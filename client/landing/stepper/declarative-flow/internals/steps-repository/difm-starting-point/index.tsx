@@ -24,22 +24,18 @@ const DIFMStartingPoint: StepType< {
 	const siteId = useSite()?.ID;
 	const showNewOrExistingSiteChoice = ! siteId && !! existingSiteCount && existingSiteCount > 0;
 
-	const queryParams = new URLSearchParams( window?.location.search );
-	const flags = queryParams.get( 'flags' )?.split( ',' );
-	const isHelpCenterLinkEnabled = flags?.includes( 'signup/help-center-link' );
-
-	const shouldRenderHelpCenterLink = useShouldRenderHelpCenterButton( {
-		flowName: DIFM_FLOW,
-		enabledGeos: [ 'US' ],
-	} );
-
-	const shouldRenderHelpCenter = isHelpCenterLinkEnabled && shouldRenderHelpCenterLink;
-
 	const onSubmit = ( value: 'existing-site' | 'new-site' ) => {
 		submit?.( {
 			newOrExistingSiteChoice: value,
 		} );
 	};
+
+	const helpCenterButtonCopy = translate( 'Questions?' );
+	const helpCenterButtonLink = translate( 'Contact our site-building team' );
+	const shouldRenderHelpCenter = useShouldRenderHelpCenterButton( {
+		flowName: DIFM_FLOW,
+		enabledGeos: [ 'US' ],
+	} );
 
 	if ( shouldUseStepContainerV2( flow ) ) {
 		const primaryButton = showNewOrExistingSiteChoice ? (
@@ -70,8 +66,8 @@ const DIFMStartingPoint: StepType< {
 									<HelpCenterStepButton
 										flowName={ DIFM_FLOW }
 										enabledGeos={ [ 'US' ] }
-										helpCenterButtonCopy={ translate( 'Questions?' ) }
-										helpCenterButtonLink={ translate( 'Contact our site-building team' ) }
+										helpCenterButtonCopy={ helpCenterButtonCopy }
+										helpCenterButtonLink={ helpCenterButtonLink }
 									/>
 								) : (
 									<Step.SkipButton onClick={ goNext }>
@@ -111,8 +107,8 @@ const DIFMStartingPoint: StepType< {
 						<HelpCenterStepButton
 							flowName={ DIFM_FLOW }
 							enabledGeos={ [ 'US' ] }
-							helpCenterButtonCopy={ translate( 'Questions?' ) }
-							helpCenterButtonLink={ translate( 'Contact our site building team' ) }
+							helpCenterButtonCopy={ helpCenterButtonCopy }
+							helpCenterButtonLink={ helpCenterButtonLink }
 						/>
 					) : undefined
 				}

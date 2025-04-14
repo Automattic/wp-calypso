@@ -138,7 +138,7 @@ export const SftpForm = ( { disabled }: SftpFormProps ) => {
 	const siteIntent = useSiteOption( 'site_intent' );
 	const completeTasks = useCompleteLaunchpadTasksWithNotice();
 
-	const sshConnectString = `ssh ${ username }@sftp.wp.com`;
+	const sshConnectString = `ssh ${ username }@ssh.wp.com`;
 
 	const handleResetPassword = () => {
 		setPasswordLoading( true );
@@ -413,13 +413,7 @@ export const SftpForm = ( { disabled }: SftpFormProps ) => {
 	}
 
 	return (
-		<ContainerComponent
-			className="sftp-card"
-			headingId="sftp-credentials"
-			title={
-				siteHasSshFeature ? translate( 'SFTP/SSH credentials' ) : translate( 'SFTP credentials' )
-			}
-		>
+		<ContainerComponent>
 			{ ! ( hasSftpFeatureAndIsLoading || hasSshFeatureAndIsLoading ) && (
 				<DescriptionComponent>
 					{ username

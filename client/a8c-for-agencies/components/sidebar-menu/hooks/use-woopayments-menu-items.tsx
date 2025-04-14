@@ -1,4 +1,4 @@
-import { category, cog } from '@wordpress/icons';
+import { category, cog, home } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import StatusBadge from 'calypso/a8c-for-agencies/components/step-section-item/status-badge';
@@ -8,6 +8,7 @@ import {
 	A4A_WOOPAYMENTS_LINK,
 	A4A_WOOPAYMENTS_DASHBOARD_LINK,
 	A4A_WOOPAYMENTS_PAYMENT_SETTINGS_LINK,
+	A4A_WOOPAYMENTS_OVERVIEW_LINK,
 } from '../lib/constants';
 import { createItem } from '../lib/utils';
 
@@ -21,6 +22,18 @@ const useWooPaymentsMenuItems = ( path: string ) => {
 
 	const menuItems = useMemo( () => {
 		return [
+			createItem(
+				{
+					icon: home,
+					path: A4A_WOOPAYMENTS_LINK,
+					link: A4A_WOOPAYMENTS_OVERVIEW_LINK,
+					title: translate( 'Overview' ),
+					trackEventProps: {
+						menu_item: 'Automattic for Agencies / WooPayments / Overview',
+					},
+				},
+				path
+			),
 			createItem(
 				{
 					icon: category,

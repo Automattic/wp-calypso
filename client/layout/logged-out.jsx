@@ -13,9 +13,9 @@ import AsyncLoad from 'calypso/components/async-load';
 import { withCurrentRoute } from 'calypso/components/route';
 import SympathyDevWarning from 'calypso/components/sympathy-dev-warning';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
-import { shouldUseStepContainerV2 } from 'calypso/landing/stepper/declarative-flow/helpers/should-use-step-container-v2';
 import MasterbarLoggedOut from 'calypso/layout/masterbar/logged-out';
 import OauthClientMasterbar from 'calypso/layout/masterbar/oauth-client';
+import { isInStepContainerV2FlowContext } from 'calypso/layout/utils';
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import isAkismetRedirect from 'calypso/lib/akismet/is-akismet-redirect';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
@@ -34,7 +34,6 @@ import {
 import { createAccountUrl } from 'calypso/lib/paths';
 import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
 import { getOnboardingUrl as getPatternLibraryOnboardingUrl } from 'calypso/my-sites/patterns/paths';
-import { getSignupCompleteFlowName } from 'calypso/signup/storageUtils';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getRedirectToOriginal, isTwoFactorEnabled } from 'calypso/state/login/selectors';
 import {
@@ -63,7 +62,6 @@ const LayoutLoggedOut = ( {
 	isWhiteLogin,
 	isPopup,
 	isJetpackWooDnaFlow,
-	isP2Login,
 	isGravatar,
 	isWPJobManager,
 	isGravPoweredClient,
@@ -148,7 +146,6 @@ const LayoutLoggedOut = ( {
 		'is-white-login': isWhiteLogin,
 		'is-popup': isPopup,
 		'is-jetpack-woo-dna-flow': isJetpackWooDnaFlow,
-		'is-p2-login': isP2Login,
 		'is-gravatar': isGravatar,
 		'is-wp-job-manager': isWPJobManager,
 		'is-grav-powered-client': hasGravPoweredClientClass,
@@ -344,7 +341,6 @@ export default withCurrentRoute(
 			const isJetpackLogin = currentRoute.startsWith( '/log-in/jetpack' );
 			const isInvitationURL = currentRoute.startsWith( '/accept-invite' );
 			const isJetpackWooDnaFlow = wooDnaConfig( getInitialQueryArguments( state ) ).isWooDnaFlow();
-			const isP2Login = 'login' === sectionName && 'p2' === currentQuery?.from;
 			const oauth2Client = getCurrentOAuth2Client( state );
 			const isGravatar = isGravatarOAuth2Client( oauth2Client );
 			const isWPJobManager = isWPJobManagerOAuth2Client( oauth2Client );
@@ -353,7 +349,6 @@ export default withCurrentRoute(
 			const isWPComLogin =
 				currentRoute.startsWith( '/log-in' ) &&
 				! isJetpackLogin &&
-				! isP2Login &&
 				Boolean( currentQuery?.client_id ) === false;
 			const isPartnerPortal = isPartnerPortalOAuth2Client( oauth2Client );
 			const isWhiteLogin = isWPComLogin || isGravatar || isGravPoweredClient || isPartnerPortal;
@@ -361,7 +356,6 @@ export default withCurrentRoute(
 				isJetpackLogin ||
 				( isWhiteLogin && ! isBlazePro ) ||
 				isJetpackWooDnaFlow ||
-				isP2Login ||
 				isInvitationURL;
 			const isPopup = '1' === currentQuery?.is_popup;
 			const noMasterbarForSection =
@@ -375,7 +369,7 @@ export default withCurrentRoute(
 				! masterbarIsVisible( state ) ||
 				noMasterbarForSection ||
 				noMasterbarForRoute ||
-				( sectionName === 'checkout' && shouldUseStepContainerV2( getSignupCompleteFlowName() ) );
+				isInStepContainerV2FlowContext( currentRoute, currentQuery );
 			const twoFactorEnabled = isTwoFactorEnabled( state );
 
 			const colorScheme = isWooJPC ? getColorSchemeFromCurrentQuery( currentQuery ) : null;
@@ -386,7 +380,6 @@ export default withCurrentRoute(
 				isWhiteLogin,
 				isPopup,
 				isJetpackWooDnaFlow,
-				isP2Login,
 				isGravatar,
 				isWPJobManager,
 				isGravPoweredClient,

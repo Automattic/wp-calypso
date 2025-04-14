@@ -1,5 +1,7 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@automattic/components/src/styles/typography";
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
 
 $blueberry-color: #3858e9;
 
@@ -77,7 +79,7 @@ $blueberry-color: #3858e9;
 				flex-direction: column;
 
 				.hosting-dashboard-item-view__header-title {
-					@include a4a-font-heading-xxl;
+					@include heading-2x-large;
 					color: var(--color-text-black);
 					padding: 4px 0;
 				}
@@ -88,7 +90,7 @@ $blueberry-color: #3858e9;
 						display: flex;
 						gap: 2px;
 						align-items: center;
-						@include a4a-font-body-lg;
+						@include body-large;
 						color: var(--color-accent-70);
 						width: fit-content;
 						text-decoration: none;
@@ -122,7 +124,7 @@ $blueberry-color: #3858e9;
 				flex-direction: column;
 
 				.hosting-dashboard-item-view__header-title {
-					@include a4a-font-heading-md;
+					@include heading-medium;
 					color: var(--color-text-black);
 					padding: 6px 0 4px 0;
 				}
@@ -132,7 +134,7 @@ $blueberry-color: #3858e9;
 					.hosting-dashboard-item-view__header-summary-link {
 						display: flex;
 						align-items: center;
-						@include a4a-font-body-md;
+						@include body-medium;
 						color: var(--color-accent-70);
 						width: fit-content;
 						text-decoration: none;

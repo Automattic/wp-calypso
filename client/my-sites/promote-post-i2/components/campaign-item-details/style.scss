@@ -538,6 +538,11 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 			justify-content: space-between;
 			width: 100%;
 
+			&.no-payment-method {
+				display: grid;
+				grid-template-columns: 100%;
+			}
+
 			@media (max-width: ($break-medium + 425)) {
 				display: grid;
 				grid-template-columns: 100%;

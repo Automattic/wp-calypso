@@ -208,7 +208,6 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 	};
 
 	const flowName = props.flow || '';
-	const isJetpackPowered = isNewsletterFlow( flowName );
 
 	// Return tailored processing screens for flows that need them
 	if ( isNewsletterFlow( flowName ) || isUpdateDesignFlow( flowName ) ) {
@@ -226,7 +225,7 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 		return (
 			<>
 				<DocumentHead title={ __( 'Processing' ) } />
-				<Step.Loading title={ getCurrentMessage() } progress={ progress } />
+				<Step.Loading title={ getCurrentMessage() } progress={ progress } delay={ 1000 } />
 			</>
 		);
 	}
@@ -242,7 +241,6 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 					<Loading title={ getCurrentMessage() } subtitle={ getSubtitle() } progress={ progress } />
 				}
 				recordTracksEvent={ recordTracksEvent }
-				showJetpackPowered={ isJetpackPowered }
 			/>
 		</>
 	);

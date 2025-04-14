@@ -75,7 +75,6 @@ const NewsletterGoals: Step = ( { navigation } ) => {
 				</VStack>
 			}
 			recordTracksEvent={ recordTracksEvent }
-			showJetpackPowered
 		/>
 	);
 };

@@ -48,6 +48,17 @@ export class PeoplePage {
 	}
 
 	/**
+	 * Click view all link if its available.
+	 */
+	async clickViewAllIfAvailable(): Promise< void > {
+		const viewAllLink = await this.page.getByRole( 'link', { name: 'View all' } );
+
+		if ( ( await viewAllLink.count() ) > 0 ) {
+			await viewAllLink.click();
+		}
+	}
+
+	/**
 	 * Clicks on the navigation tab (desktop) or dropdown (mobile).
 	 *
 	 * @param {string} name Name of the tab to click.

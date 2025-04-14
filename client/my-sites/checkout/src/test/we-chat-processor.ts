@@ -51,7 +51,7 @@ describe( 'weChatProcessor', () => {
 			payment_partner: 'IE',
 			postal_code: '10001',
 			success_url:
-				'https://example.com/checkout/thank-you/no-site/pending/:orderId?redirectTo=%2Fthank-you&receiptId=%3AreceiptId',
+				'https://example.com/checkout/thank-you/no-site/pending/:orderId?redirect_to=%2Fthank-you&receiptId=%3AreceiptId',
 			zip: '10001',
 		},
 		tos: {
@@ -202,7 +202,7 @@ describe( 'weChatProcessor', () => {
 			payment: {
 				...basicExpectedStripeRequest.payment,
 				success_url:
-					'https://example.com/checkout/thank-you/example.wordpress.com/pending/:orderId?redirectTo=%2Fthank-you&receiptId=%3AreceiptId',
+					'https://example.com/checkout/thank-you/example.wordpress.com/pending/:orderId?redirect_to=%2Fthank-you&receiptId=%3AreceiptId',
 			},
 		} );
 	} );
@@ -273,7 +273,7 @@ describe( 'weChatProcessor', () => {
 			payment: {
 				...basicExpectedStripeRequest.payment,
 				success_url:
-					'https://example.com/checkout/thank-you/example.wordpress.com/pending/:orderId?redirectTo=%2Fthank-you&receiptId=%3AreceiptId',
+					'https://example.com/checkout/thank-you/example.wordpress.com/pending/:orderId?redirect_to=%2Fthank-you&receiptId=%3AreceiptId',
 			},
 		} );
 	} );
@@ -334,7 +334,7 @@ describe( 'weChatProcessor', () => {
 			payment: {
 				...basicExpectedStripeRequest.payment,
 				success_url:
-					'https://example.com/checkout/thank-you/example.wordpress.com/pending/:orderId?redirectTo=%2Fthank-you&receiptId=%3AreceiptId',
+					'https://example.com/checkout/thank-you/example.wordpress.com/pending/:orderId?redirect_to=%2Fthank-you&receiptId=%3AreceiptId',
 			},
 		} );
 	} );

@@ -29,7 +29,6 @@
 		border: 0;
 
 		.components-button {
-			color: var(--color-neutral-60);
 			line-height: 24px;
 			padding: 4px 12px;
 
@@ -42,22 +41,6 @@
 				border-radius: 4px;
 				left: 0;
 				right: 0;
-			}
-
-			&:focus-visible::before {
-				box-shadow: inset 0 0 0 2px var(--color-primary-light);
-			}
-
-			&:not(.is-pressed):not(.is-selected):hover::before {
-				background-color: var(--studio-gray-0);
-			}
-
-			&.is-pressed {
-				color: var(--color-text-inverted);
-
-				&::before {
-					background-color: var(--color-neutral-80);
-				}
 			}
 		}
 	}
@@ -73,11 +56,6 @@
 
 		.responsive-toolbar-group__menu-item {
 			border-radius: 4px;
-
-			&.is-selected {
-				color: var(--color-text-inverted);
-				background-color: var(--color-neutral-80);
-			}
 		}
 	}
 }

@@ -27,12 +27,12 @@
 		"@automattic/interpolate-components": "workspace:^",
 		"@babel/runtime": "^7.26.10",
 		"@tannin/sprintf": "^1.1.0",
-		"@wordpress/compose": "^7.20.0",
+		"@wordpress/compose": "^7.21.0",
 		"debug": "^4.4.0",
 		"events": "^3.3.0",
 		"hash.js": "^1.1.7",
 		"lru": "^3.1.0",
-		"tannin": "^1.1.1",
+		"tannin": "^1.2.0",
 		"use-subscription": "1.10.0"
 	},
 	"devDependencies": {

@@ -7,7 +7,11 @@ import emailValidator from 'email-validator';
 import { useTranslate } from 'i18n-calypso';
 import { ChangeEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import useShowFeedback from 'calypso/a8c-for-agencies/components/a4a-feedback/hooks/use-show-a4a-feedback';
-import { A4A_REFERRALS_DASHBOARD } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import { FeedbackType } from 'calypso/a8c-for-agencies/components/a4a-feedback/types';
+import {
+	A4A_REFERRALS_DASHBOARD,
+	A4A_FEEDBACK_LINK,
+} from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import { REFERRAL_EMAIL_QUERY_PARAM_KEY } from 'calypso/a8c-for-agencies/constants';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormTextInput from 'calypso/components/forms/form-text-input';
@@ -24,7 +28,6 @@ import useRequestClientPaymentMutation from '../hooks/use-request-client-payment
 import useShoppingCart from '../hooks/use-shopping-cart';
 import NoticeSummary from './notice-summary';
 import type { ShoppingCartItem } from '../types';
-
 interface Props {
 	checkoutItems: ShoppingCartItem[];
 }
@@ -133,17 +136,18 @@ function RequestClientPayment( { checkoutItems }: Props ) {
 		translate,
 	] );
 
-	const { isFeedbackShown } = useShowFeedback( 'referral-complete' );
+	const { isFeedbackShown } = useShowFeedback( FeedbackType.ReferralCompleted );
 
 	useEffect( () => {
 		if ( isSuccess && !! email ) {
 			sessionStorage.setItem( MARKETPLACE_TYPE_SESSION_STORAGE_KEY, MARKETPLACE_TYPE_REGULAR );
 			page.redirect(
-				! isFeedbackShown
-					? addQueryArgs( A4A_REFERRALS_DASHBOARD, {
+				isFeedbackShown
+					? addQueryArgs( A4A_REFERRALS_DASHBOARD, { [ REFERRAL_EMAIL_QUERY_PARAM_KEY ]: email } )
+					: addQueryArgs( A4A_FEEDBACK_LINK, {
 							args: { email },
-					  } ) + '#feedback'
-					: addQueryArgs( A4A_REFERRALS_DASHBOARD, { [ REFERRAL_EMAIL_QUERY_PARAM_KEY ]: email } )
+							type: FeedbackType.ReferralCompleted,
+					  } )
 			);
 			setEmail( '' );
 			setMessage( '' );

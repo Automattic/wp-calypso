@@ -1,0 +1,227 @@
+.dataviews-view-table {
+	width: 100%;
+	text-indent: 0;
+	border-color: inherit;
+	border-collapse: collapse;
+	position: relative;
+	color: $gray-700;
+	margin-bottom: auto;
+
+	th {
+		text-align: left;
+		color: $gray-900;
+		font-weight: normal;
+		font-size: $default-font-size;
+	}
+	td,
+	th {
+		padding: $grid-unit-15;
+		white-space: nowrap;
+
+		&.dataviews-view-table__actions-column {
+			text-align: right;
+		}
+
+		&.dataviews-view-table__checkbox-column {
+			padding-right: 0;
+			width: 1%;
+		}
+	}
+	tr {
+		border-top: 1px solid $gray-100;
+
+		.dataviews-view-table-header-button {
+			gap: $grid-unit-05;
+		}
+
+		td:first-child,
+		th:first-child {
+			padding-left: $grid-unit-60;
+
+			.dataviews-view-table-header-button {
+				margin-left: - #{$grid-unit-10};
+			}
+		}
+
+		td:last-child,
+		th:last-child {
+			padding-right: $grid-unit-60;
+		}
+
+		&:last-child {
+			border-bottom: 0;
+		}
+
+		&.is-hovered {
+			background-color: #f8f8f8;
+		}
+
+		.components-checkbox-control__input.components-checkbox-control__input {
+			opacity: 0;
+
+			&:checked,
+			&:indeterminate,
+			&:focus {
+				opacity: 1;
+			}
+		}
+
+		.dataviews-item-actions .components-button:not(.dataviews-all-actions-button) {
+			opacity: 0;
+		}
+
+		&:focus-within,
+		&.is-hovered,
+		&:hover {
+			.components-checkbox-control__input,
+			.dataviews-item-actions .components-button:not(.dataviews-all-actions-button) {
+				opacity: 1;
+			}
+		}
+
+		@media (hover: none) {
+			// Show checkboxes and quick-actions on devices that do not support hover.
+			.components-checkbox-control__input.components-checkbox-control__input,
+			.dataviews-item-actions .components-button:not(.dataviews-all-actions-button) {
+				opacity: 1;
+			}
+		}
+
+		&.is-selected {
+			background-color: rgba(var(--wp-admin-theme-color--rgb), 0.04);
+			color: $gray-700;
+
+			&,
+			& + tr {
+				border-top: 1px solid rgba(var(--wp-admin-theme-color--rgb), 0.12);
+			}
+
+			&:hover {
+				background-color: rgba(var(--wp-admin-theme-color--rgb), 0.08);
+			}
+		}
+	}
+	thead {
+		position: sticky;
+		inset-block-start: 0;
+		z-index: z-index(".dataviews-view-table thead");
+
+		tr {
+			border: 0;
+		}
+		th {
+			background-color: $white;
+			padding-top: $grid-unit-10;
+			padding-bottom: $grid-unit-10;
+			padding-left: $grid-unit-15;
+			font-size: 11px;
+			text-transform: uppercase;
+			font-weight: 500;
+
+			&:has(.dataviews-view-table-header-button):not(:first-child) {
+				padding-left: $grid-unit-05;
+			}
+		}
+	}
+	tbody {
+		td {
+			vertical-align: top;
+		}
+		.dataviews-view-table__cell-content-wrapper {
+			min-height: $grid-unit-40;
+			display: flex;
+			align-items: center;
+		}
+
+		.components-v-stack > .dataviews-view-table__cell-content-wrapper:not(:first-child) {
+			min-height: 0;
+		}
+	}
+	.dataviews-view-table-header-button {
+		padding: $grid-unit-05 $grid-unit-10;
+		font-size: 11px;
+		text-transform: uppercase;
+		font-weight: 500;
+
+		&:not(:hover) {
+			color: $gray-900;
+		}
+
+		span {
+			speak: none;
+
+			&:empty {
+				display: none;
+			}
+		}
+	}
+
+	.dataviews-view-table-header {
+		padding-left: $grid-unit-05;
+	}
+
+	.dataviews-view-table__actions-column {
+		width: 1%;
+	}
+
+	&:has(tr.is-selected) {
+		.components-checkbox-control__input {
+			opacity: 1;
+		}
+	}
+
+	// Density style overrides.
+	&.has-compact-density {
+		thead {
+			th {
+				&:has(.dataviews-view-table-header-button):not(:first-child) {
+					padding-left: 0;
+				}
+			}
+		}
+		td,
+		th {
+			padding: $grid-unit-05 $grid-unit-10;
+		}
+	}
+
+	&.has-comfortable-density {
+		td,
+		th {
+			padding: $grid-unit-20 $grid-unit-15;
+		}
+	}
+
+	&.has-compact-density,
+	&.has-comfortable-density {
+		td,
+		th {
+			&.dataviews-view-table__checkbox-column {
+				padding-right: 0;
+			}
+		}
+	}
+}
+
+@container (max-width: 430px) {
+	.dataviews-view-table tr td:first-child,
+	.dataviews-view-table tr th:first-child {
+		padding-left: $grid-unit-30;
+	}
+
+	.dataviews-view-table tr td:last-child,
+	.dataviews-view-table tr th:last-child {
+		padding-right: $grid-unit-30;
+	}
+}
+
+.dataviews-view-table-selection-checkbox {
+	--checkbox-input-size: 24px;
+	@include break-small() {
+		--checkbox-input-size: 16px;
+	}
+}
+
+.dataviews-column-primary__media {
+	max-width: 60px;
+}

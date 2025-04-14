@@ -147,6 +147,10 @@ $font-size: rem(14px);
 .theme-default {
 	// client/layout/style.scss
 	.layout__content {
+		min-height: 100vh;
+	}
+
+	&:has(.sidebar) .layout__content {
 		min-height: 101vh; // Hack to give JS the chance to trigger the scroll event when the content is short. JS code: client/layout/utils.ts:36.
 	}
 
@@ -157,6 +161,10 @@ $font-size: rem(14px);
 		padding-bottom: 12px;
 		min-height: calc(100vh - var(--masterbar-height));
 		box-sizing: border-box;
+
+		a {
+			text-decoration: none;
+		}
 
 		.sidebar__separator {
 			margin: 0 0 11px;
@@ -820,7 +828,6 @@ $font-size: rem(14px);
 				content: "\f534";
 				/* stylelint-disable-next-line font-family-no-missing-generic-family-keyword */
 				font-family: dashicons;
-				/* stylelint-disable-next-line  declaration-property-unit-allowed-list */
 				font-size: 20px;
 				line-height: 20px;
 				background-color: #a7aaad;
@@ -1043,7 +1050,7 @@ $font-size: rem(14px);
 @media screen and (max-width: 781px) {
 	// client/layout/sidebar/style.scss
 	.theme-default {
-		.focus-content .layout__content {
+		&:has(.sidebar) .focus-content .layout__content {
 			padding: 70px 24px 24px;
 			transition: padding 0.15s ease-in-out;
 		}

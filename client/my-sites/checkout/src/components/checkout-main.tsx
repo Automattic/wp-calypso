@@ -148,7 +148,8 @@ export default function CheckoutMain( {
 	const isSiteless =
 		sitelessCheckoutType === 'jetpack' ||
 		sitelessCheckoutType === 'akismet' ||
-		sitelessCheckoutType === 'marketplace';
+		sitelessCheckoutType === 'marketplace' ||
+		sitelessCheckoutType === 'a4a';
 	const { stripe, stripeConfiguration, isStripeLoading, stripeLoadingError } = useStripe();
 	const { razorpayConfiguration, isRazorpayLoading, razorpayLoadingError } = useRazorpay();
 	const createUserAndSiteBeforeTransaction =
@@ -548,7 +549,21 @@ export default function CheckoutMain( {
 				highlightOver: colors[ 'WordPress Blue 60' ],
 		  }
 		: {};
-	const theme = { ...checkoutTheme, colors: { ...checkoutTheme.colors, ...jetpackColors } };
+	const a4aColors =
+		sitelessCheckoutType === 'a4a'
+			? {
+					primary: colors[ 'Automattic Blue' ],
+					primaryBorder: colors[ 'Automattic Blue 80' ],
+					primaryOver: colors[ 'Automattic Blue 60' ],
+					highlight: colors[ 'Automattic Blue 50' ],
+					highlightBorder: colors[ 'Automattic Blue 80' ],
+					highlightOver: colors[ 'Automattic Blue 60' ],
+			  }
+			: {};
+	const theme = {
+		...checkoutTheme,
+		colors: { ...checkoutTheme.colors, ...jetpackColors, ...a4aColors },
+	};
 
 	const isCheckoutV2ExperimentLoading = false;
 

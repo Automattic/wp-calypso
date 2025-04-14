@@ -5,6 +5,7 @@ interface TimeSinceProps {
 	date: string;
 	dateFormat?: string;
 	className?: string;
+	locale?: string;
 }
 
 /**
@@ -63,14 +64,14 @@ function useRelativeTime( date: string, dateFormat = 'll' ) {
 		}
 
 		// For older dates, use the date format
-		return formatDate( dateObj, dateFormat );
+		return formatDate( dateObj, dateFormat, translate.localeSlug );
 	}, [ now, date, dateFormat, translate ] );
 }
 
 /**
  * Format a date using Intl.DateTimeFormat
  */
-function formatDate( date: Date, format: string ): string {
+function formatDate( date: Date, format: string, locale?: string ): string {
 	if ( ! date || isNaN( date.getTime() ) ) {
 		return '';
 	}
@@ -93,12 +94,13 @@ function formatDate( date: Date, format: string ): string {
 		formatOptions.timeStyle = 'medium';
 	}
 
-	return new Intl.DateTimeFormat( undefined, formatOptions ).format( date );
+	return new Intl.DateTimeFormat( locale, formatOptions ).format( date );
 }
 
 function TimeSince( { className, date, dateFormat = 'll' }: TimeSinceProps ) {
+	const translate = useTranslate();
 	const humanDate = useRelativeTime( date, dateFormat );
-	const fullDate = formatDate( new Date( date ), 'llll' );
+	const fullDate = formatDate( new Date( date ), 'llll', translate.localeSlug );
 
 	return (
 		<time className={ className } dateTime={ date } title={ fullDate }>

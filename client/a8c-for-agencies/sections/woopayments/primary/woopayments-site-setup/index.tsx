@@ -178,7 +178,6 @@ const WooPaymentsSiteSetup = ( { siteId }: { siteId: string } ) => {
 						</div>
 						<StepSection heading={ translate( 'Next steps' ) }>
 							<StepSectionItem
-								isNewLayout
 								heading={ translate( 'Install and activate the plugin on WP-Admin' ) }
 								description={
 									<>
@@ -226,7 +225,6 @@ const WooPaymentsSiteSetup = ( { siteId }: { siteId: string } ) => {
 								}
 							/>
 							<StepSectionItem
-								isNewLayout
 								heading={ translate( 'Earn commissions' ) }
 								description={
 									<>

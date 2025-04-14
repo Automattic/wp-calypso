@@ -8,7 +8,10 @@ import { ButtonProps } from '../../../types';
 
 import './style.scss';
 
-export const BackButton = ( originalProps: ButtonProps ) => {
+export const BackButton = ( {
+	enableTracksEvent = true,
+	...originalProps
+}: ButtonProps & { enableTracksEvent?: boolean } ) => {
 	const { __ } = useI18n();
 	const stepContext = useStepContainerV2Context();
 
@@ -18,12 +21,12 @@ export const BackButton = ( originalProps: ButtonProps ) => {
 		icon: chevronLeft,
 	} );
 
-	return (
-		<Button
-			{ ...decorateButtonWithTracksEventRecording( backButtonProps, {
+	const buttonProps = enableTracksEvent
+		? decorateButtonWithTracksEventRecording( backButtonProps, {
 				tracksEventName: 'calypso_signup_previous_step_button_click',
 				stepContext,
-			} ) }
-		/>
-	);
+		  } )
+		: backButtonProps;
+
+	return <Button { ...buttonProps } />;
 };

@@ -1,4 +1,5 @@
 import { FormLabel } from '@automattic/components';
+import { Spinner } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
@@ -6,7 +7,6 @@ import { connect } from 'react-redux';
 import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import LoggedOutForm from 'calypso/components/logged-out-form';
 import Notice from 'calypso/components/notice';
 import wpcom from 'calypso/lib/wp';
@@ -65,6 +65,7 @@ class RequestLoginEmailForm extends Component {
 		isEmailInputError: PropTypes.bool,
 		isSubmitButtonDisabled: PropTypes.bool,
 		isSubmitButtonBusy: PropTypes.bool,
+		onReady: PropTypes.func,
 	};
 
 	state = {
@@ -80,6 +81,10 @@ class RequestLoginEmailForm extends Component {
 			wpcom.req
 				.get( `/sites/${ this.props.blogId }` )
 				.then( ( result ) => this.setState( { site: result } ) );
+		}
+
+		if ( this.props.onReady ) {
+			this.props.onReady();
 		}
 	}
 
@@ -176,10 +181,11 @@ class RequestLoginEmailForm extends Component {
 			isSubmitButtonDisabled,
 			isSubmitButtonBusy,
 			shouldShowLoadingEllipsis,
+			isFromJetpackOnboarding,
 		} = this.props;
 
 		if ( shouldShowLoadingEllipsis ) {
-			return <LoadingEllipsis className="magic-login__loading-ellipsis--jetpack" />;
+			return <Spinner className="magic-login__loading-spinner--jetpack" />;
 		}
 
 		const usernameOrEmail = this.getUsernameOrEmailFromState();
@@ -189,7 +195,11 @@ class RequestLoginEmailForm extends Component {
 			const emailAddress = usernameOrEmail.indexOf( '@' ) > 0 ? usernameOrEmail : null;
 
 			return isJetpackMagicLinkSignUpEnabled ? (
-				<EmailedLoginLinkSuccessfullyJetpackConnect emailAddress={ emailAddress } />
+				<EmailedLoginLinkSuccessfullyJetpackConnect
+					emailAddress={ emailAddress }
+					shouldRedirect={ ! isFromJetpackOnboarding }
+					onResendEmail={ this.onSubmit }
+				/>
 			) : (
 				<EmailedLoginLinkSuccessfully emailAddress={ emailAddress } />
 			);
@@ -232,16 +242,20 @@ class RequestLoginEmailForm extends Component {
 				<h1 className="magic-login__form-header">
 					{ headerText || translate( 'Email me a login link' ) }
 				</h1>
-				{ currentUser && currentUser.username && (
-					<p>
-						{ translate( 'NOTE: You are already logged in as user: %(user)s', {
-							args: {
-								user: currentUser.username,
-							},
-						} ) }
-					</p>
-				) }
 				<LoggedOutForm onSubmit={ onSubmit }>
+					{ currentUser && currentUser.username && (
+						<Notice
+							showDismiss={ false }
+							className="magic-login__form-header-notice"
+							status="is-info"
+							theme="light"
+							text={ translate( 'You are already logged in as user: %(user)s', {
+								args: {
+									user: currentUser.username,
+								},
+							} ) }
+						></Notice>
+					) }
 					{ ! hideSubHeaderText && (
 						<p className="magic-login__form-sub-header">{ this.getSubHeaderText() }</p>
 					) }
