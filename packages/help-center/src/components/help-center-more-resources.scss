@@ -5,6 +5,7 @@
 // More resources
 .help-center-more-resources {
 	@include help-center-link;
+	margin-top: 32px;
 
 	.help-center-link__item.help-center-more-resources__resource-item {
 		.help-center-link__cell.help-center-more-resources__resource-cell {
