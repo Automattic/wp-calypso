@@ -1,14 +1,13 @@
 import { useQuery } from '@tanstack/react-query';
 import { createContext, useContext } from 'react';
 import { fetchUser } from '../data';
-import type { User, TwoStep } from '../data/types';
+import type { User } from '../data/types';
 
 export const AUTH_QUERY_KEY = [ 'auth', 'user' ];
 export const TWO_STEP_QUERY_KEY = [ 'me', 'two-step' ];
 
 interface AuthContextType {
 	user: User;
-	twoStep: TwoStep;
 }
 const AuthContext = createContext< AuthContextType | undefined >( undefined );
 

@@ -45,10 +45,11 @@ To add a new route to the dashboard:
 By default, the whole dashboard is protected and the user must be logged in to access it. But some routes (like the profile page) require additional authorization checks. For these routes, you can use the `beforeLoad` hook to check if the user has the necessary permissions.
 
 ```typescript
-beforeLoad: ({ context }: { context: RouteContext }) => {
-  if (context?.auth?.twoStep?.two_step_reauthorization_required) {
+beforeLoad: async () => {
+  const twoStep = await fetchTwoStep();
+  if ( twoStep.two_step_reauthorization_required ) {
     const currentPath = window.location.pathname;
-    const loginUrl = `/reauth-required?redirect_to=${encodeURIComponent(currentPath)}`;
+    const loginUrl = `/reauth-required?redirect_to=${ encodeURIComponent( currentPath ) }`;
     window.location.href = loginUrl;
   }
 },
