@@ -4,7 +4,6 @@ import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import { useSelector } from 'calypso/state';
-import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
 import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
 import StatsCardUpsellOverlay from './stats-card-upsell-overlay';
 import { Props } from './';
@@ -14,13 +13,7 @@ const StatsCardUpdateJetpackVersion: React.FC< Props > = ( { className, siteId, 
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 	const siteAdminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
 
-	const isWPCOMSite = useSelector( ( state ) => siteId && getIsSiteWPCOM( state, siteId ) );
 	const tracksEvent = 'update_jetpack_feature_card_clicked';
-
-	if ( isWPCOMSite ) {
-		// Don't show Jetpack update outside Jetpack.
-		return null;
-	}
 
 	const onClick = () => {
 		// publish an event
