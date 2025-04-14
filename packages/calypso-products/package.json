@@ -6,6 +6,14 @@
 	"module": "dist/esm/index.js",
 	"types": "dist/types/index.d.ts",
 	"calypso:src": "src/index.ts",
+	"exports": {
+		".": {
+			"calypso:src": "./src/index.ts",
+			"types": "./dist/types/index.d.ts",
+			"import": "./dist/esm/index.js",
+			"require": "./dist/cjs/index.js"
+		}
+	},
 	"sideEffects": false,
 	"scripts": {
 		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",

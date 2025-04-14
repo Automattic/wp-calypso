@@ -6,6 +6,14 @@
 	"module": "dist/esm/index.js",
 	"calypso:src": "src/index.ts",
 	"types": "src/types",
+	"exports": {
+		".": {
+			"calypso:src": "./src/index.ts",
+			"types": "./src/types/index.d.ts",
+			"import": "./dist/esm/index.js",
+			"require": "./dist/cjs/index.js"
+		}
+	},
 	"sideEffects": false,
 	"repository": {
 		"type": "git",
