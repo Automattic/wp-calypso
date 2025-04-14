@@ -54,11 +54,14 @@ const COLOR_MAP: ColorPalette< number > = {
 };
 
 // maps a color map to a color palette
-
-export const mapColors = ( mapFromArray: string[] ) => {
+export const mapColors = (
+	mapFromArray: string[],
+	mapToObject: ColorPalette< number > = COLOR_MAP
+) => {
 	const map: ColorPalette< string > = {};
-	Object.entries( COLOR_MAP ).forEach( ( [ alias, color ] ) => {
-		map[ alias ] = typeof color === 'object' ? mapColors( mapFromArray ) : mapFromArray[ color ];
+	Object.entries( mapToObject ).forEach( ( [ alias, color ] ) => {
+		map[ alias ] =
+			typeof color === 'object' ? mapColors( mapFromArray, color ) : mapFromArray[ color ];
 	} );
 	return map;
 };
