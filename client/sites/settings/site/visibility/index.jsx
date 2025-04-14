@@ -22,6 +22,7 @@ import {
 	isSiteOnECommerceTrial as getIsSiteOnECommerceTrial,
 	isSiteOnMigrationTrial as getIsSiteOnMigrationTrial,
 } from 'calypso/state/sites/plans/selectors';
+import isSiteBigSkyTrial from 'calypso/state/sites/plans/selectors/is-site-big-sky-trial';
 import { isCurrentPlanPaid } from 'calypso/state/sites/selectors';
 import {
 	getSelectedSite,
@@ -90,6 +91,7 @@ const LaunchSite = () => {
 	const siteSlug = useSelector( ( state ) => getSelectedSiteSlug( state ) );
 	const isPaidPlan = useSelector( ( state ) => isCurrentPlanPaid( state, siteId ) );
 	const isComingSoon = useSelector( ( state ) => isSiteComingSoon( state, siteId ) );
+	const isBigSkyTrial = useSelector( ( state ) => isSiteBigSkyTrial( state, siteId ) );
 	const hasSitePreviewLink = useSelector( ( state ) =>
 		siteHasFeature( state, siteId, WPCOM_FEATURES_SITE_PREVIEW_LINKS )
 	);
@@ -150,13 +152,11 @@ const LaunchSite = () => {
 		);
 		querySiteDomainsComponent = '';
 	} else {
-		btnComponent = (
-			<Button
-				href={ `/start/launch-site?siteSlug=${ siteSlug }&source=general-settings&new=${ site.title }&search=yes` }
-			>
-				{ btnText }
-			</Button>
-		);
+		let href = `/start/launch-site?siteSlug=${ siteSlug }&source=general-settings&new=${ site.title }&search=yes`;
+		if ( isBigSkyTrial ) {
+			href = `/setup/ai-site-builder/domains?siteId=${ siteId }&source=general-settings&redirect=site-launch`;
+		}
+		btnComponent = <Button href={ href }>{ btnText }</Button>;
 		querySiteDomainsComponent = '';
 	}
 
