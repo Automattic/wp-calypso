@@ -26,7 +26,6 @@ export { useStepPersistedState, clearStepPersistedState } from './hooks/use-pers
 export * from './navigator';
 export { default as SelectCardCheckbox } from './select-card-checkbox';
 export * from './utils';
-export { TopBar } from './step-container-v2';
 export type { SelectItem } from './select-items';
 export type { SelectItemAlt } from './select-items-alt';
 export type { MShotsOptions } from './mshots-image';

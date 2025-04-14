@@ -2,7 +2,7 @@ import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { TopBar } from '@automattic/onboarding';
+import { Step } from '@automattic/onboarding';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { get, startsWith } from 'lodash';
@@ -383,7 +383,7 @@ export class Login extends Component {
 			: getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, pathname );
 
 		return (
-			<a
+			<Step.LinkButton
 				href={ addQueryArgs(
 					{
 						user_email: usernameOrEmail,
@@ -393,10 +393,9 @@ export class Login extends Component {
 				key="sign-up-link"
 				onClick={ this.recordSignUpLinkClick }
 				rel="external"
-				className="components-button is-link step-container-v2__link-button"
 			>
 				{ signupLinkText ?? translate( 'Create a new account' ) }
-			</a>
+			</Step.LinkButton>
 		);
 	}
 
@@ -579,7 +578,7 @@ export class Login extends Component {
 		return (
 			<>
 				{ isSocialFirst && (
-					<TopBar
+					<Step.TopBar
 						rightElement={ this.renderLoginHeaderNavigation() }
 						logo={ isFromAkismet && akismetLogo }
 					/>
