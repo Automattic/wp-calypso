@@ -218,7 +218,7 @@ export const fetchSiteEngagementStats = async ( id: string ) => {
 };
 
 export const fetchDomains = (): Promise< Domain[] > => {
-	return Promise.resolve( mockDomains );
+	return new Promise( ( resolve ) => setTimeout( () => resolve( mockDomains ), 0 ) );
 };
 
 export const fetchSiteDomains = async ( id: string ): Promise< { domains: Domain[] } > => {
@@ -352,7 +352,7 @@ export const EMAIL_DATA: Email[] = [
 ];
 
 export const fetchEmails = (): Promise< Email[] > => {
-	return Promise.resolve( EMAIL_DATA );
+	return new Promise( ( resolve ) => setTimeout( () => resolve( EMAIL_DATA ), 0 ) );
 };
 
 export const findEmailById = ( id: string ): Email | undefined => {
@@ -360,7 +360,7 @@ export const findEmailById = ( id: string ): Email | undefined => {
 };
 
 export const fetchEmail = ( id: string ): Promise< Email | undefined > => {
-	return Promise.resolve( findEmailById( id ) );
+	return new Promise( ( resolve ) => setTimeout( () => resolve( findEmailById( id ) ), 0 ) );
 };
 
 export const fetchUser = async (): Promise< User > => {
