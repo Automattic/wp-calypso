@@ -4,6 +4,7 @@
 import { colord, extend } from 'colord';
 import a11yPlugin from 'colord/plugins/a11y';
 import namesPlugin from 'colord/plugins/names';
+import { ColorBaseTokens, ColorScale, ThemeProps } from '../../types';
 
 extend( [ namesPlugin, a11yPlugin ] );
 
@@ -11,80 +12,12 @@ const LIGHT_VALUES = [ 100, 98, 95, 92, 89, 87, 83, 73, 55, 48, 39, 13 ];
 const DARK_VALUES = [ 1, 11, 16, 19, 22, 18, 29, 38, 43, 73, 80, 93 ];
 export const PRIMARY_DEFAULT = '#3858e9';
 
-// map showing which lightness in scale each use case should use
-// type ColorPalette< T > = Partial<
-// 	Record<
-// 		'bg' | 'text' | 'border',
-// 		Partial<
-// 			Record<
-// 				'default' | 'hover' | 'active' | 'input' | 'muted' | 'strong' | 'inverse' | 'disabled',
-// 				T | Partial< Record< 'default' | 'disabled' | 'hover' | 'strong', T > >
-// 			>
-// 		>
-// 	>
-// >;
-
-type ColorPalette< T > = {
-	[ key: string ]: T | ColorPalette< T >;
-};
-
-const COLOR_MAP: ColorPalette< number > = {
-	bg: {
-		default: 2,
-		hover: 3,
-		active: 4,
-		input: {
-			default: 0,
-			disabled: 0,
-		},
-		muted: 1,
-		strong: {
-			default: 8,
-			hover: 9,
-		},
-	},
-	text: {
-		default: 10,
-		hover: 11,
-		strong: 11,
-		inverse: {
-			default: 1,
-			strong: 0,
-		},
-		muted: 9,
-	},
-	border: {
-		default: 5,
-		disabled: 4,
-		input: 6,
-		strong: {
-			default: 6,
-			hover: 7,
-		},
-		muted: 4,
-		hover: 6,
-	},
-};
-
-// maps a color map to a color palette
-
-const mapColors = ( mapFromArray: string[], mapToObject: ColorPalette< number > ) => {
-	const map: ColorPalette< string > = {};
-	Object.entries( mapToObject ).forEach( ( [ alias, color ] ) => {
-		map[ alias ] =
-			typeof color === 'object' ? mapColors( mapFromArray, color ) : mapFromArray[ color ];
-	} );
-	return map;
-};
-
 const generateNeutralScale = ( { color = PRIMARY_DEFAULT, fun = 0, isDark = false } ) => {
 	const base = colord( color ).toHsl();
 	const lightValues = isDark ? DARK_VALUES : LIGHT_VALUES;
-	return lightValues.map( ( value ) => colord( { ...base, s: fun, l: value } ).toHex() );
-};
-
-const generateNeutralColors = ( neutralScale: string[] ) => {
-	return mapColors( neutralScale, COLOR_MAP );
+	return lightValues.map( ( value ) =>
+		colord( { ...base, s: fun, l: value } ).toHex()
+	) as ColorScale;
 };
 
 const generatePrimaryScale = ( {
@@ -120,33 +53,24 @@ const generatePrimaryScale = ( {
 			...base,
 			l: Math.min( Math.max( value, 0 ), 100 ),
 		} ).toHex()
-	);
+	) as ColorScale;
 };
 
-const generatePrimaryColors = ( primaryScale: string[] ) => {
-	return mapColors( primaryScale, COLOR_MAP );
-};
+export const generateBaseTokens = ( colorProp: ThemeProps[ 'color' ] ) => {
+	const color = colorProp.primary ?? PRIMARY_DEFAULT;
+	const fun = colorProp.fun ?? 0;
+	const isDark = colorProp.scheme === 'dark';
 
-// const generatePrimaryColors = ( { color = PRIMARY_DEFAULT, bg, isDark = false } ) => {
-
-// generates a color palette based on a primary color
-export const generateColors = ( { color = PRIMARY_DEFAULT, fun = 0, isDark = false } ) => {
 	const neutralScale = generateNeutralScale( { color, fun, isDark } );
-	const neutral = generateNeutralColors( neutralScale );
 
 	const primaryScale = generatePrimaryScale( {
 		color,
-		// @ts-expect-error With the current `ColorPalette` type,
-		// there's no way to guardantee that `bg` is an object
-		bg: neutral.bg.default,
+		bg: neutralScale[ 2 ],
 		isDark,
 	} );
-	const primary = generatePrimaryColors( primaryScale );
 
 	return {
-		primary,
-		neutral,
 		[ 'neutral-scale' ]: neutralScale,
 		[ 'primary-scale' ]: primaryScale,
-	};
+	} as ColorBaseTokens;
 };

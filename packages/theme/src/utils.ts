@@ -28,11 +28,14 @@ function flattenTheme( obj: RecursiveObj, parent?: string, res: Record< string, 
 }
 
 // converts a theme object to a CSS object containing CSS variables
-export const themeToCss = ( theme: { color: ReturnType< typeof generateColors > } ) => {
+export const themeToCss = (
+	theme: { color: ReturnType< typeof generateColors > },
+	prefix = ''
+) => {
 	const flattenedTheme = flattenTheme( theme );
 
 	return Object.keys( flattenedTheme ).reduce( ( result, key ) => {
-		result[ `--a8c-theme-${ key }` ] = flattenedTheme[ key ];
+		result[ `--theme-${ prefix }${ key }` ] = flattenedTheme[ key ];
 		return result;
 	}, {} as React.CSSProperties );
 };

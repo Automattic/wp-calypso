@@ -1,6 +1,6 @@
 import { forwardRef } from 'react';
-import { useGenerateStyles } from './color/a8c';
-import { useGenerateRadixStyles } from './color/radix';
+import { generateColors } from './color';
+import { themeToCss } from './utils';
 import type { ThemeProps } from './types';
 
 declare module 'react' {
@@ -10,11 +10,11 @@ declare module 'react' {
 }
 
 const Theme = forwardRef< HTMLDivElement, ThemeProps >( function Theme( { color, children }, ref ) {
-	const styles = useGenerateStyles( color );
-	const radixColors = useGenerateRadixStyles( color );
+	const colorTokens = generateColors( color );
+	const themeCss = themeToCss( { color: colorTokens } );
 
 	return (
-		<div ref={ ref } style={ { ...styles, ...radixColors } }>
+		<div ref={ ref } style={ themeCss }>
 			{ children }
 		</div>
 	);
