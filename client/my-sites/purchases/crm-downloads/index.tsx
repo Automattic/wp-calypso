@@ -17,7 +17,7 @@ export function CrmDownloads( { purchaseId, siteSlug }: { purchaseId: number; si
 
 	return (
 		<Main className="crm-downloads" wideLayout>
-			<PageViewTracker path="/purchases/:site/crm-downloads/:purchaseId" title="CRM Downloads" />
+			<PageViewTracker path="/purchases/crm-downloads/:site/:purchaseId" title="CRM Downloads" />
 			<DocumentHead title={ translate( 'CRM Downloads' ) } />
 			<HeaderCake backHref={ `/purchases/subscriptions/${ siteSlug }/${ purchaseId }` }>
 				{ translate( 'CRM Downloads' ) }
