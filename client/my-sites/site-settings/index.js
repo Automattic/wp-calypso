@@ -4,6 +4,7 @@ import { makeLayout, render as clientRender, redirectIfDuplicatedView } from 'ca
 import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
 import {
 	acceptSiteTransfer,
+	leaveSite,
 	deleteSite,
 	disconnectSite,
 	disconnectSiteConfirm,
@@ -58,6 +59,17 @@ export default function () {
 
 		return page.redirect( redirectPath );
 	} );
+
+	page(
+		'/settings/leave-site/:site_id',
+		siteSelection,
+		redirectToolsIfRemoveDuplicateViewsExperimentEnabled,
+		navigation,
+		setScroll,
+		leaveSite,
+		makeLayout,
+		clientRender
+	);
 
 	page(
 		'/settings/delete-site/:site_id',

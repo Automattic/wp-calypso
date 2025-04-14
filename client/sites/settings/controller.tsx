@@ -15,6 +15,7 @@ import {
 	useAreHostingFeaturesSupported,
 } from '../hosting/features';
 import DeleteSite from './administration/tools/delete-site';
+import LeaveSite from './administration/tools/leave-site';
 import ResetSite from './administration/tools/reset-site';
 import TransferSite from './administration/tools/transfer-site';
 import DatabaseSettings from './database';
@@ -131,6 +132,20 @@ export function administrationToolTransferSite( context: PageJSContext, next: ()
 			/>
 			<SettingsSidebar />
 			<TransferSite />
+		</PanelWithSidebar>
+	);
+	next();
+}
+
+export function administrationToolLeaveSite( context: PageJSContext, next: () => void ) {
+	context.primary = (
+		<PanelWithSidebar>
+			<PageViewTracker
+				title="Sites > Settings > Leave site"
+				path={ getRouteFromContext( context ) }
+			/>
+			<SettingsSidebar />
+			<LeaveSite />
 		</PanelWithSidebar>
 	);
 	next();
