@@ -2,7 +2,7 @@ import { OnboardSelect } from '@automattic/data-stores';
 import { ONBOARDING_FLOW, clearStepPersistedState } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs, getQueryArg, getQueryArgs, removeQueryArgs } from '@wordpress/url';
-import { useState, useMemo, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { useIsPlaygroundEligible } from 'calypso/landing/stepper/hooks/use-is-playground-eligible';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { pathToUrl } from 'calypso/lib/url';
@@ -14,14 +14,9 @@ import {
 	clearSignupCompleteFlowName,
 	clearSignupDestinationCookie,
 } from 'calypso/signup/storageUtils';
-import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { useDispatch as useReduxDispatch } from 'calypso/state';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
-import {
-	STEPPER_TRACKS_EVENT_SIGNUP_START,
-	STEPPER_TRACKS_EVENT_SIGNUP_STEP_START,
-	STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT,
-} from '../../../constants';
+import { STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT } from '../../../constants';
 import { useFlowLocale } from '../../../hooks/use-flow-locale';
 import { useMarketplaceThemeProducts } from '../../../hooks/use-marketplace-theme-products';
 import { useQuery } from '../../../hooks/use-query';
@@ -52,38 +47,6 @@ const onboarding: Flow = {
 	name: ONBOARDING_FLOW,
 	isSignupFlow: true,
 	__experimentalUseBuiltinAuth: true,
-	// This entire hook can be removed as we are no longer tracking/setting
-	// these event props in the onboarding flow. This would be best in the
-	// site-setup flow where the goal step is now.
-	// https://github.com/Automattic/wp-calypso/pull/101921/files/35e9ff8020e748de100fa6ff07c70c46255221ee#r2021712784
-	useTracksEventProps() {
-		const userIsLoggedIn = useSelector( isUserLoggedIn );
-		const goals = useSelect(
-			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getGoals(),
-			[]
-		);
-
-		// we are only interested in the initial values and not when they values change
-		const initialGoals = useRef( goals );
-		const initialLoggedOut = useRef( ! userIsLoggedIn );
-
-		return useMemo(
-			() => ( {
-				eventsProperties: {
-					[ STEPPER_TRACKS_EVENT_SIGNUP_START ]: {
-						is_logged_out: initialLoggedOut.current.toString(),
-					},
-
-					[ STEPPER_TRACKS_EVENT_SIGNUP_STEP_START ]: {
-						...( initialGoals.current.length && {
-							goals: initialGoals.current.join( ',' ),
-						} ),
-					},
-				},
-			} ),
-			[ initialLoggedOut, initialGoals ]
-		);
-	},
 	useSteps() {
 		const isPlaygroundEligible = useIsPlaygroundEligible();
 
