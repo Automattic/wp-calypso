@@ -95,7 +95,6 @@ const NoAccess = () => {
 };
 
 const AddOnsMain = () => {
-	const translate = useTranslate();
 	const selectedSite = useSelector( getSelectedSite ) ?? null;
 	const addOns = AddOns.useAddOns( { selectedSiteId: selectedSite?.ID } );
 
@@ -134,8 +133,8 @@ const AddOnsMain = () => {
 			<PageViewTracker path="/add-ons/:site" title="Add-Ons" />
 			<ContentWithHeader>
 				<AddOnsGrid
-					actionPrimary={ { text: translate( 'Buy add-on' ), handler: handleActionPrimary } }
-					actionSecondary={ { text: translate( 'Manage add-on' ), handler: handleActionSelected } }
+					actionPrimary={ handleActionPrimary }
+					actionSecondary={ handleActionSelected }
 					addOns={ addOns }
 					siteId={ selectedSite?.ID }
 					highlightFeatured

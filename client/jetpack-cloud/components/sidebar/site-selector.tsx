@@ -54,7 +54,12 @@ const SiteSelector = () => {
 			/* eslint-disable-next-line jsx-a11y/no-autofocus */
 			autoFocus={ isVisible }
 			isJetpackAgencyDashboard={ canAccessJetpackManage }
-			keepCurrentSection
+			/**
+			 * The site selector breaks to a blank page if you're on a Jetpack Manage section.
+			 * So only preserve the current section when switching sites if
+			 * the user can't access Jetpack Manage.
+			 */
+			keepCurrentSection={ ! canAccessJetpackManage }
 			allSitesPath="/dashboard"
 			siteBasePath="/landing"
 		/>

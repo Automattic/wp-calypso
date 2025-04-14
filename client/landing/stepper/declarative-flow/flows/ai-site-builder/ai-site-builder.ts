@@ -13,6 +13,7 @@ import { useDispatch } from 'calypso/state';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
 import { STEPS } from '../../internals/steps';
+import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
 import { Flow } from '../../internals/types';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
@@ -23,6 +24,7 @@ interface ProvidedDependencies {
 	cartItems?: MinimalRequestCartProduct[]; // Ensure cartItems is an array
 	siteCreated?: boolean;
 	isLaunched?: boolean;
+	processingResult?: ProcessingResult;
 }
 
 const SiteIntent = Onboard.SiteIntent;
@@ -52,17 +54,24 @@ const aiSiteBuilder: Flow = {
 	useSideEffect() {
 		const dispatch = useDispatch();
 		const siteId = useQuery().get( 'siteId' );
+		const prompt = useQuery().get( 'prompt' );
 		useEffect( () => {
 			if ( siteId ) {
 				dispatch( setSelectedSiteId( parseInt( siteId ) ) );
 			}
 		}, [ siteId ] );
+		useEffect( () => {
+			if ( prompt && prompt.length > 0 ) {
+				window.sessionStorage.setItem( 'stored_ai_prompt', prompt );
+			}
+		}, [ prompt ] );
 	},
 	initialize() {
 		// stepsWithRequiredLogin will take care of redirecting to the login step if the user is not logged in.
 		return stepsWithRequiredLogin( [
 			STEPS.SITE_CREATION_STEP,
 			STEPS.PROCESSING,
+			STEPS.ERROR,
 			STEPS.UNIFIED_DOMAINS,
 			STEPS.UNIFIED_PLANS,
 			STEPS.SITE_LAUNCH,
@@ -87,6 +96,10 @@ const aiSiteBuilder: Flow = {
 				// The processing step will wait the aforementioned promise to be resolved and then will submit to you whatever the promise resolves to.
 				// Which will be the created site { "siteId": "242341575", "siteSlug": "something.wordpress.com", "goToCheckout": false, "siteCreated": true }
 				case 'processing': {
+					if ( providedDependencies.processingResult === ProcessingResult.FAILURE ) {
+						return navigate( 'error' );
+					}
+
 					if ( providedDependencies.siteCreated ) {
 						const { siteSlug, siteId } = providedDependencies;
 						// We are setting up big sky now.
@@ -134,8 +147,12 @@ const aiSiteBuilder: Flow = {
 
 						if ( prompt ) {
 							promptParam = `&prompt=${ encodeURIComponent( prompt ) }`;
+						} else if ( window.sessionStorage.getItem( 'stored_ai_prompt' ) ) {
+							promptParam = `&prompt=${ encodeURIComponent(
+								window.sessionStorage.getItem( 'stored_ai_prompt' ) || ''
+							) }`;
+							window.sessionStorage.removeItem( 'stored_ai_prompt' );
 						}
-
 						window.location.replace(
 							`${ siteURL }/wp-admin/site-editor.php?canvas=edit&referrer=${ AI_SITE_BUILDER_FLOW }${ promptParam }`
 						);

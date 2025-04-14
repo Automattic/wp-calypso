@@ -6,14 +6,15 @@ import { useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { ReactNode } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
+import { shouldUseStepContainerV2 } from 'calypso/landing/stepper/declarative-flow/helpers/should-use-step-container-v2';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { SelectedFeatureData } from '../hooks/use-selected-feature';
 
-const Subheader = styled.p`
+const Subheader = styled.p< { isUsingStepContainerV2?: boolean } >`
 	margin: -32px 0 40px 0;
 	color: var( --studio-gray-60 );
 	font-size: 1rem;
-	text-align: center;
+	text-align: ${ ( props ) => ( props.isUsingStepContainerV2 ? 'left' : 'center' ) };
 	button.is-borderless {
 		font-weight: 500;
 		color: var( --studio-gray-90 );
@@ -23,6 +24,9 @@ const Subheader = styled.p`
 	}
 	@media ( max-width: 960px ) {
 		margin-top: -16px;
+	}
+	@media ( min-width: 600px ) {
+		text-align: center;
 	}
 `;
 
@@ -152,10 +156,12 @@ const PlansPageSubheader = ( {
 
 	const isOnboarding = isOnboardingFlow( flowName ?? null );
 
+	const isUsingStepContainerV2 = Boolean( flowName && shouldUseStepContainerV2( flowName ) );
+
 	const renderSubheader = () => {
 		if ( createWithBigSky ) {
 			return (
-				<Subheader>
+				<Subheader isUsingStepContainerV2={ isUsingStepContainerV2 }>
 					{ translate(
 						'Build your site quickly with our AI Website Builder or {{link}}start with a free plan{{/link}}.',
 						{
@@ -170,7 +176,7 @@ const PlansPageSubheader = ( {
 
 		if ( ! createWithBigSky && deemphasizeFreePlan && offeringFreePlan ) {
 			return (
-				<Subheader>
+				<Subheader isUsingStepContainerV2={ isUsingStepContainerV2 }>
 					{ translate(
 						'Unlock a powerful bundle of features. Or {{link}}start with a free plan{{/link}}.',
 						{
@@ -189,7 +195,7 @@ const PlansPageSubheader = ( {
 
 		if ( isOnboarding ) {
 			return (
-				<Subheader>
+				<Subheader isUsingStepContainerV2={ isUsingStepContainerV2 }>
 					{ translate( 'Whatever site you’re building, there’s a plan to make it happen sooner.' ) }
 				</Subheader>
 			);

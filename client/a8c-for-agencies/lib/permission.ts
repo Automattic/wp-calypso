@@ -5,6 +5,7 @@ import {
 } from 'calypso/a8c-for-agencies/sections/partner-directory/constants';
 import {
 	A4A_LANDING_LINK,
+	A4A_FEEDBACK_LINK,
 	A4A_OVERVIEW_LINK,
 	A4A_SITES_LINK,
 	A4A_SITES_LINK_NEEDS_ATTENTION,
@@ -126,7 +127,7 @@ export const isPathAllowed = ( pathname: string, agency: Agency | null ) => {
 	}
 
 	// Everyone can access the landing page and the overview page
-	if ( [ A4A_LANDING_LINK, A4A_OVERVIEW_LINK ].includes( pathname ) ) {
+	if ( [ A4A_LANDING_LINK, A4A_OVERVIEW_LINK, A4A_FEEDBACK_LINK ].includes( pathname ) ) {
 		return true;
 	}
 

@@ -7,11 +7,9 @@ import { getToken } from '@automattic/oauth-token';
 import { JETPACK_PRICING_PAGE } from '@automattic/urls';
 import debugFactory from 'debug';
 import defaultCalypsoI18n from 'i18n-calypso';
-import ReactDom from 'react-dom';
 import Modal from 'react-modal';
 import store from 'store';
 import emailVerification from 'calypso/components/email-verification';
-import { ProviderWrappedLayout } from 'calypso/controller';
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import { initializeAnalytics } from 'calypso/lib/analytics/init';
 import getSuperProps from 'calypso/lib/analytics/super-props';
@@ -314,13 +312,6 @@ const setupMiddlewares = ( currentUser, reduxStore, reactQueryClient ) => {
 	}
 };
 
-function renderLayout( reduxStore, reactQueryClient ) {
-	ReactDom.render(
-		<ProviderWrappedLayout store={ reduxStore } queryClient={ reactQueryClient } />,
-		document.getElementById( 'wpcom' )
-	);
-}
-
 const boot = async ( currentUser, registerRoutes ) => {
 	saveOauthFlags();
 	utils();
@@ -341,12 +332,6 @@ const boot = async ( currentUser, registerRoutes ) => {
 	detectHistoryNavigation.start();
 	if ( registerRoutes ) {
 		registerRoutes();
-	}
-
-	// Render initial `<Layout>` for non-isomorphic sections.
-	// Isomorphic sections will take care of rendering their `<Layout>` themselves.
-	if ( ! document.getElementById( 'primary' ) ) {
-		renderLayout( reduxStore, queryClient );
 	}
 
 	page.start();

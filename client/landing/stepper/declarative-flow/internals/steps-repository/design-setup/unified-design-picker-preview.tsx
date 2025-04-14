@@ -640,7 +640,6 @@ const UnifiedDesignPickerPreview = ( {
 		// TODO: Create a new wireframe for the design preview. It should be named "FixedColumnOnTheLeftLayout"
 		return (
 			<Step.WideLayout
-				maxWidth="xhuge"
 				className="step-container-v2--design-picker-preview"
 				topBar={ ( { isLargeViewport } ) => {
 					if ( ! isLargeViewport && activeScreen ) {

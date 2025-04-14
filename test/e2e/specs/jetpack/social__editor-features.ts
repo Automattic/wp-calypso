@@ -6,12 +6,15 @@
 import {
 	DataHelper,
 	EditorPage,
-	SecretsManager,
+	envToFeatureKey,
+	envVariables,
+	getTestAccountByFeature,
 	SocialConnectionsManager,
 	TestAccount,
 	TestAccountName,
 } from '@automattic/calypso-e2e';
 import { Browser, Page } from 'playwright';
+import { skipDescribeIf } from '../../jest-helpers';
 
 declare const browser: Browser;
 
@@ -19,6 +22,13 @@ const features4SimpleSites = {
 	resharing: false,
 	manualSharing: true,
 	mediaSharing: false,
+	socialImageGenerator: false,
+};
+
+const features4BusinessPlan = {
+	resharing: true,
+	manualSharing: true,
+	mediaSharing: true,
 	socialImageGenerator: false,
 };
 
@@ -30,56 +40,65 @@ const testCases: Array< {
 		'resharing' | 'manualSharing' | 'mediaSharing' | 'socialImageGenerator',
 		boolean
 	>;
-} > = [
-	{
-		plan: 'Free',
-		platform: 'Simple',
-		testAccountName: 'simpleSiteFreePlanUser',
-		features: features4SimpleSites,
-	},
-	{
-		plan: 'Personal',
-		platform: 'Simple',
-		testAccountName: 'simpleSitePersonalPlanUser',
-		features: features4SimpleSites,
-	},
-	{
-		plan: 'Paid',
-		platform: 'Atomic',
-		testAccountName: 'atomicUser',
-		features: {
-			resharing: true,
-			manualSharing: true,
-			mediaSharing: true,
-			socialImageGenerator: false,
+	isPrivate?: boolean;
+} > = [];
+
+if ( envVariables.JETPACK_TARGET === 'wpcom-deployment' ) {
+	testCases.push( {
+		plan: envVariables.TEST_ON_ATOMIC ? 'Paid' : 'Business',
+		platform: envVariables.TEST_ON_ATOMIC ? 'Atomic' : 'Simple',
+		testAccountName: getTestAccountByFeature( envToFeatureKey( envVariables ) ),
+		features: features4BusinessPlan,
+		isPrivate: envVariables.TEST_ON_ATOMIC && envVariables.ATOMIC_VARIATION === 'private',
+	} );
+} else {
+	testCases.push(
+		{
+			plan: 'Free',
+			platform: 'Simple',
+			testAccountName: 'simpleSiteFreePlanUser',
+			features: features4SimpleSites,
 		},
-	},
-];
+		{
+			plan: 'Personal',
+			platform: 'Simple',
+			testAccountName: 'simpleSitePersonalPlanUser',
+			features: features4SimpleSites,
+		},
+		{
+			plan: 'Paid',
+			platform: 'Atomic',
+			testAccountName: 'atomicUser',
+			features: features4BusinessPlan,
+		}
+	);
+}
 
 /**
  * Tests features offered by Jetpack Social on a Simple site with Free plan.
  *
- * Keywords: Social, Jetpack, Publicize
+ * Keywords: Social, Jetpack, Publicize, Editor
  */
 describe( DataHelper.createSuiteTitle( 'Social: Editor features' ), function () {
-	for ( const { plan, platform, testAccountName, features } of testCases ) {
+	for ( const { plan, platform, testAccountName, features, isPrivate } of testCases ) {
 		const title = `For ${ platform } sites with ${ plan } plan`;
 
-		describe( DataHelper.createSuiteTitle( title ), function () {
+		skipDescribeIf( isPrivate ?? false )( DataHelper.createSuiteTitle( title ), function () {
 			let page: Page;
 			let editorPage: EditorPage;
 			let socialConnectionsManager: SocialConnectionsManager;
 
-			const credentials = SecretsManager.secrets.testAccounts[ testAccountName ];
-			const siteSlug = credentials.testSites?.primary?.url;
-			const siteId = credentials.testSites?.primary?.id;
+			let siteSlug: string;
+			let siteId: number;
 
 			beforeAll( async () => {
 				page = await browser.newPage();
 				editorPage = new EditorPage( page );
-				socialConnectionsManager = new SocialConnectionsManager( page, siteId! );
 
 				const testAccount = new TestAccount( testAccountName );
+				siteId = testAccount.credentials.testSites?.primary?.id || 0;
+				siteSlug = testAccount.getSiteURL( { protocol: false } );
+				socialConnectionsManager = new SocialConnectionsManager( page, siteId! );
 				await testAccount.authenticate( page );
 			} );
 
@@ -237,11 +256,7 @@ describe( DataHelper.createSuiteTitle( 'Social: Editor features' ), function () 
 					name: 'Manual sharing',
 				} );
 
-				// For some reason the manual sharing is not visible on the post publish panel for Simple sites with personal plan.
-				const isPostPublishManualSharingVisible =
-					features.manualSharing && ! ( platform === 'Simple' && plan === 'Personal' );
-
-				if ( isPostPublishManualSharingVisible ) {
+				if ( features.manualSharing ) {
 					await manualSharing.waitFor();
 				}
 

@@ -1,6 +1,6 @@
 import { FEATURE_SFTP } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
-import { Dialog } from '@automattic/components';
+import { Modal } from '@wordpress/components';
 import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
 import { useState } from 'react';
@@ -47,22 +47,23 @@ export default function HostingActivationButton( { redirectUrl }: HostingActivat
 				{ translate( 'Activate now' ) }
 			</HostingHeroButton>
 
-			<Dialog
-				additionalClassNames="plugin-details-cta__dialog-content"
-				additionalOverlayClassNames="plugin-details-cta__modal-overlay"
-				isVisible={ showEligibility }
-				onClose={ () => setShowEligibility( false ) }
-				showCloseIcon
-			>
-				<EligibilityWarnings
-					className="hosting__activating-warnings"
-					onProceed={ handleTransfer }
-					backUrl={ redirectUrl }
-					showDataCenterPicker
-					standaloneProceed
-					currentContext="hosting-features"
-				/>
-			</Dialog>
+			{ showEligibility && (
+				<Modal
+					className="plugin-details-cta__dialog-content"
+					title={ translate( 'Before you continue' ) }
+					onRequestClose={ () => setShowEligibility( false ) }
+					size="medium"
+				>
+					<EligibilityWarnings
+						className="hosting__activating-warnings"
+						onProceed={ handleTransfer }
+						backUrl={ redirectUrl }
+						showDataCenterPicker
+						standaloneProceed
+						currentContext="hosting-features"
+					/>
+				</Modal>
+			) }
 		</>
 	);
 }
