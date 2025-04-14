@@ -10,7 +10,7 @@ interface TopBarProps {
 }
 
 export const TopBar = ( { leftElement, rightElement, logo }: TopBarProps ) => {
-	const DefaultLogo = () => (
+	const defaultLogo = (
 		<>
 			<WordPressWordmark
 				className="step-container-v2__top-bar-wordpress-logo step-container-v2__top-bar-wordpress-logo--wordmark"
@@ -24,7 +24,7 @@ export const TopBar = ( { leftElement, rightElement, logo }: TopBarProps ) => {
 	);
 	return (
 		<div className="step-container-v2__top-bar">
-			{ logo ? logo : <DefaultLogo /> }
+			{ logo ? logo : defaultLogo }
 
 			{ leftElement && (
 				<>
