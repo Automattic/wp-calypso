@@ -175,7 +175,6 @@ div.reader-notifications__panel {
 	}
 
 	#wpnc-panel.wpnc__main {
-		// top: calc(var(--masterbar-height) + var(--content-padding-top) + var(--3pc-notice-external-height));
 		top: var(--3pc-notice-external-height);
 		height: calc(100vh - var(--masterbar-height) - var(--content-padding-top) - var(--content-padding-bottom) - var(--3pc-notice-external-height));
 		box-shadow: -3px 1px 10px -2px color-mix(in srgb, var(--color-neutral-70) 7.5%, transparent);
