@@ -57,6 +57,7 @@ function getEnvStatsFeatureSupportChecks( state: object, siteId: number | null )
 			'0.22.0',
 			isOdysseyStats
 		),
+		// Deprecating and is replaced with `isOldJetpack`.
 		supportsLocationsStats: version_greater_than_or_equal(
 			statsAdminVersion,
 			'0.24.0',

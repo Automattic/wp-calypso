@@ -118,9 +118,11 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( {
 	const geoMode = GEO_MODES[ selectedOption ];
 	const title = translate( 'Locations' );
 
-	const { supportsLocationsStats: supportsLocationsStatsFeature } = useSelector( ( state ) =>
+	const { isOldJetpack } = useSelector( ( state ) =>
 		getEnvStatsFeatureSupportChecks( state, siteId )
 	);
+
+	const supportsLocationsStatsFeature = ! isOldJetpack;
 
 	// Main location data query
 	const {
