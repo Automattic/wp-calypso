@@ -5,7 +5,6 @@ import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { Icon, check } from '@wordpress/icons';
 import { useState, useEffect } from 'react';
-import { LoadingLine } from '../loading-line';
 import PageLayout from '../page-layout';
 import type { Site } from '../data/types';
 import type { View, Field } from '@wordpress/dataviews';
@@ -79,7 +78,7 @@ const fields = [
 
 function Sites() {
 	const navigate = useNavigate();
-	const { data, fetchStatus } = useQuery( useLoaderData( { from: '/sites' } ) );
+	const { data } = useQuery( useLoaderData( { from: '/sites' } ) );
 	const querySitesData = data as Site[];
 	const [ sites, setSites ] = useState< Site[] >( [] );
 	useEffect( () => {
@@ -111,7 +110,6 @@ function Sites() {
 
 	return (
 		<>
-			{ fetchStatus === 'fetching' && <LoadingLine /> }
 			<PageLayout
 				title={ __( 'Sites' ) }
 				actions={
