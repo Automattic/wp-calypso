@@ -167,7 +167,6 @@ div.reader-notifications__panel {
 	position: relative;
 
 	$breakpoint-flyout: 1114px;
-	$breakpoint-nested: 783px;
 	$breakpoint-mobile: 601px;
 
 	--3pc-notice-external-height: 50px;
@@ -176,29 +175,33 @@ div.reader-notifications__panel {
 	}
 
 	#wpnc-panel.wpnc__main {
-		top: calc(var(--masterbar-height) + var(--content-padding-top) + var(--3pc-notice-external-height));
+		// top: calc(var(--masterbar-height) + var(--content-padding-top) + var(--3pc-notice-external-height));
+		top: var(--3pc-notice-external-height);
 		height: calc(100vh - var(--masterbar-height) - var(--content-padding-top) - var(--content-padding-bottom) - var(--3pc-notice-external-height));
 		box-shadow: -3px 1px 10px -2px color-mix(in srgb, var(--color-neutral-70) 7.5%, transparent);
 		border-top: 1px solid var(--color-neutral-0);
 		box-sizing: border-box;
 
 		&.wpnt-open {
+			position: absolute;
 			@media only screen and (min-width: $breakpoint-mobile) {
-				right: 24px; // align with content frame padding.
 				border-radius: 8px; /* stylelint-disable-line scales/radii */
-			}
-			@media only screen and (min-width: $breakpoint-nested) {
-				right: 16px; // align with content frame padding.
+				width: 100%;
+				.wpnc__single-view,
+				.wpnc__note-list {
+					width: 100%;
+				}
 			}
 			@media only screen and (min-width: $breakpoint-flyout) {
 				width: calc(100vw - var(--sidebar-width-max) - 16px); // 16px for content frame padding.
-				// This ensures the single view flies out above the 3PC notice.
+
 				.wpnc__single-view {
-					z-index: z-index( ".reader-notifications", ".wpnc__single-view" );
+					width: 400px; // Standard notes panel width.
+					z-index: z-index( ".reader-notifications", ".wpnc__single-view" ); // This ensures the single view flies out above the 3PC notice.
 				}
-				// This ensures the single view does not rise above the note list while animating outwards.
 				.wpnc__note-list {
-					z-index: z-index( ".reader-notifications", ".wpnc__note-list" );
+					width: 400px; // Standard notes panel width.
+					z-index: z-index( ".reader-notifications", ".wpnc__note-list" ); // This ensures the single view does not rise above the note list while animating outwards.
 				}
 			}
 		}
