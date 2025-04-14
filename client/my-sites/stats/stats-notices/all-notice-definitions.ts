@@ -34,11 +34,8 @@ const ALL_STATS_NOTICES: StatsNoticeType[] = [
 	{
 		component: JetpackVersionUpgradeNotice as React.ComponentType< StatsNoticeProps >,
 		noticeId: 'jetpack_version_upgrade',
-		isVisibleFunc: ( { isOdysseyStats }: StatsNoticeProps ) => {
-			if ( ! isOdysseyStats ) {
-				return false;
-			}
-			return true;
+		isVisibleFunc: ( { isOldJetpack }: StatsNoticeProps ) => {
+			return isOldJetpack;
 		},
 		disabled: false,
 	},

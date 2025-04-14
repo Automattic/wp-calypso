@@ -25,6 +25,7 @@ export interface StatsNoticeProps {
 	isOverLimit?: boolean;
 	isNearLimit?: boolean;
 	hasWpcomUpsell?: boolean;
+	isOldJetpack?: boolean;
 }
 
 export interface NoticeBodyProps {

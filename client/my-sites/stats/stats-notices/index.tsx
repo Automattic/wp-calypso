@@ -129,7 +129,9 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 		( state ) => getSiteStatsNormalizedData( state, siteId, 'stats', {} ) || {}
 	) as AllTimeData;
 	const hasSignificantViews = !! ( views && views >= SIGNIFICANT_VIEWS_AMOUNT );
-
+	const { isOldJetpack } = useSelector( ( state ) =>
+		getEnvStatsFeatureSupportChecks( state, siteId )
+	);
 	const { data } = usePlanUsageQuery( siteId );
 	const currentUsage = data?.current_usage?.views_count || 0;
 	const tierLimit = data?.views_limit || null;
@@ -156,6 +158,7 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 		isNearLimit,
 		isOverLimit,
 		hasWpcomUpsell,
+		isOldJetpack,
 	};
 
 	const { isLoading, isError, data: serverNoticesVisibility } = useNoticesVisibilityQuery( siteId );
