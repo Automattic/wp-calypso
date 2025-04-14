@@ -31,6 +31,7 @@ import { isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
 import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
 import { getMessagePathForJITM } from 'calypso/lib/route';
 import UserVerificationChecker from 'calypso/lib/user/verification-checker';
+import { isFetchingAdminColor } from 'calypso/state/admin-color/selectors';
 import { isOffline } from 'calypso/state/application/selectors';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import {
@@ -172,6 +173,10 @@ class Layout extends Component {
 			return <AsyncLoad require="calypso/layout/masterbar/blaze-pro" placeholder={ null } />;
 		}
 
+		if ( this.props.needsColorScheme && this.props.isFetchingColorScheme ) {
+			return null;
+		}
+
 		const MasterbarComponent = config.isEnabled( 'jetpack-cloud' )
 			? JetpackCloudMasterbar
 			: MasterbarLoggedIn;
@@ -300,12 +305,16 @@ class Layout extends Component {
 						placeholder={ null }
 						id="notices"
 					/>
-					<div id="secondary" className="layout__secondary" role="navigation">
-						{ this.props.secondary }
-					</div>
-					<div id="primary" className="layout__primary">
-						{ this.props.primary }
-					</div>
+					{ ! ( this.props.needsColorScheme && this.props.isFetchingColorScheme ) && (
+						<>
+							<div id="secondary" className="layout__secondary" role="navigation">
+								{ this.props.secondary }
+							</div>
+							<div id="primary" className="layout__primary">
+								{ this.props.primary }
+							</div>
+						</>
+					) }
 				</div>
 				<AsyncLoad require="calypso/layout/community-translator" placeholder={ null } />
 				{ 'development' === process.env.NODE_ENV && (
@@ -420,6 +429,8 @@ export default withCurrentRoute(
 			isOffline: isOffline( state ),
 			currentLayoutFocus: getCurrentLayoutFocus( state ),
 			colorScheme,
+			needsColorScheme: ! shouldShowGlobalSidebar,
+			isFetchingColorScheme: isFetchingAdminColor( state, siteId ),
 			siteId,
 			// We avoid requesting sites in the Jetpack Connect authorization step, because this would
 			// request all sites before authorization has finished. That would cause the "all sites"
