@@ -17,7 +17,7 @@ import {
 import Root from '../root';
 import { queryClient } from './query-client';
 import type { AppConfig } from './context';
-import type { Domain, Email, Profile } from '../data/types';
+import type { Domain, Email } from '../data/types';
 import type { FetchQueryOptions } from '@tanstack/react-query';
 
 interface RouteContext {
@@ -159,10 +159,10 @@ const createRouteTree = ( config: AppConfig ) => {
 			getParentRoute: () => rootRoute,
 			path: 'me',
 			loader: () =>
-				queryClient.ensureQueryData( {
+				maybeAwaitFetch( {
 					queryKey: [ 'profile' ],
 					queryFn: fetchProfile,
-				} ) as Promise< Profile >,
+				} ),
 			notFoundComponent: NotFound,
 			beforeLoad: ( { context }: { context: RouteContext } ) => {
 				if ( context?.auth?.twoStep?.two_step_reauthorization_required ) {

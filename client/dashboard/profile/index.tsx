@@ -1,4 +1,4 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { useLoaderData, createLazyRoute } from '@tanstack/react-router';
 import {
 	Button,
@@ -17,6 +17,7 @@ import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useState } from 'react';
+import { queryClient } from '../app/query-client';
 import { updateProfile } from '../data';
 import EditGravatar from '../edit-gravatar';
 import PageLayout from '../page-layout';
@@ -99,8 +100,14 @@ const form = {
 } as Form;
 
 function Profile() {
-	const mutation = useMutation( { mutationFn: updateProfile } );
-	const serverData = useLoaderData( { from: '/me' } ) as ProfileType;
+	const query = useLoaderData( { from: '/me' } );
+	const mutation = useMutation( {
+		mutationFn: updateProfile,
+		onSuccess: () => {
+			queryClient.invalidateQueries( query );
+		},
+	} );
+	const serverData = useQuery( query ).data as ProfileType;
 	const [ data, setData ] = useState< ProfileType >( serverData );
 	const isSaving = mutation.isPending;
 	const isDirty = data !== serverData;
