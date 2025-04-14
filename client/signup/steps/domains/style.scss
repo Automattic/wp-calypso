@@ -52,16 +52,6 @@ body.is-section-stepper .domains__step-content,
 		background: none;
 	}
 
-	.register-domain-step__search-card {
-		border-radius: 2px;
-		@include elevation( 2dp );
-	}
-
-	.search-component.is-open.has-focus {
-		border-radius: 2px;
-		box-shadow: 0 0 0 3px var(--color-accent-light);
-	}
-
 	.search-filters__dropdown-filters {
 		border-radius: 0 2px 2px 0;
 	}
@@ -69,14 +59,6 @@ body.is-section-stepper .domains__step-content,
 	.search-filters__dropdown-filters.search-filters__dropdown-filters--is-open {
 		box-shadow: 0 0 0 3px var(--color-accent-light);
 	}
-
-	@include breakpoint-deprecated( "<660px" ) {
-		.register-domain-step__search-card,
-		.search-component.is-open.has-focus {
-			border-radius: 0;
-		}
-	}
-
 
 	.domains__domain-cart-foldable-card {
 		position: fixed;
