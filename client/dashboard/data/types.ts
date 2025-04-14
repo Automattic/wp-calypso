@@ -100,7 +100,7 @@ export interface MonitorUptime {
 	[ key: string ]: { status: string; downtime_in_minutes?: number };
 }
 
-interface EngagementStatsDataPoint {
+export interface EngagementStatsDataPoint {
 	visitors: number;
 	views: number;
 	likes: number;

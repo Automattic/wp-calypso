@@ -10,6 +10,7 @@ import type {
 	User,
 	Profile,
 	TwoStep,
+	EngagementStatsDataPoint,
 } from './types';
 
 export const fetchProfile = () =>
@@ -188,23 +189,34 @@ export const fetchSiteEngagementStats = async ( id: string ) => {
 	const response = await wpcom.req.get(
 		{ path: `/sites/${ id }/stats/visits` },
 		{
-			unit: 'week',
-			quantity: 2,
+			unit: 'day',
+			quantity: 14,
 			stat_fields: 'visitors,views,likes,comments',
 		}
 	);
-	// We need to normalize the returned data. We ask for 2 weeks of data (quantity:2)
-	// and we get a response with an array of data like: `[ '2025W03W31', 1, 3, 0, 0 ]`.
+	// We need to normalize the returned data. We ask for 14 days of data (quantity:14)
+	// and we get a response with an array of data like: `[ '2025-04-13', 1, 3, 0, 0 ]`.
 	// Each number in the response is referring to the order of the field provided in `stat_fields`.
-	// The last array element is the most recent data, so we can use the first element to
-	// compare the data and provide a percentage of the change.
-	const normalizeData = ( [ , visitors, views, likes, comments ]: ( string | number )[] ) => ( {
-		visitors,
-		views,
-		likes,
-		comments,
-	} );
-	const [ previousData, currentData ] = response.data.map( normalizeData );
+	// The returend array is sorted with ascending date order, so we need to use the last 7 entries
+	// for our current data and the first 7 entries for the previous data.
+	// Noting that we can't use `unit:'week'` because the API has a specific behavior for start/end of weeks.
+	const calculateStats = ( data: EngagementStatsDataPoint[] ) =>
+		data.reduce(
+			(
+				accumulator: EngagementStatsDataPoint,
+				[ , visitors, views, likes, comments ]: ( string | number )[]
+			) => {
+				accumulator.visitors += visitors;
+				accumulator.views += views;
+				accumulator.likes += likes;
+				accumulator.comments += comments;
+				return accumulator;
+			},
+			{ visitors: 0, views: 0, likes: 0, comments: 0 }
+		);
+	const dataLength = response.data.length;
+	const currentData = calculateStats( response.data.slice( Math.max( 0, dataLength - 7 ) ) );
+	const previousData = calculateStats( response.data.slice( 0, Math.max( 0, dataLength - 7 ) ) );
 	return { previousData, currentData };
 };
 
