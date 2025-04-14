@@ -21,7 +21,6 @@ import { useActiveThemeQuery } from 'calypso/data/themes/use-active-theme-query'
 import { useIsBigSkyEligible } from 'calypso/landing/stepper/hooks/use-is-site-big-sky-eligible';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useExperiment } from 'calypso/lib/explat';
-import { useDispatch as useReduxDispatch } from 'calypso/state';
 import { useActivateDesign } from '../../../../hooks/use-activate-design';
 import { useQuery } from '../../../../hooks/use-query';
 import { useSiteData } from '../../../../hooks/use-site-data';
@@ -60,7 +59,6 @@ const UnifiedDesignPickerStep: StepType< {
 		};
 	};
 } > = ( { navigation, flow, stepName } ) => {
-	// imageOptimizationExperimentAssignment, exerimentAssignment
 	const [ isLoadingExperiment, experimentAssignment ] = useExperiment(
 		'calypso_design_picker_image_optimization_202406'
 	);
@@ -73,8 +71,6 @@ const UnifiedDesignPickerStep: StepType< {
 
 	const queryParams = useQuery();
 	const { goBack, submit, exitFlow } = navigation;
-
-	const reduxDispatch = useReduxDispatch();
 
 	const translate = useTranslate();
 	const locale = useLocale();
@@ -106,7 +102,6 @@ const UnifiedDesignPickerStep: StepType< {
 		)
 	);
 
-	const { setDesignOnSite, assembleSite } = useDispatch( SITE_STORE );
 	const activateDesign = useActivateDesign();
 
 	const { data: allDesigns, isLoading: isLoadingDesigns } = useStarterDesignsQuery(
@@ -304,18 +299,13 @@ const UnifiedDesignPickerStep: StepType< {
 		},
 		[
 			activateDesign,
-			assembleSite,
-			categorization.selections,
 			designs,
 			globalStyles,
 			handleSubmit,
-			reduxDispatch,
 			selectedDesign,
 			selectedStyleVariation,
-			setDesignOnSite,
 			setPendingAction,
 			setSelectedDesign,
-			site?.ID,
 			siteSlugOrId,
 		]
 	);
