@@ -152,6 +152,7 @@ function Profile() {
 								</div>
 								<div>
 									<Text>{ __( 'This is your profile photo.' ) }</Text>
+									<br />
 									<Text variant="muted">
 										{ __( 'It appears when you comment on other blogs.' ) }
 									</Text>
