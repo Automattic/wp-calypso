@@ -211,10 +211,7 @@ export const EligibilityWarnings = ( {
 
 			<CompactCard>
 				<div className="eligibility-warnings__confirm-buttons">
-					<SupportLink
-						shouldUseHelpAssistant={ context === 'plugin-details' }
-						onShowHelpAssistant={ onDismiss }
-					/>
+					<SupportLink onShowHelpAssistant={ onDismiss } />
 					<Button
 						variant="primary"
 						__next40pxDefaultSize
