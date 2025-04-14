@@ -13,6 +13,9 @@ const scaleNames = [...grayScaleNames, 'tomato', 'red', 'ruby', 'crimson', 'pink
 'plum', 'purple', 'violet', 'iris', 'indigo', 'blue', 'cyan', 'teal', 'jade', 'green',
 'grass', 'brown', 'orange', 'sky', 'mint', 'lime', 'yellow', 'amber'] as const;
 
+const darkModeEasing = [ 1, 0, 1, 0 ] as [ number, number, number, number ];
+const lightModeEasing = [ 0, 2, 0, 2 ] as [ number, number, number, number ];
+
 const lightColors = Object.fromEntries(
 	scaleNames.map( ( scaleName ) => [
 		scaleName,
@@ -374,7 +377,7 @@ function getTextColor( background: Color ) {
 	const white = new Color( 'oklch', [ 1, 0, 0 ] );
 
 	if ( Math.abs( white.contrastAPCA( background ) ) < 40 ) {
-		const [ L, C, H ] = background.coords;
+		const [ , C, H ] = background.coords;
 		return new Color( 'oklch', [ 0.25, Math.max( 0.08 * C, 0.04 ), H ] );
 	}
 
@@ -553,9 +556,6 @@ function formatHex( str: string ) {
 
 	return str;
 }
-
-const darkModeEasing = [ 1, 0, 1, 0 ] as [ number, number, number, number ];
-const lightModeEasing = [ 0, 2, 0, 2 ] as [ number, number, number, number ];
 
 export function transposeProgressionStart(
 	to: number,
