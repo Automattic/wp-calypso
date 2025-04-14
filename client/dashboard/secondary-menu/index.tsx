@@ -1,4 +1,3 @@
-import { useQuery } from '@tanstack/react-query';
 import { useNavigate, useRouter } from '@tanstack/react-router';
 import {
 	__experimentalHStack as HStack,
@@ -13,8 +12,8 @@ import { __ } from '@wordpress/i18n';
 import { help, bellUnread, bell, commentAuthorAvatar } from '@wordpress/icons';
 import ReaderIcon from 'calypso/assets/icons/reader/reader-icon';
 import { useAppContext } from '../app/context';
+import { useAuth } from '../auth';
 import { useOpenCommandPalette } from '../command-palette/utils';
-import { fetchUser } from '../data';
 import MenuDivider from '../menu-divider';
 import './style.scss';
 
@@ -41,10 +40,7 @@ function NavMenuItem( { to, children }: { to: string; children: React.ReactNode 
 
 // User profile dropdown component
 function UserProfile() {
-	const { data: user } = useQuery( {
-		queryKey: [ 'user' ],
-		queryFn: fetchUser,
-	} );
+	const { user } = useAuth();
 	const { supports } = useAppContext();
 	const openCommandPalette = useOpenCommandPalette();
 
@@ -77,8 +73,8 @@ function UserProfile() {
 			renderContent={ ( { onClose } ) => (
 				<VStack>
 					<VStack style={ { padding: '16px', borderBottom: '1px solid #ccc' } } spacing={ 1 }>
-						<Text>{ user ? user.display_name : __( 'Loading…' ) }</Text>
-						<Text variant="muted">{ user ? '@' + user.username : __( 'Loading…' ) }</Text>
+						<Text>{ user.display_name }</Text>
+						<Text variant="muted">@{ user.username }</Text>
 					</VStack>
 					<MenuGroup>
 						<NavMenuItem to="/me/profile">{ __( 'Profile' ) }</NavMenuItem>
