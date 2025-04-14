@@ -408,12 +408,12 @@ class StatsSummary extends Component {
 export default connect( ( state, { context, postId } ) => {
 	const siteId = getSelectedSiteId( state );
 
-	const { supportsUTMStats } = getEnvStatsFeatureSupportChecks( state, siteId );
+	const { isOldJetpack } = getEnvStatsFeatureSupportChecks( state, siteId );
 
 	return {
 		siteId: getSelectedSiteId( state ),
 		siteSlug: getSelectedSiteSlug( state, siteId ),
 		media: context.params.module === 'videodetails' ? getMediaItem( state, siteId, postId ) : false,
-		supportsUTMStats,
+		supportsUTMStats: ! isOldJetpack,
 	};
 } )( localize( StatsSummary ) );

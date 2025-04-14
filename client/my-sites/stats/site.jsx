@@ -193,13 +193,9 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 		[ hasVideoPress, moduleToggles ]
 	);
 
-	const {
-		supportsPlanUsage,
-		supportsUTMStats: supportsUTMStatsFeature,
-		supportsDevicesStats: supportsDevicesStatsFeature,
-		isOldJetpack,
-		supportUserFeedback,
-	} = useSelector( ( state ) => getEnvStatsFeatureSupportChecks( state, siteId ) );
+	const { supportsPlanUsage, isOldJetpack, supportUserFeedback } = useSelector( ( state ) =>
+		getEnvStatsFeatureSupportChecks( state, siteId )
+	);
 
 	// Find the applied shortcut with shortcut ID from the URL.
 	const shortcuts = useShortcuts( {
@@ -245,8 +241,8 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 	);
 
 	const shouldShowUpsells = isOdysseyStats && ! isAtomic;
-	const supportsUTMStats = supportsUTMStatsFeature || isInternal;
-	const supportsDevicesStats = supportsDevicesStatsFeature || isInternal;
+	const supportsUTMStats = ! isOldJetpack || isInternal;
+	const supportsDevicesStats = ! isOldJetpack || isInternal;
 	const getAvailableLegend = () => {
 		const activeTab = getActiveTab( chartTab );
 		// TODO: remove this when we support hourly visitors.
@@ -640,7 +636,7 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 							) }
 
 							{ /* If UTM if supported display the module or update Jetpack plugin card */ }
-							{ supportsUTMStats && ! isOldJetpack && (
+							{ supportsUTMStats ? (
 								<StatsModuleUTM
 									siteId={ siteId }
 									period={ props.period }
@@ -649,9 +645,7 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 									summary={ false }
 									className={ halfWidthModuleClasses }
 								/>
-							) }
-
-							{ supportsUTMStats && isOldJetpack && (
+							) : (
 								<StatsModuleUTMOverlay
 									siteId={ siteId }
 									className={ halfWidthModuleClasses }
@@ -716,16 +710,14 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 								)
 							}
 
-							{ supportsDevicesStats && ! isOldJetpack && (
+							{ supportsDevicesStats ? (
 								<StatsModuleDevices
 									siteId={ siteId }
 									period={ props.period }
 									query={ query }
 									className={ halfWidthModuleClasses }
 								/>
-							) }
-
-							{ supportsDevicesStats && isOldJetpack && (
+							) : (
 								<StatsModuleUpgradeDevicesOverlay
 									className={ halfWidthModuleClasses }
 									siteId={ siteId }

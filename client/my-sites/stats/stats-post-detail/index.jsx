@@ -260,7 +260,7 @@ const connectComponent = connect( ( state, { postId } ) => {
 	const isPreviewable = isSitePreviewable( state, siteId );
 	const isPostHomepage = postId === 0;
 	const countLikes = countPostLikes( state, siteId, postId ) || 0;
-	const { supportsUTMStats } = getEnvStatsFeatureSupportChecks( state, siteId );
+	const { isOldJetpack } = getEnvStatsFeatureSupportChecks( state, siteId );
 
 	return {
 		post: getSitePost( state, siteId, postId ),
@@ -274,7 +274,7 @@ const connectComponent = connect( ( state, { postId } ) => {
 		showViewLink: ! isJetpack && ! isPostHomepage && isPreviewable,
 		previewUrl: getPostPreviewUrl( state, siteId, postId ),
 		siteId,
-		supportsUTMStats,
+		supportsUTMStats: ! isOldJetpack,
 	};
 } );
 
