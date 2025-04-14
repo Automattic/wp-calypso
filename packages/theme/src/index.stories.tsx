@@ -78,8 +78,8 @@ export const Default: Story = {
 					) ) }
 				{ [ 'neutral-scale', 'primary-scale' ].map( ( scaleName ) =>
 					[
-						{ name: 'Radix', varPrefix: '--radix-' },
-						{ name: 'A8C', varPrefix: '--a8c-theme-color-' },
+						{ name: 'Radix', varPrefix: '--theme-color-radix-' },
+						{ name: 'A8C', varPrefix: '--theme-color-a8c-' },
 					]
 						.map( ( { name, varPrefix } ) => [
 							<div
