@@ -1,12 +1,14 @@
 import { useQuery } from '@tanstack/react-query';
 import { useLoaderData, Outlet, createLazyRoute } from '@tanstack/react-router';
 import { __experimentalHStack as HStack, Button } from '@wordpress/components';
+import { useViewportMatch } from '@wordpress/compose';
 import HeaderBar from '../header-bar';
 import MenuDivider from '../menu-divider';
 import SiteMenu from '../site-menu';
 import type { Site as SiteType } from '../data/types';
 
 function Site() {
+	const isDesktop = useViewportMatch( 'medium' );
 	const { site } = useQuery( useLoaderData( { from: '/sites/$siteId' } ) ).data as {
 		site: SiteType;
 	};
@@ -14,7 +16,7 @@ function Site() {
 	return (
 		<>
 			<HeaderBar>
-				<HStack justify="flex-start" spacing={ 4 }>
+				<HStack justify={ isDesktop ? 'flex-start' : 'space-between' } spacing={ 4 }>
 					<Button
 						variant="tertiary"
 						__next40pxDefaultSize
@@ -31,7 +33,7 @@ function Site() {
 							<span>{ site.name }</span>
 						</HStack>
 					</Button>
-					<MenuDivider />
+					{ isDesktop && <MenuDivider /> }
 					<SiteMenu siteId={ site.id } />
 				</HStack>
 			</HeaderBar>

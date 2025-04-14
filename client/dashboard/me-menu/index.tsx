@@ -1,20 +1,20 @@
 import { __ } from '@wordpress/i18n';
 import { useAppContext } from '../app/context';
-import Menu from '../menu';
+import ResponsiveMenu from '../responsive-menu';
 
 const MeMenu = () => {
 	const { supports } = useAppContext();
 
 	return (
-		<Menu>
-			<Menu.Item to="/me/profile">{ __( 'Profile' ) }</Menu.Item>
-			<Menu.Item to="/me/billing">{ __( 'Billing' ) }</Menu.Item>
-			<Menu.Item to="/me/security">{ __( 'Security' ) }</Menu.Item>
-			<Menu.Item to="/me/privacy">{ __( 'Privacy' ) }</Menu.Item>
+		<ResponsiveMenu>
+			<ResponsiveMenu.Item to="/me/profile">{ __( 'Profile' ) }</ResponsiveMenu.Item>
+			<ResponsiveMenu.Item to="/me/billing">{ __( 'Billing' ) }</ResponsiveMenu.Item>
+			<ResponsiveMenu.Item to="/me/security">{ __( 'Security' ) }</ResponsiveMenu.Item>
+			<ResponsiveMenu.Item to="/me/privacy">{ __( 'Privacy' ) }</ResponsiveMenu.Item>
 			{ supports.notifications && (
-				<Menu.Item to="/me/notifications">{ __( 'Notifications' ) }</Menu.Item>
+				<ResponsiveMenu.Item to="/me/notifications">{ __( 'Notifications' ) }</ResponsiveMenu.Item>
 			) }
-		</Menu>
+		</ResponsiveMenu>
 	);
 };
 

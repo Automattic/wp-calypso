@@ -1,12 +1,14 @@
 import { __ } from '@wordpress/i18n';
-import Menu from '../menu';
+import ResponsiveMenu from '../responsive-menu';
 
 const SiteMenu = ( { siteId }: { siteId: string } ) => {
 	return (
-		<Menu>
-			<Menu.Item to={ `/sites/${ siteId }` }>{ __( 'Overview' ) }</Menu.Item>
-			<Menu.Item to={ `/sites/${ siteId }/deployments` }>{ __( 'Deployments' ) }</Menu.Item>
-		</Menu>
+		<ResponsiveMenu label={ __( 'Site Menu' ) }>
+			<ResponsiveMenu.Item to={ `/sites/${ siteId }` }>{ __( 'Overview' ) }</ResponsiveMenu.Item>
+			<ResponsiveMenu.Item to={ `/sites/${ siteId }/deployments` }>
+				{ __( 'Deployments' ) }
+			</ResponsiveMenu.Item>
+		</ResponsiveMenu>
 	);
 };
 

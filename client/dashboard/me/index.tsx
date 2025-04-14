@@ -1,15 +1,18 @@
 import { Outlet, createLazyRoute } from '@tanstack/react-router';
 import { __experimentalHStack as HStack, Button } from '@wordpress/components';
+import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import HeaderBar from '../header-bar';
 import MeMenu from '../me-menu';
 import MenuDivider from '../menu-divider';
 
 function Me() {
+	const isDesktop = useViewportMatch( 'medium' );
+
 	return (
 		<>
 			<HeaderBar>
-				<HStack justify="flex-start" spacing={ 4 }>
+				<HStack justify={ isDesktop ? 'flex-start' : 'space-between' } spacing={ 4 }>
 					<Button
 						variant="tertiary"
 						__next40pxDefaultSize
@@ -17,7 +20,7 @@ function Me() {
 					>
 						{ __( 'Account' ) }
 					</Button>
-					<MenuDivider />
+					{ isDesktop && <MenuDivider /> }
 					<MeMenu />
 				</HStack>
 			</HeaderBar>
