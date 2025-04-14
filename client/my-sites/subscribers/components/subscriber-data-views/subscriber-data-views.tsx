@@ -287,8 +287,8 @@ const SubscriberDataViews = ( {
 			{
 				id: 'plan',
 				label: fixMe( {
-					text: 'Subscription Type',
-					newCopy: translate( 'Subscription Type' ),
+					text: 'Subscription type',
+					newCopy: translate( 'Subscription type' ),
 					oldCopy: translate( 'Plan' ),
 				} ) as string,
 				getValue: ( { item }: { item: Subscriber } ) =>
