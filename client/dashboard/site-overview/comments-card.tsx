@@ -1,7 +1,7 @@
-import { TrendComparison } from '@automattic/components/src/highlight-cards/count-comparison-card';
 import { __ } from '@wordpress/i18n';
 import { comment } from '@wordpress/icons';
 import OverviewCard from '../overview-card';
+import TrendComparisonBadge from './trend-comparizon-badge';
 import type { EngagementStats } from '../data/types';
 
 export default function CommentsCard( { engagementStats }: { engagementStats: EngagementStats } ) {
@@ -14,9 +14,10 @@ export default function CommentsCard( { engagementStats }: { engagementStats: En
 			metaText={ __( 'Past 7 days' ) }
 			isLink
 		>
-			<div className="site-overview-card__badge">
-				<TrendComparison count={ currentData.comments } previousCount={ previousData.comments } />
-			</div>
+			<TrendComparisonBadge
+				count={ currentData.comments }
+				previousCount={ previousData.comments }
+			/>
 		</OverviewCard>
 	);
 }

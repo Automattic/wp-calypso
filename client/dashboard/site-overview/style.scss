@@ -16,11 +16,11 @@
 	font-size: 12px;
 }
 
-// TODO: this will change based on the Badge component that will be used.
+
 .site-overview-card__badge {
-	.highlight-card-difference {
-		display: flex;
-		flex-direction: row;
-		align-items: center;
+	// This is hacky way of hiding the badge icon for now.
+	// We need to handle this in the core Badge component.
+	> svg {
+		display: none;
 	}
 }

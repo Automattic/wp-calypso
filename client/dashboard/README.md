@@ -40,6 +40,10 @@ This `docs` directory contains comprehensive design documentation for the `/clie
 - The need to pass `{ width: 'auto' }` to some HStack components to make them work like regular divs.
 - Importing SASS files bring unexpected CSS variables to our bundles (masterbar, sidebar), it also brings fonts (Recoleta, Noto) and some global classes. Why? Imports should ideally be explicit.
 
+## Hacks
+
+- We want to use the core `Badge` component but there are limitations in its functionality right now. Specifically we want a way to apply the colors (by `intent` prop), but sometimes override the used `icon`. For now we are using `TrendComparisonBadge` with some hacky css to hide the icon.
+
 ## Questions
 
 - Should we show the WP and PHP version in simple sites?
@@ -47,7 +51,6 @@ This `docs` directory contains comprehensive design documentation for the `/clie
 - Check possible nuances around `fetchSiteEngagementStats`. For example if there are needed checks for availability of stats, returned data and manipulation.
 - Should we use `useQuery` inside the components or at the parent `overview` page?
 - Investigate the endpoints used in `PerformanceCards`. They return info about jobs `queued|running` and we have to use `refetchInterval` until we have both results. Is there a better way to do this and use a cached value? That would solve the delayed rendering of these cards.
-
 
 ## E2E testing
 
