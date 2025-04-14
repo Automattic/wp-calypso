@@ -239,6 +239,7 @@ function HelpSearchResults( {
 
 		// If there's no query, then we don't need to announce anything.
 		if ( ! searchQuery ) {
+			setVisibleResults( 5 );
 			return;
 		}
 
