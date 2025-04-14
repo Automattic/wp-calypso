@@ -1174,18 +1174,6 @@ export default function CampaignItemDetails( props: Props ) {
 															<FlexibleSkeleton />
 														) }
 													</span>
-													{ weeklySpend > displayBudget && (
-														<span className="campaign-item-details__details">
-															{ translate(
-																'Great news! Your campaign did really well this week, but don’t worry — we won’t charge you more than your weekly budget of %(totalWeeklyBudget)s.',
-																{
-																	args: {
-																		totalWeeklyBudget: totalBudgetFormatted,
-																	},
-																}
-															) }
-														</span>
-													) }
 													<span className="campaign-item-details__details">
 														{ ! isLoading ? (
 															`${ overallSpendingFormatted } ${ __( 'total' ) }`
@@ -1193,6 +1181,13 @@ export default function CampaignItemDetails( props: Props ) {
 															<FlexibleSkeleton />
 														) }
 													</span>
+													{ weeklySpend > displayBudget && (
+														<span className="campaign-item-details__details outperformed_notice">
+															{ __(
+																'Your campaign outperformed this week! You’ll only be charged up to your budget.'
+															) }
+														</span>
+													) }
 												</div>
 											) : (
 												<div>
