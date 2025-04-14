@@ -24,7 +24,7 @@ const meta: Meta< typeof Theme > = {
 		},
 		scheme: {
 			control: 'radio',
-			options: ['light', 'dark'],
+			options: [ 'light', 'dark' ],
 			defaultValue: 'light',
 		},
 	},
@@ -45,6 +45,7 @@ type Story = StoryObj< typeof Theme > & {
 
 export const Default: Story = {
 	render: ( args ) => (
+		// @ts-expect-error Custom control types
 		<Theme color={ { primary: args.primary, fun: args.fun, scheme: args.scheme } }>
 			{ args.children }
 		</Theme>
