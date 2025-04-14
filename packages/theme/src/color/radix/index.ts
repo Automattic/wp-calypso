@@ -6,11 +6,11 @@ function radixColorsToCSS( colors: ReturnType< typeof generateRadixColors > ) {
 	const outputCSS: React.CSSProperties = {};
 
 	colors.grayScale.forEach( ( color, index ) => {
-		outputCSS[ `--radix-neutral-${ index }` ] = color;
+		outputCSS[ `--radix-neutral-scale-${ index }` ] = color;
 	} );
 
 	colors.accentScale.forEach( ( color, index ) => {
-		outputCSS[ `--radix-primary-${ index }` ] = color;
+		outputCSS[ `--radix-primary-scale-${ index }` ] = color;
 	} );
 
 	return outputCSS;

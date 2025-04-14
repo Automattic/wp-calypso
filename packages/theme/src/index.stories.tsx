@@ -57,28 +57,55 @@ export const Default: Story = {
 		children: (
 			<div
 				style={ {
-					display: 'flex',
-					flexDirection: 'column',
-					gap: '2px',
+					display: 'grid',
+					gridTemplateColumns: 'auto repeat(12, minmax(2rem, 1fr))',
+					gap: '4px',
 				} }
 			>
-				{ [ 'neutral-scale', 'primary-scale' ].map( ( name ) => (
-					<div key={ name } style={ { display: 'flex', gap: 'inherit' } }>
-						{ Array( 12 )
-							.fill( '' )
-							.map( ( _, i ) => (
-								<div
-									key={ i }
-									style={ {
-										width: '3rem',
-										aspectRatio: '1',
-										backgroundColor: `var(--a8c-theme-color-${ name }-${ i })`,
-										border: '1px solid var(--a8c-theme-border-default)',
-									} }
-								/>
-							) ) }
-					</div>
-				) ) }
+				<div /> { /* Empty cell for top-left corner */ }
+				{ Array( 12 )
+					.fill( '' )
+					.map( ( _, i ) => (
+						<div
+							key={ i }
+							style={ {
+								textAlign: 'center',
+								padding: '0.5rem',
+							} }
+						>
+							{ i + 1 }
+						</div>
+					) ) }
+				{ [ 'neutral-scale', 'primary-scale' ].map( ( scaleName ) =>
+					[
+						{ name: 'Radix', varPrefix: '--radix-' },
+						{ name: 'A8C', varPrefix: '--a8c-theme-color-' },
+					]
+						.map( ( { name, varPrefix } ) => [
+							<div
+								key={ `${ name }-${ scaleName }-label` }
+								style={ {
+									fontSize: '0.875rem',
+									display: 'flex',
+									alignItems: 'center',
+								} }
+							>
+								{ name } { scaleName }
+							</div>,
+							...Array( 12 )
+								.fill( '' )
+								.map( ( _, i ) => (
+									<div
+										key={ `${ name }-${ scaleName }-color-${ i }` }
+										style={ {
+											aspectRatio: '2',
+											backgroundColor: `var(${ varPrefix }${ scaleName }-${ i })`,
+										} }
+									/>
+								) ),
+						] )
+						.flat()
+				) }
 			</div>
 		),
 	},
