@@ -17,11 +17,22 @@ Build a new hosting dashboard for WordPress.com based on the new design. The sam
 - Performance testing and e2e testing are key.
 - Document all the architecture decisions (design docs)
 
+# Dashboard Design Documentation
+
+This `docs` directory contains comprehensive design documentation for the `/client/dashboard` prototype, a new hosting dashboard for WordPress.com based on modern design principles.
+
+## Architecture Documentation
+
+- [Router and Routes](./docs/router.md) - Documentation for the routing system based on @tanstack/react-router
+- [Data Library and Layer](./docs/data-library.md) - Documentation for the data fetching and state management approach
+- [UI Components](./docs/ui-components.md) - Documentation for the component architecture and design principles
+- [Testing Strategy](./docs/testing.md) - Documentation for the testing approach and best practices
+- [Entry Points](./docs/entry-points.md) - Documentation for the entry points and how to define new ones (a4a, WordPress.com, etc.)
+
 ## Suggestions
 
 - We should have reusable packages for our logos: a4a and WordPress.com.
-- We're using the CoreBadge coçponent froç automattic/components. The Badge component needs to be stabilized.
-- We are not caching on localstorage the two step auth query. We can not caching it because if for example the token is valid for more 15 minutes and we cache it for 30 during 15 minutes the user would face issues without an easy fix. Ideally the server passes the experiation information to the client and the client invalidates its localstorage based on that.
+- We're using the CoreBadge component from automattic/components. The Badge component needs to be stabilized.
 
 ## Bugs
 
