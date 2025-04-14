@@ -4,6 +4,9 @@ import version_compare from 'calypso/lib/version-compare';
 import { getJetpackVersion } from 'calypso/state/sites/selectors';
 import getJetpackStatsAdminVersion from 'calypso/state/sites/selectors/get-jetpack-stats-admin-version';
 
+// TODO: Update the version check for the real number of Odyssey Stats v2.
+const ODYSSEY_STATS_V2_MIN_VERSION = '14.6';
+
 const version_greater_than_or_equal = (
 	version: string | null,
 	compareVersion: string,
@@ -69,8 +72,11 @@ function getEnvStatsFeatureSupportChecks( state: object, siteId: number | null )
 			isOdysseyStats
 		),
 		supportsWpcomV3Jitm: version_greater_than_or_equal( jetpackVersion, '14.5', isOdysseyStats ),
-		// TODO: Update the version check for the real number of Odyssey Stats v2.
-		isOldJetpack: ! version_greater_than_or_equal( jetpackVersion, '14.6', isOdysseyStats ),
+		isOldJetpack: ! version_greater_than_or_equal(
+			jetpackVersion,
+			ODYSSEY_STATS_V2_MIN_VERSION,
+			isOdysseyStats
+		),
 	};
 }
 
