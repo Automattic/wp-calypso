@@ -1,8 +1,12 @@
+.site-icon,
+.site-letter {
+	border-radius: 4px;
+}
+
 .site-letter {
     align-items: center;
     background-color: #f5f7f7;
     border: 1px solid #eee;
-    border-radius: 4px;
     color: var(--color-accent);
     cursor: default;
     display: flex;

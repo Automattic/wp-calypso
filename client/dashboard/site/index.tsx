@@ -4,6 +4,7 @@ import { __experimentalHStack as HStack, Button } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import HeaderBar from '../header-bar';
 import MenuDivider from '../menu-divider';
+import SiteIcon from '../site-icon';
 import SiteMenu from '../site-menu';
 import type { Site as SiteType } from '../data/types';
 
@@ -23,13 +24,7 @@ function Site() {
 						style={ { flexShrink: 0, color: 'inherit' } }
 					>
 						<HStack style={ { width: 'auto' } }>
-							{ site.media && (
-								<img
-									src={ site.media }
-									alt={ site.name }
-									style={ { width: '24px', borderRadius: '2px' } }
-								/>
-							) }
+							<SiteIcon site={ site } size={ 24 } />
 							<span>{ site.name }</span>
 						</HStack>
 					</Button>

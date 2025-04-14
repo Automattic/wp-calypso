@@ -7,10 +7,9 @@ import { Icon, check } from '@wordpress/icons';
 import { useState, useEffect } from 'react';
 import DataViewsCard from '../dataviews-card';
 import PageLayout from '../page-layout';
+import SiteIcon from '../site-icon';
 import type { Site } from '../data/types';
 import type { View, Field } from '@wordpress/dataviews';
-
-import './style.scss';
 
 const actions = [
 	{
@@ -40,14 +39,7 @@ const fields = [
 	{
 		id: 'media',
 		label: __( 'Media' ),
-		render: ( { item } ) =>
-			item?.media ? (
-				<img src={ item.media } alt={ item.name } width="48" height="48" loading="lazy" />
-			) : (
-				<div className="site-letter">
-					<span>{ item.name.charAt( 0 ) }</span>
-				</div>
-			),
+		render: ( { item } ) => <SiteIcon site={ item } />,
 	},
 	{
 		id: 'subscribers',
