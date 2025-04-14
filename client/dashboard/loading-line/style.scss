@@ -1,9 +1,9 @@
 @keyframes loading {
 	from {
-        transform: translateX(-50vw);
-    }
-    to {
-        transform: translateX(100vw);
+		transform: translateX(-50vw);
+	}
+	to {
+		transform: translateX(100vw);
 	}
 }
 
@@ -23,4 +23,4 @@
 	position: absolute;
 	background: linear-gradient( to right, transparent 0%, var(--color-accent) 50%, transparent 100% );
 	animation: loading 2s infinite linear;
-} 
+}
