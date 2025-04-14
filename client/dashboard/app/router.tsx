@@ -13,19 +13,12 @@ import {
 	fetchCurrentPlan,
 	fetchSitePrimaryDomain,
 	fetchSiteEngagementStats,
+	fetchTwoStep,
 } from '../data';
 import Root from '../root';
 import { queryClient } from './query-client';
 import type { AppConfig } from './context';
 import type { FetchQueryOptions } from '@tanstack/react-query';
-
-interface RouteContext {
-	auth?: {
-		twoStep?: {
-			two_step_reauthorization_required?: boolean;
-		};
-	};
-}
 
 async function maybeAwaitFetch( options: FetchQueryOptions ) {
 	const cachedData = queryClient.getQueryData( options.queryKey );
@@ -163,8 +156,9 @@ const createRouteTree = ( config: AppConfig ) => {
 					queryFn: fetchProfile,
 				} ),
 			notFoundComponent: NotFound,
-			beforeLoad: ( { context }: { context: RouteContext } ) => {
-				if ( context?.auth?.twoStep?.two_step_reauthorization_required ) {
+			beforeLoad: async () => {
+				const twoStep = await fetchTwoStep();
+				if ( twoStep.two_step_reauthorization_required ) {
 					const currentPath = window.location.pathname;
 					const loginUrl = `/reauth-required?redirect_to=${ encodeURIComponent( currentPath ) }`;
 					window.location.href = loginUrl;

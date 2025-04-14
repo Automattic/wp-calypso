@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { createContext, useContext } from 'react';
-import { fetchUser, fetchTwoStep } from '../data';
+import { fetchUser } from '../data';
 import type { User, TwoStep } from '../data/types';
 
 export const AUTH_QUERY_KEY = [ 'auth', 'user' ];
@@ -31,17 +31,7 @@ export function AuthProvider( { children }: { children: React.ReactNode } ) {
 		retry: false, // Don't retry on 401 errors
 	} );
 
-	const {
-		data: twoStep,
-		isLoading: twoStepIsLoading,
-		isError: twoStepIsError,
-	} = useQuery( {
-		queryKey: TWO_STEP_QUERY_KEY, // /me/two-step/
-		queryFn: fetchTwoStep,
-		staleTime: 30 * 60 * 1000, // Consider auth valid for 30 minutes
-		retry: false, // Don't retry on 401 errors
-	} );
-	if ( userIsError || twoStepIsError ) {
+	if ( userIsError ) {
 		if ( typeof window !== 'undefined' ) {
 			const currentPath = window.location.pathname;
 			const loginUrl = `/log-in?redirect_to=${ encodeURIComponent( currentPath ) }`;
@@ -50,11 +40,11 @@ export function AuthProvider( { children }: { children: React.ReactNode } ) {
 		return null;
 	}
 
-	if ( userIsLoading || twoStepIsLoading || ! user || ! twoStep ) {
+	if ( userIsLoading || ! user ) {
 		return null;
 	}
 
-	return <AuthContext.Provider value={ { user, twoStep } }>{ children }</AuthContext.Provider>;
+	return <AuthContext.Provider value={ { user } }>{ children }</AuthContext.Provider>;
 }
 
 /**
