@@ -17,11 +17,9 @@ Build a new hosting dashboard for WordPress.com based on the new design. The sam
 - Performance testing and e2e testing are key.
 - Document all the architecture decisions (design docs)
 
-# Dashboard Design Documentation
+## Dashboard Design Documentation
 
 This `docs` directory contains comprehensive design documentation for the `/client/dashboard` prototype, a new hosting dashboard for WordPress.com based on modern design principles.
-
-## Architecture Documentation
 
 - [Router and Routes](./docs/router.md) - Documentation for the routing system based on @tanstack/react-router
 - [Data Library and Layer](./docs/data-library.md) - Documentation for the data fetching and state management approach

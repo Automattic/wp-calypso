@@ -84,9 +84,9 @@ The command palette will only register commands for features that are enabled in
 Custom commands can be added from any component:
 
 ```jsx
+import { useRouter } from '@tanstack/react-router';
 import { store as commandsStore } from '@wordpress/commands';
 import { dispatch } from '@wordpress/data';
-import { useRouter } from '@tanstack/react-router';
 
 function YourComponent() {
   const router = useRouter();
