@@ -1,5 +1,6 @@
 import { createSelector } from '@automattic/state-utils';
-import { translate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
+import { useMemo } from 'react';
 import {
 	STATS_FEATURE_INTERVAL_DROPDOWN_DAY,
 	STATS_FEATURE_INTERVAL_DROPDOWN_MONTH,
@@ -21,39 +22,37 @@ type IntervalsType = {
 	[ key: string ]: IntervalType;
 };
 
-const intervals = {
-	[ STATS_PERIOD.DAY ]: {
-		id: STATS_PERIOD.DAY,
-		get label() {
-			return translate( 'Days' );
-		},
-		statType: STATS_FEATURE_INTERVAL_DROPDOWN_DAY,
-	},
-	[ STATS_PERIOD.WEEK ]: {
-		id: STATS_PERIOD.WEEK,
-		get label() {
-			return translate( 'Weeks' );
-		},
-		statType: STATS_FEATURE_INTERVAL_DROPDOWN_WEEK,
-	},
-	[ STATS_PERIOD.MONTH ]: {
-		id: STATS_PERIOD.MONTH,
-		get label() {
-			return translate( 'Months' );
-		},
-		statType: STATS_FEATURE_INTERVAL_DROPDOWN_MONTH,
-	},
-	[ STATS_PERIOD.YEAR ]: {
-		id: STATS_PERIOD.YEAR,
-		get label() {
-			return translate( 'Years' );
-		},
-		statType: STATS_FEATURE_INTERVAL_DROPDOWN_YEAR,
-	},
-};
+function useStaticIntervals() {
+	const translate = useTranslate();
+	return useMemo(
+		() => ( {
+			[ STATS_PERIOD.DAY ]: {
+				id: STATS_PERIOD.DAY,
+				label: translate( 'Days' ),
+				statType: STATS_FEATURE_INTERVAL_DROPDOWN_DAY,
+			},
+			[ STATS_PERIOD.WEEK ]: {
+				id: STATS_PERIOD.WEEK,
+				label: translate( 'Weeks' ),
+				statType: STATS_FEATURE_INTERVAL_DROPDOWN_WEEK,
+			},
+			[ STATS_PERIOD.MONTH ]: {
+				id: STATS_PERIOD.MONTH,
+				label: translate( 'Months' ),
+				statType: STATS_FEATURE_INTERVAL_DROPDOWN_MONTH,
+			},
+			[ STATS_PERIOD.YEAR ]: {
+				id: STATS_PERIOD.YEAR,
+				label: translate( 'Years' ),
+				statType: STATS_FEATURE_INTERVAL_DROPDOWN_YEAR,
+			},
+		} ),
+		[ translate ]
+	);
+}
 
 const getGatedIntervals = createSelector(
-	( state, siteId ) => {
+	( state, siteId, intervals ) => {
 		return Object.keys( intervals ).reduce( ( acc, key ) => {
 			const interval = intervals[ key ];
 
@@ -66,20 +65,18 @@ const getGatedIntervals = createSelector(
 			};
 		}, {} );
 	},
-	[
-		...Object.values( intervals ).map(
+	( state, siteId, intervals ) => {
+		return Object.values( intervals ).map(
 			( { statType } ) =>
 				( state: object, siteId ) =>
 					shouldGateStats( state, siteId, statType )
-		),
-		() => {
-			return translate( 'Days' );
-		},
-	]
+		);
+	}
 );
 
 function useIntervals( siteId: number | null ): IntervalsType {
-	return useSelector( ( state ) => getGatedIntervals( state, siteId ) );
+	const staticIntervals = useStaticIntervals();
+	return useSelector( ( state ) => getGatedIntervals( state, siteId, staticIntervals ) );
 }
 
 export default useIntervals;
