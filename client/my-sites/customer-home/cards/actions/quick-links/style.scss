@@ -108,14 +108,12 @@
 	}
 
 	&:hover {
-		background: var(--color-neutral-0);
-
 		.quick-links__action-box-icon {
-			fill: var(--color-neutral-80);
-
-			&.dashicons {
-				color: var(--color-neutral-80);
-			}
+			color: var(--color-primary-60);
+			fill: var(--color-primary-60);
+		}
+		.quick-links__action-box-label {
+			color: var(--color-primary-60);
 		}
 	}
 
