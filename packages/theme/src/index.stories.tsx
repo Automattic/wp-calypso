@@ -22,22 +22,37 @@ const meta: Meta< typeof Theme > = {
 		fun: {
 			control: { type: 'range', min: 0, max: 100, step: 1 },
 		},
+		scheme: {
+			control: 'radio',
+			options: ['light', 'dark'],
+			defaultValue: 'light',
+		},
 	},
 };
 
 export default meta;
 
-type Story = StoryObj< typeof Theme >;
+type StoryArgs = {
+	primary: string;
+	fun: number;
+	scheme: 'light' | 'dark';
+	children?: React.ReactNode;
+};
+
+type Story = StoryObj< typeof Theme > & {
+	args: StoryArgs;
+};
 
 export const Default: Story = {
 	render: ( args ) => (
-		<Theme { ...args } color={ { primary: args.primary, fun: args.fun } }>
+		<Theme color={ { primary: args.primary, fun: args.fun, scheme: args.scheme } }>
 			{ args.children }
 		</Theme>
 	),
 	args: {
 		primary: '#f00',
 		fun: 0,
+		scheme: 'light',
 		children: (
 			<div
 				style={ {
