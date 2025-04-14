@@ -138,7 +138,7 @@ export const SftpForm = ( { disabled }: SftpFormProps ) => {
 	const siteIntent = useSiteOption( 'site_intent' );
 	const completeTasks = useCompleteLaunchpadTasksWithNotice();
 
-	const sshConnectString = `ssh ${ username }@sftp.wp.com`;
+	const sshConnectString = `ssh ${ username }@ssh.wp.com`;
 
 	const handleResetPassword = () => {
 		setPasswordLoading( true );

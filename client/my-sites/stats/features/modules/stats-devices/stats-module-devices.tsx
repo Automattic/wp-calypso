@@ -160,7 +160,7 @@ const StatsModuleDevices: React.FC< StatsModuleDevicesProps > = ( {
 		: localizeUrl( DEVICES_SUPPORT_URL );
 
 	const titleNodes = (
-		<StatsInfoArea isNew>
+		<StatsInfoArea>
 			{ translate(
 				'The {{link}}devices and browsers{{/link}} your visitors use to access your website.',
 				{
@@ -191,7 +191,7 @@ const StatsModuleDevices: React.FC< StatsModuleDevicesProps > = ( {
 					<StatsCard
 						className={ className }
 						title={ devicesStrings.title }
-						titleNodes={ <StatsInfoArea isNew /> }
+						titleNodes={ <StatsInfoArea /> }
 						isEmpty
 						emptyMessage={
 							<EmptyModuleCard

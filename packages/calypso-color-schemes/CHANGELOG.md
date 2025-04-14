@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Clean up all definitions and usages of CSS variables ending with -rgb.
+
 ## 3.1.3
 
 - Add a new color for Threads.

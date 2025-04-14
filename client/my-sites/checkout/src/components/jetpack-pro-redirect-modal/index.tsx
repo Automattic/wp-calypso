@@ -92,7 +92,7 @@ export default function JetpackProRedirectModal( { redirectTo, productSourceFrom
 							const id = feature.replace( /[^a-zA-Z0-9]/g, '' ).toLowerCase();
 							return (
 								<li key={ id }>
-									<CheckIcon id={ id } />
+									<CheckIcon />
 									{ feature }
 								</li>
 							);

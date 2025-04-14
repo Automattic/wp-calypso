@@ -70,17 +70,6 @@ jest.mock( 'calypso/state/themes/selectors/get-theme-demo-url', () => ( {
 	},
 } ) );
 
-jest.mock( '../../../../../hooks/use-marketplace-theme-products', () => ( {
-	useMarketplaceThemeProducts: () => ( {
-		isLoading: false,
-		selectedMarketplaceProduct: '',
-		selectedMarketplaceProductCartItems: [],
-		isMarketplaceThemeSubscriptionNeeded: false,
-		isMarketplaceThemeSubscribed: false,
-		isExternallyManagedThemeAvailable: false,
-	} ),
-} ) );
-
 /**
  * Mock wpcom-proxy-request so that we could use wpcom-xhr-request to call the endpoint
  * and get the response from nock
@@ -102,6 +91,9 @@ const renderComponent = ( component, initialState = {} ) => {
 	const queryClient = new QueryClient();
 	const store = mockStore( {
 		purchases: {},
+		productsList: {
+			isFetching: false,
+		},
 		sites: {},
 		ui: { selectedSiteId: 'anySiteId' },
 		...initialState,

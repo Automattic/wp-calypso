@@ -37,7 +37,8 @@ export const useQueryForRoute = ( currentRoute: string ) => {
 		'/wp-admin/admin.php?page=polls': __( 'crowdsignal' ),
 		'/wp-admin/admin.php?page=ratings': __( 'ratings' ),
 		'/wp-admin/admin.php?page=wc': __( 'woocommerce' ),
-		'/wp-admin/edit.php?post_type=feedback': __( 'feedback form' ),
+		'/wp-admin/edit.php?post_type=feedback': __( 'forms' ),
+		'/wp-admin/admin.php?page=jetpack-forms': __( 'forms' ), // Matches /wp-admin/admin.php?page=jetpack-forms#/responses?status=inbox
 		'/wp-admin/edit.php?post_type=jetpack-testimonial': __( 'testimonials' ),
 		'/wp-admin/index.php?page=my-blogs': __( 'my sites' ),
 		'/wp-admin/options-general.php?page=debug-bar-extender': __( 'debug bar extender' ),

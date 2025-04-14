@@ -216,6 +216,8 @@
 }
 
 .tools__feature-list-item-child-row {
+	--wp-components-color-accent: var(--studio-wordpress-blue-50);
+
 	display: flex;
 	flex-direction: column;
 	justify-content: center;

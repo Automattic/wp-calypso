@@ -3,8 +3,6 @@ import { Button } from '@wordpress/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useRef, useState } from 'react';
-import { A4AFeedback } from 'calypso/a8c-for-agencies/components/a4a-feedback';
-import useShowFeedback from 'calypso/a8c-for-agencies/components/a4a-feedback/hooks/use-show-a4a-feedback';
 import {
 	DATAVIEWS_TABLE,
 	initialDataViewsState,
@@ -60,8 +58,6 @@ export default function ReferralsOverview( {
 	const { value: referralEmail, setValue: setReferralEmail } = useUrlQueryParam(
 		REFERRAL_EMAIL_QUERY_PARAM_KEY
 	);
-
-	const { showFeedback, feedbackProps } = useShowFeedback( 'referral-complete' );
 
 	const isDesktop = useDesktopBreakpoint();
 
@@ -132,19 +128,15 @@ export default function ReferralsOverview( {
 				</LayoutTop>
 
 				<LayoutBody>
-					{ showFeedback ? (
-						<A4AFeedback { ...feedbackProps } />
-					) : (
-						<LayoutBodyContent
-							tipaltiData={ tipaltiData }
-							referrals={ referrals }
-							isLoading={ isLoading }
-							dataViewsState={ dataViewsState }
-							setDataViewsState={ setDataViewsState }
-							isArchiveView={ isArchiveView }
-							onReferralRefetch={ refetchReferrals }
-						/>
-					) }
+					<LayoutBodyContent
+						tipaltiData={ tipaltiData }
+						referrals={ referrals }
+						isLoading={ isLoading }
+						dataViewsState={ dataViewsState }
+						setDataViewsState={ setDataViewsState }
+						isArchiveView={ isArchiveView }
+						onReferralRefetch={ refetchReferrals }
+					/>
 				</LayoutBody>
 			</LayoutColumn>
 			{ dataViewsState.selectedItem && (

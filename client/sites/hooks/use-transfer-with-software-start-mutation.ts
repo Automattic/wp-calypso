@@ -3,8 +3,8 @@ import wpcom from 'calypso/lib/wp';
 
 type TransferWithSoftwareResponse = {
 	blog_id: number;
-	atomic_transfer_id: number;
-	atomic_transfer_status: string;
+	transfer_id: number;
+	transfer_status: string;
 };
 
 type SoftwareSlug = string;

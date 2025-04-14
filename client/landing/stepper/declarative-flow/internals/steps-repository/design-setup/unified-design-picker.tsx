@@ -10,6 +10,9 @@ import { StepContainer, ONBOARDING_FLOW, isSiteSetupFlow, Step } from '@automatt
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useCallback } from 'react';
+import { useQueryProductsList } from 'calypso/components/data/query-products-list';
+import { useQuerySiteFeatures } from 'calypso/components/data/query-site-features';
+import { useQuerySitePurchases } from 'calypso/components/data/query-site-purchases';
 import { useQueryThemes } from 'calypso/components/data/query-themes';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Loading from 'calypso/components/loading';
@@ -213,6 +216,17 @@ const UnifiedDesignPickerStep: StepType< {
 		number: 1000,
 	} );
 
+	/**
+	 * Load data needed for the ThemeTierBadge.
+	 *
+	 * TODO: Move this within ThemeTierBadge as it's the consumer of the data.
+	 * We will need to dedupe requests because right now each ThemeTierBadge
+	 * instance will trigger a new request.
+	 */
+	useQueryProductsList();
+	useQuerySiteFeatures( [ site?.ID ] );
+	useQuerySitePurchases( site?.ID ?? -1 );
+
 	const getBadge = ( themeId: string, isLockedStyleVariation: boolean ) => (
 		<ThemeTierBadge
 			canGoToCheckout={ false }
@@ -365,7 +379,6 @@ const UnifiedDesignPickerStep: StepType< {
 				flow={ flow }
 				isPremiumThemeAvailable={ isPremiumThemeAvailable }
 				stepName={ stepName }
-				handleSubmit={ handleSubmit }
 				numOfSelectedGlobalStyles={ numOfSelectedGlobalStyles }
 				previewDesignVariation={ previewDesignVariation }
 				setSelectedColorVariation={ setSelectedColorVariation }

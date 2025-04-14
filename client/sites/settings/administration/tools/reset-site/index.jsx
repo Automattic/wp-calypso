@@ -27,6 +27,7 @@ import { getSite, getSiteDomain, isJetpackSite } from 'calypso/state/sites/selec
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { useSetFeatureBreadcrumb } from '../../../../hooks/breadcrumbs/use-set-feature-breadcrumb';
 import { DIFMUpsell } from '../../../components/difm-upsell-banner';
+import ExportNotice from '../export-notice';
 
 import './style.scss';
 
@@ -176,24 +177,6 @@ function SiteResetCard( {
 		}
 	);
 
-	const backupHint = isAtomic
-		? createInterpolateElement(
-				translate(
-					"Having second thoughts? Don't fret, you'll be able to restore your site using the most recent backup in the <a>Activity Log</a>."
-				),
-				{
-					a: <a href={ `/activity-log/${ selectedSiteSlug }` } />,
-				}
-		  )
-		: createInterpolateElement(
-				translate(
-					'To keep a copy of your current site, head to the <a>Export page</a> before starting the reset.'
-				),
-				{
-					a: <a href={ `/settings/export/${ selectedSiteSlug }` } />,
-				}
-		  );
-
 	const isResetInProgress = status?.status === 'in-progress' && isAtomic;
 
 	const ctaText =
@@ -264,6 +247,15 @@ function SiteResetCard( {
 						</>
 					) }
 					<hr />
+					{ ! isAtomic && (
+						<ExportNotice
+							siteSlug={ selectedSiteSlug }
+							siteId={ siteId }
+							warningText={ translate(
+								'Before resetting your site, consider exporting your content as a backup.'
+							) }
+						/>
+					) }
 					<FormLabel htmlFor="confirmResetInput" className="reset-site__confirm-label">
 						{ createInterpolateElement(
 							sprintf(
@@ -298,7 +290,18 @@ function SiteResetCard( {
 							{ ctaText }
 						</Button>
 					</div>
-					{ backupHint && <FormSettingExplanation>{ backupHint }</FormSettingExplanation> }
+					{ isAtomic && (
+						<FormSettingExplanation>
+							{ createInterpolateElement(
+								translate(
+									"Having second thoughts? Don't fret, you'll be able to restore your site using the most recent backup in the <a>Activity Log</a>."
+								),
+								{
+									a: <a href={ `/activity-log/${ selectedSiteSlug }` } />,
+								}
+							) }
+						</FormSettingExplanation>
+					) }
 				</PanelCard>
 			</>
 		);

@@ -109,7 +109,7 @@ const StatsModuleUTM = ( {
 		: UTM_SUPPORT_URL;
 
 	const titleNodes = (
-		<StatsInfoArea isNew>
+		<StatsInfoArea>
 			{ translate(
 				'Track your campaign {{link}}UTM performance data{{/link}}. Generate URL codes with our builder.',
 				{
@@ -138,7 +138,7 @@ const StatsModuleUTM = ( {
 					<StatsCard
 						className={ className }
 						title={ moduleStrings.title }
-						titleNodes={ <StatsInfoArea isNew /> }
+						titleNodes={ <StatsInfoArea /> }
 						isEmpty
 						emptyMessage={
 							<EmptyModuleCard

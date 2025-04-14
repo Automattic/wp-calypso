@@ -1,3 +1,6 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
 .step-container-v2__content-wrapper {
 	display: flex;
 	flex-direction: column;
@@ -6,20 +9,27 @@
 	width: 100%;
 	box-sizing: border-box;
 	flex: 1;
-	max-width: 1038px;
 
-	&.padding {
-		padding: var( --step-container-v2-content-block-padding )
-			var( --step-container-v2-content-inline-padding );
-	}
+	padding: var( --step-container-v2-content-block-padding )
+		var( --step-container-v2-content-inline-padding );
 
-	&.wide {
-		max-width: 1440px;
-	}
+	--step-container-v2-content-max-width: 1344px;
 
-	&.full {
-		max-width: 100%;
-	}
+	max-width: calc(
+		var( --step-container-v2-content-max-width ) + 2 *
+			var( --step-container-v2-content-inline-padding )
+	);
+
+	--step-container-v2-content-column-gap: 24px;
+
+	--step-container-v2-content-max-width-minus-column-gaps: calc(
+		var( --step-container-v2-content-max-width ) - 11 *
+			var( --step-container-v2-content-column-gap )
+	);
+
+	--step-container-v2-content-column-width: calc(
+		var( --step-container-v2-content-max-width-minus-column-gaps ) / 12
+	);
 
 	&.center-aligned {
 		justify-content: center;
