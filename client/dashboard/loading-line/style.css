@@ -1,6 +1,6 @@
 @keyframes loading {
 	from {
-		left: -400px;
+		left: -50vw;
 	}
 	to {
 		left: 100%;
@@ -13,12 +13,12 @@
 	left: 0;
 	width: 100%;
 	height: 2px;
-	background-color: #e0e0e0;
+	background-color: transparent;
 	z-index: 1000;
 }
 
 .loading-line-bar {
-	width: 400px;
+	width: 50vw;
 	height: 100%;
 	position: absolute;
 	background: linear-gradient( to right, transparent 0%, var(--color-accent) 50%, transparent 100% );
