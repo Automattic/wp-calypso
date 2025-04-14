@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate, useLoaderData, createLazyRoute } from '@tanstack/react-router';
-import { Button, Card } from '@wordpress/components';
+import { Button, Card, __experimentalVStack as VStack } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { Icon, check } from '@wordpress/icons';
@@ -119,16 +119,18 @@ function Sites() {
 				}
 			>
 				<Card>
-					<DataViews
-						data={ filteredData }
-						fields={ fields }
-						actions={ actions }
-						view={ view }
-						onChangeView={ setView }
-						onClickItem={ onClickItem }
-						defaultLayouts={ { table: {} } }
-						paginationInfo={ paginationInfo }
-					/>
+					<VStack spacing={ 4 }>
+						<DataViews
+							data={ filteredData }
+							fields={ fields }
+							actions={ actions }
+							view={ view }
+							onChangeView={ setView }
+							onClickItem={ onClickItem }
+							defaultLayouts={ { table: {} } }
+							paginationInfo={ paginationInfo }
+						/>
+					</VStack>
 				</Card>
 			</PageLayout>
 		</>
