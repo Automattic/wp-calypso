@@ -1,9 +1,9 @@
 @keyframes loading {
 	from {
-		left: -50vw;
-	}
-	to {
-		left: 100%;
+        transform: translateX(-50vw);
+    }
+    to {
+        transform: translateX(100vw);
 	}
 }
 
