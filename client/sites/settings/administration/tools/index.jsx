@@ -148,6 +148,11 @@ class SiteTools extends Component {
 						description={ restorePlanSoftwareText }
 					/>
 				) }
+				<AdministrationToolCard
+					title={ translate( 'Leave site' ) }
+					description={ translate( 'Leave this site and remove your access.' ) }
+					href={ leaveSiteLink }
+				/>
 				{ showDeleteContent && (
 					<AdministrationToolCard
 						href={ startOverLink }
