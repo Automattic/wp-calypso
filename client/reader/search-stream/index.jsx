@@ -45,11 +45,6 @@ class SearchStream extends React.Component {
 	static propTypes = {
 		query: PropTypes.string,
 		streamKey: PropTypes.string,
-		disableInfiniteScroll: PropTypes.bool,
-	};
-
-	static defaultProps = {
-		disableInfiniteScroll: false,
 	};
 
 	state = {
@@ -230,7 +225,6 @@ class SearchStream extends React.Component {
 									query={ query }
 									sort={ pickSort( sortOrder ) }
 									onReceiveSearchResults={ this.setSearchFeeds }
-									disableInfiniteScroll={ this.props.disableInfiniteScroll }
 								/>
 							) }
 							{ ! query && (
@@ -252,7 +246,6 @@ class SearchStream extends React.Component {
 									query={ query }
 									sort={ pickSort( sortOrder ) }
 									onReceiveSearchResults={ this.setSearchFeeds }
-									disableInfiniteScroll={ this.props.disableInfiniteScroll }
 								/>
 							) ) || (
 								<ReaderPopularSitesSidebar
