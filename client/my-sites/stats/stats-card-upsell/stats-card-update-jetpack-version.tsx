@@ -4,14 +4,21 @@ import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import { useSelector } from 'calypso/state';
-import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
+import { isJetpackSite, getSiteAdminUrl } from 'calypso/state/sites/selectors';
 import StatsCardUpsellOverlay from './stats-card-upsell-overlay';
 import { Props } from './';
 
 const StatsCardUpdateJetpackVersion: React.FC< Props > = ( { className, siteId, statType } ) => {
 	const translate = useTranslate();
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
+	const isSiteJetpackUpgradable = useSelector( ( state ) =>
+		isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: true } )
+	);
 	const siteAdminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
+
+	if ( ! isSiteJetpackUpgradable ) {
+		return null;
+	}
 
 	const tracksEvent = 'update_jetpack_feature_card_clicked';
 
