@@ -36,6 +36,8 @@ import type { SearchResult } from '../types';
 
 import './help-center-search-results.scss';
 
+const MAX_VISIBLE_RESULTS = 5;
+
 type HelpLinkProps = {
 	result: SearchResult;
 	type: string;
@@ -225,10 +227,10 @@ function HelpSearchResults( {
 	const searchResults = searchData ?? [];
 	const hasAPIResults = searchResults.length > 0;
 
-	const [ visibleResults, setVisibleResults ] = useState( 5 );
+	const [ visibleResults, setVisibleResults ] = useState( MAX_VISIBLE_RESULTS );
 
 	const handleShowMore = () => {
-		setVisibleResults( visibleResults + 5 );
+		setVisibleResults( visibleResults + MAX_VISIBLE_RESULTS );
 	};
 
 	useEffect( () => {
@@ -239,7 +241,7 @@ function HelpSearchResults( {
 
 		// If there's no query, then we don't need to announce anything.
 		if ( ! searchQuery ) {
-			setVisibleResults( 5 );
+			setVisibleResults( MAX_VISIBLE_RESULTS );
 			return;
 		}
 
@@ -248,7 +250,7 @@ function HelpSearchResults( {
 		} else if ( ! hasAPIResults ) {
 			errorSpeak();
 		} else if ( hasAPIResults ) {
-			setVisibleResults( 5 );
+			setVisibleResults( MAX_VISIBLE_RESULTS );
 			resultsSpeak();
 		}
 	}, [ isSearching, hasAPIResults, searchQuery ] );
