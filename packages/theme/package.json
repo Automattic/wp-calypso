@@ -40,7 +40,10 @@
 		"wp-admin"
 	],
 	"dependencies": {
-		"colord": "2.9.3"
+		"@radix-ui/colors": "^3.0.0",
+		"bezier-easing": "^2.1.0",
+		"colord": "2.9.3",
+		"colorjs.io": "^0.5.2"
 	},
 	"peerDependencies": {
 		"react": "^18.3.1",

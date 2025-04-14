@@ -1906,6 +1906,10 @@ __metadata:
     "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-storybook": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
+    "@radix-ui/colors": "npm:^3.0.0"
+    bezier-easing: "npm:^2.1.0"
+    colord: "npm:2.9.3"
+    colorjs.io: "npm:^0.5.2"
     copyfiles: "npm:^2.4.1"
     postcss: "npm:^8.4.5"
     storybook: "npm:^8.6.9"
@@ -5842,6 +5846,13 @@ __metadata:
   peerDependencies:
     preact: 10.x
   checksum: a438e80dc6ef1c3801c988d1e3516056293fc07920d81326f5e1a399c998b16bd2d41cdd053cda4edc402da5c5ea91d95671766f5d864b6ebbd7c8fac3502050
+  languageName: node
+  linkType: hard
+
+"@radix-ui/colors@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "@radix-ui/colors@npm:3.0.0"
+  checksum: 612c6bb4efe987f2d49aaca2f785687d08150da59a248328bc2b4e187ece4ef731c1dc5c6a9430fffcac4af9e65cf2f89ceb9806f8809940c9eb238b79d2cf2f
   languageName: node
   linkType: hard
 
@@ -12642,6 +12653,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"bezier-easing@npm:^2.1.0":
+  version: 2.1.0
+  resolution: "bezier-easing@npm:2.1.0"
+  checksum: 138a160698de3c12501479cc80280d5cc0ab47df73e20d7b5058cba6d62c0876eb97e63aa1e398233269aa2a6bb396fb0ee394da391de7258c9da20729df5158
+  languageName: node
+  linkType: hard
+
 "big.js@npm:^5.2.2":
   version: 5.2.2
   resolution: "big.js@npm:5.2.2"
@@ -14389,6 +14407,13 @@ __metadata:
   version: 2.0.20
   resolution: "colorette@npm:2.0.20"
   checksum: e94116ff33b0ff56f3b83b9ace895e5bf87c2a7a47b3401b8c3f3226e050d5ef76cf4072fb3325f9dc24d1698f9b730baf4e05eeaf861d74a1883073f4c98a40
+  languageName: node
+  linkType: hard
+
+"colorjs.io@npm:^0.5.2":
+  version: 0.5.2
+  resolution: "colorjs.io@npm:0.5.2"
+  checksum: 2e6ea43629e325e721b92429239de3a6f42fb6d88ba6e4c2aeff0288c196d876f2f7ee82aea95bd40072d5cdc8cb87f042f4d94c134dcabf0e34a717e4caacb9
   languageName: node
   linkType: hard
 
