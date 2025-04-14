@@ -1,36 +1,11 @@
-import { forwardRef, useMemo } from 'react';
-import { generateColors } from './color';
-import { themeToCss } from './utils';
+import { forwardRef } from 'react';
+import { useGenerateStyles } from './color/a8c';
+import type { ThemeProps } from './types';
 
 declare module 'react' {
 	interface CSSProperties {
 		[ key: `--${ string }` ]: string | number;
 	}
-}
-
-type ThemeProps = {
-	color: {
-		primary: string;
-		fun?: number;
-		scheme?: 'dark' | 'light';
-	};
-	children?: React.ReactNode;
-};
-
-function useGenerateStyles( color: ThemeProps[ 'color' ] ): React.CSSProperties {
-	const generatedTheme = useMemo(
-		() =>
-			themeToCss( {
-				color: generateColors( {
-					color: color.primary,
-					fun: color.fun,
-					isDark: color.scheme === 'dark',
-				} ),
-			} ),
-		[ color.primary, color.fun, color.scheme ]
-	);
-
-	return generatedTheme;
 }
 
 const Theme = forwardRef< HTMLDivElement, ThemeProps >( function Theme( { color, children }, ref ) {
