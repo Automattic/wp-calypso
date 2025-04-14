@@ -57,13 +57,24 @@ function UserProfile() {
 					aria-expanded={ isOpen }
 					variant="tertiary"
 					label={ __( 'My profile' ) }
-					icon={ commentAuthorAvatar }
+					icon={
+						user.avatar_URL ? (
+							<img
+								className="dashboard-secondary-menu__avatar"
+								src={ user.avatar_URL }
+								alt={ __( 'User avatar' ) }
+							/>
+						) : (
+							commentAuthorAvatar
+						)
+					}
 				/>
 			) }
 			renderContent={ ( { onClose } ) => (
 				<VStack>
-					<VStack style={ { padding: '16px', borderBottom: '1px solid #ccc' } }>
-						<Text>@{ user.username }</Text>
+					<VStack style={ { padding: '16px', borderBottom: '1px solid #ccc' } } spacing={ 1 }>
+						<Text>{ user.display_name }</Text>
+						<Text variant="muted">@{ user.username }</Text>
 					</VStack>
 					<MenuGroup>
 						<NavMenuItem to="/me/profile">{ __( 'Profile' ) }</NavMenuItem>
