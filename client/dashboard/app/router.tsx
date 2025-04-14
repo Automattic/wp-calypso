@@ -17,7 +17,6 @@ import {
 import Root from '../root';
 import { queryClient } from './query-client';
 import type { AppConfig } from './context';
-import type { Domain, Email } from '../data/types';
 import type { FetchQueryOptions } from '@tanstack/react-query';
 
 interface RouteContext {
@@ -131,10 +130,10 @@ const createRouteTree = ( config: AppConfig ) => {
 			getParentRoute: () => rootRoute,
 			path: 'domains',
 			loader: () =>
-				queryClient.ensureQueryData( {
+				maybeAwaitFetch( {
 					queryKey: [ 'domains' ],
 					queryFn: fetchDomains,
-				} ) as Promise< Domain[] >,
+				} ),
 		} ).lazy( () => import( '../domains' ).then( ( d ) => d.Route ) );
 
 		children.push( domainsRoute );
@@ -145,10 +144,10 @@ const createRouteTree = ( config: AppConfig ) => {
 			getParentRoute: () => rootRoute,
 			path: 'emails',
 			loader: () =>
-				queryClient.ensureQueryData( {
+				maybeAwaitFetch( {
 					queryKey: [ 'emails' ],
 					queryFn: fetchEmails,
-				} ) as Promise< Email[] >,
+				} ),
 		} ).lazy( () => import( '../emails' ).then( ( d ) => d.Route ) );
 
 		children.push( emailsRoute );

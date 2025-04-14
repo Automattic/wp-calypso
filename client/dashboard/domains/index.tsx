@@ -1,3 +1,4 @@
+import { useQuery } from '@tanstack/react-query';
 import { useLoaderData, createLazyRoute } from '@tanstack/react-router';
 import { Card, Notice } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate, View } from '@wordpress/dataviews';
@@ -91,7 +92,7 @@ function getDomainId( domain: Domain ): string {
 
 function Domains() {
 	const [ view, setView ] = useState( () => initialViewState );
-	const domains = useLoaderData( { from: '/domains' } ) as Domain[];
+	const domains = useQuery( useLoaderData( { from: '/domains' } ) ).data as Domain[];
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate( domains, view, fields );
 	return (
 		<PageLayout title={ __( 'Domains' ) }>

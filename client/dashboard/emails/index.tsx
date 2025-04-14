@@ -1,3 +1,4 @@
+import { useQuery } from '@tanstack/react-query';
 import { useNavigate, useLoaderData, createLazyRoute } from '@tanstack/react-router';
 import { Button, Card, ExternalLink, Notice } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
@@ -49,7 +50,7 @@ const fields = [
 
 function Emails() {
 	const navigate = useNavigate();
-	const emails = useLoaderData( { from: '/emails' } ) as Email[];
+	const emails = useQuery( useLoaderData( { from: '/emails' } ) ).data as Email[];
 	const [ selection, setSelection ] = useState< Email[] >( [] );
 
 	// View config
