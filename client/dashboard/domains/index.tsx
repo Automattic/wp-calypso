@@ -1,9 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
 import { useLoaderData, createLazyRoute } from '@tanstack/react-router';
-import { Card, Notice } from '@wordpress/components';
+import { Notice } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate, View } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
+import DataViewsCard from '../dataviews-card';
 import PageLayout from '../page-layout';
 import type { Domain } from '../data/types';
 
@@ -99,7 +100,7 @@ function Domains() {
 			<Notice status="warning" isDismissible={ false }>
 				{ __( 'This is using fake data for the moment' ) }
 			</Notice>
-			<Card>
+			<DataViewsCard>
 				<DataViews
 					data={ filteredData || [] }
 					fields={ fields }
@@ -112,7 +113,7 @@ function Domains() {
 					isLoading={ false }
 					defaultLayouts={ defaultLayouts }
 				/>
-			</Card>
+			</DataViewsCard>
 		</PageLayout>
 	);
 }

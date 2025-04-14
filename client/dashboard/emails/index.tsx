@@ -1,9 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate, useLoaderData, createLazyRoute } from '@tanstack/react-router';
-import { Button, Card, ExternalLink, Notice } from '@wordpress/components';
+import { Button, ExternalLink, Notice } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useState, useMemo } from 'react';
+import DataViewsCard from '../dataviews-card';
 import PageLayout from '../page-layout';
 import type { Email } from '../data/types';
 import type { View, Field, Action } from '@wordpress/dataviews';
@@ -126,7 +127,7 @@ function Emails() {
 			<Notice status="warning" isDismissible={ false }>
 				{ __( 'This is using fake data for the moment' ) }
 			</Notice>
-			<Card>
+			<DataViewsCard>
 				<DataViews
 					data={ filteredData }
 					fields={ fields }
@@ -141,7 +142,7 @@ function Emails() {
 					defaultLayouts={ { table: {} } }
 					paginationInfo={ paginationInfo }
 				/>
-			</Card>
+			</DataViewsCard>
 		</PageLayout>
 	);
 }

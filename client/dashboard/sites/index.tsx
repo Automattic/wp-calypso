@@ -1,10 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate, useLoaderData, createLazyRoute } from '@tanstack/react-router';
-import { Button, Card, __experimentalVStack as VStack } from '@wordpress/components';
+import { Button } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { Icon, check } from '@wordpress/icons';
 import { useState, useEffect } from 'react';
+import DataViewsCard from '../dataviews-card';
 import PageLayout from '../page-layout';
 import type { Site } from '../data/types';
 import type { View, Field } from '@wordpress/dataviews';
@@ -118,20 +119,18 @@ function Sites() {
 					</Button>
 				}
 			>
-				<Card>
-					<VStack spacing={ 4 }>
-						<DataViews
-							data={ filteredData }
-							fields={ fields }
-							actions={ actions }
-							view={ view }
-							onChangeView={ setView }
-							onClickItem={ onClickItem }
-							defaultLayouts={ { table: {} } }
-							paginationInfo={ paginationInfo }
-						/>
-					</VStack>
-				</Card>
+				<DataViewsCard>
+					<DataViews
+						data={ filteredData }
+						fields={ fields }
+						actions={ actions }
+						view={ view }
+						onChangeView={ setView }
+						onClickItem={ onClickItem }
+						defaultLayouts={ { table: {} } }
+						paginationInfo={ paginationInfo }
+					/>
+				</DataViewsCard>
 			</PageLayout>
 		</>
 	);
