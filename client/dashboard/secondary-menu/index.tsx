@@ -62,7 +62,7 @@ function UserProfile() {
 					variant="tertiary"
 					label={ __( 'My profile' ) }
 					icon={
-						user.avatar_URL ? (
+						user?.avatar_URL ? (
 							<img
 								className="dashboard-secondary-menu__avatar"
 								src={ user.avatar_URL }
