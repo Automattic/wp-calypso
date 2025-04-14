@@ -170,6 +170,10 @@
 		}
 	}
 
+	.components-checkbox-control__label {
+		font-size: $font-body-small;
+	}
+
 	@include breakpoint-deprecated( '<480px' ) {
 		.form-text-input-with-affixes__suffix {
 			padding-left: 8px;
