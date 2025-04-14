@@ -14,7 +14,7 @@ function percentCalculator( part: number, whole: number ) {
 	}
 	const answer = part / whole;
 	// Handle Infinities as 100%.
-	return ! Number.isFinite( answer ) ? 100 : answer * 100;
+	return ! Number.isFinite( answer ) ? 100 : Math.round( answer * 100 );
 }
 export default function TrendComparisonBadge( {
 	count,
