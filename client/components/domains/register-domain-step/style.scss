@@ -94,19 +94,6 @@
 .register-domain-step__search {
 	padding-bottom: 12px;
 
-	&.register-domain-step__search-domain-step:not(.is-sticky) {
-		padding-bottom: 16px;
-
-		@include breakpoint-deprecated( ">660px" ) {
-			padding-top: 18px;
-
-			.is-section-stepper & {
-				padding-top: 0;
-				padding-bottom: 16px;
-			}
-		}
-	}
-
 	.card.register-domain-step__search-card {
 		padding: 0;
 		display: flex;
