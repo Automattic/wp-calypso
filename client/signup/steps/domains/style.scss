@@ -343,6 +343,11 @@ body.is-section-signup {
 
 		.register-domain-step .domains__domain-side-content-container {
 			display: flex;
+			margin-bottom: 80px;
+
+			@include break-small {
+				margin-inline: 20px;
+			}
 
 			@include break-medium {
 				flex-direction: row;
