@@ -1,5 +1,6 @@
 import { CompactCard, Gridicon, MaterialIcon } from '@automattic/components';
 import clsx from 'clsx';
+import React from 'react';
 
 const ActionBox = ( {
 	href,
@@ -11,6 +12,7 @@ const ActionBox = ( {
 	gridicon,
 	iconComponent,
 	hideLinkIndicator,
+	svgIcon,
 } ) => {
 	const buttonAction = { href, onClick, target };
 	const getIcon = () => {
@@ -24,6 +26,12 @@ const ActionBox = ( {
 
 		if ( iconComponent ) {
 			return iconComponent;
+		}
+
+		if ( svgIcon ) {
+			return React.cloneElement( svgIcon, {
+				className: `${ svgIcon.props.className || '' } quick-links__action-box-icon`.trim(),
+			} );
 		}
 
 		return <img className="quick-links__action-box-icon" src={ iconSrc } alt="" />;
