@@ -100,10 +100,11 @@ const siteMigration: FlowV2 = {
 		const flowPath = variantSlug ?? flowName;
 		const siteCount = useSelector( ( state ) => getCurrentUserSiteCount( state ) );
 		const urlQueryParams = useQuery();
-		const from = urlQueryParams.get( 'from' );
-		const platform = ( urlQueryParams.get( 'platform' ) || 'unknown' ) as ImporterPlatform;
+		const fromQueryParam = urlQueryParams.get( 'from' );
+		const actionQueryParam = urlQueryParams.get( 'action' );
+		const platformQueryParam = ( urlQueryParams.get( 'platform' ) ||
+			'unknown' ) as ImporterPlatform;
 		const { get, sessionId } = useFlowState();
-		const action = urlQueryParams.get( 'action' );
 		const siteAdminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
 		const siteWooCommerceUrl = useSelector( ( state ) => getSiteWooCommerceUrl( state, siteId ) );
 		const userHasOtherWPComSites = siteCount && siteCount > 1;
@@ -134,7 +135,7 @@ const siteMigration: FlowV2 = {
 								paths.siteSetupImportListPath( {
 									siteId,
 									siteSlug,
-									from,
+									from: from || fromQueryParam,
 									origin: STEPS.SITE_MIGRATION_IDENTIFY.slug,
 									backToFlow: `/${ flowPath }/${ STEPS.SITE_MIGRATION_IDENTIFY.slug }`,
 								} )
@@ -167,8 +168,8 @@ const siteMigration: FlowV2 = {
 
 							return navigate(
 								paths.sitePickerPath( {
-									from,
-									platform: platform || 'unknown',
+									from: fromQueryParam,
+									platform: platformQueryParam || 'unknown',
 									...queryParams,
 								} )
 							);
@@ -176,25 +177,24 @@ const siteMigration: FlowV2 = {
 						case 'select-site': {
 							const { ID: siteId, slug: siteSlug } = providedDependencies.site as SiteExcerptData;
 
-							if ( 'migrate' === action ) {
+							if ( 'migrate' === actionQueryParam ) {
 								return navigate(
 									paths.howToMigratePath( {
 										siteSlug,
 										siteId,
-										from,
+										from: fromQueryParam,
 									} )
 								);
 							}
 
-							if ( platform !== 'wordpress' ) {
+							if ( platformQueryParam !== 'wordpress' ) {
 								//TODO: Improve it to redirect the user to the correct import step if the platform is not wordpress
 								return exitFlow(
 									paths.siteSetupImportListPath( {
-										from,
+										from: fromQueryParam,
 										siteSlug,
 										siteId,
 										backToFlow: `/${ flowPath }/${ STEPS.PICK_SITE.slug }`,
-										//review it
 										origin: '',
 									} )
 								);
@@ -203,16 +203,18 @@ const siteMigration: FlowV2 = {
 							return navigate( paths.importOrMigratePath( { siteSlug, siteId } ) );
 						}
 						case 'create-site':
-							return navigate( paths.siteCreationPath( { from, platform } ) );
+							return navigate(
+								paths.siteCreationPath( { from: fromQueryParam, platform: platformQueryParam } )
+							);
 					}
 				}
 
 				case STEPS.SITE_CREATION_STEP.slug: {
 					return navigate(
 						paths.processingPath( {
-							from,
-							platform,
-							action,
+							from: fromQueryParam,
+							platform: platformQueryParam,
+							action: actionQueryParam,
 						} )
 					);
 				}
@@ -231,29 +233,36 @@ const siteMigration: FlowV2 = {
 					}
 
 					//NOTE: There are links pointing to this step with the action=migrate query param, so we need to ignore the platform
-					if ( action === 'migrate' ) {
-						return navigate( paths.howToMigratePath( { siteId, siteSlug, from } ) );
+					if ( actionQueryParam === 'migrate' ) {
+						return navigate( paths.howToMigratePath( { siteId, siteSlug, from: fromQueryParam } ) );
 					}
 
-					if ( platform && platform !== 'wordpress' && isPlatformImportable( platform ) && from ) {
-						return exitFlow( getFullImporterUrl( platform, siteSlug, from ) );
+					if (
+						platformQueryParam &&
+						platformQueryParam !== 'wordpress' &&
+						isPlatformImportable( platformQueryParam ) &&
+						fromQueryParam
+					) {
+						return exitFlow( getFullImporterUrl( platformQueryParam, siteSlug, fromQueryParam ) );
 					}
 
-					if ( ! from || platform !== 'wordpress' ) {
+					if ( ! fromQueryParam || platformQueryParam !== 'wordpress' ) {
 						// If we get to this point without a fromQueryParam then we are coming from a direct
 						// pick your current platform link. That's why we navigate to the importList step.
 						return exitFlow(
 							paths.siteSetupImportListPath( {
 								siteId,
 								siteSlug,
-								from,
+								from: fromQueryParam,
 								origin: STEPS.SITE_MIGRATION_IDENTIFY.slug,
 								backToFlow: `/${ flowPath }/${ STEPS.SITE_MIGRATION_IDENTIFY.slug }`,
 							} )
 						);
 					}
 
-					return navigate( paths.importOrMigratePath( { from, siteSlug, siteId } ) );
+					return navigate(
+						paths.importOrMigratePath( { from: fromQueryParam, siteSlug, siteId } )
+					);
 				}
 
 				case STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug: {
@@ -275,14 +284,14 @@ const siteMigration: FlowV2 = {
 							paths.siteSetupImportWordpressPath( {
 								siteId,
 								siteSlug,
-								from: from || '',
+								from: fromQueryParam || '',
 								option: 'content',
 								backToFlow: `/${ flowPath }/${ STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug }`,
 							} )
 						);
 					}
 
-					return navigate( paths.howToMigratePath( { siteId, siteSlug, from } ) );
+					return navigate( paths.howToMigratePath( { siteId, siteSlug, from: fromQueryParam } ) );
 				}
 
 				case STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug: {
@@ -292,7 +301,7 @@ const siteMigration: FlowV2 = {
 							paths.upgradePlanPath( {
 								siteId,
 								siteSlug,
-								from,
+								from: fromQueryParam,
 								destination: providedDependencies?.destination,
 								how: providedDependencies?.how as string,
 							} )
@@ -300,10 +309,10 @@ const siteMigration: FlowV2 = {
 					}
 
 					if ( providedDependencies?.how === HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME ) {
-						return navigate( paths.credentialsPath( { siteId, from, siteSlug } ) );
+						return navigate( paths.credentialsPath( { siteId, from: fromQueryParam, siteSlug } ) );
 					}
 
-					return navigate( paths.instructionsPath( { siteId, siteSlug, from } ) );
+					return navigate( paths.instructionsPath( { siteId, siteSlug, from: fromQueryParam } ) );
 				}
 
 				case STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug: {
@@ -317,7 +326,7 @@ const siteMigration: FlowV2 = {
 						const destination = addQueryArgs(
 							{
 								siteSlug,
-								from,
+								from: fromQueryParam,
 								siteId,
 							},
 							`/setup/${ flowPath }/${ redirectAfterCheckout }`
@@ -327,7 +336,7 @@ const siteMigration: FlowV2 = {
 							stepName: STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug,
 							siteSlug: siteSlug,
 							destination: destination,
-							from: from ?? undefined,
+							from: fromQueryParam ?? undefined,
 							plan: providedDependencies.plan as string,
 							cancelDestination: `/setup/${ flowPath }/${
 								STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug
@@ -345,7 +354,7 @@ const siteMigration: FlowV2 = {
 				case STEPS.SITE_MIGRATION_INSTRUCTIONS.slug: {
 					// User decided to ask for an assisted migration - try to collect credentials.
 					if ( providedDependencies?.how === HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME ) {
-						return navigate( paths.credentialsPath( { siteId, from, siteSlug } ) );
+						return navigate( paths.credentialsPath( { siteId, from: fromQueryParam, siteSlug } ) );
 					}
 					return exitFlow( paths.calypsoOverviewPath( { ref: 'site-migration' }, { siteSlug } ) );
 				}
@@ -409,7 +418,7 @@ const siteMigration: FlowV2 = {
 					return navigate(
 						paths.supportInstructionsPath( {
 							siteId,
-							from,
+							from: fromQueryParam,
 							siteSlug,
 							preventTicketCreation: true,
 						} )
@@ -423,12 +432,14 @@ const siteMigration: FlowV2 = {
 							siteId: siteId!.toString(),
 							siteSlug,
 							backToFlow: `${ SITE_MIGRATION_FLOW }/${ STEPS.SITE_MIGRATION_OTHER_PLATFORM_DETECTED_IMPORT.slug }`,
-							from,
+							from: fromQueryParam,
 							ref: SITE_MIGRATION_FLOW,
 						} );
 					}
 
-					return navigate( paths.supportInstructionsPath( { siteId, from, siteSlug } ) );
+					return navigate(
+						paths.supportInstructionsPath( { siteId, from: fromQueryParam, siteSlug } )
+					);
 				}
 
 				case STEPS.SITE_MIGRATION_APPLICATION_PASSWORD_AUTHORIZATION.slug: {
@@ -450,7 +461,7 @@ const siteMigration: FlowV2 = {
 								siteSlug,
 								authorizationUrl,
 								backTo: STEPS.SITE_MIGRATION_APPLICATION_PASSWORD_AUTHORIZATION.slug,
-								from,
+								from: fromQueryParam,
 							} )
 						);
 					}
@@ -481,7 +492,7 @@ const siteMigration: FlowV2 = {
 								siteSlug,
 								origin: STEPS.SITE_MIGRATION_IDENTIFY.slug,
 								backToFlow: `/${ flowPath }/${ STEPS.SITE_MIGRATION_IDENTIFY.slug }`,
-								from,
+								from: fromQueryParam,
 							} )
 						);
 					}
@@ -495,7 +506,7 @@ const siteMigration: FlowV2 = {
 						return exitFlow( '/start' );
 					}
 
-					return navigate( paths.identifyPath( { from } ) );
+					return navigate( paths.identifyPath( { from: fromQueryParam } ) );
 				}
 
 				case STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug: {
@@ -522,7 +533,7 @@ const siteMigration: FlowV2 = {
 						paths.howToMigratePath( {
 							siteSlug,
 							siteId,
-							from,
+							from: fromQueryParam,
 						} )
 					);
 				}
@@ -544,7 +555,7 @@ const siteMigration: FlowV2 = {
 						paths.howToMigratePath( {
 							siteSlug,
 							siteId,
-							from,
+							from: fromQueryParam,
 						} )
 					);
 				}
@@ -554,7 +565,7 @@ const siteMigration: FlowV2 = {
 						paths.credentialsPath( {
 							siteId,
 							siteSlug,
-							from,
+							from: fromQueryParam,
 						} )
 					);
 				}
@@ -569,7 +580,7 @@ const siteMigration: FlowV2 = {
 							paths.applicationPasswordAuthorizationPath( {
 								siteId,
 								siteSlug,
-								from,
+								from: fromQueryParam,
 								...queryParams,
 							} )
 						);
@@ -579,7 +590,7 @@ const siteMigration: FlowV2 = {
 						paths.credentialsPath( {
 							siteId,
 							siteSlug,
-							from,
+							from: fromQueryParam,
 						} )
 					);
 				}
@@ -591,7 +602,7 @@ const siteMigration: FlowV2 = {
 						paths.credentialsPath( {
 							siteId,
 							siteSlug,
-							from,
+							from: fromQueryParam,
 							...queryParams,
 						} )
 					);
@@ -604,7 +615,7 @@ const siteMigration: FlowV2 = {
 						paths.credentialsPath( {
 							siteId,
 							siteSlug,
-							from,
+							from: fromQueryParam,
 							...queryParams,
 						} )
 					);
