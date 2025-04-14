@@ -1,3 +1,5 @@
+@use "sass:math";
+
 .dataviews-view-grid {
 	margin-bottom: auto;
 	grid-template-rows: max-content;
