@@ -2,6 +2,7 @@ import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
+import { useRouteModal } from 'calypso/lib/route-modal';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import AddOnsModal from '../add-ons-modal';
 
@@ -12,11 +13,18 @@ type ManageAddOnsButtonProps = {
 export default function ManageAddOnsButton( { tracksEventName }: ManageAddOnsButtonProps ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const [ isManageAddOnsModalOpen, setIsManageAddOnsModalOpen ] = useState( false );
+
+	const { isModalOpen, closeModal } = useRouteModal( 'add-ons-modal' );
+	const [ isManageAddOnsModalOpen, setIsManageAddOnsModalOpen ] = useState( isModalOpen );
 
 	const onClick = () => {
 		dispatch( recordTracksEvent( tracksEventName ) );
 		setIsManageAddOnsModalOpen( true );
+	};
+
+	const onCloseAddOnsModal = () => {
+		closeModal();
+		setIsManageAddOnsModalOpen( false );
 	};
 
 	return (
@@ -24,10 +32,7 @@ export default function ManageAddOnsButton( { tracksEventName }: ManageAddOnsBut
 			<Button variant="tertiary" onClick={ onClick }>
 				{ translate( 'Manage add-ons' ) }
 			</Button>
-			<AddOnsModal
-				isOpen={ isManageAddOnsModalOpen }
-				onClose={ () => setIsManageAddOnsModalOpen( false ) }
-			/>
+			<AddOnsModal isOpen={ isManageAddOnsModalOpen } onClose={ onCloseAddOnsModal } />
 		</>
 	);
 }
