@@ -14,6 +14,7 @@ const DEFAULT_SERVER_NOTICES_VISIBILITY = {
 	// TODO: Check if the site needs to be upgraded to a higher tier on the back end.
 	tier_upgrade: true,
 	gdpr_cookie_consent: false,
+	jetpack_version_upgrade: true,
 	[ NOTICES_KEY_ABLE_TO_SUBMIT_FEEDBACK ]: true,
 	[ NOTICES_KEY_SHOW_FLOATING_USER_FEEDBACK_PANEL ]: true,
 };
@@ -37,6 +38,7 @@ const CONFLICT_NOTICE_ID_GROUPS: Record< string, Array< NoticeIdType > > = {
 		'gdpr_cookie_consent',
 		'client_paid_plan_purchase_success',
 		'client_free_plan_purchase_success',
+		'jetpack_version_upgrade',
 		'do_you_love_jetpack_stats',
 		'commercial_site_upgrade',
 		// TODO: Check if the current usage is over the tier limit inside the isVisibleFunc.
