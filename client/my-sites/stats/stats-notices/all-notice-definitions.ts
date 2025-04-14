@@ -3,6 +3,7 @@ import CommercialSiteUpgradeNotice from './commercial-site-upgrade-notice';
 import DoYouLoveJetpackStatsNotice from './do-you-love-jetpack-stats-notice';
 import FreePlanPurchaseSuccessJetpackStatsNotice from './free-plan-purchase-success-notice';
 import GDPRCookieConsentNotice from './gdpr-cookie-consent-notice';
+import JetpackVersionUpgradeNotice from './jetpack-version-upgrade-notice';
 import PaidPlanPurchaseSuccessJetpackStatsNotice from './paid-plan-purchase-success-notice';
 import TierUpgradeNotice from './tier-upgrade-notice';
 import { StatsNoticeProps } from './types';
@@ -28,6 +29,13 @@ const ALL_STATS_NOTICES: StatsNoticeType[] = [
 		noticeId: 'client_free_plan_purchase_success',
 		isVisibleFunc: ( { statsPurchaseSuccess }: StatsNoticeProps ) =>
 			statsPurchaseSuccess === 'free',
+		disabled: false,
+	},
+	{
+		// Force show the Jetpack version upgrade notice for testing
+		component: JetpackVersionUpgradeNotice as React.ComponentType< StatsNoticeProps >,
+		noticeId: 'jetpack_version_upgrade',
+		isVisibleFunc: () => true, // Always show for testing
 		disabled: false,
 	},
 	{
