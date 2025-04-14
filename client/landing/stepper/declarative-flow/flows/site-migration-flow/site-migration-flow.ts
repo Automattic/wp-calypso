@@ -378,14 +378,16 @@ const siteMigration: FlowV2 = {
 					}
 
 					if ( action === 'already-wpcom' ) {
-						return navigate( paths.alreadyWpcomPath( { siteId, from, siteSlug } ) );
+						return navigate(
+							paths.alreadyWpcomPath( { siteId, from: from || fromQueryParam, siteSlug } )
+						);
 					}
 
 					if ( action === 'site-is-not-using-wordpress' ) {
 						return navigate(
 							paths.otherPlatformDetectedImportPath( {
 								siteId,
-								from,
+								from: from || fromQueryParam,
 								siteSlug,
 								platform,
 							} )
@@ -396,7 +398,7 @@ const siteMigration: FlowV2 = {
 						return navigate(
 							paths.applicationPasswordAuthorizationPath( {
 								siteId,
-								from,
+								from: from || fromQueryParam,
 								siteSlug,
 								authorizationUrl,
 							} )
@@ -404,7 +406,13 @@ const siteMigration: FlowV2 = {
 					}
 
 					if ( action === 'credentials-required' ) {
-						return navigate( paths.fallbackCredentialsPath( { siteId, from, siteSlug } ) );
+						return navigate(
+							paths.fallbackCredentialsPath( {
+								siteId,
+								from: from || fromQueryParam,
+								siteSlug,
+							} )
+						);
 					}
 
 					return exitFlow( paths.calypsoOverviewPath( { ref: 'site-migration' }, { siteSlug } ) );
@@ -515,7 +523,7 @@ const siteMigration: FlowV2 = {
 
 				case STEPS.SITE_MIGRATION_IDENTIFY.slug: {
 					if ( entryPoint === 'wp-admin-importers-list' ) {
-						return exitFlow( `${ siteAdminUrl }import.php` );
+						return window.location.assign( `${ siteAdminUrl }import.php` );
 					}
 
 					const queryParams = Object.fromEntries( urlQueryParams );
