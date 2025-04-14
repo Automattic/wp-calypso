@@ -9,8 +9,7 @@ import {
 	Card,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { envelope, wordpress } from '@wordpress/icons';
-import OverviewCard from '../overview-card';
+import { wordpress } from '@wordpress/icons';
 import PageLayout from '../page-layout';
 import CommentsCard from './comments-card';
 import LikesCard from './likes-card';
@@ -18,6 +17,7 @@ import OverviewSection from './overview-section';
 import PerformanceCards from './performance-cards';
 import Sidebar from './sidebar';
 import StorageCard from './storage-card';
+import SubscribersCard from './subscribers-card';
 import UptimeCard from './uptime-card';
 import ViewsCard from './views-card';
 import VisitorsCard from './visitors-card';
@@ -93,7 +93,7 @@ function SiteOverview() {
 						<ViewsCard engagementStats={ engagementStats } />
 						<LikesCard engagementStats={ engagementStats } />
 						<CommentsCard engagementStats={ engagementStats } />
-						<OverviewCard title={ __( 'Subscribers' ) } icon={ envelope } isLink />
+						<SubscribersCard subscribers={ site.subscribers } />
 					</OverviewSection>
 					<OverviewSection title={ __( 'Site health' ) } actions={ [] }>
 						<PerformanceCards site={ site } />
