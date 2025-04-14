@@ -13,6 +13,7 @@ import {
 	fetchCurrentPlan,
 	fetchSitePrimaryDomain,
 	fetchSiteEngagementStats,
+	fetchUser,
 	fetchTwoStep,
 } from '../data';
 import Root from '../root';
@@ -153,7 +154,11 @@ const createRouteTree = ( config: AppConfig ) => {
 			loader: () =>
 				maybeAwaitFetch( {
 					queryKey: [ 'profile' ],
-					queryFn: fetchProfile,
+					queryFn: async () => {
+						const profile = await fetchProfile();
+						const user = await fetchUser();
+						return { profile, user };
+					},
 				} ),
 			notFoundComponent: NotFound,
 			beforeLoad: async () => {
