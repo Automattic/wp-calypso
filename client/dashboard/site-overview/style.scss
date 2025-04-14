@@ -1,7 +1,10 @@
+@import '@wordpress/base-styles/variables';
+
 .dashboard-site-overview__preview-image {
 	/* stylelint-disable-next-line scales/radii */
-	border-radius: 7px;
+	border-radius: 7px 7px 0 0;
 	overflow: hidden;
+	border-bottom: $border-width solid $gray-200;
 }
 
 .site-card-contents {
