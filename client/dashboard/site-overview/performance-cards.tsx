@@ -4,8 +4,7 @@ import { desktop, mobile } from '@wordpress/icons';
 import CoreBadge from 'calypso/components/core/badge';
 import wp from 'calypso/lib/wp';
 import OverviewCard, { OverviewCardProgressBar } from '../overview-card';
-import type { Site } from '../data/types';
-import type { UrlPerformanceInsightsQueryResponse } from 'calypso/data/site-profiler/types';
+import type { Site, UrlPerformanceInsights, PerformanceReport } from '../data/types';
 
 type BadgeIntent = 'default' | 'info' | 'success' | 'warning' | 'error';
 
@@ -44,7 +43,7 @@ export default function PerformanceCards( { site }: { site: Site } ) {
 	} );
 	const token = basicMetricsData?.token;
 	// Then use the token to fetch performance insights.
-	const { data } = useQuery< UrlPerformanceInsightsQueryResponse >( {
+	const { data } = useQuery< UrlPerformanceInsights >( {
 		queryKey: [ 'url', 'performance', url, token ],
 		queryFn: () =>
 			wp.req.get(
@@ -63,13 +62,14 @@ export default function PerformanceCards( { site }: { site: Site } ) {
 			return 5000;
 		},
 	} );
-	// TODO: check `usePerformanceReport` hook and possible `token` changes
-	// that might trigger the requests again..
 	if ( data?.pagespeed?.status !== 'completed' ) {
 		return null;
 	}
-	const desktopScore = Math.round( data.pagespeed.mobile.overall_score * 100 );
-	const mobileScore = Math.round( data.pagespeed.desktop.overall_score * 100 );
+	// At this point the reports are objects.
+	const mobileReport = data.pagespeed.mobile as PerformanceReport;
+	const desktopReport = data.pagespeed.desktop as PerformanceReport;
+	const desktopScore = Math.round( mobileReport.overall_score * 100 );
+	const mobileScore = Math.round( desktopReport.overall_score * 100 );
 	return (
 		<>
 			<OverviewCard

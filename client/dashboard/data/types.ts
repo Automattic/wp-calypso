@@ -110,3 +110,17 @@ export interface EngagementStats {
 	currentData: EngagementStatsDataPoint;
 	previousData: EngagementStatsDataPoint;
 }
+
+export type PerformanceReport = {
+	overall_score: number;
+};
+export interface UrlPerformanceInsights {
+	pagespeed: {
+		status: string;
+		mobile: PerformanceReport | string;
+		desktop: PerformanceReport | string;
+	};
+	wpscan: {
+		status: string;
+	};
+}
