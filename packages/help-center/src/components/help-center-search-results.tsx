@@ -247,6 +247,7 @@ function HelpSearchResults( {
 		} else if ( ! hasAPIResults ) {
 			errorSpeak();
 		} else if ( hasAPIResults ) {
+			setVisibleResults( 5 );
 			resultsSpeak();
 		}
 	}, [ isSearching, hasAPIResults, searchQuery ] );
