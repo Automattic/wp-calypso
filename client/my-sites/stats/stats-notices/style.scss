@@ -60,3 +60,11 @@
 		}
 	}
 }
+
+.jetpack-version-upgrade-notice {
+	margin-bottom: 16px;
+	
+	&.is-dismissible {
+		padding-right: 48px;
+	}
+}
