@@ -106,16 +106,19 @@ export function redirectToSiteSettingsIfAdvancedHostingFeaturesNotSupported(
 	const site = getSelectedSite( state );
 	const dispatch = context.store.dispatch;
 
-	site?.ID &&
-		dispatch( fetchSiteFeatures( site?.ID ) ).then( () => {
-			const isSupported = areAdvancedHostingFeaturesSupported( context.store.getState() );
+	if ( ! site?.ID ) {
+		return next();
+	}
 
-			if ( isSupported === false ) {
-				return page.redirect( `/sites/settings/site/${ site?.slug }` );
-			}
+	dispatch( fetchSiteFeatures( site?.ID ) ).then( () => {
+		const isSupported = areAdvancedHostingFeaturesSupported( context.store.getState() );
 
-			next();
-		} );
+		if ( isSupported === false ) {
+			return page.redirect( `/sites/settings/site/${ site?.slug }` );
+		}
+
+		next();
+	} );
 }
 
 export function siteSettings( context: PageJSContext, next: () => void ) {
