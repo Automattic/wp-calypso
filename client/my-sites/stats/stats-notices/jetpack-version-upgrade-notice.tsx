@@ -5,27 +5,18 @@ import versionCompare from 'calypso/lib/version-compare';
 import { getSiteOption } from 'calypso/state/sites/selectors';
 import { StatsNoticeProps } from './types';
 
-const JetpackVersionUpgradeNotice: React.FC< StatsNoticeProps > = ( {
-	siteId,
-	isOdysseyStats,
-} ) => {
+const JetpackVersionUpgradeNotice: React.FC< StatsNoticeProps > = ( { siteId } ) => {
 	const translate = useTranslate();
 	const currentVersion = useSelector( ( state ) =>
 		getSiteOption( state, siteId, 'jetpack_version' )
 	);
 	const siteAdminUrl = useSelector( ( state ) => getSiteOption( state, siteId, 'admin_url' ) );
 
-	// Only show for Odyssey stats
-	if ( ! isOdysseyStats ) {
-		return null;
-	}
-
 	// Get latest version from WP.org API or Calypso state
-	const latestVersion = '12.9'; // This should be fetched from an API
+	const latestVersion = '15'; // This should be fetched from an API
 
-	const needsUpgrade = currentVersion && versionCompare( currentVersion, latestVersion, '<' );
-
-	if ( ! needsUpgrade ) {
+	// If we don't have version info yet or we're up to date, don't show anything
+	if ( ! currentVersion || ! versionCompare( currentVersion, latestVersion, '<' ) ) {
 		return null;
 	}
 

@@ -32,10 +32,14 @@ const ALL_STATS_NOTICES: StatsNoticeType[] = [
 		disabled: false,
 	},
 	{
-		// Force show the Jetpack version upgrade notice for testing
 		component: JetpackVersionUpgradeNotice as React.ComponentType< StatsNoticeProps >,
 		noticeId: 'jetpack_version_upgrade',
-		isVisibleFunc: () => true, // Always show for testing
+		isVisibleFunc: ( { isOdysseyStats }: StatsNoticeProps ) => {
+			if ( ! isOdysseyStats ) {
+				return false;
+			}
+			return true;
+		},
 		disabled: false,
 	},
 	{
