@@ -25,9 +25,6 @@
 		}
 	}
 
-	&.domain-product-single-price {
-		justify-content: start;
-	}
 	.is-section-domains & {
 		@include breakpoint-deprecated( ">800px" ) {
 			padding-left: 1em;
