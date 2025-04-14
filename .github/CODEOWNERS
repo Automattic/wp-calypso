@@ -105,3 +105,6 @@
 # Exclude Stepper steps
 /client/landing/stepper/declarative-flow/internals/steps-repository
 
+# DataViews
+/packages/dataviews @oandregal
+
