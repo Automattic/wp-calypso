@@ -342,7 +342,9 @@ function HelpSearchResults( {
 	const sections = [
 		{
 			type: SUPPORT_TYPE_API_HELP,
-			title: __( 'Recommended Resources', __i18n_text_domain__ ),
+			title: searchQuery
+				? __( 'Search Results', __i18n_text_domain__ )
+				: __( 'Recommended Resources', __i18n_text_domain__ ),
 			results: searchResults,
 			condition: ! isSearching && searchResults.length > 0,
 		},
