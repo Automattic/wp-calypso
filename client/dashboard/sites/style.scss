@@ -1,0 +1,16 @@
+.site-letter {
+    align-items: center;
+    background-color: #f5f7f7;
+    border: 1px solid #eee;
+    border-radius: 4px;
+    color: var(--color-accent);
+    cursor: default;
+    display: flex;
+    flex-shrink: 0;
+    font-size: 24px;
+    height: 48px;
+    justify-content: center;
+    overflow: hidden;
+    width: 48px;
+    box-sizing: border-box;
+}

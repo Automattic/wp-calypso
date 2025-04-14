@@ -10,6 +10,8 @@ import PageLayout from '../page-layout';
 import type { Site } from '../data/types';
 import type { View, Field } from '@wordpress/dataviews';
 
+import './style.scss';
+
 const actions = [
 	{
 		id: 'admin',
@@ -39,7 +41,13 @@ const fields = [
 		id: 'media',
 		label: __( 'Media' ),
 		render: ( { item } ) =>
-			item?.media ? <img src={ item.media } alt={ item.name } width="48" height="48" /> : null,
+			item?.media ? (
+				<img src={ item.media } alt={ item.name } width="48" height="48" loading="lazy" />
+			) : (
+				<div className="site-letter">
+					<span>{ item.name.charAt( 0 ) }</span>
+				</div>
+			),
 	},
 	{
 		id: 'subscribers',
