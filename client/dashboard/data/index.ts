@@ -200,16 +200,13 @@ export const fetchSiteEngagementStats = async ( id: string ) => {
 	// The returend array is sorted with ascending date order, so we need to use the last 7 entries
 	// for our current data and the first 7 entries for the previous data.
 	// Noting that we can't use `unit:'week'` because the API has a specific behavior for start/end of weeks.
-	const calculateStats = ( data: EngagementStatsDataPoint[] ) =>
+	const calculateStats = ( data: Array< [ string, number, number, number, number ] > ) =>
 		data.reduce(
-			(
-				accumulator: EngagementStatsDataPoint,
-				[ , visitors, views, likes, comments ]: ( string | number )[]
-			) => {
-				accumulator.visitors += visitors;
-				accumulator.views += views;
-				accumulator.likes += likes;
-				accumulator.comments += comments;
+			( accumulator: EngagementStatsDataPoint, [ , visitors, views, likes, comments ] ) => {
+				accumulator.visitors += Number( visitors );
+				accumulator.views += Number( views );
+				accumulator.likes += Number( likes );
+				accumulator.comments += Number( comments );
 				return accumulator;
 			},
 			{ visitors: 0, views: 0, likes: 0, comments: 0 }
