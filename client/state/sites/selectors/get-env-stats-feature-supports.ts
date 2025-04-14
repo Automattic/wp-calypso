@@ -43,9 +43,9 @@ function getEnvStatsFeatureSupportChecks( state: object, siteId: number | null )
 			'0.16.0-alpha',
 			isOdysseyStats
 		),
-		// Deprecating and is replaced with `isOldJetpack`.
+		// Deprecated: Use `isOldJetpack` instead.
 		supportsUTMStats: ! isOdysseyStats || !! statsAdminVersion,
-		// Deprecating and is replaced with `isOldJetpack`.
+		// Deprecated: Use `isOldJetpack` instead.
 		supportsDevicesStats: ! isOdysseyStats || !! statsAdminVersion,
 		supportsOnDemandCommercialClassification: version_greater_than_or_equal(
 			statsAdminVersion,
@@ -57,7 +57,7 @@ function getEnvStatsFeatureSupportChecks( state: object, siteId: number | null )
 			'0.22.0',
 			isOdysseyStats
 		),
-		// Deprecating and is replaced with `isOldJetpack`.
+		// Deprecated: Use `isOldJetpack` instead.
 		supportsLocationsStats: version_greater_than_or_equal(
 			statsAdminVersion,
 			'0.24.0',
