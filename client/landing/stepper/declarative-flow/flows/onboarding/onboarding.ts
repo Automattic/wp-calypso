@@ -3,7 +3,14 @@ import { ONBOARDING_FLOW, clearStepPersistedState } from '@automattic/onboarding
 import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs, getQueryArg, getQueryArgs, removeQueryArgs } from '@wordpress/url';
 import { useState, useEffect } from 'react';
-import { useIsPlaygroundEligible } from 'calypso/landing/stepper/hooks/use-is-playground-eligible';
+import {
+	useIsPlaygroundEligible,
+	isPlaygroundEligible,
+} from 'calypso/landing/stepper/hooks/use-is-playground-eligible';
+import {
+	isMvpOnboardingExperiment,
+	useMvpOnboardingExperiment,
+} from 'calypso/landing/stepper/hooks/use-mvp-onboarding-experiment';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { pathToUrl } from 'calypso/lib/url';
 import {
@@ -24,7 +31,7 @@ import { ONBOARD_STORE } from '../../../stores';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
 import { recordStepNavigation } from '../../internals/analytics/record-step-navigation';
 import { STEPS } from '../../internals/steps';
-import { Flow, ProvidedDependencies } from '../../internals/types';
+import type { FlowV2, ProvidedDependencies } from '../../internals/types';
 
 const clearUseMyDomainsQueryParams = ( currentStepSlug: string | undefined ) => {
 	const isDomainsStep = currentStepSlug === 'domains';
@@ -42,12 +49,19 @@ const withLocale = ( url: string, locale: string ) => {
 	return locale && locale !== 'en' ? `${ url }/${ locale }` : url;
 };
 
-const onboarding: Flow = {
+const onboarding: FlowV2 = {
 	name: ONBOARDING_FLOW,
 	isSignupFlow: true,
 	__experimentalUseBuiltinAuth: true,
-	useSteps() {
-		const isPlaygroundEligible = useIsPlaygroundEligible();
+	async initialize() {
+		if ( await isMvpOnboardingExperiment() ) {
+			return stepsWithRequiredLogin( [
+				STEPS.UNIFIED_PLANS,
+				STEPS.SITE_CREATION_STEP,
+				STEPS.PROCESSING,
+				STEPS.POST_CHECKOUT_ONBOARDING,
+			] );
+		}
 
 		const steps = stepsWithRequiredLogin( [
 			STEPS.UNIFIED_DOMAINS,
@@ -58,7 +72,7 @@ const onboarding: Flow = {
 			STEPS.POST_CHECKOUT_ONBOARDING,
 		] );
 
-		if ( isPlaygroundEligible ) {
+		if ( isPlaygroundEligible() ) {
 			steps.push( STEPS.PLAYGROUND );
 		}
 
@@ -68,6 +82,7 @@ const onboarding: Flow = {
 	useStepNavigation( currentStepSlug, navigate ) {
 		const flowName = this.name;
 		const isPlaygroundEligible = useIsPlaygroundEligible();
+		const [ , isMvpOnboarding ] = useMvpOnboardingExperiment();
 		const {
 			setDomain,
 			setDomainCartItem,
@@ -114,6 +129,15 @@ const onboarding: Flow = {
 						playground: playgroundId,
 					} ),
 					null,
+				];
+			}
+
+			if ( isMvpOnboarding ) {
+				return [
+					`/overview/${ providedDependencies.siteSlug }`,
+					addQueryArgs( withLocale( `/setup/${ flowName }/plans`, locale ), {
+						siteSlug: providedDependencies.siteSlug,
+					} ),
 				];
 			}
 
