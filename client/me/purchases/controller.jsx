@@ -22,6 +22,7 @@ import {
 import PurchasesNavigation from 'calypso/me/purchases/purchases-navigation';
 import { useTaxName } from 'calypso/my-sites/checkout/src/hooks/use-country-list';
 import { logStashLoadErrorEvent } from 'calypso/my-sites/checkout/src/lib/analytics';
+import CrmDownloads from 'calypso/my-sites/purchases/crm-downloads';
 import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
 import CancelPurchase from './cancel-purchase';
 import ConfirmCancelDomain from './confirm-cancel-domain';
@@ -215,6 +216,16 @@ export function managePurchase( context, next ) {
 	} );
 
 	context.primary = <ManagePurchasesWrapper />;
+	next();
+}
+
+export function managePurchaseCrmDownloads( context, next ) {
+	context.primary = (
+		<CrmDownloads
+			siteSlug={ context.params.site }
+			purchaseId={ parseInt( context.params.purchaseId, 10 ) }
+		/>
+	);
 	next();
 }
 

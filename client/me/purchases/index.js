@@ -95,6 +95,14 @@ export default ( router ) => {
 	);
 
 	router(
+		paths.purchasesRoot + '/crm-downloads/:site/:purchaseId',
+		sidebar,
+		controller.managePurchaseCrmDownloads,
+		makeLayout,
+		clientRender
+	);
+
+	router(
 		paths.managePurchaseByOwnership( ':ownershipId' ),
 		sidebar,
 		controller.managePurchaseByOwnership,

@@ -697,7 +697,7 @@ class ManagePurchase extends Component<
 	}
 
 	renderCrmDownloadsNavItem() {
-		const { purchase, translate, siteSlug } = this.props;
+		const { purchase, translate } = this.props;
 
 		if ( ! purchase ) {
 			return null;
@@ -716,7 +716,7 @@ class ManagePurchase extends Component<
 		};
 
 		// We'll pass the purchase ID in the URL, and the CRM Downloads component will fetch the actual license key
-		const path = `/purchases/crm-downloads/${ siteSlug }/${ purchase.id }`;
+		const path = `/me/purchases/crm-downloads/${ purchase.siteId }/${ purchase.id }`;
 
 		return (
 			<CompactCard href={ path } onClick={ handleCrmDownloadsClick }>
