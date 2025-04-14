@@ -17,8 +17,7 @@ const useClientMenuItems = ( path: string ) => {
 
 	// If the client billing type is BillingDragon, this mean we are reusing WPCOM billing and
 	// we need to redirect to the WPCOM billing page for this particular clients.
-
-	const isBillingTypeBD = clientBillingType === 'BD';
+	const isBillingTypeBD = clientBillingType === 'billingdragon';
 
 	const menuItems = useMemo( () => {
 		return [

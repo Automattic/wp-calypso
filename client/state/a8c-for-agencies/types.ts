@@ -101,7 +101,7 @@ export interface Agency {
 	created_at: string;
 }
 
-export type ClientBillingType = 'legacy' | 'BD';
+export type ClientBillingType = 'legacy' | 'billingdragon';
 
 export interface AgencyStore {
 	hasFetched: boolean;
