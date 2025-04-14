@@ -1,7 +1,12 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+$breakpoint-mobile: 782px;
 
 .quick-links.foldable-card.card {
+	@media only screen and (max-width: $breakpoint-mobile) {
+		padding: 1rem;
+	}
+
 	@include breakpoint-deprecated( ">660px" ) {
 		border-radius: 3px;
 	}
