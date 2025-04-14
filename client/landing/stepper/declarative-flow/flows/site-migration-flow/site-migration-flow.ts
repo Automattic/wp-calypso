@@ -284,7 +284,7 @@ const siteMigration: FlowV2 = {
 							paths.siteSetupImportWordpressPath( {
 								siteId,
 								siteSlug,
-								from: fromQueryParam || '',
+								from: fromQueryParam ?? '',
 								option: 'content',
 								backToFlow: `/${ flowPath }/${ STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug }`,
 							} )
