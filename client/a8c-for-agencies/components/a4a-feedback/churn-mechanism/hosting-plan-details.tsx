@@ -105,6 +105,7 @@ const HostingPlanDetails = ( {
 				iconSize={ 16 }
 				iconPosition="right"
 				variant="link"
+				target="_blank"
 				href={
 					isPressableLicense
 						? A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK

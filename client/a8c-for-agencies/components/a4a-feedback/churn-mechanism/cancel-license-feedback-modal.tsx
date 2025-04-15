@@ -174,6 +174,7 @@ const CancelLicenseFeedbackModal = ( {
 			successNotice( translate( 'License revoked successfully' ), {
 				displayOnNextPage: true,
 				id: 'revoke-license-success',
+				duration: 10000,
 			} )
 		);
 		if ( ! isFeedbackValid( 'cancel' ) ) {
@@ -184,9 +185,10 @@ const CancelLicenseFeedbackModal = ( {
 	// Function to handle success notice for speaking with partner manager
 	const handlePartnerManagerSuccess = useCallback( () => {
 		dispatch(
-			successNotice( translate( 'Thanks! We will connect you with a partner manager.' ), {
+			successNotice( translate( 'Thanks! We will connect you with your partner manager.' ), {
 				displayOnNextPage: true,
 				id: 'submit-product-feedback-success',
+				duration: 10000,
 			} )
 		);
 		onClose();
