@@ -5,7 +5,6 @@ import wpcomRequest from 'wpcom-proxy-request';
 import { useFlowState } from 'calypso/landing/stepper/declarative-flow/internals/state-manager/store';
 import { useIsBigSkyEligible } from 'calypso/landing/stepper/hooks/use-is-site-big-sky-eligible';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
-import { getImporterEngines } from 'calypso/lib/importer/importer-config';
 import { navigate as calypsoLibNavigate } from 'calypso/lib/navigate';
 import { addQueryArgs } from 'calypso/lib/route';
 import { clearSignupDestinationCookie } from 'calypso/signup/storageUtils';
@@ -34,7 +33,7 @@ import {
 	type ProvidedDependencies,
 } from '../../internals/types';
 import type { OnboardSelect, SiteSelect, UserSelect } from '@automattic/data-stores';
-import type { ImporterMainPlatform, ImporterPlatform } from 'calypso/lib/importer/types';
+import type { ImporterMainPlatform } from 'calypso/lib/importer/types';
 
 const SiteIntent = Onboard.SiteIntent;
 
@@ -91,48 +90,6 @@ const siteSetupFlow: Flow = {
 		}
 
 		return steps;
-	},
-	getCustomInitialStep( { queryParams, steps } ) {
-		/*
-		 * To enable initial redirection, set the `intent` query param to `import`.
-		 * If `importPlatform` is also set and matches a known importer with a step in the flow, redirect to that step.
-		 * If `importPlatform` is not set, or not a supported importer, redirect to the import list step.
-		 */
-		const intent = queryParams.get( 'intent' );
-		const importPlatform = queryParams.get( 'importPlatform' );
-
-		if ( intent !== 'import' ) {
-			return undefined;
-		}
-
-		const hasImportListStep = steps.includes( STEPS.IMPORT_LIST );
-
-		if ( ! importPlatform ) {
-			if ( hasImportListStep ) {
-				return STEPS.IMPORT_LIST.slug;
-			}
-			return undefined;
-		}
-
-		const expectedStepSlug =
-			'importer' + importPlatform.charAt( 0 ).toUpperCase() + importPlatform.substring( 1 );
-		const importerStep = steps.find( ( step ) => step.slug === expectedStepSlug );
-
-		// Special case for WordPress importer - it needs additional params
-		if (
-			importPlatform !== 'wordpress' &&
-			importerStep &&
-			getImporterEngines().includes( importPlatform as ImporterPlatform )
-		) {
-			return expectedStepSlug;
-		}
-
-		// If we don't support the importer, we should fall back on the import list step if we can.
-		if ( hasImportListStep ) {
-			return STEPS.IMPORT_LIST.slug;
-		}
-
-		return undefined;
 	},
 	useStepNavigation( currentStep, navigate ) {
 		const isGoalsAtFrontExperiment = useGoalsAtFrontExperimentQueryParam();
