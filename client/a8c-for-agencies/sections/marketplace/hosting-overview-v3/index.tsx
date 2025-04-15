@@ -37,7 +37,7 @@ export type SectionProps = {
 	section: 'wpcom' | 'pressable' | 'vip';
 };
 
-function HostingOverviewV3( { section }: SectionProps ) {
+function HostingOverview( { section }: SectionProps ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -101,7 +101,7 @@ function HostingOverviewV3( { section }: SectionProps ) {
 
 	return (
 		<Layout
-			className="hosting-overview-v3"
+			className="hosting-overview"
 			title={ isNarrowView ? '' : translate( 'Hosting Marketplace' ) }
 			onScroll={ onScroll }
 			wide
@@ -163,7 +163,7 @@ function HostingOverviewV3( { section }: SectionProps ) {
 				/>
 			</LayoutTop>
 
-			<LayoutBody className="hosting-overview-v3__body">
+			<LayoutBody className="hosting-overview__body">
 				<QueryProductsList currency="USD" />
 
 				{ section && <HostingContent section={ section } onAddToCart={ onAddToCart } /> }
@@ -172,4 +172,4 @@ function HostingOverviewV3( { section }: SectionProps ) {
 	);
 }
 
-export default withMarketplaceType( HostingOverviewV3 );
+export default withMarketplaceType( HostingOverview );

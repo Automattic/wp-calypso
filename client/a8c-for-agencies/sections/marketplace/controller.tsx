@@ -11,7 +11,7 @@ import MarketplaceSidebar from '../../components/sidebar-menu/marketplace';
 import AssignLicense from './assign-license';
 import Checkout from './checkout';
 import { MARKETPLACE_TYPE_REFERRAL } from './hoc/with-marketplace-type';
-import HostingOverviewV3 from './hosting-overview-v3';
+import HostingOverview from './hosting-overview-v3';
 import { getValidHostingSection } from './lib/hosting';
 import { getValidBrand } from './lib/product-brand';
 import DownloadProducts from './primary/download-products';
@@ -61,7 +61,7 @@ export const marketplaceHostingContext: Callback = ( context, next ) => {
 	context.primary = (
 		<>
 			<PageViewTracker title="Marketplace > Hosting" path={ context.path } />
-			<HostingOverviewV3 section={ section } />
+			<HostingOverview section={ section } />
 		</>
 	);
 	next();

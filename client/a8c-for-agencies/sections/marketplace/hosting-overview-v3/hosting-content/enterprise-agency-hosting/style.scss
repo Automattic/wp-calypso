@@ -2,7 +2,7 @@
 @import "@wordpress/base-styles/mixins";
 @import "@wordpress/base-styles/variables";
 
-.enterprise-agency-hosting-v3 {
+.enterprise-agency-hosting {
 	.hosting-plan-section__main {
 		background-color: #f5f2f1;
 	}
@@ -38,7 +38,7 @@
 	@include heading-x-large;
 }
 
-.theme-a8c-for-agencies .enterprise-agency-hosting-v3__cta-button.enterprise-agency-hosting-v3__cta-button.enterprise-agency-hosting-v3__cta-button.is-primary {
+.theme-a8c-for-agencies .enterprise-agency-hosting__cta-button.enterprise-agency-hosting__cta-button.enterprise-agency-hosting__cta-button.is-primary {
 	margin-block-start: auto;
 	justify-content: center;
 
@@ -52,7 +52,7 @@
 	}
 }
 
-.enterprise-agency-hosting-v3__logos {
+.enterprise-agency-hosting__logos {
 	display: flex;
 	flex-direction: row;
 	flex-wrap: wrap;
@@ -60,7 +60,7 @@
 	justify-content: space-between;
 	margin-block: 32px;
 
-	.enterprise-agency-hosting-v3__logos-item {
+	.enterprise-agency-hosting__logos-item {
 		display: flex;
 		align-items: center;
 		justify-content: center;
