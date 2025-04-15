@@ -1,7 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
-import { useLoaderData, Outlet } from '@tanstack/react-router';
+import { Outlet } from '@tanstack/react-router';
 import { __experimentalHStack as HStack } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
+import { siteRoute } from '../app/router';
 import HeaderBar from '../header-bar';
 import MenuDivider from '../menu-divider';
 import SiteIcon from '../site-icon';
@@ -10,7 +11,7 @@ import type { Site as SiteType } from '../data/types';
 
 function Site() {
 	const isDesktop = useViewportMatch( 'medium' );
-	const { site } = useQuery( useLoaderData( { from: '/sites/$siteId' } ) ).data as {
+	const { site } = useQuery( siteRoute.useLoaderData() ).data as {
 		site: SiteType;
 	};
 

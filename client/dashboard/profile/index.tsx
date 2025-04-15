@@ -1,5 +1,4 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { useLoaderData } from '@tanstack/react-router';
 import {
 	Button,
 	Card,
@@ -18,11 +17,13 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useState } from 'react';
 import { queryClient } from '../app/query-client';
+import { meRoute } from '../app/router';
 import { updateProfile } from '../data';
 import EditGravatar from '../edit-gravatar';
 import PageLayout from '../page-layout';
 import type { Profile as ProfileType } from '../data/types';
 import type { Field, Form } from '@wordpress/dataviews';
+
 import './style.scss';
 
 const fields = [
@@ -100,7 +101,7 @@ const form = {
 } as Form;
 
 function Profile() {
-	const query = useLoaderData( { from: '/me' } );
+	const query = meRoute.useLoaderData();
 	const mutation = useMutation( {
 		mutationFn: updateProfile,
 		onSuccess: () => {

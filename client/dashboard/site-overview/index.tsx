@@ -1,5 +1,4 @@
 import { useQuery } from '@tanstack/react-query';
-import { useLoaderData } from '@tanstack/react-router';
 import {
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
@@ -10,6 +9,7 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { wordpress } from '@wordpress/icons';
+import { siteRoute } from '../app/router';
 import PageLayout from '../page-layout';
 import CommentsCard from './comments-card';
 import LikesCard from './likes-card';
@@ -29,6 +29,7 @@ import type {
 	Domain,
 	EngagementStats,
 } from '../data/types';
+
 import './style.scss';
 
 function SiteOverview() {
@@ -40,11 +41,7 @@ function SiteOverview() {
 		currentPlan,
 		primaryDomain,
 		engagementStats,
-	} = useQuery(
-		useLoaderData( {
-			from: '/sites/$siteId',
-		} )
-	).data as {
+	} = useQuery( siteRoute.useLoaderData() ).data as {
 		site: Site;
 		mediaStorage: MediaStorage;
 		siteMonitorUptime?: MonitorUptime;

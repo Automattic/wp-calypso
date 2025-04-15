@@ -306,4 +306,20 @@ export const getRouter = ( config: AppConfig ) => {
 	} );
 };
 
-export { sitesRoute };
+export {
+	rootRoute,
+	indexRoute,
+	overviewRoute,
+	sitesRoute,
+	siteRoute,
+	siteOverviewRoute,
+	siteDeploymentsRoute,
+	domainsRoute,
+	emailsRoute,
+	meRoute,
+	profileRoute,
+	billingRoute,
+	securityRoute,
+	privacyRoute,
+	notificationsRoute,
+};
