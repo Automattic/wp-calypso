@@ -87,7 +87,6 @@
 		"migration-flow/introductory-offer": true,
 		"migration-flow/cancel-difm": true,
 		"onboarding/create-course": false,
-		"onboarding/playground": true,
 		"onboarding/step-container-v2-import-flow": false,
 		"onboarding/step-container-v2-migration-flow": true,
 		"p2-enabled": false,
