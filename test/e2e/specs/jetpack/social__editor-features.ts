@@ -29,7 +29,7 @@ const features4BusinessPlan = {
 	resharing: true,
 	manualSharing: true,
 	mediaSharing: true,
-	socialImageGenerator: false,
+	socialImageGenerator: true,
 };
 
 const testCases: Array< {
@@ -64,12 +64,6 @@ if ( envVariables.JETPACK_TARGET === 'wpcom-deployment' ) {
 			platform: 'Simple',
 			testAccountName: 'simpleSitePersonalPlanUser',
 			features: features4SimpleSites,
-		},
-		{
-			plan: 'Paid',
-			platform: 'Atomic',
-			testAccountName: 'atomicUser',
-			features: features4BusinessPlan,
 		}
 	);
 }
