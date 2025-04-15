@@ -58,6 +58,7 @@ if ( envVariables.JETPACK_TARGET === 'wpcom-deployment' ) {
 			platform: 'Simple',
 			testAccountName: 'simpleSiteFreePlanUser',
 			features: features4SimpleSites,
+			isPrivate: true,
 		},
 		{
 			plan: 'Personal',
