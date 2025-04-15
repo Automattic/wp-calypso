@@ -8,8 +8,6 @@ import SiteIcon from '../site-icon';
 import SiteMenu from '../site-menu';
 import type { Site as SiteType } from '../data/types';
 
-import './style.scss';
-
 function Site() {
 	const isDesktop = useViewportMatch( 'medium' );
 	const { site } = useQuery( useLoaderData( { from: '/sites/$siteId' } ) ).data as {
@@ -20,10 +18,10 @@ function Site() {
 		<>
 			<HeaderBar>
 				<HStack justify={ isDesktop ? 'flex-start' : 'space-between' } spacing={ 4 }>
-					<HStack className="site-header-logo__container">
+					<HeaderBar.Title>
 						<SiteIcon site={ site } size={ 24 } />
 						<span>{ site.name }</span>
-					</HStack>
+					</HeaderBar.Title>
 					{ isDesktop && <MenuDivider /> }
 					<SiteMenu siteId={ site.id } />
 				</HStack>

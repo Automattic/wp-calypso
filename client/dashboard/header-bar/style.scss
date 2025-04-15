@@ -7,3 +7,7 @@
 	background-color: var( --dashboard-header__background-color );
 	color: var( --dashboard-header__color );
 }
+
+.dashboard-header-bar-title {
+  padding-inline: $grid-unit-15;
+}
