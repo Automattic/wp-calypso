@@ -4,6 +4,7 @@ export type AppConfig = {
 	basePath: string;
 	mainRoute: string;
 	Logo: React.FC | null;
+	LoadingLogo: React.FC | undefined;
 	supports: {
 		overview: boolean;
 		sites: boolean;
@@ -20,6 +21,7 @@ const AppContext = createContext< AppConfig >( {
 	basePath: '',
 	mainRoute: '',
 	Logo: null,
+	LoadingLogo: undefined,
 	supports: {
 		overview: false,
 		sites: false,

@@ -1,13 +1,14 @@
 import { useIsFetching } from '@tanstack/react-query';
 import { Outlet, useRouter } from '@tanstack/react-router';
 import WordPressLogo from 'calypso/components/wordpress-logo';
+import { useAppContext } from '../app/context';
 import CommandPalette from '../command-palette';
 import Header from '../header';
 import { LoadingLine } from '../loading-line';
-
 import './style.scss';
 
 function Root() {
+	const { LoadingLogo = WordPressLogo } = useAppContext();
 	const isFetching = useIsFetching();
 	const router = useRouter();
 	const isNavigating = router.state.status === 'pending';
@@ -19,7 +20,7 @@ function Root() {
 	return (
 		<div className="dashboard-root__layout">
 			{ ( isFetching > 0 || isNavigating ) && <LoadingLine /> }
-			{ isInitialLoad && <WordPressLogo className="wpcom-site__logo" /> }
+			{ isInitialLoad && <LoadingLogo className="wpcom-site__logo" /> }
 			<Header />
 			{ /* There's an issue with Tanstack Router where it renders content
 			     before triggering a re-render through useRouter. */ }
