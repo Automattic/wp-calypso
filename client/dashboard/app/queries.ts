@@ -10,7 +10,10 @@ import {
 	fetchDomains,
 	fetchEmails,
 	fetchProfile,
+	updateProfile,
 } from '../data';
+import { queryClient } from './query-client';
+import type { Profile } from '../data/types';
 
 export function sitesQuery() {
 	return {
@@ -67,9 +70,22 @@ export function emailsQuery() {
 	};
 }
 
+const profileQueryKey = [ 'profile' ];
+
 export function profileQuery() {
 	return {
-		queryKey: [ 'profile' ],
+		queryKey: profileQueryKey,
 		queryFn: fetchProfile,
+	};
+}
+
+export function profileMutation() {
+	return {
+		mutationFn: updateProfile,
+		onSuccess: ( newData: Partial< Profile > ) => {
+			queryClient.setQueryData( profileQueryKey, ( oldData: Profile | undefined ) =>
+				oldData ? { ...oldData, ...newData } : newData
+			);
+		},
 	};
 }

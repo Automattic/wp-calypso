@@ -16,9 +16,7 @@ import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useState } from 'react';
-import { profileQuery } from '../app/queries';
-import { queryClient } from '../app/query-client';
-import { updateProfile } from '../data';
+import { profileQuery, profileMutation } from '../app/queries';
 import EditGravatar from '../edit-gravatar';
 import PageLayout from '../page-layout';
 import type { Profile as ProfileType } from '../data/types';
@@ -100,19 +98,9 @@ const form = {
 	],
 } as Form;
 
-function Profile() {
-	const query = profileQuery();
-	const mutation = useMutation( {
-		mutationFn: updateProfile,
-		onSuccess: () => {
-			queryClient.invalidateQueries( query );
-		},
-	} );
-	const serverData = useQuery( query ).data;
+function Profile( { data: serverData }: { data: ProfileType } ) {
+	const mutation = useMutation( profileMutation() );
 	const [ data, setData ] = useState< ProfileType >( serverData );
-	if ( ! serverData ) {
-		return;
-	}
 	const isSaving = mutation.isPending;
 	const isDirty = data !== serverData;
 	const error = mutation.error;
@@ -219,4 +207,10 @@ function Profile() {
 	);
 }
 
-export default Profile;
+export default () => {
+	const { data } = useQuery( profileQuery() );
+	if ( ! data ) {
+		return;
+	}
+	return <Profile data={ data } />;
+};

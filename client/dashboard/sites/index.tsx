@@ -4,7 +4,7 @@ import { Button } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { Icon, check } from '@wordpress/icons';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { sitesQuery } from '../app/queries';
 import DataViewsCard from '../dataviews-card';
 import PageLayout from '../page-layout';
@@ -80,13 +80,7 @@ const fields = [
 
 export default function Sites() {
 	const navigate = useNavigate();
-	const querySitesData = useQuery( sitesQuery() ).data;
-	const [ sites, setSites ] = useState< Site[] >( [] );
-	useEffect( () => {
-		if ( querySitesData ) {
-			setSites( querySitesData );
-		}
-	}, [ querySitesData ] );
+	const sites = useQuery( sitesQuery() ).data;
 
 	// View config.
 	const [ view, setView ] = useState< View >( {
@@ -102,6 +96,10 @@ export default function Sites() {
 		mediaField: 'media',
 		descriptionField: 'url',
 	} );
+
+	if ( ! sites ) {
+		return;
+	}
 
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate( sites, view, fields );
 

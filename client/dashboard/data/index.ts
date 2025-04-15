@@ -21,7 +21,7 @@ export const fetchProfile = () =>
 
 export const updateProfile = ( data: Profile ) =>
 	wpcom.req.post( {
-		path: '/me/settings',
+		path: '/me/settings?http_envelope=1',
 		apiNamespace: 'rest/v1.1',
 		body: {
 			display_name: data.display_name,
