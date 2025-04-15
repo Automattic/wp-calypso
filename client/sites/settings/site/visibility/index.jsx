@@ -151,7 +151,9 @@ const LaunchSite = () => {
 		btnComponent = (
 			<Button
 				onClick={ () => {
-					dispatch( launchSiteOrRedirectToLaunchSignupFlow( siteId, 'general-settings' ) );
+					dispatch(
+						launchSiteOrRedirectToLaunchSignupFlow( siteId, 'general-settings', site.title, 'yes' )
+					);
 				} }
 			>
 				{ btnText }

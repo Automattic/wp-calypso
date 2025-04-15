@@ -33,7 +33,7 @@ export const launchSiteFailure = ( siteId ) => ( {
  * @param {string?} source
  */
 export const launchSiteOrRedirectToLaunchSignupFlow =
-	( siteId, source = null ) =>
+	( siteId, source = null, siteTitle = null, search = null ) =>
 	( dispatch, getState ) => {
 		if ( ! isUnlaunchedSite( getState(), siteId ) ) {
 			return;
@@ -53,7 +53,7 @@ export const launchSiteOrRedirectToLaunchSignupFlow =
 
 		if ( isSiteBigSkyTrial( getState(), siteId ) ) {
 			window.location.href = addQueryArgs(
-				{ siteId: siteId, source, redirect: 'site-launch' },
+				{ siteId: siteId, source, redirect: 'site-launch', new: siteTitle, search },
 				'/setup/ai-site-builder/domains'
 			);
 			return;
@@ -61,7 +61,7 @@ export const launchSiteOrRedirectToLaunchSignupFlow =
 
 		// TODO: consider using the `page` library instead of calling using `location.href` here
 		window.location.href = addQueryArgs(
-			{ siteSlug, source, hide_initial_query: 'yes' },
+			{ siteSlug, source, hide_initial_query: 'yes', new: siteTitle, search },
 			'/start/launch-site'
 		);
 	};
