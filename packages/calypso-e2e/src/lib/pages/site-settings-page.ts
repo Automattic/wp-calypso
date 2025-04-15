@@ -32,7 +32,7 @@ export class SiteSettingsPage {
 	 * Start the site launch process.
 	 */
 	async launchSite(): Promise< void > {
-		const launchSite = this.page.getByRole( 'link', { name: 'Launch site' } );
+		const launchSite = this.page.getByRole( 'button', { name: 'Launch site' } );
 		await launchSite.click();
 	}
 
