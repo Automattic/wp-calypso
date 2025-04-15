@@ -100,7 +100,7 @@ export default function BeforeSubmitCheckoutHeader() {
 		id: 'total-adjustments',
 		type: 'subtotal',
 		label: totalAdjustments < 0 ? translate( 'Discounts' ) : translate( 'Additional charges' ),
-		formattedAmount: formatCurrency( totalAdjustment, responseCart.currency, {
+		formattedAmount: formatCurrency( totalAdjustments, responseCart.currency, {
 			isSmallestUnit: true,
 			stripZeros: true,
 		} ),
@@ -126,7 +126,7 @@ export default function BeforeSubmitCheckoutHeader() {
 			<WPOrderReviewSection>
 				<NonTotalPrices>
 					<NonProductLineItem subtotal lineItem={ subTotalLineItemWithoutCoupon } />
-					{ totalAdjustment !== 0 && (
+					{ totalAdjustments !== 0 && (
 						<NonProductLineItem subtotal lineItem={ adjustmentLineItem } />
 					) }
 					{ taxLineItems.map( ( taxLineItem ) => (
