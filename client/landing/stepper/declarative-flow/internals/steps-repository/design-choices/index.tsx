@@ -46,16 +46,16 @@ const DesignChoicesStep: StepType< { submits: { destination: string } } > = ( {
 		[]
 	);
 
-	const { isEligible, isLoading } = useIsBigSkyEligible();
+	const { isEligible } = useIsBigSkyEligible();
 
 	useEffect( () => {
-		if ( ! isLoading && isEligible ) {
+		if ( isEligible ) {
 			recordTracksEvent( 'calypso_big_sky_view_choice', {
 				flow,
 				step: stepName,
 			} );
 		}
-	}, [ isEligible, isLoading, flow, stepName ] );
+	}, [ isEligible, flow, stepName ] );
 
 	const handleSubmit = ( destination: string ) => {
 		recordTracksEvent( 'calypso_signup_design_choices_submit', {
@@ -78,7 +78,7 @@ const DesignChoicesStep: StepType< { submits: { destination: string } } > = ( {
 				onSelect={ handleSubmit }
 			/>
 
-			{ ! isLoading && isEligible && (
+			{ isEligible && (
 				<DesignChoice
 					className="design-choices__try-big-sky"
 					title={ translate( 'Create your site with AI' ) }

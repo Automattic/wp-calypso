@@ -197,8 +197,8 @@ $colophon-height: 50px;
 }
 
 .jetpack-connect__site-address {
-	padding: 0 24px 24px;
-	margin: 0 -24px;
+	padding: 0 0 20px; // this is 20px because the icon element has a -4px margin for alignment
+	margin-bottom: 24px;
 	border-bottom: 1px solid var(--color-border-subtle);
 	display: flex;
 }
@@ -215,20 +215,6 @@ $colophon-height: 50px;
 	.gridicons-globe {
 		fill: var(--color-neutral-0);
 	}
-}
-.jetpack-connect__wordpress-logo {
-	margin: 32px auto;
-	text-align: center;
-
-	.wordpress-logo {
-		margin: 0;
-		fill: var(--color-neutral);
-	}
-}
-
-.jetpack-connect__note {
-	font-size: $font-body-extra-small;
-	text-align: center;
 }
 
 .jetpack-connect__authorize-form {
@@ -657,7 +643,7 @@ $colophon-height: 50px;
 
 .jetpack-connect__creds-form-footer {
 	.button {
-		margin-top: 22px;
+		margin-top: 0;
 	}
 }
 

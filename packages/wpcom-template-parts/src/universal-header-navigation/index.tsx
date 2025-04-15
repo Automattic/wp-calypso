@@ -97,6 +97,15 @@ const UniversalNavbarHeader = ( {
 														/>
 														<ClickableItem
 															titleValue=""
+															content={ __( 'AI Website Builder', __i18n_text_domain__ ) }
+															urlValue={ localizeUrl(
+																'//wordpress.com/ai-website-builder/?ref=topnav'
+															) }
+															type="dropdown"
+															target="_self"
+														/>
+														<ClickableItem
+															titleValue=""
 															content={ __( 'Website Builder', __i18n_text_domain__ ) }
 															urlValue={ localizeUrl( '//wordpress.com/website-builder/' ) }
 															type="dropdown"
@@ -446,6 +455,12 @@ const UniversalNavbarHeader = ( {
 												titleValue=""
 												content={ __( 'Domain Names', __i18n_text_domain__ ) }
 												urlValue={ localizeUrl( '//wordpress.com/domains/' ) }
+												type="menu"
+											/>
+											<ClickableItem
+												titleValue=""
+												content={ __( 'AI Website Builder', __i18n_text_domain__ ) }
+												urlValue={ localizeUrl( '//wordpress.com/ai-website-builder/?ref=topnav' ) }
 												type="menu"
 											/>
 											<ClickableItem

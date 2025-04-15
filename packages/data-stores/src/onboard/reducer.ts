@@ -622,20 +622,6 @@ const signupDomainOrigin: Reducer< string | undefined, OnboardAction > = (
 	return state;
 };
 
-const createWithBigSky: Reducer< boolean | undefined, OnboardAction > = (
-	state = undefined,
-	action
-) => {
-	if ( action.type === 'SET_CREATE_WITH_BIG_SKY' ) {
-		return action.createWithBigSky;
-	}
-	if ( action.type === 'RESET_ONBOARD_STORE' ) {
-		return undefined;
-	}
-
-	return state;
-};
-
 const reducer = combineReducers( {
 	domain,
 	domainCartItem,
@@ -685,7 +671,6 @@ const reducer = combineReducers( {
 	paidSubscribers,
 	partnerBundle,
 	signupDomainOrigin,
-	createWithBigSky,
 } );
 
 export type State = ReturnType< typeof reducer >;

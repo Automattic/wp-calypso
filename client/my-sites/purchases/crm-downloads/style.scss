@@ -1,0 +1,112 @@
+// Import the base component styles
+@import '~calypso/components/crm-downloads/style';
+
+// Error state styling
+.crm-downloads-error {
+	padding: 32px 24px;
+	background-color: var( --studio-white );
+	border-radius: 2px;
+	box-shadow: 0 0 0 1px rgba( var( --color-neutral-10-rgb ), 0.5 );
+	text-align: center;
+	max-width: 600px;
+	margin: 0 auto;
+
+	h2 {
+		font-size: 1.5rem;
+		margin: 16px 0;
+	}
+
+	p {
+		color: var( --studio-gray-60 );
+		margin-bottom: 24px;
+	}
+
+	.gridicon {
+		color: var( --studio-orange-40 );
+	}
+
+	button {
+		margin-top: 8px;
+	}
+
+	&__product-info {
+		background-color: var( --studio-gray-0 );
+		padding: 8px 16px;
+		border-radius: 4px;
+		font-family: monospace;
+		display: inline-block;
+	}
+}
+
+// Extensions table styling
+.extensions-table {
+	margin-top: 24px;
+	
+	table {
+		width: 100%;
+		border-collapse: collapse;
+		
+		th {
+			text-align: left;
+			padding: 12px;
+			border-bottom: 1px solid var( --studio-gray-5 );
+			font-weight: 600;
+		}
+		
+		td {
+			padding: 16px 12px;
+			border-bottom: 1px solid var( --studio-gray-5 );
+			vertical-align: middle;
+			
+			&:last-child {
+				width: 120px;
+				text-align: right;
+			}
+		}
+		
+		tr:last-child td {
+			border-bottom: none;
+		}
+	}
+	
+	.extensions-table__version {
+		color: var( --studio-gray-40 );
+		font-size: 0.75rem;
+		margin-top: 4px;
+	}
+	
+	.extensions-table__description {
+		margin-top: 8px;
+		color: var( --studio-gray-60 );
+		font-size: 0.875rem;
+	}
+	
+	.extensions-table__learn-more {
+		display: inline-block;
+		margin-top: 8px;
+		font-size: 0.875rem;
+		text-decoration: none;
+		
+		&:hover {
+			text-decoration: underline;
+		}
+	}
+}
+
+// Error state for extensions table
+.extensions-table__error {
+	padding: 24px;
+	text-align: center;
+	background-color: var( --studio-gray-0 );
+	border-radius: 2px;
+	
+	.gridicon {
+		color: var( --studio-orange-40 );
+		margin-bottom: 16px;
+	}
+	
+	p {
+		margin-bottom: 16px;
+		color: var( --studio-gray-80 );
+	}
+}

@@ -28,7 +28,7 @@ const LaunchBigSky: Step = function ( props ) {
 	const { siteSlug, siteId, site } = useSiteData();
 	const translate = useTranslate();
 	const urlQuery = useQuery();
-	const { isEligible, isLoading } = useIsBigSkyEligible( flow );
+	const { isEligible } = useIsBigSkyEligible( flow );
 	const { setDesignOnSite, setStaticHomepageOnSite, setGoalsOnSite, setIntentOnSite } =
 		useDispatch( SITE_STORE );
 	const goals = useSelect(
@@ -55,10 +55,10 @@ const LaunchBigSky: Step = function ( props ) {
 	};
 
 	useEffect( () => {
-		if ( ! isLoading && ! isEligible ) {
+		if ( ! isEligible ) {
 			window.location.assign( '/start' );
 		}
-	}, [ isLoading, isEligible ] );
+	}, [ isEligible ] );
 
 	const exitFlow = useCallback(
 		async ( selectedSiteId: string, selectedSiteSlug: string ) => {
@@ -136,7 +136,7 @@ const LaunchBigSky: Step = function ( props ) {
 	);
 
 	useEffect( () => {
-		if ( isError || ! isEligible || isLoading ) {
+		if ( isError || ! isEligible ) {
 			return;
 		}
 		const syntheticEvent = {
@@ -146,9 +146,9 @@ const LaunchBigSky: Step = function ( props ) {
 			},
 		} as unknown as FormEvent;
 		onSubmit( syntheticEvent );
-	}, [ isError, isEligible, isLoading, onSubmit ] );
+	}, [ isError, isEligible, onSubmit ] );
 
-	if ( isLoading || ! isEligible ) {
+	if ( ! isEligible ) {
 		return null;
 	}
 

@@ -2,7 +2,10 @@
  * External dependencies
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { HelpCenter } from '@automattic/data-stores';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
+import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
@@ -14,11 +17,15 @@ import useLogoGenerator from '../hooks/use-logo-generator';
  */
 import type React from 'react';
 
+const HELP_CENTER_STORE = HelpCenter.register();
+
 export const UpgradeScreen: React.FC< {
 	onCancel: () => void;
 	upgradeURL: string;
 	reason: 'feature' | 'requests';
 } > = ( { onCancel, upgradeURL, reason } ) => {
+	const { setShowHelpCenter, setShowSupportDoc } = useDispatch( HELP_CENTER_STORE );
+
 	const upgradeMessageFeature = __(
 		'Upgrade your Jetpack AI for access to exclusive features, including logo generation. This upgrade will also increase the amount of requests you can use in all AI-powered features.',
 		'jetpack'
@@ -36,6 +43,16 @@ export const UpgradeScreen: React.FC< {
 		onCancel();
 	};
 
+	const learnMoreLink = localizeUrl(
+		'https://wordpress.com/support/create-a-logo-with-jetpack-ai/'
+	);
+	const onLearnMoreClick = ( event: React.MouseEvent< HTMLButtonElement, MouseEvent > ) => {
+		event.preventDefault();
+		onCancel();
+		setShowHelpCenter( true );
+		setShowSupportDoc( learnMoreLink );
+	};
+
 	return (
 		<div className="jetpack-ai-logo-generator-modal__notice-message-wrapper">
 			<div className="jetpack-ai-logo-generator-modal__notice-message">
@@ -43,7 +60,7 @@ export const UpgradeScreen: React.FC< {
 					{ reason === 'feature' ? upgradeMessageFeature : upgradeMessageRequests }
 				</span>
 				&nbsp;
-				<Button variant="link" href="https://jetpack.com/ai/">
+				<Button variant="link" href={ learnMoreLink } onClick={ onLearnMoreClick }>
 					{ __( 'Learn more', 'jetpack' ) }
 				</Button>
 			</div>

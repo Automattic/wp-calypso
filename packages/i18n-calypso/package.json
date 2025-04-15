@@ -32,7 +32,7 @@
 		"events": "^3.3.0",
 		"hash.js": "^1.1.7",
 		"lru": "^3.1.0",
-		"tannin": "^1.1.1",
+		"tannin": "^1.2.0",
 		"use-subscription": "1.10.0"
 	},
 	"devDependencies": {

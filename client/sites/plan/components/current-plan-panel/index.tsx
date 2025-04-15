@@ -6,12 +6,13 @@ import { useSelector } from 'react-redux';
 import CoreBadge from 'calypso/components/core/badge';
 import { isPartnerPurchase, purchaseType } from 'calypso/lib/purchases';
 import { getMyPurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
-import PlanPricing from 'calypso/sites/components/plan-pricing';
-import PlanStats from 'calypso/sites/components/plan-stats';
 import { isA4AUser } from 'calypso/state/partner-portal/partner/selectors';
 import getCurrentPlanPurchaseId from 'calypso/state/selectors/get-current-plan-purchase-id';
 import { getSelectedPurchase, getSelectedSite } from 'calypso/state/ui/selectors';
 import { AppState } from 'calypso/types';
+import ManageAddOnsButton from '../../../components/add-ons/manage-add-ons-button';
+import PlanPricing from '../../../components/plan-pricing';
+import PlanStats from '../../../components/plan-stats';
 
 import './style.scss';
 
@@ -61,11 +62,7 @@ export default function CurrentPlanPanel() {
 		if ( isA4APlan || is100YearPlan ) {
 			return null;
 		}
-		return (
-			<Button variant="tertiary" href={ `/add-ons/${ site?.slug }` }>
-				{ translate( 'Manage add-ons' ) }
-			</Button>
-		);
+		return <ManageAddOnsButton tracksEventName="calypso_plans_manage_add_ons_button_click" />;
 	};
 
 	const renderManageBillingButton = () => {
@@ -107,7 +104,7 @@ export default function CurrentPlanPanel() {
 				</div>
 			</div>
 
-			<PlanStats />
+			<PlanStats needMoreStorageTracksEventName="calypso_plans_need_more_storage_click" />
 			{ ! isA4APlan && ! is100YearPlan && <hr /> }
 		</div>
 	);
