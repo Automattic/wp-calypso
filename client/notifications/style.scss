@@ -1,6 +1,7 @@
 /**
  * Notifications
  */
+ @import "@wordpress/base-styles/breakpoints";
 
 #wpnc-panel {
 	position: fixed;
@@ -166,9 +167,13 @@ html.touch #wpnc-panel {
 div.reader-notifications__panel {
 	position: relative;
 
+	// This flyout breakpoint is based off the notifications panel having enough width for its
+	// default 'flyout' functionality for the nested level. Using a more general breakpoint would
+	// prevent us from applying this functionality for another ~166px of screen width (based off of
+	// using the $break-wide which is the closest larger breakpoint).
 	$breakpoint-flyout: 1114px;
-	$breakpoint-mobile: 601px;
 
+	--default-notes-panel-width: 400px;
 	--3pc-notice-external-height: 50px;
 	@media only screen and (min-width: $breakpoint-flyout) {
 		--3pc-notice-external-height: 0px; /* stylelint-disable-line length-zero-no-unit */
@@ -183,7 +188,7 @@ div.reader-notifications__panel {
 
 		&.wpnt-open {
 			position: absolute;
-			@media only screen and (min-width: $breakpoint-mobile) {
+			@media only screen and (min-width: $break-small) {
 				border-radius: 8px; /* stylelint-disable-line scales/radii */
 				width: 100%;
 				.wpnc__single-view,
@@ -195,11 +200,11 @@ div.reader-notifications__panel {
 				width: calc(100vw - var(--sidebar-width-max) - 16px); // 16px for content frame padding.
 
 				.wpnc__single-view {
-					width: 400px; // Standard notes panel width.
+					width: var(--default-notes-panel-width);
 					z-index: z-index( ".reader-notifications", ".wpnc__single-view" ); // This ensures the single view flies out above the 3PC notice.
 				}
 				.wpnc__note-list {
-					width: 400px; // Standard notes panel width.
+					width: var(--default-notes-panel-width);
 					z-index: z-index( ".reader-notifications", ".wpnc__note-list" ); // This ensures the single view does not rise above the note list while animating outwards.
 				}
 			}
@@ -218,7 +223,7 @@ div.reader-notifications__panel {
 		&-internal {
 			display: none;
 			bottom: 0;
-			right: 400px; //width of main notifs panel
+			right: var(--default-notes-panel-width);
 
 			@media only screen and (min-width: $breakpoint-flyout) {
 				display: flex;
