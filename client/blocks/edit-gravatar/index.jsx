@@ -1,14 +1,14 @@
 import path from 'path';
 import { Dialog, Gridicon, ExternalLink } from '@automattic/components';
-import { Spinner } from '@wordpress/components';
-import { Icon, upload, caution } from '@wordpress/icons';
+import { GravatarQuickEditorCore } from '@gravatar-com/quick-editor';
+import { Button } from '@wordpress/components';
+import { addQueryArgs } from '@wordpress/url';
 import clsx from 'clsx';
 import i18n, { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import ImageEditor from 'calypso/blocks/image-editor';
-import DropZone from 'calypso/components/drop-zone';
 import VerifyEmailDialog from 'calypso/components/email-verification/email-verification-dialog';
 import FilePicker from 'calypso/components/file-picker';
 import Gravatar from 'calypso/components/gravatar';
@@ -34,6 +34,7 @@ export class EditGravatar extends Component {
 		isEditingImage: false,
 		image: false,
 		showEmailVerificationNotice: false,
+		avatarUrlCacheVer: '',
 	};
 
 	static propTypes = {
@@ -46,6 +47,18 @@ export class EditGravatar extends Component {
 		recordClickButtonEvent: PropTypes.func,
 		recordReceiveImageEvent: PropTypes.func,
 	};
+
+	quickEditor = null;
+
+	componentDidMount() {
+		const { user } = this.props;
+
+		this.quickEditor = new GravatarQuickEditorCore( {
+			email: user.email,
+			scope: [ 'avatars' ],
+			onProfileUpdated: () => this.setState( { avatarUrlCacheVer: Date.now() } ),
+		} );
+	}
 
 	onReceiveFile = ( files ) => {
 		const {
@@ -218,6 +231,7 @@ export class EditGravatar extends Component {
 		// use imgSize = 400 for caching
 		// it's the popular value for large Gravatars in Calypso
 		const GRAVATAR_IMG_SIZE = 400;
+		// eslint-disable-next-line no-unused-vars
 		const uploadButtonLabel = user.email_verified
 			? translate( 'Change profile photo' )
 			: translate( 'Verify your email to change profile photo' );
@@ -230,8 +244,8 @@ export class EditGravatar extends Component {
 			return this.renderGravatarProfileHidden( { gravatarLink, translate } );
 		}
 
-		/* eslint-disable jsx-a11y/click-events-have-key-events */
-		/* eslint-disable jsx-a11y/no-static-element-interactions */
+		const avatarUrl = addQueryArgs( user.avatar_URL, { ver: this.state.avatarUrlCacheVer } );
+
 		return (
 			<div
 				className={ clsx(
@@ -240,7 +254,7 @@ export class EditGravatar extends Component {
 					{ 'is-uploading': isUploading }
 				) }
 			>
-				<FilePicker accept="image/*" onPick={ this.onReceiveFile }>
+				{ /* <FilePicker accept="image/*" onPick={ this.onReceiveFile }>
 					<button
 						type="button"
 						onClick={ this.handleUnverifiedUserClick }
@@ -283,16 +297,21 @@ export class EditGravatar extends Component {
 							</div>
 						</div>
 					</button>
-				</FilePicker>
+				</FilePicker> */ }
+				{ /* { this.renderImageEditor() } */ }
 				{ this.state.showEmailVerificationNotice && (
 					<VerifyEmailDialog onClose={ this.closeVerifyEmailDialog } />
 				) }
-				{ this.renderImageEditor() }
+				<Gravatar
+					imgSize={ GRAVATAR_IMG_SIZE }
+					size={ 150 }
+					user={ { avatar_URL: avatarUrl, display_name: user.display_name } }
+				/>
 				<div>
-					<p className="edit-gravatar__explanation">
+					{ /* <p className="edit-gravatar__explanation">
 						{ translate( 'Your profile photo is public.' ) }
-					</p>
-					<InfoPopover className="edit-gravatar__pop-over" position="left">
+					</p> */ }
+					{ /* <InfoPopover className="edit-gravatar__pop-over" position="left">
 						{ translate(
 							'{{p}}The avatar you upload here is synced with {{ExternalLink}}Gravatar{{/ExternalLink}}.' +
 								' If you do not have a Gravatar account, one will be created for you when you upload your first image.{{/p}}',
@@ -303,7 +322,14 @@ export class EditGravatar extends Component {
 								},
 							}
 						) }
-					</InfoPopover>
+					</InfoPopover> */ }
+					<Button
+						className="edit-gravatar__edit-avatar-button"
+						variant="link"
+						onClick={ () => this.quickEditor?.open() }
+					>
+						{ translate( 'Edit your public avatar' ) }
+					</Button>
 					{ additionalUploadHtml && (
 						<FilePicker accept="image/*" onPick={ this.onReceiveFile }>
 							{ additionalUploadHtml }
@@ -312,8 +338,6 @@ export class EditGravatar extends Component {
 				</div>
 			</div>
 		);
-		/* eslint-enable jsx-a11y/click-events-have-key-events */
-		/* eslint-enable jsx-a11y/no-static-element-interactions */
 	}
 }
 

@@ -184,6 +184,12 @@
 	vertical-align: middle;
 }
 
+.edit-gravatar__edit-avatar-button {
+	margin: 0.5em 0 1.5em;
+	font-size: 14px;
+	text-decoration: none !important;
+}
+
 .edit-gravatar__pop-over .external-link .gridicons-external {
 	// specificity used to override margin
 	margin-left: 1px;
