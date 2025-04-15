@@ -8,8 +8,9 @@ import {
 } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
-import { useDispatch } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
 import { leaveSite } from 'calypso/state/sites/actions';
+import { getSiteDomain } from 'calypso/state/sites/selectors';
 import './leave-site-modal-form.scss';
 
 export interface LeaveSiteModalFormProps {
@@ -22,6 +23,7 @@ const LeaveSiteModalForm = ( { siteId, onClose }: LeaveSiteModalFormProps ) => {
 	const dispatch = useDispatch();
 	const [ isChecked, setChecked ] = useState( false );
 	const [ isSubmitting, setIsSubmitting ] = useState( false );
+	const siteDomain = useSelector( ( state ) => getSiteDomain( state, siteId ) );
 
 	const handleLeaveSite = async () => {
 		if ( ! isChecked ) {
@@ -49,6 +51,15 @@ const LeaveSiteModalForm = ( { siteId, onClose }: LeaveSiteModalFormProps ) => {
 		>
 			<VStack spacing={ 6 }>
 				<VStack spacing={ 0 }>
+					<p>
+						{ translate( 'Are you sure to leave the site {{b}}%(siteDomain)s{{/b}}?', {
+							args: { siteDomain },
+							components: {
+								b: <b />,
+							},
+							comment: '%(siteDomain)s is the site domain',
+						} ) }
+					</p>
 					<p>
 						{ translate(
 							'Leaving will remove your access to the site, including all content, users, domains, upgrades, and anything else you have access to.'
