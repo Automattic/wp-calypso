@@ -340,8 +340,7 @@ const UnifiedDesignPickerStep: StepType< {
 
 	// Don't render until we've done fetching all the data needed for initial render.
 	const isSiteLoading = ! site;
-	const isDesignsLoading = isLoadingDesigns;
-	const isLoading = isSiteLoading || isDesignsLoading;
+	const isLoading = isSiteLoading || isLoadingDesigns;
 
 	if ( isLoading || isComingFromTheUpgradeScreen ) {
 		return isUsingStepContainerV2 ? <Step.Loading /> : <Loading />;
