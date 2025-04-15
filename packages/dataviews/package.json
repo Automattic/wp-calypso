@@ -67,6 +67,7 @@
 	},
 	"scripts": {
 		"build:wp": "node build",
-		"build:style": "node build-style.js"
+		"build:style": "node build-style.js",
+		"clean": "git clean --force -d -X"
 	}
 }
