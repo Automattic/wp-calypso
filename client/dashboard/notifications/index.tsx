@@ -1,4 +1,3 @@
-import { createLazyRoute } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
 import PageLayout from '../page-layout';
 
@@ -11,6 +10,4 @@ function Notifications() {
 	);
 }
 
-export const Route = createLazyRoute( 'notifications' )( {
-	component: Notifications,
-} );
+export default Notifications;

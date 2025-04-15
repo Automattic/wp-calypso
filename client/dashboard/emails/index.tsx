@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { useNavigate, useLoaderData, createLazyRoute } from '@tanstack/react-router';
+import { useNavigate, useLoaderData } from '@tanstack/react-router';
 import { Button, ExternalLink, Notice } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
@@ -147,6 +147,4 @@ function Emails() {
 	);
 }
 
-export const Route = createLazyRoute( 'emails' )( {
-	component: Emails,
-} );
+export default Emails;

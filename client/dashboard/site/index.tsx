@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { useLoaderData, Outlet, createLazyRoute } from '@tanstack/react-router';
+import { useLoaderData, Outlet } from '@tanstack/react-router';
 import { __experimentalHStack as HStack } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import HeaderBar from '../header-bar';
@@ -31,6 +31,4 @@ function Site() {
 	);
 }
 
-export const Route = createLazyRoute( 'site/$siteId' )( {
-	component: Site,
-} );
+export default Site;

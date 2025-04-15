@@ -1,4 +1,10 @@
-import { Router, createRoute, createRootRoute, redirect } from '@tanstack/react-router';
+import {
+	Router,
+	createRoute,
+	createRootRoute,
+	redirect,
+	createLazyRoute,
+} from '@tanstack/react-router';
 import NotFound from '../404';
 import UnknownError from '../500';
 import {
@@ -48,7 +54,13 @@ const createRouteTree = ( config: AppConfig ) => {
 		const overviewRoute = createRoute( {
 			getParentRoute: () => rootRoute,
 			path: 'overview',
-		} ).lazy( () => import( '../agency-overview' ).then( ( d ) => d.Route ) );
+		} ).lazy( () =>
+			import( '../agency-overview' ).then( ( d ) =>
+				createLazyRoute( 'agency-overview' )( {
+					component: d.default,
+				} )
+			)
+		);
 
 		children.push( overviewRoute );
 	}
@@ -62,7 +74,13 @@ const createRouteTree = ( config: AppConfig ) => {
 					queryKey: [ 'sites' ],
 					queryFn: fetchSites,
 				} ),
-		} ).lazy( () => import( '../sites' ).then( ( d ) => d.Route ) );
+		} ).lazy( () =>
+			import( '../sites' ).then( ( d ) =>
+				createLazyRoute( 'sites' )( {
+					component: d.default,
+				} )
+			)
+		);
 
 		const siteRoute = createRoute( {
 			getParentRoute: () => rootRoute,
@@ -100,17 +118,35 @@ const createRouteTree = ( config: AppConfig ) => {
 					},
 				} ),
 			notFoundComponent: NotFound,
-		} ).lazy( () => import( '../site' ).then( ( d ) => d.Route ) );
+		} ).lazy( () =>
+			import( '../site' ).then( ( d ) =>
+				createLazyRoute( 'site' )( {
+					component: d.default,
+				} )
+			)
+		);
 
 		const siteOverviewRoute = createRoute( {
 			getParentRoute: () => siteRoute,
 			path: '/',
-		} ).lazy( () => import( '../site-overview' ).then( ( d ) => d.Route ) );
+		} ).lazy( () =>
+			import( '../site-overview' ).then( ( d ) =>
+				createLazyRoute( 'site-overview' )( {
+					component: d.default,
+				} )
+			)
+		);
 
 		const siteDeploymentsRoute = createRoute( {
 			getParentRoute: () => siteRoute,
 			path: 'deployments',
-		} ).lazy( () => import( '../site-deployments' ).then( ( d ) => d.Route ) );
+		} ).lazy( () =>
+			import( '../site-deployments' ).then( ( d ) =>
+				createLazyRoute( 'site-deployments' )( {
+					component: d.default,
+				} )
+			)
+		);
 
 		children.push(
 			sitesRoute,
@@ -127,7 +163,13 @@ const createRouteTree = ( config: AppConfig ) => {
 					queryKey: [ 'domains' ],
 					queryFn: fetchDomains,
 				} ),
-		} ).lazy( () => import( '../domains' ).then( ( d ) => d.Route ) );
+		} ).lazy( () =>
+			import( '../domains' ).then( ( d ) =>
+				createLazyRoute( 'domains' )( {
+					component: d.default,
+				} )
+			)
+		);
 
 		children.push( domainsRoute );
 	}
@@ -141,7 +183,13 @@ const createRouteTree = ( config: AppConfig ) => {
 					queryKey: [ 'emails' ],
 					queryFn: fetchEmails,
 				} ),
-		} ).lazy( () => import( '../emails' ).then( ( d ) => d.Route ) );
+		} ).lazy( () =>
+			import( '../emails' ).then( ( d ) =>
+				createLazyRoute( 'emails' )( {
+					component: d.default,
+				} )
+			)
+		);
 
 		children.push( emailsRoute );
 	}
@@ -164,32 +212,68 @@ const createRouteTree = ( config: AppConfig ) => {
 					window.location.href = loginUrl;
 				}
 			},
-		} ).lazy( () => import( '../me' ).then( ( d ) => d.Route ) );
+		} ).lazy( () =>
+			import( '../me' ).then( ( d ) =>
+				createLazyRoute( 'me' )( {
+					component: d.default,
+				} )
+			)
+		);
 
 		const profileRoute = createRoute( {
 			getParentRoute: () => meRoute,
 			path: 'profile',
-		} ).lazy( () => import( '../profile' ).then( ( d ) => d.Route ) );
+		} ).lazy( () =>
+			import( '../profile' ).then( ( d ) =>
+				createLazyRoute( 'profile' )( {
+					component: d.default,
+				} )
+			)
+		);
 
 		const billingRoute = createRoute( {
 			getParentRoute: () => meRoute,
 			path: 'billing',
-		} ).lazy( () => import( '../billing' ).then( ( d ) => d.Route ) );
+		} ).lazy( () =>
+			import( '../billing' ).then( ( d ) =>
+				createLazyRoute( 'billing' )( {
+					component: d.default,
+				} )
+			)
+		);
 
 		const securityRoute = createRoute( {
 			getParentRoute: () => meRoute,
 			path: 'security',
-		} ).lazy( () => import( '../security' ).then( ( d ) => d.Route ) );
+		} ).lazy( () =>
+			import( '../security' ).then( ( d ) =>
+				createLazyRoute( 'security' )( {
+					component: d.default,
+				} )
+			)
+		);
 
 		const privacyRoute = createRoute( {
 			getParentRoute: () => meRoute,
 			path: 'privacy',
-		} ).lazy( () => import( '../privacy' ).then( ( d ) => d.Route ) );
+		} ).lazy( () =>
+			import( '../privacy' ).then( ( d ) =>
+				createLazyRoute( 'privacy' )( {
+					component: d.default,
+				} )
+			)
+		);
 
 		const notificationsRoute = createRoute( {
 			getParentRoute: () => meRoute,
 			path: 'notifications',
-		} ).lazy( () => import( '../notifications' ).then( ( d ) => d.Route ) );
+		} ).lazy( () =>
+			import( '../notifications' ).then( ( d ) =>
+				createLazyRoute( 'notifications' )( {
+					component: d.default,
+				} )
+			)
+		);
 
 		children.push(
 			meRoute.addChildren( [

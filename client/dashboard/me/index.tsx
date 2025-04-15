@@ -1,4 +1,4 @@
-import { Outlet, createLazyRoute } from '@tanstack/react-router';
+import { Outlet } from '@tanstack/react-router';
 import { __experimentalHStack as HStack } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
@@ -23,6 +23,4 @@ function Me() {
 	);
 }
 
-export const Route = createLazyRoute( 'me' )( {
-	component: Me,
-} );
+export default Me;

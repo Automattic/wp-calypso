@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { useLoaderData, createLazyRoute } from '@tanstack/react-router';
+import { useLoaderData } from '@tanstack/react-router';
 import { Notice } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate, View } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
@@ -118,6 +118,4 @@ function Domains() {
 	);
 }
 
-export const Route = createLazyRoute( 'domains' )( {
-	component: Domains,
-} );
+export default Domains;

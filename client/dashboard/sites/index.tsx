@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { useNavigate, useLoaderData, createLazyRoute } from '@tanstack/react-router';
+import { useNavigate, useLoaderData } from '@tanstack/react-router';
 import { Button } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
@@ -77,7 +77,7 @@ const fields = [
 	},
 ] as Field< Site >[];
 
-function Sites() {
+export default function Sites() {
 	const navigate = useNavigate();
 	const { data } = useQuery( useLoaderData( { from: '/sites' } ) );
 	const querySitesData = data as Site[];
@@ -135,7 +135,3 @@ function Sites() {
 		</>
 	);
 }
-
-export const Route = createLazyRoute( 'sites' )( {
-	component: Sites,
-} );
