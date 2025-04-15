@@ -43,6 +43,8 @@
 	"dependencies": {
 		"@ariakit/react": "^0.4.15",
 		"@babel/runtime": "7.26.10",
+		"@emotion/babel-plugin": "^11.13.5",
+		"@wordpress/babel-preset-default": "^8.22.0",
 		"@wordpress/base-styles": "^5.22.0",
 		"@wordpress/components": "^29.8.0",
 		"@wordpress/compose": "^7.22.0",
@@ -53,7 +55,9 @@
 		"@wordpress/primitives": "^4.22.0",
 		"@wordpress/private-apis": "^1.22.0",
 		"@wordpress/warning": "^3.22.0",
+		"babel-plugin-inline-json-import": "^0.3.2",
 		"clsx": "^2.1.1",
+		"glob": "^11.0.1",
 		"remove-accents": "^0.5.0"
 	},
 	"peerDependencies": {
@@ -67,8 +71,9 @@
 		"sass": "^1.54.0"
 	},
 	"scripts": {
-		"build:wp": "node build",
+		"build:js": "node build-js.js",
 		"build:style": "node build-style.js",
+		"build:wp": "node build",
 		"clean": "git clean --force -d -X"
 	}
 }
