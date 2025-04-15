@@ -14,7 +14,6 @@ function PurchaseItemRowProduct( props: {
 	const { purchase, translate } = props;
 	const site = useSelector( ( state ) => getSite( state, purchase.siteId ?? 0 ) );
 	const slug = purchase.siteName ?? purchase.siteId;
-	// Need to figure out how to pass translate here
 	return (
 		<PurchaseItemProduct
 			purchase={ purchase }
