@@ -19,8 +19,8 @@ export const fetchProfile = () =>
 		apiNamespace: 'rest/v1.1',
 	} ) as Promise< Profile >;
 
-export const updateProfile = ( data: Profile ) =>
-	wpcom.req.post( {
+export const updateProfile = async ( data: Partial< Profile > ) => {
+	return await wpcom.req.post( {
 		path: '/me/settings?http_envelope=1',
 		apiNamespace: 'rest/v1.1',
 		body: {
@@ -28,6 +28,7 @@ export const updateProfile = ( data: Profile ) =>
 			description: data.description,
 		},
 	} );
+};
 
 const mockDomains: Domain[] = [
 	{

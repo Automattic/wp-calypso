@@ -13,7 +13,7 @@ import {
 	ExternalLink,
 } from '@wordpress/components';
 import { DataForm } from '@wordpress/dataviews';
-import { createInterpolateElement } from '@wordpress/element';
+import { createInterpolateElement, useMemo } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useState } from 'react';
 import { profileQuery, profileMutation } from '../app/queries';
@@ -98,22 +98,37 @@ const form = {
 	],
 } as Form;
 
-function Profile( { data: serverData }: { data: ProfileType } ) {
+export default function Profile() {
+	const { data: serverData } = useQuery( profileQuery() );
+	const [ localData, setLocalData ] = useState< Partial< ProfileType > | undefined >();
+	const data = useMemo( () => {
+		if ( ! serverData ) {
+			return undefined;
+		}
+		return { ...serverData, ...localData };
+	}, [ localData, serverData ] );
 	const mutation = useMutation( profileMutation() );
-	const [ data, setData ] = useState< ProfileType >( serverData );
+
+	if ( ! data ) {
+		return;
+	}
+
 	const isSaving = mutation.isPending;
-	const isDirty = data !== serverData;
-	const error = mutation.error;
+	const isDirty = !! localData;
 
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
-		if ( isDirty ) {
-			mutation.mutate( data );
+		if ( localData ) {
+			const savingData = localData;
+			mutation.mutate( savingData, {
+				onSuccess: () => {
+					setLocalData( ( currentData ) =>
+						currentData === savingData ? undefined : currentData
+					);
+				},
+			} );
 		}
 	};
-
-	// Handle case where there's an error fetching data
-	const errorMessage = error instanceof Error ? error.message : String( error );
 
 	return (
 		<>
@@ -128,14 +143,6 @@ function Profile( { data: serverData }: { data: ProfileType } ) {
 					}
 					size="small"
 				>
-					{ error && (
-						<Card>
-							<Notice status="error" isDismissible={ false }>
-								{ errorMessage }
-							</Notice>
-						</Card>
-					) }
-
 					<Card>
 						<CardBody>
 							<HStack justify="flex-start" spacing={ 8 }>
@@ -160,13 +167,16 @@ function Profile( { data: serverData }: { data: ProfileType } ) {
 									data={ data }
 									fields={ fields }
 									form={ form }
-									onChange={ ( edits ) => {
-										setData( ( current ) => ( {
-											...current,
-											...edits,
-										} ) );
+									onChange={ ( edits: Partial< ProfileType > ) => {
+										setLocalData( ( current ) => ( { ...current, ...edits } ) );
 									} }
 								/>
+
+								{ mutation.error && (
+									<Notice status="error" isDismissible={ false }>
+										{ mutation.error.message }
+									</Notice>
+								) }
 
 								<Button
 									variant="primary"
@@ -206,11 +216,3 @@ function Profile( { data: serverData }: { data: ProfileType } ) {
 		</>
 	);
 }
-
-export default () => {
-	const { data } = useQuery( profileQuery() );
-	if ( ! data ) {
-		return;
-	}
-	return <Profile data={ data } />;
-};
