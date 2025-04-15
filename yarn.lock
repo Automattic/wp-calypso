@@ -828,6 +828,7 @@ __metadata:
     sass: "npm:^1.54.0"
   peerDependencies:
     react: ^18.0.0
+    react-dom: ^18.0.0
   languageName: unknown
   linkType: soft
 
