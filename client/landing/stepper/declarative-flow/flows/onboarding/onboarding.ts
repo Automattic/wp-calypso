@@ -3,6 +3,7 @@ import { ONBOARDING_FLOW, clearStepPersistedState } from '@automattic/onboarding
 import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs, getQueryArg, getQueryArgs, removeQueryArgs } from '@wordpress/url';
 import { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import {
 	useIsPlaygroundEligible,
 	isPlaygroundEligible,
@@ -81,8 +82,10 @@ const onboarding: FlowV2 = {
 
 	useStepNavigation( currentStepSlug, navigate ) {
 		const flowName = this.name;
+		const location = useLocation();
 		const isPlaygroundEligible = useIsPlaygroundEligible();
-		const [ , isMvpOnboarding ] = useMvpOnboardingExperiment();
+		const [ , isMvpOnboarding ] = useMvpOnboardingExperiment( location );
+
 		const {
 			setDomain,
 			setDomainCartItem,
