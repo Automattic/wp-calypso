@@ -13,32 +13,29 @@ type Props = {
 export function BundlePriceSelector( { options, value, onChange }: Props ) {
 	const translate = useTranslate();
 
-	const getDiscountPercentage = useCallback(
-		( bundleSize: number ) => {
-			// FIXME: Need to calculate based on average discount per bundle size.
-			return (
-				{
-					1: '',
-					5: numberFormat( 0.1, {
-						numberFormatOptions: { style: 'percent' },
-					} ),
-					10: numberFormat( 0.2, {
-						numberFormatOptions: { style: 'percent' },
-					} ),
-					20: numberFormat( 0.4, {
-						numberFormatOptions: { style: 'percent' },
-					} ),
-					50: numberFormat( 0.7, {
-						numberFormatOptions: { style: 'percent' },
-					} ),
-					100: numberFormat( 0.8, {
-						numberFormatOptions: { style: 'percent' },
-					} ),
-				}[ bundleSize ] ?? ''
-			);
-		},
-		[ translate ]
-	);
+	const getDiscountPercentage = useCallback( ( bundleSize: number ) => {
+		// FIXME: Need to calculate based on average discount per bundle size.
+		return (
+			{
+				1: '',
+				5: numberFormat( 0.1, {
+					numberFormatOptions: { style: 'percent' },
+				} ),
+				10: numberFormat( 0.2, {
+					numberFormatOptions: { style: 'percent' },
+				} ),
+				20: numberFormat( 0.4, {
+					numberFormatOptions: { style: 'percent' },
+				} ),
+				50: numberFormat( 0.7, {
+					numberFormatOptions: { style: 'percent' },
+				} ),
+				100: numberFormat( 0.8, {
+					numberFormatOptions: { style: 'percent' },
+				} ),
+			}[ bundleSize ] ?? ''
+		);
+	}, [] );
 
 	const getLabel = useCallback(
 		( option: number ) => {
