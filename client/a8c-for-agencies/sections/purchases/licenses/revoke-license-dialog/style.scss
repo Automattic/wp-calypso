@@ -111,3 +111,11 @@
 		}
 	}
 }
+
+a.revoke-license-dialog__external-link {
+	&,
+	&:visited {
+		text-decoration: underline;
+		color: var(--color-text);
+	}
+}

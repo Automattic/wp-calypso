@@ -137,17 +137,32 @@ export default function RevokeLicenseDialog( {
 			return (
 				<p>
 					{ translate(
-						'This license will be revoked from {{b}}%(siteUrl)s{{/b}}, and a new {{b}}%(product)s{{/b}} license will be created and added to the bundle.',
+						"You're revoking a single license from within your bundled purchase. This license is in use on {{b}}%(siteUrl)s{{/b}}. When you revoke this license, we will add an unassigned replacement license to the bundle which can be assigned to a new site when you're ready.{{br/}}{{br/}}" +
+							'If you wish to cancel the entire bundle, you can follow the steps {{kbLink}}here↗{{/kbLink}}.',
 						{
 							args: {
-								product,
 								siteUrl,
 							},
 							components: {
 								b: <b />,
+								br: <br />,
+								kbLink: (
+									<a
+										className="revoke-license-dialog__external-link"
+										href="https://agencieshelp.automattic.com/knowledge-base/purchases/#canceling-purchases"
+										target="_blank"
+										rel="noreferrer noopener"
+										onClick={ () => {
+											dispatch(
+												recordTracksEvent(
+													'calypso_a4a_license_list_revoke_dialog_cancel_kb_clicked'
+												)
+											);
+										} }
+									/>
+								),
 							},
-							comment:
-								'The %(siteUrl)s and %(product)s placeholders are replaced with the site URL and product name, respectively.',
+							comment: 'The %(siteUrl)s  placeholders are replaced with the site URL.',
 						}
 					) }
 				</p>
