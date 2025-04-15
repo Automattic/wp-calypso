@@ -223,7 +223,9 @@ div.reader-notifications__panel {
 		&-internal {
 			display: none;
 			bottom: 0;
+			padding: 0 30px;
 			right: var(--default-notes-panel-width);
+
 
 			@media only screen and (min-width: $breakpoint-flyout) {
 				display: flex;
