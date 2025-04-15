@@ -17,6 +17,7 @@ import useDomainDiagnosticsQuery from 'calypso/data/domains/diagnostics/use-doma
 import { useGetDomainsQuery } from 'calypso/data/domains/use-get-domains-query';
 import useHomeLayoutQuery, { getCacheKey } from 'calypso/data/home/use-home-layout-query';
 import useSkipCurrentViewMutation from 'calypso/data/home/use-skip-current-view-mutation';
+import { useMvpOnboardingExperiment } from 'calypso/landing/stepper/hooks/use-mvp-onboarding-experiment';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { setDomainNotice } from 'calypso/lib/domains/set-domain-notice';
 import { preventWidows } from 'calypso/lib/formatting';
@@ -71,6 +72,7 @@ const HomeContent = ( {
 	handleVerifyIcannEmail,
 	isAdmin,
 } ) => {
+	const [ , isMvpOnboarding ] = useMvpOnboardingExperiment( window.location );
 	const [ celebrateLaunchModalIsOpen, setCelebrateLaunchModalIsOpen ] = useState( false );
 	const [ launchedSiteId, setLaunchedSiteId ] = useState( null );
 	const queryClient = useQueryClient();
@@ -154,7 +156,11 @@ const HomeContent = ( {
 		);
 	}
 
-	if ( layout?.view_name === 'VIEW_FOCUSED_LAUNCHPAD' && ! focusedLaunchpadDismissed ) {
+	if (
+		layout?.view_name === 'VIEW_FOCUSED_LAUNCHPAD' &&
+		! focusedLaunchpadDismissed &&
+		! isMvpOnboarding
+	) {
 		return (
 			<FullScreenLaunchpad
 				onClose={ async () => {
