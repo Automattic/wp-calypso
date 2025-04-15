@@ -51,29 +51,19 @@ function useStaticIntervals() {
 	);
 }
 
-const getGatedIntervals = createSelector(
-	( state, siteId, intervals ) => {
-		return Object.keys( intervals ).reduce( ( acc, key ) => {
-			const interval = intervals[ key ];
+const getGatedIntervals = createSelector( ( state, siteId, intervals ) => {
+	return Object.keys( intervals ).reduce( ( acc, key ) => {
+		const interval = intervals[ key ];
 
-			return {
-				...acc,
-				[ key ]: {
-					...interval,
-					isGated: shouldGateStats( state, siteId, interval.statType ),
-				},
-			};
-		}, {} );
-	},
-	( state, siteId, intervals ) => {
-		return [
-			...Object.values( intervals ).map( ( { statType } ) =>
-				shouldGateStats( state, siteId, statType )
-			),
-			intervals,
-		];
-	}
-);
+		return {
+			...acc,
+			[ key ]: {
+				...interval,
+				isGated: shouldGateStats( state, siteId, interval.statType ),
+			},
+		};
+	}, {} );
+} );
 
 function useIntervals( siteId: number | null ): IntervalsType {
 	const staticIntervals = useStaticIntervals();
