@@ -127,7 +127,9 @@ const LaunchSite = () => {
 		if ( isDevelopmentSite && ! siteReferralActive ) {
 			openLaunchConfirmationModal();
 		} else {
-			dispatchSiteLaunch();
+			dispatch(
+				launchSiteOrRedirectToLaunchSignupFlow( siteId, 'general-settings', site.title, 'yes' )
+			);
 		}
 	};
 
@@ -136,25 +138,15 @@ const LaunchSite = () => {
 	if ( 0 === siteDomains.length ) {
 		querySiteDomainsComponent = <QuerySiteDomains siteId={ siteId } />;
 		btnComponent = <Button>{ btnText }</Button>;
-	} else if ( isPaidPlan && siteDomains.length > 1 ) {
+	} else {
 		btnComponent = (
 			<Button
 				onClick={ handleLaunchSiteClick }
 				busy={ isLaunchInProgress }
-				disabled={ ! isLaunchable || ( isDevelopmentSite && agencyLoading ) }
-			>
-				{ btnText }
-			</Button>
-		);
-		querySiteDomainsComponent = '';
-	} else {
-		btnComponent = (
-			<Button
-				onClick={ () => {
-					dispatch(
-						launchSiteOrRedirectToLaunchSignupFlow( siteId, 'general-settings', site.title, 'yes' )
-					);
-				} }
+				disabled={
+					( isPaidPlan && siteDomains.length > 1 && ! isLaunchable ) ||
+					( isDevelopmentSite && agencyLoading )
+				}
 			>
 				{ btnText }
 			</Button>
