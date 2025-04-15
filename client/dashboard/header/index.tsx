@@ -18,7 +18,7 @@ function Header() {
 			) }
 
 			{ Logo && (
-				<div>
+				<div style={ { display: 'flex', alignItems: 'center' } }>
 					<Logo />
 				</div>
 			) }
