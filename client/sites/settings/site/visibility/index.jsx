@@ -16,17 +16,18 @@ import getIsUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSiteSettings } from 'calypso/state/site-settings/selectors';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
-import {
-	launchSite,
-	launchSiteOrRedirectToLaunchSignupFlow,
-} from 'calypso/state/sites/launch/actions';
+import { launchSite } from 'calypso/state/sites/launch/actions';
 import { getIsSiteLaunchInProgress } from 'calypso/state/sites/launch/selectors';
 import {
 	isSiteOnECommerceTrial as getIsSiteOnECommerceTrial,
 	isSiteOnMigrationTrial as getIsSiteOnMigrationTrial,
 } from 'calypso/state/sites/plans/selectors';
 import { isCurrentPlanPaid } from 'calypso/state/sites/selectors';
-import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import {
+	getSelectedSite,
+	getSelectedSiteId,
+	getSelectedSiteSlug,
+} from 'calypso/state/ui/selectors';
 import { LaunchConfirmationModal } from './launch-confirmation-modal';
 import { LaunchSiteTrialUpsellNotice } from './launch-site-trial-notice';
 
@@ -86,6 +87,7 @@ const LaunchSite = () => {
 	const site = useSelector( ( state ) => getSelectedSite( state ) );
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const siteSettings = useSelector( ( state ) => getSiteSettings( state, siteId ) );
+	const siteSlug = useSelector( ( state ) => getSelectedSiteSlug( state ) );
 	const isPaidPlan = useSelector( ( state ) => isCurrentPlanPaid( state, siteId ) );
 	const isComingSoon = useSelector( ( state ) => isSiteComingSoon( state, siteId ) );
 	const hasSitePreviewLink = useSelector( ( state ) =>
@@ -127,9 +129,7 @@ const LaunchSite = () => {
 		if ( isDevelopmentSite && ! siteReferralActive ) {
 			openLaunchConfirmationModal();
 		} else {
-			dispatch(
-				launchSiteOrRedirectToLaunchSignupFlow( siteId, 'general-settings', site.title, 'yes' )
-			);
+			dispatchSiteLaunch();
 		}
 	};
 
@@ -138,15 +138,21 @@ const LaunchSite = () => {
 	if ( 0 === siteDomains.length ) {
 		querySiteDomainsComponent = <QuerySiteDomains siteId={ siteId } />;
 		btnComponent = <Button>{ btnText }</Button>;
-	} else {
+	} else if ( isPaidPlan && siteDomains.length > 1 ) {
 		btnComponent = (
 			<Button
 				onClick={ handleLaunchSiteClick }
 				busy={ isLaunchInProgress }
-				disabled={
-					( isPaidPlan && siteDomains.length > 1 && ! isLaunchable ) ||
-					( isDevelopmentSite && agencyLoading )
-				}
+				disabled={ ! isLaunchable || ( isDevelopmentSite && agencyLoading ) }
+			>
+				{ btnText }
+			</Button>
+		);
+		querySiteDomainsComponent = '';
+	} else {
+		btnComponent = (
+			<Button
+				href={ `/start/launch-site?siteSlug=${ siteSlug }&source=general-settings&new=${ site.title }&search=yes` }
 			>
 				{ btnText }
 			</Button>
