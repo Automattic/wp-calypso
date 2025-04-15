@@ -101,14 +101,18 @@ const form = {
 } as Form;
 
 function Profile() {
+	const query = profileQuery();
 	const mutation = useMutation( {
 		mutationFn: updateProfile,
 		onSuccess: () => {
 			queryClient.invalidateQueries( query );
 		},
 	} );
-	const serverData = useQuery( profileQuery() ).data as ProfileType;
+	const serverData = useQuery( query ).data;
 	const [ data, setData ] = useState< ProfileType >( serverData );
+	if ( ! serverData ) {
+		return;
+	}
 	const isSaving = mutation.isPending;
 	const isDirty = data !== serverData;
 	const error = mutation.error;

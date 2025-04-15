@@ -22,19 +22,15 @@ import SubscribersCard from './subscribers-card';
 import UptimeCard from './uptime-card';
 import ViewsCard from './views-card';
 import VisitorsCard from './visitors-card';
-import type {
-	Site,
-	MediaStorage,
-	MonitorUptime,
-	Plan,
-	Domain,
-	EngagementStats,
-} from '../data/types';
 
 import './style.scss';
 
 function SiteOverview() {
 	const { siteId } = siteRoute.useParams();
+	const { data } = useQuery( siteQuery( siteId ) );
+	if ( ! data ) {
+		return;
+	}
 	const {
 		site,
 		mediaStorage,
@@ -43,15 +39,7 @@ function SiteOverview() {
 		currentPlan,
 		primaryDomain,
 		engagementStats,
-	} = useQuery( siteQuery( siteId ) ).data as {
-		site: Site;
-		mediaStorage: MediaStorage;
-		siteMonitorUptime?: MonitorUptime;
-		phpVersion?: string;
-		currentPlan: Plan;
-		primaryDomain?: Domain;
-		engagementStats: EngagementStats;
-	};
+	} = data;
 	return (
 		<PageLayout
 			title={ site.name }

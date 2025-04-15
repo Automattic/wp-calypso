@@ -80,8 +80,7 @@ const fields = [
 
 export default function Sites() {
 	const navigate = useNavigate();
-	const { data } = useQuery( sitesQuery() );
-	const querySitesData = data as Site[];
+	const querySitesData = useQuery( sitesQuery() ).data;
 	const [ sites, setSites ] = useState< Site[] >( [] );
 	useEffect( () => {
 		if ( querySitesData ) {

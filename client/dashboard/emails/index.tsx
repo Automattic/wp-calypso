@@ -52,7 +52,7 @@ const fields = [
 
 function Emails() {
 	const navigate = useNavigate();
-	const emails = useQuery( emailsQuery() ).data as Email[];
+	const emails = useQuery( emailsQuery() ).data;
 	const [ selection, setSelection ] = useState< Email[] >( [] );
 
 	// View config
@@ -104,6 +104,10 @@ function Emails() {
 		],
 		[ navigate ]
 	);
+
+	if ( ! emails ) {
+		return;
+	}
 
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate( emails, view, fields );
 

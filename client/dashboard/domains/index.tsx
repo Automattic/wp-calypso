@@ -93,7 +93,10 @@ function getDomainId( domain: Domain ): string {
 
 function Domains() {
 	const [ view, setView ] = useState( () => initialViewState );
-	const domains = useQuery( domainsQuery() ).data as Domain[];
+	const domains = useQuery( domainsQuery() ).data;
+	if ( ! domains ) {
+		return;
+	}
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate( domains, view, fields );
 	return (
 		<PageLayout title={ __( 'Domains' ) }>

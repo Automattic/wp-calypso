@@ -8,14 +8,17 @@ import HeaderBar from '../header-bar';
 import MenuDivider from '../menu-divider';
 import SiteIcon from '../site-icon';
 import SiteMenu from '../site-menu';
-import type { Site as SiteType } from '../data/types';
 
 function Site() {
 	const isDesktop = useViewportMatch( 'medium' );
 	const { siteId } = siteRoute.useParams();
-	const { site } = useQuery( siteQuery( siteId ) ).data as {
-		site: SiteType;
-	};
+	const { data } = useQuery( siteQuery( siteId ) );
+
+	if ( ! data ) {
+		return;
+	}
+
+	const { site } = data;
 
 	return (
 		<>
