@@ -16,25 +16,14 @@ function PurchaseItemRowProduct( props: {
 	const slug = purchase.siteName ?? purchase.siteId;
 	// Need to figure out how to pass translate here
 	return (
-		<>
-			<div className="purchase-item__information purchases-layout__information">
-				<div className="purchase-item__title">
-					{ getDisplayName( purchase ) }
-					&nbsp;
-					<OwnerInfo purchase={ purchase } />
-				</div>
-				<div className="purchase-item__purchase-type">
-					<PurchaseItemProduct
-						purchase={ purchase }
-						site={ site }
-						translate={ translate }
-						slug={ slug }
-						showSite
-						isDisconnectedSite={ ! site }
-					/>
-				</div>
-			</div>
-		</>
+		<PurchaseItemProduct
+			purchase={ purchase }
+			site={ site }
+			translate={ translate }
+			slug={ slug }
+			showSite
+			isDisconnectedSite={ ! site }
+		/>
 	);
 }
 
@@ -57,7 +46,18 @@ export function getPurchasesFieldDefinitions(
 				return item.productId;
 			},
 			render: ( { item }: { item: Purchases.Purchase } ) => {
-				return <PurchaseItemRowProduct purchase={ item } translate={ translate } />;
+				return (
+					<div className="purchase-item__information purchases-layout__information">
+						<div className="purchase-item__title">
+							{ getDisplayName( item ) }
+							&nbsp;
+							<OwnerInfo purchase={ item } />
+						</div>
+						<div className="purchase-item__purchase-type">
+							<PurchaseItemRowProduct purchase={ item } translate={ translate } />
+						</div>
+					</div>
+				);
 			},
 		},
 		{
