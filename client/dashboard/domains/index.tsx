@@ -3,7 +3,7 @@ import { Notice } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate, View } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
-import { domainsRoute } from '../app/router';
+import { domainsQuery } from '../app/queries';
 import DataViewsCard from '../dataviews-card';
 import PageLayout from '../page-layout';
 import type { Domain } from '../data/types';
@@ -93,7 +93,7 @@ function getDomainId( domain: Domain ): string {
 
 function Domains() {
 	const [ view, setView ] = useState( () => initialViewState );
-	const domains = useQuery( domainsRoute.useLoaderData() ).data as Domain[];
+	const domains = useQuery( domainsQuery() ).data as Domain[];
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate( domains, view, fields );
 	return (
 		<PageLayout title={ __( 'Domains' ) }>

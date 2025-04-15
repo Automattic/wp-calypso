@@ -4,7 +4,7 @@ import { Button, ExternalLink, Notice } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useState, useMemo } from 'react';
-import { emailsRoute } from '../app/router';
+import { emailsQuery } from '../app/queries';
 import DataViewsCard from '../dataviews-card';
 import PageLayout from '../page-layout';
 import type { Email } from '../data/types';
@@ -52,7 +52,7 @@ const fields = [
 
 function Emails() {
 	const navigate = useNavigate();
-	const emails = useQuery( emailsRoute.useLoaderData() ).data as Email[];
+	const emails = useQuery( emailsQuery() ).data as Email[];
 	const [ selection, setSelection ] = useState< Email[] >( [] );
 
 	// View config

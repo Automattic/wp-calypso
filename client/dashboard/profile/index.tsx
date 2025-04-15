@@ -16,8 +16,8 @@ import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useState } from 'react';
+import { profileQuery } from '../app/queries';
 import { queryClient } from '../app/query-client';
-import { meRoute } from '../app/router';
 import { updateProfile } from '../data';
 import EditGravatar from '../edit-gravatar';
 import PageLayout from '../page-layout';
@@ -101,14 +101,13 @@ const form = {
 } as Form;
 
 function Profile() {
-	const query = meRoute.useLoaderData();
 	const mutation = useMutation( {
 		mutationFn: updateProfile,
 		onSuccess: () => {
 			queryClient.invalidateQueries( query );
 		},
 	} );
-	const serverData = useQuery( query ).data as ProfileType;
+	const serverData = useQuery( profileQuery() ).data as ProfileType;
 	const [ data, setData ] = useState< ProfileType >( serverData );
 	const isSaving = mutation.isPending;
 	const isDirty = data !== serverData;

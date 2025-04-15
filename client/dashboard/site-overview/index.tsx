@@ -9,6 +9,7 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { wordpress } from '@wordpress/icons';
+import { siteQuery } from '../app/queries';
 import { siteRoute } from '../app/router';
 import PageLayout from '../page-layout';
 import CommentsCard from './comments-card';
@@ -33,6 +34,7 @@ import type {
 import './style.scss';
 
 function SiteOverview() {
+	const { siteId } = siteRoute.useParams();
 	const {
 		site,
 		mediaStorage,
@@ -41,7 +43,7 @@ function SiteOverview() {
 		currentPlan,
 		primaryDomain,
 		engagementStats,
-	} = useQuery( siteRoute.useLoaderData() ).data as {
+	} = useQuery( siteQuery( siteId ) ).data as {
 		site: Site;
 		mediaStorage: MediaStorage;
 		siteMonitorUptime?: MonitorUptime;

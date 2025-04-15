@@ -7,21 +7,9 @@ import {
 } from '@tanstack/react-router';
 import NotFound from '../404';
 import UnknownError from '../500';
-import {
-	fetchProfile,
-	fetchSites,
-	fetchDomains,
-	fetchEmails,
-	fetchSite,
-	fetchSiteMediaStorage,
-	fetchSiteMonitorUptime,
-	fetchPHPVersion,
-	fetchCurrentPlan,
-	fetchSitePrimaryDomain,
-	fetchSiteEngagementStats,
-	fetchTwoStep,
-} from '../data';
+import { fetchTwoStep } from '../data';
 import Root from '../root';
+import { sitesQuery, siteQuery, domainsQuery, emailsQuery, profileQuery } from './queries';
 import { queryClient } from './query-client';
 import type { AppConfig } from './context';
 import type { FetchQueryOptions } from '@tanstack/react-query';
@@ -35,7 +23,6 @@ async function maybeAwaitFetch( options: FetchQueryOptions ) {
 	if ( ! cachedData ) {
 		await queryClient.fetchQuery( options );
 	}
-	return options;
 }
 
 const rootRoute = createRootRoute( { component: Root } );
@@ -64,11 +51,7 @@ const overviewRoute = createRoute( {
 const sitesRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'sites',
-	loader: () =>
-		maybeAwaitFetch( {
-			queryKey: [ 'sites' ],
-			queryFn: fetchSites,
-		} ),
+	loader: () => maybeAwaitFetch( sitesQuery() ),
 } ).lazy( () =>
 	import( '../sites' ).then( ( d ) =>
 		createLazyRoute( 'sites' )( {
@@ -80,38 +63,7 @@ const sitesRoute = createRoute( {
 const siteRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'sites/$siteId',
-	loader: ( { params: { siteId } } ) =>
-		maybeAwaitFetch( {
-			queryKey: [ 'site', siteId ],
-			queryFn: async () => {
-				const [
-					site,
-					mediaStorage,
-					siteMonitorUptime,
-					phpVersion,
-					currentPlan,
-					primaryDomain,
-					engagementStats,
-				] = await Promise.all( [
-					fetchSite( siteId ),
-					fetchSiteMediaStorage( siteId ),
-					fetchSiteMonitorUptime( siteId ),
-					fetchPHPVersion( siteId ),
-					fetchCurrentPlan( siteId ),
-					fetchSitePrimaryDomain( siteId ),
-					fetchSiteEngagementStats( siteId ),
-				] );
-				return {
-					site,
-					mediaStorage,
-					siteMonitorUptime,
-					phpVersion,
-					currentPlan,
-					primaryDomain,
-					engagementStats,
-				};
-			},
-		} ),
+	loader: ( { params: { siteId } } ) => maybeAwaitFetch( siteQuery( siteId ) ),
 } ).lazy( () =>
 	import( '../site' ).then( ( d ) =>
 		createLazyRoute( 'site' )( {
@@ -145,11 +97,7 @@ const siteDeploymentsRoute = createRoute( {
 const domainsRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'domains',
-	loader: () =>
-		maybeAwaitFetch( {
-			queryKey: [ 'domains' ],
-			queryFn: fetchDomains,
-		} ),
+	loader: () => maybeAwaitFetch( domainsQuery() ),
 } ).lazy( () =>
 	import( '../domains' ).then( ( d ) =>
 		createLazyRoute( 'domains' )( {
@@ -161,11 +109,7 @@ const domainsRoute = createRoute( {
 const emailsRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'emails',
-	loader: () =>
-		maybeAwaitFetch( {
-			queryKey: [ 'emails' ],
-			queryFn: fetchEmails,
-		} ),
+	loader: () => maybeAwaitFetch( emailsQuery() ),
 } ).lazy( () =>
 	import( '../emails' ).then( ( d ) =>
 		createLazyRoute( 'emails' )( {
@@ -177,11 +121,7 @@ const emailsRoute = createRoute( {
 const meRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'me',
-	loader: () =>
-		maybeAwaitFetch( {
-			queryKey: [ 'profile' ],
-			queryFn: fetchProfile,
-		} ),
+	loader: () => maybeAwaitFetch( profileQuery() ),
 	beforeLoad: async () => {
 		const twoStep = await fetchTwoStep();
 		if ( twoStep.two_step_reauthorization_required ) {

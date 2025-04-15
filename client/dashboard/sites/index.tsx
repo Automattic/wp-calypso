@@ -5,7 +5,7 @@ import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { Icon, check } from '@wordpress/icons';
 import { useState, useEffect } from 'react';
-import { sitesRoute } from '../app/router';
+import { sitesQuery } from '../app/queries';
 import DataViewsCard from '../dataviews-card';
 import PageLayout from '../page-layout';
 import SiteIcon from '../site-icon';
@@ -80,7 +80,7 @@ const fields = [
 
 export default function Sites() {
 	const navigate = useNavigate();
-	const { data } = useQuery( sitesRoute.useLoaderData() );
+	const { data } = useQuery( sitesQuery() );
 	const querySitesData = data as Site[];
 	const [ sites, setSites ] = useState< Site[] >( [] );
 	useEffect( () => {
