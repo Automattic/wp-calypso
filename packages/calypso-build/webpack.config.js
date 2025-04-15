@@ -8,6 +8,7 @@ const path = require( 'path' );
 const process = require( 'process' );
 const DependencyExtractionWebpackPlugin = require( '@wordpress/dependency-extraction-webpack-plugin' );
 const DuplicatePackageCheckerPlugin = require( 'duplicate-package-checker-webpack-plugin' );
+const MiniCssExtractPlugin = require( 'mini-css-extract-plugin' );
 const webpack = require( 'webpack' );
 const FileConfig = require( './webpack/file-loader' );
 const Minify = require( './webpack/minify' );
@@ -105,6 +106,34 @@ function getWebpackConfig(
 					presets: [ require.resolve( '@automattic/calypso-babel-config/presets/dependencies' ) ],
 					workerCount,
 				} ),
+				{
+					test: /\.module\.css$/,
+					use: [
+						MiniCssExtractPlugin.loader,
+						{
+							loader: require.resolve( 'css-loader' ),
+							options: {
+								importLoaders: 1,
+								modules: {
+									localIdentName: isDevelopment
+										? '[name]__[local]__[hash:base64:5]'
+										: '[hash:base64:5]',
+								},
+								url: {
+									filter: ( p ) => ! p.startsWith( '/' ),
+								},
+							},
+						},
+						{
+							loader: require.resolve( 'postcss-loader' ),
+							options: {
+								postcssOptions: {
+									config: postCssConfigPath,
+								},
+							},
+						},
+					],
+				},
 				SassConfig.loader( {
 					postCssOptions: {
 						config: postCssConfigPath,
