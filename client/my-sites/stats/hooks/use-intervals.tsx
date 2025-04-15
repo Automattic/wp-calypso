@@ -66,11 +66,12 @@ const getGatedIntervals = createSelector(
 		}, {} );
 	},
 	( state, siteId, intervals ) => {
-		return Object.values( intervals ).map(
-			( { statType } ) =>
-				( state: object, siteId ) =>
-					shouldGateStats( state, siteId, statType )
-		);
+		return [
+			...Object.values( intervals ).map( ( { statType } ) =>
+				shouldGateStats( state, siteId, statType )
+			),
+			intervals,
+		];
 	}
 );
 
