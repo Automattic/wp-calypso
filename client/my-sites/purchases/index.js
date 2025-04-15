@@ -18,6 +18,7 @@ import {
 	paymentMethods,
 	addPaymentMethod,
 	planDowngrade,
+	crmDownloads,
 } from './controller';
 
 const commonHandlers = [ siteSelection, navigation, stagingSiteNotSupportedRedirect ];
@@ -107,6 +108,14 @@ export default ( router ) => {
 		'/purchases/payment-methods/:site',
 		...commonHandlers,
 		paymentMethods,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		'/purchases/crm-downloads/:site/:purchaseId',
+		...commonHandlers,
+		crmDownloads,
 		makeLayout,
 		clientRender
 	);

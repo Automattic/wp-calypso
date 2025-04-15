@@ -49,6 +49,7 @@ import {
 	ProductIcon,
 	Gridicon,
 	PlanPrice,
+	MaterialIcon,
 } from '@automattic/components';
 import { Plans, type SiteDetails } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
@@ -71,6 +72,7 @@ import { bindActionCreators } from 'redux';
 import { SupportedSlugs } from 'calypso/../packages/components/src/product-icon/config';
 import googleWorkspaceIcon from 'calypso/assets/images/email-providers/google-workspace/icon.svg';
 import AsyncLoad from 'calypso/components/async-load';
+import isJetpackCrmProduct from 'calypso/components/crm-downloads/is-jetpack-crm-product';
 import QueryCanonicalTheme from 'calypso/components/data/query-canonical-theme';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
@@ -106,6 +108,7 @@ import {
 	getName,
 	shouldRenderMonthlyRenewalOption,
 	getDIFMTieredPurchaseDetails,
+	canExplicitRenew,
 } from 'calypso/lib/purchases';
 import { getPurchaseCancellationFlowType } from 'calypso/lib/purchases/utils';
 import { hasCustomDomain } from 'calypso/lib/site/utils';
@@ -374,6 +377,10 @@ class ManagePurchase extends Component<
 			return null;
 		}
 
+		if ( ! canExplicitRenew( purchase ) ) {
+			return null;
+		}
+
 		if ( this.isPendingDomainRegistration( purchase ) ) {
 			return null;
 		}
@@ -458,6 +465,10 @@ class ManagePurchase extends Component<
 				! isMarketplaceTemporarySitePurchase( purchase ) ) ||
 			isAkismetFreeProduct( purchase )
 		) {
+			return null;
+		}
+
+		if ( ! canExplicitRenew( purchase ) ) {
 			return null;
 		}
 
@@ -683,6 +694,36 @@ class ManagePurchase extends Component<
 		}
 
 		return null;
+	}
+
+	renderCrmDownloadsNavItem() {
+		const { purchase, translate, siteSlug } = this.props;
+
+		if ( ! purchase ) {
+			return null;
+		}
+
+		// Only show for Jetpack CRM Products
+		const productSlug = purchase.productSlug || '';
+		if ( ! isJetpackCrmProduct( productSlug ) ) {
+			return null;
+		}
+
+		const handleCrmDownloadsClick = () => {
+			recordTracksEvent( 'calypso_purchases_crm_downloads_click', {
+				product_slug: productSlug,
+			} );
+		};
+
+		// We'll pass the purchase ID in the URL, and the CRM Downloads component will fetch the actual license key
+		const path = `/purchases/crm-downloads/${ siteSlug }/${ purchase.id }`;
+
+		return (
+			<CompactCard href={ path } onClick={ handleCrmDownloadsClick }>
+				<MaterialIcon icon="person" className="card__icon" />
+				{ translate( 'CRM Downloads' ) }
+			</CompactCard>
+		);
 	}
 
 	renderRefundText() {
@@ -1409,6 +1450,7 @@ class ManagePurchase extends Component<
 						{ /* TODO: Add ability to Renew Akismet subscription */ }
 						{ ! isJetpackTemporarySitePurchase( purchase ) && this.renderUpgradeNavItem() }
 						{ this.renderEditPaymentMethodNavItem() }
+						{ config.isEnabled( 'jetpack/crm-downloads' ) && this.renderCrmDownloadsNavItem() }
 						{ this.renderReinstall() }
 						<div className="manage-purchase__downgrade-products">
 							{ config.isEnabled( 'plans/self-service-downgrade' ) && ! isPersonal( purchase )
@@ -1474,6 +1516,10 @@ class ManagePurchase extends Component<
 		) {
 			showExpiryNotice = isCloseToExpiration( purchase );
 			preventRenewal = ! isRenewable( purchase );
+		}
+
+		if ( ! canExplicitRenew( purchase ) ) {
+			preventRenewal = true;
 		}
 
 		return (

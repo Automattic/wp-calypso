@@ -11,6 +11,7 @@ import {
 } from '@automattic/data-stores';
 import { localizeUrl, useLocale } from '@automattic/i18n-utils';
 import { speak } from '@wordpress/a11y';
+import { Button } from '@wordpress/components';
 import { decodeEntities } from '@wordpress/html-entities';
 import { __ } from '@wordpress/i18n';
 import {
@@ -23,7 +24,7 @@ import {
 import { useRtl } from 'i18n-calypso';
 import { debounce } from 'lodash';
 import PropTypes from 'prop-types';
-import { Fragment, useEffect, useMemo } from 'react';
+import { Fragment, useEffect, useMemo, useState } from 'react';
 import { preventWidows } from 'calypso/lib/formatting';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { useAdminResults } from '../hooks/use-admin-results';
@@ -34,6 +35,8 @@ import PlaceholderLines from './placeholder-lines';
 import type { SearchResult } from '../types';
 
 import './help-center-search-results.scss';
+
+const MAX_VISIBLE_RESULTS = 5;
 
 type HelpLinkProps = {
 	result: SearchResult;
@@ -224,6 +227,12 @@ function HelpSearchResults( {
 	const searchResults = searchData ?? [];
 	const hasAPIResults = searchResults.length > 0;
 
+	const [ visibleResults, setVisibleResults ] = useState( MAX_VISIBLE_RESULTS );
+
+	const handleShowMore = () => {
+		setVisibleResults( visibleResults + MAX_VISIBLE_RESULTS );
+	};
+
 	useEffect( () => {
 		// Cancel all queued speak messages.
 		loadingSpeak.cancel();
@@ -232,6 +241,7 @@ function HelpSearchResults( {
 
 		// If there's no query, then we don't need to announce anything.
 		if ( ! searchQuery ) {
+			setVisibleResults( MAX_VISIBLE_RESULTS );
 			return;
 		}
 
@@ -240,6 +250,7 @@ function HelpSearchResults( {
 		} else if ( ! hasAPIResults ) {
 			errorSpeak();
 		} else if ( hasAPIResults ) {
+			setVisibleResults( MAX_VISIBLE_RESULTS );
 			resultsSpeak();
 		}
 	}, [ isSearching, hasAPIResults, searchQuery ] );
@@ -311,7 +322,7 @@ function HelpSearchResults( {
 					className="help-center-search-results__list help-center-articles__list"
 					aria-labelledby={ title ? id : undefined }
 				>
-					{ results.map( ( result, index ) => (
+					{ results.slice( 0, visibleResults ).map( ( result, index ) => (
 						<HelpLink
 							key={ `${ id }-${ index }` }
 							result={ result }
@@ -322,6 +333,11 @@ function HelpSearchResults( {
 						/>
 					) ) }
 				</ul>
+				{ results.length > visibleResults && (
+					<Button variant="secondary" onClick={ handleShowMore } className="show-more-button">
+						{ __( 'Show more', __i18n_text_domain__ ) }
+					</Button>
+				) }
 			</Fragment>
 		) : null;
 	};
@@ -329,8 +345,10 @@ function HelpSearchResults( {
 	const sections = [
 		{
 			type: SUPPORT_TYPE_API_HELP,
-			title: __( 'Recommended Resources', __i18n_text_domain__ ),
-			results: searchResults.slice( 0, 5 ),
+			title: searchQuery
+				? __( 'Search Results', __i18n_text_domain__ )
+				: __( 'Recommended Resources', __i18n_text_domain__ ),
+			results: searchResults,
 			condition: ! isSearching && searchResults.length > 0,
 		},
 		{
@@ -353,7 +371,7 @@ function HelpSearchResults( {
 
 	return (
 		<div className="help-center-search-results" aria-label={ resultsLabel }>
-			<HelpCenterRecentConversations />
+			{ ! searchQuery && <HelpCenterRecentConversations /> }
 			{ isSearching && ! searchResults.length && <PlaceholderLines lines={ placeholderLines } /> }
 			{ searchQuery && ! ( hasAPIResults || isSearching ) ? (
 				<p className="help-center-search-results__empty-results">

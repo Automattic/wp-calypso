@@ -28,6 +28,7 @@ export const EligibilityWarningsModal = ( {
 				standaloneProceed
 				isOnboarding
 				isMarketplace={ isMarketplace }
+				onDismiss={ handleClose }
 				onProceed={ handleContinue }
 			/>
 		</Dialog>

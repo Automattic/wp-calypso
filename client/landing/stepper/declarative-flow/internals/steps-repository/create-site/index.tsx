@@ -79,7 +79,6 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 			siteUrl: select( ONBOARD_STORE ).getSiteUrl(),
 			progress: select( ONBOARD_STORE ).getProgress(),
 			partnerBundle: select( ONBOARD_STORE ).getPartnerBundle(),
-			siteGoals: select( ONBOARD_STORE ).getGoals(),
 		} ),
 		[]
 	);
@@ -140,6 +139,7 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 	);
 	const urlQueryParams = useQuery();
 	const skipMigration = urlQueryParams.get( 'skipMigration' ) || '';
+	const platform = urlQueryParams.get( 'platform' ) || '';
 	const useThemeHeadstart = ! isStartWritingFlow( flow ) && ! isNewHostedSiteCreationFlow( flow );
 	const shouldGoToCheckout = Boolean( planCartItem );
 
@@ -215,6 +215,7 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 			goToCheckout: shouldGoToCheckout,
 			siteCreated: true,
 			skipMigration,
+			platform,
 		};
 	}
 
@@ -232,7 +233,7 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 		return (
 			<>
 				<DocumentHead title={ title } />
-				<Step.Loading title={ title } progress={ progress } />
+				<Step.Loading title={ title } progress={ progress } delay={ 1000 } />
 			</>
 		);
 	}

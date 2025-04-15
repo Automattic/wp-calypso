@@ -1,4 +1,4 @@
-import { getPlan, PlanSlug, PLAN_MONTHLY_PERIOD } from '@automattic/calypso-products';
+import { getPlan, PlanSlug, PLAN_MONTHLY_PERIOD, is100Year } from '@automattic/calypso-products';
 import { Button, PlanPrice, LoadingPlaceholder } from '@automattic/components';
 import { usePricingMetaForGridPlans } from '@automattic/data-stores/src/plans';
 import { usePlanBillingDescription } from '@automattic/plans-grid-next';
@@ -32,6 +32,9 @@ export default function PlanPricing( { inline }: PlanPricingProps ) {
 		siteId: site?.ID,
 		useCheckPlanAvailabilityForPurchase,
 	} )?.[ planSlug ];
+
+	const is100YearPlan = planPurchase && is100Year( planPurchase );
+
 	const planPurchaseLoading = ! isFreePlan && planPurchase === null;
 	const isLoading = ! pricing || ! planData || planPurchaseLoading;
 
@@ -63,6 +66,10 @@ export default function PlanPricing( { inline }: PlanPricingProps ) {
 	};
 
 	const renderPrice = () => {
+		if ( is100YearPlan ) {
+			return null;
+		}
+
 		const price = (
 			<PlanPrice
 				currencyCode={ pricing?.currencyCode }

@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import {
 	A4A_CLIENT_LANDING_LINK,
@@ -48,4 +49,15 @@ export default function () {
 		makeLayout,
 		clientRender
 	);
+
+	// New v2 route for WP.com-based checkout implementation
+	if ( isEnabled( 'a4a-client-checkout-v2' ) ) {
+		page(
+			'/client/checkout/v2',
+			requireClientAccessContext,
+			controller.clientCheckoutV2Context,
+			makeLayout,
+			clientRender
+		);
+	}
 }

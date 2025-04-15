@@ -80,7 +80,7 @@ export default function PremierAgencyHosting( { onAddToCart }: Props ) {
 				isFetching={ isExistingPlanFetched }
 			/>
 
-			<HostingFeatures heading={ translate( 'Included with every Pressable site' ) } />
+			<HostingFeatures heading={ translate( 'Included with every Pressable site' ) } isPressable />
 
 			<HostingAdditionalFeaturesSection
 				icon={ <JetpackLogo size={ 16 } /> }

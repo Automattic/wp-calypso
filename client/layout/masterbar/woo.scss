@@ -158,16 +158,16 @@ $breakpoint-mobile: 660px;
 	.wp-login__links button,
 	.button:not(.social-buttons__button),
 	.magic-login__footer a {
-		font-size: $woo-font-size-base;
-		line-height: 28px;
-		text-align: center;
 		color: $gray-50;
 		text-decoration: underline;
-		letter-spacing: 0;
 
-		&:hover,
 		&:visited {
 			color: $gray-50;
+		}
+
+		&:hover,
+		&:focus {
+			color: $woo-gray-100;
 		}
 	}
 
@@ -722,7 +722,6 @@ $breakpoint-mobile: 660px;
 
 		a {
 			color: var(--woo-purple-70);
-			font-size: $font-body;
 			text-decoration: none;
 		}
 
@@ -1525,6 +1524,7 @@ $breakpoint-mobile: 660px;
 				color: var(--woo-purple-40);
 				text-align: center;
 				font-weight: 400;
+				font-size: $woo-font-size-base;
 				line-height: 20px;
 				margin-block-start: 24px;
 				text-decoration: underline;

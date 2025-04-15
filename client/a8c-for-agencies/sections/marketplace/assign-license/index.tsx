@@ -4,6 +4,8 @@ import { getQueryArg } from '@wordpress/url';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import useShowFeedback from 'calypso/a8c-for-agencies/components/a4a-feedback/hooks/use-show-a4a-feedback';
+import { FeedbackType } from 'calypso/a8c-for-agencies/components/a4a-feedback/types';
 import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
@@ -11,6 +13,7 @@ import {
 	A4A_MARKETPLACE_DOWNLOAD_PRODUCTS_LINK,
 	A4A_LICENSES_LINK,
 	A4A_SITES_LINK,
+	A4A_FEEDBACK_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import FormRadio from 'calypso/components/forms/form-radio';
 import Pagination from 'calypso/components/pagination';
@@ -46,6 +49,8 @@ type Props = {
 export default function AssignLicense( { initialPage, initialSearch }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+
+	const { isFeedbackShown } = useShowFeedback( FeedbackType.PurchaseCompleted );
 
 	const [ selectedSite, setSelectedSite ] = useState( { ID: 0, domain: '' } );
 	const [ currentPage, setCurrentPage ] = useState< number >( initialPage );
@@ -173,12 +178,19 @@ export default function AssignLicense( { initialPage, initialSearch }: Props ) {
 		}
 
 		const fromDashboard = getQueryArg( window.location.href, 'source' ) === 'dashboard';
-		if ( fromDashboard ) {
-			return page.redirect( A4A_SITES_LINK );
-		}
-
-		return page.redirect( A4A_LICENSES_LINK );
-	}, [ assignLicensesToSite, dispatch, licenseKeysArray, selectedSite?.ID ] );
+		const redirectUrl = fromDashboard ? A4A_SITES_LINK : A4A_LICENSES_LINK;
+		return isFeedbackShown
+			? page.redirect( redirectUrl )
+			: page.redirect(
+					addQueryArgs(
+						{
+							redirectUrl: redirectUrl,
+							type: FeedbackType.PurchaseCompleted,
+						},
+						A4A_FEEDBACK_LINK
+					)
+			  );
+	}, [ assignLicensesToSite, dispatch, isFeedbackShown, licenseKeysArray, selectedSite?.ID ] );
 
 	return (
 		<Layout

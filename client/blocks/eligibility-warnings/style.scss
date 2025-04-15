@@ -1,14 +1,17 @@
 .eligibility-warnings {
 	// 16px from card padding + 32 = 48 gap from top|bottom
-	// 24px from card padding + 24 = 48 gab from left|right
-	padding: 8px 0;
+	// 24px from card padding + 24 = 48 gap from left|right
+	padding: 0;
 	overflow-wrap: anywhere;
 	background: #fff;
 	font-size: $font-body-small;
 	margin: 0;
-	box-shadow: 0 0 0 1px var(--color-border-subtle);
 
 	@media (max-width: 660px) {
+		padding: 0;
+	}
+
+	> .card {
 		padding: 0;
 	}
 
@@ -31,7 +34,6 @@
 		align-items: center;
 		display: flex;
 		gap: 5px;
-		color: var(--color-text-subtle);
 		font-size: 0.875rem;
 
 		a {
@@ -85,7 +87,14 @@
 	}
 
 	&.eligibility-warnings--without-title {
-		padding-top: 3em;
+		padding: 24px 16px 16px;
+		box-shadow: 0 0 0 1px var(--color-border-subtle);
+
+		.eligibility-warnings__address-first {
+			// The width of the parent element is much greater for the without title format
+			// so we don't need an ellipsis text-overflow here.
+			max-width: none;
+		}
 	}
 }
 
@@ -103,8 +112,7 @@
 	font-weight: 400;
 }
 
-.eligibility-warnings__primary-text {
-	color: var(--color-text-subtle);
+.eligibility-warnings__primary-text {	
 	font-size: 1rem;
 	margin-top: 16px;
 }
@@ -171,23 +179,9 @@
 	line-height: 24px;
 	padding: 0;
 	margin-bottom: 10px;
-
-	.eligibility-warnings__message-title {
-		font-weight: 600;
-	}
-
-	.eligibility-warnings__message-description {
-		color: var(--color-text-subtle);
-		font-size: $font-body;
-
-		&--hosting-features {
-			font-weight: 500;
-		}
-	}
 }
 
 .eligibility-warnings__inline-link {
-	color: var(--color-text-subtle);
 	text-decoration: underline;
 }
 
@@ -210,8 +204,7 @@
 	align-items: center;
 	display: flex;
 
-	.gridicon {
-		color: var(--color-text-subtle);
+	.gridicon {		
 		flex-shrink: 0;
 	}
 	span {
@@ -234,19 +227,39 @@
 }
 
 .eligibility-warnings__domain-names {
-	margin-top: 20px;
+	margin: 24px 0;
 
 	.card {
-		padding: 12px 16px;
+		background-color: #f6f7f7;
+		padding: 12px;
 		margin-bottom: 4px;
+		display: flex;
+		align-items: center;
+
+		&::after {
+			content: none;
+		}
+	}
+
+	.eligibility-warnings__address-first {
+		text-overflow: ellipsis;
+		max-width: 240px;
+		overflow: hidden;
+		white-space: nowrap;
+	}
+
+	.eligibility-warnings__address-second {
+		margin-right: auto;
 	}
 
 	.badge {
-		position: absolute;
-		right: 20px;
 		border-radius: 4px;
 		font-weight: 500;
 		font-size: $font-body-extra-small;
+		padding-top: 0;
+		padding-bottom: 0;
+		line-height: unset;
+    	height: unset;
 
 		&.badge--success {
 			background: var(--studio-green-5);
@@ -272,8 +285,6 @@
 }
 
 .eligibility-warnings__warnings-card {
-	background: #f6f7f7;
-	margin: 0 24px;
 	border-radius: 4px;
 
 	@media (max-width: 480px) {
@@ -298,5 +309,5 @@
 }
 
 .card.eligibility-warnings__data-center-picker.is-compact {
-	padding-bottom: 8px;
+	margin-bottom: 24px;
 }

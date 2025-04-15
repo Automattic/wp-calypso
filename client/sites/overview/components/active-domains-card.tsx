@@ -65,6 +65,15 @@ const ActiveDomainsCard: FC = () => {
 					{ translate( 'Add new domain' ) }
 				</HostingCardLinkButton>
 				<HostingCardLinkButton
+					to={ `/domains/add/use-my-domain/${ site?.slug }?redirect_to=${ window.location.pathname }` }
+					hideOnMobile
+					onClick={ () =>
+						dispatch( recordTracksEvent( 'calypso_overview_transfer_domain_button_click' ) )
+					}
+				>
+					{ translate( 'Transfer domain' ) }
+				</HostingCardLinkButton>
+				<HostingCardLinkButton
 					to={ `/domains/manage/${ site?.slug }` }
 					onClick={ () =>
 						dispatch( recordTracksEvent( 'calypso_overview_manage_domains_button_click' ) )

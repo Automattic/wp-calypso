@@ -5,9 +5,10 @@ import HostingFeaturesSectionV2 from '../../../common/hosting-features-section-v
 
 type Props = {
 	heading: string;
+	isPressable?: boolean;
 };
 
-export default function HostingFeatures( { heading }: Props ) {
+export default function HostingFeatures( { heading, isPressable }: Props ) {
 	const translate = useTranslate();
 
 	return (
@@ -70,7 +71,7 @@ export default function HostingFeatures( { heading }: Props ) {
 						translate( 'In-depth site analytics dashboard' ),
 						translate( 'Elastic-powered search' ),
 						translate( '4K, unbranded VideoPress player' ),
-						translate( 'Free domain for one year' ),
+						...( isPressable ? [] : [ translate( 'Free domain for one year' ) ] ),
 						translate( 'Smart redirects' ),
 					],
 				},

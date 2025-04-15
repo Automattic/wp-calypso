@@ -3,6 +3,7 @@ import {
 	FEATURE_LEGACY_STORAGE_200GB,
 	getIntervalTypeForTerm,
 	getPlan,
+	is100Year,
 	isFreePlanProduct,
 	PLAN_ECOMMERCE,
 	PLAN_ECOMMERCE_TRIAL_MONTHLY,
@@ -350,7 +351,13 @@ class PlansComponent extends Component {
 		);
 	}
 
-	renderMainContent( { isEcommerceTrial, isBusinessTrial, isWooExpressPlan, isA4APlan } ) {
+	renderMainContent( {
+		isEcommerceTrial,
+		isBusinessTrial,
+		isWooExpressPlan,
+		isA4APlan,
+		is100YearPlan,
+	} ) {
 		if ( isEcommerceTrial ) {
 			return this.renderEcommerceTrialPage();
 		}
@@ -360,7 +367,7 @@ class PlansComponent extends Component {
 		if ( isBusinessTrial ) {
 			return this.renderBusinessTrialPage();
 		}
-		if ( isA4APlan ) {
+		if ( isA4APlan || is100YearPlan ) {
 			return null;
 		}
 
@@ -427,6 +434,7 @@ class PlansComponent extends Component {
 
 		const isWooExpressTrial = purchase?.isWooExpressTrial;
 		const isA4APlan = purchase && isPartnerPurchase( purchase );
+		const is100YearPlan = purchase && is100Year( purchase );
 
 		// Use the Woo Express subheader text if the current plan has the Performance or trial plans or fallback to the default subheader text.
 		let subHeaderText = null;
@@ -510,6 +518,7 @@ class PlansComponent extends Component {
 									isBusinessTrial,
 									isWooExpressPlan,
 									isA4APlan,
+									is100YearPlan,
 								} ) }
 								<PerformanceTrackerStop />
 							</Main>

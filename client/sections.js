@@ -765,6 +765,12 @@ const sections = [
 		group: 'a8c-for-agencies',
 	},
 	{
+		name: 'a8c-for-agencies-feedback',
+		paths: [ '/feedback' ],
+		module: 'calypso/a8c-for-agencies/sections/feedback',
+		group: 'a8c-for-agencies',
+	},
+	{
 		name: 'a8c-for-agencies-auth',
 		paths: [ '/connect', '/connect/oauth/token' ],
 		module: 'calypso/a8c-for-agencies/sections/auth',

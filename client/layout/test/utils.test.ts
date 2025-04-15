@@ -1,26 +1,8 @@
-import configApi from '@automattic/calypso-config';
 import { SITE_SETUP_FLOW, ONBOARDING_FLOW, SITE_MIGRATION_FLOW } from '@automattic/onboarding';
 import { isInStepContainerV2FlowContext } from '../utils';
 
-jest.mock( '@automattic/calypso-config', () => ( {
-	isEnabled: jest.fn(),
-} ) );
-
 describe( 'layout/utils', () => {
 	describe( 'isInStepContainerV2FlowContext', () => {
-		beforeEach( () => {
-			// Reset all mocks before each test
-			jest.clearAllMocks();
-
-			// Default mock for configApi.isEnabled to return true for step-container-v2
-			( configApi.isEnabled as jest.Mock ).mockImplementation( ( feature ) => {
-				if ( feature === 'onboarding/step-container-v2' ) {
-					return true;
-				}
-				return false;
-			} );
-		} );
-
 		describe( 'setup path', () => {
 			it( 'should return false when path starts with /setup and flow is a not supported flow', () => {
 				const pathname = '/setup/random-flow';
@@ -39,17 +21,6 @@ describe( 'layout/utils', () => {
 					const result = isInStepContainerV2FlowContext( pathname, query );
 					expect( result ).toBe( true );
 				} );
-			} );
-
-			it( 'should return false when configApi.isEnabled returns false', () => {
-				const pathname = '/setup/' + SITE_SETUP_FLOW;
-				const query = 'step=step1';
-				( configApi.isEnabled as jest.Mock ).mockReturnValue( false );
-
-				const result = isInStepContainerV2FlowContext( pathname, query );
-
-				expect( configApi.isEnabled ).toHaveBeenCalledWith( 'onboarding/step-container-v2' );
-				expect( result ).toBe( false );
 			} );
 		} );
 

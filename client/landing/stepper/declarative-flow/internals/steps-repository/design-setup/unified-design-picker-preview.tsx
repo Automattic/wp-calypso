@@ -45,7 +45,6 @@ import { useSiteData } from '../../../../hooks/use-site-data';
 import { SITE_STORE, ONBOARD_STORE } from '../../../../stores';
 import { goToCheckout } from '../../../../utils/checkout';
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
-import { useGoalsFirstExperiment } from '../../../helpers/use-goals-first-experiment';
 import { STEP_NAME } from './constants';
 import DesignPickerDesignTitle from './design-picker-design-title';
 import { EligibilityWarningsModal } from './eligibility-warnings-modal';
@@ -91,7 +90,6 @@ interface UnifiedDesignPickerPreviewProps {
 	flow: string;
 	isPremiumThemeAvailable: boolean;
 	stepName: string;
-	handleSubmit: () => void;
 	numOfSelectedGlobalStyles: number;
 	previewDesignVariation: ( variation: StyleVariation ) => void;
 	setSelectedColorVariation: ( colorVariation: GlobalStyles | null ) => void;
@@ -110,7 +108,6 @@ const UnifiedDesignPickerPreview = ( {
 	flow,
 	isPremiumThemeAvailable,
 	stepName,
-	handleSubmit,
 	numOfSelectedGlobalStyles,
 	previewDesignVariation,
 	setSelectedColorVariation,
@@ -254,18 +251,14 @@ const UnifiedDesignPickerPreview = ( {
 	const isPluginBundleEligible = useIsPluginBundleEligible();
 	const isBundled = selectedDesign?.software_sets && selectedDesign.software_sets.length > 0;
 
-	const [ , isGoalsAtFrontExperiment ] = useGoalsFirstExperiment();
-
 	const isLockedTheme =
-		// The exp moves the Design Picker step in front of the plan selection so people can unlock theme later.
-		! isGoalsAtFrontExperiment &&
-		( ! canSiteActivateTheme ||
-			( selectedDesign?.design_tier === THEME_TIER_PREMIUM &&
-				! isPremiumThemeAvailable &&
-				! didPurchaseSelectedTheme ) ||
-			( selectedDesign?.is_externally_managed &&
-				( ! isMarketplaceThemeSubscribed || ! isExternallyManagedThemeAvailable ) ) ||
-			( ! isPluginBundleEligible && isBundled ) );
+		! canSiteActivateTheme ||
+		( selectedDesign?.design_tier === THEME_TIER_PREMIUM &&
+			! isPremiumThemeAvailable &&
+			! didPurchaseSelectedTheme ) ||
+		( selectedDesign?.is_externally_managed &&
+			( ! isMarketplaceThemeSubscribed || ! isExternallyManagedThemeAvailable ) ) ||
+		( ! isPluginBundleEligible && isBundled );
 
 	const [ showUpgradeModal, setShowUpgradeModal ] = useState( false );
 
@@ -468,14 +461,9 @@ const UnifiedDesignPickerPreview = ( {
 
 	const getPrimaryActionButtonProps = () => {
 		const action = getPrimaryActionButtonAction();
-		const text =
-			action !== pickDesign && ! isGoalsAtFrontExperiment
-				? translate( 'Unlock theme' )
-				: translate( 'Continue' );
-
 		return {
 			action,
-			text,
+			text: action !== pickDesign ? translate( 'Unlock theme' ) : translate( 'Continue' ),
 		};
 	};
 
@@ -605,7 +593,7 @@ const UnifiedDesignPickerPreview = ( {
 
 	const stepContent = (
 		<>
-			{ requiredPlanSlug && ! isGoalsAtFrontExperiment && (
+			{ requiredPlanSlug && (
 				<UpgradeModal
 					slug={ selectedDesign.slug }
 					isOpen={ showUpgradeModal }
@@ -651,7 +639,7 @@ const UnifiedDesignPickerPreview = ( {
 	if ( isUsingStepContainerV2 ) {
 		// TODO: Create a new wireframe for the design preview. It should be named "FixedColumnOnTheLeftLayout"
 		return (
-			<Step.FullWidthLayout
+			<Step.WideLayout
 				className="step-container-v2--design-picker-preview"
 				topBar={ ( { isLargeViewport } ) => {
 					if ( ! isLargeViewport && activeScreen ) {
@@ -661,13 +649,6 @@ const UnifiedDesignPickerPreview = ( {
 					return (
 						<Step.TopBar
 							leftElement={ ! activeScreen && <Step.BackButton onClick={ handleBackClick } /> }
-							rightElement={
-								! isGoalsAtFrontExperiment ? undefined : (
-									<Step.SkipButton onClick={ () => handleSubmit() }>
-										{ translate( 'Skip setup' ) }
-									</Step.SkipButton>
-								)
-							}
 						/>
 					);
 				} }
@@ -719,7 +700,7 @@ const UnifiedDesignPickerPreview = ( {
 				} }
 			>
 				{ stepContent }
-			</Step.FullWidthLayout>
+			</Step.WideLayout>
 		);
 	}
 
@@ -727,7 +708,7 @@ const UnifiedDesignPickerPreview = ( {
 		<StepContainer
 			stepName={ STEP_NAME }
 			stepContent={ stepContent }
-			hideSkip={ ! isGoalsAtFrontExperiment }
+			hideSkip
 			skipLabelText={ translate( 'Skip setup' ) }
 			skipButtonAlign="top"
 			hideBack={ !! activeScreen }

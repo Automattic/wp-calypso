@@ -18,7 +18,7 @@
 	],
 	"license": "GPL-2.0-or-later",
 	"dependencies": {
-		"@wordpress/npm-package-json-lint-config": "^5.20.0",
+		"@wordpress/npm-package-json-lint-config": "^5.21.0",
 		"eslint-plugin-json-es": "^1.6.0",
 		"esquery": "^1.4.0",
 		"npm-package-json-lint": "^8.0.0"

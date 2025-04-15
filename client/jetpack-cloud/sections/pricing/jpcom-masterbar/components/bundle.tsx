@@ -1,8 +1,8 @@
 import { ExternalLink } from '@automattic/components';
 import { useLocale, localizeUrl } from '@automattic/i18n-utils';
-import { Fragment } from 'react';
 import AntispamIcon from '../icons/jetpack-bundle-icon-antispam';
 import BackupIcon from '../icons/jetpack-bundle-icon-backup';
+import BlazeIcon from '../icons/jetpack-bundle-icon-blaze';
 import BoostIcon from '../icons/jetpack-bundle-icon-boost';
 import CRMIcon from '../icons/jetpack-bundle-icon-crm';
 import NewsletterIcon from '../icons/jetpack-bundle-icon-newsletter';
@@ -59,6 +59,7 @@ const Bundle: FC< BundleType > = ( { bundle } ) => {
 				<StatsIcon key="stats" />,
 				<SocialIcon key="social" />,
 				<NewsletterIcon key="newsletter" />,
+				<BlazeIcon key="blaze" />,
 			];
 		}
 
@@ -77,7 +78,9 @@ const Bundle: FC< BundleType > = ( { bundle } ) => {
 				</p>
 				<div className="header__submenu-bundle-icons">
 					{ getBundleIcons( id ).map( ( icon, index ) => (
-						<Fragment key={ `bundle-icon-${ id }${ index }` }>{ icon }</Fragment>
+						<span className="jp-product-icon" key={ `bundle-icon-${ id }${ index }` }>
+							{ icon }
+						</span>
 					) ) }
 				</div>
 			</ExternalLink>

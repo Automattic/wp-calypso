@@ -3,7 +3,7 @@ import { BadgeType } from '@automattic/components';
 import { Step, StepContainer } from '@automattic/onboarding';
 import { canInstallPlugins } from '@automattic/sites';
 import { getQueryArg } from '@wordpress/url';
-import { useTranslate } from 'i18n-calypso';
+import { useTranslate, numberFormat } from 'i18n-calypso';
 import { useMemo } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -32,8 +32,12 @@ const SiteMigrationImportOrMigrate: StepType< {
 	const isUsingStepContainerV2 = shouldUseStepContainerV2MigrationFlow( flow );
 
 	const options = useMemo( () => {
-		const upgradeRequiredLabel = translate( '50% off %(planName)s', {
-			args: { planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' },
+		const upgradeRequiredLabel = translate( '%(discountPercentage)s off %(planName)s', {
+			args: {
+				planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '',
+				discountPercentage: numberFormat( 0.5, { numberFormatOptions: { style: 'percent' } } ),
+			},
+			comment: 'discountPercentage is a number between 0 and 100 followed or preceded by a % sign',
 		} );
 
 		const migrateOptionDescription = translate(
