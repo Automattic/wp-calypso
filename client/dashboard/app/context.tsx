@@ -4,7 +4,7 @@ export type AppConfig = {
 	basePath: string;
 	mainRoute: string;
 	Logo: React.FC | null;
-	LoadingLogo: React.FC | undefined;
+	LoadingLogo?: React.FC;
 	supports: {
 		overview: boolean;
 		sites: boolean;
