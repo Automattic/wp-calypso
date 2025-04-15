@@ -1,7 +1,7 @@
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 import QrCodeLoginButton from '../qr-code';
-import { DefaultWrapper, WooWrapper, AkismetWrapper } from './shared';
+import { WooWrapper, AkismetWrapper, AuthFormSocial } from './shared';
 import type { Meta, StoryObj } from '@storybook/react';
 
 const initialState = {
@@ -33,15 +33,15 @@ export default meta;
 type Story = StoryObj< typeof QrCodeLoginButton >;
 
 export const Default: Story = {
-	decorators: [ DefaultWrapper ],
+	decorators: [ AuthFormSocial ],
 };
 
 export const Akismet: Story = {
-	decorators: [ AkismetWrapper ],
+	decorators: [ AuthFormSocial, AkismetWrapper ],
 };
 
 export const Woo: Story = {
-	decorators: [ WooWrapper ],
+	decorators: [ AuthFormSocial, WooWrapper ],
 	parameters: {
 		state: {
 			...initialState,

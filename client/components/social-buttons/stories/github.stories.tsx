@@ -2,7 +2,6 @@ import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 import { GitHubLoginButton } from '../github';
 import {
-	DefaultWrapper,
 	AkismetWrapper,
 	BlazeWrapper,
 	GravatarWrapper,
@@ -10,6 +9,7 @@ import {
 	WooWrapper,
 	WPJobManagerWrapper,
 	A4AWrapper,
+	AuthFormSocial,
 } from './shared';
 import type { Meta, StoryObj } from '@storybook/react';
 
@@ -52,33 +52,33 @@ export default meta;
 type Story = StoryObj< typeof GitHubLoginButton >;
 
 export const Default: Story = {
-	decorators: [ DefaultWrapper ],
+	decorators: [ AuthFormSocial ],
 };
 
 export const A4A: Story = {
-	decorators: [ A4AWrapper ],
+	decorators: [ AuthFormSocial, A4AWrapper ],
 };
 
 export const Akismet: Story = {
-	decorators: [ AkismetWrapper ],
+	decorators: [ AuthFormSocial, AkismetWrapper ],
 };
 
 export const Blaze: Story = {
-	decorators: [ BlazeWrapper ],
+	decorators: [ AuthFormSocial, BlazeWrapper ],
 };
 
 export const Gravatar: Story = {
-	decorators: [ GravatarWrapper ],
+	decorators: [ AuthFormSocial, GravatarWrapper ],
 };
 
 export const Jetpack: Story = {
-	decorators: [ JetpackWrapper ],
+	decorators: [ AuthFormSocial, JetpackWrapper ],
 };
 
 export const Woo: Story = {
-	decorators: [ WooWrapper ],
+	decorators: [ AuthFormSocial, WooWrapper ],
 };
 
 export const WPJobManager: Story = {
-	decorators: [ WPJobManagerWrapper ],
+	decorators: [ AuthFormSocial, WPJobManagerWrapper ],
 };

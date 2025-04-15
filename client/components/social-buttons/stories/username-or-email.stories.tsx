@@ -1,7 +1,7 @@
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 import UsernameOrEmailButton from '../username-or-email';
-import { DefaultWrapper } from './shared';
+import { AuthFormSocial } from './shared';
 import type { Meta, StoryObj } from '@storybook/react';
 
 const initialState = {
@@ -25,5 +25,5 @@ export default meta;
 type Story = StoryObj< typeof UsernameOrEmailButton >;
 
 export const Default: Story = {
-	decorators: [ DefaultWrapper ],
+	decorators: [ AuthFormSocial ],
 };

@@ -1,44 +1,8 @@
 import type { StoryFn } from '@storybook/react';
 import './style.scss';
 
-export const A4AWrapper = ( Story: StoryFn ) => (
-	<div className="a8c-for-agencies" style={ { paddingInline: '30px' } }>
-		<div className="auth-form__social" style={ { maxWidth: '300px' } }>
-			<div className="auth-form__social-buttons">
-				<div className="auth-form__social-buttons-container">
-					<Story />
-				</div>
-			</div>
-		</div>
-	</div>
-);
-
-export const AkismetWrapper = ( Story: StoryFn ) => (
-	<div className="is-akismet" style={ { padding: '30px' } }>
-		<div className="auth-form__social" style={ { maxWidth: '300px' } }>
-			<div className="auth-form__social-buttons">
-				<div className="auth-form__social-buttons-container">
-					<Story />
-				</div>
-			</div>
-		</div>
-	</div>
-);
-
-export const BlazeWrapper = ( Story: StoryFn ) => (
-	<div className="blaze-pro" style={ { padding: '30px' } }>
-		<div className="auth-form__social" style={ { maxWidth: '300px' } }>
-			<div className="auth-form__social-buttons">
-				<div className="auth-form__social-buttons-container">
-					<Story />
-				</div>
-			</div>
-		</div>
-	</div>
-);
-
-export const DefaultWrapper = ( Story: StoryFn ) => (
-	<div className="auth-form__social" style={ { padding: '30px', maxWidth: '300px' } }>
+export const AuthFormSocial = ( Story: StoryFn ) => (
+	<div className="auth-form__social" style={ { maxWidth: '300px', padding: '30px' } }>
 		<div className="auth-form__social-buttons">
 			<div className="auth-form__social-buttons-container">
 				<Story />
@@ -47,57 +11,48 @@ export const DefaultWrapper = ( Story: StoryFn ) => (
 	</div>
 );
 
+export const A4AWrapper = ( Story: StoryFn ) => (
+	<div className="a8c-for-agencies">
+		<Story />
+	</div>
+);
+
+export const AkismetWrapper = ( Story: StoryFn ) => (
+	<div className="is-akismet">
+		<Story />
+	</div>
+);
+
+export const BlazeWrapper = ( Story: StoryFn ) => (
+	<div className="blaze-pro">
+		<Story />
+	</div>
+);
+
 export const WooWrapper = ( Story: StoryFn ) => (
-	<div className="woo is-woo-passwordless" style={ { paddingInline: '30px' } }>
-		<div className="auth-form__social" style={ { maxWidth: '300px' } }>
-			<div className="auth-form__social-buttons">
-				<div className="auth-form__social-buttons-container">
-					<Story />
-				</div>
-			</div>
-		</div>
+	<div className="woo is-woo-passwordless">
+		<Story />
 	</div>
 );
 
 export const JetpackWrapper = ( Story: StoryFn ) => (
-	<div className="jetpack-cloud" style={ { paddingInline: '30px' } }>
-		<div className="auth-form__social" style={ { maxWidth: '300px' } }>
-			<div className="auth-form__social-buttons">
-				<div className="auth-form__social-buttons-container">
-					<Story />
-				</div>
-			</div>
-		</div>
+	<div className="jetpack-cloud">
+		<Story />
 	</div>
 );
 
 export const GravatarWrapper = ( Story: StoryFn ) => (
-	<div className="layout is-section-login is-grav-powered-client" style={ { padding: '30px' } }>
+	<div className="layout is-section-login is-grav-powered-client">
 		<div className="login">
-			<div className="auth-form__social" style={ { maxWidth: '300px' } }>
-				<div className="auth-form__social-buttons">
-					<div className="auth-form__social-buttons-container">
-						<Story />
-					</div>
-				</div>
-			</div>
+			<Story />
 		</div>
 	</div>
 );
 
 export const WPJobManagerWrapper = ( Story: StoryFn ) => (
-	<div
-		className="layout is-section-login is-grav-powered-client is-wp-job-manager"
-		style={ { padding: '30px' } }
-	>
+	<div className="layout is-section-login is-grav-powered-client is-wp-job-manager">
 		<div className="login">
-			<div className="auth-form__social" style={ { maxWidth: '300px' } }>
-				<div className="auth-form__social-buttons">
-					<div className="auth-form__social-buttons-container">
-						<Story />
-					</div>
-				</div>
-			</div>
+			<Story />
 		</div>
 	</div>
 );
