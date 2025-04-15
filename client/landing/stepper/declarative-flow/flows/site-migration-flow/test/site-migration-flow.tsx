@@ -209,6 +209,32 @@ describe( 'Site Migration Flow', () => {
 					},
 				} );
 			} );
+
+			it( 'redirects to the proper importer when the platform is importable', () => {
+				runNavigation( {
+					from: STEPS.PROCESSING,
+					dependencies: {
+						siteCreated: true,
+						siteId: 123,
+						siteSlug: 'example.wordpress.com',
+					},
+					query: {
+						platform: 'medium',
+						from: 'https://example-to-be-migrated.com',
+						sessionId: '123',
+						siteId: 123,
+					},
+				} );
+
+				expect( window.location.assign ).toMatchURL( {
+					path: '/setup/site-setup/importerMedium',
+					query: {
+						from: 'https://example-to-be-migrated.com',
+						siteSlug: 'example.wordpress.com',
+						sessionId: '123',
+					},
+				} );
+			} );
 		} );
 
 		//TODO: Move it to the top be the first test group to follow the order of the flow
