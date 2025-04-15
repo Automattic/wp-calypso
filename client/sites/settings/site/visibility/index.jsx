@@ -16,7 +16,10 @@ import getIsUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSiteSettings } from 'calypso/state/site-settings/selectors';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
-import { launchSite } from 'calypso/state/sites/launch/actions';
+import {
+	launchSite,
+	launchSiteOrRedirectToLaunchSignupFlow,
+} from 'calypso/state/sites/launch/actions';
 import { getIsSiteLaunchInProgress } from 'calypso/state/sites/launch/selectors';
 import {
 	isSiteOnECommerceTrial as getIsSiteOnECommerceTrial,
@@ -152,11 +155,15 @@ const LaunchSite = () => {
 		);
 		querySiteDomainsComponent = '';
 	} else {
-		let href = `/start/launch-site?siteSlug=${ siteSlug }&source=general-settings&new=${ site.title }&search=yes`;
-		if ( isBigSkyTrial ) {
-			href = `/setup/ai-site-builder/domains?siteId=${ siteId }&source=general-settings&redirect=site-launch`;
-		}
-		btnComponent = <Button href={ href }>{ btnText }</Button>;
+		btnComponent = (
+			<Button
+				onClick={ () => {
+					dispatch( launchSiteOrRedirectToLaunchSignupFlow( siteId, 'general-settings' ) );
+				} }
+			>
+				{ btnText }
+			</Button>
+		);
 		querySiteDomainsComponent = '';
 	}
 
