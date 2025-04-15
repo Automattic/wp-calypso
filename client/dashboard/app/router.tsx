@@ -38,10 +38,7 @@ async function maybeAwaitFetch( options: FetchQueryOptions ) {
 	return options;
 }
 
-const rootRoute = createRootRoute( {
-	component: Root,
-	notFoundComponent: NotFound,
-} );
+const rootRoute = createRootRoute( { component: Root } );
 
 const indexRoute = createRoute( {
 	getParentRoute: () => rootRoute,
@@ -115,7 +112,6 @@ const siteRoute = createRoute( {
 				};
 			},
 		} ),
-	notFoundComponent: NotFound,
 } ).lazy( () =>
 	import( '../site' ).then( ( d ) =>
 		createLazyRoute( 'site' )( {
@@ -186,7 +182,6 @@ const meRoute = createRoute( {
 			queryKey: [ 'profile' ],
 			queryFn: fetchProfile,
 		} ),
-	notFoundComponent: NotFound,
 	beforeLoad: async () => {
 		const twoStep = await fetchTwoStep();
 		if ( twoStep.two_step_reauthorization_required ) {
@@ -303,6 +298,7 @@ export const getRouter = ( config: AppConfig ) => {
 		routeTree,
 		basepath: config.basePath,
 		defaultErrorComponent: UnknownError,
+		defaultNotFoundComponent: NotFound,
 	} );
 };
 
