@@ -20,6 +20,7 @@
 	},
 	"main": "build/index.js",
 	"module": "build-module/index.js",
+	"calypso:src": "src/index.ts",
 	"exports": {
 		".": {
 			"types": "./build-types/index.d.ts",
