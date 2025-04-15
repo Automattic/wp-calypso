@@ -4,9 +4,10 @@ import CancelLicenseFeedbackModal from 'calypso/a8c-for-agencies/components/a4a-
 import PopoverMenu from 'calypso/components/popover-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import { LicenseAction, LicenseType } from 'calypso/jetpack-cloud/sections/partner-portal/types';
-import useLicenseActions from './use-license-actions';
+import useLicenseActions, { LicenseActionType } from './use-license-actions';
 
 interface Props {
+	type: LicenseActionType;
 	siteUrl: string | null;
 	isDevSite: boolean;
 	attachedAt: string | null;
@@ -30,20 +31,22 @@ export default function LicenseActions( {
 	productName,
 	licenseKey,
 	productId,
+	type,
 }: Props ) {
 	const buttonActionRef = useRef< HTMLButtonElement | null >( null );
 
 	const [ isOpen, setIsOpen ] = useState( false );
 	const [ showRevokeDialog, setShowRevokeDialog ] = useState( false );
-	const licenseActions = useLicenseActions(
+	const licenseActions = useLicenseActions( {
 		siteUrl,
 		isDevSite,
 		attachedAt,
 		revokedAt,
 		licenseType,
 		isChildLicense,
-		isClientLicense
-	);
+		isClientLicense,
+		type,
+	} );
 
 	const handleActionClick = ( action: LicenseAction ) => {
 		action.onClick();
@@ -51,6 +54,12 @@ export default function LicenseActions( {
 			setShowRevokeDialog( true );
 		}
 	};
+
+	const availableActions = licenseActions.filter( ( action ) => action.isEnabled );
+
+	if ( availableActions.length === 0 ) {
+		return null;
+	}
 
 	return (
 		<>
@@ -64,9 +73,8 @@ export default function LicenseActions( {
 				onClose={ () => setIsOpen( false ) }
 				position="bottom left"
 			>
-				{ licenseActions
-					.filter( ( action ) => action.isEnabled )
-					.map( ( action ) => (
+				{ availableActions.map( ( action ) => (
+					<>
 						<PopoverMenuItem
 							key={ action.name }
 							isExternalLink={ action?.isExternalLink }
@@ -76,7 +84,8 @@ export default function LicenseActions( {
 						>
 							{ action.name }
 						</PopoverMenuItem>
-					) ) }
+					</>
+				) ) }
 			</PopoverMenu>
 			{ showRevokeDialog && (
 				<CancelLicenseFeedbackModal

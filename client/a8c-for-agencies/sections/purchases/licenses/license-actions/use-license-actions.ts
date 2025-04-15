@@ -13,15 +13,29 @@ import { hasAgencyCapability } from 'calypso/state/a8c-for-agencies/agency/selec
 import { A4AStore } from 'calypso/state/a8c-for-agencies/types';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
-export default function useLicenseActions(
-	siteUrl: string | null,
-	isDevSite: boolean,
-	attachedAt: string | null,
-	revokedAt: string | null,
-	licenseType: LicenseType,
-	isChildLicense?: boolean,
-	isClientLicense?: boolean
-): LicenseAction[] {
+export type LicenseActionType = 'bundle' | 'wpcom' | 'regular';
+
+type Props = {
+	siteUrl: string | null;
+	isDevSite: boolean;
+	attachedAt: string | null;
+	revokedAt: string | null;
+	licenseType: LicenseType;
+	isChildLicense?: boolean;
+	isClientLicense?: boolean;
+	type: LicenseActionType;
+};
+
+export default function useLicenseActions( {
+	siteUrl,
+	isDevSite,
+	attachedAt,
+	revokedAt,
+	licenseType,
+	isChildLicense,
+	isClientLicense,
+	type,
+}: Props ): LicenseAction[] {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -30,76 +44,85 @@ export default function useLicenseActions(
 	);
 
 	return useMemo( () => {
-		if ( ! siteUrl ) {
+		const licenseState = getLicenseState( attachedAt, revokedAt );
+
+		if ( licenseState === LicenseState.Revoked ) {
 			return [];
 		}
 
-		const siteSlug = urlToSlug( siteUrl );
+		const siteSlug = siteUrl ? urlToSlug( siteUrl ) : null;
 
 		const handleClickMenuItem = ( eventName: string ) => {
 			dispatch( recordTracksEvent( eventName ) );
 		};
 
-		const licenseState = getLicenseState( attachedAt, revokedAt );
 		return [
+			// This is for Bundle licenses
+			{
+				name: translate( 'Revoke bundle' ),
+				onClick: () => handleClickMenuItem( 'calypso_a4a_licenses_revoke_bundle_clicked' ),
+				isEnabled: type === 'bundle' && canRevoke,
+				className: 'is-destructive',
+			},
+
+			// This are menu items for Assigned WPCOM Licenses
 			{
 				name: translate( 'Prepare for launch' ),
 				href: `https://wordpress.com/sites/settings/site/${ siteSlug }`,
 				onClick: () => handleClickMenuItem( 'prepare_for_launch' ),
 				isExternalLink: true,
-				isEnabled: isDevSite,
+				isEnabled: type === 'wpcom' && isDevSite,
 			},
 			{
 				name: translate( 'Set up site' ),
 				href: `https://wordpress.com/overview/${ siteSlug }`,
 				onClick: () => handleClickMenuItem( 'calypso_a4a_licenses_site_set_up_click' ),
 				isExternalLink: true,
-				isEnabled: true,
+				isEnabled: type === 'wpcom',
 			},
 			{
 				name: translate( 'Change domain' ),
 				href: `https://wordpress.com/domains/manage/${ siteSlug }`,
 				onClick: () => handleClickMenuItem( 'calypso_a4a_licenses_change_domain_click' ),
 				isExternalLink: true,
-				isEnabled: true,
+				isEnabled: type === 'wpcom',
 			},
 			{
 				name: translate( 'Hosting configuration' ),
 				href: `https://wordpress.com/hosting-config/${ siteSlug }`,
 				onClick: () => handleClickMenuItem( 'calypso_a4a_licenses_hosting_configuration_click' ),
 				isExternalLink: true,
-				isEnabled: true,
+				isEnabled: type === 'wpcom',
 			},
 			{
 				name: translate( 'Edit site in WP Admin' ),
 				href: `${ siteUrl }/wp-admin/admin.php?page=jetpack#/dashboard`,
 				onClick: () => handleClickMenuItem( 'calypso_a4a_licenses_edit_site_click' ),
 				isExternalLink: true,
-				isEnabled: true,
+				isEnabled: type === 'wpcom',
 			},
 			{
 				name: translate( 'Debug site' ),
 				href: `https://jptools.wordpress.com/debug/?url=${ siteUrl }`,
 				onClick: () => handleClickMenuItem( 'calypso_a4a_licenses_debug_site_click' ),
 				isExternalLink: true,
-				isEnabled: licenseState === LicenseState.Attached,
+				isEnabled: type === 'wpcom' && licenseState === LicenseState.Attached,
 			},
 			{
 				name: translate( 'Upgrade' ),
 				href: A4A_MARKETPLACE_HOSTING_WPCOM_LINK,
 				onClick: () => handleClickMenuItem( 'calypso_a4a_licenses_upgrade_click' ),
 				isExternalLink: false,
-				isEnabled: ! isClientLicense && ! isDevSite,
+				isEnabled: type === 'wpcom' && ! isClientLicense && ! isDevSite,
 			},
 			{
 				name: translate( 'Revoke' ),
 				onClick: () => handleClickMenuItem( 'calypso_a4a_licenses_hosting_configuration_click' ),
 				type: 'revoke',
 				isEnabled:
+					type === 'wpcom' &&
 					canRevoke &&
-					( isChildLicense
-						? licenseState === LicenseState.Attached
-						: licenseState !== LicenseState.Revoked ) &&
+					( isChildLicense ? licenseState === LicenseState.Attached : true ) &&
 					licenseType === LicenseType.Partner,
 				className: 'is-destructive',
 			},
@@ -115,5 +138,6 @@ export default function useLicenseActions(
 		revokedAt,
 		siteUrl,
 		translate,
+		type,
 	] );
 }

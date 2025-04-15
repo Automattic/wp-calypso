@@ -5,7 +5,7 @@ import { Icon, external } from '@wordpress/icons';
 import { getQueryArg, removeQueryArgs } from '@wordpress/url';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useEffect, useState, useContext, useRef } from 'react';
+import { useCallback, useEffect, useState, useContext, useRef, useMemo } from 'react';
 import useShowFeedback from 'calypso/a8c-for-agencies/components/a4a-feedback/hooks/use-show-a4a-feedback';
 import { FeedbackType } from 'calypso/a8c-for-agencies/components/a4a-feedback/types';
 import A4APopover from 'calypso/a8c-for-agencies/components/a4a-popover';
@@ -38,7 +38,6 @@ import LicenseActions from '../license-actions';
 import LicenseDetails from '../license-details';
 import BundleDetails from '../license-details/bundle-details';
 import LicensesOverviewContext from '../licenses-overview/context';
-import LicenseBundleDropDown from './license-bundle-dropdown';
 import type { ReferralAPIResponse } from 'calypso/a8c-for-agencies/sections/referrals/types';
 import type { License, LicenseMeta } from 'calypso/state/partner-portal/types';
 
@@ -271,6 +270,18 @@ export default function LicensePreview( {
 
 	const isDevelopmentSite = Boolean( meta?.isDevSite );
 
+	const licenseActionType = useMemo( () => {
+		if ( isParentLicense ) {
+			return 'bundle';
+		}
+
+		if ( isWPCOMLicense && isSiteAtomic ) {
+			return 'wpcom';
+		}
+
+		return 'regular';
+	}, [ isParentLicense, isWPCOMLicense, isSiteAtomic ] );
+
 	const hasLicensePreview =
 		! ( isWPCOMLicense && isSiteAtomic ) && // Assigned WPCOM licenses don't have a preview
 		/*
@@ -395,30 +406,19 @@ export default function LicensePreview( {
 				</div>
 
 				<div>
-					{ !! isParentLicense && ! revokedAt && (
-						<LicenseBundleDropDown
-							productName={ productName }
-							licenseKey={ licenseKey }
-							bundleSize={ quantity }
-							productId={ productId }
-							isClientLicense={ !! referral }
-						/>
-					) }
-
-					{ isWPCOMLicense && isSiteAtomic && (
-						<LicenseActions
-							siteUrl={ siteUrl }
-							isDevSite={ isDevelopmentSite }
-							attachedAt={ attachedAt }
-							revokedAt={ revokedAt }
-							licenseType={ licenseType }
-							isChildLicense={ isChildLicense }
-							isClientLicense={ !! referral }
-							productName={ productName }
-							licenseKey={ licenseKey }
-							productId={ productId }
-						/>
-					) }
+					<LicenseActions
+						type={ licenseActionType }
+						siteUrl={ siteUrl }
+						isDevSite={ isDevelopmentSite }
+						attachedAt={ attachedAt }
+						revokedAt={ revokedAt }
+						licenseType={ licenseType }
+						isChildLicense={ isChildLicense }
+						isClientLicense={ !! referral }
+						productName={ productName }
+						licenseKey={ licenseKey }
+						productId={ productId }
+					/>
 
 					{ hasLicensePreview && (
 						<Button onClick={ open } className="license-preview__toggle" borderless>
