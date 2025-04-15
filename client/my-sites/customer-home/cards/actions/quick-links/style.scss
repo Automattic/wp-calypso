@@ -1,14 +1,17 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
-$breakpoint-mobile: 782px;
 
 .quick-links.foldable-card.card {
-	@media only screen and (max-width: $breakpoint-mobile) {
-		padding: 1rem;
+	padding: 1rem;
+	border-radius: 3px;
+
+	@media only screen and (max-width: $break-small) {
+		border-radius: 0;
 	}
 
-	@include breakpoint-deprecated( ">660px" ) {
-		border-radius: 3px;
+	@media only screen and (min-width: $break-xlarge) {
+		padding: 0;
+		box-shadow: none;
 	}
 
 	.foldable-card__header {
@@ -43,7 +46,6 @@ $breakpoint-mobile: 782px;
 
 .quick-links__boxes {
 	margin-left: -16px;
-	margin-right: -16px;
 }
 
 .card.quick-links__action-box {
@@ -142,6 +144,3 @@ $breakpoint-mobile: 782px;
 	margin-left: 2px;
 }
 
-.card.quick-links-for-hosted-sites {
-	box-shadow: none;
-}

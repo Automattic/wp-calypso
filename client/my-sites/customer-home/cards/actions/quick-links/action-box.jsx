@@ -30,7 +30,7 @@ const ActionBox = ( {
 
 		if ( svgIcon ) {
 			return React.cloneElement( svgIcon, {
-				className: `${ svgIcon.props.className || '' } quick-links__action-box-icon`.trim(),
+				className: clsx( svgIcon.props.className || '', 'quick-links__action-box-icon' ),
 			} );
 		}
 
