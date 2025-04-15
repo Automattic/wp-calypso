@@ -9,7 +9,7 @@ import { getRouter } from './router';
 function RouterProviderWithAuth( { config }: { config: AppConfig } ) {
 	const auth = useAuth();
 	const router = useMemo( () => getRouter( config ), [ config ] );
-	return <RouterProvider router={ router } context={ { auth } } />;
+	return <RouterProvider router={ router } context={ { auth, config } } />;
 }
 
 function Layout( { config }: { config: AppConfig } ) {
