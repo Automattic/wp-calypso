@@ -10,6 +10,7 @@ import {
 } from 'calypso/my-sites/stats/constants';
 import { useSelector } from 'calypso/state';
 import { shouldGateStats } from './use-should-gate-stats';
+import type { AppState } from 'calypso/types';
 
 type IntervalType = {
 	id: string;
@@ -51,7 +52,7 @@ function useStaticIntervals() {
 	);
 }
 
-const getGatedIntervals = createSelector( ( state, siteId, intervals ) => {
+const getGatedIntervals = createSelector( ( state: AppState, siteId, intervals ) => {
 	return Object.keys( intervals ).reduce( ( acc, key ) => {
 		const interval = intervals[ key ];
 
