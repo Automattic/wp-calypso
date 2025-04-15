@@ -25,13 +25,8 @@ import {
 	isSiteOnECommerceTrial as getIsSiteOnECommerceTrial,
 	isSiteOnMigrationTrial as getIsSiteOnMigrationTrial,
 } from 'calypso/state/sites/plans/selectors';
-import isSiteBigSkyTrial from 'calypso/state/sites/plans/selectors/is-site-big-sky-trial';
 import { isCurrentPlanPaid } from 'calypso/state/sites/selectors';
-import {
-	getSelectedSite,
-	getSelectedSiteId,
-	getSelectedSiteSlug,
-} from 'calypso/state/ui/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { LaunchConfirmationModal } from './launch-confirmation-modal';
 import { LaunchSiteTrialUpsellNotice } from './launch-site-trial-notice';
 
@@ -91,10 +86,8 @@ const LaunchSite = () => {
 	const site = useSelector( ( state ) => getSelectedSite( state ) );
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const siteSettings = useSelector( ( state ) => getSiteSettings( state, siteId ) );
-	const siteSlug = useSelector( ( state ) => getSelectedSiteSlug( state ) );
 	const isPaidPlan = useSelector( ( state ) => isCurrentPlanPaid( state, siteId ) );
 	const isComingSoon = useSelector( ( state ) => isSiteComingSoon( state, siteId ) );
-	const isBigSkyTrial = useSelector( ( state ) => isSiteBigSkyTrial( state, siteId ) );
 	const hasSitePreviewLink = useSelector( ( state ) =>
 		siteHasFeature( state, siteId, WPCOM_FEATURES_SITE_PREVIEW_LINKS )
 	);
