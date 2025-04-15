@@ -127,10 +127,12 @@ const siteMigration: FlowV2 = {
 						action: SiteMigrationIdentifyAction;
 					};
 					const hasDestinationSite = hasSite( siteId, siteSlug );
-
 					if ( hasDestinationSite ) {
 						if ( platform !== 'wordpress' || action === 'skip_platform_identification' ) {
-							//TODO: Improve it to redirect the user to the correct import step if the platform is not wordpress
+							if ( isPlatformImportable( platform ) && from ) {
+								return exitFlow( getFullImporterUrl( platform, siteSlug, from ) );
+							}
+
 							return exitFlow(
 								paths.siteSetupImportListPath( {
 									siteId,

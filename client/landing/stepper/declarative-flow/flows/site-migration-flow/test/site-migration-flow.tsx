@@ -368,6 +368,25 @@ describe( 'Site Migration Flow', () => {
 				} );
 			} );
 
+			it( 'redirects to the importer when the platform is importable', () => {
+				runNavigation( {
+					from: STEPS.SITE_MIGRATION_IDENTIFY,
+					dependencies: {
+						platform: 'squarespace',
+						from: 'https://site-to-be-migrated.com',
+					},
+					query: {
+						siteId: 123,
+						siteSlug: 'example.wordpress.com',
+					},
+				} );
+
+				expect( window.location.assign ).toMatchURL( {
+					path: '/setup/site-setup/importerSquarespace',
+					query: { from: 'https://site-to-be-migrated.com' },
+				} );
+			} );
+
 			describe( 'back', () => {
 				beforeEach( () => {
 					jest.clearAllMocks();
