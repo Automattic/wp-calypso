@@ -11,7 +11,7 @@ import MarketplaceSidebar from '../../components/sidebar-menu/marketplace';
 import AssignLicense from './assign-license';
 import Checkout from './checkout';
 import { MARKETPLACE_TYPE_REFERRAL } from './hoc/with-marketplace-type';
-import HostingOverview from './hosting-overview-v3';
+import HostingOverview from './hosting-overview';
 import { getValidHostingSection } from './lib/hosting';
 import { getValidBrand } from './lib/product-brand';
 import DownloadProducts from './primary/download-products';
