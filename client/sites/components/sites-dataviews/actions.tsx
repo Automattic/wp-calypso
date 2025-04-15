@@ -521,7 +521,7 @@ export function useActions( {
 				RenderModal: ( { items, closeModal }: RenderModalProps< SiteExcerptData > ) => {
 					return (
 						<Suspense>
-							<LazyLeaveSiteModalForm siteId={ items[ 0 ]?.ID } onClose={ closeModal } />
+							<LazyLeaveSiteModalForm siteId={ items[ 0 ]?.ID ?? 0 } onClose={ closeModal } />
 						</Suspense>
 					);
 				},

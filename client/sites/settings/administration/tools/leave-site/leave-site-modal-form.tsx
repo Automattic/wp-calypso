@@ -23,7 +23,7 @@ const LeaveSiteModalForm = ( { siteId, onClose }: LeaveSiteModalFormProps ) => {
 	const dispatch = useDispatch();
 	const [ isChecked, setChecked ] = useState( false );
 	const [ isSubmitting, setIsSubmitting ] = useState( false );
-	const siteDomain = useSelector( ( state ) => getSiteDomain( state, siteId ) );
+	const siteDomain = useSelector( ( state ) => getSiteDomain( state, siteId ) || '' );
 
 	const handleLeaveSite = async () => {
 		if ( ! isChecked ) {
