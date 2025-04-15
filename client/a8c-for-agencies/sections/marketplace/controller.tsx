@@ -15,7 +15,7 @@ import HostingOverviewV3 from './hosting-overview-v3';
 import { getValidHostingSection } from './lib/hosting';
 import { getValidBrand } from './lib/product-brand';
 import DownloadProducts from './primary/download-products';
-import ProductsOverviewV2 from './products-overview-v2';
+import ProductsOverviewV2 from './products-overview';
 
 export const marketplaceContext: Callback = () => {
 	page.redirect( A4A_MARKETPLACE_HOSTING_LINK );
