@@ -10,7 +10,6 @@ export const PERFORMANCE = 'performance';
 export const SETTINGS_SITE = 'settings-site';
 export const SETTINGS_ADMINISTRATION_RESET_SITE = 'settings-administration-reset-site';
 export const SETTINGS_ADMINISTRATION_TRANSFER_SITE = 'settings-administration-transfer-site';
-export const SETTINGS_ADMINISTRATION_LEAVE_SITE = 'settings-administration-leave-site';
 export const SETTINGS_ADMINISTRATION_DELETE_SITE = 'settings-administration-delete-site';
 export const SETTINGS_SERVER = 'settings-server';
 export const SETTINGS_SFTP_SSH = 'settings-sftp-ssh';
@@ -31,7 +30,6 @@ export const FEATURE_TO_ROUTE_MAP: { [ feature: string ]: string } = {
 	[ SETTINGS_SITE ]: 'sites/settings/site/:site',
 	[ SETTINGS_ADMINISTRATION_RESET_SITE ]: 'sites/settings/site/:site/reset-site',
 	[ SETTINGS_ADMINISTRATION_TRANSFER_SITE ]: 'sites/settings/site/:site/transfer-site',
-	[ SETTINGS_ADMINISTRATION_LEAVE_SITE ]: 'sites/settings/site/:site/leave-site',
 	[ SETTINGS_ADMINISTRATION_DELETE_SITE ]: 'sites/settings/site/:site/delete-site',
 	[ SETTINGS_SERVER ]: 'sites/settings/server/:site',
 	[ SETTINGS_SFTP_SSH ]: 'sites/settings/sftp-ssh/:site',

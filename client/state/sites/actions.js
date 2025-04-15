@@ -243,6 +243,7 @@ export function leaveSite( siteId ) {
 						siteLeaveNoticeOptions
 					)
 				);
+				return true;
 			} )
 			.catch( ( error ) => {
 				if (
@@ -264,6 +265,7 @@ export function leaveSite( siteId ) {
 				}
 
 				dispatch( errorNotice( error.message, siteLeaveNoticeOptions ) );
+				return false;
 			} );
 	};
 }

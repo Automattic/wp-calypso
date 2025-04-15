@@ -3,7 +3,6 @@ import { addQueryArgs } from '@wordpress/url';
 import { billingHistory } from 'calypso/me/purchases/paths';
 import SiteSettingsMain from 'calypso/my-sites/site-settings/main';
 import DeleteSite from 'calypso/sites/settings/administration/tools/delete-site';
-import LeaveSite from 'calypso/sites/settings/administration/tools/leave-site';
 import StartOver from 'calypso/sites/settings/administration/tools/reset-site';
 import SiteOwnerTransfer from 'calypso/sites/settings/administration/tools/transfer-site';
 import { AcceptSiteTransfer } from 'calypso/sites/settings/administration/tools/transfer-site/accept-site-transfer';
@@ -18,12 +17,6 @@ import ManageConnection from './manage-connection';
 
 export function general( context, next ) {
 	context.primary = <SiteSettingsMain />;
-	next();
-}
-
-export function leaveSite( context, next ) {
-	context.store.dispatch( recordTracksEvent( 'calypso_settings_leave_site_page' ) );
-	context.primary = <LeaveSite path={ context.path } />;
 	next();
 }
 

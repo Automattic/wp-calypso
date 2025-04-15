@@ -1,11 +1,12 @@
 import { addQueryArgs } from '@wordpress/url';
 import { localize, fixMe } from 'i18n-calypso';
-import { Component } from 'react';
+import { Component, Suspense } from 'react';
 import { connect } from 'react-redux';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import { withSiteCopy } from 'calypso/landing/stepper/hooks/use-site-copy';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
+import { LazyLeaveSiteModal } from 'calypso/sites/settings/administration/tools/leave-site';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import {
 	hasLoadedSitePurchasesFromServer,
@@ -22,8 +23,11 @@ import { isJetpackSite, getSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import AdministrationToolCard from './card';
 import { requestRestore } from './restore-plan-software';
-
 import './style.scss';
+
+const MODAL_NAMES = {
+	LEAVE_SITE: 'LEAVE_SITE',
+};
 
 const trackDeleteSiteOption = ( option ) => {
 	recordTracksEvent( 'calypso_settings_delete_site_options', {
@@ -32,11 +36,35 @@ const trackDeleteSiteOption = ( option ) => {
 };
 
 class SiteTools extends Component {
+	state = {
+		modalOpen: {
+			leaveSite: false,
+		},
+	};
+
 	componentDidUpdate( prevProps ) {
 		if ( ! prevProps.purchasesError && this.props.purchasesError ) {
 			this.props.errorNotice( this.props.purchasesError );
 		}
 	}
+
+	handleOpenModal = ( modalName ) => () => {
+		this.setState( ( state ) => ( {
+			modalOpen: {
+				...state.modalOpen,
+				[ modalName ]: true,
+			},
+		} ) );
+	};
+
+	handleCloseModal = ( modalName ) => () => {
+		this.setState( ( state ) => ( {
+			modalOpen: {
+				...state.modalOpen,
+				[ modalName ]: false,
+			},
+		} ) );
+	};
 
 	render() {
 		const {
@@ -57,6 +85,8 @@ class SiteTools extends Component {
 			headerTitle,
 			source,
 		} = this.props;
+
+		const { modalOpen } = this.state;
 
 		const changeAddressLink = `/domains/manage/${ siteSlug }?source=${ source }`;
 
@@ -148,11 +178,18 @@ class SiteTools extends Component {
 						description={ restorePlanSoftwareText }
 					/>
 				) }
-				<AdministrationToolCard
-					title={ translate( 'Leave site' ) }
-					description={ translate( 'Leave this site and remove your access.' ) }
-					href={ leaveSiteLink }
-				/>
+
+				<Suspense>
+					<AdministrationToolCard
+						title={ translate( 'Leave site' ) }
+						description={ translate( 'Leave this site and remove your access.' ) }
+						onClick={ this.handleOpenModal( MODAL_NAMES.LEAVE_SITE ) }
+					/>
+					{ modalOpen[ MODAL_NAMES.LEAVE_SITE ] && (
+						<LazyLeaveSiteModal onClose={ this.handleCloseModal( MODAL_NAMES.LEAVE_SITE ) } />
+					) }
+				</Suspense>
+
 				{ showDeleteContent && (
 					<AdministrationToolCard
 						href={ startOverLink }

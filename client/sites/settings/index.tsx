@@ -9,7 +9,6 @@ import {
 	SETTINGS_SITE,
 	SETTINGS_ADMINISTRATION_RESET_SITE,
 	SETTINGS_ADMINISTRATION_TRANSFER_SITE,
-	SETTINGS_ADMINISTRATION_LEAVE_SITE,
 	SETTINGS_ADMINISTRATION_DELETE_SITE,
 	SETTINGS_PERFORMANCE,
 	SETTINGS_SERVER,
@@ -26,7 +25,6 @@ import {
 	administrationToolDeleteSite,
 	administrationToolResetSite,
 	administrationToolTransferSite,
-	administrationToolLeaveSite,
 	serverSettings,
 	sftpSshSettings,
 	databaseSettings,
@@ -65,16 +63,6 @@ export default function () {
 		navigation,
 		administrationToolTransferSite,
 		siteDashboard( SETTINGS_ADMINISTRATION_TRANSFER_SITE ),
-		makeLayout,
-		clientRender
-	);
-
-	page(
-		'/sites/settings/site/:site/leave-site',
-		siteSelection,
-		navigation,
-		administrationToolLeaveSite,
-		siteDashboard( SETTINGS_ADMINISTRATION_LEAVE_SITE ),
 		makeLayout,
 		clientRender
 	);
