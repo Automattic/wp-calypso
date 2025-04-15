@@ -14,11 +14,13 @@ import {
 } from '@automattic/design-picker';
 import DesignPreview, { useScreens, type DesignPreviewProps } from '@automattic/design-preview';
 import { StepContainer, Step } from '@automattic/onboarding';
+import { Modal } from '@wordpress/components';
 import { Navigator } from '@wordpress/components/build-types/navigator/types';
 import { useSelect } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useRef } from 'react';
+import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
 import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
 import { useQueryTheme } from 'calypso/components/data/query-theme';
 import PremiumGlobalStylesUpgradeModal from 'calypso/components/premium-global-styles-upgrade-modal';
@@ -47,7 +49,6 @@ import { goToCheckout } from '../../../../utils/checkout';
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
 import { STEP_NAME } from './constants';
 import DesignPickerDesignTitle from './design-picker-design-title';
-import { EligibilityWarningsModal } from './eligibility-warnings-modal';
 import type { SiteSelect, GlobalStyles, OnboardSelect } from '@automattic/data-stores';
 import type { Design, StyleVariation } from '@automattic/design-picker';
 import type { GlobalStylesObject } from '@automattic/global-styles';
@@ -607,22 +608,32 @@ const UnifiedDesignPickerPreview = ( {
 				/>
 			) }
 			<QueryEligibility siteId={ site?.ID } />
-			<EligibilityWarningsModal
-				site={ site ?? undefined }
-				isMarketplace={ selectedDesign?.is_externally_managed }
-				isOpen={ showEligibility }
-				handleClose={ () => {
-					recordTracksEvent( 'calypso_automated_transfer_eligibility_modal_dismiss', {
-						flow: 'onboarding',
-						theme: selectedDesign?.slug,
-					} );
-					setShowEligibility( false );
-				} }
-				handleContinue={ () => {
-					navigateToCheckout();
-					setShowEligibility( false );
-				} }
-			/>
+			{ showEligibility && (
+				<Modal
+					className="eligibility-warnings-modal__dialog-content"
+					title={ translate( 'Before you continue' ) }
+					onRequestClose={ () => {
+						recordTracksEvent( 'calypso_automated_transfer_eligibility_modal_dismiss', {
+							flow: 'onboarding',
+							theme: selectedDesign?.slug,
+						} );
+						setShowEligibility( false );
+					} }
+					size="medium"
+				>
+					<EligibilityWarnings
+						siteId={ site?.ID }
+						standaloneProceed
+						isOnboarding
+						isMarketplace={ selectedDesign?.is_externally_managed }
+						currentContext="plugin-details"
+						onProceed={ () => {
+							navigateToCheckout();
+							setShowEligibility( false );
+						} }
+					/>
+				</Modal>
+			) }
 			<PremiumGlobalStylesUpgradeModal
 				checkout={ handleCheckoutForPremiumGlobalStyles }
 				closeModal={ closePremiumGlobalStylesModal }
