@@ -21,6 +21,7 @@
 		{ "path": "./components" },
 		{ "path": "./composite-checkout" },
 		{ "path": "./create-calypso-config" },
+		{ "path": "./dataviews" },
 		{ "path": "./data-stores" },
 		{ "path": "./design-picker" },
 		{ "path": "./design-preview" },
