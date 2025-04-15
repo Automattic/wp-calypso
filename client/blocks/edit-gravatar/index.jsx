@@ -225,8 +225,14 @@ export class EditGravatar extends Component {
 	};
 
 	render() {
-		const { isGravatarProfileHidden, isUploading, translate, user, additionalUploadHtml } =
-			this.props;
+		const {
+			isGravatarProfileHidden,
+			isUploading,
+			translate,
+			user,
+			additionalUploadHtml,
+			recordClickButtonEvent,
+		} = this.props;
 		const gravatarLink = 'https://gravatar.com';
 		// use imgSize = 400 for caching
 		// it's the popular value for large Gravatars in Calypso
@@ -326,7 +332,11 @@ export class EditGravatar extends Component {
 					<Button
 						className="edit-gravatar__edit-avatar-button"
 						variant="link"
-						onClick={ () => this.quickEditor?.open() }
+						onClick={ () => {
+							recordClickButtonEvent( { isVerified: user.email_verified } );
+
+							this.quickEditor?.open();
+						} }
 					>
 						{ translate( 'Edit your public avatar' ) }
 					</Button>
