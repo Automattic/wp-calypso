@@ -26,6 +26,15 @@ function PerformanceBadge( { value }: { value: number } ) {
 }
 
 export default function PerformanceCards( { site }: { site: Site } ) {
+	const { data: siteSettings, isLoading: isLoadingSiteSettings } = useQuery( {
+		queryKey: [ 'site-settings', site.id ],
+		queryFn: () => wp.req.get( { path: `/sites/${ site.id }/settings` }, { apiVersion: '1.4' } ),
+		refetchOnWindowFocus: false,
+		retry: false,
+		enabled: !! site.id,
+	} );
+	const wpcomPerformanceReportUrl = siteSettings?.settings?.wpcom_performance_report_url || '';
+	const [ , cachedHash ] = wpcomPerformanceReportUrl.split( '&hash=' );
 	const { url } = site;
 	// First fetch basic metrics to get the token/hash.
 	const { data: basicMetricsData } = useQuery( {
@@ -40,9 +49,9 @@ export default function PerformanceCards( { site }: { site: Site } ) {
 				{ url, advance: '1' }
 			),
 		refetchOnWindowFocus: false,
-		enabled: !! url,
+		enabled: !! url && ! isLoadingSiteSettings && ! cachedHash,
 	} );
-	const token = basicMetricsData?.token;
+	const token = cachedHash || basicMetricsData?.token;
 	// Then use the token to fetch performance insights.
 	const { data } = useQuery< UrlPerformanceInsights >( {
 		queryKey: [ 'url', 'performance', url, token ],
