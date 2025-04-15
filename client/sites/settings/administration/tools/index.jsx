@@ -186,7 +186,10 @@ class SiteTools extends Component {
 						onClick={ this.handleOpenModal( MODAL_NAMES.LEAVE_SITE ) }
 					/>
 					{ modalOpen[ MODAL_NAMES.LEAVE_SITE ] && (
-						<LazyLeaveSiteModal onClose={ this.handleCloseModal( MODAL_NAMES.LEAVE_SITE ) } />
+						<LazyLeaveSiteModal
+							siteId={ siteId }
+							onClose={ this.handleCloseModal( MODAL_NAMES.LEAVE_SITE ) }
+						/>
 					) }
 				</Suspense>
 

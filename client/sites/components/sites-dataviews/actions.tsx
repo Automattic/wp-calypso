@@ -11,9 +11,10 @@ import { sprintf } from '@wordpress/i18n';
 import { drawerLeft, external, wordpress } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
-import { useMemo } from 'react';
+import { Suspense, useMemo } from 'react';
 import { USE_SITE_EXCERPTS_QUERY_KEY } from 'calypso/data/sites/use-site-excerpts-query';
 import useRestoreSiteMutation from 'calypso/sites/hooks/use-restore-site-mutation';
+import { LazyLeaveSiteModalForm } from 'calypso/sites/settings/administration/tools/leave-site';
 import {
 	getAdminInterface,
 	getPluginsUrl,
@@ -29,7 +30,7 @@ import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, infoNotice, successNotice } from 'calypso/state/notices/actions';
 import { launchSiteOrRedirectToLaunchSignupFlow } from 'calypso/state/sites/launch/actions';
-import type { Action } from '@wordpress/dataviews';
+import type { Action, RenderModalProps } from '@wordpress/dataviews';
 
 type Capabilities = Record< string, Record< string, boolean > >;
 
@@ -508,6 +509,23 @@ export function useActions( {
 					recordTracksEvent( 'calypso_sites_dashboard_site_action_migrate_to_wpcom_click' );
 				},
 				isEligible: isActionEligible( 'migrate-to-wpcom', capabilities ),
+			},
+
+			{
+				id: 'leave-site',
+				label: __( 'Leave site' ),
+				callback: () => {
+					recordTracksEvent( 'calypso_sites_dashboard_site_action_leave_site_click' );
+				},
+				isEligible: isActionEligible( 'leave-site', capabilities ),
+				RenderModal: ( { items, closeModal }: RenderModalProps< SiteExcerptData > ) => {
+					return (
+						<Suspense>
+							<LazyLeaveSiteModalForm siteId={ items[ 0 ]?.ID } onClose={ closeModal } />
+						</Suspense>
+					);
+				},
+				modalSize: 'small',
 			},
 
 			{
