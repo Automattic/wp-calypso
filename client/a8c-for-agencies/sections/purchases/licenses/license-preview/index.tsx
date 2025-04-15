@@ -34,10 +34,10 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { infoNotice, errorNotice } from 'calypso/state/notices/actions';
 import { getSite } from 'calypso/state/sites/selectors';
 import usePaymentMethod from '../../payment-methods/hooks/use-payment-method';
+import LicenseActions from '../license-actions';
 import LicenseDetails from '../license-details';
 import BundleDetails from '../license-details/bundle-details';
 import LicensesOverviewContext from '../licenses-overview/context';
-import LicenseActions from './license-actions';
 import LicenseBundleDropDown from './license-bundle-dropdown';
 import type { ReferralAPIResponse } from 'calypso/a8c-for-agencies/sections/referrals/types';
 import type { License, LicenseMeta } from 'calypso/state/partner-portal/types';
@@ -271,6 +271,14 @@ export default function LicensePreview( {
 
 	const isDevelopmentSite = Boolean( meta?.isDevSite );
 
+	const hasLicensePreview =
+		! ( isWPCOMLicense && isSiteAtomic ) && // Assigned WPCOM licenses don't have a preview
+		/*
+		 * For all pressable licenses, only the owner has access to the action,
+		 * so only show the actions if you are the owner or if this is not a pressable license.
+		 */
+		( isOwner || ! isPressableLicense );
+
 	return (
 		<div
 			className={ clsx( {
@@ -396,7 +404,8 @@ export default function LicensePreview( {
 							isClientLicense={ !! referral }
 						/>
 					) }
-					{ isWPCOMLicense && isSiteAtomic ? (
+
+					{ isWPCOMLicense && isSiteAtomic && (
 						<LicenseActions
 							siteUrl={ siteUrl }
 							isDevSite={ isDevelopmentSite }
@@ -409,16 +418,12 @@ export default function LicensePreview( {
 							licenseKey={ licenseKey }
 							productId={ productId }
 						/>
-					) : (
-						/*
-						 * For all pressable licenses, only the owner has access to the action,
-						 * so only show the actions if you are the owner or if this is not a pressable license.
-						 */
-						( isOwner || ! isPressableLicense ) && (
-							<Button onClick={ open } className="license-preview__toggle" borderless>
-								<Gridicon icon={ isOpen ? 'chevron-up' : 'chevron-down' } />
-							</Button>
-						)
+					) }
+
+					{ hasLicensePreview && (
+						<Button onClick={ open } className="license-preview__toggle" borderless>
+							<Gridicon icon={ isOpen ? 'chevron-up' : 'chevron-down' } />
+						</Button>
 					) }
 				</div>
 			</LicenseListItem>
