@@ -956,6 +956,22 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@automattic/ds-components@workspace:packages/ds-components":
+  version: 0.0.0-use.local
+  resolution: "@automattic/ds-components@workspace:packages/ds-components"
+  dependencies:
+    "@automattic/calypso-build": "workspace:^"
+    "@automattic/calypso-typescript-config": "workspace:^"
+    css-loader: "npm:^6.11.0"
+    postcss: "npm:^8.5.3"
+    typescript: "npm:^5.8.2"
+    webpack: "npm:^5.97.1"
+  peerDependencies:
+    react: ^18.3.1
+    react-dom: ^18.3.1
+  languageName: unknown
+  linkType: soft
+
 "@automattic/effective-module-tree@workspace:packages/effective-module-tree":
   version: 0.0.0-use.local
   resolution: "@automattic/effective-module-tree@workspace:packages/effective-module-tree"

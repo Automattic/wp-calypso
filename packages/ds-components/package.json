@@ -1,0 +1,51 @@
+{
+	"name": "@automattic/ds-components",
+	"version": "0.0.1",
+	"description": "Testing components for the a8c design system.",
+	"homepage": "https://github.com/Automattic/wp-calypso/tree/HEAD/packages/ds-components#readme",
+	"license": "GPL-2.0-or-later",
+	"author": "Automattic Inc.",
+	"main": "dist/cjs/index.js",
+	"module": "dist/esm/index.js",
+	"calypso:src": "src/index.ts",
+	"sideEffects": [
+		"*.css",
+		"*.scss"
+	],
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Automattic/wp-calypso.git",
+		"directory": "packages/ds-components"
+	},
+	"publishConfig": {
+		"access": "public"
+	},
+	"bugs": "https://github.com/Automattic/wp-calypso/issues",
+	"scripts": {
+		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",
+		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json && yarn run -T copy-assets && npx copyfiles ./styles/** dist",
+		"prepack": "yarn run clean && yarn run build"
+	},
+	"files": [
+		"dist",
+		"src"
+	],
+	"types": "dist/types/index.d.ts",
+	"keywords": [
+		"ds",
+		"ui",
+		"components"
+	],
+	"peerDependencies": {
+		"react": "^18.3.1",
+		"react-dom": "^18.3.1"
+	},
+	"devDependencies": {
+		"@automattic/calypso-build": "workspace:^",
+		"@automattic/calypso-typescript-config": "workspace:^",
+		"css-loader": "^6.11.0",
+		"postcss": "^8.5.3",
+		"typescript": "^5.8.2",
+		"webpack": "^5.97.1"
+	}
+}
