@@ -74,9 +74,11 @@
 		"sass": "^1.54.0"
 	},
 	"scripts": {
+		"build": "yarn run build:js && yarn run build:style && yarn run build:wp",
 		"build:js": "node build-js.js",
 		"build:style": "node build-style.js",
 		"build:wp": "node build",
-		"clean": "git clean --force -d -X"
+		"clean": "git clean --force -d -X",
+		"prepare": "yarn run build"
 	}
 }
