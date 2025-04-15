@@ -6,14 +6,14 @@
 $header-compact-height: 114px;
 $header-compact-height-mobile: 128px;
 
-.products-overview-v2.main.hosting-dashboard-layout {
+.products-overview.main.hosting-dashboard-layout {
 	.hosting-dashboard-layout__container {
 		height: auto;
 		overflow-y: scroll;
 		display: block;
 	}
 
-	.products-overview-v2__top {
+	.products-overview__top {
 		max-height: auto;
 		background: url( calypso/assets/images/a8c-for-agencies/marketplace-hosting-page-v3-bg.svg ) no-repeat top right $header-background-color;
         border-block-end: none;
@@ -57,13 +57,13 @@ $header-compact-height-mobile: 128px;
 		height: 156px;
 	}
 
-	.products-overview-v2__action-panel-wrapper {
+	.products-overview__action-panel-wrapper {
 		position: sticky;
 		z-index: 2;
 	}
 }
 
-.products-overview-v2.main.hosting-dashboard-layout.is-compact {
+.products-overview.main.hosting-dashboard-layout.is-compact {
 	.product-category-menu {
 		overflow: hidden;
 		height: 0;
@@ -71,7 +71,7 @@ $header-compact-height-mobile: 128px;
 		margin: 0;
 	}
 
-	.products-overview-v2__action-panel-wrapper {
+	.products-overview__action-panel-wrapper {
 		box-shadow: 0 2px 4px 0 rgba(0, 0, 0, .10);
 	}
 }

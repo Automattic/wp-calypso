@@ -43,12 +43,7 @@ type Props = {
 	searchQuery?: string;
 };
 
-export function ProductsOverviewV2( {
-	siteId,
-	suggestedProduct,
-	productBrand,
-	searchQuery,
-}: Props ) {
+export function ProductsOverview( { siteId, suggestedProduct, productBrand, searchQuery }: Props ) {
 	const [ selectedSite, setSelectedSite ] = useState< SiteDetails | null | undefined >( null );
 	const [ referralToggleRef, setReferralToggleRef ] = useState< HTMLElement | null >( null );
 
@@ -133,14 +128,14 @@ export function ProductsOverviewV2( {
 
 	return (
 		<Layout
-			className={ clsx( 'products-overview-v2', { 'is-compact': isCompact } ) }
+			className={ clsx( 'products-overview', { 'is-compact': isCompact } ) }
 			title={ isNarrowView ? '' : translate( 'Products Marketplace' ) }
 			onScroll={ onScroll }
 			wide
 		>
 			<GuidedTour defaultTourId="marketplaceWalkthrough" />
 
-			<div className="products-overview-v2__top" ref={ topRef }>
+			<div className="products-overview__top" ref={ topRef }>
 				<LayoutTop>
 					<A4AAgencyApprovalNotice />
 					<LayoutHeader>
@@ -194,7 +189,7 @@ export function ProductsOverviewV2( {
 			</div>
 
 			<div
-				className="products-overview-v2__action-panel-wrapper"
+				className="products-overview__action-panel-wrapper"
 				ref={ actionPanelRef }
 				style={ { top: actionPanelStickyTopOffset, zIndex: 20 } }
 			>
@@ -230,4 +225,4 @@ export function ProductsOverviewV2( {
 	);
 }
 
-export default withMarketplaceType( ProductsOverviewV2 );
+export default withMarketplaceType( ProductsOverview );
