@@ -241,6 +241,18 @@
 	}
 }
 
+div.is-section-reader:not(.is-logged-in) {
+	.search-stream__sort-picker {
+		top: 64px;
+		right: 85px;
+
+		@include break-small {
+			top: 76px;
+			right: 70px;
+		}
+	}
+}
+
 // Posts and Sites results
 .search-stream .search-stream__results.is-two-columns {
 	display: flex;
