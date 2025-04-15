@@ -592,6 +592,14 @@ const UnifiedDesignPickerPreview = ( {
 		screens,
 	};
 
+	const closeEligibilityModal = () => {
+		recordTracksEvent( 'calypso_automated_transfer_eligibility_modal_dismiss', {
+			flow: 'onboarding',
+			theme: selectedDesign?.slug,
+		} );
+		setShowEligibility( false );
+	};
+
 	const stepContent = (
 		<>
 			{ requiredPlanSlug && (
@@ -612,13 +620,7 @@ const UnifiedDesignPickerPreview = ( {
 				<Modal
 					className="eligibility-warnings-modal__dialog-content"
 					title={ translate( 'Before you continue' ) }
-					onRequestClose={ () => {
-						recordTracksEvent( 'calypso_automated_transfer_eligibility_modal_dismiss', {
-							flow: 'onboarding',
-							theme: selectedDesign?.slug,
-						} );
-						setShowEligibility( false );
-					} }
+					onRequestClose={ closeEligibilityModal }
 					size="medium"
 				>
 					<EligibilityWarnings
@@ -631,6 +633,7 @@ const UnifiedDesignPickerPreview = ( {
 							navigateToCheckout();
 							setShowEligibility( false );
 						} }
+						onDismiss={ closeEligibilityModal }
 					/>
 				</Modal>
 			) }
