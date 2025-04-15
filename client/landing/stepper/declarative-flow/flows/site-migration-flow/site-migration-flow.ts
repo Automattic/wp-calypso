@@ -188,7 +188,12 @@ const siteMigration: FlowV2 = {
 							}
 
 							if ( platformQueryParam !== 'wordpress' ) {
-								//TODO: Improve it to redirect the user to the correct import step if the platform is not wordpress
+								if ( isPlatformImportable( platformQueryParam ) && fromQueryParam ) {
+									return exitFlow(
+										getFullImporterUrl( platformQueryParam, siteSlug, fromQueryParam )
+									);
+								}
+
 								return exitFlow(
 									paths.siteSetupImportListPath( {
 										from: fromQueryParam,

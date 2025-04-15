@@ -590,6 +590,30 @@ describe( 'Site Migration Flow', () => {
 					step: STEPS.SITE_CREATION_STEP,
 				} );
 			} );
+			it( 'redirects to the importer when the platform is importable', () => {
+				runNavigation( {
+					from: STEPS.PICK_SITE,
+					dependencies: {
+						action: 'select-site',
+						site: { ID: 123, slug: 'example.wordpress.com' },
+					},
+					query: {
+						platform: 'squarespace',
+						from: 'https://site-to-be-migrated.com',
+						siteId: 123,
+						siteSlug: 'example.wordpress.com',
+					},
+				} );
+
+				expect( window.location.assign ).toMatchURL( {
+					path: '/setup/site-setup/importerSquarespace',
+					query: {
+						from: 'https://site-to-be-migrated.com',
+						siteSlug: 'example.wordpress.com',
+						sessionId: '123',
+					},
+				} );
+			} );
 		} );
 
 		describe( 'SITE_MIGRATION_HOW_TO_MIGRATE', () => {
