@@ -68,6 +68,9 @@
 		"access": "public"
 	},
 	"devDependencies": {
+		"@wordpress/postcss-plugins-preset": "^5.22.0",
+		"postcss": "^8.5.3",
+		"postcss-local-keyframes": "^0.0.2",
 		"sass": "^1.54.0"
 	},
 	"scripts": {
