@@ -24,7 +24,8 @@
 	"scripts": {
 		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",
 		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json && yarn run -T copy-assets && npx copyfiles ./styles/** dist",
-		"prepack": "yarn run clean && yarn run build"
+		"prepack": "yarn run clean && yarn run build",
+		"storybook:start": "storybook dev -p 57862"
 	},
 	"files": [
 		"dist",
@@ -42,9 +43,11 @@
 	},
 	"devDependencies": {
 		"@automattic/calypso-build": "workspace:^",
+		"@automattic/calypso-storybook": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"css-loader": "^6.11.0",
 		"postcss": "^8.5.3",
+		"storybook": "^8.6.9",
 		"typescript": "^5.8.2",
 		"webpack": "^5.97.1"
 	}

@@ -1,3 +1,5 @@
 import styles from './index.module.css';
 
-export const Test = () => <div className={ styles.example }>Test</div>;
+export const Test = ( { children }: { children?: React.ReactNode } ) => (
+	<div className={ styles.example }>{ children ?? 'Test default content' }</div>
+);

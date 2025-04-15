@@ -961,9 +961,11 @@ __metadata:
   resolution: "@automattic/ds-components@workspace:packages/ds-components"
   dependencies:
     "@automattic/calypso-build": "workspace:^"
+    "@automattic/calypso-storybook": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     css-loader: "npm:^6.11.0"
     postcss: "npm:^8.5.3"
+    storybook: "npm:^8.6.9"
     typescript: "npm:^5.8.2"
     webpack: "npm:^5.97.1"
   peerDependencies:
