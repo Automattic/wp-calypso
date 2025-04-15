@@ -64,12 +64,6 @@ if ( envVariables.JETPACK_TARGET === 'wpcom-deployment' ) {
 			platform: 'Simple',
 			testAccountName: 'simpleSitePersonalPlanUser',
 			features: features4SimpleSites,
-		},
-		{
-			plan: 'Paid',
-			platform: 'Atomic',
-			testAccountName: 'atomicUser',
-			features: features4BusinessPlan,
 		}
 	);
 }
