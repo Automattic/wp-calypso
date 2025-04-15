@@ -20,7 +20,10 @@ function UnknownError( { error }: { error: Error } ) {
 					__next40pxDefaultSize
 					variant="primary"
 					href={ href }
-					onClick={ () => navigate( { to } ) }
+					onClick={ ( event: React.MouseEvent ) => {
+						event.preventDefault();
+						navigate( { to } );
+					} }
 				>
 					{ __( 'Go to Sites' ) }
 				</Button>
