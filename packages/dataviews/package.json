@@ -42,6 +42,7 @@
 	"dependencies": {
 		"@ariakit/react": "^0.4.15",
 		"@babel/runtime": "7.26.10",
+		"@wordpress/base-styles": "^5.22.0",
 		"@wordpress/components": "^29.8.0",
 		"@wordpress/compose": "^7.22.0",
 		"@wordpress/data": "^10.22.0",
@@ -60,7 +61,11 @@
 	"publishConfig": {
 		"access": "public"
 	},
+	"devDependencies": {
+		"sass": "^1.54.0"
+	},
 	"scripts": {
-		"build:wp": "node build"
+		"build:wp": "node build",
+		"build:style": "node build-style.js"
 	}
 }
