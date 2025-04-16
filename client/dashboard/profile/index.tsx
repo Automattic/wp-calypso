@@ -20,11 +20,11 @@ import { profileQuery, profileMutation } from '../app/queries';
 import EditGravatar from '../edit-gravatar';
 import PageLayout from '../page-layout';
 import type { Profile as ProfileType } from '../data/types';
-import type { Field, Form } from '@wordpress/dataviews';
+import type { Field } from '@wordpress/dataviews';
 
 import './style.scss';
 
-const fields = [
+const fields: Field< ProfileType >[] = [
 	{
 		id: 'user_login',
 		label: __( 'Username' ),
@@ -79,11 +79,11 @@ const fields = [
 			);
 		},
 	},
-] as Field< ProfileType >[];
+];
 
 const form = {
-	type: 'regular',
-	labelPosition: 'top',
+	type: 'regular' as const,
+	labelPosition: 'top' as const,
 	fields: [
 		{
 			id: 'personalInfo',
@@ -96,7 +96,7 @@ const form = {
 			children: [ 'isDeveloper' ],
 		},
 	],
-} as Form;
+};
 
 export default function Profile() {
 	const { data: serverData } = useQuery( profileQuery() );
