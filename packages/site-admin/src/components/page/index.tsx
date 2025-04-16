@@ -26,11 +26,11 @@ export function Page( {
 	className,
 	hideTitleFromUI = false,
 }: PageProps ) {
-	const classes = clsx( 'edit-site-page', className );
+	const classes = clsx( 'a8c-site-admin-page', className );
 
 	return (
 		<NavigableRegion className={ classes } ariaLabel={ title }>
-			<div className="edit-site-page-content">
+			<div className="a8c-site-admin-page-content">
 				{ ! hideTitleFromUI && title && (
 					<Header title={ title } subTitle={ subTitle } actions={ actions } />
 				) }
