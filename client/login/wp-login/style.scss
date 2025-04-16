@@ -327,83 +327,10 @@ $image-height: 47px;
 		background-color: #fdfdfd;
 	}
 
-	.login .button.is-primary {
-		// Note: Matches primary button to `button.signup-form__submit`
-		background-color: var(--studio-wordpress-blue, #3858e9);
-		color: var(--color-text-inverted);
-		box-shadow: none;
-		border: 0 var(--studio-wordpress-blue-60);
-		font-weight: 500;
-		letter-spacing: 0.32px;
-		line-height: 17px;
-		min-width: 100%;
-		text-align: center;
-		margin: 13px auto;
-		float: none;
-
-		&:hover,
-		&:focus {
-			background-color: var(--studio-wordpress-blue-60);
-			border-color: var(--studio-wordpress-blue-60);
-			color: var(--color-text-inverted);
-		}
-
-		&[disabled],
-		&:disabled,
-		&.disabled {
-			background-color: var(--studio-gray-20);
-			color: var(--color-surface);
-		}
-
-		@include break-mobile {
-			min-width: 170px;
-		}
-
-		&.is-busy {
-			background-image: linear-gradient(-45deg, var(--studio-gray-10) 28%, var(--studio-gray-20) 28%, var(--studio-gray-20) 72%, var(--studio-gray-10) 72%);
-		}
-	}
-
 	.login form {
-
-		// We shouldn't regularly use .components-* classnames. The following is
-		// an exception to opt-out from some style overrides. Ideally, all
-		// input instances would come from `@wordpress/components` and the
-		// following overrides could be safely deleted.
-		input:not(.components-text-control__input),
-		button:not(.social-buttons__button) {
-			/* Note: Same as `button.signup-form__submit, .signup-form__input.form-text-input` */
-			height: 44px;
-			border-radius: 4px;
-			border: 1px solid var(--studio-gray-10);
-			font-size: $font-body;
-
-			&[disabled],
-			&:disabled,
-			&.disabled {
-				background-color: #fdfdfd;
-			}
-		}
-
-		.social-buttons__button {
-			border-radius: 4px;
-		}
-
-		.login__form-userdata input {
-			margin: 0 0 20px;
-		}
-
-		.login__form-userdata input:last-of-type {
-			/* Note: reduces space between terms and last input box */
-			margin: 0 0 10px;
-		}
-
 		.login__form-userdata {
-			button {
-				min-width: 194px;
-				height: unset;
-				border: 0;
-				text-align: start;
+			.form-text-input {
+				margin-bottom: 16px;
 			}
 		}
 	}
