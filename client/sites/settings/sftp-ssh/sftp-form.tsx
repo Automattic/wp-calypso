@@ -2,7 +2,7 @@ import { FEATURE_SFTP, FEATURE_SSH } from '@automattic/calypso-products';
 import { Button, ExternalLink, FormLabel, Spinner } from '@automattic/components';
 import { PanelBody, ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import React, { useEffect, useState } from 'react';
+import React, { ReactNode, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import ClipboardButtonInput from 'calypso/components/clipboard-button-input';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -397,7 +397,7 @@ export const SftpForm = ( { disabled }: SftpFormProps ) => {
 			? SftpCardLoadingPlaceholder
 			: React.Fragment;
 
-	const DescriptionComponent = ( { children } ) => {
+	const DescriptionComponent = ( { children }: { children: ReactNode } ) => {
 		const title = useSftpSshSettingTitle();
 		return <NavigationHeader title={ title } subtitle={ children } />;
 	};
