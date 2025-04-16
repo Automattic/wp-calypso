@@ -161,8 +161,8 @@ const billingRoute = createRoute( {
 );
 
 const billingHistoryRoute = createRoute( {
-	getParentRoute: () => billingRoute,
-	path: 'billing-history',
+	getParentRoute: () => meRoute,
+	path: 'billing/billing-history',
 } ).lazy( () =>
 	import( '../billing-history' ).then( ( d ) =>
 		createLazyRoute( 'billing-history' )( {
@@ -172,8 +172,8 @@ const billingHistoryRoute = createRoute( {
 );
 
 const activeSubscriptionsRoute = createRoute( {
-	getParentRoute: () => billingRoute,
-	path: 'active-subscriptions',
+	getParentRoute: () => meRoute,
+	path: 'billing/active-subscriptions',
 } ).lazy( () =>
 	import( '../active-subscriptions' ).then( ( d ) =>
 		createLazyRoute( 'active-subscriptions' )( {
@@ -183,8 +183,8 @@ const activeSubscriptionsRoute = createRoute( {
 );
 
 const paymentMethodsRoute = createRoute( {
-	getParentRoute: () => billingRoute,
-	path: 'payment-methods',
+	getParentRoute: () => meRoute,
+	path: 'billing/payment-methods',
 } ).lazy( () =>
 	import( '../payment-methods' ).then( ( d ) =>
 		createLazyRoute( 'payment-methods' )( {
@@ -194,8 +194,8 @@ const paymentMethodsRoute = createRoute( {
 );
 
 const taxDetailsRoute = createRoute( {
-	getParentRoute: () => billingRoute,
-	path: 'tax-details',
+	getParentRoute: () => meRoute,
+	path: 'billing/tax-details',
 } ).lazy( () =>
 	import( '../tax-details' ).then( ( d ) =>
 		createLazyRoute( 'tax-details' )( {
@@ -265,12 +265,11 @@ const createRouteTree = ( config: AppConfig ) => {
 		children.push(
 			meRoute.addChildren( [
 				profileRoute,
-				billingRoute.addChildren( [
-					billingHistoryRoute,
-					activeSubscriptionsRoute,
-					paymentMethodsRoute,
-					taxDetailsRoute,
-				] ),
+				billingRoute,
+				billingHistoryRoute,
+				activeSubscriptionsRoute,
+				paymentMethodsRoute,
+				taxDetailsRoute,
 				securityRoute,
 				privacyRoute,
 				notificationsRoute,
