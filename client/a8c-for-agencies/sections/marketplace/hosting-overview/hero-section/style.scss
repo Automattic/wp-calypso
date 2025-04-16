@@ -5,7 +5,7 @@
 $tab-background: linear-gradient( #EBF4FA, #DAE9F3);
 $tab-background-selected: var(--color-surface);
 
-.hosting-v3-hero-section {
+.hosting-hero-section {
 	max-width: 1500px;
 	margin-inline: auto;
 	padding: 24px 32px 0;
@@ -53,12 +53,12 @@ $tab-background-selected: var(--color-surface);
 	}
 }
 
-.hosting-v3-hero-section.is-compact {
+.hosting-hero-section.is-compact {
 	overflow: hidden;
 	gap: 0;
 	justify-content: flex-end;
 
-	.hosting-v3-hero-section__content {
+	.hosting-hero-section__content {
 		display: none;
 		position: absolute;
 	}
@@ -67,7 +67,7 @@ $tab-background-selected: var(--color-surface);
 }
 
 
-.hosting-v3-hero-section__heading {
+.hosting-hero-section__heading {
 	@include heading-x-large;
 	color: var( --color-text-inverted );
 	margin-block-start: 0;
@@ -77,7 +77,7 @@ $tab-background-selected: var(--color-surface);
 	}
 }
 
-.hosting-v3-hero-section__content {
+.hosting-hero-section__content {
 	display: flex;
 	flex-direction: column;
 	gap: 24px;
@@ -87,7 +87,7 @@ $tab-background-selected: var(--color-surface);
 	}
 }
 
-.hosting-v3-hero-section__tabs {
+.hosting-hero-section__tabs {
 	display: flex;
 	flex-direction: row;
 	justify-content: space-between;
@@ -101,7 +101,7 @@ $tab-background-selected: var(--color-surface);
 	}
 }
 
-.hosting-v3-hero-section__tab.section-nav-tab {
+.hosting-hero-section__tab.section-nav-tab {
 	flex-grow: 1;
 	border-bottom: none;
 
@@ -134,7 +134,7 @@ $tab-background-selected: var(--color-surface);
 	}
 }
 
-.hosting-v3__nav-item-label {
+.hosting__nav-item-label {
 	@include body-medium;
 	color: var( --color-text );
 	text-align: center;
@@ -144,7 +144,7 @@ $tab-background-selected: var(--color-surface);
 	}
 }
 
-.hosting-v3__nav-item-subtitle {
+.hosting__nav-item-subtitle {
 	@include body-medium;
 	color: var( --color-text );
 }

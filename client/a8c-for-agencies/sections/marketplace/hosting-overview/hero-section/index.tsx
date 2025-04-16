@@ -64,16 +64,14 @@ export function HeroSection(
 	const navItems = featureTabs.map( ( featureTab ) => {
 		return (
 			<NavItem
-				className="hosting-v3-hero-section__tab"
+				className="hosting-hero-section__tab"
 				key={ featureTab.key }
 				selected={ featureTab.selected }
 				onClick={ featureTab.onClick }
 			>
-				{ featureTab.label && (
-					<div className="hosting-v3__nav-item-label">{ featureTab.label }</div>
-				) }
+				{ featureTab.label && <div className="hosting__nav-item-label">{ featureTab.label }</div> }
 				{ featureTab.subtitle && (
-					<div className="hosting-v3__nav-item-subtitle">{ featureTab.subtitle }</div>
+					<div className="hosting__nav-item-subtitle">{ featureTab.subtitle }</div>
 				) }
 			</NavItem>
 		);
@@ -86,9 +84,9 @@ export function HeroSection(
 	}, [ isCompact ] );
 
 	return (
-		<div className={ clsx( 'hosting-v3-hero-section', { 'is-compact': isCompact } ) } ref={ ref }>
-			<div className="hosting-v3-hero-section__content">
-				<div className="hosting-v3-hero-section__heading">
+		<div className={ clsx( 'hosting-hero-section', { 'is-compact': isCompact } ) } ref={ ref }>
+			<div className="hosting-hero-section__content">
+				<div className="hosting-hero-section__heading">
 					{ preventWidows(
 						translate(
 							'High Performance, Highly-Secure{{br/}}Managed WordPress Hosting for Agencies',
@@ -107,7 +105,7 @@ export function HeroSection(
 				/>
 			</div>
 
-			<ul className="hosting-v3-hero-section__tabs">{ navItems }</ul>
+			<ul className="hosting-hero-section__tabs">{ navItems }</ul>
 		</div>
 	);
 }

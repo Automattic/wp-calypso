@@ -1,5 +1,5 @@
 import { WPCOM_FEATURES_SITE_PREVIEW_LINKS } from '@automattic/calypso-products';
-import { Card, CompactCard, Button } from '@automattic/components';
+import { Button } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import clsx from 'clsx';
 import { formatCurrency, translate } from 'i18n-calypso';
@@ -8,9 +8,7 @@ import useFetchAgencyFromBlog from 'calypso/a8c-for-agencies/data/agencies/use-f
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import { PanelCard, PanelCardHeading } from 'calypso/components/panel';
 import SitePreviewLinks from 'calypso/components/site-preview-links';
-import { useRemoveDuplicateViewsExperimentEnabled } from 'calypso/lib/remove-duplicate-views-experiment';
-import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
-import { useSelector, useDispatch } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
 import isSiteComingSoon from 'calypso/state/selectors/is-site-coming-soon';
 import getIsUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
@@ -161,8 +159,6 @@ const LaunchSite = () => {
 
 	const showPreviewLink = isComingSoon && hasSitePreviewLink;
 
-	const LaunchCard = showPreviewLink ? CompactCard : Card;
-
 	const handleReferToClient = () => {
 		window.location.href = `https://agencies.automattic.com/marketplace/checkout?referral_blog_id=${ siteId }`;
 	};
@@ -218,31 +214,19 @@ const LaunchSite = () => {
 		return <SitePreviewLinks siteUrl={ site.URL } siteId={ siteId } source="launch-settings" />;
 	};
 
-	const isUntangled = useRemoveDuplicateViewsExperimentEnabled();
-
 	return (
 		<>
 			{ renderConfirmationModal() }
-			{ ! isUntangled ? (
-				<>
-					<SettingsSectionHeader title={ translate( 'Launch site' ) } />
-					<LaunchCard>{ renderContent() }</LaunchCard>
-				</>
-			) : (
+			<PanelCard>
+				<PanelCardHeading>{ translate( 'Launch site' ) }</PanelCardHeading>
+				{ renderContent() }
+			</PanelCard>
+			{ showPreviewLink && (
 				<PanelCard>
-					<PanelCardHeading>{ translate( 'Launch site' ) }</PanelCardHeading>
-					{ renderContent() }
+					<PanelCardHeading>{ translate( 'Coming soon' ) }</PanelCardHeading>
+					{ renderPreviewLinks() }
 				</PanelCard>
 			) }
-			{ showPreviewLink &&
-				( ! isUntangled ? (
-					<Card>{ renderPreviewLinks() }</Card>
-				) : (
-					<PanelCard>
-						<PanelCardHeading>{ translate( 'Coming soon' ) }</PanelCardHeading>
-						{ renderPreviewLinks() }
-					</PanelCard>
-				) ) }
 			{ querySiteDomainsComponent }
 		</>
 	);

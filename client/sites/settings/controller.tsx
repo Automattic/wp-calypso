@@ -2,7 +2,6 @@ import page from '@automattic/calypso-router';
 import { __ } from '@wordpress/i18n';
 import { useSelector } from 'react-redux';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { isRemoveDuplicateViewsExperimentEnabled } from 'calypso/lib/remove-duplicate-views-experiment';
 import { isSimpleSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { getRouteFromContext } from 'calypso/utils';
@@ -58,29 +57,6 @@ export function SettingsSidebar() {
 			) }
 		</Sidebar>
 	);
-}
-
-export async function redirectToHostingConfigIfDuplicatedViewsDisabled(
-	context: PageJSContext,
-	next: () => void
-) {
-	const { getState, dispatch } = context.store;
-	const isUntangled = await isRemoveDuplicateViewsExperimentEnabled( getState, dispatch );
-	const siteSlug = getSelectedSiteSlug( getState() );
-
-	if ( ! isUntangled ) {
-		// Redirect command palette routes to the new hosting config page when not in the treatment group
-		const routes = {
-			[ `/sites/settings/server/${ siteSlug }` ]: `/hosting-config/${ siteSlug }`,
-			[ `/sites/settings/performance/${ siteSlug }` ]: `/hosting-config/${ siteSlug }#cache`,
-			[ `/sites/settings/database/${ siteSlug }` ]: `/hosting-config/${ siteSlug }#database-access`,
-			[ `/sites/settings/sftp-ssh/${ siteSlug }` ]: `/hosting-config/${ siteSlug }#sftp-credentials`,
-		};
-
-		return page.redirect( routes[ context.path ] ?? `/hosting-config/${ siteSlug }` );
-	}
-
-	next();
 }
 
 export function redirectToSiteSettingsIfHostingFeaturesNotSupported(

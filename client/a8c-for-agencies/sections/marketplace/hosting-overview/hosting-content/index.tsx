@@ -35,5 +35,5 @@ export const HostingContent = ( { section, onAddToCart }: Props ) => {
 		return { content: null, title: '' };
 	}, [ isReferMode, onAddToCart, section ] );
 
-	return <div className="hosting-v3__content">{ content }</div>;
+	return <div className="hosting__content">{ content }</div>;
 };
