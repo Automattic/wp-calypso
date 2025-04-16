@@ -488,7 +488,7 @@ export class LoginForm extends Component {
 							autoCapitalize="off"
 							autoCorrect="off"
 							spellCheck="false"
-							label={ this.props.translate( 'Email Address or Username' ) }
+							label={ this.props.translate( 'Email address or username' ) }
 							disabled={ isFormDisabled || this.isPasswordView() }
 							id="usernameOrEmail"
 							name="usernameOrEmail"
@@ -602,10 +602,10 @@ export class LoginForm extends Component {
 			// text above the form. We therefore need to clarity the must use WordPress.com credentials.
 			<>
 				<span className="screen-reader-text">
-					{ this.props.translate( 'WordPress.com Email Address or Username' ) }
+					{ this.props.translate( 'WordPress.com Email address or username' ) }
 				</span>
 				{ ! this.props.isJetpack && (
-					<span aria-hidden="true">{ this.props.translate( 'Email Address or Username' ) }</span>
+					<span aria-hidden="true">{ this.props.translate( 'Email address or username' ) }</span>
 				) }
 			</>
 		);
