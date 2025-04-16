@@ -57,6 +57,7 @@ import {
 import OwnerInfo from './owner-info';
 import type { Purchases, SiteDetails } from '@automattic/data-stores';
 import 'calypso/me/purchases/style.scss';
+import type { Site } from 'calypso/blocks/site-icon';
 import type { GetManagePurchaseUrlFor } from 'calypso/lib/purchases/types';
 import type { AppState } from 'calypso/types';
 import type { LocalizeProps } from 'i18n-calypso';
@@ -85,18 +86,65 @@ interface PurchaseItemPropsConnected {
 	iconUrl: string | undefined;
 }
 
-class PurchaseItem extends Component<
-	PurchaseItemPropsPlaceholder | ( PurchaseItemProps & PurchaseItemPropsConnected )
-> {
-	trackImpression( warning: string ) {
-		return (
-			<TrackComponentView
-				eventName="calypso_subscription_warning_impression"
-				eventProperties={ eventProperties( warning ) }
-			/>
+function TrackImpression( props: { warning: string } ) {
+	const warning = props.warning;
+	return (
+		<TrackComponentView
+			eventName="calypso_subscription_warning_impression"
+			eventProperties={ eventProperties( warning ) }
+		/>
+	);
+}
+
+export function PurchaseItemSiteIcon( {
+	site,
+	isDisconnectedSite,
+	purchase,
+	iconUrl,
+}: {
+	purchase: Purchases.Purchase;
+	site?: Site | null | undefined;
+	isDisconnectedSite?: boolean;
+	iconUrl?: string | null;
+} ) {
+	let content = <SiteIcon site={ site ?? undefined } size={ 36 } />;
+
+	if ( isAkismetTemporarySitePurchase( purchase ) ) {
+		content = (
+			<div className="purchase-item__static-icon">
+				<img src={ akismetIcon } alt="Akismet icon" />
+			</div>
 		);
 	}
 
+	if ( isMarketplaceTemporarySitePurchase( purchase ) ) {
+		content = <SiteIcon size={ 36 } />;
+	}
+
+	if ( isDisconnectedSite ) {
+		content = (
+			<div className="purchase-item__disconnected-icon">
+				<Gridicon icon="block" size={ Math.round( 36 / 1.8 ) } />
+			</div>
+		);
+	}
+
+	const isJetpackPurchase = isJetpackProduct( purchase ) || isJetpackPlan( purchase );
+
+	if ( ! iconUrl && isJetpackPurchase ) {
+		content = (
+			<div className="purchase-item__static-icon">
+				<img src={ jetpackIcon } alt="Jetpack icon" />;
+			</div>
+		);
+	}
+
+	return <div className="purchase-item__site purchases-layout__site">{ content }</div>;
+}
+
+class PurchaseItem extends Component<
+	PurchaseItemPropsPlaceholder | ( PurchaseItemProps & PurchaseItemPropsConnected )
+> {
 	getStatus() {
 		if ( this.props.isPlaceholder ) {
 			return null;
@@ -241,7 +289,7 @@ class PurchaseItem extends Component<
 							span: <span className="purchase-item__date" />,
 						},
 					} ) }
-					{ this.trackImpression( 'purchase-expiring' ) }
+					<TrackImpression warning="purchase-expiring" />
 				</span>
 			);
 		}
@@ -253,7 +301,7 @@ class PurchaseItem extends Component<
 				return (
 					<span className="purchase-item__is-error">
 						{ translate( 'Credit card expired' ) }
-						{ this.trackImpression( 'credit-card-expiring' ) }
+						<TrackImpression warning="credit-card-expiring" />
 					</span>
 				);
 			}
@@ -272,7 +320,7 @@ class PurchaseItem extends Component<
 								},
 							}
 						) }
-						{ this.trackImpression( 'credit-card-expiring' ) }
+						<TrackImpression warning="credit-card-expiring" />
 					</span>
 				);
 			}
@@ -353,7 +401,7 @@ class PurchaseItem extends Component<
 								span: <span className="purchase-item__date" />,
 							},
 						} ) }
-						{ this.trackImpression( 'purchase-expiring' ) }
+						<TrackImpression warning="purchase-expiring" />
 					</span>
 				);
 			}
@@ -385,7 +433,7 @@ class PurchaseItem extends Component<
 			return (
 				<span className="purchase-item__is-error">
 					{ isExpiredToday ? expiredTodayText : expiredFromNowText }
-					{ this.trackImpression( 'purchase-expired' ) }
+					<TrackImpression warning="purchase-expired" />
 				</span>
 			);
 		}
@@ -630,57 +678,25 @@ class PurchaseItem extends Component<
 		}
 	}
 
-	getSiteIcon = () => {
-		if ( this.props.isPlaceholder ) {
-			return null;
-		}
-		const { site, isDisconnectedSite, purchase, iconUrl } = this.props;
-
-		if ( isAkismetTemporarySitePurchase( purchase ) ) {
-			return (
-				<div className="purchase-item__static-icon">
-					<img src={ akismetIcon } alt="Akismet icon" />
-				</div>
-			);
-		}
-
-		if ( isMarketplaceTemporarySitePurchase( purchase ) ) {
-			return <SiteIcon size={ 36 } />;
-		}
-
-		if ( isDisconnectedSite ) {
-			return (
-				<div className="purchase-item__disconnected-icon">
-					<Gridicon icon="block" size={ Math.round( 36 / 1.8 ) } />
-				</div>
-			);
-		}
-
-		const isJetpackPurchase = isJetpackProduct( purchase ) || isJetpackPlan( purchase );
-
-		if ( ! iconUrl && isJetpackPurchase ) {
-			return (
-				<div className="purchase-item__static-icon">
-					<img src={ jetpackIcon } alt="Jetpack icon" />;
-				</div>
-			);
-		}
-
-		return <SiteIcon site={ site ?? undefined } size={ 36 } />;
-	};
-
 	renderPurchaseItemContent = () => {
 		if ( this.props.isPlaceholder ) {
 			return null;
 		}
-		const { purchase, showSite, isBackupMethodAvailable } = this.props;
+		const { purchase, site, showSite, isDisconnectedSite, iconUrl, isBackupMethodAvailable } =
+			this.props;
 
 		return (
 			<div className="purchase-item__wrapper purchases-layout__wrapper">
 				{ showSite && (
-					<div className="purchase-item__site purchases-layout__site">{ this.getSiteIcon() }</div>
+					<div className="purchase-item__site purchases-layout__site">
+						<PurchaseItemSiteIcon
+							site={ site }
+							isDisconnectedSite={ isDisconnectedSite }
+							purchase={ purchase }
+							iconUrl={ iconUrl }
+						/>
+					</div>
 				) }
-
 				<div className="purchase-item__information purchases-layout__information">
 					<div className="purchase-item__title">
 						{ getDisplayName( purchase ) }
