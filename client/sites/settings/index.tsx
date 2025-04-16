@@ -31,7 +31,6 @@ import {
 	performanceSettings,
 	redirectToSiteSettingsIfAdvancedHostingFeaturesNotSupported,
 	redirectToSiteSettingsIfHostingFeaturesNotSupported,
-	redirectToHostingConfig,
 } from './controller';
 
 export default function () {
@@ -82,7 +81,6 @@ export default function () {
 	page(
 		'/sites/settings/server/:site',
 		siteSelection,
-		redirectToHostingConfig,
 		redirectToSiteSettingsIfAdvancedHostingFeaturesNotSupported,
 		navigation,
 		serverSettings,
@@ -95,7 +93,6 @@ export default function () {
 	page(
 		'/sites/settings/sftp-ssh/:site',
 		siteSelection,
-		redirectToHostingConfig,
 		redirectToSiteSettingsIfAdvancedHostingFeaturesNotSupported,
 		navigation,
 		sftpSshSettings,
@@ -108,7 +105,6 @@ export default function () {
 	page(
 		'/sites/settings/database/:site',
 		siteSelection,
-		redirectToHostingConfig,
 		redirectToSiteSettingsIfAdvancedHostingFeaturesNotSupported,
 		navigation,
 		databaseSettings,
@@ -121,7 +117,6 @@ export default function () {
 	page(
 		'/sites/settings/performance/:site',
 		siteSelection,
-		redirectToHostingConfig,
 		redirectToSiteSettingsIfHostingFeaturesNotSupported,
 		navigation,
 		performanceSettings,

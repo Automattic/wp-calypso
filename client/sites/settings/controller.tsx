@@ -59,20 +59,6 @@ export function SettingsSidebar() {
 	);
 }
 
-export async function redirectToHostingConfig( context: PageJSContext ) {
-	const { getState } = context.store;
-	const siteSlug = getSelectedSiteSlug( getState() );
-	// Redirect command palette routes to the new hosting config page when not in the treatment group
-	const routes = {
-		[ `/sites/settings/server/${ siteSlug }` ]: `/hosting-config/${ siteSlug }`,
-		[ `/sites/settings/performance/${ siteSlug }` ]: `/hosting-config/${ siteSlug }#cache`,
-		[ `/sites/settings/database/${ siteSlug }` ]: `/hosting-config/${ siteSlug }#database-access`,
-		[ `/sites/settings/sftp-ssh/${ siteSlug }` ]: `/hosting-config/${ siteSlug }#sftp-credentials`,
-	};
-
-	return page.redirect( routes[ context.path ] ?? `/hosting-config/${ siteSlug }` );
-}
-
 export function redirectToSiteSettingsIfHostingFeaturesNotSupported(
 	context: PageJSContext,
 	next: () => void
