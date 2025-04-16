@@ -31,9 +31,11 @@ export default function SiteCard( {
 			<VStack spacing={ 6 }>
 				<div className="dashboard-site-overview__preview-image">
 					<img
-						src={ `https://s0.wp.com/mshots/v1/${ encodeURIComponent( url ) }?w=350&h=200` }
+						src={ `https://s0.wp.com/mshots/v1/${ encodeURIComponent( url ) }?w=600&h=400` }
 						alt={ __( 'Site preview' ) }
-						style={ { width: '100%', height: 'auto', display: 'block' } }
+						width={ 300 }
+						height={ 200 }
+						style={ { display: 'block' } }
 					/>
 				</div>
 				<VStack spacing={ 6 } className="site-card-contents">
