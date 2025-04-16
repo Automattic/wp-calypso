@@ -86,6 +86,7 @@ export const fetchMagicLoginAuthenticate =
 
 				dispatch( {
 					type: MAGIC_LOGIN_REQUEST_AUTH_SUCCESS,
+					data: json.data,
 				} );
 			} )
 			.catch( ( error ) => {
