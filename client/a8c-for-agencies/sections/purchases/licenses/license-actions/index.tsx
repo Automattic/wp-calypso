@@ -4,14 +4,13 @@ import PopoverMenu from 'calypso/components/popover-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import { LicenseAction, LicenseType } from 'calypso/jetpack-cloud/sections/partner-portal/types';
 import useLicenseActions, { LicenseActionType } from './use-license-actions';
+import type { License } from 'calypso/state/partner-portal/types';
 
 interface Props {
 	type: LicenseActionType;
-	siteUrl: string | null;
-	isDevSite: boolean;
-	attachedAt: string | null;
-	revokedAt: string | null;
+	license: License;
 	licenseType: LicenseType;
+	isDevSite: boolean;
 	isChildLicense?: boolean;
 	isClientLicense?: boolean;
 	productName: string;
@@ -21,17 +20,14 @@ interface Props {
 }
 
 export default function LicenseActions( {
-	siteUrl,
-	isDevSite,
-	attachedAt,
-	revokedAt,
+	type,
+	license,
 	licenseType,
+	isDevSite,
 	isChildLicense,
 	isClientLicense,
 	productName,
-	licenseKey,
 	productId,
-	type,
 	bundleSize,
 }: Props ) {
 	const buttonActionRef = useRef< HTMLButtonElement | null >( null );
@@ -41,16 +37,16 @@ export default function LicenseActions( {
 	const [ currentDialog, setCurrentDialog ] = useState< ReactNode >( null );
 
 	const licenseActions = useLicenseActions( {
-		siteUrl,
+		siteUrl: license.siteUrl,
 		isDevSite,
-		attachedAt,
-		revokedAt,
+		attachedAt: license.attachedAt,
+		revokedAt: license.revokedAt,
 		licenseType,
 		isChildLicense,
 		isClientLicense,
 		type,
-		licenseKey,
 		productName,
+		licenseKey: license.licenseKey,
 		bundleSize,
 		productId,
 	} );

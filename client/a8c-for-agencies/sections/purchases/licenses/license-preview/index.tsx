@@ -408,11 +408,9 @@ export default function LicensePreview( {
 				<div>
 					<LicenseActions
 						type={ licenseActionType }
-						siteUrl={ siteUrl }
 						isDevSite={ isDevelopmentSite }
-						attachedAt={ attachedAt }
-						revokedAt={ revokedAt }
 						licenseKey={ licenseKey }
+						license={ license }
 						licenseType={ licenseType }
 						isChildLicense={ isChildLicense }
 						isClientLicense={ !! referral }
