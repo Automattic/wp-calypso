@@ -114,6 +114,13 @@ export default function Profile() {
 
 	const isSaving = mutation.isPending;
 	const isDirty = !! localData;
+	let saveButtonLabel = __( 'Save' );
+
+	if ( isSaving ) {
+		saveButtonLabel = __( 'Saving…' );
+	} else if ( mutation.isSuccess && ! isDirty ) {
+		saveButtonLabel = __( 'Saved!' );
+	}
 
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
@@ -191,7 +198,7 @@ export default function Profile() {
 									isBusy={ isSaving }
 									disabled={ isSaving || ! isDirty }
 								>
-									{ __( 'Save' ) }
+									{ saveButtonLabel }
 								</Button>
 							</VStack>
 						</CardBody>
