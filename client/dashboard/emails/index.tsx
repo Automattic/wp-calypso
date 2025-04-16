@@ -8,14 +8,14 @@ import { emailsQuery } from '../app/queries';
 import DataViewsCard from '../dataviews-card';
 import PageLayout from '../page-layout';
 import type { Email } from '../data/types';
-import type { View, Field, Action } from '@wordpress/dataviews';
+import type { View } from '@wordpress/dataviews';
 
 const fields = [
 	{
 		id: 'emailAddress',
 		label: __( 'Email Address' ),
 		enableGlobalSearch: true,
-		render: ( { item } ) =>
+		render: ( { item }: { item: Email } ) =>
 			item.type === 'mailbox' ? (
 				<ExternalLink href={ `https://mail.${ item.domainName }` }>
 					{ item.emailAddress }
@@ -27,8 +27,9 @@ const fields = [
 	{
 		id: 'type',
 		label: __( 'Type' ),
-		render: ( { item } ) => ( item.type === 'mailbox' ? __( 'Mailbox' ) : __( 'Forwarding' ) ),
-		getValue: ( { item } ) => item.type,
+		render: ( { item }: { item: Email } ) =>
+			item.type === 'mailbox' ? __( 'Mailbox' ) : __( 'Forwarding' ),
+		getValue: ( { item }: { item: Email } ) => item.type,
 		elements: [
 			{ value: 'mailbox', label: __( 'Mailbox' ) },
 			{ value: 'forwarding', label: __( 'Forwarding' ) },
@@ -37,7 +38,7 @@ const fields = [
 	{
 		id: 'provider',
 		label: __( 'Provider' ),
-		render: ( { item } ) => {
+		render: ( { item }: { item: Email } ) => {
 			if ( item.type === 'forwarding' && item.forwardingTo ) {
 				return `${ __( 'Forwards to' ) } ${ item.forwardingTo }`;
 			}
@@ -46,9 +47,9 @@ const fields = [
 			// This keeps the component agnostic while showing user-friendly names
 			return item.providerDisplayName;
 		},
-		getValue: ( { item } ) => item.provider,
+		getValue: ( { item }: { item: Email } ) => item.provider,
 	},
-] as Field< Email >[];
+];
 
 function Emails() {
 	const navigate = useNavigate();
@@ -68,29 +69,29 @@ function Emails() {
 		titleField: 'emailAddress',
 	} );
 
-	const actions: Action< Email >[] = useMemo(
+	const actions = useMemo(
 		() => [
 			{
 				id: 'manage',
 				label: __( 'Manage' ),
-				callback: ( [ item ] ) => {
-					navigate( { to: `/emails/${ item.id }` } );
+				callback: ( items: Email[] ) => {
+					navigate( { to: `/emails/${ items[ 0 ].id }` } );
 				},
 			},
 			{
 				id: 'edit',
 				label: __( 'Edit' ),
-				callback: ( [ item ] ) => {
-					navigate( { to: `/emails/${ item.id }/edit` } );
+				callback: ( items: Email[] ) => {
+					navigate( { to: `/emails/${ items[ 0 ].id }/edit` } );
 				},
 			},
 			{
 				id: 'access-webmail',
 				label: __( 'Access Webmail' ),
-				callback: ( [ item ] ) => {
-					window.open( `https://mail.${ item.domainName }`, '_blank' );
+				callback: ( items: Email[] ) => {
+					window.open( `https://mail.${ items[ 0 ].domainName }`, '_blank' );
 				},
-				isEligible: ( item ) => item.type === 'mailbox',
+				isEligible: ( item: Email ) => item.type === 'mailbox',
 			},
 			{
 				id: 'delete',

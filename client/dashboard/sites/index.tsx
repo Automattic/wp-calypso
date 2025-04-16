@@ -10,7 +10,7 @@ import DataViewsCard from '../dataviews-card';
 import PageLayout from '../page-layout';
 import SiteIcon from '../site-icon';
 import type { Site } from '../data/types';
-import type { View, Field } from '@wordpress/dataviews';
+import type { View } from '@wordpress/dataviews';
 
 const actions = [
 	{
@@ -40,7 +40,7 @@ const fields = [
 	{
 		id: 'media',
 		label: __( 'Media' ),
-		render: ( { item } ) => <SiteIcon site={ item } />,
+		render: ( { item }: { item: Site } ) => <SiteIcon site={ item } />,
 	},
 	{
 		id: 'subscribers',
@@ -53,7 +53,7 @@ const fields = [
 			{ value: 'enabled', label: __( 'Enabled' ) },
 			{ value: 'disabled', label: __( 'Disabled' ) },
 		],
-		render: ( { item } ) => {
+		render: ( { item }: { item: Site } ) => {
 			if ( item.backups === 'enabled' ) {
 				return <Icon icon={ check } />;
 			}
@@ -64,7 +64,7 @@ const fields = [
 	{
 		id: 'protect',
 		label: __( 'Protect' ),
-		render: ( { item } ) => {
+		render: ( { item }: { item: Site } ) => {
 			if ( item.protect === 'enabled' ) {
 				return <Icon icon={ check } />;
 			}
@@ -76,7 +76,7 @@ const fields = [
 			{ value: 'disabled', label: __( 'Disabled' ) },
 		],
 	},
-] as Field< Site >[];
+];
 
 export default function Sites() {
 	const navigate = useNavigate();
