@@ -7,16 +7,8 @@ import { NavigableRegion } from '../../interface';
  * Internal dependencies
  */
 import Header from './header';
+import type { PageProps } from './types';
 import './style.scss';
-
-export type PageProps = {
-	title: string;
-	subTitle?: string;
-	actions?: React.ReactNode;
-	children: React.ReactNode;
-	className?: string;
-	hideTitleFromUI?: boolean;
-};
 
 export function Page( {
 	title,

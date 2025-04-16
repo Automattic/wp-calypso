@@ -11,7 +11,8 @@ import {
 /**
  * Types
  */
-import type { PageProps } from '.';
+import type { PageProps } from './types';
+
 type HeaderProps = Omit< PageProps, 'className' | 'hideTitleFromUI' | 'children' >;
 
 export default function Header( { title, subTitle, actions }: HeaderProps ) {
