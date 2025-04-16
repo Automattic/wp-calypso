@@ -1,0 +1,52 @@
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
+
+.a4a-provide-feedback__modal {
+	.a4a-modal__main {
+		height: 725px;
+	}
+}
+
+.a4a-provide-feedback__form {
+	padding-block: 16px 98px;
+	display: flex;
+	flex-direction: column;
+	gap: 24px;
+	flex: 1 1 auto;
+
+	.form-fieldset {
+		margin-block-end: 0;
+	}
+
+	.file-picker {
+		display: flex;
+		flex-direction: column;
+		gap: 16px;
+
+		button {
+			width: fit-content;
+		}
+	}
+}
+
+.form-label.a4a-provide-feedback__form-label {
+	@include heading-small;
+	padding-block-end: 8px;
+	text-transform: uppercase;
+	margin-block-end: 0;
+}
+
+.a4a-provide-feedback__form-select {
+	.components-input-control__container {
+		width: fit-content;
+	}
+}
+
+.a4a-provide-feedback__form-file-container {
+	width: 100%;
+	height: 100%;
+}
+
+.a4a-provide-feedback__form-file-name {
+	@include body-small;
+}
