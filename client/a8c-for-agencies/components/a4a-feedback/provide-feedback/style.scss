@@ -3,12 +3,16 @@
 
 .a4a-provide-feedback__modal {
 	.a4a-modal__main {
-		height: 725px;
+		height: auto;
+
+		.a4a-modal__title {
+			@include heading-x-large;
+		}
 	}
 }
 
 .a4a-provide-feedback__form {
-	padding-block: 16px 98px;
+	padding-block: 16px 68px;
 	display: flex;
 	flex-direction: column;
 	gap: 24px;
