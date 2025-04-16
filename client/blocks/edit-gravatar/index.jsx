@@ -74,7 +74,7 @@ export class EditGravatar extends Component {
 
 	renderEditGravatarIsLoading = () => {
 		return (
-			<div className="edit-gravatar is-loading">
+			<div className="edit-gravatar edit-gravatar--is-loading">
 				<div className="edit-gravatar__avatar-container">
 					<div className="edit-gravatar__gravatar-placeholder" />
 				</div>
@@ -87,7 +87,7 @@ export class EditGravatar extends Component {
 
 	renderGravatarProfileHidden = ( { gravatarLink, translate } ) => {
 		return (
-			<div className="edit-gravatar is-hidden">
+			<div className="edit-gravatar edit-gravatar--is-hidden">
 				<div className="edit-gravatar__avatar-container">
 					<div className="edit-gravatar__gravatar-is-hidden">
 						<div className="edit-gravatar__label-container">
@@ -138,7 +138,11 @@ export class EditGravatar extends Component {
 		const avatarUrl = addQueryArgs( user.avatar_URL, { ver: this.state.avatarUrlCacheVer } );
 
 		return (
-			<div className={ clsx( 'edit-gravatar', { 'is-unverified': ! user.email_verified } ) }>
+			<div
+				className={ clsx( 'edit-gravatar', {
+					'edit-gravatar--is-unverified': ! user.email_verified,
+				} ) }
+			>
 				{ this.state.showEmailVerificationNotice && (
 					<VerifyEmailDialog onClose={ this.closeVerifyEmailDialog } />
 				) }

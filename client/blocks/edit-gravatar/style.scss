@@ -44,7 +44,7 @@
 	}
 }
 
-.edit_gravatar.is-loading {
+.edit_gravatar.edit-gravatar--is-loading {
 	.edit-gravatar__gravatar-placeholder,
 	.edit-gravatar__explanation-placeholder {
 		@include placeholder();
@@ -63,7 +63,7 @@
 	}
 }
 
-.edit-gravatar.is-hidden {
+.edit-gravatar.edit-gravatar--is-hidden {
 	// TODO: Check it
 	.gridicon {
 		margin: 0;
@@ -90,7 +90,7 @@
 	}
 }
 
-.edit-gravatar.is-unverified {
+.edit-gravatar.edit-gravatar--is-unverified {
 	.gravatar {
 		opacity: 0.33;
 	}
