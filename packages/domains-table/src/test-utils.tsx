@@ -145,6 +145,7 @@ export function testDomain(
 		last_transfer_error: '',
 		has_private_registration: false,
 		is_pending_icann_verification: false,
+		is_root_domain_registered_with_automattic: false,
 		manual_transfer_required: false,
 		registrar: '',
 		domain_locking_available: false,
