@@ -23,8 +23,6 @@ import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login
 import { STEPS } from '../../internals/steps';
 import { Flow, ProvidedDependencies } from '../../internals/types';
 import type { OnboardSelect } from '@automattic/data-stores';
-import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
-import './new-hosted-site-flow.scss';
 
 function useShowDomainStep(): boolean {
 	const query = useQuery();
@@ -39,7 +37,7 @@ const hosting: Flow = {
 		const showDomainStep = useShowDomainStep();
 		return stepsWithRequiredLogin( [
 			...( showDomainStep ? [ STEPS.DOMAINS ] : [] ),
-			STEPS.PLANS,
+			STEPS.UNIFIED_PLANS,
 			STEPS.TRIAL_ACKNOWLEDGE,
 			STEPS.SITE_CREATION_STEP,
 			STEPS.PROCESSING,
@@ -92,8 +90,12 @@ const hosting: Flow = {
 					return navigate( 'plans' );
 				}
 				case 'plans': {
-					const productSlug = ( providedDependencies.plan as MinimalRequestCartProduct )
-						.product_slug;
+					const cartItems = providedDependencies.cartItems as Array< typeof planCartItem >;
+					const productSlug = cartItems?.[ 0 ]?.product_slug;
+
+					if ( ! productSlug ) {
+						throw new Error( 'No product slug found' );
+					}
 
 					setPlanCartItem( {
 						product_slug: productSlug,

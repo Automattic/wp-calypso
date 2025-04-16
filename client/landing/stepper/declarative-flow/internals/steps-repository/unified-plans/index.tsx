@@ -105,6 +105,21 @@ const PlansStepAdaptor: StepType< {
 	const customerType = useQuery().get( 'customerType' ) ?? undefined;
 	const [ planInterval, setPlanInterval ] = useState< string | undefined >( undefined );
 
+	useQueryTheme( 'wpcom', selectedDesign?.slug );
+
+	// TODO: Remove this once we have a better way to handle the plan from the query param.
+	// This is a hack used by new-hosted-site flow.
+	const planFromQuery = useQuery().get( 'plan' );
+
+	if ( planFromQuery ) {
+		props.navigation.submit?.( {
+			...stepState,
+			cartItems: [ { product_slug: planFromQuery } ],
+		} );
+
+		return null;
+	}
+
 	/**
 	 * isWordCampPromo is temporary
 	 */
@@ -133,8 +148,6 @@ const PlansStepAdaptor: StepType< {
 		const intervalType = getIntervalType( path );
 		setPlanInterval( intervalType );
 	};
-
-	useQueryTheme( 'wpcom', selectedDesign?.slug );
 
 	const isUsingStepContainerV2 = shouldUseStepContainerV2( props.flow );
 
