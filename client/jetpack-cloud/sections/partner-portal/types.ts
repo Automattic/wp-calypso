@@ -50,6 +50,7 @@ export interface LicenseAction {
 	type?: string;
 	isExternalLink?: boolean;
 	className?: string;
+	dialog?: ( props: { onClose: () => void } ) => React.ReactNode;
 }
 
 export interface SetAsPrimaryCardProps {

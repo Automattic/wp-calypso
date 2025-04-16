@@ -412,12 +412,13 @@ export default function LicensePreview( {
 						isDevSite={ isDevelopmentSite }
 						attachedAt={ attachedAt }
 						revokedAt={ revokedAt }
+						licenseKey={ licenseKey }
 						licenseType={ licenseType }
 						isChildLicense={ isChildLicense }
 						isClientLicense={ !! referral }
 						productName={ productName }
-						licenseKey={ licenseKey }
 						productId={ productId }
+						bundleSize={ quantity ?? 1 }
 					/>
 
 					{ hasLicensePreview && (

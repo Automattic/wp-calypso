@@ -1,5 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
+import CancelLicenseFeedbackModal from 'calypso/a8c-for-agencies/components/a4a-feedback/churn-mechanism/cancel-license-feedback-modal';
 import { A4A_MARKETPLACE_HOSTING_WPCOM_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import getLicenseState from 'calypso/jetpack-cloud/sections/partner-portal/lib/get-license-state';
 import {
@@ -24,6 +25,10 @@ type Props = {
 	isChildLicense?: boolean;
 	isClientLicense?: boolean;
 	type: LicenseActionType;
+	licenseKey: string;
+	productName: string;
+	productId: number;
+	bundleSize: number;
 };
 
 export default function useLicenseActions( {
@@ -35,6 +40,10 @@ export default function useLicenseActions( {
 	isChildLicense,
 	isClientLicense,
 	type,
+	licenseKey,
+	productName,
+	productId,
+	bundleSize,
 }: Props ): LicenseAction[] {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -63,6 +72,16 @@ export default function useLicenseActions( {
 				onClick: () => handleClickMenuItem( 'calypso_a4a_licenses_revoke_bundle_clicked' ),
 				isEnabled: type === 'bundle' && canRevoke,
 				className: 'is-destructive',
+				dialog: ( { onClose } ) => (
+					<CancelLicenseFeedbackModal
+						onClose={ onClose }
+						productName={ productName }
+						licenseKey={ licenseKey }
+						productId={ productId }
+						bundleSize={ bundleSize }
+						isClientLicense={ isClientLicense }
+					/>
+				),
 			},
 
 			// This are menu items for Assigned WPCOM Licenses
@@ -129,12 +148,15 @@ export default function useLicenseActions( {
 		];
 	}, [
 		attachedAt,
+		bundleSize,
 		canRevoke,
 		dispatch,
 		isChildLicense,
 		isClientLicense,
 		isDevSite,
+		licenseKey,
 		licenseType,
+		productName,
 		revokedAt,
 		siteUrl,
 		translate,
