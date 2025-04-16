@@ -172,10 +172,10 @@ export const fetchCurrentPlan = async ( id: string ): Promise< Plan > => {
 	if ( ! id ) {
 		return Promise.reject( new Error( 'Site ID is undefined' ) );
 	}
-	const plans = ( await wpcom.req.get( {
+	const plans: Record< string, Plan > = await wpcom.req.get( {
 		path: `/sites/${ id }/plans`,
 		apiVersion: '1.3',
-	} ) ) as Record< string, Plan >;
+	} );
 	const plan = Object.values( plans ).find( ( plan ) => plan.current_plan );
 	if ( ! plan ) {
 		throw new Error( 'No current plan found' );

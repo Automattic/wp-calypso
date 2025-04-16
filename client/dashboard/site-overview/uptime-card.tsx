@@ -9,7 +9,7 @@ export default function UptimeCard( { siteMonitorUptime }: { siteMonitorUptime?:
 		return;
 	}
 	const { upDays, downDays } = Object.entries( siteMonitorUptime || {} ).reduce(
-		( accumulator, [ , { status } = {} as { status: 'up|down' } ] ) => {
+		( accumulator, [ , { status } = {} ] ) => {
 			accumulator[ status === 'up' ? 'upDays' : 'downDays' ] += 1;
 			return accumulator;
 		},
