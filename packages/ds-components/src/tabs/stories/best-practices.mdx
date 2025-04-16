@@ -1,0 +1,99 @@
+import { Meta } from '@storybook/blocks';
+
+import * as TabsStories from './index.story';
+
+<Meta of={ TabsStories } name="Best Practices" />
+
+# Tabs
+
+## Usage
+
+### Uncontrolled Mode
+
+Tabs can be used in an uncontrolled mode, where the component manages its own state. In this mode, the `defaultTabId` prop can be used to set the initially selected tab. If this prop is not set, the first tab will be selected by default. In addition, in most cases where the currently active tab becomes disabled or otherwise unavailable, uncontrolled mode will automatically fall back to selecting the first available tab.
+
+```jsx
+import { Tabs } from '@wordpress/components';
+
+const onSelect = ( tabName ) => {
+	console.log( 'Selecting tab', tabName );
+};
+
+const MyUncontrolledTabs = () => (
+	<Tabs onSelect={ onSelect } defaultTabId="tab2">
+		<Tabs.TabList>
+			<Tabs.Tab tabId="tab1" title="Tab 1">
+				Tab 1
+			</Tabs.Tab>
+			<Tabs.Tab tabId="tab2" title="Tab 2">
+				Tab 2
+			</Tabs.Tab>
+			<Tabs.Tab tabId="tab3" title="Tab 3">
+				Tab 3
+			</Tabs.Tab>
+		</Tabs.TabList>
+		<Tabs.TabPanel tabId="tab1">
+			<p>Selected tab: Tab 1</p>
+		</Tabs.TabPanel>
+		<Tabs.TabPanel tabId="tab2">
+			<p>Selected tab: Tab 2</p>
+		</Tabs.TabPanel>
+		<Tabs.TabPanel tabId="tab3">
+			<p>Selected tab: Tab 3</p>
+		</Tabs.TabPanel>
+	</Tabs>
+);
+```
+
+### Controlled Mode
+
+Tabs can also be used in a controlled mode, where the parent component specifies the `selectedTabId` and the `onSelect` props to control tab selection. In this mode, the `defaultTabId` prop will be ignored if it is provided. If the `selectedTabId` is `null`, no tab is selected. In this mode, if the currently selected tab becomes disabled or otherwise unavailable, the component will _not_ fall back to another available tab, leaving the controlling component in charge of implementing the desired logic.
+
+```tsx
+import { Tabs } from '@wordpress/components';
+
+const [ selectedTabId, setSelectedTabId ] = useState<
+	string | undefined | null
+>();
+
+const onSelect = ( tabName ) => {
+	console.log( 'Selecting tab', tabName );
+};
+
+const MyControlledTabs = () => (
+	<Tabs
+		selectedTabId={ selectedTabId }
+		onSelect={ ( selectedId ) => {
+			setSelectedTabId( selectedId );
+			onSelect( selectedId );
+		} }
+	>
+		<Tabs.TabList>
+			<Tabs.Tab tabId="tab1" title="Tab 1">
+				Tab 1
+			</Tabs.Tab>
+			<Tabs.Tab tabId="tab2" title="Tab 2">
+				Tab 2
+			</Tabs.Tab>
+			<Tabs.Tab tabId="tab3" title="Tab 3">
+				Tab 3
+			</Tabs.Tab>
+		</Tabs.TabList>
+		<Tabs.TabPanel tabId="tab1">
+			<p>Selected tab: Tab 1</p>
+		</Tabs.TabPanel>
+		<Tabs.TabPanel tabId="tab2">
+			<p>Selected tab: Tab 2</p>
+		</Tabs.TabPanel>
+		<Tabs.TabPanel tabId="tab3">
+			<p>Selected tab: Tab 3</p>
+		</Tabs.TabPanel>
+	</Tabs>
+);
+```
+
+### Using `Tabs` with links
+
+The semantics implemented by the `Tabs` component don't align well with the semantics needed by a list of links. Furthermore, end users usually expect every link to be tabbable, while `Tabs.Tablist` is a [composite](https://w3c.github.io/aria/#composite) widget acting as a single tab stop.
+
+For these reasons, even if the `Tabs` component is fully extensible, we don't recommend using `Tabs` with links, and we don't currently provide any related Storybook example.
