@@ -47,7 +47,6 @@ jest.mock( 'calypso/data/hosting/use-cache' );
 jest.mock( 'calypso/state/selectors/get-request' );
 jest.mock( 'calypso/state/selectors/should-rate-limit-atomic-cache-clear' );
 jest.mock( 'calypso/state/hosting/actions' );
-jest.mock( 'calypso/lib/remove-duplicate-views-experiment' );
 
 describe( 'CacheCard component', () => {
 	beforeEach( () => {
