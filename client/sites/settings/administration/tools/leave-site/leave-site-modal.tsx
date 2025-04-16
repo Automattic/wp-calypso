@@ -4,6 +4,8 @@ import LeaveSiteModalForm, { LeaveSiteModalFormProps } from './leave-site-modal-
 
 interface LeaveSiteModalProps extends LeaveSiteModalFormProps {}
 
+const noop = () => {};
+
 const LeaveSiteModal = ( props: LeaveSiteModalProps ) => {
 	const translate = useTranslate();
 
@@ -12,7 +14,7 @@ const LeaveSiteModal = ( props: LeaveSiteModalProps ) => {
 			className="leave-site-modal"
 			title={ translate( 'Leave site' ) }
 			size="small"
-			onRequestClose={ props.onClose }
+			onRequestClose={ props.onClose || noop }
 		>
 			<LeaveSiteModalForm { ...props } />
 		</Modal>
