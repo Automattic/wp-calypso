@@ -13,11 +13,12 @@ import type {
 	EngagementStatsDataPoint,
 } from './types';
 
-export const fetchProfile = () =>
-	wpcom.req.get( {
+export const fetchProfile = async (): Promise< Profile > => {
+	return await wpcom.req.get( {
 		path: '/me/settings?http_envelope=1',
 		apiNamespace: 'rest/v1.1',
-	} ) as Promise< Profile >;
+	} );
+};
 
 export const updateProfile = async ( data: Partial< Profile > ) => {
 	return await wpcom.req.post( {
@@ -86,8 +87,8 @@ const siteRequestObjectToSiteObject = ( site: WPCOMRESTAPISite ): Site => ( {
 	is_deleted: site.is_deleted,
 } );
 
-export const fetchSites = (): Promise< Site[] > => {
-	return wpcom.req
+export const fetchSites = async (): Promise< Site[] > => {
+	return await wpcom.req
 		.get( {
 			path: '/me/sites?http_envelope=1&site_visibility=all&include_domain_only=true&site_activity=active&fields=ID,URL,name,icon,subscribers_count,plan,active_modules,is_deleted,options',
 			apiNamespace: 'rest/v1.2',
@@ -372,5 +373,5 @@ export const fetchTwoStep = async (): Promise< TwoStep > => {
 	return wpcom.req.get( {
 		path: '/me/two-step/?http_envelope=1',
 		apiNamespace: 'rest/v1.1',
-	} ) as Promise< TwoStep >;
+	} );
 };
