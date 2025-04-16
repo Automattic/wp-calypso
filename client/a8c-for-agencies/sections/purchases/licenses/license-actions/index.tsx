@@ -64,7 +64,13 @@ export default function LicenseActions( {
 
 	return (
 		<>
-			<Button borderless compact onClick={ () => setIsOpen( true ) } ref={ buttonActionRef }>
+			<Button
+				className="license-bundle-dropdown__button"
+				borderless
+				compact
+				onClick={ () => setIsOpen( true ) }
+				ref={ buttonActionRef }
+			>
 				<Gridicon icon="ellipsis" size={ 18 } />
 			</Button>
 			<PopoverMenu

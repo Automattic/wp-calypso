@@ -409,7 +409,6 @@ export default function LicensePreview( {
 					<LicenseActions
 						type={ licenseActionType }
 						isDevSite={ isDevelopmentSite }
-						licenseKey={ licenseKey }
 						license={ license }
 						licenseType={ licenseType }
 						isChildLicense={ isChildLicense }
