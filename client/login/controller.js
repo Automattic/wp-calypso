@@ -4,6 +4,7 @@ import { getUrlParts } from '@automattic/calypso-url';
 import { loadScript } from '@automattic/load-script';
 import wpcomRequest from 'wpcom-proxy-request';
 import { getLocaleSlug } from 'calypso/lib/i18n-utils';
+import { navigate } from 'calypso/lib/navigate';
 import {
 	isGravPoweredOAuth2Client,
 	isWooOAuth2Client,
@@ -166,6 +167,11 @@ export async function magicLogin( context, next ) {
 		path,
 		query: { gravatar_flow, client_id, redirect_to, auto_trigger },
 	} = context;
+
+	// If user is logged in and is coming from jetpack onboarding, show user connection screen instead (jetpack/connect/authorize)
+	if ( isUserLoggedIn( context.store.getState() ) && path.includes( 'jetpack-onboarding' ) ) {
+		return navigate( redirect_to );
+	}
 
 	if ( isUserLoggedIn( context.store.getState() ) && auto_trigger === undefined ) {
 		return login( context, next );
