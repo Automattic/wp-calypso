@@ -29,9 +29,11 @@ const VerifyLoginCode = ( {
 	onResendEmail,
 } ) => {
 	const [ verificationCode, setVerificationCode ] = useState( '' );
+	const [ isRedirecting, setIsRedirecting ] = useState( false );
 
 	useEffect( () => {
 		if ( isAuthenticated && authSuccessData ) {
+			setIsRedirecting( true );
 			navigate( authSuccessData.redirect_to );
 		}
 	}, [ isAuthenticated, authSuccessData ] );
@@ -53,7 +55,8 @@ const VerifyLoginCode = ( {
 		authenticate( loginToken, redirectTo );
 	};
 
-	const submitEnabled = verificationCode.length > 0 && ! isValidating;
+	const isDisabled = isValidating || isRedirecting;
+	const submitEnabled = verificationCode.length > 0 && ! isDisabled;
 
 	return (
 		<div className="magic-login__successfully-jetpack">
@@ -83,7 +86,7 @@ const VerifyLoginCode = ( {
 				<FormTextInput
 					autoCapitalize="off"
 					className="magic-login__verify-code-field"
-					disabled={ isValidating }
+					disabled={ isDisabled }
 					name="verificationCode"
 					value={ verificationCode }
 					onChange={ onCodeChange }
@@ -91,7 +94,7 @@ const VerifyLoginCode = ( {
 				/>
 
 				<div className="magic-login__form-action">
-					<FormButton primary disabled={ ! submitEnabled } busy={ isValidating } type="submit">
+					<FormButton primary disabled={ ! submitEnabled } busy={ isDisabled } type="submit">
 						{ translate( 'Verify' ) }
 					</FormButton>
 				</div>
@@ -109,6 +112,7 @@ const VerifyLoginCode = ( {
 										className="magic-login__resend-button"
 										variant="link"
 										onClick={ onResendEmail }
+										disabled={ isRedirecting }
 									/>
 								),
 							},
