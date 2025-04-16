@@ -57,14 +57,10 @@ form {
 
 .layout.is-white-login .login.is-akismet .login__form,
 .layout.is-white-login .login.is-akismet .continue-as-user {
-	.button.is-primary {
-		background-color: var(--color-akismet);
-
-		&:hover,
-    	&:focus {
-        	background-color: var(--color-akismet);
-    	}
-    }
+	.components-button.is-primary {
+		--color-accent: var(--color-akismet);
+		--color-accent-60: var(--color-akismet);
+	}
 }
 
 .login__form-jetpack {
