@@ -101,12 +101,11 @@ const form = {
 export default function Profile() {
 	const { data: serverData } = useQuery( profileQuery() );
 	const [ localData, setLocalData ] = useState< Partial< ProfileType > | undefined >();
-	const data = useMemo( () => {
-		if ( ! serverData ) {
-			return undefined;
-		}
-		return { ...serverData, ...localData };
-	}, [ localData, serverData ] );
+	const [ savingData, setSavingData ] = useState< Partial< ProfileType > | undefined >();
+	const data = useMemo(
+		() => ( serverData ? { ...serverData, ...savingData, ...localData } : undefined ),
+		[ serverData, savingData, localData ]
+	);
 	const mutation = useMutation( profileMutation() );
 
 	if ( ! data ) {
@@ -119,12 +118,20 @@ export default function Profile() {
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
 		if ( localData ) {
-			const savingData = localData;
-			mutation.mutate( savingData, {
-				onSuccess: () => {
-					setLocalData( ( currentData ) =>
-						currentData === savingData ? undefined : currentData
-					);
+			// Set a local ref, because onError might called synchronously, and
+			// setSavingData is async.
+			const mutationData = localData;
+			// Clear the local data, so new edits start fresh.
+			setLocalData( undefined );
+			// Set saving state, so the data shown until settling is correct.
+			setSavingData( mutationData );
+			mutation.mutate( mutationData, {
+				onSettled: () => {
+					setSavingData( undefined );
+				},
+				onError: () => {
+					// Prepend the data to the local data on error.
+					setLocalData( ( currentData ) => ( { ...mutationData, ...currentData } ) );
 				},
 			} );
 		}
