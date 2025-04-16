@@ -122,7 +122,10 @@ const meRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'me',
 	loader: () => maybeAwaitFetch( profileQuery() ),
-	beforeLoad: async () => {
+	beforeLoad: async ( { cause } ) => {
+		if ( cause !== 'enter' ) {
+			return;
+		}
 		const twoStep = await fetchTwoStep();
 		if ( twoStep.two_step_reauthorization_required ) {
 			const currentPath = window.location.pathname;
