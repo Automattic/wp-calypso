@@ -63,7 +63,6 @@ const DiscoverStream = ( props ) => {
 				selectedTab === DEFAULT_TAB ? translate( 'Sites' ) : translate( 'Related' )
 			}
 			selectedStreamName={ selectedTab }
-			disableInfiniteScroll={ ! isLoggedIn }
 			useCompactCards
 		>
 			<DiscoverHeaderAndNavigation { ...headerAndNavigationProps } />

@@ -5,7 +5,7 @@ import { useStoredPaymentMethods } from 'calypso/my-sites/checkout/src/hooks/use
 import { useSelector } from 'calypso/state';
 import { getSite } from 'calypso/state/sites/selectors';
 import { managePurchase } from '../paths';
-import PurchaseItem from '../purchase-item';
+import PurchaseItem, { PurchaseItemSiteIcon } from '../purchase-item';
 
 function PurchaseItemRow( props: { purchase: Purchases.Purchase } ) {
 	const purchase = props.purchase;
@@ -27,7 +27,6 @@ function PurchaseItemRow( props: { purchase: Purchases.Purchase } ) {
 			purchase={ purchase }
 			isJetpack={ isJetpackPlan( purchase ) || isJetpackProduct( purchase ) }
 			site={ site }
-			showSite /* Renders a button and few subscriptions */
 			name={ purchase.siteName }
 			isBackupMethodAvailable={ isBackupMethodAvailable }
 		/>
@@ -38,6 +37,23 @@ export const purchasesDataFields = [
 	{
 		id: 'site',
 		label: 'Site',
+		type: 'text',
+		enableGlobalSearch: true,
+		enableSorting: true,
+		enableHiding: false,
+		// Filter by site ID
+		getValue: ( { item }: { item: Purchases.Purchase } ) => {
+			return item.siteId;
+		},
+		// Render the site icon
+		render: ( { item }: { item: Purchases.Purchase } ) => {
+			const site = { ID: item.siteId };
+			return <PurchaseItemSiteIcon site={ site } purchase={ item } />;
+		},
+	},
+	{
+		id: 'purchase-item-site',
+		label: 'Purchase Item',
 		type: 'text',
 		enableGlobalSearch: true,
 		enableSorting: true,

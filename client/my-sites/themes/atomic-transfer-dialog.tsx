@@ -1,4 +1,4 @@
-import { Dialog } from '@automattic/components';
+import { Modal } from '@wordpress/components';
 import { localize, translate } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -183,15 +183,18 @@ class AtomicTransferDialog extends Component< AtomicTransferDialogProps > {
 	}
 
 	render() {
-		const { showEligibility, isMarketplaceProduct, inProgress } = this.props;
+		const { showEligibility, isMarketplaceProduct } = this.props;
+
+		if ( ! showEligibility ) {
+			return null;
+		}
 
 		return (
-			<Dialog
-				isVisible={ showEligibility }
-				onClose={ () => this.handleDismiss() }
-				shouldCloseOnEsc={ ! inProgress }
-				showCloseIcon={ ! inProgress }
-				shouldCloseOnOverlayClick={ ! inProgress }
+			<Modal
+				className="plugin-details-cta__dialog-content"
+				title={ translate( 'Before you continue' ) }
+				onRequestClose={ () => this.handleDismiss() }
+				size="medium"
 			>
 				{ this.renderActivationInProgress() }
 				{ this.renderSuccessfulTransfer() }
@@ -206,7 +209,7 @@ class AtomicTransferDialog extends Component< AtomicTransferDialogProps > {
 					onProceed={ () => this.handleAccept() }
 					backUrl="#"
 				/>
-			</Dialog>
+			</Modal>
 		);
 	}
 }

@@ -2,18 +2,17 @@ import { is100Year } from '@automattic/calypso-products';
 import { LoadingPlaceholder } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import CoreBadge from 'calypso/components/core/badge';
 import { isPartnerPurchase, purchaseType } from 'calypso/lib/purchases';
 import { getMyPurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
-import AddOnsModal from 'calypso/sites/components/add-ons/add-ons-modal';
-import PlanPricing from 'calypso/sites/components/plan-pricing';
-import PlanStats from 'calypso/sites/components/plan-stats';
 import { isA4AUser } from 'calypso/state/partner-portal/partner/selectors';
 import getCurrentPlanPurchaseId from 'calypso/state/selectors/get-current-plan-purchase-id';
 import { getSelectedPurchase, getSelectedSite } from 'calypso/state/ui/selectors';
 import { AppState } from 'calypso/types';
+import ManageAddOnsButton from '../../../components/add-ons/manage-add-ons-button';
+import PlanPricing from '../../../components/plan-pricing';
+import PlanStats from '../../../components/plan-stats';
 
 import './style.scss';
 
@@ -59,26 +58,11 @@ export default function CurrentPlanPanel() {
 		return <PlanPricing inline />;
 	};
 
-	const [ isManageAddOnsModalOpen, setIsManageAddOnsModalOpen ] = useState( false );
-	const onManageAddOnsButtonClick = () => {
-		setIsManageAddOnsModalOpen( true );
-	};
-
 	const renderManageAddOnsButton = () => {
 		if ( isA4APlan || is100YearPlan ) {
 			return null;
 		}
-		return (
-			<>
-				<Button variant="tertiary" onClick={ onManageAddOnsButtonClick }>
-					{ translate( 'Manage add-ons' ) }
-				</Button>
-				<AddOnsModal
-					isOpen={ isManageAddOnsModalOpen }
-					onClose={ () => setIsManageAddOnsModalOpen( false ) }
-				/>
-			</>
-		);
+		return <ManageAddOnsButton tracksEventName="calypso_plans_manage_add_ons_button_click" />;
 	};
 
 	const renderManageBillingButton = () => {
@@ -120,7 +104,7 @@ export default function CurrentPlanPanel() {
 				</div>
 			</div>
 
-			<PlanStats />
+			<PlanStats needMoreStorageTracksEventName="calypso_plans_need_more_storage_click" />
 			{ ! isA4APlan && ! is100YearPlan && <hr /> }
 		</div>
 	);
