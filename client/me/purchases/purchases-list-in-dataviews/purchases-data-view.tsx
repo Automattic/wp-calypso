@@ -8,6 +8,7 @@ export const purchasesDataView = {
 	type: 'table',
 	page: 1,
 	perPage: 5,
+	titleField: 'site',
 	fields: [ 'product' ],
 	layout: {},
 } as View;
