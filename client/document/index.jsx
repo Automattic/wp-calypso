@@ -1,4 +1,4 @@
-import path from 'path';
+import { parse } from 'path';
 import config from '@automattic/calypso-config';
 import { isLocaleRtl } from '@automattic/i18n-utils';
 import { Step } from '@automattic/onboarding';
@@ -73,7 +73,7 @@ class Document extends Component {
 
 		const installedChunks = entrypoint.js
 			.concat( chunkFiles.js )
-			.map( ( chunk ) => path.parse( chunk ).name );
+			.map( ( chunk ) => parse( chunk ).name );
 
 		const inlineScript =
 			`var COMMIT_SHA = ${ jsonStringifyForHtml( commitSha ) };\n` +
