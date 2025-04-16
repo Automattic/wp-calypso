@@ -13,7 +13,7 @@ import {
  */
 import type { PageProps } from './types';
 
-type HeaderProps = Omit< PageProps, 'className' | 'hideTitleFromUI' | 'children' >;
+type HeaderProps = Pick< PageProps, 'title' | 'subTitle' | 'actions' >;
 
 export default function Header( { title, subTitle, actions }: HeaderProps ) {
 	return (
