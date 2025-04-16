@@ -79,6 +79,10 @@
 	}
 }
 
+body.is-section-plugins .responsive-toolbar-group__dropdown .responsive-toolbar-group__menu-item {
+	padding: 8px 12px;
+}
+
 body.is-section-plugins #primary .main.is-logged-out {
 	// Need to specifically set this, to override the classic blue.
 	--wp-admin-theme-color: var(--studio-blue-50);
