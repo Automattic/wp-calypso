@@ -197,7 +197,6 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 			config.isEnabled( 'use-translation-chunks' ) ||
 			flags.includes( 'use-translation-chunks' ) ||
 			request.query.hasOwnProperty( 'useTranslationChunks' ),
-		useLoadingEllipsis: !! request.query.loading_ellipsis,
 		showGdprBanner,
 		showStepContainerV2Loader: isInStepContainerV2FlowContext( request.path, request.query ),
 	} );

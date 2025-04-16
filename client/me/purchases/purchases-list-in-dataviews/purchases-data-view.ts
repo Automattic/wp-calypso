@@ -11,6 +11,6 @@ export const purchasesDataView = {
 		direction: 'desc',
 	},
 	titleField: 'site',
-	fields: [],
+	fields: [ 'purchase-item-site' ],
 	layout: {},
 } as View;

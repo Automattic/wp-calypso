@@ -1,6 +1,7 @@
 /**
  * Notifications
  */
+ @import "@wordpress/base-styles/breakpoints";
 
 #wpnc-panel {
 	position: fixed;
@@ -166,39 +167,45 @@ html.touch #wpnc-panel {
 div.reader-notifications__panel {
 	position: relative;
 
+	// This flyout breakpoint is based off the notifications panel having enough width for its
+	// default 'flyout' functionality for the nested level. Using a more general breakpoint would
+	// prevent us from applying this functionality for another ~166px of screen width (based off of
+	// using the $break-wide which is the closest larger breakpoint).
 	$breakpoint-flyout: 1114px;
-	$breakpoint-nested: 783px;
-	$breakpoint-mobile: 601px;
 
+	--default-notes-panel-width: 400px;
 	--3pc-notice-external-height: 50px;
 	@media only screen and (min-width: $breakpoint-flyout) {
 		--3pc-notice-external-height: 0px; /* stylelint-disable-line length-zero-no-unit */
 	}
 
 	#wpnc-panel.wpnc__main {
-		top: calc(var(--masterbar-height) + var(--content-padding-top) + var(--3pc-notice-external-height));
+		top: var(--3pc-notice-external-height);
 		height: calc(100vh - var(--masterbar-height) - var(--content-padding-top) - var(--content-padding-bottom) - var(--3pc-notice-external-height));
 		box-shadow: -3px 1px 10px -2px color-mix(in srgb, var(--color-neutral-70) 7.5%, transparent);
 		border-top: 1px solid var(--color-neutral-0);
 		box-sizing: border-box;
 
 		&.wpnt-open {
-			@media only screen and (min-width: $breakpoint-mobile) {
-				right: 24px; // align with content frame padding.
+			position: absolute;
+			@media only screen and (min-width: $break-small) {
 				border-radius: 8px; /* stylelint-disable-line scales/radii */
-			}
-			@media only screen and (min-width: $breakpoint-nested) {
-				right: 16px; // align with content frame padding.
+				width: 100%;
+				.wpnc__single-view,
+				.wpnc__note-list {
+					width: 100%;
+				}
 			}
 			@media only screen and (min-width: $breakpoint-flyout) {
 				width: calc(100vw - var(--sidebar-width-max) - 16px); // 16px for content frame padding.
-				// This ensures the single view flies out above the 3PC notice.
+
 				.wpnc__single-view {
-					z-index: z-index( ".reader-notifications", ".wpnc__single-view" );
+					width: var(--default-notes-panel-width);
+					z-index: z-index( ".reader-notifications", ".wpnc__single-view" ); // This ensures the single view flies out above the 3PC notice.
 				}
-				// This ensures the single view does not rise above the note list while animating outwards.
 				.wpnc__note-list {
-					z-index: z-index( ".reader-notifications", ".wpnc__note-list" );
+					width: var(--default-notes-panel-width);
+					z-index: z-index( ".reader-notifications", ".wpnc__note-list" ); // This ensures the single view does not rise above the note list while animating outwards.
 				}
 			}
 		}
@@ -216,7 +223,8 @@ div.reader-notifications__panel {
 		&-internal {
 			display: none;
 			bottom: 0;
-			right: 400px; //width of main notifs panel
+			padding: 0 30px;
+			right: var(--default-notes-panel-width);
 
 			@media only screen and (min-width: $breakpoint-flyout) {
 				display: flex;
