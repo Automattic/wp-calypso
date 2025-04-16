@@ -7,8 +7,12 @@ import { NavigableRegion } from '../../interface';
  * Internal dependencies
  */
 import Header from './header';
-import type { PageProps } from './types';
 import './style.scss';
+/**
+ * Types
+ */
+import type { PageProps } from './types';
+import type { PropsWithChildren } from 'react';
 
 export function Page( {
 	title,
@@ -17,7 +21,7 @@ export function Page( {
 	children,
 	className,
 	hideTitleFromUI = false,
-}: PageProps ) {
+}: PropsWithChildren< PageProps > ) {
 	const classes = clsx( 'a8c-site-admin-page', className );
 
 	return (
