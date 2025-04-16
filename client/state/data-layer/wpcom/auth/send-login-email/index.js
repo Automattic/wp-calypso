@@ -37,6 +37,9 @@ export const sendLoginEmail = ( action ) => {
 	const noticeAction = showGlobalNotices
 		? infoNotice( translate( 'Sending email' ), { duration: 4000 } )
 		: null;
+
+	const useCodeBasedLogin = config.isEnabled( 'login/use-magic-code' );
+
 	return [
 		...( showGlobalNotices ? [ noticeAction ] : [] ),
 		...( loginFormFlow || requestLoginEmailFormFlow
@@ -66,14 +69,15 @@ export const sendLoginEmail = ( action ) => {
 					...( isMobileAppLogin && { infer: true } ),
 					...( isMobileAppLogin && { scheme: 'wordpress' } ),
 					locale,
-					lang_id: lang_id,
-					email: email,
+					lang_id,
+					email,
 					...( redirect_to && { redirect_to } ),
 					...( blog_id && { blog_id } ),
 					...( flow && { flow } ),
 					create_account: createAccount,
 					tos: getToSAcceptancePayload(),
 					source,
+					...( useCodeBasedLogin && { token_type: 'code' } ),
 					calypso_env:
 						window?.location?.host === 'wordpress.com' ? 'production' : config( 'env_id' ),
 				},
@@ -83,16 +87,16 @@ export const sendLoginEmail = ( action ) => {
 	];
 };
 
-export const onSuccess = ( {
-	email,
-	showGlobalNotices,
-	infoNoticeId = null,
-	loginFormFlow,
-	requestLoginEmailFormFlow,
-} ) => [
+export const onSuccess = (
+	{ email, showGlobalNotices, infoNoticeId = null, loginFormFlow, requestLoginEmailFormFlow },
+	response
+) => [
 	...( loginFormFlow || requestLoginEmailFormFlow
 		? [
-				{ type: MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_SUCCESS },
+				{
+					type: MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_SUCCESS,
+					response,
+				},
 				{ type: MAGIC_LOGIN_SHOW_CHECK_YOUR_EMAIL_PAGE, email },
 		  ]
 		: [] ),
