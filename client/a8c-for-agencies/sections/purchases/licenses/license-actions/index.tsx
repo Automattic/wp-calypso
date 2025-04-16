@@ -81,17 +81,15 @@ export default function LicenseActions( {
 				position="bottom left"
 			>
 				{ availableActions.map( ( action ) => (
-					<>
-						<PopoverMenuItem
-							key={ action.name }
-							isExternalLink={ action?.isExternalLink }
-							onClick={ () => handleActionClick( action ) }
-							href={ action?.href }
-							className={ action?.className }
-						>
-							{ action.name }
-						</PopoverMenuItem>
-					</>
+					<PopoverMenuItem
+						key={ action.name }
+						isExternalLink={ action?.isExternalLink }
+						onClick={ () => handleActionClick( action ) }
+						href={ action?.href }
+						className={ action?.className }
+					>
+						{ action.name }
+					</PopoverMenuItem>
 				) ) }
 			</PopoverMenu>
 
