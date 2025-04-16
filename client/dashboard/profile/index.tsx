@@ -53,6 +53,7 @@ const fields: Field< ProfileType >[] = [
 			const { id, getValue } = field;
 			return (
 				<TextareaControl
+					__nextHasNoMarginBottom
 					label={ hideLabelFromVision ? '' : field.label }
 					value={ getValue( { item: data } ) || '' }
 					onChange={ ( value ) => onChange( { [ id ]: value } ) }
