@@ -248,6 +248,7 @@ export const isActionEligible = (
 					! site.is_vip
 				);
 			};
+		case 'leave-site':
 		default:
 			return () => true;
 	}

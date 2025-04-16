@@ -81,6 +81,7 @@ class SiteTools extends Component {
 			showDeleteSite,
 			showManageConnection,
 			showStartSiteTransfer,
+			showLeaveSite,
 			siteId,
 			headerTitle,
 			source,
@@ -179,19 +180,21 @@ class SiteTools extends Component {
 					/>
 				) }
 
-				<Suspense>
-					<AdministrationToolCard
-						title={ translate( 'Leave site' ) }
-						description={ translate( 'Leave this site and remove your access.' ) }
-						onClick={ this.handleOpenModal( MODAL_NAMES.LEAVE_SITE ) }
-					/>
-					{ modalOpen[ MODAL_NAMES.LEAVE_SITE ] && (
-						<LazyLeaveSiteModal
-							siteId={ siteId }
-							onClose={ this.handleCloseModal( MODAL_NAMES.LEAVE_SITE ) }
+				{ showLeaveSite && (
+					<Suspense>
+						<AdministrationToolCard
+							title={ translate( 'Leave site' ) }
+							description={ translate( 'Leave this site and remove your access.' ) }
+							onClick={ this.handleOpenModal( MODAL_NAMES.LEAVE_SITE ) }
 						/>
-					) }
-				</Suspense>
+						{ modalOpen[ MODAL_NAMES.LEAVE_SITE ] && (
+							<LazyLeaveSiteModal
+								siteId={ siteId }
+								onClose={ this.handleCloseModal( MODAL_NAMES.LEAVE_SITE ) }
+							/>
+						) }
+					</Suspense>
+				) }
 
 				{ showDeleteContent && (
 					<AdministrationToolCard
@@ -264,6 +267,8 @@ export default connect(
 		const showStartSiteTransfer =
 			! isDevelopmentSite && canCurrentUserStartSiteOwnerTransfer( state, siteId );
 
+		const showLeaveSite = sitePurchasesLoaded;
+
 		return {
 			site,
 			isAtomic,
@@ -278,6 +283,7 @@ export default connect(
 			showDeleteSite: ( ! isJetpack || isAtomic ) && ! isVip && sitePurchasesLoaded,
 			showManageConnection: isJetpack && ! isAtomic,
 			showStartSiteTransfer,
+			showLeaveSite,
 			siteId,
 			hasCancelablePurchases: hasCancelableSitePurchases( state, siteId ),
 		};

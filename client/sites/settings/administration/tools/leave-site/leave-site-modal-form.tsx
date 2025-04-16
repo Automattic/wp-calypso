@@ -8,14 +8,20 @@ import {
 } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
+import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import { useDispatch, useSelector } from 'calypso/state';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { hasLoadedSitePurchasesFromServer } from 'calypso/state/purchases/selectors';
+import hasCancelableSitePurchases from 'calypso/state/selectors/has-cancelable-site-purchases';
 import { leaveSite } from 'calypso/state/sites/actions';
-import { getSiteDomain } from 'calypso/state/sites/selectors';
+import { getSite, getSiteDomain } from 'calypso/state/sites/selectors';
+import LeaveSiteModalWarning from './leave-site-modal-warning';
+import type { AppState } from 'calypso/types';
 import './leave-site-modal-form.scss';
 
 export interface LeaveSiteModalFormProps {
 	siteId: number;
-	onClose: () => void;
+	onClose?: () => void;
 }
 
 const LeaveSiteModalForm = ( { siteId, onClose }: LeaveSiteModalFormProps ) => {
@@ -23,7 +29,18 @@ const LeaveSiteModalForm = ( { siteId, onClose }: LeaveSiteModalFormProps ) => {
 	const dispatch = useDispatch();
 	const [ isChecked, setChecked ] = useState( false );
 	const [ isSubmitting, setIsSubmitting ] = useState( false );
-	const siteDomain = useSelector( ( state ) => getSiteDomain( state, siteId ) || '' );
+	const userId = useSelector( ( state: AppState ) => getCurrentUserId( state ) );
+	const siteDomain = useSelector( ( state: AppState ) => getSiteDomain( state, siteId ) || '' );
+	const siteOwnerId = useSelector( ( state: AppState ) => getSite( state, siteId )?.site_owner );
+	const sitePurchasesLoaded = useSelector( ( state: AppState ) =>
+		hasLoadedSitePurchasesFromServer( state )
+	);
+
+	const hasActiveSubscriptions = useSelector( ( state: AppState ) =>
+		hasCancelableSitePurchases( state, siteId )
+	);
+
+	const isSiteOwner = userId === siteOwnerId;
 
 	const handleLeaveSite = async () => {
 		if ( ! isChecked ) {
@@ -49,7 +66,15 @@ const LeaveSiteModalForm = ( { siteId, onClose }: LeaveSiteModalFormProps ) => {
 				handleLeaveSite();
 			} }
 		>
+			{ ! sitePurchasesLoaded && <QuerySitePurchases siteId={ siteId } /> }
 			<VStack spacing={ 6 }>
+				{ ( isSiteOwner || hasActiveSubscriptions ) && (
+					<LeaveSiteModalWarning
+						siteId={ siteId }
+						isSiteOwner={ isSiteOwner }
+						hasActiveSubscriptions={ hasActiveSubscriptions }
+					/>
+				) }
 				<VStack spacing={ 0 }>
 					<p>
 						{ translate( 'Are you sure to leave the site {{b}}%(siteDomain)s{{/b}}?', {
@@ -93,7 +118,7 @@ const LeaveSiteModalForm = ( { siteId, onClose }: LeaveSiteModalFormProps ) => {
 						<Button
 							__next40pxDefaultSize
 							variant="primary"
-							disabled={ ! isChecked }
+							disabled={ ! isChecked || isSiteOwner || hasActiveSubscriptions }
 							isBusy={ isSubmitting }
 							onClick={ handleLeaveSite }
 						>
