@@ -238,7 +238,9 @@ export default function StorageAddOnCard( { siteId, actionPrimary }: Props ) {
 					</div>
 				</CardHeader>
 				<CardBody className="storage-add-ons-card__body">
-					{ translate( 'Make more space for high-quality photos, videos, and other media.' ) }
+					<p>
+						{ translate( 'Make more space for high-quality photos, videos, and other media.' ) }
+					</p>
 					{ selectControlOptions.length ? (
 						<div className="storage-add-ons-card__storage-dropdown">
 							<CustomSelectControl
