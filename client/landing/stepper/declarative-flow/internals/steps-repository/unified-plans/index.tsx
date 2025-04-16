@@ -107,19 +107,6 @@ const PlansStepAdaptor: StepType< {
 
 	useQueryTheme( 'wpcom', selectedDesign?.slug );
 
-	// TODO: Remove this once we have a better way to handle the plan from the query param.
-	// This is a hack used by new-hosted-site flow.
-	const planFromQuery = useQuery().get( 'plan' );
-
-	if ( planFromQuery ) {
-		props.navigation.submit?.( {
-			...stepState,
-			cartItems: [ { product_slug: planFromQuery } ],
-		} );
-
-		return null;
-	}
-
 	/**
 	 * isWordCampPromo is temporary
 	 */
