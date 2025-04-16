@@ -606,8 +606,7 @@ const UnifiedDesignPickerPreview = ( {
 				<UpgradeModal
 					slug={ selectedDesign.slug }
 					isOpen={ showUpgradeModal }
-					//TODO: Fix NEEED typo
-					isMarketplacePlanSubscriptionNeeeded={ ! isExternallyManagedThemeAvailable }
+					isMarketplacePlanSubscriptionNeeded={ ! isExternallyManagedThemeAvailable }
 					isMarketplaceThemeSubscriptionNeeded={ isMarketplaceThemeSubscriptionNeeded }
 					marketplaceProduct={ selectedMarketplaceProduct }
 					requiredPlan={ requiredPlanSlug }
