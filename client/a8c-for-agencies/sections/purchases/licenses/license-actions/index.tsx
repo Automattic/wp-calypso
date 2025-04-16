@@ -14,7 +14,6 @@ interface Props {
 	isChildLicense?: boolean;
 	isClientLicense?: boolean;
 	productName: string;
-	licenseKey: string;
 	productId: number;
 	bundleSize: number;
 }
@@ -37,10 +36,8 @@ export default function LicenseActions( {
 	const [ currentDialog, setCurrentDialog ] = useState< ReactNode >( null );
 
 	const licenseActions = useLicenseActions( {
-		siteUrl: license.siteUrl,
+		license,
 		isDevSite,
-		attachedAt: license.attachedAt,
-		revokedAt: license.revokedAt,
 		licenseType,
 		isChildLicense,
 		isClientLicense,

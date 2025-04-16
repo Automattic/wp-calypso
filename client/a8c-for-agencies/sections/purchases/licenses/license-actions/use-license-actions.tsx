@@ -13,14 +13,13 @@ import { useDispatch, useSelector } from 'calypso/state';
 import { hasAgencyCapability } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { A4AStore } from 'calypso/state/a8c-for-agencies/types';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { License } from 'calypso/state/partner-portal/types';
 
 export type LicenseActionType = 'bundle' | 'wpcom' | 'regular';
 
 type Props = {
-	siteUrl: string | null;
+	license: License;
 	isDevSite: boolean;
-	attachedAt: string | null;
-	revokedAt: string | null;
 	licenseType: LicenseType;
 	isChildLicense?: boolean;
 	isClientLicense?: boolean;
@@ -32,17 +31,13 @@ type Props = {
 };
 
 export default function useLicenseActions( {
-	siteUrl,
+	license,
 	isDevSite,
-	attachedAt,
-	revokedAt,
 	licenseType,
 	isChildLicense,
 	isClientLicense,
 	type,
-	licenseKey,
 	productName,
-	productId,
 	bundleSize,
 }: Props ): LicenseAction[] {
 	const translate = useTranslate();
@@ -53,13 +48,13 @@ export default function useLicenseActions( {
 	);
 
 	return useMemo( () => {
-		const licenseState = getLicenseState( attachedAt, revokedAt );
+		const licenseState = getLicenseState( license.attachedAt, license.revokedAt );
 
 		if ( licenseState === LicenseState.Revoked ) {
 			return [];
 		}
 
-		const siteSlug = siteUrl ? urlToSlug( siteUrl ) : null;
+		const siteSlug = license.siteUrl ? urlToSlug( license.siteUrl ) : null;
 
 		const handleClickMenuItem = ( eventName: string ) => {
 			dispatch( recordTracksEvent( eventName ) );
@@ -76,8 +71,8 @@ export default function useLicenseActions( {
 					<CancelLicenseFeedbackModal
 						onClose={ onClose }
 						productName={ productName }
-						licenseKey={ licenseKey }
-						productId={ productId }
+						licenseKey={ license.licenseKey }
+						productId={ license.productId }
 						bundleSize={ bundleSize }
 						isClientLicense={ isClientLicense }
 					/>
@@ -115,14 +110,14 @@ export default function useLicenseActions( {
 			},
 			{
 				name: translate( 'Edit site in WP Admin' ),
-				href: `${ siteUrl }/wp-admin/admin.php?page=jetpack#/dashboard`,
+				href: `${ license.siteUrl }/wp-admin/admin.php?page=jetpack#/dashboard`,
 				onClick: () => handleClickMenuItem( 'calypso_a4a_licenses_edit_site_click' ),
 				isExternalLink: true,
 				isEnabled: type === 'wpcom',
 			},
 			{
 				name: translate( 'Debug site' ),
-				href: `https://jptools.wordpress.com/debug/?url=${ siteUrl }`,
+				href: `https://jptools.wordpress.com/debug/?url=${ license.siteUrl }`,
 				onClick: () => handleClickMenuItem( 'calypso_a4a_licenses_debug_site_click' ),
 				isExternalLink: true,
 				isEnabled: type === 'wpcom' && licenseState === LicenseState.Attached,
@@ -147,18 +142,19 @@ export default function useLicenseActions( {
 			},
 		];
 	}, [
-		attachedAt,
 		bundleSize,
 		canRevoke,
 		dispatch,
 		isChildLicense,
 		isClientLicense,
 		isDevSite,
-		licenseKey,
+		license.attachedAt,
+		license.licenseKey,
+		license.productId,
+		license.revokedAt,
+		license.siteUrl,
 		licenseType,
 		productName,
-		revokedAt,
-		siteUrl,
 		translate,
 		type,
 	] );
