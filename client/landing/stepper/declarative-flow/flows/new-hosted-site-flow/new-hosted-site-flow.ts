@@ -36,7 +36,7 @@ const hosting: Flow = {
 	useSteps() {
 		const showDomainStep = useShowDomainStep();
 		return stepsWithRequiredLogin( [
-			...( showDomainStep ? [ STEPS.DOMAINS ] : [] ),
+			...( showDomainStep ? [ STEPS.UNIFIED_DOMAINS ] : [] ),
 			STEPS.UNIFIED_PLANS,
 			STEPS.TRIAL_ACKNOWLEDGE,
 			STEPS.SITE_CREATION_STEP,
@@ -44,7 +44,15 @@ const hosting: Flow = {
 		] );
 	},
 	useStepNavigation( _currentStepSlug, navigate ) {
-		const { setPlanCartItem, resetCouponCode } = useDispatch( ONBOARD_STORE );
+		const {
+			setDomain,
+			setDomainCartItem,
+			setDomainCartItems,
+			setPlanCartItem,
+			setSiteUrl,
+			setSignupDomainOrigin,
+			resetCouponCode,
+		} = useDispatch( ONBOARD_STORE );
 		const planCartItem = useSelect(
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem(),
 			[]
@@ -80,6 +88,12 @@ const hosting: Flow = {
 
 			switch ( _currentStepSlug ) {
 				case 'domains': {
+					setSiteUrl( providedDependencies.siteUrl );
+					setDomain( providedDependencies.suggestion );
+					setDomainCartItem( providedDependencies.domainItem );
+					setDomainCartItems( providedDependencies.domainCart );
+					setSignupDomainOrigin( providedDependencies.signupDomainOrigin );
+
 					// If the plan is already supplied as a query param, add it to cart, and skip plans step
 					if ( plan && isDotComPlan( { product_slug: plan } ) ) {
 						setPlanCartItem( {
