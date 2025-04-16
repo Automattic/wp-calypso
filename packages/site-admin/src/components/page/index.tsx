@@ -26,7 +26,7 @@ export function Page( {
 
 	return (
 		<NavigableRegion className={ classes } ariaLabel={ title }>
-			<div className="a8c-site-admin-page-content">
+			<div className="a8c-site-admin-page__content">
 				{ ! hideTitleFromUI && title && (
 					<Header title={ title } subTitle={ subTitle } actions={ actions } />
 				) }
