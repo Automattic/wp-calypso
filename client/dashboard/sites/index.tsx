@@ -36,6 +36,7 @@ const fields = [
 		id: 'url',
 		label: __( 'URL' ),
 		enableGlobalSearch: true,
+		render: ( { item }: { item: Site } ) => new URL( item.url ).hostname,
 	},
 	{
 		id: 'media',
