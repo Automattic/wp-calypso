@@ -73,8 +73,20 @@
 		transform: translate(-50%, -50%);
 	}
 
+	// TODO: Check it
 	.info-popover {
 		vertical-align: middle;
+	}
+	
+	// TODO: Check it
+	.edit-gravatar__pop-over .external-link .gridicons-external {
+		// specificity used to override margin
+		margin-left: 1px;
+	}
+	
+	// TODO: Check it
+	.edit-gravatar__pop-over p:last-of-type {
+		margin-bottom: 0;
 	}
 }
 
