@@ -1,3 +1,4 @@
+import { Outlet } from '@tanstack/react-router';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { backup, payment, receipt, institution } from '@wordpress/icons';
@@ -39,6 +40,7 @@ function Billing() {
 					to={ taxDetailsRoute.to }
 				/>
 			</VStack>
+			<Outlet />
 		</PageLayout>
 	);
 }
