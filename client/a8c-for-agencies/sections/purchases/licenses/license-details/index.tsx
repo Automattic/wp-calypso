@@ -7,8 +7,7 @@ import useGetPressablePlanByProductId from 'calypso/a8c-for-agencies/sections/ma
 import FormattedDate from 'calypso/components/formatted-date';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import { getLicenseState, noop } from 'calypso/jetpack-cloud/sections/partner-portal/lib';
-import { LicenseState, LicenseType } from 'calypso/jetpack-cloud/sections/partner-portal/types';
-import LicenseDetailsActions from './actions';
+import { LicenseState } from 'calypso/jetpack-cloud/sections/partner-portal/types';
 import type { ReferralAPIResponse } from 'calypso/a8c-for-agencies/sections/referrals/types';
 import type { License } from 'calypso/state/partner-portal/types';
 
@@ -17,10 +16,8 @@ import './style.scss';
 interface Props {
 	license: License;
 	onCopyLicense?: () => void;
-	licenseType: LicenseType;
 	isChildLicense?: boolean;
 	referral?: ReferralAPIResponse | null;
-	isDevSite?: boolean;
 }
 
 const DETAILS_DATE_FORMAT = 'YYYY-MM-DD h:mm:ss A';
@@ -29,16 +26,11 @@ const DETAILS_DATE_FORMAT_SHORT = 'YYYY-MM-DD';
 export default function LicenseDetails( {
 	license,
 	onCopyLicense = noop,
-	licenseType,
 	isChildLicense,
 	referral,
-	isDevSite,
 }: Props ) {
 	const licenseKey = license.licenseKey;
-	const product = license.product;
-	const siteUrl = license.siteUrl;
 	const blogId = license.blogId;
-	const hasDownloads = license.hasDownloads;
 	const issuedAt = license.issuedAt;
 	const attachedAt = license.attachedAt;
 	const revokedAt = license.revokedAt;
@@ -121,19 +113,6 @@ export default function LicenseDetails( {
 					</li>
 				) }
 			</ul>
-
-			<LicenseDetailsActions
-				licenseKey={ licenseKey }
-				product={ product }
-				siteUrl={ siteUrl }
-				licenseState={ licenseState }
-				licenseType={ licenseType }
-				hasDownloads={ hasDownloads }
-				isChildLicense={ isChildLicense }
-				isClientLicense={ !! referral }
-				isDevSite={ isDevSite }
-				productId={ productId }
-			/>
 		</Card>
 	);
 }

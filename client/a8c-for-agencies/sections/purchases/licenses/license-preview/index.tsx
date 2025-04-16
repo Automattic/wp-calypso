@@ -432,10 +432,8 @@ export default function LicensePreview( {
 					<LicenseDetails
 						license={ license }
 						onCopyLicense={ onCopyLicense }
-						licenseType={ licenseType }
 						isChildLicense={ isChildLicense }
 						referral={ referral }
-						isDevSite={ isDevelopmentSite }
 					/>
 				) ) }
 		</div>
