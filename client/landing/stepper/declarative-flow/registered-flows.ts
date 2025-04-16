@@ -10,7 +10,6 @@ import {
 	REBLOGGING_FLOW,
 	SITE_MIGRATION_FLOW,
 	ENTREPRENEUR_FLOW,
-	HOSTED_SITE_MIGRATION_FLOW,
 	NEW_HOSTED_SITE_FLOW_USER_INCLUDED,
 	ONBOARDING_FLOW,
 	HUNDRED_YEAR_DOMAIN_FLOW,
@@ -115,13 +114,6 @@ const aiSiteBuilderFlows: Record< string, () => Promise< { default: Flow } > > =
 			[ AI_SITE_BUILDER_FLOW ]: () => import( './flows/ai-site-builder/ai-site-builder' ),
 	  }
 	: {};
-
-const hostedSiteMigrationFlow: Record< string, () => Promise< { default: Flow } > > = {
-	[ HOSTED_SITE_MIGRATION_FLOW ]: () =>
-		import(
-			/* webpackChunkName: "hosted-site-migration-flow" */ './flows/hosted-site-migration-flow/hosted-site-migration-flow'
-		),
-};
 
 const hundredYearDomainFlow: Record< string, () => Promise< { default: Flow } > > = {
 	[ HUNDRED_YEAR_DOMAIN_FLOW ]: () =>
