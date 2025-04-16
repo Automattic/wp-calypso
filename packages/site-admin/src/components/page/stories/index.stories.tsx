@@ -8,6 +8,9 @@ import { settings } from '@wordpress/icons';
  * Internal dependencies
  */
 import { Page } from '../';
+/**
+ * Types
+ */
 import type { Meta, StoryObj } from '@storybook/react';
 
 const meta: Meta< typeof Page > = {
