@@ -54,6 +54,7 @@ interface UpgradeModalProps {
 	marketplaceProduct?: ProductListItem;
 	closeModal: ( closedBy?: UpgradeModalClosedBy ) => void;
 	checkout: () => void;
+	isPlanSufficient: boolean;
 }
 
 interface UpgradeModalContent {
@@ -74,6 +75,7 @@ export const ThemeUpgradeModal = ( {
 	marketplaceProduct,
 	closeModal,
 	checkout,
+	isPlanSufficient,
 }: UpgradeModalProps ) => {
 	const translate = useTranslate();
 	const theme = useThemeDetails( slug );
@@ -361,17 +363,19 @@ export const ThemeUpgradeModal = ( {
 		return {
 			text: (
 				<>
-					<p>
-						{ translate(
-							'This partner theme is only available to buy on the %(businessPlanName)s or %(commercePlanName)s plans.',
-							{
-								args: {
-									businessPlanName: businessPlanName,
-									commercePlanName: ecommercePlanName,
-								},
-							}
-						) }
-					</p>
+					{ ! isPlanSufficient && (
+						<p>
+							{ translate(
+								'This partner theme is only available to buy on the %(businessPlanName)s or %(commercePlanName)s plans.',
+								{
+									args: {
+										businessPlanName: businessPlanName,
+										commercePlanName: ecommercePlanName,
+									},
+								}
+							) }
+						</p>
+					) }
 					<div>
 						<label>
 							<strong>{ translate( 'To activate this theme you need:' ) }</strong>
@@ -549,7 +553,7 @@ export const ThemeUpgradeModal = ( {
 			className={ clsx( { loading: isLoading } ) }
 			title={ modalTitle }
 			onRequestClose={ () => closeModal( 'dialog_action' ) }
-			size="large"
+			size="medium"
 		>
 			{ isLoading && <LoadingEllipsis /> }
 			{ ! isLoading && (
@@ -559,9 +563,9 @@ export const ThemeUpgradeModal = ( {
 						{ modalData.price }
 						{ /* We don't want to show features on mobile for Partner themes */ }
 						{ ! isExternallyManaged && features }
-						{ modalData.action }
 					</div>
-					<div className="theme-upgrade-modal__col">{ features }</div>
+					{ ! isPlanSufficient && <div className="theme-upgrade-modal__col">{ features }</div> }
+					{ modalData.action }
 				</div>
 			) }
 		</Modal>

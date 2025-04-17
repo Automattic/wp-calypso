@@ -600,6 +600,31 @@ const UnifiedDesignPickerPreview = ( {
 		setShowEligibility( false );
 	};
 
+	// Check if the theme requires a plan upgrade by comparing sitePlanSlug and requiredPlanSlug.
+	const isPlanSufficient = () => {
+		const requiredPlan = requiredPlanSlug?.split( /[-_]/ )[ 0 ];
+		const sitePlan = sitePlanSlug?.split( /[-_]/ )[ 0 ];
+		switch ( requiredPlan ) {
+			case 'ecommerce':
+				return requiredPlan === sitePlan;
+			case 'business':
+				return sitePlan === 'business' || sitePlan === 'ecommerce';
+			case 'value':
+				return sitePlan === 'value' || sitePlan === 'business' || sitePlan === 'ecommerce';
+			case 'personal':
+				return (
+					sitePlan === 'personal' ||
+					sitePlan === 'value' ||
+					sitePlan === 'business' ||
+					sitePlan === 'ecommerce'
+				);
+			case 'free':
+				return true;
+			default:
+				return false;
+		}
+	};
+
 	const stepContent = (
 		<>
 			{ requiredPlanSlug && (
@@ -612,6 +637,7 @@ const UnifiedDesignPickerPreview = ( {
 					requiredPlan={ requiredPlanSlug }
 					closeModal={ closeUpgradeModal }
 					checkout={ handleCheckout }
+					isPlanSufficient={ isPlanSufficient() }
 				/>
 			) }
 			<QueryEligibility siteId={ site?.ID } />

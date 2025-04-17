@@ -20,8 +20,6 @@
 	}
 
 	@include break-medium() {
-		flex-direction: row;
-		max-width: 775px;
 
 		&.loading {
 			display: flex;
@@ -36,15 +34,6 @@
 		position: relative;
 		padding: 24px;
 
-		@include break-medium {
-			&:nth-of-type(1) {
-				width: 62%;
-			}
-
-			&:nth-of-type(2) {
-				width: 38%;
-			}
-		}
 
 		&:nth-of-type(1) {
 			.theme-upgrade-modal__included {
