@@ -6,8 +6,6 @@ import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import { withSiteCopy } from 'calypso/landing/stepper/hooks/use-site-copy';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
-import { getRemoveDuplicateViewsExperimentAssignment } from 'calypso/state/explat-experiments/actions';
-import { getIsRemoveDuplicateViewsExperimentEnabled } from 'calypso/state/explat-experiments/selectors';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import {
 	hasLoadedSitePurchasesFromServer,
@@ -40,10 +38,6 @@ class SiteTools extends Component {
 		}
 	}
 
-	componentDidMount() {
-		this.props.getRemoveDuplicateViewsExperimentAssignment();
-	}
-
 	render() {
 		const {
 			shouldShowSiteCopyItem,
@@ -52,7 +46,6 @@ class SiteTools extends Component {
 			siteSlug,
 			copySiteUrl,
 			cloneUrl,
-			isUntangled,
 			showChangeAddress,
 			showClone,
 			showRestorePlanSoftware,
@@ -67,28 +60,22 @@ class SiteTools extends Component {
 
 		const changeAddressLink = `/domains/manage/${ siteSlug }?source=${ source }`;
 
-		const startOverLink = isUntangled
-			? `/sites/settings/site/${ siteSlug }/reset-site`
-			: `/settings/start-over/${ siteSlug }?source=${ source }`;
+		const startOverLink = `/sites/settings/site/${ siteSlug }/reset-site`;
 
 		const restorePlanSoftwareTitle = translate( 'Restore plugins and themes' );
 		const restorePlanSoftwareText = translate(
 			'If your website is missing plugins and themes that come with your plan, you may restore them here.'
 		);
 
-		const startSiteTransferLink = isUntangled
-			? `/sites/settings/site/${ siteSlug }/transfer-site`
-			: `/settings/start-site-transfer/${ siteSlug }?source=${ source }`;
+		const startSiteTransferLink = `/sites/settings/site/${ siteSlug }/transfer-site`;
 
-		const deleteSiteLink = isUntangled
-			? `/sites/settings/site/${ siteSlug }/delete-site`
-			: `/settings/delete-site/${ siteSlug }?source=${ source }`;
+		const deleteSiteLink = `/sites/settings/site/${ siteSlug }/delete-site`;
 
 		const manageConnectionLink = `/settings/manage-connection/${ siteSlug }?source=${ source }`;
 
 		const changeSiteAddress = translate( 'Change your site address' );
 
-		const startOver = isUntangled ? translate( 'Reset site' ) : translate( 'Reset your site' );
+		const startOver = translate( 'Reset site' );
 		const startOverText = translate(
 			"Remove all posts, pages, and media to start fresh while keeping your site's address."
 		);
@@ -108,9 +95,7 @@ class SiteTools extends Component {
 		const cloneTitle = translate( 'Clone', { context: 'verb' } );
 		const cloneText = translate( 'Clone your existing site and all its data to a new location.' );
 
-		const startSiteTransferTitle = isUntangled
-			? translate( 'Transfer site' )
-			: translate( 'Transfer your site' );
+		const startSiteTransferTitle = translate( 'Transfer site' );
 		const startSiteTransferText = fixMe( {
 			text: 'Transfer your site, plan, and purchases to a new or existing site member.',
 			newCopy: translate(
@@ -156,7 +141,7 @@ class SiteTools extends Component {
 						description={ startSiteTransferText }
 					/>
 				) }
-				{ isUntangled && showRestorePlanSoftware && (
+				{ showRestorePlanSoftware && (
 					<AdministrationToolCard
 						onClick={ this.restorePlanSoftware }
 						title={ restorePlanSoftwareTitle }
@@ -220,7 +205,6 @@ export default connect(
 		const isVip = isVipSite( state, siteId );
 		const isP2 = isSiteWPForTeams( state, siteId );
 		const isP2Hub = isSiteP2Hub( state, siteId );
-		const isUntangled = getIsRemoveDuplicateViewsExperimentEnabled( state );
 		const rewindState = getRewindState( state, siteId );
 		const sitePurchasesLoaded = hasLoadedSitePurchasesFromServer( state );
 
@@ -238,7 +222,6 @@ export default connect(
 		return {
 			site,
 			isAtomic,
-			isUntangled,
 			copySiteUrl,
 			siteSlug,
 			purchasesError: getPurchasesError( state ),
@@ -257,6 +240,5 @@ export default connect(
 	{
 		errorNotice,
 		successNotice,
-		getRemoveDuplicateViewsExperimentAssignment,
 	}
 )( localize( withSiteCopy( SiteTools ) ) );

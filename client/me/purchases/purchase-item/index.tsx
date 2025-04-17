@@ -57,6 +57,7 @@ import {
 import OwnerInfo from './owner-info';
 import type { Purchases, SiteDetails } from '@automattic/data-stores';
 import 'calypso/me/purchases/style.scss';
+import type { Site } from 'calypso/blocks/site-icon';
 import type { GetManagePurchaseUrlFor } from 'calypso/lib/purchases/types';
 import type { AppState } from 'calypso/types';
 import type { LocalizeProps } from 'i18n-calypso';
@@ -85,18 +86,216 @@ interface PurchaseItemPropsConnected {
 	iconUrl: string | undefined;
 }
 
-class PurchaseItem extends Component<
-	PurchaseItemPropsPlaceholder | ( PurchaseItemProps & PurchaseItemPropsConnected )
-> {
-	trackImpression( warning: string ) {
-		return (
-			<TrackComponentView
-				eventName="calypso_subscription_warning_impression"
-				eventProperties={ eventProperties( warning ) }
-			/>
+function TrackImpression( props: { warning: string } ) {
+	const warning = props.warning;
+	return (
+		<TrackComponentView
+			eventName="calypso_subscription_warning_impression"
+			eventProperties={ eventProperties( warning ) }
+		/>
+	);
+}
+
+export function PurchaseItemSiteIcon( {
+	site,
+	isDisconnectedSite,
+	purchase,
+	iconUrl,
+}: {
+	purchase: Purchases.Purchase;
+	site?: Site | null | undefined;
+	isDisconnectedSite?: boolean;
+	iconUrl?: string | null;
+} ) {
+	let content = <SiteIcon site={ site ?? undefined } size={ 36 } />;
+
+	if ( isAkismetTemporarySitePurchase( purchase ) ) {
+		content = (
+			<div className="purchase-item__static-icon">
+				<img src={ akismetIcon } alt="Akismet icon" />
+			</div>
+		);
+	}
+	if ( isMarketplaceTemporarySitePurchase( purchase ) ) {
+		content = <SiteIcon size={ 36 } />;
+	}
+
+	if ( isDisconnectedSite ) {
+		content = (
+			<div className="purchase-item__disconnected-icon">
+				<Gridicon icon="block" size={ Math.round( 36 / 1.8 ) } />
+			</div>
 		);
 	}
 
+	const isJetpackPurchase = isJetpackProduct( purchase ) || isJetpackPlan( purchase );
+
+	if ( ! iconUrl && isJetpackPurchase ) {
+		content = (
+			<div className="purchase-item__static-icon">
+				<img src={ jetpackIcon } alt="Jetpack icon" />;
+			</div>
+		);
+	}
+
+	return <div className="purchase-item__site purchases-layout__site">{ content }</div>;
+}
+
+export function PurchaseItemProduct( {
+	purchase,
+	site,
+	translate,
+	slug,
+	showSite,
+	isDisconnectedSite,
+}: {
+	purchase: Purchases.Purchase;
+	site?: SiteDetails | null | undefined;
+	translate: LocalizeProps[ 'translate' ];
+	slug?: string | number | null;
+	showSite?: boolean;
+	isDisconnectedSite?: boolean;
+} ) {
+	if ( isTemporarySitePurchase( purchase ) ) {
+		return null;
+	}
+
+	const productType = purchaseType( purchase );
+
+	if ( showSite && site ) {
+		if ( productType && site.name && slug ) {
+			// translators: The string contains the product name, the name of the site, and the URL for the site e.g. Premium plan for Block Store (blockstore.com)
+			return translate(
+				'%(purchaseType)s for {{button}}%(siteName)s{{/button}} ({{link}}%(siteDomain)s{{/link}})',
+				{
+					args: {
+						purchaseType: productType,
+						siteName: site.name,
+						siteDomain: site.domain,
+					},
+					components: {
+						button: (
+							<button
+								className="purchase-item__link"
+								onClick={ ( event ) => {
+									event.stopPropagation();
+									event.preventDefault();
+									page( getPurchaseListUrlFor( slug ) );
+								} }
+								title={ translate( 'View subscriptions for %(siteName)s', {
+									textOnly: true,
+									args: {
+										siteName: site.name,
+									},
+								} ) }
+							/>
+						),
+						link: (
+							<a
+								className="purchase-item__link"
+								href={ 'https://' + site.domain }
+								target="_blank"
+								rel="noreferrer"
+								title={ translate( 'View %(siteName)s', {
+									textOnly: true,
+									args: {
+										siteName: site.name,
+									},
+								} ) }
+							/>
+						),
+					},
+				}
+			);
+		}
+
+		if ( productType && slug ) {
+			// translators: The string contains the product name, and the URL of the site e.g. Premium plan for blockstore.com
+			return translate( '%(purchaseType)s for {{button}}%(siteDomain)s{{/button}}', {
+				args: {
+					purchaseType: productType,
+					siteDomain: site.domain,
+				},
+				components: {
+					button: (
+						<button
+							className="purchase-item__link"
+							onClick={ ( event ) => {
+								event.stopPropagation();
+								event.preventDefault();
+								page( getPurchaseListUrlFor( slug ) );
+							} }
+							title={ translate( 'View subscriptions for %(siteDomain)s', {
+								textOnly: true,
+								args: {
+									siteDomain: site.domain,
+								},
+							} ) }
+						/>
+					),
+				},
+			} );
+		}
+
+		if ( site.name && slug ) {
+			// translators: The string contains the name of the site, and the URL of the site e.g. for Block Store (blockstore.com)
+			return translate( 'for {{button}}%(siteName)s{{/button}} ({{link}}%(siteDomain)s{{/link}})', {
+				args: {
+					siteName: site.name,
+					siteDomain: site.domain,
+				},
+				components: {
+					button: (
+						<button
+							className="purchase-item__link"
+							onClick={ ( event ) => {
+								event.stopPropagation();
+								event.preventDefault();
+								page( getPurchaseListUrlFor( slug ) );
+							} }
+							title={ translate( 'View subscriptions for %(siteName)s', {
+								textOnly: true,
+								args: {
+									siteName: site.name,
+								},
+							} ) }
+						/>
+					),
+					link: (
+						<a
+							className="purchase-item__link"
+							href={ 'https://' + site.domain }
+							target="_blank"
+							rel="noreferrer"
+							title={ translate( 'View %(siteName)s', {
+								textOnly: true,
+								args: {
+									siteName: site.name,
+								},
+							} ) }
+						/>
+					),
+				},
+			} );
+		}
+	}
+
+	if ( isDisconnectedSite && productType ) {
+		return translate( '%(purchaseType)s for %(site)s', {
+			textOnly: true,
+			args: {
+				purchaseType: productType,
+				site: purchase.domain,
+			},
+		} );
+	}
+
+	return productType;
+}
+
+class PurchaseItem extends Component<
+	PurchaseItemPropsPlaceholder | ( PurchaseItemProps & PurchaseItemPropsConnected )
+> {
 	getStatus() {
 		if ( this.props.isPlaceholder ) {
 			return null;
@@ -241,7 +440,7 @@ class PurchaseItem extends Component<
 							span: <span className="purchase-item__date" />,
 						},
 					} ) }
-					{ this.trackImpression( 'purchase-expiring' ) }
+					<TrackImpression warning="purchase-expiring" />
 				</span>
 			);
 		}
@@ -253,7 +452,7 @@ class PurchaseItem extends Component<
 				return (
 					<span className="purchase-item__is-error">
 						{ translate( 'Credit card expired' ) }
-						{ this.trackImpression( 'credit-card-expiring' ) }
+						<TrackImpression warning="credit-card-expiring" />
 					</span>
 				);
 			}
@@ -272,7 +471,7 @@ class PurchaseItem extends Component<
 								},
 							}
 						) }
-						{ this.trackImpression( 'credit-card-expiring' ) }
+						<TrackImpression warning="credit-card-expiring" />
 					</span>
 				);
 			}
@@ -353,7 +552,7 @@ class PurchaseItem extends Component<
 								span: <span className="purchase-item__date" />,
 							},
 						} ) }
-						{ this.trackImpression( 'purchase-expiring' ) }
+						<TrackImpression warning="purchase-expiring" />
 					</span>
 				);
 			}
@@ -385,7 +584,7 @@ class PurchaseItem extends Component<
 			return (
 				<span className="purchase-item__is-error">
 					{ isExpiredToday ? expiredTodayText : expiredFromNowText }
-					{ this.trackImpression( 'purchase-expired' ) }
+					<TrackImpression warning="purchase-expired" />
 				</span>
 			);
 		}
@@ -402,150 +601,6 @@ class PurchaseItem extends Component<
 		}
 
 		return null;
-	}
-
-	getPurchaseType() {
-		if ( this.props.isPlaceholder ) {
-			return null;
-		}
-		const { purchase, site, translate, slug, showSite, isDisconnectedSite } = this.props;
-		if ( isTemporarySitePurchase( purchase ) ) {
-			return null;
-		}
-
-		const productType = purchaseType( purchase );
-		if ( showSite && site ) {
-			if ( productType && site.name && slug ) {
-				// translators: The string contains the product name, the name of the site, and the URL for the site e.g. Premium plan for Block Store (blockstore.com)
-				return translate(
-					'%(purchaseType)s for {{button}}%(siteName)s{{/button}} ({{link}}%(siteDomain)s{{/link}})',
-					{
-						args: {
-							purchaseType: productType,
-							siteName: site.name,
-							siteDomain: site.domain,
-						},
-						components: {
-							button: (
-								<button
-									className="purchase-item__link"
-									onClick={ ( event ) => {
-										event.stopPropagation();
-										event.preventDefault();
-										page( getPurchaseListUrlFor( slug ) );
-									} }
-									title={ translate( 'View subscriptions for %(siteName)s', {
-										textOnly: true,
-										args: {
-											siteName: site.name,
-										},
-									} ) }
-								/>
-							),
-							link: (
-								<a
-									className="purchase-item__link"
-									href={ 'https://' + site.domain }
-									target="_blank"
-									rel="noreferrer"
-									title={ translate( 'View %(siteName)s', {
-										textOnly: true,
-										args: {
-											siteName: site.name,
-										},
-									} ) }
-								/>
-							),
-						},
-					}
-				);
-			}
-
-			if ( productType && slug ) {
-				// translators: The string contains the product name, and the URL of the site e.g. Premium plan for blockstore.com
-				return translate( '%(purchaseType)s for {{button}}%(siteDomain)s{{/button}}', {
-					args: {
-						purchaseType: productType,
-						siteDomain: site.domain,
-					},
-					components: {
-						button: (
-							<button
-								className="purchase-item__link"
-								onClick={ ( event ) => {
-									event.stopPropagation();
-									event.preventDefault();
-									page( getPurchaseListUrlFor( slug ) );
-								} }
-								title={ translate( 'View subscriptions for %(siteDomain)s', {
-									textOnly: true,
-									args: {
-										siteDomain: site.domain,
-									},
-								} ) }
-							/>
-						),
-					},
-				} );
-			}
-
-			if ( site.name && slug ) {
-				// translators: The string contains the name of the site, and the URL of the site e.g. for Block Store (blockstore.com)
-				return translate(
-					'for {{button}}%(siteName)s{{/button}} ({{link}}%(siteDomain)s{{/link}})',
-					{
-						args: {
-							siteName: site.name,
-							siteDomain: site.domain,
-						},
-						components: {
-							button: (
-								<button
-									className="purchase-item__link"
-									onClick={ ( event ) => {
-										event.stopPropagation();
-										event.preventDefault();
-										page( getPurchaseListUrlFor( slug ) );
-									} }
-									title={ translate( 'View subscriptions for %(siteName)s', {
-										textOnly: true,
-										args: {
-											siteName: site.name,
-										},
-									} ) }
-								/>
-							),
-							link: (
-								<a
-									className="purchase-item__link"
-									href={ 'https://' + site.domain }
-									target="_blank"
-									rel="noreferrer"
-									title={ translate( 'View %(siteName)s', {
-										textOnly: true,
-										args: {
-											siteName: site.name,
-										},
-									} ) }
-								/>
-							),
-						},
-					}
-				);
-			}
-		}
-
-		if ( isDisconnectedSite && productType ) {
-			return translate( '%(purchaseType)s for %(site)s', {
-				textOnly: true,
-				args: {
-					purchaseType: productType,
-					site: purchase.domain,
-				},
-			} );
-		}
-
-		return productType;
 	}
 
 	getPaymentMethod() {
@@ -630,57 +685,33 @@ class PurchaseItem extends Component<
 		}
 	}
 
-	getSiteIcon = () => {
-		if ( this.props.isPlaceholder ) {
-			return null;
-		}
-		const { site, isDisconnectedSite, purchase, iconUrl } = this.props;
-
-		if ( isAkismetTemporarySitePurchase( purchase ) ) {
-			return (
-				<div className="purchase-item__static-icon">
-					<img src={ akismetIcon } alt="Akismet icon" />
-				</div>
-			);
-		}
-
-		if ( isMarketplaceTemporarySitePurchase( purchase ) ) {
-			return <SiteIcon size={ 36 } />;
-		}
-
-		if ( isDisconnectedSite ) {
-			return (
-				<div className="purchase-item__disconnected-icon">
-					<Gridicon icon="block" size={ Math.round( 36 / 1.8 ) } />
-				</div>
-			);
-		}
-
-		const isJetpackPurchase = isJetpackProduct( purchase ) || isJetpackPlan( purchase );
-
-		if ( ! iconUrl && isJetpackPurchase ) {
-			return (
-				<div className="purchase-item__static-icon">
-					<img src={ jetpackIcon } alt="Jetpack icon" />;
-				</div>
-			);
-		}
-
-		return <SiteIcon site={ site ?? undefined } size={ 36 } />;
-	};
-
 	renderPurchaseItemContent = () => {
 		if ( this.props.isPlaceholder ) {
 			return null;
 		}
-		const { purchase, showSite, isBackupMethodAvailable } = this.props;
+		const {
+			purchase,
+			site,
+			translate,
+			slug,
+			showSite,
+			iconUrl,
+			isBackupMethodAvailable,
+			isDisconnectedSite,
+		} = this.props;
 
 		return (
 			<div className="purchase-item__wrapper purchases-layout__wrapper">
 				{ showSite && (
-					<div className="purchase-item__site purchases-layout__site">{ this.getSiteIcon() }</div>
+					<div className="purchase-item__site purchases-layout__site">
+						<PurchaseItemSiteIcon
+							site={ site }
+							isDisconnectedSite={ isDisconnectedSite }
+							purchase={ purchase }
+							iconUrl={ iconUrl }
+						/>
+					</div>
 				) }
-
 				<div className="purchase-item__information purchases-layout__information">
 					<div className="purchase-item__title">
 						{ getDisplayName( purchase ) }
@@ -688,7 +719,16 @@ class PurchaseItem extends Component<
 						<OwnerInfo purchase={ purchase } />
 					</div>
 
-					<div className="purchase-item__purchase-type">{ this.getPurchaseType() }</div>
+					<div className="purchase-item__purchase-type">
+						<PurchaseItemProduct
+							purchase={ purchase }
+							site={ site }
+							translate={ translate }
+							slug={ slug }
+							showSite={ showSite }
+							isDisconnectedSite={ isDisconnectedSite }
+						/>
+					</div>
 				</div>
 
 				<div className="purchase-item__status purchases-layout__status">{ this.getStatus() }</div>

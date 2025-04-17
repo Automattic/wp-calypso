@@ -10,7 +10,6 @@ import {
 import { localize, LocalizeProps } from 'i18n-calypso';
 import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
-import ActionPanelLink from 'calypso/components/action-panel/link';
 import { getSectionName } from 'calypso/state/ui/selectors';
 import type { HelpCenterSelect } from '@automattic/data-stores';
 
@@ -19,10 +18,8 @@ const HELP_CENTER_STORE = HelpCenter.register();
 const SupportLink = ( {
 	onShowHelpAssistant = () => {},
 	translate,
-	shouldUseHelpAssistant = false,
 }: {
 	onShowHelpAssistant?: () => void;
-	shouldUseHelpAssistant?: boolean;
 } & LocalizeProps ) => {
 	const sectionName = useSelector( getSectionName );
 	const { show, isMinimized } = useDateStoreSelect( ( select ) => {
@@ -74,22 +71,11 @@ const SupportLink = ( {
 
 	return (
 		<div className="support-block">
-			{ shouldUseHelpAssistant ? (
-				translate( '{{button}}Need help?{{/button}}', {
-					components: {
-						button: <Button variant="link" onClick={ handleShowHelpAssistant } />,
-					},
-				} )
-			) : (
-				<>
-					<span>{ translate( 'Need help?' ) }</span>
-					{ translate( '{{a}}Contact support{{/a}}', {
-						components: {
-							a: <ActionPanelLink href="/help/contact" />,
-						},
-					} ) }
-				</>
-			) }
+			{ translate( '{{button}}Need help?{{/button}}', {
+				components: {
+					button: <Button variant="link" onClick={ handleShowHelpAssistant } />,
+				},
+			} ) }
 		</div>
 	);
 };

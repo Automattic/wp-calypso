@@ -37,7 +37,7 @@ import {
 	PRODUCT_TYPE_WPCOM_PLAN,
 } from '../constants';
 import { isPressableHostingProduct, isWPCOMHostingProduct } from '../lib/hosting';
-import { getVendorInfo } from '../products-overview-v2/lib/get-vendor-info';
+import { getVendorInfo } from '../products-overview/lib/get-vendor-info';
 import {
 	SECURITY_PRODUCT_SLUGS,
 	PERFORMANCE_PRODUCT_SLUGS,
