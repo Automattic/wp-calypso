@@ -52,6 +52,7 @@ const LeaveSiteModalForm = ( { siteId, onClose }: LeaveSiteModalFormProps ) => {
 			const result = await dispatch( leaveSite( siteId ) );
 			if ( result ) {
 				page.redirect( '/sites' );
+				onClose?.();
 			}
 		} finally {
 			setIsSubmitting( false );

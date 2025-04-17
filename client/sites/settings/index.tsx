@@ -66,7 +66,6 @@ export default function () {
 		makeLayout,
 		clientRender
 	);
-
 	page(
 		'/sites/settings/site/:site/delete-site',
 		siteSelection,
