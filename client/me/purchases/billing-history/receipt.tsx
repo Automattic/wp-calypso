@@ -639,7 +639,8 @@ function ReceiptLineItems( { transaction }: { transaction: BillingTransaction } 
 
 function ReceiptDetails( { transaction }: { transaction: BillingTransaction } ) {
 	// Pre-load the billing details textarea and hidden div with the name and email if available.
-	const initialDetailsText = transaction.cc_name + '\n' + transaction.cc_email;
+	const initialDetailsText =
+		transaction.cc_num !== 'XXXX' ? transaction.cc_name + '\n' + transaction.cc_email : '';
 	// When the content of the text area is empty, hide the "Billing Details" label for printing.
 	const [ hideDetailsOnPrint, setHideDetailsOnPrint ] = useState(
 		initialDetailsText.trim().length === 0
