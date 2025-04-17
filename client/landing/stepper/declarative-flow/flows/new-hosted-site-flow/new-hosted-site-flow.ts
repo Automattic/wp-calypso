@@ -15,7 +15,6 @@ import {
 	getSignupCompleteSlug,
 } from 'calypso/signup/storageUtils';
 import { isUserEligibleForFreeHostingTrial } from 'calypso/state/selectors/is-user-eligible-for-free-hosting-trial';
-import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { useQuery } from '../../../hooks/use-query';
 import { ONBOARD_STORE } from '../../../stores';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
@@ -31,9 +30,6 @@ const hosting: FlowV2 = {
 		const { resetOnboardStore, setPlanCartItem } = dispatch( ONBOARD_STORE ) as OnboardActions;
 
 		await resetOnboardStore();
-
-		// @ts-expect-error - This is a thunk. We need to type `reduxStore` better.
-		reduxStore.dispatch( setSelectedSiteId( null ) );
 
 		const queryParams = new URLSearchParams( window.location.search );
 		const showDomainStep = queryParams.has( 'showDomainStep' );
