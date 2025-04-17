@@ -14,7 +14,6 @@ import { useI18n } from '@wordpress/react-i18n';
 import { useEffect, useState, useRef } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import Loading from 'calypso/components/loading';
-import availableFlows from 'calypso/landing/stepper/declarative-flow/registered-flows';
 import { useRecordSignupComplete } from 'calypso/landing/stepper/hooks/use-record-signup-complete';
 import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
 import { recordSignupProcessingScreen } from 'calypso/lib/analytics/signup';
@@ -165,12 +164,12 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 	useEffect( () => {
 		if ( hasActionSuccessfullyRun && ! isSubmittedRef.current ) {
 			// We should only trigger signup completion for signup flows, so check if we have one.
-			if ( availableFlows[ flow ] ) {
-				availableFlows[ flow ]().then( ( flowExport ) => {
-					if ( flowExport.default.isSignupFlow ) {
-						recordSignupComplete( { ...destinationState } );
-					}
-				} );
+
+			if ( 'siteCreated' in destinationState ) {
+				const { siteCreated } = destinationState;
+				if ( siteCreated ) {
+					recordSignupComplete( { ...destinationState } );
+				}
 			}
 
 			if ( isNewSiteMigrationFlow( flow ) ) {
