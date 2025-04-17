@@ -28,6 +28,10 @@
 	.domain-registration-suggestion__domain-title {
 		font-size: $font-body;
 
+		@include break-small {
+			white-space: nowrap;
+		}
+
 		.domain-registration-suggestion__domain-title-name {
 			color: var(--studio-gray-60);
 		}
@@ -225,10 +229,6 @@
 	@include breakpoint-deprecated( ">480px" ) {
 		padding-right: 2em;
 	}
-}
-
-.domain-registration-suggestion__domain-title-tld {
-	word-break: normal;
 }
 
 .domain-suggestion__action-container {
@@ -435,7 +435,6 @@ body.is-section-signup {
 
 		& .domain-registration-suggestion__domain-title {
 			color: var(--studio-gray-90);
-			white-space: normal;
 		}
 
 		&:not(.featured-domain-suggestion) {
