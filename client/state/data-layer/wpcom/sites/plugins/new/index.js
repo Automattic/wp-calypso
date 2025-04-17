@@ -86,7 +86,7 @@ export const receiveError = ( { siteId }, error ) => {
 		pluginUploadError( siteId, error ),
 	];
 
-	// Mute error messages that are duplicated with content.
+	// We don't need to display error notices. The front end components will alert the user.
 	const errorsToMute = [ 'folder_exists', 'plugin_malicious' ];
 	if ( ! errorsToMute.includes( error.error ) ) {
 		actions.push( showErrorNotice( error ) );
