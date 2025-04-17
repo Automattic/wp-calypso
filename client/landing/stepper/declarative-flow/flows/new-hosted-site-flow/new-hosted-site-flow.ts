@@ -69,15 +69,13 @@ const hosting: Flow = {
 		const showDomainStep = useShowDomainStep();
 		const isWooPartner = useIsValidWooPartner();
 
-		const goBack = () => {
-			if ( _currentStepSlug === 'plans' ) {
-				if ( showDomainStep ) {
-					return navigate( 'domains' );
-				}
-				return window.location.assign( '/sites?hosting-flow=true' );
+		const getGoBack = () => {
+			if ( _currentStepSlug === STEPS.UNIFIED_PLANS.slug && showDomainStep ) {
+				return () => navigate( STEPS.UNIFIED_DOMAINS.slug );
 			}
-			if ( _currentStepSlug === 'trialAcknowledge' ) {
-				navigate( 'plans' );
+
+			if ( _currentStepSlug === STEPS.TRIAL_ACKNOWLEDGE.slug ) {
+				return () => navigate( STEPS.UNIFIED_PLANS.slug );
 			}
 		};
 
@@ -182,7 +180,7 @@ const hosting: Flow = {
 		};
 
 		return {
-			goBack,
+			goBack: getGoBack(),
 			submit,
 		};
 	},

@@ -1444,7 +1444,7 @@ export class RenderDomainsStep extends Component {
 		} else if ( isAIBuilderFlow( flowName ) ) {
 			backUrl = `${ siteUrl }/wp-admin/site-editor.php?canvas=edit&referrer=${ flowName }&p=%2F&ai-step=edit`;
 			backLabelText = translate( 'Keep Editing' );
-		} else {
+		} else if ( ! isNewHostedSiteCreationFlow( flowName ) ) {
 			backUrl = getStepUrl( flowName, stepName, null, this.getLocale() );
 
 			if ( this.state.playgroundId ) {
@@ -1480,7 +1480,7 @@ export class RenderDomainsStep extends Component {
 		if ( shouldUseStepContainerV2( flowName ) ) {
 			const [ content, sideContent ] = this.getContentColumns();
 
-			const backButton = (
+			const backButton = ( backUrl || goBack ) && (
 				<Step.BackButton
 					href={ backUrl }
 					rel={ isExternalBackUrl ? 'external' : '' }
