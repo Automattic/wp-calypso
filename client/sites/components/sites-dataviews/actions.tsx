@@ -541,6 +541,7 @@ export function useActions( {
 					);
 				},
 				modalSize: 'small',
+				hideModalHeader: true,
 			},
 
 			{

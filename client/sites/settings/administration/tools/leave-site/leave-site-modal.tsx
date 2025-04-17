@@ -14,6 +14,7 @@ const LeaveSiteModal = ( props: LeaveSiteModalProps ) => {
 			className="leave-site-modal"
 			title={ translate( 'Leave site' ) }
 			size="small"
+			__experimentalHideHeader
 			onRequestClose={ props.onClose || noop }
 		>
 			<LeaveSiteModalForm { ...props } />
