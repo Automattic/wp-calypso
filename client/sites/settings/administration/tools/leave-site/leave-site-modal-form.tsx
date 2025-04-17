@@ -40,7 +40,7 @@ const LeaveSiteModalForm = ( { siteId, onSuccess, onClose }: LeaveSiteModalFormP
 	);
 
 	const hasActiveCancelableSubscriptions = useSelector( ( state: AppState ) =>
-		hasCancelableSitePurchases( state, siteId )
+		hasCancelableSitePurchases( state, siteId, wpcomUserId )
 	);
 
 	// It gets external user ID (ID of user entity from site connected via Jetpack) from provided WPCOM user ID.
