@@ -1,71 +1,83 @@
-import { isJetpackPlan, isJetpackProduct } from '@automattic/calypso-products';
 import { Purchases } from '@automattic/data-stores';
 import { Fields, Operator } from '@wordpress/dataviews';
-import { useStoredPaymentMethods } from 'calypso/my-sites/checkout/src/hooks/use-stored-payment-methods';
+import { LocalizeProps } from 'i18n-calypso';
+import { getDisplayName } from 'calypso/lib/purchases';
 import { useSelector } from 'calypso/state';
 import { getSite } from 'calypso/state/sites/selectors';
-import { managePurchase } from '../paths';
-import PurchaseItem, { PurchaseItemSiteIcon } from '../purchase-item';
+import { PurchaseItemSiteIcon, PurchaseItemProduct } from '../purchase-item';
+import OwnerInfo from '../purchase-item/owner-info';
 
-function PurchaseItemRow( props: { purchase: Purchases.Purchase } ) {
-	const purchase = props.purchase;
+function PurchaseItemRowProduct( props: {
+	purchase: Purchases.Purchase;
+	translate: LocalizeProps[ 'translate' ];
+} ) {
+	const { purchase, translate } = props;
 	const site = useSelector( ( state ) => getSite( state, purchase.siteId ?? 0 ) );
-
-	const paymentMethodsState = useStoredPaymentMethods( { type: 'card', expired: true } );
-	const cards = paymentMethodsState.paymentMethods;
-
-	const isBackupMethodAvailable = cards.some(
-		( card ) => card.stored_details_id !== purchase.payment.storedDetailsId && card.is_backup
-	);
-
+	const slug = purchase.siteName ?? purchase.siteId;
 	return (
-		<PurchaseItem
-			getManagePurchaseUrlFor={ managePurchase }
-			key={ purchase.id }
-			slug={ purchase.siteName }
-			isDisconnectedSite={ ! site }
+		<PurchaseItemProduct
 			purchase={ purchase }
-			isJetpack={ isJetpackPlan( purchase ) || isJetpackProduct( purchase ) }
 			site={ site }
-			name={ purchase.siteName }
-			isBackupMethodAvailable={ isBackupMethodAvailable }
+			translate={ translate }
+			slug={ slug }
+			showSite
+			isDisconnectedSite={ ! site }
 		/>
 	);
 }
 
-export const purchasesDataFields = [
-	{
-		id: 'site',
-		label: 'Site',
-		type: 'text',
-		enableGlobalSearch: true,
-		enableSorting: true,
-		enableHiding: false,
-		// Filter by site ID
-		getValue: ( { item }: { item: Purchases.Purchase } ) => {
-			return item.siteId;
+export function getPurchasesFieldDefinitions(
+	// purchases: Purchases.Purchase[],
+	translate: LocalizeProps[ 'translate' ]
+): Fields< Purchases.Purchase > {
+	return [
+		{
+			id: 'product',
+			label: 'Product',
+			type: 'text',
+			enableGlobalSearch: true,
+			enableSorting: true,
+			enableHiding: false,
+			filterBy: {
+				operators: [ 'is' as Operator ],
+			},
+			getValue: ( { item }: { item: Purchases.Purchase } ) => {
+				return item.productId;
+			},
+			render: ( { item }: { item: Purchases.Purchase } ) => {
+				return (
+					<div className="purchase-item__information purchases-layout__information">
+						<div className="purchase-item__title">
+							{ getDisplayName( item ) }
+							&nbsp;
+							<OwnerInfo purchase={ item } />
+						</div>
+						<div className="purchase-item__purchase-type">
+							<PurchaseItemRowProduct purchase={ item } translate={ translate } />
+						</div>
+					</div>
+				);
+			},
 		},
-		// Render the site icon
-		render: ( { item }: { item: Purchases.Purchase } ) => {
-			const site = { ID: item.siteId };
-			return <PurchaseItemSiteIcon site={ site } purchase={ item } />;
+		{
+			id: 'site',
+			label: 'Site',
+			type: 'text',
+			enableGlobalSearch: true,
+			enableSorting: true,
+			enableHiding: false,
+			filterBy: {
+				operators: [ 'is' as Operator ],
+			},
+			// Filter by site ID
+			getValue: ( { item }: { item: Purchases.Purchase } ) => {
+				return item.siteId;
+			},
+			// Render the site icon
+			render: ( { item }: { item: Purchases.Purchase } ) => {
+				const site = { ID: item.siteId };
+				return <PurchaseItemSiteIcon site={ site } purchase={ item } />;
+			},
 		},
-	},
-	{
-		id: 'purchase-item-site',
-		label: 'Purchase Item',
-		type: 'text',
-		enableGlobalSearch: true,
-		enableSorting: true,
-		enableHiding: false,
-		filterBy: {
-			operators: [ 'is' as Operator ],
-		},
-		getValue: ( { item }: { item: Purchases.Purchase } ) => {
-			return item.siteId;
-		},
-		render: ( { item }: { item: Purchases.Purchase } ) => {
-			return <PurchaseItemRow purchase={ item } />;
-		},
-	},
-] as Fields< Purchases.Purchase >;
+	];
+}

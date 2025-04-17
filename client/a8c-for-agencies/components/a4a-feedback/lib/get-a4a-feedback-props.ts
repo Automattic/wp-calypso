@@ -137,6 +137,39 @@ export const getA4AfeedbackProps = (
 					],
 				},
 			};
+		case FeedbackType.LicenseCancelProduct:
+		case FeedbackType.LicenseCancelHosting:
+			return {
+				title: translate( 'Before you cancel!' ),
+				description: translate( "We'd love to hear from you!" ),
+				suggestion: {
+					label: translate( "Can you tell us why %(productName)s didn't meet your needs?", {
+						args: { productName: args?.productName },
+					} ),
+					options: [
+						{
+							label: translate( "It had bugs and didn't work for us" ),
+							value: 'it-had-bugs-and-didnt-work-for-us',
+						},
+						{
+							label: translate( 'It was the wrong product' ),
+							value: 'it-was-the-wrong-product',
+						},
+						{
+							label: translate( 'I was just trying it out' ),
+							value: 'i-was-just-trying-it-out',
+						},
+						{
+							label: translate( 'My client no longer needs it' ),
+							value: 'my-client-no-longer-needs-it',
+						},
+						{
+							label: translate( 'Other' ),
+							value: 'other',
+						},
+					],
+				},
+			};
 		default:
 			return {
 				title: translate( 'General feedback' ),
