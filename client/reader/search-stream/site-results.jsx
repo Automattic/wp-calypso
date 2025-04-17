@@ -7,6 +7,8 @@ import withDimensions from 'calypso/lib/with-dimensions';
 import ReaderInfiniteStream from 'calypso/reader/components/reader-infinite-stream';
 import { siteRowRenderer } from 'calypso/reader/components/reader-infinite-stream/row-renderers';
 import { SEARCH_RESULTS_SITES } from 'calypso/reader/follow-sources';
+import { MAX_POSTS_FOR_LOGGED_OUT_USERS } from 'calypso/reader/reader.const';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import {
 	requestFeedSearch,
 	SORT_BY_RELEVANCE,
@@ -18,8 +20,6 @@ import {
 } from 'calypso/state/reader/feed-searches/selectors';
 import { getFeed } from 'calypso/state/reader/feeds/selectors';
 
-const MIN_DESIRED_SITE_RESULTS = 10;
-
 class SiteResults extends Component {
 	static propTypes = {
 		query: PropTypes.string,
@@ -29,15 +29,10 @@ class SiteResults extends Component {
 		searchResults: PropTypes.array,
 		searchResultsCount: PropTypes.number,
 		width: PropTypes.number.isRequired,
-		disableInfiniteScroll: PropTypes.bool,
-	};
-
-	static defaultProps = {
-		disableInfiniteScroll: false,
 	};
 
 	fetchNextPage = ( offset ) => {
-		if ( this.props.disableInfiniteScroll && offset > MIN_DESIRED_SITE_RESULTS ) {
+		if ( this.isLoginPromptVisible( offset ) ) {
 			return;
 		}
 
@@ -50,11 +45,16 @@ class SiteResults extends Component {
 	};
 
 	hasNextPage = ( offset ) => {
-		if ( this.props.disableInfiniteScroll && offset > MIN_DESIRED_SITE_RESULTS ) {
+		if ( this.isLoginPromptVisible( offset ) ) {
 			return false;
 		}
 		return offset < this.props.searchResultsCount;
 	};
+
+	isLoginPromptVisible( offset ) {
+		// Show login prompt for all logged out users after few posts.
+		return ! this.props.isLoggedIn && offset > MAX_POSTS_FOR_LOGGED_OUT_USERS;
+	}
 
 	render() {
 		const { query, searchResults, width, sort } = this.props;
@@ -136,6 +136,7 @@ export default connect(
 			ownProps.onReceiveSearchResults( feedResults );
 		}
 		return {
+			isLoggedIn: isUserLoggedIn( state ),
 			searchResults: searchResults,
 			searchResultsCount: getReaderFeedsCountForQuery( state, {
 				query: ownProps.query,

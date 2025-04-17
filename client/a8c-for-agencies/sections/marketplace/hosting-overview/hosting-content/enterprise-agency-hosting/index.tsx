@@ -38,7 +38,7 @@ export default function EnterpriseAgencyHosting( { isReferMode }: { isReferMode:
 	};
 
 	return (
-		<div className="enterprise-agency-hosting-v3">
+		<div className="enterprise-agency-hosting">
 			<HostingPlanSection
 				heading={ translate(
 					'Deliver unmatched performance with the highest security standards on our enterprise platform'
@@ -56,7 +56,7 @@ export default function EnterpriseAgencyHosting( { isReferMode }: { isReferMode:
 					</div>
 
 					<Button
-						className="enterprise-agency-hosting-v3__cta-button"
+						className="enterprise-agency-hosting__cta-button"
 						href="https://wpvip.com/partner-application/?utm_source=partner&utm_medium=referral&utm_campaign=a4a"
 						onClick={ isReferMode ? onReferClientClick : onRequestDemoClick }
 						target="_blank"
@@ -74,7 +74,7 @@ export default function EnterpriseAgencyHosting( { isReferMode }: { isReferMode:
 					heading={ translate( 'The platform the biggest brands trust.' ) }
 				>
 					{ isReferMode && (
-						<div className="enterprise-agency-hosting-v3__top-details-subheading">
+						<div className="enterprise-agency-hosting__top-details-subheading">
 							{ translate(
 								'Earn a one-time 5% commission on client referrals to WordPress VIP. {{a}}Full Terms{{/a}} ↗',
 								{
@@ -102,26 +102,26 @@ export default function EnterpriseAgencyHosting( { isReferMode }: { isReferMode:
 						] }
 					/>
 
-					<div className="enterprise-agency-hosting-v3__logos">
-						<div className="enterprise-agency-hosting-v3__logos-item">
+					<div className="enterprise-agency-hosting__logos">
+						<div className="enterprise-agency-hosting__logos-item">
 							<img src={ SalesforceLogo } alt="Salesforce" />
 						</div>
-						<div className="enterprise-agency-hosting-v3__logos-item">
+						<div className="enterprise-agency-hosting__logos-item">
 							<img src={ MetaLogo } alt="Meta" />
 						</div>
-						<div className="enterprise-agency-hosting-v3__logos-item">
+						<div className="enterprise-agency-hosting__logos-item">
 							<img src={ SlackLogo } alt="Slack" />
 						</div>
-						<div className="enterprise-agency-hosting-v3__logos-item">
+						<div className="enterprise-agency-hosting__logos-item">
 							<img src={ SpotifyLogo } alt="Spotify" />
 						</div>
-						<div className="enterprise-agency-hosting-v3__logos-item">
+						<div className="enterprise-agency-hosting__logos-item">
 							<img src={ CNNLogo } alt="CNN" />
 						</div>
-						<div className="enterprise-agency-hosting-v3__logos-item">
+						<div className="enterprise-agency-hosting__logos-item">
 							<img src={ NewsCorpLogo } alt="News Corp" />
 						</div>
-						<div className="enterprise-agency-hosting-v3__logos-item">
+						<div className="enterprise-agency-hosting__logos-item">
 							<img src={ NewYorkPostLogo } alt="New York Post" />
 						</div>
 					</div>

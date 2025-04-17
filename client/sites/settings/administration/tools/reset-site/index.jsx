@@ -11,15 +11,12 @@ import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import HeaderCakeBack from 'calypso/components/header-cake/back';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { LoadingBar } from 'calypso/components/loading-bar';
 import NavigationHeader from 'calypso/components/navigation-header';
 import { Panel, PanelCard, PanelCardHeading } from 'calypso/components/panel';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { EVERY_FIVE_SECONDS, Interval } from 'calypso/lib/interval';
-import { useRemoveDuplicateViewsExperimentEnabled } from 'calypso/lib/remove-duplicate-views-experiment';
-import { getSettingsSource } from 'calypso/my-sites/site-settings/site-tools/utils';
 import { useDispatch, useSelector } from 'calypso/state';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
@@ -47,11 +44,7 @@ function SiteResetCard( {
 	const { data: status, refetch: refetchResetStatus } = useSiteResetStatusQuery( siteId );
 	const [ isDomainConfirmed, setDomainConfirmed ] = useState( false );
 	const [ resetComplete, setResetComplete ] = useState( false );
-
-	const isUntangled = useRemoveDuplicateViewsExperimentEnabled();
-
-	const title = isUntangled ? translate( 'Reset site' ) : translate( 'Site Reset' );
-	const source = isUntangled ? '/sites/settings/site' : getSettingsSource();
+	const title = translate( 'Reset site' );
 
 	useSetFeatureBreadcrumb( { siteId, title } );
 
@@ -201,9 +194,7 @@ function SiteResetCard( {
 			);
 			return (
 				<PanelCard>
-					{ isUntangled && (
-						<PanelCardHeading>{ translate( 'Site reset successful' ) }</PanelCardHeading>
-					) }
+					<PanelCardHeading>{ translate( 'Site reset successful' ) }</PanelCardHeading>
 					<p>{ message }</p>
 				</PanelCard>
 			);
@@ -211,9 +202,7 @@ function SiteResetCard( {
 			return (
 				<PanelCard>
 					<>
-						{ isUntangled && (
-							<PanelCardHeading>{ translate( 'Resetting site' ) }</PanelCardHeading>
-						) }
+						<PanelCardHeading>{ translate( 'Resetting site' ) }</PanelCardHeading>
 						<LoadingBar progress={ status?.progress } />
 						<p className="reset-site__in-progress-message">
 							{ translate( "We're resetting your site. We'll email you once it's ready." ) }
@@ -225,9 +214,7 @@ function SiteResetCard( {
 		return (
 			<>
 				<PanelCard>
-					{ isUntangled && (
-						<PanelCardHeading>{ translate( 'Confirm site reset' ) }</PanelCardHeading>
-					) }
+					<PanelCardHeading>{ translate( 'Confirm site reset' ) }</PanelCardHeading>
 					<p>{ instructions }</p>
 					{ content.length > 0 && (
 						<>
@@ -310,9 +297,6 @@ function SiteResetCard( {
 	return (
 		<Panel className="settings-administration__reset-site">
 			{ ! isLoading && <Interval onTick={ checkStatus } period={ EVERY_FIVE_SECONDS } /> }
-			{ ! isUntangled && (
-				<HeaderCakeBack icon="chevron-left" href={ `${ source }/${ selectedSiteSlug }` } />
-			) }
 			<NavigationHeader
 				title={ title }
 				subtitle={ translate(

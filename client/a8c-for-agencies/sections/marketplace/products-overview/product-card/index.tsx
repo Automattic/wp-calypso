@@ -18,8 +18,8 @@ import withProductLightbox, {
 	WithProductLightboxProps,
 } from '../hocs/with-product-lightbox';
 import ProductBadges from '../product-badges';
-import ProductPriceWithDiscount from '../product-card/product-price-with-discount-info';
 import useCustomProductCard from './hooks/use-custom-product-card';
+import ProductPriceWithDiscount from './product-price-with-discount-info';
 import type { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 
 import './style.scss';

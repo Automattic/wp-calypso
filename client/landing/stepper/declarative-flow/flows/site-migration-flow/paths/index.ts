@@ -39,12 +39,12 @@ export function buildPathHelper<
 export const siteCreationPath = buildPathHelper< {
 	queryParams: {
 		from?: string | null;
-		skipMigration?: boolean;
+		platform: ImporterPlatform;
 	};
 } >( STEPS.SITE_CREATION_STEP.slug );
 
 export const sitePickerPath = buildPathHelper< {
-	queryParams: { from: string | null };
+	queryParams: { from: string | null; platform: ImporterPlatform };
 } >( STEPS.PICK_SITE.slug );
 
 export const importOrMigratePath = buildPathHelper< {
@@ -66,7 +66,8 @@ export const howToMigratePath = buildPathHelper< {
 export const processingPath = buildPathHelper< {
 	queryParams: {
 		from?: string | null;
-		skipMigration?: boolean;
+		platform: ImporterPlatform;
+		action: string | null;
 	};
 } >( STEPS.PROCESSING.slug );
 
@@ -132,6 +133,8 @@ export const fallbackCredentialsPath = buildPathHelper< {
 		siteId?: number | string;
 		siteSlug?: string;
 		from?: string | null;
+		authorizationUrl?: string | null;
+		backTo?: string;
 	};
 } >( STEPS.SITE_MIGRATION_FALLBACK_CREDENTIALS.slug );
 
