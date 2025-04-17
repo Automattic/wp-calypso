@@ -329,8 +329,7 @@ $image-height: 47px;
 
 	.login form {
 		.login__form-userdata {
-			input[type="text"],
-			input[type="password"] {
+			.components-text-control__input {
 				margin-bottom: 16px;
 			}
 		}
