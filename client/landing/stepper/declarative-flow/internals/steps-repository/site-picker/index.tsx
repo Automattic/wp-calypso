@@ -1,4 +1,4 @@
-import { SITE_MIGRATION_FLOW, StepContainer } from '@automattic/onboarding';
+import { StepContainer } from '@automattic/onboarding';
 import {
 	DEFAULT_SITE_LAUNCH_STATUS_GROUP_VALUE,
 	GroupableSiteLaunchStatuses,
@@ -27,7 +27,7 @@ const SitePickerStep: Step< {
 		queryParams?: Partial< SitesDashboardQueryParams >;
 		site?: SiteExcerptData;
 	};
-} > = function SitePickerStep( { navigation, flow } ) {
+} > = function SitePickerStep( { navigation } ) {
 	const { __ } = useI18n();
 	const urlQueryParams = useQuery();
 	const page = Number( urlQueryParams.get( 'page' ) ) || 1;
@@ -108,8 +108,7 @@ const SitePickerStep: Step< {
 				stepName="site-picker"
 				hideBack
 				goBack={ navigation.goBack }
-				hideSkip={ SITE_MIGRATION_FLOW === flow }
-				skipLabelText={ __( 'Skip and create a new site' ) }
+				hideSkip
 				goNext={ createNewSite }
 				stepContent={
 					<SitePicker
