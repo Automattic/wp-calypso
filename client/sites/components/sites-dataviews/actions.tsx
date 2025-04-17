@@ -522,7 +522,21 @@ export function useActions( {
 				RenderModal: ( { items, closeModal }: RenderModalProps< SiteExcerptData > ) => {
 					return (
 						<Suspense>
-							<LazyLeaveSiteModalForm siteId={ items[ 0 ]?.ID ?? 0 } onClose={ closeModal } />
+							<LazyLeaveSiteModalForm
+								siteId={ items[ 0 ]?.ID ?? 0 }
+								onSuccess={ () => {
+									queryClient.invalidateQueries( {
+										queryKey: [
+											USE_SITE_EXCERPTS_QUERY_KEY,
+											SITE_EXCERPT_REQUEST_FIELDS,
+											SITE_EXCERPT_REQUEST_OPTIONS,
+											[],
+											'all',
+										],
+									} );
+								} }
+								onClose={ closeModal }
+							/>
 						</Suspense>
 					);
 				},
@@ -548,6 +562,15 @@ export function useActions( {
 				isEligible: isActionEligible( 'delete-site', capabilities ),
 			},
 		],
-		[ __, capabilities, dispatch, openSitePreviewPane, restoreSite, viewType, localizeUrl ]
+		[
+			__,
+			capabilities,
+			dispatch,
+			openSitePreviewPane,
+			restoreSite,
+			viewType,
+			localizeUrl,
+			queryClient,
+		]
 	);
 }

@@ -21,12 +21,11 @@ import {
 	SITE_RESET,
 } from 'calypso/state/action-types';
 import { fetchCurrentUser } from 'calypso/state/current-user/actions';
-import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import getP2HubBlogId from 'calypso/state/selectors/get-p2-hub-blog-id';
 import getSiteUrl from 'calypso/state/selectors/get-site-url';
 import { SITE_REQUEST_FIELDS, SITE_REQUEST_OPTIONS } from 'calypso/state/sites/constants';
-import { getSiteDomain } from 'calypso/state/sites/selectors';
+import { getSiteDomain, getSiteSlug } from 'calypso/state/sites/selectors';
 
 /**
  * Returns a thunk that dispatches an action object to be used in signalling that a site has been
@@ -226,15 +225,16 @@ const siteLeaveNoticeOptions = {
  * Returns a function which, when invoked, triggers a network request to delete
  * a user from a specified site.
  * @param  {number}   siteId Site ID
+ * @param  {number}   userId User ID
  * @returns {Function}        Action thunk
  */
-export function leaveSite( siteId ) {
+export function leaveSite( siteId, userId ) {
 	return ( dispatch, getState ) => {
 		const siteDomain = getSiteDomain( getState(), siteId );
-		const currentUserId = getCurrentUserId( getState() );
+		const siteSlug = getSiteSlug( getState(), siteId );
 
 		return wpcom.req
-			.post( `/sites/${ siteId }/users/${ currentUserId }/delete` )
+			.post( `/sites/${ siteId }/users/${ userId }/delete` )
 			.then( () => {
 				dispatch( receiveLeaveSite( siteId ) );
 				dispatch(
@@ -257,7 +257,7 @@ export function leaveSite( siteId ) {
 								id: siteLeaveNoticeId,
 								showDismiss: false,
 								button: translate( 'Manage Purchases' ),
-								href: purchasesRoot,
+								href: `/purchases/subscriptions/${ siteSlug }`,
 							}
 						)
 					);
