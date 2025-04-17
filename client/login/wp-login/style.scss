@@ -539,20 +539,10 @@ $image-height: 47px;
 			border-radius: 2px;
 		}
 
-		.form-button.is-primary {
-			&,
-			&:disabled {
-				background-color: var(--color-wp-job-manager);
-			}
-
-			&:hover:not(&:disabled),
-			&:focus {
-				background-color: darken(#2404eb, 10%);
-			}
-		}
-
-		.social-buttons__button {
+		.components-button,
+		.components-text-control__input {
 			--color-accent: var(--color-wp-job-manager);
+			--color-accent-60: var(--color-wp-job-manager);
 		}
 	}
 
