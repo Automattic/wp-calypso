@@ -18,7 +18,7 @@ type HeaderProps = Pick< PageProps, 'title' | 'subTitle' | 'actions' >;
 export default function Header( { title, subTitle, actions }: HeaderProps ) {
 	return (
 		<VStack className="a8c-site-admin-page-header" as="header" spacing={ 0 }>
-			<HStack className="a8c-site-admin-page-header__page-title">
+			<HStack className="a8c-site-admin-page-header__title-container">
 				<Heading
 					as="h2"
 					level={ 3 }
