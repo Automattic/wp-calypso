@@ -130,13 +130,7 @@ export type UseTracksEventPropsHook = () => {
 	>;
 };
 
-type GetCustomInitialStep = ( {
-	queryParams,
-	steps,
-}: {
-	queryParams: URLSearchParams;
-	steps: readonly StepperStep[];
-} ) => StepperStep[ 'slug' ] | undefined;
+type GetCustomInitialStep = () => StepperStep[ 'slug' ] | void;
 
 /**
  * @deprecated Use FlowV2 instead.
