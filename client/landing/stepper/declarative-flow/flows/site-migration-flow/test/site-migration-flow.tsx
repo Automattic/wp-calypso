@@ -16,6 +16,7 @@ import {
 } from 'calypso/landing/stepper/declarative-flow/test/helpers';
 import { useIsSiteAdmin } from 'calypso/landing/stepper/hooks/use-is-site-admin';
 import { goToCheckout } from 'calypso/landing/stepper/utils/checkout';
+import { addQueryArgs } from 'calypso/lib/url';
 import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
 import getSiteOption from 'calypso/state/sites/selectors/get-site-option';
 import siteMigrationFlow from '../site-migration-flow';
@@ -76,6 +77,51 @@ describe( 'Site Migration Flow', () => {
 	afterEach( () => {
 		// Restore the original implementation after each test
 		jest.restoreAllMocks();
+	} );
+
+	describe( 'getCustomInitialStep', () => {
+		const { getCustomInitialStep } = siteMigrationFlow;
+		beforeEach( () => {
+			window.location.replace = jest.fn();
+		} );
+
+		it( 'returns the default initial step', () => {
+			expect( getCustomInitialStep?.() ).toBe( STEPS.SITE_MIGRATION_IDENTIFY.slug );
+		} );
+
+		it( 'redirects to PICK_SITE when the platform is wordpress but there is no siteSlug or siteId', () => {
+			window.location.search = new URLSearchParams( { platform: 'wordpress' } ).toString();
+			expect( getCustomInitialStep?.() ).toBe( STEPS.PICK_SITE.slug );
+		} );
+
+		it( 'redirects to the IMPORT_OR_MIGRATE step when there is a siteSlug and the platform is wordpress', () => {
+			window.location.search = new URLSearchParams( {
+				platform: 'wordpress',
+				siteSlug: 'example.wordpress.com',
+				siteId: '123',
+			} ).toString();
+			expect( getCustomInitialStep?.() ).toBe( STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug );
+		} );
+
+		it( 'redirects to the import flow when the platform is importable', () => {
+			window.location.search = new URLSearchParams( {
+				platform: 'medium',
+				siteSlug: 'example.wordpress.com',
+				from: 'https://example-to-be-migrated.com',
+			} ).toString();
+
+			getCustomInitialStep?.();
+
+			expect( window.location.replace ).toHaveBeenCalledWith(
+				addQueryArgs(
+					{
+						siteSlug: 'example.wordpress.com',
+						from: 'https://example-to-be-migrated.com',
+					},
+					'/setup/site-setup/importerMedium'
+				)
+			);
+		} );
 	} );
 
 	describe( 'useAssertConditions', () => {
