@@ -4,7 +4,7 @@ import { getQueryArgs, addQueryArgs } from '@wordpress/url';
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import {
 	getActiveAgency,
-	getClientBillingType,
+	getUserBillingType,
 	hasAgency,
 	hasFetchedAgency,
 } from 'calypso/state/a8c-for-agencies/agency/selectors';
@@ -74,14 +74,14 @@ export const requireClientAccessContext: Callback = ( context, next ) => {
 
 export const requireLegacyClientBillingContext: Callback = ( context, next ) => {
 	const state = context.store.getState();
-	const clientBillingType = getClientBillingType( state );
+	const userBillingType = getUserBillingType( state );
 
-	if ( clientBillingType === 'legacy' ) {
-		next();
+	if ( userBillingType !== 'legacy' ) {
+		page.redirect( A4A_CLIENT_SUBSCRIPTIONS_LINK );
 		return;
 	}
 
-	page.redirect( A4A_CLIENT_SUBSCRIPTIONS_LINK );
+	next();
 };
 
 export const requireTierAccessContext: Callback = ( context, next ) => {

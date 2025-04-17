@@ -2,7 +2,7 @@ import { category, payment, receipt } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { useSelector } from 'calypso/state';
-import { getClientBillingType } from 'calypso/state/a8c-for-agencies/agency/selectors';
+import { getUserBillingType } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import {
 	A4A_CLIENT_SUBSCRIPTIONS_LINK,
 	A4A_CLIENT_PAYMENT_METHODS_LINK,
@@ -13,11 +13,11 @@ import { createItem } from '../lib/utils';
 const useClientMenuItems = ( path: string ) => {
 	const translate = useTranslate();
 
-	const clientBillingType = useSelector( getClientBillingType );
+	const userBillingType = useSelector( getUserBillingType );
 
-	// If the client billing type is BillingDragon, this mean we are reusing WPCOM billing and
-	// we need to redirect to the WPCOM billing page for this particular clients.
-	const isBillingTypeBD = clientBillingType === 'billingdragon';
+	// If the user billing type is 'billingdragon', this mean we are reusing WPCOM billing and
+	// we need to redirect to the WPCOM billing page for this particular users.
+	const isBillingTypeBD = userBillingType === 'billingdragon';
 
 	const menuItems = useMemo( () => {
 		return [

@@ -101,7 +101,7 @@ export interface Agency {
 	created_at: string;
 }
 
-export type ClientBillingType = 'legacy' | 'billingdragon';
+export type UserBillingType = 'legacy' | 'billingdragon';
 
 export interface AgencyStore {
 	hasFetched: boolean;
@@ -110,7 +110,7 @@ export interface AgencyStore {
 	agencies: Agency[] | [];
 	error: APIError | null;
 	isAgencyClientUser: boolean;
-	clientBillingType: ClientBillingType;
+	userBillingType: UserBillingType;
 }
 
 export type AgencyThunkAction< A extends Action = AnyAction, R = unknown > = ThunkAction<

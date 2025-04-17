@@ -51,7 +51,6 @@ export default function () {
 	page(
 		A4A_CLIENT_CHECKOUT,
 		requireClientAccessContext,
-		requireLegacyClientBillingContext,
 		controller.clientCheckoutContext,
 		makeLayout,
 		clientRender
