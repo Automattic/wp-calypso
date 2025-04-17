@@ -1,33 +1,31 @@
 import { PLAN_MIGRATION_TRIAL_MONTHLY } from '@automattic/calypso-products';
-import { Onboard, type SiteSelect, type UserSelect } from '@automattic/data-stores';
-import { isHostedSiteMigrationFlow, SITE_MIGRATION_FLOW } from '@automattic/onboarding';
+import { Onboard } from '@automattic/data-stores';
+import { SITE_MIGRATION_FLOW } from '@automattic/onboarding';
 import { SiteExcerptData } from '@automattic/sites';
-import { useDispatch, useSelect } from '@wordpress/data';
+import { useDispatch } from '@wordpress/data';
 import { useEffect } from 'react';
 import { HOSTING_INTENT_MIGRATE } from 'calypso/data/hosting/use-add-hosting-trial-mutation';
 import { HOW_TO_MIGRATE_OPTIONS } from 'calypso/landing/stepper/constants';
 import { useFlowState } from 'calypso/landing/stepper/declarative-flow/internals/state-manager/store';
 import { STEPS } from 'calypso/landing/stepper/declarative-flow/internals/steps';
-//TODO: Move to a shared place
 import {
 	isPlatformImportable,
 	getFullImporterUrl,
 } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/import/helper';
-import { getSiteIdParam } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/import/util';
 import { type SiteMigrationIdentifyAction } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/site-migration-identify';
 import { AssertConditionState } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { goToImporter } from 'calypso/landing/stepper/declarative-flow/migration/helpers';
 import { useIsSiteAdmin } from 'calypso/landing/stepper/hooks/use-is-site-admin';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSiteData } from 'calypso/landing/stepper/hooks/use-site-data';
-import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
-import { USER_STORE, SITE_STORE, ONBOARD_STORE } from 'calypso/landing/stepper/stores';
+import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { goToCheckout } from 'calypso/landing/stepper/utils/checkout';
 import { stepsWithRequiredLogin } from 'calypso/landing/stepper/utils/steps-with-required-login';
 import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
 import { ImporterPlatform } from 'calypso/lib/importer/types';
 import { addQueryArgs } from 'calypso/lib/url';
 import { useSelector } from 'calypso/state';
+import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
 import { getSiteAdminUrl, getSiteWooCommerceUrl } from 'calypso/state/sites/selectors';
 import * as paths from './paths';
 import type {
@@ -49,14 +47,14 @@ const BASE_STEPS = [
 	STEPS.SITE_MIGRATION_OTHER_PLATFORM_DETECTED_IMPORT,
 	STEPS.SITE_MIGRATION_APPLICATION_PASSWORD_AUTHORIZATION,
 	STEPS.SITE_MIGRATION_SUPPORT_INSTRUCTIONS,
-];
-
-const HOSTED_VARIANT_STEPS = [
-	...BASE_STEPS,
 	STEPS.PICK_SITE,
 	STEPS.SITE_CREATION_STEP,
 	STEPS.PROCESSING,
 ];
+
+const hasSite = ( siteId: number, siteSlug: string ) => {
+	return siteId && siteId !== 0 && siteSlug && siteSlug !== '';
+};
 
 const siteMigration: FlowV2 = {
 	name: SITE_MIGRATION_FLOW,
@@ -80,21 +78,11 @@ const siteMigration: FlowV2 = {
 	},
 
 	initialize() {
-		if ( isHostedSiteMigrationFlow( this.variantSlug ?? SITE_MIGRATION_FLOW ) ) {
-			return stepsWithRequiredLogin( HOSTED_VARIANT_STEPS );
-		}
-
 		return stepsWithRequiredLogin( BASE_STEPS );
 	},
 
 	useAssertConditions(): AssertConditionResult {
-		const { siteSlug, siteId } = useSiteData();
 		const { isAdmin } = useIsSiteAdmin();
-		const userIsLoggedIn = useSelect(
-			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
-			[]
-		);
-		const flowPath = this.variantSlug ?? SITE_MIGRATION_FLOW;
 
 		useEffect( () => {
 			if ( isAdmin === false ) {
@@ -102,37 +90,25 @@ const siteMigration: FlowV2 = {
 			}
 		}, [ isAdmin ] );
 
-		if ( userIsLoggedIn && ! siteSlug && ! siteId && ! isHostedSiteMigrationFlow( flowPath ) ) {
-			window.location.assign( '/' );
-			return {
-				state: AssertConditionState.FAILURE,
-				message: 'site-migration does not have the site slug or site id.',
-			};
-		}
-
 		return { state: AssertConditionState.SUCCESS };
 	},
 
 	useStepNavigation( currentStep, navigate ) {
 		const flowName = this.name;
-		const { siteId } = useSiteData();
+		const { siteId, siteSlug } = useSiteData();
 		const variantSlug = this.variantSlug;
 		const flowPath = variantSlug ?? flowName;
-		const siteCount =
-			useSelect( ( select ) => ( select( USER_STORE ) as UserSelect ).getCurrentUser(), [] )
-				?.site_count ?? 0;
-		const siteSlugParam = useSiteSlugParam();
+		const siteCount = useSelector( ( state ) => getCurrentUserSiteCount( state ) );
 		const urlQueryParams = useQuery();
 		const fromQueryParam = urlQueryParams.get( 'from' );
 		const actionQueryParam = urlQueryParams.get( 'action' );
-		const platformQueryParam = urlQueryParams.get( 'platform' );
-		const { getSiteIdBySlug } = useSelect( ( select ) => select( SITE_STORE ) as SiteSelect, [] );
-
+		const platformQueryParam = ( urlQueryParams.get( 'platform' ) ||
+			'unknown' ) as ImporterPlatform;
 		const { get, sessionId } = useFlowState();
-
 		const siteAdminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
 		const siteWooCommerceUrl = useSelector( ( state ) => getSiteWooCommerceUrl( state, siteId ) );
-
+		const userHasOtherWPComSites = siteCount && siteCount > 1;
+		const entryPoint = get( 'flow' )?.entryPoint;
 		const exitFlow = ( to: string ) => {
 			return window.location.assign( addQueryArgs( { sessionId }, to ) );
 		};
@@ -142,53 +118,40 @@ const siteMigration: FlowV2 = {
 			triggerGuidesForStep( flowName, currentStep, siteId );
 		}, [ flowName, currentStep, siteId ] );
 
-		// TODO - We may need to add `...params: string[]` back once we start adding more steps.
 		async function submit( providedDependencies: ProvidedDependencies = {} ) {
-			const siteSlug = ( providedDependencies?.siteSlug as string ) || siteSlugParam || '';
-			const siteId = getSiteIdBySlug( siteSlug ) || getSiteIdParam( urlQueryParams );
-
 			switch ( currentStep ) {
 				case STEPS.SITE_MIGRATION_IDENTIFY.slug: {
 					const { from, platform, action } = providedDependencies as {
 						from: string;
-						platform: string;
+						platform: ImporterPlatform;
 						action: SiteMigrationIdentifyAction;
 					};
-
-					if ( action === 'skip_platform_identification' || platform !== 'wordpress' ) {
-						if ( isHostedSiteMigrationFlow( variantSlug ?? '' ) ) {
-							// siteId/siteSlug wont be defined here if coming from a direct link/signup.
-							// We need to make sure there's a site to import into.
-							if ( ! siteSlugParam ) {
-								return navigate( paths.siteCreationPath( { from, skipMigration: true } ) );
+					const hasDestinationSite = hasSite( siteId, siteSlug );
+					if ( hasDestinationSite ) {
+						if ( platform !== 'wordpress' || action === 'skip_platform_identification' ) {
+							if ( isPlatformImportable( platform ) && from ) {
+								return exitFlow( getFullImporterUrl( platform, siteSlug, from ) );
 							}
+
+							return exitFlow(
+								paths.siteSetupImportListPath( {
+									siteId,
+									siteSlug,
+									from: from || fromQueryParam,
+									origin: STEPS.SITE_MIGRATION_IDENTIFY.slug,
+									backToFlow: `/${ flowPath }/${ STEPS.SITE_MIGRATION_IDENTIFY.slug }`,
+								} )
+							);
 						}
-						return exitFlow(
-							paths.siteSetupImportListPath( {
-								siteId,
-								siteSlug,
-								from,
-								origin: STEPS.SITE_MIGRATION_IDENTIFY.slug,
-								backToFlow: `/${ flowPath }/${ STEPS.SITE_MIGRATION_IDENTIFY.slug }`,
-							} )
-						);
+
+						return navigate( paths.importOrMigratePath( { from, siteSlug, siteId } ) );
 					}
 
-					if ( isHostedSiteMigrationFlow( variantSlug ?? '' ) ) {
-						if ( ! siteSlugParam ) {
-							if ( siteCount > 0 ) {
-								return navigate( paths.sitePickerPath( { from } ) );
-							}
-
-							if ( from ) {
-								return navigate( paths.siteCreationPath( { from } ) );
-							}
-
-							return navigate( 'error' );
-						}
+					if ( userHasOtherWPComSites ) {
+						return navigate( paths.sitePickerPath( { from, platform } ) );
 					}
 
-					return navigate( paths.importOrMigratePath( { from, siteSlug, siteId } ) );
+					return navigate( paths.siteCreationPath( { from, platform } ) );
 				}
 
 				case STEPS.PICK_SITE.slug: {
@@ -208,92 +171,114 @@ const siteMigration: FlowV2 = {
 							return navigate(
 								paths.sitePickerPath( {
 									from: fromQueryParam,
+									platform: platformQueryParam || 'unknown',
 									...queryParams,
 								} )
 							);
 						}
 						case 'select-site': {
-							const { ID: newSiteId, slug: newSiteSlug } =
-								providedDependencies.site as SiteExcerptData;
+							const { ID: siteId, slug: siteSlug } = providedDependencies.site as SiteExcerptData;
 
 							if ( 'migrate' === actionQueryParam ) {
 								return navigate(
 									paths.howToMigratePath( {
-										siteSlug: newSiteSlug,
-										siteId: newSiteId,
+										siteSlug,
+										siteId,
 										from: fromQueryParam,
 									} )
 								);
 							}
-							return navigate(
-								paths.importOrMigratePath( { siteSlug: newSiteSlug, siteId: newSiteId } )
-							);
+
+							if ( platformQueryParam !== 'wordpress' ) {
+								if ( isPlatformImportable( platformQueryParam ) && fromQueryParam ) {
+									return exitFlow(
+										getFullImporterUrl( platformQueryParam, siteSlug, fromQueryParam )
+									);
+								}
+
+								return exitFlow(
+									paths.siteSetupImportListPath( {
+										from: fromQueryParam,
+										siteSlug,
+										siteId,
+										backToFlow: `/${ flowPath }/${ STEPS.PICK_SITE.slug }`,
+										origin: '',
+									} )
+								);
+							}
+
+							return navigate( paths.importOrMigratePath( { siteSlug, siteId } ) );
 						}
 						case 'create-site':
-							return navigate( paths.siteCreationPath( { from: fromQueryParam } ) );
+							return navigate(
+								paths.siteCreationPath( { from: fromQueryParam, platform: platformQueryParam } )
+							);
 					}
 				}
 
 				case STEPS.SITE_CREATION_STEP.slug: {
-					const queryArgs = {
-						from: fromQueryParam,
-						skipMigration: 'import' === actionQueryParam ? true : undefined,
-					};
-
-					return navigate( paths.processingPath( queryArgs ) );
+					return navigate(
+						paths.processingPath( {
+							from: fromQueryParam,
+							platform: platformQueryParam,
+							action: actionQueryParam,
+						} )
+					);
 				}
 
 				case STEPS.PROCESSING.slug: {
-					if ( providedDependencies?.siteCreated ) {
-						if (
-							platformQueryParam &&
-							platformQueryParam !== 'wordpress' &&
-							isPlatformImportable( platformQueryParam as ImporterPlatform ) &&
-							fromQueryParam
-						) {
-							return exitFlow(
-								getFullImporterUrl(
-									platformQueryParam as ImporterPlatform,
-									siteSlug,
-									fromQueryParam
-								)
-							);
-						}
-						if ( ! fromQueryParam || providedDependencies?.skipMigration ) {
-							// If we get to this point without a fromQueryParam then we are coming from a direct
-							// pick your current platform link. That's why we navigate to the importList step.
-							return exitFlow(
-								paths.siteSetupImportListPath( {
-									siteId,
-									siteSlug,
-									origin: STEPS.SITE_MIGRATION_IDENTIFY.slug,
-									backToFlow: `/${ flowPath }/${ STEPS.SITE_MIGRATION_IDENTIFY.slug }`,
-									from: fromQueryParam,
-								} )
-							);
-						}
+					const { siteCreated, siteId, siteSlug } = providedDependencies as {
+						siteCreated: boolean;
+						siteId: number;
+						siteSlug: string;
+					};
 
-						// If the action is migrate, navigate to the DIY/DIFM selector screen.
-						if ( 'migrate' === actionQueryParam ) {
-							return navigate(
-								paths.howToMigratePath( {
-									siteSlug: siteSlug,
-									siteId: siteId,
-									from: fromQueryParam,
-								} )
-							);
-						}
+					if ( ! siteCreated ) {
+						return navigate( STEPS.ERROR.slug, {
+							message: 'Site not created',
+						} );
+					}
 
-						return navigate(
-							paths.importOrMigratePath( { siteSlug, siteId, from: fromQueryParam } )
+					//NOTE: There are links pointing to this step with the action=migrate query param, so we need to ignore the platform
+					if ( actionQueryParam === 'migrate' ) {
+						return navigate( paths.howToMigratePath( { siteId, siteSlug, from: fromQueryParam } ) );
+					}
+
+					if (
+						platformQueryParam &&
+						platformQueryParam !== 'wordpress' &&
+						isPlatformImportable( platformQueryParam ) &&
+						fromQueryParam
+					) {
+						return exitFlow( getFullImporterUrl( platformQueryParam, siteSlug, fromQueryParam ) );
+					}
+
+					if ( ! fromQueryParam || platformQueryParam !== 'wordpress' ) {
+						// If we get to this point without a fromQueryParam then we are coming from a direct
+						// pick your current platform link. That's why we navigate to the importList step.
+						return exitFlow(
+							paths.siteSetupImportListPath( {
+								siteId,
+								siteSlug,
+								from: fromQueryParam,
+								origin: STEPS.SITE_MIGRATION_IDENTIFY.slug,
+								backToFlow: `/${ flowPath }/${ STEPS.SITE_MIGRATION_IDENTIFY.slug }`,
+							} )
 						);
 					}
+
+					return navigate(
+						paths.importOrMigratePath( { from: fromQueryParam, siteSlug, siteId } )
+					);
 				}
 
 				case STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug: {
+					const { destination } = providedDependencies as {
+						destination: 'import' | 'migrate';
+					};
 					// Switch to the normal Import flow.
-					if ( providedDependencies?.destination === 'import' ) {
-						if ( urlQueryParams.get( 'ref' ) === 'calypso-importer' ) {
+					if ( destination === 'import' ) {
+						if ( entryPoint === 'calypso-importer' ) {
 							return exitFlow(
 								paths.calypsoImporterPath(
 									{ engine: 'wordpress', ref: 'site-migration' },
@@ -330,12 +315,10 @@ const siteMigration: FlowV2 = {
 						);
 					}
 
-					// Do it for me option.
 					if ( providedDependencies?.how === HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME ) {
 						return navigate( paths.credentialsPath( { siteId, from: fromQueryParam, siteSlug } ) );
 					}
 
-					// Continue with the migration flow.
 					return navigate( paths.instructionsPath( { siteId, siteSlug, from: fromQueryParam } ) );
 				}
 
@@ -355,7 +338,6 @@ const siteMigration: FlowV2 = {
 							},
 							`/setup/${ flowPath }/${ redirectAfterCheckout }`
 						);
-
 						goToCheckout( {
 							flowName: flowPath,
 							stepName: STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug,
@@ -457,6 +439,7 @@ const siteMigration: FlowV2 = {
 						} )
 					);
 				}
+
 				case STEPS.SITE_MIGRATION_OTHER_PLATFORM_DETECTED_IMPORT.slug: {
 					if ( providedDependencies?.action === 'import' ) {
 						return goToImporter( {
@@ -470,11 +453,7 @@ const siteMigration: FlowV2 = {
 					}
 
 					return navigate(
-						paths.supportInstructionsPath( {
-							siteId,
-							from: fromQueryParam,
-							siteSlug,
-						} )
+						paths.supportInstructionsPath( { siteId, from: fromQueryParam, siteSlug } )
 					);
 				}
 
@@ -495,6 +474,8 @@ const siteMigration: FlowV2 = {
 							paths.fallbackCredentialsPath( {
 								siteId,
 								siteSlug,
+								authorizationUrl,
+								backTo: STEPS.SITE_MIGRATION_APPLICATION_PASSWORD_AUTHORIZATION.slug,
 								from: fromQueryParam,
 							} )
 						);
@@ -506,8 +487,6 @@ const siteMigration: FlowV2 = {
 		}
 
 		const goBack = () => {
-			const siteSlug = urlQueryParams.get( 'siteSlug' ) || '';
-			const siteId = urlQueryParams.get( 'siteId' ) || '';
 			const entryPoint = get( 'flow' )?.entryPoint;
 
 			switch ( currentStep ) {

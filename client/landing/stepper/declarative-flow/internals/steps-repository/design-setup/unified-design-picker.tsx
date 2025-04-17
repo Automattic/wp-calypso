@@ -6,7 +6,7 @@ import {
 	useDesignPickerFilters,
 } from '@automattic/design-picker';
 import { useLocale, useHasEnTranslation } from '@automattic/i18n-utils';
-import { StepContainer, ONBOARDING_FLOW, isSiteSetupFlow, Step } from '@automattic/onboarding';
+import { StepContainer, isSiteSetupFlow, Step } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useCallback } from 'react';
@@ -21,13 +21,11 @@ import { useActiveThemeQuery } from 'calypso/data/themes/use-active-theme-query'
 import { useIsBigSkyEligible } from 'calypso/landing/stepper/hooks/use-is-site-big-sky-eligible';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useExperiment } from 'calypso/lib/explat';
-import { useDispatch as useReduxDispatch } from 'calypso/state';
 import { useActivateDesign } from '../../../../hooks/use-activate-design';
 import { useQuery } from '../../../../hooks/use-query';
 import { useSiteData } from '../../../../hooks/use-site-data';
 import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
-import { useGoalsFirstExperiment } from '../../../helpers/use-goals-first-experiment';
 import {
 	getDesignEventProps,
 	recordPreviewedDesign,
@@ -61,15 +59,11 @@ const UnifiedDesignPickerStep: StepType< {
 		};
 	};
 } > = ( { navigation, flow, stepName } ) => {
-	// imageOptimizationExperimentAssignment, exerimentAssignment
 	const [ isLoadingExperiment, experimentAssignment ] = useExperiment(
 		'calypso_design_picker_image_optimization_202406'
 	);
 	const variantName = experimentAssignment?.variationName;
 	const oldHighResImageLoading = ! isLoadingExperiment && variantName === 'treatment';
-
-	const [ isGoalsAtFrontExperimentLoading, isGoalsAtFrontExperiment ] = useGoalsFirstExperiment();
-	const isSiteRequired = flow !== ONBOARDING_FLOW || ! isGoalsAtFrontExperiment;
 
 	const isUpdatedBadgeDesign = useIsUpdatedBadgeDesign();
 
@@ -77,8 +71,6 @@ const UnifiedDesignPickerStep: StepType< {
 
 	const queryParams = useQuery();
 	const { goBack, submit, exitFlow } = navigation;
-
-	const reduxDispatch = useReduxDispatch();
 
 	const translate = useTranslate();
 	const locale = useLocale();
@@ -110,7 +102,6 @@ const UnifiedDesignPickerStep: StepType< {
 		)
 	);
 
-	const { setDesignOnSite, assembleSite } = useDispatch( SITE_STORE );
 	const activateDesign = useActivateDesign();
 
 	const { data: allDesigns, isLoading: isLoadingDesigns } = useStarterDesignsQuery(
@@ -304,31 +295,17 @@ const UnifiedDesignPickerStep: StepType< {
 					},
 					optionalProps
 				);
-			} else if ( ! isSiteRequired && ! siteSlugOrId && _selectedDesign ) {
-				handleSubmit(
-					{
-						selectedDesign: _selectedDesign,
-						selectedSiteCategory: categorization.selections?.join( ',' ),
-					},
-					optionalProps
-				);
 			}
 		},
 		[
 			activateDesign,
-			assembleSite,
-			categorization.selections,
 			designs,
 			globalStyles,
 			handleSubmit,
-			isSiteRequired,
-			reduxDispatch,
 			selectedDesign,
 			selectedStyleVariation,
-			setDesignOnSite,
 			setPendingAction,
 			setSelectedDesign,
-			site?.ID,
 			siteSlugOrId,
 		]
 	);
@@ -362,9 +339,8 @@ const UnifiedDesignPickerStep: StepType< {
 	// ********** Main render logic
 
 	// Don't render until we've done fetching all the data needed for initial render.
-	const isSiteLoading = ! site && isSiteRequired;
-	const isDesignsLoading = isLoadingDesigns || isGoalsAtFrontExperimentLoading;
-	const isLoading = isSiteLoading || isDesignsLoading;
+	const isSiteLoading = ! site;
+	const isLoading = isSiteLoading || isLoadingDesigns;
 
 	if ( isLoading || isComingFromTheUpgradeScreen ) {
 		return isUsingStepContainerV2 ? <Step.Loading /> : <Loading />;
@@ -455,7 +431,7 @@ const UnifiedDesignPickerStep: StepType< {
 	};
 
 	const backButton = getGoBackHandler();
-	const hideSkip = ! isGoalsAtFrontExperiment && ! isComingFromSuccessfulImport;
+	const hideSkip = ! isComingFromSuccessfulImport;
 	const skipLabelText = isComingFromSuccessfulImport
 		? translate( 'Skip to dashboard' )
 		: translate( 'Skip setup' );

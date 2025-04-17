@@ -56,6 +56,7 @@ export default function HostingActivationButton( { redirectUrl }: HostingActivat
 				>
 					<EligibilityWarnings
 						className="hosting__activating-warnings"
+						onDismiss={ () => setShowEligibility( false ) }
 						onProceed={ handleTransfer }
 						backUrl={ redirectUrl }
 						showDataCenterPicker

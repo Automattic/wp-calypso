@@ -37,7 +37,7 @@ class RequestLoginEmailForm extends Component {
 		isFetching: PropTypes.bool,
 		isJetpackMagicLinkSignUpEnabled: PropTypes.bool,
 		redirectTo: PropTypes.string,
-		requestError: PropTypes.string,
+		requestError: PropTypes.object,
 		showCheckYourEmail: PropTypes.bool,
 		userEmail: PropTypes.string,
 		flow: PropTypes.string,
@@ -213,8 +213,8 @@ class RequestLoginEmailForm extends Component {
 			! isSubmitButtonDisabled;
 
 		const errorText =
-			typeof requestError === 'string' && requestError.length
-				? requestError
+			typeof requestError?.message === 'string' && requestError?.message.length
+				? requestError?.message
 				: translate( 'Unable to complete request' );
 
 		const buttonLabel = translate( 'Send link' );

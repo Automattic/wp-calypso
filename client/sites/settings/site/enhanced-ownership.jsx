@@ -1,16 +1,14 @@
 import {
-	WPCOM_FEATURES_LOCKED_MODE,
 	WPCOM_FEATURES_LEGACY_CONTACT,
+	WPCOM_FEATURES_LOCKED_MODE,
 } from '@automattic/calypso-products/src';
-import { Button, Card, FormLabel } from '@automattic/components';
+import { Button, FormLabel } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormInput from 'calypso/components/forms/form-text-input';
 import { PanelCard, PanelCardHeading } from 'calypso/components/panel';
-import { useRemoveDuplicateViewsExperimentEnabled } from 'calypso/lib/remove-duplicate-views-experiment';
-import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { useSelectedSiteSelector } from 'calypso/state/sites/hooks';
 
@@ -28,7 +26,6 @@ export default function EnhancedOwnershipForm( {
 	const translate = useTranslate();
 	const hasLockedMode = useSelectedSiteSelector( siteHasFeature, WPCOM_FEATURES_LOCKED_MODE );
 	const hasLegacyContact = useSelectedSiteSelector( siteHasFeature, WPCOM_FEATURES_LEGACY_CONTACT );
-	const isUntangled = useRemoveDuplicateViewsExperimentEnabled();
 
 	// if has neither locked mode nor legacy contact, return
 	if ( ! hasLockedMode && ! hasLegacyContact ) {
@@ -94,22 +91,6 @@ export default function EnhancedOwnershipForm( {
 			</form>
 		);
 	};
-
-	if ( ! isUntangled ) {
-		return (
-			<div className="site-settings__enhanced-ownership-container">
-				<SettingsSectionHeader
-					title={ translate( 'Control your legacy' ) }
-					id="site-settings__enhanced-ownership-header"
-					disabled={ disabled }
-					isSaving={ isSaving }
-					onButtonClick={ onSave }
-					showButton
-				/>
-				<Card>{ renderForm() }</Card>
-			</div>
-		);
-	}
 
 	return (
 		<PanelCard>

@@ -1,6 +1,5 @@
-import { Onboard, updateLaunchpadSettings } from '@automattic/data-stores';
+import { Onboard } from '@automattic/data-stores';
 import { useSelect, useDispatch } from '@wordpress/data';
-import { useEffect, useRef } from 'react';
 import wpcomRequest from 'wpcom-proxy-request';
 import { useFlowState } from 'calypso/landing/stepper/declarative-flow/internals/state-manager/store';
 import { useIsBigSkyEligible } from 'calypso/landing/stepper/hooks/use-is-site-big-sky-eligible';
@@ -11,12 +10,10 @@ import { addQueryArgs } from 'calypso/lib/route';
 import { clearSignupDestinationCookie } from 'calypso/signup/storageUtils';
 import { useDispatch as reduxDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getInitialQueryArguments } from 'calypso/state/selectors/get-initial-query-arguments';
 import { requestSite } from 'calypso/state/sites/actions';
 import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
 import { getActiveTheme, getCanonicalTheme } from 'calypso/state/themes/selectors';
 import { WRITE_INTENT_DEFAULT_DESIGN } from '../../../constants';
-import { useActivateDesign } from '../../../hooks/use-activate-design';
 import { useIsPluginBundleEligible } from '../../../hooks/use-is-plugin-bundle-eligible';
 import { useSiteData } from '../../../hooks/use-site-data';
 import { useCanUserManageOptions } from '../../../hooks/use-user-can-manage-options';
@@ -45,18 +42,12 @@ function isLaunchpadIntent( intent: string ) {
 	return intent === SiteIntent.Write || intent === SiteIntent.Build;
 }
 
-function useGoalsAtFrontExperimentQueryParam() {
-	return Boolean( useSelector( getInitialQueryArguments )?.[ 'goals-at-front-experiment' ] );
-}
-
 const siteSetupFlow: Flow = {
 	name: 'site-setup',
 	isSignupFlow: false,
 	__experimentalUseSessions: true,
 
 	useSteps() {
-		const isGoalsAtFrontExperiment = useGoalsAtFrontExperimentQueryParam();
-
 		const steps = [
 			STEPS.GOALS,
 			STEPS.INTENT,
@@ -85,15 +76,9 @@ const siteSetupFlow: Flow = {
 			STEPS.DIFM_STARTING_POINT,
 		];
 
-		if ( isGoalsAtFrontExperiment ) {
-			return [ STEPS.PROCESSING, STEPS.ERROR ];
-		}
-
 		return steps;
 	},
 	useStepNavigation( currentStep, navigate ) {
-		const isGoalsAtFrontExperiment = useGoalsAtFrontExperimentQueryParam();
-
 		const intent = useSelect(
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIntent(),
 			[]
@@ -222,7 +207,6 @@ const siteSetupFlow: Flow = {
 						redirectionUrl = addQueryArgs(
 							{
 								showLaunchpad: true,
-								...( isGoalsAtFrontExperiment && { 'goals-at-front-experiment': true } ),
 								...( skippedCheckout && { skippedCheckout: 1 } ),
 							},
 							to
@@ -683,78 +667,6 @@ const siteSetupFlow: Flow = {
 	},
 
 	useSideEffect() {
-		const isGoalsAtFrontExperiment = useGoalsAtFrontExperimentQueryParam();
-		const { siteSlugOrId, siteId } = useSiteData();
-		const { setPendingAction } = useDispatch( ONBOARD_STORE );
-		const { selectedDesign, selectedStyleVariation, selectedGlobalStyles } = useSelect(
-			( select ) => {
-				const { getSelectedDesign, getSelectedStyleVariation, getSelectedGlobalStyles } = select(
-					ONBOARD_STORE
-				) as OnboardSelect;
-				return {
-					selectedDesign: getSelectedDesign(),
-					selectedStyleVariation: getSelectedStyleVariation(),
-					selectedGlobalStyles: getSelectedGlobalStyles(),
-				};
-			},
-			[]
-		);
-
-		const dispatch = reduxDispatch();
-
-		const skippedCheckout = useQuery().get( 'skippedCheckout' );
-		const activateDesign = useActivateDesign();
-		const isPendingActionSet = useRef( false );
-
-		useEffect( () => {
-			if ( ! isGoalsAtFrontExperiment || ! siteSlugOrId || ! siteId ) {
-				return;
-			}
-
-			// Avoid the pending action to be triggered multiple times.
-			if ( isPendingActionSet.current ) {
-				return;
-			}
-
-			isPendingActionSet.current = true;
-			setPendingAction( async () => {
-				if ( ! selectedDesign ) {
-					return;
-				}
-				try {
-					await activateDesign( selectedDesign, {
-						styleVariation: selectedStyleVariation,
-						globalStyles: selectedGlobalStyles,
-					} );
-				} catch ( error: any ) {
-					// We attempt to set the design on the site anyway even when the checkout is skipped.
-					// That's because the user might have selected a free design, and there's no reason
-					// we shouldn't set that design on the site when the checkout is skipped.
-					// If the ThemeNotPurchasedError is thrown we know that they actually selected a
-					// paid theme and we're unable to apply it.
-					if ( error.name !== 'ThemeNotPurchasedError' || skippedCheckout !== '1' ) {
-						throw error;
-					}
-				}
-
-				const design_completed = selectedDesign?.default ? false : true;
-				await updateLaunchpadSettings( siteSlugOrId, {
-					checklist_statuses: { design_completed },
-				} );
-			} );
-		}, [
-			isGoalsAtFrontExperiment,
-			siteSlugOrId,
-			siteId,
-			activateDesign,
-			selectedDesign,
-			setPendingAction,
-			dispatch,
-			selectedStyleVariation,
-			selectedGlobalStyles,
-			skippedCheckout,
-		] );
-
 		const { get, set } = useFlowState();
 		const urlQueryParams = useQuery();
 		const ref = urlQueryParams.get( 'ref' );
