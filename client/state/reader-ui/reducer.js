@@ -42,7 +42,7 @@ export const currentStream = ( state = null, action ) => {
 /*
  * Holds the last action that requires the user to be logged in
  */
-export const lastActionRequiresLogin = ( state = null, action ) => {
+export const lastActionRequiresLogin = withPersistence( ( state = null, action ) => {
 	switch ( action.type ) {
 		case READER_REGISTER_LAST_ACTION_REQUIRES_LOGIN:
 			return action.lastAction;
@@ -51,7 +51,7 @@ export const lastActionRequiresLogin = ( state = null, action ) => {
 		default:
 			return state;
 	}
-};
+} );
 
 const combinedReducer = combineReducers( {
 	sidebar,
