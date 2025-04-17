@@ -322,12 +322,16 @@ body.is-section-signup {
 
 	// Sign Up styles
 
+	.components-text-control__input,
+	.components-button {
+		--color-accent: var(--color-orange);
+		--color-accent-60: var(--color-orange);
+	}
+
 	.auth-form__social .auth-form__social-buttons-container {
 		margin-bottom: 24px;
 
 		.social-buttons__button {
-			--color-accent: var(--color-orange);
-
 			> span {
 				font-family: $inter;
 				font-size: rem(13px);
