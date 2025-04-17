@@ -1,22 +1,9 @@
-/**
- * External dependencies
- */
 import { fn } from '@storybook/test';
-
-/**
- * WordPress dependencies
- */
-import { useState } from '@wordpress/element';
-import { wordpress, more, link } from '@wordpress/icons';
-
-/**
- * Internal dependencies
- */
+// import { wordpress, more, link } from '@wordpress/icons';
+import { useState } from 'react';
 import { Tabs } from '..';
-import Button from '../../button';
-import Icon from '../../icon';
-import { Slot, Fill, Provider as SlotFillProvider } from '../../slot-fill';
-import Tooltip from '../../tooltip';
+// import Icon from '../../icon';
+// import Tooltip from '../../tooltip';
 import type { Meta, StoryFn } from '@storybook/react';
 
 const meta: Meta< typeof Tabs > = {
@@ -24,14 +11,10 @@ const meta: Meta< typeof Tabs > = {
 	id: 'components-tabs',
 	component: Tabs,
 	subcomponents: {
-		// @ts-expect-error - See https://github.com/storybookjs/storybook/issues/23170
 		'Tabs.TabList': Tabs.TabList,
-		// @ts-expect-error - See https://github.com/storybookjs/storybook/issues/23170
 		'Tabs.Tab': Tabs.Tab,
-		// @ts-expect-error - See https://github.com/storybookjs/storybook/issues/23170
 		'Tabs.TabPanel': Tabs.TabPanel,
-		// @ts-expect-error - See https://github.com/storybookjs/storybook/issues/23170
-		'Tabs.Context': Tabs.Context,
+		'Tabs.Context': Tabs.Context.Provider,
 	},
 	tags: [ 'status-private' ],
 	parameters: {
@@ -68,7 +51,7 @@ const Template: StoryFn< typeof Tabs > = ( props ) => {
 					<br />
 					Instead, the [Tab] key will move focus to the first focusable element within the panel.
 				</p>
-				<Button variant="primary">I&apos;m a button!</Button>
+				<button>I&apos;m a button!</button>
 			</Tabs.TabPanel>
 		</Tabs>
 	);
@@ -115,13 +98,9 @@ export const SizeAndOverflowPlayground: StoryFn< typeof Tabs > = ( props ) => {
 					</li>
 				</ul>
 			</div>
-			<Button
-				style={ { marginBottom: '1rem' } }
-				variant="primary"
-				onClick={ () => setFullWidth( ! fullWidth ) }
-			>
+			<button style={ { marginBottom: '1rem' } } onClick={ () => setFullWidth( ! fullWidth ) }>
 				{ fullWidth ? 'Remove width: 100% from TabList' : 'Set width: 100% in TabList' }
-			</Button>
+			</button>
 			<Tabs { ...props }>
 				<div
 					style={ {
@@ -209,92 +188,52 @@ const DisabledTabTemplate: StoryFn< typeof Tabs > = ( props ) => {
 };
 export const DisabledTab = DisabledTabTemplate.bind( {} );
 
-const WithTabIconsAndTooltipsTemplate: StoryFn< typeof Tabs > = ( props ) => {
-	return (
-		<Tabs { ...props }>
-			<Tabs.TabList>
-				{ [
-					{
-						id: 'tab1',
-						label: 'Tab one',
-						icon: wordpress,
-					},
-					{
-						id: 'tab2',
-						label: 'Tab two',
-						icon: link,
-					},
-					{
-						id: 'tab3',
-						label: 'Tab three',
-						icon: more,
-					},
-				].map( ( { id, label, icon } ) => (
-					<Tooltip text={ label } key={ id }>
-						<Tabs.Tab tabId={ id } aria-label={ label }>
-							<Icon icon={ icon } />
-						</Tabs.Tab>
-					</Tooltip>
-				) ) }
-			</Tabs.TabList>
-			<Tabs.TabPanel tabId="tab1">
-				<p>Selected tab: Tab 1</p>
-			</Tabs.TabPanel>
-			<Tabs.TabPanel tabId="tab2">
-				<p>Selected tab: Tab 2</p>
-			</Tabs.TabPanel>
-			<Tabs.TabPanel tabId="tab3">
-				<p>Selected tab: Tab 3</p>
-			</Tabs.TabPanel>
-		</Tabs>
-	);
-};
-export const WithTabIconsAndTooltips = WithTabIconsAndTooltipsTemplate.bind( {} );
+// const WithTabIconsAndTooltipsTemplate: StoryFn< typeof Tabs > = ( props ) => {
+// 	return (
+// 		<Tabs { ...props }>
+// 			<Tabs.TabList>
+// 				{ [
+// 					{
+// 						id: 'tab1',
+// 						label: 'Tab one',
+// 						icon: wordpress,
+// 					},
+// 					{
+// 						id: 'tab2',
+// 						label: 'Tab two',
+// 						icon: link,
+// 					},
+// 					{
+// 						id: 'tab3',
+// 						label: 'Tab three',
+// 						icon: more,
+// 					},
+// 				].map( ( { id, label, icon } ) => (
+// 					<Tooltip text={ label } key={ id }>
+// 						<Tabs.Tab tabId={ id } aria-label={ label }>
+// 							<Icon icon={ icon } />
+// 						</Tabs.Tab>
+// 					</Tooltip>
+// 				) ) }
+// 			</Tabs.TabList>
+// 			<Tabs.TabPanel tabId="tab1">
+// 				<p>Selected tab: Tab 1</p>
+// 			</Tabs.TabPanel>
+// 			<Tabs.TabPanel tabId="tab2">
+// 				<p>Selected tab: Tab 2</p>
+// 			</Tabs.TabPanel>
+// 			<Tabs.TabPanel tabId="tab3">
+// 				<p>Selected tab: Tab 3</p>
+// 			</Tabs.TabPanel>
+// 		</Tabs>
+// 	);
+// };
+// export const WithTabIconsAndTooltips = WithTabIconsAndTooltipsTemplate.bind( {} );
 
 export const ManualActivation = Template.bind( {} );
 ManualActivation.args = {
 	selectOnMove: false,
 };
-
-const UsingSlotFillTemplate: StoryFn< typeof Tabs > = ( props ) => {
-	return (
-		<SlotFillProvider>
-			<Tabs { ...props }>
-				<Tabs.TabList>
-					<Tabs.Tab tabId="tab1">Tab 1</Tabs.Tab>
-					<Tabs.Tab tabId="tab2">Tab 2</Tabs.Tab>
-					<Tabs.Tab tabId="tab3">Tab 3</Tabs.Tab>
-				</Tabs.TabList>
-				<Fill name="tabs-are-fun">
-					<Tabs.TabPanel tabId="tab1">
-						<p>Selected tab: Tab 1</p>
-					</Tabs.TabPanel>
-					<Tabs.TabPanel tabId="tab2">
-						<p>Selected tab: Tab 2</p>
-					</Tabs.TabPanel>
-					<Tabs.TabPanel tabId="tab3">
-						<p>Selected tab: Tab 3</p>
-					</Tabs.TabPanel>
-				</Fill>
-			</Tabs>
-			<div
-				style={ {
-					border: '2px solid #999',
-					width: '300px',
-					margin: '20px auto',
-				} }
-			>
-				<p>other stuff</p>
-				<p>other stuff</p>
-				<p>this is fun!</p>
-				<p>other stuff</p>
-				<Slot bubblesVirtually as="div" name="tabs-are-fun" />
-			</div>
-		</SlotFillProvider>
-	);
-};
-export const UsingSlotFill = UsingSlotFillTemplate.bind( {} );
-UsingSlotFill.storyName = 'Using SlotFill';
 
 const CloseButtonTemplate: StoryFn< typeof Tabs > = ( props ) => {
 	const [ isOpen, setIsOpen ] = useState( true );
@@ -321,8 +260,7 @@ const CloseButtonTemplate: StoryFn< typeof Tabs > = ( props ) => {
 								<Tabs.Tab tabId="tab2">Tab 2</Tabs.Tab>
 								<Tabs.Tab tabId="tab3">Tab 3</Tabs.Tab>
 							</Tabs.TabList>
-							<Button
-								variant="tertiary"
+							<button
 								style={ {
 									marginLeft: 'auto',
 									alignSelf: 'center',
@@ -330,7 +268,7 @@ const CloseButtonTemplate: StoryFn< typeof Tabs > = ( props ) => {
 								onClick={ () => setIsOpen( false ) }
 							>
 								Close Tabs
-							</Button>
+							</button>
 						</div>
 						<Tabs.TabPanel tabId="tab1">
 							<p>Selected tab: Tab 1</p>
@@ -344,9 +282,7 @@ const CloseButtonTemplate: StoryFn< typeof Tabs > = ( props ) => {
 					</Tabs>
 				</div>
 			) : (
-				<Button variant="tertiary" onClick={ () => setIsOpen( true ) }>
-					Open Tabs
-				</Button>
+				<button onClick={ () => setIsOpen( true ) }>Open Tabs</button>
 			) }
 		</>
 	);

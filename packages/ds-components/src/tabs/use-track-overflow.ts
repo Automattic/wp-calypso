@@ -1,9 +1,6 @@
 /* eslint-disable jsdoc/require-param */
-/**
- * WordPress dependencies
- */
-import { useState, useEffect } from '@wordpress/element';
 import { useEvent } from '@wordpress/compose';
+import { useState, useEffect } from 'react';
 
 /**
  * Tracks if an element contains overflow and on which end by tracking the

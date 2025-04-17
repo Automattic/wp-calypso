@@ -1,27 +1,17 @@
-/**
- * External dependencies
- */
 import * as Ariakit from '@ariakit/react';
-import clsx from 'clsx';
-
-/**
- * WordPress dependencies
- */
-import warning from '@wordpress/warning';
-import { forwardRef, useLayoutEffect, useState } from '@wordpress/element';
 import { useMergeRefs } from '@wordpress/compose';
-
-/**
- * Internal dependencies
- */
-import type { TabListProps } from './types';
-import type { WordPressComponentProps } from '../context';
-import type { ElementOffsetRect } from '../utils/element-rect';
+import clsx from 'clsx';
+import debugFactory from 'debug';
+import { forwardRef, useLayoutEffect, useState } from 'react';
+import { useTrackElementOffsetRect } from '../utils/element-rect';
+import { useAnimatedOffsetRect } from '../utils/hooks/use-animated-offset-rect';
 import { useTabsContext } from './context';
 import { StyledTabList } from './styles';
-import { useTrackElementOffsetRect } from '../utils/element-rect';
 import { useTrackOverflow } from './use-track-overflow';
-import { useAnimatedOffsetRect } from '../utils/hooks/use-animated-offset-rect';
+import type { TabListProps } from './types';
+import type { ElementOffsetRect } from '../utils/element-rect';
+
+const debug = debugFactory( 'a8c-ds:tabs' );
 
 const DEFAULT_SCROLL_MARGIN = 24;
 
@@ -69,7 +59,7 @@ function useScrollRectIntoView(
 
 export const TabList = forwardRef<
 	HTMLDivElement,
-	WordPressComponentProps< TabListProps, 'div', false >
+	React.ComponentPropsWithoutRef< 'div' > & TabListProps
 >( function TabList( { children, ...otherProps }, ref ) {
 	const { store } = useTabsContext() ?? {};
 
@@ -84,14 +74,10 @@ export const TabList = forwardRef<
 	const renderedItems = Ariakit.useStoreState( store, 'renderedItems' );
 
 	const selectedItemIndex =
-		renderedItems && selectedItem
-			? renderedItems.indexOf( selectedItem )
-			: -1;
+		renderedItems && selectedItem ? renderedItems.indexOf( selectedItem ) : -1;
 	// Use selectedItemIndex as a dependency to force recalculation when the
 	// selected item index changes (elements are swapped / added / removed).
-	const selectedRect = useTrackElementOffsetRect( selectedItem?.element, [
-		selectedItemIndex,
-	] );
+	const selectedRect = useTrackElementOffsetRect( selectedItem?.element, [ selectedItemIndex ] );
 
 	// Track overflow to show scroll hints.
 	const overflow = useTrackOverflow( parent, {
@@ -125,7 +111,7 @@ export const TabList = forwardRef<
 	};
 
 	if ( ! store ) {
-		warning( '`Tabs.TabList` must be wrapped in a `Tabs` component.' );
+		debug( '`Tabs.TabList` must be wrapped in a `Tabs` component.' );
 		return null;
 	}
 

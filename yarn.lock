@@ -63,6 +63,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@ariakit/core@npm:0.4.15":
+  version: 0.4.15
+  resolution: "@ariakit/core@npm:0.4.15"
+  checksum: 2d437d65e1ccadfdedb6b181447abf5a0af49a6b5380188163c80db18da7673172e2c8aa54bf2877fef534716b1755c5098ee11efa3372ee525d7ecdff611efb
+  languageName: node
+  linkType: hard
+
 "@ariakit/react-core@npm:0.4.15":
   version: 0.4.15
   resolution: "@ariakit/react-core@npm:0.4.15"
@@ -77,6 +84,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@ariakit/react-core@npm:0.4.17":
+  version: 0.4.17
+  resolution: "@ariakit/react-core@npm:0.4.17"
+  dependencies:
+    "@ariakit/core": "npm:0.4.15"
+    "@floating-ui/dom": "npm:^1.0.0"
+    use-sync-external-store: "npm:^1.2.0"
+  peerDependencies:
+    react: ^17.0.0 || ^18.0.0 || ^19.0.0
+    react-dom: ^17.0.0 || ^18.0.0 || ^19.0.0
+  checksum: ae047aecb4e662a72e3b73b05986752f9fac9f0c839493f73f566a4cf557881a44e359ecc0be54c39e7d87b8df2be1238c4810b39ba275869a27e54cce6cbd94
+  languageName: node
+  linkType: hard
+
 "@ariakit/react@npm:^0.4.15":
   version: 0.4.15
   resolution: "@ariakit/react@npm:0.4.15"
@@ -86,6 +107,18 @@ __metadata:
     react: ^17.0.0 || ^18.0.0 || ^19.0.0
     react-dom: ^17.0.0 || ^18.0.0 || ^19.0.0
   checksum: e89ccb1e56df17cf372b6f6df3217f2e2258bad920ac21044303948f59de4a61ae42142162d12c05b65e4ff63f08a450fa7429aafbb74a9817a65f36607ff980
+  languageName: node
+  linkType: hard
+
+"@ariakit/react@npm:^0.4.17":
+  version: 0.4.17
+  resolution: "@ariakit/react@npm:0.4.17"
+  dependencies:
+    "@ariakit/react-core": "npm:0.4.17"
+  peerDependencies:
+    react: ^17.0.0 || ^18.0.0 || ^19.0.0
+    react-dom: ^17.0.0 || ^18.0.0 || ^19.0.0
+  checksum: 4188e517726b27319c68da58721659fea4da91baf978407efdc48dd639ac1b095c013c027d07daae14c2a0ef62100f1f3bf849b0426d2162a9edc8f107548e8e
   languageName: node
   linkType: hard
 
@@ -960,9 +993,14 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/ds-components@workspace:packages/ds-components"
   dependencies:
+    "@ariakit/react": "npm:^0.4.17"
     "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-storybook": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
+    "@storybook/test": "npm:^8.6.9"
+    "@wordpress/compose": "npm:^7.21.0"
+    "@wordpress/icons": "npm:^10.21.0"
+    clsx: "npm:^2.1.1"
     css-loader: "npm:^6.11.0"
     postcss: "npm:^8.5.3"
     storybook: "npm:^8.6.9"

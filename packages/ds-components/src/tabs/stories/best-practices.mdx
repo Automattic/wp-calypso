@@ -1,6 +1,6 @@
 import { Meta } from '@storybook/blocks';
 
-import * as TabsStories from './index.story';
+import * as TabsStories from './index.stories';
 
 <Meta of={ TabsStories } name="Best Practices" />
 
@@ -13,7 +13,7 @@ import * as TabsStories from './index.story';
 Tabs can be used in an uncontrolled mode, where the component manages its own state. In this mode, the `defaultTabId` prop can be used to set the initially selected tab. If this prop is not set, the first tab will be selected by default. In addition, in most cases where the currently active tab becomes disabled or otherwise unavailable, uncontrolled mode will automatically fall back to selecting the first available tab.
 
 ```jsx
-import { Tabs } from '@wordpress/components';
+import { Tabs } from 'TBD';
 
 const onSelect = ( tabName ) => {
 	console.log( 'Selecting tab', tabName );
@@ -50,7 +50,7 @@ const MyUncontrolledTabs = () => (
 Tabs can also be used in a controlled mode, where the parent component specifies the `selectedTabId` and the `onSelect` props to control tab selection. In this mode, the `defaultTabId` prop will be ignored if it is provided. If the `selectedTabId` is `null`, no tab is selected. In this mode, if the currently selected tab becomes disabled or otherwise unavailable, the component will _not_ fall back to another available tab, leaving the controlling component in charge of implementing the desired logic.
 
 ```tsx
-import { Tabs } from '@wordpress/components';
+import { Tabs } from 'TBD/components';
 
 const [ selectedTabId, setSelectedTabId ] = useState<
 	string | undefined | null

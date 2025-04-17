@@ -1,15 +1,38 @@
-/**
- * External dependencies
- */
-import styled from '@emotion/styled';
 import * as Ariakit from '@ariakit/react';
-
-/**
- * Internal dependencies
- */
-import { COLORS, CONFIG } from '../utils';
-import { space } from '../utils/space';
+import styled from '@emotion/styled';
 import Icon from '../icon';
+
+const GRAY = {
+	900: '#1e1e1e',
+	800: '#2f2f2f',
+	/** Meets 4.6:1 text contrast against white. */
+	700: '#757575',
+	/** Meets 3:1 UI or large text contrast against white. */
+	600: '#949494',
+	400: '#ccc',
+	/** Used for most borders. */
+	300: '#ddd',
+	/** Used sparingly for light borders. */
+	200: '#e0e0e0',
+	/** Used for light gray backgrounds. */
+	100: '#f0f0f0',
+};
+
+const COLORS = {
+	theme: {
+		foreground: GRAY[ 900 ],
+		accent: '#3858e9',
+	},
+	ui: {
+		textDisabled: GRAY[ 600 ],
+	},
+};
+
+const CONFIG = {
+	radiusSmall: '4px',
+};
+
+const space = ( value: number ) => `calc(4px * ${ value })`;
 
 export const StyledTabList = styled( Ariakit.TabList )`
 	display: flex;
@@ -60,25 +83,15 @@ export const StyledTabList = styled( Ariakit.TabList )`
 	&[aria-orientation='horizontal'] {
 		--fade-width: 4rem;
 		--fade-gradient-base: transparent 0%, black var( --fade-width );
-		--fade-gradient-composed: var( --fade-gradient-base ), black 60%,
-			transparent 50%;
+		--fade-gradient-composed: var( --fade-gradient-base ), black 60%, transparent 50%;
 		&.is-overflowing-first {
-			mask-image: linear-gradient(
-				to var( --direction-end ),
-				var( --fade-gradient-base )
-			);
+			mask-image: linear-gradient( to var( --direction-end ), var( --fade-gradient-base ) );
 		}
 		&.is-overflowing-last {
-			mask-image: linear-gradient(
-				to var( --direction-start ),
-				var( --fade-gradient-base )
-			);
+			mask-image: linear-gradient( to var( --direction-start ), var( --fade-gradient-base ) );
 		}
 		&.is-overflowing-first.is-overflowing-last {
-			mask-image: linear-gradient(
-					to right,
-					var( --fade-gradient-composed )
-				),
+			mask-image: linear-gradient( to right, var( --fade-gradient-composed ) ),
 				linear-gradient( to left, var( --fade-gradient-composed ) );
 		}
 
@@ -86,20 +99,9 @@ export const StyledTabList = styled( Ariakit.TabList )`
 			bottom: 0;
 			height: 0;
 			width: calc( var( --antialiasing-factor ) * 1px );
-			transform: translateX(
-					calc(
-						var( --selected-start ) * var( --direction-factor ) *
-							1px
-					)
-				)
-				scaleX(
-					calc(
-						var( --selected-width, 0 ) /
-							var( --antialiasing-factor )
-					)
-				);
-			border-bottom: var( --wp-admin-border-width-focus ) solid
-				${ COLORS.theme.accent };
+			transform: translateX( calc( var( --selected-start ) * var( --direction-factor ) * 1px ) )
+				scaleX( calc( var( --selected-width, 0 ) / var( --antialiasing-factor ) ) );
+			border-bottom: var( --wp-admin-border-width-focus ) solid ${ COLORS.theme.accent };
 		}
 	}
 	&[aria-orientation='vertical'] {
@@ -107,42 +109,23 @@ export const StyledTabList = styled( Ariakit.TabList )`
 			/* Adjusting the border radius to match the scaling in the y axis. */
 			border-radius: ${ CONFIG.radiusSmall } /
 				calc(
-					${ CONFIG.radiusSmall } /
-						(
-							var( --selected-height, 0 ) /
-								var( --antialiasing-factor )
-						)
+					${ CONFIG.radiusSmall } / ( var( --selected-height, 0 ) / var( --antialiasing-factor ) )
 				);
 			top: 0;
 			left: 0;
 			width: 100%;
 			height: calc( var( --antialiasing-factor ) * 1px );
 			transform: translateY( calc( var( --selected-top, 0 ) * 1px ) )
-				scaleY(
-					calc(
-						var( --selected-height, 0 ) /
-							var( --antialiasing-factor )
-					)
-				);
-			background-color: color-mix(
-				in srgb,
-				${ COLORS.theme.accent },
-				transparent 96%
-			);
+				scaleY( calc( var( --selected-height, 0 ) / var( --antialiasing-factor ) ) );
+			background-color: color-mix( in srgb, ${ COLORS.theme.accent }, transparent 96% );
 		}
-		&[data-select-on-move='true']:has(
-				:is( :focus-visible, [data-focus-visible] )
-			)::before {
+		&[data-select-on-move='true']:has( :is( :focus-visible, [data-focus-visible] ) )::before {
 			box-sizing: border-box;
-			border: var( --wp-admin-border-width-focus ) solid
-				${ COLORS.theme.accent };
+			border: var( --wp-admin-border-width-focus ) solid ${ COLORS.theme.accent };
 			/* Adjusting the border width to match the scaling in the y axis. */
 			border-block-width: calc(
 				var( --wp-admin-border-width-focus, 1px ) /
-					(
-						var( --selected-height, 0 ) /
-							var( --antialiasing-factor )
-					)
+					( var( --selected-height, 0 ) / var( --antialiasing-factor ) )
 			);
 		}
 	}
@@ -187,8 +170,7 @@ export const Tab = styled( Ariakit.Tab )`
 
 			// Draw the indicator.
 			// Outline works for Windows high contrast mode as well.
-			outline: var( --wp-admin-border-width-focus ) solid
-				${ COLORS.theme.accent };
+			outline: var( --wp-admin-border-width-focus ) solid ${ COLORS.theme.accent };
 			border-radius: ${ CONFIG.radiusSmall };
 
 			// Animation
@@ -258,9 +240,7 @@ export const TabChevron = styled( Icon )`
 	// because otherwise it looks jarring, as it shows up outside of the focus
 	// indicator that's being animated at the same time.
 	@media not ( prefers-reduced-motion ) {
-		[data-select-on-move='true']
-			[role='tab']:is( [aria-selected='true'],  )
-			& {
+		[data-select-on-move='true'] [role='tab']:is( [aria-selected='true'],  ) & {
 			transition: opacity 0.15s 0.15s linear;
 		}
 	}
@@ -276,8 +256,7 @@ export const TabPanel = styled( Ariakit.TabPanel )`
 	}
 
 	&[data-focus-visible] {
-		box-shadow: 0 0 0 var( --wp-admin-border-width-focus )
-			${ COLORS.theme.accent };
+		box-shadow: 0 0 0 var( --wp-admin-border-width-focus ) ${ COLORS.theme.accent };
 		// Windows high contrast mode.
 		outline: 2px solid transparent;
 		outline-offset: 0;
