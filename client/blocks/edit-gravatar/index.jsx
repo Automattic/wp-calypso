@@ -32,19 +32,20 @@ export class EditGravatar extends Component {
 		translate: PropTypes.func,
 		user: PropTypes.object,
 		recordClickButtonEvent: PropTypes.func,
+		recordAvatarUpdated: PropTypes.func,
 	};
 
 	quickEditor = null;
 
 	componentDidMount() {
-		const { user, setCurrentUser: setUser } = this.props;
+		const { user, setCurrentUser: setUser, recordAvatarUpdated } = this.props;
 
 		this.quickEditor = new GravatarQuickEditorCore( {
 			email: user.email,
 			scope: [ 'avatars' ],
 			onProfileUpdated: () => {
-				const updatedAvatarUrl = addQueryArgs( user.avatar_URL, { ver: Date.now() } );
-				setUser( { ...user, avatar_URL: updatedAvatarUrl } );
+				recordAvatarUpdated();
+				setUser( { ...user, avatar_URL: addQueryArgs( user.avatar_URL, { ver: Date.now() } ) } );
 			},
 		} );
 	}
@@ -73,7 +74,9 @@ export class EditGravatar extends Component {
 				<div className="edit-gravatar__image-container">
 					<div className="edit-gravatar__gravatar-placeholder" />
 				</div>
-				<div className="edit-gravatar__edit-button-placeholder" />
+				<div className="edit-gravatar__explanation-container">
+					<div className="edit-gravatar__edit-button-placeholder" />
+				</div>
 			</div>
 		);
 	};
@@ -127,8 +130,6 @@ export class EditGravatar extends Component {
 			return this.renderGravatarProfileHidden();
 		}
 
-		user.email_verified = false;
-
 		return (
 			<div
 				className={ clsx( 'edit-gravatar', {
@@ -146,17 +147,24 @@ export class EditGravatar extends Component {
 						</div>
 					) }
 				</div>
-				<Button
-					className="edit-gravatar__edit-button"
-					variant="link"
-					onClick={ () => {
-						recordClickButtonEvent( { isVerified: user.email_verified } );
-						this.quickEditor?.open();
-					} }
-					disabled={ ! user.email_verified }
-				>
-					{ translate( 'Edit your public avatar' ) }
-				</Button>
+				<div className="edit-gravatar__explanation-container">
+					{ user.email_verified ? (
+						<Button
+							className="edit-gravatar__edit-button"
+							variant="link"
+							onClick={ () => {
+								recordClickButtonEvent( { isVerified: user.email_verified } );
+								this.quickEditor?.open();
+							} }
+						>
+							{ translate( 'Edit your public avatar' ) }
+						</Button>
+					) : (
+						<p className="edit-gravatar__explanation">
+							{ translate( 'Verify your email to update your avatar.' ) }
+						</p>
+					) }
+				</div>
 			</div>
 		);
 	}
@@ -168,6 +176,8 @@ const recordClickButtonEvent = ( { isVerified } ) =>
 		recordGoogleEvent( 'Me', 'Clicked on Edit Gravatar Button in Profile' )
 	);
 
+const recordAvatarUpdated = () => recordTracksEvent( 'calypso_edit_gravatar_update_success' );
+
 export default connect(
 	( state ) => ( {
 		user: getCurrentUser( state ) || {},
@@ -175,7 +185,8 @@ export default connect(
 		isGravatarProfileHidden: getUserSetting( state, 'gravatar_profile_hidden' ),
 	} ),
 	{
-		recordClickButtonEvent,
 		setCurrentUser,
+		recordClickButtonEvent,
+		recordAvatarUpdated,
 	}
 )( localize( EditGravatar ) );

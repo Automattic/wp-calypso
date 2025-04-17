@@ -1,3 +1,5 @@
+@import '@wordpress/base-styles/breakpoints';
+
 .edit-gravatar {
 	display: flex;
 	flex-direction: column;
@@ -19,15 +21,28 @@
 		background-color: var( --studio-red-60 );
 		border: 2px solid #fff;
 		border-radius: 50%;
-		width: 24px;
-		height: 24px;
+		width: 48px;
+		height: 48px;
+		box-sizing: border-box;
+	}
+
+	.edit-gravatar__explanation-container {
+		display: flex;
+		align-items: center;
+		margin: 15px 0 20px;
 	}
 
 	.edit-gravatar__edit-button {
 		font-size: 14px;
 		line-height: 24px;
-		margin: 15px 0 20px;
 		text-decoration: none;
+	}
+
+	.edit-gravatar__explanation {
+		color: var( --color-text-subtle );
+		font-size: $font-body-small;
+		font-style: italic;
+		margin: 0;
 	}
 
 	.edit-gravatar__gravatar-placeholder,
@@ -45,7 +60,6 @@
 	.edit-gravatar__edit-button-placeholder {
 		height: 23px;
 		width: 160px;
-		margin: 15px 0 20px;
 	}
 
 	.edit-gravatar__gravatar-is-hidden {
@@ -54,19 +68,8 @@
 		align-items: center;
 		width: 150px;
 		height: 150px;
-	}
-
-	.edit-gravatar__explanation-container {
-		display: flex;
-		align-items: center;
-		margin: 15px 0 20px;
-	}
-
-	.edit-gravatar__explanation {
-		color: var( --color-text-subtle );
-		font-size: $font-body-small;
-		font-style: italic;
-		margin: 0;
+		border-radius: 50%;
+		background-color: var( --studio-gray-5 );
 	}
 
 	.edit-gravatar__pop-over svg {
@@ -76,6 +79,12 @@
 	&.edit-gravatar--is-unverified {
 		.gravatar {
 			opacity: 0.33;
+		}
+	}
+
+	@media ( min-width: $break-large ) {
+		.edit-gravatar__explanation {
+			max-width: 270px;
 		}
 	}
 }
