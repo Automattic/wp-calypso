@@ -9,14 +9,14 @@ import {
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
-import useUserQuery from 'calypso/data/users/use-user-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useDispatch, useSelector } from 'calypso/state';
-import { getCurrentUserId, getCurrentUserName } from 'calypso/state/current-user/selectors';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { hasLoadedSitePurchasesFromServer } from 'calypso/state/purchases/selectors';
 import hasCancelableSitePurchases from 'calypso/state/selectors/has-cancelable-site-purchases';
 import { leaveSite } from 'calypso/state/sites/actions';
-import { getSite, getSiteDomain, getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSite, getSiteDomain, getSiteSlug } from 'calypso/state/sites/selectors';
+import useQueryUsersMeBySiteId from './use-query-users-me-by-site-id';
 import type { AppState } from 'calypso/types';
 import './leave-site-modal-form.scss';
 
@@ -32,10 +32,6 @@ const LeaveSiteModalForm = ( { siteId, onSuccess, onClose }: LeaveSiteModalFormP
 	const [ isChecked, setChecked ] = useState( false );
 	const [ isSubmitting, setIsSubmitting ] = useState( false );
 	const wpcomUserId = useSelector( ( state: AppState ) => getCurrentUserId( state ) );
-	const userName = useSelector( ( state: AppState ) => getCurrentUserName( state ) );
-	const isJetpack = useSelector( ( state: AppState ) =>
-		isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: true } )
-	);
 	const siteSlug = useSelector( ( state: AppState ) => getSiteSlug( state, siteId ) );
 	const siteDomain = useSelector( ( state: AppState ) => getSiteDomain( state, siteId ) || '' );
 	const siteOwnerId = useSelector( ( state: AppState ) => getSite( state, siteId )?.site_owner );
@@ -48,19 +44,19 @@ const LeaveSiteModalForm = ( { siteId, onSuccess, onClose }: LeaveSiteModalFormP
 	);
 
 	// It gets external user ID (ID of user entity from site connected via Jetpack) from provided WPCOM user ID.
-	const { data: user } = useUserQuery( siteId, userName, { retry: false } );
+	const { data: user } = useQueryUsersMeBySiteId( siteId );
+
 	const isSiteOwner = wpcomUserId === siteOwnerId;
-	const userId = isJetpack ? user?.ID : wpcomUserId;
 
 	const handleLeaveSite = async () => {
-		if ( ! userId || ! isChecked ) {
+		if ( ! user?.id || ! isChecked ) {
 			return;
 		}
 
 		recordTracksEvent( 'calypso_leave_site_modal_form_leave_site_click' );
 		setIsSubmitting( true );
 		try {
-			const result = await dispatch( leaveSite( siteId, userId ) );
+			const result = await dispatch( leaveSite( siteId, user?.id ) );
 			if ( result ) {
 				page.redirect( '/sites' );
 				onSuccess?.();
@@ -159,7 +155,7 @@ const LeaveSiteModalForm = ( { siteId, onSuccess, onClose }: LeaveSiteModalFormP
 			<Button
 				__next40pxDefaultSize
 				variant="primary"
-				disabled={ ! userId || ! isChecked || isSiteOwner || hasActiveCancelableSubscriptions }
+				disabled={ ! user?.id || ! isChecked || isSiteOwner || hasActiveCancelableSubscriptions }
 				isBusy={ isSubmitting }
 				onClick={ handleLeaveSite }
 			>
