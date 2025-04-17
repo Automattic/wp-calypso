@@ -1,5 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback } from 'react';
 import useSubmitSupportFormMutation from 'calypso/a8c-for-agencies/data/support/use-submit-support-form-mutation';
 import { useDispatch, useSelector } from 'calypso/state';
 import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selectors';
@@ -21,8 +21,6 @@ export const useProvideGeneralFeedback = () => {
 	const agencyId = useSelector( getActiveAgencyId );
 	const user = useSelector( getCurrentUser );
 
-	const [ createTicket, setCreateTicket ] = useState( false );
-
 	const getMessage = useCallback( ( type: FeedbackType ) => {
 		switch ( type ) {
 			case FeedbackType.BugReport:
@@ -32,31 +30,7 @@ export const useProvideGeneralFeedback = () => {
 		}
 	}, [] );
 
-	const {
-		mutate: saveFeedback,
-		isPending: isSavingFeedback,
-		isSuccess: isSuccessFeedback,
-		isError: isErrorFeedback,
-	} = useSaveFeedbackMutation();
-
-	const {
-		mutateAsync: submitSupportForm,
-		isPending: isSubmittingSupportForm,
-		isSuccess: isSuccessSupportForm,
-		isError: isErrorSupportForm,
-	} = useSubmitSupportFormMutation();
-
-	const isSuccess = useMemo(
-		() => ( createTicket ? isSuccessSupportForm && isSuccessFeedback : isSuccessFeedback ),
-		[ createTicket, isSuccessSupportForm, isSuccessFeedback ]
-	);
-
-	const isError = useMemo(
-		() => ( createTicket ? isErrorSupportForm || isErrorFeedback : isErrorFeedback ),
-		[ createTicket, isErrorSupportForm, isErrorFeedback ]
-	);
-
-	const handleError = useCallback( () => {
+	const handleError = () => {
 		dispatch(
 			errorNotice(
 				translate( 'An error occurred while submitting your feedback. Please try again.' ),
@@ -66,10 +40,9 @@ export const useProvideGeneralFeedback = () => {
 				}
 			)
 		);
-		setCreateTicket( false );
-	}, [ dispatch, translate ] );
+	};
 
-	const handleSuccess = useCallback( () => {
+	const handleSuccess = () => {
 		dispatch(
 			successNotice(
 				translate(
@@ -81,17 +54,21 @@ export const useProvideGeneralFeedback = () => {
 				}
 			)
 		);
-		setCreateTicket( false );
-	}, [ dispatch, translate ] );
+	};
 
-	useEffect( () => {
-		if ( isError ) {
-			handleError();
-		}
-		if ( isSuccess ) {
-			handleSuccess();
-		}
-	}, [ isError, isSuccess, handleError, handleSuccess, createTicket ] );
+	const {
+		mutate: saveFeedback,
+		isPending: isSavingFeedback,
+		isSuccess: isSuccessFeedback,
+	} = useSaveFeedbackMutation( {
+		onSuccess: handleSuccess,
+		onError: handleError,
+	} );
+
+	const { mutateAsync: submitSupportForm, isPending: isSubmittingSupportForm } =
+		useSubmitSupportFormMutation( {
+			onError: handleError,
+		} );
 
 	const handleSaveFeedback = useCallback(
 		( feedback: GeneralFeedbackParams ) => {
@@ -124,14 +101,12 @@ export const useProvideGeneralFeedback = () => {
 
 	const submitGeneralFeedback = useCallback(
 		async ( feedback: GeneralFeedbackParams ) => {
-			setCreateTicket( false );
 			if ( ! agencyId || ! feedback.responses ) {
 				return;
 			}
 			const { responses, type, screenshot } = feedback;
 			// Create a Zendesk ticket for bug reports and feature suggestions.
 			if ( [ FeedbackType.BugReport, FeedbackType.SuggestAFeature ].includes( type ) && user ) {
-				setCreateTicket( true );
 				const formData = new FormData();
 				const fields = {
 					...responses,
@@ -176,6 +151,6 @@ export const useProvideGeneralFeedback = () => {
 	return {
 		submitGeneralFeedback,
 		isSubmitting: isSubmittingSupportForm || isSavingFeedback,
-		isSuccess,
+		isSuccess: isSuccessFeedback,
 	};
 };
