@@ -899,8 +899,6 @@ export class LoginForm extends Component {
 
 							{ isSignupExistingAccount && this.renderLoginFromSignupNotice() }
 
-							<FormLabel htmlFor="usernameOrEmail">{ this.renderUsernameorEmailLabel() }</FormLabel>
-
 							<TextControl
 								autoCapitalize="off"
 								autoCorrect="off"
@@ -915,6 +913,7 @@ export class LoginForm extends Component {
 								ref={ this.saveUsernameOrEmailRef }
 								value={ this.state.usernameOrEmail }
 								disabled={ isFormDisabled || this.isPasswordView() }
+								label={ this.renderUsernameorEmailLabel() }
 								__next40pxDefaultSize
 								__nextHasNoMarginBottom
 							/>
@@ -1005,8 +1004,6 @@ export class LoginForm extends Component {
 								} ) }
 								aria-hidden={ isPasswordHidden }
 							>
-								<FormLabel htmlFor="password">{ this.props.translate( 'Password' ) }</FormLabel>
-
 								<TextControl
 									autoCapitalize="off"
 									autoComplete="current-password"
@@ -1020,6 +1017,7 @@ export class LoginForm extends Component {
 									value={ this.state.password }
 									disabled={ isFormDisabled }
 									tabIndex={ isPasswordHidden ? -1 : undefined /* not tabbable when hidden */ }
+									label={ this.props.translate( 'Password' ) }
 									__next40pxDefaultSize
 									__nextHasNoMarginBottom
 								/>

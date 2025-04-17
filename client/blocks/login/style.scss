@@ -177,12 +177,9 @@ $breakpoint-mobile: 782px; //Mobile size.
 
 .login__form .login__form-userdata {
 	label {
-		color: var(--color-neutral-70);
-		display: block;
+		color: var(--color-neutral-100);
 		font-size: $font-body-small;
-		line-height: 1.5;
-		font-weight: 600;
-		margin-bottom: 5px;
+		text-transform: initial;
 	}
 
 	input.form-text-input,
