@@ -45,6 +45,7 @@ export class EditGravatar extends Component {
 			scope: [ 'avatars' ],
 			onProfileUpdated: () => {
 				recordAvatarUpdateEvent();
+				// Update the avatar URL to force a refresh.
 				setUser( { ...user, avatar_URL: addQueryArgs( user.avatar_URL, { ver: Date.now() } ) } );
 			},
 		} );
