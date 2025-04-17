@@ -13,6 +13,14 @@ import { StepProps } from '../../../types';
 import { RenderStepOptions, mockStepProps, renderStep } from '../../test/helpers';
 
 jest.mock( 'calypso/landing/stepper/hooks/use-site-slug' );
+jest.mock(
+	'../../site-migration-instructions/site-preview/hooks/use-site-preview-mshot-image-handler',
+	() => ( {
+		useSitePreviewMShotImageHandler: () => ( {
+			createScreenshots: jest.fn(),
+		} ),
+	} )
+);
 
 const mockApi = () => nock( 'https://public-api.wordpress.com:443' );
 
@@ -176,5 +184,48 @@ describe( 'SiteMigrationIdentify', () => {
 		expect(
 			screen.getByText( /Round-the-clock security monitoring and DDoS protection./ )
 		).toBeVisible();
+	} );
+
+	it( 'shows the back link when the "ref" param is as "goals"', () => {
+		render(
+			{
+				navigation: {
+					goBack: jest.fn(),
+					submit: jest.fn(),
+				},
+			},
+			{ initialEntry: '/some-path?ref=goals' }
+		);
+
+		expect( screen.getByRole( 'button', { name: /Back/ } ) ).toBeVisible();
+	} );
+
+	it( 'shows the back button when the "back_to" param defined', () => {
+		render(
+			{
+				navigation: {
+					goBack: jest.fn(),
+					submit: jest.fn(),
+				},
+			},
+			{ initialEntry: '/some-path?back_to=https://example.com' }
+		);
+
+		expect( screen.getByRole( 'link', { name: /Back/ } ) ).toBeVisible();
+	} );
+
+	it( 'hides the back button and link by default', async () => {
+		render(
+			{
+				navigation: {
+					goBack: jest.fn(),
+					submit: jest.fn(),
+				},
+			},
+			{ initialEntry: '/some-path' }
+		);
+
+		expect( screen.queryByRole( 'button', { name: /Back/ } ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'link', { name: /Back/ } ) ).not.toBeInTheDocument();
 	} );
 } );
