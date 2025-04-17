@@ -79,7 +79,6 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 			siteUrl: select( ONBOARD_STORE ).getSiteUrl(),
 			progress: select( ONBOARD_STORE ).getProgress(),
 			partnerBundle: select( ONBOARD_STORE ).getPartnerBundle(),
-			siteGoals: select( ONBOARD_STORE ).getGoals(),
 		} ),
 		[]
 	);

@@ -67,8 +67,9 @@ describe( '/plans/:siteSlug', () => {
 		window.scrollTo = originalScrollTo;
 	} );
 
-	const renderPage = () => {
+	const renderPage = ( { initialPath } = {} ) => {
 		renderWithProvider( <PlansWrapper context={ { path: '/plans' } } />, {
+			initialPath,
 			initialState,
 			reducers: {
 				ui: uiReducer,
@@ -84,11 +85,11 @@ describe( '/plans/:siteSlug', () => {
 		( isEnabled as jest.Mock ).mockImplementation( configMock( { 'untangling/plans': true } ) );
 
 		( useCurrentPlan as jest.Mock ).mockReturnValue( mockPlan );
-
-		renderPage();
 	} );
 
 	describe( "'Manage add-ons' button", () => {
+		beforeEach( renderPage );
+
 		it( 'should be visible', () => {
 			expect( screen.getByRole( 'button', { name: 'Manage add-ons' } ) ).toBeInTheDocument();
 		} );
@@ -112,6 +113,20 @@ describe( '/plans/:siteSlug', () => {
 					'Boost your plan with add-ons'
 				);
 			} );
+		} );
+	} );
+
+	describe( "when the '?add-ons-modal=true' query param is present", () => {
+		beforeEach( () => {
+			renderPage( { initialPath: '?add-ons-modal=true' } );
+		} );
+
+		it( 'should show the add-ons modal initially', () => {
+			const dialog = screen.getByRole( 'dialog' );
+			expect( dialog ).toBeInTheDocument();
+			expect( within( dialog ).getByRole( 'heading' ) ).toHaveTextContent(
+				'Boost your plan with add-ons'
+			);
 		} );
 	} );
 } );

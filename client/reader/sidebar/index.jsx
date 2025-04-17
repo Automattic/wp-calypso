@@ -21,7 +21,6 @@ import ReaderConversationsIcon from 'calypso/reader/components/icons/conversatio
 import ReaderDiscoverIcon from 'calypso/reader/components/icons/discover-icon';
 import ReaderLikesIcon from 'calypso/reader/components/icons/likes-icon';
 import ReaderManageSubscriptionsIcon from 'calypso/reader/components/icons/manage-subscriptions-icon';
-import ReaderNotificationsIcon from 'calypso/reader/components/icons/notifications-icon';
 import ReaderSearchIcon from 'calypso/reader/components/icons/search-icon';
 import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
 import { getTagStreamUrl } from 'calypso/reader/route';
@@ -119,13 +118,6 @@ export class ReaderSidebar extends Component {
 		recordAction( 'clicked_reader_sidebar_conversations' );
 		recordGaEvent( 'Clicked Reader Sidebar Conversations' );
 		this.props.recordReaderTracksEvent( 'calypso_reader_sidebar_conversations_clicked' );
-		this.handleGlobalSidebarMenuItemClick( path );
-	};
-
-	handleReaderSidebarNotificationsClicked = ( event, path ) => {
-		recordAction( 'clicked_reader_sidebar_notifications' );
-		recordGaEvent( 'Clicked Reader Sidebar Notifications' );
-		this.props.recordReaderTracksEvent( 'calypso_reader_sidebar_notifications_clicked' );
 		this.handleGlobalSidebarMenuItemClick( path );
 	};
 
@@ -273,16 +265,6 @@ export class ReaderSidebar extends Component {
 				<SidebarSeparator />
 
 				<SidebarItem
-					className={ ReaderSidebarHelper.itemLinkClass( '/reader/notifications', path, {
-						'sidebar-streams__notifications': true,
-					} ) }
-					label={ translate( 'Notifications' ) }
-					onNavigate={ this.handleReaderSidebarNotificationsClicked }
-					customIcon={ <ReaderNotificationsIcon size={ 24 } viewBox="-2 -2 24 24" /> }
-					link="/reader/notifications"
-				/>
-
-				<SidebarItem
 					className={ ReaderSidebarHelper.itemLinkClass( '/reader/subscriptions', path, {
 						'sidebar-streams__manage-subscriptions': true,
 					} ) }
@@ -291,6 +273,13 @@ export class ReaderSidebar extends Component {
 					customIcon={ <ReaderManageSubscriptionsIcon size={ 24 } viewBox="0 0 24 24" /> }
 					link="/reader/subscriptions"
 				/>
+				{ /*
+					Keep a separator at the end to avoid having the last item covered by browser breadcrumbs,
+					url links when hovering other items, etc. Otherwise when a user scrolls to the end of the
+					sidebar, their cursor is generally on other menu items causing the urls to popup in the
+					bottom right and obscure view the last menu item.
+				*/ }
+				<SidebarSeparator />
 			</SidebarMenu>
 		);
 	}

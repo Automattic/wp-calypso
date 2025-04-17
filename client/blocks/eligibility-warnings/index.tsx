@@ -43,7 +43,7 @@ interface ExternalProps {
 	siteId?: number | null;
 	isEligible?: boolean;
 	backUrl?: string;
-	onDismiss?: () => void;
+	onDismiss?: () => void; // If rendered in a modal this is required. Used to dismiss the modal when accessing the help assistant.
 	onProceed: ( options: { geo_affinity?: string } ) => void;
 	standaloneProceed: boolean;
 	className?: string;
@@ -211,10 +211,7 @@ export const EligibilityWarnings = ( {
 
 			<CompactCard>
 				<div className="eligibility-warnings__confirm-buttons">
-					<SupportLink
-						shouldUseHelpAssistant={ context === 'plugin-details' }
-						onShowHelpAssistant={ onDismiss }
-					/>
+					<SupportLink onShowHelpAssistant={ onDismiss } />
 					<Button
 						variant="primary"
 						__next40pxDefaultSize

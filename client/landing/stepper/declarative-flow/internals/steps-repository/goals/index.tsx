@@ -70,7 +70,7 @@ const GoalsStep: StepType< {
 	useEffect( () => {
 		resetIntent();
 
-		// Delibirately not including all deps in the deps array
+		// Deliberately not including all deps in the deps array
 		// This hook is only meant to be executed in the first render
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [] );

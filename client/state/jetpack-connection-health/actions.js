@@ -6,7 +6,6 @@ import {
 	JETPACK_CONNECTION_HEALTH_REQUEST,
 	JETPACK_CONNECTION_HEALTH_REQUEST_FAILURE,
 } from 'calypso/state/action-types';
-import isJetpackConnectionUnhealthy from 'calypso/state/jetpack-connection-health/selectors/is-jetpack-connection-unhealthy';
 
 import 'calypso/state/jetpack-connection-health/init';
 
@@ -64,10 +63,7 @@ export const setJetpackConnectionRequestFailure = ( siteId, error ) => ( {
  * @param {number} siteId The site id to which the status belongs
  * @returns {Function} Action thunk
  */
-export const requestJetpackConnectionHealthStatus = ( siteId ) => ( dispatch, getState ) => {
-	const currentState = getState();
-	const reduxIsUnhealthy = isJetpackConnectionUnhealthy( currentState, siteId );
-
+export const requestJetpackConnectionHealthStatus = ( siteId ) => ( dispatch ) => {
 	dispatch( {
 		type: JETPACK_CONNECTION_HEALTH_REQUEST,
 		siteId,
@@ -81,10 +77,9 @@ export const requestJetpackConnectionHealthStatus = ( siteId ) => ( dispatch, ge
 		} )
 		.then( ( response ) => {
 			const { is_healthy, error } = response;
-			if ( is_healthy && reduxIsUnhealthy ) {
+			if ( is_healthy ) {
 				dispatch( setJetpackConnectionHealthy( siteId ) );
-			}
-			if ( ! is_healthy && ! reduxIsUnhealthy ) {
+			} else {
 				dispatch( setJetpackConnectionUnhealthy( siteId, error ) );
 			}
 		} )

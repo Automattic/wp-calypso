@@ -92,7 +92,7 @@
 /packages/data-stores/wpcom-plans-ui @Automattic/martech
 
 # Support
-/packages/help-center @Automattic/vertex
+/packages/help-center @Automattic/t-rex
 
 # Onboarding
 /client/landing/stepper/declarative-flow/internals @Automattic/dotcom-stepper

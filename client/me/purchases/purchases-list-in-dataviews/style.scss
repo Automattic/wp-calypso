@@ -24,6 +24,7 @@
 
 	.dataviews-view-table a.card.purchase-item {
 		width: 100%;
+		box-shadow: unset;
 	}
 
 	.dataviews-view-table td div.dataviews-view-table__cell-content-wrapper div.card.purchase-item {
@@ -73,17 +74,9 @@
 		justify-content: flex-start;
 	}
 
-	.dataviews-view-table .purchase-item__site,
-	.dataviews-view-table .membership-item {
-		.site-icon {
-			border-radius: 2px;
-		}
-
-		.site-icon,
-		.site-icon__img {
-			border-radius: 2px;
-			width: 36px;
-			height: 36px;
+	.dataviews-view-table {
+		tr td:first-child, tr th:first-child{
+			padding-left: 48px;
 		}
 	}
 
@@ -96,27 +89,6 @@
 		&:focus {
 			z-index: 1;
 		}
-	}
-
-	.dataviews-view-table .purchase-item__disconnected-icon {
-		display: flex;
-		width: 36px;
-		height: 36px;
-		border-radius: 2px;
-		background: var(--color-error-50);
-		align-items: center;
-		justify-content: center;
-
-		.gridicon {
-			fill: var(--color-surface);
-		}
-	}
-
-	.dataviews-view-table .purchase-item__static-icon {
-		width: 36px;
-		height: 36px;
-		border-radius: 2px;
-		overflow: hidden;
 	}
 
 	.dataviews-view-table .purchase-item__title {
@@ -140,15 +112,6 @@
 		word-wrap: break-word;
 	} 
 
-	.dataviews-title-field .purchase-item__site {
-		max-width: 52px;
-		white-space: break-spaces;
-		margin-right: unset;
-
-		@media (min-width: 961px) {
-			margin-right: 16px;
-		}
-	}
 
 	.dataviews-title-field .purchase-item__information {
 		max-width: 250px;
