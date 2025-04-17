@@ -23,8 +23,6 @@ import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import { FormDivider } from 'calypso/blocks/authentication';
 import JetpackConnectSiteOnly from 'calypso/blocks/jetpack-connect-site-only';
-import FormPasswordInput from 'calypso/components/forms/form-password-input';
-import FormTextInput from 'calypso/components/forms/form-text-input';
 import Notice from 'calypso/components/notice';
 import { LastUsedSocialButton } from 'calypso/components/social-buttons';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
@@ -219,20 +217,20 @@ export class LoginForm extends Component {
 		}
 	}, 500 );
 
-	onChangeUsernameOrEmailField = ( event ) => {
+	onChangeUsernameOrEmailField = ( value ) => {
 		this.setState( {
 			emailSuggestionError: false,
 			emailSuggestion: '',
 		} );
-		this.onChangeField( event );
-		this.debouncedEmailSuggestion( event.target.value );
+		this.onChangeField( { name: 'usernameOrEmail', value } );
+		this.debouncedEmailSuggestion( value );
 	};
 
-	onChangeField = ( event ) => {
+	onChangeField = ( { name, value } ) => {
 		this.props.formUpdate();
 
 		this.setState( {
-			[ event.target.name ]: event.target.value,
+			[ name ]: value,
 		} );
 	};
 
@@ -903,7 +901,7 @@ export class LoginForm extends Component {
 
 							<FormLabel htmlFor="usernameOrEmail">{ this.renderUsernameorEmailLabel() }</FormLabel>
 
-							<FormTextInput
+							<TextControl
 								autoCapitalize="off"
 								autoCorrect="off"
 								spellCheck="false"
@@ -917,6 +915,8 @@ export class LoginForm extends Component {
 								ref={ this.saveUsernameOrEmailRef }
 								value={ this.state.usernameOrEmail }
 								disabled={ isFormDisabled || this.isPasswordView() }
+								__next40pxDefaultSize
+								__nextHasNoMarginBottom
 							/>
 
 							{ requestError && requestError.field === 'usernameOrEmail' && (
@@ -1007,19 +1007,21 @@ export class LoginForm extends Component {
 							>
 								<FormLabel htmlFor="password">{ this.props.translate( 'Password' ) }</FormLabel>
 
-								<FormPasswordInput
+								<TextControl
 									autoCapitalize="off"
 									autoComplete="current-password"
 									className={ clsx( {
 										'is-error': requestError && requestError.field === 'password',
 									} ) }
-									onChange={ this.onChangeField }
+									onChange={ ( value ) => this.onChangeField( { name: 'password', value } ) }
 									id="password"
 									name="password"
 									ref={ this.savePasswordRef }
 									value={ this.state.password }
 									disabled={ isFormDisabled }
 									tabIndex={ isPasswordHidden ? -1 : undefined /* not tabbable when hidden */ }
+									__next40pxDefaultSize
+									__nextHasNoMarginBottom
 								/>
 
 								{ requestError && requestError.field === 'password' && (
