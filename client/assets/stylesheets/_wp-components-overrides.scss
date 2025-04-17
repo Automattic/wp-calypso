@@ -57,3 +57,7 @@
 		text-decoration: underline;
 	}
 }
+
+.components-text-control__input {
+	--wp-admin-theme-color: var(--color-accent);
+}
