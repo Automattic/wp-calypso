@@ -25,11 +25,6 @@
 	top: 0;
 	z-index: 2; // hardcoded for now ARC-95
 
-	@media not (prefers-reduced-motion) {
-		transition: padding ease-out 0.1s;
-	}
-
-	
 	&__title-container {
 		min-height: $grid-unit-50;
 
