@@ -16,9 +16,8 @@ import {
 	recordGoogleEvent,
 	composeAnalytics,
 } from 'calypso/state/analytics/actions';
+import { setCurrentUser } from 'calypso/state/current-user/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import { resetAllImageEditorState } from 'calypso/state/editor/image-editor/actions';
-import { receiveGravatarImageFailed, uploadGravatar } from 'calypso/state/gravatar-status/actions';
 import getUserSetting from 'calypso/state/selectors/get-user-setting';
 import { isFetchingUserSettings } from 'calypso/state/user-settings/selectors';
 
@@ -26,31 +25,27 @@ import './style.scss';
 
 export class EditGravatar extends Component {
 	state = {
-		isEditingImage: false,
-		image: false,
 		showEmailVerificationNotice: false,
-		avatarUrlCacheVer: '',
 	};
 
 	static propTypes = {
 		translate: PropTypes.func,
-		receiveGravatarImageFailed: PropTypes.func,
-		resetAllImageEditorState: PropTypes.func,
-		uploadGravatar: PropTypes.func,
 		user: PropTypes.object,
 		recordClickButtonEvent: PropTypes.func,
-		recordReceiveImageEvent: PropTypes.func,
 	};
 
 	quickEditor = null;
 
 	componentDidMount() {
-		const { user } = this.props;
+		const { user, setCurrentUser: setUser } = this.props;
 
 		this.quickEditor = new GravatarQuickEditorCore( {
 			email: user.email,
 			scope: [ 'avatars' ],
-			onProfileUpdated: () => this.setState( { avatarUrlCacheVer: Date.now() } ),
+			onProfileUpdated: () => {
+				const avatarUrl = addQueryArgs( user.avatar_URL, { ver: Date.now() } );
+				setUser( { ...user, avatar_URL: avatarUrl } );
+			},
 		} );
 	}
 
@@ -74,31 +69,27 @@ export class EditGravatar extends Component {
 
 	renderEditGravatarIsLoading = () => {
 		return (
-			<div className="edit-gravatar edit-gravatar--is-loading">
-				<div className="edit-gravatar__avatar-container">
+			<div className="edit-gravatar">
+				<div className="edit-gravatar__image-container">
 					<div className="edit-gravatar__gravatar-placeholder" />
 				</div>
-				<div>
-					<p className="edit-gravatar__explanation edit-gravatar__explanation-placeholder" />
-				</div>
+				<div className="edit-gravatar__edit-button-placeholder" />
 			</div>
 		);
 	};
 
 	renderGravatarProfileHidden = ( { gravatarLink, translate } ) => {
 		return (
-			<div className="edit-gravatar edit-gravatar--is-hidden">
-				<div className="edit-gravatar__avatar-container">
+			<div className="edit-gravatar">
+				<div className="edit-gravatar__image-container">
 					<div className="edit-gravatar__gravatar-is-hidden">
-						<div className="edit-gravatar__label-container">
-							<Gridicon
-								icon="user"
-								size={ 96 } /* eslint-disable-line wpcalypso/jsx-gridicon-size */
-							/>
-						</div>
+						<Gridicon
+							icon="user"
+							size={ 96 } /* eslint-disable-line wpcalypso/jsx-gridicon-size */
+						/>
 					</div>
 				</div>
-				<div>
+				<div className="edit-gravatar__explanation-container">
 					<p className="edit-gravatar__explanation">{ translate( 'Your avatar is hidden.' ) }</p>
 					<InfoPopover className="edit-gravatar__pop-over" position="left">
 						{ translate(
@@ -135,8 +126,6 @@ export class EditGravatar extends Component {
 			return this.renderGravatarProfileHidden( { gravatarLink, translate } );
 		}
 
-		const avatarUrl = addQueryArgs( user.avatar_URL, { ver: this.state.avatarUrlCacheVer } );
-
 		return (
 			<div
 				className={ clsx( 'edit-gravatar', {
@@ -146,12 +135,8 @@ export class EditGravatar extends Component {
 				{ this.state.showEmailVerificationNotice && (
 					<VerifyEmailDialog onClose={ this.closeVerifyEmailDialog } />
 				) }
-				<div className="edit-gravatar__avatar-container">
-					<Gravatar
-						imgSize={ GRAVATAR_IMG_SIZE }
-						size={ 150 }
-						user={ { ...user, avatar_URL: avatarUrl } }
-					/>
+				<div className="edit-gravatar__image-container">
+					<Gravatar imgSize={ GRAVATAR_IMG_SIZE } size={ 150 } user={ user } />
 					{ ! user.email_verified && (
 						<div className="edit-gravatar__caution-icon">
 							<Icon icon={ caution } fill="#fff" size={ 24 } />
@@ -159,7 +144,7 @@ export class EditGravatar extends Component {
 					) }
 				</div>
 				<Button
-					className="edit-gravatar__edit-avatar-button"
+					className="edit-gravatar__edit-button"
 					variant="link"
 					onClick={ () => {
 						recordClickButtonEvent( { isVerified: user.email_verified } );
@@ -180,8 +165,6 @@ const recordClickButtonEvent = ( { isVerified } ) =>
 		recordGoogleEvent( 'Me', 'Clicked on Edit Gravatar Button in Profile' )
 	);
 
-const recordReceiveImageEvent = () => recordTracksEvent( 'calypso_edit_gravatar_file_receive' );
-
 export default connect(
 	( state ) => ( {
 		user: getCurrentUser( state ) || {},
@@ -189,10 +172,7 @@ export default connect(
 		isGravatarProfileHidden: getUserSetting( state, 'gravatar_profile_hidden' ),
 	} ),
 	{
-		resetAllImageEditorState,
-		receiveGravatarImageFailed,
-		uploadGravatar,
 		recordClickButtonEvent,
-		recordReceiveImageEvent,
+		setCurrentUser,
 	}
 )( localize( EditGravatar ) );
