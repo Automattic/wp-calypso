@@ -1,5 +1,6 @@
 /* eslint-disable no-restricted-imports */
 import { HelpCenterSelect } from '@automattic/data-stores';
+import { useGetOdieInteractions } from '@automattic/odie-client/src/data/use-get-odie-interactions';
 import { useGetSupportInteractions } from '@automattic/odie-client/src/data/use-get-support-interactions';
 import { useSelect } from '@wordpress/data';
 import { useEffect, useState } from '@wordpress/element';
@@ -30,6 +31,8 @@ export const useGetHistoryChats = (): UseGetHistoryChatsResult => {
 		useGetSupportInteractions( 'zendesk', 100, 'solved' );
 	const { data: supportInteractionsClosed, isLoading: isLoadingClosedInteractions } =
 		useGetSupportInteractions( 'zendesk', 100, 'closed' );
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	const { data: odieInteractions, isLoading: isLoadingOdieInteractions } = useGetOdieInteractions();
 
 	const { isChatLoaded } = useSelect( ( select ) => {
 		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
@@ -42,6 +45,7 @@ export const useGetHistoryChats = (): UseGetHistoryChatsResult => {
 		isLoadingResolvedInteractions ||
 		isLoadingClosedInteractions ||
 		isLoadingOpenInteractions ||
+		isLoadingOdieInteractions ||
 		isLoadingSolvedInteractions;
 
 	useEffect( () => {
