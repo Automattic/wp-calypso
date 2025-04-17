@@ -9,6 +9,20 @@
 		display: flex;
 	}
 
+	.edit-gravatar__caution-icon {
+		position: absolute;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		bottom: 3px;
+		right: 3px;
+		background-color: var( --studio-red-60 );
+		border: 2px solid #fff;
+		border-radius: 50%;
+		width: 24px;
+		height: 24px;
+	}
+
 	.edit-gravatar__edit-button {
 		font-size: 14px;
 		line-height: 24px;
@@ -57,13 +71,6 @@
 
 	.edit-gravatar__pop-over svg {
 		margin-top: 2px;
-	}
-
-	// TODO: Check it
-	.gravatar.is-missing {
-		display: block;
-		width: 150px;
-		height: 150px;
 	}
 
 	&.edit-gravatar--is-unverified {

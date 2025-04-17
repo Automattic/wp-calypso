@@ -43,8 +43,8 @@ export class EditGravatar extends Component {
 			email: user.email,
 			scope: [ 'avatars' ],
 			onProfileUpdated: () => {
-				const avatarUrl = addQueryArgs( user.avatar_URL, { ver: Date.now() } );
-				setUser( { ...user, avatar_URL: avatarUrl } );
+				const updatedAvatarUrl = addQueryArgs( user.avatar_URL, { ver: Date.now() } );
+				setUser( { ...user, avatar_URL: updatedAvatarUrl } );
 			},
 		} );
 	}
@@ -78,7 +78,9 @@ export class EditGravatar extends Component {
 		);
 	};
 
-	renderGravatarProfileHidden = ( { gravatarLink, translate } ) => {
+	renderGravatarProfileHidden = () => {
+		const { translate } = this.props;
+
 		return (
 			<div className="edit-gravatar">
 				<div className="edit-gravatar__image-container">
@@ -100,7 +102,7 @@ export class EditGravatar extends Component {
 								' them from appearing on any site.{{/p}}',
 							{
 								components: {
-									ExternalLink: <ExternalLink href={ gravatarLink } target="_blank" icon />,
+									ExternalLink: <ExternalLink href="https://gravatar.com" target="_blank" icon />,
 									p: <p />,
 								},
 							}
@@ -113,7 +115,6 @@ export class EditGravatar extends Component {
 
 	render() {
 		const { isGravatarProfileHidden, translate, user, recordClickButtonEvent } = this.props;
-		const gravatarLink = 'https://gravatar.com';
 		// use imgSize = 400 for caching
 		// it's the popular value for large Gravatars in Calypso
 		const GRAVATAR_IMG_SIZE = 400;
@@ -123,8 +124,10 @@ export class EditGravatar extends Component {
 		}
 
 		if ( isGravatarProfileHidden ) {
-			return this.renderGravatarProfileHidden( { gravatarLink, translate } );
+			return this.renderGravatarProfileHidden();
 		}
+
+		user.email_verified = false;
 
 		return (
 			<div
