@@ -6,10 +6,6 @@
 }
 
 /* @wordpress/components Button overrides */
-.components-button {
-	justify-content: center;
-}
-
 .components-button.is-primary:not(.is-destructive) {
 	--wp-components-color-accent: var(--color-accent);
 	--wp-components-color-accent-inverted: var(--color-text-inverted);
@@ -58,6 +54,7 @@
 	}
 }
 
+/* @wordpress/components TextControl overrides */
 .components-text-control__input {
 	--wp-admin-theme-color: var(--color-accent);
 
