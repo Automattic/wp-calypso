@@ -58,7 +58,7 @@
 .components-text-control__input {
 	--wp-admin-theme-color: var(--color-accent);
 
-	.is-error & {
+	.components-base-control.is-error & {
 		--wp-admin-theme-color: var(--color-error);
 	}
 }
