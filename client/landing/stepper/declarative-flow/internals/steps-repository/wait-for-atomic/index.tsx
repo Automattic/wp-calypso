@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 import config from '@automattic/calypso-config';
-import { Step } from '@automattic/onboarding';
+import { isTransferringHostedSiteCreationFlow, Step } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
@@ -16,7 +16,7 @@ import type { OnboardSelect } from '@automattic/data-stores';
 const WaitForAtomic: StepType = function WaitForAtomic( { navigation, data, flow } ) {
 	const [ searchParams ] = useSearchParams();
 	const { submit } = navigation;
-	const { setPendingAction, setProgress } = useDispatch( ONBOARD_STORE );
+	const { setPendingAction, setProgress: setProgressAction } = useDispatch( ONBOARD_STORE );
 	const site = useSite();
 
 	let siteId = site?.ID as number;
@@ -58,6 +58,14 @@ const WaitForAtomic: StepType = function WaitForAtomic( { navigation, data, flow
 		if ( ! siteId ) {
 			return;
 		}
+
+		const setProgress = ( progress: number ) => {
+			if ( isTransferringHostedSiteCreationFlow( flow ) ) {
+				return;
+			}
+
+			setProgressAction( progress );
+		};
 
 		setPendingAction( async () => {
 			setProgress( 10 );
