@@ -99,7 +99,7 @@ const siteMigration: FlowV2 = {
 					from,
 				} );
 				return window.location.replace(
-					getFullImporterUrl( platform, siteSlug, from ? encodeURIComponent( from ) : null )
+					getFullImporterUrl( platform, siteSlug, from ? encodeURIComponent( from ) : '' )
 				);
 			}
 
