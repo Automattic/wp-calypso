@@ -83,8 +83,6 @@ export class EditGravatar extends Component {
 	};
 
 	renderGravatarProfileHidden = () => {
-		const { translate } = this.props;
-
 		return (
 			<div className="edit-gravatar">
 				<div className="edit-gravatar__image-container">
@@ -96,14 +94,16 @@ export class EditGravatar extends Component {
 					</div>
 				</div>
 				<div className="edit-gravatar__explanation-container">
-					<p className="edit-gravatar__explanation">{ translate( 'Your avatar is hidden.' ) }</p>
+					<p className="edit-gravatar__explanation">
+						{ this.props.translate( 'Your avatar is hidden.' ) }
+					</p>
 					<InfoPopover className="edit-gravatar__pop-over" position="left">
-						{ translate(
+						{ this.props.translate(
 							'{{p}}The avatar you use on WordPress.com comes ' +
 								'from {{ExternalLink}}Gravatar{{/ExternalLink}}, a universal avatar service ' +
 								'(it stands for "Globally Recognized Avatar," get it?).{{/p}}' +
-								'{{p}}However, your photo and Gravatar profile are hidden, preventing' +
-								' them from appearing on any site.{{/p}}',
+								'{{p}}However, because your Gravatar is currently disabled, ' +
+								'both your avatar and Gravatar profile are hidden and won’t appear on any site.{{/p}}',
 							{
 								components: {
 									ExternalLink: <ExternalLink href="https://gravatar.com" target="_blank" icon />,
