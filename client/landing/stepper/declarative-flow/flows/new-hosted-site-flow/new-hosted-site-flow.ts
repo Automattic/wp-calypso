@@ -185,7 +185,7 @@ const hosting: FlowV2 = {
 					};
 					if ( studioSiteId ) {
 						destinationParams[ 'redirect_to' ] = addQueryArgs( `/home/${ siteId }`, {
-							studioSiteId: studioSiteId,
+							studioSiteId,
 						} );
 					} else if ( isWooPartner ) {
 						// For partners, we'll redirect to the WooCommerce admin page
