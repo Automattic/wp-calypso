@@ -105,6 +105,12 @@ export default function LicenseDetailsActions( {
 					</Button>
 				) }
 
+			{ licenseState === LicenseState.Attached && (
+				<Button compact href="/purchases/site/crm-downloads">
+					{ translate( 'Download Jetpack CRM Extensions' ) }
+				</Button>
+			) }
+
 			{ ! isPressableLicense && licenseState === LicenseState.Attached && siteUrl && (
 				<Button compact href={ siteUrl } target="_blank" rel="noopener noreferrer">
 					{ translate( 'View site' ) }
