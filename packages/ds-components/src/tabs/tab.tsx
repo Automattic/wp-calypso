@@ -1,12 +1,11 @@
+import * as Ariakit from '@ariakit/react';
 import { chevronRight } from '@wordpress/icons';
 import warning from '@wordpress/warning';
+import clsx from 'clsx';
 import { forwardRef } from 'react';
+import Icon from '../icon';
 import { useTabsContext } from './context';
-import {
-	Tab as StyledTab,
-	TabChildren as StyledTabChildren,
-	TabChevron as StyledTabChevron,
-} from './styles';
+import styles from './styles.module.css';
 import type { TabProps } from './types';
 
 export const Tab = forwardRef<
@@ -23,16 +22,17 @@ export const Tab = forwardRef<
 	const instancedTabId = `${ instanceId }-${ tabId }`;
 
 	return (
-		<StyledTab
+		<Ariakit.Tab
 			ref={ ref }
 			store={ store }
 			id={ instancedTabId }
 			disabled={ disabled }
 			render={ render }
 			{ ...otherProps }
+			className={ clsx( styles.tab, otherProps.className ) }
 		>
-			<StyledTabChildren>{ children }</StyledTabChildren>
-			<StyledTabChevron icon={ chevronRight } />
-		</StyledTab>
+			<span className={ styles.tabChildren }>{ children }</span>
+			<Icon icon={ chevronRight } className={ styles.tabChevron } />
+		</Ariakit.Tab>
 	);
 } );

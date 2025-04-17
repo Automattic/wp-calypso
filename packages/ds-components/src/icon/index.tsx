@@ -28,6 +28,10 @@ export type Props = {
 	 * @default 24
 	 */
 	size?: number;
+	/**
+	 * Additional class name to apply to the icon.
+	 */
+	className?: string;
 } & AdditionalProps< IconType >;
 
 /**

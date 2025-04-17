@@ -1,0 +1,265 @@
+:root {
+  --gray-900: #1e1e1e;
+  --gray-800: #2f2f2f;
+  --gray-700: #757575;
+  --gray-600: #949494;
+  --gray-400: #ccc;
+  --gray-300: #ddd;
+  --gray-200: #e0e0e0;
+  --gray-100: #f0f0f0;
+  --theme-foreground: var(--gray-900);
+  --theme-accent: #3858e9;
+  --ui-text-disabled: var(--gray-600);
+  --radius-small: 4px;
+  --space-unit: 4px;
+}
+
+/****************************
+ * TabList styles
+ ****************************/
+.tabList {
+  display: flex;
+  align-items: stretch;
+  overflow-x: auto;
+  position: relative;
+
+  --direction-factor: 1;
+  --direction-start: left;
+  --direction-end: right;
+  --selected-start: var( --selected-left, 0 );
+
+	/* Using a large value to avoid antialiasing rounding issues
+			when scaling in the transform, see: https://stackoverflow.com/a/52159123 */
+  --antialiasing-factor: 100;
+}
+
+.tabList[aria-orientation='vertical'] {
+  flex-direction: column;
+}
+
+.tabList:where( [aria-orientation='horizontal'] ) {
+  width: fit-content;
+}
+
+/* RTL Support */
+.tabList:dir(rtl) {
+  --direction-factor: -1;
+  --direction-start: right;
+  --direction-end: left;
+  --selected-start: var( --selected-right, 0 );
+}
+
+@media not (prefers-reduced-motion) {
+  .tabList[data-indicator-animated]::before {
+    transition-property: transform, border-radius, border-block;
+    transition-duration: 0.2s;
+    transition-timing-function: ease-out;
+  }
+}
+
+.tabList::before {
+  content: '';
+  position: absolute;
+  pointer-events: none;
+  transform-origin: var(--direction-start) top;
+
+  /* Windows high contrast mode. */
+  outline: 2px solid transparent;
+  outline-offset: -1px;
+}
+
+/* Horizontal TabList styles */
+.tabList[aria-orientation='horizontal'] {
+	--fade-width: 4rem;
+	--fade-gradient-base: transparent 0%, #000 var( --fade-width );
+	--fade-gradient-composed: var( --fade-gradient-base ), #000 60%, transparent 50%;
+}
+.tabList[aria-orientation='horizontal'].is-overflowing-first {
+	mask-image: linear-gradient( to var( --direction-end ), var( --fade-gradient-base ) );
+}
+.tabList[aria-orientation='horizontal'].is-overflowing-last {
+	mask-image: linear-gradient( to var( --direction-start ), var( --fade-gradient-base ) );
+}
+.tabList[aria-orientation='horizontal'].is-overflowing-first.is-overflowing-last {
+	mask-image: linear-gradient( to right, var( --fade-gradient-composed ) ),
+		linear-gradient( to left, var( --fade-gradient-composed ) );
+}
+.tabList[aria-orientation='horizontal']::before {
+	bottom: 0;
+	height: 0;
+	width: calc( var( --antialiasing-factor ) * 1px );
+	transform: translateX( calc( var( --selected-start ) * var( --direction-factor ) * 1px ) )
+		scaleX( calc( var( --selected-width, 0 ) / var( --antialiasing-factor ) ) );
+	border-bottom: var( --wp-admin-border-width-focus ) solid var( --theme-accent);
+}
+
+/* Vertical TabList styles */
+.tabList[aria-orientation='vertical']::before {
+	/* Adjusting the border radius to match the scaling in the y axis. */
+	border-radius: var( --radius-small ) / calc( var( --radius-small ) / ( var( --selected-height, 0 ) / var( --antialiasing-factor ) ) );
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: calc( var( --antialiasing-factor ) * 1px );
+	transform: translateY( calc( var( --selected-top, 0 ) * 1px ) )
+		scaleY( calc( var( --selected-height, 0 ) / var( --antialiasing-factor ) ) );
+	background-color: color-mix( in srgb,var( --theme-accent ), transparent 96% );
+}
+.tabList[aria-orientation='vertical'][data-select-on-move='true']:has( :is( :focus-visible, [data-focus-visible] ) )::before {
+	box-sizing: border-box;
+	border: var( --wp-admin-border-width-focus ) solid var( --theme-accent );
+	/* Adjusting the border width to match the scaling in the y axis. */
+	border-block-width: calc(
+		var( --wp-admin-border-width-focus, 1px ) /
+			( var( --selected-height, 0 ) / var( --antialiasing-factor ) )
+	);
+}
+
+/****************************
+ * Tab styles
+ ****************************/
+.tab.tab {
+	/* Resets */
+	border-radius: 0;
+	background: transparent;
+	border: none;
+	box-shadow: none;
+
+	flex: 1 0 auto;
+	white-space: nowrap;
+	display: flex;
+	align-items: center;
+	cursor: pointer;
+	line-height: 1.2; /* Characters in some languages (e.g. Japanese) may have a native higher line-height. */
+	font-weight: 400;
+	color: var(--theme-foreground);
+
+	position: relative;
+ }
+
+ &[aria-disabled='true'] {
+	cursor: default;
+	color: var(--ui-text-disabled);
+}
+
+.tab.tab:not( [aria-disabled='true'] ):is( :hover, [data-focus-visible] ) {
+	color: var(--theme-accent);
+}
+
+.tab.tab:focus:not( :disabled ) {
+	box-shadow: none;
+	outline: none;
+}
+
+/* Focus indicator */
+.tab.tab::after {
+	position: absolute;
+	pointer-events: none;
+
+	/* Draw the indicator. */
+	/* Outline works for Windows high contrast mode as well. */
+	outline: var( --wp-admin-border-width-focus ) solid var(--theme-accent);
+	border-radius:var(--radius-small);
+
+	opacity: 0;
+}
+
+.tab.tab[data-focus-visible]::after {
+	opacity: 1;
+}
+
+/* Animation */
+@media not ( prefers-reduced-motion ) {
+	.tab.tab::after {
+		transition: opacity 0.1s linear;
+	}
+}
+
+[aria-orientation='horizontal'] .tab.tab {
+	padding-inline: calc(var(--space-unit) * 4);
+	height: calc(var(--space-unit) * 12);
+	scroll-margin: 24px;
+}
+[aria-orientation='horizontal'] .tab.tab::after {
+	content: '';
+	inset: calc(var(--space-unit) * 3);
+}
+
+[aria-orientation='vertical'] .tab.tab {
+	padding: calc(var(--space-unit) * 2) calc(var(--space-unit) * 3);
+	min-height: calc(var(--space-unit) * 10);
+}
+
+[aria-orientation='vertical'] .tab.tab[aria-selected='true'] {
+	color: var(--theme-accent);
+	fill: currentColor;
+}
+
+[aria-orientation='vertical'][data-select-on-move='false'] .tab.tab::after {
+	content: '';
+	inset: var( --wp-admin-border-width-focus );
+}
+
+/****************************
+ * TabChildren styles
+ ****************************/
+.tabChildren {
+	flex-grow: 1;
+
+	display: flex;
+	align-items: center;
+}
+
+[aria-orientation='horizontal'] .tabChildren {
+	justify-content: center;
+}
+[aria-orientation='vertical'] .tabChildren {
+	justify-content: start;
+}
+
+/****************************
+ * TabChevron styles
+ ****************************/
+
+.tabChevron {
+	flex-shrink: 0;
+	margin-inline-end: calc(var(--space-unit) * -1);
+	opacity: 0;
+}
+
+[aria-orientation='horizontal'] .tabChevron {
+	display: none;
+}
+
+[role='tab']:is( [aria-selected='true'], [data-focus-visible], :hover ) .tabChevron {
+	opacity: 1;
+}
+
+/* The chevron is transitioned into existence when selectOnMove is enabled,
+ * because otherwise it looks jarring, as it shows up outside of the focus
+ * indicator that's being animated at the same time. */
+@media not ( prefers-reduced-motion ) {
+	[data-select-on-move='true'] [role='tab']:is( [aria-selected='true'],  ) .tabChevron {
+		transition: opacity 0.15s 0.15s linear;
+	}
+}
+.tabChevron:dir( rtl ) {
+	rotate: 180deg;
+}
+
+
+/****************************
+ * TabPanel styles
+ ****************************/
+
+.tabPanel:focus {
+	box-shadow: none;
+	outline: none;
+}
+
+.tabPanel[data-focus-visible] {
+	box-shadow: 0 0 0 var( --wp-admin-border-width-focus ) var(--theme-accent);
+	/* Windows high contrast mode. */
+	outline: 2px solid transparent;
+	outline-offset: 0;
+}

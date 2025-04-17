@@ -1,10 +1,11 @@
+import * as Ariakit from '@ariakit/react';
 import { useStoreState } from '@ariakit/react';
+import clsx from 'clsx';
 import debugFactory from 'debug';
 import { forwardRef } from 'react';
 import { useTabsContext } from './context';
-import { TabPanel as StyledTabPanel } from './styles';
+import styles from './styles.module.css';
 import type { TabPanelProps } from './types';
-
 const debug = debugFactory( 'a8c-ds:tabs' );
 
 export const TabPanel = forwardRef<
@@ -21,7 +22,7 @@ export const TabPanel = forwardRef<
 	const instancedTabId = `${ instanceId }-${ tabId }`;
 
 	return (
-		<StyledTabPanel
+		<Ariakit.TabPanel
 			ref={ ref }
 			store={ store }
 			// For TabPanel, the id passed here is the id attribute of the DOM
@@ -31,8 +32,9 @@ export const TabPanel = forwardRef<
 			tabId={ instancedTabId }
 			focusable={ focusable }
 			{ ...otherProps }
+			className={ clsx( styles.tabPanel, otherProps.className ) }
 		>
 			{ selectedId === instancedTabId && children }
-		</StyledTabPanel>
+		</Ariakit.TabPanel>
 	);
 } );
