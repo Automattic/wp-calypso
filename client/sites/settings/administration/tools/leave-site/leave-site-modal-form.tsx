@@ -10,7 +10,6 @@ import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { useRemoveDuplicateViewsExperimentEnabled } from 'calypso/lib/remove-duplicate-views-experiment';
 import { useDispatch, useSelector } from 'calypso/state';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { hasLoadedSitePurchasesFromServer } from 'calypso/state/purchases/selectors';
@@ -41,8 +40,6 @@ const LeaveSiteModalForm = ( { siteId, onClose }: LeaveSiteModalFormProps ) => {
 	const hasActiveCancelableSubscriptions = useSelector( ( state: AppState ) =>
 		hasCancelableSitePurchases( state, siteId )
 	);
-
-	const isUntangled = useRemoveDuplicateViewsExperimentEnabled();
 
 	const isSiteOwner = userId === siteOwnerId;
 
@@ -138,11 +135,7 @@ const LeaveSiteModalForm = ( { siteId, onClose }: LeaveSiteModalFormProps ) => {
 				<Button
 					__next40pxDefaultSize
 					variant="primary"
-					href={
-						isUntangled
-							? `/sites/settings/site/${ siteSlug }/transfer-site`
-							: `/settings/start-site-transfer/${ siteSlug }?source=`
-					}
+					href={ `/sites/settings/site/${ siteSlug }/transfer-site` }
 					onClick={ () =>
 						recordTracksEvent( 'calypso_leave_site_modal_form_transfer_ownership_click' )
 					}
