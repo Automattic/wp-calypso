@@ -17,6 +17,7 @@ import {
 import { isUserEligibleForFreeHostingTrial } from 'calypso/state/selectors/is-user-eligible-for-free-hosting-trial';
 import { useQuery } from '../../../hooks/use-query';
 import { ONBOARD_STORE } from '../../../stores';
+import { getCurrentQueryParams } from '../../../utils/get-current-query-params';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
 import { STEPS } from '../../internals/steps';
 import type { FlowV2, ProvidedDependencies, StepperStep } from '../../internals/types';
@@ -31,7 +32,7 @@ const hosting: FlowV2 = {
 
 		await resetOnboardStore();
 
-		const queryParams = new URLSearchParams( window.location.search );
+		const queryParams = getCurrentQueryParams();
 		const showDomainStep = queryParams.has( 'showDomainStep' );
 		const productSlug = queryParams.get( 'plan' );
 
