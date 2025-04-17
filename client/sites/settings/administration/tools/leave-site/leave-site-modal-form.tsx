@@ -36,7 +36,7 @@ const LeaveSiteModalForm = ( { siteId, onClose }: LeaveSiteModalFormProps ) => {
 		hasLoadedSitePurchasesFromServer( state )
 	);
 
-	const hasActiveSubscriptions = useSelector( ( state: AppState ) =>
+	const hasActiveCancelableSubscriptions = useSelector( ( state: AppState ) =>
 		hasCancelableSitePurchases( state, siteId )
 	);
 
@@ -69,11 +69,11 @@ const LeaveSiteModalForm = ( { siteId, onClose }: LeaveSiteModalFormProps ) => {
 		>
 			{ ! sitePurchasesLoaded && <QuerySitePurchases siteId={ siteId } /> }
 			<VStack spacing={ 6 }>
-				{ ( isSiteOwner || hasActiveSubscriptions ) && (
+				{ ( isSiteOwner || hasActiveCancelableSubscriptions ) && (
 					<LeaveSiteModalWarning
 						siteId={ siteId }
 						isSiteOwner={ isSiteOwner }
-						hasActiveSubscriptions={ hasActiveSubscriptions }
+						hasActiveCancelableSubscriptions={ hasActiveCancelableSubscriptions }
 					/>
 				) }
 				<VStack spacing={ 0 }>
@@ -119,7 +119,7 @@ const LeaveSiteModalForm = ( { siteId, onClose }: LeaveSiteModalFormProps ) => {
 						<Button
 							__next40pxDefaultSize
 							variant="primary"
-							disabled={ ! isChecked || isSiteOwner || hasActiveSubscriptions }
+							disabled={ ! isChecked || isSiteOwner || hasActiveCancelableSubscriptions }
 							isBusy={ isSubmitting }
 							onClick={ handleLeaveSite }
 						>
