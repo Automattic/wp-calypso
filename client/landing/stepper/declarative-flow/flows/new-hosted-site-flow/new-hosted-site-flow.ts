@@ -114,8 +114,6 @@ const hosting: FlowV2 = {
 			}
 		};
 
-		const flowSteps = this.getSteps!();
-
 		const submit = ( providedDependencies: ProvidedDependencies = {} ) => {
 			if ( providedDependencies.siteId ) {
 				setSignupCompleteSiteID( providedDependencies.siteId );
@@ -129,22 +127,11 @@ const hosting: FlowV2 = {
 					setDomainCartItems( providedDependencies.domainCart );
 					setSignupDomainOrigin( providedDependencies.signupDomainOrigin );
 
-					// Surely there's a better way to do this?
-					const currentStepIndex = flowSteps.findIndex(
-						( step ) => step.slug === STEPS.UNIFIED_DOMAINS.slug
-					);
-
-					if ( currentStepIndex === -1 ) {
-						throw new Error( 'Current step index not found' );
+					if ( planCartItem ) {
+						return navigate( STEPS.SITE_CREATION_STEP.slug );
 					}
 
-					const nextStep = flowSteps[ currentStepIndex + 1 ];
-
-					if ( ! nextStep ) {
-						throw new Error( 'Next step not found' );
-					}
-
-					navigate( nextStep.slug );
+					return navigate( STEPS.UNIFIED_PLANS.slug );
 				}
 				case STEPS.UNIFIED_PLANS.slug: {
 					const cartItems = providedDependencies.cartItems as Array< typeof planCartItem >;
