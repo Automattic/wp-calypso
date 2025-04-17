@@ -263,11 +263,6 @@ export const PureUniversalNavbarFooter = ( {
 									</a>
 								</li>
 								<li>
-									<a href={ localizeUrl( 'https://wordpress.com/partners/' ) } target="_self">
-										{ __( 'Partners', __i18n_text_domain__ ) }
-									</a>
-								</li>
-								<li>
 									<a href="https://automattic.com/press/" data-is_external="1">
 										<span className="lp-link-chevron-external">
 											{ __( 'Press', __i18n_text_domain__ ) }
