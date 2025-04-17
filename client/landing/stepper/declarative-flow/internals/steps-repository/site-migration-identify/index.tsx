@@ -169,8 +169,9 @@ const SiteMigrationIdentify: StepType< {
 
 	const shouldShowBackButton = () => {
 		const ref = urlQueryParams.get( 'ref' );
-		const isFromGoals = ref === 'goals';
-		return isFromGoals || urlQueryParams.has( 'back_to' );
+
+		const isBackButtonSupported = ref && [ 'goals', 'wp-admin-importers-list' ].includes( ref );
+		return isBackButtonSupported || urlQueryParams.has( 'back_to' );
 	};
 
 	const [ isVisible, setIsVisible ] = useState( false );

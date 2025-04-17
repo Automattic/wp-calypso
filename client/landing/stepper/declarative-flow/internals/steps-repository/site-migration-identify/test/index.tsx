@@ -214,6 +214,20 @@ describe( 'SiteMigrationIdentify', () => {
 		expect( screen.getByRole( 'link', { name: /Back/ } ) ).toBeVisible();
 	} );
 
+	it( 'shows the back button when the "ref=wp-admin-importers-list"', () => {
+		render(
+			{
+				navigation: {
+					goBack: jest.fn(),
+					submit: jest.fn(),
+				},
+			},
+			{ initialEntry: '/some-path?ref=wp-admin-importers-list' }
+		);
+
+		expect( screen.getByRole( 'button', { name: /Back/ } ) ).toBeVisible();
+	} );
+
 	it( 'hides the back button and link by default', async () => {
 		render(
 			{
