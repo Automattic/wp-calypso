@@ -40,6 +40,7 @@ import {
 	getCurrentOAuth2Client,
 	showOAuth2Layout,
 } from 'calypso/state/oauth2-clients/ui/selectors';
+import { clearLastActionRequiresLogin } from 'calypso/state/reader-ui/actions';
 import { getLastActionRequiresLogin } from 'calypso/state/reader-ui/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
@@ -80,6 +81,8 @@ const LayoutLoggedOut = ( {
 	isBlazePro,
 	locale,
 	twoFactorEnabled,
+	/* eslint-disable no-shadow */
+	clearLastActionRequiresLogin,
 	userAllowedToHelpCenter,
 	colorScheme,
 } ) => {
@@ -298,6 +301,7 @@ const LayoutLoggedOut = ( {
 
 			{ ! isLoggedIn && ! isReaderTagEmbed && (
 				<ReaderJoinConversationDialog
+					onClose={ () => clearLastActionRequiresLogin() }
 					isVisible={ !! loggedInAction }
 					loggedInAction={ loggedInAction }
 					onLoginSuccess={ () => {
@@ -326,68 +330,74 @@ LayoutLoggedOut.propTypes = {
 };
 
 export default withCurrentRoute(
-	connect( ( state, { currentSection, currentRoute, currentQuery } ) => {
-		const sectionGroup = currentSection?.group ?? null;
-		const sectionName = currentSection?.name ?? null;
-		const sectionTitle = currentSection?.title ?? '';
-		const isAkismet = isAkismetRedirect(
-			new URLSearchParams( getRedirectToOriginal( state )?.split( '?' )[ 1 ] ).get( 'back' )
-		);
-		const isJetpackLogin = currentRoute.startsWith( '/log-in/jetpack' );
-		const isInvitationURL = currentRoute.startsWith( '/accept-invite' );
-		const isJetpackWooDnaFlow = wooDnaConfig( getInitialQueryArguments( state ) ).isWooDnaFlow();
-		const oauth2Client = getCurrentOAuth2Client( state );
-		const isGravatar = isGravatarOAuth2Client( oauth2Client );
-		const isWPJobManager = isWPJobManagerOAuth2Client( oauth2Client );
-		const isBlazePro = getIsBlazePro( state );
-		const isGravPoweredClient = isGravPoweredOAuth2Client( oauth2Client );
-		const isWPComLogin =
-			currentRoute.startsWith( '/log-in' ) &&
-			! isJetpackLogin &&
-			Boolean( currentQuery?.client_id ) === false;
-		const isPartnerPortal = isPartnerPortalOAuth2Client( oauth2Client );
-		const isWhiteLogin = isWPComLogin || isGravatar || isGravPoweredClient || isPartnerPortal;
-		const noMasterbarForRoute =
-			isJetpackLogin || ( isWhiteLogin && ! isBlazePro ) || isJetpackWooDnaFlow || isInvitationURL;
-		const isPopup = '1' === currentQuery?.is_popup;
-		const noMasterbarForSection =
-			! isWooOAuth2Client( oauth2Client ) &&
-			! isBlazeProOAuth2Client( oauth2Client ) &&
-			[ 'signup', 'jetpack-connect' ].includes( sectionName );
-		const isWooJPC = isWooJPCFlow( state );
-		const wccomFrom = getWccomFrom( state );
-		const masterbarIsHidden =
-			! ( currentSection || currentRoute ) ||
-			! masterbarIsVisible( state ) ||
-			noMasterbarForSection ||
-			noMasterbarForRoute ||
-			isInStepContainerV2FlowContext( currentRoute, currentQuery );
-		const twoFactorEnabled = isTwoFactorEnabled( state );
+	connect(
+		( state, { currentSection, currentRoute, currentQuery } ) => {
+			const sectionGroup = currentSection?.group ?? null;
+			const sectionName = currentSection?.name ?? null;
+			const sectionTitle = currentSection?.title ?? '';
+			const isAkismet = isAkismetRedirect(
+				new URLSearchParams( getRedirectToOriginal( state )?.split( '?' )[ 1 ] ).get( 'back' )
+			);
+			const isJetpackLogin = currentRoute.startsWith( '/log-in/jetpack' );
+			const isInvitationURL = currentRoute.startsWith( '/accept-invite' );
+			const isJetpackWooDnaFlow = wooDnaConfig( getInitialQueryArguments( state ) ).isWooDnaFlow();
+			const oauth2Client = getCurrentOAuth2Client( state );
+			const isGravatar = isGravatarOAuth2Client( oauth2Client );
+			const isWPJobManager = isWPJobManagerOAuth2Client( oauth2Client );
+			const isBlazePro = getIsBlazePro( state );
+			const isGravPoweredClient = isGravPoweredOAuth2Client( oauth2Client );
+			const isWPComLogin =
+				currentRoute.startsWith( '/log-in' ) &&
+				! isJetpackLogin &&
+				Boolean( currentQuery?.client_id ) === false;
+			const isPartnerPortal = isPartnerPortalOAuth2Client( oauth2Client );
+			const isWhiteLogin = isWPComLogin || isGravatar || isGravPoweredClient || isPartnerPortal;
+			const noMasterbarForRoute =
+				isJetpackLogin ||
+				( isWhiteLogin && ! isBlazePro ) ||
+				isJetpackWooDnaFlow ||
+				isInvitationURL;
+			const isPopup = '1' === currentQuery?.is_popup;
+			const noMasterbarForSection =
+				! isWooOAuth2Client( oauth2Client ) &&
+				! isBlazeProOAuth2Client( oauth2Client ) &&
+				[ 'signup', 'jetpack-connect' ].includes( sectionName );
+			const isWooJPC = isWooJPCFlow( state );
+			const wccomFrom = getWccomFrom( state );
+			const masterbarIsHidden =
+				! ( currentSection || currentRoute ) ||
+				! masterbarIsVisible( state ) ||
+				noMasterbarForSection ||
+				noMasterbarForRoute ||
+				isInStepContainerV2FlowContext( currentRoute, currentQuery );
+			const twoFactorEnabled = isTwoFactorEnabled( state );
 
-		const colorScheme = isWooJPC ? getColorSchemeFromCurrentQuery( currentQuery ) : null;
+			const colorScheme = isWooJPC ? getColorSchemeFromCurrentQuery( currentQuery ) : null;
 
-		return {
-			isAkismet,
-			isJetpackLogin,
-			isWhiteLogin,
-			isPopup,
-			isJetpackWooDnaFlow,
-			isGravatar,
-			isWPJobManager,
-			isGravPoweredClient,
-			wccomFrom,
-			masterbarIsHidden,
-			sectionGroup,
-			sectionName,
-			sectionTitle,
-			oauth2Client,
-			useOAuth2Layout: showOAuth2Layout( state ),
-			isWooJPC,
-			isWoo: getIsWoo( state ),
-			isBlazePro: getIsBlazePro( state ),
-			userAllowedToHelpCenter: ! getIsOnboardingAffiliateFlow( state ),
-			twoFactorEnabled,
-			colorScheme,
-		};
-	} )( localize( LayoutLoggedOut ) )
+			return {
+				isAkismet,
+				isJetpackLogin,
+				isWhiteLogin,
+				isPopup,
+				isJetpackWooDnaFlow,
+				isGravatar,
+				isWPJobManager,
+				isGravPoweredClient,
+				wccomFrom,
+				masterbarIsHidden,
+				sectionGroup,
+				sectionName,
+				sectionTitle,
+				oauth2Client,
+				useOAuth2Layout: showOAuth2Layout( state ),
+				isWooJPC,
+				isWoo: getIsWoo( state ),
+				isBlazePro: getIsBlazePro( state ),
+				userAllowedToHelpCenter: ! getIsOnboardingAffiliateFlow( state ),
+				twoFactorEnabled,
+				colorScheme,
+			};
+		},
+		{ clearLastActionRequiresLogin }
+	)( localize( LayoutLoggedOut ) )
 );

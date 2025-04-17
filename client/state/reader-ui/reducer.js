@@ -39,19 +39,34 @@ export const currentStream = ( state = null, action ) => {
 	}
 };
 
+// We bridge the gap between logged out and logged in with local storage. A new user liking a post
+// while logged out will have their state cleared when logged in, even using withPersistence. This
+// allows us to complete the action after they have signed up and logged in.
+const getInitialLastActionState = () => {
+	const storedAction = localStorage.getItem( 'wp-reader-pending-signup-action' );
+	if ( ! storedAction ) {
+		return null;
+	}
+	return JSON.parse( storedAction );
+};
 /*
  * Holds the last action that requires the user to be logged in
  */
-export const lastActionRequiresLogin = withPersistence( ( state = null, action ) => {
+export const lastActionRequiresLogin = ( state = getInitialLastActionState(), action ) => {
 	switch ( action.type ) {
 		case READER_REGISTER_LAST_ACTION_REQUIRES_LOGIN:
+			localStorage.setItem(
+				'wp-reader-pending-signup-action',
+				JSON.stringify( action.lastAction )
+			);
 			return action.lastAction;
 		case READER_CLEAR_LAST_ACTION_REQUIRES_LOGIN:
+			localStorage.removeItem( 'wp-reader-pending-signup-action' );
 			return null;
 		default:
 			return state;
 	}
-} );
+};
 
 const combinedReducer = combineReducers( {
 	sidebar,
