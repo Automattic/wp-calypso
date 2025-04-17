@@ -654,13 +654,13 @@ $image-height: 47px;
 		margin-top: 15px;
 	}
 
-	.form-text-input,
-	.login__form-userdata input:last-of-type.form-text-input {
+	.components-button.is-primary,
+	.components-text-control__input,
+	.login__form-userdata input:last-of-type.components-text-control__input {
 		padding: 14px 16px;
-		border-color: #9ea4a8;
 		font-size: 16px;
+		line-height: 1.5;
 		margin: 0;
-		border-radius: 2px;
 		height: auto;
 	}
 
@@ -676,11 +676,7 @@ $image-height: 47px;
 
 	.login__form-terms {
 		color: rgba(#00101c, 0.6);
-		margin: 24px 0 0;
-
-		a {
-			text-decoration: none;
-		}
+		margin: 24px 0;
 	}
 
 	button.form-button.is-primary,
