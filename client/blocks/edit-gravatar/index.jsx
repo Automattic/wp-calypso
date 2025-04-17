@@ -162,7 +162,7 @@ export class EditGravatar extends Component {
 						</Button>
 					) : (
 						<p className="edit-gravatar__explanation">
-							{ translate( 'Verify your email to update your avatar.' ) }
+							{ translate( 'Verify your email to edit your avatar.' ) }
 						</p>
 					) }
 				</div>
