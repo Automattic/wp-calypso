@@ -183,16 +183,19 @@ $breakpoint-mobile: 782px; //Mobile size.
 	}
 
 	input.form-text-input,
+	.components-text-control__input,
 	input {
-		margin-bottom: 20px;
+		margin-bottom: 16px;
 		transition: none;
 		text-align: left;
 		/*!rtl:ignore*/
 		direction: ltr;
+	}
 
-		&.is-error {
-			margin-bottom: 0;
-		}
+	input.form-text-input.is-error,
+	.is-error .components-text-control__input,
+	input.is-error {
+		margin-bottom: 10px;
 	}
 
 	.login__form-suggested-email {
