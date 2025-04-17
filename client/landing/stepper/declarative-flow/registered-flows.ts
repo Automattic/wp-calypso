@@ -128,7 +128,6 @@ const hundredYearDomainFlow: Record< string, () => Promise< { default: Flow } > 
 
 export default {
 	...availableFlows,
-	...hostedSiteMigrationFlow,
 	...hundredYearDomainFlow,
 	...aiSiteBuilderFlows,
 };
