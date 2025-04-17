@@ -11,6 +11,7 @@ import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { shouldUseStepContainerV2MigrationFlow } from '../../../helpers/should-use-step-container-v2';
 //TODO: Move it to a more generic folder
+import { useFlowState } from '../../state-manager/store';
 import { useSitePreviewMShotImageHandler } from '../site-migration-instructions/site-preview/hooks/use-site-preview-mshot-image-handler';
 import type { Step as StepType } from '../../types';
 import type { UrlData } from 'calypso/blocks/import/types';
@@ -166,9 +167,10 @@ const SiteMigrationIdentify: StepType< {
 	);
 
 	const urlQueryParams = useQuery();
+	const { get } = useFlowState();
 
 	const shouldShowBackButton = () => {
-		const ref = urlQueryParams.get( 'ref' );
+		const ref = get( 'flow' )?.entryPoint;
 
 		const isBackButtonSupported = ref && [ 'goals', 'wp-admin-importers-list' ].includes( ref );
 		return isBackButtonSupported || urlQueryParams.has( 'back_to' );

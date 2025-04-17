@@ -6,12 +6,18 @@ import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import React from 'react';
+import { useFlowState } from 'calypso/landing/stepper/declarative-flow/internals/state-manager/store';
 import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
 import SiteMigrationIdentify from '..';
 import { UrlData } from '../../../../../../../blocks/import/types';
 import { StepProps } from '../../../types';
 import { RenderStepOptions, mockStepProps, renderStep } from '../../test/helpers';
 
+jest.mock( 'calypso/landing/stepper/declarative-flow/internals/state-manager/store', () => ( {
+	useFlowState: jest.fn( () => ( {
+		get: jest.fn().mockReturnValue( { entryPoint: 'goals' } ),
+	} ) ),
+} ) );
 jest.mock( 'calypso/landing/stepper/hooks/use-site-slug' );
 jest.mock(
 	'../../site-migration-instructions/site-preview/hooks/use-site-preview-mshot-image-handler',
@@ -62,6 +68,9 @@ const restoreIsMigrationExperimentEnabled = () => {
 
 describe( 'SiteMigrationIdentify', () => {
 	beforeAll( () => nock.disableNetConnect() );
+	beforeEach( () => {
+		jest.clearAllMocks();
+	} );
 	afterEach( () => {
 		restoreIsMigrationExperimentEnabled();
 	} );
@@ -186,7 +195,12 @@ describe( 'SiteMigrationIdentify', () => {
 		).toBeVisible();
 	} );
 
-	it( 'shows the back link when the "ref" param is as "goals"', () => {
+	it( 'shows the back link when the entrypoint is "goals"', () => {
+		jest.mocked( useFlowState ).mockReturnValue( {
+			get: jest.fn().mockReturnValue( { entryPoint: 'goals' } ),
+			set: jest.fn(),
+			sessionId: null,
+		} );
 		render(
 			{
 				navigation: {
@@ -200,7 +214,7 @@ describe( 'SiteMigrationIdentify', () => {
 		expect( screen.getByRole( 'button', { name: /Back/ } ) ).toBeVisible();
 	} );
 
-	it( 'shows the back button when the "back_to" param defined', () => {
+	it( 'shows the back button when the "back_to" param is defined', () => {
 		render(
 			{
 				navigation: {
@@ -214,7 +228,12 @@ describe( 'SiteMigrationIdentify', () => {
 		expect( screen.getByRole( 'link', { name: /Back/ } ) ).toBeVisible();
 	} );
 
-	it( 'shows the back button when the "ref=wp-admin-importers-list"', () => {
+	it( 'shows the back button when the entrypoint is "wp-admin-importers-list"', () => {
+		jest.mocked( useFlowState ).mockReturnValue( {
+			get: jest.fn().mockReturnValue( { entryPoint: 'wp-admin-importers-list' } ),
+			set: jest.fn(),
+			sessionId: null,
+		} );
 		render(
 			{
 				navigation: {
@@ -229,6 +248,11 @@ describe( 'SiteMigrationIdentify', () => {
 	} );
 
 	it( 'hides the back button and link by default', async () => {
+		jest.mocked( useFlowState ).mockReturnValue( {
+			get: jest.fn().mockReturnValue( {} ),
+			set: jest.fn(),
+			sessionId: null,
+		} );
 		render(
 			{
 				navigation: {
