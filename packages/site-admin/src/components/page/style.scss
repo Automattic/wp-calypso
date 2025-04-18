@@ -8,10 +8,6 @@
 	background: $white;
 	container: a8c-site-admin-page / inline-size;
 
-	@media not (prefers-reduced-motion) {
-		transition: width ease-out 0.2s;
-	}
-
 	@include break-medium() {
 		height: 100%;
 	}
