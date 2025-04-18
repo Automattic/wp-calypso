@@ -508,3 +508,5 @@ export const FEATURE_CONNECT_ANALYTICS = 'feature-connect-analytics';
 export const FEATURE_LIMITED_SITE_ACTIVITY_LOG = 'feature-limited-site-activity-log';
 export const FEATURE_BIG_SKY_WEBSITE_BUILDER = 'feature-big-sky-website-builder';
 export const FEATURE_BIG_SKY_WEBSITE_BUILDER_CHECKOUT = 'feature-big-sky-website-builder-checkout';
+export const FEATURE_PLUGINS_ALLOW_ONE = 'plugins-allow-one';
+export const FEATURE_PLUGINS_ALLOW_THREE = 'plugins-allow-three';

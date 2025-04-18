@@ -39,6 +39,7 @@ import {
 } from 'calypso/state/plugins/installed/selectors';
 import { isMarketplaceProduct as isMarketplaceProductSelector } from 'calypso/state/products-list/selectors';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
+import canUserInstallPluginsOnSite from 'calypso/state/selectors/can-user-install-plugins-on-site';
 import getSelectedOrAllSitesWithPlugins from 'calypso/state/selectors/get-selected-or-all-sites-with-plugins';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
@@ -411,6 +412,9 @@ function PrimaryButton( {
 	const isAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, selectedSite?.ID ) );
 	const isDisabledForWpcomStaging = isWpcomStaging && isMarketplaceProduct;
 	const isIncompatibleForAtomic = isAtomic && 'vaultpress' === plugin.slug;
+	const canInstallPlugins = useSelector( ( state ) =>
+		canUserInstallPluginsOnSite( state, selectedSite?.ID )
+	);
 
 	const onClick = useCallback( () => {
 		dispatch(
@@ -459,7 +463,8 @@ function PrimaryButton( {
 				incompatiblePlugin ||
 				userCantManageTheSite ||
 				isDisabledForWpcomStaging ||
-				isIncompatibleForAtomic
+				isIncompatibleForAtomic ||
+				! canInstallPlugins
 			}
 		/>
 	);
