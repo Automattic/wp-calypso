@@ -20,7 +20,7 @@ const SEGMENTATION_SURVEY_SLUG = 'start';
 
 const entrepreneurFlow: Flow = {
 	name: ENTREPRENEUR_FLOW,
-
+	__experimentalUseBuiltinAuth: true,
 	isSignupFlow: true,
 
 	useSteps() {
