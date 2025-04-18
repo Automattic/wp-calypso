@@ -31,7 +31,7 @@ class TagLink extends Component {
 
 	render() {
 		const { tag } = this.props;
-		const path = addLocaleToPathLocaleInFront( `/tag/${ tag.slug }` );
+		const path = addLocaleToPathLocaleInFront( `/tag/${ encodeURIComponent( tag.slug ) }` );
 		const decodedSlug = decodeURIComponent( tag.slug ); // Other languages may contain non-ASCII characters so we need to decode it.
 
 		return (
