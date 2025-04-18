@@ -3,6 +3,7 @@ import {
 	FEATURE_PLUGINS_ALLOW_ONE,
 	FEATURE_PLUGINS_ALLOW_THREE,
 } from '@automattic/calypso-products';
+import { PREINSTALLED_PLUGINS } from 'calypso/my-sites/plugins/constants';
 import { getPlugins } from 'calypso/state/plugins/installed/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
@@ -30,9 +31,11 @@ export default function canUserInstallPluginsOnSite(
 		return false;
 	}
 
-	// Get currently installed and active plugins count
+	// Get currently installed and active plugins count, excluding preinstalled plugins
 	const plugins = getPlugins( state, [ siteId ], 'active' ) as Plugin[];
-	const activePluginsCount = plugins.length;
+	const activePluginsCount = plugins.filter(
+		( plugin ) => ! PREINSTALLED_PLUGINS.includes( plugin.slug )
+	).length;
 
 	// Check plugin count limits based on features
 	if ( siteHasFeature( state, siteId, FEATURE_PLUGINS_ALLOW_ONE ) && activePluginsCount >= 1 ) {
