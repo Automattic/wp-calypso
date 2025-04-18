@@ -115,7 +115,7 @@ const DIFMStartingPoint: StepType< {
 				stepContent={
 					<DIFMLanding
 						onPrimarySubmit={ () =>
-							showNewOrExistingSiteChoice ? onSubmit( 'existing-site' ) : onSubmit( 'new-site' )
+							showNewOrExistingSiteChoice ? onSubmit( 'new-site' ) : onSubmit( 'existing-site' )
 						}
 						onSecondarySubmit={ () => onSubmit( 'new-site' ) }
 						showNewOrExistingSiteChoice={ showNewOrExistingSiteChoice }

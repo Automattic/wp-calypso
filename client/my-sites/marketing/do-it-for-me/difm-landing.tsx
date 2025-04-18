@@ -110,8 +110,8 @@ export default function DIFMLanding( {
 
 	const ctas = showNewOrExistingSiteChoice ? (
 		<>
-			<NextButton onClick={ onSecondarySubmit }>{ translate( 'Start a new site' ) }</NextButton>
-			<NextButton onClick={ onPrimarySubmit } variant="secondary">
+			<NextButton onClick={ onPrimarySubmit }>{ translate( 'Start a new site' ) }</NextButton>
+			<NextButton onClick={ onSecondarySubmit } variant="secondary">
 				{ translate( 'Use an existing site' ) }
 			</NextButton>
 		</>
