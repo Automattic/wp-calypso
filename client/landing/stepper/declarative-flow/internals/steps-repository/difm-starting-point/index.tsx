@@ -117,7 +117,7 @@ const DIFMStartingPoint: StepType< {
 						onPrimarySubmit={ () =>
 							showNewOrExistingSiteChoice ? onSubmit( 'new-site' ) : onSubmit( 'existing-site' )
 						}
-						onSecondarySubmit={ () => onSubmit( 'new-site' ) }
+						onSecondarySubmit={ () => onSubmit( 'existing-site' ) }
 						showNewOrExistingSiteChoice={ showNewOrExistingSiteChoice }
 						siteId={ siteId }
 						isStoreFlow={ false }
