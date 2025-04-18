@@ -40,8 +40,10 @@ Initial release of the site-admin package providing a framework for building mod
 - `NavigableRegion`: Accessible region component with keyboard navigation support
 - Expose the `SiteHub` component publicly
 
-## Next
+## 0.1.2
 
 ### Components
 
 - `Page`: component wrapper for the page content.
+
+## Next
