@@ -46,6 +46,8 @@ Initial release of the site-admin package providing a framework for building mod
 
 - `Page`: component wrapper for the page content.
 
-## Next
+## 0.1.3
 
 - Expose `<Page />` component
+
+## Next
