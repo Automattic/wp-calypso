@@ -5,5 +5,5 @@ export const LazyLeaveSiteModal = lazy(
 );
 
 export const LazyLeaveSiteModalForm = lazy(
-	() => import( /* webpackChunkName: "leave-site-modal" */ './leave-site-modal-form' )
+	() => import( /* webpackChunkName: "leave-site-modal-form" */ './leave-site-modal-form' )
 );

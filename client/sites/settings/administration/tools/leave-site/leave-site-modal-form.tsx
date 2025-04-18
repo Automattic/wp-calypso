@@ -20,7 +20,7 @@ import useQueryUsersMeBySiteId from './use-query-users-me-by-site-id';
 import type { AppState } from 'calypso/types';
 import './leave-site-modal-form.scss';
 
-export interface LeaveSiteModalFormProps {
+interface LeaveSiteModalFormProps {
 	siteId: number;
 	onSuccess?: () => void;
 	onClose?: () => void;
