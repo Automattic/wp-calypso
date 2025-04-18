@@ -30,8 +30,8 @@ const render = ( options = { retry: 0 } ) => {
 				{
 					siteId: SITE_ID,
 					apiSettings: API_SETTINGS,
-					plugins: [ 'plugin-1', 'install' ],
-					themes: [ 'theme-1', 'activate' ],
+					plugin_slug: 'plugin-1',
+					theme_slug: 'theme-1',
 				},
 				options
 			),
@@ -56,8 +56,8 @@ describe( 'useRequestTransferWithSoftware', () => {
 	it( 'should successfully request transfer with software and return the transfer_id', async () => {
 		nock( 'https://public-api.wordpress.com' )
 			.post( '/wpcom/v2/sites/' + SITE_ID + '/atomic/transfer-with-software', {
-				plugins: [ 'plugin-1', 'install' ],
-				themes: [ 'theme-1', 'activate' ],
+				plugin_slug: 'plugin-1',
+				theme_slug: 'theme-1',
 				settings: API_SETTINGS,
 			} )
 			.query( {
@@ -86,15 +86,15 @@ describe( 'useRequestTransferWithSoftware', () => {
 		);
 	} );
 
-	it( 'should return an error if plugins or themes are not provided', async () => {
+	it( 'should return an error if plugin_slug or theme_slug are not provided', async () => {
 		nock( 'https://public-api.wordpress.com' )
 			.post( '/wpcom/v2/sites/' + SITE_ID + '/atomic/transfer-with-software', {
-				plugins: null,
-				themes: null,
+				plugin_slug: null,
+				theme_slug: null,
 				settings: API_SETTINGS,
 			} )
 			.query( { http_envelope: 1 } )
-			.reply( replyErrorWithEnvelope( 400, { error: 'plugins and themes are required' } ) );
+			.reply( replyErrorWithEnvelope( 400, { error: 'plugin_slug and theme_slug are required' } ) );
 		const { result } = render();
 
 		result.current.mutate();
