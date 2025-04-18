@@ -86,7 +86,7 @@ describe( 'useRequestTransferWithSoftware', () => {
 		);
 	} );
 
-	it( 'should return an error if plugin_slug or theme_slug are not provided', async () => {
+	it( 'should return an error if both plugin_slug and theme_slug are not provided', async () => {
 		nock( 'https://public-api.wordpress.com' )
 			.post( '/wpcom/v2/sites/' + SITE_ID + '/atomic/transfer-with-software', {
 				plugin_slug: null,
