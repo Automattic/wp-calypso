@@ -11,10 +11,10 @@ import { sprintf } from '@wordpress/i18n';
 import { drawerLeft, external, wordpress } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
-import { Suspense, useMemo } from 'react';
+import { useMemo } from 'react';
+import AsyncLoad from 'calypso/components/async-load';
 import { USE_SITE_EXCERPTS_QUERY_KEY } from 'calypso/data/sites/use-site-excerpts-query';
 import useRestoreSiteMutation from 'calypso/sites/hooks/use-restore-site-mutation';
-import { LazyLeaveSiteModalForm } from 'calypso/sites/settings/administration/tools/leave-site';
 import {
 	getAdminInterface,
 	getPluginsUrl,
@@ -521,23 +521,23 @@ export function useActions( {
 				isEligible: isActionEligible( 'leave-site', capabilities ),
 				RenderModal: ( { items, closeModal }: RenderModalProps< SiteExcerptData > ) => {
 					return (
-						<Suspense>
-							<LazyLeaveSiteModalForm
-								siteId={ items[ 0 ]?.ID ?? 0 }
-								onSuccess={ () => {
-									queryClient.invalidateQueries( {
-										queryKey: [
-											USE_SITE_EXCERPTS_QUERY_KEY,
-											SITE_EXCERPT_REQUEST_FIELDS,
-											SITE_EXCERPT_REQUEST_OPTIONS,
-											[],
-											'all',
-										],
-									} );
-								} }
-								onClose={ closeModal }
-							/>
-						</Suspense>
+						<AsyncLoad
+							require="calypso/sites/settings/administration/tools/leave-site/leave-site-modal-form"
+							placeholder={ null }
+							siteId={ items[ 0 ]?.ID ?? 0 }
+							onSuccess={ () => {
+								queryClient.invalidateQueries( {
+									queryKey: [
+										USE_SITE_EXCERPTS_QUERY_KEY,
+										SITE_EXCERPT_REQUEST_FIELDS,
+										SITE_EXCERPT_REQUEST_OPTIONS,
+										[],
+										'all',
+									],
+								} );
+							} }
+							onClose={ closeModal }
+						/>
 					);
 				},
 				modalSize: 'small',

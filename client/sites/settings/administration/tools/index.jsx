@@ -1,12 +1,12 @@
 import { addQueryArgs } from '@wordpress/url';
 import { localize, fixMe } from 'i18n-calypso';
-import { Component, Suspense } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
+import AsyncLoad from 'calypso/components/async-load';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import { withSiteCopy } from 'calypso/landing/stepper/hooks/use-site-copy';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
-import { LazyLeaveSiteModal } from 'calypso/sites/settings/administration/tools/leave-site';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import {
 	hasLoadedSitePurchasesFromServer,
@@ -181,19 +181,21 @@ class SiteTools extends Component {
 				) }
 
 				{ showLeaveSite && (
-					<Suspense>
+					<>
 						<AdministrationToolCard
 							title={ translate( 'Leave site' ) }
 							description={ translate( 'Leave this site and remove your access.' ) }
 							onClick={ this.handleOpenModal( MODAL_NAMES.LEAVE_SITE ) }
 						/>
 						{ modalOpen[ MODAL_NAMES.LEAVE_SITE ] && (
-							<LazyLeaveSiteModal
+							<AsyncLoad
+								require="calypso/sites/settings/administration/tools/leave-site/leave-site-modal"
+								placeholder={ null }
 								siteId={ siteId }
 								onClose={ this.handleCloseModal( MODAL_NAMES.LEAVE_SITE ) }
 							/>
 						) }
-					</Suspense>
+					</>
 				) }
 
 				{ showDeleteContent && (
