@@ -14,24 +14,21 @@ import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
 import { STEPS } from '../../internals/steps';
 import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
-import type { FlowV2, SubmitHandler } from '../../internals/types';
+import { Flow } from '../../internals/types';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
-function initialize() {
-	// stepsWithRequiredLogin will take care of redirecting to the login step if the user is not logged in.
-	return stepsWithRequiredLogin( [
-		STEPS.SITE_CREATION_STEP,
-		STEPS.PROCESSING,
-		STEPS.ERROR,
-		STEPS.UNIFIED_DOMAINS,
-		STEPS.UNIFIED_PLANS,
-		STEPS.SITE_LAUNCH,
-		STEPS.PROCESSING,
-	] );
+interface ProvidedDependencies {
+	siteSlug?: string;
+	siteId?: string;
+	domainItem?: MinimalRequestCartProduct;
+	cartItems?: MinimalRequestCartProduct[]; // Ensure cartItems is an array
+	siteCreated?: boolean;
+	isLaunched?: boolean;
+	processingResult?: ProcessingResult;
 }
 
 const SiteIntent = Onboard.SiteIntent;
-const deletePage = async ( siteId: string | number, pageId: number ): Promise< boolean > => {
+const deletePage = async ( siteId: string, pageId: number ): Promise< boolean > => {
 	try {
 		await wpcomRequest( {
 			path: '/sites/' + siteId + '/pages/' + pageId,
@@ -47,7 +44,7 @@ const deletePage = async ( siteId: string | number, pageId: number ): Promise< b
 	}
 };
 
-const aiSiteBuilder: FlowV2< typeof initialize > = {
+const aiSiteBuilder: Flow = {
 	name: AI_SITE_BUILDER_FLOW,
 	/**
 	 * Should it fire calypso_signup_start event?
@@ -69,8 +66,19 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 			}
 		}, [ prompt ] );
 	},
-	initialize,
-	useStepNavigation( _, navigate ) {
+	initialize() {
+		// stepsWithRequiredLogin will take care of redirecting to the login step if the user is not logged in.
+		return stepsWithRequiredLogin( [
+			STEPS.SITE_CREATION_STEP,
+			STEPS.PROCESSING,
+			STEPS.ERROR,
+			STEPS.UNIFIED_DOMAINS,
+			STEPS.UNIFIED_PLANS,
+			STEPS.SITE_LAUNCH,
+			STEPS.PROCESSING,
+		] );
+	},
+	useStepNavigation( currentStep, navigate ) {
 		const { siteSlug: siteSlugFromSiteData, siteId: siteIdFromSiteData } = useSiteData();
 		const { setDesignOnSite, setStaticHomepageOnSite, setIntentOnSite } =
 			useWpDataDispatch( SITE_STORE );
@@ -78,10 +86,8 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 		const { addBlogSticker } = useAddBlogStickerMutation();
 
 		const queryParams = useQuery();
-		const submit: SubmitHandler< typeof initialize > = async ( submittedStep ) => {
-			const { slug, providedDependencies } = submittedStep;
-
-			switch ( slug ) {
+		async function submit( providedDependencies: ProvidedDependencies = {} ) {
+			switch ( currentStep ) {
 				// The create-site step will start creating a site and will add the promise of that operation to pendingAction field in the store.
 				case 'create-site': {
 					// Go to the processing step and pass `true` to remove it from history. So clicking back will not go back to the create-site step.
@@ -90,7 +96,7 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 				// The processing step will wait the aforementioned promise to be resolved and then will submit to you whatever the promise resolves to.
 				// Which will be the created site { "siteId": "242341575", "siteSlug": "something.wordpress.com", "goToCheckout": false, "siteCreated": true }
 				case 'processing': {
-					if ( providedDependencies?.processingResult !== ProcessingResult.SUCCESS ) {
+					if ( providedDependencies.processingResult === ProcessingResult.FAILURE ) {
 						return navigate( 'error' );
 					}
 
@@ -158,9 +164,9 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 					return;
 				}
 				case 'domains': {
-					if ( providedDependencies?.domainItem && siteSlugFromSiteData ) {
+					if ( providedDependencies.domainItem && siteSlugFromSiteData ) {
 						addProductsToCart( siteSlugFromSiteData, AI_SITE_BUILDER_FLOW, [
-							providedDependencies.domainItem as MinimalRequestCartProduct,
+							providedDependencies.domainItem,
 						] ).then( ( res ) => {
 							// eslint-disable-next-line no-console
 							console.log( 'ADD TO CART', res );
@@ -170,9 +176,6 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 				}
 
 				case 'plans': {
-					if ( ! providedDependencies ) {
-						return navigate( 'error' );
-					}
 					const { cartItems } = providedDependencies;
 
 					if ( cartItems && cartItems[ 0 ] && siteSlugFromSiteData ) {
@@ -214,7 +217,7 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 				default:
 					return;
 			}
-		};
+		}
 
 		return { submit };
 	},
