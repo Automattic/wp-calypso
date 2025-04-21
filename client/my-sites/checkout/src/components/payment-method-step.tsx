@@ -95,23 +95,24 @@ export default function BeforeSubmitCheckoutHeader() {
 	const creditsLineItem = getCreditsLineItemFromCart( responseCart );
 	const translate = useTranslate();
 
-	const totalDiscount = getTotalDiscountsWithoutCredits( responseCart );
-	const discountLineItem: LineItemType = {
-		id: 'total-discount',
+	const totalAdjustments = getTotalDiscountsWithoutCredits( responseCart );
+	const adjustmentLineItem: LineItemType = {
+		id: 'total-adjustments',
 		type: 'subtotal',
-		label: translate( 'Discounts' ),
-		formattedAmount: formatCurrency( totalDiscount, responseCart.currency, {
+		label: totalAdjustments < 0 ? translate( 'Discounts' ) : translate( 'Additional charges' ),
+		formattedAmount: formatCurrency( totalAdjustments, responseCart.currency, {
 			isSmallestUnit: true,
 			stripZeros: true,
 		} ),
 	};
 
-	const subtotalBeforeDiscounts = getSubtotalWithoutDiscounts( responseCart );
+	const subtotalBeforeAdjustments = getSubtotalWithoutDiscounts( responseCart );
 	const subTotalLineItemWithoutCoupon: LineItemType = {
 		id: 'subtotal-without-coupon',
 		type: 'subtotal',
-		label: totalDiscount !== 0 ? translate( 'Subtotal before discounts' ) : translate( 'Subtotal' ),
-		formattedAmount: formatCurrency( subtotalBeforeDiscounts, responseCart.currency, {
+		label:
+			totalAdjustments < 0 ? translate( 'Subtotal before discounts' ) : translate( 'Subtotal' ),
+		formattedAmount: formatCurrency( subtotalBeforeAdjustments, responseCart.currency, {
 			isSmallestUnit: true,
 			stripZeros: true,
 		} ),
@@ -125,7 +126,9 @@ export default function BeforeSubmitCheckoutHeader() {
 			<WPOrderReviewSection>
 				<NonTotalPrices>
 					<NonProductLineItem subtotal lineItem={ subTotalLineItemWithoutCoupon } />
-					{ totalDiscount !== 0 && <NonProductLineItem subtotal lineItem={ discountLineItem } /> }
+					{ totalAdjustments !== 0 && (
+						<NonProductLineItem subtotal lineItem={ adjustmentLineItem } />
+					) }
 					{ taxLineItems.map( ( taxLineItem ) => (
 						<NonProductLineItem key={ taxLineItem.id } tax lineItem={ taxLineItem } />
 					) ) }
