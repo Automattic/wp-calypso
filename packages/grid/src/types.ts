@@ -1,0 +1,64 @@
+/**
+ * Grid layout item definition
+ */
+export interface GridLayoutItem {
+	/**
+	 * Unique key that matches a child component key
+	 */
+	key: string;
+
+	/**
+	 * Starting column (0-indexed)
+	 */
+	x?: number;
+
+	/**
+	 * Starting row (0-indexed)
+	 */
+	y?: number;
+
+	/**
+	 * Number of columns this item spans
+	 */
+	width?: number;
+
+	/**
+	 * Number of rows this item spans
+	 */
+	height?: number;
+}
+
+/**
+ * Props for the Grid component
+ */
+export interface GridProps {
+	/**
+	 * Array of layout items
+	 */
+	layout: GridLayoutItem[];
+
+	/**
+	 * Total number of columns in the grid
+	 */
+	cols: number;
+
+	/**
+	 * Grid children
+	 */
+	children: React.ReactNode;
+
+	/**
+	 * Additional CSS class
+	 */
+	className?: string;
+
+	/**
+	 * Grid gap size (e.g., "10px", "1rem")
+	 */
+	gap?: string;
+
+	/**
+	 * Height of each row (e.g., "50px", "auto")
+	 */
+	rowHeight?: string;
+}
