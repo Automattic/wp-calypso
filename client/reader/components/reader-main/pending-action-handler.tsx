@@ -39,7 +39,7 @@ export const ReaderPendingActionHandler = () => {
 					dispatch( requestFollowTag( pendingAction.tag ) );
 					break;
 			}
-		}, 500 );
+		}, 2000 );
 
 		dispatch( clearLastActionRequiresLogin() );
 	}, [ isLoggedIn, pendingAction, dispatch ] );
