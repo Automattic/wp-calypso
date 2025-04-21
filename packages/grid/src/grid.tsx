@@ -52,8 +52,8 @@ export function Grid( {
 		// Apply grid positioning
 		const style = {
 			...element.props.style,
-			gridColumnStart: item.x ? item.x + 1 : undefined,
-			gridRowStart: item.y ? item.y + 1 : undefined,
+			gridColumnStart: item.x !== undefined ? item.x + 1 : undefined,
+			gridRowStart: item.y !== undefined ? item.y + 1 : undefined,
 			gridColumnEnd: `span ${ item.width }`,
 			gridRowEnd: `span ${ itemHeight }`,
 		};
