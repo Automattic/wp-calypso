@@ -20,8 +20,9 @@ export const ReaderPendingActionHandler = () => {
 
 		// The timeout is a naieve attempt to try and combat race conditions. Initial requests from
 		// the app loading could come back slower than what is dispatched here, causing a stale
-		// state in the UI. However, it there doesn't seem to be a good indicator for when all of
-		// these potential items may already be loaded or some circumstances where they wouldn't be.
+		// state in the UI. However, there doesn't seem to be a good indicator for when all of these
+		// potential items may already be loaded or some circumstances where they wouldn't be which
+		// makes it difficult to evaluate this timing differently.
 		setTimeout( () => {
 			switch ( pendingAction.type ) {
 				case 'like':
