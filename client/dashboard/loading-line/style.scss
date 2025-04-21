@@ -21,6 +21,6 @@
 	width: 50vw;
 	height: 100%;
 	position: absolute;
-	background: linear-gradient( to right, transparent 0%, var(--color-accent) 50%, transparent 100% );
+	background: linear-gradient( to right, transparent 0%, var(--wp-admin-theme-color) 50%, transparent 100% );
 	animation: loading 2s infinite linear;
 }
