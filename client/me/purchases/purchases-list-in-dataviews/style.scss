@@ -8,8 +8,39 @@
 		max-width: 1040px;
 	}
 
+	.dataviews-view-table tr.dataviews-view-table__row th,
+	.dataviews-view-table tr.dataviews-view-table__row td {
+		white-space: break-spaces;
+		padding: 16px 0;
+	}
+
 	.dataviews-view-table tr td:first-child,
 	.dataviews-view-table tr th:first-child {
 		padding-left: 24px;
 	}
+
+	.dataviews-view-table__cell-content-wrapper .purchase-item__site {
+		margin-right: 16px;
+
+		.purchase-item__static-icon {
+			width: 36px;
+		}
+	}
+
+	.dataviews-view-table__cell-content-wrapper .purchase-item__information {
+		margin-right: 16px;
+	}
+
+	.dataviews-view-table__cell-content-wrapper .purchase-item__status {
+		margin-right: 16px;
+	}
+
+	.dataviews-view-table__cell-content-wrapper .purchase-item__payment-method {
+
+		.purchase-item__payment-method-card {
+			margin-right: 8px;
+			width: 40px;
+		}
+	}
+	
 }
