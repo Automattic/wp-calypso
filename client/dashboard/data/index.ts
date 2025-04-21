@@ -27,6 +27,7 @@ export const updateProfile = async ( data: Partial< Profile > ) => {
 		body: {
 			display_name: data.display_name,
 			description: data.description,
+			is_dev_account: data.is_dev_account,
 		},
 	} );
 };

@@ -63,8 +63,9 @@ const fields: Field< ProfileType >[] = [
 		},
 	},
 	{
-		id: 'isDeveloper',
+		id: 'is_dev_account',
 		label: __( 'I am a developer' ),
+		// To do: replace with boolean once implemented.
 		type: 'integer',
 		description: __( 'Opt me into previews of new developer-focused features.' ),
 		Edit: ( { field, onChange, data, hideLabelFromVision } ) => {
@@ -74,8 +75,8 @@ const fields: Field< ProfileType >[] = [
 					__nextHasNoMarginBottom
 					label={ hideLabelFromVision ? '' : field.label }
 					help={ description }
-					checked={ Boolean( getValue( { item: data } ) ) }
-					onChange={ () => onChange( { [ id ]: ! getValue( { item: data } ) ? 1 : 0 } ) }
+					checked={ getValue( { item: data } ) }
+					onChange={ () => onChange( { [ id ]: ! getValue( { item: data } ) } ) }
 				/>
 			);
 		},
@@ -94,7 +95,7 @@ const form = {
 		{
 			id: 'developerOptions',
 			label: __( 'Developer options' ),
-			children: [ 'isDeveloper' ],
+			children: [ 'is_dev_account' ],
 		},
 	],
 };
@@ -114,7 +115,12 @@ export default function Profile() {
 	}
 
 	const isSaving = mutation.isPending;
-	const isDirty = !! localData;
+	const isDirty =
+		!! localData &&
+		!! serverData &&
+		Object.entries( localData ).some( ( [ key, value ] ) => {
+			return serverData[ key as keyof ProfileType ] !== value;
+		} );
 	let saveButtonLabel = __( 'Save' );
 
 	if ( isSaving ) {
