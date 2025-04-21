@@ -1,4 +1,3 @@
-import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
 import { ODIE_THUMBS_DOWN_RATING_VALUE, ODIE_THUMBS_UP_RATING_VALUE } from '../../constants';
 import { useOdieAssistantContext } from '../../context';
