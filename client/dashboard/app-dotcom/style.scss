@@ -5,6 +5,15 @@
  */
 
 :root {
+	// Theme
+	--wp-admin-theme-color: #3858e9;
+	--wp-admin-theme-color--rgb: 56, 88, 233;
+	--wp-admin-theme-color-darker-10: #2145e6;
+	--wp-admin-theme-color-darker-10--rgb: 33, 69, 230;
+	--wp-admin-theme-color-darker-20: #183ad6;
+	--wp-admin-theme-color-darker-20--rgb: 24, 58, 214;
+	--wp-admin-border-width-focus: 2px;
+
 	// Layout
 	--dashboard__background-color: #fcfcfc;
 	--dashboard__text-color: #{$gray-900};
