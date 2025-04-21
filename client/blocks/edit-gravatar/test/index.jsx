@@ -18,13 +18,13 @@ jest.mock( 'calypso/state/selectors/get-user-settings', () => jest.fn( () => {} 
 const FIXED_NOW = 1_706_790_000_000; // 2025-03-05 00:00 UTC
 jest.spyOn( Date, 'now' ).mockReturnValue( FIXED_NOW );
 
-const userProp = {
+const user = {
 	email_verified: true,
 	display_name: 'arbitrary-user-display-name',
 };
 
 const baseProps = {
-	userProp,
+	user,
 	translate: ( i ) => i,
 	recordClickButtonEvent: jest.fn(),
 	recordAvatarUpdatedEvent: jest.fn(),
@@ -40,12 +40,12 @@ describe( 'EditGravatar', () => {
 	describe( 'renders', () => {
 		test( 'editable Gravatar', () => {
 			setup();
-			expect( screen.getByAltText( userProp.display_name ) ).toBeVisible();
+			expect( screen.getByAltText( user.display_name ) ).toBeVisible();
 			expect( screen.getByRole( 'button', { name: /Edit your public avatar/i } ) ).toBeVisible();
 		} );
 
 		test( 'unverified email', () => {
-			setup( { user: { ...userProp, email_verified: false } } );
+			setup( { user: { ...user, email_verified: false } } );
 			expect( screen.getByTestId( 'caution-icon' ) ).toBeVisible();
 			expect(
 				screen.getByRole( 'button', { name: /Verify your email to edit your avatar/i } )
@@ -76,7 +76,7 @@ describe( 'EditGravatar', () => {
 		} );
 
 		test( 'shows email‑verification dialog', () => {
-			setup( { user: { ...userProp, email_verified: false } } );
+			setup( { user: { ...user, email_verified: false } } );
 
 			fireEvent.click(
 				screen.getByRole( 'button', { name: /Verify your email to edit your avatar/i } )
