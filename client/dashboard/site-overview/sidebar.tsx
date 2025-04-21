@@ -1,6 +1,6 @@
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import SiteCard from './site-card';
-import type { Site, Domain, Plan } from '../data/types';
+import type { Site, SiteDomain, Plan } from '../data/types';
 
 /**
  * Sidebar component for the site overview page
@@ -8,7 +8,7 @@ import type { Site, Domain, Plan } from '../data/types';
 export default function Sidebar( props: {
 	site: Site;
 	phpVersion?: string;
-	primaryDomain?: Domain;
+	primaryDomain?: SiteDomain;
 	currentPlan: Plan;
 } ) {
 	return (

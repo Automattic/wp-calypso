@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
-import { Notice } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate, View } from '@wordpress/dataviews';
+import { dateI18n } from '@wordpress/date';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
 import { domainsQuery } from '../app/queries';
@@ -10,7 +10,7 @@ import type { Domain } from '../data/types';
 
 const fields = [
 	{
-		id: 'domain_name',
+		id: 'domain',
 		label: __( 'Domains' ),
 		enableHiding: false,
 		enableSorting: true,
@@ -18,36 +18,36 @@ const fields = [
 		getValue: ( { item }: { item: Domain } ) => item.domain,
 	},
 	{
-		id: 'domain_type',
-		label: __( 'Domain type' ),
+		id: 'type',
+		label: __( 'Type' ),
 		enableHiding: false,
 		enableSorting: false,
 	},
+	// {
+	// 	id: 'owner',
+	// 	label: __( 'Owner' ),
+	// 	enableHiding: false,
+	// 	enableSorting: true,
+	// },
 	{
-		id: 'owner',
-		label: __( 'Owner' ),
-		enableHiding: false,
-		enableSorting: true,
-	},
-	{
-		id: 'site',
+		id: 'blog_name',
 		label: __( 'Site' ),
 		enableHiding: false,
 		enableSorting: true,
-		// getValue: ( { item }: { item: Domain } ) => sites[ item.blog_id ]?.name ?? '',
+		getValue: ( { item }: { item: Domain } ) => item.blog_name ?? '',
 	},
-	{
-		id: 'ssl_status',
-		label: __( 'SSL' ),
-		enableHiding: false,
-		enableSorting: true,
-	},
+	// {
+	// 	id: 'ssl_status',
+	// 	label: __( 'SSL' ),
+	// 	enableHiding: false,
+	// 	enableSorting: true,
+	// },
 	{
 		id: 'expiry',
 		label: __( 'Expires/Renews on' ),
 		enableHiding: false,
 		enableSorting: true,
-		getValue: ( { item }: { item: Domain } ) => ( item.expiry ? Date.parse( item.expiry ) : 0 ),
+		getValue: ( { item }: { item: Domain } ) => dateI18n( 'F j, Y', item.expiry ),
 	},
 	{
 		id: 'domain_status',
@@ -61,7 +61,7 @@ const fields = [
 const initialViewState: View = {
 	filters: [],
 	sort: {
-		field: 'domain_name',
+		field: 'domain',
 		direction: 'asc',
 	},
 	page: 1,
@@ -69,14 +69,13 @@ const initialViewState: View = {
 	search: '',
 	type: 'table',
 	showMedia: false,
-	titleField: 'domain_name',
-	descriptionField: 'domain_type',
+	titleField: 'domain',
+	// descriptionField: 'domain_type',
 	fields: [
-		'domain_name',
-		'domain_type',
-		'owner',
-		'site',
-		'ssl_status',
+		'type',
+		// 'owner',
+		'blog_name',
+		// 'ssl_status',
 		'expiry',
 		'domain_status',
 	],
@@ -100,9 +99,6 @@ function Domains() {
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate( domains, view, fields );
 	return (
 		<PageLayout title={ __( 'Domains' ) }>
-			<Notice status="warning" isDismissible={ false }>
-				{ __( 'This is using fake data for the moment' ) }
-			</Notice>
 			<DataViewsCard>
 				<DataViews
 					data={ filteredData || [] }

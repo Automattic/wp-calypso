@@ -14,7 +14,7 @@ export interface User {
 	avatar_URL?: string;
 }
 
-export interface Domain {
+export interface SiteDomain {
 	id: number;
 	domain: string;
 	blog_id: number;
@@ -27,6 +27,18 @@ export interface Domain {
 	sslStatus: string;
 	domain_type: string;
 	primary_domain: boolean;
+}
+
+export interface Domain {
+	domain: string;
+	blog_id: number;
+	blog_name: string;
+	expiry: string;
+	domain_status: {
+		status: string;
+	};
+	wpcom_domain: boolean;
+	type: string;
 }
 
 export interface SitePlan {

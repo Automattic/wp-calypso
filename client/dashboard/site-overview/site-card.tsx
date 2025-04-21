@@ -8,7 +8,7 @@ import {
 } from '@wordpress/components';
 import { dateI18n } from '@wordpress/date';
 import { __, sprintf } from '@wordpress/i18n';
-import type { Site, Domain, Plan } from '../data/types';
+import type { Site, SiteDomain, Plan } from '../data/types';
 
 /**
  * SiteCard component to display site information in a card format
@@ -21,7 +21,7 @@ export default function SiteCard( {
 }: {
 	site: Site;
 	phpVersion?: string;
-	primaryDomain?: Domain;
+	primaryDomain?: SiteDomain;
 	currentPlan: Plan;
 } ) {
 	const { options, url } = site;
@@ -84,7 +84,7 @@ function PlanDetails( {
 }: {
 	site: Site;
 	currentPlan: Plan;
-	primaryDomain?: Domain;
+	primaryDomain?: SiteDomain;
 } ) {
 	const {
 		plan: { product_name_short, is_free: isFree },

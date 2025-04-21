@@ -11,6 +11,7 @@ import type {
 	Profile,
 	TwoStep,
 	EngagementStatsDataPoint,
+	SiteDomain,
 } from './types';
 
 export const fetchProfile = async (): Promise< Profile > => {
@@ -33,45 +34,6 @@ export const updateProfile = async ( data: Partial< Profile > ) => {
 		body: data,
 	} );
 };
-
-const mockDomains: Domain[] = [
-	{
-		id: 1,
-		domain: 'example.com',
-		blog_id: 1,
-		owner: 'User One',
-		expiry: '2025-12-31',
-		domain_status: { status: 'Active' },
-		wpcom_domain: false,
-		sslStatus: 'Active',
-		domain_type: 'Registered',
-		primary_domain: true,
-	},
-	{
-		id: 2,
-		domain: 'myblog.com',
-		blog_id: 2,
-		owner: 'User Two',
-		expiry: '2026-10-15',
-		domain_status: { status: 'Active' },
-		wpcom_domain: false,
-		sslStatus: 'Active',
-		domain_type: 'Registered',
-		primary_domain: false,
-	},
-	{
-		id: 3,
-		domain: 'testdomain.net',
-		blog_id: 3,
-		owner: 'User Three',
-		expiry: '2025-05-22',
-		domain_status: { status: 'Expiring' },
-		wpcom_domain: false,
-		sslStatus: 'Inactive',
-		domain_type: 'Registered',
-		primary_domain: false,
-	},
-];
 
 const siteRequestObjectToSiteObject = ( site: WPCOMRESTAPISite ): Site => ( {
 	id: site.ID,
@@ -260,11 +222,19 @@ export const fetchSiteEngagementStats = async ( id: string ) => {
 	return { previousData, currentData };
 };
 
-export const fetchDomains = (): Promise< Domain[] > => {
-	return Promise.resolve( mockDomains );
+export const fetchDomains = async (): Promise< Domain[] > => {
+	return (
+		await wpcom.req.get(
+			{ path: '/all-domains?http_envelope=1' },
+			{
+				no_wpcom: true,
+				resolve_status: true,
+			}
+		)
+	).domains;
 };
 
-export const fetchSiteDomains = async ( id: string ): Promise< { domains: Domain[] } > => {
+export const fetchSiteDomains = async ( id: string ): Promise< { domains: SiteDomain[] } > => {
 	try {
 		const domains = await wpcom.req.get(
 			{ path: `/sites/${ id }/domains` },
@@ -277,9 +247,9 @@ export const fetchSiteDomains = async ( id: string ): Promise< { domains: Domain
 	}
 };
 
-export const fetchSitePrimaryDomain = async ( id: string ): Promise< Domain | undefined > => {
+export const fetchSitePrimaryDomain = async ( id: string ): Promise< SiteDomain | undefined > => {
 	const { domains } = await fetchSiteDomains( id );
-	return domains.find( ( domain: Domain ) => domain.primary_domain );
+	return domains.find( ( domain: SiteDomain ) => domain.primary_domain );
 };
 
 export const EMAIL_DATA: Email[] = [
