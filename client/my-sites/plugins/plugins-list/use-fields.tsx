@@ -121,7 +121,11 @@ export function useFields(
 				},
 				enableHiding: false,
 				render: ( { item }: { item: Plugin } ) => {
-					if ( item.status?.includes( PLUGINS_STATUS.UPDATE ) && item?.update?.new_version ) {
+					if (
+						item.status?.includes( PLUGINS_STATUS.UPDATE ) &&
+						item?.update?.new_version &&
+						! isListView
+					) {
 						return (
 							<Button
 								variant="secondary"
