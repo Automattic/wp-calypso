@@ -46,17 +46,21 @@ export const currentStream = ( state = null, action ) => {
 // while logged out will have their state cleared when logged in, even using withPersistence. This
 // allows us to complete the action after they have signed up and logged in.
 const getInitialLastActionState = () => {
-	const storedAction = localStorage.getItem( PENDING_ACTION_STORAGE_KEY );
+	// avoid SSR errors
+	if ( typeof window === 'undefined' ) {
+		return null;
+	}
+
+	const storedAction = window.localStorage.getItem( PENDING_ACTION_STORAGE_KEY );
 	if ( ! storedAction ) {
 		return null;
 	}
 
 	const parsedAction = JSON.parse( storedAction );
-	localStorage.removeItem( PENDING_ACTION_STORAGE_KEY );
 
 	// To prevent lingering storage causing bugs, we only allow this action to be used for 5
 	// minutes.
-	if ( parsedAction.timestamp ) {
+	if ( parsedAction?.timestamp ) {
 		const { timestamp, ...actionWithoutTimestamp } = parsedAction;
 		const currentTime = Date.now();
 		const actionAge = currentTime - timestamp;
@@ -72,16 +76,22 @@ const getInitialLastActionState = () => {
 /*
  * Holds the last action that requires the user to be logged in
  */
-export const lastActionRequiresLogin = ( state = getInitialLastActionState(), action ) => {
+export const lastActionRequiresLogin = ( state, action ) => {
+	// Since we use localStorage, we cannot call getInitialLastActionState() in the declaration
+	// above as it may initialize before window object is available (ssr).
+	if ( typeof state === 'undefined' ) {
+		state = getInitialLastActionState();
+	}
+
 	switch ( action.type ) {
 		case READER_REGISTER_LAST_ACTION_REQUIRES_LOGIN:
-			localStorage.setItem(
+			window.localStorage.setItem(
 				PENDING_ACTION_STORAGE_KEY,
 				JSON.stringify( { ...action.lastAction, timestamp: Date.now() } )
 			);
 			return action.lastAction;
 		case READER_CLEAR_LAST_ACTION_REQUIRES_LOGIN:
-			localStorage.removeItem( PENDING_ACTION_STORAGE_KEY );
+			window.localStorage.removeItem( PENDING_ACTION_STORAGE_KEY );
 			return null;
 		default:
 			return state;

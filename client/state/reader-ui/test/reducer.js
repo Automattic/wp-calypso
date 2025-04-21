@@ -12,13 +12,17 @@ describe( 'state/reader-ui/reducer', () => {
 	};
 
 	beforeEach( () => {
+		if ( typeof window === 'undefined' ) {
+			global.window = {};
+		}
+
 		const localStorageMock = {
 			getItem: jest.fn(),
 			setItem: jest.fn(),
 			removeItem: jest.fn(),
 		};
 
-		Object.defineProperty( global, 'localStorage', {
+		Object.defineProperty( window, 'localStorage', {
 			value: localStorageMock,
 			writable: true,
 		} );
@@ -29,6 +33,10 @@ describe( 'state/reader-ui/reducer', () => {
 
 	afterEach( () => {
 		jest.restoreAllMocks();
+		// Clean up the global window
+		if ( global.window ) {
+			delete global.window;
+		}
 	} );
 
 	describe( 'items()', () => {
@@ -38,7 +46,7 @@ describe( 'state/reader-ui/reducer', () => {
 				lastAction,
 			} );
 
-			expect( localStorage.setItem ).toHaveBeenCalledWith(
+			expect( window.localStorage.setItem ).toHaveBeenCalledWith(
 				'wp-reader-pending-signup-action',
 				expect.stringContaining( '"type":"like"' )
 			);
@@ -53,7 +61,9 @@ describe( 'state/reader-ui/reducer', () => {
 				type: READER_CLEAR_LAST_ACTION_REQUIRES_LOGIN,
 			} );
 
-			expect( localStorage.removeItem ).toHaveBeenCalledWith( 'wp-reader-pending-signup-action' );
+			expect( window.localStorage.removeItem ).toHaveBeenCalledWith(
+				'wp-reader-pending-signup-action'
+			);
 
 			expect( updated ).toEqual( null );
 		} );
