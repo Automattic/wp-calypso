@@ -13,7 +13,7 @@ function Card( {
 	color,
 	children,
 }: {
-	style?: React.StyleHTMLAttributes< 'div' >;
+	style?: React.CSSProperties;
 	color: string;
 	children: React.ReactNode;
 } ) {
