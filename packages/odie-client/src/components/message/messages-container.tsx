@@ -12,6 +12,7 @@ import {
 	useCreateZendeskConversation,
 	useZendeskMessageListener,
 	useUpdateDocumentTitle,
+	useSendChatMessage,
 } from '../../hooks';
 import { useHelpCenterChatScroll } from '../../hooks/use-help-center-chat-scroll';
 import {
@@ -47,8 +48,9 @@ interface ChatMessagesProps {
 
 export const MessagesContainer = forwardRef(
 	( { currentUser }: ChatMessagesProps, forwardedRef: ForwardedRef< HTMLDivElement > ) => {
-		const { chat, botNameSlug, isChatLoaded, isUserEligibleForPaidSupport, sendMessage } =
+		const { chat, botNameSlug, isChatLoaded, isUserEligibleForPaidSupport } =
 			useOdieAssistantContext();
+		const sendMessage = useSendChatMessage();
 		const createZendeskConversation = useCreateZendeskConversation();
 		const resetSupportInteraction = useResetSupportInteraction();
 		const [ searchParams, setSearchParams ] = useSearchParams();
