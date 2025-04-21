@@ -120,6 +120,7 @@ export type UseStepNavigationHook< FlowSteps extends readonly StepperStep[] > = 
 ) => NavigationControls< any >;
 
 export type UseStepNavigationHookV2< FlowSteps extends readonly StepperStep[] > = (
+	currentStepSlug: FlowSteps[ number ][ 'slug' ],
 	navigate: NavigateV2< FlowSteps >
 ) => NavigationControlsV2< () => FlowSteps >;
 

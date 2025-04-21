@@ -61,7 +61,7 @@ const newsletter: FlowV2< typeof initialize > = {
 	__experimentalUseBuiltinAuth: true,
 	isSignupFlow: true,
 	initialize,
-	useStepNavigation( navigate ) {
+	useStepNavigation( _, navigate ) {
 		const flowName = this.name;
 		const siteSlug = useSiteSlug();
 		const { get, set } = useFlowState();

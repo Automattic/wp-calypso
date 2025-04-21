@@ -70,7 +70,7 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 		}, [ prompt ] );
 	},
 	initialize,
-	useStepNavigation( navigate ) {
+	useStepNavigation( _, navigate ) {
 		const { siteSlug: siteSlugFromSiteData, siteId: siteIdFromSiteData } = useSiteData();
 		const { setDesignOnSite, setStaticHomepageOnSite, setIntentOnSite } =
 			useWpDataDispatch( SITE_STORE );
