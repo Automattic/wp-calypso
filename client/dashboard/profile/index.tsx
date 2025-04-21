@@ -11,6 +11,7 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	ExternalLink,
+	TextControl,
 } from '@wordpress/components';
 import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement, useMemo } from '@wordpress/element';
@@ -29,6 +30,19 @@ const fields: Field< ProfileType >[] = [
 		id: 'user_login',
 		label: __( 'Username' ),
 		type: 'text',
+		Edit: ( { field, data, hideLabelFromVision } ) => {
+			const { getValue } = field;
+			return (
+				<TextControl
+					__nextHasNoMarginBottom
+					__next40pxDefaultSize
+					label={ hideLabelFromVision ? '' : field.label }
+					value={ getValue( { item: data } ) }
+					disabled
+					onChange={ () => {} }
+				/>
+			);
+		},
 	},
 	{
 		id: 'display_name',
