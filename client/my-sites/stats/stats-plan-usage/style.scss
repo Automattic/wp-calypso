@@ -4,6 +4,10 @@
 .stats__plan-usage {
 	margin-bottom: 32px;
 	border-top: 1px solid var(--studio-gray-5);
+
+	@media (max-width: $break-medium) {
+		border-bottom: 1px solid var(--studio-gray-5);
+	}
 }
 
 .plan-usage {
