@@ -52,7 +52,7 @@ function SiteOverview() {
 						href={ site.options.admin_url }
 						icon={ wordpress }
 					>
-						{ __( 'WP admin' ) }
+						{ __( 'WP Admin' ) }
 					</Button>
 				</>
 			}
