@@ -53,6 +53,25 @@ export type NavigationControls<
 	exitFlow?: ( to: string ) => void;
 };
 
+/**
+ * This is the return type of useStepNavigation hook
+ * @template StepSubmittedTypes - The types of the step submitted data.
+ * @example
+ * navigation.submit({
+ *   siteSlug: 'example.wordpress.com',
+ *   siteTitle: 'Example Site',
+ * });
+ */
+export type NavigationControlsV2<
+	InitializeFunction extends DefaultFlowStepsConfig = DefaultFlowStepsConfig,
+> = {
+	/**
+	 * Submits the answers provided in the flow. If it's complaining about the type, it means you haven't typed the step correctly.
+	 * @see {@link client/landing/stepper/declarative-flow/internals/steps-repository/DEVELOPMENT/making-a-new-step.md}
+	 */
+	submit: SubmitHandler< InitializeFunction >;
+};
+
 export type AsyncStepperStep = ( typeof STEPS )[ keyof typeof STEPS ];
 type AsyncUserStep = ( typeof PRIVATE_STEPS )[ keyof typeof PRIVATE_STEPS ];
 
@@ -101,15 +120,12 @@ export type UseStepNavigationHook< FlowSteps extends readonly StepperStep[] > = 
 ) => NavigationControls< any >;
 
 export type UseStepNavigationHookV2< FlowSteps extends readonly StepperStep[] > = (
-	currentStepSlug: FlowSteps[ number ][ 'slug' ],
 	navigate: NavigateV2< FlowSteps >
-) => NavigationControls< any >;
+) => NavigationControlsV2< () => FlowSteps >;
 
-export type UseHandleSubmitHook< FlowSteps extends readonly StepperStep[] > = (
-	submitted: MapStepToItsSubmitData< FlowSteps[ number ] >,
-	navigate: NavigateV2< FlowSteps >
+export type SubmitHandler< InitializeFunction extends DefaultFlowStepsConfig > = (
+	submittedStep: MapStepToItsSubmitData< ReturnType< InitializeFunction >[ number ] >
 ) => void;
-
 /**
  * This type is complex because it's tricky to keep the mapping between slug and the steps submitted data type.
  * Without this, TS would have a SLUG <=> SUBMITTED_TYPE mapping, between every slug and every type of submitted data.
@@ -255,7 +271,7 @@ export interface FlowV2<
 	 * Returning false will kill the app.
 	 */
 	initialize(): Promise< readonly StepperStep[] > | readonly StepperStep[] | false;
-	useHandleSubmit: UseHandleSubmitHook< ReturnType< FlowStepsInitialize > >;
+	useStepNavigation: UseStepNavigationHookV2< ReturnType< FlowStepsInitialize > >;
 	/**
 	 * A hook that is called in the flow's root at every render. You can use this hook to setup side-effects, call other hooks, etc..
 	 */

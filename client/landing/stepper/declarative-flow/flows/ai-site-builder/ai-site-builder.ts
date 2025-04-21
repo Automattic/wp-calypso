@@ -1,7 +1,6 @@
 import { Onboard } from '@automattic/data-stores';
 import { getAssemblerDesign } from '@automattic/design-picker';
 import { addPlanToCart, addProductsToCart, AI_SITE_BUILDER_FLOW } from '@automattic/onboarding';
-import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { resolveSelect, useDispatch as useWpDataDispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { useEffect } from 'react';
@@ -15,7 +14,21 @@ import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
 import { STEPS } from '../../internals/steps';
 import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
-import { FlowV2 } from '../../internals/types';
+import type { FlowV2, SubmitHandler } from '../../internals/types';
+import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
+
+function initialize() {
+	// stepsWithRequiredLogin will take care of redirecting to the login step if the user is not logged in.
+	return stepsWithRequiredLogin( [
+		STEPS.SITE_CREATION_STEP,
+		STEPS.PROCESSING,
+		STEPS.ERROR,
+		STEPS.UNIFIED_DOMAINS,
+		STEPS.UNIFIED_PLANS,
+		STEPS.SITE_LAUNCH,
+		STEPS.PROCESSING,
+	] );
+}
 
 const SiteIntent = Onboard.SiteIntent;
 const deletePage = async ( siteId: string | number, pageId: number ): Promise< boolean > => {
@@ -34,18 +47,6 @@ const deletePage = async ( siteId: string | number, pageId: number ): Promise< b
 	}
 };
 
-function initialize() {
-	// stepsWithRequiredLogin will take care of redirecting to the login step if the user is not logged in.
-	return stepsWithRequiredLogin( [
-		STEPS.SITE_CREATION_STEP,
-		STEPS.PROCESSING,
-		STEPS.UNIFIED_DOMAINS,
-		STEPS.UNIFIED_PLANS,
-		STEPS.SITE_LAUNCH,
-		STEPS.PROCESSING,
-	] );
-}
-
 const aiSiteBuilder: FlowV2< typeof initialize > = {
 	name: AI_SITE_BUILDER_FLOW,
 	/**
@@ -56,14 +57,20 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 	useSideEffect() {
 		const dispatch = useDispatch();
 		const siteId = useQuery().get( 'siteId' );
+		const prompt = useQuery().get( 'prompt' );
 		useEffect( () => {
 			if ( siteId ) {
 				dispatch( setSelectedSiteId( parseInt( siteId ) ) );
 			}
 		}, [ siteId ] );
+		useEffect( () => {
+			if ( prompt && prompt.length > 0 ) {
+				window.sessionStorage.setItem( 'stored_ai_prompt', prompt );
+			}
+		}, [ prompt ] );
 	},
 	initialize,
-	async useHandleSubmit( { slug: currentStep, providedDependencies }, navigate ) {
+	useStepNavigation( navigate ) {
 		const { siteSlug: siteSlugFromSiteData, siteId: siteIdFromSiteData } = useSiteData();
 		const { setDesignOnSite, setStaticHomepageOnSite, setIntentOnSite } =
 			useWpDataDispatch( SITE_STORE );
@@ -71,20 +78,23 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 		const { addBlogSticker } = useAddBlogStickerMutation();
 
 		const queryParams = useQuery();
-		switch ( currentStep ) {
-			// The create-site step will start creating a site and will add the promise of that operation to pendingAction field in the store.
-			case 'create-site': {
-				// Go to the processing step and pass `true` to remove it from history. So clicking back will not go back to the create-site step.
-				return navigate( 'processing', undefined, true );
-			}
-			// The processing step will wait the aforementioned promise to be resolved and then will submit to you whatever the promise resolves to.
-			// Which will be the created site { "siteId": "242341575", "siteSlug": "something.wordpress.com", "goToCheckout": false, "siteCreated": true }
-			case 'processing': {
-				if (
-					providedDependencies &&
-					providedDependencies.processingResult === ProcessingResult.SUCCESS
-				) {
-					if ( providedDependencies?.siteCreated ) {
+		const submit: SubmitHandler< typeof initialize > = async ( submittedStep ) => {
+			const { slug, providedDependencies } = submittedStep;
+
+			switch ( slug ) {
+				// The create-site step will start creating a site and will add the promise of that operation to pendingAction field in the store.
+				case 'create-site': {
+					// Go to the processing step and pass `true` to remove it from history. So clicking back will not go back to the create-site step.
+					return navigate( 'processing', undefined, true );
+				}
+				// The processing step will wait the aforementioned promise to be resolved and then will submit to you whatever the promise resolves to.
+				// Which will be the created site { "siteId": "242341575", "siteSlug": "something.wordpress.com", "goToCheckout": false, "siteCreated": true }
+				case 'processing': {
+					if ( providedDependencies?.processingResult !== ProcessingResult.SUCCESS ) {
+						return navigate( 'error' );
+					}
+
+					if ( providedDependencies.siteCreated ) {
 						const { siteSlug, siteId } = providedDependencies;
 						// We are setting up big sky now.
 						if ( ! siteId || ! siteSlug ) {
@@ -131,75 +141,82 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 
 						if ( prompt ) {
 							promptParam = `&prompt=${ encodeURIComponent( prompt ) }`;
+						} else if ( window.sessionStorage.getItem( 'stored_ai_prompt' ) ) {
+							promptParam = `&prompt=${ encodeURIComponent(
+								window.sessionStorage.getItem( 'stored_ai_prompt' ) || ''
+							) }`;
+							window.sessionStorage.removeItem( 'stored_ai_prompt' );
 						}
-
 						window.location.replace(
 							`${ siteURL }/wp-admin/site-editor.php?canvas=edit&referrer=${ AI_SITE_BUILDER_FLOW }${ promptParam }`
 						);
-					} else if ( providedDependencies?.isLaunched ) {
-						const site = await resolveSelect( SITE_STORE ).getSite(
-							providedDependencies?.siteSlug
-						);
+					} else if ( providedDependencies.isLaunched ) {
+						const site = await resolveSelect( SITE_STORE ).getSite( providedDependencies.siteSlug );
 						window.location.replace( site.URL );
 					}
+
+					return;
+				}
+				case 'domains': {
+					if ( providedDependencies?.domainItem && siteSlugFromSiteData ) {
+						addProductsToCart( siteSlugFromSiteData, AI_SITE_BUILDER_FLOW, [
+							providedDependencies.domainItem as MinimalRequestCartProduct,
+						] ).then( ( res ) => {
+							// eslint-disable-next-line no-console
+							console.log( 'ADD TO CART', res );
+						} );
+					}
+					return navigate( 'plans' );
 				}
 
-				return;
-			}
-			case 'domains': {
-				if ( providedDependencies && providedDependencies.domainItem && siteSlugFromSiteData ) {
-					addProductsToCart( siteSlugFromSiteData, AI_SITE_BUILDER_FLOW, [
-						providedDependencies.domainItem as MinimalRequestCartProduct,
-					] ).then( ( res ) => {
-						// eslint-disable-next-line no-console
-						console.log( 'ADD TO CART', res );
+				case 'plans': {
+					if ( ! providedDependencies ) {
+						return navigate( 'error' );
+					}
+					const { cartItems } = providedDependencies;
+
+					if ( cartItems && cartItems[ 0 ] && siteSlugFromSiteData ) {
+						await addPlanToCart(
+							siteSlugFromSiteData,
+							AI_SITE_BUILDER_FLOW,
+							true,
+							'assembler',
+							cartItems[ 0 ]
+						);
+					}
+
+					const site = await resolveSelect( SITE_STORE ).getSite( siteIdFromSiteData );
+					const bigSkyUrl = `${ site.URL }/wp-admin/site-editor.php?canvas=edit&p=%2F`;
+					const siteLaunchUrl = addQueryArgs( '/setup/ai-site-builder/site-launch', {
+						siteId: siteIdFromSiteData,
 					} );
-				}
-				return navigate( 'plans' );
-			}
-
-			case 'plans': {
-				const cartItems = providedDependencies?.cartItems;
-
-				if ( cartItems && cartItems[ 0 ] && siteSlugFromSiteData ) {
-					await addPlanToCart(
-						siteSlugFromSiteData,
-						AI_SITE_BUILDER_FLOW,
-						true,
-						'assembler',
-						cartItems[ 0 ]
+					window.location.assign(
+						addQueryArgs( `/checkout/${ encodeURIComponent( siteSlugFromSiteData || '' ) }`, {
+							redirect_to:
+								queryParams.get( 'redirect' ) === 'site-launch'
+									? siteLaunchUrl
+									: addQueryArgs( bigSkyUrl, {
+											checkout: 'success',
+									  } ),
+							checkoutBackUrl: addQueryArgs( bigSkyUrl, {
+								checkout: 'cancel',
+							} ),
+							signup: 1,
+							'big-sky-checkout': 1,
+						} )
 					);
 				}
 
-				const site = await resolveSelect( SITE_STORE ).getSite( siteIdFromSiteData );
-				const bigSkyUrl = `${ site.URL }/wp-admin/site-editor.php?canvas=edit&p=%2F`;
-				const siteLaunchUrl = addQueryArgs( '/setup/ai-site-builder/site-launch', {
-					siteId: siteIdFromSiteData,
-				} );
-				window.location.assign(
-					addQueryArgs( `/checkout/${ encodeURIComponent( siteSlugFromSiteData || '' ) }`, {
-						redirect_to:
-							queryParams.get( 'redirect' ) === 'site-launch'
-								? siteLaunchUrl
-								: addQueryArgs( bigSkyUrl, {
-										checkout: 'success',
-								  } ),
-						checkoutBackUrl: addQueryArgs( bigSkyUrl, {
-							checkout: 'cancel',
-						} ),
-						signup: 1,
-						'big-sky-checkout': 1,
-					} )
-				);
-			}
+				case 'site-launch': {
+					navigate( 'processing', undefined, true );
+				}
 
-			case 'site-launch': {
-				navigate( 'processing', undefined, true );
+				default:
+					return;
 			}
+		};
 
-			default:
-				return;
-		}
+		return { submit };
 	},
 };
 

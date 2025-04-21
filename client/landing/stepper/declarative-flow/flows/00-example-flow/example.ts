@@ -18,7 +18,7 @@ import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login
 import { useFlowState } from '../../internals/state-manager/store';
 import { STEPS } from '../../internals/steps';
 import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
-import type { FlowV2, Navigate } from '../../internals/types';
+import type { FlowV2, Navigate, SubmitHandler } from '../../internals/types';
 
 const DEFAULT_NEWSLETTER_THEME = 'pub/lettre';
 
@@ -61,8 +61,7 @@ const newsletter: FlowV2< typeof initialize > = {
 	__experimentalUseBuiltinAuth: true,
 	isSignupFlow: true,
 	initialize,
-	useHandleSubmit( submittedStep, navigate ) {
-		const { slug, providedDependencies } = submittedStep;
+	useStepNavigation( navigate ) {
 		const flowName = this.name;
 		const siteSlug = useSiteSlug();
 		const { get, set } = useFlowState();
@@ -85,84 +84,89 @@ const newsletter: FlowV2< typeof initialize > = {
 			}
 		};
 
-		switch ( slug ) {
-			case 'newsletterSetup': {
-				set( 'newsletterSetup', providedDependencies );
-				return navigate( 'newsletterGoals' );
-			}
-
-			case 'newsletterGoals':
-				set( 'newsletterGoals', providedDependencies );
-				return navigate( 'domains' );
-
-			case 'domains':
-				set( 'domains', providedDependencies );
-				return navigate( 'plans' );
-
-			case 'plans':
-				set( 'plans', providedDependencies );
-				setPendingAction( () =>
-					createSite( {
-						theme: DEFAULT_NEWSLETTER_THEME,
-						siteIntent: Onboard.SiteIntent.Newsletter,
-					} ).then( ( siteCreationResult ) => {
-						set( 'site', siteCreationResult );
-						// update site settings but return the siteCreationResult when done.
-						return saveSiteSettings( siteCreationResult.siteSlug, {
-							launchpad_screen: 'full',
-						} ).then( () => siteCreationResult );
-					} )
-				);
-				return navigate( 'processing' );
-			case 'processing': {
-				const site = get( 'site' );
-				if ( providedDependencies?.processingResult === ProcessingResult.SUCCESS && site ) {
-					const launchpadUrl = `/setup/${ flowName }/launchpad?siteSlug=${ providedDependencies.siteSlug }`;
-
-					const { siteId, siteSlug } = site;
-					initializeLaunchpadState( {
-						siteId: siteId,
-						siteSlug: siteSlug,
-					} );
-
-					if ( providedDependencies?.goToHome ) {
-						return window.location.replace(
-							addQueryArgs( `/home/${ siteId }`, {
-								celebrateLaunch: true,
-								launchpadComplete: true,
-							} )
-						);
-					}
-
-					if ( providedDependencies?.goToCheckout ) {
-						persistSignupDestination( launchpadUrl );
-						setSignupCompleteSlug( providedDependencies?.siteSlug );
-						setSignupCompleteFlowName( flowName );
-
-						// Replace the processing step with checkout step, so going back goes to Plans.
-						return window.location.replace(
-							`/checkout/${ encodeURIComponent( siteSlug ) }?redirect_to=${ encodeURIComponent(
-								launchpadUrl
-							) }&signup=1`
-						);
-					}
-
-					const postFlowUrl = getPostFlowUrl( {
-						flow: flowName,
-						siteId: siteId as number,
-						siteSlug: siteSlug as string,
-					} );
-
-					return window.location.replace( postFlowUrl );
+		const submit: SubmitHandler< typeof initialize > = ( submittedStep ) => {
+			const { slug, providedDependencies } = submittedStep;
+			switch ( slug ) {
+				case 'newsletterSetup': {
+					set( 'newsletterSetup', providedDependencies );
+					return navigate( 'newsletterGoals' );
 				}
-				// handle site creation error.
-				return navigate( 'error' );
-			}
 
-			case 'subscribers':
-				completeSubscribersTask();
-				return navigate( 'launchpad' );
-		}
+				case 'newsletterGoals':
+					set( 'newsletterGoals', providedDependencies );
+					return navigate( 'domains' );
+
+				case 'domains':
+					set( 'domains', providedDependencies );
+					return navigate( 'plans' );
+
+				case 'plans':
+					set( 'plans', providedDependencies );
+					setPendingAction( () =>
+						createSite( {
+							theme: DEFAULT_NEWSLETTER_THEME,
+							siteIntent: Onboard.SiteIntent.Newsletter,
+						} ).then( ( siteCreationResult ) => {
+							set( 'site', siteCreationResult );
+							// update site settings but return the siteCreationResult when done.
+							return saveSiteSettings( siteCreationResult.siteSlug, {
+								launchpad_screen: 'full',
+							} ).then( () => siteCreationResult );
+						} )
+					);
+					return navigate( 'processing' );
+				case 'processing': {
+					const site = get( 'site' );
+					if ( providedDependencies?.processingResult === ProcessingResult.SUCCESS && site ) {
+						const launchpadUrl = `/setup/${ flowName }/launchpad?siteSlug=${ providedDependencies.siteSlug }`;
+
+						const { siteId, siteSlug } = site;
+						initializeLaunchpadState( {
+							siteId: siteId,
+							siteSlug: siteSlug,
+						} );
+
+						if ( providedDependencies?.goToHome ) {
+							return window.location.replace(
+								addQueryArgs( `/home/${ siteId }`, {
+									celebrateLaunch: true,
+									launchpadComplete: true,
+								} )
+							);
+						}
+
+						if ( providedDependencies?.goToCheckout ) {
+							persistSignupDestination( launchpadUrl );
+							setSignupCompleteSlug( providedDependencies?.siteSlug );
+							setSignupCompleteFlowName( flowName );
+
+							// Replace the processing step with checkout step, so going back goes to Plans.
+							return window.location.replace(
+								`/checkout/${ encodeURIComponent( siteSlug ) }?redirect_to=${ encodeURIComponent(
+									launchpadUrl
+								) }&signup=1`
+							);
+						}
+
+						const postFlowUrl = getPostFlowUrl( {
+							flow: flowName,
+							siteId: siteId as number,
+							siteSlug: siteSlug as string,
+						} );
+
+						return window.location.replace( postFlowUrl );
+					}
+					// handle site creation error.
+					return navigate( 'error' );
+				}
+
+				case 'subscribers':
+					completeSubscribersTask();
+					return navigate( 'launchpad' );
+			}
+		};
+
+		return { submit };
 	},
 };
 

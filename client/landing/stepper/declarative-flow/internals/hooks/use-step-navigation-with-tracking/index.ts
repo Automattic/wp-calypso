@@ -13,11 +13,11 @@ import {
 	recordStepNavigation,
 	type RecordStepNavigationParams,
 } from '../../analytics/record-step-navigation';
-import type { Flow, FlowV2, Navigate, ProvidedDependencies, StepperStep } from '../../types';
+import type { Flow, Navigate, ProvidedDependencies, StepperStep } from '../../types';
 
 interface Params {
-	flow: Flow | FlowV2;
-	stepSlugs: StepperStep[ 'slug' ][];
+	flow: Flow;
+	stepSlugs: string[];
 	currentStepRoute: StepperStep[ 'slug' ];
 	navigate: Navigate;
 }
@@ -30,13 +30,7 @@ export const useStepNavigationWithTracking = ( {
 }: Params ) => {
 	// We don't know the type of the return value of useStepNavigation, because we don't know which flow is this.
 	// So we cast it to any.
-	const stepNavigationV1: any =
-		'useStepNavigation' in flow ? flow.useStepNavigation( currentStepRoute, navigate ) : null;
-
-	// Stepper's V2 API doesn't have useHandleSubmit, it uses useHandleSubmit instead.
-	// We don't know which flow, so we'll cast it to any.
-	const flowSubmissionHandler: any = 'useHandleSubmit' in flow ? flow.useHandleSubmit : null;
-
+	const stepNavigation: any = flow.useStepNavigation( currentStepRoute, navigate );
 	const { intent, goals } = useSelect( ( select ) => {
 		const onboardStore = select( ONBOARD_STORE ) as OnboardSelect;
 		return {
@@ -94,21 +88,21 @@ export const useStepNavigationWithTracking = ( {
 		[ intent, tracksEventPropsFromFlow, goals, currentStepRoute, flow ]
 	);
 
-	const deprecatedNavigationControlsForStepperV1 = useMemo(
+	return useMemo(
 		() => ( {
-			...( stepNavigationV1.submit && {
+			...( stepNavigation.submit && {
 				// TODO: remove = {}, there is no need to default to {}.
-				submit: ( providedDependencies: ProvidedDependencies ) => {
+				submit: ( providedDependencies: ProvidedDependencies = {} ) => {
 					if ( ! providedDependencies?.shouldSkipSubmitTracking ) {
 						handleRecordStepNavigation( {
 							event: STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT,
 							providedDependencies,
 						} );
 					}
-					stepNavigationV1.submit?.( providedDependencies );
+					stepNavigation.submit?.( providedDependencies );
 				},
 			} ),
-			...( stepNavigationV1.exitFlow && {
+			...( stepNavigation.exitFlow && {
 				exitFlow: ( to: string ) => {
 					handleRecordStepNavigation( {
 						event: STEPPER_TRACKS_EVENT_STEP_NAV_EXIT_FLOW,
@@ -118,7 +112,7 @@ export const useStepNavigationWithTracking = ( {
 							},
 						},
 					} );
-					stepNavigationV1.exitFlow?.( to );
+					stepNavigation.exitFlow?.( to );
 				},
 			} ),
 			/**
@@ -137,23 +131,23 @@ export const useStepNavigationWithTracking = ( {
 			/**
 			 * If the flow defines a `goBack` handler, this will overwrite the one above. Flow is the ultimate authority on navigation.
 			 */
-			...( stepNavigationV1.goBack && {
+			...( stepNavigation.goBack && {
 				goBack: () => {
 					handleRecordStepNavigation( {
 						event: STEPPER_TRACKS_EVENT_STEP_NAV_GO_BACK,
 					} );
-					stepNavigationV1.goBack?.();
+					stepNavigation.goBack?.();
 				},
 			} ),
-			...( stepNavigationV1.goNext && {
+			...( stepNavigation.goNext && {
 				goNext: () => {
 					handleRecordStepNavigation( {
 						event: STEPPER_TRACKS_EVENT_STEP_NAV_GO_NEXT,
 					} );
-					stepNavigationV1.goNext?.();
+					stepNavigation.goNext?.();
 				},
 			} ),
-			...( stepNavigationV1.goToStep && {
+			...( stepNavigation.goToStep && {
 				goToStep: ( step: string ) => {
 					handleRecordStepNavigation( {
 						event: STEPPER_TRACKS_EVENT_STEP_NAV_GO_TO,
@@ -163,50 +157,10 @@ export const useStepNavigationWithTracking = ( {
 							},
 						},
 					} );
-					stepNavigationV1.goToStep?.( step );
+					stepNavigation.goToStep?.( step );
 				},
 			} ),
 		} ),
-		[ handleRecordStepNavigation, stepNavigationV1, canUserGoBack ]
+		[ handleRecordStepNavigation, stepNavigation ]
 	);
-
-	const navigationControlsForStepperV2 = useMemo(
-		() => ( {
-			...( flowSubmissionHandler && {
-				// TODO: remove = {}, there is no need to default to {}.
-				submit: ( providedDependencies: ProvidedDependencies ) => {
-					if ( ! providedDependencies?.shouldSkipSubmitTracking ) {
-						handleRecordStepNavigation( {
-							event: STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT,
-							providedDependencies,
-						} );
-					}
-					flowSubmissionHandler(
-						{ slug: currentStepRoute, providedDependencies: undefined },
-						navigate
-					);
-				},
-			} ),
-			/**
-			 * If the `previousStep` is defined in the store, it's a solid proxy to guess that we navigated at least once via Stepper's React Router.
-			 * If the flow doesn't define a `goBack` handler, and `previousStep` is defined, we can just go history.back() and we'll remain in the flow.
-			 * But if `previousStep` is not defined, and the flow doesn't define a `goBack` handler, we should return undefined so the StepContainer doesn't render a back button.
-			 */
-			...( canUserGoBack && {
-				goBack: () => {
-					handleRecordStepNavigation( {
-						event: STEPPER_TRACKS_EVENT_STEP_NAV_GO_BACK,
-					} );
-					history.back();
-				},
-			} ),
-		} ),
-		[ handleRecordStepNavigation, flowSubmissionHandler, currentStepRoute, navigate, canUserGoBack ]
-	);
-
-	if ( 'useHandleSubmit' in flow ) {
-		return navigationControlsForStepperV2;
-	}
-
-	return deprecatedNavigationControlsForStepperV1;
 };
