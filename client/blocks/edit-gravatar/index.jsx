@@ -181,7 +181,7 @@ const recordClickButtonEvent = ( { isVerified } ) =>
 		recordGoogleEvent( 'Me', 'Clicked on Edit Gravatar Button in Profile' )
 	);
 
-const recordAvatarUpdatedEvent = () => recordTracksEvent( 'calypso_edit_gravatar_updated' );
+const recordAvatarUpdatedEvent = () => recordTracksEvent( 'calypso_edit_gravatar_avatar_updated' );
 
 export default connect(
 	( state ) => ( {
