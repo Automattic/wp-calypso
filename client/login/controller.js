@@ -823,8 +823,6 @@ export function redirectLostPassword( context, next ) {
 export function redirectJetpackDirectAuthError( context, next, newQuery = {} ) {
 	const queryParams = new URLSearchParams( Object.assign( {}, context.query, newQuery ) );
 
-	queryParams.set( 'allow_site_connection', '1' );
-
 	const fallbackUrl = `/log-in/jetpack/?${ queryParams.toString() }`;
 	window.history.replaceState( null, '', fallbackUrl );
 
