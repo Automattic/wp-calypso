@@ -21,7 +21,7 @@ const Wrapper =
 		<QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>
 	);
 
-const render = ( options = { retry: 0 } ) => {
+const render = ( plugin_slug?: string, theme_slug?: string ) => {
 	const queryClient = new QueryClient();
 
 	const renderResult = renderHook(
@@ -30,10 +30,10 @@ const render = ( options = { retry: 0 } ) => {
 				{
 					siteId: SITE_ID,
 					apiSettings: API_SETTINGS,
-					plugin_slug: 'plugin-1',
-					theme_slug: 'theme-1',
+					plugin_slug: plugin_slug,
+					theme_slug: theme_slug,
 				},
-				options
+				{ retry: 0 }
 			),
 		{
 			wrapper: Wrapper( queryClient ),
@@ -69,7 +69,7 @@ describe( 'useRequestTransferWithSoftware', () => {
 				transfer_status: 'pending',
 			} );
 
-		const { result } = render();
+		const { result } = render( 'plugin-1', 'theme-1' );
 
 		result.current.mutate();
 
@@ -102,6 +102,66 @@ describe( 'useRequestTransferWithSoftware', () => {
 		await waitFor(
 			() => {
 				expect( result.current.isError ).toBe( true );
+			},
+			{ timeout: 3000 }
+		);
+	} );
+
+	it( 'should successfully request the transfer with a plugin slug', async () => {
+		nock( 'https://public-api.wordpress.com' )
+			.post( '/wpcom/v2/sites/' + SITE_ID + '/atomic/transfer-with-software', {
+				plugin_slug: 'plugin-1',
+				settings: API_SETTINGS,
+			} )
+			.query( { http_envelope: 1 } )
+			.reply( 200, {
+				transfer_id: 456,
+				blog_id: SITE_ID,
+				transfer_status: 'pending',
+			} );
+
+		const { result } = render( 'plugin-1' );
+
+		result.current.mutate();
+
+		await waitFor(
+			() => {
+				expect( result.current.isSuccess ).toBe( true );
+				expect( result.current.data ).toEqual( {
+					transfer_id: 456,
+					blog_id: SITE_ID,
+					transfer_status: 'pending',
+				} );
+			},
+			{ timeout: 3000 }
+		);
+	} );
+
+	it( 'should successfully request the transfer with a theme slug', async () => {
+		nock( 'https://public-api.wordpress.com' )
+			.post( '/wpcom/v2/sites/' + SITE_ID + '/atomic/transfer-with-software', {
+				theme_slug: 'theme-1',
+				settings: API_SETTINGS,
+			} )
+			.query( { http_envelope: 1 } )
+			.reply( 200, {
+				transfer_id: 456,
+				blog_id: SITE_ID,
+				transfer_status: 'pending',
+			} );
+
+		const { result } = render( undefined, 'theme-1' );
+
+		result.current.mutate();
+
+		await waitFor(
+			() => {
+				expect( result.current.isSuccess ).toBe( true );
+				expect( result.current.data ).toEqual( {
+					transfer_id: 456,
+					blog_id: SITE_ID,
+					transfer_status: 'pending',
+				} );
 			},
 			{ timeout: 3000 }
 		);

@@ -7,14 +7,13 @@ type TransferWithSoftwareResponse = {
 	transfer_status: string;
 };
 
-type SoftwareSlug = string;
 type ApiSettings = Record< string, unknown >;
 
 type TransferOptions = {
 	siteId: number;
 	apiSettings?: ApiSettings;
-	plugin_slug?: SoftwareSlug;
-	theme_slug?: SoftwareSlug;
+	plugin_slug?: string;
+	theme_slug?: string;
 };
 
 const requestTransferWithSoftware: (
