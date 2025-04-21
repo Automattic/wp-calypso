@@ -249,6 +249,13 @@ export const isActionEligible = (
 				);
 			};
 		case 'leave-site':
+			return ( site: SiteExcerptData ) => {
+				if ( isP2Site( site ) ) {
+					return false;
+				}
+
+				return true;
+			};
 		default:
 			return () => true;
 	}

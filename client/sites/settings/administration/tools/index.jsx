@@ -269,7 +269,7 @@ export default connect(
 		const showStartSiteTransfer =
 			! isDevelopmentSite && canCurrentUserStartSiteOwnerTransfer( state, siteId );
 
-		const showLeaveSite = sitePurchasesLoaded;
+		const showLeaveSite = sitePurchasesLoaded && ! isP2;
 
 		return {
 			site,
