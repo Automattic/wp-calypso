@@ -1126,7 +1126,6 @@ __metadata:
     "@storybook/addon-controls": "npm:^8.6.9"
     "@storybook/addon-docs": "npm:^8.6.9"
     "@storybook/react-webpack5": "npm:^8.6.9"
-    "@testing-library/react": "npm:^16.2.0"
     storybook: "npm:^8.6.9"
     typescript: "npm:^5.8.2"
   peerDependencies:

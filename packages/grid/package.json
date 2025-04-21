@@ -36,7 +36,6 @@
 		"@storybook/addon-controls": "^8.6.9",
 		"@storybook/addon-docs": "^8.6.9",
 		"@storybook/react-webpack5": "^8.6.9",
-		"@testing-library/react": "^16.2.0",
 		"storybook": "^8.6.9",
 		"typescript": "^5.8.2"
 	},
