@@ -23,7 +23,7 @@ export function PurchasesDataViews( props: {
 } ) {
 	const { purchases } = props;
 	const onChangeView = () => {
-		alert( 'You clicked something!!' );
+		return;
 	};
 
 	const getItemId = ( item: Purchases.Purchase ) => {
