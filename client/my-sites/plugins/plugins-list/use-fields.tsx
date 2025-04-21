@@ -75,7 +75,7 @@ export function useFields(
 
 					return (
 						<>
-							{ item.name }
+							<div className="plugin-name-container">{ item.name }</div>
 							{ pluginActionStatus }
 						</>
 					);
