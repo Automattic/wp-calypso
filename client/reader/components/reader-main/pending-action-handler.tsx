@@ -18,22 +18,28 @@ export const ReaderPendingActionHandler = () => {
 			return;
 		}
 
-		switch ( pendingAction.type ) {
-			case 'like':
-				dispatch( like( pendingAction.siteId, pendingAction.postId ) );
-				break;
-			case 'comment-like':
-				dispatch(
-					likeComment( pendingAction.siteId, pendingAction.postId, pendingAction.commentId )
-				);
-				break;
-			case 'follow-site':
-				dispatch( follow( pendingAction.siteUrl, pendingAction.followData, null ) );
-				break;
-			case 'follow-tag':
-				dispatch( requestFollowTag( pendingAction.tag ) );
-				break;
-		}
+		// The timeout is a naieve attempt to try and combat race conditions. Initial requests from
+		// the app loading could come back slower than what is dispatched here, causing a stale
+		// state in the UI. However, it there doesn't seem to be a good indicator for when all of
+		// these potential items may already be loaded or some circumstances where they wouldn't be.
+		setTimeout( () => {
+			switch ( pendingAction.type ) {
+				case 'like':
+					dispatch( like( pendingAction.siteId, pendingAction.postId ) );
+					break;
+				case 'comment-like':
+					dispatch(
+						likeComment( pendingAction.siteId, pendingAction.postId, pendingAction.commentId )
+					);
+					break;
+				case 'follow-site':
+					dispatch( follow( pendingAction.siteUrl, pendingAction.followData, null ) );
+					break;
+				case 'follow-tag':
+					dispatch( requestFollowTag( pendingAction.tag ) );
+					break;
+			}
+		}, 500 );
 
 		dispatch( clearLastActionRequiresLogin() );
 	}, [ isLoggedIn, pendingAction, dispatch ] );
