@@ -86,7 +86,7 @@ export class EditGravatar extends Component {
 		return (
 			<div className="edit-gravatar">
 				<div className="edit-gravatar__image-container">
-					<div className="edit-gravatar__gravatar-is-hidden">
+					<div className="edit-gravatar__hidden-avatar" data-testid="hidden-avatar">
 						<Gridicon
 							icon="user"
 							size={ 96 } /* eslint-disable-line wpcalypso/jsx-gridicon-size */
@@ -143,7 +143,7 @@ export class EditGravatar extends Component {
 				<div className="edit-gravatar__image-container">
 					<Gravatar imgSize={ GRAVATAR_IMG_SIZE } size={ 150 } user={ user } />
 					{ ! user.email_verified && (
-						<div className="edit-gravatar__caution-icon">
+						<div className="edit-gravatar__caution-icon" data-testid="caution-icon">
 							<Icon icon={ caution } fill="#fff" size={ 24 } />
 						</div>
 					) }
