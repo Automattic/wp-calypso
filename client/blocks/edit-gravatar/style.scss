@@ -30,11 +30,11 @@
 		display: flex;
 		align-items: center;
 		margin: 15px 0 20px;
+		min-height: 24px;
 	}
 
 	.edit-gravatar__edit-button {
 		font-size: 14px;
-		line-height: 24px;
 		text-decoration: none;
 	}
 
@@ -58,7 +58,7 @@
 	}
 
 	.edit-gravatar__edit-button-placeholder {
-		height: 23px;
+		height: 24px;
 		width: 160px;
 	}
 
