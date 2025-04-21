@@ -816,18 +816,21 @@ __metadata:
     "@emotion/babel-plugin": "npm:^11.13.5"
     "@wordpress/babel-preset-default": "npm:^8.22.0"
     "@wordpress/base-styles": "npm:^5.22.0"
-    "@wordpress/components": "npm:^29.7.0"
-    "@wordpress/compose": "npm:^7.21.0"
-    "@wordpress/data": "npm:^10.21.0"
-    "@wordpress/element": "npm:^6.21.0"
-    "@wordpress/i18n": "npm:^5.21.0"
-    "@wordpress/icons": "npm:^10.21.0"
-    "@wordpress/primitives": "npm:^4.21.0"
-    "@wordpress/private-apis": "npm:^1.21.0"
-    "@wordpress/warning": "npm:^3.21.0"
+    "@wordpress/components": "npm:^29.8.0"
+    "@wordpress/compose": "npm:^7.22.0"
+    "@wordpress/data": "npm:^10.22.0"
+    "@wordpress/element": "npm:^6.22.0"
+    "@wordpress/i18n": "npm:^5.22.0"
+    "@wordpress/icons": "npm:^10.22.0"
+    "@wordpress/postcss-plugins-preset": "npm:^5.22.0"
+    "@wordpress/primitives": "npm:^4.22.0"
+    "@wordpress/private-apis": "npm:^1.22.0"
+    "@wordpress/warning": "npm:^3.22.0"
     babel-plugin-inline-json-import: "npm:^0.3.2"
     clsx: "npm:^2.1.1"
     glob: "npm:^11.0.1"
+    postcss: "npm:^8.5.3"
+    postcss-local-keyframes: "npm:^0.0.2"
     remove-accents: "npm:^0.5.0"
     sass: "npm:^1.54.0"
   peerDependencies:
@@ -11082,6 +11085,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@wordpress/postcss-plugins-preset@npm:5.22.0":
+  version: 5.22.0
+  resolution: "@wordpress/postcss-plugins-preset@npm:5.22.0"
+  dependencies:
+    "@wordpress/base-styles": "npm:^5.22.0"
+    autoprefixer: "npm:^10.4.20"
+  peerDependencies:
+    postcss: ^8.0.0
+  checksum: 8b1d08e77df38fd8696a0f9ea4d9cf9dad0c9e495edb8a4e087d01c2c570760f178ce49c950a8c580eb96b14e050f966ea7a9c273cfdddcd52336632c5fc00ac
+  languageName: node
+  linkType: hard
+
 "@wordpress/preferences@npm:4.22.0":
   version: 4.22.0
   resolution: "@wordpress/preferences@npm:4.22.0"
@@ -12567,6 +12582,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"autoprefixer@npm:^10.4.20":
+  version: 10.4.21
+  resolution: "autoprefixer@npm:10.4.21"
+  dependencies:
+    browserslist: "npm:^4.24.4"
+    caniuse-lite: "npm:^1.0.30001702"
+    fraction.js: "npm:^4.3.7"
+    normalize-range: "npm:^0.1.2"
+    picocolors: "npm:^1.1.1"
+    postcss-value-parser: "npm:^4.2.0"
+  peerDependencies:
+    postcss: ^8.1.0
+  bin:
+    autoprefixer: bin/autoprefixer
+  checksum: de5b71d26d0baff4bbfb3d59f7cf7114a6030c9eeb66167acf49a32c5b61c68e308f1e0f869d92334436a221035d08b51cd1b2f2c4689b8d955149423c16d4d4
+  languageName: node
+  linkType: hard
+
 "autosize@npm:^4.0.2, autosize@npm:^4.0.4":
   version: 4.0.4
   resolution: "autosize@npm:4.0.4"
@@ -13969,6 +14002,13 @@ __metadata:
   version: 1.0.30001702
   resolution: "caniuse-lite@npm:1.0.30001702"
   checksum: 52d46f41a96d179fd4e387bb6b26898148c31b626ff9aba105d207d2b0f869c7cb32ac67a6e8e0aeba3f03f33145ccfbee237250dfb58dba8b6526b4dd395ac6
+  languageName: node
+  linkType: hard
+
+"caniuse-lite@npm:^1.0.30001702":
+  version: 1.0.30001715
+  resolution: "caniuse-lite@npm:1.0.30001715"
+  checksum: 0109a7da797ffbe1aa197baa5242b205011098eecec1087ef3d0c58ceea19be325ab6679b2751a78660adc3051a9f77e99d5789938fd1eb1235e6fdf6a1dbf8e
   languageName: node
   linkType: hard
 
@@ -19580,6 +19620,13 @@ __metadata:
   version: 4.1.0
   resolution: "fraction.js@npm:4.1.0"
   checksum: db0e43d60dbe9211673dd88a0ba7984a1b3b34dcefa2619e12c73e9d58106fc172f13b6e6f10af5c17f2ef6439a02fe848218ec9498d4ced7cccb7ecce42e776
+  languageName: node
+  linkType: hard
+
+"fraction.js@npm:^4.3.7":
+  version: 4.3.7
+  resolution: "fraction.js@npm:4.3.7"
+  checksum: df291391beea9ab4c263487ffd9d17fed162dbb736982dee1379b2a8cc94e4e24e46ed508c6d278aded9080ba51872f1bc5f3a5fd8d7c74e5f105b508ac28711
   languageName: node
   linkType: hard
 
@@ -28177,6 +28224,15 @@ __metadata:
     postcss: ^7.0.0 || ^8.0.1
     webpack: ^5.0.0
   checksum: 736a1bf43a3e09e2351b5cc97cc26790a1c3261412c9dee063f3f6f2969a6ff7d8d194d9adcad01cee1afd1de071482318d9699e6157b67d46b3dccf3be1b58b
+  languageName: node
+  linkType: hard
+
+"postcss-local-keyframes@npm:^0.0.2":
+  version: 0.0.2
+  resolution: "postcss-local-keyframes@npm:0.0.2"
+  peerDependencies:
+    postcss: ^8.2.8
+  checksum: d84815005ec75fef50a3f4a9cb7cff59fe1222714bfe1d7864c217d7e305b45774af1567eb88af280274bf1fd56dd5a461e3d4d453bb9b44f051a3d85b79cd79
   languageName: node
   linkType: hard
 
