@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import { translate } from 'i18n-calypso';
 import { omit } from 'lodash';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import wpcom from 'calypso/lib/wp';
 import { purchasesRoot } from 'calypso/me/purchases/paths';
@@ -22,6 +23,7 @@ import {
 } from 'calypso/state/action-types';
 import { fetchCurrentUser } from 'calypso/state/current-user/actions';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getP2HubBlogId from 'calypso/state/selectors/get-p2-hub-blog-id';
 import getSiteUrl from 'calypso/state/selectors/get-site-url';
 import { SITE_REQUEST_FIELDS, SITE_REQUEST_OPTIONS } from 'calypso/state/sites/constants';
@@ -230,8 +232,10 @@ const siteLeaveNoticeOptions = {
  */
 export function leaveSite( siteId, userId ) {
 	return ( dispatch, getState ) => {
-		const siteDomain = getSiteDomain( getState(), siteId );
-		const siteSlug = getSiteSlug( getState(), siteId );
+		const state = getState();
+		const siteDomain = getSiteDomain( state, siteId );
+		const siteSlug = getSiteSlug( state, siteId );
+		const isAdmin = canCurrentUser( state, siteId, 'manage_options' );
 
 		return wpcom.req
 			.post( `/sites/${ siteId }/users/${ userId }/delete` )
@@ -242,6 +246,12 @@ export function leaveSite( siteId, userId ) {
 						translate( 'You have left %(siteDomain)s successfully.', { args: { siteDomain } } ),
 						siteLeaveNoticeOptions
 					)
+				);
+				dispatch(
+					recordTracksEvent( 'calypso_leave_blog_success', {
+						site_id: siteId,
+						is_admin: isAdmin,
+					} )
 				);
 				return true;
 			} )
@@ -261,10 +271,16 @@ export function leaveSite( siteId, userId ) {
 							}
 						)
 					);
-					return;
+				} else {
+					dispatch( errorNotice( error.message, siteLeaveNoticeOptions ) );
 				}
 
-				dispatch( errorNotice( error.message, siteLeaveNoticeOptions ) );
+				dispatch(
+					recordTracksEvent( 'calypso_leave_blog_failure', {
+						site_id: siteId,
+						is_admin: isAdmin,
+					} )
+				);
 				return false;
 			} );
 	};
