@@ -24,6 +24,7 @@ const userProp = {
 };
 
 const baseProps = {
+	userProp,
 	translate: ( i ) => i,
 	recordClickButtonEvent: jest.fn(),
 	recordAvatarUpdatedEvent: jest.fn(),
@@ -38,7 +39,7 @@ describe( 'EditGravatar', () => {
 
 	describe( 'renders', () => {
 		test( 'editable Gravatar', () => {
-			setup( { user: userProp } );
+			setup();
 			expect( screen.getByAltText( userProp.display_name ) ).toBeVisible();
 			expect( screen.getByRole( 'button', { name: /Edit your public avatar/i } ) ).toBeVisible();
 		} );
@@ -52,7 +53,7 @@ describe( 'EditGravatar', () => {
 		} );
 
 		test( 'Gravatar disabled', () => {
-			setup( { user: userProp, isGravatarProfileHidden: true } );
+			setup( { isGravatarProfileHidden: true } );
 			expect( screen.getByTestId( 'hidden-avatar' ) ).toBeVisible();
 			expect( screen.getByText( /Your avatar is hidden\./ ) ).toBeVisible();
 		} );
@@ -60,7 +61,7 @@ describe( 'EditGravatar', () => {
 
 	describe( 'actions', () => {
 		test( 'opens quick editor and updates user', () => {
-			setup( { user: userProp } );
+			setup();
 
 			fireEvent.click( screen.getByRole( 'button', { name: /Edit your public avatar/i } ) );
 
