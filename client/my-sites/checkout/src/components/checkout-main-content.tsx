@@ -90,6 +90,7 @@ import { GoogleDomainsCopy } from './google-transfers-copy';
 import JetpackAkismetCheckoutSidebarPlanUpsell from './jetpack-akismet-checkout-sidebar-plan-upsell';
 import { LeaveCheckoutModal, useCheckoutLeaveModal } from './leave-checkout-modal';
 import BeforeSubmitCheckoutHeader from './payment-method-step';
+import { PaymentMethodFilter } from './payment-methods-filter';
 import SecondaryCartPromotions from './secondary-cart-promotions';
 import WPCheckoutOrderReview, { CouponFieldArea } from './wp-checkout-order-review';
 import {
@@ -338,6 +339,8 @@ export default function CheckoutMainContent( {
 	isLoggedOutCart,
 	onPageLoadError,
 	paymentMethods,
+	areStoredCardsFiltered,
+	isBusinessCardsFilterEmpty,
 	removeProductFromCart,
 	showErrorMessageBriefly,
 	siteId,
@@ -359,6 +362,8 @@ export default function CheckoutMainContent( {
 	isLoggedOutCart: boolean;
 	onPageLoadError: CheckoutPageErrorCallback;
 	paymentMethods: PaymentMethod[];
+	areStoredCardsFiltered?: boolean;
+	isBusinessCardsFilterEmpty?: boolean;
 	removeProductFromCart: RemoveProductFromCart;
 	showErrorMessageBriefly: ( error: string ) => void;
 	siteId: number | undefined;
@@ -779,7 +784,15 @@ export default function CheckoutMainContent( {
 					/>
 				) }
 				<PaymentMethodStep
-					activeStepHeader={ <GoogleDomainsCopy responseCart={ responseCart } /> }
+					activeStepHeader={
+						<>
+							<GoogleDomainsCopy responseCart={ responseCart } />
+							<PaymentMethodFilter
+								areStoredCardsFiltered={ areStoredCardsFiltered }
+								isBusinessCardsFilterEmpty={ isBusinessCardsFilterEmpty }
+							/>
+						</>
+					}
 					canEditStep={ canEditPaymentStep() }
 					editButtonText={ String( translate( 'Edit' ) ) }
 					editButtonAriaLabel={ String( translate( 'Edit the payment method' ) ) }

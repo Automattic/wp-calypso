@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import wp from 'calypso/lib/wp';
 import type { StoredPaymentMethod } from 'calypso/lib/checkout/payment-methods';
 import type { ComponentType } from 'react';
@@ -93,14 +93,15 @@ export function useStoredPaymentMethods( {
 
 	const translate = useTranslate();
 	const isDataValid = Array.isArray( data );
-	let paymentMethods = isDataValid ? data : [];
+	const filteredPaymentMethods = useMemo( () => {
+		if ( ! isDataValid ) {
+			return [];
+		}
 
-	// Apply filtering based on business use
-	if ( isForBusiness === true ) {
-		paymentMethods = paymentMethods.filter(
-			( method ) => method?.tax_location?.is_for_business === isForBusiness
-		);
-	}
+		return isForBusiness
+			? data.filter( ( method ) => method?.tax_location?.is_for_business === isForBusiness )
+			: data;
+	}, [ isForBusiness, data ] );
 
 	const mutation = useMutation<
 		StoredPaymentMethod[ 'stored_details_id' ],
@@ -143,7 +144,7 @@ export function useStoredPaymentMethods( {
 	} )();
 
 	return {
-		paymentMethods,
+		paymentMethods: filteredPaymentMethods,
 		isLoading: isLoggedOut ? false : isLoading,
 		isDeleting: mutation.isPending,
 		error: errorMessage,
