@@ -92,10 +92,28 @@ const siteRequestObjectToSiteObject = ( site: WPCOMRESTAPISite ): Site => ( {
 
 export const fetchSites = async (): Promise< Site[] > => {
 	return await wpcom.req
-		.get( {
-			path: '/me/sites?http_envelope=1&site_visibility=all&include_domain_only=true&site_activity=active&fields=ID,URL,name,icon,subscribers_count,plan,active_modules,is_deleted,options',
-			apiNamespace: 'rest/v1.2',
-		} )
+		.get(
+			{
+				path: '/me/sites?http_envelope=1',
+				apiNamespace: 'rest/v1.2',
+			},
+			{
+				site_visibility: 'all',
+				include_domain_only: 'true',
+				site_activity: 'active',
+				fields: [
+					'ID',
+					'URL',
+					'name',
+					'icon',
+					'subscribers_count',
+					'plan',
+					'active_modules',
+					'is_deleted',
+					'options',
+				].join( ',' ),
+			}
+		)
 		.then( ( response: { sites: WPCOMRESTAPISite[] } ) => {
 			return response.sites.map( siteRequestObjectToSiteObject );
 		} );
@@ -105,10 +123,24 @@ export const fetchSite = async ( id: string ): Promise< Site > => {
 	if ( ! id ) {
 		return Promise.reject( new Error( 'Site ID is undefined' ) );
 	}
-	const site = await wpcom.req.get( {
-		path: `/sites/${ id }?http_envelope=1&fields=ID,URL,name,icon,subscribers_count,plan,active_modules,options`,
-		apiNamespace: 'rest/v1.1',
-	} );
+	const site = await wpcom.req.get(
+		{
+			path: `/sites/${ id }?http_envelope=1`,
+			apiNamespace: 'rest/v1.1',
+		},
+		{
+			fields: [
+				'ID',
+				'URL',
+				'name',
+				'icon',
+				'subscribers_count',
+				'plan',
+				'active_modules',
+				'options',
+			].join( ',' ),
+		}
+	);
 	return siteRequestObjectToSiteObject( site );
 };
 
@@ -136,10 +168,13 @@ export const fetchSiteMonitorUptime = async (
 	// TODO: check this in different contexts..
 	// TODO: this and similar requests trigger multiple requests to the same endpoint
 	// with different fields. How can we avoid this?
-	const site = await wpcom.req.get( {
-		path: `/sites/${ id }?http_envelope=1&fields=ID,jetpack,jetpack_modules`,
-		apiNamespace: 'rest/v1.1',
-	} );
+	const site = await wpcom.req.get(
+		{
+			path: `/sites/${ id }?http_envelope=1`,
+			apiNamespace: 'rest/v1.1',
+		},
+		{ fields: [ 'ID', 'jetpack', 'jetpack_modules' ].join( ',' ) }
+	);
 	if ( ! site?.jetpack || ! site?.jetpack_modules?.includes( 'monitor' ) ) {
 		return;
 	}
@@ -156,10 +191,13 @@ export const fetchPHPVersion = async ( id: string ): Promise< string | undefined
 	if ( ! id ) {
 		return Promise.reject( new Error( 'Site ID is undefined' ) );
 	}
-	const site = await wpcom.req.get( {
-		path: `/sites/${ id }?http_envelope=1&fields=ID,options`,
-		apiNamespace: 'rest/v1.1',
-	} );
+	const site = await wpcom.req.get(
+		{
+			path: `/sites/${ id }?http_envelope=1`,
+			apiNamespace: 'rest/v1.1',
+		},
+		{ fields: [ 'ID', 'options' ].join( ',' ) }
+	);
 	if ( ! site.options?.is_wpcom_atomic ) {
 		return;
 	}
@@ -196,7 +234,7 @@ export const fetchSiteEngagementStats = async ( id: string ) => {
 		{
 			unit: 'day',
 			quantity: 14,
-			stat_fields: 'visitors,views,likes,comments',
+			stat_fields: [ 'visitors', 'views', 'likes', 'comments' ].join( ',' ),
 		}
 	);
 	// We need to normalize the returned data. We ask for 14 days of data (quantity:14)
@@ -374,7 +412,7 @@ export const fetchUser = async (): Promise< User > => {
 
 export const fetchTwoStep = async (): Promise< TwoStep > => {
 	return wpcom.req.get( {
-		path: '/me/two-step/?http_envelope=1',
+		path: '/me/two-step?http_envelope=1',
 		apiNamespace: 'rest/v1.1',
 	} );
 };
