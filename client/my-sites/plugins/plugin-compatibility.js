@@ -126,7 +126,7 @@ const incompatiblePlugins = new Set( [
 
 	// cloning/staging
 	'flo-launch',
-	
+
 	// misc
 	'adult-mass-photos-downloader',
 	'adult-mass-videos-embedder',
