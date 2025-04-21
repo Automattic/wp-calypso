@@ -516,7 +516,7 @@ body.is-section-signup {
 	}
 }
 
-.step-route.onboarding.domains:has(.step-container-v2) {
+body.is-section-stepper .step-route.domains:has(.step-container-v2) {
 	padding: 0;
 
 	.register-domain-step__search-card {

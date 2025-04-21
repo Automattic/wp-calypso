@@ -2,6 +2,7 @@ import page from '@automattic/calypso-router';
 import { __ } from '@wordpress/i18n';
 import { useSelector } from 'react-redux';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { fetchSiteFeatures } from 'calypso/state/sites/features/actions';
 import { isSimpleSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { getRouteFromContext } from 'calypso/utils';
@@ -79,12 +80,21 @@ export function redirectToSiteSettingsIfAdvancedHostingFeaturesNotSupported(
 ) {
 	const state = context.store.getState();
 	const site = getSelectedSite( state );
+	const dispatch = context.store.dispatch;
 
-	if ( areAdvancedHostingFeaturesSupported( state ) === false ) {
-		return page.redirect( `/sites/settings/site/${ site?.slug }` );
+	if ( ! site?.ID ) {
+		return next();
 	}
 
-	next();
+	dispatch( fetchSiteFeatures( site?.ID ) ).then( () => {
+		const isSupported = areAdvancedHostingFeaturesSupported( context.store.getState() );
+
+		if ( isSupported === false ) {
+			return page.redirect( `/sites/settings/site/${ site?.slug }` );
+		}
+
+		next();
+	} );
 }
 
 export function siteSettings( context: PageJSContext, next: () => void ) {

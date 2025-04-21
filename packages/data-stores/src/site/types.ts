@@ -389,6 +389,7 @@ export interface Domain {
 	product_slug?: any;
 	owner: string;
 	is_pending_icann_verification?: boolean;
+	is_root_domain_registered_with_automattic: boolean;
 	is_mapped_to_atomic_site: boolean;
 }
 

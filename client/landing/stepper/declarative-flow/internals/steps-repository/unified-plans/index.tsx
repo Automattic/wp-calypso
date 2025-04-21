@@ -105,6 +105,8 @@ const PlansStepAdaptor: StepType< {
 	const customerType = useQuery().get( 'customerType' ) ?? undefined;
 	const [ planInterval, setPlanInterval ] = useState< string | undefined >( undefined );
 
+	useQueryTheme( 'wpcom', selectedDesign?.slug );
+
 	/**
 	 * isWordCampPromo is temporary
 	 */
@@ -133,8 +135,6 @@ const PlansStepAdaptor: StepType< {
 		const intervalType = getIntervalType( path );
 		setPlanInterval( intervalType );
 	};
-
-	useQueryTheme( 'wpcom', selectedDesign?.slug );
 
 	const isUsingStepContainerV2 = shouldUseStepContainerV2( props.flow );
 
