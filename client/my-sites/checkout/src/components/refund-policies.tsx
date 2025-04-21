@@ -12,12 +12,12 @@ import {
 } from '@automattic/calypso-products';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { DOMAIN_CANCEL, REFUNDS } from '@automattic/urls';
-import { isWpComProductRenewal as isRenewal } from '@automattic/wpcom-checkout';
+import { isWpComProductRenewal as isRenewal, isValueTruthy } from '@automattic/wpcom-checkout';
 import { formatCurrency, useTranslate } from 'i18n-calypso';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { has100YearPlan, has100YearDomain } from 'calypso/lib/cart-values/cart-items';
 import CheckoutTermsItem from './checkout-terms-item';
-import type { ResponseCart } from '@automattic/shopping-cart';
+import type { ResponseCart, ResponseCartProduct } from '@automattic/shopping-cart';
 
 export enum RefundPolicy {
 	DomainNameRegistration = 1,
@@ -46,126 +46,132 @@ export enum RefundPolicy {
 	DomainNameTransfer,
 }
 
-export function getRefundPolicies( cart: ResponseCart ): RefundPolicy[] {
+export function getRefundPolicyForCartItem(
+	cart: ResponseCart,
+	product: ResponseCartProduct
+): RefundPolicy | undefined {
 	const isGiftPurchase = cart.is_gift_purchase;
-
-	const refundPolicies: Array< RefundPolicy | undefined > = cart.products.map( ( product ) => {
-		if ( isGiftPurchase ) {
-			if ( isDomainRegistration( product ) ) {
-				return RefundPolicy.GiftDomainPurchase;
-			}
-
-			if ( isMonthlyProduct( product ) ) {
-				return RefundPolicy.GiftMonthlyPurchase;
-			}
-
-			if ( isYearly( product ) ) {
-				return RefundPolicy.GiftYearlyPurchase;
-			}
-
-			if ( isBiennially( product ) ) {
-				return RefundPolicy.GiftBiennialPurchase;
-			}
-		}
-
-		if ( isGoogleWorkspaceExtraLicence( product ) ) {
-			return RefundPolicy.NonRefundable;
-		}
-
-		if ( ! product.item_subtotal_integer ) {
-			return undefined;
-		}
-
+	if ( isGiftPurchase ) {
 		if ( isDomainRegistration( product ) ) {
-			if ( has100YearDomain( cart ) ) {
-				return RefundPolicy.GenericCentennial;
-			}
-
-			if ( isRenewal( product ) ) {
-				return RefundPolicy.DomainNameRenewal;
-			}
-			return RefundPolicy.DomainNameRegistration;
-		}
-
-		if ( isDomainTransfer( product ) ) {
-			if ( has100YearDomain( cart ) ) {
-				return RefundPolicy.GenericCentennial;
-			}
-
-			return RefundPolicy.DomainNameTransfer;
-		}
-
-		if ( product.product_slug === 'premium_theme' ) {
-			return RefundPolicy.PremiumTheme;
-		}
-
-		if ( isPlan( product ) ) {
-			// Monthly plans can have an associated "bundled" domain, even if the domain price
-			// ultimately isn't free (i.e. it's not a real bundle). For that reason, we look at
-			// `product.extra.domain_to_bundle` here instead of `cart.bundled_domain`.
-			if ( product.extra?.domain_to_bundle ) {
-				if ( isMonthlyProduct( product ) ) {
-					return RefundPolicy.PlanMonthlyBundle;
-				}
-
-				if ( isYearly( product ) ) {
-					return RefundPolicy.PlanYearlyBundle;
-				}
-
-				if ( isBiennially( product ) ) {
-					return RefundPolicy.PlanBiennialBundle;
-				}
-
-				if ( isTriennially( product ) ) {
-					return RefundPolicy.PlanTriennialBundle;
-				}
-
-				if ( isCentennially( product ) ) {
-					return RefundPolicy.PlanCentennialBundle;
-				}
-			}
-
-			if ( isRenewal( product ) ) {
-				if ( isMonthlyProduct( product ) ) {
-					return RefundPolicy.PlanMonthlyRenewal;
-				}
-
-				if ( isYearly( product ) ) {
-					return RefundPolicy.PlanYearlyRenewal;
-				}
-
-				if ( isBiennially( product ) ) {
-					return RefundPolicy.PlanBiennialRenewal;
-				}
-
-				if ( isTriennially( product ) ) {
-					return RefundPolicy.PlanTriennialRenewal;
-				}
-			}
+			return RefundPolicy.GiftDomainPurchase;
 		}
 
 		if ( isMonthlyProduct( product ) ) {
-			return RefundPolicy.GenericMonthly;
+			return RefundPolicy.GiftMonthlyPurchase;
 		}
 
 		if ( isYearly( product ) ) {
-			return RefundPolicy.GenericYearly;
+			return RefundPolicy.GiftYearlyPurchase;
 		}
 
 		if ( isBiennially( product ) ) {
-			return RefundPolicy.GenericBiennial;
+			return RefundPolicy.GiftBiennialPurchase;
 		}
+	}
 
-		if ( isTriennially( product ) ) {
-			return RefundPolicy.GenericTriennial;
-		}
+	if ( isGoogleWorkspaceExtraLicence( product ) ) {
+		return RefundPolicy.NonRefundable;
+	}
 
-		if ( isCentennially( product ) ) {
+	if ( ! product.item_subtotal_integer ) {
+		return undefined;
+	}
+
+	if ( isDomainRegistration( product ) ) {
+		if ( has100YearDomain( cart ) ) {
 			return RefundPolicy.GenericCentennial;
 		}
 
-		return RefundPolicy.NonRefundable;
-	} );
+		if ( isRenewal( product ) ) {
+			return RefundPolicy.DomainNameRenewal;
+		}
+		return RefundPolicy.DomainNameRegistration;
+	}
+
+	if ( isDomainTransfer( product ) ) {
+		if ( has100YearDomain( cart ) ) {
+			return RefundPolicy.GenericCentennial;
+		}
+
+		return RefundPolicy.DomainNameTransfer;
+	}
+
+	if ( product.product_slug === 'premium_theme' ) {
+		return RefundPolicy.PremiumTheme;
+	}
+
+	if ( isPlan( product ) ) {
+		// Monthly plans can have an associated "bundled" domain, even if the domain price
+		// ultimately isn't free (i.e. it's not a real bundle). For that reason, we look at
+		// `product.extra.domain_to_bundle` here instead of `cart.bundled_domain`.
+		if ( product.extra?.domain_to_bundle ) {
+			if ( isMonthlyProduct( product ) ) {
+				return RefundPolicy.PlanMonthlyBundle;
+			}
+
+			if ( isYearly( product ) ) {
+				return RefundPolicy.PlanYearlyBundle;
+			}
+
+			if ( isBiennially( product ) ) {
+				return RefundPolicy.PlanBiennialBundle;
+			}
+
+			if ( isTriennially( product ) ) {
+				return RefundPolicy.PlanTriennialBundle;
+			}
+
+			if ( isCentennially( product ) ) {
+				return RefundPolicy.PlanCentennialBundle;
+			}
+		}
+
+		if ( isRenewal( product ) ) {
+			if ( isMonthlyProduct( product ) ) {
+				return RefundPolicy.PlanMonthlyRenewal;
+			}
+
+			if ( isYearly( product ) ) {
+				return RefundPolicy.PlanYearlyRenewal;
+			}
+
+			if ( isBiennially( product ) ) {
+				return RefundPolicy.PlanBiennialRenewal;
+			}
+
+			if ( isTriennially( product ) ) {
+				return RefundPolicy.PlanTriennialRenewal;
+			}
+		}
+	}
+
+	if ( isMonthlyProduct( product ) ) {
+		return RefundPolicy.GenericMonthly;
+	}
+
+	if ( isYearly( product ) ) {
+		return RefundPolicy.GenericYearly;
+	}
+
+	if ( isBiennially( product ) ) {
+		return RefundPolicy.GenericBiennial;
+	}
+
+	if ( isTriennially( product ) ) {
+		return RefundPolicy.GenericTriennial;
+	}
+
+	if ( isCentennially( product ) ) {
+		return RefundPolicy.GenericCentennial;
+	}
+
+	return RefundPolicy.NonRefundable;
+}
+
+export function getRefundPolicies( cart: ResponseCart ): RefundPolicy[] {
+	const refundPolicies = cart.products.map( ( product ) =>
+		getRefundPolicyForCartItem( cart, product )
+	);
 
 	const cartHasPlanBundlePolicy = refundPolicies.some(
 		( refundPolicy ) =>
@@ -191,45 +197,45 @@ export function getRefundPolicies( cart: ResponseCart ): RefundPolicy[] {
 	);
 }
 
-type RefundWindow = 4 | 7 | 14 | 120;
+export type RefundWindow = 4 | 7 | 14 | 120;
+
+export function getRefundWindowForPolicy( refundPolicy: RefundPolicy ): RefundWindow | undefined {
+	switch ( refundPolicy ) {
+		case RefundPolicy.DomainNameTransfer:
+			return undefined;
+
+		case RefundPolicy.DomainNameRegistration:
+		case RefundPolicy.DomainNameRegistrationBundled:
+		case RefundPolicy.DomainNameRenewal:
+			return 4;
+
+		case RefundPolicy.GenericMonthly:
+		case RefundPolicy.PlanMonthlyBundle:
+			return 7;
+
+		case RefundPolicy.PlanBiennialBundle:
+		case RefundPolicy.PlanTriennialBundle:
+		case RefundPolicy.PlanYearlyBundle:
+		case RefundPolicy.PlanBiennialRenewal:
+		case RefundPolicy.PlanTriennialRenewal:
+		case RefundPolicy.PlanYearlyRenewal:
+		case RefundPolicy.GenericBiennial:
+		case RefundPolicy.GenericTriennial:
+		case RefundPolicy.GenericYearly:
+		case RefundPolicy.PremiumTheme:
+			return 14;
+
+		case RefundPolicy.GenericCentennial:
+		case RefundPolicy.PlanCentennialBundle:
+			return 120;
+	}
+	return undefined;
+}
 
 // Get the refund windows in days for the items in the cart
 export function getRefundWindows( refundPolicies: RefundPolicy[] ): RefundWindow[] {
-	const refundWindows = refundPolicies.map( ( refundPolicy ) => {
-		switch ( refundPolicy ) {
-			case RefundPolicy.DomainNameTransfer:
-				return 0;
-
-			case RefundPolicy.DomainNameRegistration:
-			case RefundPolicy.DomainNameRegistrationBundled:
-			case RefundPolicy.DomainNameRenewal:
-				return 4;
-
-			case RefundPolicy.GenericMonthly:
-			case RefundPolicy.PlanMonthlyBundle:
-				return 7;
-
-			case RefundPolicy.PlanBiennialBundle:
-			case RefundPolicy.PlanTriennialBundle:
-			case RefundPolicy.PlanYearlyBundle:
-			case RefundPolicy.PlanBiennialRenewal:
-			case RefundPolicy.PlanTriennialRenewal:
-			case RefundPolicy.PlanYearlyRenewal:
-			case RefundPolicy.GenericBiennial:
-			case RefundPolicy.GenericTriennial:
-			case RefundPolicy.GenericYearly:
-			case RefundPolicy.PremiumTheme:
-				return 14;
-
-			case RefundPolicy.GenericCentennial:
-			case RefundPolicy.PlanCentennialBundle:
-				return 120;
-		}
-	} );
-
-	return Array.from( new Set( refundWindows ) ).filter(
-		( refundWindow ): refundWindow is RefundWindow => refundWindow !== undefined
-	);
+	const refundWindows = refundPolicies.map( getRefundWindowForPolicy );
+	return Array.from( new Set( refundWindows ) ).filter( isValueTruthy );
 }
 
 function RefundPolicyItem( {
