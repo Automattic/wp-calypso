@@ -192,9 +192,7 @@ export function getRefundPolicies( cart: ResponseCart ): RefundPolicy[] {
 		refundPolicies.push( RefundPolicy.DomainNameRegistrationBundled );
 	}
 
-	return Array.from( new Set( refundPolicies ) ).filter(
-		( refundPolicy ): refundPolicy is RefundPolicy => refundPolicy !== undefined
-	);
+	return Array.from( new Set( refundPolicies ) ).filter( isValueTruthy );
 }
 
 export type RefundWindow = 4 | 7 | 14 | 120;

@@ -52,9 +52,12 @@ import getJetpackProductFeatures from '../lib/get-jetpack-product-features';
 import getPlanFeatures from '../lib/get-plan-features';
 import { CheckIcon } from './check-icon';
 import { ProductsAndCostOverridesList } from './cost-overrides-list';
-import { getRefundPolicies, getRefundWindows, RefundPolicy } from './refund-policies';
+import {
+	getRefundPolicyForCartItem,
+	getRefundWindowForPolicy,
+	RefundPolicy,
+} from './refund-policies';
 import type { ResponseCart, ResponseCartProduct } from '@automattic/shopping-cart';
-import type { TranslateResult } from 'i18n-calypso';
 
 // This will make converting to TS less noisy. The order of components can be reorganized later
 /* eslint-disable @typescript-eslint/no-use-before-define */
@@ -311,104 +314,42 @@ function CheckoutSummaryGiftFeaturesList( { siteSlug }: { siteSlug: string } ) {
 	);
 }
 
-export function CheckoutSummaryRefundWindows( {
+function CheckoutSummaryRefundWindow( {
 	cart,
-	highlight = false,
+	product,
+	highlight,
 	includeRefundIcon,
 }: {
 	cart: ResponseCart;
+	product: ResponseCartProduct;
 	highlight?: boolean;
 	includeRefundIcon?: boolean;
 } ) {
 	const translate = useTranslate();
-
-	const refundPolicies = getRefundPolicies( cart );
-	const refundWindows = getRefundWindows( refundPolicies );
-
-	if ( ! refundWindows.length || refundPolicies.includes( RefundPolicy.NonRefundable ) ) {
+	const policy = getRefundPolicyForCartItem( cart, product );
+	// FIXME: add the RefundPolicy.DomainNameRegistrationBundled policy if the
+	// cart has no bundle policy currently (eg: RefundPolicy.PlanYearlyBundle)
+	// and currently contains a plan + bundled domain, and the plan is not a
+	// 100-year plan.
+	if ( ! policy ) {
 		return null;
 	}
-
-	const allCartItemsAreDomains = refundPolicies.every(
-		( refundPolicy ) =>
-			refundPolicy === RefundPolicy.DomainNameRegistration ||
-			refundPolicy === RefundPolicy.DomainNameRegistrationBundled ||
-			refundPolicy === RefundPolicy.DomainNameRenewal
-	);
-
-	if ( allCartItemsAreDomains ) {
+	const refundWindow = getRefundWindowForPolicy( policy );
+	if ( ! refundWindow ) {
 		return null;
 	}
-
-	const allCartItemsAreMonthlyPlanBundle = refundPolicies.every(
-		( refundPolicy ) =>
-			refundPolicy === RefundPolicy.DomainNameRegistration ||
-			refundPolicy === RefundPolicy.PlanMonthlyBundle
-	);
-
-	const allCartItemsArePlanOrDomainRenewals = refundPolicies.every(
-		( refundPolicy ) =>
-			refundPolicy === RefundPolicy.DomainNameRenewal ||
-			refundPolicy === RefundPolicy.PlanMonthlyRenewal ||
-			refundPolicy === RefundPolicy.PlanYearlyRenewal ||
-			refundPolicy === RefundPolicy.PlanBiennialRenewal
-	);
-
-	let text: TranslateResult;
-
-	if ( refundWindows.length === 1 ) {
-		const refundWindow = refundWindows[ 0 ];
-		const planBundleRefundPolicy = refundPolicies.find(
-			( refundPolicy ) =>
-				refundPolicy === RefundPolicy.PlanBiennialBundle ||
-				refundPolicy === RefundPolicy.PlanYearlyBundle
-		);
-		const planProduct = cart.products.find( isPlan );
-
-		if ( planBundleRefundPolicy ) {
-			// Using plural translation because some languages have multiple plural forms and no plural-agnostic.
-			text = translate(
-				'%(days)d-day money back guarantee for %(product)s',
-				'%(days)d-day money back guarantee for %(product)s',
-				{
-					count: refundWindow,
-					args: {
-						days: refundWindow,
-						product: planProduct?.product_name ?? '',
-					},
-				}
-			);
-		} else {
-			text = translate( '%(days)d-day money back guarantee', '%(days)d-day money back guarantee', {
-				count: refundWindow,
-				args: { days: refundWindow },
-			} );
+	const text = translate(
+		'%(days)d-day money back guarantee for %(product)s',
+		'%(days)d-day money back guarantee for %(product)s',
+		{
+			count: refundWindow,
+			args: {
+				days: refundWindow,
+				// FIXME: list all products affected by this refund window, not only one
+				product: product?.product_name ?? '',
+			},
 		}
-	} else if ( allCartItemsAreMonthlyPlanBundle || allCartItemsArePlanOrDomainRenewals ) {
-		const refundWindow = Math.max( ...refundWindows );
-		const planProduct = cart.products.find( isPlan );
-
-		text = translate(
-			'%(days)d-day money back guarantee for %(product)s',
-			'%(days)d-day money back guarantee for %(product)s',
-			{
-				count: refundWindow,
-				args: {
-					days: refundWindow,
-					product: planProduct?.product_name ?? '',
-				},
-			}
-		);
-	} else {
-		const shortestRefundWindow = Math.min( ...refundWindows );
-
-		text = translate( '%(days)d-day money back guarantee', '%(days)d-day money back guarantee', {
-			count: shortestRefundWindow,
-			args: { days: shortestRefundWindow },
-			comment: 'The number of days until the shortest refund window in the cart expires.',
-		} );
-	}
-
+	);
 	return (
 		<>
 			{ includeRefundIcon && <StyledIcon icon={ reusableBlock } size={ 24 } /> }
@@ -418,6 +359,38 @@ export function CheckoutSummaryRefundWindows( {
 			</CheckoutSummaryFeaturesListItem>
 		</>
 	);
+}
+
+export function CheckoutSummaryRefundWindows( {
+	cart,
+	highlight = false,
+	includeRefundIcon,
+}: {
+	cart: ResponseCart;
+	highlight?: boolean;
+	includeRefundIcon?: boolean;
+} ) {
+	const cartItemsGroupedByRefundPolicy = cart.products.reduce( ( grouped, product ) => {
+		const policy = getRefundPolicyForCartItem( cart, product );
+		if ( ! policy ) {
+			return grouped;
+		}
+		if ( ! grouped.has( policy ) ) {
+			grouped.set( policy, product );
+		}
+		return grouped;
+	}, new Map< RefundPolicy, ResponseCartProduct >() );
+	return cartItemsGroupedByRefundPolicy
+		.values()
+		.map( ( product ) => (
+			<CheckoutSummaryRefundWindow
+				key={ product.uuid }
+				cart={ cart }
+				product={ product }
+				highlight={ highlight }
+				includeRefundIcon={ includeRefundIcon }
+			/>
+		) );
 }
 
 export function CheckoutSummaryFeaturesList( props: {
