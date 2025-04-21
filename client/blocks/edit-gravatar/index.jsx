@@ -51,24 +51,6 @@ export class EditGravatar extends Component {
 		} );
 	}
 
-	handleUnverifiedUserClick = () => {
-		this.props.recordClickButtonEvent( { isVerified: this.props.user.email_verified } );
-
-		if ( this.props.user.email_verified ) {
-			return;
-		}
-
-		this.setState( {
-			showEmailVerificationNotice: true,
-		} );
-	};
-
-	closeVerifyEmailDialog = () => {
-		this.setState( {
-			showEmailVerificationNotice: false,
-		} );
-	};
-
 	renderEditGravatarIsLoading = () => {
 		return (
 			<div className="edit-gravatar">
@@ -138,7 +120,9 @@ export class EditGravatar extends Component {
 				} ) }
 			>
 				{ this.state.showEmailVerificationNotice && (
-					<VerifyEmailDialog onClose={ this.closeVerifyEmailDialog } />
+					<VerifyEmailDialog
+						onClose={ () => this.setState( { showEmailVerificationNotice: false } ) }
+					/>
 				) }
 				<div className="edit-gravatar__image-container">
 					<Gravatar imgSize={ GRAVATAR_IMG_SIZE } size={ 150 } user={ user } />
@@ -164,7 +148,10 @@ export class EditGravatar extends Component {
 						<Button
 							className="edit-gravatar__action-button"
 							variant="link"
-							onClick={ this.handleUnverifiedUserClick }
+							onClick={ () => {
+								this.props.recordClickButtonEvent( { isVerified: user.email_verified } );
+								this.setState( { showEmailVerificationNotice: true } );
+							} }
 						>
 							{ translate( 'Verify your email to edit your avatar' ) }
 						</Button>
