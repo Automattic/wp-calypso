@@ -29,6 +29,7 @@ export default function TrendComparisonBadge( {
 	}
 	const negative = difference < 0;
 	return (
+		// @ts-expect-error - To do: allow children to be a ReactNode in core.
 		<CoreBadge
 			intent={ negative ? 'error' : 'success' }
 			style={ { width: 'fit-content' } }
