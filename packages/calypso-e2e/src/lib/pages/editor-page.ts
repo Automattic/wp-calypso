@@ -291,13 +291,22 @@ export class EditorPage {
 	async addBlockFromSidebar(
 		blockName: string,
 		blockEditorSelector: string,
-		{ noSearch, blockFallBackName }: { noSearch?: boolean; blockFallBackName?: string } = {}
+		{
+			noSearch,
+			blockFallBackName,
+			blockInsertedPopupConfirmButtonSelector,
+		}: {
+			noSearch?: boolean;
+			blockFallBackName?: string;
+			blockInsertedPopupConfirmButtonSelector?: string;
+		} = {}
 	): Promise< ElementHandle > {
 		await this.editorGutenbergComponent.resetSelectedBlock();
 		await this.editorToolbarComponent.openBlockInserter();
 		await this.addBlockFromInserter( blockName, this.editorSidebarBlockInserterComponent, {
 			noSearch: noSearch,
 			blockFallBackName: blockFallBackName,
+			blockInsertedPopupConfirmButtonSelector: blockInsertedPopupConfirmButtonSelector,
 		} );
 
 		const blockHandle =
@@ -366,12 +375,39 @@ export class EditorPage {
 	private async addBlockFromInserter(
 		blockName: string,
 		inserter: BlockInserter,
-		{ noSearch, blockFallBackName }: { noSearch?: boolean; blockFallBackName?: string } = {}
+		{
+			noSearch,
+			blockFallBackName,
+			blockInsertedPopupConfirmButtonSelector,
+		}: {
+			noSearch?: boolean;
+			blockFallBackName?: string;
+			blockInsertedPopupConfirmButtonSelector?: string;
+		} = {}
 	): Promise< void > {
 		if ( ! noSearch ) {
 			await inserter.searchBlockInserter( blockName );
 		}
 		await inserter.selectBlockInserterResult( blockName, { blockFallBackName } );
+
+		if ( blockInsertedPopupConfirmButtonSelector ) {
+			const editorParent = await this.editor.parent();
+			const blockInsertedPopupConfirmButtonLocator = editorParent.locator(
+				blockInsertedPopupConfirmButtonSelector
+			);
+
+			// Whether the popup confirm button is not deterministic.
+			// If it is not present, exit early.
+			try {
+				await blockInsertedPopupConfirmButtonLocator.waitFor( { timeout: 100 } );
+			} catch ( e ) {
+				// Probably doesn't exist. That's ok.
+			}
+
+			if ( ( await blockInsertedPopupConfirmButtonLocator.count() ) > 0 ) {
+				await blockInsertedPopupConfirmButtonLocator.click();
+			}
+		}
 	}
 
 	/**

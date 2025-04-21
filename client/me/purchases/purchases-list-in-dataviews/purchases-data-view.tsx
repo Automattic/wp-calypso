@@ -9,7 +9,11 @@ export const purchasesDataView = {
 	page: 1,
 	perPage: 5,
 	titleField: 'site',
-	fields: [ 'product' ],
+	fields: [ 'product', 'status' ],
+	sort: {
+		field: 'site',
+		direction: 'desc',
+	},
 	layout: {},
 } as View;
 

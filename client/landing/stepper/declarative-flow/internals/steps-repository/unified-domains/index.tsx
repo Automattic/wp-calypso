@@ -98,7 +98,7 @@ const RenderDomainsStepConnect = connect(
  */
 let mostRecentState: ProvidedDependencies = {};
 
-const DomainsStep: Step< { submits: DomainStepSubmittedTypes } > = ( props ) => {
+const DomainsStep: Step< { submits: DomainStepSubmittedTypes } > = ( { navigation, ...props } ) => {
 	const [ stepState, setStepState ] =
 		useStepPersistedState< ProvidedDependencies >( 'domains-step' );
 	const managedSiteFlowProps = useIsManagedSiteFlowProps();
@@ -108,6 +108,7 @@ const DomainsStep: Step< { submits: DomainStepSubmittedTypes } > = ( props ) => 
 			<RenderDomainsStepConnect
 				{ ...props }
 				{ ...managedSiteFlowProps }
+				{ ...navigation }
 				page={ ( url: string ) => window.location.assign( url ) }
 				saveSignupStep={ ( step: ProvidedDependencies ) => {
 					setStepState( ( mostRecentState = { ...stepState, ...step } ) );
@@ -116,7 +117,7 @@ const DomainsStep: Step< { submits: DomainStepSubmittedTypes } > = ( props ) => 
 					setStepState( ( mostRecentState = { ...stepState, ...step } ) );
 				} }
 				goToNextStep={ ( state: ProvidedDependencies ) => {
-					props.navigation.submit?.( {
+					navigation.submit?.( {
 						...mostRecentState,
 						...state,
 						shouldSkipSubmitTracking: state?.navigateToUseMyDomain ? true : false,

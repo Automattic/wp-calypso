@@ -1,10 +1,11 @@
 import { Purchases } from '@automattic/data-stores';
 import { Fields, Operator } from '@wordpress/dataviews';
 import { LocalizeProps } from 'i18n-calypso';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { getDisplayName } from 'calypso/lib/purchases';
 import { useSelector } from 'calypso/state';
 import { getSite } from 'calypso/state/sites/selectors';
-import { PurchaseItemSiteIcon, PurchaseItemProduct } from '../purchase-item';
+import { PurchaseItemSiteIcon, PurchaseItemProduct, PurchaseItemStatus } from '../purchase-item';
 import OwnerInfo from '../purchase-item/owner-info';
 
 function PurchaseItemRowProduct( props: {
@@ -26,11 +27,56 @@ function PurchaseItemRowProduct( props: {
 	);
 }
 
-export function getPurchasesFieldDefinitions(
-	// purchases: Purchases.Purchase[],
-	translate: LocalizeProps[ 'translate' ]
-): Fields< Purchases.Purchase > {
+function PurchaseItemRowStatus( props: {
+	purchase: Purchases.Purchase;
+	translate: LocalizeProps[ 'translate' ];
+	moment: ReturnType< typeof useLocalizedMoment >;
+	isJetpack?: boolean;
+	isDisconnectedSite?: boolean;
+} ) {
+	const { purchase, translate, moment, isJetpack, isDisconnectedSite } = props;
+
+	return (
+		<div className="purchase-item__status purchases-layout__status">
+			<PurchaseItemStatus
+				purchase={ purchase }
+				translate={ translate }
+				moment={ moment }
+				isJetpack={ isJetpack }
+				isDisconnectedSite={ isDisconnectedSite }
+			/>
+		</div>
+	);
+}
+
+export function getPurchasesFieldDefinitions( {
+	translate,
+	moment,
+}: {
+	translate: LocalizeProps[ 'translate' ];
+	moment: ReturnType< typeof useLocalizedMoment >;
+} ): Fields< Purchases.Purchase > {
 	return [
+		{
+			id: 'site',
+			label: 'Site',
+			type: 'text',
+			enableGlobalSearch: true,
+			enableSorting: true,
+			enableHiding: false,
+			filterBy: {
+				operators: [ 'is' as Operator ],
+			},
+			// Filter by site ID
+			getValue: ( { item }: { item: Purchases.Purchase } ) => {
+				return item.siteId;
+			},
+			// Render the site icon
+			render: ( { item }: { item: Purchases.Purchase } ) => {
+				const site = { ID: item.siteId };
+				return <PurchaseItemSiteIcon site={ site } purchase={ item } />;
+			},
+		},
 		{
 			id: 'product',
 			label: 'Product',
@@ -60,8 +106,8 @@ export function getPurchasesFieldDefinitions(
 			},
 		},
 		{
-			id: 'site',
-			label: 'Site',
+			id: 'status',
+			label: 'status',
 			type: 'text',
 			enableGlobalSearch: true,
 			enableSorting: true,
@@ -69,14 +115,13 @@ export function getPurchasesFieldDefinitions(
 			filterBy: {
 				operators: [ 'is' as Operator ],
 			},
-			// Filter by site ID
 			getValue: ( { item }: { item: Purchases.Purchase } ) => {
-				return item.siteId;
+				return item.expiryStatus;
 			},
-			// Render the site icon
 			render: ( { item }: { item: Purchases.Purchase } ) => {
-				const site = { ID: item.siteId };
-				return <PurchaseItemSiteIcon site={ site } purchase={ item } />;
+				return (
+					<PurchaseItemRowStatus purchase={ item } translate={ translate } moment={ moment } />
+				);
 			},
 		},
 	];

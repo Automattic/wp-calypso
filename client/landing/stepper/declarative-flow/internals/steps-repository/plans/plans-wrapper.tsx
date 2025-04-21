@@ -6,7 +6,6 @@ import {
 	isNewsletterFlow,
 	NEWSLETTER_FLOW,
 	NEW_HOSTED_SITE_FLOW,
-	isNewHostedSiteCreationFlow,
 	isDomainUpsellFlow,
 	isStartWritingFlow,
 } from '@automattic/onboarding';
@@ -24,7 +23,6 @@ import { useSaveHostingFlowPathStep } from 'calypso/landing/stepper/hooks/use-sa
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { getPlanCartItem } from 'calypso/lib/cart-values/cart-items';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
-import PlanFAQ from 'calypso/my-sites/plans-features-main/components/plan-faq';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { ONBOARD_STORE } from '../../../../stores';
@@ -33,7 +31,6 @@ import type { PlansIntent } from '@automattic/plans-grid-next';
 import './style.scss';
 
 interface Props {
-	shouldIncludeFAQ?: boolean;
 	flowName: string | null;
 	onSubmit: ( planCartItem: MinimalRequestCartProduct | null ) => void;
 }
@@ -184,7 +181,6 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 					intent={ plansIntent }
 					removePaidDomain={ removePaidDomain }
 					setSiteUrlAsFreeDomainSuggestion={ setSiteUrlAsFreeDomainSuggestion }
-					renderSiblingWhenLoaded={ () => props.shouldIncludeFAQ && <PlanFAQ /> }
 					showPlanTypeSelectorDropdown={ config.isEnabled( 'onboarding/interval-dropdown' ) }
 					hidePlanTypeSelector={ isWordCampPromo }
 					onPlanIntervalUpdate={ onPlanIntervalUpdate }
@@ -195,10 +191,6 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 	};
 
 	const getHeaderText = () => {
-		if ( isNewHostedSiteCreationFlow( flowName ) ) {
-			return __( 'The right plan for the right project' );
-		}
-
 		if ( isDomainUpsellFlow( flowName ) ) {
 			return __( 'There’s a plan for you' );
 		}
@@ -225,12 +217,6 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 			isDomainUpsellFlow( flowName )
 		) {
 			return;
-		}
-
-		if ( isNewHostedSiteCreationFlow( flowName ) ) {
-			return translate(
-				'Get the advanced features you need without ever thinking about overages.'
-			);
 		}
 
 		if ( ! hideFreePlan ) {

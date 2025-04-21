@@ -3,7 +3,13 @@ import config from '@automattic/calypso-config';
 import { UrlFriendlyTermType } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { FREE_THEME } from '@automattic/design-picker';
-import { isTailoredSignupFlow, ONBOARDING_FLOW, Step, StepContainer } from '@automattic/onboarding';
+import {
+	isNewHostedSiteCreationFlow,
+	isTailoredSignupFlow,
+	ONBOARDING_FLOW,
+	Step,
+	StepContainer,
+} from '@automattic/onboarding';
 import { PlansIntent } from '@automattic/plans-grid-next';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { isDesktop as isDesktopViewport, subscribeIsDesktop } from '@automattic/viewport';
@@ -354,10 +360,20 @@ function UnifiedPlansStep( {
 			return headerText;
 		}
 
+		if ( isNewHostedSiteCreationFlow( flowName ) ) {
+			return translate( 'The right plan for the right project' );
+		}
+
 		return translate( 'There’s a plan for you' );
 	};
 
 	const getSubheaderText = () => {
+		if ( isNewHostedSiteCreationFlow( flowName ) ) {
+			return translate(
+				'Get the advanced features you need without ever thinking about overages.'
+			);
+		}
+
 		const freePlanButton = (
 			<Button
 				onClick={ () =>
@@ -484,6 +500,18 @@ function UnifiedPlansStep( {
 				showPlanTypeSelectorDropdown={ config.isEnabled( 'onboarding/interval-dropdown' ) }
 				onPlanIntervalUpdate={ onPlanIntervalUpdate }
 				selectedThemeType={ selectedThemeType }
+				renderSiblingWhenLoaded={ () => {
+					if ( ! isNewHostedSiteCreationFlow( flowName ) ) {
+						return null;
+					}
+
+					return (
+						<AsyncLoad
+							require="calypso/my-sites/plans-features-main/components/plan-faq"
+							placeholder={ null }
+						/>
+					);
+				} }
 			/>
 		</div>
 	);

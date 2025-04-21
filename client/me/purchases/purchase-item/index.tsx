@@ -293,138 +293,252 @@ export function PurchaseItemProduct( {
 	return productType;
 }
 
-class PurchaseItem extends Component<
-	PurchaseItemPropsPlaceholder | ( PurchaseItemProps & PurchaseItemPropsConnected )
-> {
-	getStatus() {
-		if ( this.props.isPlaceholder ) {
-			return null;
+export function PurchaseItemStatus( {
+	purchase,
+	translate,
+	moment,
+	isJetpack,
+	isDisconnectedSite,
+}: {
+	purchase: Purchases.Purchase;
+	translate: LocalizeProps[ 'translate' ];
+	moment: ReturnType< typeof useLocalizedMoment >;
+	isJetpack?: boolean;
+	isDisconnectedSite?: boolean;
+} ) {
+	const expiry = moment( purchase.expiryDate );
+	// @todo: There isn't currently a way to get the taxName based on the
+	// country. The country is not included in the purchase information
+	// envelope. We should add this information so we can utilize useTaxName
+	// to retrieve the correct taxName. For now, we are using a fallback tax
+	// name with context, to prevent mis-translation.
+	const taxName = translate( 'tax', {
+		context: "Shortened form of 'Sales Tax', not a country-specific tax name",
+	} );
+
+	/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
+	const excludeTaxStringAbbreviation = translate( '(excludes %s)', {
+		textOnly: true,
+		args: [ taxName ],
+	} );
+
+	/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
+	const excludeTaxStringTitle = translate( 'Renewal price excludes any applicable %s', {
+		textOnly: true,
+		args: [ taxName ],
+	} );
+
+	if ( purchase && isPartnerPurchase( purchase ) ) {
+		const partnerName = getPartnerName( purchase );
+		if ( partnerName ) {
+			return translate( 'Managed by %(partnerName)s', {
+				args: {
+					partnerName,
+				},
+			} );
 		}
-		const { purchase, translate, moment, isJetpack, isDisconnectedSite } = this.props;
-		const expiry = moment( purchase.expiryDate );
-		// @todo: There isn't currently a way to get the taxName based on the
-		// country. The country is not included in the purchase information
-		// envelope. We should add this information so we can utilize useTaxName
-		// to retrieve the correct taxName. For now, we are using a fallback tax
-		// name with context, to prevent mis-translation.
-		const taxName = translate( 'tax', {
-			context: "Shortened form of 'Sales Tax', not a country-specific tax name",
-		} );
+	}
 
-		/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
-		const excludeTaxStringAbbreviation = translate( '(excludes %s)', {
-			textOnly: true,
-			args: [ taxName ],
-		} );
-
-		/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
-		const excludeTaxStringTitle = translate( 'Renewal price excludes any applicable %s', {
-			textOnly: true,
-			args: [ taxName ],
-		} );
-
-		if ( purchase && isPartnerPurchase( purchase ) ) {
-			const partnerName = getPartnerName( purchase );
-			if ( partnerName ) {
-				return translate( 'Managed by %(partnerName)s', {
-					args: {
-						partnerName,
-					},
-				} );
-			}
-		}
-
-		if (
-			isDisconnectedSite &&
-			! isAkismetTemporarySitePurchase( purchase ) &&
-			! isMarketplaceTemporarySitePurchase( purchase )
-		) {
-			if ( isJetpackTemporarySitePurchase( purchase ) ) {
-				return (
-					<>
-						<span className="purchase-item__is-error">
-							{ translate( 'Activate your product license key' ) }
-						</span>
-						<br />
-						{ /* TODO: These anchor links are causing React console warnings,
+	if (
+		isDisconnectedSite &&
+		! isAkismetTemporarySitePurchase( purchase ) &&
+		! isMarketplaceTemporarySitePurchase( purchase )
+	) {
+		if ( isJetpackTemporarySitePurchase( purchase ) ) {
+			return (
+				<>
+					<span className="purchase-item__is-error">
+						{ translate( 'Activate your product license key' ) }
+					</span>
+					<br />
+					{ /* TODO: These anchor links are causing React console warnings,
 						"Warning: validateDOMNesting(...): <a> cannot appear as a descendant of <a>."
 						Because the <CompactCard> component that renders this also us surrounded by an anchor link.
 						See: <Card> General Guidelines: https://github.com/Automattic/wp-calypso/tree/trunk/packages/components/src/card#general-guidelines
 						TLDR: Don't display more than one primary button or action in a single card. (in which the card itself if a primary action/link in this case) */ }
-						<ExternalLink
-							className="purchase-item__link"
-							href="https://jetpack.com/support/activate-a-jetpack-product-via-license-key/"
-						>
-							{ translate( 'Learn more' ) }
-						</ExternalLink>
-					</>
-				);
-			}
+					<ExternalLink
+						className="purchase-item__link"
+						href="https://jetpack.com/support/activate-a-jetpack-product-via-license-key/"
+					>
+						{ translate( 'Learn more' ) }
+					</ExternalLink>
+				</>
+			);
+		}
 
-			if ( isJetpack ) {
-				return (
-					<span className="purchase-item__is-error">
-						{ translate( 'Disconnected from WordPress.com' ) }
-					</span>
-				);
-			}
-
+		if ( isJetpack ) {
 			return (
 				<span className="purchase-item__is-error">
-					{ translate(
-						'You no longer have access to this site and its purchases. {{button}}Contact support{{/button}}',
-						{
-							components: {
-								button: (
-									<button
-										className="purchase-item__link purchase-item__link--error"
-										onClick={ ( event ) => {
-											event.stopPropagation();
-											event.preventDefault();
-											page( CALYPSO_CONTACT );
-										} }
-										title={ translate( 'Contact Support' ) }
-									/>
-								),
-							},
-						}
-					) }
+					{ translate( 'Disconnected from WordPress.com' ) }
 				</span>
 			);
 		}
 
-		if ( purchase.isInAppPurchase && purchase.iapPurchaseManagementLink ) {
+		return (
+			<span className="purchase-item__is-error">
+				{ translate(
+					'You no longer have access to this site and its purchases. {{button}}Contact support{{/button}}',
+					{
+						components: {
+							button: (
+								<button
+									className="purchase-item__link purchase-item__link--error"
+									onClick={ ( event ) => {
+										event.stopPropagation();
+										event.preventDefault();
+										page( CALYPSO_CONTACT );
+									} }
+									title={ translate( 'Contact Support' ) }
+								/>
+							),
+						},
+					}
+				) }
+			</span>
+		);
+	}
+
+	if ( purchase.isInAppPurchase && purchase.iapPurchaseManagementLink ) {
+		return translate(
+			'This product is an in-app purchase. You can manage it from within {{managePurchase}}the app store{{/managePurchase}}.',
+			{
+				components: {
+					managePurchase: <a href={ purchase.iapPurchaseManagementLink } />,
+				},
+			}
+		);
+	}
+
+	if ( isWithinIntroductoryOfferPeriod( purchase ) && isIntroductoryOfferFreeTrial( purchase ) ) {
+		if ( isRenewing( purchase ) ) {
 			return translate(
-				'This product is an in-app purchase. You can manage it from within {{managePurchase}}the app store{{/managePurchase}}.',
+				'Free trial ends on {{span}}%(date)s{{/span}}, renews automatically at %(amount)s {{abbr}}%(excludeTaxStringAbbreviation)s{{/abbr}}',
 				{
+					args: {
+						date: expiry.format( 'LL' ),
+						amount: formatCurrency( purchase.priceInteger, purchase.currencyCode, {
+							isSmallestUnit: true,
+							stripZeros: true,
+						} ),
+						excludeTaxStringAbbreviation: excludeTaxStringAbbreviation,
+					},
 					components: {
-						managePurchase: <a href={ purchase.iapPurchaseManagementLink } />,
+						span: <span className="purchase-item__date" />,
+						abbr: <abbr title={ excludeTaxStringTitle } />,
 					},
 				}
 			);
 		}
 
-		if ( isWithinIntroductoryOfferPeriod( purchase ) && isIntroductoryOfferFreeTrial( purchase ) ) {
-			if ( isRenewing( purchase ) ) {
-				return translate(
-					'Free trial ends on {{span}}%(date)s{{/span}}, renews automatically at %(amount)s {{abbr}}%(excludeTaxStringAbbreviation)s{{/abbr}}',
-					{
-						args: {
-							date: expiry.format( 'LL' ),
-							amount: formatCurrency( purchase.priceInteger, purchase.currencyCode, {
-								isSmallestUnit: true,
-								stripZeros: true,
-							} ),
-							excludeTaxStringAbbreviation: excludeTaxStringAbbreviation,
-						},
-						components: {
-							span: <span className="purchase-item__date" />,
-							abbr: <abbr title={ excludeTaxStringTitle } />,
-						},
-					}
-				);
-			}
+		const expiryClass =
+			expiry < moment().add( 7, 'days' ) ? 'purchase-item__is-error' : 'purchase-item__is-warning';
 
+		return (
+			<span className={ expiryClass }>
+				{ translate( 'Free trial ends on {{span}}%(date)s{{/span}}', {
+					args: {
+						date: expiry.format( 'LL' ),
+					},
+					components: {
+						span: <span className="purchase-item__date" />,
+					},
+				} ) }
+				<TrackImpression warning="purchase-expiring" />
+			</span>
+		);
+	}
+
+	if ( isRenewing( purchase ) && purchase.renewDate ) {
+		const renewDate = moment( purchase.renewDate );
+
+		if ( creditCardHasAlreadyExpired( purchase ) ) {
+			return (
+				<span className="purchase-item__is-error">
+					{ translate( 'Credit card expired' ) }
+					<TrackImpression warning="credit-card-expiring" />
+				</span>
+			);
+		}
+
+		if ( creditCardExpiresBeforeSubscription( purchase ) ) {
+			return (
+				<span className="purchase-item__is-warning">
+					{ translate(
+						'Credit card expires before your next renewal on {{span}}%(date)s{{/span}}',
+						{
+							args: {
+								date: renewDate.format( 'LL' ),
+							},
+							components: {
+								span: <span className="purchase-item__date" />,
+							},
+						}
+					) }
+					<TrackImpression warning="credit-card-expiring" />
+				</span>
+			);
+		}
+
+		if ( purchase.billPeriodDays ) {
+			const translateOptions = {
+				args: {
+					amount: formatCurrency( purchase.priceInteger, purchase.currencyCode, {
+						isSmallestUnit: true,
+						stripZeros: true,
+					} ),
+					excludeTaxStringAbbreviation: excludeTaxStringAbbreviation,
+					date: renewDate.format( 'LL' ),
+				},
+				components: {
+					abbr: <abbr title={ excludeTaxStringTitle } />,
+					span: <span className="purchase-item__date" />,
+				},
+			};
+			switch ( purchase.billPeriodDays ) {
+				case PLAN_MONTHLY_PERIOD:
+					return translate(
+						'Renews monthly at %(amount)s {{abbr}}%(excludeTaxStringAbbreviation)s{{/abbr}} on {{span}}%(date)s{{/span}}',
+						translateOptions
+					);
+				case PLAN_ANNUAL_PERIOD:
+					return translate(
+						'Renews yearly at %(amount)s {{abbr}}%(excludeTaxStringAbbreviation)s{{/abbr}} on {{span}}%(date)s{{/span}}',
+						translateOptions
+					);
+				case PLAN_BIENNIAL_PERIOD:
+					return translate(
+						'Renews every two years at %(amount)s {{abbr}}%(excludeTaxStringAbbreviation)s{{/abbr}} on {{span}}%(date)s{{/span}}',
+						translateOptions
+					);
+				case PLAN_TRIENNIAL_PERIOD:
+					return translate(
+						'Renews every three years at %(amount)s {{abbr}}%(excludeTaxStringAbbreviation)s{{/abbr}} on {{span}}%(date)s{{/span}}',
+						translateOptions
+					);
+			}
+		}
+
+		return translate(
+			'Renews at %(amount)s {{abbr}}%(excludeTaxStringAbbreviation)s{{/abbr}} on {{span}}%(date)s{{/span}}',
+			{
+				args: {
+					amount: formatCurrency( purchase.priceInteger, purchase.currencyCode, {
+						isSmallestUnit: true,
+						stripZeros: true,
+					} ),
+					excludeTaxStringAbbreviation: excludeTaxStringAbbreviation,
+					date: renewDate.format( 'LL' ),
+				},
+				components: {
+					abbr: <abbr title={ excludeTaxStringTitle } />,
+					span: <span className="purchase-item__date" />,
+				},
+			}
+		);
+	}
+
+	if ( isExpiring( purchase ) && ! isAkismetFreeProduct( purchase ) ) {
+		if ( expiry < moment().add( 30, 'days' ) && ! isRecentMonthlyPurchase( purchase ) ) {
 			const expiryClass =
 				expiry < moment().add( 7, 'days' )
 					? 'purchase-item__is-error'
@@ -432,8 +546,9 @@ class PurchaseItem extends Component<
 
 			return (
 				<span className={ expiryClass }>
-					{ translate( 'Free trial ends on {{span}}%(date)s{{/span}}', {
+					{ translate( 'Expires %(timeUntilExpiry)s on {{span}}%(date)s{{/span}}', {
 						args: {
+							timeUntilExpiry: expiry.fromNow(),
 							date: expiry.format( 'LL' ),
 						},
 						components: {
@@ -445,164 +560,55 @@ class PurchaseItem extends Component<
 			);
 		}
 
-		if ( isRenewing( purchase ) && purchase.renewDate ) {
-			const renewDate = moment( purchase.renewDate );
-
-			if ( creditCardHasAlreadyExpired( purchase ) ) {
-				return (
-					<span className="purchase-item__is-error">
-						{ translate( 'Credit card expired' ) }
-						<TrackImpression warning="credit-card-expiring" />
-					</span>
-				);
-			}
-
-			if ( creditCardExpiresBeforeSubscription( purchase ) ) {
-				return (
-					<span className="purchase-item__is-warning">
-						{ translate(
-							'Credit card expires before your next renewal on {{span}}%(date)s{{/span}}',
-							{
-								args: {
-									date: renewDate.format( 'LL' ),
-								},
-								components: {
-									span: <span className="purchase-item__date" />,
-								},
-							}
-						) }
-						<TrackImpression warning="credit-card-expiring" />
-					</span>
-				);
-			}
-
-			if ( purchase.billPeriodDays ) {
-				const translateOptions = {
-					args: {
-						amount: formatCurrency( purchase.priceInteger, purchase.currencyCode, {
-							isSmallestUnit: true,
-							stripZeros: true,
-						} ),
-						excludeTaxStringAbbreviation: excludeTaxStringAbbreviation,
-						date: renewDate.format( 'LL' ),
-					},
-					components: {
-						abbr: <abbr title={ excludeTaxStringTitle } />,
-						span: <span className="purchase-item__date" />,
-					},
-				};
-				switch ( purchase.billPeriodDays ) {
-					case PLAN_MONTHLY_PERIOD:
-						return translate(
-							'Renews monthly at %(amount)s {{abbr}}%(excludeTaxStringAbbreviation)s{{/abbr}} on {{span}}%(date)s{{/span}}',
-							translateOptions
-						);
-					case PLAN_ANNUAL_PERIOD:
-						return translate(
-							'Renews yearly at %(amount)s {{abbr}}%(excludeTaxStringAbbreviation)s{{/abbr}} on {{span}}%(date)s{{/span}}',
-							translateOptions
-						);
-					case PLAN_BIENNIAL_PERIOD:
-						return translate(
-							'Renews every two years at %(amount)s {{abbr}}%(excludeTaxStringAbbreviation)s{{/abbr}} on {{span}}%(date)s{{/span}}',
-							translateOptions
-						);
-					case PLAN_TRIENNIAL_PERIOD:
-						return translate(
-							'Renews every three years at %(amount)s {{abbr}}%(excludeTaxStringAbbreviation)s{{/abbr}} on {{span}}%(date)s{{/span}}',
-							translateOptions
-						);
-				}
-			}
-
-			return translate(
-				'Renews at %(amount)s {{abbr}}%(excludeTaxStringAbbreviation)s{{/abbr}} on {{span}}%(date)s{{/span}}',
-				{
-					args: {
-						amount: formatCurrency( purchase.priceInteger, purchase.currencyCode, {
-							isSmallestUnit: true,
-							stripZeros: true,
-						} ),
-						excludeTaxStringAbbreviation: excludeTaxStringAbbreviation,
-						date: renewDate.format( 'LL' ),
-					},
-					components: {
-						abbr: <abbr title={ excludeTaxStringTitle } />,
-						span: <span className="purchase-item__date" />,
-					},
-				}
-			);
-		}
-
-		if ( isExpiring( purchase ) && ! isAkismetFreeProduct( purchase ) ) {
-			if ( expiry < moment().add( 30, 'days' ) && ! isRecentMonthlyPurchase( purchase ) ) {
-				const expiryClass =
-					expiry < moment().add( 7, 'days' )
-						? 'purchase-item__is-error'
-						: 'purchase-item__is-warning';
-
-				return (
-					<span className={ expiryClass }>
-						{ translate( 'Expires %(timeUntilExpiry)s on {{span}}%(date)s{{/span}}', {
-							args: {
-								timeUntilExpiry: expiry.fromNow(),
-								date: expiry.format( 'LL' ),
-							},
-							components: {
-								span: <span className="purchase-item__date" />,
-							},
-						} ) }
-						<TrackImpression warning="purchase-expiring" />
-					</span>
-				);
-			}
-
-			return translate( 'Expires on {{span}}%s{{/span}}', {
-				args: expiry.format( 'LL' ),
-				components: {
-					span: <span className="purchase-item__date" />,
-				},
-			} );
-		}
-
-		if ( isExpired( purchase ) ) {
-			if ( isConciergeSession( purchase ) ) {
-				return translate( 'Session used on %s', {
-					args: expiry.format( 'LL' ),
-				} );
-			}
-
-			const isExpiredToday = moment().diff( expiry, 'hours' ) < 24;
-			const expiredTodayText = translate( 'Expired today' );
-			const expiredFromNowText = translate( 'Expired %(timeSinceExpiry)s', {
-				args: {
-					timeSinceExpiry: expiry.fromNow(),
-				},
-				context: 'timeSinceExpiry is of the form "[number] [time-period] ago" i.e. "3 days ago"',
-			} );
-
-			return (
-				<span className="purchase-item__is-error">
-					{ isExpiredToday ? expiredTodayText : expiredFromNowText }
-					<TrackImpression warning="purchase-expired" />
-				</span>
-			);
-		}
-
-		if ( isIncludedWithPlan( purchase ) ) {
-			return translate( 'Included with Plan' );
-		}
-
-		if (
-			( isOneTimePurchase( purchase ) || isAkismetFreeProduct( purchase ) ) &&
-			! isDomainTransfer( purchase )
-		) {
-			return translate( 'Never Expires' );
-		}
-
-		return null;
+		return translate( 'Expires on {{span}}%s{{/span}}', {
+			args: expiry.format( 'LL' ),
+			components: {
+				span: <span className="purchase-item__date" />,
+			},
+		} );
 	}
 
+	if ( isExpired( purchase ) ) {
+		if ( isConciergeSession( purchase ) ) {
+			return translate( 'Session used on %s', {
+				args: expiry.format( 'LL' ),
+			} );
+		}
+
+		const isExpiredToday = moment().diff( expiry, 'hours' ) < 24;
+		const expiredTodayText = translate( 'Expired today' );
+		const expiredFromNowText = translate( 'Expired %(timeSinceExpiry)s', {
+			args: {
+				timeSinceExpiry: expiry.fromNow(),
+			},
+			context: 'timeSinceExpiry is of the form "[number] [time-period] ago" i.e. "3 days ago"',
+		} );
+
+		return (
+			<span className="purchase-item__is-error">
+				{ isExpiredToday ? expiredTodayText : expiredFromNowText }
+				<TrackImpression warning="purchase-expired" />
+			</span>
+		);
+	}
+
+	if ( isIncludedWithPlan( purchase ) ) {
+		return translate( 'Included with Plan' );
+	}
+
+	if (
+		( isOneTimePurchase( purchase ) || isAkismetFreeProduct( purchase ) ) &&
+		! isDomainTransfer( purchase )
+	) {
+		return translate( 'Never Expires' );
+	}
+
+	return null;
+}
+
+class PurchaseItem extends Component<
+	PurchaseItemPropsPlaceholder | ( PurchaseItemProps & PurchaseItemPropsConnected )
+> {
 	getPaymentMethod() {
 		if ( this.props.isPlaceholder ) {
 			return null;
@@ -697,6 +703,8 @@ class PurchaseItem extends Component<
 			showSite,
 			iconUrl,
 			isBackupMethodAvailable,
+			moment,
+			isJetpack,
 			isDisconnectedSite,
 		} = this.props;
 
@@ -731,7 +739,15 @@ class PurchaseItem extends Component<
 					</div>
 				</div>
 
-				<div className="purchase-item__status purchases-layout__status">{ this.getStatus() }</div>
+				<div className="purchase-item__status purchases-layout__status">
+					<PurchaseItemStatus
+						purchase={ purchase }
+						translate={ translate }
+						moment={ moment }
+						isJetpack={ isJetpack }
+						isDisconnectedSite={ isDisconnectedSite }
+					/>
+				</div>
 
 				<div className="purchase-item__payment-method purchases-layout__payment-method">
 					{ this.getPaymentMethod() }
