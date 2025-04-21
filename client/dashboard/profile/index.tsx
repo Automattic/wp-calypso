@@ -46,7 +46,7 @@ const fields: Field< ProfileType >[] = [
 	},
 	{
 		id: 'display_name',
-		label: __( 'Display name' ),
+		label: __( 'Public display name' ),
 		type: 'text',
 	},
 	{
@@ -56,7 +56,7 @@ const fields: Field< ProfileType >[] = [
 	},
 	{
 		id: 'user_URL',
-		label: __( 'Site Address' ),
+		label: __( 'Public web address' ),
 		type: 'text',
 	},
 	{

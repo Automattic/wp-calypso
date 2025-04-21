@@ -21,14 +21,16 @@ export const fetchProfile = async (): Promise< Profile > => {
 };
 
 export const updateProfile = async ( data: Partial< Profile > ) => {
+	const saveableKeys = [ 'display_name', 'description', 'is_dev_account', 'user_URL' ];
+	for ( const key in data ) {
+		if ( ! saveableKeys.includes( key ) ) {
+			delete data[ key as keyof Profile ];
+		}
+	}
 	return await wpcom.req.post( {
 		path: '/me/settings?http_envelope=1',
 		apiNamespace: 'rest/v1.1',
-		body: {
-			display_name: data.display_name,
-			description: data.description,
-			is_dev_account: data.is_dev_account,
-		},
+		body: data,
 	} );
 };
 
