@@ -109,6 +109,7 @@ export default function ProvideFeedback() {
 	const [ feedbackType, setFeedbackType ] = useState< FeedbackType >( options[ 0 ].value );
 	const [ feedbackFields, setFeedbackFields ] = useState< Record< string, string > >( {} );
 	const [ screenshot, setScreenshot ] = useState< File | null >( null );
+	const [ screenshotError, setScreenshotError ] = useState< string | null >( null );
 
 	const handleFieldChange = useCallback( ( id: string, value: string ) => {
 		setFeedbackFields( ( prevFields ) => ( { ...prevFields, [ id ]: value } ) );
@@ -116,10 +117,17 @@ export default function ProvideFeedback() {
 
 	const handleScreenshotChange = useCallback(
 		( file: File | null ) => {
+			// If the file size is greater than 50MB, set the error message.
+			if ( file?.size && file.size > 50 * 1024 * 1024 ) {
+				setScreenshot( null );
+				setScreenshotError( translate( 'The image file size must be less than 50MB.' ) );
+				return;
+			}
+			setScreenshotError( null );
 			setScreenshot( file );
 			dispatch( recordTracksEvent( 'calypso_a4a_provide_feedback_screenshot_added' ) );
 		},
-		[ dispatch ]
+		[ dispatch, translate ]
 	);
 	const handleSetFeedbackType = useCallback(
 		( value?: FeedbackType ) => {
@@ -191,7 +199,7 @@ export default function ProvideFeedback() {
 			onClose={ onCloseProvideFeedbackForm }
 			title={ translate( 'Provide feedback' ) }
 			subtile={
-				<div className="a4a-provide-feedback__subtitle">
+				<>
 					{ translate(
 						'We want to hear from you! Use this form for general feedback to make the product better.'
 					) }
@@ -205,7 +213,7 @@ export default function ProvideFeedback() {
 							),
 						},
 					} ) }
-				</div>
+				</>
 			}
 			extraActions={
 				<Button
@@ -234,7 +242,7 @@ export default function ProvideFeedback() {
 					disabled={ isSubmitting }
 				></SelectControl>
 				{ currentFields.map( ( field ) => (
-					<FormFieldset key={ field.id }>
+					<FormFieldset key={ field.id } className="a4a-provide-feedback__form-fieldset">
 						<FormLabel className="a4a-provide-feedback__form-label" htmlFor={ field.id }>
 							{ field.label }
 						</FormLabel>
@@ -251,20 +259,36 @@ export default function ProvideFeedback() {
 								disabled={ isSubmitting }
 							/>
 						) }
+
 						{ field.type === 'file' && (
-							<FilePicker
-								accept="image/*,.pdf"
-								onPick={ ( files: FileList ) => handleScreenshotChange( files[ 0 ] ) }
-							>
+							<>
 								{ screenshot && (
 									<div className="a4a-provide-feedback__form-file-container">
 										<div className="a4a-provide-feedback__form-file-name">{ screenshot.name }</div>
+										<Button
+											size="small"
+											variant="tertiary"
+											onClick={ () => handleScreenshotChange( null ) }
+										>
+											{ translate( 'Remove' ) }
+										</Button>
 									</div>
 								) }
-								<Button variant="secondary" disabled={ isSubmitting }>
-									{ screenshot ? translate( 'Replace file' ) : translate( 'Select file' ) }
-								</Button>
-							</FilePicker>
+								{ screenshotError && (
+									<div className="a4a-provide-feedback__form-file-error">{ screenshotError }</div>
+								) }
+								<FilePicker
+									accept="image/*"
+									onPick={ ( files: FileList ) => handleScreenshotChange( files[ 0 ] ) }
+								>
+									<Button variant="secondary" disabled={ isSubmitting }>
+										{ screenshot ? translate( 'Replace image' ) : translate( 'Select image' ) }
+									</Button>
+								</FilePicker>
+								<div className="a4a-provide-feedback__form-file-instructions">
+									{ translate( 'Upload any image up to 50MB in size.' ) }
+								</div>
+							</>
 						) }
 					</FormFieldset>
 				) ) }
