@@ -69,9 +69,7 @@ describe( 'EditGravatar', () => {
 			expect( quickEditor.open ).toHaveBeenCalledTimes( 1 );
 
 			expect( baseProps.setCurrentUser ).toHaveBeenCalledWith(
-				expect.objectContaining( {
-					avatar_URL: expect.stringContaining( `ver=${ FIXED_NOW }` ),
-				} )
+				expect.objectContaining( { avatar_URL: expect.stringContaining( `ver=${ FIXED_NOW }` ) } )
 			);
 		} );
 
