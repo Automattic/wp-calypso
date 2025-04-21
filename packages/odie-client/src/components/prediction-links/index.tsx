@@ -1,4 +1,3 @@
-import { __ } from '@wordpress/i18n';
 import type { MessagePrediction } from '../../types';
 import './styles.scss';
 
@@ -23,6 +22,7 @@ export const PredictionLinks = ( {
 
 	return (
 		<div className={ `odie-prediction-links ${ className }` }>
+			<p className="odie-prediction-links__title">SUGGESTED FOLLOW UPS</p>
 			{ predictionContent.map( ( prediction, index ) => (
 				<button
 					key={ index }
@@ -32,13 +32,6 @@ export const PredictionLinks = ( {
 					{ prediction }
 				</button>
 			) ) }
-
-			<button
-				className="odie-prediction-link odie-prediction-link__type-reply"
-				onClick={ () => onPredictionClick( 'custom-reply', 'custom_reply' ) }
-			>
-				{ __( 'Type your reply', __i18n_text_domain__ ) }
-			</button>
 		</div>
 	);
 };

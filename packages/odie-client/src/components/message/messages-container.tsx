@@ -4,7 +4,7 @@ import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { getShortDateString } from '@automattic/i18n-utils';
 import { Spinner } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
-import { useEffect, useRef, useState, forwardRef, ForwardedRef } from 'react';
+import { useEffect, useRef, useState, forwardRef, ForwardedRef, useCallback } from 'react';
 import { NavigationType, useNavigationType, useSearchParams } from 'react-router-dom';
 import { useOdieAssistantContext } from '../../context';
 import {
@@ -19,6 +19,7 @@ import {
 	interactionHasZendeskEvent,
 	interactionHasEnded,
 } from '../../utils';
+import { PredictionLinks } from '../prediction-links';
 import { DislikeFeedbackMessage } from './dislike-feedback-message';
 import { ThinkingPlaceholder } from './thinking-placeholder';
 import ChatMessage from '.';
@@ -46,7 +47,7 @@ interface ChatMessagesProps {
 
 export const MessagesContainer = forwardRef(
 	( { currentUser }: ChatMessagesProps, forwardedRef: ForwardedRef< HTMLDivElement > ) => {
-		const { chat, botNameSlug, isChatLoaded, isUserEligibleForPaidSupport } =
+		const { chat, botNameSlug, isChatLoaded, isUserEligibleForPaidSupport, sendMessage } =
 			useOdieAssistantContext();
 		const createZendeskConversation = useCreateZendeskConversation();
 		const resetSupportInteraction = useResetSupportInteraction();
@@ -70,6 +71,16 @@ export const MessagesContainer = forwardRef(
 				chatHasEnded: interactionHasEnded( currentInteraction ),
 			};
 		}, [] );
+
+		const lastMessage = chat.messages?.[ chat.messages.length - 1 ];
+		const predictions = lastMessage?.predictions;
+
+		const handlePredictionClick = useCallback(
+			( prediction: string, predictionKey: string ) => {
+				sendMessage( { content: prediction, role: 'user', type: 'message', predictionKey } );
+			},
+			[ sendMessage ]
+		);
 
 		useZendeskMessageListener();
 		useAutoScroll( forwardedRef, shouldEnableAutoScroll );
@@ -210,6 +221,13 @@ export const MessagesContainer = forwardRef(
 											{ chat.status === 'sending' && <ThinkingPlaceholder /> }
 											{ chat.status === 'dislike' && <DislikeFeedbackMessage /> }
 										</div>
+									) }
+									{ predictions && (
+										<PredictionLinks
+											predictions={ predictions }
+											onPredictionClick={ handlePredictionClick }
+											className="odie-prediction-links"
+										/>
 									) }
 								</>
 							) }

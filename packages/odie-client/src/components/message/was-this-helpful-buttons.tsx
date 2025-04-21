@@ -52,16 +52,6 @@ const WasThisHelpfulButtons = ( {
 		'odie-feedback-component-button-icon-pressed': rated && notLiked,
 	} );
 
-	const questionClasses = clsx( 'odie-feedback-component-question', {
-		'odie-question-out': rated,
-		'odie-question-hidden': rated,
-	} );
-
-	const thanksClasses = clsx( 'odie-feedback-component-thanks', {
-		'odie-thanks-in': rated,
-		'odie-thanks-hidden': ! rated,
-	} );
-
 	const buttonLikedClasses = clsx( 'odie-feedback-component-button', {
 		'odie-feedback-component-button-liked-pressed': rated && liked,
 		'odie-feedback-component-button-liked-disabled': rated && notLiked,
@@ -78,14 +68,6 @@ const WasThisHelpfulButtons = ( {
 
 	return (
 		<div className={ containerClasses }>
-			<div className="odie-feedback-message">
-				<span className={ questionClasses }>
-					{ __( 'Was this helpful?', __i18n_text_domain__ ) }
-				</span>
-				<span className={ thanksClasses }>
-					{ __( 'We appreciate your feedback.', __i18n_text_domain__ ) }
-				</span>
-			</div>
 			<span className="odie-feedback-component-button-container">
 				<button
 					className={ buttonLikedClasses }
