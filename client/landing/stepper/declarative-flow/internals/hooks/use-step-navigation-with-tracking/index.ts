@@ -99,7 +99,13 @@ export const useStepNavigationWithTracking = ( {
 							providedDependencies,
 						} );
 					}
-					stepNavigation.submit?.( providedDependencies );
+					// FlowV2 have a different signature for the submit handler.
+					// We use `initialize` to deduce the version of the flow.
+					if ( 'initialize' in flow ) {
+						stepNavigation.submit?.( { slug: currentStepRoute, providedDependencies } );
+					} else {
+						stepNavigation.submit?.( providedDependencies );
+					}
 				},
 			} ),
 			...( stepNavigation.exitFlow && {

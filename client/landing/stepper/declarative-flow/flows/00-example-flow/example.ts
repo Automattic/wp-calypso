@@ -84,6 +84,10 @@ const newsletter: FlowV2< typeof initialize > = {
 			}
 		};
 
+		/**
+		 * This is where step's submitted data is processed.
+		 * @param submittedStep - The step that was submitted. It contains the step's slug and the step's submitted data.
+		 */
 		const submit: SubmitHandler< typeof initialize > = ( submittedStep ) => {
 			const { slug, providedDependencies } = submittedStep;
 			switch ( slug ) {
