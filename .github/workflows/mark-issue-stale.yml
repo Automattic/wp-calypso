@@ -14,26 +14,50 @@ jobs:
         uses: actions/stale@v8
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
+           # Get issues in ascending (oldest first) order.
+          ascending: true
+          # Label to use when marking an issue / PR as stale
+          stale-issue-label: '[Status] Stale'
+          stale-pr-label: '[Status] Stale'
+          # Issues and PRs with these labels will never be considered stale.
+          exempt-issue-labels: '[Pri] High,[Pri] BLOCKER,[Type] Feature Request,[Type] Enhancement,[Type] Janitorial,Good For Community,[Type] Good First Bug'
+          exempt-pr-labels: '[Pri] High,[Pri] BLOCKER,[Status] Keep Open'
+          # Managing stale issues
           # Message to be added to stale issues.
-          stale-issue-message: 'This issue is stale because 180 days have passed with no activity. A member of the Dotcom Product Ambassadors Guild will review and if required close this issue within 7 days. If you disagree and would like this issue to remain open, please provide additional context, updated reproduction steps and/or screenshots.'
+          stale-issue-message: |
+            <p>This issue is stale because 180 days have passed with no activity.
+            If you would like this issue to remain open, please provide additional context, updated reproduction steps and/or screenshots.</p>
+            <p>If the issue is not updated in another month, it will be automatically closed.</p>
           # Days before issue is considered stale.
           days-before-issue-stale: 180
-          # Override stale setting for PRs.
-          days-before-pr-stale: -1
-          # Exempted issue labels.
-          exempt-issue-labels: '[Pri] High,[Pri] BLOCKER,[Status] Keep Open,'
-          # Message to be added to stale PRs.
-          stale-pr-message: 'This PR has been marked as stale due to lack of activity within the last 30 days.'
-          # Exempted PR labels.
-          exempt-pr-labels: '[Pri] High,[Pri] BLOCKER,[Status] Keep Open'
-          # Disable auto-close of both issues and PRs.
-          days-before-close: -1
-          # Get issues in ascending (oldest first) order.
-          ascending: true
-          # Label to apply when issue is marked stale.
-          stale-issue-label: '[Status] Stale'
-          # Label to apply when PR is marked as stale.
-          stale-pr-label: '[Status] Stale'
+          # Auto-close stale issues a month later.
+          days-before-issue-close: 31
+          # Managing stale PRs
+          # After a month, mark PR as stale.
+          days-before-pr-stale: 30
+          # Auto-close PRs marked as stale a month later.
+          days-before-pr-close: 31
+          # Delete the branch when closing PRs. GitHub's "restore branch" function works indefinitely, so no reason not to.
+          delete-branch: true
+          # Messages to display.
+          stale-pr-message: |
+            <p>This PR has been marked as stale. This happened because:</p>
+
+            <ul>
+              <li>It has been inactive for the past month.</li>
+              <li>It hasn’t been labeled `[Pri] BLOCKER`, `[Pri] High`, etc.</li>
+            </ul>
+
+            <p>If this PR is still useful, please do a trunk merge or rebase
+            and otherwise make sure it's up to date and has clear testing instructions.
+            You may also want to ping possible reviewers in case they've forgotten about it.
+            Please close this PR if you think it's not valid anymore — if you
+            do, please add a brief explanation.</p>
+
+            <p>If the PR is not updated (or at least commented on) in another month, it will be automatically closed.</p>
+          close-pr-message: |
+            <p>This PR has been automatically closed as it has not been updated in some time.
+            If you want to resume work on the PR, feel free to restore the branch and reopen the PR.</p>
           # Increase number of operations executed per run.
           operations-per-run: 525
       - name: Build Stale issues list

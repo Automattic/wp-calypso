@@ -212,31 +212,16 @@ describe( '<EligibilityWarnings>', () => {
 		expect( handleProceed ).not.toHaveBeenCalled();
 	} );
 
-	it( 'renders a help center button if the context is plugin-details', async () => {
-		const state = createState( {} );
-
-		const { getByText, queryByText } = renderWithStore(
-			<EligibilityWarnings backUrl="" onProceed={ noop } currentContext="plugin-details" />,
-			state
-		);
-
-		expect( queryByText( 'Contact support' ) ).toBeNull();
-		const helpCenterButton = getByText( 'Need help?' );
-		expect( helpCenterButton ).toBeVisible();
-		expect( helpCenterButton ).toBeInstanceOf( HTMLButtonElement );
-	} );
-
-	it( 'renders a contact support link if the context is not plugin-details', async () => {
+	it( 'renders a help button', async () => {
 		const state = createState( {} );
 
 		const { getByText } = renderWithStore(
-			<EligibilityWarnings backUrl="" onProceed={ noop } currentContext="foo" />,
+			<EligibilityWarnings backUrl="" onProceed={ noop } />,
 			state
 		);
 
-		expect( getByText( 'Need help?' ) ).toBeVisible();
-		const contactSupportLink = getByText( 'Contact support' );
-		expect( contactSupportLink ).toBeVisible();
-		expect( contactSupportLink ).toBeInstanceOf( HTMLAnchorElement );
+		const helpCenterButton = getByText( 'Need help?' );
+		expect( helpCenterButton ).toBeVisible();
+		expect( helpCenterButton ).toBeInstanceOf( HTMLButtonElement );
 	} );
 } );

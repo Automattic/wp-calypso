@@ -1181,6 +1181,13 @@ export default function CampaignItemDetails( props: Props ) {
 															<FlexibleSkeleton />
 														) }
 													</span>
+													{ weeklySpend > displayBudget && (
+														<span className="campaign-item-details__details outperformed_notice">
+															{ __(
+																'Your campaign outperformed this week! You’ll only be charged up to your budget.'
+															) }
+														</span>
+													) }
 												</div>
 											) : (
 												<div>

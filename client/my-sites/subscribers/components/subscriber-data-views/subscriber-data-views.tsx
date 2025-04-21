@@ -5,7 +5,7 @@ import { useBreakpoint } from '@automattic/viewport-react';
 import { DataViews, type View, type Action, Operator } from '@wordpress/dataviews';
 import { useMemo, useState, useCallback, useEffect } from '@wordpress/element';
 import { trash } from '@wordpress/icons';
-import { translate, fixMe } from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 import { useSubscribedNewsletterCategories } from 'calypso/data/newsletter-categories';
 import { useSelector, useDispatch } from 'calypso/state';
 import { getCouponsAndGiftsEnabledForSiteId } from 'calypso/state/memberships/settings/selectors';
@@ -286,11 +286,7 @@ const SubscriberDataViews = ( {
 			},
 			{
 				id: 'plan',
-				label: fixMe( {
-					text: 'Subscription Type',
-					newCopy: translate( 'Subscription Type' ),
-					oldCopy: translate( 'Plan' ),
-				} ) as string,
+				label: translate( 'Subscription type' ),
 				getValue: ( { item }: { item: Subscriber } ) =>
 					item.plans?.length ? SubscribersFilterBy.Paid : SubscribersFilterBy.Free,
 				render: ( { item }: { item: Subscriber } ) => <SubscriptionTypeCell subscriber={ item } />,

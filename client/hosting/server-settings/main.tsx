@@ -6,14 +6,13 @@ import {
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import React, { Fragment, useState, useCallback } from 'react';
+import React, { Fragment, useCallback, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import QueryReaderTeams from 'calypso/components/data/query-reader-teams';
 import QuerySites from 'calypso/components/data/query-sites';
 import FeatureExample from 'calypso/components/feature-example';
-import { MasonryGrid } from 'calypso/components/masonry-grid';
 import NavigationHeader from 'calypso/components/navigation-header';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
@@ -26,7 +25,6 @@ import { SftpCard } from 'calypso/hosting/server-settings/components/sftp-card/c
 import HostingActivateStatus from 'calypso/hosting/server-settings/hosting-activate-status';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
-import { useRemoveDuplicateViewsExperimentEnabled } from 'calypso/lib/remove-duplicate-views-experiment';
 import { TrialAcknowledgeModal } from 'calypso/my-sites/plans/trials/trial-acknowledge/acknowlege-modal';
 import { WithOnclickTrialRequest } from 'calypso/my-sites/plans/trials/trial-acknowledge/with-onclick-trial-request';
 import TrialBanner from 'calypso/my-sites/plans/trials/trial-banner';
@@ -175,7 +173,6 @@ const Content = ( {
 	hasSftpFeature,
 	hasTransfer,
 	isBusinessTrial,
-	isRemoveDuplicateViewsExperimentEnabled,
 	isJetpack,
 	isSiteAtomic,
 	siteId,
@@ -185,7 +182,6 @@ const Content = ( {
 	hasSftpFeature: boolean;
 	hasTransfer: boolean;
 	isBusinessTrial: boolean;
-	isRemoveDuplicateViewsExperimentEnabled: boolean;
 	isJetpack: boolean | null;
 	isSiteAtomic: boolean;
 	siteId: number | null;
@@ -193,14 +189,12 @@ const Content = ( {
 } ) => {
 	const WrapperComponent = ! isSiteAtomic ? FeatureExample : Fragment;
 
-	const Inner = isRemoveDuplicateViewsExperimentEnabled ? InnerDiv : MasonryGrid;
-
 	return (
 		<>
 			{ isSiteAtomic && <QuerySites siteId={ siteId } /> }
 			{ isJetpack && siteId && <QueryJetpackModules siteId={ siteId } /> }
 			<WrapperComponent>
-				<Inner>
+				<InnerDiv>
 					<AllCards
 						isAdvancedHostingDisabled={ ! hasSftpFeature || ! isSiteAtomic }
 						isBasicHostingDisabled={ ! hasAtomicFeature || ! isSiteAtomic }
@@ -209,7 +203,7 @@ const Content = ( {
 						siteSlug={ siteSlug }
 						isJetpack={ isJetpack }
 					/>
-				</Inner>
+				</InnerDiv>
 			</WrapperComponent>
 		</>
 	);
@@ -222,8 +216,6 @@ type ServerSettingsProps = {
 const ServerSettings = ( { fetchUpdatedData }: ServerSettingsProps ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-
-	const isRemoveDuplicateViewsExperimentEnabled = useRemoveDuplicateViewsExperimentEnabled();
 
 	const clickActivate = () =>
 		dispatch( recordTracksEvent( 'calypso_hosting_configuration_activate_click' ) );
@@ -334,7 +326,7 @@ const ServerSettings = ( { fetchUpdatedData }: ServerSettingsProps ) => {
 	}
 
 	return (
-		<Panel wide={ ! isRemoveDuplicateViewsExperimentEnabled } className="page-server-settings">
+		<Panel wide={ false } className="page-server-settings">
 			{ ! isLoadingSftpData && (
 				<ScrollToAnchorOnMount
 					offset={ HEADING_OFFSET }
@@ -374,7 +366,6 @@ const ServerSettings = ( { fetchUpdatedData }: ServerSettingsProps ) => {
 				hasSftpFeature={ hasSftpFeature }
 				hasTransfer={ hasTransfer }
 				isBusinessTrial={ isBusinessTrial }
-				isRemoveDuplicateViewsExperimentEnabled={ isRemoveDuplicateViewsExperimentEnabled }
 				isJetpack={ isJetpack }
 				isSiteAtomic={ isSiteAtomic }
 				siteId={ siteId }

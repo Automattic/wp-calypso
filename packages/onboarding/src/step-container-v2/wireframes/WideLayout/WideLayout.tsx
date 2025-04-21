@@ -30,7 +30,7 @@ export const WideLayout = ( {
 					<>
 						<TopBarRenderer topBar={ topBar } />
 						<ContentWrapper>
-							{ heading && <ContentRow columns={ 6 }>{ heading }</ContentRow> }
+							{ heading && <ContentRow>{ heading }</ContentRow> }
 							<ContentRow className={ className }>{ content }</ContentRow>
 						</ContentWrapper>
 						<StickyBottomBarRenderer stickyBottomBar={ stickyBottomBar } />

@@ -1,35 +1,33 @@
 import { FEATURE_SFTP, FEATURE_SSH } from '@automattic/calypso-products';
-import { Button, FormLabel, Spinner, ExternalLink } from '@automattic/components';
+import { Button, ExternalLink, FormLabel, Spinner } from '@automattic/components';
 import { PanelBody, ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import React, { useState, useEffect } from 'react';
+import React, { ReactNode, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import ClipboardButtonInput from 'calypso/components/clipboard-button-input';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import { HostingCard, HostingCardDescription } from 'calypso/components/hosting-card';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import NavigationHeader from 'calypso/components/navigation-header';
 import { useCompleteLaunchpadTasksWithNotice } from 'calypso/launchpad/hooks/use-complete-launchpad-tasks-with-notice';
-import { useRemoveDuplicateViewsExperimentEnabled } from 'calypso/lib/remove-duplicate-views-experiment';
 import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import ReauthRequired from 'calypso/me/reauth-required';
 import { useSelector } from 'calypso/state';
 import {
-	withAnalytics,
-	composeAnalytics,
-	recordTracksEvent,
-	recordGoogleEvent,
 	bumpStat,
+	composeAnalytics,
+	recordGoogleEvent,
+	recordTracksEvent,
+	withAnalytics,
 } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import {
-	requestAtomicSftpUsers,
 	createAtomicSftpUser,
-	resetAtomicSftpPassword,
-	requestAtomicSshAccess,
-	updateAtomicSftpUser,
-	enableAtomicSshAccess,
 	disableAtomicSshAccess,
+	enableAtomicSshAccess,
+	requestAtomicSftpUsers,
+	requestAtomicSshAccess,
+	resetAtomicSftpPassword,
+	updateAtomicSftpUser,
 } from 'calypso/state/hosting/actions';
 import { getAtomicHostingIsLoadingSftpUsers } from 'calypso/state/selectors/get-atomic-hosting-is-loading-sftp-users';
 import { getAtomicHostingIsLoadingSshAccess } from 'calypso/state/selectors/get-atomic-hosting-is-loading-ssh-access';
@@ -394,23 +392,15 @@ export const SftpForm = ( { disabled }: SftpFormProps ) => {
 		</div>
 	);
 
-	const isUntangled = useRemoveDuplicateViewsExperimentEnabled();
+	const ContainerComponent =
+		hasSftpFeatureAndIsLoading || hasSshFeatureAndIsLoading
+			? SftpCardLoadingPlaceholder
+			: React.Fragment;
 
-	let ContainerComponent = HostingCard;
-	if ( isUntangled ) {
-		ContainerComponent =
-			hasSftpFeatureAndIsLoading || hasSshFeatureAndIsLoading
-				? SftpCardLoadingPlaceholder
-				: React.Fragment;
-	}
-
-	let DescriptionComponent = HostingCardDescription;
-	if ( isUntangled ) {
-		DescriptionComponent = ( { children } ) => {
-			const title = useSftpSshSettingTitle();
-			return <NavigationHeader title={ title } subtitle={ children } />;
-		};
-	}
+	const DescriptionComponent = ( { children }: { children: ReactNode } ) => {
+		const title = useSftpSshSettingTitle();
+		return <NavigationHeader title={ title } subtitle={ children } />;
+	};
 
 	return (
 		<ContainerComponent>

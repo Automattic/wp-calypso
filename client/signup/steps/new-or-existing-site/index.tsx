@@ -63,10 +63,10 @@ export default function NewOrExistingSiteStep( props: Props ) {
 				<DIFMLanding
 					onPrimarySubmit={ () =>
 						showNewOrExistingSiteChoice
-							? newOrExistingSiteSelected( 'existing-site' )
-							: newOrExistingSiteSelected( 'new-site' )
+							? newOrExistingSiteSelected( 'new-site' )
+							: newOrExistingSiteSelected( 'existing-site' )
 					}
-					onSecondarySubmit={ () => newOrExistingSiteSelected( 'new-site' ) }
+					onSecondarySubmit={ () => newOrExistingSiteSelected( 'existing-site' ) }
 					showNewOrExistingSiteChoice={ showNewOrExistingSiteChoice }
 					isStoreFlow={ 'do-it-for-me-store' === flowName }
 				/>
