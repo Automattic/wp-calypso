@@ -33,9 +33,10 @@
 		min-height: 24px;
 	}
 
-	.edit-gravatar__edit-button {
+	.edit-gravatar__action-button {
 		font-size: 14px;
 		text-decoration: none;
+		text-wrap: pretty;
 	}
 
 	.edit-gravatar__explanation {
@@ -46,7 +47,7 @@
 	}
 
 	.edit-gravatar__gravatar-placeholder,
-	.edit-gravatar__edit-button-placeholder {
+	.edit-gravatar__action-button-placeholder {
 		@include placeholder();
 	}
 
@@ -57,7 +58,7 @@
 		border-radius: 50%;
 	}
 
-	.edit-gravatar__edit-button-placeholder {
+	.edit-gravatar__action-button-placeholder {
 		height: 24px;
 		width: 160px;
 	}
@@ -83,6 +84,7 @@
 	}
 
 	@media ( min-width: $break-large ) {
+		.edit-gravatar__action-button,
 		.edit-gravatar__explanation {
 			max-width: 260px;
 		}

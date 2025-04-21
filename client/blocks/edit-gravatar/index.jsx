@@ -76,7 +76,7 @@ export class EditGravatar extends Component {
 					<div className="edit-gravatar__gravatar-placeholder" />
 				</div>
 				<div className="edit-gravatar__explanation-container">
-					<div className="edit-gravatar__edit-button-placeholder" />
+					<div className="edit-gravatar__action-button-placeholder" />
 				</div>
 			</div>
 		);
@@ -151,7 +151,7 @@ export class EditGravatar extends Component {
 				<div className="edit-gravatar__explanation-container">
 					{ user.email_verified ? (
 						<Button
-							className="edit-gravatar__edit-button"
+							className="edit-gravatar__action-button"
 							variant="link"
 							onClick={ () => {
 								recordClickButtonEvent( { isVerified: user.email_verified } );
@@ -161,9 +161,13 @@ export class EditGravatar extends Component {
 							{ translate( 'Edit your public avatar' ) }
 						</Button>
 					) : (
-						<p className="edit-gravatar__explanation">
-							{ translate( 'Verify your email to edit your avatar.' ) }
-						</p>
+						<Button
+							className="edit-gravatar__action-button"
+							variant="link"
+							onClick={ this.handleUnverifiedUserClick }
+						>
+							{ translate( 'Verify your email to edit your avatar' ) }
+						</Button>
 					) }
 				</div>
 			</div>
