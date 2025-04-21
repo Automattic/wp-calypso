@@ -1974,6 +1974,7 @@ __metadata:
     react-dom: ^18.3.1
     redux: ^5.0.1
     stylelint: "*"
+    stylelint-scss: ^6.4.0
     webpack: "*"
   languageName: unknown
   linkType: soft
@@ -35728,6 +35729,7 @@ __metadata:
     stacktrace-gps: "npm:^3.0.3"
     storybook: "npm:^8.6.9"
     stylelint: "npm:^16.15.0"
+    stylelint-scss: "npm:^6.4.0"
     swiper: "npm:^10.1.0"
     tslib: "npm:^2.3.0"
     typescript: "npm:5.8.2"

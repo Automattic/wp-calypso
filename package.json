@@ -315,6 +315,7 @@
 		"stacktrace-gps": "^3.0.3",
 		"storybook": "^8.6.9",
 		"stylelint": "^16.15.0",
+		"stylelint-scss": "^6.4.0",
 		"tslib": "^2.3.0",
 		"typescript": "5.8.2",
 		"webpack": "^5.97.1",
