@@ -4,6 +4,7 @@ import { dispatch, useDispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
 import { useLaunchpadDecider } from 'calypso/landing/stepper/declarative-flow/internals/hooks/use-launchpad-decider';
+import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
 import {
 	clearSignupDestinationCookie,
 	setSignupCompleteSlug,
@@ -18,15 +19,10 @@ import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login
 import { useFlowState } from '../../internals/state-manager/store';
 import { STEPS } from '../../internals/steps';
 import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
-import type { FlowV2, Navigate, SubmitHandler } from '../../internals/types';
+import type { FlowV2, SubmitHandler, Navigate } from '../../internals/types';
 
 const DEFAULT_NEWSLETTER_THEME = 'pub/lettre';
 
-/**
- * We define the initialize function before the flow. This gives us to know the steps of the flow before constructing the flow.
- * And this allows us to infer the type of all the utilities in the flow (navigate, useStepNavigation, etc.)
- * @returns The steps of the flow.
- */
 function initialize() {
 	const { setHidePlansFeatureComparison, setIntent } = dispatch( ONBOARD_STORE ) as OnboardActions;
 
@@ -35,7 +31,7 @@ function initialize() {
 	clearSignupDestinationCookie();
 	setIntent( Onboard.SiteIntent.Newsletter );
 
-	const privateSteps = stepsWithRequiredLogin( [
+	return stepsWithRequiredLogin( [
 		STEPS.NEWSLETTER_SETUP,
 		STEPS.NEWSLETTER_GOALS,
 		STEPS.UNIFIED_DOMAINS,
@@ -44,15 +40,10 @@ function initialize() {
 		STEPS.SUBSCRIBERS,
 		STEPS.LAUNCHPAD,
 		STEPS.ERROR,
-	] as const );
-
-	return privateSteps;
+	] );
 }
 
-/**
- * The Flow's type infers a lot of information from the initialize function.
- */
-const newsletter: FlowV2< typeof initialize > = {
+const exampleFlow: FlowV2< typeof initialize > = {
 	name: EXAMPLE_FLOW,
 	get title() {
 		return translate( 'Newsletter Example Flow' );
@@ -61,7 +52,7 @@ const newsletter: FlowV2< typeof initialize > = {
 	__experimentalUseBuiltinAuth: true,
 	isSignupFlow: true,
 	initialize,
-	useStepNavigation( _, navigate ) {
+	useStepNavigation( _currentStep, navigate ) {
 		const flowName = this.name;
 		const siteSlug = useSiteSlug();
 		const { get, set } = useFlowState();
@@ -84,17 +75,19 @@ const newsletter: FlowV2< typeof initialize > = {
 			}
 		};
 
+		triggerGuidesForStep( flowName, _currentStep );
+
 		/**
 		 * This is where step's submitted data is processed.
 		 * @param submittedStep - The step that was submitted. It contains the step's slug and the step's submitted data.
 		 */
 		const submit: SubmitHandler< typeof initialize > = ( submittedStep ) => {
 			const { slug, providedDependencies } = submittedStep;
+
 			switch ( slug ) {
-				case 'newsletterSetup': {
+				case 'newsletterSetup':
 					set( 'newsletterSetup', providedDependencies );
 					return navigate( 'newsletterGoals' );
-				}
 
 				case 'newsletterGoals':
 					set( 'newsletterGoals', providedDependencies );
@@ -111,7 +104,6 @@ const newsletter: FlowV2< typeof initialize > = {
 							theme: DEFAULT_NEWSLETTER_THEME,
 							siteIntent: Onboard.SiteIntent.Newsletter,
 						} ).then( ( siteCreationResult ) => {
-							set( 'site', siteCreationResult );
 							// update site settings but return the siteCreationResult when done.
 							return saveSiteSettings( siteCreationResult.siteSlug, {
 								launchpad_screen: 'full',
@@ -121,8 +113,8 @@ const newsletter: FlowV2< typeof initialize > = {
 					return navigate( 'processing' );
 				case 'processing': {
 					const site = get( 'site' );
-					if ( providedDependencies?.processingResult === ProcessingResult.SUCCESS && site ) {
-						const launchpadUrl = `/setup/${ flowName }/launchpad?siteSlug=${ providedDependencies.siteSlug }`;
+					if ( site && providedDependencies?.processingResult === ProcessingResult.SUCCESS ) {
+						const launchpadUrl = `/setup/${ flowName }/launchpad?siteSlug=${ site.siteSlug }`;
 
 						const { siteId, siteSlug } = site;
 						initializeLaunchpadState( {
@@ -174,4 +166,4 @@ const newsletter: FlowV2< typeof initialize > = {
 	},
 };
 
-export default newsletter;
+export default exampleFlow;

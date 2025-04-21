@@ -46,6 +46,7 @@ const ProcessingStep: StepType< {
 				siteId?: number;
 				siteSlug?: string;
 				goToCheckout?: boolean;
+				goToHome?: boolean;
 				skipMigration?: undefined;
 				path?: string;
 				intent?: SiteIntent;
