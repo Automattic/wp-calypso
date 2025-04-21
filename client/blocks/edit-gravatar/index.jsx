@@ -32,19 +32,19 @@ export class EditGravatar extends Component {
 		translate: PropTypes.func,
 		user: PropTypes.object,
 		recordClickButtonEvent: PropTypes.func,
-		recordAvatarUpdateEvent: PropTypes.func,
+		recordAvatarUpdatedEvent: PropTypes.func,
 	};
 
 	quickEditor = null;
 
 	componentDidMount() {
-		const { user, setCurrentUser: setUser, recordAvatarUpdateEvent } = this.props;
+		const { user, setCurrentUser: setUser, recordAvatarUpdatedEvent } = this.props;
 
 		this.quickEditor = new GravatarQuickEditorCore( {
 			email: user.email,
 			scope: [ 'avatars' ],
 			onProfileUpdated: () => {
-				recordAvatarUpdateEvent();
+				recordAvatarUpdatedEvent();
 				// Update the avatar URL to force a refresh.
 				setUser( { ...user, avatar_URL: addQueryArgs( user.avatar_URL, { ver: Date.now() } ) } );
 			},
@@ -177,7 +177,7 @@ const recordClickButtonEvent = ( { isVerified } ) =>
 		recordGoogleEvent( 'Me', 'Clicked on Edit Gravatar Button in Profile' )
 	);
 
-const recordAvatarUpdateEvent = () => recordTracksEvent( 'calypso_edit_gravatar_update_success' );
+const recordAvatarUpdatedEvent = () => recordTracksEvent( 'calypso_edit_gravatar_updated' );
 
 export default connect(
 	( state ) => ( {
@@ -188,6 +188,6 @@ export default connect(
 	{
 		setCurrentUser,
 		recordClickButtonEvent,
-		recordAvatarUpdateEvent,
+		recordAvatarUpdatedEvent,
 	}
 )( localize( EditGravatar ) );
