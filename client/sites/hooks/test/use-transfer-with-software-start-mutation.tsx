@@ -8,10 +8,6 @@ import nock from 'nock';
 import React from 'react';
 import { useRequestTransferWithSoftware } from '../use-transfer-with-software-start-mutation';
 
-const replyErrorWithEnvelope =
-	( status: number, defaultBody: Record< string, string | number > = {} ) =>
-	( body = {} ) =>
-	() => [ 200, { code: status, body: { ...defaultBody, ...body } } ];
 const SITE_ID = 123;
 const API_SETTINGS = { migration_source_site_domain: 'example.com' };
 
@@ -89,12 +85,13 @@ describe( 'useRequestTransferWithSoftware', () => {
 	it( 'should return an error if both plugin_slug and theme_slug are not provided', async () => {
 		nock( 'https://public-api.wordpress.com' )
 			.post( '/wpcom/v2/sites/' + SITE_ID + '/atomic/transfer-with-software', {
-				plugin_slug: null,
-				theme_slug: null,
+				plugin_slug: undefined,
+				theme_slug: undefined,
 				settings: API_SETTINGS,
 			} )
 			.query( { http_envelope: 1 } )
-			.reply( replyErrorWithEnvelope( 400, { error: 'plugin_slug and theme_slug are required' } ) );
+			.reply( 400, { message: 'plugin_slug and theme_slug are required' } );
+
 		const { result } = render();
 
 		result.current.mutate();
@@ -102,6 +99,7 @@ describe( 'useRequestTransferWithSoftware', () => {
 		await waitFor(
 			() => {
 				expect( result.current.isError ).toBe( true );
+				expect( result.current.error?.message ).toBe( 'plugin_slug and theme_slug are required' );
 			},
 			{ timeout: 3000 }
 		);
