@@ -1,12 +1,25 @@
 {
 	"$schema": "https://json.schemastore.org/tsconfig.json",
-	"extends": "@automattic/calypso-typescript-config/ts-package.json",
+	"extends": "../../tsconfig.base.json",
 	"compilerOptions": {
-		"outDir": "build-module",
-		"declarationDir": "build-types",
-		"rootDir": "src"
+		"types": [
+			"gutenberg-env",
+			"gutenberg-test-env",
+			"jest",
+			"@testing-library/jest-dom"
+		]
 	},
-	"include": [ "src" ],
+	"references": [
+		{ "path": "../components" },
+		{ "path": "../compose" },
+		{ "path": "../data" },
+		{ "path": "../element" },
+		{ "path": "../i18n" },
+		{ "path": "../icons" },
+		{ "path": "../primitives" },
+		{ "path": "../private-apis" },
+		{ "path": "../warning" }
+	],
 	"exclude": [
 		"src/**/*.android.js",
 		"src/**/*.ios.js",
