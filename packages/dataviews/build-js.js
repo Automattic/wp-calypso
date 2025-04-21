@@ -6,15 +6,11 @@ const fs = require( 'fs' );
 const path = require( 'path' );
 const glob = require( 'glob' );
 const babel = require( '@babel/core' );
-const sass = require( 'sass' );
-const postcss = require( 'postcss' );
 
 /**
  * Internal dependencies
  */
 const getBabelConfig = require( './get-babel-config' );
-
-const isDev = process.env.NODE_ENV === 'development';
 
 /**
  * Path to packages directory.
@@ -36,13 +32,6 @@ const JS_ENVIRONMENTS = {
 };
 
 /**
- * Promisified fs.readFile.
- *
- * @type {Function}
- */
-const readFile = promisify( fs.readFile );
-
-/**
  * Promisified fs.writeFile.
  *
  * @type {Function}
@@ -55,13 +44,6 @@ const writeFile = promisify( fs.writeFile );
  * @type {Function}
  */
 const makeDir = promisify( fs.mkdir );
-
-/**
- * Promisified sass.render.
- *
- * @type {Function}
- */
-const renderSass = promisify( sass.render );
 
 /**
  * Get the package name for a specified file
