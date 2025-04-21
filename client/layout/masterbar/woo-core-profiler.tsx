@@ -41,6 +41,13 @@ const WooCoreProfilerMasterbar = ( { translate }: { translate: ( text: string ) 
 		shouldShowNoThanks = false;
 	}
 
+	// Check for the existence of the flow=nox query argument
+	const isWooNOX = getQueryArg( redirectToOriginal || '', 'flow' ) === 'nox';
+
+	if ( isWooNOX ) {
+		shouldShowProgressBar = false;
+	}
+
 	return (
 		<Fragment>
 			{ shouldShowProgressBar && <ProgressBar className="masterbar__progress-bar" value={ 95 } /> }
