@@ -116,6 +116,7 @@
 	@include breakpoint-deprecated( ">660px" ) {
 		display: flex;
 		justify-content: space-between;
+		align-items: center;
 	}
 
 	.notice.is-compact {
@@ -173,13 +174,11 @@
 }
 
 .domain-registration-suggestion__title-info {
+	display: flex;
+	align-items: center;
+
 	@include breakpoint-deprecated( ">800px" ) {
 		max-width: 55%;
-	}
-
-	&.has-badges {
-		display: flex;
-    	align-items: center;
 	}
 }
 
