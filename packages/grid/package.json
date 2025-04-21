@@ -30,6 +30,7 @@
 		"storybook:start": "storybook dev -p 56834"
 	},
 	"devDependencies": {
+		"@automattic/calypso-build": "workspace:^",
 		"@automattic/calypso-storybook": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"@storybook/addon-actions": "^8.6.9",

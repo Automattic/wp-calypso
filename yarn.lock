@@ -1120,6 +1120,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/grid@workspace:packages/grid"
   dependencies:
+    "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-storybook": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@storybook/addon-actions": "npm:^8.6.9"
