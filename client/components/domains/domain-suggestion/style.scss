@@ -2,7 +2,16 @@
 @import "@wordpress/base-styles/mixins";
 
 .domain-suggestion {
+	display: flex;
 	flex-direction: column;
+
+	&.card {
+		padding: 16px 12px;
+
+		@include break-mobile {
+			padding: 16px 24px;
+		}
+	}
 
 	@include break-mobile {
 		flex-direction: row;
@@ -60,7 +69,6 @@
 	@include break-mobile {
 		flex-direction: row;
 		align-items: center;
-		padding: 15px 20px;
 	}
 
 	.is-section-signup & {
@@ -253,6 +261,7 @@
 .button.domain-suggestion__action {
 	width: 100%;
 	min-width: 130px;
+	min-height: 40px;
 	text-align: center;
 	padding: 0.25em 3em;
 	margin-left: 0;
@@ -435,11 +444,6 @@ body.is-section-signup {
 			background: none;
 			border-bottom: 1px solid rgba(220, 220, 222, 0.64);
 			border-top: 1px solid #fff; /*This white border is to prevent jumpiness while showing borders on hover*/
-			padding: 16px 20px;
-
-			@include break-mobile {
-				padding: 16px 24px;
-			}
 
 			.domain-registration-suggestion__domain-title {
 				.domain-registration-suggestion__domain-title-name {
