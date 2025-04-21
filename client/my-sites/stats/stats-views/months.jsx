@@ -34,6 +34,7 @@ class Month extends PureComponent {
 
 		if ( ! isHeader && href ) {
 			page( href );
+			window.scrollTo( 0, 0 );
 			return;
 		}
 		this.setState( { showPopover: ! this.state.showPopover } );
