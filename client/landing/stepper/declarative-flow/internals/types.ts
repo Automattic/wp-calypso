@@ -1,7 +1,7 @@
 import { StepperInternal } from '@automattic/data-stores';
 import React from 'react';
+import { Store } from 'redux';
 import { STEPPER_TRACKS_EVENTS } from '../../constants';
-import { PRIVATE_STEPS, STEPS } from './steps';
 
 /**
  * This is the return type of useStepNavigation hook
@@ -45,7 +45,11 @@ export type NavigationControls<
 	 * Submits the answers provided in the flow. If it's complaining about the type, it means you haven't typed the step correctly.
 	 * @see {@link client/landing/stepper/declarative-flow/internals/steps-repository/DEVELOPMENT/making-a-new-step.md}
 	 */
-	submit: ( providedDependencies?: StepSubmittedTypes ) => void;
+	submit?: (
+		providedDependencies?: StepSubmittedTypes extends Record< string, unknown >
+			? StepSubmittedTypes
+			: never
+	) => void;
 
 	/**
 	 * Exits the flow and continue to the given path
@@ -53,46 +57,31 @@ export type NavigationControls<
 	exitFlow?: ( to: string ) => void;
 };
 
-/**
- * This is the return type of useStepNavigation hook
- * @template StepSubmittedTypes - The types of the step submitted data.
- * @example
- * navigation.submit({
- *   siteSlug: 'example.wordpress.com',
- *   siteTitle: 'Example Site',
- * });
- */
-export type NavigationControlsV2<
-	InitializeFunction extends DefaultFlowStepsConfig = DefaultFlowStepsConfig,
-> = {
+export type AsyncStepperStep = {
 	/**
-	 * Submits the answers provided in the flow. If it's complaining about the type, it means you haven't typed the step correctly.
-	 * @see {@link client/landing/stepper/declarative-flow/internals/steps-repository/DEVELOPMENT/making-a-new-step.md}
+	 * The step slug is what appears as part of the pathname. Eg the intro in /setup/link-in-bio/intro
 	 */
-	submit: SubmitHandler< InitializeFunction >;
-};
-
-export type AsyncStepperStep = ( typeof STEPS )[ keyof typeof STEPS ];
-type AsyncUserStep = ( typeof PRIVATE_STEPS )[ keyof typeof PRIVATE_STEPS ];
-
-export type StepperStep = ( AsyncStepperStep | AsyncUserStep ) & {
+	slug: Exclude< string, 'user' >;
+	/**
+	 * Does the step require a logged-in user?
+	 */
 	requiresLoggedInUser?: boolean;
+	/**
+	 * The Async loaded component that will be rendered for this step
+	 *
+	 * It should look like this: component: () => import( './internals/steps-repository/newsletter-setup' )
+	 */
+	asyncComponent: () => Promise< { default: React.FC< any > } >;
 };
 
-/**
- * Navigates to a step in the current flow. Preserves the current query params.
- * @param stepName - The name of the step to navigate to.
- * @param extraData - Extra data to pass to the step.
- * @param replace - If true, the current step will be replaced in the history stack.
- */
-export type Navigate = (
-	stepName: string,
-	extraData?: any,
+export interface AsyncUserStep extends AsyncStepperStep {
 	/**
-	 * If true, the current step will be replaced in the history stack.
+	 * The step slug is what appears as part of the pathname. Eg the intro in /setup/link-in-bio/intro
 	 */
-	replace?: boolean
-) => void;
+	slug: 'user';
+}
+
+export type StepperStep = AsyncStepperStep | AsyncUserStep;
 
 /**
  * Navigates to a step in the current flow. Preserves the current query params.
@@ -100,7 +89,7 @@ export type Navigate = (
  * @param extraData - Extra data to pass to the step.
  * @param replace - If true, the current step will be replaced in the history stack.
  */
-export type NavigateV2< FlowSteps extends readonly StepperStep[] > = (
+export type Navigate< FlowSteps extends readonly StepperStep[] > = (
 	stepName: FlowSteps[ number ][ 'slug' ] | `${ FlowSteps[ number ][ 'slug' ] }?${ string }`,
 	extraData?: any,
 	/**
@@ -114,39 +103,18 @@ export type NavigateV2< FlowSteps extends readonly StepperStep[] > = (
  */
 export type UseStepsHook = () => readonly StepperStep[];
 
-export type UseStepNavigationHook< FlowSteps extends readonly StepperStep[] > = (
+export type UseStepNavigationHook< FlowSteps extends StepperStep[] > = (
 	currentStepSlug: FlowSteps[ number ][ 'slug' ],
-	navigate: Navigate
+	navigate: Navigate< FlowSteps >
 ) => NavigationControls< any >;
 
-export type UseStepNavigationHookV2< FlowSteps extends readonly StepperStep[] > = (
-	currentStepSlug: FlowSteps[ number ][ 'slug' ],
-	navigate: NavigateV2< FlowSteps >
-) => NavigationControlsV2< () => FlowSteps >;
-
-export type SubmitHandler< InitializeFunction extends DefaultFlowStepsConfig > = (
-	submittedStep: MapStepToItsSubmitData< ReturnType< InitializeFunction >[ number ] >
-) => void;
-/**
- * This type is complex because it's tricky to keep the mapping between slug and the steps submitted data type.
- * Without this, TS would have a SLUG <=> SUBMITTED_TYPE mapping, between every slug and every type of submitted data.
- * We only want a SLUG <=> SUBMITTED_TYPE mapping, between every slug and the type of the submitted data for the respective step.
- */
-type MapStepToItsSubmitData< T extends StepperStep > = {
-	[ K in T as K[ 'slug' ] ]: Pick< K, 'slug' > & {
-		providedDependencies: Parameters<
-			Parameters<
-				Awaited< ReturnType< K[ 'asyncComponent' ] > >[ 'default' ]
-			>[ 0 ][ 'navigation' ][ 'submit' ]
-		>[ 0 ];
-	};
-}[ T[ 'slug' ] ];
-
-export type UseAssertConditionsHook = ( navigate?: Navigate ) => AssertConditionResult;
+export type UseAssertConditionsHook< FlowSteps extends readonly StepperStep[] > = (
+	navigate?: Navigate< FlowSteps >
+) => AssertConditionResult;
 
 export type UseSideEffectHook< FlowSteps extends readonly StepperStep[] > = (
 	currentStepSlug: FlowSteps[ number ][ 'slug' ],
-	navigate: Navigate
+	navigate: Navigate< FlowSteps >
 ) => void;
 
 /**
@@ -166,15 +134,11 @@ export type UseTracksEventPropsHook = () => {
 /**
  * @deprecated Use FlowV2 instead.
  */
-export type Flow = {
+export type FlowV1 = {
 	/**
 	 * If this flag is set to true, the flow will login the user without leaving Stepper.
 	 */
 	__experimentalUseBuiltinAuth?: boolean;
-	/**
-	 * If this flag is set to true, the flow will use sessions to store the user's progress.
-	 */
-	__experimentalUseSessions?: boolean;
 	name: string;
 	/**
 	 * If this flow extends another flow, the variant slug will be added as a class name to the root element of the flow.
@@ -206,23 +170,19 @@ export type Flow = {
 	 * Use this method to define the steps of the flow and do any actions that need to run before the flow starts.
 	 * This hook is called only once when the flow is mounted. It can be asynchronous if you would like to load an experiment or other data.
 	 */
-	useStepNavigation: UseStepNavigationHook< readonly StepperStep[] >;
+	useStepNavigation: UseStepNavigationHook< StepperStep[] >;
 	/**
 	 * @deprecated Use `initialize` instead. `initialize` will run before the flow is rendered and you can make any decisions there.
 	 */
-	useAssertConditions?: UseAssertConditionsHook;
+	useAssertConditions?: UseAssertConditionsHook< ReturnType< FlowV1[ 'useSteps' ] > >;
 	/**
 	 * A hook that is called in the flow's root at every render. You can use this hook to setup side-effects, call other hooks, etc..
 	 */
-	useSideEffect?: UseSideEffectHook< readonly StepperStep[] >;
+	useSideEffect?: UseSideEffectHook< ReturnType< FlowV1[ 'useSteps' ] > >;
 	useTracksEventProps?: UseTracksEventPropsHook;
 };
 
-type DefaultFlowStepsConfig = () => readonly StepperStep[];
-
-export interface FlowV2<
-	FlowStepsInitialize extends DefaultFlowStepsConfig = DefaultFlowStepsConfig,
-> {
+export type FlowV2 = {
 	/**
 	 * If this flag is set to true, the flow will login the user without leaving Stepper.
 	 */
@@ -235,12 +195,12 @@ export interface FlowV2<
 	 * The steps of the flow. **Please don't use this variable unless absolutely necessary**. It's meant to be used internally by the Stepper.
 	 * Use `getSteps` instead.
 	 */
-	__flowSteps?: ReturnType< FlowStepsInitialize >;
+	__flowSteps?: readonly StepperStep[];
 
 	/**
 	 * Use this method to retrieve the steps of the flow.
 	 */
-	getSteps?(): ReturnType< FlowStepsInitialize >;
+	getSteps?(): readonly StepperStep[];
 
 	name: string;
 	/**
@@ -271,14 +231,22 @@ export interface FlowV2<
 	 *
 	 * Returning false will kill the app.
 	 */
-	initialize(): Promise< readonly StepperStep[] > | readonly StepperStep[] | false;
-	useStepNavigation: UseStepNavigationHookV2< ReturnType< FlowStepsInitialize > >;
+	initialize(
+		reduxStore: Store
+	): false | Promise< false > | Promise< readonly StepperStep[] > | readonly StepperStep[];
+	useStepNavigation: UseStepNavigationHook< StepperStep[] >;
 	/**
 	 * A hook that is called in the flow's root at every render. You can use this hook to setup side-effects, call other hooks, etc..
 	 */
-	useSideEffect?: UseSideEffectHook< ReturnType< FlowStepsInitialize > >;
+	useSideEffect?: UseSideEffectHook< StepperStep[] >;
 	useTracksEventProps?: UseTracksEventPropsHook;
-}
+	/**
+	 * @deprecated Avoid this. Assert your conditions in `initialize` instead unless you're 100% sure you need this.
+	 */
+	useAssertConditions?: UseAssertConditionsHook< ReturnType< FlowV1[ 'useSteps' ] > >;
+};
+
+export type Flow = FlowV1 | FlowV2;
 
 /**
  * This is a helper type to intersect A and B only if B is not never. Intersecting with never results in never which is not what we want.
