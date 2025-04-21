@@ -3,6 +3,7 @@ import { Grid } from '../grid';
 export default {
 	title: 'Grid',
 	component: Grid,
+	tags: [ 'autodocs' ],
 	parameters: {
 		layout: 'centered',
 	},
