@@ -1,12 +1,6 @@
-import {
-	StepContainer,
-	Title,
-	SubTitle,
-	HOSTED_SITE_MIGRATION_FLOW,
-	Step,
-} from '@automattic/onboarding';
+import { StepContainer, Title, SubTitle, Step } from '@automattic/onboarding';
 import { Icon, next, published, shield } from '@wordpress/icons';
-import { useTranslate } from 'i18n-calypso';
+import { numberFormat, TranslateResult, useTranslate } from 'i18n-calypso';
 import { type FC, ReactElement, useEffect, useState, useCallback } from 'react';
 import CaptureInput from 'calypso/blocks/import/capture/capture-input';
 import ScanningStep from 'calypso/blocks/import/scanning';
@@ -16,6 +10,8 @@ import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { shouldUseStepContainerV2MigrationFlow } from '../../../helpers/should-use-step-container-v2';
+//TODO: Move it to a more generic folder
+import { useFlowState } from '../../state-manager/store';
 import { useSitePreviewMShotImageHandler } from '../site-migration-instructions/site-preview/hooks/use-site-preview-mshot-image-handler';
 import type { Step as StepType } from '../../types';
 import type { UrlData } from 'calypso/blocks/import/types';
@@ -25,7 +21,7 @@ import './style.scss';
 interface HostingDetailsWithIconsProps {
 	items: {
 		icon: ReactElement;
-		description: string;
+		description: TranslateResult;
 	}[];
 }
 
@@ -101,7 +97,17 @@ export const Analyzer: FC< Props > = ( {
 		},
 		'unmatched-uptime': {
 			icon: published,
-			description: translate( 'Unmatched reliability with 99.999% uptime and unmetered traffic.' ),
+			description: translate(
+				'Unmatched reliability with %(uptimePercent)s uptime and unmetered traffic.',
+				{
+					args: {
+						uptimePercent: numberFormat( 0.99999, {
+							numberFormatOptions: { style: 'percent', maximumFractionDigits: 3 },
+						} ),
+					},
+					comment: '99.999% uptime',
+				}
+			),
 		},
 		security: {
 			icon: shield,
@@ -140,7 +146,7 @@ const SiteMigrationIdentify: StepType< {
 		platform?: string;
 		from?: string;
 	};
-} > = function ( { navigation, variantSlug, flow } ) {
+} > = function ( { navigation, flow } ) {
 	const siteSlug = useSiteSlug();
 	const translate = useTranslate();
 	const { createScreenshots } = useSitePreviewMShotImageHandler();
@@ -161,13 +167,13 @@ const SiteMigrationIdentify: StepType< {
 	);
 
 	const urlQueryParams = useQuery();
+	const { get } = useFlowState();
 
-	const shouldHideBackButton = () => {
-		const ref = urlQueryParams.get( 'ref' ) || '';
-		const shouldHideBasedOnRef = [ 'entrepreneur-signup', 'calypso-importer' ].includes( ref );
-		const shouldHideBasedOnVariant = [ HOSTED_SITE_MIGRATION_FLOW ].includes( variantSlug || '' );
-		const shouldNotHideIfBackToIsSet = Boolean( urlQueryParams.get( 'back_to' ) );
-		return ( shouldHideBasedOnRef || shouldHideBasedOnVariant ) && ! shouldNotHideIfBackToIsSet;
+	const shouldShowBackButton = () => {
+		const ref = get( 'flow' )?.entryPoint;
+
+		const isBackButtonSupported = ref && [ 'goals', 'wp-admin-importers-list' ].includes( ref );
+		return isBackButtonSupported || urlQueryParams.has( 'back_to' );
 	};
 
 	const [ isVisible, setIsVisible ] = useState( false );
@@ -196,9 +202,7 @@ const SiteMigrationIdentify: StepType< {
 					topBar={
 						<Step.TopBar
 							leftElement={
-								shouldHideBackButton() ? undefined : (
-									<Step.BackButton onClick={ navigation.goBack } />
-								)
+								shouldShowBackButton() ? <Step.BackButton onClick={ navigation.goBack } /> : null
 							}
 						/>
 					}
@@ -224,7 +228,7 @@ const SiteMigrationIdentify: StepType< {
 				stepName="site-migration-identify"
 				flowName="site-migration"
 				className="import__onboarding-page"
-				hideBack={ shouldHideBackButton() }
+				hideBack={ ! shouldShowBackButton() }
 				backUrl={ urlQueryParams.get( 'back_to' ) || undefined }
 				hideSkip
 				hideFormattedHeader

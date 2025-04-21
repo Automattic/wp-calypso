@@ -575,6 +575,14 @@ export function generateFlows( {
 			optionalDependenciesInQuery: [ 'coupon' ],
 			hideProgressIndicator: true,
 			enableHotjar: true,
+			props: {
+				[ 'plans-affiliate' ]: {
+					offeringFreePlan: false,
+				},
+				domains: {
+					allowSkipWithoutSearch: true,
+				},
+			},
 		},
 	];
 

@@ -229,7 +229,7 @@ const ProcessingStep: StepType< {
 		return (
 			<>
 				<DocumentHead title={ __( 'Processing' ) } />
-				<Step.Loading title={ getCurrentMessage() } progress={ progress } />
+				<Step.Loading title={ getCurrentMessage() } progress={ progress } delay={ 1000 } />
 			</>
 		);
 	}

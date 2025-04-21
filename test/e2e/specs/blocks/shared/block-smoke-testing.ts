@@ -71,6 +71,8 @@ export function createBlockTests( specName: string, blockFlows: BlockFlow[] ): v
 						{
 							noSearch: blockFlow.noSearch === false ? false : true,
 							blockFallBackName: blockFlow.blockTestFallBackName,
+							blockInsertedPopupConfirmButtonSelector:
+								blockFlow.blockInsertedPopupConfirmButtonSelector,
 						}
 					);
 					const id = await blockHandle.getAttribute( 'id' );

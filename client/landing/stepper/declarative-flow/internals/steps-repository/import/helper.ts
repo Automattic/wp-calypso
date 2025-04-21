@@ -75,3 +75,46 @@ export function generateStepPath( stepName: string, stepSectionName?: string ) {
 		}
 	}
 }
+
+/**
+ * Returns true if the platform is importable
+ *
+ * @param platform - The platform to check
+ * @returns True if the platform is importable, false otherwise
+ */
+export function isPlatformImportable( platform: ImporterPlatform ) {
+	const productImporters = getImporterEngines();
+	return productImporters.includes( platform );
+}
+
+/**
+ * Returns the full importer URL for the given platform
+ *
+ * @param platform - The platform to get the importer URL for
+ * @param targetSlug - The target slug for the importer URL
+ * @param fromSite - The from site for the importer URL
+ */
+export function getFullImporterUrl(
+	platform: ImporterPlatform,
+	targetSlug: string,
+	fromSite: string
+) {
+	if ( ! isPlatformImportable( platform ) ) {
+		return getWpOrgImporterUrl( targetSlug, platform );
+	}
+
+	const hasSiteSetupImporter = [ 'blogger', 'medium', 'squarespace', 'wix', 'wordpress' ];
+	if ( hasSiteSetupImporter.includes( platform ) ) {
+		let url = '/setup/site-setup/' + getWpComOnboardingUrl( targetSlug, platform, fromSite );
+
+		if ( platform === 'wix' ) {
+			url = addQueryArgs( url, {
+				run: true,
+			} );
+		}
+
+		return url;
+	}
+
+	return getImporterUrl( targetSlug, platform, fromSite );
+}

@@ -15,6 +15,7 @@ import {
 	transferRevertingInProgress,
 } from 'calypso/state/automated-transfer/constants';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { requestJetpackConnectionHealthStatus } from 'calypso/state/jetpack-connection-health/actions';
 import isJetpackConnectionProblem from 'calypso/state/jetpack-connection-health/selectors/is-jetpack-connection-problem';
 import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
 import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
@@ -501,6 +502,13 @@ export const StagingSiteCard = ( {
 	} else if ( ! hasCompletedInitialLoading ) {
 		stagingSiteCardContent = <LoadingPlaceholder />;
 	}
+
+	// Get the fresh jetpack connection health status
+	useEffect( () => {
+		if ( isJetpack && siteId ) {
+			dispatch( requestJetpackConnectionHealthStatus( siteId ) );
+		}
+	}, [ dispatch, isJetpack, siteId ] );
 
 	return (
 		<CardContentWrapper>

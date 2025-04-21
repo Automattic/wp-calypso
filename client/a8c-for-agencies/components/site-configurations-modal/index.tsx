@@ -109,6 +109,14 @@ export default function SiteConfigurationsModal( {
 						)
 					)
 				);
+			} else if ( error.code === 'email_unverified' ) {
+				dispatch(
+					errorNotice(
+						translate(
+							'Please verify your email address by clicking the link we sent to your inbox.'
+						)
+					)
+				);
 			} else {
 				dispatch( errorNotice( translate( 'Something went wrong. Please try again.' ) ) );
 			}

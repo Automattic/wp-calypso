@@ -49,6 +49,27 @@ $signup_url      = localized_wpcom_url( 'https://wordpress.com/log-in?redirect_t
 		<?php if ( $site_type === 'support' ) : ?>
 			<div class="support-content-resource">
 				<h4 class="support-content-resource__title">
+					<?php if ( get_locale() === 'en' ) : ?>
+						<?php esc_html_e( 'Watch a course', 'happy-blocks' ); ?>
+					<?php else : ?>
+						<?php esc_html_e( 'Watch a course (in English)', 'happy-blocks' ); ?>
+					<?php endif; ?>
+				</h4>
+				<p>
+					<?php esc_html_e( 'Learn how to create a website with our step-by-step video course.', 'happy-blocks' ); ?>
+					<?php if ( get_locale() !== 'en' ) : ?>
+						<br /> <br /><em><?php esc_html_e( 'Available in English only.', 'happy-blocks' ); ?></em>
+					<?php endif; ?>
+				</p>
+				<div class="resource-link">
+					<a href="<?php echo esc_url( '//wordpress.com/support/courses/create-your-website/' ); ?>">
+						<?php esc_html_e( 'Create your website', 'happy-blocks' ); ?>
+					</a>
+				</div>
+			</div>
+		<?php else : ?>
+			<div class="support-content-resource">
+				<h4 class="support-content-resource__title">
 					<?php esc_html_e( 'Check our guides', 'happy-blocks' ); ?>
 				</h4>
 				<p>
@@ -57,20 +78,6 @@ $signup_url      = localized_wpcom_url( 'https://wordpress.com/log-in?redirect_t
 				<div class="resource-link">
 					<a href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/support/' ) ); ?>">
 						<?php esc_html_e( 'Visit support guides', 'happy-blocks' ); ?>
-					</a>
-				</div>
-			</div>
-		<?php else : ?>
-			<div class="support-content-resource">
-				<h4 class="support-content-resource__title">
-					<?php esc_html_e( 'Watch a course', 'happy-blocks' ); ?>
-				</h4>
-				<p>
-					<?php esc_html_e( 'Learn how to create a website with our step-by-step video course.', 'happy-blocks' ); ?>
-				</p>
-				<div class="resource-link">
-					<a href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/support/courses/create-your-website/' ) ); ?>">
-						<?php esc_html_e( 'Create your website', 'happy-blocks' ); ?>
 					</a>
 				</div>
 			</div>

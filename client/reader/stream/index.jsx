@@ -1,3 +1,4 @@
+import './style.scss';
 import { isDefaultLocale } from '@automattic/i18n-utils';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
@@ -21,6 +22,7 @@ import { isEditorIframeFocused } from 'calypso/reader/components/quick-post/util
 import ReaderMain from 'calypso/reader/components/reader-main';
 import { shouldShowLikes } from 'calypso/reader/like-helper';
 import { keysAreEqual, keyToString } from 'calypso/reader/post-key';
+import { MAX_POSTS_FOR_LOGGED_OUT_USERS } from 'calypso/reader/reader.const';
 import ReaderStreamLoginPrompt from 'calypso/reader/stream/login-prompt';
 import UpdateNotice from 'calypso/reader/update-notice';
 import { showSelectedPost, getStreamType } from 'calypso/reader/utils';
@@ -56,7 +58,6 @@ import { CustomerCouncilBanner } from './customer-council-banner';
 import EmptyContent from './empty';
 import PostLifecycle from './post-lifecycle';
 import PostPlaceholder from './post-placeholder';
-import './style.scss';
 
 // minimal size for the two-column layout to show without cut off
 // 64 is padding, 8 is margin
@@ -91,7 +92,6 @@ class ReaderStream extends Component {
 		useCompactCards: PropTypes.bool,
 		fixedHeaderHeight: PropTypes.number,
 		selectedStreamName: PropTypes.string,
-		disableInfiniteScroll: PropTypes.bool,
 		isLoggedIn: PropTypes.bool,
 	};
 
@@ -108,7 +108,6 @@ class ReaderStream extends Component {
 		showBack: true,
 		suppressSiteNameLink: false,
 		useCompactCards: false,
-		disableInfiniteScroll: false,
 		isLoggedIn: false,
 	};
 
@@ -488,7 +487,7 @@ class ReaderStream extends Component {
 	};
 
 	fetchNextPage = ( options, props = this.props ) => {
-		if ( this.props.disableInfiniteScroll && this.props.items.length > 10 ) {
+		if ( this.isLoginPromptVisible() ) {
 			return;
 		}
 
@@ -501,6 +500,11 @@ class ReaderStream extends Component {
 		}
 		const pageHandle = stream ? this.getPageHandle( stream.pageHandle, startDate ) : null;
 		props.requestPage( { feedId: selectedFeedId, streamKey, pageHandle, localeSlug } );
+	};
+
+	isLoginPromptVisible = () => {
+		// Show login prompt for all logged out users after few posts.
+		return ! this.props.isLoggedIn && this.props.items.length > MAX_POSTS_FOR_LOGGED_OUT_USERS;
 	};
 
 	showUpdates = () => {
@@ -755,11 +759,9 @@ class ReaderStream extends Component {
 				{ showingStream && items.length ? this.props.intro?.() : null }
 				{ body }
 				{ showingStream && items.length && ! isRequesting ? <ListEnd /> : null }
-				{ this.props.disableInfiniteScroll &&
-					! this.props.isLoggedIn &&
-					this.props.items.length > 0 && (
-						<ReaderStreamLoginPrompt redirectPath={ window.location.pathname } />
-					) }
+				{ this.isLoginPromptVisible() && (
+					<ReaderStreamLoginPrompt redirectPath={ window.location.pathname } />
+				) }
 			</TopLevel>
 		);
 	}

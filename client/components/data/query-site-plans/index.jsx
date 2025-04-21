@@ -20,4 +20,6 @@ export default function QuerySitePlans( { siteId } ) {
 	return null;
 }
 
-QuerySitePlans.propTypes = { siteId: PropTypes.number };
+QuerySitePlans.propTypes = {
+	siteId: PropTypes.oneOfType( [ PropTypes.number, PropTypes.string ] ),
+};

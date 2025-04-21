@@ -6,6 +6,7 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { Button, DropdownMenu, Spinner } from '@wordpress/components';
 import { __, _n, _x, sprintf } from '@wordpress/i18n';
 import { chevronDown, chevronLeft, Icon } from '@wordpress/icons';
+import clsx from 'clsx';
 import cookie from 'cookie';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment/moment';
@@ -1180,6 +1181,13 @@ export default function CampaignItemDetails( props: Props ) {
 															<FlexibleSkeleton />
 														) }
 													</span>
+													{ weeklySpend > displayBudget && (
+														<span className="campaign-item-details__details outperformed_notice">
+															{ __(
+																'Your campaign outperformed this week! You’ll only be charged up to your budget.'
+															) }
+														</span>
+													) }
 												</div>
 											) : (
 												<div>
@@ -1390,7 +1398,11 @@ export default function CampaignItemDetails( props: Props ) {
 												<div className="campaign-item-details__weekly-orders-seperator"></div>
 											</div>
 										) }
-										<div className="campaign-item-details__secondary-payment-row">
+										<div
+											className={ clsx( 'campaign-item-details__secondary-payment-row', {
+												'no-payment-method': ! payment_method || ! card_name,
+											} ) }
+										>
 											{ payment_method && card_name && (
 												<>
 													<div className="campaign-item-details__payment-method">

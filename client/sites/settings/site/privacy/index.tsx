@@ -1,11 +1,8 @@
-import { Button, Card } from '@automattic/components';
+import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
-import InfoPopover from 'calypso/components/info-popover';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { PanelCard, PanelCardDescription, PanelCardHeading } from 'calypso/components/panel';
-import { useRemoveDuplicateViewsExperimentEnabled } from 'calypso/lib/remove-duplicate-views-experiment';
-import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteComingSoon from 'calypso/state/selectors/is-site-coming-soon';
 import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
@@ -54,33 +51,10 @@ const PrivacyForm = ( {
 		( state ) => !! getSiteOption( state, siteId, 'editing_toolkit_is_active' )
 	);
 	const isAtomicAndEditingToolkitDeactivated = !! siteIsAtomic && ! isEditingToolkitActive;
-	const isUntangled = useRemoveDuplicateViewsExperimentEnabled();
 
 	if ( isP2HubSite ) {
 		return <></>;
 	}
-
-	const renderSectionHeader = () => {
-		return (
-			<SettingsSectionHeader
-				id="site-privacy-settings"
-				disabled={ isRequestingSettings || isSavingSettings }
-				isSaving={ isSavingSettings }
-				onButtonClick={ handleSubmitForm }
-				showButton
-				title={ translate(
-					'Site Visibility {{infoPopover}} Control who can view your site. {{a}}Learn more{{/a}}. {{/infoPopover}}',
-					{
-						components: {
-							a: <InlineSupportLink showIcon={ false } supportContext="privacy" />,
-							infoPopover: <InfoPopover position="bottom right" />,
-						},
-						comment: 'Site Visibility Settings header',
-					}
-				) }
-			/>
-		);
-	};
 
 	const renderForm = () => {
 		return (
@@ -102,14 +76,6 @@ const PrivacyForm = ( {
 		);
 	};
 
-	if ( ! isUntangled ) {
-		return (
-			<>
-				{ renderSectionHeader() }
-				<Card>{ renderForm() }</Card>
-			</>
-		);
-	}
 	return (
 		<PanelCard className="settings-site__privacy">
 			<PanelCardHeading>{ translate( 'Site Visibility' ) }</PanelCardHeading>

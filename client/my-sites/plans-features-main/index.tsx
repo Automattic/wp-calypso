@@ -19,7 +19,7 @@ import {
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, Spinner } from '@automattic/components';
-import { WpcomPlansUI, AddOns, Plans, OnboardSelect } from '@automattic/data-stores';
+import { WpcomPlansUI, AddOns, Plans } from '@automattic/data-stores';
 import { isAnyHostingFlow } from '@automattic/onboarding';
 import {
 	FeaturesGrid,
@@ -32,7 +32,7 @@ import {
 } from '@automattic/plans-grid-next';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import styled from '@emotion/styled';
-import { useDispatch, useSelect } from '@wordpress/data';
+import { useDispatch } from '@wordpress/data';
 import {
 	useCallback,
 	useEffect,
@@ -50,7 +50,6 @@ import QueryActivePromotions from 'calypso/components/data/query-active-promotio
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySites from 'calypso/components/data/query-sites';
-import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { retargetViewPlans } from 'calypso/lib/analytics/ad-tracking';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { planItem as getCartItemForPlan } from 'calypso/lib/cart-values/cart-items';
@@ -247,20 +246,12 @@ const PlansFeaturesMain = ( {
 	const showUpgradeableStorage = config.isEnabled( 'plans/upgradeable-storage' );
 	const getPlanTypeDestination = usePlanTypeDestinationCallback();
 
-	const { createWithBigSky } = useSelect(
-		( select ) => ( {
-			createWithBigSky: ( select( ONBOARD_STORE ) as OnboardSelect ).getCreateWithBigSky(),
-		} ),
-		[]
-	);
-
 	const resolveModal = useModalResolutionCallback( {
 		isCustomDomainAllowedOnFreePlan,
 		flowName,
 		paidDomainName,
 		intent: intentFromProps,
 		selectedThemeType,
-		createWithBigSky,
 	} );
 
 	const toggleShowPlansComparisonGrid = () => {

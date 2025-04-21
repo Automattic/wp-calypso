@@ -1,0 +1,317 @@
+/**
+ * License Key Component Styles
+ * These styles provide a consistent base for the license key component
+ * across all implementations (CRM downloads, my-sites, partner portal)
+ */
+
+// Specific styles for the crm-downloads component
+.crm-downloads {
+	// License key container styles
+	.manage-purchase__license-clipboard-container {
+		display: block;
+		margin: 1rem 0;
+		padding: 1.25rem;
+		background-color: var(--color-surface, #fff);
+		position: relative;
+	}
+	
+	// Specific styling for agencies version
+	.crm-downloads-agencies & .manage-purchase__license-clipboard-container {
+		margin-top: 0;
+	}
+
+	.manage-purchase__license-clipboard .button{
+		min-width: 18px;
+	}
+
+	// License key heading
+	.manage-purchase__license-key-heading {
+		font-size: 1rem;
+		font-weight: 600;
+		margin: 0 0 1rem 0;
+		color: var(--color-text, #1e1e1e);
+		line-height: 1.4;
+		display: block;
+		border-bottom: 1px solid var(--color-border-subtle, #dcdcde);
+		padding-bottom: 0.75rem;
+	}
+
+	// How to activate link
+	.manage-purchase__license-clipboard-link {
+		position: absolute;
+		top: 1.25rem;
+		right: 1.25rem;
+		color: var(--color-link, #0675c4);
+		font-size: 0.875rem;
+		
+		@media (max-width: 30rem) {
+			position: static;
+			display: block;
+			margin: -0.5rem 0 0.5rem 0; // Reduced bottom margin
+		}
+		
+		// Fix external link component margins
+		&.components-external-link {
+			margin-bottom: 0;
+		}
+	}
+
+	// License key row layout
+	.manage-purchase__license-key-row {
+		display: flex;
+		align-items: center;
+		margin: 0;
+		max-width: 100%;
+		overflow-x: hidden;
+	}
+
+	// License key and clipboard icon container
+	.manage-purchase__license-clipboard {
+		display: flex;
+		align-items: center;
+		background-color: var(--color-neutral-0, #f6f7f7);
+		padding: 0.75rem 1rem;
+		border: 1px solid var(--color-border-subtle, #dcdcde);
+		flex: 1;
+		max-width: 100%;
+		overflow-x: hidden;
+	}
+
+	// License key code styling
+	.manage-purchase__license-clipboard-code {
+		flex: 1;
+		font-family: monospace;
+		font-size: 0.875rem;
+		overflow: hidden; // Changed from overflow-x: auto to prevent scrolling
+		white-space: nowrap;
+		padding: 0.25rem 0;
+		color: var(--color-text, #3c434a);
+		min-width: 0; // Important for flexbox to allow text truncation
+		text-overflow: ellipsis;
+		
+		@media (max-width: 480px) {
+			font-size: 0.75rem; // Smaller font on mobile
+		}
+	}
+
+	// Clipboard icon button
+	.manage-purchase__license-clipboard-icon {
+		color: var(--color-text-subtle, #646970);
+		transition: color 0.2s ease;
+		margin-left: 0.5rem;
+		background: transparent;
+		border: none;
+		padding: 0.25rem;
+		
+		&:hover {
+			color: var(--color-accent, #2271b1);
+		}
+		
+		.gridicon {
+			display: block;
+		}
+	}
+
+	.extensions-table {
+		margin-top: 1rem;
+		background-color: var(--color-surface, #fff);
+		border: 1px solid var(--color-border-subtle, #dcdcde);
+		padding: 1.25rem;
+		
+		@media (max-width: 600px) {
+			padding: 1rem 1.25rem 1.5rem;
+		}
+	}
+
+	.extensions-table table {
+		width: 100%;
+		border-collapse: collapse;
+		margin-top: 0;
+	}
+	
+	.extensions-table tbody {
+		@media (max-width: 600px) {
+			display: block;
+			padding-top: 0;
+		}
+	}
+	
+	.extensions-table tr {
+		@media (max-width: 600px) {
+			display: block;
+			border-bottom: 1px solid var(--color-border-subtle, #dcdcde);
+			padding: 0;
+			
+			&:first-child {
+				padding-top: 0;
+			}
+		}
+	}
+
+	.extensions-table th {
+		text-align: left;
+		padding: 0.75rem;
+		border-bottom: 1px solid var(--color-border-subtle, #dcdcde);
+		
+		// Hide the empty header cell on mobile
+		&:empty {
+			@media (max-width: 600px) {
+				display: none;
+			}
+		}
+	}
+
+	.extensions-table td {
+		padding: 0.75rem;
+		border-bottom: 1px solid var(--color-border-subtle, #dcdcde);
+		vertical-align: middle;
+		
+		@media (max-width: 600px) {
+			display: block;
+			width: 100%;
+			padding: 0.75rem 0;
+			border: none;
+			
+			&:first-child {
+				padding-bottom: 0;
+				padding-top: 0.5rem;
+				position: relative; // For absolute positioning of documentation link
+			}
+			
+			&:last-child {
+				padding-top: 0.75rem;
+				padding-bottom: 1.5rem;
+			}
+		}
+	}
+
+	.extensions-table td:last-child {
+		text-align: right;
+		width: 9.375rem;
+		
+		@media (max-width: 600px) {
+			text-align: left;
+			width: 100%;
+			padding-top: 0.75rem;
+			padding-bottom: 1.5rem;
+			
+			.button {
+				width: 100%;
+				justify-content: center;
+				display: block;
+			}
+		}
+	}
+
+	.extensions-table__title-row {
+		display: flex;
+		align-items: center;
+		flex-wrap: wrap;
+		margin-bottom: 0.25rem;
+		
+		@media (max-width: 600px) {
+			margin-bottom: 0.25rem;
+		}
+		
+		strong {
+			margin-right: 0.5rem;
+		}
+	}
+
+	.extensions-table__version {
+		color: var(--color-text-subtle, #646970);
+		font-size: 0.75rem;
+		margin: 0;
+		
+		@media (max-width: 600px) {
+			display: inline-block;
+			vertical-align: middle;
+		}
+	}
+
+	.extensions-table__description {
+		margin: 0.5rem 0;
+		font-size: 0.875rem;
+		
+		@media (max-width: 600px) {
+			margin: 0.5rem 0 0.5rem;
+			line-height: 1.4;
+		}
+	}
+
+	.extensions-table__learn-more {
+		font-size: 0.75rem;
+		display: inline-block;
+		margin-top: 0.5rem;
+		
+		@media (max-width: 600px) {
+			position: static;
+			display: block;
+			margin: 0.25rem 0 0.5rem;
+		}
+	}
+
+	.extensions-table__loading {
+		padding: 1rem;
+	}
+
+	.extensions-table__loading-item {
+		height: 1.5rem;
+		background-color: var(--color-neutral-0, #f6f7f7);
+		margin-bottom: 1rem;
+		animation: pulse 1.5s infinite;
+	}
+
+	.extensions-table__error {
+		text-align: center;
+		padding: 2rem;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 1rem;
+	}
+
+	@keyframes pulse {
+		0% {
+			opacity: 0.6;
+		}
+		50% {
+			opacity: 0.3;
+		}
+		100% {
+			opacity: 0.6;
+		}
+	}
+}
+
+// Error message styles
+.crm-downloads-error {
+	text-align: center;
+	padding: 3rem 1rem;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 1rem;
+	background-color: var(--color-surface, #fff);
+	border-radius: 2px;
+	box-shadow: 0 0 0 1px rgba(200, 215, 225, 0.5), 0 1px 2px var(--color-neutral-0, #f6f7f7);
+	margin: 1rem 0;
+	
+	.gridicon {
+		margin-bottom: 1rem;
+		color: var(--color-error-50, #d63638);
+	}
+	
+	h2 {
+		margin: 1rem 0;
+		font-size: 1.25rem;
+	}
+	
+	p {
+		margin-bottom: 1.5rem;
+		color: var(--color-text-subtle, #646970);
+		max-width: 31.25rem;
+		margin-left: auto;
+		margin-right: auto;
+	}
+}

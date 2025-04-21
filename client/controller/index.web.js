@@ -16,11 +16,9 @@ import MomentProvider from 'calypso/components/localized-moment/provider';
 import { RouteProvider } from 'calypso/components/route';
 import Layout from 'calypso/layout';
 import LayoutLoggedOut from 'calypso/layout/logged-out';
-import { isE2ETest } from 'calypso/lib/e2e';
 import { navigate } from 'calypso/lib/navigate';
 import { createAccountUrl, login } from 'calypso/lib/paths';
 import { CalypsoReactQueryDevtools } from 'calypso/lib/react-query-devtools-helper';
-import { isRemoveDuplicateViewsExperimentEnabled } from 'calypso/lib/remove-duplicate-views-experiment';
 import { addQueryArgs, getSiteFragment } from 'calypso/lib/route';
 import {
 	getProductSlugFromContext,
@@ -312,19 +310,13 @@ export function redirectIfJetpackNonAtomic( context, next ) {
  * @returns {void}
  */
 export async function redirectToHostingPromoIfNotAtomic( context, next ) {
-	const { getState, dispatch } = context.store;
+	const { getState } = context.store;
 	const state = getState();
 	const site = getSelectedSite( state );
 	const isAtomicSite = !! site?.is_wpcom_atomic || !! site?.is_wpcom_staging_site;
 
 	if ( ! isAtomicSite || site.plan?.expired ) {
-		// Keep the user within the Settings tab
-		const isUntangled = await isRemoveDuplicateViewsExperimentEnabled( getState, dispatch );
-		if ( isUntangled ) {
-			return page.redirect( '/sites/settings/site/' + context.params.site_id );
-		}
-
-		return page.redirect( `/hosting-features/${ site?.slug }` );
+		return page.redirect( '/sites/settings/site/' + context.params.site_id );
 	}
 
 	next();
@@ -401,17 +393,14 @@ export const ssrSetupLocale = ( _context, next ) => {
 };
 
 export const redirectIfDuplicatedView = ( wpAdminPath ) => async ( context, next ) => {
-	const { getState, dispatch } = context.store;
-	const isUntangled = await isRemoveDuplicateViewsExperimentEnabled( getState, dispatch );
+	const { getState } = context.store;
+	const state = getState();
+	const siteId = getSelectedSiteId( state );
+	const wpAdminUrl = getSiteAdminUrl( state, siteId, wpAdminPath );
 
-	if ( isE2ETest() || isUntangled ) {
-		const state = getState();
-		const siteId = getSelectedSiteId( state );
-		const wpAdminUrl = getSiteAdminUrl( state, siteId, wpAdminPath );
-		if ( wpAdminUrl ) {
-			window.location = wpAdminUrl;
-			return;
-		}
+	if ( wpAdminUrl ) {
+		window.location = wpAdminUrl;
+		return;
 	}
 	next();
 };

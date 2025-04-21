@@ -1,0 +1,150 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
+
+$tab-background: linear-gradient( #EBF4FA, #DAE9F3);
+$tab-background-selected: var(--color-surface);
+
+.hosting-hero-section {
+	max-width: 1500px;
+	margin-inline: auto;
+	padding: 24px 32px 0;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	gap: 39px;
+	transition: height .25s ease-out;
+
+	.a4a-migration-offer-v3 {
+		display: none;
+
+		@include break-large {
+			display: flex;
+		}
+	}
+
+	&:not(.is-compact) {
+		height: 163px;
+
+		@include break-small {
+			height: 188px;
+		}
+
+		@include break-medium {
+			padding: 32px 64px 0;
+			height: 254px;
+		}
+
+		@include break-large {
+			height: 380px;
+
+			&:has(.a4a-migration-offer-v3.is-expanded) {
+				height: 636px;
+			}
+		}
+
+		@include break-wide {
+			height: 340px;
+
+			&:has(.a4a-migration-offer-v3.is-expanded) {
+				height: 485px;
+			}
+		}
+	}
+}
+
+.hosting-hero-section.is-compact {
+	overflow: hidden;
+	gap: 0;
+	justify-content: flex-end;
+
+	.hosting-hero-section__content {
+		display: none;
+		position: absolute;
+	}
+
+	height: 74px;
+}
+
+
+.hosting-hero-section__heading {
+	@include heading-x-large;
+	color: var( --color-text-inverted );
+	margin-block-start: 0;
+
+	@include break-medium {
+		@include heading-2x-large;
+	}
+}
+
+.hosting-hero-section__content {
+	display: flex;
+	flex-direction: column;
+	gap: 24px;
+
+	@include break-medium {
+		gap: 39px;
+	}
+}
+
+.hosting-hero-section__tabs {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	width: 100%;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+
+	@include break-wide {
+		height: 74px;
+	}
+}
+
+.hosting-hero-section__tab.section-nav-tab {
+	flex-grow: 1;
+	border-bottom: none;
+
+	&,
+	&:hover:not(.is-selected) {
+		background: $tab-background;
+	}
+
+	&.is-selected,
+	&.is-selected .section-nav-tab__link {
+		background: var(--color-surface);
+
+		.section-nav-tab__link:hover {
+			background: none
+		}
+	}
+
+	&:first-child {
+		&,
+		.section-nav-tab__link {
+			border-start-start-radius: 4px;
+		}
+	}
+
+	&:last-child {
+		&,
+		.section-nav-tab__link {
+		border-start-end-radius: 4px;
+		}
+	}
+}
+
+.hosting__nav-item-label {
+	@include body-medium;
+	color: var( --color-text );
+	text-align: center;
+
+	@include break-medium {
+		@include heading-x-large;
+	}
+}
+
+.hosting__nav-item-subtitle {
+	@include body-medium;
+	color: var( --color-text );
+}

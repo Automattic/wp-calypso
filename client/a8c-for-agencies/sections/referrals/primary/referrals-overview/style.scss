@@ -82,7 +82,7 @@ $data-view-border-color: #f1f1f1;
 		max-width: 700px;
 	}
 
-	.consolidated-view, .a4a-feedback__wrapper {
+	.consolidated-view {
 		padding: 16px;
 
 		@include breakpoint-deprecated( ">660px" ) {

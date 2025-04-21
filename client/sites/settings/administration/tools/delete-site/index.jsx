@@ -7,18 +7,12 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import HeaderCakeBack from 'calypso/components/header-cake/back';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import NavigationHeader from 'calypso/components/navigation-header';
-import Notice from 'calypso/components/notice';
-import NoticeAction from 'calypso/components/notice/notice-action';
 import { Panel, PanelCard, PanelCardHeading } from 'calypso/components/panel';
 import withP2HubP2Count from 'calypso/data/p2/with-p2-hub-p2-count';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { getSettingsSource } from 'calypso/my-sites/site-settings/site-tools/utils';
 import { resetBreadcrumbs, updateBreadcrumbs } from 'calypso/state/breadcrumb/actions';
-import { getRemoveDuplicateViewsExperimentAssignment } from 'calypso/state/explat-experiments/actions';
-import { getIsRemoveDuplicateViewsExperimentEnabled } from 'calypso/state/explat-experiments/selectors';
 import { hasLoadedSitePurchasesFromServer } from 'calypso/state/purchases/selectors';
 import hasCancelableSitePurchases from 'calypso/state/selectors/has-cancelable-site-purchases';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
@@ -29,6 +23,7 @@ import { hasSitesAsLandingPage } from 'calypso/state/sites/selectors/has-sites-a
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { FeatureBreadcrumb } from '../../../../hooks/breadcrumbs/use-set-feature-breadcrumb';
+import ExportNotice from '../export-notice';
 import DeleteSiteWarnings from './delete-site-warnings';
 
 import './style.scss';
@@ -52,23 +47,20 @@ class DeleteSite extends Component {
 	};
 
 	renderNotice() {
-		const exportLink = '/export/' + this.props.siteSlug;
-		const { siteDomain } = this.props;
+		const { siteDomain, siteId } = this.props;
 
 		if ( ! siteDomain ) {
 			return null;
 		}
 
-		const warningText = () => {
-			return translate( 'Before deleting your site, consider exporting its content as a backup' );
-		};
-
 		return (
-			<Notice status="is-warning" showDismiss={ false } text={ warningText() }>
-				<NoticeAction onClick={ this._checkSiteLoaded } href={ exportLink }>
-					{ translate( 'Export content' ) }
-				</NoticeAction>
-			</Notice>
+			<ExportNotice
+				siteSlug={ this.props.siteSlug }
+				siteId={ siteId }
+				warningText={ translate(
+					'Before deleting your site, consider exporting your content as a backup.'
+				) }
+			/>
 		);
 	}
 
@@ -172,10 +164,8 @@ class DeleteSite extends Component {
 	};
 
 	_goBack = () => {
-		const { isUntangled, siteSlug } = this.props;
-		const source = isUntangled ? '/sites/settings/site' : getSettingsSource();
-
-		page( `${ source }/${ siteSlug }` );
+		const { siteSlug } = this.props;
+		page( `/sites/settings/site/${ siteSlug }` );
 	};
 
 	componentDidUpdate( prevProps ) {
@@ -191,17 +181,6 @@ class DeleteSite extends Component {
 		}
 	}
 
-	componentDidMount() {
-		this.props.getRemoveDuplicateViewsExperimentAssignment();
-	}
-
-	_checkSiteLoaded = ( event ) => {
-		const { siteId } = this.props;
-		if ( ! siteId ) {
-			event.preventDefault();
-		}
-	};
-
 	onConfirmDomainChange = ( event ) => {
 		this.setState( {
 			confirmDomain: event.target.value,
@@ -209,7 +188,6 @@ class DeleteSite extends Component {
 	};
 
 	render() {
-		const { isUntangled } = this.props;
 		const { isAtomic, isFreePlan, siteId, hasCancelablePurchases, p2HubP2Count } = this.props;
 		const isAtomicRemovalInProgress = isFreePlan && isAtomic;
 		const canDeleteSite =
@@ -223,7 +201,6 @@ class DeleteSite extends Component {
 
 		return (
 			<Panel className="settings-administration__delete-site">
-				{ ! isUntangled && <HeaderCakeBack icon="chevron-left" onClick={ this._goBack } /> }
 				<FeatureBreadcrumb siteId={ siteId } title={ strings.deleteSite } />
 				<NavigationHeader
 					compactBreadcrumb={ false }
@@ -245,11 +222,9 @@ class DeleteSite extends Component {
 				{ canDeleteSite ? (
 					<PanelCard>
 						<>
-							{ isUntangled && (
-								<PanelCardHeading>{ translate( 'Confirm site deletion' ) }</PanelCardHeading>
-							) }
-							{ this.renderNotice() }
+							<PanelCardHeading>{ translate( 'Confirm site deletion' ) }</PanelCardHeading>
 							{ this.renderBody() }
+							{ this.renderNotice() }
 						</>
 						{ this.renderDeleteSiteCTA() }
 					</PanelCard>
@@ -271,12 +246,10 @@ export default connect(
 		const siteDomain = getSiteDomain( state, siteId );
 		const siteSlug = getSelectedSiteSlug( state );
 		const site = getSite( state, siteId );
-		const isUntangled = getIsRemoveDuplicateViewsExperimentEnabled( state );
 		return {
 			hasLoadedSitePurchasesFromServer: hasLoadedSitePurchasesFromServer( state ),
 			isAtomic: isSiteAutomatedTransfer( state, siteId ),
 			isFreePlan: isFreePlanProduct( site?.plan ),
-			isUntangled,
 			siteDomain,
 			siteId,
 			siteSlug,
@@ -289,7 +262,6 @@ export default connect(
 	{
 		deleteSite,
 		setSelectedSiteId,
-		getRemoveDuplicateViewsExperimentAssignment,
 		updateBreadcrumbs,
 		resetBreadcrumbs,
 	}

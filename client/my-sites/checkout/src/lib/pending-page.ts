@@ -21,6 +21,11 @@ export interface PendingPageRedirectOptions {
 	 * logged in).
 	 */
 	fromSiteSlug?: string;
+	/**
+	 * `fromExternalCheckout` is a boolean that indicates if the checkout is coming from an external checkout (e.g. A4A client checkout).
+	 *  If this is true, we will force to use https://wordpress.com as the origin for the pending page.
+	 */
+	fromExternalCheckout?: boolean;
 }
 
 export interface RedirectInstructions {
@@ -176,6 +181,9 @@ export function absoluteRedirectThroughPending(
  * If `receiptId` is provided, it means the transaction is already complete and
  * may cause the pending page to redirect immediately to the `url`.
  *
+ * If `fromExternalCheckout` is true, it means the checkout is coming from an external checkout (e.g. A4A client checkout).
+ * In this case, we will force to use https://wordpress.com as the origin for the pending page.
+ *
  * You should always specify `urlType` as either 'absolute' or 'relative' but
  * it will default to 'absolute'.
  */
@@ -189,20 +197,23 @@ export function addUrlToPendingPageRedirect(
 		urlType = 'absolute',
 		receiptId = ':receiptId',
 		fromSiteSlug,
+		fromExternalCheckout,
 	} = options;
 
 	const { origin = 'https://wordpress.com' } = typeof window !== 'undefined' ? window.location : {};
 	const successUrlPath =
 		`/checkout/thank-you/${ siteSlug || 'no-site' }/pending/` +
 		( orderId ? `${ orderId }` : ':orderId' );
-	const successUrlBase = `${ origin }${ successUrlPath }`;
+	const successUrlBase = `${
+		fromExternalCheckout ? 'https://wordpress.com' : origin
+	}${ successUrlPath }`;
 	const successUrlObject = new URL( successUrlBase );
 	successUrlObject.searchParams.set( 'redirect_to', url );
 	successUrlObject.searchParams.set( 'receiptId', String( receiptId ) );
 	if ( fromSiteSlug ) {
 		successUrlObject.searchParams.set( 'from_site_slug', fromSiteSlug );
 	}
-	if ( urlType === 'relative' ) {
+	if ( urlType === 'relative' && ! fromExternalCheckout ) {
 		return successUrlObject.pathname + successUrlObject.search + successUrlObject.hash;
 	}
 	return successUrlObject.href;
@@ -255,6 +266,8 @@ function isRedirectAllowed( url: string, siteSlug: string | undefined ): boolean
 		'cloud.jetpack.com',
 		'jetpack.com',
 		'akismet.com',
+		'agencies.automattic.com',
+		'agencies.localhost',
 		siteSlug,
 	];
 

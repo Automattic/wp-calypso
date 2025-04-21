@@ -14,6 +14,25 @@ jest.mock( '@automattic/calypso-router', () => ( {
 	redirect: jest.fn(),
 } ) );
 
+jest.mock( '@automattic/help-center/src/hooks/use-reset-support-interaction', () => ( {
+	useResetSupportInteraction: () => jest.fn().mockResolvedValue( undefined ),
+} ) );
+
+jest.mock( '@automattic/odie-client/src/data', () => ( {
+	useManageSupportInteraction: () => ( {
+		startNewInteraction: jest.fn().mockResolvedValue( undefined ),
+		resolveInteraction: jest.fn().mockResolvedValue( undefined ),
+		addEventToInteraction: jest.fn().mockResolvedValue( undefined ),
+	} ),
+	useGetZendeskConversation: jest.fn(),
+	useOdieChat: jest.fn(),
+	broadcastOdieMessage: jest.fn(),
+} ) );
+
+jest.mock( '@automattic/odie-client/src/utils/storage-utils', () => ( {
+	clearHelpCenterZendeskConversationStarted: jest.fn(),
+} ) );
+
 function renderWithStore( element: ReactElement, initialState: Record< string, unknown > ) {
 	const store = createStore( ( state ) => state, initialState );
 	return {
@@ -53,6 +72,10 @@ function createState( {
 describe( '<EligibilityWarnings>', () => {
 	beforeEach( () => {
 		page.redirect.mockReset();
+	} );
+
+	afterAll( () => {
+		jest.restoreAllMocks();
 	} );
 
 	it( 'renders error notice when AT has been blocked by a sticker', () => {
@@ -187,5 +210,18 @@ describe( '<EligibilityWarnings>', () => {
 
 		await userEvent.click( continueButton );
 		expect( handleProceed ).not.toHaveBeenCalled();
+	} );
+
+	it( 'renders a help button', async () => {
+		const state = createState( {} );
+
+		const { getByText } = renderWithStore(
+			<EligibilityWarnings backUrl="" onProceed={ noop } />,
+			state
+		);
+
+		const helpCenterButton = getByText( 'Need help?' );
+		expect( helpCenterButton ).toBeVisible();
+		expect( helpCenterButton ).toBeInstanceOf( HTMLButtonElement );
 	} );
 } );
