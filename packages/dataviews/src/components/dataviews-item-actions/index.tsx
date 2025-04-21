@@ -110,7 +110,7 @@ export function ActionModal< Item >( {
 			title={ action.modalHeader || label }
 			__experimentalHideHeader={ !! action.hideModalHeader }
 			onRequestClose={ closeModal }
-			focusOnMount="firstContentElement"
+			focusOnMount={ action.modalFocusOnMount ?? true }
 			size={ action.modalSize || 'medium' }
 			overlayClassName={ `dataviews-action-modal dataviews-action-modal__${ kebabCase(
 				action.id

@@ -393,12 +393,19 @@ export class EditorPage {
 		if ( blockInsertedPopupConfirmButtonSelector ) {
 			const editorParent = await this.editor.parent();
 			const blockInsertedPopupConfirmButtonLocator = editorParent.locator(
-				'div[role="dialog"] button:has-text("OK")'
+				blockInsertedPopupConfirmButtonSelector
 			);
 
-			const count = await blockInsertedPopupConfirmButtonLocator.count();
-			if ( count ) {
-				blockInsertedPopupConfirmButtonLocator.click();
+			// Whether the popup confirm button is not deterministic.
+			// If it is not present, exit early.
+			try {
+				await blockInsertedPopupConfirmButtonLocator.waitFor( { timeout: 100 } );
+			} catch ( e ) {
+				// Probably doesn't exist. That's ok.
+			}
+
+			if ( ( await blockInsertedPopupConfirmButtonLocator.count() ) > 0 ) {
+				await blockInsertedPopupConfirmButtonLocator.click();
 			}
 		}
 	}
