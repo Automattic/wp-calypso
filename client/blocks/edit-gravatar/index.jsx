@@ -55,7 +55,7 @@ export class EditGravatar extends Component {
 		return (
 			<div className="edit-gravatar">
 				<div className="edit-gravatar__image-container">
-					<div className="edit-gravatar__gravatar-placeholder" />
+					<div className="edit-gravatar__avatar-placeholder" />
 				</div>
 				<div className="edit-gravatar__explanation-container">
 					<div className="edit-gravatar__action-button-placeholder" />
@@ -168,7 +168,7 @@ const recordClickButtonEvent = ( { isVerified } ) =>
 		recordGoogleEvent( 'Me', 'Clicked on Edit Gravatar Button in Profile' )
 	);
 
-const recordAvatarUpdatedEvent = () => recordTracksEvent( 'calypso_edit_gravatar_avatar_updated' );
+const recordAvatarUpdatedEvent = () => recordTracksEvent( 'calypso_edit_gravatar_update_success' );
 
 export default connect(
 	( state ) => ( {
