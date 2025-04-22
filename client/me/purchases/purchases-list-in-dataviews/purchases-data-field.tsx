@@ -165,7 +165,16 @@ export function getPurchasesFieldDefinitions( {
 				return item.payment;
 			},
 			render: ( { item }: { item: Purchases.Purchase } ) => {
-				const isBackupMethodAvailable = true;
+				let isBackupMethodAvailable = false;
+
+				if ( backupPaymentMethods ) {
+					backupPaymentMethods?.filter(
+						( paymentMethod ) => item.payment.storedDetailsId !== paymentMethod.stored_details_id
+					);
+
+					isBackupMethodAvailable = backupPaymentMethods.length >= 1;
+				}
+
 				return (
 					<PurchaseItemRowPaymentMethod
 						purchase={ item }
