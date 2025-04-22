@@ -39,7 +39,6 @@ import { keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Icon, reusableBlock } from '@wordpress/icons';
 import { formatCurrency, useTranslate } from 'i18n-calypso';
-import * as React from 'react';
 import { hasFreeCouponTransfersOnly } from 'calypso/lib/cart-values/cart-items';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
@@ -315,18 +314,20 @@ function CheckoutSummaryGiftFeaturesList( { siteSlug }: { siteSlug: string } ) {
 }
 
 function CheckoutSummaryRefundWindow( {
-	cart,
-	product,
+	products,
+	policy,
 	highlight,
 	includeRefundIcon,
 }: {
-	cart: ResponseCart;
-	product: ResponseCartProduct;
+	products: ResponseCartProduct[];
+	policy: RefundPolicy;
 	highlight?: boolean;
 	includeRefundIcon?: boolean;
 } ) {
 	const translate = useTranslate();
-	const policy = getRefundPolicyForCartItem( cart, product );
+	if ( products.length < 1 ) {
+		return null;
+	}
 	// FIXME: add the RefundPolicy.DomainNameRegistrationBundled policy if the
 	// cart has no bundle policy currently (eg: RefundPolicy.PlanYearlyBundle)
 	// and currently contains a plan + bundled domain, and the plan is not a
@@ -345,8 +346,7 @@ function CheckoutSummaryRefundWindow( {
 			count: refundWindow,
 			args: {
 				days: refundWindow,
-				// FIXME: list all products affected by this refund window, not only one
-				product: product?.product_name ?? '',
+				product: products.map( getProductNameForRefundWindow ).join( ', ' ),
 			},
 		}
 	);
@@ -361,9 +361,16 @@ function CheckoutSummaryRefundWindow( {
 	);
 }
 
+function getProductNameForRefundWindow( product: ResponseCartProduct ): string {
+	if ( product.meta ) {
+		return `${ product.product_name }: ${ product.meta }`;
+	}
+	return product.product_name;
+}
+
 export function CheckoutSummaryRefundWindows( {
 	cart,
-	highlight = false,
+	highlight,
 	includeRefundIcon,
 }: {
 	cart: ResponseCart;
@@ -376,21 +383,27 @@ export function CheckoutSummaryRefundWindows( {
 			return grouped;
 		}
 		if ( ! grouped.has( policy ) ) {
-			grouped.set( policy, product );
+			grouped.set( policy, [ product ] );
+			return grouped;
+		}
+		if ( grouped.has( policy ) ) {
+			const products = grouped.get( policy ) ?? [];
+			grouped.set( policy, [ ...products, product ] );
 		}
 		return grouped;
-	}, new Map< RefundPolicy, ResponseCartProduct >() );
-	return cartItemsGroupedByRefundPolicy
-		.values()
-		.map( ( product ) => (
+	}, new Map< RefundPolicy, ResponseCartProduct[] >() );
+	const cartItemGroups = [ ...cartItemsGroupedByRefundPolicy.entries() ];
+	return cartItemGroups.map( ( [ policy, products ] ) => {
+		return (
 			<CheckoutSummaryRefundWindow
-				key={ product.uuid }
-				cart={ cart }
-				product={ product }
+				key={ products[ 0 ].uuid }
+				products={ products }
+				policy={ policy }
 				highlight={ highlight }
 				includeRefundIcon={ includeRefundIcon }
 			/>
-		) );
+		);
+	} );
 }
 
 export function CheckoutSummaryFeaturesList( props: {
