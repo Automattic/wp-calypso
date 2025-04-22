@@ -105,10 +105,9 @@ export const SiteMigrationSupportInstructions: StepType = ( { stepName, flow } )
 			<>
 				<DocumentHead title={ headerText } />
 				<Step.CenteredColumnLayout
-					columnWidth={ 5 }
+					columnWidth={ 8 }
 					topBar={ <Step.TopBar leftElement={ null } /> }
 					heading={ <Step.Heading text={ headerText } subText={ subHeaderText } /> }
-					className="site-migration-upgrade-plan-v2"
 				>
 					<StepContent />
 				</Step.CenteredColumnLayout>
