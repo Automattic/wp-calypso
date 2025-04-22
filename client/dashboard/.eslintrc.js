@@ -5,7 +5,7 @@ module.exports = {
 			{
 				patterns: [
 					{
-						group: [ 'calypso/*' ],
+						group: [ 'calypso/*', '!calypso/lib' ],
 						message: 'Importing from calypso/ is not allowed in the dashboard folder.',
 					},
 				],

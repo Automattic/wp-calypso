@@ -1,4 +1,3 @@
-// eslint-disable-next-line no-restricted-imports
 import wpcom from 'calypso/lib/wp';
 import type { WPCOMRESTAPISite } from './rest-api-types';
 import type {
