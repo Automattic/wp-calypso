@@ -30,6 +30,20 @@ export const Default: Story = {
 	decorators: [ LoginFormAction, LoginFormWrapper ],
 };
 
+export const Sending: Story = {
+	args: {
+		isSendingEmail: true,
+	},
+	decorators: [ LoginFormAction, LoginFormWrapper ],
+};
+
+export const Disabled: Story = {
+	args: {
+		isDisabled: true,
+	},
+	decorators: [ LoginFormAction, LoginFormWrapper ],
+};
+
 export const A4A: Story = {
 	decorators: [ LoginFormAction, LoginFormWrapper, A4AWrapper ],
 };
@@ -52,6 +66,14 @@ export const Jetpack: Story = {
 
 export const Woo: Story = {
 	args: {
+		isWoo: true,
+	},
+	decorators: [ LoginFormAction, LoginFormWrapper, WooWrapper ],
+};
+
+export const WooSendingEmail: Story = {
+	args: {
+		isSendingEmail: true,
 		isWoo: true,
 	},
 	decorators: [ LoginFormAction, LoginFormWrapper, WooWrapper ],
