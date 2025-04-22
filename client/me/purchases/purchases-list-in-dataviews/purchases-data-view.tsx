@@ -24,6 +24,7 @@ export function PurchasesDataViews( props: {
 	paymentMethods?: Array< StoredPaymentMethod >;
 } ) {
 	const { purchases, paymentMethods } = props;
+
 	const onChangeView = () => {
 		return;
 	};
@@ -31,7 +32,9 @@ export function PurchasesDataViews( props: {
 	const getItemId = ( item: Purchases.Purchase ) => {
 		return item.id.toString();
 	};
+
 	const purchasesDataFields = usePurchasesFieldDefinitions( paymentMethods );
+
 	return (
 		<Card id="purchases-list" className="section-content" tagName="section">
 			<DataViews
