@@ -30,31 +30,10 @@
 		}
 	}
 
-	.theme-upgrade-modal__col {
-		position: relative;
-		padding: 24px;
-
-
-		&:nth-of-type(1) {
-			.theme-upgrade-modal__included {
-				display: block;
-				margin-bottom: 36px;
-
-				@include break-medium {
-					display: none;
-				}
-			}
-		}
-
-		&:nth-of-type(2) {
-			display: none;
-			background-color: var(--studio-gray-0);
-
-			@include break-medium {
-				display: block;
-			}
-		}
+	.theme-upgrade-modal__features {
+		background-color: var(--studio-gray-0);
 	}
+	
 
 	.theme-upgrade-modal__price-value {
 		font-family: Inter, $sans;
@@ -63,19 +42,14 @@
 	.theme-upgrade-modal__price-item {
 		display: flex;
 		justify-content: space-between;
-		padding: 20px 0;
+		padding: 24px 0;
 		font-size: $font-body-small;
 
 		&:not(:first-child) {
 			border-top: 1px solid var(--studio-gray-5);
 		}
-	}
-
-	.theme-upgrade-modal__price-summary {
-		padding-bottom: 10px;
-
-		@include break-medium {
-			padding-bottom: 15px;
+		&:last-child {
+			padding-bottom: 0;
 		}
 	}
 
@@ -175,6 +149,8 @@
 	}
 
 	.theme-upgrade-modal__included {
+		padding: 24px;
+
 		ul,
 		li {
 			font-size: $font-body-small;

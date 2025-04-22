@@ -33,6 +33,7 @@ import { useSelect } from '@wordpress/data';
 import { Icon as WpIcon, check } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
+import { useState } from 'react';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { useBundleSettings } from 'calypso/my-sites/theme/hooks/use-bundle-settings';
 import { ProductListItem } from 'calypso/state/products-list/selectors/get-products-list';
@@ -79,6 +80,7 @@ export const ThemeUpgradeModal = ( {
 }: UpgradeModalProps ) => {
 	const translate = useTranslate();
 	const theme = useThemeDetails( slug );
+	const [ isExpandedListOpen, setIsExpandedListOpen ] = useState( false );
 
 	// Check current theme: Does it have a plugin bundled?
 	const themeSoftwareSet = theme?.data?.taxonomies?.theme_software_set as
@@ -377,18 +379,32 @@ export const ThemeUpgradeModal = ( {
 						</p>
 					) }
 					<div>
-						<label>
-							<strong>{ translate( 'To activate this theme you need:' ) }</strong>
-						</label>
-						<br />
 						<div className="theme-upgrade-modal__price-summary">
 							{ isMarketplaceThemeSubscriptionNeeded && (
-								<div className="theme-upgrade-modal__price-item">
-									<label>{ theme.data?.name }</label>
-									<label className="theme-upgrade-modal__price-value">
-										<strong>{ productPriceText }</strong>
-									</label>
-								</div>
+								<>
+									{ isPlanSufficient ? (
+										<p>
+											{ translate(
+												"Great choice. You're about to give your site a fresh look. This theme is available for an extra {{b}}%(productPriceText)s{{/b}}.",
+												{
+													components: {
+														b: <strong />,
+													},
+													args: {
+														productPriceText,
+													},
+												}
+											) }
+										</p>
+									) : (
+										<div className="theme-upgrade-modal__price-item">
+											<label>{ theme.data?.name }</label>
+											<label className="theme-upgrade-modal__price-value">
+												<strong>{ productPriceText }</strong>
+											</label>
+										</div>
+									) }
+								</>
 							) }
 							{ isMarketplacePlanSubscriptionNeeded && (
 								<div className="theme-upgrade-modal__price-item">
@@ -525,12 +541,41 @@ export const ThemeUpgradeModal = ( {
 		} );
 	}
 
-	const features =
-		isExternallyManaged && featureList.length === 0 ? null : (
-			<div className="theme-upgrade-modal__included">
-				<h2>{ featureListHeader }</h2>
-				<ul>
-					{ featureList.map( ( feature, i ) => (
+	// Map features list so that if list is bigger than 4, we only show 3 and "view more" link.
+	const mapFeatureList = ( featureList: any[] ) => {
+		let firstSection = featureList;
+		let secondSection = null;
+		if ( featureList.length > 4 ) {
+			firstSection = featureList.slice( 0, 3 );
+			secondSection = featureList.slice( 3 );
+		}
+		return (
+			<>
+				{ firstSection.map( ( feature, i ) => (
+					<li key={ i } className="theme-upgrade-modal__included-item">
+						<Tooltip text={ feature.getDescription?.() as string } position="top left">
+							<div>
+								<WpIcon className="wpicon" icon={ check } size={ 24 } />
+								{ feature.getTitle() }
+							</div>
+						</Tooltip>
+					</li>
+				) ) }
+				{ ! isExpandedListOpen && secondSection && (
+					<li className="theme-upgrade-modal__included-item">
+						<Button
+							className="theme-upgrade-modal__view-more"
+							onClick={ () => {
+								setIsExpandedListOpen( true );
+							} }
+						>
+							{ translate( 'View more' ) }
+						</Button>
+					</li>
+				) }
+				{ isExpandedListOpen &&
+					secondSection &&
+					secondSection.map( ( feature, i ) => (
 						<li key={ i } className="theme-upgrade-modal__included-item">
 							<Tooltip text={ feature.getDescription?.() as string } position="top left">
 								<div>
@@ -540,7 +585,15 @@ export const ThemeUpgradeModal = ( {
 							</Tooltip>
 						</li>
 					) ) }
-				</ul>
+			</>
+		);
+	};
+
+	const features =
+		featureList.length === 0 ? null : (
+			<div className="theme-upgrade-modal__included">
+				<h2>{ featureListHeader }</h2>
+				<ul>{ mapFeatureList( featureList ) }</ul>
 			</div>
 		);
 
@@ -558,13 +611,13 @@ export const ThemeUpgradeModal = ( {
 			{ isLoading && <LoadingEllipsis /> }
 			{ ! isLoading && (
 				<div className="theme-upgrade-modal">
-					<div className="theme-upgrade-modal__col">
+					<div className="theme-upgrade-modal__purchases">
 						{ modalData.text }
 						{ modalData.price }
-						{ /* We don't want to show features on mobile for Partner themes */ }
-						{ ! isExternallyManaged && features }
 					</div>
-					{ ! isPlanSufficient && <div className="theme-upgrade-modal__col">{ features }</div> }
+					{ ! isPlanSufficient && (
+						<div className="theme-upgrade-modal__features">{ features }</div>
+					) }
 					{ modalData.action }
 				</div>
 			) }
