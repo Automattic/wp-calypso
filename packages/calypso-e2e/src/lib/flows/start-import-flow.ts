@@ -26,8 +26,7 @@ const selectors = {
 	// Buttons
 	checkUrlButton: 'form.capture__input-wrapper button.action-buttons__next',
 	startBuildingButton: 'div.import__onboarding-page button.action-buttons__next',
-	startImportButton: 'button:text("Import your site content")',
-	startImportGoalButton: 'span:has-text("Import my existing website content")',
+	startImportButton: 'button:text("Import or migrate an existing site")',
 	// And entry of the list of selectable importers
 	importerListButton: ( index: number ) =>
 		`div.list__importers-primary button:nth-child(${ index + 1 })`,
@@ -59,9 +58,7 @@ export class StartImportFlow {
 	 * Validates that we've landed on the setup page.
 	 */
 	async validateSetupPage(): Promise< void > {
-		await this.page.locator(
-			`${ selectors.startImportButton }, ${ selectors.startImportGoalButton }`
-		);
+		await this.page.locator( selectors.startImportButton );
 	}
 
 	/**
@@ -207,11 +204,12 @@ export class StartImportFlow {
 
 	/**
 	 * Go to first setup page.
+	 * TODO: should we just start from another flow?
 	 *
 	 * @param {string} siteSlug The site slug URL.
 	 */
 	async startSetup( siteSlug: string ): Promise< void > {
-		const route = '/setup/site-setup/intent';
+		const route = '/setup/site-setup';
 
 		await this.page.goto( DataHelper.getCalypsoURL( route, { siteSlug } ) );
 		await this.validateSetupPage();
