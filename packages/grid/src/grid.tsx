@@ -13,11 +13,25 @@ export function Grid( {
 	minColumnWidth,
 }: GridProps ) {
 	const [ containerWidth, setContainerWidth ] = useState( 0 );
-	const responsiveColumns = Math.max( 1, Math.floor( containerWidth / ( minColumnWidth || 1 ) ) );
-	const effectiveColumns = minColumnWidth ? responsiveColumns : columns;
 	const resizeObserverRef = useResizeObserver( ( [ { contentRect } ] ) => {
 		setContainerWidth( contentRect.width );
 	} );
+
+	const gapPx = spacing * 4;
+
+	const responsiveColumns = useMemo( () => {
+		if ( ! minColumnWidth ) {
+			return columns;
+		}
+
+		// Calculate the total width per column including the gap
+		const totalWidthPerColumn = minColumnWidth + gapPx;
+		const maxColumns = Math.floor( ( containerWidth + gapPx ) / totalWidthPerColumn );
+
+		return Math.max( 1, maxColumns );
+	}, [ minColumnWidth, gapPx, containerWidth, columns ] );
+
+	const effectiveColumns = responsiveColumns;
 
 	// In responsive mode, sort items by order property (or use original order if not specified)
 	const responsiveLayout = useMemo( () => {
@@ -64,7 +78,7 @@ export function Grid( {
 		display: 'grid',
 		gridTemplateColumns: `repeat(${ effectiveColumns }, 1fr)`,
 		gridTemplateRows: `repeat(${ rows }, ${ rowHeight })`,
-		gap: spacing * 4,
+		gap: gapPx,
 	};
 
 	// Process children and apply grid positioning based on layout
