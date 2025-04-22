@@ -708,7 +708,10 @@ function CheckoutSummaryPlanFeatures( props: {
 				}
 
 				return (
-					<CheckoutSummaryFeaturesListItem key={ String( feature ) } isSupported={ isSupported }>
+					<CheckoutSummaryFeaturesListItem
+						key={ String( feature ) }
+						isNotSupported={ ! isSupported }
+					>
 						{ isSupported ? <WPCheckoutCheckIcon /> : <WPCheckoutCrossIcon /> }
 						{ feature }
 					</CheckoutSummaryFeaturesListItem>
@@ -793,14 +796,14 @@ function CheckoutSummaryAnnualUpsell( props: {
 			</CheckoutSummaryFeaturesTitle>
 			<CheckoutSummaryFeaturesListWrapper>
 				{ shouldShowFreeDomainUpsell && (
-					<CheckoutSummaryFeaturesListItem isSupported={ false }>
+					<CheckoutSummaryFeaturesListItem isNotSupported>
 						<WPCheckoutCheckIcon />
 						{ translate( 'Free domain for one year' ) }
 					</CheckoutSummaryFeaturesListItem>
 				) }
 				{ hasEnTranslation( 'Fast support' ) && hasEnTranslation( 'Priority support 24/7' )
 					? ! isWpComPersonalPlan( productSlug ) && (
-							<CheckoutSummaryFeaturesListItem isSupported={ false }>
+							<CheckoutSummaryFeaturesListItem isNotSupported>
 								<WPCheckoutCheckIcon />
 								{ isWpComPremiumPlan( productSlug )
 									? translate( 'Fast support' )
@@ -808,7 +811,7 @@ function CheckoutSummaryAnnualUpsell( props: {
 							</CheckoutSummaryFeaturesListItem>
 					  )
 					: ! isWpComPersonalPlan( productSlug ) && (
-							<CheckoutSummaryFeaturesListItem isSupported={ false }>
+							<CheckoutSummaryFeaturesListItem isNotSupported>
 								<WPCheckoutCheckIcon />
 								{ translate( 'Live chat support' ) }
 							</CheckoutSummaryFeaturesListItem>
@@ -906,21 +909,18 @@ const StyledGridicon = styled( Gridicon )`
 
 const WPCheckoutCrossIcon = () => <StyledGridicon icon="cross" size={ 20 } />;
 
-const CheckoutSummaryFeaturesListItem = styled( 'li' )< { isSupported?: boolean } >`
+const CheckoutSummaryFeaturesListItem = styled( 'li' )< { isNotSupported?: boolean } >`
 	margin-bottom: 4px;
 	padding-left: 24px;
 	position: relative;
 	overflow-wrap: break-word;
-	color: ${ ( props ) => ( props.isSupported ? 'inherit' : props.theme.colors.textColorLight ) };
+	color: ${ ( props ) => ( props.isNotSupported ? props.theme.colors.textColorLight : 'inherit' ) };
 
 	.rtl & {
 		padding-right: 24px;
 		padding-left: 0;
 	}
 `;
-CheckoutSummaryFeaturesListItem.defaultProps = {
-	isSupported: true,
-};
 
 const CheckoutSubtotalSection = styled.div`
 	border-bottom: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
