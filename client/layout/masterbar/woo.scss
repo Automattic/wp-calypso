@@ -1380,6 +1380,10 @@ $breakpoint-mobile: 660px;
 			font-size: 1rem;
 			font-weight: 500;
 			height: 48px;
+
+			.components-spinner {
+				margin-top: 0;
+			}
 		}
 
 		.form-input-validation.is-error {
