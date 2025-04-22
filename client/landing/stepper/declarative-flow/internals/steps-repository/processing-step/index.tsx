@@ -63,7 +63,7 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 	const [ currentMessageIndex, setCurrentMessageIndex ] = useState( 0 );
 	const [ hasActionSuccessfullyRun, setHasActionSuccessfullyRun ] = useState( false );
 	const [ hasEmptyActionRun, setHasEmptyActionRun ] = useState( false );
-	const [ destinationState, setDestinationState ] = useState( {} );
+	const [ destinationState, setDestinationState ] = useState< { siteCreated?: boolean } >( {} );
 
 	/**
 	 * There is a long-term bug here that the `submit` function will be called multiple times if we
@@ -165,11 +165,8 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 		if ( hasActionSuccessfullyRun && ! isSubmittedRef.current ) {
 			// We should only trigger signup completion for signup flows, so check if we have one.
 
-			if ( 'siteCreated' in destinationState ) {
-				const { siteCreated } = destinationState;
-				if ( siteCreated ) {
-					recordSignupComplete( { ...destinationState } );
-				}
+			if ( destinationState.siteCreated ) {
+				recordSignupComplete( { ...destinationState } );
 			}
 
 			if ( isNewSiteMigrationFlow( flow ) ) {
