@@ -10,6 +10,7 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { help, bellUnread, bell, commentAuthorAvatar } from '@wordpress/icons';
+// eslint-disable-next-line no-restricted-imports
 import ReaderIcon from 'calypso/assets/icons/reader/reader-icon';
 import { useAppContext } from '../app/context';
 import { useAuth } from '../auth';

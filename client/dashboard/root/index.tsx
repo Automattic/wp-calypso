@@ -1,5 +1,6 @@
 import { useIsFetching } from '@tanstack/react-query';
 import { Outlet, useRouterState } from '@tanstack/react-router';
+// eslint-disable-next-line no-restricted-imports
 import WordPressLogo from 'calypso/components/wordpress-logo';
 import { useAppContext } from '../app/context';
 import CommandPalette from '../command-palette';

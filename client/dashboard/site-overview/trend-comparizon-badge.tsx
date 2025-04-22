@@ -1,5 +1,6 @@
 import { __experimentalHStack as HStack, Icon } from '@wordpress/components';
 import { arrowDown, arrowUp } from '@wordpress/icons';
+// eslint-disable-next-line no-restricted-imports
 import CoreBadge from 'calypso/components/core/badge';
 
 interface TrendComparisonBadgeProps {
