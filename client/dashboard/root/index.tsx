@@ -5,6 +5,8 @@ import { useAppContext } from '../app/context';
 import CommandPalette from '../command-palette';
 import Header from '../header';
 import { LoadingLine } from '../loading-line';
+import { useLinkNavigate } from './use-link-navigate';
+
 import './style.scss';
 
 function Root() {
@@ -16,6 +18,8 @@ function Root() {
 	// empty, but remain set after subsequent navigations.
 	// https://tanstack.com/router/latest/docs/framework/react/api/router/RouterStateType#resolvedlocation-property
 	const isInitialLoad = ! router.resolvedLocation;
+
+	useLinkNavigate();
 
 	return (
 		<div className="dashboard-root__layout">

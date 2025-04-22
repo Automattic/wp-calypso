@@ -1,4 +1,3 @@
-import { useNavigate, useRouter } from '@tanstack/react-router';
 import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
@@ -16,27 +15,6 @@ import { useAuth } from '../auth';
 import { useOpenCommandPalette } from '../command-palette/utils';
 import MenuDivider from '../menu-divider';
 import './style.scss';
-
-function NavMenuItem( { to, children }: { to: string; children: React.ReactNode } ) {
-	const navigate = useNavigate();
-	const router = useRouter();
-	const href = router.buildLocation( {
-		to,
-	} ).href;
-	return (
-		<MenuItem
-			// @ts-expect-error -- The MenuItem component types are not correct, href is a valid prop.
-			href={ href }
-			onClick={ ( e ) => {
-				e.preventDefault();
-				navigate( { to } );
-			} }
-			__next40pxDefaultSize
-		>
-			{ children }
-		</MenuItem>
-	);
-}
 
 // User profile dropdown component
 function UserProfile() {
@@ -77,12 +55,27 @@ function UserProfile() {
 						<Text variant="muted">@{ user.username }</Text>
 					</VStack>
 					<MenuGroup>
-						<NavMenuItem to="/me/profile">{ __( 'Profile' ) }</NavMenuItem>
-						<NavMenuItem to="/me/billing">{ __( 'Billing' ) }</NavMenuItem>
-						<NavMenuItem to="/me/security">{ __( 'Security' ) }</NavMenuItem>
-						<NavMenuItem to="/me/privacy">{ __( 'Privacy' ) }</NavMenuItem>
+						{ /* @ts-expect-error -- href is supported by MenuItem, the types are not correct. */ }
+						<MenuItem href="me/profile" __next40pxDefaultSize>
+							{ __( 'Profile' ) }
+						</MenuItem>
+						{ /* @ts-expect-error -- href is supported by MenuItem, the types are not correct. */ }
+						<MenuItem href="me/billing" __next40pxDefaultSize>
+							{ __( 'Billing' ) }
+						</MenuItem>
+						{ /* @ts-expect-error -- href is supported by MenuItem, the types are not correct. */ }
+						<MenuItem href="me/security" __next40pxDefaultSize>
+							{ __( 'Security' ) }
+						</MenuItem>
+						{ /* @ts-expect-error -- href is supported by MenuItem, the types are not correct. */ }
+						<MenuItem href="me/privacy" __next40pxDefaultSize>
+							{ __( 'Privacy' ) }
+						</MenuItem>
 						{ supports.notifications && (
-							<NavMenuItem to="/me/notifications">{ __( 'Notifications' ) }</NavMenuItem>
+							// @ts-expect-error -- href is supported by MenuItem, the types are not correct
+							<MenuItem href="me/notifications" __next40pxDefaultSize>
+								{ __( 'Notifications' ) }
+							</MenuItem>
 						) }
 					</MenuGroup>
 					<MenuGroup>
@@ -112,10 +105,8 @@ function UserProfile() {
 }
 
 function SecondaryMenu() {
-	const navigate = useNavigate();
 	const { supports } = useAppContext();
 	const hasUnreadNotifications = false;
-	const notificationsPath = '/me/notifications';
 
 	const openHelpCenter = () => {
 		// Open help center action would go here
@@ -150,11 +141,7 @@ function SecondaryMenu() {
 					label={ __( 'Notifications' ) }
 					icon={ hasUnreadNotifications ? bellUnread : bell }
 					variant="tertiary"
-					onClick={ ( e: React.MouseEvent< HTMLButtonElement > ) => {
-						e.preventDefault();
-						navigate( { to: notificationsPath } );
-					} }
-					href={ notificationsPath }
+					href="me/notifications"
 				/>
 			) }
 			<UserProfile />
