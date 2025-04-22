@@ -1,13 +1,14 @@
 import LoginButton from '../login-button';
 import {
 	WooWrapper,
-	// 	GravatarWrapper,
-	// 	JetpackWrapper,
-	// 	BlazeWrapper,
-	// 	AkismetWrapper,
-	// 	WPJobManagerWrapper,
-	// 	A4AWrapper,
-	LoginForm,
+	GravatarWrapper,
+	JetpackWrapper,
+	BlazeWrapper,
+	AkismetWrapper,
+	WPJobManagerWrapper,
+	A4AWrapper,
+	LoginFormAction,
+	LoginFormWrapper,
 } from './shared';
 import type { Meta, StoryObj } from '@storybook/react';
 
@@ -26,36 +27,36 @@ export default meta;
 type Story = StoryObj< typeof LoginButton >;
 
 export const Default: Story = {
-	decorators: [ LoginForm ],
+	decorators: [ LoginFormAction, LoginFormWrapper ],
 };
 
-// export const A4A: Story = {
-// 	decorators: [ AuthFormSocial, A4AWrapper ],
-// };
+export const A4A: Story = {
+	decorators: [ LoginFormAction, LoginFormWrapper, A4AWrapper ],
+};
 
-// export const Akismet: Story = {
-// 	decorators: [ AuthFormSocial, AkismetWrapper ],
-// };
+export const Akismet: Story = {
+	decorators: [ LoginFormAction, AkismetWrapper ],
+};
 
-// export const Blaze: Story = {
-// 	decorators: [ AuthFormSocial, BlazeWrapper ],
-// };
+export const Blaze: Story = {
+	decorators: [ LoginFormAction, LoginFormWrapper, BlazeWrapper ],
+};
 
-// export const Gravatar: Story = {
-// 	decorators: [ AuthFormSocial, GravatarWrapper ],
-// };
+export const Gravatar: Story = {
+	decorators: [ LoginFormAction, GravatarWrapper ],
+};
 
-// export const Jetpack: Story = {
-// 	decorators: [ AuthFormSocial, JetpackWrapper ],
-// };
+export const Jetpack: Story = {
+	decorators: [ LoginFormAction, LoginFormWrapper, JetpackWrapper ],
+};
 
 export const Woo: Story = {
 	args: {
 		isWoo: true,
 	},
-	decorators: [ LoginForm, WooWrapper ],
+	decorators: [ LoginFormAction, LoginFormWrapper, WooWrapper ],
 };
 
-// export const WPJobManager: Story = {
-// 	decorators: [ AuthFormSocial, WPJobManagerWrapper ],
-// };
+export const WPJobManager: Story = {
+	decorators: [ LoginFormAction, WPJobManagerWrapper ],
+};

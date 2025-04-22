@@ -1,6 +1,5 @@
 import { Button, Spinner } from '@wordpress/components';
 import React from 'react';
-
 interface LoginButtonProps {
 	isWoo: boolean;
 	isSendingEmail: boolean;
