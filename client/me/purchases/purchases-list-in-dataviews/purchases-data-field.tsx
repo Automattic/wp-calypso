@@ -3,7 +3,7 @@ import { Fields, Operator } from '@wordpress/dataviews';
 import { LocalizeProps } from 'i18n-calypso';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { StoredPaymentMethod } from 'calypso/lib/checkout/payment-methods';
-import { getDisplayName } from 'calypso/lib/purchases';
+import { getDisplayName, isRenewing } from 'calypso/lib/purchases';
 import { useSelector } from 'calypso/state';
 import { getSite } from 'calypso/state/sites/selectors';
 import {
@@ -11,6 +11,7 @@ import {
 	PurchaseItemProduct,
 	PurchaseItemStatus,
 	PurchaseItemPaymentMethod,
+	PurchaseItemBackupPaymentMethodNotice,
 } from '../purchase-item';
 import OwnerInfo from '../purchase-item/owner-info';
 
@@ -58,12 +59,16 @@ function PurchaseItemRowStatus( props: {
 function PurchaseItemRowPaymentMethod( props: {
 	purchase: Purchases.Purchase;
 	translate: LocalizeProps[ 'translate' ];
+	isBackupMethodAvailable: boolean;
 } ) {
-	const { purchase, translate } = props;
+	const { purchase, translate, isBackupMethodAvailable } = props;
 
 	return (
 		<div className="purchase-item__payment-method">
 			<PurchaseItemPaymentMethod purchase={ purchase } translate={ translate } />
+			{ isBackupMethodAvailable && isRenewing( purchase ) && (
+				<PurchaseItemBackupPaymentMethodNotice translate={ translate } />
+			) }
 		</div>
 	);
 }
@@ -77,6 +82,7 @@ export function getPurchasesFieldDefinitions( {
 	moment: ReturnType< typeof useLocalizedMoment >;
 	backupPaymentMethods: StoredPaymentMethod[] | undefined;
 } ): Fields< Purchases.Purchase > {
+	console.log( backupPaymentMethods );
 	return [
 		{
 			id: 'site',
@@ -159,7 +165,14 @@ export function getPurchasesFieldDefinitions( {
 				return item.payment;
 			},
 			render: ( { item }: { item: Purchases.Purchase } ) => {
-				return <PurchaseItemRowPaymentMethod purchase={ item } translate={ translate } />;
+				const isBackupMethodAvailable = true;
+				return (
+					<PurchaseItemRowPaymentMethod
+						purchase={ item }
+						translate={ translate }
+						isBackupMethodAvailable={ isBackupMethodAvailable }
+					/>
+				);
 			},
 		},
 	];

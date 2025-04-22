@@ -21,7 +21,7 @@ export const purchasesDataView = {
 export function PurchasesDataViews( props: {
 	purchases: Purchases.Purchase[];
 	translate: LocalizeProps[ 'translate' ];
-	paymentMethods?: StoredPaymentMethod[];
+	paymentMethods?: Array< StoredPaymentMethod >;
 } ) {
 	const { purchases, paymentMethods } = props;
 	const onChangeView = () => {

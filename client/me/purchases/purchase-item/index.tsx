@@ -15,7 +15,7 @@ import { CALYPSO_CONTACT } from '@automattic/urls';
 import { ExternalLink } from '@wordpress/components';
 import { Icon, warning as warningIcon } from '@wordpress/icons';
 import clsx from 'clsx';
-import { formatCurrency, localize, useTranslate } from 'i18n-calypso';
+import { formatCurrency, localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import akismetIcon from 'calypso/assets/images/icons/akismet-icon.svg';
@@ -61,6 +61,7 @@ import type { Site } from 'calypso/blocks/site-icon';
 import type { GetManagePurchaseUrlFor } from 'calypso/lib/purchases/types';
 import type { AppState } from 'calypso/types';
 import type { LocalizeProps } from 'i18n-calypso';
+import promotePostI2 from 'calypso/my-sites/promote-post-i2';
 
 const eventProperties = ( warning: string ) => ( { warning, position: 'purchase-list' } );
 
@@ -685,6 +686,26 @@ export function PurchaseItemPaymentMethod( {
 	}
 }
 
+export function PurchaseItemBackupPaymentMethodNotice( {
+	translate,
+}: {
+	translate: LocalizeProps[ 'translate' ];
+} ) {
+	const noticeText = translate(
+		'If the renewal fails, a {{link}}backup payment method{{/link}} may be used.',
+		{
+			components: {
+				link: <a href="/me/purchases/payment-methods" />,
+			},
+		}
+	);
+	return (
+		<span className="purchase-item__backup-payment-method-notice">
+			<InfoPopover position="bottom">{ noticeText }</InfoPopover>
+		</span>
+	);
+}
+
 class PurchaseItem extends Component<
 	PurchaseItemPropsPlaceholder | ( PurchaseItemProps & PurchaseItemPropsConnected )
 > {
@@ -749,7 +770,9 @@ class PurchaseItem extends Component<
 
 				<div className="purchase-item__payment-method purchases-layout__payment-method">
 					<PurchaseItemPaymentMethod purchase={ purchase } translate={ translate } />
-					{ isBackupMethodAvailable && isRenewing( purchase ) && <BackupPaymentMethodNotice /> }
+					{ isBackupMethodAvailable && isRenewing( purchase ) && (
+						<PurchaseItemBackupPaymentMethodNotice translate={ translate } />
+					) }
 				</div>
 			</div>
 		);
@@ -799,23 +822,6 @@ class PurchaseItem extends Component<
 			</CompactCard>
 		);
 	}
-}
-
-function BackupPaymentMethodNotice() {
-	const translate = useTranslate();
-	const noticeText = translate(
-		'If the renewal fails, a {{link}}backup payment method{{/link}} may be used.',
-		{
-			components: {
-				link: <a href="/me/purchases/payment-methods" />,
-			},
-		}
-	);
-	return (
-		<span className="purchase-item__backup-payment-method-notice">
-			<InfoPopover position="bottom">{ noticeText }</InfoPopover>
-		</span>
-	);
 }
 
 export default connect(
