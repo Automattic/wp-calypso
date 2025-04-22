@@ -33,3 +33,8 @@ a {
 #wpcom {
 	font-size: $font-size-medium;
 }
+
+h1 {
+	font-family: var(--dashboard-h1__font-family) !important;
+	font-weight: var(--dashboard-h1__font-weight) !important;
+}
