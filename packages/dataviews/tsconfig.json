@@ -30,7 +30,6 @@
 		"esModuleInterop": false,
 		"resolveJsonModule": true,
 
-		// "typeRoots": ["./typings", "./node_modules/@types"], // TODO: review
 		"types": [],
 
 		"rootDir": "src",
