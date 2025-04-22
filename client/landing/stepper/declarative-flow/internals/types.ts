@@ -47,7 +47,8 @@ export interface NavigationControls<
 	 * @see {@link client/landing/stepper/declarative-flow/internals/steps-repository/DEVELOPMENT/making-a-new-step.md}
 	 */
 	submit: StepSubmittedTypes extends Record< string, unknown >
-		? ( providedDependencies: StepSubmittedTypes ) => void
+		? // Omar: I'm playing with removing the ? after `providedDependencies`.
+		  ( providedDependencies: StepSubmittedTypes ) => void
 		: () => void;
 
 	/**
