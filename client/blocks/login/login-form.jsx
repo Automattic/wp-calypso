@@ -1,16 +1,10 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
-import {
-	Button as A8CButton,
-	Card,
-	FormInputValidation,
-	FormLabel,
-	Gridicon,
-} from '@automattic/components';
+import { Button, Card, FormInputValidation, FormLabel, Gridicon } from '@automattic/components';
 import { alert } from '@automattic/components/src/icons';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { suggestEmailCorrection } from '@automattic/onboarding';
-import { Spinner, TextControl, Button } from '@wordpress/components';
+import { TextControl } from '@wordpress/components';
 import { Icon } from '@wordpress/icons';
 import clsx from 'clsx';
 import cookie from 'cookie';
@@ -23,6 +17,7 @@ import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import { FormDivider } from 'calypso/blocks/authentication';
 import JetpackConnectSiteOnly from 'calypso/blocks/jetpack-connect-site-only';
+import LoginButton from 'calypso/blocks/login/login-button';
 import Notice from 'calypso/components/notice';
 import { LastUsedSocialButton } from 'calypso/components/social-buttons';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
@@ -468,7 +463,7 @@ export class LoginForm extends Component {
 
 						<FormLabel htmlFor="usernameOrEmail">
 							{ this.isPasswordView() ? (
-								<A8CButton
+								<Button
 									borderless
 									className="login__form-change-username"
 									onClick={ this.resetView }
@@ -478,7 +473,7 @@ export class LoginForm extends Component {
 									{ includes( this.state.usernameOrEmail, '@' )
 										? this.props.translate( 'Change Email Address' )
 										: this.props.translate( 'Change Username' ) }
-								</A8CButton>
+								</Button>
 							) : null }
 						</FormLabel>
 
@@ -536,14 +531,14 @@ export class LoginForm extends Component {
 					<div className="login__form-footer">
 						<p className="login__social-tos">{ socialToS }</p>
 						<div className="login__form-action">
-							<A8CButton
+							<Button
 								primary
 								disabled={ isFormDisabled }
 								onClick={ this.handleWooCommerceSubmit }
 								type="submit"
 							>
 								{ this.getLoginButtonText() }
-							</A8CButton>
+							</Button>
 						</div>
 
 						{ config.isEnabled( 'signup/social' ) && showSocialLogin && (
@@ -1033,16 +1028,14 @@ export class LoginForm extends Component {
 						) }
 
 						{ shouldRenderForgotPasswordLink && this.renderLostPasswordLink() }
+
 						<div className="login__form-action">
-							<Button
-								variant="primary"
-								isBusy={ ! isWoo && isSendingEmail }
-								disabled={ isSubmitButtonDisabled }
-								type="submit"
-								__next40pxDefaultSize
-							>
-								{ isWoo && isSendingEmail ? <Spinner /> : this.getLoginButtonText() }
-							</Button>
+							<LoginButton
+								isWoo={ isWoo }
+								isSendingEmail={ isSendingEmail }
+								isDisabled={ isSubmitButtonDisabled }
+								buttonText={ this.getLoginButtonText() }
+							/>
 						</div>
 
 						{ ! isBlazePro && isJetpack && (
