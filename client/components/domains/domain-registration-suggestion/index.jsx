@@ -265,18 +265,6 @@ class DomainRegistrationSuggestion extends Component {
 		};
 	}
 
-	getFormattedDomainName( name ) {
-		if ( name.length <= 24 ) {
-			return name;
-		}
-
-		return (
-			<abbr title={ name }>
-				{ name.slice( 0, 8 ) }…{ name.slice( -8 ) }
-			</abbr>
-		);
-	}
-
 	renderDomain( hasBadges = false ) {
 		const {
 			showHstsNotice,
@@ -300,9 +288,7 @@ class DomainRegistrationSuggestion extends Component {
 				<div className={ titleWrapperClassName }>
 					<h3 className="domain-registration-suggestion__title">
 						<div className="domain-registration-suggestion__domain-title">
-							<span className="domain-registration-suggestion__domain-title-name">
-								{ this.getFormattedDomainName( name ) }
-							</span>
+							<span className="domain-registration-suggestion__domain-title-name">{ name }</span>
 							<span className="domain-registration-suggestion__domain-title-tld">{ tld }</span>
 							{ ( showHstsNotice || showDotGayNotice ) && this.renderInfoBubble() }
 						</div>

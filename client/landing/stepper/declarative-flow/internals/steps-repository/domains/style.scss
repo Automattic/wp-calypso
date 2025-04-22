@@ -204,6 +204,11 @@
 			border-bottom: 1px solid var( --studio-gray-5 );
 			border-top: 1px solid #fff;
 			margin-bottom: 0;
+			padding: 16px 0;
+
+			@include break-small {
+				padding: 16px 20px;
+			}
 		}
 
 		.domain-product-price__free-price {
@@ -524,9 +529,14 @@
 			border-bottom: 1px solid var( --studio-gray-5 );
 			border-radius: 0;
 			margin-bottom: 0;
+			padding: 16px 0;
 			background: transparent;
 			border-left: 0 !important;
 			border-right: 0 !important;
+
+			@include break-mobile {
+				padding: 16px 20px;
+			}
 
 			.domain-registration-suggestion__title-wrapper {
 				gap: 4px;
@@ -569,6 +579,8 @@
 
 		.domain-registration-suggestion__title-info {
 			width: auto;
+			display: flex;
+			align-items: center;
 		}
 
 		.domain-suggestion__content {
@@ -595,6 +607,7 @@
 		}
 
 		// Hide the domain explanation image
+		.register-domain-step__domain-side-content-container-domain-explanation-image,
 		.domains__domain-side-content-container {
 			display: none;
 		}

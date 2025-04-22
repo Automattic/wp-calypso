@@ -9,6 +9,10 @@
 
 	@include break-small {
 		border-top: none;
+		margin: 0 20px;
+	}
+	@include break-large {
+		margin: 0;
 	}
 
 	&.featured-domain-suggestions--has-match-reasons .featured-domain-suggestion {
@@ -40,6 +44,10 @@
 
 	@include break-mobile {
 		flex-direction: row;
+		/* using .is-compact to increase specificity */
+		&.is-compact {
+			padding: 15px 20px;
+		}
 	}
 
 	.domain-registration-suggestion__title-info {
@@ -118,6 +126,10 @@
 		margin: 0;
 		flex-grow: 1;
 		align-items: baseline;
+		body.is-section-signup & {
+			align-items: flex-start;
+			margin-top: 12px;
+		}
 		.is-section-domains & {
 			padding-left: 0;
 		}
@@ -150,6 +162,7 @@
 	}
 
 	.domain-registration-suggestion__match-reasons {
+		margin-top: 8px;
 		order: 3;
 	}
 
@@ -194,6 +207,7 @@ body.is-section-signup .step-wrapper .featured-domain-suggestion.card {
 	align-items: center;
 	background: #fff;
 	border-bottom: 1px solid rgba(220, 220, 222, 0.64);
+	padding: 16px 20px;
 	flex-direction: column-reverse;
 	@include break-mobile {
 		border-radius: 4px;
@@ -201,6 +215,7 @@ body.is-section-signup .step-wrapper .featured-domain-suggestion.card {
 		box-sizing: border-box;
 		border: 1px solid #e2e4e7;
 		background: var(--color-surface);
+		padding: 16px 24px;
 	}
 
 	.domain-suggestion__action-container {

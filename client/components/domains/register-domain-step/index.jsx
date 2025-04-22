@@ -9,6 +9,7 @@ import {
 } from '@automattic/onboarding';
 import Search from '@automattic/search';
 import { withShoppingCart } from '@automattic/shopping-cart';
+import { Icon } from '@wordpress/icons';
 import clsx from 'clsx';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
@@ -80,6 +81,7 @@ import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import { getCurrentFlowName } from 'calypso/state/signup/flow/selectors';
 import AlreadyOwnADomain from './already-own-a-domain';
+import tip from './tip';
 
 import './style.scss';
 
@@ -538,6 +540,7 @@ class RegisterDomainStep extends Component {
 						/>
 					) }
 					{ this.renderFilterContent() }
+					{ this.renderDomainExplanationImage() }
 					{ this.renderSideContent() }
 				</div>
 				{ showAlreadyOwnADomain && (
@@ -758,6 +761,23 @@ class RegisterDomainStep extends Component {
 					illustrationWidth={ 280 }
 				/>
 			</>
+		);
+	}
+
+	renderDomainExplanationImage() {
+		return (
+			<div className="register-domain-step__domain-side-content-container-domain-explanation-image">
+				<span></span>
+				<span></span>
+				<span className="register-domain-step__domain-side-content-container-domain-explanation-image-url">
+					https://
+					{ this.props.translate( 'yoursitename', {
+						comment: 'example url used to explain what a domain is.',
+					} ) }
+					.com
+				</span>
+				<span></span>
+			</div>
 		);
 	}
 
@@ -1536,6 +1556,7 @@ class RegisterDomainStep extends Component {
 		const { translate, promptText } = this.props;
 		return (
 			<div className="register-domain-step__example-prompt">
+				<Icon icon={ tip } size={ 20 } />
 				{ promptText ?? translate( 'The best names are short and memorable' ) }
 			</div>
 		);

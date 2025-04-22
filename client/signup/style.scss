@@ -527,7 +527,8 @@ body.is-section-signup .layout:not(.dops):not(.is-wccom-oauth-flow) {
 
 	.signup__step.is-mailbox-domain,
 	.signup__step.is-emails,
-	.signup__step.is-mailbox {
+	.signup__step.is-mailbox,
+	.is-domain-only {
 		.is-wide-layout {
 			max-width: 1280px;
 		}

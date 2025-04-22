@@ -201,7 +201,6 @@
 		"@wordpress/primitives": "^4.22.0",
 		"@wordpress/rich-text": "^7.22.0",
 		"@wordpress/url": "^4.22.0",
-		"@wordpress/viewport": "^6.22.0",
 		"@wp-playground/blueprints": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@wp-playground-blueprints-1.0.29.tar.gz",
 		"@wp-playground/client": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@wp-playground-client-1.0.29.tar.gz",
 		"animate.css": "^4.1.1",
