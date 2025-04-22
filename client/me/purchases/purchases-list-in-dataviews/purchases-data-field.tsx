@@ -80,7 +80,6 @@ export function getPurchasesFieldDefinitions( {
 	moment: ReturnType< typeof useLocalizedMoment >;
 	backupPaymentMethods: StoredPaymentMethod[] | undefined;
 } ): Fields< Purchases.Purchase > {
-	console.log( backupPaymentMethods );
 	return [
 		{
 			id: 'site',
@@ -166,7 +165,7 @@ export function getPurchasesFieldDefinitions( {
 				let isBackupMethodAvailable = false;
 
 				if ( backupPaymentMethods ) {
-					backupPaymentMethods?.filter(
+					backupPaymentMethods.filter(
 						( paymentMethod ) => item.payment.storedDetailsId !== paymentMethod.stored_details_id
 					);
 
