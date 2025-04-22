@@ -46,31 +46,28 @@
 		margin: 0;
 	}
 
-	.edit-gravatar__gravatar-placeholder,
+	.edit-gravatar__avatar-placeholder,
 	.edit-gravatar__action-button-placeholder {
 		@include placeholder();
 	}
 
-	.edit-gravatar__gravatar-placeholder {
-		display: block;
+	.edit-gravatar__avatar-placeholder,
+	.edit-gravatar__hidden-avatar {
 		width: 150px;
 		height: 150px;
 		border-radius: 50%;
-	}
-
-	.edit-gravatar__action-button-placeholder {
-		height: 24px;
-		width: 160px;
 	}
 
 	.edit-gravatar__hidden-avatar {
 		display: flex;
 		justify-content: center;
 		align-items: center;
-		width: 150px;
-		height: 150px;
-		border-radius: 50%;
 		background-color: var( --studio-gray-5 );
+	}
+
+	.edit-gravatar__action-button-placeholder {
+		height: 24px;
+		width: 160px;
 	}
 
 	.edit-gravatar__pop-over svg {
