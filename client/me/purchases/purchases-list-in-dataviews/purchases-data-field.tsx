@@ -11,7 +11,7 @@ import {
 	PurchaseItemProduct,
 	PurchaseItemStatus,
 	PurchaseItemPaymentMethod,
-	PurchaseItemBackupPaymentMethodNotice,
+	BackupPaymentMethodNotice,
 } from '../purchase-item';
 import OwnerInfo from '../purchase-item/owner-info';
 
@@ -66,9 +66,7 @@ function PurchaseItemRowPaymentMethod( props: {
 	return (
 		<div className="purchase-item__payment-method">
 			<PurchaseItemPaymentMethod purchase={ purchase } translate={ translate } />
-			{ isBackupMethodAvailable && isRenewing( purchase ) && (
-				<PurchaseItemBackupPaymentMethodNotice translate={ translate } />
-			) }
+			{ isBackupMethodAvailable && isRenewing( purchase ) && <BackupPaymentMethodNotice /> }
 		</div>
 	);
 }

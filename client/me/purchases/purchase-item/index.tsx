@@ -15,7 +15,7 @@ import { CALYPSO_CONTACT } from '@automattic/urls';
 import { ExternalLink } from '@wordpress/components';
 import { Icon, warning as warningIcon } from '@wordpress/icons';
 import clsx from 'clsx';
-import { formatCurrency, localize } from 'i18n-calypso';
+import { formatCurrency, localize, useTranslate } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import akismetIcon from 'calypso/assets/images/icons/akismet-icon.svg';
@@ -686,11 +686,8 @@ export function PurchaseItemPaymentMethod( {
 	}
 }
 
-export function PurchaseItemBackupPaymentMethodNotice( {
-	translate,
-}: {
-	translate: LocalizeProps[ 'translate' ];
-} ) {
+export function BackupPaymentMethodNotice() {
+	const translate = useTranslate();
 	const noticeText = translate(
 		'If the renewal fails, a {{link}}backup payment method{{/link}} may be used.',
 		{
