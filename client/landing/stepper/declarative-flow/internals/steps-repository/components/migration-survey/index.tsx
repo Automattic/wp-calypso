@@ -11,9 +11,9 @@ const linkByCountry = {
 
 type Countries = keyof typeof linkByCountry;
 
-interface MigrationSurveyProps {
+type MigrationSurveyProps = {
 	countryCode: string;
-}
+};
 
 const getLink = ( country: Countries ) => {
 	return linkByCountry[ country ];
