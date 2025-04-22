@@ -50,7 +50,7 @@ const SiteMigrationAlreadyWPCOM: StepType = ( { stepName, flow, navigation } ) =
 			<>
 				<DocumentHead title={ translate( 'Your site is already on WordPress.com' ) } />
 				<Step.CenteredColumnLayout
-					columnWidth={ 5 }
+					columnWidth={ 8 }
 					topBar={
 						<Step.TopBar leftElement={ <Step.BackButton onClick={ navigation.goBack } /> } />
 					}
