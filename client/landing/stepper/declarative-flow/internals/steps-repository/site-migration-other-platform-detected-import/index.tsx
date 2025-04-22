@@ -92,12 +92,11 @@ const SiteMigrationOtherPlatform: StepType< {
 			<>
 				<DocumentHead title={ title } />
 				<Step.CenteredColumnLayout
-					columnWidth={ 5 }
+					columnWidth={ 8 }
 					topBar={
 						<Step.TopBar leftElement={ <Step.BackButton onClick={ navigation.goBack } /> } />
 					}
 					heading={ <Step.Heading text={ title } subText={ description } /> }
-					className="site-migration-upgrade-plan-v2"
 				>
 					{ isAnalyzingUrl ? (
 						<Scanning />
