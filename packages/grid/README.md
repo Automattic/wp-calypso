@@ -21,7 +21,7 @@ const MyLayout = () => {
 	];
 
 	return (
-		<Grid layout={ layout } cols={ 6 }>
+		<Grid layout={ layout } columns={ 6 }>
 			<div key="a">a</div>
 			<div key="b">b</div>
 			<div key="c">c</div>
@@ -44,7 +44,7 @@ The main component exported by this package.
   - `y` (number): The starting row (0-indexed)
   - `width` (number): The number of columns this item spans
   - `height` (number, optional): The number of rows this item spans (defaults to 1)
-- `cols` (required): Total number of columns in the grid
+- `columns` (required): Total number of columns in the grid
 - `className` (optional): Additional CSS class to apply to the grid container
 - `gap` (optional): Grid gap size (e.g., "10px", "1rem")
 - `rowHeight` (optional): Height of each row (e.g., "50px", "auto")

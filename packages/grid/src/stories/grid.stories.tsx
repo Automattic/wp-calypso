@@ -47,7 +47,7 @@ export const Default = () => {
 	];
 
 	return (
-		<Grid layout={ layout } cols={ 6 } gap="10px" rowHeight="100px">
+		<Grid layout={ layout } columns={ 6 } gap="10px" rowHeight="100px">
 			<Card key="a" color="#f44336">
 				A
 			</Card>
@@ -72,7 +72,7 @@ export const Implicit = () => {
 	];
 
 	return (
-		<Grid layout={ layout } cols={ 6 } gap="10px" rowHeight="100px">
+		<Grid layout={ layout } columns={ 6 } gap="10px" rowHeight="100px">
 			<Card key="a" color="#f44336">
 				A
 			</Card>
@@ -99,7 +99,7 @@ export const MultiRowLayout = () => {
 	];
 
 	return (
-		<Grid layout={ layout } cols={ 6 } gap="10px" rowHeight="100px">
+		<Grid layout={ layout } columns={ 6 } gap="10px" rowHeight="100px">
 			<Card key="a" color="#f44336">
 				A
 			</Card>

@@ -40,7 +40,7 @@ export interface GridProps {
 	/**
 	 * Total number of columns in the grid
 	 */
-	cols: number;
+	columns: number;
 
 	/**
 	 * Grid children

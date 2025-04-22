@@ -4,7 +4,7 @@ import type { ReactElement } from 'react';
 
 export function Grid( {
 	layout,
-	cols,
+	columns = 1,
 	children,
 	className,
 	gap = '10px',
@@ -31,7 +31,7 @@ export function Grid( {
 
 	const gridStyle = {
 		display: 'grid',
-		gridTemplateColumns: `repeat(${ cols }, 1fr)`,
+		gridTemplateColumns: `repeat(${ columns }, 1fr)`,
 		gridTemplateRows: `repeat(${ rows }, ${ rowHeight })`,
 		gap,
 	};
