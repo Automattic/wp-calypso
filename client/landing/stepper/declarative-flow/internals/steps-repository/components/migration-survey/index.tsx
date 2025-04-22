@@ -6,22 +6,19 @@ import { useGeoLocationQuery } from 'calypso/data/geo/use-geolocation-query';
 import { Survey, SurveyTriggerAccept, SurveyTriggerSkip } from '../survey';
 import './style.scss';
 
-const linkByCountry = {
+const linkByCountry: Record< string, string > = {
 	IN: 'https://automattic.survey.fm/wp-com-migration-survey-wtp-india-focused',
 	US: 'https://automattic.survey.fm/wp-com-migration-survey-wtp-us-focused',
 };
 
-type Countries = keyof typeof linkByCountry;
-
-const getLink = ( country: Countries ) => {
-	return linkByCountry[ country ];
-};
+const getLink = ( country?: string ): string | null =>
+	country && linkByCountry.hasOwnProperty( country ) ? linkByCountry[ country ] : null;
 
 const MigrationSurvey = () => {
 	const isEnLocale = useIsEnglishLocale();
 	const { data } = useGeoLocationQuery();
 	const countryCode = data?.country_short;
-	const surveyLink = getLink( countryCode as Countries );
+	const surveyLink = getLink( countryCode );
 
 	if ( ! isEnLocale || ! surveyLink ) {
 		return null;
