@@ -13,7 +13,9 @@ function Me() {
 		<>
 			<HeaderBar>
 				<HStack justify={ isDesktop ? 'flex-start' : 'space-between' } spacing={ 4 }>
-					<HeaderBar.Title>{ __( 'Account' ) }</HeaderBar.Title>
+					<HeaderBar.Title>
+						<span>{ __( 'Account' ) }</span>
+					</HeaderBar.Title>
 					{ isDesktop && <MenuDivider /> }
 					<MeMenu />
 				</HStack>

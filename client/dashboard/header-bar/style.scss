@@ -8,6 +8,6 @@
 	color: var( --dashboard-header__color );
 }
 
-.dashboard-header-bar-title {
+.dashboard-header-bar-title > span {
   padding-inline: $grid-unit-15;
 }
