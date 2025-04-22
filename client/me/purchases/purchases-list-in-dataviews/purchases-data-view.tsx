@@ -2,6 +2,7 @@ import { Card } from '@automattic/components';
 import { Purchases } from '@automattic/data-stores';
 import { DataViews, View } from '@wordpress/dataviews';
 import { LocalizeProps } from 'i18n-calypso';
+import { StoredPaymentMethod } from 'calypso/lib/checkout/payment-methods';
 import { usePurchasesFieldDefinitions } from './hooks/use-field-definitions';
 
 export const purchasesDataView = {
@@ -20,8 +21,9 @@ export const purchasesDataView = {
 export function PurchasesDataViews( props: {
 	purchases: Purchases.Purchase[];
 	translate: LocalizeProps[ 'translate' ];
+	paymentMethods?: StoredPaymentMethod[];
 } ) {
-	const { purchases } = props;
+	const { purchases, paymentMethods } = props;
 	const onChangeView = () => {
 		return;
 	};
@@ -29,7 +31,7 @@ export function PurchasesDataViews( props: {
 	const getItemId = ( item: Purchases.Purchase ) => {
 		return item.id.toString();
 	};
-	const purchasesDataFields = usePurchasesFieldDefinitions();
+	const purchasesDataFields = usePurchasesFieldDefinitions( paymentMethods );
 	return (
 		<Card id="purchases-list" className="section-content" tagName="section">
 			<DataViews
