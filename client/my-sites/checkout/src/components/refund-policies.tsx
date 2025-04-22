@@ -200,6 +200,12 @@ export type RefundWindow = 4 | 7 | 14 | 120;
 export function getRefundWindowForPolicy( refundPolicy: RefundPolicy ): RefundWindow | undefined {
 	switch ( refundPolicy ) {
 		case RefundPolicy.DomainNameTransfer:
+			// Domain transfers have a complicated refund window. They can be
+			// fully refunded any time until the domain transfer process
+			// completes, at which point they (and the domain registration
+			// itself) are non-refundable. This is explained via a notice in
+			// the checkout footer but cannot be simply represented here, so we
+			// display nothing instead.
 			return undefined;
 
 		case RefundPolicy.DomainNameRegistration:
