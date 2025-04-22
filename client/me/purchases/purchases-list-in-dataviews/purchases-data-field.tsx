@@ -78,7 +78,7 @@ export function getPurchasesFieldDefinitions( {
 }: {
 	translate: LocalizeProps[ 'translate' ];
 	moment: ReturnType< typeof useLocalizedMoment >;
-	backupPaymentMethods: StoredPaymentMethod[] | undefined;
+	backupPaymentMethods: Array< StoredPaymentMethod >;
 } ): Fields< Purchases.Purchase > {
 	return [
 		{
