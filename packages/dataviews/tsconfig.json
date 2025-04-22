@@ -2,38 +2,27 @@
 	"$schema": "https://json.schemastore.org/tsconfig.json",
 	"compilerOptions": {
 		"allowJs": true,
-		"checkJs": true,
 		"allowSyntheticDefaultImports": true,
-		"jsx": "preserve",
-		"target": "esnext",
-		"module": "esnext",
-		"lib": [ "DOM", "DOM.Iterable", "ESNext" ],
-		"declaration": true,
-		"declarationMap": true,
+		"checkJs": true,
 		"composite": true,
-		"isolatedModules": true,
-
-		"skipDefaultLibCheck": true,
-
-		/* Strict Type-Checking Options */
-		"strict": true,
-
-		/* Additional Checks */
-		"noImplicitReturns": true,
-		"noFallthroughCasesInSwitch": true,
-
-		/* Module Resolution Options */
-		"moduleResolution": "node",
-
-		/* This needs to be false so our types are possible to consume without setting this */
-		"esModuleInterop": false,
-		"resolveJsonModule": true,
-
-		"types": [ "jest", "@testing-library/jest-dom" ],
-
-		"rootDir": "src",
+		"declaration": true,
 		"declarationDir": "build-types",
-		"outDir": "build-module"
+		"declarationMap": true,
+		"esModuleInterop": false,
+		"isolatedModules": true,
+		"jsx": "preserve",
+		"lib": [ "DOM", "DOM.Iterable", "ESNext" ],
+		"module": "esnext",
+		"moduleResolution": "node",
+		"noFallthroughCasesInSwitch": true,
+		"noImplicitReturns": true,
+		"outDir": "build-module",
+		"resolveJsonModule": true,
+		"rootDir": "src",
+		"skipDefaultLibCheck": true,
+		"strict": true,
+		"target": "esnext",
+		"types": [ "jest", "@testing-library/jest-dom" ]
 	},
 	"include": [ "src" ],
 	"exclude": [
