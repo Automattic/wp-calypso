@@ -110,12 +110,12 @@ const SiteMigrationInstructions: Step< {
 	// Site preparation.
 	const {
 		detailedStatus,
-		completed: preparationCompleted,
+		softwareTransferCompleted: preparationCompleted,
 		error: preparationError,
 		migrationKey,
 	} = usePrepareSiteForMigration( siteId, fromUrl, { retry: 10 } );
 
-	const migrationKeyStatus = detailedStatus.migrationKey;
+	const migrationKeyStatus = detailedStatus.migrationKeyStatus;
 
 	// Register events and logs.
 	usePreparationEventsAndLogs( {
