@@ -61,7 +61,6 @@ import type { Site } from 'calypso/blocks/site-icon';
 import type { GetManagePurchaseUrlFor } from 'calypso/lib/purchases/types';
 import type { AppState } from 'calypso/types';
 import type { LocalizeProps } from 'i18n-calypso';
-import promotePostI2 from 'calypso/my-sites/promote-post-i2';
 
 const eventProperties = ( warning: string ) => ( { warning, position: 'purchase-list' } );
 
@@ -767,9 +766,7 @@ class PurchaseItem extends Component<
 
 				<div className="purchase-item__payment-method purchases-layout__payment-method">
 					<PurchaseItemPaymentMethod purchase={ purchase } translate={ translate } />
-					{ isBackupMethodAvailable && isRenewing( purchase ) && (
-						<PurchaseItemBackupPaymentMethodNotice translate={ translate } />
-					) }
+					{ isBackupMethodAvailable && isRenewing( purchase ) && <BackupPaymentMethodNotice /> }
 				</div>
 			</div>
 		);
