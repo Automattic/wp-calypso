@@ -6,6 +6,7 @@ const fs = require( 'fs' );
 const path = require( 'path' );
 const sass = require( 'sass' );
 const postcss = require( 'postcss' );
+const pkgDir = require( 'pkg-dir' );
 
 /**
  * Path to packages directory.
@@ -53,6 +54,16 @@ const renderSass = promisify( sass.render );
  */
 function getPackageName( file ) {
 	return path.relative( PACKAGES_DIR, file ).split( path.sep )[ 0 ];
+}
+
+/**
+ *
+ * @param {string} pkgName
+ * @returns {string}
+ */
+function findPackagePath( pkgName ) {
+	const path = require.resolve( pkgName );
+	return pkgDir.sync( path );
 }
 
 /**
@@ -109,7 +120,7 @@ async function buildCSS( file ) {
 
 	const builtSass = await renderSass( {
 		file,
-		includePaths: [ '../../node_modules/@wordpress/base-styles' ],
+		includePaths: [ findPackagePath( '@wordpress/base-styles' ) ],
 		data: ''.concat( '@use "sass:math";', importLists, contents ),
 	} );
 
