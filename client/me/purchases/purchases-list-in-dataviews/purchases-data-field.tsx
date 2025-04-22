@@ -2,6 +2,7 @@ import { Purchases } from '@automattic/data-stores';
 import { Fields, Operator } from '@wordpress/dataviews';
 import { LocalizeProps } from 'i18n-calypso';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import { StoredPaymentMethod } from 'calypso/lib/checkout/payment-methods';
 import { getDisplayName } from 'calypso/lib/purchases';
 import { useSelector } from 'calypso/state';
 import { getSite } from 'calypso/state/sites/selectors';
@@ -70,9 +71,11 @@ function PurchaseItemRowPaymentMethod( props: {
 export function getPurchasesFieldDefinitions( {
 	translate,
 	moment,
+	backupPaymentMethods,
 }: {
 	translate: LocalizeProps[ 'translate' ];
 	moment: ReturnType< typeof useLocalizedMoment >;
+	backupPaymentMethods: StoredPaymentMethod[] | undefined;
 } ): Fields< Purchases.Purchase > {
 	return [
 		{

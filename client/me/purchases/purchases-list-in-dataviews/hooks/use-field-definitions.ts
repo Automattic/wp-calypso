@@ -12,8 +12,16 @@ export function usePurchasesFieldDefinitions( {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
 
+	const backupPaymentMethods = paymentMethods?.filter(
+		( paymentMethod ) => paymentMethod.is_backup
+	);
+
 	return useMemo( () => {
-		const fieldDefinitions = getPurchasesFieldDefinitions( { translate, moment } );
+		const fieldDefinitions = getPurchasesFieldDefinitions( {
+			translate,
+			moment,
+			backupPaymentMethods,
+		} );
 		return fieldDefinitions;
-	}, [ translate, moment ] );
+	}, [ translate, moment, backupPaymentMethods ] );
 }
