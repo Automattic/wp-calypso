@@ -12502,25 +12502,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"autoprefixer@npm:^10.2.5":
-  version: 10.2.5
-  resolution: "autoprefixer@npm:10.2.5"
-  dependencies:
-    browserslist: "npm:^4.16.3"
-    caniuse-lite: "npm:^1.0.30001196"
-    colorette: "npm:^1.2.2"
-    fraction.js: "npm:^4.0.13"
-    normalize-range: "npm:^0.1.2"
-    postcss-value-parser: "npm:^4.1.0"
-  peerDependencies:
-    postcss: ^8.1.0
-  bin:
-    autoprefixer: bin/autoprefixer
-  checksum: 77eea8d366a70abbb99cdda2fdd1c515891e077d2d2fa80505cc0fd38d2813db8237590c971f09b62ab5f37f479b35992edfcd09d4399ba8a0285853cbabc345
-  languageName: node
-  linkType: hard
-
-"autoprefixer@npm:^10.4.20":
+"autoprefixer@npm:^10.2.5, autoprefixer@npm:^10.4.20":
   version: 10.4.21
   resolution: "autoprefixer@npm:10.4.21"
   dependencies:
@@ -13196,7 +13178,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"browserslist@npm:^4.0.0, browserslist@npm:^4.12.0, browserslist@npm:^4.16.0, browserslist@npm:^4.16.3, browserslist@npm:^4.16.6, browserslist@npm:^4.21.10, browserslist@npm:^4.24.0, browserslist@npm:^4.24.4":
+"browserslist@npm:^4.0.0, browserslist@npm:^4.12.0, browserslist@npm:^4.16.0, browserslist@npm:^4.16.6, browserslist@npm:^4.21.10, browserslist@npm:^4.24.0, browserslist@npm:^4.24.4":
   version: 4.24.4
   resolution: "browserslist@npm:4.24.4"
   dependencies:
@@ -13920,14 +13902,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"caniuse-lite@npm:^1.0.0, caniuse-lite@npm:^1.0.30001196, caniuse-lite@npm:^1.0.30001688":
-  version: 1.0.30001702
-  resolution: "caniuse-lite@npm:1.0.30001702"
-  checksum: 52d46f41a96d179fd4e387bb6b26898148c31b626ff9aba105d207d2b0f869c7cb32ac67a6e8e0aeba3f03f33145ccfbee237250dfb58dba8b6526b4dd395ac6
-  languageName: node
-  linkType: hard
-
-"caniuse-lite@npm:^1.0.30001702":
+"caniuse-lite@npm:^1.0.0, caniuse-lite@npm:^1.0.30001688, caniuse-lite@npm:^1.0.30001702":
   version: 1.0.30001715
   resolution: "caniuse-lite@npm:1.0.30001715"
   checksum: 0109a7da797ffbe1aa197baa5242b205011098eecec1087ef3d0c58ceea19be325ab6679b2751a78660adc3051a9f77e99d5789938fd1eb1235e6fdf6a1dbf8e
@@ -14636,7 +14611,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"colorette@npm:^1.2.1, colorette@npm:^1.2.2":
+"colorette@npm:^1.2.1":
   version: 1.4.0
   resolution: "colorette@npm:1.4.0"
   checksum: 4955c8f7daafca8ae7081d672e4bd89d553bd5782b5846d5a7e05effe93c2f15f7e9c0cb46f341b59f579a39fcf436241ff79594899d75d5f3460c03d607fe9e
@@ -19526,13 +19501,6 @@ __metadata:
   version: 0.2.0
   resolution: "forwarded@npm:0.2.0"
   checksum: 9b67c3fac86acdbc9ae47ba1ddd5f2f81526fa4c8226863ede5600a3f7c7416ef451f6f1e240a3cc32d0fd79fcfe6beb08fd0da454f360032bde70bf80afbb33
-  languageName: node
-  linkType: hard
-
-"fraction.js@npm:^4.0.13":
-  version: 4.1.0
-  resolution: "fraction.js@npm:4.1.0"
-  checksum: db0e43d60dbe9211673dd88a0ba7984a1b3b34dcefa2619e12c73e9d58106fc172f13b6e6f10af5c17f2ef6439a02fe848218ec9498d4ced7cccb7ecce42e776
   languageName: node
   linkType: hard
 
@@ -34232,7 +34200,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:5.8.2, typescript@npm:^5.8.2":
+"typescript@npm:5.8.2":
   version: 5.8.2
   resolution: "typescript@npm:5.8.2"
   bin:
@@ -34242,7 +34210,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:^5.8.3":
+"typescript@npm:^5.8.2, typescript@npm:^5.8.3":
   version: 5.8.3
   resolution: "typescript@npm:5.8.3"
   bin:
@@ -34252,7 +34220,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@npm%3A5.8.2#optional!builtin<compat/typescript>, typescript@patch:typescript@npm%3A^5.8.2#optional!builtin<compat/typescript>":
+"typescript@patch:typescript@npm%3A5.8.2#optional!builtin<compat/typescript>":
   version: 5.8.2
   resolution: "typescript@patch:typescript@npm%3A5.8.2#optional!builtin<compat/typescript>::version=5.8.2&hash=e012d7"
   bin:
@@ -34262,7 +34230,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@npm%3A^5.8.3#optional!builtin<compat/typescript>":
+"typescript@patch:typescript@npm%3A^5.8.2#optional!builtin<compat/typescript>, typescript@patch:typescript@npm%3A^5.8.3#optional!builtin<compat/typescript>":
   version: 5.8.3
   resolution: "typescript@patch:typescript@npm%3A5.8.3#optional!builtin<compat/typescript>::version=5.8.3&hash=e012d7"
   bin:
