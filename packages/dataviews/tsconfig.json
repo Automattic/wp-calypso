@@ -30,7 +30,7 @@
 		"esModuleInterop": false,
 		"resolveJsonModule": true,
 
-		"types": [],
+		"types": [ "jest" ],
 
 		"rootDir": "src",
 		"declarationDir": "build-types",

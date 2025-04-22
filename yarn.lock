@@ -812,6 +812,7 @@ __metadata:
   resolution: "@automattic/dataviews@workspace:packages/dataviews"
   dependencies:
     "@ariakit/react": "npm:^0.4.15"
+    "@types/jest": "npm:^29.5.14"
     "@wordpress/base-styles": "npm:^5.22.0"
     "@wordpress/components": "npm:^29.8.0"
     "@wordpress/compose": "npm:^7.22.0"
