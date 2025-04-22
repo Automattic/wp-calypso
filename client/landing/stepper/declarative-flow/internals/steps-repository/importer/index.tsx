@@ -197,7 +197,8 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 			if ( ! hasPermission() ) {
 				return (
 					<NotAuthorized
-						onStartBuilding={ stepNavigator?.goToIntentPage }
+						// TODO: does this make sense?
+						onStartBuilding={ stepNavigator?.goToGoalsPage }
 						onBackToStart={ stepNavigator?.goToImportCapturePage }
 					/>
 				);
