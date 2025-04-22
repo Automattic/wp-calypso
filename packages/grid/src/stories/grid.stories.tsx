@@ -1,13 +1,18 @@
 import { Grid } from '../grid';
+import type { Meta, StoryObj } from '@storybook/react';
 
-export default {
+const meta: Meta< typeof Grid > = {
 	title: 'Grid',
 	component: Grid,
 	tags: [ 'autodocs' ],
 	parameters: {
 		layout: 'centered',
 	},
+	argTypes: {
+		children: { control: false },
+	},
 };
+export default meta;
 
 function Card( {
 	style,
@@ -39,85 +44,89 @@ function Card( {
 /**
  * Basic usage example of the Grid component
  */
-export const Default = () => {
-	const layout = [
-		{ key: 'a', x: 0, y: 0, width: 1 },
-		{ key: 'b', x: 1, y: 0, width: 3 },
-		{ key: 'c', x: 4, y: 0, width: 1 },
-	];
-
-	return (
-		<Grid layout={ layout } columns={ 6 } rowHeight="100px">
+export const Default: StoryObj< typeof Grid > = {
+	args: {
+		layout: [
+			{ key: 'a', x: 0, y: 0, width: 1 },
+			{ key: 'b', x: 1, y: 0, width: 3 },
+			{ key: 'c', x: 4, y: 0, width: 1 },
+		],
+		columns: 6,
+		children: [
 			<Card key="a" color="#f44336">
 				A
-			</Card>
+			</Card>,
 			<Card key="b" color="#2196f3">
 				B
-			</Card>
+			</Card>,
 			<Card key="c" color="#4caf50">
 				C
-			</Card>
-		</Grid>
-	);
+			</Card>,
+		],
+	},
 };
 
 /**
  * Basic usage example of the Grid component with implicit positions
  */
-export const Implicit = () => {
-	const layout = [
-		{ key: 'a', width: 1 },
-		{ key: 'b', width: 3 },
-		{ key: 'c', width: 1 },
-	];
-
-	return (
-		<Grid layout={ layout } columns={ 6 } rowHeight="100px">
+export const Implicit: StoryObj< typeof Grid > = {
+	args: {
+		layout: [
+			{ key: 'a', width: 1 },
+			{ key: 'b', width: 3 },
+			{ key: 'c', width: 1 },
+		],
+		columns: 6,
+		spacing: 2,
+		rowHeight: '100px',
+		children: [
 			<Card key="a" color="#f44336">
 				A
-			</Card>
+			</Card>,
 			<Card key="b" color="#2196f3">
 				B
-			</Card>
+			</Card>,
 			<Card key="c" color="#4caf50">
 				C
-			</Card>
-		</Grid>
-	);
+			</Card>,
+		],
+	},
 };
 
 /**
  * Multi-row grid layout example
  */
-export const MultiRowLayout = () => {
-	const layout = [
-		{ key: 'a', x: 0, y: 0, width: 2, height: 1 },
-		{ key: 'b', x: 2, y: 0, width: 3, height: 2 },
-		{ key: 'c', x: 5, y: 0, width: 1, height: 1 },
-		{ key: 'd', x: 0, y: 1, width: 2, height: 1 },
-		{ key: 'e', x: 5, y: 1, width: 1, height: 1 },
-	];
-
-	return (
-		<Grid layout={ layout } columns={ 6 } rowHeight="100px">
+export const MultiRowLayout: StoryObj< typeof Grid > = {
+	args: {
+		layout: [
+			{ key: 'a', x: 0, y: 0, width: 2, height: 1 },
+			{ key: 'b', x: 2, y: 0, width: 3, height: 2 },
+			{ key: 'c', x: 5, y: 0, width: 1, height: 1 },
+			{ key: 'd', x: 0, y: 1, width: 2, height: 1 },
+			{ key: 'e', x: 5, y: 1, width: 1, height: 1 },
+		],
+		columns: 6,
+		spacing: 2,
+		rowHeight: '100px',
+		children: [
 			<Card key="a" color="#f44336">
 				A
-			</Card>
+			</Card>,
 			<Card key="b" color="#2196f3">
 				B
-			</Card>
+			</Card>,
 			<Card key="c" color="#4caf50">
 				C
-			</Card>
+			</Card>,
 			<Card key="d" color="#ff9800">
 				D
-			</Card>
+			</Card>,
 			<Card key="e" color="#9c27b0">
 				E
-			</Card>
+			</Card>,
 			<Card key="f" color="black">
 				F
-			</Card>
-		</Grid>
-	);
+			</Card>,
+		],
+	},
 };
