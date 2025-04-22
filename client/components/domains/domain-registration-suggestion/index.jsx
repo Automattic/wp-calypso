@@ -300,10 +300,12 @@ class DomainRegistrationSuggestion extends Component {
 				<div className={ titleWrapperClassName }>
 					<h3 className="domain-registration-suggestion__title">
 						<div className="domain-registration-suggestion__domain-title">
-							<span className="domain-registration-suggestion__domain-title-name">
-								{ this.getFormattedDomainName( name ) }
+							<span aria-label={ domain }>
+								<span className="domain-registration-suggestion__domain-title-name">
+									{ this.getFormattedDomainName( name ) }
+								</span>
+								<span className="domain-registration-suggestion__domain-title-tld">{ tld }</span>
 							</span>
-							<span className="domain-registration-suggestion__domain-title-tld">{ tld }</span>
 							{ ( showHstsNotice || showDotGayNotice ) && this.renderInfoBubble() }
 						</div>
 					</h3>
