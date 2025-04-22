@@ -37,8 +37,10 @@
 		"@storybook/addon-controls": "^8.6.9",
 		"@storybook/addon-docs": "^8.6.9",
 		"@storybook/react-webpack5": "^8.6.9",
+		"postcss": "^8.5.3",
 		"storybook": "^8.6.9",
-		"typescript": "^5.8.2"
+		"typescript": "^5.8.2",
+		"webpack": "^5.97.1"
 	},
 	"peerDependencies": {
 		"react": "^18.0.0",
