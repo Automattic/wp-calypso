@@ -166,6 +166,7 @@ export function getPurchasesFieldDefinitions( {
 
 				if ( backupPaymentMethods ) {
 					backupPaymentMethods.filter(
+						// A payment method is only a back up if it isn't already assigned to the current purchase
 						( paymentMethod ) => item.payment.storedDetailsId !== paymentMethod.stored_details_id
 					);
 
