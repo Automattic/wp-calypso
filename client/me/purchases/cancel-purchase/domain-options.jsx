@@ -125,8 +125,8 @@ const CancelPurchaseDomainOptions = ( {
 		<div>
 			<p>
 				{ translate(
-					'This plan includes the custom domain, %(domain)s, normally a %(domainCost)s purchase. ' +
-						'The domain will not be removed along with the plan, to avoid any interruptions for your visitors.',
+					'This plan includes a domain transfer, %(domain)s, normally a %(domainCost)s purchase. ' +
+						'The domain transfer will not be removed along with the plan, to avoid any interruptions for your visitors.',
 					{
 						args: {
 							domain: includedDomainTransfer.meta,
@@ -142,8 +142,8 @@ const CancelPurchaseDomainOptions = ( {
 		<div>
 			<p>
 				{ translate(
-					'This plan includes mapping for the domain %(mappedDomain)s. ' +
-						"Cancelling will remove all the plan's features from your site, including the domain.",
+					'It seems you have a pending domain transfer for the domain %(mappedDomain)s. ' +
+						'In order to receive a full refund, please cancel the domain transfer before requesting the cancellation of your plan.',
 					{
 						args: {
 							mappedDomain: includedDomainTransfer.meta,
@@ -153,24 +153,7 @@ const CancelPurchaseDomainOptions = ( {
 			</p>
 			<p>
 				{ translate(
-					'Your site will no longer be available at %(mappedDomain)s. Instead, it will be at %(wordpressSiteUrl)s',
-					{
-						args: {
-							mappedDomain: includedDomainTransfer.meta,
-							wordpressSiteUrl: purchase.domain,
-						},
-					}
-				) }
-			</p>
-			<p>
-				{ translate(
-					'The domain %(mappedDomain)s itself is not canceled. Only the connection between WordPress.com and ' +
-						'your domain is removed. %(mappedDomain)s is registered elsewhere and you can still use it with other sites.',
-					{
-						args: {
-							mappedDomain: includedDomainTransfer.meta,
-						},
-					}
+					'In some cases, a domain transfer has progressed too far to be canceled. Please contact support if you have questions about this'
 				) }
 			</p>
 		</div>
