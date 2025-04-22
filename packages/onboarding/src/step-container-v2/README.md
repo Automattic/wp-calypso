@@ -71,7 +71,7 @@ Here are the wireframes specs: <https://www.figma.com/design/QFAYPvq4xYUZC5AFkrf
 
 As a way to demonstrate how to create a new wireframe, let's re-create `HorizontalLayout`.
 
-This layout arranges two columns side by side. It has the heading on the left and the content on the right. Optionally, an image is rendered below the heading. One example of where this layout is used is in `/setup/site-setup/intent?siteSlug=%s`.
+This layout arranges two columns side by side. It has the heading on the left and the content on the right. Optionally, an image is rendered below the heading.
 
 Let's create a new wireframe named `HorizontalLayout`. Here's what its code looks like:
 
