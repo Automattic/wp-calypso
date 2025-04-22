@@ -1,0 +1,23 @@
+.site-switcher {
+  // To do: data views uses the container property, which collapses the popover
+  // if no width is explicitly set.
+  width: 300px;
+
+  // To do: data views is too inflexible about list item sizes. It completely
+  // ignores the size set in the mediaField.
+  .dataviews-view-list {
+    .dataviews-view-list__media-wrapper {
+      width: 24px;
+      height: 24px;
+    }
+    .dataviews-view-list__field-wrapper {
+      min-height: 24px;
+    }
+
+    // Additionally, data views list doesn't have a "compact" layout option.
+    div[role="row"] .dataviews-view-list__item-wrapper {
+      padding-top: 8px;
+      padding-bottom: 8px;
+    }
+  }
+}

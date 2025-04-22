@@ -8,6 +8,8 @@ import SiteIcon from '../site-icon';
 import type { Site } from '../data/types';
 import type { View } from '@wordpress/dataviews';
 
+import './switcher.scss';
+
 const fields = [
 	{
 		id: 'name',
@@ -22,7 +24,7 @@ const fields = [
 ];
 
 const DEFAULT_VIEW: View = {
-	type: 'table',
+	type: 'list',
 	page: 1,
 	perPage: 10,
 	sort: {
@@ -31,9 +33,6 @@ const DEFAULT_VIEW: View = {
 	},
 	titleField: 'name',
 	mediaField: 'media',
-	layout: {
-		density: 'compact',
-	},
 };
 
 export default function Switcher( { onClose }: { onClose: () => void } ) {
@@ -53,7 +52,7 @@ export default function Switcher( { onClose }: { onClose: () => void } ) {
 	};
 
 	return (
-		<div style={ { width: '300px' } }>
+		<div className="site-switcher">
 			<DataViews
 				data={ filteredData }
 				fields={ fields }
