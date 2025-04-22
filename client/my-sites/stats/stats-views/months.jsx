@@ -137,13 +137,14 @@ const StatsViewsMonths = ( props ) => {
 
 			totalValue += value;
 
+			const startDate = moment( `${ year }-${ month + 1 }-1` ).format( 'YYYY-MM-DD' );
+			const endDate = moment( `${ year }-${ month + 1 }-1` )
+				.endOf( 'month' )
+				.format( 'YYYY-MM-DD' );
+
 			return (
 				<Month
-					href={ `/stats/day/${ siteSlug }?chartStart=${ moment(
-						`${ year }-${ month + 1 }-1`
-					).format( 'YYYY-MM-DD' ) }&chartEnd=${ moment( `${ year }-${ month + 1 }-1` )
-						.endOf( 'month' )
-						.format( 'YYYY-MM-DD' ) }` }
+					href={ `/stats/day/${ siteSlug }?chartStart=${ startDate }&chartEnd=${ endDate }` }
 					className={ className }
 					key={ `month-${ month }` }
 					value={ numberFormat( value ) }
