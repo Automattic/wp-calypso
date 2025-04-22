@@ -1296,6 +1296,12 @@ $breakpoint-mobile: 660px;
 			}
 		}
 
+		.components-button,
+		.components-text-control__input {
+			--color-accent: var(--woo-purple-40);
+			--color-accent-60: var(--woo-purple-50);
+		}
+
 		input[type="text"].form-text-input,
 		input[type="email"].form-text-input,
 		input[type="password"].form-text-input,
@@ -1320,6 +1326,16 @@ $breakpoint-mobile: 660px;
 				border: 2px solid var(--studio-gray-5);
 				background: var(--studio-gray-0);
 			}
+		}
+
+		.components-text-control__input {
+			border-width: 2px;
+			height: 48px;
+			padding: 8px 16px;
+			font-size: $woo-font-size-input;
+			font-style: normal;
+			line-height: 24px;
+			border-radius: $woo-radius-input;
 		}
 
 		// Remove autofill styles.
@@ -1358,6 +1374,14 @@ $breakpoint-mobile: 660px;
 			}
 		}
 
+		.login__form-action button {
+			border-radius: 8px; /* stylelint-disable-line scales/radii */
+			padding: 10px 24px;
+			font-size: 1rem;
+			font-weight: 500;
+			height: 48px;
+		}
+
 		.form-input-validation.is-error {
 			color: #8a2424;
 			font-size: rem(14px);
@@ -1365,7 +1389,7 @@ $breakpoint-mobile: 660px;
 			font-weight: 400;
 			line-height: 21px;
 			padding: 0;
-			margin-top: 8px;
+			margin-bottom: 16px;
 
 			a {
 				line-height: 21px;
@@ -1559,8 +1583,6 @@ $breakpoint-mobile: 660px;
 				}
 
 				.social-buttons__button {
-					--color-accent: var(--woo-purple-40);
-
 					height: 48px;
 					padding: 8px 16px;
 					border-radius: 8px; // stylelint-disable-line scales/radii
