@@ -46,8 +46,8 @@ export default function Switcher( { onClose }: { onClose: () => void } ) {
 
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate( sites, view, fields );
 
-	const onClickItem = async ( item: Site ) => {
-		await navigate( { to: `/sites/${ item.id }` } );
+	const onChangeSelection = async ( items: string[] ) => {
+		await navigate( { to: `/sites/${ items[ 0 ] }` } );
 		onClose();
 	};
 
@@ -56,10 +56,9 @@ export default function Switcher( { onClose }: { onClose: () => void } ) {
 			<DataViews
 				data={ filteredData }
 				fields={ fields }
-				// actions={ actions }
 				view={ view }
 				onChangeView={ setView }
-				onClickItem={ onClickItem }
+				onChangeSelection={ onChangeSelection }
 				defaultLayouts={ { table: {} } }
 				paginationInfo={ paginationInfo }
 			/>
