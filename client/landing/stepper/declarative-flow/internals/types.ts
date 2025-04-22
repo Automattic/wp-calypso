@@ -1,5 +1,6 @@
 import { StepperInternal } from '@automattic/data-stores';
 import React from 'react';
+import { Store } from 'redux';
 import { STEPPER_TRACKS_EVENTS } from '../../constants';
 
 /**
@@ -230,11 +231,9 @@ export type FlowV2 = {
 	 *
 	 * Returning false will kill the app.
 	 */
-	initialize():
-		| false
-		| Promise< false >
-		| Promise< readonly StepperStep[] >
-		| readonly StepperStep[];
+	initialize(
+		reduxStore: Store
+	): false | Promise< false > | Promise< readonly StepperStep[] > | readonly StepperStep[];
 	useStepNavigation: UseStepNavigationHook< StepperStep[] >;
 	/**
 	 * A hook that is called in the flow's root at every render. You can use this hook to setup side-effects, call other hooks, etc..

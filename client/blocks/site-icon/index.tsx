@@ -13,7 +13,7 @@ import { getSite } from 'calypso/state/sites/selectors';
 
 import './style.scss';
 
-type Site = {
+export type Site = {
 	ID?: number;
 	icon?: {
 		img: string;

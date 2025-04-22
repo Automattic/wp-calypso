@@ -5,6 +5,11 @@
 	display: flex;
 	flex-direction: column;
 	clear: left;
+	gap: 16px 48px;
+
+	&:not(.is-error) {
+		margin-bottom: 48px;
+	}
 
 	@include break-small {
 		flex-direction: row-reverse;
@@ -12,47 +17,10 @@
 
 	.qr-code-login__instructions {
 		text-align: left;
-		padding-right: 20px;
-		font-size: $font-body-small;
-
-		.qr-code-login__heading {
-			font-size: $font-title-small;
-			text-align: center;
-			margin-bottom: 12px;
-			font-weight: 500;
-
-			@include break-small {
-				text-align: left;
-			}
-		}
+		line-height: 1.6;
 
 		.qr-code-login__steps {
-			margin-left: 16px;
-		}
-
-		.qr-code-login__step {
-			margin-bottom: 0.75em;
-		}
-
-		.qr-code-login__info {
-			border-radius: 2px;
-			font-size: $font-body-small;
-			padding: 8px;
-			align-items: center;
-			background-color: var(--color-neutral-0);
-			display: flex;
-			color: var(--color-neutral-50);
-
-			.gridicon {
-				padding-right: 4px;
-				width: 60px;
-				text-align: left;
-				fill: var(--color-warning);
-			}
-
-			strong {
-				color: var(--color-neutral-70);
-			}
+			margin: 16px 0 0 16px;
 		}
 
 		a {

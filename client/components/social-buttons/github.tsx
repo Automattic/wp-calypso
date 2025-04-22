@@ -127,8 +127,11 @@ const GitHubLoginButton = ( {
 	};
 
 	useEffect( () => {
-		if ( service === 'github' && socialServiceResponse ) {
-			responseHandler( { ...socialServiceResponse, service: 'github' } );
+		if ( service === 'github' && socialServiceResponse?.access_token ) {
+			responseHandler( {
+				access_token: socialServiceResponse.access_token,
+				service: 'github',
+			} );
 		}
 	}, [ socialServiceResponse, service, responseHandler ] );
 

@@ -148,7 +148,8 @@ export default function CheckoutMain( {
 	const isSiteless =
 		sitelessCheckoutType === 'jetpack' ||
 		sitelessCheckoutType === 'akismet' ||
-		sitelessCheckoutType === 'marketplace';
+		sitelessCheckoutType === 'marketplace' ||
+		sitelessCheckoutType === 'a4a';
 	const { stripe, stripeConfiguration, isStripeLoading, stripeLoadingError } = useStripe();
 	const { razorpayConfiguration, isRazorpayLoading, razorpayLoadingError } = useRazorpay();
 	const createUserAndSiteBeforeTransaction =
@@ -348,6 +349,8 @@ export default function CheckoutMain( {
 			customizedPreviousPath
 		);
 
+	const isForBusiness = responseCart?.tax?.location?.is_for_business ?? false;
+
 	const {
 		paymentMethods: storedCards,
 		isLoading: isLoadingStoredCards,
@@ -355,8 +358,14 @@ export default function CheckoutMain( {
 	} = useStoredPaymentMethods( {
 		isLoggedOut: isLoggedOutCart,
 		type: 'card',
-		isForBusiness: responseCart ? responseCart?.tax?.location?.is_for_business : null,
+		isForBusiness,
 	} );
+
+	// Stored cards are filtered by the shoppingCart's tax_location->is_for_business value
+	const areStoredCardsFiltered = isForBusiness;
+
+	// If tax_location->is_for_business is set to true, then only business cards will show in Checkout
+	const isBusinessCardsFilterEmpty = isForBusiness && storedCards.length ? true : false;
 
 	useActOnceOnStrings( [ storedCardsError ].filter( isValueTruthy ), ( messages ) => {
 		messages.forEach( ( message ) => {
@@ -548,7 +557,21 @@ export default function CheckoutMain( {
 				highlightOver: colors[ 'WordPress Blue 60' ],
 		  }
 		: {};
-	const theme = { ...checkoutTheme, colors: { ...checkoutTheme.colors, ...jetpackColors } };
+	const a4aColors =
+		sitelessCheckoutType === 'a4a'
+			? {
+					primary: colors[ 'Automattic Blue' ],
+					primaryBorder: colors[ 'Automattic Blue 80' ],
+					primaryOver: colors[ 'Automattic Blue 60' ],
+					highlight: colors[ 'Automattic Blue 50' ],
+					highlightBorder: colors[ 'Automattic Blue 80' ],
+					highlightOver: colors[ 'Automattic Blue 60' ],
+			  }
+			: {};
+	const theme = {
+		...checkoutTheme,
+		colors: { ...checkoutTheme.colors, ...jetpackColors, ...a4aColors },
+	};
 
 	const isCheckoutV2ExperimentLoading = false;
 
@@ -798,6 +821,8 @@ export default function CheckoutMain( {
 					isLoggedOutCart={ !! isLoggedOutCart }
 					onPageLoadError={ onPageLoadError }
 					paymentMethods={ paymentMethods }
+					areStoredCardsFiltered={ areStoredCardsFiltered }
+					isBusinessCardsFilterEmpty={ isBusinessCardsFilterEmpty }
 					removeProductFromCart={ removeProductFromCartAndMaybeRedirect }
 					showErrorMessageBriefly={ showErrorMessageBriefly }
 					siteId={ updatedSiteId }

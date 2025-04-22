@@ -14,6 +14,10 @@ $blueberry-color: #3858e9;
 	line-height: 16px;
 	margin-top: 30px;
 
+	a {
+		text-decoration: none;
+	}
+
 	.plan-storage__bar {
 		width: 100%;
 		background: color-mix(in srgb, $blueberry-color 8%, transparent);

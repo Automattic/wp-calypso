@@ -19,9 +19,6 @@ import Timezone from 'calypso/components/timezone';
 import scrollToAnchor from 'calypso/lib/scroll-to-anchor';
 import { domainManagementEdit } from 'calypso/my-sites/domains/paths';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
-import SiteSettingsForm from 'calypso/sites/settings/site/form';
-import { getRemoveDuplicateViewsExperimentAssignment } from 'calypso/state/explat-experiments/actions';
-import { getIsRemoveDuplicateViewsExperimentEnabled } from 'calypso/state/explat-experiments/selectors';
 import getTimezonesLabels from 'calypso/state/selectors/get-timezones-labels';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
@@ -45,7 +42,6 @@ import wrapSettingsForm from './wrap-settings-form';
 export class SiteSettingsFormGeneral extends Component {
 	componentDidMount() {
 		setTimeout( () => scrollToAnchor( { offset: 15 } ) );
-		this.props.getRemoveDuplicateViewsExperimentAssignment();
 	}
 
 	getIncompleteLocaleNoticeMessage = ( language ) => {
@@ -409,7 +405,6 @@ export class SiteSettingsFormGeneral extends Component {
 	render() {
 		const {
 			handleSubmitForm,
-			isRemoveDuplicateViewsExperimentEnabled,
 			isRequestingSettings,
 			isSavingSettings,
 			site,
@@ -454,38 +449,29 @@ export class SiteSettingsFormGeneral extends Component {
 						</Card>
 					</>
 				) }
-				{ ! isRemoveDuplicateViewsExperimentEnabled && <SiteSettingsForm { ...this.props } /> }
 				{ ! isDevelopmentSite && this.renderAdminInterface() }
 			</div>
 		);
 	}
 }
 
-const connectComponent = connect(
-	( state ) => {
-		const siteId = getSelectedSiteId( state );
-		const isRemoveDuplicateViewsExperimentEnabled =
-			getIsRemoveDuplicateViewsExperimentEnabled( state );
-		return {
-			isAtomicAndEditingToolkitDeactivated:
-				isAtomicSite( state, siteId ) &&
-				getSiteOption( state, siteId, 'editing_toolkit_is_active' ) === false,
-			adminInterfaceIsWPAdmin: isAdminInterfaceWPAdmin( state, siteId ),
-			isRemoveDuplicateViewsExperimentEnabled,
-			isUnlaunchedSite: isUnlaunchedSite( state, siteId ),
-			isWPForTeamsSite: isSiteWPForTeams( state, siteId ),
-			isWpcomStagingSite: isSiteWpcomStaging( state, siteId ),
-			selectedSite: getSelectedSite( state ),
-			siteIsJetpack: isJetpackSite( state, siteId ),
-			siteIsWpcom: isWpcomSite( state, siteId ),
-			siteSlug: getSelectedSiteSlug( state ),
-			timezonesLabels: getTimezonesLabels( state ),
-		};
-	},
-	{
-		getRemoveDuplicateViewsExperimentAssignment,
-	}
-);
+const connectComponent = connect( ( state ) => {
+	const siteId = getSelectedSiteId( state );
+	return {
+		isAtomicAndEditingToolkitDeactivated:
+			isAtomicSite( state, siteId ) &&
+			getSiteOption( state, siteId, 'editing_toolkit_is_active' ) === false,
+		adminInterfaceIsWPAdmin: isAdminInterfaceWPAdmin( state, siteId ),
+		isUnlaunchedSite: isUnlaunchedSite( state, siteId ),
+		isWPForTeamsSite: isSiteWPForTeams( state, siteId ),
+		isWpcomStagingSite: isSiteWpcomStaging( state, siteId ),
+		selectedSite: getSelectedSite( state ),
+		siteIsJetpack: isJetpackSite( state, siteId ),
+		siteIsWpcom: isWpcomSite( state, siteId ),
+		siteSlug: getSelectedSiteSlug( state ),
+		timezonesLabels: getTimezonesLabels( state ),
+	};
+} );
 
 const getFormSettings = ( settings ) => {
 	const defaultSettings = {

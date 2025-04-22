@@ -15,6 +15,7 @@ import Sidebar, {
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import A4AContactSupportWidget, { CONTACT_URL_HASH_FRAGMENT } from '../a4a-contact-support-widget';
+import ProvideFeedback from '../a4a-feedback/provide-feedback';
 import SidebarHeader from './header';
 import ProfileDropdown from './header/profile-dropdown';
 
@@ -132,6 +133,7 @@ const A4ASidebar = ( {
 			</SidebarFooter>
 
 			<A4AContactSupportWidget />
+			<ProvideFeedback />
 		</Sidebar>
 	);
 };

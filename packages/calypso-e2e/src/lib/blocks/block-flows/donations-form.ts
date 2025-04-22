@@ -15,6 +15,9 @@ interface ValidationData {
 
 const blockParentSelector = 'div[aria-label="Block: Donations Form"]';
 
+const blockInsertedPopupConfirmButtonSelector =
+	'div.jetpack-donations-first-time-modal[role="dialog"] button:has-text("Got it")';
+
 /**
  * Represents the flow of using the Donations Form block.
  */
@@ -34,6 +37,7 @@ export class DonationsFormFlow implements BlockFlow {
 
 	blockSidebarName = 'Donations Form';
 	blockEditorSelector = blockParentSelector;
+	blockInsertedPopupConfirmButtonSelector = blockInsertedPopupConfirmButtonSelector;
 
 	/**
 	 * Configure the block in the editor with the configuration data from the constructor

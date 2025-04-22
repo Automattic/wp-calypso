@@ -2,12 +2,11 @@ import { addQueryArgs } from '@wordpress/url';
 import { localize, fixMe } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import AsyncLoad from 'calypso/components/async-load';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import { withSiteCopy } from 'calypso/landing/stepper/hooks/use-site-copy';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
-import { getRemoveDuplicateViewsExperimentAssignment } from 'calypso/state/explat-experiments/actions';
-import { getIsRemoveDuplicateViewsExperimentEnabled } from 'calypso/state/explat-experiments/selectors';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import {
 	hasLoadedSitePurchasesFromServer,
@@ -24,8 +23,11 @@ import { isJetpackSite, getSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import AdministrationToolCard from './card';
 import { requestRestore } from './restore-plan-software';
-
 import './style.scss';
+
+const MODAL_NAMES = {
+	LEAVE_SITE: 'LEAVE_SITE',
+};
 
 const trackDeleteSiteOption = ( option ) => {
 	recordTracksEvent( 'calypso_settings_delete_site_options', {
@@ -34,15 +36,35 @@ const trackDeleteSiteOption = ( option ) => {
 };
 
 class SiteTools extends Component {
+	state = {
+		modalOpen: {
+			leaveSite: false,
+		},
+	};
+
 	componentDidUpdate( prevProps ) {
 		if ( ! prevProps.purchasesError && this.props.purchasesError ) {
 			this.props.errorNotice( this.props.purchasesError );
 		}
 	}
 
-	componentDidMount() {
-		this.props.getRemoveDuplicateViewsExperimentAssignment();
-	}
+	handleOpenModal = ( modalName ) => () => {
+		this.setState( ( state ) => ( {
+			modalOpen: {
+				...state.modalOpen,
+				[ modalName ]: true,
+			},
+		} ) );
+	};
+
+	handleCloseModal = ( modalName ) => () => {
+		this.setState( ( state ) => ( {
+			modalOpen: {
+				...state.modalOpen,
+				[ modalName ]: false,
+			},
+		} ) );
+	};
 
 	render() {
 		const {
@@ -52,7 +74,6 @@ class SiteTools extends Component {
 			siteSlug,
 			copySiteUrl,
 			cloneUrl,
-			isUntangled,
 			showChangeAddress,
 			showClone,
 			showRestorePlanSoftware,
@@ -60,35 +81,32 @@ class SiteTools extends Component {
 			showDeleteSite,
 			showManageConnection,
 			showStartSiteTransfer,
+			showLeaveSite,
 			siteId,
 			headerTitle,
 			source,
 		} = this.props;
 
+		const { modalOpen } = this.state;
+
 		const changeAddressLink = `/domains/manage/${ siteSlug }?source=${ source }`;
 
-		const startOverLink = isUntangled
-			? `/sites/settings/site/${ siteSlug }/reset-site`
-			: `/settings/start-over/${ siteSlug }?source=${ source }`;
+		const startOverLink = `/sites/settings/site/${ siteSlug }/reset-site`;
 
 		const restorePlanSoftwareTitle = translate( 'Restore plugins and themes' );
 		const restorePlanSoftwareText = translate(
 			'If your website is missing plugins and themes that come with your plan, you may restore them here.'
 		);
 
-		const startSiteTransferLink = isUntangled
-			? `/sites/settings/site/${ siteSlug }/transfer-site`
-			: `/settings/start-site-transfer/${ siteSlug }?source=${ source }`;
+		const startSiteTransferLink = `/sites/settings/site/${ siteSlug }/transfer-site`;
 
-		const deleteSiteLink = isUntangled
-			? `/sites/settings/site/${ siteSlug }/delete-site`
-			: `/settings/delete-site/${ siteSlug }?source=${ source }`;
+		const deleteSiteLink = `/sites/settings/site/${ siteSlug }/delete-site`;
 
 		const manageConnectionLink = `/settings/manage-connection/${ siteSlug }?source=${ source }`;
 
 		const changeSiteAddress = translate( 'Change your site address' );
 
-		const startOver = isUntangled ? translate( 'Reset site' ) : translate( 'Reset your site' );
+		const startOver = translate( 'Reset site' );
 		const startOverText = translate(
 			"Remove all posts, pages, and media to start fresh while keeping your site's address."
 		);
@@ -108,9 +126,7 @@ class SiteTools extends Component {
 		const cloneTitle = translate( 'Clone', { context: 'verb' } );
 		const cloneText = translate( 'Clone your existing site and all its data to a new location.' );
 
-		const startSiteTransferTitle = isUntangled
-			? translate( 'Transfer site' )
-			: translate( 'Transfer your site' );
+		const startSiteTransferTitle = translate( 'Transfer site' );
 		const startSiteTransferText = fixMe( {
 			text: 'Transfer your site, plan, and purchases to a new or existing site member.',
 			newCopy: translate(
@@ -156,13 +172,32 @@ class SiteTools extends Component {
 						description={ startSiteTransferText }
 					/>
 				) }
-				{ isUntangled && showRestorePlanSoftware && (
+				{ showRestorePlanSoftware && (
 					<AdministrationToolCard
 						onClick={ this.restorePlanSoftware }
 						title={ restorePlanSoftwareTitle }
 						description={ restorePlanSoftwareText }
 					/>
 				) }
+
+				{ showLeaveSite && (
+					<>
+						<AdministrationToolCard
+							title={ translate( 'Leave site' ) }
+							description={ translate( 'Leave this site and remove your access.' ) }
+							onClick={ this.handleOpenModal( MODAL_NAMES.LEAVE_SITE ) }
+						/>
+						{ modalOpen[ MODAL_NAMES.LEAVE_SITE ] && (
+							<AsyncLoad
+								require="calypso/sites/settings/administration/tools/leave-site/leave-site-modal"
+								placeholder={ null }
+								siteId={ siteId }
+								onClose={ this.handleCloseModal( MODAL_NAMES.LEAVE_SITE ) }
+							/>
+						) }
+					</>
+				) }
+
 				{ showDeleteContent && (
 					<AdministrationToolCard
 						href={ startOverLink }
@@ -220,7 +255,6 @@ export default connect(
 		const isVip = isVipSite( state, siteId );
 		const isP2 = isSiteWPForTeams( state, siteId );
 		const isP2Hub = isSiteP2Hub( state, siteId );
-		const isUntangled = getIsRemoveDuplicateViewsExperimentEnabled( state );
 		const rewindState = getRewindState( state, siteId );
 		const sitePurchasesLoaded = hasLoadedSitePurchasesFromServer( state );
 
@@ -235,10 +269,11 @@ export default connect(
 		const showStartSiteTransfer =
 			! isDevelopmentSite && canCurrentUserStartSiteOwnerTransfer( state, siteId );
 
+		const showLeaveSite = sitePurchasesLoaded && ! isP2;
+
 		return {
 			site,
 			isAtomic,
-			isUntangled,
 			copySiteUrl,
 			siteSlug,
 			purchasesError: getPurchasesError( state ),
@@ -250,6 +285,7 @@ export default connect(
 			showDeleteSite: ( ! isJetpack || isAtomic ) && ! isVip && sitePurchasesLoaded,
 			showManageConnection: isJetpack && ! isAtomic,
 			showStartSiteTransfer,
+			showLeaveSite,
 			siteId,
 			hasCancelablePurchases: hasCancelableSitePurchases( state, siteId ),
 		};
@@ -257,6 +293,5 @@ export default connect(
 	{
 		errorNotice,
 		successNotice,
-		getRemoveDuplicateViewsExperimentAssignment,
 	}
 )( localize( withSiteCopy( SiteTools ) ) );

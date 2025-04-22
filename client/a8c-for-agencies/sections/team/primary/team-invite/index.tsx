@@ -3,14 +3,17 @@ import { Button, TextControl, TextareaControl } from '@wordpress/components';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
-import { A4AFeedback } from 'calypso/a8c-for-agencies/components/a4a-feedback';
 import useShowFeedback from 'calypso/a8c-for-agencies/components/a4a-feedback/hooks/use-show-a4a-feedback';
+import { FeedbackType } from 'calypso/a8c-for-agencies/components/a4a-feedback/types';
 import Form from 'calypso/a8c-for-agencies/components/form';
 import FormField from 'calypso/a8c-for-agencies/components/form/field';
 import FormSection from 'calypso/a8c-for-agencies/components/form/section';
 import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
-import { A4A_TEAM_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import {
+	A4A_FEEDBACK_LINK,
+	A4A_TEAM_LINK,
+} from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import useSendTeamMemberInvite from 'calypso/a8c-for-agencies/data/team/use-send-team-member-invite';
 import LayoutBody from 'calypso/layout/hosting-dashboard/body';
 import LayoutHeader, {
@@ -34,7 +37,7 @@ export default function TeamInvite() {
 
 	const { mutate: sendInvite, isPending: isSending } = useSendTeamMemberInvite();
 
-	const { showFeedback, isFeedbackShown, feedbackProps } = useShowFeedback( 'member-invite-sent' );
+	const { isFeedbackShown } = useShowFeedback( FeedbackType.MemberInviteSent );
 
 	const onSendInvite = useCallback( () => {
 		setError( '' );
@@ -67,15 +70,14 @@ export default function TeamInvite() {
 						} )
 					);
 					dispatch( recordTracksEvent( 'calypso_a4a_team_invite_success' ) );
-					! isFeedbackShown
-						? window.history.replaceState(
-								null,
-								'',
-								addQueryArgs( window.location.href, {
+					isFeedbackShown
+						? page.redirect( `${ A4A_TEAM_LINK }/${ TAB_INVITED_MEMBERS }` )
+						: page.redirect(
+								addQueryArgs( A4A_FEEDBACK_LINK, {
 									args: { email: username },
-								} ) + '#feedback'
-						  )
-						: page.redirect( `${ A4A_TEAM_LINK }/${ TAB_INVITED_MEMBERS }` );
+									type: FeedbackType.MemberInviteSent,
+								} )
+						  );
 				},
 
 				onError: ( error ) => {
@@ -108,64 +110,60 @@ export default function TeamInvite() {
 				</LayoutHeader>
 			</LayoutTop>
 			<LayoutBody>
-				{ showFeedback ? (
-					<A4AFeedback { ...feedbackProps } />
-				) : (
-					<Form
-						className="team-invite-form"
-						title={ translate( 'Invite a team member.' ) }
-						autocomplete="off"
-						description={ translate( 'Invite team members to manage client sites and purchases.' ) }
-					>
-						<FormSection title={ translate( 'Team member information' ) }>
-							<FormField
-								label={ translate( 'Email or WordPress.com Username' ) }
-								error={ error }
-								isRequired
-							>
-								<TextControl
-									type="text"
-									placeholder={ translate( 'team-member@example.com' ) }
-									value={ username }
-									onChange={ onUsernameChange }
-									onClick={ () =>
-										dispatch( recordTracksEvent( 'calypso_a4a_team_invite_username_click' ) )
-									}
-								/>
-							</FormField>
+				<Form
+					className="team-invite-form"
+					title={ translate( 'Invite a team member.' ) }
+					autocomplete="off"
+					description={ translate( 'Invite team members to manage client sites and purchases.' ) }
+				>
+					<FormSection title={ translate( 'Team member information' ) }>
+						<FormField
+							label={ translate( 'Email or WordPress.com Username' ) }
+							error={ error }
+							isRequired
+						>
+							<TextControl
+								type="text"
+								placeholder={ translate( 'team-member@example.com' ) }
+								value={ username }
+								onChange={ onUsernameChange }
+								onClick={ () =>
+									dispatch( recordTracksEvent( 'calypso_a4a_team_invite_username_click' ) )
+								}
+							/>
+						</FormField>
 
-							<FormField
-								label={ translate( 'Message' ) }
-								description={ translate(
-									'Optional: Include a custom message to provide more context to your team member.'
-								) }
-							>
-								<TextareaControl
-									value={ message }
-									onChange={ setMessage }
-									onClick={ () =>
-										dispatch( recordTracksEvent( 'calypso_a4a_team_invite_message_click' ) )
-									}
-								/>
-							</FormField>
-						</FormSection>
+						<FormField
+							label={ translate( 'Message' ) }
+							description={ translate(
+								'Optional: Include a custom message to provide more context to your team member.'
+							) }
+						>
+							<TextareaControl
+								value={ message }
+								onChange={ setMessage }
+								onClick={ () =>
+									dispatch( recordTracksEvent( 'calypso_a4a_team_invite_message_click' ) )
+								}
+							/>
+						</FormField>
+					</FormSection>
 
-						<div className="team-invite-form__required-information">
-							{ translate( '* Indicates a required field' ) }
-						</div>
+					<div className="team-invite-form__required-information">
+						{ translate( '* Indicates a required field' ) }
+					</div>
 
-						<div className="team-invite-form__footer">
-							<Button
-								variant="primary"
-								onClick={ onSendInvite }
-								disabled={ isSending }
-								isBusy={ isSending }
-							>
-								{ translate( 'Send invite' ) }
-							</Button>
-						</div>
-					</Form>
-				) }
+					<div className="team-invite-form__footer">
+						<Button
+							variant="primary"
+							onClick={ onSendInvite }
+							disabled={ isSending }
+							isBusy={ isSending }
+						>
+							{ translate( 'Send invite' ) }
+						</Button>
+					</div>
+				</Form>
 			</LayoutBody>
 		</Layout>
 	);

@@ -1,10 +1,12 @@
 import config from '@automattic/calypso-config';
 import { translate } from 'i18n-calypso';
 import { omit } from 'lodash';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import wpcom from 'calypso/lib/wp';
 import { purchasesRoot } from 'calypso/me/purchases/paths';
 import {
+	SITE_LEAVE_RECEIVE,
 	SITE_DELETE_RECEIVE,
 	SITE_RECEIVE,
 	SITE_REQUEST,
@@ -21,10 +23,27 @@ import {
 } from 'calypso/state/action-types';
 import { fetchCurrentUser } from 'calypso/state/current-user/actions';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getP2HubBlogId from 'calypso/state/selectors/get-p2-hub-blog-id';
 import getSiteUrl from 'calypso/state/selectors/get-site-url';
 import { SITE_REQUEST_FIELDS, SITE_REQUEST_OPTIONS } from 'calypso/state/sites/constants';
-import { getSiteDomain } from 'calypso/state/sites/selectors';
+import { getSiteDomain, getSiteSlug } from 'calypso/state/sites/selectors';
+
+/**
+ * Returns a thunk that dispatches an action object to be used in signalling that a site has been
+ * deleted. It also re-fetches the current user.
+ * @param  {number} siteId  ID of deleted site
+ * @returns {Function}        Action thunk
+ */
+export function receiveLeaveSite( siteId ) {
+	return ( dispatch ) => {
+		dispatch( {
+			type: SITE_LEAVE_RECEIVE,
+			siteId,
+		} );
+		dispatch( fetchCurrentUser() );
+	};
+}
 
 /**
  * Returns a thunk that dispatches an action object to be used in signalling that a site has been
@@ -195,6 +214,75 @@ export function requestSite( siteFragment ) {
 			} );
 
 		return result;
+	};
+}
+
+const siteLeaveNoticeId = 'site-leave';
+const siteLeaveNoticeOptions = {
+	duration: 5000,
+	id: siteLeaveNoticeId,
+};
+
+/**
+ * Returns a function which, when invoked, triggers a network request to delete
+ * a user from a specified site.
+ * @param  {number}   siteId Site ID
+ * @param  {number}   userId User ID
+ * @returns {Function}        Action thunk
+ */
+export function leaveSite( siteId, userId ) {
+	return ( dispatch, getState ) => {
+		const state = getState();
+		const siteDomain = getSiteDomain( state, siteId );
+		const siteSlug = getSiteSlug( state, siteId );
+		const isAdmin = canCurrentUser( state, siteId, 'manage_options' );
+
+		return wpcom.req
+			.post( `/sites/${ siteId }/users/${ userId }/delete` )
+			.then( () => {
+				dispatch( receiveLeaveSite( siteId ) );
+				dispatch(
+					successNotice(
+						translate( 'You have left %(siteDomain)s successfully.', { args: { siteDomain } } ),
+						siteLeaveNoticeOptions
+					)
+				);
+				dispatch(
+					recordTracksEvent( 'calypso_leave_blog_success', {
+						site_id: siteId,
+						is_admin: isAdmin,
+					} )
+				);
+				return true;
+			} )
+			.catch( ( error ) => {
+				if (
+					error.error === 'user_owns_domain_subscription' ||
+					error.error === 'user_has_active_subscriptions'
+				) {
+					dispatch(
+						errorNotice(
+							translate( 'You must cancel any active subscriptions prior to leave your site.' ),
+							{
+								id: siteLeaveNoticeId,
+								showDismiss: false,
+								button: translate( 'Manage Purchases' ),
+								href: `/purchases/subscriptions/${ siteSlug }`,
+							}
+						)
+					);
+				} else {
+					dispatch( errorNotice( error.message, siteLeaveNoticeOptions ) );
+				}
+
+				dispatch(
+					recordTracksEvent( 'calypso_leave_blog_failure', {
+						site_id: siteId,
+						is_admin: isAdmin,
+					} )
+				);
+				return false;
+			} );
 	};
 }
 

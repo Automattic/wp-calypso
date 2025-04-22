@@ -66,6 +66,7 @@ export const PlaygroundStep: StepType = ( { navigation, flow } ) => {
 			<StepWrapper
 				hideBack
 				hideSkip
+				hideFormattedHeader
 				customizedActionButtons={
 					<Button
 						variant="primary"

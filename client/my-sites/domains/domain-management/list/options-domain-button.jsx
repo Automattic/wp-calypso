@@ -10,7 +10,7 @@ import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import SplitButton from 'calypso/components/split-button';
-import { domainAddNew, domainUseMyDomain } from 'calypso/my-sites/domains/paths';
+import { domainUseMyDomain } from 'calypso/my-sites/domains/paths';
 import { composeAnalytics, recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
@@ -32,17 +32,9 @@ class AddDomainButton extends Component {
 		super( props );
 	}
 
-	getAddNewDomainUrl = () => {
-		if ( ! this.props.selectedSiteSlug ) {
-			return '/start/domain';
-		}
-
-		return domainAddNew( this.props.selectedSiteSlug );
-	};
-
 	clickAddDomain = () => {
 		this.props.trackAddDomainClick();
-		page( this.getAddNewDomainUrl() );
+		page( '/start/domain' );
 	};
 
 	trackMenuClick = ( reactEvent ) => {
@@ -93,7 +85,7 @@ class AddDomainButton extends Component {
 				whiteSeparator={ ! this.props.sidebarMode }
 				label={ isBreakpointActive ? undefined : translate( 'Add new domain' ) }
 				toggleIcon={ isBreakpointActive ? 'plus' : undefined }
-				href={ this.getAddNewDomainUrl() }
+				href="/start/domain"
 				onClick={ this.trackAddDomainClick }
 			>
 				{ this.renderOptions() }

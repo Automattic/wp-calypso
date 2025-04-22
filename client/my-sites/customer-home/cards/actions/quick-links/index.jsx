@@ -1,13 +1,13 @@
 import config from '@automattic/calypso-config';
 import { getAllFeaturesForPlan } from '@automattic/calypso-products/';
 import { JetpackLogo, FoldableCard } from '@automattic/components';
+import { blaze } from '@automattic/components/src/icons';
 import { GeneratorModal } from '@automattic/jetpack-ai-calypso';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { connect, useSelector } from 'react-redux';
 import { useDebouncedCallback } from 'use-debounce';
 import fiverrIcon from 'calypso/assets/images/customer-home/fiverr-logo-grey.svg';
-import blazeIcon from 'calypso/assets/images/icons/blaze-icon.svg';
 import withIsFSEActive from 'calypso/data/themes/with-is-fse-active';
 import { usePromoteWidget, PromoteWidgetStatus } from 'calypso/lib/promote-post';
 import useAdvertisingUrl from 'calypso/my-sites/advertising/useAdvertisingUrl';
@@ -116,7 +116,7 @@ export const QuickLinks = ( {
 				customizerLinks
 			) }
 			<ActionBox
-				href={ usesWpAdminInterface ? `${ siteAdminUrl }post-new.php` : `/post/${ siteSlug }` }
+				href={ `${ siteAdminUrl }post-new.php` }
 				hideLinkIndicator
 				onClick={ trackWritePostAction }
 				label={ translate( 'Write blog post' ) }
@@ -128,14 +128,12 @@ export const QuickLinks = ( {
 					hideLinkIndicator
 					onClick={ trackPromotePostAction }
 					label={ translate( 'Promote with Blaze' ) }
-					iconSrc={ blazeIcon }
+					svgIcon={ blaze }
 				/>
 			) }
 			{ ! isStaticHomePage && canModerateComments && (
 				<ActionBox
-					href={
-						usesWpAdminInterface ? `${ siteAdminUrl }edit-comments.php` : `/comments/${ siteSlug }`
-					}
+					href={ `${ siteAdminUrl }edit-comments.php` }
 					hideLinkIndicator
 					onClick={ trackManageCommentsAction }
 					label={ translate( 'Manage comments' ) }
@@ -144,11 +142,7 @@ export const QuickLinks = ( {
 			) }
 			{ canEditPages && (
 				<ActionBox
-					href={
-						usesWpAdminInterface
-							? `${ siteAdminUrl }post-new.php?post_type=page`
-							: `/page/${ siteSlug }`
-					}
+					href={ `${ siteAdminUrl }post-new.php?post_type=page` }
 					hideLinkIndicator
 					onClick={ trackAddPageAction }
 					label={ translate( 'Add a page' ) }

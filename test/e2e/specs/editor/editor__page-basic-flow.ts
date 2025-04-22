@@ -63,32 +63,30 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Page Flow' ), function () 
 
 		const editorParent = await editorPage.getEditorParent();
 
-		const inserterSelector = await editorParent.getByRole( 'listbox', { name: 'All' } );
 		const modalSelector = await editorParent.getByRole( 'listbox', { name: 'Block patterns' } );
 
-		const firstPattern = await inserterSelector.or( modalSelector ).getByRole( 'option' ).first();
-
-		const allPatternsCategoryMobile = editorParent
-			.locator( '.block-editor-inserter__mobile-tab-navigation' )
-			.getByRole( 'list' )
-			.getByRole( 'listitem' )
-			.first();
-
-		// On mobile patterns are not visible by default, so we need to click on the first category.
-		// Clicking is optional e.g: on desktop clicking is not needed.
+		// The PR, https://github.com/WordPress/gutenberg/pull/69081, restored the starter content modal for newly created pages.
+		// However, not all of themes have the page template. As a result, we have to check whether the modal is open.
+		// If not, we can simply open the inserter from the sidebar manually.
+		let selectedPatternLocator;
 		try {
-			await allPatternsCategoryMobile.click( { timeout: 3000 } );
-		} catch ( e ) {}
+			await modalSelector.waitFor( { timeout: 3 * 1000 } );
+			selectedPatternLocator = await modalSelector.getByRole( 'option' ).first();
+		} catch ( e ) {
+			// Probably doesn't exist. Let's add the pattern from the sidebar.
+			selectedPatternLocator = await editorPage.addPatternFromSidebar( 'About (Page)' );
+		}
 
 		pageTemplateFirstTextContent =
-			( await firstPattern
+			( await selectedPatternLocator
 				.frameLocator( 'iframe' )
 				.locator( '.is-root-container' )
 				.locator( 'p, h1, h2, h3, h4, h5, h6, blockquote, ul, ol' )
 				.first()
 				.textContent() ) || '';
 
-		pageTemplateToSelect = ( await firstPattern.getAttribute( 'aria-label' ) ) ?? '';
+		pageTemplateFirstTextContent = pageTemplateFirstTextContent.trim();
+		pageTemplateToSelect = ( await selectedPatternLocator.getAttribute( 'aria-label' ) ) ?? '';
 		await editorPage.selectTemplate( pageTemplateToSelect, { timeout: 15 * 1000 } );
 	} );
 

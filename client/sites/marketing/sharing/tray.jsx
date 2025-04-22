@@ -181,6 +181,11 @@ class SharingButtonsTray extends Component {
 	};
 
 	getButtonElements = () => {
+		// Hide the Twitter button, it's now replaced by X.
+		const filteredButtons = this.props.buttons.filter( ( button ) => {
+			return ! ( button.ID === 'twitter' && button.enabled === false );
+		} );
+
 		if ( this.state.isReordering ) {
 			const buttons = this.getButtonsOfCurrentVisibility().map( function ( button ) {
 				return <ButtonsPreviewButton key={ button.ID } button={ button } enabled style="text" />;
@@ -190,7 +195,7 @@ class SharingButtonsTray extends Component {
 		}
 		return (
 			<ButtonsPreviewButtons
-				buttons={ this.props.buttons }
+				buttons={ filteredButtons }
 				visibility={ this.props.visibility }
 				style="text"
 				showMore={ false }

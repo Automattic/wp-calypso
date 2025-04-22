@@ -6,8 +6,14 @@ import { getQueryArg, removeQueryArgs } from '@wordpress/url';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useState, useContext, useRef } from 'react';
+import useShowFeedback from 'calypso/a8c-for-agencies/components/a4a-feedback/hooks/use-show-a4a-feedback';
+import { FeedbackType } from 'calypso/a8c-for-agencies/components/a4a-feedback/types';
 import A4APopover from 'calypso/a8c-for-agencies/components/a4a-popover';
-import { A4A_SITES_LINK_NEEDS_SETUP } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import {
+	A4A_SITES_LINK_NEEDS_SETUP,
+	A4A_FEEDBACK_LINK,
+	A4A_LICENSES_LINK,
+} from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import {
 	isPressableHostingProduct,
 	isWPCOMHostingProduct,
@@ -47,6 +53,7 @@ interface Props {
 	isChildLicense?: boolean;
 	meta?: LicenseMeta;
 	referral?: ReferralAPIResponse | null;
+	productId: number;
 }
 
 export default function LicensePreview( {
@@ -58,6 +65,7 @@ export default function LicensePreview( {
 	isChildLicense,
 	meta,
 	referral,
+	productId,
 }: Props ) {
 	const licenseKey = license.licenseKey;
 	const blogId = license.blogId;
@@ -68,6 +76,8 @@ export default function LicensePreview( {
 
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+
+	const { isFeedbackShown } = useShowFeedback( FeedbackType.PurchaseCompleted );
 
 	const site = useSelector( ( state ) => getSite( state, blogId as number ) );
 	const isPressableLicense = isPressableHostingProduct( licenseKey );
@@ -282,6 +292,19 @@ export default function LicensePreview( {
 										target="_blank"
 										rel="norefferer noopener noreferrer"
 										href={ pressableManageUrl }
+										onClick={ () => {
+											if ( ! isFeedbackShown ) {
+												page.redirect(
+													addQueryArgs(
+														{
+															type: FeedbackType.PurchaseCompleted,
+															redirectUrl: A4A_LICENSES_LINK,
+														},
+														A4A_FEEDBACK_LINK
+													)
+												);
+											}
+										} }
 									>
 										{ translate( 'Manage in Pressable' ) }
 										<Icon className="gridicon" icon={ external } size={ 18 } />
@@ -360,9 +383,11 @@ export default function LicensePreview( {
 				<div>
 					{ !! isParentLicense && ! revokedAt && (
 						<LicenseBundleDropDown
-							product={ productName }
+							productName={ productName }
 							licenseKey={ licenseKey }
 							bundleSize={ quantity }
+							productId={ productId }
+							isClientLicense={ !! referral }
 						/>
 					) }
 					{ isWPCOMLicense && isSiteAtomic ? (
@@ -374,6 +399,9 @@ export default function LicensePreview( {
 							licenseType={ licenseType }
 							isChildLicense={ isChildLicense }
 							isClientLicense={ !! referral }
+							productName={ productName }
+							licenseKey={ licenseKey }
+							productId={ productId }
 						/>
 					) : (
 						/*

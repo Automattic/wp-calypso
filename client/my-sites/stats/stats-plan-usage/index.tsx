@@ -75,7 +75,13 @@ const PlanUsage: React.FC< PlanUsageProps > = ( {
 
 	return (
 		<div className="plan-usage">
-			<h3 className="plan-usage-heading">{ translate( 'Your Stats plan usage' ) }</h3>
+			<h3 className="plan-usage-heading">
+				{ translate( 'Your %(productName)s plan usage', {
+					args: {
+						productName: 'Stats',
+					},
+				} ) }
+			</h3>
 			<div className={ progressClassNames } key="progress">
 				<div
 					className="plan-usage-progress-bar"

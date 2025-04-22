@@ -12,8 +12,8 @@ import { drawerLeft, external, wordpress } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { useMemo } from 'react';
+import AsyncLoad from 'calypso/components/async-load';
 import { USE_SITE_EXCERPTS_QUERY_KEY } from 'calypso/data/sites/use-site-excerpts-query';
-import { useRemoveDuplicateViewsExperimentEnabled } from 'calypso/lib/remove-duplicate-views-experiment';
 import useRestoreSiteMutation from 'calypso/sites/hooks/use-restore-site-mutation';
 import {
 	getAdminInterface,
@@ -30,7 +30,7 @@ import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, infoNotice, successNotice } from 'calypso/state/notices/actions';
 import { launchSiteOrRedirectToLaunchSignupFlow } from 'calypso/state/sites/launch/actions';
-import type { Action } from '@wordpress/dataviews';
+import type { Action, RenderModalProps } from '@wordpress/dataviews';
 
 type Capabilities = Record< string, Record< string, boolean > >;
 
@@ -248,6 +248,14 @@ export const isActionEligible = (
 					! site.is_vip
 				);
 			};
+		case 'leave-site':
+			return ( site: SiteExcerptData ) => {
+				if ( isP2Site( site ) ) {
+					return false;
+				}
+
+				return true;
+			};
 		default:
 			return () => true;
 	}
@@ -320,8 +328,6 @@ export function useActions( {
 		},
 		Capabilities
 	>( ( state ) => state.currentUser.capabilities );
-
-	const isUntangled = useRemoveDuplicateViewsExperimentEnabled();
 
 	return useMemo(
 		() => [
@@ -514,6 +520,38 @@ export function useActions( {
 			},
 
 			{
+				id: 'leave-site',
+				label: __( 'Leave site' ),
+				callback: () => {
+					recordTracksEvent( 'calypso_sites_dashboard_site_action_leave_site_click' );
+				},
+				isEligible: isActionEligible( 'leave-site', capabilities ),
+				RenderModal: ( { items, closeModal }: RenderModalProps< SiteExcerptData > ) => {
+					return (
+						<AsyncLoad
+							require="calypso/sites/settings/administration/tools/leave-site/leave-site-modal-form"
+							placeholder={ null }
+							siteId={ items[ 0 ]?.ID ?? 0 }
+							onSuccess={ () => {
+								queryClient.invalidateQueries( {
+									queryKey: [
+										USE_SITE_EXCERPTS_QUERY_KEY,
+										SITE_EXCERPT_REQUEST_FIELDS,
+										SITE_EXCERPT_REQUEST_OPTIONS,
+										[],
+										'all',
+									],
+								} );
+							} }
+							onClose={ closeModal }
+						/>
+					);
+				},
+				modalSize: 'small',
+				hideModalHeader: true,
+			},
+
+			{
 				id: 'delete-site',
 				label: __( 'Delete site' ),
 				callback: ( sites ) => {
@@ -522,10 +560,8 @@ export function useActions( {
 
 					if ( isStagingSite( site ) ) {
 						urlPath = `/staging-site/${ site.slug }`;
-					} else if ( isUntangled ) {
-						urlPath = `/sites/settings/site/${ site.slug }/delete-site`;
 					} else {
-						urlPath = `/settings/delete-site/${ site.slug }`;
+						urlPath = `/sites/settings/site/${ site.slug }/delete-site`;
 					}
 
 					page( urlPath );
@@ -542,7 +578,7 @@ export function useActions( {
 			restoreSite,
 			viewType,
 			localizeUrl,
-			isUntangled,
+			queryClient,
 		]
 	);
 }
