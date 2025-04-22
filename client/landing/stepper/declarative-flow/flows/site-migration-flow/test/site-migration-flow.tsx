@@ -122,6 +122,16 @@ describe( 'Site Migration Flow', () => {
 				)
 			);
 		} );
+
+		it( 'redirects to the importList when the platform is not importable', () => {
+			window.location.search = new URLSearchParams( {
+				platform: 'non-importable-platform',
+				siteSlug: 'example.wordpress.com',
+				from: 'https://example-to-be-migrated.com',
+			} ).toString();
+
+			expect( getCustomInitialStep?.() ).toBe( STEPS.SITE_MIGRATION_IDENTIFY.slug );
+		} );
 	} );
 
 	describe( 'useAssertConditions', () => {

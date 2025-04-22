@@ -83,27 +83,31 @@ const siteMigration: FlowV2 = {
 		const platform = searchParams.get( 'platform' ) as ImporterPlatform | null;
 		const siteSlug = searchParams.get( 'siteSlug' );
 		const from = searchParams.get( 'from' );
-		const hasIdentifiedPlatform = Boolean( platform );
 
-		if ( hasIdentifiedPlatform ) {
+		if ( platform ) {
 			if ( ! siteSlug ) {
 				return STEPS.PICK_SITE.slug;
 			}
 
+			if ( platform === 'wordpress' ) {
+				return STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug;
+			}
+
 			//NOTE: It is probably a case where we should update the origin to redirect directly to the import flow instead of
 			// site-migration-flow > importFlow
-			if ( platform && platform !== 'wordpress' && isPlatformImportable( platform ) ) {
+			if ( isPlatformImportable( platform ) ) {
 				recordTracksEvent( 'calypso_site_migration_flow_redirect_to_import', {
 					platform,
 					site_slug: siteSlug,
 					from,
 				} );
+
 				return window.location.replace(
 					getFullImporterUrl( platform, siteSlug, from ? encodeURIComponent( from ) : '' )
 				);
 			}
 
-			return STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug;
+			return STEPS.SITE_MIGRATION_IDENTIFY.slug;
 		}
 
 		return STEPS.SITE_MIGRATION_IDENTIFY.slug;
