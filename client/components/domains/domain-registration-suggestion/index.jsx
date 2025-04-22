@@ -265,7 +265,7 @@ class DomainRegistrationSuggestion extends Component {
 		};
 	}
 
-	getDomainName( name ) {
+	getFormattedDomainName( name ) {
 		if ( name.length <= 24 ) {
 			return name;
 		}
@@ -301,7 +301,7 @@ class DomainRegistrationSuggestion extends Component {
 					<h3 className="domain-registration-suggestion__title">
 						<div className="domain-registration-suggestion__domain-title">
 							<span className="domain-registration-suggestion__domain-title-name">
-								{ this.getDomainName( name ) }
+								{ this.getFormattedDomainName( name ) }
 							</span>
 							<span className="domain-registration-suggestion__domain-title-tld">{ tld }</span>
 							{ ( showHstsNotice || showDotGayNotice ) && this.renderInfoBubble() }
