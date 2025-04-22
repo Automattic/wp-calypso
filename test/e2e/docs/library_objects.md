@@ -36,7 +36,7 @@ Example: [EditorPage](../../../packages/calypso-e2e/src/lib/pages/editor-page.ts
 
 **Flows** - these encapsulate interactions that span multiple pages or components, or start at one location and end at another. Interactions for each page of the flow can be implemented directly in the Flow object, or by importing relevant Page/Component objects and calling their methods.
 
-Example: [StartSiteFlow](../../../packages/calypso-e2e/src/lib/flows/start-site-flow.ts)
+Example: [StartImportFlow](../../../packages/calypso-e2e/src/lib/flows/start-import-flow.ts)
 
 ## Components
 
