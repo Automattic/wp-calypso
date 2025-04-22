@@ -19,7 +19,7 @@ export function Grid( {
 
 	const gapPx = spacing * 4;
 
-	const responsiveColumns = useMemo( () => {
+	const effectiveColumns = useMemo( () => {
 		if ( ! minColumnWidth ) {
 			return columns;
 		}
@@ -30,8 +30,6 @@ export function Grid( {
 
 		return Math.max( 1, maxColumns );
 	}, [ minColumnWidth, gapPx, containerWidth, columns ] );
-
-	const effectiveColumns = responsiveColumns;
 
 	// In responsive mode, sort items by order property (or use original order if not specified)
 	const responsiveLayout = useMemo( () => {
