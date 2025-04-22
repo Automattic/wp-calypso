@@ -73,7 +73,7 @@
 	},
 	"scripts": {
 		"build": "yarn run build:js && yarn run build:style && yarn run build:wp",
-		"build:js": "tsc --build ./tsconfig.json",
+		"build:js": "tsc --build ./tsconfig.json ./tsconfig-cjs.json",
 		"build:style": "node build-style.js",
 		"build:wp": "node build",
 		"clean": "git clean --force -d -X",
