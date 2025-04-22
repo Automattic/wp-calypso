@@ -98,7 +98,7 @@ const useShowFeedback = ( type: FeedbackType ) => {
 					survey_id: params.survey_id,
 					rating: params.survey_responses.rating,
 					suggestions: params.survey_responses.suggestions?.text,
-					comment: params.survey_responses.comment.text,
+					comment: params.survey_responses.comment?.text,
 				} )
 			);
 			saveFeedback( { params } );
