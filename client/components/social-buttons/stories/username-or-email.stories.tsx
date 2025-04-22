@@ -15,9 +15,6 @@ const store = createStore( () => initialState );
 const meta: Meta< typeof UsernameOrEmailButton > = {
 	title: 'client/components/Social Button/Username or Email',
 	component: UsernameOrEmailButton,
-	args: {
-		onClick: () => {},
-	},
 	decorators: [ ( Story ) => <Provider store={ store }>{ Story() }</Provider> ],
 };
 export default meta;

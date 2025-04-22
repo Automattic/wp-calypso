@@ -16,9 +16,6 @@ const store = createStore( () => initialState );
 const meta: Meta< typeof MagicLoginButton > = {
 	title: 'client/components/Social Button/Magic Login',
 	component: MagicLoginButton,
-	args: {
-		loginUrl: 'https://example.com/magic-login',
-	},
 	decorators: [ ( Story ) => <Provider store={ store }>{ Story() }</Provider> ],
 };
 export default meta;
