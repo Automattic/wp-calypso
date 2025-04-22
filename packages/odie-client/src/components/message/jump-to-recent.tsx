@@ -65,13 +65,7 @@ export const JumpToRecent = ( {
 	// Handle scrolling using Intersection Observer on the last message
 	useEffect( () => {
 		const container = containerReference.current;
-		if (
-			! container ||
-			isMinimized ||
-			chat.messages.length < 2 ||
-			chat.status !== 'loaded' ||
-			! chat.odieId
-		) {
+		if ( ! container || isMinimized || chat.messages.length < 2 || ! chat.odieId ) {
 			setIsVisible( false );
 			return;
 		}
