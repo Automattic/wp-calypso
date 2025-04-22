@@ -1,4 +1,8 @@
-import { isDomainRegistration, isDomainMapping } from '@automattic/calypso-products';
+import {
+	isDomainRegistration,
+	isDomainMapping,
+	isDomainTransfer,
+} from '@automattic/calypso-products';
 import { CompactCard, FormLabel } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { UPDATE_NAMESERVERS } from '@automattic/urls';
@@ -10,6 +14,7 @@ import { getName, isRefundable, isSubscription } from 'calypso/lib/purchases';
 
 const CancelPurchaseDomainOptions = ( {
 	includedDomainPurchase,
+	includedDomainTransfer,
 	cancelBundledDomain,
 	confirmCancelBundledDomain = false,
 	purchase,
@@ -22,7 +27,7 @@ const CancelPurchaseDomainOptions = ( {
 		setConfirmCancel( confirmCancelBundledDomain );
 	}, [ confirmCancelBundledDomain ] );
 
-	if ( ! includedDomainPurchase || ! isSubscription( purchase ) ) {
+	if ( ( ! includedDomainPurchase && ! includedDomainTransfer ) || ! isSubscription( purchase ) ) {
 		return null;
 	}
 
@@ -116,6 +121,61 @@ const CancelPurchaseDomainOptions = ( {
 		</div>
 	);
 
+	const NonRefundableDomainTransferMessage = () => (
+		<div>
+			<p>
+				{ translate(
+					'This plan includes the custom domain, %(domain)s, normally a %(domainCost)s purchase. ' +
+						'The domain will not be removed along with the plan, to avoid any interruptions for your visitors.',
+					{
+						args: {
+							domain: includedDomainTransfer.meta,
+							domainCost: includedDomainTransfer.priceText,
+						},
+					}
+				) }
+			</p>
+		</div>
+	);
+
+	const CancelableDomainTransferMessage = () => (
+		<div>
+			<p>
+				{ translate(
+					'This plan includes mapping for the domain %(mappedDomain)s. ' +
+						"Cancelling will remove all the plan's features from your site, including the domain.",
+					{
+						args: {
+							mappedDomain: includedDomainTransfer.meta,
+						},
+					}
+				) }
+			</p>
+			<p>
+				{ translate(
+					'Your site will no longer be available at %(mappedDomain)s. Instead, it will be at %(wordpressSiteUrl)s',
+					{
+						args: {
+							mappedDomain: includedDomainTransfer.meta,
+							wordpressSiteUrl: purchase.domain,
+						},
+					}
+				) }
+			</p>
+			<p>
+				{ translate(
+					'The domain %(mappedDomain)s itself is not canceled. Only the connection between WordPress.com and ' +
+						'your domain is removed. %(mappedDomain)s is registered elsewhere and you can still use it with other sites.',
+					{
+						args: {
+							mappedDomain: includedDomainTransfer.meta,
+						},
+					}
+				) }
+			</p>
+		</div>
+	);
+
 	const RefundablePurchaseWithNonRefundableDomainMessage = () => (
 		<div>
 			<p>
@@ -146,9 +206,18 @@ const CancelPurchaseDomainOptions = ( {
 		</div>
 	);
 
+	if ( includedDomainTransfer && isDomainTransfer( includedDomainTransfer ) ) {
+		if ( ! isRefundable( purchase ) ) {
+			return <NonRefundableDomainTransferMessage />;
+		}
+
+		return <CancelableDomainTransferMessage />;
+	}
+
 	if (
-		! isDomainMapping( includedDomainPurchase ) &&
-		! isDomainRegistration( includedDomainPurchase )
+		! includedDomainPurchase ||
+		( ! isDomainMapping( includedDomainPurchase ) &&
+			! isDomainRegistration( includedDomainPurchase ) )
 	) {
 		return null;
 	}
@@ -167,7 +236,11 @@ const CancelPurchaseDomainOptions = ( {
 		return <NonRefundableDomainPurchaseMessage />;
 	}
 
-	if ( isRefundable( purchase ) && ! isRefundable( includedDomainPurchase ) ) {
+	if (
+		isRefundable( purchase ) &&
+		! isRefundable( includedDomainPurchase ) &&
+		! isRefundable( includedDomainTransfer )
+	) {
 		return <RefundablePurchaseWithNonRefundableDomainMessage />;
 	}
 
