@@ -35,9 +35,17 @@ type StatsAdvancedModuleWrapperProps = {
 	summaryUrl?: string;
 	context?: {
 		query?: {
-			[ key: string ]: any;
+			utmParam?: string;
+			startDate?: string;
+			endDate?: string;
+			date?: string;
+			[ key: string ]: string | undefined;
 		};
-		[ key: string ]: any;
+		params?: {
+			module?: string;
+			[ key: string ]: string | undefined;
+		};
+		[ key: string ]: unknown;
 	};
 };
 

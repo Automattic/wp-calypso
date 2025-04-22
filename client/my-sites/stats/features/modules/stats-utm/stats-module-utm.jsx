@@ -30,7 +30,7 @@ const OPTION_KEYS = {
 	CAMPAIGN: 'utm_campaign',
 };
 
-const UTM_QUERY_PARAM = 'utm_param';
+const UTM_QUERY_PARAM = 'utmParam';
 
 const StatsModuleUTM = ( {
 	path,
