@@ -1,25 +1,43 @@
 {
 	"$schema": "https://json.schemastore.org/tsconfig.json",
-	"extends": "../../tsconfig.base.json",
 	"compilerOptions": {
-		"types": [
-			"gutenberg-env",
-			"gutenberg-test-env",
-			"jest",
-			"@testing-library/jest-dom"
-		]
+		"allowJs": true,
+		"checkJs": true,
+		"allowSyntheticDefaultImports": true,
+		"jsx": "preserve",
+		"target": "esnext",
+		"module": "esnext",
+		"lib": [ "DOM", "DOM.Iterable", "ESNext" ],
+		"declaration": true,
+		"declarationMap": true,
+		"composite": true,
+		"emitDeclarationOnly": true,
+		"isolatedModules": true,
+
+		"skipDefaultLibCheck": true,
+
+		/* Strict Type-Checking Options */
+		"strict": true,
+
+		/* Additional Checks */
+		"noImplicitReturns": true,
+		"noFallthroughCasesInSwitch": true,
+
+		/* Module Resolution Options */
+		"moduleResolution": "node",
+
+		/* This needs to be false so our types are possible to consume without setting this */
+		"esModuleInterop": false,
+		"resolveJsonModule": true,
+
+		// "typeRoots": ["./typings", "./node_modules/@types"], // TODO: review
+		"types": [],
+
+		"rootDir": "src",
+		"declarationDir": "build-types",
+		"outDir": "build"
 	},
-	"references": [
-		{ "path": "../components" },
-		{ "path": "../compose" },
-		{ "path": "../data" },
-		{ "path": "../element" },
-		{ "path": "../i18n" },
-		{ "path": "../icons" },
-		{ "path": "../primitives" },
-		{ "path": "../private-apis" },
-		{ "path": "../warning" }
-	],
+	"include": [ "src" ],
 	"exclude": [
 		"src/**/*.android.js",
 		"src/**/*.ios.js",
