@@ -102,13 +102,12 @@ const availableFlows: Record< string, () => Promise< { default: Flow | FlowV2 } 
 		import( /* webpackChunkName: "example-flow" */ './flows/00-example-flow/example' ),
 };
 
-const aiSiteBuilderFlows: Record< string, () => Promise< { default: FlowV2 } > > = config.isEnabled(
-	'calypso/ai-site-builder-flow'
-)
-	? {
-			[ AI_SITE_BUILDER_FLOW ]: () => import( './flows/ai-site-builder/ai-site-builder' ),
-	  }
-	: {};
+const aiSiteBuilderFlows: Record< string, () => Promise< { default: FlowV2< any > } > > =
+	config.isEnabled( 'calypso/ai-site-builder-flow' )
+		? {
+				[ AI_SITE_BUILDER_FLOW ]: () => import( './flows/ai-site-builder/ai-site-builder' ),
+		  }
+		: {};
 
 const hostedSiteMigrationFlow: Record< string, () => Promise< { default: Flow } > > = {
 	[ HOSTED_SITE_MIGRATION_FLOW ]: () =>

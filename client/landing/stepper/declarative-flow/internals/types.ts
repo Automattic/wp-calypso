@@ -13,9 +13,9 @@ import type { Store } from 'redux';
  *   siteTitle: 'Example Site',
  * });
  */
-export type NavigationControls<
+export interface NavigationControls<
 	StepSubmittedTypes extends unknown | undefined | never | Record< string, unknown > = undefined,
-> = {
+> {
 	/**
 	 * @deprecated
 	 * YOU DON'T NEED THIS. Most flows don't need this since #101550.
@@ -46,13 +46,15 @@ export type NavigationControls<
 	 * Submits the answers provided in the flow. If it's complaining about the type, it means you haven't typed the step correctly.
 	 * @see {@link client/landing/stepper/declarative-flow/internals/steps-repository/DEVELOPMENT/making-a-new-step.md}
 	 */
-	submit: ( providedDependencies?: StepSubmittedTypes ) => void;
+	submit: StepSubmittedTypes extends Record< string, unknown >
+		? ( providedDependencies: StepSubmittedTypes ) => void
+		: () => void;
 
 	/**
 	 * Exits the flow and continue to the given path
 	 */
 	exitFlow?: ( to: string ) => void;
-};
+}
 
 /**
  * This is the return type of useStepNavigation hook
@@ -223,9 +225,7 @@ type DefaultFlowStepsConfig =
 	| ( ( ...args: any[] ) => readonly StepperStep[] )
 	| ( ( ...args: any[] ) => Promise< readonly StepperStep[] > );
 
-export interface FlowV2<
-	FlowStepsInitialize extends DefaultFlowStepsConfig = DefaultFlowStepsConfig,
-> {
+export interface FlowV2< FlowStepsInitialize extends DefaultFlowStepsConfig > {
 	/**
 	 * If this flag is set to true, the flow will login the user without leaving Stepper.
 	 */
