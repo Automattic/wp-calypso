@@ -1127,6 +1127,7 @@ __metadata:
     "@storybook/addon-controls": "npm:^8.6.9"
     "@storybook/addon-docs": "npm:^8.6.9"
     "@storybook/react-webpack5": "npm:^8.6.9"
+    "@wordpress/compose": "npm:^7.22.0"
     postcss: "npm:^8.5.3"
     storybook: "npm:^8.6.9"
     typescript: "npm:^5.8.2"

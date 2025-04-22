@@ -26,6 +26,16 @@ export interface GridLayoutItem {
 	 * Number of rows this item spans.
 	 */
 	height?: number;
+
+	/**
+	 * Optional order value for responsive mode (lower values displayed first)
+	 */
+	order?: number;
+
+	/**
+	 * Whether this item should always span all available columns in responsive mode
+	 */
+	fullWidth?: boolean;
 }
 
 /**
@@ -63,4 +73,10 @@ export interface GridProps {
 	 * Height of each row (e.g., "50px", "auto")
 	 */
 	rowHeight?: string;
+
+	/**
+	 * Minimum width in pixels for each column in responsive mode.
+	 * If provided, enables responsive mode which automatically adjusts columns based on container width.
+	 */
+	minColumnWidth?: number;
 }
