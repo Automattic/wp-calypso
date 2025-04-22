@@ -19,7 +19,7 @@
 		"outDir": "build-module",
 		"resolveJsonModule": true,
 		"rootDir": "src",
-		"skipLikCheck": true,
+		"skipLibCheck": true,
 		"sourceMap": true,
 		"strict": true,
 		"target": "esnext",
