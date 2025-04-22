@@ -1,7 +1,7 @@
 import { Button } from '@wordpress/components';
 import { translate } from 'i18n-calypso';
 import surveyImage from 'calypso/assets/images/onboarding/migrations/survey/wordpress-half-logo.png';
-import { Survey, SurveyProps, SurveyTriggerAccept, SurveyTriggerSkip } from '../survey';
+import { Survey, SurveyTriggerAccept, SurveyTriggerSkip } from '../survey';
 import './style.scss';
 
 const linkByCountry = {
@@ -11,15 +11,15 @@ const linkByCountry = {
 
 type Countries = keyof typeof linkByCountry;
 
-type MigrationSurveyProps = Pick< SurveyProps, 'isOpen' > & {
+interface MigrationSurveyProps {
 	countryCode: string;
-};
+}
 
 const getLink = ( country: Countries ) => {
 	return linkByCountry[ country ];
 };
 
-const MigrationSurvey = ( { isOpen, countryCode }: MigrationSurveyProps ) => {
+const MigrationSurvey = ( { countryCode }: MigrationSurveyProps ) => {
 	const surveyLink = getLink( countryCode as Countries );
 
 	return (
@@ -27,7 +27,6 @@ const MigrationSurvey = ( { isOpen, countryCode }: MigrationSurveyProps ) => {
 			name="migration-survey"
 			className="migration-survey"
 			title={ translate( 'Migration Survey' ) }
-			isOpen={ isOpen }
 		>
 			<div className="migration-survey__popup-img">
 				<img src={ surveyImage } alt={ translate( 'Code editor' ) } width={ 436 } height={ 249 } />
