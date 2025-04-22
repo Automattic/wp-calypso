@@ -60,7 +60,7 @@ describe( 'EditGravatar', () => {
 	} );
 
 	describe( 'actions', () => {
-		test( 'opens quick editor and updates user', () => {
+		test( 'opens quick editor and updates avatar URL', () => {
 			setup();
 
 			fireEvent.click( screen.getByRole( 'button', { name: /Edit your public avatar/i } ) );
