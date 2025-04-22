@@ -3,27 +3,27 @@
  */
 export interface GridLayoutItem {
 	/**
-	 * Unique key that matches a child component key
+	 * Unique key that matches a child component key.
 	 */
 	key: string;
 
 	/**
-	 * Starting column (0-indexed)
+	 * Starting column (0-indexed).
 	 */
 	x?: number;
 
 	/**
-	 * Starting row (0-indexed)
+	 * Starting row (0-indexed).
 	 */
 	y?: number;
 
 	/**
-	 * Number of columns this item spans
+	 * Number of columns this item spans.
 	 */
 	width?: number;
 
 	/**
-	 * Number of rows this item spans
+	 * Number of rows this item spans.
 	 */
 	height?: number;
 }
@@ -33,27 +33,29 @@ export interface GridLayoutItem {
  */
 export interface GridProps {
 	/**
-	 * Array of layout items
+	 * Array of layout items.
 	 */
 	layout: GridLayoutItem[];
 
 	/**
-	 * Total number of columns in the grid
+	 * Total number of columns in the grid.
+	 * @default 1
 	 */
 	columns: number;
 
 	/**
-	 * Grid children
+	 * Grid children.
 	 */
 	children: React.ReactNode;
 
 	/**
-	 * Additional CSS class
+	 * Additional CSS class.
 	 */
 	className?: string;
 
 	/**
-	 * Grid gap multiplier size (e.g., a spacing of 2 results in a gap of 8px, it's multiplied by 4)
+	 * Grid gap multiplier size (e.g., a spacing of 2 results in a gap of 8px, it's multiplied by 4).
+	 * @default 2
 	 */
 	spacing?: number;
 
