@@ -13485,7 +13485,7 @@ __metadata:
     "@wordpress/compose": "npm:^7.21.0"
     "@wordpress/data": "npm:^10.21.0"
     "@wordpress/dataviews": "npm:^4.17.0"
-    "@wordpress/date": "npm:^5.21.0"
+    "@wordpress/date": "npm:^5.22.0"
     "@wordpress/dom": "npm:^4.21.0"
     "@wordpress/edit-post": "npm:^8.21.0"
     "@wordpress/element": "npm:^6.21.0"
