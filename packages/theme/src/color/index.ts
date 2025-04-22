@@ -1,41 +1,25 @@
-// export function useGenerateStyles( color: ThemeProps[ 'color' ] ): React.CSSProperties {
-// 	const generatedTheme = useMemo(
-// 		() =>
-// 			themeToCss( {
-// 				color: generateColors( {
-// 					color: color.primary,
-// 					fun: color.fun,
-// 					isDark: color.scheme === 'dark',
-// 				} ),
-// 			} ),
-// 		[ color.primary, color.fun, color.scheme ]
-// 	);
-
-// 	return generatedTheme;
-// }
-import { ThemeProps } from '../types';
-import { generateBaseTokens as generateA8CBaseTokens } from './a8c/color';
-import { mapColors } from './color-scale-to-semantic-tokens';
-import { generateBaseTokens as generateRadixBaseTokens } from './radix';
+import Color from 'colorjs.io';
+import { ThemeProps, TokensObject } from '../types';
+import { generateColorScales } from './algos';
+import { mapColors } from './map';
 
 export function generateColors( color: ThemeProps[ 'color' ] ) {
-	const a8cBaseTokens = generateA8CBaseTokens( color );
-	const radixBaseTokens = generateRadixBaseTokens( color );
+	// Bridge the gap between color algos and our API surface.
+	const primaryColor = new Color( color.primary );
+	const primaryHue = primaryColor.hsl.h;
 
-	const a8cTokens = {
-		...a8cBaseTokens,
-		neutral: mapColors( a8cBaseTokens[ 'neutral-scale' ] ),
-		primary: mapColors( a8cBaseTokens[ 'primary-scale' ] ),
-	};
-
-	const radixTokens = {
-		...radixBaseTokens,
-		neutral: mapColors( radixBaseTokens[ 'neutral-scale' ] ),
-		primary: mapColors( radixBaseTokens[ 'primary-scale' ] ),
-	};
+	const colorScales = generateColorScales( {
+		accent: color.primary,
+		appearance: color.scheme ?? 'light',
+		// TODO: check correctness of background values
+		background: color.scheme === 'light' ? '#fff' : '#000',
+		gray: `hsl(${ primaryHue }deg ${ color.fun }% 50%)`,
+	} );
 
 	return {
-		a8c: a8cTokens,
-		radix: radixTokens,
-	};
+		[ 'neutral-scale' ]: colorScales.grayScale,
+		[ 'primary-scale' ]: colorScales.accentScale,
+		neutral: mapColors( colorScales.grayScale ),
+		primary: mapColors( colorScales.accentScale ),
+	} as TokensObject;
 }

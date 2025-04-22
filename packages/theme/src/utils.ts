@@ -1,10 +1,6 @@
-import type { generateColors } from './color';
+import type { TokensObject } from './types';
 
-// flattens the theme object to a single level
-interface RecursiveObj {
-	[ key: string ]: RecursiveObj | string | string[];
-}
-function flattenTheme( obj: RecursiveObj, parent?: string, res: Record< string, string > = {} ) {
+function flattenTheme( obj: TokensObject, parent?: string, res: Record< string, string > = {} ) {
 	if ( Array.isArray( obj ) ) {
 		return obj.reduce( ( acc, item, index ) => {
 			acc[ `${ parent }-${ index }` ] = item;
@@ -28,10 +24,7 @@ function flattenTheme( obj: RecursiveObj, parent?: string, res: Record< string, 
 }
 
 // converts a theme object to a CSS object containing CSS variables
-export const themeToCss = (
-	theme: { color: ReturnType< typeof generateColors > },
-	prefix = ''
-) => {
+export const themeToCss = ( theme: TokensObject, prefix = '' ) => {
 	const flattenedTheme = flattenTheme( theme );
 
 	return Object.keys( flattenedTheme ).reduce( ( result, key ) => {

@@ -10,8 +10,7 @@ declare module 'react' {
 }
 
 const Theme = forwardRef< HTMLDivElement, ThemeProps >( function Theme( { color, children }, ref ) {
-	const colorTokens = generateColors( color );
-	const themeCss = themeToCss( { color: colorTokens } );
+	const themeCss = themeToCss( { color: generateColors( color ) } );
 
 	return (
 		<div ref={ ref } style={ themeCss }>

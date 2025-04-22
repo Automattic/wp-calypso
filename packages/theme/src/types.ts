@@ -7,11 +7,6 @@ export type ThemeProps = {
 	children?: React.ReactNode;
 };
 
-type ArrayOf12< T > = [ T, T, T, T, T, T, T, T, T, T, T, T ];
-
-export type ColorScale = ArrayOf12< string >;
-
-export type ColorBaseTokens = {
-	'neutral-scale': ColorScale;
-	'primary-scale': ColorScale;
+export type TokensObject = {
+	[ key: string ]: string | string[] | TokensObject;
 };
