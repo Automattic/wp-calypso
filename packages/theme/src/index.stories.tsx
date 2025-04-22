@@ -8,6 +8,11 @@ const meta: Meta< typeof Theme > = {
 	title: 'Theme/Theme',
 	component: Theme,
 	argTypes: {
+		children: {
+			table: {
+				disable: true,
+			},
+		},
 		color: {
 			table: {
 				disable: true,
@@ -32,20 +37,16 @@ const meta: Meta< typeof Theme > = {
 
 export default meta;
 
-type StoryArgs = {
+type ExtraStorybookControls = {
 	primary: string;
 	fun: number;
 	scheme: 'light' | 'dark';
-	children?: React.ReactNode;
 };
 
-type Story = StoryObj< typeof Theme > & {
-	args: StoryArgs;
-};
+type Story = StoryObj< React.ComponentProps< typeof Theme > & ExtraStorybookControls >;
 
 export const Default: Story = {
 	render: ( args ) => (
-		// @ts-expect-error Custom control types
 		<Theme color={ { primary: args.primary, fun: args.fun, scheme: args.scheme } }>
 			{ args.children }
 		</Theme>
@@ -62,12 +63,35 @@ export const Default: Story = {
 					gap: '4px',
 				} }
 			>
+				{ /* Index numbers */ }
+				<div /> { /* Empty cell for top-left corner */ }
+				{ [
+					{ colSpan: 2, label: 'Backgrounds' },
+					{ colSpan: 3, label: 'Interactive components' },
+					{ colSpan: 3, label: 'Borders and separators' },
+					{ colSpan: 2, label: 'Solid colors' },
+					{ colSpan: 2, label: 'Accessible text' },
+				].map( ( { colSpan, label }, i ) => (
+					<div
+						key={ label }
+						style={ {
+							textAlign: 'center',
+							padding: '0.5rem',
+							fontSize: '0.875rem',
+							gridColumnEnd: `span ${ colSpan }`,
+							borderBottom: '1px solid #ccc',
+						} }
+					>
+						{ label }
+					</div>
+				) ) }
+				{ /* Index numbers */ }
 				<div /> { /* Empty cell for top-left corner */ }
 				{ Array( 12 )
 					.fill( '' )
 					.map( ( _, i ) => (
 						<div
-							key={ i }
+							key={ `scale-index-${ i }` }
 							style={ {
 								textAlign: 'center',
 								padding: '0.5rem',
@@ -76,36 +100,32 @@ export const Default: Story = {
 							{ i + 1 }
 						</div>
 					) ) }
-				{ [ 'neutral-scale', 'primary-scale' ].map( ( scaleName ) =>
-					[
-						{ name: 'Radix', varPrefix: '--theme-color-radix-' },
-						{ name: 'A8C', varPrefix: '--theme-color-a8c-' },
-					]
-						.map( ( { name, varPrefix } ) => [
-							<div
-								key={ `${ name }-${ scaleName }-label` }
-								style={ {
-									fontSize: '0.875rem',
-									display: 'flex',
-									alignItems: 'center',
-								} }
-							>
-								{ name } { scaleName }
-							</div>,
-							...Array( 12 )
-								.fill( '' )
-								.map( ( _, i ) => (
-									<div
-										key={ `${ name }-${ scaleName }-color-${ i }` }
-										style={ {
-											aspectRatio: '2',
-											backgroundColor: `var(${ varPrefix }${ scaleName }-${ i })`,
-										} }
-									/>
-								) ),
-						] )
-						.flat()
-				) }
+				{ /* Scales */ }
+				{ [ 'neutral-scale', 'primary-scale' ].map( ( scaleName ) => (
+					<>
+						<div
+							key={ `${ scaleName }-label` }
+							style={ {
+								fontSize: '0.875rem',
+								display: 'flex',
+								alignItems: 'center',
+							} }
+						>
+							{ scaleName }
+						</div>
+						{ Array( 12 )
+							.fill( '' )
+							.map( ( _, i ) => (
+								<div
+									key={ `${ scaleName }-color-${ i }` }
+									style={ {
+										aspectRatio: '2',
+										backgroundColor: `var(--theme-color-${ scaleName }-${ i })`,
+									} }
+								/>
+							) ) }
+					</>
+				) ) }
 			</div>
 		),
 	},
