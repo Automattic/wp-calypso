@@ -1,6 +1,6 @@
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
-import { zendeskMessageConverter } from '../../utils';
+import { isCSATMessage, zendeskMessageConverter } from '../../utils';
 import ChatWithSupportLabel from '../chat-with-support';
 import ErrorMessage from './error-message';
 import { FeedbackForm } from './feedback-form';
@@ -15,7 +15,7 @@ export const MessageContent = ( {
 	isNextMessageFromSameSender,
 	displayChatWithSupportLabel,
 	displayChatWithSupportEndedLabel,
-	rated,
+	displayCSAT,
 }: {
 	message: Message;
 	messageHeader: React.ReactNode;
@@ -23,10 +23,10 @@ export const MessageContent = ( {
 	isNextMessageFromSameSender?: boolean;
 	displayChatWithSupportLabel?: boolean;
 	displayChatWithSupportEndedLabel?: boolean;
-	rated?: boolean;
+	displayCSAT?: boolean;
 } ) => {
 	const { __ } = useI18n();
-	const isFeedbackMessage = message?.feedbackOptions;
+	const isFeedbackMessage = isCSATMessage( message );
 	const messageClasses = clsx(
 		'odie-chatbox-message',
 		`odie-chatbox-message-${ message.role }`,
@@ -64,6 +64,9 @@ export const MessageContent = ( {
 
 	return (
 		<>
+			{ isFeedbackMessage && (
+				<ChatWithSupportLabel labelText={ __( 'Chat with support ended', __i18n_text_domain__ ) } />
+			) }
 			<div className={ containerClasses } data-is-message="true">
 				<div className={ messageClasses }>
 					{ message?.context?.flags?.show_ai_avatar !== false && messageHeader }
@@ -79,17 +82,11 @@ export const MessageContent = ( {
 						/>
 					) }
 					{ message.type === 'introduction' && <IntroductionMessage content={ message.content } /> }
-					{ ! rated && isFeedbackMessage && message.feedbackOptions && (
-						<FeedbackForm chatFeedbackOptions={ message.feedbackOptions } />
+					{ displayCSAT && isFeedbackMessage && message.feedbackOptions && (
+						<FeedbackForm chatFeedbackOptions={ message?.feedbackOptions } />
 					) }
 				</div>
 			</div>
-
-			{ message.metadata?.rated && (
-				<div className="feedback-thankyou__message">
-					{ __( 'Your feedback has been sent. Thank you for helping us improve.' ) }
-				</div>
-			) }
 
 			{ displayChatWithSupportLabel && (
 				<ChatWithSupportLabel

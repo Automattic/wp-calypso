@@ -18,6 +18,8 @@ import {
 	getOdieInitialMessage,
 	interactionHasZendeskEvent,
 	interactionHasEnded,
+	hasCSATMessage,
+	hasSubmittedCSATRating,
 } from '../../utils';
 import { ViewMostRecentOpenConversationNotice } from '../odie-notice/view-most-recent-conversation-notice';
 import { DislikeFeedbackMessage } from './dislike-feedback-message';
@@ -161,9 +163,8 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 	};
 
 	const availableStatusWithFeedback = [ 'sending', 'transfer' ];
-	const alreadyRatedConversation = chat.messages.find(
-		( message ) => message.metadata?.rated === true
-	);
+	const chatHasCSATMessage = hasCSATMessage( chat );
+	const displayCSAT = chatHasCSATMessage && ! hasSubmittedCSATRating( chat );
 	return (
 		<>
 			<div className="chatbox-messages" ref={ messagesContainerRef }>
@@ -179,7 +180,6 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 								currentUser={ currentUser }
 								isNextMessageFromSameSender={ false }
 								displayChatWithSupportLabel={ false }
-								rated={ alreadyRatedConversation && true }
 							/>
 						) }
 						{ chat.messages.map( ( message, index ) => {
@@ -189,7 +189,8 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 								message.context?.flags?.show_contact_support_msg &&
 								! chatHasEnded;
 
-							const displayChatWithSupportEndedLabel = ! nextMessage && chatHasEnded;
+							const displayChatWithSupportEndedLabel =
+								! chatHasCSATMessage && ! nextMessage && chatHasEnded;
 
 							return (
 								<ChatMessage
@@ -202,7 +203,7 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 									) }
 									displayChatWithSupportLabel={ displayChatWithSupportLabel }
 									displayChatWithSupportEndedLabel={ displayChatWithSupportEndedLabel }
-									rated={ alreadyRatedConversation && true }
+									displayCSAT={ displayCSAT }
 								/>
 							);
 						} ) }
