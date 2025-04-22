@@ -63,6 +63,7 @@
 		"access": "public"
 	},
 	"devDependencies": {
+		"@testing-library/jest-dom": "^6.6.3",
 		"@types/jest": "^29.5.14",
 		"@wordpress/postcss-plugins-preset": "^5.22.0",
 		"postcss": "^8.5.3",

@@ -30,7 +30,7 @@
 		"esModuleInterop": false,
 		"resolveJsonModule": true,
 
-		"types": [ "jest" ],
+		"types": [ "jest", "@testing-library/jest-dom" ],
 
 		"rootDir": "src",
 		"declarationDir": "build-types",
