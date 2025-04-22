@@ -50,7 +50,6 @@ const siteSetupFlow: Flow = {
 	useSteps() {
 		const steps = [
 			STEPS.GOALS,
-			STEPS.INTENT,
 			STEPS.OPTIONS,
 			STEPS.DESIGN_CHOICES,
 			STEPS.DESIGN_SETUP,
@@ -369,33 +368,6 @@ const siteSetupFlow: Flow = {
 					return navigate( providedDependencies.destination as string );
 				}
 
-				case 'intent': {
-					const submittedIntent = providedDependencies.intent as string;
-					switch ( submittedIntent ) {
-						case 'wpadmin': {
-							return exitFlow( `https://wordpress.com/home/${ siteId ?? siteSlug }` );
-						}
-						case 'build': {
-							return navigate( 'design-setup' );
-						}
-						case 'sell': {
-							return navigate( 'options' );
-						}
-						case 'import': {
-							return navigate( 'import' );
-						}
-						case 'write': {
-							return navigate( 'options' );
-						}
-						case 'difm': {
-							return navigate( 'difmStartingPoint' );
-						}
-						default: {
-							return navigate( submittedIntent );
-						}
-					}
-				}
-
 				case 'courses': {
 					return exitFlow( `/post/${ siteSlug }` );
 				}
@@ -572,12 +544,15 @@ const siteSetupFlow: Flow = {
 				case 'difmStartingPoint':
 					return navigate( 'goals' );
 
+				// TODO: consider simplify switch statement by using a default
+				// case for all other steps already navigating to goals.
 				default:
-					return navigate( 'intent' );
+					return navigate( 'goals' );
 			}
 		};
 
 		const goNext = () => {
+			console.log( 'goNext', currentStep );
 			switch ( currentStep ) {
 				case 'options':
 					if ( intent === 'sell' ) {
@@ -585,17 +560,15 @@ const siteSetupFlow: Flow = {
 					}
 					return navigate( 'bloggerStartingPoint' );
 
-				case 'intent':
-					return exitFlow( `/home/${ siteId ?? siteSlug }` );
-
 				case 'import':
 					return navigate( 'importList' );
 
 				case 'difmStartingPoint':
 					return navigate( 'design-setup' );
 
+				// TODO: Does this make sense?
 				default:
-					return navigate( 'intent' );
+					return navigate( 'goals' );
 			}
 		};
 
