@@ -195,11 +195,7 @@ export function ReceiptBody( {
 					</li>
 					<ReceiptTransactionId transaction={ transaction } />
 					<ReceiptPaymentMethod transaction={ transaction } />
-					{ transaction.cc_num !== 'XXXX' ? (
-						<ReceiptDetails transaction={ transaction } />
-					) : (
-						<EmptyReceiptDetails />
-					) }
+					<ReceiptDetails transaction={ transaction } />
 					<VatDetails transaction={ transaction } />
 				</ul>
 				<ReceiptLineItems transaction={ transaction } />
@@ -642,50 +638,63 @@ function ReceiptLineItems( { transaction }: { transaction: BillingTransaction } 
 }
 
 function ReceiptDetails( { transaction }: { transaction: BillingTransaction } ) {
-	if ( ! transaction.cc_name && ! transaction.cc_email ) {
+	// Pre-load the billing details textarea and hidden div with the name and email if available.
+	const initialDetailsText =
+		transaction.cc_num !== 'XXXX' ? transaction.cc_name + '\n' + transaction.cc_email : '';
+	// When the content of the text area is empty, hide the "Billing Details" label for printing.
+	const [ hideDetailsOnPrint, setHideDetailsOnPrint ] = useState(
+		initialDetailsText.trim().length === 0
+	);
+	// Keep the billing details textarea and hidden div for printing values in sync
+	const [ billingDetailsText, setPrintableBillingDetailsText ] = useState( initialDetailsText );
+
+	const onChange = useCallback(
+		( e: React.ChangeEvent< HTMLTextAreaElement > ) => {
+			const value = e.target.value.trim();
+			setHideDetailsOnPrint( value.length === 0 );
+			setPrintableBillingDetailsText( e.target.value );
+		},
+		[ hideDetailsOnPrint, setHideDetailsOnPrint ]
+	);
+
+	if ( transaction.cc_num !== 'XXXX' && ! transaction.cc_name && ! transaction.cc_email ) {
 		return null;
 	}
 
 	return (
 		<li className="billing-history__billing-details">
-			<ReceiptLabels />
+			<ReceiptLabels hideDetailsOnPrint={ hideDetailsOnPrint } />
 			<TextareaAutosize
-				className="billing-history__billing-details-editable"
+				className="billing-history__billing-details-editable receipt__no-print"
 				aria-labelledby="billing-history__billing-details-description"
 				id="billing-history__billing-details-textarea"
 				rows="1"
-				defaultValue={ transaction.cc_name + '\n' + transaction.cc_email }
+				value={ billingDetailsText }
+				onChange={ onChange }
+			/>
+			<ReceiptDetailsPrintableArea
+				billingDetailsText={ billingDetailsText }
+				hideDetailsOnPrint={ hideDetailsOnPrint }
 			/>
 		</li>
 	);
 }
 
-function EmptyReceiptDetails() {
-	// When the content of the text area is empty, hide the "Billing Details" label for printing.
-	const [ hideDetailsLabelOnPrint, setHideDetailsLabelOnPrint ] = useState( true );
-	const onChange = useCallback(
-		( e: React.ChangeEvent< HTMLTextAreaElement > ) => {
-			const value = e.target.value.trim();
-			if ( hideDetailsLabelOnPrint && value.length > 0 ) {
-				setHideDetailsLabelOnPrint( false );
-			} else if ( ! hideDetailsLabelOnPrint && value.length === 0 ) {
-				setHideDetailsLabelOnPrint( true );
-			}
-		},
-		[ hideDetailsLabelOnPrint, setHideDetailsLabelOnPrint ]
-	);
-
+function ReceiptDetailsPrintableArea( {
+	billingDetailsText,
+	hideDetailsOnPrint,
+}: {
+	billingDetailsText: string;
+	hideDetailsOnPrint?: boolean;
+} ) {
 	return (
-		<li className="billing-history__billing-details">
-			<ReceiptLabels hideDetailsLabelOnPrint={ hideDetailsLabelOnPrint } />
-			<TextareaAutosize
-				className="billing-history__billing-details-editable"
-				aria-labelledby="billing-history__billing-details-description"
-				id="billing-history__billing-details-textarea"
-				rows="1"
-				onChange={ onChange }
-			/>
-		</li>
+		<div
+			className={ clsx( 'billing-history__billing-details-readonly', {
+				'receipt__no-print': hideDetailsOnPrint,
+			} ) }
+		>
+			{ billingDetailsText }
+		</div>
 	);
 }
 
@@ -705,15 +714,12 @@ export function ReceiptPlaceholder() {
 	);
 }
 
-function ReceiptLabels( { hideDetailsLabelOnPrint }: { hideDetailsLabelOnPrint?: boolean } ) {
+function ReceiptLabels( { hideDetailsOnPrint }: { hideDetailsOnPrint?: boolean } ) {
 	const translate = useTranslate();
 
 	return (
-		<div>
-			<FormLabel
-				htmlFor="billing-history__billing-details-textarea"
-				className={ clsx( { 'receipt__no-print': hideDetailsLabelOnPrint } ) }
-			>
+		<div className={ clsx( { 'receipt__no-print': hideDetailsOnPrint } ) }>
+			<FormLabel htmlFor="billing-history__billing-details-textarea">
 				{ translate( 'Billing Details' ) }
 			</FormLabel>
 			<div

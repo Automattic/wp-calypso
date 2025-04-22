@@ -184,7 +184,7 @@ class MeSidebar extends Component {
 					/>
 
 					<SidebarItem
-						link="https://dashboard.wordpress.com/wp-admin/index.php?page=my-blogs"
+						link="/sites"
 						label={ translate( 'Manage Blogs' ) }
 						icon={ category }
 						forceInternalLink
