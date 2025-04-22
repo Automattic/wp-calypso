@@ -64,6 +64,6 @@ describe( 'SurveyManager', () => {
 
 		const { getByText } = render( <SurveyManager flow={ testFlow } /> );
 
-		expect( getByText( 'Mock Survey' ) ).toBeInTheDocument();
+		expect( getByText( 'Mock Survey' ) ).toBeVisible();
 	} );
 } );
