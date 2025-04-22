@@ -10,7 +10,7 @@
 		"declarationMap": true,
 		"esModuleInterop": false,
 		"isolatedModules": true,
-		"jsx": "preserve",
+		"jsx": "react-jsx",
 		"lib": [ "DOM", "DOM.Iterable", "ESNext" ],
 		"module": "esnext",
 		"moduleResolution": "node",
