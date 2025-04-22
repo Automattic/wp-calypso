@@ -7,7 +7,7 @@ export { useRateChat } from './use-rate-chat';
 export { useZendeskMessagingAvailability } from './use-zendesk-messaging-availability';
 export { useUpdateZendeskUserFields } from './use-update-zendesk-user-fields';
 export { useAttachFileToConversation } from './use-attach-file';
-export { isTestModeEnvironment } from './util';
+export { isTestModeEnvironment, getBadRatingReasons } from './util';
 export {
 	ZENDESK_SOURCE_URL_TICKET_FIELD_ID,
 	ZENDESK_STAGING_SUPPORT_CHAT_KEY,

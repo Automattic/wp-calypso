@@ -1,16 +1,20 @@
 import { HelpCenterSelect } from '@automattic/data-stores/src/help-center/types';
 import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
-import { useRateChat, useAuthenticateZendeskMessaging } from '@automattic/zendesk-client';
-import { Button } from '@wordpress/components';
+import {
+	useRateChat,
+	useAuthenticateZendeskMessaging,
+	getBadRatingReasons,
+} from '@automattic/zendesk-client';
+import { Button, TextareaControl, SelectControl } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
-import { useState, useCallback } from 'react';
+import { useState } from 'react';
 import Smooch from 'smooch';
 import { useOdieAssistantContext } from '../../context';
-import { MessageAction } from '../../types';
+import { MessageAction, ZendeskMessage } from '../../types';
+import { zendeskMessageConverter } from '../../utils';
 import { ThumbsDownIcon, ThumbsUpIcon } from './thumbs-icons';
-import type { KeyboardEvent } from 'react';
 
 type MessagePayload = {
 	type: 'text' | 'formResponse';
@@ -32,13 +36,12 @@ type FeedbackFormProps = {
 };
 
 export const FeedbackForm = ( { chatFeedbackOptions }: FeedbackFormProps ) => {
-	const { chat, isUserEligibleForPaidSupport } = useOdieAssistantContext();
+	const { chat, isUserEligibleForPaidSupport, addMessage } = useOdieAssistantContext();
 	const user = Smooch.getUser();
 	const { __ } = useI18n();
 	const [ score, setScore ] = useState< 'GOOD' | 'BAD' | '' >( '' );
 	const [ comment, setComment ] = useState( '' );
-	const [ finishedRating, setFinishedRating ] = useState( false );
-
+	const [ reason, setReason ] = useState( '' );
 	const { mutateAsync: rateChat } = useRateChat();
 
 	const { zendeskClientId } = useSelect( ( select ) => {
@@ -54,6 +57,7 @@ export const FeedbackForm = ( { chatFeedbackOptions }: FeedbackFormProps ) => {
 
 	const inferredClientId = chat.clientId || zendeskClientId;
 	const lastMessage = chat?.messages?.[ chat?.messages.length - 1 ];
+	const badRatingReasons = getBadRatingReasons();
 
 	const generateMessage = ( {
 		type,
@@ -129,7 +133,27 @@ export const FeedbackForm = ( { chatFeedbackOptions }: FeedbackFormProps ) => {
 			clientId: inferredClientId,
 			appUserId: user.id,
 			message,
-		} ).then( () => setScore( score ) );
+		} ).then( () => {
+			setScore( score );
+		} );
+	};
+
+	const addFeedbackMessage = () => {
+		const index = score === 'GOOD' ? 0 : 1;
+
+		const ticketID = chatFeedbackOptions[ index ]?.metadata?.ticket_id;
+		const accountId = chatFeedbackOptions[ index ]?.metadata?.account_id;
+
+		if ( score ) {
+			const message = generateMessage( {
+				type: 'text',
+				score,
+				accountId,
+				ticketID,
+			} ) as ZendeskMessage;
+
+			addMessage( zendeskMessageConverter( message ) );
+		}
 	};
 
 	const sendScoreComment = () => {
@@ -153,20 +177,10 @@ export const FeedbackForm = ( { chatFeedbackOptions }: FeedbackFormProps ) => {
 			clientId: inferredClientId,
 			appUserId: user.id,
 			message,
-		} ).then( () => setFinishedRating( true ) );
+		} ).then( () => {
+			addFeedbackMessage();
+		} );
 	};
-
-	const setFeedbackContent = useCallback( ( event: KeyboardEvent< HTMLTextAreaElement > ) => {
-		setComment( ( event.target as HTMLTextAreaElement ).value );
-	}, [] );
-
-	if ( finishedRating ) {
-		return (
-			<div className="feedback-thankyou__message">
-				{ __( 'Your feedback has been sent. Thank you for helping us improve.' ) }
-			</div>
-		);
-	}
 
 	return (
 		<>
@@ -185,22 +199,37 @@ export const FeedbackForm = ( { chatFeedbackOptions }: FeedbackFormProps ) => {
 			</div>
 			{ score && (
 				<div className="odie-conversation-feedback__message">
-					<div>
-						<h3>{ __( 'Thank you for your input!' ) }</h3>
-						<p>{ __( 'Please share any other details that can help understand your rating.' ) }</p>
-					</div>
-					<div>
-						<textarea onKeyUp={ setFeedbackContent } />
-						<button className="components-button is-primary" onClick={ sendScoreComment }>
-							{ __( 'Send' ) }
-						</button>
-						<button
-							onClick={ () => setFinishedRating( true ) }
-							className="components-button is-secondary"
-						>
-							{ __( 'No thanks' ) }
-						</button>
-					</div>
+					<TextareaControl
+						__nextHasNoMarginBottom
+						label={ __( 'Thank you for your input!' ) }
+						help={ __( 'Please share any other details that can help understand your rating.' ) }
+						value={ comment }
+						onChange={ ( value ) => setComment( value ) }
+					/>
+					{ score && score === 'BAD' && (
+						<SelectControl
+							className="odie-conversation-feedback__reason"
+							label={ __( 'Reason' ) }
+							value={ reason }
+							options={ badRatingReasons }
+							onChange={ ( reason ) => setReason( reason ) }
+							__next40pxDefaultSize
+						/>
+					) }
+
+					<Button variant="primary" onClick={ sendScoreComment } rel="noreferrer">
+						{ __( 'Send' ) }
+					</Button>
+
+					<Button
+						variant="secondary"
+						onClick={ () => {
+							addFeedbackMessage();
+						} }
+						rel="noreferrer"
+					>
+						{ __( 'No thanks' ) }
+					</Button>
 				</div>
 			) }
 		</>
