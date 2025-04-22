@@ -1,0 +1,7 @@
+.dashboard-menu__item.dashboard-menu__item {
+	color: var( --dashboard-menu-item__color );
+
+	&.is-active {
+		color: var( --dashboard-menu-item-active__color );
+	}
+}

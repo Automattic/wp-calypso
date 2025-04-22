@@ -9,6 +9,8 @@ import {
 	isAIBuilderFlow,
 	isTailoredSignupFlow,
 	Step,
+	isNewHostedSiteCreationFlow,
+	NEW_HOSTED_SITE_FLOW,
 } from '@automattic/onboarding';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import { getQueryArg } from '@wordpress/url';
@@ -29,6 +31,11 @@ import UseMyDomain from 'calypso/components/domains/use-my-domain';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Notice from 'calypso/components/notice';
 import { shouldUseStepContainerV2 } from 'calypso/landing/stepper/declarative-flow/helpers/should-use-step-container-v2';
+import {
+	LOCAL_STORAGE_KEY_FOR_PG_ID as PG_ID,
+	LOCAL_STORAGE_KEY_FOR_PG_ID_TS as PG_TS,
+	LOCAL_STORAGE_KEY_FOR_PG_VALIDITY as PG_ID_VALIDITY,
+} from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/playground/lib/initialize-playground';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import {
 	domainRegistration,
@@ -107,6 +114,7 @@ export class RenderDomainsStep extends Component {
 		stepSectionName: PropTypes.string,
 		selectedSite: PropTypes.object,
 		recordTracksEvent: PropTypes.func,
+		allowSkipWithoutSearch: PropTypes.bool,
 	};
 
 	constructor( props ) {
@@ -157,6 +165,26 @@ export class RenderDomainsStep extends Component {
 			props.goToNextStep();
 		}
 		this.setCurrentFlowStep = this.setCurrentFlowStep.bind( this );
+
+		// Get playground ID from either GET param or localStorage
+		const playgroundIdFromUrl = getQueryArg( window.location.href, 'playground' );
+		const playgroundIdFromStorage = window.localStorage.getItem( PG_ID );
+		const playgroundIdTimestamp = window.localStorage.getItem( PG_TS );
+		const playgroundId =
+			playgroundIdFromUrl ||
+			( Date.now() - playgroundIdTimestamp < PG_ID_VALIDITY ? playgroundIdFromStorage : null );
+
+		// Clean up localStorage regardless of whether we used the value
+		window.localStorage.removeItem( PG_ID );
+		window.localStorage.removeItem( PG_TS );
+
+		// Update URL if we got the ID from localStorage
+		if ( playgroundId && playgroundIdFromStorage && ! playgroundIdFromUrl ) {
+			const url = new URL( window.location.href );
+			url.searchParams.set( 'playground', playgroundId );
+			window.history.replaceState( {}, '', url.toString() );
+		}
+
 		this.state = {
 			currentStep: null,
 			isCartPendingUpdateDomain: null,
@@ -171,6 +199,7 @@ export class RenderDomainsStep extends Component {
 			checkDomainAvailabilityPromises: [],
 			removeDomainTimeout: 0,
 			addDomainTimeout: 0,
+			playgroundId,
 		};
 	}
 
@@ -621,12 +650,22 @@ export class RenderDomainsStep extends Component {
 
 	shouldHideDomainExplainer = () => {
 		const { flowName } = this.props;
-		return [ 'domain', 'domain-for-gravatar', 'onboarding-with-email' ].includes( flowName );
+		return [
+			'domain',
+			'domain-for-gravatar',
+			'onboarding-with-email',
+			NEW_HOSTED_SITE_FLOW,
+		].includes( flowName );
 	};
 
 	shouldHideUseYourDomain = () => {
 		const { flowName } = this.props;
-		return [ 'domain', 'domain-for-gravatar', 'onboarding-with-email' ].includes( flowName );
+		return [
+			'domain',
+			'domain-for-gravatar',
+			'onboarding-with-email',
+			NEW_HOSTED_SITE_FLOW,
+		].includes( flowName );
 	};
 
 	shouldDisplayDomainOnlyExplainer = () => {
@@ -966,6 +1005,52 @@ export class RenderDomainsStep extends Component {
 		) : null;
 
 		const hasSearchedDomains = Array.isArray( this.props.step?.domainForm?.searchResults );
+		const shouldShowSkip = this.props.allowSkipWithoutSearch || hasSearchedDomains;
+
+		const content = [
+			domainsInCart.length > 0 || this.state.wpcomSubdomainSelected ? (
+				<DomainsMiniCart
+					domainsInCart={ domainsInCart }
+					domainRemovalQueue={ this.state.domainRemovalQueue }
+					cartIsLoading={ cartIsLoading }
+					flowName={ flowName }
+					removeDomainClickHandler={ this.removeDomainClickHandler }
+					isMiniCartContinueButtonBusy={ this.state.isMiniCartContinueButtonBusy }
+					goToNext={ this.goToNext }
+					handleSkip={ this.handleSkip }
+					wpcomSubdomainSelected={ this.state.wpcomSubdomainSelected }
+					freeDomainRemoveClickHandler={ this.freeDomainRemoveClickHandler }
+				/>
+			) : (
+				! this.shouldHideDomainExplainer() &&
+				shouldShowSkip && (
+					<div className="domains__domain-side-content domains__free-domain">
+						<SideExplainer
+							onClick={ this.handleDomainExplainerClick }
+							type={
+								this.props.isPlanSelectionAvailableLaterInFlow
+									? 'free-domain-explainer-check-paid-plans'
+									: 'free-domain-explainer'
+							}
+							flowName={ flowName }
+						/>
+					</div>
+				)
+			),
+			useYourDomain,
+			this.shouldDisplayDomainOnlyExplainer() && (
+				<div className="domains__domain-side-content">
+					<SideExplainer
+						onClick={ this.handleDomainExplainerClick }
+						type="free-domain-only-explainer"
+					/>
+				</div>
+			),
+		].filter( Boolean );
+
+		if ( content.length === 0 ) {
+			return null;
+		}
 
 		return (
 			<div
@@ -973,44 +1058,7 @@ export class RenderDomainsStep extends Component {
 					'is-sticky': !! useYourDomain,
 				} ) }
 			>
-				{ domainsInCart.length > 0 || this.state.wpcomSubdomainSelected ? (
-					<DomainsMiniCart
-						domainsInCart={ domainsInCart }
-						domainRemovalQueue={ this.state.domainRemovalQueue }
-						cartIsLoading={ cartIsLoading }
-						flowName={ flowName }
-						removeDomainClickHandler={ this.removeDomainClickHandler }
-						isMiniCartContinueButtonBusy={ this.state.isMiniCartContinueButtonBusy }
-						goToNext={ this.goToNext }
-						handleSkip={ this.handleSkip }
-						wpcomSubdomainSelected={ this.state.wpcomSubdomainSelected }
-						freeDomainRemoveClickHandler={ this.freeDomainRemoveClickHandler }
-					/>
-				) : (
-					! this.shouldHideDomainExplainer() &&
-					hasSearchedDomains && (
-						<div className="domains__domain-side-content domains__free-domain">
-							<SideExplainer
-								onClick={ this.handleDomainExplainerClick }
-								type={
-									this.props.isPlanSelectionAvailableLaterInFlow
-										? 'free-domain-explainer-check-paid-plans'
-										: 'free-domain-explainer'
-								}
-								flowName={ flowName }
-							/>
-						</div>
-					)
-				) }
-				{ useYourDomain }
-				{ this.shouldDisplayDomainOnlyExplainer() && (
-					<div className="domains__domain-side-content">
-						<SideExplainer
-							onClick={ this.handleDomainExplainerClick }
-							type="free-domain-only-explainer"
-						/>
-					</div>
-				) }
+				{ content }
 			</div>
 		);
 	};
@@ -1100,7 +1148,7 @@ export class RenderDomainsStep extends Component {
 				sideContent={ ! shouldUseStepContainerV2( this.props.flowName ) && this.getSideContent() }
 				isInLaunchFlow={ 'launch-site' === this.props.flowName }
 				promptText={
-					this.isHostingFlow()
+					isHostingSignupFlow( this.props.flowName )
 						? this.props.translate( 'Stand out with a short and memorable domain' )
 						: undefined
 				}
@@ -1166,16 +1214,30 @@ export class RenderDomainsStep extends Component {
 		);
 	};
 
-	isHostingFlow = () => isHostingSignupFlow( this.props.flowName );
-
 	getSubHeaderText() {
-		const { isAllDomains, stepSectionName, translate } = this.props;
+		const { isAllDomains, stepSectionName, flowName, translate } = this.props;
 
 		if ( isAllDomains ) {
 			return translate( 'Find the domain that defines you' );
 		}
 
-		if ( this.isHostingFlow() ) {
+		if ( isNewHostedSiteCreationFlow( flowName ) ) {
+			return translate(
+				'Help your site stand out with a custom domain. Not sure yet? {{decideLater}}Decide later{{/decideLater}}.',
+				{
+					components: {
+						decideLater: (
+							<Step.LinkButton
+								css={ { color: 'inherit !important' } }
+								onClick={ () => this.handleSkip( undefined, true ) }
+							/>
+						),
+					},
+				}
+			);
+		}
+
+		if ( isHostingSignupFlow( flowName ) ) {
 			const components = {
 				span: (
 					<button
@@ -1335,7 +1397,6 @@ export class RenderDomainsStep extends Component {
 		const siteUrl = this.props.selectedSite?.URL;
 		const siteSlug = this.props.queryObject?.siteSlug;
 		const source = this.props.queryObject?.source;
-		const playgroundId = getQueryArg( window.location.href, 'playground' );
 
 		let backUrl;
 		let backLabelText;
@@ -1383,11 +1444,11 @@ export class RenderDomainsStep extends Component {
 		} else if ( isAIBuilderFlow( flowName ) ) {
 			backUrl = `${ siteUrl }/wp-admin/site-editor.php?canvas=edit&referrer=${ flowName }&p=%2F&ai-step=edit`;
 			backLabelText = translate( 'Keep Editing' );
-		} else {
+		} else if ( ! isNewHostedSiteCreationFlow( flowName ) ) {
 			backUrl = getStepUrl( flowName, stepName, null, this.getLocale() );
 
-			if ( playgroundId ) {
-				backUrl = `/setup/onboarding/playground?playground=${ playgroundId }`;
+			if ( this.state.playgroundId ) {
+				backUrl = `/setup/onboarding/playground?playground=${ this.state.playgroundId }`;
 				backLabelText = translate( 'Back' );
 			} else if ( 'site' === source && siteUrl ) {
 				backUrl = siteUrl;
@@ -1419,7 +1480,7 @@ export class RenderDomainsStep extends Component {
 		if ( shouldUseStepContainerV2( flowName ) ) {
 			const [ content, sideContent ] = this.getContentColumns();
 
-			const backButton = (
+			const backButton = ( backUrl || goBack ) && (
 				<Step.BackButton
 					href={ backUrl }
 					rel={ isExternalBackUrl ? 'external' : '' }

@@ -3,7 +3,7 @@ export function WireframePlaceholder( {
 	children,
 	className,
 }: {
-	height?: number;
+	height?: React.CSSProperties[ 'height' ];
 	children?: React.ReactNode;
 	className?: string;
 } ) {

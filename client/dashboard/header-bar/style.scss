@@ -1,0 +1,13 @@
+@import '@wordpress/base-styles/variables';
+
+.dashboard-header-bar {
+	box-sizing: border-box;
+	padding: $grid-unit-15;
+	border-bottom: $border-width solid var( --dashboard-header__border-color );
+	background-color: var( --dashboard-header__background-color );
+	color: var( --dashboard-header__color );
+}
+
+.dashboard-header-bar-title {
+  padding-inline: $grid-unit-15;
+}

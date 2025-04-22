@@ -235,6 +235,7 @@ export default function useCreatePaymentCompleteCallback( {
 					siteSlug,
 					orderId: 'order_id' in transactionResult ? transactionResult.order_id : undefined,
 					receiptId: 'receipt_id' in transactionResult ? transactionResult.receipt_id : undefined,
+					fromExternalCheckout: sitelessCheckoutType === 'a4a',
 				} );
 				return;
 			}
@@ -252,6 +253,7 @@ export default function useCreatePaymentCompleteCallback( {
 					orderId: 'order_id' in transactionResult ? transactionResult.order_id : undefined,
 					receiptId: 'receipt_id' in transactionResult ? transactionResult.receipt_id : undefined,
 					fromSiteSlug,
+					fromExternalCheckout: sitelessCheckoutType === 'a4a',
 				} );
 				return;
 			}
@@ -263,6 +265,7 @@ export default function useCreatePaymentCompleteCallback( {
 				siteSlug,
 				orderId: 'order_id' in transactionResult ? transactionResult.order_id : undefined,
 				receiptId: 'receipt_id' in transactionResult ? transactionResult.receipt_id : undefined,
+				fromExternalCheckout: sitelessCheckoutType === 'a4a',
 			} );
 		},
 		[

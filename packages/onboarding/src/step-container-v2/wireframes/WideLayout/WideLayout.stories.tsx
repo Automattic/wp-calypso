@@ -13,7 +13,7 @@ const meta: Meta< typeof WideLayout > = {
 
 export default meta;
 
-export const Default = () => (
+export const Wide_Default = () => (
 	<WideLayout
 		topBar={ <TopBar leftElement={ <BackButton /> } /> }
 		heading={

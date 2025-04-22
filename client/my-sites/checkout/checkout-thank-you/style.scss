@@ -593,11 +593,16 @@
 }
 
 .is-section-checkout-thank-you {
-	background: var(--studio-white);
-
 	.layout__content {
 		padding-right: 0;
 		padding-left: 0;
+	}
+}
+
+.is-section-checkout-pending,
+.is-section-checkout-thank-you {
+	&:not( :has( .step-container-v2 ) ) {
+		background: var( --studio-white, #fff );
 	}
 }
 
@@ -615,7 +620,6 @@
 
 .is-section-checkout-pending {
 	&.has-no-sidebar {
-		background: var(--studio-white, #fff );
 		.layout__content {
 			padding: 0;
 			overflow: hidden;

@@ -105,6 +105,7 @@ export interface SiteDetailsPlan {
 	billing_period: string;
 	user_is_owner: boolean;
 	is_free: boolean;
+	license_key?: string;
 	features: {
 		active: string[];
 		available: Record< string, string[] >;
@@ -388,6 +389,7 @@ export interface Domain {
 	product_slug?: any;
 	owner: string;
 	is_pending_icann_verification?: boolean;
+	is_root_domain_registered_with_automattic: boolean;
 	is_mapped_to_atomic_site: boolean;
 }
 

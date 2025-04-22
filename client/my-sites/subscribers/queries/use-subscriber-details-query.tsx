@@ -1,7 +1,7 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 import { getSubscriberDetailsCacheKey, getSubscriberDetailsType } from '../helpers';
-import type { Subscriber } from '../types';
+import type { SubscriberDetails } from '../types';
 
 const useSubscriberDetailsQuery = (
 	siteId: number | null,
@@ -10,7 +10,7 @@ const useSubscriberDetailsQuery = (
 ) => {
 	const type = getSubscriberDetailsType( userId );
 
-	return useQuery< Subscriber >( {
+	return useQuery< SubscriberDetails >( {
 		queryKey: getSubscriberDetailsCacheKey( siteId, subscriptionId, userId, type ),
 		queryFn: () =>
 			wpcom.req.get( {

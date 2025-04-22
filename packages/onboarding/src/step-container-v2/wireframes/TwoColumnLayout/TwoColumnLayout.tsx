@@ -1,6 +1,6 @@
 import clsx from 'clsx';
 import { Children, Fragment, isValidElement, ReactNode } from 'react';
-import { Content } from '../../components/Content/Content';
+import { ContentRow } from '../../components/ContentRow/ContentRow';
 import { ContentWrapper } from '../../components/ContentWrapper/ContentWrapper';
 import { StepContainerV2 } from '../../components/StepContainerV2/StepContainerV2';
 import { ContentProp } from '../../components/StepContainerV2/context';
@@ -60,13 +60,14 @@ export const TwoColumnLayout = ( {
 					<>
 						<TopBarRenderer topBar={ topBar } />
 						<ContentWrapper>
-							{ heading }
-							<Content
-								className={ clsx( 'step-container-v2__content--two-column-layout', className ) }
+							{ heading && <ContentRow columns={ 6 }>{ heading }</ContentRow> }
+							<ContentRow
+								columns={ 10 }
+								className={ clsx( 'step-container-v2__content-row--two-column-layout', className ) }
 							>
 								{ childElements }
-							</Content>
-							{ footer }
+							</ContentRow>
+							{ footer && <ContentRow columns={ 6 }>{ footer }</ContentRow> }
 						</ContentWrapper>
 						<StickyBottomBarRenderer stickyBottomBar={ stickyBottomBar } />
 					</>

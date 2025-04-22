@@ -1,4 +1,7 @@
-import clsx from 'clsx';
+import {
+	__experimentalToggleGroupControl as ToggleGroupControl,
+	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
+} from '@wordpress/components';
 import { localize } from 'i18n-calypso';
 import { Component, createRef } from 'react';
 import { connect } from 'react-redux';
@@ -51,23 +54,13 @@ export class FilterBar extends Component {
 		}
 
 		const selectedFilter = this.filterListRef.current?.querySelector(
-			'.wpnc__filter--segmented-control-item[aria-selected="true"]'
+			'.components-toggle-group-control-option-base[aria-checked="true"]'
 		);
 		if ( selectedFilter ) {
 			// It might be focused immediately when the panel is opening because of the pointer-events is none.
 			this.timerId = window.setTimeout( () => selectedFilter.focus(), 300 );
 		}
 	}
-
-	selectFilter = ( event ) => {
-		if ( event ) {
-			event.stopPropagation();
-			event.preventDefault();
-		}
-
-		const filterName = event.target.dataset.filterName;
-		this.props.controller.selectFilter( filterName );
-	};
 
 	handleKeydown = ( event ) => {
 		let direction;
@@ -92,39 +85,23 @@ export class FilterBar extends Component {
 		const filterItems = this.getFilterItems();
 
 		return (
-			<div className="wpnc__filter">
-				<ul
-					className="wpnc__filter--segmented-control"
-					role="tablist"
-					aria-label={ translate( 'Filter notifications' ) }
-					ref={ this.filterListRef }
+			<div className="wpnc__filter" ref={ this.filterListRef }>
+				<ToggleGroupControl
+					hideLabelFromVision
+					isBlock
+					label={ translate( 'Filter Notifications' ) }
+					value={ filterName }
+					onChange={ ( selectedFilter ) => this.props.controller.selectFilter( selectedFilter ) }
 					onKeyDown={ this.handleKeydown }
+					__nextHasNoMarginBottom
+					__next40pxDefaultSize
 				>
 					{ filterItems.map( ( { label, name } ) => {
-						const isSelected = name === filterName;
 						return (
-							<li
-								key={ name }
-								data-filter-name={ name }
-								className={ clsx( 'wpnc__filter--segmented-control-item', {
-									selected: isSelected,
-								} ) }
-								onClick={ this.selectFilter }
-								onKeyDown={ ( e ) => {
-									if ( e.key === 'Enter' ) {
-										this.selectFilter( e );
-									}
-								} }
-								role="tab"
-								aria-selected={ isSelected }
-								aria-controls="wpnc__note-list"
-								tabIndex={ isSelected ? 0 : -1 }
-							>
-								{ label( translate ) }
-							</li>
+							<ToggleGroupControlOption key={ name } label={ label( translate ) } value={ name } />
 						);
 					} ) }
-				</ul>
+				</ToggleGroupControl>
 			</div>
 		);
 	}

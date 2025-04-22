@@ -65,7 +65,6 @@ export const BloggerImporter: React.FunctionComponent< ImporterBaseProps > = ( p
 
 	function onTryAgainClick() {
 		job?.importerId && resetImport( siteId, job.importerId );
-		stepNavigator?.goToImportCapturePage?.();
 	}
 
 	function checkProgress() {

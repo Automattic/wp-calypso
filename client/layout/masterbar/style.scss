@@ -679,6 +679,12 @@ body.is-mobile-app-view {
 	}
 }
 
+.masterbar__item-subitems {
+	a {
+		text-decoration: none;
+	}
+}
+
 .masterbar__item-launch-site {
 	gap: 6px;
 	cursor: pointer;
@@ -795,9 +801,6 @@ body.is-mobile-app-view {
 		min-width: 264px !important;
 		padding-top: 12px;
 
-		a {
-			text-decoration: none;
-		}
 
 		@media only screen and (max-width: 781px) {
 			max-height: 100%;

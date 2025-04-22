@@ -1,11 +1,9 @@
 import { default as apiFetchPromise } from '@wordpress/api-fetch';
 import { select } from '@wordpress/data';
-import { apiFetch } from '@wordpress/data-controls';
 import { addQueryArgs } from '@wordpress/url';
 import { default as wpcomRequestPromise, canAccessWpcomApis } from 'wpcom-proxy-request';
 import { GeneratorReturnType } from '../mapped-types';
 import { SiteDetails } from '../site';
-import { wpcomRequest } from '../wpcom-request-controls';
 import { STORE_KEY } from './constants';
 import { isE2ETest } from '.';
 import type {
@@ -15,37 +13,6 @@ import type {
 	HelpCenterShowOptions,
 } from './types';
 import type { SupportInteraction } from '@automattic/odie-client/src/types';
-
-export const receiveHasSeenWhatsNewModal = ( value: boolean | undefined ) =>
-	( {
-		type: 'HELP_CENTER_SET_SEEN_WHATS_NEW_MODAL',
-		value,
-	} ) as const;
-
-export function* setHasSeenWhatsNewModal( value: boolean ) {
-	let response: {
-		has_seen_whats_new_modal: boolean;
-	};
-	if ( canAccessWpcomApis() ) {
-		response = yield wpcomRequest( {
-			path: '/block-editor/has-seen-whats-new-modal',
-			apiNamespace: 'wpcom/v2',
-			method: 'PUT',
-			body: {
-				has_seen_whats_new_modal: value,
-			},
-		} );
-	} else {
-		response = yield apiFetch( {
-			global: true,
-			path: '/wpcom/v2/block-editor/has-seen-whats-new-modal',
-			method: 'PUT',
-			data: { has_seen_whats_new_modal: value },
-		} as APIFetchOptions );
-	}
-
-	return receiveHasSeenWhatsNewModal( response.has_seen_whats_new_modal );
-}
 
 export function setCurrentSupportInteraction( supportInteraction: SupportInteraction ) {
 	return {
@@ -255,7 +222,6 @@ export type HelpCenterAction =
 			| typeof setShowMessagingWidget
 			| typeof setSubject
 			| typeof resetStore
-			| typeof receiveHasSeenWhatsNewModal
 			| typeof setMessage
 			| typeof setUserDeclaredSite
 			| typeof setUserDeclaredSiteUrl
@@ -271,4 +237,4 @@ export type HelpCenterAction =
 			| typeof setAllowPremiumSupport
 			| typeof setHelpCenterOptions
 	  >
-	| GeneratorReturnType< typeof setShowHelpCenter | typeof setHasSeenWhatsNewModal >;
+	| GeneratorReturnType< typeof setShowHelpCenter >;

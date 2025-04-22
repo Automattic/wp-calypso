@@ -461,7 +461,7 @@ describe( 'useGenerateActionHook', () => {
 
 		const action = result.current( { planSlug: PLAN_PERSONAL, availableForPurchase: false } );
 
-		expect( action.primary.text ).toBe( 'Requires downgrade' );
-		expect( action.primary.status ).toBe( 'disabled' );
+		expect( action.primary.text ).toBe( 'Downgrade' );
+		expect( action.primary.variant ).toBe( 'secondary' );
 	} );
 } );

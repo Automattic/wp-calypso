@@ -16,7 +16,7 @@ import {
 	isHostedSiteMigrationFlow,
 	Step,
 } from '@automattic/onboarding';
-import { useDispatch, useSelect, resolveSelect } from '@wordpress/data';
+import { useDispatch, useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -34,7 +34,6 @@ import {
 import { useSelector } from 'calypso/state';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 import { getUrlData } from 'calypso/state/imports/url-analyzer/selectors';
-import { SITE_STORE } from '../../../../stores';
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
 import type { Step as StepType } from '../../types';
 import type { OnboardSelect } from '@automattic/data-stores';
@@ -80,7 +79,6 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 			siteUrl: select( ONBOARD_STORE ).getSiteUrl(),
 			progress: select( ONBOARD_STORE ).getProgress(),
 			partnerBundle: select( ONBOARD_STORE ).getPartnerBundle(),
-			siteGoals: select( ONBOARD_STORE ).getGoals(),
 		} ),
 		[]
 	);
@@ -141,13 +139,14 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 	);
 	const urlQueryParams = useQuery();
 	const skipMigration = urlQueryParams.get( 'skipMigration' ) || '';
+	const platform = urlQueryParams.get( 'platform' ) || '';
 	const useThemeHeadstart = ! isStartWritingFlow( flow ) && ! isNewHostedSiteCreationFlow( flow );
 	const shouldGoToCheckout = Boolean( planCartItem );
 
 	async function createSite() {
-		const slug = getSignupCompleteSlug();
-		const siteObj = await resolveSelect( SITE_STORE ).getSite?.( slug );
-		if ( isManageSiteFlow || ( slug && siteObj?.plan?.is_free ) ) {
+		if ( isManageSiteFlow ) {
+			const slug = getSignupCompleteSlug();
+
 			if ( planCartItem && slug ) {
 				await addPlanToCart( slug, flow, true, theme, planCartItem );
 			}
@@ -216,6 +215,7 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 			goToCheckout: shouldGoToCheckout,
 			siteCreated: true,
 			skipMigration,
+			platform,
 		};
 	}
 
@@ -233,7 +233,7 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 		return (
 			<>
 				<DocumentHead title={ title } />
-				<Step.Loading title={ title } progress={ progress } />
+				<Step.Loading title={ title } progress={ progress } delay={ 1000 } />
 			</>
 		);
 	}

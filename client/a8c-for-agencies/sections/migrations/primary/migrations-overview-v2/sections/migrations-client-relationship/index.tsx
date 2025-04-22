@@ -1,4 +1,4 @@
-import { useTranslate } from 'i18n-calypso';
+import { numberFormat, useTranslate } from 'i18n-calypso';
 import HostingBenefitsSection from 'calypso/a8c-for-agencies/sections/marketplace/common/hosting-benefits-section';
 
 import './style.scss';
@@ -17,7 +17,14 @@ export default function MigrationsClientRelationship() {
 						"With over 15 years of experience running hundreds of millions of sites on WordPress.com, including the highest-trafficked sites globally, we've developed a platform we confidently put up against any cloud service."
 					),
 					benefits: [
-						translate( '99.999% Uptime' ),
+						translate( '%(uptimePercent)s Uptime', {
+							args: {
+								uptimePercent: numberFormat( 0.99999, {
+									numberFormatOptions: { style: 'percent', maximumFractionDigits: 3 },
+								} ),
+							},
+							comment: '99.999% uptime',
+						} ),
 						translate( 'High availability with automated scaling' ),
 					],
 				},

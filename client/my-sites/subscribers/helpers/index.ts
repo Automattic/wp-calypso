@@ -8,6 +8,7 @@ const getSubscribersCacheKey = ( {
 	sortTerm,
 	filters,
 	sortOrder,
+	use_new_helper,
 }: {
 	siteId: number | undefined | null;
 	page?: number;
@@ -16,7 +17,18 @@ const getSubscribersCacheKey = ( {
 	sortTerm?: string;
 	filters?: SubscribersFilterBy[];
 	sortOrder?: 'asc' | 'desc';
-} ) => [ 'subscribers', siteId, page, perPage, search, sortTerm, filters, sortOrder ];
+	use_new_helper?: boolean;
+} ) => [
+	'subscribers',
+	siteId,
+	page,
+	perPage,
+	search,
+	sortTerm,
+	filters,
+	sortOrder,
+	use_new_helper,
+];
 
 const getSubscriberDetailsCacheKey = (
 	siteId: number | undefined | null,

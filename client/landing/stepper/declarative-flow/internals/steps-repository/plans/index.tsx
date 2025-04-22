@@ -1,9 +1,4 @@
-import {
-	isDomainUpsellFlow,
-	isNewHostedSiteCreationFlow,
-	isStartWritingFlow,
-	StepContainer,
-} from '@automattic/onboarding';
+import { isDomainUpsellFlow, isStartWritingFlow, StepContainer } from '@automattic/onboarding';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useQuery } from '../../../../hooks/use-query';
 import PlansWrapper from './plans-wrapper';
@@ -39,7 +34,7 @@ const plans: Step< {
 		return null;
 	}
 
-	const isAllowedToGoBack = isDomainUpsellFlow( flow ) || isNewHostedSiteCreationFlow( flow );
+	const isAllowedToGoBack = isDomainUpsellFlow( flow );
 
 	return (
 		<StepContainer
@@ -51,13 +46,7 @@ const plans: Step< {
 			hideFormattedHeader
 			isLargeSkipLayout={ false }
 			hideBack={ ! isAllowedToGoBack }
-			stepContent={
-				<PlansWrapper
-					flowName={ flow }
-					onSubmit={ handleSubmit }
-					shouldIncludeFAQ={ isNewHostedSiteCreationFlow( flow ) }
-				/>
-			}
+			stepContent={ <PlansWrapper flowName={ flow } onSubmit={ handleSubmit } /> }
 			recordTracksEvent={ recordTracksEvent }
 		/>
 	);

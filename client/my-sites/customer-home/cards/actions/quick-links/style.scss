@@ -2,8 +2,16 @@
 @import "@wordpress/base-styles/mixins";
 
 .quick-links.foldable-card.card {
-	@include breakpoint-deprecated( ">660px" ) {
+	padding: 1rem;
+	border-radius: 0;
+
+	@media only screen and (min-width: $break-small) {
 		border-radius: 3px;
+	}
+
+	@media only screen and (min-width: $break-xlarge) {
+		padding: 0;
+		box-shadow: none;
 	}
 
 	.foldable-card__header {
@@ -38,7 +46,6 @@
 
 .quick-links__boxes {
 	margin-left: -16px;
-	margin-right: -16px;
 }
 
 .card.quick-links__action-box {
@@ -108,14 +115,12 @@
 	}
 
 	&:hover {
-		background: var(--color-neutral-0);
-
 		.quick-links__action-box-icon {
-			fill: var(--color-neutral-80);
-
-			&.dashicons {
-				color: var(--color-neutral-80);
-			}
+			color: var(--color-primary-60);
+			fill: var(--color-primary-60);
+		}
+		.quick-links__action-box-label {
+			color: var(--color-primary-60);
 		}
 	}
 
@@ -138,3 +143,4 @@
 	height: 16px;
 	margin-left: 2px;
 }
+
