@@ -1,4 +1,4 @@
-import { Page } from 'playwright';
+import { Page, Locator } from 'playwright';
 import { EditorComponent } from './editor-component';
 
 const popoverParentSelector = '.block-editor-inserter__quick-inserter';
@@ -41,8 +41,10 @@ export class EditorInlineBlockInserterComponent {
 	 * Where multiple matches exist (eg. due to partial matching), the first
 	 * result will be chosen.
 	 */
-	async selectBlockInserterResult( name: string ): Promise< void > {
+	async selectBlockInserterResult( name: string ): Promise< Locator > {
 		const editorParent = await this.editor.parent();
-		await editorParent.getByRole( 'option', { name, exact: true } ).first().click();
+		const locator = editorParent.getByRole( 'option', { name, exact: true } ).first();
+		await locator.click();
+		return locator;
 	}
 }

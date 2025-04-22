@@ -606,95 +606,93 @@ export function PurchaseItemStatus( {
 	return null;
 }
 
+export function PurchaseItemPaymentMethod( {
+	purchase,
+	translate,
+}: {
+	purchase: Purchases.Purchase;
+	translate: LocalizeProps[ 'translate' ];
+} ) {
+	if ( isIncludedWithPlan( purchase ) ) {
+		return translate( 'Included with Plan' );
+	}
+
+	if ( purchase.isInAppPurchase ) {
+		return (
+			<div>
+				<span>{ translate( 'In-App Purchase' ) }</span>
+			</div>
+		);
+	}
+
+	if (
+		purchase.isAutoRenewEnabled &&
+		! hasPaymentMethod( purchase ) &&
+		! isPartnerPurchase( purchase ) &&
+		! isAkismetFreeProduct( purchase )
+	) {
+		return (
+			<div className="purchase-item__no-payment-method">
+				<Icon icon={ warningIcon } />
+				<span>{ translate( 'You don’t have a payment method to renew this subscription' ) }</span>
+			</div>
+		);
+	}
+
+	if (
+		! isAkismetFreeProduct( purchase ) &&
+		! isRechargeable( purchase ) &&
+		hasPaymentMethod( purchase ) &&
+		purchase.isAutoRenewEnabled
+	) {
+		return (
+			<div className="purchase-item__no-payment-method">
+				<Icon icon={ warningIcon } />
+				<span>{ translate( 'You don’t have a payment method to renew this subscription' ) }</span>
+			</div>
+		);
+	}
+
+	if ( isRenewing( purchase ) ) {
+		if ( purchase.payment.type === 'credit_card' && purchase.payment.creditCard ) {
+			const paymentMethodType = purchase.payment.creditCard.displayBrand
+				? purchase.payment.creditCard.displayBrand
+				: purchase.payment.creditCard.type || purchase.payment.paymentPartner || '';
+
+			return (
+				<>
+					<img
+						src={ getPaymentMethodImageURL( paymentMethodType ) }
+						alt={ paymentMethodType }
+						className="purchase-item__payment-method-card"
+					/>
+					{ purchase.payment.creditCard.number }
+				</>
+			);
+		}
+
+		if ( purchase.payment.type === 'paypal' ) {
+			return (
+				<img src={ payPalImage } alt={ purchase.payment.type } className="purchase-item__paypal" />
+			);
+		}
+
+		if ( purchase.payment.type === 'upi' ) {
+			return <img src={ upiImage } alt={ purchase.payment.type } />;
+		}
+
+		return null;
+	}
+}
+
 class PurchaseItem extends Component<
 	PurchaseItemPropsPlaceholder | ( PurchaseItemProps & PurchaseItemPropsConnected )
 > {
-	getPaymentMethod() {
-		if ( this.props.isPlaceholder ) {
-			return null;
-		}
-		const { purchase, translate } = this.props;
-
-		if ( isIncludedWithPlan( purchase ) ) {
-			return translate( 'Included with Plan' );
-		}
-
-		if ( purchase.isInAppPurchase ) {
-			return (
-				<div>
-					<span>{ translate( 'In-App Purchase' ) }</span>
-				</div>
-			);
-		}
-
-		if (
-			purchase.isAutoRenewEnabled &&
-			! hasPaymentMethod( purchase ) &&
-			! isPartnerPurchase( purchase ) &&
-			! isAkismetFreeProduct( purchase )
-		) {
-			return (
-				<div className="purchase-item__no-payment-method">
-					<Icon icon={ warningIcon } />
-					<span>{ translate( 'You don’t have a payment method to renew this subscription' ) }</span>
-				</div>
-			);
-		}
-
-		if (
-			! isAkismetFreeProduct( purchase ) &&
-			! isRechargeable( purchase ) &&
-			hasPaymentMethod( purchase ) &&
-			purchase.isAutoRenewEnabled
-		) {
-			return (
-				<div className="purchase-item__no-payment-method">
-					<Icon icon={ warningIcon } />
-					<span>{ translate( 'You don’t have a payment method to renew this subscription' ) }</span>
-				</div>
-			);
-		}
-
-		if ( isRenewing( purchase ) ) {
-			if ( purchase.payment.type === 'credit_card' && purchase.payment.creditCard ) {
-				const paymentMethodType = purchase.payment.creditCard.displayBrand
-					? purchase.payment.creditCard.displayBrand
-					: purchase.payment.creditCard.type || purchase.payment.paymentPartner || '';
-
-				return (
-					<>
-						<img
-							src={ getPaymentMethodImageURL( paymentMethodType ) }
-							alt={ paymentMethodType }
-							className="purchase-item__payment-method-card"
-						/>
-						{ purchase.payment.creditCard.number }
-					</>
-				);
-			}
-
-			if ( purchase.payment.type === 'paypal' ) {
-				return (
-					<img
-						src={ payPalImage }
-						alt={ purchase.payment.type }
-						className="purchase-item__paypal"
-					/>
-				);
-			}
-
-			if ( purchase.payment.type === 'upi' ) {
-				return <img src={ upiImage } alt={ purchase.payment.type } />;
-			}
-
-			return null;
-		}
-	}
-
 	renderPurchaseItemContent = () => {
 		if ( this.props.isPlaceholder ) {
 			return null;
 		}
+
 		const {
 			purchase,
 			site,
@@ -750,7 +748,7 @@ class PurchaseItem extends Component<
 				</div>
 
 				<div className="purchase-item__payment-method purchases-layout__payment-method">
-					{ this.getPaymentMethod() }
+					<PurchaseItemPaymentMethod purchase={ purchase } translate={ translate } />
 					{ isBackupMethodAvailable && isRenewing( purchase ) && <BackupPaymentMethodNotice /> }
 				</div>
 			</div>
