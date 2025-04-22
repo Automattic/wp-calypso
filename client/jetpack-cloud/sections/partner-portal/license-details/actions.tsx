@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
@@ -74,7 +75,7 @@ export default function LicenseDetailsActions( {
 
 	return (
 		<div className="license-details__actions">
-			{ isValidCrmKey && (
+			{ config.isEnabled( 'jetpack/crm-downloads' ) && isValidCrmKey && (
 				<Button compact onClick={ viewJetpackCRMExtensions }>
 					{ translate( 'Download CRM Extensions' ) }
 				</Button>
