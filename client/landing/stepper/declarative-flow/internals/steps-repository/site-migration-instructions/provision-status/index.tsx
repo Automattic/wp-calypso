@@ -16,7 +16,7 @@ interface ProvisionStatusProps {
 export const ProvisionStatus: FC< ProvisionStatusProps > = ( { status } ) => {
 	const { siteTransferStatus, migrationKeyStatus } = status;
 
-	const preparationCompleted = siteTransferStatus === 'success';
+	const preparationCompleted = siteTransferStatus === 'completed';
 
 	if ( preparationCompleted ) {
 		const text =

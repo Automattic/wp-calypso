@@ -92,7 +92,7 @@ describe( 'usePrepareSiteForMigration', () => {
 			() => {
 				expect( result.current ).toEqual( {
 					detailedStatus: {
-						siteTransferStatus: 'success',
+						siteTransferStatus: 'completed',
 						migrationKeyStatus: 'success',
 					},
 					softwareTransferCompleted: true,

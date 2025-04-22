@@ -100,7 +100,7 @@ export const usePrepareSiteForMigration = (
 		retry: options.retry ?? 0,
 	} );
 
-	const softwareTransferCompleted = 'success' === transfer_status;
+	const softwareTransferCompleted = 'completed' === transfer_status;
 
 	const {
 		data: { migrationKey } = {},
