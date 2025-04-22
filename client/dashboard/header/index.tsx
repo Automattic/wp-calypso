@@ -1,3 +1,5 @@
+import { useNavigate, useRouter } from '@tanstack/react-router';
+import { Button } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { useAppContext } from '../app/context';
 import HeaderBar from '../header-bar';
@@ -8,6 +10,9 @@ import SecondaryMenu from '../secondary-menu';
 function Header() {
 	const { Logo } = useAppContext();
 	const isDesktop = useViewportMatch( 'medium' );
+	const navigate = useNavigate();
+	const router = useRouter();
+	const href = router.buildLocation( { to: '/' } ).href;
 
 	return (
 		<HeaderBar as="header">
@@ -19,7 +24,14 @@ function Header() {
 
 			{ Logo && (
 				<div style={ { display: 'flex', alignItems: 'center' } }>
-					<Logo />
+					<Button
+						icon={ <Logo /> }
+						href={ href }
+						onClick={ ( event: React.MouseEvent ) => {
+							event.preventDefault();
+							navigate( { to: '/' } );
+						} }
+					/>
 				</div>
 			) }
 
