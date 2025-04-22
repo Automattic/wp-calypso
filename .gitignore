@@ -71,6 +71,7 @@ cached-requests.json
 /packages/*/build-style/
 /packages/*/build-types/
 /packages/*/build-wp/
+/packages/*/build/
 /build-tools/dist/
 /apps/*/.cache/
 /packages/*/.cache/
