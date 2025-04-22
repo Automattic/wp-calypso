@@ -134,7 +134,7 @@ const onboarding: FlowV2 = {
 
 			if ( isMvpOnboarding ) {
 				return [
-					`/overview/${ providedDependencies.siteSlug }`,
+					addQueryArgs( `/overview/${ providedDependencies.siteSlug }`, { ref: flowName } ),
 					addQueryArgs( withLocale( `/setup/${ flowName }/plans`, locale ), {
 						siteSlug: providedDependencies.siteSlug,
 					} ),
