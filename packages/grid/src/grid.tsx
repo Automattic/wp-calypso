@@ -7,7 +7,7 @@ export function Grid( {
 	columns = 1,
 	children,
 	className,
-	gap = '10px',
+	spacing = 2,
 	rowHeight = 'auto',
 }: GridProps ) {
 	// Create a map of layout items by key for quick lookup
@@ -33,7 +33,7 @@ export function Grid( {
 		display: 'grid',
 		gridTemplateColumns: `repeat(${ columns }, 1fr)`,
 		gridTemplateRows: `repeat(${ rows }, ${ rowHeight })`,
-		gap,
+		gap: spacing * 4,
 	};
 
 	// Process children and apply grid positioning based on layout

@@ -46,5 +46,5 @@ The main component exported by this package.
   - `height` (number, optional): The number of rows this item spans (defaults to 1)
 - `columns` (required): Total number of columns in the grid
 - `className` (optional): Additional CSS class to apply to the grid container
-- `gap` (optional): Grid gap size (e.g., "10px", "1rem")
+- `spacing` (optional): Grid gap multiplier size, defaults to 2 (e.g. A spacing of 2 results in a gap of 8px, it's multiplied by 4)
 - `rowHeight` (optional): Height of each row (e.g., "50px", "auto")

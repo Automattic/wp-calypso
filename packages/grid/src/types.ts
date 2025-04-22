@@ -53,9 +53,9 @@ export interface GridProps {
 	className?: string;
 
 	/**
-	 * Grid gap size (e.g., "10px", "1rem")
+	 * Grid gap multiplier size (e.g., a spacing of 2 results in a gap of 8px, it's multiplied by 4)
 	 */
-	gap?: string;
+	spacing?: number;
 
 	/**
 	 * Height of each row (e.g., "50px", "auto")
