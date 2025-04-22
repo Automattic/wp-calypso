@@ -87,8 +87,8 @@ const StatsModuleUTM = ( {
 
 		// If URL has valid param and it's different from state, update state
 		if ( utmParam !== selectedOption ) {
-			Object.assign( context.query, { ...context.query, [ UTM_QUERY_PARAM ]: selectedOption } );
-			const queryString = new URLSearchParams( context.query ).toString();
+			const updatedQuery = { ...context.query, [ UTM_QUERY_PARAM ]: selectedOption };
+			const queryString = new URLSearchParams( updatedQuery ).toString();
 			page( `${ basePath }?${ queryString }` );
 		}
 	}, [ context.query, selectedOption, basePath, summary ] );
