@@ -1116,6 +1116,27 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@automattic/grid@workspace:packages/grid":
+  version: 0.0.0-use.local
+  resolution: "@automattic/grid@workspace:packages/grid"
+  dependencies:
+    "@automattic/calypso-build": "workspace:^"
+    "@automattic/calypso-storybook": "workspace:^"
+    "@automattic/calypso-typescript-config": "workspace:^"
+    "@storybook/addon-actions": "npm:^8.6.9"
+    "@storybook/addon-controls": "npm:^8.6.9"
+    "@storybook/addon-docs": "npm:^8.6.9"
+    "@storybook/react-webpack5": "npm:^8.6.9"
+    postcss: "npm:^8.5.3"
+    storybook: "npm:^8.6.9"
+    typescript: "npm:^5.8.2"
+    webpack: "npm:^5.97.1"
+  peerDependencies:
+    react: ^18.0.0
+    react-dom: ^18.0.0
+  languageName: unknown
+  linkType: soft
+
 "@automattic/help-center-app@workspace:apps/help-center":
   version: 0.0.0-use.local
   resolution: "@automattic/help-center-app@workspace:apps/help-center"
