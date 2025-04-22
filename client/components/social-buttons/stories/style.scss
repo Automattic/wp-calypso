@@ -1,7 +1,3 @@
-@import "client/assets/stylesheets/shared/mixins/breakpoints";
-@import "client/assets/stylesheets/shared/mixins/elevation";
-@import "client/blocks/login/social.scss";
-@import "client/layout/masterbar/woo.scss";
-@import "client/layout/masterbar/oauth-client.scss";
-@import "client/layout/masterbar/blaze-pro.scss";
-@import "client/login/wp-login/style.scss";
+@import "../../../assets/stylesheets/shared/mixins/elevation";
+@import "../../../blocks/login/social";
+@import "../../../login/wp-login/style";
