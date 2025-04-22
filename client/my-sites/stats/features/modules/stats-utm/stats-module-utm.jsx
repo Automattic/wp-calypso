@@ -66,7 +66,7 @@ const StatsModuleUTM = ( {
 		}
 
 		return urlParams;
-	}, [ summary, summaryUrl, context.query ] );
+	}, [ summaryUrl, context.query ] );
 
 	const basePath = useMemo(
 		() => `/stats/${ period.period }/${ path }/${ siteSlug }`,
@@ -147,7 +147,7 @@ const StatsModuleUTM = ( {
 				return `${ basePath }?${ queryParams.toString() }`;
 			}
 		};
-	}, [ queryParams, selectedOption, period, basePath, summary ] );
+	}, [ path, siteSlug, queryParams, selectedOption, period, basePath, summary ] );
 
 	const isSiteJetpackNotAtomic = useSelector( ( state ) =>
 		isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } )

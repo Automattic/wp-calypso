@@ -80,20 +80,18 @@ export const StatsModuleSummaryLinks = ( props ) => {
 			periodPath = `/stats/${ period.period }/${ path }/${ siteSlug }?startDate=${ query.start_date }&endDate=${ query.date }`;
 		}
 		return periodPath;
-	}, [ period.period, path, siteSlug, query ] );
+	}, [ period.period, period.endOf, path, siteSlug, query ] );
 
-	const getSummaryPathForDaysRange = useMemo( () => {
-		return ( numberDays ) => {
-			const queryParams = new URLSearchParams( context.query );
+	const getSummaryPathForDaysRange = ( numberDays ) => {
+		const queryParams = new URLSearchParams( context.query );
 
-			queryParams.set( 'startDate', moment().format( 'YYYY-MM-DD' ) );
-			queryParams.set( 'summarize', 1 );
-			queryParams.set( 'num', numberDays );
-			queryParams.delete( 'endDate' );
+		queryParams.set( 'startDate', moment().format( 'YYYY-MM-DD' ) );
+		queryParams.set( 'summarize', 1 );
+		queryParams.set( 'num', numberDays );
+		queryParams.delete( 'endDate' );
 
-			return `/stats/day/${ path }/${ siteSlug }?${ queryParams.toString() }`;
-		};
-	}, [ path, siteSlug, query, context.query ] );
+		return `/stats/day/${ path }/${ siteSlug }?${ queryParams.toString() }`;
+	};
 
 	const options = [
 		{
