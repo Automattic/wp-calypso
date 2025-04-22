@@ -13,4 +13,5 @@ export {
 	getConversationIdFromInteraction,
 	getOdieIdFromInteraction,
 } from './support-interaction-utils';
+export { isCSATMessage, hasCSATMessage, hasSubmittedCSATRating } from './csat';
 export { userProvidedEnoughInformation } from './user-provided-enough-information';
