@@ -72,7 +72,7 @@ const StatsViewsMonths = ( props ) => {
 
 	const momentFromMonthYear = ( month, year ) => {
 		const monthValue = parseInt( month ) + 1;
-		return moment( `${ year }-${ monthValue }-1`, 'YYYY-M-D' );
+		return moment( `${ year }-${ monthValue }-1`, 'YYYY-MM-DD' );
 	};
 
 	const getMonthTotal = ( totals, month ) => {
@@ -139,9 +139,9 @@ const StatsViewsMonths = ( props ) => {
 
 			return (
 				<Month
-					href={ `/stats/day/${ siteSlug }?chartStart=${ year }-${ month + 1 }-1&chartEnd=${ moment(
+					href={ `/stats/day/${ siteSlug }?chartStart=${ moment(
 						`${ year }-${ month + 1 }-1`
-					)
+					).format( 'YYYY-MM-DD' ) }&chartEnd=${ moment( `${ year }-${ month + 1 }-1` )
 						.endOf( 'month' )
 						.format( 'YYYY-MM-DD' ) }` }
 					className={ className }
