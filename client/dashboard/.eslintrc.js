@@ -14,6 +14,10 @@ module.exports = {
 						],
 						message: 'Importing from calypso/ is not allowed in the dashboard folder.',
 					},
+					{
+						group: [ '@automattic/*' ],
+						message: 'Importing from @automattic/ is not allowed in the dashboard folder.',
+					},
 				],
 			},
 		],
