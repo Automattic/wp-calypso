@@ -67,6 +67,10 @@ cached-requests.json
 /apps/*/dist/
 /apps/*/types/
 /packages/*/dist/
+/packages/*/build-module/
+/packages/*/build-style/
+/packages/*/build-types/
+/packages/*/build-wp/
 /build-tools/dist/
 /apps/*/.cache/
 /packages/*/.cache/
@@ -125,4 +129,3 @@ packages/plans-grid-next/static/mockServiceWorker.js
 # PHPUnit cache
 .phpunit.result.cache
 .phpunit.cache
-
