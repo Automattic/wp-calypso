@@ -34,7 +34,7 @@
 
 		"rootDir": "src",
 		"declarationDir": "build-types",
-		"outDir": "build"
+		"outDir": "build-module"
 	},
 	"include": [ "src" ],
 	"exclude": [
