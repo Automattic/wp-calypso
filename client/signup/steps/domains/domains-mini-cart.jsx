@@ -1,5 +1,4 @@
 import { Button, FoldableCard } from '@automattic/components';
-import { isMobile } from '@automattic/viewport';
 import { Icon, chevronDown, chevronUp } from '@wordpress/icons';
 import { formatCurrency, translate } from 'i18n-calypso';
 import { Component } from 'react';
@@ -195,6 +194,7 @@ export class DomainsMiniCart extends Component {
 				className="domains__domain-side-content domains__domain-cart-foldable-card"
 				header={ MobileHeader }
 				expanded={ false }
+				hideSummary
 				actionButton={
 					<button className="foldable-card__action foldable-card__expand">
 						<span className="screen-reader-text">More</span>
@@ -230,7 +230,7 @@ export class DomainsMiniCart extends Component {
 			return null;
 		}
 
-		if ( isMobile() ) {
+		if ( this.props.isMobile ) {
 			return this.mobile();
 		}
 

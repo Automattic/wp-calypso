@@ -4,6 +4,7 @@
 export { Link } from './router';
 
 export {
+	Page,
 	SidebarContent,
 	SiteHub,
 	SidebarNavigationItem,

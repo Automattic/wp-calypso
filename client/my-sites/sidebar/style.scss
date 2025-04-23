@@ -778,10 +778,6 @@ $font-size: rem(14px);
 			width: auto;
 		}
 
-		.current-site .site .site__info {
-			display: none;
-		}
-
 		.sidebar .site__content {
 			padding: 10px 2px;
 
@@ -1056,11 +1052,6 @@ $font-size: rem(14px);
 		}
 
 		.sidebar {
-			// client/my-sites/current-site/style.scss
-			.site__content {
-				padding: 18px 0 18px 12px;
-			}
-
 			.site__home {
 				left: 12px;
 				top: 18px;

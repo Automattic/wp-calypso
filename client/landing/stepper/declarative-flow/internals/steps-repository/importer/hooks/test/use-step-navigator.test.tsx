@@ -3,7 +3,6 @@
  */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, renderHook, waitFor } from '@testing-library/react';
-import { WPImportOption } from 'calypso/blocks/importer/wordpress/types';
 import { useStepNavigator } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/importer/hooks/use-step-navigator';
 
 describe( 'useStepNavigator', () => {
@@ -35,7 +34,7 @@ describe( 'useStepNavigator', () => {
 		} );
 
 		act( () => {
-			result.current.goToCheckoutPage?.( WPImportOption.EVERYTHING );
+			result.current.goToCheckoutPage?.();
 		} );
 
 		await waitFor( () => {
@@ -44,7 +43,7 @@ describe( 'useStepNavigator', () => {
 
 		expect( navigation.submit ).toHaveBeenCalledWith( {
 			type: 'redirect',
-			url: '/checkout/business?redirect_to=%2Fsetup%2Ftest-flow%2FimporterWordpress%3Foption%3Deverything%26run%3Dfalse&cancel_to=%2Fsetup%2Ftest-flow%2FimporterWordpress%3Foption%3Deverything%26run%3Dfalse',
+			url: '/checkout/business?redirect_to=%2Fsetup%2Ftest-flow%2FimporterWordpress&cancel_to=%2Fsetup%2Ftest-flow%2FimporterWordpress',
 		} );
 	} );
 
@@ -57,7 +56,7 @@ describe( 'useStepNavigator', () => {
 		} );
 
 		act( () => {
-			result.current.goToCheckoutPage?.( WPImportOption.EVERYTHING, {
+			result.current.goToCheckoutPage?.( {
 				redirect_to: '/custom-redirect',
 			} );
 		} );
@@ -68,7 +67,7 @@ describe( 'useStepNavigator', () => {
 
 		expect( navigation.submit ).toHaveBeenCalledWith( {
 			type: 'redirect',
-			url: '/checkout/business?redirect_to=%2Fcustom-redirect&cancel_to=%2Fsetup%2Ftest-flow%2FimporterWordpress%3Foption%3Deverything%26run%3Dfalse',
+			url: '/checkout/business?redirect_to=%2Fcustom-redirect&cancel_to=%2Fsetup%2Ftest-flow%2FimporterWordpress',
 		} );
 	} );
 } );

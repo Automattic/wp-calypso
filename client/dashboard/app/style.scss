@@ -1,0 +1,35 @@
+@import '@wordpress/base-styles/variables';
+@import '@wordpress/dataviews/build-style/style.css';
+
+// Should be implemented differently once v2 is not loaded via the v1 stack
+// I'm tempted to even just replace all this with a display:none on the logo
+@import './loading-screen';
+
+// Hacks that shouldn't be necessary.
+.environment-badge {
+	display: none;
+}
+
+// Global Styles
+html,
+body,
+#wpcom {
+	height: 100%;
+}
+
+body {
+	margin: 0;
+	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell,
+		'Helvetica Neue', sans-serif;
+	background: var( --dashboard__background-color );
+	color: var( --dashboard__text-color );
+	line-height: $font-line-height-small;
+}
+
+#wpcom {
+	font-size: $font-size-medium;
+}
+
+h1 {
+	font-family: Recoleta, sans-serif;
+}

@@ -384,23 +384,33 @@ export class EditorPage {
 			blockFallBackName?: string;
 			blockInsertedPopupConfirmButtonSelector?: string;
 		} = {}
-	): Promise< void > {
+	): Promise< Locator > {
 		if ( ! noSearch ) {
 			await inserter.searchBlockInserter( blockName );
 		}
-		await inserter.selectBlockInserterResult( blockName, { blockFallBackName } );
+
+		const locator = await inserter.selectBlockInserterResult( blockName, { blockFallBackName } );
 
 		if ( blockInsertedPopupConfirmButtonSelector ) {
 			const editorParent = await this.editor.parent();
 			const blockInsertedPopupConfirmButtonLocator = editorParent.locator(
-				'div[role="dialog"] button:has-text("OK")'
+				blockInsertedPopupConfirmButtonSelector
 			);
 
-			const count = await blockInsertedPopupConfirmButtonLocator.count();
-			if ( count ) {
-				blockInsertedPopupConfirmButtonLocator.click();
+			// Whether the popup confirm button is not deterministic.
+			// If it is not present, exit early.
+			try {
+				await blockInsertedPopupConfirmButtonLocator.waitFor( { timeout: 100 } );
+			} catch ( e ) {
+				// Probably doesn't exist. That's ok.
+			}
+
+			if ( ( await blockInsertedPopupConfirmButtonLocator.count() ) > 0 ) {
+				await blockInsertedPopupConfirmButtonLocator.click();
 			}
 		}
+
+		return locator;
 	}
 
 	/**
@@ -414,10 +424,15 @@ export class EditorPage {
 	 *
 	 * @param {string} patternName Name of the pattern to insert.
 	 */
-	async addPatternFromSidebar( patternName: string ): Promise< void > {
-		await this.editorGutenbergComponent.resetSelectedBlock();
+	async addPatternFromSidebar( patternName: string ): Promise< Locator > {
+		if ( ! ( envVariables.TEST_ON_ATOMIC && envVariables.VIEWPORT_NAME === 'mobile' ) ) {
+			await this.editorGutenbergComponent.resetSelectedBlock();
+		}
 		await this.editorToolbarComponent.openBlockInserter();
-		await this.addPatternFromInserter( patternName, this.editorSidebarBlockInserterComponent );
+		return await this.addPatternFromInserter(
+			patternName,
+			this.editorSidebarBlockInserterComponent
+		);
 	}
 
 	/**
@@ -435,11 +450,14 @@ export class EditorPage {
 	 * @param {string} patternName Name of the pattern to insert as it matches the label in the inserter.
 	 * @param {Locator} inserterLocator Locator to the element that will open the pattern/block inserter when clicked.
 	 */
-	async addPatternInline( patternName: string, inserterLocator: Locator ): Promise< void > {
+	async addPatternInline( patternName: string, inserterLocator: Locator ): Promise< Locator > {
 		// Perform a click action on the locator.
 		await inserterLocator.click();
 		// Add the specified pattern from the inserter.
-		await this.addPatternFromInserter( patternName, this.editorInlineBlockInserterComponent );
+		return await this.addPatternFromInserter(
+			patternName,
+			this.editorInlineBlockInserterComponent
+		);
 	}
 
 	/**
@@ -451,15 +469,16 @@ export class EditorPage {
 	private async addPatternFromInserter(
 		patternName: string,
 		inserter: BlockInserter
-	): Promise< void > {
+	): Promise< Locator > {
 		const editorParent = await this.editor.parent();
 
 		await inserter.searchBlockInserter( patternName );
-		await inserter.selectBlockInserterResult( patternName, { type: 'pattern' } );
+		const locator = await inserter.selectBlockInserterResult( patternName, { type: 'pattern' } );
 		const insertConfirmationToastLocator = editorParent.locator(
 			`.components-snackbar__content:text('Block pattern "${ patternName }" inserted.')`
 		);
 		await insertConfirmationToastLocator.waitFor();
+		return locator;
 	}
 
 	/**

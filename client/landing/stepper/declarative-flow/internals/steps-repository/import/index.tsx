@@ -1,9 +1,8 @@
 import { StepContainer } from '@automattic/onboarding';
 import { useI18n } from '@wordpress/react-i18n';
-import React, { ReactElement, useEffect } from 'react';
+import React, { ReactElement } from 'react';
 import CaptureStep from 'calypso/blocks/import/capture';
 import DocumentHead from 'calypso/components/data/document-head';
-import useMigrationConfirmation from 'calypso/landing/stepper/hooks/use-migration-confirmation';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -20,15 +19,6 @@ export const ImportWrapper: Step< {
 } > = function ( props ) {
 	const { __ } = useI18n();
 	const { navigation, children, stepName } = props;
-	const [ , setMigrationConfirmed ] = useMigrationConfirmation();
-
-	useEffect(
-		() => setMigrationConfirmed( false ),
-		// setMigrationConfirmed should be a stable function,
-		// since it's part of the return value of `useState` call
-		// (see useMigrationConfirmation's implementation)
-		[ setMigrationConfirmed ]
-	);
 
 	return (
 		<>

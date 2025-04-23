@@ -99,6 +99,10 @@ textarea.billing-history__billing-details-editable {
 			text-transform: uppercase;
 		}
 
+		.billing-history__billing-details-readonly {
+			display:none;
+		}
+
 		.receipt__vat-vendor-details-number {
 			display: block;
 			margin-top: 8px;
@@ -274,6 +278,7 @@ li.billing-history__receipt-item-discount--different-term {
 @media print {
 	.is-section-me,
 	.is-section-billing,
+	.is-section-site-purchases,
 	.is-section-purchases {
 		#secondary,
 		.masterbar,
@@ -283,20 +288,24 @@ li.billing-history__receipt-item-discount--different-term {
 		.receipt__no-print {
 			display: none !important;
 		}
-	}
 
-	.billing-history__billing-details-editable {
-		background: transparent;
-		border: 0;
-		padding: 0;
-		margin: 0;
+		.layout__primary .main
+		{
+			height: auto !important;
+		}
+
+		.billing-history__receipt-details {
+			.billing-history__billing-details-readonly {
+				display: block;
+				white-space: pre-wrap
+			}
+		}
 	}
 
 	body {
 		font-family: $sans;
 	}
 }
-
 
 
 #purchases {
