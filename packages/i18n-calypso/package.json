@@ -33,13 +33,13 @@
 		"hash.js": "^1.1.7",
 		"lru": "^3.1.0",
 		"tannin": "^1.2.0",
-		"use-subscription": "1.10.0"
+		"use-subscription": "1.11.0"
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"@testing-library/jest-dom": "^6.6.3",
 		"@types/jest": "^29.5.14",
-		"@types/react": "^18.3.18",
+		"@types/react": "^18.3.20",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
 		"react-test-renderer": "^18.3.1",
