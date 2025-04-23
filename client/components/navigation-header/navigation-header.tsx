@@ -23,11 +23,9 @@ interface HeaderProps extends React.HTMLAttributes< HTMLElement > {
  *
  * @param props - Component props
  * @param props.title - Header title text
- * @param props.backLink - URL for the back button
- * @param props.backLinkText - Text for the back button
- * @param props.onBackClick - Function to call when back button is clicked
+ * @param props.backLinkProps - Object containing back link properties (backLink URL, backLinkText, and onBackClick handler)
  * @param props.titleElement - Custom element to override default title rendering
- * @param props.linkElement - Custom element to override default link rendering
+ * @param props.headElement - Custom element to override default head section rendering
  * @param props.children - Child elements to render in the right section
  * @param props.hasScreenOptionsTab - Indicates whether the screen options tab should be added
  * @returns The rendered NavigationHeader component
@@ -36,7 +34,7 @@ const NavigationHeader: React.FC< HeaderProps > = ( {
 	title,
 	backLinkProps,
 	titleElement = <h1 className="calypso-navigation-header__title">{ title }</h1>,
-	headElement: backLinkElement = (
+	headElement = (
 		<a
 			className="calypso-navigation-header__back-link"
 			href={ backLinkProps?.backLink }
@@ -61,9 +59,7 @@ const NavigationHeader: React.FC< HeaderProps > = ( {
 			}` }
 			{ ...rest }
 		>
-			<div className="calypso-navigation-header__head">
-				{ backLinkProps?.backLink && backLinkElement }
-			</div>
+			<div className="calypso-navigation-header__head">{ headElement }</div>
 			<div className="calypso-navigation-header__body">
 				<div className="calypso-navigation-header__left-section">{ titleElement }</div>
 				<div className="calypso-navigation-header__right-section">{ children }</div>

@@ -41,10 +41,25 @@ export const Basic: Story = {
 	},
 };
 
+// Header with back link
+export const WithBackLink: Story = {
+	args: {
+		title: 'Header with Back Link',
+		backLinkProps: {
+			backLink: '/dashboard',
+			backLinkText: 'Back to Dashboard',
+		},
+	},
+};
+
 // Header with both download link and action button
 export const WithDownloadAndAction: Story = {
 	args: {
 		title: 'Report Summary',
+		backLinkProps: {
+			backLink: '/reports',
+			backLinkText: 'Back to Reports',
+		},
 		children: (
 			<div style={ { display: 'flex', gap: '16px', alignItems: 'center' } }>
 				<a href="/data.csv" download style={ downloadLinkStyle }>
@@ -67,15 +82,22 @@ export const WithDownloadAndAction: Story = {
 	},
 };
 
-// Header with multiple download options and action
-export const WithMultipleDownloads: Story = {
+// Header with screen options tab
+export const WithScreenOptions: Story = {
 	args: {
 		title: 'Analytics Dashboard',
-		backLink: '/dashboard',
-		backLinkText: 'Back to Dashboard',
+		hasScreenOptionsTab: true,
+		backLinkProps: {
+			backLink: '/dashboard',
+			backLinkText: 'Back to Dashboard',
+			onBackClick: ( e ) => {
+				e.preventDefault();
+				alert( 'Back button clicked!' );
+			},
+		},
 		children: (
 			<div style={ { display: 'flex', gap: '16px', alignItems: 'center' } }>
-				<button style={ actionButtonStyle } onClick={ () => null }>
+				<button style={ actionButtonStyle } onClick={ () => alert( 'Action clicked!' ) }>
 					Post
 				</button>
 			</div>
