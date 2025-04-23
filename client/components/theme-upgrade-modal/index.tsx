@@ -564,7 +564,7 @@ export const ThemeUpgradeModal = ( {
 				{ ! isExpandedListOpen && secondSection && (
 					<li className="theme-upgrade-modal__included-item">
 						<Button
-							className="theme-upgrade-modal__view-more"
+							variant="link"
 							onClick={ () => {
 								setIsExpandedListOpen( true );
 							} }
