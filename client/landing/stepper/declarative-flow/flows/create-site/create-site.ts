@@ -163,7 +163,7 @@ const createSite: FlowV2 = {
 						);
 					}
 
-					return navigate( STEPS.UNIFIED_PLANS.slug );
+					window.location.replace( destination );
 				}
 			}
 		};
