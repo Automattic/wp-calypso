@@ -48,6 +48,7 @@ const siteRequestObjectToSiteObject = ( site: WPCOMRESTAPISite ): Site => ( {
 		software_version: site.options?.software_version,
 		admin_url: site.options?.admin_url,
 		is_wpcom_atomic: site.options?.is_wpcom_atomic,
+		blog_public: site.options?.blog_public,
 	},
 	is_deleted: site.is_deleted,
 } );

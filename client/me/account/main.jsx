@@ -3,7 +3,7 @@ import { Button, Card, Dialog, FormInputValidation, FormLabel } from '@automatti
 import { canBeTranslated, getLanguage, isLocaleVariant } from '@automattic/i18n-utils';
 import languages from '@automattic/languages';
 import debugFactory from 'debug';
-import { localize } from 'i18n-calypso';
+import { fixMe, localize } from 'i18n-calypso';
 import { debounce, flowRight as compose, get, map, size } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -963,9 +963,15 @@ class Account extends Component {
 							</FormLabel>
 							<ToggleLandingPageSettings />
 							<FormSettingExplanation>
-								{ translate(
-									'When you type https://www.wordpress.com in your browser, this is the page you land on.'
-								) }
+								{ fixMe( {
+									text: "Select what you'll see by default when visiting WordPress.com",
+									newCopy: translate(
+										"Select what you'll see by default when visiting WordPress.com"
+									),
+									oldCopy: translate(
+										'When you type https://www.wordpress.com in your browser, this is the page you land on.'
+									),
+								} ) }
 							</FormSettingExplanation>
 						</FormFieldset>
 
