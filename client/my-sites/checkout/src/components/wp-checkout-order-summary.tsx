@@ -328,10 +328,6 @@ function CheckoutSummaryRefundWindow( {
 	if ( products.length < 1 ) {
 		return null;
 	}
-	// FIXME: add the RefundPolicy.DomainNameRegistrationBundled policy if the
-	// cart has no bundle policy currently (eg: RefundPolicy.PlanYearlyBundle)
-	// and currently contains a plan + bundled domain, and the plan is not a
-	// 100-year plan.
 	if ( ! policy ) {
 		return null;
 	}
