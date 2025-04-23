@@ -1,17 +1,12 @@
-import { useMatchRoute } from '@tanstack/react-router';
 import { __experimentalHStack as HStack } from '@wordpress/components';
-import clsx from 'clsx';
 import RouterLinkButton from '../router-link-button';
 
 import './style.scss';
 
 function MenuItem( { to, children }: { to: string; children: React.ReactNode } ) {
-	const matchRoute = useMatchRoute();
 	return (
 		<RouterLinkButton
-			className={ clsx( 'dashboard-menu__item', {
-				'is-active': matchRoute( { to } ),
-			} ) }
+			className="dashboard-menu__item"
 			variant="tertiary"
 			to={ to }
 			__next40pxDefaultSize
