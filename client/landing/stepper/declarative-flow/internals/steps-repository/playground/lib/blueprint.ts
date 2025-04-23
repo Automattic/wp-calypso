@@ -118,7 +118,7 @@ async function getBlueprintFromUrl( recommendedPhpVersion: string ): Blueprint {
 	const predefinedBlueprintName = getBlueprintName( url.searchParams.get( 'blueprint' ) );
 
 	// If a predefined blueprint is specified and exists, use it
-	if ( predefinedBlueprintName && predefinedBlueprintName in PREDEFINED_BLUEPRINTS ) {
+	if ( predefinedBlueprintName ) {
 		const blueprint = PREDEFINED_BLUEPRINTS[ predefinedBlueprintName ];
 		return {
 			...blueprint,
