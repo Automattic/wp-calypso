@@ -4,7 +4,7 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import { isClientView } from 'calypso/a8c-for-agencies/sections/purchases/payment-methods/lib/is-client-view';
-import JetpackIcons from 'calypso/components/jetpack/sidebar/menu-items/jetpack-icons';
+import JetpackIcons from 'calypso/components/jetpack/jetpack-icons';
 import Sidebar, {
 	SidebarV2Main as SidebarMain,
 	SidebarV2Footer as SidebarFooter,

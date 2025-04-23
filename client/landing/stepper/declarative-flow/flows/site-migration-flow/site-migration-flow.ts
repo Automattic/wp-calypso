@@ -292,7 +292,6 @@ const siteMigration: FlowV2 = {
 								siteId,
 								siteSlug,
 								from: fromQueryParam ?? '',
-								option: 'content',
 								backToFlow: `/${ flowPath }/${ STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug }`,
 							} )
 						);

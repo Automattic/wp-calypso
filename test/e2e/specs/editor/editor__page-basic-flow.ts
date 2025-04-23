@@ -63,7 +63,9 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Page Flow' ), function () 
 
 		const editorParent = await editorPage.getEditorParent();
 
-		const modalSelector = await editorParent.getByRole( 'listbox', { name: 'Block patterns' } );
+		const modalSelector = await editorParent.getByRole( 'listbox', {
+			name: /^(All|Block patterns)$/,
+		} );
 
 		// The PR, https://github.com/WordPress/gutenberg/pull/69081, restored the starter content modal for newly created pages.
 		// However, not all of themes have the page template. As a result, we have to check whether the modal is open.

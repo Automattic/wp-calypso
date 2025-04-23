@@ -6,7 +6,6 @@ import { useTranslate } from 'i18n-calypso';
 import React, { useState, useEffect, useCallback } from 'react';
 import { UrlData } from 'calypso/blocks/import/types';
 import { getImporterTypeForEngine, isTargetSitePlanCompatible } from 'calypso/blocks/importer/util';
-import { WPImportOption } from 'calypso/blocks/importer/wordpress/types';
 import { UpgradePlan } from 'calypso/blocks/importer/wordpress/upgrade-plan';
 import { useDispatch } from 'calypso/state';
 import { startImport, resetImport, startImporting } from 'calypso/state/imports/actions';
@@ -181,7 +180,7 @@ const ImportContentOnly: React.FunctionComponent< Props > = ( props ) => {
 					}
 					isBusy={ false }
 					onCtaClick={ () => {
-						stepNavigator?.goToCheckoutPage?.( WPImportOption.CONTENT_ONLY );
+						stepNavigator?.goToCheckoutPage?.();
 					} }
 					navigateToVerifyEmailStep={ () => {
 						stepNavigator?.goToVerifyEmailPage?.();

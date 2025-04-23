@@ -489,16 +489,6 @@ const domainCartItems: Reducer< MinimalRequestCartProduct[] | undefined, Onboard
 	return state;
 };
 
-const isMigrateFromWp: Reducer< boolean, OnboardAction > = ( state = false, action ) => {
-	if ( action.type === 'SET_IS_MIGRATE_FROM_WP' ) {
-		return action.isMigrateFromWp;
-	}
-	if ( action.type === 'RESET_ONBOARD_STORE' ) {
-		return false;
-	}
-	return state;
-};
-
 const pluginsToVerify: Reducer< string[] | undefined, OnboardAction > = ( state, action ) => {
 	if ( action.type === 'SET_PLUGIN_SLUGS_TO_VERIFY' ) {
 		return action.pluginSlugs;
@@ -664,7 +654,6 @@ const reducer = combineReducers( {
 	storageAddonSlug,
 	planCartItem,
 	productCartItems,
-	isMigrateFromWp,
 	domainCartItems,
 	pluginsToVerify,
 	profilerData,

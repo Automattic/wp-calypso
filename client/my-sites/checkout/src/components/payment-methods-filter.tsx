@@ -17,17 +17,14 @@ export const PaymentMethodFilterNotice = ( {
 }: {
 	isBusinessCardsFilterEmpty?: boolean;
 } ) => {
-	let noticeText;
-
-	if ( isBusinessCardsFilterEmpty ) {
-		noticeText = __( 'There are no stored business cards on your account. Please add one below.' );
-	} else {
-		noticeText = __( 'Payment methods filtered by Business Cards' );
-	}
-
 	return (
 		<Text color="var(--studio-gray-60)" size="14px">
-			{ noticeText }
+			{ __( 'Payment methods filtered to show only business cards.' ) }
+			{ isBusinessCardsFilterEmpty && (
+				<div>
+					{ __( 'There are no stored business cards on your account. Please add one below.' ) }
+				</div>
+			) }
 		</Text>
 	);
 };
@@ -57,7 +54,7 @@ export const PaymentMethodFilter = ( {
 		<Spacer marginTop="16px" marginBottom="16px">
 			<HStack alignment="center" justify="space-between">
 				<PaymentMethodFilterNotice isBusinessCardsFilterEmpty={ isBusinessCardsFilterEmpty } />
-				{ ! isBusinessCardsFilterEmpty && <PaymentMethodFilterButton /> }
+				<PaymentMethodFilterButton />
 			</HStack>
 		</Spacer>
 	) : null;
