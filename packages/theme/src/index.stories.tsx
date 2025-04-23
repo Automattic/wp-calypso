@@ -154,7 +154,7 @@ export const Default: Story = {
 									key={ `${ scaleName }-color-${ i }` }
 									style={ {
 										aspectRatio: '2',
-										backgroundColor: `var(--theme-color-${ scaleName }-${ i })`,
+										backgroundColor: `var(--theme-color-${ scaleName }-${ i + 1 })`,
 									} }
 								/>
 							) ),
