@@ -1,17 +1,47 @@
-import * as RadixColors from '@radix-ui/colors';
+// Code adapted from @radix-ui/website
+// Source: https://github.com/radix-ui/website/blob/c7ce8c0f5529ddec4648a930af369d8454ceecf0/components/generateRadixColors.tsx
+// License: MIT (https://github.com/radix-ui/website/blob/main/LICENSE)
+
 import BezierEasing from 'bezier-easing';
 import Color from 'colorjs.io';
+import * as PresetScales from './preset-scales';
 import { ArrayOf12 } from './types';
+
+// redo token maps
+// add more colors (warning / info / success / error)
+// add example UI
+// go beyond color?
 
 const arrayOf12 = [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11 ] as const;
 
-// prettier-ignore
-const grayScaleNames = ['gray', 'mauve', 'slate', 'sage', 'olive', 'sand'] as const;
+const grayScaleNames = [ 'gray', 'mauve', 'slate', 'sage', 'olive', 'sand' ] as const;
 
-// prettier-ignore
-const scaleNames = [...grayScaleNames, 'tomato', 'red', 'ruby', 'crimson', 'pink',
-'plum', 'purple', 'violet', 'iris', 'indigo', 'blue', 'cyan', 'teal', 'jade', 'green',
-'grass', 'brown', 'orange', 'sky', 'mint', 'lime', 'yellow', 'amber'] as const;
+const scaleNames = [
+	...grayScaleNames,
+	'tomato',
+	'red',
+	'ruby',
+	'crimson',
+	'pink',
+	'plum',
+	'purple',
+	'violet',
+	'iris',
+	'indigo',
+	'blue',
+	'cyan',
+	'teal',
+	'jade',
+	'green',
+	'grass',
+	'brown',
+	'orange',
+	'sky',
+	'mint',
+	'lime',
+	'yellow',
+	'amber',
+] as const;
 
 const darkModeEasing = [ 1, 0, 1, 0 ] as [ number, number, number, number ];
 const lightModeEasing = [ 0, 2, 0, 2 ] as [ number, number, number, number ];
@@ -19,7 +49,7 @@ const lightModeEasing = [ 0, 2, 0, 2 ] as [ number, number, number, number ];
 const lightColors = Object.fromEntries(
 	scaleNames.map( ( scaleName ) => [
 		scaleName,
-		Object.values( RadixColors[ `${ scaleName }P3` ] ).map( ( str ) =>
+		Object.values( PresetScales[ `${ scaleName }P3` ] ).map( ( str ) =>
 			new Color( str ).to( 'oklch' )
 		),
 	] )
@@ -28,7 +58,7 @@ const lightColors = Object.fromEntries(
 const darkColors = Object.fromEntries(
 	scaleNames.map( ( scaleName ) => [
 		scaleName,
-		Object.values( RadixColors[ `${ scaleName }DarkP3` ] ).map( ( str ) =>
+		Object.values( PresetScales[ `${ scaleName }DarkP3` ] ).map( ( str ) =>
 			new Color( str ).to( 'oklch' )
 		),
 	] )
@@ -37,7 +67,7 @@ const darkColors = Object.fromEntries(
 const lightGrayColors = Object.fromEntries(
 	grayScaleNames.map( ( scaleName ) => [
 		scaleName,
-		Object.values( RadixColors[ `${ scaleName }P3` ] ).map( ( str ) =>
+		Object.values( PresetScales[ `${ scaleName }P3` ] ).map( ( str ) =>
 			new Color( str ).to( 'oklch' )
 		),
 	] )
@@ -46,7 +76,7 @@ const lightGrayColors = Object.fromEntries(
 const darkGrayColors = Object.fromEntries(
 	grayScaleNames.map( ( scaleName ) => [
 		scaleName,
-		Object.values( RadixColors[ `${ scaleName }DarkP3` ] ).map( ( str ) =>
+		Object.values( PresetScales[ `${ scaleName }DarkP3` ] ).map( ( str ) =>
 			new Color( str ).to( 'oklch' )
 		),
 	] )
