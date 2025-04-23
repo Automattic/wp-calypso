@@ -65,7 +65,7 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 		domainCartItems = [],
 		planCartItem,
 		selectedSiteTitle,
-		productCartItems,
+		productCartItems: _productCartItems,
 		siteUrl,
 		progress,
 		partnerBundle,
@@ -142,7 +142,8 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 	const skipMigration = urlQueryParams.get( 'skipMigration' ) || '';
 	const platform = urlQueryParams.get( 'platform' ) || '';
 	const useThemeHeadstart = ! isStartWritingFlow( flow ) && ! isNewHostedSiteCreationFlow( flow );
-	const shouldGoToCheckout = !! planCartItem || isPaidDomainItem;
+	const productCartItems = _productCartItems ?? [];
+	const shouldGoToCheckout = !! planCartItem || isPaidDomainItem || productCartItems.length > 0;
 	const [ , isMvpOnboarding ] = useMvpOnboardingExperiment();
 
 	async function createSite() {
@@ -153,7 +154,7 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 				await addPlanToCart( slug, flow, true, theme, planCartItem );
 			}
 
-			if ( productCartItems?.length && slug ) {
+			if ( productCartItems.length && slug ) {
 				await addProductsToCart( slug, flow, productCartItems );
 			}
 
@@ -209,7 +210,7 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 			await addPlanToCart( site.siteSlug, flow, true, theme, planCartItem );
 		}
 
-		if ( productCartItems?.length && site?.siteSlug ) {
+		if ( productCartItems.length && site?.siteSlug ) {
 			await addProductsToCart( site.siteSlug, flow, productCartItems );
 		}
 
