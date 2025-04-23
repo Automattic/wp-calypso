@@ -1,6 +1,10 @@
 import { getPlanByPathSlug } from '@automattic/calypso-products';
+import { Context } from '@automattic/calypso-router';
+import { addQueryArgs } from '@wordpress/url';
 
-export const shouldRedirectToStepperFlow = ( flowName?: string ) => {
+export const shouldRedirectToStepperFlow = ( context: Context ) => {
+	const { flowName } = context.params;
+
 	if ( ! flowName ) {
 		return null;
 	}
@@ -8,7 +12,10 @@ export const shouldRedirectToStepperFlow = ( flowName?: string ) => {
 	const plan = getPlanByPathSlug( flowName );
 
 	if ( plan || flowName === 'free' ) {
-		return `/setup/create-site?plan=${ flowName }`;
+		return addQueryArgs( '/setup/create-site', {
+			...context.query,
+			plan: flowName,
+		} );
 	}
 
 	return null;

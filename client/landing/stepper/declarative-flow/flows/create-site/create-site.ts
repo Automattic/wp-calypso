@@ -1,4 +1,13 @@
-import { isDotComPlan, getPlanByPathSlug } from '@automattic/calypso-products';
+import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { isDotComPlan, getPlanByPathSlug, PRODUCT_1GB_SPACE } from '@automattic/calypso-products';
+import {
+	AddOns,
+	type OnboardActions,
+	type OnboardSelect,
+	type StorageAddOnSlug,
+} from '@automattic/data-stores';
+import { STORAGE_ADD_ONS } from '@automattic/data-stores/src/add-ons';
+import { getAddOn } from '@automattic/data-stores/src/add-ons/add-ons-list';
 import { CREATE_SITE_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect, dispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
@@ -14,21 +23,23 @@ import { getCurrentQueryParams } from '../../../utils/get-current-query-params';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
 import { STEPS } from '../../internals/steps';
 import type { FlowV2, ProvidedDependencies, StepperStep } from '../../internals/types';
-import type { OnboardActions, OnboardSelect } from '@automattic/data-stores';
 
 const createSite: FlowV2 = {
 	name: CREATE_SITE_FLOW,
 	__experimentalUseBuiltinAuth: true,
 	isSignupFlow: true,
 	async initialize() {
-		const { resetOnboardStore, setPlanCartItem } = dispatch( ONBOARD_STORE ) as OnboardActions;
+		const steps: StepperStep[] = [ STEPS.UNIFIED_DOMAINS ];
+
+		const { resetOnboardStore, setPlanCartItem, setProductCartItems } = dispatch(
+			ONBOARD_STORE
+		) as OnboardActions;
 
 		await resetOnboardStore();
 
 		const queryParams = getCurrentQueryParams();
-		const planPathSlug = queryParams.get( 'plan' );
 
-		const steps: StepperStep[] = [ STEPS.UNIFIED_DOMAINS ];
+		const planPathSlug = queryParams.get( 'plan' );
 
 		if ( planPathSlug !== 'free' ) {
 			const plan = getPlanByPathSlug( planPathSlug ?? '' );
@@ -36,10 +47,30 @@ const createSite: FlowV2 = {
 			if ( ! plan || ! isDotComPlan( { productSlug: plan.getStoreSlug() } ) ) {
 				steps.push( STEPS.UNIFIED_PLANS );
 			} else {
-				await setPlanCartItem( {
+				setPlanCartItem( {
 					product_slug: plan.getStoreSlug(),
 				} );
 			}
+		}
+
+		const storageAddon = queryParams.get( 'storage' );
+		const selectedAddOn = getAddOn( storageAddon as StorageAddOnSlug );
+
+		if (
+			selectedAddOn &&
+			STORAGE_ADD_ONS.includes( selectedAddOn.addOnSlug as StorageAddOnSlug )
+		) {
+			setProductCartItems( [
+				{
+					product_slug: PRODUCT_1GB_SPACE,
+					quantity: selectedAddOn.quantity,
+					volume: 1,
+					extra: { feature_slug: AddOns.ADD_ON_50GB_STORAGE },
+				},
+			] );
+			recordTracksEvent( 'calypso_signup_storage_add_on_selected', {
+				add_on_slug: selectedAddOn.addOnSlug,
+			} );
 		}
 
 		steps.push( STEPS.SITE_CREATION_STEP, STEPS.PROCESSING );
@@ -52,6 +83,7 @@ const createSite: FlowV2 = {
 			setDomainCartItem,
 			setDomainCartItems,
 			setPlanCartItem,
+			setProductCartItems,
 			setSiteUrl,
 			setSignupDomainOrigin,
 			resetCouponCode,
@@ -91,17 +123,15 @@ const createSite: FlowV2 = {
 					return navigate( STEPS.UNIFIED_PLANS.slug );
 				}
 				case STEPS.UNIFIED_PLANS.slug: {
-					const cartItems = providedDependencies.cartItems as Array< typeof planCartItem >;
-					const productSlug = cartItems?.[ 0 ]?.product_slug;
-
-					if ( ! productSlug ) {
-						throw new Error( 'No product slug found' );
-					}
+					const [ productSlug, ...addOns ] = providedDependencies.cartItems as Array<
+						typeof planCartItem
+					>;
 
 					setPlanCartItem( {
 						product_slug: productSlug,
 					} );
 
+					setProductCartItems( addOns );
 					setSignupCompleteFlowName( this.name );
 					return navigate( STEPS.SITE_CREATION_STEP.slug );
 				}

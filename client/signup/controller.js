@@ -112,15 +112,13 @@ export default {
 	},
 
 	async redirectToStepperFlow( context, next ) {
-		const { flowName } = context.params;
+		const stepperFlowUrl = shouldRedirectToStepperFlow( context );
 
-		const stepperFlow = shouldRedirectToStepperFlow( flowName );
-
-		if ( ! stepperFlow ) {
+		if ( ! stepperFlowUrl ) {
 			return next();
 		}
 
-		return page.redirect( addQueryArgs( stepperFlow, context.query ) );
+		return page.redirect( stepperFlowUrl );
 	},
 
 	async redirectToFlow( context, next ) {
