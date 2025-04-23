@@ -61,14 +61,24 @@ const useNewHelper = config.isEnabled( 'subscribers-helper-library' );
 
 const getSubscriptionId = ( subscriber: Subscriber ): number => {
 	if ( useNewHelper ) {
-		return subscriber.email_subscription_id || subscriber.wpcom_subscription_id || 0;
+		return (
+			subscriber.email_subscription_id ||
+			subscriber.subscription_id ||
+			subscriber.wpcom_subscription_id ||
+			0
+		);
 	}
 	return subscriber.subscription_id || 0;
 };
 
 const getSubscriptionIdString = ( subscriber: Subscriber ): string => {
 	if ( useNewHelper ) {
-		return String( subscriber.email_subscription_id || subscriber.wpcom_subscription_id || '' );
+		return String(
+			subscriber.email_subscription_id ||
+				subscriber.subscription_id ||
+				subscriber.wpcom_subscription_id ||
+				''
+		);
 	}
 	return String( subscriber.subscription_id || '' );
 };
@@ -205,9 +215,12 @@ const SubscriberDataViews = ( {
 	const { data: subscribedNewsletterCategoriesData, isLoading: isLoadingNewsletterCategories } =
 		useSubscribedNewsletterCategories( {
 			siteId: siteId as number,
-			subscriptionId: selectedSubscriber ? getSubscriptionId( selectedSubscriber ) : undefined,
-			userId: selectedSubscriber?.user_id,
-			enabled: !! selectedSubscriber,
+			subscriptionId:
+				subscriberId && ! isNaN( parseInt( subscriberId, 10 ) )
+					? parseInt( subscriberId, 10 )
+					: undefined,
+			userId: subscriberDetails?.user_id,
+			enabled: !! subscriberId && !! siteId,
 		} );
 
 	const { data: subscribersTotals } = useSubscriberCountQuery( siteId ?? null );
