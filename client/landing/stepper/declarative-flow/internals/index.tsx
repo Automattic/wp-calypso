@@ -58,7 +58,7 @@ function flowStepComponent( flowStep: StepperStep | undefined ) {
  * @returns A React router switch will all the routes
  */
 export const FlowRenderer: React.FC< {
-	flow: Flow | FlowV2;
+	flow: Flow | FlowV2< any >;
 	steps: readonly StepperStep[] | null;
 } > = ( { flow, steps } ) => {
 	// Configure app element that React Modal will aria-hide when modal is open

@@ -11,7 +11,7 @@ import { FlowV2, type Flow } from '../../types';
  * Hook to track the start of a signup flow.
  */
 interface Props {
-	flow: Flow | FlowV2;
+	flow: Flow | FlowV2< any >;
 }
 
 export const useSignUpStartTracking = ( { flow }: Props ) => {

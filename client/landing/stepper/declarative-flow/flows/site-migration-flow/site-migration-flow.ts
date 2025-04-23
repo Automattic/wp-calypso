@@ -31,7 +31,7 @@ import * as paths from './paths';
 import type {
 	AssertConditionResult,
 	FlowV2,
-	ProvidedDependencies,
+	SubmitHandler,
 } from 'calypso/landing/stepper/declarative-flow/internals/types';
 
 const BASE_STEPS = [
@@ -50,18 +50,22 @@ const BASE_STEPS = [
 	STEPS.PICK_SITE,
 	STEPS.SITE_CREATION_STEP,
 	STEPS.PROCESSING,
-];
+] as const;
 
 const hasSite = ( siteId: number, siteSlug: string ) => {
 	return siteId && siteId !== 0 && siteSlug && siteSlug !== '';
 };
 
-const siteMigration: FlowV2 = {
+function initialize() {
+	return stepsWithRequiredLogin( BASE_STEPS );
+}
+
+const siteMigration: FlowV2< typeof initialize > = {
 	name: SITE_MIGRATION_FLOW,
 	isSignupFlow: false,
 	__experimentalUseSessions: true,
 	__experimentalUseBuiltinAuth: true,
-
+	initialize,
 	useSideEffect() {
 		const { setIntent, resetOnboardStore } = useDispatch( ONBOARD_STORE );
 		useEffect( () => {
@@ -75,10 +79,6 @@ const siteMigration: FlowV2 = {
 		if ( ref && ! get( 'flow' )?.entryPoint ) {
 			set( 'flow', { entryPoint: ref } );
 		}
-	},
-
-	initialize() {
-		return stepsWithRequiredLogin( BASE_STEPS );
 	},
 
 	useAssertConditions(): AssertConditionResult {
@@ -113,13 +113,16 @@ const siteMigration: FlowV2 = {
 			return window.location.assign( addQueryArgs( { sessionId }, to ) );
 		};
 
+		type StepSlug = typeof currentStep;
+
 		// Call triggerGuidesForStep for the current step
 		useEffect( () => {
 			triggerGuidesForStep( flowName, currentStep, siteId );
 		}, [ flowName, currentStep, siteId ] );
 
-		async function submit( providedDependencies: ProvidedDependencies = {} ) {
-			switch ( currentStep ) {
+		const submit: SubmitHandler< typeof initialize > = function ( submittedStep ) {
+			const { slug, providedDependencies } = submittedStep;
+			switch ( slug ) {
 				case STEPS.SITE_MIGRATION_IDENTIFY.slug: {
 					const { from, platform, action } = providedDependencies as {
 						from: string;
@@ -144,14 +147,14 @@ const siteMigration: FlowV2 = {
 							);
 						}
 
-						return navigate( paths.importOrMigratePath( { from, siteSlug, siteId } ) );
+						return navigate( paths.importOrMigratePath( { from, siteSlug, siteId } ) as StepSlug );
 					}
 
 					if ( userHasOtherWPComSites ) {
-						return navigate( paths.sitePickerPath( { from, platform } ) );
+						return navigate( paths.sitePickerPath( { from, platform } ) as StepSlug );
 					}
 
-					return navigate( paths.siteCreationPath( { from, platform } ) );
+					return navigate( paths.siteCreationPath( { from, platform } ) as StepSlug );
 				}
 
 				case STEPS.PICK_SITE.slug: {
@@ -173,7 +176,7 @@ const siteMigration: FlowV2 = {
 									from: fromQueryParam,
 									platform: platformQueryParam || 'unknown',
 									...queryParams,
-								} )
+								} ) as StepSlug
 							);
 						}
 						case 'select-site': {
@@ -185,7 +188,7 @@ const siteMigration: FlowV2 = {
 										siteSlug,
 										siteId,
 										from: fromQueryParam,
-									} )
+									} ) as StepSlug
 								);
 							}
 
@@ -207,11 +210,14 @@ const siteMigration: FlowV2 = {
 								);
 							}
 
-							return navigate( paths.importOrMigratePath( { siteSlug, siteId } ) );
+							return navigate( paths.importOrMigratePath( { siteSlug, siteId } ) as StepSlug );
 						}
 						case 'create-site':
 							return navigate(
-								paths.siteCreationPath( { from: fromQueryParam, platform: platformQueryParam } )
+								paths.siteCreationPath( {
+									from: fromQueryParam,
+									platform: platformQueryParam,
+								} ) as StepSlug
 							);
 					}
 				}
@@ -222,7 +228,7 @@ const siteMigration: FlowV2 = {
 							from: fromQueryParam,
 							platform: platformQueryParam,
 							action: actionQueryParam,
-						} )
+						} ) as StepSlug
 					);
 				}
 
@@ -241,7 +247,9 @@ const siteMigration: FlowV2 = {
 
 					//NOTE: There are links pointing to this step with the action=migrate query param, so we need to ignore the platform
 					if ( actionQueryParam === 'migrate' ) {
-						return navigate( paths.howToMigratePath( { siteId, siteSlug, from: fromQueryParam } ) );
+						return navigate(
+							paths.howToMigratePath( { siteId, siteSlug, from: fromQueryParam } ) as StepSlug
+						);
 					}
 
 					if (
@@ -268,7 +276,7 @@ const siteMigration: FlowV2 = {
 					}
 
 					return navigate(
-						paths.importOrMigratePath( { from: fromQueryParam, siteSlug, siteId } )
+						paths.importOrMigratePath( { from: fromQueryParam, siteSlug, siteId } ) as StepSlug
 					);
 				}
 
@@ -298,7 +306,9 @@ const siteMigration: FlowV2 = {
 						);
 					}
 
-					return navigate( paths.howToMigratePath( { siteId, siteSlug, from: fromQueryParam } ) );
+					return navigate(
+						paths.howToMigratePath( { siteId, siteSlug, from: fromQueryParam } ) as StepSlug
+					);
 				}
 
 				case STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug: {
@@ -311,15 +321,19 @@ const siteMigration: FlowV2 = {
 								from: fromQueryParam,
 								destination: providedDependencies?.destination,
 								how: providedDependencies?.how as string,
-							} )
+							} ) as StepSlug
 						);
 					}
 
 					if ( providedDependencies?.how === HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME ) {
-						return navigate( paths.credentialsPath( { siteId, from: fromQueryParam, siteSlug } ) );
+						return navigate(
+							paths.credentialsPath( { siteId, from: fromQueryParam, siteSlug } ) as StepSlug
+						);
 					}
 
-					return navigate( paths.instructionsPath( { siteId, siteSlug, from: fromQueryParam } ) );
+					return navigate(
+						paths.instructionsPath( { siteId, siteSlug, from: fromQueryParam } ) as StepSlug
+					);
 				}
 
 				case STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug: {
@@ -356,12 +370,15 @@ const siteMigration: FlowV2 = {
 						} );
 						return;
 					}
+					break;
 				}
 
 				case STEPS.SITE_MIGRATION_INSTRUCTIONS.slug: {
 					// User decided to ask for an assisted migration - try to collect credentials.
 					if ( providedDependencies?.how === HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME ) {
-						return navigate( paths.credentialsPath( { siteId, from: fromQueryParam, siteSlug } ) );
+						return navigate(
+							paths.credentialsPath( { siteId, from: fromQueryParam, siteSlug } ) as StepSlug
+						);
 					}
 					return exitFlow( paths.calypsoOverviewPath( { ref: 'site-migration' }, { siteSlug } ) );
 				}
@@ -386,7 +403,11 @@ const siteMigration: FlowV2 = {
 
 					if ( action === 'already-wpcom' ) {
 						return navigate(
-							paths.alreadyWpcomPath( { siteId, from: from || fromQueryParam, siteSlug } )
+							paths.alreadyWpcomPath( {
+								siteId,
+								from: from || fromQueryParam,
+								siteSlug,
+							} ) as StepSlug
 						);
 					}
 
@@ -397,7 +418,7 @@ const siteMigration: FlowV2 = {
 								from: from || fromQueryParam,
 								siteSlug,
 								platform,
-							} )
+							} ) as StepSlug
 						);
 					}
 
@@ -408,7 +429,7 @@ const siteMigration: FlowV2 = {
 								from: from || fromQueryParam,
 								siteSlug,
 								authorizationUrl,
-							} )
+							} ) as StepSlug
 						);
 					}
 
@@ -418,7 +439,7 @@ const siteMigration: FlowV2 = {
 								siteId,
 								from: from || fromQueryParam,
 								siteSlug,
-							} )
+							} ) as StepSlug
 						);
 					}
 
@@ -436,7 +457,7 @@ const siteMigration: FlowV2 = {
 							from: fromQueryParam,
 							siteSlug,
 							preventTicketCreation: true,
-						} )
+						} ) as StepSlug
 					);
 				}
 
@@ -453,7 +474,7 @@ const siteMigration: FlowV2 = {
 					}
 
 					return navigate(
-						paths.supportInstructionsPath( { siteId, from: fromQueryParam, siteSlug } )
+						paths.supportInstructionsPath( { siteId, from: fromQueryParam, siteSlug } ) as StepSlug
 					);
 				}
 
@@ -477,14 +498,14 @@ const siteMigration: FlowV2 = {
 								authorizationUrl,
 								backTo: STEPS.SITE_MIGRATION_APPLICATION_PASSWORD_AUTHORIZATION.slug,
 								from: fromQueryParam,
-							} )
+							} ) as StepSlug
 						);
 					}
 
 					return exitFlow( paths.calypsoOverviewPath( { ref: 'site-migration' }, { siteSlug } ) );
 				}
 			}
-		}
+		};
 
 		const goBack = () => {
 			const entryPoint = get( 'flow' )?.entryPoint;
@@ -508,7 +529,7 @@ const siteMigration: FlowV2 = {
 								origin: STEPS.SITE_MIGRATION_IDENTIFY.slug,
 								backToFlow: `/${ flowPath }/${ STEPS.SITE_MIGRATION_IDENTIFY.slug }`,
 								from: fromQueryParam,
-							} )
+							} ) as StepSlug
 						);
 					}
 
@@ -521,11 +542,11 @@ const siteMigration: FlowV2 = {
 						return exitFlow( '/start' );
 					}
 
-					return navigate( paths.identifyPath( { from: fromQueryParam } ) );
+					return navigate( paths.identifyPath( { from: fromQueryParam } ) as StepSlug );
 				}
 
 				case STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug: {
-					return navigate( paths.importOrMigratePath( { siteSlug, siteId } ) );
+					return navigate( paths.importOrMigratePath( { siteSlug, siteId } ) as StepSlug );
 				}
 
 				case STEPS.SITE_MIGRATION_IDENTIFY.slug: {
@@ -549,7 +570,7 @@ const siteMigration: FlowV2 = {
 							siteSlug,
 							siteId,
 							from: fromQueryParam,
-						} )
+						} ) as StepSlug
 					);
 				}
 
@@ -571,7 +592,7 @@ const siteMigration: FlowV2 = {
 							siteSlug,
 							siteId,
 							from: fromQueryParam,
-						} )
+						} ) as StepSlug
 					);
 				}
 
@@ -581,7 +602,7 @@ const siteMigration: FlowV2 = {
 							siteId,
 							siteSlug,
 							from: fromQueryParam,
-						} )
+						} ) as StepSlug
 					);
 				}
 
@@ -597,7 +618,7 @@ const siteMigration: FlowV2 = {
 								siteSlug,
 								from: fromQueryParam,
 								...queryParams,
-							} )
+							} ) as StepSlug
 						);
 					}
 
@@ -606,7 +627,7 @@ const siteMigration: FlowV2 = {
 							siteId,
 							siteSlug,
 							from: fromQueryParam,
-						} )
+						} ) as StepSlug
 					);
 				}
 
@@ -619,7 +640,7 @@ const siteMigration: FlowV2 = {
 							siteSlug,
 							from: fromQueryParam,
 							...queryParams,
-						} )
+						} ) as StepSlug
 					);
 				}
 
@@ -632,7 +653,7 @@ const siteMigration: FlowV2 = {
 							siteSlug,
 							from: fromQueryParam,
 							...queryParams,
-						} )
+						} ) as StepSlug
 					);
 				}
 			}

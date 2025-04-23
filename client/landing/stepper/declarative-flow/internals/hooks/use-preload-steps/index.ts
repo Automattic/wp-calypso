@@ -37,7 +37,7 @@ export function usePreloadSteps(
 	selectedSite: SiteDetails | undefined | null,
 	currentStepRoute: string,
 	flowSteps: readonly StepperStep[],
-	flow: Flow | FlowV2
+	flow: Flow | FlowV2< any >
 ) {
 	const isLoggedIn = useSelector( isUserLoggedIn );
 

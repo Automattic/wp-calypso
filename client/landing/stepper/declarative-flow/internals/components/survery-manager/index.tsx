@@ -45,7 +45,7 @@ const SurveyManager = ( {
 	flow,
 }: {
 	disabled?: boolean;
-	flow?: Flow | FlowV2;
+	flow?: Flow | FlowV2< any >;
 } ) => {
 	const isEnLocale = useIsEnglishLocale();
 	const { data } = useGeoLocationQuery();

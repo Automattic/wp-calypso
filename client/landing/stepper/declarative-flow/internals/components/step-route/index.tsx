@@ -16,7 +16,7 @@ import type { StepperInternalSelect } from '@automattic/data-stores';
 
 type StepRouteProps = {
 	step: StepperStep;
-	flow: Flow | FlowV2;
+	flow: Flow | FlowV2< any >;
 	renderStep: ( step: StepperStep ) => JSX.Element | null;
 	navigate: Navigate;
 };

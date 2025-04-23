@@ -32,7 +32,7 @@ interface FlowNavigation {
 /**
  *  Hook to manage the navigation between steps in the flow
  */
-export const useFlowNavigation = ( flow: Flow | FlowV2 ): FlowNavigation => {
+export const useFlowNavigation = ( flow: Flow | FlowV2< any > ): FlowNavigation => {
 	const intent = useOnboardingIntent();
 	const { setStepData } = useDispatch( STEPPER_INTERNAL_STORE );
 	const navigate = useNavigate();

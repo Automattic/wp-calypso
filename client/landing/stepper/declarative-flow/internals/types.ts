@@ -13,9 +13,7 @@ import type { Store } from 'redux';
  *   siteTitle: 'Example Site',
  * });
  */
-export interface NavigationControls<
-	StepSubmittedTypes extends unknown | undefined | never | Record< string, unknown > = undefined,
-> {
+export interface BaseNavigationControls {
 	/**
 	 * @deprecated
 	 * YOU DON'T NEED THIS. Most flows don't need this since #101550.
@@ -43,38 +41,23 @@ export interface NavigationControls<
 	goToStep?: ( step: string ) => void;
 
 	/**
-	 * Submits the answers provided in the flow. If it's complaining about the type, it means you haven't typed the step correctly.
-	 * @see {@link client/landing/stepper/declarative-flow/internals/steps-repository/DEVELOPMENT/making-a-new-step.md}
-	 */
-	submit: StepSubmittedTypes extends Record< string, unknown >
-		? // Omar: I'm playing with removing the ? after `providedDependencies`.
-		  ( providedDependencies: StepSubmittedTypes ) => void
-		: () => void;
-
-	/**
 	 * Exits the flow and continue to the given path
 	 */
 	exitFlow?: ( to: string ) => void;
 }
 
-/**
- * This is the return type of useStepNavigation hook
- * @template StepSubmittedTypes - The types of the step submitted data.
- * @example
- * navigation.submit({
- *   siteSlug: 'example.wordpress.com',
- *   siteTitle: 'Example Site',
- * });
- */
-export type NavigationControlsV2<
-	InitializeFunction extends DefaultFlowStepsConfig = DefaultFlowStepsConfig,
-> = {
+export interface NavigationControls extends BaseNavigationControls {
+	submit(): void;
+}
+
+export interface NavigationControlsWithSubmittedData< StepSubmittedTypes = unknown >
+	extends BaseNavigationControls {
 	/**
 	 * Submits the answers provided in the flow. If it's complaining about the type, it means you haven't typed the step correctly.
 	 * @see {@link client/landing/stepper/declarative-flow/internals/steps-repository/DEVELOPMENT/making-a-new-step.md}
 	 */
-	submit: SubmitHandler< InitializeFunction >;
-};
+	submit: ( arg: StepSubmittedTypes & { shouldSkipSubmitTracking?: boolean } ) => void;
+}
 
 export type AsyncStepperStep = ( typeof STEPS )[ keyof typeof STEPS ];
 type AsyncUserStep = ( typeof PRIVATE_STEPS )[ keyof typeof PRIVATE_STEPS ];
@@ -121,12 +104,18 @@ export type UseStepsHook = () => readonly StepperStep[];
 export type UseStepNavigationHook< FlowSteps extends readonly StepperStep[] > = (
 	currentStepSlug: FlowSteps[ number ][ 'slug' ],
 	navigate: Navigate
-) => NavigationControls< any >;
+) => NavigationControls;
 
 export type UseStepNavigationHookV2< FlowSteps extends readonly StepperStep[] > = (
 	currentStepSlug: FlowSteps[ number ][ 'slug' ],
 	navigate: NavigateV2< FlowSteps >
-) => NavigationControlsV2< () => FlowSteps >;
+) => {
+	/**
+	 * Submits the answers provided in the flow. If it's complaining about the type, it means you haven't typed the step correctly.
+	 * @see {@link client/landing/stepper/declarative-flow/internals/steps-repository/DEVELOPMENT/making-a-new-step.md}
+	 */
+	submit: SubmitHandler< () => FlowSteps >;
+};
 
 export type SubmitHandler< InitializeFunction extends DefaultFlowStepsConfig > = (
 	submittedStep: MapStepToItsSubmitData< Awaited< ReturnType< InitializeFunction > >[ number ] >
@@ -285,6 +274,10 @@ export interface FlowV2< FlowStepsInitialize extends DefaultFlowStepsConfig > {
 	 */
 	useSideEffect?: UseSideEffectHook< Awaited< ReturnType< FlowStepsInitialize > > >;
 	useTracksEventProps?: UseTracksEventPropsHook;
+	/**
+	 * @deprecated Use `initialize` instead. `initialize` will run before the flow is rendered and you can make any decisions there.
+	 */
+	useAssertConditions?: UseAssertConditionsHook;
 }
 
 /**
@@ -300,26 +293,32 @@ type ConditionalIntersection< TA, TB > = [ TB ] extends [ never ] ? TA : TA & TB
  *   return <div>{ props.navigation.submit( { siteSlug: 'example.wordpress.com' } ) }</div>;
  * };
  */
-export type StepProps< StepDataShape extends StepPropTypes | never = never > =
-	ConditionalIntersection<
-		{
-			navigation: NavigationControls< StepDataShape[ 'submits' ] >;
-			stepName: string;
-			flow: string;
-			/**
-			 * If this is a step of a flow that extends another, pass the variantSlug of the variant flow, it can come handy.
-			 */
-			variantSlug?: string;
-			data?: StepperInternal.State[ 'stepData' ];
-			children?: React.ReactNode;
-			/**
-			 * These two prop are used internally by the Stepper to redirect the user from the user step.
-			 */
-			redirectTo?: string;
-			signupUrl?: string;
-		},
-		StepDataShape[ 'accepts' ]
-	>;
+export type StepProps<
+	StepDataShape extends StepPropTypes = {
+		submits: never;
+		accepts: never;
+	},
+> = ConditionalIntersection<
+	{
+		navigation: StepDataShape[ 'submits' ] extends never
+			? NavigationControls
+			: NavigationControlsWithSubmittedData< StepDataShape[ 'submits' ] >;
+		stepName: string;
+		flow: string;
+		/**
+		 * If this is a step of a flow that extends another, pass the variantSlug of the variant flow, it can come handy.
+		 */
+		variantSlug?: string;
+		data?: StepperInternal.State[ 'stepData' ];
+		children?: React.ReactNode;
+		/**
+		 * These two prop are used internally by the Stepper to redirect the user from the user step.
+		 */
+		redirectTo?: string;
+		signupUrl?: string;
+	},
+	StepDataShape[ 'accepts' ]
+>;
 
 /**
  * This is the type of the step submitted and accepted props.

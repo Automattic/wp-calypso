@@ -49,36 +49,34 @@ const withLocale = ( url: string, locale: string ) => {
 	return locale && locale !== 'en' ? `${ url }/${ locale }` : url;
 };
 
-const onboarding: FlowV2 = {
-	name: ONBOARDING_FLOW,
-	isSignupFlow: true,
-	__experimentalUseBuiltinAuth: true,
-	async initialize() {
-		if ( await isMvpOnboardingExperiment() ) {
-			return stepsWithRequiredLogin( [
-				STEPS.UNIFIED_PLANS,
-				STEPS.SITE_CREATION_STEP,
-				STEPS.PROCESSING,
-				STEPS.POST_CHECKOUT_ONBOARDING,
-			] );
-		}
-
-		const steps = stepsWithRequiredLogin( [
-			STEPS.UNIFIED_DOMAINS,
-			STEPS.USE_MY_DOMAIN,
+async function initialize() {
+	if ( await isMvpOnboardingExperiment() ) {
+		return stepsWithRequiredLogin( [
 			STEPS.UNIFIED_PLANS,
 			STEPS.SITE_CREATION_STEP,
 			STEPS.PROCESSING,
 			STEPS.POST_CHECKOUT_ONBOARDING,
 		] );
+	}
 
-		if ( isPlaygroundEligible() ) {
-			steps.push( STEPS.PLAYGROUND );
-		}
+	const steps = stepsWithRequiredLogin( [
+		STEPS.UNIFIED_DOMAINS,
+		STEPS.USE_MY_DOMAIN,
+		STEPS.UNIFIED_PLANS,
+		STEPS.SITE_CREATION_STEP,
+		STEPS.PROCESSING,
+		STEPS.POST_CHECKOUT_ONBOARDING,
+		...( isPlaygroundEligible() ? [ STEPS.PLAYGROUND ] : [] ),
+	] );
 
-		return steps;
-	},
+	return steps;
+}
 
+const onboarding: FlowV2< typeof initialize > = {
+	name: ONBOARDING_FLOW,
+	isSignupFlow: true,
+	__experimentalUseBuiltinAuth: true,
+	initialize,
 	useStepNavigation( currentStepSlug, navigate ) {
 		const flowName = this.name;
 		const isPlaygroundEligible = useIsPlaygroundEligible();
@@ -178,7 +176,7 @@ const onboarding: FlowV2 = {
 							signup_domain_origin: signupDomainOrigin,
 							domain_item: providedDependencies.domainItem,
 						} );
-						return navigate( useMyDomainURL );
+						return navigate( useMyDomainURL as any );
 					}
 
 					return navigate( 'plans' );
@@ -195,7 +193,7 @@ const onboarding: FlowV2 = {
 							step: providedDependencies.mode,
 							initialQuery: providedDependencies.domain,
 						} );
-						return navigate( destination );
+						return navigate( destination as any );
 					}
 
 					// We trigger the event here, because we skip it in the domains step if

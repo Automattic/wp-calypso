@@ -1,6 +1,7 @@
 import { Onboard } from '@automattic/data-stores';
 import { getAssemblerDesign } from '@automattic/design-picker';
 import { addPlanToCart, addProductsToCart, AI_SITE_BUILDER_FLOW } from '@automattic/onboarding';
+import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { resolveSelect, useDispatch as useWpDataDispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { useEffect } from 'react';
@@ -17,7 +18,7 @@ import { ProcessingResult } from '../../internals/steps-repository/processing-st
 import { FlowV2, SubmitHandler } from '../../internals/types';
 
 const SiteIntent = Onboard.SiteIntent;
-const deletePage = async ( siteId: string, pageId: number ): Promise< boolean > => {
+const deletePage = async ( siteId: string | number, pageId: number ): Promise< boolean > => {
 	try {
 		await wpcomRequest( {
 			path: '/sites/' + siteId + '/pages/' + pageId,
@@ -161,7 +162,7 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 				case 'domains': {
 					if ( providedDependencies.domainItem && siteSlugFromSiteData ) {
 						addProductsToCart( siteSlugFromSiteData, AI_SITE_BUILDER_FLOW, [
-							providedDependencies.domainItem,
+							providedDependencies.domainItem as MinimalRequestCartProduct,
 						] ).then( ( res ) => {
 							// eslint-disable-next-line no-console
 							console.log( 'ADD TO CART', res );

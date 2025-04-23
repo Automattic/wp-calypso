@@ -36,7 +36,7 @@ const useHasRequestedSelectedSite = () => {
 };
 
 interface Props {
-	flow: Flow | FlowV2;
+	flow: Flow | FlowV2< any >;
 	stepSlug: string;
 	skipStepRender?: boolean;
 }
