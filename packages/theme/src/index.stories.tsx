@@ -56,76 +56,112 @@ export const Default: Story = {
 		fun: 0,
 		scheme: 'light',
 		children: (
-			<div
-				style={ {
-					display: 'grid',
-					gridTemplateColumns: 'auto repeat(12, minmax(2rem, 1fr))',
-					gap: '4px',
-				} }
-			>
-				{ /* Index numbers */ }
-				<div /> { /* Empty cell for top-left corner */ }
-				{ [
-					{ colSpan: 2, label: 'Backgrounds' },
-					{ colSpan: 3, label: 'Interactive components' },
-					{ colSpan: 3, label: 'Borders and separators' },
-					{ colSpan: 2, label: 'Solid colors' },
-					{ colSpan: 2, label: 'Accessible text' },
-				].map( ( { colSpan, label } ) => (
-					<div
-						key={ label }
-						style={ {
-							textAlign: 'center',
-							marginInline: '4px',
-							padding: '0.5rem',
-							fontSize: '0.875rem',
-							gridColumnEnd: `span ${ colSpan }`,
-							borderBottom: '1px solid #ccc',
-						} }
-					>
-						{ label }
-					</div>
-				) ) }
-				{ /* Index numbers */ }
-				<div /> { /* Empty cell for top-left corner */ }
-				{ Array( 12 )
-					.fill( '' )
-					.map( ( _, i ) => (
+			<>
+				<div
+					style={ {
+						display: 'grid',
+						gridTemplateColumns: 'auto repeat(12, minmax(2rem, 1fr))',
+						gap: '4px',
+					} }
+				>
+					{ /* Index numbers */ }
+					<div /> { /* Empty cell for top-left corner */ }
+					{ [
+						{ colSpan: 2, label: 'Backgrounds' },
+						{ colSpan: 3, label: 'Interactive components' },
+						{ colSpan: 3, label: 'Borders and separators' },
+						{ colSpan: 2, label: 'Solid colors' },
+						{ colSpan: 2, label: 'Accessible text' },
+					].map( ( { colSpan, label } ) => (
 						<div
-							key={ `scale-index-${ i }` }
+							key={ label }
 							style={ {
 								textAlign: 'center',
+								marginInline: '4px',
 								padding: '0.5rem',
+								fontSize: '0.875rem',
+								gridColumnEnd: `span ${ colSpan }`,
+								borderBottom: '1px solid #ccc',
 							} }
 						>
-							{ i + 1 }
+							{ label }
 						</div>
 					) ) }
-				{ /* Scales */ }
-				{ [ 'neutral-scale', 'primary-scale' ].map( ( scaleName, i ) => [
-					<div
-						key={ `${ scaleName }-label-${ i }` }
-						style={ {
-							fontSize: '0.875rem',
-							display: 'flex',
-							alignItems: 'center',
-						} }
-					>
-						{ scaleName }
-					</div>,
-					...Array( 12 )
+					{ /* Index numbers */ }
+					<div /> { /* Empty cell for top-left corner */ }
+					{ Array( 12 )
 						.fill( '' )
 						.map( ( _, i ) => (
 							<div
-								key={ `${ scaleName }-color-${ i }` }
+								key={ `scale-index-${ i }` }
 								style={ {
-									aspectRatio: '2',
-									backgroundColor: `var(--theme-color-${ scaleName }-${ i })`,
+									textAlign: 'center',
+									padding: '0.5rem',
 								} }
-							/>
-						) ),
-				] ) }
-			</div>
+							>
+								{ i + 1 }
+							</div>
+						) ) }
+					{ /* Scales */ }
+					{ [ 'neutral-scale', 'primary-scale' ].map( ( scaleName, i ) => [
+						<div
+							key={ `${ scaleName }-label-${ i }` }
+							style={ {
+								fontSize: '0.875rem',
+								display: 'flex',
+								alignItems: 'center',
+							} }
+						>
+							{ scaleName }
+						</div>,
+						...Array( 12 )
+							.fill( '' )
+							.map( ( _, i ) => (
+								<div
+									key={ `${ scaleName }-color-${ i }` }
+									style={ {
+										aspectRatio: '2',
+										backgroundColor: `var(--theme-color-${ scaleName }-${ i })`,
+									} }
+								/>
+							) ),
+					] ) }
+				</div>
+				<div
+					style={ {
+						width: '100%',
+						display: 'grid',
+						gridTemplateColumns: '1fr 1fr',
+						gap: '4px',
+						marginTop: '1rem',
+					} }
+				>
+					<div
+						style={ {
+							aspectRatio: '2',
+							backgroundColor: 'var(--theme-color-primary-scale-8)',
+							color: 'var(--theme-color-primary-contrast-small)',
+							fontSize: '16px',
+							display: 'grid',
+							placeItems: 'center',
+						} }
+					>
+						Some small text
+					</div>
+					<div
+						style={ {
+							aspectRatio: '2',
+							backgroundColor: 'var(--theme-color-primary-scale-8)',
+							color: 'var(--theme-color-primary-contrast-large)',
+							fontSize: '24px',
+							display: 'grid',
+							placeItems: 'center',
+						} }
+					>
+						Some large text
+					</div>
+				</div>
+			</>
 		),
 	},
 };
