@@ -107,6 +107,7 @@
 		"postinstall": "yarn run build-packages && husky install",
 		"reformat-files": "./node_modules/.bin/prettier --ignore-path .eslintignore --write \"**/*.{js,jsx,json,ts,tsx}\"",
 		"search:storybook:start": "echo 'Deprecated, run `yarn workspace @automattic/search run storybook:start` instead'",
+		"site-admin:storybook:start": "yarn workspace @automattic/site-admin run storybook:start",
 		"start": "npx check-node-version --package && node bin/welcome.js && yarn run build && yarn run start-build",
 		"start:debug": "NODE_OPTIONS='--max-old-space-size=6144' SOURCEMAP='eval-source-map' yarn start",
 		"start-mock-wordpress-com": "MOCK_WORDPRESSDOTCOM=1 yarn run start",

@@ -1,14 +1,14 @@
-import { useNavigate, useRouter } from '@tanstack/react-router';
 import {
 	Card,
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
-	Button,
 	Icon,
 } from '@wordpress/components';
 import { chevronRight } from '@wordpress/icons';
+import RouterLinkButton from '../router-link-button';
 import type { ReactElement, ReactNode } from 'react';
+
 import './style.scss';
 
 interface CardProps {
@@ -20,17 +20,8 @@ interface CardProps {
 }
 
 export default function BillingCard( { title, icon, description, to, children }: CardProps ) {
-	const navigate = useNavigate();
-	const router = useRouter();
-	const href = router.buildLocation( {
-		to,
-	} ).href;
-	const handleClick = ( e: React.MouseEvent ) => {
-		e.preventDefault();
-		navigate( { to } );
-	};
 	return (
-		<Button href={ href } onClick={ handleClick } className="billing-card-button">
+		<RouterLinkButton to={ to } className="billing-card-button">
 			<Card className="billing-card">
 				<HStack spacing={ 4 } justify="space-between" alignment="flex-start">
 					<HStack justify="flex-start" spacing={ 2 } alignment="flex-start">
@@ -44,6 +35,6 @@ export default function BillingCard( { title, icon, description, to, children }:
 					<Icon icon={ chevronRight } className="billing-card-icon" />
 				</HStack>
 			</Card>
-		</Button>
+		</RouterLinkButton>
 	);
 }
