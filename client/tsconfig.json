@@ -3,7 +3,12 @@
 	"compilerOptions": {
 		"rootDir": ".",
 		"noEmit": true,
-		"types": [ "node", "@types/gtag.js", "@emotion/react/types/css-prop" ],
+		"types": [
+			"node",
+			"@types/gtag.js",
+			"@emotion/react/types/css-prop",
+			"@testing-library/jest-dom"
+		],
 		"paths": {
 			"calypso/*": [ "./*" ]
 		}
