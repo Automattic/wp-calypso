@@ -1,3 +1,4 @@
+import { __experimentalInputControl as InputControl, Button } from '@wordpress/components';
 import { Theme } from './';
 import type { Meta, StoryObj } from '@storybook/react';
 
@@ -161,37 +162,41 @@ export const Default: Story = {
 					] ) }
 				</div>
 				<div
+					className="demo-container"
 					style={ {
 						width: '100%',
-						display: 'grid',
-						gridTemplateColumns: '1fr 1fr',
-						gap: '4px',
 						marginTop: '1rem',
+						background: 'var(--theme-color-background)',
 					} }
 				>
-					<div
-						style={ {
-							aspectRatio: '2',
-							backgroundColor: 'var(--theme-color-primary-scale-8)',
-							color: 'var(--theme-color-primary-contrast-small)',
-							fontSize: '16px',
-							display: 'grid',
-							placeItems: 'center',
-						} }
-					>
-						Some small text
-					</div>
-					<div
-						style={ {
-							aspectRatio: '2',
-							backgroundColor: 'var(--theme-color-primary-scale-8)',
-							color: 'var(--theme-color-primary-contrast-large)',
-							fontSize: '24px',
-							display: 'grid',
-							placeItems: 'center',
-						} }
-					>
-						Some large text
+					<style>{ `
+						.demo-container {
+							--wp-components-color-gray-100: var(--theme-color-neutral-scale-1);
+							--wp-components-color-gray-200: var(--theme-color-neutral-scale-3);
+							--wp-components-color-gray-300: var(--theme-color-neutral-scale-6);
+							--wp-components-color-gray-400: var(--theme-color-neutral-scale-7);
+							--wp-components-color-gray-500: var(--theme-color-neutral-scale-8);
+							--wp-components-color-gray-600: var(--theme-color-neutral-scale-9);
+							--wp-components-color-gray-700: var(--theme-color-neutral-scale-10);
+							--wp-components-color-gray-800: var(--theme-color-neutral-scale-11);
+							--wp-components-color-gray-900: var(--theme-color-neutral-scale-12);
+
+
+						  	--wp-components-color-accent: var(--theme-color-primary-scale-9);
+							--wp-components-color-accent-darker-10: var(--theme-color-primary-scale-10);
+							--wp-components-color-accent-darker-20: var(--theme-color-primary-scale-10)
+							--wp-components-color-accent-inverted: var(--theme-color-primary-contrast-small);
+
+							--wp-components-color-background: var(--theme-color-background);
+							--wp-components-color-foreground: var(--theme-color-neutral-scale-12);
+							--wp-components-color-foreground-inverted: var(--theme-color-neutral-scale-1);
+						}
+					` }</style>
+					<Button __next40pxDefaultSize variant="primary">
+						Click me
+					</Button>
+					<div>
+						<InputControl className="demo-input" label="Value" placeholder="Placeholder" />
 					</div>
 				</div>
 			</>

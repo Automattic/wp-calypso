@@ -40,6 +40,7 @@
 		"wp-admin"
 	],
 	"dependencies": {
+		"@wordpress/components": "^29.7.0",
 		"bezier-easing": "^2.1.0",
 		"colorjs.io": "^0.5.2"
 	},
