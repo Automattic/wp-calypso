@@ -133,18 +133,19 @@ const StatsModuleUTM = ( {
 
 	const getHref = useMemo( () => {
 		return () => {
-			queryParams.set( UTM_QUERY_PARAM, selectedOption );
+			const clonedParams = new URLSearchParams( queryParams );
+			clonedParams.set( UTM_QUERY_PARAM, selectedOption );
 
 			// Some modules do not have view all abilities
 			if ( ! summary && period && path && siteSlug ) {
-				if ( ! queryParams.has( 'startDate' ) ) {
-					queryParams.set( 'startDate', period.startOf.format( 'YYYY-MM-DD' ) );
+				if ( ! clonedParams.has( 'startDate' ) ) {
+					clonedParams.set( 'startDate', period.startOf.format( 'YYYY-MM-DD' ) );
 				}
-				if ( ! queryParams.has( 'endDate' ) ) {
-					queryParams.set( 'endDate', period.endOf.format( 'YYYY-MM-DD' ) );
+				if ( ! clonedParams.has( 'endDate' ) ) {
+					clonedParams.set( 'endDate', period.endOf.format( 'YYYY-MM-DD' ) );
 				}
 
-				return `${ basePath }?${ queryParams.toString() }`;
+				return `${ basePath }?${ clonedParams.toString() }`;
 			}
 		};
 	}, [ path, siteSlug, queryParams, selectedOption, period, basePath, summary ] );
