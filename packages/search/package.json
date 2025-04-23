@@ -51,7 +51,7 @@
 		"@storybook/addon-actions": "^8.6.9",
 		"@testing-library/dom": "^10.4.0",
 		"@testing-library/jest-dom": "^6.6.3",
-		"@testing-library/react": "^16.2.0",
+		"@testing-library/react": "^16.3.0",
 		"@testing-library/user-event": "^14.6.1",
 		"@wordpress/data": "^10.22.0",
 		"@wordpress/is-shallow-equal": "^5.22.0",
