@@ -2,7 +2,7 @@ import NavigationHeader from '../navigation-header';
 import type { Meta, StoryObj } from '@storybook/react';
 
 const meta: Meta< typeof NavigationHeader > = {
-	title: 'Components/NavigationHeader',
+	title: 'client/components/NavigationHeader',
 	component: NavigationHeader,
 	parameters: {
 		layout: 'fullscreen',
