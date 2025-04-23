@@ -1,98 +1,29 @@
-import styled from '@emotion/styled';
 import { translate } from 'i18n-calypso';
 import { ReactNode } from 'react';
+import './navigation-header.scss';
 
-// Main container for the header
-const HeaderContainer = styled.header`
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	background-color: white;
-	box-shadow: 0 1px 3px rgba( 0, 0, 0, 0.05 );
-	width: 100%;
-`;
+// Type definitions for the props
+interface ButtonProps extends React.ButtonHTMLAttributes< HTMLButtonElement > {
+	text?: string;
+	onClick?: ( e: React.MouseEvent< HTMLButtonElement > ) => void;
+}
 
-// Left section with back button and title
-const LeftSection = styled.div`
-	display: flex;
-	align-items: center;
-	gap: 16px;
-`;
+interface DownloadProps extends React.AnchorHTMLAttributes< HTMLAnchorElement > {
+	text?: string;
+	href?: string;
+	download?: boolean | string;
+}
 
-// Back button/link
-const BackLink = styled.a`
-	display: flex;
-	align-items: center;
-	text-decoration: none;
-	color: #666;
-	font-size: 16px;
-	transition: color 0.2s ease;
-
-	&:hover {
-		color: #333;
-	}
-
-	svg {
-		margin-right: 6px;
-	}
-`;
-
-// Title component that adjusts based on screen size
-const Title = styled.h1`
-	margin: 0;
-	font-size: 24px;
-	font-weight: 500;
-	color: #333;
-
-	@media ( max-width: 576px ) {
-		font-size: 20px;
-	}
-`;
-
-// Right section for buttons, links, or other elements
-const RightSection = styled.div`
-	display: flex;
-	align-items: center;
-`;
-
-// Button styling for the right section
-const ActionButton = styled.button`
-	padding: 8px 16px;
-	background-color: #2e7d32; /* Green color from the image */
-	color: white;
-	border: none;
-	border-radius: 4px;
-	font-size: 16px;
-	cursor: pointer;
-	transition: background-color 0.2s ease;
-
-	&:hover {
-		background-color: #1b5e20;
-	}
-
-	@media ( max-width: 576px ) {
-		padding: 6px 12px;
-		font-size: 14px;
-	}
-`;
-
-// Download link styling
-const DownloadLink = styled.a`
-	display: flex;
-	align-items: center;
-	text-decoration: none;
-	color: #2e7d32;
-	font-size: 16px;
-	transition: color 0.2s ease;
-
-	svg {
-		margin-right: 8px;
-	}
-
-	&:hover {
-		color: #1b5e20;
-	}
-`;
+interface HeaderProps extends React.HTMLAttributes< HTMLElement > {
+	title: string;
+	backLink?: string;
+	backLinkText?: string;
+	rightElement?: ReactNode;
+	onBackClick?: ( e: React.MouseEvent< HTMLAnchorElement > ) => void;
+	buttonProps?: ButtonProps;
+	downloadProps?: DownloadProps;
+	children?: ReactNode;
+}
 
 // Arrow left icon component
 const ArrowLeftIcon: React.FC = () => (
@@ -134,29 +65,6 @@ const DownloadIcon: React.FC = () => (
 	</svg>
 );
 
-// Type definitions for the props
-interface ButtonProps extends React.ButtonHTMLAttributes< HTMLButtonElement > {
-	text?: string;
-	onClick?: ( e: React.MouseEvent< HTMLButtonElement > ) => void;
-}
-
-interface DownloadProps extends React.AnchorHTMLAttributes< HTMLAnchorElement > {
-	text?: string;
-	href?: string;
-	download?: boolean | string;
-}
-
-interface HeaderProps extends React.HTMLAttributes< HTMLElement > {
-	title: string;
-	backLink?: string;
-	backLinkText?: string;
-	rightElement?: ReactNode;
-	onBackClick?: ( e: React.MouseEvent< HTMLAnchorElement > ) => void;
-	buttonProps?: ButtonProps;
-	downloadProps?: DownloadProps;
-	children?: ReactNode;
-}
-
 /**
  * Header component that can be used in various contexts
  *
@@ -188,48 +96,54 @@ const NavigationHeader: React.FC< HeaderProps > = ( {
 			return rightElement;
 		} else if ( buttonProps ) {
 			return (
-				<ActionButton onClick={ buttonProps.onClick } { ...buttonProps }>
+				<button
+					className="calypso-navigation-header__action-button"
+					onClick={ buttonProps.onClick }
+					{ ...buttonProps }
+				>
 					{ buttonProps.text || 'View post' }
-				</ActionButton>
+				</button>
 			);
 		} else if ( downloadProps ) {
 			return (
-				<DownloadLink
+				<a
+					className="calypso-navigation-header__download-link"
 					href={ downloadProps.href || '#' }
 					download={ downloadProps.download }
 					{ ...downloadProps }
 				>
 					<DownloadIcon />
 					{ downloadProps.text || 'Download CSV' }
-				</DownloadLink>
+				</a>
 			);
 		}
 		return null;
 	};
 
 	return (
-		<HeaderContainer { ...rest }>
-			{ backLink && (
-				<BackLink
-					href={ backLink }
-					onClick={ ( e ) => {
-						if ( onBackClick ) {
-							e.preventDefault();
-							onBackClick( e );
-						}
-					} }
-				>
-					<ArrowLeftIcon /> { backLinkText }
-				</BackLink>
-			) }
-			<LeftSection>
-				<Title>{ title }</Title>
-			</LeftSection>
-			<RightSection>
+		<header className="calypso-navigation-header" { ...rest }>
+			<div className="calypso-navigation-header__left-section">
+				{ backLink && (
+					<a
+						className="calypso-navigation-header__back-link"
+						href={ backLink }
+						onClick={ ( e ) => {
+							if ( onBackClick ) {
+								e.preventDefault();
+								onBackClick( e );
+							}
+						} }
+					>
+						<ArrowLeftIcon /> { backLinkText }
+					</a>
+				) }
+				<h1 className="calypso-navigation-header__title">{ title }</h1>
+			</div>
+			<div className="calypso-navigation-header__right-section">
 				{ renderRightElement() }
 				{ children }
-			</RightSection>
-		</HeaderContainer>
+			</div>
+		</header>
 	);
 };
 
