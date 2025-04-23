@@ -11,7 +11,9 @@ if [[ ! -f $build_file ]] ; then
 	exit 0
 fi
 
-if grep "resolving of build dependencies is invalid" $build_file ; then
+# Temp: Force invalidation
+# if grep "resolving of build dependencies is invalid" $build_file ; then
+if true ; then
 	echo "##teamcity[message text='Webpack cache invalidated!' errorDetails='This commit invalidated the webpack cache. Base image will be updated with new cache contents if on trunk.' status='warning']"
 	echo "##teamcity[setParameter name='env.WEBPACK_CACHE_INVALIDATED' value='true']"
 
