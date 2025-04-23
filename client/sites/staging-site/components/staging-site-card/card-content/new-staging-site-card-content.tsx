@@ -14,7 +14,7 @@ const WarningTitle = styled.p( {
 } );
 
 const NoticeWrapper = styled.div( {
-	marginBottom: '16px',
+	marginBottom: '24px',
 } );
 
 type CardContentProps = {
