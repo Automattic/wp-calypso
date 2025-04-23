@@ -4,7 +4,7 @@ import { ButtonProps } from '@wordpress/components/build-types/button/types';
 import { forwardRef } from 'react';
 
 export default createLink(
-	forwardRef( ( props: ButtonProps, ref: React.Ref< HTMLButtonElement > ) => (
+	forwardRef( ( props: ButtonProps, ref: React.Ref< HTMLAnchorElement > ) => (
 		<Button ref={ ref } { ...props } />
 	) )
 );
