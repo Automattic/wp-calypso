@@ -13,7 +13,7 @@ const WarningTitle = styled.p( {
 	marginBottom: '8px',
 } );
 
-const NoticeWrapper = styled.div( {
+const NoticeContainer = styled.div( {
 	marginBottom: '24px',
 } );
 
@@ -40,7 +40,7 @@ export const NewStagingSiteCardContent = ( {
 	return (
 		<>
 			{ isSiteWooStore && (
-				<NoticeWrapper>
+				<NoticeContainer>
 					<WPNotice status="warning" isDismissible={ false }>
 						<WarningTitle>
 							{ translate( 'Syncing WooCommerce sites can overwrite orders' ) }
@@ -59,7 +59,7 @@ export const NewStagingSiteCardContent = ( {
 							}
 						) }
 					</WPNotice>
-				</NoticeWrapper>
+				</NoticeContainer>
 			) }
 			{ isDevelopmentSite && (
 				<p>{ translate( 'Staging sites are only available to sites launched in production.' ) }</p>
