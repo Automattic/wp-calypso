@@ -110,60 +110,14 @@ export const generateColorScales = ( {
 		color.to( 'srgb' ).toString( { format: 'hex' } )
 	) as ArrayOf12< string >;
 
-	const accentScaleWideGamut = accentScaleColors.map( toOklchString ) as ArrayOf12< string >;
-
-	const accentScaleAlphaHex = accentScaleHex.map( ( color ) =>
-		getAlphaColorSrgb( color, backgroundHex )
-	) as ArrayOf12< string >;
-
-	const accentScaleAlphaWideGamutString = accentScaleHex.map( ( color ) =>
-		getAlphaColorP3( color, backgroundHex )
-	) as ArrayOf12< string >;
-
-	const accentContrastColorHex = accentContrastColor.to( 'srgb' ).toString( { format: 'hex' } );
 
 	const grayScaleHex = grayScaleColors.map( ( color ) =>
 		color.to( 'srgb' ).toString( { format: 'hex' } )
 	) as ArrayOf12< string >;
 
-	const grayScaleWideGamut = grayScaleColors.map( toOklchString ) as ArrayOf12< string >;
-
-	const grayScaleAlphaHex = grayScaleHex.map( ( color ) =>
-		getAlphaColorSrgb( color, backgroundHex )
-	) as ArrayOf12< string >;
-
-	const grayScaleAlphaWideGamutString = grayScaleHex.map( ( color ) =>
-		getAlphaColorP3( color, backgroundHex )
-	) as ArrayOf12< string >;
-
-	const accentSurfaceHex =
-		appearance === 'light'
-			? getAlphaColorSrgb( accentScaleHex[ 1 ], backgroundHex, 0.8 )
-			: getAlphaColorSrgb( accentScaleHex[ 1 ], backgroundHex, 0.5 );
-
-	const accentSurfaceWideGamutString =
-		appearance === 'light'
-			? getAlphaColorP3( accentScaleWideGamut[ 1 ], backgroundHex, 0.8 )
-			: getAlphaColorP3( accentScaleWideGamut[ 1 ], backgroundHex, 0.5 );
-
 	return {
 		accentScale: accentScaleHex,
-		accentScaleAlpha: accentScaleAlphaHex,
-		accentScaleWideGamut: accentScaleWideGamut,
-		accentScaleAlphaWideGamut: accentScaleAlphaWideGamutString,
-		accentContrast: accentContrastColorHex,
-
 		grayScale: grayScaleHex,
-		grayScaleAlpha: grayScaleAlphaHex,
-		grayScaleWideGamut: grayScaleWideGamut,
-		grayScaleAlphaWideGamut: grayScaleAlphaWideGamutString,
-
-		graySurface: appearance === 'light' ? '#ffffffcc' : 'rgba(0, 0, 0, 0.05)',
-		graySurfaceWideGamut:
-			appearance === 'light' ? 'color(display-p3 1 1 1 / 80%)' : 'color(display-p3 0 0 0 / 5%)',
-
-		accentSurface: accentSurfaceHex,
-		accentSurfaceWideGamut: accentSurfaceWideGamutString,
 
 		background: backgroundHex,
 	};
@@ -391,179 +345,6 @@ function getTextColor( background: Color ) {
 	return white;
 }
 
-// target = background * (1 - alpha) + foreground * alpha
-// alpha = (target - background) / (foreground - background)
-// Expects 0-1 numbers for the RGB channels
-function getAlphaColor(
-	targetRgb: number[],
-	backgroundRgb: number[],
-	rgbPrecision: number,
-	alphaPrecision: number,
-	targetAlpha?: number
-) {
-	const [ tr, tg, tb ] = targetRgb.map( ( c ) => Math.round( c * rgbPrecision ) );
-	const [ br, bg, bb ] = backgroundRgb.map( ( c ) => Math.round( c * rgbPrecision ) );
-
-	if (
-		tr === undefined ||
-		tg === undefined ||
-		tb === undefined ||
-		br === undefined ||
-		bg === undefined ||
-		bb === undefined
-	) {
-		throw Error( 'Color is undefined' );
-	}
-
-	// Is the background color lighter, RGB-wise, than target color?
-	// Decide whether we want to add as little color or as much color as possible,
-	// darkening or lightening the background respectively.
-	// If at least one of the bits of the target RGB value
-	// is lighter than the background, we want to lighten it.
-	let desiredRgb = 0;
-	if ( tr > br ) {
-		desiredRgb = rgbPrecision;
-	} else if ( tg > bg ) {
-		desiredRgb = rgbPrecision;
-	} else if ( tb > bb ) {
-		desiredRgb = rgbPrecision;
-	}
-
-	const alphaR = ( tr - br ) / ( desiredRgb - br );
-	const alphaG = ( tg - bg ) / ( desiredRgb - bg );
-	const alphaB = ( tb - bb ) / ( desiredRgb - bb );
-
-	const isPureGray = [ alphaR, alphaG, alphaB ].every( ( alpha ) => alpha === alphaR );
-
-	// No need for precision gymnastics with pure grays, and we can get cleaner output
-	if ( ! targetAlpha && isPureGray ) {
-		// Convert back to 0-1 values
-		const V = desiredRgb / rgbPrecision;
-		return [ V, V, V, alphaR ] as const;
-	}
-
-	const clampRgb = ( n: number ) => ( isNaN( n ) ? 0 : Math.min( rgbPrecision, Math.max( 0, n ) ) );
-	const clampA = ( n: number ) => ( isNaN( n ) ? 0 : Math.min( alphaPrecision, Math.max( 0, n ) ) );
-	const maxAlpha = targetAlpha ?? Math.max( alphaR, alphaG, alphaB );
-
-	const A = clampA( Math.ceil( maxAlpha * alphaPrecision ) ) / alphaPrecision;
-	let R = clampRgb( ( ( br * ( 1 - A ) - tr ) / A ) * -1 );
-	let G = clampRgb( ( ( bg * ( 1 - A ) - tg ) / A ) * -1 );
-	let B = clampRgb( ( ( bb * ( 1 - A ) - tb ) / A ) * -1 );
-
-	R = Math.ceil( R );
-	G = Math.ceil( G );
-	B = Math.ceil( B );
-
-	const blendedR = blendAlpha( R, A, br );
-	const blendedG = blendAlpha( G, A, bg );
-	const blendedB = blendAlpha( B, A, bb );
-
-	// Correct for rounding errors in light mode
-	if ( desiredRgb === 0 ) {
-		if ( tr <= br && tr !== blendedR ) {
-			R = tr > blendedR ? R + 1 : R - 1;
-		}
-
-		if ( tg <= bg && tg !== blendedG ) {
-			G = tg > blendedG ? G + 1 : G - 1;
-		}
-
-		if ( tb <= bb && tb !== blendedB ) {
-			B = tb > blendedB ? B + 1 : B - 1;
-		}
-	}
-
-	// Correct for rounding errors in dark mode
-	if ( desiredRgb === rgbPrecision ) {
-		if ( tr >= br && tr !== blendedR ) {
-			R = tr > blendedR ? R + 1 : R - 1;
-		}
-
-		if ( tg >= bg && tg !== blendedG ) {
-			G = tg > blendedG ? G + 1 : G - 1;
-		}
-
-		if ( tb >= bb && tb !== blendedB ) {
-			B = tb > blendedB ? B + 1 : B - 1;
-		}
-	}
-
-	// Convert back to 0-1 values
-	R = R / rgbPrecision;
-	G = G / rgbPrecision;
-	B = B / rgbPrecision;
-
-	return [ R, G, B, A ] as const;
-}
-
-// Important – I empirically discovered that this rounding is how the browser actually overlays
-// transparent RGB bits over each other. It does NOT round the whole result altogether.
-function blendAlpha( foreground: number, alpha: number, background: number, round = true ) {
-	if ( round ) {
-		return Math.round( background * ( 1 - alpha ) ) + Math.round( foreground * alpha );
-	}
-
-	return background * ( 1 - alpha ) + foreground * alpha;
-}
-
-function getAlphaColorSrgb( targetColor: string, backgroundColor: string, targetAlpha?: number ) {
-	const [ r, g, b, a ] = getAlphaColor(
-		new Color( targetColor ).to( 'srgb' ).coords,
-		new Color( backgroundColor ).to( 'srgb' ).coords,
-		255,
-		255,
-		targetAlpha
-	);
-
-	return formatHex( new Color( 'srgb', [ r, g, b ], a ).toString( { format: 'hex' } ) );
-}
-
-function getAlphaColorP3( targetColor: string, backgroundColor: string, targetAlpha?: number ) {
-	const [ r, g, b, a ] = getAlphaColor(
-		new Color( targetColor ).to( 'p3' ).coords,
-		new Color( backgroundColor ).to( 'p3' ).coords,
-		// Not sure why, but the resulting P3 alpha colors are blended in the browser most precisely when
-		// rounded to 255 integers too. Is the browser using 0-255 rather than 0-1 under the hood for P3 too?
-		255,
-		1000,
-		targetAlpha
-	);
-
-	return (
-		new Color( 'p3', [ r, g, b ], a )
-			.toString( { precision: 4 } )
-			// Important: in non-browser environments colorjs.io outputs a different format for some reason
-			.replace( 'color(p3 ', 'color(display-p3 ' )
-	);
-}
-
-// Format shortform hex to longform
-function formatHex( str: string ) {
-	if ( ! str.startsWith( '#' ) ) {
-		return str;
-	}
-
-	if ( str.length === 4 ) {
-		const hash = str.charAt( 0 );
-		const r = str.charAt( 1 );
-		const g = str.charAt( 2 );
-		const b = str.charAt( 3 );
-		return hash + r + r + g + g + b + b;
-	}
-
-	if ( str.length === 5 ) {
-		const hash = str.charAt( 0 );
-		const r = str.charAt( 1 );
-		const g = str.charAt( 2 );
-		const b = str.charAt( 3 );
-		const a = str.charAt( 4 );
-		return hash + r + r + g + g + b + b + a + a;
-	}
-
-	return str;
-}
-
 export function transposeProgressionStart(
 	to: number,
 	arr: number[],
@@ -588,14 +369,4 @@ export function transposeProgressionEnd(
 		const fn = BezierEasing( ...curve );
 		return n - diff * fn( i / lastIndex );
 	} );
-}
-
-// Convert to OKLCH string with percentage for the lightness channel
-// https://github.com/radix-ui/themes/issues/420
-function toOklchString( color: Color ) {
-	const L = +( color.coords[ 0 ] * 100 ).toFixed( 1 );
-	return color
-		.to( 'oklch' )
-		.toString( { precision: 4 } )
-		.replace( /(\S+)(.+)/, `oklch(${ L }%$2` );
 }
