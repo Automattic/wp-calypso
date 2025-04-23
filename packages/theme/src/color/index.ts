@@ -12,12 +12,11 @@ export function generateColors( color: ThemeProps[ 'color' ] ) {
 	const colorScales = generateColorScales( {
 		accent: color.primary,
 		appearance: color.scheme ?? 'light',
-		// TODO: check correctness of background values
-		background: color.scheme === 'light' ? '#fff' : '#000',
 		gray: `hsl(${ primaryHue }deg ${ color.fun }% 50%)`,
 	} );
 
 	return {
+		background: colorScales.background,
 		[ 'neutral-scale' ]: colorScales.grayScale,
 		[ 'primary-scale' ]: colorScales.accentScale,
 		neutral: mapColorsToScale( colorScales.grayScale, COLOR_MAP ),
