@@ -24,6 +24,26 @@ const meta: Meta< typeof Theme > = {
 				type: 'color',
 			},
 		},
+		info: {
+			control: {
+				type: 'color',
+			},
+		},
+		success: {
+			control: {
+				type: 'color',
+			},
+		},
+		warning: {
+			control: {
+				type: 'color',
+			},
+		},
+		error: {
+			control: {
+				type: 'color',
+			},
+		},
 		fun: {
 			control: { type: 'range', min: 0, max: 100, step: 1 },
 		},
@@ -37,23 +57,29 @@ const meta: Meta< typeof Theme > = {
 
 export default meta;
 
-type ExtraStorybookControls = {
-	primary: string;
-	fun: number;
-	scheme: 'light' | 'dark';
-};
+type ExtraStorybookControls = React.ComponentProps< typeof Theme >[ 'color' ];
 
 type Story = StoryObj< React.ComponentProps< typeof Theme > & ExtraStorybookControls >;
 
 export const Default: Story = {
 	render: ( args ) => (
-		<Theme color={ { primary: args.primary, fun: args.fun, scheme: args.scheme } }>
+		<Theme
+			color={ {
+				primary: args.primary,
+				info: args.info,
+				success: args.success,
+				warning: args.warning,
+				error: args.error,
+				fun: args.fun,
+				scheme: args.scheme,
+			} }
+		>
 			{ args.children }
 		</Theme>
 	),
 	args: {
-		primary: '#f00',
-		fun: 0,
+		primary: '#F76B15',
+		fun: 10,
 		scheme: 'light',
 		children: (
 			<>
@@ -103,7 +129,14 @@ export const Default: Story = {
 							</div>
 						) ) }
 					{ /* Scales */ }
-					{ [ 'neutral-scale', 'primary-scale' ].map( ( scaleName, i ) => [
+					{ [
+						'primary-scale',
+						'neutral-scale',
+						'info-scale',
+						'success-scale',
+						'warning-scale',
+						'error-scale',
+					].map( ( scaleName, i ) => [
 						<div
 							key={ `${ scaleName }-label-${ i }` }
 							style={ {

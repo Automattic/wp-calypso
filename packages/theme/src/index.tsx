@@ -10,11 +10,11 @@ declare module 'react' {
 }
 
 const Theme = forwardRef< HTMLDivElement, ThemeProps >( function Theme( { color, children }, ref ) {
-	const { primary, fun, scheme } = color;
+	const { primary, info, success, warning, error, fun, scheme } = color;
 	const colorTokens = useMemo(
 		// Recalculate the color tokens only when necessary.
-		() => generateColors( { primary, scheme, fun } ),
-		[ primary, scheme, fun ]
+		() => generateColors( { primary, info, success, warning, error, scheme, fun } ),
+		[ primary, info, success, warning, error, scheme, fun ]
 	);
 
 	const themeCss = themeToCss( { color: colorTokens } );

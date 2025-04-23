@@ -7,11 +7,6 @@ import Color from 'colorjs.io';
 import * as PresetScales from './preset-scales';
 import { ArrayOf12 } from './types';
 
-// redo token maps
-// add more colors (warning / info / success / error)
-// add example UI
-// go beyond color?
-
 const arrayOf12 = [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11 ] as const;
 
 const grayScaleNames = [ 'gray', 'mauve', 'slate', 'sage', 'olive', 'sand' ] as const;
@@ -92,74 +87,143 @@ function getReferenceBackgroundColor( appearance: 'light' | 'dark' ) {
 export const generateColorScales = ( {
 	appearance,
 	accent,
+	info,
+	success,
+	warning,
+	error,
 	gray,
 }: {
 	appearance: 'light' | 'dark';
 	accent: string;
+	info: string;
+	success: string;
+	warning: string;
+	error: string;
 	gray: string;
 } ) => {
-	const allScales = appearance === 'light' ? lightColors : darkColors;
-	const grayScales = appearance === 'light' ? lightGrayColors : darkGrayColors;
 	const backgroundColor = getReferenceBackgroundColor( appearance );
 
-	const grayBaseColor = new Color( gray ).to( 'oklch' );
-	const grayScaleColors = getScaleFromColor( grayBaseColor, grayScales, backgroundColor );
-
-	const accentBaseColor = new Color( accent ).to( 'oklch' );
-
-	let accentScaleColors = getScaleFromColor( accentBaseColor, allScales, backgroundColor );
-
-	// Enforce srgb for the background color
-	const backgroundHex = backgroundColor.to( 'srgb' ).toString( { format: 'hex' } );
-
-	// Make sure we use the tint from the gray scale for when base is pure white or black
-	const accentBaseHex = accentBaseColor.to( 'srgb' ).toString( { format: 'hex' } );
-	if ( accentBaseHex === '#000' || accentBaseHex === '#fff' ) {
-		accentScaleColors = grayScaleColors.map( ( color ) => color.clone() ) as ArrayOf12< Color >;
-	}
-
-	const [ accent9Color, accentContrastColorSmallText, accentContrastColorLargeText ] =
-		getStep9Colors( accentScaleColors, accentBaseColor );
-
-	accentScaleColors[ 8 ] = accent9Color;
-	accentScaleColors[ 9 ] = getButtonHoverColor( accent9Color, [ accentScaleColors ] );
-
-	// Limit saturation of the text colors
-	accentScaleColors[ 10 ].coords[ 1 ] = Math.min(
-		Math.max( accentScaleColors[ 8 ].coords[ 1 ], accentScaleColors[ 7 ].coords[ 1 ] ),
-		accentScaleColors[ 10 ].coords[ 1 ]
+	const computedGrayScale = computeGrayScale( gray, appearance, backgroundColor );
+	const computedAccentScale = computeColoredScale(
+		accent,
+		appearance,
+		backgroundColor,
+		computedGrayScale.grayScale
 	);
-	accentScaleColors[ 11 ].coords[ 1 ] = Math.min(
-		Math.max( accentScaleColors[ 8 ].coords[ 1 ], accentScaleColors[ 7 ].coords[ 1 ] ),
-		accentScaleColors[ 11 ].coords[ 1 ]
+	const computedInfoScale = computeColoredScale(
+		info,
+		appearance,
+		backgroundColor,
+		computedGrayScale.grayScale
 	);
-
-	const accentScaleHex = accentScaleColors.map( ( color ) =>
-		color.to( 'srgb' ).toString( { format: 'hex' } )
-	) as ArrayOf12< string >;
-
-	const accentContrastColorSmallTextHex = accentContrastColorSmallText
-		.to( 'srgb' )
-		.toString( { format: 'hex' } );
-	const accentContrastColorLargeTextHex = accentContrastColorLargeText
-		.to( 'srgb' )
-		.toString( { format: 'hex' } );
-
-	const grayScaleHex = grayScaleColors.map( ( color ) =>
-		color.to( 'srgb' ).toString( { format: 'hex' } )
-	) as ArrayOf12< string >;
+	const computedSuccessScale = computeColoredScale(
+		success,
+		appearance,
+		backgroundColor,
+		computedGrayScale.grayScale
+	);
+	const computedWarningScale = computeColoredScale(
+		warning,
+		appearance,
+		backgroundColor,
+		computedGrayScale.grayScale
+	);
+	const computedErrorScale = computeColoredScale(
+		error,
+		appearance,
+		backgroundColor,
+		computedGrayScale.grayScale
+	);
 
 	return {
 		// Accent
-		accentScale: accentScaleHex,
-		accentContrastSmallText: accentContrastColorSmallTextHex,
-		accentContrastLargeText: accentContrastColorLargeTextHex,
+		accentScale: computedAccentScale.generatedScaleHex,
+		accentContrastSmallText: computedAccentScale.contrastColorSmallTextHex,
+		accentContrastLargeText: computedAccentScale.contrastColorLargeTextHex,
+		// Info
+		infoScale: computedInfoScale.generatedScaleHex,
+		infoContrastSmallText: computedInfoScale.contrastColorSmallTextHex,
+		infoContrastLargeText: computedInfoScale.contrastColorLargeTextHex,
+		// Success
+		successScale: computedSuccessScale.generatedScaleHex,
+		successContrastSmallText: computedSuccessScale.contrastColorSmallTextHex,
+		successContrastLargeText: computedSuccessScale.contrastColorLargeTextHex,
+		// Warning
+		warningScale: computedWarningScale.generatedScaleHex,
+		warningContrastSmallText: computedWarningScale.contrastColorSmallTextHex,
+		warningContrastLargeText: computedWarningScale.contrastColorLargeTextHex,
+		// Error
+		errorScale: computedErrorScale.generatedScaleHex,
+		errorContrastSmallText: computedErrorScale.contrastColorSmallTextHex,
+		errorContrastLargeText: computedErrorScale.contrastColorLargeTextHex,
 		// Gray
-		grayScale: grayScaleHex,
-		// Background
-		background: backgroundHex,
+		grayScale: computedGrayScale.grayScaleHex,
+		// Background (Enforce srgb for the background color)
+		background: backgroundColor.to( 'srgb' ).toString( { format: 'hex' } ),
 	};
 };
+
+function computeGrayScale(
+	graySeedColor: string,
+	appearance: 'light' | 'dark',
+	backgroundColor: Color
+) {
+	const grayScales = appearance === 'light' ? lightGrayColors : darkGrayColors;
+
+	const grayBaseColor = new Color( graySeedColor ).to( 'oklch' );
+	const generatedGrayScale = getScaleFromColor( grayBaseColor, grayScales, backgroundColor );
+
+	return {
+		grayScale: generatedGrayScale,
+		grayScaleHex: generatedGrayScale.map( ( color ) =>
+			color.to( 'srgb' ).toString( { format: 'hex' } )
+		) as ArrayOf12< string >,
+	};
+}
+
+function computeColoredScale(
+	seedColor: string,
+	appearance: 'light' | 'dark',
+	backgroundColor: Color,
+	grayScaleColors: ArrayOf12< Color >
+) {
+	const allScales = appearance === 'light' ? lightColors : darkColors;
+	const baseColor = new Color( seedColor ).to( 'oklch' );
+	const baseColorHex = baseColor.to( 'srgb' ).toString( { format: 'hex' } );
+
+	let generatedScale = getScaleFromColor( baseColor, allScales, backgroundColor );
+
+	// Make sure we use the tint from the gray scale for when base is pure white or black
+	if ( baseColorHex === '#000' || baseColorHex === '#fff' ) {
+		generatedScale = grayScaleColors.map( ( color ) => color.clone() ) as ArrayOf12< Color >;
+	}
+
+	const [ step9Color, contrastColorSmallText, contrastColorLargeText ] = getStep9Colors(
+		generatedScale,
+		baseColor
+	);
+
+	generatedScale[ 8 ] = step9Color;
+	generatedScale[ 9 ] = getButtonHoverColor( step9Color, [ generatedScale ] );
+
+	// Limit saturation of the text colors
+	generatedScale[ 10 ].coords[ 1 ] = Math.min(
+		Math.max( generatedScale[ 8 ].coords[ 1 ], generatedScale[ 7 ].coords[ 1 ] ),
+		generatedScale[ 10 ].coords[ 1 ]
+	);
+	generatedScale[ 11 ].coords[ 1 ] = Math.min(
+		Math.max( generatedScale[ 8 ].coords[ 1 ], generatedScale[ 7 ].coords[ 1 ] ),
+		generatedScale[ 11 ].coords[ 1 ]
+	);
+
+	return {
+		generatedScaleHex: generatedScale.map( ( color ) =>
+			color.to( 'srgb' ).toString( { format: 'hex' } )
+		) as ArrayOf12< string >,
+		contrastColorSmallTextHex: contrastColorSmallText.to( 'srgb' ).toString( { format: 'hex' } ),
+		contrastColorLargeTextHex: contrastColorLargeText.to( 'srgb' ).toString( { format: 'hex' } ),
+	};
+}
 
 function getStep9Colors(
 	scale: ArrayOf12< Color >,
