@@ -197,7 +197,7 @@ export default function ItemActions< Item >( {
 			justify="flex-end"
 			className="dataviews-item-actions"
 			style={ {
-				flexShrink: 0, // TODO: why is this change necessary?
+				flexShrink: 0,
 				width: 'auto',
 			} }
 		>
