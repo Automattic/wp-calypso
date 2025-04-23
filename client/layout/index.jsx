@@ -31,7 +31,6 @@ import { isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
 import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
 import { getMessagePathForJITM } from 'calypso/lib/route';
 import UserVerificationChecker from 'calypso/lib/user/verification-checker';
-import { isOffline } from 'calypso/state/application/selectors';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import {
 	getShouldShowCollapsedGlobalSidebar,
@@ -134,7 +133,6 @@ class Layout extends Component {
 		// connected props
 		masterbarIsHidden: PropTypes.bool,
 		isSupportSession: PropTypes.bool,
-		isOffline: PropTypes.bool,
 		sectionGroup: PropTypes.string,
 		sectionName: PropTypes.string,
 		colorScheme: PropTypes.string,
@@ -286,7 +284,7 @@ class Layout extends Component {
 						<QueryAgencies />
 					</>
 				) }
-				{ this.props.isOffline && <OfflineStatus /> }
+				{ config.isEnabled( 'network-connection' ) && <OfflineStatus /> }
 				<div id="content" className="layout__content">
 					{ config.isEnabled( 'jitms' ) && this.props.isEligibleForJITM && (
 						<AsyncLoad
@@ -417,7 +415,6 @@ export default withCurrentRoute(
 			sectionGroup,
 			sectionName,
 			sectionJitmPath,
-			isOffline: isOffline( state ),
 			currentLayoutFocus: getCurrentLayoutFocus( state ),
 			colorScheme,
 			siteId,
