@@ -58,43 +58,6 @@
 		align-items: center;
 	}
 
-	&__action-button {
-		padding: $grid-unit-10 $grid-unit-20;
-		background-color: var(--wp-components-color-accent, #2e7d32);
-		color: var(--wp-components-color-accent-inverted, #fff);
-		border: none;
-		border-radius: $grid-unit-05;
-		font-size: $default-font-size;
-		cursor: pointer;
-		transition: background-color 0.2s ease;
-
-		&:hover {
-			background-color: var(--wp-components-color-accent-darker-20, #1b5e20);
-		}
-
-		@media (max-width: $break-small) {
-			padding: $grid-unit-10 $grid-unit-15;
-			font-size: $mobile-text-min-font-size;
-		}
-	}
-
-	&__download-link {
-		display: flex;
-		align-items: center;
-		text-decoration: none;
-		color: var(--wp-components-color-accent, #2e7d32);
-		font-size: $default-font-size;
-		transition: color 0.2s ease;
-
-		svg {
-			margin-right: $grid-unit-10;
-		}
-
-		&:hover {
-			color: var(--wp-components-color-accent-darker-20, #1b5e20);
-		}
-	}
-
 	// Add extra space when there is a classic/non classic option tab at the top on mobile that collides with cta's
 	&.calypso-navigation-header__screen-options-tab {
 		padding-top: 38px; // 30 for screen options tab + 8 gap
