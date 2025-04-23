@@ -189,7 +189,7 @@ const siteMigration: FlowV2 = {
 								);
 							}
 
-							if ( platformQueryParam !== 'wordpress' ) {
+							if ( platformQueryParam && platformQueryParam !== 'wordpress' ) {
 								if ( isPlatformImportable( platformQueryParam ) && fromQueryParam ) {
 									return exitFlow(
 										getFullImporterUrl( platformQueryParam, siteSlug, fromQueryParam )
