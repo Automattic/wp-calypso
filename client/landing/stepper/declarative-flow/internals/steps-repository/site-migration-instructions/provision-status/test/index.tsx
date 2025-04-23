@@ -8,7 +8,7 @@ import { ProvisionStatus } from '..';
 describe( 'ProvisionStatus', () => {
 	it( 'shows the number of in-progress steps', () => {
 		const status = {
-			siteTransferStatus: 'completed',
+			siteTransferStatus: 'idle',
 			migrationKeyStatus: 'error',
 		};
 
