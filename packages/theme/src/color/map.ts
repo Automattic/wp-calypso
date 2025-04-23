@@ -1,24 +1,6 @@
-// map showing which lightness in scale each use case should use
-// type ColorMap< T > = Partial<
-// 	Record<
-// 		'bg' | 'text' | 'border',
-// 		Partial<
-// 			Record<
-// 				'default' | 'hover' | 'active' | 'input' | 'muted' | 'strong' | 'inverse' | 'disabled',
-// 				T | Partial< Record< 'default' | 'disabled' | 'hover' | 'strong', T > >
-// 			>
-// 		>
-// 	>
-// >;
+import { ColorMap } from './types';
 
-import type { TokensObject } from '../types';
-import type { ArrayOf12, ColorScaleIndex } from './types';
-
-type ColorMap< T > = {
-	[ key: string ]: T | ColorMap< T >;
-};
-
-const COLOR_MAP: ColorMap< ColorScaleIndex > = {
+export const COLOR_MAP: ColorMap = {
 	bg: {
 		default: 2,
 		hover: 3,
@@ -54,13 +36,4 @@ const COLOR_MAP: ColorMap< ColorScaleIndex > = {
 		muted: 4,
 		hover: 6,
 	},
-};
-
-// maps a color map to a color scale
-export const mapColors = ( colorScale: ArrayOf12< string >, mapToObject = COLOR_MAP ) => {
-	const map: TokensObject = {};
-	Object.entries( mapToObject ).forEach( ( [ alias, color ] ) => {
-		map[ alias ] = typeof color === 'object' ? mapColors( colorScale, color ) : colorScale[ color ];
-	} );
-	return map;
 };
