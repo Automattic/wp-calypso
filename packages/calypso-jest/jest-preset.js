@@ -17,10 +17,10 @@ module.exports = {
 	testPathIgnorePatterns: [
 		...defaults.testPathIgnorePatterns,
 		'/dist/',
-		'build',
-		'build-module',
-		'build-types',
-		'build-wp',
+		'/build/',
+		'/build-module/',
+		'/build-types/',
+		'/build-wp/',
 	],
 	verbose: false,
 	snapshotFormat: {
