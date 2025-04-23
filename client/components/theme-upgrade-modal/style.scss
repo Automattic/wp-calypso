@@ -119,10 +119,6 @@
 		}
 	}
 
-	p {
-		margin-bottom: 20px;
-	}
-
 	.theme-upgrade-modal__close {
 		color: var(--color-text-subtle);
 		position: absolute;
@@ -138,12 +134,20 @@
 	.theme-upgrade-modal__actions.bundle {
 		gap: 8px;
 		display: flex;
-		flex-direction: column-reverse;
 
 		@include break-medium {
 			flex-direction: row;
 			justify-content: flex-end;
-			gap: 24px;
+		}
+
+		button {
+			flex-grow: 1;
+			justify-content: center;
+
+			@include break-medium {
+				flex-grow: 0;
+				justify-content: flex-start;
+			}
 		}
 		
 	}
