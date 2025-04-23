@@ -22,10 +22,5 @@
 		"./state/data-layer/wpcom/sites/jitm/schema.json",
 		"./declarations.d.ts"
 	],
-	"exclude": [
-		"./**/node_modules/**/*",
-		"./**/test/**/*",
-		"./server/devdocs/search-index.js",
-		"./**/.stories.tsx"
-	]
+	"exclude": [ "./**/test/**/*" ]
 }
