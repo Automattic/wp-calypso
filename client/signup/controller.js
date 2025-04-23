@@ -10,6 +10,7 @@ import { login } from 'calypso/lib/paths';
 import { sectionify } from 'calypso/lib/route';
 import { addQueryArgs } from 'calypso/lib/url';
 import flows from 'calypso/signup/config/flows';
+import { shouldRedirectToStepperFlow } from 'calypso/signup/shouldRedirectToStepperFlow';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { updateDependencies } from 'calypso/state/signup/actions';
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
@@ -108,6 +109,18 @@ export default {
 		}
 
 		next();
+	},
+
+	async redirectToStepperFlow( context, next ) {
+		const { flowName } = context.params;
+
+		const stepperFlow = shouldRedirectToStepperFlow( flowName );
+
+		if ( ! stepperFlow ) {
+			return next();
+		}
+
+		return page.redirect( addQueryArgs( stepperFlow, context.query ) );
 	},
 
 	async redirectToFlow( context, next ) {

@@ -1,6 +1,7 @@
 export const ACCOUNT_FLOW = 'account';
 export const NEWSLETTER_FLOW = 'newsletter';
 export const HOSTING_LP_FLOW = 'hosting-start';
+export const CREATE_SITE_FLOW = 'create-site';
 export const NEW_HOSTED_SITE_FLOW = 'new-hosted-site';
 export const TRANSFERRING_HOSTED_SITE_FLOW = 'transferring-hosted-site';
 export const CONNECT_DOMAIN_FLOW = 'connect-domain';

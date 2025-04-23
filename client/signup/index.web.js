@@ -15,6 +15,7 @@ export default function () {
 		],
 		controller.saveInitialContext,
 		controller.redirectWithoutLocaleIfLoggedIn,
+		controller.redirectToStepperFlow,
 		controller.redirectToFlow,
 		controller.setSelectedSiteForSignup,
 		controller.start,

@@ -14,10 +14,14 @@ import {
 	HUNDRED_YEAR_DOMAIN_FLOW,
 	EXAMPLE_FLOW,
 	AI_SITE_BUILDER_FLOW,
+	CREATE_SITE_FLOW,
 } from '@automattic/onboarding';
 import type { Flow } from '../declarative-flow/internals/types';
 
 const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
+	[ CREATE_SITE_FLOW ]: () =>
+		import( /* webpackChunkName: "create-site-flow" */ './flows/create-site/create-site' ),
+
 	'site-setup': () =>
 		import( /* webpackChunkName: "site-setup-flow" */ './flows/site-setup-flow/site-setup-flow' ),
 
