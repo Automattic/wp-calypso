@@ -11,6 +11,7 @@ import { getAddOn } from '@automattic/data-stores/src/add-ons/add-ons-list';
 import { CREATE_SITE_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect, dispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
+import { pathToUrl } from 'calypso/lib/url';
 import {
 	setSignupCompleteSlug,
 	persistSignupDestination,
@@ -161,7 +162,15 @@ const createSite: FlowV2 = {
 								`/checkout/${ encodeURIComponent(
 									( providedDependencies?.siteSlug as string ) ?? ''
 								) }`,
-								{ redirect_to: destination, coupon: couponCode }
+								{
+									redirect_to: destination,
+									coupon: couponCode,
+									checkoutBackUrl: pathToUrl(
+										addQueryArgs( `/overview/${ providedDependencies.siteSlug }`, {
+											ref: this.name,
+										} )
+									),
+								}
 							)
 						);
 					}
