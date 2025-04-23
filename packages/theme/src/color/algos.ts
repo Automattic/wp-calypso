@@ -53,7 +53,7 @@ const darkGrayColors = Object.fromEntries(
 ) as Record< ( typeof grayScaleNames )[ number ], ArrayOf12< Color > >;
 
 // TODO: confirm the reference BG colors are correct
-function getReferenceBackrgoundColor( appearance: 'light' | 'dark' ) {
+function getReferenceBackgroundColor( appearance: 'light' | 'dark' ) {
 	return appearance === 'light'
 		? new Color( '#fff' ).to( 'oklch' )
 		: new Color( '#000' ).to( 'oklch' );
@@ -70,7 +70,7 @@ export const generateColorScales = ( {
 } ) => {
 	const allScales = appearance === 'light' ? lightColors : darkColors;
 	const grayScales = appearance === 'light' ? lightGrayColors : darkGrayColors;
-	const backgroundColor = getReferenceBackrgoundColor( appearance );
+	const backgroundColor = getReferenceBackgroundColor( appearance );
 
 	const grayBaseColor = new Color( gray ).to( 'oklch' );
 	const grayScaleColors = getScaleFromColor( grayBaseColor, grayScales, backgroundColor );
