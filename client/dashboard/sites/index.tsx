@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
-import { Button } from '@wordpress/components';
+import { Button, ExternalLink } from '@wordpress/components';
 import { useResizeObserver } from '@wordpress/compose';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
@@ -38,7 +38,9 @@ const fields = [
 		id: 'url',
 		label: __( 'URL' ),
 		enableGlobalSearch: true,
-		render: ( { item }: { item: Site } ) => new URL( item.url ).hostname,
+		render: ( { item }: { item: Site } ) => (
+			<ExternalLink href={ item.url }>{ new URL( item.url ).hostname }</ExternalLink>
+		),
 	},
 	{
 		id: 'media',

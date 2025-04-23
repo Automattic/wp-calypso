@@ -26,6 +26,10 @@ body {
 	line-height: $font-line-height-small;
 }
 
+a {
+	color: var( --dashboard__link-color );
+}
+
 #wpcom {
 	font-size: $font-size-medium;
 }
