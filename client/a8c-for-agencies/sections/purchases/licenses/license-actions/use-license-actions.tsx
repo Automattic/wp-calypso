@@ -25,7 +25,6 @@ import { A4AStore } from 'calypso/state/a8c-for-agencies/types';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { License } from 'calypso/state/partner-portal/types';
-import RevokeLicenseDialog from '../revoke-license-dialog';
 import useLicenseDownloadUrlMutation from '../revoke-license-dialog/hooks/use-license-download-url-mutation';
 
 export type LicenseActionType = 'bundle' | 'wpcom' | 'regular';
@@ -201,12 +200,13 @@ export default function useLicenseActions( {
 				dialog:
 					type === 'regular'
 						? ( { onClose } ) => (
-								<RevokeLicenseDialog
-									licenseRole={ isChildLicense ? LicenseRole.Child : LicenseRole.Single }
-									licenseKey={ license.licenseKey }
-									product={ productName }
-									siteUrl={ license.siteUrl }
+								<CancelLicenseFeedbackModal
 									onClose={ onClose }
+									productName={ productName }
+									licenseKey={ license.licenseKey }
+									productId={ license.productId }
+									isClientLicense={ isClientLicense }
+									bundleSize={ bundleSize }
 								/>
 						  )
 						: undefined,
@@ -243,15 +243,6 @@ export default function useLicenseActions( {
 					),
 				isExternalLink: false,
 				isEnabled: type === 'wpcom' && ! isClientLicense && ! isDevSite,
-			},
-			{
-				name: translate( 'Revoke' ),
-				onClick: () => handleClickMenuItem( 'calypso_a4a_licenses_hosting_configuration_click' ),
-				type: 'revoke',
-				isEnabled:
-					type === 'regular' &&
-					licenseState === LicenseState.Detached &&
-					licenseType === LicenseType.Partner,
 			},
 		];
 	}, [
