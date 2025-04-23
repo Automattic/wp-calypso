@@ -64,6 +64,10 @@ RUN bash /tmp/env-config.sh
 # This layer is populated with up-to-date files from
 # Calypso development.
 COPY . /calypso/
+
+## Try a quick workaround an issue with trunk not building
+RUN echo "Force cache-bust: 2025-04-23 17:53:00"
+
 RUN yarn install --immutable --check-cache --inline-builds
 RUN node --version && yarn --version && npm --version
 
