@@ -104,17 +104,8 @@ async function buildCSS( file ) {
 		'mixins',
 		'animations',
 		'z-index',
+		'default-custom-properties',
 	]
-		// Editor and component styles should be excluded from the default CSS vars output.
-		.concat(
-			file.includes( 'common.scss' ) ||
-				! (
-					file.includes( 'block-library' ) ||
-					file.includes( 'components' )
-				)
-				? [ 'default-custom-properties' ]
-				: []
-		)
 		.map( ( imported ) => `@import "${ imported }";` )
 		.join( ' ' );
 
