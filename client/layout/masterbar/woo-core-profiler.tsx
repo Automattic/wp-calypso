@@ -13,6 +13,7 @@ import { useSelector } from 'calypso/state';
 import { getRedirectToOriginal } from 'calypso/state/login/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import { isWooCommercePaymentsOnboardingFlow } from 'calypso/state/selectors/is-woo-jpc-flow';
 
 // Masterbar for WooCommerce Core Profiler Jetpack step
 const WooCoreProfilerMasterbar = ( { translate }: { translate: ( text: string ) => string } ) => {
@@ -41,10 +42,10 @@ const WooCoreProfilerMasterbar = ( { translate }: { translate: ( text: string ) 
 		shouldShowNoThanks = false;
 	}
 
-	// Check for the existence of the flow=nox query argument
-	const isWooNOX = getQueryArg( redirectToOriginal || '', 'flow' ) === 'nox';
+	const state = useSelector( ( state ) => state );
+	const isWooPaymentsFlow = isWooCommercePaymentsOnboardingFlow( state );
 
-	if ( isWooNOX ) {
+	if ( isWooPaymentsFlow ) {
 		shouldShowProgressBar = false;
 	}
 
