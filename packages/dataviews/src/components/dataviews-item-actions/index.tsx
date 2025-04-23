@@ -192,7 +192,6 @@ export default function ItemActions< Item >( {
 
 	return (
 		<HStack
-			as="div" // TODO: why is this required?
 			spacing={ 1 }
 			justify="flex-end"
 			className="dataviews-item-actions"
