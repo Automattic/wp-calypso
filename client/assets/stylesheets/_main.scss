@@ -145,7 +145,7 @@ h4,
 h5,
 h6 {
 	clear: both;
-	text-wrap: balance;
+	text-wrap: balance; // TODO: remove this fallback once `pretty` is globally supported.
 	text-wrap: pretty;
 }
 caption,
