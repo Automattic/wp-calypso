@@ -3,13 +3,17 @@ import { ReactNode } from 'react';
 import './navigation-header.scss';
 
 // Type definitions for the props
-interface HeaderProps extends React.HTMLAttributes< HTMLElement > {
-	title?: string;
+interface BackLinkProps {
 	backLink?: string;
 	backLinkText?: string;
 	onBackClick?: ( e: React.MouseEvent< HTMLAnchorElement > ) => void;
+}
+
+interface HeaderProps extends React.HTMLAttributes< HTMLElement > {
+	title?: string;
+	backLinkProps?: BackLinkProps;
 	titleElement?: ReactNode;
-	linkElement?: ReactNode;
+	headElement?: ReactNode;
 	children?: ReactNode;
 	hasScreenOptionsTab?: boolean;
 }
@@ -30,22 +34,20 @@ interface HeaderProps extends React.HTMLAttributes< HTMLElement > {
  */
 const NavigationHeader: React.FC< HeaderProps > = ( {
 	title,
-	backLink,
-	backLinkText = translate( 'Back' ),
-	onBackClick,
+	backLinkProps,
 	titleElement = <h1 className="calypso-navigation-header__title">{ title }</h1>,
-	linkElement: backLinkElement = (
+	headElement: backLinkElement = (
 		<a
 			className="calypso-navigation-header__back-link"
-			href={ backLink }
+			href={ backLinkProps?.backLink }
 			onClick={ ( e ) => {
-				if ( onBackClick ) {
+				if ( backLinkProps?.onBackClick ) {
 					e.preventDefault();
-					onBackClick( e );
+					backLinkProps.onBackClick( e );
 				}
 			} }
 		>
-			← { backLinkText }
+			← { backLinkProps?.backLinkText ?? translate( 'Back' ) }
 		</a>
 	),
 	children,
@@ -59,7 +61,9 @@ const NavigationHeader: React.FC< HeaderProps > = ( {
 			}` }
 			{ ...rest }
 		>
-			<div className="calypso-navigation-header__head">{ backLink && backLinkElement }</div>
+			<div className="calypso-navigation-header__head">
+				{ backLinkProps?.backLink && backLinkElement }
+			</div>
 			<div className="calypso-navigation-header__body">
 				<div className="calypso-navigation-header__left-section">{ titleElement }</div>
 				<div className="calypso-navigation-header__right-section">{ children }</div>
