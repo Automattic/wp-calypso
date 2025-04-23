@@ -7,9 +7,28 @@ import userEvent from '@testing-library/user-event';
 import React from 'react';
 import { TwoFactorActions } from '../two-factor-actions';
 
+const mockDispatch = jest.fn();
+
+jest.mock( 'calypso/state', () => ( {
+	useDispatch: () => mockDispatch,
+} ) );
+
+// Mock dispatched Redux actions, since in reality these are implemented as a thunk, but we're
+// primarily interested in testing whether the action was dispatched at all.
+jest.mock( 'calypso/state/analytics/actions', () => ( {
+	recordTracksEventWithClientId: ( event: string ) => ( {
+		type: 'MOCK_TRACKS_EVENT',
+		event,
+	} ),
+} ) );
+
+jest.mock( 'i18n-calypso', () => ( {
+	...jest.requireActual( 'i18n-calypso' ),
+	useTranslate: jest.fn( () => ( text: string ) => text ),
+} ) );
+
 describe( 'TwoFactorActions', () => {
 	const onChange = jest.fn();
-	const recordTracksEventWithClientId = jest.fn();
 	const defaultProps = {
 		isAuthenticatorSupported: true,
 		isSecurityKeySupported: true,
@@ -17,8 +36,6 @@ describe( 'TwoFactorActions', () => {
 		isSmsAllowed: true,
 		onChange,
 		twoFactorAuthType: 'authenticator',
-		recordTracksEventWithClientId,
-		translate: ( text ) => text,
 	};
 
 	beforeEach( () => {
@@ -62,7 +79,7 @@ describe( 'TwoFactorActions', () => {
 		expect( smsButton ).toBeTruthy();
 
 		const buttonElement = smsButton.closest( 'button' )!;
-		expect( buttonElement ).toBeDisabled();
+		expect( buttonElement.disabled ).toBe( true );
 	} );
 
 	test( 'should not render any buttons when no methods are available', () => {
@@ -75,7 +92,7 @@ describe( 'TwoFactorActions', () => {
 			/>
 		);
 
-		expect( container ).toBeEmptyDOMElement();
+		expect( container.firstChild ).toBeNull();
 	} );
 
 	test( 'should call onChange with correct auth type when security key button is clicked', async () => {
@@ -85,9 +102,10 @@ describe( 'TwoFactorActions', () => {
 		await userEvent.click( securityKeyButton );
 
 		expect( onChange ).toHaveBeenCalledWith( 'webauthn' );
-		expect( recordTracksEventWithClientId ).toHaveBeenCalledWith(
-			'calypso_twostep_reauth_webauthn_clicked'
-		);
+		expect( mockDispatch ).toHaveBeenCalledWith( {
+			type: 'MOCK_TRACKS_EVENT',
+			event: 'calypso_twostep_reauth_webauthn_clicked',
+		} );
 	} );
 
 	test( 'should call onChange with correct auth type when SMS button is clicked', async () => {
@@ -97,9 +115,10 @@ describe( 'TwoFactorActions', () => {
 		await userEvent.click( smsButton );
 
 		expect( onChange ).toHaveBeenCalledWith( 'sms' );
-		expect( recordTracksEventWithClientId ).toHaveBeenCalledWith(
-			'calypso_twostep_reauth_sms_clicked'
-		);
+		expect( mockDispatch ).toHaveBeenCalledWith( {
+			type: 'MOCK_TRACKS_EVENT',
+			event: 'calypso_twostep_reauth_sms_clicked',
+		} );
 	} );
 
 	test( 'should call onChange with correct auth type when authenticator button is clicked', async () => {
@@ -111,8 +130,9 @@ describe( 'TwoFactorActions', () => {
 		await userEvent.click( authenticatorButton );
 
 		expect( onChange ).toHaveBeenCalledWith( 'authenticator' );
-		expect( recordTracksEventWithClientId ).toHaveBeenCalledWith(
-			'calypso_twostep_reauth_authenticator_clicked'
-		);
+		expect( mockDispatch ).toHaveBeenCalledWith( {
+			type: 'MOCK_TRACKS_EVENT',
+			event: 'calypso_twostep_reauth_authenticator_clicked',
+		} );
 	} );
 } );
