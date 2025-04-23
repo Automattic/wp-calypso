@@ -15,13 +15,14 @@ interface DownloadProps extends React.AnchorHTMLAttributes< HTMLAnchorElement > 
 }
 
 interface HeaderProps extends React.HTMLAttributes< HTMLElement > {
-	title: string;
+	title?: string;
 	backLink?: string;
 	backLinkText?: string;
 	rightElement?: ReactNode;
 	onBackClick?: ( e: React.MouseEvent< HTMLAnchorElement > ) => void;
 	buttonProps?: ButtonProps;
 	downloadProps?: DownloadProps;
+	titleElement?: ReactNode;
 	children?: ReactNode;
 }
 
@@ -76,6 +77,7 @@ const DownloadIcon: React.FC = () => (
  * @param props.onBackClick - Function to call when back button is clicked
  * @param props.buttonProps - Props for the action button if used
  * @param props.downloadProps - Props for the download link if used
+ * @param props.titleElement - Custom element to override default title rendering
  * @param props.children - Child elements to render in the right section
  * @returns The rendered NavigationHeader component
  */
@@ -85,6 +87,7 @@ const NavigationHeader: React.FC< HeaderProps > = ( {
 	backLinkText = translate( 'Back' ),
 	rightElement,
 	onBackClick,
+	titleElement = <h1 className="calypso-navigation-header__title">{ title }</h1>,
 	buttonProps,
 	downloadProps,
 	children,
@@ -122,7 +125,7 @@ const NavigationHeader: React.FC< HeaderProps > = ( {
 
 	return (
 		<header className="calypso-navigation-header" { ...rest }>
-			<div className="calypso-navigation-header__left-section">
+			<div className="calypso-navigation-header__head">
 				{ backLink && (
 					<a
 						className="calypso-navigation-header__back-link"
@@ -137,11 +140,13 @@ const NavigationHeader: React.FC< HeaderProps > = ( {
 						<ArrowLeftIcon /> { backLinkText }
 					</a>
 				) }
-				<h1 className="calypso-navigation-header__title">{ title }</h1>
 			</div>
-			<div className="calypso-navigation-header__right-section">
-				{ renderRightElement() }
-				{ children }
+			<div className="calypso-navigation-header__body">
+				<div className="calypso-navigation-header__left-section">{ titleElement }</div>
+				<div className="calypso-navigation-header__right-section">
+					{ renderRightElement() }
+					{ children }
+				</div>
 			</div>
 		</header>
 	);

@@ -3,12 +3,21 @@
 @import "@wordpress/base-styles/variables";
 
 .calypso-navigation-header {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
 	background-color: var(--wp-components-color-background, #fff);
 	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 	width: 100%;
+
+	&__head {
+		display: flex;
+		align-items: center;
+	}
+
+	&__body {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+
+	}
 
 	&__left-section {
 		display: flex;
@@ -90,6 +99,7 @@
 	&.calypso-navigation-header__screen-options-tab {
 		padding-top: 38px; // 30 for screen options tab + 8 gap
 	}
+
 	@include break-small {
 		&.calypso-navigation-header__screen-options-tab {
 			// There are existing workarounds for desktop layouts, revert back to 16 here
