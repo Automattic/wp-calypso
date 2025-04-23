@@ -138,7 +138,7 @@ object BuildDockerImage : BuildType({
 			--label com.a8c.build-id=%teamcity.build.id%
 			--build-arg workers=32
 			--build-arg node_memory=16384
-			--build-arg use_cache=true
+			--build-arg use_cache=false
 			--build-arg base_image=%base_image%
 			--build-arg commit_sha=${Settings.WpCalypso.paramRefs.buildVcsNumber}
 			--build-arg manual_sentry_release=%MANUAL_SENTRY_RELEASE%
