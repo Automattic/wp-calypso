@@ -230,6 +230,12 @@ function HelpSearchResults( {
 	const [ visibleResults, setVisibleResults ] = useState( MAX_VISIBLE_RESULTS );
 
 	const handleShowMore = () => {
+		recordTracksEvent( 'calypso_help_center_search_results_show_more', {
+			search_term: searchQuery,
+			location,
+			section: sectionName,
+			visible_results: visibleResults,
+		} );
 		setVisibleResults( visibleResults + MAX_VISIBLE_RESULTS );
 	};
 

@@ -349,6 +349,8 @@ export default function CheckoutMain( {
 			customizedPreviousPath
 		);
 
+	const isForBusiness = responseCart?.tax?.location?.is_for_business ?? false;
+
 	const {
 		paymentMethods: storedCards,
 		isLoading: isLoadingStoredCards,
@@ -356,8 +358,14 @@ export default function CheckoutMain( {
 	} = useStoredPaymentMethods( {
 		isLoggedOut: isLoggedOutCart,
 		type: 'card',
-		isForBusiness: responseCart ? responseCart?.tax?.location?.is_for_business : null,
+		isForBusiness,
 	} );
+
+	// If tax_location->is_for_business is set to true, then only business
+	// cards will show in Checkout. We should announce this filtering to the
+	// user which these variables will do.
+	const areStoredCardsFiltered = isForBusiness;
+	const isBusinessCardsFilterEmpty = isForBusiness && storedCards.length ? false : true;
 
 	useActOnceOnStrings( [ storedCardsError ].filter( isValueTruthy ), ( messages ) => {
 		messages.forEach( ( message ) => {
@@ -813,6 +821,8 @@ export default function CheckoutMain( {
 					isLoggedOutCart={ !! isLoggedOutCart }
 					onPageLoadError={ onPageLoadError }
 					paymentMethods={ paymentMethods }
+					areStoredCardsFiltered={ areStoredCardsFiltered }
+					isBusinessCardsFilterEmpty={ isBusinessCardsFilterEmpty }
 					removeProductFromCart={ removeProductFromCartAndMaybeRedirect }
 					showErrorMessageBriefly={ showErrorMessageBriefly }
 					siteId={ updatedSiteId }

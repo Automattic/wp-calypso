@@ -214,7 +214,10 @@ export interface SiteDetailsCapabilities {
 	remove_users: boolean;
 	upload_files: boolean;
 	update_plugins: boolean;
-	view_hosting: boolean;
+	/**
+	 * @deprecated `view_hosting` is no longer used and will be removed in a future release.
+	 */
+	view_hosting?: boolean;
 	view_stats: boolean;
 }
 

@@ -1116,6 +1116,28 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@automattic/grid@workspace:packages/grid":
+  version: 0.0.0-use.local
+  resolution: "@automattic/grid@workspace:packages/grid"
+  dependencies:
+    "@automattic/calypso-build": "workspace:^"
+    "@automattic/calypso-storybook": "workspace:^"
+    "@automattic/calypso-typescript-config": "workspace:^"
+    "@storybook/addon-actions": "npm:^8.6.9"
+    "@storybook/addon-controls": "npm:^8.6.9"
+    "@storybook/addon-docs": "npm:^8.6.9"
+    "@storybook/react-webpack5": "npm:^8.6.9"
+    "@wordpress/compose": "npm:^7.22.0"
+    postcss: "npm:^8.5.3"
+    storybook: "npm:^8.6.9"
+    typescript: "npm:^5.8.2"
+    webpack: "npm:^5.97.1"
+  peerDependencies:
+    react: ^18.0.0
+    react-dom: ^18.0.0
+  languageName: unknown
+  linkType: soft
+
 "@automattic/help-center-app@workspace:apps/help-center":
   version: 0.0.0-use.local
   resolution: "@automattic/help-center-app@workspace:apps/help-center"
@@ -1199,7 +1221,7 @@ __metadata:
     "@testing-library/dom": "npm:^10.4.0"
     "@testing-library/jest-dom": "npm:^6.6.3"
     "@testing-library/react": "npm:^16.2.0"
-    "@types/react": "npm:^18.3.18"
+    "@types/react": "npm:^18.3.20"
     "@wordpress/compose": "npm:^7.22.0"
     "@wordpress/i18n": "npm:^5.22.0"
     react: "npm:^18.3.1"
@@ -1217,7 +1239,7 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     react-dom: "npm:^18.3.1"
   peerDependencies:
-    "@types/react": ">=16.14.62"
+    "@types/react": ">=16.14.63"
     react: ">=16.2.0"
   peerDependenciesMeta:
     "@types/react":
@@ -1507,7 +1529,7 @@ __metadata:
     "@automattic/zendesk-client": "workspace:^"
     "@tanstack/react-query": "npm:^5.15.5"
     "@types/autosize": "npm:^4.0.3"
-    "@types/react": "npm:^18.3.18"
+    "@types/react": "npm:^18.3.20"
     "@types/smooch": "npm:^5.3.7"
     "@wordpress/api-fetch": "npm:7.22.0"
     "@wordpress/data": "npm:^10.22.0"
@@ -7398,6 +7420,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@tanstack/history@npm:1.114.29":
+  version: 1.114.29
+  resolution: "@tanstack/history@npm:1.114.29"
+  checksum: b9f2bc9cee4747ffd9870885b48ded156ed5d208059b3608f6d7767bda764b0a40987d62b9ad9b9b6ba946139c528d7ef31b52db06be882aafda759db4ba94bb
+  languageName: node
+  linkType: hard
+
 "@tanstack/query-core@npm:5.17.9":
   version: 5.17.9
   resolution: "@tanstack/query-core@npm:5.17.9"
@@ -7463,6 +7492,54 @@ __metadata:
   peerDependencies:
     react: ^18.0.0
   checksum: fe9c3c37594cddda1a3c3ec7f489243b5d8117af07cb7096a82ea644c248b31c8c3b9e248fef59ee9d41ff78663e87dd900d17da2b7f95d9b9171479a7c2d4da
+  languageName: node
+  linkType: hard
+
+"@tanstack/react-router@npm:^1.114.34":
+  version: 1.114.34
+  resolution: "@tanstack/react-router@npm:1.114.34"
+  dependencies:
+    "@tanstack/history": "npm:1.114.29"
+    "@tanstack/react-store": "npm:^0.7.0"
+    "@tanstack/router-core": "npm:1.114.33"
+    jsesc: "npm:^3.1.0"
+    tiny-invariant: "npm:^1.3.3"
+    tiny-warning: "npm:^1.0.3"
+  peerDependencies:
+    react: ">=18.0.0 || >=19.0.0"
+    react-dom: ">=18.0.0 || >=19.0.0"
+  checksum: 2e8a9bafbd5ce29bf854f0c32c693ea6a6277944fa05ef4077aaa7cfb9a58954cbb6ed31e6a74dec34aefda3370dfe6e2f5b482e95e7bf414d802792df4a5621
+  languageName: node
+  linkType: hard
+
+"@tanstack/react-store@npm:^0.7.0":
+  version: 0.7.0
+  resolution: "@tanstack/react-store@npm:0.7.0"
+  dependencies:
+    "@tanstack/store": "npm:0.7.0"
+    use-sync-external-store: "npm:^1.4.0"
+  peerDependencies:
+    react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+    react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+  checksum: 7e971ae3c547d0d803133f07737e7cc7cf381e959b4fab3f55755b28c194688392f5b921d3d43b8c9c81bdc721ea8878c680d4ca28a1ccd59e8a64ab7bcfd0f8
+  languageName: node
+  linkType: hard
+
+"@tanstack/router-core@npm:1.114.33":
+  version: 1.114.33
+  resolution: "@tanstack/router-core@npm:1.114.33"
+  dependencies:
+    "@tanstack/history": "npm:1.114.29"
+    "@tanstack/store": "npm:^0.7.0"
+    tiny-invariant: "npm:^1.3.3"
+  checksum: fd4ecf8e62d5999b5066ad658cc31678359563c9bbe5c945eea44feeb81787e437c8dfa7e64e17e55ae6eb57253848246da05af2ac10e62f93c8ad94aeaf2197
+  languageName: node
+  linkType: hard
+
+"@tanstack/store@npm:0.7.0, @tanstack/store@npm:^0.7.0":
+  version: 0.7.0
+  resolution: "@tanstack/store@npm:0.7.0"
+  checksum: 17003f1eba25bb6e9e2557ffb5d9c63cac09aa46f57d670a917727665ccc0b72d8d421ea1c07451257554aa5d14dbfff46875e7ed6a81f133b0738065f3162df
   languageName: node
   linkType: hard
 
@@ -8473,12 +8550,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react-dom@npm:^18.3.5":
-  version: 18.3.5
-  resolution: "@types/react-dom@npm:18.3.5"
+"@types/react-dom@npm:^18.3.6":
+  version: 18.3.6
+  resolution: "@types/react-dom@npm:18.3.6"
   peerDependencies:
     "@types/react": ^18.0.0
-  checksum: b163d35a6b32a79f5782574a7aeb12a31a647e248792bf437e6d596e2676961c394c5e3c6e91d1ce44ae90441dbaf93158efb4f051c0d61e2612f1cb04ce4faa
+  checksum: e77ac076096bd4b2e0a99130c47959762a927e536b83412e470ac5198d4b8d111cfd787ff2ab7c22bc39c114c0c5fef80046ea0cccb02a655e021a435859314a
   languageName: node
   linkType: hard
 
@@ -8509,13 +8586,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:^18.3.18":
-  version: 18.3.18
-  resolution: "@types/react@npm:18.3.18"
+"@types/react@npm:^18.3.20":
+  version: 18.3.20
+  resolution: "@types/react@npm:18.3.20"
   dependencies:
     "@types/prop-types": "npm:*"
     csstype: "npm:^3.0.2"
-  checksum: 8fb2b00672072135d0858dc9db07873ea107cc238b6228aaa2a9afd1ef7a64a7074078250db38afbeb19064be8ea6af5eac32d404efdd5f45e093cc4829d87f8
+  checksum: 65fa867c91357e4c4c646945c8b99044360f8973cb7f928ec4de115fe3207827985d45be236e6fd6c092b09f631c2126ce835c137be30718419e143d73300d8f
   languageName: node
   linkType: hard
 
@@ -13390,11 +13467,12 @@ __metadata:
     "@tanstack/react-query": "npm:^5.15.5"
     "@tanstack/react-query-devtools": "npm:^5.15.5"
     "@tanstack/react-query-persist-client": "npm:^5.15.5"
+    "@tanstack/react-router": "npm:^1.114.34"
     "@testing-library/dom": "npm:^10.4.0"
     "@testing-library/jest-dom": "npm:^6.6.3"
     "@testing-library/react": "npm:^16.2.0"
     "@testing-library/user-event": "npm:^14.6.1"
-    "@types/react": "npm:^18.3.18"
+    "@types/react": "npm:^18.3.20"
     "@types/react-slider": "npm:^1.3.6"
     "@types/redux-mock-store": "npm:1.5.0"
     "@wordpress/a11y": "npm:^4.22.0"
@@ -13406,6 +13484,7 @@ __metadata:
     "@wordpress/compose": "npm:^7.22.0"
     "@wordpress/data": "npm:^10.22.0"
     "@wordpress/dataviews": "npm:^4.18.0"
+    "@wordpress/date": "npm:^5.22.0"
     "@wordpress/dom": "npm:^4.22.0"
     "@wordpress/edit-post": "npm:^8.22.0"
     "@wordpress/element": "npm:^6.22.0"
@@ -13415,7 +13494,7 @@ __metadata:
     "@wordpress/is-shallow-equal": "npm:^5.22.0"
     "@wordpress/private-apis": "npm:^1.22.0"
     "@wordpress/react-i18n": "npm:^4.22.0"
-    "@wordpress/url": "npm:^4.22.0"
+    "@wordpress/viewport": "npm:^6.22.0"
     "@wordpress/warning": "npm:^3.22.0"
     autoprefixer: "npm:^10.2.5"
     autosize: "npm:^4.0.4"
@@ -20831,7 +20910,7 @@ __metadata:
     "@tannin/sprintf": "npm:^1.1.0"
     "@testing-library/jest-dom": "npm:^6.6.3"
     "@types/jest": "npm:^29.5.14"
-    "@types/react": "npm:^18.3.18"
+    "@types/react": "npm:^18.3.20"
     "@wordpress/compose": "npm:^7.22.0"
     debug: "npm:^4.4.0"
     events: "npm:^3.3.0"
@@ -20842,7 +20921,7 @@ __metadata:
     react-test-renderer: "npm:^18.3.1"
     tannin: "npm:^1.2.0"
     typescript: "npm:^5.8.2"
-    use-subscription: "npm:1.10.0"
+    use-subscription: "npm:1.11.0"
   peerDependencies:
     react: ^18.3.1
   languageName: unknown
@@ -22995,7 +23074,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jsesc@npm:^3.0.2, jsesc@npm:~3.0.2":
+"jsesc@npm:^3.0.2, jsesc@npm:^3.1.0":
+  version: 3.1.0
+  resolution: "jsesc@npm:3.1.0"
+  bin:
+    jsesc: bin/jsesc
+  checksum: 531779df5ec94f47e462da26b4cbf05eb88a83d9f08aac2ba04206508fc598527a153d08bd462bae82fc78b3eaa1a908e1a4a79f886e9238641c4cdefaf118b1
+  languageName: node
+  linkType: hard
+
+"jsesc@npm:~3.0.2":
   version: 3.0.2
   resolution: "jsesc@npm:3.0.2"
   bin:
@@ -29012,10 +29100,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-refresh@npm:^0.16.0":
-  version: 0.16.0
-  resolution: "react-refresh@npm:0.16.0"
-  checksum: 122525dbd7a44140757f46b8b93df6a349126e64b270809a8f082809662be5837a97310e56df2cfc7dac98b8adfaaafa570ec579c8b269c374e6928394307c68
+"react-refresh@npm:^0.17.0":
+  version: 0.17.0
+  resolution: "react-refresh@npm:0.17.0"
+  checksum: 002cba940384c9930008c0bce26cac97a9d5682bc623112c2268ba0c155127d9c178a9a5cc2212d560088d60dfd503edd808669a25f9b377f316a32361d0b23c
   languageName: node
   linkType: hard
 
@@ -33191,6 +33279,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"tiny-warning@npm:^1.0.3":
+  version: 1.0.3
+  resolution: "tiny-warning@npm:1.0.3"
+  checksum: ef8531f581b30342f29670cb41ca248001c6fd7975ce22122bd59b8d62b4fc84ad4207ee7faa95cde982fa3357cd8f4be650142abc22805538c3b1392d7084fa
+  languageName: node
+  linkType: hard
+
 "tinymce@npm:^5.0.0":
   version: 5.10.9
   resolution: "tinymce@npm:5.10.9"
@@ -34558,23 +34653,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"use-subscription@npm:1.10.0":
-  version: 1.10.0
-  resolution: "use-subscription@npm:1.10.0"
+"use-subscription@npm:1.11.0":
+  version: 1.11.0
+  resolution: "use-subscription@npm:1.11.0"
   dependencies:
-    use-sync-external-store: "npm:^1.4.0"
+    use-sync-external-store: "npm:^1.5.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
-  checksum: 2c1138dd57a472372ab9667199cc83948105ad20a9d6f4a5b3fab422fac63e11a790f4c90fe78f97dce860b0b9d67b3ae3e46071c79d91b21ed8d16d9bcbc644
+  checksum: 6aa31e134d56e90a37f0f8232ece5ab5b74f35224e52bfd5b9a9e1af668423bba37715ee0f932f9e40dd9f8825d2efb90a1d254a7014b55a470b033acfadf4a3
   languageName: node
   linkType: hard
 
-"use-sync-external-store@npm:^1.2.0, use-sync-external-store@npm:^1.4.0":
-  version: 1.4.0
-  resolution: "use-sync-external-store@npm:1.4.0"
+"use-sync-external-store@npm:^1.2.0, use-sync-external-store@npm:^1.4.0, use-sync-external-store@npm:^1.5.0":
+  version: 1.5.0
+  resolution: "use-sync-external-store@npm:1.5.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
-  checksum: ec011a5055962c0f6b509d6e78c0b143f8cd069890ae370528753053c55e3b360d3648e76cfaa854faa7a59eb08d6c5fb1015e60ffde9046d32f5b2a295acea5
+  checksum: 1b8663515c0be34fa653feb724fdcce3984037c78dd4a18f68b2c8be55cc1a1084c578d5b75f158d41b5ddffc2bf5600766d1af3c19c8e329bb20af2ec6f52f4
   languageName: node
   linkType: hard
 
@@ -35543,7 +35638,7 @@ __metadata:
     "@types/node": "npm:^22.7.5"
     "@types/page": "npm:^1.11.9"
     "@types/qs": "npm:^6.9.7"
-    "@types/react": "npm:^18.3.18"
+    "@types/react": "npm:^18.3.20"
     "@types/react-modal": "npm:^3.16.3"
     "@types/react-transition-group": "npm:^4.4.4"
     "@types/store": "npm:^2.0.5"
@@ -35567,12 +35662,14 @@ __metadata:
     "@wordpress/i18n": "npm:^5.22.0"
     "@wordpress/icons": "npm:^10.22.0"
     "@wordpress/is-shallow-equal": "npm:^5.22.0"
+    "@wordpress/keyboard-shortcuts": "npm:^5.22.0"
     "@wordpress/keycodes": "npm:^4.22.0"
     "@wordpress/prettier-config": "npm:^4.22.0"
     "@wordpress/primitives": "npm:^4.22.0"
     "@wordpress/rich-text": "npm:^7.22.0"
     "@wordpress/stylelint-config": "npm:^23.14.0"
     "@wordpress/url": "npm:^4.22.0"
+    "@wordpress/viewport": "npm:^6.22.0"
     "@wp-playground/blueprints": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@wp-playground-blueprints-1.0.29.tar.gz"
     "@wp-playground/client": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@wp-playground-client-1.0.29.tar.gz"
     animate.css: "npm:^4.1.1"
@@ -35640,7 +35737,7 @@ __metadata:
     react-hook-form: "npm:^7.52.2"
     react-intersection-observer: "npm:^9.4.3"
     react-modal: "npm:^3.16.3"
-    react-refresh: "npm:^0.16.0"
+    react-refresh: "npm:^0.17.0"
     readline-sync: "npm:^1.4.10"
     recursive-copy: "npm:^2.0.14"
     redux: "npm:^5.0.1"

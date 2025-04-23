@@ -6,7 +6,6 @@ import {
 	getWpComOnboardingUrl,
 	getWpOrgImporterUrl,
 } from 'calypso/blocks/import/util';
-import { WPImportOption } from 'calypso/blocks/importer/wordpress/types';
 import { getImporterEngines } from 'calypso/lib/importer/importer-config';
 import { ImporterPlatform } from 'calypso/lib/importer/types';
 import { BASE_ROUTE } from './config';
@@ -27,11 +26,7 @@ export function getFinalImporterUrl(
 			? getWpComOnboardingUrl( targetSlug, platform, encodedFromSite )
 			: getImporterUrl( targetSlug, platform, encodedFromSite );
 
-		if ( platform === 'wordpress' && ! fromSite ) {
-			importerUrl = addQueryArgs( importerUrl, {
-				option: WPImportOption.CONTENT_ONLY,
-			} );
-		} else if ( platform === 'wix' && fromSite ) {
+		if ( platform === 'wix' && fromSite ) {
 			importerUrl = addQueryArgs( importerUrl, {
 				run: true,
 			} );

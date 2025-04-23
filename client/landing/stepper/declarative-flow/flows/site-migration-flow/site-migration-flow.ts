@@ -192,7 +192,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 								);
 							}
 
-							if ( platformQueryParam !== 'wordpress' ) {
+							if ( platformQueryParam !== 'unknown' && platformQueryParam !== 'wordpress' ) {
 								if ( isPlatformImportable( platformQueryParam ) && fromQueryParam ) {
 									return exitFlow(
 										getFullImporterUrl( platformQueryParam, siteSlug, fromQueryParam )
@@ -300,7 +300,6 @@ const siteMigration: FlowV2< typeof initialize > = {
 								siteId,
 								siteSlug,
 								from: fromQueryParam ?? '',
-								option: 'content',
 								backToFlow: `/${ flowPath }/${ STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug }`,
 							} )
 						);

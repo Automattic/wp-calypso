@@ -1,0 +1,24 @@
+@keyframes logo-pulse {
+	0% {
+		opacity: 0.65;
+		filter: brightness(0.85);
+	}
+	50% {
+		opacity: 1;
+		filter: brightness(1.15);
+	}
+	100% {
+		opacity: 0.65;
+		filter: brightness(0.85);
+	}
+}
+
+.wpcom-site__logo {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	margin: 0;
+	fill: $gray-900;
+	animation: logo-pulse 1.5s ease-in-out infinite;
+}

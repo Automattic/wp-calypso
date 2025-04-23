@@ -55,6 +55,7 @@ class StatsSummary extends Component {
 				period={ period }
 				hideNavigation={ hideNavigation }
 				navigationSwap={ headerCSVButton }
+				context={ this.props.context }
 			/>
 		);
 	}
@@ -387,6 +388,7 @@ class StatsSummary extends Component {
 												period={ this.props.period }
 												query={ moduleQuery }
 												summary
+												context={ this.props.context }
 											/>
 										</>
 									) : (
