@@ -18,6 +18,7 @@ import {
 	getSignupCompleteSiteID,
 	setSignupCompleteSiteID,
 } from 'calypso/signup/storageUtils';
+import { useQuery } from '../../../hooks/use-query';
 import { ONBOARD_STORE } from '../../../stores';
 import { getCurrentQueryParams } from '../../../utils/get-current-query-params';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
@@ -88,6 +89,8 @@ const createSite: FlowV2 = {
 			setSignupDomainOrigin,
 			resetCouponCode,
 		} = useDispatch( ONBOARD_STORE );
+		const query = useQuery();
+
 		const planCartItem = useSelect(
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem(),
 			[]
@@ -116,7 +119,7 @@ const createSite: FlowV2 = {
 					setDomainCartItems( providedDependencies.domainCart );
 					setSignupDomainOrigin( providedDependencies.signupDomainOrigin );
 
-					if ( planCartItem ) {
+					if ( planCartItem || query.get( 'plan' ) === 'free' ) {
 						return navigate( STEPS.SITE_CREATION_STEP.slug );
 					}
 

@@ -142,7 +142,7 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 	const skipMigration = urlQueryParams.get( 'skipMigration' ) || '';
 	const platform = urlQueryParams.get( 'platform' ) || '';
 	const useThemeHeadstart = ! isStartWritingFlow( flow ) && ! isNewHostedSiteCreationFlow( flow );
-	const shouldGoToCheckout = Boolean( planCartItem );
+	const shouldGoToCheckout = !! planCartItem || isPaidDomainItem;
 	const [ , isMvpOnboarding ] = useMvpOnboardingExperiment();
 
 	async function createSite() {
