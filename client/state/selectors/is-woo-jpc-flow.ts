@@ -14,7 +14,7 @@ const isLegacyJetpackWooOnboardingFlow = ( state: AppState ) => {
 const isWooCommercePaymentsOnboardingFlow = ( state: AppState ) => {
 	const from =
 		get( getInitialQueryArguments( state ), 'from' ) === 'woocommerce-payments' ||
-		get( getCurrentQueryArguments( state ), 'from' ) === 'woocommerce-payments';
+		get( getCurrentQueryArguments( state ), 'from' ) === 'woocommerce-onboarding';
 
 	const redirectTo =
 		get( getInitialQueryArguments( state ), 'redirect_to' ) ||
