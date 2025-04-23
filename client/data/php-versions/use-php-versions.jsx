@@ -5,9 +5,9 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 export const usePhpVersions = () => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
-	// 10% of sites will have a recommended PHP version of 8.3. These sites are transferring to 8.3 by default.
+	// 50% of sites will have a recommended PHP version of 8.3. These sites are transferring to 8.3 by default.
 	// 243386763 is the first site of the list.
-	const isPhp83Default = siteId >= 243386763 && siteId % 10 === 0;
+	const isPhp83Default = siteId >= 243386763 && siteId % 2 === 0;
 	const recommendedValue = isPhp83Default ? '8.3' : '8.2';
 	const recommendedLabel = translate( '%s (recommended)', {
 		args: isPhp83Default ? '8.3' : '8.2',

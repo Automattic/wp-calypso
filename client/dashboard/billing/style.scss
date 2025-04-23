@@ -1,0 +1,14 @@
+.billing-card-button {
+	padding: inherit;
+    height: inherit;
+    display: block;
+
+	.billing-card {
+		padding: 16px;
+
+		.billing-card-icon {
+			fill: #757575;
+			flex-shrink: 0;
+		}
+	}
+}

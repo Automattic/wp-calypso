@@ -9,7 +9,6 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { throttle } from 'lodash';
 import { useEffect, useRef } from 'react';
-import { WIDE_DISPLAY_CUTOFF } from 'calypso/reader/stream';
 
 const SHOW_SCROLL_THRESHOLD = 10;
 const showElement = ( element: Element | null ) => element?.classList.remove( 'display-none' );
@@ -28,11 +27,15 @@ interface Props< T extends object > {
 	selectedTab: string;
 	tabs: Tab< T >[];
 	titleField?: keyof Tab< T >;
-	width: number;
 }
 
-const ScrollableHorizontalNavigation = < T extends object >( props: Props< T > ) => {
-	const { className, onTabClick, selectedTab, tabs, titleField = 'title', width } = props;
+const ScrollableHorizontalNavigation = < T extends object >( {
+	className,
+	onTabClick,
+	selectedTab,
+	tabs,
+	titleField = 'title',
+}: Props< T > ) => {
 	const scrollRef = useRef< HTMLDivElement >( null );
 	const translate = useTranslate();
 
@@ -93,11 +96,7 @@ const ScrollableHorizontalNavigation = < T extends object >( props: Props< T > )
 	}
 
 	return (
-		<div
-			className={ clsx( 'scrollable-horizontal-navigation', className, {
-				'reader-dual-column': width > WIDE_DISPLAY_CUTOFF,
-			} ) }
-		>
+		<div className={ clsx( 'scrollable-horizontal-navigation', className ) }>
 			<div
 				className={ clsx( 'scrollable-horizontal-navigation__left-button-wrapper', {
 					'display-none': shouldHideLeftScrollButton(),

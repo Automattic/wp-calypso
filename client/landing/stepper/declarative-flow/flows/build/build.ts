@@ -7,8 +7,6 @@ import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { getStepFromURL } from 'calypso/landing/stepper/utils/get-flow-from-url';
 import { skipLaunchpad } from 'calypso/landing/stepper/utils/skip-launchpad';
 import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
-import { useSelector } from 'calypso/state';
-import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
 import { shouldShowLaunchpadFirst } from 'calypso/state/selectors/should-show-launchpad-first';
 import { STEPPER_TRACKS_EVENT_SIGNUP_STEP_START } from '../../../constants';
 import { useExitFlow } from '../../../hooks/use-exit-flow';
@@ -18,10 +16,6 @@ import { ONBOARD_STORE } from '../../../stores';
 import { useLaunchpadDecider } from '../../internals/hooks/use-launchpad-decider';
 import { STEPS } from '../../internals/steps';
 import { Flow, ProvidedDependencies } from '../../internals/types';
-
-function useGoalsAtFrontExperimentQueryParam() {
-	return Boolean( useSelector( getInitialQueryArguments )?.[ 'goals-at-front-experiment' ] );
-}
 
 const steps = [ STEPS.LAUNCHPAD, STEPS.PROCESSING ];
 
@@ -35,7 +29,6 @@ const build: Flow = {
 		return steps;
 	},
 	useTracksEventProps() {
-		const isGoalsAtFrontExperiment = useGoalsAtFrontExperimentQueryParam();
 		const goals = useSelect(
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getGoals(),
 			[]
@@ -51,16 +44,13 @@ const build: Flow = {
 			() => ( {
 				eventsProperties: {
 					[ STEPPER_TRACKS_EVENT_SIGNUP_STEP_START ]: {
-						...( isGoalsAtFrontExperiment && {
-							is_goals_first: 'true',
-						} ),
 						...( initialGoals.current.length && {
 							goals: initialGoals.current.join( ',' ),
 						} ),
 					},
 				},
 			} ),
-			[ isGoalsAtFrontExperiment, initialGoals ]
+			[ initialGoals ]
 		);
 
 		if ( site && shouldShowLaunchpadFirst( site ) && step === 'launchpad' ) {

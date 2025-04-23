@@ -11,7 +11,6 @@ import {
 	useSetEdgeCacheMutation,
 	useClearEdgeCacheMutation,
 } from 'calypso/data/hosting/use-cache';
-import { useRemoveDuplicateViewsExperimentEnabled } from 'calypso/lib/remove-duplicate-views-experiment';
 import CacheCard from 'calypso/sites/settings/performance/form';
 import { clearWordPressCache } from 'calypso/state/hosting/actions';
 import getRequest from 'calypso/state/selectors/get-request';
@@ -48,7 +47,6 @@ jest.mock( 'calypso/data/hosting/use-cache' );
 jest.mock( 'calypso/state/selectors/get-request' );
 jest.mock( 'calypso/state/selectors/should-rate-limit-atomic-cache-clear' );
 jest.mock( 'calypso/state/hosting/actions' );
-jest.mock( 'calypso/lib/remove-duplicate-views-experiment' );
 
 describe( 'CacheCard component', () => {
 	beforeEach( () => {
@@ -65,7 +63,6 @@ describe( 'CacheCard component', () => {
 		} );
 		jest.mocked( getRequest ).mockReturnValue( { isLoading: false } );
 		jest.mocked( shouldRateLimitAtomicCacheClear ).mockReturnValue( false );
-		jest.mocked( useRemoveDuplicateViewsExperimentEnabled ).mockReturnValue( false );
 	} );
 
 	function renderWithProvider() {

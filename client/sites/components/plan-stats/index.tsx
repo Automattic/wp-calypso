@@ -17,10 +17,11 @@ import './style.scss';
 
 type NeedMoreStorageProps = {
 	noLink?: boolean;
+	tracksEventName: string;
 	onClick: ( e: React.MouseEvent< HTMLButtonElement > ) => void;
 };
 
-function NeedMoreStorage( { noLink = false, onClick }: NeedMoreStorageProps ) {
+function NeedMoreStorage( { noLink = false, onClick, tracksEventName }: NeedMoreStorageProps ) {
 	const translate = useTranslate();
 	const site = useSelector( getSelectedSite );
 	const dispatch = useDispatch();
@@ -40,7 +41,7 @@ function NeedMoreStorage( { noLink = false, onClick }: NeedMoreStorageProps ) {
 					e.preventDefault();
 					onClick( e );
 				}
-				dispatch( recordTracksEvent( 'calypso_hosting_overview_need_more_storage_click' ) );
+				dispatch( recordTracksEvent( tracksEventName ) );
 			} }
 		>
 			{ text }
@@ -48,7 +49,11 @@ function NeedMoreStorage( { noLink = false, onClick }: NeedMoreStorageProps ) {
 	);
 }
 
-export default function PlanStats() {
+type PlanStatsProps = {
+	needMoreStorageTracksEventName: string;
+};
+
+export default function PlanStats( { needMoreStorageTracksEventName }: PlanStatsProps ) {
 	const site = useSelector( getSelectedSite );
 	const planDetails = site?.plan;
 	const planData = useSelector( ( state ) => getCurrentPlan( state, site?.ID ) );
@@ -80,6 +85,7 @@ export default function PlanStats() {
 						<div className="plan-storage-footer">
 							<NeedMoreStorage
 								noLink={ footerWrapperIsLink }
+								tracksEventName={ needMoreStorageTracksEventName }
 								onClick={ () => setIsStorageAddOnsModalOpen( true ) }
 							/>
 							{ isUntangled && (

@@ -1,4 +1,5 @@
 import { Button } from '@automattic/components';
+import { domainManagementRoot } from '@automattic/domains-table/src/utils/paths';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { CONTACT } from '@automattic/urls';
 import { Icon, lock } from '@wordpress/icons';
@@ -63,6 +64,45 @@ const DomainSecurityDetails = ( { domain, isDisabled }: SecurityCardProps ) => {
 		}
 	}, [ isStale, refetchSSLDetails ] );
 
+	const renderFailureReasons = (
+		failureReasons: { error_type: string; message: string }[]
+	): ReactElement => {
+		return (
+			<ul>
+				{ failureReasons.map( ( failureReason ) => {
+					const isDnssecErrorForManagedSubdomain =
+						failureReason.error_type === 'DNSSEC validation error' &&
+						domain.isSubdomain &&
+						domain.isRootDomainRegisteredWithAutomattic;
+					return (
+						<li key={ failureReason.error_type }>
+							{ isDnssecErrorForManagedSubdomain
+								? translate(
+										'This domain has DNSSEC validation errors. You may need to deactivate DNSSEC on the root domain {{strong}}%(rootDomain)s{{/strong}}, from {{a}}here{{/a}}.',
+										{
+											args: { rootDomain: domain.name.replace( `${ domain.subdomainPart }.`, '' ) },
+											components: {
+												strong: <strong />,
+												a: (
+													<a
+														href={
+															`${ domainManagementRoot() }/` +
+															domain.name.replace( `${ domain.subdomainPart }.`, '' ) +
+															'/edit'
+														}
+													/>
+												),
+											},
+										}
+								  )
+								: failureReason.message }
+						</li>
+					);
+				} ) }
+			</ul>
+		);
+	};
+
 	const getSslStatusMessage = (): ReactElement | null => {
 		if ( isLoadingSSLDetails || ! sslDetails || sslDetails.certificate_provisioned ) {
 			return null;
@@ -98,11 +138,7 @@ const DomainSecurityDetails = ( { domain, isDisabled }: SecurityCardProps ) => {
 								'There are one or more problems with your DNS configuration that prevent an SSL certificate from being issued:'
 							) }
 						</p>
-						<ul>
-							{ sslDetails.failure_reasons?.map( ( failureReason ) => {
-								return <li key={ failureReason.error_type }>{ failureReason.message }</li>;
-							} ) }
-						</ul>
+						{ sslDetails.failure_reasons && renderFailureReasons( sslDetails.failure_reasons ) }
 						<p className="domain-security-details__description-message">
 							{ translate(
 								'Once you have fixed all the issues, you can request a new certificate by clicking the button below.'

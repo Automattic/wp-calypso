@@ -8,10 +8,6 @@ $highlight-color: #3858E9;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-
-	.form-fieldset {
-		margin-block-end: 0;
-	}
 }
 
 .a4a-feedback__content {
@@ -48,6 +44,10 @@ $highlight-color: #3858E9;
 	flex-direction: column;
 	gap: 24px;
 	flex: 1 1 auto;
+
+	.form-fieldset {
+		margin-block-end: 0;
+	}
 }
 
 .a4a-feedback__question-details {

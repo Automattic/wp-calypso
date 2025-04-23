@@ -69,7 +69,11 @@ export function useAdminResults( searchTerm: string ) {
 	const siteSlug = useSiteSlug();
 	const customizerUrls = useCustomizerUrls();
 	const siteEditorUrls = useSiteEditorUrls();
-	const { googleMailServiceFamily, locale, onboardingUrl } = useHelpCenterContext();
+	const { googleMailServiceFamily, locale, onboardingUrl, sectionName } = useHelpCenterContext();
+
+	if ( [ 'wp-admin', 'gutenberg-editor' ].includes( sectionName ) ) {
+		return [];
+	}
 
 	if ( siteSlug ) {
 		const sections = generateAdminSections(
@@ -84,5 +88,6 @@ export function useAdminResults( searchTerm: string ) {
 
 		return filteredSections;
 	}
+
 	return [];
 }

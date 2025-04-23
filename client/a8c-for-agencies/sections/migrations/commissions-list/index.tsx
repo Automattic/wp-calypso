@@ -4,6 +4,7 @@ import { useMemo, ReactNode, useState } from 'react';
 import { initialDataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
 import ItemsDataViews from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews';
 import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
+import { getSiteReviewStatus } from '../lib/utils';
 import { MigratedOnColumn, ReviewStatusColumn, SiteColumn } from './commission-columns';
 import CommissionListActions from './commission-list-actions';
 import MigrationsCommissionsListMobileView from './mobile-view';
@@ -55,7 +56,11 @@ export default function MigrationsCommissionsList( {
 				id: 'reviewStatus',
 				label: translate( 'Review status' ).toUpperCase(),
 				getValue: () => '-',
-				render: ( { item } ): ReactNode => <ReviewStatusColumn reviewStatus={ item.state } />,
+				render: ( { item }: { item: TaggedSite } ): ReactNode => {
+					const tags = item.tags.map( ( tag ) => tag.name );
+					const status = getSiteReviewStatus( tags );
+					return <ReviewStatusColumn reviewStatus={ status } />;
+				},
 				enableHiding: false,
 				enableSorting: false,
 			},

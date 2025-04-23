@@ -464,7 +464,7 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 
 		.campaign-item-details__secondary-stats-row-bottom {
 			display: grid;
-			grid-template-columns: 42% 58%;
+			grid-template-columns: 50% 50%;
 			flex-grow: 1;
 			justify-content: space-between;
 			> div {
@@ -669,6 +669,12 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 				max-width: 37px;
 				max-height: 37px;
 				margin-right: 16px;
+			}
+
+			&.outperformed_notice {
+				padding: 16px;
+				background-color: var(--studio-gray-0);
+				border-radius: 4px;
 			}
 		}
 
@@ -1045,7 +1051,7 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 
 	.campaign-item-details__secondary-stats-row {
 		display: grid;
-		grid-template-columns: 42% 58%;
+		grid-template-columns: 50% 50%;
 		flex-grow: 1;
 		justify-content: space-between;
 

@@ -4,15 +4,14 @@ import { Button } from '@automattic/components';
 import { ToggleControl, Tooltip } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import React, { useEffect, useState } from 'react';
-import { HostingCard, HostingCardDescription } from 'calypso/components/hosting-card';
+import { HostingCard } from 'calypso/components/hosting-card';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { PanelCard, PanelCardDescription, PanelCardHeading } from 'calypso/components/panel';
 import {
+	useClearEdgeCacheMutation,
 	useEdgeCacheQuery,
 	useSetEdgeCacheMutation,
-	useClearEdgeCacheMutation,
 } from 'calypso/data/hosting/use-cache';
-import { useRemoveDuplicateViewsExperimentEnabled } from 'calypso/lib/remove-duplicate-views-experiment';
 import { useDispatch, useSelector } from 'calypso/state';
 import { clearEdgeCacheSuccess, clearWordPressCache } from 'calypso/state/hosting/actions';
 import getRequest from 'calypso/state/selectors/get-request';
@@ -110,27 +109,20 @@ export default function CachingForm( { disabled }: CachingFormProps ) {
 		dispatch( clearWordPressCache( siteId, 'Manually clearing again.' ) );
 	};
 
-	const isRemoveDuplicateViewsExperimentEnabled = useRemoveDuplicateViewsExperimentEnabled();
 	const edgeCacheToggleDescription = isEdgeCacheEligible
 		? translate( 'Enable global edge caching for faster content delivery.' )
 		: translate(
 				'Global edge cache can only be enabled for public sites. {{a}}Review privacy settings{{/a}}',
 				{
 					components: {
-						a: isRemoveDuplicateViewsExperimentEnabled ? (
-							<a href={ '/sites/settings/site/' + siteSlug + '#site-privacy-settings' } />
-						) : (
-							<a href={ '/settings/general/' + siteSlug + '#site-privacy-settings' } />
-						),
+						a: <a href={ '/sites/settings/site/' + siteSlug + '#site-privacy-settings' } />,
 					},
 				}
 		  );
 
-	const isUntangled = useRemoveDuplicateViewsExperimentEnabled();
-
 	return (
 		<HostingCard
-			fallthrough={ isUntangled }
+			fallthrough
 			className="cache-card"
 			headingId="cache"
 			title={ translate( 'Caching', {
@@ -138,19 +130,8 @@ export default function CachingForm( { disabled }: CachingFormProps ) {
 				textOnly: true,
 			} ) }
 		>
-			<>
-				<HostingCardDescription hide={ isUntangled }>
-					{ translate( 'Manage your site’s server-side caching. {{a}}Learn more{{/a}}', {
-						components: {
-							a: <InlineSupportLink supportContext="hosting-clear-cache" showIcon={ false } />,
-						},
-					} ) }
-				</HostingCardDescription>
-			</>
-			<PanelCard isBorderless={ ! isUntangled }>
-				<PanelCardHeading asFormLabel={ ! isUntangled }>
-					{ translate( 'All caches' ) }
-				</PanelCardHeading>
+			<PanelCard isBorderless={ false }>
+				<PanelCardHeading asFormLabel={ false }>{ translate( 'All caches' ) }</PanelCardHeading>
 				<PanelCardDescription>
 					{ translate( 'Clearing the cache may temporarily make your site less responsive.' ) }
 				</PanelCardDescription>
@@ -181,14 +162,12 @@ export default function CachingForm( { disabled }: CachingFormProps ) {
 				</Tooltip>
 			</PanelCard>
 
-			{ ! isUntangled && <div className="cache-card__hr" /> }
-
-			<PanelCard isBorderless={ ! isUntangled }>
+			<PanelCard isBorderless={ false }>
 				{ isEdgeCacheInitialLoading ? (
 					<EdgeCacheLoadingPlaceholder />
 				) : (
 					<>
-						<PanelCardHeading asFormLabel={ ! isUntangled }>
+						<PanelCardHeading asFormLabel={ false }>
 							{ translate( 'Global edge cache', {
 								comment: 'Edge cache is a type of CDN that stores generated HTML pages',
 							} ) }
@@ -252,8 +231,8 @@ export default function CachingForm( { disabled }: CachingFormProps ) {
 			</PanelCard>
 
 			{ config.isEnabled( 'hosting-server-settings-enhancements' ) && (
-				<PanelCard isBorderless={ ! isUntangled }>
-					<PanelCardHeading asFormLabel={ ! isUntangled }>
+				<PanelCard isBorderless={ false }>
+					<PanelCardHeading asFormLabel={ false }>
 						{ translate( 'Object cache', {
 							comment: 'Object cache stores database lookups and some network requests',
 						} ) }

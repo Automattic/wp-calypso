@@ -8,7 +8,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import ScrollableHorizontalNavigation from 'calypso/components/scrollable-horizontal-navigation';
 import { setQueryArgs } from 'calypso/lib/query-args';
 import scrollTo from 'calypso/lib/scroll-to';
-import withDimensions from 'calypso/lib/with-dimensions';
 import Categories from 'calypso/my-sites/plugins/categories';
 import {
 	ALLOWED_CATEGORIES,
@@ -90,8 +89,7 @@ const SearchCategories: FC< {
 	searchRef: MutableRefObject< ImperativeHandle >;
 	searchTerm: string;
 	searchTerms: string[];
-	width: number;
-} > = ( { category, isSearching, isSticky, searchRef, searchTerm, searchTerms, width } ) => {
+} > = ( { category, isSearching, isSticky, searchRef, searchTerm, searchTerms } ) => {
 	const dispatch = useDispatch();
 	const getCategoryUrl = useGetCategoryUrl();
 	const categoriesRef = useRef< HTMLDivElement >( null );
@@ -141,7 +139,6 @@ const SearchCategories: FC< {
 							selectedTab={ category ?? categories[ 0 ].slug }
 							tabs={ categories }
 							titleField="menu"
-							width={ width }
 						/>
 					</>
 				) : (
@@ -155,4 +152,4 @@ const SearchCategories: FC< {
 	);
 };
 
-export default withDimensions( SearchCategories );
+export default SearchCategories;

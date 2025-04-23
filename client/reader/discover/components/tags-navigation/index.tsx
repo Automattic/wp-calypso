@@ -13,9 +13,8 @@ interface Tag {
 	slug: string;
 }
 
-interface Props {
-	selectedTag: string;
-	width: number;
+interface DiscoverTagsNavigationProps {
+	selectedTag?: string;
 	onTagSelect: ( tag: string ) => void;
 }
 
@@ -46,7 +45,7 @@ export const useRecommendedTags = (): Tag[] => {
 	return interestTags;
 };
 
-const DiscoverTagsNavigation = ( { selectedTag, width, onTagSelect }: Props ) => {
+const DiscoverTagsNavigation = ( { selectedTag, onTagSelect }: DiscoverTagsNavigationProps ) => {
 	const recommendedTags = useRecommendedTags();
 	const dispatch = useDispatch();
 
@@ -67,7 +66,6 @@ const DiscoverTagsNavigation = ( { selectedTag, width, onTagSelect }: Props ) =>
 			onTabClick={ menuTabClick }
 			selectedTab={ selectedTag || '' }
 			tabs={ recommendedTags }
-			width={ width }
 		/>
 	);
 };

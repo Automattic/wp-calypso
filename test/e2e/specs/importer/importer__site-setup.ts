@@ -37,16 +37,14 @@ describe( DataHelper.createSuiteTitle( 'Importer: Site Setup' ), () => {
 	describe( 'Follow the WordPress import flow', () => {
 		navigateToSetup( credentials.testSites?.primary?.url as string );
 
-		it( 'Start a WordPress import', async () => {
+		it( 'Start a content-only WordPress import', async () => {
 			await startImportFlow.enterURL( 'make.wordpress.org' );
-			await Promise.any( [
-				startImportFlow.clickPremigrationOptionButton(),
-				Promise.all( [
-					startImportFlow.validateWordPressPage(),
-					startImportFlow.contentOnlyWordPressPage(),
-				] ),
-			] );
 			await startImportFlow.validateImporterDragPage( 'wordpress' );
+		} );
+
+		it( 'Back shows the URL capture form', async () => {
+			await startImportFlow.clickBack();
+			await startImportFlow.validateURLCapturePage();
 		} );
 	} );
 
@@ -111,22 +109,6 @@ describe( DataHelper.createSuiteTitle( 'Importer: Site Setup' ), () => {
 			await startImportFlow.startImporterList();
 			await startImportFlow.validateImporterListPage();
 			await startImportFlow.selectImporterFromList( 0 );
-		} );
-	} );
-
-	// Go back through pages.
-	describe( 'Go back to first page', () => {
-		navigateToSetup( credentials.testSites?.primary?.url as string );
-
-		it( 'Go to Import page', async () => {
-			await startImportFlow.enterURL( 'make.wordpress.org' );
-			await startImportFlow.validateUpgradePlanPage();
-		} );
-
-		// Back one page shows the URL capture page
-		it( 'Back shows migration modal', async () => {
-			await startImportFlow.clickBack();
-			await startImportFlow.validateURLCapturePage();
 		} );
 	} );
 

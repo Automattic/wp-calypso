@@ -3,6 +3,7 @@ import { SITE_LAUNCH, SITE_LAUNCH_FAILURE, SITE_LAUNCH_SUCCESS } from 'calypso/s
 import 'calypso/state/data-layer/wpcom/sites/launch';
 import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
+import isSiteBigSkyTrial from 'calypso/state/sites/plans/selectors/is-site-big-sky-trial';
 import { getSiteSlug, isCurrentPlanPaid, getSiteOption } from 'calypso/state/sites/selectors';
 import { isSiteOnHostingTrial } from '../plans/selectors';
 
@@ -32,7 +33,7 @@ export const launchSiteFailure = ( siteId ) => ( {
  * @param {string?} source
  */
 export const launchSiteOrRedirectToLaunchSignupFlow =
-	( siteId, source = null ) =>
+	( siteId, source = null, siteTitle = null, search = null ) =>
 	( dispatch, getState ) => {
 		if ( ! isUnlaunchedSite( getState(), siteId ) ) {
 			return;
@@ -50,9 +51,17 @@ export const launchSiteOrRedirectToLaunchSignupFlow =
 
 		const siteSlug = getSiteSlug( getState(), siteId );
 
+		if ( isSiteBigSkyTrial( getState(), siteId ) ) {
+			window.location.href = addQueryArgs(
+				{ siteId: siteId, source, redirect: 'site-launch', new: siteTitle, search },
+				'/setup/ai-site-builder/domains'
+			);
+			return;
+		}
+
 		// TODO: consider using the `page` library instead of calling using `location.href` here
 		window.location.href = addQueryArgs(
-			{ siteSlug, source, hide_initial_query: 'yes' },
+			{ siteSlug, source, hide_initial_query: 'yes', new: siteTitle, search },
 			'/start/launch-site'
 		);
 	};

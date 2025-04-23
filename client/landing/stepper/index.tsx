@@ -111,23 +111,6 @@ async function main() {
 	let queryClient;
 
 	let { default: flow } = await flowPromise;
-	let flowSteps = 'initialize' in flow ? await flow.initialize() : null;
-
-	if ( '__experimentalUseSessions' in flow ) {
-		const sessionId = getSessionId() || createSessionId();
-		history.replaceState( null, '', addQueryArgs( { sessionId }, window.location.href ) );
-		queryClient = ( await createQueryClient( 'stepper-persistence-session-' + sessionId ) )
-			.queryClient;
-	} else {
-		queryClient = ( await createQueryClient( userId ) ).queryClient;
-	}
-
-	/**
-	 * When `initialize` returns false, it means the app should be killed (the user probably issued a redirect).
-	 */
-	if ( flowSteps === false ) {
-		return;
-	}
 
 	const initialState = getInitialState( initialReducer, userId );
 	const reduxStore = createReduxStore( initialState, initialReducer );
@@ -145,6 +128,28 @@ async function main() {
 
 	setupErrorLogger( reduxStore );
 
+	// When re-using steps from /start, we need to set the current flow name in the redux store, since some depend on it.
+	reduxStore.dispatch( setCurrentFlowName( flow.name ) );
+	reduxStore.dispatch( setSelectedSiteId( siteId ) as unknown as AnyAction );
+
+	let flowSteps = 'initialize' in flow ? await flow.initialize( reduxStore ) : null;
+
+	if ( '__experimentalUseSessions' in flow ) {
+		const sessionId = getSessionId() || createSessionId();
+		history.replaceState( null, '', addQueryArgs( { sessionId }, window.location.href ) );
+		queryClient = ( await createQueryClient( 'stepper-persistence-session-' + sessionId ) )
+			.queryClient;
+	} else {
+		queryClient = ( await createQueryClient( userId ) ).queryClient;
+	}
+
+	/**
+	 * When `initialize` returns false, it means the app should be killed (the user probably issued a redirect).
+	 */
+	if ( flowSteps === false ) {
+		return;
+	}
+
 	// Checking for initialize implies this is a V2 flow.
 	// CLEAN UP: once the `onboarding` flow is migrated to V2, this can be cleaned up to only support V2
 	// The `onboarding` flow is the only flow that uses in-stepper auth so far, so all the auth logic catering V1 can be deleted.
@@ -157,10 +162,6 @@ async function main() {
 		// V1 flows have to be enhanced by changing their `useSteps` hook.
 		flow = enhanceFlowWithAuth( flow );
 	}
-
-	// When re-using steps from /start, we need to set the current flow name in the redux store, since some depend on it.
-	reduxStore.dispatch( setCurrentFlowName( flow.name ) );
-	reduxStore.dispatch( setSelectedSiteId( siteId ) as unknown as AnyAction );
 
 	// No need to await this, it's not critical to the boot process and will slow booting down.
 	defaultCalypsoI18n.geolocateCurrencySymbol();
