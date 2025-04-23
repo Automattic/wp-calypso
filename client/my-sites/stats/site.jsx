@@ -23,7 +23,7 @@ import EmptyContent from 'calypso/components/empty-content';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import NavigationHeader from 'calypso/components/navigation-header';
-import NavigationHeaderNew from 'calypso/components/navigation-header/navigation-header';
+import NavigationHeaderImpr from 'calypso/components/navigation-header/navigation-header';
 import StickyPanel from 'calypso/components/sticky-panel';
 import memoizeLast from 'calypso/lib/memoize-last';
 import Main from 'calypso/my-sites/stats/components/stats-main';
@@ -33,7 +33,7 @@ import {
 	STATS_FEATURE_PAGE_TRAFFIC,
 	STATS_FEATURE_INTERVAL_DROPDOWN_WEEK,
 	STATS_PRODUCT_NAME,
-	STATS_PRODUCT_NAME_NEW,
+	STATS_PRODUCT_NAME_IMPR,
 } from 'calypso/my-sites/stats/constants';
 import { getMomentSiteZone } from 'calypso/my-sites/stats/hooks/use-moment-site-zone';
 import { getChartRangeParams } from 'calypso/my-sites/stats/utils';
@@ -531,9 +531,9 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 				</div>
 			) }
 			{ isStatsNavigationImprovementEnabled ? (
-				<NavigationHeaderNew
+				<NavigationHeaderImpr
 					className="stats__section-header modernized-header"
-					title={ STATS_PRODUCT_NAME_NEW }
+					title={ STATS_PRODUCT_NAME_IMPR }
 				/>
 			) : (
 				<NavigationHeader
