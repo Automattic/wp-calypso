@@ -61,7 +61,8 @@ function getReferenceBackrgoundColor( appearance: 'light' | 'dark' ) {
 
 export const generateColorScales = ( {
 	appearance,
-	...args
+	accent,
+	gray,
 }: {
 	appearance: 'light' | 'dark';
 	accent: string;
@@ -71,10 +72,10 @@ export const generateColorScales = ( {
 	const grayScales = appearance === 'light' ? lightGrayColors : darkGrayColors;
 	const backgroundColor = getReferenceBackrgoundColor( appearance );
 
-	const grayBaseColor = new Color( args.gray ).to( 'oklch' );
+	const grayBaseColor = new Color( gray ).to( 'oklch' );
 	const grayScaleColors = getScaleFromColor( grayBaseColor, grayScales, backgroundColor );
 
-	const accentBaseColor = new Color( args.accent ).to( 'oklch' );
+	const accentBaseColor = new Color( accent ).to( 'oklch' );
 
 	let accentScaleColors = getScaleFromColor( accentBaseColor, allScales, backgroundColor );
 
