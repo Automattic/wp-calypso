@@ -7,7 +7,7 @@ import { recordTracksEventWithClientId } from 'calypso/state/analytics/actions';
 
 import './two-factor-actions.scss';
 
-class TwoFactorActions extends Component {
+export class TwoFactorActions extends Component {
 	static propTypes = {
 		isAuthenticatorSupported: PropTypes.bool.isRequired,
 		isSecurityKeySupported: PropTypes.bool.isRequired,
