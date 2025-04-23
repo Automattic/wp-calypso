@@ -80,7 +80,7 @@ describe( 'usePrepareSiteForMigration', () => {
 			.reply( 200, {
 				blog_id: SITE_ID,
 				transfer_id: 456,
-				transfer_status: 'success',
+				transfer_status: 'completed',
 			} )
 			.get( `/wpcom/v2/sites/${ SITE_ID }/atomic-migration-status/wpcom-migration-key` )
 			.query( { http_envelope: 1 } )
