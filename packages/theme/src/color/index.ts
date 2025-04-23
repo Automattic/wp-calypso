@@ -19,6 +19,8 @@ export function generateColors( color: ThemeProps[ 'color' ] ) {
 		background: colorScales.background,
 		[ 'neutral-scale' ]: colorScales.grayScale,
 		[ 'primary-scale' ]: colorScales.accentScale,
+		[ 'primary-contrast-small' ]: colorScales.accentContrastSmallText,
+		[ 'primary-contrast-large' ]: colorScales.accentContrastLargeText,
 		neutral: mapColorsToScale( colorScales.grayScale, COLOR_MAP ),
 		primary: mapColorsToScale( colorScales.accentScale, COLOR_MAP ),
 	} as TokensObject;

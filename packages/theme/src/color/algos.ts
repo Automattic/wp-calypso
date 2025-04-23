@@ -88,10 +88,8 @@ export const generateColorScales = ( {
 		accentScaleColors = grayScaleColors.map( ( color ) => color.clone() ) as ArrayOf12< Color >;
 	}
 
-	const [ accent9Color, accentContrastColor ] = getStep9Colors(
-		accentScaleColors,
-		accentBaseColor
-	);
+	const [ accent9Color, accentContrastColorSmallText, accentContrastColorLargeText ] =
+		getStep9Colors( accentScaleColors, accentBaseColor );
 
 	accentScaleColors[ 8 ] = accent9Color;
 	accentScaleColors[ 9 ] = getButtonHoverColor( accent9Color, [ accentScaleColors ] );
@@ -110,30 +108,47 @@ export const generateColorScales = ( {
 		color.to( 'srgb' ).toString( { format: 'hex' } )
 	) as ArrayOf12< string >;
 
+	const accentContrastColorSmallTextHex = accentContrastColorSmallText
+		.to( 'srgb' )
+		.toString( { format: 'hex' } );
+	const accentContrastColorLargeTextHex = accentContrastColorLargeText
+		.to( 'srgb' )
+		.toString( { format: 'hex' } );
 
 	const grayScaleHex = grayScaleColors.map( ( color ) =>
 		color.to( 'srgb' ).toString( { format: 'hex' } )
 	) as ArrayOf12< string >;
 
 	return {
+		// Accent
 		accentScale: accentScaleHex,
+		accentContrastSmallText: accentContrastColorSmallTextHex,
+		accentContrastLargeText: accentContrastColorLargeTextHex,
+		// Gray
 		grayScale: grayScaleHex,
-
+		// Background
 		background: backgroundHex,
 	};
 };
 
-function getStep9Colors( scale: ArrayOf12< Color >, accentBaseColor: Color ): [ Color, Color ] {
+function getStep9Colors(
+	scale: ArrayOf12< Color >,
+	accentBaseColor: Color
+): [ Color, Color, Color ] {
 	const referenceBackgroundColor = scale[ 0 ];
 	const distance = accentBaseColor.deltaEOK( referenceBackgroundColor ) * 100;
 
 	// If the accent base color is close to the page background color, it's likely
 	// white on white or black on black, so we want to return something that makes sense instead
 	if ( distance < 25 ) {
-		return [ scale[ 8 ], getTextColor( scale[ 8 ] ) ];
+		return [ scale[ 8 ], getTextColor( scale[ 8 ], false ), getTextColor( scale[ 8 ], true ) ];
 	}
 
-	return [ accentBaseColor, getTextColor( accentBaseColor ) ];
+	return [
+		accentBaseColor,
+		getTextColor( accentBaseColor, false ),
+		getTextColor( accentBaseColor, true ),
+	];
 }
 
 function getButtonHoverColor( source: Color, scales: ArrayOf12< Color >[] ) {
@@ -334,15 +349,37 @@ function getScaleFromColor(
 	return scale;
 }
 
-function getTextColor( background: Color ) {
+// TODO: the way contrast text is calculated has room for interpretation.
+// - if both white and black meet the contrast, we still pick the one with the
+//   higher contrast. We could instead be more opinionated (ie. pick white for
+//   light appearance and black for dark appearance, pick always white, ...);
+// - fixed black/white vs trying the earliest shade of gray that meets contrast;
+// - use chroma/hue from the background or the accent to the shade of gray;
+// - small vs large text;
+// - consider a different algo (APAC? although check for WCAG requirements);
+// - high contrast mode (ie. change thresholds)
+function getTextColor( background: Color, isLargeText = true ) {
+	const targetContrast = isLargeText ? 3 : 4.5;
+
 	const white = new Color( 'oklch', [ 1, 0, 0 ] );
+	const black = new Color( 'oklch', [ 0, 0, 0 ] );
 
-	if ( Math.abs( white.contrastAPCA( background ) ) < 40 ) {
-		const [ , C, H ] = background.coords;
-		return new Color( 'oklch', [ 0.25, Math.max( 0.08 * C, 0.04 ), H ] );
+	const contrastWithBlack = background.contrastWCAG21( black );
+	const contrastWithWhite = background.contrastWCAG21( white );
+
+	// Check if either black or white meets the target contrast
+	if ( contrastWithBlack >= targetContrast && contrastWithWhite >= targetContrast ) {
+		// Both colors meet the contrast requirement; choose the one with higher contrast
+		return contrastWithBlack > contrastWithWhite ? black : white;
+	} else if ( contrastWithBlack >= targetContrast ) {
+		return black;
+	} else if ( contrastWithWhite >= targetContrast ) {
+		return white;
 	}
-
-	return white;
+	// Neither black nor white meets the contrast requirement
+	// Attempt to find a color that does
+	// For simplicity, return the one with higher contrast
+	return contrastWithBlack > contrastWithWhite ? black : white;
 }
 
 export function transposeProgressionStart(
