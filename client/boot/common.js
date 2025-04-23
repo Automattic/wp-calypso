@@ -47,9 +47,15 @@ import { setupLocale } from './locale';
 const debug = debugFactory( 'calypso' );
 
 const setupContextMiddleware = ( reduxStore, reactQueryClient ) => {
+	let previousPath = null;
+
 	page( '*', ( context, next ) => {
 		const parsed = getUrlParts( context.canonicalPath );
 		const path = parsed.pathname + parsed.search || null;
+
+		context.previousPath = previousPath;
+		previousPath = context.path;
+
 		context.prevPath = path === context.path ? false : path;
 		context.query = Object.fromEntries( parsed.searchParams.entries() );
 
