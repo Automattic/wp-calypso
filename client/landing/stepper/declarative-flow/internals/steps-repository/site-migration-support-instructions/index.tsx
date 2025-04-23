@@ -1,10 +1,12 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useLocale } from '@automattic/i18n-utils';
-import { StepContainer } from '@automattic/onboarding';
+import { Step, StepContainer } from '@automattic/onboarding';
 import { translate, useTranslate } from 'i18n-calypso';
 import { useMemo, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
+import { shouldUseStepContainerV2MigrationFlow } from 'calypso/landing/stepper/declarative-flow/helpers/should-use-step-container-v2';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import { useSubmitMigrationTicket } from 'calypso/landing/stepper/hooks/use-submit-migration-ticket';
 import { UserData } from 'calypso/lib/user/user';
@@ -12,7 +14,7 @@ import { useSelector } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import FlowCard from '../components/flow-card';
 import { redirect } from '../import/util';
-import type { Step } from '../../types';
+import type { Step as StepType } from '../../types';
 import './style.scss';
 
 const StepContent = () => {
@@ -39,7 +41,7 @@ const StepContent = () => {
 	);
 };
 
-export const SiteMigrationSupportInstructions: Step = ( { stepName } ) => {
+export const SiteMigrationSupportInstructions: StepType = ( { stepName, flow } ) => {
 	const translate = useTranslate();
 	const user = useSelector( getCurrentUser ) as UserData;
 	const [ query ] = useSearchParams();
@@ -48,7 +50,7 @@ export const SiteMigrationSupportInstructions: Step = ( { stepName } ) => {
 	const fromUrl = query.get( 'from' ) || '';
 	const locale = useLocale();
 
-	const contentVariation = useMemo(
+	const subHeaderOptions = useMemo(
 		() => ( {
 			default: translate(
 				'We apologize for the problems you’re running into. Our Happiness Engineers will reach out to you shortly at {{strong}}%(email)s{{/strong}} to help you figure out your next steps together.',
@@ -76,8 +78,8 @@ export const SiteMigrationSupportInstructions: Step = ( { stepName } ) => {
 		[ user.email, translate ]
 	);
 
-	const content =
-		contentVariation[ variation as keyof typeof contentVariation ] ?? contentVariation.default;
+	const subHeaderText =
+		subHeaderOptions[ variation as keyof typeof subHeaderOptions ] ?? subHeaderOptions.default;
 
 	const { sendTicket } = useSubmitMigrationTicket();
 
@@ -94,15 +96,30 @@ export const SiteMigrationSupportInstructions: Step = ( { stepName } ) => {
 		} );
 	}, [ sendTicket, locale, siteSlug, fromUrl ] );
 
+	const headerText = translate( 'We’ll take it from here!' );
+
+	const isUsingStepContainerV2 = shouldUseStepContainerV2MigrationFlow( flow );
+
+	if ( isUsingStepContainerV2 ) {
+		return (
+			<>
+				<DocumentHead title={ headerText } />
+				<Step.CenteredColumnLayout
+					columnWidth={ 8 }
+					topBar={ <Step.TopBar leftElement={ null } /> }
+					heading={ <Step.Heading text={ headerText } subText={ subHeaderText } /> }
+				>
+					<StepContent />
+				</Step.CenteredColumnLayout>
+			</>
+		);
+	}
 	return (
 		<StepContainer
 			stepName={ stepName }
 			hideBack
 			formattedHeader={
-				<FormattedHeader
-					headerText={ translate( 'We’ll take it from here!' ) }
-					subHeaderText={ content }
-				/>
+				<FormattedHeader headerText={ headerText } subHeaderText={ subHeaderText } />
 			}
 			isHorizontalLayout={ false }
 			stepContent={ <StepContent /> }
