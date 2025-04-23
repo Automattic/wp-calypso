@@ -24,6 +24,7 @@ interface HeaderProps extends React.HTMLAttributes< HTMLElement > {
 	downloadProps?: DownloadProps;
 	titleElement?: ReactNode;
 	children?: ReactNode;
+	hasScreenOptionsTab?: boolean;
 }
 
 // Arrow left icon component
@@ -79,6 +80,7 @@ const DownloadIcon: React.FC = () => (
  * @param props.downloadProps - Props for the download link if used
  * @param props.titleElement - Custom element to override default title rendering
  * @param props.children - Child elements to render in the right section
+ * @param props.hasScreenOptionsTab - Indicates whether the screen options tab should be added
  * @returns The rendered NavigationHeader component
  */
 const NavigationHeader: React.FC< HeaderProps > = ( {
@@ -91,6 +93,7 @@ const NavigationHeader: React.FC< HeaderProps > = ( {
 	buttonProps,
 	downloadProps,
 	children,
+	hasScreenOptionsTab,
 	...rest
 } ) => {
 	// Determine what to render on the right side
@@ -124,7 +127,12 @@ const NavigationHeader: React.FC< HeaderProps > = ( {
 	};
 
 	return (
-		<header className="calypso-navigation-header" { ...rest }>
+		<header
+			className={ `calypso-navigation-header${
+				hasScreenOptionsTab ? ' calypso-navigation-header__screen-options-tab' : ''
+			}` }
+			{ ...rest }
+		>
 			<div className="calypso-navigation-header__head">
 				{ backLink && (
 					<a
@@ -177,4 +185,10 @@ export default NavigationHeader;
 // <Header
 //   title="Custom Header"
 //   rightElement={<YourCustomComponent />}
+// />
+
+// With screen options tab:
+// <Header
+//   title="With Options"
+//   hasScreenOptionsTab={true}
 // />
