@@ -23,9 +23,9 @@
 	"calypso:src": "src/index.ts",
 	"exports": {
 		".": {
+			"calypso:src": "./src/index.ts",
 			"types": "./build-types/index.d.ts",
 			"import": "./build-module/index.js",
-			"calypso:src": "./src/index.ts",
 			"default": "./build/index.js"
 		},
 		"./wp": {
