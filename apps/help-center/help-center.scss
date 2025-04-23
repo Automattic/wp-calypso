@@ -1,18 +1,6 @@
 @import "calypso/assets/stylesheets/shared/mixins/breakpoints";
 @import "@automattic/calypso-color-schemes";
 
-// This block can be removed once support for `text-wrap: pretty` is stable in Safari.
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-caption,
-figcaption {
-	text-wrap: balance;
-}
-
 h1,
 h2,
 h3,

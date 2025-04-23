@@ -146,10 +146,12 @@ h5,
 h6 {
 	clear: both;
 	text-wrap: balance;
+	text-wrap: pretty;
 }
 caption,
 figcaption {
 	text-wrap: balance;
+	text-wrap: pretty;
 }
 hr {
 	background: var(--color-neutral-10);
