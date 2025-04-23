@@ -1,40 +1,9 @@
-import { useNavigate, useRouter } from '@tanstack/react-router';
-import { DropdownMenu, MenuItem } from '@wordpress/components';
+import { DropdownMenu } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { menu } from '@wordpress/icons';
 import React from 'react';
 import Menu from '../menu';
-
-function MobileMenuItem( {
-	to,
-	children,
-	onClose,
-}: {
-	to: string;
-	children: React.ReactNode;
-	onClose: () => void;
-} ) {
-	const navigate = useNavigate();
-	const router = useRouter();
-	const href = router.buildLocation( {
-		to,
-	} ).href;
-	const handleClick = ( e: React.MouseEvent ) => {
-		e.preventDefault();
-		navigate( { to } );
-		onClose();
-	};
-
-	return (
-		<MenuItem
-			onClick={ handleClick }
-			// @ts-expect-error -- href is supported by MenuItem, the types are not correct.
-			href={ href }
-		>
-			{ children }
-		</MenuItem>
-	);
-}
+import RouterLinkMenuItem from '../router-link-menu-item';
 
 type ResponsiveMenuProps = {
 	children: React.ReactNode;
@@ -78,9 +47,9 @@ function ResponsiveMenu( {
 						if ( React.isValidElement( child ) && child.type === ResponsiveMenu.Item ) {
 							const { to, children: itemChildren } = child.props;
 							return (
-								<MobileMenuItem to={ to } onClose={ onClose }>
+								<RouterLinkMenuItem to={ to } onClick={ onClose }>
 									{ itemChildren }
-								</MobileMenuItem>
+								</RouterLinkMenuItem>
 							);
 						}
 						return child;

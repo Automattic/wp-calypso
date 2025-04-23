@@ -1,39 +1,8 @@
-import { useNavigate, useRouter } from '@tanstack/react-router';
-import { DropdownMenu, MenuItem } from '@wordpress/components';
+import { DropdownMenu } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { menu } from '@wordpress/icons';
 import { useAppContext } from '../app/context';
-
-function MobileMenuItem( {
-	to,
-	children,
-	onClose,
-}: {
-	to: string;
-	children: React.ReactNode;
-	onClose: () => void;
-} ) {
-	const navigate = useNavigate();
-	const router = useRouter();
-	const href = router.buildLocation( {
-		to,
-	} ).href;
-	const handleClick = ( e: React.MouseEvent ) => {
-		e.preventDefault();
-		navigate( { to } );
-		onClose();
-	};
-
-	return (
-		<MenuItem
-			onClick={ handleClick }
-			// @ts-expect-error -- href is supported by MenuItem, the types are not correct.
-			href={ href }
-		>
-			{ children }
-		</MenuItem>
-	);
-}
+import RouterLinkMenuItem from '../router-link-menu-item';
 
 function PrimaryMenuMobile() {
 	const { supports } = useAppContext();
@@ -49,24 +18,24 @@ function PrimaryMenuMobile() {
 			{ ( { onClose } ) => (
 				<>
 					{ supports.overview && (
-						<MobileMenuItem to="/overview" onClose={ onClose }>
+						<RouterLinkMenuItem to="/overview" onClick={ onClose }>
 							{ __( 'Overview' ) }
-						</MobileMenuItem>
+						</RouterLinkMenuItem>
 					) }
 					{ supports.sites && (
-						<MobileMenuItem to="/sites" onClose={ onClose }>
+						<RouterLinkMenuItem to="/sites" onClick={ onClose }>
 							{ __( 'Sites' ) }
-						</MobileMenuItem>
+						</RouterLinkMenuItem>
 					) }
 					{ supports.domains && (
-						<MobileMenuItem to="/domains" onClose={ onClose }>
+						<RouterLinkMenuItem to="/domains" onClick={ onClose }>
 							{ __( 'Domains' ) }
-						</MobileMenuItem>
+						</RouterLinkMenuItem>
 					) }
 					{ supports.emails && (
-						<MobileMenuItem to="/emails" onClose={ onClose }>
+						<RouterLinkMenuItem to="/emails" onClick={ onClose }>
 							{ __( 'Emails' ) }
-						</MobileMenuItem>
+						</RouterLinkMenuItem>
 					) }
 				</>
 			) }
