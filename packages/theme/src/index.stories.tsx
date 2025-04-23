@@ -71,11 +71,12 @@ export const Default: Story = {
 					{ colSpan: 3, label: 'Borders and separators' },
 					{ colSpan: 2, label: 'Solid colors' },
 					{ colSpan: 2, label: 'Accessible text' },
-				].map( ( { colSpan, label }, i ) => (
+				].map( ( { colSpan, label } ) => (
 					<div
 						key={ label }
 						style={ {
 							textAlign: 'center',
+							marginInline: '4px',
 							padding: '0.5rem',
 							fontSize: '0.875rem',
 							gridColumnEnd: `span ${ colSpan }`,
@@ -101,31 +102,29 @@ export const Default: Story = {
 						</div>
 					) ) }
 				{ /* Scales */ }
-				{ [ 'neutral-scale', 'primary-scale' ].map( ( scaleName ) => (
-					<>
-						<div
-							key={ `${ scaleName }-label` }
-							style={ {
-								fontSize: '0.875rem',
-								display: 'flex',
-								alignItems: 'center',
-							} }
-						>
-							{ scaleName }
-						</div>
-						{ Array( 12 )
-							.fill( '' )
-							.map( ( _, i ) => (
-								<div
-									key={ `${ scaleName }-color-${ i }` }
-									style={ {
-										aspectRatio: '2',
-										backgroundColor: `var(--theme-color-${ scaleName }-${ i })`,
-									} }
-								/>
-							) ) }
-					</>
-				) ) }
+				{ [ 'neutral-scale', 'primary-scale' ].map( ( scaleName, i ) => [
+					<div
+						key={ `${ scaleName }-label-${ i }` }
+						style={ {
+							fontSize: '0.875rem',
+							display: 'flex',
+							alignItems: 'center',
+						} }
+					>
+						{ scaleName }
+					</div>,
+					...Array( 12 )
+						.fill( '' )
+						.map( ( _, i ) => (
+							<div
+								key={ `${ scaleName }-color-${ i }` }
+								style={ {
+									aspectRatio: '2',
+									backgroundColor: `var(--theme-color-${ scaleName }-${ i })`,
+								} }
+							/>
+						) ),
+				] ) }
 			</div>
 		),
 	},
