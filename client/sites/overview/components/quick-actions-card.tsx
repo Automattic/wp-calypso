@@ -1,6 +1,6 @@
 import { Button } from '@automattic/components';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
-import { chevronRightSmall, Icon } from '@wordpress/icons';
+import { Icon, chevronRightSmall, download } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { FC, ReactNode } from 'react';
 import { useSelector } from 'react-redux';
@@ -141,7 +141,7 @@ const QuickActionsCard: FC = () => {
 					commandName="openJetpackStats"
 				/>
 				<Action
-					icon={ <SidebarCustomIcon icon="dashicons-admin-plugins hosting-overview__dashicon" /> }
+					icon={ <Icon className="hosting-overview__dashicon" icon={ download } /> }
 					href={ importSiteUrl }
 					text={ translate( 'Import site to WordPress.com' ) }
 					commandName="importSite"

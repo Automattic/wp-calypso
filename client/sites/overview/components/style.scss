@@ -75,6 +75,10 @@ $blueberry-color: #3858e9;
 					color: var(--studio-gray-30);
 					margin-right: 8px;
 				}
+
+				svg {
+					fill: var(--studio-gray-30);
+				}
 			}
 
 			&:last-child {
