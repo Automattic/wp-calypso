@@ -425,7 +425,9 @@ export class EditorPage {
 	 * @param {string} patternName Name of the pattern to insert.
 	 */
 	async addPatternFromSidebar( patternName: string ): Promise< Locator > {
-		await this.editorGutenbergComponent.resetSelectedBlock();
+		if ( ! ( envVariables.TEST_ON_ATOMIC && envVariables.VIEWPORT_NAME === 'mobile' ) ) {
+			await this.editorGutenbergComponent.resetSelectedBlock();
+		}
 		await this.editorToolbarComponent.openBlockInserter();
 		return await this.addPatternFromInserter(
 			patternName,

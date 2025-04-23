@@ -1,58 +1,55 @@
 import { getTracksAnonymousUserId } from '@automattic/calypso-analytics';
 import { ENTREPRENEUR_FLOW, SITE_MIGRATION_FLOW } from '@automattic/onboarding';
-import { useSelect, useDispatch } from '@wordpress/data';
+import { useDispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { useEffect, useState } from 'react';
 import { anonIdCache, useCachedAnswers } from 'calypso/data/segmentaton-survey';
 import { useEntrepreneurAdminDestination } from 'calypso/landing/stepper/hooks/use-entrepreneur-admin-destination';
-import { useFlowLocale } from 'calypso/landing/stepper/hooks/use-flow-locale';
 import { useSiteData } from 'calypso/landing/stepper/hooks/use-site-data';
-import { getLoginUrl } from 'calypso/landing/stepper/utils/path';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
-import { USER_STORE, ONBOARD_STORE } from '../../../stores';
+import { ONBOARD_STORE } from '../../../stores';
+import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
 import { STEPS } from '../../internals/steps';
 import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
 import { ENTREPRENEUR_TRIAL_SURVEY_KEY } from '../../internals/steps-repository/segmentation-survey';
 import type { Flow, ProvidedDependencies, StepperStep } from '../../internals/types';
-import type { UserSelect } from '@automattic/data-stores';
+
 const SEGMENTATION_SURVEY_SLUG = 'start';
 
 const entrepreneurFlow: Flow = {
 	name: ENTREPRENEUR_FLOW,
-
+	__experimentalUseBuiltinAuth: true,
 	isSignupFlow: true,
 
 	useSteps() {
-		return [
-			// Replacing the `segmentation-survey` slug with `start` as having the
-			// word `survey` in the address bar might discourage users from continuing.
-			{
-				...STEPS.SEGMENTATION_SURVEY,
-				...{ slug: SEGMENTATION_SURVEY_SLUG as StepperStep[ 'slug' ] },
-			},
-			STEPS.TRIAL_ACKNOWLEDGE,
-			STEPS.SITE_CREATION_STEP,
-			STEPS.PROCESSING,
-			STEPS.WAIT_FOR_ATOMIC,
-			STEPS.WAIT_FOR_PLUGIN_INSTALL,
-			STEPS.ERROR,
-		] as const;
+		// Replacing the `segmentation-survey` slug with `start` as having the
+		// word `survey` in the address bar might discourage users from continuing.
+		const surveyStep = {
+			...STEPS.SEGMENTATION_SURVEY,
+			...{ slug: SEGMENTATION_SURVEY_SLUG as StepperStep[ 'slug' ] },
+		};
+
+		const steps: StepperStep[] = [
+			surveyStep,
+			...stepsWithRequiredLogin( [
+				STEPS.TRIAL_ACKNOWLEDGE,
+				STEPS.SITE_CREATION_STEP,
+				STEPS.PROCESSING,
+				STEPS.WAIT_FOR_ATOMIC,
+				STEPS.WAIT_FOR_PLUGIN_INSTALL,
+				STEPS.ERROR,
+			] ),
+		];
+
+		return steps;
 	},
 
 	useStepNavigation( currentStep, navigate ) {
-		const flowName = this.name;
-
 		const { setPluginsToVerify } = useDispatch( ONBOARD_STORE );
 		setPluginsToVerify( [ 'woocommerce' ] );
 
-		const userIsLoggedIn = useSelect(
-			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
-			[]
-		);
-
-		const locale = useFlowLocale();
 		const [ isMigrationFlow, setIsMigrationFlow ] = useState( false );
 		const [ lastQuestionPath, setlastQuestionPath ] = useState( '#1' );
 		const { clearAnswers } = useCachedAnswers( ENTREPRENEUR_TRIAL_SURVEY_KEY );
@@ -61,19 +58,6 @@ const entrepreneurFlow: Flow = {
 
 		const entrepreneurAdminDestination = useEntrepreneurAdminDestination();
 		const siteAdminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
-
-		const getEntrepreneurLoginUrl = () => {
-			const redirectTo = `${ window.location.protocol }//${ window.location.host }/setup/entrepreneur/trialAcknowledge${ window.location.search }`;
-
-			const loginUrl = getLoginUrl( {
-				variationName: flowName,
-				redirectTo,
-				locale,
-				customLoginPath: '/start/entrepreneur/user-social',
-			} );
-
-			return loginUrl;
-		};
 
 		const goBack = () => {
 			if ( currentStep === STEPS.TRIAL_ACKNOWLEDGE.slug ) {
@@ -99,13 +83,7 @@ const entrepreneurFlow: Flow = {
 						setlastQuestionPath( providedDependencies.lastQuestionPath as string );
 					}
 
-					if ( userIsLoggedIn ) {
-						return navigate( STEPS.TRIAL_ACKNOWLEDGE.slug );
-					}
-
-					// Redirect user to the sign-in/sign-up page before site creation.
-					const entrepreneurLoginUrl = getEntrepreneurLoginUrl();
-					return window.location.replace( entrepreneurLoginUrl );
+					return navigate( STEPS.TRIAL_ACKNOWLEDGE.slug );
 				}
 
 				case STEPS.TRIAL_ACKNOWLEDGE.slug: {

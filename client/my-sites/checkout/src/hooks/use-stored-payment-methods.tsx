@@ -101,7 +101,7 @@ export function useStoredPaymentMethods( {
 		return isForBusiness
 			? data.filter( ( method ) => method?.tax_location?.is_for_business === isForBusiness )
 			: data;
-	}, [ isForBusiness, data ] );
+	}, [ isForBusiness, data, isDataValid ] );
 
 	const mutation = useMutation<
 		StoredPaymentMethod[ 'stored_details_id' ],

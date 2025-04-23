@@ -171,7 +171,6 @@ export const siteSetupImportWordpressPath = buildPathHelper< {
 		siteId?: number | string;
 		siteSlug: string;
 		from: string;
-		option: 'content';
 		backToFlow: string;
 	};
 } >( '/setup/site-setup/importerWordpress' );

@@ -291,6 +291,11 @@ $image-height: 47px;
 .layout.is-white-login {
 	background-color: #fdfdfd;
 
+	// Specificity bump.
+	.layout__content.layout__content {
+		padding: 0;
+	}
+
 	.login__form-header {
 		@include onboarding-heading-text-mobile;
 		margin-bottom: 0;
@@ -439,6 +444,8 @@ $image-height: 47px;
 	.wp-login__main.is-social-first {
 		max-width: 758px;
 		margin-top: 24px;
+		padding-left: 20px;
+		padding-right: 20px;
 
 		@include break-medium {
 			margin-top: 20.5vh;
@@ -503,17 +510,11 @@ $image-height: 47px;
 	}
 
 	.layout__primary {
-		margin-top: 40px;
+		margin-top: 0;
 
 		/* START - Note: Patches below needed to continue using the current Divider.
 		We can remove when we refactor the Divider itself (or rethink current usage), and leave the default card styles intact.
 		Ideally, the Divider used in Login should be consolidated with the inline Separator's styles used in Signup (see `.auth-form__separator`) */
-		padding-left: 20px;
-		padding-right: 20px;
-
-		@include break-mobile {
-			margin-top: 64px;
-		}
 
 		form {
 			.card.login__form {

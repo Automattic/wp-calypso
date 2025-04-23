@@ -361,11 +361,11 @@ export default function CheckoutMain( {
 		isForBusiness,
 	} );
 
-	// Stored cards are filtered by the shoppingCart's tax_location->is_for_business value
+	// If tax_location->is_for_business is set to true, then only business
+	// cards will show in Checkout. We should announce this filtering to the
+	// user which these variables will do.
 	const areStoredCardsFiltered = isForBusiness;
-
-	// If tax_location->is_for_business is set to true, then only business cards will show in Checkout
-	const isBusinessCardsFilterEmpty = isForBusiness && storedCards.length ? true : false;
+	const isBusinessCardsFilterEmpty = isForBusiness && storedCards.length ? false : true;
 
 	useActOnceOnStrings( [ storedCardsError ].filter( isValueTruthy ), ( messages ) => {
 		messages.forEach( ( message ) => {
