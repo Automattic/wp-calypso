@@ -4,8 +4,8 @@ import './navigation-header.scss';
 
 // Type definitions for the props
 interface BackLinkProps {
-	backLink?: string;
-	backLinkText?: string;
+	url?: string;
+	text?: string;
 	onBackClick?: ( e: React.MouseEvent< HTMLAnchorElement > ) => void;
 }
 
@@ -34,10 +34,10 @@ const NavigationHeader: React.FC< HeaderProps > = ( {
 	title,
 	backLinkProps,
 	titleElement = <h1 className="calypso-navigation-header__title">{ title }</h1>,
-	headElement = (
+	headElement = backLinkProps?.url && (
 		<a
 			className="calypso-navigation-header__back-link"
-			href={ backLinkProps?.backLink }
+			href={ backLinkProps?.url }
 			onClick={ ( e ) => {
 				if ( backLinkProps?.onBackClick ) {
 					e.preventDefault();
@@ -45,7 +45,7 @@ const NavigationHeader: React.FC< HeaderProps > = ( {
 				}
 			} }
 		>
-			← { backLinkProps?.backLinkText ?? translate( 'Back' ) }
+			← { backLinkProps?.text ?? translate( 'Back' ) }
 		</a>
 	),
 	children,

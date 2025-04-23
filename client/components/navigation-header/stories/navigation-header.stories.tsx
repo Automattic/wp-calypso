@@ -46,8 +46,8 @@ export const WithBackLink: Story = {
 	args: {
 		title: 'Header with Back Link',
 		backLinkProps: {
-			backLink: '/dashboard',
-			backLinkText: 'Back to Dashboard',
+			url: '/dashboard',
+			text: 'Back to Dashboard',
 		},
 	},
 };
@@ -57,8 +57,8 @@ export const WithDownloadAndAction: Story = {
 	args: {
 		title: 'Report Summary',
 		backLinkProps: {
-			backLink: '/reports',
-			backLinkText: 'Back to Reports',
+			url: '/reports',
+			text: 'Back to Reports',
 		},
 		children: (
 			<div style={ { display: 'flex', gap: '16px', alignItems: 'center' } }>
@@ -88,8 +88,8 @@ export const WithScreenOptions: Story = {
 		title: 'Analytics Dashboard',
 		hasScreenOptionsTab: true,
 		backLinkProps: {
-			backLink: '/dashboard',
-			backLinkText: 'Back to Dashboard',
+			url: '/dashboard',
+			text: 'Back to Dashboard',
 			onBackClick: ( e ) => {
 				e.preventDefault();
 				alert( 'Back button clicked!' );
