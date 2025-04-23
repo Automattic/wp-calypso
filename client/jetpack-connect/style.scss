@@ -1,4 +1,8 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@automattic/components/src/styles/typography";
+@import "@wordpress/base-styles/variables";
 @import "@wordpress/base-styles/colors";
+@import "@wordpress/base-styles/mixins";
 @import "colors";
 
 // TODO: Audit and remove since there is no footer colophon anymore.
@@ -120,6 +124,12 @@ $colophon-height: 50px;
 	margin-bottom: 35px;
 }
 
+.jetpack-connect__compact-logo {
+	position: absolute;
+	top: 24px;
+	left: 24px;
+}
+
 .jetpack-connect__main.is-wide {
 	max-width: 100%;
 	text-align: center;
@@ -220,6 +230,97 @@ $colophon-height: 50px;
 .jetpack-connect__authorize-form {
 	.jetpack-connect__authorize-form-header {
 		text-align: center;
+	}
+
+	.jetpack-connect__authorize-form-header--left-aligned {
+		padding-bottom: 48px;
+
+		h1 {
+			margin-bottom: 16px;
+			@include heading-2x-large;
+		}
+
+		p {
+			@include body-large;
+		}
+	}
+}
+
+.jetpack-connect__authorize-form-wrapper--onboarding {
+	margin-top: 10vh;
+	min-width: 450px;
+}
+
+.jetpack-connect__logged-in-user-card {
+	display: flex;
+	border-radius: 4px;
+	border: 1px solid var(--studio-gray-5);
+
+	.jetpack-connect__user-card-gravatar.gravatar {
+		border-radius: 4px 0 0 4px;
+		margin: 0;
+	}
+}
+
+.jetpack-connect__switch-account-link {
+	@include body-medium;
+	padding: 12px 0 0;
+	color: var(--studio-green-60);
+}
+
+.jetpack-connect__benefits {
+	padding: 32px 0;
+
+	.jetpack-connect__benefits-title {
+		@include heading-large;
+
+		padding-bottom: 16px;
+	}
+
+	ul {
+		margin: 0;
+		padding: 0;
+	}
+
+	li {
+		@include heading-medium;
+
+		list-style: none;
+		display: flex;
+		align-items: center;
+		gap: 6px;
+
+		& + li {
+			margin-top: 10px;
+		}
+
+		svg {
+			display: block;
+		}
+	}
+}
+
+.jetpack-connect__user-card-text {
+	padding: 10px 12px 10px 16px;
+
+	.jetpack-connect__logged-in-user-text-name {
+		@include body-medium;
+	}
+
+	.jetpack-connect__logged-in-user-text-email {
+		@include body-small;
+	}
+}
+
+.card.logged-out-form__footer {
+	&.jetpack-connect__action-disclaimer--onboarding {
+		margin: 0;
+		padding: 0;
+
+		button {
+			background-color: var(--studio-green-60);
+			margin-bottom: 16px;
+		}
 	}
 }
 
