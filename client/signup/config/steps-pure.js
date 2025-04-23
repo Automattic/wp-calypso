@@ -1,20 +1,5 @@
 import config from '@automattic/calypso-config';
-import {
-	PLAN_PERSONAL,
-	PLAN_PREMIUM,
-	PLAN_BUSINESS,
-	PLAN_PERSONAL_MONTHLY,
-	PLAN_PREMIUM_MONTHLY,
-	PLAN_BUSINESS_MONTHLY,
-	PLAN_ECOMMERCE_MONTHLY,
-	PLAN_PERSONAL_2_YEARS,
-	PLAN_PREMIUM_2_YEARS,
-	PLAN_BUSINESS_2_YEARS,
-	PLAN_PERSONAL_3_YEARS,
-	PLAN_PREMIUM_3_YEARS,
-	PLAN_BUSINESS_3_YEARS,
-	PLAN_ECOMMERCE,
-} from '@automattic/calypso-products';
+import { PLAN_BUSINESS } from '@automattic/calypso-products';
 import i18n from 'i18n-calypso';
 
 const noop = () => {};
@@ -23,7 +8,6 @@ export function generateSteps( {
 	addPlanToCart = noop,
 	addWithThemePlanToCart = noop,
 	addWithPluginPlanToCart = noop,
-	addAddOnsToCart = noop,
 	createAccount = noop,
 	createSite = noop,
 	createSiteOrDomain = noop,
@@ -34,7 +18,6 @@ export function generateSteps( {
 	addDomainToCart = noop,
 	launchSiteApi = noop,
 	isPlanFulfilled = noop,
-	maybeAddStorageAddonToCart = noop,
 	isDomainFulfilled = noop,
 	maybeRemoveStepForUserlessCheckout = noop,
 	createSiteAndAddDIFMToCart = noop,
@@ -265,42 +248,6 @@ export function generateSteps( {
 			},
 		},
 
-		'plans-personal': {
-			stepName: 'plans-personal',
-			apiRequestFunction: addPlanToCart,
-			fulfilledStepCallback: isPlanFulfilled,
-			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'cartItems', 'themeSlugWithRepo' ],
-			optionalDependencies: [ 'themeSlugWithRepo' ],
-			defaultDependencies: {
-				cartItem: PLAN_PERSONAL,
-			},
-		},
-
-		'plans-premium': {
-			stepName: 'plans-premium',
-			apiRequestFunction: addPlanToCart,
-			fulfilledStepCallback: isPlanFulfilled,
-			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'cartItems', 'themeSlugWithRepo' ],
-			optionalDependencies: [ 'themeSlugWithRepo' ],
-			defaultDependencies: {
-				cartItem: PLAN_PREMIUM,
-			},
-		},
-
-		'plans-business': {
-			stepName: 'plans-business',
-			apiRequestFunction: addPlanToCart,
-			fulfilledStepCallback: isPlanFulfilled,
-			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'cartItems', 'themeSlugWithRepo' ],
-			optionalDependencies: [ 'themeSlugWithRepo' ],
-			defaultDependencies: {
-				cartItem: PLAN_BUSINESS,
-			},
-		},
-
 		'plans-business-with-plugin': {
 			stepName: 'plans-business-with-plugin',
 			apiRequestFunction: addWithPluginPlanToCart,
@@ -310,18 +257,6 @@ export function generateSteps( {
 			optionalDependencies: [ 'themeSlugWithRepo' ],
 			defaultDependencies: {
 				cartItem: PLAN_BUSINESS,
-			},
-		},
-
-		'plans-ecommerce-fulfilled': {
-			stepName: 'plans-ecommerce-fulfilled',
-			apiRequestFunction: addPlanToCart,
-			fulfilledStepCallback: isPlanFulfilled,
-			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'cartItems', 'themeSlugWithRepo' ],
-			defaultDependencies: {
-				cartItem: PLAN_ECOMMERCE,
-				themeSlugWithRepo: 'pub/twentytwentytwo',
 			},
 		},
 
@@ -641,124 +576,6 @@ export function generateSteps( {
 				nonInteractive: true,
 			},
 		},
-
-		'plans-personal-monthly': {
-			stepName: 'plans-personal-monthly',
-			apiRequestFunction: addPlanToCart,
-			fulfilledStepCallback: isPlanFulfilled,
-			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'cartItems', 'themeSlugWithRepo' ],
-			optionalDependencies: [ 'themeSlugWithRepo' ],
-			defaultDependencies: {
-				cartItem: PLAN_PERSONAL_MONTHLY,
-			},
-		},
-
-		'plans-premium-monthly': {
-			stepName: 'plans-premium-monthly',
-			apiRequestFunction: addPlanToCart,
-			fulfilledStepCallback: isPlanFulfilled,
-			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'cartItems', 'themeSlugWithRepo' ],
-			optionalDependencies: [ 'themeSlugWithRepo' ],
-			defaultDependencies: {
-				cartItem: PLAN_PREMIUM_MONTHLY,
-			},
-		},
-
-		'plans-business-monthly': {
-			stepName: 'plans-business-monthly',
-			apiRequestFunction: addPlanToCart,
-			fulfilledStepCallback: isPlanFulfilled,
-			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'cartItems', 'themeSlugWithRepo' ],
-			optionalDependencies: [ 'themeSlugWithRepo' ],
-			defaultDependencies: {
-				cartItem: PLAN_BUSINESS_MONTHLY,
-			},
-		},
-
-		'plans-ecommerce-monthly': {
-			stepName: 'plans-ecommerce-monthly',
-			apiRequestFunction: addPlanToCart,
-			fulfilledStepCallback: isPlanFulfilled,
-			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'cartItems', 'themeSlugWithRepo' ],
-			defaultDependencies: {
-				cartItem: PLAN_ECOMMERCE_MONTHLY,
-				themeSlugWithRepo: 'pub/twentytwentytwo',
-			},
-		},
-
-		'plans-personal-2y': {
-			stepName: 'plans-personal-2y',
-			apiRequestFunction: addPlanToCart,
-			fulfilledStepCallback: isPlanFulfilled,
-			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'cartItems', 'themeSlugWithRepo' ],
-			optionalDependencies: [ 'themeSlugWithRepo' ],
-			defaultDependencies: {
-				cartItem: PLAN_PERSONAL_2_YEARS,
-			},
-		},
-
-		'plans-premium-2y': {
-			stepName: 'plans-premium-2y',
-			apiRequestFunction: addPlanToCart,
-			fulfilledStepCallback: isPlanFulfilled,
-			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'cartItems', 'themeSlugWithRepo' ],
-			optionalDependencies: [ 'themeSlugWithRepo' ],
-			defaultDependencies: {
-				cartItem: PLAN_PREMIUM_2_YEARS,
-			},
-		},
-
-		'plans-business-2y': {
-			stepName: 'plans-business-2y',
-			apiRequestFunction: addPlanToCart,
-			fulfilledStepCallback: isPlanFulfilled,
-			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'cartItems', 'themeSlugWithRepo' ],
-			optionalDependencies: [ 'themeSlugWithRepo' ],
-			defaultDependencies: {
-				cartItem: PLAN_BUSINESS_2_YEARS,
-			},
-		},
-		'plans-personal-3y': {
-			stepName: 'plans-personal-3y',
-			apiRequestFunction: addPlanToCart,
-			fulfilledStepCallback: isPlanFulfilled,
-			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'cartItems', 'themeSlugWithRepo' ],
-			optionalDependencies: [ 'themeSlugWithRepo' ],
-			defaultDependencies: {
-				cartItem: PLAN_PERSONAL_3_YEARS,
-			},
-		},
-		'plans-premium-3y': {
-			stepName: 'plans-premium-3y',
-			apiRequestFunction: addPlanToCart,
-			fulfilledStepCallback: isPlanFulfilled,
-			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'cartItems', 'themeSlugWithRepo' ],
-			optionalDependencies: [ 'themeSlugWithRepo' ],
-			defaultDependencies: {
-				cartItem: PLAN_PREMIUM_3_YEARS,
-			},
-		},
-
-		'plans-business-3y': {
-			stepName: 'plans-business-3y',
-			apiRequestFunction: addPlanToCart,
-			fulfilledStepCallback: isPlanFulfilled,
-			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'cartItems', 'themeSlugWithRepo' ],
-			optionalDependencies: [ 'themeSlugWithRepo' ],
-			defaultDependencies: {
-				cartItem: PLAN_BUSINESS_3_YEARS,
-			},
-		},
 		intent: {
 			stepName: 'intent',
 			dependencies: [ 'siteSlug' ],
@@ -771,15 +588,6 @@ export function generateSteps( {
 		'new-or-existing-site': {
 			stepName: 'new-or-existing-site',
 			providesDependencies: [ 'newOrExistingSiteChoice', 'forceAutoGeneratedBlogName' ],
-		},
-
-		'storage-addon': {
-			stepName: 'storage-addon',
-			apiRequestFunction: addAddOnsToCart,
-			fulfilledStepCallback: maybeAddStorageAddonToCart,
-			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'cartItem' ],
-			optionalDependencies: [ 'cartItem' ],
 		},
 
 		'difm-site-picker': {
