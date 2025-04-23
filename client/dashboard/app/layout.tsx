@@ -3,7 +3,6 @@ import { RouterProvider } from '@tanstack/react-router';
 import { useMemo } from 'react';
 import { AuthProvider, useAuth } from '../auth';
 import { AppProvider, type AppConfig } from './context';
-import Head from './head';
 import { queryClient } from './query-client';
 import { getRouter } from './router';
 
@@ -16,7 +15,6 @@ function RouterProviderWithAuth( { config }: { config: AppConfig } ) {
 function Layout( { config }: { config: AppConfig } ) {
 	return (
 		<AppProvider config={ config }>
-			<Head basePath={ config.basePath } />
 			<QueryClientProvider client={ queryClient }>
 				<AuthProvider>
 					<RouterProviderWithAuth config={ config } />

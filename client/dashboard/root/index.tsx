@@ -5,7 +5,7 @@ import { useAppContext } from '../app/context';
 import CommandPalette from '../command-palette';
 import Header from '../header';
 import { LoadingLine } from '../loading-line';
-import { useLinkNavigate } from './use-link-navigate';
+import { LinkNavigate } from './use-link-navigate';
 
 import './style.scss';
 
@@ -19,10 +19,9 @@ function Root() {
 	// https://tanstack.com/router/latest/docs/framework/react/api/router/RouterStateType#resolvedlocation-property
 	const isInitialLoad = ! router.resolvedLocation;
 
-	useLinkNavigate();
-
 	return (
 		<div className="dashboard-root__layout">
+			<LinkNavigate />
 			{ ( isFetching > 0 || isNavigating ) && <LoadingLine /> }
 			{ isInitialLoad && <LoadingLogo className="wpcom-site__logo" /> }
 			<Header />

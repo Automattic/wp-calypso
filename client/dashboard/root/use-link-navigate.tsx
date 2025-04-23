@@ -2,9 +2,10 @@ import { useRouter } from '@tanstack/react-router';
 import { useEffect } from 'react';
 import { useAppContext } from '../app/context';
 
-export function useLinkNavigate() {
+export function LinkNavigate() {
 	const { basePath } = useAppContext();
 	const router = useRouter();
+
 	useEffect( () => {
 		function onClick( event: MouseEvent ) {
 			// Allow the user to open in new tab, new window, etc.
@@ -34,4 +35,6 @@ export function useLinkNavigate() {
 			window.removeEventListener( 'click', onClick );
 		};
 	}, [ basePath, router ] );
+
+	return createPortal( <base href={ basePath + '/' } />, document.head );
 }
