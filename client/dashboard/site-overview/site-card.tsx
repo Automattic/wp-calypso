@@ -8,6 +8,7 @@ import {
 } from '@wordpress/components';
 import { dateI18n } from '@wordpress/date';
 import { __, sprintf } from '@wordpress/i18n';
+import SitePreview from '../site-preview';
 import type { Site, SiteDomain, Plan } from '../data/types';
 
 /**
@@ -52,20 +53,7 @@ export default function SiteCard( {
 							className="dashboard-site-overview__preview-iframe"
 							style={ { width: '300px', height: '200px' } }
 						>
-							<iframe
-								loading="lazy"
-								title="Site Preview"
-								// See mu-plugins/theme-preview.php
-								src={ `${ url }/?theme&hide_banners=true&preview_overlay=true` }
-								style={ {
-									display: 'block',
-									border: 'none',
-									transform: 'scale(0.25)',
-									transformOrigin: 'top left',
-								} }
-								width={ 1200 }
-								height={ 800 }
-							></iframe>
+							<SitePreview url={ url } scale={ 0.25 } />
 						</div>
 					) }
 				</div>
