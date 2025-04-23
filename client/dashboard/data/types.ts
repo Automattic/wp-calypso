@@ -64,6 +64,7 @@ export interface SiteOptions {
 	software_version: string;
 	admin_url: string;
 	is_wpcom_atomic?: boolean;
+	blog_public: number;
 }
 
 export interface Site {
