@@ -226,7 +226,13 @@ const SubscriberDataViews = ( {
 	const shouldShowLaunchpad =
 		! isLoading && ! searchTerm && ( ! grandTotal || ( grandTotal === 1 && isOwnerSubscribed ) );
 
-	// Read page from URL when component mounts or URL changes
+	/**
+	 * Read page from URL when component mounts or URL changes.
+	 *
+	 * URL Parameters:
+	 * - /subscribers/{siteSlug}/{subscriberId} - View specific subscriber
+	 * - ?page={number} - Navigate to specific page (preserved across views)
+	 */
 	useEffect( () => {
 		const urlParams = new URLSearchParams( window.location.search );
 		const pageFromUrl = urlParams.get( 'page' );
