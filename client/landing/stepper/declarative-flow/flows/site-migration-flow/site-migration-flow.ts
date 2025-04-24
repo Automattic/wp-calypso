@@ -52,13 +52,13 @@ const BASE_STEPS = [
 	STEPS.PROCESSING,
 ] as const;
 
-const hasSite = ( siteId: number, siteSlug: string ) => {
-	return siteId && siteId !== 0 && siteSlug && siteSlug !== '';
-};
-
 function initialize() {
 	return stepsWithRequiredLogin( BASE_STEPS );
 }
+
+const hasSite = ( siteId: number, siteSlug: string ) => {
+	return siteId && siteId !== 0 && siteSlug && siteSlug !== '';
+};
 
 const siteMigration: FlowV2< typeof initialize > = {
 	name: SITE_MIGRATION_FLOW,
@@ -80,7 +80,6 @@ const siteMigration: FlowV2< typeof initialize > = {
 			set( 'flow', { entryPoint: ref } );
 		}
 	},
-
 	useAssertConditions(): AssertConditionResult {
 		const { isAdmin } = useIsSiteAdmin();
 
@@ -120,7 +119,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 			triggerGuidesForStep( flowName, currentStep, siteId );
 		}, [ flowName, currentStep, siteId ] );
 
-		const submit: SubmitHandler< typeof initialize > = function ( submittedStep ) {
+		const submit: SubmitHandler< typeof initialize > = ( submittedStep ) => {
 			const { slug, providedDependencies } = submittedStep;
 			switch ( slug ) {
 				case STEPS.SITE_MIGRATION_IDENTIFY.slug: {
@@ -528,7 +527,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 								origin: STEPS.SITE_MIGRATION_IDENTIFY.slug,
 								backToFlow: `/${ flowPath }/${ STEPS.SITE_MIGRATION_IDENTIFY.slug }`,
 								from: fromQueryParam,
-							} ) as StepSlug
+							} )
 						);
 					}
 
