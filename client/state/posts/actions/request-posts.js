@@ -22,7 +22,7 @@ export function requestPosts( siteId, query = {} ) {
 			query,
 		} );
 
-		const endpoint = siteId ? `/site/${ siteId }/posts` : '/me/posts';
+		const endpoint = siteId ? `/sites/${ siteId }/posts` : '/me/posts';
 
 		return wpcom.req
 			.get( endpoint, { ...query } )
