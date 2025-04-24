@@ -60,9 +60,10 @@ Before responding to any request, follow these steps:
 - Try to always use RTL specific styles. For example, instead of margin-left, use margin-inline-start.
 - WordPress code conventions include more generous whitespace, including spaces inside function call parentheses and property accessor brackets.
 
-## WordPress imports
+## Dependencies
 
 - Use imports from [wordpress-imports.mdc](mdc:.cursor/rules/wordpress-imports.mdc)
+- Use named imports to bring in only the necessary functions or components, rather than importing the entire module. 
 
 ## Documentation
 
