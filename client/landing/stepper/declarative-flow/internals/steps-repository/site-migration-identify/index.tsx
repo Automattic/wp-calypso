@@ -141,13 +141,11 @@ export const Analyzer: FC< Props > = ( {
 export type SiteMigrationIdentifyAction = 'continue' | 'skip_platform_identification';
 
 const SiteMigrationIdentify: StepType< {
-	submits:
-		| {
-				action: SiteMigrationIdentifyAction;
-				platform?: string;
-				from?: string;
-		  }
-		| undefined;
+	submits: {
+		action: SiteMigrationIdentifyAction;
+		platform?: string;
+		from?: string;
+	};
 } > = function ( { navigation, flow } ) {
 	const siteSlug = useSiteSlug();
 	const translate = useTranslate();
@@ -235,8 +233,6 @@ const SiteMigrationIdentify: StepType< {
 				hideSkip
 				hideFormattedHeader
 				goBack={ navigation?.goBack }
-				// TODO: remove this as Stepper API V2 doesn't support goNext.
-				goNext={ () => navigation?.submit?.( undefined ) }
 				isFullLayout
 				stepContent={
 					<div className="import__capture-wrapper">

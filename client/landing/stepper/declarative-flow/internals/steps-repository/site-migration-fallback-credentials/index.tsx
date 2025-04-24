@@ -9,12 +9,10 @@ import type { Step } from '../../types';
 import './style.scss';
 
 const SiteMigrationFallbackCredentials: Step< {
-	submits:
-		| {
-				action: 'submit' | 'skip';
-				from?: string;
-		  }
-		| undefined;
+	submits: {
+		action: 'submit' | 'skip';
+		from?: string;
+	};
 } > = function ( { navigation } ) {
 	const translate = useTranslate();
 	const siteURL = useQuery().get( 'from' ) || '';
@@ -40,8 +38,6 @@ const SiteMigrationFallbackCredentials: Step< {
 				stepName="site-migration-fallback-credentials"
 				flowName="site-migration"
 				goBack={ navigation?.goBack }
-				// TODO: remove this as Stepper API V2 doesn't support goNext.
-				goNext={ () => navigation?.submit?.( undefined ) }
 				hideSkip
 				isFullLayout
 				formattedHeader={
