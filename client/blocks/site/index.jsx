@@ -21,12 +21,7 @@ import {
 	isRequestingSiteDomains,
 } from 'calypso/state/sites/domains/selectors';
 import { isTrialSite } from 'calypso/state/sites/plans/selectors';
-import {
-	getSite,
-	getSiteSlug,
-	isSitePreviewable,
-	getSiteOption,
-} from 'calypso/state/sites/selectors';
+import { getSite, getSiteOption } from 'calypso/state/sites/selectors';
 
 import './style.scss';
 
@@ -231,8 +226,6 @@ function mapStateToProps( state, ownProps ) {
 		site,
 		customDomains,
 		isLoadingDomains,
-		isPreviewable: isSitePreviewable( state, siteId ),
-		siteSlug: getSiteSlug( state, siteId ),
 		isSiteUnlaunched: isUnlaunchedSite( state, siteId ),
 		isSiteP2: isSiteWPForTeams( state, siteId ),
 		isP2Hub: isSiteP2Hub( state, siteId ),
