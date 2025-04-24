@@ -15,6 +15,7 @@ import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import { isSimpleSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { SubscribersFilterBy, SubscribersSortBy, SubscribersStatus } from '../../constants';
+import { getSubscriptionIdFromSubscriber } from '../../helpers';
 import { useSubscriptionPlans, useUnsubscribeModal } from '../../hooks';
 import {
 	useSubscribersQuery,
@@ -60,17 +61,11 @@ const SubscriberName = ( { displayName, email }: { displayName: string; email: s
 const useNewHelper = config.isEnabled( 'subscribers-helper-library' );
 
 const getSubscriptionId = ( subscriber: Subscriber ): number => {
-	if ( useNewHelper ) {
-		return subscriber.email_subscription_id || subscriber.wpcom_subscription_id || 0;
-	}
-	return subscriber.subscription_id || 0;
+	return Number( getSubscriptionIdFromSubscriber( subscriber ) );
 };
 
 const getSubscriptionIdString = ( subscriber: Subscriber ): string => {
-	if ( useNewHelper ) {
-		return String( subscriber.email_subscription_id || subscriber.wpcom_subscription_id || '' );
-	}
-	return String( subscriber.subscription_id || '' );
+	return String( getSubscriptionIdFromSubscriber( subscriber ) );
 };
 
 const getSubscriptionDate = ( subscriber: Subscriber ): string => {
@@ -205,9 +200,12 @@ const SubscriberDataViews = ( {
 	const { data: subscribedNewsletterCategoriesData, isLoading: isLoadingNewsletterCategories } =
 		useSubscribedNewsletterCategories( {
 			siteId: siteId as number,
-			subscriptionId: selectedSubscriber ? getSubscriptionId( selectedSubscriber ) : undefined,
-			userId: selectedSubscriber?.user_id,
-			enabled: !! selectedSubscriber,
+			subscriptionId:
+				subscriberId && ! isNaN( parseInt( subscriberId, 10 ) )
+					? parseInt( subscriberId, 10 )
+					: undefined,
+			userId: subscriberDetails?.user_id,
+			enabled: !! subscriberId && !! siteId,
 		} );
 
 	const { data: subscribersTotals } = useSubscriberCountQuery( siteId ?? null );
