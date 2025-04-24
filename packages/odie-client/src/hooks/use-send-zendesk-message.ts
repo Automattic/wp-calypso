@@ -32,7 +32,13 @@ export const useSendZendeskMessage = () => {
 			return;
 		}
 
-		await Smooch.sendMessage( { type: 'text', text: message.content }, conversationId );
+		const messageToSend = {
+			type: 'text',
+			text: message.content,
+			...( message.payload && { payload: message.payload } ),
+			...( message.metadata && { metadata: message.metadata } ),
+		};
+		await Smooch.sendMessage( messageToSend, conversationId );
 		setChatStatus( 'loaded' );
 	};
 };
