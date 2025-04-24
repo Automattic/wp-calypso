@@ -499,6 +499,10 @@
 		font-weight: 400;
 	}
 
+	.login__form-password .login__form-password-toggle {
+		top: 44px;
+	}
+
 	.login__form-action button {
 		font-size: $font-body;
 		line-height: 23px;

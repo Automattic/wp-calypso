@@ -320,6 +320,12 @@ $breakpoint-mobile: 782px; //Mobile size.
 		right: 12px;
 		top: 36px;
 		cursor: pointer;
+		width: 24px;
+		height: 24px;
+
+		svg {
+			fill: var(--color-neutral-20);
+		}
 	}
 
 	.form-input-validation {

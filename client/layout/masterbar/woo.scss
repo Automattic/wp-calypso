@@ -682,6 +682,10 @@ $breakpoint-mobile: 660px;
 
 	.login__form-password {
 		margin-top: 8px;
+
+		.login__form-password-toggle {
+			top: 40px;
+		}
 	}
 
 	.auth-form__separator::before,

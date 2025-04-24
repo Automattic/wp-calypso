@@ -634,6 +634,10 @@ $image-height: 47px;
 
 	.login__form-password {
 		margin-top: 15px;
+
+		.login__form-password-toggle {
+			top: 44px;
+		}
 	}
 
 	.components-button.is-primary,
