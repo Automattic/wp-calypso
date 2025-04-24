@@ -62,11 +62,7 @@ function TwoFactorActions( {
 	return (
 		<Card className="two-factor-actions__actions">
 			{ isSecurityKeyAvailable && (
-				<Button
-					data-e2e-link="2fa-security-key-link"
-					value="webauthn"
-					onClick={ handleButtonClick }
-				>
+				<Button value="webauthn" onClick={ handleButtonClick }>
 					{ translate( 'Continue with your security\u00A0key' ) }
 				</Button>
 			) }
@@ -78,12 +74,7 @@ function TwoFactorActions( {
 			) }
 
 			{ isSmsAvailable && (
-				<Button
-					data-e2e-link="2fa-sms-link"
-					value="sms"
-					disabled={ ! isSmsAllowed }
-					onClick={ handleButtonClick }
-				>
+				<Button value="sms" disabled={ ! isSmsAllowed } onClick={ handleButtonClick }>
 					{ translate( 'Send code via\u00A0text\u00A0message' ) }
 				</Button>
 			) }
