@@ -5,6 +5,7 @@ import { ONBOARDING_FLOW } from '@automattic/onboarding';
 import { addQueryArgs } from '@wordpress/url';
 import onboarding from '../flows/onboarding/onboarding';
 import { STEPS } from '../internals/steps';
+import { ProcessingResult } from '../internals/steps-repository/processing-step/constants';
 import { renderFlow } from './helpers';
 
 const originalLocation = window.location;
@@ -59,6 +60,7 @@ describe( 'Onboarding Flow', () => {
 					hasExternalTheme: false,
 					hasPluginByGoal: true,
 					siteSlug: 'test-site.wordpress.com',
+					processingResult: ProcessingResult.SUCCESS,
 				},
 			} );
 
@@ -73,6 +75,7 @@ describe( 'Onboarding Flow', () => {
 				dependencies: {
 					hasExternalTheme: true,
 					siteSlug: 'test-site.wordpress.com',
+					processingResult: ProcessingResult.SUCCESS,
 				},
 			} );
 
