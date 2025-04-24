@@ -36,7 +36,6 @@ const site: SiteDetails = {
 		delete_users: true,
 		remove_users: true,
 		own_site: true,
-		view_hosting: true,
 		view_stats: true,
 		activate_plugins: true,
 	},

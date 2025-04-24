@@ -9,6 +9,7 @@ import {
 import { dateI18n } from '@wordpress/date';
 import { __, sprintf } from '@wordpress/i18n';
 import SitePreview from '../site-preview';
+import { getSiteStatusLabel } from '../utils/site-status';
 import type { Site, SiteDomain, Plan } from '../data/types';
 
 /**
@@ -64,7 +65,7 @@ export default function SiteCard( {
 						</Field>
 					) }
 					<HStack justify="space-between">
-						<Field title={ __( 'Status' ) }>status here...</Field>
+						<Field title={ __( 'Status' ) }>{ getSiteStatusLabel( site ) }</Field>
 					</HStack>
 					<HStack justify="space-between">
 						<Field title={ __( 'WordPress' ) }>{ software_version }</Field>

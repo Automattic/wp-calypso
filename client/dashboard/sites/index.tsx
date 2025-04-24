@@ -11,6 +11,7 @@ import DataViewsCard from '../dataviews-card';
 import PageLayout from '../page-layout';
 import SiteIcon from '../site-icon';
 import SitePreview from '../site-preview';
+import { STATUS_LABELS, getSiteStatus, getSiteStatusLabel } from '../utils/site-status';
 import type { Site } from '../data/types';
 import type { View } from '@wordpress/dataviews';
 
@@ -76,6 +77,13 @@ const fields = [
 		],
 	},
 	{
+		id: 'status',
+		label: __( 'Status' ),
+		getValue: ( { item }: { item: Site } ) => getSiteStatus( item ),
+		elements: Object.entries( STATUS_LABELS ).map( ( [ value, label ] ) => ( { value, label } ) ),
+		render: ( { item }: { item: Site } ) => getSiteStatusLabel( item ),
+	},
+	{
 		id: 'preview',
 		label: __( 'Preview' ),
 		render: function PreviewRender( { item }: { item: Site } ) {
@@ -112,7 +120,7 @@ const fields = [
 const DEFAULT_LAYOUTS = {
 	table: {
 		mediaField: 'icon.ico',
-		fields: [ 'subscribers_count', 'backups', 'protect' ],
+		fields: [ 'subscribers_count', 'status', 'backups', 'protect' ],
 		titleField: 'name',
 		descriptionField: 'url',
 	},
