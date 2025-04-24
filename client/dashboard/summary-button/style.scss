@@ -1,0 +1,65 @@
+.summary-button {
+	padding: 0;
+	height: inherit;
+	display: block;
+
+	&.has-density-medium {
+		.summary-button-card-body {
+			padding: 12px;
+		}
+	}
+
+	&.has-density-high {
+		.summary-button-card-body {
+			padding: 4px;
+		}
+
+		.summary-button-decoration svg {
+			width: 16px;
+			height: 16px;
+		}
+	}
+
+	.summary-button-card {
+		background-color: inherit;
+	}
+
+	&:hover:not(:disabled, [aria-disabled="true"], .is-pressed) {
+		background: color-mix(in srgb, var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9)) 4%, transparent);
+		color: var(--wp-components-color-accent-darker-20, var(--wp-admin-theme-color-darker-20, #183ad6));
+
+		.summary-button-title {
+			color: var(--wp-components-color-accent-darker-20, var(--wp-admin-theme-color-darker-20, #183ad6));
+		}
+	}
+
+	&:disabled, &[aria-disabled="true"] {
+		.summary-button-card-body {
+			opacity: 0.6;
+
+			.summary-button-title {
+				// TODO: can I get this from a var?
+				color: #757575;
+			}
+		}
+	}
+
+	.summary-button-strapline {
+		text-transform: uppercase;
+	}
+
+	.summary-button-navigation-icon,
+	.summary-button-decoration svg {
+		fill: #757575;
+		flex-shrink: 0;
+	}
+
+	.summary-button-decoration {
+		img {
+			// TODO: revisit styles with design.. These are placeholder styles.
+			width: 20px;
+			height: 20px;
+			flex-shrink: 0;
+		}
+	}
+}
