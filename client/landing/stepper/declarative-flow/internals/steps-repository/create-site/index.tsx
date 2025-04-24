@@ -13,7 +13,6 @@ import {
 	isReadymadeFlow,
 	isStartWritingFlow,
 	isOnboardingFlow,
-	isHostedSiteMigrationFlow,
 	Step,
 } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
@@ -162,7 +161,7 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 			};
 		}
 
-		const siteIntent = isHostedSiteMigrationFlow( flow ) ? 'migration' : '';
+		const siteIntent = isSiteMigrationFlow( flow ) ? 'migration' : '';
 
 		const sourceSlug = hasSourceSlug( data ) ? data.sourceSlug : undefined;
 		const site = await createSiteWithCart(
