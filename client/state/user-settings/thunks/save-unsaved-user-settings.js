@@ -24,7 +24,7 @@ const saveUnsavedUserSettings =
 			return obj;
 		}, {} );
 
-		const response = await wp.me().settings().update( settingsToSave );
+		const response = await wp.req.put( '/me/settings', settingsToSave );
 		dispatch( saveUserSettingsSuccess( fromApi( response ) ) );
 		dispatch( clearUnsavedUserSettings( fields ) );
 

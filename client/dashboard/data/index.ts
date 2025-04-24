@@ -309,12 +309,9 @@ export const fetchEmail = ( id: string ): Promise< Email | undefined > => {
 };
 
 export const fetchUser = async (): Promise< User > => {
-	return await wpcom.me().get();
+	return wpcom.req.get( '/me' );
 };
 
 export const fetchTwoStep = async (): Promise< TwoStep > => {
-	return wpcom.req.get( {
-		path: '/me/two-step?http_envelope=1',
-		apiNamespace: 'rest/v1.1',
-	} );
+	return wpcom.req.get( '/me/two-step' );
 };
