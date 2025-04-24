@@ -12,7 +12,7 @@ import PageLayout from '../page-layout';
 import SiteIcon from '../site-icon';
 import SitePreview from '../site-preview';
 import type { Site } from '../data/types';
-import type { View } from '@wordpress/dataviews';
+import type { View, Operator } from '@wordpress/dataviews';
 
 const actions = [
 	{
@@ -55,25 +55,31 @@ const fields = [
 		id: 'backups',
 		label: __( 'Backups' ),
 		getValue: ( { item }: { item: Site } ) =>
-			item.plan.features.active.includes( 'backups' ) ? 'enabled' : 'disabled',
+			item.plan.features.active.includes( 'backups' ) || undefined,
 		elements: [
-			{ value: 'enabled', label: __( 'Enabled' ) },
-			{ value: 'disabled', label: __( 'Disabled' ) },
+			{ value: true, label: __( 'Enabled' ) },
+			{ value: undefined, label: __( 'Disabled' ) },
 		],
 		render: ( { item }: { item: Site } ) =>
 			item.plan.features.active.includes( 'backups' ) ? <Icon icon={ check } /> : __( 'Disabled' ),
+		filterBy: {
+			operators: [ 'is' as Operator ],
+		},
 	},
 	{
 		id: 'protect',
 		label: __( 'Protect' ),
 		getValue: ( { item }: { item: Site } ) =>
-			item.active_modules?.includes( 'protect' ) ? 'enabled' : 'disabled',
+			item.active_modules?.includes( 'protect' ) || undefined,
 		render: ( { item }: { item: Site } ) =>
 			item.active_modules?.includes( 'protect' ) ? <Icon icon={ check } /> : __( 'Disabled' ),
 		elements: [
-			{ value: 'enabled', label: __( 'Enabled' ) },
-			{ value: 'disabled', label: __( 'Disabled' ) },
+			{ value: true, label: __( 'Enabled' ) },
+			{ value: undefined, label: __( 'Disabled' ) },
 		],
+		filterBy: {
+			operators: [ 'is' as Operator ],
+		},
 	},
 	{
 		id: 'preview',
