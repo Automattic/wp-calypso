@@ -58,7 +58,14 @@ const hasSite = ( siteId: number, siteSlug: string ) => {
 
 const siteMigration: FlowV2 = {
 	name: SITE_MIGRATION_FLOW,
-	isSignupFlow: false,
+	get isSignupFlow() {
+		const searchParams = new URLSearchParams( window.location.search );
+		const hasDestinationSite = [
+			searchParams.has( 'siteSlug' ),
+			searchParams.has( 'siteId' ),
+		].some( Boolean );
+		return ! hasDestinationSite;
+	},
 	__experimentalUseSessions: true,
 	__experimentalUseBuiltinAuth: true,
 
