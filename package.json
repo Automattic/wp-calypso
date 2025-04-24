@@ -245,7 +245,6 @@
 		"@babel/core": "^7.26.10",
 		"@babel/eslint-parser": "^7.26.10",
 		"@babel/register": "^7.25.9",
-		"@babel/runtime": "^7.26.10",
 		"@bartekbp/typescript-checkstyle": "^5.0.0",
 		"@pmmmwh/react-refresh-webpack-plugin": "^0.5.15",
 		"@signal-noise/stylelint-scales": "^2.0.3",
