@@ -2,6 +2,7 @@ import { addQueryArgs } from '@wordpress/url';
 import { localize, fixMe } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import AsyncLoad from 'calypso/components/async-load';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import { withSiteCopy } from 'calypso/landing/stepper/hooks/use-site-copy';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -22,8 +23,11 @@ import { isJetpackSite, getSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import AdministrationToolCard from './card';
 import { requestRestore } from './restore-plan-software';
-
 import './style.scss';
+
+const MODAL_NAMES = {
+	LEAVE_SITE: 'LEAVE_SITE',
+};
 
 const trackDeleteSiteOption = ( option ) => {
 	recordTracksEvent( 'calypso_settings_delete_site_options', {
@@ -32,11 +36,35 @@ const trackDeleteSiteOption = ( option ) => {
 };
 
 class SiteTools extends Component {
+	state = {
+		modalOpen: {
+			leaveSite: false,
+		},
+	};
+
 	componentDidUpdate( prevProps ) {
 		if ( ! prevProps.purchasesError && this.props.purchasesError ) {
 			this.props.errorNotice( this.props.purchasesError );
 		}
 	}
+
+	handleOpenModal = ( modalName ) => () => {
+		this.setState( ( state ) => ( {
+			modalOpen: {
+				...state.modalOpen,
+				[ modalName ]: true,
+			},
+		} ) );
+	};
+
+	handleCloseModal = ( modalName ) => () => {
+		this.setState( ( state ) => ( {
+			modalOpen: {
+				...state.modalOpen,
+				[ modalName ]: false,
+			},
+		} ) );
+	};
 
 	render() {
 		const {
@@ -53,10 +81,13 @@ class SiteTools extends Component {
 			showDeleteSite,
 			showManageConnection,
 			showStartSiteTransfer,
+			showLeaveSite,
 			siteId,
 			headerTitle,
 			source,
 		} = this.props;
+
+		const { modalOpen } = this.state;
 
 		const changeAddressLink = `/domains/manage/${ siteSlug }?source=${ source }`;
 
@@ -148,6 +179,25 @@ class SiteTools extends Component {
 						description={ restorePlanSoftwareText }
 					/>
 				) }
+
+				{ showLeaveSite && (
+					<>
+						<AdministrationToolCard
+							title={ translate( 'Leave site' ) }
+							description={ translate( 'Leave this site and remove your access.' ) }
+							onClick={ this.handleOpenModal( MODAL_NAMES.LEAVE_SITE ) }
+						/>
+						{ modalOpen[ MODAL_NAMES.LEAVE_SITE ] && (
+							<AsyncLoad
+								require="calypso/sites/settings/administration/tools/leave-site/leave-site-modal"
+								placeholder={ null }
+								siteId={ siteId }
+								onClose={ this.handleCloseModal( MODAL_NAMES.LEAVE_SITE ) }
+							/>
+						) }
+					</>
+				) }
+
 				{ showDeleteContent && (
 					<AdministrationToolCard
 						href={ startOverLink }
@@ -219,6 +269,8 @@ export default connect(
 		const showStartSiteTransfer =
 			! isDevelopmentSite && canCurrentUserStartSiteOwnerTransfer( state, siteId );
 
+		const showLeaveSite = sitePurchasesLoaded && ! isP2;
+
 		return {
 			site,
 			isAtomic,
@@ -233,6 +285,7 @@ export default connect(
 			showDeleteSite: ( ! isJetpack || isAtomic ) && ! isVip && sitePurchasesLoaded,
 			showManageConnection: isJetpack && ! isAtomic,
 			showStartSiteTransfer,
+			showLeaveSite,
 			siteId,
 			hasCancelablePurchases: hasCancelableSitePurchases( state, siteId ),
 		};

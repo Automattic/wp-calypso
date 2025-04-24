@@ -1,5 +1,6 @@
 import { INSTALL_PLUGIN } from 'calypso/lib/plugins/constants';
 import { PLUGIN_INSTALL_REQUEST_SUCCESS } from 'calypso/state/action-types';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	completePluginUpload,
 	pluginUploadError,
@@ -22,16 +23,6 @@ const SUCCESS_RESPONSE = {
 	plugin_url: 'http://wordpress.org/extend/plugins/hello-dolly/',
 	slug: 'hello-dolly',
 	version: '1.6',
-};
-
-const ERROR_RESPONSE = {
-	error: 'folder_exists',
-	message: 'folder_exists',
-};
-
-const UNKNOWN_ERROR_RESPONSE = {
-	error: 'unknown_error',
-	message: 'unknown_error',
 };
 
 describe( 'uploadPlugin', () => {
@@ -74,16 +65,95 @@ describe( 'uploadComplete', () => {
 } );
 
 describe( 'receiveError', () => {
-	test( 'should return a plugin upload error action for a known error', () => {
-		const action = receiveError( { siteId }, ERROR_RESPONSE );
-		expect( action ).toEqual(
-			expect.arrayContaining( [ pluginUploadError( siteId, ERROR_RESPONSE ) ] )
+	test( 'should return expected actions for a muted error (folder_exists)', () => {
+		const error = { error: 'folder_exists', message: 'folder_exists' };
+		const actions = receiveError( { siteId }, error );
+
+		expect( actions ).toEqual( [
+			recordTracksEvent( 'calypso_plugin_upload_error', {
+				error_code: error.error,
+				error_message: error.message,
+			} ),
+			pluginUploadError( siteId, error ),
+		] );
+
+		// Should not contain error notice
+		expect( actions ).not.toEqual(
+			expect.arrayContaining( [
+				expect.objectContaining( {
+					type: 'NOTICE_ADD',
+				} ),
+			] )
 		);
 	} );
-	test( 'should return a plugin upload error action for an unknown error', () => {
-		const action = receiveError( { siteId }, UNKNOWN_ERROR_RESPONSE );
-		expect( action ).toEqual(
-			expect.arrayContaining( [ pluginUploadError( siteId, UNKNOWN_ERROR_RESPONSE ) ] )
+
+	test( 'should return expected actions for a muted error (plugin_malicious)', () => {
+		const error = { error: 'plugin_malicious', message: 'plugin_malicious' };
+		const actions = receiveError( { siteId }, error );
+
+		expect( actions ).toEqual( [
+			recordTracksEvent( 'calypso_plugin_upload_error', {
+				error_code: error.error,
+				error_message: error.message,
+			} ),
+			pluginUploadError( siteId, error ),
+		] );
+
+		// Should not contain error notice
+		expect( actions ).not.toEqual(
+			expect.arrayContaining( [
+				expect.objectContaining( {
+					type: 'NOTICE_ADD',
+				} ),
+			] )
+		);
+	} );
+
+	test( 'should return expected actions including error notice for non-muted error', () => {
+		const error = { error: 'too_large', message: 'File is too large' };
+		const actions = receiveError( { siteId }, error );
+
+		// Test each action individually to handle dynamic notice ID
+		expect( actions[ 0 ] ).toEqual(
+			recordTracksEvent( 'calypso_plugin_upload_error', {
+				error_code: error.error,
+				error_message: error.message,
+			} )
+		);
+		expect( actions[ 1 ] ).toEqual( pluginUploadError( siteId, error ) );
+		expect( actions[ 2 ] ).toEqual(
+			expect.objectContaining( {
+				type: 'NOTICE_CREATE',
+				notice: expect.objectContaining( {
+					status: 'is-error',
+					text: 'The plugin zip file must be smaller than 10MB.',
+					showDismiss: true,
+				} ),
+			} )
+		);
+	} );
+
+	test( 'should return expected actions for unknown error', () => {
+		const error = { error: 'unknown_error', message: 'Something went wrong' };
+		const actions = receiveError( { siteId }, error );
+
+		// Test each action individually to handle dynamic notice ID
+		expect( actions[ 0 ] ).toEqual(
+			recordTracksEvent( 'calypso_plugin_upload_error', {
+				error_code: error.error,
+				error_message: error.message,
+			} )
+		);
+		expect( actions[ 1 ] ).toEqual( pluginUploadError( siteId, error ) );
+		expect( actions[ 2 ] ).toEqual(
+			expect.objectContaining( {
+				type: 'NOTICE_CREATE',
+				notice: expect.objectContaining( {
+					status: 'is-error',
+					text: 'Upload problem: unknown_error.',
+					showDismiss: true,
+				} ),
+			} )
 		);
 	} );
 } );

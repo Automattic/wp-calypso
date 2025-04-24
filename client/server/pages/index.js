@@ -19,6 +19,10 @@ import { get, includes, snakeCase } from 'lodash';
 import { stringify } from 'qs';
 // eslint-disable-next-line no-restricted-imports
 import superagent from 'superagent'; // Don't have Node.js fetch lib yet.
+import {
+	DASHBOARD_SECTION_DEFINITION,
+	DASHBOARD_A4A_SECTION_DEFINITION,
+} from 'calypso/dashboard/section';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import { STEPPER_SECTION_DEFINITION } from 'calypso/landing/stepper/section';
 import { SUBSCRIPTIONS_SECTION_DEFINITION } from 'calypso/landing/subscriptions/section';
@@ -983,6 +987,12 @@ export default function pages() {
 	// Set up login routing.
 	handleSectionPath( LOGIN_SECTION_DEFINITION, '/log-in', 'entry-login' );
 	loginRouter( serverRouter( app, setUpRoute, null ) );
+
+	// Set up v2 dashboard routing.
+	handleSectionPath( DASHBOARD_SECTION_DEFINITION, '/v2', 'entry-dashboard-dotcom' );
+
+	// Set up v2-a4a dashboard routing.
+	handleSectionPath( DASHBOARD_A4A_SECTION_DEFINITION, '/v2-a4a', 'entry-dashboard-a4a' );
 
 	handleSectionPath( STEPPER_SECTION_DEFINITION, '/setup', 'entry-stepper' );
 	handleSectionPath( SUBSCRIPTIONS_SECTION_DEFINITION, '/subscriptions', 'entry-subscriptions' );

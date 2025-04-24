@@ -34,6 +34,7 @@ class Month extends PureComponent {
 
 		if ( ! isHeader && href ) {
 			page( href );
+			window.scrollTo( 0, 0 );
 			return;
 		}
 		this.setState( { showPopover: ! this.state.showPopover } );
@@ -71,7 +72,7 @@ const StatsViewsMonths = ( props ) => {
 
 	const momentFromMonthYear = ( month, year ) => {
 		const monthValue = parseInt( month ) + 1;
-		return moment( `${ year }-${ monthValue }-1`, 'YYYY-M-D' );
+		return moment( `${ year }-${ monthValue }-1`, 'YYYY-MM-DD' );
 	};
 
 	const getMonthTotal = ( totals, month ) => {
@@ -136,9 +137,14 @@ const StatsViewsMonths = ( props ) => {
 
 			totalValue += value;
 
+			const startDate = moment( `${ year }-${ month + 1 }-1` ).format( 'YYYY-MM-DD' );
+			const endDate = moment( `${ year }-${ month + 1 }-1` )
+				.endOf( 'month' )
+				.format( 'YYYY-MM-DD' );
+
 			return (
 				<Month
-					href={ `/stats/month/${ siteSlug }?startDate=${ year }-${ month + 1 }-1` }
+					href={ `/stats/day/${ siteSlug }?chartStart=${ startDate }&chartEnd=${ endDate }` }
 					className={ className }
 					key={ `month-${ month }` }
 					value={ numberFormat( value ) }

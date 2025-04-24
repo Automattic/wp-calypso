@@ -193,6 +193,7 @@
 		"stats/paid-wpcom-v2": true,
 		"stats/paid-wpcom-v3": true,
 		"stats/real-time-tab": true,
+		"stats/navigation-improvement": true,
 		"subscriber-importer": true,
 		"subscribers-helper-library": true,
 		"themes/block-theme-previews-premium-and-woo": true,
@@ -207,6 +208,7 @@
 		"upgrades/wpcom-monthly-plans": true,
 		"user-management-revamp": true,
 		"wpcom-user-bootstrap": false,
-		"yolo/command-palette": true
+		"yolo/command-palette": true,
+		"dashboard/v2": true
 	}
 }

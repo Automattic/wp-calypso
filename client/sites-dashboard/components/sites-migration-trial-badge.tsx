@@ -16,11 +16,10 @@ const SitesMigrationTrialBadge = styled( SitesLaunchStatusBadge )( ( props: Prop
 		color: COLOR,
 		backgroundColor: BACKGROUND_COLOR,
 	},
-	'.current-site .site:hover &, .notouch .layout__secondary .site-selector.is-hover-enabled .site:hover  &':
-		{
-			color: '#001621',
-			backgroundColor: '#68b3e8',
-		},
+	'.notouch .layout__secondary .site-selector.is-hover-enabled .site:hover  &': {
+		color: '#001621',
+		backgroundColor: '#68b3e8',
+	},
 } ) );
 
 export default SitesMigrationTrialBadge;

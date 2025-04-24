@@ -1,5 +1,4 @@
 import { UrlData } from 'calypso/blocks/import/types';
-import { WPImportOption } from 'calypso/blocks/importer/wordpress/types';
 import type { SiteDetails } from '@automattic/data-stores';
 
 export type Importer = 'blogger' | 'medium' | 'squarespace' | 'wix' | 'wordpress';
@@ -17,7 +16,7 @@ export type StepNavigator = {
 	goToImportContentOnlyPage?: () => void;
 	goToSiteViewPage?: () => void;
 	goToDashboardPage?: () => void;
-	goToCheckoutPage?: ( option: WPImportOption, queryArgs?: object ) => void;
+	goToCheckoutPage?: ( queryArgs?: object ) => void;
 	goToWpAdminImportPage?: () => void;
 	goToWpAdminWordPressPluginPage?: () => void;
 	navigate?: ( path: string ) => void;

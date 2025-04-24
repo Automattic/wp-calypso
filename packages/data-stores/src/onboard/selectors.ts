@@ -77,7 +77,6 @@ export const getSignupDomainOrigin = ( state: State ) => state.signupDomainOrigi
 export const getSiteUrl = ( state: State ) => state.siteUrl;
 export const getHideFreePlan = ( state: State ) => state.hideFreePlan;
 export const getHidePlansFeatureComparison = ( state: State ) => state.hidePlansFeatureComparison;
-export const getIsMigrateFromWp = ( state: State ) => state.isMigrateFromWp;
 export const getPluginsToVerify = ( state: State ) => state.pluginsToVerify;
 export const getProfilerData = ( state: State ) => state.profilerData;
 export const getPaidSubscribers = ( state: State ) => state.paidSubscribers;

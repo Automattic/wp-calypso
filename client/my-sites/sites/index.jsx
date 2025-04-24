@@ -77,11 +77,8 @@ class Sites extends Component {
 		}
 
 		if ( /^\/hosting-config/.test( path ) ) {
-			if ( ! site.capabilities.view_hosting ) {
-				return false;
-			}
-
 			// allow both Atomic sites and Simple sites, so they can be exposed to upgrade notices.
+			// Note: This is a deprecated path, superceded by /hosting-features/ or /sites/settings/server/ as of 2025 April.
 			return true;
 		}
 

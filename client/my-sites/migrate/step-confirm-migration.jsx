@@ -112,6 +112,7 @@ class StepConfirmMigration extends Component {
 		const { targetSite, translate } = this.props;
 		const targetSiteDomain = get( targetSite, 'domain' );
 
+		// TODO: is the following "import everything" behaviour up to date?
 		if ( this.isTargetSitePlanCompatible() ) {
 			return (
 				<MigrateButton onClick={ this.handleClick } targetSiteDomain={ targetSiteDomain }>
