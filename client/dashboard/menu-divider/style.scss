@@ -1,0 +1,6 @@
+@import '@wordpress/base-styles/variables';
+
+.dashboard-menu-divider {
+	height: $grid-unit-40;
+	border-left: $border-width solid $gray-100;
+}

@@ -435,7 +435,7 @@ const MarketplaceProductInstall = ( {
 					) }
 					secondaryAction={ translate( 'Back' ) }
 					secondaryActionURL={ `/plugins/upload/${ selectedSiteSlug }` }
-					action={ translate( 'Continue' ) }
+					action={ translate( 'Re-upload plugin' ) }
 					actionURL={ `https://${ selectedSiteSlug }/wp-admin/plugin-install.php?tab=upload` }
 				/>
 			);
@@ -456,7 +456,7 @@ const MarketplaceProductInstall = ( {
 					}
 					secondaryAction={ translate( 'Back' ) }
 					secondaryActionURL={ `/plugins/upload/${ selectedSiteSlug }` }
-					action={ translate( 'Continue' ) }
+					action={ translate( 'Re-upload plugin' ) }
 					actionURL={ `https://${ selectedSiteSlug }/wp-admin/plugin-install.php?tab=upload` }
 				/>
 			);

@@ -10,15 +10,9 @@ const ImporterWordpress: Step< {
 	submits: { type: 'redirect'; url: string } | { action: 'verify-email' };
 	accepts: { customizedActionButtons?: ReactElement };
 } > = function ( props ) {
-	let customizedActionButtons;
-
-	return (
-		<Importer
-			importer="wordpress"
-			{ ...props }
-			customizedActionButtons={ customizedActionButtons }
-		/>
-	);
+	// TODO: previously, customizedActionButtons was always overridden to undefined
+	// Was it a bug, or was it intentional?
+	return <Importer importer="wordpress" { ...props } />;
 };
 
 export default ImporterWordpress;
