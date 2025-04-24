@@ -54,7 +54,7 @@ describe( 'SurveyManager', () => {
 		expect( container ).toBeEmptyDOMElement();
 	} );
 
-	it( 'should render survey for a flow with an associated survey', () => {
+	it( 'should render survey for site migration flow', () => {
 		const testFlow: Flow = {
 			name: SITE_MIGRATION_FLOW,
 			isSignupFlow: true,
