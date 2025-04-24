@@ -56,7 +56,12 @@ export interface NavigationControlsWithSubmittedData< StepSubmittedTypes = unkno
 	 * Submits the answers provided in the flow. If it's complaining about the type, it means you haven't typed the step correctly.
 	 * @see {@link client/landing/stepper/declarative-flow/internals/steps-repository/DEVELOPMENT/making-a-new-step.md}
 	 */
-	submit: ( arg: StepSubmittedTypes & { shouldSkipSubmitTracking?: boolean } ) => void;
+	submit: (
+		// This is the only way to allow steps to submit `{ data: 1 } | undefined`
+		arg: StepSubmittedTypes extends undefined
+			? undefined
+			: StepSubmittedTypes & { shouldSkipSubmitTracking?: boolean }
+	) => void;
 }
 
 export type AsyncStepperStep = ( typeof STEPS )[ keyof typeof STEPS ];

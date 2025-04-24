@@ -31,7 +31,6 @@ const UseMyDomain: StepType< {
 		| {
 				mode: 'transfer' | 'connect';
 				domain: string;
-				shouldSkipSubmitTracking?: boolean;
 		  }
 		| undefined;
 } > = function UseMyDomain( { navigation, flow } ) {
@@ -64,7 +63,7 @@ const UseMyDomain: StepType< {
 		setHideFreePlan( true );
 		setDomainCartItem( domainCartItem );
 
-		submit?.();
+		submit?.( undefined );
 	};
 
 	const handleOnConnect = async ( domain: string ) => {
@@ -72,7 +71,7 @@ const UseMyDomain: StepType< {
 		setHideFreePlan( true );
 		setDomainCartItem( domainCartItem );
 
-		submit?.();
+		submit?.( undefined );
 	};
 
 	const getInitialQuery = function () {
