@@ -170,6 +170,7 @@ export type Message = {
 	created_at?: string;
 	feedbackOptions?: MessageAction[];
 	metadata?: Record< string, any >;
+	payload?: string;
 	quotedMessageId?: string;
 };
 

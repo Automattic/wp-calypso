@@ -1,186 +1,81 @@
-import { HelpCenterSelect } from '@automattic/data-stores/src/help-center/types';
-import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import {
 	useRateChat,
 	useAuthenticateZendeskMessaging,
 	getBadRatingReasons,
+	isTestModeEnvironment,
 } from '@automattic/zendesk-client';
-import { Button, TextareaControl, SelectControl } from '@wordpress/components';
-import { useSelect } from '@wordpress/data';
+import { Button, TextareaControl, SelectControl, Spinner } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
-import { useState } from 'react';
+import { useCallback, useState, useMemo } from 'react';
 import Smooch from 'smooch';
 import { useOdieAssistantContext } from '../../context';
-import { MessageAction, ZendeskMessage } from '../../types';
-import { zendeskMessageConverter } from '../../utils';
+import { useSendChatMessage } from '../../hooks';
+import { Message, MessageAction } from '../../types';
 import { ThumbsDownIcon, ThumbsUpIcon } from './thumbs-icons';
-
-type MessagePayload = {
-	type: 'text' | 'formResponse';
-	text?: string;
-	payload?: string;
-	metadata?: Record< string, any >;
-	fields?: Array< {
-		type: 'text';
-		name: string;
-		label: string;
-		text: string;
-	} >;
-	quotedMessageId?: string;
-	role: 'appUser';
-};
 
 type FeedbackFormProps = {
 	chatFeedbackOptions: MessageAction[];
 };
 
+const generateFeedbackMessage = ( score: 'good' | 'bad' ): Message => {
+	return {
+		content: score === 'good' ? 'Good 👍' : 'Bad 👎',
+		payload: JSON.stringify( { csat_rating: score.toUpperCase() } ),
+		metadata: { rated: true },
+		role: 'user',
+		type: 'message',
+	} as Message;
+};
+
 export const FeedbackForm = ( { chatFeedbackOptions }: FeedbackFormProps ) => {
-	const { chat, isUserEligibleForPaidSupport, addMessage } = useOdieAssistantContext();
+	const { isUserEligibleForPaidSupport } = useOdieAssistantContext();
 	const user = Smooch.getUser();
 	const { __ } = useI18n();
-	const [ score, setScore ] = useState< 'GOOD' | 'BAD' | '' >( '' );
+	const [ score, setScore ] = useState< 'good' | 'bad' | '' >( '' );
 	const [ comment, setComment ] = useState( '' );
 	const [ reason, setReason ] = useState( '' );
-	const { mutateAsync: rateChat } = useRateChat();
-
-	const { zendeskClientId } = useSelect( ( select ) => {
-		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
-		return {
-			zendeskClientId: helpCenterSelect.getZendeskClientId(),
-		};
-	}, [] );
 	const { data: authData } = useAuthenticateZendeskMessaging(
 		isUserEligibleForPaidSupport,
 		'messenger'
 	);
+	const ticketId = useMemo( () => {
+		if ( ! chatFeedbackOptions.length ) {
+			return null;
+		}
+		return chatFeedbackOptions[ 0 ]?.metadata?.ticket_id ?? null;
+	}, [ chatFeedbackOptions ] );
+	const sendMessage = useSendChatMessage();
 
-	const inferredClientId = chat.clientId || zendeskClientId;
-	const lastMessage = chat?.messages?.[ chat?.messages.length - 1 ];
 	const badRatingReasons = getBadRatingReasons();
 
-	const generateMessage = ( {
-		type,
-		score,
-		comment,
-		quotedMessageId,
-		accountId,
-		ticketID,
-	}: {
-		type: 'text' | 'formResponse';
-		score?: 'GOOD' | 'BAD';
-		comment?: string;
-		quotedMessageId?: string;
-		accountId?: number;
-		ticketID?: number;
-	} ): MessagePayload | null => {
-		if ( type === 'text' ) {
-			const textValue = score === 'GOOD' ? 'Good 👍' : 'Bad 👎';
-			return {
-				type: 'text',
-				text: textValue,
-				payload: JSON.stringify( { csat_rating: score } ),
-				metadata: {
-					rated: true,
-					score,
-					account_id: accountId,
-					ticket_id: ticketID,
-				},
-				role: 'appUser',
-			};
-		} else if ( type === 'formResponse' ) {
-			return {
-				type: 'formResponse',
-				fields: [
-					{
-						type: 'text',
-						name: 'csat_comment',
-						label: 'Tell us what you think:',
-						text: comment || '',
-					},
-				],
-				quotedMessageId: quotedMessageId,
-				role: 'appUser',
-			};
-		}
-		return null;
-	};
+	const { isPending: isSubmitting, mutateAsync: rateChat } = useRateChat();
 
-	const ratingConversation = ( score: 'GOOD' | 'BAD' ) => {
-		if ( ! chat?.conversationId || ! chat?.messages?.length || ! authData ) {
+	const postCSAT = useCallback( async () => {
+		if ( ! authData?.jwt || ! ticketId || ! score ) {
 			return;
 		}
 
-		const index = score === 'GOOD' ? 0 : 1;
+		await sendMessage( generateFeedbackMessage( score ) );
 
-		const ticketID = chatFeedbackOptions[ index ]?.metadata?.ticket_id;
-		const accountId = chatFeedbackOptions[ index ]?.metadata?.account_id;
-
-		const message = generateMessage( {
-			type: 'text',
+		await rateChat( {
+			jwt: authData.jwt,
+			email: user.email,
+			ticket_id: ticketId,
 			score,
-			accountId,
-			ticketID,
-		} );
-
-		if ( ! message ) {
-			return;
-		}
-
-		rateChat( {
-			authData,
-			conversationId: chat.conversationId,
-			clientId: inferredClientId,
-			appUserId: user.id,
-			message,
-		} ).then( () => {
-			setScore( score );
-		} );
-	};
-
-	const addFeedbackMessage = () => {
-		const index = score === 'GOOD' ? 0 : 1;
-
-		const ticketID = chatFeedbackOptions[ index ]?.metadata?.ticket_id;
-		const accountId = chatFeedbackOptions[ index ]?.metadata?.account_id;
-
-		if ( score ) {
-			const message = generateMessage( {
-				type: 'text',
-				score,
-				accountId,
-				ticketID,
-			} ) as ZendeskMessage;
-
-			addMessage( zendeskMessageConverter( message ) );
-		}
-	};
-
-	const sendScoreComment = () => {
-		if ( ! chat?.conversationId || ! chat?.messages?.length || ! authData ) {
-			return;
-		}
-
-		const message = generateMessage( {
-			type: 'formResponse',
 			comment,
-			quotedMessageId: lastMessage?.quotedMessageId,
+			reason_id: reason,
+			test_mode: isTestModeEnvironment(),
 		} );
+	}, [ rateChat, authData?.jwt, user.email, ticketId, score, comment, reason, sendMessage ] );
 
-		if ( ! message ) {
-			return;
-		}
-
-		rateChat( {
-			authData,
-			conversationId: chat.conversationId,
-			clientId: inferredClientId,
-			appUserId: user.id,
-			message,
-		} ).then( () => {
-			addFeedbackMessage();
-		} );
-	};
+	if ( isSubmitting ) {
+		return (
+			<div className="odie-conversation__feedback-loading">
+				<Spinner />
+			</div>
+		);
+	}
 
 	return (
 		<>
@@ -189,10 +84,10 @@ export const FeedbackForm = ( { chatFeedbackOptions }: FeedbackFormProps ) => {
 					<p>{ __( 'Was this helpful?' ) }</p>
 				</div>
 				<div className="odie-conversation-feedback__thumbs">
-					<Button onClick={ () => ratingConversation( 'GOOD' ) } rel="noreferrer">
+					<Button onClick={ () => setScore( 'good' ) } rel="noreferrer">
 						<ThumbsUpIcon />
 					</Button>
-					<Button onClick={ () => ratingConversation( 'BAD' ) } rel="noreferrer">
+					<Button onClick={ () => setScore( 'bad' ) } rel="noreferrer">
 						<ThumbsDownIcon />
 					</Button>
 				</div>
@@ -206,7 +101,7 @@ export const FeedbackForm = ( { chatFeedbackOptions }: FeedbackFormProps ) => {
 						value={ comment }
 						onChange={ ( value ) => setComment( value ) }
 					/>
-					{ score && score === 'BAD' && (
+					{ score && score === 'bad' && (
 						<SelectControl
 							className="odie-conversation-feedback__reason"
 							label={ __( 'Reason' ) }
@@ -217,17 +112,11 @@ export const FeedbackForm = ( { chatFeedbackOptions }: FeedbackFormProps ) => {
 						/>
 					) }
 
-					<Button variant="primary" onClick={ sendScoreComment } rel="noreferrer">
+					<Button variant="primary" onClick={ postCSAT } rel="noreferrer">
 						{ __( 'Send' ) }
 					</Button>
 
-					<Button
-						variant="secondary"
-						onClick={ () => {
-							addFeedbackMessage();
-						} }
-						rel="noreferrer"
-					>
+					<Button variant="secondary" onClick={ postCSAT } rel="noreferrer">
 						{ __( 'No thanks' ) }
 					</Button>
 				</div>
