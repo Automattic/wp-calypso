@@ -93,9 +93,8 @@ const onboarding: FlowV2< typeof initialize > = {
 		} = useDispatch( ONBOARD_STORE );
 		const locale = useFlowLocale();
 
-		const { planCartItem, signupDomainOrigin } = useSelect(
+		const { signupDomainOrigin } = useSelect(
 			( select ) => ( {
-				planCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem(),
 				signupDomainOrigin: ( select( ONBOARD_STORE ) as OnboardSelect ).getSignupDomainOrigin(),
 			} ),
 			[]
@@ -209,7 +208,7 @@ const onboarding: FlowV2< typeof initialize > = {
 
 					return navigate( 'plans' );
 				case 'plans': {
-					const cartItems = providedDependencies.cartItems as Array< typeof planCartItem >;
+					const cartItems = providedDependencies.cartItems;
 					setPlanCartItem( cartItems?.[ 0 ] ?? null );
 					if ( ! cartItems?.[ 0 ] ) {
 						// Since we're removing the paid domain, it means that the user chose to continue
