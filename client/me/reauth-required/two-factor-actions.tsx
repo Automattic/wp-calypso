@@ -1,6 +1,6 @@
 import { Button, Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import React, { useCallback } from 'react';
+import { type MouseEvent, useCallback } from 'react';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEventWithClientId } from 'calypso/state/analytics/actions';
 import './two-factor-actions.scss';
@@ -26,7 +26,7 @@ function TwoFactorActions( {
 	const translate = useTranslate();
 
 	const recordButtonClicked = useCallback(
-		( event: React.MouseEvent< HTMLButtonElement > ) => {
+		( event: MouseEvent< HTMLButtonElement > ) => {
 			event.preventDefault();
 			let tracksEvent;
 
