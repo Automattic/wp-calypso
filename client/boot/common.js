@@ -51,12 +51,10 @@ const setupContextMiddleware = ( reduxStore, reactQueryClient ) => {
 
 	page( '*', ( context, next ) => {
 		const parsed = getUrlParts( context.canonicalPath );
-		const path = parsed.pathname + parsed.search || null;
 
 		context.previousPath = previousPath;
 		previousPath = context.path;
 
-		context.prevPath = path === context.path ? false : path;
 		context.query = Object.fromEntries( parsed.searchParams.entries() );
 
 		context.hashstring = ( parsed.hash && parsed.hash.substring( 1 ) ) || '';
