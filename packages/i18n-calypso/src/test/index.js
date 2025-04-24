@@ -463,4 +463,23 @@ describe( 'I18n', function () {
 			expect( result ).toBe( 'not test 3' );
 		} );
 	} );
+
+	describe( 'initializeGeolocation', () => {
+		it( 'should set geoLocation directly when passed a value', () => {
+			const spy = jest.spyOn( i18n, 'geolocateCurrencySymbol' ).mockImplementation();
+
+			i18n.initializeGeolocation( 'CA' );
+
+			expect( i18n.geoLocation ).toBe( 'CA' );
+			expect( spy ).not.toHaveBeenCalled();
+		} );
+
+		it( 'should call geolocateCurrencySymbol when no value is passed', () => {
+			const spy = jest.spyOn( i18n, 'geolocateCurrencySymbol' ).mockImplementation();
+
+			i18n.initializeGeolocation();
+
+			expect( spy ).toHaveBeenCalled();
+		} );
+	} );
 } );

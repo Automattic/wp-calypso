@@ -4,7 +4,6 @@ import { initializeAnalytics } from '@automattic/calypso-analytics';
 import { CurrentUser } from '@automattic/calypso-analytics/dist/types/utils/current-user';
 import config from '@automattic/calypso-config';
 import { UserActions, User as UserStore } from '@automattic/data-stores';
-import { setGeoLocation } from '@automattic/number-formatters';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { dispatch } from '@wordpress/data';
 import defaultCalypsoI18n from 'i18n-calypso';
@@ -96,7 +95,7 @@ async function main() {
 	// Add accessible-focus listener.
 	accessibleFocus();
 
-	const user = ( await initializeCurrentUser() ) as unknown;
+	const user = await initializeCurrentUser();
 	const userId = ( user as CurrentUser ).ID;
 	let queryClient;
 
@@ -154,7 +153,7 @@ async function main() {
 	}
 
 	// No need to await this, it's not critical to the boot process and will slow booting down.
-	defaultCalypsoI18n.geolocateCurrencySymbol( setGeoLocation );
+	defaultCalypsoI18n.initializeGeolocation( user ? user.user_ip_country_code : undefined );
 
 	const root = createRoot( document.getElementById( 'wpcom' ) as HTMLElement );
 
