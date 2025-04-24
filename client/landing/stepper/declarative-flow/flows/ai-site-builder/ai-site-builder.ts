@@ -89,11 +89,11 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 				// The processing step will wait the aforementioned promise to be resolved and then will submit to you whatever the promise resolves to.
 				// Which will be the created site { "siteId": "242341575", "siteSlug": "something.wordpress.com", "goToCheckout": false, "siteCreated": true }
 				case 'processing': {
-					if ( providedDependencies?.processingResult === ProcessingResult.FAILURE ) {
+					if ( providedDependencies.processingResult === ProcessingResult.FAILURE ) {
 						return navigate( 'error' );
 					}
 
-					if ( providedDependencies?.processingResult === ProcessingResult.SUCCESS ) {
+					if ( providedDependencies.processingResult === ProcessingResult.SUCCESS ) {
 						if ( providedDependencies.siteCreated ) {
 							const { siteSlug, siteId } = providedDependencies;
 							// We are setting up big sky now.
