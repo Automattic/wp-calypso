@@ -126,6 +126,8 @@ const SyncWarningContainer = styled.div( {
 	display: 'flex',
 	flexDirection: 'column',
 	maxWidth: '807px',
+	marginBottom: '16px',
+	lineHeight: '24px',
 } );
 
 interface SyncCardProps {
@@ -263,7 +265,7 @@ const StagingToProductionSync = ( {
 											{ translate( 'Warning! WooCommerce data will be overwritten.' ) }
 										</SyncWarningTitle>
 										{ translate(
-											"The production site could have newer orders and customers that would be lost when overwritten by the staging site's data. We do not recommend syncing data from a staging site to a production eCommmerce or news site without proper planning and testing."
+											"The production site could have newer orders and customers that would be lost when overwritten by the staging site's data. We do not recommend syncing data from a staging site to a production eCommmerce site without proper planning and testing."
 										) }
 									</WPNotice>
 								</SyncWarningContainer>
