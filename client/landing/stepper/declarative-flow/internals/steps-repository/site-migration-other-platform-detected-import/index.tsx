@@ -22,10 +22,12 @@ export const Scanning = () => {
 };
 
 const SiteMigrationOtherPlatform: Step< {
-	submits: {
-		action: 'import' | 'skip';
-		platform?: ImporterPlatform | null;
-	};
+	submits:
+		| {
+				action: 'import' | 'skip';
+				platform?: ImporterPlatform | null;
+		  }
+		| undefined;
 } > = function ( { navigation } ) {
 	const translate = useTranslate();
 	const [ query ] = useSearchParams();
@@ -89,7 +91,8 @@ const SiteMigrationOtherPlatform: Step< {
 			<StepContainer
 				stepName="site-migration-other-platform"
 				goBack={ navigation?.goBack }
-				goNext={ navigation?.submit }
+				// TODO: remove this as Stepper API V2 doesn't support goNext.
+				goNext={ () => navigation?.submit?.( undefined ) }
 				hideSkip
 				isFullLayout
 				formattedHeader={
