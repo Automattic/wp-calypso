@@ -17,7 +17,7 @@ const fields = [
 		enableGlobalSearch: true,
 	},
 	{
-		id: 'media',
+		id: 'icon.ico',
 		label: __( 'Media' ),
 		render: ( { item }: { item: Site } ) => <SiteIcon site={ item } size={ 24 } />,
 	},
@@ -54,6 +54,7 @@ export default function Switcher( { onClose }: { onClose: () => void } ) {
 	return (
 		<div className="site-switcher">
 			<DataViews
+				getItemId={ ( item ) => item.ID }
 				data={ filteredData }
 				fields={ fields }
 				view={ view }

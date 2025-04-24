@@ -39,7 +39,7 @@ function Site() {
 						/>
 					</HeaderBar.Title>
 					{ isDesktop && <MenuDivider /> }
-					<SiteMenu siteId={ site.id } />
+					<SiteMenu siteId={ site.ID } />
 				</HStack>
 			</HeaderBar>
 			<Outlet />

@@ -8,6 +8,7 @@ import {
 } from '@wordpress/components';
 import { dateI18n } from '@wordpress/date';
 import { __, sprintf } from '@wordpress/i18n';
+import SitePreview from '../site-preview';
 import type { Site, SiteDomain, Plan } from '../data/types';
 
 /**
@@ -24,19 +25,37 @@ export default function SiteCard( {
 	primaryDomain?: SiteDomain;
 	currentPlan: Plan;
 } ) {
-	const { options, url } = site;
-	const { software_version } = options;
+	const { options, URL: url } = site;
+	const { software_version, blog_public } = options;
 	return (
 		<Card>
 			<VStack spacing={ 6 }>
 				<div className="dashboard-site-overview__preview-image">
-					<img
-						src={ `https://s0.wp.com/mshots/v1/${ encodeURIComponent( url ) }?w=600&h=400` }
-						alt={ __( 'Site preview' ) }
-						width={ 300 }
-						height={ 200 }
-						style={ { display: 'block' } }
-					/>
+					{ /* If the site is private, show the preview image, because X-Frame-Options is set to same origin. */ }
+					{ blog_public === -1 && (
+						<div
+							style={ {
+								width: '300px',
+								height: '200px',
+								fontSize: '24px',
+								background: 'var(--dashboard__background-color)',
+								display: 'flex',
+								alignItems: 'center',
+								justifyContent: 'center',
+							} }
+						>
+							{ __( 'Private Site' ) }
+						</div>
+					) }
+					{ /* If the site is public or coming soon, show the preview iframe. */ }
+					{ blog_public > -1 && (
+						<div
+							className="dashboard-site-overview__preview-iframe"
+							style={ { width: '300px', height: '200px' } }
+						>
+							<SitePreview url={ url } scale={ 0.25 } />
+						</div>
+					) }
 				</div>
 				<VStack spacing={ 6 } className="site-card-contents">
 					{ primaryDomain && (

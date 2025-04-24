@@ -19,11 +19,20 @@ function FollowButtonContainer( props ) {
 	const translate = useTranslate();
 
 	const handleFollowToggle = ( followingSite ) => {
+		const followData = omitBy(
+			{
+				feed_ID: props.feedId,
+				blog_ID: props.siteId,
+			},
+			( data ) => typeof data === 'undefined'
+		);
+
 		if ( ! isLoggedIn ) {
 			return dispatch(
 				registerLastActionRequiresLogin( {
 					type: 'follow-site',
-					siteId: props.siteId,
+					siteUrl: props.siteUrl,
+					followData,
 				} )
 			);
 		}
@@ -41,14 +50,6 @@ function FollowButtonContainer( props ) {
 		}
 
 		if ( followingSite ) {
-			const followData = omitBy(
-				{
-					feed_ID: props.feedId,
-					blog_ID: props.siteId,
-				},
-				( data ) => typeof data === 'undefined'
-			);
-
 			dispatch( follow( props.siteUrl, followData ) );
 		} else {
 			dispatch( unfollow( props.siteUrl ) );
