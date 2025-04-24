@@ -40,7 +40,7 @@ import type { DomainSuggestion } from '@automattic/data-stores';
 import './style.scss';
 
 const DomainsStep: Step< {
-	submits:
+	submits?:
 		| {
 				freeDomain?: boolean;
 				domainName?: string;
@@ -237,7 +237,9 @@ const DomainsStep: Step< {
 
 		setDomainCartItem( domainCartItem );
 
-		submit?.();
+		// TODO: Since the step is typed to submit an object, we need to submit an empty object.
+		// Stepper cannot handle Steps that submit something | nothing. A step must decide to submit something or nothing.
+		submit( {} );
 	};
 
 	const handleAddMapping = ( domain: string ) => {
@@ -247,7 +249,7 @@ const DomainsStep: Step< {
 
 		setDomainCartItem( domainCartItem );
 
-		submit?.();
+		submit( {} );
 	};
 
 	const handleAddDomain = ( suggestion: DomainSuggestion, position: number ) => {
@@ -343,7 +345,7 @@ const DomainsStep: Step< {
 			stepContent={ <div className="domains__content">{ renderContent() }</div> }
 			recordTracksEvent={ recordTracksEvent }
 			goBack={ () => handleGoBack( goBack ) }
-			goNext={ () => submit?.() }
+			goNext={ () => submit?.( {} ) }
 			formattedHeader={
 				<FormattedHeader
 					id="domains-header"

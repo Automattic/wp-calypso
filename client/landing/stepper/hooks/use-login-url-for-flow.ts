@@ -6,7 +6,7 @@ import { useSiteData } from './use-site-data';
 import type { Flow, FlowV2 } from 'calypso/landing/stepper/declarative-flow/internals/types';
 
 type UseLoginUrlForFlowProps = {
-	flow: Flow | FlowV2;
+	flow: Flow | FlowV2< any >;
 };
 
 export function useLoginUrlForFlow( { flow }: UseLoginUrlForFlowProps ): string {
@@ -29,7 +29,7 @@ export function useLoginUrlForFlow( { flow }: UseLoginUrlForFlowProps ): string 
 }
 
 type GetLoginUrlForFlowProps = {
-	flow: Flow | FlowV2;
+	flow: Flow | FlowV2< any >;
 	path: string;
 	locale: string;
 	siteId: string | number;

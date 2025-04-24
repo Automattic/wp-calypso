@@ -18,7 +18,7 @@ import {
 } from '@automattic/onboarding';
 import type { Flow, FlowV2 } from '../declarative-flow/internals/types';
 
-const availableFlows: Record< string, () => Promise< { default: Flow | FlowV2 } > > = {
+const availableFlows: Record< string, () => Promise< { default: Flow | FlowV2< any > } > > = {
 	'site-setup': () =>
 		import( /* webpackChunkName: "site-setup-flow" */ './flows/site-setup-flow/site-setup-flow' ),
 
@@ -109,7 +109,7 @@ const aiSiteBuilderFlows: Record< string, () => Promise< { default: FlowV2< any 
 		  }
 		: {};
 
-const hostedSiteMigrationFlow: Record< string, () => Promise< { default: Flow } > > = {
+const hostedSiteMigrationFlow: Record< string, () => Promise< { default: FlowV2< any > } > > = {
 	[ HOSTED_SITE_MIGRATION_FLOW ]: () =>
 		import(
 			/* webpackChunkName: "hosted-site-migration-flow" */ './flows/hosted-site-migration-flow/hosted-site-migration-flow'

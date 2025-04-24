@@ -285,6 +285,8 @@ export interface FlowV2< FlowStepsInitialize extends DefaultFlowStepsConfig > {
  */
 type ConditionalIntersection< TA, TB > = [ TB ] extends [ never ] ? TA : TA & TB;
 
+type HasProperty< T, K extends string > = K extends keyof T ? true : false;
+
 /**
  * This is the type of the props passed to the step.
  * @template StepDataShape - The types of the step submitted data.
@@ -293,14 +295,9 @@ type ConditionalIntersection< TA, TB > = [ TB ] extends [ never ] ? TA : TA & TB
  *   return <div>{ props.navigation.submit( { siteSlug: 'example.wordpress.com' } ) }</div>;
  * };
  */
-export type StepProps<
-	StepDataShape extends StepPropTypes = {
-		submits: never;
-		accepts: never;
-	},
-> = ConditionalIntersection<
+export type StepProps< StepDataShape extends StepPropTypes = object > = ConditionalIntersection<
 	{
-		navigation: StepDataShape[ 'submits' ] extends never
+		navigation: HasProperty< StepDataShape, 'submits' > extends false
 			? NavigationControls
 			: NavigationControlsWithSubmittedData< StepDataShape[ 'submits' ] >;
 		stepName: string;
@@ -348,15 +345,11 @@ type StepPropTypes = {
  *   );
  * };
  */
-export type Step<
-	ConfiguredStepPropTypes extends StepPropTypes = {
-		submits: never;
-		accepts: never;
-	},
-> = keyof ConfiguredStepPropTypes extends keyof StepPropTypes
-	? React.FC< StepProps< ConfiguredStepPropTypes > >
-	: // Only allow `accept` and `submits` config props.
-	  never;
+export type Step< ConfiguredStepPropTypes extends StepPropTypes = object > =
+	keyof ConfiguredStepPropTypes extends keyof StepPropTypes
+		? React.FC< StepProps< ConfiguredStepPropTypes > >
+		: // Only allow `accept` and `submits` config props.
+		  never;
 
 // TODO: get rid of these. Every type should be specific.
 export type ProvidedDependencies = Record< string, unknown >;
