@@ -113,31 +113,29 @@ const DEFAULT_LAYOUTS = {
 	table: {
 		mediaField: 'icon.ico',
 		fields: [ 'subscribers_count', 'backups', 'protect' ],
+		titleField: 'name',
+		descriptionField: 'url',
 	},
 	grid: {
 		mediaField: 'preview',
 		fields: [],
+		titleField: 'name',
+		descriptionField: 'url',
 	},
+};
+
+const DEFAULT_VIEW: View = {
+	...DEFAULT_LAYOUTS.grid,
+	type: 'grid',
+	page: 1,
+	perPage: 10,
+	sort: { field: 'name', direction: 'asc' },
 };
 
 export default function Sites() {
 	const navigate = useNavigate();
 	const sites = useQuery( sitesQuery() ).data;
-
-	// View config.
-	const [ view, setView ] = useState< View >( {
-		type: 'table',
-		page: 1,
-		perPage: 10,
-		sort: {
-			field: 'name',
-			direction: 'asc',
-		},
-		fields: [ 'subscribers_count', 'backups', 'protect' ],
-		titleField: 'name',
-		mediaField: 'icon.ico',
-		descriptionField: 'URL',
-	} );
+	const [ view, setView ] = useState< View >( DEFAULT_VIEW );
 
 	if ( ! sites ) {
 		return;
