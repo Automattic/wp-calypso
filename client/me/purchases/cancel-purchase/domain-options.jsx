@@ -211,9 +211,8 @@ const CancelPurchaseDomainOptions = ( {
 	}
 
 	if (
-		! includedDomainPurchase ||
-		( ! isDomainMapping( includedDomainPurchase ) &&
-			! isDomainRegistration( includedDomainPurchase ) )
+		! isDomainMapping( includedDomainPurchase ) &&
+		! isDomainRegistration( includedDomainPurchase )
 	) {
 		return null;
 	}
