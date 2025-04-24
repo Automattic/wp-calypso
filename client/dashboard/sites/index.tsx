@@ -114,12 +114,12 @@ const fields = [
 		],
 	},
 	{
-		id: 'visibility',
-		label: __( 'Visibility' ),
+		id: 'status',
+		label: __( 'Status' ),
 		getValue: getStatus,
-		elements: Object.keys( STATUS_LABELS ).map( ( key ) => ( {
-			value: key,
-			label: STATUS_LABELS[ key ],
+		elements: Object.entries( STATUS_LABELS ).map( ( [ value, label ] ) => ( {
+			value,
+			label,
 		} ) ),
 		render: ( { item }: { item: Site } ) => {
 			return STATUS_LABELS[ getStatus( { item } ) ];
@@ -162,7 +162,7 @@ const fields = [
 const DEFAULT_LAYOUTS = {
 	table: {
 		mediaField: 'icon.ico',
-		fields: [ 'subscribers_count', 'backups', 'protect' ],
+		fields: [ 'subscribers_count', 'status', 'backups', 'protect' ],
 		titleField: 'name',
 		descriptionField: 'url',
 	},
