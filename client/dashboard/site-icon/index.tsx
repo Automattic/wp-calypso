@@ -18,7 +18,16 @@ export default function SiteIcon( { site, size = 48 }: { site: Site; size?: numb
 	}, [ site.media ] );
 
 	if ( site.media ) {
-		return <img className="site-icon" src={ src } alt={ site.name } { ...dims } loading="lazy" />;
+		return (
+			<img
+				className="site-icon"
+				src={ src }
+				alt={ site.name }
+				{ ...dims }
+				loading="lazy"
+				style={ { width: size, height: size } }
+			/>
+		);
 	}
 
 	return (

@@ -18,6 +18,7 @@ const StatsModuleUTMWrapper: React.FC< StatsAdvancedModuleWrapperProps > = ( {
 	summary,
 	className,
 	summaryUrl,
+	context,
 } ) => {
 	const moduleStrings = statsStrings();
 	const shouldGateStats = useShouldGateStats( STATS_FEATURE_UTM_STATS );
@@ -63,6 +64,7 @@ const StatsModuleUTMWrapper: React.FC< StatsAdvancedModuleWrapperProps > = ( {
 					postId={ postId }
 					summary={ summary }
 					summaryUrl={ summaryUrl }
+					context={ context }
 				/>
 			) }
 		</>

@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
-import { Button } from '@wordpress/components';
+import { Button, ExternalLink } from '@wordpress/components';
+import { useResizeObserver } from '@wordpress/compose';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { Icon, check } from '@wordpress/icons';
@@ -9,6 +10,7 @@ import { sitesQuery } from '../app/queries';
 import DataViewsCard from '../dataviews-card';
 import PageLayout from '../page-layout';
 import SiteIcon from '../site-icon';
+import SitePreview from '../site-preview';
 import type { Site } from '../data/types';
 import type { View } from '@wordpress/dataviews';
 
@@ -36,7 +38,9 @@ const fields = [
 		id: 'url',
 		label: __( 'URL' ),
 		enableGlobalSearch: true,
-		render: ( { item }: { item: Site } ) => new URL( item.url ).hostname,
+		render: ( { item }: { item: Site } ) => (
+			<ExternalLink href={ item.url }>{ new URL( item.url ).hostname }</ExternalLink>
+		),
 	},
 	{
 		id: 'media',
@@ -77,7 +81,50 @@ const fields = [
 			{ value: 'disabled', label: __( 'Disabled' ) },
 		],
 	},
+	{
+		id: 'preview',
+		label: __( 'Preview' ),
+		render: function PreviewRender( { item }: { item: Site } ) {
+			const [ resizeListener, { width } ] = useResizeObserver();
+			const { options, url } = item;
+			const { blog_public } = options;
+			return (
+				<>
+					{ resizeListener }
+					{ /* If the site is private, show the preview image, because X-Frame-Options is set to same origin. */ }
+					{ blog_public === -1 && (
+						<div
+							style={ {
+								fontSize: '24px',
+								display: 'flex',
+								alignItems: 'center',
+								justifyContent: 'center',
+								height: '100%',
+							} }
+						>
+							<SiteIcon site={ item } />
+						</div>
+					) }
+					{ /* If the site is public or coming soon, show the preview iframe. */ }
+					{ width && blog_public > -1 && (
+						<SitePreview url={ url } scale={ width / 1200 } height={ 1200 } />
+					) }
+				</>
+			);
+		},
+	},
 ];
+
+const DEFAULT_LAYOUTS = {
+	table: {
+		mediaField: 'media',
+		fields: [ 'subscribers', 'backups', 'protect' ],
+	},
+	grid: {
+		mediaField: 'preview',
+		fields: [],
+	},
+};
 
 export default function Sites() {
 	const navigate = useNavigate();
@@ -126,7 +173,7 @@ export default function Sites() {
 						view={ view }
 						onChangeView={ setView }
 						onClickItem={ onClickItem }
-						defaultLayouts={ { table: {} } }
+						defaultLayouts={ DEFAULT_LAYOUTS }
 						paginationInfo={ paginationInfo }
 					/>
 				</DataViewsCard>
