@@ -5,7 +5,7 @@ import { alert } from '@automattic/components/src/icons';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { suggestEmailCorrection } from '@automattic/onboarding';
 import { TextControl } from '@wordpress/components';
-import { Icon } from '@wordpress/icons';
+import { Icon, seen, unseen } from '@wordpress/icons';
 import clsx from 'clsx';
 import cookie from 'cookie';
 import emailValidator from 'email-validator';
@@ -116,6 +116,7 @@ export class LoginForm extends Component {
 		emailSuggestionError: false,
 		password: '',
 		lastUsedAuthenticationMethod: this.getLastUsedAuthenticationMethod(),
+		isViewingPassword: false,
 	};
 
 	componentDidMount() {
@@ -707,6 +708,37 @@ export class LoginForm extends Component {
 		return this.renderMagicLoginLink() ?? this.props.requestError.message;
 	}
 
+	renderPasswordToggle( isPasswordHidden ) {
+		const { translate } = this.props;
+		const { isViewingPassword } = this.state;
+		const tabIndex = isPasswordHidden ? -1 : undefined;
+		const onClick = () => {
+			this.setState( { isViewingPassword: ! isViewingPassword } );
+		};
+
+		return isViewingPassword ? (
+			<button
+				type="button"
+				className="login__form-password-toggle"
+				onClick={ onClick }
+				aria-label={ translate( 'Hide password' ) }
+				tabIndex={ tabIndex }
+			>
+				<Icon icon={ seen } />
+			</button>
+		) : (
+			<button
+				type="button"
+				className="login__form-password-toggle"
+				onClick={ onClick }
+				aria-label={ translate( 'Show password' ) }
+				tabIndex={ tabIndex }
+			>
+				<Icon icon={ unseen } />
+			</button>
+		);
+	}
+
 	handleAcceptEmailSuggestion() {
 		this.props.recordTracksEvent( 'calypso_login_email_suggestion_confirmation', {
 			original_email: JSON.stringify( this.state.usernameOrEmail ),
@@ -782,7 +814,7 @@ export class LoginForm extends Component {
 	};
 
 	renderLoginCard() {
-		const { lastUsedAuthenticationMethod } = this.state;
+		const { lastUsedAuthenticationMethod, isViewingPassword } = this.state;
 		const isFormDisabled = this.state.isFormDisabledWhileLoading || this.props.isFormDisabled;
 		const isSubmitButtonDisabled = isFormDisabled;
 		let loginUrl;
@@ -1000,6 +1032,7 @@ export class LoginForm extends Component {
 								aria-hidden={ isPasswordHidden }
 							>
 								<TextControl
+									type={ isViewingPassword ? 'text' : 'password' }
 									autoCapitalize="off"
 									autoComplete="current-password"
 									className={ clsx( {
@@ -1016,6 +1049,8 @@ export class LoginForm extends Component {
 									__next40pxDefaultSize
 									__nextHasNoMarginBottom
 								/>
+
+								{ this.renderPasswordToggle( isPasswordHidden ) }
 
 								{ requestError && requestError.field === 'password' && (
 									<FormInputValidation isError text={ this.renderPasswordValidationError() } />
