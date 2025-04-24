@@ -524,13 +524,26 @@ export class Login extends Component {
 		);
 	}
 
-	renderTopBar( isSocialFirst ) {
-		const { isFromAkismet, isJetpack, isWooJPC } = this.props;
-
-		if ( isWooJPC ) {
-			// The Woo flow already displays the Woo logo in the header.
-			return null;
-		}
+	render() {
+		const {
+			locale,
+			translate,
+			isFromMigrationPlugin,
+			isGenericOauth,
+			isGravPoweredClient,
+			isWoo,
+			isBlazePro,
+			isWhiteLogin,
+			isJetpack,
+			isFromAkismet,
+		} = this.props;
+		const canonicalUrl = localizeUrl( 'https://wordpress.com/log-in', locale );
+		const isSocialFirst =
+			config.isEnabled( 'login/social-first' ) &&
+			isWhiteLogin &&
+			! isGravPoweredClient &&
+			! isWoo &&
+			! isBlazePro;
 
 		const akismetLogo = (
 			<svg
@@ -567,71 +580,51 @@ export class Login extends Component {
 			</div>
 		);
 
-		if ( isJetpack && ! this.props.isFromAutomatticForAgenciesPlugin ) {
-			return jetpackLogo;
-		}
+		const mainContent = (
+			<Main
+				className={ clsx( 'wp-login__main', {
+					'is-wpcom-migration': isFromMigrationPlugin,
+					'is-social-first': isSocialFirst,
+					'is-generic-oauth': isGenericOauth,
+					'is-jetpack': isJetpack,
+				} ) }
+			>
+				{ this.renderI18nSuggestions() }
 
-		if ( isSocialFirst ) {
-			return (
-				<Step.TopBar
-					rightElement={ this.renderLoginHeaderNavigation() }
-					logo={ isFromAkismet && akismetLogo }
+				<DocumentHead
+					title={ translate( 'Log In' ) }
+					link={ [ { rel: 'canonical', href: canonicalUrl } ] }
+					meta={ [
+						{
+							name: 'description',
+							content: translate(
+								'Log in to your WordPress.com account to manage your website, publish content, and access all your tools securely and easily.'
+							),
+						},
+					] }
 				/>
-			);
-		}
 
-		return null;
-	}
-
-	render() {
-		const {
-			locale,
-			translate,
-			isFromMigrationPlugin,
-			isGenericOauth,
-			isGravPoweredClient,
-			isWoo,
-			isBlazePro,
-			isWhiteLogin,
-			isJetpack,
-		} = this.props;
-		const canonicalUrl = localizeUrl( 'https://wordpress.com/log-in', locale );
-		const isSocialFirst =
-			config.isEnabled( 'login/social-first' ) &&
-			isWhiteLogin &&
-			! isGravPoweredClient &&
-			! isWoo &&
-			! isBlazePro;
+				<div className="wp-login__container">{ this.renderContent( isSocialFirst ) }</div>
+			</Main>
+		);
 
 		return (
 			<>
-				{ this.renderTopBar( isSocialFirst ) }
-				<Main
-					className={ clsx( 'wp-login__main', {
-						'is-wpcom-migration': isFromMigrationPlugin,
-						'is-social-first': isSocialFirst,
-						'is-generic-oauth': isGenericOauth,
-						'is-jetpack': isJetpack,
-					} ) }
-				>
-					{ this.renderI18nSuggestions() }
-
-					<DocumentHead
-						title={ translate( 'Log In' ) }
-						link={ [ { rel: 'canonical', href: canonicalUrl } ] }
-						meta={ [
-							{
-								name: 'description',
-								content: translate(
-									'Log in to your WordPress.com account to manage your website, publish content, and access all your tools securely and easily.'
-								),
-							},
-						] }
-					/>
-
-					<div className="wp-login__container">{ this.renderContent( isSocialFirst ) }</div>
-				</Main>
-
+				{ isSocialFirst && (
+					<Step.CenteredColumnLayout
+						columnWidth={ 6 }
+						topBar={
+							<Step.TopBar
+								rightElement={ this.renderLoginHeaderNavigation() }
+								logo={ isFromAkismet && akismetLogo }
+							/>
+						}
+					>
+						{ mainContent }
+					</Step.CenteredColumnLayout>
+				) }
+				{ isJetpack && ! this.props.isFromAutomatticForAgenciesPlugin && jetpackLogo }
+				{ ! isSocialFirst && mainContent }
 				{ this.renderFooter() }
 			</>
 		);
