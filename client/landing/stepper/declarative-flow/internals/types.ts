@@ -47,7 +47,7 @@ export interface BaseNavigationControls {
 }
 
 export interface NavigationControls extends BaseNavigationControls {
-	submit(): void;
+	submit( providedDependencies?: ProvidedDependencies ): void;
 }
 
 export interface NavigationControlsWithSubmittedData< StepSubmittedTypes = unknown >
