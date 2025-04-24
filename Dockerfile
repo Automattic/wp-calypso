@@ -64,6 +64,9 @@ RUN bash /tmp/env-config.sh
 # This layer is populated with up-to-date files from
 # Calypso development.
 COPY . /calypso/
+
+RUN echo "Memory check:" && free -h
+
 RUN yarn install --immutable --check-cache --inline-builds
 RUN node --version && yarn --version && npm --version
 
