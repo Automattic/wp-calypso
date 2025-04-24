@@ -35,47 +35,41 @@ const fields = [
 		enableGlobalSearch: true,
 	},
 	{
-		id: 'url',
+		id: 'URL',
 		label: __( 'URL' ),
 		enableGlobalSearch: true,
 		render: ( { item }: { item: Site } ) => (
-			<ExternalLink href={ item.url }>{ new URL( item.url ).hostname }</ExternalLink>
+			<ExternalLink href={ item.URL }>{ new URL( item.URL ).hostname }</ExternalLink>
 		),
 	},
 	{
-		id: 'media',
+		id: 'icon.ico',
 		label: __( 'Media' ),
 		render: ( { item }: { item: Site } ) => <SiteIcon site={ item } />,
 	},
 	{
-		id: 'subscribers',
+		id: 'subscribers_count',
 		label: __( 'Subscribers' ),
 	},
 	{
 		id: 'backups',
 		label: __( 'Backups' ),
+		getValue: ( { item }: { item: Site } ) =>
+			item.plan.features.active.includes( 'backups' ) ? 'enabled' : 'disabled',
 		elements: [
 			{ value: 'enabled', label: __( 'Enabled' ) },
 			{ value: 'disabled', label: __( 'Disabled' ) },
 		],
-		render: ( { item }: { item: Site } ) => {
-			if ( item.backups === 'enabled' ) {
-				return <Icon icon={ check } />;
-			}
-
-			return __( 'Disabled' );
-		},
+		render: ( { item }: { item: Site } ) =>
+			item.plan.features.active.includes( 'backups' ) ? <Icon icon={ check } /> : __( 'Disabled' ),
 	},
 	{
 		id: 'protect',
 		label: __( 'Protect' ),
-		render: ( { item }: { item: Site } ) => {
-			if ( item.protect === 'enabled' ) {
-				return <Icon icon={ check } />;
-			}
-
-			return __( 'Disabled' );
-		},
+		getValue: ( { item }: { item: Site } ) =>
+			item.active_modules?.includes( 'protect' ) ? 'enabled' : 'disabled',
+		render: ( { item }: { item: Site } ) =>
+			item.active_modules?.includes( 'protect' ) ? <Icon icon={ check } /> : __( 'Disabled' ),
 		elements: [
 			{ value: 'enabled', label: __( 'Enabled' ) },
 			{ value: 'disabled', label: __( 'Disabled' ) },
@@ -86,7 +80,7 @@ const fields = [
 		label: __( 'Preview' ),
 		render: function PreviewRender( { item }: { item: Site } ) {
 			const [ resizeListener, { width } ] = useResizeObserver();
-			const { options, url } = item;
+			const { options, URL: url } = item;
 			const { blog_public } = options;
 			return (
 				<>
@@ -117,8 +111,8 @@ const fields = [
 
 const DEFAULT_LAYOUTS = {
 	table: {
-		mediaField: 'media',
-		fields: [ 'subscribers', 'backups', 'protect' ],
+		mediaField: 'icon.ico',
+		fields: [ 'subscribers_count', 'backups', 'protect' ],
 	},
 	grid: {
 		mediaField: 'preview',
@@ -139,10 +133,10 @@ export default function Sites() {
 			field: 'name',
 			direction: 'asc',
 		},
-		fields: [ 'subscribers', 'backups', 'protect' ],
+		fields: [ 'subscribers_count', 'backups', 'protect' ],
 		titleField: 'name',
-		mediaField: 'media',
-		descriptionField: 'url',
+		mediaField: 'icon.ico',
+		descriptionField: 'URL',
 	} );
 
 	if ( ! sites ) {
@@ -152,7 +146,7 @@ export default function Sites() {
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate( sites, view, fields );
 
 	const onClickItem = ( item: Site ) => {
-		navigate( { to: `/sites/${ item.id }` } );
+		navigate( { to: `/sites/${ item.ID }` } );
 	};
 
 	return (
@@ -167,6 +161,7 @@ export default function Sites() {
 			>
 				<DataViewsCard>
 					<DataViews
+						getItemId={ ( item ) => item.ID }
 						data={ filteredData }
 						fields={ fields }
 						actions={ actions }

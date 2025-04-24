@@ -68,14 +68,15 @@ export interface SiteOptions {
 }
 
 export interface Site {
-	id: string;
+	ID: string;
 	name: string;
-	url: string;
-	media?: string;
-	backups: 'enabled' | 'disabled';
-	protect: 'enabled' | 'disabled';
-	subscribers: number;
+	URL: string;
+	icon?: {
+		ico: string;
+	};
 	plan: SitePlan;
+	active_modules?: string[];
+	subscribers_count: number;
 	options: SiteOptions;
 	is_deleted: boolean;
 }

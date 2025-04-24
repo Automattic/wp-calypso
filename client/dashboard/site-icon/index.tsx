@@ -5,19 +5,20 @@ import './style.scss';
 
 export default function SiteIcon( { site, size = 48 }: { site: Site; size?: number } ) {
 	const dims = { width: size, height: size };
+	const ico = site.icon?.ico;
 	const src = useMemo( () => {
-		if ( ! site.media ) {
-			return site.media;
+		if ( ! ico ) {
+			return;
 		}
-		const url = new URL( site.media );
+		const url = new URL( ico );
 		// wordpress.com/wp-content works with w.
 		url.searchParams.set( 'w', '96' );
 		// "blavatar" works with s.
 		url.searchParams.set( 's', '96' );
 		return url.toString();
-	}, [ site.media ] );
+	}, [ ico ] );
 
-	if ( site.media ) {
+	if ( ico ) {
 		return (
 			<img
 				className="site-icon"

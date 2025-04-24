@@ -45,7 +45,7 @@ function SiteOverview() {
 			title={ site.name }
 			actions={
 				<>
-					<ExternalLink href={ site.url }>{ __( 'Visit' ) }</ExternalLink>
+					<ExternalLink href={ site.URL }>{ __( 'Visit' ) }</ExternalLink>
 					<Button
 						__next40pxDefaultSize
 						variant="primary"
@@ -80,7 +80,7 @@ function SiteOverview() {
 						<ViewsCard engagementStats={ engagementStats } />
 						<LikesCard engagementStats={ engagementStats } />
 						<CommentsCard engagementStats={ engagementStats } />
-						<SubscribersCard subscribers={ site.subscribers } />
+						<SubscribersCard subscribers={ site.subscribers_count } />
 					</OverviewSection>
 					<OverviewSection title={ __( 'Site health' ) } actions={ [] }>
 						<PerformanceCards site={ site } />
