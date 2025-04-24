@@ -51,7 +51,7 @@ const StatsModuleUTM = ( {
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 	const translate = useTranslate();
 	const [ selectedOption, setSelectedOption ] = useState( () => {
-		const utmQueryParam = context.query?.[ UTM_QUERY_PARAM ];
+		const utmQueryParam = context.query[ UTM_QUERY_PARAM ];
 		return Object.values( OPTION_KEYS ).includes( utmQueryParam )
 			? utmQueryParam
 			: OPTION_KEYS.SOURCE_MEDIUM;
@@ -78,7 +78,7 @@ const StatsModuleUTM = ( {
 			return;
 		}
 
-		const utmParam = context.query?.[ UTM_QUERY_PARAM ];
+		const utmParam = context.query[ UTM_QUERY_PARAM ];
 		const isValidUtmParam = utmParam && Object.values( OPTION_KEYS ).includes( utmParam );
 
 		if ( ! isValidUtmParam ) {
