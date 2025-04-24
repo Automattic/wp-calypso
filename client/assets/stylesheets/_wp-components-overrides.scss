@@ -58,6 +58,11 @@
 .components-text-control__input {
 	--wp-admin-theme-color: var(--color-accent);
 
+	&[type="text"],
+	&[type="password"] {
+		border-color: var(--studio-gray-10);
+	}
+
 	.components-base-control.is-error & {
 		--wp-admin-theme-color: var(--color-error);
 	}
