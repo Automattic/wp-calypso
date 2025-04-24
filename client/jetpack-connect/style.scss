@@ -249,6 +249,11 @@ $colophon-height: 50px;
 .jetpack-connect__authorize-form-wrapper--onboarding {
 	margin-top: 10vh;
 	min-width: 450px;
+
+	@media screen and ( max-width: $break-mobile ) {
+		min-width: 250px;
+		padding: 0 8px;
+	}
 }
 
 .jetpack-connect__logged-in-user-card {
@@ -313,13 +318,15 @@ $colophon-height: 50px;
 }
 
 .card.logged-out-form__footer {
-	&.jetpack-connect__action-disclaimer--onboarding {
+	&.jetpack-connect__action--onboarding {
 		margin: 0;
 		padding: 0;
 
 		button {
 			background-color: var(--studio-green-60);
 			margin-bottom: 16px;
+			padding-top: 12px;
+			padding-bottom: 12px;
 		}
 	}
 }

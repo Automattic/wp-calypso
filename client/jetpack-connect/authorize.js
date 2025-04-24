@@ -806,6 +806,10 @@ export class JetpackAuthorize extends Component {
 			return translate( 'Connect to WordPress.com' );
 		}
 
+		if ( this.isFromJetpackOnboarding() ) {
+			return translate( 'Connect my site' );
+		}
+
 		if ( ! this.retryingAuth ) {
 			return translate( 'Approve' );
 		}
@@ -1082,7 +1086,9 @@ export class JetpackAuthorize extends Component {
 					</LoggedOutFormLinkItem>
 					<div className="jetpack-connect__benefits">
 						<div className="jetpack-connect__benefits-title">
-							{ translate( 'This connection allows Jetpack to:' ) }
+							{ translate( 'This connection on %(siteName)s allows Jetpack to:', {
+								args: { siteName: decodeEntities( authQuery.blogname ) },
+							} ) }
 						</div>
 						<ul>
 							<li>
@@ -1278,9 +1284,8 @@ export class JetpackAuthorize extends Component {
 
 		if ( this.isFromJetpackOnboarding() ) {
 			return (
-				<LoggedOutFormFooter className="jetpack-connect__action-disclaimer--onboarding">
+				<LoggedOutFormFooter className="jetpack-connect__action--onboarding">
 					{ actionButton }
-					{ disclaimer }
 				</LoggedOutFormFooter>
 			);
 		}
