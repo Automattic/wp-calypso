@@ -11,6 +11,7 @@ import DataViewsCard from '../dataviews-card';
 import PageLayout from '../page-layout';
 import SiteIcon from '../site-icon';
 import SitePreview from '../site-preview';
+import { STATUS_LABELS, getSiteStatus, getSiteStatusLabel } from '../utils/site-status';
 import type { Site } from '../data/types';
 import type { View } from '@wordpress/dataviews';
 
@@ -26,44 +27,6 @@ const actions = [
 		isEligible: ( item: Site ) => ( item.is_deleted ? false : true ),
 	},
 ];
-
-function getStatus( { item }: { item: Site } ) {
-	if ( item.site_migration?.migration_status.startsWith( 'migration-pending' ) ) {
-		return 'migration_pending';
-	}
-
-	if ( item.site_migration?.migration_status.startsWith( 'migration-started' ) ) {
-		return 'migration_started';
-	}
-
-	if ( item.is_deleted ) {
-		return 'deleted';
-	}
-
-	if ( item.options.is_redirect ) {
-		return 'redirect';
-	}
-
-	if ( item.is_coming_soon || ( item.is_private && item.launch_status === 'unlaunched' ) ) {
-		return 'coming_soon';
-	}
-
-	if ( item.is_private ) {
-		return 'private';
-	}
-
-	return 'public';
-}
-
-const STATUS_LABELS = {
-	public: __( 'Public' ),
-	private: __( 'Private' ),
-	coming_soon: __( 'Coming Soon' ),
-	deleted: __( 'Deleted' ),
-	redirect: __( 'Redirect' ),
-	migration_pending: __( 'Migration Pending' ),
-	migration_started: __( 'Migration Started' ),
-};
 
 // Field definitions
 const fields = [
@@ -116,14 +79,9 @@ const fields = [
 	{
 		id: 'status',
 		label: __( 'Status' ),
-		getValue: getStatus,
-		elements: Object.entries( STATUS_LABELS ).map( ( [ value, label ] ) => ( {
-			value,
-			label,
-		} ) ),
-		render: ( { item }: { item: Site } ) => {
-			return STATUS_LABELS[ getStatus( { item } ) ];
-		},
+		getValue: ( { item }: { item: Site } ) => getSiteStatus( item ),
+		elements: Object.entries( STATUS_LABELS ).map( ( [ value, label ] ) => ( { value, label } ) ),
+		render: ( { item }: { item: Site } ) => getSiteStatusLabel( item ),
 	},
 	{
 		id: 'preview',
