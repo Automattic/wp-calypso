@@ -1,3 +1,4 @@
+import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import { ReactNode } from 'react';
 import './navigation-header.scss';
@@ -20,8 +21,8 @@ interface HeaderProps extends React.HTMLAttributes< HTMLElement > {
 
 /**
  * Header component that can be used in various contexts
- *
  * @param props - Component props
+ * @param props.className - Additional CSS class name for the component
  * @param props.title - Header title text
  * @param props.backLinkProps - Object containing back link properties (backLink URL, backLinkText, and onBackClick handler)
  * @param props.titleElement - Custom element to override default title rendering
@@ -31,6 +32,7 @@ interface HeaderProps extends React.HTMLAttributes< HTMLElement > {
  * @returns The rendered NavigationHeader component
  */
 const NavigationHeader: React.FC< HeaderProps > = ( {
+	className,
 	title,
 	backLinkProps,
 	titleElement = <h1 className="calypso-navigation-header__title">{ title }</h1>,
@@ -54,9 +56,9 @@ const NavigationHeader: React.FC< HeaderProps > = ( {
 } ) => {
 	return (
 		<header
-			className={ `calypso-navigation-header${
-				hasScreenOptionsTab ? ' calypso-navigation-header__screen-options-tab' : ''
-			}` }
+			className={ clsx( 'calypso-navigation-header', className, {
+				'calypso-navigation-header__screen-options-tab': hasScreenOptionsTab,
+			} ) }
 			{ ...rest }
 		>
 			<div className="calypso-navigation-header__head">{ headElement }</div>
