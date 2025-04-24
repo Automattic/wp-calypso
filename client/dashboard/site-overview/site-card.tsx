@@ -25,7 +25,7 @@ export default function SiteCard( {
 	primaryDomain?: SiteDomain;
 	currentPlan: Plan;
 } ) {
-	const { options, url } = site;
+	const { options, URL: url } = site;
 	const { software_version, blog_public } = options;
 	return (
 		<Card>

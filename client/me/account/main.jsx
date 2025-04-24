@@ -498,6 +498,7 @@ class Account extends Component {
 				isPlaceholder={ ! primarySiteId || requestingMissingSites }
 				selectedSiteId={ primarySiteId }
 				onSiteSelect={ this.onSiteSelect }
+				disabled={ this.state.submittingForm }
 			/>
 		);
 	}
