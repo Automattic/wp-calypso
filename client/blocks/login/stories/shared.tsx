@@ -1,5 +1,13 @@
-import type { StoryFn } from '@storybook/react';
+import LoginButton from '../login-button';
+import type { StoryFn, StoryObj } from '@storybook/react';
 import './style.scss';
+
+export const loginButtonArgs = {
+	isWoo: false,
+	isSendingEmail: false,
+	isDisabled: false,
+	buttonText: 'Continue',
+};
 
 export const LoginFormWrapper = ( Story: StoryFn ) => (
 	<div className="login" style={ { maxWidth: '300px', padding: '30px' } }>
@@ -62,3 +70,17 @@ export const WPJobManagerWrapper = ( Story: StoryFn ) => (
 		</div>
 	</div>
 );
+
+export type Story = StoryObj< typeof LoginButton >;
+
+export const disabledStory: Story = {
+	args: {
+		isDisabled: true,
+	},
+};
+
+export const sendingEmailStory: Story = {
+	args: {
+		isSendingEmail: true,
+	},
+};
