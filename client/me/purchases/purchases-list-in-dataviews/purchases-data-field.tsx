@@ -56,21 +56,6 @@ function PurchaseItemRowStatus( props: {
 	);
 }
 
-function PurchaseItemRowPaymentMethod( props: {
-	purchase: Purchases.Purchase;
-	translate: LocalizeProps[ 'translate' ];
-	isBackupMethodAvailable: boolean;
-} ) {
-	const { purchase, translate, isBackupMethodAvailable } = props;
-
-	return (
-		<div className="purchase-item__payment-method">
-			<PurchaseItemPaymentMethod purchase={ purchase } translate={ translate } />
-			{ isBackupMethodAvailable && isRenewing( purchase ) && <BackupPaymentMethodNotice /> }
-		</div>
-	);
-}
-
 export function getPurchasesFieldDefinitions( {
 	translate,
 	moment,
@@ -174,11 +159,10 @@ export function getPurchasesFieldDefinitions( {
 				}
 
 				return (
-					<PurchaseItemRowPaymentMethod
-						purchase={ item }
-						translate={ translate }
-						isBackupMethodAvailable={ isBackupMethodAvailable }
-					/>
+					<div className="purchase-item__payment-method">
+						<PurchaseItemPaymentMethod purchase={ item } translate={ translate } />
+						{ isBackupMethodAvailable && isRenewing( item ) && <BackupPaymentMethodNotice /> }
+					</div>
 				);
 			},
 		},
