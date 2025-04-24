@@ -1,4 +1,4 @@
 /**
  * Internal dependencies
  */
-import './style.scss';
+import '../dist/style/style.css';
