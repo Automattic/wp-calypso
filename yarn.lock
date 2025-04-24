@@ -807,6 +807,36 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@automattic/dataviews@workspace:packages/dataviews":
+  version: 0.0.0-use.local
+  resolution: "@automattic/dataviews@workspace:packages/dataviews"
+  dependencies:
+    "@ariakit/react": "npm:^0.4.15"
+    "@testing-library/jest-dom": "npm:^6.6.3"
+    "@types/jest": "npm:^29.5.14"
+    "@wordpress/base-styles": "npm:^5.22.0"
+    "@wordpress/components": "npm:^29.8.0"
+    "@wordpress/compose": "npm:^7.22.0"
+    "@wordpress/data": "npm:^10.22.0"
+    "@wordpress/element": "npm:^6.22.0"
+    "@wordpress/i18n": "npm:^5.22.0"
+    "@wordpress/icons": "npm:^10.22.0"
+    "@wordpress/postcss-plugins-preset": "npm:^5.22.0"
+    "@wordpress/primitives": "npm:^4.22.0"
+    "@wordpress/private-apis": "npm:^1.22.0"
+    "@wordpress/warning": "npm:^3.22.0"
+    clsx: "npm:^2.1.1"
+    postcss: "npm:^8.5.3"
+    postcss-local-keyframes: "npm:^0.0.2"
+    remove-accents: "npm:^0.5.0"
+    sass: "npm:1.54.0"
+    typescript: "npm:5.8.2"
+  peerDependencies:
+    react: ^18.0.0
+    react-dom: ^18.0.0
+  languageName: unknown
+  linkType: soft
+
 "@automattic/design-picker@workspace:^, @automattic/design-picker@workspace:packages/design-picker":
   version: 0.0.0-use.local
   resolution: "@automattic/design-picker@workspace:packages/design-picker"
@@ -10849,6 +10879,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@wordpress/postcss-plugins-preset@npm:5.22.0":
+  version: 5.22.0
+  resolution: "@wordpress/postcss-plugins-preset@npm:5.22.0"
+  dependencies:
+    "@wordpress/base-styles": "npm:^5.22.0"
+    autoprefixer: "npm:^10.4.20"
+  peerDependencies:
+    postcss: ^8.0.0
+  checksum: 8b1d08e77df38fd8696a0f9ea4d9cf9dad0c9e495edb8a4e087d01c2c570760f178ce49c950a8c580eb96b14e050f966ea7a9c273cfdddcd52336632c5fc00ac
+  languageName: node
+  linkType: hard
+
 "@wordpress/preferences@npm:4.22.0":
   version: 4.22.0
   resolution: "@wordpress/preferences@npm:4.22.0"
@@ -12316,21 +12358,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"autoprefixer@npm:^10.2.5":
-  version: 10.2.5
-  resolution: "autoprefixer@npm:10.2.5"
+"autoprefixer@npm:^10.2.5, autoprefixer@npm:^10.4.20":
+  version: 10.4.21
+  resolution: "autoprefixer@npm:10.4.21"
   dependencies:
-    browserslist: "npm:^4.16.3"
-    caniuse-lite: "npm:^1.0.30001196"
-    colorette: "npm:^1.2.2"
-    fraction.js: "npm:^4.0.13"
+    browserslist: "npm:^4.24.4"
+    caniuse-lite: "npm:^1.0.30001702"
+    fraction.js: "npm:^4.3.7"
     normalize-range: "npm:^0.1.2"
-    postcss-value-parser: "npm:^4.1.0"
+    picocolors: "npm:^1.1.1"
+    postcss-value-parser: "npm:^4.2.0"
   peerDependencies:
     postcss: ^8.1.0
   bin:
     autoprefixer: bin/autoprefixer
-  checksum: 77eea8d366a70abbb99cdda2fdd1c515891e077d2d2fa80505cc0fd38d2813db8237590c971f09b62ab5f37f479b35992edfcd09d4399ba8a0285853cbabc345
+  checksum: de5b71d26d0baff4bbfb3d59f7cf7114a6030c9eeb66167acf49a32c5b61c68e308f1e0f869d92334436a221035d08b51cd1b2f2c4689b8d955149423c16d4d4
   languageName: node
   linkType: hard
 
@@ -12992,7 +13034,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"browserslist@npm:^4.0.0, browserslist@npm:^4.12.0, browserslist@npm:^4.16.0, browserslist@npm:^4.16.3, browserslist@npm:^4.16.6, browserslist@npm:^4.21.10, browserslist@npm:^4.24.0, browserslist@npm:^4.24.4":
+"browserslist@npm:^4.0.0, browserslist@npm:^4.12.0, browserslist@npm:^4.16.0, browserslist@npm:^4.16.6, browserslist@npm:^4.21.10, browserslist@npm:^4.24.0, browserslist@npm:^4.24.4":
   version: 4.24.4
   resolution: "browserslist@npm:4.24.4"
   dependencies:
@@ -13716,10 +13758,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"caniuse-lite@npm:^1.0.0, caniuse-lite@npm:^1.0.30001196, caniuse-lite@npm:^1.0.30001688":
-  version: 1.0.30001702
-  resolution: "caniuse-lite@npm:1.0.30001702"
-  checksum: 52d46f41a96d179fd4e387bb6b26898148c31b626ff9aba105d207d2b0f869c7cb32ac67a6e8e0aeba3f03f33145ccfbee237250dfb58dba8b6526b4dd395ac6
+"caniuse-lite@npm:^1.0.0, caniuse-lite@npm:^1.0.30001688, caniuse-lite@npm:^1.0.30001702":
+  version: 1.0.30001715
+  resolution: "caniuse-lite@npm:1.0.30001715"
+  checksum: 0109a7da797ffbe1aa197baa5242b205011098eecec1087ef3d0c58ceea19be325ab6679b2751a78660adc3051a9f77e99d5789938fd1eb1235e6fdf6a1dbf8e
   languageName: node
   linkType: hard
 
@@ -14416,7 +14458,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"colorette@npm:^1.2.1, colorette@npm:^1.2.2":
+"colorette@npm:^1.2.1":
   version: 1.4.0
   resolution: "colorette@npm:1.4.0"
   checksum: 4955c8f7daafca8ae7081d672e4bd89d553bd5782b5846d5a7e05effe93c2f15f7e9c0cb46f341b59f579a39fcf436241ff79594899d75d5f3460c03d607fe9e
@@ -19309,10 +19351,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fraction.js@npm:^4.0.13":
-  version: 4.1.0
-  resolution: "fraction.js@npm:4.1.0"
-  checksum: db0e43d60dbe9211673dd88a0ba7984a1b3b34dcefa2619e12c73e9d58106fc172f13b6e6f10af5c17f2ef6439a02fe848218ec9498d4ced7cccb7ecce42e776
+"fraction.js@npm:^4.3.7":
+  version: 4.3.7
+  resolution: "fraction.js@npm:4.3.7"
+  checksum: df291391beea9ab4c263487ffd9d17fed162dbb736982dee1379b2a8cc94e4e24e46ed508c6d278aded9080ba51872f1bc5f3a5fd8d7c74e5f105b508ac28711
   languageName: node
   linkType: hard
 
@@ -27846,6 +27888,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"postcss-local-keyframes@npm:^0.0.2":
+  version: 0.0.2
+  resolution: "postcss-local-keyframes@npm:0.0.2"
+  peerDependencies:
+    postcss: ^8.2.8
+  checksum: d84815005ec75fef50a3f4a9cb7cff59fe1222714bfe1d7864c217d7e305b45774af1567eb88af280274bf1fd56dd5a461e3d4d453bb9b44f051a3d85b79cd79
+  languageName: node
+  linkType: hard
+
 "postcss-media-query-parser@npm:^0.2.3":
   version: 0.2.3
   resolution: "postcss-media-query-parser@npm:0.2.3"
@@ -33956,7 +34007,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:5.8.2, typescript@npm:^5.8.2":
+"typescript@npm:5.8.2":
   version: 5.8.2
   resolution: "typescript@npm:5.8.2"
   bin:
@@ -33966,13 +34017,33 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@npm%3A5.8.2#optional!builtin<compat/typescript>, typescript@patch:typescript@npm%3A^5.8.2#optional!builtin<compat/typescript>":
+"typescript@npm:^5.8.2":
+  version: 5.8.3
+  resolution: "typescript@npm:5.8.3"
+  bin:
+    tsc: bin/tsc
+    tsserver: bin/tsserver
+  checksum: 5f8bb01196e542e64d44db3d16ee0e4063ce4f3e3966df6005f2588e86d91c03e1fb131c2581baf0fb65ee79669eea6e161cd448178986587e9f6844446dbb48
+  languageName: node
+  linkType: hard
+
+"typescript@patch:typescript@npm%3A5.8.2#optional!builtin<compat/typescript>":
   version: 5.8.2
   resolution: "typescript@patch:typescript@npm%3A5.8.2#optional!builtin<compat/typescript>::version=5.8.2&hash=e012d7"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
   checksum: 8a6cd29dfb59bd5a978407b93ae0edb530ee9376a5b95a42ad057a6f80ffb0c410489ccd6fe48d1d0dfad6e8adf5d62d3874bbd251f488ae30e11a1ce6dabd28
+  languageName: node
+  linkType: hard
+
+"typescript@patch:typescript@npm%3A^5.8.2#optional!builtin<compat/typescript>":
+  version: 5.8.3
+  resolution: "typescript@patch:typescript@npm%3A5.8.3#optional!builtin<compat/typescript>::version=5.8.3&hash=e012d7"
+  bin:
+    tsc: bin/tsc
+    tsserver: bin/tsserver
+  checksum: 92ea03509e06598948559ddcdd8a4ae5a7ab475766d5589f1b796f5731b3d631a4c7ddfb86a3bd44d58d10102b132cd4b4994dda9b63e6273c66d77d6a271dbd
   languageName: node
   linkType: hard
 

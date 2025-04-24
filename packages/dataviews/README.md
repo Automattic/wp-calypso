@@ -1,4 +1,6 @@
-# The `@wordpress/dataviews` package
+# The `@automattic/dataviews` package
+
+> This package is based on the `@wordpress/dataviews` package and extends its functionality. See the "Contributing to this package" section for more info.
 
 The DataViews package offers two React components and a few utilities to work with a list of data:
 
@@ -10,14 +12,14 @@ The DataViews package offers two React components and a few utilities to work wi
 Install the module
 
 ```bash
-npm install @wordpress/dataviews --save
+npm install @automattic/dataviews --save
 ```
 
 ## `DataViews`
 
 <div class="callout callout-info">At <a href="https://wordpress.github.io/gutenberg/">WordPress Gutenberg's Storybook</a> there's an <a href="https://wordpress.github.io/gutenberg/?path=/docs/dataviews-dataviews--docs">example implementation of the Dataviews component</a>.</div>
 
-**Important note** If you're trying to use the `DataViews` component in a WordPress plugin or theme and you're building your scripts using the `@wordpress/scripts` package, you need to import the components from `@wordpress/dataviews/wp` instead of `@wordpress/dataviews`.
+**Important note** If you're trying to use the `DataViews` component in a WordPress plugin or theme and you're building your scripts using the `@wordpress/scripts` package, you need to import the components from `@automattic/dataviews/wp` instead of `@automattic/dataviews`.
 
 ### Usage
 
@@ -1221,8 +1223,8 @@ Example:
 
 ## Contributing to this package
 
-This is an individual package that's part of the Gutenberg project. The project is organized as a monorepo. It's made up of multiple self-contained software packages, each with a specific purpose. The packages in this monorepo are published to [npm](https://www.npmjs.com/) and used by [WordPress](https://make.wordpress.org/core/) as well as other software projects.
+This package is based on and extends the [`@wordpress/dataviews` package](https://www.npmjs.com/package/@wordpress/dataviews).
 
-To find out more about contributing to this package or Gutenberg as a whole, please read the project's main [contributor guide](https://github.com/WordPress/gutenberg/tree/HEAD/CONTRIBUTING.md).
+This is an individual package that's part of the wp-calypso project. The project is organized as a monorepo. It's made up of multiple self-contained software packages, each with a specific purpose. The packages in this monorepo are published to [npm](https://www.npmjs.com/) and used by [wp-calypso](https://github.com/automattic/wp-calypso/) as well as other software projects.
 
-<br /><br /><p align="center"><img src="https://s.w.org/style/images/codeispoetry.png?1" alt="Code is Poetry." /></p>
+To find out more about contributing to this package or wp-calypso as a whole, please read the project's main [contributor guide](https://github.com/Automattic/wp-calypso/blob/trunk/docs/CONTRIBUTING.md).
