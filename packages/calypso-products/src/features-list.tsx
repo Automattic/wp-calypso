@@ -191,8 +191,8 @@ import {
 	FEATURE_ISOLATED_INFRA,
 	FEATURE_SECURITY_MALWARE,
 	FEATURE_SECURITY_DDOS,
-	FEATURE_DEV_TOOLS_GIT,
 	FEATURE_DEV_TOOLS_SSH,
+	FEATURE_DEV_TOOLS_GIT,
 	FEATURE_WP_UPDATES,
 	FEATURE_MULTI_SITE,
 	FEATURE_SELL_SHIP,
@@ -1945,7 +1945,7 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_DEV_TOOLS_GIT ]: {
 		getSlug: () => FEATURE_DEV_TOOLS_GIT,
-		getTitle: () => i18n.translate( 'Git commands, and GitHub Deployments' ),
+		getTitle: () => i18n.translate( 'Git commands and GitHub Deployments' ),
 		getDescription: () =>
 			i18n.translate( 'Use familiar developer tools to manage and deploy your site.' ),
 	},
