@@ -806,7 +806,10 @@ export class JetpackAuthorize extends Component {
 			return translate( 'Connect to WordPress.com' );
 		}
 
-		if ( this.isFromJetpackOnboarding() ) {
+		if (
+			config.isEnabled( 'jetpack/onboarding-user-connection-redesign' ) &&
+			this.isFromJetpackOnboarding()
+		) {
 			return translate( 'Connect my site' );
 		}
 
@@ -884,7 +887,10 @@ export class JetpackAuthorize extends Component {
 			);
 		}
 
-		if ( this.isFromJetpackOnboarding() ) {
+		if (
+			config.isEnabled( 'jetpack/onboarding-user-connection-redesign' ) &&
+			this.isFromJetpackOnboarding()
+		) {
 			return (
 				<>
 					<div className="jetpack-connect__logged-in-user-text-name">
@@ -1282,7 +1288,10 @@ export class JetpackAuthorize extends Component {
 			/>
 		);
 
-		if ( this.isFromJetpackOnboarding() ) {
+		if (
+			config.isEnabled( 'jetpack/onboarding-user-connection-redesign' ) &&
+			this.isFromJetpackOnboarding()
+		) {
 			return (
 				<LoggedOutFormFooter className="jetpack-connect__action--onboarding">
 					{ actionButton }
