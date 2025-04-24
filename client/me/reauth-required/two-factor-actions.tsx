@@ -14,7 +14,7 @@ interface TwoFactorActionsProps {
 	twoFactorAuthType: string;
 }
 
-export function TwoFactorActions( {
+function TwoFactorActions( {
 	isAuthenticatorSupported,
 	isSecurityKeySupported,
 	isSmsSupported,

@@ -5,7 +5,7 @@
 import { render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
-import { TwoFactorActions } from '../two-factor-actions';
+import TwoFactorActions from '../two-factor-actions';
 
 const mockDispatch = jest.fn();
 
