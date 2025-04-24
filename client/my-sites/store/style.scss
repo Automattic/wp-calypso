@@ -20,19 +20,6 @@
 		}
 	}
 
-	.woocommerce__placeholder {
-		padding-top: 16px;
-
-		@include breakpoint-deprecated( ">660px" ) {
-			padding-top: 32px;
-		}
-	}
-
-	.woocommerce__placeholder-card {
-		@include placeholder();
-		height: 70vh;
-	}
-
 	@include breakpoint-deprecated( ">660px" ) {
 		&.store-stats {
 			.stats-navigation .section-nav {
