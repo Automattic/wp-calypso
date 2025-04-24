@@ -72,16 +72,7 @@ const debug = debugFactory( 'calypso:me:account' );
 const ALLOWED_USERNAME_CHARACTERS_REGEX = /^[a-z0-9]+$/;
 const USERNAME_MIN_LENGTH = 4;
 const ACCOUNT_FORM_NAME = 'account';
-const INTERFACE_FORM_NAME = 'interface';
-const ACCOUNT_FIELDS = [ 'user_login', 'user_email', 'user_URL', 'primary_site_ID' ];
-const INTERFACE_FIELDS = [
-	'locale_variant',
-	'language',
-	'i18n_empathy_mode',
-	'use_fallback_for_incomplete_languages',
-	'enable_translator',
-	'calypso_preferences',
-];
+const ACCOUNT_FIELDS = [ 'user_login', 'user_email', 'primary_site_ID' ];
 
 class Account extends Component {
 	constructor( props ) {
@@ -100,7 +91,7 @@ class Account extends Component {
 	};
 
 	componentDidUpdate() {
-		if ( ! this.hasUnsavedUserSettings( ACCOUNT_FIELDS.concat( INTERFACE_FIELDS ) ) ) {
+		if ( ! this.hasUnsavedUserSettings( ACCOUNT_FIELDS ) ) {
 			this.props.markSaved();
 		}
 	}
@@ -126,7 +117,7 @@ class Account extends Component {
 	}
 
 	getDisabledState( formName ) {
-		return formName ? this.state.formsSubmitting[ formName ] : this.state.submittingForm;
+		return this.state.formsSubmitting[ formName ];
 	}
 
 	getUserSetting( settingName ) {
@@ -511,14 +502,7 @@ class Account extends Component {
 		);
 	}
 
-	shouldDisableInterfaceSubmitButton() {
-		return (
-			! this.hasUnsavedUserSettings( INTERFACE_FIELDS ) ||
-			this.getDisabledState( INTERFACE_FORM_NAME )
-		);
-	}
-
-	handleSubmitError( error, formName = '' ) {
+	handleSubmitError( error, formName ) {
 		debug( 'Error saving settings: ' + JSON.stringify( error ) );
 
 		if ( error.message ) {
@@ -534,17 +518,17 @@ class Account extends Component {
 			submittingForm: false,
 			formsSubmitting: {
 				...this.state.formsSubmitting,
-				...( formName && { [ formName ]: false } ),
+				[ formName ]: false,
 			},
 		} );
 	}
 
 	isSubmittingForm( formName ) {
-		return formName ? this.state.formsSubmitting[ formName ] : this.state.submittingForm;
+		return this.state.formsSubmitting[ formName ];
 	}
 
-	async handleSubmitSuccess( response, formName = '' ) {
-		if ( ! this.hasUnsavedUserSettings( ACCOUNT_FIELDS.concat( INTERFACE_FIELDS ) ) ) {
+	async handleSubmitSuccess( response, formName ) {
+		if ( ! this.hasUnsavedUserSettings( ACCOUNT_FIELDS ) ) {
 			this.props.markSaved();
 		}
 
@@ -596,7 +580,7 @@ class Account extends Component {
 				submittingForm: false,
 				formsSubmitting: {
 					...this.state.formsSubmitting,
-					...( formName && { [ formName ]: false } ),
+					[ formName ]: false,
 				},
 			},
 			() => {
@@ -606,7 +590,7 @@ class Account extends Component {
 		debug( 'Settings saved successfully ' + JSON.stringify( response ) );
 	}
 
-	async submitForm( event, fields, formName = '' ) {
+	async submitForm( event, fields, formName ) {
 		event?.preventDefault && event.preventDefault();
 		debug( 'Submitting form' );
 
@@ -614,7 +598,7 @@ class Account extends Component {
 			submittingForm: true,
 			formsSubmitting: {
 				...this.state.formsSubmitting,
-				...( formName && { [ formName ]: true } ),
+				[ formName ]: true,
 			},
 		} );
 
@@ -837,10 +821,6 @@ class Account extends Component {
 		this.submitForm( event, ACCOUNT_FIELDS, ACCOUNT_FORM_NAME );
 	};
 
-	saveInterfaceSettings = ( event ) => {
-		this.submitForm( event, INTERFACE_FIELDS, INTERFACE_FORM_NAME );
-	};
-
 	render() {
 		const { isFetching, markChanged, translate } = this.props;
 		// Is a username change in progress?
@@ -921,72 +901,69 @@ class Account extends Component {
 
 				<SectionHeader label={ translate( 'Interface settings' ) } />
 				<Card className="account__settings">
-					<form onSubmit={ this.saveInterfaceSettings }>
-						<FormFieldset>
-							<FormLabel id="account__language" htmlFor="language">
-								{ translate( 'Interface language' ) }
-							</FormLabel>
-							<LanguagePicker
-								disabled={ this.getDisabledState( INTERFACE_FORM_NAME ) }
-								isLoading={ isFetching }
-								languages={ languages }
-								onClick={ this.getClickHandler( 'Interface Language Field' ) }
-								valueKey="langSlug"
-								value={
-									this.getUserSetting( 'locale_variant' ) || this.getUserSetting( 'language' ) || ''
-								}
-								empathyMode={ this.getUserSetting( 'i18n_empathy_mode' ) }
-								useFallbackForIncompleteLanguages={ this.getUserSetting(
-									'use_fallback_for_incomplete_languages'
-								) }
-								onChange={ this.updateLanguage }
-							/>
-							<FormSettingExplanation>
-								{ translate(
-									'This is the language of the interface you see across WordPress.com as a whole.'
-								) }
-							</FormSettingExplanation>
-							{ this.thankTranslationContributors() }
-						</FormFieldset>
+					<FormFieldset>
+						<FormLabel id="account__language" htmlFor="language">
+							{ translate( 'Interface language' ) }
+						</FormLabel>
+						<LanguagePicker
+							isLoading={ isFetching }
+							languages={ languages }
+							onClick={ this.getClickHandler( 'Interface Language Field' ) }
+							valueKey="langSlug"
+							value={
+								this.getUserSetting( 'locale_variant' ) || this.getUserSetting( 'language' ) || ''
+							}
+							empathyMode={ this.getUserSetting( 'i18n_empathy_mode' ) }
+							useFallbackForIncompleteLanguages={ this.getUserSetting(
+								'use_fallback_for_incomplete_languages'
+							) }
+							onChange={ this.updateLanguage }
+						/>
+						<FormSettingExplanation>
+							{ translate(
+								'This is the language of the interface you see across WordPress.com as a whole.'
+							) }
+						</FormSettingExplanation>
+						{ this.thankTranslationContributors() }
+					</FormFieldset>
 
-						{ this.props.canDisplayCommunityTranslator && (
-							<FormFieldset className="account__settings-admin-home">
-								<FormLabel id="account__default_landing_page">
-									{ translate( 'Community translator' ) }
-								</FormLabel>
-								<ToggleUseCommunityTranslator />
-							</FormFieldset>
-						) }
-
+					{ this.props.canDisplayCommunityTranslator && (
 						<FormFieldset className="account__settings-admin-home">
 							<FormLabel id="account__default_landing_page">
-								{ translate( 'Default landing page' ) }
+								{ translate( 'Community translator' ) }
 							</FormLabel>
-							<ToggleLandingPageSettings />
-							<FormSettingExplanation>
-								{ fixMe( {
-									text: "Select what you'll see by default when visiting WordPress.com",
-									newCopy: translate(
-										"Select what you'll see by default when visiting WordPress.com"
-									),
-									oldCopy: translate(
-										'When you type https://www.wordpress.com in your browser, this is the page you land on.'
-									),
-								} ) }
-							</FormSettingExplanation>
+							<ToggleUseCommunityTranslator />
 						</FormFieldset>
+					) }
 
-						<FormFieldset>
-							<FormLabel id="account__color_scheme" htmlFor="color_scheme">
-								{ translate( 'Dashboard color scheme' ) }
-							</FormLabel>
-							<FormSettingExplanation>
-								{ translate(
-									'You can now set the color scheme on your individual site by visiting Users → Profile from your site dashboard.'
-								) }
-							</FormSettingExplanation>
-						</FormFieldset>
-					</form>
+					<FormFieldset className="account__settings-admin-home">
+						<FormLabel id="account__default_landing_page">
+							{ translate( 'Default landing page' ) }
+						</FormLabel>
+						<ToggleLandingPageSettings />
+						<FormSettingExplanation>
+							{ fixMe( {
+								text: "Select what you'll see by default when visiting WordPress.com",
+								newCopy: translate(
+									"Select what you'll see by default when visiting WordPress.com"
+								),
+								oldCopy: translate(
+									'When you type https://www.wordpress.com in your browser, this is the page you land on.'
+								),
+							} ) }
+						</FormSettingExplanation>
+					</FormFieldset>
+
+					<FormFieldset>
+						<FormLabel id="account__color_scheme" htmlFor="color_scheme">
+							{ translate( 'Dashboard color scheme' ) }
+						</FormLabel>
+						<FormSettingExplanation>
+							{ translate(
+								'You can now set the color scheme on your individual site by visiting Users → Profile from your site dashboard.'
+							) }
+						</FormSettingExplanation>
+					</FormFieldset>
 				</Card>
 
 				{ config.isEnabled( 'me/account-close' ) && <AccountSettingsCloseLink /> }
