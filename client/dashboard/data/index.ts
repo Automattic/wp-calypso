@@ -49,6 +49,8 @@ const SITE_FIELDS = [
 	'site_migration',
 	'options',
 	'site_owner',
+	'jetpack',
+	'jetpack_modules',
 ].join( ',' );
 
 export const fetchSites = async (): Promise< Site[] > => {
@@ -97,51 +99,34 @@ export const fetchSiteMediaStorage = async ( id: string ): Promise< MediaStorage
 };
 
 export const fetchSiteMonitorUptime = async (
-	id: string
+	site: Site
 ): Promise< MonitorUptime | undefined > => {
-	if ( ! id ) {
-		return Promise.reject( new Error( 'Site ID is undefined' ) );
+	if ( ! site ) {
+		return Promise.reject( new Error( 'Site is undefined' ) );
 	}
-	// TODO: check this in different contexts..
-	// TODO: this and similar requests trigger multiple requests to the same endpoint
-	// with different fields. How can we avoid this?
-	const site = await wpcom.req.get(
-		{
-			path: `/sites/${ id }?http_envelope=1`,
-			apiNamespace: 'rest/v1.1',
-		},
-		{ fields: [ 'ID', 'jetpack', 'jetpack_modules' ].join( ',' ) }
-	);
-	if ( ! site?.jetpack || ! site?.jetpack_modules?.includes( 'monitor' ) ) {
+	if ( ! site.jetpack || ! site.jetpack_modules?.includes( 'monitor' ) ) {
 		return;
 	}
 	return wpcom.req.get(
 		{
-			path: `/sites/${ id }/jetpack-monitor-uptime`,
+			path: `/sites/${ site.ID }/jetpack-monitor-uptime`,
 			apiNamespace: 'wpcom/v2',
 		},
 		{ period: '30 days' }
 	);
 };
 
-export const fetchPHPVersion = async ( id: string ): Promise< string | undefined > => {
-	if ( ! id ) {
-		return Promise.reject( new Error( 'Site ID is undefined' ) );
+export const fetchPHPVersion = async ( site: Site ): Promise< string | undefined > => {
+	if ( ! site ) {
+		return Promise.reject( new Error( 'Site is undefined' ) );
 	}
-	const site = await wpcom.req.get(
-		{
-			path: `/sites/${ id }?http_envelope=1`,
-			apiNamespace: 'rest/v1.1',
-		},
-		{ fields: [ 'ID', 'options' ].join( ',' ) }
-	);
-	if ( ! site.options?.is_wpcom_atomic ) {
+	if ( ! site.options.is_wpcom_atomic ) {
 		return;
 	}
 	// TODO: check request in different contexts.. Also do we show this only for atomic sites?
 	// TODO: find out what check is needed before this request to avoid 403 errors.
 	return wpcom.req.get( {
-		path: `/sites/${ id }/hosting/php-version`,
+		path: `/sites/${ site.ID }/hosting/php-version`,
 		apiNamespace: 'wpcom/v2',
 	} );
 };

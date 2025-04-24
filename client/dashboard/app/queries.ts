@@ -26,8 +26,8 @@ export function siteQuery( siteId: string ) {
 	return {
 		queryKey: [ 'site', siteId ],
 		queryFn: async () => {
+			const site = await fetchSite( siteId );
 			const [
-				site,
 				mediaStorage,
 				siteMonitorUptime,
 				phpVersion,
@@ -35,10 +35,9 @@ export function siteQuery( siteId: string ) {
 				primaryDomain,
 				engagementStats,
 			] = await Promise.all( [
-				fetchSite( siteId ),
 				fetchSiteMediaStorage( siteId ),
-				fetchSiteMonitorUptime( siteId ),
-				fetchPHPVersion( siteId ),
+				fetchSiteMonitorUptime( site ),
+				fetchPHPVersion( site ),
 				fetchCurrentPlan( siteId ),
 				fetchSitePrimaryDomain( siteId ),
 				fetchSiteEngagementStats( siteId ),
