@@ -77,20 +77,10 @@ export const isEntrepreneurFlow = ( flowName: string | null ) => {
 	return Boolean( flowName && [ ENTREPRENEUR_FLOW ].includes( flowName ) );
 };
 
-/**
- * @deprecated Please use isSiteMigrationFlow instead
- */
 export const isNewSiteMigrationFlow = ( flowName: string | null ) => {
 	return Boolean( flowName && [ SITE_MIGRATION_FLOW ].includes( flowName ) );
 };
 
-export const isSiteMigrationFlow = ( flowName: string | null ) => {
-	return Boolean( flowName && [ SITE_MIGRATION_FLOW ].includes( flowName ) );
-};
-
-/**
- * @deprecated Please use isNewSiteMigrationFlow instead
- */
 export const isHostedSiteMigrationFlow = ( flowName: string | null ) => {
 	return Boolean( flowName && [ HOSTED_SITE_MIGRATION_FLOW ].includes( flowName ) );
 };
