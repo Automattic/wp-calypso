@@ -537,6 +537,8 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 				/>
 			) : (
 				<NavigationHeader
+					className="stats__section-header modernized-header"
+					title={ STATS_PRODUCT_NAME }
 					subtitle={ translate(
 						"Gain insights into the activity and behavior of your site's visitors. {{learnMoreLink}}Learn more{{/learnMoreLink}}",
 						{
