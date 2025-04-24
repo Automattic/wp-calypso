@@ -382,18 +382,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 				}
 
 				case STEPS.SITE_MIGRATION_CREDENTIALS.slug: {
-					const { action, from, authorizationUrl, platform } = providedDependencies as {
-						action:
-							| 'skip'
-							| 'submit'
-							| 'application-passwords-approval'
-							| 'credentials-required'
-							| 'already-wpcom'
-							| 'site-is-not-using-wordpress';
-						from: string;
-						authorizationUrl: string;
-						platform: ImporterPlatform;
-					};
+					const { action, from, authorizationUrl, platform } = providedDependencies;
 
 					if ( action === 'skip' ) {
 						return exitFlow( paths.calypsoOverviewPath( { ref: 'site-migration' }, { siteSlug } ) );
