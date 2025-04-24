@@ -487,6 +487,14 @@ const SubscriberDataViews = ( {
 				} );
 			}
 
+			// Update URL when page changes
+			if ( newView.page !== currentView.page ) {
+				const currentPath = window.location.pathname;
+				const urlParams = new URLSearchParams( window.location.search );
+				urlParams.set( 'page', String( newView.page ) );
+				page.show( `${ currentPath }?${ urlParams.toString() }` );
+			}
+
 			setCurrentView( newView );
 		},
 		[
