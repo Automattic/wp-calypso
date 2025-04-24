@@ -31,7 +31,8 @@ import { ONBOARD_STORE } from '../../../stores';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
 import { recordStepNavigation } from '../../internals/analytics/record-step-navigation';
 import { STEPS } from '../../internals/steps';
-import type { FlowV2, ProvidedDependencies } from '../../internals/types';
+import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
+import type { FlowV2, ProvidedDependencies, SubmitHandler } from '../../internals/types';
 
 const clearUseMyDomainsQueryParams = ( currentStepSlug: string | undefined ) => {
 	const isDomainsStep = currentStepSlug === 'domains';
@@ -148,8 +149,9 @@ const onboarding: FlowV2< typeof initialize > = {
 
 		clearUseMyDomainsQueryParams( currentStepSlug );
 
-		const submit = async ( providedDependencies: ProvidedDependencies = {} ) => {
-			switch ( currentStepSlug ) {
+		const submit: SubmitHandler< typeof initialize > = async ( submittedStep ) => {
+			const { slug, providedDependencies } = submittedStep;
+			switch ( slug ) {
 				case 'domains':
 					setSiteUrl( providedDependencies.siteUrl );
 					setDomain( providedDependencies.suggestion );
@@ -163,8 +165,7 @@ const onboarding: FlowV2< typeof initialize > = {
 
 						let useMyDomainURL = addQueryArgs( '/use-my-domain', currentQueryArgs );
 
-						const lastQueryParam = ( providedDependencies?.domainForm as { lastQuery?: string } )
-							?.lastQuery;
+						const lastQueryParam = providedDependencies.domainForm?.lastQuery;
 
 						if ( lastQueryParam !== undefined ) {
 							currentQueryArgs.initialQuery = lastQueryParam;
@@ -243,38 +244,47 @@ const onboarding: FlowV2< typeof initialize > = {
 
 					persistSignupDestination( destination );
 					setSignupCompleteFlowName( flowName );
-					setSignupCompleteSlug( providedDependencies.siteSlug );
 
-					if ( providedDependencies.goToCheckout ) {
-						const siteSlug = providedDependencies.siteSlug as string;
+					if ( providedDependencies.processingResult === ProcessingResult.SUCCESS ) {
+						setSignupCompleteSlug( providedDependencies.siteSlug );
 
-						/**
-						 * If the user comes from the Playground onboarding flow,
-						 * redirect the user back to Playground to start the import.
-						 */
-						const playgroundId = getQueryArg( window.location.href, 'playground' );
-						const redirectTo: string = playgroundId
-							? addQueryArgs( withLocale( '/setup/site-setup/importerPlayground', locale ), {
-									siteSlug,
-									siteId: providedDependencies.siteId,
-									playground: playgroundId,
-							  } )
-							: addQueryArgs( withLocale( '/setup/onboarding/post-checkout-onboarding', locale ), {
-									siteSlug,
-							  } );
+						if ( providedDependencies.goToCheckout ) {
+							const siteSlug = providedDependencies.siteSlug as string;
 
-						// replace the location to delete processing step from history.
-						window.location.replace(
-							addQueryArgs( `/checkout/${ encodeURIComponent( siteSlug ) }`, {
-								redirect_to: redirectTo,
-								signup: 1,
-								checkoutBackUrl: pathToUrl( backDestination ?? '' ),
-								coupon,
-							} )
-						);
+							/**
+							 * If the user comes from the Playground onboarding flow,
+							 * redirect the user back to Playground to start the import.
+							 */
+							const playgroundId = getQueryArg( window.location.href, 'playground' );
+							const redirectTo: string = playgroundId
+								? addQueryArgs( withLocale( '/setup/site-setup/importerPlayground', locale ), {
+										siteSlug,
+										siteId: providedDependencies.siteId,
+										playground: playgroundId,
+								  } )
+								: addQueryArgs(
+										withLocale( '/setup/onboarding/post-checkout-onboarding', locale ),
+										{
+											siteSlug,
+										}
+								  );
+
+							// replace the location to delete processing step from history.
+							window.location.replace(
+								addQueryArgs( `/checkout/${ encodeURIComponent( siteSlug ) }`, {
+									redirect_to: redirectTo,
+									signup: 1,
+									checkoutBackUrl: pathToUrl( backDestination ?? '' ),
+									coupon,
+								} )
+							);
+						} else {
+							// replace the location to delete processing step from history.
+							window.location.replace( destination );
+						}
 					} else {
-						// replace the location to delete processing step from history.
-						window.location.replace( destination );
+						// TODO: Handle errors
+						// navigate( 'error' );
 					}
 					return;
 				}
