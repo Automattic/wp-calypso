@@ -9,6 +9,7 @@ import {
 import { dateI18n } from '@wordpress/date';
 import { __, sprintf } from '@wordpress/i18n';
 import SitePreview from '../site-preview';
+import { isA8CSite } from '../utils/site-owner';
 import { getSiteStatusLabel } from '../utils/site-status';
 import type { Site, SiteDomain, Plan } from '../data/types';
 
@@ -28,12 +29,14 @@ export default function SiteCard( {
 } ) {
 	const { options, URL: url } = site;
 	const { software_version, blog_public } = options;
+	// If the site is a private A8C site, X-Frame-Options is set to same
+	// origin.
+	const iframeDisabled = isA8CSite( site ) && blog_public === -1;
 	return (
 		<Card>
 			<VStack spacing={ 6 }>
 				<div className="dashboard-site-overview__preview-image">
-					{ /* If the site is private, show the preview image, because X-Frame-Options is set to same origin. */ }
-					{ blog_public === -1 && (
+					{ iframeDisabled && (
 						<div
 							style={ {
 								width: '300px',
@@ -48,8 +51,7 @@ export default function SiteCard( {
 							{ __( 'Private Site' ) }
 						</div>
 					) }
-					{ /* If the site is public or coming soon, show the preview iframe. */ }
-					{ blog_public > -1 && (
+					{ ! iframeDisabled && (
 						<div
 							className="dashboard-site-overview__preview-iframe"
 							style={ { width: '300px', height: '200px' } }

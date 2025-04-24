@@ -103,11 +103,12 @@ const DEFAULT_FIELDS = [
 			const [ resizeListener, { width } ] = useResizeObserver();
 			const { options, URL: url } = item;
 			const { blog_public } = options;
+			// If the site is a private A8C site, X-Frame-Options is set to same
+			// origin.
 			const iframeDisabled = isA8CSite( item ) && blog_public === -1;
 			return (
 				<>
 					{ resizeListener }
-					{ /* If the site is private, show the preview image, because X-Frame-Options is set to same origin. */ }
 					{ iframeDisabled && (
 						<div
 							style={ {
@@ -121,7 +122,6 @@ const DEFAULT_FIELDS = [
 							<SiteIcon site={ item } />
 						</div>
 					) }
-					{ /* If the site is public or coming soon, show the preview iframe. */ }
 					{ width && ! iframeDisabled && (
 						<SitePreview url={ url } scale={ width / 1200 } height={ 1200 } />
 					) }
