@@ -185,7 +185,7 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 	const isWPAdmin = config.isEnabled( 'is_odyssey' );
 	const isAtomic = useSelector( ( state ) => isAtomicSite( state, siteId ) );
 	const isSitePrivate = useSelector( ( state ) => isPrivateSite( state, siteId ) );
-	const isStatsNavigationImprovementEnabled = true;
+	const isStatsNavigationImprovementEnabled = config.isEnabled( 'stats/navigation-improvement' );
 	const slug = useSelector( getSelectedSiteSlug );
 	const moduleToggles = useSelector( ( state ) => getModuleToggles( state, siteId, 'traffic' ) );
 	const momentSiteZone = useSelector( ( state ) => getMomentSiteZone( state, siteId ) );
