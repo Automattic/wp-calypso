@@ -26,21 +26,32 @@ export function siteQuery( siteId: string ) {
 	return {
 		queryKey: [ 'site', siteId ],
 		queryFn: async () => {
-			const site = await fetchSite( siteId );
+			const sitePromise = fetchSite( siteId );
+			const mediaStoragePromise = fetchSiteMediaStorage( siteId );
+			const currentPlanPromise = fetchCurrentPlan( siteId );
+			const primaryDomainPromise = fetchSitePrimaryDomain( siteId );
+			const engagementStatsPromise = fetchSiteEngagementStats( siteId );
+			const siteMonitorUptimePromise = sitePromise.then( ( site ) =>
+				fetchSiteMonitorUptime( site )
+			);
+			const phpVersionPromise = sitePromise.then( ( site ) => fetchPHPVersion( site ) );
+
 			const [
+				site,
 				mediaStorage,
-				siteMonitorUptime,
-				phpVersion,
 				currentPlan,
 				primaryDomain,
 				engagementStats,
+				siteMonitorUptime,
+				phpVersion,
 			] = await Promise.all( [
-				fetchSiteMediaStorage( siteId ),
-				fetchSiteMonitorUptime( site ),
-				fetchPHPVersion( site ),
-				fetchCurrentPlan( siteId ),
-				fetchSitePrimaryDomain( siteId ),
-				fetchSiteEngagementStats( siteId ),
+				sitePromise,
+				mediaStoragePromise,
+				currentPlanPromise,
+				primaryDomainPromise,
+				engagementStatsPromise,
+				siteMonitorUptimePromise,
+				phpVersionPromise,
 			] );
 			return {
 				site,

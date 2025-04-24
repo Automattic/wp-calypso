@@ -186,10 +186,7 @@ export const fetchDomains = async (): Promise< Domain[] > => {
 	return (
 		await wpcom.req.get(
 			{ path: '/all-domains?http_envelope=1' },
-			{
-				no_wpcom: true,
-				resolve_status: true,
-			}
+			{ no_wpcom: true, resolve_status: true }
 		)
 	).domains;
 };
