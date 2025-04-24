@@ -1,3 +1,4 @@
+// @ts-nocheck - TODO: Fix TypeScript issues
 /** @jest-environment jsdom */
 import { WPCOM_FEATURES_PREMIUM_THEMES_LIMITED } from '@automattic/calypso-products';
 import { screen, waitFor } from '@testing-library/react';

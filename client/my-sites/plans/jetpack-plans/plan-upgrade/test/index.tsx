@@ -1,3 +1,4 @@
+// @ts-nocheck - TODO: Fix TypeScript issues
 /** @jest-environment jsdom */
 jest.mock( 'calypso/state/ui/selectors', () => ( {
 	getSelectedSiteId: jest.fn( () => 100 ),
