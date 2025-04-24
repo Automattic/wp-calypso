@@ -34,7 +34,7 @@ export const StatsModuleSummaryLinks = ( props ) => {
 		navigationSwap,
 		shouldGateOptions,
 		siteId,
-		context = {},
+		context,
 	} = props;
 
 	const dispatch = useDispatch();
@@ -83,7 +83,7 @@ export const StatsModuleSummaryLinks = ( props ) => {
 	}, [ period.period, period.endOf, path, siteSlug, query ] );
 
 	const getSummaryPathForDaysRange = ( numberDays ) => {
-		const queryParams = new URLSearchParams( context.query || {} );
+		const queryParams = new URLSearchParams( context.query );
 
 		queryParams.set( 'startDate', moment().format( 'YYYY-MM-DD' ) );
 		queryParams.set( 'summarize', 1 );

@@ -45,7 +45,7 @@ const StatsModuleUTM = ( {
 	query,
 	postId,
 	summaryUrl,
-	context = {},
+	context,
 } ) => {
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
@@ -62,7 +62,7 @@ const StatsModuleUTM = ( {
 		if ( summaryUrl ) {
 			urlParams = new URLSearchParams( summaryUrl?.split( '?' )[ 1 ] || '' );
 		} else {
-			urlParams = new URLSearchParams( context.query || {} );
+			urlParams = new URLSearchParams( context.query );
 		}
 
 		return urlParams;
@@ -87,7 +87,7 @@ const StatsModuleUTM = ( {
 
 		// If URL has valid param and it's different from state, update state
 		if ( utmParam !== selectedOption ) {
-			const updatedQuery = { ...( context.query || {} ), [ UTM_QUERY_PARAM ]: selectedOption };
+			const updatedQuery = { ...context.query, [ UTM_QUERY_PARAM ]: selectedOption };
 			const queryString = new URLSearchParams( updatedQuery ).toString();
 			page( `${ basePath }?${ queryString }` );
 		}
