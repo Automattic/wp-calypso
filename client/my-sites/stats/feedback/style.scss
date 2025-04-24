@@ -8,7 +8,6 @@
 	line-height: 21px;
 	letter-spacing: -0.24px;
 	color: var(--studio-gray-100);
-	padding-top: 21px;
 }
 
 .stats-feedback-content__actions {
@@ -101,6 +100,10 @@
 
 	.components-button.is-link {
 		color: var(--studio-gray-100);
+	}
+
+	.stats-feedback-content {
+		padding-top: 21px;
 	}
 }
 
