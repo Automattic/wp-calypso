@@ -86,10 +86,10 @@ const DEFAULT_FIELDS = [
 	{
 		id: 'a8c_owned',
 		label: __( 'A8C Owned' ),
-		getValue: ( { item }: { item: Site } ) => isA8CSite( item ),
+		getValue: ( { item }: { item: Site } ) => isA8CSite( item ) || undefined,
 		elements: [
 			{ value: true, label: __( 'Yes' ) },
-			{ value: false, label: __( 'No' ) },
+			{ value: undefined, label: __( 'No' ) },
 		],
 		filterBy: {
 			operators: [ 'is' as Operator ],
@@ -166,7 +166,7 @@ export default function Sites() {
 						{
 							field: 'a8c_owned',
 							operator: 'is',
-							value: false,
+							value: undefined,
 						},
 					],
 			  }
