@@ -45,13 +45,13 @@ const StatsModuleUTM = ( {
 	query,
 	postId,
 	summaryUrl,
-	context,
+	context = {},
 } ) => {
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 	const translate = useTranslate();
 	const [ selectedOption, setSelectedOption ] = useState( () => {
-		const utmQueryParam = context.query[ UTM_QUERY_PARAM ];
+		const utmQueryParam = context.query?.[ UTM_QUERY_PARAM ];
 		return Object.values( OPTION_KEYS ).includes( utmQueryParam )
 			? utmQueryParam
 			: OPTION_KEYS.SOURCE_MEDIUM;
@@ -62,7 +62,7 @@ const StatsModuleUTM = ( {
 		if ( summaryUrl ) {
 			urlParams = new URLSearchParams( summaryUrl?.split( '?' )[ 1 ] || '' );
 		} else {
-			urlParams = new URLSearchParams( context.query );
+			urlParams = new URLSearchParams( context.query || {} );
 		}
 
 		return urlParams;
@@ -78,7 +78,7 @@ const StatsModuleUTM = ( {
 			return;
 		}
 
-		const utmParam = context.query[ UTM_QUERY_PARAM ];
+		const utmParam = context.query?.[ UTM_QUERY_PARAM ];
 		const isValidUtmParam = utmParam && Object.values( OPTION_KEYS ).includes( utmParam );
 
 		if ( ! isValidUtmParam ) {
@@ -87,7 +87,7 @@ const StatsModuleUTM = ( {
 
 		// If URL has valid param and it's different from state, update state
 		if ( utmParam !== selectedOption ) {
-			const updatedQuery = { ...context.query, [ UTM_QUERY_PARAM ]: selectedOption };
+			const updatedQuery = { ...( context.query || {} ), [ UTM_QUERY_PARAM ]: selectedOption };
 			const queryString = new URLSearchParams( updatedQuery ).toString();
 			page( `${ basePath }?${ queryString }` );
 		}
