@@ -230,7 +230,7 @@ describe( 'Site Migration Flow', () => {
 						siteId: 123,
 						siteSlug: 'example.wordpress.com',
 						origin: STEPS.SITE_MIGRATION_IDENTIFY.slug,
-						backToFlow: '/site-migration/site-migration-identify',
+						backToFlow: '/site-migration',
 					},
 				} );
 			} );

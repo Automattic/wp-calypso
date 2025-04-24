@@ -60,7 +60,7 @@ describe( 'Transferring hosted site flow submit redirects', () => {
 
 		it( 'redirects the user to the wp-admin when isAdminInterfaceWPAdmin', async () => {
 			runUseStepNavigationSubmit( {
-				currentURL: '/setup/hosted-site-migration',
+				currentURL: '/setup/site-migration',
 				currentStep: 'processing',
 				dependencies: {
 					action: 'continue',
@@ -71,7 +71,7 @@ describe( 'Transferring hosted site flow submit redirects', () => {
 
 			await waitFor( () => {
 				expect( getFlowLocation() ).toEqual( {
-					path: '/setup/hosted-site-migration',
+					path: '/setup/site-migration',
 					state: null,
 				} );
 			} );

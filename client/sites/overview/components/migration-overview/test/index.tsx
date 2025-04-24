@@ -97,7 +97,7 @@ describe( 'MigrationOverview', () => {
 
 			expect( link ).toHaveAttribute(
 				'href',
-				'/setup/hosted-site-migration/site-migration-instructions?siteId=123&siteSlug=example.com&ref=hosting-migration-overview'
+				'/setup/site-migration/site-migration-instructions?siteId=123&siteSlug=example.com&ref=hosting-migration-overview'
 			);
 		} );
 
@@ -171,7 +171,7 @@ describe( 'MigrationOverview', () => {
 
 			expect( link ).toHaveAttribute(
 				'href',
-				'/setup/hosted-site-migration/site-migration-credentials?siteId=123&siteSlug=example.com&ref=hosting-migration-overview'
+				'/setup/site-migration/site-migration-credentials?siteId=123&siteSlug=example.com&ref=hosting-migration-overview'
 			);
 		} );
 	} );
