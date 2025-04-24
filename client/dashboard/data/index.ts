@@ -99,34 +99,28 @@ export const fetchSiteMediaStorage = async ( id: string ): Promise< MediaStorage
 };
 
 export const fetchSiteMonitorUptime = async (
-	site: Site
+	id: string
 ): Promise< MonitorUptime | undefined > => {
-	if ( ! site ) {
-		return Promise.reject( new Error( 'Site is undefined' ) );
-	}
-	if ( ! site.jetpack || ! site.jetpack_modules?.includes( 'monitor' ) ) {
-		return;
+	if ( ! id ) {
+		return Promise.reject( new Error( 'Site ID is undefined' ) );
 	}
 	return wpcom.req.get(
 		{
-			path: `/sites/${ site.ID }/jetpack-monitor-uptime`,
+			path: `/sites/${ id }/jetpack-monitor-uptime`,
 			apiNamespace: 'wpcom/v2',
 		},
 		{ period: '30 days' }
 	);
 };
 
-export const fetchPHPVersion = async ( site: Site ): Promise< string | undefined > => {
-	if ( ! site ) {
-		return Promise.reject( new Error( 'Site is undefined' ) );
-	}
-	if ( ! site.options.is_wpcom_atomic ) {
-		return;
+export const fetchPHPVersion = async ( id: string ): Promise< string | undefined > => {
+	if ( ! id ) {
+		return Promise.reject( new Error( 'Site ID is undefined' ) );
 	}
 	// TODO: check request in different contexts.. Also do we show this only for atomic sites?
 	// TODO: find out what check is needed before this request to avoid 403 errors.
 	return wpcom.req.get( {
-		path: `/sites/${ site.ID }/hosting/php-version`,
+		path: `/sites/${ id }/hosting/php-version`,
 		apiNamespace: 'wpcom/v2',
 	} );
 };

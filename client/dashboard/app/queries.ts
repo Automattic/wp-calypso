@@ -32,9 +32,13 @@ export function siteQuery( siteId: string ) {
 			const primaryDomainPromise = fetchSitePrimaryDomain( siteId );
 			const engagementStatsPromise = fetchSiteEngagementStats( siteId );
 			const siteMonitorUptimePromise = sitePromise.then( ( site ) =>
-				fetchSiteMonitorUptime( site )
+				site.jetpack && site.jetpack_modules.includes( 'monitor' )
+					? fetchSiteMonitorUptime( siteId )
+					: undefined
 			);
-			const phpVersionPromise = sitePromise.then( ( site ) => fetchPHPVersion( site ) );
+			const phpVersionPromise = sitePromise.then( ( site ) =>
+				site.options.is_wpcom_atomic ? fetchPHPVersion( siteId ) : undefined
+			);
 
 			const [
 				site,
