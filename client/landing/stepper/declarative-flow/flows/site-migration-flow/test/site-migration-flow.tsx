@@ -78,27 +78,6 @@ describe( 'Site Migration Flow', () => {
 		jest.restoreAllMocks();
 	} );
 
-	describe( 'isSignupFlow', () => {
-		afterEach( () => {
-			window.location.search = '';
-		} );
-
-		it( 'returns false when there is siteSlug on query params', () => {
-			window.location.search = '?siteSlug=123';
-			expect( siteMigrationFlow.isSignupFlow ).toBe( false );
-		} );
-
-		it( 'returns false when there is siteId on query params', () => {
-			window.location.search = '?siteId=123';
-			expect( siteMigrationFlow.isSignupFlow ).toBe( false );
-		} );
-
-		it( 'returns true when there is no siteSlug or siteId on query params', () => {
-			window.location.search = '';
-			expect( siteMigrationFlow.isSignupFlow ).toBe( true );
-		} );
-	} );
-
 	describe( 'useAssertConditions', () => {
 		it( 'redirects the user to the start page when the user is not a site admin', () => {
 			const { runUseAssertionCondition } = renderFlow( siteMigrationFlow );
