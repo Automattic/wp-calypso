@@ -51,8 +51,12 @@ export async function initializeWordPressPlayground(
 			remoteUrl: 'https://playground.wordpress.net/remote.html',
 			blueprint: await getBlueprint( isWordPressInstalled, recommendedPhpVersion ),
 			shouldInstallWordPress: ! isWordPressInstalled,
-			mounts: [ mountDescriptor ],
+			mounts: isWordPressInstalled ? [ mountDescriptor ] : [],
 		} );
+
+		if ( ! isWordPressInstalled ) {
+			await client.mountOpfs( mountDescriptor );
+		}
 
 		await client.isReady();
 		return client;
