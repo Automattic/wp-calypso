@@ -69,7 +69,7 @@ const ErrorStep: StepType = function ErrorStep( { navigation, flow, variantSlug 
 			<>
 				<DocumentHead title={ headerText } />
 				<Step.CenteredColumnLayout
-					columnWidth={ 5 }
+					columnWidth={ 8 }
 					topBar={ <Step.TopBar /> }
 					heading={ <Step.Heading text={ headerText } /> }
 				>
