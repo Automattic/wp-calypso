@@ -15,7 +15,7 @@ import type { AppState } from 'calypso/types';
 type IntervalType = {
 	id: string;
 	label: string;
-	isGated: number;
+	isGated: boolean;
 	statType: string;
 };
 
@@ -23,9 +23,35 @@ type IntervalsType = {
 	[ key: string ]: IntervalType;
 };
 
-function useStaticIntervals() {
+const getGatedIntervals = createSelector(
+	(
+		state: AppState,
+		siteId: number | null,
+		intervals: Record< string, Omit< IntervalType, 'isGated' > >
+	) => {
+		return Object.fromEntries(
+			Object.entries( intervals ).map( ( [ key, interval ] ) => [
+				key,
+				{
+					...interval,
+					isGated: shouldGateStats( state, siteId, interval.statType ),
+				},
+			] )
+		) as IntervalsType;
+	},
+	( state, siteId, intervals: Record< string, Omit< IntervalType, 'isGated' > > ) => {
+		return [
+			...Object.values( intervals ).map( ( { statType } ) =>
+				shouldGateStats( state, siteId, statType )
+			),
+			intervals,
+		];
+	}
+);
+
+function useIntervals( siteId: number | null ): IntervalsType {
 	const translate = useTranslate();
-	return useMemo(
+	const intervals = useMemo(
 		() => ( {
 			[ STATS_PERIOD.DAY ]: {
 				id: STATS_PERIOD.DAY,
@@ -50,35 +76,8 @@ function useStaticIntervals() {
 		} ),
 		[ translate ]
 	);
-}
 
-const getGatedIntervals = createSelector(
-	( state: AppState, siteId, intervals ) => {
-		return Object.keys( intervals ).reduce( ( acc, key ) => {
-			const interval = intervals[ key ];
-
-			return {
-				...acc,
-				[ key ]: {
-					...interval,
-					isGated: shouldGateStats( state, siteId, interval.statType ),
-				},
-			};
-		}, {} );
-	},
-	( state, siteId, intervals: IntervalsType ) => {
-		return [
-			...Object.values( intervals ).map( ( { statType } ) =>
-				shouldGateStats( state, siteId, statType )
-			),
-			intervals,
-		];
-	}
-);
-
-function useIntervals( siteId: number | null ): IntervalsType {
-	const staticIntervals = useStaticIntervals();
-	return useSelector( ( state ) => getGatedIntervals( state, siteId, staticIntervals ) );
+	return useSelector( ( state ) => getGatedIntervals( state, siteId, intervals ) );
 }
 
 export default useIntervals;
