@@ -92,7 +92,7 @@ const SyncContainerTitle = styled.p( {
 } );
 
 const SyncContainerContent = styled.p( {
-	fontWeight: 600,
+	fontWeight: 400,
 	lineHeight: '24px',
 	marginTop: '16px',
 	marginBottom: '16px',
