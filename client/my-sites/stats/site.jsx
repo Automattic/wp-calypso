@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { eye } from '@automattic/components/src/icons';
-import { Icon, people, starEmpty, commentContent } from '@wordpress/icons';
+import { Icon, settings, people, starEmpty, commentContent } from '@wordpress/icons';
 import clsx from 'clsx';
 import { localize, translate } from 'i18n-calypso';
 import { find } from 'lodash';
@@ -22,6 +22,7 @@ import { useShortcuts } from 'calypso/components/date-range/use-shortcuts';
 import EmptyContent from 'calypso/components/empty-content';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
+import JetpackLogo from 'calypso/components/jetpack-logo';
 import NavigationHeader from 'calypso/components/navigation-header';
 import NavigationHeaderImpr from 'calypso/components/navigation-header/navigation-header';
 import StickyPanel from 'calypso/components/sticky-panel';
@@ -184,7 +185,7 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 	const isWPAdmin = config.isEnabled( 'is_odyssey' );
 	const isAtomic = useSelector( ( state ) => isAtomicSite( state, siteId ) );
 	const isSitePrivate = useSelector( ( state ) => isPrivateSite( state, siteId ) );
-	const isStatsNavigationImprovementEnabled = config.isEnabled( 'stats/navigation-improvement' );
+	const isStatsNavigationImprovementEnabled = true;
 	const slug = useSelector( getSelectedSiteSlug );
 	const moduleToggles = useSelector( ( state ) => getModuleToggles( state, siteId, 'traffic' ) );
 	const momentSiteZone = useSelector( ( state ) => getMomentSiteZone( state, siteId ) );
@@ -533,7 +534,9 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 			{ isStatsNavigationImprovementEnabled ? (
 				<NavigationHeaderImpr
 					className="stats__section-header modernized-header"
-					title={ STATS_PRODUCT_NAME_IMPR }
+					title={ isOdysseyStats ? STATS_PRODUCT_NAME : STATS_PRODUCT_NAME_IMPR }
+					titleLogo={ isOdysseyStats ? <JetpackLogo size={ 24 } /> : null }
+					rightSection={ <Icon className="gridicon" icon={ settings } /> }
 				/>
 			) : (
 				<NavigationHeader
