@@ -2,6 +2,7 @@ import { useResizeObserver } from '@wordpress/compose';
 import clsx from 'clsx';
 import { useMemo, Children, isValidElement, useState, CSSProperties } from 'react';
 import { useDraggableGrid } from './use-draggable-grid';
+import { normalizeLayout } from './utils';
 import type { GridProps, GridLayoutItem } from './types';
 import type { ReactElement, ReactNode } from 'react';
 
@@ -20,6 +21,9 @@ export function Grid( {
 	const resizeObserverRef = useResizeObserver( ( [ { contentRect } ] ) => {
 		setContainerWidth( contentRect.width );
 	} );
+	const normalizedLayout = useMemo( () => {
+		return normalizeLayout( layout );
+	}, [ layout ] );
 
 	const gapPx = spacing * 4;
 
@@ -41,13 +45,9 @@ export function Grid( {
 		handleDrop,
 		isDragging,
 		tempLayout,
-	} = useDraggableGrid( layout, editMode, onChangeLayout );
+	} = useDraggableGrid( normalizedLayout, editMode, onChangeLayout );
 
-	// Use temp layout during dragging or sort by order property
-	const activeLayout = useMemo( () => {
-		const baseLayout = tempLayout || layout;
-		return [ ...baseLayout ].sort( ( a, b ) => ( a.order ?? 0 ) - ( b.order ?? 0 ) );
-	}, [ tempLayout, layout ] );
+	const activeLayout = tempLayout || normalizedLayout;
 
 	// Map for quick layout item lookup
 	const activeLayoutMap = useMemo( () => {

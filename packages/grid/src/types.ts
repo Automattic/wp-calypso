@@ -28,6 +28,12 @@ export interface GridLayoutItem {
 	fullWidth?: boolean;
 }
 
+export interface NormalizedGridLayoutItem extends GridLayoutItem {
+	order: number;
+	width: number;
+	height: number;
+}
+
 /**
  * Props for the Grid component
  */

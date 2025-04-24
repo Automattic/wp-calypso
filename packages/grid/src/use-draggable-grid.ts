@@ -1,5 +1,5 @@
 import { useState, useCallback, useRef } from 'react';
-import type { GridLayoutItem } from './types';
+import type { NormalizedGridLayoutItem } from './types';
 
 type DragItem = {
 	index: number;
@@ -7,13 +7,13 @@ type DragItem = {
 };
 
 export function useDraggableGrid(
-	layout: GridLayoutItem[],
+	layout: NormalizedGridLayoutItem[],
 	editMode: boolean,
-	onChangeLayout?: ( newLayout: GridLayoutItem[] ) => void
+	onChangeLayout?: ( newLayout: NormalizedGridLayoutItem[] ) => void
 ) {
-	const originalLayoutRef = useRef< GridLayoutItem[] >( layout );
+	const originalLayoutRef = useRef< NormalizedGridLayoutItem[] >( layout );
 	const [ draggedItem, setDraggedItem ] = useState< DragItem | null >( null );
-	const [ tempLayout, setTempLayout ] = useState< GridLayoutItem[] | null >( null );
+	const [ tempLayout, setTempLayout ] = useState< NormalizedGridLayoutItem[] | null >( null );
 
 	const handleDragStart = useCallback(
 		( e: React.DragEvent, key: string, index: number ) => {
@@ -62,10 +62,21 @@ export function useDraggableGrid(
 			const updatedLayout = tempLayout.map( ( item ) => {
 				const newItem = { ...item };
 
-				if ( item.key === draggedItem.key ) {
-					newItem.order = targetIndex;
-				} else if ( item.key === targetKey ) {
-					newItem.order = draggedItem.index;
+				// Moving item forward in sequence
+				if ( draggedItem.index < targetIndex ) {
+					if ( item.key === draggedItem.key ) {
+						newItem.order = targetIndex;
+					} else if ( item.order > draggedItem.index && item.order <= targetIndex ) {
+						newItem.order--;
+					}
+				}
+				// Moving item backward in sequence
+				else if ( draggedItem.index > targetIndex ) {
+					if ( item.key === draggedItem.key ) {
+						newItem.order = targetIndex;
+					} else if ( item.order >= targetIndex && item.order < draggedItem.index ) {
+						newItem.order++;
+					}
 				}
 
 				return newItem;
