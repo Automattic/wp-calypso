@@ -128,6 +128,7 @@ const SyncWarningContainer = styled.div( {
 	maxWidth: '807px',
 	marginBottom: '16px',
 	lineHeight: '24px',
+	textWrap: 'pretty',
 } );
 
 interface SyncCardProps {
