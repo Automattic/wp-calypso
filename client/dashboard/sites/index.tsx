@@ -136,13 +136,13 @@ const DEFAULT_LAYOUTS = {
 		mediaField: 'icon.ico',
 		fields: [ 'subscribers_count', 'status', 'backups', 'protect' ],
 		titleField: 'name',
-		descriptionField: 'url',
+		descriptionField: 'URL',
 	},
 	grid: {
 		mediaField: 'preview',
 		fields: [],
 		titleField: 'name',
-		descriptionField: 'url',
+		descriptionField: 'URL',
 	},
 };
 
