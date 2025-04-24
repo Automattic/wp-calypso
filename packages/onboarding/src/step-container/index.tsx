@@ -36,7 +36,7 @@ interface Props {
 	isHorizontalLayout?: boolean;
 	goBack?: () => void;
 	onSkip?: () => void;
-	goNext?: ( arg: undefined ) => void;
+	goNext?: () => void;
 	flowName?: string;
 	intent?: string;
 	recordTracksEvent: ( eventName: string, eventProperties: object ) => void;
