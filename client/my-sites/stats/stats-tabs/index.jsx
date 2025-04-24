@@ -56,6 +56,7 @@ class StatsTabs extends Component {
 			aggregate,
 			tabCountsAlt,
 			tabCountsAltComp,
+			isNavigationImprovementEnabled,
 		} = this.props;
 
 		let statsTabs;
@@ -97,7 +98,8 @@ class StatsTabs extends Component {
 				className={ clsx(
 					'stats-tabs',
 					{ 'is-enabled': !! data },
-					{ 'is-borderless': borderless }
+					{ 'is-borderless': borderless },
+					{ 'is-modernized': isNavigationImprovementEnabled }
 				) }
 			>
 				{ statsTabs || children }
