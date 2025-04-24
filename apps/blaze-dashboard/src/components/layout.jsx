@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -6,7 +5,6 @@ import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import { withCurrentRoute } from 'calypso/components/route';
 import LayoutLoader from 'calypso/layout/loader';
-import OfflineStatus from 'calypso/layout/offline-status';
 import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
 
 class Layout extends Component {
@@ -34,7 +32,6 @@ class Layout extends Component {
 			<div className={ sectionClass }>
 				<DocumentHead />
 				<LayoutLoader />
-				{ config.isEnabled( 'network-connection' ) && <OfflineStatus /> }
 				<div id="content" className="layout__content">
 					<div id="secondary" className="layout__secondary" role="navigation">
 						{ this.props.secondary }
