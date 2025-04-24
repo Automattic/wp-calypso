@@ -1,0 +1,50 @@
+@import '@wordpress/base-styles/mixins';
+@import '@wordpress/base-styles/breakpoints';
+
+@mixin loading-effect {
+	animation: loading-fade 1.6s ease-in-out infinite;
+	background: var(--color-neutral-10);
+}
+
+.client-checkout-v2-placeholder {
+	display: grid;
+    grid-template-rows: auto;
+
+	@include break-large {
+		grid-template-columns: 1fr minmax(500px, 688px) 376px 1fr;
+		grid-template-areas: 'main-content main-content sidebar-content sidebar-content';
+		justify-items: end;
+	}
+}
+
+.client-checkout-v2-placeholder__main-content {
+	grid-area: main-content;
+	max-width: 688px;
+	padding: 144px 64px 0 24px;
+	width: 100%;
+
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+}
+
+.client-checkout-v2-placeholder__sidebar-content {
+	grid-area: sidebar-content;
+	background: #F6F7F7;
+	min-height: 100vh;
+	width: 100%;
+
+	margin-top: 0;
+	padding: 144px 24px 144px 64px;
+
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+}
+
+
+.client-checkout-v2-placeholder__line {
+	@include loading-effect;
+	border-radius: 4px;
+	height: 32px;
+}

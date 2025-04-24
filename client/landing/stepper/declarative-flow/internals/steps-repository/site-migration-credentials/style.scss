@@ -2,7 +2,7 @@
 @import "@automattic/onboarding/styles/mixins";
 $blueberry-color: #3858e9;
 
-.step-container.site-migration-credentials {
+.site-migration-credentials-v2, .step-container.site-migration-credentials {
 	@include onboarding-block-margin;
 
 	@media ( min-width: $break-medium ) {

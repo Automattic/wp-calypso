@@ -9,7 +9,7 @@ import { useTranslate } from 'i18n-calypso';
 import React, { useState, useEffect, useRef } from 'react';
 import Loading from 'calypso/components/loading';
 import Main from 'calypso/components/main';
-import { isRedirectingToStepContainerV2Flow } from 'calypso/layout/utils';
+import { useInitialIsInStepContainerV2FlowContext } from 'calypso/layout/utils';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import { getRedirectFromPendingPage } from 'calypso/my-sites/checkout/src/lib/pending-page';
@@ -93,8 +93,10 @@ function CheckoutPending( {
 		fromSiteSlug,
 	} );
 
-	const content = isRedirectingToStepContainerV2Flow( redirectTo ?? '' ) ? (
-		<Step.Loading title={ headingText } />
+	const isInStepContainerV2 = useInitialIsInStepContainerV2FlowContext();
+
+	const content = isInStepContainerV2 ? (
+		<Step.Loading title={ headingText } delay={ 2000 } />
 	) : (
 		<Main className="checkout-thank-you__pending">
 			<Loading className="checkout__pending-content" title={ headingText } />

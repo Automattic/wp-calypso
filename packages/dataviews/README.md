@@ -722,6 +722,23 @@ Example:
 }
 ```
 
+### `modalFocusOnMount`
+
+Specifies the focus on mount property of the modal.
+
+-	Type: `boolean` | `string`
+-	Optional
+-	Default: `true`
+-	One of: `true` | `false` | `'firstElement'` | `'firstContentElement'`
+
+Example:
+
+```js
+{
+	modalFocusOnMount: 'firstContentElement';
+}
+```
+
 ## Fields API
 
 ### `id`

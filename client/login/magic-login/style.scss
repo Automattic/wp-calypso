@@ -23,7 +23,54 @@
 }
 
 .layout.is-jetpack-login {
+	background-color: #fff;
+
 	.magic-login {
+		max-width: calc(450px + 48px);
+		margin-top: calc(96px - 48px);
+
+		@include break-small {
+			margin-top: calc(160px - 48px);
+		}
+
+		&.is-section-login {
+			min-height: 100%;
+			padding-bottom: 0;
+		}
+
+		.magic-login__form {
+			.magic-login__form-header {
+				padding: 0 24px 0 24px;
+			}
+		}
+
+		.magic-login__form-header {
+			margin-top: 0;
+			margin-bottom: 16px;
+
+			font-family: "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+			font-size: 32px;
+			font-weight: 500;
+
+			text-align: initial;
+		}
+
+		.logged-out-form {
+			max-width: calc(450px + 48px);
+
+			> form {
+				margin: 0;
+			}
+		}
+
+		.magic-login__successfully-jetpack {
+			padding: 0 24px 0 24px;
+		}
+
+		.magic-login__footer {
+			max-width: 450px;
+		}
+
 		&__loading-spinner--jetpack {
 			color: var(--studio-jetpack-green-40, #069e08 );
 			height: 48px;
@@ -32,8 +79,34 @@
 			transform: translateX(-50%);
 			width: 48px;
 		}
-
 	}	
+}
+.magic-login__successfully-jetpack-actions {
+	color: var(--studio-jetpack-grey-50, #646970 );
+	font-size: 14px;
+	font-weight: 400;
+	line-height: 20px;
+	word-wrap: break-word;
+
+	margin-top: 45px;
+	margin-bottom: 45px;
+
+	.magic-login__resend-button {
+		font-size: 100%;
+		color: var(--studio-jetpack-green-60, #007117 );
+
+		&:hover {
+			color: var(--studio-jetpack-green-60, #007117 );
+		}
+	}
+
+	.magic-login__log-in-link {
+		color: var(--studio-jetpack-green-60, #007117 );
+	}
+
+	> p {
+		margin-bottom: 4px;
+	}
 }
 
 .layout.is-wpcom-magic-login {
@@ -128,15 +201,15 @@
 		box-shadow: 0 0 0 1px var(--color-border-subtle);
 		margin: 0 auto;
 		max-width: 400px;
-		padding: 16px;
-
-		@include breakpoint-deprecated( ">480px" ) {
-			padding: 24px;
-		}
+		padding: 0 24px;
 
 		p {
 			margin-bottom: 20px;
 		}
+	}
+
+	.magic-login__form-header-notice {
+		margin-top: 16px;
 	}
 }
 
@@ -291,7 +364,7 @@
 	position: absolute;
 	left: 0;
 	top: 0;
-	padding: 0 16px;
+	padding: 0 24px;
 	box-sizing: border-box;
 	display: flex;
 	align-items: center;
@@ -311,12 +384,6 @@
 		@include break-mobile {
 			white-space: pre;
 		}
-	}
-}
-
-.magic-login__successfully-jetpack {
-	p {
-		text-align: center;
 	}
 }
 

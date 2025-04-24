@@ -133,6 +133,17 @@
 				width: 100%;
 				height: auto;
 			}
+
+			.videos-ui__resource-links {
+				ul {
+					margin: 0;
+
+					li {
+						list-style: none;
+						margin-bottom: 8px;
+					}
+				}
+			}
 		}
 
 		.videos-ui__chapters {

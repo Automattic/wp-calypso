@@ -1,4 +1,4 @@
-import { StepContainer } from '@automattic/onboarding';
+import { Step, StepContainer } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -6,6 +6,7 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
+import { shouldUseStepContainerV2MigrationFlow } from 'calypso/landing/stepper/declarative-flow/helpers/should-use-step-container-v2';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSiteIdParam } from 'calypso/landing/stepper/hooks/use-site-id-param';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
@@ -14,15 +15,15 @@ import { useDispatch } from 'calypso/state';
 import { resetSite } from 'calypso/state/sites/actions';
 import Authorization from './components/authorization';
 import useStoreApplicationPassword from './hooks/use-store-application-password';
-import type { Step } from '../../types';
+import type { Step as StepType } from '../../types';
 import './style.scss';
 
-const SiteMigrationApplicationPasswordsAuthorization: Step< {
+const SiteMigrationApplicationPasswordsAuthorization: StepType< {
 	submits: {
 		action: 'migration-started' | 'fallback-credentials' | 'authorization' | 'contact-me';
 		authorizationUrl?: string;
 	};
-} > = function ( { navigation } ) {
+} > = function ( { navigation, flow } ) {
 	const translate = useTranslate();
 	const siteSlug = useSiteSlugParam();
 	const siteId = parseInt( useSiteIdParam() ?? '' );
@@ -45,6 +46,8 @@ const SiteMigrationApplicationPasswordsAuthorization: Step< {
 	const isLoading =
 		isAuthorizationSuccessful &&
 		( ! hasStoreApplicationPasswordResponse || isStoreApplicationPasswordPending );
+
+	const isUsingStepContainerV2 = shouldUseStepContainerV2MigrationFlow( flow );
 
 	useEffect( () => {
 		if ( ! isAuthorizationSuccessful || ! siteSlug ) {
@@ -102,6 +105,7 @@ const SiteMigrationApplicationPasswordsAuthorization: Step< {
 
 	const sourceDomain = new URL( source || '' ).host;
 
+	const title = translate( 'Get ready for blazing fast speeds' );
 	// translators: %(sourceDomain)s is the source domain that is being migrated.
 	const subHeaderText = translate(
 		"We're ready to migrate {{strong}}%(sourceDomain)s{{/strong}} to WordPress.com. To ensure a smooth process, we need you to authorize us in your WordPress.com admin.",
@@ -124,9 +128,38 @@ const SiteMigrationApplicationPasswordsAuthorization: Step< {
 		/>
 	) : undefined;
 
+	const stepContent = ! isLoading ? (
+		<Authorization
+			onAuthorizationClick={ startAuthorization }
+			onShareCredentialsClick={ navigateToFallbackCredentials }
+		/>
+	) : (
+		<div data-testid="loading-ellipsis">
+			<LoadingEllipsis />
+		</div>
+	);
+
+	if ( isUsingStepContainerV2 ) {
+		return (
+			<>
+				<DocumentHead title={ title } />
+				<Step.CenteredColumnLayout
+					columnWidth={ 5 }
+					topBar={
+						<Step.TopBar leftElement={ <Step.BackButton onClick={ navigation.goBack } /> } />
+					}
+					heading={ <Step.Heading text={ title } subText={ subHeaderText } /> }
+					className="site-migration-application-password-authorization-v2"
+				>
+					{ stepContent }
+				</Step.CenteredColumnLayout>
+			</>
+		);
+	}
+
 	return (
 		<>
-			<DocumentHead title={ translate( 'Get ready for blazing fast speeds' ) } />
+			<DocumentHead title={ title } />
 			<StepContainer
 				stepName="site-migration-application-password-authorization"
 				flowName="site-migration"

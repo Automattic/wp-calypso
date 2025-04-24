@@ -9,6 +9,11 @@ const sections = [
 		enableLoggedOut: true,
 	},
 	{
+		name: 'reauth-required',
+		paths: [ '/reauth-required' ],
+		module: 'calypso/reauth-required',
+	},
+	{
 		name: 'customize',
 		paths: [ '/customize' ],
 		module: 'calypso/my-sites/customize',
@@ -762,6 +767,12 @@ const sections = [
 		name: 'a8c-for-agencies-landing',
 		paths: [ '/landing' ],
 		module: 'calypso/a8c-for-agencies/sections/landing',
+		group: 'a8c-for-agencies',
+	},
+	{
+		name: 'a8c-for-agencies-feedback',
+		paths: [ '/feedback' ],
+		module: 'calypso/a8c-for-agencies/sections/feedback',
 		group: 'a8c-for-agencies',
 	},
 	{

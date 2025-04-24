@@ -3,7 +3,6 @@ const { copyFileSync, existsSync, mkdirSync } = require( 'fs' );
 const { basename, dirname, join } = require( 'path' );
 
 copyAsset( '@automattic/color-studio/dist/color-properties.css' );
-copyAsset( '@automattic/color-studio/dist/color-properties-rgb.css' );
 
 function copyAsset( assetPath, targetName ) {
 	if ( ! targetName ) {

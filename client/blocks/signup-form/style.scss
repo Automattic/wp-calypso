@@ -2,6 +2,24 @@
 @import "@wordpress/base-styles/mixins";
 @import "@automattic/onboarding/styles/mixins";
 
+.signup-form-social-first {
+	display: grid;
+	grid-template-areas: "stack";
+
+	&-screen {
+		grid-area: stack;
+		visibility: hidden;
+
+		&.visible {
+			visibility: visible;
+		}
+	}
+
+	.signup-form__passwordless-email {
+		transition: none !important; // The default form element transition breaks the visibility transition between steps.
+	}
+}
+
 .signup-form .signup-form__input.form-text-input {
 	margin-bottom: 20px;
 	transition: none;

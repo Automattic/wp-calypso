@@ -227,13 +227,29 @@
 .search-stream__sort-picker {
 	position: absolute;
 	z-index: z-index("root", ".search-stream__sort-picker");
-	bottom: 15px;
-	right: 15px;
+	right: 16px;
+	top: 100px;
+	width: 170px;
+
+	@include break-small {
+		right: 0;
+	}
 
 	&.is-wide {
-		bottom: unset;
-		right: 50px;
-		top: 41px;
+		top: 30px;
+		right: 45px;
+	}
+}
+
+div.is-section-reader:not(.is-logged-in) {
+	.search-stream__sort-picker {
+		top: 64px;
+		right: 85px;
+
+		@include break-small {
+			top: 76px;
+			right: 70px;
+		}
 	}
 }
 

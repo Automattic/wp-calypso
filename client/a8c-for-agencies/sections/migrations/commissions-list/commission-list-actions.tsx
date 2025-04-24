@@ -1,7 +1,7 @@
 import { Gridicon } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { A4AConfirmationDialog } from 'calypso/a8c-for-agencies/components/a4a-confirmation-dialog';
 import PopoverMenu from 'calypso/components/popover-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
@@ -9,6 +9,7 @@ import { useDispatch } from 'calypso/state';
 import { successNotice } from 'calypso/state/notices/actions';
 import useUpdateSiteTagsMutation from '../../sites/site-preview-pane/hooks/use-update-site-tags-mutation';
 import { A4A_MIGRATED_SITE_TAG } from '../lib/constants';
+import { getSiteReviewStatus } from '../lib/utils';
 import { TaggedSite } from '../types';
 
 type Props = {
@@ -24,6 +25,11 @@ const CommissionListActions = ( { fetchMigratedSites, site }: Props ) => {
 	const [ isOpen, setIsOpen ] = useState( false );
 	const [ showRemoveSiteDialog, setShowRemoveSiteDialog ] = useState( false );
 	const { mutate, isPending } = useUpdateSiteTagsMutation();
+
+	const isPendingReview = useMemo( () => {
+		const tags = site.tags.map( ( tag ) => tag.name );
+		return getSiteReviewStatus( tags ) === 'pending';
+	}, [ site.tags ] );
 
 	const showActions = useCallback( () => {
 		setIsOpen( true );
@@ -70,6 +76,11 @@ const CommissionListActions = ( { fetchMigratedSites, site }: Props ) => {
 		dispatch,
 		translate,
 	] );
+
+	// Only render actions if the site is pending review
+	if ( ! isPendingReview ) {
+		return null;
+	}
 
 	return (
 		<div>

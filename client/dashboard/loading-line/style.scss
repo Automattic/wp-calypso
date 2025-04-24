@@ -1,0 +1,26 @@
+@keyframes loading {
+	from {
+		transform: translateX(-50vw);
+	}
+	to {
+		transform: translateX(100vw);
+	}
+}
+
+.loading-line-wrapper {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 2px;
+	background-color: transparent;
+	z-index: 1000;
+}
+
+.loading-line-bar {
+	width: 50vw;
+	height: 100%;
+	position: absolute;
+	background: linear-gradient( to right, transparent 0%, var(--wp-admin-theme-color) 50%, transparent 100% );
+	animation: loading 2s infinite linear;
+}

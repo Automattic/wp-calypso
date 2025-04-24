@@ -2,6 +2,7 @@ import { Button } from '@automattic/components';
 import { Icon, external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState, useEffect } from 'react';
+import CancelLicenseFeedbackModal from 'calypso/a8c-for-agencies/components/a4a-feedback/churn-mechanism/cancel-license-feedback-modal';
 import {
 	A4A_MARKETPLACE_ASSIGN_LICENSE_LINK,
 	A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK,
@@ -12,18 +13,13 @@ import {
 	isPressableHostingProduct,
 	isWPCOMHostingProduct,
 } from 'calypso/a8c-for-agencies/sections/marketplace/lib/hosting';
-import {
-	LicenseRole,
-	LicenseState,
-	LicenseType,
-} from 'calypso/jetpack-cloud/sections/partner-portal/types';
+import { LicenseState, LicenseType } from 'calypso/jetpack-cloud/sections/partner-portal/types';
 import { addQueryArgs } from 'calypso/lib/url';
 import { useDispatch, useSelector } from 'calypso/state';
 import { hasAgencyCapability } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { A4AStore } from 'calypso/state/a8c-for-agencies/types';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
-import RevokeLicenseDialog from '../revoke-license-dialog';
 import useLicenseDownloadUrlMutation from '../revoke-license-dialog/hooks/use-license-download-url-mutation';
 
 interface Props {
@@ -36,6 +32,7 @@ interface Props {
 	isChildLicense?: boolean;
 	isClientLicense?: boolean;
 	isDevSite?: boolean;
+	productId?: number;
 }
 
 export default function LicenseDetailsActions( {
@@ -48,6 +45,7 @@ export default function LicenseDetailsActions( {
 	isChildLicense,
 	isClientLicense,
 	isDevSite,
+	productId,
 }: Props ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
@@ -164,12 +162,13 @@ export default function LicenseDetailsActions( {
 			) }
 
 			{ revokeDialog && (
-				<RevokeLicenseDialog
+				<CancelLicenseFeedbackModal
+					productName={ product }
 					licenseKey={ licenseKey }
-					product={ product }
+					productId={ productId }
 					siteUrl={ siteUrl }
 					onClose={ closeRevokeDialog }
-					licenseRole={ isChildLicense ? LicenseRole.Child : LicenseRole.Single }
+					isClientLicense={ isClientLicense }
 				/>
 			) }
 		</div>

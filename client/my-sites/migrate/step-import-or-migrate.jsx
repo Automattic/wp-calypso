@@ -138,6 +138,7 @@ class StepImportOrMigrate extends Component {
 					<CardHeading>{ translate( 'What do you want to import?' ) }</CardHeading>
 
 					{ this.getJetpackOrUpgradeMessage() }
+					{ /* TODO: is the following code in use / up to date? */ }
 					<ImportTypeChoice
 						onChange={ this.chooseImportType }
 						radioOptions={ {

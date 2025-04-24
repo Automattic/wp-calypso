@@ -199,7 +199,7 @@ export const usePlanTypesWithIntent = ( {
 			planTypes = [ TYPE_PREMIUM, TYPE_BUSINESS ];
 			break;
 		case 'plans-affiliate':
-			planTypes = [ TYPE_FREE, TYPE_BUSINESS, TYPE_ECOMMERCE ];
+			planTypes = [ TYPE_BUSINESS, TYPE_ECOMMERCE ];
 			break;
 		case 'plans-site-selected-legacy':
 			planTypes = [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS, TYPE_ECOMMERCE ];

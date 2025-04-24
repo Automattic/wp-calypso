@@ -51,7 +51,7 @@ const offerClick = () => {
 	recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_item', {
 		action: 'offer',
 	} );
-	window.location.assign( localizeUrl( 'https://wordpress.com/pricing/' ) );
+	window.location.assign( localizeUrl( 'https://wordpress.com/setup/onboarding' ) );
 };
 
 export const Content = () => {

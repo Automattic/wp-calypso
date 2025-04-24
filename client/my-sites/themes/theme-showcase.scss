@@ -218,6 +218,10 @@
 		&:not(.is-pressed) {
 			color: var(--studio-blue-90);
 
+			&::before {
+				background-color: transparent;
+			}
+
 			&:hover::before {
 				background-color: color-mix(in srgb, var(--studio-blue) 10%, transparent);
 			}

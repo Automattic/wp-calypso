@@ -4,7 +4,6 @@ import { Onboard } from '@automattic/data-stores';
 import { AI_SITE_BUILDER_FLOW } from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
 import userAgent from 'calypso/lib/user-agent';
-import { useBigSkyBeforePlans } from '../declarative-flow/helpers/use-bigsky-before-plans-experiment';
 import { useIsSiteOwner } from '../hooks/use-is-site-owner';
 import { ONBOARD_STORE } from '../stores';
 import { useSite } from './use-site';
@@ -34,25 +33,15 @@ export function useIsBigSkyEligible( flowName?: string ) {
 
 	const isEligibleGoals = isGoalsBigSkyEligible( goals );
 	const isEligiblePlan = isPremiumPlan( product_slug ) || isBusinessPlan( product_slug );
-	const [ isLoadingBigsky, isBigSkyBeforePlansExperiment ] = useBigSkyBeforePlans();
-
-	if ( isLoadingBigsky ) {
-		return { isLoading: true, isEligible: null };
-	}
 
 	if ( flowName === AI_SITE_BUILDER_FLOW ) {
-		return { isLoading: false, isEligible: true };
+		return { isEligible: true };
 	}
 
-	if ( isBigSkyBeforePlansExperiment ) {
-		const eligibilityResult = featureFlagEnabled && isEligibleGoals && onSupportedDevice;
-		return { isLoading: false, isEligible: eligibilityResult };
-	}
-
-	const eligibilityResult =
-		featureFlagEnabled && isOwner && isEligiblePlan && isEligibleGoals && onSupportedDevice;
-
-	return { isLoading: false, isEligible: eligibilityResult };
+	return {
+		isEligible:
+			featureFlagEnabled && isOwner && isEligiblePlan && isEligibleGoals && onSupportedDevice,
+	};
 }
 
 export function isGoalsBigSkyEligible( goals: Onboard.SiteGoal[] ) {

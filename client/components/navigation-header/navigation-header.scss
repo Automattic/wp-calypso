@@ -1,0 +1,72 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
+
+.calypso-navigation-header {
+	background-color: var(--wp-components-color-background, #fff);
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+	width: 100%;
+	padding: 24px 0;
+
+	&__head {
+		display: flex;
+		align-items: center;
+	}
+
+	&__body {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+	}
+
+	&__left-section {
+		display: flex;
+		align-items: center;
+		gap: $grid-unit-20;
+	}
+
+	&__back-link {
+		display: flex;
+		align-items: center;
+		text-decoration: none;
+		color: var(--wp-components-color-gray-600, #666);
+		font-size: $default-font-size;
+		transition: color 0.2s ease;
+
+		&:hover {
+			color: var(--wp-components-color-gray-900, #333);
+		}
+
+		svg {
+			margin-right: $grid-unit-10;
+		}
+	}
+
+	&__title {
+		margin: 0;
+		font-size: 24px;
+		font-weight: 500;
+		color: var(--wp-components-color-gray-900, #333);
+
+		@media (max-width: $break-small) {
+			font-size: 20px;
+		}
+	}
+
+	&__right-section {
+		display: flex;
+		align-items: center;
+	}
+
+	// Add extra space when there is a classic/non classic option tab at the top on mobile that collides with cta's
+	&.calypso-navigation-header__screen-options-tab {
+		padding-top: 38px; // 30 for screen options tab + 8 gap
+	}
+
+	@include break-small {
+		&.calypso-navigation-header__screen-options-tab {
+			// There are existing workarounds for desktop layouts, revert back to 16 here
+			padding-top: $grid-unit-20;
+		}
+	}
+}
