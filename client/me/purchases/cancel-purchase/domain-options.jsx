@@ -135,6 +135,19 @@ const CancelPurchaseDomainOptions = ( {
 					}
 				) }
 			</p>
+			<p>
+				{ translate(
+					'You will receive a partial refund of %(refundAmount)s which is %(planCost)s for the plan ' +
+						'minus %(domainCost)s for the domain.',
+					{
+						args: {
+							domainCost: includedDomainTransfer.priceText,
+							planCost: planCostText,
+							refundAmount: purchase.refundText,
+						},
+					}
+				) }
+			</p>
 		</div>
 	);
 
@@ -219,11 +232,7 @@ const CancelPurchaseDomainOptions = ( {
 		return <NonRefundableDomainPurchaseMessage />;
 	}
 
-	if (
-		isRefundable( purchase ) &&
-		! isRefundable( includedDomainPurchase ) &&
-		! isRefundable( includedDomainTransfer )
-	) {
+	if ( isRefundable( purchase ) && ! isRefundable( includedDomainPurchase ) ) {
 		return <RefundablePurchaseWithNonRefundableDomainMessage />;
 	}
 
