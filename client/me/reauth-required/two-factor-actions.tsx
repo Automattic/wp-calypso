@@ -25,7 +25,7 @@ function TwoFactorActions( {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 
-	const recordButtonClicked = useCallback(
+	const handleButtonClick = useCallback(
 		( event: MouseEvent< HTMLButtonElement > ) => {
 			event.preventDefault();
 			let tracksEvent;
@@ -66,14 +66,14 @@ function TwoFactorActions( {
 				<Button
 					data-e2e-link="2fa-security-key-link"
 					value="webauthn"
-					onClick={ recordButtonClicked }
+					onClick={ handleButtonClick }
 				>
 					{ translate( 'Continue with your security\u00A0key' ) }
 				</Button>
 			) }
 
 			{ isAuthenticatorAvailable && (
-				<Button data-e2e-link="2fa-otp-link" value="authenticator" onClick={ recordButtonClicked }>
+				<Button data-e2e-link="2fa-otp-link" value="authenticator" onClick={ handleButtonClick }>
 					{ translate( 'Continue with your authenticator\u00A0app' ) }
 				</Button>
 			) }
@@ -83,7 +83,7 @@ function TwoFactorActions( {
 					data-e2e-link="2fa-sms-link"
 					value="sms"
 					disabled={ ! isSmsAllowed }
-					onClick={ recordButtonClicked }
+					onClick={ handleButtonClick }
 				>
 					{ translate( 'Send code via\u00A0text\u00A0message' ) }
 				</Button>
