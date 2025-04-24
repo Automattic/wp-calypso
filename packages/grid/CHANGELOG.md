@@ -9,6 +9,5 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 
 - Grid component for CSS Grid layouts
-- Support for precise and implicit positioning of child elements
 - Customizable columns, spacing, and row height
 - Support for automated responsive layout by specifying minimum column widths

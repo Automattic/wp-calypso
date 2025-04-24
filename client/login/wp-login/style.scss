@@ -614,6 +614,13 @@ $image-height: 47px;
 		}
 	}
 
+	.wp-login__main .locale-suggestions .locale-suggestions__notice.is-light {		
+		&,
+		.notice__icon-wrapper {
+			background-color: var(--studio-gray-0);
+		}
+	}
+
 	.login__form-gutenboarding-wordpress-logo {
 		display: none;
 	}
@@ -894,6 +901,11 @@ $image-height: 47px;
 
 	@include break-small {
 		background-color: #efefef;
+
+		.wp-login__main:not(:has(.locale-suggestions)) .login,
+		.grav-powered-magic-login:not(:has(.locale-suggestions)) .grav-powered-magic-login__content {
+			margin-top: 40px;
+		}
 
 		.login {
 			padding: 40px 56px;

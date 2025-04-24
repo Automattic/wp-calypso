@@ -1,5 +1,4 @@
 import wpcom from 'calypso/lib/wp';
-import type { WPCOMRESTAPISite } from './rest-api-types';
 import type {
 	Domain,
 	Email,
@@ -35,27 +34,9 @@ export const updateProfile = async ( data: Partial< Profile > ) => {
 	} );
 };
 
-const siteRequestObjectToSiteObject = ( site: WPCOMRESTAPISite ): Site => ( {
-	id: site.ID,
-	name: site.name,
-	url: site.URL,
-	media: site.icon?.ico,
-	backups: site.plan?.features?.active?.includes( 'backups' ) ? 'enabled' : 'disabled',
-	protect: site.active_modules?.includes( 'protect' ) ? 'enabled' : 'disabled',
-	subscribers: site.subscribers_count,
-	plan: site.plan,
-	options: {
-		software_version: site.options?.software_version,
-		admin_url: site.options?.admin_url,
-		is_wpcom_atomic: site.options?.is_wpcom_atomic,
-		blog_public: site.options?.blog_public,
-	},
-	is_deleted: site.is_deleted,
-} );
-
 export const fetchSites = async (): Promise< Site[] > => {
-	return await wpcom.req
-		.get(
+	return (
+		await wpcom.req.get(
 			{
 				path: '/me/sites?http_envelope=1',
 				apiNamespace: 'rest/v1.2',
@@ -77,16 +58,14 @@ export const fetchSites = async (): Promise< Site[] > => {
 				].join( ',' ),
 			}
 		)
-		.then( ( response: { sites: WPCOMRESTAPISite[] } ) => {
-			return response.sites.map( siteRequestObjectToSiteObject );
-		} );
+	).sites;
 };
 
 export const fetchSite = async ( id: string ): Promise< Site > => {
 	if ( ! id ) {
 		return Promise.reject( new Error( 'Site ID is undefined' ) );
 	}
-	const site = await wpcom.req.get(
+	return await wpcom.req.get(
 		{
 			path: `/sites/${ id }?http_envelope=1`,
 			apiNamespace: 'rest/v1.1',
@@ -104,7 +83,6 @@ export const fetchSite = async ( id: string ): Promise< Site > => {
 			].join( ',' ),
 		}
 	);
-	return siteRequestObjectToSiteObject( site );
 };
 
 export const fetchSiteMediaStorage = async ( id: string ): Promise< MediaStorage > => {

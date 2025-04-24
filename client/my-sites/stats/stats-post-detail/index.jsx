@@ -232,6 +232,7 @@ class StatsPostDetail extends Component {
 								siteId={ siteId }
 								postId={ postId }
 								supportsUTMStats={ supportsUTMStats }
+								context={ this.props.context }
 							/>
 							<PostDetailTableSection siteId={ siteId } postId={ postId } />
 						</>
