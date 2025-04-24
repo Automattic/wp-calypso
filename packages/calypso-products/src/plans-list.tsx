@@ -620,6 +620,7 @@ const getPlanFreeDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_CONTACT_FORM_JP,
 			FEATURE_SITE_ACTIVITY_LOG_JP,
 			FEATURE_UNLTD_SOCIAL_MEDIA_JP,
+			FEATURE_ES_SEARCH_JP,
 		];
 	},
 	getStorageFeature: () => FEATURE_1GB_STORAGE,
