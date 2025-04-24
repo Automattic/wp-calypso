@@ -2,5 +2,5 @@
 
 .dashboard-menu-divider {
 	height: $grid-unit-40;
-	border-left: $border-width solid $gray-100;
+	border-left: $border-width solid var( --dashboard-header__border-color );
 }
