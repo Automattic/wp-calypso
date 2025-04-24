@@ -124,7 +124,7 @@ export type UseStepNavigationHookV2< FlowSteps extends readonly StepperStep[] > 
 
 export type SubmitHandler< InitializeFunction extends DefaultFlowStepsConfig > = (
 	submittedStep: MapStepToItsSubmitData< Awaited< ReturnType< InitializeFunction > >[ number ] >
-) => void;
+) => /* return unknown, not void, to activate type checks against function params */ unknown;
 /**
  * This type is complex because it's tricky to keep the mapping between slug and the steps submitted data type.
  * Without this, TS would have a SLUG <=> SUBMITTED_TYPE mapping, between every slug and every type of submitted data.
