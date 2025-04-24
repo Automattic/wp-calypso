@@ -59,6 +59,7 @@ export const fetchSites = async (): Promise< Site[] > => {
 					'launch_status',
 					'site_migration',
 					'options',
+					'site_owner',
 				].join( ',' ),
 			}
 		)

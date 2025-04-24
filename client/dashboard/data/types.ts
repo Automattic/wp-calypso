@@ -86,6 +86,7 @@ export interface Site {
 	site_migration: {
 		migration_status: string;
 	} | null;
+	site_owner: number;
 }
 
 export type EmailProvider = 'titan' | 'google-workspace' | 'forwarding';
