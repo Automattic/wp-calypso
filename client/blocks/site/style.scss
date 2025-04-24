@@ -139,34 +139,6 @@
 	}
 }
 
-.site__home {
-	display: block;
-	width: 32px;
-	height: 32px;
-	text-align: center;
-	text-transform: none;
-	overflow: initial;
-	opacity: 0;
-	transition: opacity 0.2s;
-	transform: translate3d(0, 0, 0);
-	position: absolute;
-	left: 16px;
-	top: 16px;
-
-	.gridicon {
-		margin-top: 5px;
-		vertical-align: middle;
-	}
-
-	@include breakpoint-deprecated( "<660px" ) {
-		display: none;
-	}
-}
-
-.site__content:hover .site__home {
-	opacity: 1;
-}
-
 .site__badge {
 	color: var(--color-neutral-60);
 	background-color: var(--color-neutral-5);
@@ -211,11 +183,6 @@
 }
 
 .layout__secondary {
-	.site__home {
-		background: var(--color-sidebar-menu-selected-background);
-		color: var(--color-sidebar-menu-selected-text);
-	}
-
 	.site__badge {
 		background: var(--color-sidebar-menu-hover-background);
 		color: var(--color-sidebar-menu-hover-text);
