@@ -17,28 +17,26 @@
 		"node": ">=18.12.0",
 		"npm": ">=8.19.2"
 	},
-	"main": "build/index.js",
-	"module": "build-module/index.js",
+	"main": "dist/cjs/index.js",
+	"module": "dist/esm/index.js",
 	"calypso:src": "src/index.ts",
 	"exports": {
 		".": {
 			"calypso:src": "./src/index.ts",
-			"types": "./build-types/index.d.ts",
-			"import": "./build-module/index.js",
-			"default": "./build/index.js"
+			"types": "./dist/types/index.d.ts",
+			"import": "./dist/esm/index.js",
+			"default": "./dist/cjs/index.js"
 		},
 		"./wp": {
-			"types": "./build-types/index.d.ts",
-			"default": "./build-wp/index.js"
+			"types": "./dist/types/index.d.ts",
+			"default": "./dist/wp/index.js"
 		},
-		"./package.json": {
-			"default": "./package.json"
-		},
-		"./build-style/": "./build-style/"
+		"./package.json": "./package.json",
+		"./build-style/*": "./dist/style/*"
 	},
 	"react-native": "src/index",
 	"wpScript": true,
-	"types": "build-types",
+	"types": "dist/types",
 	"sideEffects": false,
 	"dependencies": {
 		"@ariakit/react": "^0.4.15",

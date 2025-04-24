@@ -85,11 +85,11 @@ function getBuildPath( file, buildFolder ) {
 async function buildCSS( file ) {
 	const outputFile = getBuildPath(
 		file.replace( '.scss', '.css' ),
-		'build-style'
+		'dist/style'
 	);
 	const outputFileRTL = getBuildPath(
 		file.replace( '.scss', '-rtl.css' ),
-		'build-style'
+		'dist/style'
 	);
 
 	const [ , contents ] = await Promise.all( [

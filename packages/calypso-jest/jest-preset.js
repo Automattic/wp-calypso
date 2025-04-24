@@ -14,14 +14,7 @@ module.exports = {
 		'\\.[jt]sx?$': [ 'babel-jest', { rootMode: 'upward' } ],
 		'\\.(gif|jpg|jpeg|png|svg|scss|sass|css)$': require.resolve( './src/asset-transform.js' ),
 	},
-	testPathIgnorePatterns: [
-		...defaults.testPathIgnorePatterns,
-		'/dist/',
-		'/build/',
-		'/build-module/',
-		'/build-types/',
-		'/build-wp/',
-	],
+	testPathIgnorePatterns: [ ...defaults.testPathIgnorePatterns, '/dist/' ],
 	verbose: false,
 	snapshotFormat: {
 		escapeString: true,

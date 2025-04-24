@@ -5,7 +5,6 @@
 node_modules
 vendor
 dist
-build-style
 packages/calypso-color-schemes/css
 packages/calypso-color-schemes/root-only
 packages/calypso-color-schemes/src/__color-studio
