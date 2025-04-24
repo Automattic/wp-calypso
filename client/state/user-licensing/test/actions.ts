@@ -1,7 +1,7 @@
-// @ts-nocheck - TODO: Fix TypeScript issues
 /**
  * @jest-environment jsdom
  */
+// @ts-nocheck - TODO: Fix TypeScript issues
 
 import {
 	LicenseFilter,

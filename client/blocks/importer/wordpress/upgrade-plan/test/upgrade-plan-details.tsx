@@ -1,7 +1,7 @@
-// @ts-nocheck - TODO: Fix TypeScript issues
 /**
  * @jest-environment jsdom
  */
+// @ts-nocheck - TODO: Fix TypeScript issues
 import { PLAN_BUSINESS } from '@automattic/calypso-products';
 import { type PricingMetaForGridPlan } from '@automattic/data-stores';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';

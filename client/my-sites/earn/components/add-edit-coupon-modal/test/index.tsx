@@ -1,7 +1,7 @@
-// @ts-nocheck - TODO: Fix TypeScript issues
 /**
  * @jest-environment jsdom
  */
+// @ts-nocheck - TODO: Fix TypeScript issues
 
 const mockGetConnectedAccountDefaultCurrencyForSiteId = () => 'USD';
 const mockGetConnectedAccountMinimumCurrencyForSiteId = () => 0.5;

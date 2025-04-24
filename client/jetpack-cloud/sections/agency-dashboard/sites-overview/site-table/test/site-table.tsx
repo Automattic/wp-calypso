@@ -1,7 +1,7 @@
-// @ts-nocheck - TODO: Fix TypeScript issues
 /**
  * @jest-environment jsdom
  */
+// @ts-nocheck - TODO: Fix TypeScript issues
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render } from '@testing-library/react';

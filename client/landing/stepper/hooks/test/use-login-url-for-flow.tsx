@@ -1,7 +1,7 @@
-// @ts-nocheck - TODO: Fix TypeScript issues
 /**
  * @jest-environment jsdom
  */
+// @ts-nocheck - TODO: Fix TypeScript issues
 import { addQueryArgs } from '@wordpress/url';
 import React from 'react';
 import { MemoryRouter } from 'react-router';
