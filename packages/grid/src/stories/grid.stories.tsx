@@ -1,5 +1,8 @@
+import { useState } from 'react';
 import { Grid } from '../grid';
+import type { GridLayoutItem } from '../types';
 import type { Meta, StoryObj } from '@storybook/react';
+import type { HTMLAttributes } from 'react';
 
 const meta: Meta< typeof Grid > = {
 	title: 'Grid',
@@ -15,17 +18,13 @@ const meta: Meta< typeof Grid > = {
 export default meta;
 
 function Card( {
-	style,
 	color,
 	children,
-}: {
-	style?: React.CSSProperties;
-	color: string;
-	children: React.ReactNode;
-} ) {
+	...props
+}: { color: string; children: React.ReactNode } & HTMLAttributes< HTMLDivElement > ) {
 	return (
 		<div
-			key="a"
+			{ ...props }
 			style={ {
 				backgroundColor: color,
 				color: 'white',
@@ -33,7 +32,7 @@ function Card( {
 				display: 'flex',
 				alignItems: 'center',
 				justifyContent: 'center',
-				...style,
+				...props?.style,
 			} }
 		>
 			{ children }
@@ -111,5 +110,57 @@ export const ResponsiveGrid: StoryObj< typeof Grid > = {
 			},
 		},
 		layout: '',
+	},
+};
+
+/**
+ * Example showing the Grid component in edit mode with drag and drop functionality
+ */
+export const EditableGrid: StoryObj< typeof Grid > = {
+	render: function EditableGrid() {
+		const [ layout, setLayout ] = useState< GridLayoutItem[] >( [
+			{ key: 'a', width: 1 },
+			{ key: 'b', width: 2 },
+			{ key: 'c', width: 1 },
+			{ key: 'd', width: 2 },
+			{ key: 'e', width: 1 },
+		] );
+
+		console;
+
+		return (
+			<Grid
+				layout={ layout }
+				columns={ 6 }
+				rowHeight="100px"
+				spacing={ 2 }
+				editMode
+				onChangeLayout={ ( newLayout ) => setLayout( newLayout ) }
+			>
+				<Card key="a" color="#f44336">
+					Card A
+				</Card>
+				<Card key="b" color="#2196f3">
+					Card B
+				</Card>
+				<Card key="c" color="#4caf50">
+					Card C
+				</Card>
+				<Card key="d" color="#ff9800">
+					Card D
+				</Card>
+				<Card key="e" color="#9c27b0">
+					Card E
+				</Card>
+			</Grid>
+		);
+	},
+	parameters: {
+		docs: {
+			description: {
+				story:
+					'This example demonstrates the Grid component in edit mode with drag and drop functionality. Use the edit mode to reorder the cards. The layout and edit mode are managed with local state.',
+			},
+		},
 	},
 };

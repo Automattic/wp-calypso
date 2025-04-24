@@ -1,7 +1,9 @@
 import { useResizeObserver } from '@wordpress/compose';
-import { useMemo, Children, isValidElement, useState } from 'react';
+import clsx from 'clsx';
+import { useMemo, Children, isValidElement, useState, CSSProperties } from 'react';
+import { useDraggableGrid } from './use-draggable-grid';
 import type { GridProps, GridLayoutItem } from './types';
-import type { ReactElement } from 'react';
+import type { ReactElement, ReactNode } from 'react';
 
 export function Grid( {
 	layout,
@@ -11,6 +13,8 @@ export function Grid( {
 	spacing = 2,
 	rowHeight = 'auto',
 	minColumnWidth,
+	editMode = false,
+	onChangeLayout,
 }: GridProps ) {
 	const [ containerWidth, setContainerWidth ] = useState( 0 );
 	const resizeObserverRef = useResizeObserver( ( [ { contentRect } ] ) => {
@@ -24,84 +28,123 @@ export function Grid( {
 			return columns;
 		}
 
-		// Calculate the total width per column including the gap
 		const totalWidthPerColumn = minColumnWidth + gapPx;
 		const maxColumns = Math.floor( ( containerWidth + gapPx ) / totalWidthPerColumn );
-
 		return Math.max( 1, maxColumns );
 	}, [ minColumnWidth, gapPx, containerWidth, columns ] );
 
-	// In responsive mode, sort items by order property (or use original order if not specified)
-	const responsiveLayout = useMemo( () => {
-		if ( ! minColumnWidth ) {
-			return null;
-		}
+	const {
+		handleDragStart,
+		handleDragOver,
+		handleDragEnter,
+		handleDragEnd,
+		handleDrop,
+		isDragging,
+		tempLayout,
+	} = useDraggableGrid( layout, editMode, onChangeLayout );
 
-		return [ ...layout ].sort( ( a, b ) => {
-			if ( a.order !== undefined && b.order !== undefined ) {
-				return a.order - b.order;
-			}
-			if ( a.order !== undefined ) {
-				return -1;
-			}
-			if ( b.order !== undefined ) {
-				return 1;
-			}
-			return 0;
-		} );
-	}, [ layout, minColumnWidth ] );
+	// Use temp layout during dragging or sort by order property
+	const activeLayout = useMemo( () => {
+		const baseLayout = tempLayout || layout;
+		return [ ...baseLayout ].sort( ( a, b ) => ( a.order ?? 0 ) - ( b.order ?? 0 ) );
+	}, [ tempLayout, layout ] );
 
-	// Create a map of layout items for quick access
+	// Map for quick layout item lookup
 	const activeLayoutMap = useMemo( () => {
-		const activeLayout = responsiveLayout || layout;
 		const map = new Map< string, GridLayoutItem >();
-		activeLayout.forEach( ( item ) => {
-			map.set( item.key, item );
-		} );
+		activeLayout.forEach( ( item ) => map.set( item.key, item ) );
 		return map;
-	}, [ layout, responsiveLayout ] );
+	}, [ activeLayout ] );
 
-	const gridStyle = {
-		display: 'grid',
-		gridTemplateColumns: `repeat(${ effectiveColumns }, 1fr)`,
-		gridAutoRows: rowHeight,
-		gap: gapPx,
-	};
+	// Sort children based on layout order
+	const sortedChildren = useMemo( () => {
+		// Group children by whether they have layout items
+		const withLayout: ReactElement[] = [];
+		const withoutLayout: ReactNode[] = [];
 
-	// Process children and apply grid positioning based on layout
-	const gridItems = Children.map( children, ( child ) => {
-		// Skip invalid children
-		if ( ! isValidElement( child ) ) {
-			return null;
-		}
+		Children.forEach( children, ( child ) => {
+			if ( ! isValidElement( child ) ) {
+				withoutLayout.push( child );
+				return;
+			}
 
+			const key = child.key?.toString();
+			if ( key && activeLayoutMap.has( key ) ) {
+				withLayout.push( child );
+			} else {
+				withoutLayout.push( child );
+			}
+		} );
+
+		// Sort by order property
+		withLayout.sort( ( a, b ) => {
+			const keyA = a.key?.toString() ?? '';
+			const keyB = b.key?.toString() ?? '';
+			const orderA = activeLayoutMap.get( keyA )?.order ?? 0;
+			const orderB = activeLayoutMap.get( keyB )?.order ?? 0;
+			return orderA - orderB;
+		} );
+
+		return [ ...withLayout, ...withoutLayout ];
+	}, [ children, activeLayoutMap ] );
+
+	const gridItems = Children.map( sortedChildren, ( child, index ) => {
 		const element = child as ReactElement;
 		const key = element.key?.toString();
+		if ( ! key ) {
+			return element;
+		}
 
-		const item: Omit< GridLayoutItem, 'key' > = key ? activeLayoutMap.get( key )! ?? {} : {};
-		const itemHeight = item.height || 1;
-
-		// Apply grid positioning - using only automatic positioning
-		const style = {
+		const item: Omit< GridLayoutItem, 'key' > = activeLayoutMap.get( key ) ?? {};
+		const style: CSSProperties = {
 			...element.props.style,
 			gridColumnEnd: `span ${
 				item.fullWidth ? effectiveColumns : Math.min( item.width ?? 1, effectiveColumns )
 			}`,
-			gridRowEnd: `span ${ itemHeight }`,
+			gridRowEnd: `span ${ item.height || 1 }`,
 		};
 
-		// Clone the element with the updated style
+		if ( editMode ) {
+			Object.assign( style, {
+				cursor: 'grab',
+				transition: 'all 0.2s ease',
+				position: 'relative',
+				userSelect: 'none',
+				boxShadow: '0 0 0 1px rgba(0, 0, 0, 0.1)',
+			} );
+		}
+
 		return {
 			...element,
 			props: {
 				...element.props,
 				style,
+				...( editMode && {
+					draggable: true,
+					onDragStart: ( e: React.DragEvent ) => handleDragStart( e, key, index ),
+					onDragOver: handleDragOver,
+					onDragEnter: ( e: React.DragEvent ) => handleDragEnter( e, key, index ),
+					onDragEnd: handleDragEnd,
+					onDrop: handleDrop,
+				} ),
 			},
 		};
 	} );
 
 	return (
-		<div ref={ resizeObserverRef } className={ className } style={ gridStyle }>
+		<div
+			ref={ resizeObserverRef }
+			className={ clsx( className, {
+				'grid-edit-mode': editMode,
+				'grid-dragging': isDragging,
+			} ) }
+			style={ {
+				display: 'grid',
+				gridTemplateColumns: `repeat(${ effectiveColumns }, 1fr)`,
+				gridAutoRows: rowHeight,
+				gap: gapPx,
+			} }
+		>
 			{ gridItems }
 		</div>
 	);

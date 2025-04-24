@@ -47,6 +47,7 @@
 		"react-dom": "^18.0.0"
 	},
 	"dependencies": {
-		"@wordpress/compose": "^7.22.0"
+		"@wordpress/compose": "^7.22.0",
+		"clsx": "^2.1.1"
 	}
 }

@@ -57,6 +57,17 @@ interface BaseGridProps {
 	 * Height of each row (e.g., "50px", "auto")
 	 */
 	rowHeight?: string;
+
+	/**
+	 * Whether the grid is in edit mode (allows dragging and repositioning items)
+	 * @default false
+	 */
+	editMode?: boolean;
+
+	/**
+	 * Callback fired when layout changes due to item dragging
+	 */
+	onChangeLayout?: ( newLayout: GridLayoutItem[] ) => void;
 }
 
 interface StandardGridProps extends BaseGridProps {
