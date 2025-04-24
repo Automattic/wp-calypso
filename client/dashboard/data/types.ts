@@ -65,6 +65,7 @@ export interface SiteOptions {
 	admin_url: string;
 	is_wpcom_atomic?: boolean;
 	blog_public: number;
+	is_redirect?: boolean;
 }
 
 export interface Site {
@@ -79,6 +80,12 @@ export interface Site {
 	subscribers_count: number;
 	options: SiteOptions;
 	is_deleted: boolean;
+	is_coming_soon: boolean;
+	is_private: boolean;
+	launch_status: string | boolean;
+	site_migration: {
+		migration_status: string;
+	} | null;
 }
 
 export type EmailProvider = 'titan' | 'google-workspace' | 'forwarding';

@@ -54,6 +54,10 @@ export const fetchSites = async (): Promise< Site[] > => {
 					'plan',
 					'active_modules',
 					'is_deleted',
+					'is_coming_soon',
+					'is_private',
+					'launch_status',
+					'site_migration',
 					'options',
 				].join( ',' ),
 			}

@@ -28,7 +28,7 @@ const SiteMigrationOtherPlatform: Step< {
 				platform?: ImporterPlatform | null;
 		  }
 		| undefined;
-} > = function ( { navigation } ) {
+} > = function ( { navigation, flow } ) {
 	const translate = useTranslate();
 	const [ query ] = useSearchParams();
 	const from = query.get( 'from' ) as string;

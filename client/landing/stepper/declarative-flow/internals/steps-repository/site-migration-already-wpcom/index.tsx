@@ -1,13 +1,12 @@
-import { StepContainer } from '@automattic/onboarding';
+import { Step, StepContainer } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
-import { type FC } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
+import { shouldUseStepContainerV2MigrationFlow } from 'calypso/landing/stepper/declarative-flow/helpers/should-use-step-container-v2';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import Form from './components/form';
-import type { StepProps } from '../../types';
-
+import type { Step as StepType } from '../../types';
 import './style.scss';
 
 const extractDomainFromUrl = ( url: string ) => {
@@ -19,7 +18,7 @@ const extractDomainFromUrl = ( url: string ) => {
 	}
 };
 
-const SiteMigrationAlreadyWPCOM: FC< StepProps > = ( { stepName, flow, navigation } ) => {
+const SiteMigrationAlreadyWPCOM: StepType = ( { stepName, flow, navigation } ) => {
 	const translate = useTranslate();
 	const [ query ] = useSearchParams();
 	const from = query.get( 'from' )!;
@@ -29,6 +28,7 @@ const SiteMigrationAlreadyWPCOM: FC< StepProps > = ( { stepName, flow, navigatio
 			break: <span style={ { display: 'block' } } />,
 		},
 	} );
+
 	const subHeaderText = translate(
 		"Let's figure out your next steps for {{strong}}%(from)s{{/strong}} together. Please complete the form below.",
 		{
@@ -44,6 +44,23 @@ const SiteMigrationAlreadyWPCOM: FC< StepProps > = ( { stepName, flow, navigatio
 	const onSubmit = () => {
 		navigation?.submit?.();
 	};
+
+	if ( shouldUseStepContainerV2MigrationFlow( flow ) ) {
+		return (
+			<>
+				<DocumentHead title={ translate( 'Your site is already on WordPress.com' ) } />
+				<Step.CenteredColumnLayout
+					columnWidth={ 8 }
+					topBar={
+						<Step.TopBar leftElement={ <Step.BackButton onClick={ navigation.goBack } /> } />
+					}
+					heading={ <Step.Heading text={ title } subText={ subHeaderText } /> }
+				>
+					<Form onComplete={ onSubmit } />
+				</Step.CenteredColumnLayout>
+			</>
+		);
+	}
 
 	return (
 		<>
