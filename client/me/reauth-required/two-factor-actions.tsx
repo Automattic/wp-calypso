@@ -27,7 +27,6 @@ function TwoFactorActions( {
 
 	const handleButtonClick = useCallback(
 		( event: MouseEvent< HTMLButtonElement > ) => {
-			event.preventDefault();
 			let tracksEvent;
 
 			switch ( event.currentTarget.value ) {
