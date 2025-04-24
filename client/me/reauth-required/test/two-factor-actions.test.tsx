@@ -22,11 +22,6 @@ jest.mock( 'calypso/state/analytics/actions', () => ( {
 	} ),
 } ) );
 
-jest.mock( 'i18n-calypso', () => ( {
-	...jest.requireActual( 'i18n-calypso' ),
-	useTranslate: jest.fn( () => ( text: string ) => text ),
-} ) );
-
 describe( 'TwoFactorActions', () => {
 	const onChange = jest.fn();
 	const defaultProps = {
