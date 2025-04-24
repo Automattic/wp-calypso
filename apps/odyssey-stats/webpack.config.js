@@ -55,7 +55,7 @@ module.exports = {
 		'widget-loader': path.join( __dirname, 'src', 'widget-loader' ),
 	},
 	mode: isDevelopment ? 'development' : 'production',
-	devtool: false,
+	devtool: isDevelopment ? 'inline-cheap-source-map' : 'source-map',
 	output: {
 		path: outputPath,
 		filename: '[name].min.js',
