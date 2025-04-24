@@ -48,7 +48,7 @@ export default function SiteCard( {
 								justifyContent: 'center',
 							} }
 						>
-							{ __( 'Private Site' ) }
+							{ __( 'A8C Private Site' ) }
 						</div>
 					) }
 					{ ! iframeDisabled && (
