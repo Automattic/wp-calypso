@@ -569,7 +569,7 @@ describe( 'Site Migration Flow', () => {
 		} );
 
 		describe( 'PICK_SITE', () => {
-			it( 'redirects to IMPORT_OR_MIGRATE if a site is selected', () => {
+			it( 'redirects to IMPORT_OR_MIGRATE when a site is selected', () => {
 				const destination = runNavigation( {
 					from: STEPS.PICK_SITE,
 					dependencies: {
@@ -581,6 +581,27 @@ describe( 'Site Migration Flow', () => {
 					},
 					query: {
 						platform: 'wordpress',
+					},
+				} );
+
+				expect( destination ).toMatchDestination( {
+					step: STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE,
+					query: {
+						siteSlug: 'example.wordpress.com',
+						siteId: 123,
+					},
+				} );
+			} );
+
+			it( 'redirects to IMPORT_OR_MIGRATE when a site is selected and the platform is not identified', () => {
+				const destination = runNavigation( {
+					from: STEPS.PICK_SITE,
+					dependencies: {
+						action: 'select-site',
+						site: {
+							ID: 123,
+							slug: 'example.wordpress.com',
+						},
 					},
 				} );
 
