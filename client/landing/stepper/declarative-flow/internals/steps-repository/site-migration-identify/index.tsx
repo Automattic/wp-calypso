@@ -1,114 +1,221 @@
-import { StepContainer, Step } from '@automattic/onboarding';
-import { useTranslate } from 'i18n-calypso';
-import { useCallback, useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
-import { convertPlatformName } from 'calypso/blocks/import/util';
+import { StepContainer, Title, SubTitle, Step } from '@automattic/onboarding';
+import { Icon, next, published, shield } from '@wordpress/icons';
+import { numberFormat, TranslateResult, useTranslate } from 'i18n-calypso';
+import { type FC, ReactElement, useEffect, useState, useCallback } from 'react';
+import CaptureInput from 'calypso/blocks/import/capture/capture-input';
+import ScanningStep from 'calypso/blocks/import/scanning';
 import DocumentHead from 'calypso/components/data/document-head';
-import FormattedHeader from 'calypso/components/formatted-header';
-import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
-import { shouldUseStepContainerV2MigrationFlow } from 'calypso/landing/stepper/declarative-flow/helpers/should-use-step-container-v2';
+import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
+import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { ImporterPlatform } from 'calypso/lib/importer/types';
-import { Step as StepType } from '../../types';
-import { ImportPlatformForwarder } from './components/importer-forwarding-details';
+import { shouldUseStepContainerV2MigrationFlow } from '../../../helpers/should-use-step-container-v2';
+//TODO: Move it to a more generic folder
+import { useFlowState } from '../../state-manager/store';
+import { useSitePreviewMShotImageHandler } from '../site-migration-instructions/site-preview/hooks/use-site-preview-mshot-image-handler';
+import type { Step as StepType } from '../../types';
+import type { UrlData } from 'calypso/blocks/import/types';
+
 import './style.scss';
 
-export const Scanning = () => {
+interface HostingDetailsWithIconsProps {
+	items: {
+		icon: ReactElement;
+		description: TranslateResult;
+	}[];
+}
+
+const HostingDetailsWithIcons: FC< HostingDetailsWithIconsProps > = ( { items } ) => {
+	const translate = useTranslate();
+
 	return (
-		<div className="site-migration-other-platform__scanning">
-			<LoadingEllipsis />
+		<div className="import__site-identify-hosting-details-experiment">
+			<p className="import__site-identify-hosting-details-experiment-title">
+				{ translate( 'Why should you host with us?' ) }
+			</p>
+			<ul className="import__site-identify-hosting-details-experiment-list">
+				{ items.map( ( item, index ) => (
+					<li key={ index } className="import__site-identify-hosting-details-experiment-list-item">
+						<Icon
+							className="import__site-identify-hosting-details-experiment-icon"
+							icon={ item.icon }
+							size={ 24 }
+						/>
+						<p className="import__site-identify-hosting-details-experiment-description">
+							{ item.description }
+						</p>
+					</li>
+				) ) }
+			</ul>
 		</div>
 	);
 };
 
-const SiteMigrationOtherPlatform: StepType< {
-	submits:
-		| {
-				action: 'import' | 'skip';
-				platform?: ImporterPlatform | null;
-		  }
-		| undefined;
-} > = function ( { navigation, flow } ) {
+interface Props {
+	hasError?: boolean;
+	onComplete: ( siteInfo: UrlData ) => void;
+	onSkip: () => void;
+	hideImporterListLink: boolean;
+	flowName: string;
+	onVisibilityChange: ( isVisible: boolean ) => void;
+}
+
+export const Analyzer: FC< Props > = ( {
+	onComplete,
+	onSkip,
+	onVisibilityChange,
+	hideImporterListLink = false,
+} ) => {
 	const translate = useTranslate();
-	const [ query ] = useSearchParams();
-	const from = query.get( 'from' ) as string;
-
-	const [ platform, setPlatform ] = useState< ImporterPlatform | null >(
-		query.get( 'platform' ) as ImporterPlatform | null
-	);
-
-	const shouldAnalyzeUrl = platform === null;
-
+	const [ siteURL, setSiteURL ] = useState< string >( '' );
 	const {
-		isFetching: isAnalyzingUrl,
 		data: siteInfo,
-		isSuccess,
-	} = useAnalyzeUrlQuery( from, shouldAnalyzeUrl );
-
-	const platformName = convertPlatformName( platform as ImporterPlatform ) || '';
+		isError: hasError,
+		isFetching,
+		isFetched,
+	} = useAnalyzeUrlQuery( siteURL, siteURL !== '' );
 
 	useEffect( () => {
-		if ( ! isSuccess || ! siteInfo ) {
-			return;
+		if ( siteInfo ) {
+			onComplete( siteInfo );
 		}
-		setPlatform( siteInfo.platform );
-	}, [ siteInfo, isSuccess, platform ] );
+	}, [ onComplete, siteInfo ] );
 
-	const handleSubmit = useCallback( () => {
-		navigation.submit?.( {
-			action: 'import',
-			platform: platform,
-		} );
-	}, [ navigation, platform ] );
+	if ( isFetching || ( isFetched && ! hasError ) ) {
+		onVisibilityChange?.( false );
+		return <ScanningStep />;
+	}
 
-	const handleHelp = useCallback( () => {
-		navigation.submit?.( {
-			action: 'skip',
-		} );
-	}, [ navigation ] );
+	onVisibilityChange?.( true );
 
-	const descriptionWithPlatform = translate(
-		// translators: platform is the name of the platform importer we are supporting.
-		'Our migration service is for WordPress sites. But don’t worry — our {{strong}}%(platform)s{{/strong}} import tool is ready to bring your content to WordPress.com.',
-		{
-			args: {
-				platform: platformName || '',
-			},
-			components: {
-				strong: <strong />,
-			},
-		}
+	const hostingDetailItems = {
+		'blazing-fast-speed': {
+			icon: next,
+			description: translate(
+				'Blazing fast speeds with lightning-fast load times for a seamless experience.'
+			),
+		},
+		'unmatched-uptime': {
+			icon: published,
+			description: translate(
+				'Unmatched reliability with %(uptimePercent)s uptime and unmetered traffic.',
+				{
+					args: {
+						uptimePercent: numberFormat( 0.99999, {
+							numberFormatOptions: { style: 'percent', maximumFractionDigits: 3 },
+						} ),
+					},
+					comment: '99.999% uptime',
+				}
+			),
+		},
+		security: {
+			icon: shield,
+			description: translate( 'Round-the-clock security monitoring and DDoS protection.' ),
+		},
+	};
+
+	return (
+		<>
+			<div className="import__capture-container">
+				<CaptureInput
+					onInputEnter={ setSiteURL }
+					onInputChange={ () => setSiteURL( '' ) }
+					hasError={ hasError }
+					skipInitialChecking
+					onDontHaveSiteAddressClick={ onSkip }
+					placeholder={ translate( 'mygreatnewblog.com' ) }
+					label={ translate( 'Enter your site address:' ) }
+					dontHaveSiteAddressLabel={ translate(
+						'Or <button>pick your current platform from a list</button>'
+					) }
+					hideImporterListLink={ hideImporterListLink }
+					nextLabelText={ translate( 'Check my site' ) }
+				/>
+			</div>
+			<HostingDetailsWithIcons items={ Object.values( hostingDetailItems ) } />
+		</>
+	);
+};
+
+export type SiteMigrationIdentifyAction = 'continue' | 'skip_platform_identification';
+
+const SiteMigrationIdentify: StepType< {
+	submits: {
+		action: SiteMigrationIdentifyAction;
+		platform?: string;
+		from?: string;
+	};
+} > = function ( { navigation, flow } ) {
+	const siteSlug = useSiteSlug();
+	const translate = useTranslate();
+	const { createScreenshots } = useSitePreviewMShotImageHandler();
+	const isUsingStepContainerV2 = shouldUseStepContainerV2MigrationFlow( flow );
+
+	const handleSubmit = useCallback(
+		async ( action: SiteMigrationIdentifyAction, data?: { platform: string; from: string } ) => {
+			// If we have a URL of the source, we send requests to the mShots API to create screenshots
+			// early in the flow to avoid long loading times in the migration instructions step.
+			// Because mShots API can often take a long time to generate screenshots.
+			if ( data?.from ) {
+				createScreenshots( data?.from );
+			}
+
+			navigation?.submit?.( { action, ...data } );
+		},
+		[ navigation, siteSlug ]
 	);
 
-	const descriptionWithoutPlatform = translate(
-		'Our migration service is for WordPress sites. We don’t currently support importing from this platform.'
+	const urlQueryParams = useQuery();
+	const { get } = useFlowState();
+
+	const shouldShowBackButton = () => {
+		const ref = get( 'flow' )?.entryPoint;
+
+		const isBackButtonSupported = ref && [ 'goals', 'wp-admin-importers-list' ].includes( ref );
+		return isBackButtonSupported || urlQueryParams.has( 'back_to' );
+	};
+
+	const [ isVisible, setIsVisible ] = useState( false );
+
+	const stepContent = (
+		<Analyzer
+			onComplete={ ( { platform, url } ) => handleSubmit( 'continue', { platform, from: url } ) }
+			hideImporterListLink={ urlQueryParams.get( 'hide_importer_link' ) === 'true' }
+			onSkip={ () => {
+				handleSubmit( 'skip_platform_identification' );
+			} }
+			flowName={ flow }
+			onVisibilityChange={ ( isVisible ) => {
+				setIsVisible( isVisible );
+			} }
+		/>
 	);
 
-	const title = translate( "Looks like there's been a mix-up" );
-	const description =
-		platformName === 'Unknown' ? descriptionWithoutPlatform : descriptionWithPlatform;
-
-	if ( shouldUseStepContainerV2MigrationFlow( flow ) ) {
+	if ( isUsingStepContainerV2 ) {
 		return (
 			<>
-				<DocumentHead title={ title } />
+				<DocumentHead title={ translate( 'Import your site content' ) } />
 				<Step.CenteredColumnLayout
-					columnWidth={ 8 }
+					className="step-container-v2--site-migration-identify"
+					columnWidth={ 4 }
 					topBar={
-						<Step.TopBar leftElement={ <Step.BackButton onClick={ navigation.goBack } /> } />
-					}
-					heading={ <Step.Heading text={ title } subText={ description } /> }
-				>
-					{ isAnalyzingUrl ? (
-						<Scanning />
-					) : (
-						<ImportPlatformForwarder
-							platformName={ platformName }
-							onSubmit={ handleSubmit }
-							onHelp={ handleHelp }
+						<Step.TopBar
+							leftElement={
+								shouldShowBackButton() ? <Step.BackButton onClick={ navigation.goBack } /> : null
+							}
 						/>
-					) }
+					}
+					heading={
+						isVisible ? (
+							<Step.Heading
+								text={ translate( 'Let’s find your site' ) }
+								subText={ translate( 'Enter your current site address below to get started.' ) }
+							/>
+						) : undefined
+					}
+				>
+					{ stepContent }
 				</Step.CenteredColumnLayout>
 			</>
 		);
@@ -116,35 +223,30 @@ const SiteMigrationOtherPlatform: StepType< {
 
 	return (
 		<>
-			<DocumentHead title={ title } />
+			<DocumentHead title={ translate( 'Import your site content' ) } />
 			<StepContainer
-				stepName="site-migration-other-platform"
-				goBack={ navigation?.goBack }
-				goNext={ () => navigation?.submit?.( undefined ) }
+				stepName="site-migration-identify"
+				flowName="site-migration"
+				className="import__onboarding-page"
+				hideBack={ ! shouldShowBackButton() }
+				backUrl={ urlQueryParams.get( 'back_to' ) || undefined }
 				hideSkip
+				hideFormattedHeader
+				goBack={ navigation?.goBack }
+				goNext={ navigation?.submit }
 				isFullLayout
-				formattedHeader={
-					isAnalyzingUrl ? (
-						<span />
-					) : (
-						<FormattedHeader
-							id="site-migration-credentials-header"
-							headerText={ title }
-							subHeaderText={ description }
-							align="center"
-						/>
-					)
-				}
 				stepContent={
-					isAnalyzingUrl ? (
-						<Scanning />
-					) : (
-						<ImportPlatformForwarder
-							platformName={ platformName }
-							onSubmit={ handleSubmit }
-							onHelp={ handleHelp }
-						/>
-					)
+					<div className="import__capture-wrapper">
+						{ isVisible && (
+							<div className="import__heading import__heading-center">
+								<Title>{ translate( 'Let’s find your site' ) }</Title>
+								<SubTitle>
+									{ translate( 'Enter your current site address below to get started.' ) }
+								</SubTitle>
+							</div>
+						) }
+						{ stepContent }
+					</div>
 				}
 				recordTracksEvent={ recordTracksEvent }
 			/>
@@ -152,4 +254,4 @@ const SiteMigrationOtherPlatform: StepType< {
 	);
 };
 
-export default SiteMigrationOtherPlatform;
+export default SiteMigrationIdentify;
