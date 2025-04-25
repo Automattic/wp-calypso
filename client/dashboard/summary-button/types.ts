@@ -1,4 +1,4 @@
-type Density = 'low' | 'medium' | 'high';
+type Density = 'low' | 'medium';
 
 /**
  * `fields` property of `SummaryButton` component is used to display
@@ -30,7 +30,6 @@ export interface SummaryButtonProps {
 	to?: string;
 	/**
 	 * A callback to handle clicking an item.
-	 * @default noop
 	 */
 	onClick?: React.MouseEventHandler;
 	/**
@@ -67,7 +66,8 @@ export interface SummaryButtonProps {
 	// TODO: rename, revisit this param..
 	leadsToNestedPage?: boolean;
 	/**
-	 * Determines if the element is disabled.
+	 * Determines if the element is disabled. If `true`, this will force a `button`
+	 * element to be rendered, even when an `href` is given.
 	 * @default false
 	 */
 	disabled?: boolean;

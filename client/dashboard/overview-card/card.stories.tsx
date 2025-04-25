@@ -5,6 +5,9 @@ import OverviewCard, { OverviewCardProgressBar } from './';
 const meta = {
 	title: 'Dashboard/OverviewCard',
 	component: OverviewCard,
+	parameters: {
+		layout: 'centered',
+	},
 	tags: [ 'autodocs' ],
 	argTypes: {
 		icon: {

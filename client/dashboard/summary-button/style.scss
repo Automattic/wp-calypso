@@ -1,30 +1,16 @@
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
+
 .summary-button {
-	padding: 0;
-	height: inherit;
+	padding: 24px;
 	display: block;
+	height: auto;
+	/* stylelint-disable-next-line scales/radii */
+	border-radius: 7px;
+	background-color: #fff;
+	box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
 
-	&.has-density-medium {
-		.summary-button-card-body {
-			padding: 12px;
-		}
-	}
-
-	&.has-density-high {
-		.summary-button-card-body {
-			padding: 4px;
-		}
-
-		.summary-button-decoration svg {
-			width: 16px;
-			height: 16px;
-		}
-	}
-
-	.summary-button-card {
-		background-color: inherit;
-	}
-
-	&:hover:not(:disabled, [aria-disabled="true"], .is-pressed) {
+	&:hover:not(:disabled, [aria-disabled="true"]) {
 		background: color-mix(in srgb, var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9)) 4%, transparent);
 		color: var(--wp-components-color-accent-darker-20, var(--wp-admin-theme-color-darker-20, #183ad6));
 
@@ -33,24 +19,22 @@
 		}
 	}
 
-	&:disabled, &[aria-disabled="true"] {
-		.summary-button-card-body {
-			opacity: 0.6;
+	&[aria-disabled="true"] {
+		opacity: 0.6;
+		cursor: default;
+	}
 
-			.summary-button-title {
-				// TODO: can I get this from a var?
-				color: #757575;
-			}
-		}
+	.summary-button-title {
+		@include body-large;
 	}
 
 	.summary-button-strapline {
-		text-transform: uppercase;
+		@include heading-small;
 	}
 
 	.summary-button-navigation-icon,
 	.summary-button-decoration svg {
-		fill: #757575;
+		fill: $gray-700;
 		flex-shrink: 0;
 	}
 
@@ -60,6 +44,14 @@
 			width: 20px;
 			height: 20px;
 			flex-shrink: 0;
+		}
+	}
+
+	&.has-density-medium {
+		padding: 12px;
+
+		.summary-button-title {
+			@include body-medium;
 		}
 	}
 }

@@ -22,9 +22,6 @@ const fieldOptions: Record< string, SummaryButtonFieldProps[] > = {
 const meta = {
 	title: 'Dashboard/SummaryButton',
 	component: SummaryButton,
-	parameters: {
-		layout: 'centered',
-	},
 	tags: [ 'autodocs' ],
 	argTypes: {
 		decoration: {
@@ -44,7 +41,7 @@ const meta = {
 		},
 		density: {
 			control: 'radio',
-			options: [ 'low', 'medium', 'high' ],
+			options: [ 'low', 'medium' ],
 		},
 	},
 } satisfies Meta< typeof SummaryButton >;
@@ -82,15 +79,5 @@ export const MediumDensity: Story = {
 		decoration: <Icon icon={ envelope } />,
 		fields: fieldOptions[ 'Two Badges' ],
 		onClick: () => alert( 'Clicked medium density!' ),
-	},
-};
-
-export const HighDensity: Story = {
-	args: {
-		title: 'DNS Records',
-		density: 'high',
-		decoration: <Icon icon={ backup } />,
-		fields: fieldOptions[ 'One Badge' ],
-		onClick: () => alert( 'Clicked high density!' ),
 	},
 };

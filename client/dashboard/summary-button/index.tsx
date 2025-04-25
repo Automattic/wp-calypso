@@ -1,6 +1,4 @@
 import {
-	Card,
-	CardBody,
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
@@ -11,10 +9,23 @@ import { chevronRight } from '@wordpress/icons';
 import clsx from 'clsx';
 import { forwardRef } from 'react';
 import CoreBadge from 'calypso/components/core/badge';
-import { SummaryButtonProps, SummaryButtonFieldProps } from './types';
+import { SummaryButtonProps } from './types';
 import './style.scss';
 
-const noop = () => {};
+function BadgesList( { fields }: { fields: SummaryButtonProps[ 'fields' ] } ) {
+	if ( ! fields?.length ) {
+		return null;
+	}
+	return (
+		<HStack spacing={ 1 } justify="flex-start" style={ { minWidth: 'fit-content' } }>
+			{ fields?.map( ( field ) => (
+				<CoreBadge key={ field.text } intent={ field.intent || 'default' }>
+					{ field.text }
+				</CoreBadge>
+			) ) }
+		</HStack>
+	);
+}
 
 function SummaryButton(
 	{
@@ -25,22 +36,14 @@ function SummaryButton(
 		strapline,
 		fields,
 		leadsToNestedPage = true,
-		onClick = noop,
+		onClick,
 		disabled,
 		density = 'low',
 	}: SummaryButtonProps,
-	ref: React.ForwardedRef< HTMLAnchorElement >
+	ref: React.ForwardedRef< HTMLAnchorElement | HTMLButtonElement >
 ) {
 	const hasLowDensity = density === 'low';
-	const badges = fields?.length && (
-		<HStack spacing={ 1 } justify="flex-start" style={ { minWidth: 'fit-content' } }>
-			{ fields?.map( ( field: SummaryButtonFieldProps ) => (
-				<CoreBadge key={ field.text } intent={ field.intent || 'default' }>
-					{ field.text }
-				</CoreBadge>
-			) ) }
-		</HStack>
-	);
+
 	return (
 		<Button
 			ref={ ref }
@@ -50,35 +53,31 @@ function SummaryButton(
 			disabled={ disabled }
 			accessibleWhenDisabled
 		>
-			<Card className="summary-button-card">
-				<CardBody className="summary-button-card-body">
-					<HStack spacing={ 4 } justify="space-between" alignment="flex-start">
-						<HStack justify="flex-start" spacing={ 2 } alignment="flex-start">
-							{ !! decoration && <div className="summary-button-decoration">{ decoration }</div> }
-							<VStack alignment="flex-start">
-								{ strapline && (
-									<Text className="summary-button-strapline" variant="muted" size={ 10 }>
-										{ strapline }
-									</Text>
-								) }
-								<Text size={ hasLowDensity ? 18 : 14 } className="summary-button-title">
-									{ title }
+			<span className="summary-button-contents">
+				<HStack spacing={ 4 } justify="space-between" alignment="flex-start" as="span">
+					<HStack justify="flex-start" spacing={ 4 } alignment="flex-start" as="span">
+						{ !! decoration && <span className="summary-button-decoration">{ decoration }</span> }
+						<VStack alignment="flex-start" as="span" spacing={ 3 }>
+							{ strapline && (
+								<Text variant="muted" size={ 10 } upperCase className="summary-button-strapline">
+									{ strapline }
 								</Text>
-								{ description && <Text variant="muted">{ description }</Text> }
-								{ hasLowDensity && badges }
-							</VStack>
-						</HStack>
-						{ /* // TODO: we might need to consider to add `badges` in the same HStack with the main content
-						// and not like here with the chevron icon. */ }
-						<HStack justify="flex-end" spacing={ 2 } expanded={ false }>
-							{ ! hasLowDensity && badges }
-							{ leadsToNestedPage && (
-								<Icon icon={ chevronRight } className="summary-button-navigation-icon" />
 							) }
-						</HStack>
+							<Text className="summary-button-title">{ title }</Text>
+							{ description && <Text variant="muted">{ description }</Text> }
+							{ hasLowDensity && <BadgesList fields={ fields } /> }
+						</VStack>
 					</HStack>
-				</CardBody>
-			</Card>
+					{ /* // TODO: we might need to consider to add `badges` in the same HStack with the main content
+						// and not like here with the chevron icon. */ }
+					<HStack justify="flex-end" spacing={ 2 } expanded={ false } as="span">
+						{ ! hasLowDensity && <BadgesList fields={ fields } /> }
+						{ leadsToNestedPage && (
+							<Icon icon={ chevronRight } className="summary-button-navigation-icon" />
+						) }
+					</HStack>
+				</HStack>
+			</span>
 		</Button>
 	);
 }
