@@ -133,7 +133,6 @@ function I18N() {
 		return new I18N();
 	}
 	this.defaultLocaleSlug = 'en';
-	this.geoLocation = '';
 	// Tannin always needs a plural form definition, or it fails when dealing with plurals.
 	this.defaultPluralForms = ( n ) => ( n === 1 ? 0 : 1 );
 	this.state = {
@@ -189,8 +188,7 @@ I18N.prototype.geolocateCurrencySymbol = async function ( callback ) {
 			warn( 'Fetching geolocation for format-currency failed.', error );
 		} );
 
-	this.geoLocation = 'string' === typeof geoData?.country_short ? geoData.country_short : '';
-	callback?.( this.geoLocation );
+	callback?.( 'string' === typeof geoData?.country_short ? geoData.country_short : '' );
 };
 
 I18N.prototype.on = function ( ...args ) {
