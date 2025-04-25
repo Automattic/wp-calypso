@@ -137,6 +137,9 @@ export const createSiteDomainObject = ( domain: DomainData ) => {
 		isMappedToAtomicSite: Boolean( domain.is_mapped_to_atomic_site ),
 		isMoveToNewSitePending: Boolean( domain.is_move_to_new_site_pending ),
 		isPendingIcannVerification: Boolean( domain.is_pending_icann_verification ),
+		isRootDomainRegisteredWithAutomattic: Boolean(
+			domain.is_root_domain_registered_with_automattic
+		),
 		isPendingRenewal: Boolean( domain.pending_renewal ),
 		isPremium: Boolean( domain.is_premium ),
 		isPrimary: Boolean( domain.primary_domain ),

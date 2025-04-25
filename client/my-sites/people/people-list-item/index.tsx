@@ -4,7 +4,6 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { get } from 'lodash';
 import React from 'react';
-import { getRole } from 'calypso/blocks/importer/wordpress/import-everything/import-users/utils';
 import { userCan } from 'calypso/lib/site/utils';
 import PeopleProfile from 'calypso/my-sites/people/people-profile';
 import { useDispatch, useSelector } from 'calypso/state';
@@ -17,6 +16,22 @@ import { isSimpleSite } from 'calypso/state/sites/selectors';
 import { Invite } from '../team-invites/types';
 import type { Member, SiteDetails } from '@automattic/data-stores';
 import './style.scss';
+
+export const getRole = ( user: Member ) => {
+	if ( ! user ) {
+		return 'subscriber';
+	}
+
+	if ( ! user.roles && user.date_subscribed ) {
+		return user.login ? 'follower' : 'email-subscriber';
+	}
+
+	if ( user && user.roles && user.roles[ 0 ] ) {
+		return user.roles[ 0 ];
+	}
+
+	return 'follower';
+};
 
 interface PeopleListItemProps {
 	site?: SiteDetails | null;

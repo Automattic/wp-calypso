@@ -8,6 +8,7 @@ import {
 	invoicesContext,
 	paymentMethodsContext,
 	paymentMethodsAddContext,
+	crmDownloadsContext,
 } from './controller';
 
 export default function () {
@@ -46,4 +47,13 @@ export default function () {
 
 	// Invoices
 	page( '/purchases/invoices', requireAccessContext, invoicesContext, makeLayout, clientRender );
+
+	// CRM Downloads
+	page(
+		'/purchases/crm-downloads/:licenseKey',
+		// requireAccessContext,
+		crmDownloadsContext,
+		makeLayout,
+		clientRender
+	);
 }

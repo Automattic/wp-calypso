@@ -4,6 +4,7 @@ import { getUrlParts } from '@automattic/calypso-url';
 import { loadScript } from '@automattic/load-script';
 import wpcomRequest from 'wpcom-proxy-request';
 import { getLocaleSlug } from 'calypso/lib/i18n-utils';
+import { navigate } from 'calypso/lib/navigate';
 import {
 	isGravPoweredOAuth2Client,
 	isWooOAuth2Client,
@@ -15,7 +16,11 @@ import wpcom from 'calypso/lib/wp';
 import { DesktopLoginStart, DesktopLoginFinalize } from 'calypso/login/desktop-login';
 import { SOCIAL_HANDOFF_CONNECT_ACCOUNT } from 'calypso/state/action-types';
 import { redirectToLogout } from 'calypso/state/current-user/actions';
-import { isUserLoggedIn, getCurrentUserLocale } from 'calypso/state/current-user/selectors';
+import {
+	isUserLoggedIn,
+	getCurrentUserLocale,
+	getCurrentUserEmail,
+} from 'calypso/state/current-user/selectors';
 import { loginSocialUser, rebootAfterLogin } from 'calypso/state/login/actions';
 import { postLoginRequest } from 'calypso/state/login/utils';
 import { fetchOAuth2ClientData } from 'calypso/state/oauth2-clients/actions';
@@ -167,7 +172,19 @@ export async function magicLogin( context, next ) {
 		query: { gravatar_flow, client_id, redirect_to, auto_trigger },
 	} = context;
 
-	if ( isUserLoggedIn( context.store.getState() ) && auto_trigger === undefined ) {
+	const currentUserEmail = getCurrentUserEmail( context.store.getState() );
+	const isLoggedIn = isUserLoggedIn( context.store.getState() );
+
+	// If user is logged in and is coming from jetpack onboarding, show user connection screen instead (jetpack/connect/authorize)
+	if (
+		isLoggedIn &&
+		path.includes( 'jetpack-onboarding' ) &&
+		context?.query?.email_address === currentUserEmail
+	) {
+		return navigate( redirect_to );
+	}
+
+	if ( isLoggedIn && auto_trigger === undefined ) {
 		return login( context, next );
 	}
 

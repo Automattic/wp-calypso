@@ -1335,7 +1335,7 @@ class ManagePurchase extends Component<
 		);
 	}
 
-	renderPurchaseDetail( preventRenewal: boolean ) {
+	renderPurchaseDetail( preventRenewal: boolean, isJetpackLegacyPlan: boolean ) {
 		if ( this.isDataLoading( this.props ) || this.isDomainsLoading( this.props ) ) {
 			return this.renderPlaceholder();
 		}
@@ -1410,7 +1410,7 @@ class ManagePurchase extends Component<
 						</div>
 						{ isProductOwner && ! purchase.isLocked && (
 							<div className="manage-purchase__renew-upgrade-buttons">
-								{ preventRenewal && this.renderSelectNewButton() }
+								{ preventRenewal && isJetpackLegacyPlan && this.renderSelectNewButton() }
 								{ this.renderUpgradeButton( preventRenewal ) }
 								{ ! preventRenewal && this.renderRenewButton() }
 							</div>
@@ -1437,7 +1437,7 @@ class ManagePurchase extends Component<
 				) }
 				{ isProductOwner && ! purchase.isLocked && (
 					<>
-						{ preventRenewal && this.renderSelectNewNavItem() }
+						{ preventRenewal && isJetpackLegacyPlan && this.renderSelectNewNavItem() }
 						{ ! preventRenewal &&
 							! renderMonthlyRenewalOption &&
 							! isActive100YearPurchase &&
@@ -1509,12 +1509,14 @@ class ManagePurchase extends Component<
 
 		let showExpiryNotice = false;
 		let preventRenewal = false;
+		let isJetpackLegacyPlan = false;
 
 		if (
 			purchase &&
 			( JETPACK_LEGACY_PLANS as ReadonlyArray< string > ).includes( purchase.productSlug )
 		) {
 			showExpiryNotice = isCloseToExpiration( purchase );
+			isJetpackLegacyPlan = true;
 			preventRenewal = ! isRenewable( purchase );
 		}
 
@@ -1568,7 +1570,7 @@ class ManagePurchase extends Component<
 					siteId={ this.props.siteId ?? 0 }
 					purchase={ purchase }
 				/>
-				{ this.renderPurchaseDetail( preventRenewal ) }
+				{ this.renderPurchaseDetail( preventRenewal, isJetpackLegacyPlan ) }
 				{ this.renderWordAdsEligibilityWarningDialog( purchase ) }
 				{ site && this.renderNonPrimaryDomainWarningDialog( site, purchase ) }
 			</Fragment>

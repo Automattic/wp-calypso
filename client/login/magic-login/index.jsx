@@ -1138,10 +1138,10 @@ class MagicLogin extends Component {
 								</svg>
 								<div>
 									<h4 className="grav-powered-magic-login__feature-header">
-										{ translate( 'One connected profile' ) }
+										{ translate( 'One profile, everywhere' ) }
 									</h4>
 									<p className="grav-powered-magic-login__feature-sub-header">
-										{ translate( 'Your avatar and bio that syncs across the web.' ) }
+										{ translate( 'Your avatar and bio syncs across the web.' ) }
 									</p>
 								</div>
 							</div>

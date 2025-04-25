@@ -15,8 +15,7 @@ import {
 	A4A_PARTNER_DIRECTORY_DASHBOARD_LINK,
 	A4A_PARTNER_DIRECTORY_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
-import { reduxDispatch } from 'calypso/lib/redux-bridge';
-import { useSelector } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
 import { setActiveAgency } from 'calypso/state/a8c-for-agencies/agency/actions';
 import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { Agency } from 'calypso/state/a8c-for-agencies/types';
@@ -89,18 +88,19 @@ type Props = {
 
 const AgencyExpertise = ( { initialFormData }: Props ) => {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 
 	const { validate, validationError, updateValidationError } = useExpertiseFormValidation();
-
 	const { availableDirectories } = useFormSelectors();
-
 	const agency = useSelector( getActiveAgency );
 
 	const onSubmitSuccess = useCallback(
 		( response: Agency ) => {
-			response && reduxDispatch( setActiveAgency( { ...agency, ...response } ) );
+			if ( response ) {
+				dispatch( setActiveAgency( { ...agency, ...response } ) );
+			}
 
-			reduxDispatch(
+			dispatch(
 				successNotice( translate( 'Your Partner Directory application was submitted!' ), {
 					displayOnNextPage: true,
 					duration: 6000,
@@ -108,16 +108,16 @@ const AgencyExpertise = ( { initialFormData }: Props ) => {
 			);
 			page( A4A_PARTNER_DIRECTORY_DASHBOARD_LINK );
 		},
-		[ agency, translate ]
+		[ agency, translate, dispatch ]
 	);
 
 	const onSubmitError = useCallback( () => {
-		reduxDispatch(
+		dispatch(
 			errorNotice( translate( 'Something went wrong submitting your application!' ), {
 				duration: 6000,
 			} )
 		);
-	}, [ translate ] );
+	}, [ translate, dispatch ] );
 
 	const {
 		formData,

@@ -1,7 +1,5 @@
-/* eslint-disable wpcalypso/jsx-classname-namespace */
 import config from '@automattic/calypso-config';
 import { StepContainer } from '@automattic/onboarding';
-import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import { useEffect, useMemo } from 'react';
@@ -14,7 +12,6 @@ import Loading from 'calypso/components/loading';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSaveHostingFlowPathStep } from 'calypso/landing/stepper/hooks/use-save-hosting-flow-path-step';
 import { useSiteData } from 'calypso/landing/stepper/hooks/use-site-data';
-import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { EVERY_FIVE_SECONDS, Interval } from 'calypso/lib/interval';
 import { logToLogstash } from 'calypso/lib/logstash';
@@ -40,7 +37,6 @@ import { useAtomicTransferQueryParamUpdate } from './hooks/use-atomic-transfer-q
 import { useInitialQueryRun } from './hooks/use-initial-query-run';
 import { useStepNavigator } from './hooks/use-step-navigator';
 import type { ImporterCompType } from './types';
-import type { OnboardSelect } from '@automattic/data-stores';
 import type { Importer, ImportJob } from 'calypso/blocks/importer/types';
 
 type StepContainerProps = React.ComponentProps< typeof StepContainer >;
@@ -77,10 +73,6 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 		const canImport = useSelector( ( state ) => canCurrentUser( state, siteId, 'manage_options' ) );
 		const siteImports = useSelector( ( state ) => getImporterStatusForSiteId( state, siteId ) );
 		const isImporterStatusHydrated = useSelector( isImporterStatusHydratedSelector );
-		const isMigrateFromWp = useSelect(
-			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIsMigrateFromWp(),
-			[]
-		);
 		const fromSite = currentSearchParams.get( 'from' ) || '';
 		const fromSiteData = useSelector( getUrlData );
 		const stepNavigator = useStepNavigator( flow, navigation, siteId, siteSlug, fromSite );
@@ -221,7 +213,6 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 					fromSite={ fromSite }
 					urlData={ fromSiteData ?? undefined }
 					stepNavigator={ stepNavigator }
-					showConfirmDialog={ ! isMigrateFromWp }
 				/>
 			);
 		};

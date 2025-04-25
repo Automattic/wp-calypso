@@ -13,7 +13,7 @@ import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
 import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';
 import { useFirstMatchingBackupAttempt, useMatchingBackupAttemptsInRange } from '../hooks';
 
-export const useLatestBackupAttempt = (
+const useLatestBackupAttempt = (
 	siteId,
 	{ before, after, successOnly = false } = {},
 	queryOptions = {}

@@ -6,12 +6,11 @@ import { useEffect } from 'react';
 import AsyncLoad from 'calypso/components/async-load';
 import BloganuaryHeader from 'calypso/components/bloganuary-header';
 import NavigationHeader from 'calypso/components/navigation-header';
-import withDimensions from 'calypso/lib/with-dimensions';
 import QuickPost from 'calypso/reader/components/quick-post';
 import { focusEditor } from 'calypso/reader/components/quick-post/utils';
 import ReaderOnboarding from 'calypso/reader/onboarding';
 import SuggestionProvider from 'calypso/reader/search-stream/suggestion-provider';
-import ReaderStream, { WIDE_DISPLAY_CUTOFF } from 'calypso/reader/stream';
+import ReaderStream from 'calypso/reader/stream';
 import { useDispatch, useSelector } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { useRecordReaderTracksEvent } from 'calypso/state/reader/analytics/useRecordReaderTracksEvent';
@@ -69,9 +68,7 @@ function FollowingStream( { ...props } ) {
 							newCopy: translate( 'Latest from your subscriptions.' ),
 							oldCopy: translate( 'Fresh content from blogs you follow.' ),
 						} ) }
-						className={ clsx( 'following-stream-header', {
-							'reader-dual-column': props.width > WIDE_DISPLAY_CUTOFF,
-						} ) }
+						className={ clsx( 'following-stream-header' ) }
 					>
 						<ViewToggle />
 					</NavigationHeader>
@@ -104,4 +101,4 @@ function FollowingStream( { ...props } ) {
 	);
 }
 
-export default SuggestionProvider( withDimensions( FollowingStream ) );
+export default SuggestionProvider( FollowingStream );

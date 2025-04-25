@@ -117,11 +117,14 @@
 		"stats/chart-library": true,
 		"stats/empty-module-traffic": true,
 		"stats/empty-module-v2": true,
+		"stats/navigation-improvement": false,
+		"subscribers-helper-library": true,
 		"themes/premium": true,
 		"upgrades/redirect-payments": true,
 		"upgrades/upcoming-renewals-notices": true,
 		"upgrades/wpcom-monthly-plans": true,
 		"wpcom-user-bootstrap": false,
-		"yolo/command-palette": true
+		"yolo/command-palette": true,
+		"dashboard/v2": true
 	}
 }
