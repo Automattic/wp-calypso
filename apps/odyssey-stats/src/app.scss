@@ -135,3 +135,8 @@
 .jitm-card.jitm-banner {
 	display: none;
 }
+
+// Apply jetpack green color to the module toggler.
+.page-modules-settings-popover {
+	--wp-components-color-accent: var(--studio-jetpack-green-50);
+}
