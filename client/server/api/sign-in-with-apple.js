@@ -70,9 +70,9 @@ function redirectToCalypso( request, response, next ) {
 		originalUrlPath = originalUrlPath.replace( 'log-in', 'log-in/jetpack' );
 	}
 
-	const queryParams = new URLSearchParams( state.queryString ?? '' );
-
-	response.redirect( `${ originalUrlPath }?${ queryParams.toString() }#${ hashString }` );
+	response.redirect(
+		`${ originalUrlPath }?${ encodeURIComponent( state.queryString ?? '' ) }#${ hashString }`
+	);
 }
 
 export default function ( app ) {
