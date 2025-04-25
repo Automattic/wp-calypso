@@ -857,7 +857,6 @@ const PlansFeaturesMain = ( {
 										enableReducedFeatureGroupSpacing={ showSimplifiedFeatures }
 										enableLogosOnlyForEnterprisePlan={ showSimplifiedFeatures }
 										hideFeatureGroupTitles={ showSimplifiedFeatures }
-										enableTermSavingsPriceDisplay={ false }
 									/>
 								) }
 								{ showEscapeHatch && hidePlansFeatureComparison && viewAllPlansButton }
@@ -919,7 +918,6 @@ const PlansFeaturesMain = ( {
 													}
 													enableFeatureTooltips
 													featureGroupMap={ featureGroupMapForComparisonGrid }
-													enableTermSavingsPriceDisplay={ false }
 												/>
 											) }
 											<ComparisonGridToggle

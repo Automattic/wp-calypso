@@ -1157,7 +1157,6 @@ const WrappedComparisonGrid = ( {
 	hideUnsupportedFeatures,
 	enableFeatureTooltips,
 	featureGroupMap,
-	enableTermSavingsPriceDisplay,
 	reflectStorageSelectionInPlanPrices,
 	...otherProps
 }: ComparisonGridExternalProps ) => {
@@ -1204,7 +1203,6 @@ const WrappedComparisonGrid = ( {
 				enableFeatureTooltips={ enableFeatureTooltips }
 				featureGroupMap={ featureGroupMap }
 				hideUnsupportedFeatures={ hideUnsupportedFeatures }
-				enableTermSavingsPriceDisplay={ enableTermSavingsPriceDisplay }
 				reflectStorageSelectionInPlanPrices={ reflectStorageSelectionInPlanPrices }
 			>
 				<ComparisonGrid

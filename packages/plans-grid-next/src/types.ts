@@ -228,13 +228,6 @@ export type GridContextProps = {
 	hideFeatureGroupTitles?: boolean;
 
 	/**
-	 * Enable the display of the term savings in plan prices.
-	 * Prices will display crossed out with the savings from shorter term accentuated in a label.
-	 * This carries lower precedence than promo/coupon and introductory pricing, irrespective of whether set or not.
-	 */
-	enableTermSavingsPriceDisplay?: boolean;
-
-	/**
 	 * Determine if storage add-on products should be combined with plan costs when
 	 * calculating prices.
 	 */

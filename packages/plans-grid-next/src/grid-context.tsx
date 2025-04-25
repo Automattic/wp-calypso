@@ -25,7 +25,6 @@ interface PlansGridContext {
 	enableStorageAsBadge?: boolean;
 	enableReducedFeatureGroupSpacing?: boolean;
 	enableLogosOnlyForEnterprisePlan?: boolean;
-	enableTermSavingsPriceDisplay?: boolean;
 	featureGroupMap: Partial< FeatureGroupMap >;
 	hideUnsupportedFeatures?: boolean;
 	hideFeatureGroupTitles?: boolean;
@@ -50,7 +49,6 @@ const PlansGridContextProvider = ( {
 	enableStorageAsBadge,
 	enableReducedFeatureGroupSpacing,
 	enableLogosOnlyForEnterprisePlan,
-	enableTermSavingsPriceDisplay,
 	featureGroupMap,
 	hideUnsupportedFeatures,
 	hideFeatureGroupTitles,
@@ -84,7 +82,6 @@ const PlansGridContextProvider = ( {
 				enableStorageAsBadge,
 				enableReducedFeatureGroupSpacing,
 				enableLogosOnlyForEnterprisePlan,
-				enableTermSavingsPriceDisplay,
 				featureGroupMap,
 				hideUnsupportedFeatures,
 				hideFeatureGroupTitles,
