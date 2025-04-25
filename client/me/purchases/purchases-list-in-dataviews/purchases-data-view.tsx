@@ -22,7 +22,6 @@ export function PurchasesDataViews( props: {
 	translate: LocalizeProps[ 'translate' ];
 } ) {
 	const { purchases } = props;
-
 	const onChangeView = () => {
 		return;
 	};
@@ -30,9 +29,7 @@ export function PurchasesDataViews( props: {
 	const getItemId = ( item: Purchases.Purchase ) => {
 		return item.id.toString();
 	};
-
 	const purchasesDataFields = usePurchasesFieldDefinitions();
-
 	return (
 		<Card id="purchases-list" className="section-content" tagName="section">
 			<DataViews
