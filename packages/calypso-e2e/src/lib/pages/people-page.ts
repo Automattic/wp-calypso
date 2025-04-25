@@ -11,9 +11,8 @@ const selectors = {
 
 	// Team people
 	teamUser: ( username: string ) => `.people-profile:has(:text("${ username }"))`,
-	deletedUserContentAction: ( action: 'reassign' | 'delete' ) => `input[value="${ action }"]`,
-	deleteUserButton: 'button:text("Delete user")',
-	deleteConfirmBanner: ':text("Successfully deleted")',
+	clearUserButton: 'button:text("Clear")',
+	deleteConfirmBanner: ':text("Invite deleted.")',
 
 	// Header
 	addPeopleButton: 'a:text("Add a user")',
@@ -94,31 +93,7 @@ export class PeoplePage {
 	 * Delete the user from site.
 	 */
 	async deleteUser(): Promise< void > {
-		await this.page.waitForLoadState( 'networkidle', { timeout: 20 * 1000 } );
-
-		const elementHandle = await this.page.waitForSelector(
-			selectors.deletedUserContentAction( 'delete' )
-		);
-
-		// Invoke scroll directly via JavaScript.
-		// Playwright's built-in `click` or `check` methods are not able to
-		// scroll the radio buttons into view for uncertain reasons.
-		await this.page.evaluate(
-			( element: SVGElement | HTMLElement ) => element.scrollIntoView(),
-			elementHandle
-		);
-
-		// Native `page.check` sometimes fails here. Instead, click on the radio and wait for the
-		// Delete user button to become enabled.
-		await this.page.click( selectors.deletedUserContentAction( 'delete' ) );
-		await this.page.waitForSelector(
-			`${ selectors.deletedUserContentAction( 'delete' ) }:checked`
-		);
-
-		await Promise.all( [
-			this.page.waitForNavigation(),
-			this.page.click( selectors.deleteUserButton ),
-		] );
+		await this.page.click( selectors.clearUserButton );
 		await this.page.waitForSelector( selectors.deleteConfirmBanner );
 	}
 
