@@ -23,9 +23,11 @@ const actions = [
 		label: __( 'WP Admin' ),
 		callback: ( sites: Site[] ) => {
 			const site = sites[ 0 ];
-			window.location.href = site.options?.admin_url ?? '';
+			if ( site.options?.admin_url ) {
+				window.location.href = site.options.admin_url;
+			}
 		},
-		isEligible: ( item: Site ) => ( item.is_deleted ? false : true ),
+		isEligible: ( item: Site ) => ( item.is_deleted || ! item.options?.admin_url ? false : true ),
 	},
 ];
 
@@ -107,11 +109,10 @@ const DEFAULT_FIELDS = [
 		label: __( 'Preview' ),
 		render: function PreviewRender( { item }: { item: Site } ) {
 			const [ resizeListener, { width } ] = useResizeObserver();
-			const { options, URL: url } = item;
-			const { blog_public } = options;
+			const { is_deleted, is_private, URL: url } = item;
 			// If the site is a private A8C site, X-Frame-Options is set to same
 			// origin.
-			const iframeDisabled = isA8CSite( item ) && blog_public === -1;
+			const iframeDisabled = is_deleted || ( isA8CSite( item ) && is_private );
 			return (
 				<>
 					{ resizeListener }

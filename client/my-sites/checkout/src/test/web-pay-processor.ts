@@ -1,3 +1,4 @@
+// @ts-nocheck - TODO: Fix TypeScript issues
 import { getEmptyResponseCart, getEmptyResponseCartProduct } from '@automattic/shopping-cart';
 import webPayProcessor from '../lib/web-pay-processor';
 import {

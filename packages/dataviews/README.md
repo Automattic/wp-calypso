@@ -1223,7 +1223,7 @@ Example:
 
 ## Contributing to this package
 
-This package is based on and extends the [`@wordpress/dataviews` package](https://www.npmjs.com/package/@wordpress/dataviews).
+This package is based on and extends the [`@wordpress/dataviews` package](https://www.npmjs.com/package/@wordpress/dataviews). We keep two CHANGELOGS: `CHANGELOG.md` refers to the upstream changes from `@wordpress/dataviews`, and `CHANGELOG.automattic.md` refers to the modifications introduced in `@automattic/dataviews`.
 
 This is an individual package that's part of the wp-calypso project. The project is organized as a monorepo. It's made up of multiple self-contained software packages, each with a specific purpose. The packages in this monorepo are published to [npm](https://www.npmjs.com/) and used by [wp-calypso](https://github.com/automattic/wp-calypso/) as well as other software projects.
 
