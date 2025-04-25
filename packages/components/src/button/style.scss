@@ -77,7 +77,7 @@
 		}
 	}
 
-	.accessible-focus &:focus {
+	&:focus-visible {
 		border-color: var(--color-primary);
 		box-shadow: 0 0 0 2px var(--color-primary-light);
 	}
@@ -135,7 +135,7 @@
 		color: var(--color-text-inverted);
 	}
 
-	.accessible-focus &:focus {
+	&:focus-visible {
 		box-shadow: 0 0 0 2px var(--color-accent-light);
 	}
 
@@ -165,7 +165,7 @@
 		border-color: var(--color-error);
 	}
 
-	.accessible-focus &:focus {
+	&:focus-visible {
 		box-shadow: 0 0 0 2px var(--color-error-light);
 	}
 

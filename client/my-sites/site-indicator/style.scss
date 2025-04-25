@@ -34,7 +34,7 @@
 	&:focus {
 		box-shadow: none;
 	}
-	.accessible-focus &:focus {
+	&:focus-visible {
 		outline: 0;
 		border: 1px dotted var(--color-primary);
 		&::before {
@@ -58,7 +58,7 @@
 	}
 
 	.is-expanded & {
-		.accessible-focus &:focus {
+		&:focus-visible {
 			border: 1px dotted var(--color-surface);
 			&::before {
 				top: 6px;

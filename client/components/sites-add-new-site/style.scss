@@ -66,6 +66,12 @@
 		background-color: var(--color-neutral-0);
 	}
 
+	// Remove the focus outline from the button when clicked with the mouse,
+	// but retain it for keyboard navigation (e.g., Tab key). */
+	&:focus-within:not(:focus-visible) {
+		box-shadow: none;
+	}
+
 	&.is-disabled {
 		cursor: not-allowed;
 		background-color: var(--color-neutral-0);
@@ -138,17 +144,6 @@
 		padding-top: 4px;
 		text-wrap: balance; /* Fallback for browsers that don't support pretty. */
 		text-wrap: pretty;
-	}
-}
-
-// Remove the focus outline from the button when clicked with the mouse,
-// but retain it for keyboard navigation (e.g., Tab key). */
-html:not(.accessible-focus) button,
-a {
-	&.components-button.sites-add-new-site__popover-button {
-		&:focus-within {
-			box-shadow: none;
-		}
 	}
 }
 

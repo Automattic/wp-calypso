@@ -29,7 +29,7 @@
 		background-color: var(--color-surface);
 		height: 100%;
 
-		.accessible-focus &:focus {
+		&:focus-visible {
 			box-shadow: inset 0 0 0 2px var(--color-primary-light);
 			position: relative;
 			z-index: 9999;

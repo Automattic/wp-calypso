@@ -1,5 +1,4 @@
 import '@automattic/calypso-polyfills';
-import accessibleFocus from '@automattic/accessible-focus';
 import { initializeAnalytics } from '@automattic/calypso-analytics';
 import { CurrentUser } from '@automattic/calypso-analytics/dist/types/utils/current-user';
 import config from '@automattic/calypso-config';
@@ -102,9 +101,6 @@ async function main() {
 	requestAllBlogsAccess();
 
 	setupWpDataDebug();
-
-	// Add accessible-focus listener.
-	accessibleFocus();
 
 	const user = ( await initializeCurrentUser() ) as unknown;
 	const userId = ( user as CurrentUser ).ID;

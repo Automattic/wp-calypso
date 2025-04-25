@@ -44,7 +44,7 @@
 	position: relative;
 }
 
-html.accessible-focus .a4a-sidebar__profile-dropdown-button:focus {
+html.a4a-sidebar__profile-dropdown-button:focus-visible {
 	box-shadow: inset 0 0 0 2px var(--color-primary-light);
 }
 

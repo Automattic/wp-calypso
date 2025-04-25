@@ -17,7 +17,7 @@
 	}
 }
 
-.accessible-focus .reader-site-notification-settings__button:focus {
+.reader-site-notification-settings__button:focus-visible {
 	border-color: var(--color-primary);
 	border-radius: 2px;
 	box-shadow: 0 0 0 2px var(--color-primary-light);

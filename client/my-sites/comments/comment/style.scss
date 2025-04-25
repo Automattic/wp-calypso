@@ -12,9 +12,9 @@
 		box-shadow: 0 -1px color-mix(in srgb, var(--color-neutral-10) 50%, transparent);
 	}
 
-	.accessible-focus &:focus {
+	&:focus-visible {
 		box-shadow: 0 0 0 1px var(--color-accent), 0 0 0 3px var(--color-primary-light);
-		z-index: z-index("root", ".card.comment.accessible-focus:focus");
+		z-index: z-index("root", ".card.comment:focus-visible");
 	}
 
 	&.is-pending {

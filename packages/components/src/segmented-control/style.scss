@@ -51,7 +51,7 @@
 		background-color: var(--color-neutral-0);
 	}
 
-	.accessible-focus &:focus {
+	&:focus-visible {
 		box-shadow: 0 0 0 2px var(--color-primary-light);
 		outline: none;
 	}

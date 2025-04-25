@@ -275,7 +275,7 @@
 		outline: none;
 		box-shadow: none;
 
-		.accessible-focus & {
+		&:focus-visible {
 			box-shadow: inset 0 0 0 2px var(--color-primary-light);
 		}
 	}

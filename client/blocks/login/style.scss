@@ -15,7 +15,7 @@ $breakpoint-mobile: 782px; //Mobile size.
 				background-color: var(--studio-jetpack-green-60);
 			}
 
-			.accessible-focus &:focus {
+			&:focus-visible {
 				box-shadow: 0 0 0 2px var(--studio-jetpack-green-30);
 			}
 		}
@@ -437,7 +437,7 @@ $breakpoint-mobile: 782px; //Mobile size.
 				box-shadow: 0 0 0 2px var(--color-accent-dark) !important;
 			}
 
-			.accessible-focus &:focus {
+			&:focus-visible {
 				box-shadow: 0 0 0 2px var(--color-accent) !important;
 			}
 		}

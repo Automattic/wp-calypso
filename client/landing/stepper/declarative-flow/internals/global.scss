@@ -56,11 +56,9 @@ button {
 	}
 }
 
-.accessible-focus {
-	.site-setup {
-		.button.is-primary:focus {
-			box-shadow: 0 0 0 2px var(--color-primary-light);
-		}
+.site-setup {
+	.button.is-primary:focus-visible {
+		box-shadow: 0 0 0 2px var(--color-primary-light);
 	}
 }
 

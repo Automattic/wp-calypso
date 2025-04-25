@@ -70,7 +70,7 @@
 	cursor: default;
 }
 
-.accessible-focus .foldable-card__action:focus {
+.foldable-card__action:focus-visible {
 	outline: thin dotted;
 }
 

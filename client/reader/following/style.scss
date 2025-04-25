@@ -72,7 +72,7 @@
 
 .following-stream__quick-post-card.card {
 
-	.accessible-focus & .foldable-card__action:focus {
+	& .foldable-card__action:focus-visible {
 		outline: none;
 		border-color: var(--color-primary);
 		box-shadow: 0 0 0 2px var(--color-primary-light);

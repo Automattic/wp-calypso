@@ -2,10 +2,10 @@
 
 /* Override very specific css on an attribute */
 .sidebar {
-	.accessible-focus div.global-sidebar & {
+	div.global-sidebar & {
 		.sidebar-streams__conversations .sidebar__menu-link,
 		.sidebar__menu.is-togglable .sidebar__heading {
-			&:focus {
+			&:focus-visible {
 				border-radius: 2px;
 				z-index: 1;
 			}

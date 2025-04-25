@@ -80,15 +80,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@automattic/accessible-focus@workspace:^, @automattic/accessible-focus@workspace:packages/accessible-focus":
-  version: 0.0.0-use.local
-  resolution: "@automattic/accessible-focus@workspace:packages/accessible-focus"
-  dependencies:
-    "@automattic/calypso-typescript-config": "workspace:^"
-    typescript: "npm:^5.8.2"
-  languageName: unknown
-  linkType: soft
-
 "@automattic/babel-plugin-i18n-calypso@workspace:^, @automattic/babel-plugin-i18n-calypso@workspace:packages/babel-plugin-i18n-calypso":
   version: 0.0.0-use.local
   resolution: "@automattic/babel-plugin-i18n-calypso@workspace:packages/babel-plugin-i18n-calypso"
@@ -13372,7 +13363,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "calypso@workspace:client"
   dependencies:
-    "@automattic/accessible-focus": "workspace:^"
     "@automattic/block-renderer": "workspace:^"
     "@automattic/browser-data-collector": "workspace:^"
     "@automattic/calypso-analytics": "workspace:^"

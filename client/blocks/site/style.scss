@@ -73,7 +73,7 @@
 	position: relative;
 	width: 100%;
 
-	.accessible-focus &:focus {
+	&:focus-visible {
 		outline: none;
 		box-shadow: inset 0 0 0 2px var(--color-primary-light);
 

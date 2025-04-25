@@ -18,7 +18,7 @@
 	cursor: pointer;
 }
 
-html.accessible-focus .jetpack-cloud-sidebar__profile-dropdown-button:focus {
+html.jetpack-cloud-sidebar__profile-dropdown-button:focus-visible {
 	box-shadow: inset 0 0 0 2px var(--color-primary-light);
 }
 

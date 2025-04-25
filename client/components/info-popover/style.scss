@@ -4,7 +4,7 @@
 		color: var(--color-text-subtle);
 	}
 
-	.accessible-focus &:focus,
+	&:focus-visible,
 	&:hover,
 	&.is-active {
 		.gridicon {

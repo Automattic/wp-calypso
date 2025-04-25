@@ -1,4 +1,3 @@
-import accessibleFocus from '@automattic/accessible-focus';
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { getUrlParts } from '@automattic/calypso-url';
@@ -206,9 +205,6 @@ const utils = () => {
 	} else {
 		document.documentElement.classList.add( 'notouch' );
 	}
-
-	// Add accessible-focus listener
-	accessibleFocus();
 
 	// Configure app element that React Modal will aria-hide when modal is open
 	Modal.setAppElement( document.getElementById( 'wpcom' ) );

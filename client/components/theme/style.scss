@@ -163,8 +163,8 @@ $theme-info-height: 54px;
 			color: color-mix(in srgb, var(--color-surface) 20%, transparent);
 		}
 
-		.accessible-focus &:focus {
-			z-index: z-index("root", ".accessible-focus .theme__more-button button:focus");
+		&:focus-visible {
+			z-index: z-index("root", ".theme__more-button button:focus-visible");
 			box-shadow: inset 0 0 0 2px var(--color-primary-light);
 		}
 	}

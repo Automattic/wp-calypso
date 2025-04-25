@@ -76,7 +76,7 @@ $theme-card-info-margin-top: 16px;
 			}
 		}
 
-		.accessible-focus &:focus &-label {
+		&:focus-visible &-label {
 			box-shadow: 0 0 0 2px var(--color-primary-light);
 		}
 	}
