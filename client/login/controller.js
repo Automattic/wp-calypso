@@ -17,6 +17,7 @@ import { SOCIAL_HANDOFF_CONNECT_ACCOUNT } from 'calypso/state/action-types';
 import { isUserLoggedIn, getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { loginSocialUser, rebootAfterLogin } from 'calypso/state/login/actions';
 import { postLoginRequest } from 'calypso/state/login/utils';
+import { logoutUser } from 'calypso/state/logout/actions';
 import { fetchOAuth2ClientData } from 'calypso/state/oauth2-clients/actions';
 import { getOAuth2Client } from 'calypso/state/oauth2-clients/selectors';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
@@ -230,7 +231,7 @@ export async function jetpackGoogleAuth( context, next ) {
 
 		// Create state object with relevant data
 		const stateObject = {
-			redirect_to: query?.redirect_to || window.location.origin,
+			redirect_to: query?.redirect_to || '/',
 			is_jetpack: true,
 			locale: context.params.lang,
 			wpcomNonce: nonce,
@@ -246,6 +247,10 @@ export async function jetpackGoogleAuth( context, next ) {
 			if ( ! window?.google?.accounts?.oauth2 ) {
 				throw new Error( 'Failed to load Google Identity Services API' );
 			}
+		}
+
+		if ( isUserLoggedIn( context.store.getState() ) ) {
+			await context.store.dispatch( logoutUser() );
 		}
 
 		// Initialize and request authorization code
@@ -290,7 +295,7 @@ export async function jetpackGoogleAuthCallback( context, next ) {
 		const stateData = JSON.parse( stateString || '{}' );
 
 		state = {
-			redirect_to: stateData.redirect_to || window.location.origin,
+			redirect_to: stateData.redirect_to || '/',
 			is_jetpack: stateData.is_jetpack || true,
 			locale: stateData.locale || getLocaleSlug(),
 			wpcomNonce: stateData.wpcomNonce || '',
@@ -384,6 +389,7 @@ export async function jetpackGoogleAuthCallback( context, next ) {
 			} );
 
 			return redirectJetpackDirectAuthError( context, next, {
+				code: null,
 				redirect_to: state.redirect_to,
 			} );
 		}
@@ -397,6 +403,7 @@ export async function jetpackGoogleAuthCallback( context, next ) {
 		} );
 
 		return redirectJetpackDirectAuthError( context, next, {
+			code: null,
 			redirect_to: state.redirect_to,
 		} );
 	}
@@ -428,7 +435,7 @@ export async function jetpackAppleAuth( context, next ) {
 			is_jetpack: true,
 			oauth2State: nonce,
 			// Allow just redirect_to to be passed in the query params
-			queryString: `redirect_to=${ query?.redirect_to || window.location.origin }`,
+			queryString: `redirect_to=${ query?.redirect_to || '/' }`,
 		};
 
 		// Store nonce in sessionStorage for validation on callback
@@ -443,6 +450,10 @@ export async function jetpackAppleAuth( context, next ) {
 			if ( ! window.AppleID ) {
 				throw new Error( 'Failed to load Apple Authentication Services API' );
 			}
+		}
+
+		if ( isUserLoggedIn( context.store.getState() ) ) {
+			await context.store.dispatch( logoutUser() );
 		}
 
 		// Initialize Apple auth
@@ -552,13 +563,10 @@ export async function jetpackGitHubAuth( context, next ) {
 		return next();
 	}
 
-	const redirectUri = `${ window.location.origin }/log-in/jetpack/github/callback`;
+	const redirectUri = `https://${ window.location.host }/log-in/jetpack/github/callback`;
 	try {
 		// Store redirect_to in sessionStorage for use on callback
-		window.sessionStorage.setItem(
-			'github_redirect_to',
-			query?.redirect_to || window.location.origin
-		);
+		window.sessionStorage.setItem( 'github_redirect_to', query?.redirect_to || '/' );
 
 		// Redirect to GitHub authorization URL
 		const scope = 'read:user,user:email';
@@ -566,7 +574,12 @@ export async function jetpackGitHubAuth( context, next ) {
 			redirect_uri: redirectUri,
 			scope,
 			ux_mode: 'redirect',
+			redirect_to: query?.redirect_to || '/',
 		} );
+
+		if ( isUserLoggedIn( context.store.getState() ) ) {
+			await context.store.dispatch( logoutUser() );
+		}
 
 		window.location.href = `https://public-api.wordpress.com/wpcom/v2/hosting/github/app-authorize?${ params.toString() }`;
 	} catch {
@@ -597,10 +610,14 @@ export async function jetpackGitHubAuthCallback( context, next ) {
 	window.sessionStorage.removeItem( 'github_redirect_to' );
 
 	try {
+		// GitHub supports localhost auth; and we allowlist the jetpack callback path
+		const redirectUri = `${ window.location.origin }/log-in/jetpack/github/callback`;
+
 		// Exchange auth code for tokens
 		const response = await postLoginRequest( 'exchange-social-auth-code', {
 			service: 'github',
 			auth_code: code,
+			redirect_uri: redirectUri,
 			client_id: config( 'wpcom_signup_id' ),
 			client_secret: config( 'wpcom_signup_key' ),
 		} );
