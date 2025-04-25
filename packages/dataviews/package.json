@@ -1,7 +1,6 @@
 {
 	"name": "@automattic/dataviews",
 	"version": "0.1.0",
-	"private": true,
 	"description": "DataViews is a component that provides an API to render datasets using different types of layouts (table, grid, list, etc.).",
 	"author": "Automattic Inc.",
 	"license": "GPL-2.0-or-later",
@@ -18,30 +17,30 @@
 		"node": ">=18.12.0",
 		"npm": ">=8.19.2"
 	},
-	"main": "build/index.js",
-	"module": "build-module/index.js",
+	"main": "dist/cjs/index.js",
+	"module": "dist/esm/index.js",
+	"calypso:src": "src/index.ts",
 	"exports": {
 		".": {
-			"types": "./build-types/index.d.ts",
-			"import": "./build-module/index.js",
-			"default": "./build/index.js"
+			"calypso:src": "./src/index.ts",
+			"types": "./dist/types/index.d.ts",
+			"import": "./dist/esm/index.js",
+			"default": "./dist/cjs/index.js"
 		},
 		"./wp": {
-			"types": "./build-types/index.d.ts",
-			"default": "./build-wp/index.js"
+			"types": "./dist/types/index.d.ts",
+			"default": "./dist/wp/index.js"
 		},
-		"./package.json": {
-			"default": "./package.json"
-		},
-		"./build-style/": "./build-style/"
+		"./package.json": "./package.json",
+		"./build-style/*": "./dist/style/*"
 	},
 	"react-native": "src/index",
 	"wpScript": true,
-	"types": "build-types",
+	"types": "dist/types",
 	"sideEffects": false,
 	"dependencies": {
 		"@ariakit/react": "^0.4.15",
-		"@babel/runtime": "7.26.10",
+		"@wordpress/base-styles": "^5.22.0",
 		"@wordpress/components": "^29.8.0",
 		"@wordpress/compose": "^7.22.0",
 		"@wordpress/data": "^10.22.0",
@@ -55,12 +54,29 @@
 		"remove-accents": "^0.5.0"
 	},
 	"peerDependencies": {
-		"react": "^18.0.0"
+		"react": "^18.0.0",
+		"react-dom": "^18.0.0"
 	},
 	"publishConfig": {
 		"access": "public"
 	},
+	"devDependencies": {
+		"@testing-library/jest-dom": "^6.6.3",
+		"@types/jest": "^29.5.14",
+		"@wordpress/postcss-plugins-preset": "^5.22.0",
+		"postcss": "^8.5.3",
+		"postcss-local-keyframes": "^0.0.2",
+		"sass": "1.54.0",
+		"typescript": "5.8.2"
+	},
 	"scripts": {
-		"build:wp": "node build"
+		"build": "yarn run build:js && yarn run build:style && yarn run build:wp",
+		"build:js": "tsc --build ./tsconfig.json ./tsconfig-cjs.json",
+		"build:style": "node build-style.js",
+		"build:wp": "node build",
+		"clean": "git clean --force -d -X",
+		"prepare": "yarn run build",
+		"prepack": "yarn run clean && yarn run build",
+		"watch": "tsc --build ./tsconfig.json --watch"
 	}
 }

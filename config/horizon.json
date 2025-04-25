@@ -128,6 +128,7 @@
 		"stats/real-time-tab": false,
 		"stats/navigation-improvement": false,
 		"subscriber-importer": true,
+		"subscribers-helper-library": true,
 		"themes/block-theme-previews-premium-and-woo": true,
 		"themes/discovery": true,
 		"themes/premium": true,

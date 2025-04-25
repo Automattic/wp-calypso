@@ -29,6 +29,7 @@ function Site() {
 						<Dropdown
 							renderToggle={ ( { onToggle } ) => (
 								<Button
+									className="dashboard-menu__item active"
 									onClick={ () => onToggle() }
 									icon={ <SiteIcon site={ site } size={ 24 } /> }
 								>
@@ -39,7 +40,7 @@ function Site() {
 						/>
 					</HeaderBar.Title>
 					{ isDesktop && <MenuDivider /> }
-					<SiteMenu siteId={ site.id } />
+					<SiteMenu siteId={ site.ID } />
 				</HStack>
 			</HeaderBar>
 			<Outlet />

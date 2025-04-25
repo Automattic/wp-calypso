@@ -26,22 +26,31 @@ export function siteQuery( siteId: string ) {
 	return {
 		queryKey: [ 'site', siteId ],
 		queryFn: async () => {
+			// Site usually takes the longest, so kick it off first.
+			const sitePromise = fetchSite( siteId );
+			// Kick off all independent promises in parallel.
+			const mediaStoragePromise = fetchSiteMediaStorage( siteId );
+			const currentPlanPromise = fetchCurrentPlan( siteId );
+			const primaryDomainPromise = fetchSitePrimaryDomain( siteId );
+			const engagementStatsPromise = fetchSiteEngagementStats( siteId );
+			const site = await sitePromise;
 			const [
-				site,
 				mediaStorage,
-				siteMonitorUptime,
-				phpVersion,
 				currentPlan,
 				primaryDomain,
 				engagementStats,
+				siteMonitorUptime,
+				phpVersion,
 			] = await Promise.all( [
-				fetchSite( siteId ),
-				fetchSiteMediaStorage( siteId ),
-				fetchSiteMonitorUptime( siteId ),
-				fetchPHPVersion( siteId ),
-				fetchCurrentPlan( siteId ),
-				fetchSitePrimaryDomain( siteId ),
-				fetchSiteEngagementStats( siteId ),
+				mediaStoragePromise,
+				currentPlanPromise,
+				primaryDomainPromise,
+				engagementStatsPromise,
+				// Kick off dependent promises in parallel.
+				site.jetpack && site.jetpack_modules.includes( 'monitor' )
+					? fetchSiteMonitorUptime( siteId )
+					: undefined,
+				site.options.is_wpcom_atomic ? fetchPHPVersion( siteId ) : undefined,
 			] );
 			return {
 				site,
