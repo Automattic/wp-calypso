@@ -16,7 +16,7 @@ import { JETPACK_SUPPORT_URL_TRAFFIC, UTM_SUPPORT_URL } from '../../../const';
 import useUTMMetricsQuery from '../../../hooks/use-utm-metrics-query';
 import ErrorPanel from '../../../stats-error';
 import StatsListCard from '../../../stats-list/stats-list-card';
-import UTMBuilder from '../../../stats-module-utm-builder/';
+import UTMBuilder from '../../../stats-module-utm-builder';
 import { StatsEmptyActionUTMBuilder } from '../shared';
 import StatsCardSkeleton from '../shared/stats-card-skeleton';
 import UTMDropdown from './stats-module-utm-dropdown';
