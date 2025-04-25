@@ -11,6 +11,7 @@ type PageModuleTogglerProps = {
 	onToggleModule: ( module: string, isShow: boolean ) => void;
 	isTooltipShown: boolean;
 	onTooltipDismiss: () => void;
+	toggleIcon?: React.ReactNode;
 };
 
 export default function PageModuleToggler( {
@@ -19,6 +20,7 @@ export default function PageModuleToggler( {
 	onToggleModule,
 	isTooltipShown,
 	onTooltipDismiss,
+	toggleIcon = <Icon className="gridicon" icon={ cog } />,
 }: PageModuleTogglerProps ) {
 	const translate = useTranslate();
 
@@ -48,7 +50,7 @@ export default function PageModuleToggler( {
 				ref={ buttonRefCallback }
 				onClick={ toggleSettingsMenu }
 			>
-				<Icon className="gridicon" icon={ cog } />
+				{ toggleIcon }
 			</button>
 			<Popover
 				className="tooltip tooltip--darker highlight-card-tooltip highlight-card__settings-tooltip"
