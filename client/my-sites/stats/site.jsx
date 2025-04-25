@@ -13,6 +13,7 @@ import illustration404 from 'calypso/assets/images/illustrations/illustration-40
 import JetpackBackupCredsBanner from 'calypso/blocks/jetpack-backup-creds-banner';
 import StatsNavigation, { getAvailablePageModules } from 'calypso/blocks/stats-navigation';
 import { AVAILABLE_PAGE_MODULES, navItems } from 'calypso/blocks/stats-navigation/constants';
+import PageModuleToggler from 'calypso/blocks/stats-navigation/page-module-toggler';
 import AsyncLoad from 'calypso/components/async-load';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
@@ -27,6 +28,7 @@ import NavigationHeader from 'calypso/components/navigation-header';
 import NavigationHeaderImpr from 'calypso/components/navigation-header/navigation-header';
 import StickyPanel from 'calypso/components/sticky-panel';
 import memoizeLast from 'calypso/lib/memoize-last';
+import version_compare from 'calypso/lib/version-compare';
 import Main from 'calypso/my-sites/stats/components/stats-main';
 import {
 	DATE_FORMAT,
@@ -37,6 +39,8 @@ import {
 	STATS_PRODUCT_NAME_IMPR,
 } from 'calypso/my-sites/stats/constants';
 import { getMomentSiteZone } from 'calypso/my-sites/stats/hooks/use-moment-site-zone';
+import useNoticeVisibilityMutation from 'calypso/my-sites/stats/hooks/use-notice-visibility-mutation';
+import { useNoticeVisibilityQuery } from 'calypso/my-sites/stats/hooks/use-notice-visibility-query';
 import { getChartRangeParams } from 'calypso/my-sites/stats/utils';
 import {
 	recordGoogleEvent,
@@ -51,8 +55,9 @@ import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-act
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import isAtomicSite from 'calypso/state/selectors/is-site-wpcom-atomic';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { isJetpackSite, getJetpackStatsAdminVersion } from 'calypso/state/sites/selectors';
 import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
+import { updateModuleToggles } from 'calypso/state/stats/module-toggles/actions';
 import { getModuleToggles } from 'calypso/state/stats/module-toggles/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import StatsModuleAuthors from './features/modules/stats-authors';
@@ -190,6 +195,18 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 	const moduleToggles = useSelector( ( state ) => getModuleToggles( state, siteId, 'traffic' ) );
 	const momentSiteZone = useSelector( ( state ) => getMomentSiteZone( state, siteId ) );
 	const hasVideoPress = useSelector( ( state ) => siteHasFeature( state, siteId, 'videopress' ) );
+	const [ pageModules, setPageModules ] = useState( () => {
+		return Object.assign(
+			...AVAILABLE_PAGE_MODULES.traffic.map( ( module ) => {
+				return {
+					[ module.key ]: module.defaultValue,
+				};
+			} )
+		);
+	} );
+	const [ isPageSettingsTooltipDismissed, setIsPageSettingsTooltipDismissed ] = useState(
+		!! localStorage.getItem( 'notices_dismissed__traffic_page_settings' )
+	);
 
 	// Determine module visibility based on user settings, VideoPress availability, AND defaults.
 	const moduleVisibility = useMemo(
@@ -524,6 +541,60 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 	// TODO: Fix isOdysseyStats to include the environment running on WP-Admin of Simple sites.
 	const isRunningOnWPAdmin = document.getElementById( 'wpadminbar' );
 
+	const statsAdminVersion = useSelector( ( state ) =>
+		getJetpackStatsAdminVersion( state, siteId )
+	);
+
+	const gatedTrafficPage = useSelector( ( state ) => {
+		return (
+			config.isEnabled( 'stats/paid-wpcom-v3' ) &&
+			shouldGateStats( state, siteId, STATS_FEATURE_PAGE_TRAFFIC )
+		);
+	} );
+
+	const availableModuleToggles = useSelector( () =>
+		getAvailablePageModules( 'traffic', hasVideoPress )
+	);
+
+	const { data: showSettingsTooltip, refetch: refetchNotices } = useNoticeVisibilityQuery(
+		siteId,
+		'traffic_page_settings'
+	);
+	const { mutateAsync: mutateNoticeVisbilityAsync } = useNoticeVisibilityMutation(
+		siteId,
+		'traffic_page_settings'
+	);
+
+	const onToggleModule = ( module, isShow ) => {
+		const selectedPageModules = Object.assign( {}, pageModules );
+		selectedPageModules[ module ] = isShow;
+		setPageModules( selectedPageModules );
+
+		dispatch(
+			updateModuleToggles( siteId, {
+				[ 'traffic' ]: selectedPageModules,
+			} )
+		);
+	};
+
+	const onTooltipDismiss = () => {
+		if ( isPageSettingsTooltipDismissed || ! showSettingsTooltip ) {
+			return;
+		}
+
+		setIsPageSettingsTooltipDismissed( true );
+		localStorage.setItem( 'notices_dismissed__traffic_page_settings', 1 );
+		mutateNoticeVisbilityAsync().finally( refetchNotices );
+	};
+
+	// Module settings for Odyssey are not supported until stats-admin@0.9.0-alpha.
+	const isModuleSettingsSupported =
+		! config.isEnabled( 'is_running_in_jetpack_site' ) ||
+		!! ( statsAdminVersion && version_compare( statsAdminVersion, '0.9.0-alpha', '>=' ) );
+
+	const shouldRenderModuleToggler =
+		isModuleSettingsSupported && AVAILABLE_PAGE_MODULES.traffic && ! gatedTrafficPage;
+
 	return (
 		<div className="stats">
 			{ ! isOdysseyStats && (
@@ -536,7 +607,18 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 					className="stats__section-header modernized-header"
 					title={ isOdysseyStats ? STATS_PRODUCT_NAME : STATS_PRODUCT_NAME_IMPR }
 					titleLogo={ isOdysseyStats ? <JetpackLogo size={ 24 } /> : null }
-					rightSection={ <Icon className="gridicon" icon={ settings } /> }
+					rightSection={
+						shouldRenderModuleToggler && (
+							<PageModuleToggler
+								availableModuleToggles={ availableModuleToggles }
+								pageModules={ pageModules }
+								onToggleModule={ onToggleModule }
+								isTooltipShown={ showSettingsTooltip && ! isPageSettingsTooltipDismissed }
+								onTooltipDismiss={ onTooltipDismiss }
+								toggleIcon={ <Icon className="gridicon" icon={ settings } /> }
+							/>
+						)
+					}
 				/>
 			) : (
 				<NavigationHeader
