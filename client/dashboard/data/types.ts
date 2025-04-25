@@ -78,7 +78,8 @@ export interface Site {
 	plan: SitePlan;
 	active_modules?: string[];
 	subscribers_count: number;
-	options: SiteOptions;
+	// Can be undefined for deleted sites.
+	options?: SiteOptions;
 	is_deleted: boolean;
 	is_coming_soon: boolean;
 	is_private: boolean;
