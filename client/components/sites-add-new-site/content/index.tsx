@@ -32,9 +32,7 @@ const migrateClick = () => {
 	recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_item', {
 		action: 'migrate',
 	} );
-	page(
-		'/setup/hosted-site-migration/site-migration-identify?source=sites-dashboard&ref=new-site-popover&action=migrate'
-	);
+	page( '/setup/site-migration?source=sites-dashboard&ref=new-site-popover&action=migrate' );
 };
 
 const importClick = () => {
@@ -43,7 +41,7 @@ const importClick = () => {
 		action: 'import',
 	} );
 	page(
-		'/setup/hosted-site-migration/create-site?source=sites-dashboard&ref=new-site-popover&action=import'
+		'/setup/site-migration/create-site?source=sites-dashboard&ref=new-site-popover&action=import'
 	);
 };
 

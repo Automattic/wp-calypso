@@ -135,7 +135,7 @@ export const MetricsInsight: React.FC< MetricsInsightProps > = ( props ) => {
 	const tip = isLoggedIn && isWpcom ? loggedInTips[ insight.id ] : tips[ insight.id ];
 
 	if ( props.url && tip && ! isWpcom ) {
-		tip.link = `https://wordpress.com/setup/hosted-site-migration?from=${ props.url }&ref=performance-profiler-dashboard`;
+		tip.link = `https://wordpress.com/setup/site-migration?from=${ props.url }&ref=performance-profiler-dashboard`;
 	}
 
 	if ( tip && isWpcom && ! site?.is_wpcom_atomic ) {
