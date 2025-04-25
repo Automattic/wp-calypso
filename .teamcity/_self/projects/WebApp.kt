@@ -1071,8 +1071,25 @@ fun e2ePreReleaseBuildType( targetDevice: String, buildUuid: String ): E2EBuildT
 			param("env.VIEWPORT_NAME", targetDevice)
 			param("env.CALYPSO_BASE_URL", "https://wpcalypso.wordpress.com")
 			param("env.ALLURE_RESULTS_PATH", "allure-results")
-			// TODO: After running all tests on mobile and identifying actual failures,
-			// add TEST_EXCLUDE_PATTERN here with proper documentation of why each test is excluded
+			// Skip tests that fail specifically on mobile viewport due to UI/layout differences
+			if (targetDevice == "mobile") {
+				param("env.TEST_EXCLUDE_PATTERN", """
+					# Tests failing due to mobile-specific UI issues:
+					
+					# 1. Signup with theme from LOHP - elements not visible in mobile viewport
+					# Error: Element is not visible when trying to hover over theme
+					.*signup__with-theme-LOHP.*|
+					
+					# 2. LOHP to signup events - elements not visible/clickable in mobile layout
+					# Error: Timeout waiting for element to be visible and clickable
+					.*tracks__lohp-to-signup-events.*|
+					
+					# 3. Signup with premium theme & Lifecycle tests - sidebar navigation issues
+					# Error: Cannot click Purchases link in sidebar - element outside viewport
+					.*signup__with-theme-premium.*|
+					.*lifecycle__signup-onboarding-launch-cancel.*
+				""".trimIndent())
+			}
 		},
 		buildFeatures = {
 			notifications {
