@@ -191,6 +191,7 @@ import {
 	FEATURE_ISOLATED_INFRA,
 	FEATURE_SECURITY_MALWARE,
 	FEATURE_SECURITY_DDOS,
+	FEATURE_DEV_TOOLS,
 	FEATURE_DEV_TOOLS_SSH,
 	FEATURE_DEV_TOOLS_GIT,
 	FEATURE_WP_UPDATES,
@@ -1936,6 +1937,12 @@ const FEATURES_LIST: FeatureList = {
 		getTitle: () => i18n.translate( 'DDoS protection and mitigation' ),
 		getDescription: () =>
 			i18n.translate( 'Breeze past DDoS attacks thanks to real-time monitoring and mitigation.' ),
+	},
+	[ FEATURE_DEV_TOOLS ]: {
+		getSlug: () => FEATURE_DEV_TOOLS,
+		getTitle: () => i18n.translate( 'SFTP/SSH, WP-CLI, Git commands, and GitHub Deployments' ),
+		getDescription: () =>
+			i18n.translate( 'Use familiar developer tools to manage and deploy your site.' ),
 	},
 	[ FEATURE_DEV_TOOLS_SSH ]: {
 		getSlug: () => FEATURE_DEV_TOOLS_SSH,

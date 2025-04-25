@@ -369,6 +369,7 @@ export const FEATURE_SECURITY_MALWARE = 'security-malware';
 export const FEATURE_REAL_TIME_SECURITY_SCANS = 'real-time-security-scans';
 export const FEATURE_SECURITY_VULNERABILITY_NOTIFICATIONS = 'security-vulnerability-notifications';
 export const FEATURE_SECURITY_DDOS = 'security-ddos';
+export const FEATURE_DEV_TOOLS = 'dev-tools';
 export const FEATURE_DEV_TOOLS_SSH = 'dev-tools-ssh';
 export const FEATURE_DEV_TOOLS_GIT = 'dev-tools-git';
 export const FEATURE_WP_UPDATES = 'wp-updates';

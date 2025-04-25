@@ -26,8 +26,7 @@ import {
 	FEATURE_CUSTOM_MARKETING_AUTOMATION,
 	getPlan,
 	FEATURE_SUPPORT_FROM_EXPERTS,
-	FEATURE_DEV_TOOLS_SSH,
-	FEATURE_DEV_TOOLS_GIT,
+	FEATURE_DEV_TOOLS,
 } from '../src';
 
 describe( 'getFeatureDifference function related tests', () => {
@@ -59,12 +58,7 @@ describe( 'getFeatureDifference function related tests', () => {
 	it( 'get2023PricingGridSignupWpcomFeatures bundle selector: Premium --> Business difference', () => {
 		expect(
 			getFeatureDifference( PLAN_PREMIUM, PLAN_BUSINESS, 'get2023PricingGridSignupWpcomFeatures' )
-		).toEqual( [
-			FEATURE_PRIORITY_24_7_SUPPORT,
-			FEATURE_UPLOAD_PLUGINS,
-			FEATURE_DEV_TOOLS_SSH,
-			FEATURE_DEV_TOOLS_GIT,
-		] );
+		).toEqual( [ FEATURE_PRIORITY_24_7_SUPPORT, FEATURE_UPLOAD_PLUGINS, FEATURE_DEV_TOOLS ] );
 	} );
 
 	it( 'get2023PricingGridSignupWpcomFeatures bundle selector extractor: Business --> Woo difference', () => {
