@@ -23,7 +23,7 @@ import { getCurrentQueryParams } from '../../../utils/get-current-query-params';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
 import { STEPS } from '../../internals/steps';
 import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
-import type { FlowV2, StepperStep, SubmitHandler } from '../../internals/types';
+import type { FlowV2, SubmitHandler } from '../../internals/types';
 import type { DomainSuggestion, OnboardActions, OnboardSelect } from '@automattic/data-stores';
 
 async function initialize( reduxStore: Store ) {
@@ -37,7 +37,7 @@ async function initialize( reduxStore: Store ) {
 
 	const eligibleForFreeHostingTrial = isUserEligibleForFreeHostingTrial( reduxStore.getState() );
 
-	const steps: StepperStep[] = [];
+	const steps = [];
 
 	if ( showDomainStep ) {
 		steps.push( STEPS.UNIFIED_DOMAINS );
