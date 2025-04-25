@@ -494,8 +494,8 @@ export class SiteAddressChanger extends Component {
 						<Icon icon={ check } size={ 24 } className="site-address-changer__copy-addition" />
 					</span>
 					<p className="site-address-changer__confirmation-detail-copy site-address-changer__copy-addition">
-						<strong>{ currentDomainPrefix }</strong>
-						{ currentDomainSuffix }
+						<strong>{ newDomainName }</strong>
+						{ newDomainSuffix }
 					</p>
 				</div>
 
@@ -506,8 +506,8 @@ export class SiteAddressChanger extends Component {
 						<Icon icon={ closeSmall } size={ 24 } className="site-address-changer__copy-deletion" />
 					</span>
 					<p className="site-address-changer__confirmation-detail-copy site-address-changer__copy-deletion">
-						<strong>{ newDomainName }</strong>
-						{ newDomainSuffix }
+						<strong>{ currentDomainPrefix }</strong>
+						{ currentDomainSuffix }
 					</p>
 				</div>
 				<CheckboxControl
