@@ -43,6 +43,7 @@ import PremiumGlobalStylesUpgradeModal from 'calypso/components/premium-global-s
 import ThemeSiteSelectorModal from 'calypso/components/theme-site-selector-modal';
 import ThemeTierBadge from 'calypso/components/theme-tier/theme-tier-badge';
 import { HOSTING_THEME_SELCETED_HASH } from 'calypso/hosting/constants';
+import { EligibilityWarningsModal } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/design-setup/eligibility-warnings-modal';
 import { withCompleteLaunchpadTasksWithNotice } from 'calypso/launchpad/hooks/with-complete-launchpad-tasks-with-notice';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { decodeEntities } from 'calypso/lib/formatting';
@@ -53,10 +54,12 @@ import { connectOptions } from 'calypso/my-sites/themes/theme-options';
 import ThemePreview from 'calypso/my-sites/themes/theme-preview';
 import { useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getEligibility } from 'calypso/state/automated-transfer/selectors';
 import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import { isUserPaid } from 'calypso/state/purchases/selectors';
+import { hasPurchasedDomain } from 'calypso/state/purchases/selectors/has-purchased-domain';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getProductionSiteForWpcomStaging from 'calypso/state/selectors/get-production-site-for-wpcom-staging';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
@@ -68,7 +71,7 @@ import { useSiteOption } from 'calypso/state/sites/hooks';
 import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
 import { withSiteGlobalStylesOnPersonal } from 'calypso/state/sites/hooks/with-site-global-styles-on-personal';
 import { getCurrentPlan, isSiteOnECommerceTrial } from 'calypso/state/sites/plans/selectors';
-import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSite, getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import {
 	setThemePreviewOptions,
 	themeStartActivationSync as themeStartActivationSyncAction,
@@ -106,7 +109,7 @@ import { getIsLoadingCart } from 'calypso/state/themes/selectors/get-is-loading-
 import { getBackPath } from 'calypso/state/themes/themes-ui/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { ReviewsModal } from '../marketplace/components/reviews-modal';
-import EligibilityWarningModal from '../themes/atomic-transfer-dialog';
+import AtomicTransferDialog from '../themes/atomic-transfer-dialog';
 import ThemeDownloadCard from './theme-download-card';
 import ThemeFeaturesCard from './theme-features-card';
 import ThemeNotFoundError from './theme-not-found-error';
@@ -173,6 +176,7 @@ class ThemeSheet extends Component {
 	 * Its assigned to state to guarantee the initial state will be the same for SSR
 	 */
 	state = {
+		showEligibilityWarningsModal: false,
 		showUnlockStyleUpgradeModal: false,
 		isAtomicTransferCompleted: false,
 		isReviewsModalVisible: false,
@@ -944,6 +948,8 @@ class ThemeSheet extends Component {
 		const label = this.getDefaultOptionLabel();
 		const placeholder = <span className="theme__sheet-button-placeholder">loading......</span>;
 		const {
+			didPurchaseDomain,
+			hasEligibilityMessages,
 			isActive,
 			isExternallyManagedTheme,
 			isLoggedIn,
@@ -980,7 +986,14 @@ class ThemeSheet extends Component {
 						...( action && { action } ),
 					} );
 
-					this.onButtonClick( event );
+					const shouldShowEligibilityWarningsModal =
+						! isActive && isExternallyManagedTheme && hasEligibilityMessages && ! didPurchaseDomain;
+
+					if ( shouldShowEligibilityWarningsModal ) {
+						this.setState( { showEligibilityWarningsModal: true } );
+					} else {
+						this.onButtonClick( event );
+					}
 				} }
 				primary
 				busy={ this.isRequestingActivatingTheme() }
@@ -1106,8 +1119,10 @@ class ThemeSheet extends Component {
 		const section = this.validateSection( this.props.section );
 		const {
 			themeId,
+			site,
 			siteId,
 			translate,
+			isExternallyManagedTheme,
 			isLoggedIn,
 			isThemeActivationSyncStarted,
 			successNotice: showSuccessNotice,
@@ -1241,7 +1256,23 @@ class ThemeSheet extends Component {
 						onFailure={ this.onAtomicThemeActiveFailure }
 					/>
 				) }
-				<EligibilityWarningModal />
+				<AtomicTransferDialog />
+				<EligibilityWarningsModal
+					site={ site ?? undefined }
+					isMarketplace={ isExternallyManagedTheme }
+					isOpen={ this.state.showEligibilityWarningsModal }
+					handleClose={ () => {
+						recordTracksEvent( 'calypso_automated_transfer_eligibility_modal_dismiss', {
+							// flow: 'onboarding',
+							theme: themeId,
+						} );
+						this.setState( { showEligibilityWarningsModal: false } );
+					} }
+					handleContinue={ () => {
+						this.onButtonClick();
+						this.setState( { showEligibilityWarningsModal: false } );
+					} }
+				/>
 			</Main>
 		);
 	};
@@ -1279,6 +1310,8 @@ const ThemeSheetWithOptions = ( props ) => {
 		isStandaloneJetpack,
 		demoUrl,
 		showTryAndCustomize,
+		isAtomic,
+		isJetpack,
 		isThemeInstalled,
 		isBundledSoftwareSet,
 		isExternallyManagedTheme,
@@ -1293,7 +1326,16 @@ const ThemeSheetWithOptions = ( props ) => {
 	let secondaryOption = 'tryandcustomize';
 	const needsJetpackPlanUpgrade = isStandaloneJetpack && isPremium && ! isThemePurchased;
 	const activeThemeId = useSelector( ( state ) => getActiveTheme( state, siteId ) );
+	const site = useSelector( ( state ) => getSite( state, siteId ) );
 	const siteIntent = useSiteOption( 'site_intent' );
+	const eligibility = useSelector( ( state ) => site && getEligibility( state, siteId ) );
+	const hasEligibilityMessages =
+		! isAtomic &&
+		! isJetpack &&
+		( eligibility?.eligibilityHolds?.length || eligibility?.eligibilityWarnings?.length );
+	const didPurchaseDomain = useSelector(
+		( state ) => siteId && hasPurchasedDomain( state, siteId )
+	);
 
 	if ( ! showTryAndCustomize ) {
 		secondaryOption = null;
@@ -1338,8 +1380,11 @@ const ThemeSheetWithOptions = ( props ) => {
 		<ConnectedThemeSheet
 			{ ...props }
 			themeTier={ themeTier }
+			hasEligibilityMessages={ hasEligibilityMessages }
 			isThemeAllowed={ isThemeAllowed }
 			demo_uri={ demoUrl }
+			didPurchaseDomain={ didPurchaseDomain }
+			site={ site }
 			siteId={ siteId }
 			defaultOption={ defaultOption }
 			secondaryOption={ secondaryOption }
