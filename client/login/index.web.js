@@ -24,8 +24,6 @@ import {
 	jetpackAppleAuthCallback,
 	jetpackGoogleAuthCallback,
 	jetpackGoogleAuth,
-	jetpackGitHubAuth,
-	jetpackGitHubAuthCallback,
 } from './controller';
 import redirectLoggedIn from './redirect-logged-in';
 import { setShouldServerSideRenderLogin, ssrSetupLocaleLogin, setMetaTags } from './ssr';
@@ -162,26 +160,6 @@ export default ( router ) => {
 		setMetaTags,
 		setSectionMiddleware( LOGIN_SECTION_DEFINITION ),
 		jetpackAppleAuthCallback,
-		makeLoggedOutLayout
-	);
-
-	router(
-		`/log-in/jetpack/github/${ lang }`,
-		redirectLoggedIn,
-		setLocaleMiddleware(),
-		setMetaTags,
-		setSectionMiddleware( LOGIN_SECTION_DEFINITION ),
-		jetpackGitHubAuth,
-		makeLoggedOutLayout
-	);
-
-	router(
-		`/log-in/jetpack/github/callback/${ lang }`,
-		redirectLoggedIn,
-		setLocaleMiddleware(),
-		setMetaTags,
-		setSectionMiddleware( LOGIN_SECTION_DEFINITION ),
-		jetpackGitHubAuthCallback,
 		makeLoggedOutLayout
 	);
 
