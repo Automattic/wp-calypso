@@ -164,7 +164,6 @@ const SiteMigrationApplicationPasswordsAuthorization: StepType< {
 				stepName="site-migration-application-password-authorization"
 				flowName="site-migration"
 				goBack={ navigation?.goBack }
-				goNext={ navigation?.submit }
 				hideSkip
 				notice={ notice }
 				formattedHeader={ formattedHeader }

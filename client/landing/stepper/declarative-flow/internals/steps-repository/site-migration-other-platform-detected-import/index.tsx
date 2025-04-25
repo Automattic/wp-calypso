@@ -118,7 +118,6 @@ const SiteMigrationOtherPlatform: StepType< {
 			<StepContainer
 				stepName="site-migration-other-platform"
 				goBack={ navigation?.goBack }
-				goNext={ navigation?.submit }
 				hideSkip
 				isFullLayout
 				formattedHeader={

@@ -235,19 +235,11 @@ const pluginBundleFlow: FlowV1 = {
 			return navigate( 'checkForPlugins' );
 		};
 
-		const goNext = () => {
-			switch ( currentStep ) {
-				// TODO - Do we need anything here?
-				default:
-					return navigate( 'checkForPlugins' );
-			}
-		};
-
 		const goToStep = ( step: string ) => {
 			navigate( step );
 		};
 
-		return { goNext, goBack, goToStep, submit, exitFlow };
+		return { goBack, goToStep, submit, exitFlow };
 	},
 
 	useAssertConditions(): AssertConditionResult {

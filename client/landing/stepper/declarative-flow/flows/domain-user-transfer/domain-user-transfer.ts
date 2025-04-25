@@ -29,15 +29,11 @@ const domainUserTransfer: Flow = {
 			return;
 		};
 
-		const goNext = () => {
-			return;
-		};
-
 		const goToStep = ( step: string ) => {
 			navigate( step );
 		};
 
-		return { goNext, goBack, goToStep, submit };
+		return { goBack, goToStep, submit };
 	},
 };
 

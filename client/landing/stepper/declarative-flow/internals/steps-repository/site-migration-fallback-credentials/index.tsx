@@ -38,7 +38,6 @@ const SiteMigrationFallbackCredentials: Step< {
 				stepName="site-migration-fallback-credentials"
 				flowName="site-migration"
 				goBack={ navigation?.goBack }
-				goNext={ navigation?.submit }
 				hideSkip
 				isFullLayout
 				formattedHeader={

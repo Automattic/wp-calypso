@@ -137,10 +137,6 @@ const copySite: Flow = {
 			return;
 		};
 
-		const goNext = () => {
-			return;
-		};
-
 		const goToStep = ( step: StepperStep[ 'slug' ] ) => {
 			navigate( step );
 		};
@@ -149,7 +145,7 @@ const copySite: Flow = {
 			window.location.assign( location );
 		};
 
-		return { goNext, goBack, goToStep, submit, exitFlow };
+		return { goBack, goToStep, submit, exitFlow };
 	},
 
 	useAssertConditions() {

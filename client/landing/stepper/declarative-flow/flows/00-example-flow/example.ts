@@ -4,7 +4,6 @@ import { dispatch, useDispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
 import { useLaunchpadDecider } from 'calypso/landing/stepper/declarative-flow/internals/hooks/use-launchpad-decider';
-import { skipLaunchpad } from 'calypso/landing/stepper/utils/skip-launchpad';
 import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
 import {
 	clearSignupDestinationCookie,
@@ -14,7 +13,6 @@ import {
 } from 'calypso/signup/storageUtils';
 import { useCreateSite } from '../../../hooks/use-create-site-hook';
 import { useExitFlow } from '../../../hooks/use-exit-flow';
-import { useSiteIdParam } from '../../../hooks/use-site-id-param';
 import { useSiteSlug } from '../../../hooks/use-site-slug';
 import { ONBOARD_STORE, SITE_STORE } from '../../../stores';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
@@ -57,7 +55,6 @@ const newsletter: Flow = {
 
 	useStepNavigation( _currentStep, navigate ) {
 		const flowName = this.name;
-		const siteId = useSiteIdParam();
 		const siteSlug = useSiteSlug();
 		const { get, set } = useFlowState();
 		const { exitFlow } = useExitFlow();
@@ -164,25 +161,11 @@ const newsletter: Flow = {
 			return;
 		};
 
-		const goNext = async () => {
-			switch ( _currentStep ) {
-				case 'launchpad':
-					skipLaunchpad( {
-						siteId,
-						siteSlug,
-					} );
-					return;
-
-				default:
-					return navigate( 'newsletterSetup' );
-			}
-		};
-
 		const goToStep = ( step: string ) => {
 			navigate( step );
 		};
 
-		return { goNext, goBack, goToStep, submit };
+		return { goBack, goToStep, submit };
 	},
 };
 
