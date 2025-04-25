@@ -9,7 +9,6 @@ import {
 	PlanSlug,
 } from '@automattic/calypso-products';
 import { Plans } from '@automattic/data-stores';
-import { HOSTED_SITE_MIGRATION_FLOW } from '@automattic/onboarding';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
@@ -179,37 +178,6 @@ describe( 'SiteMigrationUpgradePlan', () => {
 		expect( navigation.submit ).toHaveBeenCalledWith( {
 			goToCheckout: true,
 			plan: 'business',
-		} );
-	} );
-
-	it.skip( 'selects free trial', async () => {
-		mockTrialEligibilityAPI( API_RESPONSE_EMAIL_VERIFIED );
-
-		const navigation = { submit: jest.fn() };
-		render( { navigation } );
-
-		await waitFor( async () => {
-			await userEvent.click( screen.getByRole( 'button', { name: /Try 7 days for free/ } ) );
-
-			expect( navigation.submit ).toHaveBeenCalledWith( {
-				goToCheckout: true,
-				plan: 'wp_bundle_migration_trial_monthly',
-				sendIntentWhenCreatingTrial: true,
-			} );
-		} );
-	} );
-
-	it.skip( 'show the trial plan for verified users', async () => {
-		nock.cleanAll();
-		mockTrialEligibilityAPI( API_RESPONSE_EMAIL_VERIFIED );
-
-		render( {
-			data: { hideFreeMigrationTrialForNonVerifiedEmail: true },
-			flow: HOSTED_SITE_MIGRATION_FLOW,
-		} );
-
-		await waitFor( () => {
-			expect( screen.queryByRole( 'button', { name: /Try 7 days for free/ } ) ).toBeInTheDocument();
 		} );
 	} );
 

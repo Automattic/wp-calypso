@@ -1,5 +1,6 @@
-import { OnboardSelect } from '@automattic/data-stores';
+import { DomainSuggestion, OnboardActions, OnboardSelect } from '@automattic/data-stores';
 import { ONBOARDING_FLOW, clearStepPersistedState } from '@automattic/onboarding';
+import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs, getQueryArg, getQueryArgs, removeQueryArgs } from '@wordpress/url';
 import { useState, useEffect } from 'react';
@@ -49,7 +50,6 @@ const clearUseMyDomainsQueryParams = ( currentStepSlug: string | undefined ) => 
 const withLocale = ( url: string, locale: string ) => {
 	return locale && locale !== 'en' ? `${ url }/${ locale }` : url;
 };
-
 async function initialize() {
 	if ( await isMvpOnboardingExperiment() ) {
 		return stepsWithRequiredLogin( [
@@ -90,7 +90,7 @@ const onboarding: FlowV2< typeof initialize > = {
 			setProductCartItems,
 			setSiteUrl,
 			setSignupDomainOrigin,
-		} = useDispatch( ONBOARD_STORE );
+		} = useDispatch( ONBOARD_STORE ) as OnboardActions;
 		const locale = useFlowLocale();
 
 		const { signupDomainOrigin } = useSelect(
@@ -152,11 +152,11 @@ const onboarding: FlowV2< typeof initialize > = {
 			const { slug, providedDependencies } = submittedStep;
 			switch ( slug ) {
 				case 'domains':
-					setSiteUrl( providedDependencies.siteUrl );
-					setDomain( providedDependencies.suggestion );
-					setDomainCartItem( providedDependencies.domainItem );
-					setDomainCartItems( providedDependencies.domainCart );
-					setSignupDomainOrigin( providedDependencies.signupDomainOrigin );
+					setSiteUrl( providedDependencies.siteUrl as string );
+					setDomain( providedDependencies.suggestion as DomainSuggestion );
+					setDomainCartItem( providedDependencies.domainItem as MinimalRequestCartProduct );
+					setDomainCartItems( providedDependencies.domainCart as MinimalRequestCartProduct[] );
+					setSignupDomainOrigin( providedDependencies.signupDomainOrigin as string );
 
 					if ( providedDependencies.navigateToUseMyDomain ) {
 						const currentQueryArgs = getQueryArgs( window.location.href );
@@ -164,7 +164,8 @@ const onboarding: FlowV2< typeof initialize > = {
 
 						let useMyDomainURL = addQueryArgs( '/use-my-domain', currentQueryArgs );
 
-						const lastQueryParam = providedDependencies.domainForm?.lastQuery;
+						const lastQueryParam = ( providedDependencies?.domainForm as { lastQuery?: string } )
+							?.lastQuery;
 
 						if ( lastQueryParam !== undefined ) {
 							currentQueryArgs.initialQuery = lastQueryParam;
@@ -176,7 +177,7 @@ const onboarding: FlowV2< typeof initialize > = {
 							signup_domain_origin: signupDomainOrigin,
 							domain_item: providedDependencies.domainItem,
 						} );
-						return navigate( useMyDomainURL as any );
+						return navigate( useMyDomainURL as typeof currentStepSlug );
 					}
 
 					return navigate( 'plans' );
@@ -193,7 +194,7 @@ const onboarding: FlowV2< typeof initialize > = {
 							step: providedDependencies.mode,
 							initialQuery: providedDependencies.domain,
 						} );
-						return navigate( destination as any );
+						return navigate( destination as typeof currentStepSlug );
 					}
 
 					// We trigger the event here, because we skip it in the domains step if
@@ -209,8 +210,11 @@ const onboarding: FlowV2< typeof initialize > = {
 					return navigate( 'plans' );
 				case 'plans': {
 					const cartItems = providedDependencies.cartItems;
-					setPlanCartItem( cartItems?.[ 0 ] ?? null );
-					if ( ! cartItems?.[ 0 ] ) {
+					const [ pickedPlan, ...products ] = cartItems ?? [];
+
+					setPlanCartItem( pickedPlan );
+
+					if ( ! pickedPlan ) {
 						// Since we're removing the paid domain, it means that the user chose to continue
 						// with a free domain. Because signupDomainOrigin should reflect the last domain
 						// selection status before they land on the checkout page, this value can be
@@ -225,7 +229,7 @@ const onboarding: FlowV2< typeof initialize > = {
 					// Make sure to put the rest of products into the cart, e.g. the storage add-ons.
 					setProductCartItems( [
 						...( selectedMarketplaceProduct ? [ selectedMarketplaceProduct ] : [] ),
-						...( cartItems || [] ).slice( 1 ),
+						...products.filter( ( product ) => product !== null ),
 					] );
 
 					setSignupCompleteFlowName( flowName );
@@ -240,11 +244,9 @@ const onboarding: FlowV2< typeof initialize > = {
 						providedDependencies,
 						isPlaygroundEligible
 					);
-
-					persistSignupDestination( destination );
-					setSignupCompleteFlowName( flowName );
-
 					if ( providedDependencies.processingResult === ProcessingResult.SUCCESS ) {
+						persistSignupDestination( destination );
+						setSignupCompleteFlowName( flowName );
 						setSignupCompleteSlug( providedDependencies.siteSlug );
 
 						if ( providedDependencies.goToCheckout ) {

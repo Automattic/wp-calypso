@@ -171,7 +171,12 @@ describe( 'useGenerateActionHook', () => {
 		expect( action.primary.text ).toBe( 'Start with Free' );
 	} );
 
-	it( 'should handle signup actions for business plan with ineligible free hosting trial', () => {
+	/**
+	 * Disable free hosting trials - see pMz3w-k4H-p2#comment-119368
+	 * See https://github.com/Automattic/wp-calypso/pull/102861
+	 * for how to restore this test.
+	 */
+	it.skip( 'should handle signup actions for business plan with ineligible free hosting trial', () => {
 		( useSelector as jest.Mock ).mockImplementation( ( selector ) =>
 			selector( {
 				ui: {},

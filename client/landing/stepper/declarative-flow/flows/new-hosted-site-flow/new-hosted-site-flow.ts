@@ -1,5 +1,6 @@
 import { isFreeHostingTrial, isDotComPlan } from '@automattic/calypso-products';
 import { NEW_HOSTED_SITE_FLOW } from '@automattic/onboarding';
+import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { useDispatch, useSelect, dispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { useEffect } from 'react';
@@ -22,8 +23,8 @@ import { getCurrentQueryParams } from '../../../utils/get-current-query-params';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
 import { STEPS } from '../../internals/steps';
 import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
-import type { FlowV2, SubmitHandler } from '../../internals/types';
-import type { OnboardActions, OnboardSelect } from '@automattic/data-stores';
+import type { FlowV2, StepperStep, SubmitHandler } from '../../internals/types';
+import type { DomainSuggestion, OnboardActions, OnboardSelect } from '@automattic/data-stores';
 
 async function initialize( reduxStore: Store ) {
 	const { resetOnboardStore, setPlanCartItem } = dispatch( ONBOARD_STORE ) as OnboardActions;
@@ -36,7 +37,7 @@ async function initialize( reduxStore: Store ) {
 
 	const eligibleForFreeHostingTrial = isUserEligibleForFreeHostingTrial( reduxStore.getState() );
 
-	const steps = [];
+	const steps: StepperStep[] = [];
 
 	if ( showDomainStep ) {
 		steps.push( STEPS.UNIFIED_DOMAINS );
@@ -72,8 +73,7 @@ async function initialize( reduxStore: Store ) {
 
 	steps.push( STEPS.SITE_CREATION_STEP, STEPS.PROCESSING );
 
-	// Make the steps array readonly, so Stepper can infer the type of the steps array.
-	return [ ...stepsWithRequiredLogin( steps ) ] as const;
+	return stepsWithRequiredLogin( steps );
 }
 
 const hosting: FlowV2< typeof initialize > = {
@@ -87,10 +87,11 @@ const hosting: FlowV2< typeof initialize > = {
 			setDomainCartItem,
 			setDomainCartItems,
 			setPlanCartItem,
+			setProductCartItems,
 			setSiteUrl,
 			setSignupDomainOrigin,
 			resetCouponCode,
-		} = useDispatch( ONBOARD_STORE );
+		} = useDispatch( ONBOARD_STORE ) as OnboardActions;
 		const planCartItem = useSelect(
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem(),
 			[]
@@ -124,38 +125,39 @@ const hosting: FlowV2< typeof initialize > = {
 
 			switch ( slug ) {
 				case STEPS.UNIFIED_DOMAINS.slug: {
-					if ( providedDependencies ) {
-						setSiteUrl( providedDependencies.siteUrl );
-						setDomain( providedDependencies.suggestion );
-						setDomainCartItem( providedDependencies.domainItem );
-						setDomainCartItems( providedDependencies.domainCart );
-						setSignupDomainOrigin( providedDependencies.signupDomainOrigin );
+					setSiteUrl( providedDependencies.siteUrl as string );
+					setDomain( providedDependencies.suggestion as DomainSuggestion );
+					setDomainCartItem( providedDependencies.domainItem as MinimalRequestCartProduct );
+					setDomainCartItems( providedDependencies.domainCart as MinimalRequestCartProduct[] );
+					setSignupDomainOrigin( providedDependencies.signupDomainOrigin as string );
 
-						if ( planCartItem ) {
-							return navigate( STEPS.SITE_CREATION_STEP.slug );
-						}
+					if ( planCartItem ) {
+						return navigate( STEPS.SITE_CREATION_STEP.slug );
 					}
 
 					return navigate( STEPS.UNIFIED_PLANS.slug );
 				}
 				case STEPS.UNIFIED_PLANS.slug: {
 					const cartItems = providedDependencies.cartItems;
-					const productSlug = cartItems?.[ 0 ]?.product_slug;
+					const [ pickedPlan, ...extraProducts ] = cartItems ?? [];
 
-					if ( ! productSlug ) {
+					if ( ! pickedPlan ) {
 						throw new Error( 'No product slug found' );
 					}
 
 					setPlanCartItem( {
-						product_slug: productSlug,
+						...pickedPlan,
 						extra: {
+							...pickedPlan.extra,
 							...( utmSource && {
 								hideProductVariants: utmSource === 'wordcamp',
 							} ),
 						},
 					} );
 
-					if ( isFreeHostingTrial( productSlug ) ) {
+					setProductCartItems( extraProducts.filter( ( product ) => product !== null ) );
+
+					if ( isFreeHostingTrial( pickedPlan.product_slug ) ) {
 						return navigate( STEPS.TRIAL_ACKNOWLEDGE.slug );
 					}
 
@@ -174,7 +176,6 @@ const hosting: FlowV2< typeof initialize > = {
 					if ( providedDependencies.processingResult === ProcessingResult.SUCCESS ) {
 						const siteId = providedDependencies.siteId || getSignupCompleteSiteID();
 						setSignupCompleteSiteID( providedDependencies.siteId );
-
 						const siteSlug = providedDependencies.siteSlug || getSignupCompleteSlug();
 						const destinationParams: Record< string, string > = {
 							siteId,
