@@ -2292,9 +2292,11 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_WOOCOMMERCE_HOSTING ]: {
 		getSlug: () => FEATURE_WOOCOMMERCE_HOSTING,
-		getTitle: () => {
-			return i18n.translate( 'eCommerce tools and optimized WooCommerce hosting' );
-		},
+		getTitle: () =>
+			i18n.getLocaleSlug()?.startsWith( 'en' ) ||
+			i18n.hasTranslation( 'eCommerce tools and optimized WooCommerce experience' )
+				? i18n.translate( 'eCommerce tools and optimized WooCommerce experience' )
+				: i18n.translate( 'eCommerce tools and optimized WooCommerce hosting' ),
 		getDescription: () =>
 			i18n.translate(
 				'Enjoy a hosting solution tailored to enhance the performance and security of sites running WooCommerce.'
