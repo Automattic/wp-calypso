@@ -7,32 +7,15 @@ import { plus } from '@wordpress/icons';
 import { useState } from 'react';
 import { sitesQuery } from '../app/queries';
 import SiteIcon from '../site-icon';
-import type { Site } from '../data/types';
 import type { View } from '@wordpress/dataviews';
 
-const fields = [
-	{
-		id: 'name',
-		label: __( 'Site' ),
-		enableGlobalSearch: true,
-	},
-	{
-		id: 'icon.ico',
-		label: __( 'Media' ),
-		render: ( { item }: { item: Site } ) => <SiteIcon site={ item } size={ 24 } />,
-	},
-];
+const fields = [ { id: 'name', enableGlobalSearch: true } ];
 
 const DEFAULT_VIEW: View = {
 	type: 'list',
 	page: 1,
 	perPage: 10,
-	sort: {
-		field: 'name',
-		direction: 'asc',
-	},
-	titleField: 'name',
-	mediaField: 'media',
+	sort: { field: 'name', direction: 'asc' },
 };
 
 export default function Switcher( { onClose }: { onClose: () => void } ) {
