@@ -12,16 +12,18 @@
 .a4a-layout__banner {
 	margin-inline: 0;
 	max-height: 100%;
-	margin-block-end: 24px;
+	margin-block: 24px;
 
 	> * {
-		padding-inline: 16px;
 
 		@include breakpoint-deprecated( ">660px" ) {
 			max-width: 1500px;
 			margin-inline: auto !important;
-			padding-inline: 64px;
 		}
+	}
+
+	@include breakpoint-deprecated( ">660px" ) {
+		margin-block-start: 0;
 	}
 }
 

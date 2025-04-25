@@ -62,54 +62,6 @@
 			}
 		}
 	}
-
-	&.is-compact {
-		.site-icon {
-			align-self: center;
-		}
-
-		.site__content {
-			padding: 0 16px;
-		}
-
-		.site__domain {
-			display: none;
-		}
-
-		.site__title {
-			line-height: 46px;
-		}
-
-		.site__home {
-			top: 11px;
-			line-height: 18px;
-			width: 24px;
-			height: 24px;
-		}
-
-		.site__home .gridicon {
-			margin-top: 0;
-		}
-	}
-
-	&.inline-badges .site__domain-and-badges {
-		display: flex;
-		align-items: flex-start;
-
-		.site__badge {
-			margin: -2px 0 0 3px;
-			padding: 0;
-			background: inherit;
-			color: var(--studio-blue-40);
-			text-wrap: nowrap;
-
-			&::before {
-				content: "•";
-				color: var(--studio-white);
-				padding-right: 3px;
-			}
-		}
-	}
 }
 
 // Wraps the anchor element
@@ -187,34 +139,6 @@
 	}
 }
 
-.site__home {
-	display: block;
-	width: 32px;
-	height: 32px;
-	text-align: center;
-	text-transform: none;
-	overflow: initial;
-	opacity: 0;
-	transition: opacity 0.2s;
-	transform: translate3d(0, 0, 0);
-	position: absolute;
-	left: 16px;
-	top: 16px;
-
-	.gridicon {
-		margin-top: 5px;
-		vertical-align: middle;
-	}
-
-	@include breakpoint-deprecated( "<660px" ) {
-		display: none;
-	}
-}
-
-.site__content:hover .site__home {
-	opacity: 1;
-}
-
 .site__badge {
 	color: var(--color-neutral-60);
 	background-color: var(--color-neutral-5);
@@ -259,11 +183,6 @@
 }
 
 .layout__secondary {
-	.site__home {
-		background: var(--color-sidebar-menu-selected-background);
-		color: var(--color-sidebar-menu-selected-text);
-	}
-
 	.site__badge {
 		background: var(--color-sidebar-menu-hover-background);
 		color: var(--color-sidebar-menu-hover-text);

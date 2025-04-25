@@ -34,6 +34,23 @@ export const updateProfile = async ( data: Partial< Profile > ) => {
 	} );
 };
 
+const SITE_FIELDS = [
+	'ID',
+	'URL',
+	'name',
+	'icon',
+	'subscribers_count',
+	'plan',
+	'active_modules',
+	'is_deleted',
+	'is_coming_soon',
+	'is_private',
+	'launch_status',
+	'site_migration',
+	'options',
+	'site_owner',
+].join( ',' );
+
 export const fetchSites = async (): Promise< Site[] > => {
 	return (
 		await wpcom.req.get(
@@ -45,17 +62,7 @@ export const fetchSites = async (): Promise< Site[] > => {
 				site_visibility: 'all',
 				include_domain_only: 'true',
 				site_activity: 'active',
-				fields: [
-					'ID',
-					'URL',
-					'name',
-					'icon',
-					'subscribers_count',
-					'plan',
-					'active_modules',
-					'is_deleted',
-					'options',
-				].join( ',' ),
+				fields: SITE_FIELDS,
 			}
 		)
 	).sites;
@@ -70,18 +77,7 @@ export const fetchSite = async ( id: string ): Promise< Site > => {
 			path: `/sites/${ id }?http_envelope=1`,
 			apiNamespace: 'rest/v1.1',
 		},
-		{
-			fields: [
-				'ID',
-				'URL',
-				'name',
-				'icon',
-				'subscribers_count',
-				'plan',
-				'active_modules',
-				'options',
-			].join( ',' ),
-		}
+		{ fields: SITE_FIELDS }
 	);
 };
 

@@ -97,7 +97,6 @@ const DEFAULT_SITE_CAPABILITIES = {
 	remove_users: true,
 	update_plugins: true,
 	upload_files: true,
-	view_hosting: true,
 	view_stats: true,
 };
 
