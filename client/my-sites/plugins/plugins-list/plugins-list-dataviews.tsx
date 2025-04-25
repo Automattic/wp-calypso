@@ -47,6 +47,7 @@ export default function PluginsListDataViews( {
 	bulkActionDialog,
 }: Props ) {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 	const isDesktopView = isDesktop();
 	const shouldUseListView = pluginSlug !== undefined || ! isDesktopView;
 	const pluginUpdateCount = currentPlugins.filter(
@@ -133,7 +134,7 @@ export default function PluginsListDataViews( {
 							} );
 						}
 						setIsFilteringUpdates( ! isFilteringUpdates );
-						recordTracksEvent( 'calypso_plugins_list_pending_update_filter_click' );
+						dispatch( recordTracksEvent( 'calypso_plugins_list_pending_update_filter_click' ) );
 					} }
 				>
 					{ translate( 'Pending update (%s)', { args: [ pluginUpdateCount ] } ) }
@@ -180,7 +181,6 @@ export default function PluginsListDataViews( {
 		[ dataViewsState.type ]
 	);
 
-	const dispatch = useDispatch();
 	const trackPluginNameClick = useCallback(
 		( item: Plugin ) => {
 			dispatch(
