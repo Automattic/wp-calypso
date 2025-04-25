@@ -140,9 +140,7 @@ export default ( router ) => {
 		setLocaleMiddleware(),
 		setMetaTags,
 		setSectionMiddleware( LOGIN_SECTION_DEFINITION ),
-		jetpackGoogleAuth,
-		login,
-		makeLoggedOutLayout
+		jetpackGoogleAuth
 	);
 
 	router(
@@ -150,9 +148,7 @@ export default ( router ) => {
 		setLocaleMiddleware(),
 		setMetaTags,
 		setSectionMiddleware( LOGIN_SECTION_DEFINITION ),
-		jetpackGoogleAuthCallback,
-		login,
-		makeLoggedOutLayout
+		jetpackGoogleAuthCallback
 	);
 
 	router(
@@ -160,9 +156,7 @@ export default ( router ) => {
 		setLocaleMiddleware(),
 		setMetaTags,
 		setSectionMiddleware( LOGIN_SECTION_DEFINITION ),
-		jetpackAppleAuth,
-		login,
-		makeLoggedOutLayout
+		jetpackAppleAuth
 	);
 
 	router(
@@ -170,9 +164,7 @@ export default ( router ) => {
 		setLocaleMiddleware(),
 		setMetaTags,
 		setSectionMiddleware( LOGIN_SECTION_DEFINITION ),
-		jetpackAppleAuthCallback,
-		login,
-		makeLoggedOutLayout
+		jetpackAppleAuthCallback
 	);
 
 	router(
@@ -180,9 +172,7 @@ export default ( router ) => {
 		setLocaleMiddleware(),
 		setMetaTags,
 		setSectionMiddleware( LOGIN_SECTION_DEFINITION ),
-		jetpackGitHubAuth,
-		login,
-		makeLoggedOutLayout
+		jetpackGitHubAuth
 	);
 
 	router(
@@ -190,9 +180,7 @@ export default ( router ) => {
 		setLocaleMiddleware(),
 		setMetaTags,
 		setSectionMiddleware( LOGIN_SECTION_DEFINITION ),
-		jetpackGitHubAuthCallback,
-		login,
-		makeLoggedOutLayout
+		jetpackGitHubAuthCallback
 	);
 
 	router(
