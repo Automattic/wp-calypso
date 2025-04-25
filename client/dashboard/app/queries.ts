@@ -26,22 +26,15 @@ export function siteQuery( siteId: string ) {
 	return {
 		queryKey: [ 'site', siteId ],
 		queryFn: async () => {
+			// Site usually takes the longest, so kick it off first.
 			const sitePromise = fetchSite( siteId );
+			// Kick off all independent promises in parallel.
 			const mediaStoragePromise = fetchSiteMediaStorage( siteId );
 			const currentPlanPromise = fetchCurrentPlan( siteId );
 			const primaryDomainPromise = fetchSitePrimaryDomain( siteId );
 			const engagementStatsPromise = fetchSiteEngagementStats( siteId );
-			const siteMonitorUptimePromise = sitePromise.then( ( site ) =>
-				site.jetpack && site.jetpack_modules.includes( 'monitor' )
-					? fetchSiteMonitorUptime( siteId )
-					: undefined
-			);
-			const phpVersionPromise = sitePromise.then( ( site ) =>
-				site.options.is_wpcom_atomic ? fetchPHPVersion( siteId ) : undefined
-			);
-
+			const site = await sitePromise;
 			const [
-				site,
 				mediaStorage,
 				currentPlan,
 				primaryDomain,
@@ -49,13 +42,15 @@ export function siteQuery( siteId: string ) {
 				siteMonitorUptime,
 				phpVersion,
 			] = await Promise.all( [
-				sitePromise,
 				mediaStoragePromise,
 				currentPlanPromise,
 				primaryDomainPromise,
 				engagementStatsPromise,
-				siteMonitorUptimePromise,
-				phpVersionPromise,
+				// Kick off dependent promises in parallel.
+				site.jetpack && site.jetpack_modules.includes( 'monitor' )
+					? fetchSiteMonitorUptime( siteId )
+					: undefined,
+				site.options.is_wpcom_atomic ? fetchPHPVersion( siteId ) : undefined,
 			] );
 			return {
 				site,
