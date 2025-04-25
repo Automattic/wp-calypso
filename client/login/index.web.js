@@ -26,6 +26,7 @@ import {
 	jetpackGoogleAuth,
 	jetpackGitHubAuth,
 	jetpackGitHubAuthCallback,
+	redirectJetpackDirectAuthError,
 } from './controller';
 import redirectLoggedIn from './redirect-logged-in';
 import { setShouldServerSideRenderLogin, ssrSetupLocaleLogin, setMetaTags } from './ssr';
@@ -140,7 +141,8 @@ export default ( router ) => {
 		setLocaleMiddleware(),
 		setMetaTags,
 		setSectionMiddleware( LOGIN_SECTION_DEFINITION ),
-		jetpackGoogleAuth
+		jetpackGoogleAuth,
+		redirectJetpackDirectAuthError
 	);
 
 	router(
@@ -148,7 +150,8 @@ export default ( router ) => {
 		setLocaleMiddleware(),
 		setMetaTags,
 		setSectionMiddleware( LOGIN_SECTION_DEFINITION ),
-		jetpackGoogleAuthCallback
+		jetpackGoogleAuthCallback,
+		redirectJetpackDirectAuthError
 	);
 
 	router(
@@ -156,7 +159,8 @@ export default ( router ) => {
 		setLocaleMiddleware(),
 		setMetaTags,
 		setSectionMiddleware( LOGIN_SECTION_DEFINITION ),
-		jetpackAppleAuth
+		jetpackAppleAuth,
+		redirectJetpackDirectAuthError
 	);
 
 	router(
@@ -164,7 +168,8 @@ export default ( router ) => {
 		setLocaleMiddleware(),
 		setMetaTags,
 		setSectionMiddleware( LOGIN_SECTION_DEFINITION ),
-		jetpackAppleAuthCallback
+		jetpackAppleAuthCallback,
+		redirectJetpackDirectAuthError
 	);
 
 	router(
@@ -172,7 +177,8 @@ export default ( router ) => {
 		setLocaleMiddleware(),
 		setMetaTags,
 		setSectionMiddleware( LOGIN_SECTION_DEFINITION ),
-		jetpackGitHubAuth
+		jetpackGitHubAuth,
+		redirectJetpackDirectAuthError
 	);
 
 	router(
@@ -180,7 +186,8 @@ export default ( router ) => {
 		setLocaleMiddleware(),
 		setMetaTags,
 		setSectionMiddleware( LOGIN_SECTION_DEFINITION ),
-		jetpackGitHubAuthCallback
+		jetpackGitHubAuthCallback,
+		redirectJetpackDirectAuthError
 	);
 
 	router(
