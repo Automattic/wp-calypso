@@ -36,7 +36,7 @@ $sidebar-appearance-break-point: $break-medium;
 	> * {
 		padding: 0 max(calc(50% - #{math.div($stats-sections-max-width, 2)}), 32px);
 
-		&:not(.navigation-header) {
+		&:not(.calypso-navigation-header, .navigation-header) {
 			@media (max-width: $break-small) {
 				padding-left: 0;
 				padding-right: 0;
@@ -49,6 +49,7 @@ $sidebar-appearance-break-point: $break-medium;
 		margin-bottom: 32px;
 	}
 
+	.calypso-navigation-header,
 	.navigation-header {
 		margin-bottom: 0;
 		padding-bottom: 24px;
