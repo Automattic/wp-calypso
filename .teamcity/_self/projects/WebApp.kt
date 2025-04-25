@@ -1073,22 +1073,11 @@ fun e2ePreReleaseBuildType( targetDevice: String, buildUuid: String ): E2EBuildT
 			param("env.ALLURE_RESULTS_PATH", "allure-results")
 			// Skip tests that fail specifically on mobile viewport due to UI/layout differences
 			if (targetDevice == "mobile") {
-				param("env.TEST_EXCLUDE_PATTERN", """
-					# Tests failing due to mobile-specific UI issues:
-					
-					# 1. Signup with theme from LOHP - elements not visible in mobile viewport
-					# Error: Element is not visible when trying to hover over theme
-					.*signup__with-theme-LOHP.*|
-					
-					# 2. LOHP to signup events - elements not visible/clickable in mobile layout
-					# Error: Timeout waiting for element to be visible and clickable
-					.*tracks__lohp-to-signup-events.*|
-					
-					# 3. Signup with premium theme & Lifecycle tests - sidebar navigation issues
-					# Error: Cannot click Purchases link in sidebar - element outside viewport
-					.*signup__with-theme-premium.*|
-					.*lifecycle__signup-onboarding-launch-cancel.*
-				""".trimIndent())
+				// These tests are skipped due to mobile-specific UI issues:
+				// 1. signup__with-theme-LOHP - Elements not visible in mobile viewport
+				// 2. tracks__lohp-to-signup-events - Elements not visible/clickable in mobile layout
+				// 3. signup__with-theme-premium & lifecycle__signup-onboarding-launch-cancel - Sidebar navigation issues
+				param("env.TEST_EXCLUDE_PATTERN", "signup__with-theme-LOHP|tracks__lohp-to-signup-events|signup__with-theme-premium|lifecycle__signup-onboarding-launch-cancel")
 			}
 		},
 		buildFeatures = {
