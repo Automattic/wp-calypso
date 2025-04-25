@@ -163,10 +163,10 @@ export function desktopLoginFinalize( context, next ) {
 export async function magicLogin( context, next ) {
 	const {
 		path,
-		query: { gravatar_flow, client_id, redirect_to, auto_trigger },
+		query: { gravatar_flow, client_id, redirect_to },
 	} = context;
 
-	if ( isUserLoggedIn( context.store.getState() ) && auto_trigger === undefined ) {
+	if ( isUserLoggedIn( context.store.getState() ) ) {
 		return login( context, next );
 	}
 
@@ -210,7 +210,7 @@ export function qrCodeLogin( context, next ) {
 export async function jetpackGoogleAuth( context, next ) {
 	const { query, isServerSide } = context;
 
-	// Don't run authentication if it's server side
+	// Do not continue if it's server side
 	if ( isServerSide ) {
 		return next();
 	}
@@ -404,7 +404,7 @@ export async function jetpackGoogleAuthCallback( context, next ) {
 export async function jetpackAppleAuth( context, next ) {
 	const { query, isServerSide } = context;
 
-	// Don't run authentication if it's server side
+	// Do not continue if it's server side
 	if ( isServerSide ) {
 		return next();
 	}
@@ -548,14 +548,8 @@ export async function jetpackAppleAuthCallback( context, next ) {
 }
 
 export async function jetpackGitHubAuth( context, next ) {
-	const { query, isServerSide } = context;
-
-	// Don't run authentication if it's server side
-	if ( isServerSide ) {
-		return next();
-	}
-
-	const redirectUri = `https://${ window.location.host }/log-in/jetpack/github/callback`;
+	const { query } = context;
+	const redirectUri = `${ window.location.origin }/log-in/jetpack/github/callback`;
 	try {
 		// Store redirect_to in sessionStorage for use on callback
 		window.sessionStorage.setItem( 'github_redirect_to', query?.redirect_to || '/' );
@@ -587,13 +581,13 @@ export async function jetpackGitHubAuth( context, next ) {
 }
 
 export async function jetpackGitHubAuthCallback( context, next ) {
-	const { query, isServerSide } = context;
+	const { query } = context;
 
 	const code = query.code;
 	const service = query.service;
 
 	// Not a redirect from GitHub if no code or error present
-	if ( ! code || service !== 'github' || isServerSide ) {
+	if ( ! code || service !== 'github' ) {
 		return next();
 	}
 
@@ -825,10 +819,4 @@ export function redirectLostPassword( context, next ) {
 	}
 
 	next();
-}
-
-export function redirectJetpackDirectAuthError( context ) {
-	const queryString = new URLSearchParams( context.query ).toString();
-	const redirectUrl = queryString ? `/log-in/jetpack/?${ queryString }` : '/log-in/jetpack/';
-	return context.redirect( 301, redirectUrl );
 }
