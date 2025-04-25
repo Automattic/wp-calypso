@@ -47,7 +47,6 @@ type StripeMinimumCurrencyAmounts = {
 };
 
 type DefaultNames = {
-	// [ key: string ]: ( arg0: string ) => string;
 	[ key: string ]: string;
 };
 
@@ -404,8 +403,6 @@ const RecurringPaymentsPlanAddEditModal = ( {
 									currencyList={ currencyList.map( ( code ) => ( { code } ) ) }
 									placeholder="0.00"
 									noWrap
-									className={ null }
-									currencySymbolSuffix={ null }
 								/>
 							</div>
 							<div className="memberships__dialog-sections-price-field-container">
@@ -420,8 +417,6 @@ const RecurringPaymentsPlanAddEditModal = ( {
 									currencyList={ currencyList.map( ( code ) => ( { code } ) ) }
 									placeholder="0.00"
 									noWrap
-									className={ null }
-									currencySymbolSuffix={ null }
 								/>
 							</div>
 						</FormFieldset>
@@ -455,8 +450,6 @@ const RecurringPaymentsPlanAddEditModal = ( {
 								currencyList={ currencyList.map( ( code ) => ( { code } ) ) }
 								placeholder="0.00"
 								noWrap
-								className={ null }
-								currencySymbolSuffix={ null }
 							/>
 						</div>
 					</FormFieldset>

@@ -526,8 +526,6 @@ const RecurringPaymentsCouponAddEditModal = ( {
 								onCurrencyChange={ onDiscountCurrencyChange }
 								currencyList={ currencyList.map( ( code ) => ( { code } ) ) }
 								placeholder="0.00"
-								className={ null }
-								currencySymbolSuffix={ null }
 								role="textbox"
 								aria-label={ translate( 'Discount value' ) }
 							/>
