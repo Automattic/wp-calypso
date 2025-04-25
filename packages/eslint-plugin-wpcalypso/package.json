@@ -42,8 +42,8 @@
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"@babel/core": "^7.26.10",
-		"@babel/eslint-parser": "^7.26.10",
-		"@babel/parser": "^7.26.10",
+		"@babel/eslint-parser": "^7.27.0",
+		"@babel/parser": "^7.27.0",
 		"eslint": "^8.57.1"
 	}
 }
