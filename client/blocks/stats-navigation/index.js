@@ -207,6 +207,7 @@ class StatsNavigation extends Component {
 			delayTooltipPresentation,
 			gatedTrafficPage,
 			siteId,
+			isStatsNavigationImprovementEnabled,
 		} = this.props;
 		const { pageModules, isPageSettingsTooltipDismissed, availableModuleToggles } = this.state;
 		const { label, showIntervals, path } = navItems[ selectedItem ];
@@ -280,7 +281,7 @@ class StatsNavigation extends Component {
 					<Intervals selected={ interval } pathTemplate={ pathTemplate } standalone />
 				) }
 
-				{ shouldRenderModuleToggler && (
+				{ isStatsNavigationImprovementEnabled && shouldRenderModuleToggler && (
 					<PageModuleToggler
 						availableModuleToggles={ availableModuleToggles }
 						pageModules={ pageModules }
@@ -337,6 +338,7 @@ export default connect(
 			gatedTrafficPage:
 				config.isEnabled( 'stats/paid-wpcom-v3' ) &&
 				shouldGateStats( state, siteId, STATS_FEATURE_PAGE_TRAFFIC ),
+			isStatsNavigationImprovementEnabled: config.isEnabled( 'stats-navigation-improvement' ),
 		};
 	},
 	{ requestModuleToggles, updateModuleToggles }
