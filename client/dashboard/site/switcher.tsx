@@ -1,14 +1,14 @@
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
-import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
+import { MenuGroup, MenuItem, SearchControl, Icon } from '@wordpress/components';
+import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
+import { plus } from '@wordpress/icons';
 import { useState } from 'react';
 import { sitesQuery } from '../app/queries';
 import SiteIcon from '../site-icon';
 import type { Site } from '../data/types';
 import type { View } from '@wordpress/dataviews';
-
-import './switcher.scss';
 
 const fields = [
 	{
@@ -44,25 +44,46 @@ export default function Switcher( { onClose }: { onClose: () => void } ) {
 		return __( 'Loading…' );
 	}
 
-	const { data: filteredData, paginationInfo } = filterSortAndPaginate( sites, view, fields );
-
-	const onChangeSelection = async ( items: string[] ) => {
-		await navigate( { to: `/sites/${ items[ 0 ] }` } );
-		onClose();
-	};
+	const { data: filteredData } = filterSortAndPaginate( sites, view, fields );
 
 	return (
-		<div className="site-switcher">
-			<DataViews
-				getItemId={ ( item ) => item.ID }
-				data={ filteredData }
-				fields={ fields }
-				view={ view }
-				onChangeView={ setView }
-				onChangeSelection={ onChangeSelection }
-				defaultLayouts={ { table: {} } }
-				paginationInfo={ paginationInfo }
-			/>
+		<div style={ { width: '280px' } }>
+			<MenuGroup>
+				<SearchControl
+					label={ __( 'Search' ) }
+					value={ view.search }
+					onChange={ ( value ) => setView( { ...view, search: value } ) }
+					__nextHasNoMarginBottom
+				/>
+			</MenuGroup>
+			<MenuGroup>
+				{ filteredData.map( ( site ) => (
+					<MenuItem
+						key={ site.ID }
+						onClick={ async () => {
+							await navigate( { to: `/sites/${ site.ID }` } );
+							onClose();
+						} }
+					>
+						<div style={ { display: 'flex', gap: '8px', alignItems: 'center', width: '100%' } }>
+							<SiteIcon site={ site } size={ 24 } />
+							<span
+								style={ { overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' } }
+							>
+								{ site.name }
+							</span>
+						</div>
+					</MenuItem>
+				) ) }
+			</MenuGroup>
+			<MenuGroup>
+				<MenuItem>
+					<div style={ { display: 'flex', gap: '8px', alignItems: 'center' } }>
+						<Icon icon={ plus } />
+						{ __( 'Add New Site' ) }
+					</div>
+				</MenuItem>
+			</MenuGroup>
 		</div>
 	);
 }
