@@ -65,3 +65,38 @@ form {
     	}
     }
 }
+
+.login__form-jetpack {
+	.auth-form__social {
+		.auth-form__social-buttons {
+			.auth-form__social-buttons-container {
+				button {
+					height: 48px;
+				}
+			}
+		}
+	}
+
+	.card.login__form {
+		box-shadow: none;
+		padding: 16px 16px 24px;
+
+		@include break-mobile {
+			padding: 16px 0 24px;
+		}
+	}
+
+	.login__form-jetpack-terms {
+		margin-top: 24px;
+		color: var(--studio-gray-50, #646970);
+		font-size: 13px;
+		font-weight: 400;
+		line-height: 20px;
+		word-wrap: break-word;
+
+		a {
+			color: var(--studio-gray-50, #646970);
+			text-decoration: underline;
+		}
+	}
+}
