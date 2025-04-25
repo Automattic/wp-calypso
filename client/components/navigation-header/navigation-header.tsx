@@ -76,7 +76,7 @@ const NavigationHeader: React.FC< HeaderProps > = ( {
 
 	return (
 		<header
-			className={ clsx( 'calypso-navigation-header', 'navigation-header', className, {
+			className={ clsx( 'calypso-navigation-header', className, {
 				'calypso-navigation-header__screen-options-tab': hasScreenOptionsTab,
 			} ) }
 			{ ...rest }
