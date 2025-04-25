@@ -1071,14 +1071,6 @@ fun e2ePreReleaseBuildType( targetDevice: String, buildUuid: String ): E2EBuildT
 			param("env.VIEWPORT_NAME", targetDevice)
 			param("env.CALYPSO_BASE_URL", "https://wpcalypso.wordpress.com")
 			param("env.ALLURE_RESULTS_PATH", "allure-results")
-			// Skip tests that fail specifically on mobile viewport due to UI/layout differences
-			if (targetDevice == "mobile") {
-				// These tests are skipped due to mobile-specific UI issues:
-				// 1. signup__with-theme-LOHP - Elements not visible in mobile viewport
-				// 2. tracks__lohp-to-signup-events - Elements not visible/clickable in mobile layout
-				// 3. signup__with-theme-premium & lifecycle__signup-onboarding-launch-cancel - Sidebar navigation issues
-				param("env.TEST_EXCLUDE_PATTERN", "signup__with-theme-LOHP|tracks__lohp-to-signup-events|signup__with-theme-premium|lifecycle__signup-onboarding-launch-cancel")
-			}
 		},
 		buildFeatures = {
 			notifications {
@@ -1089,7 +1081,8 @@ fun e2ePreReleaseBuildType( targetDevice: String, buildUuid: String ): E2EBuildT
 						addStatusText = true
 					}
 				}
-				branchFilter = "+:<default>"
+				// TODO: Temporarily targeting test branches - revert to '+:<default>' after testing
+				branchFilter = "+:add/mobile-pre-release-tests,+:add/mobile-e2e-prerelease"
 				buildFailedToStart = true
 				buildFailed = true
 				buildFinishedSuccessfully = false
