@@ -103,6 +103,7 @@
 		"lint:css": "stylelint \"**/*.{css,scss}\"",
 		"lint:js": "eslint --ext .js,.jsx,.ts,.tsx,.mjs,.json --cache .",
 		"lint:mixedindent": "mixedindentlint --ignore-comments \"client/**/*.scss\" \"assets/**/*.scss\" \"!build/**\" \"!node_modules/**\" \"!public/**\"",
+		"lint:unused-state-action-types": "node bin/find-unused-state-action-types.sh",
 		"postcss": "postcss -r --config packages/calypso-build/postcss.config.js",
 		"postinstall": "yarn run build-packages && husky install",
 		"reformat-files": "./node_modules/.bin/prettier --ignore-path .eslintignore --write \"**/*.{js,jsx,json,ts,tsx}\"",
