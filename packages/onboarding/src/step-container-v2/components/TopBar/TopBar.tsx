@@ -1,5 +1,4 @@
 import { WordPressLogo, WordPressWordmark } from '@automattic/components';
-import clsx from 'clsx';
 import { ReactNode } from 'react';
 
 import './style.scss';
@@ -8,10 +7,9 @@ interface TopBarProps {
 	leftElement?: ReactNode;
 	rightElement?: ReactNode;
 	logo?: ReactNode;
-	className?: string;
 }
 
-export const TopBar = ( { leftElement, rightElement, logo, className }: TopBarProps ) => {
+export const TopBar = ( { leftElement, rightElement, logo }: TopBarProps ) => {
 	const defaultLogo = (
 		<>
 			<WordPressWordmark
@@ -25,7 +23,7 @@ export const TopBar = ( { leftElement, rightElement, logo, className }: TopBarPr
 		</>
 	);
 	return (
-		<div className={ clsx( 'step-container-v2__top-bar', className ) }>
+		<div className="step-container-v2__top-bar">
 			{ logo ? logo : defaultLogo }
 
 			{ leftElement && (

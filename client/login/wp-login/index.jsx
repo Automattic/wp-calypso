@@ -576,7 +576,7 @@ export class Login extends Component {
 		);
 
 		if ( isJetpack ) {
-			return <Step.TopBar logo={ jetpackLogo } className="is-jetpack-login" />;
+			return jetpackLogo;
 		}
 
 		if ( isSocialFirst ) {
