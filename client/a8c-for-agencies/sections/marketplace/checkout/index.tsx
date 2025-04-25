@@ -156,6 +156,8 @@ function Checkout( { isClient, referralBlogId }: Props ) {
 
 	const title = isAutomatedReferrals ? translate( 'Referral checkout' ) : translate( 'Checkout' );
 
+	const onlyFreeItems = checkoutItems.every( ( item ) => item.price_per_unit === 0 );
+
 	const handleShowPopover = () => {
 		if ( ! canIssueLicenses ) {
 			setShowPopover( true );
@@ -211,7 +213,7 @@ function Checkout( { isClient, referralBlogId }: Props ) {
 		</>
 	);
 
-	if ( isAutomatedReferrals ) {
+	if ( isAutomatedReferrals && ! onlyFreeItems ) {
 		actionContent = <RequestClientPayment checkoutItems={ checkoutItems } />;
 	}
 
@@ -273,6 +275,18 @@ function Checkout( { isClient, referralBlogId }: Props ) {
 							</LayoutBanner>
 						) }
 
+						{ isAutomatedReferrals && onlyFreeItems && (
+							<LayoutBanner level="info" hideCloseButton>
+								{ translate(
+									"As the referral includes only free item, this checkout won't need a client and will be processed like a regular purchase.",
+									"As the referral includes only free items, this checkout won't need a client and will be processed like a regular purchase.",
+									{
+										count: checkoutItems.length,
+									}
+								) }
+							</LayoutBanner>
+						) }
+
 						<div className="checkout__main-list">
 							{ referralBlogId && isLoadingReferralDevSite ? (
 								<div className="product-info__placeholder"></div>
@@ -297,7 +311,7 @@ function Checkout( { isClient, referralBlogId }: Props ) {
 						<PricingSummary
 							items={ checkoutItems }
 							onRemoveItem={ siteId || isClient ? undefined : onRemoveItem }
-							isAutomatedReferrals={ isAutomatedReferrals }
+							isAutomatedReferrals={ isAutomatedReferrals && ! onlyFreeItems }
 							isClient={ isClient }
 						/>
 
