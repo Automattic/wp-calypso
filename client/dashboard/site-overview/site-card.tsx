@@ -27,11 +27,10 @@ export default function SiteCard( {
 	primaryDomain?: SiteDomain;
 	currentPlan: Plan;
 } ) {
-	const { options, URL: url } = site;
-	const { software_version, blog_public } = options;
+	const { options, URL: url, is_private } = site;
 	// If the site is a private A8C site, X-Frame-Options is set to same
 	// origin.
-	const iframeDisabled = isA8CSite( site ) && blog_public === -1;
+	const iframeDisabled = isA8CSite( site ) && is_private;
 	return (
 		<Card>
 			<VStack spacing={ 6 }>
@@ -70,7 +69,9 @@ export default function SiteCard( {
 						<Field title={ __( 'Status' ) }>{ getSiteStatusLabel( site ) }</Field>
 					</HStack>
 					<HStack justify="space-between">
-						<Field title={ __( 'WordPress' ) }>{ software_version }</Field>
+						{ options?.software_version && (
+							<Field title={ __( 'WordPress' ) }>{ options.software_version }</Field>
+						) }
 						{ phpVersion && <Field title={ __( 'PHP' ) }>{ phpVersion }</Field> }
 					</HStack>
 					<PlanDetails site={ site } currentPlan={ currentPlan } primaryDomain={ primaryDomain } />

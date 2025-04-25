@@ -24,7 +24,7 @@ export function getSiteStatus( item: Site ) {
 		return 'deleted';
 	}
 
-	if ( item.options.is_redirect ) {
+	if ( item.options?.is_redirect ) {
 		return 'redirect';
 	}
 

@@ -812,6 +812,7 @@ __metadata:
   resolution: "@automattic/dataviews@workspace:packages/dataviews"
   dependencies:
     "@ariakit/react": "npm:^0.4.15"
+    "@automattic/calypso-storybook": "workspace:^"
     "@testing-library/jest-dom": "npm:^6.6.3"
     "@types/jest": "npm:^29.5.14"
     "@wordpress/base-styles": "npm:^5.22.0"
@@ -830,6 +831,7 @@ __metadata:
     postcss-local-keyframes: "npm:^0.0.2"
     remove-accents: "npm:^0.5.0"
     sass: "npm:1.54.0"
+    storybook: "npm:^8.6.9"
     typescript: "npm:5.8.2"
   peerDependencies:
     react: ^18.0.0
