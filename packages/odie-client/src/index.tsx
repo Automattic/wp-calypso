@@ -6,12 +6,12 @@ import { ClosedConversationFooter } from './components/closed-conversation-foote
 import { MessagesContainer } from './components/message/messages-container';
 import { OdieSendMessageButton } from './components/send-message-input';
 import { useOdieAssistantContext, OdieAssistantProvider } from './context';
-import { interactionHasEnded } from './utils';
+import { hasCSATMessage, interactionHasEnded } from './utils';
 
 import './style.scss';
 
 export const OdieAssistant: React.FC = () => {
-	const { trackEvent, currentUser } = useOdieAssistantContext();
+	const { trackEvent, currentUser, chat } = useOdieAssistantContext();
 	const { currentSupportInteraction } = useSelect( ( select ) => {
 		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
 		return {
@@ -19,7 +19,9 @@ export const OdieAssistant: React.FC = () => {
 		};
 	}, [] );
 
-	const showClosedConversationFooter = interactionHasEnded( currentSupportInteraction );
+	const chatHasCSATMessage = hasCSATMessage( chat );
+	const showClosedConversationFooter =
+		chatHasCSATMessage || interactionHasEnded( currentSupportInteraction );
 
 	useEffect( () => {
 		trackEvent( 'chatbox_view' );
