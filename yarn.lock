@@ -568,7 +568,6 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@babel/core": "npm:^7.26.10"
     babel-jest: "npm:^29.7.0"
-    enhanced-resolve: "npm:^5.8.3"
     jest: "npm:^29.7.0"
     jest-config: "npm:^29.7.0"
   peerDependencies:
@@ -18206,7 +18205,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"enhanced-resolve@npm:^5.17.1, enhanced-resolve@npm:^5.8.3":
+"enhanced-resolve@npm:^5.17.1":
   version: 5.17.1
   resolution: "enhanced-resolve@npm:5.17.1"
   dependencies:
