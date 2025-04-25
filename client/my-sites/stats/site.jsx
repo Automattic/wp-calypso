@@ -57,7 +57,10 @@ import isAtomicSite from 'calypso/state/selectors/is-site-wpcom-atomic';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isJetpackSite, getJetpackStatsAdminVersion } from 'calypso/state/sites/selectors';
 import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
-import { updateModuleToggles } from 'calypso/state/stats/module-toggles/actions';
+import {
+	updateModuleToggles,
+	requestModuleToggles,
+} from 'calypso/state/stats/module-toggles/actions';
 import { getModuleToggles } from 'calypso/state/stats/module-toggles/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import StatsModuleAuthors from './features/modules/stats-authors';
@@ -195,15 +198,7 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 	const moduleToggles = useSelector( ( state ) => getModuleToggles( state, siteId, 'traffic' ) );
 	const momentSiteZone = useSelector( ( state ) => getMomentSiteZone( state, siteId ) );
 	const hasVideoPress = useSelector( ( state ) => siteHasFeature( state, siteId, 'videopress' ) );
-	const [ pageModules, setPageModules ] = useState( () => {
-		return Object.assign(
-			...AVAILABLE_PAGE_MODULES.traffic.map( ( module ) => {
-				return {
-					[ module.key ]: module.defaultValue,
-				};
-			} )
-		);
-	} );
+	const [ pageModules, setPageModules ] = useState( moduleToggles );
 	const [ isPageSettingsTooltipDismissed, setIsPageSettingsTooltipDismissed ] = useState(
 		!! localStorage.getItem( 'notices_dismissed__traffic_page_settings' )
 	);
@@ -506,6 +501,10 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 			return;
 		}
 	}, [ shouldForceDefaultPeriod, period, daysInRange, slug, context.query ] );
+
+	useEffect( () => {
+		requestModuleToggles( siteId );
+	}, [ siteId ] );
 
 	// setActiveTabState and setActiveLegend
 	useEffect( () => {
