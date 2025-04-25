@@ -178,6 +178,19 @@ const SiteMigrationIdentify: StepType< {
 		return isBackButtonSupported || urlQueryParams.has( 'back_to' );
 	};
 
+	const getBackButton = () => {
+		if ( ! shouldShowBackButton() ) {
+			return null;
+		}
+
+		const backToUrl = urlQueryParams.get( 'back_to' );
+		return backToUrl ? (
+			<Step.BackButton href={ backToUrl ?? '' } />
+		) : (
+			<Step.BackButton onClick={ navigation?.goBack } />
+		);
+	};
+
 	const [ isVisible, setIsVisible ] = useState( false );
 
 	const stepContent = (
@@ -195,19 +208,14 @@ const SiteMigrationIdentify: StepType< {
 	);
 
 	if ( isUsingStepContainerV2 ) {
+		const backButton = getBackButton();
 		return (
 			<>
 				<DocumentHead title={ translate( 'Import your site content' ) } />
 				<Step.CenteredColumnLayout
 					className="step-container-v2--site-migration-identify"
 					columnWidth={ 4 }
-					topBar={
-						<Step.TopBar
-							leftElement={
-								shouldShowBackButton() ? <Step.BackButton onClick={ navigation.goBack } /> : null
-							}
-						/>
-					}
+					topBar={ <Step.TopBar leftElement={ backButton } /> }
 					heading={
 						isVisible ? (
 							<Step.Heading
