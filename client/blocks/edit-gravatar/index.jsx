@@ -23,6 +23,10 @@ import { isFetchingUserSettings } from 'calypso/state/user-settings/selectors';
 
 import './style.scss';
 
+// use imgSize = 400 for caching
+// it's the popular value for large Gravatars in Calypso
+const GRAVATAR_IMG_SIZE = 400;
+
 export class EditGravatar extends Component {
 	state = {
 		showEmailVerificationNotice: false,
@@ -101,9 +105,6 @@ export class EditGravatar extends Component {
 
 	render() {
 		const { isGravatarProfileHidden, translate, user, recordClickButtonEvent } = this.props;
-		// use imgSize = 400 for caching
-		// it's the popular value for large Gravatars in Calypso
-		const GRAVATAR_IMG_SIZE = 400;
 
 		if ( this.props.isFetchingUserSettings ) {
 			return this.renderEditGravatarIsLoading();
