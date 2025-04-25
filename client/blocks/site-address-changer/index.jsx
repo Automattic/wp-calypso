@@ -58,6 +58,7 @@ export class SiteAddressChanger extends Component {
 		domainFieldValue: '',
 		newDomainSuffix: this.props.currentDomainSuffix,
 		confirmEmailSent: 0,
+		isConfirmationChecked: false,
 	};
 
 	componentDidMount() {
