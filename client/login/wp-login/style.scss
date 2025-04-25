@@ -33,6 +33,19 @@ $image-height: 47px;
 
 .wp-login__main.main {
 	max-width: 400px;
+
+	&.is-jetpack {
+		max-width: 450px;
+		margin-top: calc(96px - 48px);
+
+		@include break-small {
+			margin-top: calc(160px - 48px);
+		}
+	}
+}
+
+.step-container-v2__top-bar.is-jetpack-login {
+	padding: 0;
 }
 
 .wp-login__header {
