@@ -209,18 +209,25 @@ export function qrCodeLogin( context, next ) {
 
 export async function jetpackGoogleAuth( context, next ) {
 	const { query } = context;
-	const redirectUri = `https://${ window.location.host }${ loginPath( {
-		socialService: 'google',
-	} ) }`;
+	const redirectUri = `https://${
+		config.isEnabled( 'oauth' ) ? window.location.host : 'wordpress.com'
+	}${ loginPath( { socialService: 'google' } ) }`;
 
 	try {
 		// Get authorization nonce for security
-		const response = await wpcomRequest( {
-			path: '/generate-authorization-nonce',
-			apiNamespace: 'wpcom/v2',
-			method: 'GET',
-		} );
-		const nonce = response.nonce;
+		let nonce;
+		if ( config.isEnabled( 'oauth' ) ) {
+			// Use the API to get a real nonce in production
+			const response = await wpcomRequest( {
+				path: '/generate-authorization-nonce',
+				apiNamespace: 'wpcom/v2',
+				method: 'GET',
+			} );
+			nonce = response.nonce;
+		} else {
+			// In dev environment, use a random string as nonce
+			nonce = Math.random().toString( 36 ).substring( 2, 15 );
+		}
 
 		// Create state object with relevant data
 		const stateObject = {
@@ -323,9 +330,9 @@ export async function jetpackGoogleAuthCallback( context, next ) {
 			throw new Error( 'Invalid state parameter' );
 		}
 
-		const redirectUri = `https://${ window.location.host }${ loginPath( {
-			socialService: 'google',
-		} ) }`;
+		const redirectUri = `https://${
+			config.isEnabled( 'oauth' ) ? window.location.host : 'wordpress.com'
+		}${ loginPath( { socialService: 'google' } ) }`;
 
 		// Exchange auth code for tokens
 		const response = await postLoginRequest( 'exchange-social-auth-code', {
@@ -397,18 +404,25 @@ export async function jetpackGoogleAuthCallback( context, next ) {
 
 export async function jetpackAppleAuth( context, next ) {
 	const { query } = context;
-	const redirectUri = `https://${ window.location.host }${ loginPath( {
-		socialService: 'apple',
-	} ) }`;
+	const redirectUri = `https://${
+		config.isEnabled( 'oauth' ) ? window.location.host : 'wordpress.com'
+	}${ loginPath( { socialService: 'apple' } ) }`;
 
 	try {
 		// Get authorization nonce for security
-		const response = await wpcomRequest( {
-			path: '/generate-authorization-nonce',
-			apiNamespace: 'wpcom/v2',
-			method: 'GET',
-		} );
-		const nonce = response.nonce;
+		let nonce;
+		if ( config.isEnabled( 'oauth' ) ) {
+			// Use the API to get a real nonce in production
+			const response = await wpcomRequest( {
+				path: '/generate-authorization-nonce',
+				apiNamespace: 'wpcom/v2',
+				method: 'GET',
+			} );
+			nonce = response.nonce;
+		} else {
+			// In dev environment, use a random string as nonce
+			nonce = Math.random().toString( 36 ).substring( 2, 15 );
+		}
 
 		// Create state object with relevant data
 		const stateObject = {
