@@ -44,6 +44,7 @@ export default function FormCurrencyInput( props: FormCurrencyInputProps ): JSX.
 			type="number"
 			step={ currencySymbolPrefix === 'JPY' ? '1' : '0.01' }
 			placeholder={ placeholder }
+			value={ props.value || null }
 		/>
 	);
 }
