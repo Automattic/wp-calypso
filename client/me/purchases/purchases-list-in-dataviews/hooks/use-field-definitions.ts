@@ -10,14 +10,10 @@ export function usePurchasesFieldDefinitions() {
 	const paymentMethods = useStoredPaymentMethods().paymentMethods;
 
 	return useMemo( () => {
-		const backupPaymentMethods = paymentMethods.filter(
-			( paymentMethod ) => paymentMethod.is_backup === true
-		);
-
 		const fieldDefinitions = getPurchasesFieldDefinitions( {
 			translate,
 			moment,
-			backupPaymentMethods,
+			paymentMethods,
 		} );
 		return fieldDefinitions;
 	}, [ translate, moment, paymentMethods ] );

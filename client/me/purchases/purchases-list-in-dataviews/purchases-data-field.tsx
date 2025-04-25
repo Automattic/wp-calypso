@@ -59,12 +59,16 @@ function PurchaseItemRowStatus( props: {
 export function getPurchasesFieldDefinitions( {
 	translate,
 	moment,
-	backupPaymentMethods,
+	paymentMethods,
 }: {
 	translate: LocalizeProps[ 'translate' ];
 	moment: ReturnType< typeof useLocalizedMoment >;
-	backupPaymentMethods: Array< StoredPaymentMethod >;
+	paymentMethods: Array< StoredPaymentMethod >;
 } ): Fields< Purchases.Purchase > {
+	const backupPaymentMethods = paymentMethods.filter(
+		( paymentMethod ) => paymentMethod.is_backup === true
+	);
+
 	return [
 		{
 			id: 'site',
