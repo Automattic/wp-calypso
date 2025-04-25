@@ -1,5 +1,6 @@
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
+import { useOdieAssistantContext } from '../../context';
 import { zendeskMessageConverter } from '../../utils';
 import ChatWithSupportLabel from '../chat-with-support';
 import ErrorMessage from './error-message';
@@ -31,6 +32,8 @@ export const MessageContent = ( {
 		message?.context?.flags?.show_ai_avatar === false && 'odie-chatbox-message-no-avatar'
 	);
 	const isFeedbackMessage = message.type === 'conversation-feedback' && message?.meta?.feedbackUrl;
+	const { canConnectToZendesk } = useOdieAssistantContext();
+	const isRequestingHumanSupport = message.context?.flags?.forward_to_human_support ?? false;
 
 	const containerClasses = clsx(
 		'odie-chatbox-message-sources-container',
@@ -63,7 +66,9 @@ export const MessageContent = ( {
 		<>
 			<div className={ containerClasses } data-is-message="true">
 				<div className={ messageClasses }>
-					{ message?.context?.flags?.show_ai_avatar !== false && messageHeader }
+					{ ! ( ! canConnectToZendesk && isRequestingHumanSupport ) &&
+						message?.context?.flags?.show_ai_avatar !== false &&
+						messageHeader }
 					{ message.type === 'error' && <ErrorMessage message={ message } /> }
 					{ ( [ 'message', 'image', 'image-placeholder', 'file', 'text' ].includes(
 						message.type

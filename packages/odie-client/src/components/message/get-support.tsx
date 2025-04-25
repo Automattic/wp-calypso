@@ -14,6 +14,7 @@ interface GetSupportProps {
 	onClickAdditionalEvent?: ( destination: string ) => void;
 	isUserEligibleForPaidSupport?: boolean;
 	canConnectToZendesk?: boolean;
+	displayEmailSupport?: boolean;
 }
 
 interface ButtonConfig {
@@ -23,7 +24,9 @@ interface ButtonConfig {
 	hideButton?: boolean;
 }
 
-export const NewThirdPartyCookiesNotice: React.FC = () => {
+export const NewThirdPartyCookiesNotice: React.FC< { displayEmailSupport?: boolean } > = ( {
+	displayEmailSupport,
+} ) => {
 	return (
 		<div className="help-center__cookie-warning">
 			<p>
@@ -41,6 +44,19 @@ export const NewThirdPartyCookiesNotice: React.FC = () => {
 				>
 					{ __( 'Learn more.', __i18n_text_domain__ ) }
 				</a>
+				{ displayEmailSupport && (
+					<>
+						<br />
+						<p className="help-center__email-support">
+							{ __( 'You can also send an email to', __i18n_text_domain__ ) }&nbsp;
+							<a className="help-center__email-support-link" href="mailto:help@wordpress.com">
+								help@wordpress.com
+							</a>
+							&nbsp;
+							{ __( 'and we’ll help you further.', __i18n_text_domain__ ) }
+						</p>
+					</>
+				) }
 			</p>
 		</div>
 	);
@@ -50,6 +66,7 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 	onClickAdditionalEvent,
 	isUserEligibleForPaidSupport,
 	canConnectToZendesk = false,
+	displayEmailSupport = false,
 } ) => {
 	const navigate = useNavigate();
 	const newConversation = useCreateZendeskConversation();
@@ -78,7 +95,11 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 		! ( canConnectToZendesk || contextCanConnectToZendesk ) &&
 		( isUserEligibleForPaidSupport || contextIsUserEligibleForPaidSupport )
 	) {
-		return <NewThirdPartyCookiesNotice />;
+		return (
+			<>
+				<NewThirdPartyCookiesNotice displayEmailSupport={ displayEmailSupport } />
+			</>
+		);
 	}
 
 	const getButtonConfig = (): ButtonConfig[] => {

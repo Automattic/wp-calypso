@@ -23,7 +23,8 @@ export const UserMessage = ( {
 	message: Message;
 	isMessageWithoutEscalationOption?: boolean;
 } ) => {
-	const { isUserEligibleForPaidSupport, trackEvent, chat } = useOdieAssistantContext();
+	const { isUserEligibleForPaidSupport, trackEvent, chat, canConnectToZendesk } =
+		useOdieAssistantContext();
 
 	const hasCannedResponse = message.context?.flags?.canned_response;
 	const isRequestingHumanSupport = message.context?.flags?.forward_to_human_support ?? false;
@@ -55,7 +56,7 @@ export const UserMessage = ( {
 	const renderExtraContactOptions = () => {
 		return (
 			chat.provider === 'odie' && (
-				<GetSupport onClickAdditionalEvent={ handleContactSupportClick } />
+				<GetSupport onClickAdditionalEvent={ handleContactSupportClick } displayEmailSupport />
 			)
 		);
 	};
@@ -95,22 +96,26 @@ export const UserMessage = ( {
 
 	return (
 		<>
-			<div className="odie-chatbox-message__content">
-				<Markdown
-					urlTransform={ uriTransformer }
-					components={ {
-						a: ( props: React.ComponentProps< 'a' > ) => (
-							<CustomALink { ...props } target="_blank" />
-						),
-					} }
-				>
-					{ isRequestingHumanSupport ? displayMessage : message.content }
-				</Markdown>
-			</div>
+			{ ( canConnectToZendesk || ! isRequestingHumanSupport ) && (
+				<div className="odie-chatbox-message__content">
+					<Markdown
+						urlTransform={ uriTransformer }
+						components={ {
+							a: ( props: React.ComponentProps< 'a' > ) => (
+								<CustomALink { ...props } target="_blank" />
+							),
+						} }
+					>
+						{ isRequestingHumanSupport ? displayMessage : message.content }
+					</Markdown>
+				</div>
+			) }
 			{ ! isMessageWithoutEscalationOption && isBot && (
 				<div
 					className={ clsx( 'chat-feedback-wrapper', {
 						'chat-feedback-wrapper-no-extra-contact': ! showExtraContactOptions,
+						'chat-feedback-wrapper-no-margin-left':
+							! canConnectToZendesk && isRequestingHumanSupport,
 					} ) }
 				>
 					<Sources message={ message } />
