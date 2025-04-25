@@ -614,7 +614,7 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 								onToggleModule={ onToggleModule }
 								isTooltipShown={ showSettingsTooltip && ! isPageSettingsTooltipDismissed }
 								onTooltipDismiss={ onTooltipDismiss }
-								toggleIcon={ <Icon className="gridicon" icon={ settings } /> }
+								customToggleIcon={ <Icon className="gridicon" icon={ settings } /> }
 							/>
 						)
 					}
