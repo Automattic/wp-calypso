@@ -25,8 +25,7 @@ import LayoutHeader, {
 	LayoutHeaderActions as Actions,
 } from 'calypso/layout/hosting-dashboard/header';
 import { useDispatch, useSelector } from 'calypso/state';
-import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
-import { ApprovalStatus } from 'calypso/state/a8c-for-agencies/types';
+import { hasApprovedAgencyStatus } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import MissingPaymentSettingsNotice from '../../common/missing-payment-settings-notice';
 import useFetchReferrals from '../../hooks/use-fetch-referrals';
@@ -45,9 +44,7 @@ export default function ReferralsOverview( {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const agency = useSelector( getActiveAgency );
-
-	const isAgencyApproved = agency?.approval_status === ApprovalStatus.APPROVED;
+	const isAgencyApproved = useSelector( hasApprovedAgencyStatus );
 
 	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( {
 		...initialDataViewsState,

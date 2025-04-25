@@ -1,3 +1,4 @@
+// @ts-nocheck - TODO: Fix TypeScript issues
 import config from '@automattic/calypso-config';
 import { GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY } from '@automattic/calypso-products';
 import {

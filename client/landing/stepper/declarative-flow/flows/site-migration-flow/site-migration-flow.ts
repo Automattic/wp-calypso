@@ -17,6 +17,7 @@ import { AssertConditionState } from 'calypso/landing/stepper/declarative-flow/i
 import { goToImporter } from 'calypso/landing/stepper/declarative-flow/migration/helpers';
 import { useIsSiteAdmin } from 'calypso/landing/stepper/hooks/use-is-site-admin';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
+import { useRecordSignupComplete } from 'calypso/landing/stepper/hooks/use-record-signup-complete';
 import { useSiteData } from 'calypso/landing/stepper/hooks/use-site-data';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { goToCheckout } from 'calypso/landing/stepper/utils/checkout';
@@ -62,7 +63,14 @@ const hasSite = ( siteId: number, siteSlug: string ) => {
 
 const siteMigration: FlowV2< typeof initialize > = {
 	name: SITE_MIGRATION_FLOW,
-	isSignupFlow: false,
+	get isSignupFlow() {
+		const searchParams = new URLSearchParams( window.location.search );
+		const hasDestinationSite = [
+			searchParams.has( 'siteSlug' ),
+			searchParams.has( 'siteId' ),
+		].some( Boolean );
+		return ! hasDestinationSite;
+	},
 	__experimentalUseSessions: true,
 	__experimentalUseBuiltinAuth: true,
 	initialize,
@@ -113,6 +121,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 		};
 
 		type StepSlug = typeof currentStep;
+		const recordSignupComplete = useRecordSignupComplete( flowName );
 
 		// Call triggerGuidesForStep for the current step
 		useEffect( () => {
@@ -243,6 +252,8 @@ const siteMigration: FlowV2< typeof initialize > = {
 							message: 'Site not created',
 						} );
 					}
+
+					recordSignupComplete( { siteId } );
 
 					//NOTE: There are links pointing to this step with the action=migrate query param, so we need to ignore the platform
 					if ( actionQueryParam === 'migrate' ) {

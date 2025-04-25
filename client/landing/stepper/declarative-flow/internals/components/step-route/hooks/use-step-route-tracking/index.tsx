@@ -9,6 +9,7 @@ import recordStepComplete, {
 } from 'calypso/landing/stepper/declarative-flow/internals/analytics/record-step-complete';
 import recordStepStart from 'calypso/landing/stepper/declarative-flow/internals/analytics/record-step-start';
 import { useIntent } from 'calypso/landing/stepper/hooks/use-intent';
+import { useMvpOnboardingExperiment } from 'calypso/landing/stepper/hooks/use-mvp-onboarding-experiment';
 import { useSiteData } from 'calypso/landing/stepper/hooks/use-site-data';
 import kebabCase from 'calypso/landing/stepper/utils/kebabCase';
 import useSnakeCasedKeys from 'calypso/landing/stepper/utils/use-snake-cased-keys';
@@ -46,6 +47,7 @@ interface Props {
  */
 export const useStepRouteTracking = ( { flow, stepSlug, skipStepRender }: Props ) => {
 	const intent = useIntent();
+	const [ , isMvpOnboarding ] = useMvpOnboardingExperiment();
 	const hasRequestedSelectedSite = useHasRequestedSelectedSite();
 	const stepCompleteEventPropsRef = useRef< RecordStepCompleteProps | null >( null );
 	const pathname = window.location.pathname;
@@ -127,6 +129,7 @@ export const useStepRouteTracking = ( { flow, stepSlug, skipStepRender }: Props 
 		const pageTitle = `Setup > ${ flowName } > ${ stepSlug }`;
 		const params = {
 			flow: flowName,
+			is_simplified_onboarding: isMvpOnboarding,
 			...( skipStepRender && { skip_step_render: skipStepRender } ),
 			...reenteringStepAfterSignupCompleteProps,
 		};

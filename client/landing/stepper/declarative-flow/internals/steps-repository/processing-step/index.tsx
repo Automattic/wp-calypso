@@ -68,7 +68,9 @@ const ProcessingStep: StepType< {
 	const [ currentMessageIndex, setCurrentMessageIndex ] = useState( 0 );
 	const [ hasActionSuccessfullyRun, setHasActionSuccessfullyRun ] = useState( false );
 	const [ hasEmptyActionRun, setHasEmptyActionRun ] = useState( false );
-	const [ destinationState, setDestinationState ] = useState( {} );
+	const [ destinationState, setDestinationState ] = useState<
+		{ siteCreated?: boolean } | undefined
+	>( {} );
 
 	/**
 	 * There is a long-term bug here that the `submit` function will be called multiple times if we
@@ -169,7 +171,8 @@ const ProcessingStep: StepType< {
 	useEffect( () => {
 		if ( hasActionSuccessfullyRun && ! isSubmittedRef.current ) {
 			// We should only trigger signup completion for signup flows, so check if we have one.
-			if ( availableFlows[ flow ] ) {
+
+			if ( availableFlows[ flow ] && ! isNewSiteMigrationFlow( flow ) ) {
 				availableFlows[ flow ]().then( ( flowExport ) => {
 					if ( flowExport.default.isSignupFlow ) {
 						recordSignupComplete( { ...destinationState } );
