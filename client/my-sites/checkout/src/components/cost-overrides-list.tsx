@@ -56,7 +56,7 @@ const CostOverridesListStyle = styled.div`
 	}
 
 	& .cost-overrides-list-item__reason--is-discount {
-		color: #008a20;
+		color: #007017;
 	}
 
 	& .cost-overrides-list-item__discount {
