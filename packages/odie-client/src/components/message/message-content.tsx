@@ -37,7 +37,7 @@ export const MessageContent = ( {
 
 	const containerClasses = clsx(
 		'odie-chatbox-message-sources-container',
-		( isNextMessageFromSameSender || isFeedbackMessage ) && 'next-chat-message-same-sender'
+		isNextMessageFromSameSender && 'next-chat-message-same-sender'
 	);
 
 	const isMessageWithOnlyText =

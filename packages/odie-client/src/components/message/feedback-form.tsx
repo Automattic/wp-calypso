@@ -7,7 +7,7 @@ import {
 import { Button, TextareaControl, SelectControl, Spinner } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
-import { useCallback, useState, useMemo } from 'react';
+import { useCallback, useEffect, useRef, useState, useMemo } from 'react';
 import Smooch from 'smooch';
 import { useOdieAssistantContext } from '../../context';
 import { useSendChatMessage } from '../../hooks';
@@ -39,6 +39,7 @@ export const FeedbackForm = ( { chatFeedbackOptions }: FeedbackFormProps ) => {
 		isUserEligibleForPaidSupport,
 		'messenger'
 	);
+	const feedbackRef = useRef< HTMLDivElement | null >( null );
 	const ticketId = useMemo( () => {
 		if ( ! chatFeedbackOptions.length ) {
 			return null;
@@ -50,6 +51,12 @@ export const FeedbackForm = ( { chatFeedbackOptions }: FeedbackFormProps ) => {
 	const badRatingReasons = getBadRatingReasons();
 
 	const { isPending: isSubmitting, mutateAsync: rateChat } = useRateChat();
+
+	useEffect( () => {
+		if ( score && feedbackRef?.current ) {
+			feedbackRef.current.scrollIntoView( { behavior: 'smooth', block: 'start' } );
+		}
+	}, [ score ] );
 
 	const postCSAT = useCallback( async () => {
 		if ( ! authData?.jwt || ! ticketId || ! score ) {
@@ -93,7 +100,7 @@ export const FeedbackForm = ( { chatFeedbackOptions }: FeedbackFormProps ) => {
 				</div>
 			</div>
 			{ score && (
-				<div className="odie-conversation-feedback__message">
+				<div ref={ feedbackRef } className="odie-conversation-feedback__message">
 					<TextareaControl
 						__nextHasNoMarginBottom
 						label={ __( 'Thank you for your input!' ) }
