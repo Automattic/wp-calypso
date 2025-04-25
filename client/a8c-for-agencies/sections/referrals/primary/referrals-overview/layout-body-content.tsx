@@ -134,7 +134,7 @@ export default function LayoutBodyContent( {
 				</div>
 			) }
 			<div className="referrals-overview__section-icons">
-				<JetpackLogo className="jetpack-logo" size={ 24 } />
+				<JetpackLogo className="jetpack-logo" size={ 24 } monochrome />
 				<img width={ 45 } src={ WooLogoColor } alt="WooCommerce" />
 				<img className="pressable-icon" src={ pressableIcon } alt="Pressable" />
 				<WordPressLogo className="a4a-overview-hosting__wp-logo" size={ 24 } />

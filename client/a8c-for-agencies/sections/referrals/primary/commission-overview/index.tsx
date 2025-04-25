@@ -139,7 +139,7 @@ export default function CommissionOverview() {
 							header={
 								<>
 									<div className="a4a-overview-hosting__logo-container">
-										<JetpackLogo className="jetpack-logo" size={ 24 } />
+										<JetpackLogo className="jetpack-logo" size={ 24 } monochrome />
 										<img width={ 45 } src={ WooLogoColor } alt="WooCommerce" />
 									</div>
 

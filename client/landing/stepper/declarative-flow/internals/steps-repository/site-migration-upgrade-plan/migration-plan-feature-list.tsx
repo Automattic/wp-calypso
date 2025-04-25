@@ -120,7 +120,7 @@ export const MigrationPlanFeatureList = ( {
 				)
 			) }
 			<li className="import__upgrade-plan-feature logo">
-				<JetpackLogo size={ 24 } />
+				<JetpackLogo size={ 24 } monochrome />
 			</li>
 			{ migrationPlanFeatures[ 'jetpackFeatures' ].map( ( feature: ReactNode, index: number ) => (
 				<li key={ index } className="import__upgrade-plan-feature">

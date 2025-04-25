@@ -6,8 +6,8 @@ export default function JetpackLogoExample() {
 			<pre>{ '<JetpackLogo />' }</pre>
 			<JetpackLogo />
 			<hr />
-			<pre>{ '<JetpackLogo size={ 24 } />' }</pre>
-			<JetpackLogo size={ 24 } />
+			<pre>{ '<JetpackLogo size={ 24 } monochrome />' }</pre>
+			<JetpackLogo size={ 24 } monochrome />
 			<hr />
 			<pre>{ '<JetpackLogo full size={ 64 } />' }</pre>
 			<JetpackLogo full size={ 64 } />
