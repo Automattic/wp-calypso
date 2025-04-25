@@ -216,6 +216,11 @@ export type Flow = {
 	useTracksEventProps?: UseTracksEventPropsHook;
 };
 
+/**
+ * @deprecated Use FlowV2 instead.
+ */
+export type FlowV1 = Flow;
+
 type DefaultFlowStepsConfig =
 	| ( ( ...args: any[] ) => readonly StepperStep[] )
 	| ( ( ...args: any[] ) => Promise< readonly StepperStep[] > );

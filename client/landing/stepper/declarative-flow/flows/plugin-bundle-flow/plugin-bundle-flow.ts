@@ -14,7 +14,7 @@ import { ProcessingResult } from '../../internals/steps-repository/processing-st
 import {
 	AssertConditionResult,
 	AssertConditionState,
-	Flow,
+	FlowV1,
 	ProvidedDependencies,
 	StepperStep,
 } from '../../internals/types';
@@ -26,9 +26,12 @@ import {
 } from './plugin-bundle-data';
 import type { OnboardSelect, SiteSelect, UserSelect } from '@automattic/data-stores';
 
-const getNextStep = ( currentStep: string, steps: readonly StepperStep[] ): string | undefined => {
+const getNextStep = (
+	currentStep: StepperStep[ 'slug' ],
+	steps: readonly StepperStep[]
+): string | undefined => {
 	const stepsIndex = steps.map( ( step ) => step.slug );
-	const currentStepIndex = stepsIndex.indexOf( currentStep as StepperStep[ 'slug' ] );
+	const currentStepIndex = stepsIndex.indexOf( currentStep );
 	const nextStep = stepsIndex[ currentStepIndex + 1 ];
 
 	return nextStep;
@@ -36,7 +39,7 @@ const getNextStep = ( currentStep: string, steps: readonly StepperStep[] ): stri
 
 const SiteIntent = Onboard.SiteIntent;
 
-const pluginBundleFlow: Flow = {
+const pluginBundleFlow: FlowV1 = {
 	name: 'plugin-bundle',
 	isSignupFlow: false,
 
