@@ -14,10 +14,10 @@ import getToSAcceptancePayload from 'calypso/lib/tos-acceptance-tracking';
 import wpcom from 'calypso/lib/wp';
 import { DesktopLoginStart, DesktopLoginFinalize } from 'calypso/login/desktop-login';
 import { SOCIAL_HANDOFF_CONNECT_ACCOUNT } from 'calypso/state/action-types';
-import { redirectToLogout } from 'calypso/state/current-user/actions';
 import { isUserLoggedIn, getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { loginSocialUser, rebootAfterLogin } from 'calypso/state/login/actions';
 import { postLoginRequest } from 'calypso/state/login/utils';
+import { logoutUser } from 'calypso/state/logout/actions';
 import { fetchOAuth2ClientData } from 'calypso/state/oauth2-clients/actions';
 import { getOAuth2Client } from 'calypso/state/oauth2-clients/selectors';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
@@ -216,16 +216,15 @@ export async function jetpackGoogleAuth( context, next ) {
 		return next();
 	}
 
-	if ( isUserLoggedIn( context.store.getState() ) ) {
-		// Log out the user and reload the page
-		return context.store.dispatch( redirectToLogout( window.location.href ) );
-	}
-
 	const redirectUri = `https://${ window.location.host }${ loginPath( {
 		socialService: 'google',
 	} ) }`;
 
 	try {
+		if ( isUserLoggedIn( context.store.getState() ) ) {
+			await context.store.dispatch( logoutUser() );
+		}
+
 		// Get authorization nonce for security
 		const response = await wpcomRequest( {
 			path: '/generate-authorization-nonce',
@@ -361,27 +360,38 @@ export async function jetpackGoogleAuthCallback( context, next ) {
 				client_secret: config( 'wpcom_signup_key' ),
 				tos: JSON.stringify( getToSAcceptancePayload() ),
 			} );
+
+			await context.store.dispatch(
+				loginSocialUser(
+					{
+						service: 'google',
+						access_token,
+						id_token,
+					},
+					state.redirect_to
+				)
+			);
+			const url = new URL( state.redirect_to );
+			context.store.dispatch(
+				setRoute( url.pathname, Object.fromEntries( url.searchParams.entries() ) )
+			);
+
+			await context.store.dispatch( rebootAfterLogin() );
+			return page.redirect( state.redirect_to );
 		} catch ( createError ) {
-			// Silently fail: user already exists
-		}
-
-		await context.store.dispatch(
-			loginSocialUser(
-				{
-					service: 'google',
-					access_token,
-					id_token,
+			// If both connection and creation fail, show warning and redirect
+			context.store.dispatch( {
+				type: 'NOTICE_CREATE',
+				notice: {
+					status: 'is-warning',
+					text: 'Could not complete Google login. Please try again.',
 				},
-				state.redirect_to
-			)
-		);
-		const url = new URL( state.redirect_to );
-		context.store.dispatch(
-			setRoute( url.pathname, Object.fromEntries( url.searchParams.entries() ) )
-		);
+			} );
 
-		await context.store.dispatch( rebootAfterLogin() );
-		return page.redirect( state.redirect_to );
+			return redirectJetpackDirectAuthError( context, next, {
+				redirect_to: state.redirect_to,
+			} );
+		}
 	} catch {
 		context.store.dispatch( {
 			type: 'NOTICE_CREATE',
@@ -405,18 +415,22 @@ export async function jetpackAppleAuth( context, next ) {
 		return next();
 	}
 
-	if ( isUserLoggedIn( context.store.getState() ) ) {
-		// Log out the user and reload the page
-		return context.store.dispatch( redirectToLogout( window.location.href ) );
-	}
-
 	const redirectUri = `https://${ window.location.host }${ loginPath( {
 		socialService: 'apple',
 	} ) }`;
 
 	try {
-		// Siwa nonce: see social-buttons/apple.js
-		const nonce = String( Math.floor( Math.random() * 10e9 ) );
+		if ( isUserLoggedIn( context.store.getState() ) ) {
+			await context.store.dispatch( logoutUser() );
+		}
+
+		// Get authorization nonce for security
+		const response = await wpcomRequest( {
+			path: '/generate-authorization-nonce',
+			apiNamespace: 'wpcom/v2',
+			method: 'GET',
+		} );
+		const nonce = response.nonce;
 
 		// Create state object with relevant data
 		const stateObject = {
@@ -545,11 +559,6 @@ export async function jetpackGitHubAuth( context, next ) {
 	// Don't run authentication if it's server side
 	if ( isServerSide ) {
 		return next();
-	}
-
-	if ( isUserLoggedIn( context.store.getState() ) ) {
-		// Log out the user and reload the page
-		return context.store.dispatch( redirectToLogout( window.location.href ) );
 	}
 
 	const redirectUri = `${ window.location.origin }/log-in/jetpack/github/callback`;
