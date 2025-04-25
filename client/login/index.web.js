@@ -20,8 +20,6 @@ import {
 	redirectLostPassword,
 	desktopLogin,
 	desktopLoginFinalize,
-	jetpackAppleAuth,
-	jetpackAppleAuthCallback,
 	jetpackGoogleAuthCallback,
 	jetpackGoogleAuth,
 } from './controller';
@@ -140,26 +138,6 @@ export default ( router ) => {
 		setMetaTags,
 		setSectionMiddleware( LOGIN_SECTION_DEFINITION ),
 		jetpackGoogleAuthCallback,
-		makeLoggedOutLayout
-	);
-
-	router(
-		`/log-in/jetpack/apple/${ lang }`,
-		redirectLoggedIn,
-		setLocaleMiddleware(),
-		setMetaTags,
-		setSectionMiddleware( LOGIN_SECTION_DEFINITION ),
-		jetpackAppleAuth,
-		makeLoggedOutLayout
-	);
-
-	router(
-		`/log-in/jetpack/apple/callback/${ lang }`,
-		redirectLoggedIn,
-		setLocaleMiddleware(),
-		setMetaTags,
-		setSectionMiddleware( LOGIN_SECTION_DEFINITION ),
-		jetpackAppleAuthCallback,
 		makeLoggedOutLayout
 	);
 
