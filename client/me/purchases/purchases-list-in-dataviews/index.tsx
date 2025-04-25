@@ -98,13 +98,7 @@ class PurchasesListDataView extends Component<
 		}
 
 		if ( purchases && purchases.length ) {
-			content = (
-				<PurchasesDataViews
-					purchases={ purchases }
-					translate={ translate }
-					paymentMethods={ this.props.paymentMethodsState.paymentMethods }
-				/>
-			);
+			content = <PurchasesDataViews purchases={ purchases } translate={ translate } />;
 		}
 
 		if ( purchases && ! purchases.length && ! subscriptions.length ) {
