@@ -139,7 +139,7 @@ const hosting: FlowV2< typeof initialize > = {
 					return navigate( STEPS.UNIFIED_PLANS.slug );
 				}
 				case STEPS.UNIFIED_PLANS.slug: {
-					const cartItems = providedDependencies?.cartItems as Array< typeof planCartItem >;
+					const cartItems = providedDependencies.cartItems;
 					const productSlug = cartItems?.[ 0 ]?.product_slug;
 
 					if ( ! productSlug ) {
@@ -171,7 +171,7 @@ const hosting: FlowV2< typeof initialize > = {
 					return navigate( STEPS.PROCESSING.slug );
 
 				case STEPS.PROCESSING.slug: {
-					if ( providedDependencies?.processingResult === ProcessingResult.SUCCESS ) {
+					if ( providedDependencies.processingResult === ProcessingResult.SUCCESS ) {
 						const siteId = providedDependencies.siteId || getSignupCompleteSiteID();
 						setSignupCompleteSiteID( providedDependencies.siteId );
 
