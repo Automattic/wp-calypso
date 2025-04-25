@@ -39,7 +39,7 @@
 		transition: color 0.2s ease;
 
 		&:hover {
-			color: var($gray-900, #1e1e1e);
+			color: var(--wp-components-color-gray-900, $gray-900);
 		}
 
 		svg {
@@ -50,7 +50,8 @@
 	&__title {
 		font-size: 20px;
 		font-weight: 500;
-		color: var($gray-900, #1e1e1e);
+		font-family: "SF Pro Display", $sans;
+		color: var(--wp-components-color-gray-900, $gray-900);
 		display: flex;
 		align-items: center;
 		gap: 10px;
