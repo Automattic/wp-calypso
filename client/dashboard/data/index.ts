@@ -71,9 +71,6 @@ export const fetchSites = async (): Promise< Site[] > => {
 };
 
 export const fetchSite = async ( id: string ): Promise< Site > => {
-	if ( ! id ) {
-		return Promise.reject( new Error( 'Site ID is undefined' ) );
-	}
 	return await wpcom.req.get(
 		{
 			path: `/sites/${ id }?http_envelope=1`,
@@ -84,9 +81,6 @@ export const fetchSite = async ( id: string ): Promise< Site > => {
 };
 
 export const fetchSiteMediaStorage = async ( id: string ): Promise< MediaStorage > => {
-	if ( ! id ) {
-		return Promise.reject( new Error( 'Site ID is undefined' ) );
-	}
 	const mediaStorage = await wpcom.req.get( {
 		path: `/sites/${ id }/media-storage`,
 		apiVersion: '1.1',
@@ -101,9 +95,6 @@ export const fetchSiteMediaStorage = async ( id: string ): Promise< MediaStorage
 export const fetchSiteMonitorUptime = async (
 	id: string
 ): Promise< MonitorUptime | undefined > => {
-	if ( ! id ) {
-		return Promise.reject( new Error( 'Site ID is undefined' ) );
-	}
 	return wpcom.req.get(
 		{
 			path: `/sites/${ id }/jetpack-monitor-uptime`,
@@ -114,9 +105,6 @@ export const fetchSiteMonitorUptime = async (
 };
 
 export const fetchPHPVersion = async ( id: string ): Promise< string | undefined > => {
-	if ( ! id ) {
-		return Promise.reject( new Error( 'Site ID is undefined' ) );
-	}
 	// TODO: check request in different contexts.. Also do we show this only for atomic sites?
 	// TODO: find out what check is needed before this request to avoid 403 errors.
 	return wpcom.req.get( {
@@ -126,9 +114,6 @@ export const fetchPHPVersion = async ( id: string ): Promise< string | undefined
 };
 
 export const fetchCurrentPlan = async ( id: string ): Promise< Plan > => {
-	if ( ! id ) {
-		return Promise.reject( new Error( 'Site ID is undefined' ) );
-	}
 	const plans: Record< string, Plan > = await wpcom.req.get( {
 		path: `/sites/${ id }/plans`,
 		apiVersion: '1.3',
@@ -141,10 +126,6 @@ export const fetchCurrentPlan = async ( id: string ): Promise< Plan > => {
 };
 
 export const fetchSiteEngagementStats = async ( id: string ) => {
-	if ( ! id ) {
-		return Promise.reject( new Error( 'Site ID is undefined' ) );
-	}
-
 	const response = await wpcom.req.get(
 		{ path: `/sites/${ id }/stats/visits` },
 		{
