@@ -133,6 +133,7 @@ export default function PluginsListDataViews( {
 							} );
 						}
 						setIsFilteringUpdates( ! isFilteringUpdates );
+						recordTracksEvent( 'calypso_plugins_list_pending_update_filter_click' );
 					} }
 				>
 					{ translate( 'Pending update (%s)', { args: [ pluginUpdateCount ] } ) }
