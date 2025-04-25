@@ -375,17 +375,6 @@ const webpackConfig = {
 				res.request = 'calypso/components/empty-component';
 			}
 		} ),
-		/*
-		 * Local storage used to throw errors in Safari private mode, but that's no longer the case in Safari >=11.
-		 */
-		...( browserslistEnv === 'evergreen'
-			? [
-					new webpack.NormalModuleReplacementPlugin(
-						/^calypso[/\\]lib[/\\]local-storage-polyfill$/,
-						'lodash-es/noop'
-					),
-			  ]
-			: [] ),
 
 		/*
 		 * Replace `lodash` with `lodash-es`
