@@ -343,7 +343,7 @@ const DomainsStep: Step< {
 			stepContent={ <div className="domains__content">{ renderContent() }</div> }
 			recordTracksEvent={ recordTracksEvent }
 			goBack={ () => handleGoBack( goBack ) }
-			goNext={ () => submit?.() }
+			goNext={ () => submit?.( undefined ) }
 			formattedHeader={
 				<FormattedHeader
 					id="domains-header"
