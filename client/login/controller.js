@@ -341,7 +341,7 @@ export async function jetpackGoogleAuthCallback( context, next ) {
 			redirect_uri: redirectUri,
 			client_id: config( 'wpcom_signup_id' ),
 			client_secret: config( 'wpcom_signup_key' ),
-			state: state.wpcomNonce, // State is nonce in this request
+			state,
 		} );
 
 		const { access_token, id_token } = response.body.data;
