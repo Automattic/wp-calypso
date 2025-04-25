@@ -38,20 +38,7 @@ const NavigationHeader: React.FC< HeaderProps > = ( {
 	title,
 	titleLogo,
 	backLinkProps,
-	titleElement = (
-		<h1 className="calypso-navigation-header__title">
-			{ titleLogo && (
-				<span className="calypso-navigation-header__title-logo" aria-hidden="true">
-					{ titleLogo }
-				</span>
-			) }
-			{ title && titleLogo ? (
-				<span className="calypso-navigation-header__title-text">{ title }</span>
-			) : (
-				title
-			) }
-		</h1>
-	),
+	titleElement,
 	headElement = backLinkProps?.url && (
 		<a
 			className="calypso-navigation-header__back-link"
@@ -70,6 +57,23 @@ const NavigationHeader: React.FC< HeaderProps > = ( {
 	hasScreenOptionsTab,
 	...rest
 } ) => {
+	const defaultTitleElement = (
+		<h1 className="calypso-navigation-header__title">
+			{ titleLogo && (
+				<span className="calypso-navigation-header__title-logo" aria-hidden="true">
+					{ titleLogo }
+				</span>
+			) }
+			{ title && titleLogo ? (
+				<span className="calypso-navigation-header__title-text">{ title }</span>
+			) : (
+				title
+			) }
+		</h1>
+	);
+
+	const finalTitleElement = titleElement ?? defaultTitleElement;
+
 	return (
 		<header
 			className={ clsx( 'calypso-navigation-header', 'navigation-header', className, {
@@ -79,7 +83,7 @@ const NavigationHeader: React.FC< HeaderProps > = ( {
 		>
 			<div className="calypso-navigation-header__head">{ headElement }</div>
 			<div className="calypso-navigation-header__body">
-				<div className="calypso-navigation-header__left-section">{ titleElement }</div>
+				<div className="calypso-navigation-header__left-section">{ finalTitleElement }</div>
 				{ rightSection && (
 					<div className="calypso-navigation-header__right-section">{ rightSection }</div>
 				) }
