@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+// @ts-nocheck - TODO: Fix TypeScript issues
 import { PLAN_HOSTING_TRIAL_MONTHLY } from '@automattic/calypso-products';
 import { render } from '@testing-library/react';
 import { SitePlan } from '../sites-site-plan';

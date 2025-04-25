@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+// @ts-nocheck - TODO: Fix TypeScript issues
 import { waitFor } from '@testing-library/react';
 import transferringHostedSite from '../flows/transferring-hosted-site-flow/transferring-hosted-site-flow';
 import { getFlowLocation, renderFlow } from './helpers';

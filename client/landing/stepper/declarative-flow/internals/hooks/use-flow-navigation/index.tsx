@@ -10,7 +10,7 @@ import { ONBOARD_STORE, STEPPER_INTERNAL_STORE } from 'calypso/landing/stepper/s
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { PRIVATE_STEPS } from '../../steps';
-import type { Flow, Navigate, StepperStep } from '../../types';
+import type { Flow, Navigate } from '../../types';
 
 const useOnboardingIntent = () => {
 	const intent = useSelect(
@@ -21,7 +21,7 @@ const useOnboardingIntent = () => {
 };
 
 interface FlowNavigation {
-	navigate: Navigate< StepperStep[] >;
+	navigate: Navigate;
 	params: {
 		flow: string | null;
 		step: string | null;
@@ -46,7 +46,7 @@ export const useFlowNavigation = ( flow: Flow ): FlowNavigation => {
 	const locale = useFlowLocale();
 	const { siteId, siteSlug } = useSiteData();
 
-	const customNavigate = useCallback< Navigate< StepperStep[] > >(
+	const customNavigate = useCallback< Navigate >(
 		( nextStep: string, extraData = {}, replace = false ) => {
 			// If the user is not logged in, and the next step requires a logged in user, redirect to the login step.
 			if (

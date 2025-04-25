@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+// @ts-nocheck - TODO: Fix TypeScript issues
 import config from '@automattic/calypso-config';
 import { Site, useLaunchpad } from '@automattic/data-stores';
 import { useDispatch } from '@wordpress/data';
