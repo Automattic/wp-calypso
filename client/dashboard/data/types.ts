@@ -127,13 +127,6 @@ export interface MonitorUptime {
 	[ key: string ]: { status: string; downtime_in_minutes?: number };
 }
 
-export interface EngagementStats {
-	visitors: { previous: number; current: number };
-	views: { previous: number; current: number };
-	likes: { previous: number; current: number };
-	comments: { previous: number; current: number };
-}
-
 export type PerformanceReport = {
 	overall_score: number;
 };

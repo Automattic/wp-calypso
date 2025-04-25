@@ -8,20 +8,18 @@ import {
 	Card,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { wordpress } from '@wordpress/icons';
+import { wordpress, people, seen, starEmpty, comment } from '@wordpress/icons';
 import { siteQuery } from '../app/queries';
 import { siteRoute } from '../app/router';
+import OverviewCard from '../overview-card';
 import PageLayout from '../page-layout';
-import CommentsCard from './comments-card';
-import LikesCard from './likes-card';
 import OverviewSection from './overview-section';
 import PerformanceCards from './performance-cards';
 import Sidebar from './sidebar';
 import StorageCard from './storage-card';
 import SubscribersCard from './subscribers-card';
+import TrendComparisonBadge from './trend-comparizon-badge';
 import UptimeCard from './uptime-card';
-import ViewsCard from './views-card';
-import VisitorsCard from './visitors-card';
 
 import './style.scss';
 
@@ -78,10 +76,35 @@ function SiteOverview() {
 						</VStack>
 					</Card>
 					<OverviewSection title={ __( 'Engagement' ) } actions={ [] }>
-						<VisitorsCard engagementStats={ engagementStats } />
-						<ViewsCard engagementStats={ engagementStats } />
-						<LikesCard engagementStats={ engagementStats } />
-						<CommentsCard engagementStats={ engagementStats } />
+						{ engagementStats.data
+							.reduce(
+								( accumulator, [ , visitors, views, likes, comments ], index, data ) => {
+									const key = index < data.length / 2 ? 'previous' : 'current';
+									accumulator[ 0 ][ key ] += visitors;
+									accumulator[ 1 ][ key ] += views;
+									accumulator[ 2 ][ key ] += likes;
+									accumulator[ 3 ][ key ] += comments;
+									return accumulator;
+								},
+								[
+									{ previous: 0, current: 0, icon: people, title: __( 'Visitors' ) },
+									{ previous: 0, current: 0, icon: seen, title: __( 'Views' ) },
+									{ previous: 0, current: 0, icon: starEmpty, title: __( 'Likes' ) },
+									{ previous: 0, current: 0, icon: comment, title: __( 'Comments' ) },
+								]
+							)
+							.map( ( { current, previous, icon, title } ) => (
+								<OverviewCard
+									key={ title }
+									title={ title }
+									icon={ icon }
+									heading={ `${ current }` }
+									metaText={ __( 'Past 7 days' ) }
+									isLink
+								>
+									<TrendComparisonBadge count={ current } previousCount={ previous } />
+								</OverviewCard>
+							) ) }
 						<SubscribersCard subscribers={ site.subscribers_count } />
 					</OverviewSection>
 					<OverviewSection title={ __( 'Site health' ) } actions={ [] }>
