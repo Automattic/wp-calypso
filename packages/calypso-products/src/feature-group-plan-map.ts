@@ -221,6 +221,7 @@ export const featureGroups: Partial< FeatureGroupMap > = {
 		slug: FEATURE_GROUP_DEVELOPER_TOOLS,
 		getTitle: () => i18n.translate( 'Developer tools' ),
 		getFeatures: () => [
+			FEATURE_DEV_TOOLS,
 			FEATURE_DEV_TOOLS_SSH,
 			FEATURE_DEV_TOOLS_GIT,
 			FEATURE_SITE_STAGING_SITES,
