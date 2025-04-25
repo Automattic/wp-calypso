@@ -1071,14 +1071,8 @@ fun e2ePreReleaseBuildType( targetDevice: String, buildUuid: String ): E2EBuildT
 			param("env.VIEWPORT_NAME", targetDevice)
 			param("env.CALYPSO_BASE_URL", "https://wpcalypso.wordpress.com")
 			param("env.ALLURE_RESULTS_PATH", "allure-results")
-			// Skip known failing tests for mobile
-			if (targetDevice == "mobile") {
-				param("env.TEST_EXCLUDE_PATTERN", """(
-					.*gutenberg-editor.*|
-					.*jetpack-connect.*|
-					.*media-editor.*
-				)""")
-			}
+			// TODO: After running all tests on mobile and identifying actual failures,
+			// add TEST_EXCLUDE_PATTERN here with proper documentation of why each test is excluded
 		},
 		buildFeatures = {
 			notifications {
