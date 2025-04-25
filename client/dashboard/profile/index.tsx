@@ -192,11 +192,6 @@ export default function Profile() {
 									</Text>
 								</div>
 							</HStack>
-						</CardBody>
-					</Card>
-
-					<Card>
-						<CardBody>
 							<VStack spacing={ 4 } alignment="left">
 								<DataForm< ProfileType >
 									data={ data }
