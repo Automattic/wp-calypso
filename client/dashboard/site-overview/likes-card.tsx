@@ -5,16 +5,16 @@ import TrendComparisonBadge from './trend-comparizon-badge';
 import type { EngagementStats } from '../data/types';
 
 export default function LikesCard( { engagementStats }: { engagementStats: EngagementStats } ) {
-	const { currentData, previousData } = engagementStats;
+	const { likes } = engagementStats;
 	return (
 		<OverviewCard
 			title={ __( 'Likes' ) }
 			icon={ starEmpty }
-			heading={ `${ currentData.likes }` }
+			heading={ `${ likes.current }` }
 			metaText={ __( 'Past 7 days' ) }
 			isLink
 		>
-			<TrendComparisonBadge count={ currentData.likes } previousCount={ previousData.likes } />
+			<TrendComparisonBadge count={ likes.current } previousCount={ likes.previous } />
 		</OverviewCard>
 	);
 }

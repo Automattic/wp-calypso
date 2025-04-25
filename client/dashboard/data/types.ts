@@ -127,15 +127,11 @@ export interface MonitorUptime {
 	[ key: string ]: { status: string; downtime_in_minutes?: number };
 }
 
-export interface EngagementStatsDataPoint {
-	visitors: number;
-	views: number;
-	likes: number;
-	comments: number;
-}
 export interface EngagementStats {
-	currentData: EngagementStatsDataPoint;
-	previousData: EngagementStatsDataPoint;
+	visitors: { previous: number; current: number };
+	views: { previous: number; current: number };
+	likes: { previous: number; current: number };
+	comments: { previous: number; current: number };
 }
 
 export type PerformanceReport = {

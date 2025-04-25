@@ -5,19 +5,16 @@ import TrendComparisonBadge from './trend-comparizon-badge';
 import type { EngagementStats } from '../data/types';
 
 export default function VisitorsCard( { engagementStats }: { engagementStats: EngagementStats } ) {
-	const { currentData, previousData } = engagementStats;
+	const { visitors } = engagementStats;
 	return (
 		<OverviewCard
 			title={ __( 'Visitors' ) }
 			icon={ people }
-			heading={ `${ currentData.visitors }` }
+			heading={ `${ visitors.current }` }
 			metaText={ __( 'Past 7 days' ) }
 			isLink
 		>
-			<TrendComparisonBadge
-				count={ currentData.visitors }
-				previousCount={ previousData.visitors }
-			/>
+			<TrendComparisonBadge count={ visitors.current } previousCount={ visitors.previous } />
 		</OverviewCard>
 	);
 }
