@@ -1062,9 +1062,45 @@ fun e2ePreReleaseBuildType( targetDevice: String, buildUuid: String ): E2EBuildT
 		buildUuid = buildUuid,
 		buildName = "Pre-Release E2E Tests ($targetDevice)",
 		buildDescription = "Runs a pre-release suite of E2E tests against trunk on staging, intended to be run after PR merge, but before deployment to production. Will run on $targetDevice size.",
-		testGroup = "calypso-pr",
-		buildFeatures = {
+		testGroup = "calypso-release",
+		buildParams = {
+			param("env.NODE_CONFIG_ENV", "test")
+			param("env.PLAYWRIGHT_BROWSERS_PATH", "0")
+			param("env.HEADLESS", "true")
+			param("env.LOCALE", "en")
+			param("env.VIEWPORT_NAME", targetDevice)
+			param("env.CALYPSO_BASE_URL", "https://wpcalypso.wordpress.com")
+			param("env.ALLURE_RESULTS_PATH", "allure-results")
+			// Skip known failing tests for mobile
+			if (targetDevice == "mobile") {
+				param("env.TEST_EXCLUDE_PATTERN", """(
+					.*gutenberg-editor.*|
+					.*jetpack-connect.*|
+					.*media-editor.*
+				)""")
+			}
 		},
+		buildFeatures = {
+			notifications {
+				notifierSettings = slackNotifier {
+					connection = "PROJECT_EXT_11"
+					sendTo = "#e2eflowtesting-notif"
+					messageFormat = verboseMessageFormat {
+						addStatusText = true
+					}
+				}
+				branchFilter = "+:<default>"
+				buildFailedToStart = true
+				buildFailed = true
+				buildFinishedSuccessfully = false
+				buildProbablyHanging = true
+			}
+		},
+		buildDependencies = {
+			snapshot(PreReleaseE2ETests) {
+				onDependencyFailure = FailureAction.FAIL_TO_START
+			}
+		}
 	)
 }
 
