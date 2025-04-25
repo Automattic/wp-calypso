@@ -120,7 +120,6 @@ const siteMigration: FlowV2< typeof initialize > = {
 			return window.location.assign( addQueryArgs( { sessionId }, to ) );
 		};
 
-		type StepSlug = typeof currentStep;
 		const recordSignupComplete = useRecordSignupComplete( flowName );
 
 		// Call triggerGuidesForStep for the current step
@@ -155,14 +154,14 @@ const siteMigration: FlowV2< typeof initialize > = {
 							);
 						}
 
-						return navigate( paths.importOrMigratePath( { from, siteSlug, siteId } ) as StepSlug );
+						return navigate( paths.importOrMigratePath( { from, siteSlug, siteId } ) );
 					}
 
 					if ( userHasOtherWPComSites ) {
-						return navigate( paths.sitePickerPath( { from, platform } ) as StepSlug );
+						return navigate( paths.sitePickerPath( { from, platform } ) );
 					}
 
-					return navigate( paths.siteCreationPath( { from, platform } ) as StepSlug );
+					return navigate( paths.siteCreationPath( { from, platform } ) );
 				}
 
 				case STEPS.PICK_SITE.slug: {
@@ -184,7 +183,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 									from: fromQueryParam,
 									platform: platformQueryParam || 'unknown',
 									...queryParams,
-								} ) as StepSlug
+								} )
 							);
 						}
 						case 'select-site': {
@@ -196,7 +195,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 										siteSlug,
 										siteId,
 										from: fromQueryParam,
-									} ) as StepSlug
+									} )
 								);
 							}
 
@@ -218,14 +217,14 @@ const siteMigration: FlowV2< typeof initialize > = {
 								);
 							}
 
-							return navigate( paths.importOrMigratePath( { siteSlug, siteId } ) as StepSlug );
+							return navigate( paths.importOrMigratePath( { siteSlug, siteId } ) );
 						}
 						case 'create-site':
 							return navigate(
 								paths.siteCreationPath( {
 									from: fromQueryParam,
 									platform: platformQueryParam,
-								} ) as StepSlug
+								} )
 							);
 					}
 				}
@@ -236,7 +235,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 							from: fromQueryParam,
 							platform: platformQueryParam,
 							action: actionQueryParam,
-						} ) as StepSlug
+						} )
 					);
 				}
 
@@ -257,9 +256,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 
 					//NOTE: There are links pointing to this step with the action=migrate query param, so we need to ignore the platform
 					if ( actionQueryParam === 'migrate' ) {
-						return navigate(
-							paths.howToMigratePath( { siteId, siteSlug, from: fromQueryParam } ) as StepSlug
-						);
+						return navigate( paths.howToMigratePath( { siteId, siteSlug, from: fromQueryParam } ) );
 					}
 
 					if (
@@ -286,7 +283,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 					}
 
 					return navigate(
-						paths.importOrMigratePath( { from: fromQueryParam, siteSlug, siteId } ) as StepSlug
+						paths.importOrMigratePath( { from: fromQueryParam, siteSlug, siteId } )
 					);
 				}
 
@@ -315,9 +312,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 						);
 					}
 
-					return navigate(
-						paths.howToMigratePath( { siteId, siteSlug, from: fromQueryParam } ) as StepSlug
-					);
+					return navigate( paths.howToMigratePath( { siteId, siteSlug, from: fromQueryParam } ) );
 				}
 
 				case STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug: {
@@ -330,19 +325,15 @@ const siteMigration: FlowV2< typeof initialize > = {
 								from: fromQueryParam,
 								destination: providedDependencies?.destination,
 								how: providedDependencies?.how as string,
-							} ) as StepSlug
+							} )
 						);
 					}
 
 					if ( providedDependencies?.how === HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME ) {
-						return navigate(
-							paths.credentialsPath( { siteId, from: fromQueryParam, siteSlug } ) as StepSlug
-						);
+						return navigate( paths.credentialsPath( { siteId, from: fromQueryParam, siteSlug } ) );
 					}
 
-					return navigate(
-						paths.instructionsPath( { siteId, siteSlug, from: fromQueryParam } ) as StepSlug
-					);
+					return navigate( paths.instructionsPath( { siteId, siteSlug, from: fromQueryParam } ) );
 				}
 
 				case STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug: {
@@ -385,9 +376,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 				case STEPS.SITE_MIGRATION_INSTRUCTIONS.slug: {
 					// User decided to ask for an assisted migration - try to collect credentials.
 					if ( providedDependencies?.how === HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME ) {
-						return navigate(
-							paths.credentialsPath( { siteId, from: fromQueryParam, siteSlug } ) as StepSlug
-						);
+						return navigate( paths.credentialsPath( { siteId, from: fromQueryParam, siteSlug } ) );
 					}
 					return exitFlow( paths.calypsoOverviewPath( { ref: 'site-migration' }, { siteSlug } ) );
 				}
@@ -405,7 +394,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 								siteId,
 								from: from || fromQueryParam,
 								siteSlug,
-							} ) as StepSlug
+							} )
 						);
 					}
 
@@ -416,7 +405,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 								from: from || fromQueryParam,
 								siteSlug,
 								platform,
-							} ) as StepSlug
+							} )
 						);
 					}
 
@@ -427,7 +416,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 								from: from || fromQueryParam,
 								siteSlug,
 								authorizationUrl,
-							} ) as StepSlug
+							} )
 						);
 					}
 
@@ -437,7 +426,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 								siteId,
 								from: from || fromQueryParam,
 								siteSlug,
-							} ) as StepSlug
+							} )
 						);
 					}
 
@@ -455,7 +444,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 							from: fromQueryParam,
 							siteSlug,
 							preventTicketCreation: true,
-						} ) as StepSlug
+						} )
 					);
 				}
 
@@ -472,7 +461,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 					}
 
 					return navigate(
-						paths.supportInstructionsPath( { siteId, from: fromQueryParam, siteSlug } ) as StepSlug
+						paths.supportInstructionsPath( { siteId, from: fromQueryParam, siteSlug } )
 					);
 				}
 
@@ -493,7 +482,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 								authorizationUrl,
 								backTo: STEPS.SITE_MIGRATION_APPLICATION_PASSWORD_AUTHORIZATION.slug,
 								from: fromQueryParam,
-							} ) as StepSlug
+							} )
 						);
 					}
 
@@ -537,11 +526,11 @@ const siteMigration: FlowV2< typeof initialize > = {
 						return exitFlow( '/start' );
 					}
 
-					return navigate( paths.identifyPath( { from: fromQueryParam } ) as StepSlug );
+					return navigate( paths.identifyPath( { from: fromQueryParam } ) );
 				}
 
 				case STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug: {
-					return navigate( paths.importOrMigratePath( { siteSlug, siteId } ) as StepSlug );
+					return navigate( paths.importOrMigratePath( { siteSlug, siteId } ) );
 				}
 
 				case STEPS.SITE_MIGRATION_IDENTIFY.slug: {
@@ -565,7 +554,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 							siteSlug,
 							siteId,
 							from: fromQueryParam,
-						} ) as StepSlug
+						} )
 					);
 				}
 
@@ -587,7 +576,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 							siteSlug,
 							siteId,
 							from: fromQueryParam,
-						} ) as StepSlug
+						} )
 					);
 				}
 
@@ -597,7 +586,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 							siteId,
 							siteSlug,
 							from: fromQueryParam,
-						} ) as StepSlug
+						} )
 					);
 				}
 
@@ -613,7 +602,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 								siteSlug,
 								from: fromQueryParam,
 								...queryParams,
-							} ) as StepSlug
+							} )
 						);
 					}
 
@@ -622,7 +611,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 							siteId,
 							siteSlug,
 							from: fromQueryParam,
-						} ) as StepSlug
+						} )
 					);
 				}
 
@@ -635,7 +624,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 							siteSlug,
 							from: fromQueryParam,
 							...queryParams,
-						} ) as StepSlug
+						} )
 					);
 				}
 
@@ -648,7 +637,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 							siteSlug,
 							from: fromQueryParam,
 							...queryParams,
-						} ) as StepSlug
+						} )
 					);
 				}
 			}
