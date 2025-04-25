@@ -119,13 +119,15 @@ export const MetricsInsight: React.FC< MetricsInsightProps > = ( props ) => {
 	const isLoadingLlmAnswer = isLoading || ! isFetched;
 
 	const { data } = useUrlPerformanceInsightsQuery( url, hash );
-	const isWpscanLoading = data?.wpscan?.status !== 'completed';
+	const wpscanErrors = data?.wpscan?.errors;
+	const hasWpscanErrors = wpscanErrors && Object.keys( wpscanErrors ).length > 0;
+	const isWpscanLoading = data?.wpscan?.status !== 'completed' && ! hasWpscanErrors;
 
 	useEffect( () => {
-		if ( ! isWpscanLoading && cardOpen ) {
+		if ( ( ! isWpscanLoading || hasWpscanErrors ) && cardOpen ) {
 			setRetrieveInsight( true );
 		}
-	}, [ isWpscanLoading, cardOpen ] );
+	}, [ isWpscanLoading, hasWpscanErrors, cardOpen ] );
 
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const site = useSelector( getSelectedSite );
