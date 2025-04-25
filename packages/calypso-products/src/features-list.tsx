@@ -1940,14 +1940,15 @@ const FEATURES_LIST: FeatureList = {
 	[ FEATURE_DEV_TOOLS_SSH ]: {
 		getSlug: () => FEATURE_DEV_TOOLS_SSH,
 		getTitle: () => i18n.translate( 'SFTP/SSH, WP-CLI' ),
-		getDescription: () =>
-			i18n.translate( 'Use familiar developer tools to manage and deploy your site.' ),
+		getDescription: () => i18n.translate( 'Access your site via SSH and manage it with WP-CLI.' ),
 	},
 	[ FEATURE_DEV_TOOLS_GIT ]: {
 		getSlug: () => FEATURE_DEV_TOOLS_GIT,
 		getTitle: () => i18n.translate( 'Git commands and GitHub Deployments' ),
 		getDescription: () =>
-			i18n.translate( 'Use familiar developer tools to manage and deploy your site.' ),
+			i18n.translate(
+				'Deploy from GitHub with a few clicks. Simple and advanced deployment modes supported.'
+			),
 	},
 	[ FEATURE_SITE_STAGING_SITES ]: {
 		getSlug: () => FEATURE_SITE_STAGING_SITES,
