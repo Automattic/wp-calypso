@@ -47,38 +47,11 @@ function Card( {
 export const Default: StoryObj< typeof Grid > = {
 	args: {
 		layout: [
-			{ key: 'a', x: 0, y: 0, width: 1 },
-			{ key: 'b', x: 1, y: 0, width: 3 },
-			{ key: 'c', x: 4, y: 0, width: 1 },
-		],
-		columns: 6,
-		children: [
-			<Card key="a" color="#f44336">
-				A
-			</Card>,
-			<Card key="b" color="#2196f3">
-				B
-			</Card>,
-			<Card key="c" color="#4caf50">
-				C
-			</Card>,
-		],
-	},
-};
-
-/**
- * Basic usage example of the Grid component with implicit positions
- */
-export const Implicit: StoryObj< typeof Grid > = {
-	args: {
-		layout: [
 			{ key: 'a', width: 1 },
 			{ key: 'b', width: 3 },
 			{ key: 'c', width: 1 },
 		],
 		columns: 6,
-		spacing: 2,
-		rowHeight: '100px',
 		children: [
 			<Card key="a" color="#f44336">
 				A
@@ -94,39 +67,49 @@ export const Implicit: StoryObj< typeof Grid > = {
 };
 
 /**
- * Multi-row grid layout example
+ * Responsive grid that reflows based on container width.
+ * Resize the storybook window to see it in action.
  */
-export const MultiRowLayout: StoryObj< typeof Grid > = {
+export const ResponsiveGrid: StoryObj< typeof Grid > = {
 	args: {
 		layout: [
-			{ key: 'a', x: 0, y: 0, width: 2, height: 1 },
-			{ key: 'b', x: 2, y: 0, width: 3, height: 2 },
-			{ key: 'c', x: 5, y: 0, width: 1, height: 1 },
-			{ key: 'd', x: 0, y: 1, width: 2, height: 1 },
-			{ key: 'e', x: 5, y: 1, width: 1, height: 1 },
+			{ key: 'a', width: 2, height: 1, order: 1 },
+			{ key: 'b', width: 2, height: 1, order: 2 },
+			{ key: 'c', width: 2, height: 1, order: 3 },
+			{ key: 'd', width: 4, height: 1, order: 4 },
+			{ key: 'e', width: 2, height: 1, order: 5 },
+			{ key: 'f', height: 2, order: 6, fullWidth: true },
 		],
-		columns: 6,
-		spacing: 2,
 		rowHeight: '100px',
+		minColumnWidth: 160,
 		children: [
 			<Card key="a" color="#f44336">
-				A
+				Card A
 			</Card>,
 			<Card key="b" color="#2196f3">
-				B
+				Card B
 			</Card>,
 			<Card key="c" color="#4caf50">
-				C
+				Card C
 			</Card>,
 			<Card key="d" color="#ff9800">
-				D
+				Card D
 			</Card>,
 			<Card key="e" color="#9c27b0">
-				E
+				Card E
 			</Card>,
-			<Card key="f" color="black">
-				F
+			<Card key="f" color="#607d8b">
+				Full Width Card F
 			</Card>,
 		],
+	},
+	parameters: {
+		docs: {
+			description: {
+				story:
+					'This example demonstrates the responsive behavior of the Grid component. The grid will automatically adjust the number of columns based on the container width. Resize the browser window to see it in action.',
+			},
+		},
+		layout: '',
 	},
 };

@@ -3,6 +3,7 @@ import { useAppContext } from '../app/context';
 import HeaderBar from '../header-bar';
 import PrimaryMenu from '../primary-menu';
 import PrimaryMenuMobile from '../primary-menu-mobile';
+import RouterLinkButton from '../router-link-button';
 import SecondaryMenu from '../secondary-menu';
 
 function Header() {
@@ -19,7 +20,7 @@ function Header() {
 
 			{ Logo && (
 				<div style={ { display: 'flex', alignItems: 'center' } }>
-					<Logo />
+					<RouterLinkButton icon={ <Logo /> } to="/" />
 				</div>
 			) }
 

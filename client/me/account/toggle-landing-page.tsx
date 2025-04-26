@@ -1,5 +1,5 @@
 import { RadioControl } from '@wordpress/components';
-import { useTranslate } from 'i18n-calypso';
+import { fixMe, useTranslate } from 'i18n-calypso';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
@@ -66,14 +66,20 @@ function ToggleLandingPageSettings() {
 		}
 	}
 
+	const primarySiteLabel = fixMe( {
+		text: 'Primary site dashboard',
+		newCopy: translate( 'Primary site dashboard' ),
+		oldCopy: translate( 'My primary site' ),
+	} ) as string;
+
 	return (
 		<div>
 			<RadioControl
 				selected={ selectedOption }
 				options={ [
-					{ label: translate( 'My primary site' ), value: 'default' },
-					{ label: translate( 'All my sites' ), value: 'my-sites' },
-					{ label: translate( 'The Reader' ), value: 'reader' },
+					{ label: primarySiteLabel, value: 'default' },
+					{ label: translate( 'Sites' ), value: 'my-sites' },
+					{ label: translate( 'Reader' ), value: 'reader' },
 				] }
 				onChange={ handlePreferenceChange }
 				disabled={ isSaving }

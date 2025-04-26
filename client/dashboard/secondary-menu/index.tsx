@@ -1,4 +1,4 @@
-import { useNavigate, useRouter } from '@tanstack/react-router';
+import { useNavigate } from '@tanstack/react-router';
 import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
@@ -15,33 +15,13 @@ import { useAppContext } from '../app/context';
 import { useAuth } from '../auth';
 import { useOpenCommandPalette } from '../command-palette/utils';
 import MenuDivider from '../menu-divider';
-import './style.scss';
+import RouterLinkMenuItem from '../router-link-menu-item';
 
-function NavMenuItem( { to, children }: { to: string; children: React.ReactNode } ) {
-	const navigate = useNavigate();
-	const router = useRouter();
-	const href = router.buildLocation( {
-		to,
-	} ).href;
-	return (
-		<MenuItem
-			// @ts-expect-error -- The MenuItem component types are not correct, href is a valid prop.
-			href={ href }
-			onClick={ ( e ) => {
-				e.preventDefault();
-				navigate( { to } );
-			} }
-			__next40pxDefaultSize
-		>
-			{ children }
-		</MenuItem>
-	);
-}
+import './style.scss';
 
 // User profile dropdown component
 function UserProfile() {
 	const { user } = useAuth();
-	const { supports } = useAppContext();
 	const openCommandPalette = useOpenCommandPalette();
 
 	return (
@@ -77,13 +57,7 @@ function UserProfile() {
 						<Text variant="muted">@{ user.username }</Text>
 					</VStack>
 					<MenuGroup>
-						<NavMenuItem to="/me/profile">{ __( 'Profile' ) }</NavMenuItem>
-						<NavMenuItem to="/me/billing">{ __( 'Billing' ) }</NavMenuItem>
-						<NavMenuItem to="/me/security">{ __( 'Security' ) }</NavMenuItem>
-						<NavMenuItem to="/me/privacy">{ __( 'Privacy' ) }</NavMenuItem>
-						{ supports.notifications && (
-							<NavMenuItem to="/me/notifications">{ __( 'Notifications' ) }</NavMenuItem>
-						) }
+						<RouterLinkMenuItem to="/me/profile">{ __( 'Account' ) }</RouterLinkMenuItem>
 					</MenuGroup>
 					<MenuGroup>
 						<MenuItem

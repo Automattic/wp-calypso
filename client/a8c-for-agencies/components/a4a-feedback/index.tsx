@@ -1,11 +1,8 @@
-import { FormLabel } from '@automattic/components';
+import { FormLabel, ExperienceControl } from '@automattic/components';
 import { Button, CheckboxControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { ChangeEvent, useState } from 'react';
 import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
-import IconBad from 'calypso/assets/images/a8c-for-agencies/feedback/bad.svg';
-import IconGood from 'calypso/assets/images/a8c-for-agencies/feedback/good.svg';
-import IconNeutral from 'calypso/assets/images/a8c-for-agencies/feedback/neutral.svg';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormTextarea from 'calypso/components/forms/form-textarea';
 import LayoutBody from 'calypso/layout/hosting-dashboard/body';
@@ -46,31 +43,11 @@ export function A4AFeedback( { type }: { type: FeedbackType } ) {
 							<div className="a4a-feedback__question-details">
 								{ translate( 'Share your feedback' ) }
 							</div>
-							<div className="a4a-feedback__experience-selector">
-								<div className="a4a-feedback__experience-selector-label">
-									{ translate( 'What was your experience like?' ) }
-								</div>
-								<div className="a4a-feedback__experience-selector-buttons">
-									<Button
-										variant={ experience === 'good' ? 'primary' : 'secondary' }
-										onClick={ () => setExperience( 'good' ) }
-									>
-										<img src={ IconGood } alt="Good" />
-									</Button>
-									<Button
-										variant={ experience === 'neutral' ? 'primary' : 'secondary' }
-										onClick={ () => setExperience( 'neutral' ) }
-									>
-										<img src={ IconNeutral } alt="Neutral" />
-									</Button>
-									<Button
-										variant={ experience === 'bad' ? 'primary' : 'secondary' }
-										onClick={ () => setExperience( 'bad' ) }
-									>
-										<img src={ IconBad } alt="Bad" />
-									</Button>
-								</div>
-							</div>
+							<ExperienceControl
+								label={ translate( 'What was your experience like?' ) }
+								onChange={ ( experience ) => setExperience( experience ) }
+								selectedExperience={ experience }
+							/>
 							{ suggestion && (
 								<FormFieldset>
 									<FormLabel className="a4a-feedback__comments-label" htmlFor="suggestion">

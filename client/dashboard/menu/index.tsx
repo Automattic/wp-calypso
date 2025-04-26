@@ -1,33 +1,18 @@
-import { useNavigate, useMatchRoute, useRouter } from '@tanstack/react-router';
-import { __experimentalHStack as HStack, Button } from '@wordpress/components';
-import clsx from 'clsx';
+import { __experimentalHStack as HStack } from '@wordpress/components';
+import RouterLinkButton from '../router-link-button';
+
 import './style.scss';
 
 function MenuItem( { to, children }: { to: string; children: React.ReactNode } ) {
-	const navigate = useNavigate();
-	const matchRoute = useMatchRoute();
-	const isActive = matchRoute( { to } );
-	const router = useRouter();
-	const href = router.buildLocation( {
-		to,
-	} ).href;
-	const handleClick = ( e: React.MouseEvent ) => {
-		e.preventDefault();
-		navigate( { to } );
-	};
-
 	return (
-		<Button
-			className={ clsx( 'dashboard-menu__item', {
-				'is-active': isActive,
-			} ) }
+		<RouterLinkButton
+			className="dashboard-menu__item"
 			variant="tertiary"
-			href={ href }
-			onClick={ handleClick }
+			to={ to }
 			__next40pxDefaultSize
 		>
 			{ children }
-		</Button>
+		</RouterLinkButton>
 	);
 }
 

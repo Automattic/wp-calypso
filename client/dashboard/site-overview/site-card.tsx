@@ -8,6 +8,9 @@ import {
 } from '@wordpress/components';
 import { dateI18n } from '@wordpress/date';
 import { __, sprintf } from '@wordpress/i18n';
+import SitePreview from '../site-preview';
+import { isA8CSite } from '../utils/site-owner';
+import { getSiteStatusLabel } from '../utils/site-status';
 import type { Site, SiteDomain, Plan } from '../data/types';
 
 /**
@@ -24,19 +27,37 @@ export default function SiteCard( {
 	primaryDomain?: SiteDomain;
 	currentPlan: Plan;
 } ) {
-	const { options, url } = site;
-	const { software_version } = options;
+	const { options, URL: url, is_private } = site;
+	// If the site is a private A8C site, X-Frame-Options is set to same
+	// origin.
+	const iframeDisabled = isA8CSite( site ) && is_private;
 	return (
 		<Card>
 			<VStack spacing={ 6 }>
 				<div className="dashboard-site-overview__preview-image">
-					<img
-						src={ `https://s0.wp.com/mshots/v1/${ encodeURIComponent( url ) }?w=600&h=400` }
-						alt={ __( 'Site preview' ) }
-						width={ 300 }
-						height={ 200 }
-						style={ { display: 'block' } }
-					/>
+					{ iframeDisabled && (
+						<div
+							style={ {
+								width: '300px',
+								height: '200px',
+								fontSize: '24px',
+								background: 'var(--dashboard__background-color)',
+								display: 'flex',
+								alignItems: 'center',
+								justifyContent: 'center',
+							} }
+						>
+							{ __( 'A8C Private Site' ) }
+						</div>
+					) }
+					{ ! iframeDisabled && (
+						<div
+							className="dashboard-site-overview__preview-iframe"
+							style={ { width: '300px', height: '200px' } }
+						>
+							<SitePreview url={ url } scale={ 0.25 } />
+						</div>
+					) }
 				</div>
 				<VStack spacing={ 6 } className="site-card-contents">
 					{ primaryDomain && (
@@ -45,10 +66,12 @@ export default function SiteCard( {
 						</Field>
 					) }
 					<HStack justify="space-between">
-						<Field title={ __( 'Status' ) }>status here...</Field>
+						<Field title={ __( 'Status' ) }>{ getSiteStatusLabel( site ) }</Field>
 					</HStack>
 					<HStack justify="space-between">
-						<Field title={ __( 'WordPress' ) }>{ software_version }</Field>
+						{ options?.software_version && (
+							<Field title={ __( 'WordPress' ) }>{ options.software_version }</Field>
+						) }
 						{ phpVersion && <Field title={ __( 'PHP' ) }>{ phpVersion }</Field> }
 					</HStack>
 					<PlanDetails site={ site } currentPlan={ currentPlan } primaryDomain={ primaryDomain } />

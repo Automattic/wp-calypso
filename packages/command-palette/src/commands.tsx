@@ -490,7 +490,7 @@ export function useCommands() {
 			importSite: {
 				name: 'importSite',
 				label: __( 'Import site to WordPress.com', __i18n_text_domain__ ),
-				callback: commandNavigation( '/setup/hosted-site-migration?ref=command-palette' ),
+				callback: commandNavigation( '/setup/site-migration?ref=command-palette' ),
 				searchLabel: [
 					_x(
 						'Import site to WordPress.com',

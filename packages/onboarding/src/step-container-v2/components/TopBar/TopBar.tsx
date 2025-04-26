@@ -6,11 +6,12 @@ import './style.scss';
 interface TopBarProps {
 	leftElement?: ReactNode;
 	rightElement?: ReactNode;
+	logo?: ReactNode;
 }
 
-export const TopBar = ( { leftElement, rightElement }: TopBarProps ) => {
-	return (
-		<div className="step-container-v2__top-bar">
+export const TopBar = ( { leftElement, rightElement, logo }: TopBarProps ) => {
+	const defaultLogo = (
+		<>
 			<WordPressWordmark
 				className="step-container-v2__top-bar-wordpress-logo step-container-v2__top-bar-wordpress-logo--wordmark"
 				color="currentColor"
@@ -19,6 +20,11 @@ export const TopBar = ( { leftElement, rightElement }: TopBarProps ) => {
 				size={ 21 }
 				className="step-container-v2__top-bar-wordpress-logo step-container-v2__top-bar-wordpress-logo--logo"
 			/>
+		</>
+	);
+	return (
+		<div className="step-container-v2__top-bar">
+			{ logo ? logo : defaultLogo }
 
 			{ leftElement && (
 				<>

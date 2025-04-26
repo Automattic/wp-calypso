@@ -3,10 +3,12 @@ import { Button } from '@automattic/components';
 import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect } from 'react';
+import { CrmDownloadsContent } from 'calypso/components/crm-downloads/crm-downloads';
 import WooProductDownload from 'calypso/jetpack-cloud/sections/partner-portal/download-products-form/woo-product-download';
 import {
 	getProductSlugFromLicenseKey,
 	isWooCommerceProduct,
+	isJetpackCrmProduct,
 } from 'calypso/jetpack-cloud/sections/partner-portal/lib';
 import { partnerPortalBasePath } from 'calypso/lib/jetpack/paths';
 import { useSelector } from 'calypso/state';
@@ -31,6 +33,9 @@ export default function DownloadProductsForm() {
 
 	const jetpackKeys =
 		licenseKeys && licenseKeys.split( ',' ).filter( ( key ) => ! isWooCommerceProduct( key ) );
+
+	const crmKey =
+		licenseKeys && licenseKeys.split( ',' ).find( ( key ) => isJetpackCrmProduct( key ) );
 
 	const jetpackProducts =
 		jetpackKeys &&
@@ -107,10 +112,18 @@ export default function DownloadProductsForm() {
 						<ul>{ jetpackProducts }</ul>
 					</div>
 				) }
-				<div className="download-products-form__action-items">
-					<h4>{ translate( 'These extensions need to be downloaded and installed:' ) }</h4>
-					<ul>{ wooProducts }</ul>
-				</div>
+				{ crmKey && (
+					<div className="download-products-form__action-items">
+						<h4>{ translate( 'Your license includes access to Jetpack CRM' ) }</h4>
+						<CrmDownloadsContent licenseKey={ crmKey } />
+					</div>
+				) }
+				{ !! wooProducts?.length && (
+					<div className="download-products-form__action-items">
+						<h4>{ translate( 'These extensions need to be downloaded and installed:' ) }</h4>
+						<ul>{ wooProducts }</ul>
+					</div>
+				) }
 			</div>
 		</div>
 	);
