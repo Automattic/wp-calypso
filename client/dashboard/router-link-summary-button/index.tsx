@@ -1,5 +1,5 @@
+import SummaryButton from '@automattic/components/src/summary-button';
 import { createLink } from '@tanstack/react-router';
-import SummaryButton from '../summary-button';
 
 /**
  * This component is a wrapper of `SummaryButton` component and acts as a

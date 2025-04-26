@@ -5,7 +5,6 @@ type Density = 'low' | 'medium';
  * `CoreBadge` instances per field. For this reason we need to define
  * the props that match the `CoreBadge` component (intent and text).
  */
-// TODO: maybe remove this duplicate description from here and only keep the one in `SummaryButtonProps`?
 export type SummaryButtonFieldProps = {
 	/**
 	 * Text to display inside the badge.
@@ -36,7 +35,6 @@ export interface SummaryButtonProps {
 	 * Adjusts spacing and layout. Higher density reduces padding and may hide
 	 * optional elements like the description to create a more compact appearance.
 	 */
-	// TODO: what should be the default value?
 	density?: Density;
 	/**
 	 * Optional supporting text that provides additional context or detail about the linked page.

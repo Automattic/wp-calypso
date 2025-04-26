@@ -20,7 +20,7 @@ const fieldOptions: Record< string, SummaryButtonFieldProps[] > = {
 };
 
 const meta = {
-	title: 'Dashboard/SummaryButton',
+	title: 'Components/SummaryButton',
 	component: SummaryButton,
 	tags: [ 'autodocs' ],
 	argTypes: {

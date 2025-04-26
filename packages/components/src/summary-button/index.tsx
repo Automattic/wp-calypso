@@ -8,7 +8,7 @@ import {
 import { chevronRight } from '@wordpress/icons';
 import clsx from 'clsx';
 import { forwardRef } from 'react';
-import CoreBadge from 'calypso/components/core/badge';
+import CoreBadge from '../core-badge';
 import { SummaryButtonProps } from './types';
 import './style.scss';
 
@@ -19,7 +19,7 @@ function BadgesList( { fields }: { fields: SummaryButtonProps[ 'fields' ] } ) {
 	return (
 		<HStack spacing={ 1 } justify="flex-start" style={ { minWidth: 'fit-content' } }>
 			{ fields?.map( ( field ) => (
-				<CoreBadge key={ field.text } intent={ field.intent || 'default' }>
+				<CoreBadge key={ field.text } intent={ field.intent }>
 					{ field.text }
 				</CoreBadge>
 			) ) }
@@ -85,7 +85,7 @@ function SummaryButton(
 /**
  * The SummaryButton component provides a quick overview of a related page
  * (often settings). It includes a title, supporting description, and may
- * optionally display key field values or status indicators (e.g. a “2FA enabled” badge)
+ * optionally display key field values or status indicators (e.g. a "2FA enabled" badge)
  * to surface the current state of settings at a glance.
  */
 export default forwardRef( SummaryButton );
