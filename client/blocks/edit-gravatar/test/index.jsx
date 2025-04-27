@@ -7,10 +7,20 @@ import { EditGravatar } from 'calypso/blocks/edit-gravatar';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 
 jest.mock( '@gravatar-com/quick-editor', () => ( {
-	GravatarQuickEditorCore: jest.fn().mockImplementation( ( options ) => ( {
-		// Fire the callback to simulate the profile update.
-		open: jest.fn( () => options.onProfileUpdated?.() ),
-	} ) ),
+	GravatarQuickEditorCore: jest.fn().mockImplementation( ( options ) => {
+		let _isOpen = false;
+		return {
+			// Fire the callback to simulate the profile update.
+			open: jest.fn( () => {
+				_isOpen = true;
+				options.onProfileUpdated?.();
+			} ),
+			close: jest.fn( () => {
+				_isOpen = false;
+			} ),
+			isOpen: jest.fn( () => _isOpen ),
+		};
+	} ),
 } ) );
 
 jest.mock( 'calypso/state/selectors/get-user-settings', () => jest.fn( () => {} ) );
@@ -33,6 +43,11 @@ const baseProps = {
 
 const setup = ( overrides = {} ) =>
 	renderWithProvider( <EditGravatar { ...baseProps } { ...overrides } /> );
+
+const clickEditAvatarLink = () => {
+	const button = screen.getByRole( 'button', { name: /Edit your public avatar/i } );
+	fireEvent.click( button );
+};
 
 describe( 'EditGravatar', () => {
 	afterEach( jest.clearAllMocks );
@@ -63,7 +78,7 @@ describe( 'EditGravatar', () => {
 		test( 'opens quick editor and updates avatar URL', () => {
 			setup();
 
-			fireEvent.click( screen.getByRole( 'button', { name: /Edit your public avatar/i } ) );
+			clickEditAvatarLink();
 
 			const quickEditor = GravatarQuickEditorCore.mock.results.at( -1 ).value;
 			expect( quickEditor.open ).toHaveBeenCalledTimes( 1 );
@@ -82,6 +97,45 @@ describe( 'EditGravatar', () => {
 
 			// Check for dialog modal copy to ensure it appeared.
 			expect( screen.getByText( /Secure your account and access more features\./ ) ).toBeVisible();
+		} );
+
+		test( 'closes the previous quick editor before opening a new one', () => {
+			setup();
+
+			clickEditAvatarLink();
+
+			const quickEditor = GravatarQuickEditorCore.mock.results.at( -1 ).value;
+			expect( quickEditor.isOpen ).toBeTruthy();
+
+			clickEditAvatarLink();
+
+			expect( quickEditor.close ).toHaveBeenCalledTimes( 1 );
+		} );
+
+		test( 'closes quick editor on page refresh', () => {
+			setup();
+
+			clickEditAvatarLink();
+
+			const quickEditor = GravatarQuickEditorCore.mock.results.at( -1 ).value;
+			expect( quickEditor.isOpen ).toBeTruthy();
+
+			window.dispatchEvent( new Event( 'pagehide' ) );
+
+			expect( quickEditor.close ).toHaveBeenCalledTimes( 1 );
+		} );
+
+		test( 'closes quick editor when navigating away from the page', () => {
+			const { unmount } = setup();
+
+			clickEditAvatarLink();
+
+			const quickEditor = GravatarQuickEditorCore.mock.results.at( -1 ).value;
+			expect( quickEditor.isOpen ).toBeTruthy();
+
+			unmount();
+
+			expect( quickEditor.close ).toHaveBeenCalledTimes( 1 );
 		} );
 	} );
 } );
