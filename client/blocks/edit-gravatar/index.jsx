@@ -53,7 +53,22 @@ export class EditGravatar extends Component {
 				setUser( { ...user, avatar_URL: addQueryArgs( user.avatar_URL, { ver: Date.now() } ) } );
 			},
 		} );
+
+		// Close the quick editor on any pagehide event (refresh, tab close, or navigation away).
+		window.addEventListener( 'pagehide', this.maybeCloseQuickEditor );
 	}
+
+	componentWillUnmount() {
+		// Close the quick editor when the component unmounts (e.g. client-side nav).
+		this.maybeCloseQuickEditor();
+		window.removeEventListener( 'pagehide', this.maybeCloseQuickEditor );
+	}
+
+	maybeCloseQuickEditor = () => {
+		if ( this.quickEditor?.isOpen() === true ) {
+			this.quickEditor.close();
+		}
+	};
 
 	renderEditGravatarIsLoading = () => {
 		return (
@@ -140,6 +155,7 @@ export class EditGravatar extends Component {
 							variant="link"
 							onClick={ () => {
 								recordClickButtonEvent( { isVerified: user.email_verified } );
+								this.maybeCloseQuickEditor(); // Ensure the quick editor is closed before opening it again.
 								this.quickEditor?.open();
 							} }
 						>
