@@ -1,16 +1,12 @@
 import { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'calypso/state';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 export const usePhpVersions = () => {
 	const translate = useTranslate();
-	const siteId = useSelector( getSelectedSiteId );
-	// 50% of sites will have a recommended PHP version of 8.3. These sites are transferring to 8.3 by default.
-	// 243386763 is the first site of the list.
-	const isPhp83Default = siteId >= 243386763 && siteId % 2 === 0;
-	const recommendedValue = isPhp83Default ? '8.3' : '8.2';
+
+	// PHP 8.3 is now the default recommended version
+	const recommendedValue = '8.3';
 	const recommendedLabel = translate( '%s (recommended)', {
-		args: isPhp83Default ? '8.3' : '8.2',
+		args: recommendedValue,
 		comment: 'PHP Version for a version switcher',
 	} );
 
@@ -36,14 +32,17 @@ export const usePhpVersions = () => {
 		{
 			label: '8.1',
 			value: '8.1',
+			disabled: false, // EOL 31st December, 2025
 		},
 		{
-			label: isPhp83Default ? '8.2' : recommendedLabel,
+			label: '8.2',
 			value: '8.2',
+			disabled: false, // EOL 31st December, 2026
 		},
 		{
-			label: isPhp83Default ? recommendedLabel : '8.3',
-			value: '8.3',
+			label: recommendedLabel,
+			value: recommendedValue,
+			disabled: false, // EOL 31st December, 2027
 		},
 	];
 

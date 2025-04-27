@@ -1,5 +1,4 @@
 import { useQuery } from '@tanstack/react-query';
-import { Spinner, __experimentalHStack as HStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { desktop, mobile } from '@wordpress/icons';
 import CoreBadge from 'calypso/components/core/badge';
@@ -9,9 +8,12 @@ import type { Site, UrlPerformanceInsights } from '../data/types';
 
 type BadgeIntent = 'default' | 'info' | 'success' | 'warning' | 'error';
 
-function PerformanceBadge( { value }: { value: number } ) {
+function PerformanceBadge( { value }: { value: number | undefined } ) {
 	const badgeProps = { intent: 'error' as BadgeIntent, label: __( 'Poor' ) };
-	if ( value >= 90 ) {
+	if ( ! value ) {
+		badgeProps.label = __( 'Calculating…' );
+		badgeProps.intent = 'default';
+	} else if ( value >= 90 ) {
 		badgeProps.intent = 'success';
 		badgeProps.label = __( 'Excellent' );
 	} else if ( value >= 50 ) {
@@ -75,51 +77,31 @@ export default function PerformanceCards( { site }: { site: Site } ) {
 	const desktopLoaded = typeof data?.pagespeed?.desktop === 'object';
 	const mobileLoaded = typeof data?.pagespeed?.mobile === 'object';
 	const desktopScore =
-		desktopLoaded &&
-		typeof data.pagespeed.desktop === 'object' &&
-		Math.round( data.pagespeed.desktop.overall_score * 100 );
+		desktopLoaded && typeof data.pagespeed.desktop === 'object'
+			? Math.round( data.pagespeed.desktop.overall_score * 100 )
+			: undefined;
 	const mobileScore =
-		mobileLoaded &&
-		typeof data.pagespeed.mobile === 'object' &&
-		Math.round( data.pagespeed.mobile.overall_score * 100 );
+		mobileLoaded && typeof data.pagespeed.mobile === 'object'
+			? Math.round( data.pagespeed.mobile.overall_score * 100 )
+			: undefined;
 	return (
 		<>
 			<OverviewCard
 				title={ __( 'Desktop performance' ) }
 				icon={ desktop }
-				heading={ desktopLoaded ? `${ desktopScore }` : undefined }
+				heading={ desktopLoaded ? `${ desktopScore }` : '\u00A0' }
 			>
-				{ desktopLoaded ? (
-					<>
-						<OverviewCardProgressBar value={ desktopScore as number } />
-						<PerformanceBadge value={ desktopScore as number } />
-					</>
-				) : (
-					<Loader />
-				) }
+				<OverviewCardProgressBar value={ desktopScore } />
+				<PerformanceBadge value={ desktopScore } />
 			</OverviewCard>
 			<OverviewCard
 				title={ __( 'Mobile performance' ) }
 				icon={ mobile }
-				heading={ mobileLoaded ? `${ mobileScore }` : undefined }
+				heading={ mobileLoaded ? `${ mobileScore }` : '\u00A0' }
 			>
-				{ mobileLoaded ? (
-					<>
-						<OverviewCardProgressBar value={ mobileScore as number } />
-						<PerformanceBadge value={ mobileScore as number } />
-					</>
-				) : (
-					<Loader />
-				) }
+				<OverviewCardProgressBar value={ mobileScore } />
+				<PerformanceBadge value={ mobileScore } />
 			</OverviewCard>
 		</>
-	);
-}
-
-function Loader() {
-	return (
-		<HStack justify="center">
-			<Spinner />
-		</HStack>
 	);
 }

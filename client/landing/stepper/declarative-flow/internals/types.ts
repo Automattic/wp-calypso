@@ -89,7 +89,7 @@ export type StepperStep = AsyncStepperStep | AsyncUserStep;
  * @param extraData - Extra data to pass to the step.
  * @param replace - If true, the current step will be replaced in the history stack.
  */
-export type Navigate< FlowSteps extends readonly StepperStep[] > = (
+export type Navigate< FlowSteps extends readonly StepperStep[] = StepperStep[] > = (
 	stepName: FlowSteps[ number ][ 'slug' ] | `${ FlowSteps[ number ][ 'slug' ] }?${ string }`,
 	extraData?: any,
 	/**

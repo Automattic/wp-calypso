@@ -18,7 +18,7 @@ type StepRouteProps = {
 	step: StepperStep;
 	flow: Flow;
 	renderStep: ( step: StepperStep ) => JSX.Element | null;
-	navigate: Navigate< StepperStep[] >;
+	navigate: Navigate;
 };
 
 // TODO: Check we can move RenderStep function to here and remove the renderStep prop

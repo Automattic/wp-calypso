@@ -298,7 +298,7 @@ export class UserStep extends Component {
 
 		const redirectToAfterLoginUrl = getRedirectToAfterLoginUrl( this.props );
 
-		if ( redirectToAfterLoginUrl?.startsWith( '/setup/hosted-site-migration' ) ) {
+		if ( redirectToAfterLoginUrl?.startsWith( '/setup/site-migration' ) ) {
 			subHeaderText = translate(
 				'Pick an option to start moving your site to the world’s best WordPress host.'
 			);

@@ -137,7 +137,6 @@ class Help extends PureComponent {
 		<>
 			<h2 className="help__section-title">{ this.props.translate( 'More Resources' ) }</h2>
 			<div className="help__support-links">
-				{ this.getCoursesTeaser() }
 				<CompactCard
 					className="help__support-link"
 					href="https://www.youtube.com/@WordPressdotcom"
@@ -191,25 +190,6 @@ class Help extends PureComponent {
 			</div>
 		</>
 	);
-
-	getCoursesTeaser = () => {
-		return (
-			<CompactCard
-				className="help__support-link"
-				href={ localizeUrl( 'https://wordpress.com/webinars/' ) }
-				onClick={ this.trackCoursesButtonClick }
-				showLinkIcon={ false }
-			>
-				<Gridicon icon="chat" size={ 36 } />
-				<div className="help__support-link-section">
-					<h2 className="help__support-link-title">{ this.props.translate( 'Webinars' ) }</h2>
-					<p className="help__support-link-content">
-						{ this.props.translate( 'Make the most of your site with courses and webinars.' ) }
-					</p>
-				</div>
-			</CompactCard>
-		);
-	};
 
 	trackCoursesButtonClick = () => {
 		const { isBusinessOrEcomPlanUser } = this.props;

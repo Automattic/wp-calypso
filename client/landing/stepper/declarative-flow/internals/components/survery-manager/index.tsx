@@ -1,12 +1,12 @@
 import { useIsEnglishLocale } from '@automattic/i18n-utils';
-import { SITE_MIGRATION_FLOW, HOSTED_SITE_MIGRATION_FLOW } from '@automattic/onboarding';
+import { SITE_MIGRATION_FLOW } from '@automattic/onboarding';
 import { Suspense } from 'react';
 import { useGeoLocationQuery } from 'calypso/data/geo/use-geolocation-query';
 import AsyncMigrationSurvey from '../../steps-repository/components/migration-survey/async';
 import { Flow } from '../../types';
 import { DeferredRender } from '../deferred-render';
 
-const migrationFlows = [ SITE_MIGRATION_FLOW, HOSTED_SITE_MIGRATION_FLOW ];
+const migrationFlows = [ SITE_MIGRATION_FLOW ];
 const availableCountries = [ 'US', 'IN' ];
 
 const isMigrationSurveyAvailable = ( {

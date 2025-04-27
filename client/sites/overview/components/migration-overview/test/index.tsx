@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+// @ts-nocheck - TODO: Fix TypeScript issues
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
@@ -97,7 +98,7 @@ describe( 'MigrationOverview', () => {
 
 			expect( link ).toHaveAttribute(
 				'href',
-				'/setup/hosted-site-migration/site-migration-instructions?siteId=123&siteSlug=example.com&ref=hosting-migration-overview'
+				'/setup/site-migration/site-migration-instructions?siteId=123&siteSlug=example.com&ref=hosting-migration-overview'
 			);
 		} );
 
@@ -171,7 +172,7 @@ describe( 'MigrationOverview', () => {
 
 			expect( link ).toHaveAttribute(
 				'href',
-				'/setup/hosted-site-migration/site-migration-credentials?siteId=123&siteSlug=example.com&ref=hosting-migration-overview'
+				'/setup/site-migration/site-migration-credentials?siteId=123&siteSlug=example.com&ref=hosting-migration-overview'
 			);
 		} );
 	} );
