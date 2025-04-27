@@ -44,10 +44,8 @@ const baseProps = {
 const setup = ( overrides = {} ) =>
 	renderWithProvider( <EditGravatar { ...baseProps } { ...overrides } /> );
 
-const clickEditAvatarLink = () => {
-	const button = screen.getByRole( 'button', { name: /Edit your public avatar/i } );
-	fireEvent.click( button );
-};
+const clickEditAvatarLink = () =>
+	fireEvent.click( screen.getByRole( 'button', { name: /Edit your public avatar/i } ) );
 
 describe( 'EditGravatar', () => {
 	afterEach( jest.clearAllMocks );
