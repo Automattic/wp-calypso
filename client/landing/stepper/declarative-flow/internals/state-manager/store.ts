@@ -1,4 +1,4 @@
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { QueryClient, useQuery, useQueryClient } from '@tanstack/react-query';
 import { getFlowFromURL } from 'calypso/landing/stepper/utils/get-flow-from-url';
 import { getSessionId } from 'calypso/landing/stepper/utils/use-session-id';
 import type { FlowStateManifest } from './stepper-state-manifest';
@@ -56,3 +56,35 @@ export function useFlowState() {
 		sessionId: session,
 	};
 }
+
+export const getFlowStateManager = ( queryClient: QueryClient ) => {
+	const flow = getFlowFromURL() || 'flow';
+	const session = getSessionId();
+
+	const getState = () =>
+		queryClient.getQueryData< FlowStateManifest >( [ PREFIX, flow, session, VERSION ] );
+
+	function get< T extends keyof FlowStateManifest >( key: T ) {
+		return getState()?.[ key ];
+	}
+
+	function set< T extends keyof FlowStateManifest >(
+		key: T,
+		value: FlowStateManifest[ T ]
+	): FlowStateManifest[ T ] {
+		queryClient.setQueryData( [ PREFIX, flow, session, VERSION ], {
+			...getState(),
+			[ key ]: value,
+		} );
+
+		return value as FlowStateManifest[ T ];
+	}
+
+	return {
+		get,
+		set,
+		sessionId: session,
+	};
+};
+
+export type FlowStateManager = ReturnType< typeof getFlowStateManager >;

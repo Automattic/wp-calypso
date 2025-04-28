@@ -13,6 +13,6 @@ export interface DomainStepResult {
 	domainItem?: DomainSuggestion;
 }
 export interface PlansStepResult {
-	stepName: 'plans';
+	stepName?: 'plans';
 	cartItems: MinimalRequestCartProduct[] | null;
 }

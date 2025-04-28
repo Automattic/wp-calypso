@@ -35,6 +35,7 @@ import { AsyncHelpCenter } from './declarative-flow/internals/components';
 import 'calypso/components/environment-badge/style.scss';
 import 'calypso/assets/stylesheets/style.scss';
 import { createSessionId } from './declarative-flow/internals/state-manager/create-session-id';
+import { getFlowStateManager } from './declarative-flow/internals/state-manager/store';
 import availableFlows from './declarative-flow/registered-flows';
 import { USER_STORE } from './stores';
 import { setupWpDataDebug } from './utils/devtools';
@@ -133,16 +134,21 @@ async function main() {
 	reduxStore.dispatch( setCurrentFlowName( flow.name ) );
 	reduxStore.dispatch( setSelectedSiteId( siteId ) as unknown as AnyAction );
 
-	let flowSteps = 'initialize' in flow ? await flow.initialize( reduxStore ) : null;
+	let sessionId: string | null = null;
 
 	if ( '__experimentalUseSessions' in flow ) {
-		const sessionId = getSessionId() || createSessionId();
+		sessionId = getSessionId() || createSessionId();
 		history.replaceState( null, '', addQueryArgs( { sessionId }, window.location.href ) );
 		queryClient = ( await createQueryClient( 'stepper-persistence-session-' + sessionId ) )
 			.queryClient;
 	} else {
 		queryClient = ( await createQueryClient( userId ) ).queryClient;
 	}
+
+	let flowSteps =
+		'initialize' in flow
+			? await flow.initialize( { reduxStore, flowState: getFlowStateManager( queryClient ) } )
+			: null;
 
 	/**
 	 * When `initialize` returns false, it means the app should be killed (the user probably issued a redirect).

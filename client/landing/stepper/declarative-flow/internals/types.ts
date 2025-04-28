@@ -1,6 +1,7 @@
 import { StepperInternal } from '@automattic/data-stores';
 import React from 'react';
 import { STEPPER_TRACKS_EVENTS } from '../../constants';
+import { FlowStateManager } from './state-manager/store';
 import { PRIVATE_STEPS, STEPS } from './steps';
 import type { Store } from 'redux';
 
@@ -221,7 +222,14 @@ export type Flow = {
  */
 export type FlowV1 = Flow;
 
-type DefaultFlowStepsConfig = ( reduxStore: Store ) => StepperStep[] | Promise< StepperStep[] >;
+export type InitializeParameters = {
+	reduxStore: Store;
+	flowState: FlowStateManager;
+};
+
+type DefaultFlowStepsConfig = (
+	params: InitializeParameters
+) => StepperStep[] | Promise< StepperStep[] >;
 
 export interface FlowV2< FlowStepsInitialize extends DefaultFlowStepsConfig > {
 	/**

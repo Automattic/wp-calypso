@@ -1,6 +1,6 @@
 import { isFreeHostingTrial, isDotComPlan } from '@automattic/calypso-products';
+import { Site, type OnboardActions, type OnboardSelect } from '@automattic/data-stores';
 import { NEW_HOSTED_SITE_FLOW } from '@automattic/onboarding';
-import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { useDispatch, useSelect, dispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { useEffect } from 'react';
@@ -16,18 +16,23 @@ import {
 	getSignupCompleteSlug,
 } from 'calypso/signup/storageUtils';
 import { isUserEligibleForFreeHostingTrial } from 'calypso/state/selectors/is-user-eligible-for-free-hosting-trial';
+import { useCreateSite } from '../../../hooks/use-create-site-hook';
 import { useQuery } from '../../../hooks/use-query';
 import { ONBOARD_STORE } from '../../../stores';
 import { getCurrentQueryParams } from '../../../utils/get-current-query-params';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
+import { useFlowState } from '../../internals/state-manager/store';
 import { STEPS } from '../../internals/steps';
 import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
-import type { FlowV2, SubmitHandler } from '../../internals/types';
-import type { DomainSuggestion, OnboardActions, OnboardSelect } from '@automattic/data-stores';
-import type { Store } from 'redux';
+import type {
+	FlowV2,
+	SubmitHandler,
+	StepperStep,
+	InitializeParameters,
+} from '../../internals/types';
 
-async function initialize( reduxStore: Store ) {
-	const { resetOnboardStore, setPlanCartItem } = dispatch( ONBOARD_STORE ) as OnboardActions;
+async function initialize( { reduxStore, flowState }: InitializeParameters ) {
+	const { resetOnboardStore } = dispatch( ONBOARD_STORE ) as OnboardActions;
 
 	await resetOnboardStore();
 
@@ -37,7 +42,7 @@ async function initialize( reduxStore: Store ) {
 
 	const eligibleForFreeHostingTrial = isUserEligibleForFreeHostingTrial( reduxStore.getState() );
 
-	const steps = [];
+	const steps: StepperStep[] = [];
 
 	if ( showDomainStep ) {
 		steps.push( STEPS.UNIFIED_DOMAINS );
@@ -48,22 +53,30 @@ async function initialize( reduxStore: Store ) {
 	if ( ! productSlug || ! isDotComPlan( { product_slug: productSlug } ) ) {
 		steps.push( STEPS.UNIFIED_PLANS, STEPS.TRIAL_ACKNOWLEDGE );
 	} else if ( ! isFreeHostingTrial( productSlug ) ) {
-		await setPlanCartItem( {
-			product_slug: productSlug,
-			extra: {
-				...( utmSource && {
-					hideProductVariants: utmSource === 'wordcamp',
-				} ),
-			},
+		flowState.set( 'plans', {
+			cartItems: [
+				{
+					product_slug: productSlug,
+					extra: {
+						...( utmSource && {
+							hideProductVariants: utmSource === 'wordcamp',
+						} ),
+					},
+				},
+			],
 		} );
 	} else if ( eligibleForFreeHostingTrial ) {
-		await setPlanCartItem( {
-			product_slug: productSlug,
-			extra: {
-				...( utmSource && {
-					hideProductVariants: utmSource === 'wordcamp',
-				} ),
-			},
+		flowState.set( 'plans', {
+			cartItems: [
+				{
+					product_slug: productSlug,
+					extra: {
+						...( utmSource && {
+							hideProductVariants: utmSource === 'wordcamp',
+						} ),
+					},
+				},
+			],
 		} );
 
 		steps.push( STEPS.TRIAL_ACKNOWLEDGE, STEPS.UNIFIED_PLANS );
@@ -71,35 +84,26 @@ async function initialize( reduxStore: Store ) {
 		steps.push( STEPS.UNIFIED_PLANS );
 	}
 
-	steps.push( STEPS.SITE_CREATION_STEP, STEPS.PROCESSING );
+	steps.push( STEPS.PROCESSING );
 
 	return stepsWithRequiredLogin( steps );
 }
 
 const hosting: FlowV2< typeof initialize > = {
 	name: NEW_HOSTED_SITE_FLOW,
+	__experimentalUseSessions: true,
 	__experimentalUseBuiltinAuth: true,
 	isSignupFlow: true,
 	initialize,
 	useStepNavigation( _currentStepSlug, navigate ) {
-		const {
-			setDomain,
-			setDomainCartItem,
-			setDomainCartItems,
-			setPlanCartItem,
-			setProductCartItems,
-			setSiteUrl,
-			setSignupDomainOrigin,
-			resetCouponCode,
-		} = useDispatch( ONBOARD_STORE ) as OnboardActions;
-		const planCartItem = useSelect(
-			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem(),
-			[]
-		);
+		const { resetCouponCode } = useDispatch( ONBOARD_STORE ) as OnboardActions;
 		const couponCode = useSelect(
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getCouponCode(),
 			[]
 		);
+
+		const { setPendingAction } = useDispatch( ONBOARD_STORE ) as OnboardActions;
+		const createSite = useCreateSite();
 
 		const query = useQuery();
 
@@ -120,22 +124,36 @@ const hosting: FlowV2< typeof initialize > = {
 			}
 		};
 
+		const scheduleSiteCreation = () => {
+			setPendingAction( () =>
+				createSite( {
+					siteVisibility: Site.Visibility.PublicNotIndexed,
+					useThemeHeadstart: false,
+				} )
+			);
+			return navigate( STEPS.PROCESSING.slug );
+		};
+
+		const { get, set } = useFlowState();
+
+		const planCartItem = get( 'plans' )?.cartItems?.[ 0 ];
+
 		const submit: SubmitHandler< typeof initialize > = ( submittedStep ) => {
 			const { slug, providedDependencies } = submittedStep;
 
 			switch ( slug ) {
 				case STEPS.UNIFIED_DOMAINS.slug: {
-					setSiteUrl( providedDependencies.siteUrl as string );
-					setDomain( providedDependencies.suggestion as DomainSuggestion );
-					setDomainCartItem( providedDependencies.domainItem as MinimalRequestCartProduct );
-					setDomainCartItems( providedDependencies.domainCart as MinimalRequestCartProduct[] );
-					setSignupDomainOrigin( providedDependencies.signupDomainOrigin as string );
+					set( 'domains', providedDependencies );
 
-					if ( planCartItem ) {
-						return navigate( STEPS.SITE_CREATION_STEP.slug );
+					if ( ! planCartItem ) {
+						return navigate( STEPS.UNIFIED_PLANS.slug );
 					}
 
-					return navigate( STEPS.UNIFIED_PLANS.slug );
+					if ( isFreeHostingTrial( planCartItem.product_slug ) ) {
+						return navigate( STEPS.TRIAL_ACKNOWLEDGE.slug );
+					}
+
+					return scheduleSiteCreation();
 				}
 				case STEPS.UNIFIED_PLANS.slug: {
 					const cartItems = providedDependencies.cartItems;
@@ -145,32 +163,31 @@ const hosting: FlowV2< typeof initialize > = {
 						throw new Error( 'No product slug found' );
 					}
 
-					setPlanCartItem( {
-						...pickedPlan,
-						extra: {
-							...pickedPlan.extra,
-							...( utmSource && {
-								hideProductVariants: utmSource === 'wordcamp',
-							} ),
-						},
+					set( 'plans', {
+						cartItems: [
+							{
+								...pickedPlan,
+								extra: {
+									...pickedPlan.extra,
+									...( utmSource && {
+										hideProductVariants: utmSource === 'wordcamp',
+									} ),
+								},
+							},
+							...extraProducts.filter( ( product ) => !! product ),
+						],
 					} );
-
-					setProductCartItems( extraProducts.filter( ( product ) => product !== null ) );
 
 					if ( isFreeHostingTrial( pickedPlan.product_slug ) ) {
 						return navigate( STEPS.TRIAL_ACKNOWLEDGE.slug );
 					}
 
 					setSignupCompleteFlowName( flowName );
-					return navigate( STEPS.SITE_CREATION_STEP.slug );
+					return scheduleSiteCreation();
 				}
 
-				case STEPS.TRIAL_ACKNOWLEDGE.slug: {
-					return navigate( STEPS.SITE_CREATION_STEP.slug );
-				}
-
-				case STEPS.SITE_CREATION_STEP.slug:
-					return navigate( STEPS.PROCESSING.slug );
+				case STEPS.TRIAL_ACKNOWLEDGE.slug:
+					return scheduleSiteCreation();
 
 				case STEPS.PROCESSING.slug: {
 					if ( providedDependencies.processingResult === ProcessingResult.SUCCESS ) {

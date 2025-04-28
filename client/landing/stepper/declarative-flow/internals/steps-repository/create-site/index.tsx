@@ -8,7 +8,6 @@ import {
 	createSiteWithCart,
 	isCopySiteFlow,
 	isEntrepreneurFlow,
-	isNewHostedSiteCreationFlow,
 	isNewsletterFlow,
 	isReadymadeFlow,
 	isStartWritingFlow,
@@ -123,7 +122,6 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 		isOnboardingFlow( flow ) ||
 		isCopySiteFlow( flow ) ||
 		isStartWritingFlow( flow ) ||
-		isNewHostedSiteCreationFlow( flow ) ||
 		isReadymadeFlow( flow ) ||
 		wooFlows.includes( flow || '' ) ||
 		flow === AI_SITE_BUILDER_FLOW
@@ -141,7 +139,7 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 	const urlQueryParams = useQuery();
 	const skipMigration = urlQueryParams.get( 'skipMigration' ) || '';
 	const platform = urlQueryParams.get( 'platform' ) || '';
-	const useThemeHeadstart = ! isStartWritingFlow( flow ) && ! isNewHostedSiteCreationFlow( flow );
+	const useThemeHeadstart = ! isStartWritingFlow( flow );
 	const shouldGoToCheckout = Boolean( planCartItem );
 	const [ , isMvpOnboarding ] = useMvpOnboardingExperiment();
 

@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { type DomainSuggestion, type NewSiteSuccessResponse, Site } from '@automattic/data-stores';
 import { getLanguage } from '@automattic/i18n-utils';
 import { addPlanToCart, getNewSiteParams, processItemCart } from '@automattic/onboarding';
 import { useMutation } from '@tanstack/react-query';
@@ -8,7 +9,6 @@ import { useSelector } from 'calypso/state';
 import { getCurrentUserName, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { useFlowState } from '../declarative-flow/internals/state-manager/store';
 import { getFlowFromURL } from '../utils/get-flow-from-url';
-import type { DomainSuggestion, NewSiteSuccessResponse, Site } from '@automattic/data-stores';
 import type { SiteGoal } from '@automattic/data-stores/src/onboard';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
@@ -154,13 +154,17 @@ export const useCreateSite = () => {
 
 	return useMutation( {
 		mutationFn: async ( {
-			theme,
-			siteIntent,
+			theme = '',
+			siteIntent = '',
+			siteVisibility = Site.Visibility.PublicIndexed,
+			useThemeHeadstart = true,
 		}: {
-			theme: string;
-			siteIntent: string;
+			theme?: string;
+			siteIntent?: string;
 			siteGoals?: SiteGoal[];
-		} ) => {
+			siteVisibility?: Site.Visibility;
+			useThemeHeadstart?: boolean;
+		} = {} ) => {
 			if ( createdSite ) {
 				// If the site already exists, we need to fill the cart with the domain and plan items.
 				// Because the user may have changed their mind about the domain or plan.
@@ -179,13 +183,13 @@ export const useCreateSite = () => {
 				userIsLoggedIn,
 				isPurchasingDomainItem: false,
 				themeSlugWithRepo: theme,
-				siteVisibility: 1,
+				siteVisibility,
 				siteTitle,
 				// We removed the color option during newsletter onboarding.
 				// But backend still expects/needs a value, so supplying the default.
 				// Ideally should remove this and update code downstream to handle this.
 				siteAccentColor: '#113AF5',
-				useThemeHeadstart: true,
+				useThemeHeadstart,
 				username,
 				domainCartItems: mergedDomainCartItems,
 				partnerBundle: null,
