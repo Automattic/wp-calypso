@@ -1,11 +1,4 @@
-import {
-	DndContext,
-	closestCenter,
-	KeyboardSensor,
-	PointerSensor,
-	useSensor,
-	useSensors,
-} from '@dnd-kit/core';
+import { DndContext, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 import {
 	arrayMove,
 	SortableContext,
@@ -155,12 +148,7 @@ export function Grid( {
 	}
 
 	return (
-		<DndContext
-			sensors={ sensors }
-			collisionDetection={ closestCenter }
-			onDragOver={ handleDragOver }
-			onDragEnd={ handleDragEnd }
-		>
+		<DndContext sensors={ sensors } onDragOver={ handleDragOver } onDragEnd={ handleDragEnd }>
 			<SortableContext items={ currentItems } strategy={ () => null }>
 				<div
 					ref={ resizeObserverRef }
