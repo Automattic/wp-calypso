@@ -1,7 +1,8 @@
-import { ArgTypes, Meta } from '@storybook/blocks';
-import { ValidatedInputControl } from './input-control';
+import { ArgTypes, Meta, Stories } from '@storybook/blocks';
+import * as OverviewStories from './overview.stories';
+import { ValidatedInputControl } from './components/input-control';
 
-<Meta title="Packages/Components/Validated Form Controls/Overview" />
+<Meta of={ OverviewStories } title="Packages/Components/Validated Form Controls/Overview" />
 
 # Validated Form Controls
 
@@ -45,3 +46,7 @@ This is not ideal, but lets us maintain a consistent mechanism to scroll to the 
 ### Controlled mode only
 
 Some of the underlying WordPress components currently do not fully support uncontrolled mode. For now, we recommend sticking to controlled mode to avoid any issues.
+
+## Examples
+
+<Stories />
