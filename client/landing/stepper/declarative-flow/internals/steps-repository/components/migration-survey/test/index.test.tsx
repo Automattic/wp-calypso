@@ -26,7 +26,7 @@ describe( 'MigrationSurvey', () => {
 		( useIsEnglishLocale as jest.Mock ).mockReturnValue( false );
 		( useGeoLocationQuery as jest.Mock ).mockReturnValue( { data: { country_short: 'US' } } );
 
-		const { container } = render( <MigrationSurvey isOpen /> );
+		const { container } = render( <MigrationSurvey /> );
 
 		expect( container ).toBeEmptyDOMElement();
 	} );
@@ -35,7 +35,7 @@ describe( 'MigrationSurvey', () => {
 		( useIsEnglishLocale as jest.Mock ).mockReturnValue( true );
 		( useGeoLocationQuery as jest.Mock ).mockReturnValue( { data: { country_short: 'FR' } } );
 
-		const { container } = render( <MigrationSurvey isOpen /> );
+		const { container } = render( <MigrationSurvey /> );
 
 		expect( container ).toBeEmptyDOMElement();
 	} );
@@ -44,7 +44,7 @@ describe( 'MigrationSurvey', () => {
 		( useIsEnglishLocale as jest.Mock ).mockReturnValue( true );
 		( useGeoLocationQuery as jest.Mock ).mockReturnValue( { data: undefined } );
 
-		const { container } = render( <MigrationSurvey isOpen /> );
+		const { container } = render( <MigrationSurvey /> );
 
 		expect( container ).toBeEmptyDOMElement();
 	} );
@@ -53,7 +53,7 @@ describe( 'MigrationSurvey', () => {
 		( useIsEnglishLocale as jest.Mock ).mockReturnValue( true );
 		( useGeoLocationQuery as jest.Mock ).mockReturnValue( { data: { country_short: 'US' } } );
 
-		const { getByRole } = render( <MigrationSurvey isOpen /> );
+		const { getByRole } = render( <MigrationSurvey /> );
 
 		expect( getByRole( 'link', { name: 'Take survey' } ) ).toHaveAttribute(
 			'href',
@@ -65,7 +65,7 @@ describe( 'MigrationSurvey', () => {
 		( useIsEnglishLocale as jest.Mock ).mockReturnValue( true );
 		( useGeoLocationQuery as jest.Mock ).mockReturnValue( { data: { country_short: 'IN' } } );
 
-		const { getByRole } = render( <MigrationSurvey isOpen /> );
+		const { getByRole } = render( <MigrationSurvey /> );
 
 		expect( getByRole( 'link', { name: 'Take survey' } ) ).toHaveAttribute(
 			'href',
