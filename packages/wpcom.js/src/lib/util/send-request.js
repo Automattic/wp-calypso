@@ -7,8 +7,8 @@ const debug_res = debugFactory( 'wpcom:send-request:res' );
 /**
  * Request to WordPress REST API
  * @param {string | Object} params - params object
- * @param {Object} [query] - query object parameter
- * @param {Object} [body] - body object parameter
+ * @param {Object} query - query object parameter
+ * @param {Object} body - body object parameter
  * @param {Function} fn - callback function
  * @returns {Function} request handler
  */
@@ -20,18 +20,6 @@ export default function sendRequest( params, query, body, fn ) {
 
 	// set `method` request param
 	params.method = ( params.method || 'get' ).toUpperCase();
-
-	// `query` is optional
-	if ( 'function' === typeof query ) {
-		fn = query;
-		query = {};
-	}
-
-	// `body` is optional
-	if ( 'function' === typeof body ) {
-		fn = body;
-		body = null;
-	}
 
 	// query could be `null`
 	query = query || {};
@@ -65,10 +53,7 @@ export default function sendRequest( params, query, body, fn ) {
 	}
 
 	// Stringify query object before to send
-	query = qs.stringify( query, { arrayFormat: 'brackets' } );
-
-	// pass `query` and/or `body` to request params
-	params.query = query;
+	params.query = qs.stringify( query, { arrayFormat: 'brackets' } );
 
 	if ( body ) {
 		params.body = body;
