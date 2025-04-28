@@ -9,7 +9,6 @@ import {
 	AddPeoplePage,
 	InvitePeoplePage,
 	PeoplePage,
-	LoginPage,
 	UserSignupPage,
 	RoleValue,
 	CloseAccountFlow,
@@ -90,11 +89,7 @@ describe( DataHelper.createSuiteTitle( 'Invite: New User' ), function () {
 			invitePage = await browser.newContext().then( ( context ) => context.newPage() );
 		} );
 
-		afterAll( async () => {
-			if ( invitePage ) {
-				await invitePage.context().close();
-			}
-		} );
+		// Keep invitePage open as we'll need it for the close account flow
 
 		it( 'Invite email was received for test user', async function () {
 			const emailClient = new EmailClient();
@@ -145,23 +140,22 @@ describe( DataHelper.createSuiteTitle( 'Invite: New User' ), function () {
 		} );
 
 		it( 'Remove invited user from site', async function () {
-			await peoplePage.deleteUser();
+			await peoplePage.deleteUser( testUser.username );
 		} );
 	} );
 
 	describe( 'Close account', function () {
-		it( 'Log in as invited user', async function () {
-			const loginPage = new LoginPage( invitePage );
-			await loginPage.visit();
-			await Promise.all( [
-				invitePage.waitForNavigation( { url: '**/reader' } ),
-				loginPage.logInWithCredentials( testUser.email, testUser.password ),
-			] );
-		} );
-
 		it( 'Close account', async function () {
+			// Use the existing authenticated session from invitePage
 			const closeAccountFlow = new CloseAccountFlow( invitePage );
 			await closeAccountFlow.closeAccount();
+		} );
+
+		afterAll( async () => {
+			// Now we can close invitePage since we're done with all tests
+			if ( invitePage ) {
+				await invitePage.context().close();
+			}
 		} );
 	} );
 } );
