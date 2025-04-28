@@ -121,6 +121,22 @@ const CancelPurchaseDomainOptions = ( {
 		</div>
 	);
 
+	const IncludedDomainTransferPartialRefund = () => (
+		<p>
+			{ translate(
+				'You will receive a partial refund of %(refundAmount)s which is %(planCost)s for the plan ' +
+					'minus %(domainCost)s for the domain.',
+				{
+					args: {
+						domainCost: includedDomainTransfer.priceText,
+						planCost: planCostText,
+						refundAmount: purchase.refundText,
+					},
+				}
+			) }
+		</p>
+	);
+
 	const NonRefundableDomainTransferMessage = () => (
 		<div>
 			<p>
@@ -135,19 +151,7 @@ const CancelPurchaseDomainOptions = ( {
 					}
 				) }
 			</p>
-			<p>
-				{ translate(
-					'You will receive a partial refund of %(refundAmount)s which is %(planCost)s for the plan ' +
-						'minus %(domainCost)s for the domain.',
-					{
-						args: {
-							domainCost: includedDomainTransfer.priceText,
-							planCost: planCostText,
-							refundAmount: purchase.refundText,
-						},
-					}
-				) }
-			</p>
+			<IncludedDomainTransferPartialRefund />
 		</div>
 	);
 
@@ -164,6 +168,7 @@ const CancelPurchaseDomainOptions = ( {
 					}
 				) }
 			</p>
+			<IncludedDomainTransferPartialRefund />
 			<p>
 				{ translate(
 					'In some cases, a domain transfer has progressed too far to be canceled. Please contact support if you have questions about this'
