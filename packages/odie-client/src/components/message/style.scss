@@ -265,9 +265,16 @@ $blueberry-color: #3858e9;
 		.odie-conversation-feedback__message {
 			padding: 12px 44px;
 
+			h3 {
+				font-weight: 500;
+				line-height: 24px;
+			}
+
 			p {
 				padding: 12px 0;
 				background-color: unset !important;
+				color: var( --studio-gray-80 );
+				line-height: 20px;
 			}
 
 			.odie-conversation-feedback__reason {
@@ -275,6 +282,7 @@ $blueberry-color: #3858e9;
 			}
 
 			button.is-primary {
+				margin-top: 10px;
     			margin-right: 8px;
 			}
 		}

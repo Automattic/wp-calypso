@@ -101,10 +101,10 @@ export const FeedbackForm = ( { chatFeedbackOptions }: FeedbackFormProps ) => {
 			</div>
 			{ score && (
 				<div ref={ feedbackRef } className="odie-conversation-feedback__message">
+					<h3>{ __( 'Thank you for your input' ) }</h3>
+					<p>{ __( 'Please share any other details that can help understand your rating.' ) }</p>
 					<TextareaControl
 						__nextHasNoMarginBottom
-						label={ __( 'Thank you for your input!' ) }
-						help={ __( 'Please share any other details that can help understand your rating.' ) }
 						value={ comment }
 						onChange={ ( value ) => setComment( value ) }
 					/>
@@ -119,13 +119,15 @@ export const FeedbackForm = ( { chatFeedbackOptions }: FeedbackFormProps ) => {
 						/>
 					) }
 
-					<Button variant="primary" onClick={ postCSAT } rel="noreferrer">
-						{ __( 'Send' ) }
-					</Button>
+					<div>
+						<Button variant="primary" onClick={ postCSAT } rel="noreferrer">
+							{ __( 'Send' ) }
+						</Button>
 
-					<Button variant="secondary" onClick={ postCSAT } rel="noreferrer">
-						{ __( 'No thanks' ) }
-					</Button>
+						<Button variant="tertiary" onClick={ postCSAT } rel="noreferrer">
+							{ __( 'No thanks' ) }
+						</Button>
+					</div>
 				</div>
 			) }
 		</>
