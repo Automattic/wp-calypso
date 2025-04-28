@@ -1092,8 +1092,10 @@ export class JetpackAuthorize extends Component {
 					</LoggedOutFormLinkItem>
 					<div className="jetpack-connect__benefits">
 						<div className="jetpack-connect__benefits-title">
-							{ translate( 'This connection on %(siteName)s allows Jetpack to:', {
-								args: { siteName: decodeEntities( authQuery.blogname ) },
+							{ translate( 'This connection on %(siteURL)s allows Jetpack to:', {
+								args: {
+									siteURL: decodeEntities( authQuery.siteUrl.replace( /^https?:\/\//, '' ) ),
+								},
 							} ) }
 						</div>
 						<ul>
