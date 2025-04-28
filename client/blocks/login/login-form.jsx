@@ -425,13 +425,8 @@ export class LoginForm extends Component {
 	};
 
 	showJetpackConnectSiteOnly = () => {
-		const { currentQuery } = this.props;
-		const isFromMigrationPlugin = currentQuery?.redirect_to?.includes( 'wpcom-migration' );
-		return (
-			( currentQuery?.skip_user || currentQuery?.allow_site_connection ) &&
-			! isFromMigrationPlugin &&
-			! this.props.isFromAutomatticForAgenciesPlugin
-		);
+		// Currently we enforce users to create user connection in order to use Jetpack.
+		return false;
 	};
 
 	renderWooCommerce( { showSocialLogin = true, socialToS } = {} ) {
@@ -1126,7 +1121,7 @@ export class LoginForm extends Component {
 							socialServiceResponse={ this.props.socialServiceResponse }
 							shouldRenderToS={ false }
 							isWoo={ isWoo }
-							isSocialFirst={ isSocialFirst }
+							isSocialFirst={ isSocialFirst || isJetpack }
 							magicLoginLink={ ! isWooJPC ? this.getMagicLoginPageLink() : null }
 							qrLoginLink={ this.getQrLoginLink() }
 						/>
