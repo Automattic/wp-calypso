@@ -1,11 +1,11 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { Icon } from '@wordpress/components';
 import { envelope, receipt, backup } from '@wordpress/icons';
-import { SummaryButtonFieldProps } from './types';
+import { SummaryButtonBadgeProps } from './types';
 import SummaryButton from './index';
 
 // Define field options for the controls
-const fieldOptions: Record< string, SummaryButtonFieldProps[] > = {
+const badgeOptions: Record< string, SummaryButtonBadgeProps[] > = {
 	'Three Badges': [
 		{ text: 'Active', intent: 'success' },
 		{ text: 'Auto-renew on', intent: 'info' },
@@ -20,7 +20,7 @@ const fieldOptions: Record< string, SummaryButtonFieldProps[] > = {
 };
 
 const meta = {
-	title: 'Components/SummaryButton',
+	title: 'packages/components/SummaryButton',
 	component: SummaryButton,
 	tags: [ 'autodocs' ],
 	argTypes: {
@@ -33,10 +33,10 @@ const meta = {
 				backup: <Icon icon={ backup } />,
 			},
 		},
-		fields: {
+		badges: {
 			control: 'select',
-			options: Object.keys( fieldOptions ),
-			mapping: fieldOptions,
+			options: Object.keys( badgeOptions ),
+			mapping: badgeOptions,
 			description: 'Pre-defined badge sets to display',
 		},
 		density: {
@@ -54,7 +54,7 @@ export const Default: Story = {
 		title: 'Domain Settings',
 		description: 'Manage your domain settings, DNS, email, and more.',
 		onClick: () => alert( 'Clicked!' ),
-		fields: fieldOptions[ 'Two Badges' ],
+		badges: badgeOptions[ 'Two Badges' ],
 	},
 };
 
@@ -65,8 +65,7 @@ export const LowDensity: Story = {
 		strapline: 'Some settings require attention',
 		density: 'low',
 		decoration: <Icon icon={ receipt } />,
-		fields: fieldOptions[ 'Three Badges' ],
-		leadsToNestedPage: true,
+		badges: badgeOptions[ 'Three Badges' ],
 		onClick: () => alert( 'Clicked low density!' ),
 	},
 };
@@ -77,7 +76,7 @@ export const MediumDensity: Story = {
 		description: 'Setup email forwarding for your domain.',
 		density: 'medium',
 		decoration: <Icon icon={ envelope } />,
-		fields: fieldOptions[ 'Two Badges' ],
+		badges: badgeOptions[ 'Two Badges' ],
 		onClick: () => alert( 'Clicked medium density!' ),
 	},
 };

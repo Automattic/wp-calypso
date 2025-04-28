@@ -1,11 +1,11 @@
 type Density = 'low' | 'medium';
 
 /**
- * `fields` property of `SummaryButton` component is used to display
- * `CoreBadge` instances per field. For this reason we need to define
- * the props that match the `CoreBadge` component (intent and text).
+ * `badges` property of `SummaryButton` component is used to display `CoreBadge`
+ * instances for each array item. For this reason we need to define the props
+ * that match the `CoreBadge` component (intent and text).
  */
-export type SummaryButtonFieldProps = {
+export type SummaryButtonBadgeProps = {
 	/**
 	 * Text to display inside the badge.
 	 */
@@ -24,9 +24,9 @@ export interface SummaryButtonProps {
 	title: string;
 	/**
 	 * If provided, causes the component to render an `<a />` element
-	 * instead of a `<button />` element. It's mapped to the `href` property.
+	 * instead of a `<button />` element.
 	 */
-	to?: string;
+	href?: string;
 	/**
 	 * A callback to handle clicking an item.
 	 */
@@ -51,18 +51,16 @@ export interface SummaryButtonProps {
 	 */
 	decoration?: React.ReactElement;
 	/**
-	 * This property is used to display `CoreBadge` instances per field. For
+	 * This property is used to display `CoreBadge` instances per item. For
 	 * this reason we need to define the props that match the `CoreBadge`
 	 * component (intent and text).
 	 */
-	fields?: SummaryButtonFieldProps[];
+	badges?: SummaryButtonBadgeProps[];
 	/**
-	 * A flag that indicates whether the button leads to a deeper level of navigation
-	 * or a separate detail page. When `true` it shows a chevron at the UI.
+	 * A flag that indicates whether to show a chevron at the right-top UI.
 	 * @default true
 	 */
-	// TODO: rename, revisit this param..
-	leadsToNestedPage?: boolean;
+	showArrow?: boolean;
 	/**
 	 * Determines if the element is disabled. If `true`, this will force a `button`
 	 * element to be rendered, even when an `href` is given.

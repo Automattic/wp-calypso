@@ -12,15 +12,15 @@ import CoreBadge from '../core-badge';
 import { SummaryButtonProps } from './types';
 import './style.scss';
 
-function BadgesList( { fields }: { fields: SummaryButtonProps[ 'fields' ] } ) {
-	if ( ! fields?.length ) {
+function BadgesList( { badges }: { badges: SummaryButtonProps[ 'badges' ] } ) {
+	if ( ! badges?.length ) {
 		return null;
 	}
 	return (
 		<HStack spacing={ 1 } justify="flex-start" style={ { minWidth: 'fit-content' } }>
-			{ fields?.map( ( field ) => (
-				<CoreBadge key={ field.text } intent={ field.intent }>
-					{ field.text }
+			{ badges?.map( ( badge ) => (
+				<CoreBadge key={ badge.text } intent={ badge.intent }>
+					{ badge.text }
 				</CoreBadge>
 			) ) }
 		</HStack>
@@ -30,12 +30,12 @@ function BadgesList( { fields }: { fields: SummaryButtonProps[ 'fields' ] } ) {
 function SummaryButton(
 	{
 		title,
-		to,
+		href,
 		decoration,
 		description,
 		strapline,
-		fields,
-		leadsToNestedPage = true,
+		badges,
+		showArrow = true,
 		onClick,
 		disabled,
 		density = 'low',
@@ -43,11 +43,10 @@ function SummaryButton(
 	ref: React.ForwardedRef< HTMLAnchorElement | HTMLButtonElement >
 ) {
 	const hasLowDensity = density === 'low';
-
 	return (
 		<Button
 			ref={ ref }
-			href={ to }
+			href={ href }
 			onClick={ onClick }
 			className={ clsx( 'summary-button', `has-density-${ density }` ) }
 			disabled={ disabled }
@@ -65,14 +64,14 @@ function SummaryButton(
 							) }
 							<Text className="summary-button-title">{ title }</Text>
 							{ description && <Text variant="muted">{ description }</Text> }
-							{ hasLowDensity && <BadgesList fields={ fields } /> }
+							{ hasLowDensity && <BadgesList badges={ badges } /> }
 						</VStack>
 					</HStack>
 					{ /* // TODO: we might need to consider to add `badges` in the same HStack with the main content
 						// and not like here with the chevron icon. */ }
 					<HStack justify="flex-end" spacing={ 2 } expanded={ false } as="span">
-						{ ! hasLowDensity && <BadgesList fields={ fields } /> }
-						{ leadsToNestedPage && (
+						{ ! hasLowDensity && <BadgesList badges={ badges } /> }
+						{ showArrow && (
 							<Icon icon={ chevronRight } className="summary-button-navigation-icon" />
 						) }
 					</HStack>
