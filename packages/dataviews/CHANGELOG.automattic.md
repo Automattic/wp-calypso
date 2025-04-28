@@ -7,3 +7,4 @@
 ## Next
 
 - Introduce and expose `useDataViewsContext` custom hook
+- Add DataViews children prop support
