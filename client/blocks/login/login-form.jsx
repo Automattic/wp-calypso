@@ -721,6 +721,7 @@ export class LoginForm extends Component {
 				type="button"
 				className="login__form-password-toggle"
 				onClick={ onClick }
+				aria-controls="password"
 				aria-label={ translate( 'Hide password' ) }
 				tabIndex={ tabIndex }
 			>
@@ -731,6 +732,7 @@ export class LoginForm extends Component {
 				type="button"
 				className="login__form-password-toggle"
 				onClick={ onClick }
+				aria-controls="password"
 				aria-label={ translate( 'Show password' ) }
 				tabIndex={ tabIndex }
 			>

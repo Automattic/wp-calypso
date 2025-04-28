@@ -328,6 +328,13 @@ $breakpoint-mobile: 782px; //Mobile size.
 		svg {
 			fill: var(--color-neutral-20);
 		}
+
+		&:hover,
+		&:focus-visible {
+			svg {
+				fill: var(--color-neutral-40);
+			}
+		}
 	}
 
 	.form-input-validation {
