@@ -1,7 +1,7 @@
 import { PRIVATE_STEPS } from '../declarative-flow/internals/steps';
-import type { Flow, StepperStep } from '../declarative-flow/internals/types';
+import type { FlowV1, StepperStep } from '../declarative-flow/internals/types';
 
-function useInjectUserStepIfNeededForV1( flow: Flow ): readonly StepperStep[] {
+function useInjectUserStepIfNeededForV1( flow: FlowV1 ): readonly StepperStep[] {
 	const steps = flow.useSteps();
 	return injectUserStepInSteps( steps ) as readonly StepperStep[];
 }
@@ -25,7 +25,7 @@ export function injectUserStepInSteps< T extends readonly StepperStep[] >(
 /**
  * @deprecated should be removed once #97999 is merged and all flows are migrated to V2.
  */
-export function enhanceFlowWithAuth( flow: Flow ): Flow {
+export function enhanceFlowWithAuth( flow: FlowV1 ): FlowV1 {
 	return {
 		...flow,
 		useSteps: () => useInjectUserStepIfNeededForV1( flow ) as StepperStep[],
