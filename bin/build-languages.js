@@ -5,7 +5,6 @@ const path = require( 'path' );
 const languages = require( '@automattic/languages' );
 const parse = require( 'gettext-parser' ).po.parse;
 const _ = require( 'lodash' );
-const fetch = require( 'node-fetch' );
 
 const LANGUAGES_BASE_URL = 'https://widgets.wp.com/languages/calypso';
 const LANGUAGES_REVISIONS_FILENAME = 'lang-revisions.json';

@@ -46,7 +46,6 @@
 		"@wordpress/dependency-extraction-webpack-plugin": "^6.19.0",
 		"gettext-parser": "^6.0.0",
 		"lodash": "^4.17.21",
-		"node-fetch": "^2.7.0",
 		"npm-run-all": "^4.1.5",
 		"postcss": "^8.5.3",
 		"webpack": "^5.97.1",

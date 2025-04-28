@@ -64,7 +64,6 @@
 		"@typescript-eslint/parser": "^6.21.0",
 		"@wordpress/eslint-plugin": "^22.8.0",
 		"@wordpress/stylelint-config": "^23.14.0",
-		"node-fetch": "^2.7.0",
 		"stylelint": "^16.2.1",
 		"stylelint-scss": "^6.4.0",
 		"typescript": "^5.8.2"

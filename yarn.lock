@@ -151,7 +151,6 @@ __metadata:
     i18n-calypso: "workspace:^"
     lodash: "npm:^4.17.21"
     moment: "npm:^2.30.1"
-    node-fetch: "npm:^2.7.0"
     path-browserify: "npm:^1.0.1"
     postcss: "npm:^8.5.3"
     prop-types: "npm:^15.8.1"
@@ -282,7 +281,6 @@ __metadata:
     gettext-parser: "npm:^6.0.0"
     lodash: "npm:^4.17.21"
     mini-css-extract-plugin: "npm:^1.6.2"
-    node-fetch: "npm:^2.7.0"
     postcss-custom-properties: "npm:^11.0.0"
     postcss-loader: "npm:^6.2.1"
     recursive-copy: "npm:^2.0.14"
@@ -360,7 +358,6 @@ __metadata:
     "@playwright/browser-chromium": "npm:1.48.2"
     "@playwright/browser-firefox": "npm:1.48.2"
     "@types/node": "npm:^22.7.5"
-    "@types/node-fetch": "npm:^2.6.12"
     "@types/totp-generator": "npm:^0.0.3"
     "@wordpress/i18n": "npm:^5.22.0"
     asana-phrase: "npm:^0.0.8"
@@ -368,7 +365,6 @@ __metadata:
     jest-docblock: "npm:^29.7.0"
     mailosaur: "npm:^8.4.0"
     nock: "npm:^13.5.6"
-    node-fetch: "npm:^2.7.0"
     playwright: "npm:1.48.2"
     totp-generator: "npm:^0.0.12"
     typescript: "npm:^5.8.2"
@@ -611,7 +607,6 @@ __metadata:
     gettext-parser: "npm:^6.0.0"
     i18n-calypso: "workspace:^"
     lodash: "npm:^4.17.21"
-    node-fetch: "npm:^2.7.0"
     npm-run-all: "npm:^4.1.5"
     postcss: "npm:^8.5.3"
     react: "npm:^18.3.1"
@@ -779,7 +774,6 @@ __metadata:
     i18n-calypso: "workspace:^"
     jest-fetch-mock: "npm:^3.0.3"
     nock: "npm:^13.5.6"
-    node-fetch: "npm:^2.7.0"
     qs: "npm:^6.9.1"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
@@ -1622,7 +1616,6 @@ __metadata:
     jest: "npm:^29.7.0"
     lodash: "npm:^4.17.21"
     moment: "npm:^2.30.1"
-    node-fetch: "npm:^2.7.0"
     path-browserify: "npm:^1.0.1"
     postcss: "npm:^8.5.3"
     prop-types: "npm:^15.8.1"
@@ -2018,7 +2011,6 @@ __metadata:
     "@wordpress/rich-text": "npm:^7.22.0"
     "@wordpress/stylelint-config": "npm:^23.14.0"
     "@wordpress/url": "npm:^4.22.0"
-    node-fetch: "npm:^2.7.0"
     stylelint: "npm:^16.2.1"
     stylelint-scss: "npm:^6.4.0"
     typescript: "npm:^5.8.2"
@@ -8484,16 +8476,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node-fetch@npm:^2.6.12":
-  version: 2.6.12
-  resolution: "@types/node-fetch@npm:2.6.12"
-  dependencies:
-    "@types/node": "npm:*"
-    form-data: "npm:^4.0.0"
-  checksum: 7693acad5499b7df2d1727d46cff092a63896dc04645f36b973dd6dd754a59a7faba76fcb777bdaa35d80625c6a9dd7257cca9c401a4bab03b04480cda7fd1af
-  languageName: node
-  linkType: hard
-
 "@types/node-forge@npm:^1.3.0":
   version: 1.3.9
   resolution: "@types/node-forge@npm:1.3.9"
@@ -8503,12 +8485,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*, @types/node@npm:>=10.0.0, @types/node@npm:^22.10.10, @types/node@npm:^22.7.5":
-  version: 22.10.10
-  resolution: "@types/node@npm:22.10.10"
+"@types/node@npm:*, @types/node@npm:>=10.0.0, @types/node@npm:^22.10.10, @types/node@npm:^22.15.3, @types/node@npm:^22.7.5":
+  version: 22.15.3
+  resolution: "@types/node@npm:22.15.3"
   dependencies:
-    undici-types: "npm:~6.20.0"
-  checksum: 3425772d4513cd5dbdd87c00acda088113c03a97445f84f6a89744c60a66990b56c9d3a7213d09d57b6b944ae8ff45f985565e0c1846726112588e33a22dd12b
+    undici-types: "npm:~6.21.0"
+  checksum: 2879f012d1aeba0bfdb5fed80d165f4f2cb3d1f2e1f98a24b18d4a211b4ace7d64bf2622784c78355982ffc1081ba79d0934efc2fb8353913e5871a63609661f
   languageName: node
   linkType: hard
 
@@ -26013,7 +25995,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"node-fetch@npm:^2.6.1, node-fetch@npm:^2.6.7, node-fetch@npm:^2.7.0":
+"node-fetch@npm:^2.6.1, node-fetch@npm:^2.6.7":
   version: 2.7.0
   resolution: "node-fetch@npm:2.7.0"
   dependencies:
@@ -33855,10 +33837,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"undici-types@npm:~6.20.0":
-  version: 6.20.0
-  resolution: "undici-types@npm:6.20.0"
-  checksum: 68e659a98898d6a836a9a59e6adf14a5d799707f5ea629433e025ac90d239f75e408e2e5ff086afc3cace26f8b26ee52155293564593fbb4a2f666af57fc59bf
+"undici-types@npm:~6.21.0":
+  version: 6.21.0
+  resolution: "undici-types@npm:6.21.0"
+  checksum: c01ed51829b10aa72fc3ce64b747f8e74ae9b60eafa19a7b46ef624403508a54c526ffab06a14a26b3120d055e1104d7abe7c9017e83ced038ea5cf52f8d5e04
   languageName: node
   linkType: hard
 
@@ -35424,7 +35406,7 @@ __metadata:
     "@types/gtag.js": "npm:^0.0.20"
     "@types/jest": "npm:^29.5.14"
     "@types/lodash": "npm:^4.17.16"
-    "@types/node": "npm:^22.7.5"
+    "@types/node": "npm:^22.15.3"
     "@types/page": "npm:^1.11.9"
     "@types/qs": "npm:^6.9.7"
     "@types/react": "npm:^18.3.20"
@@ -35511,7 +35493,6 @@ __metadata:
     moment: "npm:^2.30.1"
     ncp: "npm:^2.0.0"
     nock: "npm:^13.5.6"
-    node-fetch: "npm:^2.7.0"
     npm-run-all: "npm:^4.1.5"
     photon: "workspace:^"
     postcss: "npm:^8.5.3"
@@ -35586,7 +35567,6 @@ __metadata:
     jest-teamcity: "npm:^1.12.0"
     lodash: "npm:^4.17.20"
     mailosaur: "npm:^8.4.0"
-    node-fetch: "npm:^2.7.0"
     playwright: "npm:1.48.2"
     postcss: "npm:^8.3.11"
     webpack: "npm:^5.63.0"
