@@ -4,8 +4,8 @@
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
-import nock from 'nock';
-import React, { act, ReactNode } from 'react';
+import { when } from 'jest-when';
+import { act, ReactNode } from 'react';
 import { useGeoLocationQuery, GeoLocationData } from '../use-geolocation-query';
 
 jest.useFakeTimers();
@@ -25,11 +25,9 @@ describe( 'useGeoLocationQuery', () => {
 	};
 
 	beforeAll( () => {
-		nock( 'https://public-api.wordpress.com' ).persist().get( '/geo/' ).reply( 200, mockGeoData );
-	} );
-
-	afterAll( () => {
-		nock.cleanAll();
+		when( jest.spyOn( globalThis, 'fetch' ) )
+			.calledWith( 'https://public-api.wordpress.com/geo/' )
+			.mockResolvedValue( { json: () => Promise.resolve( mockGeoData ) } as Response );
 	} );
 
 	it( 'should fetch geolocation data', async () => {
