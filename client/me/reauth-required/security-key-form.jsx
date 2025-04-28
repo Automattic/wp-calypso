@@ -8,7 +8,7 @@ import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 
 import './security-key-form.scss';
 
-class SecurityKeyForm extends Component {
+export class SecurityKeyForm extends Component {
 	static propTypes = {
 		twoStepAuthorization: PropTypes.object.isRequired,
 		onComplete: PropTypes.func,
