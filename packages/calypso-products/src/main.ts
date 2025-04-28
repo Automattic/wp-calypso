@@ -375,6 +375,13 @@ export function is100YearPlan( planSlug: string ): boolean {
 	return planMatches( planSlug, { type: TYPE_100_YEAR } );
 }
 
+export function isBigSkySupportedPlan( planSlug: string ): boolean {
+	return (
+		planMatches( planSlug, { type: TYPE_BUSINESS } ) ||
+		planMatches( planSlug, { type: TYPE_PREMIUM } )
+	);
+}
+
 // Checks if it is an Enterprise plan (a.k.a VIP), introduced as part of pdgrnI-1Qp-p2.
 // This is not a real plan, but added to display Enterprise in the pricing grid.
 export function isWpcomEnterpriseGridPlan( planSlug: string ): boolean {
