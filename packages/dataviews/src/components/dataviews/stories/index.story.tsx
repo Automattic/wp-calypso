@@ -16,7 +16,7 @@ import { __, _n } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
-import DataViews from '../index';
+import { DataViews } from '../index';
 import { DEFAULT_VIEW, actions, data, fields } from './fixtures';
 import { LAYOUT_GRID, LAYOUT_LIST, LAYOUT_TABLE } from '../../../constants';
 import { filterSortAndPaginate } from '../../../filter-and-sort-data-view';
