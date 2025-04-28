@@ -28,10 +28,8 @@ export const ImportWrapper: Step< {
 				stepName={ stepName || 'import-step' }
 				flowName="importer"
 				className="import__onboarding-page"
-				hideSkip
 				hideFormattedHeader
 				goBack={ navigation.goBack }
-				goNext={ navigation.goNext }
 				skipLabelText={ __( "I don't have a site address" ) }
 				isFullLayout
 				stepContent={ children as ReactElement }
