@@ -23,6 +23,7 @@ import {
 	isPremiumPlan,
 	isFreePlan,
 	isPersonalPlan,
+	isBigSkySupportedPlan,
 } from '@automattic/calypso-products';
 import { Plans } from '@automattic/data-stores';
 import { isSamePlan } from '../../lib/is-same-plan';
@@ -62,6 +63,13 @@ const isGridPlanVisible = ( {
 	selectedPlan?: PlanSlug;
 } ): boolean => {
 	let isVisible = planSlugsForIntent.includes( planSlug );
+
+	// TODO: actually check if the site is a big sky trial
+	const isBigSkyTrial = true;
+
+	if ( isBigSkyTrial ) {
+		isVisible = isBigSkySupportedPlan( planSlug );
+	}
 
 	if ( isDisplayingPlansNeededForFeature && selectedPlan ) {
 		if ( isEcommercePlan( selectedPlan ) ) {
