@@ -6,7 +6,9 @@
 	background-color: var(--wp-components-color-background, #fff);
 	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 	width: 100%;
-	padding: 24px 0;
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
 
 	&__head {
 		display: flex;
@@ -17,6 +19,7 @@
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
+		padding-bottom: 24px;
 	}
 
 	&__left-section {
@@ -25,7 +28,7 @@
 		gap: $grid-unit-20;
 	}
 
-	&__back-link {
+	a.calypso-navigation-header__back-link {
 		display: flex;
 		align-items: center;
 		text-decoration: none;

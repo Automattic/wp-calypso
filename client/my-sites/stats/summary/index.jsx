@@ -1,4 +1,5 @@
-import { isEnabled } from '@automattic/calypso-config';
+import config, { isEnabled } from '@automattic/calypso-config';
+import styled from '@emotion/styled';
 import { localize } from 'i18n-calypso';
 import { merge } from 'lodash';
 import { Component, Fragment } from 'react';
@@ -7,6 +8,7 @@ import titlecase from 'to-title-case';
 import QueryMedia from 'calypso/components/data/query-media';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import NavigationHeader from 'calypso/components/navigation-header';
+import NavigationHeaderImpr from 'calypso/components/navigation-header/navigation-header';
 import AnnualSiteStats from 'calypso/my-sites/stats/annual-site-stats';
 import Main from 'calypso/my-sites/stats/components/stats-main';
 import StatsModuleAuthors from 'calypso/my-sites/stats/features/modules/stats-authors';
@@ -101,6 +103,7 @@ class StatsSummary extends Component {
 		const moduleQuery = merge( {}, statsQueryOptions, query );
 		const urlParams = new URLSearchParams( this.props.context.querystring );
 		const listItemClassName = 'stats__summary--narrow-mobile';
+		const isStatsNavigationImprovementEnabled = config.isEnabled( 'stats/navigation-improvement' );
 
 		switch ( this.props.context.params.module ) {
 			case 'referrers':
@@ -366,43 +369,68 @@ class StatsSummary extends Component {
 			backLink += domain;
 		}
 		const navigationItems = [ { label: backLabel, href: backLink }, { label: title } ];
+		const Stats = styled.div`
+			padding-bottom: 24px;
+
+			@media ( max-width: 782px ) {
+				padding-bottom: 0;
+			}
+		`;
 
 		return (
-			<Main className="has-fixed-nav" wideLayout>
+			<>
 				<PageViewTracker
 					path={ `/stats/${ period }/${ module }/:site` }
 					title={ `Stats > ${ titlecase( period ) } > ${ titlecase( module ) }` }
 				/>
-				<NavigationHeader className="stats-summary-view" navigationItems={ navigationItems } />
 
-				<div id="my-stats-content" className="stats-summary-view stats-summary__positioned">
-					{ this.props.context.params.module === 'utm' ? (
-						<StatsGlobalValuesContext.Consumer>
-							{ ( isInternal ) => (
-								<>
-									{ supportsUTMStats || isInternal ? (
-										<>
-											{ this.renderSummaryHeader( path, statType, false, moduleQuery ) }
-											<StatsModuleUTM
-												siteId={ siteId }
-												period={ this.props.period }
-												query={ moduleQuery }
-												summary
-												context={ this.props.context }
-											/>
-										</>
-									) : (
-										<div>{ translate( 'This path is not available.' ) }</div>
-									) }
-								</>
-							) }
-						</StatsGlobalValuesContext.Consumer>
-					) : (
-						summaryViews
+				{ isStatsNavigationImprovementEnabled && (
+					<Stats className="stats">
+						<NavigationHeaderImpr
+							className="stats__section-header modernized-header"
+							title={ title }
+							backLinkProps={ {
+								url: backLink,
+								text: backLabel,
+							} }
+						/>
+					</Stats>
+				) }
+
+				<Main className="has-fixed-nav" wideLayout>
+					{ ! isStatsNavigationImprovementEnabled && (
+						<NavigationHeader className="stats-summary-view" navigationItems={ navigationItems } />
 					) }
-					<JetpackColophon />
-				</div>
-			</Main>
+
+					<div id="my-stats-content" className="stats-summary-view stats-summary__positioned">
+						{ this.props.context.params.module === 'utm' ? (
+							<StatsGlobalValuesContext.Consumer>
+								{ ( isInternal ) => (
+									<>
+										{ supportsUTMStats || isInternal ? (
+											<>
+												{ this.renderSummaryHeader( path, statType, false, moduleQuery ) }
+												<StatsModuleUTM
+													siteId={ siteId }
+													period={ this.props.period }
+													query={ moduleQuery }
+													summary
+													context={ this.props.context }
+												/>
+											</>
+										) : (
+											<div>{ translate( 'This path is not available.' ) }</div>
+										) }
+									</>
+								) }
+							</StatsGlobalValuesContext.Consumer>
+						) : (
+							summaryViews
+						) }
+						<JetpackColophon />
+					</div>
+				</Main>
+			</>
 		);
 	}
 }
