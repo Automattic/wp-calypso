@@ -45,10 +45,10 @@ export function useStepNavigator(
 		navigator( getWordpressImportContentOnlyUrl() );
 	}
 
-	function goToSiteViewPage() {
+	function goToWpAdmin() {
 		navigation.submit?.( {
 			type: 'redirect',
-			url: `/view/${ siteId || siteSlug || '' }`,
+			url: `/home/${ siteId || siteSlug || '' }`,
 		} );
 	}
 
@@ -130,7 +130,7 @@ export function useStepNavigator(
 		goToGoalsPage,
 		goToImportCapturePage,
 		goToImportContentOnlyPage,
-		goToSiteViewPage,
+		goToWpAdmin,
 		goToDashboardPage,
 		goToCheckoutPage,
 		goToWpAdminImportPage,
