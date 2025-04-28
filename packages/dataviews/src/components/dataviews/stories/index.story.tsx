@@ -11,7 +11,7 @@ import {
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
+import { __, _n } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
@@ -128,7 +128,10 @@ export const WithChildren = () => {
 		return filterSortAndPaginate( data, view, fields );
 	}, [ view ] );
 
-	const moons = shownData.reduce( ( sum, item ) => sum + item.satellites, 0 );
+	const planets = shownData.filter( ( item ) =>
+		item.categories.includes( 'Planet' )
+	);
+	const moons = planets.reduce( ( sum, item ) => sum + item.satellites, 0 );
 
 	return (
 		<DataViews
@@ -143,17 +146,23 @@ export const WithChildren = () => {
 		>
 			<Card isBorderless style={ { padding: '12px 24px' } }>
 				<CardHeader>
-					<Heading>{ __( 'Solar System numbers' ) }</Heading>
+					<Heading level={ 2 }>
+						{ __( 'Solar System numbers' ) }
+					</Heading>
 				</CardHeader>
 
 				<CardBody>
 					<VStack>
 						<Text size={ 18 } as="p">
 							{ createInterpolateElement(
-								__( '<PlanetsNumber /> planets' ),
+								_n(
+									'<PlanetsNumber /> planet',
+									'<PlanetsNumber /> planets',
+									planets.length
+								),
 								{
 									PlanetsNumber: (
-										<strong>{ shownData.length } </strong>
+										<strong>{ planets.length } </strong>
 									),
 								}
 							) }
@@ -161,7 +170,11 @@ export const WithChildren = () => {
 
 						<Text size={ 18 } as="p">
 							{ createInterpolateElement(
-								__( '<SatellitesNumber /> moons' ),
+								_n(
+									'<SatellitesNumber /> moon',
+									'<SatellitesNumber /> moons',
+									moons
+								),
 								{
 									SatellitesNumber: (
 										<strong>{ moons } </strong>
