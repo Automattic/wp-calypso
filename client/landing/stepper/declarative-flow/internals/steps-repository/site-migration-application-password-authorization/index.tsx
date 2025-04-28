@@ -19,12 +19,10 @@ import type { Step as StepType } from '../../types';
 import './style.scss';
 
 const SiteMigrationApplicationPasswordsAuthorization: StepType< {
-	submits:
-		| {
-				action: 'migration-started' | 'fallback-credentials' | 'authorization' | 'contact-me';
-				authorizationUrl?: string;
-		  }
-		| undefined;
+	submits: {
+		action: 'migration-started' | 'fallback-credentials' | 'authorization' | 'contact-me';
+		authorizationUrl?: string;
+	};
 } > = function ( { navigation, flow } ) {
 	const translate = useTranslate();
 	const siteSlug = useSiteSlugParam();
@@ -167,8 +165,6 @@ const SiteMigrationApplicationPasswordsAuthorization: StepType< {
 				stepName="site-migration-application-password-authorization"
 				flowName="site-migration"
 				goBack={ navigation?.goBack }
-				goNext={ () => navigation?.submit?.( undefined ) }
-				hideSkip
 				notice={ notice }
 				formattedHeader={ formattedHeader }
 				stepContent={

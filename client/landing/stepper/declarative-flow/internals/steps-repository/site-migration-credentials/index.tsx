@@ -47,21 +47,19 @@ const getAction = ( siteInfo?: UrlData, applicationPasswordsInfo?: ApplicationPa
 };
 
 const SiteMigrationCredentials: StepType< {
-	submits:
-		| {
-				action:
-					| 'submit'
-					| 'application-passwords-approval'
-					| 'credentials-required'
-					| 'already-wpcom'
-					| 'site-is-not-using-wordpress'
-					| 'skip';
-				from?: string;
-				platform?: ImporterPlatform;
-				authorizationUrl?: string;
-				hasError?: 'ticket-creation';
-		  }
-		| undefined;
+	submits: {
+		action:
+			| 'submit'
+			| 'application-passwords-approval'
+			| 'credentials-required'
+			| 'already-wpcom'
+			| 'site-is-not-using-wordpress'
+			| 'skip';
+		from?: string;
+		platform?: ImporterPlatform;
+		authorizationUrl?: string;
+		hasError?: 'ticket-creation';
+	};
 } > = function ( { navigation, flow } ) {
 	const translate = useTranslate();
 	const siteId = parseInt( useSiteIdParam() ?? '' );
@@ -175,8 +173,6 @@ const SiteMigrationCredentials: StepType< {
 				stepName="site-migration-credentials"
 				flowName="site-migration"
 				goBack={ navigation?.goBack }
-				goNext={ () => navigation?.submit?.( undefined ) }
-				hideSkip
 				isFullLayout
 				formattedHeader={
 					<FormattedHeader
