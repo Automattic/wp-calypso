@@ -68,7 +68,7 @@ function TwoFactorActions( {
 			) }
 
 			{ isAuthenticatorAvailable && (
-				<Button data-e2e-link="2fa-otp-link" value="authenticator" onClick={ handleButtonClick }>
+				<Button value="authenticator" onClick={ handleButtonClick }>
 					{ translate( 'Continue with your authenticator\u00A0app' ) }
 				</Button>
 			) }
