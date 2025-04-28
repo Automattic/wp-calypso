@@ -3,7 +3,6 @@ const fs = require( 'fs' );
 const path = require( 'path' );
 const vm = require( 'vm' );
 const _ = require( 'lodash' );
-const request = require( 'request' );
 
 const areaCodes = {
 	CA: [
@@ -134,10 +133,12 @@ const aliases = {
 
 function getLibPhoneNumberData() {
 	return new Promise( function ( resolve, reject ) {
-		request.get( LIBPHONENUMBER_METADATA_URL, function ( error, response, body ) {
-			if ( error || response.statusCode >= 400 ) {
-				throw error || response.statusCode;
+		fetch( LIBPHONENUMBER_METADATA_URL ).then( async ( response ) => {
+			if ( response.status >= 400 ) {
+				throw response.status;
 			}
+
+			const body = await response.text();
 
 			const capture = body.substring(
 				body.indexOf( 'countryToMetadata = ' ) + 20,
