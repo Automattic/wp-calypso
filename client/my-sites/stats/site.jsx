@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { eye } from '@automattic/components/src/icons';
-import { Icon, settings, people, starEmpty, commentContent } from '@wordpress/icons';
+import { Icon, people, starEmpty, commentContent } from '@wordpress/icons';
 import clsx from 'clsx';
 import { localize, translate } from 'i18n-calypso';
 import { find } from 'lodash';
@@ -536,7 +536,6 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 					className="stats__section-header modernized-header"
 					title={ isOdysseyStats ? STATS_PRODUCT_NAME : STATS_PRODUCT_NAME_IMPR }
 					titleLogo={ isOdysseyStats ? <JetpackLogo size={ 24 } monochrome={ false } /> : null }
-					rightSection={ <Icon className="gridicon" icon={ settings } /> }
 				/>
 			) : (
 				<NavigationHeader
