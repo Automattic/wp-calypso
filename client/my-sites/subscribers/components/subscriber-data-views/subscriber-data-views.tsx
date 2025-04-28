@@ -31,6 +31,7 @@ import {
 import { Subscriber } from '../../types';
 import { JetpackEmptyListView } from '../jetpack-empty-list-view';
 import { SubscriberDetails } from '../subscriber-details';
+import { SubscriberDetailsSkeleton } from '../subscriber-details/skeleton';
 import { SubscriberLaunchpad } from '../subscriber-launchpad';
 import SubscriberTotals from '../subscriber-totals';
 import { SubscribersHeader } from '../subscribers-header';
@@ -173,30 +174,6 @@ const SubscriberDataViews = ( {
 			: undefined
 	);
 
-	// Single effect to handle all subscriber selection scenarios
-	useEffect( () => {
-		// If URL changes or we get new subscriber details, update the selection
-		if ( subscriberId ) {
-			// If we have details and they match the current URL
-			if ( subscriberDetails && subscriberId === getSubscriptionIdString( subscriberDetails ) ) {
-				setSelectedSubscriber( subscriberDetails );
-			}
-			// If we don't have matching details yet, try to find in current list
-			else {
-				const subscriberFromList = subscribersQueryResult?.subscribers.find(
-					( s ) => subscriberId === getSubscriptionIdString( s )
-				);
-				if ( subscriberFromList ) {
-					setSelectedSubscriber( subscriberFromList );
-				}
-			}
-		} else if ( ! subscriberId && selectedSubscriber ) {
-			setSelectedSubscriber( null );
-		}
-		// We don't need to re-run this effect when selectedSubscriber changes.
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ subscriberId, subscriberDetails, subscribersQueryResult?.subscribers ] );
-
 	const { data: subscribedNewsletterCategoriesData, isLoading: isLoadingNewsletterCategories } =
 		useSubscribedNewsletterCategories( {
 			siteId: siteId as number,
@@ -207,6 +184,31 @@ const SubscriberDataViews = ( {
 			userId: subscriberDetails?.user_id,
 			enabled: !! subscriberId && !! siteId,
 		} );
+
+	// Single effect to handle all subscriber selection scenarios
+	useEffect( () => {
+		// If no subscriberId in URL, immediately clear selection
+		if ( ! subscriberId ) {
+			setSelectedSubscriber( null );
+			return;
+		}
+
+		// If we have details and they match the current URL, use them
+		if ( subscriberDetails && subscriberId === getSubscriptionIdString( subscriberDetails ) ) {
+			setSelectedSubscriber( subscriberDetails );
+			return;
+		}
+
+		// Only try to find subscriber in the list if we don't have matching details yet
+		if ( ! subscriberDetails || subscriberId !== getSubscriptionIdString( subscriberDetails ) ) {
+			const subscriberFromList = subscribersQueryResult?.subscribers.find(
+				( s ) => subscriberId === getSubscriptionIdString( s )
+			);
+			if ( subscriberFromList ) {
+				setSelectedSubscriber( subscriberFromList );
+			}
+		}
+	}, [ subscriberId, subscriberDetails, subscribersQueryResult?.subscribers ] );
 
 	const { data: subscribersTotals } = useSubscriberCountQuery( siteId ?? null );
 	const grandTotal = subscribersTotals?.email_subscribers ?? 0;
@@ -289,8 +291,9 @@ const SubscriberDataViews = ( {
 		]
 	);
 
-	// Modify the onClose handler in SubscriberDetails to preserve the page when going back to the list
+	// Modify the onClose handler to clear selection before navigation
 	const handleClose = useCallback( () => {
+		setSelectedSubscriber( null );
 		const urlParams = new URLSearchParams( window.location.search );
 		const pageParam = urlParams.get( 'page' );
 		if ( pageParam ) {
@@ -610,23 +613,26 @@ const SubscriberDataViews = ( {
 					</>
 				) }
 			</section>
-			{ selectedSubscriber &&
-				siteId &&
-				! isLoadingNewsletterCategories &&
-				! isLoadingDetails &&
-				subscriberDetails && (
-					<section className="subscriber-data-views__details">
+			{ selectedSubscriber && siteId && (
+				<section className="subscriber-data-views__details">
+					{ isLoadingNewsletterCategories ||
+					isLoadingDetails ||
+					! subscriberDetails ||
+					getSubscriptionIdString( subscriberDetails ) !== subscriberId ? (
+						<SubscriberDetailsSkeleton />
+					) : (
 						<SubscriberDetails
 							subscriber={ subscriberDetails }
 							siteId={ siteId }
-							subscriptionId={ getSubscriptionId( selectedSubscriber ) }
+							subscriptionId={ getSubscriptionId( subscriberDetails ) }
 							onClose={ handleClose }
 							onUnsubscribe={ ( subscriber ) => handleUnsubscribe( [ subscriber ] ) }
 							newsletterCategoriesEnabled={ subscribedNewsletterCategoriesData?.enabled }
 							newsletterCategories={ subscribedNewsletterCategoriesData?.newsletterCategories }
 						/>
-					</section>
-				) }
+					) }
+				</section>
+			) }
 			<UnsubscribeModal
 				subscribers={ currentSubscribers }
 				onCancel={ resetSubscribers }
