@@ -56,13 +56,15 @@ function SummaryButton(
 				{ !! decoration && <span className="summary-button-decoration">{ decoration }</span> }
 				<HStack justify="space-between" spacing={ 4 } as="span" wrap>
 					<VStack alignment="flex-start" as="span" spacing={ 3 } justify="flex-start">
-						{ strapline && hasLowDensity && (
-							<Text variant="muted" size={ 10 } upperCase className="summary-button-strapline">
-								{ strapline }
-							</Text>
-						) }
-						<Text className="summary-button-title">{ title }</Text>
-						{ description && hasLowDensity && <Text variant="muted">{ description }</Text> }
+						<VStack alignment="flex-start" as="span" spacing={ 2 } justify="flex-start">
+							{ strapline && hasLowDensity && (
+								<Text variant="muted" size={ 10 } upperCase className="summary-button-strapline">
+									{ strapline }
+								</Text>
+							) }
+							<Text className="summary-button-title">{ title }</Text>
+							{ description && hasLowDensity && <Text variant="muted">{ description }</Text> }
+						</VStack>
 						{ hasLowDensity && <BadgesList badges={ badges } /> }
 					</VStack>
 					{ ! hasLowDensity && <BadgesList badges={ badges } /> }

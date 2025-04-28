@@ -5,13 +5,27 @@
 	padding: 24px;
 	display: block;
 	height: auto;
+	transition: none;
 
 	&:hover:not(:disabled, [aria-disabled="true"]) {
-		background: color-mix(in srgb, var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9)) 4%, transparent);
-		color: var(--wp-components-color-accent-darker-20, var(--wp-admin-theme-color-darker-20, #183ad6));
+		background: color-mix(in srgb, var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9)) 2%, transparent);
+		color: var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9));
 
 		.summary-button-title {
-			color: var(--wp-components-color-accent-darker-20, var(--wp-admin-theme-color-darker-20, #183ad6));
+			color: var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9));
+		}
+
+		.summary-button-navigation-icon,
+		.summary-button-decoration svg {
+			fill: var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9));
+		}
+
+		&.has-density-low {
+			box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9)) 12%, transparent);
+		}
+
+		&.has-density-medium {
+			box-shadow: 0 2px 1px -1px color-mix(in srgb, var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9)) 12%, transparent);
 		}
 	}
 
@@ -47,13 +61,13 @@
 	&.has-density-low {
 		/* stylelint-disable-next-line scales/radii */
 		border-radius: 7px;
-		box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
+		box-shadow: inset 0 0 0 1px $gray-200;
 		background-color: #fff;
 	}
 
 	&.has-density-medium {
 		padding: 12px;
-		box-shadow: 0 2px 1px -1px rgba(0, 0, 0, 0.1);
+		box-shadow: 0 2px 1px -1px $gray-100;
 
 		.summary-button-title {
 			@include body-medium;
