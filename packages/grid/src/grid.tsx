@@ -8,6 +8,7 @@ import {
 import { CSS } from '@dnd-kit/utilities';
 import { useResizeObserver } from '@wordpress/compose';
 import { useMemo, Children, isValidElement, useState } from 'react';
+import ResizeHandle from './resize-handle';
 import type { GridLayoutItem, GridProps } from './types';
 import type { DragOverEvent } from '@dnd-kit/core';
 
@@ -35,11 +36,13 @@ export function GridItem( {
 		}`,
 		gridRowEnd: `span ${ item.height || 1 }`,
 		cursor: disabled ? 'default' : dragCursor,
+		position: 'relative' as const,
 	};
 
 	return (
 		<div ref={ setNodeRef } style={ style } { ...attributes } { ...listeners }>
 			{ children }
+			<ResizeHandle disabled={ disabled } />
 		</div>
 	);
 }
