@@ -42,7 +42,11 @@ export default function sendRequest( params, query, body, fn ) {
 		params.apiVersion = query.apiVersion;
 		debug( 'apiVersion: %o', params.apiVersion );
 		delete query.apiVersion;
-	} else {
+	}
+
+	// Set default value of `params.apiVersion` if it wasn't specified. This WPCOM client uses `1.1` as the default,
+	// while the REST proxy itself will default to `1` if the client doesn't specify an explicit `apiVersion`.
+	if ( ! params.apiVersion ) {
 		params.apiVersion = this.apiVersion;
 	}
 
