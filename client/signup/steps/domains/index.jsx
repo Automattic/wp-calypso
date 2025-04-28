@@ -20,7 +20,7 @@ import { localize } from 'i18n-calypso';
 import { defer, get, isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
 import { parse } from 'qs';
-import { Component } from 'react';
+import { Children, Component, isValidElement } from 'react';
 import { connect } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import QueryProductsList from 'calypso/components/data/query-products-list';
@@ -1029,9 +1029,13 @@ class RenderDomainsStepComponent extends Component {
 					/>
 				</div>
 			),
-		].filter( Boolean );
+		];
 
-		if ( content.length === 0 ) {
+		const nonEmptyElements = Children.toArray( content )
+			.map( ( element ) => element.children )
+			.filter( isValidElement );
+
+		if ( nonEmptyElements.length === 0 ) {
 			return null;
 		}
 
@@ -1041,7 +1045,7 @@ class RenderDomainsStepComponent extends Component {
 					'is-sticky': !! useYourDomain,
 				} ) }
 			>
-				{ content }
+				{ nonEmptyElements }
 			</div>
 		);
 	};
