@@ -136,7 +136,7 @@ export const EditableGrid: StoryObj< typeof Grid > = {
 		return (
 			<Grid
 				layout={ layout }
-				columns={ 6 }
+				minColumnWidth={ 160 }
 				rowHeight="auto"
 				spacing={ 2 }
 				editMode
@@ -182,5 +182,6 @@ export const EditableGrid: StoryObj< typeof Grid > = {
 					'This example demonstrates the Grid component in edit mode with drag and drop functionality. Use the edit mode to reorder the cards. The layout and edit mode are managed with local state.',
 			},
 		},
+		layout: '',
 	},
 };
