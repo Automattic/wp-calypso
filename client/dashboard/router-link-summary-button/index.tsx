@@ -1,7 +1,5 @@
 import SummaryButton from '@automattic/components/src/summary-button';
 import { createLink } from '@tanstack/react-router';
-import { forwardRef } from 'react';
-import type { SummaryButtonProps } from '@automattic/components/src/summary-button/types';
 
 /**
  * This component is a wrapper of `SummaryButton` component and acts as a
@@ -10,10 +8,4 @@ import type { SummaryButtonProps } from '@automattic/components/src/summary-butt
  * It's separate from `SummaryButton` to allow for better separation of concerns, as
  * `SummaryButton` is a pure UI component.
  */
-export default createLink(
-	forwardRef(
-		( props: SummaryButtonProps, ref: React.Ref< HTMLAnchorElement | HTMLButtonElement > ) => (
-			<SummaryButton ref={ ref } { ...props } />
-		)
-	)
-);
+export default createLink( SummaryButton );
