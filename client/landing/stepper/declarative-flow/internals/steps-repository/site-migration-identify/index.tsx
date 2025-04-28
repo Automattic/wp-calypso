@@ -240,10 +240,8 @@ const SiteMigrationIdentify: StepType< {
 				className="import__onboarding-page"
 				hideBack={ ! shouldShowBackButton() }
 				backUrl={ urlQueryParams.get( 'back_to' ) || undefined }
-				hideSkip
 				hideFormattedHeader
 				goBack={ navigation?.goBack }
-				goNext={ () => navigation?.submit?.( undefined ) }
 				isFullLayout
 				stepContent={
 					<div className="import__capture-wrapper">

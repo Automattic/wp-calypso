@@ -120,8 +120,6 @@ const SiteMigrationOtherPlatform: StepType< {
 			<StepContainer
 				stepName="site-migration-other-platform"
 				goBack={ navigation?.goBack }
-				goNext={ () => navigation?.submit?.( undefined ) }
-				hideSkip
 				isFullLayout
 				formattedHeader={
 					isAnalyzingUrl ? (
