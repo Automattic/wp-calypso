@@ -49,10 +49,13 @@ $sidebar-appearance-break-point: $break-medium;
 		margin-bottom: 32px;
 	}
 
+	.navigation-header {
+		padding-bottom: 24px;
+	}
+
 	.calypso-navigation-header,
 	.navigation-header {
 		margin-bottom: 0;
-		padding-bottom: 24px;
 		padding-left: max(calc(50% - #{math.div($stats-sections-max-width, 2)}), 32px);
 		padding-right: max(calc(50% - #{math.div($stats-sections-max-width, 2)}), 32px);
 		background-color: var(--studio-white);
