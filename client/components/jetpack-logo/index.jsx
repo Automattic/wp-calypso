@@ -48,9 +48,18 @@ const LogoPathSize32Monochrome = () => (
 	</>
 );
 
-const JetpackLogo = ( { full = false, monochrome = false, size = 32, className, aria } ) => {
+const JetpackLogo = ( { full = false, monochrome = undefined, size = 32, className, aria } ) => {
 	const classes = clsx( 'jetpack-logo', className );
 	const ariaProps = useAriaProps( aria );
+
+	// If the size=24 is passed without explicitely passing monochrome=true,
+	// we assume that the logo should be monochrome.
+	// This is to support the legacy behavior of the logo component.
+	if ( size === 24 && monochrome === undefined ) {
+		monochrome = true;
+	} else {
+		monochrome = monochrome ?? false;
+	}
 
 	if ( full === true ) {
 		return (
@@ -65,7 +74,7 @@ const JetpackLogo = ( { full = false, monochrome = false, size = 32, className, 
 		);
 	}
 
-	if ( 24 === size ) {
+	if ( 24 === size && monochrome ) {
 		return (
 			// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 			<svg className={ classes } height="24" width="24" viewBox="0 0 24 24" { ...ariaProps }>
