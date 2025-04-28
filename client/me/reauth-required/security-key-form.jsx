@@ -11,8 +11,6 @@ import './security-key-form.scss';
 export class SecurityKeyForm extends Component {
 	static propTypes = {
 		twoStepAuthorization: PropTypes.object.isRequired,
-		onComplete: PropTypes.func,
-
 		translate: PropTypes.func.isRequired,
 	};
 
@@ -30,7 +28,6 @@ export class SecurityKeyForm extends Component {
 
 		this.props.twoStepAuthorization
 			.loginUserWithSecurityKey( { user_id: this.props.currentUserId } )
-			.then( ( response ) => this.onComplete( null, response ) )
 			.catch( ( error ) => {
 				const errors = error?.data?.errors ?? [];
 				if ( errors.some( ( e ) => e.code === 'invalid_two_step_nonce' ) ) {
@@ -40,20 +37,12 @@ export class SecurityKeyForm extends Component {
 						} else {
 							// We only retry once, so let's show the original error.
 							this.setState( { isAuthenticating: false, showError: true } );
-							this.onComplete( error, null );
 						}
 					} );
 					return;
 				}
 				this.setState( { isAuthenticating: false, showError: true } );
-				this.onComplete( error, null );
 			} );
-	};
-
-	onComplete = ( error, data ) => {
-		if ( this.props.onComplete ) {
-			this.props.onComplete( error, data );
-		}
 	};
 
 	render() {
