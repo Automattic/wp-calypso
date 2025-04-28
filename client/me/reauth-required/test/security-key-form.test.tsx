@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { SecurityKeyForm } from '../security-key-form';
 
@@ -33,35 +33,32 @@ describe( 'SecurityKeyForm', () => {
 		// Never resolves, simulates loading
 		loginUserWithSecurityKey.mockReturnValue( new Promise( () => {} ) );
 
-		setup();
+		const { findByText, getByText, getByRole } = setup();
 
-		await screen.findByText( 'Waiting for security key' );
-		expect( screen.getByText( 'Waiting for security key' ) ).toBeInTheDocument();
-		expect(
-			screen.getByText( /Connect and touch your security key to log in/ )
-		).toBeInTheDocument();
-		expect(
-			screen.getByRole( 'button', { name: 'Continue with security key' } )
-		).toBeInTheDocument();
+		await findByText( 'Waiting for security key' );
+		expect( getByText( 'Waiting for security key' ) ).toBeInTheDocument();
+		expect( getByText( /Connect and touch your security key to log in/ ) ).toBeInTheDocument();
+		expect( getByRole( 'button', { name: 'Continue with security key' } ) ).toBeInTheDocument();
 	} );
 
 	test( 'shows error and allows user to retry authentication on client failure', async () => {
 		const { reject, promise } = Promise.withResolvers();
 		loginUserWithSecurityKey.mockReturnValue( promise );
-		setup();
+
+		const { findByText, getByText, getByRole } = setup();
 
 		// Wait for the spinner to appear (auth in progress)
-		await screen.findByText( 'Waiting for security key' );
+		await findByText( 'Waiting for security key' );
 
 		// Resolve the initial authentication
 		reject( new Error() );
 
 		await waitFor( () => {
-			expect( screen.getByText( /An error occurred, please try again/ ) ).toBeInTheDocument();
+			expect( getByText( /An error occurred, please try again/ ) ).toBeInTheDocument();
 		} );
 
 		// Now click the button to trigger another authentication
-		await userEvent.click( screen.getByRole( 'button', { name: 'Continue with security key' } ) );
+		await userEvent.click( getByRole( 'button', { name: 'Continue with security key' } ) );
 		await waitFor( () => {
 			expect( loginUserWithSecurityKey ).toHaveBeenCalledTimes( 2 );
 			expect( loginUserWithSecurityKey ).toHaveBeenLastCalledWith( { user_id: currentUserId } );
