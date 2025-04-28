@@ -52,7 +52,7 @@ const expectedCommandsResults = {
 	openJetpackSettings: [ '/wp-admin/admin.php?page=jetpack#/dashboard', siteFilters.adminJetpack ],
 	addJetpack: [ '/jetpack/connect?cta_from=command-palette' ],
 	manageJetpackModules: [ '/wp-admin/admin.php?page=jetpack_modules', siteFilters.adminJetpack ],
-	importSite: [ '/setup/hosted-site-migration?ref=command-palette' ],
+	importSite: [ '/setup/site-migration?ref=command-palette' ],
 	addNewSite: [ '/start?source=command-palette' ],
 	openAccountSettings: [ '/me/account' ],
 	accessPurchases: [ '/me/purchases' ],

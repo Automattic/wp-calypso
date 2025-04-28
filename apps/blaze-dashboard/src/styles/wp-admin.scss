@@ -1,4 +1,3 @@
-
 // Overrides layout for WP Admin.
 .wp-admin {
 	// CSS variable overrides.
@@ -38,7 +37,7 @@
 
 // Since the component `Notice` styles affect the WP Admin notice styles,
 // we need to restore by overriding them except for `.wpcomsh-notice` on Atomic sites.
-.notice:not(.wpcomsh-notice, .promote-post-notice) {
+.calypso-notice:not(.wpcomsh-notice, .promote-post-notice) {
 	display: block;
 	width: auto;
 	background: var(--studio-white);

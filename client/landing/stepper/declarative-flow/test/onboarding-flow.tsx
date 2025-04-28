@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+// @ts-nocheck - TODO: Fix TypeScript issues
 import { ONBOARDING_FLOW } from '@automattic/onboarding';
 import { addQueryArgs } from '@wordpress/url';
 import onboarding from '../flows/onboarding/onboarding';

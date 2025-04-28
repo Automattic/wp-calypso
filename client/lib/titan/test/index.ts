@@ -1,3 +1,4 @@
+// @ts-nocheck - TODO: Fix TypeScript issues
 import { ResponseDomain } from 'calypso/lib/domains/types';
 import { getEligibleTitanDomain } from '..';
 

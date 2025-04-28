@@ -93,7 +93,6 @@
 	border: 1px solid var(--studio-gray-5);
 	border-radius: 8px; // stylelint-disable-line scales/radii
 	padding: 24px;
-	width: 300px;
 	box-sizing: border-box;
 	box-shadow: 0 10px 20px 0 #00000014;
 
@@ -101,6 +100,10 @@
 
 	.components-button.is-link {
 		color: var(--studio-gray-100);
+	}
+
+	.stats-feedback-content {
+		padding-top: 21px;
 	}
 }
 

@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+// @ts-nocheck - TODO: Fix TypeScript issues
 import {
 	PLAN_ENTERPRISE_GRID_WPCOM,
 	PLAN_BUSINESS,

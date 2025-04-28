@@ -226,6 +226,24 @@ const SubscriberDataViews = ( {
 	const shouldShowLaunchpad =
 		! isLoading && ! searchTerm && ( ! grandTotal || ( grandTotal === 1 && isOwnerSubscribed ) );
 
+	/**
+	 * Read page from URL when component mounts or URL changes.
+	 *
+	 * URL Parameters:
+	 * - /subscribers/{siteSlug}/{subscriberId} - View specific subscriber
+	 * - ?page={number} - Navigate to specific page (preserved across views)
+	 */
+	useEffect( () => {
+		const urlParams = new URLSearchParams( window.location.search );
+		const pageFromUrl = urlParams.get( 'page' );
+		if ( pageFromUrl && ! isNaN( parseInt( pageFromUrl, 10 ) ) ) {
+			setCurrentView( ( prev ) => ( {
+				...prev,
+				page: parseInt( pageFromUrl, 10 ),
+			} ) );
+		}
+	}, [] );
+
 	const handleSubscriberSelection = useCallback(
 		( input: Subscriber | string[] ) => {
 			if ( Array.isArray( input ) ) {
@@ -234,14 +252,20 @@ const SubscriberDataViews = ( {
 					page.show( `/subscribers/${ siteSlug }` );
 					return;
 				}
-				const subscriber = subscribers.find( ( s ) => getSubscriptionIdString( s ) === input[ 0 ] );
+				const subscriber = subscribersQueryResult?.subscribers.find(
+					( s ) => getSubscriptionIdString( s ) === input[ 0 ]
+				);
 				if ( subscriber ) {
 					recordSubscriberClicked( 'list', {
 						site_id: siteId,
 						subscription_id: getSubscriptionId( subscriber ),
 						user_id: subscriber.user_id,
 					} );
-					page.show( `/subscribers/${ siteSlug }/${ getSubscriptionIdString( subscriber ) }` );
+					page.show(
+						`/subscribers/${ siteSlug }/${ getSubscriptionIdString( subscriber ) }?page=${
+							currentView.page
+						}`
+					);
 				}
 			} else {
 				recordSubscriberClicked( 'row', {
@@ -249,11 +273,32 @@ const SubscriberDataViews = ( {
 					subscription_id: getSubscriptionId( input ),
 					user_id: input.user_id,
 				} );
-				page.show( `/subscribers/${ siteSlug }/${ getSubscriptionIdString( input ) }` );
+				page.show(
+					`/subscribers/${ siteSlug }/${ getSubscriptionIdString( input ) }?page=${
+						currentView.page
+					}`
+				);
 			}
 		},
-		[ subscribers, recordSubscriberClicked, siteId, siteSlug ]
+		[
+			subscribersQueryResult?.subscribers,
+			recordSubscriberClicked,
+			siteId,
+			siteSlug,
+			currentView.page,
+		]
 	);
+
+	// Modify the onClose handler in SubscriberDetails to preserve the page when going back to the list
+	const handleClose = useCallback( () => {
+		const urlParams = new URLSearchParams( window.location.search );
+		const pageParam = urlParams.get( 'page' );
+		if ( pageParam ) {
+			page.show( `/subscribers/${ siteSlug }?page=${ pageParam }` );
+		} else {
+			page.show( `/subscribers/${ siteSlug }` );
+		}
+	}, [ siteSlug ] );
 
 	const fields = useMemo(
 		() => [
@@ -448,6 +493,14 @@ const SubscriberDataViews = ( {
 				} );
 			}
 
+			// Update URL when page changes
+			if ( newView.page !== currentView.page ) {
+				const currentPath = window.location.pathname;
+				const urlParams = new URLSearchParams( window.location.search );
+				urlParams.set( 'page', String( newView.page ) );
+				page.show( `${ currentPath }?${ urlParams.toString() }` );
+			}
+
 			setCurrentView( newView );
 		},
 		[
@@ -567,9 +620,7 @@ const SubscriberDataViews = ( {
 							subscriber={ subscriberDetails }
 							siteId={ siteId }
 							subscriptionId={ getSubscriptionId( selectedSubscriber ) }
-							onClose={ () => {
-								page.show( `/subscribers/${ siteSlug }` );
-							} }
+							onClose={ handleClose }
 							onUnsubscribe={ ( subscriber ) => handleUnsubscribe( [ subscriber ] ) }
 							newsletterCategoriesEnabled={ subscribedNewsletterCategoriesData?.enabled }
 							newsletterCategories={ subscribedNewsletterCategoriesData?.newsletterCategories }
