@@ -1,7 +1,3 @@
-/**
- * @group quarantined
- */
-
 import {
 	DataHelper,
 	EmailClient,
