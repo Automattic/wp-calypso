@@ -167,7 +167,7 @@ export class UserSignupPage {
 		} );
 
 		// Ensure response is captured correctly
-		const responsePromise = this.page.waitForResponse( /.*users\/new\?.*/ );
+		const responsePromise = this.page.waitForResponse( /\/users\/new\?[^?]*$/ );
 		await this.page.click( selectors.submitButton );
 
 		const [ response ] = await Promise.all( [ responsePromise, redirectDetected ] );
@@ -190,7 +190,7 @@ export class UserSignupPage {
 		await this.page.fill( selectors.emailInput, email );
 
 		const [ response ] = await Promise.all( [
-			this.page.waitForResponse( /.*new\?.*/ ),
+			this.page.waitForResponse( /\/users\/new\?[^?]*$/ ),
 			this.page.click( selectors.createAccountButton ),
 		] );
 
