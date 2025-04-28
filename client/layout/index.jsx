@@ -400,6 +400,9 @@ export default withCurrentRoute(
 					sidebarIsHidden,
 					sectionName,
 			  } );
+		const needsColorScheme =
+			sidebarType === SidebarType.UnifiedSiteDefault ||
+			sidebarType === SidebarType.UnifiedSiteClassic;
 
 		return {
 			masterbarIsHidden,
@@ -421,7 +424,7 @@ export default withCurrentRoute(
 			sectionJitmPath,
 			currentLayoutFocus: getCurrentLayoutFocus( state ),
 			colorScheme,
-			needsColorScheme: ! shouldShowGlobalSidebar,
+			needsColorScheme,
 			isFetchingColorScheme: isFetchingAdminColor( state, siteId ),
 			siteId,
 			// We avoid requesting sites in the Jetpack Connect authorization step, because this would
