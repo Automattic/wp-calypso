@@ -12,6 +12,7 @@ import { translate, fixMe } from 'i18n-calypso';
 import { Provider as ReduxProvider } from 'react-redux';
 import CalypsoI18nProvider from 'calypso/components/calypso-i18n-provider';
 import EmptyContent from 'calypso/components/empty-content';
+import FormatterCountryCodeSync from 'calypso/components/formatter-country-code-sync';
 import MomentProvider from 'calypso/components/localized-moment/provider';
 import { RouteProvider } from 'calypso/components/route';
 import Layout from 'calypso/layout';
@@ -77,6 +78,7 @@ export const ProviderWrappedLayout = ( {
 				<QueryClientProvider client={ queryClient }>
 					<ReduxProvider store={ store }>
 						<MomentProvider>{ layout }</MomentProvider>
+						<FormatterCountryCodeSync />
 					</ReduxProvider>
 					<CalypsoReactQueryDevtools />
 				</QueryClientProvider>

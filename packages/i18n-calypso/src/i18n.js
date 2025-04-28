@@ -186,19 +186,6 @@ I18N.prototype.geolocateCurrencySymbol = async function ( callback ) {
 	callback?.( 'string' === typeof geoData?.country_short ? geoData.country_short : '' );
 };
 
-/**
- * Initializes currency based on the given geolocation. If the geolocation is not provided, it will
- * be fetched from the geolocation endpoint.
- * @param {string=} geoLocation Initial country code, if known.
- */
-I18N.prototype.initializeGeolocation = function ( geoLocation ) {
-	if ( geoLocation ) {
-		this.geoLocation = geoLocation;
-	} else {
-		this.geolocateCurrencySymbol();
-	}
-};
-
 I18N.prototype.subscribe = function ( callback ) {
 	this.subscribers.add( callback );
 	return () => this.subscribers.delete( callback );

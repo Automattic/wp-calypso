@@ -119,7 +119,6 @@ export interface I18N {
 	 * `geolocateCurrencySymbol()` helps prevent that from happening by showing `US$` for those users.
 	 */
 	geolocateCurrencySymbol( callback?: ( geoLocation: string ) => void ): Promise< void >;
-	initializeGeolocation( geoLocation?: string ): void;
 
 	getLocale(): LocaleData;
 	getLocaleSlug(): string | null; // TODO clk i18ncalypso this should be string. Default is 'en'
@@ -168,7 +167,6 @@ declare const i18n: I18N;
 export default i18n;
 export declare const translate: typeof i18n.translate;
 export declare const geolocateCurrencySymbol: typeof i18n.geolocateCurrencySymbol;
-export declare const initializeGeolocation: typeof i18n.initializeGeolocation;
 export declare const setLocale: typeof i18n.setLocale;
 export declare const addTranslations: typeof i18n.addTranslations;
 export declare const configure: typeof i18n.configure;
