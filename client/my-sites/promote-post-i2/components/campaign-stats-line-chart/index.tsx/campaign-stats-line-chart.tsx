@@ -118,7 +118,7 @@ const CampaignStatsLineChart = ( { data, source, resolution }: GraphProps ) => {
 						show: false,
 					},
 					gap: 16,
-					size: 60,
+					size: 72,
 				},
 			],
 			cursor: {
