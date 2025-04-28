@@ -3,11 +3,10 @@ import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { useCallback, useMemo } from 'react';
 import wpcomRequest from 'wpcom-proxy-request';
-import { useSiteSettings } from 'calypso/blocks/plugins-scheduled-updates/hooks/use-site-settings';
-import { useDispatch, useSelector } from 'calypso/state';
+import { useDispatch } from 'calypso/state';
 import { saveSiteSettings } from 'calypso/state/site-settings/actions';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { isValidURL } from '../utils';
+import type { SiteDetails } from '@automattic/data-stores';
 
 interface SitePage {
 	id: number;
@@ -72,10 +71,17 @@ const toPerformanceReportUrl = ( { url, hash }: PerformanceReportUrl ) => {
 
 const HOME_PAGE_ID = '0';
 
-export const useSitePerformancePageReports = ( { query = '' } = {} ) => {
+export const useSitePerformancePageReports = ( {
+	query = '',
+	site,
+	reportUrl,
+}: {
+	query?: string;
+	site: SiteDetails | undefined | null;
+	reportUrl: string;
+} ) => {
 	const { __ } = useI18n();
 
-	const site = useSelector( getSelectedSite );
 	const siteId = site?.ID;
 
 	const {
@@ -110,13 +116,10 @@ export const useSitePerformancePageReports = ( { query = '' } = {} ) => {
 		},
 	} );
 
-	const { getSiteSetting } = useSiteSettings( site?.slug );
-	const homePagePerformanceUrl: SitePage[ 'wpcom_performance_report_url' ] = getSiteSetting(
-		'wpcom_performance_report_url'
-	);
+	const homePagePerformanceUrl: SitePage[ 'wpcom_performance_report_url' ] = reportUrl;
 
 	const pages = useMemo( () => {
-		if ( ! site?.URL ) {
+		if ( ! site?.URL || ! homePagePerformanceUrl ) {
 			return [];
 		}
 
@@ -139,9 +142,13 @@ export const useSitePerformancePageReports = ( { query = '' } = {} ) => {
 		return data ?? [];
 	}, [ query, data, site?.URL, __, homePagePerformanceUrl ] );
 
+	return { pages, isInitialLoading, refetch };
+};
+
+export function useSavePerformanceReportUrl( siteId: number ) {
 	const dispatch = useDispatch();
 
-	const savePerformanceReportUrl = useCallback(
+	return useCallback(
 		async ( pageId: string, performanceReport: PerformanceReportUrl ) => {
 			if ( ! siteId ) {
 				return;
@@ -158,10 +165,9 @@ export const useSitePerformancePageReports = ( { query = '' } = {} ) => {
 					saveSiteSettings( siteId, { wpcom_performance_report_url: performanceReportUrl } )
 				);
 			}
+
 			return await savePageMeta( siteId, parseInt( pageId, 10 ), performanceReportUrl );
 		},
 		[ siteId, dispatch ]
 	);
-
-	return { pages, isInitialLoading, savePerformanceReportUrl, refetch };
-};
+}

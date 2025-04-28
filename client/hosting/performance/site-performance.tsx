@@ -30,7 +30,10 @@ import { ReportUnavailable } from './components/ReportUnavailable';
 import { DeviceTabControls } from './components/device-tab-control';
 import { ExpiredReportNotice } from './components/expired-report-notice/expired-report-notice';
 import { usePerformanceReport } from './hooks/usePerformanceReport';
-import { useSitePerformancePageReports } from './hooks/useSitePerformancePageReports';
+import {
+	useSitePerformancePageReports,
+	useSavePerformanceReportUrl,
+} from './hooks/useSitePerformancePageReports';
 import { getSupportLinkProps } from './utils';
 
 import './style.scss';
@@ -44,35 +47,24 @@ const statsQuery = {
 	max: 0,
 };
 
-const SitePerformanceContent = () => {
-	const dispatch = useDispatch();
-	const { activeTab, setActiveTab } = useDeviceTab();
-	const site = useSelector( getSelectedSite );
-	const siteId = site?.ID;
-	const { getSiteSetting } = useSiteSettings( site?.slug );
-	const blog_public = getSiteSetting( 'blog_public' );
-	const isSitePublic = site && blog_public === 1;
-	const isSiteAtomic = useSelector( ( state ) => isAtomicSite( state, siteId ) );
+interface PageSelectorProps {
+	siteId: number;
+	pages: { label: string; value: string }[];
+	currentPage: { label: string; value: string };
+	setCurrentPageUserSelection: ( page: { label: string; value: string } | undefined ) => void;
+	disableControls: boolean;
+}
 
+const PageSelectorContainer: React.FC< PageSelectorProps > = ( {
+	siteId,
+	pages,
+	currentPage,
+	setCurrentPageUserSelection,
+	disableControls,
+} ) => {
 	const stats = useSelector( ( state ) =>
 		getSiteStatsNormalizedData( state, siteId, statType, statsQuery )
 	) as { id: number; value: number }[];
-
-	useEffect( () => {
-		if ( ! siteId ) {
-			return;
-		}
-
-		dispatch( requestSiteStats( siteId, statType, statsQuery ) );
-	}, [ dispatch, siteId ] );
-
-	const queryParams = useSelector( getCurrentQueryArguments );
-	const {
-		pages,
-		isInitialLoading,
-		savePerformanceReportUrl,
-		refetch: refetchPages,
-	} = useSitePerformancePageReports();
 
 	const orderedPages = useMemo( () => {
 		return [ ...pages ].sort( ( a, b ) => {
@@ -82,27 +74,6 @@ const SitePerformanceContent = () => {
 		} );
 	}, [ pages, stats ] );
 
-	const currentPageId = queryParams?.page_id?.toString() ?? '0';
-	const filter = queryParams?.filter?.toString();
-	const [ recommendationsFilter, setRecommendationsFilter ] = useState( filter );
-
-	// Stores any page selection made by the user, `undefined` by default. See
-	// `currentPage` below for logic regarding the default page if the user
-	// hasn't selected one yet.
-	const [ currentPageUserSelection, setCurrentPageUserSelection ] =
-		useState< ( typeof pages )[ number ] >();
-
-	const [ isSavingPerformanceReportUrl, setIsSavingPerformanceReportUrl ] = useState( false );
-
-	const [ prevSiteId, setPrevSiteId ] = useState( siteId );
-	if ( prevSiteId !== siteId ) {
-		setPrevSiteId( siteId );
-		setCurrentPageUserSelection( undefined );
-	}
-
-	const currentPage =
-		currentPageUserSelection ?? pages?.find( ( page ) => page.value === currentPageId );
-
 	const pageOptions = useMemo( () => {
 		const options = currentPage
 			? [ currentPage, ...orderedPages.filter( ( p ) => p.value !== currentPage.value ) ]
@@ -111,6 +82,103 @@ const SitePerformanceContent = () => {
 		// Add a disabled option at the end that will show a disclaimer message.
 		return [ ...options, { label: '', value: '-1', path: '', disabled: true } ];
 	}, [ currentPage, orderedPages ] );
+
+	const [ prevSiteId, setPrevSiteId ] = useState( siteId );
+	if ( prevSiteId !== siteId ) {
+		setPrevSiteId( siteId );
+		setCurrentPageUserSelection( undefined );
+	}
+
+	// This forces a no pages found message in the dropdown
+	const [ noPagesFound, setNoPagesFound ] = useState( { query: '', found: true } );
+
+	const options = ! noPagesFound.found
+		? [
+				{
+					label: noPagesFound.query,
+					value: '-2',
+					disabled: true,
+				},
+		  ]
+		: pageOptions;
+
+	return (
+		<PageSelector
+			onFilterValueChange={ ( value ) => {
+				const filter = pageOptions.find( ( option ) =>
+					option.label.toLowerCase().startsWith( value )
+				);
+
+				if ( filter ) {
+					setNoPagesFound( { query: '', found: true } );
+					return;
+				}
+				setNoPagesFound( { query: value, found: false } );
+			} }
+			allowReset={ false }
+			onBlur={ () => {
+				// if no pages found, reset so that the previous selected page is shown
+				if ( ! noPagesFound.found ) {
+					setNoPagesFound( { query: '', found: true } );
+				}
+			} }
+			options={ options }
+			disabled={ disableControls }
+			onChange={ ( page_id ) => {
+				const url = new URL( window.location.href );
+				recordTracksEvent( 'calypso_performance_profiler_page_selector_change', {
+					is_home: page_id === '0',
+					version: profilerVersion(),
+				} );
+				if ( page_id ) {
+					setCurrentPageUserSelection( pages.find( ( page ) => page.value === page_id ) );
+					url.searchParams.set( 'page_id', page_id );
+				} else {
+					setCurrentPageUserSelection( undefined );
+					url.searchParams.delete( 'page_id' );
+				}
+
+				page.replace( url.pathname + url.search );
+			} }
+			value={ currentPage?.value }
+		/>
+	);
+};
+
+interface SitePerformanceContentProps {
+	activeTab: TabType;
+	isSitePublic: boolean;
+	isInitialLoading: boolean;
+	disableControls: boolean;
+	pageSelector: React.ReactElement;
+	subtitle: React.ReactNode;
+	siteIsLaunching: boolean;
+	onLaunchSiteClick: () => void;
+	retestPage: () => void;
+	handleDeviceTabChange: ( tab: TabType ) => void;
+	performanceReport: ReturnType< typeof usePerformanceReport >;
+	currentPage: { label: string; value: string };
+	queryParams: { filter: string };
+}
+
+const SitePerformanceContent: React.FC< SitePerformanceContentProps > = ( {
+	activeTab,
+	isSitePublic,
+	isInitialLoading,
+	disableControls,
+	pageSelector,
+	subtitle,
+	siteIsLaunching,
+	onLaunchSiteClick,
+	retestPage,
+	handleDeviceTabChange,
+	performanceReport,
+	currentPage,
+	queryParams,
+} ) => {
+	const filter = queryParams?.filter?.toString();
+	const [ recommendationsFilter, setRecommendationsFilter ] = useState( filter );
+	const isMobile = useMobileBreakpoint();
 
 	const handleRecommendationsFilterChange = ( filter?: string ) => {
 		setRecommendationsFilter( filter );
@@ -125,6 +193,106 @@ const SitePerformanceContent = () => {
 		window.history.replaceState( {}, '', url.toString() );
 	};
 
+	return (
+		<div className="site-performance">
+			<div className="site-performance-device-tab-controls__container">
+				{ isMobile ? (
+					<MobileHeader
+						pageTitle={ currentPage?.label ?? '' }
+						pageSelector={ pageSelector }
+						subtitle={ subtitle }
+					/>
+				) : (
+					<NavigationHeader
+						className="site-performance__navigation-header"
+						title={ translate( 'Performance' ) }
+						subtitle={ subtitle }
+					/>
+				) }
+				{ ! isMobile && pageSelector }
+				<DeviceTabControls
+					showTitle={ ! isMobile }
+					onDeviceTabChange={ handleDeviceTabChange }
+					disabled={ disableControls }
+					value={ activeTab }
+				/>
+			</div>
+			{ isInitialLoading && isSitePublic ? (
+				<PerformanceReportLoading isLoadingPages isSavedReport={ false } pageTitle="" />
+			) : (
+				<>
+					{ ! isSitePublic ? (
+						<ReportUnavailable
+							isLaunching={ siteIsLaunching }
+							onLaunchSiteClick={ onLaunchSiteClick }
+							ctaText={
+								// @ts-ignore site is not available in props, should be handled in container
+								translate( 'Launch your site' )
+							}
+						/>
+					) : (
+						currentPage && (
+							<>
+								<ExpiredReportNotice
+									reportTimestamp={ performanceReport.performanceReport?.timestamp }
+									onRetest={ retestPage }
+								/>
+								<PerformanceReport
+									{ ...performanceReport }
+									pageTitle={ currentPage.label }
+									onRetestClick={ retestPage }
+									onFilterChange={ handleRecommendationsFilterChange }
+									filter={ recommendationsFilter }
+								/>
+							</>
+						)
+					) }
+				</>
+			) }
+		</div>
+	);
+};
+
+const SitePerformanceContainer: React.FC = () => {
+	const dispatch = useDispatch();
+	const { activeTab, setActiveTab } = useDeviceTab();
+	const site = useSelector( getSelectedSite );
+	const siteId = site?.ID;
+	const { getSiteSetting } = useSiteSettings( site?.slug );
+	const blog_public = getSiteSetting( 'blog_public' );
+	const isSitePublic = site && blog_public === 1;
+	const isSiteAtomic = useSelector( ( state ) => isAtomicSite( state, siteId ) );
+
+	useEffect( () => {
+		if ( ! siteId ) {
+			return;
+		}
+
+		dispatch( requestSiteStats( siteId, statType, statsQuery ) );
+	}, [ dispatch, siteId ] );
+
+	const queryParams = useSelector( getCurrentQueryArguments );
+	const {
+		pages,
+		isInitialLoading,
+		refetch: refetchPages,
+	} = useSitePerformancePageReports( {
+		site,
+		reportUrl: getSiteSetting( 'wpcom_performance_report_url' ),
+	} );
+
+	const currentPageId = queryParams?.page_id?.toString() ?? '0';
+
+	// Stores any page selection made by the user, `undefined` by default.
+	const [ currentPageUserSelection, setCurrentPageUserSelection ] =
+		useState< ( typeof pages )[ number ] >();
+
+	const [ isSavingPerformanceReportUrl, setIsSavingPerformanceReportUrl ] = useState( false );
+
+	const currentPage =
+		currentPageUserSelection ?? pages?.find( ( page ) => page.value === currentPageId );
+
+	const savePerformanceReportUrl = useSavePerformanceReportUrl( site?.ID );
 	const performanceReport = usePerformanceReport(
 		setIsSavingPerformanceReportUrl,
 		refetchPages,
@@ -172,7 +340,6 @@ const SitePerformanceContent = () => {
 		recordTracksEvent( 'calypso_performance_profiler_launch_site_cta_click' );
 	};
 
-	const isMobile = useMobileBreakpoint();
 	const disableControls =
 		performanceReport.isLoading ||
 		isInitialLoading ||
@@ -185,61 +352,6 @@ const SitePerformanceContent = () => {
 			device: tab,
 		} );
 	};
-
-	// This forces a no pages found message in the dropdown
-	const [ noPagesFound, setNoPagesFound ] = useState( { query: '', found: true } );
-
-	const options = ! noPagesFound.found
-		? [
-				{
-					label: noPagesFound.query,
-					value: '-2',
-					disabled: true,
-				},
-		  ]
-		: pageOptions;
-
-	const pageSelector = (
-		<PageSelector
-			onFilterValueChange={ ( value ) => {
-				const filter = pageOptions.find( ( option ) =>
-					option.label.toLowerCase().startsWith( value )
-				);
-
-				if ( filter ) {
-					setNoPagesFound( { query: '', found: true } );
-					return;
-				}
-				setNoPagesFound( { query: value, found: false } );
-			} }
-			allowReset={ false }
-			onBlur={ () => {
-				// if no pages found, reset so that the previous selected page is shown
-				if ( ! noPagesFound.found ) {
-					setNoPagesFound( { query: '', found: true } );
-				}
-			} }
-			options={ options }
-			disabled={ disableControls }
-			onChange={ ( page_id ) => {
-				const url = new URL( window.location.href );
-				recordTracksEvent( 'calypso_performance_profiler_page_selector_change', {
-					is_home: page_id === '0',
-					version: profilerVersion(),
-				} );
-				if ( page_id ) {
-					setCurrentPageUserSelection( pages.find( ( page ) => page.value === page_id ) );
-					url.searchParams.set( 'page_id', page_id );
-				} else {
-					setCurrentPageUserSelection( undefined );
-					url.searchParams.delete( 'page_id' );
-				}
-
-				page.replace( url.pathname + url.search );
-			} }
-			value={ currentPageId }
-		/>
-	);
 
 	const subtitle =
 		! performanceReport.isLoading && performanceReport.performanceReport
@@ -282,75 +394,56 @@ const SitePerformanceContent = () => {
 					}
 			  );
 
-	if ( ! isSiteAtomic ) {
+	// Ensure booleans are always boolean
+	const isSiteAtomicBool = Boolean( isSiteAtomic );
+	const isSitePublicBool = Boolean( isSitePublic );
+	const isInitialLoadingBool = Boolean( isInitialLoading );
+	const disableControlsBool = Boolean( disableControls );
+
+	// Ensure pageSelector is always a valid ReactElement
+
+	const pageSelector = (
+		<PageSelectorContainer
+			siteId={ siteId }
+			pages={ pages }
+			currentPage={ currentPage }
+			disableControls={ disableControls }
+			currentPageUserSelection={ currentPageUserSelection }
+			setCurrentPageUserSelection={ setCurrentPageUserSelection }
+		/>
+	);
+
+	const validPageSelector = pageSelector ?? <></>;
+
+	if ( ! isSiteAtomicBool ) {
 		return null;
 	}
 
 	return (
-		<div className="site-performance">
-			<div className="site-performance-device-tab-controls__container">
-				{ isMobile ? (
-					<MobileHeader
-						pageTitle={ currentPage?.label ?? '' }
-						pageSelector={ pageSelector }
-						subtitle={ subtitle }
-					/>
-				) : (
-					<NavigationHeader
-						className="site-performance__navigation-header"
-						title={ translate( 'Performance' ) }
-						subtitle={ subtitle }
-					/>
-				) }
-				{ ! isMobile && pageSelector }
-				<DeviceTabControls
-					showTitle={ ! isMobile }
-					onDeviceTabChange={ handleDeviceTabChange }
-					disabled={ disableControls }
-					value={ activeTab }
-				/>
-			</div>
-			{ isInitialLoading && isSitePublic ? (
-				<PerformanceReportLoading isLoadingPages isSavedReport={ false } pageTitle="" />
-			) : (
-				<>
-					{ ! isSitePublic ? (
-						<ReportUnavailable
-							isLaunching={ siteIsLaunching }
-							onLaunchSiteClick={ onLaunchSiteClick }
-							ctaText={
-								site?.is_a4a_dev_site
-									? translate( 'Prepare for launch' )
-									: translate( 'Launch your site' )
-							}
-						/>
-					) : (
-						currentPage && (
-							<>
-								<ExpiredReportNotice
-									reportTimestamp={ performanceReport.performanceReport?.timestamp }
-									onRetest={ retestPage }
-								/>
-								<PerformanceReport
-									{ ...performanceReport }
-									pageTitle={ currentPage.label }
-									onRetestClick={ retestPage }
-									onFilterChange={ handleRecommendationsFilterChange }
-									filter={ recommendationsFilter }
-								/>
-							</>
-						)
-					) }
-				</>
-			) }
-		</div>
+		<SitePerformanceContent
+			queryParams={ queryParams }
+			activeTab={ activeTab }
+			isSitePublic={ isSitePublicBool }
+			isInitialLoading={ isInitialLoadingBool }
+			disableControls={ disableControlsBool }
+			pageSelector={ validPageSelector }
+			subtitle={ subtitle }
+			siteIsLaunching={ siteIsLaunching }
+			onLaunchSiteClick={ onLaunchSiteClick }
+			retestPage={ retestPage }
+			handleDeviceTabChange={ handleDeviceTabChange }
+			performanceReport={ performanceReport }
+			currentPage={ currentPage }
+		/>
 	);
 };
 
 export const SitePerformance = () => {
 	return (
 		<DeviceTabProvider>
-			<SitePerformanceContent />
+			<SitePerformanceContainer />
 		</DeviceTabProvider>
 	);
 };
+
+export { SitePerformanceContent };

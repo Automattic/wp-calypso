@@ -11,6 +11,7 @@ import type {
 	TwoStep,
 	EngagementStatsDataPoint,
 	SiteDomain,
+	SiteSettingsResponse,
 } from './types';
 
 export const fetchProfile = async (): Promise< Profile > => {
@@ -36,6 +37,7 @@ export const updateProfile = async ( data: Partial< Profile > ) => {
 
 const SITE_FIELDS = [
 	'ID',
+	'slug',
 	'URL',
 	'name',
 	'icon',
@@ -51,6 +53,7 @@ const SITE_FIELDS = [
 	'site_owner',
 	'jetpack',
 	'jetpack_modules',
+	'is_a4a_dev_site',
 ].join( ',' );
 
 export const fetchSites = async (): Promise< Site[] > => {
@@ -317,4 +320,13 @@ export const fetchTwoStep = async (): Promise< TwoStep > => {
 		path: '/me/two-step?http_envelope=1',
 		apiNamespace: 'rest/v1.1',
 	} );
+};
+
+export const fetchSiteSettings = async ( id: string ): Promise< SiteSettingsResponse > => {
+	return wpcom.req.get(
+		{
+			path: `/sites/${ id }/settings`,
+		},
+		{ apiVersion: '1.4' }
+	);
 };

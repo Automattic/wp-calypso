@@ -80,10 +80,12 @@ export interface Site {
 	subscribers_count: number;
 	// Can be undefined for deleted sites.
 	options?: SiteOptions;
+	is_a4a_dev_site: boolean;
 	is_deleted: boolean;
 	is_coming_soon: boolean;
 	is_private: boolean;
 	launch_status: string | boolean;
+	slug: string;
 	site_migration: {
 		migration_status: string;
 	} | null;
@@ -150,4 +152,12 @@ export interface UrlPerformanceInsights {
 	wpscan: {
 		status: string;
 	};
+}
+
+export interface SiteSettings {
+	wpcom_performance_report_url: string;
+}
+
+export interface SiteSettingsResponse {
+	settings: SiteSettings;
 }

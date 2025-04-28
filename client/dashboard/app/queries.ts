@@ -11,6 +11,7 @@ import {
 	fetchEmails,
 	fetchProfile,
 	updateProfile,
+	fetchSiteSettings,
 } from '../data';
 import { queryClient } from './query-client';
 import type { Profile } from '../data/types';
@@ -96,5 +97,17 @@ export function profileMutation() {
 				oldData ? { ...oldData, ...newData } : newData
 			);
 		},
+	};
+}
+
+export function siteSettingsQuery( siteId: string ) {
+	return {
+		queryKey: [ 'siteSettings', siteId ],
+		queryFn: async () => {
+			return fetchSiteSettings( siteId );
+		},
+		refetchOnWindowFocus: false,
+		retry: false,
+		enabled: !! siteId,
 	};
 }
