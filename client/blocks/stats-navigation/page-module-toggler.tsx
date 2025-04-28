@@ -5,6 +5,8 @@ import { useTranslate } from 'i18n-calypso';
 import { useState, useRef, useCallback } from 'react';
 import { ModuleToggleItem } from './constants';
 
+import './page-module-toggler.scss';
+
 type PageModuleTogglerProps = {
 	availableModuleToggles: ModuleToggleItem[];
 	pageModules: { [ name: string ]: boolean };
