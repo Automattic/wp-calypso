@@ -298,6 +298,15 @@ export class LoginForm extends Component {
 				usernameOrEmail,
 			} );
 
+			if ( this.props.isJetpack ) {
+				const isEmailAddress = includes( usernameOrEmail, '@' );
+
+				if ( isEmailAddress ) {
+					this.jetpackCreateAccountWithMagicLink();
+					return;
+				}
+			}
+
 			return;
 		}
 
