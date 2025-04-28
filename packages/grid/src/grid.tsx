@@ -23,7 +23,7 @@ export function GridItem( {
 	disabled?: boolean;
 	children: React.ReactNode;
 } ) {
-	const { attributes, listeners, setNodeRef, transform, transition } = useSortable( {
+	const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable( {
 		id: item.key,
 		disabled,
 	} );
@@ -40,6 +40,7 @@ export function GridItem( {
 			item.fullWidth ? maxColumns : Math.min( item.width ?? 1, maxColumns )
 		}`,
 		gridRowEnd: `span ${ item.height || 1 }`,
+		cursor: isDragging ? 'grabbing' : 'grab',
 	};
 
 	return (
