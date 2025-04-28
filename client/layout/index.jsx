@@ -31,11 +31,7 @@ import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
 import { getMessagePathForJITM } from 'calypso/lib/route';
 import UserVerificationChecker from 'calypso/lib/user/verification-checker';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import {
-	getShouldShowCollapsedGlobalSidebar,
-	getShouldShowGlobalSidebar,
-	getShouldShowUnifiedSiteSidebar,
-} from 'calypso/state/global-sidebar/selectors';
+import { getSidebarType, SidebarType } from 'calypso/state/global-sidebar/selectors';
 import { isUserNewerThan, WEEK_IN_MILLISECONDS } from 'calypso/state/guided-tours/contexts';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
@@ -342,18 +338,19 @@ export default withCurrentRoute(
 		const isWooJPC =
 			[ 'jetpack-connect', 'login' ].includes( sectionName ) && isWooJPCFlow( state );
 		const isBlazePro = getIsBlazePro( state );
-		const shouldShowGlobalSidebar = getShouldShowGlobalSidebar( state, siteId, sectionGroup );
-		const shouldShowCollapsedGlobalSidebar = getShouldShowCollapsedGlobalSidebar(
+
+		const sidebarType = getSidebarType( {
 			state,
 			siteId,
-			sectionGroup
-		);
-		const shouldShowUnifiedSiteSidebar = getShouldShowUnifiedSiteSidebar(
-			state,
-			siteId,
-			sectionGroup,
-			sectionName
-		);
+			section: currentSection,
+			route: currentRoute,
+		} );
+
+		const shouldShowGlobalSidebar =
+			sidebarType === SidebarType.Global || sidebarType === SidebarType.GlobalCollapsed;
+		const shouldShowCollapsedGlobalSidebar = sidebarType === SidebarType.GlobalCollapsed;
+		const shouldShowUnifiedSiteSidebar = sidebarType === SidebarType.UnifiedSiteClassic;
+
 		const noMasterbarForRoute =
 			isJetpackLogin ||
 			currentRoute === '/me/account/closed' ||
