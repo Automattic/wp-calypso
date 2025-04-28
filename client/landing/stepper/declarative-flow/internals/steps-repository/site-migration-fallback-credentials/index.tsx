@@ -9,7 +9,7 @@ import { CredentialsForm } from './components/credentials-form';
 import type { Step as StepType } from '../../types';
 import './style.scss';
 
-const SiteMigrationFallbackCredentials: Step< {
+const SiteMigrationFallbackCredentials: StepType< {
 	submits:
 		| {
 				action: 'submit' | 'skip';
