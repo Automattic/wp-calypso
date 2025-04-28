@@ -2,8 +2,9 @@ import config from '@automattic/calypso-config';
 import { Button, Card, Dialog, FormInputValidation, FormLabel } from '@automattic/components';
 import { canBeTranslated, getLanguage, isLocaleVariant } from '@automattic/i18n-utils';
 import languages from '@automattic/languages';
+import { ExternalLink } from '@wordpress/components';
 import debugFactory from 'debug';
-import { localize } from 'i18n-calypso';
+import { fixMe, localize } from 'i18n-calypso';
 import { debounce, flowRight as compose, get, map, size } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -305,20 +306,29 @@ class Account extends Component {
 		const { translate } = this.props;
 		const url = 'https://translate.wordpress.com/translators/?contributor_locale=' + locale;
 
-		return (
-			<FormSettingExplanation>
-				{ ' ' }
-				{ translate(
-					'Thanks to {{a}}all our community members who helped translate to {{language/}}{{/a}}!',
-					{
-						components: {
-							a: <a target="_blank" rel="noopener noreferrer" href={ url } />,
-							language: <span>{ language.name }</span>,
-						},
-					}
-				) }
-			</FormSettingExplanation>
-		);
+		const thanksLabel = fixMe( {
+			text: 'Thanks to {{a}}all our community members who helped translate to {{language/}}{{/a}}',
+			newCopy: translate(
+				'Thanks to {{a}}all our community members who helped translate to {{language/}}{{/a}}',
+				{
+					components: {
+						a: <ExternalLink children={ null } href={ url } />,
+						language: <span>{ language.name }</span>,
+					},
+				}
+			),
+			oldCopy: translate(
+				'Thanks to {{a}}all our community members who helped translate to {{language/}}{{/a}}!',
+				{
+					components: {
+						a: <ExternalLink children={ null } href={ url } />,
+						language: <span>{ language.name }</span>,
+					},
+				}
+			),
+		} );
+
+		return <FormSettingExplanation> { thanksLabel }</FormSettingExplanation>;
 	}
 
 	handleRadioChange = ( event ) => {
@@ -498,6 +508,7 @@ class Account extends Component {
 				isPlaceholder={ ! primarySiteId || requestingMissingSites }
 				selectedSiteId={ primarySiteId }
 				onSiteSelect={ this.onSiteSelect }
+				disabled={ this.state.submittingForm }
 			/>
 		);
 	}
@@ -963,9 +974,15 @@ class Account extends Component {
 							</FormLabel>
 							<ToggleLandingPageSettings />
 							<FormSettingExplanation>
-								{ translate(
-									'When you type https://www.wordpress.com in your browser, this is the page you land on.'
-								) }
+								{ fixMe( {
+									text: "Select what you'll see by default when visiting WordPress.com",
+									newCopy: translate(
+										"Select what you'll see by default when visiting WordPress.com"
+									),
+									oldCopy: translate(
+										'When you type https://www.wordpress.com in your browser, this is the page you land on.'
+									),
+								} ) }
 							</FormSettingExplanation>
 						</FormFieldset>
 

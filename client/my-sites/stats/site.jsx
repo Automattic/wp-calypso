@@ -23,6 +23,7 @@ import EmptyContent from 'calypso/components/empty-content';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import NavigationHeader from 'calypso/components/navigation-header';
+import NavigationHeaderImpr from 'calypso/components/navigation-header/navigation-header';
 import StickyPanel from 'calypso/components/sticky-panel';
 import memoizeLast from 'calypso/lib/memoize-last';
 import Main from 'calypso/my-sites/stats/components/stats-main';
@@ -32,6 +33,7 @@ import {
 	STATS_FEATURE_PAGE_TRAFFIC,
 	STATS_FEATURE_INTERVAL_DROPDOWN_WEEK,
 	STATS_PRODUCT_NAME,
+	STATS_PRODUCT_NAME_IMPR,
 } from 'calypso/my-sites/stats/constants';
 import { getMomentSiteZone } from 'calypso/my-sites/stats/hooks/use-moment-site-zone';
 import { getChartRangeParams } from 'calypso/my-sites/stats/utils';
@@ -182,6 +184,7 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 	const isWPAdmin = config.isEnabled( 'is_odyssey' );
 	const isAtomic = useSelector( ( state ) => isAtomicSite( state, siteId ) );
 	const isSitePrivate = useSelector( ( state ) => isPrivateSite( state, siteId ) );
+	const isStatsNavigationImprovementEnabled = config.isEnabled( 'stats/navigation-improvement' );
 	const slug = useSelector( getSelectedSiteSlug );
 	const moduleToggles = useSelector( ( state ) => getModuleToggles( state, siteId, 'traffic' ) );
 	const momentSiteZone = useSelector( ( state ) => getMomentSiteZone( state, siteId ) );
@@ -527,20 +530,27 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 					<JetpackBackupCredsBanner event="stats-backup-credentials" />
 				</div>
 			) }
-			<NavigationHeader
-				className="stats__section-header modernized-header"
-				title={ STATS_PRODUCT_NAME }
-				subtitle={ translate(
-					"Gain insights into the activity and behavior of your site's visitors. {{learnMoreLink}}Learn more{{/learnMoreLink}}",
-					{
-						components: {
-							learnMoreLink: <InlineSupportLink supportContext="stats" showIcon={ false } />,
-						},
-					}
-				) }
-				screenReader={ navItems.traffic?.label }
-				navigationItems={ [] }
-			></NavigationHeader>
+			{ isStatsNavigationImprovementEnabled ? (
+				<NavigationHeaderImpr
+					className="stats__section-header modernized-header"
+					title={ STATS_PRODUCT_NAME_IMPR }
+				/>
+			) : (
+				<NavigationHeader
+					className="stats__section-header modernized-header"
+					title={ STATS_PRODUCT_NAME }
+					subtitle={ translate(
+						"Gain insights into the activity and behavior of your site's visitors. {{learnMoreLink}}Learn more{{/learnMoreLink}}",
+						{
+							components: {
+								learnMoreLink: <InlineSupportLink supportContext="stats" showIcon={ false } />,
+							},
+						}
+					) }
+					screenReader={ navItems.traffic?.label }
+					navigationItems={ [] }
+				/>
+			) }
 			<StatsNavigation selectedItem="traffic" interval={ period } siteId={ siteId } slug={ slug } />
 			<StatsNotices
 				siteId={ siteId }
@@ -648,6 +658,7 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 									summaryUrl={ getStatHref( 'utm', query ) }
 									summary={ false }
 									className={ halfWidthModuleClasses }
+									context={ context }
 								/>
 							) }
 

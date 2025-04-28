@@ -1,0 +1,5 @@
+.step-container-v2__playground-layout {
+	height: calc(
+		100vh - var( --step-container-v2-top-bar-height )
+	);
+}

@@ -10,8 +10,6 @@ import {
 	REBLOGGING_FLOW,
 	SITE_MIGRATION_FLOW,
 	ENTREPRENEUR_FLOW,
-	HOSTED_SITE_MIGRATION_FLOW,
-	NEW_HOSTED_SITE_FLOW_USER_INCLUDED,
 	ONBOARDING_FLOW,
 	HUNDRED_YEAR_DOMAIN_FLOW,
 	EXAMPLE_FLOW,
@@ -63,11 +61,6 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 			/* webpackChunkName: "new-hosted-site-flow" */ './flows/new-hosted-site-flow/new-hosted-site-flow'
 		),
 
-	[ NEW_HOSTED_SITE_FLOW_USER_INCLUDED ]: () =>
-		import(
-			/* webpackChunkName: "new-hosted-site-flow-user-included" */ './flows/new-hosted-site-flow-user-included/new-hosted-site-flow-user-included'
-		),
-
 	[ TRANSFERRING_HOSTED_SITE_FLOW ]: () =>
 		import(
 			/* webpackChunkName: "transferring-hosted-site-flow" */ './flows/transferring-hosted-site-flow/transferring-hosted-site-flow'
@@ -116,13 +109,6 @@ const aiSiteBuilderFlows: Record< string, () => Promise< { default: Flow } > > =
 	  }
 	: {};
 
-const hostedSiteMigrationFlow: Record< string, () => Promise< { default: Flow } > > = {
-	[ HOSTED_SITE_MIGRATION_FLOW ]: () =>
-		import(
-			/* webpackChunkName: "hosted-site-migration-flow" */ './flows/hosted-site-migration-flow/hosted-site-migration-flow'
-		),
-};
-
 const hundredYearDomainFlow: Record< string, () => Promise< { default: Flow } > > = {
 	[ HUNDRED_YEAR_DOMAIN_FLOW ]: () =>
 		import(
@@ -136,7 +122,6 @@ const hundredYearDomainFlow: Record< string, () => Promise< { default: Flow } > 
 
 export default {
 	...availableFlows,
-	...hostedSiteMigrationFlow,
 	...hundredYearDomainFlow,
 	...aiSiteBuilderFlows,
 };

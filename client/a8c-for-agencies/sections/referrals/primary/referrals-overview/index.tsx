@@ -3,8 +3,6 @@ import { Button } from '@wordpress/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useRef, useState } from 'react';
-import { A4AFeedback } from 'calypso/a8c-for-agencies/components/a4a-feedback';
-import useShowFeedback from 'calypso/a8c-for-agencies/components/a4a-feedback/hooks/use-show-a4a-feedback';
 import {
 	DATAVIEWS_TABLE,
 	initialDataViewsState,
@@ -27,8 +25,7 @@ import LayoutHeader, {
 	LayoutHeaderActions as Actions,
 } from 'calypso/layout/hosting-dashboard/header';
 import { useDispatch, useSelector } from 'calypso/state';
-import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
-import { ApprovalStatus } from 'calypso/state/a8c-for-agencies/types';
+import { hasApprovedAgencyStatus } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import MissingPaymentSettingsNotice from '../../common/missing-payment-settings-notice';
 import useFetchReferrals from '../../hooks/use-fetch-referrals';
@@ -47,9 +44,7 @@ export default function ReferralsOverview( {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const agency = useSelector( getActiveAgency );
-
-	const isAgencyApproved = agency?.approval_status === ApprovalStatus.APPROVED;
+	const isAgencyApproved = useSelector( hasApprovedAgencyStatus );
 
 	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( {
 		...initialDataViewsState,
@@ -60,8 +55,6 @@ export default function ReferralsOverview( {
 	const { value: referralEmail, setValue: setReferralEmail } = useUrlQueryParam(
 		REFERRAL_EMAIL_QUERY_PARAM_KEY
 	);
-
-	const { showFeedback, feedbackProps } = useShowFeedback( 'referral-complete' );
 
 	const isDesktop = useDesktopBreakpoint();
 
@@ -132,19 +125,15 @@ export default function ReferralsOverview( {
 				</LayoutTop>
 
 				<LayoutBody>
-					{ showFeedback ? (
-						<A4AFeedback { ...feedbackProps } />
-					) : (
-						<LayoutBodyContent
-							tipaltiData={ tipaltiData }
-							referrals={ referrals }
-							isLoading={ isLoading }
-							dataViewsState={ dataViewsState }
-							setDataViewsState={ setDataViewsState }
-							isArchiveView={ isArchiveView }
-							onReferralRefetch={ refetchReferrals }
-						/>
-					) }
+					<LayoutBodyContent
+						tipaltiData={ tipaltiData }
+						referrals={ referrals }
+						isLoading={ isLoading }
+						dataViewsState={ dataViewsState }
+						setDataViewsState={ setDataViewsState }
+						isArchiveView={ isArchiveView }
+						onReferralRefetch={ refetchReferrals }
+					/>
 				</LayoutBody>
 			</LayoutColumn>
 			{ dataViewsState.selectedItem && (

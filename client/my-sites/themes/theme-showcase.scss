@@ -103,7 +103,7 @@
 		}
 	}
 
-	.main > .notice.is-error {
+	.main > .calypso-notice.is-error {
 		margin-top: 24px;
 		margin-bottom: 0;
 	}
@@ -217,6 +217,10 @@
 	.themes-toolbar-group.responsive-toolbar-group__swipe .components-toolbar .components-button {
 		&:not(.is-pressed) {
 			color: var(--studio-blue-90);
+
+			&::before {
+				background-color: transparent;
+			}
 
 			&:hover::before {
 				background-color: color-mix(in srgb, var(--studio-blue) 10%, transparent);

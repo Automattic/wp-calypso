@@ -19,7 +19,7 @@ import {
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, Spinner } from '@automattic/components';
-import { WpcomPlansUI, AddOns, Plans, OnboardSelect } from '@automattic/data-stores';
+import { WpcomPlansUI, AddOns, Plans } from '@automattic/data-stores';
 import { isAnyHostingFlow } from '@automattic/onboarding';
 import {
 	FeaturesGrid,
@@ -32,7 +32,7 @@ import {
 } from '@automattic/plans-grid-next';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import styled from '@emotion/styled';
-import { useDispatch, useSelect } from '@wordpress/data';
+import { useDispatch } from '@wordpress/data';
 import {
 	useCallback,
 	useEffect,
@@ -50,7 +50,6 @@ import QueryActivePromotions from 'calypso/components/data/query-active-promotio
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySites from 'calypso/components/data/query-sites';
-import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { retargetViewPlans } from 'calypso/lib/analytics/ad-tracking';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { planItem as getCartItemForPlan } from 'calypso/lib/cart-values/cart-items';
@@ -73,7 +72,6 @@ import { useModalResolutionCallback } from './components/plan-upsell-modal/hooks
 import PlansPageSubheader from './components/plans-page-subheader';
 import useCheckPlanAvailabilityForPurchase from './hooks/use-check-plan-availability-for-purchase';
 import useDefaultWpcomPlansIntent from './hooks/use-default-wpcom-plans-intent';
-import useEligibilityForTermSavingsPriceDisplay from './hooks/use-eligibility-for-term-savings-price-display';
 import useFilteredDisplayedIntervals from './hooks/use-filtered-displayed-intervals';
 import useGenerateActionHook from './hooks/use-generate-action-hook';
 import usePlanFromUpsells from './hooks/use-plan-from-upsells';
@@ -247,20 +245,12 @@ const PlansFeaturesMain = ( {
 	const showUpgradeableStorage = config.isEnabled( 'plans/upgradeable-storage' );
 	const getPlanTypeDestination = usePlanTypeDestinationCallback();
 
-	const { createWithBigSky } = useSelect(
-		( select ) => ( {
-			createWithBigSky: ( select( ONBOARD_STORE ) as OnboardSelect ).getCreateWithBigSky(),
-		} ),
-		[]
-	);
-
 	const resolveModal = useModalResolutionCallback( {
 		isCustomDomainAllowedOnFreePlan,
 		flowName,
 		paidDomainName,
 		intent: intentFromProps,
 		selectedThemeType,
-		createWithBigSky,
 	} );
 
 	const toggleShowPlansComparisonGrid = () => {
@@ -407,20 +397,6 @@ const PlansFeaturesMain = ( {
 		hideEnterprisePlan,
 	};
 
-	const {
-		isEligibleForTermSavingsPriceDisplay: enableTermSavingsPriceDisplay,
-		isLoading: isLoadingemphasizeLongerTermSavingsExperiment,
-	} = useEligibilityForTermSavingsPriceDisplay( {
-		selectedPlan,
-		hiddenPlans,
-		isSubdomainNotGenerated: ! resolvedSubdomainName.result,
-		term,
-		intent,
-		displayedIntervals: filteredDisplayedIntervals,
-		coupon,
-		siteId,
-	} );
-
 	// we need all the plans that are available to pick for comparison grid (these should extend into plans-ui data store selectors)
 	const gridPlansForComparisonGrid = useGridPlansForComparisonGrid( {
 		allFeaturesList: getFeaturesList(),
@@ -439,7 +415,7 @@ const PlansFeaturesMain = ( {
 		useCheckPlanAvailabilityForPurchase,
 		useFreeTrialPlanSlugs,
 		isDomainOnlySite,
-		reflectStorageSelectionInPlanPrices: ! enableTermSavingsPriceDisplay,
+		reflectStorageSelectionInPlanPrices: true,
 	} );
 
 	// we need only the visible ones for features grid (these should extend into plans-ui data store selectors)
@@ -462,7 +438,7 @@ const PlansFeaturesMain = ( {
 		useFreeTrialPlanSlugs,
 		isDomainOnlySite,
 		term,
-		reflectStorageSelectionInPlanPrices: ! enableTermSavingsPriceDisplay,
+		reflectStorageSelectionInPlanPrices: true,
 	} );
 
 	// when `deemphasizeFreePlan` is enabled, the Free plan will be presented as a CTA link instead of a plan card in the features grid.
@@ -673,8 +649,7 @@ const PlansFeaturesMain = ( {
 		! intent ||
 			! defaultWpcomPlansIntent || // this may be unnecessary, but just in case
 			! gridPlansForFeaturesGrid ||
-			! gridPlansForComparisonGrid ||
-			isLoadingemphasizeLongerTermSavingsExperiment
+			! gridPlansForComparisonGrid
 	);
 
 	const isPlansGridReady = ! isLoadingGridPlans && ! resolvedSubdomainName.isLoading;
@@ -864,7 +839,7 @@ const PlansFeaturesMain = ( {
 										onStorageAddOnClick={ handleStorageAddOnClick }
 										paidDomainName={ paidDomainName }
 										recordTracksEvent={ recordTracksEvent }
-										reflectStorageSelectionInPlanPrices={ ! enableTermSavingsPriceDisplay }
+										reflectStorageSelectionInPlanPrices
 										selectedFeature={ selectedFeature }
 										showLegacyStorageFeature={ showLegacyStorageFeature }
 										showRefundPeriod={ isAnyHostingFlow( flowName ) }
@@ -882,7 +857,7 @@ const PlansFeaturesMain = ( {
 										enableReducedFeatureGroupSpacing={ showSimplifiedFeatures }
 										enableLogosOnlyForEnterprisePlan={ showSimplifiedFeatures }
 										hideFeatureGroupTitles={ showSimplifiedFeatures }
-										enableTermSavingsPriceDisplay={ enableTermSavingsPriceDisplay }
+										enableTermSavingsPriceDisplay={ false }
 									/>
 								) }
 								{ showEscapeHatch && hidePlansFeatureComparison && viewAllPlansButton }
@@ -931,7 +906,7 @@ const PlansFeaturesMain = ( {
 															: undefined
 													}
 													recordTracksEvent={ recordTracksEvent }
-													reflectStorageSelectionInPlanPrices={ ! enableTermSavingsPriceDisplay }
+													reflectStorageSelectionInPlanPrices
 													selectedFeature={ selectedFeature }
 													selectedPlan={ selectedPlan }
 													showUpgradeableStorage={ showUpgradeableStorage }
@@ -944,7 +919,7 @@ const PlansFeaturesMain = ( {
 													}
 													enableFeatureTooltips
 													featureGroupMap={ featureGroupMapForComparisonGrid }
-													enableTermSavingsPriceDisplay={ enableTermSavingsPriceDisplay }
+													enableTermSavingsPriceDisplay={ false }
 												/>
 											) }
 											<ComparisonGridToggle

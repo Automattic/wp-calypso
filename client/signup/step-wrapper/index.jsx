@@ -212,10 +212,7 @@ class StepWrapper extends Component {
 			sticky = isSticky;
 		}
 
-		const queryParams = new URLSearchParams( window?.location.search );
-		const flags = queryParams.get( 'flags' )?.split( ',' );
-		const isHelpCenterLinkEnabled =
-			flags?.includes( 'signup/help-center-link' ) && flow?.enabledHelpCenterGeos && userLoggedIn;
+		const isHelpCenterLinkEnabled = flow?.enabledHelpCenterGeos && userLoggedIn;
 
 		return (
 			<>
@@ -277,7 +274,12 @@ export default connect( ( state, ownProps ) => {
 	const backToParam = getCurrentQueryArguments( state )?.back_to?.toString();
 	const backTo = backToParam?.startsWith( '/' ) ? backToParam : undefined;
 
-	const backUrl = ownProps.backUrl ?? backTo;
+	let backUrl = ownProps.backUrl;
+
+	// Fallback to back_to from the query string only if the current step is the first step.
+	if ( ! backUrl && ownProps.positionInFlow === 0 ) {
+		backUrl = backTo;
+	}
 
 	return {
 		backUrl,

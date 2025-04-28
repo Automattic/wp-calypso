@@ -1,10 +1,9 @@
 import config from '@automattic/calypso-config';
 import { isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
 import { useBreakpoint } from '@automattic/viewport-react';
-import { useShouldShowCriticalAnnouncementsQuery } from '@automattic/whats-new';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
-import { Component, useCallback, useEffect, useState } from 'react';
+import { Component, useEffect } from 'react';
 import { connect } from 'react-redux';
 import QueryAgencies from 'calypso/a8c-for-agencies/data/agencies/query-agencies';
 import AsyncLoad from 'calypso/components/async-load';
@@ -23,7 +22,6 @@ import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import HtmlIsIframeClassname from 'calypso/layout/html-is-iframe-classname';
 import EmptyMasterbar from 'calypso/layout/masterbar/empty';
 import MasterbarLoggedIn from 'calypso/layout/masterbar/logged-in';
-import OfflineStatus from 'calypso/layout/offline-status';
 import { isInStepContainerV2FlowContext } from 'calypso/layout/utils';
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
@@ -32,7 +30,6 @@ import { isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
 import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
 import { getMessagePathForJITM } from 'calypso/lib/route';
 import UserVerificationChecker from 'calypso/lib/user/verification-checker';
-import { isOffline } from 'calypso/state/application/selectors';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import {
 	getShouldShowCollapsedGlobalSidebar,
@@ -98,37 +95,6 @@ function SidebarScrollSynchronizer() {
 	return null;
 }
 
-function WhatsNewLoader( { loadWhatsNew, siteId } ) {
-	const { data: shouldShowCriticalAnnouncements, isLoading } =
-		useShouldShowCriticalAnnouncementsQuery( siteId );
-	const [ showWhatsNew, setShowWhatsNew ] = useState( false );
-
-	useEffect( () => {
-		if ( ! isLoading && shouldShowCriticalAnnouncements ) {
-			setShowWhatsNew( true );
-		}
-	}, [ shouldShowCriticalAnnouncements, isLoading ] );
-
-	const handleClose = useCallback( () => {
-		setShowWhatsNew( false );
-	}, [ setShowWhatsNew ] );
-
-	if ( ! loadWhatsNew ) {
-		return null;
-	}
-
-	return (
-		showWhatsNew && (
-			<AsyncLoad
-				require="@automattic/whats-new"
-				placeholder={ null }
-				onClose={ handleClose }
-				siteId={ siteId }
-			/>
-		)
-	);
-}
-
 function SidebarOverflowDelay( { layoutFocus } ) {
 	const setSidebarOverflowClass = ( overflow ) => {
 		const classList = document.querySelector( 'body' ).classList;
@@ -158,23 +124,6 @@ function SidebarOverflowDelay( { layoutFocus } ) {
 	return null;
 }
 
-function AppBannerLoader( { siteId } ) {
-	const { data: shouldShowCriticalAnnouncements, isLoading } =
-		useShouldShowCriticalAnnouncementsQuery( siteId );
-	const [ showWhatsNew, setShowWhatsNew ] = useState( false );
-
-	useEffect( () => {
-		if ( ! isLoading && shouldShowCriticalAnnouncements ) {
-			setShowWhatsNew( true );
-		}
-	}, [ shouldShowCriticalAnnouncements, isLoading ] );
-
-	return (
-		! isLoading &&
-		! showWhatsNew && <AsyncLoad require="calypso/blocks/app-banner" placeholder={ null } />
-	);
-}
-
 class Layout extends Component {
 	static propTypes = {
 		primary: PropTypes.element,
@@ -183,7 +132,6 @@ class Layout extends Component {
 		// connected props
 		masterbarIsHidden: PropTypes.bool,
 		isSupportSession: PropTypes.bool,
-		isOffline: PropTypes.bool,
 		sectionGroup: PropTypes.string,
 		sectionName: PropTypes.string,
 		colorScheme: PropTypes.string,
@@ -291,10 +239,6 @@ class Layout extends Component {
 
 		return (
 			<div className={ sectionClass }>
-				<WhatsNewLoader
-					loadWhatsNew={ loadHelpCenter && ! this.props.sidebarIsHidden && ! this.props.isNewUser }
-					siteId={ this.props.siteId }
-				/>
 				<HelpCenterLoader
 					sectionName={ this.props.sectionName }
 					loadHelpCenter={ loadHelpCenter }
@@ -339,7 +283,6 @@ class Layout extends Component {
 						<QueryAgencies />
 					</>
 				) }
-				{ this.props.isOffline && <OfflineStatus /> }
 				<div id="content" className="layout__content">
 					{ config.isEnabled( 'jitms' ) && this.props.isEligibleForJITM && (
 						<AsyncLoad
@@ -369,9 +312,6 @@ class Layout extends Component {
 				) }
 				{ config.isEnabled( 'layout/support-article-dialog' ) && (
 					<AsyncLoad require="calypso/blocks/support-article-dialog" placeholder={ null } />
-				) }
-				{ config.isEnabled( 'layout/app-banner' ) && (
-					<AppBannerLoader siteId={ this.props.siteId } />
 				) }
 				{ config.isEnabled( 'cookie-banner' ) && (
 					<AsyncLoad require="calypso/blocks/cookie-banner" placeholder={ null } />
@@ -473,7 +413,6 @@ export default withCurrentRoute(
 			sectionGroup,
 			sectionName,
 			sectionJitmPath,
-			isOffline: isOffline( state ),
 			currentLayoutFocus: getCurrentLayoutFocus( state ),
 			colorScheme,
 			siteId,

@@ -1,8 +1,14 @@
 @import "@automattic/components/src/styles/typography";
+@import "@wordpress/base-styles/breakpoints";
 
 .stats__plan-usage {
 	margin-bottom: 32px;
 	border-top: 1px solid var(--studio-gray-5);
+
+	@media (max-width: $break-medium) {
+		border-bottom: 1px solid var(--studio-gray-5);
+		margin-bottom: 0;
+	}
 }
 
 .plan-usage {
@@ -15,6 +21,11 @@
 	font-weight: 500;
 	color: var(--studio-gray-100);
 	background-color: var(--studio-white);
+
+	@media (max-width: $break-medium) {
+		border: 0;
+		margin-top: 0;
+	}
 }
 
 .plan-usage-heading {

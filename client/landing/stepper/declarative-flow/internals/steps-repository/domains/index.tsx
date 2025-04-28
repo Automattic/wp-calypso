@@ -338,12 +338,10 @@ const DomainsStep: Step< {
 			isWideLayout
 			hideBack={ shouldHideBackButton() }
 			backLabelText={ getBackLabelText() }
-			hideSkip
 			flowName={ flow as string }
 			stepContent={ <div className="domains__content">{ renderContent() }</div> }
 			recordTracksEvent={ recordTracksEvent }
 			goBack={ () => handleGoBack( goBack ) }
-			goNext={ () => submit?.() }
 			formattedHeader={
 				<FormattedHeader
 					id="domains-header"

@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+// @ts-nocheck - TODO: Fix TypeScript issues
 
 import { isWithinBreakpoint } from '@automattic/viewport';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';

@@ -14,7 +14,6 @@ import sendRequest from './lib/util/send-request';
  * Local module constants
  */
 const debug = debugModule( 'wpcom' );
-const DEFAULT_ASYNC_TIMEOUT = 30000;
 
 /**
  * XMLHttpRequest (and CORS) API access method.
@@ -173,31 +172,3 @@ WPCOM.Plans = Plans;
 WPCOM.Request = Request;
 WPCOM.Site = Site;
 WPCOM.Users = Users;
-
-if ( ! Promise.prototype.timeout ) {
-	/**
-	 * Returns a new promise with a deadline
-	 *
-	 * After the timeout interval, the promise will
-	 * reject. If the actual promise settles before
-	 * the deadline, the timer is cancelled.
-	 * @param {number} delay how many ms to wait
-	 * @returns {Promise} promise
-	 */
-	Promise.prototype.timeout = function ( delay = DEFAULT_ASYNC_TIMEOUT ) {
-		let timer;
-
-		const timeout = new Promise( ( resolve, reject ) => {
-			timer = setTimeout( () => {
-				reject( new Error( 'Action timed out while waiting for response.' ) );
-			}, delay );
-		} );
-
-		const cancelTimeout = () => {
-			clearTimeout( timer );
-			return this;
-		};
-
-		return Promise.race( [ this.then( cancelTimeout ).catch( cancelTimeout ), timeout ] );
-	};
-}

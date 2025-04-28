@@ -17,11 +17,6 @@
 
 	.language-picker-component__title {
 		font-size: 2rem;
-		padding: 0 10px 12px;
-
-		@include break-small() {
-			padding: initial;
-		}
 	}
 
 	.components-custom-select-control {
@@ -54,8 +49,14 @@
 		flex: 1 1 auto;
 		margin-bottom: 12px;
 
+		.search-component__input-fade {
+			min-width: 0;
+		}
+
 		.search-component__input[type="search"] {
+			width: 100%;
 			font-size: 0.875rem;
+			max-width: 100%;
 
 			@include break-small() {
 				padding-left: 12px;
@@ -83,6 +84,26 @@
 		&-mobile {
 			@include break-small() {
 				display: none;
+			}
+
+			.search-component__icon-navigation {
+				background-color: transparent;
+			}
+
+			.search-component:not(.is-open) {
+				width: 30px;
+				height: 30px;
+				top: 1px;
+				right: 26px;
+
+				.search-component__icon-navigation {
+					padding: 0;
+				}
+
+				.search-component__open-icon {
+					width: 30px;
+					height: 30px;
+				}
 			}
 		}
 	}

@@ -21,3 +21,7 @@ export const Indeterminate = () => {
 export const NoTitle = () => {
 	return <Loading progress={ undefined } />;
 };
+
+export const DelayedTitle = () => {
+	return <Loading title="Reticulating splines" progress={ undefined } delay={ 2000 } />;
+};

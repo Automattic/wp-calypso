@@ -13,6 +13,7 @@ import { useDispatch } from 'calypso/state';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
 import { STEPS } from '../../internals/steps';
+import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
 import { Flow } from '../../internals/types';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
@@ -23,10 +24,11 @@ interface ProvidedDependencies {
 	cartItems?: MinimalRequestCartProduct[]; // Ensure cartItems is an array
 	siteCreated?: boolean;
 	isLaunched?: boolean;
+	processingResult?: ProcessingResult;
 }
 
 const SiteIntent = Onboard.SiteIntent;
-const deletePage = async ( siteId: string, pageId: number ): Promise< boolean > => {
+const deletePage = async ( siteId: string | number, pageId: number ): Promise< boolean > => {
 	try {
 		await wpcomRequest( {
 			path: '/sites/' + siteId + '/pages/' + pageId,
@@ -42,6 +44,19 @@ const deletePage = async ( siteId: string, pageId: number ): Promise< boolean > 
 	}
 };
 
+function initialize() {
+	// stepsWithRequiredLogin will take care of redirecting to the login step if the user is not logged in.
+	return stepsWithRequiredLogin( [
+		STEPS.SITE_CREATION_STEP,
+		STEPS.PROCESSING,
+		STEPS.ERROR,
+		STEPS.UNIFIED_DOMAINS,
+		STEPS.UNIFIED_PLANS,
+		STEPS.SITE_LAUNCH,
+		STEPS.PROCESSING,
+	] );
+}
+
 const aiSiteBuilder: Flow = {
 	name: AI_SITE_BUILDER_FLOW,
 	/**
@@ -52,23 +67,19 @@ const aiSiteBuilder: Flow = {
 	useSideEffect() {
 		const dispatch = useDispatch();
 		const siteId = useQuery().get( 'siteId' );
+		const prompt = useQuery().get( 'prompt' );
 		useEffect( () => {
 			if ( siteId ) {
 				dispatch( setSelectedSiteId( parseInt( siteId ) ) );
 			}
 		}, [ siteId ] );
+		useEffect( () => {
+			if ( prompt && prompt.length > 0 ) {
+				window.sessionStorage.setItem( 'stored_ai_prompt', prompt );
+			}
+		}, [ prompt ] );
 	},
-	initialize() {
-		// stepsWithRequiredLogin will take care of redirecting to the login step if the user is not logged in.
-		return stepsWithRequiredLogin( [
-			STEPS.SITE_CREATION_STEP,
-			STEPS.PROCESSING,
-			STEPS.UNIFIED_DOMAINS,
-			STEPS.UNIFIED_PLANS,
-			STEPS.SITE_LAUNCH,
-			STEPS.PROCESSING,
-		] );
-	},
+	initialize,
 	useStepNavigation( currentStep, navigate ) {
 		const { siteSlug: siteSlugFromSiteData, siteId: siteIdFromSiteData } = useSiteData();
 		const { setDesignOnSite, setStaticHomepageOnSite, setIntentOnSite } =
@@ -87,69 +98,80 @@ const aiSiteBuilder: Flow = {
 				// The processing step will wait the aforementioned promise to be resolved and then will submit to you whatever the promise resolves to.
 				// Which will be the created site { "siteId": "242341575", "siteSlug": "something.wordpress.com", "goToCheckout": false, "siteCreated": true }
 				case 'processing': {
-					if ( providedDependencies.siteCreated ) {
-						const { siteSlug, siteId } = providedDependencies;
-						// We are setting up big sky now.
-						if ( ! siteId || ! siteSlug ) {
-							// eslint-disable-next-line no-console
-							console.error( 'No siteId or siteSlug', providedDependencies );
-							return;
-						}
-						// get the prompt from the get url
-						const prompt = queryParams.get( 'prompt' );
-						let promptParam = '';
-
-						addBlogSticker( siteId, 'big-sky-free-trial' );
-
-						const pendingActions = [
-							resolveSelect( SITE_STORE ).getSite( siteId ), // To get the URL.
-						];
-
-						// Create a new home page if one is not set yet.
-						pendingActions.push(
-							wpcomRequest( {
-								path: '/sites/' + siteId + '/pages',
-								method: 'POST',
-								apiNamespace: 'wp/v2',
-								body: {
-									title: 'Home',
-									status: 'publish',
-									content: '<!-- wp:paragraph -->\n<p>Hello world!</p>\n<!-- /wp:paragraph -->',
-								},
-							} )
-						);
-
-						pendingActions.push(
-							setDesignOnSite( siteSlug, getAssemblerDesign(), { enableThemeSetup: true } )
-						);
-						pendingActions.push( setIntentOnSite( siteSlug, SiteIntent.AIAssembler ) );
-
-						// Delete the existing boilerplate about page, always has a page ID of 1
-						pendingActions.push( deletePage( siteId || '', 1 ) );
-						const results = await Promise.all( pendingActions );
-						const siteURL = results[ 0 ].URL;
-
-						const homePagePostId = results[ 1 ].id;
-						await setStaticHomepageOnSite( siteId, homePagePostId );
-
-						if ( prompt ) {
-							promptParam = `&prompt=${ encodeURIComponent( prompt ) }`;
-						}
-
-						window.location.replace(
-							`${ siteURL }/wp-admin/site-editor.php?canvas=edit&referrer=${ AI_SITE_BUILDER_FLOW }${ promptParam }`
-						);
-					} else if ( providedDependencies.isLaunched ) {
-						const site = await resolveSelect( SITE_STORE ).getSite( providedDependencies.siteSlug );
-						window.location.replace( site.URL );
+					if ( providedDependencies.processingResult === ProcessingResult.FAILURE ) {
+						return navigate( 'error' );
 					}
 
+					if ( providedDependencies.processingResult === ProcessingResult.SUCCESS ) {
+						if ( providedDependencies.siteCreated ) {
+							const { siteSlug, siteId } = providedDependencies;
+							// We are setting up big sky now.
+							if ( ! siteId || ! siteSlug ) {
+								// eslint-disable-next-line no-console
+								console.error( 'No siteId or siteSlug', providedDependencies );
+								return;
+							}
+							// get the prompt from the get url
+							const prompt = queryParams.get( 'prompt' );
+							let promptParam = '';
+
+							addBlogSticker( siteId, 'big-sky-free-trial' );
+
+							const pendingActions = [
+								resolveSelect( SITE_STORE ).getSite( siteId ), // To get the URL.
+							];
+
+							// Create a new home page if one is not set yet.
+							pendingActions.push(
+								wpcomRequest( {
+									path: '/sites/' + siteId + '/pages',
+									method: 'POST',
+									apiNamespace: 'wp/v2',
+									body: {
+										title: 'Home',
+										status: 'publish',
+										content: '<!-- wp:paragraph -->\n<p>Hello world!</p>\n<!-- /wp:paragraph -->',
+									},
+								} )
+							);
+
+							pendingActions.push(
+								setDesignOnSite( siteSlug, getAssemblerDesign(), { enableThemeSetup: true } )
+							);
+							pendingActions.push( setIntentOnSite( siteSlug, SiteIntent.AIAssembler ) );
+
+							// Delete the existing boilerplate about page, always has a page ID of 1
+							pendingActions.push( deletePage( siteId || '', 1 ) );
+							const results = await Promise.all( pendingActions );
+							const siteURL = results[ 0 ].URL;
+
+							const homePagePostId = results[ 1 ].id;
+							await setStaticHomepageOnSite( siteId, homePagePostId );
+
+							if ( prompt ) {
+								promptParam = `&prompt=${ encodeURIComponent( prompt ) }`;
+							} else if ( window.sessionStorage.getItem( 'stored_ai_prompt' ) ) {
+								promptParam = `&prompt=${ encodeURIComponent(
+									window.sessionStorage.getItem( 'stored_ai_prompt' ) || ''
+								) }`;
+								window.sessionStorage.removeItem( 'stored_ai_prompt' );
+							}
+							window.location.replace(
+								`${ siteURL }/wp-admin/site-editor.php?canvas=edit&referrer=${ AI_SITE_BUILDER_FLOW }${ promptParam }`
+							);
+						} else if ( providedDependencies.isLaunched ) {
+							const site = await resolveSelect( SITE_STORE ).getSite(
+								providedDependencies.siteSlug
+							);
+							window.location.replace( site.URL );
+						}
+					}
 					return;
 				}
 				case 'domains': {
 					if ( providedDependencies.domainItem && siteSlugFromSiteData ) {
 						addProductsToCart( siteSlugFromSiteData, AI_SITE_BUILDER_FLOW, [
-							providedDependencies.domainItem,
+							providedDependencies.domainItem as MinimalRequestCartProduct,
 						] ).then( ( res ) => {
 							// eslint-disable-next-line no-console
 							console.log( 'ADD TO CART', res );

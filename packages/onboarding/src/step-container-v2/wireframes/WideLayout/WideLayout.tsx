@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { Content } from '../../components/Content/Content';
+import { ContentRow } from '../../components/ContentRow/ContentRow';
 import { ContentWrapper } from '../../components/ContentWrapper/ContentWrapper';
 import { StepContainerV2 } from '../../components/StepContainerV2/StepContainerV2';
 import { ContentProp } from '../../components/StepContainerV2/context';
@@ -11,7 +11,6 @@ interface WideLayoutProps {
 	heading?: ReactNode;
 	className?: string;
 	children?: ContentProp;
-	footer?: ReactNode;
 	stickyBottomBar?: ContentProp;
 }
 
@@ -20,7 +19,6 @@ export const WideLayout = ( {
 	heading,
 	className,
 	children,
-	footer,
 	stickyBottomBar,
 }: WideLayoutProps ) => {
 	return (
@@ -31,10 +29,9 @@ export const WideLayout = ( {
 				return (
 					<>
 						<TopBarRenderer topBar={ topBar } />
-						<ContentWrapper width="wide">
-							{ heading }
-							<Content className={ className }>{ content }</Content>
-							{ footer }
+						<ContentWrapper>
+							{ heading && <ContentRow>{ heading }</ContentRow> }
+							<ContentRow className={ className }>{ content }</ContentRow>
 						</ContentWrapper>
 						<StickyBottomBarRenderer stickyBottomBar={ stickyBottomBar } />
 					</>

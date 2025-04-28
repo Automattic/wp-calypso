@@ -63,6 +63,7 @@
 		"jetpack/social-plans-v1": true,
 		"jetpack/standalone-plugin-onboarding-update-v1": true,
 		"jetpack/streamline-license-purchases": false,
+		"jetpack/crm-downloads": false,
 		"layout/app-banner": false,
 		"layout/guided-tours": false,
 		"layout/query-selected-editor": false,
@@ -74,6 +75,7 @@
 		"purchases/new-payment-methods": true,
 		"realtime-site-count": true,
 		"site-indicator": false,
+		"subscribers-helper-library": true,
 		"upgrades/redirect-payments": false,
 		"jetpack/pricing-page-cart": true,
 		"yolo/command-palette": false

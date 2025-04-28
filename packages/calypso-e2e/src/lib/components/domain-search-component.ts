@@ -76,15 +76,18 @@ export class DomainSearchComponent {
 	 */
 	async selectDomain( keyword: string ): Promise< string > {
 		const targetRow = this.page.locator( selectors.domainSuggestionRow ).filter( {
-			hasText: keyword,
+			has: this.page.getByLabel( keyword ),
 		} );
 		await targetRow.waitFor();
 
 		const target = targetRow.getByRole( 'button' );
 		await target.waitFor();
 
-		// The `heading` element represents the entire domain (including the tld).
-		const selectedDomain = await targetRow.getByRole( 'heading' ).innerText();
+		const selectedDomain = await targetRow.getByLabel( keyword ).getAttribute( 'aria-label' );
+
+		if ( ! selectedDomain ) {
+			throw new Error( `No domain found for keyword: ${ keyword }` );
+		}
 
 		await target.click();
 

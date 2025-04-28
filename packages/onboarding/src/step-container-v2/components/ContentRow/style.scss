@@ -1,0 +1,18 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
+.step-container-v2__content-row {
+	width: 100%;
+	max-width: 100%;
+
+	@include break-small {
+		--total-column-width: calc(
+			var( --columns ) * var( --step-container-v2-content-column-width )
+		);
+		--total-gap-width: calc(
+			( var( --columns ) - 1 ) * var( --step-container-v2-content-column-gap )
+		);
+
+		max-width: calc( var( --total-gap-width ) + var( --total-column-width ) );
+	}
+}

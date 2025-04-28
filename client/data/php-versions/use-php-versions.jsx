@@ -2,7 +2,13 @@ import { useTranslate } from 'i18n-calypso';
 
 export const usePhpVersions = () => {
 	const translate = useTranslate();
-	const recommendedValue = '8.2';
+
+	// PHP 8.3 is now the default recommended version
+	const recommendedValue = '8.3';
+	const recommendedLabel = translate( '%s (recommended)', {
+		args: recommendedValue,
+		comment: 'PHP Version for a version switcher',
+	} );
 
 	const phpVersions = [
 		{
@@ -26,17 +32,17 @@ export const usePhpVersions = () => {
 		{
 			label: '8.1',
 			value: '8.1',
+			disabled: false, // EOL 31st December, 2025
 		},
 		{
-			label: translate( '%s (recommended)', {
-				args: '8.2',
-				comment: 'PHP Version for a version switcher',
-			} ),
+			label: '8.2',
+			value: '8.2',
+			disabled: false, // EOL 31st December, 2026
+		},
+		{
+			label: recommendedLabel,
 			value: recommendedValue,
-		},
-		{
-			label: '8.3',
-			value: '8.3',
+			disabled: false, // EOL 31st December, 2027
 		},
 	];
 

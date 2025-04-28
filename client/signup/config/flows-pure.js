@@ -25,7 +25,6 @@ export function generateFlows( {
 	getDIFMSignupDestination = noop,
 	getDIFMSiteContentCollectionDestination = noop,
 	getHostingFlowDestination = noop,
-	getEntrepreneurFlowDestination = noop,
 } = {} ) {
 	const userSocialStep = getUserSocialStepOrFallback();
 
@@ -554,17 +553,6 @@ export function generateFlows( {
 			optionalDependenciesInQuery: [ 'coupon' ],
 		},
 		{
-			name: 'entrepreneur',
-			steps: [ userSocialStep ],
-			destination: getEntrepreneurFlowDestination,
-			description: 'Entrepreneur Trial signup flow that goes through the trialAcknowledge step',
-			lastModified: '2024-05-29',
-			showRecaptcha: true,
-			providesDependenciesInQuery: [ 'toStepper', 'redirect_to' ],
-			optionalDependenciesInQuery: [ 'toStepper', 'redirect_to' ],
-			hideProgressIndicator: true,
-		},
-		{
 			name: 'onboarding-affiliate',
 			steps: [ userSocialStep, 'domains', 'plans-affiliate' ],
 			destination: getSignupDestination,
@@ -575,6 +563,14 @@ export function generateFlows( {
 			optionalDependenciesInQuery: [ 'coupon' ],
 			hideProgressIndicator: true,
 			enableHotjar: true,
+			props: {
+				[ 'plans-affiliate' ]: {
+					offeringFreePlan: false,
+				},
+				domains: {
+					allowSkipWithoutSearch: true,
+				},
+			},
 		},
 	];
 

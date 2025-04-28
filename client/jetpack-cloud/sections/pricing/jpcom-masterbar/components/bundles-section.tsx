@@ -13,11 +13,11 @@ const BundlesSection: FC< BundlesSectionProps > = ( { bundles } ) => {
 	}
 
 	return (
-		<div className="header__submenu-bottom-section">
-			<div className="header__submenu-bundles">
-				<p className="header__submenu-category-heading">{ bundles.label }</p>
+		<div className="header__submenu-bundles-section">
+			<div className="header__submenu-bundles-wrapper">
+				<p className="header__submenu-category-title">{ bundles.label }</p>
 
-				<ul className="header__submenu-links-list">
+				<ul className="header__submenu-bundles-list">
 					{ bundles &&
 						Array.from( Object.values( bundles.items ) )
 							.sort( sortByMenuOrder )

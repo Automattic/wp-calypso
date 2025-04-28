@@ -105,6 +105,7 @@ export interface SiteDetailsPlan {
 	billing_period: string;
 	user_is_owner: boolean;
 	is_free: boolean;
+	license_key?: string;
 	features: {
 		active: string[];
 		available: Record< string, string[] >;
@@ -213,7 +214,10 @@ export interface SiteDetailsCapabilities {
 	remove_users: boolean;
 	upload_files: boolean;
 	update_plugins: boolean;
-	view_hosting: boolean;
+	/**
+	 * @deprecated `view_hosting` is no longer used and will be removed in a future release.
+	 */
+	view_hosting?: boolean;
 	view_stats: boolean;
 }
 
@@ -388,6 +392,7 @@ export interface Domain {
 	product_slug?: any;
 	owner: string;
 	is_pending_icann_verification?: boolean;
+	is_root_domain_registered_with_automattic: boolean;
 	is_mapped_to_atomic_site: boolean;
 }
 
