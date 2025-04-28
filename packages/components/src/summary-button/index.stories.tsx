@@ -26,11 +26,12 @@ const meta = {
 	argTypes: {
 		decoration: {
 			control: 'select',
-			options: [ 'envelope', 'receipt', 'backup' ],
+			options: [ 'envelope', 'receipt', 'backup', 'image' ],
 			mapping: {
 				envelope: <Icon icon={ envelope } />,
 				receipt: <Icon icon={ receipt } />,
 				backup: <Icon icon={ backup } />,
+				image: <img src="https://live.staticflickr.com/5725/21726228300_51333bd62c_b.jpg" alt="" />,
 			},
 		},
 		badges: {
