@@ -40,6 +40,7 @@ import { ProductListItem } from 'calypso/state/products-list/selectors/get-produ
 import { useThemeDetails } from 'calypso/state/themes/hooks/use-theme-details';
 import { ThemeSoftwareSet } from 'calypso/types';
 import './style.scss';
+import type { FeatureObject } from '@automattic/calypso-products';
 
 export type UpgradeModalClosedBy = 'close_icon' | 'cancel_button' | 'dialog_action';
 
@@ -542,16 +543,22 @@ export const ThemeUpgradeModal = ( {
 	}
 
 	// Map features list so that if list is bigger than 4, we only show 3 and "view more" link.
-	const mapFeatureList = ( featureList: any[] ) => {
-		let firstSection = featureList;
-		let secondSection = null;
-		if ( featureList.length > 4 ) {
-			firstSection = featureList.slice( 0, 3 );
-			secondSection = featureList.slice( 3 );
+	const mapFeatureList = ( featureList: FeatureObject[] ) => {
+		if ( featureList.length <= 4 || isExpandedListOpen ) {
+			return featureList.map( ( feature, i ) => (
+				<li key={ i } className="theme-upgrade-modal__included-item">
+					<Tooltip text={ feature.getDescription?.() as string } position="top left">
+						<div>
+							<WpIcon className="wpicon" icon={ check } size={ 24 } />
+							{ feature.getTitle() }
+						</div>
+					</Tooltip>
+				</li>
+			) );
 		}
 		return (
 			<>
-				{ firstSection.map( ( feature, i ) => (
+				{ featureList.slice( 0, 3 ).map( ( feature, i ) => (
 					<li key={ i } className="theme-upgrade-modal__included-item">
 						<Tooltip text={ feature.getDescription?.() as string } position="top left">
 							<div>
@@ -561,30 +568,16 @@ export const ThemeUpgradeModal = ( {
 						</Tooltip>
 					</li>
 				) ) }
-				{ ! isExpandedListOpen && secondSection && (
-					<li className="theme-upgrade-modal__included-item">
-						<Button
-							variant="link"
-							onClick={ () => {
-								setIsExpandedListOpen( true );
-							} }
-						>
-							{ translate( 'View more' ) }
-						</Button>
-					</li>
-				) }
-				{ isExpandedListOpen &&
-					secondSection &&
-					secondSection.map( ( feature, i ) => (
-						<li key={ i } className="theme-upgrade-modal__included-item">
-							<Tooltip text={ feature.getDescription?.() as string } position="top left">
-								<div>
-									<WpIcon className="wpicon" icon={ check } size={ 24 } />
-									{ feature.getTitle() }
-								</div>
-							</Tooltip>
-						</li>
-					) ) }
+				<li className="theme-upgrade-modal__included-item">
+					<Button
+						variant="link"
+						onClick={ () => {
+							setIsExpandedListOpen( true );
+						} }
+					>
+						{ translate( 'View more' ) }
+					</Button>
+				</li>
 			</>
 		);
 	};
