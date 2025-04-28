@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+import { Button } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate, View } from '@wordpress/dataviews';
 import { dateI18n } from '@wordpress/date';
 import { __ } from '@wordpress/i18n';
@@ -98,7 +99,14 @@ function Domains() {
 	}
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate( domains, view, fields );
 	return (
-		<PageLayout title={ __( 'Domains' ) }>
+		<PageLayout
+			title={ __( 'Domains' ) }
+			actions={
+				<Button variant="primary" __next40pxDefaultSize>
+					{ __( 'Add New Domain' ) }
+				</Button>
+			}
+		>
 			<DataViewsCard>
 				<DataViews
 					data={ filteredData || [] }

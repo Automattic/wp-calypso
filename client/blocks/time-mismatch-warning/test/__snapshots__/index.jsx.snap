@@ -4,17 +4,17 @@ exports[`TimeMismatchWarning to render if GMT offsets do not match 1`] = `
 <div>
   <div
     aria-label="Notice"
-    class="notice is-warning is-dismissable"
+    class="calypso-notice is-warning is-dismissable"
     role="status"
   >
     <span
-      class="notice__icon-wrapper"
+      class="calypso-notice__icon-wrapper"
     >
       <span
-        class="notice__icon-wrapper-drop"
+        class="calypso-notice__icon-wrapper-drop"
       />
       <svg
-        class="gridicon gridicons-notice notice__icon"
+        class="gridicon gridicons-notice calypso-notice__icon"
         height="24"
         viewBox="0 0 24 24"
         width="24"
@@ -26,17 +26,17 @@ exports[`TimeMismatchWarning to render if GMT offsets do not match 1`] = `
       </svg>
     </span>
     <span
-      class="notice__content"
+      class="calypso-notice__content"
     >
       <span
-        class="notice__text"
+        class="calypso-notice__text"
       >
         This page reflects the time zone set on your site. It looks like that does not match your current time zone. {{SiteSettings}}You can update your site time zone here{{/SiteSettings}}.
       </span>
     </span>
     <button
       aria-label="Dismiss"
-      class="notice__dismiss"
+      class="calypso-notice__dismiss"
     >
       <svg
         class="gridicon gridicons-cross"

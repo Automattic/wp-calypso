@@ -46,11 +46,6 @@ jest.mock( '@automattic/data-stores', () => ( {
 jest.mock( 'calypso/components/data/query-active-promotions', () => jest.fn() );
 jest.mock( 'calypso/components/data/query-products-list', () => jest.fn() );
 
-jest.mock( '../hooks/use-eligibility-for-term-savings-price-display', () => () => ( {
-	isEligibleForTermSavingsPriceDisplay: false,
-	isLoading: false,
-} ) );
-
 import {
 	PLAN_FREE,
 	PLAN_BUSINESS_MONTHLY,

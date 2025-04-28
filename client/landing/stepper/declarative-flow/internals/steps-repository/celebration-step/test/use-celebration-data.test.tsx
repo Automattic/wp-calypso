@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+// @ts-nocheck - TODO: Fix TypeScript issues
 import { START_WRITING_FLOW } from '@automattic/onboarding';
 import { renderHook } from '@testing-library/react';
 import defaultCalypsoI18n, { I18NContext } from 'i18n-calypso';

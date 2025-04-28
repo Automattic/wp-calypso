@@ -22,7 +22,6 @@ import './style.scss';
 // User profile dropdown component
 function UserProfile() {
 	const { user } = useAuth();
-	const { supports } = useAppContext();
 	const openCommandPalette = useOpenCommandPalette();
 
 	return (
@@ -58,15 +57,7 @@ function UserProfile() {
 						<Text variant="muted">@{ user.username }</Text>
 					</VStack>
 					<MenuGroup>
-						<RouterLinkMenuItem to="/me/profile">{ __( 'Profile' ) }</RouterLinkMenuItem>
-						<RouterLinkMenuItem to="/me/billing">{ __( 'Billing' ) }</RouterLinkMenuItem>
-						<RouterLinkMenuItem to="/me/security">{ __( 'Security' ) }</RouterLinkMenuItem>
-						<RouterLinkMenuItem to="/me/privacy">{ __( 'Privacy' ) }</RouterLinkMenuItem>
-						{ supports.notifications && (
-							<RouterLinkMenuItem to="/me/notifications">
-								{ __( 'Notifications' ) }
-							</RouterLinkMenuItem>
-						) }
+						<RouterLinkMenuItem to="/me/profile">{ __( 'Account' ) }</RouterLinkMenuItem>
 					</MenuGroup>
 					<MenuGroup>
 						<MenuItem

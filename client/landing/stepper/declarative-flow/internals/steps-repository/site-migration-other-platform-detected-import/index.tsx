@@ -1,4 +1,4 @@
-import { StepContainer } from '@automattic/onboarding';
+import { StepContainer, Step } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
@@ -7,9 +7,10 @@ import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
+import { shouldUseStepContainerV2MigrationFlow } from 'calypso/landing/stepper/declarative-flow/helpers/should-use-step-container-v2';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { ImporterPlatform } from 'calypso/lib/importer/types';
-import { Step } from '../../types';
+import { Step as StepType } from '../../types';
 import { ImportPlatformForwarder } from './components/importer-forwarding-details';
 import './style.scss';
 
@@ -21,12 +22,12 @@ export const Scanning = () => {
 	);
 };
 
-const SiteMigrationOtherPlatform: Step< {
+const SiteMigrationOtherPlatform: StepType< {
 	submits: {
 		action: 'import' | 'skip';
 		platform?: ImporterPlatform | null;
 	};
-} > = function ( { navigation } ) {
+} > = function ( { navigation, flow } ) {
 	const translate = useTranslate();
 	const [ query ] = useSearchParams();
 	const from = query.get( 'from' ) as string;
@@ -81,7 +82,35 @@ const SiteMigrationOtherPlatform: Step< {
 	const descriptionWithoutPlatform = translate(
 		'Our migration service is for WordPress sites. We don’t currently support importing from this platform.'
 	);
+
 	const title = translate( "Looks like there's been a mix-up" );
+	const description =
+		platformName === 'Unknown' ? descriptionWithoutPlatform : descriptionWithPlatform;
+
+	if ( shouldUseStepContainerV2MigrationFlow( flow ) ) {
+		return (
+			<>
+				<DocumentHead title={ title } />
+				<Step.CenteredColumnLayout
+					columnWidth={ 8 }
+					topBar={
+						<Step.TopBar leftElement={ <Step.BackButton onClick={ navigation.goBack } /> } />
+					}
+					heading={ <Step.Heading text={ title } subText={ description } /> }
+				>
+					{ isAnalyzingUrl ? (
+						<Scanning />
+					) : (
+						<ImportPlatformForwarder
+							platformName={ platformName }
+							onSubmit={ handleSubmit }
+							onHelp={ handleHelp }
+						/>
+					) }
+				</Step.CenteredColumnLayout>
+			</>
+		);
+	}
 
 	return (
 		<>
@@ -99,9 +128,7 @@ const SiteMigrationOtherPlatform: Step< {
 						<FormattedHeader
 							id="site-migration-credentials-header"
 							headerText={ title }
-							subHeaderText={
-								platformName === 'Unknown' ? descriptionWithoutPlatform : descriptionWithPlatform
-							}
+							subHeaderText={ description }
 							align="center"
 						/>
 					)

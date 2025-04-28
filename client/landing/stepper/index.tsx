@@ -4,7 +4,7 @@ import { initializeAnalytics } from '@automattic/calypso-analytics';
 import { CurrentUser } from '@automattic/calypso-analytics/dist/types/utils/current-user';
 import config from '@automattic/calypso-config';
 import { UserActions, User as UserStore } from '@automattic/data-stores';
-import { HOSTED_SITE_MIGRATION_FLOW, SITE_MIGRATION_FLOW } from '@automattic/onboarding';
+import { SITE_MIGRATION_FLOW } from '@automattic/onboarding';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { dispatch } from '@wordpress/data';
 import defaultCalypsoI18n from 'i18n-calypso';
@@ -62,7 +62,7 @@ const getSiteIdFromURL = () => {
 	return siteId ? Number( siteId ) : null;
 };
 
-const HOTJAR_ENABLED_FLOWS = [ SITE_MIGRATION_FLOW, HOSTED_SITE_MIGRATION_FLOW ];
+const HOTJAR_ENABLED_FLOWS = [ SITE_MIGRATION_FLOW ];
 
 const initializeHotJar = ( flowName: string ) => {
 	if ( HOTJAR_ENABLED_FLOWS.includes( flowName ) ) {

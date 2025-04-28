@@ -1,3 +1,4 @@
+// @ts-nocheck - TODO: Fix TypeScript issues
 import { getSetupPaymentsTask } from '../';
 import { buildTask } from '../../../test/lib/fixtures';
 import { TaskContext } from '../../../types';

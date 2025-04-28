@@ -129,7 +129,7 @@
 		align-items: center;
 	}
 
-	.notice.is-compact {
+	.calypso-notice.is-compact {
 		margin: 0 0 0 8px;
 		color: var(--color-text-inverted);
 
@@ -145,12 +145,12 @@
 			background: var(--color-warning);
 		}
 
-		.notice__content {
+		.calypso-notice__content {
 			padding: 4px 8px;
 		}
 	}
 
-	.notice__icon-wrapper {
+	.calypso-notice__icon-wrapper {
 		display: none;
 	}
 

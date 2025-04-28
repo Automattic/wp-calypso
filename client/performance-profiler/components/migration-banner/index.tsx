@@ -52,7 +52,7 @@ export const MigrationBanner = ( props: { url: string; onClick: () => void } ) =
 						<div className="buttons">
 							<Button
 								variant="primary"
-								href={ `https://wordpress.com/setup/hosted-site-migration?from=${ props.url }&ref=performance-profiler-dashboard` }
+								href={ `https://wordpress.com/setup/site-migration?from=${ props.url }&ref=performance-profiler-dashboard` }
 								onClick={ props.onClick }
 							>
 								{ translate( 'Migrate your site' ) }

@@ -1,0 +1,86 @@
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
+
+$color-good: #255C33;
+$color-neutral: #2F2F2F;
+$color-bad: #660C0D;
+$color-background-good: #EDF8EF;
+$color-background-neutral: #F0F0F0;
+$color-background-bad: #FAE7E8;
+
+$experience-types: (
+	'is-good': (
+		border: $color-background-good,
+		background: $color-good,
+		hover: $color-background-good
+	),
+	'is-neutral': (
+		border: $color-background-neutral,
+		background: $color-neutral,
+		hover: $color-background-neutral
+	),
+	'is-bad': (
+		border: $color-background-bad,
+		background: $color-bad,
+		hover: $color-background-bad
+	)
+);
+
+.experience-control {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+
+.experience-control__help-text {
+	@include body-small;
+	color: rgb(117, 117, 117);
+}
+
+.experience-control__label {
+	@include heading-medium;
+	padding-block-end: 12px;
+	text-transform: uppercase;
+}
+
+.experience-control__buttons {
+	display: flex;
+	gap: 8px;
+
+	button.experience-control__button {
+		border-radius: 50%;
+		height: 32px;
+		width: 32px;
+		border-width: 1px;
+		border-style: solid;
+		justify-content: center;
+
+		&:focus {
+			box-shadow: none;
+		}
+
+		@each $type, $colors in $experience-types {
+			&.#{$type} {
+				border-color: map-get($colors, 'border');
+
+				&.is-selected {
+					background-color: map-get($colors, 'background');
+				}
+
+				&:hover:not(.is-selected), &:focus:not(.is-selected) {
+					background-color: map-get($colors, 'hover');
+				}
+			}
+		}
+
+		&.is-selected {
+			svg path {
+				fill: var(--color-text-inverted);
+			}
+		}
+	}
+}
+
+.experience-control__button-content {
+	display: flex;
+}

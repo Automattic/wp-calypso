@@ -211,7 +211,7 @@ object BuildBaseImages : BuildType({
 	triggers {
 		schedule {
 			schedulingPolicy = cron {
-				hours = "*/12"
+				hours = "*/6"
 			}
 			branchFilter = """
 				+:trunk
