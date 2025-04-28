@@ -21,7 +21,8 @@ export const useUrlPerformanceInsightsQuery = ( url?: string, hash?: string ) =>
 		refetchOnWindowFocus: false,
 		refetchInterval: ( query ) =>
 			query.state.data?.pagespeed?.status === 'completed' &&
-			query.state.data?.wpscan?.status === 'completed'
+			( query.state.data?.wpscan?.status === 'completed' ||
+				Object.keys( query.state.data?.wpscan?.errors ?? {} ).length > 0 )
 				? false
 				: 5000, // 5 second
 	} );

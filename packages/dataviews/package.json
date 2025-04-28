@@ -61,12 +61,14 @@
 		"access": "public"
 	},
 	"devDependencies": {
+		"@automattic/calypso-storybook": "workspace:^",
 		"@testing-library/jest-dom": "^6.6.3",
 		"@types/jest": "^29.5.14",
 		"@wordpress/postcss-plugins-preset": "^5.22.0",
 		"postcss": "^8.5.3",
 		"postcss-local-keyframes": "^0.0.2",
 		"sass": "1.54.0",
+		"storybook": "^8.6.9",
 		"typescript": "5.8.2"
 	},
 	"scripts": {
@@ -77,6 +79,7 @@
 		"clean": "git clean --force -d -X",
 		"prepare": "yarn run build",
 		"prepack": "yarn run clean && yarn run build",
-		"watch": "tsc --build ./tsconfig.json --watch"
+		"watch": "tsc --build ./tsconfig.json --watch",
+		"storybook:start": "storybook dev -p 57863"
 	}
 }

@@ -88,7 +88,7 @@ export default function Notice( {
 		}
 	}, [ duration ] );
 
-	const classes = clsx( 'notice', status, className, {
+	const classes = clsx( 'calypso-notice', status, className, {
 		'is-compact': isCompact,
 		'is-loading': isLoading,
 		'is-dismissable': showDismiss,
@@ -106,7 +106,9 @@ export default function Notice( {
 		renderedIcon = icon;
 	} else {
 		const iconName = icon || getIcon( status );
-		renderedIcon = <Gridicon className="notice__icon" icon={ iconName as string } size={ 24 } />;
+		renderedIcon = (
+			<Gridicon className="calypso-notice__icon" icon={ iconName as string } size={ 24 } />
+		);
 		iconNeedsDrop = GRIDICONS_WITH_DROP.includes(
 			iconName as ( typeof GRIDICONS_WITH_DROP )[ number ]
 		);
@@ -114,17 +116,17 @@ export default function Notice( {
 
 	return (
 		<div className={ classes } role="status" aria-label={ translate( 'Notice' ) }>
-			<span className="notice__icon-wrapper">
-				{ iconNeedsDrop && <span className="notice__icon-wrapper-drop" /> }
+			<span className="calypso-notice__icon-wrapper">
+				{ iconNeedsDrop && <span className="calypso-notice__icon-wrapper-drop" /> }
 				{ renderedIcon }
 			</span>
-			<span className="notice__content">
-				<span className="notice__text">{ text ? text : children }</span>
+			<span className="calypso-notice__content">
+				<span className="calypso-notice__text">{ text ? text : children }</span>
 			</span>
 			{ text ? children : null }
 			{ showDismiss && (
 				<button
-					className="notice__dismiss"
+					className="calypso-notice__dismiss"
 					onClick={ onDismissClick }
 					aria-label={ translate( 'Dismiss' ) }
 				>

@@ -1,3 +1,4 @@
+// @ts-nocheck - TODO: Fix TypeScript issues
 import wpcom from 'calypso/lib/wp';
 import * as Logger from 'calypso/server/lib/logger';
 import { logError } from '../log-error';

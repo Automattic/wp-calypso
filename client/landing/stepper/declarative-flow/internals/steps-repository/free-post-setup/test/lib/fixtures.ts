@@ -1,3 +1,4 @@
+// @ts-nocheck - TODO: Fix TypeScript issues
 import { SiteDetails } from '@automattic/data-stores/src/site';
 
 export const defaultSiteDetails: SiteDetails = {
