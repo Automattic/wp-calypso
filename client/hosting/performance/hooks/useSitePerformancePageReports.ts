@@ -165,7 +165,6 @@ export function useSavePerformanceReportUrl( siteId: number ) {
 					saveSiteSettings( siteId, { wpcom_performance_report_url: performanceReportUrl } )
 				);
 			}
-
 			return await savePageMeta( siteId, parseInt( pageId, 10 ), performanceReportUrl );
 		},
 		[ siteId, dispatch ]
