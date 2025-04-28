@@ -242,6 +242,7 @@ $colophon-height: 50px;
 
 		p {
 			@include body-large;
+			margin-bottom: 0;
 		}
 	}
 }
@@ -269,7 +270,8 @@ $colophon-height: 50px;
 
 .jetpack-connect__switch-account-link {
 	@include body-medium;
-	padding: 12px 0 0;
+	margin: 12px 0 0;
+	padding: 0;
 	color: var(--studio-green-60);
 }
 
@@ -309,7 +311,7 @@ $colophon-height: 50px;
 	padding: 10px 12px 10px 16px;
 
 	.jetpack-connect__logged-in-user-text-name {
-		@include body-medium;
+		@include heading-large;
 	}
 
 	.jetpack-connect__logged-in-user-text-email {
@@ -323,10 +325,35 @@ $colophon-height: 50px;
 		padding: 0;
 
 		button {
-			background-color: var(--studio-green-60);
-			margin-bottom: 16px;
-			padding-top: 12px;
-			padding-bottom: 12px;
+			width: 100%;
+			padding: 12px 16px;
+			min-height: 48px;
+			font-weight: 500;
+			font-size: 16px;
+			line-height: 24px;
+			border: 1px solid var(--jp-green-60, #007117);
+			border-radius: var(--jp-button-radius);
+			box-sizing: border-box;
+			color: var(--jp-white, #fff);
+			background: var(--jp-green-60, #007117);
+			justify-content: center;
+
+			&:hover,
+			&:focus {
+				background: var(--jp-green-70, #00801a);
+				color: var(--jp-white, #fff);
+			}
+
+			&:focus {
+				border-color: var(--jp-white, #FFF);
+				outline: 2px solid var(--jp-green-60, #007117);
+			}
+
+			&:disabled {
+				background: var(--jp-gray, #dcdcde);
+				border-color: var(--jp-gray, #dcdcde);
+				color: var(--jp-gray-50, #646970);
+			}
 		}
 	}
 }
