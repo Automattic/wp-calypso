@@ -9,6 +9,7 @@ import {
 	CardBody,
 	__experimentalHeading as Heading,
 	__experimentalText as Text,
+	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { __, _n } from '@wordpress/i18n';
@@ -199,7 +200,15 @@ export const CustomComposition = () => {
 			search={ false }
 		>
 			<PlanetOverview />
-			<DataViews.Search />
+
+			<HStack
+				alignment="top"
+				justify="space-between"
+				className="dataviews__view-actions"
+				spacing={ 1 }
+			>
+				<DataViews.Search />
+			</HStack>
 		</DataViews>
 	);
 };
