@@ -1,6 +1,6 @@
 import { Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { caution } from '@wordpress/icons';
+import { error } from '@wordpress/icons';
 import { cloneElement, forwardRef, useEffect, useState } from 'react';
 
 import './style.scss';
@@ -130,7 +130,7 @@ function UnforwardedControlWithError< C extends React.ReactElement >(
 					<p className="a8c-validated-control__error">
 						<Icon
 							className="a8c-validated-control__error-icon"
-							icon={ caution }
+							icon={ error }
 							size={ 16 }
 							fill="currentColor"
 						/>
