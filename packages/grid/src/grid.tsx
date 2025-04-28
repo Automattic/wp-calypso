@@ -10,7 +10,6 @@ import { useResizeObserver } from '@wordpress/compose';
 import { useMemo, Children, isValidElement, useState } from 'react';
 import type { GridLayoutItem, GridProps } from './types';
 import type { DragOverEvent } from '@dnd-kit/core';
-import type { Transform } from '@dnd-kit/utilities';
 
 export function GridItem( {
 	item,
@@ -27,20 +26,15 @@ export function GridItem( {
 		id: item.key,
 		disabled,
 	} );
-	const ignoreScaleTransform: Transform = transform
-		? { ...transform }
-		: { x: 0, y: 0, scaleX: 1, scaleY: 1 };
-	ignoreScaleTransform.scaleX = 1;
-	ignoreScaleTransform.scaleY = 1;
-
+	const dragCursor = isDragging ? 'grabbing' : 'grab';
 	const style = {
-		transform: CSS.Transform.toString( ignoreScaleTransform ),
+		transform: CSS.Translate.toString( transform ),
 		transition,
 		gridColumnEnd: `span ${
 			item.fullWidth ? maxColumns : Math.min( item.width ?? 1, maxColumns )
 		}`,
 		gridRowEnd: `span ${ item.height || 1 }`,
-		cursor: isDragging ? 'grabbing' : 'grab',
+		cursor: disabled ? 'default' : dragCursor,
 	};
 
 	return (
@@ -61,13 +55,16 @@ export function Grid( {
 	editMode = false,
 	onChangeLayout,
 }: GridProps ) {
+	// Temporary layout to avoid updaing the layout while dragging
+	const [ temporaryLayout, setTemporaryLayout ] = useState< GridLayoutItem[] | undefined >(
+		layout
+	);
+	const activeLayout = temporaryLayout || layout;
 	const [ containerWidth, setContainerWidth ] = useState( 0 );
 	const resizeObserverRef = useResizeObserver( ( [ { contentRect } ] ) => {
 		setContainerWidth( contentRect.width );
 	} );
-
 	const gapPx = spacing * 4;
-
 	const effectiveColumns = useMemo( () => {
 		if ( ! minColumnWidth ) {
 			return columns;
@@ -80,18 +77,17 @@ export function Grid( {
 
 	const layoutMap = useMemo( () => {
 		const map = new Map< string, GridLayoutItem >();
-		layout.forEach( ( item ) => map.set( item.key, item ) );
+		activeLayout.forEach( ( item ) => map.set( item.key, item ) );
 		return map;
-	}, [ layout ] );
+	}, [ activeLayout ] );
 
 	const items = useMemo(
 		() =>
-			[ ...layout ]
+			[ ...activeLayout ]
 				.sort( ( a, b ) => ( a.order ?? Infinity ) - ( b.order ?? Infinity ) )
 				.map( ( item ) => item.key ),
-		[ layout ]
+		[ activeLayout ]
 	);
-	const [ currentItems, setCurrentItems ] = useState( items );
 
 	const [ childrenMap, remaining ] = useMemo( () => {
 		const map = new Map< string, React.ReactElement >();
@@ -125,32 +121,32 @@ export function Grid( {
 		const { active, over } = event;
 
 		if ( over && active && active.id !== over.id ) {
-			const oldIndex = currentItems.indexOf( String( active.id ) );
-			const newIndex = currentItems.indexOf( String( over.id ) );
-			const updatedItems = arrayMove( currentItems, oldIndex, newIndex );
-			setCurrentItems( updatedItems );
+			const oldIndex = items.indexOf( String( active.id ) );
+			const newIndex = items.indexOf( String( over.id ) );
+			const updatedItems = arrayMove( items, oldIndex, newIndex );
+			const updatedLayout = layout.map( ( item ) => {
+				const newOrder = updatedItems.indexOf( item.key );
+				return {
+					...item,
+					order: newOrder,
+				};
+			} );
+			setTemporaryLayout( updatedLayout );
 		}
 	}
 
 	function handleDragEnd() {
-		if ( currentItems === items ) {
+		if ( ! onChangeLayout || ! temporaryLayout ) {
 			return;
 		}
-		const updatedLayout = layout.map( ( item ) => {
-			const newOrder = currentItems.indexOf( item.key );
-			return {
-				...item,
-				order: newOrder,
-			};
-		} );
-		if ( onChangeLayout ) {
-			onChangeLayout( updatedLayout );
-		}
+
+		onChangeLayout( temporaryLayout );
+		setTemporaryLayout( undefined );
 	}
 
 	return (
 		<DndContext sensors={ sensors } onDragOver={ handleDragOver } onDragEnd={ handleDragEnd }>
-			<SortableContext items={ currentItems } strategy={ () => null }>
+			<SortableContext items={ items } strategy={ () => null }>
 				<div
 					ref={ resizeObserverRef }
 					className={ className }
@@ -161,7 +157,7 @@ export function Grid( {
 						gap: gapPx,
 					} }
 				>
-					{ currentItems.map( ( id ) => (
+					{ items.map( ( id ) => (
 						<GridItem
 							key={ id }
 							item={ layoutMap.get( id ) as GridLayoutItem }
