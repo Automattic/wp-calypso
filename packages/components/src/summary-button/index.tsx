@@ -17,7 +17,7 @@ function BadgesList( { badges }: { badges: SummaryButtonProps[ 'badges' ] } ) {
 		return null;
 	}
 	return (
-		<HStack spacing={ 1 } justify="flex-start" style={ { minWidth: 'fit-content' } }>
+		<HStack spacing={ 1 } justify="flex-start" as="span" wrap expanded={ false }>
 			{ badges?.map( ( badge ) => (
 				<CoreBadge key={ badge.text } intent={ badge.intent }>
 					{ badge.text }
@@ -52,31 +52,23 @@ function SummaryButton(
 			disabled={ disabled }
 			accessibleWhenDisabled
 		>
-			<span className="summary-button-contents">
-				<HStack spacing={ 4 } justify="space-between" alignment="flex-start" as="span">
-					<HStack justify="flex-start" spacing={ 4 } alignment="flex-start" as="span">
-						{ !! decoration && <span className="summary-button-decoration">{ decoration }</span> }
-						<VStack alignment="flex-start" as="span" spacing={ 3 }>
-							{ strapline && (
-								<Text variant="muted" size={ 10 } upperCase className="summary-button-strapline">
-									{ strapline }
-								</Text>
-							) }
-							<Text className="summary-button-title">{ title }</Text>
-							{ description && <Text variant="muted">{ description }</Text> }
-							{ hasLowDensity && <BadgesList badges={ badges } /> }
-						</VStack>
-					</HStack>
-					{ /* // TODO: we might need to consider to add `badges` in the same HStack with the main content
-						// and not like here with the chevron icon. */ }
-					<HStack justify="flex-end" spacing={ 2 } expanded={ false } as="span">
-						{ ! hasLowDensity && <BadgesList badges={ badges } /> }
-						{ showArrow && (
-							<Icon icon={ chevronRight } className="summary-button-navigation-icon" />
+			<HStack spacing={ 4 } justify="flex-start" alignment="flex-start" as="span">
+				{ !! decoration && <span className="summary-button-decoration">{ decoration }</span> }
+				<HStack justify="space-between" spacing={ 4 } as="span" wrap>
+					<VStack alignment="flex-start" as="span" spacing={ 3 } justify="flex-start">
+						{ strapline && hasLowDensity && (
+							<Text variant="muted" size={ 10 } upperCase className="summary-button-strapline">
+								{ strapline }
+							</Text>
 						) }
-					</HStack>
+						<Text className="summary-button-title">{ title }</Text>
+						{ description && hasLowDensity && <Text variant="muted">{ description }</Text> }
+						{ hasLowDensity && <BadgesList badges={ badges } /> }
+					</VStack>
+					{ ! hasLowDensity && <BadgesList badges={ badges } /> }
 				</HStack>
-			</span>
+				{ showArrow && <Icon icon={ chevronRight } className="summary-button-navigation-icon" /> }
+			</HStack>
 		</Button>
 	);
 }

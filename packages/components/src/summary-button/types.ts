@@ -38,6 +38,8 @@ export interface SummaryButtonProps {
 	density?: Density;
 	/**
 	 * Optional supporting text that provides additional context or detail about the linked page.
+	 * For now, this property is only rendered in `low` density variant.
+	 * We might revisit adding this in more variants in the future.
 	 */
 	description?: string;
 	/**
@@ -48,6 +50,8 @@ export interface SummaryButtonProps {
 	/**
 	 * An optional visual element such as an icon or small illustration to enhance
 	 * visual context or reinforce the category.
+	 * For now, this property is only rendered in `low` density variant.
+	 * We might revisit adding this in more variants in the future.
 	 */
 	decoration?: React.ReactElement;
 	/**
