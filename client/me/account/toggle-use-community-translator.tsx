@@ -36,6 +36,7 @@ function ToggleUseCommunityTranslator() {
 							<ExternalLink
 								href="https://translate.wordpress.com/community-translator/"
 								onClick={ handleLearnMoreClick }
+								children={ null }
 							/>
 						),
 					},

@@ -312,7 +312,7 @@ class Account extends Component {
 				'Thanks to {{a}}all our community members who helped translate to {{language/}}{{/a}}',
 				{
 					components: {
-						a: <ExternalLink href={ url } />,
+						a: <ExternalLink children={ null } href={ url } />,
 						language: <span>{ language.name }</span>,
 					},
 				}
