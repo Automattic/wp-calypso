@@ -1,26 +1,28 @@
+import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
 import { translate } from 'i18n-calypso';
 import surveyImage from 'calypso/assets/images/onboarding/migrations/survey/wordpress-half-logo.png';
+import { useGeoLocationQuery } from 'calypso/data/geo/use-geolocation-query';
 import { Survey, SurveyTriggerAccept, SurveyTriggerSkip } from '../survey';
 import './style.scss';
 
-const linkByCountry = {
+const linkByCountry: Record< string, string > = {
 	IN: 'https://automattic.survey.fm/wp-com-migration-survey-wtp-india-focused',
 	US: 'https://automattic.survey.fm/wp-com-migration-survey-wtp-us-focused',
 };
 
-type Countries = keyof typeof linkByCountry;
+const getLink = ( country?: string ): string | null =>
+	country && linkByCountry.hasOwnProperty( country ) ? linkByCountry[ country ] : null;
 
-type MigrationSurveyProps = {
-	countryCode: string;
-};
+const MigrationSurvey = () => {
+	const isEnLocale = useIsEnglishLocale();
+	const { data } = useGeoLocationQuery();
+	const countryCode = data?.country_short;
+	const surveyLink = getLink( countryCode );
 
-const getLink = ( country: Countries ) => {
-	return linkByCountry[ country ];
-};
-
-const MigrationSurvey = ( { countryCode }: MigrationSurveyProps ) => {
-	const surveyLink = getLink( countryCode as Countries );
+	if ( ! isEnLocale || ! surveyLink ) {
+		return null;
+	}
 
 	return (
 		<Survey

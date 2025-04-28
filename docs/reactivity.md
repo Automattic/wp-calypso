@@ -2,8 +2,6 @@
 
 One of the guiding principles of Calypso is to minimize delays between the user, the interface, and the data, in order to construct an experience that feels fast and responsive. It tries to avoid _ad hoc_ state and fragmentation of truth by simplifying the data flow, making the final render just a representation of the current data state. For this we require view modules to be able to react to data changes elegantly, no matter how those changes are being retrieved. If something changes on the server, Calypso needs to be able to reflect that without user intervention. Some of these updates may require optimizations done on the UI to convey something has changed, naturally. That depends on the nature of the area you are working with.
 
-We currently have a [data-poller module](../client/lib/data-poller) that continuously request data from the server, but we may switch that to an open WebSocket connection in the future to establish a more explicit flow of data from both sides. What's important is that modules are ready to react to new information. To achieve this, initially, we had a simple `data-observe` module that handled the event listeners and re-rendered a component when its registered `props` emitted a `change` event. We have since moved towards more robust Redux-like approaches to handle these flows.
-
 ## Avoid Loading Spinners!
 
 In conjunction with this approach to reactivity, we encourage developers to think about the information they have available at any given time, and to utilize it to represent the visual states of their components — make the most use of what is already known, and anticipate results when you can.

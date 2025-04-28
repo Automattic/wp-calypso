@@ -153,6 +153,7 @@ const SiteMigrationApplicationPasswordsAuthorization: StepType< {
 					heading={ <Step.Heading text={ title } subText={ subHeaderText } /> }
 					className="site-migration-application-password-authorization-v2"
 				>
+					{ notice }
 					{ stepContent }
 				</Step.CenteredColumnLayout>
 			</>

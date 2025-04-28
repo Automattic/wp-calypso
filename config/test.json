@@ -79,7 +79,6 @@
 		"me/account-close": true,
 		"migration-flow/experiment": false,
 		"migration-flow/introductory-offer": true,
-		"network-connection": true,
 		"onboarding/create-course": false,
 		"onboarding/import": true,
 		"onboarding/import-from-blogger": true,
