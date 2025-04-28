@@ -1,5 +1,4 @@
 import config, { isEnabled } from '@automattic/calypso-config';
-import styled from '@emotion/styled';
 import { localize } from 'i18n-calypso';
 import { merge } from 'lodash';
 import { Component, Fragment } from 'react';
@@ -369,13 +368,6 @@ class StatsSummary extends Component {
 			backLink += domain;
 		}
 		const navigationItems = [ { label: backLabel, href: backLink }, { label: title } ];
-		const Stats = styled.div`
-			padding-bottom: 24px;
-
-			@media ( max-width: 782px ) {
-				padding-bottom: 0;
-			}
-		`;
 
 		return (
 			<>
@@ -385,7 +377,7 @@ class StatsSummary extends Component {
 				/>
 
 				{ isStatsNavigationImprovementEnabled && (
-					<Stats className="stats">
+					<div className="stats stats-summary-view">
 						<NavigationHeaderImpr
 							className="stats__section-header modernized-header"
 							title={ title }
@@ -394,7 +386,7 @@ class StatsSummary extends Component {
 								text: backLabel,
 							} }
 						/>
-					</Stats>
+					</div>
 				) }
 
 				<Main className="has-fixed-nav" wideLayout>

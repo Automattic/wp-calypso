@@ -21,6 +21,12 @@
 	.is-fixed-row-header tbody > tr:nth-child(odd) > th {
 		background-color: var(--studio-gray-0);
 	}
+
+	&.stats {
+		@media (min-width: $break-medium) {
+			padding-bottom: 24px;
+		}
+	}
 }
 
 .stats-summary__positioned {
