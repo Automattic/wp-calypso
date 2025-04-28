@@ -48,6 +48,7 @@ type DataViewsProps< Item > = {
 	onClickItem?: ( item: Item ) => void;
 	isItemClickable?: ( item: Item ) => boolean;
 	header?: ReactNode;
+	children?: ReactNode;
 	getItemLevel?: ( item: Item ) => number;
 } & ( Item extends ItemWithId
 	? { getItemId?: ( item: Item ) => string }
@@ -75,6 +76,7 @@ export default function DataViews< Item >( {
 	onClickItem,
 	isItemClickable = defaultIsItemClickable,
 	header,
+	children,
 }: DataViewsProps< Item > ) {
 	const [ containerWidth, setContainerWidth ] = useState( 0 );
 	const containerRef = useResizeObserver(
@@ -166,6 +168,9 @@ export default function DataViews< Item >( {
 						{ header }
 					</HStack>
 				</HStack>
+
+				{ children }
+
 				{ isShowingFilter && <DataViewsFilters /> }
 				<DataViewsLayout />
 				<DataViewsFooter />
