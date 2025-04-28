@@ -608,7 +608,7 @@ export const ThemeUpgradeModal = ( {
 						{ modalData.text }
 						{ modalData.price }
 					</div>
-					{ ! isPlanSufficient && (
+					{ ! isPlanSufficient && features && (
 						<div className="theme-upgrade-modal__features">{ features }</div>
 					) }
 					{ modalData.action }
