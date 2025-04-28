@@ -57,6 +57,7 @@ const onboarding: FlowV2 = {
 	async initialize() {
 		if ( await isMvpOnboardingExperiment() ) {
 			return stepsWithRequiredLogin( [
+				STEPS.UNIFIED_DOMAINS,
 				STEPS.UNIFIED_PLANS,
 				STEPS.SITE_CREATION_STEP,
 				STEPS.PROCESSING,
