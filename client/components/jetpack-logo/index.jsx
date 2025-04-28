@@ -1,6 +1,7 @@
 import colorStudio from '@automattic/color-studio';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
+import React from 'react';
 import useAriaProps from 'calypso/lib/a11y/use-aria-props';
 
 /**
@@ -48,13 +49,22 @@ const LogoPathSize32Monochrome = () => (
 	</>
 );
 
+/**
+ * JetpackLogo component renders the Jetpack logo with optional monochrome styling.
+ * @param {Object} props - Component properties.
+ * @param {boolean} [props.full] - Whether to show the full logo with text.
+ * @param {boolean|undefined} [props.monochrome] - If true, renders the logo in monochrome. If undefined, uses a default based on size.
+ * @param {number} [props.size] - The size of the logo.
+ * @param {string} [props.className] - Additional class names.
+ * @param {Object} [props.aria] - ARIA attributes.
+ * @returns The rendered NavigationHeader component
+ */
 const JetpackLogo = ( { full = false, monochrome = undefined, size = 32, className, aria } ) => {
 	const classes = clsx( 'jetpack-logo', className );
 	const ariaProps = useAriaProps( aria );
 
-	// For size=24, if monochrome is not explicitly passed, we want to use the monochrome version of the logo.
-	// This is to support the legacy behavior of the logo component.
-	const shouldUseMonochromeLogo = monochrome ?? size === 24;
+	// If monochrome is undefined, set default based on size (e.g., true for size 24)
+	const shouldUseMonochromeLogo = monochrome !== undefined ? monochrome : size === 24;
 
 	if ( full === true ) {
 		return (
