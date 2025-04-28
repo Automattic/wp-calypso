@@ -15,7 +15,7 @@ export function customize( context, next ) {
 			<CustomizeComponent
 				domain={ context.params.domain || '' }
 				pathname={ context.pathname }
-				prevPath={ context.prevPath || '' }
+				prevPath={ context.previousPath || '' }
 				query={ context.query }
 				panel={ context.params.panel }
 			/>

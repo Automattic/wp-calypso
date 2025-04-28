@@ -7,7 +7,7 @@
 }
 
 .global-notices {
-	.notice {
+	.calypso-notice {
 		margin: 0;
 		padding: 0;
 		border-left: 0;
@@ -16,7 +16,7 @@
 
 // Since the component `Notice` styles affect the WP Admin notice styles,
 // we need to restore by overriding them except for `.wpcomsh-notice` on Atomic sites.
-.notice:not(.wpcomsh-notice) {
+.calypso-notice:not(.wpcomsh-notice) {
 	display: block;
 	width: auto;
 	background: var(--studio-white);

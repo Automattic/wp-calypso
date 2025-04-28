@@ -604,11 +604,11 @@ $colophon-height: 50px;
 	}
 }
 
-.jetpack-connect__sso .email-verification-gate .notice {
+.jetpack-connect__sso .email-verification-gate .calypso-notice {
 	margin-bottom: 0;
 }
 
-.jetpack-connect__sso .email-verification-gate .notice__text {
+.jetpack-connect__sso .email-verification-gate .calypso-notice__text {
 	word-wrap: break-word;
 	word-break: break-word;
 }
@@ -1378,17 +1378,17 @@ $colophon-height: 50px;
 			margin: 0 20px;
 		}
 
-		.notice__icon-wrapper {
+		.calypso-notice__icon-wrapper {
 			background: inherit;
 			padding: 0 3px 0 11px;
 			width: fit-content;
 
-			.notice__icon {
+			.calypso-notice__icon {
 				color: var(--studio-green-30);
 			}
 		}
 
-		.notice__content {
+		.calypso-notice__content {
 			font-size: 0.8125rem; /* stylelint-disable-line scales/font-sizes */
 			line-height: 16px;
 			padding: 17px 8px;
