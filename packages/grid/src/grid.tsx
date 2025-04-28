@@ -1,10 +1,60 @@
+import {
+	DndContext,
+	closestCenter,
+	KeyboardSensor,
+	PointerSensor,
+	useSensor,
+	useSensors,
+} from '@dnd-kit/core';
+import {
+	arrayMove,
+	SortableContext,
+	sortableKeyboardCoordinates,
+	useSortable,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 import { useResizeObserver } from '@wordpress/compose';
-import clsx from 'clsx';
-import { useMemo, Children, isValidElement, useState, CSSProperties } from 'react';
-import { useDraggableGrid } from './use-draggable-grid';
-import { normalizeLayout } from './utils';
-import type { GridProps, GridLayoutItem } from './types';
-import type { ReactElement, ReactNode } from 'react';
+import { useMemo, Children, isValidElement, useState } from 'react';
+import type { GridLayoutItem, GridProps } from './types';
+import type { DragOverEvent } from '@dnd-kit/core';
+import type { Transform } from '@dnd-kit/utilities';
+
+export function GridItem( {
+	item,
+	maxColumns,
+	disabled = false,
+	children,
+}: {
+	item: GridLayoutItem;
+	maxColumns: number;
+	disabled?: boolean;
+	children: React.ReactNode;
+} ) {
+	const { attributes, listeners, setNodeRef, transform, transition } = useSortable( {
+		id: item.key,
+		disabled,
+	} );
+	const ignoreScaleTransform: Transform = transform
+		? { ...transform }
+		: { x: 0, y: 0, scaleX: 1, scaleY: 1 };
+	ignoreScaleTransform.scaleX = 1;
+	ignoreScaleTransform.scaleY = 1;
+
+	const style = {
+		transform: CSS.Transform.toString( ignoreScaleTransform ),
+		transition,
+		gridColumnEnd: `span ${
+			item.fullWidth ? maxColumns : Math.min( item.width ?? 1, maxColumns )
+		}`,
+		gridRowEnd: `span ${ item.height || 1 }`,
+	};
+
+	return (
+		<div ref={ setNodeRef } style={ style } { ...attributes } { ...listeners }>
+			{ children }
+		</div>
+	);
+}
 
 export function Grid( {
 	layout,
@@ -21,9 +71,6 @@ export function Grid( {
 	const resizeObserverRef = useResizeObserver( ( [ { contentRect } ] ) => {
 		setContainerWidth( contentRect.width );
 	} );
-	const normalizedLayout = useMemo( () => {
-		return normalizeLayout( layout );
-	}, [ layout ] );
 
 	const gapPx = spacing * 4;
 
@@ -37,115 +84,107 @@ export function Grid( {
 		return Math.max( 1, maxColumns );
 	}, [ minColumnWidth, gapPx, containerWidth, columns ] );
 
-	const {
-		handleDragStart,
-		handleDragOver,
-		handleDragEnter,
-		handleDragEnd,
-		handleDrop,
-		isDragging,
-		tempLayout,
-	} = useDraggableGrid( normalizedLayout, editMode, onChangeLayout );
-
-	const activeLayout = tempLayout || normalizedLayout;
-
-	// Map for quick layout item lookup
-	const activeLayoutMap = useMemo( () => {
+	const layoutMap = useMemo( () => {
 		const map = new Map< string, GridLayoutItem >();
-		activeLayout.forEach( ( item ) => map.set( item.key, item ) );
+		layout.forEach( ( item ) => map.set( item.key, item ) );
 		return map;
-	}, [ activeLayout ] );
+	}, [ layout ] );
 
-	// Sort children based on layout order
-	const sortedChildren = useMemo( () => {
-		// Group children by whether they have layout items
-		const withLayout: ReactElement[] = [];
-		const withoutLayout: ReactNode[] = [];
+	const items = useMemo(
+		() =>
+			[ ...layout ]
+				.sort( ( a, b ) => ( a.order ?? Infinity ) - ( b.order ?? Infinity ) )
+				.map( ( item ) => item.key ),
+		[ layout ]
+	);
+	const [ currentItems, setCurrentItems ] = useState( items );
+
+	const [ childrenMap, remaining ] = useMemo( () => {
+		const map = new Map< string, React.ReactElement >();
+		const rest: React.ReactNode[] = [];
 
 		Children.forEach( children, ( child ) => {
 			if ( ! isValidElement( child ) ) {
-				withoutLayout.push( child );
+				rest.push( child );
 				return;
 			}
 
 			const key = child.key?.toString();
-			if ( key && activeLayoutMap.has( key ) ) {
-				withLayout.push( child );
+			if ( key && layoutMap.has( key ) ) {
+				map.set( key, child );
 			} else {
-				withoutLayout.push( child );
+				rest.push( child );
 			}
 		} );
 
-		// Sort by order property
-		withLayout.sort( ( a, b ) => {
-			const keyA = a.key?.toString() ?? '';
-			const keyB = b.key?.toString() ?? '';
-			const orderA = activeLayoutMap.get( keyA )?.order ?? 0;
-			const orderB = activeLayoutMap.get( keyB )?.order ?? 0;
-			return orderA - orderB;
+		return [ map, rest ];
+	}, [ children, layoutMap ] );
+
+	const sensors = useSensors(
+		useSensor( PointerSensor ),
+		useSensor( KeyboardSensor, {
+			coordinateGetter: sortableKeyboardCoordinates,
+		} )
+	);
+
+	function handleDragOver( event: DragOverEvent ) {
+		const { active, over } = event;
+
+		if ( over && active && active.id !== over.id ) {
+			const oldIndex = currentItems.indexOf( String( active.id ) );
+			const newIndex = currentItems.indexOf( String( over.id ) );
+			const updatedItems = arrayMove( currentItems, oldIndex, newIndex );
+			setCurrentItems( updatedItems );
+		}
+	}
+
+	function handleDragEnd() {
+		if ( currentItems === items ) {
+			return;
+		}
+		const updatedLayout = layout.map( ( item ) => {
+			const newOrder = currentItems.indexOf( item.key );
+			return {
+				...item,
+				order: newOrder,
+			};
 		} );
-
-		return [ ...withLayout, ...withoutLayout ];
-	}, [ children, activeLayoutMap ] );
-
-	const gridItems = Children.map( sortedChildren, ( child, index ) => {
-		const element = child as ReactElement;
-		const key = element.key?.toString();
-		if ( ! key ) {
-			return element;
+		if ( onChangeLayout ) {
+			onChangeLayout( updatedLayout );
 		}
-
-		const item: Omit< GridLayoutItem, 'key' > = activeLayoutMap.get( key ) ?? {};
-		const style: CSSProperties = {
-			...element.props.style,
-			gridColumnEnd: `span ${
-				item.fullWidth ? effectiveColumns : Math.min( item.width ?? 1, effectiveColumns )
-			}`,
-			gridRowEnd: `span ${ item.height || 1 }`,
-		};
-
-		if ( editMode ) {
-			Object.assign( style, {
-				cursor: 'grab',
-				transition: 'all 0.2s ease',
-				position: 'relative',
-				userSelect: 'none',
-				boxShadow: '0 0 0 1px rgba(0, 0, 0, 0.1)',
-			} );
-		}
-
-		return {
-			...element,
-			props: {
-				...element.props,
-				style,
-				...( editMode && {
-					draggable: true,
-					onDragStart: ( e: React.DragEvent ) => handleDragStart( e, key, index ),
-					onDragOver: handleDragOver,
-					onDragEnter: ( e: React.DragEvent ) => handleDragEnter( e, key, index ),
-					onDragEnd: handleDragEnd,
-					onDrop: handleDrop,
-				} ),
-			},
-		};
-	} );
+	}
 
 	return (
-		<div
-			ref={ resizeObserverRef }
-			className={ clsx( className, {
-				'grid-edit-mode': editMode,
-				'grid-dragging': isDragging,
-			} ) }
-			style={ {
-				display: 'grid',
-				gridTemplateColumns: `repeat(${ effectiveColumns }, 1fr)`,
-				gridAutoRows: rowHeight,
-				gap: gapPx,
-			} }
+		<DndContext
+			sensors={ sensors }
+			collisionDetection={ closestCenter }
+			onDragOver={ handleDragOver }
+			onDragEnd={ handleDragEnd }
 		>
-			{ gridItems }
-		</div>
+			<SortableContext items={ currentItems } strategy={ () => null }>
+				<div
+					ref={ resizeObserverRef }
+					className={ className }
+					style={ {
+						display: 'grid',
+						gridTemplateColumns: `repeat(${ effectiveColumns }, 1fr)`,
+						gridAutoRows: rowHeight,
+						gap: gapPx,
+					} }
+				>
+					{ currentItems.map( ( id ) => (
+						<GridItem
+							key={ id }
+							item={ layoutMap.get( id ) as GridLayoutItem }
+							maxColumns={ effectiveColumns }
+							disabled={ ! editMode }
+						>
+							{ childrenMap.get( id ) }
+						</GridItem>
+					) ) }
+					{ remaining }
+				</div>
+			</SortableContext>
+		</DndContext>
 	);
 }

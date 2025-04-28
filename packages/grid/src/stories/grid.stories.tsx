@@ -79,7 +79,7 @@ export const ResponsiveGrid: StoryObj< typeof Grid > = {
 			{ key: 'e', width: 2, height: 1, order: 5 },
 			{ key: 'f', height: 2, order: 6, fullWidth: true },
 		],
-		rowHeight: '100px',
+		rowHeight: 'auto',
 		minColumnWidth: 160,
 		children: [
 			<Card key="a" color="#f44336">
@@ -124,6 +124,11 @@ export const EditableGrid: StoryObj< typeof Grid > = {
 			{ key: 'c', width: 1 },
 			{ key: 'd', width: 2 },
 			{ key: 'e', width: 1 },
+			{ key: 'f', width: 1 },
+			{ key: 'g', width: 2 },
+			{ key: 'h', width: 1 },
+			{ key: 'i', width: 1 },
+			{ key: 'j', width: 1 },
 		] );
 
 		console;
@@ -132,7 +137,7 @@ export const EditableGrid: StoryObj< typeof Grid > = {
 			<Grid
 				layout={ layout }
 				columns={ 6 }
-				rowHeight="100px"
+				rowHeight="auto"
 				spacing={ 2 }
 				editMode
 				onChangeLayout={ ( newLayout ) => setLayout( newLayout ) }
@@ -151,6 +156,21 @@ export const EditableGrid: StoryObj< typeof Grid > = {
 				</Card>
 				<Card key="e" color="#9c27b0">
 					Card E
+				</Card>
+				<Card key="f" color="#607d8b">
+					Card F
+				</Card>
+				<Card key="g" color="#3f51b5">
+					Card G
+				</Card>
+				<Card key="h" color="#8bc34a">
+					Card H
+				</Card>
+				<Card key="i" color="#cddc39">
+					Card I
+				</Card>
+				<Card key="j" color="#ffeb3b">
+					Card J
 				</Card>
 			</Grid>
 		);
