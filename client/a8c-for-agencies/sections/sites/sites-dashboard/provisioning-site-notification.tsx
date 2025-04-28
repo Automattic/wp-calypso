@@ -34,7 +34,7 @@ function Banner( { siteId, migration, development, onDismiss }: BannerProps ) {
 			siteId: site?.features.wpcom_atomic.blog_id,
 			siteSlug,
 		},
-		'https://wordpress.com/setup/hosted-site-migration/site-migration-identify'
+		'https://wordpress.com/setup/site-migration'
 	);
 
 	const { isFeedbackShown } = useShowFeedback( FeedbackType.PurchaseCompleted );
