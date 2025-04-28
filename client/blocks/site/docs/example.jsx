@@ -7,8 +7,7 @@ import { getSite } from 'calypso/state/sites/selectors';
 
 const SiteExample = ( { site } ) => (
 	<Card style={ { padding: 0 } }>
-		<Site site={ site } homeLink />
-		<Site compact site={ site } homeLink />
+		<Site site={ site } />
 	</Card>
 );
 

@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+// @ts-nocheck - TODO: Fix TypeScript issues
 import { clearSignupDestinationCookie } from 'calypso/signup/storageUtils';
 import siteSetupFlow from '../flows/site-setup-flow/site-setup-flow';
 import { STEPS } from '../internals/steps';

@@ -22,7 +22,6 @@ import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import HtmlIsIframeClassname from 'calypso/layout/html-is-iframe-classname';
 import EmptyMasterbar from 'calypso/layout/masterbar/empty';
 import MasterbarLoggedIn from 'calypso/layout/masterbar/logged-in';
-import OfflineStatus from 'calypso/layout/offline-status';
 import { isInStepContainerV2FlowContext } from 'calypso/layout/utils';
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
@@ -31,7 +30,6 @@ import { isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
 import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
 import { getMessagePathForJITM } from 'calypso/lib/route';
 import UserVerificationChecker from 'calypso/lib/user/verification-checker';
-import { isOffline } from 'calypso/state/application/selectors';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import {
 	getShouldShowCollapsedGlobalSidebar,
@@ -134,7 +132,6 @@ class Layout extends Component {
 		// connected props
 		masterbarIsHidden: PropTypes.bool,
 		isSupportSession: PropTypes.bool,
-		isOffline: PropTypes.bool,
 		sectionGroup: PropTypes.string,
 		sectionName: PropTypes.string,
 		colorScheme: PropTypes.string,
@@ -286,7 +283,6 @@ class Layout extends Component {
 						<QueryAgencies />
 					</>
 				) }
-				{ this.props.isOffline && <OfflineStatus /> }
 				<div id="content" className="layout__content">
 					{ config.isEnabled( 'jitms' ) && this.props.isEligibleForJITM && (
 						<AsyncLoad
@@ -417,7 +413,6 @@ export default withCurrentRoute(
 			sectionGroup,
 			sectionName,
 			sectionJitmPath,
-			isOffline: isOffline( state ),
 			currentLayoutFocus: getCurrentLayoutFocus( state ),
 			colorScheme,
 			siteId,

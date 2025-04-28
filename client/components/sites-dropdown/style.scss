@@ -9,12 +9,29 @@
 		}
 	}
 
+	&.is-disabled {
+		.sites-dropdown__wrapper {
+			background-color: var(--color-neutral-0);
+			border-color: var(--color-neutral-0);
+			pointer-events: none;
+
+			.site__title,
+			.site__domain {
+				color: var(--color-neutral-20);
+
+				&::after {
+					content: none;
+				}
+			}
+		}
+	}
+
 	.gridicons-chevron-down {
 		align-self: center;
 		color: var(--color-neutral-20);
 		flex-grow: 0;
 		flex-shrink: 0;
-		margin-right: 16px;
+		margin-right: 12px;
 		transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275), color 0.2s ease-in;
 	}
 }

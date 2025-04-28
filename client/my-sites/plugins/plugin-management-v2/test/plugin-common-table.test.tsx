@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+// @ts-nocheck - TODO: Fix TypeScript issues
 import { render, screen } from '@testing-library/react';
 import { translate } from 'i18n-calypso';
 import React from 'react';

@@ -1,4 +1,5 @@
-@import "jetpack-connect/colors";
+@import "../../jetpack-connect/colors";
+@import "../../assets/stylesheets/shared/mixins/elevation";
 @import "@automattic/onboarding/styles/mixins";
 @import "@automattic/typography/styles/fonts";
 @import "@wordpress/base-styles/breakpoints";
@@ -625,7 +626,7 @@ $image-height: 47px;
 
 	.wp-login__main .locale-suggestions .locale-suggestions__notice.is-light {		
 		&,
-		.notice__icon-wrapper {
+		.calypso-notice__icon-wrapper {
 			background-color: var(--studio-gray-0);
 		}
 	}
@@ -655,7 +656,7 @@ $image-height: 47px;
 		font-size: 14px;
 		line-height: 1.5;
 
-		a:not(.notice.is-error a) {
+		a:not(.calypso-notice.is-error a) {
 			color: var(--color-gravatar);
 		}
 

@@ -37,7 +37,7 @@ export default class NoticeAction extends Component< NoticeActionProps > {
 			href?: string;
 		} = {
 			'aria-label': this.props[ 'aria-label' ],
-			className: 'notice__action',
+			className: 'calypso-notice__action',
 			href: this.props.href ?? undefined,
 			onClick: this.props.onClick,
 			tabIndex: 0,

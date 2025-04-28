@@ -19,10 +19,12 @@ import type { Step as StepType } from '../../types';
 import './style.scss';
 
 const SiteMigrationApplicationPasswordsAuthorization: StepType< {
-	submits: {
-		action: 'migration-started' | 'fallback-credentials' | 'authorization' | 'contact-me';
-		authorizationUrl?: string;
-	};
+	submits:
+		| {
+				action: 'migration-started' | 'fallback-credentials' | 'authorization' | 'contact-me';
+				authorizationUrl?: string;
+		  }
+		| undefined;
 } > = function ( { navigation, flow } ) {
 	const translate = useTranslate();
 	const siteSlug = useSiteSlugParam();
@@ -151,6 +153,7 @@ const SiteMigrationApplicationPasswordsAuthorization: StepType< {
 					heading={ <Step.Heading text={ title } subText={ subHeaderText } /> }
 					className="site-migration-application-password-authorization-v2"
 				>
+					{ notice }
 					{ stepContent }
 				</Step.CenteredColumnLayout>
 			</>
@@ -164,7 +167,7 @@ const SiteMigrationApplicationPasswordsAuthorization: StepType< {
 				stepName="site-migration-application-password-authorization"
 				flowName="site-migration"
 				goBack={ navigation?.goBack }
-				goNext={ navigation?.submit }
+				goNext={ () => navigation?.submit?.( undefined ) }
 				hideSkip
 				notice={ notice }
 				formattedHeader={ formattedHeader }

@@ -126,7 +126,6 @@
 		"me/account/color-scheme-picker": true,
 		"migration-flow/experiment": false,
 		"migration-flow/introductory-offer": true,
-		"network-connection": true,
 		"oauth": false,
 		"onboarding/create-course": false,
 		"onboarding/import": true,

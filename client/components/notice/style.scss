@@ -11,7 +11,7 @@
 	}
 }
 
-.notice {
+.calypso-notice {
 	display: flex;
 	position: relative;
 	width: 100%;
@@ -29,44 +29,44 @@
 
 	// Success!
 	&.is-success {
-		.notice__icon-wrapper {
+		.calypso-notice__icon-wrapper {
 			background: var(--color-success-40);
 		}
 
-		.notice__icon-wrapper-drop {
+		.calypso-notice__icon-wrapper-drop {
 			background: var(--color-success);
 		}
 	}
 
 	// Warning
 	&.is-warning {
-		.notice__icon-wrapper {
+		.calypso-notice__icon-wrapper {
 			background: var(--color-warning-30);
 		}
 
-		.notice__icon-wrapper-drop {
+		.calypso-notice__icon-wrapper-drop {
 			background: var(--color-warning);
 		}
 	}
 
 	// Error! OHNO!
 	&.is-error {
-		.notice__icon-wrapper {
+		.calypso-notice__icon-wrapper {
 			background: var(--color-error-40);
 		}
 
-		.notice__icon-wrapper-drop {
+		.calypso-notice__icon-wrapper-drop {
 			background: var(--color-error);
 		}
 	}
 
 	// General notice
 	&.is-info {
-		.notice__icon-wrapper {
+		.calypso-notice__icon-wrapper {
 			background: var(--color-accent-40);
 		}
 
-		.notice__icon-wrapper-drop {
+		.calypso-notice__icon-wrapper-drop {
 			background: var(--color-accent);
 		}
 	}
@@ -78,29 +78,29 @@
 		margin-bottom: 0;
 
 		&.is-compact {
-			.notice__icon-wrapper-drop {
+			.calypso-notice__icon-wrapper-drop {
 				width: 18px;
 				height: 18px;
 				top: unset;
 				left: unset;
 			}
 
-			.notice__icon-wrapper {
+			.calypso-notice__icon-wrapper {
 				align-items: center;
 				padding-top: 0;
 			}
 		}
 
-		.notice__text a {
+		.calypso-notice__text a {
 			color: var(--color-link);
 		}
 
-		.notice__icon-wrapper {
+		.calypso-notice__icon-wrapper {
 			background: transparent;
 			align-items: center;
 			padding: 0;
 		}
-		.notice__icon-wrapper-drop {
+		.calypso-notice__icon-wrapper-drop {
 			background: var(--color-error);
 			border-radius: 50%;
 			width: 24px;
@@ -111,13 +111,13 @@
 	}
 
 	&.is-loading {
-		.notice__icon-wrapper {
+		.calypso-notice__icon-wrapper {
 			animation: notice-loading-pulse 0.8s ease-in-out infinite;
 		}
 	}
 
-	.notice__dismiss,
-	.notice__link {
+	.calypso-notice__dismiss,
+	.calypso-notice__link {
 		overflow: hidden;
 		color: var(--color-neutral-20);
 
@@ -127,7 +127,7 @@
 		}
 	}
 
-	.notice__link {
+	.calypso-notice__link {
 		// This matches the gridicon size, since we will not be using it with links
 		margin-right: 18px;
 	}
@@ -136,14 +136,14 @@
 	&.is-error,
 	&.is-warning,
 	&.is-info {
-		.notice__dismiss,
-		.notice__link {
+		.calypso-notice__dismiss,
+		.calypso-notice__link {
 			overflow: hidden;
 		}
 	}
 }
 
-.notice__icon-wrapper {
+.calypso-notice__icon-wrapper {
 	position: relative;
 	background: var(--color-neutral-40);
 	color: var(--color-text-inverted);
@@ -157,7 +157,7 @@
 
 // Accessible background drop for icons enclosed in a circle
 // to emphasize the glyph inside
-.notice__icon-wrapper-drop {
+.calypso-notice__icon-wrapper-drop {
 	position: absolute;
 	top: calc(50% - 8px);
 	left: calc(50% - 8px);
@@ -166,17 +166,17 @@
 	border-radius: 8px; /* stylelint-disable-line scales/radii */
 	background: var(--color-neutral);
 
-	& + .notice__icon {
+	& + .calypso-notice__icon {
 		position: relative;
 	}
 }
 
-.notice__content {
+.calypso-notice__content {
 	padding: 13px;
 	font-size: $font-body-extra-small;
 	flex-grow: 1;
 
-	.notice__text {
+	.calypso-notice__text {
 		a,
 		a:visited,
 		button.is-link {
@@ -223,14 +223,14 @@
 	}
 }
 
-.notice__button {
+.calypso-notice__button {
 	cursor: pointer;
 	margin-left: 0.428em;
 }
 
 // "X" for dismissing a notice
-.notice__dismiss,
-.notice__link {
+.calypso-notice__dismiss,
+.calypso-notice__link {
 	display: flex;
 	flex-shrink: 0;
 	padding: 12px;
@@ -252,7 +252,7 @@
 }
 
 // specificity for general `a` elements within notice is too great
-a.notice__action {
+a.calypso-notice__action {
 	cursor: pointer;
 	font-size: $font-body-extra-small;
 	font-weight: 400;
@@ -294,7 +294,7 @@ a.notice__action {
 }
 
 // Compact notices
-.notice.is-compact {
+.calypso-notice.is-compact {
 	display: inline-flex;
 	flex-wrap: nowrap;
 	flex-direction: row;
@@ -311,30 +311,30 @@ a.notice__action {
 		width: 100%;
 	}
 
-	.notice__content {
+	.calypso-notice__content {
 		font-size: $font-body-extra-small;
 		padding: 6px 10px;
 	}
 
-	.notice__icon-wrapper {
+	.calypso-notice__icon-wrapper {
 		width: 28px;
 
-		.notice__icon {
+		.calypso-notice__icon {
 			width: 18px;
 			height: 18px;
 			margin: 0;
 		}
 	}
 
-	.notice__icon-wrapper-drop {
+	.calypso-notice__icon-wrapper-drop {
 		top: calc(50% - 6px);
 		left: calc(50% - 6px);
 		width: 12px;
 		height: 12px;
 	}
 
-	.notice__dismiss,
-	.notice__link {
+	.calypso-notice__dismiss,
+	.calypso-notice__link {
 		position: relative;
 		align-self: center;
 		flex: none;
@@ -347,7 +347,7 @@ a.notice__action {
 		}
 	}
 
-	a.notice__action {
+	a.calypso-notice__action {
 		background: transparent;
 		display: inline-block;
 		margin: 0;
@@ -372,14 +372,14 @@ a.notice__action {
 	}
 }
 
-.notice.is-light {
+.calypso-notice.is-light {
 	background: var(--studio-gray-0);
 	color: inherit;
 	border-radius: 4px;
 
-	.notice__content {
+	.calypso-notice__content {
 		padding: 13px 0;
-		.notice__text {
+		.calypso-notice__text {
 			a,
 			a:visited,
 			button.is-link {
@@ -392,7 +392,7 @@ a.notice__action {
 		}
 	}
 
-	.notice__icon-wrapper {
+	.calypso-notice__icon-wrapper {
 		border-top-left-radius: 4px;
 		border-bottom-left-radius: 4px;
 		background: var(--studio-gray-0);
@@ -403,45 +403,45 @@ a.notice__action {
 
 	&.is-info,
 	&.is-success {
-		.notice__icon-wrapper {
+		.calypso-notice__icon-wrapper {
 			color: var(--studio-green-40);
 			background: var(--studio-gray-0);
-			.notice__icon-wrapper-drop {
+			.calypso-notice__icon-wrapper-drop {
 				background: var(--color-text-inverted);
 			}
 		}
 	}
 	&.is-warning {
-		.notice__icon-wrapper {
+		.calypso-notice__icon-wrapper {
 			color: var(--studio-orange-40);
 			background: var(--studio-gray-0);
-			.notice__icon-wrapper-drop {
+			.calypso-notice__icon-wrapper-drop {
 				background: var(--color-text-inverted);
 			}
 		}
 	}
 	&.is-error {
-		.notice__icon-wrapper {
+		.calypso-notice__icon-wrapper {
 			color: var(--studio-red-40);
 			background: var(--studio-gray-0);
-			.notice__icon-wrapper-drop {
+			.calypso-notice__icon-wrapper-drop {
 				background: var(--color-text-inverted);
 			}
 		}
 	}
 	&.is-plain {
-		.notice__icon-wrapper {
+		.calypso-notice__icon-wrapper {
 			color: inherit;
 			background: var(--studio-gray-0);
-			.notice__icon-wrapper-drop {
+			.calypso-notice__icon-wrapper-drop {
 				background: var(--color-text-inverted);
 			}
 		}
 	}
 
 	// "X" for dismissing a notice
-	.notice__dismiss,
-	.notice__link {
+	.calypso-notice__dismiss,
+	.calypso-notice__link {
 		display: flex;
 		flex-shrink: 0;
 		padding: 16px;

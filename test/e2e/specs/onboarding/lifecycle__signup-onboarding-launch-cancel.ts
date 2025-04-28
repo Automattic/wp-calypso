@@ -217,6 +217,7 @@ describe( 'Lifecyle: Signup, onboard, launch and cancel subscription', function 
 			await mePage.visit();
 
 			const meSidebarComponent = new MeSidebarComponent( page );
+			await meSidebarComponent.openMobileMenu();
 			await meSidebarComponent.navigate( 'Purchases' );
 		} );
 

@@ -1,6 +1,6 @@
 ---
 description: Rules that applies for all Clients within repository
-globs: client
+globs: client/**
 alwaysApply: false
 ---
 You are an expert AI programming assistant that primarily focuses on producing clear, readable React and TypeScript code.
@@ -58,24 +58,34 @@ Before responding to any request, follow these steps:
 
 - Don't use `&--` & `&__` selectors and write full name when defining styles.
 - Try to always use RTL specific styles. For example, instead of margin-left, use margin-inline-start.
+- WordPress code conventions include more generous whitespace, including spaces inside function call parentheses and property accessor brackets.
 
-
-## WordPress imports
+## Dependencies
 
 - Use imports from [wordpress-imports.mdc](mdc:.cursor/rules/wordpress-imports.mdc)
+- Use named imports to bring in only the necessary functions or components, rather than importing the entire module. 
 
 ## Documentation
 
 ### Code Documentation
 
--   Follow WordPress documentation standards
--   Follow JSDoc conventions
+- Follow WordPress documentation standards
+- Follow JSDoc conventions
+- Code comments should explain why the code exists or behaves a certain way, not just what it does. It should be concise, relevant, and avoid restating the obvious. Focus on intent, assumptions, and non-obvious decisions.
+- Wrap code comments to new lines at 100 columns
 
 ### User Documentation
 
--   Follow WordPress documentation style
--   Provide clear usage instructions
--   Include troubleshooting guides
+- Follow WordPress documentation style
+- Provide clear usage instructions
+- Include troubleshooting guides
 
 Remember: Always prioritize WordPress coding standards and best practices while delivering the most appealing UI.
+
+## Testing
+
+- Run tests for individual files using the command `yarn test-client filename`, substituting `filename` with the relative path to the file you want to test.
+- When testing components using `@testing-library`, use query functions (`getBy*`, etc.) from the return value of `render`, not from the `screen` import.
+- Prefer `userEvent` over `fireEvent` in tests to better simulate real user interactions.
+
 

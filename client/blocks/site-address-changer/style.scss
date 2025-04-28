@@ -1,30 +1,39 @@
-@import "@automattic/typography/styles/variables";
-@import "@wordpress/base-styles/colors.native";
+@import '@automattic/typography/styles/variables';
+@import '@wordpress/base-styles/colors.native';
+@import '@wordpress/base-styles/breakpoints';
 
-.site-address-changer__dialog {
-	text-align: left;
+.site-address-changer__copy-addition,
+.site-address-changer__copy-addition svg {
+	color: var( --color-success );
+	fill: currentColor;
+}
 
-	h2 {
-		border-top: 1px solid var(--color-border-subtle);
-		font-weight: 600;
-		margin-top: 1.5em;
-		margin-bottom: 1em;
-		padding-top: 1.5em;
+.site-address-changer__copy-deletion,
+.site-address-changer__copy-deletion svg {
+	color: var( --color-error );
+	fill: currentColor;
+}
+
+.site-address-changer__confirmation-detail {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	margin-bottom: 24px;
+
+	.site-address-changer__icon-wrapper {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 24px;
+		height: 24px;
 	}
-}
 
-.site-address-changer__copy-addition strong,
-.site-address-changer__copy-addition.gridicon {
-	color: var(--color-success);
-}
-
-.site-address-changer__copy-deletion strong,
-.site-address-changer__copy-deletion.gridicon {
-	color: var(--color-error);
-}
-
-.card.site-address-changer__content {
-	margin-bottom: 0;
+	.site-address-changer__confirmation-detail-copy {
+		margin: 0;
+		line-height: 1.5;
+		display: flex;
+		font-size: $font-body;
+	}
 }
 
 .site-address-changer__affix {
@@ -32,16 +41,41 @@
 	align-items: center;
 }
 
+.site-address-changer__info-message {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+
+	.site-address-changer__info-icon {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		flex-shrink: 0;
+	}
+
+	svg {
+		fill: currentColor;
+	}
+}
+
 .site-address-changer__select-icon {
-	color: var(--color-neutral-light);
+	color: var( --color-neutral-light );
 	margin-left: 6px;
 	align-self: center;
+
+	svg {
+		fill: currentColor;
+	}
 }
 
 .form-text-input-with-affixes__prefix,
 .form-text-input-with-affixes__suffix {
 	&:hover .site-address-changer__select-icon {
-		color: var(--color-neutral-50);
+		color: var( --color-neutral-50 );
+
+		svg {
+			fill: currentColor;
+		}
 	}
 }
 
@@ -59,11 +93,31 @@
 }
 
 .site-address-changer__info {
-	word-break: break-word;
+	font-size: $font-body-small;
+	margin-top: 24px;
+	margin-bottom: 24px;
+
+	.site-address-changer__message {
+		@media ( min-width: $break-small ) {
+			display: flex;
+			flex-direction: column;
+		}
+		margin-bottom: 24px;
+	}
 }
 
 .site-address-changer__details {
-	margin-top: 32px;
+	.form-label {
+		text-transform: uppercase;
+		font-size: $font-body-extra-small;
+		font-weight: 500;
+	}
+
+	.form-input-validation {
+		padding-top: 6px;
+		padding-right: 24px;
+		padding-bottom: 0;
+	}
 
 	.form-input-validation.email-not-verified {
 		padding-bottom: 0;
@@ -78,16 +132,10 @@
 		margin-bottom: 16px;
 
 		button {
-			color: var(--color-link);
+			color: var( --color-link );
 			cursor: pointer;
 			font-size: $font-body-small;
 		}
-	}
-
-	.site-address-changer__info-custom-domain {
-		margin-top: 10px;
-		font-size: 0.875rem;
-		color: $gray-60;
 	}
 }
 
@@ -95,21 +143,17 @@
 	margin: 0 auto 10px;
 	padding: 16px;
 
-	@include breakpoint-deprecated( "<660px" ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		margin: 0;
-	}
-
-	.gridicon {
-		float: left;
-		margin: auto 12px auto 10px;
-
-		@include breakpoint-deprecated( "<660px" ) {
-			margin: auto 6px auto 4px;
-		}
 	}
 }
 
 .site-address-changer__content {
+	p {
+		font-size: $font-body-small;
+		margin-bottom: 8px;
+	}
+
 	.form-section-heading {
 		font-size: 1.25rem;
 		margin: 0;
@@ -117,9 +161,8 @@
 	}
 
 	.site-address-changer__email-confirmation-banner {
-
 		.gridicon {
-			fill: var(--color-accent);
+			fill: var( --color-accent );
 		}
 
 		.banner__icon-circle {
@@ -127,7 +170,11 @@
 		}
 	}
 
-	@include breakpoint-deprecated( "<480px" ) {
+	.components-checkbox-control__label {
+		font-size: $font-body-small;
+	}
+
+	@include breakpoint-deprecated( '<480px' ) {
 		.form-text-input-with-affixes__suffix {
 			padding-left: 8px;
 			padding-right: 8px;
@@ -135,66 +182,12 @@
 	}
 }
 
-.site-address-changer__form-footer {
-	border-top: 1px solid var(--color-neutral-0);
-	margin: 0 -16px -16px;
-	padding: 16px;
+.site-address-changer__modal-buttons {
 	display: flex;
-	justify-content: flex-start;
+	justify-content: flex-end;
+	margin-top: 24px;
 
-	@include breakpoint-deprecated( ">480px" ) {
-		padding: 24px;
-		margin: 0 -24px -24px;
+	.components-button + .components-button {
+		margin-left: 8px;
 	}
-
-	@include breakpoint-deprecated( "<480px" ) {
-		flex-direction: column;
-	}
-
-	.button {
-		margin: 0 0 0 15px;
-
-		&.is-primary {
-			margin: 0 0 15px;
-
-			@include breakpoint-deprecated( ">480px" ) {
-				margin: 0;
-			}
-
-			@include breakpoint-deprecated( "<480px" ) {
-				order: 1;
-			}
-		}
-
-		@include breakpoint-deprecated( "<480px" ) {
-			width: 100%;
-			order: 2;
-		}
-	}
-}
-
-.site-address-changer__confirmation-detail {
-	margin-bottom: 1em;
-
-	.gridicon {
-		float: left;
-		margin-top: 4px;
-
-		@include breakpoint-deprecated( "<660px" ) {
-			display: none;
-		}
-	}
-
-	.site-address-changer__confirmation-detail-copy {
-		word-break: break-word;
-
-		@include breakpoint-deprecated( ">660px" ) {
-			margin-left: 24px;
-		}
-	}
-}
-
-.dialog__content h1.site-address-changer__dialog-heading {
-	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-	line-height: 1.4em;
 }

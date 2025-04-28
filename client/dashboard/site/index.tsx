@@ -28,18 +28,17 @@ function Site() {
 					<HeaderBar.Title>
 						<Dropdown
 							renderToggle={ ( { onToggle } ) => (
-								<Button
-									onClick={ () => onToggle() }
-									icon={ <SiteIcon site={ site } size={ 24 } /> }
-								>
-									{ site.name }
+								<Button className="dashboard-menu__item active" onClick={ () => onToggle() }>
+									<div style={ { display: 'flex', gap: '8px', alignItems: 'center' } }>
+										<SiteIcon site={ site } size={ 24 } /> { site.name }
+									</div>
 								</Button>
 							) }
 							renderContent={ ( { onClose } ) => <Switcher onClose={ onClose } /> }
 						/>
 					</HeaderBar.Title>
 					{ isDesktop && <MenuDivider /> }
-					<SiteMenu siteId={ site.id } />
+					<SiteMenu siteId={ site.ID } />
 				</HStack>
 			</HeaderBar>
 			<Outlet />

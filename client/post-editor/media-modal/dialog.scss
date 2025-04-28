@@ -104,8 +104,8 @@
 	}
 }
 
-.editor-media-modal .notice {
-	z-index: z-index(".dialog__backdrop", ".editor-media-modal .notice");
+.editor-media-modal .calypso-notice {
+	z-index: z-index(".dialog__backdrop", ".editor-media-modal .calypso-notice");
 
 	@include breakpoint-deprecated( ">660px" ) {
 		margin-top: 16px;

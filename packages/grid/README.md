@@ -1,6 +1,6 @@
 # Grid
 
-A flexible grid component for React applications. This component uses CSS Grid to create layouts with precise control over the positioning of elements.
+A flexible grid component for React applications. This component uses CSS Grid to create layouts with automatic positioning of elements.
 
 ## Installation
 
@@ -15,9 +15,9 @@ import { Grid } from '@automattic/grid';
 
 const MyLayout = () => {
 	const layout = [
-		{ key: 'a', x: 0, y: 0, width: 1 },
-		{ key: 'b', x: 1, y: 0, width: 3 },
-		{ key: 'c', x: 4, y: 0, width: 1 },
+		{ key: 'a', width: 1 },
+		{ key: 'b', width: 3 },
+		{ key: 'c', width: 1 },
 	];
 
 	return (
@@ -40,8 +40,6 @@ The main component exported by this package.
 
 - `layout` (required): An array of layout items with the following properties:
   - `key` (string): A unique identifier that matches the `key` prop of the corresponding child component
-  - `x` (number): The starting column (0-indexed)
-  - `y` (number): The starting row (0-indexed)
   - `width` (number): The number of columns this item spans
   - `height` (number, optional): The number of rows this item spans (defaults to 1)
   - `order` (number, optional): In responsive mode, determines the order of items (lower values displayed first)
@@ -52,20 +50,20 @@ The main component exported by this package.
 - `rowHeight` (optional): Height of each row (e.g., "50px", "auto")
 - `minColumnWidth` (optional): Minimum width in pixels for each column; when provided, enables responsive mode that automatically adjusts columns based on container width
 
-## Fixed vs. Responsive Mode
+## Standard vs. Responsive Mode
 
 The Grid component can operate in two modes:
 
-### Fixed Mode (Default)
+### Standard Mode (Default)
 
-In fixed mode, items are positioned exactly according to their `x` and `y` coordinates in the layout. This provides precise control over the grid layout.
+In standard mode, items are positioned automatically in a grid with the specified number of columns. Each item can span multiple columns and rows.
 
 ```jsx
-// Fixed layout with 6 columns
+// Standard layout with 6 columns
 <Grid
 	layout={ [
-		{ key: 'a', x: 0, y: 0, width: 2 },
-		{ key: 'b', x: 2, y: 0, width: 4 },
+		{ key: 'a', width: 2 },
+		{ key: 'b', width: 4 },
 	] }
 	columns={ 6 }
 >
@@ -79,7 +77,7 @@ In fixed mode, items are positioned exactly according to their `x` and `y` coord
 When `minColumnWidth` is provided, the Grid activates responsive mode, which automatically adjusts the number of columns based on the container width. In this mode:
 
 1. Items flow according to their `order` property (or original array order if not specified)
-2. The grid will collapse to fewer columns when the container width can't accommodate `columns` columns of `minColumnWidth` each
+2. The grid will use the available space to fit as many columns as possible, based on the `minColumnWidth`
 3. Items that can't fit on a row will wrap to the next row
 4. Items with `fullWidth` set to `true` will always span all available columns
 
@@ -91,7 +89,6 @@ When `minColumnWidth` is provided, the Grid activates responsive mode, which aut
 		{ key: 'b', width: 2, order: 2 },
 		{ key: 'c', width: 4, order: 3, fullWidth: true },
 	] }
-	columns={ 6 }
 	minColumnWidth={ 150 } // Each column should be at least 150px
 >
 	<div key="a">Item A</div>

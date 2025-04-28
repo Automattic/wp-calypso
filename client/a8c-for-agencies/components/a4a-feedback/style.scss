@@ -102,40 +102,6 @@ $highlight-color: #3858E9;
 	}
 }
 
-.theme-a8c-for-agencies .a4a-feedback__experience-selector-buttons {
-	display: flex;
-	gap: 10px;
-
-	.components-button {
-		box-shadow: none;
-		height: 40px;
-		padding: 8px;
-
-		&.is-primary {
-			border: 2px solid $highlight-color;
-			background-color: unset;
-
-			&:focus:not(:disabled), &:hover:not(:disabled), &:focus-visible:not(:disabled) {
-				border: 2px solid $highlight-color;
-			}
-		}
-		&.is-secondary {
-			border: 2px solid transparent;
-
-			&:focus:not(:disabled), &:hover:not(:disabled), &:focus-visible:not(:disabled) {
-				border: 2px solid transparent;
-			}
-		}
-
-		&.is-primary, &.is-secondary {
-			&:focus:not(:disabled), &:hover:not(:disabled), &:focus-visible:not(:disabled) {
-				box-shadow: none;
-				background-color: unset;
-			}
-		}
-	}
-}
-
 .a4a-feedback__suggestions {
 	display: flex;
 	flex-direction: column;

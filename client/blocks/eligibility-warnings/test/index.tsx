@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+// @ts-nocheck - TODO: Fix TypeScript issues
 
 import page from '@automattic/calypso-router';
 import { render } from '@testing-library/react';
@@ -88,7 +89,7 @@ describe( '<EligibilityWarnings>', () => {
 			state
 		);
 
-		const notice = container.querySelector( '.notice.is-error' );
+		const notice = container.querySelector( '.calypso-notice.is-error' );
 
 		expect( notice ).toBeVisible();
 		expect( notice ).toHaveTextContent( /This site is not currently eligible/ );
@@ -104,7 +105,7 @@ describe( '<EligibilityWarnings>', () => {
 			state
 		);
 
-		expect( container.querySelectorAll( '.notice' ) ).toHaveLength( 1 );
+		expect( container.querySelectorAll( '.calypso-notice' ) ).toHaveLength( 1 );
 	} );
 
 	it( 'dimly renders the hold card when AT has been blocked by a sticker', () => {
@@ -163,7 +164,7 @@ describe( '<EligibilityWarnings>', () => {
 			state
 		);
 
-		expect( container.querySelectorAll( '.notice.is-warning' ) ).toHaveLength( 0 );
+		expect( container.querySelectorAll( '.calypso-notice.is-warning' ) ).toHaveLength( 0 );
 	} );
 
 	it( 'goes to checkout when clicking "Upgrade and continue"', async () => {
