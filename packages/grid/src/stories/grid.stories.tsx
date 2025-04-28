@@ -32,6 +32,8 @@ function Card( {
 				display: 'flex',
 				alignItems: 'center',
 				justifyContent: 'center',
+				height: '100%',
+				boxSizing: 'border-box',
 				...props?.style,
 			} }
 		>
@@ -130,8 +132,6 @@ export const EditableGrid: StoryObj< typeof Grid > = {
 			{ key: 'i', width: 1 },
 			{ key: 'j', width: 1 },
 		] );
-
-		console;
 
 		return (
 			<Grid
