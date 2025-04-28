@@ -46,6 +46,7 @@ import canDisplayCommunityTranslator from 'calypso/state/selectors/can-display-c
 import getUnsavedUserSettings from 'calypso/state/selectors/get-unsaved-user-settings';
 import getUserSettings from 'calypso/state/selectors/get-user-settings';
 import isRequestingMissingSites from 'calypso/state/selectors/is-requesting-missing-sites';
+import { isA8cTeamMember } from 'calypso/state/teams/selectors';
 import {
 	clearUnsavedUserSettings,
 	removeUnsavedUserSetting,
@@ -476,6 +477,22 @@ class Account extends Component {
 		);
 	}
 
+	renderUsernameDescription() {
+		const { translate, isAutomattician, isEmailVerified } = this.props;
+
+		if ( ! isEmailVerified ) {
+			return (
+				<span>{ translate( 'Username can be changed once your email address is verified.' ) }</span>
+			);
+		}
+
+		if ( isAutomattician ) {
+			return <span>{ translate( 'Automatticians cannot change their username' ) }</span>;
+		}
+
+		return this.renderJoinDate();
+	}
+
 	renderPrimarySite() {
 		const { requestingMissingSites, translate, visibleSiteCount } = this.props;
 
@@ -893,6 +910,7 @@ class Account extends Component {
 								this.renderUsernameValidation()
 							) : (
 								<FormSettingExplanation>
+									{ this.renderUsernameDescription() }
 									{ ! this.props.isEmailVerified ? (
 										<span>
 											{ translate(
@@ -1012,6 +1030,7 @@ export default compose(
 			unsavedUserSettings: getUnsavedUserSettings( state ),
 			visibleSiteCount: getCurrentUserVisibleSiteCount( state ),
 			isEmailVerified: isCurrentUserEmailVerified( state ),
+			isAutomattician: isA8cTeamMember( state ),
 		} ),
 		{
 			clearUnsavedUserSettings,

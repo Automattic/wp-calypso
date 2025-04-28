@@ -35,12 +35,12 @@ const EmailVerificationBanner: React.FC< {
 			) }
 			<Banner
 				className="email-verification-banner"
-				title={ translate( 'Please, verify your email address.' ) }
+				title={ translate( 'Verify your email address.' ) }
 				description={
 					customDescription
 						? customDescription
 						: translate(
-								'Verifying your email helps you secure your WordPress.com account and enables key features.'
+								'Verifying your email helps you secure your WordPress.com account and enables key features, like changing your username.'
 						  )
 				}
 				callToAction={ translate( 'Verify email' ) }
