@@ -1,6 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@automattic/components/src/styles/typography";
-@import "packages/typography/styles/variables.scss";
+@import "@automattic/typography/styles/variables";
 
 @font-face {
 	font-family: Inter;
