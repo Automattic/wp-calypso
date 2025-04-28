@@ -45,13 +45,13 @@ export interface SummaryButtonProps {
 	/**
 	 * A brief, optional line of text used to highlight important information,
 	 * such as a warning or status.
+	 * For now, this property is only rendered in `low` density variant.
+	 * We might revisit adding this in more variants in the future.
 	 */
 	strapline?: string;
 	/**
 	 * An optional visual element such as an icon or small illustration to enhance
 	 * visual context or reinforce the category.
-	 * For now, this property is only rendered in `low` density variant.
-	 * We might revisit adding this in more variants in the future.
 	 */
 	decoration?: React.ReactElement;
 	/**
