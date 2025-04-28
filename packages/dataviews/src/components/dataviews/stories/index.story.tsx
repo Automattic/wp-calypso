@@ -2,6 +2,16 @@
  * WordPress dependencies
  */
 import { useState, useMemo } from '@wordpress/element';
+import { createInterpolateElement } from '@wordpress/element';
+import {
+	Card,
+	CardHeader,
+	CardBody,
+	__experimentalHeading as Heading,
+	__experimentalText as Text,
+	__experimentalVStack as VStack,
+} from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
@@ -103,5 +113,65 @@ export const FieldsNoSortableNoHidable = () => {
 				table: {},
 			} }
 		/>
+	);
+};
+
+export const WithChildren = () => {
+	const [ view, setView ] = useState< View >( {
+		...DEFAULT_VIEW,
+		fields: [ 'categories' ],
+		titleField: 'title',
+		descriptionField: 'description',
+		mediaField: 'image',
+	} );
+	const { data: shownData, paginationInfo } = useMemo( () => {
+		return filterSortAndPaginate( data, view, fields );
+	}, [ view ] );
+
+	const moons = shownData.reduce( ( sum, item ) => sum + item.satellites, 0 );
+
+	return (
+		<DataViews
+			getItemId={ ( item ) => item.id.toString() }
+			paginationInfo={ paginationInfo }
+			data={ shownData }
+			view={ view }
+			fields={ fields }
+			onChangeView={ setView }
+			actions={ actions }
+			defaultLayouts={ defaultLayouts }
+		>
+			<Card isBorderless style={ { padding: '12px 24px' } }>
+				<CardHeader>
+					<Heading>{ __( 'Solar System numbers' ) }</Heading>
+				</CardHeader>
+
+				<CardBody>
+					<VStack>
+						<Text size={ 18 } as="p">
+							{ createInterpolateElement(
+								__( '<PlanetsNumber /> planets' ),
+								{
+									PlanetsNumber: (
+										<strong>{ shownData.length } </strong>
+									),
+								}
+							) }
+						</Text>
+
+						<Text size={ 18 } as="p">
+							{ createInterpolateElement(
+								__( '<SatellitesNumber /> moons' ),
+								{
+									SatellitesNumber: (
+										<strong>{ moons } </strong>
+									),
+								}
+							) }
+						</Text>
+					</VStack>
+				</CardBody>
+			</Card>
+		</DataViews>
 	);
 };
