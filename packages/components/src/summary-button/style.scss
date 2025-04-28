@@ -5,10 +5,6 @@
 	padding: 24px;
 	display: block;
 	height: auto;
-	/* stylelint-disable-next-line scales/radii */
-	border-radius: 7px;
-	background-color: #fff;
-	box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
 
 	&:hover:not(:disabled, [aria-disabled="true"]) {
 		background: color-mix(in srgb, var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9)) 4%, transparent);
@@ -49,8 +45,16 @@
 		}
 	}
 
+	&.has-density-low {
+		/* stylelint-disable-next-line scales/radii */
+		border-radius: 7px;
+		box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
+		background-color: #fff;
+	}
+
 	&.has-density-medium {
 		padding: 12px;
+		box-shadow: 0 2px 1px -1px rgba(0, 0, 0, 0.1);
 
 		.summary-button-title {
 			@include body-medium;
