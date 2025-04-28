@@ -2,6 +2,7 @@ import { Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { error } from '@wordpress/icons';
 import { cloneElement, forwardRef, useEffect, useState } from 'react';
+import { withIgnoreIMEEvents } from '../utils/with-ignore-ime-events';
 
 import './style.scss';
 
@@ -118,8 +119,23 @@ function UnforwardedControlWithError< C extends React.ReactElement >(
 		}
 	};
 
+	const onKeyDown = ( event: React.KeyboardEvent< HTMLDivElement > ) => {
+		// Ensures that custom validators are triggered when the user submits by pressing Enter,
+		// without ever blurring the control.
+		if ( event.key === 'Enter' ) {
+			validate();
+		}
+	};
+
 	return (
-		<div className="a8c-validated-control" ref={ forwardedRef } onBlur={ onBlur }>
+		// Disable reason: Just listening to a bubbled event, not for interaction.
+		// eslint-disable-next-line jsx-a11y/no-static-element-interactions
+		<div
+			className="a8c-validated-control"
+			ref={ forwardedRef }
+			onBlur={ onBlur }
+			onKeyDown={ withIgnoreIMEEvents( onKeyDown ) }
+		>
 			{ cloneElement( render, {
 				label: appendRequiredIndicator( render.props.label, required, markWhenOptional ),
 				onChange,
