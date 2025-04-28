@@ -52,7 +52,7 @@ const JetpackLogo = ( { full = false, monochrome = undefined, size = 32, classNa
 	const classes = clsx( 'jetpack-logo', className );
 	const ariaProps = useAriaProps( aria );
 
-	// For size=24, if monochrome is not explicitely passed, we want to use the monochrome version of the logo.
+	// For size=24, if monochrome is not explicitly passed, we want to use the monochrome version of the logo.
 	// This is to support the legacy behavior of the logo component.
 	const useMonochrome = monochrome ?? size === 24;
 
