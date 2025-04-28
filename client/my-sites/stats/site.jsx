@@ -535,7 +535,7 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 				<NavigationHeaderImpr
 					className="stats__section-header modernized-header"
 					title={ isOdysseyStats ? STATS_PRODUCT_NAME : STATS_PRODUCT_NAME_IMPR }
-					titleLogo={ ! isOdysseyStats ? <JetpackLogo size={ 24 } monochrome={ false } /> : null }
+					titleLogo={ isOdysseyStats ? <JetpackLogo size={ 24 } monochrome={ false } /> : null }
 					rightSection={ <Icon className="gridicon" icon={ settings } /> }
 				/>
 			) : (
