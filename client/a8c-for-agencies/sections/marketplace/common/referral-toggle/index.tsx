@@ -4,8 +4,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useContext, useEffect } from 'react';
 import useReferralsGuide from 'calypso/a8c-for-agencies/components/guide-modal/guides/useReferralsGuide';
 import { useDispatch, useSelector } from 'calypso/state';
-import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
-import { ApprovalStatus } from 'calypso/state/a8c-for-agencies/types';
+import { hasApprovedAgencyStatus } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference } from 'calypso/state/preferences/selectors';
 import { MarketplaceTypeContext } from '../../context';
@@ -22,11 +21,7 @@ const ReferralToggle = () => {
 
 	const guideModalSeen = useSelector( ( state ) => getPreference( state, PREFERENCE_NAME ) );
 
-	const agency = useSelector( getActiveAgency );
-
-	// Old agencies didn't had approval_status set, so we need to check for that
-	const isAgencyApproved =
-		agency?.approval_status === ApprovalStatus.APPROVED || agency?.approval_status === '';
+	const isAgencyApproved = useSelector( hasApprovedAgencyStatus );
 
 	useEffect( () => {
 		if ( marketplaceType === 'referral' && ! guideModalSeen ) {

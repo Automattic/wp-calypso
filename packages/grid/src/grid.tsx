@@ -5,7 +5,7 @@ import type { ReactElement } from 'react';
 
 export function Grid( {
 	layout,
-	columns = 1,
+	columns = 6,
 	children,
 	className,
 	spacing = 2,
@@ -51,17 +51,6 @@ export function Grid( {
 		} );
 	}, [ layout, minColumnWidth ] );
 
-	// Get the number of rows in the layout
-	const rows = useMemo( () => {
-		const activeLayout = responsiveLayout || layout;
-		let maxRow = 0;
-		activeLayout.forEach( ( item ) => {
-			const itemHeight = item.height || 1;
-			maxRow = Math.max( maxRow, ( item.y ?? 0 ) + itemHeight );
-		} );
-		return maxRow;
-	}, [ layout, responsiveLayout ] );
-
 	// Create a map of layout items for quick access
 	const activeLayoutMap = useMemo( () => {
 		const activeLayout = responsiveLayout || layout;
@@ -75,7 +64,7 @@ export function Grid( {
 	const gridStyle = {
 		display: 'grid',
 		gridTemplateColumns: `repeat(${ effectiveColumns }, 1fr)`,
-		gridTemplateRows: `repeat(${ rows }, ${ rowHeight })`,
+		gridAutoRows: rowHeight,
 		gap: gapPx,
 	};
 
@@ -92,11 +81,9 @@ export function Grid( {
 		const item: Omit< GridLayoutItem, 'key' > = key ? activeLayoutMap.get( key )! ?? {} : {};
 		const itemHeight = item.height || 1;
 
-		// Apply grid positioning
+		// Apply grid positioning - using only automatic positioning
 		const style = {
 			...element.props.style,
-			gridColumnStart: item.x !== undefined ? item.x + 1 : undefined,
-			gridRowStart: item.y !== undefined ? item.y + 1 : undefined,
 			gridColumnEnd: `span ${
 				item.fullWidth ? effectiveColumns : Math.min( item.width ?? 1, effectiveColumns )
 			}`,

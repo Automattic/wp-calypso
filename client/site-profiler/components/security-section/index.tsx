@@ -68,9 +68,7 @@ export const SecuritySection: React.FC< SecuritySectionProps > = ( props ) => {
 			name={ translate( 'Security' ) }
 			title={ title }
 			subtitle={ ! isWPcom ? translate( 'Migrate for Better Security' ) : null }
-			subtitleOnClick={ () =>
-				page( `/setup/hosted-site-migration?ref=site-profiler&from=${ url }` )
-			}
+			subtitleOnClick={ () => page( `/setup/site-migration?ref=site-profiler&from=${ url }` ) }
 			ref={ securityMetricsRef }
 		>
 			{ Object.values( securityData ).map( ( metric: any ) => (

@@ -27,6 +27,8 @@ const requestExternalAccess = ( url, cb ) => {
 		'toolbar=0,location=0,status=0,menubar=0,' + popupMonitor.getScreenCenterSpecs( 780, 700 )
 	);
 
+	debug( 'popupMonitor.open', url );
+
 	popupMonitor.once( 'close', () => {
 		const result = {};
 		if ( lastMessage && lastMessage.keyring_id ) {

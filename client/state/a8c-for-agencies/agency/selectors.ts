@@ -1,9 +1,15 @@
 // Required for modular state.
 import 'calypso/state/a8c-for-agencies/init';
-import { A4AStore, APIError, Agency } from '../types';
+import { A4AStore, APIError, Agency, ApprovalStatus } from '../types';
 
 export function getActiveAgency( state: A4AStore ): Agency | null {
 	return state.a8cForAgencies.agencies.activeAgency;
+}
+
+export function hasApprovedAgencyStatus( state: A4AStore ): boolean {
+	const agency = getActiveAgency( state );
+	// Old agencies didn't have approval_status set, so we need to account for that
+	return agency?.approval_status === ApprovalStatus.APPROVED || agency?.approval_status === '';
 }
 
 export function getActiveAgencyId( state: A4AStore ): number | undefined {

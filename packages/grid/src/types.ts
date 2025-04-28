@@ -8,16 +8,6 @@ export interface GridLayoutItem {
 	key: string;
 
 	/**
-	 * Starting column (0-indexed).
-	 */
-	x?: number;
-
-	/**
-	 * Starting row (0-indexed).
-	 */
-	y?: number;
-
-	/**
 	 * Number of columns this item spans.
 	 */
 	width?: number;
@@ -41,17 +31,11 @@ export interface GridLayoutItem {
 /**
  * Props for the Grid component
  */
-export interface GridProps {
+interface BaseGridProps {
 	/**
 	 * Array of layout items.
 	 */
 	layout: GridLayoutItem[];
-
-	/**
-	 * Total number of columns in the grid.
-	 * @default 1
-	 */
-	columns: number;
 
 	/**
 	 * Grid children.
@@ -73,10 +57,26 @@ export interface GridProps {
 	 * Height of each row (e.g., "50px", "auto")
 	 */
 	rowHeight?: string;
+}
 
+interface StandardGridProps extends BaseGridProps {
+	/**
+	 * Total number of columns in the grid.
+	 * @default 6
+	 */
+	columns: number;
+
+	minColumnWidth?: never;
+}
+
+interface ResponsiveGridProps extends BaseGridProps {
 	/**
 	 * Minimum width in pixels for each column in responsive mode.
 	 * If provided, enables responsive mode which automatically adjusts columns based on container width.
 	 */
 	minColumnWidth?: number;
+
+	columns?: never;
 }
+
+export type GridProps = StandardGridProps | ResponsiveGridProps;

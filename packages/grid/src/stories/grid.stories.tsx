@@ -47,38 +47,11 @@ function Card( {
 export const Default: StoryObj< typeof Grid > = {
 	args: {
 		layout: [
-			{ key: 'a', x: 0, y: 0, width: 1 },
-			{ key: 'b', x: 1, y: 0, width: 3 },
-			{ key: 'c', x: 4, y: 0, width: 1 },
-		],
-		columns: 6,
-		children: [
-			<Card key="a" color="#f44336">
-				A
-			</Card>,
-			<Card key="b" color="#2196f3">
-				B
-			</Card>,
-			<Card key="c" color="#4caf50">
-				C
-			</Card>,
-		],
-	},
-};
-
-/**
- * Basic usage example of the Grid component with implicit positions
- */
-export const Implicit: StoryObj< typeof Grid > = {
-	args: {
-		layout: [
 			{ key: 'a', width: 1 },
 			{ key: 'b', width: 3 },
 			{ key: 'c', width: 1 },
 		],
 		columns: 6,
-		spacing: 2,
-		rowHeight: '100px',
 		children: [
 			<Card key="a" color="#f44336">
 				A
@@ -88,44 +61,6 @@ export const Implicit: StoryObj< typeof Grid > = {
 			</Card>,
 			<Card key="c" color="#4caf50">
 				C
-			</Card>,
-		],
-	},
-};
-
-/**
- * Multi-row grid layout example
- */
-export const MultiRowLayout: StoryObj< typeof Grid > = {
-	args: {
-		layout: [
-			{ key: 'a', x: 0, y: 0, width: 2, height: 1 },
-			{ key: 'b', x: 2, y: 0, width: 3, height: 2 },
-			{ key: 'c', x: 5, y: 0, width: 1, height: 1 },
-			{ key: 'd', x: 0, y: 1, width: 2, height: 1 },
-			{ key: 'e', x: 5, y: 1, width: 1, height: 1 },
-		],
-		columns: 6,
-		spacing: 2,
-		rowHeight: '100px',
-		children: [
-			<Card key="a" color="#f44336">
-				A
-			</Card>,
-			<Card key="b" color="#2196f3">
-				B
-			</Card>,
-			<Card key="c" color="#4caf50">
-				C
-			</Card>,
-			<Card key="d" color="#ff9800">
-				D
-			</Card>,
-			<Card key="e" color="#9c27b0">
-				E
-			</Card>,
-			<Card key="f" color="black">
-				F
 			</Card>,
 		],
 	},
@@ -138,15 +73,15 @@ export const MultiRowLayout: StoryObj< typeof Grid > = {
 export const ResponsiveGrid: StoryObj< typeof Grid > = {
 	args: {
 		layout: [
-			{ key: 'a', width: 1, height: 1, order: 1 },
-			{ key: 'b', width: 3, height: 1, order: 2 },
-			{ key: 'c', width: 1, height: 1, order: 3 },
-			{ key: 'd', width: 3, height: 1, order: 4 },
-			{ key: 'e', width: 4, height: 1, order: 5 },
+			{ key: 'a', width: 2, height: 1, order: 1 },
+			{ key: 'b', width: 2, height: 1, order: 2 },
+			{ key: 'c', width: 2, height: 1, order: 3 },
+			{ key: 'd', width: 4, height: 1, order: 4 },
+			{ key: 'e', width: 2, height: 1, order: 5 },
 			{ key: 'f', height: 2, order: 6, fullWidth: true },
 		],
 		rowHeight: '100px',
-		minColumnWidth: 200,
+		minColumnWidth: 160,
 		children: [
 			<Card key="a" color="#f44336">
 				Card A

@@ -68,6 +68,6 @@ export default function OverviewCard( {
 	);
 }
 
-export function OverviewCardProgressBar( { value }: { value: number } ) {
+export function OverviewCardProgressBar( { value }: { value: number | undefined } ) {
 	return <ProgressBar className="dashboard-overview-card__progress-bar" value={ value } />;
 }

@@ -51,7 +51,7 @@
 		"@automattic/calypso-apps-builder": "workspace:^",
 		"@emotion/react": "^11.11.1",
 		"@testing-library/dom": "^10.4.0",
-		"@testing-library/react": "^16.2.0",
+		"@testing-library/react": "^16.3.0",
 		"@wordpress/readable-js-assets-webpack-plugin": "^3.19.0",
 		"copy-webpack-plugin": "^10.2.4",
 		"glob": "^7.2.3",

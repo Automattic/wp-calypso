@@ -1,5 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { makeLayout, render } from 'calypso/controller';
+import { recordPageView } from 'calypso/lib/analytics/page-view';
 import { addQueryArgs, getSiteFragment } from 'calypso/lib/route';
 import { EDITOR_START, POST_EDIT } from 'calypso/state/action-types';
 import { requestAdminMenu } from 'calypso/state/admin-menu/actions';
@@ -248,6 +249,11 @@ function getSessionStorageOneTimeValue( key ) {
 }
 
 export const post = ( context, next ) => {
+	recordPageView( context.path, 'iFramed Editor', {
+		iframedEditor: true,
+		previousPath: context.previousPath,
+	} );
+
 	const postId = getPostID( context );
 	const postType = determinePostType( context );
 	const jetpackCopy = parseInt( context.query[ 'jetpack-copy' ] );
