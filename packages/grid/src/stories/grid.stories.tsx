@@ -137,7 +137,7 @@ export const EditableGrid: StoryObj< typeof Grid > = {
 			<Grid
 				layout={ layout }
 				minColumnWidth={ 160 }
-				rowHeight="100px"
+				rowHeight={ 100 }
 				spacing={ 2 }
 				editMode
 				onChangeLayout={ ( newLayout ) => setLayout( newLayout ) }
@@ -180,53 +180,6 @@ export const EditableGrid: StoryObj< typeof Grid > = {
 			description: {
 				story:
 					'This example demonstrates the Grid component in edit mode with drag, drop, and resize functionality. Use the edit mode to reorder and resize the cards. Grab and drag the handle in the bottom-right corner of each card to resize it. The layout and edit mode are managed with local state.',
-			},
-		},
-		layout: '',
-	},
-};
-
-/**
- * Example showing the Grid component in edit mode with non-resizable height (rowHeight="auto")
- */
-export const EditableAutoHeightGrid: StoryObj< typeof Grid > = {
-	render: function EditableAutoHeightGrid() {
-		const [ layout, setLayout ] = useState< GridLayoutItem[] >( [
-			{ key: 'a', width: 1 },
-			{ key: 'b', width: 2 },
-			{ key: 'c', width: 1 },
-			{ key: 'd', width: 2 },
-		] );
-
-		return (
-			<Grid
-				layout={ layout }
-				minColumnWidth={ 160 }
-				rowHeight="auto"
-				spacing={ 2 }
-				editMode
-				onChangeLayout={ ( newLayout ) => setLayout( newLayout ) }
-			>
-				<Card key="a" color="#f44336">
-					Card A (can only resize width when rowHeight="auto")
-				</Card>
-				<Card key="b" color="#2196f3">
-					Card B (can only resize width when rowHeight="auto")
-				</Card>
-				<Card key="c" color="#4caf50">
-					Card C (can only resize width when rowHeight="auto")
-				</Card>
-				<Card key="d" color="#ff9800">
-					Card D (can only resize width when rowHeight="auto")
-				</Card>
-			</Grid>
-		);
-	},
-	parameters: {
-		docs: {
-			description: {
-				story:
-					'This example demonstrates the Grid component in edit mode with only width resizing enabled (since rowHeight="auto"). Height resizing is automatically disabled when rowHeight="auto".',
 			},
 		},
 		layout: '',

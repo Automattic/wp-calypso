@@ -1,12 +1,17 @@
-import { DndContext, useDraggable } from '@dnd-kit/core';
+import { DndContext, DragMoveEvent, useDraggable } from '@dnd-kit/core';
+import { useRef } from 'react';
 
 interface ResizeHandleProps {
 	disabled?: boolean;
+	itemId?: string;
+	onResize?: ( delta: { width: number; height: number } ) => void;
+	onResizeEnd?: () => void;
 }
 
-function ResizeHandle( { disabled = false }: ResizeHandleProps ) {
-	const { attributes, listeners, setNodeRef, transform } = useDraggable( {
+function ResizeHandle( { disabled = false, itemId }: ResizeHandleProps ) {
+	const { attributes, listeners, setNodeRef } = useDraggable( {
 		id: 'draggable',
+		data: { itemId },
 	} );
 
 	const resizeHandleStyle = {
@@ -21,15 +26,57 @@ function ResizeHandle( { disabled = false }: ResizeHandleProps ) {
 		borderColor: 'transparent transparent var(--wp-admin-theme-color, #0087be) transparent',
 		zIndex: 1,
 		display: disabled ? 'none' : 'block',
-		transform: transform ? `translate3d(${ transform.x }px, ${ transform.y }px, 0)` : undefined,
 	};
 
 	return <div ref={ setNodeRef } style={ resizeHandleStyle } { ...listeners } { ...attributes } />;
 }
 
 export default function ResizeHandleWrapper( props: ResizeHandleProps ) {
+	const initialAnchorPosition = useRef< DOMRect | null >( null );
+
+	const handleDragStart = ( event: DragMoveEvent ) => {
+		// @ts-expect-error I expect this to be always defined.
+		initialAnchorPosition.current = event.activatorEvent.target.getBoundingClientRect();
+	};
+
+	const handleDragMove = ( event: DragMoveEvent ) => {
+		const { onResize } = props;
+		if ( ! initialAnchorPosition.current ) {
+			return;
+		}
+		// @ts-expect-error I expect this to be always defined.
+		const currentPosition = event.activatorEvent.target.getBoundingClientRect();
+		const deltaX = currentPosition.x - initialAnchorPosition.current.x;
+		const deltaY = currentPosition.y - initialAnchorPosition.current.y;
+		const anchorDelta = {
+			width: deltaX,
+			height: deltaY,
+		};
+
+		if ( onResize && event.active.id === 'draggable' ) {
+			const delta = {
+				width: event.delta.x - anchorDelta.width,
+				height: event.delta.y - anchorDelta.height,
+			};
+
+			onResize( delta );
+		}
+	};
+
+	const handleDragEnd = () => {
+		initialAnchorPosition.current = null;
+
+		if ( props.onResizeEnd ) {
+			props.onResizeEnd();
+		}
+	};
+
 	return (
-		<DndContext>
+		<DndContext
+			onDragStart={ handleDragStart }
+			onDragMove={ handleDragMove }
+			onDragEnd={ handleDragEnd }
+		>
 			<ResizeHandle { ...props } />
 		</DndContext>
 	);

@@ -17,11 +17,15 @@ export function GridItem( {
 	maxColumns,
 	disabled = false,
 	children,
+	onResize,
+	onResizeEnd,
 }: {
 	item: GridLayoutItem;
 	maxColumns: number;
 	disabled?: boolean;
 	children: React.ReactNode;
+	onResize?: ( delta: { width: number; height: number } ) => void;
+	onResizeEnd: () => void;
 } ) {
 	const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable( {
 		id: item.key,
@@ -42,7 +46,12 @@ export function GridItem( {
 	return (
 		<div ref={ setNodeRef } style={ style } { ...attributes } { ...listeners }>
 			{ children }
-			<ResizeHandle disabled={ disabled } />
+			<ResizeHandle
+				disabled={ disabled }
+				itemId={ item.key }
+				onResize={ onResize }
+				onResizeEnd={ onResizeEnd }
+			/>
 		</div>
 	);
 }
@@ -77,6 +86,7 @@ export function Grid( {
 		const maxColumns = Math.floor( ( containerWidth + gapPx ) / totalWidthPerColumn );
 		return Math.max( 1, maxColumns );
 	}, [ minColumnWidth, gapPx, containerWidth, columns ] );
+	const columnWidth = ( containerWidth - gapPx ) / effectiveColumns;
 
 	const layoutMap = useMemo( () => {
 		const map = new Map< string, GridLayoutItem >();
@@ -138,7 +148,7 @@ export function Grid( {
 		}
 	}
 
-	function handleDragEnd() {
+	function persistTemporaryLayout() {
 		if ( ! onChangeLayout || ! temporaryLayout ) {
 			return;
 		}
@@ -147,8 +157,41 @@ export function Grid( {
 		setTemporaryLayout( undefined );
 	}
 
+	function handleResize( id: string, delta: { width: number; height: number } ) {
+		if ( ! editMode ) {
+			return;
+		}
+
+		const relativeDelta = {
+			width: Math.round( delta.width / ( columnWidth + gapPx ) ),
+			height: rowHeight === 'auto' ? 0 : Math.round( delta.height / ( rowHeight + gapPx ) ),
+		};
+
+		if ( relativeDelta.width !== 0 || relativeDelta.height !== 0 ) {
+			// Update the temporary layout with the new size
+			const updatedLayout = activeLayout.map( ( item ) => {
+				if ( item.key === id ) {
+					return {
+						...item,
+						width: Math.max(
+							1,
+							Math.min( ( item.width ?? 1 ) + relativeDelta.width, effectiveColumns )
+						),
+						height: Math.max( 1, ( item.height ?? 1 ) + relativeDelta.height ),
+					};
+				}
+				return item;
+			} );
+			setTemporaryLayout( updatedLayout );
+		}
+	}
+
 	return (
-		<DndContext sensors={ sensors } onDragOver={ handleDragOver } onDragEnd={ handleDragEnd }>
+		<DndContext
+			sensors={ sensors }
+			onDragOver={ handleDragOver }
+			onDragEnd={ persistTemporaryLayout }
+		>
 			<SortableContext items={ items } strategy={ () => null }>
 				<div
 					ref={ resizeObserverRef }
@@ -166,6 +209,8 @@ export function Grid( {
 							item={ layoutMap.get( id ) as GridLayoutItem }
 							maxColumns={ effectiveColumns }
 							disabled={ ! editMode }
+							onResize={ ( delta ) => handleResize( id, delta ) }
+							onResizeEnd={ persistTemporaryLayout }
 						>
 							{ childrenMap.get( id ) }
 						</GridItem>
