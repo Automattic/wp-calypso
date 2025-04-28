@@ -17,8 +17,7 @@ const WarningsOrHoldsSection = styled.div`
 	margin-top: 40px;
 `;
 
-const ErrorStep: StepType = function ErrorStep( { navigation, flow, variantSlug } ) {
-	const { goBack, goNext } = navigation;
+const ErrorStep: StepType = function ErrorStep( { flow, variantSlug } ) {
 	const { __ } = useI18n();
 	const siteDomains = useSiteDomains();
 	const { error, message } = useSiteSetupError();
@@ -83,8 +82,6 @@ const ErrorStep: StepType = function ErrorStep( { navigation, flow, variantSlug 
 	return (
 		<StepContainer
 			stepName="error-step"
-			goBack={ goBack }
-			goNext={ goNext }
 			isHorizontalLayout={ false }
 			formattedHeader={
 				<>
@@ -94,9 +91,6 @@ const ErrorStep: StepType = function ErrorStep( { navigation, flow, variantSlug 
 			}
 			stepContent={ getContent() }
 			recordTracksEvent={ recordTracksEvent }
-			hideBack
-			hideSkip
-			hideNext
 		/>
 	);
 };
