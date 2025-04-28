@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { eye } from '@automattic/components/src/icons';
-import { Icon, settings, people, starEmpty, commentContent } from '@wordpress/icons';
+import { Icon, people, starEmpty, commentContent, settings } from '@wordpress/icons';
 import clsx from 'clsx';
 import { localize, translate } from 'i18n-calypso';
 import { find } from 'lodash';
