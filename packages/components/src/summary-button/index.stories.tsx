@@ -4,7 +4,7 @@ import { envelope, receipt, backup } from '@wordpress/icons';
 import { SummaryButtonBadgeProps } from './types';
 import SummaryButton from './index';
 
-// Define field options for the controls
+// Define field options for the controls.
 const badgeOptions: Record< string, SummaryButtonBadgeProps[] > = {
 	'Three Badges': [
 		{ text: 'Active', intent: 'success' },
@@ -40,10 +40,9 @@ const meta = {
 			mapping: badgeOptions,
 			description: 'Pre-defined badge sets to display',
 		},
-		density: {
-			control: 'radio',
-			options: [ 'low', 'medium' ],
-		},
+	},
+	parameters: {
+		actions: { argTypesRegex: '^on.*' },
 	},
 } satisfies Meta< typeof SummaryButton >;
 
@@ -54,7 +53,6 @@ export const Default: Story = {
 	args: {
 		title: 'Domain Settings',
 		description: 'Manage your domain settings, DNS, email, and more.',
-		onClick: () => alert( 'Clicked!' ),
 		badges: badgeOptions[ 'Two Badges' ],
 	},
 };
@@ -67,7 +65,6 @@ export const LowDensity: Story = {
 		density: 'low',
 		decoration: <Icon icon={ receipt } />,
 		badges: badgeOptions[ 'Three Badges' ],
-		onClick: () => alert( 'Clicked low density!' ),
 	},
 };
 
@@ -78,6 +75,5 @@ export const MediumDensity: Story = {
 		density: 'medium',
 		decoration: <Icon icon={ envelope } />,
 		badges: badgeOptions[ 'Two Badges' ],
-		onClick: () => alert( 'Clicked medium density!' ),
 	},
 };

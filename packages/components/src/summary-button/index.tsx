@@ -27,7 +27,7 @@ function BadgesList( { badges }: { badges: SummaryButtonProps[ 'badges' ] } ) {
 	);
 }
 
-function SummaryButton(
+function UnforwardedSummaryButton(
 	{
 		title,
 		href,
@@ -75,10 +75,12 @@ function SummaryButton(
 	);
 }
 
+export const SummaryButton = forwardRef( UnforwardedSummaryButton );
+
 /**
  * The SummaryButton component provides a quick overview of a related page
  * (often settings). It includes a title, supporting description, and may
  * optionally display key field values or status indicators (e.g. a "2FA enabled" badge)
  * to surface the current state of settings at a glance.
  */
-export default forwardRef( SummaryButton );
+export default SummaryButton;
