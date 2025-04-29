@@ -401,8 +401,9 @@ export default withCurrentRoute(
 					sectionName,
 			  } );
 		const needsColorScheme =
-			sidebarType === SidebarType.UnifiedSiteDefault ||
-			sidebarType === SidebarType.UnifiedSiteClassic;
+			! sidebarIsHidden &&
+			( sidebarType === SidebarType.UnifiedSiteDefault ||
+				sidebarType === SidebarType.UnifiedSiteClassic );
 
 		return {
 			masterbarIsHidden,
