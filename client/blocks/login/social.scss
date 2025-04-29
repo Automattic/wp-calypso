@@ -96,8 +96,6 @@
 	*/
 	@at-root .crowdsignal & {
 		.auth-form__social-buttons .auth-form__social-buttons-container .social-buttons__button {
-			height: 44px;
-			border-radius: 2px;
 			display: none;
 
 			&.google {
