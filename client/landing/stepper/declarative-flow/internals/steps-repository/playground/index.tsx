@@ -11,7 +11,7 @@ import { getBlueprintName } from './lib/blueprint';
 import type { Step as StepType } from '../../types';
 import './style.scss';
 
-export const PlaygroundStep: StepType = ( { navigation } ) => {
+export const PlaygroundStep: StepType = ( { navigation, flow } ) => {
 	const { submit } = navigation;
 	const isPlaygroundEligible = useIsPlaygroundEligible();
 	const playgroundClientRef = useRef< PlaygroundClient | null >( null );
