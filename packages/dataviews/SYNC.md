@@ -28,7 +28,7 @@ git subtree split --prefix=packages/dataviews/ --branch=dataviews-trunk
 3. Prepare a PR to merge dataviews-trunk into wp-calypso. For the initial setup, we need to connect the histories of gutenberg and wp-calypso repositories. See [git](https://www.kernel.org/pub/software/scm/git/docs/howto/using-merge-subtree.html) and [GitHub](https://docs.github.com/en/get-started/using-git/about-git-subtree-merges) docs.
 
   - `git merge ...` command: adds meta-information but doesn't bring any contents yet.
-  - `git read-tree ...` command: stores the contents of the dataviews-trunk brunch into packages/dataviews folder of wp-calypso.
+  - `git read-tree ...` command: stores the contents of the dataviews-trunk branch into packages/dataviews folder of wp-calypso.
   - `git commit ...` command: finalizes the merge process.
 
 ```sh
