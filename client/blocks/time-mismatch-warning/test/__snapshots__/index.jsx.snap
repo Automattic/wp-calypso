@@ -25,7 +25,7 @@ exports[`TimeMismatchWarning to render if GMT offsets do not match 1`] = `
         />
       </svg>
     </span>
-    <p
+    <span
       class="calypso-notice__content"
     >
       <span
@@ -33,7 +33,7 @@ exports[`TimeMismatchWarning to render if GMT offsets do not match 1`] = `
       >
         This page reflects the time zone set on your site. It looks like that does not match your current time zone. {{SiteSettings}}You can update your site time zone here{{/SiteSettings}}.
       </span>
-    </p>
+    </span>
     <button
       aria-label="Dismiss"
       class="calypso-notice__dismiss"
