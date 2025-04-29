@@ -1,4 +1,4 @@
-import { urlToSlug } from 'calypso/lib/url/http-utils';
+import { urlToSlug, withoutHttp } from 'calypso/lib/url/http-utils';
 import type { Site } from '../data/types';
 
 export function getSiteSlug( site: Site ) {
