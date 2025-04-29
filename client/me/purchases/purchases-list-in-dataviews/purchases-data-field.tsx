@@ -1,10 +1,18 @@
 import { Purchases } from '@automattic/data-stores';
 import { Fields, Operator } from '@wordpress/dataviews';
 import { LocalizeProps } from 'i18n-calypso';
-import { getDisplayName } from 'calypso/lib/purchases';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import { StoredPaymentMethod } from 'calypso/lib/checkout/payment-methods';
+import { getDisplayName, isRenewing } from 'calypso/lib/purchases';
 import { useSelector } from 'calypso/state';
 import { getSite } from 'calypso/state/sites/selectors';
-import { PurchaseItemSiteIcon, PurchaseItemProduct } from '../purchase-item';
+import {
+	PurchaseItemSiteIcon,
+	PurchaseItemProduct,
+	PurchaseItemStatus,
+	PurchaseItemPaymentMethod,
+	BackupPaymentMethodNotice,
+} from '../purchase-item';
 import OwnerInfo from '../purchase-item/owner-info';
 
 function PurchaseItemRowProduct( props: {
@@ -26,11 +34,62 @@ function PurchaseItemRowProduct( props: {
 	);
 }
 
-export function getPurchasesFieldDefinitions(
-	// purchases: Purchases.Purchase[],
-	translate: LocalizeProps[ 'translate' ]
-): Fields< Purchases.Purchase > {
+function PurchaseItemRowStatus( props: {
+	purchase: Purchases.Purchase;
+	translate: LocalizeProps[ 'translate' ];
+	moment: ReturnType< typeof useLocalizedMoment >;
+	isJetpack?: boolean;
+	isDisconnectedSite?: boolean;
+} ) {
+	const { purchase, translate, moment, isJetpack, isDisconnectedSite } = props;
+
+	return (
+		<div className="purchase-item__status purchases-layout__status">
+			<PurchaseItemStatus
+				purchase={ purchase }
+				translate={ translate }
+				moment={ moment }
+				isJetpack={ isJetpack }
+				isDisconnectedSite={ isDisconnectedSite }
+			/>
+		</div>
+	);
+}
+
+export function getPurchasesFieldDefinitions( {
+	translate,
+	moment,
+	paymentMethods,
+}: {
+	translate: LocalizeProps[ 'translate' ];
+	moment: ReturnType< typeof useLocalizedMoment >;
+	paymentMethods: Array< StoredPaymentMethod >;
+} ): Fields< Purchases.Purchase > {
+	const backupPaymentMethods = paymentMethods.filter(
+		( paymentMethod ) => paymentMethod.is_backup === true
+	);
+
 	return [
+		{
+			id: 'site',
+			label: 'Site',
+			type: 'text',
+			enableGlobalSearch: true,
+			enableSorting: true,
+			enableHiding: false,
+			filterBy: {
+				operators: [ 'is' as Operator ],
+			},
+			// Filter by site ID
+			getValue: ( { item }: { item: Purchases.Purchase } ) => {
+				return item.siteId;
+			},
+			// Render the site icon
+			render: ( { item }: { item: Purchases.Purchase } ) => {
+				const site = { ID: item.siteId };
+				return <PurchaseItemSiteIcon site={ site } purchase={ item } />;
+			},
+		},
 		{
 			id: 'product',
 			label: 'Product',
@@ -60,8 +119,8 @@ export function getPurchasesFieldDefinitions(
 			},
 		},
 		{
-			id: 'site',
-			label: 'Site',
+			id: 'status',
+			label: 'status',
 			type: 'text',
 			enableGlobalSearch: true,
 			enableSorting: true,
@@ -69,14 +128,46 @@ export function getPurchasesFieldDefinitions(
 			filterBy: {
 				operators: [ 'is' as Operator ],
 			},
-			// Filter by site ID
 			getValue: ( { item }: { item: Purchases.Purchase } ) => {
-				return item.siteId;
+				return item.expiryStatus;
 			},
-			// Render the site icon
 			render: ( { item }: { item: Purchases.Purchase } ) => {
-				const site = { ID: item.siteId };
-				return <PurchaseItemSiteIcon site={ site } purchase={ item } />;
+				return (
+					<PurchaseItemRowStatus purchase={ item } translate={ translate } moment={ moment } />
+				);
+			},
+		},
+		{
+			id: 'payment-method',
+			label: 'Payment method',
+			type: 'text',
+			enableGlobalSearch: true,
+			enableSorting: true,
+			enableHiding: false,
+			filterBy: {
+				operators: [ 'is' as Operator ],
+			},
+			getValue: ( { item }: { item: Purchases.Purchase } ) => {
+				return item.payment.storedDetailsId;
+			},
+			render: ( { item }: { item: Purchases.Purchase } ) => {
+				let isBackupMethodAvailable = false;
+
+				if ( backupPaymentMethods ) {
+					const backupPaymentMethodsWithoutCurrentPurchase = backupPaymentMethods.filter(
+						// A payment method is only a back up if it isn't already assigned to the current purchase
+						( paymentMethod ) => item.payment.storedDetailsId !== paymentMethod.stored_details_id
+					);
+
+					isBackupMethodAvailable = backupPaymentMethodsWithoutCurrentPurchase.length >= 1;
+				}
+
+				return (
+					<div className="purchase-item__payment-method">
+						<PurchaseItemPaymentMethod purchase={ item } translate={ translate } />
+						{ isBackupMethodAvailable && isRenewing( item ) && <BackupPaymentMethodNotice /> }
+					</div>
+				);
 			},
 		},
 	];

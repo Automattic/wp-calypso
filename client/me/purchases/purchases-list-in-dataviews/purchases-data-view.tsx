@@ -9,7 +9,11 @@ export const purchasesDataView = {
 	page: 1,
 	perPage: 5,
 	titleField: 'site',
-	fields: [ 'product' ],
+	fields: [ 'product', 'status', 'payment-method' ],
+	sort: {
+		field: 'site',
+		direction: 'desc',
+	},
 	layout: {},
 } as View;
 
@@ -19,7 +23,7 @@ export function PurchasesDataViews( props: {
 } ) {
 	const { purchases } = props;
 	const onChangeView = () => {
-		alert( 'You clicked something!!' );
+		return;
 	};
 
 	const getItemId = ( item: Purchases.Purchase ) => {

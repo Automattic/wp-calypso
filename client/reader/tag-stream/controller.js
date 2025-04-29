@@ -20,10 +20,9 @@ const analyticsPageTitle = 'Reader';
 export const tagListing = ( context, next ) => {
 	const basePath = '/tag/:slug';
 	const fullAnalyticsPageTitle = analyticsPageTitle + ' > Tag > ' + context.params.tag;
-	const tagSlug = trim( context.params.tag )
-		.toLowerCase()
-		.replace( /\s+/g, '-' )
-		.replace( /-{2,}/g, '-' );
+	const tagSlug = decodeURIComponent(
+		trim( context.params.tag ).toLowerCase().replace( /\s+/g, '-' ).replace( /-{2,}/g, '-' )
+	);
 	const tagTitle = titlecase( trim( context.params.tag ) ).replace( /[-_]/g, ' ' );
 	const state = context.store.getState();
 

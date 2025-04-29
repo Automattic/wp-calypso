@@ -47,10 +47,14 @@ import { setupLocale } from './locale';
 const debug = debugFactory( 'calypso' );
 
 const setupContextMiddleware = ( reduxStore, reactQueryClient ) => {
+	let previousPath = null;
+
 	page( '*', ( context, next ) => {
 		const parsed = getUrlParts( context.canonicalPath );
-		const path = parsed.pathname + parsed.search || null;
-		context.prevPath = path === context.path ? false : path;
+
+		context.previousPath = previousPath;
+		previousPath = context.path;
+
 		context.query = Object.fromEntries( parsed.searchParams.entries() );
 
 		context.hashstring = ( parsed.hash && parsed.hash.substring( 1 ) ) || '';
@@ -220,12 +224,6 @@ const configureReduxStore = ( currentUser, reduxStore ) => {
 	if ( currentUser && currentUser.ID ) {
 		// Set current user in Redux store
 		reduxStore.dispatch( setCurrentUser( currentUser ) );
-	}
-
-	if ( config.isEnabled( 'network-connection' ) ) {
-		asyncRequire( 'calypso/lib/network-connection' ).then( ( networkConnection ) =>
-			networkConnection.default.init( reduxStore )
-		);
 	}
 
 	setSupportSessionReduxStore( reduxStore );

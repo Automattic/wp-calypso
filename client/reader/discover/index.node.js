@@ -3,10 +3,10 @@ import {
 	removeLocaleFromPathLocaleInFront,
 } from '@automattic/i18n-utils';
 import { makeLayout, ssrSetupLocale } from 'calypso/controller';
+import DiscoverHeaderAndNavigation from 'calypso/reader/discover/components/header-and-navigation';
 import PostPlaceholder from 'calypso/reader/stream/post-placeholder';
 import renderHeaderSection from '../lib/header-section';
 import { DiscoverDocumentHead } from './discover-document-head';
-import { DiscoverHeader } from './discover-stream';
 import { getSelectedTabTitle, DEFAULT_TAB } from './helper';
 
 const discoverSsr = ( context, next ) => {
@@ -26,7 +26,10 @@ const discoverSsr = ( context, next ) => {
 	context.primary = (
 		<>
 			<DiscoverDocumentHead tabTitle={ tabTitle } />
-			<DiscoverHeader selectedTab={ selectedTab } />
+			<DiscoverHeaderAndNavigation
+				selectedTab={ selectedTab }
+				effectiveTabSelection={ selectedTab }
+			/>
 			<PostPlaceholder />
 		</>
 	);

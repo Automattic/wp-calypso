@@ -58,7 +58,7 @@ const onMigrateSite = ( url?: string ) => {
 		cta_name: 'migrateSiteBannerBig',
 		url,
 	} );
-	page( `/setup/hosted-site-migration?ref=site-profiler&from=${ url }` );
+	page( `/setup/site-migration?ref=site-profiler&from=${ url }` );
 };
 
 export const MigrationBannerBig = ( { url }: { url?: string } ) => {

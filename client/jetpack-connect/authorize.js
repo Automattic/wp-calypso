@@ -342,7 +342,7 @@ export class JetpackAuthorize extends Component {
 			debug( `Redirecting directly to cart with ${ PRODUCT_JETPACK_BACKUP_T1_YEARLY } in cart.` );
 			navigate( `/checkout/${ urlToSlug( homeUrl ) }/${ PRODUCT_JETPACK_BACKUP_T1_YEARLY }` );
 		} else if ( this.isFromMigrationPlugin() ) {
-			navigate( `/setup/hosted-site-migration?ref=jetpack-connect&from=${ urlToSlug( homeUrl ) }` );
+			navigate( `/setup/site-migration?ref=jetpack-connect&from=${ urlToSlug( homeUrl ) }` );
 		} else {
 			const redirectionTarget = this.getRedirectionTarget();
 			debug( `Redirecting to: ${ redirectionTarget }` );

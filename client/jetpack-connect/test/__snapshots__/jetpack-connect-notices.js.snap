@@ -7,17 +7,17 @@ exports[`JetpackConnectNotices Should render non-terminal notice if callback sup
   >
     <div
       aria-label="Notice"
-      class="notice is-warning"
+      class="calypso-notice is-warning"
       role="status"
     >
       <span
-        class="notice__icon-wrapper"
+        class="calypso-notice__icon-wrapper"
       >
         <span
-          class="notice__icon-wrapper-drop"
+          class="calypso-notice__icon-wrapper-drop"
         />
         <svg
-          class="gridicon gridicons-notice notice__icon"
+          class="gridicon gridicons-notice calypso-notice__icon"
           height="24"
           viewBox="0 0 24 24"
           width="24"
@@ -28,15 +28,15 @@ exports[`JetpackConnectNotices Should render non-terminal notice if callback sup
           />
         </svg>
       </span>
-      <span
-        class="notice__content"
+      <p
+        class="calypso-notice__content"
       >
         <span
-          class="notice__text"
+          class="calypso-notice__text"
         >
           In some cases, authorization can take a few attempts. Please try again.
         </span>
-      </span>
+      </p>
     </div>
   </div>
 </div>
@@ -49,17 +49,17 @@ exports[`JetpackConnectNotices Should render notice 1`] = `
   >
     <div
       aria-label="Notice"
-      class="notice is-error"
+      class="calypso-notice is-error"
       role="status"
     >
       <span
-        class="notice__icon-wrapper"
+        class="calypso-notice__icon-wrapper"
       >
         <span
-          class="notice__icon-wrapper-drop"
+          class="calypso-notice__icon-wrapper-drop"
         />
         <svg
-          class="gridicon gridicons-notice notice__icon"
+          class="gridicon gridicons-notice calypso-notice__icon"
           height="24"
           viewBox="0 0 24 24"
           width="24"
@@ -70,15 +70,15 @@ exports[`JetpackConnectNotices Should render notice 1`] = `
           />
         </svg>
       </span>
-      <span
-        class="notice__content"
+      <p
+        class="calypso-notice__content"
       >
         <span
-          class="notice__text"
+          class="calypso-notice__text"
         >
           This site can't be connected to WordPress.com because it violates our {{a}}Terms of Service{{/a}}.
         </span>
-      </span>
+      </p>
     </div>
   </div>
 </div>

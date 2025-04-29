@@ -146,11 +146,13 @@ const WooPaymentsDashboard = () => {
 		return <WooPaymentsDashboardContent />;
 	}, [ isLoading, showEmptyState ] );
 
+	const isFullWidth = ! showEmptyState && isDesktop && ! isLoading;
+
 	return (
 		<Layout
 			className={ clsx( 'woopayments-dashboard', {
 				'is-empty': showEmptyState,
-				'full-width-layout-with-table': ! showEmptyState && isDesktop && ! isLoading,
+				'full-width-layout-with-table': isFullWidth,
 			} ) }
 			title={ title }
 			wide
@@ -162,7 +164,7 @@ const WooPaymentsDashboard = () => {
 					sitesWithPluginsStates: sitesWithPluginsStatesSorted,
 				} }
 			>
-				<LayoutTop>
+				<LayoutTop isFullWidth={ isFullWidth }>
 					{ !! sitesWithPluginsStates.length && <MissingPaymentSettingsNotice /> }
 					<LayoutHeader>
 						<Title>{ title }</Title>

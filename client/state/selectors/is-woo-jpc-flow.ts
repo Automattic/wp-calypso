@@ -11,10 +11,12 @@ const isLegacyJetpackWooOnboardingFlow = ( state: AppState ) => {
 	return 'woocommerce-onboarding' === get( getCurrentQueryArguments( state ), 'from' );
 };
 
-const isWooCommercePaymentsOnboardingFlow = ( state: AppState ) => {
+export const isWooCommercePaymentsOnboardingFlow = ( state: AppState ) => {
 	const from =
 		get( getInitialQueryArguments( state ), 'from' ) === 'woocommerce-payments' ||
-		get( getCurrentQueryArguments( state ), 'from' ) === 'woocommerce-payments';
+		get( getCurrentQueryArguments( state ), 'from' ) === 'woocommerce-payments' ||
+		get( getInitialQueryArguments( state ), 'from' ) === 'woocommerce-onboarding' ||
+		get( getCurrentQueryArguments( state ), 'from' ) === 'woocommerce-onboarding';
 
 	const redirectTo =
 		get( getInitialQueryArguments( state ), 'redirect_to' ) ||

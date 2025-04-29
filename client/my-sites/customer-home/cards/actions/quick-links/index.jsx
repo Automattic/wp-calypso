@@ -1,13 +1,13 @@
 import config from '@automattic/calypso-config';
 import { getAllFeaturesForPlan } from '@automattic/calypso-products/';
 import { JetpackLogo, FoldableCard } from '@automattic/components';
+import { blaze } from '@automattic/components/src/icons';
 import { GeneratorModal } from '@automattic/jetpack-ai-calypso';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { connect, useSelector } from 'react-redux';
 import { useDebouncedCallback } from 'use-debounce';
 import fiverrIcon from 'calypso/assets/images/customer-home/fiverr-logo-grey.svg';
-import blazeIcon from 'calypso/assets/images/icons/blaze-icon.svg';
 import withIsFSEActive from 'calypso/data/themes/with-is-fse-active';
 import { usePromoteWidget, PromoteWidgetStatus } from 'calypso/lib/promote-post';
 import useAdvertisingUrl from 'calypso/my-sites/advertising/useAdvertisingUrl';
@@ -128,7 +128,7 @@ export const QuickLinks = ( {
 					hideLinkIndicator
 					onClick={ trackPromotePostAction }
 					label={ translate( 'Promote with Blaze' ) }
-					iconSrc={ blazeIcon }
+					svgIcon={ blaze }
 				/>
 			) }
 			{ ! isStaticHomePage && canModerateComments && (
@@ -384,14 +384,6 @@ const trackDesignLogoAction = ( isStaticHomePage ) =>
 		bumpStat( 'calypso_customer_home', 'my_site_design_logo' )
 	);
 
-const trackAnchorPodcastAction = ( isStaticHomePage ) =>
-	composeAnalytics(
-		recordTracksEvent( 'calypso_customer_home_my_site_anchor_podcast_click', {
-			is_static_home_page: isStaticHomePage,
-		} ),
-		bumpStat( 'calypso_customer_home', 'my_site_anchor_podcast' )
-	);
-
 const trackExplorePluginsAction = ( isStaticHomePage ) => ( dispatch ) => {
 	dispatch(
 		composeAnalytics(
@@ -477,7 +469,6 @@ const mapDispatchToProps = {
 	trackCustomizeThemeAction,
 	trackChangeThemeAction,
 	trackDesignLogoAction,
-	trackAnchorPodcastAction,
 	trackAddDomainAction,
 	trackManageAllDomainsAction,
 	trackManageEmailsAction,
@@ -500,7 +491,6 @@ const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
 		trackCustomizeThemeAction: () => dispatchProps.trackCustomizeThemeAction( isStaticHomePage ),
 		trackChangeThemeAction: () => dispatchProps.trackChangeThemeAction( isStaticHomePage ),
 		trackDesignLogoAction: () => dispatchProps.trackDesignLogoAction( isStaticHomePage ),
-		trackAnchorPodcastAction: () => dispatchProps.trackAnchorPodcastAction( isStaticHomePage ),
 		trackAddDomainAction: () => dispatchProps.trackAddDomainAction( isStaticHomePage ),
 		trackManageAllDomainsAction: () =>
 			dispatchProps.trackManageAllDomainsAction( isStaticHomePage ),

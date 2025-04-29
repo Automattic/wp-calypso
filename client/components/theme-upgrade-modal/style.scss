@@ -6,6 +6,7 @@
 .theme-upgrade-modal {
 	display: flex;
 	flex-direction: column;
+	gap: 24px;
 
 	&.dialog__content {
 		padding: 0;
@@ -19,8 +20,6 @@
 	}
 
 	@include break-medium() {
-		flex-direction: row;
-		max-width: 775px;
 
 		&.loading {
 			display: flex;
@@ -31,44 +30,10 @@
 		}
 	}
 
-	.theme-upgrade-modal__col {
-		position: relative;
-		padding: 45px 25px;
-
-		@include break-medium {
-			padding: 45px;
-
-			&:nth-of-type(1) {
-				width: 62%;
-			}
-
-			&:nth-of-type(2) {
-				width: 38%;
-			}
-		}
-
-		&:nth-of-type(1) {
-			.theme-upgrade-modal__included {
-				display: block;
-				margin-bottom: 36px;
-
-				@include break-medium {
-					display: none;
-				}
-			}
-		}
-
-		&:nth-of-type(2) {
-			display: none;
-			background-color: var(--studio-gray-0);
-			padding-left: 25px;
-			padding-right: 25px;
-
-			@include break-medium {
-				display: block;
-			}
-		}
+	.theme-upgrade-modal__features {
+		background-color: var(--studio-gray-0);
 	}
+	
 
 	.theme-upgrade-modal__price-value {
 		font-family: Inter, $sans;
@@ -77,19 +42,14 @@
 	.theme-upgrade-modal__price-item {
 		display: flex;
 		justify-content: space-between;
-		padding: 20px 0;
+		padding: 24px 0;
 		font-size: $font-body-small;
 
 		&:not(:first-child) {
 			border-top: 1px solid var(--studio-gray-5);
 		}
-	}
-
-	.theme-upgrade-modal__price-summary {
-		padding-bottom: 10px;
-
-		@include break-medium {
-			padding-bottom: 15px;
+		&:last-child {
+			padding-bottom: 0;
 		}
 	}
 
@@ -159,10 +119,6 @@
 		}
 	}
 
-	p {
-		margin-bottom: 20px;
-	}
-
 	.theme-upgrade-modal__close {
 		color: var(--color-text-subtle);
 		position: absolute;
@@ -176,39 +132,29 @@
 	}
 
 	.theme-upgrade-modal__actions.bundle {
-		display: grid;
-		grid-template-columns: repeat(1, 1fr);
-		gap: 20px;
-
-		&.externally-managed {
-			gap: 8px;
-			display: flex;
-			flex-direction: column-reverse;
-
-			@include break-medium {
-				display: grid;
-				gap: 16px;
-			}
-		}
-
-		.button {
-			padding: 9px 25px;
-			border-radius: 4px;
-			font-weight: 500;
-			margin-bottom: 0;
-			box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05) !important;
-
-			&.is-primary {
-				width: 100%;
-			}
-		}
+		gap: 8px;
+		display: flex;
 
 		@include break-medium {
-			grid-template-columns: repeat(2, 1fr);
+			flex-direction: row;
+			justify-content: flex-end;
 		}
+
+		button {
+			flex-grow: 1;
+			justify-content: center;
+
+			@include break-medium {
+				flex-grow: 0;
+				justify-content: flex-start;
+			}
+		}
+		
 	}
 
 	.theme-upgrade-modal__included {
+		padding: 24px;
+
 		ul,
 		li {
 			font-size: $font-body-small;
@@ -227,6 +173,10 @@
 			> div {
 				display: flex;
 			}
+		}
+
+		button {
+			margin-top: 8px;
 		}
 
 		.wpicon {

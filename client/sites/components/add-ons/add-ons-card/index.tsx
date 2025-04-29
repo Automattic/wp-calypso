@@ -144,7 +144,9 @@ const AddOnCard = ( { addOnMeta, actionPrimary, actionSecondary, highlightFeatur
 						<div className="add-ons-card__billing">{ addOnMeta.displayCost }</div>
 					</div>
 				</CardHeader>
-				<CardBody className="add-ons-card__body">{ addOnMeta.description }</CardBody>
+				<CardBody as="p" className="add-ons-card__body">
+					{ addOnMeta.description }
+				</CardBody>
 				<CardFooter isBorderless className="add-ons-card__footer">
 					{ shouldRenderLoadingState && (
 						<Spinner size={ 24 } className="spinner-button__spinner" />

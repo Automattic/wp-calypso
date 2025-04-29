@@ -17,7 +17,7 @@ type QrCodeLoginButtonProps = {
 	loginUrl: string;
 };
 
-const QrCodeLoginButton = ( { loginUrl }: QrCodeLoginButtonProps ) => {
+export const QrCodeLoginButton = ( { loginUrl }: QrCodeLoginButtonProps ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const { isDisabled, oauth2Client, isWoo } = useSelector( ( select ) => {

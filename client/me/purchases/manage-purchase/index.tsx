@@ -437,20 +437,6 @@ class ManagePurchase extends Component<
 		);
 	}
 
-	renderSelectNewButton() {
-		const { translate, siteId, purchase } = this.props;
-
-		if ( purchase && this.isPendingDomainRegistration( purchase ) ) {
-			return null;
-		}
-
-		return (
-			<Button className="manage-purchase__renew-button" href={ `/plans/${ siteId }` } compact>
-				{ translate( 'Select a new plan' ) }
-			</Button>
-		);
-	}
-
 	renderRenewalNavItem( content: JSX.Element | string, onClick: () => void ) {
 		const { purchase } = this.props;
 		if ( ! purchase ) {
@@ -624,20 +610,6 @@ class ManagePurchase extends Component<
 			>
 				<Icon icon={ icon } className="card__icon" />
 				{ buttonText }
-			</CompactCard>
-		);
-	}
-
-	renderSelectNewNavItem() {
-		const { translate, siteId, purchase } = this.props;
-
-		if ( purchase && this.isPendingDomainRegistration( purchase ) ) {
-			return null;
-		}
-
-		return (
-			<CompactCard tagName="button" displayAsLink href={ `/plans/${ siteId }` }>
-				{ translate( 'Select a new plan' ) }
 			</CompactCard>
 		);
 	}
@@ -1410,7 +1382,6 @@ class ManagePurchase extends Component<
 						</div>
 						{ isProductOwner && ! purchase.isLocked && (
 							<div className="manage-purchase__renew-upgrade-buttons">
-								{ preventRenewal && this.renderSelectNewButton() }
 								{ this.renderUpgradeButton( preventRenewal ) }
 								{ ! preventRenewal && this.renderRenewButton() }
 							</div>
@@ -1437,7 +1408,6 @@ class ManagePurchase extends Component<
 				) }
 				{ isProductOwner && ! purchase.isLocked && (
 					<>
-						{ preventRenewal && this.renderSelectNewNavItem() }
 						{ ! preventRenewal &&
 							! renderMonthlyRenewalOption &&
 							! isActive100YearPurchase &&
@@ -1508,15 +1478,15 @@ class ManagePurchase extends Component<
 		}
 
 		let showExpiryNotice = false;
-		let preventRenewal = false;
 
 		if (
 			purchase &&
 			( JETPACK_LEGACY_PLANS as ReadonlyArray< string > ).includes( purchase.productSlug )
 		) {
 			showExpiryNotice = isCloseToExpiration( purchase );
-			preventRenewal = ! isRenewable( purchase );
 		}
+
+		let preventRenewal = false;
 
 		if ( ! canExplicitRenew( purchase ) ) {
 			preventRenewal = true;
