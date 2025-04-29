@@ -301,7 +301,7 @@ export class LoginForm extends Component {
 			if ( this.props.isJetpack ) {
 				const isEmailAddress = includes( usernameOrEmail, '@' );
 
-				if ( isEmailAddress ) {
+				if ( isEmailAddress && isPasswordlessAccount( this.props.accountType ) ) {
 					this.jetpackCreateAccountWithMagicLink();
 					return;
 				}
