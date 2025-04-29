@@ -36,8 +36,11 @@ export class DoneButton extends PureComponent {
 			action: customizeSiteVariant ? 'customize-site' : 'view-site',
 		} );
 
-		const destination = customizeSiteVariant ? '/customize/' + ( siteSlug || '' ) : URL;
-		page( destination );
+		if ( customizeSiteVariant ) {
+			page( '/customize/' + ( siteSlug || '' ) );
+		} else {
+			window.open( URL, '_blank' );
+		}
 	};
 
 	componentWillUnmount() {
