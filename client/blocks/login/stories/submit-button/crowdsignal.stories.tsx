@@ -4,7 +4,7 @@ import {
 	submitButtonArgs,
 	LoginFormAction,
 	LoginFormWrapper,
-	type UsernameStory,
+	type SubmitButtonStory,
 } from '../shared';
 import type { Meta } from '@storybook/react';
 import '../../../../layout/masterbar/crowdsignal.scss';
@@ -18,4 +18,4 @@ const meta: Meta = {
 
 export default meta;
 
-export const Default: UsernameStory = {};
+export const Default: SubmitButtonStory = {};

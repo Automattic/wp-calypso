@@ -327,6 +327,50 @@ $image-height: 47px;
 		background-color: #fdfdfd;
 	}
 
+	.login form {
+
+		// We shouldn't regularly use .components-* classnames. The following is
+		// an exception to opt-out from some style overrides. Ideally, all
+		// input instances would come from `@wordpress/components` and the
+		// following overrides could be safely deleted.
+		input:not(.components-text-control__input),
+		button:not(.social-buttons__button) {
+			/* Note: Same as `button.signup-form__submit, .signup-form__input.form-text-input` */
+			height: 44px;
+			border-radius: 4px;
+			border: 1px solid var(--studio-gray-10);
+			font-size: $font-body;
+
+			&[disabled],
+			&:disabled,
+			&.disabled {
+				background-color: #fdfdfd;
+			}
+		}
+
+		.social-buttons__button {
+			border-radius: 4px;
+		}
+
+		.login__form-userdata input {
+			margin: 0 0 20px;
+		}
+
+		.login__form-userdata input:last-of-type {
+			/* Note: reduces space between terms and last input box */
+			margin: 0 0 10px;
+		}
+
+		.login__form-userdata {
+			button {
+				min-width: 194px;
+				height: unset;
+				border: 0;
+				text-align: start;
+			}
+		}
+	}
+
 	.wp-login__links > .button,
 	.wp-login__links:not(.has-2fa-links) > a:first-of-type {
 		/* Note: Matches secondary button used in /start (signup). Should probably turn this into a button. */
@@ -531,14 +575,13 @@ $image-height: 47px;
 			border-radius: 2px;
 		}
 
-		.components-button,
-		.components-text-control__input {
+		.components-button {
 			--color-accent: var(--color-wp-job-manager);
 			--color-accent-60: var(--color-wp-job-manager);
 		}
 	}
 
-	.wp-login__main .locale-suggestions .locale-suggestions__notice.is-light {		
+	.wp-login__main .locale-suggestions .locale-suggestions__notice.is-light {
 		&,
 		.calypso-notice__icon-wrapper {
 			background-color: var(--studio-gray-0);
@@ -634,19 +677,15 @@ $image-height: 47px;
 
 	.login__form-password {
 		margin-top: 15px;
-
-		.login__form-password-toggle {
-			top: 44px;
-		}
 	}
 
-	.components-button.is-primary,
-	.components-text-control__input,
-	.login__form-userdata input:last-of-type.components-text-control__input {
+	.form-text-input,
+	.login__form-userdata input:last-of-type.form-text-input {
 		padding: 14px 16px;
+		border-color: #9ea4a8;
 		font-size: 16px;
-		line-height: 1.5;
 		margin: 0;
+		border-radius: 2px;
 		height: auto;
 	}
 

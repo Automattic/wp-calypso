@@ -499,10 +499,6 @@
 		font-weight: 400;
 	}
 
-	.login__form-password .login__form-password-toggle {
-		top: 44px;
-	}
-
 	.login__form-action button {
 		font-size: $font-body;
 		line-height: 23px;
@@ -626,7 +622,11 @@
 }
 
 .jetpack-cloud {
-	.components-text-control__input,
+	input:focus:hover[type],
+	input:focus[type] {
+		box-shadow: 0 0 0 2px var(--color-primary-10);
+	}
+
 	.components-button {
 		--color-accent: var(--studio-jetpack-green-40);
 		--color-accent-60: var(--studio-jetpack-green-60);
@@ -646,7 +646,11 @@
 }
 
 .a8c-for-agencies {
-	.components-text-control__input,
+	input:focus:hover[type],
+	input:focus[type] {
+		box-shadow: 0 0 0 2px var(--color-primary-10);
+	}
+
 	.components-button {
 		--color-accent: var(--color-primary-40);
 		--color-accent-60: var(--color-primary-60);
@@ -662,10 +666,6 @@
 		&:focus {
 			color: var(--color-primary-60);
 		}
-	}
-
-	.social-buttons__button {
-		--color-accent: var(--color-primary-40);
 	}
 }
 

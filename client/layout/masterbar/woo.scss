@@ -682,10 +682,6 @@ $breakpoint-mobile: 660px;
 
 	.login__form-password {
 		margin-top: 8px;
-
-		.login__form-password-toggle {
-			top: 40px;
-		}
 	}
 
 	.auth-form__separator::before,
@@ -1300,8 +1296,7 @@ $breakpoint-mobile: 660px;
 			}
 		}
 
-		.components-button,
-		.components-text-control__input {
+		.components-button {
 			--color-accent: var(--woo-purple-40);
 			--color-accent-60: var(--woo-purple-50);
 		}
@@ -1330,16 +1325,6 @@ $breakpoint-mobile: 660px;
 				border: 2px solid var(--studio-gray-5);
 				background: var(--studio-gray-0);
 			}
-		}
-
-		.components-text-control__input {
-			border-width: 2px;
-			height: 48px;
-			padding: 8px 16px;
-			font-size: $woo-font-size-input;
-			font-style: normal;
-			line-height: 24px;
-			border-radius: $woo-radius-input;
 		}
 
 		// Remove autofill styles.
@@ -1397,7 +1382,7 @@ $breakpoint-mobile: 660px;
 			font-weight: 400;
 			line-height: 21px;
 			padding: 0;
-			margin-bottom: 16px;
+			margin-top: 8px;
 
 			a {
 				line-height: 21px;

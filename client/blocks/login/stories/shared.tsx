@@ -1,5 +1,4 @@
 import LoginSubmitButton from '../login-submit-button';
-import LoginUsername from '../login-username';
 import type { StoryFn, StoryObj } from '@storybook/react';
 import './style.scss';
 
@@ -10,26 +9,11 @@ export const submitButtonArgs = {
 	buttonText: 'Continue',
 };
 
-export const usernameArgs = {
-	value: '',
-	label: 'Email address or username',
-	isDisabled: false,
-	isError: false,
-	onChange: () => {},
-	ref: null,
-};
-
 export const LoginFormWrapper = ( Story: StoryFn ) => (
 	<div className="login" style={ { maxWidth: '360px', padding: '30px' } }>
 		<div className="login__form">
 			<Story />
 		</div>
-	</div>
-);
-
-export const LoginFormUserData = ( Story: StoryFn ) => (
-	<div className="login__form-userdata">
-		<Story />
 	</div>
 );
 
@@ -102,5 +86,3 @@ export const sendingEmailStory: SubmitButtonStory = {
 		isSendingEmail: true,
 	},
 };
-
-export type UsernameStory = StoryObj< typeof LoginUsername >;

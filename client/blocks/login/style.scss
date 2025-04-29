@@ -179,25 +179,25 @@ $breakpoint-mobile: 782px; //Mobile size.
 
 .login__form .login__form-userdata {
 	label {
-		color: var(--color-neutral-100);
+		color: var(--color-neutral-70);
+		display: block;
 		font-size: $font-body-small;
-		text-transform: initial;
+		line-height: 1.5;
+		font-weight: 600;
+		margin-bottom: 5px;
 	}
 
 	input.form-text-input,
-	.components-text-control__input,
 	input {
-		margin-bottom: 16px;
+		margin-bottom: 20px;
 		transition: none;
 		text-align: left;
 		/*!rtl:ignore*/
 		direction: ltr;
-	}
 
-	input.form-text-input.is-error,
-	.is-error .components-text-control__input,
-	input.is-error {
-		margin-bottom: 10px;
+		&.is-error {
+			margin-bottom: 0;
+		}
 	}
 
 	.login__form-suggested-email {
@@ -304,7 +304,6 @@ $breakpoint-mobile: 782px; //Mobile size.
 }
 
 .login__form-password {
-	position: relative;
 
 	&.is-hidden {
 		// hide the password field in a way that still makes it "visible" for password managers.
@@ -315,24 +314,6 @@ $breakpoint-mobile: 782px; //Mobile size.
 		width: 0;
 		overflow: hidden;
 		opacity: 0;
-	}
-
-	.login__form-password-toggle {
-		position: absolute;
-		right: 12px;
-		top: 36px;
-		height: 24px;
-
-		svg {
-			fill: var(--color-neutral-20);
-		}
-
-		&:hover,
-		&:focus-visible {
-			svg {
-				fill: var(--color-neutral-40);
-			}
-		}
 	}
 
 	.form-input-validation {

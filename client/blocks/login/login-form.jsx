@@ -4,8 +4,8 @@ import { Button, Card, FormInputValidation, FormLabel, Gridicon } from '@automat
 import { alert } from '@automattic/components/src/icons';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { suggestEmailCorrection } from '@automattic/onboarding';
-import { Button as CoreButton, TextControl } from '@wordpress/components';
-import { Icon, seen, unseen } from '@wordpress/icons';
+import { TextControl } from '@wordpress/components';
+import { Icon } from '@wordpress/icons';
 import clsx from 'clsx';
 import cookie from 'cookie';
 import emailValidator from 'email-validator';
@@ -18,7 +18,8 @@ import { connect } from 'react-redux';
 import { FormDivider } from 'calypso/blocks/authentication';
 import JetpackConnectSiteOnly from 'calypso/blocks/jetpack-connect-site-only';
 import LoginSubmitButton from 'calypso/blocks/login/login-submit-button';
-import LoginUsername from 'calypso/blocks/login/login-username';
+import FormPasswordInput from 'calypso/components/forms/form-password-input';
+import FormTextInput from 'calypso/components/forms/form-text-input';
 import Notice from 'calypso/components/notice';
 import { LastUsedSocialButton } from 'calypso/components/social-buttons';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
@@ -117,7 +118,6 @@ export class LoginForm extends Component {
 		emailSuggestionError: false,
 		password: '',
 		lastUsedAuthenticationMethod: this.getLastUsedAuthenticationMethod(),
-		isViewingPassword: false,
 	};
 
 	componentDidMount() {
@@ -214,20 +214,20 @@ export class LoginForm extends Component {
 		}
 	}, 500 );
 
-	onChangeUsernameOrEmailField = ( value ) => {
+	onChangeUsernameOrEmailField = ( event ) => {
 		this.setState( {
 			emailSuggestionError: false,
 			emailSuggestion: '',
 		} );
-		this.onChangeField( { name: 'usernameOrEmail', value } );
-		this.debouncedEmailSuggestion( value );
+		this.onChangeField( event );
+		this.debouncedEmailSuggestion( event.target.value );
 	};
 
-	onChangeField = ( { name, value } ) => {
+	onChangeField = ( event ) => {
 		this.props.formUpdate();
 
 		this.setState( {
-			[ name ]: value,
+			[ event.target.name ]: event.target.value,
 		} );
 	};
 
@@ -483,7 +483,7 @@ export class LoginForm extends Component {
 							autoCapitalize="off"
 							autoCorrect="off"
 							spellCheck="false"
-							label={ this.props.translate( 'Email address or username' ) }
+							label={ this.props.translate( 'Email Address or Username' ) }
 							disabled={ isFormDisabled || this.isPasswordView() }
 							id="usernameOrEmail"
 							name="usernameOrEmail"
@@ -597,10 +597,10 @@ export class LoginForm extends Component {
 			// text above the form. We therefore need to clarity the must use WordPress.com credentials.
 			<>
 				<span className="screen-reader-text">
-					{ this.props.translate( 'WordPress.com Email address or username' ) }
+					{ this.props.translate( 'WordPress.com Email Address or Username' ) }
 				</span>
 				{ ! this.props.isJetpack && (
-					<span aria-hidden="true">{ this.props.translate( 'Email address or username' ) }</span>
+					<span aria-hidden="true">{ this.props.translate( 'Email Address or Username' ) }</span>
 				) }
 			</>
 		);
@@ -709,37 +709,6 @@ export class LoginForm extends Component {
 		return this.renderMagicLoginLink() ?? this.props.requestError.message;
 	}
 
-	renderPasswordToggle( isPasswordHidden ) {
-		const { translate } = this.props;
-		const { isViewingPassword } = this.state;
-		const tabIndex = isPasswordHidden ? -1 : undefined;
-		const onClick = () => {
-			this.setState( { isViewingPassword: ! isViewingPassword } );
-		};
-
-		return isViewingPassword ? (
-			<CoreButton
-				type="button"
-				className="login__form-password-toggle"
-				onClick={ onClick }
-				aria-controls="password"
-				aria-label={ translate( 'Hide password' ) }
-				tabIndex={ tabIndex }
-				icon={ seen }
-			/>
-		) : (
-			<CoreButton
-				type="button"
-				className="login__form-password-toggle"
-				onClick={ onClick }
-				aria-controls="password"
-				aria-label={ translate( 'Show password' ) }
-				tabIndex={ tabIndex }
-				icon={ unseen }
-			/>
-		);
-	}
-
 	handleAcceptEmailSuggestion() {
 		this.props.recordTracksEvent( 'calypso_login_email_suggestion_confirmation', {
 			original_email: JSON.stringify( this.state.usernameOrEmail ),
@@ -815,7 +784,7 @@ export class LoginForm extends Component {
 	};
 
 	renderLoginCard() {
-		const { lastUsedAuthenticationMethod, isViewingPassword } = this.state;
+		const { lastUsedAuthenticationMethod } = this.state;
 		const isFormDisabled = this.state.isFormDisabledWhileLoading || this.props.isFormDisabled;
 		const isSubmitButtonDisabled = isFormDisabled;
 		let loginUrl;
@@ -927,13 +896,22 @@ export class LoginForm extends Component {
 
 							{ isSignupExistingAccount && this.renderLoginFromSignupNotice() }
 
-							<LoginUsername
-								isDisabled={ isFormDisabled || this.isPasswordView() }
-								isError={ requestError && requestError.field === 'usernameOrEmail' }
-								label={ this.renderUsernameorEmailLabel() }
+							<FormLabel htmlFor="usernameOrEmail">{ this.renderUsernameorEmailLabel() }</FormLabel>
+
+							<FormTextInput
+								autoCapitalize="off"
+								autoCorrect="off"
+								spellCheck="false"
+								autoComplete="username"
+								className={ clsx( {
+									'is-error': requestError && requestError.field === 'usernameOrEmail',
+								} ) }
 								onChange={ this.onChangeUsernameOrEmailField }
+								id="usernameOrEmail"
+								name="usernameOrEmail"
 								ref={ this.saveUsernameOrEmailRef }
 								value={ this.state.usernameOrEmail }
+								disabled={ isFormDisabled || this.isPasswordView() }
 							/>
 
 							{ requestError && requestError.field === 'usernameOrEmail' && (
@@ -1022,26 +1000,22 @@ export class LoginForm extends Component {
 								} ) }
 								aria-hidden={ isPasswordHidden }
 							>
-								<TextControl
-									type={ isViewingPassword ? 'text' : 'password' }
+								<FormLabel htmlFor="password">{ this.props.translate( 'Password' ) }</FormLabel>
+
+								<FormPasswordInput
 									autoCapitalize="off"
 									autoComplete="current-password"
 									className={ clsx( {
 										'is-error': requestError && requestError.field === 'password',
 									} ) }
-									onChange={ ( value ) => this.onChangeField( { name: 'password', value } ) }
+									onChange={ this.onChangeField }
 									id="password"
 									name="password"
 									ref={ this.savePasswordRef }
 									value={ this.state.password }
 									disabled={ isFormDisabled }
 									tabIndex={ isPasswordHidden ? -1 : undefined /* not tabbable when hidden */ }
-									label={ this.props.translate( 'Password' ) }
-									__next40pxDefaultSize
-									__nextHasNoMarginBottom
 								/>
-
-								{ this.renderPasswordToggle( isPasswordHidden ) }
 
 								{ requestError && requestError.field === 'password' && (
 									<FormInputValidation isError text={ this.renderPasswordValidationError() } />
