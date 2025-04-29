@@ -14,6 +14,7 @@ export default function ( router ) {
 
 	router(
 		[
+			`/sign-up/${ lang }`,
 			`/start/${ lang }`,
 			`/start/:flowName/${ lang }`,
 			`/start/:flowName/:stepName/${ lang }`,

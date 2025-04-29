@@ -2,7 +2,6 @@ import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { isOnboardingFlow } from '@automattic/onboarding';
 import { isEmpty } from 'lodash';
-import { createElement } from 'react';
 import store from 'store';
 import { notFound } from 'calypso/controller';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
@@ -23,6 +22,7 @@ import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { getStepComponent } from './config/step-components';
 import SignupComponent from './main';
+import { SignupPage } from './signup';
 import {
 	retrieveSignupDestination,
 	getDomainsDependencies,
@@ -91,6 +91,12 @@ export default {
 			window.location = urlWithoutLocale;
 			return;
 		}
+
+		next();
+	},
+
+	renderSignup( context, next ) {
+		context.primary = <SignupPage />;
 
 		next();
 	},
@@ -319,20 +325,22 @@ export default {
 			context.store.dispatch( updateDependencies( additionalDependencies ) );
 		}
 
-		context.primary = createElement( SignupComponent, {
-			store: context.store,
-			path: context.path,
-			initialContext,
-			locale: context.params.lang,
-			flowName,
-			queryObject: query,
-			refParameter,
-			stepName,
-			stepSectionName,
-			stepComponent,
-			pageTitle: getFlowPageTitle( flowName, userLoggedIn ),
-			isManageSiteFlow,
-		} );
+		context.primary = (
+			<SignupComponent
+				store={ context.store }
+				path={ context.path }
+				initialContext={ initialContext }
+				locale={ context.params.lang }
+				flowName={ flowName }
+				queryObject={ query }
+				refParameter={ refParameter }
+				stepName={ stepName }
+				stepSectionName={ stepSectionName }
+				stepComponent={ stepComponent }
+				pageTitle={ getFlowPageTitle( flowName, userLoggedIn ) }
+				isManageSiteFlow={ isManageSiteFlow }
+			/>
+		);
 
 		next();
 	},

@@ -255,7 +255,7 @@ const sections = [
 	},
 	{
 		name: 'signup',
-		paths: [ '/start' ],
+		paths: [ '/start', '/sign-up' ],
 		module: 'calypso/signup',
 		enableLoggedOut: true,
 		isomorphic: true,

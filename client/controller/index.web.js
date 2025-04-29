@@ -42,6 +42,32 @@ import { hydrate, render } from './web-util.js';
 export { setLocaleMiddleware, setSectionMiddleware } from './shared.js';
 export { hydrate, render } from './web-util.js';
 
+const Providers = ( {
+	store,
+	queryClient,
+	currentSection,
+	currentRoute,
+	currentQuery,
+	primary,
+} ) => {
+	return (
+		<CalypsoI18nProvider>
+			<RouteProvider
+				currentSection={ currentSection }
+				currentRoute={ currentRoute }
+				currentQuery={ currentQuery }
+			>
+				<QueryClientProvider client={ queryClient }>
+					<ReduxProvider store={ store }>
+						<MomentProvider>{ primary }</MomentProvider>
+					</ReduxProvider>
+					<CalypsoReactQueryDevtools />
+				</QueryClientProvider>
+			</RouteProvider>
+		</CalypsoI18nProvider>
+	);
+};
+
 export const ProviderWrappedLayout = ( {
 	store,
 	queryClient,
@@ -68,24 +94,19 @@ export const ProviderWrappedLayout = ( {
 	);
 
 	return (
-		<CalypsoI18nProvider>
-			<RouteProvider
-				currentSection={ currentSection }
-				currentRoute={ currentRoute }
-				currentQuery={ currentQuery }
-			>
-				<QueryClientProvider client={ queryClient }>
-					<ReduxProvider store={ store }>
-						<MomentProvider>{ layout }</MomentProvider>
-					</ReduxProvider>
-					<CalypsoReactQueryDevtools />
-				</QueryClientProvider>
-			</RouteProvider>
-		</CalypsoI18nProvider>
+		<Providers
+			primary={ layout }
+			store={ store }
+			queryClient={ queryClient }
+			currentSection={ currentSection }
+			currentRoute={ currentRoute }
+			currentQuery={ currentQuery }
+		/>
 	);
 };
 
 export const makeLayout = makeLayoutMiddleware( ProviderWrappedLayout );
+export const wrapLayoutWithProviders = makeLayoutMiddleware( Providers );
 
 /**
  * For logged in users with bootstrap (production), ReactDOM.hydrate().

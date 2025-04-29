@@ -1,10 +1,12 @@
 import page from '@automattic/calypso-router';
 import { getLanguageRouteParam } from '@automattic/i18n-utils';
-import { makeLayout, render as clientRender } from 'calypso/controller';
+import { makeLayout, render as clientRender, wrapLayoutWithProviders } from 'calypso/controller';
 import controller from './controller';
 
 export default function () {
 	const lang = getLanguageRouteParam();
+
+	page( `/sign-up/${ lang }`, controller.renderSignup, wrapLayoutWithProviders, clientRender );
 
 	page(
 		[
