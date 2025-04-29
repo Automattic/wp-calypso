@@ -5,7 +5,7 @@ import {
 	LoginFormAction,
 	LoginFormWrapper,
 	type Story,
-} from './shared';
+} from '../shared';
 import type { Meta } from '@storybook/react';
 import '../../../../layout/masterbar/blaze-pro.scss';
 
@@ -13,7 +13,7 @@ const meta: Meta = {
 	title: 'client/blocks/Login/Login Button/Blaze Pro',
 	decorators: [ LoginFormAction, LoginFormWrapper, BlazeWrapper ],
 	component: LoginButton,
-	args: loginButtonArgs,
+	args: { ...loginButtonArgs },
 };
 
 export default meta;

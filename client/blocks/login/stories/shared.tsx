@@ -1,6 +1,7 @@
-import LoginButton from '../../login-button';
+import LoginButton from '../login-button';
+import LoginUsername from '../login-username';
 import type { StoryFn, StoryObj } from '@storybook/react';
-import '../style.scss';
+import './style.scss';
 
 export const loginButtonArgs = {
 	isWoo: false,
@@ -9,8 +10,25 @@ export const loginButtonArgs = {
 	buttonText: 'Continue',
 };
 
+export const loginUsernameArgs = {
+	value: '',
+	label: 'Email address or username',
+	isDisabled: false,
+	isError: false,
+	onChange: () => {},
+	ref: null,
+};
+
 export const LoginFormWrapper = ( Story: StoryFn ) => (
-	<div className="login" style={ { maxWidth: '300px', padding: '30px' } }>
+	<div className="login" style={ { maxWidth: '360px', padding: '30px' } }>
+		<div className="login__form">
+			<Story />
+		</div>
+	</div>
+);
+
+export const LoginFormUserData = ( Story: StoryFn ) => (
+	<div className="login__form-userdata">
 		<Story />
 	</div>
 );
@@ -29,7 +47,7 @@ export const A4AWrapper = ( Story: StoryFn ) => (
 
 export const AkismetWrapper = ( Story: StoryFn ) => (
 	<div className="layout is-white-login">
-		<div className="login is-akismet" style={ { maxWidth: '300px', padding: '30px' } }>
+		<div className="login is-akismet" style={ { maxWidth: '360px', padding: '30px' } }>
 			<div className="login__form">
 				<Story />
 			</div>
@@ -39,6 +57,12 @@ export const AkismetWrapper = ( Story: StoryFn ) => (
 
 export const BlazeWrapper = ( Story: StoryFn ) => (
 	<div className="blaze-pro">
+		<Story />
+	</div>
+);
+
+export const CrowdsignalWrapper = ( Story: StoryFn ) => (
+	<div className="crowdsignal">
 		<Story />
 	</div>
 );
@@ -57,7 +81,7 @@ export const JetpackWrapper = ( Story: StoryFn ) => (
 
 export const GravatarWrapper = ( Story: StoryFn ) => (
 	<div className="layout is-section-login is-grav-powered-client">
-		<div className="login" style={ { maxWidth: '300px' } }>
+		<div className="login" style={ { maxWidth: '360px' } }>
 			<Story />
 		</div>
 	</div>
@@ -65,7 +89,7 @@ export const GravatarWrapper = ( Story: StoryFn ) => (
 
 export const WPJobManagerWrapper = ( Story: StoryFn ) => (
 	<div className="layout is-section-login is-grav-powered-client is-wp-job-manager">
-		<div className="login" style={ { maxWidth: '300px' } }>
+		<div className="login" style={ { maxWidth: '360px' } }>
 			<Story />
 		</div>
 	</div>
@@ -78,3 +102,5 @@ export const sendingEmailStory: Story = {
 		isSendingEmail: true,
 	},
 };
+
+export type LoginUsernameStory = StoryObj< typeof LoginUsername >;

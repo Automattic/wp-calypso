@@ -5,14 +5,14 @@ import {
 	LoginFormAction,
 	LoginFormWrapper,
 	type Story,
-} from './shared';
+} from '../shared';
 import type { Meta } from '@storybook/react';
 
 const meta: Meta = {
 	title: 'client/blocks/Login/Login Button/Default',
 	decorators: [ LoginFormAction, LoginFormWrapper ],
 	component: LoginButton,
-	args: loginButtonArgs,
+	args: { ...loginButtonArgs },
 };
 
 export default meta;
