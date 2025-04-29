@@ -24,7 +24,6 @@ import InlineSupportLink from 'calypso/components/inline-support-link';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import NavigationHeader from 'calypso/components/navigation-header';
-import NavigationHeaderImpr from 'calypso/components/navigation-header/navigation-header';
 import StickyPanel from 'calypso/components/sticky-panel';
 import memoizeLast from 'calypso/lib/memoize-last';
 import Main from 'calypso/my-sites/stats/components/stats-main';
@@ -85,6 +84,7 @@ import StatsPlanUsage from './stats-plan-usage';
 import statsStrings from './stats-strings';
 import StatsUpsell from './stats-upsell/traffic-upsell';
 import { appendQueryStringForRedirection, getPathWithUpdatedQueryString } from './utils';
+import PageHeader from './components/headers/page-header';
 
 // Sync hidable modules with StatsNavigation.
 const HIDDABLE_MODULES = AVAILABLE_PAGE_MODULES.traffic.map( ( module ) => {
@@ -532,11 +532,7 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 				</div>
 			) }
 			{ isStatsNavigationImprovementEnabled ? (
-				<NavigationHeaderImpr
-					className="stats__section-header modernized-header"
-					title={ isOdysseyStats ? STATS_PRODUCT_NAME : STATS_PRODUCT_NAME_IMPR }
-					titleLogo={ isOdysseyStats ? <JetpackLogo size={ 24 } monochrome={ false } /> : null }
-				/>
+				<PageHeader />
 			) : (
 				<NavigationHeader
 					className="stats__section-header modernized-header"
