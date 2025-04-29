@@ -96,7 +96,7 @@ const EditGravatar = ( { isEmailVerified = true, avatarUrl, userEmail }: EditGra
 		wpcom.req
 			.post( {
 				method: 'POST',
-				path: '/gravatar-upload?http_envelope=1',
+				path: '/gravatar-upload',
 				body: {},
 				apiNamespace: 'wpcom/v2',
 				formData: [

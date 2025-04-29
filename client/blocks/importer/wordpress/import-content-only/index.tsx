@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { PLAN_BUSINESS, getPlan } from '@automattic/calypso-products';
 import { addQueryArgs } from '@wordpress/url';
 import clsx from 'clsx';
@@ -108,15 +107,12 @@ const ImportContentOnly: React.FunctionComponent< Props > = ( props ) => {
 	}, [ job, isSiteCompatible ] );
 
 	const onCompleteSiteViewClick = useCallback( () => {
-		if (
-			job?.importerFileType !== 'playground' &&
-			isEnabled( 'onboarding/import-redirect-to-themes' )
-		) {
+		if ( job?.importerFileType !== 'playground' ) {
 			stepNavigator?.navigate?.(
 				addQueryArgs( 'design-setup', { comingFromSuccessfulImport: '1' } )
 			);
 		} else {
-			stepNavigator?.goToSiteViewPage?.();
+			stepNavigator?.goToAdmin?.();
 		}
 	}, [ job ] );
 
@@ -203,7 +199,7 @@ const ImportContentOnly: React.FunctionComponent< Props > = ( props ) => {
 					siteSlug={ siteSlug }
 					job={ job as ImportJob }
 					buttonLabel={
-						job?.importerFileType === 'playground' ? translate( 'View site' ) : undefined
+						job?.importerFileType === 'playground' ? translate( 'Go to dashboard' ) : undefined
 					}
 					resetImport={ () => {
 						dispatch( resetImport( siteItem?.ID, job?.importerId ) );

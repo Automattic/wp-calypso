@@ -33,6 +33,13 @@ module.exports = {
 						group: [
 							'@automattic/*',
 							'!@automattic/calypso-config',
+							// Allowed:
+							// - @automattic/components/src/summary-button
+							'!@automattic/components',
+							'@automattic/components/*',
+							'!@automattic/components/src',
+							'@automattic/components/src/*',
+							'!@automattic/components/src/summary-button',
 							// Please do not add exceptions unless agreed on
 							// with the #architecture group.
 						],

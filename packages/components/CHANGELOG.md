@@ -12,7 +12,8 @@
 
 ### Enhancements
 
-- Add FlowQuestion component
+- Add `FlowQuestion` component
+- Add `SummaryButton` component ([#102827](https://github.com/Automattic/wp-calypso/pull/102827)).
 
 ## 2.1.1
 

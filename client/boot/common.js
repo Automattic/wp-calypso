@@ -226,12 +226,6 @@ const configureReduxStore = ( currentUser, reduxStore ) => {
 		reduxStore.dispatch( setCurrentUser( currentUser ) );
 	}
 
-	if ( config.isEnabled( 'network-connection' ) ) {
-		asyncRequire( 'calypso/lib/network-connection' ).then( ( networkConnection ) =>
-			networkConnection.default.init( reduxStore )
-		);
-	}
-
 	setSupportSessionReduxStore( reduxStore );
 	setReduxBridgeReduxStore( reduxStore );
 

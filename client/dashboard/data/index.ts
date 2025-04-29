@@ -14,10 +14,7 @@ import type {
 } from './types';
 
 export const fetchProfile = async (): Promise< Profile > => {
-	return await wpcom.req.get( {
-		path: '/me/settings?http_envelope=1',
-		apiNamespace: 'rest/v1.1',
-	} );
+	return await wpcom.req.get( '/me/settings' );
 };
 
 export const updateProfile = async ( data: Partial< Profile > ) => {
@@ -27,11 +24,7 @@ export const updateProfile = async ( data: Partial< Profile > ) => {
 			delete data[ key as keyof Profile ];
 		}
 	}
-	return await wpcom.req.post( {
-		path: '/me/settings?http_envelope=1',
-		apiNamespace: 'rest/v1.1',
-		body: data,
-	} );
+	return await wpcom.req.post( '/me/settings', data );
 };
 
 const SITE_FIELDS = [
@@ -54,37 +47,27 @@ const SITE_FIELDS = [
 ].join( ',' );
 
 export const fetchSites = async (): Promise< Site[] > => {
-	return (
-		await wpcom.req.get(
-			{
-				path: '/me/sites?http_envelope=1',
-				apiNamespace: 'rest/v1.2',
-			},
-			{
-				site_visibility: 'all',
-				include_domain_only: 'true',
-				site_activity: 'active',
-				fields: SITE_FIELDS,
-			}
-		)
-	).sites;
+	const { sites } = await wpcom.req.get(
+		{
+			path: '/me/sites',
+			apiVersion: '1.2',
+		},
+		{
+			site_visibility: 'all',
+			include_domain_only: 'true',
+			site_activity: 'active',
+			fields: SITE_FIELDS,
+		}
+	);
+	return sites;
 };
 
 export const fetchSite = async ( id: string ): Promise< Site > => {
-	return await wpcom.req.get(
-		{
-			path: `/sites/${ id }?http_envelope=1`,
-			apiNamespace: 'rest/v1.1',
-		},
-		{ fields: SITE_FIELDS }
-	);
+	return await wpcom.req.get( `/sites/${ id }`, { fields: SITE_FIELDS } );
 };
 
 export const fetchSiteMediaStorage = async ( id: string ): Promise< MediaStorage > => {
-	const mediaStorage = await wpcom.req.get( {
-		path: `/sites/${ id }/media-storage`,
-		apiVersion: '1.1',
-	} );
+	const mediaStorage = await wpcom.req.get( `/sites/${ id }/media-storage` );
 	return {
 		maxStorageBytesFromAddOns: Number( mediaStorage.max_storage_bytes_from_add_ons ),
 		maxStorageBytes: Number( mediaStorage.max_storage_bytes ),
@@ -126,14 +109,11 @@ export const fetchCurrentPlan = async ( id: string ): Promise< Plan > => {
 };
 
 export const fetchSiteEngagementStats = async ( id: string ) => {
-	const response = await wpcom.req.get(
-		{ path: `/sites/${ id }/stats/visits` },
-		{
-			unit: 'day',
-			quantity: 14,
-			stat_fields: [ 'visitors', 'views', 'likes', 'comments' ].join( ',' ),
-		}
-	);
+	const response = await wpcom.req.get( `/sites/${ id }/stats/visits`, {
+		unit: 'day',
+		quantity: 14,
+		stat_fields: [ 'visitors', 'views', 'likes', 'comments' ].join( ',' ),
+	} );
 	// We need to normalize the returned data. We ask for 14 days of data (quantity:14)
 	// and we get a response with an array of data like: `[ '2025-04-13', 1, 3, 0, 0 ]`.
 	// Each number in the response is referring to the order of the field provided in `stat_fields`.
@@ -158,20 +138,13 @@ export const fetchSiteEngagementStats = async ( id: string ) => {
 };
 
 export const fetchDomains = async (): Promise< Domain[] > => {
-	return (
-		await wpcom.req.get(
-			{ path: '/all-domains?http_envelope=1' },
-			{ no_wpcom: true, resolve_status: true }
-		)
-	).domains;
+	return ( await wpcom.req.get( '/all-domains', { no_wpcom: true, resolve_status: true } ) )
+		.domains;
 };
 
 export const fetchSiteDomains = async ( id: string ): Promise< { domains: SiteDomain[] } > => {
 	try {
-		const domains = await wpcom.req.get(
-			{ path: `/sites/${ id }/domains` },
-			{ apiVersion: '1.2' }
-		);
+		const domains = await wpcom.req.get( { path: `/sites/${ id }/domains`, apiVersion: '1.2' } );
 		return domains;
 	} catch ( error ) {
 		// TODO: check how to properly fetch for all sites..
@@ -309,12 +282,9 @@ export const fetchEmail = ( id: string ): Promise< Email | undefined > => {
 };
 
 export const fetchUser = async (): Promise< User > => {
-	return await wpcom.me().get();
+	return wpcom.req.get( '/me' );
 };
 
 export const fetchTwoStep = async (): Promise< TwoStep > => {
-	return wpcom.req.get( {
-		path: '/me/two-step?http_envelope=1',
-		apiNamespace: 'rest/v1.1',
-	} );
+	return wpcom.req.get( '/me/two-step' );
 };
