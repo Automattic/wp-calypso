@@ -15,9 +15,10 @@ interface SearchProps {
 }
 
 /**
- * DataViewsSearch is a component that renders a search input
- * for the DataViews component.
- * It connects to the DataViewsContext to handle the search input.
+ * DataViewsSearch is a controlled search input that updates the `search` property
+ * in the current DataViews `view` object, using a debounced value.
+ *
+ * It relies on DataViewsContext and must be rendered inside a <DataViews> tree.
  */
 const DataViewsSearch = memo( function Search( { label }: SearchProps ) {
 	const { view, onChangeView } = useDataViewsContext();
