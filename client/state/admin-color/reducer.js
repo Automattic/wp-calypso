@@ -8,7 +8,7 @@ const adminColorReducer = ( state = [], action ) => {
 		case ADMIN_COLOR_RECEIVE:
 			return action.adminColor;
 		case ADMIN_COLOR_REQUEST_FAILURE:
-			return action.adminColor || 'default'; // fallback color scheme: packages/calypso-color-schemes/src/shared/color-schemes/_default.scss
+			return 'default'; // fallback color scheme: packages/calypso-color-schemes/src/shared/color-schemes/_default.scss
 		default:
 			return state;
 	}
