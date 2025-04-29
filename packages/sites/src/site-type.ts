@@ -5,6 +5,7 @@ export interface MinimumSite {
 	slug: string;
 	title: string;
 	visible?: boolean;
+	is_a8c?: boolean;
 	is_coming_soon?: boolean;
 	is_private?: boolean;
 	is_deleted?: boolean;

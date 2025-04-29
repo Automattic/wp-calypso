@@ -81,6 +81,7 @@ export interface Site {
 	subscribers_count: number;
 	// Can be undefined for deleted sites.
 	options?: SiteOptions;
+	is_a8c: boolean;
 	is_deleted: boolean;
 	is_coming_soon: boolean;
 	is_private: boolean;

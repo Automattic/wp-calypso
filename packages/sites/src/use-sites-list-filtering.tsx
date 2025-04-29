@@ -9,9 +9,9 @@ export interface SitesFilterOptions {
 	includeA8CSites?: boolean;
 }
 
-type SiteForFiltering = Pick< MinimumSite, 'URL' | 'name' | 'slug' | 'title' | 'site_owner' >;
+type SiteForFiltering = Pick< MinimumSite, 'URL' | 'name' | 'slug' | 'title' | 'is_a8c' >;
 
-const isA8CSite = ( site: SiteForFiltering ) => site.site_owner === 26957695;
+const isA8CSite = ( site: SiteForFiltering ) => site.is_a8c;
 
 export function useSitesListFiltering< T extends SiteForFiltering >(
 	sites: T[],

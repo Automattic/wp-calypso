@@ -39,6 +39,7 @@ const SITE_FIELDS = [
 	'subscribers_count',
 	'plan',
 	'active_modules',
+	'is_a8c',
 	'is_deleted',
 	'is_coming_soon',
 	'is_private',
