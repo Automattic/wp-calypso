@@ -12,19 +12,18 @@ import {
 	__experimentalHStack as HStack,
 } from '@wordpress/components';
 import { __, sprintf, _n } from '@wordpress/i18n';
-import { useMemo, useState, useRef, useContext } from '@wordpress/element';
+import { useMemo, useState, useRef } from '@wordpress/element';
 import { useRegistry } from '@wordpress/data';
 import { closeSmall } from '@wordpress/icons';
 
 /**
  * Internal dependencies
  */
-import DataViewsContext from '../dataviews-context';
+import { useDataViewsContext } from '../..';
 import { ActionModal } from '../dataviews-item-actions';
 import type { Action, ActionModal as ActionModalType } from '../../types';
 import type { SetSelection } from '../../private-types';
 import type { ActionTriggerProps } from '../dataviews-item-actions';
-
 interface ActionWithModalProps< Item > {
 	action: ActionModalType< Item >;
 	items: Item[];
@@ -383,7 +382,7 @@ export function BulkActionsFooter() {
 		actions = EMPTY_ARRAY,
 		onChangeSelection,
 		getItemId,
-	} = useContext( DataViewsContext );
+	} = useDataViewsContext();
 	return (
 		<FooterContent
 			selection={ selection }

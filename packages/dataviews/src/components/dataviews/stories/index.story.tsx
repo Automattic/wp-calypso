@@ -2,11 +2,30 @@
  * WordPress dependencies
  */
 import { useState, useMemo } from '@wordpress/element';
+<<<<<<< HEAD
+=======
+import { createInterpolateElement } from '@wordpress/element';
+import {
+	Card,
+	CardHeader,
+	CardBody,
+	__experimentalHeading as Heading,
+	__experimentalText as Text,
+	__experimentalHStack as HStack,
+	__experimentalVStack as VStack,
+} from '@wordpress/components';
+import { __, _n } from '@wordpress/i18n';
+>>>>>>> d86f84eae69 (Replace useContext with useDataViewsContext hook)
 
 /**
  * Internal dependencies
  */
+<<<<<<< HEAD
 import DataViews from '../index';
+=======
+import { DataViews } from '../../';
+import { useDataViewsContext } from '../../../';
+>>>>>>> d86f84eae69 (Replace useContext with useDataViewsContext hook)
 import { DEFAULT_VIEW, actions, data, fields } from './fixtures';
 import { LAYOUT_GRID, LAYOUT_LIST, LAYOUT_TABLE } from '../../../constants';
 import { filterSortAndPaginate } from '../../../filter-and-sort-data-view';

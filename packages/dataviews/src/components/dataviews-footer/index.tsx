@@ -2,12 +2,11 @@
  * WordPress dependencies
  */
 import { __experimentalHStack as HStack } from '@wordpress/components';
-import { useContext } from '@wordpress/element';
 
 /**
  * Internal dependencies
  */
-import DataViewsContext from '../dataviews-context';
+import { useDataViewsContext } from '../..';
 import DataViewsPagination from '../dataviews-pagination';
 import {
 	BulkActionsFooter,
@@ -23,7 +22,7 @@ export default function DataViewsFooter() {
 		paginationInfo: { totalItems = 0, totalPages },
 		data,
 		actions = EMPTY_ARRAY,
-	} = useContext( DataViewsContext );
+	} = useDataViewsContext();
 	const hasBulkActions =
 		useSomeItemHasAPossibleBulkAction( actions, data ) &&
 		[ LAYOUT_TABLE, LAYOUT_GRID ].includes( view.type );

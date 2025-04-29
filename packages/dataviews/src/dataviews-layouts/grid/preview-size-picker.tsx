@@ -3,12 +3,12 @@
  */
 import { RangeControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { useMemo, useContext } from '@wordpress/element';
+import { useMemo } from '@wordpress/element';
 
 /**
  * Internal dependencies
  */
-import DataViewsContext from '../../components/dataviews-context';
+import { useDataViewsContext } from '../../hooks/use-dataviews-context';
 import type { ViewGrid } from '../../types';
 
 const viewportBreaks: {
@@ -34,7 +34,7 @@ const BREAKPOINTS = {
 };
 
 function useViewPortBreakpoint() {
-	const containerWidth = useContext( DataViewsContext ).containerWidth;
+	const containerWidth = useDataViewsContext().containerWidth;
 	for ( const [ key, value ] of Object.entries( BREAKPOINTS ) ) {
 		if ( containerWidth >= value ) {
 			return key;
@@ -44,7 +44,7 @@ function useViewPortBreakpoint() {
 }
 
 export function useUpdatedPreviewSizeOnViewportChange() {
-	const view = useContext( DataViewsContext ).view as ViewGrid;
+	const view = useDataViewsContext().view as ViewGrid;
 	const viewport = useViewPortBreakpoint();
 	return useMemo( () => {
 		const previewSize = view.layout?.previewSize;
@@ -65,7 +65,7 @@ export function useUpdatedPreviewSizeOnViewportChange() {
 
 export default function PreviewSizePicker() {
 	const viewport = useViewPortBreakpoint();
-	const context = useContext( DataViewsContext );
+	const context = useDataViewsContext();
 	const view = context.view as ViewGrid;
 	const breakValues = viewportBreaks[ viewport ];
 	const previewSizeToUse = view.layout?.previewSize || breakValues.default;

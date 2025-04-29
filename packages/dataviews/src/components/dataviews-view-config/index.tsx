@@ -27,7 +27,7 @@ import {
 	Icon,
 } from '@wordpress/components';
 import { __, _x, sprintf } from '@wordpress/i18n';
-import { memo, useContext, useMemo, useState } from '@wordpress/element';
+import { memo, useMemo, useState } from '@wordpress/element';
 import {
 	chevronDown,
 	chevronUp,
@@ -43,11 +43,11 @@ import { useInstanceId } from '@wordpress/compose';
 /**
  * Internal dependencies
  */
+import { useDataViewsContext } from '../..';
 import { SORTING_DIRECTIONS, sortIcons, sortLabels } from '../../constants';
 import { VIEW_LAYOUTS } from '../../dataviews-layouts';
-import type { NormalizedField, SupportedLayouts, View } from '../../types';
-import DataViewsContext from '../dataviews-context';
 import { unlock } from '../../lock-unlock';
+import type { NormalizedField, SupportedLayouts, View } from '../../types';
 
 const { Menu } = unlock( componentsPrivateApis );
 
@@ -64,7 +64,7 @@ const DATAVIEWS_CONFIG_POPOVER_PROPS = {
 function ViewTypeMenu( {
 	defaultLayouts = { list: {}, grid: {}, table: {} },
 }: ViewTypeMenuProps ) {
-	const { view, onChangeView } = useContext( DataViewsContext );
+	const { view, onChangeView } = useDataViewsContext();
 	const availableLayouts = Object.keys( defaultLayouts );
 	if ( availableLayouts.length <= 1 ) {
 		return null;
@@ -127,7 +127,7 @@ function ViewTypeMenu( {
 }
 
 function SortFieldControl() {
-	const { view, fields, onChangeView } = useContext( DataViewsContext );
+	const { view, fields, onChangeView } = useDataViewsContext();
 	const orderOptions = useMemo( () => {
 		const sortableFields = fields.filter(
 			( field ) => field.enableSorting !== false
@@ -162,7 +162,7 @@ function SortFieldControl() {
 }
 
 function SortDirectionControl() {
-	const { view, fields, onChangeView } = useContext( DataViewsContext );
+	const { view, fields, onChangeView } = useDataViewsContext();
 
 	const sortableFields = fields.filter(
 		( field ) => field.enableSorting !== false
@@ -220,7 +220,7 @@ function SortDirectionControl() {
 
 const PAGE_SIZE_VALUES = [ 10, 20, 50, 100 ];
 function ItemsPerPageControl() {
-	const { view, onChangeView } = useContext( DataViewsContext );
+	const { view, onChangeView } = useDataViewsContext();
 	return (
 		<ToggleGroupControl
 			__nextHasNoMarginBottom
@@ -544,7 +544,7 @@ function isDefined< T >( item: T | undefined ): item is T {
 }
 
 function FieldControl() {
-	const { view, fields, onChangeView } = useContext( DataViewsContext );
+	const { view, fields, onChangeView } = useDataViewsContext();
 
 	const togglableFields = [
 		view?.titleField,
@@ -762,7 +762,7 @@ function SettingsSection( {
 }
 
 function DataviewsViewConfigDropdown() {
-	const { view } = useContext( DataViewsContext );
+	const { view } = useDataViewsContext();
 	const popoverId = useInstanceId(
 		_DataViewsViewConfig,
 		'dataviews-view-config-dropdown'

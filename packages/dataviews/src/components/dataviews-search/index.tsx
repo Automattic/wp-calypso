@@ -2,21 +2,20 @@
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
-import { useEffect, useRef, memo, useContext } from '@wordpress/element';
+import { useEffect, useRef, memo } from '@wordpress/element';
 import { SearchControl } from '@wordpress/components';
 import { useDebouncedInput } from '@wordpress/compose';
 
 /**
  * Internal dependencies
  */
-import DataViewsContext from '../dataviews-context';
-
+import { useDataViewsContext } from '../..';
 interface SearchProps {
 	label?: string;
 }
 
 const DataViewsSearch = memo( function Search( { label }: SearchProps ) {
-	const { view, onChangeView } = useContext( DataViewsContext );
+	const { view, onChangeView } = useDataViewsContext();
 	const [ search, setSearch, debouncedSearch ] = useDebouncedInput(
 		view.search
 	);

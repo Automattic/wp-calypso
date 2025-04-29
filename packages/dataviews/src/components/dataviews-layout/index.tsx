@@ -4,14 +4,9 @@
 import type { ComponentType } from 'react';
 
 /**
- * WordPress dependencies
- */
-import { useContext } from '@wordpress/element';
-
-/**
  * Internal dependencies
  */
-import DataViewsContext from '../dataviews-context';
+import { useDataViewsContext } from '../..';
 import { VIEW_LAYOUTS } from '../../dataviews-layouts';
 import type { ViewBaseProps } from '../../types';
 
@@ -30,7 +25,7 @@ export default function DataViewsLayout() {
 		setOpenedFilter,
 		onClickItem,
 		isItemClickable,
-	} = useContext( DataViewsContext );
+	} = useDataViewsContext();
 
 	const ViewComponent = VIEW_LAYOUTS.find( ( v ) => v.type === view.type )
 		?.component as ComponentType< ViewBaseProps< any > >;

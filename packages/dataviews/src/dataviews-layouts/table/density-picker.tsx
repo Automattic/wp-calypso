@@ -6,16 +6,15 @@ import {
 	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
 } from '@wordpress/components';
 import { __, _x } from '@wordpress/i18n';
-import { useContext } from '@wordpress/element';
 
 /**
  * Internal dependencies
  */
-import DataViewsContext from '../../components/dataviews-context';
+import { useDataViewsContext } from '../../hooks/use-dataviews-context';
 import type { ViewTable, Density } from '../../types';
 
 export default function DensityPicker() {
-	const context = useContext( DataViewsContext );
+	const context = useDataViewsContext();
 	const view = context.view as ViewTable;
 	return (
 		<ToggleGroupControl

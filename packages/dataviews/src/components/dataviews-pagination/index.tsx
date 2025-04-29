@@ -3,24 +3,24 @@
  */
 import {
 	Button,
-	__experimentalHStack as HStack,
 	SelectControl,
+	__experimentalHStack as HStack,
 } from '@wordpress/components';
-import { createInterpolateElement, memo, useContext } from '@wordpress/element';
+import { createInterpolateElement, memo } from '@wordpress/element';
 import { sprintf, __, _x, isRTL } from '@wordpress/i18n';
 import { next, previous } from '@wordpress/icons';
 
 /**
  * Internal dependencies
  */
-import DataViewsContext from '../dataviews-context';
+import { useDataViewsContext } from '../..';
 
 function DataViewsPagination() {
 	const {
 		view,
 		onChangeView,
 		paginationInfo: { totalItems = 0, totalPages },
-	} = useContext( DataViewsContext );
+	} = useDataViewsContext();
 
 	if ( ! totalItems || ! totalPages ) {
 		return null;

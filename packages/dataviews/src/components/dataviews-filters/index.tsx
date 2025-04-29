@@ -3,7 +3,6 @@
  */
 import {
 	memo,
-	useContext,
 	useRef,
 	useMemo,
 	useCallback,
@@ -16,12 +15,12 @@ import { __, _x } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
+import { useDataViewsContext } from '../..';
+import { sanitizeOperators } from '../../utils';
+import { ALL_OPERATORS, OPERATOR_IS, OPERATOR_IS_NOT } from '../../constants';
 import FilterSummary from './filter-summary';
 import { default as AddFilter, AddFilterMenu } from './add-filter';
 import ResetFilters from './reset-filters';
-import DataViewsContext from '../dataviews-context';
-import { sanitizeOperators } from '../../utils';
-import { ALL_OPERATORS, OPERATOR_IS, OPERATOR_IS_NOT } from '../../constants';
 import type { NormalizedFilter, NormalizedField, View } from '../../types';
 
 export function useFilters( fields: NormalizedField< any >[], view: View ) {
@@ -180,7 +179,7 @@ function FilterVisibilityToggle( {
 
 function Filters() {
 	const { fields, view, onChangeView, openedFilter, setOpenedFilter } =
-		useContext( DataViewsContext );
+		useDataViewsContext();
 	const addFilterRef = useRef< HTMLButtonElement >( null );
 	const filters = useFilters( fields, view );
 	const addFilter = (
