@@ -11,6 +11,9 @@ import type {
 	TwoStep,
 	EngagementStatsDataPoint,
 	SiteDomain,
+	BasicMetricsData,
+	SiteSettings,
+	UrlPerformanceInsights,
 } from './types';
 
 export const fetchProfile = async (): Promise< Profile > => {
@@ -287,4 +290,35 @@ export const fetchUser = async (): Promise< User > => {
 
 export const fetchTwoStep = async (): Promise< TwoStep > => {
 	return wpcom.req.get( '/me/two-step' );
+};
+
+export const fetchSiteSettings = async ( id: string ): Promise< SiteSettings > => {
+	return wpcom.req.get( {
+		path: `/sites/${ id }/settings`,
+		apiNamespace: 'rest/v1.1',
+	} );
+};
+
+export const fetchBasicMetrics = async ( url: string ): Promise< BasicMetricsData > => {
+	return wp.req.get(
+		{
+			path: '/site-profiler/metrics/basic',
+			apiNamespace: 'wpcom/v2',
+		},
+		// Important: advance=1 is needed to get the `token` and request advanced metrics.
+		{ url, advance: '1' }
+	);
+};
+
+export const fetchPerformanceInsights = async (
+	url: string,
+	token: string
+): Promise< UrlPerformanceInsights > => {
+	return wp.req.get(
+		{
+			path: '/site-profiler/metrics/advanced/insights',
+			apiNamespace: 'wpcom/v2',
+		},
+		{ url, advance: '1', hash: token }
+	);
 };

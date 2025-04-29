@@ -145,6 +145,16 @@ export interface SiteSettings {
 	};
 }
 
+export interface PerformanceInsightsQueryState {
+	state: {
+		data?: {
+			pagespeed?: {
+				status: string;
+			};
+		};
+	};
+}
+
 export interface BasicMetricsData {
 	token?: string;
 	[ key: string ]: any;
