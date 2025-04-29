@@ -8,4 +8,4 @@
 
 - Introduce and expose `useDataViewsContext` custom hook
 - Add support for `children` prop in DataViews component
-- Expose DataViews.Search component
+- Expose `DataViews.Search` as a standalone sub-component to allow custom layouts.
