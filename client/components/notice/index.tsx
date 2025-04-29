@@ -121,7 +121,7 @@ export default function Notice( {
 				{ renderedIcon }
 			</span>
 			<p className="calypso-notice__content">
-				<span className="notice__text">{ text ? text : children }</span>
+				<span className="calypso-notice__text">{ text ? text : children }</span>
 			</p>
 			{ text ? children : null }
 			{ showDismiss && (
