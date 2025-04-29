@@ -55,7 +55,10 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { planItem as getCartItemForPlan } from 'calypso/lib/cart-values/cart-items';
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
 import PlanNotice from 'calypso/my-sites/plans-features-main/components/plan-notice';
-import { shouldForceDefaultPlansBasedOnIntent } from 'calypso/my-sites/plans-features-main/components/utils/utils';
+import {
+	shouldForceDefaultPlansBasedOnIntent,
+	hideEscapeHatchForIntent,
+} from 'calypso/my-sites/plans-features-main/components/utils/utils';
 import { useFreeTrialPlanSlugs } from 'calypso/my-sites/plans-features-main/hooks/use-free-trial-plan-slugs';
 import usePlanTypeDestinationCallback from 'calypso/my-sites/plans-features-main/hooks/use-plan-type-destination-callback';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
@@ -95,10 +98,6 @@ const PlanComparisonHeader = styled.h1`
 		margin: 48px 0;
 	}
 `;
-
-const hideEscapeHatchForIntent = ( intent: PlansIntent ) => {
-	return intent === 'plans-ai-assembler';
-};
 
 export interface PlansFeaturesMainProps {
 	siteId?: number | null;
