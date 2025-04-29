@@ -4,6 +4,13 @@ import { useState } from 'react';
 import * as React from 'react';
 import { Theme } from '../lib/theme';
 
+interface RadioButtonWrapperProps {
+	disabled?: boolean;
+	isFocused?: boolean;
+	checked?: boolean;
+	hideRadioButton?: boolean;
+}
+
 const RadioButtonWrapper = styled.div<
 	RadioButtonWrapperProps & React.HTMLAttributes< HTMLDivElement >
 >`
@@ -14,28 +21,32 @@ const RadioButtonWrapper = styled.div<
 	width: 100%;
 	outline: ${ getOutline };
 
-	::before {
-		display: ${ ( props ) => ( props.hidden ? 'none' : 'block' ) };
-		width: 100%;
-		height: 100%;
-		position: absolute;
-		top: 0;
-		left: 0;
-		content: '';
-		border: ${ ( props ) => ( props.checked ? '1px solid ' + getBorderColor( props ) : 'none' ) };
-		border-bottom: ${ ( props ) => '1px solid ' + getBorderColor( props ) };
-		box-sizing: border-box;
-		border-radius: ${ ( props ) => ( props.checked ? '3px' : 0 ) };
-		.rtl & {
-			right: 0;
-			left: auto;
+	${ ( props ) =>
+		! props.hideRadioButton &&
+		`
+		::before {
+			display: ${ props.hidden ? 'none' : 'block' };
+			width: 100%;
+			height: 100%;
+			position: absolute;
+			top: 0;
+			left: 0;
+			content: '';
+			border: ${ props.checked ? '1px solid ' + getBorderColor( props ) : 'none' };
+			border-bottom: 1px solid ${ getBorderColor( props ) };
+			box-sizing: border-box;
+			border-radius: ${ props.checked ? '3px' : 0 };
+			.rtl & {
+				right: 0;
+				left: auto;
+			}
 		}
-	}
 
-	:hover::before {
-		border: 3px solid ${ ( props ) => props.theme.colors.highlight };
-		border-radius: 3px;
-	}
+		:hover::before {
+			border: 3px solid ${ props.theme.colors.highlight };
+			border-radius: 3px;
+		}
+	` }
 
 	.payment-logos {
 		display: none;
@@ -71,12 +82,6 @@ const RadioButtonWrapper = styled.div<
 
 	${ handleWrapperDisabled };
 `;
-
-interface RadioButtonWrapperProps {
-	disabled?: boolean;
-	isFocused?: boolean;
-	checked?: boolean;
-}
 
 const Radio = styled.input`
 	position: absolute;
@@ -210,6 +215,7 @@ export default function RadioButton( {
 			isFocused={ isFocused }
 			checked={ checked }
 			hidden={ hidden }
+			hideRadioButton={ hideRadioButton }
 			className={ `${ checked ? 'is-checked' : '' }` }
 		>
 			<Radio
