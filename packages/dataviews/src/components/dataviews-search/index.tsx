@@ -14,20 +14,29 @@ interface SearchProps {
 	label?: string;
 }
 
+/**
+ * DataViewsSearch is a component that renders a search input
+ * for the DataViews component.
+ * It connects to the DataViewsContext to handle the search input.
+ */
 const DataViewsSearch = memo( function Search( { label }: SearchProps ) {
 	const { view, onChangeView } = useDataViewsContext();
 	const [ search, setSearch, debouncedSearch ] = useDebouncedInput(
 		view.search
 	);
+
 	useEffect( () => {
 		setSearch( view.search ?? '' );
 	}, [ view.search, setSearch ] );
+
 	const onChangeViewRef = useRef( onChangeView );
 	const viewRef = useRef( view );
+
 	useEffect( () => {
 		onChangeViewRef.current = onChangeView;
 		viewRef.current = view;
 	}, [ onChangeView, view ] );
+
 	useEffect( () => {
 		if ( debouncedSearch !== viewRef.current?.search ) {
 			onChangeViewRef.current( {
@@ -37,7 +46,9 @@ const DataViewsSearch = memo( function Search( { label }: SearchProps ) {
 			} );
 		}
 	}, [ debouncedSearch ] );
+
 	const searchLabel = label || __( 'Search' );
+
 	return (
 		<SearchControl
 			className="dataviews-search"
