@@ -18,6 +18,7 @@ import { connect } from 'react-redux';
 import { FormDivider } from 'calypso/blocks/authentication';
 import JetpackConnectSiteOnly from 'calypso/blocks/jetpack-connect-site-only';
 import LoginButton from 'calypso/blocks/login/login-button';
+import LoginUsername from 'calypso/blocks/login/login-username';
 import Notice from 'calypso/components/notice';
 import { LastUsedSocialButton } from 'calypso/components/social-buttons';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
@@ -928,23 +929,13 @@ export class LoginForm extends Component {
 
 							{ isSignupExistingAccount && this.renderLoginFromSignupNotice() }
 
-							<TextControl
-								autoCapitalize="off"
-								autoCorrect="off"
-								spellCheck="false"
-								autoComplete="username"
-								className={ clsx( {
-									'is-error': requestError && requestError.field === 'usernameOrEmail',
-								} ) }
+							<LoginUsername
+								isDisabled={ isFormDisabled || this.isPasswordView() }
+								isError={ requestError && requestError.field === 'usernameOrEmail' }
+								label={ this.renderUsernameorEmailLabel() }
 								onChange={ this.onChangeUsernameOrEmailField }
-								id="usernameOrEmail"
-								name="usernameOrEmail"
 								ref={ this.saveUsernameOrEmailRef }
 								value={ this.state.usernameOrEmail }
-								disabled={ isFormDisabled || this.isPasswordView() }
-								label={ this.renderUsernameorEmailLabel() }
-								__next40pxDefaultSize
-								__nextHasNoMarginBottom
 							/>
 
 							{ requestError && requestError.field === 'usernameOrEmail' && (
