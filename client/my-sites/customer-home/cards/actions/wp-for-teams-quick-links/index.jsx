@@ -6,7 +6,6 @@ import { useDebouncedCallback } from 'use-debounce';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference } from 'calypso/state/preferences/selectors';
-import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
 import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
 import { getSiteFrontPage, getCustomizerUrl, getSiteOption } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -133,9 +132,7 @@ const trackAddP2UsersAction = ( isStaticHomePage ) => ( dispatch ) => {
 
 const mapStateToProps = ( state ) => {
 	const siteId = getSelectedSiteId( state );
-	const isClassicEditor = getSelectedEditor( state, siteId ) === 'classic';
-	const isStaticHomePage =
-		! isClassicEditor && 'page' === getSiteOption( state, siteId, 'show_on_front' );
+	const isStaticHomePage = 'page' === getSiteOption( state, siteId, 'show_on_front' );
 	const siteSlug = getSelectedSiteSlug( state );
 	const staticHomePageId = getSiteFrontPage( state, siteId );
 	const editHomePageUrl = isStaticHomePage && `/page/${ siteSlug }/${ staticHomePageId }`;
