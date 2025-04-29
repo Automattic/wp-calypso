@@ -336,7 +336,7 @@ $image-height: 47px;
 		input:not(.components-text-control__input),
 		button:not(.components-button) {
 			/* Note: Same as `button.signup-form__submit, .signup-form__input.form-text-input` */
-			height: 40px;
+			height: 40px; // Matches .components-button height __next40pxDefaultSize
 			border: 1px solid var(--studio-gray-10);
 			font-size: $font-body;
 
@@ -696,7 +696,7 @@ $image-height: 47px;
 
 	.login__form-terms {
 		color: rgba(#00101c, 0.6);
-		margin: 24px 0;
+		margin: 24px 0 0;
 	}
 
 	.login__form-action button {
