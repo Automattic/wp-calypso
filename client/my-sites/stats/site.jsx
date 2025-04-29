@@ -586,7 +586,20 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 				</div>
 			) }
 			{ isStatsNavigationImprovementEnabled ? (
-				<PageHeader />
+				<PageHeader
+					rightSection={
+						shouldRenderModuleToggler && (
+							<PageModuleToggler
+								availableModuleToggles={ availableModuleToggles }
+								pageModules={ pageModules }
+								onToggleModule={ onToggleModule }
+								isTooltipShown={ showSettingsTooltip && ! isPageSettingsTooltipDismissed }
+								onTooltipDismiss={ onTooltipDismiss }
+								customToggleIcon={ <Icon className="gridicon" icon={ settings } /> }
+							/>
+						)
+					}
+				/>
 			) : (
 				<NavigationHeader
 					className="stats__section-header modernized-header"
