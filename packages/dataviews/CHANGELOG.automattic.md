@@ -6,4 +6,4 @@
 
 ## Next
 
-- Add DataViews children prop support
+- Add support for `children` prop in DataViews component
