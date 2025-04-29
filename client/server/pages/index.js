@@ -920,6 +920,28 @@ export default function pages() {
 
 	app.set( 'views', __dirname );
 
+	// Limit allowed header sizes
+	app.use( ( req, res, next ) => {
+		const MAX_HEADER_LENGTH = 8192; // 8 KB total for all headers
+		const MAX_USER_AGENT_LENGTH = 1024; // 1 KB for User-Agent header
+
+		const totalHeaderSize = Object.entries( req.headers ).reduce(
+			( sum, [ key, value ] ) => sum + key.length + String( value ).length,
+			0
+		);
+
+		if ( totalHeaderSize > MAX_HEADER_LENGTH ) {
+			return res.status( 400 ).send( 'Headers too large.' );
+		}
+
+		const ua = req.get( 'User-Agent' );
+		if ( ua && ua.length > MAX_USER_AGENT_LENGTH ) {
+			return res.status( 400 ).send( 'User-Agent header too large.' );
+		}
+
+		next();
+	} );
+
 	app.use( logSectionResponse );
 	app.use( cookieParser() );
 	app.use( middlewareAssets() );
