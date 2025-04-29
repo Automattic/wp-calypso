@@ -8,10 +8,7 @@ import {
 	useIsPlaygroundEligible,
 	isPlaygroundEligible,
 } from 'calypso/landing/stepper/hooks/use-is-playground-eligible';
-import {
-	isMvpOnboardingExperiment,
-	useMvpOnboardingExperiment,
-} from 'calypso/landing/stepper/hooks/use-mvp-onboarding-experiment';
+import { useMvpOnboardingExperiment } from 'calypso/landing/stepper/hooks/use-mvp-onboarding-experiment';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { pathToUrl } from 'calypso/lib/url';
 import {
@@ -55,15 +52,6 @@ const onboarding: FlowV2 = {
 	isSignupFlow: true,
 	__experimentalUseBuiltinAuth: true,
 	async initialize() {
-		if ( await isMvpOnboardingExperiment() ) {
-			return stepsWithRequiredLogin( [
-				STEPS.UNIFIED_PLANS,
-				STEPS.SITE_CREATION_STEP,
-				STEPS.PROCESSING,
-				STEPS.POST_CHECKOUT_ONBOARDING,
-			] );
-		}
-
 		const steps = stepsWithRequiredLogin( [
 			STEPS.UNIFIED_DOMAINS,
 			STEPS.USE_MY_DOMAIN,

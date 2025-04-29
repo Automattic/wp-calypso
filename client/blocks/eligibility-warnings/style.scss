@@ -11,7 +11,8 @@
 		padding: 0;
 	}
 
-	> .card {
+	// Specificity bump to override the default styles that may get loaded later.
+	> .card.card {
 		padding: 0;
 	}
 
@@ -230,7 +231,8 @@
 .eligibility-warnings__domain-names {
 	margin: 24px 0;
 
-	.card {
+	// Specificity bump to override the default styles that may get loaded later.
+	.card.card {
 		background-color: #f6f7f7;
 		padding: 12px;
 		margin-bottom: 4px;

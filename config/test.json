@@ -88,6 +88,7 @@
 		"onboarding/import-from-wordpress": true,
 		"onboarding/playground": true,
 		"onboarding/step-container-v2-import-flow": true,
+		"onboarding/step-container-v2-migration-flow": true,
 		"p2-enabled": false,
 		"plans/hosting-trial": true,
 		"plans/migration-trial": true,

@@ -75,7 +75,7 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 		const isImporterStatusHydrated = useSelector( isImporterStatusHydratedSelector );
 		const fromSite = currentSearchParams.get( 'from' ) || '';
 		const fromSiteData = useSelector( getUrlData );
-		const stepNavigator = useStepNavigator( flow, navigation, siteId, siteSlug, fromSite );
+		const stepNavigator = useStepNavigator( flow, navigation, siteId, siteSlug, site, fromSite );
 		const currentPath = window.location.pathname + window.location.search;
 		const hasAllSitesFetched = useSelector( hasAllSitesList );
 
