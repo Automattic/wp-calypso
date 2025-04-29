@@ -27,7 +27,6 @@ import { clearLastNonEditorRoute, setRoute } from 'calypso/state/route/actions';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getEditorCloseConfig from 'calypso/state/selectors/get-editor-close-config';
 import getPostTypeTrashUrl from 'calypso/state/selectors/get-post-type-trash-url';
-import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
 import getSiteUrl from 'calypso/state/selectors/get-site-url';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
@@ -815,11 +814,6 @@ const mapStateToProps = (
 	// needed for loading the editor in SU sessions
 	if ( wpcom.addSupportParams ) {
 		queryArgs = wpcom.addSupportParams( queryArgs );
-	}
-
-	// Pass through to iframed editor if user is in editor deprecation group.
-	if ( 'classic' === getSelectedEditor( state, siteId ?? 0 ) ) {
-		queryArgs[ 'in-editor-deprecation-group' ] = 1;
 	}
 
 	// Add new Site Editor params introduced in https://github.com/WordPress/gutenberg/pull/38817.
