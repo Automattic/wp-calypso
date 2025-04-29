@@ -62,12 +62,12 @@ export const fetchSites = async (): Promise< Site[] > => {
 	return sites;
 };
 
-export const fetchSite = async ( id: string ): Promise< Site > => {
-	return await wpcom.req.get( `/sites/${ id }`, { fields: SITE_FIELDS } );
+export const fetchSite = async ( siteIdOrSlug: string ): Promise< Site > => {
+	return await wpcom.req.get( `/sites/${ siteIdOrSlug }`, { fields: SITE_FIELDS } );
 };
 
-export const fetchSiteMediaStorage = async ( id: string ): Promise< MediaStorage > => {
-	const mediaStorage = await wpcom.req.get( `/sites/${ id }/media-storage` );
+export const fetchSiteMediaStorage = async ( siteIdOrSlug: string ): Promise< MediaStorage > => {
+	const mediaStorage = await wpcom.req.get( `/sites/${ siteIdOrSlug }/media-storage` );
 	return {
 		maxStorageBytesFromAddOns: Number( mediaStorage.max_storage_bytes_from_add_ons ),
 		maxStorageBytes: Number( mediaStorage.max_storage_bytes ),
@@ -96,9 +96,9 @@ export const fetchPHPVersion = async ( id: string ): Promise< string | undefined
 	} );
 };
 
-export const fetchCurrentPlan = async ( id: string ): Promise< Plan > => {
+export const fetchCurrentPlan = async ( siteIdOrSlug: string ): Promise< Plan > => {
 	const plans: Record< string, Plan > = await wpcom.req.get( {
-		path: `/sites/${ id }/plans`,
+		path: `/sites/${ siteIdOrSlug }/plans`,
 		apiVersion: '1.3',
 	} );
 	const plan = Object.values( plans ).find( ( plan ) => plan.current_plan );
@@ -108,8 +108,8 @@ export const fetchCurrentPlan = async ( id: string ): Promise< Plan > => {
 	return plan;
 };
 
-export const fetchSiteEngagementStats = async ( id: string ) => {
-	const response = await wpcom.req.get( `/sites/${ id }/stats/visits`, {
+export const fetchSiteEngagementStats = async ( siteIdOrSlug: string ) => {
+	const response = await wpcom.req.get( `/sites/${ siteIdOrSlug }/stats/visits`, {
 		unit: 'day',
 		quantity: 14,
 		stat_fields: [ 'visitors', 'views', 'likes', 'comments' ].join( ',' ),
@@ -152,8 +152,10 @@ export const fetchSiteDomains = async ( id: string ): Promise< { domains: SiteDo
 	}
 };
 
-export const fetchSitePrimaryDomain = async ( id: string ): Promise< SiteDomain | undefined > => {
-	const { domains } = await fetchSiteDomains( id );
+export const fetchSitePrimaryDomain = async (
+	siteIdOrSlug: string
+): Promise< SiteDomain | undefined > => {
+	const { domains } = await fetchSiteDomains( siteIdOrSlug );
 	return domains.find( ( domain: SiteDomain ) => domain.primary_domain );
 };
 
