@@ -4,7 +4,7 @@ import { Button, Card, FormInputValidation, FormLabel, Gridicon } from '@automat
 import { alert } from '@automattic/components/src/icons';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { suggestEmailCorrection } from '@automattic/onboarding';
-import { TextControl } from '@wordpress/components';
+import { Button as CoreButton, TextControl } from '@wordpress/components';
 import { Icon, seen, unseen } from '@wordpress/icons';
 import clsx from 'clsx';
 import cookie from 'cookie';
@@ -718,27 +718,25 @@ export class LoginForm extends Component {
 		};
 
 		return isViewingPassword ? (
-			<button
+			<CoreButton
 				type="button"
 				className="login__form-password-toggle"
 				onClick={ onClick }
 				aria-controls="password"
 				aria-label={ translate( 'Hide password' ) }
 				tabIndex={ tabIndex }
-			>
-				<Icon icon={ seen } />
-			</button>
+				icon={ seen }
+			/>
 		) : (
-			<button
+			<CoreButton
 				type="button"
 				className="login__form-password-toggle"
 				onClick={ onClick }
 				aria-controls="password"
 				aria-label={ translate( 'Show password' ) }
 				tabIndex={ tabIndex }
-			>
-				<Icon icon={ unseen } />
-			</button>
+				icon={ unseen }
+			/>
 		);
 	}
 
