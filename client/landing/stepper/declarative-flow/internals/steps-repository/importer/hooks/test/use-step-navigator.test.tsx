@@ -29,9 +29,12 @@ describe( 'useStepNavigator', () => {
 		const navigation = {
 			submit: jest.fn(),
 		};
-		const { result } = renderHook( () => useStepNavigator( flow, navigation, null, null, null ), {
-			wrapper,
-		} );
+		const { result } = renderHook(
+			() => useStepNavigator( flow, navigation, null, null, null, null ),
+			{
+				wrapper,
+			}
+		);
 
 		act( () => {
 			result.current.goToCheckoutPage?.();
@@ -51,9 +54,12 @@ describe( 'useStepNavigator', () => {
 		const navigation = {
 			submit: jest.fn(),
 		};
-		const { result } = renderHook( () => useStepNavigator( flow, navigation, null, null, null ), {
-			wrapper,
-		} );
+		const { result } = renderHook(
+			() => useStepNavigator( flow, navigation, null, null, null, null ),
+			{
+				wrapper,
+			}
+		);
 
 		act( () => {
 			result.current.goToCheckoutPage?.( {

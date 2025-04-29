@@ -112,7 +112,7 @@ const ImportContentOnly: React.FunctionComponent< Props > = ( props ) => {
 				addQueryArgs( 'design-setup', { comingFromSuccessfulImport: '1' } )
 			);
 		} else {
-			stepNavigator?.goToWpAdmin?.();
+			stepNavigator?.goToAdmin?.();
 		}
 	}, [ job ] );
 
