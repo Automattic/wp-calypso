@@ -51,7 +51,7 @@ const BASE_STEPS = [
 	STEPS.PICK_SITE,
 	STEPS.SITE_CREATION_STEP,
 	STEPS.PROCESSING,
-] as const;
+];
 
 function initialize() {
 	return stepsWithRequiredLogin( BASE_STEPS );
