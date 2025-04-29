@@ -83,6 +83,7 @@ import PaymentLogo from 'calypso/components/payment-logo/docs/example';
 import PieChart from 'calypso/components/pie-chart/docs/example';
 import PodcastIndicator from 'calypso/components/podcast-indicator/docs/example';
 import Popovers from 'calypso/components/popover-menu/docs/example';
+import PoweredByExample from 'calypso/components/powered-by/docs/example';
 import ProductCard from 'calypso/components/product-card/docs/example';
 import ProductExpiration from 'calypso/components/product-expiration/docs/example';
 import PromoSection from 'calypso/components/promo-section/docs/example';
@@ -230,6 +231,7 @@ export default class DesignAssets extends Component {
 					<PieChart readmeFilePath="pie-chart" />
 					<PodcastIndicator readmeFilePath="podcast-indicator" />
 					<Popovers readmeFilePath="popover" />
+					<PoweredByExample readmeFilePath="powered-by" />
 					<ProductCard readmeFilePath="product-card" />
 					<ProductExpiration readmeFilePath="product-expiration" />
 					<ProductIcon readmeFilePath="/packages/components/src/product-icon" />
