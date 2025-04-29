@@ -112,3 +112,4 @@ export { default as VerticalNav } from 'calypso/components/vertical-nav';
 export { default as VerticalNavItem } from 'calypso/components/vertical-nav/item';
 export { default as VerticalNavItemEnhanced } from 'calypso/components/vertical-nav/item/enhanced';
 export { default as Wizard } from 'calypso/components/wizard';
+export { default as WooCommerceLogo } from 'calypso/components/woocommerce-logo';
