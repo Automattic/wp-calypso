@@ -168,10 +168,7 @@ const SubscriberDataViews = ( {
 		subscriberId && ! isNaN( parseInt( subscriberId, 10 ) )
 			? parseInt( subscriberId, 10 )
 			: undefined,
-		// Only pass user_id if it's a valid number (WordPress.com user)
-		typeof selectedSubscriber?.user_id === 'number' && ! isNaN( selectedSubscriber.user_id )
-			? selectedSubscriber.user_id
-			: undefined
+		undefined // We only need the subscriberId to fetch details
 	);
 
 	const { data: subscribedNewsletterCategoriesData, isLoading: isLoadingNewsletterCategories } =
