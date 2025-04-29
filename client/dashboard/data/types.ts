@@ -75,7 +75,7 @@ export interface Site {
 	icon?: {
 		ico: string;
 	};
-	plan: SitePlan;
+	plan?: SitePlan;
 	active_modules?: string[];
 	subscribers_count: number;
 	// Can be undefined for deleted sites.
