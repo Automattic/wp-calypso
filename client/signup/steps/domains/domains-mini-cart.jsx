@@ -5,7 +5,6 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
-import { shouldUseMultipleDomainsInCart } from './utils';
 
 // Referenced from WordAds_Ads_Txt
 const wpcomSubdomains = [
@@ -223,13 +222,6 @@ export class DomainsMiniCart extends Component {
 	};
 
 	render() {
-		if (
-			! shouldUseMultipleDomainsInCart( this.props.flowName ) ||
-			( this.props.cartIsLoading && this.props.domainsInCart.length === 0 )
-		) {
-			return null;
-		}
-
 		if ( this.props.isMobile ) {
 			return this.mobile();
 		}

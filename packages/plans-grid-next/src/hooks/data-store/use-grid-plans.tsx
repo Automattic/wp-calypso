@@ -155,6 +155,9 @@ export const usePlanTypesWithIntent = ( {
 		case 'plans-new-hosted-site-business-only':
 			planTypes = [ TYPE_BUSINESS ];
 			break;
+		case 'plans-ai-assembler-free-trial':
+			planTypes = [ TYPE_PREMIUM, TYPE_BUSINESS ];
+			break;
 		case 'plans-import':
 			planTypes = [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS ];
 			break;

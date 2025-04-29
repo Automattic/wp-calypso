@@ -55,7 +55,10 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { planItem as getCartItemForPlan } from 'calypso/lib/cart-values/cart-items';
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
 import PlanNotice from 'calypso/my-sites/plans-features-main/components/plan-notice';
-import { shouldForceDefaultPlansBasedOnIntent } from 'calypso/my-sites/plans-features-main/components/utils/utils';
+import {
+	shouldForceDefaultPlansBasedOnIntent,
+	hideEscapeHatchForIntent,
+} from 'calypso/my-sites/plans-features-main/components/utils/utils';
 import { useFreeTrialPlanSlugs } from 'calypso/my-sites/plans-features-main/hooks/use-free-trial-plan-slugs';
 import usePlanTypeDestinationCallback from 'calypso/my-sites/plans-features-main/hooks/use-plan-type-destination-callback';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
@@ -338,7 +341,10 @@ const PlansFeaturesMain = ( {
 	] );
 
 	const showEscapeHatch =
-		intentFromSiteMeta.intent && ! isInSignup && defaultWpcomPlansIntent !== intent;
+		intentFromSiteMeta.intent &&
+		! isInSignup &&
+		defaultWpcomPlansIntent !== intent &&
+		! hideEscapeHatchForIntent( intentFromSiteMeta.intent );
 
 	/**
 	 * showSimplifiedFeatures should be true always and this variable should be removed.

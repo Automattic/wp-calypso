@@ -85,10 +85,9 @@ describe( 'Site Migration Import or Migrate Step', () => {
 			},
 		} );
 
-		const { container, queryByText } = render();
+		const { queryByText } = render();
 
-		expect( container.querySelectorAll( '.formatted-header__subtitle' ) ).toHaveLength( 1 );
-		expect( queryByText( /WP Engine/ ) ).toBeInTheDocument();
+		expect( queryByText( /WP Engine/ ) ).toBeVisible();
 	} );
 
 	it( "doesn't show the host identification message when the host is unknown", async () => {

@@ -1,5 +1,6 @@
 import { FormLabel } from '@automattic/components';
 import styled from '@emotion/styled';
+import { Notice as WPNotice } from '@wordpress/components';
 import { translate, useTranslate } from 'i18n-calypso';
 import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
@@ -115,26 +116,19 @@ const OptionsTreeTitle = styled.p( {
 	marginBottom: '16px',
 } );
 
-const SyncWarningContainer = styled.div( {
-	display: 'flex',
-	flexDirection: 'column',
-	border: '1px solid #D63638',
-	borderRadius: '4px',
-	maxWidth: '807px',
-	padding: '16px',
-	marginBottom: '16px',
-} );
-
 const SyncWarningTitle = styled.p( {
 	fontWeight: 600,
 	marginTop: '0px',
 	marginBottom: '8px',
-	color: '#D63638',
 } );
 
-const SyncWarningContent = styled.p( {
-	marginTop: '0px',
-	marginBottom: '0px',
+const SyncWarningContainer = styled.div( {
+	display: 'flex',
+	flexDirection: 'column',
+	maxWidth: '807px',
+	marginBottom: '16px',
+	lineHeight: '24px',
+	textWrap: 'pretty',
 } );
 
 interface SyncCardProps {
@@ -267,17 +261,14 @@ const StagingToProductionSync = ( {
 							</ConfirmationModalList>
 							{ isSiteWooStore && isSqlSyncOptionChecked && (
 								<SyncWarningContainer>
-									<SyncWarningTitle>{ translate( 'Warning:' ) }</SyncWarningTitle>
-									<SyncWarningContent>
+									<WPNotice status="warning" isDismissible={ false }>
+										<SyncWarningTitle>
+											{ translate( 'Warning! WooCommerce data will be overwritten.' ) }
+										</SyncWarningTitle>
 										{ translate(
-											'{{span}}This site has WooCommerce installed.{{/span}} We do not recommend syncing or pushing data from a staging site to live production news sites or sites that use eCommerce plugins, such as WooCommerce, without proper planning and testing. Keep in mind that data on the destination site could have newer transactions, such as customers and orders, and would be lost when overwritten by the staging site’s data.',
-											{
-												components: {
-													span: <ConfirmationModalRedSpan />,
-												},
-											}
+											'This site has WooCommerce installed. We do not recommend syncing or pushing data from a staging site to live production news sites or sites that use eCommerce plugins, such as WooCommerce, without proper planning and testing. Keep in mind that data on the destination site could have newer transactions, such as customers and orders, and would be lost when overwritten by the staging site’s data.'
 										) }
-									</SyncWarningContent>
+									</WPNotice>
 								</SyncWarningContainer>
 							) }
 							<ConfirmationModalInputTitle>

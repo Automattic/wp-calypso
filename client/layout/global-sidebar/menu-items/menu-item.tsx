@@ -42,15 +42,17 @@ const SidebarMenuItem = forwardRef< HTMLButtonElement | HTMLAnchorElement, Props
 		const preloadedRef = useRef( false );
 
 		const selectedSiteId = useSelector( getSelectedSiteId );
-		const { currentSection } = useCurrentRoute() as {
+		const { currentSection, currentRoute } = useCurrentRoute() as {
 			currentSection: false | { group?: string; name?: string };
+			currentRoute: string;
 		};
 		const isSidebarCollapsed = useSelector( ( state ) => {
-			return getShouldShowCollapsedGlobalSidebar(
+			return getShouldShowCollapsedGlobalSidebar( {
 				state,
-				selectedSiteId,
-				currentSection !== false ? currentSection?.group ?? '' : ''
-			);
+				siteId: selectedSiteId,
+				section: currentSection as { group?: string },
+				route: currentRoute,
+			} );
 		} );
 
 		const preload = () => {

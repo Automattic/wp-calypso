@@ -321,9 +321,12 @@ export class ReaderSidebar extends Component {
 export default withCurrentRoute(
 	connect(
 		( state, { currentSection } ) => {
-			const sectionGroup = currentSection?.group ?? null;
 			const siteId = getSelectedSiteId( state );
-			const shouldShowGlobalSidebar = getShouldShowGlobalSidebar( state, siteId, sectionGroup );
+			const shouldShowGlobalSidebar = getShouldShowGlobalSidebar( {
+				state,
+				siteId,
+				section: currentSection,
+			} );
 
 			return {
 				isListsOpen: isListsOpen( state ),

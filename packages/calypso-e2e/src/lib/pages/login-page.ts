@@ -3,7 +3,8 @@ import { getCalypsoURL } from '../../data-helper';
 
 const selectors = {
 	continue: 'button:text("Continue"),a:text("Continue")',
-	loginWithAnotherAccount: ':text("Log in with another account")',
+	loginWithAnotherAccount: ':text("another account")',
+	useUsernamePasswordInstead: 'button:text("Use username and password instead")',
 };
 
 /**
@@ -179,6 +180,36 @@ export class LoginPage {
 	async clickSignUp(): Promise< Locator > {
 		const locator = await this.page.locator( ':text-is("Sign Up")' );
 		await locator.click();
+
+		return locator;
+	}
+
+	/**
+	 * Clicks the "Continue" button.
+	 */
+	async clickContinue(): Promise< Locator > {
+		const locator = await this.page.locator( selectors.continue );
+		await locator.click();
+
+		return locator;
+	}
+
+	/**
+	 * Clicks the Login with another account link.
+	 */
+	async clickLoginWithAnotherAccount(): Promise< Locator > {
+		const locator = await this.page.locator( selectors.loginWithAnotherAccount );
+		await locator.click();
+
+		return locator;
+	}
+
+	/**
+	 * Clicks the "use username and password instead" link.
+	 */
+	async clickUseUsernamePasswordInstead(): Promise< Locator > {
+		const locator = await this.page.locator( selectors.useUsernamePasswordInstead );
+		// await locator.click();
 
 		return locator;
 	}

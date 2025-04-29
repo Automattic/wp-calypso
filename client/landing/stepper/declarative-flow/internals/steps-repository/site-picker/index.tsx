@@ -103,8 +103,6 @@ const SitePickerStep: Step< {
 				stepName="site-picker"
 				hideBack
 				goBack={ navigation.goBack }
-				hideSkip
-				goNext={ createNewSite }
 				stepContent={
 					<SitePicker
 						page={ page }

@@ -55,7 +55,7 @@
 		"webpack": "^5.97.1"
 	},
 	"peerDependencies": {
-		"@babel/runtime": "^7.26.10",
+		"@babel/runtime": "^7.27.0",
 		"@wordpress/data": "^10.22.0",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1"
