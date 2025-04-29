@@ -5,7 +5,7 @@ import { createInterpolateElement, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { registerPlugin } from '@wordpress/plugins';
 import { hasQueryArg } from '@wordpress/url';
-import { InserterImage, InserterIconImage } from './images';
+import { InserterIconImage } from './images';
 
 const storageKey = `classic_block_guide_${ globalThis._currentSiteId }_is_dismissed`;
 
@@ -58,7 +58,6 @@ const ClassicGuide = () => {
 							),
 						},
 						{
-							image: <InserterImage />,
 							content: (
 								<>
 									<h1 className="use-classic-block-guide__heading edit-post-welcome-guide__heading">
