@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import { type Request, type Response, type NextFunction } from 'express';
+import { type Details as UserAgentDetails, parse as parseUserAgent } from 'express-useragent';
 import unsupportedBrowserMiddleware from '../../middleware/unsupported-browser';
 
 jest.mock( '@automattic/calypso-config', () =>
@@ -30,7 +31,7 @@ jest.mock( 'calypso/server/lib/analytics', () => ( {
 } ) );
 
 describe( 'unsupported-browser', () => {
-	let req: Partial< Request > & { useragent: { source: string } };
+	let req: Partial< Request > & { useragent: UserAgentDetails };
 	let res: Partial< Response > & { redirect: jest.Mock; cookie: jest.Mock };
 	let next: NextFunction;
 
@@ -38,7 +39,7 @@ describe( 'unsupported-browser', () => {
 		jest.clearAllMocks();
 
 		req = {
-			useragent: { source: '' },
+			useragent: {} as UserAgentDetails,
 			path: '/test',
 			cookies: {},
 			query: {},
@@ -64,8 +65,9 @@ describe( 'unsupported-browser', () => {
 
 	it( 'should call next() for allowed paths', () => {
 		// Use an unsupported browser that should normally be redirected
-		req.useragent.source =
-			'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.132 Safari/537.36';
+		req.useragent = parseUserAgent(
+			'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.132 Safari/537.36'
+		);
 
 		const allowedPaths = [
 			'/browsehappy',
@@ -141,8 +143,13 @@ describe( 'unsupported-browser', () => {
 				userAgent:
 					'Mozilla/5.0 (iPhone; CPU iPhone OS 13_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0 Mobile/15E148 Safari/604.1',
 			},
+			{
+				description: 'Opera 66',
+				userAgent:
+					'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.87 Safari/537.36 OPR/66.0.3575.31',
+			},
 		] )( 'should redirect $description', ( { userAgent } ) => {
-			req.useragent.source = userAgent;
+			req.useragent = parseUserAgent( userAgent );
 
 			unsupportedBrowserMiddleware()( req, res, next );
 
@@ -172,8 +179,18 @@ describe( 'unsupported-browser', () => {
 				userAgent:
 					'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.81 Safari/537.36 WordPressDesktop/7.0.0 Electron/13.5.1',
 			},
+			{
+				description: 'Edge 80',
+				userAgent:
+					'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.132 Safari/537.36 Edg/80.0.361.69',
+			},
+			{
+				description: 'Opera 67',
+				userAgent:
+					'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.87 Safari/537.36 OPR/67.0.3575.31',
+			},
 		] )( 'should not redirect $description', ( { userAgent } ) => {
-			req.useragent.source = userAgent;
+			req.useragent = parseUserAgent( userAgent );
 
 			unsupportedBrowserMiddleware()( req, res, next );
 
@@ -183,8 +200,9 @@ describe( 'unsupported-browser', () => {
 	} );
 
 	it( 'should handle WordPress Desktop app by stripping WordPressDesktop and Electron from user agent', () => {
-		req.useragent.source =
-			'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.81 Safari/537.36 WordPressDesktop/7.0.0 Electron/13.5.1';
+		req.useragent = parseUserAgent(
+			'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.81 Safari/537.36 WordPressDesktop/7.0.0 Electron/13.5.1'
+		);
 
 		unsupportedBrowserMiddleware()( req, res, next );
 
@@ -200,8 +218,9 @@ describe( 'unsupported-browser', () => {
 		);
 
 		// Use a modern browser that shouldn't normally be redirected
-		req.useragent.source =
-			'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0 Safari/605.1.15';
+		req.useragent = parseUserAgent(
+			'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0 Safari/605.1.15'
+		);
 
 		unsupportedBrowserMiddleware()( req, res, next );
 
