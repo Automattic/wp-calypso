@@ -20,7 +20,7 @@ export async function initializeWordPressPlayground(
 	let isWordPressInstalled = false;
 
 	const url = new URL( window.location.href );
-	let playgroundId = url.searchParams.get( 'playground' );
+	let playgroundId: string | null = url.searchParams.get( 'playground' );
 	if ( ! playgroundId ) {
 		playgroundId = crypto.randomUUID();
 		// update url in browser history
@@ -43,7 +43,7 @@ export async function initializeWordPressPlayground(
 				path: `${ OPFS_PATH_PREFIX }/${ playgroundId }/`,
 			},
 			mountpoint: '/wordpress',
-			initialSyncDirection: 'opfs-to-memfs',
+			initialSyncDirection: isWordPressInstalled ? 'opfs-to-memfs' : 'memfs-to-opfs',
 		};
 
 		const client = await startPlaygroundWeb( {
