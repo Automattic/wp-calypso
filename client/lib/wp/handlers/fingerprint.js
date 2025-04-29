@@ -1,4 +1,4 @@
-import { load } from '@automattic/fingerprintjs';
+import { load } from '@fingerprintjs/fingerprintjs';
 
 let fingerprint;
 export async function loadFingerprint() {
