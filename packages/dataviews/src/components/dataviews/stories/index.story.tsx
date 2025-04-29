@@ -1,7 +1,7 @@
 /**
  * WordPress dependencies
  */
-import { useState, useMemo } from '@wordpress/element';
+import { useState, useMemo, useContext } from '@wordpress/element';
 import { createInterpolateElement } from '@wordpress/element';
 import {
 	Card,
@@ -20,6 +20,7 @@ import DataViews from '../index';
 import { DEFAULT_VIEW, actions, data, fields } from './fixtures';
 import { LAYOUT_GRID, LAYOUT_LIST, LAYOUT_TABLE } from '../../../constants';
 import { filterSortAndPaginate } from '../../../filter-and-sort-data-view';
+import DataViewsContext from '../../dataviews-context';
 import type { View } from '../../../types';
 
 import './style.css';
@@ -116,6 +117,58 @@ export const FieldsNoSortableNoHidable = () => {
 	);
 };
 
+/**
+ * Custom composition example
+ */
+function PlanetOverview() {
+	const { data } = useContext( DataViewsContext );
+
+	const planets = data.filter( ( item ) =>
+		item.categories.includes( 'Planet' )
+	);
+	const moons = planets.reduce( ( sum, item ) => sum + item.satellites, 0 );
+
+	return (
+		<Card isBorderless style={ { padding: '12px 24px' } }>
+			<CardHeader>
+				<Heading level={ 2 }>{ __( 'Solar System numbers' ) }</Heading>
+			</CardHeader>
+
+			<CardBody>
+				<VStack spacing={ 2 }>
+					<Text size={ 18 } as="p">
+						{ createInterpolateElement(
+							_n(
+								'<PlanetsNumber /> planet',
+								'<PlanetsNumber /> planets',
+								planets.length
+							),
+							{
+								PlanetsNumber: (
+									<strong>{ planets.length } </strong>
+								),
+							}
+						) }
+					</Text>
+
+					<Text size={ 18 } as="p">
+						{ createInterpolateElement(
+							_n(
+								'<SatellitesNumber /> moon',
+								'<SatellitesNumber /> moons',
+								moons
+							),
+							{
+								SatellitesNumber: <strong>{ moons } </strong>,
+							}
+						) }
+					</Text>
+				</VStack>
+			</CardBody>
+		</Card>
+	);
+}
+
 export const CustomComposition = () => {
 	const [ view, setView ] = useState< View >( {
 		...DEFAULT_VIEW,
@@ -144,47 +197,7 @@ export const CustomComposition = () => {
 			actions={ actions }
 			defaultLayouts={ defaultLayouts }
 		>
-			<Card isBorderless style={ { padding: '12px 24px' } }>
-				<CardHeader>
-					<Heading level={ 2 }>
-						{ __( 'Solar System numbers' ) }
-					</Heading>
-				</CardHeader>
-
-				<CardBody>
-					<VStack spacing={ 2 }>
-						<Text size={ 18 } as="p">
-							{ createInterpolateElement(
-								_n(
-									'<PlanetsNumber /> planet',
-									'<PlanetsNumber /> planets',
-									planets.length
-								),
-								{
-									PlanetsNumber: (
-										<strong>{ planets.length } </strong>
-									),
-								}
-							) }
-						</Text>
-
-						<Text size={ 18 } as="p">
-							{ createInterpolateElement(
-								_n(
-									'<SatellitesNumber /> moon',
-									'<SatellitesNumber /> moons',
-									moons
-								),
-								{
-									SatellitesNumber: (
-										<strong>{ moons } </strong>
-									),
-								}
-							) }
-						</Text>
-					</VStack>
-				</CardBody>
-			</Card>
+			<PlanetOverview />
 		</DataViews>
 	);
 };
