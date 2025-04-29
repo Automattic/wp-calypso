@@ -226,10 +226,10 @@ export class Banner extends Component {
 		}
 		if ( typeof description === 'string' ) {
 			return (
-				<p
+				<div
 					className="banner__description"
 					dangerouslySetInnerHTML={ { __html: this.sanitize( description ) } } // eslint-disable-line react/no-danger
-				></p>
+				></div>
 			);
 		}
 		return <div className="banner__description">{ description }</div>;
@@ -274,7 +274,7 @@ export class Banner extends Component {
 					/>
 				) }
 				<div className="banner__info">
-					<p className="banner__title">{ title }</p>
+					<div className="banner__title">{ title }</div>
 					{ this.renderDescription( description ) }
 					{ size( list ) > 0 && (
 						<ul className="banner__list">

@@ -26,7 +26,7 @@ exports[`<GlobalNotices /> should render notices with the expected structure 1`]
           />
         </svg>
       </span>
-      <p
+      <span
         class="calypso-notice__content"
       >
         <span
@@ -34,7 +34,7 @@ exports[`<GlobalNotices /> should render notices with the expected structure 1`]
         >
           A test notice
         </span>
-      </p>
+      </span>
       <button
         aria-label="Dismiss"
         class="calypso-notice__dismiss"

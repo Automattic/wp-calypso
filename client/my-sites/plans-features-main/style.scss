@@ -68,6 +68,7 @@ $plan-features-header-banner-height: 20px;
 .calypso-notice.plan-features-main__notice {
 	margin: 0 20px 24px;
 	width: unset;
+	text-wrap: pretty;
 
 	@include plans-section-custom-mobile-breakpoint {
 		margin: 0 0 24px;
