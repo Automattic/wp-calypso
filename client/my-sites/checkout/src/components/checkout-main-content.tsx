@@ -859,7 +859,10 @@ export default function CheckoutMainContent( {
 	}
 
 	return (
-		<StepContainerV2CheckoutFixer isLargeViewport={ isLargeViewport }>
+		<StepContainerV2CheckoutFixer
+			isLargeViewport={ isLargeViewport }
+			isStreamlinedPrice={ streamlinedPriceExperimentAssignment }
+		>
 			<Step.TwoColumnLayout
 				firstColumnWidth={ 8 }
 				secondColumnWidth={ 4 }
@@ -908,7 +911,10 @@ export default function CheckoutMainContent( {
 	);
 }
 
-const StepContainerV2CheckoutFixer = styled.div< { isLargeViewport: boolean } >`
+const StepContainerV2CheckoutFixer = styled.div< {
+	isLargeViewport: boolean;
+	isStreamlinedPrice: boolean;
+} >`
 	background: ${ colorStudio.colors[ 'White' ] };
 
 	// This shouldn't exist. It's a hack to make the top bar appear on top of the checkout sidebar, which extends from the top of the page.
@@ -931,6 +937,15 @@ const StepContainerV2CheckoutFixer = styled.div< { isLargeViewport: boolean } >`
 		margin-inline: 0;
 		max-width: 100%;
 	}
+
+	${ ( props ) =>
+		props.isStreamlinedPrice &&
+		css`
+			div:has( .checkout-sidebar-content ) {
+				position: sticky;
+				top: 32px;
+			}
+		` }
 
 	${ ( props ) =>
 		! props.isLargeViewport &&
