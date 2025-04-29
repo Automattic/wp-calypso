@@ -1,8 +1,8 @@
 import { isDomainRegistration, isDomainMapping } from '@automattic/calypso-products';
+import { find } from 'lodash';
 import { isSubscription } from 'calypso/lib/purchases';
 import { getSitePurchases } from './get-site-purchases';
-import type { Purchase } from 'calypso/lib/purchases/types';
-import type { AppState } from 'calypso/types';
+
 import 'calypso/state/purchases/init';
 
 /**
@@ -11,17 +11,15 @@ import 'calypso/state/purchases/init';
  * Even if a domain registration was purchased with the subscription, it will
  * not be returned if the domain product was paid for separately (eg: if it was
  * renewed on its own).
- * @param   {AppState} state  global state
- * @param   {Purchase | null | undefined} subscriptionPurchase  subscription purchase object
- * @returns {Purchase | null | undefined} domain purchase if there is one, null if none found or not a subscription object passed
+ * @param   {Object} state  global state
+ * @param   {Object} subscriptionPurchase  subscription purchase object
+ * @returns {Object} domain purchase if there is one, null if none found or not a subscription object passed
  */
-export const getIncludedDomainPurchase = (
-	state: AppState,
-	subscriptionPurchase: Purchase | null | undefined
-): Purchase | null | undefined => {
+export const getIncludedDomainPurchase = ( state, subscriptionPurchase ) => {
 	if (
 		! subscriptionPurchase ||
 		! isSubscription( subscriptionPurchase ) ||
+		subscriptionPurchase.included_domain_purchase_amount ||
 		subscriptionPurchase.includedDomainPurchaseAmount
 	) {
 		return null;
@@ -29,9 +27,12 @@ export const getIncludedDomainPurchase = (
 
 	const { includedDomain } = subscriptionPurchase;
 	const sitePurchases = getSitePurchases( state, subscriptionPurchase.siteId );
-	return sitePurchases.find(
+	const domainPurchase = find(
+		sitePurchases,
 		( purchase ) =>
 			( isDomainMapping( purchase ) || isDomainRegistration( purchase ) ) &&
 			includedDomain === purchase.meta
 	);
+
+	return domainPurchase;
 };
