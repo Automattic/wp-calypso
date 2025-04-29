@@ -15,6 +15,9 @@ const PoweredByExample = () => {
 				<FlexItem>
 					<PoweredBy brand="wpcloud" variant="color" />
 				</FlexItem>
+				<FlexItem>
+					<PoweredBy brand="wpcom" variant="color" />
+				</FlexItem>
 			</Flex>
 
 			<h3>Black variant</h3>
@@ -27,6 +30,9 @@ const PoweredByExample = () => {
 				</FlexItem>
 				<FlexItem>
 					<PoweredBy brand="wpcloud" variant="black" />
+				</FlexItem>
+				<FlexItem>
+					<PoweredBy brand="wpcom" variant="black" />
 				</FlexItem>
 			</Flex>
 
@@ -41,6 +47,9 @@ const PoweredByExample = () => {
 					</FlexItem>
 					<FlexItem>
 						<PoweredBy brand="wpcloud" variant="white" />
+					</FlexItem>
+					<FlexItem>
+						<PoweredBy brand="wpcom" variant="white" />
 					</FlexItem>
 				</Flex>
 			</div>

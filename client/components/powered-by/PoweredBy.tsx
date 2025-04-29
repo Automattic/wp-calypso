@@ -2,11 +2,12 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import JetpackLogo from '../jetpack-logo';
 import WooCommerceLogo from '../woocommerce-logo';
+import WordPressComLogo from '../wordpress-com-logo';
 import WPCloudLogo from '../wp-cloud-logo';
 
 import './style.scss';
 
-export type PoweredByBrand = 'jetpack' | 'woocommerce' | 'wpcloud';
+export type PoweredByBrand = 'jetpack' | 'woocommerce' | 'wpcloud' | 'wpcom';
 export type PoweredByVariant = 'color' | 'black' | 'white';
 
 interface PoweredByProps {
@@ -39,6 +40,11 @@ const PoweredBy = ( { brand, variant = 'color', className }: PoweredByProps ) =>
 					size={ 156 }
 					variant={ variant === 'white' ? 'white' : 'black' }
 				/>
+			);
+			break;
+		case 'wpcom':
+			LogoComponent = (
+				<WordPressComLogo className="powered-by-logo" size={ 156 } variant={ variant } />
 			);
 			break;
 	}
