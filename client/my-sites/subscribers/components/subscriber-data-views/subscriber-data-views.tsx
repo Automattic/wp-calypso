@@ -196,19 +196,10 @@ const SubscriberDataViews = ( {
 		// If we have details and they match the current URL, use them
 		if ( subscriberDetails && subscriberId === getSubscriptionIdString( subscriberDetails ) ) {
 			setSelectedSubscriber( subscriberDetails );
-			return;
 		}
-
-		// Only try to find subscriber in the list if we don't have matching details yet
-		if ( ! subscriberDetails || subscriberId !== getSubscriptionIdString( subscriberDetails ) ) {
-			const subscriberFromList = subscribersQueryResult?.subscribers.find(
-				( s ) => subscriberId === getSubscriptionIdString( s )
-			);
-			if ( subscriberFromList ) {
-				setSelectedSubscriber( subscriberFromList );
-			}
-		}
-	}, [ subscriberId, subscriberDetails, subscribersQueryResult?.subscribers ] );
+		// Don't clear selectedSubscriber - let it keep showing the previous subscriber while loading
+		// The SubscriberDetailsSkeleton will show because subscriberDetails won't match subscriberId
+	}, [ subscriberId, subscriberDetails ] );
 
 	const { data: subscribersTotals } = useSubscriberCountQuery( siteId ?? null );
 	const grandTotal = subscribersTotals?.email_subscribers ?? 0;
@@ -613,7 +604,7 @@ const SubscriberDataViews = ( {
 					</>
 				) }
 			</section>
-			{ selectedSubscriber && siteId && (
+			{ subscriberId && siteId && (
 				<section className="subscriber-data-views__details">
 					{ isLoadingNewsletterCategories ||
 					isLoadingDetails ||
