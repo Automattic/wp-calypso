@@ -82,4 +82,5 @@ export { default as VerticalMenu } from 'calypso/components/vertical-menu/docs/e
 export { default as VerticalNav } from 'calypso/components/vertical-nav/docs/example';
 export { default as Wizard } from 'calypso/components/wizard/docs/example';
 export { default as WooCommerceLogo } from 'calypso/components/woocommerce-logo/docs/example';
+export { default as WordPressComLogo } from 'calypso/components/wordpress-com-logo/docs/example';
 export { default as WPCloudLogo } from 'calypso/components/wp-cloud-logo/docs/example';

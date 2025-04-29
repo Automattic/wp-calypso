@@ -115,6 +115,7 @@ import VerticalMenu from 'calypso/components/vertical-menu/docs/example';
 import VerticalNav from 'calypso/components/vertical-nav/docs/example';
 import Wizard from 'calypso/components/wizard/docs/example';
 import WooCommerceLogo from 'calypso/components/woocommerce-logo/docs/example';
+import WordPressComLogo from 'calypso/components/wordpress-com-logo/docs/example';
 import WPCloudLogo from 'calypso/components/wp-cloud-logo/docs/example';
 import Collection from 'calypso/devdocs/design/search-collection';
 import { slugToCamelCase } from 'calypso/devdocs/docs-example/util';
@@ -274,6 +275,7 @@ export default class DesignAssets extends Component {
 					<VerticalNav readmeFilePath="vertical-nav" />
 					<Wizard readmeFilePath="wizard" />
 					<WooCommerceLogo readmeFilePath="woocommerce-logo" />
+					<WordPressComLogo readmeFilePath="wordpress-com-logo" />
 					<WPCloudLogo readmeFilePath="wp-cloud-logo" />
 					<MasonryGridExample readmeFilePath="masonry-grid" />
 				</Collection>
