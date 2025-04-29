@@ -41,7 +41,7 @@ export type ValidatedControlProps< V > = {
 	 */
 	// TODO: Technically, we could add an optional `customValidity` string prop so the consumer can set
 	// an error message at any point in time. We should wait until we have a use case though.
-	onReportCustomValidity?: ( currentValue: V ) => string | void;
+	customValidator?: ( currentValue: V ) => string | void;
 };
 
 // These re-exports, in combination with the `reactDocgenTypescriptOptions.propFilter` in the

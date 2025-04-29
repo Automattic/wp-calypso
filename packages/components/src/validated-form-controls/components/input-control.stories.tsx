@@ -48,7 +48,7 @@ Default.args = {
 	required: true,
 	label: 'Input',
 	help: 'The word "error" will trigger an error.',
-	onReportCustomValidity: ( value ) => {
+	customValidator: ( value ) => {
 		if ( value?.toLowerCase() === 'error' ) {
 			return 'The word "error" is not allowed.';
 		}
@@ -94,7 +94,7 @@ Password.args = {
 	label: 'Password',
 	help: 'Minimum 8 characters, include a number, capital letter, and symbol (!@£$%^&*#).',
 	minLength: 8,
-	onReportCustomValidity: ( value ) => {
+	customValidator: ( value ) => {
 		if ( ! /\d/.test( value ?? '' ) ) {
 			return 'Password must include at least one number.';
 		}

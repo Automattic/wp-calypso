@@ -35,7 +35,7 @@ Default.args = {
 	required: true,
 	label: 'Toggle',
 	help: 'This toggle may neither be enabled nor disabled.',
-	onReportCustomValidity: ( value ) => {
+	customValidator: ( value ) => {
 		if ( value ) {
 			return 'This toggle may not be enabled.';
 		}

@@ -11,43 +11,38 @@ type Value = ToggleControlProps[ 'checked' ];
 export const ValidatedToggleControl = forwardRef<
 	HTMLInputElement,
 	Omit< ToggleControlProps, '__nextHasNoMarginBottom' > & ValidatedControlProps< Value >
->(
-	(
-		{ required, onReportCustomValidity, onChange, markWhenOptional, ...restProps },
-		forwardedRef
-	) => {
-		const validityTargetRef = useRef< HTMLInputElement >( null );
-		const mergedRefs = useMergeRefs( [ forwardedRef, validityTargetRef ] );
-		const valueRef = useRef< Value >( restProps.checked );
+>( ( { required, customValidator, onChange, markWhenOptional, ...restProps }, forwardedRef ) => {
+	const validityTargetRef = useRef< HTMLInputElement >( null );
+	const mergedRefs = useMergeRefs( [ forwardedRef, validityTargetRef ] );
+	const valueRef = useRef< Value >( restProps.checked );
 
-		// TODO: Upstream limitation - The `required` attribute is not passed down to the input,
-		// so we need to set it manually.
-		useEffect( () => {
-			if ( validityTargetRef.current ) {
-				validityTargetRef.current.required = required ?? false;
+	// TODO: Upstream limitation - The `required` attribute is not passed down to the input,
+	// so we need to set it manually.
+	useEffect( () => {
+		if ( validityTargetRef.current ) {
+			validityTargetRef.current.required = required ?? false;
+		}
+	}, [ required ] );
+
+	return (
+		<ControlWithError
+			required={ required }
+			markWhenOptional={ markWhenOptional }
+			render={
+				<ToggleControl
+					__nextHasNoMarginBottom
+					ref={ mergedRefs }
+					onChange={ ( value ) => {
+						valueRef.current = value;
+						onChange?.( value );
+					} }
+					{ ...restProps }
+				/>
 			}
-		}, [ required ] );
-
-		return (
-			<ControlWithError
-				required={ required }
-				markWhenOptional={ markWhenOptional }
-				render={
-					<ToggleControl
-						__nextHasNoMarginBottom
-						ref={ mergedRefs }
-						onChange={ ( value ) => {
-							valueRef.current = value;
-							onChange?.( value );
-						} }
-						{ ...restProps }
-					/>
-				}
-				onReportCustomValidity={ () => {
-					return onReportCustomValidity?.( valueRef.current );
-				} }
-				getValidityTarget={ () => validityTargetRef.current }
-			/>
-		);
-	}
-);
+			customValidator={ () => {
+				return customValidator?.( valueRef.current );
+			} }
+			getValidityTarget={ () => validityTargetRef.current }
+		/>
+	);
+} );

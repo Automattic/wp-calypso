@@ -33,7 +33,7 @@ Default.args = {
 	required: true,
 	label: 'Textarea',
 	help: 'The word "error" will trigger an error.',
-	onReportCustomValidity: ( value ) => {
+	customValidator: ( value ) => {
 		if ( value?.toLowerCase() === 'error' ) {
 			return 'The word "error" is not allowed.';
 		}

@@ -29,7 +29,7 @@ export const WithMultipleControls: Story = {
 					required
 					value={ text }
 					help="The word 'error' will trigger an error."
-					onReportCustomValidity={ ( value ) => {
+					customValidator={ ( value ) => {
 						if ( value?.toLowerCase() === 'error' ) {
 							return 'The word "error" is not allowed.';
 						}
@@ -41,7 +41,7 @@ export const WithMultipleControls: Story = {
 					required
 					value={ text2 }
 					help="The word 'error' will trigger an error."
-					onReportCustomValidity={ ( value ) => {
+					customValidator={ ( value ) => {
 						if ( value?.toLowerCase() === 'error' ) {
 							return 'The word "error" is not allowed.';
 						}
@@ -68,7 +68,7 @@ export const WithHelpTextReplacement: Story = {
 				required
 				value={ text }
 				help={ hasCustomError ? undefined : 'The word "error" is not allowed.' }
-				onReportCustomValidity={ ( value ) => {
+				customValidator={ ( value ) => {
 					if ( value?.toLowerCase() === 'error' ) {
 						setHasCustomError( true );
 						return 'The word "error" is not allowed.';

@@ -10,36 +10,31 @@ export const ValidatedTextControl = forwardRef<
 	HTMLInputElement,
 	Omit< TextControlProps, '__next40pxDefaultSize' | '__nextHasNoMarginBottom' > &
 		ValidatedControlProps< Value >
->(
-	(
-		{ required, onReportCustomValidity, onChange, markWhenOptional, ...restProps },
-		forwardedRef
-	) => {
-		const validityTargetRef = useRef< HTMLInputElement >( null );
-		const mergedRefs = useMergeRefs( [ forwardedRef, validityTargetRef ] );
-		const valueRef = useRef< Value >( restProps.value );
+>( ( { required, customValidator, onChange, markWhenOptional, ...restProps }, forwardedRef ) => {
+	const validityTargetRef = useRef< HTMLInputElement >( null );
+	const mergedRefs = useMergeRefs( [ forwardedRef, validityTargetRef ] );
+	const valueRef = useRef< Value >( restProps.value );
 
-		return (
-			<ControlWithError
-				required={ required }
-				markWhenOptional={ markWhenOptional }
-				render={
-					<TextControl
-						__next40pxDefaultSize
-						__nextHasNoMarginBottom
-						ref={ mergedRefs }
-						onChange={ ( value ) => {
-							valueRef.current = value;
-							onChange?.( value );
-						} }
-						{ ...restProps }
-					/>
-				}
-				onReportCustomValidity={ () => {
-					return onReportCustomValidity?.( valueRef.current );
-				} }
-				getValidityTarget={ () => validityTargetRef.current }
-			/>
-		);
-	}
-);
+	return (
+		<ControlWithError
+			required={ required }
+			markWhenOptional={ markWhenOptional }
+			render={
+				<TextControl
+					__next40pxDefaultSize
+					__nextHasNoMarginBottom
+					ref={ mergedRefs }
+					onChange={ ( value ) => {
+						valueRef.current = value;
+						onChange?.( value );
+					} }
+					{ ...restProps }
+				/>
+			}
+			customValidator={ () => {
+				return customValidator?.( valueRef.current );
+			} }
+			getValidityTarget={ () => validityTargetRef.current }
+		/>
+	);
+} );

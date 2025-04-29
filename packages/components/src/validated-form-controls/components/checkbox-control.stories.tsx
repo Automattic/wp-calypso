@@ -37,7 +37,7 @@ Default.args = {
 	required: true,
 	label: 'Checkbox',
 	help: 'This checkbox may neither be checked nor unchecked.',
-	onReportCustomValidity: ( value ) => {
+	customValidator: ( value ) => {
 		if ( value ) {
 			return 'This checkbox may not be checked.';
 		}

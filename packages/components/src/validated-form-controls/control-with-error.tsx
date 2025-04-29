@@ -38,7 +38,7 @@ function UnforwardedControlWithError< C extends React.ReactElement >(
 	{
 		required,
 		markWhenOptional,
-		onReportCustomValidity,
+		customValidator,
 		getValidityTarget,
 		render,
 	}: {
@@ -56,7 +56,7 @@ function UnforwardedControlWithError< C extends React.ReactElement >(
 		 * This message will be applied to the element returned by `getValidityTarget`.
 		 * @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLObjectElement/setCustomValidity
 		 */
-		onReportCustomValidity?: () => string | void;
+		customValidator?: () => string | void;
 		/**
 		 * A function that returns the actual element on which the validity data should be applied.
 		 */
@@ -82,7 +82,7 @@ function UnforwardedControlWithError< C extends React.ReactElement >(
 	} );
 
 	const validate = () => {
-		const message = onReportCustomValidity?.();
+		const message = customValidator?.();
 		const validityTarget = getValidityTarget();
 
 		validityTarget?.setCustomValidity( message ?? '' );

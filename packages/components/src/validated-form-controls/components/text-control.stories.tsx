@@ -35,7 +35,7 @@ Default.args = {
 	required: true,
 	label: 'Text',
 	help: "The word 'error' will trigger an error.",
-	onReportCustomValidity: ( value ) => {
+	customValidator: ( value ) => {
 		if ( value?.toString().toLowerCase() === 'error' ) {
 			return 'The word "error" is not allowed.';
 		}

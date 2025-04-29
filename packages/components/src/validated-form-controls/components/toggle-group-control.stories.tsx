@@ -46,7 +46,7 @@ Default.args = {
 		<ToggleGroupControlOption value="2" key="2" label="Option 2" />,
 	],
 	help: 'Selecting option 2 will trigger an error.',
-	onReportCustomValidity: ( value ) => {
+	customValidator: ( value ) => {
 		if ( value === '2' ) {
 			return 'Option 2 is not allowed.';
 		}

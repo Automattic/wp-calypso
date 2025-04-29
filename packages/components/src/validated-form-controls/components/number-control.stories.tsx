@@ -40,7 +40,7 @@ Default.args = {
 	required: true,
 	label: 'Number',
 	help: 'Odd numbers are not allowed.',
-	onReportCustomValidity: ( value ) => {
+	customValidator: ( value ) => {
 		if ( value && parseInt( value.toString(), 10 ) % 2 !== 0 ) {
 			return 'Choose an even number.';
 		}

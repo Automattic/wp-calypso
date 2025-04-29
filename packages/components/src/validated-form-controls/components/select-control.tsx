@@ -18,36 +18,31 @@ export const ValidatedSelectControl = forwardRef<
 		ValidatedControlProps< Value > & {
 			markWhenOptional?: boolean;
 		}
->(
-	(
-		{ required, onReportCustomValidity, onChange, markWhenOptional, ...restProps },
-		forwardedRef
-	) => {
-		const validityTargetRef = useRef< HTMLSelectElement >( null );
-		const mergedRefs = useMergeRefs( [ forwardedRef, validityTargetRef ] );
-		const valueRef = useRef< Value >( restProps.value );
+>( ( { required, customValidator, onChange, markWhenOptional, ...restProps }, forwardedRef ) => {
+	const validityTargetRef = useRef< HTMLSelectElement >( null );
+	const mergedRefs = useMergeRefs( [ forwardedRef, validityTargetRef ] );
+	const valueRef = useRef< Value >( restProps.value );
 
-		return (
-			<ControlWithError
-				required={ required }
-				markWhenOptional={ markWhenOptional }
-				render={
-					<SelectControl
-						__nextHasNoMarginBottom
-						__next40pxDefaultSize
-						ref={ mergedRefs }
-						onChange={ ( value ) => {
-							valueRef.current = value;
-							onChange?.( value );
-						} }
-						{ ...restProps }
-					/>
-				}
-				onReportCustomValidity={ () => {
-					return onReportCustomValidity?.( valueRef.current );
-				} }
-				getValidityTarget={ () => validityTargetRef.current }
-			/>
-		);
-	}
-);
+	return (
+		<ControlWithError
+			required={ required }
+			markWhenOptional={ markWhenOptional }
+			render={
+				<SelectControl
+					__nextHasNoMarginBottom
+					__next40pxDefaultSize
+					ref={ mergedRefs }
+					onChange={ ( value ) => {
+						valueRef.current = value;
+						onChange?.( value );
+					} }
+					{ ...restProps }
+				/>
+			}
+			customValidator={ () => {
+				return customValidator?.( valueRef.current );
+			} }
+			getValidityTarget={ () => validityTargetRef.current }
+		/>
+	);
+} );

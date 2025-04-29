@@ -40,7 +40,7 @@ Default.args = {
 		{ value: 'a', label: 'Option A (not allowed)' },
 		{ value: 'b', label: 'Option B' },
 	],
-	onReportCustomValidity: ( value ) => {
+	customValidator: ( value ) => {
 		if ( value === 'a' ) {
 			return 'Option A is not allowed.';
 		}

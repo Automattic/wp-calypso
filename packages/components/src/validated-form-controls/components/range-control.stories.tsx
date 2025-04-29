@@ -38,7 +38,7 @@ Default.args = {
 	help: 'Odd numbers are not allowed.',
 	min: 0,
 	max: 20,
-	onReportCustomValidity: ( value ) => {
+	customValidator: ( value ) => {
 		if ( value && value % 2 !== 0 ) {
 			return 'Choose an even number.';
 		}

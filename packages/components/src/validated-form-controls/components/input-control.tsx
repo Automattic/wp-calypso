@@ -10,35 +10,30 @@ type Value = InputControlProps[ 'value' ];
 export const ValidatedInputControl = forwardRef<
 	HTMLInputElement,
 	Omit< InputControlProps, '__next40pxDefaultSize' > & ValidatedControlProps< Value >
->(
-	(
-		{ required, onReportCustomValidity, onChange, markWhenOptional, ...restProps },
-		forwardedRef
-	) => {
-		const validityTargetRef = useRef< HTMLInputElement >( null );
-		const mergedRefs = useMergeRefs( [ forwardedRef, validityTargetRef ] );
-		const valueRef = useRef< Value >( restProps.value );
+>( ( { required, customValidator, onChange, markWhenOptional, ...restProps }, forwardedRef ) => {
+	const validityTargetRef = useRef< HTMLInputElement >( null );
+	const mergedRefs = useMergeRefs( [ forwardedRef, validityTargetRef ] );
+	const valueRef = useRef< Value >( restProps.value );
 
-		return (
-			<ControlWithError
-				required={ required }
-				markWhenOptional={ markWhenOptional }
-				render={
-					<InputControl
-						__next40pxDefaultSize
-						ref={ mergedRefs }
-						onChange={ ( value, ...args ) => {
-							valueRef.current = value;
-							onChange?.( value, ...args );
-						} }
-						{ ...restProps }
-					/>
-				}
-				onReportCustomValidity={ () => {
-					return onReportCustomValidity?.( valueRef.current );
-				} }
-				getValidityTarget={ () => validityTargetRef.current }
-			/>
-		);
-	}
-);
+	return (
+		<ControlWithError
+			required={ required }
+			markWhenOptional={ markWhenOptional }
+			render={
+				<InputControl
+					__next40pxDefaultSize
+					ref={ mergedRefs }
+					onChange={ ( value, ...args ) => {
+						valueRef.current = value;
+						onChange?.( value, ...args );
+					} }
+					{ ...restProps }
+				/>
+			}
+			customValidator={ () => {
+				return customValidator?.( valueRef.current );
+			} }
+			getValidityTarget={ () => validityTargetRef.current }
+		/>
+	);
+} );

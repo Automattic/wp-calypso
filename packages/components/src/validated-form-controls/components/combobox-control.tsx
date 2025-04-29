@@ -10,49 +10,44 @@ export const ValidatedComboboxControl = forwardRef<
 	HTMLInputElement,
 	Omit< ComboboxControlProps, '__next40pxDefaultSize' | '__nextHasNoMarginBottom' > &
 		ValidatedControlProps< Value >
->(
-	(
-		{ required, onReportCustomValidity, onChange, markWhenOptional, ...restProps },
-		forwardedRef
-	) => {
-		const validityTargetRef = useRef< HTMLInputElement >( null );
-		const mergedRefs = useMergeRefs( [ forwardedRef, validityTargetRef ] );
-		const valueRef = useRef< Value >( restProps.value );
+>( ( { required, customValidator, onChange, markWhenOptional, ...restProps }, forwardedRef ) => {
+	const validityTargetRef = useRef< HTMLInputElement >( null );
+	const mergedRefs = useMergeRefs( [ forwardedRef, validityTargetRef ] );
+	const valueRef = useRef< Value >( restProps.value );
 
-		// TODO: Upstream limitation - The `required` attribute is not passed down to the input,
-		// so we need to set it manually.
-		useEffect( () => {
-			const input =
-				validityTargetRef.current?.querySelector< HTMLInputElement >( 'input[role="combobox"]' );
-			if ( input ) {
-				input.required = required ?? false;
+	// TODO: Upstream limitation - The `required` attribute is not passed down to the input,
+	// so we need to set it manually.
+	useEffect( () => {
+		const input =
+			validityTargetRef.current?.querySelector< HTMLInputElement >( 'input[role="combobox"]' );
+		if ( input ) {
+			input.required = required ?? false;
+		}
+	}, [ required ] );
+
+	return (
+		// TODO: Bug - Missing value error is not cleared immediately on change, waits for blur.
+		<ControlWithError
+			required={ required }
+			markWhenOptional={ markWhenOptional }
+			ref={ mergedRefs }
+			render={
+				<ComboboxControl
+					__nextHasNoMarginBottom
+					__next40pxDefaultSize
+					{ ...restProps }
+					onChange={ ( value ) => {
+						valueRef.current = value;
+						onChange?.( value );
+					} }
+				/>
 			}
-		}, [ required ] );
-
-		return (
-			// TODO: Bug - Missing value error is not cleared immediately on change, waits for blur.
-			<ControlWithError
-				required={ required }
-				markWhenOptional={ markWhenOptional }
-				ref={ mergedRefs }
-				render={
-					<ComboboxControl
-						__nextHasNoMarginBottom
-						__next40pxDefaultSize
-						{ ...restProps }
-						onChange={ ( value ) => {
-							valueRef.current = value;
-							onChange?.( value );
-						} }
-					/>
-				}
-				onReportCustomValidity={ () => {
-					return onReportCustomValidity?.( valueRef.current );
-				} }
-				getValidityTarget={ () =>
-					validityTargetRef.current?.querySelector< HTMLInputElement >( 'input[role="combobox"]' )
-				}
-			/>
-		);
-	}
-);
+			customValidator={ () => {
+				return customValidator?.( valueRef.current );
+			} }
+			getValidityTarget={ () =>
+				validityTargetRef.current?.querySelector< HTMLInputElement >( 'input[role="combobox"]' )
+			}
+		/>
+	);
+} );
