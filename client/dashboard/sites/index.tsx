@@ -64,7 +64,11 @@ const DEFAULT_FIELDS = [
 			{ value: undefined, label: __( 'Disabled' ) },
 		],
 		render: ( { item }: { item: Site } ) =>
-			item.plan.features.active.includes( 'backups' ) ? <Icon icon={ check } /> : __( 'Disabled' ),
+			item.plan?.features?.active?.includes( 'backups' ) ? (
+				<Icon icon={ check } />
+			) : (
+				__( 'Disabled' )
+			),
 		filterBy: {
 			operators: [ 'is' as Operator ],
 		},
