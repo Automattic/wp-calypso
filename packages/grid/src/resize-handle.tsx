@@ -1,4 +1,5 @@
 import { DndContext, DragMoveEvent, useDraggable } from '@dnd-kit/core';
+import { useThrottle } from '@wordpress/compose';
 import { useRef } from 'react';
 
 interface ResizeHandleProps {
@@ -33,6 +34,14 @@ function ResizeHandle( { disabled = false, itemId }: ResizeHandleProps ) {
 
 export default function ResizeHandleWrapper( props: ResizeHandleProps ) {
 	const initialAnchorPosition = useRef< DOMRect | null >( null );
+	// Throttle the resize event to avoid excessive calls
+	// and improve performance during drag operations and drag and scroll behavior.
+	const throttleDelay = 100;
+	const throttledResize = useThrottle( ( delta: { width: number; height: number } ) => {
+		if ( props.onResize ) {
+			props.onResize( delta );
+		}
+	}, throttleDelay );
 
 	const handleDragStart = ( event: DragMoveEvent ) => {
 		// @ts-expect-error I expect this to be always defined.
@@ -40,7 +49,6 @@ export default function ResizeHandleWrapper( props: ResizeHandleProps ) {
 	};
 
 	const handleDragMove = ( event: DragMoveEvent ) => {
-		const { onResize } = props;
 		if ( ! initialAnchorPosition.current ) {
 			return;
 		}
@@ -53,13 +61,13 @@ export default function ResizeHandleWrapper( props: ResizeHandleProps ) {
 			height: deltaY,
 		};
 
-		if ( onResize && event.active.id === 'draggable' ) {
+		if ( event.active.id === 'draggable' ) {
 			const delta = {
 				width: event.delta.x - anchorDelta.width,
 				height: event.delta.y - anchorDelta.height,
 			};
 
-			onResize( delta );
+			throttledResize( delta );
 		}
 	};
 
