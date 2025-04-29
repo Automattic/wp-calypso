@@ -842,7 +842,13 @@ const pulse = keyframes`
 `;
 
 const CheckoutSummaryCard = styled.div`
-	border-bottom: none 0;
+	border: none;
+	border-radius: 4px;
+	background: #fff;
+	padding: 28px;
+	box-shadow:
+		0 3px 1px rgb( 0 0 0 / 4% ),
+		0 3px 8px rgb( 0 0 0 / 12% );
 `;
 
 const CheckoutSummaryFeatures = styled.div`
