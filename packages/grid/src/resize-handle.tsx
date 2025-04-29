@@ -34,9 +34,10 @@ function ResizeHandle( { disabled = false, itemId }: ResizeHandleProps ) {
 
 export default function ResizeHandleWrapper( props: ResizeHandleProps ) {
 	const initialAnchorPosition = useRef< DOMRect | null >( null );
+
 	// Throttle the resize event to avoid excessive calls
-	// and improve performance during drag operations and drag and scroll behavior.
-	const throttleDelay = 100;
+	// and improve performance during drag operations
+	const throttleDelay = 60;
 	const throttledResize = useThrottle( ( delta: { width: number; height: number } ) => {
 		if ( props.onResize ) {
 			props.onResize( delta );

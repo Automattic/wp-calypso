@@ -1,60 +1,10 @@
 import { DndContext, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
-import {
-	arrayMove,
-	SortableContext,
-	sortableKeyboardCoordinates,
-	useSortable,
-} from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
+import { arrayMove, SortableContext, sortableKeyboardCoordinates } from '@dnd-kit/sortable';
 import { useResizeObserver } from '@wordpress/compose';
 import { useMemo, Children, isValidElement, useState } from 'react';
-import ResizeHandle from './resize-handle';
+import { GridItem } from './grid-item';
 import type { GridLayoutItem, GridProps } from './types';
 import type { DragOverEvent } from '@dnd-kit/core';
-
-export function GridItem( {
-	item,
-	maxColumns,
-	disabled = false,
-	children,
-	onResize,
-	onResizeEnd,
-}: {
-	item: GridLayoutItem;
-	maxColumns: number;
-	disabled?: boolean;
-	children: React.ReactNode;
-	onResize?: ( delta: { width: number; height: number } ) => void;
-	onResizeEnd: () => void;
-} ) {
-	const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable( {
-		id: item.key,
-		disabled,
-	} );
-	const dragCursor = isDragging ? 'grabbing' : 'grab';
-	const style = {
-		transform: CSS.Translate.toString( transform ),
-		transition,
-		gridColumnEnd: `span ${
-			item.fullWidth ? maxColumns : Math.min( item.width ?? 1, maxColumns )
-		}`,
-		gridRowEnd: `span ${ item.height || 1 }`,
-		cursor: disabled ? 'default' : dragCursor,
-		position: 'relative' as const,
-	};
-
-	return (
-		<div ref={ setNodeRef } style={ style } { ...attributes } { ...listeners }>
-			{ children }
-			<ResizeHandle
-				disabled={ disabled }
-				itemId={ item.key }
-				onResize={ onResize }
-				onResizeEnd={ onResizeEnd }
-			/>
-		</div>
-	);
-}
 
 export function Grid( {
 	layout,
