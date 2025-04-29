@@ -1001,9 +1001,6 @@ const CheckoutSummarySubtotal = styled( CheckoutSummaryLineItem )`
 	line-height: 26px;
 	margin-bottom: 0px;
 	font-size: 20px;
-	& span {
-		font-family: 'Recoleta', sans-serif;
-	}
 	& .wp-checkout-order-summary__subtotal-price {
 		font-size: 14px; }
 	}
@@ -1016,12 +1013,12 @@ const CheckoutSummaryTotal = styled( CheckoutSummaryLineItem )< { isStreamlinedP
 	margin-bottom: 0px;
 	font-size: 20px;
 
-	& span {
-		font-family: 'Recoleta', sans-serif;
-	}
 	${ ( props ) =>
 		! props.isStreamlinedPrice &&
 		css`
+	& span {
+		font-family: 'Recoleta', sans-serif;
+	}
 	& .wp-checkout-order-summary__label {
 		font-size: 28px;
 		line-height: 40px;
