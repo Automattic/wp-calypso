@@ -96,6 +96,10 @@ const PlanComparisonHeader = styled.h1`
 	}
 `;
 
+const hideEscapeHatchForIntent = ( intent: PlansIntent ) => {
+	return intent === 'plans-ai-assembler';
+};
+
 export interface PlansFeaturesMainProps {
 	siteId?: number | null;
 	intent?: PlansIntent | null;
@@ -338,7 +342,10 @@ const PlansFeaturesMain = ( {
 	] );
 
 	const showEscapeHatch =
-		intentFromSiteMeta.intent && ! isInSignup && defaultWpcomPlansIntent !== intent;
+		intentFromSiteMeta.intent &&
+		! isInSignup &&
+		defaultWpcomPlansIntent !== intent &&
+		! hideEscapeHatchForIntent( intentFromSiteMeta.intent );
 
 	/**
 	 * showSimplifiedFeatures should be true always and this variable should be removed.
