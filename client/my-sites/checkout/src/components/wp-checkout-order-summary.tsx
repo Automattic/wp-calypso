@@ -88,11 +88,13 @@ export function WPCheckoutOrderSummary( {
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 	const isCartUpdating = FormStatus.VALIDATING === formStatus;
+	const [ , streamlinedPriceExperimentAssignment ] = useStreamlinedPriceExperiment();
 
 	return (
 		<CheckoutSummaryCard
 			className={ isCartUpdating ? 'is-loading' : '' }
 			data-e2e-cart-is-loading={ isCartUpdating }
+			isStreamlinedPrice={ streamlinedPriceExperimentAssignment }
 		>
 			{ showFeaturesList && (
 				<CheckoutSummaryFeaturedList
@@ -859,16 +861,20 @@ const pulse = keyframes`
 	100% { opacity: 1; }
 `;
 
-const CheckoutSummaryCard = styled.div`
-	border: none;
-	border-radius: 4px;
-	background: #fff;
-	padding: 28px;
-	box-shadow:
-		0 3px 1px rgb( 0 0 0 / 4% ),
-		0 3px 8px rgb( 0 0 0 / 12% );
+const CheckoutSummaryCard = styled.div< { isStreamlinedPrice: boolean } >`
+	border-bottom: none 0;
+	${ ( props ) =>
+		props.isStreamlinedPrice &&
+		css`
+			border: none;
+			border-radius: 4px;
+			background: #fff;
+			padding: 28px;
+			box-shadow:
+				0 3px 1px rgb( 0 0 0 / 4% ),
+				0 3px 8px rgb( 0 0 0 / 12% );
+		` }
 `;
-
 const CheckoutSummaryFeatures = styled.div`
 	padding: 24px 0;
 	justify-self: flex-start;
