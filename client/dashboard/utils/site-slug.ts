@@ -1,7 +1,9 @@
 import { urlToSlug } from 'calypso/lib/url/http-utils';
 import type { Site } from '../data/types';
 
-// TODO: handle site collisions as well somehow. See: https://github.com/Automattic/wp-calypso/pull/65938
 export function getSiteSlug( site: Site ) {
+	if ( site.options?.is_redirect ) {
+		return withoutHttp( site.options?.unmapped_url ?? '' );
+	}
 	return urlToSlug( site.URL );
 }

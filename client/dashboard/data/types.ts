@@ -66,6 +66,7 @@ export interface SiteOptions {
 	is_wpcom_atomic?: boolean;
 	blog_public: number;
 	is_redirect?: boolean;
+	unmapped_url?: string;
 }
 
 export interface Site {
