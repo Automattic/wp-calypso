@@ -266,7 +266,7 @@ const StagingToProductionSync = ( {
 											{ translate( 'Warning! WooCommerce data will be overwritten.' ) }
 										</SyncWarningTitle>
 										{ translate(
-											"The production site could have newer orders and customers that would be lost when overwritten by the staging site's data. We do not recommend syncing data from a staging site to a production eCommmerce site without proper planning and testing."
+											'This site has WooCommerce installed. We do not recommend syncing or pushing data from a staging site to live production news sites or sites that use eCommerce plugins, such as WooCommerce, without proper planning and testing. Keep in mind that data on the destination site could have newer transactions, such as customers and orders, and would be lost when overwritten by the staging site’s data.'
 										) }
 									</WPNotice>
 								</SyncWarningContainer>
