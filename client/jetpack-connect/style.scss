@@ -332,7 +332,7 @@ $colophon-height: 50px;
 			font-size: 16px;
 			line-height: 24px;
 			border: 1px solid var(--jp-green-60, #007117);
-			border-radius: var(--jp-button-radius);
+			border-radius: var(--jp-button-radius, 4px);
 			box-sizing: border-box;
 			color: var(--jp-white, #fff);
 			background: var(--jp-green-60, #007117);
