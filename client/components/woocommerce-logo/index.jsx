@@ -14,6 +14,11 @@ function WooCommerceLogo( { className = 'woo-logo', size = 72, variant = 'color'
 		fill = 'black';
 	}
 
+	// Calculate height based on the aspect ratio of the viewBox
+	const viewBoxWidth = 183.6;
+	const viewBoxHeight = 47.5;
+	const height = ( size * viewBoxHeight ) / viewBoxWidth;
+
 	return (
 		<svg
 			version="1.1"
@@ -23,7 +28,7 @@ function WooCommerceLogo( { className = 'woo-logo', size = 72, variant = 'color'
 			x="0px"
 			y="0px"
 			width={ size }
-			height={ size }
+			height={ height }
 			viewBox="0 0 183.6 47.5"
 			className={ className }
 		>
