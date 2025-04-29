@@ -22,7 +22,6 @@ import { useShortcuts } from 'calypso/components/date-range/use-shortcuts';
 import EmptyContent from 'calypso/components/empty-content';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
-import JetpackLogo from 'calypso/components/jetpack-logo';
 import NavigationHeader from 'calypso/components/navigation-header';
 import StickyPanel from 'calypso/components/sticky-panel';
 import memoizeLast from 'calypso/lib/memoize-last';
@@ -33,7 +32,6 @@ import {
 	STATS_FEATURE_PAGE_TRAFFIC,
 	STATS_FEATURE_INTERVAL_DROPDOWN_WEEK,
 	STATS_PRODUCT_NAME,
-	STATS_PRODUCT_NAME_IMPR,
 } from 'calypso/my-sites/stats/constants';
 import { getMomentSiteZone } from 'calypso/my-sites/stats/hooks/use-moment-site-zone';
 import { getChartRangeParams } from 'calypso/my-sites/stats/utils';
@@ -54,6 +52,7 @@ import { isJetpackSite } from 'calypso/state/sites/selectors';
 import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
 import { getModuleToggles } from 'calypso/state/stats/module-toggles/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import PageHeader from './components/headers/page-header';
 import StatsModuleAuthors from './features/modules/stats-authors';
 import StatsModuleClicks from './features/modules/stats-clicks';
 import StatsModuleCountries from './features/modules/stats-countries';
@@ -84,7 +83,6 @@ import StatsPlanUsage from './stats-plan-usage';
 import statsStrings from './stats-strings';
 import StatsUpsell from './stats-upsell/traffic-upsell';
 import { appendQueryStringForRedirection, getPathWithUpdatedQueryString } from './utils';
-import PageHeader from './components/headers/page-header';
 
 // Sync hidable modules with StatsNavigation.
 const HIDDABLE_MODULES = AVAILABLE_PAGE_MODULES.traffic.map( ( module ) => {

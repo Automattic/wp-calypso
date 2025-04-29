@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
+import { JetpackLogo } from '@automattic/components';
 import NavigationHeaderImpr from 'calypso/components/navigation-header/navigation-header';
 import { STATS_PRODUCT_NAME, STATS_PRODUCT_NAME_IMPR } from '../../constants';
-import { JetpackLogo } from '@automattic/components';
 
 function PageHeader() {
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
