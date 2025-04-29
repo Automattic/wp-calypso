@@ -26,10 +26,13 @@ import type { View } from '../../../types';
 
 import './style.css';
 
-const meta = {
+import type { Meta } from '@storybook/react';
+
+const meta: Meta< typeof DataViews > = {
 	title: 'DataViews/DataViews',
 	component: DataViews,
 };
+
 export default meta;
 
 const defaultLayouts = {
