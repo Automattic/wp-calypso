@@ -186,6 +186,9 @@ function CheckoutSummaryPriceList() {
 
 	return (
 		<>
+			<CheckoutSummaryTitle>
+				<span>{ translate( 'Your order' ) }</span>
+			</CheckoutSummaryTitle>
 			<ProductsAndCostOverridesList responseCart={ responseCart } />
 			<CheckoutSummaryAmountWrapper>
 				<CheckoutSubtotalSection>
@@ -956,6 +959,14 @@ const CheckoutSummaryFeaturesListItem = styled( 'li' )< { isSupported?: boolean 
 CheckoutSummaryFeaturesListItem.defaultProps = {
 	isSupported: true,
 };
+
+const CheckoutSummaryTitle = styled.div`
+	margin-bottom: 8px;
+	color: ${ ( props ) => props.theme.colors.textColorDark };
+	font-weight: ${ ( props ) => props.theme.weights.bold };
+	line-height: 26px;
+	font-size: 20px;
+`;
 
 const CheckoutSubtotalSection = styled.div`
 	border-bottom: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
