@@ -1,6 +1,6 @@
-import LoginButton from '../login-button';
+import LoginButton from '../../login-button';
 import type { StoryFn, StoryObj } from '@storybook/react';
-import './style.scss';
+import '../style.scss';
 
 export const loginButtonArgs = {
 	isWoo: false,
@@ -72,12 +72,6 @@ export const WPJobManagerWrapper = ( Story: StoryFn ) => (
 );
 
 export type Story = StoryObj< typeof LoginButton >;
-
-export const disabledStory: Story = {
-	args: {
-		isDisabled: true,
-	},
-};
 
 export const sendingEmailStory: Story = {
 	args: {

@@ -5,7 +5,7 @@ import {
 	type Story,
 	JetpackWrapper,
 	loginButtonArgs,
-} from '../shared';
+} from './shared';
 import type { Meta } from '@storybook/react';
 import '../../../../layout/masterbar/oauth-client.scss';
 

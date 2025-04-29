@@ -1,12 +1,11 @@
 import LoginButton from '../../login-button';
 import {
-	disabledStory,
 	sendingEmailStory,
 	loginButtonArgs,
 	LoginFormAction,
 	LoginFormWrapper,
 	type Story,
-} from '../shared';
+} from './shared';
 import type { Meta } from '@storybook/react';
 
 const meta: Meta = {
@@ -20,6 +19,10 @@ export default meta;
 
 export const Default: Story = {};
 
-export const Disabled: Story = { ...disabledStory };
+export const Disabled: Story = {
+	args: {
+		isDisabled: true,
+	},
+};
 
 export const SendingEmail: Story = { ...sendingEmailStory };

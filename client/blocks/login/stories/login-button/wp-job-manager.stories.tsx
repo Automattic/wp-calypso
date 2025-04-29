@@ -1,5 +1,5 @@
 import LoginButton from '../../login-button';
-import { loginButtonArgs, LoginFormAction, WPJobManagerWrapper, type Story } from '../shared';
+import { loginButtonArgs, LoginFormAction, WPJobManagerWrapper, type Story } from './shared';
 import type { Meta } from '@storybook/react';
 import '../../../../login/wp-login/style.scss';
 

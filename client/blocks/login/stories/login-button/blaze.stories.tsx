@@ -5,7 +5,7 @@ import {
 	LoginFormAction,
 	LoginFormWrapper,
 	type Story,
-} from '../shared';
+} from './shared';
 import type { Meta } from '@storybook/react';
 import '../../../../layout/masterbar/blaze-pro.scss';
 
