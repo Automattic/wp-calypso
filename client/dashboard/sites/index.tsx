@@ -12,6 +12,7 @@ import PageLayout from '../page-layout';
 import SiteIcon from '../site-icon';
 import SitePreview from '../site-preview';
 import { isA8CSite } from '../utils/site-owner';
+import { getSiteSlug } from '../utils/site-slug';
 import { STATUS_LABELS, getSiteStatus, getSiteStatusLabel } from '../utils/site-status';
 import type { Site } from '../data/types';
 import type { View, Operator } from '@wordpress/dataviews';
@@ -192,7 +193,7 @@ export default function Sites() {
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate( sites, view, fields );
 
 	const onClickItem = ( item: Site ) => {
-		navigate( { to: `/sites/${ item.ID }` } );
+		navigate( { to: `/sites/${ getSiteSlug( item ) }` } );
 	};
 
 	return (
