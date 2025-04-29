@@ -2,13 +2,11 @@ import debugModule from 'debug';
 import Batch from './lib/batch';
 import Domain from './lib/domain';
 import Domains from './lib/domains';
-import Me from './lib/me';
 import Plans from './lib/plans';
 import Site from './lib/site';
 import Users from './lib/users';
 import Pinghub from './lib/util/pinghub';
 import Request from './lib/util/request';
-import sendRequest from './lib/util/send-request';
 
 /**
  * Local module constants
@@ -77,14 +75,6 @@ WPCOM.prototype.isTokenLoaded = function () {
 };
 
 /**
- * Return `Me` object instance
- * @returns {Me} Me instance
- */
-WPCOM.prototype.me = function () {
-	return new Me( this );
-};
-
-/**
  * Return `Domains` object instance
  * @returns {Domains} Domains instance
  */
@@ -144,29 +134,12 @@ WPCOM.prototype.freshlyPressed = function ( query, fn ) {
 	return this.req.get( '/freshly-pressed', query, fn );
 };
 
-// Expose send-request
-// TODO: use `this.req` instead of this method
-WPCOM.prototype.sendRequest = function ( params, query, body, fn ) {
-	const msg = 'WARN! Don use `sendRequest() anymore. Use `this.req` method.';
-
-	/* eslint-disable no-console */
-	if ( console && console.warn ) {
-		console.warn( msg );
-	} else {
-		console.log( msg );
-	}
-	/* eslint-enable no-console */
-
-	return sendRequest.call( this, params, query, body, fn );
-};
-
 /**
  * Re-export all the class types.
  */
 WPCOM.Batch = Batch;
 WPCOM.Domain = Domain;
 WPCOM.Domains = Domains;
-WPCOM.Me = Me;
 WPCOM.Pinghub = Pinghub;
 WPCOM.Plans = Plans;
 WPCOM.Request = Request;

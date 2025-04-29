@@ -117,6 +117,15 @@ module.exports = {
 					'return-await': 'off',
 					semi: 'off',
 					'space-before-function-paren': 'off',
+					'@typescript-eslint/ban-ts-comment': [
+						'error',
+						{
+							'ts-check': 'allow-with-description',
+							'ts-expect-error': 'allow-with-description',
+							'ts-ignore': 'allow-with-description',
+							'ts-nocheck': 'allow-with-description',
+						},
+					],
 					'@typescript-eslint/ban-types': [
 						'error',
 						{

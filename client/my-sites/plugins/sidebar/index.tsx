@@ -3,9 +3,13 @@ import { settings } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
+import { connect } from 'react-redux';
+import { withCurrentRoute } from 'calypso/components/route';
 import GlobalSidebar from 'calypso/layout/global-sidebar';
 import SidebarItem from 'calypso/layout/sidebar/item';
 import SidebarMenu from 'calypso/layout/sidebar/menu';
+import { getShouldShowCollapsedGlobalSidebar } from 'calypso/state/global-sidebar/selectors';
+import { AppState } from 'calypso/types';
 import { SidebarIconPlugins } from '../../sidebar/static-data/global-sidebar-menu';
 import { SidebarIconCalendar } from './icons';
 import './style.scss';
@@ -77,4 +81,17 @@ const PluginsSidebar = ( { path, isCollapsed }: Props ) => {
 	);
 };
 
-export default PluginsSidebar;
+export default withCurrentRoute(
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	connect( ( state: AppState, { currentSection, currentRoute }: any ) => {
+		const shouldShowCollapsedGlobalSidebar = getShouldShowCollapsedGlobalSidebar( {
+			state,
+			siteId: null,
+			section: currentSection,
+			route: currentRoute,
+		} );
+		return {
+			isCollapsed: shouldShowCollapsedGlobalSidebar,
+		};
+	} )( PluginsSidebar )
+);

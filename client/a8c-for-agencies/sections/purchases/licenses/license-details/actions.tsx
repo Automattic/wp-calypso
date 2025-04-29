@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { Icon, external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
@@ -13,6 +14,7 @@ import {
 	isPressableHostingProduct,
 	isWPCOMHostingProduct,
 } from 'calypso/a8c-for-agencies/sections/marketplace/lib/hosting';
+import isJetpackCrmProduct from 'calypso/components/crm-downloads/is-jetpack-crm-product';
 import { LicenseState, LicenseType } from 'calypso/jetpack-cloud/sections/partner-portal/types';
 import { addQueryArgs } from 'calypso/lib/url';
 import { useDispatch, useSelector } from 'calypso/state';
@@ -102,6 +104,14 @@ export default function LicenseDetailsActions( {
 						onClick={ download }
 					>
 						{ translate( 'Download' ) }
+					</Button>
+				) }
+
+			{ config.isEnabled( 'jetpack/crm-downloads' ) &&
+				licenseState === LicenseState.Attached &&
+				isJetpackCrmProduct( licenseKey ) && (
+					<Button compact href={ `/purchases/crm-downloads/${ licenseKey }` }>
+						{ translate( 'Download Jetpack CRM Extensions' ) }
 					</Button>
 				) }
 

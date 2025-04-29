@@ -1,5 +1,8 @@
+import { useState } from 'react';
 import { Grid } from '../grid';
+import type { GridLayoutItem } from '../types';
 import type { Meta, StoryObj } from '@storybook/react';
+import type { HTMLAttributes } from 'react';
 
 const meta: Meta< typeof Grid > = {
 	title: 'Grid',
@@ -15,17 +18,13 @@ const meta: Meta< typeof Grid > = {
 export default meta;
 
 function Card( {
-	style,
 	color,
 	children,
-}: {
-	style?: React.CSSProperties;
-	color: string;
-	children: React.ReactNode;
-} ) {
+	...props
+}: { color: string; children: React.ReactNode } & HTMLAttributes< HTMLDivElement > ) {
 	return (
 		<div
-			key="a"
+			{ ...props }
 			style={ {
 				backgroundColor: color,
 				color: 'white',
@@ -33,7 +32,9 @@ function Card( {
 				display: 'flex',
 				alignItems: 'center',
 				justifyContent: 'center',
-				...style,
+				height: '100%',
+				boxSizing: 'border-box',
+				...props?.style,
 			} }
 		>
 			{ children }
@@ -47,38 +48,11 @@ function Card( {
 export const Default: StoryObj< typeof Grid > = {
 	args: {
 		layout: [
-			{ key: 'a', x: 0, y: 0, width: 1 },
-			{ key: 'b', x: 1, y: 0, width: 3 },
-			{ key: 'c', x: 4, y: 0, width: 1 },
-		],
-		columns: 6,
-		children: [
-			<Card key="a" color="#f44336">
-				A
-			</Card>,
-			<Card key="b" color="#2196f3">
-				B
-			</Card>,
-			<Card key="c" color="#4caf50">
-				C
-			</Card>,
-		],
-	},
-};
-
-/**
- * Basic usage example of the Grid component with implicit positions
- */
-export const Implicit: StoryObj< typeof Grid > = {
-	args: {
-		layout: [
 			{ key: 'a', width: 1 },
 			{ key: 'b', width: 3 },
 			{ key: 'c', width: 1 },
 		],
 		columns: 6,
-		spacing: 2,
-		rowHeight: '100px',
 		children: [
 			<Card key="a" color="#f44336">
 				A
@@ -88,44 +62,6 @@ export const Implicit: StoryObj< typeof Grid > = {
 			</Card>,
 			<Card key="c" color="#4caf50">
 				C
-			</Card>,
-		],
-	},
-};
-
-/**
- * Multi-row grid layout example
- */
-export const MultiRowLayout: StoryObj< typeof Grid > = {
-	args: {
-		layout: [
-			{ key: 'a', x: 0, y: 0, width: 2, height: 1 },
-			{ key: 'b', x: 2, y: 0, width: 3, height: 2 },
-			{ key: 'c', x: 5, y: 0, width: 1, height: 1 },
-			{ key: 'd', x: 0, y: 1, width: 2, height: 1 },
-			{ key: 'e', x: 5, y: 1, width: 1, height: 1 },
-		],
-		columns: 6,
-		spacing: 2,
-		rowHeight: '100px',
-		children: [
-			<Card key="a" color="#f44336">
-				A
-			</Card>,
-			<Card key="b" color="#2196f3">
-				B
-			</Card>,
-			<Card key="c" color="#4caf50">
-				C
-			</Card>,
-			<Card key="d" color="#ff9800">
-				D
-			</Card>,
-			<Card key="e" color="#9c27b0">
-				E
-			</Card>,
-			<Card key="f" color="black">
-				F
 			</Card>,
 		],
 	},
@@ -138,15 +74,15 @@ export const MultiRowLayout: StoryObj< typeof Grid > = {
 export const ResponsiveGrid: StoryObj< typeof Grid > = {
 	args: {
 		layout: [
-			{ key: 'a', width: 1, height: 1, order: 1 },
-			{ key: 'b', width: 3, height: 1, order: 2 },
-			{ key: 'c', width: 1, height: 1, order: 3 },
-			{ key: 'd', width: 3, height: 1, order: 4 },
-			{ key: 'e', width: 4, height: 1, order: 5 },
+			{ key: 'a', width: 2, height: 1, order: 1 },
+			{ key: 'b', width: 2, height: 1, order: 2 },
+			{ key: 'c', width: 2, height: 1, order: 3 },
+			{ key: 'd', width: 4, height: 1, order: 4 },
+			{ key: 'e', width: 2, height: 1, order: 5 },
 			{ key: 'f', height: 2, order: 6, fullWidth: true },
 		],
-		rowHeight: '100px',
-		minColumnWidth: 200,
+		rowHeight: 'auto',
+		minColumnWidth: 160,
 		children: [
 			<Card key="a" color="#f44336">
 				Card A
@@ -173,6 +109,77 @@ export const ResponsiveGrid: StoryObj< typeof Grid > = {
 			description: {
 				story:
 					'This example demonstrates the responsive behavior of the Grid component. The grid will automatically adjust the number of columns based on the container width. Resize the browser window to see it in action.',
+			},
+		},
+		layout: '',
+	},
+};
+
+/**
+ * Example showing the Grid component in edit mode with drag and drop functionality
+ */
+export const EditableGrid: StoryObj< typeof Grid > = {
+	render: function EditableGrid() {
+		const [ layout, setLayout ] = useState< GridLayoutItem[] >( [
+			{ key: 'a', width: 1 },
+			{ key: 'b', width: 2 },
+			{ key: 'c', width: 1 },
+			{ key: 'd', width: 2 },
+			{ key: 'e', width: 1 },
+			{ key: 'f', width: 1 },
+			{ key: 'g', width: 2 },
+			{ key: 'h', width: 1 },
+			{ key: 'i', width: 1 },
+			{ key: 'j', width: 1 },
+		] );
+
+		return (
+			<Grid
+				layout={ layout }
+				minColumnWidth={ 160 }
+				rowHeight="auto"
+				spacing={ 2 }
+				editMode
+				onChangeLayout={ ( newLayout ) => setLayout( newLayout ) }
+			>
+				<Card key="a" color="#f44336">
+					Card A
+				</Card>
+				<Card key="b" color="#2196f3">
+					Card B
+				</Card>
+				<Card key="c" color="#4caf50">
+					Card C
+				</Card>
+				<Card key="d" color="#ff9800">
+					Card D
+				</Card>
+				<Card key="e" color="#9c27b0">
+					Card E
+				</Card>
+				<Card key="f" color="#607d8b">
+					Card F
+				</Card>
+				<Card key="g" color="#3f51b5">
+					Card G
+				</Card>
+				<Card key="h" color="#8bc34a">
+					Card H
+				</Card>
+				<Card key="i" color="#cddc39">
+					Card I
+				</Card>
+				<Card key="j" color="#ffeb3b">
+					Card J
+				</Card>
+			</Grid>
+		);
+	},
+	parameters: {
+		docs: {
+			description: {
+				story:
+					'This example demonstrates the Grid component in edit mode with drag and drop functionality. Use the edit mode to reorder the cards. The layout and edit mode are managed with local state.',
 			},
 		},
 		layout: '',

@@ -12,7 +12,7 @@ type UsernameOrEmailButtonProps = {
 	onClick: () => void;
 };
 
-const UsernameOrEmailButton = ( { onClick }: UsernameOrEmailButtonProps ) => {
+export const UsernameOrEmailButton = ( { onClick }: UsernameOrEmailButtonProps ) => {
 	const { __ } = useI18n();
 	const isDisabled = useSelector( isFormDisabled );
 

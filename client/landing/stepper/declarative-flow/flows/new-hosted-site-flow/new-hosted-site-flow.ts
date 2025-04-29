@@ -1,5 +1,6 @@
 import { isFreeHostingTrial, isDotComPlan } from '@automattic/calypso-products';
 import { NEW_HOSTED_SITE_FLOW } from '@automattic/onboarding';
+import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { useDispatch, useSelect, dispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { useEffect } from 'react';
@@ -21,7 +22,7 @@ import { getCurrentQueryParams } from '../../../utils/get-current-query-params';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
 import { STEPS } from '../../internals/steps';
 import type { FlowV2, ProvidedDependencies, StepperStep } from '../../internals/types';
-import type { OnboardActions, OnboardSelect } from '@automattic/data-stores';
+import type { DomainSuggestion, OnboardActions, OnboardSelect } from '@automattic/data-stores';
 
 const hosting: FlowV2 = {
 	name: NEW_HOSTED_SITE_FLOW,
@@ -82,10 +83,11 @@ const hosting: FlowV2 = {
 			setDomainCartItem,
 			setDomainCartItems,
 			setPlanCartItem,
+			setProductCartItems,
 			setSiteUrl,
 			setSignupDomainOrigin,
 			resetCouponCode,
-		} = useDispatch( ONBOARD_STORE );
+		} = useDispatch( ONBOARD_STORE ) as OnboardActions;
 		const planCartItem = useSelect(
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem(),
 			[]
@@ -121,11 +123,11 @@ const hosting: FlowV2 = {
 
 			switch ( _currentStepSlug ) {
 				case STEPS.UNIFIED_DOMAINS.slug: {
-					setSiteUrl( providedDependencies.siteUrl );
-					setDomain( providedDependencies.suggestion );
-					setDomainCartItem( providedDependencies.domainItem );
-					setDomainCartItems( providedDependencies.domainCart );
-					setSignupDomainOrigin( providedDependencies.signupDomainOrigin );
+					setSiteUrl( providedDependencies.siteUrl as string );
+					setDomain( providedDependencies.suggestion as DomainSuggestion );
+					setDomainCartItem( providedDependencies.domainItem as MinimalRequestCartProduct );
+					setDomainCartItems( providedDependencies.domainCart as MinimalRequestCartProduct[] );
+					setSignupDomainOrigin( providedDependencies.signupDomainOrigin as string );
 
 					if ( planCartItem ) {
 						return navigate( STEPS.SITE_CREATION_STEP.slug );
@@ -134,23 +136,26 @@ const hosting: FlowV2 = {
 					return navigate( STEPS.UNIFIED_PLANS.slug );
 				}
 				case STEPS.UNIFIED_PLANS.slug: {
-					const cartItems = providedDependencies.cartItems as Array< typeof planCartItem >;
-					const productSlug = cartItems?.[ 0 ]?.product_slug;
+					const cartItems = providedDependencies.cartItems as Array< typeof planCartItem > | null;
+					const [ pickedPlan, ...extraProducts ] = cartItems ?? [];
 
-					if ( ! productSlug ) {
+					if ( ! pickedPlan ) {
 						throw new Error( 'No product slug found' );
 					}
 
 					setPlanCartItem( {
-						product_slug: productSlug,
+						...pickedPlan,
 						extra: {
+							...pickedPlan.extra,
 							...( utmSource && {
 								hideProductVariants: utmSource === 'wordcamp',
 							} ),
 						},
 					} );
 
-					if ( isFreeHostingTrial( productSlug ) ) {
+					setProductCartItems( extraProducts.filter( ( product ) => product !== null ) );
+
+					if ( isFreeHostingTrial( pickedPlan.product_slug ) ) {
 						return navigate( STEPS.TRIAL_ACKNOWLEDGE.slug );
 					}
 
