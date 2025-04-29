@@ -37,10 +37,11 @@ $image-height: 47px;
 
 	&.is-jetpack {
 		max-width: 450px;
-		margin-top: calc(96px - 48px);
 
+		// This is margin based on the layout + padding height.
+		margin-top: calc(96px - 48px);
 		@include break-small {
-			margin-top: calc(160px - 48px);
+			margin-top: calc(170px - 48px);
 		}
 	}
 }
