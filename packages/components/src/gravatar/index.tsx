@@ -26,7 +26,7 @@ type Props = {
 		| false; // or false if the temp image does not exist
 	alt?: string;
 	title?: string;
-};
+} & React.ImgHTMLAttributes< HTMLImageElement >;
 
 export class Gravatar extends Component< Props > {
 	static defaultProps = {
@@ -67,7 +67,7 @@ export class Gravatar extends Component< Props > {
 	onError = () => this.setState( { failedToLoad: true } );
 
 	render() {
-		const { alt, title, size, tempImage, user } = this.props;
+		const { alt, title, size, tempImage, user, ...rest } = this.props;
 
 		if ( ! user ) {
 			return <span className="gravatar is-placeholder" style={ { width: size, height: size } } />;
@@ -90,6 +90,7 @@ export class Gravatar extends Component< Props > {
 				width={ size }
 				height={ size }
 				onError={ this.onError }
+				{ ...rest }
 			/>
 		);
 	}

@@ -1,18 +1,19 @@
 import path from 'path';
 import { Dialog, Gridicon, ExternalLink } from '@automattic/components';
+import { GravatarQuickEditor } from '@gravatar-com/quick-editor';
 import { Spinner } from '@wordpress/components';
 import { Icon, upload, caution } from '@wordpress/icons';
 import clsx from 'clsx';
 import i18n, { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { Component } from 'react';
+import { Component, useEffect } from 'react';
 import { connect } from 'react-redux';
 import ImageEditor from 'calypso/blocks/image-editor';
-import DropZone from 'calypso/components/drop-zone';
 import VerifyEmailDialog from 'calypso/components/email-verification/email-verification-dialog';
 import FilePicker from 'calypso/components/file-picker';
 import Gravatar from 'calypso/components/gravatar';
 import InfoPopover from 'calypso/components/info-popover';
+import { useSelector } from 'calypso/state';
 import {
 	recordTracksEvent,
 	recordGoogleEvent,
@@ -28,6 +29,29 @@ import { isFetchingUserSettings } from 'calypso/state/user-settings/selectors';
 import { ALLOWED_FILE_EXTENSIONS } from './constants';
 
 import './style.scss';
+
+const GRAVATAR_IMG_SIZE = 400;
+
+const initializeGravatarQuickEditor = ( user ) => {
+	return new GravatarQuickEditor( {
+		email: user.email,
+		editorTriggerSelector: '#gravatar-avatar-edit-button',
+		avatarSelector: '#gravatar-avatar',
+		scope: [ 'avatars' ],
+	} );
+};
+
+function QuicklyEditableGravatar() {
+	const user = useSelector( getCurrentUser );
+
+	useEffect( () => {
+		if ( user ) {
+			initializeGravatarQuickEditor( user );
+		}
+	}, [ user ] );
+
+	return <Gravatar id="gravatar-avatar" imgSize={ GRAVATAR_IMG_SIZE } size={ 150 } user={ user } />;
+}
 
 export class EditGravatar extends Component {
 	state = {
@@ -217,7 +241,6 @@ export class EditGravatar extends Component {
 		const gravatarLink = 'https://gravatar.com';
 		// use imgSize = 400 for caching
 		// it's the popular value for large Gravatars in Calypso
-		const GRAVATAR_IMG_SIZE = 400;
 		const uploadButtonLabel = user.email_verified
 			? translate( 'Change profile photo' )
 			: translate( 'Verify your email to change profile photo' );
@@ -240,50 +263,43 @@ export class EditGravatar extends Component {
 					{ 'is-uploading': isUploading }
 				) }
 			>
-				<FilePicker accept="image/*" onPick={ this.onReceiveFile }>
-					<button
-						type="button"
-						onClick={ this.handleUnverifiedUserClick }
-						className="edit-gravatar__image-button"
-						aria-label={ uploadButtonLabel }
+				<button
+					type="button"
+					onClick={ this.handleUnverifiedUserClick }
+					className="edit-gravatar__image-button"
+					id="gravatar-avatar-edit-button"
+					aria-label={ uploadButtonLabel }
+				>
+					<div
+						data-tip-target="edit-gravatar"
+						className={ clsx( 'edit-gravatar__image-container', {
+							'is-uploading': isUploading,
+						} ) }
 					>
-						<div
-							data-tip-target="edit-gravatar"
-							className={ clsx( 'edit-gravatar__image-container', {
-								'is-uploading': isUploading,
-							} ) }
-						>
-							{ user.email_verified && (
-								<DropZone
-									textLabel={ translate( 'Drop to upload profile photo' ) }
-									onFilesDrop={ this.onReceiveFile }
-								/>
-							) }
-							<Gravatar imgSize={ GRAVATAR_IMG_SIZE } size={ 150 } user={ user } />
-							<div className="edit-gravatar__label-container">
-								<div className="edit-gravatar__label-container-icon">
-									{ ! user.email_verified && (
-										<Icon className="gridicon" icon={ caution } fill="#fff" size={ 24 } />
-									) }
+						<QuicklyEditableGravatar />
+						<div className="edit-gravatar__label-container">
+							<div className="edit-gravatar__label-container-icon">
+								{ ! user.email_verified && (
+									<Icon className="gridicon" icon={ caution } fill="#fff" size={ 24 } />
+								) }
 
-									{ user.email_verified && ! isUploading && (
-										<Icon className="gridicon" icon={ upload } fill="#fff" size={ 24 } />
-									) }
+								{ user.email_verified && ! isUploading && (
+									<Icon className="gridicon" icon={ upload } fill="#fff" size={ 24 } />
+								) }
 
-									{ user.email_verified && isUploading && (
-										<Spinner
-											style={ {
-												width: 24,
-												height: 24,
-											} }
-											className="edit-gravatar__label-container-icon-spinner"
-										/>
-									) }
-								</div>
+								{ user.email_verified && isUploading && (
+									<Spinner
+										style={ {
+											width: 24,
+											height: 24,
+										} }
+										className="edit-gravatar__label-container-icon-spinner"
+									/>
+								) }
 							</div>
 						</div>
-					</button>
-				</FilePicker>
+					</div>
+				</button>
 				{ this.state.showEmailVerificationNotice && (
 					<VerifyEmailDialog onClose={ this.closeVerifyEmailDialog } />
 				) }
