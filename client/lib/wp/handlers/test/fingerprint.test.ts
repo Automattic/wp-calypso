@@ -1,0 +1,80 @@
+/**
+ * @jest-environment jsdom
+ */
+
+import { loadFingerprint, injectFingerprint } from '../fingerprint';
+
+describe( '#injectFingerprint', () => {
+	let wpcom: { request: jest.Mock };
+	let originalRequest: jest.Mock;
+	const callback = jest.fn();
+
+	beforeEach( () => {
+		originalRequest = jest.fn();
+		wpcom = { request: originalRequest };
+	} );
+
+	test( 'should not inject X-Fingerprint header when fingerprint is not available', async () => {
+		injectFingerprint( wpcom );
+
+		wpcom.request( { path: '/me/transactions' }, callback );
+
+		expect( originalRequest ).toHaveBeenCalledWith( { path: '/me/transactions' }, callback );
+	} );
+
+	describe( 'when fingerprint is loaded', () => {
+		beforeAll( async () => {
+			await loadFingerprint();
+		} );
+
+		test( 'should inject fingering header for transactions path', async () => {
+			await loadFingerprint();
+
+			injectFingerprint( wpcom );
+
+			wpcom.request( { path: '/me/transactions' }, callback );
+
+			expect( originalRequest ).toHaveBeenCalledWith(
+				{
+					path: '/me/transactions',
+					headers: {
+						'X-Fingerprint': expect.any( String ),
+					},
+				},
+				callback
+			);
+		} );
+
+		test( 'should not inject header for other paths', async () => {
+			await loadFingerprint();
+
+			injectFingerprint( wpcom );
+
+			wpcom.request( { path: '/me/settings' }, callback );
+
+			expect( originalRequest ).toHaveBeenCalledWith( { path: '/me/settings' }, callback );
+		} );
+
+		test( 'should merge with existing headers if present', async () => {
+			await loadFingerprint();
+
+			injectFingerprint( wpcom );
+
+			wpcom.request(
+				{ path: '/me/transactions', headers: { 'Content-Type': 'application/json' } },
+				callback
+			);
+
+			expect( originalRequest ).toHaveBeenCalledWith(
+				{
+					path: '/me/transactions',
+					headers: {
+						'Content-Type': 'application/json',
+						'X-Fingerprint': expect.any( String ),
+					},
+				},
+				callback
+			);
+		} );
+	} );
+} );
