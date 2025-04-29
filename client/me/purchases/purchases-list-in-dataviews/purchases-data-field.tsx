@@ -2,7 +2,8 @@ import { Purchases } from '@automattic/data-stores';
 import { Fields, Operator } from '@wordpress/dataviews';
 import { LocalizeProps } from 'i18n-calypso';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
-import { getDisplayName } from 'calypso/lib/purchases';
+import { StoredPaymentMethod } from 'calypso/lib/checkout/payment-methods';
+import { getDisplayName, isRenewing } from 'calypso/lib/purchases';
 import { useSelector } from 'calypso/state';
 import { getSite } from 'calypso/state/sites/selectors';
 import {
@@ -10,6 +11,7 @@ import {
 	PurchaseItemProduct,
 	PurchaseItemStatus,
 	PurchaseItemPaymentMethod,
+	BackupPaymentMethodNotice,
 } from '../purchase-item';
 import OwnerInfo from '../purchase-item/owner-info';
 
@@ -54,26 +56,19 @@ function PurchaseItemRowStatus( props: {
 	);
 }
 
-function PurchaseItemRowPaymentMethod( props: {
-	purchase: Purchases.Purchase;
-	translate: LocalizeProps[ 'translate' ];
-} ) {
-	const { purchase, translate } = props;
-
-	return (
-		<div className="purchase-item__payment-method">
-			<PurchaseItemPaymentMethod purchase={ purchase } translate={ translate } />
-		</div>
-	);
-}
-
 export function getPurchasesFieldDefinitions( {
 	translate,
 	moment,
+	paymentMethods,
 }: {
 	translate: LocalizeProps[ 'translate' ];
 	moment: ReturnType< typeof useLocalizedMoment >;
+	paymentMethods: Array< StoredPaymentMethod >;
 } ): Fields< Purchases.Purchase > {
+	const backupPaymentMethods = paymentMethods.filter(
+		( paymentMethod ) => paymentMethod.is_backup === true
+	);
+
 	return [
 		{
 			id: 'site',
@@ -153,10 +148,26 @@ export function getPurchasesFieldDefinitions( {
 				operators: [ 'is' as Operator ],
 			},
 			getValue: ( { item }: { item: Purchases.Purchase } ) => {
-				return item.payment;
+				return item.payment.storedDetailsId;
 			},
 			render: ( { item }: { item: Purchases.Purchase } ) => {
-				return <PurchaseItemRowPaymentMethod purchase={ item } translate={ translate } />;
+				let isBackupMethodAvailable = false;
+
+				if ( backupPaymentMethods ) {
+					const backupPaymentMethodsWithoutCurrentPurchase = backupPaymentMethods.filter(
+						// A payment method is only a back up if it isn't already assigned to the current purchase
+						( paymentMethod ) => item.payment.storedDetailsId !== paymentMethod.stored_details_id
+					);
+
+					isBackupMethodAvailable = backupPaymentMethodsWithoutCurrentPurchase.length >= 1;
+				}
+
+				return (
+					<div className="purchase-item__payment-method">
+						<PurchaseItemPaymentMethod purchase={ item } translate={ translate } />
+						{ isBackupMethodAvailable && isRenewing( item ) && <BackupPaymentMethodNotice /> }
+					</div>
+				);
 			},
 		},
 	];

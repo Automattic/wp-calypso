@@ -68,9 +68,7 @@ const SiteMigrationAlreadyWPCOM: StepType = ( { stepName, flow, navigation } ) =
 			<StepContainer
 				stepName={ stepName }
 				flowName={ flow }
-				hideSkip
 				goBack={ navigation?.goBack }
-				goNext={ navigation?.submit }
 				formattedHeader={
 					<FormattedHeader
 						subHeaderAs="div"

@@ -1,4 +1,4 @@
-import { __experimentalVStack as VStack } from '@wordpress/components';
+import { __experimentalVStack as VStack, Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { backup, payment, receipt, institution } from '@wordpress/icons';
 import {
@@ -8,34 +8,34 @@ import {
 	taxDetailsRoute,
 } from '../app/router';
 import PageLayout from '../page-layout';
-import BillingCard from './billing-card';
+import RouterLinkSummaryButton from '../router-link-summary-button';
 
 function Billing() {
 	return (
 		<PageLayout title={ __( 'Billing' ) } size="small">
 			<VStack spacing={ 4 }>
-				<BillingCard
+				<RouterLinkSummaryButton
 					title={ __( 'Active subscriptions' ) }
-					description={ __( 'View, manage or cancel your plan and other subscriptions.' ) }
-					icon={ receipt }
+					description={ __( 'View your current plan and usage.' ) }
+					decoration={ <Icon icon={ receipt } /> }
 					to={ activeSubscriptionsRoute.to }
 				/>
-				<BillingCard
+				<RouterLinkSummaryButton
 					title={ __( 'Billing history' ) }
 					description={ __( 'View email receipts for past purchases.' ) }
-					icon={ backup }
+					decoration={ <Icon icon={ backup } /> }
 					to={ billingHistoryRoute.to }
 				/>
-				<BillingCard
+				<RouterLinkSummaryButton
 					title={ __( 'Payment methods' ) }
 					description={ __( 'Manage credit cards saved to your account.' ) }
-					icon={ payment }
+					decoration={ <Icon icon={ payment } /> }
 					to={ paymentMethodsRoute.to }
 				/>
-				<BillingCard
+				<RouterLinkSummaryButton
 					title={ __( 'Tax details' ) }
 					description={ __( 'Configure tax details (VAT/GST/CT) to be included on all receipts.' ) }
-					icon={ institution }
+					decoration={ <Icon icon={ institution } /> }
 					to={ taxDetailsRoute.to }
 				/>
 			</VStack>

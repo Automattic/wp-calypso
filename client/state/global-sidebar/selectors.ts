@@ -1,10 +1,69 @@
 import { isPlansPageUntangled } from 'calypso/lib/plans/untangling-plans-experiment';
-import isScheduledUpdatesMultisiteRoute, {
+import {
 	isScheduledUpdatesMultisiteCreateRoute,
 	isScheduledUpdatesMultisiteEditRoute,
 } from 'calypso/state/selectors/is-scheduled-updates-multisite-route';
 import { isAdminInterfaceWPAdmin } from '../sites/selectors';
 import type { AppState } from 'calypso/types';
+
+export enum SidebarType {
+	None = 'none',
+	Global = 'global',
+	GlobalCollapsed = 'global-collapsed',
+	UnifiedSiteDefault = 'unified-site-default',
+	UnifiedSiteClassic = 'unified-site-classic',
+}
+
+interface GetSidebarTypeParams {
+	state: AppState;
+	siteId: number | null;
+	section: { group?: string };
+	route: string;
+}
+
+export function getSidebarType( params: GetSidebarTypeParams ): SidebarType {
+	const { state, siteId, section, route } = params;
+	const { group } = section;
+
+	if ( shouldShowSiteDashboard( params ) || shouldShowPluginDashboard( params ) ) {
+		return SidebarType.GlobalCollapsed;
+	}
+	if (
+		group === 'me' ||
+		group === 'reader' ||
+		group === 'sites-dashboard' ||
+		( group === 'sites' && ! siteId ) ||
+		( group === 'sites' && siteId && route === '/domains/manage' )
+	) {
+		return SidebarType.Global;
+	}
+	if ( group === 'sites' ) {
+		return isAdminInterfaceWPAdmin( state, siteId )
+			? SidebarType.UnifiedSiteClassic
+			: SidebarType.UnifiedSiteDefault;
+	}
+	return SidebarType.None;
+}
+
+export function getShouldShowGlobalSidebar( params: GetSidebarTypeParams ) {
+	const sidebarType = getSidebarType( params );
+	return sidebarType === SidebarType.Global || sidebarType === SidebarType.GlobalCollapsed;
+}
+
+export function getShouldShowCollapsedGlobalSidebar( params: GetSidebarTypeParams ) {
+	const sidebarType = getSidebarType( params );
+	return sidebarType === SidebarType.GlobalCollapsed;
+}
+
+export function shouldShowSiteDashboard( { state, route }: GetSidebarTypeParams ) {
+	return isInRoute( route, getSiteDashboardRoutes( state ) );
+}
+
+function shouldShowPluginDashboard( { route }: GetSidebarTypeParams ) {
+	return (
+		isScheduledUpdatesMultisiteCreateRoute( route ) || isScheduledUpdatesMultisiteEditRoute( route )
+	);
+}
 
 // Calypso routes for which we show the Site Dashboard.
 // Calypso routes not listed here will be shown in nav unification instead.
@@ -32,81 +91,6 @@ function getSiteDashboardRoutes( state: AppState ) {
 	];
 }
 
-/**
- * These routes are used in both 'sites' and 'sites-dashboard' sections.
- * @returns A list of routes.
- */
-function tangledBasePaths() {
-	return [ '/domains/manage', '/themes' ];
+function isInRoute( route: string, routes: string[] ) {
+	return routes.some( ( r ) => route?.startsWith( r ) );
 }
-
-function isInRoute( state: AppState, routes: string[] ) {
-	return routes.some( ( route ) => state.route.path?.current?.startsWith( route ) );
-}
-
-function shouldShowSitesDashboard( state: AppState ) {
-	return isInRoute( state, [
-		'/sites',
-		'/p2s',
-		'/setup',
-		'/start',
-		...getSiteDashboardRoutes( state ),
-		...tangledBasePaths(),
-	] );
-}
-
-export function shouldShowSiteDashboard( state: AppState, siteId: number | null ) {
-	return (
-		!! siteId && isInRoute( state, [ '/setup', '/start', ...getSiteDashboardRoutes( state ) ] )
-	);
-}
-
-export const getShouldShowGlobalSidebar = (
-	state: AppState,
-	siteId: number | null,
-	sectionGroup: string
-) => {
-	const pluginsScheduledUpdates = isScheduledUpdatesMultisiteRoute( state );
-
-	return (
-		sectionGroup === 'me' ||
-		sectionGroup === 'reader' ||
-		( sectionGroup === 'sites-dashboard' && shouldShowSitesDashboard( state ) ) ||
-		( sectionGroup === 'sites' && ! siteId ) ||
-		( sectionGroup === 'sites' && pluginsScheduledUpdates ) ||
-		( sectionGroup === 'sites' && shouldShowSiteDashboard( state, siteId ) )
-	);
-};
-
-export const getShouldShowCollapsedGlobalSidebar = (
-	state: AppState,
-	siteId: number | null,
-	sectionGroup: string
-) => {
-	const isSiteDashboard = sectionGroup === 'sites' && shouldShowSiteDashboard( state, siteId );
-
-	const isPluginsScheduledUpdatesEditMode =
-		isScheduledUpdatesMultisiteCreateRoute( state ) ||
-		isScheduledUpdatesMultisiteEditRoute( state );
-
-	const isPluginsManageSites = isInRoute( state, [ '/plugins/manage/sites/' ] );
-
-	return isSiteDashboard || isPluginsScheduledUpdatesEditMode || isPluginsManageSites;
-};
-
-export const getShouldShowUnifiedSiteSidebar = (
-	state: AppState,
-	siteId: number,
-	sectionGroup: string,
-	sectionName: string
-) => {
-	return (
-		( isAdminInterfaceWPAdmin( state, siteId ) &&
-			sectionGroup === 'sites' &&
-			sectionName !== 'plugins' &&
-			! shouldShowSiteDashboard( state, siteId ) ) ||
-		( isAdminInterfaceWPAdmin( state, siteId ) &&
-			sectionName === 'plugins' &&
-			! isScheduledUpdatesMultisiteRoute( state ) )
-	);
-};

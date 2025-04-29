@@ -16,6 +16,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import GuidedTour from 'calypso/components/guided-tour';
 import { GuidedTourContextProvider } from 'calypso/components/guided-tour/data/guided-tour-context';
+import { useCurrentRoute } from 'calypso/components/route';
 import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
 import Layout from 'calypso/layout/hosting-dashboard';
 import LayoutColumn from 'calypso/layout/hosting-dashboard/column';
@@ -382,8 +383,17 @@ const SitesDashboard = ( {
 		}
 	};
 
+	const { currentSection, currentRoute } = useCurrentRoute() as {
+		currentSection: false | { group?: string; name?: string };
+		currentRoute: string;
+	};
 	const showSiteDashboard = useSelector( ( state ) =>
-		shouldShowSiteDashboard( state, selectedSite?.ID ?? null )
+		shouldShowSiteDashboard( {
+			state,
+			siteId: selectedSite?.ID ?? null,
+			section: currentSection as { group?: string },
+			route: currentRoute,
+		} )
 	);
 	if ( !! selectedSite && ! showSiteDashboard ) {
 		return null;

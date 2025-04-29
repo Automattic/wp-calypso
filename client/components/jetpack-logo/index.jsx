@@ -57,7 +57,7 @@ const LogoPathSize32Monochrome = () => (
  * @param {number} [props.size] - The size of the logo.
  * @param {string} [props.className] - Additional class names.
  * @param {Object} [props.aria] - ARIA attributes.
- * @returns The rendered NavigationHeader component
+ * @returns The rendered Jetpack logo component
  */
 const JetpackLogo = ( { full = false, monochrome, size = 32, className, aria } ) => {
 	const classes = clsx( 'jetpack-logo', className );

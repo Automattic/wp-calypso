@@ -685,6 +685,23 @@ export function PurchaseItemPaymentMethod( {
 	}
 }
 
+export function BackupPaymentMethodNotice() {
+	const translate = useTranslate();
+	const noticeText = translate(
+		'If the renewal fails, a {{link}}backup payment method{{/link}} may be used.',
+		{
+			components: {
+				link: <a href="/me/purchases/payment-methods" />,
+			},
+		}
+	);
+	return (
+		<span className="purchase-item__backup-payment-method-notice">
+			<InfoPopover position="bottom">{ noticeText }</InfoPopover>
+		</span>
+	);
+}
+
 class PurchaseItem extends Component<
 	PurchaseItemPropsPlaceholder | ( PurchaseItemProps & PurchaseItemPropsConnected )
 > {
@@ -799,23 +816,6 @@ class PurchaseItem extends Component<
 			</CompactCard>
 		);
 	}
-}
-
-function BackupPaymentMethodNotice() {
-	const translate = useTranslate();
-	const noticeText = translate(
-		'If the renewal fails, a {{link}}backup payment method{{/link}} may be used.',
-		{
-			components: {
-				link: <a href="/me/purchases/payment-methods" />,
-			},
-		}
-	);
-	return (
-		<span className="purchase-item__backup-payment-method-notice">
-			<InfoPopover position="bottom">{ noticeText }</InfoPopover>
-		</span>
-	);
 }
 
 export default connect(
