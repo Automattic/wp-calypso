@@ -101,6 +101,7 @@ const Radio = styled.input`
 interface LabelProps {
 	disabled?: boolean;
 	checked?: boolean;
+	hideRadioButton?: boolean;
 }
 
 /**
@@ -109,7 +110,7 @@ interface LabelProps {
  */
 const Label = styled.label< LabelProps & React.LabelHTMLAttributes< HTMLLabelElement > >`
 	position: relative;
-	padding: 16px 14px 16px 56px;
+	padding: ${ ( props ) => ( props.hideRadioButton ? '16px 14px' : '16px 14px 16px 56px' ) };
 	border-radius: 3px;
 	box-sizing: border-box;
 	width: 100%;
@@ -124,7 +125,7 @@ const Label = styled.label< LabelProps & React.LabelHTMLAttributes< HTMLLabelEle
 	min-height: 72px;
 
 	.rtl & {
-		padding: 16px 56px 16px 14px;
+		padding: ${ ( props ) => ( props.hideRadioButton ? '16px 14px' : '16px 56px 16px 14px' ) };
 	}
 
 	:hover {
@@ -132,7 +133,7 @@ const Label = styled.label< LabelProps & React.LabelHTMLAttributes< HTMLLabelEle
 	}
 
 	::before {
-		display: block;
+		display: ${ ( props ) => ( props.hideRadioButton ? 'none' : 'block' ) };
 		width: 16px;
 		height: 16px;
 		content: '';
@@ -152,7 +153,7 @@ const Label = styled.label< LabelProps & React.LabelHTMLAttributes< HTMLLabelEle
 	}
 
 	::after {
-		display: block;
+		display: ${ ( props ) => ( props.hideRadioButton ? 'none' : 'block' ) };
 		width: 8px;
 		height: 8px;
 		content: '';
@@ -199,6 +200,7 @@ export default function RadioButton( {
 	hidden,
 	id,
 	ariaLabel,
+	hideRadioButton,
 	...otherProps
 }: RadioButtonProps ) {
 	const [ isFocused, changeFocus ] = useState( false );
@@ -228,7 +230,12 @@ export default function RadioButton( {
 				aria-label={ ariaLabel }
 				{ ...otherProps }
 			/>
-			<Label checked={ checked } htmlFor={ id } disabled={ disabled }>
+			<Label
+				checked={ checked }
+				htmlFor={ id }
+				disabled={ disabled }
+				hideRadioButton={ hideRadioButton }
+			>
 				{ label }
 			</Label>
 			{ children && <RadioButtonChildren checked={ checked }>{ children }</RadioButtonChildren> }
@@ -247,6 +254,7 @@ interface RadioButtonProps {
 	onChange?: () => void;
 	ariaLabel?: string;
 	children?: React.ReactNode;
+	hideRadioButton?: boolean;
 }
 
 RadioButton.propTypes = {
