@@ -28,6 +28,12 @@ export interface GridLayoutItem {
 	fullWidth?: boolean;
 }
 
+export interface NormalizedGridLayoutItem extends GridLayoutItem {
+	order: number;
+	width: number;
+	height: number;
+}
+
 /**
  * Props for the Grid component
  */
@@ -57,6 +63,17 @@ interface BaseGridProps {
 	 * Height of each row (e.g., "50px", "auto")
 	 */
 	rowHeight?: string;
+
+	/**
+	 * Whether the grid is in edit mode (allows dragging and repositioning items)
+	 * @default false
+	 */
+	editMode?: boolean;
+
+	/**
+	 * Callback fired when layout changes due to item dragging
+	 */
+	onChangeLayout?: ( newLayout: GridLayoutItem[] ) => void;
 }
 
 interface StandardGridProps extends BaseGridProps {

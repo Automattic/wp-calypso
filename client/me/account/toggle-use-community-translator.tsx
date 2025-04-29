@@ -1,4 +1,4 @@
-import { ToggleControl } from '@wordpress/components';
+import { ToggleControl, ExternalLink } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { ENABLE_TRANSLATOR_KEY } from 'calypso/lib/i18n-utils/constants';
 import { useDispatch, useSelector } from 'calypso/state';
@@ -33,11 +33,10 @@ function ToggleUseCommunityTranslator() {
 				label={ translate( 'Enable the in-page translator where available. {{a}}Learn more{{/a}}', {
 					components: {
 						a: (
-							<a
-								target="_blank"
-								rel="noopener noreferrer"
+							<ExternalLink
 								href="https://translate.wordpress.com/community-translator/"
 								onClick={ handleLearnMoreClick }
+								children={ null }
 							/>
 						),
 					},
