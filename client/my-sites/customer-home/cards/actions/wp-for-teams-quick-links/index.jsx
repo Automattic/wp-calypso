@@ -8,12 +8,7 @@ import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference } from 'calypso/state/preferences/selectors';
 import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
 import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
-import {
-	getSiteFrontPage,
-	getCustomizerUrl,
-	getSiteOption,
-	isNewSite,
-} from 'calypso/state/sites/selectors';
+import { getSiteFrontPage, getCustomizerUrl, getSiteOption } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import ActionBox from '../quick-links/action-box';
 import '../quick-links/style.scss';
@@ -149,7 +144,6 @@ const mapStateToProps = ( state ) => {
 	return {
 		customizeUrl: getCustomizerUrl( state, siteId ),
 		menusUrl: getCustomizerUrl( state, siteId, 'menus' ),
-		isNewlyCreatedSite: isNewSite( state, siteId ),
 		isP2Hub,
 		siteSlug,
 		isStaticHomePage,

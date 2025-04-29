@@ -130,7 +130,7 @@ export const useStepRouteTracking = ( { flow, stepSlug, skipStepRender }: Props 
 		const params = {
 			flow: flowName,
 			is_simplified_onboarding: isMvpOnboarding,
-			...( skipStepRender && { skip_step_render: skipStepRender } ),
+			skip_step_render: skipStepRender,
 			...reenteringStepAfterSignupCompleteProps,
 		};
 		recordPageView( pathname, pageTitle, params );

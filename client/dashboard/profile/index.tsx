@@ -234,7 +234,7 @@ export default function Profile() {
 								sprintf(
 									/* translators: %1$s: User email */
 									__(
-										'Your WordPress profile is linked to Gravatar, making your Gravatar public by default. It might appear on other sites using Gravatar when loggend in with <strong>%s</strong>. Manage your Gravatar settings on your <external>Gravatar profile</external>.'
+										'Your WordPress profile is linked to Gravatar, making your Gravatar public by default. It might appear on other sites using Gravatar when logged in with <strong>%s</strong>. Manage your Gravatar settings on your <external>Gravatar profile</external>.'
 									),
 									data.user_email
 								),

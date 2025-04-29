@@ -8,10 +8,7 @@ import {
 	useIsPlaygroundEligible,
 	isPlaygroundEligible,
 } from 'calypso/landing/stepper/hooks/use-is-playground-eligible';
-import {
-	isMvpOnboardingExperiment,
-	useMvpOnboardingExperiment,
-} from 'calypso/landing/stepper/hooks/use-mvp-onboarding-experiment';
+import { useMvpOnboardingExperiment } from 'calypso/landing/stepper/hooks/use-mvp-onboarding-experiment';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { pathToUrl } from 'calypso/lib/url';
 import {
@@ -50,17 +47,9 @@ const clearUseMyDomainsQueryParams = ( currentStepSlug: string | undefined ) => 
 const withLocale = ( url: string, locale: string ) => {
 	return locale && locale !== 'en' ? `${ url }/${ locale }` : url;
 };
-async function initialize() {
-	if ( await isMvpOnboardingExperiment() ) {
-		return stepsWithRequiredLogin( [
-			STEPS.UNIFIED_PLANS,
-			STEPS.SITE_CREATION_STEP,
-			STEPS.PROCESSING,
-			STEPS.POST_CHECKOUT_ONBOARDING,
-		] );
-	}
 
-	const steps = stepsWithRequiredLogin( [
+function initialize() {
+	const steps = [
 		STEPS.UNIFIED_DOMAINS,
 		STEPS.USE_MY_DOMAIN,
 		STEPS.UNIFIED_PLANS,
@@ -68,9 +57,9 @@ async function initialize() {
 		STEPS.PROCESSING,
 		STEPS.POST_CHECKOUT_ONBOARDING,
 		...( isPlaygroundEligible() ? [ STEPS.PLAYGROUND ] : [] ),
-	] );
+	];
 
-	return steps;
+	return stepsWithRequiredLogin( steps );
 }
 
 const onboarding: FlowV2< typeof initialize > = {

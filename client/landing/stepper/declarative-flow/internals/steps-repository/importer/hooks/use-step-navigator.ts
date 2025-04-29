@@ -20,6 +20,7 @@ export function useStepNavigator(
 	>,
 	siteId: number | undefined | null,
 	siteSlug: string | undefined | null,
+	site: { options?: { admin_url?: string } } | undefined | null,
 	fromSite: string | undefined | null
 ): StepNavigator {
 	const { data: selectedPlan } = useSelectedPlanUpgradeQuery();
@@ -45,10 +46,10 @@ export function useStepNavigator(
 		navigator( getWordpressImportContentOnlyUrl() );
 	}
 
-	function goToSiteViewPage() {
+	function goToAdmin() {
 		navigation.submit?.( {
 			type: 'redirect',
-			url: `/view/${ siteId || siteSlug || '' }`,
+			url: site?.options?.admin_url ?? `/home/${ siteId || siteSlug || '' }`,
 		} );
 	}
 
@@ -130,7 +131,7 @@ export function useStepNavigator(
 		goToGoalsPage,
 		goToImportCapturePage,
 		goToImportContentOnlyPage,
-		goToSiteViewPage,
+		goToAdmin,
 		goToDashboardPage,
 		goToCheckoutPage,
 		goToWpAdminImportPage,

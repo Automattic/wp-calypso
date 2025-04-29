@@ -23,7 +23,6 @@ import {
 	getSiteFrontPage,
 	getCustomizerUrl,
 	getSiteOption,
-	isNewSite,
 	getSitePlanSlug,
 	getSite,
 	isAdminInterfaceWPAdmin,
@@ -384,14 +383,6 @@ const trackDesignLogoAction = ( isStaticHomePage ) =>
 		bumpStat( 'calypso_customer_home', 'my_site_design_logo' )
 	);
 
-const trackAnchorPodcastAction = ( isStaticHomePage ) =>
-	composeAnalytics(
-		recordTracksEvent( 'calypso_customer_home_my_site_anchor_podcast_click', {
-			is_static_home_page: isStaticHomePage,
-		} ),
-		bumpStat( 'calypso_customer_home', 'my_site_anchor_podcast' )
-	);
-
 const trackExplorePluginsAction = ( isStaticHomePage ) => ( dispatch ) => {
 	dispatch(
 		composeAnalytics(
@@ -453,7 +444,6 @@ const mapStateToProps = ( state ) => {
 		canModerateComments: canCurrentUser( state, siteId, 'moderate_comments' ),
 		customizeUrl: getCustomizerUrl( state, siteId ),
 		menusUrl: getCustomizerUrl( state, siteId, 'menus' ),
-		isNewlyCreatedSite: isNewSite( state, siteId ),
 		siteSlug,
 		isStaticHomePage,
 		editHomePageUrl,
@@ -477,7 +467,6 @@ const mapDispatchToProps = {
 	trackCustomizeThemeAction,
 	trackChangeThemeAction,
 	trackDesignLogoAction,
-	trackAnchorPodcastAction,
 	trackAddDomainAction,
 	trackManageAllDomainsAction,
 	trackManageEmailsAction,
@@ -500,7 +489,6 @@ const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
 		trackCustomizeThemeAction: () => dispatchProps.trackCustomizeThemeAction( isStaticHomePage ),
 		trackChangeThemeAction: () => dispatchProps.trackChangeThemeAction( isStaticHomePage ),
 		trackDesignLogoAction: () => dispatchProps.trackDesignLogoAction( isStaticHomePage ),
-		trackAnchorPodcastAction: () => dispatchProps.trackAnchorPodcastAction( isStaticHomePage ),
 		trackAddDomainAction: () => dispatchProps.trackAddDomainAction( isStaticHomePage ),
 		trackManageAllDomainsAction: () =>
 			dispatchProps.trackManageAllDomainsAction( isStaticHomePage ),
