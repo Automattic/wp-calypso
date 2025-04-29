@@ -1,4 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { Card } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
 import clsx from 'clsx';
 import cookie from 'cookie';
@@ -122,19 +123,24 @@ class Developer extends Component {
 						className="developer__header"
 					/>
 
-					<form className="developer__form" onChange={ this.props.submitForm }>
-						<FormFieldset
-							className={ clsx( 'developer__is_dev_account-fieldset', {
+					<form onChange={ this.props.submitForm }>
+						<Card
+							className={ clsx( 'developer__is-dev-account-card', {
 								'is-loading': this.props.isFetchingUserSettings,
 							} ) }
 						>
-							<ToggleControl
-								disabled={ this.props.isFetchingUserSettings || this.props.isUpdatingUserSettings }
-								checked={ this.props.getSetting( 'is_dev_account' ) }
-								onChange={ this.handleToggleIsDevAccount }
-								label={ getIAmDeveloperCopy( this.props.translate ) }
-							/>
-						</FormFieldset>
+							<FormFieldset>
+								<ToggleControl
+									disabled={
+										this.props.isFetchingUserSettings || this.props.isUpdatingUserSettings
+									}
+									checked={ this.props.getSetting( 'is_dev_account' ) }
+									onChange={ this.handleToggleIsDevAccount }
+									label={ getIAmDeveloperCopy( this.props.translate ) }
+									__nextHasNoMarginBottom
+								/>
+							</FormFieldset>
+						</Card>
 					</form>
 
 					<DeveloperFeatures />
