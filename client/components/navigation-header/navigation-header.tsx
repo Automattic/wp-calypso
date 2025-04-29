@@ -18,14 +18,17 @@ interface HeaderProps extends React.HTMLAttributes< HTMLElement > {
 	headElement?: ReactNode;
 	rightSection?: ReactNode;
 	hasScreenOptionsTab?: boolean;
+	titleProps?: {
+		title?: string;
+		titleLogo?: ReactNode;
+	};
 }
 
 /**
  * Header component that can be used in various contexts
  * @param props - Component props
  * @param props.className - Additional CSS class name for the component
- * @param props.title - Header title text
- * @param props.titleLogo - Header title logo element to render
+ * @param props.titleProps - Header title props
  * @param props.backLinkProps - Object containing back link properties (backLink URL, backLinkText, and onBackClick handler)
  * @param props.titleElement - Custom element to override default title rendering
  * @param props.headElement - Custom element to override default head section rendering
@@ -35,8 +38,7 @@ interface HeaderProps extends React.HTMLAttributes< HTMLElement > {
  */
 const NavigationHeader: React.FC< HeaderProps > = ( {
 	className,
-	title,
-	titleLogo,
+	titleProps,
 	backLinkProps,
 	titleElement,
 	headElement = backLinkProps?.url && (
@@ -59,15 +61,15 @@ const NavigationHeader: React.FC< HeaderProps > = ( {
 } ) => {
 	const defaultTitleElement = (
 		<h1 className="calypso-navigation-header__title">
-			{ titleLogo && (
+			{ titleProps?.titleLogo && (
 				<span className="calypso-navigation-header__title-logo" aria-hidden="true">
-					{ titleLogo }
+					{ titleProps.titleLogo }
 				</span>
 			) }
-			{ title && titleLogo ? (
-				<span className="calypso-navigation-header__title-text">{ title }</span>
+			{ titleProps?.title && titleProps?.titleLogo ? (
+				<span className="calypso-navigation-header__title-text">{ titleProps?.title }</span>
 			) : (
-				title
+				titleProps?.title
 			) }
 		</h1>
 	);

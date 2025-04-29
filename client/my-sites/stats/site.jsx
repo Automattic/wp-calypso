@@ -23,9 +23,7 @@ import { useShortcuts } from 'calypso/components/date-range/use-shortcuts';
 import EmptyContent from 'calypso/components/empty-content';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
-import JetpackLogo from 'calypso/components/jetpack-logo';
 import NavigationHeader from 'calypso/components/navigation-header';
-import NavigationHeaderImpr from 'calypso/components/navigation-header/navigation-header';
 import StickyPanel from 'calypso/components/sticky-panel';
 import memoizeLast from 'calypso/lib/memoize-last';
 import version_compare from 'calypso/lib/version-compare';
@@ -36,7 +34,6 @@ import {
 	STATS_FEATURE_PAGE_TRAFFIC,
 	STATS_FEATURE_INTERVAL_DROPDOWN_WEEK,
 	STATS_PRODUCT_NAME,
-	STATS_PRODUCT_NAME_IMPR,
 } from 'calypso/my-sites/stats/constants';
 import { getMomentSiteZone } from 'calypso/my-sites/stats/hooks/use-moment-site-zone';
 import useNoticeVisibilityMutation from 'calypso/my-sites/stats/hooks/use-notice-visibility-mutation';
@@ -60,6 +57,7 @@ import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-e
 import { updateModuleToggles } from 'calypso/state/stats/module-toggles/actions';
 import { getModuleToggles } from 'calypso/state/stats/module-toggles/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import PageHeader from './components/headers/page-header';
 import StatsModuleAuthors from './features/modules/stats-authors';
 import StatsModuleClicks from './features/modules/stats-clicks';
 import StatsModuleCountries from './features/modules/stats-countries';
@@ -537,13 +535,6 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 		getJetpackStatsAdminVersion( state, siteId )
 	);
 
-	const gatedTrafficPage = useSelector( ( state ) => {
-		return (
-			config.isEnabled( 'stats/paid-wpcom-v3' ) &&
-			shouldGateStats( state, siteId, STATS_FEATURE_PAGE_TRAFFIC )
-		);
-	} );
-
 	const availableModuleToggles = useSelector( () =>
 		getAvailablePageModules( 'traffic', hasVideoPress )
 	);
@@ -585,7 +576,7 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 		!! ( statsAdminVersion && version_compare( statsAdminVersion, '0.9.0-alpha', '>=' ) );
 
 	const shouldRenderModuleToggler =
-		isModuleSettingsSupported && AVAILABLE_PAGE_MODULES.traffic && ! gatedTrafficPage;
+		isModuleSettingsSupported && AVAILABLE_PAGE_MODULES.traffic && ! wpcomShowUpsell;
 
 	return (
 		<div className="stats">
@@ -595,23 +586,7 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 				</div>
 			) }
 			{ isStatsNavigationImprovementEnabled ? (
-				<NavigationHeaderImpr
-					className="stats__section-header modernized-header"
-					title={ isOdysseyStats ? STATS_PRODUCT_NAME : STATS_PRODUCT_NAME_IMPR }
-					titleLogo={ isOdysseyStats ? <JetpackLogo size={ 24 } monochrome={ false } /> : null }
-					rightSection={
-						shouldRenderModuleToggler && (
-							<PageModuleToggler
-								availableModuleToggles={ availableModuleToggles }
-								pageModules={ pageModules }
-								onToggleModule={ onToggleModule }
-								isTooltipShown={ showSettingsTooltip && ! isPageSettingsTooltipDismissed }
-								onTooltipDismiss={ onTooltipDismiss }
-								customToggleIcon={ <Icon className="gridicon" icon={ settings } /> }
-							/>
-						)
-					}
-				/>
+				<PageHeader />
 			) : (
 				<NavigationHeader
 					className="stats__section-header modernized-header"
