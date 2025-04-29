@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { JetpackLogo } from '@automattic/components';
+import JetpackLogo from 'calypso/components/jetpack-logo';
 import NavigationHeaderImpr from 'calypso/components/navigation-header/navigation-header';
 import { STATS_PRODUCT_NAME, STATS_PRODUCT_NAME_IMPR } from '../../constants';
 

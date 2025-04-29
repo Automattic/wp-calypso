@@ -59,14 +59,9 @@ const LogoPathSize32Monochrome = () => (
  * @param {Object} [props.aria] - ARIA attributes.
  * @returns The rendered NavigationHeader component
  */
-const JetpackLogo = ( { full = false, monochrome = undefined, size = 32, className, aria } ) => {
+const JetpackLogo = ( { full = false, monochrome, size = 32, className, aria } ) => {
 	const classes = clsx( 'jetpack-logo', className );
 	const ariaProps = useAriaProps( aria );
-
-	// This is to ensure compatibility with the legacy behavior, where a size of 24 always results in a monochrome logo.
-	if ( monochrome === undefined && size === 24 ) {
-		monochrome = true;
-	}
 
 	if ( full === true ) {
 		return (
@@ -81,7 +76,9 @@ const JetpackLogo = ( { full = false, monochrome = undefined, size = 32, classNa
 		);
 	}
 
-	if ( 24 === size && monochrome ) {
+	// If size=24 and monochrome is true or undefined, return a monochrome logo - This is to ensure legacy behavior of the component.
+	// Return a non-monochrome logo if monochrome=false is explicitly passed with size 24.
+	if ( 24 === size && ( monochrome || monochrome === undefined ) ) {
 		return (
 			// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 			<svg className={ classes } height="24" width="24" viewBox="0 0 24 24" { ...ariaProps }>
