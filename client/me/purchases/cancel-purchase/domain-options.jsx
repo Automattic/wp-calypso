@@ -1,4 +1,8 @@
-import { isDomainRegistration, isDomainMapping } from '@automattic/calypso-products';
+import {
+	isDomainRegistration,
+	isDomainMapping,
+	isDomainTransfer,
+} from '@automattic/calypso-products';
 import { CompactCard, FormLabel } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { UPDATE_NAMESERVERS } from '@automattic/urls';
@@ -10,6 +14,7 @@ import { getName, isRefundable, isSubscription } from 'calypso/lib/purchases';
 
 const CancelPurchaseDomainOptions = ( {
 	includedDomainPurchase,
+	includedDomainTransfer,
 	cancelBundledDomain,
 	confirmCancelBundledDomain = false,
 	purchase,
@@ -22,7 +27,7 @@ const CancelPurchaseDomainOptions = ( {
 		setConfirmCancel( confirmCancelBundledDomain );
 	}, [ confirmCancelBundledDomain ] );
 
-	if ( ! includedDomainPurchase || ! isSubscription( purchase ) ) {
+	if ( ( ! includedDomainPurchase && ! includedDomainTransfer ) || ! isSubscription( purchase ) ) {
 		return null;
 	}
 
@@ -116,6 +121,62 @@ const CancelPurchaseDomainOptions = ( {
 		</div>
 	);
 
+	const IncludedDomainTransferPartialRefund = () => (
+		<p>
+			{ translate(
+				'You will receive a partial refund of %(refundAmount)s which is %(planCost)s for the plan ' +
+					'minus %(domainCost)s for the domain.',
+				{
+					args: {
+						domainCost: includedDomainTransfer.priceText,
+						planCost: planCostText,
+						refundAmount: purchase.refundText,
+					},
+				}
+			) }
+		</p>
+	);
+
+	const NonRefundableDomainTransferMessage = () => (
+		<div>
+			<p>
+				{ translate(
+					'This plan includes a domain transfer, %(domain)s, normally a %(domainCost)s purchase. ' +
+						'The domain transfer will not be removed along with the plan, to avoid any interruptions for your visitors.',
+					{
+						args: {
+							domain: includedDomainTransfer.meta,
+							domainCost: includedDomainTransfer.priceText,
+						},
+					}
+				) }
+			</p>
+			<IncludedDomainTransferPartialRefund />
+		</div>
+	);
+
+	const CancelableDomainTransferMessage = () => (
+		<div>
+			<p>
+				{ translate(
+					'It seems you have a pending domain transfer for the domain %(mappedDomain)s. ' +
+						'In order to receive a full refund, please cancel the domain transfer before requesting the cancellation of your plan.',
+					{
+						args: {
+							mappedDomain: includedDomainTransfer.meta,
+						},
+					}
+				) }
+			</p>
+			<IncludedDomainTransferPartialRefund />
+			<p>
+				{ translate(
+					'In some cases, a domain transfer has progressed too far to be canceled. Please contact support if you have questions about this'
+				) }
+			</p>
+		</div>
+	);
+
 	const RefundablePurchaseWithNonRefundableDomainMessage = () => (
 		<div>
 			<p>
@@ -145,6 +206,14 @@ const CancelPurchaseDomainOptions = ( {
 			</p>
 		</div>
 	);
+
+	if ( includedDomainTransfer && isDomainTransfer( includedDomainTransfer ) ) {
+		if ( ! isRefundable( purchase ) ) {
+			return <NonRefundableDomainTransferMessage />;
+		}
+
+		return <CancelableDomainTransferMessage />;
+	}
 
 	if (
 		! isDomainMapping( includedDomainPurchase ) &&

@@ -88,9 +88,9 @@ export default function PlanPricing( { inline }: PlanPricingProps ) {
 					height="16px"
 				/>
 			) : (
-				<p className="plan-price-info">
+				<div className="plan-price-info">
 					{ price } { getBillingDetails() }
-				</p>
+				</div>
 			);
 		}
 
@@ -106,7 +106,7 @@ export default function PlanPricing( { inline }: PlanPricingProps ) {
 						} ) }
 					</span>
 				</div>
-				<p className="plan-price-info">{ getBillingDetails() }</p>
+				<div className="plan-price-info">{ getBillingDetails() }</div>
 			</>
 		);
 	};

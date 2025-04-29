@@ -2,13 +2,13 @@ import { useExperiment, loadExperimentAssignment } from 'calypso/lib/explat';
 import { useIsPlaygroundEligible, isPlaygroundEligible } from './use-is-playground-eligible';
 import { useQuery } from './use-query';
 
-const MVP_ONBOARDING_EXPERIMENT_NAME = 'calypso_signup_onboarding_simplified_hosting_flow';
+const HOSTING_ONBOARDING_EXPERIMENT_NAME = 'calypso_signup_onboarding_simplified_hosting_flow_v2';
 
 export function useMvpOnboardingExperiment() {
 	const isPlaygroundEligible = useIsPlaygroundEligible();
 	const hasPlaygroundId = useQuery().has( 'playground' );
 
-	const [ isLoading, assignment ] = useExperiment( MVP_ONBOARDING_EXPERIMENT_NAME, {
+	const [ isLoading, assignment ] = useExperiment( HOSTING_ONBOARDING_EXPERIMENT_NAME, {
 		isEligible: ! isPlaygroundEligible || ! hasPlaygroundId,
 	} );
 
@@ -25,6 +25,6 @@ export async function isMvpOnboardingExperiment() {
 		}
 	}
 
-	const assignment = await loadExperimentAssignment( MVP_ONBOARDING_EXPERIMENT_NAME );
+	const assignment = await loadExperimentAssignment( HOSTING_ONBOARDING_EXPERIMENT_NAME );
 	return assignment.variationName === 'treatment';
 }

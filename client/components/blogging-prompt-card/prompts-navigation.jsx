@@ -150,7 +150,7 @@ const PromptsNavigation = ( { siteId, prompts, tracksPrefix, index, menu } ) => 
 					>
 						<Gridicon icon={ backIcon } size={ 18 } />
 					</Button>
-					<p className="blogging-prompt__prompt-text">{ getPrompt()?.text }</p>
+					<div className="blogging-prompt__prompt-text">{ getPrompt()?.text }</div>
 					<Button
 						aria-label={ translate( 'Show next prompt' ) }
 						borderless={ false }

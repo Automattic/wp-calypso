@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { HelpCenterSelect } from '@automattic/data-stores';
 import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { useSelect } from '@wordpress/data';
@@ -36,6 +37,11 @@ export const useZendeskMessageListener = () => {
 					status: 'loaded',
 				} ) );
 				Smooch.markAllAsRead( data.conversation.id );
+			} else {
+				recordTracksEvent( 'calypso_zendesk_message_received_wrong_conversation', {
+					conversation_id: data?.conversation?.id,
+					chat_id: chat?.conversationId,
+				} );
 			}
 		},
 		[ chat.conversationId, setChat ]
