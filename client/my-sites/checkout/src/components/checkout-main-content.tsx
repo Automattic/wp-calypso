@@ -63,6 +63,7 @@ import { prepareDomainContactValidationRequest } from 'calypso/my-sites/checkout
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import SitePreview from 'calypso/my-sites/customer-home/cards/features/site-preview';
 import useOneDollarOfferTrack from 'calypso/my-sites/plans/hooks/use-onedollar-offer-track';
+import { useStreamlinedPriceExperiment } from 'calypso/my-sites/plans-features-main/hooks/use-streamlined-price-experiment';
 import { siteHasPaidPlan } from 'calypso/signup/steps/site-picker/site-picker-submit';
 import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -389,6 +390,8 @@ export default function CheckoutMainContent( {
 
 	const leaveModalProps = useCheckoutLeaveModal( { siteUrl: siteUrl ?? '' } );
 
+	const [ , streamlinedPriceExperimentAssignment ] = useStreamlinedPriceExperiment();
+
 	const searchParams = new URLSearchParams( window.location.search );
 	const isDIFMInCart = hasDIFMProduct( responseCart );
 	const isSignupCheckout = searchParams.get( 'signup' ) === '1';
@@ -624,7 +627,7 @@ export default function CheckoutMainContent( {
 							<WPCheckoutOrderSummary
 								siteId={ siteId }
 								onChangeSelection={ changeSelection }
-								showFeaturesList
+								showFeaturesList={ ! streamlinedPriceExperimentAssignment }
 							/>
 							<CheckoutSidebarNudge
 								addItemToCart={ addItemToCart }
