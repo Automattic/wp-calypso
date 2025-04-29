@@ -699,33 +699,11 @@ $image-height: 47px;
 		margin: 24px 0;
 	}
 
-	button.form-button.is-primary,
-	.two-factor-authentication__actions .button {
+	.login__form-action button {
 		min-height: 56px;
-		margin: 0;
-		padding: 10px 16px;
 		font-size: 16px;
 		font-weight: 600;
-
-		&:disabled {
-			opacity: 0.3;
-		}
-	}
-
-	button.form-button.is-primary {
 		margin-top: 16px;
-		margin-bottom: 0;
-		border: 0;
-
-		&,
-		&:disabled {
-			background-color: var(--color-gravatar);
-		}
-
-		&:hover:not(&:disabled),
-		&:focus {
-			background-color: darken(#1d4fc4, 10%);
-		}
 	}
 
 	.two-factor-authentication__actions {
@@ -741,9 +719,18 @@ $image-height: 47px;
 		}
 
 		.button {
+			min-height: 56px;
+			margin: 0;
+			padding: 10px 16px;
+			font-size: 16px;
+			font-weight: 600;
 			color: var(--color-gravatar);
 			border: 1px solid #1d4fc44d;
 			box-shadow: none;
+
+			&:disabled {
+				opacity: 0.3;
+			}
 
 			&:hover:not(&:disabled),
 			&:focus {
@@ -777,9 +764,12 @@ $image-height: 47px;
 		clip-path: unset;
 	}
 
-	.social-buttons__button {
+	.components-button {
 		--color-accent: var(--color-gravatar);
+		--color-accent-60: #163d98; // equivalent to darken(#1d4fc4, 13%)
+	}
 
+	.social-buttons__button {
 		box-shadow: none;
 		padding: unset;
 		height: auto;
