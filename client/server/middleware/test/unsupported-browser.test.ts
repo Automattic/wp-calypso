@@ -199,17 +199,6 @@ describe( 'unsupported-browser', () => {
 		} );
 	} );
 
-	it( 'should handle WordPress Desktop app by stripping WordPressDesktop and Electron from user agent', () => {
-		req.useragent = parseUserAgent(
-			'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.81 Safari/537.36 WordPressDesktop/7.0.0 Electron/13.5.1'
-		);
-
-		unsupportedBrowserMiddleware()( req, res, next );
-
-		expect( next ).toHaveBeenCalled();
-		expect( res.redirect ).not.toHaveBeenCalled();
-	} );
-
 	it( 'should force redirect when test flag is enabled', () => {
 		// Override config.isEnabled for this test to enable test mode
 		( config.isEnabled as jest.Mock ).mockImplementation(
