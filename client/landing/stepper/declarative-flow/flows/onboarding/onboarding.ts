@@ -1,5 +1,6 @@
-import { OnboardSelect } from '@automattic/data-stores';
+import { DomainSuggestion, OnboardActions, OnboardSelect } from '@automattic/data-stores';
 import { ONBOARDING_FLOW, clearStepPersistedState } from '@automattic/onboarding';
+import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs, getQueryArg, getQueryArgs, removeQueryArgs } from '@wordpress/url';
 import { useState, useEffect } from 'react';
@@ -7,10 +8,7 @@ import {
 	useIsPlaygroundEligible,
 	isPlaygroundEligible,
 } from 'calypso/landing/stepper/hooks/use-is-playground-eligible';
-import {
-	isMvpOnboardingExperiment,
-	useMvpOnboardingExperiment,
-} from 'calypso/landing/stepper/hooks/use-mvp-onboarding-experiment';
+import { useMvpOnboardingExperiment } from 'calypso/landing/stepper/hooks/use-mvp-onboarding-experiment';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { pathToUrl } from 'calypso/lib/url';
 import {
@@ -54,15 +52,6 @@ const onboarding: FlowV2 = {
 	isSignupFlow: true,
 	__experimentalUseBuiltinAuth: true,
 	async initialize() {
-		if ( await isMvpOnboardingExperiment() ) {
-			return stepsWithRequiredLogin( [
-				STEPS.UNIFIED_PLANS,
-				STEPS.SITE_CREATION_STEP,
-				STEPS.PROCESSING,
-				STEPS.POST_CHECKOUT_ONBOARDING,
-			] );
-		}
-
 		const steps = stepsWithRequiredLogin( [
 			STEPS.UNIFIED_DOMAINS,
 			STEPS.USE_MY_DOMAIN,
@@ -91,7 +80,7 @@ const onboarding: FlowV2 = {
 			setProductCartItems,
 			setSiteUrl,
 			setSignupDomainOrigin,
-		} = useDispatch( ONBOARD_STORE );
+		} = useDispatch( ONBOARD_STORE ) as OnboardActions;
 		const locale = useFlowLocale();
 
 		const { planCartItem, signupDomainOrigin } = useSelect(
@@ -153,11 +142,11 @@ const onboarding: FlowV2 = {
 		const submit = async ( providedDependencies: ProvidedDependencies = {} ) => {
 			switch ( currentStepSlug ) {
 				case 'domains':
-					setSiteUrl( providedDependencies.siteUrl );
-					setDomain( providedDependencies.suggestion );
-					setDomainCartItem( providedDependencies.domainItem );
-					setDomainCartItems( providedDependencies.domainCart );
-					setSignupDomainOrigin( providedDependencies.signupDomainOrigin );
+					setSiteUrl( providedDependencies.siteUrl as string );
+					setDomain( providedDependencies.suggestion as DomainSuggestion );
+					setDomainCartItem( providedDependencies.domainItem as MinimalRequestCartProduct );
+					setDomainCartItems( providedDependencies.domainCart as MinimalRequestCartProduct[] );
+					setSignupDomainOrigin( providedDependencies.signupDomainOrigin as string );
 
 					if ( providedDependencies.navigateToUseMyDomain ) {
 						const currentQueryArgs = getQueryArgs( window.location.href );
@@ -210,9 +199,12 @@ const onboarding: FlowV2 = {
 
 					return navigate( 'plans' );
 				case 'plans': {
-					const cartItems = providedDependencies.cartItems as Array< typeof planCartItem >;
-					setPlanCartItem( cartItems?.[ 0 ] ?? null );
-					if ( ! cartItems?.[ 0 ] ) {
+					const cartItems = providedDependencies.cartItems as Array< typeof planCartItem > | null;
+					const [ pickedPlan, ...products ] = cartItems ?? [];
+
+					setPlanCartItem( pickedPlan );
+
+					if ( ! pickedPlan ) {
 						// Since we're removing the paid domain, it means that the user chose to continue
 						// with a free domain. Because signupDomainOrigin should reflect the last domain
 						// selection status before they land on the checkout page, this value can be
@@ -227,7 +219,7 @@ const onboarding: FlowV2 = {
 					// Make sure to put the rest of products into the cart, e.g. the storage add-ons.
 					setProductCartItems( [
 						...( selectedMarketplaceProduct ? [ selectedMarketplaceProduct ] : [] ),
-						...( cartItems || [] ).slice( 1 ),
+						...products.filter( ( product ) => product !== null ),
 					] );
 
 					setSignupCompleteFlowName( flowName );

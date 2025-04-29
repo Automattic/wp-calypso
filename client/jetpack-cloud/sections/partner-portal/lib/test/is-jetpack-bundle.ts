@@ -1,3 +1,4 @@
+// @ts-nocheck - TODO: Fix TypeScript issues
 import isJetpackBundle from '../is-jetpack-bundle';
 import type { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 

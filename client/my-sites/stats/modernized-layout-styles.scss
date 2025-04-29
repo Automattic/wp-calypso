@@ -36,7 +36,7 @@ $sidebar-appearance-break-point: $break-medium;
 	> * {
 		padding: 0 max(calc(50% - #{math.div($stats-sections-max-width, 2)}), 32px);
 
-		&:not(.navigation-header) {
+		&:not(.calypso-navigation-header, .navigation-header) {
 			@media (max-width: $break-small) {
 				padding-left: 0;
 				padding-right: 0;
@@ -50,17 +50,23 @@ $sidebar-appearance-break-point: $break-medium;
 	}
 
 	.navigation-header {
-		margin-bottom: 0;
 		padding-bottom: 24px;
+
+		@media (max-width: $break-small) {
+			padding-bottom: 24px;
+		}
+	}
+
+	.calypso-navigation-header,
+	.navigation-header {
+		margin-bottom: 0;
 		padding-left: max(calc(50% - #{math.div($stats-sections-max-width, 2)}), 32px);
 		padding-right: max(calc(50% - #{math.div($stats-sections-max-width, 2)}), 32px);
 		background-color: var(--studio-white);
 
 		@media (max-width: $break-small) {
-			// Restore padding to 16px on mobile as per the `.navigation-header` style.
-			padding: 16px;
-			// Reduce gap to the following section on mobile.
-			padding-bottom: 24px;
+			padding-top: 16px;
+			padding-inline: 16px;
 		}
 
 		@media (max-width: $break-mobile) {

@@ -46,14 +46,16 @@ function SiteOverview() {
 			actions={
 				<>
 					<ExternalLink href={ site.URL }>{ __( 'Visit' ) }</ExternalLink>
-					<Button
-						__next40pxDefaultSize
-						variant="primary"
-						href={ site.options.admin_url }
-						icon={ wordpress }
-					>
-						{ __( 'WP Admin' ) }
-					</Button>
+					{ site.options?.admin_url && (
+						<Button
+							__next40pxDefaultSize
+							variant="primary"
+							href={ site.options.admin_url }
+							icon={ wordpress }
+						>
+							{ __( 'WP Admin' ) }
+						</Button>
+					) }
 				</>
 			}
 		>

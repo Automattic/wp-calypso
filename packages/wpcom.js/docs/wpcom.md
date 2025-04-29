@@ -7,15 +7,6 @@ make admin actions or to access to protected resources.
 
 **Note**: You can use the [node-wpcom-oauth][] module to get an _access token_.
 
-## WPCOM#me(fn)
-
-Create a `Me` object. More info in [Me doc page](./me.md).
-
-```js
-const wpcom = require( 'wpcom' )( '<your-token>' );
-const me = wpcom.me();
-```
-
 ## WPCOM#site('site-id')
 
 Create a `Site` object. More info in [Site doc page](./site.md).

@@ -19,7 +19,7 @@ const fetchSites = (
 	additional_fields: string[] = [],
 	additional_options: string[] = []
 ): Promise< { sites: SiteExcerptNetworkData[] } > => {
-	return wpcom.me().sites( {
+	return wpcom.req.get( '/me/sites', {
 		apiVersion: '1.2',
 		site_visibility,
 		include_domain_only: true,

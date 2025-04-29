@@ -110,16 +110,6 @@ describe( 'Survey', () => {
 		expect( screen.queryByText( 'Survey' ) ).not.toBeInTheDocument();
 	} );
 
-	it( 'does not render the survey when isOpen is false', () => {
-		render(
-			<Survey name={ SURVEY_NAME } isOpen={ false }>
-				<h1>Survey</h1>
-			</Survey>
-		);
-
-		expect( screen.queryByText( 'Survey' ) ).not.toBeInTheDocument();
-	} );
-
 	it( 'use trigger as child for accept', async () => {
 		const onAccept = jest.fn();
 

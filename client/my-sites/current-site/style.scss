@@ -1,19 +1,19 @@
-.sidebar .notice.is-compact {
+.sidebar .calypso-notice.is-compact {
 	display: flex;
 	margin: -4px 8px 8px;
 	border-radius: 2px;
 
-	.notice__content {
+	.calypso-notice__content {
 		overflow: hidden;
 		text-overflow: ellipsis;
 	}
 
-	.notice__text {
+	.calypso-notice__text {
 		display: inline;
 		line-height: 1.3;
 	}
 
-	.notice__action {
+	.calypso-notice__action {
 		margin-left: auto;
 		white-space: normal;
 	}

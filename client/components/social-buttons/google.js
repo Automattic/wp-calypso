@@ -20,7 +20,7 @@ import './style.scss';
 
 const noop = () => {};
 
-class GoogleSocialButton extends Component {
+export class GoogleSocialButton extends Component {
 	static propTypes = {
 		isFormDisabled: PropTypes.bool,
 		onClick: PropTypes.func,

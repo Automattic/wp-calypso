@@ -75,12 +75,17 @@ function StatsLineChart( {
 
 	const yNumTicks = useMemo( () => {
 		const uniqueValues = [
-			...new Set( chartData.flatMap( ( series ) => series.data.map( ( d ) => d.value ) ) ),
+			...new Set( chartData.flatMap( ( series ) => series.data.map( ( d ) => d.value ?? 0 ) ) ),
 		];
 
 		const maxTicks = uniqueValues.length > 5 ? 5 : uniqueValues.length;
 
 		if ( fixedDomain ) {
+			return maxTicks;
+		}
+
+		// The only one tick, e.g. [ 2 ] or two ticks not [ 1, 2 ], e.g. [ 1, 3 ].
+		if ( maxTicks === 1 || ( maxTicks === 2 && Math.max( ...uniqueValues ) > 2 ) ) {
 			return maxTicks;
 		}
 

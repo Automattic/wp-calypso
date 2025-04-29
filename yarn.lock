@@ -37,15 +37,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@aivenio/tsc-output-parser@npm:^2.1.1":
-  version: 2.1.1
-  resolution: "@aivenio/tsc-output-parser@npm:2.1.1"
-  bin:
-    tsc-output-parser: dist/cli.js
-  checksum: b2e74b82b312ccf13913647a816301c7e10cbdfcb649b8d98631fbd13c99c52259a5afaad80d52ee5a125e3534a2e4dfc40ad3a474c15fb7935f9eb9c7b23238
-  languageName: node
-  linkType: hard
-
 "@ampproject/remapping@npm:^2.2.0":
   version: 2.2.1
   resolution: "@ampproject/remapping@npm:2.2.1"
@@ -685,7 +676,7 @@ __metadata:
     "@storybook/addon-actions": "npm:^8.6.9"
     "@testing-library/dom": "npm:^10.4.0"
     "@testing-library/jest-dom": "npm:^6.6.3"
-    "@testing-library/react": "npm:^16.2.0"
+    "@testing-library/react": "npm:^16.3.0"
     "@testing-library/user-event": "npm:^14.6.1"
     "@types/canvas-confetti": "npm:^1.6.0"
     "@types/node": "npm:^22.7.5"
@@ -732,7 +723,7 @@ __metadata:
     "@emotion/styled": "npm:^11.11.0"
     "@testing-library/dom": "npm:^10.4.0"
     "@testing-library/jest-dom": "npm:^6.6.3"
-    "@testing-library/react": "npm:^16.2.0"
+    "@testing-library/react": "npm:^16.3.0"
     "@testing-library/user-event": "npm:^14.6.1"
     "@wordpress/i18n": "npm:^5.22.0"
     "@wordpress/react-i18n": "npm:^4.22.0"
@@ -807,6 +798,38 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@automattic/dataviews@workspace:packages/dataviews":
+  version: 0.0.0-use.local
+  resolution: "@automattic/dataviews@workspace:packages/dataviews"
+  dependencies:
+    "@ariakit/react": "npm:^0.4.15"
+    "@automattic/calypso-storybook": "workspace:^"
+    "@testing-library/jest-dom": "npm:^6.6.3"
+    "@types/jest": "npm:^29.5.14"
+    "@wordpress/base-styles": "npm:^5.22.0"
+    "@wordpress/components": "npm:^29.8.0"
+    "@wordpress/compose": "npm:^7.22.0"
+    "@wordpress/data": "npm:^10.22.0"
+    "@wordpress/element": "npm:^6.22.0"
+    "@wordpress/i18n": "npm:^5.22.0"
+    "@wordpress/icons": "npm:^10.22.0"
+    "@wordpress/postcss-plugins-preset": "npm:^5.22.0"
+    "@wordpress/primitives": "npm:^4.22.0"
+    "@wordpress/private-apis": "npm:^1.22.0"
+    "@wordpress/warning": "npm:^3.22.0"
+    clsx: "npm:^2.1.1"
+    postcss: "npm:^8.5.3"
+    postcss-local-keyframes: "npm:^0.0.2"
+    remove-accents: "npm:^0.5.0"
+    sass: "npm:1.54.0"
+    storybook: "npm:^8.6.9"
+    typescript: "npm:5.8.2"
+  peerDependencies:
+    react: ^18.0.0
+    react-dom: ^18.0.0
+  languageName: unknown
+  linkType: soft
+
 "@automattic/design-picker@workspace:^, @automattic/design-picker@workspace:packages/design-picker":
   version: 0.0.0-use.local
   resolution: "@automattic/design-picker@workspace:packages/design-picker"
@@ -823,7 +846,7 @@ __metadata:
     "@tanstack/react-query": "npm:^5.15.5"
     "@testing-library/dom": "npm:^10.4.0"
     "@testing-library/jest-dom": "npm:^6.6.3"
-    "@testing-library/react": "npm:^16.2.0"
+    "@testing-library/react": "npm:^16.3.0"
     "@wordpress/components": "npm:^29.8.0"
     "@wordpress/react-i18n": "npm:^4.22.0"
     "@wordpress/url": "npm:^4.22.0"
@@ -862,7 +885,7 @@ __metadata:
     "@automattic/onboarding": "workspace:^"
     "@testing-library/dom": "npm:^10.4.0"
     "@testing-library/jest-dom": "npm:^6.6.3"
-    "@testing-library/react": "npm:^16.2.0"
+    "@testing-library/react": "npm:^16.3.0"
     "@wordpress/components": "npm:^29.8.0"
     "@wordpress/html-entities": "npm:^4.22.0"
     "@wordpress/icons": "npm:^10.22.0"
@@ -896,7 +919,7 @@ __metadata:
     "@automattic/typography": "workspace:^"
     "@testing-library/dom": "npm:^10.4.0"
     "@testing-library/jest-dom": "npm:^6.6.3"
-    "@testing-library/react": "npm:^16.2.0"
+    "@testing-library/react": "npm:^16.3.0"
     "@wordpress/base-styles": "npm:^5.22.0"
     "@wordpress/components": "npm:^29.8.0"
     "@wordpress/compose": "npm:^7.22.0"
@@ -935,7 +958,7 @@ __metadata:
     "@tanstack/react-query": "npm:^5.15.5"
     "@testing-library/dom": "npm:^10.4.0"
     "@testing-library/jest-dom": "npm:^6.6.3"
-    "@testing-library/react": "npm:^16.2.0"
+    "@testing-library/react": "npm:^16.3.0"
     "@wordpress/components": "npm:^29.8.0"
     "@wordpress/react-i18n": "npm:^4.22.0"
     clsx: "npm:^2.1.1"
@@ -993,7 +1016,7 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/explat-client": "workspace:^"
     "@testing-library/dom": "npm:^10.4.0"
-    "@testing-library/react": "npm:^16.2.0"
+    "@testing-library/react": "npm:^16.3.0"
     jest: "npm:^29.7.0"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
@@ -1123,11 +1146,14 @@ __metadata:
     "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-storybook": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
+    "@dnd-kit/core": "npm:^6.3.1"
+    "@dnd-kit/sortable": "npm:^10.0.0"
     "@storybook/addon-actions": "npm:^8.6.9"
     "@storybook/addon-controls": "npm:^8.6.9"
     "@storybook/addon-docs": "npm:^8.6.9"
     "@storybook/react-webpack5": "npm:^8.6.9"
     "@wordpress/compose": "npm:^7.22.0"
+    clsx: "npm:^2.1.1"
     postcss: "npm:^8.5.3"
     storybook: "npm:^8.6.9"
     typescript: "npm:^5.8.2"
@@ -1220,7 +1246,7 @@ __metadata:
     "@automattic/languages": "workspace:^"
     "@testing-library/dom": "npm:^10.4.0"
     "@testing-library/jest-dom": "npm:^6.6.3"
-    "@testing-library/react": "npm:^16.2.0"
+    "@testing-library/react": "npm:^16.3.0"
     "@types/react": "npm:^18.3.20"
     "@wordpress/compose": "npm:^7.22.0"
     "@wordpress/i18n": "npm:^5.22.0"
@@ -1272,7 +1298,7 @@ __metadata:
     "@automattic/languages": "workspace:^"
     "@testing-library/dom": "npm:^10.4.0"
     "@testing-library/jest-dom": "npm:^6.6.3"
-    "@testing-library/react": "npm:^16.2.0"
+    "@testing-library/react": "npm:^16.3.0"
     clsx: "npm:^2.1.1"
     debug: "npm:^4.4.0"
     postcss: "npm:^8.5.3"
@@ -1423,7 +1449,7 @@ __metadata:
     "@emotion/styled": "npm:^11.11.0"
     "@testing-library/dom": "npm:^10.4.0"
     "@testing-library/jest-dom": "npm:^6.6.3"
-    "@testing-library/react": "npm:^16.2.0"
+    "@testing-library/react": "npm:^16.3.0"
     "@wordpress/i18n": "npm:^5.22.0"
     "@wordpress/react-i18n": "npm:^4.22.0"
     debug: "npm:^4.4.0"
@@ -1614,7 +1640,7 @@ __metadata:
     "@automattic/viewport": "workspace:^"
     "@storybook/addon-a11y": "npm:^8.6.9"
     "@testing-library/dom": "npm:^10.4.0"
-    "@testing-library/react": "npm:^16.2.0"
+    "@testing-library/react": "npm:^16.3.0"
     "@wordpress/base-styles": "npm:^5.22.0"
     "@wordpress/components": "npm:^29.8.0"
     "@wordpress/data": "npm:^10.22.0"
@@ -1658,7 +1684,7 @@ __metadata:
     "@emotion/styled": "npm:^11.11.0"
     "@testing-library/dom": "npm:^10.4.0"
     "@testing-library/jest-dom": "npm:^6.6.3"
-    "@testing-library/react": "npm:^16.2.0"
+    "@testing-library/react": "npm:^16.3.0"
     "@testing-library/user-event": "npm:^14.6.1"
     "@wordpress/data": "npm:^10.22.0"
     "@wordpress/element": "npm:^6.22.0"
@@ -1703,7 +1729,7 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@testing-library/dom": "npm:^10.4.0"
     "@testing-library/jest-dom": "npm:^6.6.3"
-    "@testing-library/react": "npm:^16.2.0"
+    "@testing-library/react": "npm:^16.3.0"
     clsx: "npm:^2.1.1"
     postcss: "npm:^8.5.3"
     require-from-string: "npm:^2.0.2"
@@ -1753,7 +1779,7 @@ __metadata:
     "@storybook/addon-actions": "npm:^8.6.9"
     "@testing-library/dom": "npm:^10.4.0"
     "@testing-library/jest-dom": "npm:^6.6.3"
-    "@testing-library/react": "npm:^16.2.0"
+    "@testing-library/react": "npm:^16.3.0"
     "@testing-library/user-event": "npm:^14.6.1"
     "@wordpress/base-styles": "npm:^5.22.0"
     "@wordpress/components": "npm:^29.8.0"
@@ -1785,7 +1811,7 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@testing-library/dom": "npm:^10.4.0"
     "@testing-library/jest-dom": "npm:^6.6.3"
-    "@testing-library/react": "npm:^16.2.0"
+    "@testing-library/react": "npm:^16.3.0"
     debug: "npm:^4.4.0"
     typescript: "npm:^5.8.2"
   peerDependencies:
@@ -1835,7 +1861,7 @@ __metadata:
     "@automattic/search": "workspace:^"
     "@testing-library/dom": "npm:^10.4.0"
     "@testing-library/jest-dom": "npm:^6.6.3"
-    "@testing-library/react": "npm:^16.2.0"
+    "@testing-library/react": "npm:^16.3.0"
     typescript: "npm:^5.8.2"
   peerDependencies:
     "@wordpress/data": ^10.22.0
@@ -1854,7 +1880,7 @@ __metadata:
     "@emotion/react": "npm:^11.11.1"
     "@testing-library/dom": "npm:^10.4.0"
     "@testing-library/jest-dom": "npm:^6.6.3"
-    "@testing-library/react": "npm:^16.2.0"
+    "@testing-library/react": "npm:^16.3.0"
     "@wordpress/components": "npm:^29.8.0"
     "@wordpress/element": "npm:^6.22.0"
     "@wordpress/i18n": "npm:^5.22.0"
@@ -2160,7 +2186,7 @@ __metadata:
     "@stripe/stripe-js": "npm:^1.54.2"
     "@testing-library/dom": "npm:^10.4.0"
     "@testing-library/jest-dom": "npm:^6.6.3"
-    "@testing-library/react": "npm:^16.2.0"
+    "@testing-library/react": "npm:^16.3.0"
     "@wordpress/data": "npm:^10.22.0"
     "@wordpress/i18n": "npm:^5.22.0"
     "@wordpress/react-i18n": "npm:^4.22.0"
@@ -2234,15 +2260,6 @@ __metadata:
     babel: ./bin/babel.js
     babel-external-helpers: ./bin/babel-external-helpers.js
   checksum: f2d4fc3c4a34dd3001e3bd7084b78b38211003c36afaf2dc8fedf4565c0442bd59b1c64a9f91a0b7b2450e089123f197e09577ae50dc994307c3348b310ce34c
-  languageName: node
-  linkType: hard
-
-"@babel/code-frame@npm:7.0.0":
-  version: 7.0.0
-  resolution: "@babel/code-frame@npm:7.0.0"
-  dependencies:
-    "@babel/highlight": "npm:^7.0.0"
-  checksum: 354d21933d183ae2b3326d960b7731244c21a6cca663d10a3822ffb122bfa2cd3bb85bfb75bc6be7f73afbb4e69281355e5093b572d8690dc47d5ad813c42f35
   languageName: node
   linkType: hard
 
@@ -2510,7 +2527,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/helper-validator-identifier@npm:^7.25.7, @babel/helper-validator-identifier@npm:^7.25.9":
+"@babel/helper-validator-identifier@npm:^7.25.9":
   version: 7.25.9
   resolution: "@babel/helper-validator-identifier@npm:7.25.9"
   checksum: 4fc6f830177b7b7e887ad3277ddb3b91d81e6c4a24151540d9d1023e8dc6b1c0505f0f0628ae653601eb4388a8db45c1c14b2c07a9173837aef7e4116456259d
@@ -2542,18 +2559,6 @@ __metadata:
     "@babel/template": "npm:^7.27.0"
     "@babel/types": "npm:^7.27.0"
   checksum: a3c64fd2d8b164c041808826cc00769d814074ea447daaacaf2e3714b66d3f4237ef6e420f61d08f463d6608f3468c2ac5124ab7c68f704e20384def5ade95f4
-  languageName: node
-  linkType: hard
-
-"@babel/highlight@npm:^7.0.0":
-  version: 7.25.7
-  resolution: "@babel/highlight@npm:7.25.7"
-  dependencies:
-    "@babel/helper-validator-identifier": "npm:^7.25.7"
-    chalk: "npm:^2.4.2"
-    js-tokens: "npm:^4.0.0"
-    picocolors: "npm:^1.0.0"
-  checksum: 1f5894fdb0a0af6101fb2822369b2eeeae32cbeae2ef73ff73fc6a0a4a20471565cd9cfa589f54ed69df66adeca7c57266031ca9134b7bd244d023a488d419aa
   languageName: node
   linkType: hard
 
@@ -3987,21 +3992,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@bartekbp/typescript-checkstyle@npm:^5.0.0":
-  version: 5.0.0
-  resolution: "@bartekbp/typescript-checkstyle@npm:5.0.0"
-  dependencies:
-    "@aivenio/tsc-output-parser": "npm:^2.1.1"
-    checkstyle-formatter: "npm:^1.1.0"
-    get-stdin: "npm:^8.0.0"
-    lodash: "npm:^4.17.20"
-    yargs: "npm:^16.2.0"
-  bin:
-    typescript-checkstyle: dist/cli.js
-  checksum: 656f1ea7274d579b76ee635631450881c6344e2635dfe2cc5d4e4c4b6c2316985c01b01f43e6de53e8e8c725ccf9197bf07f988f048e423902c7a1bfed4981ee
-  languageName: node
-  linkType: hard
-
 "@base2/pretty-print-object@npm:1.0.1":
   version: 1.0.1
   resolution: "@base2/pretty-print-object@npm:1.0.1"
@@ -4127,6 +4117,55 @@ __metadata:
   version: 0.5.7
   resolution: "@discoveryjs/json-ext@npm:0.5.7"
   checksum: e10f1b02b78e4812646ddf289b7d9f2cb567d336c363b266bd50cd223cf3de7c2c74018d91cd2613041568397ef3a4a2b500aba588c6e5bd78c38374ba68f38c
+  languageName: node
+  linkType: hard
+
+"@dnd-kit/accessibility@npm:^3.1.1":
+  version: 3.1.1
+  resolution: "@dnd-kit/accessibility@npm:3.1.1"
+  dependencies:
+    tslib: "npm:^2.0.0"
+  peerDependencies:
+    react: ">=16.8.0"
+  checksum: be0bf41716dc58f9386bc36906ec1ce72b7b42b6d1d0e631d347afe9bd8714a829bd6f58a346dd089b1519e93918ae2f94497411a61a4f5e4d9247c6cfd1fef8
+  languageName: node
+  linkType: hard
+
+"@dnd-kit/core@npm:^6.3.1":
+  version: 6.3.1
+  resolution: "@dnd-kit/core@npm:6.3.1"
+  dependencies:
+    "@dnd-kit/accessibility": "npm:^3.1.1"
+    "@dnd-kit/utilities": "npm:^3.2.2"
+    tslib: "npm:^2.0.0"
+  peerDependencies:
+    react: ">=16.8.0"
+    react-dom: ">=16.8.0"
+  checksum: 196db95d81096d9dc248983533eab91ba83591770fa5c894b1ac776f42af0d99522b3fd5bb3923411470e4733fcfa103e6ee17adc17b9b7eb54c7fbec5ff7c52
+  languageName: node
+  linkType: hard
+
+"@dnd-kit/sortable@npm:^10.0.0":
+  version: 10.0.0
+  resolution: "@dnd-kit/sortable@npm:10.0.0"
+  dependencies:
+    "@dnd-kit/utilities": "npm:^3.2.2"
+    tslib: "npm:^2.0.0"
+  peerDependencies:
+    "@dnd-kit/core": ^6.3.0
+    react: ">=16.8.0"
+  checksum: 37ee48bc6789fb512dc0e4c374a96d19abe5b2b76dc34856a5883aaa96c3297891b94cc77bbc409e074dcce70967ebcb9feb40cd9abadb8716fc280b4c7f99af
+  languageName: node
+  linkType: hard
+
+"@dnd-kit/utilities@npm:^3.2.2":
+  version: 3.2.2
+  resolution: "@dnd-kit/utilities@npm:3.2.2"
+  dependencies:
+    tslib: "npm:^2.0.0"
+  peerDependencies:
+    react: ">=16.8.0"
+  checksum: 9aa90526f3e3fd567b5acc1b625a63177b9e8d00e7e50b2bd0e08fa2bf4dba7e19529777e001fdb8f89a7ce69f30b190c8364d390212634e0afdfa8c395e85a0
   languageName: node
   linkType: hard
 
@@ -4699,16 +4738,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ianvs/eslint-stats@npm:^2.0.0":
-  version: 2.0.0
-  resolution: "@ianvs/eslint-stats@npm:2.0.0"
-  dependencies:
-    chalk: "npm:^2.4.2"
-    lodash: "npm:^4.17.15"
-  checksum: 9ac75d85b046e1fd95c87222359d4d00eb9172a02ade3b050ac4f3920aee0700b1eee3ab592b7914dd47d18b2858109d2fb4458a4b41af6ad030406751d13bcf
-  languageName: node
-  linkType: hard
-
 "@inquirer/confirm@npm:^3.0.0":
   version: 3.1.6
   resolution: "@inquirer/confirm@npm:3.1.6"
@@ -5211,7 +5240,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@octokit/app@npm:^14.0.0":
+"@octokit/app@npm:^14.0.2":
   version: 14.1.0
   resolution: "@octokit/app@npm:14.1.0"
   dependencies:
@@ -5618,137 +5647,134 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@php-wasm/fs-journal@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-fs-journal-1.0.29.tar.gz":
-  version: 1.0.29
-  resolution: "@php-wasm/fs-journal@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-fs-journal-1.0.29.tar.gz"
+"@php-wasm/fs-journal@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.31/@php-wasm-fs-journal-1.0.31.tar.gz":
+  version: 1.0.31
+  resolution: "@php-wasm/fs-journal@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.31/@php-wasm-fs-journal-1.0.31.tar.gz"
   dependencies:
-    "@php-wasm/logger": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-logger-1.0.29.tar.gz"
-    "@php-wasm/node": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-node-1.0.29.tar.gz"
-    "@php-wasm/universal": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-universal-1.0.29.tar.gz"
-    "@php-wasm/util": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-util-1.0.29.tar.gz"
+    "@php-wasm/logger": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.31/@php-wasm-logger-1.0.31.tar.gz"
+    "@php-wasm/node": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.31/@php-wasm-node-1.0.31.tar.gz"
+    "@php-wasm/universal": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.31/@php-wasm-universal-1.0.31.tar.gz"
+    "@php-wasm/util": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.31/@php-wasm-util-1.0.31.tar.gz"
     comlink: "npm:^4.4.1"
-    events: "npm:3.3.0"
-    express: "npm:4.19.2"
+    express: "npm:4.21.2"
     ini: "npm:4.1.2"
     wasm-feature-detect: "npm:1.8.0"
-    ws: "npm:8.18.0"
+    ws: "npm:8.18.1"
     yargs: "npm:17.7.2"
-  checksum: f14f4925ee1d115e00873583c07e18a84d0d83e3f71f2a8ecc5c66df329dd1134f5e0e36ea54a101b0e8910803f57fdbc0e39b09e4b06a9363c14cef58865ccb
+  checksum: 521d7691c5ab99ad67cd1c6d99b73fe645ad5ba3734cd5e599b7b7fd34752ab0e924f860a979515c867d65bd6df20c9d1ed973770fd419fee5ab60d3550cea5c
   languageName: node
   linkType: hard
 
-"@php-wasm/logger@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-logger-1.0.29.tar.gz":
-  version: 1.0.29
-  resolution: "@php-wasm/logger@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-logger-1.0.29.tar.gz"
+"@php-wasm/logger@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.31/@php-wasm-logger-1.0.31.tar.gz":
+  version: 1.0.31
+  resolution: "@php-wasm/logger@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.31/@php-wasm-logger-1.0.31.tar.gz"
   dependencies:
-    "@php-wasm/node-polyfills": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-node-polyfills-1.0.29.tar.gz"
-  checksum: 4f51cfd9c3c75eb6fbf334a87a81228d2d64df760b6e9cd7302f1214b18f803cd8cb020b0a91b5e1e39f164468370658470cad04c09dcee15040b3f17fe70e78
+    "@php-wasm/node-polyfills": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.31/@php-wasm-node-polyfills-1.0.31.tar.gz"
+  checksum: 57adea157f4388db1152dc1fd3b0aa48566af62c3b2b35a8b4741557acc32fbf057fc0079c1a56674a2c8fae69ae8a78aa3425de48ce8b42601ec3a88f44ce6f
   languageName: node
   linkType: hard
 
-"@php-wasm/node-polyfills@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-node-polyfills-1.0.29.tar.gz":
-  version: 1.0.29
-  resolution: "@php-wasm/node-polyfills@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-node-polyfills-1.0.29.tar.gz"
-  checksum: 3b3e8e24c2c1658432e35fa9fd356e04ccecfef8dd3c6335107f2ab66921f075bbfc8a4f15c5749e1090f5f2ae47738bbd296b3d422beb3501a87895da4ccb73
+"@php-wasm/node-polyfills@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.31/@php-wasm-node-polyfills-1.0.31.tar.gz":
+  version: 1.0.31
+  resolution: "@php-wasm/node-polyfills@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.31/@php-wasm-node-polyfills-1.0.31.tar.gz"
+  checksum: a65653f6eaa1209a5c65647b4a313a945c065ee558362eed5f329e5585f7b073a9615e317e6fc50909e719a8d43f85d019d5867aa75c39d374eab46f95bfac29
   languageName: node
   linkType: hard
 
-"@php-wasm/node@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-node-1.0.29.tar.gz":
-  version: 1.0.29
-  resolution: "@php-wasm/node@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-node-1.0.29.tar.gz"
+"@php-wasm/node@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.31/@php-wasm-node-1.0.31.tar.gz":
+  version: 1.0.31
+  resolution: "@php-wasm/node@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.31/@php-wasm-node-1.0.31.tar.gz"
   dependencies:
-    "@php-wasm/logger": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-logger-1.0.29.tar.gz"
-    "@php-wasm/node-polyfills": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-node-polyfills-1.0.29.tar.gz"
-    "@php-wasm/universal": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-universal-1.0.29.tar.gz"
-    "@php-wasm/util": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-util-1.0.29.tar.gz"
-    "@wp-playground/common": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@wp-playground-common-1.0.29.tar.gz"
-    "@wp-playground/wordpress": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@wp-playground-wordpress-1.0.29.tar.gz"
+    "@php-wasm/logger": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.31/@php-wasm-logger-1.0.31.tar.gz"
+    "@php-wasm/node-polyfills": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.31/@php-wasm-node-polyfills-1.0.31.tar.gz"
+    "@php-wasm/universal": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.31/@php-wasm-universal-1.0.31.tar.gz"
+    "@php-wasm/util": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.31/@php-wasm-util-1.0.31.tar.gz"
+    "@wp-playground/common": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.31/@wp-playground-common-1.0.31.tar.gz"
+    "@wp-playground/wordpress": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.31/@wp-playground-wordpress-1.0.31.tar.gz"
     comlink: "npm:^4.4.1"
-    events: "npm:3.3.0"
-    express: "npm:4.19.2"
+    express: "npm:4.21.2"
     ini: "npm:4.1.2"
     wasm-feature-detect: "npm:1.8.0"
-    ws: "npm:8.18.0"
+    ws: "npm:8.18.1"
     yargs: "npm:17.7.2"
-  checksum: 4e8404a942261128e987c73d7d1cefc8541a6ac448be447ccd030dbba7c695ce91e7e6127fead4b2306c314c13373bad56e6b49160c3274eb2af52a3275184c2
+  checksum: 0dc37b0df904e25f1a43ace325dfac947e7d1acaea25d01d0b6f0ebc6d607948b26f8b9fb2ab5cb8d79f5bd3f62c2cf5a2a822b4a444a691824c097616c66fa3
   languageName: node
   linkType: hard
 
-"@php-wasm/progress@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-progress-1.0.29.tar.gz":
-  version: 1.0.29
-  resolution: "@php-wasm/progress@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-progress-1.0.29.tar.gz"
+"@php-wasm/progress@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.31/@php-wasm-progress-1.0.31.tar.gz":
+  version: 1.0.31
+  resolution: "@php-wasm/progress@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.31/@php-wasm-progress-1.0.31.tar.gz"
   dependencies:
-    "@php-wasm/logger": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-logger-1.0.29.tar.gz"
-    "@php-wasm/node-polyfills": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-node-polyfills-1.0.29.tar.gz"
-  checksum: b872c7b97d715220b29c8480ff7acf4bec3583ce12f33b564cc3b9415a1365667632183dd1494e42fb9a54b54a2a0ad4845c60703cf95117e7ae93b52925b49d
+    "@php-wasm/logger": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.31/@php-wasm-logger-1.0.31.tar.gz"
+    "@php-wasm/node-polyfills": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.31/@php-wasm-node-polyfills-1.0.31.tar.gz"
+  checksum: bc2f942c753cafc15d0fd41cb3ce0b1cf24be78effb51d8430af294787687d79132a94c90d3885202b820b68303447015ef8c3464513adf591128dfae1abbc63
   languageName: node
   linkType: hard
 
-"@php-wasm/scopes@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-scopes-1.0.29.tar.gz":
-  version: 1.0.29
-  resolution: "@php-wasm/scopes@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-scopes-1.0.29.tar.gz"
-  checksum: ce565f73c597feba8d2d66a2c891e42c40271251e8c27d990ccb7bdf92d5bda79a3f51a6a6107334d4377bf1d8c0999d107ab74be7fa334c23208b55a2f7af61
+"@php-wasm/scopes@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.31/@php-wasm-scopes-1.0.31.tar.gz":
+  version: 1.0.31
+  resolution: "@php-wasm/scopes@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.31/@php-wasm-scopes-1.0.31.tar.gz"
+  checksum: e10214c0fa10200d956fbf2f8a8897f0826e82d1f87c7a01f05887884c875b8512131f035054344fc054186e09f7b0e7363e68f3b42ec8cd3588b49a4a08464f
   languageName: node
   linkType: hard
 
-"@php-wasm/stream-compression@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-stream-compression-1.0.29.tar.gz":
-  version: 1.0.29
-  resolution: "@php-wasm/stream-compression@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-stream-compression-1.0.29.tar.gz"
+"@php-wasm/stream-compression@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.31/@php-wasm-stream-compression-1.0.31.tar.gz":
+  version: 1.0.31
+  resolution: "@php-wasm/stream-compression@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.31/@php-wasm-stream-compression-1.0.31.tar.gz"
   dependencies:
-    "@php-wasm/node-polyfills": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-node-polyfills-1.0.29.tar.gz"
-    "@php-wasm/util": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-util-1.0.29.tar.gz"
-  checksum: 8b8a7f40d45cbe88cd59a90c7eb3b0a7d8ddb6c0491d5966cf494e7cbfebfa52172fd384f552753f1bc68ba5617b0596423a6baf40a99321edf69cafd3116152
+    "@php-wasm/node-polyfills": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.31/@php-wasm-node-polyfills-1.0.31.tar.gz"
+    "@php-wasm/util": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.31/@php-wasm-util-1.0.31.tar.gz"
+  checksum: d7389b3a570b58ab1d728c94377ac547434c4d30aa92679d7315bb19e039a15eac87f190f0c3fe90d6745c698d90bcc17fa5918b07dfe7d1b064a940befd3396
   languageName: node
   linkType: hard
 
-"@php-wasm/universal@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-universal-1.0.29.tar.gz":
-  version: 1.0.29
-  resolution: "@php-wasm/universal@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-universal-1.0.29.tar.gz"
+"@php-wasm/universal@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.31/@php-wasm-universal-1.0.31.tar.gz":
+  version: 1.0.31
+  resolution: "@php-wasm/universal@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.31/@php-wasm-universal-1.0.31.tar.gz"
   dependencies:
-    "@php-wasm/logger": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-logger-1.0.29.tar.gz"
-    "@php-wasm/node-polyfills": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-node-polyfills-1.0.29.tar.gz"
-    "@php-wasm/progress": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-progress-1.0.29.tar.gz"
-    "@php-wasm/stream-compression": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-stream-compression-1.0.29.tar.gz"
-    "@php-wasm/util": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-util-1.0.29.tar.gz"
+    "@php-wasm/logger": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.31/@php-wasm-logger-1.0.31.tar.gz"
+    "@php-wasm/node-polyfills": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.31/@php-wasm-node-polyfills-1.0.31.tar.gz"
+    "@php-wasm/progress": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.31/@php-wasm-progress-1.0.31.tar.gz"
+    "@php-wasm/stream-compression": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.31/@php-wasm-stream-compression-1.0.31.tar.gz"
+    "@php-wasm/util": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.31/@php-wasm-util-1.0.31.tar.gz"
     comlink: "npm:^4.4.1"
     ini: "npm:4.1.2"
-  checksum: 44fa5578c839f9a3f086476e1255cd0fa62f0c8f214a851b59735bf6b266aed2d5d73fb6ebb1785508f98fe86f6d353109fd62a9b478c4163e650c6e1cb84f0a
+  checksum: 0f74d8e78817fae695968dbd4afb5e7f9e06cc3b1cef86808c984b3353ba63d51c52d50a437a1af4eef7b0bce581de04c19f91a77a59fccb0893674be7c75b73
   languageName: node
   linkType: hard
 
-"@php-wasm/util@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-util-1.0.29.tar.gz":
-  version: 1.0.29
-  resolution: "@php-wasm/util@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-util-1.0.29.tar.gz"
-  checksum: 85dbbaba37a9e2d5ac71664ecf57b734443a2a61edbe8c37be8df7d6548602477611bb25e4bb672c15ee2e74594d39885ad15358d66817ae7e9c5305de60667e
+"@php-wasm/util@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.31/@php-wasm-util-1.0.31.tar.gz":
+  version: 1.0.31
+  resolution: "@php-wasm/util@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.31/@php-wasm-util-1.0.31.tar.gz"
+  checksum: 7ce5baa7bc31b5775fb8de8ec18eb420b16e43eff0a8b4dd4b857d183786b5f74d4c127a5f46a7af0005b4127c7b023dbbd24d903fcc3ee85dc903abd06201ba
   languageName: node
   linkType: hard
 
-"@php-wasm/web-service-worker@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-web-service-worker-1.0.29.tar.gz":
-  version: 1.0.29
-  resolution: "@php-wasm/web-service-worker@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-web-service-worker-1.0.29.tar.gz"
+"@php-wasm/web-service-worker@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.31/@php-wasm-web-service-worker-1.0.31.tar.gz":
+  version: 1.0.31
+  resolution: "@php-wasm/web-service-worker@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.31/@php-wasm-web-service-worker-1.0.31.tar.gz"
   dependencies:
-    "@php-wasm/scopes": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-scopes-1.0.29.tar.gz"
-  checksum: 00cbfbba43ac432a5050a6f10303f4985e28946fa54ac4f065f96248e4d1c94c0b3c65fbc897cb11f9a04aa3e61f283bd998003ee925e065c9f347529836f6d1
+    "@php-wasm/scopes": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.31/@php-wasm-scopes-1.0.31.tar.gz"
+  checksum: 3dd9a69887f2406e30be5a6d0183f4ae391fa1c5a693544140aaafee0b05b361581429c7849958aabca39eec2b842f4989b8dde3d5a4fbe657ff4e11975f5fde
   languageName: node
   linkType: hard
 
-"@php-wasm/web@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-web-1.0.29.tar.gz":
-  version: 1.0.29
-  resolution: "@php-wasm/web@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-web-1.0.29.tar.gz"
+"@php-wasm/web@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.31/@php-wasm-web-1.0.31.tar.gz":
+  version: 1.0.31
+  resolution: "@php-wasm/web@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.31/@php-wasm-web-1.0.31.tar.gz"
   dependencies:
-    "@php-wasm/fs-journal": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-fs-journal-1.0.29.tar.gz"
-    "@php-wasm/logger": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-logger-1.0.29.tar.gz"
-    "@php-wasm/universal": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-universal-1.0.29.tar.gz"
-    "@php-wasm/util": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-util-1.0.29.tar.gz"
-    "@php-wasm/web-service-worker": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-web-service-worker-1.0.29.tar.gz"
+    "@php-wasm/fs-journal": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.31/@php-wasm-fs-journal-1.0.31.tar.gz"
+    "@php-wasm/logger": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.31/@php-wasm-logger-1.0.31.tar.gz"
+    "@php-wasm/universal": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.31/@php-wasm-universal-1.0.31.tar.gz"
+    "@php-wasm/util": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.31/@php-wasm-util-1.0.31.tar.gz"
+    "@php-wasm/web-service-worker": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.31/@php-wasm-web-service-worker-1.0.31.tar.gz"
     comlink: "npm:^4.4.1"
-    events: "npm:3.3.0"
-    express: "npm:4.19.2"
+    express: "npm:4.21.2"
     ini: "npm:4.1.2"
     wasm-feature-detect: "npm:1.8.0"
-    ws: "npm:8.18.0"
+    ws: "npm:8.18.1"
     yargs: "npm:17.7.2"
-  checksum: afb59b61e9476809869c5aa1ee7921d02494bac6ee8f31fbe658a2e9c9878510663c1837cf3379c46e10e6d298501b4937dd0e940f55add66dc2962b7c5b4e33
+  checksum: e58e29f99293a52b80274197c6cd4a70b901f197bef7ffa32a0e3ebcda47a43d1495044530ac8f667b734139bfd562836ad6a687b58e17e7322e2109f4708062
   languageName: node
   linkType: hard
 
@@ -7590,9 +7616,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@testing-library/react@npm:^16.2.0":
-  version: 16.2.0
-  resolution: "@testing-library/react@npm:16.2.0"
+"@testing-library/react@npm:^16.3.0":
+  version: 16.3.0
+  resolution: "@testing-library/react@npm:16.3.0"
   dependencies:
     "@babel/runtime": "npm:^7.12.5"
   peerDependencies:
@@ -7606,7 +7632,7 @@ __metadata:
       optional: true
     "@types/react-dom":
       optional: true
-  checksum: 7adaedaf237002b42e04a6261d2756074a19cbca0f0c79ba375660f618e123c0ee56256ced00aeb0bb7225ba1a8a81b92b692cca053521a21bb92a8cace1e4c6
+  checksum: 3a2cb1f87c9a67e1ebbbcfd99b94b01e496fc35147be8bc5d8bf07a699c7d523a09d57ef2f7b1d91afccd1a28e21eda3b00d80187fbb51b1de01e422592d845e
   languageName: node
   linkType: hard
 
@@ -10849,6 +10875,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@wordpress/postcss-plugins-preset@npm:5.22.0":
+  version: 5.22.0
+  resolution: "@wordpress/postcss-plugins-preset@npm:5.22.0"
+  dependencies:
+    "@wordpress/base-styles": "npm:^5.22.0"
+    autoprefixer: "npm:^10.4.20"
+  peerDependencies:
+    postcss: ^8.0.0
+  checksum: 8b1d08e77df38fd8696a0f9ea4d9cf9dad0c9e495edb8a4e087d01c2c570760f178ce49c950a8c580eb96b14e050f966ea7a9c273cfdddcd52336632c5fc00ac
+  languageName: node
+  linkType: hard
+
 "@wordpress/preferences@npm:4.22.0":
   version: 4.22.0
   resolution: "@wordpress/preferences@npm:4.22.0"
@@ -11186,145 +11224,140 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wp-playground/blueprints@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@wp-playground-blueprints-1.0.29.tar.gz":
-  version: 1.0.29
-  resolution: "@wp-playground/blueprints@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@wp-playground-blueprints-1.0.29.tar.gz"
+"@wp-playground/blueprints@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.31/@wp-playground-blueprints-1.0.31.tar.gz":
+  version: 1.0.31
+  resolution: "@wp-playground/blueprints@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.31/@wp-playground-blueprints-1.0.31.tar.gz"
   dependencies:
-    "@php-wasm/logger": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-logger-1.0.29.tar.gz"
-    "@php-wasm/node": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-node-1.0.29.tar.gz"
-    "@php-wasm/node-polyfills": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-node-polyfills-1.0.29.tar.gz"
-    "@php-wasm/progress": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-progress-1.0.29.tar.gz"
-    "@php-wasm/stream-compression": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-stream-compression-1.0.29.tar.gz"
-    "@php-wasm/universal": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-universal-1.0.29.tar.gz"
-    "@php-wasm/util": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-util-1.0.29.tar.gz"
-    "@php-wasm/web": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-web-1.0.29.tar.gz"
-    "@wp-playground/common": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@wp-playground-common-1.0.29.tar.gz"
-    "@wp-playground/storage": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@wp-playground-storage-1.0.29.tar.gz"
-    "@wp-playground/wordpress": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@wp-playground-wordpress-1.0.29.tar.gz"
+    "@php-wasm/logger": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.31/@php-wasm-logger-1.0.31.tar.gz"
+    "@php-wasm/node": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.31/@php-wasm-node-1.0.31.tar.gz"
+    "@php-wasm/node-polyfills": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.31/@php-wasm-node-polyfills-1.0.31.tar.gz"
+    "@php-wasm/progress": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.31/@php-wasm-progress-1.0.31.tar.gz"
+    "@php-wasm/stream-compression": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.31/@php-wasm-stream-compression-1.0.31.tar.gz"
+    "@php-wasm/universal": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.31/@php-wasm-universal-1.0.31.tar.gz"
+    "@php-wasm/util": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.31/@php-wasm-util-1.0.31.tar.gz"
+    "@php-wasm/web": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.31/@php-wasm-web-1.0.31.tar.gz"
+    "@wp-playground/common": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.31/@wp-playground-common-1.0.31.tar.gz"
+    "@wp-playground/storage": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.31/@wp-playground-storage-1.0.31.tar.gz"
+    "@wp-playground/wordpress": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.31/@wp-playground-wordpress-1.0.31.tar.gz"
     "@zip.js/zip.js": "npm:2.7.57"
     ajv: "npm:8.12.0"
     async-lock: "npm:1.4.1"
-    buffer: "npm:6.0.3"
     clean-git-ref: "npm:2.0.1"
     comlink: "npm:^4.4.1"
     crc-32: "npm:1.2.2"
     diff3: "npm:0.0.4"
-    ignore: "npm:5.2.4"
+    ignore: "npm:5.3.2"
     ini: "npm:4.1.2"
     minimisted: "npm:2.0.1"
-    octokit: "npm:3.1.1"
+    octokit: "npm:3.1.2"
     pako: "npm:1.0.10"
-    pify: "npm:5.0.0"
+    pify: "npm:2.3.0"
     readable-stream: "npm:3.6.2"
     sha.js: "npm:2.4.11"
     simple-get: "npm:4.0.1"
     wasm-feature-detect: "npm:1.8.0"
-  checksum: a7307ccbfbd43038ec17f09741e77f764d51d748b44f462ec0b7f6c6774c190da364065b7a960b1680c09723c4765d80d0649c8870d72cb2f86fae469f42c0d0
+  checksum: 63126ecccdbef19838a8c3e2ebb8c78d049075bf87270b2d62d89263aeee6a4957b9d0a3c67c66a0678623a5d75ffea52fae994883c58d63771a0c7ebd941bf7
   languageName: node
   linkType: hard
 
-"@wp-playground/client@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@wp-playground-client-1.0.29.tar.gz":
-  version: 1.0.29
-  resolution: "@wp-playground/client@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@wp-playground-client-1.0.29.tar.gz"
+"@wp-playground/client@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.31/@wp-playground-client-1.0.31.tar.gz":
+  version: 1.0.31
+  resolution: "@wp-playground/client@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.31/@wp-playground-client-1.0.31.tar.gz"
   dependencies:
-    "@php-wasm/logger": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-logger-1.0.29.tar.gz"
-    "@php-wasm/progress": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-progress-1.0.29.tar.gz"
-    "@php-wasm/universal": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-universal-1.0.29.tar.gz"
-    "@php-wasm/util": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-util-1.0.29.tar.gz"
-    "@php-wasm/web": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-web-1.0.29.tar.gz"
-    "@wp-playground/blueprints": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@wp-playground-blueprints-1.0.29.tar.gz"
-    "@wp-playground/remote": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@wp-playground-remote-1.0.29.tar.gz"
+    "@php-wasm/logger": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.31/@php-wasm-logger-1.0.31.tar.gz"
+    "@php-wasm/progress": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.31/@php-wasm-progress-1.0.31.tar.gz"
+    "@php-wasm/universal": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.31/@php-wasm-universal-1.0.31.tar.gz"
+    "@php-wasm/util": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.31/@php-wasm-util-1.0.31.tar.gz"
+    "@php-wasm/web": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.31/@php-wasm-web-1.0.31.tar.gz"
+    "@wp-playground/blueprints": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.31/@wp-playground-blueprints-1.0.31.tar.gz"
+    "@wp-playground/remote": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.31/@wp-playground-remote-1.0.31.tar.gz"
     "@zip.js/zip.js": "npm:2.7.57"
     ajv: "npm:8.12.0"
     async-lock: "npm:1.4.1"
-    buffer: "npm:6.0.3"
     clean-git-ref: "npm:2.0.1"
     comlink: "npm:^4.4.1"
     crc-32: "npm:1.2.2"
     diff3: "npm:0.0.4"
-    ignore: "npm:5.2.4"
+    ignore: "npm:5.3.2"
     ini: "npm:4.1.2"
     minimisted: "npm:2.0.1"
-    octokit: "npm:3.1.1"
+    octokit: "npm:3.1.2"
     pako: "npm:1.0.10"
-    pify: "npm:5.0.0"
+    pify: "npm:2.3.0"
     readable-stream: "npm:3.6.2"
     sha.js: "npm:2.4.11"
     simple-get: "npm:4.0.1"
     wasm-feature-detect: "npm:1.8.0"
-  checksum: 979bfcaf7ce24c1de336aa0f7eda0714eec8e87a1062d25155efc154ae4214ba5d320be547bcebe3c537000fb8ec1ddec2142a02bd8eae042c4303cdad8dd2dc
+  checksum: 28a71c62a403a40617374e0c14f5366bfad92e55f67d61ad97e1e28d841d0d846a639c1fb60f897b5ff4ee37a0a76f60ae457d07cd0959e60600613413109bf7
   languageName: node
   linkType: hard
 
-"@wp-playground/common@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@wp-playground-common-1.0.29.tar.gz":
-  version: 1.0.29
-  resolution: "@wp-playground/common@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@wp-playground-common-1.0.29.tar.gz"
+"@wp-playground/common@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.31/@wp-playground-common-1.0.31.tar.gz":
+  version: 1.0.31
+  resolution: "@wp-playground/common@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.31/@wp-playground-common-1.0.31.tar.gz"
   dependencies:
-    "@php-wasm/universal": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-universal-1.0.29.tar.gz"
-    "@php-wasm/util": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-util-1.0.29.tar.gz"
+    "@php-wasm/universal": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.31/@php-wasm-universal-1.0.31.tar.gz"
+    "@php-wasm/util": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.31/@php-wasm-util-1.0.31.tar.gz"
     comlink: "npm:^4.4.1"
     ini: "npm:4.1.2"
-  checksum: 12423e3617abb4aca9f8d408ada554e7e35ae867fefc3d842c1aed96f95ac1ca3fa67fe5a2694b9d9214e46ec90d3a2363225652a76dab4555efece91b627aba
+  checksum: da3cb304ddaa440968c64480e7d671b28965322224ba8b482c402ed9cbe39b088bde01b1e389e035dc7f508f359ccd012c914efe86c862f3226701437ae64bf9
   languageName: node
   linkType: hard
 
-"@wp-playground/remote@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@wp-playground-remote-1.0.29.tar.gz":
-  version: 1.0.29
-  resolution: "@wp-playground/remote@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@wp-playground-remote-1.0.29.tar.gz"
-  checksum: 825f8a7869d363965bae798102262c80af428dc88454e93a62c2895b60939d314d32221921379ff68a624ce2c9d6842de1f7d330efb10c523da8e55c505cfbbe
+"@wp-playground/remote@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.31/@wp-playground-remote-1.0.31.tar.gz":
+  version: 1.0.31
+  resolution: "@wp-playground/remote@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.31/@wp-playground-remote-1.0.31.tar.gz"
+  checksum: adac9d5d9e9792d15dfed410c787e7afa8260465efbd7217029998307f951de57d8364f9233a318c87b043ba1113167e12baeec21b9618e18ea8a41f64581afb
   languageName: node
   linkType: hard
 
-"@wp-playground/storage@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@wp-playground-storage-1.0.29.tar.gz":
-  version: 1.0.29
-  resolution: "@wp-playground/storage@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@wp-playground-storage-1.0.29.tar.gz"
+"@wp-playground/storage@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.31/@wp-playground-storage-1.0.31.tar.gz":
+  version: 1.0.31
+  resolution: "@wp-playground/storage@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.31/@wp-playground-storage-1.0.31.tar.gz"
   dependencies:
-    "@php-wasm/stream-compression": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-stream-compression-1.0.29.tar.gz"
-    "@php-wasm/universal": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-universal-1.0.29.tar.gz"
-    "@php-wasm/util": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-util-1.0.29.tar.gz"
-    "@php-wasm/web": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-web-1.0.29.tar.gz"
+    "@php-wasm/stream-compression": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.31/@php-wasm-stream-compression-1.0.31.tar.gz"
+    "@php-wasm/universal": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.31/@php-wasm-universal-1.0.31.tar.gz"
+    "@php-wasm/util": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.31/@php-wasm-util-1.0.31.tar.gz"
+    "@php-wasm/web": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.31/@php-wasm-web-1.0.31.tar.gz"
     "@zip.js/zip.js": "npm:2.7.57"
     async-lock: "npm:^1.4.1"
-    buffer: "npm:6.0.3"
     clean-git-ref: "npm:^2.0.1"
     comlink: "npm:^4.4.1"
     crc-32: "npm:^1.2.0"
     diff3: "npm:0.0.3"
-    events: "npm:3.3.0"
-    express: "npm:4.19.2"
+    express: "npm:4.21.2"
     ignore: "npm:^5.1.4"
     ini: "npm:4.1.2"
     minimisted: "npm:^2.0.0"
-    octokit: "npm:3.1.1"
+    octokit: "npm:3.1.2"
     pako: "npm:^1.0.10"
     pify: "npm:^4.0.1"
     readable-stream: "npm:^3.4.0"
     sha.js: "npm:^2.4.9"
     simple-get: "npm:^4.0.1"
     wasm-feature-detect: "npm:1.8.0"
-    ws: "npm:8.18.0"
+    ws: "npm:8.18.1"
     yargs: "npm:17.7.2"
-  checksum: 2ce1cd4d95a60c7edf77794b64c2fa3067a18a085b38ba63a2ac3062f557b56db86ef1deecb72e63b4cdcba9027ac474e087328fd65c9fb99089e2768c053392
+  checksum: 6343215d663123569da0f5b485b0f032ff442523091c1cf5bec76977d97c15afc92d0e3cc70a8dd24a33ab559a6899f87e64bffacf466516d89b45c10dcb95e1
   languageName: node
   linkType: hard
 
-"@wp-playground/wordpress@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@wp-playground-wordpress-1.0.29.tar.gz":
-  version: 1.0.29
-  resolution: "@wp-playground/wordpress@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@wp-playground-wordpress-1.0.29.tar.gz"
+"@wp-playground/wordpress@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.31/@wp-playground-wordpress-1.0.31.tar.gz":
+  version: 1.0.31
+  resolution: "@wp-playground/wordpress@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.31/@wp-playground-wordpress-1.0.31.tar.gz"
   dependencies:
-    "@php-wasm/logger": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-logger-1.0.29.tar.gz"
-    "@php-wasm/node": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-node-1.0.29.tar.gz"
-    "@php-wasm/universal": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-universal-1.0.29.tar.gz"
-    "@php-wasm/util": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-util-1.0.29.tar.gz"
-    "@wp-playground/common": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@wp-playground-common-1.0.29.tar.gz"
+    "@php-wasm/logger": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.31/@php-wasm-logger-1.0.31.tar.gz"
+    "@php-wasm/node": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.31/@php-wasm-node-1.0.31.tar.gz"
+    "@php-wasm/universal": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.31/@php-wasm-universal-1.0.31.tar.gz"
+    "@php-wasm/util": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.31/@php-wasm-util-1.0.31.tar.gz"
+    "@wp-playground/common": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.31/@wp-playground-common-1.0.31.tar.gz"
     comlink: "npm:^4.4.1"
-    events: "npm:3.3.0"
-    express: "npm:4.19.2"
+    express: "npm:4.21.2"
     ini: "npm:4.1.2"
     wasm-feature-detect: "npm:1.8.0"
-    ws: "npm:8.18.0"
+    ws: "npm:8.18.1"
     yargs: "npm:17.7.2"
-  checksum: f3dd03e66d6070a254206bd1f96d5bc9f281e318bf7eb2654ea991399617443fa5386562f270b93c01b31c1db06cc58bb1cb027da3da35f22e7d120130e2bc6a
+  checksum: 8f3fb24917f873fdeb59246b95a00bded7e8aa94348117a15cd774c04fdca07ec8c6a9073627610ef484068dd4eb1cf75a9f9d6289126db4fba42a899e05c7fc
   languageName: node
   linkType: hard
 
@@ -11679,13 +11712,6 @@ __metadata:
   version: 6.0.1
   resolution: "ansi-regex@npm:6.0.1"
   checksum: cbe16dbd2c6b2735d1df7976a7070dd277326434f0212f43abf6d87674095d247968209babdaad31bb00882fa68807256ba9be340eec2f1004de14ca75f52a08
-  languageName: node
-  linkType: hard
-
-"ansi-styles@npm:^2.2.1":
-  version: 2.2.1
-  resolution: "ansi-styles@npm:2.2.1"
-  checksum: 7c68aed4f1857389e7a12f85537ea5b40d832656babbf511cc7ecd9efc52889b9c3e5653a71a6aade783c3c5e0aa223ad4ff8e83c27ac8a666514e6c79068cab
   languageName: node
   linkType: hard
 
@@ -12316,21 +12342,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"autoprefixer@npm:^10.2.5":
-  version: 10.2.5
-  resolution: "autoprefixer@npm:10.2.5"
+"autoprefixer@npm:^10.2.5, autoprefixer@npm:^10.4.20":
+  version: 10.4.21
+  resolution: "autoprefixer@npm:10.4.21"
   dependencies:
-    browserslist: "npm:^4.16.3"
-    caniuse-lite: "npm:^1.0.30001196"
-    colorette: "npm:^1.2.2"
-    fraction.js: "npm:^4.0.13"
+    browserslist: "npm:^4.24.4"
+    caniuse-lite: "npm:^1.0.30001702"
+    fraction.js: "npm:^4.3.7"
     normalize-range: "npm:^0.1.2"
-    postcss-value-parser: "npm:^4.1.0"
+    picocolors: "npm:^1.1.1"
+    postcss-value-parser: "npm:^4.2.0"
   peerDependencies:
     postcss: ^8.1.0
   bin:
     autoprefixer: bin/autoprefixer
-  checksum: 77eea8d366a70abbb99cdda2fdd1c515891e077d2d2fa80505cc0fd38d2813db8237590c971f09b62ab5f37f479b35992edfcd09d4399ba8a0285853cbabc345
+  checksum: de5b71d26d0baff4bbfb3d59f7cf7114a6030c9eeb66167acf49a32c5b61c68e308f1e0f869d92334436a221035d08b51cd1b2f2c4689b8d955149423c16d4d4
   languageName: node
   linkType: hard
 
@@ -12744,26 +12770,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"body-parser@npm:1.20.2":
-  version: 1.20.2
-  resolution: "body-parser@npm:1.20.2"
-  dependencies:
-    bytes: "npm:3.1.2"
-    content-type: "npm:~1.0.5"
-    debug: "npm:2.6.9"
-    depd: "npm:2.0.0"
-    destroy: "npm:1.2.0"
-    http-errors: "npm:2.0.0"
-    iconv-lite: "npm:0.4.24"
-    on-finished: "npm:2.4.1"
-    qs: "npm:6.11.0"
-    raw-body: "npm:2.5.2"
-    type-is: "npm:~1.6.18"
-    unpipe: "npm:1.0.0"
-  checksum: 06f1438fff388a2e2354c96aa3ea8147b79bfcb1262dfcc2aae68ec13723d01d5781680657b74e9f83c808266d5baf52804032fbde2b7382b89bd8cdb273ace9
-  languageName: node
-  linkType: hard
-
 "body-parser@npm:1.20.3, body-parser@npm:^1.19.0, body-parser@npm:^1.20.3":
   version: 1.20.3
   resolution: "body-parser@npm:1.20.3"
@@ -12992,7 +12998,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"browserslist@npm:^4.0.0, browserslist@npm:^4.12.0, browserslist@npm:^4.16.0, browserslist@npm:^4.16.3, browserslist@npm:^4.16.6, browserslist@npm:^4.21.10, browserslist@npm:^4.24.0, browserslist@npm:^4.24.4":
+"browserslist@npm:^4.0.0, browserslist@npm:^4.12.0, browserslist@npm:^4.16.0, browserslist@npm:^4.16.6, browserslist@npm:^4.21.10, browserslist@npm:^4.24.0, browserslist@npm:^4.24.4":
   version: 4.24.4
   resolution: "browserslist@npm:4.24.4"
   dependencies:
@@ -13110,16 +13116,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"buffer@npm:6.0.3, buffer@npm:^6.0.3":
-  version: 6.0.3
-  resolution: "buffer@npm:6.0.3"
-  dependencies:
-    base64-js: "npm:^1.3.1"
-    ieee754: "npm:^1.2.1"
-  checksum: 2a905fbbcde73cc5d8bd18d1caa23715d5f83a5935867c2329f0ac06104204ba7947be098fe1317fbd8830e26090ff8e764f08cd14fefc977bb248c3487bcbd0
-  languageName: node
-  linkType: hard
-
 "buffer@npm:^5.1.0, buffer@npm:^5.4.3, buffer@npm:^5.5.0":
   version: 5.7.1
   resolution: "buffer@npm:5.7.1"
@@ -13127,6 +13123,16 @@ __metadata:
     base64-js: "npm:^1.3.1"
     ieee754: "npm:^1.1.13"
   checksum: 27cac81cff434ed2876058d72e7c4789d11ff1120ef32c9de48f59eab58179b66710c488987d295ae89a228f835fc66d088652dffeb8e3ba8659f80eb091d55e
+  languageName: node
+  linkType: hard
+
+"buffer@npm:^6.0.3":
+  version: 6.0.3
+  resolution: "buffer@npm:6.0.3"
+  dependencies:
+    base64-js: "npm:^1.3.1"
+    ieee754: "npm:^1.2.1"
+  checksum: 2a905fbbcde73cc5d8bd18d1caa23715d5f83a5935867c2329f0ac06104204ba7947be098fe1317fbd8830e26090ff8e764f08cd14fefc977bb248c3487bcbd0
   languageName: node
   linkType: hard
 
@@ -13471,7 +13477,7 @@ __metadata:
     "@tanstack/react-router": "npm:^1.114.34"
     "@testing-library/dom": "npm:^10.4.0"
     "@testing-library/jest-dom": "npm:^6.6.3"
-    "@testing-library/react": "npm:^16.2.0"
+    "@testing-library/react": "npm:^16.3.0"
     "@testing-library/user-event": "npm:^14.6.1"
     "@types/react": "npm:^18.3.20"
     "@types/react-slider": "npm:^1.3.6"
@@ -13604,7 +13610,7 @@ __metadata:
     stream-browserify: "npm:^3.0.0"
     striptags: "npm:^3.2.0"
     superagent: "npm:^3.8.3"
-    supertest: "npm:^7.0.0"
+    supertest: "npm:^7.1.0"
     textarea-caret: "npm:^3.1.0"
     to-title-case: "npm:^1.0.0"
     tracekit: "npm:^0.4.5"
@@ -13716,10 +13722,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"caniuse-lite@npm:^1.0.0, caniuse-lite@npm:^1.0.30001196, caniuse-lite@npm:^1.0.30001688":
-  version: 1.0.30001702
-  resolution: "caniuse-lite@npm:1.0.30001702"
-  checksum: 52d46f41a96d179fd4e387bb6b26898148c31b626ff9aba105d207d2b0f869c7cb32ac67a6e8e0aeba3f03f33145ccfbee237250dfb58dba8b6526b4dd395ac6
+"caniuse-lite@npm:^1.0.0, caniuse-lite@npm:^1.0.30001688, caniuse-lite@npm:^1.0.30001702":
+  version: 1.0.30001715
+  resolution: "caniuse-lite@npm:1.0.30001715"
+  checksum: 0109a7da797ffbe1aa197baa5242b205011098eecec1087ef3d0c58ceea19be325ab6679b2751a78660adc3051a9f77e99d5789938fd1eb1235e6fdf6a1dbf8e
   languageName: node
   linkType: hard
 
@@ -13790,19 +13796,6 @@ __metadata:
     escape-string-regexp: "npm:^1.0.5"
     supports-color: "npm:^5.3.0"
   checksum: e6543f02ec877732e3a2d1c3c3323ddb4d39fbab687c23f526e25bd4c6a9bf3b83a696e8c769d078e04e5754921648f7821b2a2acfd16c550435fd630026e073
-  languageName: node
-  linkType: hard
-
-"chalk@npm:^1.0.0":
-  version: 1.1.3
-  resolution: "chalk@npm:1.1.3"
-  dependencies:
-    ansi-styles: "npm:^2.2.1"
-    escape-string-regexp: "npm:^1.0.2"
-    has-ansi: "npm:^2.0.0"
-    strip-ansi: "npm:^3.0.0"
-    supports-color: "npm:^2.0.0"
-  checksum: 28c3e399ec286bb3a7111fd4225ebedb0d7b813aef38a37bca7c498d032459c265ef43404201d5fbb8d888d29090899c95335b4c0cda13e8b126ff15c541cef8
   languageName: node
   linkType: hard
 
@@ -13943,15 +13936,6 @@ __metadata:
   bin:
     check-node-version: bin.js
   checksum: fea1a5ed7f4a83ebe43425c1223b7ddae5655a09f974397d1088af3521da0b9b3e1edd14c5c7b8a2590d6d7a4fa22da69ea0347fdde985164f97b847cc78e09f
-  languageName: node
-  linkType: hard
-
-"checkstyle-formatter@npm:^1.1.0":
-  version: 1.1.0
-  resolution: "checkstyle-formatter@npm:1.1.0"
-  dependencies:
-    xml-escape: "npm:^1.0.0"
-  checksum: 85e63d281eabb13b12f54db09ca0082800c2fce67a42fdd36b8233d298e48b09bf5888ffd82d8262f0b75daf8fa404c2e6323aec02481fbc21a37c8d6a8a2d1a
   languageName: node
   linkType: hard
 
@@ -14416,7 +14400,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"colorette@npm:^1.2.1, colorette@npm:^1.2.2":
+"colorette@npm:^1.2.1":
   version: 1.4.0
   resolution: "colorette@npm:1.4.0"
   checksum: 4955c8f7daafca8ae7081d672e4bd89d553bd5782b5846d5a7e05effe93c2f15f7e9c0cb46f341b59f579a39fcf436241ff79594899d75d5f3460c03d607fe9e
@@ -14756,15 +14740,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"config@npm:^3.3.12":
-  version: 3.3.12
-  resolution: "config@npm:3.3.12"
-  dependencies:
-    json5: "npm:^2.2.3"
-  checksum: 496b3ef740754527cbc59d11df234f5be5b5f44511d14ca7fa6117fda0959ccd4cc6d8da2d94cb0dfcdf77d9d7aaaa34558d6dcce0a7860a3a8cf8a54c77b237
-  languageName: node
-  linkType: hard
-
 "configstore@npm:^5.0.1":
   version: 5.0.1
   resolution: "configstore@npm:5.0.1"
@@ -14881,13 +14856,6 @@ __metadata:
   version: 1.0.6
   resolution: "cookie-signature@npm:1.0.6"
   checksum: b36fd0d4e3fef8456915fcf7742e58fbfcc12a17a018e0eb9501c9d5ef6893b596466f03b0564b81af29ff2538fd0aa4b9d54fe5ccbfb4c90ea50ad29fe2d221
-  languageName: node
-  linkType: hard
-
-"cookie@npm:0.6.0":
-  version: 0.6.0
-  resolution: "cookie@npm:0.6.0"
-  checksum: f2318b31af7a31b4ddb4a678d024514df5e705f9be5909a192d7f116cfb6d45cbacf96a473fa733faa95050e7cff26e7832bb3ef94751592f1387b71c8956686
   languageName: node
   linkType: hard
 
@@ -17626,7 +17594,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"escape-string-regexp@npm:^1.0.2, escape-string-regexp@npm:^1.0.5":
+"escape-string-regexp@npm:^1.0.5":
   version: 1.0.5
   resolution: "escape-string-regexp@npm:1.0.5"
   checksum: a968ad453dd0c2724e14a4f20e177aaf32bb384ab41b674a8454afe9a41c5e6fe8903323e0a1052f56289d04bd600f81278edf140b0fcc02f5cac98d0f5b5371
@@ -17687,32 +17655,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-filtered-fix@npm:^0.3.0":
-  version: 0.3.0
-  resolution: "eslint-filtered-fix@npm:0.3.0"
-  dependencies:
-    optionator: "npm:^0.9.1"
-  peerDependencies:
-    eslint: ">=7.0.0"
-  bin:
-    eslint-filtered-fix: bin/eslint-filtered-fix.js
-  checksum: 43346641ea7ddaf5ef41059ad5a8c0d7560e3b6ced3108d1ad3774f4a736b2896be1b211949302bb08a4abd166dfde70e3a6c1e01c19f91de1cdbcecb438ea5e
-  languageName: node
-  linkType: hard
-
-"eslint-formatter-friendly@npm:^7.0.0":
-  version: 7.0.0
-  resolution: "eslint-formatter-friendly@npm:7.0.0"
-  dependencies:
-    "@babel/code-frame": "npm:7.0.0"
-    chalk: "npm:2.4.2"
-    extend: "npm:3.0.2"
-    strip-ansi: "npm:5.2.0"
-    text-table: "npm:0.2.0"
-  checksum: bba7798e6dc35be7424c086984f67498f207de1ceb9be8d967b11b0e9fe448c379997b33eb950cee5fd822a3b95b370a11d43509c9d6ca4d04cbdcf027d75193
-  languageName: node
-  linkType: hard
-
 "eslint-import-resolver-node@npm:^0.3.9":
   version: 0.3.9
   resolution: "eslint-import-resolver-node@npm:0.3.9"
@@ -17733,25 +17675,6 @@ __metadata:
     eslint:
       optional: true
   checksum: 4d8b46dcd525d71276f9be9ffac1d2be61c9d54cc53c992e6333cf957840dee09381842b1acbbb15fc6b255ebab99cd481c5007ab438e5455a14abe1a0468558
-  languageName: node
-  linkType: hard
-
-"eslint-nibble@npm:^8.1.0":
-  version: 8.1.0
-  resolution: "eslint-nibble@npm:8.1.0"
-  dependencies:
-    "@ianvs/eslint-stats": "npm:^2.0.0"
-    chalk: "npm:^4.1.1"
-    eslint-filtered-fix: "npm:^0.3.0"
-    eslint-formatter-friendly: "npm:^7.0.0"
-    eslint-summary: "npm:^1.0.0"
-    inquirer: "npm:^8.2.3"
-    optionator: "npm:^0.9.1"
-  peerDependencies:
-    eslint: ">=7.0.0"
-  bin:
-    eslint-nibble: bin/eslint-nibble.js
-  checksum: 9c272cc9a5a781366470d326841c093bf269302a72532ca610d20621143a28e8c266cbf8027dc857f7b18a8dd19e4c4949a30bf06122dbcb9f2eee51309fa079
   languageName: node
   linkType: hard
 
@@ -18019,16 +17942,6 @@ __metadata:
     esrecurse: "npm:^4.3.0"
     estraverse: "npm:^5.2.0"
   checksum: 613c267aea34b5a6d6c00514e8545ef1f1433108097e857225fed40d397dd6b1809dffd11c2fde23b37ca53d7bf935fe04d2a18e6fc932b31837b6ad67e1c116
-  languageName: node
-  linkType: hard
-
-"eslint-summary@npm:^1.0.0":
-  version: 1.0.0
-  resolution: "eslint-summary@npm:1.0.0"
-  dependencies:
-    chalk: "npm:^1.0.0"
-    text-table: "npm:^0.2.0"
-  checksum: f884fe88154a7857e80bd041b69967aee9e81037daf3cc123817ba048dffe5b40768c761a522d117bfc79392b7bcd3c9439835db55d026a86ab9a6023605682d
   languageName: node
   linkType: hard
 
@@ -18329,7 +18242,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"events@npm:3.3.0, events@npm:^3.2.0, events@npm:^3.3.0":
+"events@npm:^3.2.0, events@npm:^3.3.0":
   version: 3.3.0
   resolution: "events@npm:3.3.0"
   checksum: d6b6f2adbccbcda74ddbab52ed07db727ef52e31a61ed26db9feb7dc62af7fc8e060defa65e5f8af9449b86b52cc1a1f6a79f2eafcf4e62add2b7a1fa4a432f6
@@ -18486,46 +18399,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"express@npm:4.19.2":
-  version: 4.19.2
-  resolution: "express@npm:4.19.2"
-  dependencies:
-    accepts: "npm:~1.3.8"
-    array-flatten: "npm:1.1.1"
-    body-parser: "npm:1.20.2"
-    content-disposition: "npm:0.5.4"
-    content-type: "npm:~1.0.4"
-    cookie: "npm:0.6.0"
-    cookie-signature: "npm:1.0.6"
-    debug: "npm:2.6.9"
-    depd: "npm:2.0.0"
-    encodeurl: "npm:~1.0.2"
-    escape-html: "npm:~1.0.3"
-    etag: "npm:~1.8.1"
-    finalhandler: "npm:1.2.0"
-    fresh: "npm:0.5.2"
-    http-errors: "npm:2.0.0"
-    merge-descriptors: "npm:1.0.1"
-    methods: "npm:~1.1.2"
-    on-finished: "npm:2.4.1"
-    parseurl: "npm:~1.3.3"
-    path-to-regexp: "npm:0.1.7"
-    proxy-addr: "npm:~2.0.7"
-    qs: "npm:6.11.0"
-    range-parser: "npm:~1.2.1"
-    safe-buffer: "npm:5.2.1"
-    send: "npm:0.18.0"
-    serve-static: "npm:1.15.0"
-    setprototypeof: "npm:1.2.0"
-    statuses: "npm:2.0.1"
-    type-is: "npm:~1.6.18"
-    utils-merge: "npm:1.0.1"
-    vary: "npm:~1.1.2"
-  checksum: e82e2662ea9971c1407aea9fc3c16d6b963e55e3830cd0ef5e00b533feda8b770af4e3be630488ef8a752d7c75c4fcefb15892868eeaafe7353cb9e3e269fdcb
-  languageName: node
-  linkType: hard
-
-"express@npm:^4.17.3, express@npm:^4.21.2":
+"express@npm:4.21.2, express@npm:^4.17.3, express@npm:^4.21.2":
   version: 4.21.2
   resolution: "express@npm:4.21.2"
   dependencies:
@@ -18583,7 +18457,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"extend@npm:3.0.2, extend@npm:^3.0.0, extend@npm:^3.0.2, extend@npm:~3.0.2":
+"extend@npm:^3.0.0, extend@npm:^3.0.2, extend@npm:~3.0.2":
   version: 3.0.2
   resolution: "extend@npm:3.0.2"
   checksum: 73bf6e27406e80aa3e85b0d1c4fd987261e628064e170ca781125c0b635a3dabad5e05adbf07595ea0cf1e6c5396cacb214af933da7cbaf24fe75ff14818e8f9
@@ -18943,21 +18817,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"finalhandler@npm:1.2.0":
-  version: 1.2.0
-  resolution: "finalhandler@npm:1.2.0"
-  dependencies:
-    debug: "npm:2.6.9"
-    encodeurl: "npm:~1.0.2"
-    escape-html: "npm:~1.0.3"
-    on-finished: "npm:2.4.1"
-    parseurl: "npm:~1.3.3"
-    statuses: "npm:2.0.1"
-    unpipe: "npm:~1.0.0"
-  checksum: 64b7e5ff2ad1fcb14931cd012651631b721ce657da24aedb5650ddde9378bf8e95daa451da43398123f5de161a81e79ff5affe4f9f2a6d2df4a813d6d3e254b7
-  languageName: node
-  linkType: hard
-
 "finalhandler@npm:1.3.1":
   version: 1.3.1
   resolution: "finalhandler@npm:1.3.1"
@@ -19309,10 +19168,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fraction.js@npm:^4.0.13":
-  version: 4.1.0
-  resolution: "fraction.js@npm:4.1.0"
-  checksum: db0e43d60dbe9211673dd88a0ba7984a1b3b34dcefa2619e12c73e9d58106fc172f13b6e6f10af5c17f2ef6439a02fe848218ec9498d4ced7cccb7ecce42e776
+"fraction.js@npm:^4.3.7":
+  version: 4.3.7
+  resolution: "fraction.js@npm:4.3.7"
+  checksum: df291391beea9ab4c263487ffd9d17fed162dbb736982dee1379b2a8cc94e4e24e46ed508c6d278aded9080ba51872f1bc5f3a5fd8d7c74e5f105b508ac28711
   languageName: node
   linkType: hard
 
@@ -19618,13 +19477,6 @@ __metadata:
   version: 1.0.1
   resolution: "get-src@npm:1.0.1"
   checksum: aa51a13a03a7ea5dc0d467bb7889634dce602503ba3acc8ba8c969cd99623391c4ab7a5e0d24486588e20ea977034ab41d03aa48c282f680e8d0cbb0a17c931e
-  languageName: node
-  linkType: hard
-
-"get-stdin@npm:^8.0.0":
-  version: 8.0.0
-  resolution: "get-stdin@npm:8.0.0"
-  checksum: b71b72b83928221052f713b3b6247ebf1ceaeb4ef76937778557537fd51ad3f586c9e6a7476865022d9394b39b74eed1dc7514052fa74d80625276253571b76f
   languageName: node
   linkType: hard
 
@@ -20166,7 +20018,7 @@ __metadata:
     "@emotion/react": "npm:^11.11.1"
     "@emotion/styled": "npm:^11.11.0"
     "@testing-library/dom": "npm:^10.4.0"
-    "@testing-library/react": "npm:^16.2.0"
+    "@testing-library/react": "npm:^16.3.0"
     "@wordpress/base-styles": "npm:^5.22.0"
     "@wordpress/block-editor": "npm:^14.17.0"
     "@wordpress/blocks": "npm:^14.11.0"
@@ -20207,15 +20059,6 @@ __metadata:
   version: 2.1.0
   resolution: "hard-rejection@npm:2.1.0"
   checksum: febc3343a1ad575aedcc112580835b44a89a89e01f400b4eda6e8110869edfdab0b00cd1bd4c3bfec9475a57e79e0b355aecd5be46454b6a62b9a359af60e564
-  languageName: node
-  linkType: hard
-
-"has-ansi@npm:^2.0.0":
-  version: 2.0.0
-  resolution: "has-ansi@npm:2.0.0"
-  dependencies:
-    ansi-regex: "npm:^2.0.0"
-  checksum: f54e4887b9f8f3c4bfefd649c48825b3c093987c92c27880ee9898539e6f01aed261e82e73153c3f920fde0db5bf6ebd58deb498ed1debabcb4bc40113ccdf05
   languageName: node
   linkType: hard
 
@@ -20757,8 +20600,8 @@ __metadata:
   linkType: hard
 
 "http-proxy-middleware@npm:^2.0.3":
-  version: 2.0.7
-  resolution: "http-proxy-middleware@npm:2.0.7"
+  version: 2.0.9
+  resolution: "http-proxy-middleware@npm:2.0.9"
   dependencies:
     "@types/http-proxy": "npm:^1.17.8"
     http-proxy: "npm:^1.18.1"
@@ -20770,13 +20613,13 @@ __metadata:
   peerDependenciesMeta:
     "@types/express":
       optional: true
-  checksum: 8d00a61eb215b83826460b07489d8bb095368ec16e02a9d63e228dcf7524e7c20d61561e5476de1391aecd4ec32ea093279cdc972115b311f8e0a95a24c9e47e
+  checksum: 8e9032af625f7c9f2f0d318f6cdb14eb725cc16ffe7b4ccccea25cf591fa819bb7c3bb579e0b543e0ae9c73059b505a6d728290c757bff27bae526a6ed11c05e
   languageName: node
   linkType: hard
 
 "http-proxy-middleware@npm:^3.0.3":
-  version: 3.0.3
-  resolution: "http-proxy-middleware@npm:3.0.3"
+  version: 3.0.5
+  resolution: "http-proxy-middleware@npm:3.0.5"
   dependencies:
     "@types/http-proxy": "npm:^1.17.15"
     debug: "npm:^4.3.6"
@@ -20784,7 +20627,7 @@ __metadata:
     is-glob: "npm:^4.0.3"
     is-plain-object: "npm:^5.0.0"
     micromatch: "npm:^4.0.8"
-  checksum: c4d68a10d8d42f02e59f7dc8249c98d1ac03aecee177b42c2d8b6a0cb6b71c6688e759e5387f4cdb570150070ca1c6808b38010cbdf67f4500a2e75671a36e05
+  checksum: 89ff3c8fe65b22b8042a6173ae1b8f77c5171f7eecf3c8b5d6dcffe3c9d688acae7bcf498cc08d1525f566dc0781efaec4e2ddc49224b1f16f020de7987a446b
   languageName: node
   linkType: hard
 
@@ -20988,10 +20831,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ignore@npm:5.2.4":
-  version: 5.2.4
-  resolution: "ignore@npm:5.2.4"
-  checksum: 7c7cd90edd9fea6e037f9b9da4b01bf0a86b198ce78345f9bbd983929d68ff14830be31111edc5d70c264921f4962404d75b7262b4d9cc3bc12381eccbd03096
+"ignore@npm:5.3.2, ignore@npm:^5.1.1, ignore@npm:^5.1.4, ignore@npm:^5.1.8, ignore@npm:^5.2.0, ignore@npm:^5.2.4, ignore@npm:^5.3.1":
+  version: 5.3.2
+  resolution: "ignore@npm:5.3.2"
+  checksum: f9f652c957983634ded1e7f02da3b559a0d4cc210fca3792cb67f1b153623c9c42efdc1c4121af171e295444459fc4a9201101fb041b1104a3c000bccb188337
   languageName: node
   linkType: hard
 
@@ -20999,13 +20842,6 @@ __metadata:
   version: 4.0.6
   resolution: "ignore@npm:4.0.6"
   checksum: 836ee7dc7fd9436096e2dba429359dbb9fa0e33d309e2b2d81692f375f6ca82024fc00567f798613d50c6b989e9cd2ad2b065acf116325cde177f02c86b7d4e0
-  languageName: node
-  linkType: hard
-
-"ignore@npm:^5.1.1, ignore@npm:^5.1.4, ignore@npm:^5.1.8, ignore@npm:^5.2.0, ignore@npm:^5.2.4, ignore@npm:^5.3.1":
-  version: 5.3.2
-  resolution: "ignore@npm:5.3.2"
-  checksum: f9f652c957983634ded1e7f02da3b559a0d4cc210fca3792cb67f1b153623c9c42efdc1c4121af171e295444459fc4a9201101fb041b1104a3c000bccb188337
   languageName: node
   linkType: hard
 
@@ -21217,7 +21053,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"inquirer@npm:^8.2.2, inquirer@npm:^8.2.3":
+"inquirer@npm:^8.2.2":
   version: 8.2.6
   resolution: "inquirer@npm:8.2.6"
   dependencies:
@@ -24917,13 +24753,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"merge-descriptors@npm:1.0.1":
-  version: 1.0.1
-  resolution: "merge-descriptors@npm:1.0.1"
-  checksum: b67d07bd44cfc45cebdec349bb6e1f7b077ee2fd5beb15d1f7af073849208cb6f144fe403e29a36571baf3f4e86469ac39acf13c318381e958e186b2766f54ec
-  languageName: node
-  linkType: hard
-
 "merge-descriptors@npm:1.0.3":
   version: 1.0.3
   resolution: "merge-descriptors@npm:1.0.3"
@@ -26649,11 +26478,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"octokit@npm:3.1.1":
-  version: 3.1.1
-  resolution: "octokit@npm:3.1.1"
+"octokit@npm:3.1.2":
+  version: 3.1.2
+  resolution: "octokit@npm:3.1.2"
   dependencies:
-    "@octokit/app": "npm:^14.0.0"
+    "@octokit/app": "npm:^14.0.2"
     "@octokit/core": "npm:^5.0.0"
     "@octokit/oauth-app": "npm:^6.0.0"
     "@octokit/plugin-paginate-graphql": "npm:^4.0.0"
@@ -26663,7 +26492,7 @@ __metadata:
     "@octokit/plugin-throttling": "npm:^8.0.0"
     "@octokit/request-error": "npm:^5.0.0"
     "@octokit/types": "npm:^12.0.0"
-  checksum: d8c96c82e0d86ae777aef787b03a05cdf076a6ea3bbfdc4963996bf02adc8bba62802028b5a083df92d57cc76c53532ea384c442cdd268a1fe6de1db8313e708
+  checksum: 8d9b1847c1c5295fed2b9ea574213ae55f9a12d75913bc77575f48382b8d1998446adeea32095d4866591b224678b0ffa4b6c8ccdb2c4dcd2ec679033a1dc696
   languageName: node
   linkType: hard
 
@@ -26762,7 +26591,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"optionator@npm:^0.9.1, optionator@npm:^0.9.3":
+"optionator@npm:^0.9.3":
   version: 0.9.3
   resolution: "optionator@npm:0.9.3"
   dependencies:
@@ -27366,13 +27195,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"path-to-regexp@npm:0.1.7":
-  version: 0.1.7
-  resolution: "path-to-regexp@npm:0.1.7"
-  checksum: 50a1ddb1af41a9e68bd67ca8e331a705899d16fb720a1ea3a41e310480948387daf603abb14d7b0826c58f10146d49050a1291ba6a82b78a382d1c02c0b8f905
-  languageName: node
-  linkType: hard
-
 "path-to-regexp@npm:^6.2.0, path-to-regexp@npm:^6.2.1":
   version: 6.2.1
   resolution: "path-to-regexp@npm:6.2.1"
@@ -27525,14 +27347,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pify@npm:5.0.0":
-  version: 5.0.0
-  resolution: "pify@npm:5.0.0"
-  checksum: 9f6f3cd1f159652692f514383efe401a06473af35a699962230ad1c4c9796df5999961461fc1a3b81eed8e3e74adb8bd032474fb3f93eb6bdbd9f33328da1ed2
-  languageName: node
-  linkType: hard
-
-"pify@npm:^2.0.0, pify@npm:^2.3.0":
+"pify@npm:2.3.0, pify@npm:^2.0.0, pify@npm:^2.3.0":
   version: 2.3.0
   resolution: "pify@npm:2.3.0"
   checksum: 551ff8ab830b1052633f59cb8adc9ae8407a436e06b4a9718bcb27dc5844b83d535c3a8512b388b6062af65a98c49bdc0dd523d8b2617b188f7c8fee457158dc
@@ -27843,6 +27658,15 @@ __metadata:
     postcss: ^7.0.0 || ^8.0.1
     webpack: ^5.0.0
   checksum: 736a1bf43a3e09e2351b5cc97cc26790a1c3261412c9dee063f3f6f2969a6ff7d8d194d9adcad01cee1afd1de071482318d9699e6157b67d46b3dccf3be1b58b
+  languageName: node
+  linkType: hard
+
+"postcss-local-keyframes@npm:^0.0.2":
+  version: 0.0.2
+  resolution: "postcss-local-keyframes@npm:0.0.2"
+  peerDependencies:
+    postcss: ^8.2.8
+  checksum: d84815005ec75fef50a3f4a9cb7cff59fe1222714bfe1d7864c217d7e305b45774af1567eb88af280274bf1fd56dd5a461e3d4d453bb9b44f051a3d85b79cd79
   languageName: node
   linkType: hard
 
@@ -28652,15 +28476,6 @@ __metadata:
   peerDependencies:
     react: ^16.8.0 || ^17.0.0 || ^18.0.0
   checksum: af183e99ecaad90f7ef14bd027510ae7866935693c53ccf81b172438abbbf7f29c283c5dc7c2141b420d2413960b8f8dca8d9949646475afe669ed638e8fb722
-  languageName: node
-  linkType: hard
-
-"qs@npm:6.11.0":
-  version: 6.11.0
-  resolution: "qs@npm:6.11.0"
-  dependencies:
-    side-channel: "npm:^1.0.4"
-  checksum: 4e4875e4d7c7c31c233d07a448e7e4650f456178b9dd3766b7cfa13158fdb24ecb8c4f059fa91e820dc6ab9f2d243721d071c9c0378892dcdad86e9e9a27c68f
   languageName: node
   linkType: hard
 
@@ -31311,27 +31126,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"send@npm:0.18.0":
-  version: 0.18.0
-  resolution: "send@npm:0.18.0"
-  dependencies:
-    debug: "npm:2.6.9"
-    depd: "npm:2.0.0"
-    destroy: "npm:1.2.0"
-    encodeurl: "npm:~1.0.2"
-    escape-html: "npm:~1.0.3"
-    etag: "npm:~1.8.1"
-    fresh: "npm:0.5.2"
-    http-errors: "npm:2.0.0"
-    mime: "npm:1.6.0"
-    ms: "npm:2.1.3"
-    on-finished: "npm:2.4.1"
-    range-parser: "npm:~1.2.1"
-    statuses: "npm:2.0.1"
-  checksum: 0eb134d6a51fc13bbcb976a1f4214ea1e33f242fae046efc311e80aff66c7a43603e26a79d9d06670283a13000e51be6e0a2cb80ff0942eaf9f1cd30b7ae736a
-  languageName: node
-  linkType: hard
-
 "send@npm:0.19.0":
   version: 0.19.0
   resolution: "send@npm:0.19.0"
@@ -31394,18 +31188,6 @@ __metadata:
     mime-types: "npm:~2.1.17"
     parseurl: "npm:~1.3.2"
   checksum: a666471a24196f74371edf2c3c7bcdd82adbac52f600804508754b5296c3567588bf694258b19e0cb23a567acfa20d9721bfdaed3286007b81f9741ada8a3a9c
-  languageName: node
-  linkType: hard
-
-"serve-static@npm:1.15.0":
-  version: 1.15.0
-  resolution: "serve-static@npm:1.15.0"
-  dependencies:
-    encodeurl: "npm:~1.0.2"
-    escape-html: "npm:~1.0.3"
-    parseurl: "npm:~1.3.3"
-    send: "npm:0.18.0"
-  checksum: fa9f0e21a540a28f301258dfe1e57bb4f81cd460d28f0e973860477dd4acef946a1f41748b5bd41c73b621bea2029569c935faa38578fd34cd42a9b4947088ba
   languageName: node
   linkType: hard
 
@@ -31604,7 +31386,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"side-channel@npm:^1.0.4, side-channel@npm:^1.0.6, side-channel@npm:^1.1.0":
+"side-channel@npm:^1.0.6, side-channel@npm:^1.1.0":
   version: 1.1.0
   resolution: "side-channel@npm:1.1.0"
   dependencies:
@@ -32569,15 +32351,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"strip-ansi@npm:5.2.0, strip-ansi@npm:^5.0.0, strip-ansi@npm:^5.1.0, strip-ansi@npm:^5.2.0":
-  version: 5.2.0
-  resolution: "strip-ansi@npm:5.2.0"
-  dependencies:
-    ansi-regex: "npm:^4.1.0"
-  checksum: de4658c8a097ce3b15955bc6008f67c0790f85748bdc025b7bc8c52c7aee94bc4f9e50624516150ed173c3db72d851826cd57e7a85fe4e4bb6dbbebd5d297fdf
-  languageName: node
-  linkType: hard
-
 "strip-ansi@npm:^3.0.0, strip-ansi@npm:^3.0.1":
   version: 3.0.1
   resolution: "strip-ansi@npm:3.0.1"
@@ -32593,6 +32366,15 @@ __metadata:
   dependencies:
     ansi-regex: "npm:^3.0.0"
   checksum: d75d9681e0637ea316ddbd7d4d3be010b1895a17e885155e0ed6a39755ae0fd7ef46e14b22162e66a62db122d3a98ab7917794e255532ab461bb0a04feb03e7d
+  languageName: node
+  linkType: hard
+
+"strip-ansi@npm:^5.0.0, strip-ansi@npm:^5.1.0, strip-ansi@npm:^5.2.0":
+  version: 5.2.0
+  resolution: "strip-ansi@npm:5.2.0"
+  dependencies:
+    ansi-regex: "npm:^4.1.0"
+  checksum: de4658c8a097ce3b15955bc6008f67c0790f85748bdc025b7bc8c52c7aee94bc4f9e50624516150ed173c3db72d851826cd57e7a85fe4e4bb6dbbebd5d297fdf
   languageName: node
   linkType: hard
 
@@ -32897,20 +32679,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"supertest@npm:^7.0.0":
-  version: 7.0.0
-  resolution: "supertest@npm:7.0.0"
+"supertest@npm:^7.1.0":
+  version: 7.1.0
+  resolution: "supertest@npm:7.1.0"
   dependencies:
     methods: "npm:^1.1.2"
     superagent: "npm:^9.0.1"
-  checksum: f0b10a1d292e6156fab16efdbb90d8cb1df54367667ae4108a6da67b81058d35182720dd9a3b4b2f538b14729dc8633741e6242724f1a0ccfde5197341ea96ec
-  languageName: node
-  linkType: hard
-
-"supports-color@npm:^2.0.0":
-  version: 2.0.0
-  resolution: "supports-color@npm:2.0.0"
-  checksum: 570e0b63be36cccdd25186350a6cb2eaad332a95ff162fa06d9499982315f2fe4217e69dd98e862fbcd9c81eaff300a825a1fe7bf5cc752e5b84dfed042b0dda
+  checksum: 7a711630b5895c86978980fc88db0b6e54a655424d47e83bb126ff13d3879130271c37bca5e1f404c9ce8cbcaa922ab0897f3955598c3d5bb0dc6914161221bc
   languageName: node
   linkType: hard
 
@@ -33179,7 +32954,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"text-table@npm:0.2.0, text-table@npm:^0.2.0":
+"text-table@npm:^0.2.0":
   version: 0.2.0
   resolution: "text-table@npm:0.2.0"
   checksum: 02805740c12851ea5982686810702e2f14369a5f4c5c40a836821e3eefc65ffeec3131ba324692a37608294b0fd8c1e55a2dd571ffed4909822787668ddbee5c
@@ -33956,7 +33731,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:5.8.2, typescript@npm:^5.8.2":
+"typescript@npm:5.8.2":
   version: 5.8.2
   resolution: "typescript@npm:5.8.2"
   bin:
@@ -33966,13 +33741,33 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@npm%3A5.8.2#optional!builtin<compat/typescript>, typescript@patch:typescript@npm%3A^5.8.2#optional!builtin<compat/typescript>":
+"typescript@npm:^5.8.2":
+  version: 5.8.3
+  resolution: "typescript@npm:5.8.3"
+  bin:
+    tsc: bin/tsc
+    tsserver: bin/tsserver
+  checksum: 5f8bb01196e542e64d44db3d16ee0e4063ce4f3e3966df6005f2588e86d91c03e1fb131c2581baf0fb65ee79669eea6e161cd448178986587e9f6844446dbb48
+  languageName: node
+  linkType: hard
+
+"typescript@patch:typescript@npm%3A5.8.2#optional!builtin<compat/typescript>":
   version: 5.8.2
   resolution: "typescript@patch:typescript@npm%3A5.8.2#optional!builtin<compat/typescript>::version=5.8.2&hash=e012d7"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
   checksum: 8a6cd29dfb59bd5a978407b93ae0edb530ee9376a5b95a42ad057a6f80ffb0c410489ccd6fe48d1d0dfad6e8adf5d62d3874bbd251f488ae30e11a1ce6dabd28
+  languageName: node
+  linkType: hard
+
+"typescript@patch:typescript@npm%3A^5.8.2#optional!builtin<compat/typescript>":
+  version: 5.8.3
+  resolution: "typescript@patch:typescript@npm%3A5.8.3#optional!builtin<compat/typescript>::version=5.8.3&hash=e012d7"
+  bin:
+    tsc: bin/tsc
+    tsserver: bin/tsserver
+  checksum: 92ea03509e06598948559ddcdd8a4ae5a7ab475766d5589f1b796f5731b3d631a4c7ddfb86a3bd44d58d10102b132cd4b4994dda9b63e6273c66d77d6a271dbd
   languageName: node
   linkType: hard
 
@@ -35574,13 +35369,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"workspace@npm:^0.0.1-preview.1":
-  version: 0.0.1-preview.1
-  resolution: "workspace@npm:0.0.1-preview.1"
-  checksum: 8c2a2d67ff7d02edbbdde587ca010e9e1fbd57e96faf8ce91092ad4ca94ff61f26342de113152e8e890e24a808376aef4453a9f99c5d96710e0fad26e39f21bf
-  languageName: node
-  linkType: hard
-
 "wp-calypso@workspace:.":
   version: 0.0.0-use.local
   resolution: "wp-calypso@workspace:."
@@ -35619,7 +35407,6 @@ __metadata:
     "@babel/eslint-parser": "npm:^7.26.10"
     "@babel/register": "npm:^7.25.9"
     "@babel/runtime": "npm:^7.26.10"
-    "@bartekbp/typescript-checkstyle": "npm:^5.0.0"
     "@paypal/react-paypal-js": "npm:^8.7.0"
     "@pmmmwh/react-refresh-webpack-plugin": "npm:^0.5.15"
     "@signal-noise/stylelint-scales": "npm:^2.0.3"
@@ -35671,8 +35458,8 @@ __metadata:
     "@wordpress/stylelint-config": "npm:^23.14.0"
     "@wordpress/url": "npm:^4.22.0"
     "@wordpress/viewport": "npm:^6.22.0"
-    "@wp-playground/blueprints": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@wp-playground-blueprints-1.0.29.tar.gz"
-    "@wp-playground/client": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@wp-playground-client-1.0.29.tar.gz"
+    "@wp-playground/blueprints": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.31/@wp-playground-blueprints-1.0.31.tar.gz"
+    "@wp-playground/client": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.31/@wp-playground-client-1.0.31.tar.gz"
     animate.css: "npm:^4.1.1"
     babel-loader: "npm:^8.2.3"
     browserslist: "npm:^4.24.4"
@@ -35683,7 +35470,6 @@ __metadata:
     check-node-version: "npm:^4.0.2"
     chroma-js: "npm:^2.6.0"
     cmdk: "npm:^0.2.1"
-    config: "npm:^3.3.12"
     css-loader: "npm:^6.11.0"
     d3-time-format: "npm:^4.1.0"
     debug: "npm:^4.4.0"
@@ -35692,7 +35478,6 @@ __metadata:
     enhanced-resolve: "npm:5.9.3"
     eslint: "npm:^8.57.1"
     eslint-config-prettier: "npm:^9.1.0"
-    eslint-nibble: "npm:^8.1.0"
     eslint-plugin-import: "npm:^2.31.0"
     eslint-plugin-inclusive-language: "npm:^2.2.1"
     eslint-plugin-jest: "npm:^27.9.0"
@@ -35761,7 +35546,6 @@ __metadata:
     webpack-cli: "npm:^4.10.0"
     webpack-dev-middleware: "npm:^5.3.4"
     whybundled: "npm:^2.0.0"
-    workspace: "npm:^0.0.1-preview.1"
     wpcom: "workspace:^"
     yargs: "npm:^17.0.1"
   dependenciesMeta:
@@ -35996,9 +35780,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ws@npm:8.18.0, ws@npm:^8.11.0, ws@npm:^8.13.0, ws@npm:^8.17.1, ws@npm:^8.2.3":
-  version: 8.18.0
-  resolution: "ws@npm:8.18.0"
+"ws@npm:8.18.1, ws@npm:^8.11.0, ws@npm:^8.13.0, ws@npm:^8.17.1, ws@npm:^8.2.3":
+  version: 8.18.1
+  resolution: "ws@npm:8.18.1"
   peerDependencies:
     bufferutil: ^4.0.1
     utf-8-validate: ">=5.0.2"
@@ -36007,7 +35791,7 @@ __metadata:
       optional: true
     utf-8-validate:
       optional: true
-  checksum: 25eb33aff17edcb90721ed6b0eb250976328533ad3cd1a28a274bd263682e7296a6591ff1436d6cbc50fa67463158b062f9d1122013b361cec99a05f84680e06
+  checksum: e498965d6938c63058c4310ffb6967f07d4fa06789d3364829028af380d299fe05762961742971c764973dce3d1f6a2633fe8b2d9410c9b52e534b4b882a99fa
   languageName: node
   linkType: hard
 
@@ -36056,13 +35840,6 @@ __metadata:
     estree-walker: "npm:^0.6.1"
     lodash: "npm:^4.17.15"
   checksum: 233f8c39eeeb4f70ecd4251b9ce1af76462822cf74987ca475888c050196945f5eb99162bf069a599de762b5b33db99eff6b8a85a2edca7a8d2c981c4bc75d4a
-  languageName: node
-  linkType: hard
-
-"xml-escape@npm:^1.0.0":
-  version: 1.1.0
-  resolution: "xml-escape@npm:1.1.0"
-  checksum: 973cef0e383c373d1ccbacbba33ac49e7f2afd60d2710ed1308e153d2aa3b3189477f79315eb10eed43b7221add040a5eab18107170b658559e4d29ce7653a76
   languageName: node
   linkType: hard
 
@@ -36286,7 +36063,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"yargs@npm:^16.0.0, yargs@npm:^16.1.0, yargs@npm:^16.1.1, yargs@npm:^16.2.0":
+"yargs@npm:^16.0.0, yargs@npm:^16.1.0, yargs@npm:^16.1.1":
   version: 16.2.0
   resolution: "yargs@npm:16.2.0"
   dependencies:

@@ -14,10 +14,7 @@ import type {
 } from './types';
 
 export const fetchProfile = async (): Promise< Profile > => {
-	return await wpcom.req.get( {
-		path: '/me/settings?http_envelope=1',
-		apiNamespace: 'rest/v1.1',
-	} );
+	return await wpcom.req.get( '/me/settings' );
 };
 
 export const updateProfile = async ( data: Partial< Profile > ) => {
@@ -27,72 +24,50 @@ export const updateProfile = async ( data: Partial< Profile > ) => {
 			delete data[ key as keyof Profile ];
 		}
 	}
-	return await wpcom.req.post( {
-		path: '/me/settings?http_envelope=1',
-		apiNamespace: 'rest/v1.1',
-		body: data,
-	} );
+	return await wpcom.req.post( '/me/settings', data );
 };
 
+const SITE_FIELDS = [
+	'ID',
+	'URL',
+	'name',
+	'icon',
+	'subscribers_count',
+	'plan',
+	'active_modules',
+	'is_deleted',
+	'is_coming_soon',
+	'is_private',
+	'launch_status',
+	'site_migration',
+	'options',
+	'site_owner',
+	'jetpack',
+	'jetpack_modules',
+].join( ',' );
+
 export const fetchSites = async (): Promise< Site[] > => {
-	return (
-		await wpcom.req.get(
-			{
-				path: '/me/sites?http_envelope=1',
-				apiNamespace: 'rest/v1.2',
-			},
-			{
-				site_visibility: 'all',
-				include_domain_only: 'true',
-				site_activity: 'active',
-				fields: [
-					'ID',
-					'URL',
-					'name',
-					'icon',
-					'subscribers_count',
-					'plan',
-					'active_modules',
-					'is_deleted',
-					'options',
-				].join( ',' ),
-			}
-		)
-	).sites;
+	const { sites } = await wpcom.req.get(
+		{
+			path: '/me/sites',
+			apiVersion: '1.2',
+		},
+		{
+			site_visibility: 'all',
+			include_domain_only: 'true',
+			site_activity: 'active',
+			fields: SITE_FIELDS,
+		}
+	);
+	return sites;
 };
 
 export const fetchSite = async ( id: string ): Promise< Site > => {
-	if ( ! id ) {
-		return Promise.reject( new Error( 'Site ID is undefined' ) );
-	}
-	return await wpcom.req.get(
-		{
-			path: `/sites/${ id }?http_envelope=1`,
-			apiNamespace: 'rest/v1.1',
-		},
-		{
-			fields: [
-				'ID',
-				'URL',
-				'name',
-				'icon',
-				'subscribers_count',
-				'plan',
-				'active_modules',
-				'options',
-			].join( ',' ),
-		}
-	);
+	return await wpcom.req.get( `/sites/${ id }`, { fields: SITE_FIELDS } );
 };
 
 export const fetchSiteMediaStorage = async ( id: string ): Promise< MediaStorage > => {
-	if ( ! id ) {
-		return Promise.reject( new Error( 'Site ID is undefined' ) );
-	}
-	const mediaStorage = await wpcom.req.get( {
-		path: `/sites/${ id }/media-storage`,
-		apiVersion: '1.1',
-	} );
+	const mediaStorage = await wpcom.req.get( `/sites/${ id }/media-storage` );
 	return {
 		maxStorageBytesFromAddOns: Number( mediaStorage.max_storage_bytes_from_add_ons ),
 		maxStorageBytes: Number( mediaStorage.max_storage_bytes ),
@@ -103,22 +78,6 @@ export const fetchSiteMediaStorage = async ( id: string ): Promise< MediaStorage
 export const fetchSiteMonitorUptime = async (
 	id: string
 ): Promise< MonitorUptime | undefined > => {
-	if ( ! id ) {
-		return Promise.reject( new Error( 'Site ID is undefined' ) );
-	}
-	// TODO: check this in different contexts..
-	// TODO: this and similar requests trigger multiple requests to the same endpoint
-	// with different fields. How can we avoid this?
-	const site = await wpcom.req.get(
-		{
-			path: `/sites/${ id }?http_envelope=1`,
-			apiNamespace: 'rest/v1.1',
-		},
-		{ fields: [ 'ID', 'jetpack', 'jetpack_modules' ].join( ',' ) }
-	);
-	if ( ! site?.jetpack || ! site?.jetpack_modules?.includes( 'monitor' ) ) {
-		return;
-	}
 	return wpcom.req.get(
 		{
 			path: `/sites/${ id }/jetpack-monitor-uptime`,
@@ -129,19 +88,6 @@ export const fetchSiteMonitorUptime = async (
 };
 
 export const fetchPHPVersion = async ( id: string ): Promise< string | undefined > => {
-	if ( ! id ) {
-		return Promise.reject( new Error( 'Site ID is undefined' ) );
-	}
-	const site = await wpcom.req.get(
-		{
-			path: `/sites/${ id }?http_envelope=1`,
-			apiNamespace: 'rest/v1.1',
-		},
-		{ fields: [ 'ID', 'options' ].join( ',' ) }
-	);
-	if ( ! site.options?.is_wpcom_atomic ) {
-		return;
-	}
 	// TODO: check request in different contexts.. Also do we show this only for atomic sites?
 	// TODO: find out what check is needed before this request to avoid 403 errors.
 	return wpcom.req.get( {
@@ -151,9 +97,6 @@ export const fetchPHPVersion = async ( id: string ): Promise< string | undefined
 };
 
 export const fetchCurrentPlan = async ( id: string ): Promise< Plan > => {
-	if ( ! id ) {
-		return Promise.reject( new Error( 'Site ID is undefined' ) );
-	}
 	const plans: Record< string, Plan > = await wpcom.req.get( {
 		path: `/sites/${ id }/plans`,
 		apiVersion: '1.3',
@@ -166,18 +109,11 @@ export const fetchCurrentPlan = async ( id: string ): Promise< Plan > => {
 };
 
 export const fetchSiteEngagementStats = async ( id: string ) => {
-	if ( ! id ) {
-		return Promise.reject( new Error( 'Site ID is undefined' ) );
-	}
-
-	const response = await wpcom.req.get(
-		{ path: `/sites/${ id }/stats/visits` },
-		{
-			unit: 'day',
-			quantity: 14,
-			stat_fields: [ 'visitors', 'views', 'likes', 'comments' ].join( ',' ),
-		}
-	);
+	const response = await wpcom.req.get( `/sites/${ id }/stats/visits`, {
+		unit: 'day',
+		quantity: 14,
+		stat_fields: [ 'visitors', 'views', 'likes', 'comments' ].join( ',' ),
+	} );
 	// We need to normalize the returned data. We ask for 14 days of data (quantity:14)
 	// and we get a response with an array of data like: `[ '2025-04-13', 1, 3, 0, 0 ]`.
 	// Each number in the response is referring to the order of the field provided in `stat_fields`.
@@ -202,23 +138,13 @@ export const fetchSiteEngagementStats = async ( id: string ) => {
 };
 
 export const fetchDomains = async (): Promise< Domain[] > => {
-	return (
-		await wpcom.req.get(
-			{ path: '/all-domains?http_envelope=1' },
-			{
-				no_wpcom: true,
-				resolve_status: true,
-			}
-		)
-	).domains;
+	return ( await wpcom.req.get( '/all-domains', { no_wpcom: true, resolve_status: true } ) )
+		.domains;
 };
 
 export const fetchSiteDomains = async ( id: string ): Promise< { domains: SiteDomain[] } > => {
 	try {
-		const domains = await wpcom.req.get(
-			{ path: `/sites/${ id }/domains` },
-			{ apiVersion: '1.2' }
-		);
+		const domains = await wpcom.req.get( { path: `/sites/${ id }/domains`, apiVersion: '1.2' } );
 		return domains;
 	} catch ( error ) {
 		// TODO: check how to properly fetch for all sites..
@@ -356,12 +282,9 @@ export const fetchEmail = ( id: string ): Promise< Email | undefined > => {
 };
 
 export const fetchUser = async (): Promise< User > => {
-	return await wpcom.me().get();
+	return wpcom.req.get( '/me' );
 };
 
 export const fetchTwoStep = async (): Promise< TwoStep > => {
-	return wpcom.req.get( {
-		path: '/me/two-step?http_envelope=1',
-		apiNamespace: 'rest/v1.1',
-	} );
+	return wpcom.req.get( '/me/two-step' );
 };

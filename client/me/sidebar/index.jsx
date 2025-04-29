@@ -250,9 +250,12 @@ class MeSidebar extends Component {
 export default withCurrentRoute(
 	connect(
 		( state, { currentSection } ) => {
-			const sectionGroup = currentSection?.group ?? null;
 			const siteId = getSelectedSiteId( state );
-			const shouldShowGlobalSidebar = getShouldShowGlobalSidebar( state, siteId, sectionGroup );
+			const shouldShowGlobalSidebar = getShouldShowGlobalSidebar( {
+				state,
+				siteId,
+				section: currentSection,
+			} );
 			return {
 				currentUser: getCurrentUser( state ),
 				shouldShowGlobalSidebar,
