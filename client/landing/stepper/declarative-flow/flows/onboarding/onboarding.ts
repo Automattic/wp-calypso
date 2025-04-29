@@ -1,4 +1,4 @@
-import { DomainSuggestion, OnboardActions, OnboardSelect } from '@automattic/data-stores';
+import { DomainSuggestion, Onboard, OnboardActions, OnboardSelect } from '@automattic/data-stores';
 import { ONBOARDING_FLOW, clearStepPersistedState } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { useDispatch, useSelect } from '@wordpress/data';
@@ -25,7 +25,7 @@ import { STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT } from '../../../constants';
 import { useFlowLocale } from '../../../hooks/use-flow-locale';
 import { useMarketplaceThemeProducts } from '../../../hooks/use-marketplace-theme-products';
 import { useQuery } from '../../../hooks/use-query';
-import { ONBOARD_STORE } from '../../../stores';
+import { ONBOARD_STORE, SITE_STORE } from '../../../stores';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
 import { recordStepNavigation } from '../../internals/analytics/record-step-navigation';
 import { STEPS } from '../../internals/steps';
@@ -69,6 +69,7 @@ const onboarding: FlowV2 = {
 	},
 
 	useStepNavigation( currentStepSlug, navigate ) {
+		const { setIntentOnSite } = useDispatch( SITE_STORE );
 		const flowName = this.name;
 		const isPlaygroundEligible = useIsPlaygroundEligible();
 		const [ , isMvpOnboarding ] = useMvpOnboardingExperiment();
@@ -238,6 +239,11 @@ const onboarding: FlowV2 = {
 					persistSignupDestination( destination );
 					setSignupCompleteFlowName( flowName );
 					setSignupCompleteSlug( providedDependencies.siteSlug );
+
+					// For the simplified onboarding flow, we'll use the build intent since user can't choose the intent.
+					if ( isMvpOnboarding ) {
+						setIntentOnSite( providedDependencies.siteSlug, Onboard.SiteIntent.Build );
+					}
 
 					if ( providedDependencies.goToCheckout ) {
 						const siteSlug = providedDependencies.siteSlug as string;
