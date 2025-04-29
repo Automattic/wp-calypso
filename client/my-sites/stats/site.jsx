@@ -11,9 +11,11 @@ import { useSelector, useDispatch } from 'react-redux';
 import titlecase from 'to-title-case';
 import illustration404 from 'calypso/assets/images/illustrations/illustration-404.svg';
 import JetpackBackupCredsBanner from 'calypso/blocks/jetpack-backup-creds-banner';
-import StatsNavigation, { getAvailablePageModules } from 'calypso/blocks/stats-navigation';
+import StatsNavigation from 'calypso/blocks/stats-navigation';
 import { AVAILABLE_PAGE_MODULES, navItems } from 'calypso/blocks/stats-navigation/constants';
-import PageModuleToggler from 'calypso/blocks/stats-navigation/page-module-toggler';
+import PageModuleToggler, {
+	getAvailablePageModules,
+} from 'calypso/blocks/stats-navigation/page-module-toggler';
 import AsyncLoad from 'calypso/components/async-load';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
@@ -54,7 +56,6 @@ import isAtomicSite from 'calypso/state/selectors/is-site-wpcom-atomic';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isJetpackSite, getJetpackStatsAdminVersion } from 'calypso/state/sites/selectors';
 import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
-import { updateModuleToggles } from 'calypso/state/stats/module-toggles/actions';
 import { getModuleToggles } from 'calypso/state/stats/module-toggles/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import PageHeader from './components/headers/page-header';
@@ -193,7 +194,6 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 	const moduleToggles = useSelector( ( state ) => getModuleToggles( state, siteId, 'traffic' ) );
 	const momentSiteZone = useSelector( ( state ) => getMomentSiteZone( state, siteId ) );
 	const hasVideoPress = useSelector( ( state ) => siteHasFeature( state, siteId, 'videopress' ) );
-	const [ pageModules, setPageModules ] = useState( moduleToggles );
 	const [ isPageSettingsTooltipDismissed, setIsPageSettingsTooltipDismissed ] = useState(
 		!! localStorage.getItem( 'notices_dismissed__traffic_page_settings' )
 	);
@@ -535,10 +535,6 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 		getJetpackStatsAdminVersion( state, siteId )
 	);
 
-	const availableModuleToggles = useSelector( () =>
-		getAvailablePageModules( 'traffic', hasVideoPress )
-	);
-
 	const { data: showSettingsTooltip, refetch: refetchNotices } = useNoticeVisibilityQuery(
 		siteId,
 		'traffic_page_settings'
@@ -547,18 +543,6 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 		siteId,
 		'traffic_page_settings'
 	);
-
-	const onToggleModule = ( module, isShow ) => {
-		const selectedPageModules = Object.assign( {}, pageModules );
-		selectedPageModules[ module ] = isShow;
-		setPageModules( selectedPageModules );
-
-		dispatch(
-			updateModuleToggles( siteId, {
-				[ 'traffic' ]: selectedPageModules,
-			} )
-		);
-	};
 
 	const onTooltipDismiss = () => {
 		if ( isPageSettingsTooltipDismissed || ! showSettingsTooltip ) {
@@ -590,9 +574,9 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 					rightSection={
 						shouldRenderModuleToggler && (
 							<PageModuleToggler
-								availableModuleToggles={ availableModuleToggles }
-								pageModules={ pageModules }
-								onToggleModule={ onToggleModule }
+								selectedItem="traffic"
+								moduleToggles={ moduleToggles }
+								siteId={ siteId }
 								isTooltipShown={ showSettingsTooltip && ! isPageSettingsTooltipDismissed }
 								onTooltipDismiss={ onTooltipDismiss }
 								customToggleIcon={ <Icon className="gridicon" icon={ settings } /> }

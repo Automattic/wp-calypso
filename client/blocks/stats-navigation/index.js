@@ -35,23 +35,6 @@ import PageModuleToggler from './page-module-toggler';
 
 import './style.scss';
 
-// Helper to expose logic for default module listing.
-export function getAvailablePageModules( selectedItem, hasVideoPress ) {
-	return ( AVAILABLE_PAGE_MODULES[ selectedItem ] || [] ).map( ( toggleItem ) => {
-		// Set the default VideoPress visibility based on the hasVideoPress parameter.
-		// We update the disabled state as well but that value is currently ignored.
-		if ( toggleItem.key === 'videos' ) {
-			return {
-				...toggleItem,
-				disabled: ! hasVideoPress,
-				defaultValue: hasVideoPress,
-			};
-		}
-
-		return toggleItem;
-	} );
-}
-
 // Use HOC to wrap hooks of `react-query` for fetching the notice visibility state.
 function withNoticeHook( HookedComponent ) {
 	return function WrappedComponent( props ) {
@@ -101,42 +84,6 @@ class StatsNavigation extends Component {
 		isPageSettingsTooltipDismissed: !! localStorage.getItem(
 			'notices_dismissed__traffic_page_settings'
 		),
-		// Only traffic page modules are supported for now.
-		pageModules: Object.assign(
-			...AVAILABLE_PAGE_MODULES.traffic.map( ( module ) => {
-				return {
-					[ module.key ]: module.defaultValue,
-				};
-			} )
-		),
-		availableModuleToggles: [],
-	};
-
-	static getDerivedStateFromProps( nextProps, prevState ) {
-		const availableModuleToggles = getAvailablePageModules(
-			nextProps.selectedItem,
-			nextProps.hasVideoPress
-		);
-
-		if (
-			prevState.pageModules !== nextProps.pageModuleToggles ||
-			prevState.availableModuleToggles !== nextProps.availableModuleToggles
-		) {
-			return { availableModuleToggles, pageModules: nextProps.pageModuleToggles };
-		}
-
-		return null;
-	}
-
-	onToggleModule = ( module, isShow ) => {
-		const seletedPageModules = Object.assign( {}, this.state.pageModules );
-		seletedPageModules[ module ] = isShow;
-
-		this.setState( { pageModules: seletedPageModules } );
-
-		this.props.updateModuleToggles( this.props.siteId, {
-			[ this.props.selectedItem ]: seletedPageModules,
-		} );
 	};
 
 	onTooltipDismiss = () => {
@@ -208,8 +155,9 @@ class StatsNavigation extends Component {
 			gatedTrafficPage,
 			siteId,
 			isStatsNavigationImprovementEnabled,
+			pageModuleToggles,
 		} = this.props;
-		const { pageModules, isPageSettingsTooltipDismissed, availableModuleToggles } = this.state;
+		const { isPageSettingsTooltipDismissed } = this.state;
 		const { label, showIntervals, path } = navItems[ selectedItem ];
 		const slugPath = slug ? `/${ slug }` : '';
 		const pathTemplate = `${ path }/{{ interval }}${ slugPath }`;
@@ -283,9 +231,9 @@ class StatsNavigation extends Component {
 
 				{ ! isStatsNavigationImprovementEnabled && shouldRenderModuleToggler && (
 					<PageModuleToggler
-						availableModuleToggles={ availableModuleToggles }
-						pageModules={ pageModules }
-						onToggleModule={ this.onToggleModule }
+						siteId={ siteId }
+						selectedItem={ selectedItem }
+						moduleToggles={ pageModuleToggles }
 						isTooltipShown={
 							showSettingsTooltip && ! isPageSettingsTooltipDismissed && ! delayTooltipPresentation
 						}
