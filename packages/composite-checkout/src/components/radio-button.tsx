@@ -110,7 +110,7 @@ interface LabelProps {
  */
 const Label = styled.label< LabelProps & React.LabelHTMLAttributes< HTMLLabelElement > >`
 	position: relative;
-	padding: ${ ( props ) => ( props.hideRadioButton ? '16px 14px' : '16px 14px 16px 56px' ) };
+	padding: ${ ( props ) => ( props.hideRadioButton ? '16px 24px' : '16px 14px 16px 56px' ) };
 	border-radius: 3px;
 	box-sizing: border-box;
 	width: 100%;
@@ -125,7 +125,7 @@ const Label = styled.label< LabelProps & React.LabelHTMLAttributes< HTMLLabelEle
 	min-height: 72px;
 
 	.rtl & {
-		padding: ${ ( props ) => ( props.hideRadioButton ? '16px 14px' : '16px 56px 16px 14px' ) };
+		padding: ${ ( props ) => ( props.hideRadioButton ? '16px 24px' : '16px 56px 16px 14px' ) };
 	}
 
 	:hover {
