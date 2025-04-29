@@ -281,7 +281,7 @@ class StatsNavigation extends Component {
 					<Intervals selected={ interval } pathTemplate={ pathTemplate } standalone />
 				) }
 
-				{ isStatsNavigationImprovementEnabled && shouldRenderModuleToggler && (
+				{ ! isStatsNavigationImprovementEnabled && shouldRenderModuleToggler && (
 					<PageModuleToggler
 						availableModuleToggles={ availableModuleToggles }
 						pageModules={ pageModules }
@@ -338,7 +338,7 @@ export default connect(
 			gatedTrafficPage:
 				config.isEnabled( 'stats/paid-wpcom-v3' ) &&
 				shouldGateStats( state, siteId, STATS_FEATURE_PAGE_TRAFFIC ),
-			isStatsNavigationImprovementEnabled: config.isEnabled( 'stats-navigation-improvement' ),
+			isStatsNavigationImprovementEnabled: config.isEnabled( 'stats/navigation-improvement' ),
 		};
 	},
 	{ requestModuleToggles, updateModuleToggles }
