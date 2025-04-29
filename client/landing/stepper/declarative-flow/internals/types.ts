@@ -92,7 +92,7 @@ export type Navigate = (
  * @param extraData - Extra data to pass to the step.
  * @param replace - If true, the current step will be replaced in the history stack.
  */
-export type NavigateV2< FlowSteps extends readonly StepperStep[] > = (
+export type NavigateV2< FlowSteps extends StepperStep[] > = (
 	stepName: FlowSteps[ number ][ 'slug' ] | `${ FlowSteps[ number ][ 'slug' ] }?${ string }`,
 	extraData?: any,
 	/**
@@ -104,14 +104,14 @@ export type NavigateV2< FlowSteps extends readonly StepperStep[] > = (
 /**
  * This is the return type of useSteps hook
  */
-export type UseStepsHook = () => readonly StepperStep[];
+export type UseStepsHook = () => StepperStep[];
 
-export type UseStepNavigationHook< FlowSteps extends readonly StepperStep[] > = (
+export type UseStepNavigationHook< FlowSteps extends StepperStep[] > = (
 	currentStepSlug: FlowSteps[ number ][ 'slug' ],
 	navigate: Navigate
 ) => NavigationControls;
 
-export type UseStepNavigationHookV2< FlowSteps extends readonly StepperStep[] > = (
+export type UseStepNavigationHookV2< FlowSteps extends StepperStep[] > = (
 	currentStepSlug: FlowSteps[ number ][ 'slug' ],
 	navigate: NavigateV2< FlowSteps >
 ) => {
@@ -142,7 +142,7 @@ type MapStepToItsSubmitData< T extends StepperStep > = {
 
 export type UseAssertConditionsHook = ( navigate?: Navigate ) => AssertConditionResult;
 
-export type UseSideEffectHook< FlowSteps extends readonly StepperStep[] > = (
+export type UseSideEffectHook< FlowSteps extends StepperStep[] > = (
 	currentStepSlug: FlowSteps[ number ][ 'slug' ],
 	navigate: Navigate
 ) => void;
@@ -204,7 +204,7 @@ export type Flow = {
 	 * Use this method to define the steps of the flow and do any actions that need to run before the flow starts.
 	 * This hook is called only once when the flow is mounted. It can be asynchronous if you would like to load an experiment or other data.
 	 */
-	useStepNavigation: UseStepNavigationHook< readonly StepperStep[] >;
+	useStepNavigation: UseStepNavigationHook< StepperStep[] >;
 	/**
 	 * @deprecated Use `initialize` instead. `initialize` will run before the flow is rendered and you can make any decisions there.
 	 */
@@ -212,7 +212,7 @@ export type Flow = {
 	/**
 	 * A hook that is called in the flow's root at every render. You can use this hook to setup side-effects, call other hooks, etc..
 	 */
-	useSideEffect?: UseSideEffectHook< readonly StepperStep[] >;
+	useSideEffect?: UseSideEffectHook< StepperStep[] >;
 	useTracksEventProps?: UseTracksEventPropsHook;
 };
 
@@ -221,9 +221,7 @@ export type Flow = {
  */
 export type FlowV1 = Flow;
 
-type DefaultFlowStepsConfig =
-	| ( ( ...args: any[] ) => readonly StepperStep[] )
-	| ( ( ...args: any[] ) => Promise< readonly StepperStep[] > );
+type DefaultFlowStepsConfig = ( reduxStore: Store ) => StepperStep[] | Promise< StepperStep[] >;
 
 export interface FlowV2< FlowStepsInitialize extends DefaultFlowStepsConfig > {
 	/**
@@ -271,12 +269,8 @@ export interface FlowV2< FlowStepsInitialize extends DefaultFlowStepsConfig > {
 	/**
 	 * Use this method to define the steps of the flow and do any actions that need to run before the flow starts.
 	 * This hook is called only once when the flow is mounted. It can be asynchronous if you would like to load an experiment or other data.
-	 *
-	 * Returning false will kill the app.
 	 */
-	initialize(
-		reduxStore?: Store
-	): false | Promise< false > | Promise< readonly StepperStep[] > | readonly StepperStep[];
+	initialize: FlowStepsInitialize;
 
 	useStepNavigation: UseStepNavigationHookV2< Awaited< ReturnType< FlowStepsInitialize > > >;
 	/**
