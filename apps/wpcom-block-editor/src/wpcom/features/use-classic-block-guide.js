@@ -5,7 +5,6 @@ import { createInterpolateElement, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { registerPlugin } from '@wordpress/plugins';
 import { hasQueryArg } from '@wordpress/url';
-import { InserterIconImage } from './images';
 
 const storageKey = `classic_block_guide_${ globalThis._currentSiteId }_is_dismissed`;
 
@@ -69,9 +68,7 @@ const ClassicGuide = () => {
 												'To use the classic block, click on the <InserterIconImage /> button at the top of the screen, search for Classic and insert the block.'
 											),
 											{
-												InserterIconImage: (
-													<InserterIconImage className="edit-post-welcome-guide__inserter-icon" />
-												),
+												InserterIconImage: null,
 											}
 										) }
 									</p>
