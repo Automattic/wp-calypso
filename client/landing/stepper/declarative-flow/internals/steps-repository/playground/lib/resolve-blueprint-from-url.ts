@@ -105,9 +105,11 @@ export async function resolveBlueprintFromURL( url: URL ) {
 	blueprint.preferredVersions!.wp =
 		query.get( 'wp' ) || blueprint.preferredVersions!.wp || 'latest';
 
-	// Features
+	// Features, must have networking enabled.
 	if ( ! blueprint.features ) {
-		blueprint.features = {};
+		blueprint.features = {
+			networking: true,
+		};
 	}
 
 	/**
