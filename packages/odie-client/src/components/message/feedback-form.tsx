@@ -18,16 +18,6 @@ type FeedbackFormProps = {
 	chatFeedbackOptions: MessageAction[];
 };
 
-const generateFeedbackMessage = ( score: 'good' | 'bad' ): Message => {
-	return {
-		content: score === 'good' ? 'Good 👍' : 'Bad 👎',
-		payload: JSON.stringify( { csat_rating: score.toUpperCase() } ),
-		metadata: { rated: true },
-		role: 'user',
-		type: 'message',
-	} as Message;
-};
-
 export const FeedbackForm = ( { chatFeedbackOptions }: FeedbackFormProps ) => {
 	const { isUserEligibleForPaidSupport } = useOdieAssistantContext();
 	const user = Smooch.getUser();
@@ -57,6 +47,16 @@ export const FeedbackForm = ( { chatFeedbackOptions }: FeedbackFormProps ) => {
 			feedbackRef.current.scrollIntoView( { behavior: 'smooth', block: 'start' } );
 		}
 	}, [ score ] );
+
+	const generateFeedbackMessage = ( score: 'good' | 'bad' ): Message => {
+		return {
+			content: score === 'good' ? __( 'Good 👍' ) : __( 'Bad 👎' ),
+			payload: JSON.stringify( { csat_rating: score.toUpperCase() } ),
+			metadata: { rated: true },
+			role: 'user',
+			type: 'message',
+		} as Message;
+	};
 
 	const postCSAT = useCallback( async () => {
 		if ( ! authData?.jwt || ! ticketId || ! score ) {
@@ -103,12 +103,7 @@ export const FeedbackForm = ( { chatFeedbackOptions }: FeedbackFormProps ) => {
 				<div ref={ feedbackRef } className="odie-conversation-feedback__message">
 					<h3>{ __( 'Thank you for your input' ) }</h3>
 					<p>{ __( 'Please share any other details that can help understand your rating.' ) }</p>
-					<TextareaControl
-						__nextHasNoMarginBottom
-						value={ comment }
-						onChange={ ( value ) => setComment( value ) }
-					/>
-					{ score && score === 'bad' && (
+					{ score === 'bad' && (
 						<SelectControl
 							className="odie-conversation-feedback__reason"
 							label={ __( 'Reason' ) }
@@ -118,6 +113,13 @@ export const FeedbackForm = ( { chatFeedbackOptions }: FeedbackFormProps ) => {
 							__next40pxDefaultSize
 						/>
 					) }
+
+					<TextareaControl
+						label={ score === 'bad' ? __( 'Additional Comments' ) : '' }
+						__nextHasNoMarginBottom
+						value={ comment }
+						onChange={ ( value ) => setComment( value ) }
+					/>
 
 					<div>
 						<Button variant="primary" onClick={ postCSAT } rel="noreferrer">
