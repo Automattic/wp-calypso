@@ -28,7 +28,9 @@ export type ValidatedControlProps< V > = {
 	markWhenOptional?: boolean;
 	/**
 	 * A function that returns a custom validity message when applicable. This error message will be applied to the
-	 * underlying element using [`setCustomValidity()`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLObjectElement/setCustomValidity).
+	 * underlying element using the native [`setCustomValidity()` method](https://developer.mozilla.org/en-US/docs/Web/API/HTMLObjectElement/setCustomValidity).
+	 * This means the custom validator will be run _in addition_ to any other HTML attribute-based validation, and
+	 * will be prioritized over any existing validity messages dictated by the HTML attributes.
 	 * An empty string or `undefined` return value will clear any existing custom validity message.
 	 *
 	 * Make sure you don't programatically pass a value (such as an initial value) to the control component
