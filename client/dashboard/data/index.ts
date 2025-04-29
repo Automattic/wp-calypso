@@ -47,15 +47,19 @@ const SITE_FIELDS = [
 ].join( ',' );
 
 export const fetchSites = async (): Promise< Site[] > => {
-	return (
-		await wpcom.req.get( '/me/sites', {
+	const { sites } = await wpcom.req.get(
+		{
+			path: '/me/sites',
 			apiVersion: '1.2',
+		},
+		{
 			site_visibility: 'all',
 			include_domain_only: 'true',
 			site_activity: 'active',
 			fields: SITE_FIELDS,
-		} )
-	).sites;
+		}
+	);
+	return sites;
 };
 
 export const fetchSite = async ( id: string ): Promise< Site > => {
@@ -93,7 +97,8 @@ export const fetchPHPVersion = async ( id: string ): Promise< string | undefined
 };
 
 export const fetchCurrentPlan = async ( id: string ): Promise< Plan > => {
-	const plans: Record< string, Plan > = await wpcom.req.get( `/sites/${ id }/plans`, {
+	const plans: Record< string, Plan > = await wpcom.req.get( {
+		path: `/sites/${ id }/plans`,
 		apiVersion: '1.3',
 	} );
 	const plan = Object.values( plans ).find( ( plan ) => plan.current_plan );
@@ -139,7 +144,7 @@ export const fetchDomains = async (): Promise< Domain[] > => {
 
 export const fetchSiteDomains = async ( id: string ): Promise< { domains: SiteDomain[] } > => {
 	try {
-		const domains = await wpcom.req.get( `/sites/${ id }/domains`, { apiVersion: '1.2' } );
+		const domains = await wpcom.req.get( { path: `/sites/${ id }/domains`, apiVersion: '1.2' } );
 		return domains;
 	} catch ( error ) {
 		// TODO: check how to properly fetch for all sites..
