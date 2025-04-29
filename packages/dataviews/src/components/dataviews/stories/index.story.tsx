@@ -116,7 +116,7 @@ export const FieldsNoSortableNoHidable = () => {
 	);
 };
 
-export const WithChildren = () => {
+export const CustomComposition = () => {
 	const [ view, setView ] = useState< View >( {
 		...DEFAULT_VIEW,
 		fields: [ 'categories' ],
@@ -152,7 +152,7 @@ export const WithChildren = () => {
 				</CardHeader>
 
 				<CardBody>
-					<VStack>
+					<VStack spacing={ 2 }>
 						<Text size={ 18 } as="p">
 							{ createInterpolateElement(
 								_n(
