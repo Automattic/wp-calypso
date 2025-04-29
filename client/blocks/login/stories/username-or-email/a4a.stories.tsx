@@ -3,8 +3,8 @@ import {
 	A4AWrapper,
 	LoginFormUserData,
 	LoginFormWrapper,
-	type LoginUsernameStory,
-	loginUsernameArgs,
+	type UsernameStory,
+	usernameArgs,
 } from '../shared';
 import type { Meta } from '@storybook/react';
 
@@ -12,9 +12,9 @@ const meta: Meta = {
 	title: 'client/blocks/Login/Username or Email/Automattic For Agencies',
 	decorators: [ LoginFormUserData, LoginFormWrapper, A4AWrapper ],
 	component: LoginUsername,
-	args: { ...loginUsernameArgs },
+	args: { ...usernameArgs },
 };
 
 export default meta;
 
-export const Default: LoginUsernameStory = {};
+export const Default: UsernameStory = {};

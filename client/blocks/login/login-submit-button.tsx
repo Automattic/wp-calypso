@@ -1,13 +1,14 @@
 import { Button, Spinner } from '@wordpress/components';
 import React from 'react';
-interface LoginButtonProps {
+
+interface LoginSubmitButtonProps {
 	isWoo: boolean;
 	isSendingEmail: boolean;
 	isDisabled: boolean;
 	buttonText: string;
 }
 
-const LoginButton: React.FC< LoginButtonProps > = ( {
+const LoginSubmitButton: React.FC< LoginSubmitButtonProps > = ( {
 	isWoo,
 	isSendingEmail,
 	isDisabled,
@@ -26,4 +27,4 @@ const LoginButton: React.FC< LoginButtonProps > = ( {
 	);
 };
 
-export default LoginButton;
+export default LoginSubmitButton;

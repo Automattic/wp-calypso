@@ -1,21 +1,21 @@
-import LoginButton from '../../login-button';
+import LoginSubmitButton from '../../login-submit-button';
 import {
 	LoginFormAction,
 	LoginFormWrapper,
-	type Story,
+	type SubmitButtonStory,
 	A4AWrapper,
-	loginButtonArgs,
+	submitButtonArgs,
 } from '../shared';
 import type { Meta } from '@storybook/react';
 import '../../../../layout/masterbar/oauth-client.scss';
 
 const meta: Meta = {
-	title: 'client/blocks/Login/Login Button/Automattic for Agencies',
+	title: 'client/blocks/Login/Submit Button/Automattic for Agencies',
 	decorators: [ LoginFormAction, LoginFormWrapper, A4AWrapper ],
-	component: LoginButton,
-	args: { ...loginButtonArgs },
+	component: LoginSubmitButton,
+	args: { ...submitButtonArgs },
 };
 
 export default meta;
 
-export const Default: Story = {};
+export const Default: SubmitButtonStory = {};

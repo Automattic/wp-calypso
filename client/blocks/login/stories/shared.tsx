@@ -1,16 +1,16 @@
-import LoginButton from '../login-button';
+import LoginSubmitButton from '../login-submit-button';
 import LoginUsername from '../login-username';
 import type { StoryFn, StoryObj } from '@storybook/react';
 import './style.scss';
 
-export const loginButtonArgs = {
+export const submitButtonArgs = {
 	isWoo: false,
 	isSendingEmail: false,
 	isDisabled: false,
 	buttonText: 'Continue',
 };
 
-export const loginUsernameArgs = {
+export const usernameArgs = {
 	value: '',
 	label: 'Email address or username',
 	isDisabled: false,
@@ -95,12 +95,12 @@ export const WPJobManagerWrapper = ( Story: StoryFn ) => (
 	</div>
 );
 
-export type Story = StoryObj< typeof LoginButton >;
+export type SubmitButtonStory = StoryObj< typeof LoginSubmitButton >;
 
-export const sendingEmailStory: Story = {
+export const sendingEmailStory: SubmitButtonStory = {
 	args: {
 		isSendingEmail: true,
 	},
 };
 
-export type LoginUsernameStory = StoryObj< typeof LoginUsername >;
+export type UsernameStory = StoryObj< typeof LoginUsername >;

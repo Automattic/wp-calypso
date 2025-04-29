@@ -1,30 +1,25 @@
 import LoginUsername from '../../login-username';
-import {
-	LoginFormUserData,
-	LoginFormWrapper,
-	type LoginUsernameStory,
-	loginUsernameArgs,
-} from '../shared';
+import { LoginFormUserData, LoginFormWrapper, type UsernameStory, usernameArgs } from '../shared';
 import type { Meta } from '@storybook/react';
 
 const meta: Meta = {
 	title: 'client/blocks/Login/Username or Email/Default',
 	decorators: [ LoginFormUserData, LoginFormWrapper ],
 	component: LoginUsername,
-	args: { ...loginUsernameArgs },
+	args: { ...usernameArgs },
 };
 
 export default meta;
 
-export const Default: LoginUsernameStory = {};
+export const Default: UsernameStory = {};
 
-export const Disabled: LoginUsernameStory = {
+export const Disabled: UsernameStory = {
 	args: {
 		isDisabled: true,
 	},
 };
 
-export const Error: LoginUsernameStory = {
+export const Error: UsernameStory = {
 	args: {
 		isError: true,
 	},
