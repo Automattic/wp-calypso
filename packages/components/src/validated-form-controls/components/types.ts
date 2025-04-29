@@ -18,10 +18,12 @@ import type {
 export type ValidatedControlProps< V > = {
 	/**
 	 * Whether the control is required.
+	 * @default false
 	 */
 	required?: boolean;
 	/**
 	 * Label the control as "optional" when _not_ `required`, instead of the inverse.
+	 * @default false
 	 */
 	markWhenOptional?: boolean;
 	/**
