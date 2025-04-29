@@ -10,8 +10,10 @@ function PageHeader() {
 		return (
 			<NavigationHeaderImpr
 				className="stats__section-header modernized-header"
-				title={ STATS_PRODUCT_NAME }
-				titleLogo={ <JetpackLogo size={ 24 } monochrome={ false } /> }
+				titleProps={ {
+					title: STATS_PRODUCT_NAME,
+					titleLogo: <JetpackLogo size={ 24 } monochrome={ false } />,
+				} }
 			/>
 		);
 	}
@@ -19,7 +21,9 @@ function PageHeader() {
 	return (
 		<NavigationHeaderImpr
 			className="stats__section-header modernized-header"
-			title={ STATS_PRODUCT_NAME_IMPR }
+			titleProps={ {
+				title: STATS_PRODUCT_NAME_IMPR,
+			} }
 		/>
 	);
 }
