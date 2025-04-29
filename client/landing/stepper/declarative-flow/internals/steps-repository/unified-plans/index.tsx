@@ -45,7 +45,7 @@ function getPlansIntent( flowName: string | null, isWordCampPromo?: boolean ): P
 			}
 			return 'plans-new-hosted-site';
 		case AI_SITE_BUILDER_FLOW:
-			return 'plans-ai-assembler';
+			return 'plans-ai-assembler-free-trial';
 		default:
 			return null;
 	}

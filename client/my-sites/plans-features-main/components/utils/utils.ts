@@ -22,7 +22,7 @@ export const shouldForceDefaultPlansBasedOnIntent = ( intent: PlansIntent | unde
 };
 
 export const hideEscapeHatchForIntent = ( intent: PlansIntent ) => {
-	return intent === 'plans-ai-assembler';
+	return intent === 'plans-ai-assembler-free-trial';
 };
 
 /**

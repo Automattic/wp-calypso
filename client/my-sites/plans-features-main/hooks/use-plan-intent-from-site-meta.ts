@@ -1,6 +1,7 @@
 import { useSiteIntent, Onboard } from '@automattic/data-stores';
 import { useSelector } from 'react-redux';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import getSelectedSite from 'calypso/state/ui/selectors/get-selected-site';
 import type { PlansIntent } from '@automattic/plans-grid-next';
 
 const { SiteIntent } = Onboard;
@@ -12,6 +13,7 @@ interface IntentFromSiteMeta {
 
 const usePlanIntentFromSiteMeta = (): IntentFromSiteMeta => {
 	const selectedSiteId = useSelector( getSelectedSiteId ) ?? undefined;
+	const selectedSite = useSelector( ( state ) => getSelectedSite( state ) );
 	const siteIntentResponse = useSiteIntent( selectedSiteId );
 
 	if ( siteIntentResponse.isFetching ) {
@@ -23,10 +25,14 @@ const usePlanIntentFromSiteMeta = (): IntentFromSiteMeta => {
 
 	const siteIntent = siteIntentResponse.data?.site_intent;
 
-	if ( SiteIntent.AIAssembler === siteIntent ) {
+	// ai-site-builder flow is specifically the free trial for big sky
+	if (
+		SiteIntent.AIAssembler === siteIntent &&
+		selectedSite?.options?.site_creation_flow === 'ai-site-builder'
+	) {
 		return {
 			processing: false,
-			intent: 'plans-ai-assembler',
+			intent: 'plans-ai-assembler-free-trial',
 		};
 	}
 
