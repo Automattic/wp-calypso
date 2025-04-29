@@ -204,12 +204,7 @@ export const CustomComposition = () => {
 		>
 			<PlanetOverview />
 
-			<HStack
-				alignment="top"
-				justify="space-between"
-				className="dataviews__view-actions"
-				spacing={ 1 }
-			>
+			<HStack style={ { padding: `8px 48px` } }>
 				<DataViews.Search />
 			</HStack>
 		</DataViews>
