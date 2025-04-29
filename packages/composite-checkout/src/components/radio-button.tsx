@@ -349,12 +349,14 @@ function getGrayscaleValue( { checked }: { checked?: boolean } ) {
 function getOutline( {
 	isFocused,
 	theme,
+	hideRadioButton,
 }: {
 	isFocused?: boolean;
 	checked?: boolean;
 	theme: Theme;
+	hideRadioButton?: boolean;
 } ) {
-	if ( isFocused ) {
+	if ( isFocused && ! hideRadioButton ) {
 		return theme.colors.outline + ' solid 2px';
 	}
 	return '0';
