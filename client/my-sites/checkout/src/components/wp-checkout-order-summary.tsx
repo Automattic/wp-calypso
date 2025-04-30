@@ -188,9 +188,11 @@ function CheckoutSummaryPriceList() {
 
 	return (
 		<>
-			<CheckoutSummaryTitle>
-				<span>{ translate( 'Your order' ) }</span>
-			</CheckoutSummaryTitle>
+			{ streamlinedPriceExperimentAssignment && (
+				<CheckoutSummaryTitle>
+					<span>{ translate( 'Your order' ) }</span>
+				</CheckoutSummaryTitle>
+			) }
 			<ProductsAndCostOverridesList responseCart={ responseCart } />
 			<CheckoutSummaryAmountWrapper>
 				<CheckoutSubtotalSection>
@@ -1008,7 +1010,7 @@ const CheckoutSummarySubtotal = styled( CheckoutSummaryLineItem )`
 	margin-bottom: 0px;
 	font-size: 20px;
 	& .wp-checkout-order-summary__subtotal-price {
-		font-size: 14px; }
+		font-size: 14px;
 	}
 `;
 
