@@ -8,7 +8,6 @@ import { Button, TextareaControl, SelectControl, Spinner } from '@wordpress/comp
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import { useCallback, useEffect, useRef, useState, useMemo } from 'react';
-import Smooch from 'smooch';
 import { useOdieAssistantContext } from '../../context';
 import { useSendChatMessage } from '../../hooks';
 import { Message, MessageAction } from '../../types';
@@ -20,7 +19,6 @@ type FeedbackFormProps = {
 
 export const FeedbackForm = ( { chatFeedbackOptions }: FeedbackFormProps ) => {
 	const { isUserEligibleForPaidSupport } = useOdieAssistantContext();
-	const user = Smooch.getUser();
 	const { __ } = useI18n();
 	const [ score, setScore ] = useState< 'good' | 'bad' | '' >( '' );
 	const [ comment, setComment ] = useState( '' );
@@ -84,14 +82,13 @@ export const FeedbackForm = ( { chatFeedbackOptions }: FeedbackFormProps ) => {
 
 		await rateChat( {
 			jwt: authData.jwt,
-			email: user.email,
 			ticket_id: ticketId,
 			score,
 			comment,
 			reason_id: reason,
 			test_mode: isTestModeEnvironment(),
 		} );
-	}, [ rateChat, authData?.jwt, user.email, ticketId, score, comment, reason ] );
+	}, [ rateChat, authData?.jwt, ticketId, score, comment, reason ] );
 
 	return (
 		<>

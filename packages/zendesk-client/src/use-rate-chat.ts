@@ -4,7 +4,6 @@ import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
 
 type CSATPayload = {
 	jwt: string;
-	email: string;
 	ticket_id: number;
 	score: string;
 	comment?: string;
