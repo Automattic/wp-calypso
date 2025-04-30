@@ -27,6 +27,8 @@ import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
 import { buildUpgradeFunction } from 'calypso/lib/signup/step-actions';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
+import { useFCCARestrictions } from 'calypso/my-sites/plans-features-main/hooks/use-fcca-restrictions';
+import { useStreamlinedPriceExperiment } from 'calypso/my-sites/plans-features-main/hooks/use-streamlined-price-experiment';
 import { getStepUrl } from 'calypso/signup/utils';
 import { getDomainFromUrl } from 'calypso/site-profiler/utils/get-valid-url';
 import { useDispatch as reduxUseDispatch, useSelector } from 'calypso/state';
@@ -223,6 +225,8 @@ function UnifiedPlansStep( {
 	const initializedSitesBackUrl = useSelector( ( state ) =>
 		getCurrentUserSiteCount( state ) ? '/sites/' : null
 	);
+	const [ isStreamlinedPriceExperimentLoading, streamlinedPriceExperimentAssignment ] =
+		useStreamlinedPriceExperiment();
 
 	useSiteGlobalStylesOnPersonal();
 
@@ -444,7 +448,18 @@ function UnifiedPlansStep( {
 		}
 	}
 
-	const intervalTypeValue = intervalType || getIntervalType( path );
+	const { shouldRestrict3YearPlans } = useFCCARestrictions();
+	let defaultIntervalType = 'yearly';
+	const experimentValue = streamlinedPriceExperimentAssignment as string;
+	if (
+		! isStreamlinedPriceExperimentLoading &&
+		experimentValue &&
+		experimentValue.startsWith( 'plans_3y' )
+	) {
+		defaultIntervalType = shouldRestrict3YearPlans() ? '2yearly' : '3yearly';
+	}
+
+	const intervalTypeValue = intervalType || getIntervalType( path, defaultIntervalType );
 
 	let paidDomainName = domainItem?.meta;
 
