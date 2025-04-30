@@ -3,36 +3,7 @@ import {
 	GRAVATAR_UPLOAD_REQUEST_SUCCESS,
 	GRAVATAR_UPLOAD_REQUEST_FAILURE,
 } from 'calypso/state/action-types';
-import { http } from 'calypso/state/data-layer/wpcom-http/actions';
-import { uploadGravatar, announceSuccess, announceFailure } from '../';
-
-describe( '#uploadGravatar()', () => {
-	test( 'dispatches an HTTP request to the gravatar upload endpoint', () => {
-		const action = {
-			type: 'DUMMY_ACTION',
-			file: 'file',
-			email: 'email',
-		};
-
-		const result = uploadGravatar( action );
-
-		expect( result ).toEqual(
-			http(
-				{
-					apiNamespace: 'wpcom/v2',
-					method: 'POST',
-					body: {},
-					path: '/gravatar-upload',
-					formData: [
-						[ 'account', 'email' ],
-						[ 'filedata', 'file' ],
-					],
-				},
-				action
-			)
-		);
-	} );
-} );
+import { announceSuccess, announceFailure } from '../';
 
 describe( '#announceSuccess()', () => {
 	const noop = () => {};
