@@ -46,7 +46,6 @@ const SITE_FIELDS = [
 	'launch_status',
 	'site_migration',
 	'options',
-	'site_owner',
 	'jetpack',
 	'jetpack_modules',
 ].join( ',' );
