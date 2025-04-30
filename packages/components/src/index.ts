@@ -71,3 +71,4 @@ export { ExperienceControl } from './experience-control';
 export { default as SummaryButton } from './summary-button';
 export { default as CoreBadge } from './core-badge';
 export { default as Menu } from './menu';
+export { PoweredBy } from './powered-by';

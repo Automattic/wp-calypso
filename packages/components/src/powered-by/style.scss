@@ -1,0 +1,30 @@
+@import '@wordpress/base-styles/variables';
+
+.powered-by {
+	display: inline-flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: $grid-unit-10;
+	margin: 20px;
+
+	&__text {
+		color: var( --color-text );
+		white-space: nowrap;
+	}
+
+	&__logo {
+		display: inline-flex;
+
+		.wpcom-wordmark {
+			margin-top: -4px; // Adjust vertical alignment for WordPress.com wordmark
+		}
+	}
+
+	&.is-white &__text {
+		color: #fff;
+	}
+
+	.powered-by-logo {
+		display: block;
+	}
+}
