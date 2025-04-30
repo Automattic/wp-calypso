@@ -861,7 +861,7 @@ export default function CheckoutMainContent( {
 	return (
 		<StepContainerV2CheckoutFixer
 			isLargeViewport={ isLargeViewport }
-			isStreamlinedPrice={ streamlinedPriceExperimentAssignment }
+			isStreamlinedPrice={ streamlinedPriceExperimentAssignment !== null }
 		>
 			<Step.TwoColumnLayout
 				firstColumnWidth={ 8 }

@@ -94,7 +94,7 @@ export function WPCheckoutOrderSummary( {
 		<CheckoutSummaryCard
 			className={ isCartUpdating ? 'is-loading' : '' }
 			data-e2e-cart-is-loading={ isCartUpdating }
-			isStreamlinedPrice={ streamlinedPriceExperimentAssignment }
+			isStreamlinedPrice={ streamlinedPriceExperimentAssignment !== null }
 		>
 			{ showFeaturesList && (
 				<CheckoutSummaryFeaturedList
@@ -233,7 +233,7 @@ function CheckoutSummaryPriceList() {
 					) }
 				</CheckoutSubtotalSection>
 
-				<CheckoutSummaryTotal isStreamlinedPrice={ streamlinedPriceExperimentAssignment }>
+				<CheckoutSummaryTotal isStreamlinedPrice={ streamlinedPriceExperimentAssignment !== null }>
 					<span className="wp-checkout-order-summary__label">
 						{ translate( 'Total', {
 							context: 'The label of the total line item in checkout',
