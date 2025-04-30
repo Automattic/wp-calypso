@@ -1,4 +1,5 @@
-import './style.scss';
+import clsx from 'clsx';
+import styles from './style.module.scss';
 
 type Props = {
 	/**
@@ -17,7 +18,10 @@ type Props = {
 };
 
 export const WordPressLogo: React.FunctionComponent< Props > = ( {
-	className = 'wordpress-logo',
+	// TODO: This behavior of the `className` prop overriding the default classes are not standard,
+	// and should be normalized to be merged instead. Ideally, we also remove the `wordpress-logo`
+	// class because it clashes very easily.
+	className = clsx( styles.wordpressLogo, 'wordpress-logo' ),
 	size = 72,
 } ) => {
 	return (
