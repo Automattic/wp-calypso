@@ -27,25 +27,16 @@ import { normalizeFields } from '../../normalize-fields';
 import type { Action, Field, View, SupportedLayouts } from '../../types';
 import type { SelectionOrUpdater } from '../../private-types';
 
-/**
- * External public props
- */
 type ItemWithId = { id: string };
 
-export type DataViewsProps< Item > = {
-	/** Required for both modes */
-	data: Item[];
-
-	/** Contextual children for free composition */
-	children?: ReactNode;
-
-	/** Controlled mode props */
+type DataViewsProps< Item > = {
 	view?: View;
 	onChangeView?: ( view: View ) => void;
 	fields?: Field< Item >[];
 	search?: boolean;
 	searchLabel?: string;
 	actions?: Action< Item >[];
+	data: Item[];
 	isLoading?: boolean;
 	paginationInfo?: {
 		totalItems: number;
@@ -58,6 +49,7 @@ export type DataViewsProps< Item > = {
 	isItemClickable?: ( item: Item ) => boolean;
 	header?: ReactNode;
 	getItemLevel?: ( item: Item ) => number;
+	children?: ReactNode;
 } & ( Item extends ItemWithId
 	? { getItemId?: ( item: Item ) => string }
 	: { getItemId: ( item: Item ) => string } );
@@ -66,28 +58,26 @@ const defaultGetItemId = ( item: ItemWithId ) => item.id;
 const defaultIsItemClickable = () => true;
 const EMPTY_ARRAY: any[] = [];
 
-export default function DataViews< Item >( props: DataViewsProps< Item > ) {
-	const {
-		view,
-		onChangeView,
-		fields = [],
-		search = true,
-		searchLabel = undefined,
-		actions = EMPTY_ARRAY,
-		data,
-		selection: selectionProperty,
-		onChangeSelection,
-		paginationInfo,
-		getItemId = defaultGetItemId,
-		getItemLevel,
-		isLoading = false,
-		onClickItem,
-		isItemClickable = defaultIsItemClickable,
-		header,
-		defaultLayouts,
-		children,
-	} = props;
-
+export default function DataViews< Item >( {
+	view,
+	onChangeView,
+	fields = [],
+	search = true,
+	searchLabel = undefined,
+	actions = EMPTY_ARRAY,
+	data,
+	getItemId = defaultGetItemId,
+	getItemLevel,
+	isLoading = false,
+	paginationInfo,
+	defaultLayouts,
+	selection: selectionProperty,
+	onChangeSelection,
+	onClickItem,
+	isItemClickable = defaultIsItemClickable,
+	header,
+	children,
+}: DataViewsProps< Item > ) {
 	const [ containerWidth, setContainerWidth ] = useState( 0 );
 	const containerRef = useResizeObserver(
 		( resizeObserverEntries: any ) => {
@@ -97,13 +87,11 @@ export default function DataViews< Item >( props: DataViewsProps< Item > ) {
 		},
 		{ box: 'border-box' }
 	);
-
 	const [ selectionState, setSelectionState ] = useState< string[] >( [] );
 	const isUncontrolled =
 		selectionProperty === undefined || onChangeSelection === undefined;
 	const selection = isUncontrolled ? selectionState : selectionProperty;
 	const [ openedFilter, setOpenedFilter ] = useState< string | null >( null );
-
 	function setSelectionWithChange( value: SelectionOrUpdater ) {
 		const newValue =
 			typeof value === 'function' ? value( selection ) : value;
@@ -114,13 +102,10 @@ export default function DataViews< Item >( props: DataViewsProps< Item > ) {
 			onChangeSelection( newValue );
 		}
 	}
-
 	const _fields = useMemo( () => normalizeFields( fields ), [ fields ] );
 	const _selection = useMemo( () => {
-		return (
-			selection?.filter(
-				( id ) => data?.some( ( item ) => getItemId( item ) === id )
-			) || []
+		return selection.filter( ( id ) =>
+			data.some( ( item ) => getItemId( item ) === id )
 		);
 	}, [ selection, data, getItemId ] );
 
