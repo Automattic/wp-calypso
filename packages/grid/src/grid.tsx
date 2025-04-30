@@ -1,6 +1,6 @@
 import { DndContext, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { arrayMove, SortableContext, sortableKeyboardCoordinates } from '@dnd-kit/sortable';
-import { useResizeObserver } from '@wordpress/compose';
+import { useResizeObserver, useDebounce, useEvent } from '@wordpress/compose';
 import { useMemo, Children, isValidElement, useState } from 'react';
 import { GridItem } from './grid-item';
 import type { GridLayoutItem, GridProps } from './types';
@@ -80,7 +80,7 @@ export function Grid( {
 		} )
 	);
 
-	function handleDragOver( event: DragOverEvent ) {
+	const handleDragOver = useEvent( ( event: DragOverEvent ) => {
 		const { active, over } = event;
 
 		if ( over && active && active.id !== over.id ) {
@@ -96,7 +96,8 @@ export function Grid( {
 			} );
 			setTemporaryLayout( updatedLayout );
 		}
-	}
+	} );
+	const debouncedHandleDragOver = useDebounce( handleDragOver, 100 );
 
 	function persistTemporaryLayout() {
 		if ( ! onChangeLayout || ! temporaryLayout ) {
@@ -139,8 +140,11 @@ export function Grid( {
 	return (
 		<DndContext
 			sensors={ sensors }
-			onDragOver={ handleDragOver }
-			onDragEnd={ persistTemporaryLayout }
+			onDragOver={ debouncedHandleDragOver }
+			onDragEnd={ () => {
+				debouncedHandleDragOver.flush();
+				persistTemporaryLayout();
+			} }
 		>
 			<SortableContext items={ items } strategy={ () => null }>
 				<div

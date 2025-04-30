@@ -36,7 +36,7 @@ export function GridItem( {
 		gridRowEnd: `span ${ item.height || 1 }`,
 		cursor: disabled ? 'default' : dragCursor,
 		position: 'relative' as const,
-		zIndex: isDragging ? 1 : undefined,
+		zIndex: isDragging ? 2 : undefined,
 	};
 
 	// Inner content style with scaling effect
@@ -72,7 +72,7 @@ export function GridItem( {
 				border: '2px dashed var(--wp-admin-theme-color, #0087be)',
 				background: 'rgba(0, 135, 190, 0.1)',
 				pointerEvents: 'none',
-				zIndex: 10,
+				zIndex: 1,
 			} }
 		/>
 	) : null;
