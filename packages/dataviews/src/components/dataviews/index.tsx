@@ -34,20 +34,26 @@ import type { DataViewsContextType } from '../dataviews-context';
  */
 type ItemWithId = { id: string };
 
-export type DataViewsControlledProps< Item > = {
-	view: View;
-	onChangeView: ( view: View ) => void;
-	fields: Field< Item >[];
+export type DataViewsProps< Item > = {
+	/** Required for both modes */
+	data: Item[];
+
+	/** Contextual children for free composition */
+	children?: ReactNode;
+
+	/** Controlled mode props */
+	view?: View;
+	onChangeView?: ( view: View ) => void;
+	fields?: Field< Item >[];
 	search?: boolean;
 	searchLabel?: string;
 	actions?: Action< Item >[];
-	data: Item[];
 	isLoading?: boolean;
-	paginationInfo: {
+	paginationInfo?: {
 		totalItems: number;
 		totalPages: number;
 	};
-	defaultLayouts: SupportedLayouts;
+	defaultLayouts?: SupportedLayouts;
 	selection?: string[];
 	onChangeSelection?: ( items: string[] ) => void;
 	onClickItem?: ( item: Item ) => void;
@@ -57,15 +63,6 @@ export type DataViewsControlledProps< Item > = {
 } & ( Item extends ItemWithId
 	? { getItemId?: ( item: Item ) => string }
 	: { getItemId: ( item: Item ) => string } );
-
-export type DataViewsCompositionProps< Item > = {
-	children: ReactNode;
-	data: Item[];
-} & Partial< Omit< DataViewsControlledProps< Item >, 'children' | 'data' > >;
-
-export type DataViewsProps< Item > =
-	| DataViewsControlledProps< Item >
-	| DataViewsCompositionProps< Item >;
 
 const defaultGetItemId = ( item: ItemWithId ) => item.id;
 const defaultIsItemClickable = () => true;
@@ -91,8 +88,7 @@ export default function DataViews< Item >( props: DataViewsProps< Item > ) {
 		header,
 		defaultLayouts,
 		children,
-	} = props as DataViewsControlledProps< Item > &
-		DataViewsCompositionProps< Item >;
+	} = props;
 
 	const [ containerWidth, setContainerWidth ] = useState( 0 );
 	const containerRef = useResizeObserver(
@@ -159,16 +155,10 @@ export default function DataViews< Item >( props: DataViewsProps< Item > ) {
 
 	if ( children ) {
 		return (
-			<DataViewsContext.Provider
-				value={ contextValue as DataViewsContextType< any > }
-			>
+			<DataViewsContext.Provider value={ contextValue }>
 				{ children }
 			</DataViewsContext.Provider>
 		);
-	}
-
-	if ( ! data ) {
-		throw new Error( '`data` is required when `children` is not used.' );
 	}
 
 	return (
