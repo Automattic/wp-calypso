@@ -24,12 +24,12 @@ const PoweredBy = ( { brand, variant = 'color', className }: PoweredByProps ) =>
 	switch ( brand ) {
 		case 'jetpack':
 			LogoComponent = (
-				<JetpackLogo full size={ 32 } variant={ variant } className="powered-by-logo" />
+				<JetpackLogo full size={ 20 } variant={ variant } className="powered-by-logo" />
 			);
 			break;
 		case 'woocommerce':
 			LogoComponent = (
-				<WooCommerceLogo className="powered-by-logo" size={ 112 } variant={ variant } />
+				<WooCommerceLogo className="powered-by-logo" size={ 20 } variant={ variant } />
 			);
 			break;
 		case 'wpcloud':
@@ -37,14 +37,14 @@ const PoweredBy = ( { brand, variant = 'color', className }: PoweredByProps ) =>
 			LogoComponent = (
 				<WPCloudLogo
 					className="powered-by-logo"
-					size={ 156 }
+					size={ 20 }
 					variant={ variant === 'white' ? 'white' : 'black' }
 				/>
 			);
 			break;
 		case 'wpcom':
 			LogoComponent = (
-				<WordPressComLogo className="powered-by-logo" size={ 156 } variant={ variant } />
+				<WordPressComLogo className="powered-by-logo" size={ 20 } variant={ variant } />
 			);
 			break;
 	}

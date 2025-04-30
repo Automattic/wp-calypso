@@ -2,6 +2,12 @@ import PropTypes from 'prop-types';
 
 function WPCloudLogo( { className = 'wpcloud-logo', size = 72, variant = 'black' } ) {
 	const fill = variant === 'white' ? '#fff' : '#000';
+
+	// Calculate width based on the aspect ratio of the viewBox
+	const viewBoxWidth = 181;
+	const viewBoxHeight = 34;
+	const width = size * ( viewBoxWidth / viewBoxHeight );
+
 	return (
 		<svg
 			version="1.1"
@@ -10,7 +16,8 @@ function WPCloudLogo( { className = 'wpcloud-logo', size = 72, variant = 'black'
 			xmlnsXlink="http://www.w3.org/1999/xlink"
 			x="0px"
 			y="0px"
-			width={ size }
+			width={ width }
+			height={ size }
 			viewBox="0 0 181 34"
 			className={ className }
 		>

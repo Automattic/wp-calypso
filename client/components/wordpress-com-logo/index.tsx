@@ -22,11 +22,16 @@ function WordPressComLogo( {
 		fill = '#000';
 	}
 
+	// Calculate width based on the aspect ratio of the viewBox
+	const viewBoxWidth = 185;
+	const viewBoxHeight = 30;
+	const width = size * ( viewBoxWidth / viewBoxHeight );
+
 	return (
 		<svg
 			xmlns="http://www.w3.org/2000/svg"
-			width={ size }
-			height={ size * ( 30 / 185 ) }
+			width={ width }
+			height={ size }
 			viewBox="0 0 185 30"
 			className={ className }
 		>

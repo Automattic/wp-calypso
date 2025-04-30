@@ -14,10 +14,10 @@ function WooCommerceLogo( { className = 'woo-logo', size = 72, variant = 'color'
 		fill = 'black';
 	}
 
-	// Calculate height based on the aspect ratio of the viewBox
+	// Calculate width based on the aspect ratio of the viewBox
 	const viewBoxWidth = 183.6;
 	const viewBoxHeight = 47.5;
-	const height = ( size * viewBoxHeight ) / viewBoxWidth;
+	const width = size * ( viewBoxWidth / viewBoxHeight );
 
 	return (
 		<svg
@@ -27,8 +27,8 @@ function WooCommerceLogo( { className = 'woo-logo', size = 72, variant = 'color'
 			xmlnsXlink="http://www.w3.org/1999/xlink"
 			x="0px"
 			y="0px"
-			width={ size }
-			height={ height }
+			width={ width }
+			height={ size }
 			viewBox="0 0 183.6 47.5"
 			className={ className }
 		>
