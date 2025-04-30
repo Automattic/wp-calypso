@@ -181,7 +181,7 @@ const CancelPurchaseDomainOptions = ( {
 		</div>
 	);
 
-	if ( includedDomainTransfer && isDomainTransfer( includedDomainTransfer ) ) {
+	if ( includedDomainTransfer ) {
 		return <DomainTransferMessage />;
 	}
 
