@@ -657,7 +657,7 @@ class Login extends Component {
 			postHeader = <p className="login__header-subtitle">{ subtitle }</p>;
 		} else if ( isFromMigrationPlugin ) {
 			headerText = translate( 'Log in to your account' );
-		} else if ( isJetpack ) {
+		} else if ( isJetpack && ! isFromAutomatticForAgenciesPlugin ) {
 			const isJetpackMagicLinkSignUpFlow = config.isEnabled( 'jetpack/magic-link-signup' );
 			headerText = isJetpackMagicLinkSignUpFlow
 				? translate(

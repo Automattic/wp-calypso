@@ -1130,7 +1130,9 @@ export class LoginForm extends Component {
 							socialServiceResponse={ this.props.socialServiceResponse }
 							shouldRenderToS={ false }
 							isWoo={ isWoo }
-							isSocialFirst={ isSocialFirst || isJetpack }
+							isSocialFirst={
+								isSocialFirst || ( isJetpack && ! this.props.isFromAutomatticForAgenciesPlugin )
+							}
 							magicLoginLink={ ! isWooJPC ? this.getMagicLoginPageLink() : null }
 							qrLoginLink={ this.getQrLoginLink() }
 						/>

@@ -575,7 +575,7 @@ export class Login extends Component {
 			</div>
 		);
 
-		if ( isJetpack ) {
+		if ( isJetpack && ! this.props.isFromAutomatticForAgenciesPlugin ) {
 			return jetpackLogo;
 		}
 
@@ -684,6 +684,10 @@ export default connect(
 			currentRoute,
 			currentQuery,
 			redirectTo: getRedirectToOriginal( state ),
+			isFromAutomatticForAgenciesPlugin:
+				'automattic-for-agencies-client' === get( getCurrentQueryArguments( state ), 'from' ) ||
+				'automattic-for-agencies-client' ===
+					new URLSearchParams( getRedirectToOriginal( state )?.split( '?' )[ 1 ] ).get( 'from' ),
 		};
 	},
 	{
