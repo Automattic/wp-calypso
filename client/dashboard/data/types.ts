@@ -66,10 +66,12 @@ export interface SiteOptions {
 	is_wpcom_atomic?: boolean;
 	blog_public: number;
 	is_redirect?: boolean;
+	unmapped_url?: string;
 }
 
 export interface Site {
 	ID: string;
+	slug: string;
 	name: string;
 	URL: string;
 	icon?: {

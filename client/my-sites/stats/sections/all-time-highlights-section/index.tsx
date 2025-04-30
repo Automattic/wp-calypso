@@ -4,9 +4,10 @@ import {
 	percentCalculator,
 } from '@automattic/components/src/highlight-cards/lib/numbers';
 import { eye } from '@automattic/components/src/icons';
+import { formatNumber } from '@automattic/number-formatters';
 import { Icon, people, postContent, starEmpty, commentContent } from '@wordpress/icons';
 import clsx from 'clsx';
-import { useTranslate, numberFormat, numberFormatCompact } from 'i18n-calypso';
+import { useTranslate, numberFormatCompact } from 'i18n-calypso';
 import React, { useMemo } from 'react';
 import QueryPosts from 'calypso/components/data/query-posts';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
@@ -245,7 +246,7 @@ function AllTimeStatsCard( { infoItems, siteId }: AllTimeStatsCardProps ) {
 										className="highlight-card-info-item-count"
 										title={ Number.isFinite( info.count ) ? String( info.count ) : undefined }
 									>
-										{ numberFormat( info.count ) }
+										{ formatNumber( info.count ) }
 									</span>
 								</div>
 							);

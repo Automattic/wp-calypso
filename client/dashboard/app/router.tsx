@@ -62,8 +62,8 @@ const sitesRoute = createRoute( {
 
 const siteRoute = createRoute( {
 	getParentRoute: () => rootRoute,
-	path: 'sites/$siteId',
-	loader: ( { params: { siteId } } ) => maybeAwaitFetch( siteQuery( siteId ) ),
+	path: 'sites/$siteSlug',
+	loader: ( { params: { siteSlug } } ) => maybeAwaitFetch( siteQuery( siteSlug ) ),
 } ).lazy( () =>
 	import( '../site' ).then( ( d ) =>
 		createLazyRoute( 'site' )( {

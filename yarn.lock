@@ -798,7 +798,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/dataviews@workspace:packages/dataviews":
+"@automattic/dataviews@workspace:^, @automattic/dataviews@workspace:packages/dataviews":
   version: 0.0.0-use.local
   resolution: "@automattic/dataviews@workspace:packages/dataviews"
   dependencies:
@@ -1501,6 +1501,17 @@ __metadata:
     wpcom-proxy-request: "workspace:^"
   languageName: unknown
   linkType: soft
+
+"@automattic/number-formatters@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "@automattic/number-formatters@npm:1.0.0"
+  dependencies:
+    "@wordpress/date": "npm:^5.19.0"
+    debug: "npm:^4.4.0"
+    tslib: "npm:^2.5.0"
+  checksum: f591460cf08ff24434235fa797634620904a935bf2f31ab3a6b3bfa76e827168e09e698d8f774cf1c2689be31fa0be980646cece4052da630652503269a91b6c
+  languageName: node
+  linkType: hard
 
 "@automattic/o2-blocks@workspace:apps/o2-blocks":
   version: 0.0.0-use.local
@@ -13417,6 +13428,7 @@ __metadata:
     "@automattic/composite-checkout": "workspace:^"
     "@automattic/create-calypso-config": "workspace:^"
     "@automattic/data-stores": "workspace:^"
+    "@automattic/dataviews": "workspace:^"
     "@automattic/design-picker": "workspace:^"
     "@automattic/design-preview": "workspace:^"
     "@automattic/domain-picker": "workspace:^"
@@ -13612,9 +13624,9 @@ __metadata:
     textarea-caret: "npm:^3.1.0"
     to-title-case: "npm:^1.0.0"
     tracekit: "npm:^0.4.5"
-    twemoji: "npm:^12.1.4"
+    twemoji: "npm:^12.1.6"
     ua-parser-js: "npm:^0.7.22"
-    uplot: "npm:^1.6.25"
+    uplot: "npm:^1.6.32"
     uplot-react: "npm:^1.1.4"
     use-debounce: "npm:^3.1.0"
     util: "npm:^0.12.3"
@@ -33548,22 +33560,22 @@ __metadata:
   languageName: node
   linkType: hard
 
-"twemoji-parser@npm:12.1.1":
-  version: 12.1.1
-  resolution: "twemoji-parser@npm:12.1.1"
-  checksum: 88e2aa95a96f2796c72ed23f157428a843e70ae9c704f697f5850e0966173e6fb390bf2816f0c8eb28a95687a6668a79ac1874bc377839a933fa2b3b0161278a
+"twemoji-parser@npm:12.1.3":
+  version: 12.1.3
+  resolution: "twemoji-parser@npm:12.1.3"
+  checksum: d24b4edb014e5f4dd5714820347b585064a1dc485626468c7ce9ab042d4cd553bacb322483c5f31877503b0800788214033703b5ac02a98c11aecbab304f7e5b
   languageName: node
   linkType: hard
 
-"twemoji@npm:^12.1.4":
-  version: 12.1.4
-  resolution: "twemoji@npm:12.1.4"
+"twemoji@npm:^12.1.6":
+  version: 12.1.6
+  resolution: "twemoji@npm:12.1.6"
   dependencies:
     fs-extra: "npm:^8.0.1"
     jsonfile: "npm:^5.0.0"
-    twemoji-parser: "npm:12.1.1"
+    twemoji-parser: "npm:12.1.3"
     universalify: "npm:^0.1.2"
-  checksum: 0c9c23962ebdccb377026c182efe94fd0e67d4be447d6599a0213df0e66a39c39596b2014a05864cad5122829ebbb02e81385eff1df32498736fb8f2c1c1451f
+  checksum: a4d028897bf82890aa2796a0074bd1fa69b833844996e1fec1b7f07062b0a7272c480b7fd069f137b54a7d62ebcdaf48a98de530a3cfc07ac2054f74d8d00f30
   languageName: node
   linkType: hard
 
@@ -34294,10 +34306,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"uplot@npm:^1.6.25":
-  version: 1.6.31
-  resolution: "uplot@npm:1.6.31"
-  checksum: b1b03ebb23bda148c16e085006db183f93e99c63dd457863217c81fe7f9d99d680b2bf18f5ea2e39c39df67e20d7bae4e7730853c0af9c86c0eb8e8004e2f8ed
+"uplot@npm:^1.6.32":
+  version: 1.6.32
+  resolution: "uplot@npm:1.6.32"
+  checksum: 4d9cdd5f53371656cfc178ea4ae0d8c9bdbe4c98c99df847926d7e5f5a5bcb8043561219da2979fee7616aabe3619d80fee093befdfe39aae65e6621284c39b1
   languageName: node
   linkType: hard
 
@@ -35373,6 +35385,7 @@ __metadata:
     "@automattic/i18n-utils": "workspace:^"
     "@automattic/languages": "workspace:^"
     "@automattic/launchpad": "workspace:^"
+    "@automattic/number-formatters": "npm:^1.0.0"
     "@automattic/plans-grid-next": "workspace:^"
     "@automattic/privacy-toolset": "workspace:^"
     "@automattic/typography": "workspace:^"

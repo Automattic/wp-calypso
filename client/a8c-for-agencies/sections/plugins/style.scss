@@ -8,4 +8,20 @@
 			}
 		}
 	}
+
+	.plugin-manage-sites-pane {
+		.hosting-dashboard-layout-column__container {
+			.hosting-dashboard-layout__top-wrapper {
+				display: flex;
+			}
+
+			.hosting-dashboard-layout__viewport {
+				box-sizing: border-box;
+
+				> div {
+					width: 100%;
+				}
+			}
+		}
+	}
 }
