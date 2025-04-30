@@ -10,7 +10,7 @@
     max-width: 500px;
     padding: 2rem;
     text-align: center;
-    background-color: white;
+    background-color: #fff;
     border-radius: 4px;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
   }
@@ -29,5 +29,17 @@
 
   &__button {
     margin-top: 1rem;
+  }
+
+  &__loader {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+
+    p {
+      margin: 0;
+      color: #50575e;
+      line-height: 1.5;
+    }
   }
 }

@@ -40,7 +40,7 @@ export function PlaygroundIframe( {
 				setPlaygroundClient( client );
 			} )
 			.catch( ( error ) => {
-				if ( error.message === 'PLAYGROUND_NOT_FOUND' ) {
+				if ( error.message === 'WordPress installation has failed.' ) {
 					setPlaygroundError( 'PLAYGROUND_NOT_FOUND' );
 				} else {
 					setPlaygroundError( 'UNKNOWN_ERROR' );

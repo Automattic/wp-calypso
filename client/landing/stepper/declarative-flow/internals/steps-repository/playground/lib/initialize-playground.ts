@@ -12,21 +12,6 @@ export const LOCAL_STORAGE_KEY_FOR_PG_ID = 'pg_flow_pg_id';
 export const LOCAL_STORAGE_KEY_FOR_PG_ID_TS = 'pg_flow_pg_ts';
 export const LOCAL_STORAGE_KEY_FOR_PG_VALIDITY = 180000; // ms - 180 seconds / 3 minutes
 
-export async function checkPlaygroundExists( playgroundId: string ): Promise< boolean > {
-	if ( ! playgroundId ) {
-		return Promise.resolve( false );
-	}
-
-	// TODO: check if WordPress is installed using playgroundAvailableInOpfs from @wp-playground/website
-
-	// TODO: remove this case which was deliberately added for testing
-	if ( playgroundId === 'fail' ) {
-		return Promise.resolve( false );
-	}
-
-	return Promise.resolve( true );
-}
-
 export async function initializeWordPressPlayground(
 	iframe: HTMLIFrameElement,
 	recommendedPhpVersion: string,
@@ -37,9 +22,7 @@ export async function initializeWordPressPlayground(
 	const url = new URL( window.location.href );
 	let playgroundId = url.searchParams.get( 'playground' );
 	if ( playgroundId ) {
-		if ( ! ( await checkPlaygroundExists( playgroundId ) ) ) {
-			throw new Error( 'PLAYGROUND_NOT_FOUND' );
-		}
+		// assume we have WP installed, we will attempt to boot and capture the error when boot fails
 		isWordPressInstalled = true;
 	} else {
 		// Create a new playground ID if none exists
