@@ -218,51 +218,21 @@
 			}
 		}
 
-		.section-nav-tabs {
-			display: flex;
-			height: 48px;
-			margin: 0;
-			align-items: center;
-			border: none;
-			box-shadow: none;
-
-			&__list {
-				border: none;
-				box-shadow: none;
-				width: auto; // Allow list to be content-sized
-				display: flex;
-				justify-content: flex-start;
-				gap: 0;
-			}
-		}
-
 		.section-nav-tab {
-			position: relative;
-			display: flex;
-			align-items: center;
 			border: none;
-			box-shadow: none;
 			flex: 0 0 auto; // Don't grow to fill space
 
 			&:not(:first-child) {
-				margin-left: 0; // Override the 40px margin from modernized styles
+				margin-left: 0; // Override the 40px margin between items from modernized styles
 			}
 
 			.section-nav-tab__link {
 				padding: 8px 16px;
 				color: #1E1E1E;
-				text-align: center;
-				border: none;
-				box-shadow: none;
-				border-bottom: 2px solid transparent; // Always have 2px border to stop text from moving
+				border-bottom: 1.5px solid transparent; // Always have 2px border to stop text from moving
 				font-size: $font-body-small;
 				line-height: 20px;
-				transition: border-color 0.15s ease-in-out;
 				font-weight: 500;
-				font-style: normal;
-				overflow: hidden;
-				text-overflow: ellipsis;
-				white-space: nowrap;
 			}
 
 			&.is-selected .section-nav-tab__link {
