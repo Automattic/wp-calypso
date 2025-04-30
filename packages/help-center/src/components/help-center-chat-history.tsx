@@ -13,7 +13,7 @@ import { useGetHistoryChats } from '../hooks/use-get-history-chats';
 import { HELP_CENTER_STORE } from '../stores';
 import { HelpCenterSupportChatMessage } from './help-center-support-chat-message';
 import { getLastMessage } from './utils';
-import type { SupportInteraction, ZendeskConversation } from '@automattic/odie-client';
+import type { Conversations, SupportInteraction } from '@automattic/odie-client';
 
 import './help-center-chat-history.scss';
 
@@ -31,7 +31,7 @@ const Conversations = ( {
 	supportInteractions,
 	isLoadingInteractions,
 }: {
-	conversations: ZendeskConversation[];
+	conversations: Conversations;
 	supportInteractions: SupportInteraction[];
 	isLoadingInteractions?: boolean;
 } ) => {
@@ -57,11 +57,26 @@ const Conversations = ( {
 		<>
 			{ conversations.map( ( conversation ) => {
 				const lastMessage = getLastMessage( { conversation } );
-				const lastSupportInteraction = supportInteractions.find(
-					( interaction ) => interaction.uuid === conversation?.metadata.supportInteractionId
-				);
 
 				if ( lastMessage ) {
+					const hasMetadataAndParticipants = (
+						conv: typeof conversation
+					): conv is typeof conversation & { metadata: any; participants: any } =>
+						'metadata' in conv && 'participants' in conv;
+
+					let conversationStatus: string = '';
+					let isUnread = false;
+					let lastSupportInteraction = undefined;
+
+					if ( hasMetadataAndParticipants( conversation ) ) {
+						conversationStatus = conversation.metadata.status;
+						isUnread = conversation.participants[ 0 ]?.unreadCount > 0;
+
+						lastSupportInteraction = supportInteractions.find(
+							( interaction ) => interaction.uuid === conversation.metadata.supportInteractionId
+						);
+					}
+
 					return (
 						<HelpCenterSupportChatMessage
 							sectionName="chat_history"
@@ -69,8 +84,8 @@ const Conversations = ( {
 							supportInteraction={ lastSupportInteraction }
 							key={ conversation.id }
 							message={ lastMessage }
-							isUnread={ conversation.participants[ 0 ]?.unreadCount > 0 }
-							conversationStatus={ conversation.metadata.status }
+							isUnread={ isUnread }
+							conversationStatus={ conversationStatus }
 						/>
 					);
 				}

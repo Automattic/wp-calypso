@@ -2,23 +2,23 @@ import { useQuery } from '@tanstack/react-query';
 import apiFetch from '@wordpress/api-fetch';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
 import { useOdieAssistantContext } from '../context';
-import type { ReturnedChat } from '../types';
+import type { OdieConversation } from '../types';
 
 /**
- * Get the Odie interactions and manage the cache to save on API calls.
+ * Retrieves the list of conversations handled by AI.
  */
-export const useGetOdieInteractions = ( enabled = true ) => {
+export const useGetOdieConversations = ( enabled = true ) => {
 	const { botNameSlug, version } = useOdieAssistantContext();
 
-	return useQuery< ReturnedChat[], Error >( {
+	return useQuery< OdieConversation[], Error >( {
 		queryKey: [ 'odie-interactions', botNameSlug, version ],
-		queryFn: async (): Promise< ReturnedChat[] > => {
+		queryFn: async (): Promise< OdieConversation[] > => {
 			const queryParams = new URLSearchParams( {
 				page_number: '1',
 				items_per_page: '30',
 			} ).toString();
 
-			const data = (
+			return (
 				canAccessWpcomApis()
 					? await wpcomRequest( {
 							method: 'GET',
@@ -29,9 +29,7 @@ export const useGetOdieInteractions = ( enabled = true ) => {
 							path: `/help-center/odie/chats/${ botNameSlug }?${ queryParams }`,
 							method: 'GET',
 					  } )
-			) as ReturnedChat[];
-
-			return data;
+			) as OdieConversation[];
 		},
 		refetchOnMount: true,
 		refetchOnWindowFocus: false,

@@ -2,7 +2,11 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { getConversationIdFromInteraction } from '@automattic/odie-client/src/utils';
 import Smooch from 'smooch';
 import type { ContactOption } from '../types';
-import type { ZendeskConversation, SupportInteraction } from '@automattic/odie-client';
+import type {
+	OdieConversation,
+	ZendeskConversation,
+	SupportInteraction,
+} from '@automattic/odie-client';
 
 const isMatchingInteraction = (
 	supportInteraction: SupportInteraction,
@@ -36,7 +40,11 @@ export const generateContactOnClickEvent = (
 	}
 };
 
-export const getLastMessage = ( { conversation }: { conversation: ZendeskConversation } ) => {
+export const getLastMessage = ( {
+	conversation,
+}: {
+	conversation: OdieConversation | ZendeskConversation;
+} ) => {
 	return Array.isArray( conversation.messages ) && conversation.messages.length > 0
 		? conversation.messages[ conversation.messages.length - 1 ]
 		: null;

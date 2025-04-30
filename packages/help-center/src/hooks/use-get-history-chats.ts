@@ -1,6 +1,6 @@
 /* eslint-disable no-restricted-imports */
 import { HelpCenterSelect } from '@automattic/data-stores';
-import { useGetOdieInteractions } from '@automattic/odie-client/src/data/use-get-odie-interactions';
+import { useGetOdieConversations } from '@automattic/odie-client/src/data/use-get-odie-conversations';
 import { useGetSupportInteractions } from '@automattic/odie-client/src/data/use-get-support-interactions';
 import { useSelect } from '@wordpress/data';
 import { useEffect, useState } from '@wordpress/element';
@@ -9,18 +9,23 @@ import {
 	getZendeskConversations,
 } from '../components/utils';
 import { HELP_CENTER_STORE } from '../stores';
-import type { SupportInteraction, ZendeskConversation } from '@automattic/odie-client';
+import type {
+	Conversations,
+	OdieConversation,
+	SupportInteraction,
+	ZendeskConversation,
+} from '@automattic/odie-client';
 
 interface UseGetHistoryChatsResult {
-	conversations: ZendeskConversation[];
+	conversations: Conversations;
 	supportInteractions: SupportInteraction[];
 	isLoadingInteractions: boolean;
-	recentConversations: ZendeskConversation[];
-	archivedConversations: ZendeskConversation[];
+	recentConversations: Conversations;
+	archivedConversations: Conversations;
 }
 
 export const useGetHistoryChats = (): UseGetHistoryChatsResult => {
-	const [ conversations, setConversations ] = useState< ZendeskConversation[] >( [] );
+	const [ conversations, setConversations ] = useState< Conversations >( [] );
 	const [ supportInteractions, setSupportInteractions ] = useState< SupportInteraction[] >( [] );
 
 	const { data: supportInteractionsOpen, isLoading: isLoadingOpenInteractions } =
@@ -31,8 +36,8 @@ export const useGetHistoryChats = (): UseGetHistoryChatsResult => {
 		useGetSupportInteractions( 'zendesk', 100, 'solved' );
 	const { data: supportInteractionsClosed, isLoading: isLoadingClosedInteractions } =
 		useGetSupportInteractions( 'zendesk', 100, 'closed' );
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const { data: odieInteractions, isLoading: isLoadingOdieInteractions } = useGetOdieInteractions();
+	const { data: odieConversations, isLoading: isLoadingOdieConversations } =
+		useGetOdieConversations();
 
 	const { isChatLoaded } = useSelect( ( select ) => {
 		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
@@ -45,8 +50,8 @@ export const useGetHistoryChats = (): UseGetHistoryChatsResult => {
 		isLoadingResolvedInteractions ||
 		isLoadingClosedInteractions ||
 		isLoadingOpenInteractions ||
-		isLoadingOdieInteractions ||
-		isLoadingSolvedInteractions;
+		isLoadingSolvedInteractions ||
+		isLoadingOdieConversations;
 
 	useEffect( () => {
 		if ( isChatLoaded && getZendeskConversations && ! isLoadingInteractions ) {
@@ -79,28 +84,35 @@ export const useGetHistoryChats = (): UseGetHistoryChatsResult => {
 	const getSortedRecentAndArchivedConversations = ( {
 		conversations,
 	}: {
-		conversations: ZendeskConversation[];
+		conversations: Conversations;
 	} ) => {
-		const recentConversations: ZendeskConversation[] = [];
-		const archivedConversations: ZendeskConversation[] = [];
+		const recentConversations: Conversations = [];
+		const archivedConversations: Conversations = [];
 
 		if ( Array.isArray( conversations ) ) {
-			conversations.forEach( ( conversation: ZendeskConversation ) => {
-				if ( ! conversation?.metadata?.createdAt ) {
-					recentConversations.push( conversation );
-					return;
+			const oneYearAgo = new Date();
+			oneYearAgo.setFullYear( oneYearAgo.getFullYear() - 1 );
+
+			conversations.forEach( ( conversation: OdieConversation | ZendeskConversation ) => {
+				let createdAt: number | undefined;
+
+				if ( 'metadata' in conversation && conversation.metadata?.createdAt ) {
+					createdAt = conversation.metadata.createdAt;
+				} else if ( 'createdAt' in conversation && conversation.createdAt ) {
+					createdAt = conversation.createdAt;
 				}
 
-				const createdAt = conversation.metadata?.createdAt;
-				const createdAtDate = new Date( createdAt as string | number | Date );
-				const now = new Date();
-				const oneYearAgo = new Date( now.setFullYear( now.getFullYear() - 1 ) );
+				if ( createdAt ) {
+					const createdAtDate = new Date( createdAt );
 
-				if ( createdAtDate < oneYearAgo ) {
-					archivedConversations.push( conversation );
-				} else {
-					recentConversations.push( conversation );
+					if ( createdAtDate < oneYearAgo ) {
+						archivedConversations.push( conversation );
+
+						return;
+					}
 				}
+
+				recentConversations.push( conversation );
 			} );
 		}
 
@@ -110,8 +122,26 @@ export const useGetHistoryChats = (): UseGetHistoryChatsResult => {
 		};
 	};
 
+	// Merges conversations coming from Zendesk with conversations handled by AI, then sort by most recent first
+	const mergedAndSortedConversations = [
+		...( conversations ?? [] ),
+		...( odieConversations ?? [] ),
+	].sort( ( a, b ) => {
+		const getCreatedAt = ( conversation: OdieConversation | ZendeskConversation ): number => {
+			if ( 'metadata' in conversation && conversation.metadata?.createdAt ) {
+				return conversation.metadata.createdAt;
+			} else if ( 'createdAt' in conversation && conversation.createdAt ) {
+				return conversation.createdAt;
+			}
+
+			return 0;
+		};
+
+		return getCreatedAt( b ) - getCreatedAt( a );
+	} );
+
 	const { recentConversations, archivedConversations } = getSortedRecentAndArchivedConversations( {
-		conversations,
+		conversations: mergedAndSortedConversations,
 	} );
 
 	return {

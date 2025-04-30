@@ -203,6 +203,14 @@ type MessageAction = {
 	uri: string;
 };
 
+export type OdieMessage = {
+	displayName: string;
+	received: number;
+	role: string;
+	text: string;
+	altText?: string;
+};
+
 export type ZendeskMessage = {
 	avatarUrl?: string;
 	displayName: string;
@@ -240,6 +248,12 @@ type Metadata = {
 	status: InteractionStatus;
 };
 
+export type OdieConversation = {
+	id: string;
+	createdAt: number;
+	messages: OdieMessage[];
+};
+
 export type ZendeskConversation = {
 	id: string;
 	lastUpdatedAt: number;
@@ -252,6 +266,8 @@ export type ZendeskConversation = {
 	messages: ZendeskMessage[];
 	metadata: Metadata;
 };
+
+export type Conversations = Array< OdieConversation | ZendeskConversation >;
 
 export type SupportInteractionUser = {
 	user_id: string;

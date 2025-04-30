@@ -10,7 +10,7 @@ import clsx from 'clsx';
 import { Link } from 'react-router-dom';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { HELP_CENTER_STORE } from '../stores';
-import type { SupportInteraction, ZendeskMessage } from '@automattic/odie-client';
+import type { OdieMessage, SupportInteraction, ZendeskMessage } from '@automattic/odie-client';
 
 import './help-center-support-chat-message.scss';
 const trackContactButtonClicked = ( sectionName: string ) => {
@@ -30,7 +30,7 @@ export const HelpCenterSupportChatMessage = ( {
 	sectionName,
 	conversationStatus,
 }: {
-	message: ZendeskMessage;
+	message: OdieMessage | ZendeskMessage;
 	badgeCount?: number;
 	avatarSize?: number;
 	isUnread: boolean;
@@ -43,17 +43,18 @@ export const HelpCenterSupportChatMessage = ( {
 	const { __ } = useI18n();
 	const locale = useLocale();
 	const { currentUser } = useHelpCenterContext();
-	const { displayName, received, text, altText } = message;
+	const { displayName, received, role, text, altText } = message;
 	const helpCenterContext = useHelpCenterContext();
 	const helpCenterContextSectionName = helpCenterContext.sectionName;
 	const { setCurrentSupportInteraction } = useDataStoreDispatch( HELP_CENTER_STORE );
 	const messageDisplayName =
-		message.role === 'business' ? __( 'Happiness Engineer', __i18n_text_domain__ ) : displayName;
+		role === 'business' ? __( 'Happiness Engineer', __i18n_text_domain__ ) : displayName;
 
 	const renderAvatar = () => {
-		if ( message.role === 'business' ) {
+		if ( role === 'business' ) {
 			return <HumanAvatar title={ __( 'User Avatar', __i18n_text_domain__ ) } />;
 		}
+
 		return (
 			<Gravatar
 				user={ currentUser }
