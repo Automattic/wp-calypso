@@ -25,7 +25,7 @@ function StatsLineChart( {
 	),
 	zeroBaseline = true,
 	fixedDomain = false,
-	curveType = 'smooth',
+	curveType = 'monotone',
 }: {
 	chartData: Array< {
 		label: string;
