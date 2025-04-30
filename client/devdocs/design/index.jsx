@@ -17,6 +17,7 @@ import SegmentedControl from '@automattic/components/src/segmented-control/docs/
 import SelectDropdown from '@automattic/components/src/select-dropdown/docs/example';
 import SiteThumbnail from '@automattic/components/src/site-thumbnail/docs/example';
 import Suggestions from '@automattic/components/src/suggestions/docs/example';
+import SummaryButtonExample from '@automattic/components/src/summary-button/docs/example';
 import Swipeable from '@automattic/components/src/swipeable/docs/example';
 import TimeSince from '@automattic/components/src/time-since/docs/example';
 import Tooltip from '@automattic/components/src/tooltip/docs/example';
@@ -256,6 +257,7 @@ export default class DesignAssets extends Component {
 					<StepProgress readmeFilePath="step-progress" />
 					<Suggestions readmeFilePath="/packages/components/src/suggestions" />
 					<SuggestionSearchExample />
+					<SummaryButtonExample />
 					<SupportInfoExample />
 					<TextareaAutosize readmeFilePath="textarea-autosize" />
 					<TextDiff readmeFilePath="text-diff" />
