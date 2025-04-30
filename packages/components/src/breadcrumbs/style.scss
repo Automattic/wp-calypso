@@ -1,0 +1,24 @@
+@import "@wordpress/base-styles/variables";
+
+.breadcrumb {
+	overflow: visible;
+
+	.breadcrumb__item-wrapper {
+		flex-shrink: 0;
+	}
+
+	.breadcrumb__item {
+		padding: 6px;
+		height: auto;
+		color: $gray-700;
+		flex-shrink: 0;
+
+		&.is-current {
+			color: var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9));
+		}
+	}
+
+	.breadcrumb__separator {
+		display: inline-flex;
+	}
+}
