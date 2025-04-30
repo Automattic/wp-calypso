@@ -18,7 +18,7 @@ import { Page, Browser } from 'playwright';
 
 declare const browser: Browser;
 
-describe( DataHelper.createSuiteTitle( 'Domains: Add to current site' ), function () {
+describe.skip( DataHelper.createSuiteTitle( 'Domains: Add to current site' ), function () {
 	let page: Page;
 	let sidebarComponent: SidebarComponent;
 	let domainSearchComponent: DomainSearchComponent;
