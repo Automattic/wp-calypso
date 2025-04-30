@@ -90,12 +90,16 @@
 		}
 	}
 
+	@media (max-width: $break-large) {
+		margin: 0 32px 24px 32px;
+	}
+
 	@media (max-width: $break-medium) {
 		position: fixed;
 		left: 0;
 		bottom: 0;
 		width: 100%;
-		margin-bottom: 0;
+		margin: 0 auto;
 		text-align: left;
 		padding: 16px 32px;
 		z-index: 2;

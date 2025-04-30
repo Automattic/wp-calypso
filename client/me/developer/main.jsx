@@ -123,25 +123,27 @@ class Developer extends Component {
 						className="developer__header"
 					/>
 
-					<form onChange={ this.props.submitForm }>
+					<div className="developer-is-dev-account">
 						<Card
 							className={ clsx( 'developer__is-dev-account-card', {
 								'is-loading': this.props.isFetchingUserSettings,
 							} ) }
 						>
-							<FormFieldset>
-								<ToggleControl
-									disabled={
-										this.props.isFetchingUserSettings || this.props.isUpdatingUserSettings
-									}
-									checked={ this.props.getSetting( 'is_dev_account' ) }
-									onChange={ this.handleToggleIsDevAccount }
-									label={ getIAmDeveloperCopy( this.props.translate ) }
-									__nextHasNoMarginBottom
-								/>
-							</FormFieldset>
+							<form onChange={ this.props.submitForm }>
+								<FormFieldset>
+									<ToggleControl
+										disabled={
+											this.props.isFetchingUserSettings || this.props.isUpdatingUserSettings
+										}
+										checked={ this.props.getSetting( 'is_dev_account' ) }
+										onChange={ this.handleToggleIsDevAccount }
+										label={ getIAmDeveloperCopy( this.props.translate ) }
+										__nextHasNoMarginBottom
+									/>
+								</FormFieldset>
+							</form>
 						</Card>
-					</form>
+					</div>
 
 					<DeveloperFeatures />
 				</Main>
