@@ -16,7 +16,12 @@ import { __, _n } from '@wordpress/i18n';
  * Internal dependencies
  */
 import DataViewsContainer from '../index';
-import { data, DEFAULT_VIEW, fields, type SpaceObject } from '../../dataviews/stories/fixtures';
+import {
+	data,
+	DEFAULT_VIEW,
+	fields,
+	type SpaceObject,
+} from '../../dataviews/stories/fixtures';
 import { filterSortAndPaginate } from '../../..';
 
 const meta = {
