@@ -342,22 +342,22 @@ const FeaturesGrid = ( {
 				<div className="plan-features-2023-grid__content">
 					<div>
 						{ 'large' === gridSize && (
-							<p className="plan-features-2023-grid__desktop-view">
+							<div className="plan-features-2023-grid__desktop-view">
 								<Table { ...planFeaturesProps } stickyRowOffset={ stickyRowOffset } />
-							</p>
+							</div>
 						) }
 						{ 'medium' === gridSize && (
-							<p className="plan-features-2023-grid__tablet-view">
+							<div className="plan-features-2023-grid__tablet-view">
 								<TabletView { ...planFeaturesProps } stickyRowOffset={ stickyRowOffset } />
-							</p>
+							</div>
 						) }
 						{ 'small' === gridSize && (
-							<p className="plan-features-2023-grid__mobile-view">
+							<div className="plan-features-2023-grid__mobile-view">
 								<MobileView
 									{ ...planFeaturesProps }
 									enableShowAllFeaturesButton={ enableShowAllFeaturesButton }
 								/>
-							</p>
+							</div>
 						) }
 					</div>
 				</div>

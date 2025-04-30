@@ -72,6 +72,10 @@ const Container = styled.div`
 		padding-top: 0;
 		padding-bottom: 0;
 
+		p {
+			margin-bottom: 0;
+		}
+
 		.storage-add-ons-card__storage-dropdown {
 			margin: 16px 0;
 
