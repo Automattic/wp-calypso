@@ -118,13 +118,17 @@
 			top: 0;
 			bottom: 0;
 			left: 0;
-			width: 5px;
-			box-shadow: -3px 0 2px -2px rgba(0, 0, 0, 0.1);
+			width: 1px;
+			background-color: #f0f0f0;
 		}
 	}
 
 	.dataviews-view-table__row.is-hovered .dataviews-view-table__actions-column {
 		background-color: inherit;
+	}
+
+	&.sites-dataviews--scrolled-end .dataviews-view-table__actions-column::after {
+		background-color: transparent;
 	}
 }
 
