@@ -10,6 +10,7 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import LoginBlock from 'calypso/blocks/login';
+import { GetHeaderText } from 'calypso/blocks/login/login-header';
 import AutomatticLogo from 'calypso/components/automattic-logo';
 import DocumentHead from 'calypso/components/data/document-head';
 import LocaleSuggestions from 'calypso/components/locale-suggestions';
@@ -34,6 +35,7 @@ import {
 	recordTracksEventWithClientId as recordTracksEvent,
 	enhanceWithSiteType,
 } from 'calypso/state/analytics/actions';
+import { wasManualRenewalImmediateLoginAttempted } from 'calypso/state/immediate-login/selectors';
 import { getRedirectToOriginal } from 'calypso/state/login/selectors';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
@@ -536,7 +538,24 @@ export class Login extends Component {
 			isWhiteLogin,
 			isJetpack,
 			isFromAkismet,
+			twoFactorAuthType,
+			isManualRenewalImmediateLoginAttempt,
+			socialConnect,
+			linkingSocialService,
+			action,
+			privateSite,
+			oauth2Client,
+			isWooJPC,
+			isWCCOM,
+			isJetpack,
+			isSignupExistingAccount,
+			isFromAutomatticForAgenciesPlugin,
+			currentQuery,
+			showContinueAsUser,
+			wccomFrom,
+			twoFactorEnabled,
 		} = this.props;
+
 		const canonicalUrl = localizeUrl( 'https://wordpress.com/log-in', locale );
 		const isSocialFirst =
 			config.isEnabled( 'login/social-first' ) &&
@@ -608,6 +627,31 @@ export class Login extends Component {
 			</Main>
 		);
 
+		const headerText = (
+			<GetHeaderText
+				isSocialFirst={ isSocialFirst }
+				twoFactorAuthType={ twoFactorAuthType }
+				isManualRenewalImmediateLoginAttempt={ isManualRenewalImmediateLoginAttempt }
+				socialConnect={ socialConnect }
+				linkingSocialService={ linkingSocialService }
+				action={ action }
+				privateSite={ privateSite }
+				oauth2Client={ oauth2Client }
+				isWooJPC={ isWooJPC }
+				isFromMigrationPlugin={ isFromMigrationPlugin }
+				isJetpack={ isJetpack }
+				isWCCOM={ isWCCOM }
+				isSignupExistingAccount={ isSignupExistingAccount }
+				isFromAkismet={ isFromAkismet }
+				isFromAutomatticForAgenciesPlugin={ isFromAutomatticForAgenciesPlugin }
+				isGravPoweredClient={ isGravPoweredClient }
+				wccomFrom={ wccomFrom }
+				twoFactorEnabled={ twoFactorEnabled }
+				currentQuery={ currentQuery }
+				showContinueAsUser={ showContinueAsUser }
+			/>
+		);
+
 		return (
 			<>
 				{ isSocialFirst && (
@@ -619,6 +663,7 @@ export class Login extends Component {
 								logo={ isFromAkismet && akismetLogo }
 							/>
 						}
+						heading={ <Step.Heading text={ headerText } /> }
 					>
 						{ mainContent }
 					</Step.CenteredColumnLayout>
@@ -672,6 +717,7 @@ export default connect(
 				'automattic-for-agencies-client' === get( getCurrentQueryArguments( state ), 'from' ) ||
 				'automattic-for-agencies-client' ===
 					new URLSearchParams( getRedirectToOriginal( state )?.split( '?' )[ 1 ] ).get( 'from' ),
+			isManualRenewalImmediateLoginAttempt: wasManualRenewalImmediateLoginAttempted( state ),
 		};
 	},
 	{
