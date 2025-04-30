@@ -10,35 +10,12 @@ import DataViewsContext, {
 	type DataViewsContextType,
 } from '../dataviews-context';
 import { LAYOUT_TABLE } from '../../constants';
-import type { SupportedLayouts, Field, View, Action } from '../../types';
+import type { DataViewsProps } from '../dataviews';
 
-type ItemWithId = { id: string };
-
-type DataViewsContainerProps< Item > = {
+type DataViewsContainerProps< Item > = Partial< DataViewsProps< Item > > & {
 	data: Item[];
 	children: ReactNode;
-
-	view?: View;
-	onChangeView?: ( view: View ) => void;
-	fields?: Field< Item >[];
-	search?: boolean;
-	searchLabel?: string;
-	actions?: Action< Item >[];
-	isLoading?: boolean;
-	paginationInfo?: {
-		totalItems: number;
-		totalPages: number;
-	};
-	defaultLayouts?: SupportedLayouts;
-	selection?: string[];
-	onChangeSelection?: ( items: string[] ) => void;
-	onClickItem?: ( item: Item ) => void;
-	isItemClickable?: ( item: Item ) => boolean;
-	header?: ReactNode;
-	getItemLevel?: ( item: Item ) => number;
-} & ( Item extends ItemWithId
-	? { getItemId?: ( item: Item ) => string }
-	: { getItemId: ( item: Item ) => string } );
+};
 
 /**
  * Default value for DataViewsContext.

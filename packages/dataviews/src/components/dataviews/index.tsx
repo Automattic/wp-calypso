@@ -27,9 +27,9 @@ import { normalizeFields } from '../../normalize-fields';
 import type { Action, Field, View, SupportedLayouts } from '../../types';
 import type { SelectionOrUpdater } from '../../private-types';
 
-type ItemWithId = { id: string };
+export type ItemWithId = { id: string };
 
-type DataViewsProps< Item > = {
+export type DataViewsProps< Item > = {
 	view: View;
 	onChangeView: ( view: View ) => void;
 	fields: Field< Item >[];
