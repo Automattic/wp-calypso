@@ -295,7 +295,7 @@ export const fetchTwoStep = async (): Promise< TwoStep > => {
 export const fetchSiteSettings = async ( id: string ): Promise< SiteSettings > => {
 	return wpcom.req.get( {
 		path: `/sites/${ id }/settings`,
-		apiNamespace: 'rest/v1.1',
+		apiVersion: '1.4',
 	} );
 };
 

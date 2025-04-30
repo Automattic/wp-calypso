@@ -141,7 +141,6 @@ export interface EngagementStats {
 export interface SiteSettings {
 	settings: {
 		wpcom_performance_report_url?: string;
-		[ key: string ]: any;
 	};
 }
 
@@ -157,7 +156,6 @@ export interface PerformanceInsightsQueryState {
 
 export interface BasicMetricsData {
 	token?: string;
-	[ key: string ]: any;
 }
 
 export interface PerformanceReport {
