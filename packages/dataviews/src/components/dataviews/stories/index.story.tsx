@@ -1,7 +1,7 @@
 /**
  * WordPress dependencies
  */
-import { useState, useMemo, useContext } from '@wordpress/element';
+import { useState, useMemo } from '@wordpress/element';
 import { createInterpolateElement } from '@wordpress/element';
 import {
 	Card,
@@ -12,7 +12,6 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { __, _n } from '@wordpress/i18n';
-
 /**
  * Internal dependencies
  */
@@ -26,7 +25,6 @@ import {
 } from './fixtures';
 import { LAYOUT_GRID, LAYOUT_LIST, LAYOUT_TABLE } from '../../../constants';
 import { filterSortAndPaginate } from '../../../filter-and-sort-data-view';
-import DataViewsContext from '../../dataviews-context';
 import type { View } from '../../../types';
 
 import './style.css';
@@ -185,12 +183,19 @@ function PlanetOverview( { planets }: { planets: SpaceObject[] } ) {
  * or pagination controls.
  */
 export const FreeComposition = () => {
-	const planets = data.filter( ( item ) =>
+	const { data: shownData } = useMemo( () => {
+		return filterSortAndPaginate( data, DEFAULT_VIEW, fields );
+	}, [] );
+
+	const planets = shownData.filter( ( item ) =>
 		item.categories.includes( 'Planet' )
 	);
 
 	return (
-		<DataViews data={ data } getItemId={ ( item ) => item.id.toString() }>
+		<DataViews
+			data={ shownData }
+			getItemId={ ( item ) => item.id.toString() }
+		>
 			<PlanetOverview planets={ planets } />
 		</DataViews>
 	);
