@@ -34,9 +34,9 @@ describe( 'SecurityKeyForm', () => {
 		const { findByText, getByText, getByRole } = setup();
 
 		await findByText( 'Waiting for security key' );
-		expect( getByText( 'Waiting for security key' ) ).toBeInTheDocument();
-		expect( getByText( /Connect and touch your security key to log in/ ) ).toBeInTheDocument();
-		expect( getByRole( 'button', { name: 'Continue with security key' } ) ).toBeInTheDocument();
+		expect( getByText( 'Waiting for security key' ) ).toBeVisible();
+		expect( getByText( /Connect and touch your security key to log in/ ) ).toBeVisible();
+		expect( getByRole( 'button', { name: 'Continue with security key' } ) ).toBeVisible();
 	} );
 
 	test( 'shows error and allows user to retry authentication on client failure', async () => {
@@ -52,7 +52,7 @@ describe( 'SecurityKeyForm', () => {
 		reject( new Error() );
 
 		await waitFor( () => {
-			expect( getByText( /An error occurred, please try again/ ) ).toBeInTheDocument();
+			expect( getByText( /An error occurred, please try again/ ) ).toBeVisible();
 		} );
 
 		// Now click the button to trigger another authentication
