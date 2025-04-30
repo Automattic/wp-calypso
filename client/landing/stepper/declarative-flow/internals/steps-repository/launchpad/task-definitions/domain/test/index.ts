@@ -1,3 +1,4 @@
+// @ts-nocheck - TODO: Fix TypeScript issues
 import { START_WRITING_FLOW } from '@automattic/onboarding';
 import { getDomainUpSellTask } from '../';
 import { buildSiteDetails, buildTask } from '../../../test/lib/fixtures';

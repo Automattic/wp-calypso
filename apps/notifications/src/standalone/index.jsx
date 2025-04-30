@@ -185,9 +185,8 @@ const render = ( wpcom ) => {
 };
 
 const setTracksUser = ( wpcom ) => {
-	wpcom
-		.me()
-		.get( { fields: 'ID,username' } )
+	wpcom.req
+		.get( '/me', { fields: 'ID,username' } )
 		.then( ( { ID, username } ) => {
 			window._tkq = window._tkq || [];
 			window._tkq.push( [ 'identifyUser', ID, username ] );

@@ -1,6 +1,7 @@
+import { formatCurrency } from '@automattic/number-formatters';
 import { Button } from '@wordpress/components';
 import clsx from 'clsx';
-import { useTranslate, formatCurrency } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import A4ANumberInputV2 from 'calypso/a8c-for-agencies/components/a4a-number-input-v2';
 import useWPCOMPlanDescription from 'calypso/a8c-for-agencies/sections/marketplace/hooks/use-wpcom-plan-description';
@@ -140,7 +141,6 @@ export default function WPCOMPlanSelector( {
 					</div>
 				</div>
 			</div>
-
 			<div className="wpcom-plan-selector__cta">
 				<div className="wpcom-plan-selector__cta-component">
 					<Button

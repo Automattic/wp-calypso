@@ -5,15 +5,16 @@ import type { LanguageSlug } from '@automattic/languages';
 
 const selectors = {
 	// Close account
-	closeAccountLink: 'p:text("Close your account permanently")',
-	closeAccountButton: 'button:text("Close account")',
+	closeAccountLink: 'p:text("Delete your account permanently")',
+	closeAccountButton: 'button:text("Delete account")',
 	deletedItemsSidebar: 'text=These items will be deleted',
 
 	// Modal
 	modalContinueButton: 'button:text("Continue")',
 	usernameSpan: 'span.account-close__confirm-dialog-target-username',
 	usernameConfirmationInput: 'input[id="confirmAccountCloseInput"]',
-	modalCloseAccountButton: 'button:text("Close your account")',
+	// The delete button is outside the confirm dialog but has the is-scary class
+	modalCloseAccountButton: 'button.is-scary',
 
 	// UI Language
 	uiLanguageButton: 'button.language-picker',
@@ -81,13 +82,19 @@ export class AccountSettingsPage {
 		// `Are you sure?` modal.
 		await this.page.click( selectors.modalContinueButton );
 
-		// Final attempt to save the situation in getting the user to type their account username.
+		// Get username and fill the input
 		const username = await this.page
 			.waitForSelector( selectors.usernameSpan )
 			.then( ( element ) => element.innerText() );
+
+		// Fill the input and ensure it's focused
+		await this.page.focus( selectors.usernameConfirmationInput );
 		await this.page.fill( selectors.usernameConfirmationInput, username );
-		// Confirm closure.
-		await this.page.click( selectors.modalCloseAccountButton );
+
+		// Press Tab twice to reach the button and then press Enter
+		await this.page.keyboard.press( 'Tab' );
+		await this.page.keyboard.press( 'Tab' );
+		await this.page.keyboard.press( 'Enter' );
 	}
 
 	/**

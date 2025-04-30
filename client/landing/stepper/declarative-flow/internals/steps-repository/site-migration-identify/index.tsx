@@ -1,6 +1,7 @@
+import { formatNumber } from '@automattic/number-formatters';
 import { StepContainer, Title, SubTitle, Step } from '@automattic/onboarding';
 import { Icon, next, published, shield } from '@wordpress/icons';
-import { numberFormat, TranslateResult, useTranslate } from 'i18n-calypso';
+import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { type FC, ReactElement, useEffect, useState, useCallback } from 'react';
 import CaptureInput from 'calypso/blocks/import/capture/capture-input';
 import ScanningStep from 'calypso/blocks/import/scanning';
@@ -101,7 +102,7 @@ export const Analyzer: FC< Props > = ( {
 				'Unmatched reliability with %(uptimePercent)s uptime and unmetered traffic.',
 				{
 					args: {
-						uptimePercent: numberFormat( 0.99999, {
+						uptimePercent: formatNumber( 0.99999, {
 							numberFormatOptions: { style: 'percent', maximumFractionDigits: 3 },
 						} ),
 					},
@@ -141,11 +142,13 @@ export const Analyzer: FC< Props > = ( {
 export type SiteMigrationIdentifyAction = 'continue' | 'skip_platform_identification';
 
 const SiteMigrationIdentify: StepType< {
-	submits: {
-		action: SiteMigrationIdentifyAction;
-		platform?: string;
-		from?: string;
-	};
+	submits:
+		| {
+				action: SiteMigrationIdentifyAction;
+				platform?: string;
+				from?: string;
+		  }
+		| undefined;
 } > = function ( { navigation, flow } ) {
 	const siteSlug = useSiteSlug();
 	const translate = useTranslate();
@@ -176,6 +179,19 @@ const SiteMigrationIdentify: StepType< {
 		return isBackButtonSupported || urlQueryParams.has( 'back_to' );
 	};
 
+	const getBackButton = () => {
+		if ( ! shouldShowBackButton() ) {
+			return null;
+		}
+
+		const backToUrl = urlQueryParams.get( 'back_to' );
+		return backToUrl ? (
+			<Step.BackButton href={ backToUrl ?? '' } />
+		) : (
+			<Step.BackButton onClick={ navigation?.goBack } />
+		);
+	};
+
 	const [ isVisible, setIsVisible ] = useState( false );
 
 	const stepContent = (
@@ -193,19 +209,14 @@ const SiteMigrationIdentify: StepType< {
 	);
 
 	if ( isUsingStepContainerV2 ) {
+		const backButton = getBackButton();
 		return (
 			<>
 				<DocumentHead title={ translate( 'Import your site content' ) } />
 				<Step.CenteredColumnLayout
 					className="step-container-v2--site-migration-identify"
 					columnWidth={ 4 }
-					topBar={
-						<Step.TopBar
-							leftElement={
-								shouldShowBackButton() ? <Step.BackButton onClick={ navigation.goBack } /> : null
-							}
-						/>
-					}
+					topBar={ <Step.TopBar leftElement={ backButton } /> }
 					heading={
 						isVisible ? (
 							<Step.Heading
@@ -230,10 +241,8 @@ const SiteMigrationIdentify: StepType< {
 				className="import__onboarding-page"
 				hideBack={ ! shouldShowBackButton() }
 				backUrl={ urlQueryParams.get( 'back_to' ) || undefined }
-				hideSkip
 				hideFormattedHeader
 				goBack={ navigation?.goBack }
-				goNext={ navigation?.submit }
 				isFullLayout
 				stepContent={
 					<div className="import__capture-wrapper">

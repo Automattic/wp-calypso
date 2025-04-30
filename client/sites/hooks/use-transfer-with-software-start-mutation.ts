@@ -7,16 +7,13 @@ type TransferWithSoftwareResponse = {
 	transfer_status: string;
 };
 
-type SoftwareSlug = string;
-type SoftwareStatus = 'install' | 'activate';
-type Software = [ SoftwareSlug, SoftwareStatus ];
 type ApiSettings = Record< string, unknown >;
 
 type TransferOptions = {
 	siteId: number;
 	apiSettings?: ApiSettings;
-	plugins?: Software;
-	themes?: Software;
+	plugin_slug?: string;
+	theme_slug?: string;
 };
 
 const requestTransferWithSoftware: (
@@ -24,15 +21,15 @@ const requestTransferWithSoftware: (
 ) => Promise< TransferWithSoftwareResponse > = async ( {
 	siteId,
 	apiSettings,
-	plugins,
-	themes,
+	plugin_slug,
+	theme_slug,
 } ) => {
 	const response = await wpcom.req.post( {
 		path: `/sites/${ siteId }/atomic/transfer-with-software?http_envelope=1`,
 		apiNamespace: 'wpcom/v2',
 		body: {
-			plugins: plugins,
-			themes: themes,
+			plugin_slug: plugin_slug,
+			theme_slug: theme_slug,
 			settings: { ...apiSettings },
 		},
 	} );
@@ -57,8 +54,8 @@ export const useRequestTransferWithSoftware = (
 			'transfer-with-software',
 			transferOptions.siteId,
 			transferOptions.apiSettings,
-			transferOptions.plugins,
-			transferOptions.themes,
+			transferOptions.plugin_slug,
+			transferOptions.theme_slug,
 		],
 		mutationFn: async () => {
 			if ( ! transferOptions.siteId ) {
@@ -67,8 +64,8 @@ export const useRequestTransferWithSoftware = (
 			return requestTransferWithSoftware( {
 				siteId: transferOptions.siteId,
 				apiSettings: transferOptions.apiSettings,
-				plugins: transferOptions.plugins,
-				themes: transferOptions.themes,
+				plugin_slug: transferOptions.plugin_slug,
+				theme_slug: transferOptions.theme_slug,
 			} );
 		},
 		retry: queryOptions?.retry ?? 3, // Default retry 3 times

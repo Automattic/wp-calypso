@@ -2,9 +2,10 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import page from '@automattic/calypso-router';
 import { WordPressLogo, JetpackLogo } from '@automattic/components';
 import { localizeUrl, useHasEnTranslation } from '@automattic/i18n-utils';
+import { formatNumber } from '@automattic/number-formatters';
 import { download, reusableBlock, Icon } from '@wordpress/icons';
 import clsx from 'clsx';
-import { numberFormat, useTranslate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 // TODO: This will need to be updated to use whatever image we decide on.
 import devSiteBanner from 'calypso/assets/images/a8c-for-agencies/dev-site-banner.svg';
 import { preventWidows } from 'calypso/lib/formatting';
@@ -32,9 +33,7 @@ const migrateClick = () => {
 	recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_item', {
 		action: 'migrate',
 	} );
-	page(
-		'/setup/hosted-site-migration/site-migration-identify?source=sites-dashboard&ref=new-site-popover&action=migrate'
-	);
+	page( '/setup/site-migration?source=sites-dashboard&ref=new-site-popover&action=migrate' );
 };
 
 const importClick = () => {
@@ -43,7 +42,7 @@ const importClick = () => {
 		action: 'import',
 	} );
 	page(
-		'/setup/hosted-site-migration/create-site?source=sites-dashboard&ref=new-site-popover&action=import'
+		'/setup/site-migration/create-site?source=sites-dashboard&ref=new-site-popover&action=import'
 	);
 };
 
@@ -51,7 +50,7 @@ const offerClick = () => {
 	recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_item', {
 		action: 'offer',
 	} );
-	window.location.assign( localizeUrl( 'https://wordpress.com/pricing/' ) );
+	window.location.assign( localizeUrl( 'https://wordpress.com/setup/onboarding' ) );
 };
 
 export const Content = () => {
@@ -113,7 +112,7 @@ export const Content = () => {
 					icon={ <img src={ devSiteBanner } alt="Get a Free Domain and Up to 55% off" /> }
 					heading={ translate( 'Get a Free Domain and Up to %(percentage)s off', {
 						args: {
-							percentage: numberFormat( 0.55, {
+							percentage: formatNumber( 0.55, {
 								numberFormatOptions: { style: 'percent' },
 							} ),
 							comment: 'percentage like 55% off',
@@ -124,7 +123,7 @@ export const Content = () => {
 							'Save up to %(percentage)s on annual plans and get a free custom domain for a year. Your next site is just a step away.',
 							{
 								args: {
-									percentage: numberFormat( 0.55, {
+									percentage: formatNumber( 0.55, {
 										numberFormatOptions: { style: 'percent' },
 									} ),
 									comment: 'percentage like 55% off',

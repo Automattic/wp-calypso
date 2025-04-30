@@ -7,10 +7,11 @@ import './style.scss';
 export default function LayoutWithPaymentNotification( {
 	children,
 	withNavigation,
-}: ComponentProps< typeof LayoutTop > ) {
+	isFullWidth,
+}: ComponentProps< typeof LayoutTop > & { isFullWidth?: boolean } ) {
 	return (
 		<LayoutTop withNavigation={ withNavigation }>
-			<PendingPaymentNotification />
+			<PendingPaymentNotification isFullWidth={ isFullWidth } />
 			{ children }
 		</LayoutTop>
 	);

@@ -466,7 +466,7 @@ const siteSetupFlow: Flow = {
 				}
 
 				case 'importerPlayground': {
-					return navigate( `importerWordpress?${ urlQueryParams.toString() }&option=content` );
+					return navigate( `importerWordpress?${ urlQueryParams.toString() }` );
 				}
 
 				case 'trialAcknowledge': {
@@ -550,8 +550,8 @@ const siteSetupFlow: Flow = {
 						return navigate( `importList?siteSlug=${ siteSlug }` );
 					}
 
-					// Ensure we override from and option, as we end up in a loop if we don't.
-					return navigate( `import?siteSlug=${ siteSlug }&option=&from` );
+					// Ensure we override the from param, as we end up in a loop if we don't.
+					return navigate( `import?siteSlug=${ siteSlug }&from` );
 				case 'importerWix':
 				case 'importReady':
 				case 'importReadyNot':

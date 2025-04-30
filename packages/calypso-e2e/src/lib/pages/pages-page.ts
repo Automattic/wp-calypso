@@ -36,9 +36,10 @@ export class PagesPage {
 	 */
 	async addNewPage(): Promise< void > {
 		const locator = this.page.locator( selectors.addNewPageButton );
-		await Promise.all( [
-			this.page.waitForNavigation( { url: /post-new.php\?post_type=page/, timeout: 20 * 1000 } ),
-			locator.click( { timeout: 20 * 1000 } ),
-		] );
+		await locator.click( { timeout: 20 * 1000 } );
+		await this.page.waitForURL( /post-new.php\?post_type=page/, {
+			timeout: 20 * 1000,
+			waitUntil: 'domcontentloaded',
+		} );
 	}
 }

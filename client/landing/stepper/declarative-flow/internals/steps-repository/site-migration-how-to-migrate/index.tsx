@@ -150,8 +150,9 @@ const SiteMigrationHowToMigrate: StepType< {
 							rightElement={
 								<Step.SkipButton
 									onClick={ () => handleClick( HOW_TO_MIGRATE_OPTIONS.DO_IT_MYSELF ) }
-									label={ translate( "I'll do it myself" ) }
-								/>
+								>
+									{ translate( "I'll do it myself" ) }
+								</Step.SkipButton>
 							}
 						/>
 					}

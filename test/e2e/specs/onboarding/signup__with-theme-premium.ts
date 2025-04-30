@@ -138,6 +138,7 @@ describe( 'Lifecyle: Premium theme signup, onboard, launch and cancel subscripti
 			await mePage.visit();
 
 			const meSidebarComponent = new MeSidebarComponent( page );
+			await meSidebarComponent.openMobileMenu();
 			await meSidebarComponent.navigate( 'Purchases' );
 		} );
 

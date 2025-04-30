@@ -52,31 +52,9 @@ body.is-section-stepper .domains__step-content,
 		background: none;
 	}
 
-	.register-domain-step__search-card {
-		border-radius: 2px;
-		@include elevation( 2dp );
-	}
-
-	.search-component.is-open.has-focus {
-		border-radius: 2px;
-		box-shadow: 0 0 0 3px var(--color-accent-light);
-	}
-
 	.search-filters__dropdown-filters {
 		border-radius: 0 2px 2px 0;
 	}
-
-	.search-filters__dropdown-filters.search-filters__dropdown-filters--is-open {
-		box-shadow: 0 0 0 3px var(--color-accent-light);
-	}
-
-	@include breakpoint-deprecated( "<660px" ) {
-		.register-domain-step__search-card,
-		.search-component.is-open.has-focus {
-			border-radius: 0;
-		}
-	}
-
 
 	.domains__domain-cart-foldable-card {
 		position: fixed;
@@ -365,6 +343,11 @@ body.is-section-signup {
 
 		.register-domain-step .domains__domain-side-content-container {
 			display: flex;
+			margin-bottom: 80px;
+
+			@include break-small {
+				margin-inline: 20px;
+			}
 
 			@include break-medium {
 				flex-direction: row;
@@ -395,17 +378,8 @@ body.is-section-signup {
 			padding: 20px 0;
 			margin: 0;
 
-			@include break-small {
-				width: 80%;
-				margin: 0 auto;
-			}
-
-			@include break-medium {
-				width: 290px;
-				margin: 0 20px;
-			}
-
 			@include break-large {
+				width: 290px;
 				margin: 0 0 0 40px;
 				padding: 40px 0;
 			}
@@ -526,11 +500,6 @@ body.is-section-stepper .step-route.domains:has(.step-container-v2) {
 	.featured-domain-suggestions,
 	.domain-suggestion {
 		margin-inline: 0;
-	}
-
-	.register-domain-step__domain-side-content-container-domain-explanation-image {
-		max-width: 100%;
-		margin-bottom: 0;
 	}
 
 	.register-domain-step__example-prompt {

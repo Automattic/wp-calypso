@@ -1,5 +1,5 @@
-import { Button } from '@automattic/components';
 import styled from '@emotion/styled';
+import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Notice from 'calypso/components/notice';
@@ -22,6 +22,10 @@ const WarningTitle = styled.p( {
 
 const WarningDescription = styled.p( {
 	marginBottom: '8px',
+} );
+
+const StyledButton = styled( Button )( {
+	fontSize: '14px',
 } );
 
 type CardContentProps = {
@@ -77,9 +81,13 @@ export const NewStagingSiteCardContent = ( {
 						{ disabledMessage }
 					</Notice>
 				) }
-				<Button primary disabled={ isButtonDisabled } onClick={ onAddClick }>
-					<span>{ translate( 'Add staging site' ) }</span>
-				</Button>
+				<StyledButton
+					variant="primary"
+					disabled={ isButtonDisabled }
+					onClick={ onAddClick }
+					__next40pxDefaultSize
+					text={ translate( 'Add staging site' ) }
+				></StyledButton>
 				{ showQuotaError && <ExceedQuotaErrorContent /> }
 			</>
 		);

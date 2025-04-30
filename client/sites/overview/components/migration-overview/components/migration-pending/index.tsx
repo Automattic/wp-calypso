@@ -38,13 +38,10 @@ const getContinueMigrationUrl = (
 			);
 		}
 
-		return addQueryArgs(
-			baseQueryArgs,
-			'/setup/hosted-site-migration/site-migration-instructions'
-		);
+		return addQueryArgs( baseQueryArgs, '/setup/site-migration/site-migration-instructions' );
 	}
 
-	return addQueryArgs( baseQueryArgs, '/setup/hosted-site-migration/site-migration-credentials' );
+	return addQueryArgs( baseQueryArgs, '/setup/site-migration/site-migration-credentials' );
 };
 
 export const MigrationPending = ( { site }: { site: SiteDetails } ) => {

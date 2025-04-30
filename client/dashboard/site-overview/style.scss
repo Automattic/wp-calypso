@@ -1,0 +1,26 @@
+@import '@wordpress/base-styles/variables';
+
+.dashboard-site-overview__preview-image {
+	/* stylelint-disable-next-line scales/radii */
+	border-radius: 7px 7px 0 0;
+	overflow: hidden;
+	border-bottom: $border-width solid $gray-200;
+}
+
+.site-card-contents {
+	padding: 0 16px 16px;
+}
+
+.site-overview-field-title {
+	text-transform: uppercase;
+	font-size: 12px;
+}
+
+
+.site-overview-card__badge {
+	// This is hacky way of hiding the badge icon for now.
+	// We need to handle this in the core Badge component.
+	> svg {
+		display: none;
+	}
+}

@@ -796,11 +796,8 @@ const Settings = ( {
 		// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 		<Main wideLayout className="domain-settings-page">
 			{ selectedSite?.ID && <QuerySitePurchases siteId={ selectedSite?.ID } /> }
-
 			<BodySectionCssClass bodyClass={ [ 'edit__body-white' ] } />
-
 			{ renderHeader() }
-
 			<TwoColumnsLayout content={ renderMainContent() } sidebar={ renderSettingsCards() } />
 		</Main>
 	);

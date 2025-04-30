@@ -14,12 +14,13 @@ import {
 } from '@automattic/onboarding';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import { getQueryArg } from '@wordpress/url';
+import { withViewportMatch } from '@wordpress/viewport';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { defer, get, isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
 import { parse } from 'qs';
-import { Component } from 'react';
+import { Children, Component, isValidElement } from 'react';
 import { connect } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import QueryProductsList from 'calypso/components/data/query-products-list';
@@ -92,10 +93,14 @@ import { setDesignType } from 'calypso/state/signup/steps/design-type/actions';
 import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import DomainsMiniCart from './domains-mini-cart';
-import { getExternalBackUrl, shouldUseMultipleDomainsInCart } from './utils';
+import {
+	getExternalBackUrl,
+	shouldUseMultipleDomainsInCart,
+	sortProductsByPriceDescending,
+} from './utils';
 import './style.scss';
 
-export class RenderDomainsStep extends Component {
+class RenderDomainsStepComponent extends Component {
 	static propTypes = {
 		cart: PropTypes.object,
 		shoppingCartManager: PropTypes.any,
@@ -745,7 +750,7 @@ export class RenderDomainsStep extends Component {
 						return ! this.state.domainsWithMappingError.includes( product.meta );
 					} );
 					// Sort products to ensure the user gets the best deal with the free domain bundle promotion.
-					const sortedProducts = this.sortProductsByPriceDescending( productsInCart );
+					const sortedProducts = sortProductsByPriceDescending( productsInCart );
 					this.props.shoppingCartManager
 						.replaceProductsInCart( sortedProducts )
 						.then( () => {
@@ -784,29 +789,6 @@ export class RenderDomainsStep extends Component {
 		}
 
 		this.setState( { isCartPendingUpdateDomain: null } );
-	}
-
-	sortProductsByPriceDescending( productsInCart ) {
-		// Sort products by price descending, considering promotions.
-		const getSortingValue = ( product ) => {
-			if ( product.item_subtotal_integer !== 0 ) {
-				return product.item_subtotal_integer;
-			}
-
-			// Use the lowest non-zero new_price or fallback to item_original_cost_integer.
-			const nonZeroPrices =
-				product.cost_overrides
-					?.map( ( override ) => override.new_price * 100 )
-					.filter( ( price ) => price > 0 ) || [];
-
-			return nonZeroPrices.length
-				? Math.min( ...nonZeroPrices )
-				: product.item_original_cost_integer;
-		};
-
-		return productsInCart.sort( ( a, b ) => {
-			return getSortingValue( b ) - getSortingValue( a );
-		} );
 	}
 
 	removeDomainClickHandler = ( domain ) => async () => {
@@ -974,6 +956,29 @@ export class RenderDomainsStep extends Component {
 		} );
 	};
 
+	getDomainsMiniCart = ( domainsInCart ) => {
+		const cartIsLoading = this.props.shoppingCartManager.isLoading;
+
+		if ( cartIsLoading && domainsInCart.length === 0 ) {
+			return null;
+		}
+
+		return (
+			<DomainsMiniCart
+				isMobile={ ! this.props.isDesktop }
+				domainsInCart={ domainsInCart }
+				domainRemovalQueue={ this.state.domainRemovalQueue }
+				flowName={ this.props.flowName }
+				removeDomainClickHandler={ this.removeDomainClickHandler }
+				isMiniCartContinueButtonBusy={ this.state.isMiniCartContinueButtonBusy }
+				goToNext={ this.goToNext }
+				handleSkip={ this.handleSkip }
+				wpcomSubdomainSelected={ this.state.wpcomSubdomainSelected }
+				freeDomainRemoveClickHandler={ this.freeDomainRemoveClickHandler }
+			/>
+		);
+	};
+
 	getSideContent = () => {
 		const { flowName } = this.props;
 		const domainsInCart = getDomainsInCart( this.props.cart );
@@ -989,8 +994,6 @@ export class RenderDomainsStep extends Component {
 		if ( additionalDomains.length > 0 ) {
 			domainsInCart.push( ...additionalDomains );
 		}
-
-		const cartIsLoading = this.props.shoppingCartManager.isLoading;
 
 		const useYourDomain = ! this.shouldHideUseYourDomain() ? (
 			<div
@@ -1008,35 +1011,23 @@ export class RenderDomainsStep extends Component {
 		const shouldShowSkip = this.props.allowSkipWithoutSearch || hasSearchedDomains;
 
 		const content = [
-			domainsInCart.length > 0 || this.state.wpcomSubdomainSelected ? (
-				<DomainsMiniCart
-					domainsInCart={ domainsInCart }
-					domainRemovalQueue={ this.state.domainRemovalQueue }
-					cartIsLoading={ cartIsLoading }
-					flowName={ flowName }
-					removeDomainClickHandler={ this.removeDomainClickHandler }
-					isMiniCartContinueButtonBusy={ this.state.isMiniCartContinueButtonBusy }
-					goToNext={ this.goToNext }
-					handleSkip={ this.handleSkip }
-					wpcomSubdomainSelected={ this.state.wpcomSubdomainSelected }
-					freeDomainRemoveClickHandler={ this.freeDomainRemoveClickHandler }
-				/>
-			) : (
-				! this.shouldHideDomainExplainer() &&
-				shouldShowSkip && (
-					<div className="domains__domain-side-content domains__free-domain">
-						<SideExplainer
-							onClick={ this.handleDomainExplainerClick }
-							type={
-								this.props.isPlanSelectionAvailableLaterInFlow
-									? 'free-domain-explainer-check-paid-plans'
-									: 'free-domain-explainer'
-							}
-							flowName={ flowName }
-						/>
-					</div>
-				)
-			),
+			shouldUseMultipleDomainsInCart( flowName ) &&
+			( domainsInCart.length > 0 || this.state.wpcomSubdomainSelected )
+				? this.getDomainsMiniCart( domainsInCart )
+				: ! this.shouldHideDomainExplainer() &&
+				  shouldShowSkip && (
+						<div className="domains__domain-side-content domains__free-domain">
+							<SideExplainer
+								onClick={ this.handleDomainExplainerClick }
+								type={
+									this.props.isPlanSelectionAvailableLaterInFlow
+										? 'free-domain-explainer-check-paid-plans'
+										: 'free-domain-explainer'
+								}
+								flowName={ flowName }
+							/>
+						</div>
+				  ),
 			useYourDomain,
 			this.shouldDisplayDomainOnlyExplainer() && (
 				<div className="domains__domain-side-content">
@@ -1046,9 +1037,11 @@ export class RenderDomainsStep extends Component {
 					/>
 				</div>
 			),
-		].filter( Boolean );
+		];
 
-		if ( content.length === 0 ) {
+		const nonEmptyElements = Children.toArray( content ).filter( isValidElement );
+
+		if ( nonEmptyElements.length === 0 ) {
 			return null;
 		}
 
@@ -1058,7 +1051,7 @@ export class RenderDomainsStep extends Component {
 					'is-sticky': !! useYourDomain,
 				} ) }
 			>
-				{ content }
+				{ nonEmptyElements }
 			</div>
 		);
 	};
@@ -1576,6 +1569,10 @@ export class RenderDomainsStep extends Component {
 		);
 	}
 }
+
+export const RenderDomainsStep = withViewportMatch( { isDesktop: '>= large' } )(
+	RenderDomainsStepComponent
+);
 
 export const submitDomainStepSelection = ( suggestion, section ) => {
 	let domainType = 'domain_reg';

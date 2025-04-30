@@ -42,9 +42,9 @@
 	},
 	"dependencies": {
 		"@emotion/react": "^11.11.1",
-		"@wordpress/components": "^29.7.0",
-		"@wordpress/element": "^6.21.0",
-		"@wordpress/i18n": "^5.21.0",
+		"@wordpress/components": "^29.8.0",
+		"@wordpress/element": "^6.22.0",
+		"@wordpress/i18n": "^5.22.0",
 		"clsx": "^2.1.1",
 		"prop-types": "^15.8.1",
 		"tslib": "^2.3.0"
@@ -54,7 +54,7 @@
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"@testing-library/dom": "^10.4.0",
 		"@testing-library/jest-dom": "^6.6.3",
-		"@testing-library/react": "^16.2.0",
+		"@testing-library/react": "^16.3.0",
 		"postcss": "^8.5.3",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
@@ -62,7 +62,7 @@
 		"webpack": "^5.97.1"
 	},
 	"peerDependencies": {
-		"@babel/runtime": "^7.26.10",
+		"@babel/runtime": "^7.27.0",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1"
 	},

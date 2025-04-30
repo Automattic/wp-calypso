@@ -12,6 +12,7 @@ import {
 import { localizeUrl, useLocale } from '@automattic/i18n-utils';
 import { speak } from '@wordpress/a11y';
 import { Button } from '@wordpress/components';
+import { useDispatch } from '@wordpress/data';
 import { decodeEntities } from '@wordpress/html-entities';
 import { __ } from '@wordpress/i18n';
 import {
@@ -30,6 +31,7 @@ import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { useAdminResults } from '../hooks/use-admin-results';
 import { useContextBasedSearchMapping } from '../hooks/use-context-based-search-mapping';
 import { useHelpSearchQuery } from '../hooks/use-help-search-query';
+import { HELP_CENTER_STORE } from '../stores';
 import HelpCenterRecentConversations from './help-center-recent-conversations';
 import PlaceholderLines from './placeholder-lines';
 import type { SearchResult } from '../types';
@@ -199,6 +201,7 @@ function HelpSearchResults( {
 	currentRoute,
 }: HelpSearchResultsProps ) {
 	const { hasPurchases, sectionName, site } = useHelpCenterContext();
+	const { setNavigateToRoute } = useDispatch( HELP_CENTER_STORE );
 
 	const adminResults = useAdminResults( searchQuery );
 
@@ -230,6 +233,12 @@ function HelpSearchResults( {
 	const [ visibleResults, setVisibleResults ] = useState( MAX_VISIBLE_RESULTS );
 
 	const handleShowMore = () => {
+		recordTracksEvent( 'calypso_help_center_search_results_show_more', {
+			search_term: searchQuery,
+			location,
+			section: sectionName,
+			visible_results: visibleResults,
+		} );
 		setVisibleResults( visibleResults + MAX_VISIBLE_RESULTS );
 	};
 
@@ -374,12 +383,21 @@ function HelpSearchResults( {
 			{ ! searchQuery && <HelpCenterRecentConversations /> }
 			{ isSearching && ! searchResults.length && <PlaceholderLines lines={ placeholderLines } /> }
 			{ searchQuery && ! ( hasAPIResults || isSearching ) ? (
-				<p className="help-center-search-results__empty-results">
-					{ __(
-						'Sorry, there were no matches. Here are some of the most searched for help pages for this section:',
-						__i18n_text_domain__
-					) }
-				</p>
+				<div className="help-center-search-results__empty-results">
+					<p>
+						{ __(
+							'Sorry, we couldn’t find any matches. Double-check your search or try asking your AI assistant about it.',
+							__i18n_text_domain__
+						) }
+					</p>
+					<Button
+						variant="secondary"
+						onClick={ () => setNavigateToRoute( '/odie' ) }
+						className="show-more-button"
+					>
+						{ __( 'Ask AI assistant', __i18n_text_domain__ ) }
+					</Button>
+				</div>
 			) : null }
 			{ sections }
 		</div>

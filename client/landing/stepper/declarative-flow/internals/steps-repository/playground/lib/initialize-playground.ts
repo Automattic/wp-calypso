@@ -20,7 +20,7 @@ export async function initializeWordPressPlayground(
 	let isWordPressInstalled = false;
 
 	const url = new URL( window.location.href );
-	let playgroundId = url.searchParams.get( 'playground' );
+	let playgroundId: string | null = url.searchParams.get( 'playground' );
 	if ( ! playgroundId ) {
 		// Create a new playground ID if none exists
 		playgroundId = crypto.randomUUID();
@@ -44,16 +44,20 @@ export async function initializeWordPressPlayground(
 				path: `${ OPFS_PATH_PREFIX }/${ playgroundId }/`,
 			},
 			mountpoint: '/wordpress',
-			initialSyncDirection: 'opfs-to-memfs',
+			initialSyncDirection: isWordPressInstalled ? 'opfs-to-memfs' : 'memfs-to-opfs',
 		};
 
 		const client = await startPlaygroundWeb( {
 			iframe,
-			remoteUrl: 'https://playground.wordpress.net/remote.html',
+			remoteUrl: 'https://wordpress-playground.atomicsites.blog/remote.html',
 			blueprint: await getBlueprint( isWordPressInstalled, recommendedPhpVersion ),
 			shouldInstallWordPress: ! isWordPressInstalled,
-			mounts: [ mountDescriptor ],
+			mounts: isWordPressInstalled ? [ mountDescriptor ] : [],
 		} );
+
+		if ( ! isWordPressInstalled ) {
+			await client.mountOpfs( mountDescriptor );
+		}
 
 		await client.isReady();
 		return client;

@@ -134,7 +134,7 @@ class MagicLogin extends Component {
 	};
 
 	componentDidMount() {
-		const { userEmail, oauth2Client, query } = this.props;
+		const { oauth2Client, query } = this.props;
 
 		this.props.recordPageView( '/log-in/link', 'Login > Link' );
 
@@ -149,22 +149,6 @@ class MagicLogin extends Component {
 				is_gravatar_flow_with_email: !! ( isGravatarFlow && query?.email_address ),
 				is_initial_view: true,
 			} );
-		}
-
-		// If the auto_trigger query parameter is set to true, automatically trigger the email send.
-		if ( query?.auto_trigger !== undefined ) {
-			if ( userEmail && emailValidator.validate( userEmail ) ) {
-				if ( isGravPoweredOAuth2Client( oauth2Client ) ) {
-					this.handleGravPoweredEmailSubmit( userEmail );
-				} else {
-					this.props.sendEmailLogin( userEmail, {
-						redirectTo: query?.redirect_to,
-						requestLoginEmailFormFlow: true,
-						createAccount: true,
-						flow: 'jetpack', // Auto trigger is Jetpack flow
-					} );
-				}
-			}
 		}
 	}
 
@@ -1138,10 +1122,10 @@ class MagicLogin extends Component {
 								</svg>
 								<div>
 									<h4 className="grav-powered-magic-login__feature-header">
-										{ translate( 'One connected profile' ) }
+										{ translate( 'One profile, everywhere' ) }
 									</h4>
 									<p className="grav-powered-magic-login__feature-sub-header">
-										{ translate( 'Your avatar and bio that syncs across the web.' ) }
+										{ translate( 'Your avatar and bio syncs across the web.' ) }
 									</p>
 								</div>
 							</div>

@@ -44,6 +44,8 @@ function getPlansIntent( flowName: string | null, isWordCampPromo?: boolean ): P
 				return 'plans-new-hosted-site-business-only';
 			}
 			return 'plans-new-hosted-site';
+		case AI_SITE_BUILDER_FLOW:
+			return 'plans-ai-assembler-free-trial';
 		default:
 			return null;
 	}
@@ -107,36 +109,11 @@ const PlansStepAdaptor: StepType< {
 
 	useQueryTheme( 'wpcom', selectedDesign?.slug );
 
-	// TODO: Remove this once we have a better way to handle the plan from the query param.
-	// This is a hack used by new-hosted-site flow.
-	const planFromQuery = useQuery().get( 'plan' );
-
-	if ( planFromQuery ) {
-		props.navigation.submit?.( {
-			...stepState,
-			cartItems: [ { product_slug: planFromQuery } ],
-		} );
-
-		return null;
-	}
-
 	/**
 	 * isWordCampPromo is temporary
 	 */
 	const isWordCampPromo = new URLSearchParams( location.search ).has( 'utm_source', 'wordcamp' );
 	const plansIntent = getPlansIntent( props.flow, isWordCampPromo );
-
-	let hidePlanProps;
-	if ( props.flow === AI_SITE_BUILDER_FLOW ) {
-		hidePlanProps = {
-			hideFreePlan: true,
-			hidePersonalPlan: true,
-			hideEcommercePlan: true,
-			hideEnterprisePlan: true,
-		};
-	} else {
-		hidePlanProps = getHidePlanPropsBasedOnThemeType( selectedThemeType || '' );
-	}
 
 	/**
 	 * The plans step has a quirk where it calls `submitSignupStep` then synchronously calls `goToNextStep` after it.
@@ -157,7 +134,7 @@ const PlansStepAdaptor: StepType< {
 
 	return (
 		<UnifiedPlansStep
-			{ ...hidePlanProps }
+			{ ...getHidePlanPropsBasedOnThemeType( selectedThemeType || '' ) }
 			selectedSite={ site ?? undefined }
 			saveSignupStep={ ( step ) => {
 				setStepState( ( mostRecentState = { ...stepState, ...step } ) );

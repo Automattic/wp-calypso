@@ -33,15 +33,15 @@ describe( DataHelper.createSuiteTitle( 'Verify Tracks events starting at LOHP' )
 		expect( await didEventFirePromise ).toBe( true );
 	} );
 
-	it( 'Clicking link on LOHP fires wpcom_link_click', async function () {
+	it( 'Clicking link on LOHP fires wpcom_homepage_link_click', async function () {
 		// Navigate to LOHP
 		await tracksEventManager.navigateToUrl( lohpUrl );
 
-		// Set up listener for wpcom_link_click event
-		const didEventFirePromise = tracksEventManager.didEventFire( 'wpcom_link_click' );
+		// Set up listener for wpcom_homepage_link_click event
+		const didEventFirePromise = tracksEventManager.didEventFire( 'wpcom_homepage_link_click' );
 
 		// Click first signup link to go to signup page
-		await page.locator( 'a[href^="https://wordpress.com/setup/onboarding"]' ).first().click();
+		await page.getByRole( 'link', { name: 'Get started' } ).first().click();
 
 		// Expect the event to fire
 		expect( await didEventFirePromise ).toBe( true );
@@ -62,7 +62,8 @@ describe( DataHelper.createSuiteTitle( 'Verify Tracks events starting at LOHP' )
 		requestUrlPromise = tracksEventManager.getRequestUrlForEvent( 'calypso_page_view' );
 
 		// Click first signup link to go to signup page
-		await page.locator( 'a[href^="https://wordpress.com/setup/onboarding"]' ).first().click();
+		await page.getByRole( 'link', { name: 'Get started' } ).first().click();
+
 		requestUrl = await requestUrlPromise;
 
 		// Expect anon ids in wpcom and calypso page view events to match

@@ -5,21 +5,22 @@ import {
 	getPlan,
 	getPlanByPathSlug,
 } from '@automattic/calypso-products';
-import { StepContainer } from '@automattic/onboarding';
+import { Step, StepContainer } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import { UpgradePlan } from 'calypso/blocks/importer/wordpress/upgrade-plan';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { useSelectedPlanUpgradeQuery } from 'calypso/data/import-flow/use-selected-plan-upgrade';
+import { shouldUseStepContainerV2MigrationFlow } from 'calypso/landing/stepper/declarative-flow/helpers/should-use-step-container-v2';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import type { Step } from '../../types';
+import type { Step as StepType } from '../../types';
 
 import './style.scss';
 
-const SiteMigrationUpgradePlan: Step< {
+const SiteMigrationUpgradePlan: StepType< {
 	accepts: {
 		skipLabelText?: string;
 		onSkip?: () => void;
@@ -44,6 +45,7 @@ const SiteMigrationUpgradePlan: Step< {
 
 	const selectedPlanData = useSelectedPlanUpgradeQuery();
 	const selectedPlanPathSlug = selectedPlanData.data;
+	const isUsingStepContainerV2 = shouldUseStepContainerV2MigrationFlow( flow );
 
 	const plan = selectedPlanPathSlug
 		? getPlanByPathSlug( selectedPlanPathSlug )
@@ -103,6 +105,24 @@ const SiteMigrationUpgradePlan: Step< {
 			},
 		}
 	);
+
+	if ( isUsingStepContainerV2 ) {
+		return (
+			<>
+				<DocumentHead title={ headerText } />
+				<Step.CenteredColumnLayout
+					columnWidth={ 5 }
+					topBar={
+						<Step.TopBar leftElement={ <Step.BackButton onClick={ navigation.goBack } /> } />
+					}
+					heading={ <Step.Heading text={ headerText } subText={ subHeaderText } /> }
+					className="site-migration-upgrade-plan-v2"
+				>
+					{ stepContent }
+				</Step.CenteredColumnLayout>
+			</>
+		);
+	}
 
 	return (
 		<>

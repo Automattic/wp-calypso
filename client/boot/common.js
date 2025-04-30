@@ -3,6 +3,7 @@ import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { getUrlParts } from '@automattic/calypso-url';
 import { getLanguageSlugs } from '@automattic/i18n-utils';
+import { setGeoLocation } from '@automattic/number-formatters';
 import { getToken } from '@automattic/oauth-token';
 import { JETPACK_PRICING_PAGE } from '@automattic/urls';
 import debugFactory from 'debug';
@@ -47,10 +48,14 @@ import { setupLocale } from './locale';
 const debug = debugFactory( 'calypso' );
 
 const setupContextMiddleware = ( reduxStore, reactQueryClient ) => {
+	let previousPath = null;
+
 	page( '*', ( context, next ) => {
 		const parsed = getUrlParts( context.canonicalPath );
-		const path = parsed.pathname + parsed.search || null;
-		context.prevPath = path === context.path ? false : path;
+
+		context.previousPath = previousPath;
+		previousPath = context.path;
+
 		context.query = Object.fromEntries( parsed.searchParams.entries() );
 
 		context.hashstring = ( parsed.hash && parsed.hash.substring( 1 ) ) || '';
@@ -222,12 +227,6 @@ const configureReduxStore = ( currentUser, reduxStore ) => {
 		reduxStore.dispatch( setCurrentUser( currentUser ) );
 	}
 
-	if ( config.isEnabled( 'network-connection' ) ) {
-		asyncRequire( 'calypso/lib/network-connection' ).then( ( networkConnection ) =>
-			networkConnection.default.init( reduxStore )
-		);
-	}
-
 	setSupportSessionReduxStore( reduxStore );
 	setReduxBridgeReduxStore( reduxStore );
 
@@ -326,7 +325,9 @@ const boot = async ( currentUser, registerRoutes ) => {
 	onDisablePersistence( persistOnChange( reduxStore, currentUser?.ID ) );
 	onDisablePersistence( unsubscribePersister );
 	setupLocale( currentUser, reduxStore );
-	defaultCalypsoI18n.geolocateCurrencySymbol();
+
+	defaultCalypsoI18n.geolocateCurrencySymbol( setGeoLocation );
+
 	configureReduxStore( currentUser, reduxStore );
 	setupMiddlewares( currentUser, reduxStore, queryClient );
 	detectHistoryNavigation.start();

@@ -1,4 +1,5 @@
-import { useTranslate, formatCurrency } from 'i18n-calypso';
+import { formatCurrency } from '@automattic/number-formatters';
+import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'calypso/state';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import CommissionsInfo from '../commissions-info';
@@ -53,7 +54,6 @@ export default function PricingSummary( {
 				}
 				<div className="checkout__summary-pricing-interval">{ translate( '/month' ) }</div>
 			</div>
-
 			<ul className="checkout__summary-items">
 				{ items.map( ( item ) => (
 					<ShoppingCartMenuItem
@@ -63,9 +63,7 @@ export default function PricingSummary( {
 					/>
 				) ) }
 			</ul>
-
 			<hr />
-
 			<div className="checkout__summary-total">
 				<span>
 					{ isAutomatedReferrals

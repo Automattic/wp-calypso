@@ -6,7 +6,7 @@ import useGetTipaltiPayee from '../../hooks/use-get-tipalti-payee';
 
 import './style.scss';
 
-export const MissingPaymentSettingsNotice = () => {
+export const MissingPaymentSettingsNotice = ( { isFullWidth }: { isFullWidth?: boolean } ) => {
 	const translate = useTranslate();
 
 	const { data: tipaltiData } = useGetTipaltiPayee();
@@ -22,6 +22,7 @@ export const MissingPaymentSettingsNotice = () => {
 
 	return (
 		<LayoutBanner
+			isFullWidth={ isFullWidth }
 			level="warning"
 			title={ translate( 'Add your payment information to get paid' ) }
 			className="missing-payment-settings-notice"

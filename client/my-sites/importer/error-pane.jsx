@@ -103,6 +103,7 @@ class ImporterError extends PureComponent {
 				{
 					components: {
 						ip: <Button className="importer__error-pane is-link" onClick={ this.installPlugin } />,
+						// TODO: is this "everthing import" behaviour up to date?
 						ei: (
 							<Button className="importer__error-pane is-link" onClick={ this.everythingImport } />
 						),

@@ -207,13 +207,13 @@ $breakpoint-mobile: 660px;
 		background-color: initial;
 	}
 
-	.login__form-user-exists-notice.notice {
+	.login__form-user-exists-notice.calypso-notice {
 		border-radius: 8px; // stylelint-disable-line scales/radii
 		overflow: auto;
 		padding: 16px 20px;
 		background-color: #f6f7f7;
 
-		.notice__icon-wrapper {
+		.calypso-notice__icon-wrapper {
 			background-color: #f6f7f7;
 			color: #2c3338;
 			width: auto;
@@ -221,19 +221,19 @@ $breakpoint-mobile: 660px;
 			align-items: flex-start;
 		}
 
-		.notice__dismiss {
+		.calypso-notice__dismiss {
 			padding: 0;
 			background-color: #f6f7f7;
 			color: #a7aaad;
 		}
 
-		.notice__content {
+		.calypso-notice__content {
 			padding: 0 16px;
 			background-color: #f6f7f7;
 			color: #2c3338;
 		}
 
-		.notice__text {
+		.calypso-notice__text {
 			color: #2c3338;
 			font-size: rem(14px);
 			font-style: normal;
@@ -2273,8 +2273,8 @@ $breakpoint-mobile: 660px;
 		@include button-primary;
 	}
 
-	.notice__text a,
-	.notice__text a:visited {
+	.calypso-notice__text a,
+	.calypso-notice__text a:visited {
 		@include link-woo;
 	}
 

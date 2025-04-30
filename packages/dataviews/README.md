@@ -1,4 +1,6 @@
-# The `@wordpress/dataviews` package
+# The `@automattic/dataviews` package
+
+> This package is based on the `@wordpress/dataviews` package and extends its functionality. See the "Contributing to this package" section for more info.
 
 The DataViews package offers two React components and a few utilities to work with a list of data:
 
@@ -10,14 +12,14 @@ The DataViews package offers two React components and a few utilities to work wi
 Install the module
 
 ```bash
-npm install @wordpress/dataviews --save
+npm install @automattic/dataviews --save
 ```
 
 ## `DataViews`
 
 <div class="callout callout-info">At <a href="https://wordpress.github.io/gutenberg/">WordPress Gutenberg's Storybook</a> there's an <a href="https://wordpress.github.io/gutenberg/?path=/docs/dataviews-dataviews--docs">example implementation of the Dataviews component</a>.</div>
 
-**Important note** If you're trying to use the `DataViews` component in a WordPress plugin or theme and you're building your scripts using the `@wordpress/scripts` package, you need to import the components from `@wordpress/dataviews/wp` instead of `@wordpress/dataviews`.
+**Important note** If you're trying to use the `DataViews` component in a WordPress plugin or theme and you're building your scripts using the `@wordpress/scripts` package, you need to import the components from `@automattic/dataviews/wp` instead of `@automattic/dataviews`.
 
 ### Usage
 
@@ -722,6 +724,23 @@ Example:
 }
 ```
 
+### `modalFocusOnMount`
+
+Specifies the focus on mount property of the modal.
+
+-	Type: `boolean` | `string`
+-	Optional
+-	Default: `true`
+-	One of: `true` | `false` | `'firstElement'` | `'firstContentElement'`
+
+Example:
+
+```js
+{
+	modalFocusOnMount: 'firstContentElement';
+}
+```
+
 ## Fields API
 
 ### `id`
@@ -1204,8 +1223,11 @@ Example:
 
 ## Contributing to this package
 
-This is an individual package that's part of the Gutenberg project. The project is organized as a monorepo. It's made up of multiple self-contained software packages, each with a specific purpose. The packages in this monorepo are published to [npm](https://www.npmjs.com/) and used by [WordPress](https://make.wordpress.org/core/) as well as other software projects.
+This package is based on the [`@wordpress/dataviews` package](https://www.npmjs.com/package/@wordpress/dataviews). We aim to synchronize changes from upstream (Gutenberg repo, `@wordpress/dataviews` package) while extending its core functionality.
 
-To find out more about contributing to this package or Gutenberg as a whole, please read the project's main [contributor guide](https://github.com/WordPress/gutenberg/tree/HEAD/CONTRIBUTING.md).
+There's two workflows: adding new features to this package and synchronizing changes from upstream. See [SYNC.md](https://github.com/Automattic/wp-calypso/blob/trunk/packages/dataviews/SYNC.md) for details about the second workflow.
 
-<br /><br /><p align="center"><img src="https://s.w.org/style/images/codeispoetry.png?1" alt="Code is Poetry." /></p>
+- When adding new features, document every change in the `CHANGELOG.automattic.md` file.
+- When synchronizing changes from upstream, document it in the `CHANGELOG.automattic.md` as well. For example, add a line such as `Bring changes from @wordpress/dataviews X.Y.Z`. Ideally, synchronizations should happen every time there's new release of `@wordpress/packages`, as this makes it easier to pinpoint changes. If it brings upstream changes that cannot be pinpointed to a package release, document the upstream git commit that's being pulled into this package.
+
+This is an individual package that's part of the wp-calypso project. The project is organized as a monorepo. It's made up of multiple self-contained software packages, each with a specific purpose. The packages in this monorepo are published to [npm](https://www.npmjs.com/) and used by [wp-calypso](https://github.com/automattic/wp-calypso/) as well as other software projects. To find out more about contributing to this package or wp-calypso as a whole, please read the project's main [contributor guide](https://github.com/Automattic/wp-calypso/blob/trunk/docs/CONTRIBUTING.md).

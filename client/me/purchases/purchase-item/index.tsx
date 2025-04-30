@@ -11,11 +11,12 @@ import {
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { CompactCard, Gridicon } from '@automattic/components';
+import { formatCurrency } from '@automattic/number-formatters';
 import { CALYPSO_CONTACT } from '@automattic/urls';
 import { ExternalLink } from '@wordpress/components';
 import { Icon, warning as warningIcon } from '@wordpress/icons';
 import clsx from 'clsx';
-import { formatCurrency, localize, useTranslate } from 'i18n-calypso';
+import { localize, useTranslate } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import akismetIcon from 'calypso/assets/images/icons/akismet-icon.svg';
@@ -606,95 +607,110 @@ export function PurchaseItemStatus( {
 	return null;
 }
 
+export function PurchaseItemPaymentMethod( {
+	purchase,
+	translate,
+}: {
+	purchase: Purchases.Purchase;
+	translate: LocalizeProps[ 'translate' ];
+} ) {
+	if ( isIncludedWithPlan( purchase ) ) {
+		return translate( 'Included with Plan' );
+	}
+
+	if ( purchase.isInAppPurchase ) {
+		return (
+			<div>
+				<span>{ translate( 'In-App Purchase' ) }</span>
+			</div>
+		);
+	}
+
+	if (
+		purchase.isAutoRenewEnabled &&
+		! hasPaymentMethod( purchase ) &&
+		! isPartnerPurchase( purchase ) &&
+		! isAkismetFreeProduct( purchase )
+	) {
+		return (
+			<div className="purchase-item__no-payment-method">
+				<Icon icon={ warningIcon } />
+				<span>{ translate( 'You don’t have a payment method to renew this subscription' ) }</span>
+			</div>
+		);
+	}
+
+	if (
+		! isAkismetFreeProduct( purchase ) &&
+		! isRechargeable( purchase ) &&
+		hasPaymentMethod( purchase ) &&
+		purchase.isAutoRenewEnabled
+	) {
+		return (
+			<div className="purchase-item__no-payment-method">
+				<Icon icon={ warningIcon } />
+				<span>{ translate( 'You don’t have a payment method to renew this subscription' ) }</span>
+			</div>
+		);
+	}
+
+	if ( isRenewing( purchase ) ) {
+		if ( purchase.payment.type === 'credit_card' && purchase.payment.creditCard ) {
+			const paymentMethodType = purchase.payment.creditCard.displayBrand
+				? purchase.payment.creditCard.displayBrand
+				: purchase.payment.creditCard.type || purchase.payment.paymentPartner || '';
+
+			return (
+				<>
+					<img
+						src={ getPaymentMethodImageURL( paymentMethodType ) }
+						alt={ paymentMethodType }
+						className="purchase-item__payment-method-card"
+					/>
+					{ purchase.payment.creditCard.number }
+				</>
+			);
+		}
+
+		if ( purchase.payment.type === 'paypal' ) {
+			return (
+				<img src={ payPalImage } alt={ purchase.payment.type } className="purchase-item__paypal" />
+			);
+		}
+
+		if ( purchase.payment.type === 'upi' ) {
+			return <img src={ upiImage } alt={ purchase.payment.type } />;
+		}
+
+		return null;
+	}
+}
+
+export function BackupPaymentMethodNotice() {
+	const translate = useTranslate();
+	const noticeText = translate(
+		'If the renewal fails, a {{link}}backup payment method{{/link}} may be used.',
+		{
+			components: {
+				link: <a href="/me/purchases/payment-methods" />,
+			},
+		}
+	);
+	return (
+		<span className="purchase-item__backup-payment-method-notice">
+			<InfoPopover position="bottom">{ noticeText }</InfoPopover>
+		</span>
+	);
+}
+
 class PurchaseItem extends Component<
 	PurchaseItemPropsPlaceholder | ( PurchaseItemProps & PurchaseItemPropsConnected )
 > {
-	getPaymentMethod() {
-		if ( this.props.isPlaceholder ) {
-			return null;
-		}
-		const { purchase, translate } = this.props;
-
-		if ( isIncludedWithPlan( purchase ) ) {
-			return translate( 'Included with Plan' );
-		}
-
-		if ( purchase.isInAppPurchase ) {
-			return (
-				<div>
-					<span>{ translate( 'In-App Purchase' ) }</span>
-				</div>
-			);
-		}
-
-		if (
-			purchase.isAutoRenewEnabled &&
-			! hasPaymentMethod( purchase ) &&
-			! isPartnerPurchase( purchase ) &&
-			! isAkismetFreeProduct( purchase )
-		) {
-			return (
-				<div className="purchase-item__no-payment-method">
-					<Icon icon={ warningIcon } />
-					<span>{ translate( 'You don’t have a payment method to renew this subscription' ) }</span>
-				</div>
-			);
-		}
-
-		if (
-			! isAkismetFreeProduct( purchase ) &&
-			! isRechargeable( purchase ) &&
-			hasPaymentMethod( purchase ) &&
-			purchase.isAutoRenewEnabled
-		) {
-			return (
-				<div className="purchase-item__no-payment-method">
-					<Icon icon={ warningIcon } />
-					<span>{ translate( 'You don’t have a payment method to renew this subscription' ) }</span>
-				</div>
-			);
-		}
-
-		if ( isRenewing( purchase ) ) {
-			if ( purchase.payment.type === 'credit_card' && purchase.payment.creditCard ) {
-				const paymentMethodType = purchase.payment.creditCard.displayBrand
-					? purchase.payment.creditCard.displayBrand
-					: purchase.payment.creditCard.type || purchase.payment.paymentPartner || '';
-
-				return (
-					<>
-						<img
-							src={ getPaymentMethodImageURL( paymentMethodType ) }
-							alt={ paymentMethodType }
-							className="purchase-item__payment-method-card"
-						/>
-						{ purchase.payment.creditCard.number }
-					</>
-				);
-			}
-
-			if ( purchase.payment.type === 'paypal' ) {
-				return (
-					<img
-						src={ payPalImage }
-						alt={ purchase.payment.type }
-						className="purchase-item__paypal"
-					/>
-				);
-			}
-
-			if ( purchase.payment.type === 'upi' ) {
-				return <img src={ upiImage } alt={ purchase.payment.type } />;
-			}
-
-			return null;
-		}
-	}
-
 	renderPurchaseItemContent = () => {
 		if ( this.props.isPlaceholder ) {
 			return null;
 		}
+
 		const {
 			purchase,
 			site,
@@ -750,7 +766,7 @@ class PurchaseItem extends Component<
 				</div>
 
 				<div className="purchase-item__payment-method purchases-layout__payment-method">
-					{ this.getPaymentMethod() }
+					<PurchaseItemPaymentMethod purchase={ purchase } translate={ translate } />
 					{ isBackupMethodAvailable && isRenewing( purchase ) && <BackupPaymentMethodNotice /> }
 				</div>
 			</div>
@@ -801,23 +817,6 @@ class PurchaseItem extends Component<
 			</CompactCard>
 		);
 	}
-}
-
-function BackupPaymentMethodNotice() {
-	const translate = useTranslate();
-	const noticeText = translate(
-		'If the renewal fails, a {{link}}backup payment method{{/link}} may be used.',
-		{
-			components: {
-				link: <a href="/me/purchases/payment-methods" />,
-			},
-		}
-	);
-	return (
-		<span className="purchase-item__backup-payment-method-notice">
-			<InfoPopover position="bottom">{ noticeText }</InfoPopover>
-		</span>
-	);
 }
 
 export default connect(

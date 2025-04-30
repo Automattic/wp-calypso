@@ -34,19 +34,6 @@ export const setSiteUrl = ( siteUrl: string ) => ( {
 	siteUrl,
 } );
 
-export interface CreateSiteBaseActionParameters {
-	username: string;
-	languageSlug: string;
-	visibility: number;
-}
-
-export interface CreateSiteActionParameters extends CreateSiteBaseActionParameters {
-	bearerToken?: string;
-	anchorFmPodcastId: string | null;
-	anchorFmEpisodeId: string | null;
-	anchorFmSpotifyUrl: string | null;
-}
-
 export function* createSenseiSite( {
 	username = '',
 	languageSlug = '',
@@ -356,11 +343,6 @@ export const setHidePlansFeatureComparison = ( hidePlansFeatureComparison: boole
 	hidePlansFeatureComparison,
 } );
 
-export const setIsMigrateFromWp = ( isMigrateFromWp: boolean ) => ( {
-	type: 'SET_IS_MIGRATE_FROM_WP' as const,
-	isMigrateFromWp,
-} );
-
 export const setPluginsToVerify = ( pluginSlugs: string[] ) => ( {
 	type: 'SET_PLUGIN_SLUGS_TO_VERIFY' as const,
 	pluginSlugs,
@@ -437,7 +419,6 @@ export type OnboardAction = ReturnType<
 	| typeof setHidePlansFeatureComparison
 	| typeof setProductCartItems
 	| typeof setPlanCartItem
-	| typeof setIsMigrateFromWp
 	| typeof setPaidSubscribers
 	| typeof setPartnerBundle
 	| typeof setSignupDomainOrigin

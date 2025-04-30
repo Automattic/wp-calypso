@@ -1,4 +1,5 @@
-import { useTranslate, formatCurrency } from 'i18n-calypso';
+import { formatCurrency } from '@automattic/number-formatters';
+import { useTranslate } from 'i18n-calypso';
 import TimeFrame from './time-frame';
 import type { Duration } from 'calypso/my-sites/plans/jetpack-plans/types';
 

@@ -1,9 +1,10 @@
 import { Badge, Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { formatCurrency } from '@automattic/number-formatters';
 import { HUNDRED_YEAR_DOMAIN_FLOW } from '@automattic/onboarding';
 import { HTTPS_SSL } from '@automattic/urls';
 import clsx from 'clsx';
-import { localize, formatCurrency } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import { get, includes } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -265,6 +266,18 @@ class DomainRegistrationSuggestion extends Component {
 		};
 	}
 
+	getFormattedDomainName( name ) {
+		if ( name.length <= 24 ) {
+			return name;
+		}
+
+		return (
+			<abbr title={ name }>
+				{ name.slice( 0, 8 ) }…{ name.slice( -8 ) }
+			</abbr>
+		);
+	}
+
 	renderDomain( hasBadges = false ) {
 		const {
 			showHstsNotice,
@@ -288,8 +301,12 @@ class DomainRegistrationSuggestion extends Component {
 				<div className={ titleWrapperClassName }>
 					<h3 className="domain-registration-suggestion__title">
 						<div className="domain-registration-suggestion__domain-title">
-							<span className="domain-registration-suggestion__domain-title-name">{ name }</span>
-							<span className="domain-registration-suggestion__domain-title-tld">{ tld }</span>
+							<span aria-label={ domain }>
+								<span className="domain-registration-suggestion__domain-title-name">
+									{ this.getFormattedDomainName( name ) }
+								</span>
+								<span className="domain-registration-suggestion__domain-title-tld">{ tld }</span>
+							</span>
 							{ ( showHstsNotice || showDotGayNotice ) && this.renderInfoBubble() }
 						</div>
 					</h3>

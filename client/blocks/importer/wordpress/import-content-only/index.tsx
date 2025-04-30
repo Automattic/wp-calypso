@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { PLAN_BUSINESS, getPlan } from '@automattic/calypso-products';
 import { addQueryArgs } from '@wordpress/url';
 import clsx from 'clsx';
@@ -6,7 +5,6 @@ import { useTranslate } from 'i18n-calypso';
 import React, { useState, useEffect, useCallback } from 'react';
 import { UrlData } from 'calypso/blocks/import/types';
 import { getImporterTypeForEngine, isTargetSitePlanCompatible } from 'calypso/blocks/importer/util';
-import { WPImportOption } from 'calypso/blocks/importer/wordpress/types';
 import { UpgradePlan } from 'calypso/blocks/importer/wordpress/upgrade-plan';
 import { useDispatch } from 'calypso/state';
 import { startImport, resetImport, startImporting } from 'calypso/state/imports/actions';
@@ -109,15 +107,12 @@ const ImportContentOnly: React.FunctionComponent< Props > = ( props ) => {
 	}, [ job, isSiteCompatible ] );
 
 	const onCompleteSiteViewClick = useCallback( () => {
-		if (
-			job?.importerFileType !== 'playground' &&
-			isEnabled( 'onboarding/import-redirect-to-themes' )
-		) {
+		if ( job?.importerFileType !== 'playground' ) {
 			stepNavigator?.navigate?.(
 				addQueryArgs( 'design-setup', { comingFromSuccessfulImport: '1' } )
 			);
 		} else {
-			stepNavigator?.goToSiteViewPage?.();
+			stepNavigator?.goToAdmin?.();
 		}
 	}, [ job ] );
 
@@ -181,7 +176,7 @@ const ImportContentOnly: React.FunctionComponent< Props > = ( props ) => {
 					}
 					isBusy={ false }
 					onCtaClick={ () => {
-						stepNavigator?.goToCheckoutPage?.( WPImportOption.CONTENT_ONLY );
+						stepNavigator?.goToCheckoutPage?.();
 					} }
 					navigateToVerifyEmailStep={ () => {
 						stepNavigator?.goToVerifyEmailPage?.();
@@ -204,7 +199,7 @@ const ImportContentOnly: React.FunctionComponent< Props > = ( props ) => {
 					siteSlug={ siteSlug }
 					job={ job as ImportJob }
 					buttonLabel={
-						job?.importerFileType === 'playground' ? translate( 'View site' ) : undefined
+						job?.importerFileType === 'playground' ? translate( 'Go to dashboard' ) : undefined
 					}
 					resetImport={ () => {
 						dispatch( resetImport( siteItem?.ID, job?.importerId ) );

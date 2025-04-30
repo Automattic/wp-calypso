@@ -1,5 +1,6 @@
 import { JetpackLogo } from '@automattic/components';
-import { useTranslate, formatCurrency } from 'i18n-calypso';
+import { formatCurrency } from '@automattic/number-formatters';
+import { useTranslate } from 'i18n-calypso';
 import { useContext } from 'react';
 import { BackgroundType10 } from 'calypso/a8c-for-agencies/components/page-section/backgrounds';
 import useFetchLicenses from 'calypso/a8c-for-agencies/data/purchases/use-fetch-licenses';
@@ -70,7 +71,6 @@ export default function PremierAgencyHosting( { onAddToCart }: Props ) {
 			{ agencyPressablePlan && ! isReferralMode && (
 				<PressableUsageSection existingPlan={ agencyPressablePlan } />
 			) }
-
 			<PressablePlanSection
 				onSelect={ onAddToCart }
 				isReferralMode={ isReferralMode }
@@ -120,7 +120,6 @@ export default function PremierAgencyHosting( { onAddToCart }: Props ) {
 				] }
 				fourRows
 			/>
-
 			<HostingTestimonialsSection
 				heading={ translate( 'Love for Pressable hosting' ) }
 				subheading={ translate( 'What agencies say' ) }
@@ -158,7 +157,6 @@ export default function PremierAgencyHosting( { onAddToCart }: Props ) {
 					},
 				] }
 			/>
-
 			<ClientRelationships />
 		</div>
 	);

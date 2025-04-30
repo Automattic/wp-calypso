@@ -186,6 +186,9 @@ const webpackConfig = {
 		'entry-stepper': [ path.join( __dirname, 'landing', 'stepper' ) ],
 		'entry-browsehappy': [ path.join( __dirname, 'landing', 'browsehappy' ) ],
 		'entry-subscriptions': [ path.join( __dirname, 'landing', 'subscriptions' ) ],
+		'entry-dashboard-dotcom': [ path.join( __dirname, 'dashboard', 'app-dotcom' ) ],
+		'entry-dashboard-a4a': [ path.join( __dirname, 'dashboard', 'app-a4a' ) ],
+		'entry-reauth-required': [ path.join( __dirname, 'reauth-required', 'bundle' ) ],
 	} ),
 	mode: isDevelopment ? 'development' : 'production',
 	devtool: sourceMapType,
@@ -372,17 +375,6 @@ const webpackConfig = {
 				res.request = 'calypso/components/empty-component';
 			}
 		} ),
-		/*
-		 * Local storage used to throw errors in Safari private mode, but that's no longer the case in Safari >=11.
-		 */
-		...( browserslistEnv === 'evergreen'
-			? [
-					new webpack.NormalModuleReplacementPlugin(
-						/^calypso[/\\]lib[/\\]local-storage-polyfill$/,
-						'lodash-es/noop'
-					),
-			  ]
-			: [] ),
 
 		/*
 		 * Replace `lodash` with `lodash-es`

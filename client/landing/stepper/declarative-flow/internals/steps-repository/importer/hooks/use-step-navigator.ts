@@ -1,6 +1,5 @@
 import { getWpOrgImporterUrl } from 'calypso/blocks/import/util';
 import { buildCheckoutUrl } from 'calypso/blocks/importer/util';
-import { WPImportOption } from 'calypso/blocks/importer/wordpress/types';
 import { useSelectedPlanUpgradeQuery } from 'calypso/data/import-flow/use-selected-plan-upgrade';
 import { addQueryArgs } from 'calypso/lib/route';
 import { BASE_STEPPER_ROUTE } from '../../import/config';
@@ -21,6 +20,7 @@ export function useStepNavigator(
 	>,
 	siteId: number | undefined | null,
 	siteSlug: string | undefined | null,
+	site: { options?: { admin_url?: string } } | undefined | null,
 	fromSite: string | undefined | null
 ): StepNavigator {
 	const { data: selectedPlan } = useSelectedPlanUpgradeQuery();
@@ -46,17 +46,17 @@ export function useStepNavigator(
 		navigator( getWordpressImportContentOnlyUrl() );
 	}
 
-	function goToSiteViewPage() {
+	function goToAdmin() {
 		navigation.submit?.( {
 			type: 'redirect',
-			url: `/view/${ siteId || siteSlug || '' }`,
+			url: site?.options?.admin_url ?? `/home/${ siteId || siteSlug || '' }`,
 		} );
 	}
 
-	function goToCheckoutPage( importOption: WPImportOption, extraArgs = {} ) {
+	function goToCheckoutPage( extraArgs = {} ) {
 		navigation.submit?.( {
 			type: 'redirect',
-			url: getCheckoutUrl( importOption, extraArgs ),
+			url: getCheckoutUrl( extraArgs ),
 		} );
 	}
 
@@ -84,22 +84,9 @@ export function useStepNavigator(
 		} );
 	}
 
-	function getWordpressImportEverythingUrl( extraArgs = {} ): string {
-		const queryParams = {
-			siteSlug: siteSlug,
-			from: fromSite,
-			option: WPImportOption.EVERYTHING,
-			run: false,
-			...extraArgs,
-		};
-
-		return addQueryArgs( queryParams, `/${ BASE_STEPPER_ROUTE }/${ flow }/importerWordpress` );
-	}
-
 	function getWordpressImportContentOnlyUrl( extraArgs = {} ): string {
 		const queryParams = {
 			siteSlug: siteSlug,
-			option: WPImportOption.CONTENT_ONLY,
 			...extraArgs,
 		};
 
@@ -107,33 +94,19 @@ export function useStepNavigator(
 	}
 
 	function getCheckoutUrl(
-		importOption: WPImportOption,
 		extraArgs: { plan?: string; slug?: string; redirect_to?: string } = {}
 	) {
 		const plan = extraArgs.plan ?? selectedPlan;
 		const slug = extraArgs.slug ?? siteSlug;
 		const path = buildCheckoutUrl( slug, plan );
-		let redirectTo = '';
-		let cancelTo = '';
 
-		switch ( importOption ) {
-			case WPImportOption.CONTENT_ONLY:
-				redirectTo = extraArgs.redirect_to ?? getWordpressImportContentOnlyUrl( extraArgs );
-				cancelTo = getWordpressImportContentOnlyUrl();
-				break;
-
-			case WPImportOption.EVERYTHING:
-				redirectTo = extraArgs.redirect_to ?? getWordpressImportEverythingUrl( extraArgs );
-				cancelTo = getWordpressImportEverythingUrl();
-				break;
-		}
-
-		const queryParams = {
-			redirect_to: redirectTo,
-			cancel_to: cancelTo,
-		};
-
-		return addQueryArgs( queryParams, path );
+		return addQueryArgs(
+			{
+				redirect_to: extraArgs.redirect_to ?? getWordpressImportContentOnlyUrl( extraArgs ),
+				cancel_to: getWordpressImportContentOnlyUrl(),
+			},
+			path
+		);
 	}
 
 	function goToAddDomainPage() {
@@ -158,7 +131,7 @@ export function useStepNavigator(
 		goToGoalsPage,
 		goToImportCapturePage,
 		goToImportContentOnlyPage,
-		goToSiteViewPage,
+		goToAdmin,
 		goToDashboardPage,
 		goToCheckoutPage,
 		goToWpAdminImportPage,

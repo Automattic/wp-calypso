@@ -1,4 +1,3 @@
-import './styles.scss';
 import page from '@automattic/calypso-router';
 import { addLocaleToPathLocaleInFront, useLocale } from '@automattic/i18n-utils';
 import clsx from 'clsx';
@@ -8,20 +7,18 @@ import { addQueryArgs } from 'calypso/lib/url';
 import ReaderBackButton from 'calypso/reader/components/back-button';
 import DiscoverNavigation from 'calypso/reader/discover/components/navigation';
 import DiscoverTagsNavigation from 'calypso/reader/discover/components/tags-navigation';
-import { WIDE_DISPLAY_CUTOFF } from 'calypso/reader/stream';
 import { getSelectedTabTitle, FIRST_POSTS_TAB, ADD_NEW_TAB, REDDIT_TAB } from '../../helper';
 
-interface DiscoverHeaderAndNavigationProps {
-	width: number;
+export interface DiscoverHeaderAndNavigationProps {
 	selectedTab: string;
 	effectiveTabSelection: string;
-	selectedTag: string;
+	selectedTag?: string;
 }
 
 export default function DiscoverHeaderAndNavigation(
 	props: DiscoverHeaderAndNavigationProps
 ): JSX.Element {
-	const { width, selectedTab, effectiveTabSelection, selectedTag } = props;
+	const { selectedTab, effectiveTabSelection, selectedTag } = props;
 	const currentLocale = useLocale();
 	const tabTitle = getSelectedTabTitle( effectiveTabSelection );
 	const translate = useTranslate();
@@ -58,18 +55,12 @@ export default function DiscoverHeaderAndNavigation(
 			<NavigationHeader
 				title={ translate( 'Discover' ) }
 				subtitle={ subHeaderText }
-				className={ clsx( 'discover-stream-header', {
-					'reader-dual-column': width > WIDE_DISPLAY_CUTOFF,
-				} ) }
+				className={ clsx( 'discover-stream-header' ) }
 			/>
 			<DiscoverNavigation selectedTab={ selectedTab } />
 
 			{ selectedTab === 'tags' && (
-				<DiscoverTagsNavigation
-					width={ width }
-					selectedTag={ selectedTag }
-					onTagSelect={ handleTagSelect }
-				/>
+				<DiscoverTagsNavigation selectedTag={ selectedTag } onTagSelect={ handleTagSelect } />
 			) }
 		</>
 	);

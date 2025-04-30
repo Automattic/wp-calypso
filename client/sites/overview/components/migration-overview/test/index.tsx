@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+// @ts-nocheck - TODO: Fix TypeScript issues
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
@@ -21,10 +22,13 @@ const buildMigrationSite = ( {
 	( {
 		ID: 123,
 		slug: 'example.com',
+
 		site_migration: {
 			migration_status: [ 'migration', status, how ].filter( Boolean ).join( '-' ),
 		},
+
 		name: 'Bold Apps',
+
 		plan: {
 			features: {
 				active: canInstallPlugins ? [ 'install-plugins' ] : [],
@@ -97,7 +101,7 @@ describe( 'MigrationOverview', () => {
 
 			expect( link ).toHaveAttribute(
 				'href',
-				'/setup/hosted-site-migration/site-migration-instructions?siteId=123&siteSlug=example.com&ref=hosting-migration-overview'
+				'/setup/site-migration/site-migration-instructions?siteId=123&siteSlug=example.com&ref=hosting-migration-overview'
 			);
 		} );
 
@@ -171,7 +175,7 @@ describe( 'MigrationOverview', () => {
 
 			expect( link ).toHaveAttribute(
 				'href',
-				'/setup/hosted-site-migration/site-migration-credentials?siteId=123&siteSlug=example.com&ref=hosting-migration-overview'
+				'/setup/site-migration/site-migration-credentials?siteId=123&siteSlug=example.com&ref=hosting-migration-overview'
 			);
 		} );
 	} );

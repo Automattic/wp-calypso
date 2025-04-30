@@ -1,12 +1,11 @@
 import { Button, FoldableCard } from '@automattic/components';
-import { isMobile } from '@automattic/viewport';
+import { formatCurrency } from '@automattic/number-formatters';
 import { Icon, chevronDown, chevronUp } from '@wordpress/icons';
-import { formatCurrency, translate } from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
-import { shouldUseMultipleDomainsInCart } from './utils';
 
 // Referenced from WordAds_Ads_Txt
 const wpcomSubdomains = [
@@ -195,6 +194,7 @@ export class DomainsMiniCart extends Component {
 				className="domains__domain-side-content domains__domain-cart-foldable-card"
 				header={ MobileHeader }
 				expanded={ false }
+				hideSummary
 				actionButton={
 					<button className="foldable-card__action foldable-card__expand">
 						<span className="screen-reader-text">More</span>
@@ -223,14 +223,7 @@ export class DomainsMiniCart extends Component {
 	};
 
 	render() {
-		if (
-			! shouldUseMultipleDomainsInCart( this.props.flowName ) ||
-			( this.props.cartIsLoading && this.props.domainsInCart.length === 0 )
-		) {
-			return null;
-		}
-
-		if ( isMobile() ) {
+		if ( this.props.isMobile ) {
 			return this.mobile();
 		}
 
