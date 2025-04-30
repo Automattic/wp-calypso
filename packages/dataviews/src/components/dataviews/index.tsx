@@ -27,9 +27,14 @@ import { normalizeFields } from '../../normalize-fields';
 import type { Action, Field, View, SupportedLayouts } from '../../types';
 import type { SelectionOrUpdater } from '../../private-types';
 
+import type { DataViewsContextType } from '../dataviews-context';
+
+/**
+ * External public props
+ */
 type ItemWithId = { id: string };
 
-type DataViewsProps< Item > = {
+export type DataViewsControlledProps< Item > = {
 	view: View;
 	onChangeView: ( view: View ) => void;
 	fields: Field< Item >[];
@@ -53,29 +58,42 @@ type DataViewsProps< Item > = {
 	? { getItemId?: ( item: Item ) => string }
 	: { getItemId: ( item: Item ) => string } );
 
+export type DataViewsWithChildren< Item > = {
+	children: ReactNode;
+	data?: Item[];
+} & Partial< Omit< DataViewsControlledProps< Item >, 'children' | 'data' > >;
+
+export type DataViewsProps< Item > =
+	| DataViewsControlledProps< Item >
+	| DataViewsWithChildren< Item >;
+
 const defaultGetItemId = ( item: ItemWithId ) => item.id;
 const defaultIsItemClickable = () => true;
 const EMPTY_ARRAY: any[] = [];
 
-export default function DataViews< Item >( {
-	view,
-	onChangeView,
-	fields,
-	search = true,
-	searchLabel = undefined,
-	actions = EMPTY_ARRAY,
-	data,
-	getItemId = defaultGetItemId,
-	getItemLevel,
-	isLoading = false,
-	paginationInfo,
-	defaultLayouts,
-	selection: selectionProperty,
-	onChangeSelection,
-	onClickItem,
-	isItemClickable = defaultIsItemClickable,
-	header,
-}: DataViewsProps< Item > ) {
+export default function DataViews< Item >( props: DataViewsProps< Item > ) {
+	const {
+		view,
+		onChangeView,
+		fields = [],
+		search = true,
+		searchLabel = undefined,
+		actions = EMPTY_ARRAY,
+		data,
+		selection: selectionProperty,
+		onChangeSelection,
+		paginationInfo,
+		getItemId = defaultGetItemId,
+		getItemLevel,
+		isLoading = false,
+		onClickItem,
+		isItemClickable = defaultIsItemClickable,
+		header,
+		defaultLayouts,
+		children,
+	} = props as DataViewsControlledProps< Item > &
+		DataViewsWithChildren< Item >;
+
 	const [ containerWidth, setContainerWidth ] = useState( 0 );
 	const containerRef = useResizeObserver(
 		( resizeObserverEntries: any ) => {
@@ -85,11 +103,13 @@ export default function DataViews< Item >( {
 		},
 		{ box: 'border-box' }
 	);
+
 	const [ selectionState, setSelectionState ] = useState< string[] >( [] );
 	const isUncontrolled =
 		selectionProperty === undefined || onChangeSelection === undefined;
 	const selection = isUncontrolled ? selectionState : selectionProperty;
 	const [ openedFilter, setOpenedFilter ] = useState< string | null >( null );
+
 	function setSelectionWithChange( value: SelectionOrUpdater ) {
 		const newValue =
 			typeof value === 'function' ? value( selection ) : value;
@@ -100,39 +120,59 @@ export default function DataViews< Item >( {
 			onChangeSelection( newValue );
 		}
 	}
+
 	const _fields = useMemo( () => normalizeFields( fields ), [ fields ] );
 	const _selection = useMemo( () => {
-		return selection.filter( ( id ) =>
-			data.some( ( item ) => getItemId( item ) === id )
+		return (
+			selection?.filter(
+				( id ) => data?.some( ( item ) => getItemId( item ) === id )
+			) || []
 		);
 	}, [ selection, data, getItemId ] );
 
-	const filters = useFilters( _fields, view );
+	const filters = useFilters( _fields, view ?? ( {} as View ) );
 	const [ isShowingFilter, setIsShowingFilter ] = useState< boolean >( () =>
 		( filters || [] ).some( ( filter ) => filter.isPrimary )
 	);
 
+	const contextValue: DataViewsContextType< Item > = {
+		view: view as View,
+		onChangeView: onChangeView as ( view: View ) => void,
+		fields: _fields,
+		actions,
+		data: ( data || [] ) as Item[],
+		isLoading,
+		paginationInfo: paginationInfo || {
+			totalItems: 0,
+			totalPages: 0,
+		},
+		selection: _selection,
+		onChangeSelection: setSelectionWithChange,
+		openedFilter,
+		setOpenedFilter,
+		getItemId: getItemId as ( item: Item ) => string,
+		getItemLevel,
+		isItemClickable,
+		onClickItem,
+		containerWidth,
+	};
+
+	if ( children ) {
+		return (
+			<DataViewsContext.Provider
+				value={ contextValue as DataViewsContextType< any > }
+			>
+				{ children }
+			</DataViewsContext.Provider>
+		);
+	}
+
+	if ( ! data ) {
+		throw new Error( '`data` is required when `children` is not used.' );
+	}
+
 	return (
-		<DataViewsContext.Provider
-			value={ {
-				view,
-				onChangeView,
-				fields: _fields,
-				actions,
-				data,
-				isLoading,
-				paginationInfo,
-				selection: _selection,
-				onChangeSelection: setSelectionWithChange,
-				openedFilter,
-				setOpenedFilter,
-				getItemId,
-				getItemLevel,
-				isItemClickable,
-				onClickItem,
-				containerWidth,
-			} }
-		>
+		<DataViewsContext.Provider value={ contextValue }>
 			<div className="dataviews-wrapper" ref={ containerRef }>
 				<HStack
 					alignment="top"
@@ -148,8 +188,8 @@ export default function DataViews< Item >( {
 						{ search && <DataViewsSearch label={ searchLabel } /> }
 						<FiltersToggle
 							filters={ filters }
-							view={ view }
-							onChangeView={ onChangeView }
+							view={ view! }
+							onChangeView={ onChangeView! }
 							setOpenedFilter={ setOpenedFilter }
 							setIsShowingFilter={ setIsShowingFilter }
 							isShowingFilter={ isShowingFilter }
@@ -161,7 +201,7 @@ export default function DataViews< Item >( {
 						style={ { flexShrink: 0 } }
 					>
 						<DataViewsViewConfig
-							defaultLayouts={ defaultLayouts }
+							defaultLayouts={ defaultLayouts! }
 						/>
 						{ header }
 					</HStack>
