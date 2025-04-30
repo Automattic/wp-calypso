@@ -171,14 +171,13 @@ function PlanetOverview( { planets }: { planets: SpaceObject[] } ) {
 }
 
 export const FreeComposition = () => {
-	const { data } = useContext( DataViewsContext );
-
+	console.log( { data } );
 	const planets = data.filter( ( item ) =>
 		item.categories.includes( 'Planet' )
 	);
 
 	return (
-		<DataViews data={ data }>
+		<DataViews>
 			<PlanetOverview planets={ planets } />
 		</DataViews>
 	);
