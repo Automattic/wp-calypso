@@ -1,12 +1,14 @@
 import { useQuery } from '@tanstack/react-query';
 import { siteSettingsQuery, basicMetricsQuery, performanceInsightsQuery } from '../app/queries';
+import { UrlPerformanceInsights } from '../data/types';
 
 interface PerformanceData {
+	performanceData: UrlPerformanceInsights | undefined;
 	desktopScore: number | undefined;
 	mobileScore: number | undefined;
 	desktopLoaded: boolean;
 	mobileLoaded: boolean;
-	isLoadingSiteSettings: boolean;
+	isLoading: boolean;
 }
 
 export function usePerformanceData( siteId: string, url: string ): PerformanceData {
@@ -18,13 +20,15 @@ export function usePerformanceData( siteId: string, url: string ): PerformanceDa
 		siteSettings?.settings?.wpcom_performance_report_url || '';
 	const [ , cachedHash ] = wpcomPerformanceReportUrl.split( '&hash=' );
 
-	const { data: basicMetricsData } = useQuery(
+	const { data: basicMetricsData, isLoading: isLoadingBasicMetrics } = useQuery(
 		basicMetricsQuery( url, isLoadingSiteSettings, cachedHash )
 	);
 
 	const token = cachedHash || basicMetricsData?.token;
 
-	const { data: performanceData } = useQuery( performanceInsightsQuery( url, token || '' ) );
+	const { data: performanceData, isLoading: isLoadingPerformanceInsights } = useQuery(
+		performanceInsightsQuery( url, token || '' )
+	);
 
 	const desktopLoaded = typeof performanceData?.pagespeed?.desktop === 'object';
 	const mobileLoaded = typeof performanceData?.pagespeed?.mobile === 'object';
@@ -44,6 +48,6 @@ export function usePerformanceData( siteId: string, url: string ): PerformanceDa
 		mobileScore,
 		desktopLoaded,
 		mobileLoaded,
-		isLoadingSiteSettings,
+		isLoading: isLoadingSiteSettings || isLoadingBasicMetrics || isLoadingPerformanceInsights,
 	};
 }
