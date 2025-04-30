@@ -170,8 +170,21 @@ function PlanetOverview( { planets }: { planets: SpaceObject[] } ) {
 	);
 }
 
+/**
+ * This is a basic example of using the DataViews component in
+ * a free composition mode.
+ *
+ * Unlike the default usage where DataViews renders its own UI,
+ * here we use it purely to provide context and handle data-related logic.
+ *
+ * The UI is fully custom and composed externally via the
+ * `PlanetOverview` component.
+ *
+ * In future iterations, this story will showcase more advanced compositions
+ * using built-in subcomponents like <Search />, filters,
+ * or pagination controls.
+ */
 export const FreeComposition = () => {
-	console.log( { data } );
 	const planets = data.filter( ( item ) =>
 		item.categories.includes( 'Planet' )
 	);
