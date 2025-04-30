@@ -11,8 +11,6 @@ export interface SitesFilterOptions {
 
 type SiteForFiltering = Pick< MinimumSite, 'URL' | 'name' | 'slug' | 'title' | 'is_a8c' >;
 
-const isA8CSite = ( site: SiteForFiltering ) => site.is_a8c;
-
 export function useSitesListFiltering< T extends SiteForFiltering >(
 	sites: T[],
 	{ search, includeA8CSites = false }: SitesFilterOptions
@@ -25,7 +23,7 @@ export function useSitesListFiltering< T extends SiteForFiltering >(
 
 	return useMemo( () => {
 		if ( ! includeA8CSites ) {
-			return filteredSites.filter( ( site ) => ! isA8CSite( site ) );
+			return filteredSites.filter( ( site ) => ! site.is_a8c );
 		}
 
 		return filteredSites;
