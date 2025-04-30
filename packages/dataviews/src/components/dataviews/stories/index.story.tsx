@@ -17,7 +17,13 @@ import { __, _n } from '@wordpress/i18n';
  * Internal dependencies
  */
 import DataViews from '../index';
-import { DEFAULT_VIEW, actions, data, fields } from './fixtures';
+import {
+	DEFAULT_VIEW,
+	actions,
+	data,
+	fields,
+	type SpaceObject,
+} from './fixtures';
 import { LAYOUT_GRID, LAYOUT_LIST, LAYOUT_TABLE } from '../../../constants';
 import { filterSortAndPaginate } from '../../../filter-and-sort-data-view';
 import DataViewsContext from '../../dataviews-context';
@@ -120,12 +126,7 @@ export const FieldsNoSortableNoHidable = () => {
 /**
  * Custom composition example
  */
-function PlanetOverview() {
-	const { data } = useContext( DataViewsContext );
-
-	const planets = data.filter( ( item ) =>
-		item.categories.includes( 'Planet' )
-	);
+function PlanetOverview( { planets }: { planets: SpaceObject[] } ) {
 	const moons = planets.reduce( ( sum, item ) => sum + item.satellites, 0 );
 
 	return (
@@ -170,9 +171,15 @@ function PlanetOverview() {
 }
 
 export const FreeComposition = () => {
+	const { data } = useContext( DataViewsContext );
+
+	const planets = data.filter( ( item ) =>
+		item.categories.includes( 'Planet' )
+	);
+
 	return (
 		<DataViews data={ data }>
-			<PlanetOverview />
+			<PlanetOverview planets={ planets } />
 		</DataViews>
 	);
 };
