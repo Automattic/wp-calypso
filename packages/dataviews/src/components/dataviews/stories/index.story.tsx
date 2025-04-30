@@ -63,7 +63,7 @@ export const Default = () => {
 			fields={ fields }
 			onChangeView={ setView }
 			actions={ actions }
-			onClickItem={ ( item ) => {
+			onClickItem={ ( item: SpaceObject ) => {
 				// eslint-disable-next-line no-alert
 				alert( 'Clicked: ' + item.title );
 			} }
