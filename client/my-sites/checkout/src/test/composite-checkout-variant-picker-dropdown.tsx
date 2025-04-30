@@ -1,7 +1,8 @@
-import { formatCurrency } from '@automattic/number-formatters';
 /**
  * @jest-environment jsdom
  */
+
+import { formatCurrency } from '@automattic/number-formatters';
 // @ts-nocheck - TODO: Fix TypeScript issues
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
