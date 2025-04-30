@@ -1,4 +1,4 @@
-import { useQuery, type UseQueryOptions } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 
 export interface GeoLocationData {
 	city: string;
@@ -9,9 +9,7 @@ export interface GeoLocationData {
 	region: string;
 }
 
-export const useGeoLocationQuery = (
-	options: Partial< UseQueryOptions< GeoLocationData > > = {}
-) =>
+export const useGeoLocationQuery = ( options = {} ) =>
 	useQuery< GeoLocationData >( {
 		queryKey: [ 'geo' ],
 		queryFn: () =>

@@ -152,6 +152,9 @@ async function main() {
 		flow = enhanceFlowWithAuth( flow );
 	}
 
+	// No need to await this, it's not critical to the boot process and will slow booting down.
+	defaultCalypsoI18n.initializeGeolocation( user ? user.user_ip_country_code : undefined );
+
 	const root = createRoot( document.getElementById( 'wpcom' ) as HTMLElement );
 
 	root.render(
