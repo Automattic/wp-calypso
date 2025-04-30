@@ -19,6 +19,7 @@ class SecurityCheckupTwoFactorAuthentication extends Component {
 		hasTwoStepEnhancedSecurity: PropTypes.bool,
 		translate: PropTypes.func.isRequired,
 		twoStepSmsPhoneNumber: PropTypes.string,
+		isEmailVerified: PropTypes.bool,
 	};
 
 	render() {
