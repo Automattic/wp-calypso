@@ -101,6 +101,31 @@
 	.stats-sparkline {
 		padding-top: 0;
 	}
+
+	/**
+	 * Pin the actions column.
+	 */
+	.dataviews-view-table__actions-column {
+		position: sticky;
+		right: 0;
+		z-index: 1;
+		background-color: var(--studio-white);
+
+		&::after {
+			display: block;
+			content: '';
+			position: absolute;
+			top: 0;
+			bottom: 0;
+			left: 0;
+			width: 5px;
+			box-shadow: -3px 0 2px -2px rgba(0, 0, 0, 0.1);
+		}
+	}
+
+	.dataviews-view-table__row.is-hovered .dataviews-view-table__actions-column {
+		background-color: inherit;
+	}
 }
 
 .is-section-a8c-for-agencies-sites {
