@@ -22,6 +22,7 @@ interface Props {
 	siteSlug: string | null;
 	title?: string;
 	subTitle?: string;
+	renderHeading?: boolean;
 	submit?: ( dependencies: { platform: ImporterPlatform; url: string } ) => void;
 	getFinalImporterUrl: (
 		siteSlug: string,
@@ -38,6 +39,7 @@ export default function ListStep( props: Props ) {
 	const { siteSlug, submit, getFinalImporterUrl, onNavBack } = props;
 	const backToFlow = urlQueryParams.get( 'backToFlow' );
 	const fromSite = urlQueryParams.get( 'from' );
+	const renderHeading = props.renderHeading ?? true;
 	const title = props.title;
 	const subTitle = props.subTitle;
 
@@ -71,7 +73,7 @@ export default function ListStep( props: Props ) {
 				</div>
 			) }
 			<div className="list__wrapper">
-				{ title && subTitle && (
+				{ renderHeading && (
 					<div className="import__heading import__heading-center">
 						<Title>{ title }</Title>
 						<SubTitle>{ subTitle }</SubTitle>
