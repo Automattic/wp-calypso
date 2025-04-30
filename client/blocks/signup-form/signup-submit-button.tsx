@@ -7,6 +7,7 @@ interface SignupSubmitButtonProps {
 	isDisabled?: boolean;
 	variationName?: string;
 	children: ReactNode;
+	className?: string;
 }
 
 const SignupSubmitButton = ( {
@@ -14,15 +15,20 @@ const SignupSubmitButton = ( {
 	isDisabled = false,
 	variationName,
 	children,
+	className,
 }: SignupSubmitButtonProps ) => {
 	return (
 		<Button
 			variant="primary"
 			type="submit"
-			className={ clsx( 'signup-form__submit', variationName && `${ variationName }-signup-form` ) }
+			className={ clsx(
+				'signup-form__submit',
+				className,
+				variationName && `${ variationName }-signup-form`
+			) }
 			disabled={ isDisabled }
-			__next40pxDefaultSize
 			isBusy={ isBusy }
+			__next40pxDefaultSize
 		>
 			{ children }
 		</Button>
