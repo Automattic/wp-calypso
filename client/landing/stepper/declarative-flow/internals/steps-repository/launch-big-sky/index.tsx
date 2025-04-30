@@ -158,9 +158,9 @@ const LaunchBigSky: Step = function ( props ) {
 				<div className="processing-step__container">
 					<div className="processing-step">
 						{ ! isError && <ProgressBar key="main-progress" value={ progress } compact /> }
-						{ true && (
+						{ isError && (
 							<p className="processing-step__error">
-								{ __( "Sorry, but we've encountered an error. Please try again." ) }
+								{ __( 'Something unexpected happened. Please go back and try again.' ) }
 							</p>
 						) }
 					</div>
