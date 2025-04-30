@@ -1,176 +1,57 @@
-import path from 'path';
-import { Dialog, Gridicon, ExternalLink } from '@automattic/components';
-import { GravatarQuickEditor } from '@gravatar-com/quick-editor';
+import { Gridicon, ExternalLink } from '@automattic/components';
+import { GravatarQuickEditorCore } from '@gravatar-com/quick-editor';
 import { Spinner } from '@wordpress/components';
 import { Icon, upload, caution } from '@wordpress/icons';
 import clsx from 'clsx';
-import i18n, { localize } from 'i18n-calypso';
+import { localize, translate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { Component, useEffect } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
-import ImageEditor from 'calypso/blocks/image-editor';
 import VerifyEmailDialog from 'calypso/components/email-verification/email-verification-dialog';
-import FilePicker from 'calypso/components/file-picker';
 import Gravatar from 'calypso/components/gravatar';
 import InfoPopover from 'calypso/components/info-popover';
-import { useSelector } from 'calypso/state';
+import { addQueryArgs } from 'calypso/lib/url';
+import {} from 'calypso/state/action-types';
 import {
 	recordTracksEvent,
 	recordGoogleEvent,
 	composeAnalytics,
 } from 'calypso/state/analytics/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import { resetAllImageEditorState } from 'calypso/state/editor/image-editor/actions';
-import { AspectRatios } from 'calypso/state/editor/image-editor/constants';
-import { receiveGravatarImageFailed, uploadGravatar } from 'calypso/state/gravatar-status/actions';
-import { isCurrentUserUploadingGravatar } from 'calypso/state/gravatar-status/selectors';
+import { successNotice } from 'calypso/state/notices/actions';
 import getUserSetting from 'calypso/state/selectors/get-user-setting';
 import { isFetchingUserSettings } from 'calypso/state/user-settings/selectors';
-import { ALLOWED_FILE_EXTENSIONS } from './constants';
-
 import './style.scss';
 
 const GRAVATAR_IMG_SIZE = 400;
-
-const initializeGravatarQuickEditor = ( user ) => {
-	return new GravatarQuickEditor( {
-		email: user.email,
-		editorTriggerSelector: '#gravatar-avatar-edit-button',
-		avatarSelector: '#gravatar-avatar',
-		scope: [ 'avatars' ],
-	} );
-};
-
-function QuicklyEditableGravatar() {
-	const user = useSelector( getCurrentUser );
-
-	useEffect( () => {
-		if ( user ) {
-			initializeGravatarQuickEditor( user );
-		}
-	}, [ user ] );
-
-	return <Gravatar id="gravatar-avatar" imgSize={ GRAVATAR_IMG_SIZE } size={ 150 } user={ user } />;
-}
-
+const GRAVATAR_SELECTOR = '.gravatar,.masterbar__item-howdy-gravatar';
 export class EditGravatar extends Component {
 	state = {
-		isEditingImage: false,
-		image: false,
 		showEmailVerificationNotice: false,
 	};
 
 	static propTypes = {
-		isUploading: PropTypes.bool,
 		translate: PropTypes.func,
-		receiveGravatarImageFailed: PropTypes.func,
-		resetAllImageEditorState: PropTypes.func,
-		uploadGravatar: PropTypes.func,
 		user: PropTypes.object,
 		recordClickButtonEvent: PropTypes.func,
-		recordReceiveImageEvent: PropTypes.func,
+		onProfileUpdated: PropTypes.func,
+		onOpened: PropTypes.func,
+		onClosed: PropTypes.func,
 	};
 
-	onReceiveFile = ( files ) => {
-		const {
-			receiveGravatarImageFailed: receiveGravatarImageFailedAction,
-			translate,
-			recordReceiveImageEvent,
-		} = this.props;
-		const extension = path.extname( files[ 0 ].name ).toLowerCase().substring( 1 );
+	handleAvatarClick = () => {
+		const { user, recordClickButtonEvent, onProfileUpdated, onOpened, onClosed } = this.props;
+		recordClickButtonEvent( { isVerified: this.props.user.email_verified } );
 
-		recordReceiveImageEvent();
-
-		if ( ALLOWED_FILE_EXTENSIONS.indexOf( extension ) === -1 ) {
-			let errorMessage = '';
-
-			if ( extension ) {
-				errorMessage = translate(
-					'Sorry, %s files are not supported' +
-						' — please make sure your image is in JPG, GIF, or PNG format.',
-					{
-						args: extension,
-					}
-				);
-			} else {
-				errorMessage = translate(
-					'Sorry, images of that filetype are not supported ' +
-						'— please make sure your image is in JPG, GIF, or PNG format.'
-				);
-			}
-
-			receiveGravatarImageFailedAction( {
-				errorMessage,
-				statName: 'bad_filetype',
+		if ( user.email_verified ) {
+			const quickEditor = new GravatarQuickEditorCore( {
+				email: user.email,
+				onProfileUpdated,
+				onOpened,
+				onClosed,
+				scope: [ 'avatars' ],
 			} );
-			return;
-		}
-
-		const imageObjectUrl = URL.createObjectURL( files[ 0 ] );
-		this.setState( {
-			isEditingImage: true,
-			image: imageObjectUrl,
-		} );
-	};
-
-	onImageEditorDone = ( error, imageBlob ) => {
-		const {
-			receiveGravatarImageFailed: receiveGravatarImageFailedAction,
-			translate,
-			uploadGravatar: uploadGravatarAction,
-			user,
-		} = this.props;
-
-		this.hideImageEditor();
-
-		if ( error ) {
-			receiveGravatarImageFailedAction( {
-				errorMessage: translate( "We couldn't save that image — please try another one." ),
-				statName: 'image_editor_error',
-			} );
-			return;
-		}
-
-		// send gravatar request
-		uploadGravatarAction( imageBlob, user.email );
-	};
-
-	hideImageEditor = () => {
-		const { resetAllImageEditorState: resetAllImageEditorStateAction } = this.props;
-		resetAllImageEditorStateAction();
-		URL.revokeObjectURL( this.state.image );
-		this.setState( {
-			isEditingImage: false,
-			image: false,
-		} );
-	};
-
-	renderImageEditor() {
-		const doneButtonText = i18n.fixMe( {
-			text: 'Upload photo',
-			newCopy: i18n.translate( 'Upload photo' ),
-			oldCopy: i18n.translate( 'Change My Photo' ),
-		} );
-
-		if ( this.state.isEditingImage ) {
-			return (
-				<Dialog additionalClassNames="edit-gravatar-modal" isVisible>
-					<ImageEditor
-						allowedAspectRatios={ [ AspectRatios.ASPECT_1X1 ] }
-						media={ { src: this.state.image } }
-						onDone={ this.onImageEditorDone }
-						onCancel={ this.hideImageEditor }
-						doneButtonText={ doneButtonText }
-					/>
-				</Dialog>
-			);
-		}
-	}
-
-	handleUnverifiedUserClick = () => {
-		this.props.recordClickButtonEvent( { isVerified: this.props.user.email_verified } );
-
-		if ( this.props.user.email_verified ) {
+			quickEditor.open();
 			return;
 		}
 
@@ -198,7 +79,7 @@ export class EditGravatar extends Component {
 		);
 	};
 
-	renderGravatarProfileHidden = ( { gravatarLink, translate } ) => {
+	renderGravatarProfileHidden = ( { gravatarLink } ) => {
 		return (
 			<div className="edit-gravatar">
 				<div className="edit-gravatar__image-container">
@@ -236,8 +117,7 @@ export class EditGravatar extends Component {
 	};
 
 	render() {
-		const { isGravatarProfileHidden, isUploading, translate, user, additionalUploadHtml } =
-			this.props;
+		const { isGravatarProfileHidden, isUploading, user } = this.props;
 		const gravatarLink = 'https://gravatar.com';
 		// use imgSize = 400 for caching
 		// it's the popular value for large Gravatars in Calypso
@@ -253,8 +133,6 @@ export class EditGravatar extends Component {
 			return this.renderGravatarProfileHidden( { gravatarLink, translate } );
 		}
 
-		/* eslint-disable jsx-a11y/click-events-have-key-events */
-		/* eslint-disable jsx-a11y/no-static-element-interactions */
 		return (
 			<div
 				className={ clsx(
@@ -265,7 +143,7 @@ export class EditGravatar extends Component {
 			>
 				<button
 					type="button"
-					onClick={ this.handleUnverifiedUserClick }
+					onClick={ this.handleAvatarClick }
 					className="edit-gravatar__image-button"
 					id="gravatar-avatar-edit-button"
 					aria-label={ uploadButtonLabel }
@@ -276,7 +154,7 @@ export class EditGravatar extends Component {
 							'is-uploading': isUploading,
 						} ) }
 					>
-						<QuicklyEditableGravatar />
+						<Gravatar imgSize={ GRAVATAR_IMG_SIZE } size={ 150 } user={ user } />
 						<div className="edit-gravatar__label-container">
 							<div className="edit-gravatar__label-container-icon">
 								{ ! user.email_verified && (
@@ -303,14 +181,13 @@ export class EditGravatar extends Component {
 				{ this.state.showEmailVerificationNotice && (
 					<VerifyEmailDialog onClose={ this.closeVerifyEmailDialog } />
 				) }
-				{ this.renderImageEditor() }
 				<div>
 					<p className="edit-gravatar__explanation">
 						{ translate( 'Your profile photo is public.' ) }
 					</p>
 					<InfoPopover className="edit-gravatar__pop-over" position="left">
 						{ translate(
-							'{{p}}The avatar you upload here is synced with {{ExternalLink}}Gravatar{{/ExternalLink}}.' +
+							'{{p}}This avatar is managed by {{ExternalLink}}Gravatar{{/ExternalLink}}.' +
 								' If you do not have a Gravatar account, one will be created for you when you upload your first image.{{/p}}',
 							{
 								components: {
@@ -320,16 +197,9 @@ export class EditGravatar extends Component {
 							}
 						) }
 					</InfoPopover>
-					{ additionalUploadHtml && (
-						<FilePicker accept="image/*" onPick={ this.onReceiveFile }>
-							{ additionalUploadHtml }
-						</FilePicker>
-					) }
 				</div>
 			</div>
 		);
-		/* eslint-enable jsx-a11y/click-events-have-key-events */
-		/* eslint-enable jsx-a11y/no-static-element-interactions */
 	}
 }
 
@@ -339,20 +209,36 @@ const recordClickButtonEvent = ( { isVerified } ) =>
 		recordGoogleEvent( 'Me', 'Clicked on Edit Gravatar Button in Profile' )
 	);
 
-const recordReceiveImageEvent = () => recordTracksEvent( 'calypso_edit_gravatar_file_receive' );
-
 export default connect(
 	( state ) => ( {
 		user: getCurrentUser( state ) || {},
 		isFetchingUserSettings: isFetchingUserSettings( state ),
 		isGravatarProfileHidden: getUserSetting( state, 'gravatar_profile_hidden' ),
-		isUploading: isCurrentUserUploadingGravatar( state ),
 	} ),
 	{
-		resetAllImageEditorState,
-		receiveGravatarImageFailed,
-		uploadGravatar,
 		recordClickButtonEvent,
-		recordReceiveImageEvent,
+		onProfileUpdated() {
+			return ( dispatch ) => {
+				dispatch( recordTracksEvent( 'calypso_edit_gravatar_upload_success' ) );
+				dispatch(
+					successNotice(
+						translate( 'You successfully uploaded a new profile photo — looking sharp!' ),
+						{
+							id: 'gravatar-upload',
+						}
+					)
+				);
+				// Update the Gravatar images to bust the cache
+				document
+					.querySelectorAll( GRAVATAR_SELECTOR )
+					.forEach( ( el ) => ( el.src = addQueryArgs( { cache: Date.now() }, el.src ) ) );
+			};
+		},
+		onOpened() {
+			return recordTracksEvent( 'calypso_edit_gravatar_quick_editor_opened' );
+		},
+		onClosed() {
+			return recordTracksEvent( 'calypso_edit_gravatar_quick_editor_closed' );
+		},
 	}
 )( localize( EditGravatar ) );

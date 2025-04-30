@@ -104,6 +104,27 @@ class Profile extends Component {
 							/>
 						</FormFieldset>
 
+						<p className="profile__gravatar-profile-description">
+							<span>
+								{ this.props.translate(
+									'Your WordPress.com profile is connected to Gravatar. Your Gravatar is public by default and may appear on any site using Gravatar when you’re logged in with {{strong}}%(email)s{{/strong}}.' +
+										' To manage your Gravatar profile, profile links, and visibility settings, {{a}}visit your Gravatar profile{{/a}}.',
+									{
+										components: {
+											strong: <strong />,
+											a: <ExternalLink href="https://gravatar.com/profile" />,
+										},
+										args: {
+											email: this.props.getSetting( 'user_email' ),
+										},
+									}
+								) }
+							</span>
+							<span>
+								<WPAndGravatarLogo />
+							</span>
+						</p>
+
 						<FormFieldset>
 							<FormLabel htmlFor="display_name">
 								{ this.props.translate( 'Public display name' ) }
@@ -168,27 +189,6 @@ class Profile extends Component {
 								value={ this.props.getSetting( 'description' ) }
 							/>
 						</FormFieldset>
-
-						<p className="profile__gravatar-profile-description">
-							<span>
-								{ this.props.translate(
-									'Your WordPress.com profile is connected to Gravatar. Your Gravatar is public by default and may appear on any site using Gravatar when you’re logged in with {{strong}}%(email)s{{/strong}}.' +
-										' To manage your Gravatar profile, profile links, and visibility settings, {{a}}visit your Gravatar profile{{/a}}.',
-									{
-										components: {
-											strong: <strong />,
-											a: <ExternalLink href="https://gravatar.com/profile" />,
-										},
-										args: {
-											email: this.props.getSetting( 'user_email' ),
-										},
-									}
-								) }
-							</span>
-							<span>
-								<WPAndGravatarLogo />
-							</span>
-						</p>
 
 						<p className="profile__submit-button-wrapper">
 							<FormButton

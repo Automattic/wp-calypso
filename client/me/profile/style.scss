@@ -49,6 +49,7 @@
 	font-size: $font-body-small;
 	line-height: 20px;
 	word-break: break-word;
+	width: 100%;
 
 	@include breakpoint-deprecated(">960px") {
 		flex-direction: row;

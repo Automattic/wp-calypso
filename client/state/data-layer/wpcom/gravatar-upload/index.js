@@ -12,27 +12,9 @@ import {
 	withAnalytics,
 } from 'calypso/state/analytics/actions';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
-import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { dispatchProfileCompleteNotice } from 'calypso/state/reader/onboarding/handlers';
-
-export function uploadGravatar( action ) {
-	const { email, file } = action;
-	return http(
-		{
-			method: 'POST',
-			path: '/gravatar-upload',
-			body: {},
-			apiNamespace: 'wpcom/v2',
-			formData: [
-				[ 'account', email ],
-				[ 'filedata', file ],
-			],
-		},
-		action
-	);
-}
 
 export function announceSuccess( { file } ) {
 	return ( dispatch ) => {
@@ -81,7 +63,6 @@ export function announceFailure() {
 registerHandlers( 'state/data-layer/wpcom/gravatar-upload/index.js', {
 	[ GRAVATAR_UPLOAD_REQUEST ]: [
 		dispatchRequest( {
-			fetch: uploadGravatar,
 			onSuccess: announceSuccess,
 			onError: announceFailure,
 		} ),
