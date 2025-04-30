@@ -225,6 +225,7 @@ function LineItemCostOverride( {
 	product: ResponseCartProduct;
 } ) {
 	const isPriceIncrease = doesIntroductoryOfferHavePriceIncrease( product );
+	const [ , streamlinedPriceExperimentAssignment ] = useStreamlinedPriceExperiment();
 	if ( isPriceIncrease ) {
 		return (
 			<div className="cost-overrides-list-item" key={ costOverride.humanReadableReason }>
@@ -239,6 +240,7 @@ function LineItemCostOverride( {
 			</span>
 			<span className="cost-overrides-list-item__discount">
 				{ costOverride.discountAmount &&
+					! streamlinedPriceExperimentAssignment &&
 					formatCurrency( -costOverride.discountAmount, product.currency, {
 						isSmallestUnit: true,
 						signForPositive: true, // TODO clk numberFormatCurrency signForPositive only usage
@@ -325,6 +327,29 @@ function SingleProductAndCostOverridesList( { product }: { product: ResponseCart
 	);
 	const [ , streamlinedPriceExperimentAssignment ] = useStreamlinedPriceExperiment();
 	if ( streamlinedPriceExperimentAssignment ) {
+		let isDiscounted;
+		let streamlinedActualAmountDisplay;
+		let originalAmountDisplay;
+		if ( ! doesIntroductoryOfferHavePriceIncrease( product ) ) {
+			// logic taken from packages/wpcom-checkout/src/checkout-line-items.tsx
+			const originalAmountInteger = product.item_original_subtotal_integer;
+			originalAmountDisplay = formatCurrency( originalAmountInteger, product.currency, {
+				isSmallestUnit: true,
+				stripZeros: true,
+			} );
+			const itemSubtotalInteger = product.item_subtotal_integer;
+			streamlinedActualAmountDisplay = formatCurrency( itemSubtotalInteger, product.currency, {
+				isSmallestUnit: true,
+				stripZeros: true,
+			} );
+			isDiscounted = Boolean(
+				itemSubtotalInteger < originalAmountInteger && originalAmountDisplay
+			);
+		} else {
+			isDiscounted = false;
+			streamlinedActualAmountDisplay = actualAmountDisplay;
+		}
+
 		const StreamlinedSingleProductAndCostOverridesListWrapper = styled(
 			SingleProductAndCostOverridesListWrapper
 		)`
@@ -341,7 +366,10 @@ function SingleProductAndCostOverridesList( { product }: { product: ResponseCart
 				<WPCheckoutCheckIcon />
 				<ProductTitleAreaForCostOverridesList>
 					<span className="cost-overrides-list-product__title">{ label }</span>
-					<LineItemPrice actualAmount={ actualAmountDisplay } />
+					<LineItemPrice
+						actualAmount={ streamlinedActualAmountDisplay }
+						crossedOutAmount={ isDiscounted ? originalAmountDisplay : undefined }
+					/>
 				</ProductTitleAreaForCostOverridesList>
 				<LineItemCostOverrides product={ product } costOverridesList={ costOverridesList } />
 			</StreamlinedSingleProductAndCostOverridesListWrapper>
