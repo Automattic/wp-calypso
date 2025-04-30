@@ -27,8 +27,6 @@ import { normalizeFields } from '../../normalize-fields';
 import type { Action, Field, View, SupportedLayouts } from '../../types';
 import type { SelectionOrUpdater } from '../../private-types';
 
-import type { DataViewsContextType } from '../dataviews-context';
-
 /**
  * External public props
  */
@@ -131,7 +129,7 @@ export default function DataViews< Item >( props: DataViewsProps< Item > ) {
 		( filters || [] ).some( ( filter ) => filter.isPrimary )
 	);
 
-	const contextValue: DataViewsContextType< Item > = {
+	const contextValue = {
 		view: view as View,
 		onChangeView: onChangeView as ( view: View ) => void,
 		fields: _fields,

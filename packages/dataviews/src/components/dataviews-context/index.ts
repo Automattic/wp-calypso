@@ -10,7 +10,7 @@ import type { View, Action, NormalizedField } from '../../types';
 import type { SetSelection } from '../../private-types';
 import { LAYOUT_TABLE } from '../../constants';
 
-export type DataViewsContextType< Item > = {
+type DataViewsContextType< Item > = {
 	view: View;
 	onChangeView: ( view: View ) => void;
 	fields: NormalizedField< Item >[];
