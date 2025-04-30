@@ -9,5 +9,5 @@ export function useStreamlinedPriceExperiment() {
 
 export async function isStreamlinedPriceExperiment() {
 	const assignment = await loadExperimentAssignment( STREAMLINED_PRICE_EXPERIMENT_NAME );
-	return assignment.variationName !== false;
+	return assignment?.variationName !== null;
 }
