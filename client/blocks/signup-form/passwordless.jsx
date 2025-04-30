@@ -8,6 +8,7 @@ import { debounce } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import SignupSubmitButton from 'calypso/blocks/signup-form/signup-submit-button';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import LoggedOutForm from 'calypso/components/logged-out-form';
 import LoggedOutFormFooter from 'calypso/components/logged-out-form/footer';
@@ -312,14 +313,12 @@ class PasswordlessSignupForm extends Component {
 
 		return (
 			<LoggedOutFormFooter>
-				<Button
-					type="submit"
-					primary
-					busy={ isSubmitting }
-					disabled={ isSubmitting || !! this.props.disabled || !! this.props.disableSubmitButton }
+				<SignupSubmitButton
+					isBusy={ isSubmitting }
+					isDisabled={ isSubmitting || !! this.props.disabled || !! this.props.disableSubmitButton }
 				>
 					{ submitButtonText }
-				</Button>
+				</SignupSubmitButton>
 				{ this.props.secondaryFooterButton }
 			</LoggedOutFormFooter>
 		);
