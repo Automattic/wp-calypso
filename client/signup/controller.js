@@ -96,7 +96,9 @@ export default {
 	},
 
 	renderSignup( context, next ) {
-		context.primary = <SignupPage />;
+		context.primary = (
+			<SignupPage initialContext={ { query: context.query, hash: context.hash } } />
+		);
 
 		next();
 	},
