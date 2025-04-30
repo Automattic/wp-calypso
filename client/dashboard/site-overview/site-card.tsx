@@ -62,7 +62,7 @@ export default function SiteCard( {
 				<VStack spacing={ 6 } className="site-card-contents">
 					{ primaryDomain && (
 						<Field title={ __( 'Domain' ) }>
-							<ExternalLink className="break-anywhere" href={ url }>
+							<ExternalLink href={ url } style={ { overflowWrap: 'anywhere' } }>
 								{ primaryDomain.domain }
 							</ExternalLink>
 						</Field>

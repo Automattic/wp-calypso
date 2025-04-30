@@ -28,11 +28,6 @@ body {
 
 a {
 	color: var( --dashboard__link-color );
-
-	// Apply the following styles to prevent overflow.
-	&.break-anywhere {
-		overflow-wrap: anywhere;
-	}
 }
 
 #wpcom {
