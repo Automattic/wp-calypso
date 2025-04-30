@@ -126,7 +126,7 @@ export default ( router ) => {
 	}
 
 	router(
-		[ `/log-in/qr/${ lang }` ],
+		[ `/log-in/qr/${ lang }`, `/log-in/jetpack/qr/${ lang }` ],
 		redirectLoggedIn,
 		setLocaleMiddleware(),
 		setMetaTags,

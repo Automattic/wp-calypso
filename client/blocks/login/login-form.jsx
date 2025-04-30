@@ -676,7 +676,7 @@ export class LoginForm extends Component {
 
 		return getLoginLinkPageUrl( {
 			locale: this.props.locale,
-			twoFactorAuthType: 'qr',
+			twoFactorAuthType: this.props.isJetpack ? 'jetpack/qr' : 'qr',
 			redirectTo: this.props.redirectTo,
 			signupUrl: this.props.currentQuery?.signup_url,
 		} );
