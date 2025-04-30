@@ -798,7 +798,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/dataviews@workspace:packages/dataviews":
+"@automattic/dataviews@workspace:^, @automattic/dataviews@workspace:packages/dataviews":
   version: 0.0.0-use.local
   resolution: "@automattic/dataviews@workspace:packages/dataviews"
   dependencies:
@@ -13428,6 +13428,7 @@ __metadata:
     "@automattic/composite-checkout": "workspace:^"
     "@automattic/create-calypso-config": "workspace:^"
     "@automattic/data-stores": "workspace:^"
+    "@automattic/dataviews": "workspace:^"
     "@automattic/design-picker": "workspace:^"
     "@automattic/design-preview": "workspace:^"
     "@automattic/domain-picker": "workspace:^"

@@ -1,8 +1,8 @@
+import { DataViews, filterSortAndPaginate } from '@automattic/dataviews';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { Button, ExternalLink } from '@wordpress/components';
 import { useResizeObserver } from '@wordpress/compose';
-import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { Icon, check } from '@wordpress/icons';
 import { useState, useMemo } from 'react';
@@ -14,7 +14,7 @@ import SitePreview from '../site-preview';
 import { isA8CSite } from '../utils/site-owner';
 import { STATUS_LABELS, getSiteStatus, getSiteStatusLabel } from '../utils/site-status';
 import type { Site } from '../data/types';
-import type { View, Operator } from '@wordpress/dataviews';
+import type { View, Operator } from '@automattic/dataviews';
 
 const actions = [
 	{

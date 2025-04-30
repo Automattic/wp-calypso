@@ -1,6 +1,6 @@
+import { DataViews, filterSortAndPaginate, View } from '@automattic/dataviews';
 import { useQuery } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
-import { DataViews, filterSortAndPaginate, View } from '@wordpress/dataviews';
 import { dateI18n } from '@wordpress/date';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
