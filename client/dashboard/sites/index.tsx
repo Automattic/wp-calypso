@@ -42,7 +42,7 @@ const DEFAULT_FIELDS = [
 		label: __( 'URL' ),
 		enableGlobalSearch: true,
 		render: ( { item }: { item: Site } ) => (
-			<ExternalLink href={ item.URL } style={ { overflowWrap: 'anywhere' } }>
+			<ExternalLink className="break-anywhere" href={ item.URL }>
 				{ new URL( item.URL ).hostname }
 			</ExternalLink>
 		),
