@@ -466,7 +466,8 @@ const PlansFeaturesMain = ( {
 		( { planSlug } ) => planSlug === PLAN_FREE
 	);
 
-	const [ , streamlinedPriceExperimentAssignment ] = useStreamlinedPriceExperiment();
+	const [ isStreamlinedPriceExperimentLoading, streamlinedPriceExperimentAssignment ] =
+		useStreamlinedPriceExperiment();
 
 	let hidePlanSelector = false;
 	// In the "purchase a plan and free domain" flow we do not want to show
@@ -474,7 +475,7 @@ const PlansFeaturesMain = ( {
 	if (
 		redirectToAddDomainFlow !== undefined ||
 		hidePlanTypeSelector ||
-		( isInSignup && streamlinedPriceExperimentAssignment )
+		( isInSignup && ! isStreamlinedPriceExperimentLoading && streamlinedPriceExperimentAssignment )
 	) {
 		hidePlanSelector = true;
 	}

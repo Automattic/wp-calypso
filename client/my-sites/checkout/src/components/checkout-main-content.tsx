@@ -390,7 +390,8 @@ export default function CheckoutMainContent( {
 
 	const leaveModalProps = useCheckoutLeaveModal( { siteUrl: siteUrl ?? '' } );
 
-	const [ , streamlinedPriceExperimentAssignment ] = useStreamlinedPriceExperiment();
+	const [ isStreamlinedPriceExperimentLoading, streamlinedPriceExperimentAssignment ] =
+		useStreamlinedPriceExperiment();
 
 	const searchParams = new URLSearchParams( window.location.search );
 	const isDIFMInCart = hasDIFMProduct( responseCart );
@@ -627,7 +628,9 @@ export default function CheckoutMainContent( {
 							<WPCheckoutOrderSummary
 								siteId={ siteId }
 								onChangeSelection={ changeSelection }
-								showFeaturesList={ ! streamlinedPriceExperimentAssignment }
+								showFeaturesList={
+									! isStreamlinedPriceExperimentLoading && ! streamlinedPriceExperimentAssignment
+								}
 							/>
 							<CheckoutSidebarNudge
 								addItemToCart={ addItemToCart }
@@ -1246,7 +1249,7 @@ function CheckoutTermsAndCheckboxes( {
 					onChange={ setIs3PDAccountConsentAccepted }
 					isSubmitted={ isSubmitted }
 					message={ translate(
-						'You agree that an account may be created on a third party developer’s site related to the products you have purchased.'
+						"You agree that an account may be created on a third party developer's site related to the products you have purchased."
 					) }
 				/>
 			) }

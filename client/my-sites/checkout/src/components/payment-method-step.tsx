@@ -96,7 +96,8 @@ export default function BeforeSubmitCheckoutHeader() {
 	const creditsLineItem = getCreditsLineItemFromCart( responseCart );
 	const translate = useTranslate();
 
-	const [ , streamlinedPriceExperimentAssignment ] = useStreamlinedPriceExperiment();
+	const [ isStreamlinedPriceExperimentLoading, streamlinedPriceExperimentAssignment ] =
+		useStreamlinedPriceExperiment();
 
 	const totalAdjustments = getTotalDiscountsWithoutCredits( responseCart );
 	const adjustmentLineItem: LineItemType = {
@@ -126,7 +127,7 @@ export default function BeforeSubmitCheckoutHeader() {
 			<CheckoutTermsWrapper>
 				<CheckoutTerms cart={ responseCart } />
 			</CheckoutTermsWrapper>
-			{ ! streamlinedPriceExperimentAssignment && (
+			{ ! isStreamlinedPriceExperimentLoading && ! streamlinedPriceExperimentAssignment && (
 				<WPOrderReviewSection>
 					<NonTotalPrices>
 						<NonProductLineItem subtotal lineItem={ subTotalLineItemWithoutCoupon } />
