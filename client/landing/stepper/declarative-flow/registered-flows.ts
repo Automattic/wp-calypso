@@ -14,6 +14,7 @@ import {
 	HUNDRED_YEAR_DOMAIN_FLOW,
 	EXAMPLE_FLOW,
 	AI_SITE_BUILDER_FLOW,
+	LAUNCH_SITE_FLOW,
 } from '@automattic/onboarding';
 import type { Flow } from '../declarative-flow/internals/types';
 
@@ -23,6 +24,9 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 
 	'copy-site': () =>
 		import( /* webpackChunkName: "copy-site-flow" */ './flows/copy-site/copy-site' ),
+
+	[ LAUNCH_SITE_FLOW ]: () =>
+		import( /* webpackChunkName: "launch-site-flow" */ './flows/launch-site/launch-site' ),
 
 	newsletter: () =>
 		import( /* webpackChunkName: "newsletter-flow" */ './flows/newsletter/newsletter' ),

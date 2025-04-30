@@ -13,7 +13,7 @@ export const WRITE_FLOW = 'write';
 export const START_WRITING_FLOW = 'start-writing';
 export const SITE_SETUP_FLOW = 'site-setup';
 export const WITH_THEME_FLOW = 'with-theme';
-
+export const LAUNCH_SITE_FLOW = 'launch-site';
 export const READYMADE_TEMPLATE_FLOW = 'readymade-template';
 
 export const UPDATE_DESIGN_FLOW = 'update-design';
@@ -67,6 +67,10 @@ export const isAnyHostingFlow = ( flowName?: string | null ) => {
 
 export const isCopySiteFlow = ( flowName: string | null ) => {
 	return Boolean( flowName && [ COPY_SITE_FLOW ].includes( flowName ) );
+};
+
+export const isLaunchSiteFlow = ( flowName: string ) => {
+	return flowName === LAUNCH_SITE_FLOW;
 };
 
 export const isEntrepreneurFlow = ( flowName: string | null ) => {

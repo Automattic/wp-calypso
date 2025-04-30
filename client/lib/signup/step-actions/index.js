@@ -803,13 +803,8 @@ function addPrivacyProtectionIfSupported( item, state ) {
 	return item;
 }
 
-export function launchSiteApi( callback, dependencies ) {
-	const { siteSlug } = dependencies;
-
-	wpcom.req
-		.post( `/sites/${ siteSlug }/launch` )
-		.then( () => callback( null ) )
-		.catch( ( error ) => callback( error ) );
+export function launchSiteApi( { siteSlug } ) {
+	return wpcom.req.post( `/sites/${ siteSlug }/launch` );
 }
 
 export function createAccount(
