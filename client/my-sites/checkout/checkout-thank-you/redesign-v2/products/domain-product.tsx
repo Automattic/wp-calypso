@@ -1,6 +1,7 @@
 import { isDomainMapping, isDomainTransfer } from '@automattic/calypso-products';
 import { Button } from '@wordpress/components';
 import { formatCurrency, useTranslate } from 'i18n-calypso';
+import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import ThankYouProduct from 'calypso/components/thank-you-v2/product';
 import {
@@ -57,6 +58,33 @@ export default function ThankYouDomainProduct( {
 
 	domainName ??= purchase?.meta;
 
+	function isFromGravatarPopup() {
+		if ( ! window.opener || window.opener.closed ) {
+			return false;
+		}
+
+		const gravatarOriginRegex = /^https:\/\/(?:[a-z]+(?:-[a-z]+)*\.)?gravatar\.com\/?$/;
+
+		return gravatarOriginRegex.test( window.name || '' );
+	}
+
+	// Gravatar: Send a message to notify the parent window that the domain claim is completed.
+	useEffect( () => {
+		if ( ! domainName || ! isGravatarDomain || ! isFromGravatarPopup() ) {
+			return;
+		}
+
+		const parentOrigin = window.name;
+
+		try {
+			// Send a message to the opener window to indicate that the domain claim is completed.
+			window.opener.postMessage( { type: 'DOMAIN_CLAIM_COMPLETED', domainName }, parentOrigin );
+		} catch ( error ) {
+			// eslint-disable-next-line no-console
+			console.error( 'Error sending message to parent window: ', error );
+		}
+	}, [ domainName, isGravatarDomain ] );
+
 	// Do not proceed if a domain is not specified by domain name or a purchase object.
 	if ( ! domainName ) {
 		return null;
@@ -72,6 +100,15 @@ export default function ThankYouDomainProduct( {
 				{ translate( 'Return to Gravatar' ) }
 			</Button>
 		);
+
+		// If the page is opened from the Gravatar popup, use a close button instead of a link.
+		if ( isFromGravatarPopup() ) {
+			actions = (
+				<Button variant="primary" onClick={ () => window.close() }>
+					{ translate( 'Close' ) }
+				</Button>
+			);
+		}
 	} else if ( purchase?.blogId && siteSlug ) {
 		const createSiteHref = siteSlug && createSiteFromDomainOnly( siteSlug, purchase.blogId );
 		const createSiteProps = createSiteHref ? { href: createSiteHref } : { disabled: true };
