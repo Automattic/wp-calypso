@@ -121,28 +121,12 @@ const CancelPurchaseDomainOptions = ( {
 		</div>
 	);
 
-	const IncludedDomainTransferPartialRefund = () => (
-		<p>
-			{ translate(
-				'You will receive a partial refund of %(refundAmount)s which is %(planCost)s for the plan ' +
-					'minus %(domainCost)s for the domain.',
-				{
-					args: {
-						domainCost: includedDomainTransfer.priceText,
-						planCost: planCostText,
-						refundAmount: purchase.refundText,
-					},
-				}
-			) }
-		</p>
-	);
-
-	const NonRefundableDomainTransferMessage = () => (
+	const DomainTransferMessage = () => (
 		<div>
 			<p>
 				{ translate(
 					'This plan includes a domain transfer, %(domain)s, normally a %(domainCost)s purchase. ' +
-						'The domain transfer will not be removed along with the plan, to avoid any interruptions for your visitors.',
+						'The domain will not be removed along with the plan, to avoid any interruptions for your visitors.',
 					{
 						args: {
 							domain: includedDomainTransfer.meta,
@@ -151,27 +135,17 @@ const CancelPurchaseDomainOptions = ( {
 					}
 				) }
 			</p>
-			<IncludedDomainTransferPartialRefund />
-		</div>
-	);
-
-	const CancelableDomainTransferMessage = () => (
-		<div>
 			<p>
 				{ translate(
-					'It seems you have a pending domain transfer for the domain %(mappedDomain)s. ' +
-						'In order to receive a full refund, please cancel the domain transfer before requesting the cancellation of your plan.',
+					'You will receive a partial refund of %(refundAmount)s which is %(planCost)s for the plan ' +
+						'minus %(domainCost)s for the domain.',
 					{
 						args: {
-							mappedDomain: includedDomainTransfer.meta,
+							domainCost: includedDomainTransfer.priceText,
+							planCost: planCostText,
+							refundAmount: purchase.refundText,
 						},
 					}
-				) }
-			</p>
-			<IncludedDomainTransferPartialRefund />
-			<p>
-				{ translate(
-					'In some cases, a domain transfer has progressed too far to be canceled. Please contact support if you have questions about this'
 				) }
 			</p>
 		</div>
@@ -208,11 +182,7 @@ const CancelPurchaseDomainOptions = ( {
 	);
 
 	if ( includedDomainTransfer && isDomainTransfer( includedDomainTransfer ) ) {
-		if ( ! isRefundable( purchase ) ) {
-			return <NonRefundableDomainTransferMessage />;
-		}
-
-		return <CancelableDomainTransferMessage />;
+		return <DomainTransferMessage />;
 	}
 
 	if (
