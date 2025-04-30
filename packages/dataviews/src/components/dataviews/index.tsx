@@ -58,14 +58,14 @@ export type DataViewsControlledProps< Item > = {
 	? { getItemId?: ( item: Item ) => string }
 	: { getItemId: ( item: Item ) => string } );
 
-export type DataViewsWithChildren< Item > = {
+export type DataViewsCompositionProps< Item > = {
 	children: ReactNode;
 	data?: Item[];
 } & Partial< Omit< DataViewsControlledProps< Item >, 'children' | 'data' > >;
 
 export type DataViewsProps< Item > =
 	| DataViewsControlledProps< Item >
-	| DataViewsWithChildren< Item >;
+	| DataViewsCompositionProps< Item >;
 
 const defaultGetItemId = ( item: ItemWithId ) => item.id;
 const defaultIsItemClickable = () => true;
@@ -92,7 +92,7 @@ export default function DataViews< Item >( props: DataViewsProps< Item > ) {
 		defaultLayouts,
 		children,
 	} = props as DataViewsControlledProps< Item > &
-		DataViewsWithChildren< Item >;
+		DataViewsCompositionProps< Item >;
 
 	const [ containerWidth, setContainerWidth ] = useState( 0 );
 	const containerRef = useResizeObserver(
