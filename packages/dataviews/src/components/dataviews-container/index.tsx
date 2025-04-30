@@ -4,17 +4,32 @@
 import type { ReactNode } from 'react';
 
 /**
- * WordPress dependencies
- */
-import { createElement } from '@wordpress/element';
-
-/**
  * Internal dependencies
  */
 import DataViewsContext, { type DataViewsContextType } from '../dataviews-context';
 import type { DataViewsProps } from '../dataviews';
 import { LAYOUT_TABLE } from '../../constants';
+import { SupportedLayouts, Field, View } from '../../types';
 
+type DataViewsContainerProps< Item > = Omit<
+	DataViewsProps< Item >,
+	| 'header'
+	| 'view'
+	| 'fields'
+	| 'paginationInfo'
+	| 'onChangeView'
+	| 'defaultLayouts'
+> & {
+	children: ReactNode;
+	view?: View;
+	fields?: Field< Item >[];
+	paginationInfo?: {
+		totalItems: number;
+		totalPages: number;
+	};
+	defaultLayouts?: SupportedLayouts;
+	onChangeView?: ( view: View ) => void;
+};
 
 /**
  * Default value for DataViewsContext.
@@ -40,26 +55,11 @@ export const DEFAULT_DATAVIEWS_CONTEXT_VALUE: DataViewsContextType< any > = {
 	containerWidth: 0,
 };
 
-/**
- * DataViewsProviderProps:
- * Requires `data` and `children`. All other props from DataViewsProps are optional,
- * except for `header`, `search`, and `searchLabel`, which are intentionally omitted.
- */
-type DataViewsProviderProps< Item > = Pick< DataViewsProps< Item >, 'data' > &
-	Partial<
-		Omit<
-			DataViewsProps< Item >,
-			'header' | 'search' | 'searchLabel' | 'data'
-		>
-	> & {
-		children: ReactNode;
-	};
-
-const DataViewsProvider = < Item, >( {
+const DataViewsContainer = < Item, >( {
 	data,
 	children,
 	...contextProps
-}: DataViewsProviderProps< Item > ) => {
+}: DataViewsContainerProps< Item > ) => {
 	const contextValue = {
 		...DEFAULT_DATAVIEWS_CONTEXT_VALUE,
 		...contextProps,
@@ -73,4 +73,4 @@ const DataViewsProvider = < Item, >( {
 	);
 };
 
-export default DataViewsProvider;
+export default DataViewsContainer;

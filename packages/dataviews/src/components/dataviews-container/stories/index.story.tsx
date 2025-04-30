@@ -1,7 +1,7 @@
 /**
  * WordPress dependencies
  */
-import { createInterpolateElement } from '@wordpress/element';
+import { createInterpolateElement, useMemo } from '@wordpress/element';
 import {
 	Card,
 	CardHeader,
@@ -15,12 +15,13 @@ import { __, _n } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
-import DataViewsProvider from '../index';
-import { data, type SpaceObject } from '../../dataviews/stories/fixtures';
+import DataViewsContainer from '../index';
+import { data, DEFAULT_VIEW, fields, type SpaceObject } from '../../dataviews/stories/fixtures';
+import { filterSortAndPaginate } from '../../..';
 
 const meta = {
-	title: 'DataViews/DataViewsProvider',
-	component: null,
+	title: 'DataViews/DataViewsContainer',
+	component: DataViewsContainer,
 };
 
 export default meta;
@@ -28,10 +29,7 @@ export default meta;
 /**
  * Custom composition example
  */
-function PlanetOverview( { data }: { data: SpaceObject[] } ) {
-	const planets = data.filter( ( item ) =>
-		item.categories.includes( 'Planet' )
-	);
+function PlanetOverview( { planets }: { planets: SpaceObject[] } ) {
 	const moons = planets.reduce( ( sum, item ) => sum + item.satellites, 0 );
 
 	return (
@@ -74,11 +72,21 @@ function PlanetOverview( { data }: { data: SpaceObject[] } ) {
 		</Card>
 	);
 }
-
 export const FreeComposition = () => {
+	const { data: shownData } = useMemo( () => {
+		return filterSortAndPaginate( data, DEFAULT_VIEW, fields );
+	}, [] );
+
+	const planets = shownData.filter( ( item ) =>
+		item.categories.includes( 'Planet' )
+	);
+
 	return (
-		<DataViewsProvider< SpaceObject > data={ data }>
-			<PlanetOverview data={ data } />
-		</DataViewsProvider>
+		<DataViewsContainer
+			data={ shownData }
+			getItemId={ ( item ) => item.id.toString() }
+		>
+			<PlanetOverview planets={ planets } />
+		</DataViewsContainer>
 	);
 };

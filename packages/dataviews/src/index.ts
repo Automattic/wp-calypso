@@ -1,4 +1,5 @@
 export { default as DataViews } from './components/dataviews';
+export { default as DataViewsContainer } from './components/dataviews-container';
 export { default as DataForm } from './components/dataform';
 export { VIEW_LAYOUTS } from './dataviews-layouts';
 export { filterSortAndPaginate } from './filter-and-sort-data-view';
