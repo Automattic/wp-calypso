@@ -114,32 +114,43 @@ export default function DataViews< Item >( {
 		( filters || [] ).some( ( filter ) => filter.isPrimary )
 	);
 
-	if ( children ) {
-		return (
-			<DataViewsContext.Provider
-				value={ {
-					view,
-					onChangeView,
-					fields: _fields,
-					actions,
-					data,
-					isLoading,
-					paginationInfo,
-					selection: _selection,
-					onChangeSelection: setSelectionWithChange,
-					openedFilter,
-					setOpenedFilter,
-					getItemId,
-					getItemLevel,
-					isItemClickable,
-					onClickItem,
-					containerWidth,
-				} }
+	const defaultUI = (
+		<div className="dataviews-wrapper" ref={ containerRef }>
+			<HStack
+				alignment="top"
+				justify="space-between"
+				className="dataviews__view-actions"
+				spacing={ 1 }
 			>
-				{ children }
-			</DataViewsContext.Provider>
-		);
-	}
+				<HStack
+					justify="start"
+					expanded={ false }
+					className="dataviews__search"
+				>
+					{ search && <DataViewsSearch label={ searchLabel } /> }
+					<FiltersToggle
+						filters={ filters }
+						view={ view! }
+						onChangeView={ onChangeView! }
+						setOpenedFilter={ setOpenedFilter }
+						setIsShowingFilter={ setIsShowingFilter }
+						isShowingFilter={ isShowingFilter }
+					/>
+				</HStack>
+				<HStack
+					spacing={ 1 }
+					expanded={ false }
+					style={ { flexShrink: 0 } }
+				>
+					<DataViewsViewConfig defaultLayouts={ defaultLayouts! } />
+					{ header }
+				</HStack>
+			</HStack>
+			{ isShowingFilter && <DataViewsFilters /> }
+			<DataViewsLayout />
+			<DataViewsFooter />
+		</div>
+	);
 
 	return (
 		<DataViewsContext.Provider
@@ -162,43 +173,7 @@ export default function DataViews< Item >( {
 				containerWidth,
 			} }
 		>
-			<div className="dataviews-wrapper" ref={ containerRef }>
-				<HStack
-					alignment="top"
-					justify="space-between"
-					className="dataviews__view-actions"
-					spacing={ 1 }
-				>
-					<HStack
-						justify="start"
-						expanded={ false }
-						className="dataviews__search"
-					>
-						{ search && <DataViewsSearch label={ searchLabel } /> }
-						<FiltersToggle
-							filters={ filters }
-							view={ view! }
-							onChangeView={ onChangeView! }
-							setOpenedFilter={ setOpenedFilter }
-							setIsShowingFilter={ setIsShowingFilter }
-							isShowingFilter={ isShowingFilter }
-						/>
-					</HStack>
-					<HStack
-						spacing={ 1 }
-						expanded={ false }
-						style={ { flexShrink: 0 } }
-					>
-						<DataViewsViewConfig
-							defaultLayouts={ defaultLayouts! }
-						/>
-						{ header }
-					</HStack>
-				</HStack>
-				{ isShowingFilter && <DataViewsFilters /> }
-				<DataViewsLayout />
-				<DataViewsFooter />
-			</div>
+			{ children || defaultUI }
 		</DataViewsContext.Provider>
 	);
 }
