@@ -218,7 +218,8 @@
 			}
 		}
 
-		.section-nav-tab {
+		// Increase specificity to override base styles
+		.section-nav-tab.section-nav-tab {
 			border: none;
 			flex: 0 0 auto; // Don't grow to fill space
 
@@ -228,8 +229,8 @@
 
 			.section-nav-tab__link {
 				padding: 16px;
-				color: #1E1E1E;
-				border-bottom: 1.5px solid transparent; // Always have 2px border to stop text from moving
+				color: var(--theme-base-color);
+				border-bottom: 2px solid transparent; // Always have 2px border to stop text from moving
 				font-size: $font-body-small;
 				line-height: 20px;
 				font-weight: 500;
@@ -240,7 +241,7 @@
 			}
 
 			&:not(.is-selected):hover .section-nav-tab__link {
-				border-bottom-color: #d5dffa;
+				border-bottom-color: var(--color-primary-0);
 			}
 		}
 	}
