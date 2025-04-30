@@ -2,6 +2,9 @@ import PropTypes from 'prop-types';
 
 import './style.scss';
 
+// TODO: Consolidate all existing usage. Though, the main `WordPressLogo` component needs
+// an overhaul of its styles/props, so we should probably do that first.
+
 /**
  * @deprecated Use `WordPressLogo` from `@automattic/components` instead.
  */
