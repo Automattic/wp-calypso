@@ -1,7 +1,8 @@
 import { SegmentedControl } from '@automattic/components';
+import { formatNumber } from '@automattic/number-formatters';
 import { Icon, external } from '@wordpress/icons';
 import clsx from 'clsx';
-import { useTranslate, numberFormat } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
 import { useState, FunctionComponent } from 'react';
 import useReferrersQuery from '../hooks/use-referrers-query';
@@ -65,7 +66,7 @@ const ItemWrapper: FunctionComponent< ItemWrapperProps > = ( {
 			<span>
 				{ translate( '%(views)s Views', {
 					args: {
-						views: numberFormat( item.views ),
+						views: formatNumber( item.views ),
 					},
 				} ) }
 			</span>

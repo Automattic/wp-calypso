@@ -8,7 +8,8 @@ import {
 	isEcommerce,
 	isPro,
 } from '@automattic/calypso-products';
-import { formatCurrency, LocalizeProps, useTranslate, TranslateResult } from 'i18n-calypso';
+import { formatCurrency } from '@automattic/number-formatters';
+import { LocalizeProps, useTranslate, TranslateResult } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'calypso/state';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';

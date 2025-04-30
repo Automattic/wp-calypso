@@ -210,7 +210,6 @@ const StatsModuleDevices: React.FC< StatsModuleDevicesProps > = ( {
 						}
 					/>
 				) }
-
 			{ ! showLoader && !! data?.length && (
 				<>
 					{

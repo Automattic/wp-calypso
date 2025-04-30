@@ -1,6 +1,7 @@
+import { formatNumber } from '@automattic/number-formatters';
 import { NextButton } from '@automattic/onboarding';
 import { Icon, loop, backup, shield } from '@wordpress/icons';
-import { numberFormat, useTranslate, type TranslateResult } from 'i18n-calypso';
+import { useTranslate, type TranslateResult } from 'i18n-calypso';
 
 interface AuthorizationBenefitsItem {
 	icon: React.ReactElement;
@@ -68,7 +69,7 @@ const Authorization = ( { onShareCredentialsClick, onAuthorizationClick }: Autho
 								'Unmatched reliability with %(uptimePercent)s uptime and unmetered traffic.',
 								{
 									args: {
-										uptimePercent: numberFormat( 0.99999, {
+										uptimePercent: formatNumber( 0.99999, {
 											numberFormatOptions: { style: 'percent', maximumFractionDigits: 3 },
 										} ),
 									},

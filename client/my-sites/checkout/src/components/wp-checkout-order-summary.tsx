@@ -27,6 +27,7 @@ import {
 import { Gridicon } from '@automattic/components';
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
+import { formatCurrency } from '@automattic/number-formatters';
 import { isNewsletterFlow, isAnyHostingFlow } from '@automattic/onboarding';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import {
@@ -38,7 +39,7 @@ import {
 import { keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Icon, reusableBlock } from '@wordpress/icons';
-import { formatCurrency, useTranslate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import * as React from 'react';
 import { hasFreeCouponTransfersOnly } from 'calypso/lib/cart-values/cart-items';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
@@ -670,7 +671,6 @@ function CheckoutSummaryAkismetProductFeatures( { product }: { product: Response
 					</CheckoutSummaryFeaturesListItem>
 				);
 			} ) }
-
 			{ yearlySavingsPercentage > 0 && (
 				<CheckoutSummaryFeaturesListItem>
 					<WPCheckoutCheckIcon />

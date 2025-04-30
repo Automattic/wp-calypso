@@ -68,7 +68,6 @@ const jetpackConnection = ( WrappedComponent ) => {
 
 		/**
 		 * Check if there is a history of pages to go back to
-		 *
 		 * @returns {boolean}
 		 */
 		canGoBack = () => {

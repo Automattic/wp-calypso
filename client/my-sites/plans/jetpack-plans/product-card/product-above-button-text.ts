@@ -1,5 +1,6 @@
 import { JETPACK_SEARCH_PRODUCTS } from '@automattic/calypso-products';
-import { numberFormat, translate, TranslateResult } from 'i18n-calypso';
+import { formatNumber } from '@automattic/number-formatters';
+import { translate, TranslateResult } from 'i18n-calypso';
 import { SelectorProduct, SiteProduct } from 'calypso/my-sites/plans/jetpack-plans/types';
 
 export default function productAboveButtonText(
@@ -18,7 +19,7 @@ export default function productAboveButtonText(
 			'*estimated price based on %(records_and_or_requests)s records and/or monthly requests',
 			{
 				args: {
-					records_and_or_requests: numberFormat( siteProduct.tierUsage ),
+					records_and_or_requests: formatNumber( siteProduct.tierUsage ),
 				},
 				comment:
 					'records_and_or_requests = number of records (posts, pages, etc) in a site or monthly search requests (whichever is greater)',

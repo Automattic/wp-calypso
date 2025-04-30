@@ -1,7 +1,8 @@
 import { Button, WooLogo } from '@automattic/components';
 import NoticeBanner from '@automattic/components/src/notice-banner';
+import { formatNumber } from '@automattic/number-formatters';
 import { reusableBlock } from '@wordpress/icons';
-import { numberFormat, useTranslate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo, useState, useEffect } from 'react';
 import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
 import {
@@ -143,13 +144,12 @@ export default function LayoutBodyContent( {
 				{ translate( 'Recommend our products.' ) } <br />
 				{ translate( 'Earn up to a %(commissionPercent)s commission.', {
 					args: {
-						commissionPercent: numberFormat( 0.5, {
+						commissionPercent: formatNumber( 0.5, {
 							numberFormatOptions: { style: 'percent' },
 						} ),
 					},
 				} ) }
 			</div>
-
 			<div className="referrals-overview__section-subtitle">
 				{ translate(
 					'Make money when your clients buy Automattic products, hosting, or use WooPayments. No promo codes{{nbsp/}}needed.',

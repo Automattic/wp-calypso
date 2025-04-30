@@ -1,4 +1,5 @@
-import { translate, useTranslate, getLocaleSlug, numberFormat } from 'i18n-calypso';
+import { formatNumber } from '@automattic/number-formatters';
+import { translate, useTranslate, getLocaleSlug } from 'i18n-calypso';
 import { useCallback, useMemo } from 'react';
 import {
 	PRODUCT_JETPACK_ANTI_SPAM_BI_YEARLY,
@@ -1105,7 +1106,7 @@ export const getJetpackProductsLightboxDescription = (): Record< string, Transla
 		'Print USPS and DHL labels right from the WooCommerce desktop and save up to %(discountPercent)s instantly. WooCommerce Shipping is free and saves you time and money.',
 		{
 			args: {
-				discountPercent: numberFormat( 0.9, {
+				discountPercent: formatNumber( 0.9, {
 					numberFormatOptions: { style: 'percent' },
 				} ),
 			},
@@ -1341,7 +1342,7 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 		translate( 'Priority support' ),
 		translate( '%(transactionFee)s transaction fees', {
 			args: {
-				transactionFee: numberFormat( 0.02, {
+				transactionFee: formatNumber( 0.02, {
 					numberFormatOptions: { style: 'percent' },
 				} ),
 			},
@@ -2016,7 +2017,7 @@ export const getJetpackProductsBenefits = (): Record< string, Array< TranslateRe
 		translate( 'Unlimited email sends' ),
 		translate( 'AutomateWoo is %(extentablePercent)s extendable', {
 			args: {
-				extentablePercent: numberFormat( 1, {
+				extentablePercent: formatNumber( 1, {
 					numberFormatOptions: { style: 'percent' },
 				} ),
 			},
@@ -2662,7 +2663,7 @@ export const getJetpackPlansAlsoIncludedFeatures = (): Record<
 		translate( 'Priority support' ),
 		translate( '%(transactionFee)s transaction fees', {
 			args: {
-				transactionFee: numberFormat( 0.02, {
+				transactionFee: formatNumber( 0.02, {
 					numberFormatOptions: { style: 'percent' },
 				} ),
 			},
