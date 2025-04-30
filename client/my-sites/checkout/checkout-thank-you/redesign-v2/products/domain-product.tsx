@@ -59,7 +59,7 @@ export default function ThankYouDomainProduct( {
 
 	domainName ??= purchase?.meta;
 
-	function isFromGravatarPopup() {
+	function isInGravatarPopup() {
 		if ( ! window.opener || window.opener.closed ) {
 			return false;
 		}
@@ -71,7 +71,7 @@ export default function ThankYouDomainProduct( {
 
 	// Gravatar: Send a message to notify the parent window that the domain claim is completed.
 	useEffect( () => {
-		if ( ! domainName || ! isGravatarDomain || ! isFromGravatarPopup() ) {
+		if ( ! domainName || ! isGravatarDomain || ! isInGravatarPopup() ) {
 			return;
 		}
 
@@ -102,8 +102,8 @@ export default function ThankYouDomainProduct( {
 			</Button>
 		);
 
-		// If the page is opened from the Gravatar popup, use a close button instead of a link.
-		if ( isFromGravatarPopup() ) {
+		// If the page is opened in Gravatar popup, we need to close the popup after the user clicks the button.
+		if ( isInGravatarPopup() ) {
 			actions = (
 				<Button variant="primary" onClick={ () => window.close() }>
 					{ translate( 'Close' ) }
