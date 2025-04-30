@@ -487,7 +487,7 @@ class Account extends Component {
 		}
 
 		if ( isAutomattician ) {
-			return <span>{ translate( 'Automatticians cannot change their username' ) }</span>;
+			return <span>{ translate( 'Automatticians cannot change their username.' ) }</span>;
 		}
 
 		return this.renderJoinDate();
