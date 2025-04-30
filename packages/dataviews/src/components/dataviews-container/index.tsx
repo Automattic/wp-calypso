@@ -6,30 +6,39 @@ import type { ReactNode } from 'react';
 /**
  * Internal dependencies
  */
-import DataViewsContext, { type DataViewsContextType } from '../dataviews-context';
-import type { DataViewsProps } from '../dataviews';
+import DataViewsContext, {
+	type DataViewsContextType,
+} from '../dataviews-context';
 import { LAYOUT_TABLE } from '../../constants';
-import { SupportedLayouts, Field, View } from '../../types';
+import type { SupportedLayouts, Field, View, Action } from '../../types';
 
-type DataViewsContainerProps< Item > = Omit<
-	DataViewsProps< Item >,
-	| 'header'
-	| 'view'
-	| 'fields'
-	| 'paginationInfo'
-	| 'onChangeView'
-	| 'defaultLayouts'
-> & {
+type ItemWithId = { id: string };
+
+type DataViewsContainerProps< Item > = {
+	data: Item[];
 	children: ReactNode;
+
 	view?: View;
+	onChangeView?: ( view: View ) => void;
 	fields?: Field< Item >[];
+	search?: boolean;
+	searchLabel?: string;
+	actions?: Action< Item >[];
+	isLoading?: boolean;
 	paginationInfo?: {
 		totalItems: number;
 		totalPages: number;
 	};
 	defaultLayouts?: SupportedLayouts;
-	onChangeView?: ( view: View ) => void;
-};
+	selection?: string[];
+	onChangeSelection?: ( items: string[] ) => void;
+	onClickItem?: ( item: Item ) => void;
+	isItemClickable?: ( item: Item ) => boolean;
+	header?: ReactNode;
+	getItemLevel?: ( item: Item ) => number;
+} & ( Item extends ItemWithId
+	? { getItemId?: ( item: Item ) => string }
+	: { getItemId: ( item: Item ) => string } );
 
 /**
  * Default value for DataViewsContext.

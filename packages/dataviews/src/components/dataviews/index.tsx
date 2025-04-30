@@ -29,7 +29,7 @@ import type { SelectionOrUpdater } from '../../private-types';
 
 type ItemWithId = { id: string };
 
-export type DataViewsProps< Item > = {
+type DataViewsProps< Item > = {
 	view: View;
 	onChangeView: ( view: View ) => void;
 	fields: Field< Item >[];
