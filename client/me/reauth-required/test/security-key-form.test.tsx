@@ -10,7 +10,6 @@ describe( 'SecurityKeyForm', () => {
 	const translate = ( str: string ) => str;
 	const loginUserWithSecurityKey = jest.fn();
 	const fetch = jest.fn();
-	const onComplete = jest.fn();
 
 	const setup = () =>
 		render(
@@ -20,7 +19,6 @@ describe( 'SecurityKeyForm', () => {
 					fetch,
 				} }
 				translate={ translate }
-				onComplete={ onComplete }
 				currentUserId={ currentUserId }
 			/>
 		);
