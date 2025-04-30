@@ -1502,6 +1502,17 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@automattic/number-formatters@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "@automattic/number-formatters@npm:1.0.0"
+  dependencies:
+    "@wordpress/date": "npm:^5.19.0"
+    debug: "npm:^4.4.0"
+    tslib: "npm:^2.5.0"
+  checksum: f591460cf08ff24434235fa797634620904a935bf2f31ab3a6b3bfa76e827168e09e698d8f774cf1c2689be31fa0be980646cece4052da630652503269a91b6c
+  languageName: node
+  linkType: hard
+
 "@automattic/o2-blocks@workspace:apps/o2-blocks":
   version: 0.0.0-use.local
   resolution: "@automattic/o2-blocks@workspace:apps/o2-blocks"
@@ -35373,6 +35384,7 @@ __metadata:
     "@automattic/i18n-utils": "workspace:^"
     "@automattic/languages": "workspace:^"
     "@automattic/launchpad": "workspace:^"
+    "@automattic/number-formatters": "npm:^1.0.0"
     "@automattic/plans-grid-next": "workspace:^"
     "@automattic/privacy-toolset": "workspace:^"
     "@automattic/typography": "workspace:^"
