@@ -325,11 +325,11 @@ function SingleProductAndCostOverridesList( { product }: { product: ResponseCart
 	);
 	const [ , streamlinedPriceExperimentAssignment ] = useStreamlinedPriceExperiment();
 	if ( streamlinedPriceExperimentAssignment ) {
-		const StreamlinedSingleProductAndCostOverridesListWrapper = styled.div`
-			margin-bottom: 4px;
+		const StreamlinedSingleProductAndCostOverridesListWrapper = styled(
+			SingleProductAndCostOverridesListWrapper
+		)`
 			padding-left: 24px;
 			position: relative;
-			overflow-wrap: break-word;
 
 			.rtl & {
 				padding-right: 24px;
@@ -369,6 +369,7 @@ export function CouponCostOverride( {
 	const { formStatus } = useFormStatus();
 	const isDisabled = formStatus !== FormStatus.READY;
 	const isOnboardingAffiliateFlow = useSelector( getIsOnboardingAffiliateFlow );
+	const [ , streamlinedPriceExperimentAssignment ] = useStreamlinedPriceExperiment();
 
 	if ( ! responseCart.coupon || ! responseCart.coupon_savings_total_integer ) {
 		return null;
@@ -380,6 +381,47 @@ export function CouponCostOverride( {
 	} );
 
 	const label = isOnboardingAffiliateFlow ? getAffiliateCouponLabel() : couponLabel;
+
+	if ( streamlinedPriceExperimentAssignment ) {
+		const StreamlinedCostOverridesListStyle = styled( CostOverridesListStyle )`
+			padding-left: 24px;
+			position: relative;
+
+			.rtl & {
+				padding-right: 24px;
+				padding-left: 0;
+			}
+		`;
+		return (
+			<StreamlinedCostOverridesListStyle>
+				<WPCheckoutCheckIcon />
+				<div className="cost-overrides-list-item cost-overrides-list-item--coupon">
+					<span className="cost-overrides-list-item__reason cost-overrides-list-item__reason--is-discount">
+						{ label }
+					</span>
+					<span className="cost-overrides-list-item__discount">
+						{ formatCurrency( -responseCart.coupon_savings_total_integer, responseCart.currency, {
+							isSmallestUnit: true,
+						} ) }
+					</span>
+				</div>
+				{ removeCoupon && (
+					<span className="cost-overrides-list-item__actions">
+						<DeleteButton
+							buttonType="text-button"
+							disabled={ isDisabled }
+							className="cost-overrides-list-item__actions-remove"
+							onClick={ removeCoupon }
+							aria-label={ translate( 'Remove coupon' ) }
+						>
+							{ translate( 'Remove' ) }
+						</DeleteButton>
+					</span>
+				) }
+			</StreamlinedCostOverridesListStyle>
+		);
+	}
+
 	return (
 		<CostOverridesListStyle>
 			<div className="cost-overrides-list-item cost-overrides-list-item--coupon">
