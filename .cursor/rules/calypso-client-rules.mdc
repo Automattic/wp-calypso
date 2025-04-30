@@ -88,4 +88,6 @@ Remember: Always prioritize WordPress coding standards and best practices while 
 - When testing components using `@testing-library`, use query functions (`getBy*`, etc.) from the return value of `render`, not from the `screen` import.
 - Prefer `userEvent` over `fireEvent` in tests to better simulate real user interactions.
 
+## Main branch name
 
+The main branch name is `trunk`.
