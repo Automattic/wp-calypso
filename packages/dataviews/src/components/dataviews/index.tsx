@@ -25,7 +25,7 @@ import DataViewsSearch from '../dataviews-search';
 import DataViewsViewConfig from '../dataviews-view-config';
 import { normalizeFields } from '../../normalize-fields';
 import type { Action, Field, View, SupportedLayouts } from '../../types';
-import type { SelectionOrUpdater } from '../../private-types';
+import type { SelectionOrUpdater, SetSelection } from '../../private-types';
 
 type ItemWithId = { id: string };
 
@@ -44,7 +44,7 @@ type DataViewsProps< Item > = {
 	};
 	defaultLayouts?: SupportedLayouts;
 	selection?: string[];
-	onChangeSelection?: ( items: string[] ) => void;
+	onChangeSelection?: SetSelection;
 	onClickItem?: ( item: Item ) => void;
 	isItemClickable?: ( item: Item ) => boolean;
 	header?: ReactNode;
@@ -114,38 +114,54 @@ export default function DataViews< Item >( {
 		( filters || [] ).some( ( filter ) => filter.isPrimary )
 	);
 
-	const contextValue = {
-		view: view as View,
-		onChangeView: onChangeView as ( view: View ) => void,
-		fields: _fields,
-		actions,
-		data: ( data || [] ) as Item[],
-		isLoading,
-		paginationInfo: paginationInfo || {
-			totalItems: 0,
-			totalPages: 0,
-		},
-		selection: _selection,
-		onChangeSelection: setSelectionWithChange,
-		openedFilter,
-		setOpenedFilter,
-		getItemId: getItemId as ( item: Item ) => string,
-		getItemLevel,
-		isItemClickable,
-		onClickItem,
-		containerWidth,
-	};
-
 	if ( children ) {
 		return (
-			<DataViewsContext.Provider value={ contextValue }>
+			<DataViewsContext.Provider
+				value={ {
+					view,
+					onChangeView,
+					fields: _fields,
+					actions,
+					data,
+					isLoading,
+					paginationInfo,
+					selection: _selection,
+					onChangeSelection: setSelectionWithChange,
+					openedFilter,
+					setOpenedFilter,
+					getItemId,
+					getItemLevel,
+					isItemClickable,
+					onClickItem,
+					containerWidth,
+				} }
+			>
 				{ children }
 			</DataViewsContext.Provider>
 		);
 	}
 
 	return (
-		<DataViewsContext.Provider value={ contextValue }>
+		<DataViewsContext.Provider
+			value={ {
+				view,
+				onChangeView,
+				fields: _fields,
+				actions,
+				data,
+				isLoading,
+				paginationInfo,
+				selection: _selection,
+				onChangeSelection: setSelectionWithChange,
+				openedFilter,
+				setOpenedFilter,
+				getItemId,
+				getItemLevel,
+				isItemClickable,
+				onClickItem,
+				containerWidth,
+			} }
+		>
 			<div className="dataviews-wrapper" ref={ containerRef }>
 				<HStack
 					alignment="top"
