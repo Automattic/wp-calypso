@@ -36,6 +36,18 @@ export function GridItem( {
 		gridRowEnd: `span ${ item.height || 1 }`,
 		cursor: disabled ? 'default' : dragCursor,
 		position: 'relative' as const,
+		zIndex: isDragging ? 1 : undefined,
+	};
+
+	// Inner content style with scaling effect
+	// The reason we need a separate "content" div is because the scaling animation
+	// impacts the computation done by useSortable if they're applied to the same div.
+	const contentStyle = {
+		position: 'relative' as const,
+		transition: 'transform 200ms ease, box-shadow 200ms ease',
+		transform: isDragging ? 'scale(1.05)' : undefined,
+		boxShadow: isDragging ? '0 5px 10px rgba(0,0,0,0.15)' : undefined,
+		height: '100%',
 	};
 
 	const handleResize = ( delta: { width: number; height: number } ) => {
@@ -67,14 +79,16 @@ export function GridItem( {
 
 	return (
 		<div ref={ setNodeRef } style={ style } { ...attributes } { ...listeners }>
-			{ children }
+			<div style={ contentStyle }>
+				{ children }
+				<ResizeHandle
+					disabled={ disabled }
+					itemId={ item.key }
+					onResize={ handleResize }
+					onResizeEnd={ handleResizeEnd }
+				/>
+			</div>
 			{ previewOverlay }
-			<ResizeHandle
-				disabled={ disabled }
-				itemId={ item.key }
-				onResize={ handleResize }
-				onResizeEnd={ handleResizeEnd }
-			/>
 		</div>
 	);
 }
