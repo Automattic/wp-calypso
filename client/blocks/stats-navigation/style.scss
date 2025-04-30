@@ -213,8 +213,6 @@
 	// Styles specific to the navigation improvement feature
 	&.navigation-improvement {
 		.section-nav {
-			// padding: 0;
-
 			&__panel {
 				margin: 0 -16px; // Negative margin to counteract the global padding for active tab underline styling + alignment
 			}
@@ -233,8 +231,8 @@
 				box-shadow: none;
 				width: auto; // Allow list to be content-sized
 				display: flex;
-				justify-content: flex-start; // Align tabs to the left
-				gap: 0; // Remove gap between tabs
+				justify-content: flex-start;
+				gap: 0;
 			}
 		}
 
@@ -250,38 +248,29 @@
 				margin-left: 0; // Override the 40px margin from modernized styles
 			}
 
-			&.is-selected {
-				.section-nav-tab__link {
-					position: relative;
-					padding: 8px 16px;
-					text-align: center;
-					border-bottom: 2px solid var(--color-primary);
-					box-shadow: none;
-				}
-			}
-
-			&:not(.is-selected):hover {
-				.section-nav-tab__link {
-					border-bottom: 2px solid #d5dffa;
-				}
-			}
-
 			.section-nav-tab__link {
-				position: relative;
 				padding: 8px 16px;
 				color: #1E1E1E;
 				text-align: center;
 				border: none;
 				box-shadow: none;
-				border-bottom: 2px solid transparent; // Always have 2px border
+				border-bottom: 2px solid transparent; // Always have 2px border to stop text from moving
 				font-size: $font-body-small;
 				line-height: 20px;
-				transition: border-color 0.15s ease-in-out; // Smooth transition for border color only
+				transition: border-color 0.15s ease-in-out;
 				font-weight: 500;
 				font-style: normal;
 				overflow: hidden;
 				text-overflow: ellipsis;
-				white-space: nowrap; // Ensure text stays on one line for ellipsis to work
+				white-space: nowrap;
+			}
+
+			&.is-selected .section-nav-tab__link {
+				border-bottom-color: var(--color-primary);
+			}
+
+			&:not(.is-selected):hover .section-nav-tab__link {
+				border-bottom-color: #d5dffa;
 			}
 		}
 	}
