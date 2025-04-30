@@ -190,7 +190,7 @@ export const FreeComposition = () => {
 	);
 
 	return (
-		<DataViews>
+		<DataViews data={ data }>
 			<PlanetOverview planets={ planets } />
 		</DataViews>
 	);

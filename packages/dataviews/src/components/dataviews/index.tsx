@@ -60,7 +60,7 @@ export type DataViewsControlledProps< Item > = {
 
 export type DataViewsCompositionProps< Item > = {
 	children: ReactNode;
-	data?: Item[];
+	data: Item[];
 } & Partial< Omit< DataViewsControlledProps< Item >, 'children' | 'data' > >;
 
 export type DataViewsProps< Item > =
