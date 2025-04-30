@@ -101,7 +101,7 @@ function getConfig( {
 		description: (
 			<p>
 				{ translate(
-					'Import posts, pages, comments, tags, and images from a . wakaca %(importerName)s export file to {{b}}%(siteTitle)s{{/b}}.',
+					'Import posts, pages, comments, tags, and images from a %(importerName)s export file to {{b}}%(siteTitle)s{{/b}}.',
 					{
 						args: {
 							importerName: 'Blogger',
