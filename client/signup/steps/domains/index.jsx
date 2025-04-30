@@ -20,7 +20,7 @@ import { localize } from 'i18n-calypso';
 import { defer, get, isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
 import { parse } from 'qs';
-import { Component } from 'react';
+import { Children, Component, isValidElement } from 'react';
 import { connect } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import QueryProductsList from 'calypso/components/data/query-products-list';
@@ -956,6 +956,29 @@ class RenderDomainsStepComponent extends Component {
 		} );
 	};
 
+	getDomainsMiniCart = ( domainsInCart ) => {
+		const cartIsLoading = this.props.shoppingCartManager.isLoading;
+
+		if ( cartIsLoading && domainsInCart.length === 0 ) {
+			return null;
+		}
+
+		return (
+			<DomainsMiniCart
+				isMobile={ ! this.props.isDesktop }
+				domainsInCart={ domainsInCart }
+				domainRemovalQueue={ this.state.domainRemovalQueue }
+				flowName={ this.props.flowName }
+				removeDomainClickHandler={ this.removeDomainClickHandler }
+				isMiniCartContinueButtonBusy={ this.state.isMiniCartContinueButtonBusy }
+				goToNext={ this.goToNext }
+				handleSkip={ this.handleSkip }
+				wpcomSubdomainSelected={ this.state.wpcomSubdomainSelected }
+				freeDomainRemoveClickHandler={ this.freeDomainRemoveClickHandler }
+			/>
+		);
+	};
+
 	getSideContent = () => {
 		const { flowName } = this.props;
 		const domainsInCart = getDomainsInCart( this.props.cart );
@@ -971,8 +994,6 @@ class RenderDomainsStepComponent extends Component {
 		if ( additionalDomains.length > 0 ) {
 			domainsInCart.push( ...additionalDomains );
 		}
-
-		const cartIsLoading = this.props.shoppingCartManager.isLoading;
 
 		const useYourDomain = ! this.shouldHideUseYourDomain() ? (
 			<div
@@ -990,36 +1011,23 @@ class RenderDomainsStepComponent extends Component {
 		const shouldShowSkip = this.props.allowSkipWithoutSearch || hasSearchedDomains;
 
 		const content = [
-			domainsInCart.length > 0 || this.state.wpcomSubdomainSelected ? (
-				<DomainsMiniCart
-					isMobile={ ! this.props.isDesktop }
-					domainsInCart={ domainsInCart }
-					domainRemovalQueue={ this.state.domainRemovalQueue }
-					cartIsLoading={ cartIsLoading }
-					flowName={ flowName }
-					removeDomainClickHandler={ this.removeDomainClickHandler }
-					isMiniCartContinueButtonBusy={ this.state.isMiniCartContinueButtonBusy }
-					goToNext={ this.goToNext }
-					handleSkip={ this.handleSkip }
-					wpcomSubdomainSelected={ this.state.wpcomSubdomainSelected }
-					freeDomainRemoveClickHandler={ this.freeDomainRemoveClickHandler }
-				/>
-			) : (
-				! this.shouldHideDomainExplainer() &&
-				shouldShowSkip && (
-					<div className="domains__domain-side-content domains__free-domain">
-						<SideExplainer
-							onClick={ this.handleDomainExplainerClick }
-							type={
-								this.props.isPlanSelectionAvailableLaterInFlow
-									? 'free-domain-explainer-check-paid-plans'
-									: 'free-domain-explainer'
-							}
-							flowName={ flowName }
-						/>
-					</div>
-				)
-			),
+			shouldUseMultipleDomainsInCart( flowName ) &&
+			( domainsInCart.length > 0 || this.state.wpcomSubdomainSelected )
+				? this.getDomainsMiniCart( domainsInCart )
+				: ! this.shouldHideDomainExplainer() &&
+				  shouldShowSkip && (
+						<div className="domains__domain-side-content domains__free-domain">
+							<SideExplainer
+								onClick={ this.handleDomainExplainerClick }
+								type={
+									this.props.isPlanSelectionAvailableLaterInFlow
+										? 'free-domain-explainer-check-paid-plans'
+										: 'free-domain-explainer'
+								}
+								flowName={ flowName }
+							/>
+						</div>
+				  ),
 			useYourDomain,
 			this.shouldDisplayDomainOnlyExplainer() && (
 				<div className="domains__domain-side-content">
@@ -1029,9 +1037,11 @@ class RenderDomainsStepComponent extends Component {
 					/>
 				</div>
 			),
-		].filter( Boolean );
+		];
 
-		if ( content.length === 0 ) {
+		const nonEmptyElements = Children.toArray( content ).filter( isValidElement );
+
+		if ( nonEmptyElements.length === 0 ) {
 			return null;
 		}
 
@@ -1041,7 +1051,7 @@ class RenderDomainsStepComponent extends Component {
 					'is-sticky': !! useYourDomain,
 				} ) }
 			>
-				{ content }
+				{ nonEmptyElements }
 			</div>
 		);
 	};

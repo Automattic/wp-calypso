@@ -106,5 +106,11 @@
 /client/landing/stepper/declarative-flow/internals/steps-repository
 
 # DataViews
-/packages/dataviews @oandregal
+/packages/dataviews @oandregal @youknowriad
+
+# Grid package
+/packages/grid @youknowriad
+
+# V2 Dashboard
+/client/dashboard @youknowriad
 

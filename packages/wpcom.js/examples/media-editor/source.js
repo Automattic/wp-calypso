@@ -62,14 +62,11 @@ function init( wpcom ) {
 		siteNode.value = siteId;
 		debug( 'siteId: %o', siteId );
 	} else {
-		wpcom
-			.me()
-			.get()
-			.then( ( data ) => {
-				siteId = data.primary_blog_url.replace( /http:\/\//, '' );
-				siteNode.value = siteId;
-				input.removeAttribute( 'disabled' );
-			} );
+		wpcom.req.get( '/me' ).then( ( data ) => {
+			siteId = data.primary_blog_url.replace( /http:\/\//, '' );
+			siteNode.value = siteId;
+			input.removeAttribute( 'disabled' );
+		} );
 	}
 
 	if ( mediaId && siteId ) {

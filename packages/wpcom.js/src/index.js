@@ -2,7 +2,6 @@ import debugModule from 'debug';
 import Batch from './lib/batch';
 import Domain from './lib/domain';
 import Domains from './lib/domains';
-import Me from './lib/me';
 import Plans from './lib/plans';
 import Site from './lib/site';
 import Users from './lib/users';
@@ -76,14 +75,6 @@ WPCOM.prototype.isTokenLoaded = function () {
 };
 
 /**
- * Return `Me` object instance
- * @returns {Me} Me instance
- */
-WPCOM.prototype.me = function () {
-	return new Me( this );
-};
-
-/**
  * Return `Domains` object instance
  * @returns {Domains} Domains instance
  */
@@ -149,7 +140,6 @@ WPCOM.prototype.freshlyPressed = function ( query, fn ) {
 WPCOM.Batch = Batch;
 WPCOM.Domain = Domain;
 WPCOM.Domains = Domains;
-WPCOM.Me = Me;
 WPCOM.Pinghub = Pinghub;
 WPCOM.Plans = Plans;
 WPCOM.Request = Request;

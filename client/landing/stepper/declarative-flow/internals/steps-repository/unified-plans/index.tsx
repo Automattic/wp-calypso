@@ -44,6 +44,8 @@ function getPlansIntent( flowName: string | null, isWordCampPromo?: boolean ): P
 				return 'plans-new-hosted-site-business-only';
 			}
 			return 'plans-new-hosted-site';
+		case AI_SITE_BUILDER_FLOW:
+			return 'plans-ai-assembler-free-trial';
 		default:
 			return null;
 	}
@@ -113,18 +115,6 @@ const PlansStepAdaptor: StepType< {
 	const isWordCampPromo = new URLSearchParams( location.search ).has( 'utm_source', 'wordcamp' );
 	const plansIntent = getPlansIntent( props.flow, isWordCampPromo );
 
-	let hidePlanProps;
-	if ( props.flow === AI_SITE_BUILDER_FLOW ) {
-		hidePlanProps = {
-			hideFreePlan: true,
-			hidePersonalPlan: true,
-			hideEcommercePlan: true,
-			hideEnterprisePlan: true,
-		};
-	} else {
-		hidePlanProps = getHidePlanPropsBasedOnThemeType( selectedThemeType || '' );
-	}
-
 	/**
 	 * The plans step has a quirk where it calls `submitSignupStep` then synchronously calls `goToNextStep` after it.
 	 * This doesn't give `setStepState` a chance to update and the data is not passed to `submit`.
@@ -144,7 +134,7 @@ const PlansStepAdaptor: StepType< {
 
 	return (
 		<UnifiedPlansStep
-			{ ...hidePlanProps }
+			{ ...getHidePlanPropsBasedOnThemeType( selectedThemeType || '' ) }
 			selectedSite={ site ?? undefined }
 			saveSignupStep={ ( step ) => {
 				setStepState( ( mostRecentState = { ...stepState, ...step } ) );

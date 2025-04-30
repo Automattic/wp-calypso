@@ -12,8 +12,8 @@ import Switcher from './switcher';
 
 function Site() {
 	const isDesktop = useViewportMatch( 'medium' );
-	const { siteId } = siteRoute.useParams();
-	const { data } = useQuery( siteQuery( siteId ) );
+	const { siteSlug } = siteRoute.useParams();
+	const { data } = useQuery( siteQuery( siteSlug ) );
 
 	if ( ! data ) {
 		return;
@@ -38,7 +38,7 @@ function Site() {
 						/>
 					</HeaderBar.Title>
 					{ isDesktop && <MenuDivider /> }
-					<SiteMenu siteId={ site.ID } />
+					<SiteMenu siteSlug={ siteSlug } />
 				</HStack>
 			</HeaderBar>
 			<Outlet />

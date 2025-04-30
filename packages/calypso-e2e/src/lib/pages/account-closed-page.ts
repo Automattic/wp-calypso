@@ -1,7 +1,7 @@
 import { Page } from 'playwright';
 
 const selectors = {
-	accountClosedMessage: ':text("Your account has been closed")',
+	accountClosedMessage: ':text("Your account has been deleted")',
 };
 
 /**

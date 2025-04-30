@@ -42,7 +42,9 @@ const DEFAULT_FIELDS = [
 		label: __( 'URL' ),
 		enableGlobalSearch: true,
 		render: ( { item }: { item: Site } ) => (
-			<ExternalLink href={ item.URL }>{ new URL( item.URL ).hostname }</ExternalLink>
+			<ExternalLink href={ item.URL } style={ { overflowWrap: 'anywhere' } }>
+				{ new URL( item.URL ).hostname }
+			</ExternalLink>
 		),
 	},
 	{
@@ -192,7 +194,7 @@ export default function Sites() {
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate( sites, view, fields );
 
 	const onClickItem = ( item: Site ) => {
-		navigate( { to: `/sites/${ item.ID }` } );
+		navigate( { to: `/sites/${ item.slug }` } );
 	};
 
 	return (

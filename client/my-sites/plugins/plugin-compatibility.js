@@ -126,7 +126,6 @@ const incompatiblePlugins = new Set( [
 
 	// cloning/staging
 	'flo-launch',
-	'wp-staging',
 
 	// misc
 	'adult-mass-photos-downloader',

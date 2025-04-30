@@ -145,13 +145,11 @@ h4,
 h5,
 h6 {
 	clear: both;
-	text-wrap: balance; // TODO: remove this fallback once `pretty` is globally supported.
-	text-wrap: pretty;
+	text-wrap: balance;
 }
 caption,
 figcaption {
 	text-wrap: balance;
-	text-wrap: pretty;
 }
 hr {
 	background: var(--color-neutral-10);

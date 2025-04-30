@@ -40,8 +40,7 @@ export const fetchSite = async ( id: string ): Promise< Site > => {
 		return Promise.reject( new Error( 'Site ID is undefined' ) );
 	}
 	return await wpcom.req.get( {
-		path: `/sites/${ id }?http_envelope=1&fields=ID,URL,name,icon,subscribers_count,plan,active_modules,options`,
-		apiNamespace: 'rest/v1.1',
+		path: `/sites/${ id }?fields=ID,URL,name,icon,subscribers_count,plan,active_modules,options`,
 	} );
 };
 ```

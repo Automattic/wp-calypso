@@ -1,3 +1,4 @@
+import { useResetSupportInteraction } from '@automattic/help-center/src/hooks/use-reset-support-interaction';
 import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
@@ -53,12 +54,14 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 } ) => {
 	const navigate = useNavigate();
 	const newConversation = useCreateZendeskConversation();
+	const resetSupportInteraction = useResetSupportInteraction();
 	const location = useLocation();
 	const {
 		chat,
 		isUserEligibleForPaidSupport: contextIsUserEligibleForPaidSupport,
 		canConnectToZendesk: contextCanConnectToZendesk,
 		trackEvent,
+		isChatLoaded,
 	} = useOdieAssistantContext();
 
 	const { mostRecentSupportInteractionId } = useGetMostRecentOpenConversation();
@@ -102,7 +105,15 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 					waitTimeText: __( 'Average wait time < 5 minutes', __i18n_text_domain__ ),
 					action: async () => {
 						onClickAdditionalEvent?.( 'chat' );
-						await newConversation( { createdFrom: 'chat_support_button' } );
+						resetSupportInteraction().then( ( interaction ) => {
+							if ( isChatLoaded ) {
+								newConversation( {
+									avoidTransfer: true,
+									interactionId: interaction?.uuid,
+									createdFrom: 'chat_support_button',
+								} );
+							}
+						} );
 					},
 				},
 			];

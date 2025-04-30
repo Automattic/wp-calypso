@@ -44,7 +44,7 @@ export default function Switcher( { onClose }: { onClose: () => void } ) {
 					<MenuItem
 						key={ site.ID }
 						onClick={ async () => {
-							await navigate( { to: `/sites/${ site.ID }` } );
+							await navigate( { to: `/sites/${ site.slug }` } );
 							onClose();
 						} }
 					>

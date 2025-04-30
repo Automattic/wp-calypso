@@ -154,6 +154,7 @@ describe( 'StepRoute', () => {
 			expect( recordPageView ).toHaveBeenCalledWith( '/', 'Setup > some-flow > some-step-slug', {
 				flow: 'some-flow',
 				is_simplified_onboarding: false,
+				skip_step_render: false,
 			} );
 		} );
 

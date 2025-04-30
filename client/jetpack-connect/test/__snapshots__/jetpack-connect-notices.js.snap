@@ -28,7 +28,7 @@ exports[`JetpackConnectNotices Should render non-terminal notice if callback sup
           />
         </svg>
       </span>
-      <p
+      <span
         class="calypso-notice__content"
       >
         <span
@@ -36,7 +36,7 @@ exports[`JetpackConnectNotices Should render non-terminal notice if callback sup
         >
           In some cases, authorization can take a few attempts. Please try again.
         </span>
-      </p>
+      </span>
     </div>
   </div>
 </div>
@@ -70,7 +70,7 @@ exports[`JetpackConnectNotices Should render notice 1`] = `
           />
         </svg>
       </span>
-      <p
+      <span
         class="calypso-notice__content"
       >
         <span
@@ -78,7 +78,7 @@ exports[`JetpackConnectNotices Should render notice 1`] = `
         >
           This site can't be connected to WordPress.com because it violates our {{a}}Terms of Service{{/a}}.
         </span>
-      </p>
+      </span>
     </div>
   </div>
 </div>
