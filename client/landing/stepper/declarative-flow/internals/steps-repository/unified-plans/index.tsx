@@ -2,6 +2,7 @@ import { OnboardSelect } from '@automattic/data-stores';
 import {
 	AI_SITE_BUILDER_FLOW,
 	EXAMPLE_FLOW,
+	isLaunchSiteFlow,
 	NEW_HOSTED_SITE_FLOW,
 	NEWSLETTER_FLOW,
 	START_WRITING_FLOW,
@@ -146,6 +147,7 @@ const PlansStepAdaptor: StepType< {
 					setStepState( ( mostRecentState = { ...stepState, ...stepInfo } ) );
 				}
 			} }
+			isLaunchPage={ isLaunchSiteFlow( props.flow ) }
 			goToNextStep={ () => {
 				props.navigation.submit?.( { ...stepState, ...mostRecentState } );
 			} }
