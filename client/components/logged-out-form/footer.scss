@@ -10,10 +10,8 @@
 		padding-top: 0;
 	}
 
-	.button.is-primary {
-		float: none;
-		margin: 0;
+	.signup-form__submit {
 		width: 100%;
-		@include elevation( 1dp );
+		justify-content: center;
 	}
 }

@@ -27,7 +27,7 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import { FormDivider } from 'calypso/blocks/authentication';
 import ContinueAsUser from 'calypso/blocks/login/continue-as-user';
-import FormButton from 'calypso/components/forms/form-button';
+import SignupSubmitButton from 'calypso/blocks/signup-form/signup-submit-button';
 import FormPasswordInput from 'calypso/components/forms/form-password-input';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
@@ -1016,21 +1016,18 @@ class SignupForm extends Component {
 		return (
 			<LoggedOutFormFooter isBlended={ this.props.isSocialSignupEnabled }>
 				{ ! this.props.disableTosText && this.termsOfServiceLink() }
-				<FormButton
-					className={ clsx(
-						'signup-form__submit',
-						variationName && `${ variationName }-signup-form`
-					) }
-					disabled={
+				<SignupSubmitButton
+					isDisabled={
 						this.state.submitting ||
 						this.props.disabled ||
 						this.props.disableSubmitButton ||
 						( this.props.isWoo &&
 							( ! this.hasFilledInputValues() || formState.hasErrors( this.state.form ) ) )
 					}
+					variationName={ variationName }
 				>
 					{ this.props.submitButtonText }
-				</FormButton>
+				</SignupSubmitButton>
 			</LoggedOutFormFooter>
 		);
 	}
