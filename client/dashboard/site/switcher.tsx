@@ -7,7 +7,6 @@ import { plus } from '@wordpress/icons';
 import { useState } from 'react';
 import { sitesQuery } from '../app/queries';
 import SiteIcon from '../site-icon';
-import { getSiteSlug } from '../utils/site-slug';
 import type { View } from '@wordpress/dataviews';
 
 const fields = [ { id: 'name', enableGlobalSearch: true } ];
@@ -45,7 +44,7 @@ export default function Switcher( { onClose }: { onClose: () => void } ) {
 					<MenuItem
 						key={ site.ID }
 						onClick={ async () => {
-							await navigate( { to: `/sites/${ getSiteSlug( site ) }` } );
+							await navigate( { to: `/sites/${ site.slug }` } );
 							onClose();
 						} }
 					>

@@ -71,6 +71,7 @@ export interface SiteOptions {
 
 export interface Site {
 	ID: string;
+	slug: string;
 	name: string;
 	URL: string;
 	icon?: {
