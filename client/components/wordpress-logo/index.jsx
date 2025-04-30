@@ -2,6 +2,9 @@ import PropTypes from 'prop-types';
 
 import './style.scss';
 
+/**
+ * @deprecated Use `WordPressLogo` from `@automattic/components` instead.
+ */
 function WordPressLogo( { className = 'wordpress-logo', size = 72 } ) {
 	return (
 		<svg className={ className } height={ size } width={ size } viewBox="0 0 72 72">
