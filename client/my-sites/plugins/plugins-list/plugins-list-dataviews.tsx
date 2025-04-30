@@ -137,7 +137,7 @@ export default function PluginsListDataViews( {
 						dispatch( recordTracksEvent( 'calypso_plugins_list_pending_update_filter_click' ) );
 					} }
 				>
-					{ translate( 'Pending update (%s)', { args: [ pluginUpdateCount ] } ) }
+					{ translate( 'Update available (%s)', { args: [ pluginUpdateCount ] } ) }
 				</Button>
 			) }
 		</>
