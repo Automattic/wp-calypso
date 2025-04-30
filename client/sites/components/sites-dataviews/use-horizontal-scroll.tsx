@@ -6,7 +6,7 @@ interface UseScrollProps {
 	enabled: boolean;
 }
 
-const isScrolledToEnd = ( element, isRtl ) => {
+const isScrolledToEnd = ( element: Element, isRtl: boolean ) => {
 	if ( isRtl ) {
 		const scrollLeft = Math.abs( element.scrollLeft );
 		return scrollLeft <= 1;
@@ -20,13 +20,13 @@ const useHorizontalScroll = ( { selector, enabled }: UseScrollProps ) => {
 	const isRtl = useRtl();
 
 	useEffect( () => {
-		const handleScroll = ( event ) => {
+		const handleScroll = ( event: { currentTarget: EventTarget | null } ) => {
 			if ( event.currentTarget ) {
-				setIsScrolledEnd( isScrolledToEnd( event.currentTarget, isRtl ) );
+				setIsScrolledEnd( isScrolledToEnd( event.currentTarget as Element, isRtl ) );
 			}
 		};
 
-		let scrollContainer;
+		let scrollContainer: Element | null = null;
 		if ( enabled ) {
 			scrollContainer = document.querySelector( selector );
 			if ( scrollContainer ) {
