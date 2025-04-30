@@ -470,6 +470,7 @@ const PlansFeaturesMain = ( {
 		useStreamlinedPriceExperiment();
 
 	let hidePlanSelector = false;
+	let enableTermSavingsPriceDisplay = false;
 	// In the "purchase a plan and free domain" flow we do not want to show
 	// monthly plans because monthly plans do not come with a free domain.
 	if (
@@ -478,6 +479,7 @@ const PlansFeaturesMain = ( {
 		( isInSignup && ! isStreamlinedPriceExperimentLoading && streamlinedPriceExperimentAssignment )
 	) {
 		hidePlanSelector = true;
+		enableTermSavingsPriceDisplay = true;
 	}
 
 	let _customerType = chooseDefaultCustomerType( {
@@ -871,7 +873,7 @@ const PlansFeaturesMain = ( {
 										enableReducedFeatureGroupSpacing={ showSimplifiedFeatures }
 										enableLogosOnlyForEnterprisePlan={ showSimplifiedFeatures }
 										hideFeatureGroupTitles={ showSimplifiedFeatures }
-										enableTermSavingsPriceDisplay={ false }
+										enableTermSavingsPriceDisplay={ enableTermSavingsPriceDisplay }
 									/>
 								) }
 								{ showEscapeHatch && hidePlansFeatureComparison && viewAllPlansButton }
@@ -933,7 +935,7 @@ const PlansFeaturesMain = ( {
 													}
 													enableFeatureTooltips
 													featureGroupMap={ featureGroupMapForComparisonGrid }
-													enableTermSavingsPriceDisplay={ false }
+													enableTermSavingsPriceDisplay={ enableTermSavingsPriceDisplay }
 												/>
 											) }
 											<ComparisonGridToggle
