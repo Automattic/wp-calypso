@@ -113,7 +113,7 @@ export default ( router ) => {
 	);
 
 	page(
-		'/purchases/crm-downloads/:site/:purchaseId',
+		'/purchases/crm-downloads/:licenseKey',
 		...commonHandlers,
 		crmDownloads,
 		makeLayout,
