@@ -135,7 +135,7 @@ export default function PluginsListDataViews( {
 						setIsFilteringUpdates( ! isFilteringUpdates );
 					} }
 				>
-					{ translate( 'Pending update (%s)', { args: [ pluginUpdateCount ] } ) }
+					{ translate( 'Update available (%s)', { args: [ pluginUpdateCount ] } ) }
 				</Button>
 			) }
 		</>

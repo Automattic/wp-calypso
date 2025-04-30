@@ -40,6 +40,7 @@ module.exports = {
 							'!@automattic/components/src',
 							'@automattic/components/src/*',
 							'!@automattic/components/src/summary-button',
+							'!@automattic/dataviews',
 							// Please do not add exceptions unless agreed on
 							// with the #architecture group.
 						],

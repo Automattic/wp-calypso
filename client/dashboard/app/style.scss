@@ -1,5 +1,5 @@
 @import '@wordpress/base-styles/variables';
-@import '@wordpress/dataviews/build-style/style.css';
+@import '@automattic/dataviews/build-style/style.css';
 
 // Should be implemented differently once v2 is not loaded via the v1 stack
 // I'm tempted to even just replace all this with a display:none on the logo
@@ -35,6 +35,6 @@ a {
 }
 
 h1 {
-	font-family: var(--dashboard-h1__font-family);
-	font-weight: var(--dashboard-h1__font-weight) !important;
+	font-family: var( --dashboard-h1__font-family );
+	font-weight: var( --dashboard-h1__font-weight ) !important;
 }

@@ -12,3 +12,4 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Customizable columns, spacing, and row height
 - Support for automated responsive layout by specifying minimum column widths
 - Support for drag-and-drop reordering of grid items
+- Suppoer for resizing grid items

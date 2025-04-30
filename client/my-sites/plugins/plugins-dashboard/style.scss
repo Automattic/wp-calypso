@@ -58,7 +58,11 @@
 		.plugin-details-v2__title {
 			color: var( --studio-gray-100 );
 			font-size: 1.25rem;
-			padding: 16px 16px;
+			padding: 16px 24px;
+
+			@include break-medium {
+				padding-inline: 48px;
+			}
 		}
 	}
 

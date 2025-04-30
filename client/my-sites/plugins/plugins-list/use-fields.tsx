@@ -37,7 +37,7 @@ export function useFields(
 					},
 					{
 						value: PLUGINS_STATUS.UPDATE,
-						label: translate( 'Needs update' ),
+						label: translate( 'Update available' ),
 					},
 				],
 				filterBy: {
