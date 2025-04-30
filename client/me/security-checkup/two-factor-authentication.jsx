@@ -41,6 +41,7 @@ class SecurityCheckupTwoFactorAuthentication extends Component {
 		let icon;
 		let description;
 
+		// Email verification is prioritized over other two-factor authentication conditions.
 		if ( ! isEmailVerified ) {
 			icon = getWarningIcon();
 			description = translate(
