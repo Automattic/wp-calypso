@@ -23,11 +23,13 @@ import {
 	isOverrideCodeIntroductoryOffer,
 } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
-import { useTranslate } from 'i18n-calypso';
+import { formatCurrency, useTranslate } from 'i18n-calypso';
+import { useStreamlinedPriceExperiment } from 'calypso/my-sites/plans-features-main/hooks/use-streamlined-price-experiment';
 import { useSelector } from 'calypso/state';
 import { getIsOnboardingAffiliateFlow } from 'calypso/state/signup/flow/selectors';
 import useCartKey from '../../use-cart-key';
 import { getAffiliateCouponLabel } from '../../utils';
+import { CheckIcon } from './check-icon';
 import type { Theme } from '@automattic/composite-checkout';
 import type { LineItemCostOverrideForDisplay } from '@automattic/wpcom-checkout';
 
@@ -294,6 +296,21 @@ const ProductTitleAreaForCostOverridesList = styled.div`
 	}
 `;
 
+const WPCheckoutCheckIcon = styled( CheckIcon )`
+	fill: ${ ( props ) => props.theme.colors.success };
+	margin-right: 4px;
+	position: absolute;
+	top: 1px;
+	left: 0;
+
+	.rtl & {
+		margin-right: 0;
+		margin-left: 4px;
+		right: 0;
+		left: auto;
+	}
+`;
+
 function SingleProductAndCostOverridesList( { product }: { product: ResponseCartProduct } ) {
 	const translate = useTranslate();
 	const costOverridesList = filterCostOverridesForLineItem( product, translate );
@@ -306,6 +323,30 @@ function SingleProductAndCostOverridesList( { product }: { product: ResponseCart
 			stripZeros: true,
 		}
 	);
+	const [ , streamlinedPriceExperimentAssignment ] = useStreamlinedPriceExperiment();
+	if ( streamlinedPriceExperimentAssignment ) {
+		const StreamlinedSingleProductAndCostOverridesListWrapper = styled.div`
+			margin-bottom: 4px;
+			padding-left: 24px;
+			position: relative;
+			overflow-wrap: break-word;
+
+			.rtl & {
+				padding-right: 24px;
+				padding-left: 0;
+			}
+		`;
+		return (
+			<StreamlinedSingleProductAndCostOverridesListWrapper>
+				<WPCheckoutCheckIcon />
+				<ProductTitleAreaForCostOverridesList>
+					<span className="cost-overrides-list-product__title">{ label }</span>
+					<LineItemPrice actualAmount={ actualAmountDisplay } />
+				</ProductTitleAreaForCostOverridesList>
+				<LineItemCostOverrides product={ product } costOverridesList={ costOverridesList } />
+			</StreamlinedSingleProductAndCostOverridesListWrapper>
+		);
+	}
 	return (
 		<SingleProductAndCostOverridesListWrapper>
 			<ProductTitleAreaForCostOverridesList>
