@@ -38,8 +38,8 @@ export default function ListStep( props: Props ) {
 	const { siteSlug, submit, getFinalImporterUrl, onNavBack } = props;
 	const backToFlow = urlQueryParams.get( 'backToFlow' );
 	const fromSite = urlQueryParams.get( 'from' );
-	const title = props.title || __( 'Import content from another platform or file' );
-	const subTitle = props.subTitle || __( "Select the platform you're coming from" );
+	const title = props.title;
+	const subTitle = props.subTitle;
 
 	// We need to remove the wix importer from the primary importers list.
 	const primaryListOptions: ImporterOption[] = getImportersAsImporterOption( 'primary' ).filter(
@@ -71,10 +71,12 @@ export default function ListStep( props: Props ) {
 				</div>
 			) }
 			<div className="list__wrapper">
-				<div className="import__heading import__heading-center">
-					<Title>{ title }</Title>
-					<SubTitle>{ subTitle }</SubTitle>
-				</div>
+				{ title && subTitle && (
+					<div className="import__heading import__heading-center">
+						<Title>{ title }</Title>
+						<SubTitle>{ subTitle }</SubTitle>
+					</div>
+				) }
 				<div className="list__importers list__importers-primary">
 					{ primaryListOptions.map( ( x ) => (
 						<Button
