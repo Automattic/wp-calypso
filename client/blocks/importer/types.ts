@@ -89,4 +89,5 @@ export interface ImporterBaseProps {
 	startImport: ( siteId: number, type: string ) => void;
 	resetImport: ( siteId: number, importerId: string ) => void;
 	stepNavigator?: StepNavigator;
+	renderHeading?: boolean;
 }

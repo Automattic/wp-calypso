@@ -1,8 +1,9 @@
 import config from '@automattic/calypso-config';
-import { StepContainer } from '@automattic/onboarding';
+import { Step, StepContainer } from '@automattic/onboarding';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import { useEffect, useMemo } from 'react';
+import { getImportDragConfig } from 'calypso/blocks/importer/components/importer-drag/config';
 import NotAuthorized from 'calypso/blocks/importer/components/not-authorized';
 import NotFound from 'calypso/blocks/importer/components/not-found';
 import { getImporterTypeForEngine } from 'calypso/blocks/importer/util';
@@ -32,6 +33,7 @@ import { getUrlData } from 'calypso/state/imports/url-analyzer/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { requestSites } from 'calypso/state/sites/actions';
 import { isRequestingSite, hasAllSitesList } from 'calypso/state/sites/selectors';
+import { shouldUseStepContainerV2ImportFlow } from '../../../helpers/should-use-step-container-v2';
 import { StepProps } from '../../types';
 import { useAtomicTransferQueryParamUpdate } from './hooks/use-atomic-transfer-query-param-update';
 import { useInitialQueryRun } from './hooks/use-initial-query-run';
@@ -78,6 +80,7 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 		const stepNavigator = useStepNavigator( flow, navigation, siteId, siteSlug, site, fromSite );
 		const currentPath = window.location.pathname + window.location.search;
 		const hasAllSitesFetched = useSelector( hasAllSitesList );
+		const useContainerV2 = shouldUseStepContainerV2ImportFlow( flow );
 
 		const isRequestingCurrentSite = useSelector( ( state ) =>
 			siteId ? isRequestingSite( state, siteId ) : false
@@ -213,11 +216,41 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 					fromSite={ fromSite }
 					urlData={ fromSiteData ?? undefined }
 					stepNavigator={ stepNavigator }
+					renderHeading={ ! useContainerV2 }
 				/>
 			);
 		};
 
 		const importJob = getImportJob( importer );
+		if ( useContainerV2 ) {
+			const importerData = getImportDragConfig( importer, stepNavigator?.supportLinkModal );
+			return (
+				<>
+					<QuerySites siteId={ siteId } />
+					<DocumentHead title={ __( 'Import your site content' ) } />
+					<Interval onTick={ fetchImporters } period={ EVERY_FIVE_SECONDS } />
+					<Step.CenteredColumnLayout
+						className={ clsx(
+							'import__onboarding-page',
+							'importer-wrapper',
+							'step-container-v2--site-migration-identify',
+							'import__onboarding-page--redesign',
+							{
+								[ `importer-wrapper__${ importer }` ]: !! importer,
+							}
+						) }
+						columnWidth={ 4 }
+						topBar={ <Step.TopBar leftElement={ <Step.BackButton onClick={ onGoBack } /> } /> }
+						heading={
+							<Step.Heading text={ importerData.title } subText={ importerData.description } />
+						}
+					>
+						{ renderStepContent() }
+					</Step.CenteredColumnLayout>
+				</>
+			);
+		}
+
 		return (
 			<>
 				<QuerySites siteId={ siteId } />
