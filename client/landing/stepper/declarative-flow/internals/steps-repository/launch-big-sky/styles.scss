@@ -23,6 +23,10 @@ $color-big-sky-background: #000cb2;
 			margin-top: 0;
 			width: 100%;
 			max-width: 188px;
+
+			.processing-step__error {
+				color: $color-white;
+			}
 		}
 
 		.big-sky-disclaimer {
