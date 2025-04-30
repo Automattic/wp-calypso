@@ -34,19 +34,6 @@ export const setSiteUrl = ( siteUrl: string ) => ( {
 	siteUrl,
 } );
 
-export interface CreateSiteBaseActionParameters {
-	username: string;
-	languageSlug: string;
-	visibility: number;
-}
-
-export interface CreateSiteActionParameters extends CreateSiteBaseActionParameters {
-	bearerToken?: string;
-	anchorFmPodcastId: string | null;
-	anchorFmEpisodeId: string | null;
-	anchorFmSpotifyUrl: string | null;
-}
-
 export function* createSenseiSite( {
 	username = '',
 	languageSlug = '',

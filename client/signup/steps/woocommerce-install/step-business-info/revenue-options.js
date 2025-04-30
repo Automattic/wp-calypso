@@ -1,5 +1,5 @@
+import { formatCurrency } from '@automattic/number-formatters';
 import { __, sprintf } from '@wordpress/i18n';
-import { formatCurrency } from 'i18n-calypso';
 // These are rough exchange rates from USD.  Precision is not paramount.
 // The keys here should match the keys in `getCurrencyData`.
 const exchangeRates = {

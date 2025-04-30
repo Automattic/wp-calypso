@@ -1,4 +1,5 @@
 import { Card, Gridicon } from '@automattic/components';
+import { formatNumber } from '@automattic/number-formatters';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -112,10 +113,10 @@ class WordAdsEarnings extends Component {
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	payoutNotice() {
-		const { earnings, numberFormat, translate } = this.props;
+		const { earnings, translate } = this.props;
 		const owed =
 			earnings && earnings.total_amount_owed
-				? numberFormat( earnings.total_amount_owed, { decimals: 2 } )
+				? formatNumber( earnings.total_amount_owed, { decimals: 2 } )
 				: '0.00';
 		const notice = translate(
 			'Outstanding amount of $%(amountOwed)s does not exceed the minimum $100 needed to make the payment. ' +
@@ -187,7 +188,7 @@ class WordAdsEarnings extends Component {
 	}
 
 	earningsBreakdown() {
-		const { earnings, numberFormat, translate } = this.props;
+		const { earnings, translate } = this.props;
 		const total = earnings && earnings.total_earnings ? Number( earnings.total_earnings ) : 0;
 		const owed = earnings && earnings.total_amount_owed ? Number( earnings.total_amount_owed ) : 0;
 		const paid = total - owed;
@@ -199,7 +200,7 @@ class WordAdsEarnings extends Component {
 						{ translate( 'Total earnings', { context: 'Sum of earnings' } ) }
 					</span>
 					<span className="ads__earnings-breakdown-value">
-						${ numberFormat( total, { decimals: 2 } ) }
+						${ formatNumber( total, { decimals: 2 } ) }
 					</span>
 				</li>
 				<li className="ads__earnings-breakdown-item">
@@ -207,7 +208,7 @@ class WordAdsEarnings extends Component {
 						{ translate( 'Total paid', { context: 'Sum of earnings that have been distributed' } ) }
 					</span>
 					<span className="ads__earnings-breakdown-value">
-						${ numberFormat( paid, { decimals: 2 } ) }
+						${ formatNumber( paid, { decimals: 2 } ) }
 					</span>
 				</li>
 				<li className="ads__earnings-breakdown-item">
@@ -215,7 +216,7 @@ class WordAdsEarnings extends Component {
 						{ translate( 'Outstanding amount', { context: 'Sum earnings left unpaid' } ) }
 					</span>
 					<span className="ads__earnings-breakdown-value">
-						${ numberFormat( owed, { decimals: 2 } ) }
+						${ formatNumber( owed, { decimals: 2 } ) }
 					</span>
 				</li>
 			</ul>
@@ -223,7 +224,7 @@ class WordAdsEarnings extends Component {
 	}
 
 	earningsTable( earnings, header_text, type ) {
-		const { numberFormat, translate } = this.props;
+		const { translate } = this.props;
 		const rows = [];
 		const infoIcon = this.getInfoToggle( type ) ? 'info' : 'info-outline';
 		const classes = clsx( 'earnings_history', {
@@ -236,10 +237,10 @@ class WordAdsEarnings extends Component {
 					<tr key={ type + '-' + period }>
 						<td className="ads__earnings-history-value">{ this.swapYearMonth( period ) }</td>
 						<td className="ads__earnings-history-value">
-							${ numberFormat( earnings[ period ].amount, { decimals: 2 } ) }
+							${ formatNumber( earnings[ period ].amount, { decimals: 2 } ) }
 						</td>
 						<td className="ads__earnings-history-value">
-							{ numberFormat( earnings[ period ].pageviews ) }
+							{ formatNumber( earnings[ period ].pageviews ) }
 						</td>
 						<td className="ads__earnings-history-value">
 							{ this.getStatus( earnings[ period ].status ) }
