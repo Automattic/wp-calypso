@@ -262,29 +262,6 @@ describe( 'I18n', function () {
 		} );
 	} );
 
-	describe( 'geolocateCurrencySymbol()', () => {
-		const originalFetch = globalThis.fetch;
-
-		afterEach( async () => {
-			globalThis.fetch = originalFetch;
-		} );
-
-		it( 'should call the callback with the correct value', async () => {
-			globalThis.fetch = jest.fn( ( url ) =>
-				Promise.resolve( {
-					json: () =>
-						url.includes( '/geo' )
-							? Promise.resolve( { country_short: 'en' } )
-							: Promise.resolve( 'invalid' ),
-				} )
-			);
-			const callback = jest.fn();
-
-			await i18n.geolocateCurrencySymbol( callback );
-			expect( callback ).toHaveBeenCalledWith( 'en' );
-		} );
-	} );
-
 	describe( 'emitChange()', () => {
 		it( 'should call all subscribed callbacks', () => {
 			const callback1 = jest.fn();
@@ -461,25 +438,6 @@ describe( 'I18n', function () {
 				},
 			} );
 			expect( result ).toBe( 'not test 3' );
-		} );
-	} );
-
-	describe( 'initializeGeolocation', () => {
-		it( 'should set geoLocation directly when passed a value', () => {
-			const spy = jest.spyOn( i18n, 'geolocateCurrencySymbol' ).mockImplementation();
-
-			i18n.initializeGeolocation( 'CA' );
-
-			expect( i18n.geoLocation ).toBe( 'CA' );
-			expect( spy ).not.toHaveBeenCalled();
-		} );
-
-		it( 'should call geolocateCurrencySymbol when no value is passed', () => {
-			const spy = jest.spyOn( i18n, 'geolocateCurrencySymbol' ).mockImplementation();
-
-			i18n.initializeGeolocation();
-
-			expect( spy ).toHaveBeenCalled();
 		} );
 	} );
 } );

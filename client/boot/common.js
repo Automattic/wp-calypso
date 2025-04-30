@@ -6,7 +6,6 @@ import { getLanguageSlugs } from '@automattic/i18n-utils';
 import { getToken } from '@automattic/oauth-token';
 import { JETPACK_PRICING_PAGE } from '@automattic/urls';
 import debugFactory from 'debug';
-import defaultCalypsoI18n from 'i18n-calypso';
 import Modal from 'react-modal';
 import store from 'store';
 import emailVerification from 'calypso/components/email-verification';
@@ -42,6 +41,7 @@ import initialReducer from 'calypso/state/reducer';
 import { setStore } from 'calypso/state/redux-store';
 import { setRoute } from 'calypso/state/route/actions';
 import { setupErrorLogger } from '../lib/error-logger/setup-error-logger';
+import { setupCountryCode } from './geolocation';
 import { setupLocale } from './locale';
 
 const debug = debugFactory( 'calypso' );
@@ -324,7 +324,7 @@ const boot = async ( currentUser, registerRoutes ) => {
 	onDisablePersistence( persistOnChange( reduxStore, currentUser?.ID ) );
 	onDisablePersistence( unsubscribePersister );
 	setupLocale( currentUser, reduxStore );
-	defaultCalypsoI18n.initializeGeolocation( currentUser?.user_ip_country_code );
+	setupCountryCode( currentUser );
 	configureReduxStore( currentUser, reduxStore );
 	setupMiddlewares( currentUser, reduxStore, queryClient );
 	detectHistoryNavigation.start();

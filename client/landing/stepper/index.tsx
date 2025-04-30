@@ -11,6 +11,7 @@ import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 import { requestAllBlogsAccess } from 'wpcom-proxy-request';
+import { setupCountryCode } from 'calypso/boot/geolocation';
 import { setupLocale } from 'calypso/boot/locale';
 import AsyncLoad from 'calypso/components/async-load';
 import CalypsoI18nProvider from 'calypso/components/calypso-i18n-provider';
@@ -106,6 +107,7 @@ async function main() {
 	setStore( reduxStore, getStateFromCache( userId ) );
 	onDisablePersistence( persistOnChange( reduxStore, userId ) );
 	setupLocale( user, reduxStore );
+	setupCountryCode( user );
 	const { receiveCurrentUser } = dispatch( USER_STORE ) as UserActions;
 
 	if ( user ) {
@@ -151,9 +153,6 @@ async function main() {
 		// V1 flows have to be enhanced by changing their `useSteps` hook.
 		flow = enhanceFlowWithAuth( flow );
 	}
-
-	// No need to await this, it's not critical to the boot process and will slow booting down.
-	defaultCalypsoI18n.initializeGeolocation( user ? user.user_ip_country_code : undefined );
 
 	const root = createRoot( document.getElementById( 'wpcom' ) as HTMLElement );
 
