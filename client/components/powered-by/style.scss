@@ -1,9 +1,11 @@
+@import '@wordpress/base-styles/variables';
+
 .powered-by {
 	display: inline-flex;
 	flex-wrap: wrap;
 	align-items: center;
-	gap: 8px;
-	margin: 0;
+	gap: $grid-unit-10, 8px;
+	margin: 20px;
 
 	&__text {
 		color: var( --color-text );
