@@ -9,7 +9,11 @@ import { useI18n } from '@wordpress/react-i18n';
 import React, { useEffect, useState } from 'react';
 import { HELP_CENTER_STORE } from '../stores';
 import { HelpCenterSupportChatMessage } from './help-center-support-chat-message';
-import { filterAndUpdateConversationsWithStatus, getZendeskConversations } from './utils';
+import {
+	filterAndUpdateConversationsWithStatus,
+	getLastMessage,
+	getZendeskConversations,
+} from './utils';
 import type {
 	SupportInteraction,
 	ZendeskConversation,
@@ -33,7 +37,7 @@ const HelpCenterRecentConversations: React.FC = () => {
 	const [ unreadConversationsCount, setUnreadConversationsCount ] = useState( 0 );
 	const [ unreadMessagesCount, setUnreadMessagesCount ] = useState( 0 );
 
-	const [ lastMessage, setLastMessage ] = useState< ZendeskMessage >();
+	const [ lastMessage, setLastMessage ] = useState< ZendeskMessage | null >();
 	const [ lastConversation, setLastConversation ] = useState< ZendeskConversation >();
 	const [ lastSupportInteraction, setLastSupportInteraction ] = useState< SupportInteraction >();
 
@@ -72,7 +76,8 @@ const HelpCenterRecentConversations: React.FC = () => {
 				( conversation ) => conversation.participants[ 0 ]?.unreadCount > 0
 			);
 			const lastConversation = lastUnreadConversation || conversationsWithUpdatedStatuses[ 0 ];
-			const lastMessage = lastConversation?.messages[ lastConversation?.messages.length - 1 ];
+			const lastMessage = getLastMessage( { conversation: lastConversation } );
+
 			const lastSupportInteraction = supportInteractions.find(
 				( interaction ) => interaction.uuid === lastConversation?.metadata.supportInteractionId
 			);

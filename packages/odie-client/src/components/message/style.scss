@@ -262,6 +262,27 @@ $blueberry-color: #3858e9;
 				}
 			}
 		}
+
+		.odie-rating-feedback-message {
+			width: 100%;
+			display: flex;
+			flex-direction: column;
+			align-items: flex-end;
+			padding: 8px 0;
+
+			> div {
+				border-radius: 8px 8px 0 8px; /* stylelint-disable-line scales/radii */
+				background: var(--studio-wordpress-blue, #3858e9);
+				width: 80%;
+				padding: 16px;
+				max-width: 256px;
+				box-sizing: border-box;
+				color: var(--studio-white);
+				font-size: 0.875rem;
+			}
+		}
+
+
 		.odie-conversation-feedback__message {
 			padding: 12px 44px;
 

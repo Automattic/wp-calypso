@@ -25,6 +25,7 @@ export const FeedbackForm = ( { chatFeedbackOptions }: FeedbackFormProps ) => {
 	const [ score, setScore ] = useState< 'good' | 'bad' | '' >( '' );
 	const [ comment, setComment ] = useState( '' );
 	const [ reason, setReason ] = useState( '' );
+	const [ isFormHidden, setIsFormHidden ] = useState( false );
 	const { data: authData } = useAuthenticateZendeskMessaging(
 		isUserEligibleForPaidSupport,
 		'messenger'
@@ -58,12 +59,28 @@ export const FeedbackForm = ( { chatFeedbackOptions }: FeedbackFormProps ) => {
 		} as Message;
 	};
 
+	const postScore = useCallback(
+		async ( score: 'good' | 'bad' ) => {
+			if ( ! authData?.jwt || ! score ) {
+				return;
+			}
+
+			setScore( score );
+			await sendMessage( generateFeedbackMessage( score ) );
+		},
+		[ authData?.jwt, sendMessage, generateFeedbackMessage ]
+	);
+
 	const postCSAT = useCallback( async () => {
 		if ( ! authData?.jwt || ! ticketId || ! score ) {
 			return;
 		}
 
-		await sendMessage( generateFeedbackMessage( score ) );
+		setIsFormHidden( true );
+
+		if ( ! comment && ! reason ) {
+			return;
+		}
 
 		await rateChat( {
 			jwt: authData.jwt,
@@ -74,15 +91,7 @@ export const FeedbackForm = ( { chatFeedbackOptions }: FeedbackFormProps ) => {
 			reason_id: reason,
 			test_mode: isTestModeEnvironment(),
 		} );
-	}, [ rateChat, authData?.jwt, user.email, ticketId, score, comment, reason, sendMessage ] );
-
-	if ( isSubmitting ) {
-		return (
-			<div className="odie-conversation__feedback-loading">
-				<Spinner />
-			</div>
-		);
-	}
+	}, [ rateChat, authData?.jwt, user.email, ticketId, score, comment, reason ] );
 
 	return (
 		<>
@@ -91,46 +100,66 @@ export const FeedbackForm = ( { chatFeedbackOptions }: FeedbackFormProps ) => {
 					<p>{ __( 'Was this helpful?' ) }</p>
 				</div>
 				<div className="odie-conversation-feedback__thumbs">
-					<Button onClick={ () => setScore( 'good' ) } rel="noreferrer">
+					<Button onClick={ () => postScore( 'good' ) } rel="noreferrer">
 						<ThumbsUpIcon />
 					</Button>
-					<Button onClick={ () => setScore( 'bad' ) } rel="noreferrer">
+					<Button onClick={ () => postScore( 'bad' ) } rel="noreferrer">
 						<ThumbsDownIcon />
 					</Button>
 				</div>
 			</div>
 			{ score && (
-				<div ref={ feedbackRef } className="odie-conversation-feedback__message">
-					<h3>{ __( 'Thank you for your input' ) }</h3>
-					<p>{ __( 'Please share any other details that can help understand your rating.' ) }</p>
-					{ score === 'bad' && (
-						<SelectControl
-							className="odie-conversation-feedback__reason"
-							label={ __( 'Reason' ) }
-							value={ reason }
-							options={ badRatingReasons }
-							onChange={ ( reason ) => setReason( reason ) }
-							__next40pxDefaultSize
-						/>
+				<>
+					<div className="odie-rating-feedback-message">
+						<div>{ score === 'good' ? __( 'Good 👍' ) : __( 'Bad 👎' ) }</div>
+					</div>
+
+					{ isSubmitting && (
+						<div className="odie-conversation__feedback-loading">
+							<Spinner />
+						</div>
 					) }
 
-					<TextareaControl
-						label={ score === 'bad' ? __( 'Additional Comments' ) : '' }
-						__nextHasNoMarginBottom
-						value={ comment }
-						onChange={ ( value ) => setComment( value ) }
-					/>
+					{ ! isFormHidden && (
+						<div ref={ feedbackRef } className="odie-conversation-feedback__message">
+							<h3>{ __( 'Thank you for your input' ) }</h3>
+							<p>
+								{ __( 'Please share any other details that can help understand your rating.' ) }
+							</p>
+							{ score === 'bad' && (
+								<SelectControl
+									className="odie-conversation-feedback__reason"
+									label={ __( 'Reason' ) }
+									value={ reason }
+									options={ badRatingReasons }
+									onChange={ ( reason ) => setReason( reason ) }
+									__next40pxDefaultSize
+								/>
+							) }
 
-					<div>
-						<Button variant="primary" onClick={ postCSAT } rel="noreferrer">
-							{ __( 'Send' ) }
-						</Button>
+							<TextareaControl
+								label={ score === 'bad' ? __( 'Additional Comments' ) : '' }
+								__nextHasNoMarginBottom
+								value={ comment }
+								onChange={ ( value ) => setComment( value ) }
+							/>
 
-						<Button variant="tertiary" onClick={ postCSAT } rel="noreferrer">
-							{ __( 'No thanks' ) }
-						</Button>
-					</div>
-				</div>
+							<div>
+								<Button variant="primary" onClick={ postCSAT } rel="noreferrer">
+									{ __( 'Send' ) }
+								</Button>
+
+								<Button
+									variant="tertiary"
+									onClick={ () => setIsFormHidden( true ) }
+									rel="noreferrer"
+								>
+									{ __( 'No thanks' ) }
+								</Button>
+							</div>
+						</div>
+					) }
+				</>
 			) }
 		</>
 	);

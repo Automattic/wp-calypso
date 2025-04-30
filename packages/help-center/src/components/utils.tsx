@@ -60,7 +60,7 @@ export const getFeedbackPlaceholderMessage = ( message: ZendeskMessage ): Zendes
 };
 
 export const getLastMessage = ( { conversation }: { conversation: ZendeskConversation } ) => {
-	if ( ! Array.isArray( conversation.messages ) ) {
+	if ( ! Array.isArray( conversation?.messages ) ) {
 		return null;
 	}
 

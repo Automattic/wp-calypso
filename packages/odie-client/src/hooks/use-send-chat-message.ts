@@ -23,9 +23,12 @@ export const useSendChatMessage = () => {
 
 	const sendMessage = useCallback(
 		async ( message: Message ) => {
-			// Add the user message to the chat and broadcast it to the client.
-			addMessage( message );
-			broadcastOdieMessage( message, odieBroadcastClientId );
+			// Payload messages should not be immediately added to chats
+			if ( ! message.payload ) {
+				// Add the user message to the chat and broadcast it to the client.
+				addMessage( message );
+				broadcastOdieMessage( message, odieBroadcastClientId );
+			}
 
 			if ( chat.provider === 'zendesk' ) {
 				if (
