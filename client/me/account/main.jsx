@@ -911,15 +911,6 @@ class Account extends Component {
 							) : (
 								<FormSettingExplanation>
 									{ this.renderUsernameDescription() }
-									{ ! this.props.isEmailVerified ? (
-										<span>
-											{ translate(
-												'Username can be changed once your email address is verified.'
-											) }
-										</span>
-									) : (
-										this.renderJoinDate()
-									) }
 								</FormSettingExplanation>
 							) }
 						</FormFieldset>
