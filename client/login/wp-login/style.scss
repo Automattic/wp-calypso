@@ -680,6 +680,7 @@ $image-height: 47px;
 		> .card {
 			padding: 0;
 			border: 0;
+			box-shadow: none;
 		}
 	}
 
@@ -727,6 +728,8 @@ $image-height: 47px;
 	.login__form-terms {
 		color: rgba(#00101c, 0.6);
 		margin: 24px 0 0;
+		font-size: 0.875rem;
+		text-align: left;
 	}
 
 	button.form-button.is-primary,
