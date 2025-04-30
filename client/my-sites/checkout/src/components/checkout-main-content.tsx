@@ -1060,6 +1060,15 @@ const StepContainerV2CheckoutFixer = styled.div< {
 				padding-top: 32px;
 			}
 		` }
+	${ ( props ) =>
+		props.isLargeViewport &&
+		props.isStreamlinedPrice &&
+		css`
+			.checkout__summary-area,
+			.checkout-loading-sidebar {
+				min-width: 384px;
+			}
+		` }
 `;
 
 const CheckoutSummary = styled.div`
