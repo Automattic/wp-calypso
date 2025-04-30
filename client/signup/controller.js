@@ -23,6 +23,7 @@ import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { getStepComponent } from './config/step-components';
 import SignupComponent from './main';
+import { shouldRedirectToStepperFlow } from './shouldRedirectToStepperFlow';
 import {
 	retrieveSignupDestination,
 	getDomainsDependencies,
@@ -108,6 +109,16 @@ export default {
 		}
 
 		next();
+	},
+
+	async redirectToStepperFlow( context, next ) {
+		const stepperFlowUrl = shouldRedirectToStepperFlow( context );
+
+		if ( ! stepperFlowUrl ) {
+			return next();
+		}
+
+		return page.redirect( stepperFlowUrl );
 	},
 
 	async redirectToFlow( context, next ) {
