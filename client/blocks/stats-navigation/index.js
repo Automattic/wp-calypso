@@ -215,7 +215,7 @@ class StatsNavigation extends Component {
 
 		const wrapperClass = clsx( 'stats-navigation', {
 			'stats-navigation--modernized': ! isLegacy,
-			'navigation-improvement': config.isEnabled( 'stats/navigation-improvement' ),
+			'stats-navigation-improvement': config.isEnabled( 'stats/navigation-improvement' ),
 		} );
 
 		// Module settings for Odyssey are not supported until stats-admin@0.9.0-alpha.
