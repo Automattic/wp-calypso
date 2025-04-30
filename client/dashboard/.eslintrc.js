@@ -7,14 +7,9 @@ module.exports = {
 					{
 						group: [
 							'calypso/*',
-							// Allowed:
-							// - calypso/lib/url/http-utils
-							// - calypso/lib/wp
+							// Allowed: calypso/lib/wp
 							'!calypso/lib',
 							'calypso/lib/*',
-							'!calypso/lib/url',
-							'calypso/lib/url/*',
-							'!calypso/lib/url/http-utils',
 							'!calypso/lib/wp',
 							// Allowed:
 							// - calypso/components/core/badge

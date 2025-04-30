@@ -1,9 +1,10 @@
-import { urlToSlug, withoutHttp } from 'calypso/lib/url/http-utils';
 import type { Site } from '../data/types';
 
 export function getSiteSlug( site: Site ) {
-	if ( site.options?.is_redirect ) {
-		return withoutHttp( site.options?.unmapped_url ?? '' );
+	let url = site.URL;
+	if ( site.options?.is_redirect && site.options?.unmapped_url ) {
+		url = site.options?.unmapped_url;
 	}
-	return urlToSlug( site.URL );
+
+	return new URL( url ).hostname;
 }
