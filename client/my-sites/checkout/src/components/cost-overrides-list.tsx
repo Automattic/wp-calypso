@@ -361,12 +361,49 @@ function SingleProductAndCostOverridesList( { product }: { product: ResponseCart
 				padding-left: 0;
 			}
 		`;
+
+		const StreamlinedLineItemPriceWrapper = styled.span`
+			display: flex;
+			flex: 0 0 auto;
+			gap: 4px;
+			margin-left: 12px;
+			font-size: inherit;
+
+			.rtl & {
+				margin-right: 12px;
+				margin-left: 0;
+			}
+
+			& s {
+				color: #787c82;
+			}
+
+			& span {
+				font-weight: 500;
+			}
+		`;
+
+		const StreamlinedLineItemPrice = function ( {
+			actualAmount,
+			crossedOutAmount,
+		}: {
+			actualAmount?: string;
+			crossedOutAmount?: string;
+		} ) {
+			return (
+				<StreamlinedLineItemPriceWrapper>
+					{ crossedOutAmount && <s>{ crossedOutAmount }</s> }
+					<span>{ actualAmount }</span>
+				</StreamlinedLineItemPriceWrapper>
+			);
+		};
+
 		return (
 			<StreamlinedSingleProductAndCostOverridesListWrapper>
 				<WPCheckoutCheckIcon />
 				<ProductTitleAreaForCostOverridesList>
 					<span className="cost-overrides-list-product__title">{ label }</span>
-					<LineItemPrice
+					<StreamlinedLineItemPrice
 						actualAmount={ streamlinedActualAmountDisplay }
 						crossedOutAmount={ isDiscounted ? originalAmountDisplay : undefined }
 					/>
@@ -418,6 +455,11 @@ export function CouponCostOverride( {
 			.rtl & {
 				padding-right: 24px;
 				padding-left: 0;
+			}
+
+			& .cost-overrides-list-item__discount {
+				color: #008a20;
+				font-weight: 500;
 			}
 		`;
 		return (
