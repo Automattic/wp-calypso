@@ -27,60 +27,65 @@ $experience-types: (
 );
 
 .experience-control {
-	display: flex;
-	flex-direction: column;
-	gap: 12px;
+	.components-base-control__label {
+		@include heading-medium;
+		margin-block-end: 12px;
+		text-transform: uppercase;
+		color: var(--color-text);
+	}
 }
 
-.experience-control__help-text {
-	@include body-small;
-	color: rgb(117, 117, 117);
-}
-
-.experience-control__label {
-	@include heading-medium;
-	padding-block-end: 12px;
-	text-transform: uppercase;
-}
-
-.experience-control__buttons {
+.experience-control__options {
 	display: flex;
 	gap: 8px;
+}
 
-	button.experience-control__button {
-		border-radius: 50%;
-		height: 32px;
-		width: 32px;
-		border-width: 1px;
-		border-style: solid;
-		justify-content: center;
+.experience-control__radio {
+	position: absolute;
+	opacity: 0;
+	width: 0;
+	height: 0;
+	margin: 0;
+}
 
-		&:focus {
-			box-shadow: none;
-		}
+.experience-control__option {
+	display: inline-flex;
+	border-radius: 50%;
+	height: 32px;
+	width: 32px;
+	border-width: 1px;
+	border-style: solid;
+	justify-content: center;
+	align-items: center;
+	cursor: pointer;
 
-		@each $type, $colors in $experience-types {
-			&.#{$type} {
-				border-color: map-get($colors, 'border');
+	&:focus-within {
+		box-shadow: 0 0 0 var(--wp-admin-border-width-focus) #fff, 0 0 0 calc(2* var(--wp-admin-border-width-focus)) var(--color-primary-50);
+		outline: 2px solid transparent;
+		outline-offset: 2px;
+	}
 
-				&.is-selected {
-					background-color: map-get($colors, 'background');
-				}
+	@each $type, $colors in $experience-types {
+		&.#{$type} {
+			border-color: map-get($colors, 'border');
 
-				&:hover:not(.is-selected), &:focus:not(.is-selected) {
-					background-color: map-get($colors, 'hover');
-				}
+			&.is-selected {
+				background-color: map-get($colors, 'background');
+			}
+
+			&:hover:not(.is-selected), &:focus-within:not(.is-selected) {
+				background-color: map-get($colors, 'hover');
 			}
 		}
+	}
 
-		&.is-selected {
-			svg path {
-				fill: var(--color-text-inverted);
-			}
+	&.is-selected {
+		svg path {
+			fill: var(--color-text-inverted);
 		}
 	}
 }
 
-.experience-control__button-content {
+.experience-control__option-content {
 	display: flex;
 }

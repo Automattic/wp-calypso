@@ -46,7 +46,7 @@ export function A4AFeedback( { type }: { type: FeedbackType } ) {
 							<ExperienceControl
 								label={ translate( 'What was your experience like?' ) }
 								onChange={ ( experience ) => setExperience( experience ) }
-								selectedExperience={ experience }
+								value={ experience }
 							/>
 							{ suggestion && (
 								<FormFieldset>

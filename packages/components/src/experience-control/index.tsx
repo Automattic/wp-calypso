@@ -1,90 +1,118 @@
-import { Button } from '@wordpress/components';
+import { BaseControl, useBaseControlProps } from '@wordpress/components';
 import clsx from 'clsx';
+import { useTranslate } from 'i18n-calypso';
 import { IconBad, IconGood, IconNeutral } from './icons';
 
 import './style.scss';
 
-enum Experience {
+export enum Experience {
 	GOOD = 'good',
 	NEUTRAL = 'neutral',
 	BAD = 'bad',
 }
 
-const ExperienceControlOption = ( {
-	className,
-	isSelected,
-	onClick,
-	children,
-}: {
+type ExperienceOption = {
+	value: Experience;
+	icon: JSX.Element;
+	ariaLabel: string;
+};
+
+interface ExperienceControlOptionProps {
 	className?: string;
-	isSelected: boolean;
+	checked: boolean;
 	onClick: () => void;
 	children: React.ReactNode;
-} ) => (
-	<Button
-		className={ clsx( 'experience-control__button', className, {
-			'is-selected': isSelected,
-		} ) }
-		onClick={ onClick }
-	>
-		<div className="experience-control__button-content">{ children }</div>
-	</Button>
-);
+	value: string;
+	name: string;
+	ariaLabel: string;
+}
 
-const ExperienceControlBase = ( {
-	label,
+const ExperienceControlOption = ( {
+	className,
+	checked,
+	onClick,
 	children,
-	helpText,
-}: {
-	label: string;
-	children: React.ReactNode;
-	helpText?: string;
-} ) => (
-	<div className="experience-control">
-		<div className="experience-control__label">{ label }</div>
-		<div className="experience-control__buttons">{ children }</div>
-		{ helpText && <div className="experience-control__help-text">{ helpText }</div> }
-	</div>
+	value,
+	name,
+	ariaLabel,
+}: ExperienceControlOptionProps ) => (
+	<label
+		className={ clsx( 'experience-control__option', className, {
+			'is-selected': checked,
+		} ) }
+	>
+		<input
+			type="radio"
+			className="experience-control__radio"
+			checked={ checked }
+			onChange={ onClick }
+			value={ value }
+			name={ name }
+			aria-label={ ariaLabel }
+		/>
+		<div className="experience-control__option-content">{ children }</div>
+	</label>
 );
 
-export function ExperienceControl( {
-	label,
-	onChange,
-	selectedExperience,
-	helpText,
-}: {
-	label: string;
-	onChange: ( experience: string ) => void;
-	selectedExperience: string;
-	helpText?: string;
-} ) {
-	const handleChange = ( experience: string ) => {
-		onChange( experience );
-	};
+interface ExperienceControlBaseProps {
+	children: React.ReactNode;
+	label?: string;
+	help?: string;
+}
 
-	const options = [
+const ExperienceControlBase = ( { children, ...props }: ExperienceControlBaseProps ) => {
+	const { baseControlProps } = useBaseControlProps( props );
+
+	return (
+		<BaseControl className="experience-control" { ...baseControlProps }>
+			<div className="experience-control__options" role="radiogroup">
+				{ children }
+			</div>
+		</BaseControl>
+	);
+};
+
+interface ExperienceControlProps {
+	label: string;
+	onChange: ( experience: Experience ) => void;
+	value: Experience;
+	help?: string;
+}
+
+export function ExperienceControl( { label, onChange, value, help }: ExperienceControlProps ) {
+	const translate = useTranslate();
+
+	const options: ExperienceOption[] = [
 		{
 			value: Experience.GOOD,
 			icon: <IconGood />,
+			ariaLabel: translate( 'Rate as good experience' ),
 		},
 		{
 			value: Experience.NEUTRAL,
 			icon: <IconNeutral />,
+			ariaLabel: translate( 'Rate as neutral experience' ),
 		},
 		{
 			value: Experience.BAD,
 			icon: <IconBad />,
+			ariaLabel: translate( 'Rate as bad experience' ),
 		},
 	];
 
+	const radioGroupName = `experience-control-${ label.toLowerCase().replace( /\s+/g, '-' ) }`;
+
 	return (
-		<ExperienceControlBase label={ label } helpText={ helpText }>
+		<ExperienceControlBase label={ label } help={ help }>
 			{ options.map( ( option ) => (
 				<ExperienceControlOption
 					key={ option.value }
 					className={ `is-${ option.value }` }
-					isSelected={ selectedExperience === option.value }
-					onClick={ () => handleChange( option.value ) }
+					checked={ value === option.value }
+					onClick={ () => onChange( option.value ) }
+					value={ option.value }
+					name={ radioGroupName }
+					ariaLabel={ option.ariaLabel }
 				>
 					{ option.icon }
 				</ExperienceControlOption>
@@ -92,6 +120,7 @@ export function ExperienceControl( {
 		</ExperienceControlBase>
 	);
 }
+
 ExperienceControl.Base = ExperienceControlBase;
 ExperienceControl.Option = ExperienceControlOption;
 

@@ -1,5 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react';
-import { ExperienceControl } from './index';
+import { fn } from '@storybook/test';
+import { ExperienceControl, Experience } from './index';
 
 const meta: Meta< typeof ExperienceControl > = {
 	title: 'Unaudited/ExperienceControl',
@@ -12,25 +13,25 @@ type Story = StoryObj< typeof ExperienceControl >;
 export const Default: Story = {
 	args: {
 		label: 'How was your experience?',
-		selectedExperience: 'good',
-		onChange: () => {},
+		value: Experience.GOOD,
+		onChange: fn(),
 	},
 };
 
 export const WithHelpText: Story = {
 	args: {
 		label: 'Rate your satisfaction',
-		selectedExperience: 'good',
-		helpText: 'Please select an option that best describes your experience',
-		onChange: () => {},
+		value: Experience.GOOD,
+		help: 'Please select an option that best describes your experience',
+		onChange: fn(),
 	},
 };
 
 export const PreSelectedBad: Story = {
 	args: {
 		label: 'How was the support?',
-		selectedExperience: 'bad',
-		onChange: () => {},
+		value: Experience.BAD,
+		onChange: fn(),
 	},
 };
 
@@ -38,7 +39,13 @@ export const PreSelectedBad: Story = {
 export const CustomBase: Story = {
 	render: () => (
 		<ExperienceControl.Base label="Custom Experience Control">
-			<ExperienceControl.Option isSelected onClick={ () => {} }>
+			<ExperienceControl.Option
+				checked
+				onClick={ fn() }
+				value="1"
+				name="experience-control"
+				ariaLabel="Rate as good experience"
+			>
 				1
 			</ExperienceControl.Option>
 		</ExperienceControl.Base>
