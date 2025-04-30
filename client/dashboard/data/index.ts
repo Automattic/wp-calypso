@@ -300,7 +300,7 @@ export const fetchSiteSettings = async ( id: string ): Promise< SiteSettings > =
 };
 
 export const fetchBasicMetrics = async ( url: string ): Promise< BasicMetricsData > => {
-	return wp.req.get(
+	return wpcom.req.get(
 		{
 			path: '/site-profiler/metrics/basic',
 			apiNamespace: 'wpcom/v2',
@@ -314,7 +314,7 @@ export const fetchPerformanceInsights = async (
 	url: string,
 	token: string
 ): Promise< UrlPerformanceInsights > => {
-	return wp.req.get(
+	return wpcom.req.get(
 		{
 			path: '/site-profiler/metrics/advanced/insights',
 			apiNamespace: 'wpcom/v2',
