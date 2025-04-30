@@ -190,7 +190,7 @@ export const FreeComposition = () => {
 	);
 
 	return (
-		<DataViews data={ data }>
+		<DataViews data={ data } getItemId={ ( item ) => item.id.toString() }>
 			<PlanetOverview planets={ planets } />
 		</DataViews>
 	);
