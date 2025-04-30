@@ -295,10 +295,6 @@ const buildApp = ( environment ) => {
 					cookies: defaultCookies,
 					query: {},
 					params: {},
-					// Setup by parent app using 'express-useragent'
-					useragent: {
-						source: '',
-					},
 					headers: {
 						'user-agent': userAgent,
 					},

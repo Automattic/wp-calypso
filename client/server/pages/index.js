@@ -209,11 +209,13 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 		showStepContainerV2Loader: isInStepContainerV2FlowContext( request.path, request.query ),
 	} );
 
+	const userAgent = request.get( 'user-agent' );
+
 	context.app = {
 		// use ipv4 address when is ipv4 mapped address
 		clientIp: request.ip ? request.ip.replace( '::ffff:', '' ) : request.ip,
-		isWpMobileApp: isWpMobileApp( request.useragent.source ),
-		isWcMobileApp: isWcMobileApp( request.useragent.source ),
+		isWpMobileApp: isWpMobileApp( userAgent ),
+		isWcMobileApp: isWcMobileApp( userAgent ),
 		isDebug,
 	};
 

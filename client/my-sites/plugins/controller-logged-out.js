@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { isbot } from 'isbot';
 import { getESPluginsInfiniteQueryParams } from 'calypso/data/marketplace/use-es-query';
 import {
 	getWPCOMFeaturedPluginsQueryParams,
@@ -93,7 +94,7 @@ const prefetchPlugin = async ( queryClient, store, { locale, pluginSlug } ) => {
 
 const prefetchTimebox = ( prefetchPromises, context ) => {
 	const racingPromises = [ Promise.all( prefetchPromises ) ];
-	const isBot = context.res?.req?.useragent?.isBot;
+	const isBot = isbot( context.res.req.get( 'user-agent' ) );
 
 	if ( config.isEnabled( 'ssr/prefetch-timebox' ) ) {
 		const timeboxPromise = new Promise( ( _, reject ) =>

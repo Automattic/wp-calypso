@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
 import { type Request, type Response, type NextFunction } from 'express';
-import { type Details as UserAgentDetails, parse as parseUserAgent } from 'express-useragent';
+import { when } from 'jest-when';
 import unsupportedBrowserMiddleware from '../../middleware/unsupported-browser';
 
 jest.mock( '@automattic/calypso-config', () =>
@@ -31,7 +31,7 @@ jest.mock( 'calypso/server/lib/analytics', () => ( {
 } ) );
 
 describe( 'unsupported-browser', () => {
-	let req: Partial< Request > & { useragent: UserAgentDetails };
+	let req: Partial< Request > & { get: jest.Mock };
 	let res: Partial< Response > & { redirect: jest.Mock; cookie: jest.Mock };
 	let next: NextFunction;
 
@@ -39,7 +39,7 @@ describe( 'unsupported-browser', () => {
 		jest.clearAllMocks();
 
 		req = {
-			useragent: {} as UserAgentDetails,
+			get: jest.fn(),
 			path: '/test',
 			cookies: {},
 			query: {},
@@ -95,9 +95,9 @@ describe( 'unsupported-browser', () => {
 	describe( 'allowed paths', () => {
 		beforeEach( () => {
 			// Use an unsupported browser that should normally be redirected
-			req.useragent = parseUserAgent(
-				'Mozilla/5.0 (Windows NT 10.0; Trident/7.0; rv:11.0) like Gecko'
-			);
+			when( req.get )
+				.calledWith( 'user-agent' )
+				.mockReturnValue( 'Mozilla/5.0 (Windows NT 10.0; Trident/7.0; rv:11.0) like Gecko' );
 		} );
 
 		it.each( [
@@ -151,7 +151,7 @@ describe( 'unsupported-browser', () => {
 					'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.87 Safari/537.36 OPR/66.0.3575.31',
 			},
 		] )( 'should redirect $description', ( { userAgent } ) => {
-			req.useragent = parseUserAgent( userAgent );
+			when( req.get ).calledWith( 'user-agent' ).mockReturnValue( userAgent );
 
 			unsupportedBrowserMiddleware()( req, res, next );
 
@@ -192,7 +192,7 @@ describe( 'unsupported-browser', () => {
 					'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.87 Safari/537.36 OPR/67.0.3575.31',
 			},
 		] )( 'should not redirect $description', ( { userAgent } ) => {
-			req.useragent = parseUserAgent( userAgent );
+			when( req.get ).calledWith( 'user-agent' ).mockReturnValue( userAgent );
 
 			unsupportedBrowserMiddleware()( req, res, next );
 
@@ -209,9 +209,11 @@ describe( 'unsupported-browser', () => {
 		);
 
 		// Use a modern browser that shouldn't normally be redirected
-		req.useragent = parseUserAgent(
-			'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0 Safari/605.1.15'
-		);
+		when( req.get )
+			.calledWith( 'user-agent' )
+			.mockReturnValue(
+				'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0 Safari/605.1.15'
+			);
 
 		unsupportedBrowserMiddleware()( req, res, next );
 

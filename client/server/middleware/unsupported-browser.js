@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import UserAgent from 'ua-parser-js';
 import { addQueryArgs } from 'calypso/lib/url';
 import analytics from 'calypso/server/lib/analytics';
 
@@ -20,7 +21,7 @@ const ALLOWED_PATH_PATTERN = new RegExp(
 );
 
 /**
- * @typedef {import('express-useragent').Details} UserAgentDetails
+ * @typedef {import('ua-parser-js').IBrowser} Browser
  */
 
 /**
@@ -49,25 +50,28 @@ const getMajorVersion = ( version ) => Number( version.split( '.' )[ 0 ] );
  * listed in package.json. This list only serves as a way to assist users who are
  * using a browser which is definitely broken. It is not a guarantee that things
  * will work flawlessly on newer versions.
- * @type {Map<string, (ua: UserAgentDetails) => boolean>}
+ * @type {Map<string, (browser: Browser) => boolean>}
  */
 const UNSUPPORTED_BROWSERS = new Map( [
 	[ 'IE', () => true ],
-	[ 'Edge', ( ua ) => getMajorVersion( ua.version ) <= 79 ],
-	[ 'Firefox', ( ua ) => getMajorVersion( ua.version ) <= 73 ],
-	[ 'Chrome', ( ua ) => getMajorVersion( ua.version ) <= 79 ],
-	[ 'Safari', ( ua ) => getMajorVersion( ua.version ) <= 13 ],
-	[ 'Opera', ( ua ) => getMajorVersion( ua.version ) <= 66 ],
+	[ 'Edge', ( { version } ) => getMajorVersion( version ) <= 79 ],
+	[ 'Firefox', ( { version } ) => getMajorVersion( version ) <= 73 ],
+	[ 'Chrome', ( { version } ) => getMajorVersion( version ) <= 79 ],
+	[ 'Safari', ( { version } ) => getMajorVersion( version ) <= 13 ],
+	[ 'Mobile Safari', ( { version } ) => getMajorVersion( version ) <= 13 ],
+	[ 'Opera', ( { version } ) => getMajorVersion( version ) <= 66 ],
 ] );
 
 /**
  * Returns true if the browser via the request useragent is explicitly unsupported, or false
  * otherwise.
- * @param {import('express').Request & { useragent: UserAgentDetails }} req
+ * @param {import('express').Request} req
  * @returns {boolean} Whether the browser is unsupported
  */
-const isUnsupportedBrowser = ( req ) =>
-	UNSUPPORTED_BROWSERS.get( req.useragent.browser )?.( req.useragent ) === true;
+const isUnsupportedBrowser = ( req ) => {
+	const browser = new UserAgent( req.get( 'user-agent' ) ).getBrowser();
+	return UNSUPPORTED_BROWSERS.get( browser.name )?.( browser ) === true;
+};
 
 /**
  * These public pages work even in unsupported browsers, so we do not redirect them.
