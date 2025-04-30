@@ -11,18 +11,18 @@ import type { SetSelection } from '../../private-types';
 import { LAYOUT_TABLE } from '../../constants';
 
 type DataViewsContextType< Item > = {
-	view: View;
-	onChangeView: ( view: View ) => void;
+	view?: View;
+	onChangeView?: ( view: View ) => void;
 	fields: NormalizedField< Item >[];
 	actions?: Action< Item >[];
 	data: Item[];
 	isLoading?: boolean;
-	paginationInfo: {
+	paginationInfo?: {
 		totalItems: number;
 		totalPages: number;
 	};
 	selection: string[];
-	onChangeSelection: SetSelection;
+	onChangeSelection?: SetSelection;
 	openedFilter: string | null;
 	setOpenedFilter: ( openedFilter: string | null ) => void;
 	getItemId: ( item: Item ) => string;
