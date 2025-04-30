@@ -1,3 +1,8 @@
+/**
+ * Global polyfills
+ */
+import '@automattic/calypso-polyfills';
+
 import page from '@automattic/calypso-router';
 import { setupLocale } from 'calypso/boot/locale';
 import { render } from 'calypso/controller/web-util';
