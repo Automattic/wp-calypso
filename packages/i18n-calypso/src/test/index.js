@@ -353,5 +353,28 @@ describe( 'I18n', function () {
 			} );
 			expect( result ).toBe( 'hi' );
 		} );
+
+		it( 'should return newCopy if text has a translation with context', function () {
+			const result = i18n.fixMe( {
+				text: 'test3',
+				newCopy: 'translation3',
+				oldCopy: 'not test 3',
+				translationOptions: {
+					context: 'thecontext',
+				},
+			} );
+			expect( result ).toBe( 'translation3' );
+		} );
+		it( 'should return oldCopy if text does not have a translation with this context', function () {
+			const result = i18n.fixMe( {
+				text: 'test3',
+				newCopy: 'translation3',
+				oldCopy: 'not test 3',
+				translationOptions: {
+					context: 'notthecontext',
+				},
+			} );
+			expect( result ).toBe( 'not test 3' );
+		} );
 	} );
 } );
