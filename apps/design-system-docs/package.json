@@ -13,11 +13,11 @@
 	},
 	"scripts": {
 		"docusaurus": "docusaurus",
-		"start": "docusaurus start -p 3456",
+		"start": "docusaurus start -p 42987",
 		"build": "docusaurus build",
 		"deploy": "docusaurus deploy",
 		"clear": "docusaurus clear",
-		"serve": "docusaurus serve -p 3456",
+		"serve": "docusaurus serve -p 42987",
 		"write-heading-ids": "docusaurus write-heading-ids",
 		"typecheck": "tsc"
 	},
