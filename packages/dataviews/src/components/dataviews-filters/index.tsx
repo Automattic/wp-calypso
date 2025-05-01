@@ -173,7 +173,7 @@ function FilterVisibilityToggle( {
 	);
 }
 
-function Filters() {
+function Filters( { className }: { className?: string } ) {
 	const { fields, view, onChangeView, openedFilter, setOpenedFilter } =
 		useContext( DataViewsContext );
 	const addFilterRef = useRef< HTMLButtonElement >( null );
@@ -221,8 +221,8 @@ function Filters() {
 		<HStack
 			justify="flex-start"
 			style={ { width: 'fit-content' } }
-			className="dataviews-filters__container"
 			wrap
+			className={ className }
 		>
 			{ filterComponents }
 		</HStack>
