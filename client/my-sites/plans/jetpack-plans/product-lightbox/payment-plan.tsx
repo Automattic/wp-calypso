@@ -1,7 +1,8 @@
 import { JETPACK_SOCIAL_ADVANCED_PRODUCTS } from '@automattic/calypso-products';
 import { PlanPrice } from '@automattic/components';
+import { formatCurrency } from '@automattic/number-formatters';
 import clsx from 'clsx';
-import { formatCurrency, useTranslate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { isNumber } from 'lodash';
 import { useCallback } from 'react';
 import TimeFrame from 'calypso/components/jetpack/card/jetpack-product-card/display-price/time-frame';

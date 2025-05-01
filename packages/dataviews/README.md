@@ -1223,8 +1223,11 @@ Example:
 
 ## Contributing to this package
 
-This package is based on and extends the [`@wordpress/dataviews` package](https://www.npmjs.com/package/@wordpress/dataviews). We keep two CHANGELOGS: `CHANGELOG.md` refers to the upstream changes from `@wordpress/dataviews`, and `CHANGELOG.automattic.md` refers to the modifications introduced in `@automattic/dataviews`.
+This package is based on the [`@wordpress/dataviews` package](https://www.npmjs.com/package/@wordpress/dataviews). We aim to synchronize changes from upstream (Gutenberg repo, `@wordpress/dataviews` package) while extending its core functionality.
 
-This is an individual package that's part of the wp-calypso project. The project is organized as a monorepo. It's made up of multiple self-contained software packages, each with a specific purpose. The packages in this monorepo are published to [npm](https://www.npmjs.com/) and used by [wp-calypso](https://github.com/automattic/wp-calypso/) as well as other software projects.
+There's two workflows: adding new features to this package and synchronizing changes from upstream. See [SYNC.md](https://github.com/Automattic/wp-calypso/blob/trunk/packages/dataviews/SYNC.md) for details about the second workflow.
 
-To find out more about contributing to this package or wp-calypso as a whole, please read the project's main [contributor guide](https://github.com/Automattic/wp-calypso/blob/trunk/docs/CONTRIBUTING.md).
+- When adding new features, document every change in the `CHANGELOG.automattic.md` file.
+- When synchronizing changes from upstream, document it in the `CHANGELOG.automattic.md` as well. For example, add a line such as `Bring changes from @wordpress/dataviews X.Y.Z`. Ideally, synchronizations should happen every time there's new release of `@wordpress/packages`, as this makes it easier to pinpoint changes. If it brings upstream changes that cannot be pinpointed to a package release, document the upstream git commit that's being pulled into this package.
+
+This is an individual package that's part of the wp-calypso project. The project is organized as a monorepo. It's made up of multiple self-contained software packages, each with a specific purpose. The packages in this monorepo are published to [npm](https://www.npmjs.com/) and used by [wp-calypso](https://github.com/automattic/wp-calypso/) as well as other software projects. To find out more about contributing to this package or wp-calypso as a whole, please read the project's main [contributor guide](https://github.com/Automattic/wp-calypso/blob/trunk/docs/CONTRIBUTING.md).

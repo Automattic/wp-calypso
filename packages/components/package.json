@@ -34,6 +34,7 @@
 		"@automattic/i18n-utils": "workspace:^",
 		"@automattic/load-script": "workspace:^",
 		"@automattic/material-design-icons": "workspace:^",
+		"@automattic/number-formatters": "^1.0.0",
 		"@automattic/typography": "workspace:^",
 		"@automattic/viewport-react": "workspace:^",
 		"@emotion/css": "^11.11.2",

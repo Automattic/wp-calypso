@@ -4,6 +4,13 @@ import { useState } from 'react';
 import * as React from 'react';
 import { Theme } from '../lib/theme';
 
+interface RadioButtonWrapperProps {
+	disabled?: boolean;
+	isFocused?: boolean;
+	checked?: boolean;
+	hideRadioButton?: boolean;
+}
+
 const RadioButtonWrapper = styled.div<
 	RadioButtonWrapperProps & React.HTMLAttributes< HTMLDivElement >
 >`
@@ -14,28 +21,32 @@ const RadioButtonWrapper = styled.div<
 	width: 100%;
 	outline: ${ getOutline };
 
-	::before {
-		display: ${ ( props ) => ( props.hidden ? 'none' : 'block' ) };
-		width: 100%;
-		height: 100%;
-		position: absolute;
-		top: 0;
-		left: 0;
-		content: '';
-		border: ${ ( props ) => ( props.checked ? '1px solid ' + getBorderColor( props ) : 'none' ) };
-		border-bottom: ${ ( props ) => '1px solid ' + getBorderColor( props ) };
-		box-sizing: border-box;
-		border-radius: ${ ( props ) => ( props.checked ? '3px' : 0 ) };
-		.rtl & {
-			right: 0;
-			left: auto;
+	${ ( props ) =>
+		! props.hideRadioButton &&
+		`
+		::before {
+			display: ${ props.hidden ? 'none' : 'block' };
+			width: 100%;
+			height: 100%;
+			position: absolute;
+			top: 0;
+			left: 0;
+			content: '';
+			border: ${ props.checked ? '1px solid ' + getBorderColor( props ) : 'none' };
+			border-bottom: 1px solid ${ getBorderColor( props ) };
+			box-sizing: border-box;
+			border-radius: ${ props.checked ? '3px' : 0 };
+			.rtl & {
+				right: 0;
+				left: auto;
+			}
 		}
-	}
 
-	:hover::before {
-		border: 3px solid ${ ( props ) => props.theme.colors.highlight };
-		border-radius: 3px;
-	}
+		:hover::before {
+			border: 3px solid ${ props.theme.colors.highlight };
+			border-radius: 3px;
+		}
+	` }
 
 	.payment-logos {
 		display: none;
@@ -72,12 +83,6 @@ const RadioButtonWrapper = styled.div<
 	${ handleWrapperDisabled };
 `;
 
-interface RadioButtonWrapperProps {
-	disabled?: boolean;
-	isFocused?: boolean;
-	checked?: boolean;
-}
-
 const Radio = styled.input`
 	position: absolute;
 	opacity: 0 !important;
@@ -101,6 +106,7 @@ const Radio = styled.input`
 interface LabelProps {
 	disabled?: boolean;
 	checked?: boolean;
+	hideRadioButton?: boolean;
 }
 
 /**
@@ -109,7 +115,7 @@ interface LabelProps {
  */
 const Label = styled.label< LabelProps & React.LabelHTMLAttributes< HTMLLabelElement > >`
 	position: relative;
-	padding: 16px 14px 16px 56px;
+	padding: ${ ( props ) => ( props.hideRadioButton ? '16px 24px' : '16px 14px 16px 56px' ) };
 	border-radius: 3px;
 	box-sizing: border-box;
 	width: 100%;
@@ -124,7 +130,7 @@ const Label = styled.label< LabelProps & React.LabelHTMLAttributes< HTMLLabelEle
 	min-height: 72px;
 
 	.rtl & {
-		padding: 16px 56px 16px 14px;
+		padding: ${ ( props ) => ( props.hideRadioButton ? '16px 24px' : '16px 56px 16px 14px' ) };
 	}
 
 	:hover {
@@ -132,7 +138,7 @@ const Label = styled.label< LabelProps & React.LabelHTMLAttributes< HTMLLabelEle
 	}
 
 	::before {
-		display: block;
+		display: ${ ( props ) => ( props.hideRadioButton ? 'none' : 'block' ) };
 		width: 16px;
 		height: 16px;
 		content: '';
@@ -152,7 +158,7 @@ const Label = styled.label< LabelProps & React.LabelHTMLAttributes< HTMLLabelEle
 	}
 
 	::after {
-		display: block;
+		display: ${ ( props ) => ( props.hideRadioButton ? 'none' : 'block' ) };
 		width: 8px;
 		height: 8px;
 		content: '';
@@ -199,6 +205,7 @@ export default function RadioButton( {
 	hidden,
 	id,
 	ariaLabel,
+	hideRadioButton,
 	...otherProps
 }: RadioButtonProps ) {
 	const [ isFocused, changeFocus ] = useState( false );
@@ -208,6 +215,7 @@ export default function RadioButton( {
 			isFocused={ isFocused }
 			checked={ checked }
 			hidden={ hidden }
+			hideRadioButton={ hideRadioButton }
 			className={ `${ checked ? 'is-checked' : '' }` }
 		>
 			<Radio
@@ -228,7 +236,12 @@ export default function RadioButton( {
 				aria-label={ ariaLabel }
 				{ ...otherProps }
 			/>
-			<Label checked={ checked } htmlFor={ id } disabled={ disabled }>
+			<Label
+				checked={ checked }
+				htmlFor={ id }
+				disabled={ disabled }
+				hideRadioButton={ hideRadioButton }
+			>
 				{ label }
 			</Label>
 			{ children && <RadioButtonChildren checked={ checked }>{ children }</RadioButtonChildren> }
@@ -247,6 +260,7 @@ interface RadioButtonProps {
 	onChange?: () => void;
 	ariaLabel?: string;
 	children?: React.ReactNode;
+	hideRadioButton?: boolean;
 }
 
 RadioButton.propTypes = {
@@ -335,12 +349,14 @@ function getGrayscaleValue( { checked }: { checked?: boolean } ) {
 function getOutline( {
 	isFocused,
 	theme,
+	hideRadioButton,
 }: {
 	isFocused?: boolean;
 	checked?: boolean;
 	theme: Theme;
+	hideRadioButton?: boolean;
 } ) {
-	if ( isFocused ) {
+	if ( isFocused && ! hideRadioButton ) {
 		return theme.colors.outline + ' solid 2px';
 	}
 	return '0';

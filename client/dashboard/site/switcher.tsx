@@ -1,13 +1,13 @@
+import { filterSortAndPaginate } from '@automattic/dataviews';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { MenuGroup, MenuItem, SearchControl, Icon } from '@wordpress/components';
-import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { plus } from '@wordpress/icons';
 import { useState } from 'react';
 import { sitesQuery } from '../app/queries';
 import SiteIcon from '../site-icon';
-import type { View } from '@wordpress/dataviews';
+import type { View } from '@automattic/dataviews';
 
 const fields = [ { id: 'name', enableGlobalSearch: true } ];
 
@@ -44,7 +44,7 @@ export default function Switcher( { onClose }: { onClose: () => void } ) {
 					<MenuItem
 						key={ site.ID }
 						onClick={ async () => {
-							await navigate( { to: `/sites/${ site.ID }` } );
+							await navigate( { to: `/sites/${ site.slug }` } );
 							onClose();
 						} }
 					>

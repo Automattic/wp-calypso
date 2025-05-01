@@ -3,6 +3,7 @@ import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { getUrlParts } from '@automattic/calypso-url';
 import { getLanguageSlugs } from '@automattic/i18n-utils';
+import { setGeoLocation } from '@automattic/number-formatters';
 import { getToken } from '@automattic/oauth-token';
 import { JETPACK_PRICING_PAGE } from '@automattic/urls';
 import debugFactory from 'debug';
@@ -226,12 +227,6 @@ const configureReduxStore = ( currentUser, reduxStore ) => {
 		reduxStore.dispatch( setCurrentUser( currentUser ) );
 	}
 
-	if ( config.isEnabled( 'network-connection' ) ) {
-		asyncRequire( 'calypso/lib/network-connection' ).then( ( networkConnection ) =>
-			networkConnection.default.init( reduxStore )
-		);
-	}
-
 	setSupportSessionReduxStore( reduxStore );
 	setReduxBridgeReduxStore( reduxStore );
 
@@ -330,7 +325,9 @@ const boot = async ( currentUser, registerRoutes ) => {
 	onDisablePersistence( persistOnChange( reduxStore, currentUser?.ID ) );
 	onDisablePersistence( unsubscribePersister );
 	setupLocale( currentUser, reduxStore );
-	defaultCalypsoI18n.geolocateCurrencySymbol();
+
+	defaultCalypsoI18n.geolocateCurrencySymbol( setGeoLocation );
+
 	configureReduxStore( currentUser, reduxStore );
 	setupMiddlewares( currentUser, reduxStore, queryClient );
 	detectHistoryNavigation.start();

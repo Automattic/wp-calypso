@@ -1,5 +1,6 @@
 import { AddOns, Site, StorageAddOnSlug } from '@automattic/data-stores';
 import { useGetPurchasedStorageAddOn } from '@automattic/data-stores/src/add-ons';
+import { formatCurrency } from '@automattic/number-formatters';
 import styled from '@emotion/styled';
 import {
 	Card,
@@ -11,7 +12,7 @@ import {
 } from '@wordpress/components';
 import { Icon } from '@wordpress/icons';
 import filesize from 'filesize';
-import { formatCurrency, useTranslate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { SiteId } from 'calypso/types';
 
@@ -71,6 +72,10 @@ const Container = styled.div`
 		font-size: 0.875rem;
 		padding-top: 0;
 		padding-bottom: 0;
+
+		p {
+			margin-bottom: 0;
+		}
 
 		.storage-add-ons-card__storage-dropdown {
 			margin: 16px 0;
@@ -238,7 +243,9 @@ export default function StorageAddOnCard( { siteId, actionPrimary }: Props ) {
 					</div>
 				</CardHeader>
 				<CardBody className="storage-add-ons-card__body">
-					{ translate( 'Make more space for high-quality photos, videos, and other media.' ) }
+					<p>
+						{ translate( 'Make more space for high-quality photos, videos, and other media.' ) }
+					</p>
 					{ selectControlOptions.length ? (
 						<div className="storage-add-ons-card__storage-dropdown">
 							<CustomSelectControl

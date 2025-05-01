@@ -1,6 +1,7 @@
 import { Button, Dialog } from '@automattic/components';
+import { formatNumber } from '@automattic/number-formatters';
 import styled from '@emotion/styled';
-import { numberFormat, useTranslate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { CHARACTER_LIMIT } from './section-types/constants';
 
 const DialogContent = styled.div`
@@ -124,7 +125,7 @@ export function ContentGuidelinesDialog( {
 								components: {
 									strong: <strong />,
 								},
-								args: [ numberFormat( CHARACTER_LIMIT ) ],
+								args: [ formatNumber( CHARACTER_LIMIT ) ],
 							}
 						) }
 					</li>

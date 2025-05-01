@@ -23,6 +23,7 @@ import {
 	useTransactionStatus,
 	TransactionStatus,
 } from '@automattic/composite-checkout';
+import { formatCurrency } from '@automattic/number-formatters';
 import { Step } from '@automattic/onboarding';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import {
@@ -35,7 +36,7 @@ import { css, keyframes } from '@emotion/react';
 import { useViewportMatch } from '@wordpress/compose';
 import { useSelect, useDispatch } from '@wordpress/data';
 import debugFactory from 'debug';
-import { formatCurrency, useTranslate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { useState, useCallback } from 'react';
 import Loading from 'calypso/components/loading';
 import { useInitialIsInStepContainerV2FlowContext } from 'calypso/layout/utils';
@@ -63,6 +64,7 @@ import { prepareDomainContactValidationRequest } from 'calypso/my-sites/checkout
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import SitePreview from 'calypso/my-sites/customer-home/cards/features/site-preview';
 import useOneDollarOfferTrack from 'calypso/my-sites/plans/hooks/use-onedollar-offer-track';
+import { useStreamlinedPriceExperiment } from 'calypso/my-sites/plans-features-main/hooks/use-streamlined-price-experiment';
 import { siteHasPaidPlan } from 'calypso/signup/steps/site-picker/site-picker-submit';
 import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -389,6 +391,9 @@ export default function CheckoutMainContent( {
 
 	const leaveModalProps = useCheckoutLeaveModal( { siteUrl: siteUrl ?? '' } );
 
+	const [ isStreamlinedPriceExperimentLoading, streamlinedPriceExperimentAssignment ] =
+		useStreamlinedPriceExperiment();
+
 	const searchParams = new URLSearchParams( window.location.search );
 	const isDIFMInCart = hasDIFMProduct( responseCart );
 	const isSignupCheckout = searchParams.get( 'signup' ) === '1';
@@ -624,7 +629,9 @@ export default function CheckoutMainContent( {
 							<WPCheckoutOrderSummary
 								siteId={ siteId }
 								onChangeSelection={ changeSelection }
-								showFeaturesList
+								showFeaturesList={
+									! isStreamlinedPriceExperimentLoading && ! streamlinedPriceExperimentAssignment
+								}
 							/>
 							<CheckoutSidebarNudge
 								addItemToCart={ addItemToCart }
@@ -1243,7 +1250,7 @@ function CheckoutTermsAndCheckboxes( {
 					onChange={ setIs3PDAccountConsentAccepted }
 					isSubmitted={ isSubmitted }
 					message={ translate(
-						'You agree that an account may be created on a third party developer’s site related to the products you have purchased.'
+						"You agree that an account may be created on a third party developer's site related to the products you have purchased."
 					) }
 				/>
 			) }

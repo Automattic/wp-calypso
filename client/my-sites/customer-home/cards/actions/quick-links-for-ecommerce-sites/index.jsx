@@ -7,7 +7,6 @@ import { useDebouncedCallback } from 'use-debounce';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference } from 'calypso/state/preferences/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
-import getSelectedEditor from 'calypso/state/selectors/get-selected-editor';
 import isSiteAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import { getSitePlanSlug, getSite, getSiteOption } from 'calypso/state/sites/selectors';
@@ -155,9 +154,7 @@ const QuickLinksForEcommerceSites = ( props ) => {
 
 const mapStateToProps = ( state ) => {
 	const siteId = getSelectedSiteId( state );
-	const isClassicEditor = getSelectedEditor( state, siteId ) === 'classic';
-	const isStaticHomePage =
-		! isClassicEditor && 'page' === getSiteOption( state, siteId, 'show_on_front' );
+	const isStaticHomePage = 'page' === getSiteOption( state, siteId, 'show_on_front' );
 
 	return {
 		isStaticHomePage,

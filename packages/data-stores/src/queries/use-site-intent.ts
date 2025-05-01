@@ -1,9 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
 import wpcomRequest from 'wpcom-proxy-request';
+import { SiteIntent } from '../onboard';
 
 export function useSiteIntent( siteId: string | number | undefined ) {
 	return useQuery< {
-		site_intent: '';
+		site_intent: SiteIntent;
 	} >( {
 		queryKey: [ 'site-intent', siteId ],
 		queryFn: async () =>

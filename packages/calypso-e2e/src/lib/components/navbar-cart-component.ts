@@ -26,6 +26,7 @@ export class NavbarCartComponent {
 	 * Opens the popover cart.
 	 */
 	async openCart(): Promise< void > {
+		await this.page.locator( selectors.cartButton ).waitFor( { state: 'visible', timeout: 3000 } );
 		await this.page.locator( selectors.cartButton ).click();
 		await this.page.locator( selectors.popover ).waitFor();
 		// Sometimes there is background work happening when you open the popover. This can interrupt later actions taken.
@@ -60,5 +61,14 @@ export class NavbarCartComponent {
 			// Since we're going one by one and removing them all, we can always just remove the first item until there are none.
 			await this.removeCartItem( { index: 0 } );
 		}
+	}
+
+	/**
+	 * Checks if the cart button is visible.
+	 *
+	 * @returns {Promise<boolean>} True if the cart button is visible, false otherwise.
+	 */
+	async isCartButtonVisible(): Promise< boolean > {
+		return ( await this.page.locator( selectors.cartButton ).isVisible() ) ?? false;
 	}
 }

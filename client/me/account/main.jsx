@@ -2,6 +2,7 @@ import config from '@automattic/calypso-config';
 import { Button, Card, Dialog, FormInputValidation, FormLabel } from '@automattic/components';
 import { canBeTranslated, getLanguage, isLocaleVariant } from '@automattic/i18n-utils';
 import languages from '@automattic/languages';
+import { ExternalLink } from '@wordpress/components';
 import debugFactory from 'debug';
 import { fixMe, localize } from 'i18n-calypso';
 import { debounce, flowRight as compose, get, map, size } from 'lodash';
@@ -305,20 +306,29 @@ class Account extends Component {
 		const { translate } = this.props;
 		const url = 'https://translate.wordpress.com/translators/?contributor_locale=' + locale;
 
-		return (
-			<FormSettingExplanation>
-				{ ' ' }
-				{ translate(
-					'Thanks to {{a}}all our community members who helped translate to {{language/}}{{/a}}!',
-					{
-						components: {
-							a: <a target="_blank" rel="noopener noreferrer" href={ url } />,
-							language: <span>{ language.name }</span>,
-						},
-					}
-				) }
-			</FormSettingExplanation>
-		);
+		const thanksLabel = fixMe( {
+			text: 'Thanks to {{a}}all our community members who helped translate to {{language/}}{{/a}}',
+			newCopy: translate(
+				'Thanks to {{a}}all our community members who helped translate to {{language/}}{{/a}}',
+				{
+					components: {
+						a: <ExternalLink children={ null } href={ url } />,
+						language: <span>{ language.name }</span>,
+					},
+				}
+			),
+			oldCopy: translate(
+				'Thanks to {{a}}all our community members who helped translate to {{language/}}{{/a}}!',
+				{
+					components: {
+						a: <ExternalLink children={ null } href={ url } />,
+						language: <span>{ language.name }</span>,
+					},
+				}
+			),
+		} );
+
+		return <FormSettingExplanation> { thanksLabel }</FormSettingExplanation>;
 	}
 
 	handleRadioChange = ( event ) => {

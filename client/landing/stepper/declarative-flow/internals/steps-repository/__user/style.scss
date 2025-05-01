@@ -20,11 +20,10 @@ $breakpoint-mobile: 660px;
 	.signup-form-social-first__email-tos-link {
 		color: var(--studio-gray-60, #646970);
 		font-family: "SF Pro Text", sans-serif;
-		font-size: 0.75rem;
+		font-size: 0.875rem;
 		font-style: normal;
 		font-weight: 400;
 		line-height: 20px;
-		margin-bottom: 0;
 
 		a {
 			color: var(--studio-gray-60, #646970);
@@ -33,7 +32,8 @@ $breakpoint-mobile: 660px;
 	}
 
 	.signup-form-social-first__tos-link {
-		margin-top: 3rem;
+		margin-bottom: 2rem;
+		margin-top: -2rem;
 		text-align: center;
 	}
 
@@ -217,6 +217,7 @@ $breakpoint-mobile: 660px;
 	}
 
 	.signup-form-social-first {
+
 		&,
 		.card.auth-form__social,
 		.card.logged-out-form {

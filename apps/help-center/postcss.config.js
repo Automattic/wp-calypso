@@ -18,6 +18,11 @@ module.exports = {
 					return selector === '.count' ? prefixedSelector : selector;
 				}
 
+				// Replace :root with .help-center to avoid stylizing the document and scope all the help center variables to the help center.
+				if ( selector === ':root' ) {
+					return '.help-center';
+				}
+
 				return selector;
 			},
 		} ),
