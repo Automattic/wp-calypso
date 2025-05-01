@@ -68,12 +68,17 @@ skipDescribeIf(
 
 				// Handle potential 2FA challenge.
 				if ( url.includes( 'appleid.apple.com/auth/authorize' ) ) {
+					// Only click 'Send code' if the button is visible
+					if ( await appleLoginPage.hasButtonWithExactText( 'Send code' ) ) {
+						await appleLoginPage.clickButtonWithExactText( 'Send code' );
+					}
+
 					const emailClient = new EmailClient();
 					const message = await emailClient.getLastMatchingMessage( {
 						inboxId: SecretsManager.secrets.mailosaur.totpUserInboxId,
 						receivedAfter: timestamp,
 						subject: 'SMS',
-						body: 'Your Apple ID Code is',
+						body: 'Your Apple Account code is',
 					} );
 
 					const code = emailClient.get2FACodeFromMessage( message );
@@ -87,8 +92,8 @@ skipDescribeIf(
 				await appleLoginPage.clickButtonContainingText( 'Continue' );
 			} );
 
-			it( 'Redirected to woo.com upon successful login', async function () {
-				await page.waitForURL( /.*woo\.com*/ );
+			it( 'Redirected to WordPress.com OAuth2 user page', async function () {
+				await page.waitForURL( /.*\/start\/wpcc\/oauth2-user.*/ );
 			} );
 		} );
 	}

@@ -8,7 +8,7 @@ const selectors = {
 	// Inputs
 	emailInput: 'input[id="account_name_text_field"]',
 	passwordInput: 'input[id="password_text_field"]',
-	otpInput: 'input[maxlength="1"]', // Matches on the first OTP input field.
+	otpInput: 'input.form-security-code-input', // Matches OTP input fields
 
 	// Button
 	continueButton: 'button[aria-label="Continue"][aria-disabled="false"]',
@@ -54,6 +54,17 @@ export class AppleLoginPage {
 	}
 
 	/**
+	 * Checks if a button with the exact text exists and is visible.
+	 *
+	 * @param {string} text Text on the button.
+	 * @returns {Promise<boolean>} True if the button exists and is visible.
+	 */
+	async hasButtonWithExactText( text: string ): Promise< boolean > {
+		const locator = this.page.locator( selectors.buttonWithExactText( text ) );
+		return await locator.isVisible();
+	}
+
+	/**
 	 * Fills the Apple ID username/email field.
 	 *
 	 * @param {string} email Username (Apple ID) of the user.
@@ -89,7 +100,8 @@ export class AppleLoginPage {
 	 * @param {string} code 2FA code for the user.
 	 */
 	async enter2FACode( code: string ): Promise< void > {
-		const locator = this.page.locator( selectors.otpInput ).first();
-		await locator.type( code, { delay: 150 } );
+		const firstInput = this.page.locator( selectors.otpInput ).first();
+		await firstInput.focus();
+		await this.page.keyboard.insertText( code );
 	}
 }
