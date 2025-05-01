@@ -67,7 +67,6 @@ export function GetHeaderText( {
 	isFromMigrationPlugin,
 	isJetpack,
 	isWCCOM,
-	isSignupExistingAccount,
 	isFromAkismet,
 	isFromAutomatticForAgenciesPlugin,
 	isGravPoweredClient,
@@ -89,7 +88,6 @@ export function GetHeaderText( {
 	isFromMigrationPlugin: boolean;
 	isJetpack: boolean;
 	isWCCOM: boolean;
-	isSignupExistingAccount: boolean;
 	isFromAkismet: boolean;
 	isFromAutomatticForAgenciesPlugin: boolean;
 	isGravPoweredClient: boolean;
@@ -263,9 +261,6 @@ export function GetHeaderText( {
 			</>
 		);
 	}
-	if ( isSignupExistingAccount ) {
-		headerText = <>{ translate( 'Log in to your existing account' ) }</>;
-	}
 
 	if ( isFromAkismet ) {
 		headerText = <>{ translate( 'Log in to Akismet with WordPress.com' ) }</>;
@@ -289,7 +284,6 @@ export function LoginHeader( {
 	isGravPoweredLoginPage,
 	isJetpack,
 	isManualRenewalImmediateLoginAttempt,
-	isSignupExistingAccount,
 	isSocialFirst,
 	isWhiteLogin,
 	isWCCOM,
@@ -325,7 +319,6 @@ export function LoginHeader( {
 			isFromMigrationPlugin={ isFromMigrationPlugin }
 			isJetpack={ isJetpack }
 			isWCCOM={ isWCCOM }
-			isSignupExistingAccount={ isSignupExistingAccount }
 			isFromAkismet={ isFromAkismet }
 			isFromAutomatticForAgenciesPlugin={ isFromAutomatticForAgenciesPlugin }
 			isGravPoweredClient={ isGravPoweredClient }

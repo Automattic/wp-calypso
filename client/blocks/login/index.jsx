@@ -328,6 +328,23 @@ class Login extends Component {
 		return getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, pathname );
 	};
 
+	renderLoginFromSignupNotice() {
+		return (
+			<Notice status="is-transparent-info" showDismiss={ false }>
+				{ this.props.translate(
+					'This email address is already associated with an account. Please consider {{returnToSignup}}using another one{{/returnToSignup}} or log in.',
+					{
+						components: {
+							returnToSignup: (
+								<a href={ this.getSignupUrl() } onClick={ this.recordSignUpLinkClick } />
+							),
+						},
+					}
+				) }
+			</Notice>
+		);
+	}
+
 	renderToS() {
 		const { isSocialFirst, translate, twoFactorAuthType } = this.props;
 		if ( ! isSocialFirst || twoFactorAuthType ) {
@@ -394,7 +411,6 @@ class Login extends Component {
 			action,
 			currentQuery,
 			isGravPoweredClient,
-			isSignupExistingAccount,
 			isSocialFirst,
 			isFromAutomatticForAgenciesPlugin,
 			currentUser,
@@ -551,7 +567,6 @@ class Login extends Component {
 				handleUsernameChange={ handleUsernameChange }
 				signupUrl={ signupUrl }
 				hideSignupLink={ isGravPoweredClient || isBlazePro }
-				isSignupExistingAccount={ isSignupExistingAccount }
 				sendMagicLoginLink={ this.sendMagicLoginLink }
 				isFromAkismet={ this.props.isFromAkismet }
 				isSendingEmail={ this.props.isSendingEmail }
@@ -625,7 +640,6 @@ class Login extends Component {
 						isGravPoweredLoginPage={ isGravPoweredLoginPage }
 						isJetpack={ isJetpack }
 						isManualRenewalImmediateLoginAttempt={ isManualRenewalImmediateLoginAttempt }
-						isSignupExistingAccount={ isSignupExistingAccount }
 						isSocialFirst={ isSocialFirst }
 						isWhiteLogin={ isWhiteLogin }
 						isWCCOM={ isWCCOM }
@@ -647,16 +661,20 @@ class Login extends Component {
 					/>
 				) }
 
+				{ isSignupExistingAccount && this.renderLoginFromSignupNotice() }
+
 				{ /* For Woo, we render the ErrrorNotice component in login-form.jsx */ }
 				{ ! isWCCOM && <ErrorNotice locale={ locale } /> }
 
 				{ this.renderNotice() }
 
-				{ this.renderToS() }
+				{ ! isWhiteLogin && this.renderToS() }
 
 				{ this.renderContent() }
 
 				{ this.renderFooter() }
+
+				{ isWhiteLogin && this.renderToS() }
 			</div>
 		);
 	}

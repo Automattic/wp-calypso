@@ -549,8 +549,6 @@ export class Login extends Component {
 			oauth2Client,
 			isWooJPC,
 			isWCCOM,
-			isJetpack,
-			isSignupExistingAccount,
 			isFromAutomatticForAgenciesPlugin,
 			currentQuery,
 			showContinueAsUser,
@@ -643,7 +641,6 @@ export class Login extends Component {
 				isFromMigrationPlugin={ isFromMigrationPlugin }
 				isJetpack={ isJetpack }
 				isWCCOM={ isWCCOM }
-				isSignupExistingAccount={ isSignupExistingAccount }
 				isFromAkismet={ isFromAkismet }
 				isFromAutomatticForAgenciesPlugin={ isFromAutomatticForAgenciesPlugin }
 				isGravPoweredClient={ isGravPoweredClient }

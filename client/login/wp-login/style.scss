@@ -292,6 +292,14 @@ $image-height: 47px;
 		padding: 0;
 	}
 
+	.step-container-v2__content-wrapper {
+		margin-top: 24px;
+
+		@include break-medium {
+			margin-top: 6rem;
+		}
+	}
+
 	.login__form-header {
 		@include onboarding-heading-text-mobile;
 		margin-bottom: 0;
@@ -438,13 +446,8 @@ $image-height: 47px;
 
 	.wp-login__main.is-social-first {
 		max-width: 758px;
-		margin-top: 24px;
 		padding-left: 20px;
 		padding-right: 20px;
-
-		@include break-medium {
-			margin-top: 20.5vh;
-		}
 
 		.wp-login__header-navigation {
 			align-items: center;
@@ -496,11 +499,6 @@ $image-height: 47px;
 			text-align: center;
 			text-decoration: underline;
 			text-underline-offset: 5px;
-			margin-top: 24px;
-
-			@include break-mobile {
-				margin-top: 40px;
-			}
 		}
 	}
 
