@@ -15,6 +15,11 @@ export const getFlowFromURL = ( pathname?: string, search?: string ) => {
 };
 
 export const getStepFromURL = () => {
+	// For SSR, e.g. the logged-out themes section.
+	if ( typeof window === 'undefined' ) {
+		return null;
+	}
+
 	const fromPath = matchPath( { path: '/setup/:flow/:step' }, window.location.pathname )?.params
 		?.step;
 	return fromPath;
