@@ -1,28 +1,22 @@
 {
 	"$schema": "https://json.schemastore.org/tsconfig",
-
 	"compilerOptions": {
 		"composite": true,
 		"disableReferencedProjectLoad": true,
-
 		"declaration": true,
 		"declarationMap": true,
 		"sourceMap": true,
-
 		"importHelpers": true,
 		"noEmitHelpers": true,
 		"skipLibCheck": true,
-
 		"lib": [ "ES2022", "DOM", "DOM.Iterable" ],
 		"module": "ES2022",
 		"target": "ES2022",
 		"esModuleInterop": true,
 		"jsx": "react-jsx",
 		"resolveJsonModule": true,
-
 		"strict": true,
 		"isolatedModules": true,
-
 		"moduleResolution": "node",
 		"types": [],
 		"forceConsistentCasingInFileNames": true

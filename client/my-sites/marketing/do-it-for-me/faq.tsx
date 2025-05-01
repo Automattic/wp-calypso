@@ -1,10 +1,11 @@
 import { getPlan, PLAN_BUSINESS, PLAN_PREMIUM } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
+import { formatNumber } from '@automattic/number-formatters';
 import styled from '@emotion/styled';
 import { Button } from '@wordpress/components';
 import { RefObject } from '@wordpress/element';
-import { numberFormat, useTranslate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
 import { CHARACTER_LIMIT } from 'calypso/signup/steps/website-content/section-types/constants';
@@ -234,7 +235,6 @@ export const DIFMFAQ = ( {
 						: translate( 'Show Frequently Asked Questions' ),
 				} ) }
 			</div>
-
 			{ isFAQSectionOpen && (
 				<>
 					{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
@@ -363,7 +363,7 @@ export const DIFMFAQ = ( {
 									components: {
 										strong: <strong />,
 									},
-									args: [ numberFormat( CHARACTER_LIMIT ) ],
+									args: [ formatNumber( CHARACTER_LIMIT ) ],
 								}
 							) }
 						</p>

@@ -82,7 +82,6 @@ const ActiveDomainsCard: FC = () => {
 					{ translate( 'Manage domains' ) }
 				</HostingCardLinkButton>
 			</HostingCardHeading>
-
 			<DomainsTable
 				className="hosting-overview__domains-table"
 				context="site"

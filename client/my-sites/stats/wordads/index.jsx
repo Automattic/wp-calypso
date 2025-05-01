@@ -1,9 +1,10 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { eye } from '@automattic/components/src/icons';
+import { formatNumber } from '@automattic/number-formatters';
 import { Icon, chartBar, trendingUp } from '@wordpress/icons';
 import clsx from 'clsx';
-import { localize, translate, numberFormat } from 'i18n-calypso';
+import { localize, translate } from 'i18n-calypso';
 import { find } from 'lodash';
 import moment from 'moment';
 import { stringify as stringifyQs } from 'qs';
@@ -41,7 +42,7 @@ import './style.scss';
 import 'calypso/my-sites/earn/ads/style.scss';
 
 const formatCurrency = ( value ) => {
-	return '$' + numberFormat( value, { decimals: 2 } );
+	return '$' + formatNumber( value, { decimals: 2 } );
 };
 
 const CHARTS = [

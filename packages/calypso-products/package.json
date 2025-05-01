@@ -39,6 +39,7 @@
 		"@automattic/calypso-config": "workspace:^",
 		"@automattic/components": "workspace:^",
 		"@automattic/i18n-utils": "workspace:^",
+		"@automattic/number-formatters": "^1.0.0",
 		"@automattic/shopping-cart": "workspace:^",
 		"@automattic/urls": "workspace:^",
 		"i18n-calypso": "workspace:^"

@@ -1,4 +1,5 @@
-import { useTranslate, numberFormatCompact, formatCurrency } from 'i18n-calypso';
+import { formatCurrency, formatNumberCompact } from '@automattic/number-formatters';
+import { useTranslate } from 'i18n-calypso';
 import wpcomIcon from 'calypso/assets/images/icons/wordpress-logo.svg';
 import pressableIcon from 'calypso/assets/images/pressable/pressable-icon.svg';
 import { VendorInfo } from 'calypso/components/jetpack/jetpack-lightbox/types';
@@ -45,7 +46,7 @@ export default function ProductInfo( {
 			{
 				args: {
 					install: presablePlan.install,
-					visits: numberFormatCompact( presablePlan.visits ),
+					visits: formatNumberCompact( presablePlan.visits ),
 					storage: presablePlan.storage,
 				},
 				count: presablePlan.install,
@@ -161,7 +162,7 @@ export default function ProductInfo( {
 										trafficCharge: formatCurrency( 8, 'USD', {
 											stripZeros: true,
 										} ),
-										visits: numberFormatCompact( 10000 ),
+										visits: formatNumberCompact( 10000 ),
 									},
 								}
 							) }

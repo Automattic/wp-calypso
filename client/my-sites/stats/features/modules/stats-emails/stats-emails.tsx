@@ -2,7 +2,8 @@ import config from '@automattic/calypso-config';
 import { StatsCard } from '@automattic/components';
 import { mail } from '@automattic/components/src/icons';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { numberFormat, useTranslate } from 'i18n-calypso';
+import { formatNumber } from '@automattic/number-formatters';
+import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import StatsInfoArea from 'calypso/my-sites/stats/features/modules/shared/stats-info-area';
@@ -88,7 +89,7 @@ const StatsEmails: React.FC< StatsDefaultModuleProps > = ( {
 								<TooltipWrapper
 									value={
 										hasUniques
-											? `${ numberFormat( item.opens_rate, {
+											? `${ formatNumber( item.opens_rate, {
 													numberFormatOptions: {
 														maximumFractionDigits: 2,
 													},
@@ -119,7 +120,7 @@ const StatsEmails: React.FC< StatsDefaultModuleProps > = ( {
 							<TooltipWrapper
 								value={
 									hasUniques
-										? `${ numberFormat( item.clicks_rate, {
+										? `${ formatNumber( item.clicks_rate, {
 												numberFormatOptions: {
 													maximumFractionDigits: 2,
 												},

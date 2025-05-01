@@ -1,5 +1,6 @@
+import { formatNumber } from '@automattic/number-formatters';
 import { ProgressBar, Notice } from '@wordpress/components';
-import { numberFormat, localize } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import { omit } from 'lodash';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
@@ -127,7 +128,7 @@ export class ImportingPane extends PureComponent {
 			'%(numResources)s posts, pages, and media files left to import',
 			{
 				count: numResources,
-				args: { numResources: numberFormat( numResources ) },
+				args: { numResources: formatNumber( numResources ) },
 			}
 		);
 	};

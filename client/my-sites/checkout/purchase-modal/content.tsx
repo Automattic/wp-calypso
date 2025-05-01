@@ -1,5 +1,6 @@
 import page from '@automattic/calypso-router';
 import { Button, Gridicon } from '@automattic/components';
+import { formatCurrency } from '@automattic/number-formatters';
 import {
 	PaymentLogo,
 	getCreditsLineItemFromCart,
@@ -10,7 +11,7 @@ import {
 } from '@automattic/wpcom-checkout';
 import { sprintf } from '@wordpress/i18n';
 import clsx from 'clsx';
-import { formatCurrency, useTranslate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import React, { useCallback } from 'react';
 import CheckoutTerms from 'calypso/my-sites/checkout/src/components/checkout-terms';
 import { CheckIcon } from '../src/components/check-icon';

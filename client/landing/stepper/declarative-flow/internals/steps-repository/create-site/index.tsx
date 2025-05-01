@@ -1,4 +1,4 @@
-import { Site } from '@automattic/data-stores';
+import { Site, Onboard } from '@automattic/data-stores';
 import {
 	AI_SITE_BUILDER_FLOW,
 	ENTREPRENEUR_FLOW,
@@ -34,6 +34,7 @@ import {
 import { useSelector } from 'calypso/state';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 import { getUrlData } from 'calypso/state/imports/url-analyzer/selectors';
+import { useMvpOnboardingExperiment } from '../../../../hooks/use-mvp-onboarding-experiment';
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
 import type { Step as StepType } from '../../types';
 import type { OnboardSelect } from '@automattic/data-stores';
@@ -142,6 +143,7 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 	const platform = urlQueryParams.get( 'platform' ) || '';
 	const useThemeHeadstart = ! isStartWritingFlow( flow ) && ! isNewHostedSiteCreationFlow( flow );
 	const shouldGoToCheckout = Boolean( planCartItem );
+	const [ , isMvpOnboarding ] = useMvpOnboardingExperiment();
 
 	async function createSite() {
 		if ( isManageSiteFlow ) {
@@ -162,7 +164,13 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 			};
 		}
 
-		const siteIntent = isNewSiteMigrationFlow( flow ) ? 'migration' : '';
+		// eslint-disable-next-line no-nested-ternary
+		const siteIntent = isNewSiteMigrationFlow( flow )
+			? 'migration'
+			: isMvpOnboarding
+			? // For the simplified onboarding flow, we'll use the build intent since user can't choose the intent.
+			  Onboard.SiteIntent.Build
+			: '';
 
 		const sourceSlug = hasSourceSlug( data ) ? data.sourceSlug : undefined;
 		const site = await createSiteWithCart(

@@ -6,6 +6,7 @@ import {
 	isYearly,
 } from '@automattic/calypso-products';
 import { FormStatus, useFormStatus, Button } from '@automattic/composite-checkout';
+import { formatCurrency } from '@automattic/number-formatters';
 import {
 	type ResponseCart,
 	type RemoveCouponFromCart,
@@ -21,7 +22,7 @@ import {
 	isOverrideCodeIntroductoryOffer,
 } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
-import { formatCurrency, useTranslate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'calypso/state';
 import { getIsOnboardingAffiliateFlow } from 'calypso/state/signup/flow/selectors';
 import useCartKey from '../../use-cart-key';

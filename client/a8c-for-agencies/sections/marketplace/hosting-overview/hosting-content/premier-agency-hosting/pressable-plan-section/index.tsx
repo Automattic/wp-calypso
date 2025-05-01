@@ -1,5 +1,6 @@
+import { formatCurrency, formatNumberCompact } from '@automattic/number-formatters';
 import { external } from '@wordpress/icons';
-import { useTranslate, numberFormatCompact, formatCurrency } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { useState, useCallback, useEffect, useMemo } from 'react';
 import SimpleList from 'calypso/a8c-for-agencies/components/simple-list';
 import useProductAndPlans from 'calypso/a8c-for-agencies/sections/marketplace/hooks/use-product-and-plans';
@@ -138,7 +139,6 @@ export default function PressablePlanSection( {
 					/>
 				) }
 			</HostingPlanSection.Card>
-
 			<HostingPlanSection.Details
 				heading={
 					isCustomPlan ? translate( 'Custom' ) : selectedPlan.name.replace( /Pressable/g, '' )
@@ -218,7 +218,7 @@ export default function PressablePlanSection( {
 							),
 							translate( '{{b}}%(count)s visits{{/b}} per month*', {
 								args: {
-									count: numberFormatCompact( selectedPlanInfo?.visits ?? 0 ),
+									count: formatNumberCompact( selectedPlanInfo?.visits ?? 0 ),
 								},
 								components: {
 									b: <b />,
@@ -254,13 +254,12 @@ export default function PressablePlanSection( {
 								trafficCharge: formatCurrency( 8, 'USD', {
 									stripZeros: true,
 								} ),
-								visits: numberFormatCompact( 10000 ),
+								visits: formatNumberCompact( 10000 ),
 							},
 						}
 					) }
 				</span>
 			</HostingPlanSection.Details>
-
 			<HostingPlanSection.Aside
 				heading={ translate( 'Schedule a demo' ) }
 				cta={ {

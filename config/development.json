@@ -94,6 +94,7 @@
 		"jetpack/golden-token": true,
 		"jetpack/magic-link-signup": true,
 		"jetpack/manage-simple-sites": true,
+		"jetpack/onboarding-user-connection-redesign": true,
 		"jetpack/pricing-add-boost-social": true,
 		"jetpack/pricing-page-annual-only": true,
 		"jetpack/sharing-buttons-block-enabled": true,

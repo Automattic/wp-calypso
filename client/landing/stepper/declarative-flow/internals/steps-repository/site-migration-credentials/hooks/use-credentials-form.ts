@@ -25,8 +25,7 @@ export const analyzeUrl = async ( domain: string ): Promise< UrlData | undefined
 
 export const getApplicationPasswordsInfo = async (
 	siteId: number,
-	from: string,
-	locale: string
+	from: string
 ): Promise< ApplicationPasswordsInfo | undefined > => {
 	try {
 		return await wp.req.post( {
@@ -34,7 +33,6 @@ export const getApplicationPasswordsInfo = async (
 			apiNamespace: 'wpcom/v2',
 			body: {
 				source: from,
-				locale,
 			},
 		} );
 	} catch ( error ) {
@@ -167,15 +165,11 @@ export const useCredentialsForm = (
 				} );
 				onSubmit( siteInfoResult );
 			} else {
-				const applicationPasswordsInfoResult = await getApplicationPasswordsInfo(
-					siteId,
-					from,
-					locale
-				);
+				const applicationPasswordsInfoResult = await getApplicationPasswordsInfo( siteId, from );
 				onSubmit( siteInfoResult, applicationPasswordsInfoResult );
 			}
 		},
-		[ onSubmit, siteSlug, sendTicketAsync, locale ]
+		[ onSubmit, siteSlug, sendTicketAsync ]
 	);
 
 	const submitHandler = handleSubmit( async ( data: CredentialsFormData ) => {

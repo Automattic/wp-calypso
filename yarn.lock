@@ -455,6 +455,7 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/components": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
+    "@automattic/number-formatters": "npm:^1.0.0"
     "@automattic/shopping-cart": "workspace:^"
     "@automattic/urls": "workspace:^"
     "@wordpress/data": "npm:^10.22.0"
@@ -668,6 +669,7 @@ __metadata:
     "@automattic/i18n-utils": "workspace:^"
     "@automattic/load-script": "workspace:^"
     "@automattic/material-design-icons": "workspace:^"
+    "@automattic/number-formatters": "npm:^1.0.0"
     "@automattic/typography": "workspace:^"
     "@automattic/viewport-react": "workspace:^"
     "@emotion/css": "npm:^11.11.2"
@@ -798,7 +800,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/dataviews@workspace:packages/dataviews":
+"@automattic/dataviews@workspace:^, @automattic/dataviews@workspace:packages/dataviews":
   version: 0.0.0-use.local
   resolution: "@automattic/dataviews@workspace:packages/dataviews"
   dependencies:
@@ -1444,6 +1446,7 @@ __metadata:
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/composite-checkout": "workspace:^"
+    "@automattic/number-formatters": "npm:^1.0.0"
     "@automattic/shopping-cart": "workspace:^"
     "@automattic/wpcom-checkout": "workspace:^"
     "@emotion/styled": "npm:^11.11.0"
@@ -1501,6 +1504,17 @@ __metadata:
     wpcom-proxy-request: "workspace:^"
   languageName: unknown
   linkType: soft
+
+"@automattic/number-formatters@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "@automattic/number-formatters@npm:1.0.0"
+  dependencies:
+    "@wordpress/date": "npm:^5.19.0"
+    debug: "npm:^4.4.0"
+    tslib: "npm:^2.5.0"
+  checksum: f591460cf08ff24434235fa797634620904a935bf2f31ab3a6b3bfa76e827168e09e698d8f774cf1c2689be31fa0be980646cece4052da630652503269a91b6c
+  languageName: node
+  linkType: hard
 
 "@automattic/o2-blocks@workspace:apps/o2-blocks":
   version: 0.0.0-use.local
@@ -2181,6 +2195,7 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/components": "workspace:^"
     "@automattic/composite-checkout": "workspace:^"
+    "@automattic/number-formatters": "npm:^1.0.0"
     "@automattic/shopping-cart": "workspace:^"
     "@emotion/styled": "npm:^11.11.0"
     "@stripe/stripe-js": "npm:^1.54.2"
@@ -4710,6 +4725,13 @@ __metadata:
   bin:
     webauthn-json: dist/bin/main.js
   checksum: 4423ddd1e5b74d91ded02ea551923a73c45b1ee2ee4294943aaddfc12e1929405ea1e8b4380456db829fcdc3a4d8a89bf8ee29c6a35be3889dc00236b1c96968
+  languageName: node
+  linkType: hard
+
+"@gravatar-com/quick-editor@npm:^0.8.0":
+  version: 0.8.0
+  resolution: "@gravatar-com/quick-editor@npm:0.8.0"
+  checksum: 7eadb7916833132dc3d3afa41e924aab6fa5430fbe60986bfa9d0d680b9399d3eef6035d63c490efd0d21023e3a9b45e428422982343fb50b8ad189cbb21ff41
   languageName: node
   linkType: hard
 
@@ -8086,6 +8108,15 @@ __metadata:
     "@types/range-parser": "npm:*"
     "@types/send": "npm:*"
   checksum: ba8d8d976ab797b2602c60e728802ff0c98a00f13d420d82770f3661b67fa36ea9d3be0b94f2ddd632afe1fbc6e41620008b01db7e4fabdd71a2beb5539b0725
+  languageName: node
+  linkType: hard
+
+"@types/express-useragent@npm:^1.0.5":
+  version: 1.0.5
+  resolution: "@types/express-useragent@npm:1.0.5"
+  dependencies:
+    "@types/express": "npm:*"
+  checksum: 58fce8ab583390c8975f25dbc8d237638236b695e13333a227e740e44582f8e59589556c7f718e943c458c91ad8d09077b269858e025ec8c10a154a876fe5e40
   languageName: node
   linkType: hard
 
@@ -12987,18 +13018,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"browserslist-useragent@npm:^3.0.3":
-  version: 3.0.3
-  resolution: "browserslist-useragent@npm:3.0.3"
-  dependencies:
-    browserslist: "npm:^4.12.0"
-    semver: "npm:^7.3.2"
-    useragent: "npm:^2.3.0"
-  checksum: 69f70ec0dd8d7be9d58f10e502e2440d28c4e26353022d1918164c4bfdaed14d7c5b2521a5b8c1a0292c5820e6a6a660dbe4a5051a1fd81e67c3461544fd309c
-  languageName: node
-  linkType: hard
-
-"browserslist@npm:^4.0.0, browserslist@npm:^4.12.0, browserslist@npm:^4.16.0, browserslist@npm:^4.16.6, browserslist@npm:^4.21.10, browserslist@npm:^4.24.0, browserslist@npm:^4.24.4":
+"browserslist@npm:^4.0.0, browserslist@npm:^4.16.0, browserslist@npm:^4.16.6, browserslist@npm:^4.21.10, browserslist@npm:^4.24.0, browserslist@npm:^4.24.4":
   version: 4.24.4
   resolution: "browserslist@npm:4.24.4"
   dependencies:
@@ -13419,6 +13439,7 @@ __metadata:
     "@automattic/composite-checkout": "workspace:^"
     "@automattic/create-calypso-config": "workspace:^"
     "@automattic/data-stores": "workspace:^"
+    "@automattic/dataviews": "workspace:^"
     "@automattic/design-picker": "workspace:^"
     "@automattic/design-preview": "workspace:^"
     "@automattic/domain-picker": "workspace:^"
@@ -13479,6 +13500,7 @@ __metadata:
     "@testing-library/jest-dom": "npm:^6.6.3"
     "@testing-library/react": "npm:^16.3.0"
     "@testing-library/user-event": "npm:^14.6.1"
+    "@types/express-useragent": "npm:^1.0.5"
     "@types/react": "npm:^18.3.20"
     "@types/react-slider": "npm:^1.3.6"
     "@types/redux-mock-store": "npm:1.5.0"
@@ -13507,7 +13529,6 @@ __metadata:
     autosize: "npm:^4.0.4"
     body-parser: "npm:^1.20.3"
     browser-filesaver: "npm:^1.1.1"
-    browserslist-useragent: "npm:^3.0.3"
     bunyan: "npm:^1.8.15"
     chalk: "npm:^4.1.2"
     chrono-node: "npm:^2.3.5"
@@ -13614,9 +13635,9 @@ __metadata:
     textarea-caret: "npm:^3.1.0"
     to-title-case: "npm:^1.0.0"
     tracekit: "npm:^0.4.5"
-    twemoji: "npm:^12.1.4"
+    twemoji: "npm:^12.1.6"
     ua-parser-js: "npm:^0.7.22"
-    uplot: "npm:^1.6.25"
+    uplot: "npm:^1.6.32"
     uplot-react: "npm:^1.1.4"
     use-debounce: "npm:^3.1.0"
     util: "npm:^0.12.3"
@@ -20012,6 +20033,7 @@ __metadata:
     "@automattic/calypso-products": "workspace:^"
     "@automattic/color-studio": "npm:^4.1.0"
     "@automattic/components": "workspace:^"
+    "@automattic/number-formatters": "npm:^1.0.0"
     "@automattic/typography": "workspace:^"
     "@automattic/wp-babel-makepot": "workspace:^"
     "@automattic/wpcom-template-parts": "workspace:^"
@@ -24113,16 +24135,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lru-cache@npm:4.1.x, lru-cache@npm:^4.0.0":
-  version: 4.1.5
-  resolution: "lru-cache@npm:4.1.5"
-  dependencies:
-    pseudomap: "npm:^1.0.2"
-    yallist: "npm:^2.1.2"
-  checksum: 1ca5306814e5add9ec63556d6fd9b24a4ecdeaef8e9cea52cbf30301e6b88c8d8ddc7cab45b59b56eb763e6c45af911585dc89925a074ab65e1502e3fe8103cf
-  languageName: node
-  linkType: hard
-
 "lru-cache@npm:@wolfy1339/lru-cache@^11.0.2-patch.1":
   version: 11.0.2-patch.1
   resolution: "@wolfy1339/lru-cache@npm:11.0.2-patch.1"
@@ -24134,6 +24146,16 @@ __metadata:
   version: 10.4.3
   resolution: "lru-cache@npm:10.4.3"
   checksum: ebd04fbca961e6c1d6c0af3799adcc966a1babe798f685bb84e6599266599cd95d94630b10262f5424539bc4640107e8a33aa28585374abf561d30d16f4b39fb
+  languageName: node
+  linkType: hard
+
+"lru-cache@npm:^4.0.0":
+  version: 4.1.5
+  resolution: "lru-cache@npm:4.1.5"
+  dependencies:
+    pseudomap: "npm:^1.0.2"
+    yallist: "npm:^2.1.2"
+  checksum: 1ca5306814e5add9ec63556d6fd9b24a4ecdeaef8e9cea52cbf30301e6b88c8d8ddc7cab45b59b56eb763e6c45af911585dc89925a074ab65e1502e3fe8103cf
   languageName: node
   linkType: hard
 
@@ -30340,7 +30362,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"request@npm:^2.88.0, request@npm:^2.88.2":
+"request@npm:^2.88.2":
   version: 2.88.2
   resolution: "request@npm:2.88.2"
   dependencies:
@@ -31085,15 +31107,6 @@ __metadata:
   bin:
     semver: bin/semver
   checksum: e4cf10f86f168db772ae95d86ba65b3fd6c5967c94d97c708ccb463b778c2ee53b914cd7167620950fc07faf5a564e6efe903836639e512a1aa15fbc9667fa25
-  languageName: node
-  linkType: hard
-
-"semver@npm:5.5.x":
-  version: 5.5.1
-  resolution: "semver@npm:5.5.1"
-  bin:
-    semver: ./bin/semver
-  checksum: ab3369637fcb09f2d709e53364086e328c261c24c9565747fd027ccb07fdf24fc655f93e67fa288c05558ad9005679d91d5b126953b4269f7b3d375362ec1c13
   languageName: node
   linkType: hard
 
@@ -33108,7 +33121,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tmp@npm:0.0.x, tmp@npm:^0.0.33":
+"tmp@npm:^0.0.33":
   version: 0.0.33
   resolution: "tmp@npm:0.0.33"
   dependencies:
@@ -33559,22 +33572,22 @@ __metadata:
   languageName: node
   linkType: hard
 
-"twemoji-parser@npm:12.1.1":
-  version: 12.1.1
-  resolution: "twemoji-parser@npm:12.1.1"
-  checksum: 88e2aa95a96f2796c72ed23f157428a843e70ae9c704f697f5850e0966173e6fb390bf2816f0c8eb28a95687a6668a79ac1874bc377839a933fa2b3b0161278a
+"twemoji-parser@npm:12.1.3":
+  version: 12.1.3
+  resolution: "twemoji-parser@npm:12.1.3"
+  checksum: d24b4edb014e5f4dd5714820347b585064a1dc485626468c7ce9ab042d4cd553bacb322483c5f31877503b0800788214033703b5ac02a98c11aecbab304f7e5b
   languageName: node
   linkType: hard
 
-"twemoji@npm:^12.1.4":
-  version: 12.1.4
-  resolution: "twemoji@npm:12.1.4"
+"twemoji@npm:^12.1.6":
+  version: 12.1.6
+  resolution: "twemoji@npm:12.1.6"
   dependencies:
     fs-extra: "npm:^8.0.1"
     jsonfile: "npm:^5.0.0"
-    twemoji-parser: "npm:12.1.1"
+    twemoji-parser: "npm:12.1.3"
     universalify: "npm:^0.1.2"
-  checksum: 0c9c23962ebdccb377026c182efe94fd0e67d4be447d6599a0213df0e66a39c39596b2014a05864cad5122829ebbb02e81385eff1df32498736fb8f2c1c1451f
+  checksum: a4d028897bf82890aa2796a0074bd1fa69b833844996e1fec1b7f07062b0a7272c480b7fd069f137b54a7d62ebcdaf48a98de530a3cfc07ac2054f74d8d00f30
   languageName: node
   linkType: hard
 
@@ -34305,10 +34318,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"uplot@npm:^1.6.25":
-  version: 1.6.31
-  resolution: "uplot@npm:1.6.31"
-  checksum: b1b03ebb23bda148c16e085006db183f93e99c63dd457863217c81fe7f9d99d680b2bf18f5ea2e39c39df67e20d7bae4e7730853c0af9c86c0eb8e8004e2f8ed
+"uplot@npm:^1.6.32":
+  version: 1.6.32
+  resolution: "uplot@npm:1.6.32"
+  checksum: 4d9cdd5f53371656cfc178ea4ae0d8c9bdbe4c98c99df847926d7e5f5a5bcb8043561219da2979fee7616aabe3619d80fee093befdfe39aae65e6621284c39b1
   languageName: node
   linkType: hard
 
@@ -34473,16 +34486,6 @@ __metadata:
   version: 3.1.1
   resolution: "use@npm:3.1.1"
   checksum: 75b48673ab80d5139c76922630d5a8a44e72ed58dbaf54dee1b88352d10e1c1c1fc332066c782d8ae9a56503b85d3dc67ff6d2ffbd9821120466d1280ebb6d6e
-  languageName: node
-  linkType: hard
-
-"useragent@npm:^2.3.0":
-  version: 2.3.0
-  resolution: "useragent@npm:2.3.0"
-  dependencies:
-    lru-cache: "npm:4.1.x"
-    tmp: "npm:0.0.x"
-  checksum: cd8e2f784358f63c96a8cffd697e0ed59bafe1affc7235035bdbc2f8b94454381346bcf0c0785209038cdaf10342d164f974dad8962121389483298d0da3a6e4
   languageName: node
   linkType: hard
 
@@ -35394,6 +35397,7 @@ __metadata:
     "@automattic/i18n-utils": "workspace:^"
     "@automattic/languages": "workspace:^"
     "@automattic/launchpad": "workspace:^"
+    "@automattic/number-formatters": "npm:^1.0.0"
     "@automattic/plans-grid-next": "workspace:^"
     "@automattic/privacy-toolset": "workspace:^"
     "@automattic/typography": "workspace:^"
@@ -35407,6 +35411,7 @@ __metadata:
     "@babel/eslint-parser": "npm:^7.27.0"
     "@babel/register": "npm:^7.25.9"
     "@babel/runtime": "npm:^7.27.0"
+    "@gravatar-com/quick-editor": "npm:^0.8.0"
     "@paypal/react-paypal-js": "npm:^8.7.0"
     "@pmmmwh/react-refresh-webpack-plugin": "npm:^0.5.15"
     "@signal-noise/stylelint-scales": "npm:^2.0.3"
@@ -35947,13 +35952,6 @@ __metadata:
   version: 1.10.2
   resolution: "yaml@npm:1.10.2"
   checksum: 5c28b9eb7adc46544f28d9a8d20c5b3cb1215a886609a2fd41f51628d8aaa5878ccd628b755dbcd29f6bb4921bd04ffbc6dcc370689bb96e594e2f9813d2605f
-  languageName: node
-  linkType: hard
-
-"yamlparser@npm:0.0.x":
-  version: 0.0.2
-  resolution: "yamlparser@npm:0.0.2"
-  checksum: 5908043725abbbdf7053520dfc4d69b01ce00143f811c07d50dfdfc1adcd238b1f7b94f9d3e0a539d3fa3a645f455219fdb1158529063bc527695328c49fab1b
   languageName: node
   linkType: hard
 
