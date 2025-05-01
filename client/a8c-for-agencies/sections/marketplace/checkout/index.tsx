@@ -278,11 +278,7 @@ function Checkout( { isClient, referralBlogId }: Props ) {
 						{ isAutomatedReferrals && onlyFreeItems && (
 							<LayoutBanner level="info" hideCloseButton>
 								{ translate(
-									"As the referral includes only free item, this checkout won't need a client and will be processed like a regular purchase.",
-									"As the referral includes only free items, this checkout won't need a client and will be processed like a regular purchase.",
-									{
-										count: checkoutItems.length,
-									}
+									'Because your referral includes only free products, you can assign them immediately after purchase — no client payment or approval required.'
 								) }
 							</LayoutBanner>
 						) }
