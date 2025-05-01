@@ -18,6 +18,14 @@
 	--color-text-subtle: var(--studio-gray-50);
 	--color-text-inverted: var(--studio-white);
 	--color-link: inherit;
+
+	.components-button {
+		font-size: $font-body-small;
+
+		&.is-primary {
+			font-weight: 600;
+		}
+	}
 }
 
 .masterbar.masterbar__crowdsignal {
