@@ -168,6 +168,10 @@ $image-height: 47px;
 
 .layout.is-jetpack-login:not(.is-wccom-oauth-flow):not(.is-woocommerce-core-profiler-flow) {
 	@include jetpack-connect-colors();
+
+	.auth-form__social-buttons {
+		--color-accent: var(--studio-jetpack-green-50);
+	}
 }
 
 .layout.is-wccom-oauth-flow,
