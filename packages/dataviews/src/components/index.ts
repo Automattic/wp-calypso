@@ -10,4 +10,7 @@ type DataViewsProps = typeof DataViewsRoot & {
 
 const DataViews = DataViewsRoot as DataViewsProps;
 
+// Expose DataViews components sub components
+DataViews.Search = DataViewsSearch;
+
 export default DataViews;
