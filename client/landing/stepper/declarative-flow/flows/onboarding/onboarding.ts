@@ -24,7 +24,6 @@ import { useDispatch as useReduxDispatch } from 'calypso/state';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT } from '../../../constants';
 import { useFlowLocale } from '../../../hooks/use-flow-locale';
-import { useMarketplaceThemeProducts } from '../../../hooks/use-marketplace-theme-products';
 import { useQuery } from '../../../hooks/use-query';
 import { ONBOARD_STORE } from '../../../stores';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
@@ -92,8 +91,6 @@ const onboarding: FlowV2< typeof initialize > = {
 		const coupon = useQuery().get( 'coupon' );
 
 		const [ useMyDomainTracksEventProps, setUseMyDomainTracksEventProps ] = useState( {} );
-
-		const { selectedMarketplaceProduct } = useMarketplaceThemeProducts();
 
 		/**
 		 * Returns [destination, backDestination] for the post-checkout destination.
@@ -215,6 +212,7 @@ const onboarding: FlowV2< typeof initialize > = {
 					return navigate( 'plans' );
 				case 'plans': {
 					const cartItems = providedDependencies.cartItems;
+					const selectedMarketplaceProduct = providedDependencies.selectedMarketplaceProduct;
 					const [ pickedPlan, ...products ] = cartItems ?? [];
 
 					setPlanCartItem( pickedPlan );
