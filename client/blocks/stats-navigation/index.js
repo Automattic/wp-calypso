@@ -227,6 +227,7 @@ class StatsNavigation extends Component {
 
 		const shouldRenderModuleToggler =
 			! isLegacy &&
+			! isNavigationImprovementEnabled &&
 			isModuleSettingsSupported &&
 			AVAILABLE_PAGE_MODULES[ this.props.selectedItem ] &&
 			! hideModuleSettings &&
