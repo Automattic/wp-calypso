@@ -36,6 +36,8 @@ import PageModuleToggler from './page-module-toggler';
 
 import './style.scss';
 
+const isNavigationImprovementEnabled = config.isEnabled( 'stats/navigation-improvement' );
+
 // Helper to expose logic for default module listing.
 export function getAvailablePageModules( selectedItem, hasVideoPress ) {
 	return ( AVAILABLE_PAGE_MODULES[ selectedItem ] || [] ).map( ( toggleItem ) => {
