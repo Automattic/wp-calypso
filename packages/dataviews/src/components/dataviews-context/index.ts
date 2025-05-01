@@ -11,7 +11,7 @@ import type { SetSelection } from '../../private-types';
 import { LAYOUT_TABLE } from '../../constants';
 
 type DataViewsContextType< Item > = {
-	view?: View;
+	view: View;
 	onChangeView?: ( view: View ) => void;
 	fields: NormalizedField< Item >[];
 	actions?: Action< Item >[];

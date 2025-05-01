@@ -30,7 +30,7 @@ import type { SelectionOrUpdater, SetSelection } from '../../private-types';
 type ItemWithId = { id: string };
 
 type DataViewsProps< Item > = {
-	view?: View;
+	view: View;
 	onChangeView?: ( view: View ) => void;
 	fields?: Field< Item >[];
 	search?: boolean;
