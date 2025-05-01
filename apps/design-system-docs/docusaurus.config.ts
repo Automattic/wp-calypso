@@ -85,19 +85,26 @@ const config: Config = {
 		},
 		// TODO: Figure out what to put in the footer
 		footer: {
-			style: 'dark',
 			links: [
 				{
 					title: 'Docs',
 					items: [
 						{
-							label: 'Tutorial',
-							to: '/docs/intro',
+							label: 'Foundations',
+							to: '/foundations',
+						},
+						{
+							label: 'Patterns',
+							to: '/patterns',
+						},
+						{
+							label: 'Components',
+							to: '/components',
 						},
 					],
 				},
 				{
-					title: 'Find us on',
+					title: 'Connect',
 					items: [
 						{
 							label: 'A8C Slack',
