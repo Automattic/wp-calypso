@@ -8,13 +8,9 @@ import { navItems } from 'calypso/blocks/stats-navigation/constants';
 import DocumentHead from 'calypso/components/data/document-head';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import NavigationHeader from 'calypso/components/navigation-header';
-import NavigationHeaderImpr from 'calypso/components/navigation-header/navigation-header';
+import PageHeader from 'calypso/my-sites/stats/components/headers/page-header';
 import Main from 'calypso/my-sites/stats/components/stats-main';
-import {
-	STATS_FEATURE_PAGE_INSIGHTS,
-	STATS_PRODUCT_NAME,
-	STATS_PRODUCT_NAME_IMPR,
-} from 'calypso/my-sites/stats/constants';
+import { STATS_FEATURE_PAGE_INSIGHTS, STATS_PRODUCT_NAME } from 'calypso/my-sites/stats/constants';
 import StatsModuleComments from 'calypso/my-sites/stats/features/modules/stats-comments';
 import StatShares from 'calypso/my-sites/stats/features/modules/stats-shares';
 import StatsModuleTags from 'calypso/my-sites/stats/features/modules/stats-tags';
@@ -82,10 +78,7 @@ function StatsInsights() {
 						navigationItems={ [] }
 					></NavigationHeader>
 				) : (
-					<NavigationHeaderImpr
-						className="stats__section-header modernized-header"
-						title={ STATS_PRODUCT_NAME_IMPR }
-					/>
+					<PageHeader />
 				) }
 				<StatsNavigation selectedItem="insights" siteId={ siteId } slug={ siteSlug } />
 				{ shouldRendeUpsell ? (
