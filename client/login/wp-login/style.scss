@@ -327,6 +327,43 @@ $image-height: 47px;
 		background-color: #fdfdfd;
 	}
 
+	.login .button.is-primary {
+		// Note: Matches primary button to `button.signup-form__submit`
+		background-color: var(--studio-wordpress-blue, #3858e9);
+		color: var(--color-text-inverted);
+		box-shadow: none;
+		border: 0 var(--studio-wordpress-blue-60);
+		font-weight: 500;
+		letter-spacing: 0.32px;
+		line-height: 17px;
+		min-width: 100%;
+		text-align: center;
+		margin: 13px auto;
+		float: none;
+
+		&:hover,
+		&:focus {
+			background-color: var(--studio-wordpress-blue-60);
+			border-color: var(--studio-wordpress-blue-60);
+			color: var(--color-text-inverted);
+		}
+
+		&[disabled],
+		&:disabled,
+		&.disabled {
+			background-color: var(--studio-gray-20);
+			color: var(--color-surface);
+		}
+
+		@include break-mobile {
+			min-width: 170px;
+		}
+
+		&.is-busy {
+			background-image: linear-gradient(-45deg, var(--studio-gray-10) 28%, var(--studio-gray-20) 28%, var(--studio-gray-20) 72%, var(--studio-gray-10) 72%);
+		}
+	}
+
 	.login form {
 
 		// We shouldn't regularly use .components-* classnames. The following is
