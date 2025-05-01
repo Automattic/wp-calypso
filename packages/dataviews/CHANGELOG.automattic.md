@@ -1,6 +1,8 @@
 <!-- This file lists the modifications done to the base package `@wordpress/dataviews` that are published under `@automattic/dataviews`. -->
 
 ## Next 
+
+- Expose `<DataViews.Search />` component.
 - Add support for `free-composition` in the `DataViews` component
 
 ## 0.1.0
