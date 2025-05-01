@@ -23,7 +23,6 @@ import AllTimeHighlightsSection from '../../sections/all-time-highlights-section
 import AllTimeViewsSection from '../../sections/all-time-views-section';
 import AnnualHighlightsSection from '../../sections/annual-highlights-section';
 import PostingActivity from '../../sections/posting-activity-section';
-import StatsModule from '../../stats-module';
 import PageViewTracker from '../../stats-page-view-tracker';
 import statsStrings from '../../stats-strings';
 import StatsUpsell from '../../stats-upsell/insights-upsell';
@@ -35,7 +34,6 @@ function StatsInsights() {
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
 	const translate = useTranslate();
 	const moduleStrings = statsStrings();
-	const isEmptyStateV2 = config.isEnabled( 'stats/empty-module-v2' );
 	const { isPending, data: usageInfo } = usePlanUsageQuery( siteId );
 	const reduxDispatch = useDispatch();
 
@@ -86,38 +84,19 @@ function StatsInsights() {
 						<PostingActivity siteId={ siteId } />
 						<AllTimeViewsSection siteId={ siteId } slug={ siteSlug } />
 						<StatsModuleListing className="stats__module-list--insights" siteId={ siteId }>
-							{ isEmptyStateV2 && (
-								<StatsModuleTags
-									moduleStrings={ moduleStrings.tags }
-									hideSummaryLink
-									className={ clsx(
-										{
-											'stats__flexible-grid-item--half': isJetpack,
-											'stats__flexible-grid-item--full--large': isJetpack,
-										},
-										{
-											'stats__flexible-grid-item--full': ! isJetpack,
-										}
-									) }
-								/>
-							) }
-							{ ! isEmptyStateV2 && (
-								<StatsModule
-									path="tags-categories"
-									moduleStrings={ moduleStrings.tags }
-									statType="statsTags"
-									hideSummaryLink
-									className={ clsx(
-										{
-											'stats__flexible-grid-item--half': isJetpack,
-											'stats__flexible-grid-item--full--large': isJetpack,
-										},
-										{
-											'stats__flexible-grid-item--full': ! isJetpack,
-										}
-									) }
-								/>
-							) }
+							<StatsModuleTags
+								moduleStrings={ moduleStrings.tags }
+								hideSummaryLink
+								className={ clsx(
+									{
+										'stats__flexible-grid-item--half': isJetpack,
+										'stats__flexible-grid-item--full--large': isJetpack,
+									},
+									{
+										'stats__flexible-grid-item--full': ! isJetpack,
+									}
+								) }
+							/>
 
 							<StatsModuleComments
 								className={ clsx(
