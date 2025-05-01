@@ -470,9 +470,7 @@ const PlansFeaturesMain = ( {
 		useStreamlinedPriceExperiment();
 
 	const showStreamlinedPriceExperiment =
-		isInSignup &&
-		! isStreamlinedPriceExperimentLoading &&
-		Boolean( streamlinedPriceExperimentAssignment );
+		isInSignup && Boolean( streamlinedPriceExperimentAssignment );
 
 	let hidePlanSelector = true;
 	let enableTermSavingsPriceDisplay = true;
@@ -481,6 +479,7 @@ const PlansFeaturesMain = ( {
 	if (
 		redirectToAddDomainFlow === undefined &&
 		! hidePlanTypeSelector &&
+		! isStreamlinedPriceExperimentLoading &&
 		! showStreamlinedPriceExperiment
 	) {
 		hidePlanSelector = false;
@@ -879,7 +878,9 @@ const PlansFeaturesMain = ( {
 										enableLogosOnlyForEnterprisePlan={ showSimplifiedFeatures }
 										hideFeatureGroupTitles={ showSimplifiedFeatures }
 										enableTermSavingsPriceDisplay={ enableTermSavingsPriceDisplay }
-										showStreamlinedBillingDescription={ showStreamlinedPriceExperiment }
+										showStreamlinedBillingDescription={
+											! isStreamlinedPriceExperimentLoading && showStreamlinedPriceExperiment
+										}
 									/>
 								) }
 								{ showEscapeHatch && hidePlansFeatureComparison && viewAllPlansButton }
@@ -942,7 +943,9 @@ const PlansFeaturesMain = ( {
 													enableFeatureTooltips
 													featureGroupMap={ featureGroupMapForComparisonGrid }
 													enableTermSavingsPriceDisplay={ enableTermSavingsPriceDisplay }
-													showStreamlinedBillingDescription={ showStreamlinedPriceExperiment }
+													showStreamlinedBillingDescription={
+														! isStreamlinedPriceExperimentLoading && showStreamlinedPriceExperiment
+													}
 												/>
 											) }
 											<ComparisonGridToggle
