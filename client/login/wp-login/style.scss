@@ -364,6 +364,10 @@ $image-height: 47px;
 		}
 	}
 
+	.login__form-action .components-button.is-primary {
+		margin: 6px auto 13px;
+	}
+
 	.login form {
 
 		// We shouldn't regularly use .components-* classnames. The following is
