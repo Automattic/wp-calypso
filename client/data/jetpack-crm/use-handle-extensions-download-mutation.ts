@@ -48,7 +48,7 @@ async function fetchExtensionDownloads( licenseKey: string, extensionSlug: strin
 	return data;
 }
 
-export default function useHandleExtensionsDownloadMutation( licenseKey: string ) {
+export default function useHandleExtensionsDownloadMutation( licenseKey?: string ) {
 	return useMutation( {
 		mutationKey: [ 'use-handle-jetpack-crm-extensions-download', licenseKey ],
 		mutationFn: ( extensionSlug: string ) => fetchExtensionDownloads( licenseKey, extensionSlug ),
