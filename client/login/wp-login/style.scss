@@ -607,9 +607,21 @@ $image-height: 47px;
 			border-radius: 2px;
 		}
 
+		.form-button.is-primary {
+			&,
+			&:disabled {
+				background-color: var(--color-wp-job-manager);
+			}
+
+			&:hover:not(&:disabled),
+			&:focus {
+				background-color: darken(#2404eb, 10%);
+			}
+		}
+
 		.components-button {
 			--color-accent: var(--color-wp-job-manager);
-			--color-accent-60: var(--color-wp-job-manager);
+			--color-accent-60: #1c03b9; // equivalent to darken(#2404eb, 10%)
 		}
 	}
 
@@ -736,11 +748,40 @@ $image-height: 47px;
 		margin: 24px 0 0;
 	}
 
-	.login__form-action button {
+	button.form-button.is-primary,
+	.two-factor-authentication__actions .button {
 		min-height: 56px;
+		margin: 0;
+		padding: 10px 16px;
 		font-size: 16px;
 		font-weight: 600;
+
+		&:disabled {
+			opacity: 0.3;
+		}
+	}
+
+	button.form-button.is-primary {
 		margin-top: 16px;
+		margin-bottom: 0;
+		border: 0;
+
+		&,
+		&:disabled {
+			background-color: var(--color-gravatar);
+		}
+
+		&:hover:not(&:disabled),
+		&:focus {
+			background-color: darken(#1d4fc4, 10%);
+		}
+	}
+
+	.login__form-action .components-button.is-primary {
+		min-height: 56px;
+		margin-top: 16px;
+		font-size: 16px;
+		font-weight: 600;
 	}
 
 	.two-factor-authentication__actions {
@@ -756,18 +797,9 @@ $image-height: 47px;
 		}
 
 		.button {
-			min-height: 56px;
-			margin: 0;
-			padding: 10px 16px;
-			font-size: 16px;
-			font-weight: 600;
 			color: var(--color-gravatar);
 			border: 1px solid #1d4fc44d;
 			box-shadow: none;
-
-			&:disabled {
-				opacity: 0.3;
-			}
 
 			&:hover:not(&:disabled),
 			&:focus {
