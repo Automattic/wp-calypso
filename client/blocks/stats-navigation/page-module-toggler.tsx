@@ -3,24 +3,55 @@ import { FormToggle } from '@wordpress/components';
 import { Icon, cog } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useRef, useCallback } from 'react';
-import { ModuleToggleItem } from './constants';
+import { useSelector } from 'react-redux';
+import { useDispatch } from 'calypso/state';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
+import { updateModuleToggles } from 'calypso/state/stats/module-toggles/actions';
+import './page-module-toggler.scss';
+import { AVAILABLE_PAGE_MODULES, ModuleToggleItem } from './constants';
 
 type PageModuleTogglerProps = {
-	availableModuleToggles: ModuleToggleItem[];
-	pageModules: { [ name: string ]: boolean };
+	moduleToggles: { [ name: string ]: boolean };
 	onToggleModule: ( module: string, isShow: boolean ) => void;
 	isTooltipShown: boolean;
 	onTooltipDismiss: () => void;
+	customToggleIcon?: React.ReactNode;
+	siteId: number;
+	selectedItem: string;
 };
 
+// Helper to expose logic for default module listing.
+export function getAvailablePageModules( selectedItem: string, hasVideoPress: boolean ) {
+	return ( AVAILABLE_PAGE_MODULES[ selectedItem ] || [] ).map( ( toggleItem ) => {
+		// Set the default VideoPress visibility based on the hasVideoPress parameter.
+		// We update the disabled state as well but that value is currently ignored.
+		if ( toggleItem.key === 'videos' ) {
+			return {
+				...toggleItem,
+				disabled: ! hasVideoPress,
+				defaultValue: hasVideoPress,
+			};
+		}
+
+		return toggleItem;
+	} );
+}
+
 export default function PageModuleToggler( {
-	availableModuleToggles,
-	pageModules,
-	onToggleModule,
+	selectedItem,
+	moduleToggles,
+	siteId,
 	isTooltipShown,
 	onTooltipDismiss,
+	customToggleIcon = <Icon className="gridicon" icon={ cog } />,
 }: PageModuleTogglerProps ) {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
+	const [ pageModules, setPageModules ] = useState( moduleToggles );
+	const hasVideoPress = useSelector( ( state ) => siteHasFeature( state, siteId, 'videopress' ) );
+	const availableModuleToggles = useSelector( () =>
+		getAvailablePageModules( selectedItem, hasVideoPress )
+	);
 
 	// Use state to update the ref of the setting action button to avoid null element.
 	const [ settingsActionRef, setSettingsActionRef ] = useState(
@@ -41,6 +72,18 @@ export default function PageModuleToggler( {
 		} );
 	};
 
+	const onToggleModule = ( module: string, isShow: boolean ) => {
+		const selectedPageModules = Object.assign( {}, pageModules );
+		selectedPageModules[ module ] = isShow;
+		setPageModules( selectedPageModules );
+
+		dispatch(
+			updateModuleToggles( siteId, {
+				[ 'traffic' ]: selectedPageModules,
+			} )
+		);
+	};
+
 	return (
 		<div className="page-modules-settings">
 			<button
@@ -48,7 +91,7 @@ export default function PageModuleToggler( {
 				ref={ buttonRefCallback }
 				onClick={ toggleSettingsMenu }
 			>
-				<Icon className="gridicon" icon={ cog } />
+				{ customToggleIcon }
 			</button>
 			<Popover
 				className="tooltip tooltip--darker highlight-card-tooltip highlight-card__settings-tooltip"
