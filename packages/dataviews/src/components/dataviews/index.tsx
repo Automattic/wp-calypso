@@ -24,13 +24,14 @@ import DataViewsFooter from '../dataviews-footer';
 import DataViewsSearch from '../dataviews-search';
 import DataViewsViewConfig from '../dataviews-view-config';
 import { normalizeFields } from '../../normalize-fields';
+import { LAYOUT_TABLE } from '../../constants';
 import type { Action, Field, View, SupportedLayouts } from '../../types';
 import type { SelectionOrUpdater, SetSelection } from '../../private-types';
 
 type ItemWithId = { id: string };
 
 type DataViewsProps< Item > = {
-	view: View;
+	view?: View;
 	onChangeView?: ( view: View ) => void;
 	fields?: Field< Item >[];
 	search?: boolean;
@@ -59,8 +60,8 @@ const defaultIsItemClickable = () => true;
 const EMPTY_ARRAY: any[] = [];
 
 export default function DataViews< Item >( {
-	view,
-	onChangeView,
+	view = { type: LAYOUT_TABLE },
+	onChangeView = () => {},
 	fields = [],
 	search = true,
 	searchLabel = undefined,
@@ -69,10 +70,10 @@ export default function DataViews< Item >( {
 	getItemId = defaultGetItemId,
 	getItemLevel,
 	isLoading = false,
-	paginationInfo,
+	paginationInfo = { totalItems: 0, totalPages: 0 },
 	defaultLayouts,
 	selection: selectionProperty,
-	onChangeSelection,
+	onChangeSelection = () => {},
 	onClickItem,
 	isItemClickable = defaultIsItemClickable,
 	header,

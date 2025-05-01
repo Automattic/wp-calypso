@@ -195,11 +195,7 @@ export const FreeComposition = () => {
 	const getItemId = ( item: SpaceObject ) => item.id.toString();
 
 	return (
-		<DataViews
-			data={ shownData }
-			view={ DEFAULT_VIEW }
-			getItemId={ getItemId }
-		>
+		<DataViews data={ shownData } getItemId={ getItemId }>
 			<PlanetOverview planets={ planets } />
 		</DataViews>
 	);
