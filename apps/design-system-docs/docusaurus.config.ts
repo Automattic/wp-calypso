@@ -34,8 +34,8 @@ const config: Config = {
 				docs: {
 					sidebarPath: './sidebars.ts',
 					// Remove this to remove the "edit this page" links.
-					editUrl:
-						'https://github.com/Automattic/wp-calypso/tree/trunk/apps/design-system-docs/docs',
+					editUrl: 'https://github.com/Automattic/wp-calypso/tree/trunk/apps/design-system-docs',
+					routeBasePath: '/',
 				},
 				theme: {
 					customCss: './src/css/custom.css',
@@ -60,9 +60,21 @@ const config: Config = {
 			items: [
 				{
 					type: 'docSidebar',
-					sidebarId: 'tutorialSidebar',
+					sidebarId: 'foundationsSidebar',
 					position: 'left',
-					label: 'Tutorial',
+					label: 'Foundations',
+				},
+				{
+					type: 'docSidebar',
+					sidebarId: 'patternsSidebar',
+					position: 'left',
+					label: 'Patterns',
+				},
+				{
+					type: 'docSidebar',
+					sidebarId: 'componentsSidebar',
+					position: 'left',
+					label: 'Components',
 				},
 				{
 					href: 'https://github.com/Automattic/wp-calypso/tree/trunk/apps/design-system-docs',
