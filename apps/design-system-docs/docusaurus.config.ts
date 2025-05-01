@@ -37,20 +37,6 @@ const config: Config = {
 					editUrl:
 						'https://github.com/Automattic/wp-calypso/tree/trunk/apps/design-system-docs/docs',
 				},
-				blog: {
-					showReadingTime: true,
-					feedOptions: {
-						type: [ 'rss', 'atom' ],
-						xslt: true,
-					},
-					// Remove this to remove the "edit this page" links.
-					editUrl:
-						'https://github.com/Automattic/wp-calypso/tree/trunk/apps/design-system-docs/blog',
-					// Useful options to enforce blogging best practices
-					onInlineTags: 'warn',
-					onInlineAuthors: 'warn',
-					onUntruncatedBlogPosts: 'warn',
-				},
 				theme: {
 					customCss: './src/css/custom.css',
 				},
@@ -75,7 +61,6 @@ const config: Config = {
 					position: 'left',
 					label: 'Tutorial',
 				},
-				{ to: '/blog', label: 'What’s New', position: 'left' },
 				{
 					href: 'https://github.com/Automattic/wp-calypso/tree/trunk/apps/design-system-docs',
 					label: 'GitHub',
@@ -106,15 +91,6 @@ const config: Config = {
 						{
 							label: 'GitHub',
 							href: 'https://github.com/Automattic/wp-calypso/tree/trunk/apps/design-system-docs',
-						},
-					],
-				},
-				{
-					title: 'More',
-					items: [
-						{
-							label: 'What’s New',
-							to: '/blog',
 						},
 					],
 				},
