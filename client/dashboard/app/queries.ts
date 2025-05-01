@@ -108,24 +108,15 @@ export function siteSettingsQuery( siteId: string ) {
 		queryFn: () => {
 			return fetchSiteSettings( siteId );
 		},
-		refetchOnWindowFocus: false,
-		retry: false,
-		enabled: !! siteId,
 	};
 }
 
-export function basicMetricsQuery(
-	url: string,
-	isLoadingSiteSettings: boolean,
-	cachedHash: string
-) {
+export function basicMetricsQuery( url: string ) {
 	return {
 		queryKey: [ 'url', 'basic-metrics', url ],
 		queryFn: () => {
 			return fetchBasicMetrics( url );
 		},
-		refetchOnWindowFocus: false,
-		enabled: !! url && ! isLoadingSiteSettings && ! cachedHash,
 	};
 }
 
@@ -135,8 +126,6 @@ export function performanceInsightsQuery( url: string, token: string ) {
 		queryFn: () => {
 			return fetchPerformanceInsights( url, token );
 		},
-		enabled: !! url && !! token,
-		refetchOnWindowFocus: false,
 		refetchInterval: ( query: PerformanceInsightsQueryState ) => {
 			if ( query.state.data?.pagespeed?.status === 'completed' ) {
 				return false;

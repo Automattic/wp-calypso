@@ -12,23 +12,30 @@ interface PerformanceData {
 }
 
 export function usePerformanceData( siteId: string, url: string ): PerformanceData {
-	const { data: siteSettings, isLoading: isLoadingSiteSettings } = useQuery(
-		siteSettingsQuery( siteId )
-	);
+	const { data: siteSettings, isLoading: isLoadingSiteSettings } = useQuery( {
+		...siteSettingsQuery( siteId ),
+		refetchOnWindowFocus: false,
+		retry: false,
+		enabled: !! siteId,
+	} );
 
 	const wpcomPerformanceReportUrl: string =
 		siteSettings?.settings?.wpcom_performance_report_url || '';
 	const [ , cachedHash ] = wpcomPerformanceReportUrl.split( '&hash=' );
 
-	const { data: basicMetricsData, isLoading: isLoadingBasicMetrics } = useQuery(
-		basicMetricsQuery( url, isLoadingSiteSettings, cachedHash )
-	);
+	const { data: basicMetricsData, isLoading: isLoadingBasicMetrics } = useQuery( {
+		...basicMetricsQuery( url, isLoadingSiteSettings, cachedHash ),
+		refetchOnWindowFocus: false,
+		enabled: !! url && ! isLoadingSiteSettings && ! cachedHash,
+	} );
 
 	const token = cachedHash || basicMetricsData?.token;
 
-	const { data: performanceData, isLoading: isLoadingPerformanceInsights } = useQuery(
-		performanceInsightsQuery( url, token || '' )
-	);
+	const { data: performanceData, isLoading: isLoadingPerformanceInsights } = useQuery( {
+		...performanceInsightsQuery( url, token || '' ),
+		refetchOnWindowFocus: false,
+		enabled: !! url && !! token,
+	} );
 
 	const desktopLoaded = typeof performanceData?.pagespeed?.desktop === 'object';
 	const mobileLoaded = typeof performanceData?.pagespeed?.mobile === 'object';
