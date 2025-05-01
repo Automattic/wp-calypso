@@ -16,6 +16,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import LocaleSuggestions from 'calypso/components/locale-suggestions';
 import LoggedOutFormBackLink from 'calypso/components/logged-out-form/back-link';
 import Main from 'calypso/components/main';
+import WPCloudLogo from 'calypso/components/wp-cloud-logo';
 import isAkismetRedirect from 'calypso/lib/akismet/is-akismet-redirect';
 import { getSignupUrl, pathWithLeadingSlash } from 'calypso/lib/login';
 import {
@@ -27,6 +28,7 @@ import {
 	isGravPoweredOAuth2Client,
 	isBlazeProOAuth2Client,
 	isWooOAuth2Client,
+	isPartnerPortalOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { login, lostPassword } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/url';
@@ -652,16 +654,24 @@ export class Login extends Component {
 			/>
 		);
 
+		let brandLogo;
+
+		if ( isFromAkismet ) {
+			brandLogo = akismetLogo;
+		} else if (
+			isPartnerPortalOAuth2Client( oauth2Client ) &&
+			document.location.search?.includes( 'wpcloud' )
+		) {
+			brandLogo = <WPCloudLogo className="login__wpcloud-logo" size={ 120 } />;
+		}
+
 		return (
 			<>
 				{ isSocialFirst && (
 					<Step.CenteredColumnLayout
 						columnWidth={ 6 }
 						topBar={
-							<Step.TopBar
-								rightElement={ this.renderLoginHeaderNavigation() }
-								logo={ isFromAkismet && akismetLogo }
-							/>
+							<Step.TopBar rightElement={ this.renderLoginHeaderNavigation() } logo={ brandLogo } />
 						}
 						heading={ <Step.Heading text={ headerText } /> }
 					>

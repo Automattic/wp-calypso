@@ -100,34 +100,36 @@ export function GetHeaderText( {
 } ): JSX.Element {
 	const translate = useTranslate();
 
+	let headerText = <></>;
+
 	if ( isSocialFirst ) {
-		return <>{ translate( 'Log in to WordPress.com' ) }</>;
+		headerText = <>{ translate( 'Log in to WordPress.com' ) }</>;
 	}
 
 	if ( twoFactorAuthType === 'authenticator' ) {
-		return <>{ translate( 'Continue with an authentication code' ) }</>;
+		headerText = <>{ translate( 'Continue with an authentication code' ) }</>;
 	}
 
 	if ( twoFactorAuthType === 'push' ) {
-		return <>{ translate( 'Continue with the Jetpack app' ) }</>;
+		headerText = <>{ translate( 'Continue with the Jetpack app' ) }</>;
 	}
 
 	if ( twoFactorAuthType === 'backup' ) {
-		return <>{ translate( 'Continue with a backup code' ) }</>;
+		headerText = <>{ translate( 'Continue with a backup code' ) }</>;
 	}
 
 	if ( isManualRenewalImmediateLoginAttempt ) {
-		return (
+		headerText = (
 			<>{ translate( 'Log in to update your payment details and renew your subscription' ) }</>
 		);
 	}
 
 	if ( twoStepNonce ) {
-		return <>{ translate( 'Two-Step Authentication' ) }</>;
+		headerText = <>{ translate( 'Two-Step Authentication' ) }</>;
 	}
 
 	if ( socialConnect ) {
-		return (
+		headerText = (
 			<>
 				{ translate( 'Connect your %(service)s account', {
 					args: {
@@ -139,23 +141,23 @@ export function GetHeaderText( {
 	}
 
 	if ( action === 'lostpassword' ) {
-		return <>{ translate( 'Forgot your password?' ) }</>;
+		headerText = <>{ translate( 'Forgot your password?' ) }</>;
 	}
 
 	if ( privateSite ) {
-		return <>{ translate( 'This is a private WordPress.com site' ) }</>;
+		headerText = <>{ translate( 'This is a private WordPress.com site' ) }</>;
 	}
 
 	if ( oauth2Client ) {
 		if ( isWCCOM ) {
 			if ( wccomFrom === 'cart' ) {
-				return <>{ translate( 'Log in with a WordPress.com account' ) }</>;
+				headerText = <>{ translate( 'Log in with a WordPress.com account' ) }</>;
 			} else if ( twoFactorEnabled ) {
-				return <>{ translate( 'Authenticate your login' ) }</>;
+				headerText = <>{ translate( 'Authenticate your login' ) }</>;
 			} else if ( currentQuery.lostpassword_flow ) {
-				return <>{ translate( 'Log in to your account' ) }</>;
+				headerText = <>{ translate( 'Log in to your account' ) }</>;
 			} else if ( showContinueAsUser() ) {
-				return (
+				headerText = (
 					<>
 						{ wccomFrom === 'nux'
 							? translate( 'Get started in minutes' )
@@ -163,15 +165,17 @@ export function GetHeaderText( {
 					</>
 				);
 			}
-			return <>{ translate( 'Log in to your account' ) }</>;
+			headerText = <>{ translate( 'Log in to your account' ) }</>;
 		}
 
 		if ( isJetpackCloudOAuth2Client( oauth2Client ) ) {
-			return <>{ translate( 'Howdy! Log in to Jetpack.com with your WordPress.com account.' ) }</>;
+			headerText = (
+				<>{ translate( 'Howdy! Log in to Jetpack.com with your WordPress.com account.' ) }</>
+			);
 		}
 
 		if ( isA4AOAuth2Client( oauth2Client ) ) {
-			return (
+			headerText = (
 				<>
 					{ translate(
 						'Howdy! Log in to Automattic for Agencies with your WordPress.com{{nbsp/}}account.',
@@ -186,27 +190,28 @@ export function GetHeaderText( {
 
 		if ( isPartnerPortalOAuth2Client( oauth2Client ) ) {
 			if ( document.location.search?.includes( 'wpcloud' ) ) {
-				return <>{ translate( 'Log in to WP Cloud with WordPress.com' ) }</>;
+				headerText = <>{ translate( 'Log in to WP Cloud with WordPress.com' ) }</>;
 			} else if ( document.location.search?.includes( 'jetpack' ) ) {
-				return (
+				headerText = (
 					<>
 						{ translate(
 							'Howdy! Log into the Jetpack Partner Portal with your WordPress.com account.'
 						) }
 					</>
 				);
+			} else {
+				headerText = (
+					<>
+						{ translate(
+							'Howdy! Log into the Automattic Partner Portal with your WordPress.com account.'
+						) }
+					</>
+				);
 			}
-			return (
-				<>
-					{ translate(
-						'Howdy! Log into the Automattic Partner Portal with your WordPress.com account.'
-					) }
-				</>
-			);
 		}
 
 		if ( isCrowdsignalOAuth2Client( oauth2Client ) ) {
-			return (
+			headerText = (
 				<>
 					{ translate( 'Sign in to %(clientTitle)s', {
 						args: {
@@ -218,7 +223,7 @@ export function GetHeaderText( {
 		}
 
 		if ( isGravPoweredClient ) {
-			return (
+			headerText = (
 				<>
 					{ translate( 'Login to %(clientTitle)s', {
 						args: { clientTitle: oauth2Client.title },
@@ -228,7 +233,7 @@ export function GetHeaderText( {
 		}
 
 		if ( isBlazeProOAuth2Client( oauth2Client ) ) {
-			return <>{ translate( 'Log in to your Blaze Pro account' ) }</>;
+			headerText = <>{ translate( 'Log in to your Blaze Pro account' ) }</>;
 		}
 	}
 
@@ -236,21 +241,21 @@ export function GetHeaderText( {
 		const isLostPasswordFlow = currentQuery.lostpassword_flow === 'true';
 		switch ( true ) {
 			case isLostPasswordFlow:
-				return <>{ translate( "You've got mail" ) }</>;
+				headerText = <>{ translate( "You've got mail" ) }</>;
 			case twoFactorEnabled:
-				return <>{ translate( 'Authenticate your login' ) }</>;
+				headerText = <>{ translate( 'Authenticate your login' ) }</>;
 			default:
-				return <>{ translate( 'Log in to your account' ) }</>;
+				headerText = <>{ translate( 'Log in to your account' ) }</>;
 		}
 	}
 
 	if ( isFromMigrationPlugin ) {
-		return <>{ translate( 'Log in to your account' ) }</>;
+		headerText = <>{ translate( 'Log in to your account' ) }</>;
 	}
 
 	if ( isJetpack ) {
 		const isJetpackMagicLinkSignUpFlow = config.isEnabled( 'jetpack/magic-link-signup' );
-		return (
+		headerText = (
 			<>
 				{ isJetpackMagicLinkSignUpFlow
 					? translate( 'Log in or create a WordPress.com account to get started with Jetpack' )
@@ -259,18 +264,18 @@ export function GetHeaderText( {
 		);
 	}
 	if ( isSignupExistingAccount ) {
-		return <>{ translate( 'Log in to your existing account' ) }</>;
+		headerText = <>{ translate( 'Log in to your existing account' ) }</>;
 	}
 
 	if ( isFromAkismet ) {
-		return <>{ translate( 'Log in to Akismet with WordPress.com' ) }</>;
+		headerText = <>{ translate( 'Log in to Akismet with WordPress.com' ) }</>;
 	}
 
 	if ( isFromAutomatticForAgenciesPlugin ) {
-		return <>{ translate( 'Log in to Automattic for Agencies' ) }</>;
+		headerText = <>{ translate( 'Log in to Automattic for Agencies' ) }</>;
 	}
 
-	return <></>;
+	return headerText;
 }
 
 export function LoginHeader( {
