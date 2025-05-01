@@ -1133,7 +1133,7 @@ export class LoginForm extends Component {
 							isSocialFirst={
 								isSocialFirst || ( isJetpack && ! this.props.isFromAutomatticForAgenciesPlugin )
 							}
-							magicLoginLink={ ! isWooJPC ? this.getMagicLoginPageLink() : null }
+							magicLoginLink={ null }
 							qrLoginLink={ this.getQrLoginLink() }
 						/>
 					) }
