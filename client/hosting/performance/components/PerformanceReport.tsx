@@ -1,5 +1,8 @@
 import { PerformanceReport as PerformanceReportObject } from 'calypso/data/site-profiler/types';
 import { PerformanceProfilerDashboardContent } from 'calypso/performance-profiler/components/dashboard-content';
+import { UserProvider } from 'calypso/performance-profiler/context';
+import { useSelector } from 'calypso/state';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { PerformanceReportLoading } from './PerformanceReportLoading';
 import { ReportError } from './ReportError';
 
@@ -28,6 +31,8 @@ export const PerformanceReport = ( {
 	filter,
 	onFilterChange,
 }: PerformanceReportProps ) => {
+	const isLoggedIn = useSelector( isUserLoggedIn );
+
 	if ( isError ) {
 		return <ReportError onRetestClick={ onRetestClick } />;
 	}
@@ -46,15 +51,17 @@ export const PerformanceReport = ( {
 	}
 
 	return (
-		<PerformanceProfilerDashboardContent
-			performanceReport={ performanceReport }
-			url={ url }
-			hash={ hash }
-			overallScoreIsTab
-			filter={ filter }
-			displayNewsletterBanner={ false }
-			displayMigrationBanner={ false }
-			onRecommendationsFilterChange={ onFilterChange }
-		/>
+		<UserProvider isUserLoggedIn={ isLoggedIn }>
+			<PerformanceProfilerDashboardContent
+				performanceReport={ performanceReport }
+				url={ url }
+				hash={ hash }
+				overallScoreIsTab
+				filter={ filter }
+				displayNewsletterBanner={ false }
+				displayMigrationBanner={ false }
+				onRecommendationsFilterChange={ onFilterChange }
+			/>
+		</UserProvider>
 	);
 };

@@ -10,14 +10,14 @@ import { useUrlPerformanceInsightsQuery } from 'calypso/data/site-profiler/use-u
 import { useDeviceTab } from 'calypso/hosting/performance/contexts/device-tab-context';
 import { Tip } from 'calypso/performance-profiler/components/tip';
 import { useSupportChatLLMQuery } from 'calypso/performance-profiler/hooks/use-support-chat-llm-query';
-import { isLoggedInProfiler } from 'calypso/performance-profiler/utils/profiler-version';
+import { useUser } from 'calypso/performance-profiler/hooks/use-user';
 import { loggedInTips, tips } from 'calypso/performance-profiler/utils/tips';
 import { InsightContent } from './insight-content';
 import { InsightHeader } from './insight-header';
 
 interface MetricsInsightProps {
-	insight: PerformanceMetricsItemQueryResponse;
 	fullPageScreenshot: FullPageScreenshot;
+	insight: PerformanceMetricsItemQueryResponse;
 	onClick?: () => void;
 	index: number;
 	url?: string;
@@ -98,6 +98,7 @@ export const MetricsInsight: React.FC< MetricsInsightProps > = ( props ) => {
 	const { insight, fullPageScreenshot, onClick, index, isWpcom, hash, url } = props;
 	const translate = useTranslate();
 	const { activeTab } = useDeviceTab();
+	const { isUserLoggedIn } = useUser();
 
 	const [ retrieveInsight, setRetrieveInsight ] = useState( false );
 	const [ cardOpen, setCardOpen ] = useState( false );
@@ -127,7 +128,7 @@ export const MetricsInsight: React.FC< MetricsInsightProps > = ( props ) => {
 		}
 	}, [ isWpscanLoading, hasWpscanErrors, cardOpen ] );
 
-	const tip = isLoggedInProfiler() && isWpcom ? loggedInTips[ insight.id ] : tips[ insight.id ];
+	const tip = isUserLoggedIn && isWpcom ? loggedInTips[ insight.id ] : tips[ insight.id ];
 
 	if ( props.url && tip && ! isWpcom ) {
 		tip.link = `https://wordpress.com/setup/site-migration?from=${ props.url }&ref=performance-profiler-dashboard`;

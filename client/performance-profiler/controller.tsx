@@ -52,6 +52,7 @@ export function PerformanceProfilerDashboardContext( context: Context, next: () 
 				}
 				hash={ context.query?.hash ?? '' }
 				filter={ context.query?.filter }
+				isLoggedIn={ isLoggedIn }
 			/>
 		</PerformanceProfilerWrapper>
 	);

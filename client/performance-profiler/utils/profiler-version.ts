@@ -6,7 +6,3 @@ export const profilerVersion = () => {
 	}
 	return 'unknown';
 };
-
-export const isLoggedInProfiler = () => {
-	return 'logged-in' === profilerVersion();
-};

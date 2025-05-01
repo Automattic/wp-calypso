@@ -20,6 +20,7 @@ import {
 	MessageDisplay,
 	ErrorSecondLine,
 } from 'calypso/performance-profiler/components/message-display';
+import { UserProvider } from 'calypso/performance-profiler/context';
 import { profilerVersion } from 'calypso/performance-profiler/utils/profiler-version';
 import { updateQueryParams } from 'calypso/performance-profiler/utils/query-params';
 import { LoadingScreen } from '../loading-screen';
@@ -31,11 +32,12 @@ type PerformanceProfilerDashboardProps = {
 	tab: TabType;
 	hash: string;
 	filter?: string;
+	isLoggedIn: boolean;
 };
 
 const PerformanceProfilerDashboard = ( props: PerformanceProfilerDashboardProps ) => {
 	const translate = useTranslate();
-	const { url, hash, filter } = props;
+	const { url, hash, filter, isLoggedIn } = props;
 	const isSavedReport = useRef( !! hash );
 	const { activeTab, setActiveTab } = useDeviceTab();
 	const {
@@ -143,15 +145,19 @@ const PerformanceProfilerDashboard = ( props: PerformanceProfilerDashboardProps 
 					</div>
 					{ ( ( activeTab === TabTypes.mobile && mobileLoaded ) ||
 						( activeTab === TabTypes.desktop && desktopLoaded ) ) && (
-						<PerformanceProfilerDashboardContent
-							performanceReport={ performanceReport }
-							activeTab={ activeTab }
-							url={ finalUrl ?? url }
-							hash={ hash }
-							filter={ filter }
-							displayMigrationBanner={ ! performanceReport?.is_wpcom }
-							onRecommendationsFilterChange={ ( filter ) => updateQueryParams( { filter }, true ) }
-						/>
+						<UserProvider isUserLoggedIn={ isLoggedIn }>
+							<PerformanceProfilerDashboardContent
+								performanceReport={ performanceReport }
+								activeTab={ activeTab }
+								url={ finalUrl ?? url }
+								hash={ hash }
+								filter={ filter }
+								displayMigrationBanner={ ! performanceReport?.is_wpcom }
+								onRecommendationsFilterChange={ ( filter ) =>
+									updateQueryParams( { filter }, true )
+								}
+							/>
+						</UserProvider>
 					) }
 				</>
 			) }
