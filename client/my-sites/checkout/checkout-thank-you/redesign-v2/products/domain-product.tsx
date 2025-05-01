@@ -103,7 +103,7 @@ export default function ThankYouDomainProduct( {
 			</Button>
 		);
 
-		// If the page is opened in Gravatar popup, we will automatically close the popup.
+		// If the page is opened in Gravatar popup, we will automatically close the popup for the user.
 		if ( isInGravatarPopup() ) {
 			actions = (
 				<Button isBusy disabled>
