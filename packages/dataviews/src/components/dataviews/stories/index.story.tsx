@@ -134,6 +134,7 @@ function PlanetOverview( { planets }: { planets: SpaceObject[] } ) {
 			<CardHeader>
 				<Heading level={ 2 }>{ __( 'Solar System numbers' ) }</Heading>
 				<DataViews.Search label={ __( 'moons by planet' ) } />
+				<DataViews.FiltersToggle />
 			</CardHeader>
 
 			<CardBody>
@@ -208,7 +209,7 @@ export const FreeComposition = () => {
 			paginationInfo={ paginationInfo }
 			data={ processedData }
 			view={ view }
-			fields={ [] }
+			fields={ fields }
 			onChangeView={ setView }
 			defaultLayouts={ defaultLayouts }
 		>
