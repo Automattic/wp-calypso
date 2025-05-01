@@ -3,7 +3,7 @@ import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import React, { lazy, useEffect, useMemo } from 'react';
 import Modal from 'react-modal';
-import { createPath, generatePath, useParams } from 'react-router';
+import { createPath, generatePath, Navigate, useParams } from 'react-router';
 import { Route, Routes } from 'react-router-dom';
 import DocumentHead from 'calypso/components/data/document-head';
 import Loading from 'calypso/components/loading';
@@ -188,10 +188,10 @@ export const FlowRenderer: React.FC< { flow: Flow; steps: readonly StepperStep[]
 		}
 
 		if ( step.slug === PRIVATE_STEPS.USER.slug ) {
-			// eslint-disable-next-line no-console
-			console.warn(
-				'Please define the next step after auth explicitly as we cannot find the user step automatically.'
-			);
+			// In this case, the user step is not able to determine the next step after auth. This happens when users somehow land in /flow/user directly.
+			// So we navigate to the landing page of the flow and let the flow decide what to do.
+			// If you intend to land in /flow/user, please point your URL to the step itself and Stepper will automatically redirect to the user step if needed.
+			return <Navigate to={ `/${ flow.variantSlug ?? flow.name }/` } replace />;
 		}
 
 		return (
