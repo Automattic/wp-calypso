@@ -176,6 +176,7 @@ function DataViews< Item >( {
 				onClickItem,
 				containerWidth,
 				defaultLayouts,
+				filters,
 			} }
 		>
 			<div className="dataviews-wrapper" ref={ containerRef }>
