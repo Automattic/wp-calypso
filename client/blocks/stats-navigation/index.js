@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { TabPanel } from '@wordpress/components';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
