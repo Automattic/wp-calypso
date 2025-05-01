@@ -9,7 +9,7 @@ $breakpoint-mobile: 782px; //Mobile size.
 	.login.is-jetpack:not(.is-automattic-for-agencies-flow) {
 		.button.is-primary {
 			background-color: var(--studio-jetpack-green-50);
-			border-color: var(--studio-jetpack-green-70);
+			border-color: var(--studio-jetpack-green-50);
 
 			&:hover,
 			&:focus {
