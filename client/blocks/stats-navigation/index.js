@@ -175,7 +175,6 @@ class StatsNavigation extends Component {
 
 		const shouldRenderModuleToggler =
 			! isLegacy &&
-			! isNavigationImprovementEnabled &&
 			isModuleSettingsSupported &&
 			AVAILABLE_PAGE_MODULES[ this.props.selectedItem ] &&
 			! hideModuleSettings &&
@@ -186,7 +185,7 @@ class StatsNavigation extends Component {
 		return (
 			<div className={ wrapperClass }>
 				{ siteId && <QueryJetpackModules siteId={ siteId } /> }
-				{ isNavigationImprovementEnabled ? (
+				{ isStatsNavigationImprovementEnabled ? (
 					<TabPanel
 						className="stats-navigation__tabs"
 						tabs={ Object.keys( navItems )
