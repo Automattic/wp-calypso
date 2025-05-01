@@ -36,6 +36,8 @@ type DataViewsContextType< Item > = {
 	isItemClickable: ( item: Item ) => boolean;
 	containerWidth: number;
 	filters: NormalizedFilter[];
+	isShowingFilter: boolean;
+	setIsShowingFilter: ( value: boolean ) => void;
 };
 
 const DataViewsContext = createContext< DataViewsContextType< any > >( {
@@ -55,6 +57,8 @@ const DataViewsContext = createContext< DataViewsContextType< any > >( {
 	isItemClickable: () => true,
 	containerWidth: 0,
 	filters: [],
+	isShowingFilter: false,
+	setIsShowingFilter: () => {},
 } );
 
 export default DataViewsContext;

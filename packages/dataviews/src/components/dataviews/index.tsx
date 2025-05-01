@@ -128,10 +128,7 @@ function DataViews< Item >( {
 					className="dataviews__search"
 				>
 					{ search && <DataViewsSearch label={ searchLabel } /> }
-					<FiltersToggle
-						setIsShowingFilter={ setIsShowingFilter }
-						isShowingFilter={ isShowingFilter }
-					/>
+					<FiltersToggle />
 				</HStack>
 				<HStack
 					spacing={ 1 }
@@ -168,6 +165,8 @@ function DataViews< Item >( {
 				onClickItem,
 				containerWidth,
 				filters,
+				isShowingFilter,
+				setIsShowingFilter,
 			} }
 		>
 			{ children || defaultUI }
