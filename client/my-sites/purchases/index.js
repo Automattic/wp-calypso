@@ -73,7 +73,7 @@ export default ( router ) => {
 	);
 
 	page(
-		'/purchases/crm-downloads/:licenseKey',
+		'/purchases/crm-downloads/:subscription',
 		navigation,
 		crmDownloads,
 		makeLayout,

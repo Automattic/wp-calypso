@@ -35,7 +35,7 @@ import titles from './titles';
 import VatInfoPage from './vat-info';
 import useVatDetails from './vat-info/use-vat-details';
 
-const useDataViewPurchasesList = config.isEnabled( 'purchases/purchase-list-dataview' );
+const useDataViewPurchasesList = ! config.isEnabled( 'purchases/purchase-list-dataview' );
 
 function useLogPurchasesError( message ) {
 	return useCallback(
@@ -277,11 +277,6 @@ export function changePaymentMethod( context, next ) {
 }
 
 export function crmDownloads( context, next ) {
-	const purchaseId =
-		'number' === typeof +context.params.licenseKey ? +context.params.licenseKey : 0;
-
-	context.primary = (
-		<CrmDownloads licenseKey={ context.params.licenseKey } purchaseId={ purchaseId } />
-	);
+	context.primary = <CrmDownloads subscription={ context.params.subscription } />;
 	next();
 }

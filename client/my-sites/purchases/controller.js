@@ -105,11 +105,6 @@ export const receiptView = ( context, next ) => {
 };
 
 export const crmDownloads = ( context, next ) => {
-	const purchaseId =
-		'number' === typeof +context.params.licenseKey ? +context.params.licenseKey : 0;
-
-	context.primary = (
-		<CrmDownloads licenseKey={ context.params.licenseKey } purchaseId={ purchaseId } />
-	);
+	context.primary = <CrmDownloads subscription={ context.params.subscription } />;
 	next();
 };
