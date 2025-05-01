@@ -1,3 +1,4 @@
+import { englishLocales } from '@automattic/i18n-utils';
 import { StepContainer, DIFM_FLOW, Step } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
@@ -12,7 +13,6 @@ import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-conta
 import { StepContainerV2DIFMStartingPoint } from './step-container-v2-difm-starting-point';
 import type { Step as StepType } from '../../types';
 import type { AppState } from 'calypso/types';
-
 const STEP_NAME = 'difmStartingPoint';
 
 const DIFMStartingPoint: StepType< {
@@ -34,7 +34,7 @@ const DIFMStartingPoint: StepType< {
 	const helpCenterButtonLink = translate( 'Contact our site-building team' );
 	const shouldRenderHelpCenter = useShouldRenderHelpCenterButton( {
 		flowName: DIFM_FLOW,
-		enabledGeos: [ 'US' ],
+		enabledLocales: englishLocales,
 	} );
 
 	if ( shouldUseStepContainerV2( flow ) ) {
@@ -65,7 +65,7 @@ const DIFMStartingPoint: StepType< {
 								shouldRenderHelpCenter ? (
 									<HelpCenterStepButton
 										flowName={ DIFM_FLOW }
-										enabledGeos={ [ 'US' ] }
+										enabledLocales={ englishLocales }
 										helpCenterButtonCopy={ helpCenterButtonCopy }
 										helpCenterButtonLink={ helpCenterButtonLink }
 									/>
@@ -106,7 +106,7 @@ const DIFMStartingPoint: StepType< {
 					shouldRenderHelpCenter ? (
 						<HelpCenterStepButton
 							flowName={ DIFM_FLOW }
-							enabledGeos={ [ 'US' ] }
+							enabledLocales={ englishLocales }
 							helpCenterButtonCopy={ helpCenterButtonCopy }
 							helpCenterButtonLink={ helpCenterButtonLink }
 						/>
