@@ -687,7 +687,9 @@ class ManagePurchase extends Component<
 		};
 
 		// We'll pass the purchase ID in the URL, and the CRM Downloads component will fetch the actual license key
-		const path = `/purchases/crm-downloads/${ site.plan.license_key }`;
+		const path = isJetpackCloud()
+			? `/purchases/crm-downloads/${ site.plan.license_key }`
+			: `/me/purchases/crm-downloads/${ site.plan.license_key }`;
 
 		return (
 			<CompactCard href={ path } onClick={ handleCrmDownloadsClick }>
