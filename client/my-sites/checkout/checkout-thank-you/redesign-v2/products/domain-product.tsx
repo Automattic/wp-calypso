@@ -64,7 +64,7 @@ export default function ThankYouDomainProduct( {
 			return false;
 		}
 
-		const gravatarOriginRegex = /^https:\/\/(?:[a-z]{2}(?:-[a-z]{2})?\.)?gravatar\.com$/i;
+		const gravatarOriginRegex = /^https:\/\/(?:[a-z]{2}(?:-[a-z]{2})?\.)?gravatar\.com\/?$/i;
 
 		return gravatarOriginRegex.test( window.name || '' );
 	}
