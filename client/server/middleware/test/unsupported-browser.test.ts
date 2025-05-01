@@ -66,7 +66,7 @@ describe( 'unsupported-browser', () => {
 	it( 'should call next() for allowed paths', () => {
 		// Use an unsupported browser that should normally be redirected
 		req.useragent = parseUserAgent(
-			'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.132 Safari/537.36'
+			'Mozilla/5.0 (Windows NT 10.0; Trident/7.0; rv:11.0) like Gecko'
 		);
 
 		const allowedPaths = [
