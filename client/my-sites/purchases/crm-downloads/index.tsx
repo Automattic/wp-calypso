@@ -10,15 +10,9 @@ import useUserLicenseBySubscriptionQuery from 'calypso/data/jetpack-licensing/us
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import './style.scss';
 
-export function CrmDownloads( {
-	licenseKey,
-	purchaseId,
-}: {
-	licenseKey?: string;
-	purchaseId: number;
-} ) {
+export function CrmDownloads( { subscription }: { subscription: number } ) {
 	const translate = useTranslate();
-	const { data, isError, isLoading } = useUserLicenseBySubscriptionQuery( purchaseId );
+	const { data, isError, isLoading } = useUserLicenseBySubscriptionQuery( subscription );
 
 	return (
 		<Main className="crm-downloads" wideLayout>
@@ -29,10 +23,7 @@ export function CrmDownloads( {
 			{ isError ? (
 				<CrmDownloadsError />
 			) : (
-				<CrmDownloadsContent
-					licenseKey={ data?.licenseKey || licenseKey }
-					isLoading={ isLoading }
-				/>
+				<CrmDownloadsContent licenseKey={ data?.licenseKey } isLoading={ isLoading } />
 			) }
 		</Main>
 	);
