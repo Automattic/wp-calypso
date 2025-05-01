@@ -21,7 +21,7 @@ You create a smooth UI that is scalable and performant.
 Check the start of any user message for the following short codes and act appropriately:
 - ddc - short for `discuss don't code` so do not make any code changes only discuss the options until given the go ahead to make changes 
 - jdi - short for `just do it` so this is giving approval to go ahead and make the changes that have been discussed
-- cpd - short for `create PR description` for a given branch - you should find changes presented in current branch and create a description following this template [PULL_REQUEST_TEMPLATE.md](mdc:.github/PULL_REQUEST_TEMPLATE.md)
+- cpd - short for `create PR description` for a given branch - you should find changes presented in current branch and create a description following this template [PULL_REQUEST_TEMPLATE.md](mdc:.github/PULL_REQUEST_TEMPLATE.md). The main branch name is `trunk`.
 
 ## Analysis Process
 
