@@ -68,11 +68,22 @@ skipDescribeIf(
 
 				// Handle potential 2FA challenge.
 				if ( url.includes( 'appleid.apple.com/auth/authorize' ) ) {
+					// Wait a bit for the page to fully load
+					await page.waitForLoadState( 'networkidle' );
+
 					// Only click 'Send code' if the button is visible
-					if ( await appleLoginPage.hasButtonWithExactText( 'Send code' ) ) {
+					const sendCodeVisible = await appleLoginPage.hasButtonWithExactText( 'Send code' );
+					console.log( 'Send code button visible:', sendCodeVisible );
+
+					if ( sendCodeVisible ) {
 						await appleLoginPage.clickButtonWithExactText( 'Send code' );
+						console.log( 'Clicked Send code button' );
 					}
 
+					// Wait a bit after clicking to ensure the SMS is sent
+					await page.waitForTimeout( 5000 );
+
+					console.log( 'Searching for message with timestamp:', timestamp );
 					const emailClient = new EmailClient();
 					const message = await emailClient.getLastMatchingMessage( {
 						inboxId: SecretsManager.secrets.mailosaur.totpUserInboxId,
