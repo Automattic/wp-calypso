@@ -2,6 +2,7 @@
 
 ## Next 
 
+- Expose `<DataViews.Filters />` component.
 - Expose `<DataViews.FiltersToggle />` component.
 - Expose `<DataViews.Search />` component.
 - Add support for `free-composition` in the `DataViews` component
