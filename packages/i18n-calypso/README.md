@@ -223,6 +223,19 @@ i18n.fixMe( {
 } );
 ```
 
+If the newCopy requires translation context that it must also be passed with `translationOptions`.
+
+```js
+const i18n = require( 'i18n-calypso' );
+
+i18n.fixMe( {
+	text: 'new copy',
+	newCopy: i18n.translate( 'new copy', { context: 'verb' } ),
+	oldCopy: i18n.translate( 'old copy' ),
+	translationOptions: { context: 'verb' },
+} );
+```
+
 ## hasTranslation Method
 
 Using the method `hasTranslation` you can check whether a translation for a given string exists. As the `translate()` function will always return screen text that can be displayed (will supply the source text if no translation exists), it is unsuitable to determine whether text is translated. Other factors are optional [key hashing](#key-hashing) as well as purposeful translation to the source text.

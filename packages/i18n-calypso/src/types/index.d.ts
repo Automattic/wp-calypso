@@ -146,17 +146,22 @@ export interface I18N {
 	 * @param options.text - The text to check for translation.
 	 * @param options.newCopy - The translation to return if the text is translated.
 	 * @param options.oldCopy - The fallback to return if the text is not translated.
+	 * @param options.translationOptions - Optional. The options to pass to the translation.
 	 * @example
 	 * i18n.fixMe( {
 	 * 	text: 'new copy',
 	 * 	newCopy: i18n.translate( 'new copy' ),
 	 * 	oldCopy: i18n.translate( 'old copy' ),
+	 * 	translationOptions: {
+	 * 		context: 'Some disambiguating context if needed for the translation',
+	 * 	}
 	 * } );
 	 */
 	fixMe( options: {
 		text: string;
 		newCopy: ExistingReactNode;
 		oldCopy?: ExistingReactNode;
+		translationOptions?: TranslateOptions;
 	} ): ExistingReactNode | null;
 }
 
