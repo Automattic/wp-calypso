@@ -476,7 +476,8 @@ const PlansFeaturesMain = ( {
 
 	let hidePlanSelector = true;
 	let enableTermSavingsPriceDisplay = true;
-	// Only show plan selector if none of these conditions are true
+	// In the "purchase a plan and free domain" flow we do not want to show
+	// monthly plans because monthly plans do not come with a free domain.
 	if (
 		redirectToAddDomainFlow === undefined &&
 		! hidePlanTypeSelector &&
