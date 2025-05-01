@@ -183,6 +183,20 @@ function PlanetOverview( { planets }: { planets: SpaceObject[] } ) {
  * or pagination controls.
  */
 export const FreeComposition = () => {
+	const view = {
+		type: 'table' as const,
+		search: '',
+		page: 1,
+		perPage: 10,
+		layout: {},
+		filters: [],
+	};
+
+	const paginationInfo = {
+		totalItems: data.length,
+		totalPages: 1,
+	};
+
 	const { data: shownData } = useMemo( () => {
 		return filterSortAndPaginate( data, DEFAULT_VIEW, fields );
 	}, [] );
@@ -195,7 +209,15 @@ export const FreeComposition = () => {
 	const getItemId = ( item: SpaceObject ) => item.id.toString();
 
 	return (
-		<DataViews data={ shownData } getItemId={ getItemId }>
+		<DataViews
+			data={ shownData }
+			getItemId={ getItemId }
+			view={ view }
+			onChangeView={ () => {} }
+			fields={ fields }
+			paginationInfo={ paginationInfo }
+			defaultLayouts={ defaultLayouts }
+		>
 			<PlanetOverview planets={ planets } />
 		</DataViews>
 	);

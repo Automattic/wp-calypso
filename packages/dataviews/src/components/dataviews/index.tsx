@@ -31,21 +31,21 @@ import type { SelectionOrUpdater, SetSelection } from '../../private-types';
 type ItemWithId = { id: string };
 
 type DataViewsProps< Item > = {
-	view?: View;
-	onChangeView?: ( view: View ) => void;
-	fields?: Field< Item >[];
+	view: View;
+	onChangeView: ( view: View ) => void;
+	fields: Field< Item >[];
 	search?: boolean;
 	searchLabel?: string;
 	actions?: Action< Item >[];
 	data: Item[];
 	isLoading?: boolean;
-	paginationInfo?: {
+	paginationInfo: {
 		totalItems: number;
 		totalPages: number;
 	};
-	defaultLayouts?: SupportedLayouts;
+	defaultLayouts: SupportedLayouts;
 	selection?: string[];
-	onChangeSelection?: SetSelection;
+	onChangeSelection?: ( items: string[] ) => void;
 	onClickItem?: ( item: Item ) => void;
 	isItemClickable?: ( item: Item ) => boolean;
 	header?: ReactNode;
@@ -60,9 +60,9 @@ const defaultIsItemClickable = () => true;
 const EMPTY_ARRAY: any[] = [];
 
 export default function DataViews< Item >( {
-	view = { type: LAYOUT_TABLE },
-	onChangeView = () => {},
-	fields = [],
+	view,
+	onChangeView,
+	fields,
 	search = true,
 	searchLabel = undefined,
 	actions = EMPTY_ARRAY,
@@ -70,10 +70,10 @@ export default function DataViews< Item >( {
 	getItemId = defaultGetItemId,
 	getItemLevel,
 	isLoading = false,
-	paginationInfo = { totalItems: 0, totalPages: 0 },
+	paginationInfo,
 	defaultLayouts,
 	selection: selectionProperty,
-	onChangeSelection = () => {},
+	onChangeSelection,
 	onClickItem,
 	isItemClickable = defaultIsItemClickable,
 	header,
