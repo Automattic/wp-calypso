@@ -8,6 +8,9 @@ const SiteMenu = ( { siteSlug }: { siteSlug: string } ) => {
 			<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/deployments` }>
 				{ __( 'Deployments' ) }
 			</ResponsiveMenu.Item>
+			<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/monitoring` }>
+				{ __( 'Monitoring' ) }
+			</ResponsiveMenu.Item>
 			<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/performance` }>
 				{ __( 'Performance' ) }
 			</ResponsiveMenu.Item>
