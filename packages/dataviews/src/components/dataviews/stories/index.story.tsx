@@ -1,6 +1,7 @@
 /**
  * WordPress dependencies
  */
+import type { Meta } from '@storybook/react';
 import { useState, useMemo } from '@wordpress/element';
 import { createInterpolateElement } from '@wordpress/element';
 import {
@@ -32,7 +33,8 @@ import './style.css';
 const meta = {
 	title: 'DataViews/DataViews',
 	component: DataViews,
-};
+} as Meta< typeof DataViews >;
+
 export default meta;
 
 const defaultLayouts = {
