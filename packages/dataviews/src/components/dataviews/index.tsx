@@ -132,10 +132,7 @@ function DataViews< Item >( {
 					className="dataviews__search"
 				>
 					{ search && <DataViewsSearch label={ searchLabel } /> }
-					<FiltersToggle
-						setIsShowingFilter={ setIsShowingFilter }
-						isShowingFilter={ isShowingFilter }
-					/>
+					<FiltersToggle />
 				</HStack>
 				<HStack
 					spacing={ 1 }
@@ -173,6 +170,8 @@ function DataViews< Item >( {
 				containerWidth,
 				defaultLayouts,
 				filters,
+				isShowingFilter,
+				setIsShowingFilter,
 			} }
 		>
 			<div className="dataviews-wrapper" ref={ containerRef }>

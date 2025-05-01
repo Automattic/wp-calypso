@@ -38,6 +38,8 @@ type DataViewsContextType< Item > = {
 	containerWidth: number;
 	defaultLayouts: SupportedLayouts;
 	filters: NormalizedFilter[];
+	isShowingFilter: boolean;
+	setIsShowingFilter: ( value: boolean ) => void;
 };
 
 const DataViewsContext = createContext< DataViewsContextType< any > >( {
@@ -58,6 +60,8 @@ const DataViewsContext = createContext< DataViewsContextType< any > >( {
 	containerWidth: 0,
 	defaultLayouts: { list: {}, grid: {}, table: {} },
 	filters: [],
+	isShowingFilter: false,
+	setIsShowingFilter: () => {},
 } );
 
 export default DataViewsContext;
