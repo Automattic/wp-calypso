@@ -58,7 +58,7 @@ const DEFAULT_FIELDS = [
 		id: 'backups',
 		label: __( 'Backups' ),
 		getValue: ( { item }: { item: Site } ) =>
-			item.plan.features.active.includes( 'backups' ) || undefined,
+			item.plan?.features?.active?.includes( 'backups' ) || undefined,
 		elements: [
 			{ value: true, label: __( 'Enabled' ) },
 			{ value: undefined, label: __( 'Disabled' ) },
