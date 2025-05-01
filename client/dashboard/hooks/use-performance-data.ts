@@ -24,7 +24,7 @@ export function usePerformanceData( siteId: string, url: string ): PerformanceDa
 	const [ , cachedHash ] = wpcomPerformanceReportUrl.split( '&hash=' );
 
 	const { data: basicMetricsData, isLoading: isLoadingBasicMetrics } = useQuery( {
-		...basicMetricsQuery( url, isLoadingSiteSettings, cachedHash ),
+		...basicMetricsQuery( url ),
 		refetchOnWindowFocus: false,
 		enabled: !! url && ! isLoadingSiteSettings && ! cachedHash,
 	} );
@@ -51,6 +51,7 @@ export function usePerformanceData( siteId: string, url: string ): PerformanceDa
 			: undefined;
 
 	return {
+		performanceData,
 		desktopScore,
 		mobileScore,
 		desktopLoaded,
