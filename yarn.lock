@@ -4728,6 +4728,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@gravatar-com/quick-editor@npm:^0.8.0":
+  version: 0.8.0
+  resolution: "@gravatar-com/quick-editor@npm:0.8.0"
+  checksum: 7eadb7916833132dc3d3afa41e924aab6fa5430fbe60986bfa9d0d680b9399d3eef6035d63c490efd0d21023e3a9b45e428422982343fb50b8ad189cbb21ff41
+  languageName: node
+  linkType: hard
+
 "@humanwhocodes/config-array@npm:^0.13.0":
   version: 0.13.0
   resolution: "@humanwhocodes/config-array@npm:0.13.0"
@@ -35404,6 +35411,7 @@ __metadata:
     "@babel/eslint-parser": "npm:^7.27.0"
     "@babel/register": "npm:^7.25.9"
     "@babel/runtime": "npm:^7.27.0"
+    "@gravatar-com/quick-editor": "npm:^0.8.0"
     "@paypal/react-paypal-js": "npm:^8.7.0"
     "@pmmmwh/react-refresh-webpack-plugin": "npm:^0.5.15"
     "@signal-noise/stylelint-scales": "npm:^2.0.3"

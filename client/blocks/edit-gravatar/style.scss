@@ -1,235 +1,100 @@
+@import '@wordpress/base-styles/breakpoints';
+
 .edit-gravatar {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
 	min-width: 205px;
-}
 
-.edit-gravatar__image-container {
-	cursor: pointer;
-	display: inline-block;
-	position: relative;
-
-	&.is-uploading::before {
-		content: "";
-		position: absolute;
-		top: 0;
-		left: 0;
-		background-color: color-mix(in srgb, var(--color-neutral-70) 50%, transparent);
-		border-radius: 50%;
-		height: 150px;
-		width: 150px;
+	.edit-gravatar__image-container {
+		position: relative;
+		display: flex;
 	}
-}
 
-.edit-gravatar__image-container .edit-gravatar__gravatar-is-hidden {
-	display: block;
-	width: 150px;
-	height: 150px;
-	position: relative;
-	cursor: auto;
-}
+	.edit-gravatar__caution-icon {
+		position: absolute;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		bottom: 0;
+		right: 0;
+		background-color: var( --studio-red-60 );
+		border: 2px solid #fff;
+		border-radius: 50%;
+		width: 48px;
+		height: 48px;
+		box-sizing: border-box;
+	}
 
-.edit_gravatar__is-loading {
-	.edit-gravatar__gravatar-placeholder,
-	.edit-gravatar__explanation-placeholder {
+	.edit-gravatar__explanation-container {
+		display: flex;
+		align-items: center;
+		margin: 15px 0 20px;
+		min-height: 24px;
+	}
+
+	.edit-gravatar__action-button {
+		font-size: 14px;
+		text-decoration: none;
+		text-wrap: pretty;
+	}
+
+	.edit-gravatar__explanation {
+		color: var( --color-text-subtle );
+		font-size: $font-body-small;
+		font-style: italic;
+		margin: 0;
+	}
+
+	.edit-gravatar__avatar-placeholder,
+	.edit-gravatar__action-button-placeholder {
 		@include placeholder();
 	}
-	.edit-gravatar__gravatar-placeholder {
-		display: block;
+
+	.edit-gravatar__avatar-placeholder,
+	.edit-gravatar__hidden-avatar {
 		width: 150px;
 		height: 150px;
 		border-radius: 50%;
 	}
-	.edit-gravatar__explanation-placeholder {
+
+	.edit-gravatar__hidden-avatar {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		background-color: var( --studio-gray-5 );
+	}
+
+	.edit-gravatar__action-button-placeholder {
 		height: 24px;
-		width: 200px;
+		width: 160px;
+	}
+
+	.edit-gravatar__pop-over svg {
+		margin-top: 2px;
+	}
+
+	&.edit-gravatar--is-unverified {
+		.gravatar {
+			opacity: 0.33;
+		}
+	}
+
+	@media ( min-width: $break-large ) {
+		.edit-gravatar__action-button,
+		.edit-gravatar__explanation {
+			max-width: 260px;
+		}
 	}
 }
 
-.edit-gravatar__image-container .gravatar.is-missing {
-	display: block;
-	width: 150px;
-	height: 150px;
-}
-
-.edit-gravatar__spinner {
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	transform: translate(-50%, -50%);
-}
-
-.edit-gravatar-modal.dialog.card {
-	max-width: none;
-	padding: 0;
-	position: absolute;
-	top: 0;
-	right: 0;
-	bottom: 0;
-	left: 0;
-
-	@include breakpoint-deprecated( ">660px" ) {
-		top: 5%;
-		bottom: 5%;
-		left: 5%;
-		right: 5%;
-		width: 90%;
+/* Override the default popover styles. */
+.popover__inner {
+	.gridicons-external {
+		margin-left: 1px;
 	}
 
-	@include breakpoint-deprecated( ">960px" ) {
-		left: 12.5%;
-		right: 12.5%;
-		width: 75%;
+	p:last-of-type {
+		margin-bottom: 0;
 	}
-}
-
-.edit-gravatar-modal .dialog__content {
-	height: 100%;
-}
-
-.edit-gravatar__label-container {
-	position: absolute;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 100%;
-
-	text-align: center;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	color: #fff;
-	transition: all 0.3s ease;
-	.edit-gravatar__label-container-icon {
-		padding: 10px;
-		border-radius: 50%;
-		background-color: var(--color-accent-60);
-		width: 24px;
-		height: 24px;
-		transform: translate(100%, 100%);
-		border: solid 2px transparent;
-		transition: all 0.3s ease;
-	}
-
-}
-
-.edit-gravatar__image-button:focus .edit-gravatar__label-container-icon {
-	box-shadow: 0 0 0 2px var(--color-accent-light);
-}
-
-.gravatar {
-	transition: filter 0.3s ease;
-}
-
-.edit-gravatar__image-container:hover, .is-uploading .edit-gravatar__image-container {
-	.gravatar{
-		filter: brightness(0.7);
-	}
-
-	.edit-gravatar__label-container-icon {
-		background-color: var(--color-accent-70);
-
-	}
-}
-
-.edit-gravatar__image-container .edit-gravatar__label-container-icon {
-	background-color: var(--color-accent-60);
-	border-color: #fff;
-}
-
-.is-uploading .edit-gravatar__image-container {
-	.edit-gravatar__label-container-icon {
-		background-color: #fff;
-	}
-}
-
-.is-unverified .edit-gravatar__label-container-icon {
-	background-color: var(--studio-red-60);
-	border-color: #fff;
-}
-
-.edit-gravatar .edit-gravatar__label-container-icon-spinner{
-	margin: 0;
-	width: 24px;
-	height: 24px;
-}
-
-.edit-gravatar__gravatar-is-hidden .gridicon {
-	margin: 0;
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	transform: translate(-50%, -50%);
-}
-
-.edit-gravatar__label {
-	display: inline-block;
-	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-	line-height: 1.2em;
-	padding: 0 1em;
-}
-
-.edit-gravatar .spinner__border {
-	fill: color-mix(in srgb, var(--color-neutral-70) 50%, transparent);
-}
-
-.edit-gravatar__explanation {
-	color: var(--color-text-subtle);
-	font-size: $font-body-small;
-	font-style: italic;
-	font-weight: 400;
-	display: inline-block;
-	margin-top: 0.5em;
-}
-
-.edit-gravatar .info-popover {
-	vertical-align: middle;
-}
-
-.edit-gravatar__pop-over .external-link .gridicons-external {
-	// specificity used to override margin
-	margin-left: 1px;
-}
-
-.edit-gravatar__pop-over p:last-of-type {
-	margin-bottom: 0;
-}
-
-.edit-gravatar.is-unverified {
-	.file-picker {
-		pointer-events: none;
-	}
-
-	.gravatar {
-		opacity: 0.33;
-	}
-}
-
-.edit-gravatar.is-uploading {
-	.file-picker {
-		pointer-events: none;
-	}
-}
-
-.edit-gravatar .drop-zone {
-	border-radius: 50%;
-	width: 150px;
-	height: 150px;
-	border: 0;
-	margin: 0;
-}
-
-.edit-gravatar .drop-zone__content {
-	top: calc(50% - 0.5em); // align with button text
-}
-
-.edit-gravatar .drop-zone__content-text {
-	padding: 0 1em;
-}
-
-.edit-gravatar .drop-zone.is-active ~ .edit-gravatar__label-container {
-	visibility: hidden;
-}
-
-.edit-gravatar .drop-zone .gridicon {
-	height: 36px;
-	width: 36px;
 }
