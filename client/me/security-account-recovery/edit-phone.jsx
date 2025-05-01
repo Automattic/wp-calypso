@@ -1,4 +1,4 @@
-import { FormInputValidation } from '@automattic/components';
+import { FormInputValidation, FormLabel } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
@@ -22,7 +22,6 @@ class SecurityAccountRecoveryRecoveryPhoneEdit extends Component {
 			numberFull: PropTypes.string,
 		} ),
 		onSave: PropTypes.func,
-		onCancel: PropTypes.func,
 		onDelete: PropTypes.func,
 	};
 
@@ -34,6 +33,9 @@ class SecurityAccountRecoveryRecoveryPhoneEdit extends Component {
 		return (
 			<div>
 				<FormFieldset>
+					<FormLabel htmlFor="phone_number">
+						{ this.props.translate( 'Recovery SMS number' ) }
+					</FormLabel>
 					<QuerySmsCountries />
 					<FormPhoneInput
 						countriesList={ this.props.countriesList }
@@ -56,7 +58,6 @@ class SecurityAccountRecoveryRecoveryPhoneEdit extends Component {
 					saveText={ this.props.translate( 'Save Number' ) }
 					onSave={ this.onSave }
 					onDelete={ this.onDelete }
-					onCancel={ this.onCancel }
 				/>
 			</div>
 		);
@@ -109,10 +110,6 @@ class SecurityAccountRecoveryRecoveryPhoneEdit extends Component {
 			number: phoneNumber.phoneNumber,
 			numberFull: phoneNumber.phoneNumberFull,
 		} );
-	};
-
-	onCancel = () => {
-		this.props.onCancel();
 	};
 
 	onDelete = () => {

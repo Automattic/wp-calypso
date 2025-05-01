@@ -42,7 +42,10 @@ class RecoveryPhoneValidationNotice extends Component {
 		const validateButtonText = isValidating ? translate( 'Validating' ) : translate( 'Validate' );
 
 		return (
-			<form onSubmit={ this.onSubmit }>
+			<form
+				className="security-account-recovery__recovery-phone-validation"
+				onSubmit={ this.onSubmit }
+			>
 				{ ! hasSent && (
 					<Notice
 						className="security-account-recovery__validation-notice"

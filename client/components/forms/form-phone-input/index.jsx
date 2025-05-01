@@ -1,4 +1,3 @@
-import { FormLabel } from '@automattic/components';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { find } from 'lodash';
@@ -48,11 +47,6 @@ export class FormPhoneInput extends Component {
 		return (
 			<div className={ clsx( this.props.className, 'form-phone-input' ) }>
 				<FormFieldset className="form-phone-input__country">
-					<FormLabel htmlFor="country_code">
-						{ this.props.translate( 'Country code', {
-							context: 'The country code for the phone for the user.',
-						} ) }
-					</FormLabel>
 					<FormCountrySelect
 						{ ...this.props.countrySelectProps }
 						countriesList={ this.props.countriesList }
@@ -64,10 +58,10 @@ export class FormPhoneInput extends Component {
 				</FormFieldset>
 
 				<FormFieldset className="form-phone-input__phone-number">
-					<FormLabel htmlFor="phone_number">{ this.props.translate( 'Phone number' ) }</FormLabel>
 					<FormTelInput
 						{ ...this.props.phoneInputProps }
 						disabled={ this.props.isDisabled }
+						id="phone_number"
 						name="phone_number"
 						value={ this.state.phoneNumber }
 						onChange={ this.handlePhoneChange }
