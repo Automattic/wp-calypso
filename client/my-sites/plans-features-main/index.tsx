@@ -841,7 +841,7 @@ const PlansFeaturesMain = ( {
 							data-e2e-plans="wpcom"
 						>
 							<div className="plans-wrapper">
-								{ gridPlansForFeaturesGrid && (
+								{ gridPlansForFeaturesGrid && ! isStreamlinedPriceExperimentLoading && (
 									<FeaturesGrid
 										allFeaturesList={ getFeaturesList() }
 										className="plans-features-main__features-grid"
@@ -878,9 +878,7 @@ const PlansFeaturesMain = ( {
 										enableLogosOnlyForEnterprisePlan={ showSimplifiedFeatures }
 										hideFeatureGroupTitles={ showSimplifiedFeatures }
 										enableTermSavingsPriceDisplay={ enableTermSavingsPriceDisplay }
-										showStreamlinedBillingDescription={
-											! isStreamlinedPriceExperimentLoading && showStreamlinedPriceExperiment
-										}
+										showStreamlinedBillingDescription={ showStreamlinedPriceExperiment }
 									/>
 								) }
 								{ showEscapeHatch && hidePlansFeatureComparison && viewAllPlansButton }
@@ -909,45 +907,45 @@ const PlansFeaturesMain = ( {
 														coupon={ coupon }
 													/>
 												) }
-											{ gridPlansForComparisonGrid && gridPlansForPlanTypeSelector && (
-												<ComparisonGrid
-													allFeaturesList={ getFeaturesList() }
-													className="plans-features-main__comparison-grid"
-													coupon={ coupon }
-													currentSitePlanSlug={ sitePlanSlug }
-													gridPlans={ gridPlansForComparisonGrid }
-													hideUnavailableFeatures={ hideUnavailableFeatures }
-													intent={ intent }
-													intervalType={ intervalType }
-													isInAdmin={ ! isInSignup }
-													isInSiteDashboard={ isInSiteDashboard }
-													isInSignup={ isInSignup }
-													onStorageAddOnClick={ handleStorageAddOnClick }
-													planTypeSelectorProps={
-														! hidePlanSelector
-															? { ...planTypeSelectorProps, plans: gridPlansForPlanTypeSelector }
-															: undefined
-													}
-													recordTracksEvent={ recordTracksEvent }
-													reflectStorageSelectionInPlanPrices
-													selectedFeature={ selectedFeature }
-													selectedPlan={ selectedPlan }
-													showUpgradeableStorage={ showUpgradeableStorage }
-													siteId={ siteId }
-													stickyRowOffset={ comparisonGridStickyRowOffset }
-													showRefundPeriod={ isAnyHostingFlow( flowName ) }
-													useAction={ useAction }
-													useCheckPlanAvailabilityForPurchase={
-														useCheckPlanAvailabilityForPurchase
-													}
-													enableFeatureTooltips
-													featureGroupMap={ featureGroupMapForComparisonGrid }
-													enableTermSavingsPriceDisplay={ enableTermSavingsPriceDisplay }
-													showStreamlinedBillingDescription={
-														! isStreamlinedPriceExperimentLoading && showStreamlinedPriceExperiment
-													}
-												/>
-											) }
+											{ gridPlansForComparisonGrid &&
+												gridPlansForPlanTypeSelector &&
+												! isStreamlinedPriceExperimentLoading && (
+													<ComparisonGrid
+														allFeaturesList={ getFeaturesList() }
+														className="plans-features-main__comparison-grid"
+														coupon={ coupon }
+														currentSitePlanSlug={ sitePlanSlug }
+														gridPlans={ gridPlansForComparisonGrid }
+														hideUnavailableFeatures={ hideUnavailableFeatures }
+														intent={ intent }
+														intervalType={ intervalType }
+														isInAdmin={ ! isInSignup }
+														isInSiteDashboard={ isInSiteDashboard }
+														isInSignup={ isInSignup }
+														onStorageAddOnClick={ handleStorageAddOnClick }
+														planTypeSelectorProps={
+															! hidePlanSelector
+																? { ...planTypeSelectorProps, plans: gridPlansForPlanTypeSelector }
+																: undefined
+														}
+														recordTracksEvent={ recordTracksEvent }
+														reflectStorageSelectionInPlanPrices
+														selectedFeature={ selectedFeature }
+														selectedPlan={ selectedPlan }
+														showUpgradeableStorage={ showUpgradeableStorage }
+														siteId={ siteId }
+														stickyRowOffset={ comparisonGridStickyRowOffset }
+														showRefundPeriod={ isAnyHostingFlow( flowName ) }
+														useAction={ useAction }
+														useCheckPlanAvailabilityForPurchase={
+															useCheckPlanAvailabilityForPurchase
+														}
+														enableFeatureTooltips
+														featureGroupMap={ featureGroupMapForComparisonGrid }
+														enableTermSavingsPriceDisplay={ enableTermSavingsPriceDisplay }
+														showStreamlinedBillingDescription={ showStreamlinedPriceExperiment }
+													/>
+												) }
 											<ComparisonGridToggle
 												onClick={ toggleShowPlansComparisonGrid }
 												label={ translate( 'Hide comparison' ) }
