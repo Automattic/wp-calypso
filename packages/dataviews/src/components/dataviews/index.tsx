@@ -182,8 +182,10 @@ function DataViews< Item >( {
 // Populate the DataViews sub components
 const DataViewsSubComponents = DataViews as typeof DataViews & {
 	Search: typeof DataViewsSearch;
+	FiltersToggle: typeof FiltersToggle;
 };
 
 DataViewsSubComponents.Search = DataViewsSearch;
+DataViewsSubComponents.FiltersToggle = FiltersToggle;
 
 export default DataViewsSubComponents;
