@@ -191,10 +191,14 @@ export const FreeComposition = () => {
 		item.categories.includes( 'Planet' )
 	);
 
+	// id` is a number in the data, but a string in the DataViews component.
+	const getItemId = ( item: SpaceObject ) => item.id.toString();
+
 	return (
 		<DataViews
 			data={ shownData }
-			getItemId={ ( item ) => item.id.toString() }
+			view={ DEFAULT_VIEW }
+			getItemId={ getItemId }
 		>
 			<PlanetOverview planets={ planets } />
 		</DataViews>
