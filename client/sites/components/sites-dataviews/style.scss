@@ -101,35 +101,6 @@
 	.stats-sparkline {
 		padding-top: 0;
 	}
-
-	/**
-	 * Pin the actions column.
-	 */
-	.dataviews-view-table__actions-column {
-		position: sticky;
-		right: 0;
-		z-index: 1;
-		background-color: var(--studio-white);
-
-		&::after {
-			display: block;
-			content: '';
-			position: absolute;
-			top: 0;
-			bottom: 0;
-			left: 0;
-			width: 1px;
-			background-color: #f0f0f0;
-		}
-	}
-
-	.dataviews-view-table__row.is-hovered .dataviews-view-table__actions-column {
-		background-color: inherit;
-	}
-
-	&.sites-dataviews--scrolled-end .dataviews-view-table__actions-column::after {
-		background-color: transparent;
-	}
 }
 
 .is-section-a8c-for-agencies-sites {

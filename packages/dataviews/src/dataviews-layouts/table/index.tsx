@@ -30,6 +30,7 @@ import type {
 import type { SetSelection } from '../../private-types';
 import ColumnHeaderMenu from './column-header-menu';
 import ColumnPrimary from './column-primary';
+import { useIsScrolledEnd } from './use-is-scrolled-end';
 
 interface TableColumnFieldProps< Item > {
 	fields: NormalizedField< Item >[];
@@ -53,6 +54,7 @@ interface TableRowProps< Item > {
 	onChangeSelection: SetSelection;
 	isItemClickable: ( item: Item ) => boolean;
 	onClickItem?: ( item: Item ) => void;
+	isActionsColumnSticky?: boolean;
 }
 
 function TableColumnField< Item >( {
@@ -89,6 +91,7 @@ function TableRow< Item >( {
 	isItemClickable,
 	onClickItem,
 	onChangeSelection,
+	isActionsColumnSticky,
 }: TableRowProps< Item > ) {
 	const hasPossibleBulkAction = useHasAPossibleBulkAction( actions, item );
 	const isSelected = hasPossibleBulkAction && selection.includes( id );
@@ -192,7 +195,13 @@ function TableRow< Item >( {
 
 				/* eslint-disable jsx-a11y/no-noninteractive-element-interactions, jsx-a11y/click-events-have-key-events */
 				<td
-					className="dataviews-view-table__actions-column"
+					className={ clsx( 'dataviews-view-table__actions-column', {
+						'dataviews-view-table__actions-column--sticky':
+							view.layout?.shouldPinActions,
+						'dataviews-view-table__actions-column--stuck':
+							view.layout?.shouldPinActions &&
+							isActionsColumnSticky,
+					} ) }
 					onClick={ ( e ) => e.stopPropagation() }
 				>
 					<ItemActions item={ item } actions={ actions } />
@@ -278,6 +287,11 @@ function ViewTable< Item >( {
 			}
 		};
 
+	const isScrolledEnd = useIsScrolledEnd( {
+		selector: '.dataviews-wrapper',
+		enabled: !! actions?.length && !! view.layout?.shouldPinActions,
+	} );
+
 	return (
 		<>
 			<table
@@ -355,7 +369,18 @@ function ViewTable< Item >( {
 							);
 						} ) }
 						{ !! actions?.length && (
-							<th className="dataviews-view-table__actions-column">
+							<th
+								className={ clsx(
+									'dataviews-view-table__actions-column',
+									{
+										'dataviews-view-table__actions-column--sticky':
+											view.layout?.shouldPinActions,
+										'dataviews-view-table__actions-column--stuck':
+											view.layout?.shouldPinActions &&
+											! isScrolledEnd,
+									}
+								) }
+							>
 								<span className="dataviews-view-table-header">
 									{ __( 'Actions' ) }
 								</span>
@@ -388,6 +413,7 @@ function ViewTable< Item >( {
 								onChangeSelection={ onChangeSelection }
 								onClickItem={ onClickItem }
 								isItemClickable={ isItemClickable }
+								isActionsColumnSticky={ ! isScrolledEnd }
 							/>
 						) ) }
 				</tbody>

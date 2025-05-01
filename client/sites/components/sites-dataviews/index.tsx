@@ -1,8 +1,7 @@
 import { TimeSince } from '@automattic/components';
+import { DataViews, Field } from '@automattic/dataviews';
 import { SiteExcerptData } from '@automattic/sites';
-import { DataViews, Field } from '@wordpress/dataviews';
 import { useI18n } from '@wordpress/react-i18n';
-import clsx from 'clsx';
 import { useCallback, useMemo } from 'react';
 import { useQueryReaderTeams } from 'calypso/components/data/query-reader-teams';
 import JetpackLogo from 'calypso/components/jetpack-logo';
@@ -18,7 +17,6 @@ import SiteField from './dataviews-fields/site-field';
 import SiteIcon from './site-icon';
 import { SiteStats } from './sites-site-stats';
 import { SiteStatus } from './sites-site-status';
-import useHorizontalScroll from './use-horizontal-scroll';
 import type { View } from '@wordpress/dataviews';
 import './style.scss';
 import './dataview-style.scss';
@@ -220,15 +218,8 @@ const DotcomSitesDataViews = ( {
 		viewType: dataViewsState.type,
 	} );
 
-	const isScrolledEnd = useHorizontalScroll( {
-		selector: '.sites-dataviews .dataviews-wrapper',
-		enabled: dataViewsState.type === 'table',
-	} );
-
 	return (
-		<div
-			className={ clsx( 'sites-dataviews', { 'sites-dataviews--scrolled-end': isScrolledEnd } ) }
-		>
+		<div className="sites-dataviews">
 			<DataViews
 				data={ sites }
 				fields={ fields }
