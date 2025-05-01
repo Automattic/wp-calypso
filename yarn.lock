@@ -6111,7 +6111,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@docusaurus/core@npm:3.7.0":
+"@docusaurus/core@npm:3.7.0, @docusaurus/core@npm:^3.7.0":
   version: 3.7.0
   resolution: "@docusaurus/core@npm:3.7.0"
   dependencies:
@@ -6224,7 +6224,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@docusaurus/module-type-aliases@npm:3.7.0":
+"@docusaurus/module-type-aliases@npm:3.7.0, @docusaurus/module-type-aliases@npm:^3.7.0":
   version: 3.7.0
   resolution: "@docusaurus/module-type-aliases@npm:3.7.0"
   dependencies:
@@ -6421,7 +6421,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@docusaurus/preset-classic@npm:3.7.0":
+"@docusaurus/preset-classic@npm:^3.7.0":
   version: 3.7.0
   resolution: "@docusaurus/preset-classic@npm:3.7.0"
   dependencies:
@@ -6544,14 +6544,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@docusaurus/tsconfig@npm:3.7.0":
+"@docusaurus/tsconfig@npm:^3.7.0":
   version: 3.7.0
   resolution: "@docusaurus/tsconfig@npm:3.7.0"
   checksum: 22a076fa3cf6da25a76f87fbe5b37c09997f5a8729fdc1a69c0c7955dff9f9850f16dc1de8c6d5096d258a95c428fb8839b252b9dbaa648acb7de8a0e5889dea
   languageName: node
   linkType: hard
 
-"@docusaurus/types@npm:3.7.0":
+"@docusaurus/types@npm:3.7.0, @docusaurus/types@npm:^3.7.0":
   version: 3.7.0
   resolution: "@docusaurus/types@npm:3.7.0"
   dependencies:
@@ -19642,13 +19642,13 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "design-system-docs@workspace:apps/design-system-docs"
   dependencies:
-    "@docusaurus/core": "npm:3.7.0"
-    "@docusaurus/module-type-aliases": "npm:3.7.0"
-    "@docusaurus/preset-classic": "npm:3.7.0"
-    "@docusaurus/tsconfig": "npm:3.7.0"
-    "@docusaurus/types": "npm:3.7.0"
+    "@docusaurus/core": "npm:^3.7.0"
+    "@docusaurus/module-type-aliases": "npm:^3.7.0"
+    "@docusaurus/preset-classic": "npm:^3.7.0"
+    "@docusaurus/tsconfig": "npm:^3.7.0"
+    "@docusaurus/types": "npm:^3.7.0"
     "@mdx-js/react": "npm:^3.0.0"
-    "@types/react": "npm:18.3.20"
+    "@types/react": "npm:^18.3.20"
     clsx: "npm:^2.0.0"
     prism-react-renderer: "npm:^2.3.0"
     react: "npm:^18.3.1"
