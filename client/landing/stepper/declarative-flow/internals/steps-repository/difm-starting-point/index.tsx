@@ -13,6 +13,7 @@ import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-conta
 import { StepContainerV2DIFMStartingPoint } from './step-container-v2-difm-starting-point';
 import type { Step as StepType } from '../../types';
 import type { AppState } from 'calypso/types';
+
 const STEP_NAME = 'difmStartingPoint';
 
 const DIFMStartingPoint: StepType< {
