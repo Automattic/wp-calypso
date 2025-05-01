@@ -213,7 +213,17 @@ class StatsPostDetail extends Component {
 
 				<div className={ postDetailPageClasses }>
 					{ config.isEnabled( 'stats/navigation-improvement' ) ? (
-						<PageHeader backLinkProps={ backLinkProps } titleProps={ titleProps } />
+						<PageHeader
+							backLinkProps={ backLinkProps }
+							titleProps={ titleProps }
+							rightSection={
+								showViewLink && (
+									<Button onClick={ this.openPreview } primary>
+										<span>{ actionLabel }</span>
+									</Button>
+								)
+							}
+						/>
 					) : (
 						<NavigationHeader navigationItems={ navigationItems }>
 							{ showViewLink && (

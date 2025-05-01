@@ -28,6 +28,10 @@
 	&__right-section {
 		display: flex;
 		align-items: center;
+
+		.button {
+			padding: 4px 8px;
+		}
 	}
 
 	&__back-link {
