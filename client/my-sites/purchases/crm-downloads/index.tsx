@@ -3,7 +3,6 @@ import {
 	CrmDownloadsError,
 	CrmDownloadsContent,
 } from 'calypso/components/crm-downloads/crm-downloads';
-import isJetpackCrmProduct from 'calypso/components/crm-downloads/is-jetpack-crm-product';
 import DocumentHead from 'calypso/components/data/document-head';
 import HeaderCake from 'calypso/components/header-cake';
 import Main from 'calypso/components/main';
@@ -11,12 +10,15 @@ import useUserLicenseBySubscriptionQuery from 'calypso/data/jetpack-licensing/us
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import './style.scss';
 
-export function CrmDownloads( { licenseKey }: { licenseKey?: string } ) {
+export function CrmDownloads( {
+	licenseKey,
+	purchaseId,
+}: {
+	licenseKey?: string;
+	purchaseId: number;
+} ) {
 	const translate = useTranslate();
-	const isLicense = isJetpackCrmProduct( licenseKey || '' );
-	const { data, isError, isLoading } = useUserLicenseBySubscriptionQuery(
-		isLicense ? 0 : licenseKey
-	);
+	const { data, isError, isLoading } = useUserLicenseBySubscriptionQuery( purchaseId );
 
 	return (
 		<Main className="crm-downloads" wideLayout>
@@ -28,7 +30,7 @@ export function CrmDownloads( { licenseKey }: { licenseKey?: string } ) {
 				<CrmDownloadsError />
 			) : (
 				<CrmDownloadsContent
-					licenseKey={ isLicense ? licenseKey : data?.licenseKey }
+					licenseKey={ data?.licenseKey || licenseKey }
 					isLoading={ isLoading }
 				/>
 			) }
