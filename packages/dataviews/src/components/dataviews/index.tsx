@@ -184,6 +184,7 @@ function DataViews< Item >( {
 // Populate the DataViews sub components
 const DataViewsSubComponents = DataViews as typeof DataViews & {
 	BulkActionToolbar: typeof BulkActionsFooter;
+	Filters: typeof DataViewsFilters;
 	FiltersToggle: typeof FiltersToggle;
 	Layout: typeof DataViewsLayout;
 	LayoutSwitcher: typeof ViewTypeMenu;
@@ -193,6 +194,7 @@ const DataViewsSubComponents = DataViews as typeof DataViews & {
 };
 
 DataViewsSubComponents.BulkActionToolbar = BulkActionsFooter;
+DataViewsSubComponents.Filters = DataViewsFilters;
 DataViewsSubComponents.FiltersToggle = FiltersToggle;
 DataViewsSubComponents.Layout = DataViewsLayout;
 DataViewsSubComponents.LayoutSwitcher = ViewTypeMenu;
