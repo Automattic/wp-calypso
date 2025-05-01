@@ -201,6 +201,8 @@ class StatsPostDetail extends Component {
 		};
 		const titleProps = {
 			title: navigationItems[ 1 ].label,
+			// Remove the default logo for Odyssey stats.
+			titleLogo: null,
 		};
 
 		return (
