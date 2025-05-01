@@ -1432,8 +1432,8 @@ const SubmitButtonHeaderWrapper = styled.div`
 `;
 
 const WPCheckoutWrapper = styled.div< {
-	isLargeViewport: boolean;
-	isStreamlinedPrice: boolean;
+	isLargeViewport?: boolean;
+	isStreamlinedPrice?: boolean;
 } >`
 	background: ${ colorStudio.colors[ 'White' ] };
 	display: grid;
