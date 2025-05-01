@@ -194,18 +194,12 @@ function PlanetOverview( { planets }: { planets: SpaceObject[] } ) {
 
 					<DataViews.BulkActionToolbar />
 				</VStack>
+
+				<DataViews.Filters />
 			</Grid>
 
-<<<<<<< HEAD
 			<DataViews.Layout />
 		</>
-=======
-			<VStack spacing={ 2 }>
-				<DataViews.Search label={ __( 'moons by planet' ) } />
-				<DataViews.Filters />
-			</VStack>
-		</Card>
->>>>>>> 56acc96041f (expose filters as DataViews.Filters)
 	);
 }
 
