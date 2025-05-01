@@ -7,7 +7,7 @@ import QrCode from 'calypso/blocks/app-promo/qr-code';
 import AppsBadge from 'calypso/blocks/get-apps/apps-badge';
 import CardHeading from 'calypso/components/card-heading';
 import { preventWidows } from 'calypso/lib/formatting';
-import userAgent from 'calypso/lib/user-agent';
+import { isIos, isAndroid } from 'calypso/lib/user-agent';
 import './style.scss';
 
 interface AppPromoProps {
@@ -33,11 +33,8 @@ export const AppPromo = ( {
 	const translate = useTranslate();
 	const iconWidth = Math.ceil( ( 49 / 29 ) * iconSize );
 
-	const { isiPad, isiPod, isiPhone, isAndroid } = userAgent;
-	const isIos = isiPad || isiPod || isiPhone;
-
-	const showIosBadge = isIos;
-	const showAndroidBadge = isAndroid;
+	const showIosBadge = isIos();
+	const showAndroidBadge = isAndroid();
 	const showBadge = showIosBadge || showAndroidBadge;
 
 	return (

@@ -5,7 +5,7 @@ import {
 } from '@automattic/composite-checkout';
 import { createElement } from 'react';
 import { Root, createRoot } from 'react-dom/client';
-import userAgent from 'calypso/lib/user-agent';
+import { isMobile } from 'calypso/lib/user-agent';
 import { PurchaseOrderStatus, fetchPurchaseOrder } from '../hooks/use-purchase-order';
 import { recordTransactionBeginAnalytics } from '../lib/analytics';
 import getDomainDetails from '../lib/get-domain-details';
@@ -103,7 +103,7 @@ export default async function weChatProcessor(
 
 			// The WeChat payment type should only redirect when on mobile as redirect urls
 			// are mobile app urls: e.g. weixin://wxpay/bizpayurl?pr=RaXzhu4
-			if ( userAgent.isMobile && response.redirect_url ) {
+			if ( isMobile() && response.redirect_url ) {
 				return makeRedirectResponse( response?.redirect_url );
 			}
 

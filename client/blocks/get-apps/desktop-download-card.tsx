@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import userAgent from 'calypso/lib/user-agent';
+import { isMobile } from 'calypso/lib/user-agent';
 import { AppsCard } from './apps-card';
 import { PlatformType, type DesktopAppConfig } from './apps-config';
 import { DesktopDownloadOptions } from './desktop-download-options';
@@ -25,7 +25,6 @@ const getCurrentPlatform = (): PlatformType => {
 };
 
 const DesktopDownloadCard: React.FC< DesktopDownloadCardProps > = ( { appConfig } ) => {
-	const { isMobile } = userAgent;
 	const platform = useMemo( () => getCurrentPlatform(), [] );
 
 	const currentPlatformConfig = useMemo(
@@ -43,7 +42,7 @@ const DesktopDownloadCard: React.FC< DesktopDownloadCardProps > = ( { appConfig 
 			<DesktopDownloadOptions
 				appConfig={ appConfig }
 				currentPlatformConfig={ currentPlatformConfig }
-				isMobile={ isMobile }
+				isMobile={ isMobile() }
 			/>
 		</AppsCard>
 	);
