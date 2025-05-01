@@ -23,28 +23,31 @@ export function useIsScrolledEnd( {
 	const [ isScrolledEnd, setIsScrolledEnd ] = useState( false );
 
 	useEffect( () => {
-		if ( ! enabled ) {
+		if ( typeof window === 'undefined' || ! enabled ) {
 			return () => {};
 		}
 
-		const handleScroll = ( event: {
-			currentTarget: EventTarget | null;
-		} ) => {
-			if ( event.currentTarget ) {
-				setIsScrolledEnd(
-					isScrolledToEnd( event.currentTarget as Element )
-				);
+		const scrollContainer = document.querySelector( selector );
+
+		const handleIsScrolledEnd = () => {
+			if ( scrollContainer ) {
+				setIsScrolledEnd( isScrolledToEnd( scrollContainer ) );
 			}
 		};
 
-		const scrollContainer = document.querySelector( selector );
+		handleIsScrolledEnd();
 		if ( scrollContainer ) {
-			scrollContainer.addEventListener( 'scroll', handleScroll );
+			scrollContainer.addEventListener( 'scroll', handleIsScrolledEnd );
+			window.addEventListener( 'resize', handleIsScrolledEnd );
 		}
 
 		return () => {
 			if ( scrollContainer ) {
-				scrollContainer.removeEventListener( 'scroll', handleScroll );
+				scrollContainer.removeEventListener(
+					'scroll',
+					handleIsScrolledEnd
+				);
+				window.removeEventListener( 'resize', handleIsScrolledEnd );
 			}
 		};
 	}, [ selector, enabled ] );
