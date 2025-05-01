@@ -102,11 +102,11 @@ export default function ThankYouDomainProduct( {
 			</Button>
 		);
 
-		// If the page is opened in Gravatar popup, we need to close the popup after the user clicks the button.
+		// If the page is opened in Gravatar popup, we will automatically close the popup.
 		if ( isInGravatarPopup() ) {
 			actions = (
-				<Button variant="primary" onClick={ () => window.close() }>
-					{ translate( 'Close' ) }
+				<Button isBusy disabled>
+					{ translate( 'Processing…' ) }
 				</Button>
 			);
 		}
