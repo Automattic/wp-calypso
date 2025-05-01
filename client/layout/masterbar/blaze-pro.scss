@@ -56,6 +56,11 @@ body.is-section-signup {
 
 	$login-form-max-width: 327px;
 
+	.components-button {
+		--color-accent: var(--color-orange);
+		--color-accent-60: var(--color-orange);
+	}
+
 	.masterbar__blaze-pro-nav {
 		display: flex;
 		flex-direction: row;
@@ -319,11 +324,6 @@ body.is-section-signup {
 	}
 
 	// Sign Up styles
-
-	.components-button {
-		--color-accent: var(--color-orange);
-		--color-accent-60: var(--color-orange);
-	}
 
 	.auth-form__social .auth-form__social-buttons-container {
 		margin-bottom: 24px;
