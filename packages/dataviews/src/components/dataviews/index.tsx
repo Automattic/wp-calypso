@@ -171,6 +171,7 @@ function DataViews< Item >( {
 				isItemClickable,
 				onClickItem,
 				containerWidth,
+				filters,
 			} }
 		>
 			{ children || defaultUI }
