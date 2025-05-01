@@ -58,7 +58,7 @@ const defaultGetItemId = ( item: ItemWithId ) => item.id;
 const defaultIsItemClickable = () => true;
 const EMPTY_ARRAY: any[] = [];
 
-export default function DataViews< Item >( {
+export function DataViews< Item >( {
 	view,
 	onChangeView,
 	fields,

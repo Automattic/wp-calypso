@@ -15,7 +15,7 @@ import { __, _n } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
-import DataViews from '../index';
+import DataViews from '../../';
 import {
 	DEFAULT_VIEW,
 	actions,
