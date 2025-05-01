@@ -59,6 +59,8 @@ body.is-section-signup {
 	.components-button {
 		--color-accent: var(--color-orange);
 		--color-accent-60: var(--color-orange);
+
+		font-weight: 600;
 	}
 
 	.masterbar__blaze-pro-nav {
@@ -332,7 +334,6 @@ body.is-section-signup {
 			> span {
 				font-family: $inter;
 				font-size: rem(13px);
-				font-weight: 600;
 			}
 
 		}
