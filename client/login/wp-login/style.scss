@@ -625,7 +625,7 @@ $image-height: 47px;
 
 		.components-button {
 			--color-accent: var(--color-wp-job-manager);
-			--color-accent-60: #1c03b9; // equivalent to darken(#2404eb, 10%)
+			--color-accent-60: color-mix(in srgb, var(--color-wp-job-manager), #000 10%);
 		}
 	}
 
@@ -839,7 +839,7 @@ $image-height: 47px;
 
 	.components-button {
 		--color-accent: var(--color-gravatar);
-		--color-accent-60: #163d98; // equivalent to darken(#1d4fc4, 13%)
+		--color-accent-60: color-mix(in srgb, var(--color-gravatar), #000 13%);
 	}
 
 	.social-buttons__button {
