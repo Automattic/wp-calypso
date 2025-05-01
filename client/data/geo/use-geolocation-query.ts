@@ -9,12 +9,13 @@ export interface GeoLocationData {
 	region: string;
 }
 
+const ONE_HOUR_IN_MS = 1000 * 60 * 60;
+
 export const useGeoLocationQuery = ( options = {} ) =>
 	useQuery< GeoLocationData >( {
 		queryKey: [ 'geo' ],
 		queryFn: () =>
 			fetch( 'https://public-api.wordpress.com/geo/' ).then( ( response ) => response.json() ),
-		refetchInterval: Infinity,
-		meta: { persist: false },
+		staleTime: ONE_HOUR_IN_MS,
 		...options,
 	} );
