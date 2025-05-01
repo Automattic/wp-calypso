@@ -308,6 +308,16 @@ describe( 'I18n', function () {
 	} );
 
 	describe( 'fixMe', () => {
+		let originalHasTranslation;
+
+		beforeEach( () => {
+			originalHasTranslation = i18n.hasTranslation;
+		} );
+
+		afterEach( () => {
+			i18n.hasTranslation = originalHasTranslation;
+		} );
+
 		it( 'should return null if text is missing or wrong type', () => {
 			const result = i18n.fixMe( {} );
 			expect( result ).toBe( null );
