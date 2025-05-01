@@ -232,6 +232,7 @@ class StatModuleChartTabs extends Component {
 						require="calypso/my-sites/stats/components/line-chart"
 						className="stats-chart-tabs__line-chart"
 						chartData={ lineChartData }
+						curveType="monotone" // can use smooth, linear, monotone
 						height={ 224 }
 						moment={ moment }
 						onClick={ this.props.barClick }
