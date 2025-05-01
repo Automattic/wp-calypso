@@ -73,6 +73,10 @@ const Container = styled.div`
 		padding-top: 0;
 		padding-bottom: 0;
 
+		p {
+			margin-bottom: 0;
+		}
+
 		.storage-add-ons-card__storage-dropdown {
 			margin: 16px 0;
 
@@ -239,7 +243,9 @@ export default function StorageAddOnCard( { siteId, actionPrimary }: Props ) {
 					</div>
 				</CardHeader>
 				<CardBody className="storage-add-ons-card__body">
-					{ translate( 'Make more space for high-quality photos, videos, and other media.' ) }
+					<p>
+						{ translate( 'Make more space for high-quality photos, videos, and other media.' ) }
+					</p>
 					{ selectControlOptions.length ? (
 						<div className="storage-add-ons-card__storage-dropdown">
 							<CustomSelectControl
