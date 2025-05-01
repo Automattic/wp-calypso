@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { Button as CoreButton } from '@wordpress/components';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
@@ -218,9 +219,9 @@ class StatsPostDetail extends Component {
 							titleProps={ titleProps }
 							rightSection={
 								showViewLink && (
-									<Button onClick={ this.openPreview } primary>
+									<CoreButton onClick={ this.openPreview } variant="primary">
 										<span>{ actionLabel }</span>
-									</Button>
+									</CoreButton>
 								)
 							}
 						/>
