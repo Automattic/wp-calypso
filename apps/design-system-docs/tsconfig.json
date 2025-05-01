@@ -2,8 +2,7 @@
 	// This file is not used in compilation. It is here just for a nice editor experience.
 	"extends": [ "@docusaurus/tsconfig", "@automattic/calypso-build/tsconfig.json" ],
 	"compilerOptions": {
-		"baseUrl": ".",
-		"types": [ "docusaurus-plugin-sass" ]
+		"baseUrl": "."
 	},
 	"exclude": [ ".docusaurus", "build" ]
 }
