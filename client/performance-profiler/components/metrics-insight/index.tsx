@@ -16,8 +16,8 @@ import { InsightContent } from './insight-content';
 import { InsightHeader } from './insight-header';
 
 interface MetricsInsightProps {
-	fullPageScreenshot: FullPageScreenshot;
 	insight: PerformanceMetricsItemQueryResponse;
+	fullPageScreenshot: FullPageScreenshot;
 	onClick?: () => void;
 	index: number;
 	url?: string;
