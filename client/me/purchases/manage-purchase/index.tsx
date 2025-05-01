@@ -682,14 +682,12 @@ class ManagePurchase extends Component<
 
 		const handleCrmDownloadsClick = () => {
 			recordTracksEvent( 'calypso_purchases_crm_downloads_click', {
-				product_slug: site?.plan?.license_key || 'no_key',
+				product_slug: site?.plan?.product_slug || '',
 			} );
 		};
 
 		// We'll pass the purchase ID in the URL, and the CRM Downloads component will fetch the actual license key
-		const path = isJetpackCloud()
-			? `/purchases/crm-downloads/${ purchase?.id ?? site.plan.license_key }`
-			: `/me/purchases/crm-downloads/${ purchase?.id ?? site.plan.license_key }`;
+		const path = `/purchases/crm-downloads/${ purchase?.id ?? site.plan.license_key }`;
 
 		return (
 			<CompactCard href={ path } onClick={ handleCrmDownloadsClick }>
