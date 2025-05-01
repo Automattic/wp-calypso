@@ -180,7 +180,10 @@ function PlanetOverview( { planets }: { planets: SpaceObject[] } ) {
 					</CardBody>
 				</Card>
 
-				<DataViews.Search label={ __( 'moons by planet' ) } />
+				<HStack justify="start">
+					<DataViews.FiltersToggle />
+					<DataViews.Search label={ __( 'moons by planet' ) } />
+				</HStack>
 
 				<VStack>
 					<HStack justify="start">
