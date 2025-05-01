@@ -173,7 +173,11 @@ function FilterVisibilityToggle( {
 	);
 }
 
-function Filters( { className }: { className?: string } ) {
+function Filters( {
+	className = 'dataviews-filters__container',
+}: {
+	className?: string;
+} ) {
 	const { fields, view, onChangeView, openedFilter, setOpenedFilter } =
 		useContext( DataViewsContext );
 	const addFilterRef = useRef< HTMLButtonElement >( null );

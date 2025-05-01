@@ -139,9 +139,7 @@ function DataViews< Item >( {
 					{ header }
 				</HStack>
 			</HStack>
-			{ isShowingFilter && (
-				<DataViewsFilters className="dataviews-filters__container" />
-			) }
+			{ isShowingFilter && <DataViewsFilters /> }
 			<DataViewsLayout />
 			<DataViewsFooter />
 		</div>
