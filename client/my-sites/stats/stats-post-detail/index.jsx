@@ -191,6 +191,17 @@ class StatsPostDetail extends Component {
 			'is-odyssey-stats': isWPAdmin,
 		} );
 
+		const navigationItems = this.getNavigationItemsWithTitle( this.getTitle() );
+
+		const backLinkProps = {
+			text: navigationItems[ 0 ].label,
+			url: navigationItems[ 0 ].href,
+		};
+
+		const titleProps = {
+			title: this.getTitle(),
+		};
+
 		return (
 			<Main fullWidthLayout>
 				<PageViewTracker
@@ -202,11 +213,9 @@ class StatsPostDetail extends Component {
 
 				<div className={ postDetailPageClasses }>
 					{ config.isEnabled( 'stats/navigation-improvement' ) ? (
-						<PageHeader />
+						<PageHeader backLinkProps={ backLinkProps } titleProps={ titleProps } />
 					) : (
-						<NavigationHeader
-							navigationItems={ this.getNavigationItemsWithTitle( this.getTitle() ) }
-						>
+						<NavigationHeader navigationItems={ navigationItems }>
 							{ showViewLink && (
 								<Button onClick={ this.openPreview }>
 									<span>{ actionLabel }</span>
