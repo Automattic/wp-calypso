@@ -58,7 +58,7 @@ const defaultGetItemId = ( item: ItemWithId ) => item.id;
 const defaultIsItemClickable = () => true;
 const EMPTY_ARRAY: any[] = [];
 
-export function DataViews< Item >( {
+function DataViews< Item >( {
 	view,
 	onChangeView,
 	fields,
@@ -177,3 +177,12 @@ export function DataViews< Item >( {
 		</DataViewsContext.Provider>
 	);
 }
+
+// Populate the DataViews sub components
+const DataViewsWithExtras = DataViews as typeof DataViews & {
+	Search: typeof DataViewsSearch;
+};
+
+DataViewsWithExtras.Search = DataViewsSearch;
+
+export default DataViewsWithExtras;
