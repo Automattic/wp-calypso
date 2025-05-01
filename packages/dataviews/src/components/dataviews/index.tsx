@@ -178,9 +178,11 @@ function DataViews< Item >( {
 const DataViewsSubComponents = DataViews as typeof DataViews & {
 	Search: typeof DataViewsSearch;
 	FiltersToggle: typeof FiltersToggle;
+	Filters: typeof DataViewsFilters;
 };
 
 DataViewsSubComponents.Search = DataViewsSearch;
 DataViewsSubComponents.FiltersToggle = FiltersToggle;
+DataViewsSubComponents.Filters = DataViewsFilters;
 
 export default DataViewsSubComponents;

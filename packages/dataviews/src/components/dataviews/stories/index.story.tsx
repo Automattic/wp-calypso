@@ -168,7 +168,10 @@ function PlanetOverview( { planets }: { planets: SpaceObject[] } ) {
 				</VStack>
 			</CardBody>
 
-			<DataViews.Search label={ __( 'moons by planet' ) } />
+			<VStack spacing={ 2 }>
+				<DataViews.Search label={ __( 'moons by planet' ) } />
+				<DataViews.Filters />
+			</VStack>
 		</Card>
 	);
 }
