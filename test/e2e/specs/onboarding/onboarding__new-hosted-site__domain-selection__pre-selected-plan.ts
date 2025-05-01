@@ -5,35 +5,45 @@
 import {
 	DataHelper,
 	RestAPIClient,
+	DomainSearchComponent,
 	NewUserResponse,
 	UserSignupPage,
 	CartCheckoutPage,
-	PlansPage,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 import { apiCloseAccount } from '../shared';
 
 declare const browser: Browser;
 
+/**
+ * We need this test to ensure that the post-domain selection navigation
+ * sends the user to the plans page or checkout.
+ */
 describe(
 	DataHelper.createSuiteTitle(
-		'New Hosted Site Flow: Go to checkout with a paid site and storage add-on'
+		'New Hosted Site Flow: With domain selection and pre-selected plan'
 	),
 	function () {
+		const planSlug = 'business-bundle';
 		const planName = 'Business';
+		const blogName = DataHelper.getBlogName();
 		const testUser = DataHelper.getNewTestUser();
 
 		let newUserDetails: NewUserResponse;
-		let plansPage: PlansPage;
 		let cartCheckoutPage: CartCheckoutPage;
+		let domainSearchComponent: DomainSearchComponent;
 		let page: Page;
+		let selectedDomain: string;
 
 		beforeAll( async function () {
 			page = await browser.newPage();
 		} );
 
 		it( 'Enter the flow', async function () {
-			const flowUrl = DataHelper.getCalypsoURL( '/setup/new-hosted-site' );
+			const flowUrl = DataHelper.getCalypsoURL( '/setup/new-hosted-site', {
+				showDomainStep: 'true',
+				plan: planSlug,
+			} );
 
 			await page.goto( flowUrl );
 		} );
@@ -43,22 +53,17 @@ describe(
 			newUserDetails = await userSignupPage.signupSocialFirstWithEmail( testUser.email );
 		} );
 
-		it( `Pick the 50 GB storage add-on for the ${ planName } plan`, async function () {
-			plansPage = new PlansPage( page );
-			await plansPage.selectAddOn( planName, '50 GB' );
+		it( 'Select a domain name', async function () {
+			domainSearchComponent = new DomainSearchComponent( page );
+			await domainSearchComponent.search( blogName + '.io' );
+			selectedDomain = await domainSearchComponent.selectDomain( '.io' );
 		} );
 
-		it( `Pick the ${ planName } plan`, async function () {
-			plansPage = new PlansPage( page );
-
-			await plansPage.selectPlan( planName );
-		} );
-
-		it( 'See domain, plan and add-on at checkout', async function () {
+		it( 'See domain and plan at checkout', async function () {
 			cartCheckoutPage = new CartCheckoutPage( page );
 
 			await cartCheckoutPage.validateCartItem( `WordPress.com ${ planName }` );
-			await cartCheckoutPage.validateCartItem( 'Storage Add-On' );
+			await cartCheckoutPage.validateCartItem( selectedDomain );
 		} );
 
 		afterAll( async function () {

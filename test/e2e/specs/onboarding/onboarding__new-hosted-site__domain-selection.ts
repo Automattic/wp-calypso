@@ -5,6 +5,7 @@
 import {
 	DataHelper,
 	RestAPIClient,
+	DomainSearchComponent,
 	NewUserResponse,
 	UserSignupPage,
 	CartCheckoutPage,
@@ -16,24 +17,27 @@ import { apiCloseAccount } from '../shared';
 declare const browser: Browser;
 
 describe(
-	DataHelper.createSuiteTitle(
-		'New Hosted Site Flow: Go to checkout with a paid site and storage add-on'
-	),
+	DataHelper.createSuiteTitle( 'New Hosted Site Flow: With domain selection' ),
 	function () {
 		const planName = 'Business';
+		const blogName = DataHelper.getBlogName();
 		const testUser = DataHelper.getNewTestUser();
 
 		let newUserDetails: NewUserResponse;
 		let plansPage: PlansPage;
 		let cartCheckoutPage: CartCheckoutPage;
+		let domainSearchComponent: DomainSearchComponent;
 		let page: Page;
+		let selectedDomain: string;
 
 		beforeAll( async function () {
 			page = await browser.newPage();
 		} );
 
 		it( 'Enter the flow', async function () {
-			const flowUrl = DataHelper.getCalypsoURL( '/setup/new-hosted-site' );
+			const flowUrl = DataHelper.getCalypsoURL( '/setup/new-hosted-site', {
+				showDomainStep: 'true',
+			} );
 
 			await page.goto( flowUrl );
 		} );
@@ -41,6 +45,12 @@ describe(
 		it( 'Sign up as a new user', async function () {
 			const userSignupPage = new UserSignupPage( page );
 			newUserDetails = await userSignupPage.signupSocialFirstWithEmail( testUser.email );
+		} );
+
+		it( 'Select a domain name', async function () {
+			domainSearchComponent = new DomainSearchComponent( page );
+			await domainSearchComponent.search( blogName + '.io' );
+			selectedDomain = await domainSearchComponent.selectDomain( '.io' );
 		} );
 
 		it( `Pick the 50 GB storage add-on for the ${ planName } plan`, async function () {
@@ -58,6 +68,7 @@ describe(
 			cartCheckoutPage = new CartCheckoutPage( page );
 
 			await cartCheckoutPage.validateCartItem( `WordPress.com ${ planName }` );
+			await cartCheckoutPage.validateCartItem( selectedDomain );
 			await cartCheckoutPage.validateCartItem( 'Storage Add-On' );
 		} );
 

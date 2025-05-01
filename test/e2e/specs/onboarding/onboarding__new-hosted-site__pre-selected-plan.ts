@@ -8,7 +8,6 @@ import {
 	NewUserResponse,
 	UserSignupPage,
 	CartCheckoutPage,
-	PlansPage,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 import { apiCloseAccount } from '../shared';
@@ -16,15 +15,13 @@ import { apiCloseAccount } from '../shared';
 declare const browser: Browser;
 
 describe(
-	DataHelper.createSuiteTitle(
-		'New Hosted Site Flow: Go to checkout with a paid site and storage add-on'
-	),
+	DataHelper.createSuiteTitle( 'New Hosted Site Flow: With pre-selected plan' ),
 	function () {
+		const planSlug = 'business-bundle';
 		const planName = 'Business';
 		const testUser = DataHelper.getNewTestUser();
 
 		let newUserDetails: NewUserResponse;
-		let plansPage: PlansPage;
 		let cartCheckoutPage: CartCheckoutPage;
 		let page: Page;
 
@@ -33,7 +30,9 @@ describe(
 		} );
 
 		it( 'Enter the flow', async function () {
-			const flowUrl = DataHelper.getCalypsoURL( '/setup/new-hosted-site' );
+			const flowUrl = DataHelper.getCalypsoURL( '/setup/new-hosted-site', {
+				plan: planSlug,
+			} );
 
 			await page.goto( flowUrl );
 		} );
@@ -43,22 +42,10 @@ describe(
 			newUserDetails = await userSignupPage.signupSocialFirstWithEmail( testUser.email );
 		} );
 
-		it( `Pick the 50 GB storage add-on for the ${ planName } plan`, async function () {
-			plansPage = new PlansPage( page );
-			await plansPage.selectAddOn( planName, '50 GB' );
-		} );
-
-		it( `Pick the ${ planName } plan`, async function () {
-			plansPage = new PlansPage( page );
-
-			await plansPage.selectPlan( planName );
-		} );
-
-		it( 'See domain, plan and add-on at checkout', async function () {
+		it( 'See plan at checkout', async function () {
 			cartCheckoutPage = new CartCheckoutPage( page );
 
 			await cartCheckoutPage.validateCartItem( `WordPress.com ${ planName }` );
-			await cartCheckoutPage.validateCartItem( 'Storage Add-On' );
 		} );
 
 		afterAll( async function () {
