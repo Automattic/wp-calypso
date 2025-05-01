@@ -9,6 +9,12 @@ import {
 	UserSignupPage,
 	CartCheckoutPage,
 	PlansPage,
+	NoticeComponent,
+	PurchasesPage,
+	MyProfilePage,
+	MeSidebarComponent,
+	cancelPurchaseFlow,
+	WPAdminSidebarComponent,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 import { apiCloseAccount } from '../shared';
@@ -16,14 +22,13 @@ import { apiCloseAccount } from '../shared';
 declare const browser: Browser;
 
 describe(
-	DataHelper.createSuiteTitle(
-		'New Hosted Site Flow: Go to checkout with a paid site and storage add-on'
-	),
+	DataHelper.createSuiteTitle( 'New Hosted Site Flow: Purchase a hosted site and cancel it' ),
 	function () {
 		const planName = 'Business';
 		const testUser = DataHelper.getNewTestUser();
 
 		let newUserDetails: NewUserResponse;
+		let siteSlug: string;
 		let plansPage: PlansPage;
 		let cartCheckoutPage: CartCheckoutPage;
 		let page: Page;
@@ -32,33 +37,97 @@ describe(
 			page = await browser.newPage();
 		} );
 
-		it( 'Enter the flow', async function () {
-			const flowUrl = DataHelper.getCalypsoURL( '/setup/new-hosted-site' );
+		describe( 'Purchase site', function () {
+			it( 'Enter the flow', async function () {
+				const flowUrl = DataHelper.getCalypsoURL( '/setup/new-hosted-site' );
 
-			await page.goto( flowUrl );
+				await page.goto( flowUrl );
+			} );
+
+			it( 'Sign up as a new user', async function () {
+				const userSignupPage = new UserSignupPage( page );
+				newUserDetails = await userSignupPage.signupSocialFirstWithEmail( testUser.email );
+			} );
+
+			it( `Pick the ${ planName } plan`, async function () {
+				plansPage = new PlansPage( page );
+
+				await plansPage.selectPlan( planName );
+			} );
+
+			it( 'See plan at checkout', async function () {
+				cartCheckoutPage = new CartCheckoutPage( page );
+
+				await cartCheckoutPage.validateCartItem( `WordPress.com ${ planName }` );
+			} );
+
+			it( 'Enter billing and payment details', async function () {
+				const paymentDetails = DataHelper.getTestPaymentDetails();
+				await cartCheckoutPage.enterBillingDetails( paymentDetails );
+				await cartCheckoutPage.enterPaymentDetails( paymentDetails );
+			} );
+
+			it( 'Make purchase', async function () {
+				await cartCheckoutPage.purchase( { timeout: 90 * 1000 } );
+			} );
+
+			it( 'Wait for the Atomic transfer to complete', async function () {
+				await page.waitForURL( /.*transferring-hosted-site.*/ );
+			} );
 		} );
 
-		it( 'Sign up as a new user', async function () {
-			const userSignupPage = new UserSignupPage( page );
-			newUserDetails = await userSignupPage.signupSocialFirstWithEmail( testUser.email );
+		describe( 'View server settings', function () {
+			it( 'See WP Admin', async function () {
+				await page.waitForURL( /wp-admin/, {
+					timeout: 180 * 1000,
+				} );
+			} );
+
+			it( 'Navigate to Hosting > Site Settings', async function () {
+				const wpAdminSidebarComponent = new WPAdminSidebarComponent( page );
+				await wpAdminSidebarComponent.navigate( 'Hosting', 'Site Settings' );
+			} );
+
+			it( 'Navigate to Server > Server Settings', async function () {
+				await page.getByRole( 'link', { name: 'Server' } ).click();
+				await page.getByRole( 'heading', { name: 'Server Settings' } ).waitFor();
+
+				const url = new URL( page.url() );
+				siteSlug = url.pathname.split( '/' ).at( -1 )!;
+			} );
 		} );
 
-		it( `Pick the 50 GB storage add-on for the ${ planName } plan`, async function () {
-			plansPage = new PlansPage( page );
-			await plansPage.selectAddOn( planName, '50 GB' );
-		} );
+		describe( 'Cancel and remove plan', function () {
+			let noticeComponent: NoticeComponent;
+			let purchasesPage: PurchasesPage;
 
-		it( `Pick the ${ planName } plan`, async function () {
-			plansPage = new PlansPage( page );
+			it( 'Navigate to Me > Purchases', async function () {
+				const mePage = new MyProfilePage( page );
+				await mePage.visit();
 
-			await plansPage.selectPlan( planName );
-		} );
+				const meSidebarComponent = new MeSidebarComponent( page );
+				await meSidebarComponent.openMobileMenu();
+				await meSidebarComponent.navigate( 'Purchases' );
+			} );
 
-		it( 'See domain, plan and add-on at checkout', async function () {
-			cartCheckoutPage = new CartCheckoutPage( page );
+			it( 'View details of purchased plan', async function () {
+				purchasesPage = new PurchasesPage( page );
 
-			await cartCheckoutPage.validateCartItem( `WordPress.com ${ planName }` );
-			await cartCheckoutPage.validateCartItem( 'Storage Add-On' );
+				await purchasesPage.clickOnPurchase( `WordPress.com ${ planName }`, siteSlug );
+				await purchasesPage.purchaseAction( 'Cancel plan' );
+			} );
+
+			it( 'Cancel plan renewal', async function () {
+				await cancelPurchaseFlow( page, {
+					reason: 'Another reason…',
+					customReasonText: 'E2E TEST CANCELLATION',
+				} );
+
+				noticeComponent = new NoticeComponent( page );
+				await noticeComponent.noticeShown( 'You successfully canceled your purchase', {
+					timeout: 30 * 1000,
+				} );
+			} );
 		} );
 
 		afterAll( async function () {

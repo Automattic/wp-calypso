@@ -17,7 +17,7 @@ import { apiCloseAccount } from '../shared';
 declare const browser: Browser;
 
 describe(
-	DataHelper.createSuiteTitle( 'New Hosted Site Flow: With domain selection' ),
+	DataHelper.createSuiteTitle( 'New Hosted Site Flow: With domain and storage add-on selection' ),
 	function () {
 		const planName = 'Business';
 		const blogName = DataHelper.getBlogName();
