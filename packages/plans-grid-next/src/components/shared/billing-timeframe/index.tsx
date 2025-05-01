@@ -18,6 +18,10 @@ const DiscountPromotion = styled.div`
 	margin-top: 6px;
 `;
 
+const BillingTimeframeContainer = styled.p`
+	margin-bottom: 0;
+`;
+
 interface RefundNoticeProps {
 	showRefundPeriod?: boolean;
 	planSlug: string;
@@ -70,10 +74,10 @@ const BillingTimeframe = ( { showRefundPeriod, planSlug }: Props ) => {
 		( ! introOffer || introOffer.isOfferComplete )
 	) {
 		return (
-			<div>
+			<BillingTimeframeContainer>
 				<div>{ billingTimeframe }</div>
 				<DiscountPromotion>{ planBillingDescription }</DiscountPromotion>
-			</div>
+			</BillingTimeframeContainer>
 		);
 	}
 
@@ -81,7 +85,7 @@ const BillingTimeframe = ( { showRefundPeriod, planSlug }: Props ) => {
 		const price = formatCurrency( 25000, 'USD', { stripZeros: true } );
 
 		return (
-			<div>
+			<BillingTimeframeContainer>
 				{ fixMe( {
 					text: 'Starts at {{b}}%(price)s{{/b}} annually',
 					newCopy: translate( 'Starts at {{b}}%(price)s{{/b}} annually', {
@@ -95,19 +99,19 @@ const BillingTimeframe = ( { showRefundPeriod, planSlug }: Props ) => {
 						comment: 'Translators: the price is in US dollars for all users (US$25,000)',
 					} ),
 				} ) }
-			</div>
+			</BillingTimeframeContainer>
 		);
 	}
 
 	return (
-		<div>
+		<BillingTimeframeContainer>
 			{ description }
 			<RefundNotice
 				showRefundPeriod={ showRefundPeriod }
 				planSlug={ planSlug }
 				billingPeriod={ billingPeriod }
 			/>
-		</div>
+		</BillingTimeframeContainer>
 	);
 };
 
