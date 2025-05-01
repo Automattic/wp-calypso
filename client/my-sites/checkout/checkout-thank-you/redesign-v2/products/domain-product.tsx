@@ -65,8 +65,9 @@ export default function ThankYouDomainProduct( {
 		}
 
 		const gravatarOriginRegex = /^https:\/\/(?:[a-z]{2}(?:-[a-z]{2})?\.)?gravatar\.com\/?$/i;
+		const gravatarOrigin = window.name || '';
 
-		return gravatarOriginRegex.test( window.name || '' );
+		return gravatarOriginRegex.test( gravatarOrigin );
 	}
 
 	// Gravatar: Send a message to notify the parent window that the domain claim is completed.
@@ -75,11 +76,11 @@ export default function ThankYouDomainProduct( {
 			return;
 		}
 
-		const parentOrigin = window.name;
+		const gravatarOrigin = window.name || '';
 
 		try {
 			// Send a message to the opener window to indicate that the domain claim is completed.
-			window.opener.postMessage( { type: 'DOMAIN_CLAIM_COMPLETED', domainName }, parentOrigin );
+			window.opener.postMessage( { type: 'DOMAIN_CLAIM_COMPLETED', domainName }, gravatarOrigin );
 		} catch ( error ) {
 			// eslint-disable-next-line no-console
 			console.error( 'Error sending message to parent window: ', error );
