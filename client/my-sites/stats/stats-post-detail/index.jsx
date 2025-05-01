@@ -191,15 +191,15 @@ class StatsPostDetail extends Component {
 			'is-odyssey-stats': isWPAdmin,
 		} );
 
+		// TODO: Refactor navigationItems to a single object with backLink and title attributes.
 		const navigationItems = this.getNavigationItemsWithTitle( this.getTitle() );
 
 		const backLinkProps = {
 			text: navigationItems[ 0 ].label,
 			url: navigationItems[ 0 ].href,
 		};
-
 		const titleProps = {
-			title: this.getTitle(),
+			title: navigationItems[ 1 ].label,
 		};
 
 		return (
