@@ -218,6 +218,7 @@ Properties:
 | ----------------------------------------------------------------------------------- | ----- | ---- | ---- |
 | `badgeFields`: a list of field's `id` to render without label and styled as badges. |       | ✓    |      |
 | `styles`: additional `width`, `maxWidth`, `minWidth` styles for each field column.  | ✓     |      |      |
+| `shouldPinActions`: whether to pin actions column when the width is insufficient .  | ✓     |      |      |
 
 #### `onChangeView`: `function`
 
