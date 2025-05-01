@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import page from '@automattic/calypso-router';
 import { TabPanel } from '@wordpress/components';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
@@ -247,7 +248,6 @@ class StatsNavigation extends Component {
 								const navItem = navItems[ item ];
 								const intervalPath = navItem.showIntervals ? `/${ interval || 'day' }` : '';
 								const itemPath = `${ navItem.path }${ intervalPath }${ slugPath }`;
-
 								return {
 									name: item,
 									title: navItem.label + ( navItem.paywall && showLock ? ' 🔒' : '' ),
@@ -255,17 +255,18 @@ class StatsNavigation extends Component {
 									path: itemPath,
 								};
 							} ) }
-						onSelect={ ( tab ) => {
-							if ( tab.name === 'store' && config.isEnabled( 'is_running_in_jetpack_site' ) ) {
-								window.location.href = `${ this.props.adminUrl }admin.php?page=wc-admin&path=%2Fanalytics%2Foverview`;
-								return;
-							}
-							if ( tab.path ) {
-								window.location.href = tab.path;
-							}
-						} }
+						initialTabName={ selectedItem }
 					>
-						{ () => null /* TabPanel requires children but we handle navigation in onSelect */ }
+						{ ( tab ) => {
+							if ( tab.name === 'store' && config.isEnabled( 'is_running_in_jetpack_site' ) ) {
+								page(
+									`${ this.props.adminUrl }admin.php?page=wc-admin&path=%2Fanalytics%2Foverview`
+								);
+							} else if ( tab.path ) {
+								page( tab.path );
+							}
+							return <div className="stats-navigation__content" />; // Placeholder div since content is rendered elsewhere
+						} }
 					</TabPanel>
 				) : (
 					//TODO: remove this SectionNav in favour of above TabPanel once Navigation Improvement is fully launched
