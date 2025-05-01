@@ -469,17 +469,21 @@ const PlansFeaturesMain = ( {
 	const [ isStreamlinedPriceExperimentLoading, streamlinedPriceExperimentAssignment ] =
 		useStreamlinedPriceExperiment();
 
-	let hidePlanSelector = false;
-	let enableTermSavingsPriceDisplay = false;
-	// In the "purchase a plan and free domain" flow we do not want to show
-	// monthly plans because monthly plans do not come with a free domain.
+	const showStreamlinedPriceExperiment =
+		isInSignup &&
+		! isStreamlinedPriceExperimentLoading &&
+		Boolean( streamlinedPriceExperimentAssignment );
+
+	let hidePlanSelector = true;
+	let enableTermSavingsPriceDisplay = true;
+	// Only show plan selector if none of these conditions are true
 	if (
-		redirectToAddDomainFlow !== undefined ||
-		hidePlanTypeSelector ||
-		( isInSignup && ! isStreamlinedPriceExperimentLoading && streamlinedPriceExperimentAssignment )
+		redirectToAddDomainFlow === undefined &&
+		! hidePlanTypeSelector &&
+		! showStreamlinedPriceExperiment
 	) {
-		hidePlanSelector = true;
-		enableTermSavingsPriceDisplay = true;
+		hidePlanSelector = false;
+		enableTermSavingsPriceDisplay = false;
 	}
 
 	let _customerType = chooseDefaultCustomerType( {
