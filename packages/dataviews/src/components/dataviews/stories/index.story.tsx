@@ -67,9 +67,7 @@ export const Default = () => {
 			} }
 			isItemClickable={ () => true }
 			defaultLayouts={ defaultLayouts }
-		>
-			<DataViews.Search />
-		</DataViews>
+		/>
 	);
 };
 
