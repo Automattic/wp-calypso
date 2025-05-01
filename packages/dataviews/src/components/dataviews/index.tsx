@@ -179,10 +179,10 @@ function DataViews< Item >( {
 }
 
 // Populate the DataViews sub components
-const DataViewsWithExtras = DataViews as typeof DataViews & {
+const DataViewsSubComponents = DataViews as typeof DataViews & {
 	Search: typeof DataViewsSearch;
 };
 
-DataViewsWithExtras.Search = DataViewsSearch;
+DataViewsSubComponents.Search = DataViewsSearch;
 
-export default DataViewsWithExtras;
+export default DataViewsSubComponents;
