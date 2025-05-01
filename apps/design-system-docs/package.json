@@ -2,6 +2,15 @@
 	"name": "design-system-docs",
 	"version": "0.0.0",
 	"private": true,
+	"license": "GPL-2.0-or-later",
+	"author": "Automattic Inc.",
+	"description": "Documentation site for the Automattic Design System.",
+	"homepage": "https://github.com/Automattic/wp-calypso/tree/trunk/apps/design-system-docs",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/Automattic/wp-calypso.git",
+		"directory": "apps/design-system-docs"
+	},
 	"scripts": {
 		"docusaurus": "docusaurus",
 		"start": "docusaurus start -p 3456",
@@ -37,5 +46,9 @@
 	"engines": {
 		"node": ">=18.0",
 		"yarn": "^4.0.0"
-	}
+	},
+	"sideEffects": [
+		"*.css",
+		"*.scss"
+	]
 }
