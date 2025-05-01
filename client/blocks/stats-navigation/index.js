@@ -205,9 +205,7 @@ class StatsNavigation extends Component {
 					>
 						{ ( tab ) => {
 							if ( tab.name === 'store' && config.isEnabled( 'is_running_in_jetpack_site' ) ) {
-								page(
-									`${ this.props.adminUrl }admin.php?page=wc-admin&path=%2Fanalytics%2Foverview`
-								);
+								window.location.href = `${ this.props.adminUrl }admin.php?page=wc-admin&path=%2Fanalytics%2Foverview`;
 							} else if ( tab.path ) {
 								page( tab.path );
 							}
