@@ -1,3 +1,4 @@
+import { DIFM_FLOW } from '@automattic/onboarding';
 import { useEffect } from 'react';
 import difmImage from 'calypso/assets/images/difm/difm.svg';
 import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
@@ -35,14 +36,23 @@ export default function NewOrExistingSiteStep( props: Props ) {
 		triggerGuidesForStep( flowName, stepName );
 	}, [ dispatch, flowName, stepName ] );
 
+	// Show one button only for DIFM_FLOW, two buttons for all other flows
+	const showTwoButtons = flowName !== DIFM_FLOW;
+
 	const branchSteps = useBranchSteps( stepName, () => [ 'difm-site-picker' ] );
 
-	const newOrExistingSiteSelected = ( value: ChoiceType ) => {
-		// If 'new-site' is selected, skip the `difm-site-picker` step.
-		if ( 'new-site' === value ) {
+	const handleSiteChoice = ( value: ChoiceType ) => {
+		// Skip site picker when:
+		// 1. In DIFM flow with no existing sites, or
+		// 2. In other flows when explicitly choosing new site
+		if (
+			( ! showTwoButtons && existingSiteCount === 0 ) ||
+			( showTwoButtons && value === 'new-site' )
+		) {
 			branchSteps( {} );
 			dispatch( removeSiteSlugDependency() );
 		}
+
 		dispatch(
 			submitSignupStep(
 				{ stepName: stepName },
@@ -55,20 +65,21 @@ export default function NewOrExistingSiteStep( props: Props ) {
 		goToNextStep();
 	};
 
-	const showNewOrExistingSiteChoice = existingSiteCount > 0;
+	const getPrimarySiteChoice = () => {
+		if ( showTwoButtons ) {
+			return 'new-site';
+		}
+		return existingSiteCount > 0 ? 'existing-site' : 'new-site';
+	};
 
 	return (
 		<StepWrapper
 			stepContent={
 				<DIFMLanding
-					onPrimarySubmit={ () =>
-						showNewOrExistingSiteChoice
-							? newOrExistingSiteSelected( 'new-site' )
-							: newOrExistingSiteSelected( 'existing-site' )
-					}
-					onSecondarySubmit={ () => newOrExistingSiteSelected( 'existing-site' ) }
-					showNewOrExistingSiteChoice={ showNewOrExistingSiteChoice }
-					isStoreFlow={ 'do-it-for-me-store' === flowName }
+					onPrimarySubmit={ () => handleSiteChoice( getPrimarySiteChoice() ) }
+					onSecondarySubmit={ () => handleSiteChoice( 'existing-site' ) }
+					showNewOrExistingSiteChoice={ showTwoButtons }
+					isStoreFlow={ ! showTwoButtons }
 				/>
 			}
 			hideFormattedHeader
