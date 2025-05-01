@@ -23,7 +23,7 @@ const LoadingSkeleton = () => (
 );
 
 interface CrmDownloadsProps {
-	licenseKey: string;
+	licenseKey?: string;
 	isLoading?: boolean;
 }
 
