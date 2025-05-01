@@ -144,7 +144,7 @@ export default function ThemeCollection( {
 			<div className="theme-collection__meta">
 				<div className="theme-collection__headings">
 					<h2 className="theme-collection__title">{ title }</h2>
-					<div className="theme-collection__description">{ preventWidows( description ) }</div>
+					<p className="theme-collection__description">{ preventWidows( description ) }</p>
 				</div>
 				<div className="theme-collection__carousel-controls">
 					<Button className="theme-collection__see-all" onClick={ onSeeAllAction }>

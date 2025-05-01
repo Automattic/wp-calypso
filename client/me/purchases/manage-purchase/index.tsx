@@ -669,26 +669,27 @@ class ManagePurchase extends Component<
 	}
 
 	renderCrmDownloadsNavItem() {
-		const { purchase, translate, siteSlug } = this.props;
+		const { site, translate } = this.props;
 
-		if ( ! purchase ) {
+		if ( ! site?.plan ) {
 			return null;
 		}
 
 		// Only show for Jetpack CRM Products
-		const productSlug = purchase.productSlug || '';
-		if ( ! isJetpackCrmProduct( productSlug ) ) {
+		if ( ! isJetpackCrmProduct( site.plan.license_key || '' ) ) {
 			return null;
 		}
 
 		const handleCrmDownloadsClick = () => {
 			recordTracksEvent( 'calypso_purchases_crm_downloads_click', {
-				product_slug: productSlug,
+				product_slug: site?.plan?.license_key || 'no_key',
 			} );
 		};
 
 		// We'll pass the purchase ID in the URL, and the CRM Downloads component will fetch the actual license key
-		const path = `/purchases/crm-downloads/${ siteSlug }/${ purchase.id }`;
+		const path = isJetpackCloud()
+			? `/purchases/crm-downloads/${ site.plan.license_key }`
+			: `/me/purchases/crm-downloads/${ site.plan.license_key }`;
 
 		return (
 			<CompactCard href={ path } onClick={ handleCrmDownloadsClick }>

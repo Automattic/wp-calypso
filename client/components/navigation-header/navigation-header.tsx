@@ -10,7 +10,7 @@ interface BackLinkProps {
 	onBackClick?: ( e: React.MouseEvent< HTMLAnchorElement > ) => void;
 }
 
-interface HeaderProps extends React.HTMLAttributes< HTMLElement > {
+export interface HeaderProps extends React.HTMLAttributes< HTMLElement > {
 	title?: string;
 	titleLogo?: ReactNode;
 	backLinkProps?: BackLinkProps;
