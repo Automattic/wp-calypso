@@ -194,7 +194,9 @@ function CheckoutSummaryPriceList() {
 				</CheckoutSummaryTitle>
 			) }
 			<ProductsAndCostOverridesList responseCart={ responseCart } />
-			<CheckoutSummaryAmountWrapper>
+			<CheckoutSummaryAmountWrapper
+				isStreamlinedPrice={ streamlinedPriceExperimentAssignment !== null }
+			>
 				<CheckoutSubtotalSection>
 					{ streamlinedPriceExperimentAssignment && (
 						<CheckoutSummarySubtotal key="checkout-summary-line-item-subtotal">
@@ -969,7 +971,7 @@ CheckoutSummaryFeaturesListItem.defaultProps = {
 };
 
 const CheckoutSummaryTitle = styled.div`
-	margin-bottom: 8px;
+	margin-bottom: 16px;
 	color: ${ ( props ) => props.theme.colors.textColorDark };
 	font-weight: ${ ( props ) => props.theme.weights.bold };
 	line-height: 26px;
@@ -982,10 +984,16 @@ const CheckoutSubtotalSection = styled.div`
 	padding-bottom: 20px;
 `;
 
-const CheckoutSummaryAmountWrapper = styled.div`
+const CheckoutSummaryAmountWrapper = styled.div< { isStreamlinedPrice: boolean } >`
 	border-top: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
 	padding: 20px 0;
 	margin-top: 20px;
+
+	${ ( props ) =>
+		props.isStreamlinedPrice &&
+		css`
+			padding: 20px 0 0 0;
+		` }
 `;
 
 const CheckoutSummaryLineItem = styled.div< { isDiscount?: boolean } >`
