@@ -851,7 +851,11 @@ export default function CheckoutMainContent( {
 
 	if ( ! isStepContainerV2 ) {
 		return (
-			<WPCheckoutWrapper className="checkout-wrapper">
+			<WPCheckoutWrapper
+				className="checkout-wrapper"
+				isLargeViewport={ isLargeViewport }
+				isStreamlinedPrice={ streamlinedPriceExperimentAssignment !== null }
+			>
 				{ checkoutSummary }
 				{ checkoutMainContent }
 			</WPCheckoutWrapper>
@@ -1427,7 +1431,10 @@ const SubmitButtonHeaderWrapper = styled.div`
 	}
 `;
 
-const WPCheckoutWrapper = styled.div`
+const WPCheckoutWrapper = styled.div< {
+	isLargeViewport: boolean;
+	isStreamlinedPrice: boolean;
+} >`
 	background: ${ colorStudio.colors[ 'White' ] };
 	display: grid;
 	grid-template-rows: auto;
@@ -1441,6 +1448,11 @@ const WPCheckoutWrapper = styled.div`
 		grid-template-columns: 1fr minmax( 500px, 688px ) 376px 1fr;
 		grid-template-areas: 'main-content main-content sidebar-content sidebar-content';
 		justify-items: end;
+		${ ( props ) =>
+			props.isStreamlinedPrice &&
+			css`
+				grid-template-columns: 1fr minmax( 500px, 688px ) 475px 1fr;
+			` }
 	}
 
 	& > * {
@@ -1455,6 +1467,25 @@ const WPCheckoutWrapper = styled.div`
 	& *:focus {
 		outline: ${ ( props ) => props.theme.colors.outline } solid 2px;
 	}
+
+	${ ( props ) =>
+		props.isStreamlinedPrice &&
+		css`
+			.checkout__summary-area {
+				position: sticky;
+				top: 32px;
+			}
+		` }
+	${ ( props ) =>
+		props.isStreamlinedPrice &&
+		props.isLargeViewport &&
+		css`
+			.checkout__summary-body,
+			.checkout-loading-sidebar,
+			.checkout-sidebar-plan-upsell {
+				min-width: 384px;
+			}
+		` }
 `;
 
 const WPCheckoutCompletedWrapper = styled.div`
