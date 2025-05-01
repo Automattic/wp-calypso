@@ -16,77 +16,277 @@ import { apiCloseAccount } from '../shared';
 
 declare const browser: Browser;
 
-describe( DataHelper.createSuiteTitle( 'New Hosted Site Flow: With domain' ), function () {
-	const planName = 'Business';
-	const blogName = DataHelper.getBlogName();
-	const testUser = DataHelper.getNewTestUser();
+describe(
+	DataHelper.createSuiteTitle(
+		'New Hosted Site Flow: Go to checkout with a paid site and storage add-on'
+	),
+	function () {
+		const planName = 'Business';
+		const testUser = DataHelper.getNewTestUser();
 
-	let newUserDetails: NewUserResponse;
-	let plansPage: PlansPage;
-	let cartCheckoutPage: CartCheckoutPage;
-	let domainSearchComponent: DomainSearchComponent;
-	let page: Page;
-	let selectedDomain: string;
+		let newUserDetails: NewUserResponse;
+		let plansPage: PlansPage;
+		let cartCheckoutPage: CartCheckoutPage;
+		let page: Page;
 
-	beforeAll( async function () {
-		page = await browser.newPage();
-	} );
-
-	it( 'Enter the flow', async function () {
-		const flowUrl = DataHelper.getCalypsoURL( '/setup/new-hosted-site', {
-			showDomainStep: 'true',
+		beforeAll( async function () {
+			page = await browser.newPage();
 		} );
 
-		await page.goto( flowUrl );
-	} );
+		it( 'Enter the flow', async function () {
+			const flowUrl = DataHelper.getCalypsoURL( '/setup/new-hosted-site' );
 
-	it( 'Sign up as a new user', async function () {
-		const userSignupPage = new UserSignupPage( page );
-		newUserDetails = await userSignupPage.signupSocialFirstWithEmail( testUser.email );
-	} );
-
-	it( 'Select a domain name', async function () {
-		domainSearchComponent = new DomainSearchComponent( page );
-		await domainSearchComponent.search( blogName + '.io' );
-		selectedDomain = await domainSearchComponent.selectDomain( '.io' );
-	} );
-
-	it( `Pick the 50 GB storage add-on for the ${ planName } plan`, async function () {
-		plansPage = new PlansPage( page );
-		await plansPage.selectAddOn( planName, '50 GB' );
-	} );
-
-	it( `Pick the ${ planName } plan`, async function () {
-		plansPage = new PlansPage( page );
-
-		await plansPage.selectPlan( planName );
-	} );
-
-	it( 'See domain, plan and add-on at checkout', async function () {
-		cartCheckoutPage = new CartCheckoutPage( page );
-
-		await cartCheckoutPage.validateCartItem( `WordPress.com ${ planName }` );
-		await cartCheckoutPage.validateCartItem( selectedDomain );
-		await cartCheckoutPage.validateCartItem( 'Storage Add-On' );
-	} );
-
-	afterAll( async function () {
-		if ( ! newUserDetails ) {
-			return;
-		}
-
-		const restAPIClient = new RestAPIClient(
-			{
-				username: testUser.username,
-				password: testUser.password,
-			},
-			newUserDetails.body.bearer_token
-		);
-
-		await apiCloseAccount( restAPIClient, {
-			userID: newUserDetails.body.user_id,
-			username: newUserDetails.body.username,
-			email: testUser.email,
+			await page.goto( flowUrl );
 		} );
-	} );
-} );
+
+		it( 'Sign up as a new user', async function () {
+			const userSignupPage = new UserSignupPage( page );
+			newUserDetails = await userSignupPage.signupSocialFirstWithEmail( testUser.email );
+		} );
+
+		it( `Pick the 50 GB storage add-on for the ${ planName } plan`, async function () {
+			plansPage = new PlansPage( page );
+			await plansPage.selectAddOn( planName, '50 GB' );
+		} );
+
+		it( `Pick the ${ planName } plan`, async function () {
+			plansPage = new PlansPage( page );
+
+			await plansPage.selectPlan( planName );
+		} );
+
+		it( 'See domain, plan and add-on at checkout', async function () {
+			cartCheckoutPage = new CartCheckoutPage( page );
+
+			await cartCheckoutPage.validateCartItem( `WordPress.com ${ planName }` );
+			await cartCheckoutPage.validateCartItem( 'Storage Add-On' );
+		} );
+
+		afterAll( async function () {
+			if ( ! newUserDetails ) {
+				return;
+			}
+
+			const restAPIClient = new RestAPIClient(
+				{
+					username: testUser.username,
+					password: testUser.password,
+				},
+				newUserDetails.body.bearer_token
+			);
+
+			await apiCloseAccount( restAPIClient, {
+				userID: newUserDetails.body.user_id,
+				username: newUserDetails.body.username,
+				email: testUser.email,
+			} );
+		} );
+	}
+);
+
+describe(
+	DataHelper.createSuiteTitle( 'New Hosted Site Flow: With domain selection' ),
+	function () {
+		const planName = 'Business';
+		const blogName = DataHelper.getBlogName();
+		const testUser = DataHelper.getNewTestUser();
+
+		let newUserDetails: NewUserResponse;
+		let plansPage: PlansPage;
+		let cartCheckoutPage: CartCheckoutPage;
+		let domainSearchComponent: DomainSearchComponent;
+		let page: Page;
+		let selectedDomain: string;
+
+		beforeAll( async function () {
+			page = await browser.newPage();
+		} );
+
+		it( 'Enter the flow', async function () {
+			const flowUrl = DataHelper.getCalypsoURL( '/setup/new-hosted-site', {
+				showDomainStep: 'true',
+			} );
+
+			await page.goto( flowUrl );
+		} );
+
+		it( 'Sign up as a new user', async function () {
+			const userSignupPage = new UserSignupPage( page );
+			newUserDetails = await userSignupPage.signupSocialFirstWithEmail( testUser.email );
+		} );
+
+		it( 'Select a domain name', async function () {
+			domainSearchComponent = new DomainSearchComponent( page );
+			await domainSearchComponent.search( blogName + '.io' );
+			selectedDomain = await domainSearchComponent.selectDomain( '.io' );
+		} );
+
+		it( `Pick the 50 GB storage add-on for the ${ planName } plan`, async function () {
+			plansPage = new PlansPage( page );
+			await plansPage.selectAddOn( planName, '50 GB' );
+		} );
+
+		it( `Pick the ${ planName } plan`, async function () {
+			plansPage = new PlansPage( page );
+
+			await plansPage.selectPlan( planName );
+		} );
+
+		it( 'See domain, plan and add-on at checkout', async function () {
+			cartCheckoutPage = new CartCheckoutPage( page );
+
+			await cartCheckoutPage.validateCartItem( `WordPress.com ${ planName }` );
+			await cartCheckoutPage.validateCartItem( selectedDomain );
+			await cartCheckoutPage.validateCartItem( 'Storage Add-On' );
+		} );
+
+		afterAll( async function () {
+			if ( ! newUserDetails ) {
+				return;
+			}
+
+			const restAPIClient = new RestAPIClient(
+				{
+					username: testUser.username,
+					password: testUser.password,
+				},
+				newUserDetails.body.bearer_token
+			);
+
+			await apiCloseAccount( restAPIClient, {
+				userID: newUserDetails.body.user_id,
+				username: newUserDetails.body.username,
+				email: testUser.email,
+			} );
+		} );
+	}
+);
+
+/**
+ * We need this test to ensure that the post-domain selection navigation
+ * sends the user to the plans page or checkout.
+ */
+describe(
+	DataHelper.createSuiteTitle(
+		'New Hosted Site Flow: With domain selection and pre-selected plan'
+	),
+	function () {
+		const planSlug = 'business-bundle';
+		const planName = 'Business';
+		const blogName = DataHelper.getBlogName();
+		const testUser = DataHelper.getNewTestUser();
+
+		let newUserDetails: NewUserResponse;
+		let cartCheckoutPage: CartCheckoutPage;
+		let domainSearchComponent: DomainSearchComponent;
+		let page: Page;
+		let selectedDomain: string;
+
+		beforeAll( async function () {
+			page = await browser.newPage();
+		} );
+
+		it( 'Enter the flow', async function () {
+			const flowUrl = DataHelper.getCalypsoURL( '/setup/new-hosted-site', {
+				showDomainStep: 'true',
+				plan: planSlug,
+			} );
+
+			await page.goto( flowUrl );
+		} );
+
+		it( 'Sign up as a new user', async function () {
+			const userSignupPage = new UserSignupPage( page );
+			newUserDetails = await userSignupPage.signupSocialFirstWithEmail( testUser.email );
+		} );
+
+		it( 'Select a domain name', async function () {
+			domainSearchComponent = new DomainSearchComponent( page );
+			await domainSearchComponent.search( blogName + '.io' );
+			selectedDomain = await domainSearchComponent.selectDomain( '.io' );
+		} );
+
+		it( 'See domain and plan at checkout', async function () {
+			cartCheckoutPage = new CartCheckoutPage( page );
+
+			await cartCheckoutPage.validateCartItem( `WordPress.com ${ planName }` );
+			await cartCheckoutPage.validateCartItem( selectedDomain );
+		} );
+
+		afterAll( async function () {
+			if ( ! newUserDetails ) {
+				return;
+			}
+
+			const restAPIClient = new RestAPIClient(
+				{
+					username: testUser.username,
+					password: testUser.password,
+				},
+				newUserDetails.body.bearer_token
+			);
+
+			await apiCloseAccount( restAPIClient, {
+				userID: newUserDetails.body.user_id,
+				username: newUserDetails.body.username,
+				email: testUser.email,
+			} );
+		} );
+	}
+);
+
+describe(
+	DataHelper.createSuiteTitle( 'New Hosted Site Flow: With pre-selected plan' ),
+	function () {
+		const planSlug = 'business-bundle';
+		const planName = 'Business';
+		const testUser = DataHelper.getNewTestUser();
+
+		let newUserDetails: NewUserResponse;
+		let cartCheckoutPage: CartCheckoutPage;
+		let page: Page;
+
+		beforeAll( async function () {
+			page = await browser.newPage();
+		} );
+
+		it( 'Enter the flow', async function () {
+			const flowUrl = DataHelper.getCalypsoURL( '/setup/new-hosted-site', {
+				plan: planSlug,
+			} );
+
+			await page.goto( flowUrl );
+		} );
+
+		it( 'Sign up as a new user', async function () {
+			const userSignupPage = new UserSignupPage( page );
+			newUserDetails = await userSignupPage.signupSocialFirstWithEmail( testUser.email );
+		} );
+
+		it( 'See plan at checkout', async function () {
+			cartCheckoutPage = new CartCheckoutPage( page );
+
+			await cartCheckoutPage.validateCartItem( `WordPress.com ${ planName }` );
+		} );
+
+		afterAll( async function () {
+			if ( ! newUserDetails ) {
+				return;
+			}
+
+			const restAPIClient = new RestAPIClient(
+				{
+					username: testUser.username,
+					password: testUser.password,
+				},
+				newUserDetails.body.bearer_token
+			);
+
+			await apiCloseAccount( restAPIClient, {
+				userID: newUserDetails.body.user_id,
+				username: newUserDetails.body.username,
+				email: testUser.email,
+			} );
+		} );
+	}
+);
