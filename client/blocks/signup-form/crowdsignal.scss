@@ -1,3 +1,7 @@
+@import "@automattic/typography/styles/fonts";
+@import "@automattic/typography/styles/variables";
+@import "../../assets/stylesheets/shared/mixins/breakpoints";
+
 body.is-section-signup .layout .signup.is-crowdsignal .step-wrapper {
 	@include breakpoint-deprecated( ">1040px" ) {
 		margin: 0 auto;
@@ -116,10 +120,13 @@ body.is-section-signup .layout .signup.is-crowdsignal .step-wrapper {
 	}
 }
 
-.components-button.is-primary {
+.signup-form__crowdsignal-submit,
+.signup-form__crowdsignal-show-form,
+.signup-form__crowdsignal-wpcom {
 	font-size: .875rem;
 	font-weight: 600;
 }
+
 
 .signup-form__crowdsignal-submit,
 .signup-form__crowdsignal-show-form {

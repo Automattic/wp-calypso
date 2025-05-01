@@ -7,10 +7,10 @@ import {
 } from '../shared';
 import type { Meta } from '@storybook/react';
 import '../../../../layout/masterbar/crowdsignal.scss';
-import '../../../../blocks/signup-form/crowdsignal.scss';
+import '../../crowdsignal.scss';
 
 const meta: Meta = {
-	title: 'client/blocks/Signup/Submit Button',
+	title: 'client/blocks/Signup/Submit Button/Brands',
 	decorators: [ SignupFormWrapper, CrowdsignalWrapper ],
 	component: SignupSubmitButton,
 	args: {
