@@ -24,9 +24,8 @@ import DataViewsFooter from '../dataviews-footer';
 import DataViewsSearch from '../dataviews-search';
 import DataViewsViewConfig from '../dataviews-view-config';
 import { normalizeFields } from '../../normalize-fields';
-import { LAYOUT_TABLE } from '../../constants';
 import type { Action, Field, View, SupportedLayouts } from '../../types';
-import type { SelectionOrUpdater, SetSelection } from '../../private-types';
+import type { SelectionOrUpdater } from '../../private-types';
 
 type ItemWithId = { id: string };
 
@@ -110,7 +109,7 @@ export default function DataViews< Item >( {
 		);
 	}, [ selection, data, getItemId ] );
 
-	const filters = useFilters( _fields, view ?? ( {} as View ) );
+	const filters = useFilters( _fields, view );
 	const [ isShowingFilter, setIsShowingFilter ] = useState< boolean >( () =>
 		( filters || [] ).some( ( filter ) => filter.isPrimary )
 	);
