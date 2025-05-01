@@ -133,7 +133,7 @@ function PlanetOverview( { planets }: { planets: SpaceObject[] } ) {
 		<Card isBorderless style={ { padding: '12px 24px' } }>
 			<CardHeader>
 				<Heading level={ 2 }>{ __( 'Solar System numbers' ) }</Heading>
-				<DataViews.Search />
+				<DataViews.Search label={ __( 'moons by planet' ) } />
 			</CardHeader>
 
 			<CardBody>
