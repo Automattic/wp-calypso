@@ -1,9 +1,13 @@
+// These buttons require the wp-login.scss file to be loaded.
+import '../../../../login/wp-login/style.scss';
+
 import LoginSubmitButton from '../../login-submit-button';
 import {
 	submitButtonArgs,
 	LoginFormAction,
+	GravatarWrapper,
+	WPJobManagerWrapper,
 	type SubmitButtonStory,
-	AkismetWrapper,
 } from '../shared';
 import type { Meta } from '@storybook/react';
 
@@ -15,6 +19,8 @@ const meta: Meta = {
 
 export default meta;
 
-export const Akismet: SubmitButtonStory = {
-	decorators: [ LoginFormAction, AkismetWrapper ],
+export const Gravatar: SubmitButtonStory = { decorators: [ LoginFormAction, GravatarWrapper ] };
+
+export const WPJobManager: SubmitButtonStory = {
+	decorators: [ LoginFormAction, WPJobManagerWrapper ],
 };

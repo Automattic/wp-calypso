@@ -9,20 +9,23 @@ import {
 import type { Meta } from '@storybook/react';
 
 const meta: Meta = {
-	title: 'client/blocks/Login/Submit Button/Default',
-	decorators: [ LoginFormAction, LoginFormWrapper ],
+	title: 'client/blocks/Login/Submit Button',
 	component: LoginSubmitButton,
 	args: { ...submitButtonArgs },
 };
 
 export default meta;
 
-export const Default: SubmitButtonStory = {};
+export const Default: SubmitButtonStory = { decorators: [ LoginFormAction, LoginFormWrapper ] };
 
 export const Disabled: SubmitButtonStory = {
 	args: {
 		isDisabled: true,
 	},
+	decorators: [ LoginFormAction, LoginFormWrapper ],
 };
 
-export const SendingEmail: SubmitButtonStory = { ...sendingEmailStory };
+export const SendingEmail: SubmitButtonStory = {
+	...sendingEmailStory,
+	decorators: [ LoginFormAction, LoginFormWrapper ],
+};

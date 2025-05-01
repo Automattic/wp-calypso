@@ -10,7 +10,7 @@ import type { Meta } from '@storybook/react';
 import '../../../../layout/masterbar/blaze-pro.scss';
 
 const meta: Meta = {
-	title: 'client/blocks/Login/Submit Button/Blaze Pro',
+	title: 'client/blocks/Login/Submit Button/Brands',
 	decorators: [ LoginFormAction, LoginFormWrapper, BlazeWrapper ],
 	component: LoginSubmitButton,
 	args: { ...submitButtonArgs },
@@ -18,4 +18,4 @@ const meta: Meta = {
 
 export default meta;
 
-export const Default: SubmitButtonStory = {};
+export const BlazePro: SubmitButtonStory = {};

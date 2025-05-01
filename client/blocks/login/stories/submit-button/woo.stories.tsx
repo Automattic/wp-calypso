@@ -11,7 +11,7 @@ import type { Meta } from '@storybook/react';
 import '../../../../layout/masterbar/woo.scss';
 
 const meta: Meta = {
-	title: 'client/blocks/Login/Submit Button/Woo',
+	title: 'client/blocks/Login/Submit Button/Brands/Woo',
 	decorators: [ LoginFormAction, LoginFormWrapper, WooWrapper ],
 	component: LoginSubmitButton,
 	args: { ...submitButtonArgs, isWoo: true },
