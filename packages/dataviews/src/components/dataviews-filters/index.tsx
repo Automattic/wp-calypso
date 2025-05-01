@@ -72,20 +72,15 @@ export function useFilters( fields: NormalizedField< any >[], view: View ) {
 }
 
 export function FiltersToggle( {
-	filters,
-	view,
-	onChangeView,
-	setOpenedFilter,
 	isShowingFilter,
 	setIsShowingFilter,
 }: {
-	filters: NormalizedFilter[];
-	view: View;
-	onChangeView: ( view: View ) => void;
-	setOpenedFilter: ( filter: string | null ) => void;
 	isShowingFilter: boolean;
 	setIsShowingFilter: React.Dispatch< React.SetStateAction< boolean > >;
 } ) {
+	const { filters, view, onChangeView, setOpenedFilter } =
+		useContext( DataViewsContext );
+
 	const buttonRef = useRef< HTMLButtonElement >( null );
 	const onChangeViewWithFilterVisibility = useCallback(
 		( _view: View ) => {

@@ -133,10 +133,6 @@ function DataViews< Item >( {
 				>
 					{ search && <DataViewsSearch label={ searchLabel } /> }
 					<FiltersToggle
-						filters={ filters }
-						view={ view! }
-						onChangeView={ onChangeView! }
-						setOpenedFilter={ setOpenedFilter }
 						setIsShowingFilter={ setIsShowingFilter }
 						isShowingFilter={ isShowingFilter }
 					/>
