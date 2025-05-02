@@ -292,14 +292,6 @@ $image-height: 47px;
 		padding: 0;
 	}
 
-	.step-container-v2__content-wrapper {
-		margin-top: 24px;
-
-		@include break-medium {
-			margin-top: 6rem;
-		}
-	}
-
 	.login__form-header {
 		@include onboarding-heading-text-mobile;
 		margin-bottom: 0;

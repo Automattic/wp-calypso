@@ -671,6 +671,7 @@ export class Login extends Component {
 							<Step.TopBar rightElement={ this.renderLoginHeaderNavigation() } logo={ brandLogo } />
 						}
 						heading={ <Step.Heading text={ headerText } /> }
+						verticalAlign="center"
 					>
 						{ mainContent }
 					</Step.CenteredColumnLayout>
