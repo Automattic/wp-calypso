@@ -39,11 +39,15 @@
 		}
 	}
 
-	a.calypso-navigation-header__back-link {
+	// Increased specificity to override the default link color for anchor elements on Atomic.
+	& &__back-link {
+		color: var(--wp-components-color-gray-600, #666);
+	}
+
+	&__back-link {
 		display: flex;
 		align-items: center;
 		text-decoration: none;
-		color: var(--wp-components-color-gray-600, #666);
 		font-size: $default-font-size;
 		transition: color 0.2s ease;
 
