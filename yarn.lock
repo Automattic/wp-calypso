@@ -1906,9 +1906,8 @@ __metadata:
     "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-storybook": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
-    "@radix-ui/colors": "npm:^3.0.0"
+    "@wordpress/components": "npm:^29.7.0"
     bezier-easing: "npm:^2.1.0"
-    colord: "npm:2.9.3"
     colorjs.io: "npm:^0.5.2"
     copyfiles: "npm:^2.4.1"
     postcss: "npm:^8.4.5"
@@ -5846,13 +5845,6 @@ __metadata:
   peerDependencies:
     preact: 10.x
   checksum: a438e80dc6ef1c3801c988d1e3516056293fc07920d81326f5e1a399c998b16bd2d41cdd053cda4edc402da5c5ea91d95671766f5d864b6ebbd7c8fac3502050
-  languageName: node
-  linkType: hard
-
-"@radix-ui/colors@npm:^3.0.0":
-  version: 3.0.0
-  resolution: "@radix-ui/colors@npm:3.0.0"
-  checksum: 612c6bb4efe987f2d49aaca2f785687d08150da59a248328bc2b4e187ece4ef731c1dc5c6a9430fffcac4af9e65cf2f89ceb9806f8809940c9eb238b79d2cf2f
   languageName: node
   linkType: hard
 
