@@ -120,11 +120,11 @@ function UnforwardedBreadcrumbs(
 	return (
 		<HStack
 			as="nav"
-			className="breadcrumb"
+			className="breadcrumbs"
 			ref={ mergedRefs }
 			spacing={ 0 }
 			justify="flex-start"
-			aria-label="Breadcrumb"
+			aria-label={ __( 'Breadcrumbs' ) }
 			expanded={ false }
 		>
 			<BreadcrumbItem item={ firstItem } />
