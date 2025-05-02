@@ -415,6 +415,16 @@
 			white-space: nowrap;
 		}
 	}
+
+	.theme__tier-select {
+		min-width: 220px;
+		width: 220px;
+
+		@media ( max-width: $break-small ) {
+			width: 100%;
+			min-width: auto;
+		}
+	}
 }
 
 .themes:not(.is-logged-out) {

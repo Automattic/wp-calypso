@@ -2,7 +2,7 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { FEATURE_INSTALL_THEMES } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
-import { SelectDropdown } from '@automattic/components';
+import { CustomSelectControl } from '@wordpress/components';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { compact, pickBy } from 'lodash';
@@ -19,7 +19,6 @@ import { SearchThemes, SearchThemesV2 } from 'calypso/components/search-themes';
 import ThemeDesignYourOwnModal from 'calypso/components/theme-design-your-own-modal';
 import ThemeSiteSelectorModal from 'calypso/components/theme-site-selector-modal';
 import { THEME_TIERS } from 'calypso/components/theme-tier/constants';
-import { getOptionLabel } from 'calypso/landing/subscriptions/helpers';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { THEME_COLLECTIONS } from 'calypso/my-sites/themes/collections/collection-definitions';
 import ShowcaseThemeCollection from 'calypso/my-sites/themes/collections/showcase-theme-collection';
@@ -222,16 +221,16 @@ class ThemeShowcase extends Component {
 			return [
 				...availableTiers,
 				{
-					value: tier,
-					label: THEME_TIERS[ tier ].label,
+					key: tier,
+					name: THEME_TIERS[ tier ].label,
 				},
 			];
 		}, [] );
 
 		return [
 			{
-				value: 'all',
-				get label() {
+				key: 'all',
+				get name() {
 					return translate( 'All' );
 				},
 			},
@@ -341,7 +340,9 @@ class ThemeShowcase extends Component {
 		} );
 	};
 
-	onTierSelectFilter = ( { value: tier } ) => {
+	onTierSelectFilter = ( attrs ) => {
+		const tier = attrs.selectedItem.key;
+
 		recordTracksEvent( 'calypso_themeshowcase_filter_pricing_click', { tier } );
 		trackClick( 'search bar filter', tier );
 
@@ -710,15 +711,20 @@ class ThemeShowcase extends Component {
 										</div>
 										{ tabFilters && premiumThemesEnabled && ! isMultisite && (
 											<>
-												<SelectDropdown
-													className="section-nav-tabs__dropdown"
-													onSelect={ this.onTierSelectFilter }
-													selectedText={ translate( 'View: %s', {
-														args: getOptionLabel( tiers, tier ) || '',
-													} ) }
+												<CustomSelectControl
+													className="theme__tier-select"
+													label={ translate( 'Filters' ) }
+													hideLabelFromVision
+													__next40pxDefaultSize
 													options={ tiers }
-													initialSelected={ tier }
-												></SelectDropdown>
+													value={ {
+														key: tier,
+														name: translate( 'View: %s', {
+															args: this.getTiers().find( ( t ) => t.key === tier ).name,
+														} ),
+													} }
+													onChange={ this.onTierSelectFilter }
+												/>
 											</>
 										) }
 									</div>

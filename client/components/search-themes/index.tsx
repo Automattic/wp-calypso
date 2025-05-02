@@ -42,6 +42,7 @@ const SearchThemes: React.FC< SearchThemesProps > = ( { query, onSearch, recordT
 				data-tip-target="search-themes-card"
 			>
 				<SearchControl
+					__nextHasNoMarginBottom
 					value={ searchInput }
 					placeholder={ translate( 'Search themes…' ) }
 					onChange={ setSearchInput }
