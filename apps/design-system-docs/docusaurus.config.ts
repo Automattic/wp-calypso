@@ -91,15 +91,15 @@ const config: Config = {
 					items: [
 						{
 							label: 'Foundations',
-							to: '/foundations',
+							to: '/foundations/',
 						},
 						{
 							label: 'Patterns',
-							to: '/patterns',
+							to: '/patterns/',
 						},
 						{
 							label: 'Components',
-							to: '/components',
+							to: '/components/',
 						},
 					],
 				},
