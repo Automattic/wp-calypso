@@ -181,8 +181,16 @@ function DataViews< Item >( {
 // Populate the DataViews sub components
 const DataViewsSubComponents = DataViews as typeof DataViews & {
 	Search: typeof DataViewsSearch;
+	ViewConfig: typeof DataViewsViewConfig;
+	Filters: typeof DataViewsFilters;
+	Layout: typeof DataViewsLayout;
+	Pagination: typeof DataViewsFooter;
 };
 
 DataViewsSubComponents.Search = DataViewsSearch;
+DataViewsSubComponents.ViewConfig = DataViewsViewConfig;
+DataViewsSubComponents.Filters = DataViewsFilters;
+DataViewsSubComponents.Layout = DataViewsLayout;
+DataViewsSubComponents.Pagination = DataViewsFooter;
 
 export default DataViewsSubComponents;
