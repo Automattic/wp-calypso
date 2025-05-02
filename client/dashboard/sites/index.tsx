@@ -95,9 +95,8 @@ const DEFAULT_FIELDS = [
 		render: ( { item }: { item: Site } ) => getSiteStatusLabel( item ),
 	},
 	{
-		id: 'a8c_owned',
+		id: 'is_a8c',
 		label: __( 'A8C Owned' ),
-		getValue: ( { item }: { item: Site } ) => item.is_a8c,
 		elements: [
 			{ value: true, label: __( 'Yes' ) },
 			{ value: false, label: __( 'No' ) },
@@ -174,7 +173,7 @@ export default function Sites() {
 					...DEFAULT_VIEW,
 					filters: [
 						{
-							field: 'a8c_owned',
+							field: 'is_a8c',
 							operator: 'is',
 							value: false,
 						},
@@ -184,7 +183,7 @@ export default function Sites() {
 	);
 	const fields = useMemo(
 		() =>
-			hasA8CSites ? DEFAULT_FIELDS : DEFAULT_FIELDS.filter( ( field ) => field.id !== 'a8c_owned' ),
+			hasA8CSites ? DEFAULT_FIELDS : DEFAULT_FIELDS.filter( ( field ) => field.id !== 'is_a8c' ),
 		[ hasA8CSites ]
 	);
 
