@@ -13,10 +13,8 @@ module.exports = {
 							'!calypso/lib/wp',
 							// Allowed:
 							// - calypso/components/core/badge
-							// - calypso/components/wordpress-logo
 							'!calypso/components',
 							'calypso/components/*',
-							'!calypso/components/wordpress-logo',
 							'!calypso/components/core',
 							'calypso/components/core/*',
 							'!calypso/components/core/badge',
