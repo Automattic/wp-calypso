@@ -18,7 +18,7 @@ import {
 	RadioControl,
 	CheckboxControl,
 } from '@wordpress/components';
-import { search, check } from '@wordpress/icons';
+import { search } from '@wordpress/icons';
 import { SVG, Circle } from '@wordpress/primitives';
 
 /**
@@ -33,12 +33,6 @@ interface SearchWidgetProps {
 }
 
 const noop = () => {};
-
-const radioCheck = (
-	<SVG xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-		<Circle cx={ 12 } cy={ 12 } r={ 3 }></Circle>
-	</SVG>
-);
 
 function normalizeSearchInput( input = '' ) {
 	return removeAccents( input.trim().toLowerCase() );
