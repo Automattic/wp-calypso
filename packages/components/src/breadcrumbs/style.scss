@@ -9,7 +9,9 @@
 		flex-shrink: 0;
 
 		&.is-current {
-			color: var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9));
+			.breadcrumb__item {
+				color: var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9));
+			}
 		}
 
 		&:not(.is-current)::after {

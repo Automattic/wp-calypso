@@ -53,20 +53,18 @@ type Story = StoryObj< typeof meta >;
 export const Default: Story = {
 	args: {
 		items: itemsOptions[ '3 items' ],
-		showCurrentItem: true,
 	},
 };
 
-export const HiddenCurrentPage: Story = {
+export const VisibleCurrentPage: Story = {
 	args: {
 		items: itemsOptions[ '5 items' ],
-		showCurrentItem: false,
+		showCurrentItem: true,
 	},
 };
 
 export const LongPath: Story = {
 	args: {
 		items: itemsOptions[ '7 items' ],
-		showCurrentItem: true,
 	},
 };
