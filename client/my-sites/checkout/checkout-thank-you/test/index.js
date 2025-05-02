@@ -30,13 +30,16 @@ jest.mock( 'calypso/lib/analytics/page-view-tracker', () => () => 'page-view-tra
 jest.mock( '../header', () =>
 	jest.fn( ( { children } ) => <div data-testid="checkout-thank-you-header">{ children }</div> )
 );
+// eslint-disable-next-line react/display-name
 jest.mock( 'calypso/components/happiness-support', () => () => (
 	<div data-testid="happiness-support" />
 ) );
 jest.mock( '../transfer-pending/', () => () => 'transfer-pending' );
+// eslint-disable-next-line react/display-name
 jest.mock( '../redesign-v2/pages/plan-only', () => () => (
 	<div data-testid="component--plan-only-thank-you" />
 ) );
+// eslint-disable-next-line react/display-name
 jest.mock( '../redesign-v2/pages/generic', () => () => (
 	<div data-testid="component--generic-thank-you" />
 ) );
