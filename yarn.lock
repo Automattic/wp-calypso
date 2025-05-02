@@ -1101,6 +1101,26 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@automattic/design-system-docs@workspace:apps/design-system-docs":
+  version: 0.0.0-use.local
+  resolution: "@automattic/design-system-docs@workspace:apps/design-system-docs"
+  dependencies:
+    "@docusaurus/core": "npm:^3.7.0"
+    "@docusaurus/module-type-aliases": "npm:^3.7.0"
+    "@docusaurus/preset-classic": "npm:^3.7.0"
+    "@docusaurus/tsconfig": "npm:^3.7.0"
+    "@docusaurus/types": "npm:^3.7.0"
+    "@mdx-js/react": "npm:^3.0.0"
+    "@types/react": "npm:^18.3.20"
+    "@wordpress/browserslist-config": "npm:^6.22.0"
+    clsx: "npm:^2.0.0"
+    prism-react-renderer: "npm:^2.3.0"
+    react: "npm:^18.3.1"
+    react-dom: "npm:^18.3.1"
+    typescript: "npm:~5.6.2"
+  languageName: unknown
+  linkType: soft
+
 "@automattic/domain-picker@workspace:^, @automattic/domain-picker@workspace:packages/domain-picker":
   version: 0.0.0-use.local
   resolution: "@automattic/domain-picker@workspace:packages/domain-picker"
@@ -19632,26 +19652,6 @@ __metadata:
   checksum: 671354943ad67493e49eb4c555480ab153edd7cee3a51c658082fcde539d2690ed2a4a0b5d1f401f9cde822edf3939a6afb2585f32c091f2d3a1b1665cd45236
   languageName: node
   linkType: hard
-
-"design-system-docs@workspace:apps/design-system-docs":
-  version: 0.0.0-use.local
-  resolution: "design-system-docs@workspace:apps/design-system-docs"
-  dependencies:
-    "@docusaurus/core": "npm:^3.7.0"
-    "@docusaurus/module-type-aliases": "npm:^3.7.0"
-    "@docusaurus/preset-classic": "npm:^3.7.0"
-    "@docusaurus/tsconfig": "npm:^3.7.0"
-    "@docusaurus/types": "npm:^3.7.0"
-    "@mdx-js/react": "npm:^3.0.0"
-    "@types/react": "npm:^18.3.20"
-    "@wordpress/browserslist-config": "npm:^6.22.0"
-    clsx: "npm:^2.0.0"
-    prism-react-renderer: "npm:^2.3.0"
-    react: "npm:^18.3.1"
-    react-dom: "npm:^18.3.1"
-    typescript: "npm:~5.6.2"
-  languageName: unknown
-  linkType: soft
 
 "destroy@npm:1.2.0":
   version: 1.2.0

@@ -1,5 +1,5 @@
 {
-	"name": "design-system-docs",
+	"name": "@automattic/design-system-docs",
 	"version": "0.0.0",
 	"private": true,
 	"license": "GPL-2.0-or-later",
