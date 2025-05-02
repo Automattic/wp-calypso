@@ -8,8 +8,6 @@ import { when } from 'jest-when';
 import { ReactNode } from 'react';
 import { useGeoLocationQuery, GeoLocationData } from '../use-geolocation-query';
 
-jest.useFakeTimers();
-
 describe( 'useGeoLocationQuery', () => {
 	const wrapper = ( { children }: { children: ReactNode } ) => (
 		<QueryClientProvider client={ new QueryClient() }>{ children }</QueryClientProvider>
