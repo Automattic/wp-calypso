@@ -73,14 +73,6 @@ export default ( router ) => {
 	);
 
 	page(
-		'/purchases/crm-downloads/:subscription',
-		navigation,
-		crmDownloads,
-		makeLayout,
-		clientRender
-	);
-
-	page(
 		'/purchases/subscriptions/:site/:purchaseId/payment-method/change/:cardId',
 		...commonHandlers,
 		purchaseChangePaymentMethod,
@@ -116,6 +108,14 @@ export default ( router ) => {
 		'/purchases/payment-methods/:site',
 		...commonHandlers,
 		paymentMethods,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		'/purchases/crm-downloads/:licenseKey',
+		...commonHandlers,
+		crmDownloads,
 		makeLayout,
 		clientRender
 	);
