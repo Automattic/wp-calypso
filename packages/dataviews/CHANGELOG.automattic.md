@@ -3,7 +3,6 @@
 ## Next 
 
 - Expose self-sufficient DataViews subcomponents:
-	- `<DataViews.Filters />`
 	- `<DataViews.ViewConfig />`
 	- `<DataViews.ViewTypeMenu />`
 	- `<DataViews.Layout />`

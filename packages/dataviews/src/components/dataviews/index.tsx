@@ -186,7 +186,6 @@ function DataViews< Item >( {
 const DataViewsSubComponents = DataViews as typeof DataViews & {
 	Search: typeof DataViewsSearch;
 	ViewConfig: typeof DataviewsViewConfigDropdown;
-	Filters: typeof DataViewsFilters;
 	Layout: typeof DataViewsLayout;
 	Pagination: typeof DataViewsFooter;
 	ViewTypeMenu: typeof ViewTypeMenu;
@@ -194,7 +193,6 @@ const DataViewsSubComponents = DataViews as typeof DataViews & {
 
 DataViewsSubComponents.Search = DataViewsSearch;
 DataViewsSubComponents.ViewConfig = DataviewsViewConfigDropdown;
-DataViewsSubComponents.Filters = DataViewsFilters;
 DataViewsSubComponents.Layout = DataViewsLayout;
 DataViewsSubComponents.Pagination = DataViewsFooter;
 DataViewsSubComponents.ViewTypeMenu = ViewTypeMenu;

@@ -192,8 +192,6 @@ function PlanetOverview( { planets }: { planets: SpaceObject[] } ) {
 				</HStack>
 			</Grid>
 
-			<DataViews.Filters />
-
 			<DataViews.Layout />
 		</>
 	);
