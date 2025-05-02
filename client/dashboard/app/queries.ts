@@ -11,9 +11,13 @@ import {
 	fetchEmails,
 	fetchProfile,
 	updateProfile,
+	fetchSiteSettings,
+	fetchBasicMetrics,
+	fetchPerformanceInsights,
 } from '../data';
 import { queryClient } from './query-client';
-import type { Profile } from '../data/types';
+import type { Profile, UrlPerformanceInsights } from '../data/types';
+import type { Query } from '@tanstack/react-query';
 
 export function sitesQuery() {
 	return {
@@ -22,17 +26,17 @@ export function sitesQuery() {
 	};
 }
 
-export function siteQuery( siteId: string ) {
+export function siteQuery( siteIdOrSlug: string ) {
 	return {
-		queryKey: [ 'site', siteId ],
+		queryKey: [ 'site', siteIdOrSlug ],
 		queryFn: async () => {
 			// Site usually takes the longest, so kick it off first.
-			const sitePromise = fetchSite( siteId );
+			const sitePromise = fetchSite( siteIdOrSlug );
 			// Kick off all independent promises in parallel.
-			const mediaStoragePromise = fetchSiteMediaStorage( siteId );
-			const currentPlanPromise = fetchCurrentPlan( siteId );
-			const primaryDomainPromise = fetchSitePrimaryDomain( siteId );
-			const engagementStatsPromise = fetchSiteEngagementStats( siteId );
+			const mediaStoragePromise = fetchSiteMediaStorage( siteIdOrSlug );
+			const currentPlanPromise = fetchCurrentPlan( siteIdOrSlug );
+			const primaryDomainPromise = fetchSitePrimaryDomain( siteIdOrSlug );
+			const engagementStatsPromise = fetchSiteEngagementStats( siteIdOrSlug );
 			const site = await sitePromise;
 			const [
 				mediaStorage,
@@ -48,9 +52,9 @@ export function siteQuery( siteId: string ) {
 				engagementStatsPromise,
 				// Kick off dependent promises in parallel.
 				site.jetpack && site.jetpack_modules.includes( 'monitor' )
-					? fetchSiteMonitorUptime( siteId )
+					? fetchSiteMonitorUptime( site.ID )
 					: undefined,
-				site.options?.is_wpcom_atomic ? fetchPHPVersion( siteId ) : undefined,
+				site.options?.is_wpcom_atomic ? fetchPHPVersion( site.ID ) : undefined,
 			] );
 			return {
 				site,
@@ -95,6 +99,39 @@ export function profileMutation() {
 			queryClient.setQueryData( profileQueryKey, ( oldData: Profile | undefined ) =>
 				oldData ? { ...oldData, ...newData } : newData
 			);
+		},
+	};
+}
+
+export function siteSettingsQuery( siteId: string ) {
+	return {
+		queryKey: [ 'site-settings', siteId ],
+		queryFn: () => {
+			return fetchSiteSettings( siteId );
+		},
+	};
+}
+
+export function basicMetricsQuery( url: string ) {
+	return {
+		queryKey: [ 'url', 'basic-metrics', url ],
+		queryFn: () => {
+			return fetchBasicMetrics( url );
+		},
+	};
+}
+
+export function performanceInsightsQuery( url: string, token: string ) {
+	return {
+		queryKey: [ 'url', 'performance', url, token ],
+		queryFn: () => {
+			return fetchPerformanceInsights( url, token );
+		},
+		refetchInterval: ( query: Query< UrlPerformanceInsights > ) => {
+			if ( query.state.data?.pagespeed?.status === 'completed' ) {
+				return false;
+			}
+			return 5000;
 		},
 	};
 }

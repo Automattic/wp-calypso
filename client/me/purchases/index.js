@@ -51,6 +51,14 @@ export default ( router ) => {
 	);
 
 	router(
+		paths.purchasesRoot + '/crm-downloads/:licenseKey',
+		sidebar,
+		controller.crmDownloads,
+		makeLayout,
+		clientRender
+	);
+
+	router(
 		paths.purchasesRoot + '/subscription-removed',
 		sidebar,
 		membershipsController.cancelledSubscriptionReturnFromRedirect,

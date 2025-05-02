@@ -167,11 +167,13 @@
 	.banner__title {
 		font-size: $font-body-small;
 		font-weight: 600;
+		margin-bottom: 0;
 	}
 
 	.banner__description {
 		font-size: $font-body-extra-small;
 		margin-top: 3px;
+		margin-bottom: 0;
 	}
 
 	.banner__list {

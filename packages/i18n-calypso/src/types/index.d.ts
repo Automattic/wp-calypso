@@ -147,7 +147,7 @@ export interface I18N {
 	 * As a result, those users will see a price with `$` and could be misled about what currency is being displayed.
 	 * `geolocateCurrencySymbol()` helps prevent that from happening by showing `US$` for those users.
 	 */
-	geolocateCurrencySymbol(): Promise< void >;
+	geolocateCurrencySymbol( callback?: ( geoLocation: string ) => void ): Promise< void >;
 
 	getLocale(): LocaleData;
 	getLocaleSlug(): string | null; // TODO clk i18ncalypso this should be string. Default is 'en'

@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Button, Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { CALYPSO_CONTACT } from '@automattic/urls';
@@ -19,6 +20,7 @@ import NoticeAction from 'calypso/components/notice/notice-action';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import GoogleMyBusinessLocation from 'calypso/my-sites/google-my-business/location';
 import GoogleMyBusinessStatsChart from 'calypso/my-sites/google-my-business/stats/chart';
+import PageHeader from 'calypso/my-sites/stats/components/headers/page-header';
 import Main from 'calypso/my-sites/stats/components/stats-main';
 import { enhanceWithSiteType, recordTracksEvent } from 'calypso/state/analytics/actions';
 import getGoogleMyBusinessConnectedLocation from 'calypso/state/selectors/get-google-my-business-connected-location';
@@ -194,6 +196,7 @@ class GoogleMyBusinessStats extends Component {
 
 	render() {
 		const { isLocationVerified, locationData, siteId, siteSlug, translate } = this.props;
+		const isStatsNavigationImprovementEnabled = config.isEnabled( 'stats/navigation-improvement' );
 
 		return (
 			<Main fullWidthLayout>
@@ -209,27 +212,31 @@ class GoogleMyBusinessStats extends Component {
 				<QueryKeyringServices />
 
 				<div className="stats">
-					<NavigationHeader
-						className="stats__section-header modernized-header"
-						title={ translate( 'Jetpack Stats' ) }
-						subtitle={ translate(
-							'Integrate your business with Google and get stats on your locations. {{learnMoreLink}}Learn more{{/learnMoreLink}}',
-							{
-								components: {
-									learnMoreLink: (
-										<a
-											href={ localizeUrl(
-												'https://wordpress.com/support/google-my-business-integration/#checking-the-impact-of-your-google-my-business-connection'
-											) }
-											target="_blank"
-											rel="noreferrer noopener"
-										/>
-									),
-								},
-							}
-						) }
-						screenReader={ navItems.googleMyBusiness?.label }
-					></NavigationHeader>
+					{ ! isStatsNavigationImprovementEnabled ? (
+						<NavigationHeader
+							className="stats__section-header modernized-header"
+							title={ translate( 'Jetpack Stats' ) }
+							subtitle={ translate(
+								'Integrate your business with Google and get stats on your locations. {{learnMoreLink}}Learn more{{/learnMoreLink}}',
+								{
+									components: {
+										learnMoreLink: (
+											<a
+												href={ localizeUrl(
+													'https://wordpress.com/support/google-my-business-integration/#checking-the-impact-of-your-google-my-business-connection'
+												) }
+												target="_blank"
+												rel="noreferrer noopener"
+											/>
+										),
+									},
+								}
+							) }
+							screenReader={ navItems.googleMyBusiness?.label }
+						></NavigationHeader>
+					) : (
+						<PageHeader />
+					) }
 
 					<StatsNavigation selectedItem="googleMyBusiness" siteId={ siteId } slug={ siteSlug } />
 

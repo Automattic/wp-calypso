@@ -3,26 +3,6 @@
 .stats-navigation {
 	box-shadow: inset 0 -1px 0 #0000000d;
 
-	.page-modules-settings {
-		display: flex;
-		align-items: center;
-
-		// Add gap for not open .section-nav on tablet and mobile.
-		@media (max-width: $break-small) {
-			padding-right: 16px;
-		}
-
-		button {
-			height: 24px;
-			cursor: pointer;
-		}
-
-		.page-modules-settings-action:focus {
-			box-shadow: 0 0 0 2px var(--color-primary-light);
-			z-index: 0; //fix for left box-shadow being cut off
-		}
-	}
-
 	.section-nav__panel {
 		padding-right: 0;
 

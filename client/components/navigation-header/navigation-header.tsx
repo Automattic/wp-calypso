@@ -9,7 +9,7 @@ interface BackLinkProps {
 	text?: string;
 }
 
-interface HeaderProps extends React.HTMLAttributes< HTMLElement > {
+export interface HeaderProps extends React.HTMLAttributes< HTMLElement > {
 	title?: string;
 	titleLogo?: ReactNode;
 	backLinkProps?: BackLinkProps;

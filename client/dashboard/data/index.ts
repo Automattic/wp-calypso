@@ -1,4 +1,5 @@
 import wpcom from 'calypso/lib/wp';
+import { getSiteSlug } from '../utils/site-slug';
 import type {
 	Domain,
 	Email,
@@ -11,13 +12,13 @@ import type {
 	TwoStep,
 	EngagementStatsDataPoint,
 	SiteDomain,
+	BasicMetricsData,
+	SiteSettings,
+	UrlPerformanceInsights,
 } from './types';
 
 export const fetchProfile = async (): Promise< Profile > => {
-	return await wpcom.req.get( {
-		path: '/me/settings?http_envelope=1',
-		apiNamespace: 'rest/v1.1',
-	} );
+	return await wpcom.req.get( '/me/settings' );
 };
 
 export const updateProfile = async ( data: Partial< Profile > ) => {
@@ -27,11 +28,7 @@ export const updateProfile = async ( data: Partial< Profile > ) => {
 			delete data[ key as keyof Profile ];
 		}
 	}
-	return await wpcom.req.post( {
-		path: '/me/settings?http_envelope=1',
-		apiNamespace: 'rest/v1.1',
-		body: data,
-	} );
+	return await wpcom.req.post( '/me/settings', data );
 };
 
 const SITE_FIELDS = [
@@ -54,37 +51,28 @@ const SITE_FIELDS = [
 ].join( ',' );
 
 export const fetchSites = async (): Promise< Site[] > => {
-	return (
-		await wpcom.req.get(
-			{
-				path: '/me/sites?http_envelope=1',
-				apiNamespace: 'rest/v1.2',
-			},
-			{
-				site_visibility: 'all',
-				include_domain_only: 'true',
-				site_activity: 'active',
-				fields: SITE_FIELDS,
-			}
-		)
-	).sites;
-};
-
-export const fetchSite = async ( id: string ): Promise< Site > => {
-	return await wpcom.req.get(
+	const { sites } = await wpcom.req.get(
 		{
-			path: `/sites/${ id }?http_envelope=1`,
-			apiNamespace: 'rest/v1.1',
+			path: '/me/sites',
+			apiVersion: '1.2',
 		},
-		{ fields: SITE_FIELDS }
+		{
+			site_visibility: 'all',
+			include_domain_only: 'true',
+			site_activity: 'active',
+			fields: SITE_FIELDS,
+		}
 	);
+	return sites.map( ( site: Site ) => ( { ...site, slug: getSiteSlug( site ) } ) );
 };
 
-export const fetchSiteMediaStorage = async ( id: string ): Promise< MediaStorage > => {
-	const mediaStorage = await wpcom.req.get( {
-		path: `/sites/${ id }/media-storage`,
-		apiVersion: '1.1',
-	} );
+export const fetchSite = async ( siteIdOrSlug: string ): Promise< Site > => {
+	const site = await wpcom.req.get( `/sites/${ siteIdOrSlug }`, { fields: SITE_FIELDS } );
+	return { ...site, slug: getSiteSlug( site ) };
+};
+
+export const fetchSiteMediaStorage = async ( siteIdOrSlug: string ): Promise< MediaStorage > => {
+	const mediaStorage = await wpcom.req.get( `/sites/${ siteIdOrSlug }/media-storage` );
 	return {
 		maxStorageBytesFromAddOns: Number( mediaStorage.max_storage_bytes_from_add_ons ),
 		maxStorageBytes: Number( mediaStorage.max_storage_bytes ),
@@ -113,9 +101,9 @@ export const fetchPHPVersion = async ( id: string ): Promise< string | undefined
 	} );
 };
 
-export const fetchCurrentPlan = async ( id: string ): Promise< Plan > => {
+export const fetchCurrentPlan = async ( siteIdOrSlug: string ): Promise< Plan > => {
 	const plans: Record< string, Plan > = await wpcom.req.get( {
-		path: `/sites/${ id }/plans`,
+		path: `/sites/${ siteIdOrSlug }/plans`,
 		apiVersion: '1.3',
 	} );
 	const plan = Object.values( plans ).find( ( plan ) => plan.current_plan );
@@ -125,15 +113,12 @@ export const fetchCurrentPlan = async ( id: string ): Promise< Plan > => {
 	return plan;
 };
 
-export const fetchSiteEngagementStats = async ( id: string ) => {
-	const response = await wpcom.req.get(
-		{ path: `/sites/${ id }/stats/visits` },
-		{
-			unit: 'day',
-			quantity: 14,
-			stat_fields: [ 'visitors', 'views', 'likes', 'comments' ].join( ',' ),
-		}
-	);
+export const fetchSiteEngagementStats = async ( siteIdOrSlug: string ) => {
+	const response = await wpcom.req.get( `/sites/${ siteIdOrSlug }/stats/visits`, {
+		unit: 'day',
+		quantity: 14,
+		stat_fields: [ 'visitors', 'views', 'likes', 'comments' ].join( ',' ),
+	} );
 	// We need to normalize the returned data. We ask for 14 days of data (quantity:14)
 	// and we get a response with an array of data like: `[ '2025-04-13', 1, 3, 0, 0 ]`.
 	// Each number in the response is referring to the order of the field provided in `stat_fields`.
@@ -158,20 +143,13 @@ export const fetchSiteEngagementStats = async ( id: string ) => {
 };
 
 export const fetchDomains = async (): Promise< Domain[] > => {
-	return (
-		await wpcom.req.get(
-			{ path: '/all-domains?http_envelope=1' },
-			{ no_wpcom: true, resolve_status: true }
-		)
-	).domains;
+	return ( await wpcom.req.get( '/all-domains', { no_wpcom: true, resolve_status: true } ) )
+		.domains;
 };
 
 export const fetchSiteDomains = async ( id: string ): Promise< { domains: SiteDomain[] } > => {
 	try {
-		const domains = await wpcom.req.get(
-			{ path: `/sites/${ id }/domains` },
-			{ apiVersion: '1.2' }
-		);
+		const domains = await wpcom.req.get( { path: `/sites/${ id }/domains`, apiVersion: '1.2' } );
 		return domains;
 	} catch ( error ) {
 		// TODO: check how to properly fetch for all sites..
@@ -179,8 +157,10 @@ export const fetchSiteDomains = async ( id: string ): Promise< { domains: SiteDo
 	}
 };
 
-export const fetchSitePrimaryDomain = async ( id: string ): Promise< SiteDomain | undefined > => {
-	const { domains } = await fetchSiteDomains( id );
+export const fetchSitePrimaryDomain = async (
+	siteIdOrSlug: string
+): Promise< SiteDomain | undefined > => {
+	const { domains } = await fetchSiteDomains( siteIdOrSlug );
 	return domains.find( ( domain: SiteDomain ) => domain.primary_domain );
 };
 
@@ -309,12 +289,40 @@ export const fetchEmail = ( id: string ): Promise< Email | undefined > => {
 };
 
 export const fetchUser = async (): Promise< User > => {
-	return await wpcom.me().get();
+	return wpcom.req.get( '/me' );
 };
 
 export const fetchTwoStep = async (): Promise< TwoStep > => {
+	return wpcom.req.get( '/me/two-step' );
+};
+
+export const fetchSiteSettings = async ( id: string ): Promise< SiteSettings > => {
 	return wpcom.req.get( {
-		path: '/me/two-step?http_envelope=1',
-		apiNamespace: 'rest/v1.1',
+		path: `/sites/${ id }/settings`,
+		apiVersion: '1.4',
 	} );
+};
+
+export const fetchBasicMetrics = async ( url: string ): Promise< BasicMetricsData > => {
+	return wpcom.req.get(
+		{
+			path: '/site-profiler/metrics/basic',
+			apiNamespace: 'wpcom/v2',
+		},
+		// Important: advance=1 is needed to get the `token` and request advanced metrics.
+		{ url, advance: '1' }
+	);
+};
+
+export const fetchPerformanceInsights = async (
+	url: string,
+	token: string
+): Promise< UrlPerformanceInsights > => {
+	return wpcom.req.get(
+		{
+			path: '/site-profiler/metrics/advanced/insights',
+			apiNamespace: 'wpcom/v2',
+		},
+		{ url, advance: '1', hash: token }
+	);
 };

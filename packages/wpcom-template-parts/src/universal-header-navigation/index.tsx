@@ -301,15 +301,6 @@ const UniversalNavbarHeader = ( {
 															type="dropdown"
 															target="_self"
 														/>
-														{ isEnglishLocale && (
-															<ClickableItem
-																titleValue=""
-																content={ __( 'Learn WordPress', __i18n_text_domain__ ) }
-																urlValue={ localizeUrl( '//wordpress.com/learn/' ) }
-																type="dropdown"
-																target="_self"
-															/>
-														) }
 													</ul>
 												</div>
 											</li>
@@ -620,14 +611,6 @@ const UniversalNavbarHeader = ( {
 												urlValue={ localizeUrl( '//wordpress.com/reader/search/' ) }
 												type="menu"
 											/>
-											{ isEnglishLocale && (
-												<ClickableItem
-													titleValue=""
-													content={ __( 'Learn WordPress', __i18n_text_domain__ ) }
-													urlValue={ localizeUrl( '//wordpress.com/learn/' ) }
-													type="menu"
-												/>
-											) }
 										</ul>
 									</div>
 								</>

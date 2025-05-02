@@ -7,6 +7,7 @@ import { navItems } from 'calypso/blocks/stats-navigation/constants';
 import DocumentHead from 'calypso/components/data/document-head';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import NavigationHeader from 'calypso/components/navigation-header';
+import PageHeader from 'calypso/my-sites/stats/components/headers/page-header';
 import Main from 'calypso/my-sites/stats/components/stats-main';
 import { STATS_PRODUCT_NAME } from 'calypso/my-sites/stats/constants';
 import StatsModuleEmails from 'calypso/my-sites/stats/features/modules/stats-emails';
@@ -76,6 +77,7 @@ const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {
 	);
 	const today = new Date().toISOString().slice( 0, 10 );
 	const moduleStrings = statsStrings().emails as TranslationStringType;
+	const isStatsNavigationImprovementEnabled = config.isEnabled( 'stats/navigation-improvement' );
 
 	const className = clsx( 'subscribers-page', {
 		'is-email-stats-unavailable': ! supportsEmailStats,
@@ -122,13 +124,17 @@ const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {
 			<DocumentHead title={ STATS_PRODUCT_NAME } />
 			<PageViewTracker path="/stats/subscribers/:site" title="Stats > Subscribers" />
 			<div className={ subscribersPageClasses }>
-				<NavigationHeader
-					className="stats__section-header modernized-header"
-					title={ STATS_PRODUCT_NAME }
-					subtitle={ translate( 'Track your subscriber growth and engagement.' ) }
-					screenReader={ navItems.subscribers?.label }
-					navigationItems={ [] }
-				></NavigationHeader>
+				{ ! isStatsNavigationImprovementEnabled ? (
+					<NavigationHeader
+						className="stats__section-header modernized-header"
+						title={ STATS_PRODUCT_NAME }
+						subtitle={ translate( 'Track your subscriber growth and engagement.' ) }
+						screenReader={ navItems.subscribers?.label }
+						navigationItems={ [] }
+					></NavigationHeader>
+				) : (
+					<PageHeader />
+				) }
 				<StatsNavigation selectedItem="subscribers" siteId={ siteId } slug={ siteSlug } />
 				{ isLoading && <StatsModulePlaceholder className="is-subscriber-page" isLoading /> }
 				{ isError && <StatsSubscribersPageError /> }

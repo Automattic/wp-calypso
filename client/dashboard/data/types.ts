@@ -66,16 +66,18 @@ export interface SiteOptions {
 	is_wpcom_atomic?: boolean;
 	blog_public: number;
 	is_redirect?: boolean;
+	unmapped_url?: string;
 }
 
 export interface Site {
 	ID: string;
+	slug: string;
 	name: string;
 	URL: string;
 	icon?: {
 		ico: string;
 	};
-	plan: SitePlan;
+	plan?: SitePlan;
 	active_modules?: string[];
 	subscribers_count: number;
 	// Can be undefined for deleted sites.
@@ -138,9 +140,20 @@ export interface EngagementStats {
 	previousData: EngagementStatsDataPoint;
 }
 
-export type PerformanceReport = {
+export interface SiteSettings {
+	settings: {
+		wpcom_performance_report_url?: string;
+	};
+}
+
+export interface BasicMetricsData {
+	token?: string;
+}
+
+export interface PerformanceReport {
 	overall_score: number;
-};
+}
+
 export interface UrlPerformanceInsights {
 	pagespeed: {
 		status: string;

@@ -1,6 +1,11 @@
 import { FoldableCard } from '@automattic/components';
+import {
+	formatCurrency,
+	formatNumberCompact,
+	getCurrencyObject,
+} from '@automattic/number-formatters';
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
-import { useTranslate, numberFormatCompact, formatCurrency, getCurrencyObject } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
@@ -23,8 +28,8 @@ const formatCurrencyCompact = ( amount: number, currencyCode = 'USD' ) => {
 	const currencyObject = getCurrencyObject( amount, currencyCode );
 	const formattedAmount =
 		currencyObject.symbolPosition === 'before'
-			? `${ currencyObject.symbol }${ numberFormatCompact( amount ) }`
-			: `${ numberFormatCompact( amount ) }${ currencyObject.symbol }`;
+			? `${ currencyObject.symbol }${ formatNumberCompact( amount ) }`
+			: `${ formatNumberCompact( amount ) }${ currencyObject.symbol }`;
 
 	return formattedAmount;
 };
@@ -66,7 +71,6 @@ export default function CommissionOverview() {
 					/>
 				</LayoutHeader>
 			</LayoutTop>
-
 			<LayoutBody>
 				<div className="commission-overview__section-heading">
 					{ translate( 'Referrals and commissions Frequently Asked Questions{{nbsp/}}(FAQ)', {

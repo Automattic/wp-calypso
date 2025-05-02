@@ -120,9 +120,9 @@ export default function Notice( {
 				{ iconNeedsDrop && <span className="calypso-notice__icon-wrapper-drop" /> }
 				{ renderedIcon }
 			</span>
-			<p className="calypso-notice__content">
+			<span className="calypso-notice__content">
 				<span className="calypso-notice__text">{ text ? text : children }</span>
-			</p>
+			</span>
 			{ text ? children : null }
 			{ showDismiss && (
 				<button

@@ -8,6 +8,7 @@ import { navItems } from 'calypso/blocks/stats-navigation/constants';
 import DocumentHead from 'calypso/components/data/document-head';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import NavigationHeader from 'calypso/components/navigation-header';
+import PageHeader from 'calypso/my-sites/stats/components/headers/page-header';
 import Main from 'calypso/my-sites/stats/components/stats-main';
 import { STATS_FEATURE_PAGE_INSIGHTS, STATS_PRODUCT_NAME } from 'calypso/my-sites/stats/constants';
 import StatsModuleComments from 'calypso/my-sites/stats/features/modules/stats-comments';
@@ -23,7 +24,6 @@ import AllTimeHighlightsSection from '../../sections/all-time-highlights-section
 import AllTimeViewsSection from '../../sections/all-time-views-section';
 import AnnualHighlightsSection from '../../sections/annual-highlights-section';
 import PostingActivity from '../../sections/posting-activity-section';
-import StatsModule from '../../stats-module';
 import PageViewTracker from '../../stats-page-view-tracker';
 import statsStrings from '../../stats-strings';
 import StatsUpsell from '../../stats-upsell/insights-upsell';
@@ -35,7 +35,6 @@ function StatsInsights() {
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
 	const translate = useTranslate();
 	const moduleStrings = statsStrings();
-	const isEmptyStateV2 = config.isEnabled( 'stats/empty-module-v2' );
 	const { isPending, data: usageInfo } = usePlanUsageQuery( siteId );
 	const reduxDispatch = useDispatch();
 
@@ -52,6 +51,7 @@ function StatsInsights() {
 
 	const shouldGateInsights = useShouldGateStats( STATS_FEATURE_PAGE_INSIGHTS );
 	const shouldRendeUpsell = config.isEnabled( 'stats/paid-wpcom-v3' ) && shouldGateInsights;
+	const isStatsNavigationImprovementEnabled = config.isEnabled( 'stats/navigation-improvement' );
 
 	// Track the last viewed tab.
 	// Necessary to properly configure the fixed navigation headers.
@@ -67,13 +67,17 @@ function StatsInsights() {
 			<DocumentHead title={ STATS_PRODUCT_NAME } />
 			<PageViewTracker path="/stats/insights/:site" title="Stats > Insights" />
 			<div className={ insightsPageClasses }>
-				<NavigationHeader
-					className="stats__section-header modernized-header"
-					title={ STATS_PRODUCT_NAME }
-					subtitle={ translate( "View your site's performance and learn from trends." ) }
-					screenReader={ navItems.insights?.label }
-					navigationItems={ [] }
-				></NavigationHeader>
+				{ ! isStatsNavigationImprovementEnabled ? (
+					<NavigationHeader
+						className="stats__section-header modernized-header"
+						title={ STATS_PRODUCT_NAME }
+						subtitle={ translate( "View your site's performance and learn from trends." ) }
+						screenReader={ navItems.insights?.label }
+						navigationItems={ [] }
+					></NavigationHeader>
+				) : (
+					<PageHeader />
+				) }
 				<StatsNavigation selectedItem="insights" siteId={ siteId } slug={ siteSlug } />
 				{ shouldRendeUpsell ? (
 					<div id="my-stats-content" className="stats-content">
@@ -86,38 +90,19 @@ function StatsInsights() {
 						<PostingActivity siteId={ siteId } />
 						<AllTimeViewsSection siteId={ siteId } slug={ siteSlug } />
 						<StatsModuleListing className="stats__module-list--insights" siteId={ siteId }>
-							{ isEmptyStateV2 && (
-								<StatsModuleTags
-									moduleStrings={ moduleStrings.tags }
-									hideSummaryLink
-									className={ clsx(
-										{
-											'stats__flexible-grid-item--half': isJetpack,
-											'stats__flexible-grid-item--full--large': isJetpack,
-										},
-										{
-											'stats__flexible-grid-item--full': ! isJetpack,
-										}
-									) }
-								/>
-							) }
-							{ ! isEmptyStateV2 && (
-								<StatsModule
-									path="tags-categories"
-									moduleStrings={ moduleStrings.tags }
-									statType="statsTags"
-									hideSummaryLink
-									className={ clsx(
-										{
-											'stats__flexible-grid-item--half': isJetpack,
-											'stats__flexible-grid-item--full--large': isJetpack,
-										},
-										{
-											'stats__flexible-grid-item--full': ! isJetpack,
-										}
-									) }
-								/>
-							) }
+							<StatsModuleTags
+								moduleStrings={ moduleStrings.tags }
+								hideSummaryLink
+								className={ clsx(
+									{
+										'stats__flexible-grid-item--half': isJetpack,
+										'stats__flexible-grid-item--full--large': isJetpack,
+									},
+									{
+										'stats__flexible-grid-item--full': ! isJetpack,
+									}
+								) }
+							/>
 
 							<StatsModuleComments
 								className={ clsx(

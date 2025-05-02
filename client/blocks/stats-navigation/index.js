@@ -1,4 +1,6 @@
 import config from '@automattic/calypso-config';
+import page from '@automattic/calypso-router';
+import { TabPanel } from '@wordpress/components';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -34,23 +36,6 @@ import Intervals from './intervals';
 import PageModuleToggler from './page-module-toggler';
 
 import './style.scss';
-
-// Helper to expose logic for default module listing.
-export function getAvailablePageModules( selectedItem, hasVideoPress ) {
-	return ( AVAILABLE_PAGE_MODULES[ selectedItem ] || [] ).map( ( toggleItem ) => {
-		// Set the default VideoPress visibility based on the hasVideoPress parameter.
-		// We update the disabled state as well but that value is currently ignored.
-		if ( toggleItem.key === 'videos' ) {
-			return {
-				...toggleItem,
-				disabled: ! hasVideoPress,
-				defaultValue: hasVideoPress,
-			};
-		}
-
-		return toggleItem;
-	} );
-}
 
 // Use HOC to wrap hooks of `react-query` for fetching the notice visibility state.
 function withNoticeHook( HookedComponent ) {
@@ -101,42 +86,6 @@ class StatsNavigation extends Component {
 		isPageSettingsTooltipDismissed: !! localStorage.getItem(
 			'notices_dismissed__traffic_page_settings'
 		),
-		// Only traffic page modules are supported for now.
-		pageModules: Object.assign(
-			...AVAILABLE_PAGE_MODULES.traffic.map( ( module ) => {
-				return {
-					[ module.key ]: module.defaultValue,
-				};
-			} )
-		),
-		availableModuleToggles: [],
-	};
-
-	static getDerivedStateFromProps( nextProps, prevState ) {
-		const availableModuleToggles = getAvailablePageModules(
-			nextProps.selectedItem,
-			nextProps.hasVideoPress
-		);
-
-		if (
-			prevState.pageModules !== nextProps.pageModuleToggles ||
-			prevState.availableModuleToggles !== nextProps.availableModuleToggles
-		) {
-			return { availableModuleToggles, pageModules: nextProps.pageModuleToggles };
-		}
-
-		return null;
-	}
-
-	onToggleModule = ( module, isShow ) => {
-		const seletedPageModules = Object.assign( {}, this.state.pageModules );
-		seletedPageModules[ module ] = isShow;
-
-		this.setState( { pageModules: seletedPageModules } );
-
-		this.props.updateModuleToggles( this.props.siteId, {
-			[ this.props.selectedItem ]: seletedPageModules,
-		} );
 	};
 
 	onTooltipDismiss = () => {
@@ -207,8 +156,10 @@ class StatsNavigation extends Component {
 			delayTooltipPresentation,
 			gatedTrafficPage,
 			siteId,
+			isStatsNavigationImprovementEnabled,
+			pageModuleToggles,
 		} = this.props;
-		const { pageModules, isPageSettingsTooltipDismissed, availableModuleToggles } = this.state;
+		const { isPageSettingsTooltipDismissed } = this.state;
 		const { label, showIntervals, path } = navItems[ selectedItem ];
 		const slugPath = slug ? `/${ slug }` : '';
 		const pathTemplate = `${ path }/{{ interval }}${ slugPath }`;
@@ -234,57 +185,89 @@ class StatsNavigation extends Component {
 		return (
 			<div className={ wrapperClass }>
 				{ siteId && <QueryJetpackModules siteId={ siteId } /> }
-				<SectionNav selectedText={ label }>
-					<NavTabs selectedText={ label }>
-						{ Object.keys( navItems )
+				{ isStatsNavigationImprovementEnabled ? (
+					<TabPanel
+						className="stats-navigation__tabs"
+						tabs={ Object.keys( navItems )
 							.filter( this.isValidItem )
 							.map( ( item ) => {
 								const navItem = navItems[ item ];
 								const intervalPath = navItem.showIntervals ? `/${ interval || 'day' }` : '';
 								const itemPath = `${ navItem.path }${ intervalPath }${ slugPath }`;
-								const className = 'stats-navigation__' + item;
-								if ( item === 'store' && config.isEnabled( 'is_running_in_jetpack_site' ) ) {
-									return (
-										<NavItem
-											className={ className }
-											key={ item }
-											onClick={ () =>
-												( window.location.href = `${ this.props.adminUrl }admin.php?page=wc-admin&path=%2Fanalytics%2Foverview` )
-											}
-											selected={ false }
-										>
-											{ navItem.label }
-										</NavItem>
-									);
-								}
-								return (
-									<NavItem
-										className={ className }
-										key={ item }
-										path={ itemPath }
-										selected={ selectedItem === item }
-									>
-										{ navItem.label }
-										{ navItem.paywall && showLock && ' 🔒' }
-									</NavItem>
-								);
+								return {
+									name: item,
+									title: navItem.label + ( navItem.paywall && showLock ? ' 🔒' : '' ),
+									className: 'stats-navigation__' + item,
+									path: itemPath,
+								};
 							} ) }
-					</NavTabs>
+						initialTabName={ selectedItem }
+					>
+						{ ( tab ) => {
+							if ( tab.name === 'store' && config.isEnabled( 'is_running_in_jetpack_site' ) ) {
+								window.location.href = `${ this.props.adminUrl }admin.php?page=wc-admin&path=%2Fanalytics%2Foverview`;
+							} else if ( tab.path ) {
+								page( tab.path );
+							}
+							return <div className="stats-navigation__content" />; // Placeholder div since content is rendered elsewhere
+						} }
+					</TabPanel>
+				) : (
+					//TODO: remove this SectionNav in favour of above TabPanel once Navigation Improvement is fully launched
+					<>
+						<SectionNav selectedText={ label }>
+							<NavTabs selectedText={ label }>
+								{ Object.keys( navItems )
+									.filter( this.isValidItem )
+									.map( ( item ) => {
+										const navItem = navItems[ item ];
+										const intervalPath = navItem.showIntervals ? `/${ interval || 'day' }` : '';
+										const itemPath = `${ navItem.path }${ intervalPath }${ slugPath }`;
+										const className = 'stats-navigation__' + item;
+										if ( item === 'store' && config.isEnabled( 'is_running_in_jetpack_site' ) ) {
+											return (
+												<NavItem
+													className={ className }
+													key={ item }
+													onClick={ () =>
+														( window.location.href = `${ this.props.adminUrl }admin.php?page=wc-admin&path=%2Fanalytics%2Foverview` )
+													}
+													selected={ false }
+												>
+													{ navItem.label }
+												</NavItem>
+											);
+										}
+										return (
+											<NavItem
+												className={ className }
+												key={ item }
+												path={ itemPath }
+												selected={ selectedItem === item }
+											>
+												{ navItem.label }
+												{ navItem.paywall && showLock && ' 🔒' }
+											</NavItem>
+										);
+									} ) }
+							</NavTabs>
 
-					{ isLegacy && showIntervals && (
-						<Intervals selected={ interval } pathTemplate={ pathTemplate } />
-					) }
-				</SectionNav>
+							{ isLegacy && showIntervals && (
+								<Intervals selected={ interval } pathTemplate={ pathTemplate } />
+							) }
+						</SectionNav>
 
-				{ isLegacy && showIntervals && (
-					<Intervals selected={ interval } pathTemplate={ pathTemplate } standalone />
+						{ isLegacy && showIntervals && (
+							<Intervals selected={ interval } pathTemplate={ pathTemplate } standalone />
+						) }
+					</>
 				) }
 
-				{ shouldRenderModuleToggler && (
+				{ ! isStatsNavigationImprovementEnabled && shouldRenderModuleToggler && (
 					<PageModuleToggler
-						availableModuleToggles={ availableModuleToggles }
-						pageModules={ pageModules }
-						onToggleModule={ this.onToggleModule }
+						siteId={ siteId }
+						selectedItem={ selectedItem }
+						moduleToggles={ pageModuleToggles }
 						isTooltipShown={
 							showSettingsTooltip && ! isPageSettingsTooltipDismissed && ! delayTooltipPresentation
 						}
@@ -337,6 +320,7 @@ export default connect(
 			gatedTrafficPage:
 				config.isEnabled( 'stats/paid-wpcom-v3' ) &&
 				shouldGateStats( state, siteId, STATS_FEATURE_PAGE_TRAFFIC ),
+			isStatsNavigationImprovementEnabled: config.isEnabled( 'stats/navigation-improvement' ),
 		};
 	},
 	{ requestModuleToggles, updateModuleToggles }

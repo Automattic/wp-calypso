@@ -1,6 +1,7 @@
 import { ProgressBar } from '@automattic/components';
+import { formatNumber } from '@automattic/number-formatters';
 import clsx from 'clsx';
-import { useTranslate, numberFormat } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import getPressablePlan from 'calypso/a8c-for-agencies/sections/marketplace/pressable-overview/lib/get-pressable-plan';
 import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
@@ -61,7 +62,6 @@ export default function PressableUsageDetails( { existingPlan }: Props ) {
 					</div>
 				</div>
 			</div>
-
 			<div className="pressable-usage-details__info">
 				<div className="pressable-usage-details__info-item sites">
 					<div className="pressable-usage-details__info-header">
@@ -97,8 +97,8 @@ export default function PressableUsageDetails( { existingPlan }: Props ) {
 						<div className="pressable-usage-details__info-top-right">
 							{ translate( '%(visits_count)s of %(max_visits)s', {
 								args: {
-									max_visits: numberFormat( planInfo.visits ),
-									visits_count: numberFormat( planUsage?.visits_count ?? 0 ),
+									max_visits: formatNumber( planInfo.visits ),
+									visits_count: formatNumber( planUsage?.visits_count ?? 0 ),
 								},
 								comment:
 									'%(visits_count)s is the number of month visits of the site and %(max_visits)s is the maximum number of visits.',

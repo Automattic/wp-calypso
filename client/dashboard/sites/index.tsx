@@ -1,8 +1,8 @@
+import { DataViews, filterSortAndPaginate } from '@automattic/dataviews';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { Button, ExternalLink } from '@wordpress/components';
 import { useResizeObserver } from '@wordpress/compose';
-import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { Icon, check } from '@wordpress/icons';
 import { useState, useMemo } from 'react';
@@ -14,7 +14,7 @@ import SitePreview from '../site-preview';
 import { isA8CSite } from '../utils/site-owner';
 import { STATUS_LABELS, getSiteStatus, getSiteStatusLabel } from '../utils/site-status';
 import type { Site } from '../data/types';
-import type { View, Operator } from '@wordpress/dataviews';
+import type { View, Operator } from '@automattic/dataviews';
 
 const actions = [
 	{
@@ -42,7 +42,9 @@ const DEFAULT_FIELDS = [
 		label: __( 'URL' ),
 		enableGlobalSearch: true,
 		render: ( { item }: { item: Site } ) => (
-			<ExternalLink href={ item.URL }>{ new URL( item.URL ).hostname }</ExternalLink>
+			<ExternalLink href={ item.URL } style={ { overflowWrap: 'anywhere' } }>
+				{ new URL( item.URL ).hostname }
+			</ExternalLink>
 		),
 	},
 	{
@@ -58,13 +60,17 @@ const DEFAULT_FIELDS = [
 		id: 'backups',
 		label: __( 'Backups' ),
 		getValue: ( { item }: { item: Site } ) =>
-			item.plan.features.active.includes( 'backups' ) || undefined,
+			item.plan?.features?.active?.includes( 'backups' ) || undefined,
 		elements: [
 			{ value: true, label: __( 'Enabled' ) },
 			{ value: undefined, label: __( 'Disabled' ) },
 		],
 		render: ( { item }: { item: Site } ) =>
-			item.plan.features.active.includes( 'backups' ) ? <Icon icon={ check } /> : __( 'Disabled' ),
+			item.plan?.features?.active?.includes( 'backups' ) ? (
+				<Icon icon={ check } />
+			) : (
+				__( 'Disabled' )
+			),
 		filterBy: {
 			operators: [ 'is' as Operator ],
 		},
@@ -192,7 +198,7 @@ export default function Sites() {
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate( sites, view, fields );
 
 	const onClickItem = ( item: Site ) => {
-		navigate( { to: `/sites/${ item.ID }` } );
+		navigate( { to: `/sites/${ item.slug }` } );
 	};
 
 	return (

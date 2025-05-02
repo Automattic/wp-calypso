@@ -1,5 +1,5 @@
+import { formatCurrency } from '@automattic/number-formatters';
 import { __, sprintf } from '@wordpress/i18n';
-import { formatCurrency } from 'i18n-calypso';
 import {
 	isDomainBundledWithPlan,
 	isDomainMappingFree,
