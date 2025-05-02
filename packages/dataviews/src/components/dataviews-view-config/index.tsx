@@ -61,7 +61,7 @@ const DATAVIEWS_CONFIG_POPOVER_PROPS = {
 	offset: 9,
 };
 
-function ViewTypeMenu( {
+export function ViewTypeMenu( {
 	defaultLayouts = { list: {}, grid: {}, table: {} },
 }: ViewTypeMenuProps ) {
 	const { view, onChangeView } = useContext( DataViewsContext );

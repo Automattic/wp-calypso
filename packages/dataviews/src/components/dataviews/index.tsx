@@ -24,6 +24,7 @@ import DataViewsFooter from '../dataviews-footer';
 import DataViewsSearch from '../dataviews-search';
 import DataViewsViewConfig, {
 	DataviewsViewConfigDropdown,
+	ViewTypeMenu,
 } from '../dataviews-view-config';
 import { normalizeFields } from '../../normalize-fields';
 import type { Action, Field, View, SupportedLayouts } from '../../types';
@@ -187,6 +188,7 @@ const DataViewsSubComponents = DataViews as typeof DataViews & {
 	Filters: typeof DataViewsFilters;
 	Layout: typeof DataViewsLayout;
 	Pagination: typeof DataViewsFooter;
+	ViewTypeMenu: typeof ViewTypeMenu;
 };
 
 DataViewsSubComponents.Search = DataViewsSearch;
@@ -194,5 +196,6 @@ DataViewsSubComponents.ViewConfig = DataviewsViewConfigDropdown;
 DataViewsSubComponents.Filters = DataViewsFilters;
 DataViewsSubComponents.Layout = DataViewsLayout;
 DataViewsSubComponents.Pagination = DataViewsFooter;
+DataViewsSubComponents.ViewTypeMenu = ViewTypeMenu;
 
 export default DataViewsSubComponents;
