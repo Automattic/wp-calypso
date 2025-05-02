@@ -33,14 +33,11 @@ describe( 'useGeoLocationQuery', () => {
 	it( 'should fetch geolocation data', async () => {
 		const { result } = renderHook( () => useGeoLocationQuery(), { wrapper } );
 
-		// Initially loading
-		expect( result.current.isLoading ).toBe( true );
+		// Initially loading, no data yet.
+		expect( result.current.data ).toBe( undefined );
 
-		// Wait for the query to complete
-		await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
-
-		// Verify data
-		expect( result.current.data ).toEqual( mockGeoData );
+		// Verify data.
+		await waitFor( () => expect( result.current.data ).toEqual( mockGeoData ) );
 	} );
 
 	it( 'should not refetch', async () => {
