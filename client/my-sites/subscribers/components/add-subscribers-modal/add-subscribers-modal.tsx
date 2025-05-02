@@ -60,7 +60,7 @@ const AddSubscribersModal = ( {
 	const [ isUploading, setIsUploading ] = useState( false );
 	const onImportStarted = ( hasFile: boolean ) => {
 		// Mark this task complete on starting the import, as relying on completion is unreliable
-		// since we may prompt users to navigate elsewhere they are no longer mounted.
+		// since we prompt users to navigate elsewhere while it completes.
 		completeImportSubscribersTask();
 		setIsUploading( hasFile );
 	};
