@@ -145,7 +145,7 @@ function DataViews< Item >( {
 					expanded={ false }
 					style={ { flexShrink: 0 } }
 				>
-					<DataViewsViewConfig defaultLayouts={ defaultLayouts! } />
+					<DataViewsViewConfig />
 					{ header }
 				</HStack>
 			</HStack>
