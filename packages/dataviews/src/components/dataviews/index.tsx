@@ -187,19 +187,19 @@ function DataViews< Item >( {
 
 // Populate the DataViews sub components
 const DataViewsSubComponents = DataViews as typeof DataViews & {
+	BulkActionToolbar: typeof BulkActionsFooter;
+	Layout: typeof DataViewsLayout;
+	LayoutSwitcher: typeof ViewTypeMenu;
+	Pagination: typeof DataViewsPagination;
 	Search: typeof DataViewsSearch;
 	ViewConfig: typeof DataviewsViewConfigDropdown;
-	Layout: typeof DataViewsLayout;
-	Pagination: typeof DataViewsPagination;
-	BulkActionToolbar: typeof BulkActionsFooter;
-	LayoutSwitcher: typeof ViewTypeMenu;
 };
 
+DataViewsSubComponents.BulkActionToolbar = BulkActionsFooter;
+DataViewsSubComponents.Layout = DataViewsLayout;
+DataViewsSubComponents.LayoutSwitcher = ViewTypeMenu;
+DataViewsSubComponents.Pagination = DataViewsPagination;
 DataViewsSubComponents.Search = DataViewsSearch;
 DataViewsSubComponents.ViewConfig = DataviewsViewConfigDropdown;
-DataViewsSubComponents.Layout = DataViewsLayout;
-DataViewsSubComponents.Pagination = DataViewsPagination;
-DataViewsSubComponents.LayoutSwitcher = ViewTypeMenu;
-DataViewsSubComponents.BulkActionToolbar = BulkActionsFooter;
 
 export default DataViewsSubComponents;
