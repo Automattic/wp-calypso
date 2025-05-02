@@ -14,7 +14,7 @@ const { packagesInMonorepo } = require( '../build-tools/lib/monorepo' );
 const ExternalModulesWriter = require( './server/bundler/external-modules' );
 const config = require( './server/config' );
 const bundleEnv = config( 'env' );
-const { workerCount } = require( './webpack.common' );
+const { workerCount, getSCSSConfig, getOutputFileName } = require( './webpack.common' );
 
 /**
  * Internal variables
@@ -81,6 +81,9 @@ function getExternals() {
 
 const buildDir = path.resolve( 'build' );
 
+const { outputFilename, outputChunkFilename } = getOutputFileName( { isDevelopment } );
+const scssConfig = getSCSSConfig( { outputFilename, outputChunkFilename } );
+
 const webpackConfig = {
 	devtool: 'source-map',
 	entry: path.join( __dirname, 'server' ),
@@ -127,10 +130,7 @@ const webpackConfig = {
 				include: shouldTranspileDependency,
 			} ),
 			fileLoader,
-			{
-				test: /\.(sc|sa|c)ss$/,
-				loader: 'ignore-loader',
-			},
+			scssConfig.loader,
 		],
 	},
 	resolve: {
@@ -169,6 +169,7 @@ const webpackConfig = {
 			'process.env.NODE_ENV': JSON.stringify( bundleEnv ),
 			__i18n_text_domain__: JSON.stringify( 'default' ),
 		} ),
+		...scssConfig.plugins,
 		new webpack.IgnorePlugin( { resourceRegExp: /^\.\/locale$/, contextRegExp: /moment$/ } ),
 		! isDevelopment && new ExternalModulesWriter(),
 	].filter( Boolean ),

@@ -5,17 +5,12 @@
 const path = require( 'path' );
 const FileConfig = require( '@automattic/calypso-build/webpack/file-loader' );
 const Minify = require( '@automattic/calypso-build/webpack/minify' );
-const SassConfig = require( '@automattic/calypso-build/webpack/sass' );
 const TranspileConfig = require( '@automattic/calypso-build/webpack/transpile' );
-const {
-	cssNameFromFilename,
-	shouldTranspileDependency,
-} = require( '@automattic/calypso-build/webpack/util' );
+const { shouldTranspileDependency } = require( '@automattic/calypso-build/webpack/util' );
 const ExtensiveLodashReplacementPlugin = require( '@automattic/webpack-extensive-lodash-replacement-plugin' );
 const InlineConstantExportsPlugin = require( '@automattic/webpack-inline-constant-exports-plugin' );
 const ReactRefreshWebpackPlugin = require( '@pmmmwh/react-refresh-webpack-plugin' );
 const SentryCliPlugin = require( '@sentry/webpack-plugin' );
-const autoprefixerPlugin = require( 'autoprefixer' );
 const CircularDependencyPlugin = require( 'circular-dependency-plugin' );
 const Dotenv = require( 'dotenv-webpack' );
 const DuplicatePackageCheckerPlugin = require( 'duplicate-package-checker-webpack-plugin' );
@@ -29,7 +24,7 @@ const GenerateChunksMapPlugin = require( '../build-tools/webpack/generate-chunks
 const ReadOnlyCachePlugin = require( '../build-tools/webpack/readonly-cache-plugin' );
 const RequireChunkCallbackPlugin = require( '../build-tools/webpack/require-chunk-callback-plugin' );
 const config = require( './server/config' );
-const { workerCount } = require( './webpack.common' );
+const { workerCount, getSCSSConfig, getOutputFileName } = require( './webpack.common' );
 /**
  * Internal variables
  */
@@ -140,18 +135,8 @@ if ( ! process.env.BROWSERSLIST_ENV ) {
 	process.env.BROWSERSLIST_ENV = browserslistEnv;
 }
 
-let outputFilename = '[name].[contenthash].min.js';
-let outputChunkFilename = '[name].[contenthash].min.js';
-
-// we should not use chunkhash in development: https://github.com/webpack/webpack-dev-server/issues/377#issuecomment-241258405
-// also we don't minify so dont name them .min.js
-if ( isDevelopment ) {
-	outputFilename = '[name].js';
-	outputChunkFilename = '[name].js';
-}
-
-const cssFilename = cssNameFromFilename( outputFilename );
-const cssChunkFilename = cssNameFromFilename( outputChunkFilename );
+const { outputFilename, outputChunkFilename } = getOutputFileName( { isDevelopment } );
+const scssConfig = getSCSSConfig( { outputFilename, outputChunkFilename } );
 
 const outputDir = path.resolve( '.' );
 
@@ -235,29 +220,7 @@ const webpackConfig = {
 				cacheCompression: false,
 				include: shouldTranspileDependency,
 			} ),
-			SassConfig.loader( {
-				includePaths: [ __dirname ],
-				postCssOptions: {
-					// Do not use postcss.config.js. This ensure we have the final say on how PostCSS is used in calypso.
-					// This is required because Calypso imports `@automattic/notifications` and that package defines its
-					// own `postcss.config.js` that they use for their webpack bundling process.
-					config: false,
-					plugins: [ autoprefixerPlugin() ],
-				},
-				// Since `prelude` string will be appended to each Sass file
-				// We need to ensure that the import path (inside a sass file) is a posix path, regardless of the OS/platform
-				// Final result should be something like `@use 'client/assets/stylesheets/shared/_utils.scss' as *;`
-				prelude: `@use '${
-					path
-						// Path, relative to Node CWD
-						.relative(
-							process.cwd(),
-							path.join( __dirname, 'assets/stylesheets/shared/_utils.scss' )
-						)
-						.split( path.sep ) // Break any path (posix/win32) by path separator
-						.join( path.posix.sep ) // Convert the path explicitly to posix to ensure imports work fine
-				}' as *;`,
-			} ),
+			scssConfig.loader,
 			{
 				include: path.join( __dirname, 'sections.js' ),
 				loader: path.join( __dirname, '../build-tools/webpack/sections-loader' ),
@@ -320,10 +283,7 @@ const webpackConfig = {
 		} ),
 		new webpack.NormalModuleReplacementPlugin( /^path$/, 'path-browserify' ),
 		new webpack.IgnorePlugin( { resourceRegExp: /^\.\/locale$/, contextRegExp: /moment$/ } ),
-		...SassConfig.plugins( {
-			chunkFilename: cssChunkFilename,
-			filename: cssFilename,
-		} ),
+		...scssConfig.plugins,
 		new AssetsWriter( {
 			filename: `assets.json`,
 			path: path.join( outputDir, 'build' ),

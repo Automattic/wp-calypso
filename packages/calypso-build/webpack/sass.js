@@ -18,6 +18,29 @@ module.exports.loader = ( { includePaths, prelude, postCssOptions } ) => ( {
 			loader: require.resolve( 'css-loader' ),
 			options: {
 				importLoaders: 2,
+				modules: {
+					auto: /\.module\.scss$/, // Only enable CSS modules for .module.scss files
+					getLocalIdent: ( context, localIdentName, localName ) => {
+						// Only apply custom naming for .module.scss files
+						if ( ! /\.module\.scss$/.test( context.resourcePath ) ) {
+							// For non-modules, return the original class name (no hashing)
+							return localName;
+						}
+
+						// Custom class name for modules
+						return (
+							context.resourcePath.split( '/' ).slice( -2 ).join( '_' ) +
+							'__' +
+							localName +
+							'___' +
+							require( 'crypto' )
+								.createHash( 'md5' )
+								.update( context.resourcePath + localName )
+								.digest( 'hex' )
+								.substr( 0, 5 )
+						);
+					},
+				},
 				// We do not want css-loader to resolve absolute paths. We
 				// typically use `/` to indicate the start of the base URL,
 				// but starting with css-loader v4, it started trying to handle
