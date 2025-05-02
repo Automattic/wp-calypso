@@ -1,3 +1,4 @@
+import { getLocaleData } from '@wordpress/i18n';
 import clsx from 'clsx';
 import { useTranslate, useRtl } from 'i18n-calypso';
 import { useMemo } from 'react';
@@ -62,6 +63,8 @@ const useCommonProps = ( {
 	const commonProps = useMemo( () => {
 		const isRtl = isDateFnsLocaleRTL( locale ) ?? isCalypsoRtl;
 		const localeCode = locale?.code ?? translate.localeSlug ?? 'en-US';
+
+		console.log( { localeData: getLocaleData() } );
 
 		// ie. April 2025
 		const monthNameFormatter = new Intl.DateTimeFormat( localeCode, {
@@ -176,17 +179,16 @@ export const DateCalendar = ( {
 
 	return (
 		<DayPicker
-			weekStartsOn={ weekStartsOn }
 			aria-label={ ariaLabel }
 			className={ clsx( 'a8c-components-date-calendar', className ) }
 			{ ...props }
 			mode="single"
 			// TODO: add custom classnames everywhere, potentially
 			// replace style overrides
-			// classNames={ {
-			// 	selected: `${ defaultClassNames.selected } marco`,
-			// 	day_button: `${ defaultClassNames.day_button } marco`,
-			// } }
+			classNames={ {
+				selected: 'a8c-components-date-calendar',
+				day_button: `${ defaultClassNames.day_button } marco`,
+			} }
 			{ ...commonProps }
 		/>
 	);

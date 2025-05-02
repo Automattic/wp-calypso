@@ -47,6 +47,16 @@
 	display: inline flow-root;
 	color: var(--gray-900);
 
+	.rdp-months {
+		justify-content: center;
+	}
+
+	.rdp-nav {
+		inset-inline-start: 0;
+		inset-inline-end: 0;
+		justify-content: space-between;
+	}
+
 	.rdp-chevron {
 		fill: currentColor;
 		width: 16px;
@@ -60,11 +70,6 @@
 		margin-bottom: 12px;
 	}
 
-	.rdp-nav {
-		inset-inline-start: 0;
-		inset-inline-end: 0;
-		justify-content: space-between;
-	}
 
 	.rdp-button_previous,
 	.rdp-button_next {
