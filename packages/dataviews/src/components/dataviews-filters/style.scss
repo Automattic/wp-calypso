@@ -34,11 +34,10 @@
 }
 
 .dataviews-filters__summary-operators-container {
-	padding: $grid-unit-10 $grid-unit-10 0;
+	padding: $grid-unit-10 $grid-unit-20;
 
 	&:has(+ .dataviews-filters__search-widget-listbox) {
 		border-bottom: 1px solid $gray-200;
-		padding-bottom: $grid-unit-10;
 	}
 
 	&:empty {
@@ -47,6 +46,9 @@
 
 	.dataviews-filters__summary-operators-filter-name {
 		color: $gray-700;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
 	}
 }
 
@@ -172,7 +174,6 @@
 	box-sizing: border-box;
 	padding: $grid-unit-10 $grid-unit-15;
 	cursor: default;
-	margin-block-end: 2px;
 
 	&:last-child {
 		margin-block-end: 0;
@@ -184,19 +185,9 @@
 		background-color: var(--wp-admin-theme-color);
 		color: $white;
 
-		.dataviews-filters__search-widget-listitem-check {
-			fill: $white;
-		}
-
 		.dataviews-filters__search-widget-listitem-description {
 			color: $white;
 		}
-	}
-
-	.dataviews-filters__search-widget-listitem-check {
-		width: 24px;
-		height: 24px;
-		flex-shrink: 0;
 	}
 
 	.dataviews-filters__search-widget-listitem-description {
@@ -206,6 +197,15 @@
 		font-size: $helptext-font-size;
 		line-height: 16px;
 		color: $gray-700;
+	}
+
+	.components-radio-control__label {
+		line-height: 20px;
+	}
+
+	.components-checkbox-control__label {
+		// Disable pointer events since parent handles clicks
+		pointer-events: none;
 	}
 }
 
