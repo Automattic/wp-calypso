@@ -18,6 +18,7 @@ interface GetSupportProps {
 }
 
 interface ButtonConfig {
+	className?: string;
 	disabled?: boolean;
 	text: string;
 	action: () => Promise< void >;
