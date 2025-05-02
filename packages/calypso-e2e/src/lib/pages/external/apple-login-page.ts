@@ -104,4 +104,28 @@ export class AppleLoginPage {
 		await firstInput.focus();
 		await this.page.keyboard.insertText( code );
 	}
+
+	/**
+	 * Checks if the rate limit message is visible.
+	 *
+	 * @returns {Promise<boolean>} True if the rate limit message is visible.
+	 */
+	async hasRateLimitMessage(): Promise< boolean > {
+		try {
+			// Look for the exact error message with proper error handling
+			const element = this.page.getByText(
+				"Verification codes can't be sent to this phone number at this time. Please try again later.",
+				{ exact: true }
+			);
+
+			// Wait a short time for the message to be visible
+			await element.waitFor( { state: 'visible', timeout: 1000 } ).catch( () => {} );
+
+			// Check if it's visible
+			return await element.isVisible();
+		} catch ( error ) {
+			console.log( 'Error while checking for rate limit message:', error );
+			return false;
+		}
+	}
 }

@@ -72,13 +72,9 @@ skipDescribeIf(
 					await page.waitForLoadState( 'networkidle' );
 
 					// Check for rate limit message
-					const rateLimitText = await page
-						.getByText(
-							"Verification codes can't be sent to this phone number at this time. Please try again later."
-						)
-						.isVisible();
+					const hasRateLimit = await appleLoginPage.hasRateLimitMessage();
 
-					if ( rateLimitText ) {
+					if ( hasRateLimit ) {
 						// TODO: Implement phone number rotation logic here
 						// For now, we'll mark the test as skipped with a meaningful message
 						// @ts-ignore - this is a valid Jest context property
