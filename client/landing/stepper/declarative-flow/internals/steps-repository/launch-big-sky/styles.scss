@@ -1,10 +1,10 @@
 $color-white: #fff;
 $color-big-sky-background: #000cb2;
 
-.is-section-stepper:has(.launch-big-sky) {
+.is-section-stepper:has(.launch-ai) {
 	background-color: $color-big-sky-background;
 
-	.launch-big-sky {
+	.launch-ai {
 		padding-top: 0;
 	}
 
@@ -23,6 +23,34 @@ $color-big-sky-background: #000cb2;
 			margin-top: 0;
 			width: 100%;
 			max-width: 188px;
+		}
+
+		.confirmation-dialog {
+			max-width: 900px;
+			text-align: center;
+
+			h1,
+			p {
+				color: $color-white;
+			}
+
+			&__actions {
+				display: flex;
+				gap: 16px;
+				justify-content: center;
+				margin-top: 1rem;
+
+				.components-button {
+					padding: 10px 14px;
+					color: $color-white;
+
+					&.is-primary {
+						background-color: hsla(0, 0%, 100%, .1);
+						border: 1px solid hsla(0, 0%, 100%, .1);
+						color: $color-white;
+					}
+				}
+			}
 		}
 
 		.big-sky-disclaimer {

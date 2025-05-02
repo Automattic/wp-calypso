@@ -2,6 +2,7 @@ import { ProgressBar } from '@automattic/components';
 import { Onboard } from '@automattic/data-stores';
 import { getAssemblerDesign } from '@automattic/design-picker';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { Button } from '@wordpress/components';
 import { resolveSelect, useDispatch, useSelect } from '@wordpress/data';
 import { useCallback } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
@@ -25,18 +26,36 @@ const LaunchBigSky: Step = function ( props ) {
 	const { __ } = useI18n();
 	const [ isError, setError ] = useState( false );
 	const [ progress, setProgress ] = useState( 0 );
+	const [ isExistingSite, setIsExistingSite ] = useState( false );
+	const [ hasCheckedSite, setHasCheckedSite ] = useState( false );
+	const [ showConfirmation, setShowConfirmation ] = useState( false );
 	const { siteSlug, siteId, site } = useSiteData();
 	const translate = useTranslate();
 	const urlQuery = useQuery();
-	const { isEligible } = useIsBigSkyEligible( flow );
+	const { isOwner, isEligiblePlan } = useIsBigSkyEligible( flow );
 	const { setDesignOnSite, setStaticHomepageOnSite, setGoalsOnSite, setIntentOnSite } =
 		useDispatch( SITE_STORE );
 	const goals = useSelect(
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getGoals(),
 		[]
 	);
+
 	const hasStaticHomepage = site?.options?.show_on_front === 'page' && site?.options?.page_on_front;
 	const assemblerThemeActive = site?.options?.theme_slug === 'pub/assembler';
+	const siteName = site?.name || translate( 'your site' );
+
+	const checkIfPageExists = async ( siteId: string, pageId: number ): Promise< boolean > => {
+		try {
+			await wpcomRequest( {
+				path: '/sites/' + siteId + '/pages/' + pageId,
+				method: 'GET',
+				apiNamespace: 'wp/v2',
+			} );
+			return true;
+		} catch ( error ) {
+			return false;
+		}
+	};
 
 	const deletePage = async ( siteId: string, pageId: number ): Promise< boolean > => {
 		try {
@@ -49,16 +68,35 @@ const LaunchBigSky: Step = function ( props ) {
 		} catch ( error ) {
 			// fail silently here, just log an error and return false, Big Sky will still launch
 			// eslint-disable-next-line no-console
-			console.error( `Failed to delete page ${ pageId } for site ${ siteId }:`, error );
 			return false;
 		}
 	};
 
 	useEffect( () => {
-		if ( ! isEligible ) {
+		if ( ! isOwner ) {
 			window.location.assign( '/start' );
 		}
-	}, [ isEligible ] );
+	}, [ isOwner ] );
+
+	useEffect( () => {
+		const checkSite = async () => {
+			if ( ! siteId || hasCheckedSite ) {
+				return;
+			}
+
+			try {
+				const pageExists = await checkIfPageExists( siteId.toString(), 1 );
+				// const pageExists = true;
+				setIsExistingSite( ! pageExists );
+				setShowConfirmation( ! pageExists );
+				setHasCheckedSite( true );
+			} catch ( error ) {
+				setError( true );
+			}
+		};
+
+		checkSite();
+	}, [ siteId, hasCheckedSite ] );
 
 	const exitFlow = useCallback(
 		async ( selectedSiteId: string, selectedSiteSlug: string ) => {
@@ -72,7 +110,9 @@ const LaunchBigSky: Step = function ( props ) {
 
 			// Set the Assembler theme on the site.
 			if ( ! assemblerThemeActive ) {
-				setDesignOnSite( selectedSiteSlug, getAssemblerDesign(), { enableThemeSetup: true } );
+				pendingActions.push(
+					setDesignOnSite( selectedSiteSlug, getAssemblerDesign(), { enableThemeSetup: true } )
+				);
 			}
 			setProgress( 25 );
 
@@ -93,17 +133,17 @@ const LaunchBigSky: Step = function ( props ) {
 			}
 			setProgress( 50 );
 
-			// Delete the existing boilerplate about page, always has a page ID of 1
-			pendingActions.push( deletePage( selectedSiteId, 1 ) );
+			// Only delete the about page for new sites (where page ID 1 exists)
+			if ( ! isExistingSite ) {
+				pendingActions.push( deletePage( selectedSiteId, 1 ) );
+			}
 
 			try {
 				const results = await Promise.all( pendingActions );
 				const siteURL = results[ 0 ].URL;
 
-				if ( ! hasStaticHomepage ) {
-					const homePagePostId = results[ 1 ].id;
-					await setStaticHomepageOnSite( selectedSiteId, homePagePostId );
-				}
+				const homePagePostId = results[ results.length - 1 ].id;
+				await setStaticHomepageOnSite( selectedSiteId, homePagePostId );
 				setProgress( 75 );
 
 				const prompt = urlQuery.get( 'prompt' );
@@ -114,7 +154,7 @@ const LaunchBigSky: Step = function ( props ) {
 				}
 
 				window.location.replace(
-					`${ siteURL }/wp-admin/site-editor.php?canvas=edit&referrer=${ flow }${ promptParam }`
+					`${ siteURL }/wp-admin/site-editor.php?canvas=edit&referrer=${ flow }${ promptParam }&ai-step=onboarding`
 				);
 			} catch ( error ) {
 				// eslint-disable-next-line no-console
@@ -122,7 +162,14 @@ const LaunchBigSky: Step = function ( props ) {
 				setError( true );
 			}
 		},
-		[ assemblerThemeActive, hasStaticHomepage, setDesignOnSite, setStaticHomepageOnSite ]
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+		[
+			assemblerThemeActive,
+			hasStaticHomepage,
+			setDesignOnSite,
+			setStaticHomepageOnSite,
+			isExistingSite,
+		]
 	);
 
 	const onSubmit = useCallback(
@@ -136,7 +183,7 @@ const LaunchBigSky: Step = function ( props ) {
 	);
 
 	useEffect( () => {
-		if ( isError || ! isEligible ) {
+		if ( isError || ! isOwner || ! isEligiblePlan || ! hasCheckedSite || showConfirmation ) {
 			return;
 		}
 		const syntheticEvent = {
@@ -146,10 +193,74 @@ const LaunchBigSky: Step = function ( props ) {
 			},
 		} as unknown as FormEvent;
 		onSubmit( syntheticEvent );
-	}, [ isError, isEligible, onSubmit ] );
+	}, [ isError, isOwner, isEligiblePlan, onSubmit, hasCheckedSite, showConfirmation ] );
 
-	if ( ! isEligible ) {
-		return null;
+	if ( ! isEligiblePlan ) {
+		return (
+			<div className="processing-step__container">
+				<div className="confirmation-dialog step-container-v2__heading">
+					<h1 className="wp-brand-font">{ translate( 'Upgrade your plan to use AI' ) }</h1>
+					<p>
+						{ translate(
+							'To rebuild your site with AI, you need to upgrade to a paid plan. This will give you access to our AI-powered site builder and many other premium features.'
+						) }
+					</p>
+					<div className="confirmation-dialog__actions">
+						<Button variant="secondary" onClick={ () => window.history.back() }>
+							{ translate( 'Not now' ) }
+						</Button>
+						<Button
+							variant="primary"
+							onClick={ () => {
+								window.location.assign( `/plans/${ siteSlug }` );
+							} }
+						>
+							{ translate( 'View plans' ) }
+						</Button>
+					</div>
+				</div>
+			</div>
+		);
+	}
+
+	if ( showConfirmation ) {
+		return (
+			<div className="processing-step__container">
+				<div className="confirmation-dialog step-container-v2__heading">
+					<h1 className="wp-brand-font">
+						{ translate( 'Rebuild %(siteName)s with AI?', {
+							args: { siteName },
+							components: {
+								siteName: siteName,
+							},
+						} ) }
+					</h1>
+					<p>
+						{ translate(
+							'Continuing will overwrite theme settings. Some settings and customizations may not be restorable.'
+						) }
+					</p>
+					<div className="confirmation-dialog__actions">
+						<Button variant="secondary" onClick={ () => window.history.back() }>
+							{ translate( 'Nevermind' ) }
+						</Button>
+						<Button
+							variant="primary"
+							onClick={ () => {
+								setShowConfirmation( false );
+								const syntheticEvent = {
+									preventDefault: () => {},
+									target: { elements: {} },
+								} as unknown as FormEvent;
+								onSubmit( syntheticEvent );
+							} }
+						>
+							{ translate( 'Yes, rebuild my site' ) }
+						</Button>
+					</div>
+				</div>
+			</div>
+		);
 	}
 
 	return (

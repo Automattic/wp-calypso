@@ -3,7 +3,6 @@ import { isBusinessPlan, isPremiumPlan } from '@automattic/calypso-products';
 import { Onboard } from '@automattic/data-stores';
 import { AI_SITE_BUILDER_FLOW } from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
-import userAgent from 'calypso/lib/user-agent';
 import { useIsSiteOwner } from '../hooks/use-is-site-owner';
 import { ONBOARD_STORE } from '../stores';
 import { useSite } from './use-site';
@@ -25,7 +24,6 @@ export function useIsBigSkyEligible( flowName?: string ) {
 	const { isOwner } = useIsSiteOwner();
 	const site = useSite();
 	const product_slug = site?.plan?.product_slug || '';
-	const onSupportedDevice = userAgent.isTablet || userAgent.isDesktop;
 	const goals = useSelect(
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getGoals(),
 		[ site ]
@@ -39,8 +37,10 @@ export function useIsBigSkyEligible( flowName?: string ) {
 	}
 
 	return {
-		isEligible:
-			featureFlagEnabled && !! isOwner && isEligiblePlan && isEligibleGoals && onSupportedDevice,
+		isEligible: featureFlagEnabled && !! isOwner && isEligiblePlan && isEligibleGoals,
+		isOwner,
+		isEligiblePlan,
+		isEligibleGoals,
 	};
 }
 

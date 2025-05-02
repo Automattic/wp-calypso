@@ -358,10 +358,10 @@ const siteSetupFlow: Flow = {
 				}
 
 				case 'design-choices': {
-					if ( providedDependencies.destination === 'launch-big-sky' ) {
+					if ( providedDependencies.destination === 'launch-ai' ) {
 						const queryParams = new URLSearchParams( location.search ).toString();
 						calypsoLibNavigate(
-							`/setup/site-setup/launch-big-sky${ queryParams ? `?${ queryParams }` : '' }`
+							`/setup/site-setup/launch-ai${ queryParams ? `?${ queryParams }` : '' }`
 						);
 						return;
 					}
