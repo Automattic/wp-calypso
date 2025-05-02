@@ -1,4 +1,4 @@
-import { DIFM_FLOW } from '@automattic/onboarding';
+import { DIFM_FLOW, DIFM_FLOW_STORE } from '@automattic/onboarding';
 import { useEffect } from 'react';
 import difmImage from 'calypso/assets/images/difm/difm.svg';
 import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
@@ -36,8 +36,8 @@ export default function NewOrExistingSiteStep( props: Props ) {
 		triggerGuidesForStep( flowName, stepName );
 	}, [ dispatch, flowName, stepName ] );
 
-	// Show one button only for DIFM_FLOW, two buttons for all other flows
-	const showTwoButtons = flowName !== DIFM_FLOW;
+	// Show one button only for DIFM_FLOW and DIFM_FLOW_STORE, two buttons for all other flows
+	const showTwoButtons = ! [ DIFM_FLOW, DIFM_FLOW_STORE ].includes( flowName );
 
 	const branchSteps = useBranchSteps( stepName, () => [ 'difm-site-picker' ] );
 
