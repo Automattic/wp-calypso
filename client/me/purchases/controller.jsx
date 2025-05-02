@@ -35,7 +35,7 @@ import titles from './titles';
 import VatInfoPage from './vat-info';
 import useVatDetails from './vat-info/use-vat-details';
 
-const useDataViewPurchasesList = ! config.isEnabled( 'purchases/purchase-list-dataview' );
+const useDataViewPurchasesList = config.isEnabled( 'purchases/purchase-list-dataview' );
 
 function useLogPurchasesError( message ) {
 	return useCallback(
