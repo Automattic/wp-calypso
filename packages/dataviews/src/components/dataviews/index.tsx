@@ -119,7 +119,7 @@ function DataViews< Item >( {
 	);
 
 	const defaultUI = (
-		<div className="dataviews-wrapper" ref={ containerRef }>
+		<>
 			<HStack
 				alignment="top"
 				justify="space-between"
@@ -153,7 +153,7 @@ function DataViews< Item >( {
 			{ isShowingFilter && <DataViewsFilters /> }
 			<DataViewsLayout />
 			<DataViewsFooter />
-		</div>
+		</>
 	);
 
 	return (
@@ -178,7 +178,9 @@ function DataViews< Item >( {
 				defaultLayouts,
 			} }
 		>
-			{ children || defaultUI }
+			<div className="dataviews-wrapper" ref={ containerRef }>
+				{ children || defaultUI }
+			</div>
 		</DataViewsContext.Provider>
 	);
 }
