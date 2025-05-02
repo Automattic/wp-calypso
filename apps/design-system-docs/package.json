@@ -25,7 +25,6 @@
 		"@docusaurus/core": "^3.7.0",
 		"@docusaurus/preset-classic": "^3.7.0",
 		"@mdx-js/react": "^3.0.0",
-		"clsx": "^2.0.0",
 		"prism-react-renderer": "^2.3.0",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1"

@@ -1113,7 +1113,6 @@ __metadata:
     "@mdx-js/react": "npm:^3.0.0"
     "@types/react": "npm:^18.3.20"
     "@wordpress/browserslist-config": "npm:^6.22.0"
-    clsx: "npm:^2.0.0"
     prism-react-renderer: "npm:^2.3.0"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
