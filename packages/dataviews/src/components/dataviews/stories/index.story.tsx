@@ -238,7 +238,10 @@ export const FreeComposition = () => {
 			view={ view }
 			fields={ fields }
 			onChangeView={ setView }
-			defaultLayouts={ defaultLayouts }
+			defaultLayouts={ {
+				table: {},
+				grid: {},
+			} }
 		>
 			<PlanetOverview planets={ planets } />
 		</DataViews>
