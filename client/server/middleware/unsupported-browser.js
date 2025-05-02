@@ -16,7 +16,7 @@ const ALLOWED_PATHS = [ 'browsehappy', 'themes', 'theme', 'calypso' ];
  * Regular expression matching paths that are allowed even if the browser is unsupported.
  */
 const ALLOWED_PATH_PATTERN = new RegExp(
-	`^(/(${ SUPPORTED_LOCALES.join( '|' ) }))?/${ ALLOWED_PATHS.join( '|' ) }/?`
+	`^/((${ SUPPORTED_LOCALES.join( '|' ) })/)?(${ ALLOWED_PATHS.join( '|' ) })($|/)`
 );
 
 /**
