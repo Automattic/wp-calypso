@@ -22,6 +22,7 @@ import {
 import DataViewsLayout from '../dataviews-layout';
 import DataViewsFooter from '../dataviews-footer';
 import DataViewsSearch from '../dataviews-search';
+import { DataViewsPagination } from '../dataviews-pagination';
 import DataViewsViewConfig, {
 	DataviewsViewConfigDropdown,
 	ViewTypeMenu,
@@ -187,14 +188,14 @@ const DataViewsSubComponents = DataViews as typeof DataViews & {
 	Search: typeof DataViewsSearch;
 	ViewConfig: typeof DataviewsViewConfigDropdown;
 	Layout: typeof DataViewsLayout;
-	Pagination: typeof DataViewsFooter;
+	Pagination: typeof DataViewsPagination;
 	ViewTypeMenu: typeof ViewTypeMenu;
 };
 
 DataViewsSubComponents.Search = DataViewsSearch;
 DataViewsSubComponents.ViewConfig = DataviewsViewConfigDropdown;
 DataViewsSubComponents.Layout = DataViewsLayout;
-DataViewsSubComponents.Pagination = DataViewsFooter;
+DataViewsSubComponents.Pagination = DataViewsPagination;
 DataViewsSubComponents.ViewTypeMenu = ViewTypeMenu;
 
 export default DataViewsSubComponents;
