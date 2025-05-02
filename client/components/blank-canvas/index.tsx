@@ -13,7 +13,7 @@ interface Props {
 	className?: string;
 	children: ReactNode;
 }
-const BlankCanvas = ( { className = '', children }: Props ) => {
+const BlankCanvasComponent = ( { className = '', children }: Props ) => {
 	const dispatch = useDispatch();
 
 	useEffect( () => {
@@ -34,7 +34,7 @@ interface HeaderProps {
 	backUrl?: string;
 	onBackClick?: MouseEventHandler;
 }
-BlankCanvas.Header = ( {
+const BlankCanvasHeader = ( {
 	className = '',
 	backUrl,
 	children,
@@ -56,12 +56,18 @@ BlankCanvas.Header = ( {
 	</div>
 );
 
-BlankCanvas.Content = ( { children }: PropsWithChildren ) => (
+const BlankCanvasContent = ( { children }: PropsWithChildren ) => (
 	<div className="blank-canvas__content">{ children }</div>
 );
 
-BlankCanvas.Footer = ( { children }: PropsWithChildren ) => (
+const BlankCanvasFooter = ( { children }: PropsWithChildren ) => (
 	<div className="blank-canvas__footer">{ children }</div>
 );
+
+const BlankCanvas = Object.assign( BlankCanvasComponent, {
+	Header: Object.assign( BlankCanvasHeader, { displayName: 'BlankCanvas.Header' } ),
+	Content: Object.assign( BlankCanvasContent, { displayName: 'BlankCanvas.Content' } ),
+	Footer: Object.assign( BlankCanvasFooter, { displayName: 'BlankCanvas.Footer' } ),
+} );
 
 export { BlankCanvas };
