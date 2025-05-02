@@ -22,6 +22,7 @@ import {
 import DataViewsLayout from '../dataviews-layout';
 import DataViewsFooter from '../dataviews-footer';
 import DataViewsSearch from '../dataviews-search';
+import { BulkActionsFooter } from '../dataviews-bulk-actions';
 import { DataViewsPagination } from '../dataviews-pagination';
 import DataViewsViewConfig, {
 	DataviewsViewConfigDropdown,
@@ -30,7 +31,6 @@ import DataViewsViewConfig, {
 import { normalizeFields } from '../../normalize-fields';
 import type { Action, Field, View, SupportedLayouts } from '../../types';
 import type { SelectionOrUpdater } from '../../private-types';
-
 type ItemWithId = { id: string };
 
 type DataViewsProps< Item > = {
@@ -189,6 +189,7 @@ const DataViewsSubComponents = DataViews as typeof DataViews & {
 	ViewConfig: typeof DataviewsViewConfigDropdown;
 	Layout: typeof DataViewsLayout;
 	Pagination: typeof DataViewsPagination;
+	BulkActionToolbar: typeof BulkActionsFooter;
 	ViewTypeMenu: typeof ViewTypeMenu;
 };
 
@@ -197,5 +198,6 @@ DataViewsSubComponents.ViewConfig = DataviewsViewConfigDropdown;
 DataViewsSubComponents.Layout = DataViewsLayout;
 DataViewsSubComponents.Pagination = DataViewsPagination;
 DataViewsSubComponents.ViewTypeMenu = ViewTypeMenu;
+DataViewsSubComponents.BulkActionToolbar = BulkActionsFooter;
 
 export default DataViewsSubComponents;
