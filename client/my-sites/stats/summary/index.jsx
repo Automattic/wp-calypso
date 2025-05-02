@@ -103,21 +103,20 @@ class StatsSummary extends Component {
 		const urlParams = new URLSearchParams( this.props.context.querystring );
 		const listItemClassName = 'stats__summary--narrow-mobile';
 		const isStatsNavigationImprovementEnabled = config.isEnabled( 'stats/navigation-improvement' );
-		let downloadCsvQuery;
+		let finalModuleQuery = moduleQuery;
 
 		switch ( this.props.context.params.module ) {
 			case 'referrers':
 				title = translate( 'Referrers' );
 				path = 'referrers';
 				statType = 'statsReferrers';
-				downloadCsvQuery = moduleQuery;
 				summaryView = (
 					<Fragment key="referrers-summary">
-						{ this.renderSummaryHeader( path, statType, false, downloadCsvQuery ) }
+						{ this.renderSummaryHeader( path, statType, false, finalModuleQuery ) }
 						<StatsModuleReferrers
 							moduleStrings={ StatsStrings.referrers }
 							period={ this.props.period }
-							query={ moduleQuery }
+							query={ finalModuleQuery }
 							summary
 							listItemClassName={ listItemClassName }
 						/>
@@ -129,14 +128,13 @@ class StatsSummary extends Component {
 				title = translate( 'Clicks' );
 				path = 'clicks';
 				statType = 'statsClicks';
-				downloadCsvQuery = moduleQuery;
 				summaryView = (
 					<Fragment key="clicks-summary">
-						{ this.renderSummaryHeader( path, statType, false, moduleQuery ) }
+						{ this.renderSummaryHeader( path, statType, false, finalModuleQuery ) }
 						<StatsModuleClicks
 							moduleStrings={ StatsStrings.clicks }
 							period={ this.props.period }
-							query={ moduleQuery }
+							query={ finalModuleQuery }
 							summary
 							listItemClassName={ listItemClassName }
 						/>
@@ -148,15 +146,14 @@ class StatsSummary extends Component {
 				title = translate( 'Countries' );
 				path = 'countryviews';
 				statType = 'statsCountryViews';
-				downloadCsvQuery = moduleQuery;
 				summaryView = (
 					<Fragment key="countries-summary">
-						{ this.renderSummaryHeader( path, statType, false, moduleQuery ) }
+						{ this.renderSummaryHeader( path, statType, false, finalModuleQuery ) }
 						{ isEnabled( 'stats/locations' ) ? (
 							<StatsModuleLocations
 								moduleStrings={ StatsStrings.countries }
 								period={ this.props.period }
-								query={ moduleQuery }
+								query={ finalModuleQuery }
 								summary
 								listItemClassName={ listItemClassName }
 							/>
@@ -164,7 +161,7 @@ class StatsSummary extends Component {
 							<StatsModuleCountries
 								moduleStrings={ StatsStrings.countries }
 								period={ this.props.period }
-								query={ moduleQuery }
+								query={ finalModuleQuery }
 								summary
 								listItemClassName={ listItemClassName }
 							/>
@@ -177,14 +174,13 @@ class StatsSummary extends Component {
 				title = translate( 'Locations' );
 				path = 'locations';
 				statType = 'statsCountryViews';
-				downloadCsvQuery = moduleQuery;
 				summaryView = (
 					<Fragment key="countries-summary">
-						{ this.renderSummaryHeader( path, statType, false, moduleQuery ) }
+						{ this.renderSummaryHeader( path, statType, false, finalModuleQuery ) }
 						<StatsModuleLocations
 							moduleStrings={ StatsStrings.countries }
 							period={ this.props.period }
-							query={ moduleQuery }
+							query={ finalModuleQuery }
 							summary
 							listItemClassName={ listItemClassName }
 							initialGeoMode={ urlParams.get( 'geoMode' ) }
@@ -197,14 +193,13 @@ class StatsSummary extends Component {
 				title = translate( 'Posts & pages' );
 				path = 'posts';
 				statType = 'statsTopPosts';
-				downloadCsvQuery = moduleQuery;
 				summaryView = (
 					<Fragment key="posts-summary">
-						{ this.renderSummaryHeader( path, statType, false, moduleQuery ) }
+						{ this.renderSummaryHeader( path, statType, false, finalModuleQuery ) }
 						<StatsModuleTopPosts
 							moduleStrings={ StatsStrings.posts }
 							period={ this.props.period }
-							query={ moduleQuery }
+							query={ finalModuleQuery }
 							summary
 							listItemClassName={ listItemClassName }
 						/>
@@ -216,7 +211,6 @@ class StatsSummary extends Component {
 				title = translate( 'Authors' );
 				path = 'authors';
 				statType = 'statsTopAuthors';
-				downloadCsvQuery = moduleQuery;
 				// TODO: should be refactored so that className doesn't have to be passed in
 				/* eslint-disable wpcalypso/jsx-classname-namespace */
 				summaryView = (
@@ -260,14 +254,14 @@ class StatsSummary extends Component {
 				title = translate( 'File Downloads' );
 				path = 'filedownloads';
 				statType = 'statsFileDownloads';
-				downloadCsvQuery = query;
+				finalModuleQuery = query;
 				summaryView = (
 					<Fragment key="filedownloads-summary">
-						{ this.renderSummaryHeader( path, statType, false, query ) }
+						{ this.renderSummaryHeader( path, statType, false, finalModuleQuery ) }
 						<StatsModuleDownloads
 							moduleStrings={ StatsStrings.filedownloads }
 							period={ this.props.period }
-							query={ query }
+							query={ finalModuleQuery }
 							summary
 							listItemClassName={ listItemClassName }
 						/>
@@ -320,14 +314,13 @@ class StatsSummary extends Component {
 				title = translate( 'Search Terms' );
 				path = 'searchterms';
 				statType = 'statsSearchTerms';
-				downloadCsvQuery = moduleQuery;
 				summaryView = (
 					<Fragment key="search-terms-summary">
-						{ this.renderSummaryHeader( path, statType, false, moduleQuery ) }
+						{ this.renderSummaryHeader( path, statType, false, finalModuleQuery ) }
 						<StatsModuleSearch
 							moduleStrings={ StatsStrings.search }
 							period={ this.props.period }
-							query={ moduleQuery }
+							query={ finalModuleQuery }
 							summary
 							listItemClassName={ listItemClassName }
 						/>
@@ -391,7 +384,7 @@ class StatsSummary extends Component {
 									<div className="stats-module__header-nav-button">
 										<DownloadCsv
 											statType={ statType }
-											query={ downloadCsvQuery }
+											query={ finalModuleQuery }
 											path={ path }
 											period={ this.props.period }
 										/>
