@@ -251,7 +251,9 @@ export const HelpCenterContactButton: FC = () => {
 		'closed',
 	] );
 
-	return canConnectToZendesk && supportInteractionsSolvedOrClosed?.length > 0 ? (
+	return canConnectToZendesk &&
+		supportInteractionsSolvedOrClosed &&
+		supportInteractionsSolvedOrClosed.length > 0 ? (
 		<>
 			<HelpCenterFooterButton
 				icon={ comment }
