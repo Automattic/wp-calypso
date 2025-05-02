@@ -181,16 +181,15 @@ function PlanetOverview( { planets }: { planets: SpaceObject[] } ) {
 					</CardBody>
 				</Card>
 
-				<HStack spacing={ 4 } justify="end" style={ { width: 'auto' } }>
+				<HStack justify="end">
 					<DataViews.Search label={ __( 'moons by planet' ) } />
-					<div>
-						<DataViews.ViewConfig
-							defaultLayouts={ defaultLayouts! }
-						/>
-					</div>
 				</HStack>
 
-				<DataViews.Pagination />
+				<HStack justify="end">
+					<DataViews.Pagination />
+					<DataViews.ViewConfig />
+					<DataViews.ViewTypeMenu defaultLayouts={ defaultLayouts } />
+				</HStack>
 			</Grid>
 
 			<DataViews.Filters />
