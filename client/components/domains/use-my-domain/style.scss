@@ -8,8 +8,10 @@
 	align-items: center;
 	flex-direction: column;
 	padding: 36px 24px;
-	box-shadow: none;
 	background-color: inherit;
+	& .card {
+		box-shadow: none;
+	}
 
 	& &__page-heading {
 		.formatted-header__title {
