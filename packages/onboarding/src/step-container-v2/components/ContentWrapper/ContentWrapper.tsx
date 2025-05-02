@@ -1,6 +1,10 @@
 import clsx from 'clsx';
+import { createContext, useContext, type ReactNode } from 'react';
 import styles from './style.module.scss';
-import type { ReactNode } from 'react';
+
+const ContentWrapperContext = createContext( false );
+
+export const useIsContentWrapperContext = () => useContext( ContentWrapperContext );
 
 export const ContentWrapper = ( {
 	children,
@@ -10,12 +14,14 @@ export const ContentWrapper = ( {
 	centerAligned?: boolean;
 } ) => {
 	return (
-		<div
-			className={ clsx( styles[ 'step-container-v2__content-wrapper' ], {
-				[ styles[ 'center-aligned' ] ]: centerAligned,
-			} ) }
-		>
-			{ children }
-		</div>
+		<ContentWrapperContext.Provider value>
+			<div
+				className={ clsx( styles[ 'step-container-v2__content-wrapper' ], {
+					[ styles[ 'center-aligned' ] ]: centerAligned,
+				} ) }
+			>
+				{ children }
+			</div>
+		</ContentWrapperContext.Provider>
 	);
 };

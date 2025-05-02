@@ -2,14 +2,18 @@ import { Button } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import { normalizeButtonProps } from '../../../helpers/normalizeButtonProps';
 import { ButtonProps } from '../../../types';
+import { useIsContentWrapperContext } from '../../ContentWrapper/ContentWrapper';
 import styles from './style.module.scss';
 
 export const SecondaryButton = ( originalProps: ButtonProps ) => {
 	const { __ } = useI18n();
+	const isWithinContentWrapper = useIsContentWrapperContext();
 
 	const secondaryButtonProps = normalizeButtonProps( originalProps, {
 		children: __( 'Secondary', __i18n_text_domain__ ),
-		className: styles[ 'step-container-v2__secondary-button' ],
+		className: isWithinContentWrapper
+			? styles[ 'step-container-v2__secondary-button--content' ]
+			: undefined,
 	} );
 
 	return <Button __next40pxDefaultSize variant="secondary" { ...secondaryButtonProps } />;
