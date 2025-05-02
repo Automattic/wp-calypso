@@ -22,7 +22,9 @@ import {
 import DataViewsLayout from '../dataviews-layout';
 import DataViewsFooter from '../dataviews-footer';
 import DataViewsSearch from '../dataviews-search';
-import DataViewsViewConfig from '../dataviews-view-config';
+import DataViewsViewConfig, {
+	DataviewsViewConfigDropdown,
+} from '../dataviews-view-config';
 import { normalizeFields } from '../../normalize-fields';
 import type { Action, Field, View, SupportedLayouts } from '../../types';
 import type { SelectionOrUpdater } from '../../private-types';
@@ -181,14 +183,14 @@ function DataViews< Item >( {
 // Populate the DataViews sub components
 const DataViewsSubComponents = DataViews as typeof DataViews & {
 	Search: typeof DataViewsSearch;
-	ViewConfig: typeof DataViewsViewConfig;
+	ViewConfig: typeof DataviewsViewConfigDropdown;
 	Filters: typeof DataViewsFilters;
 	Layout: typeof DataViewsLayout;
 	Pagination: typeof DataViewsFooter;
 };
 
 DataViewsSubComponents.Search = DataViewsSearch;
-DataViewsSubComponents.ViewConfig = DataViewsViewConfig;
+DataViewsSubComponents.ViewConfig = DataviewsViewConfigDropdown;
 DataViewsSubComponents.Filters = DataViewsFilters;
 DataViewsSubComponents.Layout = DataViewsLayout;
 DataViewsSubComponents.Pagination = DataViewsFooter;

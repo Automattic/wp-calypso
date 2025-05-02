@@ -761,7 +761,7 @@ function SettingsSection( {
 	);
 }
 
-function DataviewsViewConfigDropdown() {
+export function DataviewsViewConfigDropdown() {
 	const { view } = useContext( DataViewsContext );
 	const popoverId = useInstanceId(
 		_DataViewsViewConfig,
