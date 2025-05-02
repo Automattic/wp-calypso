@@ -6,6 +6,7 @@
 	- `<DataViews.Search />`
 	- `<DataViews.Filters />`
 	- `<DataViews.ViewConfig />`
+	- `<DataViews.ViewTypeMenu />`
 	- `<DataViews.Layout />`
 	- `<DataViews.Pagination />`
 - Expose `<DataViews.Search />` component.
