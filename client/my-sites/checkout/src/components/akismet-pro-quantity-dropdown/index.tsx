@@ -4,10 +4,11 @@ import {
 	PRODUCT_AKISMET_BUSINESS_5K_DOWNGRADE_MAP,
 } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
+import { formatCurrency } from '@automattic/number-formatters';
 import { isMobile } from '@automattic/viewport';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import { formatCurrency, useTranslate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { useEffect, useCallback, useState, useMemo } from 'react';
 import { preventWidows } from 'calypso/lib/formatting';
 import type { AkismetProQuantityDropDownProps } from './types';

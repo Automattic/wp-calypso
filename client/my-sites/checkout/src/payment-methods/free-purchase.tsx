@@ -1,10 +1,10 @@
 import { PRODUCT_AKISMET_FREE } from '@automattic/calypso-products';
 import { Button, useFormStatus, FormStatus } from '@automattic/composite-checkout';
+import { formatCurrency } from '@automattic/number-formatters';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { doesPurchaseHaveFullCredits } from '@automattic/wpcom-checkout';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
-import { formatCurrency } from 'i18n-calypso';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import WordPressLogo from '../components/wordpress-logo';
 import type { PaymentMethod, ProcessPayment } from '@automattic/composite-checkout';

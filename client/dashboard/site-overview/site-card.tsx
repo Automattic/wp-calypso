@@ -62,7 +62,9 @@ export default function SiteCard( {
 				<VStack spacing={ 6 } className="site-card-contents">
 					{ primaryDomain && (
 						<Field title={ __( 'Domain' ) }>
-							<ExternalLink href={ url }>{ primaryDomain.domain }</ExternalLink>
+							<ExternalLink href={ url } style={ { overflowWrap: 'anywhere' } }>
+								{ primaryDomain.domain }
+							</ExternalLink>
 						</Field>
 					) }
 					<HStack justify="space-between">
@@ -109,6 +111,10 @@ function PlanDetails( {
 	currentPlan: Plan;
 	primaryDomain?: SiteDomain;
 } ) {
+	if ( ! site.plan || ! currentPlan ) {
+		return null;
+	}
+
 	const {
 		plan: { product_name_short, is_free: isFree },
 	} = site;

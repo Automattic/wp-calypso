@@ -187,7 +187,7 @@ I18N.throwErrors = false;
  * As a result, those users will see a price with `$` and could be misled about what currency is being displayed.
  * `geolocateCurrencySymbol()` helps prevent that from happening by showing `US$` for those users.
  */
-I18N.prototype.geolocateCurrencySymbol = async function () {
+I18N.prototype.geolocateCurrencySymbol = async function ( callback ) {
 	const geoData = await globalThis
 		.fetch?.( GEO_LOCATION_ENDPOINT_URL )
 		.then( ( response ) => response.json() )
@@ -196,6 +196,7 @@ I18N.prototype.geolocateCurrencySymbol = async function () {
 		} );
 
 	this.geoLocation = 'string' === typeof geoData?.country_short ? geoData.country_short : '';
+	callback?.( this.geoLocation );
 };
 
 I18N.prototype.on = function ( ...args ) {

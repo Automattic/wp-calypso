@@ -11,11 +11,12 @@ import {
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { CompactCard, Gridicon } from '@automattic/components';
+import { formatCurrency } from '@automattic/number-formatters';
 import { CALYPSO_CONTACT } from '@automattic/urls';
 import { ExternalLink } from '@wordpress/components';
 import { Icon, warning as warningIcon } from '@wordpress/icons';
 import clsx from 'clsx';
-import { formatCurrency, localize, useTranslate } from 'i18n-calypso';
+import { localize, useTranslate } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import akismetIcon from 'calypso/assets/images/icons/akismet-icon.svg';

@@ -10,7 +10,8 @@ import {
 	PLAN_HOSTING_TRIAL_MONTHLY,
 } from '@automattic/calypso-products';
 import { Plans } from '@automattic/data-stores';
-import { useTranslate, formatCurrency } from 'i18n-calypso';
+import { formatCurrency } from '@automattic/number-formatters';
+import { useTranslate } from 'i18n-calypso';
 import { usePlansGridContext } from '../../grid-context';
 import type { GridPlan } from '../../types';
 

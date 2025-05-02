@@ -145,6 +145,8 @@ function PaymentMethod( {
 }: PaymentMethodProps ) {
 	const availablePaymentMethodIds = useAvailablePaymentMethodIds();
 	const { formStatus } = useFormStatus();
+	const isSinglePaymentMethod = availablePaymentMethodIds.length === 1;
+
 	if ( summary ) {
 		return <>{ inactiveContent && inactiveContent }</>;
 	}
@@ -160,6 +162,7 @@ function PaymentMethod( {
 			onChange={ onClick ? () => onClick( id ) : undefined }
 			ariaLabel={ ariaLabel }
 			label={ label }
+			hideRadioButton={ isSinglePaymentMethod }
 		>
 			{ activeContent && activeContent }
 		</RadioButton>

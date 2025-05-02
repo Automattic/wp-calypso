@@ -15,7 +15,6 @@ import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/ana
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference } from 'calypso/state/preferences/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
-import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
 import getSiteEditorUrl from 'calypso/state/selectors/get-site-editor-url';
 import isSiteAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
@@ -23,7 +22,6 @@ import {
 	getSiteFrontPage,
 	getCustomizerUrl,
 	getSiteOption,
-	isNewSite,
 	getSitePlanSlug,
 	getSite,
 	isAdminInterfaceWPAdmin,
@@ -430,9 +428,7 @@ export const trackManageEmailsAction = ( isStaticHomePage ) => ( dispatch ) => {
 
 const mapStateToProps = ( state ) => {
 	const siteId = getSelectedSiteId( state );
-	const isClassicEditor = getSelectedEditor( state, siteId ) === 'classic';
-	const isStaticHomePage =
-		! isClassicEditor && 'page' === getSiteOption( state, siteId, 'show_on_front' );
+	const isStaticHomePage = 'page' === getSiteOption( state, siteId, 'show_on_front' );
 	const siteSlug = getSelectedSiteSlug( state );
 	const staticHomePageId = getSiteFrontPage( state, siteId );
 	const editHomePageUrl = isStaticHomePage && `/page/${ siteSlug }/${ staticHomePageId }`;
@@ -445,7 +441,6 @@ const mapStateToProps = ( state ) => {
 		canModerateComments: canCurrentUser( state, siteId, 'moderate_comments' ),
 		customizeUrl: getCustomizerUrl( state, siteId ),
 		menusUrl: getCustomizerUrl( state, siteId, 'menus' ),
-		isNewlyCreatedSite: isNewSite( state, siteId ),
 		siteSlug,
 		isStaticHomePage,
 		editHomePageUrl,

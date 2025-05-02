@@ -77,6 +77,7 @@ const Container = styled.div`
 		font-size: 0.875rem;
 		padding-top: 0;
 		padding-bottom: 0;
+		margin-bottom: 0;
 	}
 
 	.add-ons-card__footer {

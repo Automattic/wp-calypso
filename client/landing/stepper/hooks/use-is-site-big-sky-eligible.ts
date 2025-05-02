@@ -40,7 +40,7 @@ export function useIsBigSkyEligible( flowName?: string ) {
 
 	return {
 		isEligible:
-			featureFlagEnabled && isOwner && isEligiblePlan && isEligibleGoals && onSupportedDevice,
+			featureFlagEnabled && !! isOwner && isEligiblePlan && isEligibleGoals && onSupportedDevice,
 	};
 }
 

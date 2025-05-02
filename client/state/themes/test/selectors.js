@@ -1289,7 +1289,7 @@ describe( 'themes selectors', () => {
 					items: {},
 				},
 			} );
-			expect( customizeUrl ).toEqual( '/customize' );
+			expect( customizeUrl ).toEqual( null );
 		} );
 
 		test( 'given a theme and no site ID, should return the correct customize URL', () => {
@@ -1301,7 +1301,7 @@ describe( 'themes selectors', () => {
 				},
 				'twentysixteen'
 			);
-			expect( customizeUrl ).toEqual( '/customize' );
+			expect( customizeUrl ).toEqual( null );
 		} );
 
 		test( 'given a theme and wpcom site ID, should return the correct customize URL', () => {
@@ -1312,6 +1312,9 @@ describe( 'themes selectors', () => {
 							2916284: {
 								ID: 2916284,
 								URL: 'https://example.wordpress.com',
+								options: {
+									admin_url: 'https://example.wordpress.com/wp-admin/',
+								},
 							},
 						},
 					},
@@ -1327,7 +1330,9 @@ describe( 'themes selectors', () => {
 				'twentysixteen',
 				2916284
 			);
-			expect( customizeUrl ).toEqual( '/customize/example.wordpress.com?theme=pub/twentysixteen' );
+			expect( customizeUrl ).toEqual(
+				'https://example.wordpress.com/wp-admin/customize.php?theme=pub/twentysixteen'
+			);
 		} );
 
 		test( 'given a theme and wpcom site ID on which that theme is active, should return the correct customize URL', () => {
@@ -1338,6 +1343,9 @@ describe( 'themes selectors', () => {
 							2916284: {
 								ID: 2916284,
 								URL: 'https://example.wordpress.com',
+								options: {
+									admin_url: 'https://example.wordpress.com/wp-admin/',
+								},
 							},
 						},
 					},
@@ -1355,7 +1363,7 @@ describe( 'themes selectors', () => {
 				'twentysixteen',
 				2916284
 			);
-			expect( customizeUrl ).toEqual( '/customize/example.wordpress.com' );
+			expect( customizeUrl ).toEqual( 'https://example.wordpress.com/wp-admin/customize.php' );
 		} );
 
 		describe( 'on a Jetpack site', () => {

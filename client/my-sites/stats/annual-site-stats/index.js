@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import { Card } from '@automattic/components';
+import { formatNumber } from '@automattic/number-formatters';
 import { localize } from 'i18n-calypso';
 import { find, includes } from 'lodash';
 import PropTypes from 'prop-types';
@@ -21,7 +22,6 @@ class AnnualSiteStats extends Component {
 		requesting: PropTypes.bool,
 		years: PropTypes.array,
 		translate: PropTypes.func,
-		numberFormat: PropTypes.func,
 		moment: PropTypes.func,
 		isWidget: PropTypes.bool,
 		siteId: PropTypes.number,
@@ -33,7 +33,6 @@ class AnnualSiteStats extends Component {
 	};
 
 	renderWidgetContent( data, strings ) {
-		const { numberFormat } = this.props;
 		return (
 			<div className="annual-site-stats__content">
 				<div className="annual-site-stats__stat is-year">
@@ -43,52 +42,51 @@ class AnnualSiteStats extends Component {
 				<div className="annual-site-stats__stat">
 					<div className="annual-site-stats__stat-title">{ strings.total_posts }</div>
 					<div className="annual-site-stats__stat-figure is-large">
-						{ numberFormat( data.total_posts ) }
+						{ formatNumber( data.total_posts ) }
 					</div>
 				</div>
 				<div className="annual-site-stats__stat">
 					<div className="annual-site-stats__stat-title">{ strings.total_comments }</div>
 					<div className="annual-site-stats__stat-figure">
-						{ numberFormat( data.total_comments ) }
+						{ formatNumber( data.total_comments ) }
 					</div>
 				</div>
 				<div className="annual-site-stats__stat">
 					<div className="annual-site-stats__stat-title">{ strings.avg_comments }</div>
 					<div className="annual-site-stats__stat-figure">
-						{ numberFormat( data.avg_comments ) }
+						{ formatNumber( data.avg_comments ) }
 					</div>
 				</div>
 				<div className="annual-site-stats__stat">
 					<div className="annual-site-stats__stat-title">{ strings.total_likes }</div>
-					<div className="annual-site-stats__stat-figure">{ numberFormat( data.total_likes ) }</div>
+					<div className="annual-site-stats__stat-figure">{ formatNumber( data.total_likes ) }</div>
 				</div>
 				<div className="annual-site-stats__stat">
 					<div className="annual-site-stats__stat-title">{ strings.avg_likes }</div>
-					<div className="annual-site-stats__stat-figure">{ numberFormat( data.avg_likes ) }</div>
+					<div className="annual-site-stats__stat-figure">{ formatNumber( data.avg_likes ) }</div>
 				</div>
 				<div className="annual-site-stats__stat">
 					<div className="annual-site-stats__stat-title">{ strings.total_words }</div>
-					<div className="annual-site-stats__stat-figure">{ numberFormat( data.total_words ) }</div>
+					<div className="annual-site-stats__stat-figure">{ formatNumber( data.total_words ) }</div>
 				</div>
 				<div className="annual-site-stats__stat">
 					<div className="annual-site-stats__stat-title">{ strings.avg_words }</div>
-					<div className="annual-site-stats__stat-figure">{ numberFormat( data.avg_words ) }</div>
+					<div className="annual-site-stats__stat-figure">{ formatNumber( data.avg_words ) }</div>
 				</div>
 			</div>
 		);
 	}
 
 	formatTableValue( key, value ) {
-		const { numberFormat } = this.props;
 		const singleDecimal = [ 'avg_comments', 'avg_likes' ];
 
 		if ( includes( singleDecimal, key ) ) {
-			return numberFormat( value, { decimals: 1 } );
+			return formatNumber( value, { decimals: 1 } );
 		}
 		if ( 'year' === key ) {
 			return value;
 		}
-		return numberFormat( value );
+		return formatNumber( value );
 	}
 
 	renderTable( data, strings ) {

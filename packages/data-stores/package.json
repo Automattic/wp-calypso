@@ -38,6 +38,7 @@
 		"@automattic/i18n-utils": "workspace:^",
 		"@automattic/js-utils": "workspace:^",
 		"@automattic/load-script": "workspace:^",
+		"@automattic/number-formatters": "^1.0.0",
 		"@automattic/oauth-token": "workspace:^",
 		"@automattic/shopping-cart": "workspace:^",
 		"@tanstack/react-query": "^5.15.5",

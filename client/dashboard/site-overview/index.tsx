@@ -26,8 +26,9 @@ import VisitorsCard from './visitors-card';
 import './style.scss';
 
 function SiteOverview() {
-	const { siteId } = siteRoute.useParams();
-	const { data } = useQuery( siteQuery( siteId ) );
+	const { siteSlug } = siteRoute.useParams();
+	const { data } = useQuery( siteQuery( siteSlug ) );
+
 	if ( ! data ) {
 		return;
 	}
