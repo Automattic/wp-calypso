@@ -68,9 +68,6 @@ skipDescribeIf(
 
 				// Handle potential 2FA challenge.
 				if ( url.includes( 'appleid.apple.com/auth/authorize' ) ) {
-					// Wait a bit for the page to fully load
-					await page.waitForLoadState( 'networkidle' );
-
 					// Check for rate limit message
 					const hasRateLimit = await appleLoginPage.hasRateLimitMessage();
 
