@@ -13,7 +13,7 @@ const SUPPORTED_LOCALES = [ 'en', ...config( 'magnificent_non_en_locales' ) ];
 const ALLOWED_PATHS = [ 'browsehappy', 'themes', 'theme', 'calypso' ];
 
 /**
- * Regular expression matching paths that are allowed even if the browser is unsupported.
+ * We allow some paths even if the browser is unsupported.
  */
 const ALLOWED_PATH_PATTERN = new RegExp(
 	`^/((${ SUPPORTED_LOCALES.join( '|' ) })/)?(${ ALLOWED_PATHS.join( '|' ) })($|/)`
