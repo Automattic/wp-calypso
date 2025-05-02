@@ -26,6 +26,20 @@ const meta: Meta< typeof DateRangeCalendar > = {
 				type: 'select',
 			},
 		},
+		labels: {
+			control: false,
+		},
+		onMonthChange: {
+			control: false,
+		},
+		onSelect: {
+			control: false,
+		},
+		defaultMonth: { control: { type: 'date' } },
+		month: { control: { type: 'date' } },
+		endMonth: { control: { type: 'date' } },
+		startMonth: { control: { type: 'date' } },
+		footer: { control: { type: 'text' } },
 	},
 	args: {
 		onMonthChange: fn(),

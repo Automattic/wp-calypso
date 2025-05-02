@@ -12,13 +12,6 @@ const meta: Meta< typeof DateCalendar > = {
 		controls: { expanded: true },
 	},
 	argTypes: {
-		disabled: { control: { type: 'boolean' } },
-		startMonth: { control: { type: 'date' } },
-		endMonth: { control: { type: 'date' } },
-		defaultMonth: { control: { type: 'date' } },
-		month: { control: { type: 'date' } },
-		numberOfMonths: { control: { type: 'number', min: 1, max: 3 } },
-		selected: { control: { type: 'date' } },
 		locale: {
 			options: [ 'ar', 'es', 'fr', 'ja', 'ko', 'pt' ],
 			mapping: {
@@ -33,6 +26,20 @@ const meta: Meta< typeof DateCalendar > = {
 				type: 'select',
 			},
 		},
+		labels: {
+			control: false,
+		},
+		onMonthChange: {
+			control: false,
+		},
+		onSelect: {
+			control: false,
+		},
+		defaultMonth: { control: { type: 'date' } },
+		month: { control: { type: 'date' } },
+		endMonth: { control: { type: 'date' } },
+		startMonth: { control: { type: 'date' } },
+		footer: { control: { type: 'text' } },
 	},
 	args: {
 		onMonthChange: fn(),
@@ -43,6 +50,9 @@ export default meta;
 
 type Story = StoryObj< typeof DateCalendar >;
 
+// TODO:
+// - Check: does it work uncontrolled out of the box?
+// - More sexamples (localization, matchers)
 const Template: Story[ 'render' ] = ( args ) => {
 	const [ selected, setSelected ] = useState< Date | undefined >();
 	return (
