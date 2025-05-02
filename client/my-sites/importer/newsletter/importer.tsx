@@ -110,7 +110,7 @@ export default function NewsletterImporter( {
 		// Mark the task complete once importing starts. Since we prompt users to leave the page while
 		// importing is happening, it may not be called if we wait until completion.
 		if ( paidNewsletterData?.steps?.subscribers?.status === 'importing' ) {
-			// We do this here instead of in the Subscribers component because steps ship over the
+			// We do this here instead of in the Subscribers component because steps skip over the
 			// component when not importing paid subscribers.
 			completeImportSubscribersTask();
 		}
