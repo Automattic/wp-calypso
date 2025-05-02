@@ -1,7 +1,8 @@
 /**
  * WordPress dependencies
  */
-import { useEffect, useState } from '@wordpress/element';
+import { useDebounce } from '@wordpress/compose';
+import { useCallback, useEffect, useRef, useState } from '@wordpress/element';
 import { isRTL } from '@wordpress/i18n';
 
 const isScrolledToEnd = ( element: Element ) => {
@@ -22,18 +23,25 @@ export function useIsScrolledEnd( {
 } ): boolean {
 	const [ isScrolledEnd, setIsScrolledEnd ] = useState( false );
 
+	const scrollContainerRef = useRef< Element | null >();
+
+	const handleIsScrolledEnd = useDebounce(
+		useCallback( () => {
+			const scrollContainer = scrollContainerRef.current;
+			if ( scrollContainer ) {
+				setIsScrolledEnd( isScrolledToEnd( scrollContainer ) );
+			}
+		}, [ scrollContainerRef, setIsScrolledEnd ] ),
+		200
+	);
+
 	useEffect( () => {
 		if ( typeof window === 'undefined' || ! enabled ) {
 			return () => {};
 		}
 
 		const scrollContainer = document.querySelector( selector );
-
-		const handleIsScrolledEnd = () => {
-			if ( scrollContainer ) {
-				setIsScrolledEnd( isScrolledToEnd( scrollContainer ) );
-			}
-		};
+		scrollContainerRef.current = scrollContainer;
 
 		handleIsScrolledEnd();
 		if ( scrollContainer ) {
