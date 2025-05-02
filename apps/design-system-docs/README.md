@@ -2,6 +2,10 @@
 
 This website is built using [Docusaurus](https://docusaurus.io/).
 
+## Package scripts
+
+These scripts need to be run from the package directory, so run `cd apps/design-system-docs` first.
+
 ### Installation
 
 ```
