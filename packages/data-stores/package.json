@@ -74,7 +74,6 @@
 		"@types/validator": "^13.7.1",
 		"jest-fetch-mock": "^3.0.3",
 		"nock": "^13.5.6",
-		"node-fetch": "^2.7.0",
 		"typescript": "^5.8.2",
 		"wait-for-expect": "^3.0.2"
 	}
