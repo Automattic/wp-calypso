@@ -118,7 +118,7 @@ export default {
 			return next();
 		}
 
-		return page.redirect( stepperFlowUrl );
+		return window.location.replace( stepperFlowUrl );
 	},
 
 	async redirectToFlow( context, next ) {
