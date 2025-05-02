@@ -1,7 +1,6 @@
 import clsx from 'clsx';
+import styles from './style.module.scss';
 import type { ReactNode } from 'react';
-
-import './style.scss';
 
 export const ContentWrapper = ( {
 	children,
@@ -12,8 +11,8 @@ export const ContentWrapper = ( {
 } ) => {
 	return (
 		<div
-			className={ clsx( 'step-container-v2__content-wrapper', {
-				'center-aligned': centerAligned,
+			className={ clsx( styles[ 'step-container-v2__content-wrapper' ], {
+				[ styles[ 'center-aligned' ] ]: centerAligned,
 			} ) }
 		>
 			{ children }

@@ -1,5 +1,6 @@
 import { useContext, useRef, useLayoutEffect } from 'react';
 import { StepContainerV2Context, ContentProp } from '../StepContainerV2/context';
+import styles from './style.module.scss';
 
 export const StickyBottomBarRenderer = ( {
 	stickyBottomBar,
@@ -34,7 +35,10 @@ export const StickyBottomBarRenderer = ( {
 			: ! context.isSmallViewport && stickyBottomBar;
 
 	return (
-		<div className="step-container-v2__sticky-bottom-bar-wrapper" ref={ stickyBottomBarRef }>
+		<div
+			className={ styles[ 'step-container-v2__sticky-bottom-bar-wrapper' ] }
+			ref={ stickyBottomBarRef }
+		>
 			{ content }
 		</div>
 	);

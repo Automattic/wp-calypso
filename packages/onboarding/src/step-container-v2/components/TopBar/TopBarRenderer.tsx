@@ -1,5 +1,6 @@
 import { useContext, useLayoutEffect, useRef } from 'react';
 import { StepContainerV2Context, ContentProp } from '../StepContainerV2/context';
+import styles from './style.module.scss';
 
 export const TopBarRenderer = ( { topBar }: { topBar?: ContentProp } ) => {
 	const context = useContext( StepContainerV2Context );
@@ -27,7 +28,7 @@ export const TopBarRenderer = ( { topBar }: { topBar?: ContentProp } ) => {
 	const topBarContent = typeof topBar === 'function' ? topBar( context ) : topBar;
 
 	return (
-		<div ref={ topBarRef } className="step-container-v2__top-bar-wrapper">
+		<div ref={ topBarRef } className={ styles[ 'step-container-v2__top-bar-wrapper' ] }>
 			{ topBarContent }
 		</div>
 	);

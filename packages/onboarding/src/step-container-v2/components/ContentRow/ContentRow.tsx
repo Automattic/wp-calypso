@@ -1,7 +1,6 @@
 import clsx from 'clsx';
+import styles from './style.module.scss';
 import type { CSSProperties, ReactNode } from 'react';
-
-import './style.scss';
 
 export const ContentRow = ( {
 	children,
@@ -14,7 +13,7 @@ export const ContentRow = ( {
 } ) => {
 	return (
 		<div
-			className={ clsx( 'step-container-v2__content-row', className ) }
+			className={ clsx( styles[ 'step-container-v2__content-row' ], className ) }
 			style={ { '--columns': columns } as CSSProperties }
 		>
 			{ children }

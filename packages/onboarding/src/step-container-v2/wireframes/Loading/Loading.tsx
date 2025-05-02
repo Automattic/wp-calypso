@@ -3,8 +3,7 @@ import { ReactNode, useEffect, useState } from 'react';
 import { Heading } from '../../components/Heading/Heading';
 import { StepContainerV2 } from '../../components/StepContainerV2/StepContainerV2';
 import { TopBar } from '../../components/TopBar/TopBar';
-
-import './style.scss';
+import styles from './style.module.scss';
 
 interface LoadingProps {
 	title?: ReactNode;
@@ -36,15 +35,18 @@ export const Loading = ( { title, progress, delay = 0 }: LoadingProps ) => {
 	return (
 		<StepContainerV2>
 			<TopBar />
-			<div className="step-container-v2--loading">
+			<div className={ styles[ 'step-container-v2--loading' ] }>
 				{ title && shouldDisplayTitle && (
-					<div className="step-container-v2--loading__heading-wrapper">
-						<div className="step-container-v2--loading__heading">
+					<div className={ styles[ 'step-container-v2--loading__heading-wrapper' ] }>
+						<div className={ styles[ 'step-container-v2--loading__heading' ] }>
 							<Heading text={ title } size="small" align="center" />
 						</div>
 					</div>
 				) }
-				<ProgressBar className="step-container-v2--loading__progress-bar" value={ progress } />
+				<ProgressBar
+					className={ styles[ 'step-container-v2--loading__progress-bar' ] }
+					value={ progress }
+				/>
 			</div>
 		</StepContainerV2>
 	);

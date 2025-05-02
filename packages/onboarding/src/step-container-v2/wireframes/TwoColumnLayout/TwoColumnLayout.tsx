@@ -6,7 +6,7 @@ import { StepContainerV2 } from '../../components/StepContainerV2/StepContainerV
 import { ContentProp } from '../../components/StepContainerV2/context';
 import { StickyBottomBarRenderer } from '../../components/StickyBottomBar/StickyBottomBarRenderer';
 import { TopBarRenderer } from '../../components/TopBar/TopBarRenderer';
-import './style.scss';
+import styles from './style.module.scss';
 
 interface TwoColumnLayoutProps {
 	topBar?: ContentProp;
@@ -63,7 +63,10 @@ export const TwoColumnLayout = ( {
 							{ heading && <ContentRow columns={ 6 }>{ heading }</ContentRow> }
 							<ContentRow
 								columns={ 10 }
-								className={ clsx( 'step-container-v2__content-row--two-column-layout', className ) }
+								className={ clsx(
+									styles[ 'step-container-v2__content-row--two-column-layout' ],
+									className
+								) }
 							>
 								{ childElements }
 							</ContentRow>

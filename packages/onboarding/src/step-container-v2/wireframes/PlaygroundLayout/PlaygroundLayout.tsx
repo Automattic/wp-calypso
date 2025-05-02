@@ -2,8 +2,7 @@ import clsx from 'clsx';
 import { StepContainerV2 } from '../../components/StepContainerV2/StepContainerV2';
 import { ContentProp } from '../../components/StepContainerV2/context';
 import { TopBarRenderer } from '../../components/TopBar/TopBarRenderer';
-
-import './style.scss';
+import styles from './style.module.scss';
 
 interface PlaygroundLayoutProps {
 	topBar?: ContentProp;
@@ -20,7 +19,7 @@ export const PlaygroundLayout = ( { topBar, className, children }: PlaygroundLay
 				return (
 					<>
 						<TopBarRenderer topBar={ topBar } />
-						<div className={ clsx( 'step-container-v2__playground-layout', className ) }>
+						<div className={ clsx( styles[ 'step-container-v2__playground-layout' ], className ) }>
 							{ content }
 						</div>
 					</>

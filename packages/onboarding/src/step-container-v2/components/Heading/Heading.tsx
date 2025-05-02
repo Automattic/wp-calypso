@@ -1,7 +1,6 @@
 import clsx from 'clsx';
 import { ReactNode } from 'react';
-
-import './style.scss';
+import styles from './style.module.scss';
 
 interface HeadingProps {
 	text: ReactNode;
@@ -13,9 +12,9 @@ interface HeadingProps {
 export const Heading = ( { text, subText, align, size }: HeadingProps ) => {
 	return (
 		<div
-			className={ clsx( 'step-container-v2__heading', {
-				left: align === 'left',
-				center: align === 'center',
+			className={ clsx( styles[ 'step-container-v2__heading' ], {
+				[ styles.left ]: align === 'left',
+				[ styles.center ]: align === 'center',
 			} ) }
 		>
 			<h1

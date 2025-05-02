@@ -1,7 +1,8 @@
 import { useViewportMatch } from '@wordpress/compose';
+import clsx from 'clsx';
 import { useMemo, useState } from 'react';
 import { ContentProp, StepContainerV2Context } from './context';
-import './style.scss';
+import styles from './style.module.scss';
 
 export const StepContainerV2 = ( { children }: { children: ContentProp } ) => {
 	const isSmallViewport = useViewportMatch( 'small', '>=' );
@@ -34,7 +35,7 @@ export const StepContainerV2 = ( { children }: { children: ContentProp } ) => {
 	return (
 		<StepContainerV2Context.Provider value={ stepContainerContextValue }>
 			<div
-				className="step-container-v2"
+				className={ clsx( styles[ 'step-container-v2' ], 'step-container-v2' ) }
 				style={
 					{
 						'--step-container-v2-top-bar-height': `${ topBarHeight }px`,

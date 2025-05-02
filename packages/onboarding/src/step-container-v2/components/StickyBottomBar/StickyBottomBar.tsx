@@ -1,6 +1,5 @@
 import { ReactNode } from 'react';
-
-import './style.scss';
+import styles from './style.module.scss';
 
 interface StickyBottomBarProps {
 	leftElement?: ReactNode;
@@ -14,15 +13,21 @@ export const StickyBottomBar = ( {
 	rightElement,
 }: StickyBottomBarProps ) => {
 	return (
-		<div className="step-container-v2__sticky-bottom-bar">
+		<div className={ styles[ 'step-container-v2__sticky-bottom-bar' ] }>
 			{ leftElement && (
-				<div className="step-container-v2__sticky-bottom-bar-left-element">{ leftElement }</div>
+				<div className={ styles[ 'step-container-v2__sticky-bottom-bar-left-element' ] }>
+					{ leftElement }
+				</div>
 			) }
 			{ centerElement && (
-				<div className="step-container-v2__sticky-bottom-bar-center-element">{ centerElement }</div>
+				<div className={ styles[ 'step-container-v2__sticky-bottom-bar-center-element' ] }>
+					{ centerElement }
+				</div>
 			) }
 			{ rightElement && (
-				<div className="step-container-v2__sticky-bottom-bar-right-element">{ rightElement }</div>
+				<div className={ styles[ 'step-container-v2__sticky-bottom-bar-right-element' ] }>
+					{ rightElement }
+				</div>
 			) }
 		</div>
 	);

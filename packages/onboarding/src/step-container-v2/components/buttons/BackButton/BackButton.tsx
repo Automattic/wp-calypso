@@ -5,8 +5,7 @@ import { useStepContainerV2Context } from '../../../contexts/StepContainerV2Cont
 import { decorateButtonWithTracksEventRecording } from '../../../helpers/decorateButtonWithTracksEventRecording';
 import { normalizeButtonProps } from '../../../helpers/normalizeButtonProps';
 import { ButtonProps } from '../../../types';
-
-import './style.scss';
+import styles from './style.module.scss';
 
 export const BackButton = ( {
 	enableTracksEvent = true,
@@ -17,7 +16,7 @@ export const BackButton = ( {
 
 	const backButtonProps = normalizeButtonProps( originalProps, {
 		children: __( 'Back', __i18n_text_domain__ ),
-		className: 'step-container-v2__back-button',
+		className: styles[ 'step-container-v2__back-button' ],
 		icon: chevronLeft,
 	} );
 
