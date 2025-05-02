@@ -135,9 +135,8 @@ function PlanetOverview( { planets }: { planets: SpaceObject[] } ) {
 		<>
 			<Grid
 				templateColumns="repeat(auto-fit, minmax(330px, 1fr))"
-				justify="left"
 				align="flex-start"
-				className="dataviews-sticky-header"
+				className="free-composition-header"
 			>
 				<Card variant="secondary">
 					<CardHeader>

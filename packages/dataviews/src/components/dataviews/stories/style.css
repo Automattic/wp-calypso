@@ -3,10 +3,6 @@
     text-wrap: pretty;
 }
 
-.dataviews-sticky-header {
-	position: sticky;
-	top: 16px;
-	padding-bottom: 16px;
-	background-color: #fff;
-	z-index: 100;
+.free-composition-header {
+    padding: 16px 48px;
 }
