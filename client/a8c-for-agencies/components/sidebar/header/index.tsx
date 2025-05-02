@@ -1,5 +1,6 @@
 import { SidebarV2Header as SidebarHeader } from 'calypso/layout/sidebar-v2';
 import A4ALogo, { LOGO_COLOR_SECONDARY_ALT } from '../../a4a-logo';
+import SidebarHelpCenter from './help-center';
 import ProfileDropdown from './profile-dropdown';
 
 type Props = {
@@ -18,6 +19,7 @@ const Header = ( { withProfileDropdown }: Props ) => {
 	return (
 		<SidebarHeader className="a4a-sidebar__header">
 			<AllSitesIcon />
+			<SidebarHelpCenter tooltip="Help Center" onClick={ () => {} } />
 			{ withProfileDropdown && <ProfileDropdown compact /> }
 		</SidebarHeader>
 	);
