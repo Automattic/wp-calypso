@@ -53,23 +53,17 @@ describe(
 			selectedDomain = await domainSearchComponent.selectDomain( '.io' );
 		} );
 
-		it( `Pick the 50 GB storage add-on for the ${ planName } plan`, async function () {
-			plansPage = new PlansPage( page );
-			await plansPage.selectAddOn( planName, '50 GB' );
-		} );
-
 		it( `Pick the ${ planName } plan`, async function () {
 			plansPage = new PlansPage( page );
 
 			await plansPage.selectPlan( planName );
 		} );
 
-		it( 'See domain, plan and add-on at checkout', async function () {
+		it( 'See domain and plan at checkout', async function () {
 			cartCheckoutPage = new CartCheckoutPage( page );
 
 			await cartCheckoutPage.validateCartItem( `WordPress.com ${ planName }` );
 			await cartCheckoutPage.validateCartItem( selectedDomain );
-			await cartCheckoutPage.validateCartItem( 'Storage Add-On' );
 		} );
 
 		afterAll( async function () {

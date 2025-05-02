@@ -6,7 +6,8 @@ type PurchaseActions =
 	| 'Renew monthly'
 	| 'Pick another plan'
 	| 'Remove plan'
-	| 'Cancel plan';
+	| 'Cancel plan'
+	| 'Cancel subscription';
 
 /**
  * Represents the /me endpoint.
@@ -64,7 +65,7 @@ export class PurchasesPage {
 			this.page.getByRole( 'link', { name: action } ).click(),
 		] );
 
-		if ( action === 'Cancel plan' ) {
+		if ( action === 'Cancel plan' || action === 'Cancel subscription' ) {
 			await this.page.getByRole( 'button', { name: 'Cancel Subscription' } ).click();
 		}
 	}

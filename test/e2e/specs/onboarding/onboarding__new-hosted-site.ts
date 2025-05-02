@@ -14,6 +14,7 @@ import {
 	PurchasesPage,
 	MyProfilePage,
 	MeSidebarComponent,
+	cancelSubscriptionFlow,
 	cancelAtomicPurchaseFlow,
 	WPAdminSidebarComponent,
 } from '@automattic/calypso-e2e';
@@ -54,16 +55,22 @@ describe(
 				newUserDetails = await userSignupPage.signupSocialFirstWithEmail( testUser.email );
 			} );
 
+			it( `Pick the 50 GB storage add-on for the ${ planName } plan`, async function () {
+				plansPage = new PlansPage( page );
+				await plansPage.selectAddOn( planName, '50 GB' );
+			} );
+
 			it( `Pick the ${ planName } plan`, async function () {
 				plansPage = new PlansPage( page );
 
 				await plansPage.selectPlan( planName );
 			} );
 
-			it( 'See plan at checkout', async function () {
+			it( 'See plan and storage add-on at checkout', async function () {
 				cartCheckoutPage = new CartCheckoutPage( page );
 
 				await cartCheckoutPage.validateCartItem( `WordPress.com ${ planName }` );
+				await cartCheckoutPage.validateCartItem( 'Storage Add-On' );
 			} );
 
 			it( 'Enter billing and payment details', async function () {
@@ -99,6 +106,36 @@ describe(
 
 				const url = new URL( page.url() );
 				siteSlug = url.pathname.split( '/' ).at( -1 )!;
+			} );
+		} );
+
+		describe( 'Cancel and remove storage add-on', function () {
+			let noticeComponent: NoticeComponent;
+			let purchasesPage: PurchasesPage;
+
+			it( 'Navigate to Me > Purchases', async function () {
+				const mePage = new MyProfilePage( page );
+				await mePage.visit();
+
+				const meSidebarComponent = new MeSidebarComponent( page );
+				await meSidebarComponent.openMobileMenu();
+				await meSidebarComponent.navigate( 'Purchases' );
+			} );
+
+			it( 'View details of purchased add-on', async function () {
+				purchasesPage = new PurchasesPage( page );
+
+				await purchasesPage.clickOnPurchase( 'Storage Add-On Space Upgrade 50 GB', siteSlug );
+				await purchasesPage.purchaseAction( 'Cancel subscription' );
+			} );
+
+			it( 'Cancel add-on renewal', async function () {
+				await cancelSubscriptionFlow( page );
+
+				noticeComponent = new NoticeComponent( page );
+				await noticeComponent.noticeShown( 'You successfully canceled your purchase', {
+					timeout: 30 * 1000,
+				} );
 			} );
 		} );
 

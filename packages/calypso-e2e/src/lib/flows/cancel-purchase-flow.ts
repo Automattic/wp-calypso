@@ -3,6 +3,13 @@ import { Page } from 'playwright';
 type CancelReason = 'Another reason…';
 
 /**
+ * Cancels a purchased subscription.
+ */
+export async function cancelSubscriptionFlow( page: Page ) {
+	await page.getByRole( 'button', { name: 'Submit and cancel product' } ).click();
+}
+
+/**
  * Cancels a purchased plan.
  */
 export async function cancelPurchaseFlow(
