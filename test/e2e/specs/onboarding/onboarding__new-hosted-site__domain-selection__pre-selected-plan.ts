@@ -55,8 +55,8 @@ describe(
 
 		it( 'Select a domain name', async function () {
 			domainSearchComponent = new DomainSearchComponent( page );
-			await domainSearchComponent.search( blogName + '.io' );
-			selectedDomain = await domainSearchComponent.selectDomain( '.io' );
+			await domainSearchComponent.search( blogName + '.live' );
+			selectedDomain = await domainSearchComponent.selectDomain( '.live', false );
 		} );
 
 		it( 'See domain and plan at checkout', async function () {

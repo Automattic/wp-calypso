@@ -17,7 +17,7 @@ import { apiCloseAccount } from '../shared';
 declare const browser: Browser;
 
 describe(
-	DataHelper.createSuiteTitle( 'New Hosted Site Flow: With domain and storage add-on selection' ),
+	DataHelper.createSuiteTitle( 'New Hosted Site Flow: With domain selection' ),
 	function () {
 		const planName = 'Business';
 		const blogName = DataHelper.getBlogName();
@@ -49,8 +49,8 @@ describe(
 
 		it( 'Select a domain name', async function () {
 			domainSearchComponent = new DomainSearchComponent( page );
-			await domainSearchComponent.search( blogName + '.io' );
-			selectedDomain = await domainSearchComponent.selectDomain( '.io' );
+			await domainSearchComponent.search( blogName + '.live' );
+			selectedDomain = await domainSearchComponent.selectDomain( '.live', false );
 		} );
 
 		it( `Pick the ${ planName } plan`, async function () {
