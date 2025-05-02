@@ -1,6 +1,5 @@
 import page from '@automattic/calypso-router';
-import { Button, FoldableCard, Gridicon } from '@automattic/components';
-import CoreBadge from '@automattic/components/src/core-badge';
+import { Button, FoldableCard, Gridicon, CoreBadge } from '@automattic/components';
 import { formatNumber } from '@automattic/number-formatters';
 import { __experimentalHStack as HStack } from '@wordpress/components';
 import { Icon, external } from '@wordpress/icons';

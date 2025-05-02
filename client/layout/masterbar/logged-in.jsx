@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
 import { isEcommercePlan } from '@automattic/calypso-products/src';
 import page from '@automattic/calypso-router';
-import CoreBadge from '@automattic/components/src/core-badge';
+import { CoreBadge } from '@automattic/components';
 import { isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
 import { Button } from '@wordpress/components';
 import clsx from 'clsx';

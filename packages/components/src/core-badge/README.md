@@ -5,7 +5,7 @@ A wrapper component around WordPress's private [`Badge` component](https://wordp
 ## Usage
 
 ```jsx
-import CoreBadge from '@automattic/components/src/core-badge';
+import { CoreBadge } from '@automattic/components';
 
 function MyComponent() {
 	return <CoreBadge>Badge Content</CoreBadge>;

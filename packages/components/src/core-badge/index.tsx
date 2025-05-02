@@ -16,7 +16,7 @@ const { Badge } = unlock( privateApis );
  * from `@wordpress/components`.
  *
  * ```jsx
- * import CoreBadge from '@automattic/components/src/core-badge';
+ * import { CoreBadge } from '@automattic/components';
  *
  * function MyComponent() {
  * 	return <CoreBadge>Badge Content</CoreBadge>;
