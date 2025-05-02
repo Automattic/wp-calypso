@@ -8,11 +8,18 @@ import clsx from 'clsx';
  */
 import { __ } from '@wordpress/i18n';
 import { Spinner } from '@wordpress/components';
-import { useEffect, useId, useRef, useState } from '@wordpress/element';
+import {
+	useContext,
+	useEffect,
+	useId,
+	useRef,
+	useState,
+} from '@wordpress/element';
 
 /**
  * Internal dependencies
  */
+import DataViewsContext from '../../components/dataviews-context';
 import DataViewsSelectionCheckbox from '../../components/dataviews-selection-checkbox';
 import ItemActions from '../../components/dataviews-item-actions';
 import { sortValues } from '../../constants';
@@ -227,6 +234,7 @@ function ViewTable< Item >( {
 	isItemClickable,
 	view,
 }: ViewTableProps< Item > ) {
+	const { containerRef } = useContext( DataViewsContext );
 	const headerMenuRefs = useRef<
 		Map< string, { node: HTMLButtonElement; fallback: string } >
 	>( new Map() );
@@ -288,7 +296,7 @@ function ViewTable< Item >( {
 		};
 
 	const isScrolledEnd = useIsScrolledEnd( {
-		selector: '.dataviews-wrapper',
+		scrollContainerRef: containerRef,
 		enabled: !! actions?.length && !! view.layout?.shouldPinActions,
 	} );
 

@@ -15,15 +15,13 @@ const isScrolledToEnd = ( element: Element ) => {
 };
 
 export function useIsScrolledEnd( {
-	selector,
+	scrollContainerRef,
 	enabled = false,
 }: {
-	selector: string;
+	scrollContainerRef: React.MutableRefObject< HTMLDivElement | null >;
 	enabled?: boolean;
 } ): boolean {
 	const [ isScrolledEnd, setIsScrolledEnd ] = useState( false );
-
-	const scrollContainerRef = useRef< Element | null >();
 
 	const handleIsScrolledEnd = useDebounce(
 		useCallback( () => {
@@ -36,29 +34,29 @@ export function useIsScrolledEnd( {
 	);
 
 	useEffect( () => {
-		if ( typeof window === 'undefined' || ! enabled ) {
+		if (
+			typeof window === 'undefined' ||
+			! enabled ||
+			! scrollContainerRef.current
+		) {
 			return () => {};
 		}
 
-		const scrollContainer = document.querySelector( selector );
-		scrollContainerRef.current = scrollContainer;
-
 		handleIsScrolledEnd();
-		if ( scrollContainer ) {
-			scrollContainer.addEventListener( 'scroll', handleIsScrolledEnd );
-			window.addEventListener( 'resize', handleIsScrolledEnd );
-		}
+		scrollContainerRef.current.addEventListener(
+			'scroll',
+			handleIsScrolledEnd
+		);
+		window.addEventListener( 'resize', handleIsScrolledEnd );
 
 		return () => {
-			if ( scrollContainer ) {
-				scrollContainer.removeEventListener(
-					'scroll',
-					handleIsScrolledEnd
-				);
-				window.removeEventListener( 'resize', handleIsScrolledEnd );
-			}
+			scrollContainerRef.current?.removeEventListener(
+				'scroll',
+				handleIsScrolledEnd
+			);
+			window.removeEventListener( 'resize', handleIsScrolledEnd );
 		};
-	}, [ selector, enabled ] );
+	}, [ scrollContainerRef, enabled ] );
 
 	return isScrolledEnd;
 }
