@@ -1,8 +1,9 @@
 import { WordPressLogo } from '@automattic/components';
+import { formatCurrency } from '@automattic/number-formatters';
 import styled from '@emotion/styled';
 import { Button } from '@wordpress/components';
 import { useCopyToClipboard } from '@wordpress/compose';
-import { formatCurrency, useTranslate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { QRCodeSVG } from 'qrcode.react';
 import { useState } from 'react';
 import AkismetLogo from 'calypso/components/akismet-logo';

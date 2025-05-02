@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { Button as CoreButton } from '@wordpress/components';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
@@ -16,6 +17,7 @@ import JetpackColophon from 'calypso/components/jetpack-colophon';
 import NavigationHeader from 'calypso/components/navigation-header';
 import WebPreview from 'calypso/components/web-preview';
 import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
+import PageHeader from 'calypso/my-sites/stats/components/headers/page-header';
 import Main from 'calypso/my-sites/stats/components/stats-main';
 import { getSitePost, getPostPreviewUrl } from 'calypso/state/posts/selectors';
 import { countPostLikes } from 'calypso/state/posts/selectors/count-post-likes';
@@ -190,6 +192,19 @@ class StatsPostDetail extends Component {
 			'is-odyssey-stats': isWPAdmin,
 		} );
 
+		// TODO: Refactor navigationItems to a single object with backLink and title attributes.
+		const navigationItems = this.getNavigationItemsWithTitle( this.getTitle() );
+
+		const backLinkProps = {
+			text: navigationItems[ 0 ].label,
+			url: navigationItems[ 0 ].href,
+		};
+		const titleProps = {
+			title: navigationItems[ 1 ].label,
+			// Remove the default logo for Odyssey stats.
+			titleLogo: null,
+		};
+
 		return (
 			<Main fullWidthLayout>
 				<PageViewTracker
@@ -200,13 +215,27 @@ class StatsPostDetail extends Component {
 				{ siteId && <QueryPostStats siteId={ siteId } postId={ postId } /> }
 
 				<div className={ postDetailPageClasses }>
-					<NavigationHeader navigationItems={ this.getNavigationItemsWithTitle( this.getTitle() ) }>
-						{ showViewLink && (
-							<Button onClick={ this.openPreview }>
-								<span>{ actionLabel }</span>
-							</Button>
-						) }
-					</NavigationHeader>
+					{ config.isEnabled( 'stats/navigation-improvement' ) ? (
+						<PageHeader
+							backLinkProps={ backLinkProps }
+							titleProps={ titleProps }
+							rightSection={
+								showViewLink && (
+									<CoreButton onClick={ this.openPreview } variant="primary">
+										<span>{ actionLabel }</span>
+									</CoreButton>
+								)
+							}
+						/>
+					) : (
+						<NavigationHeader navigationItems={ navigationItems }>
+							{ showViewLink && (
+								<Button onClick={ this.openPreview }>
+									<span>{ actionLabel }</span>
+								</Button>
+							) }
+						</NavigationHeader>
+					) }
 
 					<PostDetailHighlightsSection siteId={ siteId } postId={ postId } post={ passedPost } />
 

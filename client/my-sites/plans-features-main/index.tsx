@@ -80,6 +80,7 @@ import useGenerateActionHook from './hooks/use-generate-action-hook';
 import usePlanFromUpsells from './hooks/use-plan-from-upsells';
 import usePlanIntentFromSiteMeta from './hooks/use-plan-intent-from-site-meta';
 import useSelectedFeature from './hooks/use-selected-feature';
+import { useStreamlinedPriceExperiment } from './hooks/use-streamlined-price-experiment';
 import useGetFreeSubdomainSuggestion from './hooks/use-suggested-free-domain-from-paid-domain';
 import type {
 	PlansIntent,
@@ -465,10 +466,17 @@ const PlansFeaturesMain = ( {
 		( { planSlug } ) => planSlug === PLAN_FREE
 	);
 
+	const [ isStreamlinedPriceExperimentLoading, streamlinedPriceExperimentAssignment ] =
+		useStreamlinedPriceExperiment();
+
 	let hidePlanSelector = false;
 	// In the "purchase a plan and free domain" flow we do not want to show
 	// monthly plans because monthly plans do not come with a free domain.
-	if ( redirectToAddDomainFlow !== undefined || hidePlanTypeSelector ) {
+	if (
+		redirectToAddDomainFlow !== undefined ||
+		hidePlanTypeSelector ||
+		( isInSignup && ! isStreamlinedPriceExperimentLoading && streamlinedPriceExperimentAssignment )
+	) {
 		hidePlanSelector = true;
 	}
 

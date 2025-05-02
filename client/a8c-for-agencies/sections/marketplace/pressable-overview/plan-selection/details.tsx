@@ -1,6 +1,7 @@
 import { Button, Tooltip } from '@automattic/components';
+import { formatCurrency, formatNumber, formatNumberCompact } from '@automattic/number-formatters';
 import { Icon, external } from '@wordpress/icons';
-import { useTranslate, numberFormat, numberFormatCompact, formatCurrency } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { useCallback, useRef, useState } from 'react';
 import { CONTACT_URL_HASH_FRAGMENT_WITH_PRODUCT } from 'calypso/a8c-for-agencies/components/a4a-contact-support-widget';
 import SimpleList from 'calypso/a8c-for-agencies/components/simple-list';
@@ -118,7 +119,7 @@ export default function PlanSelectionDetails( {
 										'{{b}}%(installsCount)s{{/b}} WordPress installs',
 										{
 											args: {
-												installsCount: numberFormat( info.install ),
+												installsCount: formatNumber( info.install ),
 											},
 											count: info.install,
 											components: { b: <b /> },
@@ -128,7 +129,7 @@ export default function PlanSelectionDetails( {
 								: translate( 'Custom WordPress installs' ),
 							translate( '{{b}}%(count)s{{/b}} visits per month*', {
 								args: {
-									count: info ? numberFormatCompact( info.visits ) : customString,
+									count: info ? formatNumberCompact( info.visits ) : customString,
 								},
 								components: { b: <b /> },
 								comment: '%(count)s is the number of visits per month.',
@@ -224,7 +225,6 @@ export default function PlanSelectionDetails( {
 					</>
 				) }
 			</div>
-
 			<div className="pressable-overview-plan-selection__details-card is-aside">
 				<h3 className="pressable-overview-plan-selection__details-card-header-title">
 					{ translate( 'Schedule a demo and personal consultation' ) }
@@ -252,7 +252,6 @@ export default function PlanSelectionDetails( {
 					{ translate( 'Schedule a Demo' ) } <Icon icon={ external } size={ 18 } />
 				</Button>
 			</div>
-
 			<div className="pressable-overview-plan-selection__details-hint">
 				{ translate(
 					"*If you exceed your plan's storage or traffic limits, you will be charged {{b}}%(storageCharge)s{{/b}} per GB and {{b}}%(trafficCharge)s{{/b}} per %(visits)s visits per month.",
@@ -264,7 +263,7 @@ export default function PlanSelectionDetails( {
 							trafficCharge: formatCurrency( 8, 'USD', {
 								stripZeros: true,
 							} ),
-							visits: numberFormatCompact( 10000 ),
+							visits: formatNumberCompact( 10000 ),
 						},
 						components: {
 							b: <b />,

@@ -1,6 +1,7 @@
 import { isMultiYearDomainProduct } from '@automattic/calypso-products';
+import { formatCurrency } from '@automattic/number-formatters';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
-import { formatCurrency, useTranslate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
 import { preventWidows } from 'calypso/lib/formatting';
 import {

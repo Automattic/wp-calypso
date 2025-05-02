@@ -12,8 +12,9 @@ import {
 import page from '@automattic/calypso-router';
 import { Button, Card } from '@automattic/components';
 import { Plans, type SiteDetails, SitePlan } from '@automattic/data-stores';
+import { formatCurrency } from '@automattic/number-formatters';
 import clsx from 'clsx';
-import { formatCurrency, useTranslate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import useCheckPlanAvailabilityForPurchase from 'calypso/my-sites/plans-features-main/hooks/use-check-plan-availability-for-purchase';

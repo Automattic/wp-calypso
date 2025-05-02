@@ -124,7 +124,6 @@
 		"ssr/prefetch-timebox": true,
 		"stats/chart-library": true,
 		"stats/empty-module-traffic": true,
-		"stats/empty-module-v2": true,
 		"stats/paid-wpcom-v2": true,
 		"stats/real-time-tab": false,
 		"stats/navigation-improvement": false,

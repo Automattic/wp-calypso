@@ -29,7 +29,6 @@ type Props = {
  * Renders the subscribers management page.
  * Handles both the subscribers list view and individual subscriber details view.
  * The view is determined by the presence of a valid subscriberId in the URL.
- *
  * @param {Props} props - Component properties
  * @param {string} [props.subscriberId] - Optional subscriber ID from URL parameters
  */

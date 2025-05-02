@@ -1,6 +1,6 @@
+import { formatCurrency } from '@automattic/number-formatters';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { formatCurrency } from 'i18n-calypso';
 import { isDomainBundledWithPlan, isNextDomainFree } from 'calypso/lib/cart-values/cart-items';
 import { getDomainProductSlug, getDomainTransferSalePrice } from 'calypso/lib/domains';
 import { domainAvailability } from 'calypso/lib/domains/constants';

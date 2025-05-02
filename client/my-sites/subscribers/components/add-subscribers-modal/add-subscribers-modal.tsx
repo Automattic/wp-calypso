@@ -13,6 +13,7 @@ import { useTranslate } from 'i18n-calypso';
 import { LoadingBar } from 'calypso/components/loading-bar';
 import Notice from 'calypso/components/notice';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import { useCompleteImportSubscribersTask } from 'calypso/my-sites/subscribers/hooks/use-complete-import-subscribers-task';
 import { isBusinessTrialSite } from 'calypso/sites-dashboard/utils';
 import { useSelector } from 'calypso/state';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
@@ -41,6 +42,7 @@ const AddSubscribersModal = ( {
 		siteHasFeature( state, site?.ID, FEATURE_UNLIMITED_SUBSCRIBERS )
 	);
 	const isJetpack = useSelector( ( state: AppState ) => isJetpackSite( state, site?.ID ) );
+	const completeImportSubscribersTask = useCompleteImportSubscribersTask();
 	// There is also a separate `importers/substack` flag but that refers to a separate Substack content importer.
 	// This flag refers to Substack free/paid subscriber + content importer.
 	const isSubstackSubscriberImporterEnabled = isEnabled( 'importers/newsletter' );
@@ -56,7 +58,12 @@ const AddSubscribersModal = ( {
 	} );
 
 	const [ isUploading, setIsUploading ] = useState( false );
-	const onImportStarted = ( hasFile: boolean ) => setIsUploading( hasFile );
+	const onImportStarted = ( hasFile: boolean ) => {
+		// Mark this task complete on starting the import, as relying on completion is unreliable
+		// since we prompt users to navigate elsewhere while it completes.
+		completeImportSubscribersTask();
+		setIsUploading( hasFile );
+	};
 
 	const isImportInProgress = useInProgressState();
 	const hasStaleImportJobs = useHasStaleImportJobs();

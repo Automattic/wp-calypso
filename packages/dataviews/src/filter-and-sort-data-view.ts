@@ -121,7 +121,10 @@ export function filterSortAndPaginate< Item >(
 					} );
 				} else if ( filter.operator === OPERATOR_IS ) {
 					filteredData = filteredData.filter( ( item ) => {
-						return filter.value === field.getValue( { item } );
+						return (
+							filter.value === field.getValue( { item } ) ||
+							filter.value === undefined
+						);
 					} );
 				} else if ( filter.operator === OPERATOR_IS_NOT ) {
 					filteredData = filteredData.filter( ( item ) => {

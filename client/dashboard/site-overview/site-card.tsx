@@ -111,6 +111,10 @@ function PlanDetails( {
 	currentPlan: Plan;
 	primaryDomain?: SiteDomain;
 } ) {
+	if ( ! site.plan || ! currentPlan ) {
+		return null;
+	}
+
 	const {
 		plan: { product_name_short, is_free: isFree },
 	} = site;

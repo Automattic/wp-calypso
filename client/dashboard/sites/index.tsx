@@ -1,8 +1,8 @@
+import { DataViews, filterSortAndPaginate } from '@automattic/dataviews';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { Button, ExternalLink } from '@wordpress/components';
 import { useResizeObserver } from '@wordpress/compose';
-import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { Icon, check } from '@wordpress/icons';
 import { useState, useMemo } from 'react';
@@ -14,7 +14,7 @@ import SitePreview from '../site-preview';
 import { isA8CSite } from '../utils/site-owner';
 import { STATUS_LABELS, getSiteStatus, getSiteStatusLabel } from '../utils/site-status';
 import type { Site } from '../data/types';
-import type { View, Operator } from '@wordpress/dataviews';
+import type { View, Operator } from '@automattic/dataviews';
 
 const actions = [
 	{
@@ -59,14 +59,17 @@ const DEFAULT_FIELDS = [
 	{
 		id: 'backups',
 		label: __( 'Backups' ),
-		getValue: ( { item }: { item: Site } ) =>
-			item.plan.features.active.includes( 'backups' ) || undefined,
+		getValue: ( { item }: { item: Site } ) => !! item.plan?.features?.active?.includes( 'backups' ),
 		elements: [
 			{ value: true, label: __( 'Enabled' ) },
-			{ value: undefined, label: __( 'Disabled' ) },
+			{ value: false, label: __( 'Disabled' ) },
 		],
 		render: ( { item }: { item: Site } ) =>
-			item.plan.features.active.includes( 'backups' ) ? <Icon icon={ check } /> : __( 'Disabled' ),
+			item.plan?.features?.active?.includes( 'backups' ) ? (
+				<Icon icon={ check } />
+			) : (
+				__( 'Disabled' )
+			),
 		filterBy: {
 			operators: [ 'is' as Operator ],
 		},
@@ -74,13 +77,12 @@ const DEFAULT_FIELDS = [
 	{
 		id: 'protect',
 		label: __( 'Protect' ),
-		getValue: ( { item }: { item: Site } ) =>
-			item.active_modules?.includes( 'protect' ) || undefined,
+		getValue: ( { item }: { item: Site } ) => !! item.active_modules?.includes( 'protect' ),
 		render: ( { item }: { item: Site } ) =>
 			item.active_modules?.includes( 'protect' ) ? <Icon icon={ check } /> : __( 'Disabled' ),
 		elements: [
 			{ value: true, label: __( 'Enabled' ) },
-			{ value: undefined, label: __( 'Disabled' ) },
+			{ value: false, label: __( 'Disabled' ) },
 		],
 		filterBy: {
 			operators: [ 'is' as Operator ],
@@ -96,10 +98,10 @@ const DEFAULT_FIELDS = [
 	{
 		id: 'a8c_owned',
 		label: __( 'A8C Owned' ),
-		getValue: ( { item }: { item: Site } ) => isA8CSite( item ) || undefined,
+		getValue: ( { item }: { item: Site } ) => isA8CSite( item ),
 		elements: [
 			{ value: true, label: __( 'Yes' ) },
-			{ value: undefined, label: __( 'No' ) },
+			{ value: false, label: __( 'No' ) },
 		],
 		filterBy: {
 			operators: [ 'is' as Operator ],
@@ -175,7 +177,7 @@ export default function Sites() {
 						{
 							field: 'a8c_owned',
 							operator: 'is',
-							value: undefined,
+							value: false,
 						},
 					],
 			  }

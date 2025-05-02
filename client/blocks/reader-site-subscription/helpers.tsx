@@ -1,5 +1,5 @@
 import { Reader } from '@automattic/data-stores';
-import { getCurrencyObject } from 'i18n-calypso';
+import { getCurrencyObject } from '@automattic/number-formatters';
 import moment from 'moment';
 import {
 	PLAN_YEARLY_FREQUENCY,

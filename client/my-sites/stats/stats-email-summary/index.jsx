@@ -1,4 +1,5 @@
-import { localize, numberFormat } from 'i18n-calypso';
+import { formatNumber } from '@automattic/number-formatters';
+import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
@@ -49,7 +50,6 @@ const StatsEmailSummary = ( { translate, period, siteSlug } ) => {
 				title={ `Stats > ${ titlecase( module ) }` }
 			/>
 			<NavigationHeader className="stats-summary-view" navigationItems={ navigationItems } />
-
 			<div id="my-stats-content" className="stats-summary-view stats-summary__positioned">
 				<div className="stats-summary-nav">
 					<div className="stats-summary-nav__header">
@@ -76,7 +76,7 @@ const StatsEmailSummary = ( { translate, period, siteSlug } ) => {
 								<TooltipWrapper
 									value={
 										hasUniquesData
-											? `${ numberFormat( item.opens_rate, {
+											? `${ formatNumber( item.opens_rate, {
 													numberFormatOptions: {
 														maximumFractionDigits: 2,
 													},
@@ -107,7 +107,7 @@ const StatsEmailSummary = ( { translate, period, siteSlug } ) => {
 								<TooltipWrapper
 									value={
 										hasUniquesData
-											? `${ numberFormat( item.clicks_rate, {
+											? `${ formatNumber( item.clicks_rate, {
 													numberFormatOptions: {
 														maximumFractionDigits: 2,
 													},

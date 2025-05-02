@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { eye } from '@automattic/components/src/icons';
-import { Icon, people, starEmpty, commentContent } from '@wordpress/icons';
+import { Icon, people, starEmpty, commentContent, settings } from '@wordpress/icons';
 import clsx from 'clsx';
 import { localize, translate } from 'i18n-calypso';
 import { find } from 'lodash';
@@ -11,8 +11,11 @@ import { useSelector, useDispatch } from 'react-redux';
 import titlecase from 'to-title-case';
 import illustration404 from 'calypso/assets/images/illustrations/illustration-404.svg';
 import JetpackBackupCredsBanner from 'calypso/blocks/jetpack-backup-creds-banner';
-import StatsNavigation, { getAvailablePageModules } from 'calypso/blocks/stats-navigation';
+import StatsNavigation from 'calypso/blocks/stats-navigation';
 import { AVAILABLE_PAGE_MODULES, navItems } from 'calypso/blocks/stats-navigation/constants';
+import PageModuleToggler, {
+	getAvailablePageModules,
+} from 'calypso/blocks/stats-navigation/page-module-toggler';
 import AsyncLoad from 'calypso/components/async-load';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
@@ -25,6 +28,7 @@ import JetpackColophon from 'calypso/components/jetpack-colophon';
 import NavigationHeader from 'calypso/components/navigation-header';
 import StickyPanel from 'calypso/components/sticky-panel';
 import memoizeLast from 'calypso/lib/memoize-last';
+import version_compare from 'calypso/lib/version-compare';
 import Main from 'calypso/my-sites/stats/components/stats-main';
 import {
 	DATE_FORMAT,
@@ -34,6 +38,8 @@ import {
 	STATS_PRODUCT_NAME,
 } from 'calypso/my-sites/stats/constants';
 import { getMomentSiteZone } from 'calypso/my-sites/stats/hooks/use-moment-site-zone';
+import useNoticeVisibilityMutation from 'calypso/my-sites/stats/hooks/use-notice-visibility-mutation';
+import { useNoticeVisibilityQuery } from 'calypso/my-sites/stats/hooks/use-notice-visibility-query';
 import { getChartRangeParams } from 'calypso/my-sites/stats/utils';
 import {
 	recordGoogleEvent,
@@ -48,7 +54,7 @@ import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-act
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import isAtomicSite from 'calypso/state/selectors/is-site-wpcom-atomic';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { isJetpackSite, getJetpackStatsAdminVersion } from 'calypso/state/sites/selectors';
 import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
 import { getModuleToggles } from 'calypso/state/stats/module-toggles/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -188,6 +194,9 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 	const moduleToggles = useSelector( ( state ) => getModuleToggles( state, siteId, 'traffic' ) );
 	const momentSiteZone = useSelector( ( state ) => getMomentSiteZone( state, siteId ) );
 	const hasVideoPress = useSelector( ( state ) => siteHasFeature( state, siteId, 'videopress' ) );
+	const [ isPageSettingsTooltipDismissed, setIsPageSettingsTooltipDismissed ] = useState(
+		!! localStorage.getItem( 'notices_dismissed__traffic_page_settings' )
+	);
 
 	// Determine module visibility based on user settings, VideoPress availability, AND defaults.
 	const moduleVisibility = useMemo(
@@ -522,6 +531,37 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 	// TODO: Fix isOdysseyStats to include the environment running on WP-Admin of Simple sites.
 	const isRunningOnWPAdmin = document.getElementById( 'wpadminbar' );
 
+	const statsAdminVersion = useSelector( ( state ) =>
+		getJetpackStatsAdminVersion( state, siteId )
+	);
+
+	const { data: showSettingsTooltip, refetch: refetchNotices } = useNoticeVisibilityQuery(
+		siteId,
+		'traffic_page_settings'
+	);
+	const { mutateAsync: mutateNoticeVisbilityAsync } = useNoticeVisibilityMutation(
+		siteId,
+		'traffic_page_settings'
+	);
+
+	const onTooltipDismiss = () => {
+		if ( isPageSettingsTooltipDismissed || ! showSettingsTooltip ) {
+			return;
+		}
+
+		setIsPageSettingsTooltipDismissed( true );
+		localStorage.setItem( 'notices_dismissed__traffic_page_settings', 1 );
+		mutateNoticeVisbilityAsync().finally( refetchNotices );
+	};
+
+	// Module settings for Odyssey are not supported until stats-admin@0.9.0-alpha.
+	const isModuleSettingsSupported =
+		! config.isEnabled( 'is_running_in_jetpack_site' ) ||
+		!! ( statsAdminVersion && version_compare( statsAdminVersion, '0.9.0-alpha', '>=' ) );
+
+	const shouldRenderModuleToggler =
+		isModuleSettingsSupported && AVAILABLE_PAGE_MODULES.traffic && ! wpcomShowUpsell;
+
 	return (
 		<div className="stats">
 			{ ! isOdysseyStats && (
@@ -530,7 +570,20 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 				</div>
 			) }
 			{ isStatsNavigationImprovementEnabled ? (
-				<PageHeader />
+				<PageHeader
+					rightSection={
+						shouldRenderModuleToggler && (
+							<PageModuleToggler
+								selectedItem="traffic"
+								moduleToggles={ moduleToggles }
+								siteId={ siteId }
+								isTooltipShown={ showSettingsTooltip && ! isPageSettingsTooltipDismissed }
+								onTooltipDismiss={ onTooltipDismiss }
+								customToggleIcon={ <Icon className="gridicon" icon={ settings } /> }
+							/>
+						)
+					}
+				/>
 			) : (
 				<NavigationHeader
 					className="stats__section-header modernized-header"

@@ -1,6 +1,7 @@
 import { eye } from '@automattic/components/src/icons';
+import { formatNumber } from '@automattic/number-formatters';
 import { Icon, people, starEmpty, chevronRight, postContent } from '@wordpress/icons';
-import { numberFormat, translate } from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 import { capitalize } from 'lodash';
 import moment from 'moment';
 import memoizeLast from 'calypso/lib/memoize-last';
@@ -76,7 +77,7 @@ function addTooltipData( chartTab, item, period ) {
 		case 'opens_count':
 			tooltipData.push( {
 				label: translate( 'Opens' ),
-				value: numberFormat( item.value ),
+				value: formatNumber( item.value ),
 				className: 'is-opens',
 				icon: <Icon className="gridicon" icon={ starEmpty } />,
 			} );
@@ -84,7 +85,7 @@ function addTooltipData( chartTab, item, period ) {
 		case 'unique_opens_count':
 			tooltipData.push( {
 				label: translate( 'Unique opens' ),
-				value: numberFormat( item.value ),
+				value: formatNumber( item.value ),
 				className: 'is-unqiue-opens',
 				icon: <Icon className="gridicon" icon={ starEmpty } />,
 			} );
@@ -92,19 +93,19 @@ function addTooltipData( chartTab, item, period ) {
 		default:
 			tooltipData.push( {
 				label: translate( 'Views' ),
-				value: numberFormat( item.data.views ),
+				value: formatNumber( item.data.views ),
 				className: 'is-views',
 				icon: <Icon className="gridicon" icon={ eye } />,
 			} );
 			tooltipData.push( {
 				label: translate( 'Visitors' ),
-				value: numberFormat( item.data.visitors ),
+				value: formatNumber( item.data.visitors ),
 				className: 'is-visitors',
 				icon: <Icon className="gridicon" icon={ people } />,
 			} );
 			tooltipData.push( {
 				label: translate( 'Views Per Visitor' ),
-				value: numberFormat( item.data.views / item.data.visitors, { decimals: 2 } ),
+				value: formatNumber( item.data.views / item.data.visitors, { decimals: 2 } ),
 				className: 'is-views-per-visitor',
 				icon: <Icon className="gridicon" icon={ chevronRight } />,
 			} );
@@ -114,7 +115,7 @@ function addTooltipData( chartTab, item, period ) {
 				if ( item.data.post_titles.length > 2 ) {
 					tooltipData.push( {
 						label: translate( 'Posts Published' ),
-						value: numberFormat( item.data.post_titles.length ),
+						value: formatNumber( item.data.post_titles.length ),
 						className: 'is-published-nolist',
 						icon: <Icon className="gridicon" icon={ postContent } />,
 					} );

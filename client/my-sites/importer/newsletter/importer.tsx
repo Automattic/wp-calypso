@@ -12,6 +12,7 @@ import {
 import { useResetMutation } from 'calypso/data/paid-newsletter/use-reset-mutation';
 import { useSkipNextStepMutation } from 'calypso/data/paid-newsletter/use-skip-next-step-mutation';
 import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
+import { useCompleteImportSubscribersTask } from 'calypso/my-sites/subscribers/hooks/use-complete-import-subscribers-task';
 import { useSelector } from 'calypso/state';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import Content from './content';
@@ -63,10 +64,10 @@ export default function NewsletterImporter( {
 }: NewsletterImporterProps ) {
 	const fromSite = getQueryArg( window.location.href, 'from' ) as string;
 	const selectedSite = useSelector( getSelectedSite ) ?? undefined;
-
 	const [ validFromSite, setValidFromSite ] = useState( false );
 	const [ autoFetchData, setAutoFetchData ] = useState( false );
 	const [ shouldResetImport, setShouldResetImport ] = useState( step === 'reset' );
+	const completeImportSubscribersTask = useCompleteImportSubscribersTask();
 	const previousFromSite = useRef( fromSite );
 
 	// Reset validFromSite when fromSite changes or is removed
@@ -104,6 +105,16 @@ export default function NewsletterImporter( {
 		setAutoFetchData,
 		paidNewsletterData?.steps,
 	] );
+
+	useEffect( () => {
+		// Mark the task complete once importing starts. Since we prompt users to leave the page while
+		// importing is happening, it may not be called if we wait until completion.
+		if ( paidNewsletterData?.steps?.subscribers?.status === 'importing' ) {
+			// We do this here instead of in the Subscribers component because steps skip over the
+			// component when not importing paid subscribers.
+			completeImportSubscribersTask();
+		}
+	}, [ paidNewsletterData?.steps?.subscribers?.status, completeImportSubscribersTask ] );
 
 	const { currentStepNumber, nextStepSlug } = stepSlugs.reduce(
 		function ( result, curr, index ) {
