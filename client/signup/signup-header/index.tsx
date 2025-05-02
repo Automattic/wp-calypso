@@ -1,7 +1,6 @@
-import { ProgressBar } from '@automattic/components';
+import { ProgressBar, WordPressLogo } from '@automattic/components';
 import { useFlowProgress } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
-import WordPressLogo from 'calypso/components/wordpress-logo';
 import './style.scss';
 
 interface ProgressBarData {

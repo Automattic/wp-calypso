@@ -5,7 +5,7 @@ import {
 	WPCOM_FEATURES_MANAGE_PLUGINS,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
-import { Button } from '@automattic/components';
+import { Button, WordPressLogo } from '@automattic/components';
 import { css, Global, ThemeProvider } from '@emotion/react';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState, useMemo, useRef } from 'react';
@@ -14,7 +14,6 @@ import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import { useQueryTheme } from 'calypso/components/data/query-theme';
 import EmptyContent from 'calypso/components/empty-content';
-import WordPressLogo from 'calypso/components/wordpress-logo';
 import { useWPCOMPlugin } from 'calypso/data/marketplace/use-wpcom-plugins-query';
 import Masterbar from 'calypso/layout/masterbar/masterbar';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';

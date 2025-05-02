@@ -1,10 +1,10 @@
+import { WordPressLogo } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { chevronLeft } from '@wordpress/icons';
 import { MouseEventHandler, PropsWithChildren, ReactNode, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import { useDispatch } from 'react-redux';
-import WordPressLogo from 'calypso/components/wordpress-logo';
 import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 
 import './style.scss';
