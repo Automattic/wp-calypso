@@ -11,7 +11,13 @@ import removeAccents from 'remove-accents';
 import { useInstanceId } from '@wordpress/compose';
 import { __, sprintf } from '@wordpress/i18n';
 import { useState, useMemo, useDeferredValue } from '@wordpress/element';
-import { VisuallyHidden, Icon, Composite } from '@wordpress/components';
+import {
+	VisuallyHidden,
+	Icon,
+	Composite,
+	RadioControl,
+	CheckboxControl,
+} from '@wordpress/components';
 import { search, check } from '@wordpress/icons';
 import { SVG, Circle } from '@wordpress/primitives';
 
@@ -25,6 +31,8 @@ interface SearchWidgetProps {
 	filter: NormalizedFilter;
 	onChangeView: ( view: View ) => void;
 }
+
+const noop = () => {};
 
 const radioCheck = (
 	<SVG xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
@@ -189,17 +197,27 @@ function ListBox( { view, filter, onChangeView }: SearchWidgetProps ) {
 						/>
 					}
 				>
-					<span className="dataviews-filters__search-widget-listitem-check">
-						{ filter.singleSelection &&
-							currentValue === element.value && (
-								<Icon icon={ radioCheck } />
-							) }
-						{ ! filter.singleSelection &&
-							currentValue.includes( element.value ) && (
-								<Icon icon={ check } />
-							) }
-					</span>
-					<span>{ element.label }</span>
+					{ filter.singleSelection && (
+						<RadioControl
+							hideLabelFromVision
+							options={ [
+								{
+									label: element.label,
+									value: element.value,
+								},
+							] }
+							selected={ currentValue }
+							onChange={ noop }
+						/>
+					) }
+					{ ! filter.singleSelection && (
+						<CheckboxControl
+							__nextHasNoMarginBottom
+							label={ element.label }
+							checked={ currentValue.includes( element.value ) }
+							onChange={ noop }
+						/>
+					) }
 				</Composite.Hover>
 			) ) }
 		</Composite>
@@ -288,16 +306,28 @@ function ComboboxList( { view, filter, onChangeView }: SearchWidgetProps ) {
 							setValueOnClick={ false }
 							focusOnHover
 						>
-							<span className="dataviews-filters__search-widget-listitem-check">
-								{ filter.singleSelection &&
-									currentValue === element.value && (
-										<Icon icon={ radioCheck } />
+							{ filter.singleSelection && (
+								<RadioControl
+									hideLabelFromVision
+									options={ [
+										{
+											label: element.label,
+											value: element.value,
+										},
+									] }
+									selected={ currentValue }
+									onChange={ noop }
+								/>
+							) }
+							{ ! filter.singleSelection && (
+								<CheckboxControl
+									__nextHasNoMarginBottom
+									checked={ currentValue.includes(
+										element.value
 									) }
-								{ ! filter.singleSelection &&
-									currentValue.includes( element.value ) && (
-										<Icon icon={ check } />
-									) }
-							</span>
+									onChange={ noop }
+								/>
+							) }
 							<span>
 								<Ariakit.ComboboxItemValue
 									className="dataviews-filters__search-widget-filter-combobox-item-value"
