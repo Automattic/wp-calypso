@@ -71,19 +71,29 @@ skipDescribeIf(
 					// Wait a bit for the page to fully load
 					await page.waitForLoadState( 'networkidle' );
 
-					// Only click 'Send code' if the button is visible
-					const sendCodeVisible = await appleLoginPage.hasButtonWithExactText( 'Send code' );
-					console.log( 'Send code button visible:', sendCodeVisible );
+					// Check for rate limit message
+					const rateLimitText = await page
+						.getByText( "Verification codes can't be sent to this phone number at this time" )
+						.isVisible();
 
+					if ( rateLimitText ) {
+						// TODO: Implement phone number rotation logic here
+						// For now, we'll mark the test as skipped with a meaningful message
+						// @ts-ignore - this is a valid Jest context property
+						this.skip();
+						return;
+					}
+
+					const sendCodeVisible = await appleLoginPage.hasButtonWithExactText( 'Send code' );
+
+					// Only click 'Send code' if the button is visible
 					if ( sendCodeVisible ) {
 						await appleLoginPage.clickButtonWithExactText( 'Send code' );
-						console.log( 'Clicked Send code button' );
 					}
 
 					// Wait a bit after clicking to ensure the SMS is sent
 					await page.waitForTimeout( 5000 );
 
-					console.log( 'Searching for message with timestamp:', timestamp );
 					const emailClient = new EmailClient();
 					const message = await emailClient.getLastMatchingMessage( {
 						inboxId: SecretsManager.secrets.mailosaur.totpUserInboxId,
