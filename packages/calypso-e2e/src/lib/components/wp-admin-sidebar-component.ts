@@ -1,11 +1,7 @@
 import { Page } from 'playwright';
-import { getCalypsoURL } from '../../data-helper';
 
 const selectors = {
 	sidebar: '#adminmenu',
-
-	// Buttons and links within Sidebar
-	linkWithText: ( text: string ) => `a:has-text("${ text }")`,
 };
 
 /**
@@ -48,39 +44,13 @@ export class WPAdminSidebarComponent {
 	async navigate( item: string, subitem?: string ): Promise< void > {
 		await this.waitForSidebarInitialization();
 
-		// Top level menu item selector.
-		const itemSelector = `${ selectors.sidebar } :text-is("${ item }"):visible`;
-		await this.page.dispatchEvent( itemSelector, 'click' );
-
-		// Sub-level menu item selector.
-		if ( subitem ) {
-			const subitemSelector = `.is-toggle-open :text-is("${ subitem }"):visible`;
-			await Promise.all( [
-				this.page.waitForNavigation( { timeout: 30 * 1000 } ),
-				this.page.dispatchEvent( subitemSelector, 'click' ),
-			] );
-		}
-
-		const currentURL = this.page.url();
-		// Do not verify selected menu items or retry if navigation takes user out of Calypso (eg. WP-Admin, Widgets editor)...
-		if ( ! currentURL.startsWith( getCalypsoURL() ) ) {
-			return;
-		}
-		// ... or to a page in Calypso that closes the sidebar.
-		if ( currentURL.match( /\/(post|page|site-editor)\// ) ) {
-			return;
-		}
-
-		// Some menu items (eg. Comments, Stats) do not have a submenu. In these cases,
-		// the `.selected` class is applied to the top level menu.
-		let selectedMenuItem = `${ selectors.sidebar } .selected :text-is("${ item }")`;
+		const menuItem = this.page.locator( selectors.sidebar ).getByRole( 'link', { name: item } );
 
 		if ( subitem ) {
-			selectedMenuItem = `${ selectors.sidebar } .selected :text-is("${ subitem }")`;
+			await menuItem.hover();
+			await this.page.locator( selectors.sidebar ).getByRole( 'link', { name: subitem } ).click();
+		} else {
+			await menuItem.click();
 		}
-
-		// Verify the expected item or subitem is selected.
-		const locator = this.page.locator( selectedMenuItem );
-		await locator.waitFor( { state: 'attached' } );
 	}
 }
