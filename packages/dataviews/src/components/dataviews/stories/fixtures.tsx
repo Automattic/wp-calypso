@@ -654,6 +654,9 @@ export const fields: Field< SpaceObject >[] = [
 			{ value: 'Terrestrial', label: 'Terrestrial' },
 			{ value: 'Gas giant', label: 'Gas giant' },
 		],
+		filterBy: {
+			operators: [ 'is', 'isNot' ],
+		},
 	},
 	{
 		label: 'Satellites',
