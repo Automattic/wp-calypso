@@ -187,7 +187,6 @@
 		"ssr/prefetch-timebox": false,
 		"stats/chart-library": true,
 		"stats/empty-module-traffic": true,
-		"stats/empty-module-v2": true,
 		"stats/locations": true,
 		"stats/paid-wpcom-v2": true,
 		"stats/paid-wpcom-v3": true,

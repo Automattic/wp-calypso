@@ -1,5 +1,4 @@
 import wpcom from 'calypso/lib/wp';
-import { getSiteSlug } from '../utils/site-slug';
 import type {
 	Domain,
 	Email,
@@ -12,6 +11,9 @@ import type {
 	TwoStep,
 	EngagementStatsDataPoint,
 	SiteDomain,
+	BasicMetricsData,
+	SiteSettings,
+	UrlPerformanceInsights,
 } from './types';
 
 export const fetchProfile = async (): Promise< Profile > => {
@@ -30,6 +32,7 @@ export const updateProfile = async ( data: Partial< Profile > ) => {
 
 const SITE_FIELDS = [
 	'ID',
+	'slug',
 	'URL',
 	'name',
 	'icon',
@@ -60,12 +63,11 @@ export const fetchSites = async (): Promise< Site[] > => {
 			fields: SITE_FIELDS,
 		}
 	);
-	return sites.map( ( site: Site ) => ( { ...site, slug: getSiteSlug( site ) } ) );
+	return sites;
 };
 
 export const fetchSite = async ( siteIdOrSlug: string ): Promise< Site > => {
-	const site = await wpcom.req.get( `/sites/${ siteIdOrSlug }`, { fields: SITE_FIELDS } );
-	return { ...site, slug: getSiteSlug( site ) };
+	return await wpcom.req.get( { path: `/sites/${ siteIdOrSlug }` }, { fields: SITE_FIELDS } );
 };
 
 export const fetchSiteMediaStorage = async ( siteIdOrSlug: string ): Promise< MediaStorage > => {
@@ -291,4 +293,35 @@ export const fetchUser = async (): Promise< User > => {
 
 export const fetchTwoStep = async (): Promise< TwoStep > => {
 	return wpcom.req.get( '/me/two-step' );
+};
+
+export const fetchSiteSettings = async ( id: string ): Promise< SiteSettings > => {
+	return wpcom.req.get( {
+		path: `/sites/${ id }/settings`,
+		apiVersion: '1.4',
+	} );
+};
+
+export const fetchBasicMetrics = async ( url: string ): Promise< BasicMetricsData > => {
+	return wpcom.req.get(
+		{
+			path: '/site-profiler/metrics/basic',
+			apiNamespace: 'wpcom/v2',
+		},
+		// Important: advance=1 is needed to get the `token` and request advanced metrics.
+		{ url, advance: '1' }
+	);
+};
+
+export const fetchPerformanceInsights = async (
+	url: string,
+	token: string
+): Promise< UrlPerformanceInsights > => {
+	return wpcom.req.get(
+		{
+			path: '/site-profiler/metrics/advanced/insights',
+			apiNamespace: 'wpcom/v2',
+		},
+		{ url, advance: '1', hash: token }
+	);
 };

@@ -34,8 +34,8 @@ import {
 	PLAN_TRIENNIAL_PERIOD,
 } from '@automattic/calypso-products';
 import { Plans } from '@automattic/data-stores';
+import { formatCurrency } from '@automattic/number-formatters';
 import { render } from '@testing-library/react';
-import { formatCurrency } from 'i18n-calypso';
 import React from 'react';
 import { usePlansGridContext } from '../../grid-context';
 import BillingTimeframe from '../shared/billing-timeframe';

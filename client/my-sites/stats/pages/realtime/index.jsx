@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo } from 'react';
@@ -8,6 +9,7 @@ import AsyncLoad from 'calypso/components/async-load';
 import DocumentHead from 'calypso/components/data/document-head';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import NavigationHeader from 'calypso/components/navigation-header';
+import PageHeader from 'calypso/my-sites/stats/components/headers/page-header';
 import Main from 'calypso/my-sites/stats/components/stats-main';
 import { STATS_PRODUCT_NAME } from 'calypso/my-sites/stats/constants';
 import StatsModuleCountries from 'calypso/my-sites/stats/features/modules/stats-countries';
@@ -45,6 +47,7 @@ function StatsRealtime() {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const moduleStrings = statsStrings();
+	const isStatsNavigationImprovementEnabled = config.isEnabled( 'stats/navigation-improvement' );
 
 	const halfWidthModuleClasses = clsx(
 		'stats__flexible-grid-item--half',
@@ -102,13 +105,17 @@ function StatsRealtime() {
 			<DocumentHead title={ STATS_PRODUCT_NAME } />
 			<PageViewTracker path="/stats/realtime/:site" title="Stats > Realtime" />
 			<div className="stats">
-				<NavigationHeader
-					className="stats__section-header modernized-header"
-					title={ STATS_PRODUCT_NAME }
-					subtitle={ translate( "[Experimental] View your site's traffic in real-time." ) }
-					screenReader={ navItems.realtime?.label }
-					navigationItems={ [] }
-				></NavigationHeader>
+				{ ! isStatsNavigationImprovementEnabled ? (
+					<NavigationHeader
+						className="stats__section-header modernized-header"
+						title={ STATS_PRODUCT_NAME }
+						subtitle={ translate( "[Experimental] View your site's traffic in real-time." ) }
+						screenReader={ navItems.realtime?.label }
+						navigationItems={ [] }
+					></NavigationHeader>
+				) : (
+					<PageHeader />
+				) }
 				<StatsNavigation selectedItem="realtime" siteId={ siteId } slug={ siteSlug } />
 				<StatsRealtimeHeader />
 				<AsyncLoad

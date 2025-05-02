@@ -22,6 +22,7 @@ export async function initializeWordPressPlayground(
 	const url = new URL( window.location.href );
 	let playgroundId: string | null = url.searchParams.get( 'playground' );
 	if ( ! playgroundId ) {
+		// Create a new playground ID if none exists
 		playgroundId = crypto.randomUUID();
 		// update url in browser history
 		url.searchParams.set( 'playground', playgroundId );
@@ -32,7 +33,7 @@ export async function initializeWordPressPlayground(
 			return prev;
 		} );
 	} else {
-		// TODO: check if WordPress is installed using playgroundAvailableInOpfs from @wp-playground/website
+		// Assume we have WP installed, we will attempt to boot and capture the error when boot fails
 		isWordPressInstalled = true;
 	}
 
