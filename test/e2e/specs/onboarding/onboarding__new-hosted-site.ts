@@ -4,6 +4,7 @@
 
 import {
 	DataHelper,
+	BrowserManager,
 	RestAPIClient,
 	NewUserResponse,
 	UserSignupPage,
@@ -38,6 +39,10 @@ describe(
 		} );
 
 		describe( 'Purchase site', function () {
+			beforeAll( async function () {
+				await BrowserManager.setStoreCookie( page, { currency: 'GBP' } );
+			} );
+
 			it( 'Enter the flow', async function () {
 				const flowUrl = DataHelper.getCalypsoURL( '/setup/new-hosted-site' );
 
