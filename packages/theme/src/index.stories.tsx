@@ -166,7 +166,7 @@ export const Default: Story = {
 					style={ {
 						width: '100%',
 						marginTop: '1rem',
-						background: 'var(--theme-color-background)',
+						background: 'var(--theme-color-neutral-scale-1)',
 					} }
 				>
 					<style>{ `
@@ -198,6 +198,18 @@ export const Default: Story = {
 					<div>
 						<InputControl className="demo-input" label="Value" placeholder="Placeholder" />
 					</div>
+
+					<div
+						style={ {
+							width: 200,
+							aspectRatio: 1,
+							border: '1px solid var(--theme-color-neutral-scale-6)',
+							marginBlock: '1rem',
+							marginInlineStart: '1rem',
+							backgroundColor: 'var(--theme-color-background)',
+						} }
+					/>
+					<div />
 				</div>
 			</>
 		),
