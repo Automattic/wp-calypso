@@ -1,5 +1,4 @@
 import { getLocaleData } from '@wordpress/i18n';
-import clsx from 'clsx';
 import { useTranslate, useRtl } from 'i18n-calypso';
 import { useMemo } from 'react';
 import {
@@ -34,6 +33,8 @@ import './styles.scss';
 
 type DateCalendarProps = PropsBase & ( PropsSingle | PropsSingleRequired );
 type DateRangeCalendarProps = PropsBase & ( PropsRange | PropsRangeRequired );
+
+const BASE_CLASSNAME = 'a8c-components-calendar';
 
 // Known RTL base locale codes
 const rtlLocales = [ 'ar', 'he', 'fa', 'ur', 'ps', 'syr', 'dv', 'ku', 'ug', 'yi' ];
@@ -102,6 +103,36 @@ const useCommonProps = ( {
 			hideNavigation: false,
 			// Show multiple months (1, 2, 3)
 			numberOfMonths: Math.min( 3, Math.max( 1, numberOfMonths ) ),
+			// Classname
+			classNames: {
+				root: BASE_CLASSNAME,
+				day: `${ BASE_CLASSNAME }__day`,
+				day_button: `${ BASE_CLASSNAME }__day-button`,
+				caption_label: `${ BASE_CLASSNAME }__caption-label`,
+				button_next: `${ BASE_CLASSNAME }__button-next`,
+				button_previous: `${ BASE_CLASSNAME }__button-previous`,
+				chevron: `${ BASE_CLASSNAME }__chevron`,
+				nav: `${ BASE_CLASSNAME }__nav`,
+				month_caption: `${ BASE_CLASSNAME }__month-caption`,
+				months: `${ BASE_CLASSNAME }__months`,
+				month_grid: `${ BASE_CLASSNAME }__month-grid`,
+				weekday: `${ BASE_CLASSNAME }__weekday`,
+				today: `${ BASE_CLASSNAME }__day--today`,
+				selected: `${ BASE_CLASSNAME }__day--selected`,
+				disabled: `${ BASE_CLASSNAME }__day--disabled`,
+				hidden: `${ BASE_CLASSNAME }__day--hidden`,
+				range_start: `${ BASE_CLASSNAME }__range-start`,
+				range_end: `${ BASE_CLASSNAME }__range-end`,
+				range_middle: `${ BASE_CLASSNAME }__range-middle`,
+				weeks_before_enter: `${ BASE_CLASSNAME }__weeks-before-enter`,
+				weeks_before_exit: `${ BASE_CLASSNAME }__weeks-before-exit`,
+				weeks_after_enter: `${ BASE_CLASSNAME }__weeks-after-enter`,
+				weeks_after_exit: `${ BASE_CLASSNAME }__weeks-after-exit`,
+				caption_after_enter: `${ BASE_CLASSNAME }__caption-after-enter`,
+				caption_after_exit: `${ BASE_CLASSNAME }__caption-after-exit`,
+				caption_before_enter: `${ BASE_CLASSNAME }__caption-before-enter`,
+				caption_before_exit: `${ BASE_CLASSNAME }__caption-before-exit`,
+			},
 			// Localization
 			locale,
 			formatters: {
@@ -165,61 +196,30 @@ const useCommonProps = ( {
 };
 
 export const DateCalendar = ( {
-	className,
-	numberOfMonths = 1,
-	// Start week on Monday
-	// Is this a good default? Should we expose it individually? Should it be part of localization?
-	weekStartsOn = 1,
 	[ 'aria-label' ]: ariaLabel = 'Date calendar',
 	locale,
+	numberOfMonths = 1,
 	...props
 }: DateCalendarProps ) => {
-	// const defaultClassNames = getDefaultClassNames();
 	const commonProps = useCommonProps( { numberOfMonths, locale } );
 
-	return (
-		<DayPicker
-			aria-label={ ariaLabel }
-			className={ clsx( 'a8c-components-date-calendar', className ) }
-			{ ...props }
-			mode="single"
-			// TODO: add custom classnames everywhere, potentially
-			// replace style overrides
-			classNames={ {
-				selected: 'a8c-components-date-calendar',
-				day_button: `${ defaultClassNames.day_button } marco`,
-			} }
-			{ ...commonProps }
-		/>
-	);
+	return <DayPicker aria-label={ ariaLabel } { ...props } mode="single" { ...commonProps } />;
 };
 
 export const DateRangeCalendar = ( {
-	className,
-	numberOfMonths = 1,
-	// Start week on Monday
-	// Is this a good default? Should we expose it individually? Should it be part of localization?
-	weekStartsOn = 1,
 	[ 'aria-label' ]: ariaLabel = 'Date range calendar',
 	locale,
+	numberOfMonths = 1,
 	...props
 }: DateRangeCalendarProps ) => {
 	const commonProps = useCommonProps( { numberOfMonths, locale } );
 
 	return (
 		<DayPicker
-			weekStartsOn={ weekStartsOn }
 			aria-label={ ariaLabel }
-			className={ clsx( 'a8c-components-date-range-calendar', className ) }
 			{ ...props }
 			mode="range"
 			excludeDisabled
-			// TODO: add custom classnames everywhere, potentially
-			// replace style overrides
-			// classNames={ {
-			// 	selected: `${ defaultClassNames.selected } marco`,
-			// 	day_button: `${ defaultClassNames.day_button } marco`,
-			// } }
 			{ ...commonProps }
 		/>
 	);
