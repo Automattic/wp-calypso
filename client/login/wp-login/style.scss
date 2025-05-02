@@ -437,9 +437,7 @@ $image-height: 47px;
 	}
 
 	.wp-login__main.is-social-first {
-		max-width: 758px;
-		padding-left: 20px;
-		padding-right: 20px;
+		max-width: none;
 
 		.wp-login__header-navigation {
 			align-items: center;
