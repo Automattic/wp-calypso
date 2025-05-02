@@ -195,7 +195,6 @@ function PlanetOverview( { planets }: { planets: SpaceObject[] } ) {
 			<DataViews.Filters />
 
 			<DataViews.Layout />
-			<DataViews.Pagination />
 		</>
 	);
 }
