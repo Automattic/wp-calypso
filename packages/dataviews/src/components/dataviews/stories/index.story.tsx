@@ -181,15 +181,17 @@ function PlanetOverview( { planets }: { planets: SpaceObject[] } ) {
 					</CardBody>
 				</Card>
 
-				<HStack justify="end">
-					<DataViews.Search label={ __( 'moons by planet' ) } />
-				</HStack>
+				<DataViews.Search label={ __( 'moons by planet' ) } />
 
-				<HStack justify="end">
-					<DataViews.Pagination />
-					<DataViews.ViewConfig />
-					<DataViews.ViewTypeMenu />
-				</HStack>
+				<VStack>
+					<HStack justify="start">
+						<DataViews.Pagination />
+						<DataViews.ViewConfig />
+						<DataViews.ViewTypeMenu />
+					</HStack>
+
+					<DataViews.BulkActionToolbar />
+				</VStack>
 			</Grid>
 
 			<DataViews.Layout />
@@ -235,6 +237,7 @@ export const FreeComposition = () => {
 			data={ processedData }
 			view={ view }
 			fields={ fields }
+			actions={ actions }
 			onChangeView={ setView }
 			defaultLayouts={ {
 				table: {},
