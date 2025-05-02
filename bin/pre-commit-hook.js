@@ -32,8 +32,11 @@ require( './validate-config-keys' );
 function parseGitDiffToPathArray( command ) {
 	return execSync( command, { encoding: 'utf8' } )
 		.split( '\n' )
-		.map( ( name ) => name.trim() )
-		.filter( ( name ) => /(?:\.json|\.[jt]sx?|\.scss|\.php)$/.test( name ) );
+		.map( ( name ) => name.trim() );
+}
+
+function isSourceCode( pathname ) {
+	return /(?:\.json|\.[jt]sx?|\.scss|\.php)$/.test( pathname );
 }
 
 function getPathForCommand( command ) {
@@ -78,12 +81,37 @@ function phpcsInstalled() {
 const phpcs = phpcsInstalled();
 
 // grab a list of all the files staged to commit
-const files = parseGitDiffToPathArray( 'git diff --cached --name-only --diff-filter=ACM' );
+const allFiles = parseGitDiffToPathArray( 'git diff --cached --name-only --diff-filter=ACM' );
 
-// grab a list of all the files with changes in the working copy.
+// we'll mostly only care about source code for the remainder of the script
+const files = allFiles.filter( isSourceCode );
+
+// grab a list of all the source code files with changes in the working copy.
+//
 // This list may have overlaps with the staged list if files are
 // partially staged...
-const dirtyFiles = new Set( parseGitDiffToPathArray( 'git diff --name-only --diff-filter=ACM' ) );
+const dirtyFiles = new Set(
+	parseGitDiffToPathArray( 'git diff --name-only --diff-filter=ACM' ).filter( isSourceCode )
+);
+
+const hasChangesInDataViews = files.some( ( pathname ) =>
+	pathname.startsWith( 'packages/dataviews/' )
+);
+if ( hasChangesInDataViews ) {
+	// be sure to check in `allFiles` rather than `files`, since the target is a .md file
+	const hasChangelogEntry = allFiles.includes( 'packages/dataviews/CHANGELOG.automattic.md' );
+
+	if ( ! hasChangelogEntry ) {
+		console.log(
+			chalk.red( 'COMMIT ABORTED:' ),
+			'You are attempting to commit changes within `packages/dataviews/` ' +
+				'without an accompanying entry in ' +
+				'`packages/dataviews/CHANGELOG.automattic.md`. Please document your ' +
+				'changes in the changelog.'
+		);
+		process.exit( 1 );
+	}
+}
 
 // we don't want to format any files that are partially staged or unstaged
 dirtyFiles.forEach( ( file ) =>
