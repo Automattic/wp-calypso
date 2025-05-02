@@ -14,7 +14,7 @@ import {
 	PurchasesPage,
 	MyProfilePage,
 	MeSidebarComponent,
-	cancelPurchaseFlow,
+	cancelAtomicPurchaseFlow,
 	WPAdminSidebarComponent,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
@@ -123,7 +123,7 @@ describe(
 			} );
 
 			it( 'Cancel plan renewal', async function () {
-				await cancelPurchaseFlow( page, {
+				await cancelAtomicPurchaseFlow( page, {
 					reason: 'Another reason…',
 					customReasonText: 'E2E TEST CANCELLATION',
 				} );
