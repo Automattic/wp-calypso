@@ -365,12 +365,11 @@ class StatsSummary extends Component {
 
 		return (
 			<>
-				<PageViewTracker
-					path={ `/stats/${ period }/${ module }/:site` }
-					title={ `Stats > ${ titlecase( period ) } > ${ titlecase( module ) }` }
-				/>
-
 				<Main fullWidthLayout>
+					<PageViewTracker
+						path={ `/stats/${ period }/${ module }/:site` }
+						title={ `Stats > ${ titlecase( period ) } > ${ titlecase( module ) }` }
+					/>
 					<div className="stats stats-summary-view">
 						{ isStatsNavigationImprovementEnabled && (
 							<PageHeader
