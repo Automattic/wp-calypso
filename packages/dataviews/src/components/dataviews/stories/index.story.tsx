@@ -8,8 +8,10 @@ import {
 	Card,
 	CardHeader,
 	CardBody,
+	__experimentalGrid as Grid,
 	__experimentalHeading as Heading,
 	__experimentalText as Text,
+	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { __, _n } from '@wordpress/i18n';
@@ -130,44 +132,72 @@ function PlanetOverview( { planets }: { planets: SpaceObject[] } ) {
 	const moons = planets.reduce( ( sum, item ) => sum + item.satellites, 0 );
 
 	return (
-		<Card isBorderless style={ { padding: '12px 24px' } }>
-			<CardHeader>
-				<Heading level={ 2 }>{ __( 'Solar System numbers' ) }</Heading>
-				<DataViews.Search label={ __( 'moons by planet' ) } />
-			</CardHeader>
+		<>
+			<Grid
+				templateColumns="repeat(auto-fit, minmax(330px, 1fr))"
+				justify="left"
+				align="flex-start"
+				className="dataviews-sticky-header"
+			>
+				<Card variant="secondary">
+					<CardHeader>
+						<Heading level={ 2 }>
+							{ __( 'Solar System numbers' ) }
+						</Heading>
+					</CardHeader>
 
-			<CardBody>
-				<VStack spacing={ 2 }>
-					<Text size={ 18 } as="p">
-						{ createInterpolateElement(
-							_n(
-								'<PlanetsNumber /> planet',
-								'<PlanetsNumber /> planets',
-								planets.length
-							),
-							{
-								PlanetsNumber: (
-									<strong>{ planets.length } </strong>
-								),
-							}
-						) }
-					</Text>
+					<CardBody>
+						<VStack>
+							<Text size={ 18 } as="p">
+								{ createInterpolateElement(
+									_n(
+										'<PlanetsNumber /> planet',
+										'<PlanetsNumber /> planets',
+										planets.length
+									),
+									{
+										PlanetsNumber: (
+											<strong>{ planets.length } </strong>
+										),
+									}
+								) }
+							</Text>
 
-					<Text size={ 18 } as="p">
-						{ createInterpolateElement(
-							_n(
-								'<SatellitesNumber /> moon',
-								'<SatellitesNumber /> moons',
-								moons
-							),
-							{
-								SatellitesNumber: <strong>{ moons } </strong>,
-							}
-						) }
-					</Text>
-				</VStack>
-			</CardBody>
-		</Card>
+							<Text size={ 18 } as="p">
+								{ createInterpolateElement(
+									_n(
+										'<SatellitesNumber /> moon',
+										'<SatellitesNumber /> moons',
+										moons
+									),
+									{
+										SatellitesNumber: (
+											<strong>{ moons } </strong>
+										),
+									}
+								) }
+							</Text>
+						</VStack>
+					</CardBody>
+				</Card>
+
+				<HStack spacing={ 4 } justify="end" style={ { width: 'auto' } }>
+					<DataViews.Search label={ __( 'moons by planet' ) } />
+					<div>
+						<DataViews.ViewConfig
+							defaultLayouts={ defaultLayouts! }
+						/>
+					</div>
+				</HStack>
+
+				<DataViews.Pagination />
+			</Grid>
+
+			<DataViews.Filters />
+
+			<DataViews.Layout />
+			<DataViews.Pagination />
+		</>
 	);
 }
 
@@ -208,7 +238,7 @@ export const FreeComposition = () => {
 			paginationInfo={ paginationInfo }
 			data={ processedData }
 			view={ view }
-			fields={ [] }
+			fields={ fields }
 			onChangeView={ setView }
 			defaultLayouts={ defaultLayouts }
 		>

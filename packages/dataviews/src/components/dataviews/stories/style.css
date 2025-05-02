@@ -2,3 +2,11 @@
     text-wrap: balance;
     text-wrap: pretty;
 }
+
+.dataviews-sticky-header {
+	position: sticky;
+	top: 16px;
+	padding-bottom: 16px;
+	background-color: #fff;
+	z-index: 100;
+}
