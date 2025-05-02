@@ -8,6 +8,7 @@
 
 - Add support for free composition in the `DataViews` component by exporting subcomponents: `<DataViews.ViewConfig />`, `<DataViews.Search />`, `<DataViews.Pagination />`, `<DataViews.LayoutSwitcher />`, `<DataViews.Layout />`, `<DataViews.FiltersToggle />`, `<DataViews.Filters />`, `<DataViews.BulkActionToolbar />`.
 - Fix `filterSortAndPaginate` to handle undefined values for the `is` filter.
+- Add support for `shouldPinActions` on the table view.
 
 ## 0.1.0
 
