@@ -33,7 +33,7 @@ export async function initializeWordPressPlayground(
 			return prev;
 		} );
 	} else {
-		// assume we have WP installed, we will attempt to boot and capture the error when boot fails
+		// Assume we have WP installed, we will attempt to boot and capture the error when boot fails
 		isWordPressInstalled = true;
 	}
 
