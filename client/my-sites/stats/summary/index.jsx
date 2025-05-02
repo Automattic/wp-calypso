@@ -44,7 +44,7 @@ class StatsSummary extends Component {
 		const period = this.props.period;
 
 		const headerCSVButton = (
-			<div className="stats-module__heaver-nav-button">
+			<div className="stats-module__header-nav-button">
 				<DownloadCsv statType={ statType } query={ query } path={ path } period={ period } />
 			</div>
 		);
@@ -388,7 +388,7 @@ class StatsSummary extends Component {
 									text: backLabel,
 								} }
 								rightSection={
-									<div className="stats-module__heaver-nav-button">
+									<div className="stats-module__header-nav-button">
 										<DownloadCsv
 											statType={ statType }
 											query={ downloadCsvQuery }
