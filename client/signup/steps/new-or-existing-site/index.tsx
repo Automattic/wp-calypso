@@ -79,7 +79,7 @@ export default function NewOrExistingSiteStep( props: Props ) {
 					onPrimarySubmit={ () => handleSiteChoice( getPrimarySiteChoice() ) }
 					onSecondarySubmit={ () => handleSiteChoice( 'existing-site' ) }
 					showNewOrExistingSiteChoice={ showTwoButtons }
-					isStoreFlow={ ! showTwoButtons }
+					isStoreFlow={ 'do-it-for-me-store' === flowName }
 				/>
 			}
 			hideFormattedHeader
