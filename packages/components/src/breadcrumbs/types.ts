@@ -22,7 +22,7 @@ export interface BreadcrumbProps {
 	/**
 	 * A boolean to show/hide the current item in the trail.
 	 * Note that when `false` the current item is only visually hidden.
-	 * @default true
+	 * @default false
 	 */
 	showCurrentItem?: boolean;
 	/**

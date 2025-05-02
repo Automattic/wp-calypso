@@ -34,19 +34,9 @@ function BreadcrumbsMenu( { items }: { items: BreadcrumbItemProps[] } ) {
 				/>
 			) }
 			renderContent={ () => (
-				<NavigableMenu
-					className="block-editor-tool-selector__menu"
-					role="menu"
-					aria-label={ __( 'More breadcrumb items' ) }
-				>
+				<NavigableMenu role="menu" aria-label={ __( 'More breadcrumb items' ) }>
 					{ items.map( ( item, index ) => (
-						<BreadcrumbItem
-							key={ `${ item.label }-${ index }` }
-							href={ item.href }
-							onClick={ item.onClick }
-							label={ item.label }
-							as={ MenuItem }
-						/>
+						<BreadcrumbItem key={ `${ item.label }-${ index }` } item={ item } as={ MenuItem } />
 					) ) }
 				</NavigableMenu>
 			) }
@@ -55,14 +45,10 @@ function BreadcrumbsMenu( { items }: { items: BreadcrumbItemProps[] } ) {
 }
 
 function BreadcrumbItem( {
-	label,
-	href,
-	onClick,
+	item: { label, href, onClick },
 	as = 'a',
 }: {
-	label: string;
-	href?: string;
-	onClick?: React.MouseEventHandler;
+	item: BreadcrumbItemProps;
 	as?: React.ElementType;
 } ) {
 	const ButtonComponent = as;
@@ -76,7 +62,7 @@ function BreadcrumbItem( {
 }
 
 function UnforwardedBreadcrumbs(
-	{ items, showCurrentItem = true, isCompact = false }: BreadcrumbProps,
+	{ items, showCurrentItem = false, isCompact = false }: BreadcrumbProps,
 	ref: React.ForwardedRef< HTMLElement >
 ) {
 	const scrollWidth = useRef( 0 );
@@ -104,9 +90,12 @@ function UnforwardedBreadcrumbs(
 	}
 	// Always show the first item. The last item (current page) is rendered
 	// conditionally based on the `showCurrentItem` prop.
-	const hasMiddleItems = items.length > 2;
+	const hasMiddleItems = items.length > 3;
 	const firstItem = items[ 0 ];
-	const middleItems = hasMiddleItems ? items.slice( 1, -1 ) : [];
+	const middleItems = hasMiddleItems ? items.slice( 1, -2 ) : [];
+	// Always show the parent item if there are more than 2 items. If there
+	// are only 2 items, the parent item is the first item and is already shown.
+	const parentItem = items.length > 2 && items[ items.length - 2 ];
 	/**
 	 * As the container shrinks, multiple breadcrumb items between the first and
 	 * last visible item should collapse into a dropdown menu to avoid wrapping.
@@ -138,24 +127,15 @@ function UnforwardedBreadcrumbs(
 			aria-label="Breadcrumb"
 			expanded={ false }
 		>
-			<BreadcrumbItem
-				key={ `first-${ firstItem.label }` }
-				label={ firstItem.label }
-				href={ firstItem.href }
-				onClick={ firstItem.onClick }
-			/>
+			<BreadcrumbItem item={ firstItem } />
 			{ _isCompact ? (
 				<BreadcrumbsMenu items={ middleItems } />
 			) : (
 				middleItems.map( ( item, index ) => (
-					<BreadcrumbItem
-						key={ `${ item.label }-${ index }` }
-						label={ item.label }
-						href={ item.href }
-						onClick={ item.onClick }
-					/>
+					<BreadcrumbItem key={ `${ item.label }-${ index }` } item={ item } />
 				) )
 			) }
+			{ parentItem && <BreadcrumbItem item={ parentItem } /> }
 			{ showCurrentItem ? currentItem : <VisuallyHidden as="span">{ currentItem }</VisuallyHidden> }
 		</HStack>
 	);

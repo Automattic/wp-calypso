@@ -1,21 +1,18 @@
+@import "@wordpress/base-styles/mixins";
 @import "@wordpress/base-styles/variables";
 
 .breadcrumb {
 	overflow: visible;
 
 	.breadcrumb__item-wrapper {
+		display: inline-flex;
 		flex-shrink: 0;
 
 		&.is-current {
 			color: var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9));
-
-			&::after {
-				content: '';
-				margin: 0;
-			}
 		}
 
-		&::after {
+		&:not(.is-current)::after {
 			content: '/';
 			color: $gray-700;
 			margin: 0 8px;
@@ -24,10 +21,10 @@
 
 	.breadcrumb__item {
 		color: $gray-700;
-		display: inline-flex;
 		text-decoration: none;
 		height: auto;
 		padding: 0;
+		@include body-medium;
 
 		&:hover {
 			color: var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9));
