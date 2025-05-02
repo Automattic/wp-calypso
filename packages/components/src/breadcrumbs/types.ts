@@ -16,15 +16,15 @@ export interface BreadcrumbItemProps {
 export interface BreadcrumbProps {
 	/**
 	 * An array of items to display in the breadcrumb trail.
-	 * The last item is considered the current page.
+	 * The last item is considered the current item.
 	 */
 	items: BreadcrumbItemProps[];
 	/**
-	 * A boolean to show/hide the current page in the trail.
-	 * Note that when `false` the current page is only visually hidden.
+	 * A boolean to show/hide the current item in the trail.
+	 * Note that when `false` the current item is only visually hidden.
 	 * @default true
 	 */
-	showCurrentPage?: boolean;
+	showCurrentItem?: boolean;
 	/**
 	 * A flag to force the component to be rendered in a compact
 	 * format, by rendering a dropdown of the middle items (if any).

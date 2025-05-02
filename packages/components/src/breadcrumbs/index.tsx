@@ -1,15 +1,14 @@
 import {
-	Button,
 	__experimentalText as Text,
 	__experimentalHStack as HStack,
-	DropdownMenu,
+	NavigableMenu,
+	Button,
+	Dropdown,
 	MenuItem,
-	Icon,
 	VisuallyHidden,
 } from '@wordpress/components';
 import { useResizeObserver, useMergeRefs } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
-import { moreHorizontal } from '@wordpress/icons';
 import { useState, forwardRef, useRef } from 'react';
 import { BreadcrumbProps, BreadcrumbItemProps } from './types';
 import './style.scss';
@@ -20,25 +19,38 @@ const popoverProps = {
 
 function BreadcrumbsMenu( { items }: { items: BreadcrumbItemProps[] } ) {
 	return (
-		<DropdownMenu
-			label={ __( 'More breadcrumb items' ) }
+		<Dropdown
+			className="breadcrumb__item-wrapper"
 			popoverProps={ popoverProps }
-			icon={ <Icon icon={ moreHorizontal } /> }
-			toggleProps={ { className: 'breadcrumb__item' } }
-		>
-			{ () => {
-				return items.map( ( item, index ) => (
-					<BreadcrumbItem
-						key={ `${ item.label }-${ index }` }
-						href={ item.href }
-						onClick={ item.onClick }
-						label={ item.label }
-						as={ MenuItem }
-						showSeparator={ false }
-					/>
-				) );
-			} }
-		</DropdownMenu>
+			renderToggle={ ( { isOpen, onToggle } ) => (
+				<Button
+					size="compact"
+					className="breadcrumb__item"
+					text="…"
+					aria-expanded={ isOpen }
+					aria-haspopup="true"
+					onClick={ onToggle }
+					label={ __( 'More breadcrumb items' ) }
+				/>
+			) }
+			renderContent={ () => (
+				<NavigableMenu
+					className="block-editor-tool-selector__menu"
+					role="menu"
+					aria-label={ __( 'More breadcrumb items' ) }
+				>
+					{ items.map( ( item, index ) => (
+						<BreadcrumbItem
+							key={ `${ item.label }-${ index }` }
+							href={ item.href }
+							onClick={ item.onClick }
+							label={ item.label }
+							as={ MenuItem }
+						/>
+					) ) }
+				</NavigableMenu>
+			) }
+		/>
 	);
 }
 
@@ -46,48 +58,25 @@ function BreadcrumbItem( {
 	label,
 	href,
 	onClick,
-	showSeparator = true,
-	as = Button,
+	as = 'a',
 }: {
 	label: string;
 	href?: string;
 	onClick?: React.MouseEventHandler;
-	showSeparator?: boolean;
 	as?: React.ElementType;
 } ) {
 	const ButtonComponent = as;
-	const buttonElement = (
-		<ButtonComponent href={ href } onClick={ onClick } className="breadcrumb__item">
-			{ label }
-		</ButtonComponent>
-	);
-	if ( showSeparator ) {
-		return (
-			<HStack
-				as="span"
-				spacing={ 1 }
-				justify="flex-start"
-				expanded={ false }
-				className="breadcrumb__item-wrapper"
-			>
-				{ buttonElement }
-				<BreadcrumbSeparator />
-			</HStack>
-		);
-	}
-	return buttonElement;
-}
-
-function BreadcrumbSeparator() {
 	return (
-		<Text as="span" className="breadcrumb__separator" aria-hidden="true" variant="muted">
-			/
-		</Text>
+		<span className="breadcrumb__item-wrapper">
+			<ButtonComponent href={ href } onClick={ onClick } className="breadcrumb__item">
+				{ label }
+			</ButtonComponent>
+		</span>
 	);
 }
 
 function UnforwardedBreadcrumbs(
-	{ items, showCurrentPage = true, isCompact = false }: BreadcrumbProps,
+	{ items, showCurrentItem = true, isCompact = false }: BreadcrumbProps,
 	ref: React.ForwardedRef< HTMLElement >
 ) {
 	const scrollWidth = useRef( 0 );
@@ -114,7 +103,7 @@ function UnforwardedBreadcrumbs(
 		return null;
 	}
 	// Always show the first item. The last item (current page) is rendered
-	// conditionally based on the `showCurrentPage` prop.
+	// conditionally based on the `showCurrentItem` prop.
 	const hasMiddleItems = items.length > 2;
 	const firstItem = items[ 0 ];
 	const middleItems = hasMiddleItems ? items.slice( 1, -1 ) : [];
@@ -128,21 +117,23 @@ function UnforwardedBreadcrumbs(
 	 */
 	const _isCompact = hasMiddleItems && ( isCompact || containerWidth < scrollWidth.current );
 	const currentItem = (
-		<Text
-			as="span"
-			className="breadcrumb__item is-current"
-			aria-current="page"
-			aria-hidden={ ! showCurrentPage }
-		>
-			{ items[ items.length - 1 ].label }
-		</Text>
+		<span className="breadcrumb__item-wrapper is-current">
+			<Text
+				as="span"
+				className="breadcrumb__item"
+				aria-current="page"
+				aria-hidden={ ! showCurrentItem }
+			>
+				{ items[ items.length - 1 ].label }
+			</Text>
+		</span>
 	);
 	return (
 		<HStack
 			as="nav"
 			className="breadcrumb"
 			ref={ mergedRefs }
-			spacing={ 1 }
+			spacing={ 0 }
 			justify="flex-start"
 			aria-label="Breadcrumb"
 			expanded={ false }
@@ -154,16 +145,7 @@ function UnforwardedBreadcrumbs(
 				onClick={ firstItem.onClick }
 			/>
 			{ _isCompact ? (
-				<HStack
-					as="span"
-					spacing={ 1 }
-					justify="flex-start"
-					expanded={ false }
-					className="breadcrumb__item-wrapper"
-				>
-					<BreadcrumbsMenu items={ middleItems } />
-					<BreadcrumbSeparator />
-				</HStack>
+				<BreadcrumbsMenu items={ middleItems } />
 			) : (
 				middleItems.map( ( item, index ) => (
 					<BreadcrumbItem
@@ -174,7 +156,7 @@ function UnforwardedBreadcrumbs(
 					/>
 				) )
 			) }
-			{ showCurrentPage ? currentItem : <VisuallyHidden as="span">{ currentItem }</VisuallyHidden> }
+			{ showCurrentItem ? currentItem : <VisuallyHidden as="span">{ currentItem }</VisuallyHidden> }
 		</HStack>
 	);
 }

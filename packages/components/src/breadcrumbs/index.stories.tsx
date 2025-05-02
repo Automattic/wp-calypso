@@ -41,10 +41,6 @@ const meta = {
 			mapping: itemsOptions,
 			description: 'Pre-defined breadcrumb trails',
 		},
-		showCurrentPage: {
-			control: 'boolean',
-			description: 'Show or hide the current page in the trail',
-		},
 	},
 	parameters: {
 		actions: { argTypesRegex: '^on.*' },
@@ -57,20 +53,20 @@ type Story = StoryObj< typeof meta >;
 export const Default: Story = {
 	args: {
 		items: itemsOptions[ '3 items' ],
-		showCurrentPage: true,
+		showCurrentItem: true,
 	},
 };
 
 export const HiddenCurrentPage: Story = {
 	args: {
 		items: itemsOptions[ '5 items' ],
-		showCurrentPage: false,
+		showCurrentItem: false,
 	},
 };
 
 export const LongPath: Story = {
 	args: {
 		items: itemsOptions[ '7 items' ],
-		showCurrentPage: true,
+		showCurrentItem: true,
 	},
 };
