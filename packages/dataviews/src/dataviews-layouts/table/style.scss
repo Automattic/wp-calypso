@@ -20,24 +20,24 @@
 
 		&.dataviews-view-table__actions-column {
 			text-align: right;
+		}
 
-			&.dataviews-view-table__actions-column--sticky {
-				position: sticky;
-				right: 0;
-				background-color: $white;
-			}
+		&.dataviews-view-table__actions-column--sticky {
+			position: sticky;
+			right: 0;
+			background-color: $white;
+		}
 
-			&.dataviews-view-table__actions-column--stuck {
-				&::after {
-					display: block;
-					content: '';
-					position: absolute;
-					top: 0;
-					bottom: 0;
-					left: 0;
-					width: 1px;
-					background-color: $gray-100;
-				}
+		&.dataviews-view-table__actions-column--stuck {
+			&::after {
+				display: block;
+				content: '';
+				position: absolute;
+				top: 0;
+				bottom: 0;
+				left: 0;
+				width: 1px;
+				background-color: $gray-100;
 			}
 		}
 
