@@ -73,7 +73,9 @@ skipDescribeIf(
 
 					// Check for rate limit message
 					const rateLimitText = await page
-						.getByText( "Verification codes can't be sent to this phone number at this time" )
+						.getByText(
+							"Verification codes can't be sent to this phone number at this time. Please try again later."
+						)
 						.isVisible();
 
 					if ( rateLimitText ) {
