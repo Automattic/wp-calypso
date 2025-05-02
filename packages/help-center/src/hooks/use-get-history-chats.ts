@@ -2,6 +2,7 @@
 import { HelpCenterSelect } from '@automattic/data-stores';
 import { useGetOdieConversations } from '@automattic/odie-client/src/data/use-get-odie-conversations';
 import { useGetSupportInteractions } from '@automattic/odie-client/src/data/use-get-support-interactions';
+import { getConversationCreatedAt } from '@automattic/odie-client/src/utils';
 import { useSelect } from '@wordpress/data';
 import { useEffect, useState } from '@wordpress/element';
 import {
@@ -94,13 +95,7 @@ export const useGetHistoryChats = (): UseGetHistoryChatsResult => {
 			oneYearAgo.setFullYear( oneYearAgo.getFullYear() - 1 );
 
 			conversations.forEach( ( conversation: OdieConversation | ZendeskConversation ) => {
-				let createdAt: number | undefined;
-
-				if ( 'metadata' in conversation && conversation.metadata?.createdAt ) {
-					createdAt = conversation.metadata.createdAt;
-				} else if ( 'createdAt' in conversation && conversation.createdAt ) {
-					createdAt = conversation.createdAt;
-				}
+				const createdAt = getConversationCreatedAt( conversation );
 
 				if ( createdAt ) {
 					const createdAtDate = new Date( createdAt );
@@ -122,23 +117,15 @@ export const useGetHistoryChats = (): UseGetHistoryChatsResult => {
 		};
 	};
 
-	// Merges conversations coming from Zendesk with conversations handled by AI, then sort by most recent first
-	const mergedAndSortedConversations = [
-		...( conversations ?? [] ),
-		...( odieConversations ?? [] ),
-	].sort( ( a, b ) => {
-		const getCreatedAt = ( conversation: OdieConversation | ZendeskConversation ): number => {
-			if ( 'metadata' in conversation && conversation.metadata?.createdAt ) {
-				return conversation.metadata.createdAt;
-			} else if ( 'createdAt' in conversation && conversation.createdAt ) {
-				return conversation.createdAt;
-			}
+	// Merges conversations coming from Zendesk with those coming from Odie, then sort them by most recent first
+	const mergedAndSortedConversations = [ ...conversations, ...( odieConversations ?? [] ) ].sort(
+		( a, b ) => {
+			const createdAtA = getConversationCreatedAt( a ) ?? 0;
+			const createdAtB = getConversationCreatedAt( b ) ?? 0;
 
-			return 0;
-		};
-
-		return getCreatedAt( b ) - getCreatedAt( a );
-	} );
+			return createdAtB - createdAtA;
+		}
+	);
 
 	const { recentConversations, archivedConversations } = getSortedRecentAndArchivedConversations( {
 		conversations: mergedAndSortedConversations,

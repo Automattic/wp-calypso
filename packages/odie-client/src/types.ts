@@ -211,12 +211,9 @@ export type OdieMessage = {
 	altText?: string;
 };
 
-export type ZendeskMessage = {
+export type ZendeskMessage = OdieMessage & {
 	avatarUrl?: string;
-	displayName: string;
 	id: string;
-	received: number;
-	role: string;
 	actions?: MessageAction[];
 	source?: {
 		type: 'web' | 'slack' | 'zd:surveys' | 'zd:answerBot';
@@ -224,9 +221,7 @@ export type ZendeskMessage = {
 		integrationId: string;
 	};
 	type: ZendeskContentType;
-	text: string;
 	mediaUrl?: string;
-	altText?: string;
 };
 
 export type ZendeskContentType =

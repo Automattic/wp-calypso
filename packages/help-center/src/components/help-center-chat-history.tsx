@@ -59,9 +59,10 @@ const Conversations = ( {
 				const lastMessage = getLastMessage( { conversation } );
 
 				if ( lastMessage ) {
+					// Checks whether a conversation is of type ZendeskConversation (vs OdieConversation)
 					const hasMetadataAndParticipants = (
 						conv: typeof conversation
-					): conv is typeof conversation & { metadata: any; participants: any } =>
+					): conv is typeof conversation & { metadata: never; participants: never } =>
 						'metadata' in conv && 'participants' in conv;
 
 					let conversationStatus: string = '';

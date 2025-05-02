@@ -4,8 +4,8 @@ import Smooch from 'smooch';
 import type { ContactOption } from '../types';
 import type {
 	OdieConversation,
-	ZendeskConversation,
 	SupportInteraction,
+	ZendeskConversation,
 } from '@automattic/odie-client';
 
 const isMatchingInteraction = (
