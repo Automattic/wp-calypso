@@ -113,9 +113,8 @@ export class AppleLoginPage {
 	async hasRateLimitMessage(): Promise< boolean > {
 		try {
 			// Look for the exact error message with proper error handling
-			const element = this.page.getByText(
-				"Verification codes can't be sent to this phone number at this time. Please try again later.",
-				{ exact: true }
+			const element = this.page.locator(
+				'.form-message:has-text("Verification codes can\'t be sent to this phone number at this time. Please try again later.")'
 			);
 
 			// Wait a short time for the message to be visible
