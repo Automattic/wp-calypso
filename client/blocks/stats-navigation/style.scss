@@ -3,6 +3,15 @@
 .stats-navigation {
 	box-shadow: inset 0 -1px 0 #0000000d;
 
+	// When the feature flag is enabled, adjust TabPanel padding
+	.stats-navigation__tabs {
+		margin: 0 -16px;  // This creates a negative margin to counteract the parent's padding
+		
+		.components-tab-panel__tabs {
+			padding: 0 16px;  // This sets the actual padding to 16px
+		}
+	}
+
 	.section-nav__panel {
 		padding-right: 0;
 
@@ -39,12 +48,38 @@
 		}
 	}
 
+	&.stats-navigation--improved {
+		.stats-navigation__tabs {
+			margin-left: -16px;
+
+			.components-tab-panel__tabs {
+				padding-left: 0;
+			}
+
+			@media (max-width: $break-small) {
+				margin-left: 0;
+				
+				.components-tab-panel__tabs {
+					padding-left: 16px;
+					padding-right: 16px;
+				}
+			}
+		}
+	}
+
 	// Modernize styles except for GoogleMyBusinessStats and StatsOverview pages
 	&.stats-navigation--modernized {
 		// For aligning the `.page-modules-settings` action button.
 		position: relative;
 		display: flex;
 		align-items: center;
+
+		// Only apply these styles when using the new TabPanel navigation
+		.stats-navigation__tabs {
+			width: calc(100% + 32px);  // Extend width to counter the parent padding
+			margin-left: -16px;        // Pull left to counter parent padding
+			margin-right: -16px;       // Pull right to counter parent padding
+		}
 
 		.section-nav {
 			margin: 0;

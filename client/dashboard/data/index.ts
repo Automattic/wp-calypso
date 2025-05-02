@@ -1,5 +1,4 @@
 import wpcom from 'calypso/lib/wp';
-import { getSiteSlug } from '../utils/site-slug';
 import type {
 	Domain,
 	Email,
@@ -33,6 +32,7 @@ export const updateProfile = async ( data: Partial< Profile > ) => {
 
 const SITE_FIELDS = [
 	'ID',
+	'slug',
 	'URL',
 	'name',
 	'icon',
@@ -63,12 +63,11 @@ export const fetchSites = async (): Promise< Site[] > => {
 			fields: SITE_FIELDS,
 		}
 	);
-	return sites.map( ( site: Site ) => ( { ...site, slug: getSiteSlug( site ) } ) );
+	return sites;
 };
 
 export const fetchSite = async ( siteIdOrSlug: string ): Promise< Site > => {
-	const site = await wpcom.req.get( `/sites/${ siteIdOrSlug }`, { fields: SITE_FIELDS } );
-	return { ...site, slug: getSiteSlug( site ) };
+	return await wpcom.req.get( { path: `/sites/${ siteIdOrSlug }` }, { fields: SITE_FIELDS } );
 };
 
 export const fetchSiteMediaStorage = async ( siteIdOrSlug: string ): Promise< MediaStorage > => {
