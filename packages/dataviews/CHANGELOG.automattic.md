@@ -3,11 +3,11 @@
 ## Next 
 
 - Expose self-sufficient DataViews subcomponents:
-	- `<DataViews.ViewConfig />`
-	- `<DataViews.ViewTypeMenu />`
-	- `<DataViews.Layout />`
-	- `<DataViews.Pagination />`
 	- `<DataViews.BulkActionToolbar />`
+	- `<DataViews.Layout />`
+	- `<DataViews.LayoutSwitcher />`
+	- `<DataViews.Pagination />`
+	- `<DataViews.ViewConfig />`
 - Expose `<DataViews.Search />` component.
 - Add support for `free-composition` in the `DataViews` component
 - Fix `filterSortAndPaginate` to handle undefined values for the `is` filter.

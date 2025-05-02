@@ -187,7 +187,7 @@ function PlanetOverview( { planets }: { planets: SpaceObject[] } ) {
 					<HStack justify="start">
 						<DataViews.Pagination />
 						<DataViews.ViewConfig />
-						<DataViews.ViewTypeMenu />
+						<DataViews.LayoutSwitcher />
 					</HStack>
 
 					<DataViews.BulkActionToolbar />

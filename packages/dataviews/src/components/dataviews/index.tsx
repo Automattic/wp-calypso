@@ -192,14 +192,14 @@ const DataViewsSubComponents = DataViews as typeof DataViews & {
 	Layout: typeof DataViewsLayout;
 	Pagination: typeof DataViewsPagination;
 	BulkActionToolbar: typeof BulkActionsFooter;
-	ViewTypeMenu: typeof ViewTypeMenu;
+	LayoutSwitcher: typeof ViewTypeMenu;
 };
 
 DataViewsSubComponents.Search = DataViewsSearch;
 DataViewsSubComponents.ViewConfig = DataviewsViewConfigDropdown;
 DataViewsSubComponents.Layout = DataViewsLayout;
 DataViewsSubComponents.Pagination = DataViewsPagination;
-DataViewsSubComponents.ViewTypeMenu = ViewTypeMenu;
+DataViewsSubComponents.LayoutSwitcher = ViewTypeMenu;
 DataViewsSubComponents.BulkActionToolbar = BulkActionsFooter;
 
 export default DataViewsSubComponents;
