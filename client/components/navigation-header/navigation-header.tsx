@@ -7,6 +7,7 @@ import './navigation-header.scss';
 interface BackLinkProps {
 	url?: string;
 	text?: string;
+	onBackClick?: ( e: React.MouseEvent< HTMLAnchorElement > ) => void;
 }
 
 export interface HeaderProps extends React.HTMLAttributes< HTMLElement > {
@@ -41,7 +42,16 @@ const NavigationHeader: React.FC< HeaderProps > = ( {
 	backLinkProps,
 	titleElement,
 	headElement = backLinkProps?.url && (
-		<a className="calypso-navigation-header__back-link" href={ backLinkProps?.url }>
+		<a
+			className="calypso-navigation-header__back-link"
+			href={ backLinkProps?.url }
+			onClick={ ( e ) => {
+				if ( backLinkProps?.onBackClick ) {
+					e.preventDefault();
+					backLinkProps.onBackClick( e );
+				}
+			} }
+		>
 			← { backLinkProps?.text ?? translate( 'Back' ) }
 		</a>
 	),
