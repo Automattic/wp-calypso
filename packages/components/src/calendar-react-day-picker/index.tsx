@@ -1,17 +1,8 @@
 import { useMemo } from 'react';
-import {
-	DayPicker,
-	type PropsBase,
-	type PropsSingle,
-	type PropsSingleRequired,
-	type PropsRange,
-	type PropsRangeRequired,
-} from 'react-day-picker';
+import { DayPicker } from 'react-day-picker';
+import type { DateCalendarProps, DateRangeCalendarProps } from './types';
 
 import './styles.scss';
-
-type DateCalendarProps = PropsBase & ( PropsSingle | PropsSingleRequired );
-type DateRangeCalendarProps = PropsBase & ( PropsRange | PropsRangeRequired );
 
 const BASE_CLASSNAME = 'a8c-components-calendar';
 
@@ -20,7 +11,7 @@ const useCommonProps = ( {
 	locale,
 }: {
 	numberOfMonths: number;
-	locale: PropsBase[ 'locale' ];
+	locale: DateCalendarProps[ 'locale' ];
 } ) => {
 	const commonProps = useMemo( () => {
 		const localeCode = locale?.code ?? 'en-US';
@@ -88,6 +79,8 @@ const useCommonProps = ( {
 					} ).format( date );
 				},
 			},
+			// a11y
+			role: 'application',
 		} as const;
 	}, [ numberOfMonths, locale ] );
 
@@ -113,13 +106,5 @@ export const DateRangeCalendar = ( {
 }: DateRangeCalendarProps ) => {
 	const commonProps = useCommonProps( { numberOfMonths, locale } );
 
-	return (
-		<DayPicker
-			aria-label={ ariaLabel }
-			{ ...props }
-			mode="range"
-			excludeDisabled
-			{ ...commonProps }
-		/>
-	);
+	return <DayPicker aria-label={ ariaLabel } { ...props } mode="range" { ...commonProps } />;
 };

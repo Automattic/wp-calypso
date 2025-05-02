@@ -12,14 +12,6 @@ const meta: Meta< typeof DateRangeCalendar > = {
 		controls: { expanded: true },
 	},
 	argTypes: {
-		disabled: { control: { type: 'boolean' } },
-		startMonth: { control: { type: 'date' } },
-		endMonth: { control: { type: 'date' } },
-		defaultMonth: { control: { type: 'date' } },
-		month: { control: { type: 'date' } },
-		numberOfMonths: { control: { type: 'number' } },
-		disableNavigation: { control: { type: 'boolean' } },
-		selected: { control: { type: 'date' } },
 		locale: {
 			options: [ 'ar', 'es', 'fr', 'ja', 'ko', 'pt' ],
 			mapping: {

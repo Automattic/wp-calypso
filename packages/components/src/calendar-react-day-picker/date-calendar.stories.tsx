@@ -17,8 +17,7 @@ const meta: Meta< typeof DateCalendar > = {
 		endMonth: { control: { type: 'date' } },
 		defaultMonth: { control: { type: 'date' } },
 		month: { control: { type: 'date' } },
-		numberOfMonths: { control: { type: 'number' } },
-		disableNavigation: { control: { type: 'boolean' } },
+		numberOfMonths: { control: { type: 'number', min: 1, max: 3 } },
 		selected: { control: { type: 'date' } },
 		locale: {
 			options: [ 'ar', 'es', 'fr', 'ja', 'ko', 'pt' ],
