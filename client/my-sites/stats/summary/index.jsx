@@ -377,7 +377,7 @@ class StatsSummary extends Component {
 					title={ `Stats > ${ titlecase( period ) } > ${ titlecase( module ) }` }
 				/>
 
-				<Main className="has-fixed-nav" fullWidthLayout>
+				<Main fullWidthLayout>
 					<div className="stats stats-summary-view">
 						{ isStatsNavigationImprovementEnabled && (
 							<PageHeader
