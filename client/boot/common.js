@@ -324,7 +324,7 @@ const boot = async ( currentUser, registerRoutes ) => {
 	onDisablePersistence( persistOnChange( reduxStore, currentUser?.ID ) );
 	onDisablePersistence( unsubscribePersister );
 	setupLocale( currentUser, reduxStore );
-	setupCountryCode( currentUser );
+	setupCountryCode();
 	configureReduxStore( currentUser, reduxStore );
 	setupMiddlewares( currentUser, reduxStore, queryClient );
 	detectHistoryNavigation.start();

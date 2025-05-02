@@ -107,7 +107,7 @@ async function main() {
 	setStore( reduxStore, getStateFromCache( userId ) );
 	onDisablePersistence( persistOnChange( reduxStore, userId ) );
 	setupLocale( user, reduxStore );
-	setupCountryCode( user );
+	setupCountryCode();
 	const { receiveCurrentUser } = dispatch( USER_STORE ) as UserActions;
 
 	if ( user ) {
