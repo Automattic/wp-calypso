@@ -16,7 +16,8 @@ import {
 	fetchPerformanceInsights,
 } from '../data';
 import { queryClient } from './query-client';
-import type { Profile, PerformanceInsightsQueryState } from '../data/types';
+import type { Profile, UrlPerformanceInsights } from '../data/types';
+import type { Query } from '@tanstack/react-query';
 
 export function sitesQuery() {
 	return {
@@ -126,7 +127,7 @@ export function performanceInsightsQuery( url: string, token: string ) {
 		queryFn: () => {
 			return fetchPerformanceInsights( url, token );
 		},
-		refetchInterval: ( query: PerformanceInsightsQueryState ) => {
+		refetchInterval: ( query: Query< UrlPerformanceInsights > ) => {
 			if ( query.state.data?.pagespeed?.status === 'completed' ) {
 				return false;
 			}
