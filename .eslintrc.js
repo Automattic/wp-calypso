@@ -425,6 +425,7 @@ module.exports = {
 		'no-unused-expressions': 'off',
 
 		'react/forbid-foreign-prop-types': 'error',
+		'react/display-name': 'error',
 		'react/jsx-curly-brace-presence': [ 'error', { props: 'never', children: 'never' } ],
 		'react/jsx-boolean-value': 'error',
 		// enforce our classname namespacing rules
