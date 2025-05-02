@@ -59,11 +59,10 @@ const DEFAULT_FIELDS = [
 	{
 		id: 'backups',
 		label: __( 'Backups' ),
-		getValue: ( { item }: { item: Site } ) =>
-			item.plan?.features?.active?.includes( 'backups' ) || undefined,
+		getValue: ( { item }: { item: Site } ) => !! item.plan?.features?.active?.includes( 'backups' ),
 		elements: [
 			{ value: true, label: __( 'Enabled' ) },
-			{ value: undefined, label: __( 'Disabled' ) },
+			{ value: false, label: __( 'Disabled' ) },
 		],
 		render: ( { item }: { item: Site } ) =>
 			item.plan?.features?.active?.includes( 'backups' ) ? (
@@ -78,13 +77,12 @@ const DEFAULT_FIELDS = [
 	{
 		id: 'protect',
 		label: __( 'Protect' ),
-		getValue: ( { item }: { item: Site } ) =>
-			item.active_modules?.includes( 'protect' ) || undefined,
+		getValue: ( { item }: { item: Site } ) => !! item.active_modules?.includes( 'protect' ),
 		render: ( { item }: { item: Site } ) =>
 			item.active_modules?.includes( 'protect' ) ? <Icon icon={ check } /> : __( 'Disabled' ),
 		elements: [
 			{ value: true, label: __( 'Enabled' ) },
-			{ value: undefined, label: __( 'Disabled' ) },
+			{ value: false, label: __( 'Disabled' ) },
 		],
 		filterBy: {
 			operators: [ 'is' as Operator ],
@@ -100,10 +98,10 @@ const DEFAULT_FIELDS = [
 	{
 		id: 'a8c_owned',
 		label: __( 'A8C Owned' ),
-		getValue: ( { item }: { item: Site } ) => isA8CSite( item ) || undefined,
+		getValue: ( { item }: { item: Site } ) => isA8CSite( item ),
 		elements: [
 			{ value: true, label: __( 'Yes' ) },
-			{ value: undefined, label: __( 'No' ) },
+			{ value: false, label: __( 'No' ) },
 		],
 		filterBy: {
 			operators: [ 'is' as Operator ],
@@ -179,7 +177,7 @@ export default function Sites() {
 						{
 							field: 'a8c_owned',
 							operator: 'is',
-							value: undefined,
+							value: false,
 						},
 					],
 			  }
