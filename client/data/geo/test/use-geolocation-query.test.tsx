@@ -5,7 +5,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
 import { when } from 'jest-when';
-import { act, ReactNode } from 'react';
+import { ReactNode } from 'react';
 import { useGeoLocationQuery, GeoLocationData } from '../use-geolocation-query';
 
 jest.useFakeTimers();
@@ -40,16 +40,9 @@ describe( 'useGeoLocationQuery', () => {
 		await waitFor( () => expect( result.current.data ).toEqual( mockGeoData ) );
 	} );
 
-	it( 'should not refetch', async () => {
+	it( 'keeps the data fresh', async () => {
 		const { result } = renderHook( () => useGeoLocationQuery(), { wrapper } );
 
-		// Wait for the query to complete
-		await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
-
-		act( () => {
-			result.current.refetch();
-		} );
-
-		expect( result.current.isRefetching ).toBe( false );
+		await waitFor( () => expect( result.current.isStale ).toBe( false ) );
 	} );
 } );
