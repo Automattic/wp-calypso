@@ -17,6 +17,6 @@ export const getFlowFromURL = ( pathname?: string, search?: string ) => {
 export const getStepFromURL = (
 	pathname = typeof window !== 'undefined' ? window.location.pathname : ''
 ) => {
-	const fromPath = matchPath( { path: '/setup/:flow/:step' }, pathname )?.params?.step;
+	const fromPath = matchPath( { path: '/setup/:flow/:step' }, pathname ?? '' )?.params?.step;
 	return fromPath;
 };
