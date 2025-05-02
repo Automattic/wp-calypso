@@ -18,6 +18,7 @@ object WebApp : Project({
 
 	buildType(RunAllUnitTests)
 	buildType(CheckCodeStyleBranch)
+	buildType(DataViewsChangelogCheck)
 	buildType(Translate)
 	buildType(BuildDockerImage)
 	buildType(playwrightPrBuildType("desktop", "23cc069f-59e5-4a63-a131-539fb55264e7"))
@@ -1198,3 +1199,81 @@ object QuarantinedE2ETests: E2EBuildType(
 	buildTriggers = {
 	}
 )
+
+object DataViewsChangelogCheck : BuildType({
+	id("calypso_WebApp_DataViews_Changelog_Check")
+	uuid = "c494fae3-e0e1-49e2-9219-ea59cc17c499"
+	name = "DataViews Changelog Check"
+	description = "Ensures that changes to the packages/dataviews fork are accompanied by changes to its changelog"
+
+	vcs {
+		root(Settings.WpCalypso)
+		cleanCheckout = true
+	}
+
+	steps {
+		bashNodeScript {
+			name = "Check DataViews changelog"
+			scriptContent = """
+				#!/usr/bin/env bash
+				set -e
+
+				# Check if there are any changes to packages/dataviews
+				DATAVIEWS_CHANGES=${'$'}(git diff --name-only refs/remotes/origin/trunk...HEAD \
+					| grep -c ^packages/dataviews/ \
+					|| true)
+
+				if [ "${'$'}DATAVIEWS_CHANGES" -eq 0 ]; then
+					exit 0
+				fi
+
+				# Check if the changelog file was modified
+				CHANGELOG_MODIFIED=${'$'}(git diff --name-only refs/remotes/origin/trunk...HEAD \
+					| grep -c '^packages/dataviews/CHANGELOG.automattic.md${'$'}' \
+					|| true)
+
+				if [ "${'$'}CHANGELOG_MODIFIED" -eq 0 ]; then
+					echo "ERROR: Changes to 'packages/dataviews' detected with no accompanying changelog entry."
+					echo "Please document your changes in 'packages/dataviews/CHANGELOG.automattic.md'."
+					exit 1
+				fi
+			"""
+		}
+	}
+
+	triggers {
+		vcs {
+			branchFilter = """
+				+:*
+				-:trunk
+				-:pull*
+			""".trimIndent()
+			triggerRules = """
+				+:packages/dataviews/**
+			""".trimIndent()
+		}
+	}
+
+	features {
+		perfmon {
+		}
+		pullRequests {
+			vcsRootExtId = "${Settings.WpCalypso.id}"
+			provider = github {
+				authType = token {
+					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
+				}
+				filterAuthorRole = PullRequests.GitHubRoleFilter.EVERYBODY
+			}
+		}
+		commitStatusPublisher {
+			vcsRootExtId = "${Settings.WpCalypso.id}"
+			publisher = github {
+				githubUrl = "https://api.github.com"
+				authType = personalToken {
+					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
+				}
+			}
+		}
+	}
+})
