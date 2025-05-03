@@ -1,5 +1,5 @@
 import { fn } from '@storybook/test';
-import { fr, ja, es, ko, pt, ar } from 'date-fns/locale';
+import { fr, ja, es, ko, pt, ar, it } from 'date-fns/locale';
 import { useState } from 'react';
 import { DateRangeCalendar } from './index';
 import type { Meta, StoryObj } from '@storybook/react';
@@ -13,7 +13,7 @@ const meta: Meta< typeof DateRangeCalendar > = {
 	},
 	argTypes: {
 		locale: {
-			options: [ 'ar', 'es', 'fr', 'ja', 'ko', 'pt' ],
+			options: [ 'ar', 'es', 'fr', 'ja', 'ko', 'pt', 'it' ],
 			mapping: {
 				ar: ar,
 				es: es,
@@ -21,6 +21,7 @@ const meta: Meta< typeof DateRangeCalendar > = {
 				ja: ja,
 				ko: ko,
 				pt: pt,
+				it: it,
 			},
 			control: {
 				type: 'select',
@@ -52,32 +53,32 @@ export default meta;
 
 type Story = StoryObj< typeof DateRangeCalendar >;
 
-const ControlledTemplate: Story[ 'render' ] = ( args ) => {
-	const [ range, setRange ] = useState< typeof args.selected >( {
-		from: undefined,
-		to: undefined,
-	} );
-	return (
-		<DateRangeCalendar
-			{ ...args }
-			selected={ range }
-			onSelect={ ( selectedDate, ...rest ) => {
-				setRange( selectedDate );
-				// TS is strict about `onSelect` expecting a non-undefined date
-				// when the selection is required.
-				if ( ! args.required ) {
-					args.onSelect?.( selectedDate, ...rest );
-				} else if ( selectedDate ) {
-					args.onSelect?.( selectedDate, ...rest );
-				}
-			} }
-		/>
-	);
-};
-
 export const Default: Story = {};
 
-export const Controlled: Story = { render: ControlledTemplate };
+export const Controlled: Story = {
+	render: function ControlledTemplate( args ) {
+		const [ range, setRange ] = useState< typeof args.selected >( {
+			from: undefined,
+			to: undefined,
+		} );
+		return (
+			<DateRangeCalendar
+				{ ...args }
+				selected={ range }
+				onSelect={ ( selectedDate, ...rest ) => {
+					setRange( selectedDate );
+					// TS is strict about `onSelect` expecting a non-undefined date
+					// when the selection is required.
+					if ( ! args.required ) {
+						args.onSelect?.( selectedDate, ...rest );
+					} else if ( selectedDate ) {
+						args.onSelect?.( selectedDate, ...rest );
+					}
+				} }
+			/>
+		);
+	},
+};
 
 export const DisabledDates: Story = {
 	args: {
@@ -117,5 +118,99 @@ export const WithSelectedRangeAndMonth: Story = {
 	args: {
 		defaultSelected: { from: firstDayOfNextMonth, to: fourthDayOfNextMonth },
 		defaultMonth: firstDayOfNextMonth,
+	},
+};
+
+const fullMonthYearFormatter = ( date: Date, locale: string ) =>
+	new Intl.DateTimeFormat( locale, {
+		month: 'long',
+		year: 'numeric',
+	} ).format( date );
+
+const fullDateFormatter = ( date: Date, locale: string ) =>
+	new Intl.DateTimeFormat( locale, {
+		month: 'long',
+		year: 'numeric',
+		day: 'numeric',
+		weekday: 'long',
+	} ).format( date );
+
+const weekdayFormatter = ( date: Date, locale: string ) =>
+	new Intl.DateTimeFormat( locale, {
+		weekday: 'long',
+	} ).format( date );
+
+export const Localized: Story = {
+	args: {
+		locale: it,
+		dir: 'ltr',
+		labels: {
+			labelNav: () => 'Naviga tra i mesi',
+			labelGrid: ( date ) => fullMonthYearFormatter( date, it.code ),
+			labelGridcell: ( date, modifiers ) => {
+				const formattedDate = fullDateFormatter( date, it.code );
+				let label = formattedDate;
+				if ( modifiers?.today ) {
+					label = `Oggi, ${ formattedDate }`;
+				}
+				return label;
+			},
+			labelNext: ( month ) =>
+				`Vai al prossimo mese, ${ month ? fullMonthYearFormatter( month, it.code ) : '' }`,
+			labelPrevious: ( month ) =>
+				`Vai al mese precedente, ${ month ? fullMonthYearFormatter( month, it.code ) : '' }`,
+			labelDayButton: ( date, modifiers ) => {
+				const formattedDate = fullDateFormatter( date, it.code );
+				let label = formattedDate;
+				if ( modifiers?.today ) {
+					label = `Oggi, ${ formattedDate }`;
+				}
+				if ( modifiers?.selected ) {
+					label = `${ formattedDate }, selezionato`;
+				}
+				return label;
+			},
+			labelWeekday: ( date ) => weekdayFormatter( date, it.code ),
+		},
+	},
+};
+
+/**
+ * Since the footer is a live region, it is a great place to provide feedback
+ * to the user about the selected date.
+ */
+export const Footer: Story = {
+	render: function ControlledDateCalendar( args ) {
+		const [ range, setRange ] = useState< typeof args.selected >( {
+			from: undefined,
+			to: undefined,
+		} );
+
+		let footerText;
+		if ( ! range?.from ) {
+			footerText = 'Please pick the first day.';
+		} else if ( range.from && ! range.to ) {
+			footerText = 'Now pick the last day.';
+		} else if ( range.from && range.to ) {
+			footerText = `You selected from ${ range.from.toLocaleDateString() } to ${ range.to.toLocaleDateString() }.`;
+		}
+
+		return (
+			<DateRangeCalendar
+				{ ...args }
+				selected={ range }
+				onSelect={ ( selectedDate, ...rest ) => {
+					setRange( selectedDate );
+					// TS is strict about `onSelect` expecting a non-undefined date
+					// when the selection is required.
+					if ( ! args.required ) {
+						args.onSelect?.( selectedDate, ...rest );
+					} else if ( selectedDate ) {
+						args.onSelect?.( selectedDate, ...rest );
+					}
+				} }
+				footer={ footerText }
+			/>
+		);
 	},
 };
