@@ -183,6 +183,13 @@ interface BaseProps extends Omit< React.HTMLAttributes< HTMLDivElement >, 'onSel
 	 */
 	footer?: React.ReactNode | string;
 	/**
+	 * Focus the first selected day (if set) or today's date (if not disabled).
+	 *
+	 * Use this prop when you need to focus the calendar after a user action
+	 * (e.g. opening the dialog with the calendar).
+	 */
+	autoFocus?: boolean;
+	/**
 	 * Specify which days are disabled.
 	 */
 	disabled?: Matcher | Matcher[] | undefined;
