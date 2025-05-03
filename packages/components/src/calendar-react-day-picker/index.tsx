@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { DayPicker } from 'react-day-picker';
+import { useControlledValue } from './utils';
 import type { DateCalendarProps, DateRangeCalendarProps } from './types';
 
 import './styles.scss';
@@ -95,7 +96,22 @@ export const DateCalendar = ( {
 }: DateCalendarProps ) => {
 	const commonProps = useCommonProps( { numberOfMonths, locale } );
 
-	return <DayPicker aria-label={ ariaLabel } { ...props } mode="single" { ...commonProps } />;
+	const [ selected, setSelected ] = useControlledValue< Date >( {
+		defaultValue: props.selected,
+		value: props.selected,
+		onChange: props.onSelect,
+	} );
+
+	return (
+		<DayPicker
+			aria-label={ ariaLabel }
+			{ ...props }
+			mode="single"
+			selected={ selected }
+			onSelect={ setSelected }
+			{ ...commonProps }
+		/>
+	);
 };
 
 export const DateRangeCalendar = ( {
@@ -106,5 +122,21 @@ export const DateRangeCalendar = ( {
 }: DateRangeCalendarProps ) => {
 	const commonProps = useCommonProps( { numberOfMonths, locale } );
 
-	return <DayPicker aria-label={ ariaLabel } { ...props } mode="range" { ...commonProps } />;
+	// TODO: bug when unselecting date range
+	// const [ selected, setSelected ] = useControlledValue< DateRange >( {
+	// 	defaultValue: props.selected,
+	// 	value: props.selected,
+	// 	onChange: props.onSelect,
+	// } );
+
+	return (
+		<DayPicker
+			aria-label={ ariaLabel }
+			{ ...props }
+			mode="range"
+			// selected={ selected }
+			// onSelect={ setSelected }
+			{ ...commonProps }
+		/>
+	);
 };
