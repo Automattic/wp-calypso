@@ -256,6 +256,8 @@ interface SinglePropsRequired {
 	selected: Date | undefined;
 	/** Event handler when a day is selected. */
 	onSelect?: OnSelectHandler< Date >;
+	/** The default selected date (for uncontrolled usage). */
+	defaultSelected?: Date;
 }
 
 interface SinglePropsOptional {
@@ -264,6 +266,8 @@ interface SinglePropsOptional {
 	selected?: Date | undefined;
 	/** Event handler when a day is selected. */
 	onSelect?: OnSelectHandler< Date | undefined >;
+	/** The default selected date (for uncontrolled usage). */
+	defaultSelected?: Date;
 }
 
 interface RangeProps {
@@ -283,6 +287,8 @@ interface RangePropsRequired {
 	selected: DateRange | undefined;
 	/** Event handler when a range is selected. */
 	onSelect?: OnSelectHandler< DateRange >;
+	/** The default selected range (for uncontrolled usage). */
+	defaultSelected?: DateRange;
 }
 
 interface RangePropsOptional {
@@ -291,6 +297,8 @@ interface RangePropsOptional {
 	selected?: DateRange | undefined;
 	/** Event handler when the selection changes. */
 	onSelect?: OnSelectHandler< DateRange | undefined >;
+	/** The default selected range (for uncontrolled usage). */
+	defaultSelected?: DateRange;
 }
 
 export type DateCalendarProps = BaseProps & ( SinglePropsRequired | SinglePropsOptional );

@@ -92,14 +92,17 @@ export const DateCalendar = ( {
 	[ 'aria-label' ]: ariaLabel = 'Date calendar',
 	locale,
 	numberOfMonths = 1,
+	defaultSelected,
+	selected: selectedProp,
+	onSelect,
 	...props
 }: DateCalendarProps ) => {
 	const commonProps = useCommonProps( { numberOfMonths, locale } );
 
-	const [ selected, setSelected ] = useControlledValue< Date >( {
-		defaultValue: props.selected,
-		value: props.selected,
-		onChange: props.onSelect,
+	const [ selected, setSelected ] = useControlledValue( {
+		defaultValue: defaultSelected,
+		value: selectedProp,
+		onChange: onSelect,
 	} );
 
 	return (
@@ -118,24 +121,26 @@ export const DateRangeCalendar = ( {
 	[ 'aria-label' ]: ariaLabel = 'Date range calendar',
 	locale,
 	numberOfMonths = 1,
+	defaultSelected,
+	selected: selectedProp,
+	onSelect,
 	...props
 }: DateRangeCalendarProps ) => {
 	const commonProps = useCommonProps( { numberOfMonths, locale } );
 
-	// TODO: bug when unselecting date range
-	// const [ selected, setSelected ] = useControlledValue< DateRange >( {
-	// 	defaultValue: props.selected,
-	// 	value: props.selected,
-	// 	onChange: props.onSelect,
-	// } );
+	const [ selected, setSelected ] = useControlledValue( {
+		defaultValue: defaultSelected,
+		value: selectedProp,
+		onChange: onSelect,
+	} );
 
 	return (
 		<DayPicker
 			aria-label={ ariaLabel }
 			{ ...props }
 			mode="range"
-			// selected={ selected }
-			// onSelect={ setSelected }
+			selected={ selected }
+			onSelect={ setSelected }
 			{ ...commonProps }
 		/>
 	);
