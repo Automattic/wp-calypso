@@ -1,6 +1,5 @@
 import { fn } from '@storybook/test';
 import { fr, ja, es, ko, pt, ar } from 'date-fns/locale';
-import { useState } from 'react';
 import { DateCalendar } from './index';
 import type { Meta, StoryObj } from '@storybook/react';
 
@@ -50,38 +49,9 @@ export default meta;
 
 type Story = StoryObj< typeof DateCalendar >;
 
-// TODO:
-// - Check: does it work uncontrolled out of the box?
-// - More sexamples (localization, matchers)
-const Template: Story[ 'render' ] = ( args ) => {
-	const [ selected, setSelected ] = useState< Date | undefined >();
-	return (
-		<DateCalendar
-			{ ...args }
-			selected={ selected }
-			onSelect={ ( selectedDate, triggerDate, modifiers, e ) => {
-				setSelected( selectedDate );
-
-				// TS is strict about `onSelect` expecting a non-undefined date
-				// when the selection is required.
-				if ( ! args.required ) {
-					args.onSelect?.( selectedDate, triggerDate, modifiers, e );
-				} else if ( selectedDate ) {
-					args.onSelect?.( selectedDate, triggerDate, modifiers, e );
-				}
-			} }
-		/>
-	);
-};
-
-export const Default: Story = {
-	name: 'Default',
-	render: Template,
-};
+export const Default: Story = {};
 
 export const DisabledDates: Story = {
-	name: 'Disable dates',
-	render: Template,
 	args: {
 		disabled: [
 			// Disable tomorrow (single date)
@@ -111,7 +81,6 @@ export const DisabledDates: Story = {
 };
 
 export const CustomDefaultMonth: Story = {
-	name: 'Custom Default Month',
 	args: {
 		defaultMonth: new Date( 2024, 0, 1 ), // January 2024
 	},
