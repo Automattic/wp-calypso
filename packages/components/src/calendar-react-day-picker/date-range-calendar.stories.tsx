@@ -29,14 +29,16 @@ const meta: Meta< typeof DateRangeCalendar > = {
 		labels: {
 			control: false,
 		},
-		onMonthChange: {
-			control: false,
-		},
+		defaultSelected: { control: { type: 'date' } },
+		selected: { control: { type: 'date' } },
 		onSelect: {
 			control: false,
 		},
 		defaultMonth: { control: { type: 'date' } },
 		month: { control: { type: 'date' } },
+		onMonthChange: {
+			control: false,
+		},
 		endMonth: { control: { type: 'date' } },
 		startMonth: { control: { type: 'date' } },
 		footer: { control: { type: 'text' } },
@@ -49,40 +51,35 @@ const meta: Meta< typeof DateRangeCalendar > = {
 export default meta;
 
 type Story = StoryObj< typeof DateRangeCalendar >;
-type DateRange = {
-	from: Date | undefined;
-	to?: Date | undefined;
-};
 
-const Template: Story[ 'render' ] = ( args ) => {
-	const [ selected, setSelected ] = useState< DateRange | undefined >();
+const ControlledTemplate: Story[ 'render' ] = ( args ) => {
+	const [ range, setRange ] = useState< typeof args.selected >( {
+		from: undefined,
+		to: undefined,
+	} );
 	return (
 		<DateRangeCalendar
 			{ ...args }
-			selected={ selected }
-			onSelect={ ( selectedDate, triggerDate, modifiers, e ) => {
-				setSelected( selectedDate );
-
+			selected={ range }
+			onSelect={ ( selectedDate, ...rest ) => {
+				setRange( selectedDate );
 				// TS is strict about `onSelect` expecting a non-undefined date
 				// when the selection is required.
 				if ( ! args.required ) {
-					args.onSelect?.( selectedDate, triggerDate, modifiers, e );
+					args.onSelect?.( selectedDate, ...rest );
 				} else if ( selectedDate ) {
-					args.onSelect?.( selectedDate, triggerDate, modifiers, e );
+					args.onSelect?.( selectedDate, ...rest );
 				}
 			} }
 		/>
 	);
 };
 
-export const Default: Story = {
-	name: 'Default',
-	render: Template,
-};
+export const Default: Story = {};
+
+export const Controlled: Story = { render: ControlledTemplate };
 
 export const DisabledDates: Story = {
-	name: 'Disable dates',
-	render: Template,
 	args: {
 		disabled: [
 			// Disable tomorrow (single date)
@@ -111,9 +108,14 @@ export const DisabledDates: Story = {
 	},
 };
 
-export const CustomDefaultMonth: Story = {
-	name: 'Custom Default Month',
+const nextMonth = new Date().getMonth() === 11 ? 0 : new Date().getMonth() + 1;
+const nextMonthYear =
+	new Date().getMonth() === 11 ? new Date().getFullYear() + 1 : new Date().getFullYear();
+const firstDayOfNextMonth = new Date( nextMonthYear, nextMonth, 1 );
+const fourthDayOfNextMonth = new Date( nextMonthYear, nextMonth, 4 );
+export const WithSelectedRangeAndMonth: Story = {
 	args: {
-		defaultMonth: new Date( 2024, 0, 1 ), // January 2024
+		defaultSelected: { from: firstDayOfNextMonth, to: fourthDayOfNextMonth },
+		defaultMonth: firstDayOfNextMonth,
 	},
 };
