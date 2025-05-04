@@ -192,7 +192,7 @@ function CheckoutSummaryPriceList() {
 	let subtotalBeforeDiscounts = 0;
 	let totalDiscount = 0;
 	if ( streamlinedPriceExperimentAssignment ) {
-		for ( const product of responseCart.unmerged_products ) {
+		for ( const product of responseCart.products ) {
 			// Calculate due today amount for introductory offers, based on the code from LineItemIntroOfferCostOverrideDetail
 			if (
 				doesIntroductoryOfferHaveDifferentTermLengthThanProduct(
