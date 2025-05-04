@@ -31,6 +31,8 @@ import { formatCurrency } from '@automattic/number-formatters';
 import { isNewsletterFlow, isAnyHostingFlow } from '@automattic/onboarding';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import {
+	doesIntroductoryOfferHaveDifferentTermLengthThanProduct,
+	doesIntroductoryOfferHavePriceIncrease,
 	isBillingInfoEmpty,
 	getTaxBreakdownLineItemsFromCart,
 	getTotalLineItemFromCart,
@@ -187,6 +189,30 @@ function CheckoutSummaryPriceList() {
 	const translate = useTranslate();
 	const [ , streamlinedPriceExperimentAssignment ] = useStreamlinedPriceExperiment();
 
+	let subtotalBeforeDiscounts = 0;
+	let totalDiscount = 0;
+	if ( streamlinedPriceExperimentAssignment ) {
+		for ( const product of responseCart.unmerged_products ) {
+			// Calculate due today amount for introductory offers, based on the code from LineItemIntroOfferCostOverrideDetail
+			if (
+				doesIntroductoryOfferHaveDifferentTermLengthThanProduct(
+					product.cost_overrides,
+					product.introductory_offer_terms,
+					product.months_per_bill_period
+				) ||
+				doesIntroductoryOfferHavePriceIncrease( product )
+			) {
+				// While cost_overrides is an array, it seems that it only contains one item for now
+				const dueTodayAmount =
+					product.cost_overrides[ 0 ]?.new_subtotal_integer ?? product.item_subtotal_integer;
+				subtotalBeforeDiscounts += dueTodayAmount;
+			} else {
+				subtotalBeforeDiscounts += product.item_original_subtotal_integer;
+			}
+		}
+		totalDiscount = subtotalBeforeDiscounts - responseCart.sub_total_integer;
+	}
+
 	return (
 		<>
 			{ streamlinedPriceExperimentAssignment && (
@@ -203,13 +229,35 @@ function CheckoutSummaryPriceList() {
 						<CheckoutSummarySubtotal key="checkout-summary-line-item-subtotal">
 							<span>{ translate( 'Subtotal' ) }</span>
 							<span className="wp-checkout-order-summary__subtotal-price">
-								{ formatCurrency( responseCart.sub_total_integer, responseCart.currency, {
+								{ totalDiscount > 0 && (
+									<s>
+										{ formatCurrency( subtotalBeforeDiscounts, responseCart.currency, {
+											isSmallestUnit: true,
+											stripZeros: true,
+										} ) }
+									</s>
+								) }
+								<span>
+									{ formatCurrency( responseCart.sub_total_integer, responseCart.currency, {
+										isSmallestUnit: true,
+										stripZeros: true,
+									} ) }
+								</span>
+							</span>
+						</CheckoutSummarySubtotal>
+					) }
+					{ streamlinedPriceExperimentAssignment && totalDiscount > 0 && (
+						<CheckoutSummaryTotalDiscount>
+							<span>{ translate( 'Discount' ) }</span>
+							<span className="wp-checkout-order-summary__subtotal-discount">
+								{ formatCurrency( totalDiscount, responseCart.currency, {
 									isSmallestUnit: true,
 									stripZeros: true,
 								} ) }
 							</span>
-						</CheckoutSummarySubtotal>
+						</CheckoutSummaryTotalDiscount>
 					) }
+
 					{ ! streamlinedPriceExperimentAssignment && (
 						<CheckoutSummaryLineItem key="checkout-summary-line-item-subtotal">
 							<span>{ translate( 'Subtotal' ) }</span>
@@ -1019,6 +1067,31 @@ const CheckoutSummarySubtotal = styled( CheckoutSummaryLineItem )`
 	font-size: 20px;
 	& .wp-checkout-order-summary__subtotal-price {
 		font-size: 14px;
+
+		display: flex;
+		flex: 0 0 auto;
+		gap: 4px;
+		margin-left: 12px;
+
+		.rtl & {
+			margin-right: 12px;
+			margin-left: 0;
+		}
+
+		& s {
+			color: #787c82;
+		}
+
+		& span {
+			font-weight: 500;
+		}
+	}
+`;
+
+const CheckoutSummaryTotalDiscount = styled( CheckoutSummaryLineItem )`
+	& .wp-checkout-order-summary__subtotal-discount {
+		color: #008a20;
+		font-weight: 500;
 	}
 `;
 
