@@ -12,15 +12,12 @@
 
 	&.stats-period-navigation__is-with-new-date-control {
 		padding: 0;
-		align-items: flex-start;
-	
-		.stats-navigation-arrows {
-			justify-content: flex-end;
-		}
+	  align-items: flex-start;
 	
 		.stats-period-navigation__date-range-control {
+			margin-left: auto;
+
 			display:flex;
-			flex-direction: row;
 			gap: 20px;
 
 			@media (max-width: $break-mobile) {
