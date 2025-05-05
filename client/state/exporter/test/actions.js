@@ -8,7 +8,6 @@ import {
 	EXPORT_POST_TYPE_FIELD_SET,
 	EXPORT_START_REQUEST,
 	EXPORT_STARTED,
-	EXPORT_STATUS_FETCH,
 } from 'calypso/state/action-types';
 import {
 	advancedSettingsFetch,
@@ -182,17 +181,9 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#exportStatusFetch()', () => {
-		test( 'should dispatch fetch export status action when thunk triggered', async () => {
-			await exportStatusFetch( 100658273 )( spy );
-			expect( spy ).toHaveBeenCalledWith( {
-				type: EXPORT_STATUS_FETCH,
-				siteId: 100658273,
-			} );
-		} );
-
 		test( 'should dispatch export complete action when an export has completed', async () => {
 			await exportStatusFetch( 100658273 )( spy );
-			expect( spy ).toHaveBeenCalledTimes( 2 );
+			expect( spy ).toHaveBeenCalledTimes( 1 );
 			expect( spy ).toHaveBeenCalledWith( {
 				type: EXPORT_COMPLETE,
 				siteId: 100658273,
@@ -201,7 +192,7 @@ describe( 'actions', () => {
 
 		test( 'should dispatch export failure action when an export has failed', async () => {
 			await exportStatusFetch( 2916284 )( spy );
-			expect( spy ).toHaveBeenCalledTimes( 2 );
+			expect( spy ).toHaveBeenCalledTimes( 1 );
 			expect( spy ).toHaveBeenCalledWith(
 				expect.objectContaining( {
 					type: EXPORT_FAILURE,

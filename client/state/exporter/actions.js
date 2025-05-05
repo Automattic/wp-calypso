@@ -8,7 +8,6 @@ import {
 	EXPORT_FAILURE,
 	EXPORT_START_REQUEST,
 	EXPORT_STARTED,
-	EXPORT_STATUS_FETCH,
 	EXPORT_POST_TYPE_SET,
 	EXPORT_POST_TYPE_FIELD_SET,
 	EXPORT_MEDIA_REQUEST,
@@ -128,11 +127,6 @@ export function exportStarted( siteId ) {
 
 export function exportStatusFetch( siteId ) {
 	return ( dispatch ) => {
-		dispatch( {
-			type: EXPORT_STATUS_FETCH,
-			siteId,
-		} );
-
 		const failure = ( error ) => {
 			dispatch( exportFailed( siteId, error ) );
 		};
