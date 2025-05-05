@@ -116,7 +116,9 @@ class StatsPostDetail extends Component {
 	}
 
 	hasDontSendEmailPostToSubs( metadata ) {
-		return metadata?.some( ( { key } ) => key === '_jetpack_dont_email_post_to_subs' );
+		return metadata?.some(
+			( { key, value } ) => key === '_jetpack_dont_email_post_to_subs' && !! value
+		);
 	}
 
 	getPost() {
