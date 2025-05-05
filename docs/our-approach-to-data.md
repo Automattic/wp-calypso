@@ -1,12 +1,10 @@
 # Our Approach to Data
 
-**Important notice:**: This document is slightly out of date. There's actually a fifth era of data fetching and manipulation in Calypso, using `@tanstack/react-query`. We discourage the use of our legacy data layer (found in `client/state/data-layer`) for new components – while there's definitely a case for using Redux as a state library and thunks for some data fetching, we generally recommend using `@tanstack/react-query` for most of your data needs. Please refer [`client/data/README.md`](https://github.com/Automattic/wp-calypso/blob/trunk/client/data/README.md) to get more information about usage conventions and recommendations (the document is currently a work in progress).
-
 Throughout Calypso's development, our approach to handling data has evolved to allow us to better adapt to the scale at which the application has grown. These shifts have not been ubiquitously adopted throughout the codebase, so you'll occasionally encounter legacy code which is not consistent with our current recommendations. The purpose of this document is to outline a history of these approaches such that you as the developer can understand the differences between each. Furthermore, it seeks to prescribe our current set of recommendations with regard to data management.
 
 ## History
 
-There have been three major "eras" of data management throughout the lifetime of Calypso's development. Below, you will find a description of each, common identifying features, and reasons it was adopted in favor of the previous approach.
+There have been five major "eras" of data management throughout the lifetime of Calypso's development. Below, you will find a description of each, common identifying features, and reasons it was adopted in favor of the previous approach.
 
 ### First Era: Emitter Objects (June 2014 - April 2015)
 
@@ -61,7 +59,7 @@ Facebook's [Flux architecture](https://facebook.github.io/flux/) is a pattern th
 - Encourages and often forces a developer toward writing functional, testable code
 - Extendable, supporting middlewares to suit our specific needs and [conveniences for use with React](https://github.com/reactjs/react-redux)
 
-### Fourth Era: Modularized Redux State Tree (February 2020 - Present)
+### Fourth Era: Modularized Redux State Tree (February 2020 - October 2023)
 
 This era builds upon the previous, using the same selectors, reducers and action creators that were created before. However, instead of creating a single monolithic root reducer on boot, the goal is instead to have individual reducers register themselves when needed. This is done synchronously and automatically through dependency graph resolution.
 
@@ -80,9 +78,19 @@ See [the Modularized State documentation](./modularized-state.md) for more detai
 - Significantly reduces the amount of code required to boot Calypso, improving loading performance
 - More scalable approach, as Redux state continues to grow
 
+### Fifth Era: TanStack Query (October 2023 - Present)
+
+The fifth era of data management in Calypso is the introduction of [TanStack Query](https://tanstack.com/query/latest) for data fetching and manipulation. This library provides a powerful and lightweight solution for managing server state in React applications. It allows developers to easily fetch, cache, and synchronize data with the server, while also providing built-in support for features like pagination, optimistic updates, and background refetching.
+
 ## Current Recommendations
 
-All new data requirements should be implemented as part of the global, modularized Redux state tree. The `client/state` directory contains all of the behavior describing the global application state. The folder structure of the `state` directory should directly mirror the sub-trees within the global state tree. Each sub-tree should include its own reducer, and preferably also its action creators and selectors.
+- use TanStack Query for data fetching and manipulation when possible.
+
+- For the new hosting dashboard, use TanStack Query exclusively, and if your data is mandatory for the route to render, preload it as part of the route loader. If your data is optional, use TanStack Query to fetch it in the component.
+
+- For all the other parts of Calypso, you can continue using the `client/state` selectors.
+
+## Appendix: Redux State
 
 ### Terminology
 
@@ -138,7 +146,7 @@ As mentioned above, new actions should be added to `action-types.js`. Action typ
 
 ### Data Normalization
 
-Because a Redux store is the [single source of truth](https://redux.js.org/introduction/three-principles#single-source-of-truth) for the entire application state, it is important that all known data be tracked within the state tree and that it be well-structured. In your reducer functions, consider the data being manipulated in the tree and ensure that subjects are appropriately separated to minimize redundancy and to avoid synchronization concerns. When a subject needs to refer to another part of the tree, store a reference (likely an ID). Tracking an indexed set of items makes it easy to navigate the tree when needing to perform a lookup.
+In your reducer functions, consider the data being manipulated in the tree and ensure that subjects are appropriately separated to minimize redundancy and to avoid synchronization concerns. When a subject needs to refer to another part of the tree, store a reference (likely an ID). Tracking an indexed set of items makes it easy to navigate the tree when needing to perform a lookup.
 
 As an example, consider that there are many variations of a "user" in the application. A user may be the current user, a subscriber to a site, or someone who has left a comment on a story in your Reader feed. Each of these display user data in different ways, and in some cases retrieve the data from different sources. However, they can all be classified as a user, and relations between the user and a display context can be established through references.
 
@@ -183,100 +191,6 @@ The following state tree demonstrates how users, sites, and posts may be interre
 }
 ```
 
-### Data Components
-
-First, if you haven't already, you should consider reading the following blog posts, as they help to explain the reasoning behind splitting data and visual concerns:
-
-- [_Container Components_](https://medium.com/@learnreact/container-components-c0e67432e005#.zd590uacw)
-- [_Presentational and Container Components_](https://medium.com/@dan_abramov/smart-and-dumb-components-7ca2f9a7c7d0#.cwn6alkqw)
-
-With that in mind, we typically have a few concerns when building a component that has data needs:
-
-- Ensuring that the necessary data is available
-- Making the data available to the component
-- Allowing the component to modify the data
-
-The first of these, ensuring that data is available, is one that we'd wish to eliminate. It is unfortunate that a developer should concern themselves with the fetching behavior of data, as it would be preferable instead that a component describe its data needs, and that the syncing/fetching behavior be handled behind the scenes automatically. Tools like [Relay](https://facebook.github.io/relay/) get us closer to this reality, though Relay has environment requirements that we cannot currently satisfy. For the time being, we must handle our own data fetching, but we should be conscious of a future in which fetching is not a concern for our components.
-
-Framed this way, we can consider two types of data components: app components and query components.
-
-#### App components
-
-An app component wraps a visual component, connecting it to the global application state. We use the [`react-redux` library](https://github.com/reactjs/react-redux) to assist in creating bindings between React components and the Redux store instance.
-
-Below is an example of an app component that retrieves an array of posts for a given site and renders them. (This example uses the stateless function syntax for declaring components: see the [React 0.14 upgrade guide](https://reactjs.org/blog/2015/10/07/react-v0.14.html#stateless-function-components) if you're unfamiliar with it.)
-
-```jsx
-function PostsList( { posts } ) {
-	return (
-		<ul className="posts-list">
-			{ posts.map( ( post ) => {
-				return <li key={ post.id }>{ post.title }</li>;
-			} ) }
-		</ul>
-	);
-}
-
-export default connect( ( state, ownProps ) => {
-	return {
-		posts: getSitePosts( ownProps.siteId ),
-	};
-} )( PostsList );
-```
-
-In this example, the `PostsList` function defines the visual `PostsList` component.
-It expects an array of `posts` passed as a prop, which it renders as a `ul`. The `connect` function wraps this purely presentational component to produce an app component.
-
-`connect` accepts two arguments. Both pass props to the component. The first argument provides data; the second sets the component up to handle behavior.
-
-1. `mapStateToProps`: A function which, given the store state, returns props to be passed to the app component. This argument allows us to pass store data to the component.
-2. `mapDispatchToProps`: A function which, given the store dispatch method, also returns props to be passed to the app component. This argument can enable the component to update the store state.
-
-In the example above we only pass the first argument, `mapStateToProps`. As another example, consider a component which renders a Delete button for a given post. We want to display the post title as a label in the delete button, and allow the component to trigger the post deletion when clicked.
-
-```jsx
-import { localize } from 'i18n-calypso';
-
-const PostDeleteButton = ( { deleteHandler, label, translate } ) => (
-	<button onClick={ deleteHandler }>
-		{ translate( 'Delete %s', {
-			args: [ label ],
-		} ) }
-	</button>
-);
-
-export default connect(
-	( state, ownProps ) => {
-		return {
-			label: getSitePost( ownProps.siteId, ownProps.postId ).title,
-		};
-	},
-	( dispatch, ownProps ) => {
-		return {
-			deleteHandler: () => dispatch( deleteSitePost( ownProps.siteId, ownProps.postId ) ),
-		};
-	}
-)( localize( PostDeleteButton ) );
-```
-
-In this example we pass both arguments to `connect`.
-
-`connect` is a [currying](https://www.sitepoint.com/currying-in-functional-javascript/) function: after we invoke it with the `mapStateToProps` and `mapDispatchToProps` arguments we call it a second time, this time passing the `PostDeleteButton` visual component. `connect` takes this component class and returns a new one which is connected to the store. The resulting component can have additional props which were not defined in the original class.
-
-At this point, you might observe that the visual elements rendered in `<PostDeleteButton />` aren't very specific to posts and could probably be reused in different contexts. This is a good observation to make, and in this case it might make sense to split the visual component to its own separate file (e.g. `client/components/delete-button/index.jsx`). You should try to identify these opportunities as often as possible. Since the `connect` wrapping function is detached from the component declaration in the file above, it should not be difficult to separate the two.
-
-Separating visual and data concerns is a good mindset to have when approaching components, and whenever possible, we should strive to create reusable visual components which accept simple props for rendering. However, pragmatically it is unreasonable to assume that components will always be reused and that there's always a clear divide between the visual and data elements. As such, while we recommend creating purely visual components whenever possible, it is also reasonable to create components that are directly tied to the global application state.
-
-#### Query components
-
-Query components accept as few props as possible to describe the data needs of the context in which they're used. They are responsible for dispatching the actions that fetch the desired data from the WordPress.com REST API. They should neither accept nor render any children.
-
-The benefits of query components are that they (a) are reusable, (b) take advantage of React's lifecycle methods to ensure that data needs are kept in sync, and (c) can be used by app components to maintain their self-sufficiency. That they neither accept nor render children eliminates the need for ancestor components to concern themselves with the data needs of leaf components and [can be more performant](https://www.youtube.com/watch?v=KYzlpRvWZ6c&t=1137).
-
-When creating a component that needs to consume data, we can simply include a query component as a child of that component.
-
-Refer to the [`<QueryPosts />` component](https://github.com/Automattic/wp-calypso/tree/HEAD/client/components/data/query-posts) as an example of a query component. New query components should be added to the `components/data` directory, prefixed with `query-` such to distinguish them from legacy data components.
-
 ### Selectors
 
 A selector is simply a convenience function for retrieving data out of the global state tree. Since the global state tree is a plain JavaScript object, there's nothing to stop you from accessing data directly, but you may find that creating a selector will help to reduce repetition, improve the semantic meaning of your code, and avoid mistakes. For example, the following two approaches both serve to retrieve an array of posts for a specific site, though you might find the selector more convenient and readable at a glance:
@@ -306,7 +220,7 @@ What are a few common use-cases for selectors?
 
 ### UI State
 
-By now, you're hopefully convinced that a global application state can enable us to scale our application needs with regards to persisted data (sites, posts, comments, etc.). The store can also be used to track the state of the user interface, but it's important to distinguish when and why it's appropriate to use the Redux store over, say, a [React component's state](https://reactjs.org/docs/state-and-lifecycle.html).
+The store can also be used to track the state of the user interface, but it's important to distinguish when and why it's appropriate to use the Redux store over, say, a [React component's state](https://reactjs.org/docs/state-and-lifecycle.html).
 
 We recommend that you only use the state tree to store user interface state when you know that the data being stored should be persisted between page views, or when it's to be used by distinct areas of the application on the same page. As an example, consider the currently selected site. When navigating between pages in the [_My Sites_](https://wordpress.com/stats) section, I'd expect that the selected site should not change. Additionally, many parts of the rendered application make use of selected site. For these reasons, it makes sense that the currently selected site be saved in the global state. By contrast, when I navigate to the Sharing page and expand one of the available sharing services, I don't have the same expectation that this interaction be preserved when I later leave and return to the page. In these cases, it might be more appropriate to use React state to track the expanded status of the component, local only to the current rendering context. Use your best judgment when considering whether to add to the global state, but don't feel compelled to avoid React state altogether.
 
