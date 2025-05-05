@@ -27,7 +27,7 @@ import {
 } from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
 import getToSAcceptancePayload from 'calypso/lib/tos-acceptance-tracking';
-import { isMobile } from 'calypso/lib/user-agent';
+import { isIos, isAndroid } from 'calypso/lib/user-agent';
 import wpcom from 'calypso/lib/wp';
 import {
 	recordTracksEventWithClientId as recordTracksEvent,
@@ -279,7 +279,7 @@ class MagicLogin extends Component {
 
 		const isA4A = query?.redirect_to?.includes( 'agencies.automattic.com/client' ) ?? false;
 
-		const hideAppPromo = isA4A || ! isMobile();
+		const hideAppPromo = isA4A || ! ( isIos() || isAndroid() );
 
 		if ( isWCCOM ) {
 			return null;
