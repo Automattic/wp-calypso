@@ -18,6 +18,7 @@ import Security2faDisable from 'calypso/me/security-2fa-disable';
 import Security2faKey from 'calypso/me/security-2fa-key';
 import Security2faSetup from 'calypso/me/security-2fa-setup';
 import SecuritySectionNav from 'calypso/me/security-section-nav';
+import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import getUserSettings from 'calypso/state/selectors/get-user-settings';
 import isTwoStepEnabled from 'calypso/state/selectors/is-two-step-enabled';
 import { fetchUserSettings } from 'calypso/state/user-settings/actions';
@@ -38,6 +39,24 @@ class TwoStep extends Component {
 	onDisableFinished = () => {
 		this.props.fetchUserSettings();
 	};
+
+	componentDidMount() {
+		if ( ! this.props.isFetchingUserSettings && ! this.props.isEmailVerified ) {
+			window.location.href = '/me/security';
+		}
+	}
+
+	componentDidUpdate( prevProps ) {
+		// Check if fetching just completed
+		if (
+			prevProps.isFetchingUserSettings &&
+			! this.props.isFetchingUserSettings &&
+			prevProps.isEmailVerified &&
+			! this.props.isEmailVerified
+		) {
+			window.location.href = '/me/security';
+		}
+	}
 
 	renderPlaceholders = () => {
 		const placeholders = [];
@@ -139,6 +158,7 @@ export default connect(
 		isFetchingUserSettings: isFetchingUserSettings( state ),
 		userSettings: getUserSettings( state ),
 		isTwoStepEnabled: isTwoStepEnabled( state ),
+		isEmailVerified: isCurrentUserEmailVerified( state ),
 	} ),
 	{
 		fetchUserSettings,
