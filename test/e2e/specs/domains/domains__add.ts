@@ -66,7 +66,7 @@ describe.skip( DataHelper.createSuiteTitle( 'Domains: Add to current site' ), fu
 		} );
 
 		it( 'Choose the .live TLD', async function () {
-			selectedDomain = await domainSearchComponent.selectDomain( '.live' );
+			selectedDomain = await domainSearchComponent.selectDomain( '.live', false );
 		} );
 
 		it( 'Decline Titan Email upsell', async function () {

@@ -3,7 +3,11 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
 import Markdown from 'react-markdown';
-import { ODIE_FORWARD_TO_FORUMS_MESSAGE, ODIE_FORWARD_TO_ZENDESK_MESSAGE } from '../../constants';
+import {
+	ODIE_FORWARD_TO_FORUMS_MESSAGE,
+	ODIE_FORWARD_TO_ZENDESK_MESSAGE,
+	ODIE_THIRD_PARTY_MESSAGE,
+} from '../../constants';
 import { useOdieAssistantContext } from '../../context';
 import { userProvidedEnoughInformation } from '../../utils';
 import CustomALink from './custom-a-link';
@@ -14,6 +18,23 @@ import { uriTransformer } from './uri-transformer';
 import WasThisHelpfulButtons from './was-this-helpful-buttons';
 import type { Message } from '../../types';
 
+const getDisplayMessage = (
+	isUserEligibleForPaidSupport: boolean,
+	canConnectToZendesk: boolean,
+	isRequestingHumanSupport: boolean,
+	messageContent: string,
+	forwardMessage: string,
+	hasCannedResponse?: boolean
+) => {
+	if ( isUserEligibleForPaidSupport && ! canConnectToZendesk && isRequestingHumanSupport ) {
+		return ODIE_THIRD_PARTY_MESSAGE;
+	}
+	if ( isUserEligibleForPaidSupport && hasCannedResponse ) {
+		return messageContent;
+	}
+	return forwardMessage;
+};
+
 export const UserMessage = ( {
 	message,
 	isDisliked = false,
@@ -23,7 +44,8 @@ export const UserMessage = ( {
 	message: Message;
 	isMessageWithoutEscalationOption?: boolean;
 } ) => {
-	const { isUserEligibleForPaidSupport, trackEvent, chat } = useOdieAssistantContext();
+	const { isUserEligibleForPaidSupport, trackEvent, chat, canConnectToZendesk } =
+		useOdieAssistantContext();
 
 	const hasCannedResponse = message.context?.flags?.canned_response;
 	const isRequestingHumanSupport = message.context?.flags?.forward_to_human_support ?? false;
@@ -42,8 +64,17 @@ export const UserMessage = ( {
 		? ODIE_FORWARD_TO_ZENDESK_MESSAGE
 		: ODIE_FORWARD_TO_FORUMS_MESSAGE;
 
-	const displayMessage =
-		isUserEligibleForPaidSupport && hasCannedResponse ? message.content : forwardMessage;
+	const displayMessage = getDisplayMessage(
+		isUserEligibleForPaidSupport,
+		canConnectToZendesk,
+		isRequestingHumanSupport,
+		message.content,
+		forwardMessage,
+		hasCannedResponse
+	);
+
+	const displayingThirdPartyMessage =
+		isUserEligibleForPaidSupport && ! canConnectToZendesk && isRequestingHumanSupport;
 
 	const handleContactSupportClick = ( destination: string ) => {
 		trackEvent( 'chat_get_support', {
@@ -111,6 +142,7 @@ export const UserMessage = ( {
 				<div
 					className={ clsx( 'chat-feedback-wrapper', {
 						'chat-feedback-wrapper-no-extra-contact': ! showExtraContactOptions,
+						'chat-feedback-wrapper-third-party-cookies': displayingThirdPartyMessage,
 					} ) }
 				>
 					<Sources message={ message } />

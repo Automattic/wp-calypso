@@ -2,7 +2,6 @@ import fs from 'fs';
 import { DataHelper } from '@automattic/calypso-e2e';
 import archiver from 'archiver';
 import FormData from 'form-data';
-import fetch from 'node-fetch';
 
 export default async function uploadScreenshotsToBlog( zipFilename, globPattern ) {
 	const archive = archiver( 'zip', {

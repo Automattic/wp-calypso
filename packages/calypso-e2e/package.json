@@ -25,7 +25,6 @@
 		"form-data": "^4.0.2",
 		"jest-docblock": "^29.7.0",
 		"mailosaur": "^8.4.0",
-		"nock": "^13.5.6",
 		"playwright": "1.48.2",
 		"totp-generator": "^0.0.12"
 	},
@@ -36,10 +35,9 @@
 		"@automattic/zendesk-client": "workspace:^",
 		"@jest/globals": "^29.7.0",
 		"@types/node": "^22.7.5",
-		"@types/node-fetch": "^2.6.12",
 		"@wordpress/i18n": "^5.22.0",
 		"asana-phrase": "^0.0.8",
-		"node-fetch": "^2.7.0",
+		"nock": "^14.0.4",
 		"typescript": "^5.8.2"
 	},
 	"scripts": {
