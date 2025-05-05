@@ -6,7 +6,6 @@ import {
 	setStoredUserId,
 } from 'calypso/lib/user/store';
 import {
-	CURRENT_USER_FETCH,
 	CURRENT_USER_RECEIVE,
 	CURRENT_USER_SET_EMAIL_VERIFIED,
 	CURRENT_USER_SET_JETPACK_PARTNER_TYPE,
@@ -32,10 +31,6 @@ export function fetchCurrentUser() {
 		if ( fetchingUser ) {
 			return fetchingUser;
 		}
-
-		dispatch( {
-			type: CURRENT_USER_FETCH,
-		} );
 
 		fetchingUser = rawCurrentUserFetch()
 			.then( async ( user ) => {
