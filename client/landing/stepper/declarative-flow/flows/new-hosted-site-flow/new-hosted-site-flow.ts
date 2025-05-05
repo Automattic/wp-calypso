@@ -49,6 +49,7 @@ async function initialize( { reduxStore, flowState }: InitializeParameters ) {
 		steps.push( STEPS.UNIFIED_PLANS, STEPS.TRIAL_ACKNOWLEDGE );
 	} else if ( ! isFreeHostingTrial( productSlug ) ) {
 		flowState.set( 'plans', {
+			stepName: 'plans',
 			cartItems: [
 				{
 					product_slug: productSlug,
@@ -62,6 +63,7 @@ async function initialize( { reduxStore, flowState }: InitializeParameters ) {
 		} );
 	} else if ( eligibleForFreeHostingTrial ) {
 		flowState.set( 'plans', {
+			stepName: 'plans',
 			cartItems: [
 				{
 					product_slug: productSlug,
@@ -159,6 +161,7 @@ const hosting: FlowV2< typeof initialize > = {
 					}
 
 					set( 'plans', {
+						stepName: 'plans',
 						cartItems: [
 							{
 								...pickedPlan,
