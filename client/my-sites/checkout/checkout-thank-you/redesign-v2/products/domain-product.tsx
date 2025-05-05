@@ -13,6 +13,18 @@ import {
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import type { ReceiptPurchase } from 'calypso/state/receipts/types';
 
+function getGravatarPopupInfo(): { gravatarOrigin: string; isInGravatarPopup: boolean } {
+	if ( ! window.opener || window.opener.closed ) {
+		return { gravatarOrigin: '', isInGravatarPopup: false };
+	}
+
+	const gravatarOrigin = window.name || '';
+	const gravatarOriginRegex = /^https:\/\/(?:[a-z]{2}(?:-[a-z]{2})?\.)?gravatar\.com\/?$/i;
+	const isInGravatarPopup = gravatarOriginRegex.test( gravatarOrigin );
+
+	return { gravatarOrigin, isInGravatarPopup };
+}
+
 type DomainTransferSectionProps = {
 	purchase: ReceiptPurchase;
 	currency: string;
@@ -59,24 +71,17 @@ export default function ThankYouDomainProduct( {
 
 	domainName ??= purchase?.meta;
 
-	function isInGravatarPopup() {
-		if ( ! window.opener || window.opener.closed ) {
-			return false;
-		}
-
-		const gravatarOriginRegex = /^https:\/\/(?:[a-z]{2}(?:-[a-z]{2})?\.)?gravatar\.com\/?$/i;
-		const gravatarOrigin = window.name || '';
-
-		return gravatarOriginRegex.test( gravatarOrigin );
-	}
-
 	// Gravatar: Send a message to notify the parent window that the domain claim is completed.
 	useEffect( () => {
-		if ( ! domainName || ! isGravatarDomain || ! isInGravatarPopup() ) {
+		if ( ! domainName || ! isGravatarDomain ) {
 			return;
 		}
 
-		const gravatarOrigin = window.name || '';
+		const { gravatarOrigin, isInGravatarPopup } = getGravatarPopupInfo();
+
+		if ( ! isInGravatarPopup ) {
+			return;
+		}
 
 		try {
 			// Send a message to the opener window to indicate that the domain claim is completed.
@@ -104,7 +109,7 @@ export default function ThankYouDomainProduct( {
 		);
 
 		// If the page is opened in Gravatar popup, we will automatically close the popup for the user.
-		if ( isInGravatarPopup() ) {
+		if ( getGravatarPopupInfo().isInGravatarPopup ) {
 			actions = (
 				<Button isBusy disabled>
 					{ translate( 'Processing…' ) }
