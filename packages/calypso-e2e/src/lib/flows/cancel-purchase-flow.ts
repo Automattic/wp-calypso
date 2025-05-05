@@ -29,7 +29,10 @@ export async function cancelPurchaseFlow(
 
 	await page.getByRole( 'button', { name: 'Submit' } ).click();
 
-	await page.getByRole( 'button', { name: /Submit and (remove|cancel) plan/ } ).click();
+	await Promise.all( [
+		page.waitForNavigation(),
+		page.getByRole( 'button', { name: /Submit and (remove|cancel) plan/ } ).click(),
+	] );
 }
 
 /**
@@ -68,5 +71,8 @@ export async function cancelAtomicPurchaseFlow(
 		await hasContentCheck.click();
 	}
 
-	await page.getByRole( 'button', { name: /Submit and cancel plan/ } ).click();
+	await Promise.all( [
+		page.waitForNavigation(),
+		page.getByRole( 'button', { name: /Submit and cancel plan/ } ).click(),
+	] );
 }
