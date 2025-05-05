@@ -150,9 +150,7 @@ __metadata:
     html-webpack-plugin: "npm:^5.6.3"
     i18n-calypso: "workspace:^"
     lodash: "npm:^4.17.21"
-    mkdirp: "npm:^1.0.4"
     moment: "npm:^2.30.1"
-    node-fetch: "npm:^2.7.0"
     path-browserify: "npm:^1.0.1"
     postcss: "npm:^8.5.3"
     prop-types: "npm:^15.8.1"
@@ -283,7 +281,6 @@ __metadata:
     gettext-parser: "npm:^6.0.0"
     lodash: "npm:^4.17.21"
     mini-css-extract-plugin: "npm:^1.6.2"
-    node-fetch: "npm:^2.7.0"
     postcss-custom-properties: "npm:^11.0.0"
     postcss-loader: "npm:^6.2.1"
     recursive-copy: "npm:^2.0.14"
@@ -361,15 +358,13 @@ __metadata:
     "@playwright/browser-chromium": "npm:1.48.2"
     "@playwright/browser-firefox": "npm:1.48.2"
     "@types/node": "npm:^22.7.5"
-    "@types/node-fetch": "npm:^2.6.12"
     "@types/totp-generator": "npm:^0.0.3"
     "@wordpress/i18n": "npm:^5.22.0"
     asana-phrase: "npm:^0.0.8"
     form-data: "npm:^4.0.2"
     jest-docblock: "npm:^29.7.0"
     mailosaur: "npm:^8.4.0"
-    nock: "npm:^13.5.6"
-    node-fetch: "npm:^2.7.0"
+    nock: "npm:^14.0.4"
     playwright: "npm:1.48.2"
     totp-generator: "npm:^0.0.12"
     typescript: "npm:^5.8.2"
@@ -612,8 +607,6 @@ __metadata:
     gettext-parser: "npm:^6.0.0"
     i18n-calypso: "workspace:^"
     lodash: "npm:^4.17.21"
-    mkdirp: "npm:^1.0.4"
-    node-fetch: "npm:^2.7.0"
     npm-run-all: "npm:^4.1.5"
     postcss: "npm:^8.5.3"
     react: "npm:^18.3.1"
@@ -782,7 +775,6 @@ __metadata:
     i18n-calypso: "workspace:^"
     jest-fetch-mock: "npm:^3.0.3"
     nock: "npm:^13.5.6"
-    node-fetch: "npm:^2.7.0"
     qs: "npm:^6.9.1"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
@@ -1624,9 +1616,7 @@ __metadata:
     html-webpack-plugin: "npm:^5.6.3"
     jest: "npm:^29.7.0"
     lodash: "npm:^4.17.21"
-    mkdirp: "npm:^1.0.4"
     moment: "npm:^2.30.1"
-    node-fetch: "npm:^2.7.0"
     path-browserify: "npm:^1.0.1"
     postcss: "npm:^8.5.3"
     prop-types: "npm:^15.8.1"
@@ -2023,7 +2013,6 @@ __metadata:
     "@wordpress/rich-text": "npm:^7.22.0"
     "@wordpress/stylelint-config": "npm:^23.14.0"
     "@wordpress/url": "npm:^4.22.0"
-    node-fetch: "npm:^2.7.0"
     stylelint: "npm:^16.2.1"
     stylelint-scss: "npm:^6.4.0"
     typescript: "npm:^5.8.2"
@@ -5199,6 +5188,20 @@ __metadata:
     outvariant: "npm:^1.2.1"
     strict-event-emitter: "npm:^0.5.1"
   checksum: 378c4b14adf020aa7b23816aae364fcea00becfaba30665e9a35d4726c581df0762342625cc2b6e3e84b6a1e87b3c263f96946a60fe16b78db7c19e698e4a4f3
+  languageName: node
+  linkType: hard
+
+"@mswjs/interceptors@npm:^0.38.5":
+  version: 0.38.6
+  resolution: "@mswjs/interceptors@npm:0.38.6"
+  dependencies:
+    "@open-draft/deferred-promise": "npm:^2.2.0"
+    "@open-draft/logger": "npm:^0.3.0"
+    "@open-draft/until": "npm:^2.0.0"
+    is-node-process: "npm:^1.2.0"
+    outvariant: "npm:^1.4.3"
+    strict-event-emitter: "npm:^0.5.1"
+  checksum: 86aada6b0fb1ca2d7359cac89e5962db2be5978b9cd3e6fa48d428fad5c4c962eff1ed9edfa5cb4881e929369eeaf6a09c337e8880a9324c9703283cf9b1a137
   languageName: node
   linkType: hard
 
@@ -8489,16 +8492,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node-fetch@npm:^2.6.12":
-  version: 2.6.12
-  resolution: "@types/node-fetch@npm:2.6.12"
-  dependencies:
-    "@types/node": "npm:*"
-    form-data: "npm:^4.0.0"
-  checksum: 7693acad5499b7df2d1727d46cff092a63896dc04645f36b973dd6dd754a59a7faba76fcb777bdaa35d80625c6a9dd7257cca9c401a4bab03b04480cda7fd1af
-  languageName: node
-  linkType: hard
-
 "@types/node-forge@npm:^1.3.0":
   version: 1.3.9
   resolution: "@types/node-forge@npm:1.3.9"
@@ -8508,12 +8501,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*, @types/node@npm:>=10.0.0, @types/node@npm:^22.10.10, @types/node@npm:^22.7.5":
-  version: 22.10.10
-  resolution: "@types/node@npm:22.10.10"
+"@types/node@npm:*, @types/node@npm:>=10.0.0, @types/node@npm:^22.10.10, @types/node@npm:^22.15.3, @types/node@npm:^22.7.5":
+  version: 22.15.3
+  resolution: "@types/node@npm:22.15.3"
   dependencies:
-    undici-types: "npm:~6.20.0"
-  checksum: 3425772d4513cd5dbdd87c00acda088113c03a97445f84f6a89744c60a66990b56c9d3a7213d09d57b6b944ae8ff45f985565e0c1846726112588e33a22dd12b
+    undici-types: "npm:~6.21.0"
+  checksum: 2879f012d1aeba0bfdb5fed80d165f4f2cb3d1f2e1f98a24b18d4a211b4ace7d64bf2622784c78355982ffc1081ba79d0934efc2fb8353913e5871a63609661f
   languageName: node
   linkType: hard
 
@@ -11435,7 +11428,6 @@ __metadata:
     jest: "npm:^29.7.0"
     js-yaml: "npm:^4.1.0"
     lodash: "npm:^4.17.21"
-    make-dir: "npm:^3.1.0"
     playwright: "npm:1.48.2"
     postcss: "npm:^8.5.3"
     react: "npm:^18.3.1"
@@ -25948,6 +25940,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"nock@npm:^14.0.4":
+  version: 14.0.4
+  resolution: "nock@npm:14.0.4"
+  dependencies:
+    "@mswjs/interceptors": "npm:^0.38.5"
+    json-stringify-safe: "npm:^5.0.1"
+    propagate: "npm:^2.0.0"
+  checksum: 54e958aa0a734b45207936602616ce9009b32291d22a93f94e2058f3ee20f317b6f974814efc52f32ebb92c6c30e6e15d8a53c17744a95fa2df4e0c267da1af1
+  languageName: node
+  linkType: hard
+
 "node-abi@npm:3.35.0":
   version: 3.35.0
   resolution: "node-abi@npm:3.35.0"
@@ -26012,7 +26015,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"node-fetch@npm:^2.6.1, node-fetch@npm:^2.6.7, node-fetch@npm:^2.7.0":
+"node-fetch@npm:^2.6.1, node-fetch@npm:^2.6.7":
   version: 2.7.0
   resolution: "node-fetch@npm:2.7.0"
   dependencies:
@@ -26697,10 +26700,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"outvariant@npm:^1.2.1, outvariant@npm:^1.4.0, outvariant@npm:^1.4.2":
-  version: 1.4.2
-  resolution: "outvariant@npm:1.4.2"
-  checksum: 48041425a4cb725ff8871b7d9889bfc2eaded867b9b35b6c2450a36fb3632543173098654990caa6c9e9f67d902b2a01f4402c301835e9ecaf4b4695d3161853
+"outvariant@npm:^1.2.1, outvariant@npm:^1.4.0, outvariant@npm:^1.4.2, outvariant@npm:^1.4.3":
+  version: 1.4.3
+  resolution: "outvariant@npm:1.4.3"
+  checksum: 5976ca7740349cb8c71bd3382e2a762b1aeca6f33dc984d9d896acdf3c61f78c3afcf1bfe9cc633a7b3c4b295ec94d292048f83ea2b2594fae4496656eba992c
   languageName: node
   linkType: hard
 
@@ -33854,10 +33857,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"undici-types@npm:~6.20.0":
-  version: 6.20.0
-  resolution: "undici-types@npm:6.20.0"
-  checksum: 68e659a98898d6a836a9a59e6adf14a5d799707f5ea629433e025ac90d239f75e408e2e5ff086afc3cace26f8b26ee52155293564593fbb4a2f666af57fc59bf
+"undici-types@npm:~6.21.0":
+  version: 6.21.0
+  resolution: "undici-types@npm:6.21.0"
+  checksum: c01ed51829b10aa72fc3ce64b747f8e74ae9b60eafa19a7b46ef624403508a54c526ffab06a14a26b3120d055e1104d7abe7c9017e83ced038ea5cf52f8d5e04
   languageName: node
   linkType: hard
 
@@ -35423,7 +35426,7 @@ __metadata:
     "@types/gtag.js": "npm:^0.0.20"
     "@types/jest": "npm:^29.5.14"
     "@types/lodash": "npm:^4.17.16"
-    "@types/node": "npm:^22.7.5"
+    "@types/node": "npm:^22.15.3"
     "@types/page": "npm:^1.11.9"
     "@types/qs": "npm:^6.9.7"
     "@types/react": "npm:^18.3.20"
@@ -35507,11 +35510,9 @@ __metadata:
     lottie-web: "npm:^5.9.6"
     lunr: "npm:^2.3.9"
     mixedindentlint: "npm:^1.2.0"
-    mkdirp: "npm:^1.0.4"
     moment: "npm:^2.30.1"
     ncp: "npm:^2.0.0"
     nock: "npm:^13.5.6"
-    node-fetch: "npm:^2.7.0"
     npm-run-all: "npm:^4.1.5"
     photon: "workspace:^"
     postcss: "npm:^8.5.3"
@@ -35528,7 +35529,6 @@ __metadata:
     recursive-copy: "npm:^2.0.14"
     redux: "npm:^5.0.1"
     replace: "npm:^1.1.5"
-    request: "npm:^2.88.2"
     resize-observer-polyfill: "npm:^1.5.1"
     sass: "npm:1.54.0"
     sass-loader: "npm:^13.3.3"
@@ -35586,7 +35586,6 @@ __metadata:
     jest-teamcity: "npm:^1.12.0"
     lodash: "npm:^4.17.20"
     mailosaur: "npm:^8.4.0"
-    node-fetch: "npm:^2.7.0"
     playwright: "npm:1.48.2"
     postcss: "npm:^8.3.11"
     webpack: "npm:^5.63.0"

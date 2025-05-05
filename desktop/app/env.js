@@ -1,7 +1,7 @@
 /* eslint-disable import/order */
 const path = require( 'path' );
 const { app } = require( 'electron' );
-const makeDir = require( 'make-dir' );
+const { mkdirSync } = require( 'fs' );
 
 /**
  * Initialize core components
@@ -15,7 +15,7 @@ const appData = path.join( app.getPath( 'appData' ), config.appPathName );
 const logPath = process.env.WP_DEBUG_LOG
 	? process.env.WP_DEBUG_LOG
 	: path.join( appData, 'logs', 'wpdesktop-main.log' );
-makeDir.sync( path.dirname( logPath ) );
+mkdirSync( path.dirname( logPath ), { recursive: true } );
 state.setLogPath( logPath );
 
 // Initialize settings

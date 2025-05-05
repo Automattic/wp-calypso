@@ -9,7 +9,7 @@ import type { SupportProvider } from '../types';
 export const useGetSupportInteractions = (
 	provider: SupportProvider | null = null,
 	per_page = 10,
-	status = 'open',
+	status: string | string[] = 'open',
 	page = 1,
 	enabled = true
 ) => {
