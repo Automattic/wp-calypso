@@ -653,12 +653,6 @@ $breakpoint-mobile: 660px;
 			margin-bottom: 32px;
 			position: initial;
 		}
-
-		.continue-as-user__change-user-link {
-			color: $gray-60;
-			font-weight: 400;
-			text-decoration: underline;
-		}
 	}
 
 	.logged-out-form {
@@ -1729,15 +1723,8 @@ $breakpoint-mobile: 660px;
 
 			.continue-as-user__change-user-link {
 				text-decoration: none;
-				color: var(--woo-purple-50);
 				font-size: 0.875rem;
-				font-style: normal;
 				font-weight: 500;
-				line-height: 21px;
-
-				&:hover {
-					color: var(--woo-purple-70);
-				}
 			}
 
 			.continue-as-user__continue-button {
@@ -2311,11 +2298,6 @@ $breakpoint-mobile: 660px;
 	.login__header-subtitle a {
 		@include link-woo;
 		font-weight: 500;
-	}
-
-	.continue-as-user__change-user-link {
-		@include button-tertiary;
-		@include button-size-small;
 	}
 
 	.magic-login__footer a {
