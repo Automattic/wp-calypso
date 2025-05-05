@@ -644,6 +644,17 @@ export const fields: Field< SpaceObject >[] = [
 		id: 'date',
 		label: 'Date',
 		type: 'datetime',
+		elements: [
+			{ value: 'today', label: 'Today' },
+			{ value: 'past-week', label: 'Past week' },
+			{ value: 'past-month', label: 'Past month' },
+		],
+		filterBy: {
+			// TODO:
+			// - define before/after operators
+			// - filters for datetime types should be single value by default (is, isNot)?
+			operators: [ 'is', 'isNot' ],
+		},
 	},
 	{
 		label: 'Type',
