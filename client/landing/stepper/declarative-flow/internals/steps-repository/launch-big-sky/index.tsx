@@ -212,7 +212,7 @@ const LaunchBigSky: Step = function ( props ) {
 						<Button
 							variant="primary"
 							onClick={ () => {
-								window.location.assign( `/plans/${ siteSlug }` );
+								window.location.assign( `/setup/ai-site-builder/plans?siteId=${ siteId }` );
 							} }
 						>
 							{ translate( 'View plans' ) }
