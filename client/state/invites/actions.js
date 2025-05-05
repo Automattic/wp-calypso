@@ -14,7 +14,6 @@ import {
 	INVITES_VALIDATE_TOKEN,
 	INVITES_VALIDATE_TOKEN_SUCCESS,
 	INVITES_VALIDATE_TOKEN_FAILURE,
-	INVITE_ACCEPTED,
 	INVITES_SEND,
 	INVITES_SEND_ERROR,
 	INVITES_SEND_FAILURE,
@@ -171,10 +170,6 @@ export function deleteInvites( siteId, inviteIds ) {
 	};
 }
 
-function inviteAccepted( invite ) {
-	return { type: INVITE_ACCEPTED, invite };
-}
-
 export function createAccount( userData, invite ) {
 	return ( dispatch ) => {
 		const result = wpcom.req.post( '/users/new', {
@@ -253,7 +248,6 @@ export function acceptInvite( invite, emailVerificationSecret ) {
 				inviter_blog_id: invite.site.ID,
 			} );
 
-			dispatch( inviteAccepted( invite ) );
 			return data;
 		} catch ( error ) {
 			if ( error.message ) {
