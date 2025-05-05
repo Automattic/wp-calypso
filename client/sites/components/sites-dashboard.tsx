@@ -304,7 +304,7 @@ const SitesDashboard = ( {
 
 	const hasA8CSitesFilter =
 		dataViewsState.filters?.some(
-			( { field, operator, value } ) => field === 'a8c_owned' && operator === 'is' && value === true
+			( { field, operator, value } ) => field === 'is_a8c' && operator === 'is' && value === true
 		) ?? false;
 
 	const includeA8CSites = siteType === 'p2' || hasA8CSitesFilter;
