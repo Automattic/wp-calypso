@@ -80,7 +80,10 @@ import useGenerateActionHook from './hooks/use-generate-action-hook';
 import usePlanFromUpsells from './hooks/use-plan-from-upsells';
 import usePlanIntentFromSiteMeta from './hooks/use-plan-intent-from-site-meta';
 import useSelectedFeature from './hooks/use-selected-feature';
-import { useStreamlinedPriceExperiment } from './hooks/use-streamlined-price-experiment';
+import {
+	isStreamlinedPricePlansTreatment,
+	useStreamlinedPriceExperiment,
+} from './hooks/use-streamlined-price-experiment';
 import useGetFreeSubdomainSuggestion from './hooks/use-suggested-free-domain-from-paid-domain';
 import type {
 	PlansIntent,
@@ -470,7 +473,7 @@ const PlansFeaturesMain = ( {
 		useStreamlinedPriceExperiment();
 
 	const showStreamlinedPriceExperiment =
-		isInSignup && Boolean( streamlinedPriceExperimentAssignment );
+		isInSignup && isStreamlinedPricePlansTreatment( streamlinedPriceExperimentAssignment );
 
 	let hidePlanSelector = true;
 	let enableTermSavingsPriceDisplay = true;
