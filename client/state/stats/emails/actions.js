@@ -3,7 +3,6 @@ import {
 	EMAIL_STATS_RECEIVE,
 	EMAIL_STATS_REQUEST,
 	EMAIL_STATS_REQUEST_FAILURE,
-	EMAIL_STATS_REQUEST_SUCCESS,
 } from 'calypso/state/action-types';
 import { PERIOD_ALL_TIME } from 'calypso/state/stats/emails/constants';
 import 'calypso/state/stats/init';
@@ -126,13 +125,6 @@ function requestEmailStats( siteId, postId, period, statType, date, quantity ) {
 						: emailStatsForPeriodTransform( stats, period );
 
 				dispatch( receiveEmailStats( siteId, postId, period, statType, date, emailStatsObject ) );
-
-				dispatch( {
-					type: EMAIL_STATS_REQUEST_SUCCESS,
-					siteId,
-					postId,
-					date,
-				} );
 			} )
 			.catch( ( error ) => {
 				dispatch( {
