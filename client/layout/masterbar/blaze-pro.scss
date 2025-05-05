@@ -282,23 +282,14 @@ body.is-section-signup {
 		}
 
 		.continue-as-user__change-user-link {
-			font-family: $inter;
 			font-size: 0.875rem;
-			font-style: normal;
 			font-weight: 500;
-			line-height: 20px;
-			text-decoration: none;
 		}
 
 		.continue-as-user__continue-button {
-			background: var(--color-orange);
-			border-color: var(--color-orange);
-			font-family: $inter;
 			font-size: rem(13px);
 			font-weight: 600;
-			line-height: 14px;
 			margin-top: 24px;
-			padding: 12px 16px;
 			width: 326px;
 		}
 	}
