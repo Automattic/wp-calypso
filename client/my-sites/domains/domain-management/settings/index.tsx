@@ -787,15 +787,19 @@ const Settings = ( {
 		);
 	};
 
-	if ( ! domain ) {
+	if ( ! domain || isLoadingPurchase ) {
 		// TODO: Update this placeholder
-		return <DomainMainPlaceholder breadcrumbs={ renderHeader } />;
+		return (
+			<>
+				<DomainMainPlaceholder breadcrumbs={ renderHeader } />
+				{ selectedSite?.ID && <QuerySitePurchases siteId={ selectedSite?.ID } /> }
+			</>
+		);
 	}
 
 	return (
 		// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 		<Main wideLayout className="domain-settings-page">
-			{ selectedSite?.ID && <QuerySitePurchases siteId={ selectedSite?.ID } /> }
 			<BodySectionCssClass bodyClass={ [ 'edit__body-white' ] } />
 			{ renderHeader() }
 			<TwoColumnsLayout content={ renderMainContent() } sidebar={ renderSettingsCards() } />
