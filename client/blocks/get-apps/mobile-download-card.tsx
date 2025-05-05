@@ -5,7 +5,7 @@ import { isIos, isMobile } from 'calypso/lib/user-agent';
 import AppsBadge from './apps-badge';
 import { AppsCard } from './apps-card';
 
-const MobileDownloadCardTest = () => {
+function MobileDownloadCard() {
 	const translate = useTranslate();
 
 	return (
@@ -30,6 +30,6 @@ const MobileDownloadCardTest = () => {
 			) }
 		</AppsCard>
 	);
-};
+}
 
-export default MobileDownloadCardTest;
+export default MobileDownloadCard;
