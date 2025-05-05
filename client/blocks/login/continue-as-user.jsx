@@ -54,8 +54,8 @@ export default function ContinueAsUser( {
 		components: {
 			br: <br />,
 			link: (
-				<button
-					type="button"
+				<Button
+					variant="link"
 					id="loginAsAnotherUser"
 					className="continue-as-user__change-user-link"
 					onClick={ onChangeAccount }
@@ -85,14 +85,14 @@ export default function ContinueAsUser( {
 				<div className="continue-as-user__user-info">
 					{ gravatarLink }
 					<div className="continue-as-user__not-you">
-						<button
-							type="button"
+						<Button
+							variant="tertiary"
 							id="loginAsAnotherUser"
 							className="continue-as-user__change-user-link"
 							onClick={ onChangeAccount }
 						>
 							{ translate( 'Sign in as a different user' ) }
-						</button>
+						</Button>
 					</div>
 				</div>
 				<Button
@@ -114,14 +114,14 @@ export default function ContinueAsUser( {
 				<div className="continue-as-user__user-info">
 					{ gravatarLink }
 					<div className="continue-as-user__not-you">
-						<button
-							type="button"
+						<Button
+							variant="tertiary"
 							id="loginAsAnotherUser"
 							className="continue-as-user__change-user-link"
 							onClick={ onChangeAccount }
 						>
 							{ translate( 'Sign in as a different user' ) }
-						</button>
+						</Button>
 					</div>
 				</div>
 				<Button
