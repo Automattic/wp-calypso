@@ -8,9 +8,6 @@ import 'calypso/state/purchases/init';
 /**
  * Returns a purchase object that corresponds to that subscription's transferred domain
  *
- * Even if a domain transfer was purchased with the subscription, it will
- * not be returned if the domain transfer product was paid for separately (eg: if it was
- * renewed on its own).
  * @param   {AppState} state  global state
  * @param   {Purchase | null | undefined} subscriptionPurchase  subscription purchase object
  * @returns {Purchase | null | undefined} domain transfer purchase if there is one, null if none found or not a subscription object passed
@@ -19,7 +16,11 @@ export const getIncludedDomainTransfer = (
 	state: AppState,
 	subscriptionPurchase: Purchase | null | undefined
 ): Purchase | null | undefined => {
-	if ( ! subscriptionPurchase || ! isSubscription( subscriptionPurchase ) ) {
+	if (
+		! subscriptionPurchase ||
+		! isSubscription( subscriptionPurchase ) ||
+		subscriptionPurchase.includedDomainPurchaseAmount
+	) {
 		return null;
 	}
 
