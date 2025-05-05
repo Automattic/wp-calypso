@@ -716,7 +716,9 @@ class ThemeShowcase extends Component {
 													label={ translate( 'Filters' ) }
 													hideLabelFromVision
 													__next40pxDefaultSize
-													options={ tiers }
+													options={ tiers.map( ( t ) => {
+														return { ...t, className: t.key === tier ? 'is-selected' : '' };
+													} ) }
 													value={ {
 														key: tier,
 														name: translate( 'View: %s', {

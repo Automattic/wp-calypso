@@ -424,6 +424,10 @@
 			width: 100%;
 			min-width: auto;
 		}
+
+		.components-custom-select-control__item.is-selected {
+			background-color: var(--wp-components-color-gray-300, #ddd);
+		}
 	}
 }
 
