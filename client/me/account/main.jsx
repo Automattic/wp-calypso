@@ -32,6 +32,8 @@ import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import { clearStore } from 'calypso/lib/user/store';
 import wpcom from 'calypso/lib/wp';
 import AccountEmailField from 'calypso/me/account/account-email-field';
+import { DefaultInterface } from 'calypso/me/account/types';
+import { withDefaultInterface } from 'calypso/me/account/with-default-interface';
 import EmailVerificationBanner from 'calypso/me/email-verification-banner';
 import ReauthRequired from 'calypso/me/reauth-required';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -656,10 +658,15 @@ class Account extends Component {
 					userSettings={ this.props.userSettings }
 				/>
 
-				<FormFieldset>
-					<FormLabel htmlFor="primary_site_ID">{ translate( 'Primary site' ) }</FormLabel>
-					{ this.renderPrimarySite() }
-				</FormFieldset>
+				{ this.props.defaultInterface === DefaultInterface.PRIMARY_SITE && (
+					<FormFieldset>
+						<FormLabel htmlFor="primary_site_ID">{ translate( 'Primary site' ) }</FormLabel>
+						<FormSettingExplanation>
+							{ translate( "Select the site whose dashboard you'll see first when logging in." ) }
+						</FormSettingExplanation>
+						{ this.renderPrimarySite() }
+					</FormFieldset>
+				) }
 
 				<FormButton
 					isSubmitting={ this.isSubmittingForm( ACCOUNT_FORM_NAME ) }
@@ -972,7 +979,7 @@ class Account extends Component {
 							<FormLabel id="account__default_landing_page">
 								{ translate( 'Default landing page' ) }
 							</FormLabel>
-							<ToggleLandingPageSettings />
+							<ToggleLandingPageSettings defaultInterface={ this.props.defaultInterface } />
 							<FormSettingExplanation>
 								{ fixMe( {
 									text: "Select what you'll see by default when visiting WordPress.com",
@@ -1010,6 +1017,7 @@ export default compose(
 	withLocalizedMoment,
 	withGeoLocation,
 	protectForm,
+	withDefaultInterface,
 	connect(
 		( state ) => ( {
 			canDisplayCommunityTranslator: canDisplayCommunityTranslator( state ),
