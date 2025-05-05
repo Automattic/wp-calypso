@@ -26,7 +26,7 @@
 		"test:js:watch": "yarn test:js --watch",
 		"test:size": "size-limit",
 		"teamcity:build-app": "yarn run build && yarn run test:size",
-		"translate": "rm -rf dist/strings && mkdirp dist && wp-babel-makepot '../../{client,packages,apps}/**/*.{js,jsx,ts,tsx}' --ignore '**/node_modules/**,**/test/**,**/*.d.ts' --base '../../' --dir './dist/strings' --output './dist/odyssey-strings.pot' && build-app-languages --stringsFilePath=./dist/odyssey-strings.pot"
+		"translate": "rm -rf dist/strings && mkdir -p dist && wp-babel-makepot '../../{client,packages,apps}/**/*.{js,jsx,ts,tsx}' --ignore '**/node_modules/**,**/test/**,**/*.d.ts' --base '../../' --dir './dist/strings' --output './dist/odyssey-strings.pot' && build-app-languages --stringsFilePath=./dist/odyssey-strings.pot"
 	},
 	"dependencies": {
 		"@automattic/calypso-color-schemes": "workspace:^",
@@ -69,8 +69,6 @@
 		"html-webpack-plugin": "^5.6.3",
 		"jest": "^29.7.0",
 		"lodash": "^4.17.21",
-		"mkdirp": "^1.0.4",
-		"node-fetch": "^2.7.0",
 		"path-browserify": "^1.0.1",
 		"postcss": "^8.5.3",
 		"size-limit": "^8.2.6",

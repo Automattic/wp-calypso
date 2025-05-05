@@ -1,6 +1,5 @@
 const fs = require( 'fs' );
 const path = require( 'path' );
-const makeDir = require( 'make-dir' );
 
 const DESKTOP_DIR = path.resolve( __dirname, '..' );
 /*
@@ -30,5 +29,5 @@ if ( process.env.WINDOWS_STORE ) {
 
 const config = JSON.stringify( Object.assign( base, env ), null, 2 );
 
-makeDir.sync( path.join( DESKTOP_DIR, 'config' ) );
+fs.mkdirSync( path.join( DESKTOP_DIR, 'config' ), { recursive: true } );
 fs.writeFileSync( path.join( DESKTOP_DIR, 'config', 'config.json' ), config, 'utf-8' );

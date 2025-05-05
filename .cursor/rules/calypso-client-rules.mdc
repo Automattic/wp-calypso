@@ -87,5 +87,6 @@ Remember: Always prioritize WordPress coding standards and best practices while 
 - Run tests for individual files using the command `yarn test-client filename`, substituting `filename` with the relative path to the file you want to test.
 - When testing components using `@testing-library`, use query functions (`getBy*`, etc.) from the return value of `render`, not from the `screen` import.
 - Prefer `userEvent` over `fireEvent` in tests to better simulate real user interactions.
+- Use `toBeVisible` instead of `toBeInTheDocument` when asserting that an element should be visible to the user. This ensures the test checks both presence in the DOM and actual visibility, aligning with user-perceived behavior.
 
 

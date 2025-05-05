@@ -34,6 +34,16 @@ $image-height: 47px;
 
 .wp-login__main.main {
 	max-width: 400px;
+
+	&.is-jetpack {
+		max-width: 450px;
+
+		// This is margin based on the layout + padding height.
+		margin-top: calc(96px - 48px);
+		@include break-small {
+			margin-top: calc(170px - 48px);
+		}
+	}
 }
 
 .wp-login__header {
@@ -158,6 +168,10 @@ $image-height: 47px;
 
 .layout.is-jetpack-login:not(.is-wccom-oauth-flow):not(.is-woocommerce-core-profiler-flow) {
 	@include jetpack-connect-colors();
+
+	.auth-form__social-buttons {
+		--color-accent: var(--studio-jetpack-green-50);
+	}
 }
 
 .layout.is-wccom-oauth-flow,

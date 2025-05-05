@@ -175,7 +175,7 @@
 	padding: 13px;
 	font-size: $font-body-extra-small;
 	flex-grow: 1;
-	margin-bottom: 0;
+	text-wrap: pretty;
 
 	.calypso-notice__text {
 		a,

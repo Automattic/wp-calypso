@@ -852,7 +852,11 @@ export default function CheckoutMainContent( {
 
 	if ( ! isStepContainerV2 ) {
 		return (
-			<WPCheckoutWrapper className="checkout-wrapper">
+			<WPCheckoutWrapper
+				className="checkout-wrapper"
+				isLargeViewport={ isLargeViewport }
+				isStreamlinedPrice={ streamlinedPriceExperimentAssignment !== null }
+			>
 				{ checkoutSummary }
 				{ checkoutMainContent }
 			</WPCheckoutWrapper>
@@ -860,7 +864,10 @@ export default function CheckoutMainContent( {
 	}
 
 	return (
-		<StepContainerV2CheckoutFixer isLargeViewport={ isLargeViewport }>
+		<StepContainerV2CheckoutFixer
+			isLargeViewport={ isLargeViewport }
+			isStreamlinedPrice={ streamlinedPriceExperimentAssignment !== null }
+		>
 			<Step.TwoColumnLayout
 				firstColumnWidth={ 8 }
 				secondColumnWidth={ 4 }
@@ -909,7 +916,10 @@ export default function CheckoutMainContent( {
 	);
 }
 
-const StepContainerV2CheckoutFixer = styled.div< { isLargeViewport: boolean } >`
+const StepContainerV2CheckoutFixer = styled.div< {
+	isLargeViewport: boolean;
+	isStreamlinedPrice: boolean;
+} >`
 	background: ${ colorStudio.colors[ 'White' ] };
 
 	// This shouldn't exist. It's a hack to make the top bar appear on top of the checkout sidebar, which extends from the top of the page.
@@ -932,6 +942,15 @@ const StepContainerV2CheckoutFixer = styled.div< { isLargeViewport: boolean } >`
 		margin-inline: 0;
 		max-width: 100%;
 	}
+
+	${ ( props ) =>
+		props.isStreamlinedPrice &&
+		css`
+			div:has( .checkout-sidebar-content ) {
+				position: sticky;
+				top: 32px;
+			}
+		` }
 
 	${ ( props ) =>
 		! props.isLargeViewport &&
@@ -1044,6 +1063,15 @@ const StepContainerV2CheckoutFixer = styled.div< { isLargeViewport: boolean } >`
 
 			.checkout__summary-features {
 				padding-top: 32px;
+			}
+		` }
+	${ ( props ) =>
+		props.isLargeViewport &&
+		props.isStreamlinedPrice &&
+		css`
+			.checkout__summary-area,
+			.checkout-loading-sidebar {
+				min-width: 384px;
 			}
 		` }
 `;
@@ -1404,7 +1432,10 @@ const SubmitButtonHeaderWrapper = styled.div`
 	}
 `;
 
-const WPCheckoutWrapper = styled.div`
+const WPCheckoutWrapper = styled.div< {
+	isLargeViewport?: boolean;
+	isStreamlinedPrice?: boolean;
+} >`
 	background: ${ colorStudio.colors[ 'White' ] };
 	display: grid;
 	grid-template-rows: auto;
@@ -1418,6 +1449,11 @@ const WPCheckoutWrapper = styled.div`
 		grid-template-columns: 1fr minmax( 500px, 688px ) 376px 1fr;
 		grid-template-areas: 'main-content main-content sidebar-content sidebar-content';
 		justify-items: end;
+		${ ( props ) =>
+			props.isStreamlinedPrice &&
+			css`
+				grid-template-columns: 1fr minmax( 500px, 688px ) 475px 1fr;
+			` }
 	}
 
 	& > * {
@@ -1432,6 +1468,25 @@ const WPCheckoutWrapper = styled.div`
 	& *:focus {
 		outline: ${ ( props ) => props.theme.colors.outline } solid 2px;
 	}
+
+	${ ( props ) =>
+		props.isStreamlinedPrice &&
+		css`
+			.checkout__summary-area {
+				position: sticky;
+				top: 32px;
+			}
+		` }
+	${ ( props ) =>
+		props.isStreamlinedPrice &&
+		props.isLargeViewport &&
+		css`
+			.checkout__summary-body,
+			.checkout-loading-sidebar,
+			.checkout-sidebar-plan-upsell {
+				min-width: 384px;
+			}
+		` }
 `;
 
 const WPCheckoutCompletedWrapper = styled.div`

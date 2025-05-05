@@ -126,11 +126,6 @@ class MagicLogin extends Component {
 		showEmailCodeVerification: false,
 		maskedEmailAddress: '',
 		hashedEmail: null,
-		isFormReady: false,
-	};
-
-	handleFormReady = () => {
-		this.setState( { isFormReady: true } );
 	};
 
 	componentDidMount() {
@@ -1292,7 +1287,6 @@ class MagicLogin extends Component {
 			translate,
 			showCheckYourEmail: showEmailLinkVerification,
 			isWooJPC,
-			isSendingEmail,
 			isFromJetpackOnboarding,
 		} = this.props;
 		const { showSecondaryEmailOptions, showEmailCodeVerification, usernameOrEmail } = this.state;
@@ -1361,21 +1355,11 @@ class MagicLogin extends Component {
 			);
 		}
 
-		const isJetpackMagicLinkSignUpEnabled =
-			config.isEnabled( 'jetpack/magic-link-signup' ) && this.props.isJetpackLogin;
-		const shouldShowLoadingEllipsis =
-			isFromJetpackOnboarding &&
-			isJetpackMagicLinkSignUpEnabled &&
-			( isSendingEmail || ! this.state.isFormReady );
-
 		// If this is part of the Jetpack login flow and the `jetpack/magic-link-signup` feature
 		// flag is enabled, some steps will display a different UI
 		const requestLoginEmailFormProps = {
 			...( this.props.isJetpackLogin ? { flow: 'jetpack' } : {} ),
-			...( isJetpackMagicLinkSignUpEnabled ? { isJetpackMagicLinkSignUpEnabled: true } : {} ),
 			createAccountForNewUser: true,
-			shouldShowLoadingEllipsis,
-			onReady: this.handleFormReady,
 			isFromJetpackOnboarding,
 		};
 
@@ -1391,8 +1375,6 @@ class MagicLogin extends Component {
 				<GlobalNotices id="notices" />
 
 				<RequestLoginEmailForm { ...requestLoginEmailFormProps } />
-
-				{ ! shouldShowLoadingEllipsis && this.renderLinks() }
 			</Main>
 		);
 	}

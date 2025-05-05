@@ -1,6 +1,7 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 @import "@automattic/color-studio/dist/color-variables";
+@import "@wordpress/base-styles/variables";
 
 $breakpoint-mobile: 782px; //Mobile size.
 
@@ -8,7 +9,7 @@ $breakpoint-mobile: 782px; //Mobile size.
 	.login.is-jetpack:not(.is-automattic-for-agencies-flow) {
 		.button.is-primary {
 			background-color: var(--studio-jetpack-green-50);
-			border-color: var(--studio-jetpack-green-70);
+			border-color: var(--studio-jetpack-green-50);
 
 			&:hover,
 			&:focus {
@@ -18,6 +19,9 @@ $breakpoint-mobile: 782px; //Mobile size.
 			.accessible-focus &:focus {
 				box-shadow: 0 0 0 2px var(--studio-jetpack-green-30);
 			}
+		}
+		.button, .components-button, input[type="text"] {
+			border-radius: 4px;
 		}
 	}
 }
@@ -56,7 +60,6 @@ $breakpoint-mobile: 782px; //Mobile size.
 
 .layout.is-jetpack-woo-dna-flow,
 .layout.is-wccom-oauth-flow {
-	.login__jetpack-logo,
 	.login__woocommerce-logo {
 		text-align: center;
 		border-bottom: 1px solid var(--color-neutral-5);
@@ -252,6 +255,14 @@ $breakpoint-mobile: 782px; //Mobile size.
 			text-align: center;
 		}
 	}
+
+	&.is-jetpack-login {
+		padding: 0 16px;
+
+		@include break-mobile {
+			padding: 0;
+		}
+	}
 }
 
 .login__form-header {
@@ -307,11 +318,19 @@ $breakpoint-mobile: 782px; //Mobile size.
 	}
 }
 
-.login__jetpack-logo {
-	@include breakpoint-deprecated( "<660px" ) {
-		margin-top: 20px;
-	}
+.login__jetpack-pre-header {
+	margin-top: 0;
+	margin-bottom: 16px;
+
+	@include heading-2x-large;
+
+	text-align: initial;
 }
+
+.login__jetpack-header {
+	@include body-large;
+	text-align: initial;
+}	
 
 .login__form-gutenboarding-wordpress-logo {
 	height: 64px;

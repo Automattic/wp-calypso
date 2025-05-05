@@ -22,7 +22,7 @@
 		"build:command-palette-wp-admin": "calypso-build",
 		"teamcity:build-app": "yarn run build",
 		"dev": "yarn run calypso-apps-builder --localPath dist --remotePath /home/wpcom/public_html/widgets.wp.com/command-palette",
-		"translate": "rm -rf dist/strings && mkdirp dist && wp-babel-makepot '../../{client,packages,apps}/**/*.{js,jsx,ts,tsx}' --ignore '**/node_modules/**,**/test/**,**/*.d.ts' --base '../../' --dir './dist/strings' --output './dist/command-palette-strings.pot' && build-app-languages --stringsFilePath='./dist/command-palette-strings.pot'"
+		"translate": "rm -rf dist/strings && mkdir -p dist && wp-babel-makepot '../../{client,packages,apps}/**/*.{js,jsx,ts,tsx}' --ignore '**/node_modules/**,**/test/**,**/*.d.ts' --base '../../' --dir './dist/strings' --output './dist/command-palette-strings.pot' && build-app-languages --stringsFilePath='./dist/command-palette-strings.pot'"
 	},
 	"dependencies": {
 		"@automattic/command-palette": "workspace:^",
@@ -46,8 +46,6 @@
 		"@wordpress/dependency-extraction-webpack-plugin": "^6.19.0",
 		"gettext-parser": "^6.0.0",
 		"lodash": "^4.17.21",
-		"mkdirp": "^1.0.4",
-		"node-fetch": "^2.7.0",
 		"npm-run-all": "^4.1.5",
 		"postcss": "^8.5.3",
 		"webpack": "^5.97.1",

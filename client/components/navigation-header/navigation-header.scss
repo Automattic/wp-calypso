@@ -28,6 +28,11 @@
 	&__right-section {
 		display: flex;
 		align-items: center;
+
+		.components-button {
+			height: 32px;
+			padding: 4px 8px;
+		}
 	}
 
 	&__back-link {

@@ -46,7 +46,7 @@ export function isAgencyClientUser( state: A4AStore ): boolean {
 }
 
 export function getUserBillingType( state: A4AStore ): UserBillingType {
-	return state.a8cForAgencies.agencies.userBillingType;
+	return state.a8cForAgencies.agencies.userBillingType || 'legacy';
 }
 
 export function hasAgencyCapability( state: A4AStore, capability: string ): boolean {

@@ -1,5 +1,6 @@
 @import "@automattic/onboarding/styles/mixins";
 @import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 $breakpoint-mobile: 782px; //Mobile size.
 
@@ -64,4 +65,29 @@ form {
         	background-color: var(--color-akismet);
     	}
     }
+}
+
+.login__form-jetpack {
+	.card.login__form {
+		box-shadow: none;
+		padding: 16px 16px 24px;
+
+		@include break-mobile {
+			padding: 16px 0 24px;
+		}
+	}
+
+	.login__form-jetpack-terms {
+		margin-top: 24px;
+		color: var(--studio-gray-50, #646970);
+
+		@include body-small;
+		line-height: 20px;
+		word-wrap: break-word;
+
+		a {
+			color: var(--studio-gray-50, #646970);
+			text-decoration: underline;
+		}
+	}
 }

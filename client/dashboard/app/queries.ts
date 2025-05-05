@@ -11,9 +11,13 @@ import {
 	fetchEmails,
 	fetchProfile,
 	updateProfile,
+	fetchSiteSettings,
+	fetchBasicMetrics,
+	fetchPerformanceInsights,
 } from '../data';
 import { queryClient } from './query-client';
-import type { Profile } from '../data/types';
+import type { Profile, UrlPerformanceInsights } from '../data/types';
+import type { Query } from '@tanstack/react-query';
 
 export function sitesQuery() {
 	return {
@@ -95,6 +99,39 @@ export function profileMutation() {
 			queryClient.setQueryData( profileQueryKey, ( oldData: Profile | undefined ) =>
 				oldData ? { ...oldData, ...newData } : newData
 			);
+		},
+	};
+}
+
+export function siteSettingsQuery( siteId: string ) {
+	return {
+		queryKey: [ 'site-settings', siteId ],
+		queryFn: () => {
+			return fetchSiteSettings( siteId );
+		},
+	};
+}
+
+export function basicMetricsQuery( url: string ) {
+	return {
+		queryKey: [ 'url', 'basic-metrics', url ],
+		queryFn: () => {
+			return fetchBasicMetrics( url );
+		},
+	};
+}
+
+export function performanceInsightsQuery( url: string, token: string ) {
+	return {
+		queryKey: [ 'url', 'performance', url, token ],
+		queryFn: () => {
+			return fetchPerformanceInsights( url, token );
+		},
+		refetchInterval: ( query: Query< UrlPerformanceInsights > ) => {
+			if ( query.state.data?.pagespeed?.status === 'completed' ) {
+				return false;
+			}
+			return 5000;
 		},
 	};
 }
