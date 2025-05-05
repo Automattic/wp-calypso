@@ -427,7 +427,7 @@ The following components are available directly under `DataViews`:
 * `DataViews.BulkActionToolbar`
 * `DataViews.ViewConfig`
 
-### example
+#### example
 
 ```jsx
 import DataViews from '@automattic/dataviews';
