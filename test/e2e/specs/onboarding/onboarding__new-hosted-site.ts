@@ -18,6 +18,7 @@ import {
 	cancelAtomicPurchaseFlow,
 	WPAdminSidebarComponent,
 	SiteSettingsPage,
+	DashboardSitePage,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 import { apiCloseAccount } from '../shared';
@@ -104,6 +105,9 @@ describe(
 			} );
 
 			it( 'Navigate to Server > Server Settings', async function () {
+				const dashboardSitePage = new DashboardSitePage( page );
+				await dashboardSitePage.maybeCloseGuidedTour();
+
 				const siteSettings = new SiteSettingsPage( page );
 				await siteSettings.navigateToSubmenu( 'Server' );
 
