@@ -2,12 +2,23 @@
  * @jest-environment jsdom
  */
 
-import { loadFingerprint, injectFingerprint } from '../fingerprint';
+import {
+	type loadFingerprint as loadFingerprintType,
+	type injectFingerprint as injectFingerprintType,
+} from '../fingerprint';
 
 describe( '#injectFingerprint', () => {
+	let loadFingerprint: typeof loadFingerprintType;
+	let injectFingerprint: typeof injectFingerprintType;
 	let wpcom: { request: jest.Mock };
 	let originalRequest: jest.Mock;
 	const callback = jest.fn();
+
+	beforeAll( async () => {
+		jest.spyOn( document, 'readyState', 'get' ).mockReturnValue( 'loading' );
+		jest.spyOn( document, 'addEventListener' ).mockImplementation( () => {} );
+		( { loadFingerprint, injectFingerprint } = await import( '../fingerprint' ) );
+	} );
 
 	beforeEach( () => {
 		originalRequest = jest.fn();
