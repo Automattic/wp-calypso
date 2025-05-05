@@ -2,10 +2,6 @@ import { load } from '@fingerprintjs/fingerprintjs';
 
 let fingerprint;
 export async function loadFingerprint() {
-	if ( fingerprint ) {
-		return;
-	}
-
 	const agent = await load( { monitoring: false } );
 	const result = await agent.get();
 	fingerprint = result.visitorId;
