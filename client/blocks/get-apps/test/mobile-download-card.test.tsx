@@ -3,12 +3,12 @@
  */
 
 import MobileDownloadCardTest from 'calypso/blocks/get-apps/mobile-download-card';
-import { isMobile, isIos } from 'calypso/lib/user-agent';
+import { isIos, isAndroid } from 'calypso/lib/user-agent';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 
 jest.mock( 'calypso/lib/user-agent', () => ( {
 	isIos: jest.fn(),
-	isMobile: jest.fn(),
+	isAndroid: jest.fn(),
 } ) );
 
 jest.mock(
@@ -23,7 +23,7 @@ describe( 'MobileDownloadCardTest', () => {
 	} );
 
 	it( 'renders linked image for mobile iOS device', () => {
-		( isMobile as jest.Mock ).mockReturnValue( true );
+		( isAndroid as jest.Mock ).mockReturnValue( false );
 		( isIos as jest.Mock ).mockReturnValue( true );
 
 		const { getByRole, queryByText } = renderWithProvider( <MobileDownloadCardTest /> );
@@ -36,7 +36,7 @@ describe( 'MobileDownloadCardTest', () => {
 	} );
 
 	it( 'renders linked image for mobile Android device', () => {
-		( isMobile as jest.Mock ).mockReturnValue( true );
+		( isAndroid as jest.Mock ).mockReturnValue( true );
 		( isIos as jest.Mock ).mockReturnValue( false );
 
 		const { getByRole, queryByText } = renderWithProvider( <MobileDownloadCardTest /> );
@@ -49,7 +49,8 @@ describe( 'MobileDownloadCardTest', () => {
 	} );
 
 	it( 'renders qr code for devices other than iOS or Android', async () => {
-		( isMobile as jest.Mock ).mockReturnValue( false );
+		( isAndroid as jest.Mock ).mockReturnValue( false );
+		( isIos as jest.Mock ).mockReturnValue( false );
 
 		const { getByText } = renderWithProvider( <MobileDownloadCardTest /> );
 
