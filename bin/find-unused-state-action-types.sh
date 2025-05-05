@@ -16,6 +16,7 @@ grep "export const [A-Z_]* =" client/state/action-types.ts | \
         \( \
            -path "*/actions/*" \
            -o -name "reducer.[jt]s" \
+           -o -name "reducers.[jt]s" \
            -o -name "actions.[jt]s" \
            -o -name "index.[jt]s" \
            -o -name "middleware.[jt]s" \
