@@ -160,6 +160,24 @@
 				padding: 0 32px;
 			}
 		}
+
+		.theme__search {
+			.theme__search-input {
+				.components-input-control__container {
+					background-color: #fff;
+				}
+
+				.components-input-base {
+					height: 55px;
+				}
+			}
+
+			.theme__tier-select {
+				.components-input-control__container {
+					height: 55px;
+				}
+			}
+		}
 	}
 
 	.search-themes-card {
