@@ -437,23 +437,21 @@ const CustomLayout = () => {
 	// Declare data, fields, etc.
 
 	return (
-		<>
-			<h1>{ __( 'Free composition', 'dataviews' ) }</h1>
-			<DataViews
-    			data={ data }
-    			fields={ fields }
-    			view={ view }
-    			onChangeView={ onChangeView }
-    			paginationInfo={ paginationInfo }
-    			defaultLayouts={ { table: {} } }
-    		>
-    			<DataViews.Search />
-    			<DataViews.FiltersToggle />
-    			<DataViews.Filters />
-    			<DataViews.Layout />
-    			<DataViews.Pagination />
-    		</DataViews>
-		</>
+		<DataViews
+			data={ data }
+			fields={ fields }
+			view={ view }
+			onChangeView={ onChangeView }
+			paginationInfo={ paginationInfo }
+			defaultLayouts={ { table: {} } }
+		>
+			<h1>{ __( 'Free composition' ) }</h1>
+			<DataViews.Search />
+			<DataViews.FiltersToggle />
+			<DataViews.Filters />
+			<DataViews.Layout />
+			<DataViews.Pagination />
+		</DataViews>
 	);
 };
 ```
