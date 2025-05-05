@@ -84,7 +84,7 @@ const DesignChoicesStep: StepType< { submits: { destination: string } } > = ( {
 					title={ translate( 'Create your site with AI' ) }
 					description={ translate( 'Tell our AI what you need, and watch it come to life.' ) }
 					bgImageSrc={ hiBigSky }
-					destination="launch-ai"
+					destination="launch-big-sky"
 					onSelect={ ( destination ) => {
 						recordTracksEvent( 'calypso_big_sky_choose', {
 							flow,

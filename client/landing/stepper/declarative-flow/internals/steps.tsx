@@ -158,7 +158,7 @@ export const STEPS = {
 	},
 
 	LAUNCH_BIG_SKY: {
-		slug: 'launch-ai',
+		slug: 'launch-big-sky',
 		asyncComponent: () => import( './steps-repository/launch-big-sky' ),
 	},
 

@@ -1,10 +1,10 @@
 $color-white: #fff;
 $color-big-sky-background: #000cb2;
 
-.is-section-stepper:has(.launch-ai) {
+.is-section-stepper:has(.launch-big-sky) {
 	background-color: $color-big-sky-background;
 
-	.launch-ai {
+	.launch-big-sky {
 		padding-top: 0;
 	}
 
