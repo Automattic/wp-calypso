@@ -5,14 +5,14 @@ import { IconBad, IconGood, IconNeutral } from './icons';
 
 import './style.scss';
 
-export enum Experience {
+export enum ExperienceType {
 	GOOD = 'good',
 	NEUTRAL = 'neutral',
 	BAD = 'bad',
 }
 
 type ExperienceOption = {
-	value: Experience;
+	value: ExperienceType;
 	icon: JSX.Element;
 	ariaLabel: string;
 };
@@ -74,8 +74,8 @@ const ExperienceControlBase = ( { children, ...props }: ExperienceControlBasePro
 
 interface ExperienceControlProps {
 	label: string;
-	onChange: ( experience: Experience ) => void;
-	value: Experience;
+	onChange: ( experience: ExperienceType ) => void;
+	value: ExperienceType;
 	help?: string;
 }
 
@@ -84,17 +84,17 @@ export function ExperienceControl( { label, onChange, value, help }: ExperienceC
 
 	const options: ExperienceOption[] = [
 		{
-			value: Experience.GOOD,
+			value: ExperienceType.GOOD,
 			icon: <IconGood />,
 			ariaLabel: translate( 'Rate as good experience' ),
 		},
 		{
-			value: Experience.NEUTRAL,
+			value: ExperienceType.NEUTRAL,
 			icon: <IconNeutral />,
 			ariaLabel: translate( 'Rate as neutral experience' ),
 		},
 		{
-			value: Experience.BAD,
+			value: ExperienceType.BAD,
 			icon: <IconBad />,
 			ariaLabel: translate( 'Rate as bad experience' ),
 		},

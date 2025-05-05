@@ -1,4 +1,4 @@
-import { FormLabel, ExperienceControl } from '@automattic/components';
+import { FormLabel, ExperienceControl, ExperienceType } from '@automattic/components';
 import { Button, CheckboxControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { ChangeEvent, useState } from 'react';
@@ -13,7 +13,7 @@ import './style.scss';
 
 export function A4AFeedback( { type }: { type: FeedbackType } ) {
 	const translate = useTranslate();
-	const [ experience, setExperience ] = useState< string >( 'good' );
+	const [ experience, setExperience ] = useState< ExperienceType >( ExperienceType.GOOD );
 	const [ comments, setComments ] = useState< string >( '' );
 	const [ suggestions, setSuggestions ] = useState< FeedbackSuggestion[] >( [] );
 
