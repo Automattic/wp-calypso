@@ -3,7 +3,6 @@ import { useTranslate } from 'i18n-calypso';
 import { capitalize } from 'lodash';
 import A4APlusWpComLogo from 'calypso/a8c-for-agencies/components/a4a-plus-wpcom-logo';
 import VisitSite from 'calypso/blocks/visit-site';
-import AsyncLoad from 'calypso/components/async-load';
 import GravatarLoginLogo from 'calypso/components/gravatar-login-logo';
 import JetpackPlusWpComLogo from 'calypso/components/jetpack-plus-wpcom-logo';
 import WooCommerceConnectCartHeader from 'calypso/components/woocommerce-connect-cart-header';
@@ -48,7 +47,6 @@ interface LoginHeaderProps {
 	twoFactorAuthType: string;
 	twoFactorEnabled: boolean;
 	initialQuery: { 'client-id': string; redirect_to: string } | null;
-	partnerSlug: string | null;
 	getSignupLinkComponent: () => JSX.Element;
 	showContinueAsUser: () => boolean;
 }
@@ -251,12 +249,14 @@ export function GetHeaderText( {
 		headerText = <>{ translate( 'Log in to your account' ) }</>;
 	}
 
-	if ( isJetpack ) {
+	if ( isJetpack && ! isFromAutomatticForAgenciesPlugin ) {
 		const isJetpackMagicLinkSignUpFlow = config.isEnabled( 'jetpack/magic-link-signup' );
 		headerText = (
 			<>
 				{ isJetpackMagicLinkSignUpFlow
-					? translate( 'Log in or create a WordPress.com account to get started with Jetpack' )
+					? translate(
+							'Log in or create a WordPress.com account to supercharge your site with powerful growth, performance, and security tools.'
+					  )
 					: translate( 'Log in or create a WordPress.com account to set up Jetpack' ) }
 			</>
 		);
@@ -298,7 +298,6 @@ export function LoginHeader( {
 	twoFactorAuthType,
 	twoFactorEnabled,
 	initialQuery,
-	partnerSlug,
 	getSignupLinkComponent,
 	showContinueAsUser,
 }: LoginHeaderProps ) {
@@ -542,17 +541,9 @@ export function LoginHeader( {
 		}
 		preHeader = null;
 		postHeader = <p className="login__header-subtitle">{ subtitle }</p>;
-	} else if ( isJetpack ) {
-		preHeader = (
-			<div className="login__jetpack-logo">
-				<AsyncLoad
-					require="calypso/components/jetpack-header"
-					placeholder={ null }
-					partnerSlug={ partnerSlug }
-					darkColorScheme
-				/>
-			</div>
-		);
+	} else if ( isJetpack && ! isFromAutomatticForAgenciesPlugin ) {
+		preHeader = <p className="login__jetpack-pre-header">{ translate( 'Log in or sign up' ) }</p>;
+		header = <p className="login__jetpack-header">{ headerText }</p>;
 	} else if ( fromSite ) {
 		// if redirected from Calypso URL with a site slug, offer a link to that site's frontend
 		postHeader = <VisitSite siteSlug={ fromSite } />;
