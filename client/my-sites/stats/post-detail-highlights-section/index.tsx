@@ -60,7 +60,8 @@ export default function PostDetailHighlightsSection( {
 	const isSimple = useSelector( isSimpleSite );
 
 	const isSubscriptionsModuleActive =
-		useSelector( ( state ) => isJetpackModuleActive( state, siteId, 'subscriptions' ) ) ?? false;
+		useSelector( ( state ) => isJetpackModuleActive( state, siteId, 'subscriptions', true ) ) ??
+		false;
 
 	const subscriptionsEnabled = isSimple || isSubscriptionsModuleActive;
 
