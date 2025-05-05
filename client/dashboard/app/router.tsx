@@ -5,12 +5,12 @@ import {
 	redirect,
 	createLazyRoute,
 } from '@tanstack/react-router';
-import NotFound from '../404';
-import UnknownError from '../500';
 import { fetchTwoStep } from '../data';
-import Root from '../root';
+import NotFound from './404';
+import UnknownError from './500';
 import { sitesQuery, siteQuery, domainsQuery, emailsQuery, profileQuery } from './queries';
 import { queryClient } from './query-client';
+import Root from './root';
 import type { AppConfig } from './context';
 import type { FetchQueryOptions } from '@tanstack/react-query';
 
@@ -65,7 +65,7 @@ const siteRoute = createRoute( {
 	path: 'sites/$siteSlug',
 	loader: ( { params: { siteSlug } } ) => maybeAwaitFetch( siteQuery( siteSlug ) ),
 } ).lazy( () =>
-	import( '../site' ).then( ( d ) =>
+	import( '../sites/site' ).then( ( d ) =>
 		createLazyRoute( 'site' )( {
 			component: d.default,
 		} )
@@ -76,7 +76,7 @@ const siteOverviewRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: '/',
 } ).lazy( () =>
-	import( '../site-overview' ).then( ( d ) =>
+	import( '../sites/overview' ).then( ( d ) =>
 		createLazyRoute( 'site-overview' )( {
 			component: d.default,
 		} )
@@ -87,7 +87,7 @@ const siteDeploymentsRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: 'deployments',
 } ).lazy( () =>
-	import( '../site-deployments' ).then( ( d ) =>
+	import( '../sites/deployments' ).then( ( d ) =>
 		createLazyRoute( 'site-deployments' )( {
 			component: d.default,
 		} )
@@ -98,7 +98,7 @@ const sitePerformanceRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: 'performance',
 } ).lazy( () =>
-	import( '../site-performance' ).then( ( d ) =>
+	import( '../sites/performance' ).then( ( d ) =>
 		createLazyRoute( 'site-performance' )( {
 			component: d.default,
 		} )
@@ -109,7 +109,7 @@ const siteSettingsRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: 'settings',
 } ).lazy( () =>
-	import( '../site-settings' ).then( ( d ) =>
+	import( '../sites/settings' ).then( ( d ) =>
 		createLazyRoute( 'site-settings' )( {
 			component: d.default,
 		} )
@@ -167,7 +167,7 @@ const profileRoute = createRoute( {
 	getParentRoute: () => meRoute,
 	path: 'profile',
 } ).lazy( () =>
-	import( '../profile' ).then( ( d ) =>
+	import( '../me/profile' ).then( ( d ) =>
 		createLazyRoute( 'profile' )( {
 			component: d.default,
 		} )
@@ -178,7 +178,7 @@ const billingRoute = createRoute( {
 	getParentRoute: () => meRoute,
 	path: 'billing',
 } ).lazy( () =>
-	import( '../billing' ).then( ( d ) =>
+	import( '../me/billing' ).then( ( d ) =>
 		createLazyRoute( 'billing' )( {
 			component: d.default,
 		} )
@@ -189,7 +189,7 @@ const billingHistoryRoute = createRoute( {
 	getParentRoute: () => meRoute,
 	path: 'billing/billing-history',
 } ).lazy( () =>
-	import( '../billing-history' ).then( ( d ) =>
+	import( '../me/billing-history' ).then( ( d ) =>
 		createLazyRoute( 'billing-history' )( {
 			component: d.default,
 		} )
@@ -200,7 +200,7 @@ const activeSubscriptionsRoute = createRoute( {
 	getParentRoute: () => meRoute,
 	path: 'billing/active-subscriptions',
 } ).lazy( () =>
-	import( '../active-subscriptions' ).then( ( d ) =>
+	import( '../me/active-subscriptions' ).then( ( d ) =>
 		createLazyRoute( 'active-subscriptions' )( {
 			component: d.default,
 		} )
@@ -211,7 +211,7 @@ const paymentMethodsRoute = createRoute( {
 	getParentRoute: () => meRoute,
 	path: 'billing/payment-methods',
 } ).lazy( () =>
-	import( '../payment-methods' ).then( ( d ) =>
+	import( '../me/payment-methods' ).then( ( d ) =>
 		createLazyRoute( 'payment-methods' )( {
 			component: d.default,
 		} )
@@ -222,7 +222,7 @@ const taxDetailsRoute = createRoute( {
 	getParentRoute: () => meRoute,
 	path: 'billing/tax-details',
 } ).lazy( () =>
-	import( '../tax-details' ).then( ( d ) =>
+	import( '../me/tax-details' ).then( ( d ) =>
 		createLazyRoute( 'tax-details' )( {
 			component: d.default,
 		} )
@@ -233,7 +233,7 @@ const securityRoute = createRoute( {
 	getParentRoute: () => meRoute,
 	path: 'security',
 } ).lazy( () =>
-	import( '../security' ).then( ( d ) =>
+	import( '../me/security' ).then( ( d ) =>
 		createLazyRoute( 'security' )( {
 			component: d.default,
 		} )
@@ -244,7 +244,7 @@ const privacyRoute = createRoute( {
 	getParentRoute: () => meRoute,
 	path: 'privacy',
 } ).lazy( () =>
-	import( '../privacy' ).then( ( d ) =>
+	import( '../me/privacy' ).then( ( d ) =>
 		createLazyRoute( 'privacy' )( {
 			component: d.default,
 		} )
@@ -255,7 +255,7 @@ const notificationsRoute = createRoute( {
 	getParentRoute: () => meRoute,
 	path: 'notifications',
 } ).lazy( () =>
-	import( '../notifications' ).then( ( d ) =>
+	import( '../me/notifications' ).then( ( d ) =>
 		createLazyRoute( 'notifications' )( {
 			component: d.default,
 		} )
