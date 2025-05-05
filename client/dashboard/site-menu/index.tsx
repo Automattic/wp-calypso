@@ -11,6 +11,9 @@ const SiteMenu = ( { siteSlug }: { siteSlug: string } ) => {
 			<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/performance` }>
 				{ __( 'Performance' ) }
 			</ResponsiveMenu.Item>
+			<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/settings` }>
+				{ __( 'Settings' ) }
+			</ResponsiveMenu.Item>
 		</ResponsiveMenu>
 	);
 };
