@@ -1,11 +1,12 @@
 /**
  * @jest-environment jsdom
  */
+
+import { formatCurrency } from '@automattic/number-formatters';
 // @ts-nocheck - TODO: Fix TypeScript issues
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { dispatch } from '@wordpress/data';
-import { formatCurrency } from 'i18n-calypso';
 import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 import { getDomainsBySiteId, hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getPlansBySiteId } from 'calypso/state/sites/plans/selectors/get-plans-by-site';
@@ -31,10 +32,11 @@ import {
 	getBasicCart,
 } from './util';
 import { MockCheckout } from './util/mock-checkout';
+import type { ResponseCartProduct } from '@automattic/shopping-cart';
 
 jest.mock( 'calypso/lib/analytics/utils/refresh-country-code-cookie-gdpr' );
 jest.mock( 'calypso/my-sites/checkout/use-cart-key' );
-jest.mock( 'calypso/state/products-list/selectors/is-marketplace-product' );
+jest.mock( 'calypso/state/products-list/selectors' );
 jest.mock( 'calypso/state/selectors/get-intro-offer-price' );
 jest.mock( 'calypso/state/selectors/is-site-automated-transfer' );
 jest.mock( 'calypso/state/sites/domains/selectors' );
@@ -60,11 +62,11 @@ describe( 'CheckoutMain with a variant picker', () => {
 		( getPlansBySiteId as jest.Mock ).mockImplementation( () => ( {
 			data: getActivePersonalPlanDataForType( 'yearly' ),
 		} ) );
-		hasLoadedSiteDomains.mockImplementation( () => true );
-		getDomainsBySiteId.mockImplementation( () => [] );
-		isMarketplaceProduct.mockImplementation( () => false );
-		( isJetpackSite as jest.Mock ).mockImplementation( () => false );
-		( useCartKey as jest.Mock ).mockImplementation( () => mainCartKey );
+		( hasLoadedSiteDomains as unknown as jest.Mock ).mockImplementation( () => true );
+		( getDomainsBySiteId as unknown as jest.Mock ).mockImplementation( () => [] );
+		( isMarketplaceProduct as unknown as jest.Mock ).mockImplementation( () => false );
+		( isJetpackSite as unknown as jest.Mock ).mockImplementation( () => false );
+		( useCartKey as unknown as jest.Mock ).mockImplementation( () => mainCartKey );
 
 		mockGetPaymentMethodsEndpoint( [] );
 		mockLogStashEndpoint();
@@ -175,7 +177,11 @@ describe( 'CheckoutMain with a variant picker', () => {
 		'renders the $expectedVariant variant with a discount percentage for a Jetpack $cartPlan plan when the current plan is $activePlan',
 		async ( { cartPlan, expectedVariant } ) => {
 			const user = userEvent.setup();
-			const cartChanges = { products: [ getJetpackPlanForInterval( cartPlan ) ] };
+			const cartChanges = {
+				products: [ getJetpackPlanForInterval( cartPlan ) ].filter(
+					Boolean
+				) as ResponseCartProduct[],
+			};
 			render( <MockCheckout initialCart={ initialCart } cartChanges={ cartChanges } /> );
 
 			const openVariantPicker = await screen.findByLabelText( 'Pick a product term' );
@@ -191,8 +197,8 @@ describe( 'CheckoutMain with a variant picker', () => {
 				( plan ) => plan.product_slug === variantSlug
 			);
 
-			const discountAmount = variantData.orig_cost_integer / 2; // hardcoded: 50%
-			const formattedDiscountAmount = formatCurrency( discountAmount, variantData.currency_code, {
+			const discountAmount = variantData!.orig_cost_integer / 2; // hardcoded: 50%
+			const formattedDiscountAmount = formatCurrency( discountAmount, variantData!.currency_code, {
 				stripZeros: true,
 				isSmallestUnit: true,
 			} );
@@ -235,13 +241,13 @@ describe( 'CheckoutMain with a variant picker', () => {
 			const variantData = getPlansItemsState().find(
 				( plan ) => plan.product_slug === variantSlug
 			);
-			const finalPrice = variantData.raw_price;
-			const variantInterval = parseInt( String( variantData.bill_period ), 10 );
+			const finalPrice = variantData!.raw_price;
+			const variantInterval = parseInt( String( variantData!.bill_period ), 10 );
 			const currentVariantData = getPlansItemsState().find(
 				( plan ) => plan.product_slug === currentVariantSlug
 			);
-			const currentVariantPrice = currentVariantData.raw_price;
-			const currentVariantInterval = parseInt( String( currentVariantData.bill_period ), 10 );
+			const currentVariantPrice = currentVariantData!.raw_price;
+			const currentVariantInterval = parseInt( String( currentVariantData!.bill_period ), 10 );
 			const intervalsInVariant = Math.round( variantInterval / currentVariantInterval );
 			const priceBeforeDiscount = currentVariantPrice * intervalsInVariant;
 

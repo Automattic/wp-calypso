@@ -230,6 +230,34 @@ describe( 'filters', () => {
 		expect( result[ 1 ].title ).toBe( 'Space' );
 		expect( result[ 2 ].title ).toBe( 'NASA' );
 	} );
+
+	it( 'should search using IS filter and return all values if filter.value is undefined', () => {
+		const { data: result } = filterSortAndPaginate(
+			data,
+			{
+				filters: [
+					{
+						field: 'type',
+						operator: 'is',
+						value: undefined,
+					},
+				],
+			},
+			fields
+		);
+		expect( result ).toHaveLength( 11 );
+		expect( result[ 0 ].title ).toBe( 'Apollo' );
+		expect( result[ 1 ].title ).toBe( 'Space' );
+		expect( result[ 2 ].title ).toBe( 'NASA' );
+		expect( result[ 3 ].title ).toBe( 'Neptune' );
+		expect( result[ 4 ].title ).toBe( 'Mercury' );
+		expect( result[ 5 ].title ).toBe( 'Venus' );
+		expect( result[ 6 ].title ).toBe( 'Earth' );
+		expect( result[ 7 ].title ).toBe( 'Mars' );
+		expect( result[ 8 ].title ).toBe( 'Jupiter' );
+		expect( result[ 9 ].title ).toBe( 'Saturn' );
+		expect( result[ 10 ].title ).toBe( 'Uranus' );
+	} );
 } );
 
 describe( 'sorting', () => {

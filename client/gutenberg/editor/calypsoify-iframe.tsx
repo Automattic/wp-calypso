@@ -27,7 +27,6 @@ import { clearLastNonEditorRoute, setRoute } from 'calypso/state/route/actions';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getEditorCloseConfig from 'calypso/state/selectors/get-editor-close-config';
 import getPostTypeTrashUrl from 'calypso/state/selectors/get-post-type-trash-url';
-import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
 import getSiteUrl from 'calypso/state/selectors/get-site-url';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
@@ -59,11 +58,6 @@ interface Props {
 	editorType: 'site' | 'post'; // Note: a page or other CPT is a type of post.
 	pressThisData: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 	bloggingPromptData: any; // eslint-disable-line @typescript-eslint/no-explicit-any
-	anchorFmData: {
-		anchor_podcast: string | undefined;
-		anchor_episode: string | undefined;
-		spotify_url: string | undefined;
-	};
 	siteAdminUrl: T.URL | null;
 	parentPostId: T.PostId;
 	stripeConnectSuccess: 'gutenberg' | null;
@@ -778,7 +772,6 @@ const mapStateToProps = (
 		creatingNewHomepage,
 		editorType = 'post',
 		stripeConnectSuccess,
-		anchorFmData,
 		showDraftPostModal,
 		pressThisData,
 		bloggingPromptData,
@@ -804,7 +797,6 @@ const mapStateToProps = (
 		'environment-id': config( 'env_id' ),
 		'new-homepage': creatingNewHomepage,
 		...( !! stripeConnectSuccess && { stripe_connect_success: stripeConnectSuccess } ),
-		...anchorFmData,
 		openSidebar: getQueryArg( window.location.href, 'openSidebar' ),
 		showDraftPostModal,
 		...pressThisData,
@@ -815,11 +807,6 @@ const mapStateToProps = (
 	// needed for loading the editor in SU sessions
 	if ( wpcom.addSupportParams ) {
 		queryArgs = wpcom.addSupportParams( queryArgs );
-	}
-
-	// Pass through to iframed editor if user is in editor deprecation group.
-	if ( 'classic' === getSelectedEditor( state, siteId ?? 0 ) ) {
-		queryArgs[ 'in-editor-deprecation-group' ] = 1;
 	}
 
 	// Add new Site Editor params introduced in https://github.com/WordPress/gutenberg/pull/38817.

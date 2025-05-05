@@ -1,9 +1,8 @@
 import { is100Year } from '@automattic/calypso-products';
-import { LoadingPlaceholder } from '@automattic/components';
+import { LoadingPlaceholder, CoreBadge } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
-import CoreBadge from 'calypso/components/core/badge';
 import { isPartnerPurchase, purchaseType } from 'calypso/lib/purchases';
 import { getMyPurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
 import { isA4AUser } from 'calypso/state/partner-portal/partner/selectors';

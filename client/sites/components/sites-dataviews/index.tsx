@@ -172,7 +172,7 @@ const DotcomSitesDataViews = ( {
 
 		if ( isAutomattician && siteType === 'non-p2' ) {
 			dataViewFields.push( {
-				id: 'a8c_owned',
+				id: 'is_a8c',
 				label: __( 'Include A8C sites' ),
 				enableHiding: false,
 				elements: [

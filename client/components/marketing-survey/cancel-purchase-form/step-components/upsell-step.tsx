@@ -3,9 +3,10 @@ import { getPlan, PLAN_PERSONAL, PLAN_BUSINESS } from '@automattic/calypso-produ
 import page from '@automattic/calypso-router';
 import { HelpCenter } from '@automattic/data-stores';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
+import { formatCurrency, formatNumber } from '@automattic/number-formatters';
 import { Button } from '@wordpress/components';
 import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
-import { useTranslate, numberFormat, formatCurrency } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import imgBuiltBy from 'calypso/assets/images/cancellation/built-by.png';
 import imgBusinessPlan from 'calypso/assets/images/cancellation/business-plan.png';
@@ -112,7 +113,7 @@ export default function UpsellStep( { upsell, site, purchase, ...props }: StepPr
 	const translate = useTranslate();
 	const hasEnTranslation = useHasEnTranslation();
 	const currencyCode = useSelector( getCurrentUserCurrencyCode ) || 'USD';
-	const numberOfPluginsThemes = numberFormat( 50000 );
+	const numberOfPluginsThemes = formatNumber( 50000 );
 	const discountRate = 25;
 	const couponCode = 'BIZWPC25';
 	const builtByURL = 'https://wordpress.com/website-design-service/?ref=wpcom-cancel-flow';

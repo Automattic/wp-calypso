@@ -1,3 +1,4 @@
+import { formatNumber } from '@automattic/number-formatters';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { PureComponent } from 'react';
@@ -9,7 +10,6 @@ import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { countPostLikes } from 'calypso/state/posts/selectors/count-post-likes';
 import { getPostLikes } from 'calypso/state/posts/selectors/get-post-likes';
-
 import './style.scss';
 
 class PostLikes extends PureComponent {
@@ -42,7 +42,7 @@ class PostLikes extends PureComponent {
 	};
 
 	renderExtraCount() {
-		const { likes, likeCount, translate, numberFormat } = this.props;
+		const { likes, likeCount, translate } = this.props;
 
 		if ( ! likes || likeCount <= likes.length ) {
 			return null;
@@ -51,7 +51,7 @@ class PostLikes extends PureComponent {
 		const extraCount = likeCount - likes.length;
 
 		const message = translate( '%(extraCount)s more', {
-			args: { extraCount: numberFormat( extraCount ) },
+			args: { extraCount: formatNumber( extraCount ) },
 		} );
 
 		return (

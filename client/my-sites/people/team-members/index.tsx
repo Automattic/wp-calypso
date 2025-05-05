@@ -1,7 +1,8 @@
 import { Card, Button } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { formatNumber } from '@automattic/number-formatters';
 import { Icon } from '@wordpress/icons';
-import { useTranslate, numberFormat } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { ReactElement } from 'react';
 import InfiniteList from 'calypso/components/infinite-list';
 import NoResults from 'calypso/my-sites/no-results';
@@ -79,7 +80,7 @@ function TeamMembers( props: Props ) {
 			'You have %(membersTotalCount)s user',
 			'You have %(membersTotalCount)s users',
 			{
-				args: { membersTotalCount: numberFormat( membersTotal as number ) },
+				args: { membersTotalCount: formatNumber( membersTotal as number ) },
 				count: membersTotal as number,
 			}
 		);

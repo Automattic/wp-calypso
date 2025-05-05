@@ -1,14 +1,15 @@
 import { isPlan, isJetpackPlan } from '@automattic/calypso-products';
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
+import { formatCurrency } from '@automattic/number-formatters';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { createElement, createInterpolateElement, useState } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
-import { formatCurrency } from 'i18n-calypso';
 import PromoCard from 'calypso/components/promo-section/promo-card';
 import PromoCardCTA from 'calypso/components/promo-section/promo-card/cta';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
+import { useStreamlinedPriceExperiment } from 'calypso/my-sites/plans-features-main/hooks/use-streamlined-price-experiment';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { useGetProductVariants } from '../../hooks/product-variants';
@@ -108,6 +109,7 @@ export function CheckoutSidebarPlanUpsell() {
 	const plan = responseCart.products.find(
 		( product ) => isPlan( product ) && ! isJetpackPlan( product )
 	);
+	const [ , streamlinedPriceExperimentAssignment ] = useStreamlinedPriceExperiment();
 
 	const variants = useGetProductVariants( plan );
 
@@ -202,9 +204,13 @@ export function CheckoutSidebarPlanUpsell() {
 
 	const { cardTitle, cellLabel, ctaText } = upsellText;
 
+	const checkoutSidebarPlanUpsellClassName =
+		'checkout-sidebar-plan-upsell' +
+		( streamlinedPriceExperimentAssignment ? ' checkout-sidebar-plan-upsell-streamlined' : '' );
+
 	return (
 		<>
-			<PromoCard title={ cardTitle } className="checkout-sidebar-plan-upsell">
+			<PromoCard title={ cardTitle } className={ checkoutSidebarPlanUpsellClassName }>
 				<div className="checkout-sidebar-plan-upsell__plan-grid">
 					<div className="checkout-sidebar-plan-upsell__plan-grid-cell">
 						<strong>{ __( 'Plan' ) }</strong>

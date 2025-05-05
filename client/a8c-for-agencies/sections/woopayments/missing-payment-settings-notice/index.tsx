@@ -18,6 +18,7 @@ export const MissingPaymentSettingsNotice = () => {
 
 	return (
 		<LayoutBanner
+			isFullWidth
 			level="warning"
 			title={ translate( 'Add your payout information to get paid.' ) }
 			className="missing-payment-settings-notice"

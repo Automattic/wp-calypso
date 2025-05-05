@@ -1,4 +1,5 @@
 import { eye } from '@automattic/components/src/icons';
+import { formatNumber } from '@automattic/number-formatters';
 import { Icon, chartBar, trendingUp } from '@wordpress/icons';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
@@ -62,19 +63,19 @@ class WordAdsChartTabs extends Component {
 			default:
 				tooltipData.push( {
 					label: this.props.translate( 'Ads Served' ),
-					value: this.props.numberFormat( item.data.impressions ),
+					value: formatNumber( item.data.impressions ),
 					className: 'is-impressions',
 					icon: <Icon className="gridicon" icon={ eye } />,
 				} );
 				tooltipData.push( {
 					label: this.props.translate( 'Avg. CPM' ),
-					value: '$ ' + this.props.numberFormat( item.data.cpm, { decimals: 2 } ),
+					value: '$ ' + formatNumber( item.data.cpm, { decimals: 2 } ),
 					className: 'is-cpm',
 					icon: <Icon className="gridicon" icon={ chartBar } />,
 				} );
 				tooltipData.push( {
 					label: this.props.translate( 'Revenue' ),
-					value: '$ ' + this.props.numberFormat( item.data.revenue, { decimals: 2 } ),
+					value: '$ ' + formatNumber( item.data.revenue, { decimals: 2 } ),
 					className: 'is-revenue',
 					icon: <Icon className="gridicon" icon={ trendingUp } />,
 				} );

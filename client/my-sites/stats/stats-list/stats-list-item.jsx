@@ -1,5 +1,6 @@
 import page from '@automattic/calypso-router';
 import { Gridicon } from '@automattic/components';
+import { formatNumber } from '@automattic/number-formatters';
 import { Icon, moreHorizontalMobile, tag, file, chevronDown } from '@wordpress/icons';
 import clsx from 'clsx';
 import debugFactory from 'debug';
@@ -321,7 +322,7 @@ class StatsListItem extends Component {
 				break;
 			default:
 			case 'number':
-				value = this.props.numberFormat( valueData.value );
+				value = formatNumber( valueData.value );
 				break;
 		}
 

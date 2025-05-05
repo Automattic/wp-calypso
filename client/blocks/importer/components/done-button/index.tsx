@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { NextButton } from '@automattic/onboarding';
 import { useI18n } from '@wordpress/react-i18n';
 import React from 'react';
@@ -18,9 +17,7 @@ const DoneButton: React.FunctionComponent< Props > = ( props ) => {
 	const {
 		job,
 		siteId,
-		label = isEnabled( 'onboarding/import-redirect-to-themes' )
-			? __( 'Pick a design' )
-			: __( 'View site' ),
+		label = __( 'Pick a design' ),
 		resetImport,
 		onSiteViewClick,
 		className,

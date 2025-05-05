@@ -62,8 +62,8 @@ const sitesRoute = createRoute( {
 
 const siteRoute = createRoute( {
 	getParentRoute: () => rootRoute,
-	path: 'sites/$siteId',
-	loader: ( { params: { siteId } } ) => maybeAwaitFetch( siteQuery( siteId ) ),
+	path: 'sites/$siteSlug',
+	loader: ( { params: { siteSlug } } ) => maybeAwaitFetch( siteQuery( siteSlug ) ),
 } ).lazy( () =>
 	import( '../site' ).then( ( d ) =>
 		createLazyRoute( 'site' )( {
@@ -89,6 +89,28 @@ const siteDeploymentsRoute = createRoute( {
 } ).lazy( () =>
 	import( '../site-deployments' ).then( ( d ) =>
 		createLazyRoute( 'site-deployments' )( {
+			component: d.default,
+		} )
+	)
+);
+
+const sitePerformanceRoute = createRoute( {
+	getParentRoute: () => siteRoute,
+	path: 'performance',
+} ).lazy( () =>
+	import( '../site-performance' ).then( ( d ) =>
+		createLazyRoute( 'site-performance' )( {
+			component: d.default,
+		} )
+	)
+);
+
+const siteSettingsRoute = createRoute( {
+	getParentRoute: () => siteRoute,
+	path: 'settings',
+} ).lazy( () =>
+	import( '../site-settings' ).then( ( d ) =>
+		createLazyRoute( 'site-settings' )( {
 			component: d.default,
 		} )
 	)
@@ -252,7 +274,12 @@ const createRouteTree = ( config: AppConfig ) => {
 	if ( config.supports.sites ) {
 		children.push(
 			sitesRoute,
-			siteRoute.addChildren( [ siteOverviewRoute, siteDeploymentsRoute ] )
+			siteRoute.addChildren( [
+				siteOverviewRoute,
+				siteDeploymentsRoute,
+				sitePerformanceRoute,
+				siteSettingsRoute,
+			] )
 		);
 	}
 
@@ -301,6 +328,8 @@ export {
 	siteRoute,
 	siteOverviewRoute,
 	siteDeploymentsRoute,
+	sitePerformanceRoute,
+	siteSettingsRoute,
 	domainsRoute,
 	emailsRoute,
 	meRoute,

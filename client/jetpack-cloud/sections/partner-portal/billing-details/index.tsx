@@ -1,5 +1,6 @@
 import { Card, Gridicon } from '@automattic/components';
-import { useTranslate, formatCurrency } from 'i18n-calypso';
+import { formatCurrency } from '@automattic/number-formatters';
+import { useTranslate } from 'i18n-calypso';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
 import useBillingDashboardQuery from 'calypso/state/partner-portal/licenses/hooks/use-billing-dashboard-query';
@@ -21,7 +22,6 @@ export default function BillingDetails() {
 					<div>{ billing.isSuccess && useDailyPrices && translate( 'Days in Total' ) }</div>
 				</div>
 			</Card>
-
 			{ billing.isSuccess &&
 				billing.data.products.map( ( product ) => (
 					<Card compact key={ product.productSlug }>
@@ -86,7 +86,6 @@ export default function BillingDetails() {
 						</div>
 					</Card>
 				) ) }
-
 			{ ! billing.isSuccess && (
 				<Card compact>
 					<div className="billing-details__row">
@@ -116,7 +115,6 @@ export default function BillingDetails() {
 					</div>
 				</Card>
 			) }
-
 			<Card compact className="billing-details__footer">
 				<div className="billing-details__row billing-details__row--summary">
 					{ billing.isSuccess && ! useDailyPrices && (
@@ -159,7 +157,6 @@ export default function BillingDetails() {
 					</strong>
 				</div>
 			</Card>
-
 			{ billing.isSuccess && useDailyPrices && billing.data.products.length > 0 && (
 				<Card compact className="billing-details__footer">
 					<small>

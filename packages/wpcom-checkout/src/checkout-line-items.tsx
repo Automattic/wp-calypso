@@ -26,8 +26,9 @@ import {
 	Button,
 	Theme,
 } from '@automattic/composite-checkout';
+import { formatCurrency } from '@automattic/number-formatters';
 import styled from '@emotion/styled';
-import { formatCurrency, useTranslate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { useState, PropsWithChildren, useRef } from 'react';
 import { getLabel, DefaultLineItemSublabel } from './checkout-labels';
 import {

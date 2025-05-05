@@ -77,7 +77,7 @@ const EmailedLoginLinkSuccessfullyJetpackConnect: FC< Props > = ( {
 				<p>
 					{ translate( 'Wrong email or account? {{link}}Use a different account{{/link}}', {
 						components: {
-							link: <a className="magic-login__log-in-link" href="/log-in" />,
+							link: <a className="magic-login__log-in-link" href="/log-in/jetpack" />,
 						},
 					} ) }
 				</p>

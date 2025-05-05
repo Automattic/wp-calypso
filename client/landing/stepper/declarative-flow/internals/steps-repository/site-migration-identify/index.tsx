@@ -1,6 +1,7 @@
+import { formatNumber } from '@automattic/number-formatters';
 import { StepContainer, Title, SubTitle, Step } from '@automattic/onboarding';
 import { Icon, next, published, shield } from '@wordpress/icons';
-import { numberFormat, TranslateResult, useTranslate } from 'i18n-calypso';
+import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { type FC, ReactElement, useEffect, useState, useCallback } from 'react';
 import CaptureInput from 'calypso/blocks/import/capture/capture-input';
 import ScanningStep from 'calypso/blocks/import/scanning';
@@ -101,7 +102,7 @@ export const Analyzer: FC< Props > = ( {
 				'Unmatched reliability with %(uptimePercent)s uptime and unmetered traffic.',
 				{
 					args: {
-						uptimePercent: numberFormat( 0.99999, {
+						uptimePercent: formatNumber( 0.99999, {
 							numberFormatOptions: { style: 'percent', maximumFractionDigits: 3 },
 						} ),
 					},
@@ -240,10 +241,8 @@ const SiteMigrationIdentify: StepType< {
 				className="import__onboarding-page"
 				hideBack={ ! shouldShowBackButton() }
 				backUrl={ urlQueryParams.get( 'back_to' ) || undefined }
-				hideSkip
 				hideFormattedHeader
 				goBack={ navigation?.goBack }
-				goNext={ () => navigation?.submit?.( undefined ) }
 				isFullLayout
 				stepContent={
 					<div className="import__capture-wrapper">

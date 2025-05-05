@@ -1,12 +1,12 @@
 import { Button } from '@automattic/components';
 import { protect, akismet } from '@automattic/components/src/icons';
+import { formatNumberCompact } from '@automattic/number-formatters';
 import clsx from 'clsx';
-import { useTranslate, numberFormatCompact } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { useState, FunctionComponent } from 'react';
 import wpcom from 'calypso/lib/wp';
 import useModuleDataQuery from '../hooks/use-module-data-query';
 import canCurrentUser from '../lib/selectors/can-current-user';
-
 import './modules.scss';
 
 interface ModuleCardProps {
@@ -64,7 +64,7 @@ const ModuleCard: FunctionComponent< ModuleCardProps > = ( {
 				<>
 					{ ( ! isError || ! canManageModule ) && (
 						<div className="stats-widget-module__value">
-							<span>{ numberFormatCompact( value ) }</span>
+							<span>{ formatNumberCompact( value ) }</span>
 						</div>
 					) }
 					{ isError && canManageModule && (

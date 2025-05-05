@@ -1,8 +1,9 @@
 import { FormLabel } from '@automattic/components';
+import { formatCurrency } from '@automattic/number-formatters';
 import { MenuGroup, MenuItem, ToolbarDropdownMenu } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { check, chevronDown, close } from '@wordpress/icons';
-import { formatCurrency, translate } from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 import { ChangeEvent, MouseEvent, MouseEventHandler, useState } from 'react';
 import QueryMemberships from 'calypso/components/data/query-memberships';
 import FormFieldset from 'calypso/components/forms/form-fieldset';

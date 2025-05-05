@@ -30,12 +30,9 @@ import { isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
 import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
 import { getMessagePathForJITM } from 'calypso/lib/route';
 import UserVerificationChecker from 'calypso/lib/user/verification-checker';
+import { isFetchingAdminColor } from 'calypso/state/admin-color/selectors';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import {
-	getShouldShowCollapsedGlobalSidebar,
-	getShouldShowGlobalSidebar,
-	getShouldShowUnifiedSiteSidebar,
-} from 'calypso/state/global-sidebar/selectors';
+import { getSidebarType, SidebarType } from 'calypso/state/global-sidebar/selectors';
 import { isUserNewerThan, WEEK_IN_MILLISECONDS } from 'calypso/state/guided-tours/contexts';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
@@ -169,6 +166,10 @@ class Layout extends Component {
 			return <AsyncLoad require="calypso/layout/masterbar/blaze-pro" placeholder={ null } />;
 		}
 
+		if ( this.props.needsColorScheme && this.props.isFetchingColorScheme ) {
+			return null;
+		}
+
 		const MasterbarComponent = config.isEnabled( 'jetpack-cloud' )
 			? JetpackCloudMasterbar
 			: MasterbarLoggedIn;
@@ -296,12 +297,16 @@ class Layout extends Component {
 						placeholder={ null }
 						id="notices"
 					/>
-					<div id="secondary" className="layout__secondary" role="navigation">
-						{ this.props.secondary }
-					</div>
-					<div id="primary" className="layout__primary">
-						{ this.props.primary }
-					</div>
+					{ ! ( this.props.needsColorScheme && this.props.isFetchingColorScheme ) && (
+						<>
+							<div id="secondary" className="layout__secondary" role="navigation">
+								{ this.props.secondary }
+							</div>
+							<div id="primary" className="layout__primary">
+								{ this.props.primary }
+							</div>
+						</>
+					) }
 				</div>
 				<AsyncLoad require="calypso/layout/community-translator" placeholder={ null } />
 				{ 'development' === process.env.NODE_ENV && (
@@ -342,18 +347,19 @@ export default withCurrentRoute(
 		const isWooJPC =
 			[ 'jetpack-connect', 'login' ].includes( sectionName ) && isWooJPCFlow( state );
 		const isBlazePro = getIsBlazePro( state );
-		const shouldShowGlobalSidebar = getShouldShowGlobalSidebar( state, siteId, sectionGroup );
-		const shouldShowCollapsedGlobalSidebar = getShouldShowCollapsedGlobalSidebar(
+
+		const sidebarType = getSidebarType( {
 			state,
 			siteId,
-			sectionGroup
-		);
-		const shouldShowUnifiedSiteSidebar = getShouldShowUnifiedSiteSidebar(
-			state,
-			siteId,
-			sectionGroup,
-			sectionName
-		);
+			section: currentSection,
+			route: currentRoute,
+		} );
+
+		const shouldShowGlobalSidebar =
+			sidebarType === SidebarType.Global || sidebarType === SidebarType.GlobalCollapsed;
+		const shouldShowCollapsedGlobalSidebar = sidebarType === SidebarType.GlobalCollapsed;
+		const shouldShowUnifiedSiteSidebar = sidebarType === SidebarType.UnifiedSiteClassic;
+
 		const noMasterbarForRoute =
 			isJetpackLogin ||
 			currentRoute === '/me/account/closed' ||
@@ -394,6 +400,10 @@ export default withCurrentRoute(
 					sidebarIsHidden,
 					sectionName,
 			  } );
+		const needsColorScheme =
+			! sidebarIsHidden &&
+			( sidebarType === SidebarType.UnifiedSiteDefault ||
+				sidebarType === SidebarType.UnifiedSiteClassic );
 
 		return {
 			masterbarIsHidden,
@@ -415,6 +425,8 @@ export default withCurrentRoute(
 			sectionJitmPath,
 			currentLayoutFocus: getCurrentLayoutFocus( state ),
 			colorScheme,
+			needsColorScheme,
+			isFetchingColorScheme: isFetchingAdminColor( state, siteId ),
 			siteId,
 			// We avoid requesting sites in the Jetpack Connect authorization step, because this would
 			// request all sites before authorization has finished. That would cause the "all sites"

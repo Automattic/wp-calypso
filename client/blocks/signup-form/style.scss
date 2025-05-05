@@ -175,14 +175,14 @@ body.is-section-accept-invite {
 
 			.signup-form-social-first__tos-link,
 			.signup-form-social-first__email-tos-link {
-				color: var(--studio-gray-50, #646970);
+				color: var(--studio-gray-60, #646970);
 				font-family: "SF Pro Text", sans-serif;
-				font-size: 0.75rem;
+				font-size: 0.875rem;
 				font-style: normal;
 				font-weight: 400;
-				line-height: 18px;
-				margin-top: 3rem;
-				margin-bottom: 0;
+				line-height: 20px;
+				margin-top: 0;
+				margin-bottom: 2rem;
 
 				a {
 					color: var(--studio-gray-50, #646970);

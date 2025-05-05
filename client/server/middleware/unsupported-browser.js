@@ -1,7 +1,34 @@
 import config from '@automattic/calypso-config';
-import { matchesUA } from 'browserslist-useragent';
 import { addQueryArgs } from 'calypso/lib/url';
 import analytics from 'calypso/server/lib/analytics';
+
+/**
+ * The locales that are supported in exempting browser support checks.
+ */
+const SUPPORTED_LOCALES = [ 'en', ...config( 'magnificent_non_en_locales' ) ];
+
+/**
+ * The paths that are allowed even if the browser is unsupported.
+ */
+const ALLOWED_PATHS = [ 'browsehappy', 'themes', 'theme', 'calypso' ];
+
+/**
+ * We allow some paths even if the browser is unsupported.
+ */
+const ALLOWED_PATH_PATTERN = new RegExp(
+	`^/((${ SUPPORTED_LOCALES.join( '|' ) })/)?(${ ALLOWED_PATHS.join( '|' ) })($|/)`
+);
+
+/**
+ * @typedef {import('express-useragent').Details} UserAgentDetails
+ */
+
+/**
+ * Get the major version number of a version string, formatted as "##.#" or "##.#.#".
+ * @param {string} version Version string
+ * @returns {number} Major version number
+ */
+const getMajorVersion = ( version ) => Number( version.split( '.' )[ 0 ] );
 
 /**
  * This is a list of browsers which DEFINITELY do not work on WordPress.com.
@@ -22,45 +49,30 @@ import analytics from 'calypso/server/lib/analytics';
  * listed in package.json. This list only serves as a way to assist users who are
  * using a browser which is definitely broken. It is not a guarantee that things
  * will work flawlessly on newer versions.
+ * @type {Map<string, (ua: UserAgentDetails) => boolean>}
  */
-const UNSUPPORTED_BROWSERS = [
-	'ie <= 11',
-	'edge <= 79',
-	'firefox <= 73',
-	'chrome <= 79',
-	'safari <= 13', // Note: 13.1 IS supported. Browserslist considers Safari point releases as new versions.
-	'opera <= 66',
-	'ios <= 13.3',
-];
+const UNSUPPORTED_BROWSERS = new Map( [
+	[ 'IE', () => true ],
+	[ 'Edge', ( ua ) => getMajorVersion( ua.version ) <= 79 ],
+	[ 'Firefox', ( ua ) => getMajorVersion( ua.version ) <= 73 ],
+	[ 'Chrome', ( ua ) => getMajorVersion( ua.version ) <= 79 ],
+	[ 'Safari', ( ua ) => getMajorVersion( ua.version ) <= 13 ],
+	[ 'Opera', ( ua ) => getMajorVersion( ua.version ) <= 66 ],
+] );
 
-function isUnsupportedBrowser( req ) {
-	// The desktop app sends a UserAgent including WordPress, Electron and Chrome.
-	// We need to check if the chrome portion is supported, but the UA library
-	// will select WordPress and Electron before Chrome, giving a result not
-	// based on the chrome version.
-	const userAgentString = req.useragent.source;
-	const sanitizedUA = userAgentString.replace( / (WordPressDesktop|Electron)\/[.\d]+/g, '' );
-	return matchesUA( sanitizedUA, { ignoreMinor: true, browsers: UNSUPPORTED_BROWSERS } );
-}
+/**
+ * Returns true if the browser via the request useragent is explicitly unsupported, or false
+ * otherwise.
+ * @param {import('express').Request & { useragent: UserAgentDetails }} req
+ * @returns {boolean} Whether the browser is unsupported
+ */
+const isUnsupportedBrowser = ( req ) =>
+	UNSUPPORTED_BROWSERS.get( req.useragent.browser )?.( req.useragent ) === true;
 
 /**
  * These public pages work even in unsupported browsers, so we do not redirect them.
  */
-function allowPath( path ) {
-	const locales = [ 'en', ...config( 'magnificent_non_en_locales' ) ];
-	const prefixedLocale = locales.find( ( locale ) => path.startsWith( `/${ locale }/` ) );
-
-	// If the path starts with a locale, replace it (e.g. '/es/log-in' => '/log-in')
-	const parsedPath = prefixedLocale
-		? path.replace( new RegExp( `^/${ prefixedLocale }` ), '' )
-		: path;
-
-	// '/calypso' is the static assets path, and should never be redirected. (Can
-	// cause CDN caching issues if an asset gets cached with a redirect.)
-	const allowedPaths = [ '/browsehappy', '/themes', '/theme', '/calypso' ];
-	// For example, match either exactly "/themes" or "/themes/*"
-	return allowedPaths.some( ( p ) => parsedPath === p || parsedPath.startsWith( p + '/' ) );
-}
+const isAllowedPath = ( path ) => ALLOWED_PATH_PATTERN.test( path );
 
 export default () => ( req, res, next ) => {
 	if ( ! config.isEnabled( 'redirect-fallback-browsers' ) ) {
@@ -69,7 +81,7 @@ export default () => ( req, res, next ) => {
 	}
 
 	// Permitted paths even if the browser is unsupported.
-	if ( allowPath( req.path ) ) {
+	if ( isAllowedPath( req.path ) ) {
 		next();
 		return;
 	}

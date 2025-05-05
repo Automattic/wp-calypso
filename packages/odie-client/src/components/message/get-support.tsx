@@ -1,7 +1,9 @@
+import { useResetSupportInteraction } from '@automattic/help-center/src/hooks/use-reset-support-interaction';
 import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
+import clsx from 'clsx';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useOdieAssistantContext } from '../../context';
 import { useGetSupportInteractionById } from '../../data';
@@ -17,6 +19,8 @@ interface GetSupportProps {
 }
 
 interface ButtonConfig {
+	className?: string;
+	disabled?: boolean;
 	text: string;
 	action: () => Promise< void >;
 	waitTimeText?: string;
@@ -53,12 +57,14 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 } ) => {
 	const navigate = useNavigate();
 	const newConversation = useCreateZendeskConversation();
+	const resetSupportInteraction = useResetSupportInteraction();
 	const location = useLocation();
 	const {
 		chat,
 		isUserEligibleForPaidSupport: contextIsUserEligibleForPaidSupport,
 		canConnectToZendesk: contextCanConnectToZendesk,
 		trackEvent,
+		isChatLoaded,
 	} = useOdieAssistantContext();
 
 	const { mostRecentSupportInteractionId } = useGetMostRecentOpenConversation();
@@ -74,12 +80,9 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 		return null;
 	}
 
-	if (
+	const disabledButton =
 		! ( canConnectToZendesk || contextCanConnectToZendesk ) &&
-		( isUserEligibleForPaidSupport || contextIsUserEligibleForPaidSupport )
-	) {
-		return <NewThirdPartyCookiesNotice />;
-	}
+		( isUserEligibleForPaidSupport || contextIsUserEligibleForPaidSupport );
 
 	const getButtonConfig = (): ButtonConfig[] => {
 		if ( isUserEligibleForPaidSupport || contextIsUserEligibleForPaidSupport ) {
@@ -98,11 +101,23 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 					hideButton: !! supportInteraction,
 				},
 				{
+					disabled: disabledButton,
+					className: clsx( 'odie__transfer-chat--button', {
+						'odie__transfer-chat--button--disabled': disabledButton,
+					} ),
 					text: __( 'Chat with support', __i18n_text_domain__ ),
 					waitTimeText: __( 'Average wait time < 5 minutes', __i18n_text_domain__ ),
 					action: async () => {
 						onClickAdditionalEvent?.( 'chat' );
-						await newConversation( { createdFrom: 'chat_support_button' } );
+						resetSupportInteraction().then( ( interaction ) => {
+							if ( isChatLoaded ) {
+								newConversation( {
+									avoidTransfer: true,
+									interactionId: interaction?.uuid,
+									createdFrom: 'chat_support_button',
+								} );
+							}
+						} );
 					},
 				},
 			];
@@ -135,7 +150,9 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 				( button, index ) =>
 					button.hideButton !== false && (
 						<div className="odie__transfer-chat--button-container" key={ index }>
-							<button onClick={ ( e ) => handleClick( e, button ) }>{ button.text }</button>
+							<button onClick={ ( e ) => handleClick( e, button ) } disabled={ button.disabled }>
+								{ button.text }
+							</button>
 							{ button.waitTimeText && (
 								<span className="odie__transfer-chat--wait-time">{ button.waitTimeText }</span>
 							) }

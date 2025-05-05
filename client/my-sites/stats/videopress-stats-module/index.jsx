@@ -1,8 +1,9 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Card } from '@automattic/components';
+import { formatNumber } from '@automattic/number-formatters';
 import clsx from 'clsx';
-import { numberFormat, localize } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -252,7 +253,7 @@ class VideoPressStatsModule extends Component {
 										tabIndex="0"
 										role="button"
 									>
-										{ numberFormat( row.impressions ) }
+										{ formatNumber( row.impressions ) }
 									</span>
 								</div>
 								<div className="videopress-stats-module__grid-cell videopress-stats-module__grid-metric">
@@ -263,8 +264,8 @@ class VideoPressStatsModule extends Component {
 										role="button"
 									>
 										{ row.watch_time > 1
-											? numberFormat( row.watch_time, { decimals: 1 } )
-											: `< ${ numberFormat( 1, { decimals: 1 } ) }` }
+											? formatNumber( row.watch_time, { decimals: 1 } )
+											: `< ${ formatNumber( 1, { decimals: 1 } ) }` }
 									</span>
 								</div>
 								<div className="videopress-stats-module__grid-cell videopress-stats-module__grid-metric">
@@ -284,7 +285,7 @@ class VideoPressStatsModule extends Component {
 										tabIndex="0"
 										role="button"
 									>
-										{ numberFormat( row.views ) }
+										{ formatNumber( row.views ) }
 									</span>
 								</div>
 							</div>

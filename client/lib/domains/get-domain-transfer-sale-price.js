@@ -1,4 +1,4 @@
-import { formatCurrency } from 'i18n-calypso';
+import { formatCurrency } from '@automattic/number-formatters';
 import { get } from 'lodash';
 
 export function getDomainTransferSalePrice( slug, productsList, currencyCode ) {

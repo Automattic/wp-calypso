@@ -67,3 +67,5 @@ export { default as Swipeable } from './swipeable';
 export { default as DotPager } from './dot-pager';
 export { default as EmbedContainer } from './embed-container';
 export { ExperienceControl } from './experience-control';
+export { default as SummaryButton } from './summary-button';
+export { default as CoreBadge } from './core-badge';

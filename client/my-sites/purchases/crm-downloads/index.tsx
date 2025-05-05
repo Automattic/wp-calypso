@@ -1,32 +1,29 @@
 import { useTranslate } from 'i18n-calypso';
 import {
-	CrmDownloadsContent,
 	CrmDownloadsError,
+	CrmDownloadsContent,
 } from 'calypso/components/crm-downloads/crm-downloads';
 import DocumentHead from 'calypso/components/data/document-head';
 import HeaderCake from 'calypso/components/header-cake';
 import Main from 'calypso/components/main';
-import { useSiteQuery } from 'calypso/data/sites/use-site-query';
+import useUserLicenseBySubscriptionQuery from 'calypso/data/jetpack-licensing/use-user-license-by-subscription-query';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import './style.scss';
 
-export function CrmDownloads( { purchaseId, siteSlug }: { purchaseId: number; siteSlug: string } ) {
+export function CrmDownloads( { subscription }: { subscription: number } ) {
 	const translate = useTranslate();
-
-	const { data, isError, isLoading } = useSiteQuery( siteSlug );
+	const { data, isError, isLoading } = useUserLicenseBySubscriptionQuery( subscription );
 
 	return (
 		<Main className="crm-downloads" wideLayout>
-			<PageViewTracker path="/purchases/:site/crm-downloads/:purchaseId" title="CRM Downloads" />
+			<PageViewTracker path="/purchases/crm-downloads/:licenseKey" title="CRM Downloads" />
 			<DocumentHead title={ translate( 'CRM Downloads' ) } />
-			<HeaderCake backHref={ `/purchases/subscriptions/${ siteSlug }/${ purchaseId }` }>
-				{ translate( 'CRM Downloads' ) }
-			</HeaderCake>
+			<HeaderCake backHref="/purchases/subscriptions/">{ translate( 'CRM Downloads' ) }</HeaderCake>
 
 			{ isError ? (
-				<CrmDownloadsError onReturnClick={ () => ( window.location.href = '/me/purchases' ) } />
+				<CrmDownloadsError />
 			) : (
-				<CrmDownloadsContent isLoading={ isLoading } licenseKey={ data?.plan?.license_key || '' } />
+				<CrmDownloadsContent licenseKey={ data?.licenseKey } isLoading={ isLoading } />
 			) }
 		</Main>
 	);

@@ -1,4 +1,5 @@
-import { useTranslate, numberFormat } from 'i18n-calypso';
+import { formatNumber } from '@automattic/number-formatters';
+import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { navigate } from 'calypso/lib/navigate';
@@ -63,7 +64,7 @@ const useUnsubscribeModal = (
 										{
 											count: subscribers.length,
 											args: {
-												count: numberFormat( subscribers.length ),
+												count: formatNumber( subscribers.length ),
 											},
 											comment: 'Shows when multiple subscribers are removed, using the count',
 										}

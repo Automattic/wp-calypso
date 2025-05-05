@@ -1,4 +1,5 @@
 import { ScreenReaderText } from '@automattic/components';
+import { formatNumber } from '@automattic/number-formatters';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
@@ -10,7 +11,6 @@ import { getNormalizedPost } from 'calypso/state/posts/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getSiteSlug, isJetpackModuleActive, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getRecentViewsForPost } from 'calypso/state/stats/recent-post-views/selectors';
-
 import './style.scss';
 
 class PostActionCounts extends PureComponent {
@@ -48,14 +48,7 @@ class PostActionCounts extends PureComponent {
 	};
 
 	renderCommentCount() {
-		const {
-			commentCount: count,
-			numberFormat,
-			postId,
-			showComments,
-			siteSlug,
-			translate,
-		} = this.props;
+		const { commentCount: count, postId, showComments, siteSlug, translate } = this.props;
 
 		if ( count < 1 || ! showComments ) {
 			return null;
@@ -71,7 +64,7 @@ class PostActionCounts extends PureComponent {
 						// translators: count is the number of comments, eg 5 Comments
 						translate( '%(count)s Comment', '%(count)s Comments', {
 							count,
-							args: { count: numberFormat( count ) },
+							args: { count: formatNumber( count ) },
 						} )
 					}
 				</a>
@@ -80,7 +73,7 @@ class PostActionCounts extends PureComponent {
 	}
 
 	renderViewCount() {
-		const { viewCount: count, numberFormat, postId, showViews, siteSlug, translate } = this.props;
+		const { viewCount: count, postId, showViews, siteSlug, translate } = this.props;
 		if ( ! count || count < 1 || ! showViews ) {
 			return null;
 		}
@@ -90,7 +83,7 @@ class PostActionCounts extends PureComponent {
 			{
 				count,
 				args: {
-					count: numberFormat( count ),
+					count: formatNumber( count ),
 				},
 				comment:
 					'text wrapped by "srText" is not visible on screen for brevity, but is read by screen readers to provide more context',
@@ -105,7 +98,7 @@ class PostActionCounts extends PureComponent {
 			{
 				count,
 				args: {
-					count: numberFormat( count ),
+					count: formatNumber( count ),
 				},
 			}
 		);
@@ -124,15 +117,7 @@ class PostActionCounts extends PureComponent {
 	}
 
 	renderLikeCount() {
-		const {
-			likeCount: count,
-			numberFormat,
-			siteId,
-			postId,
-			showLikes,
-			siteSlug,
-			translate,
-		} = this.props;
+		const { likeCount: count, siteId, postId, showLikes, siteSlug, translate } = this.props;
 
 		if ( count < 1 || ! showLikes ) {
 			return null;
@@ -145,7 +130,7 @@ class PostActionCounts extends PureComponent {
 						// translators: count is the number of likes
 						translate( '%(count)s Like', '%(count)s Likes', {
 							count,
-							args: { count: numberFormat( count ) },
+							args: { count: formatNumber( count ) },
 						} )
 					}
 				</a>

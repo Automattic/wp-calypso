@@ -1,12 +1,12 @@
 import page from '@automattic/calypso-router';
-import { Button, FoldableCard, Gridicon } from '@automattic/components';
+import { Button, FoldableCard, Gridicon, CoreBadge } from '@automattic/components';
+import { formatNumber } from '@automattic/number-formatters';
 import { __experimentalHStack as HStack } from '@wordpress/components';
 import { Icon, external } from '@wordpress/icons';
-import { numberFormat, useTranslate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { useDispatch, useSelector } from 'react-redux';
 import { A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import pressableIcon from 'calypso/assets/images/pressable/pressable-icon.svg';
-import CoreBadge from 'calypso/components/core/badge';
 import { getActiveAgency, isAgencyOwner } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 
@@ -24,7 +24,7 @@ const PressableOffering = () => {
 		translate( 'Lightning-fast performance.' ),
 		translate( '%(uptimePercent)s uptime SLA.', {
 			args: {
-				uptimePercent: numberFormat( 1, {
+				uptimePercent: formatNumber( 1, {
 					numberFormatOptions: { style: 'percent' },
 				} ),
 			},
