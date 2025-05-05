@@ -25,7 +25,7 @@ const SearchThemes: React.FC< SearchThemesProps > = ( { query, onSearch, recordT
 
 	const onClearSearch = useCallback( () => {
 		onSearch( '' );
-		recordTracksEvent( 'search_clear_icon_click' );
+		recordTracksEvent && recordTracksEvent( 'search_clear_icon_click' );
 	}, [ onSearch, recordTracksEvent ] );
 
 	useEffect( () => {
