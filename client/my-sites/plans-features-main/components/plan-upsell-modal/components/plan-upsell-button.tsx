@@ -29,8 +29,8 @@ function PlanUpsellButton( {
 			} }
 		>
 			{ ! hidePrice
-				? translate( 'Get %(planTitle)s - %(planPrice)s/month', {
-						comment: 'Eg: Get Personal $4/month',
+				? translate( 'Get %(planTitle)s - %(planPrice)s/mo', {
+						comment: 'Eg: Get Personal $4/mo',
 						args: {
 							planTitle: planUpsellInfo.title,
 							planPrice: planUpsellInfo.formattedPriceMonthly,

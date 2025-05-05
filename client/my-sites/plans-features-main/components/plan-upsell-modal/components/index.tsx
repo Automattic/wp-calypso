@@ -37,7 +37,7 @@ export const ButtonContainer = styled.div`
 		margin-top: 24px;
 		button {
 			max-width: 220px;
-			flex-basis: 196px;
+			flex-basis: 220px;
 		}
 	}
 `;
