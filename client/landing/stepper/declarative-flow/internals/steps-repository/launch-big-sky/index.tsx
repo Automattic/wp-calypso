@@ -74,7 +74,7 @@ const LaunchBigSky: Step = function ( props ) {
 
 	useEffect( () => {
 		if ( ! isOwner ) {
-			window.location.assign( '/start' );
+			window.location.assign( '/sites' );
 		}
 	}, [ isOwner ] );
 
