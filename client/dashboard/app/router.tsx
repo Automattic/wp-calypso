@@ -105,6 +105,17 @@ const sitePerformanceRoute = createRoute( {
 	)
 );
 
+const siteSettingsRoute = createRoute( {
+	getParentRoute: () => siteRoute,
+	path: 'settings',
+} ).lazy( () =>
+	import( '../site-settings' ).then( ( d ) =>
+		createLazyRoute( 'site-settings' )( {
+			component: d.default,
+		} )
+	)
+);
+
 const domainsRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'domains',
@@ -263,7 +274,12 @@ const createRouteTree = ( config: AppConfig ) => {
 	if ( config.supports.sites ) {
 		children.push(
 			sitesRoute,
-			siteRoute.addChildren( [ siteOverviewRoute, siteDeploymentsRoute, sitePerformanceRoute ] )
+			siteRoute.addChildren( [
+				siteOverviewRoute,
+				siteDeploymentsRoute,
+				sitePerformanceRoute,
+				siteSettingsRoute,
+			] )
 		);
 	}
 
@@ -313,6 +329,7 @@ export {
 	siteOverviewRoute,
 	siteDeploymentsRoute,
 	sitePerformanceRoute,
+	siteSettingsRoute,
 	domainsRoute,
 	emailsRoute,
 	meRoute,

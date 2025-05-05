@@ -105,6 +105,6 @@ export const receiptView = ( context, next ) => {
 };
 
 export const crmDownloads = ( context, next ) => {
-	context.primary = <CrmDownloads licenseKey={ context.params.licenseKey } />;
+	context.primary = <CrmDownloads subscription={ context.params.subscription } />;
 	next();
 };

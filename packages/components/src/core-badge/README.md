@@ -5,7 +5,7 @@ A wrapper component around WordPress's private [`Badge` component](https://wordp
 ## Usage
 
 ```jsx
-import CoreBadge from 'calypso/components/core/badge';
+import { CoreBadge } from '@automattic/components';
 
 function MyComponent() {
 	return <CoreBadge>Badge Content</CoreBadge>;
@@ -25,12 +25,6 @@ We will migrate to the public version of this component once it becomes availabl
 1. **Centralized Private API Management**: Without this wrapper, we would need to duplicate the private API acknowledgment code everywhere the Badge is used. This wrapper centralizes the code in one place and makes it easier to track its usage.
 
 2. **Future-Proofing**: When the Badge component becomes public, we'll only need to update this one wrapper component instead of finding and updating every direct usage throughout the codebase. This makes the eventual migration to the public API much simpler.
-
-### Scope
-
-For now, this component will remain in `client/components` (Calypso-only).
-
-Products that run in dependency-extracted environments (e.g., Jetpack, WooCommerce) should unlock the private component on their own from their globally available version. We can consider company-wide sharing when a non-dependency-extracted product needs to use this component.
 
 ## Future Plans
 

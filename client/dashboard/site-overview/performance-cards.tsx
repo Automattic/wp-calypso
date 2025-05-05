@@ -1,6 +1,6 @@
+import CoreBadge from '@automattic/components/src/core-badge';
 import { __ } from '@wordpress/i18n';
 import { desktop, mobile } from '@wordpress/icons';
-import CoreBadge from 'calypso/components/core/badge';
 import { usePerformanceData } from '../hooks/use-performance-data';
 import OverviewCard, { OverviewCardProgressBar } from '../overview-card';
 import type { Site } from '../data/types';

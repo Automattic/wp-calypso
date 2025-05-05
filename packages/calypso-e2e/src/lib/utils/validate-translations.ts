@@ -1,5 +1,4 @@
 import { sprintf } from '@wordpress/i18n';
-import fetch from 'node-fetch';
 import { Page, ElementHandle } from 'playwright';
 
 const GLOTPRESS_ORIGINALS_ENDPOINT =

@@ -11,7 +11,6 @@ import DataViewsCard from '../dataviews-card';
 import PageLayout from '../page-layout';
 import SiteIcon from '../site-icon';
 import SitePreview from '../site-preview';
-import { isA8CSite } from '../utils/site-owner';
 import { STATUS_LABELS, getSiteStatus, getSiteStatusLabel } from '../utils/site-status';
 import type { Site } from '../data/types';
 import type { View, Operator } from '@automattic/dataviews';
@@ -96,9 +95,8 @@ const DEFAULT_FIELDS = [
 		render: ( { item }: { item: Site } ) => getSiteStatusLabel( item ),
 	},
 	{
-		id: 'a8c_owned',
+		id: 'is_a8c',
 		label: __( 'A8C Owned' ),
-		getValue: ( { item }: { item: Site } ) => isA8CSite( item ),
 		elements: [
 			{ value: true, label: __( 'Yes' ) },
 			{ value: false, label: __( 'No' ) },
@@ -106,7 +104,7 @@ const DEFAULT_FIELDS = [
 		filterBy: {
 			operators: [ 'is' as Operator ],
 		},
-		render: ( { item }: { item: Site } ) => ( isA8CSite( item ) ? __( 'Yes' ) : __( 'No' ) ),
+		render: ( { item }: { item: Site } ) => ( item.is_a8c ? __( 'Yes' ) : __( 'No' ) ),
 	},
 	{
 		id: 'preview',
@@ -116,7 +114,7 @@ const DEFAULT_FIELDS = [
 			const { is_deleted, is_private, URL: url } = item;
 			// If the site is a private A8C site, X-Frame-Options is set to same
 			// origin.
-			const iframeDisabled = is_deleted || ( isA8CSite( item ) && is_private );
+			const iframeDisabled = is_deleted || ( item.is_a8c && is_private );
 			return (
 				<>
 					{ resizeListener }
@@ -168,14 +166,14 @@ const DEFAULT_VIEW: View = {
 export default function Sites() {
 	const navigate = useNavigate();
 	const sites = useQuery( sitesQuery() ).data;
-	const hasA8CSites = sites?.some( isA8CSite );
+	const hasA8CSites = sites?.some( ( site ) => site.is_a8c );
 	const [ view, setView ] = useState< View >(
 		hasA8CSites
 			? {
 					...DEFAULT_VIEW,
 					filters: [
 						{
-							field: 'a8c_owned',
+							field: 'is_a8c',
 							operator: 'is',
 							value: false,
 						},
@@ -185,7 +183,7 @@ export default function Sites() {
 	);
 	const fields = useMemo(
 		() =>
-			hasA8CSites ? DEFAULT_FIELDS : DEFAULT_FIELDS.filter( ( field ) => field.id !== 'a8c_owned' ),
+			hasA8CSites ? DEFAULT_FIELDS : DEFAULT_FIELDS.filter( ( field ) => field.id !== 'is_a8c' ),
 		[ hasA8CSites ]
 	);
 
