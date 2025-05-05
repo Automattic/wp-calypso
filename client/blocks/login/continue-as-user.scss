@@ -47,6 +47,12 @@
 		}
 	}
 
+	.continue-as-user__continue-button {
+		justify-content: center;
+		min-width: 100%;
+		margin-block: 13px;
+	}
+
 	.continue-as-user__not-you {
 		display: block;
 		bottom: 0;
