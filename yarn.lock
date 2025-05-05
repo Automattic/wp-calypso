@@ -1354,12 +1354,12 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@dnd-kit/core": "npm:^6.3.1"
     "@dnd-kit/sortable": "npm:^10.0.0"
+    "@dnd-kit/utilities": "npm:^3.2.1"
     "@storybook/addon-actions": "npm:^8.6.9"
     "@storybook/addon-controls": "npm:^8.6.9"
     "@storybook/addon-docs": "npm:^8.6.9"
     "@storybook/react-webpack5": "npm:^8.6.9"
     "@wordpress/compose": "npm:^7.22.0"
-    clsx: "npm:^2.1.1"
     postcss: "npm:^8.5.3"
     storybook: "npm:^8.6.9"
     typescript: "npm:^5.8.2"
@@ -4847,7 +4847,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@dnd-kit/utilities@npm:^3.2.2":
+"@dnd-kit/utilities@npm:^3.2.1, @dnd-kit/utilities@npm:^3.2.2":
   version: 3.2.2
   resolution: "@dnd-kit/utilities@npm:3.2.2"
   dependencies:
@@ -9901,7 +9901,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/jest@npm:^29.5.14":
+"@types/jest-when@npm:^3.5.5":
+  version: 3.5.5
+  resolution: "@types/jest-when@npm:3.5.5"
+  dependencies:
+    "@types/jest": "npm:*"
+  checksum: 65b4df6204860d71908cf1d5b31e03504628f7efdb275ec3a705d99deb5df3abed419a3387d6cbb7c785e64559f70e3c26f117ad26e3707b4241ae08d3d4467a
+  languageName: node
+  linkType: hard
+
+"@types/jest@npm:*, @types/jest@npm:^29.5.14":
   version: 29.5.14
   resolution: "@types/jest@npm:29.5.14"
   dependencies:
@@ -40043,6 +40052,7 @@ __metadata:
     "@types/ga-gtag": "npm:^1.2.0"
     "@types/gtag.js": "npm:^0.0.20"
     "@types/jest": "npm:^29.5.14"
+    "@types/jest-when": "npm:^3.5.5"
     "@types/lodash": "npm:^4.17.16"
     "@types/node": "npm:^22.15.3"
     "@types/page": "npm:^1.11.9"

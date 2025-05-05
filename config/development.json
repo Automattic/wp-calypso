@@ -160,7 +160,7 @@
 		"press-this": true,
 		"publicize-preview": true,
 		"purchases/new-payment-methods": true,
-		"purchases/purchase-list-dataview": true,
+		"purchases/purchase-list-dataview": false,
 		"push-notifications": true,
 		"reader": true,
 		"reader/comment-polling": false,
