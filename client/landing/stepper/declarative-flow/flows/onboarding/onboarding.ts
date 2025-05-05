@@ -212,7 +212,6 @@ const onboarding: FlowV2< typeof initialize > = {
 					return navigate( 'plans' );
 				case 'plans': {
 					const cartItems = providedDependencies.cartItems;
-					const selectedMarketplaceProduct = providedDependencies.selectedMarketplaceProduct;
 					const [ pickedPlan, ...products ] = cartItems ?? [];
 
 					setPlanCartItem( pickedPlan );
@@ -230,10 +229,7 @@ const onboarding: FlowV2< typeof initialize > = {
 					}
 
 					// Make sure to put the rest of products into the cart, e.g. the storage add-ons.
-					setProductCartItems( [
-						...( selectedMarketplaceProduct ? [ selectedMarketplaceProduct ] : [] ),
-						...products.filter( ( product ) => product !== null ),
-					] );
+					setProductCartItems( products.filter( ( product ) => product !== null ) );
 
 					setSignupCompleteFlowName( flowName );
 					return navigate( 'create-site', undefined, false );
