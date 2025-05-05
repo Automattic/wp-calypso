@@ -525,6 +525,7 @@ const ComparisonGridHeader = forwardRef< HTMLDivElement, ComparisonGridHeaderPro
 		);
 	}
 );
+ComparisonGridHeader.displayName = 'ComparisonGridHeader';
 
 const ComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 	feature?: FeatureObject;
