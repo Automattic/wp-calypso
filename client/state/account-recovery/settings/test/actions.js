@@ -9,8 +9,6 @@ import {
 	ACCOUNT_RECOVERY_SETTINGS_DELETE_SUCCESS,
 	ACCOUNT_RECOVERY_SETTINGS_DELETE_FAILED,
 	ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION,
-	ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION_SUCCESS,
-	ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION_FAILED,
 	ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE,
 	ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE_SUCCESS,
 	ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE_FAILED,
@@ -32,11 +30,7 @@ import {
 	deleteAccountRecoveryEmailSuccess,
 	deleteAccountRecoveryEmailFailed,
 	resendAccountRecoveryEmailValidation,
-	resendAccountRecoveryEmailValidationSuccess,
-	resendAccountRecoveryEmailValidationFailed,
 	resendAccountRecoveryPhoneValidation,
-	resendAccountRecoveryPhoneValidationSuccess,
-	resendAccountRecoveryPhoneValidationFailed,
 	validateAccountRecoveryPhone,
 	validateAccountRecoveryPhoneSuccess,
 	validateAccountRecoveryPhoneFailed,
@@ -322,27 +316,6 @@ describe( 'account-recovery actions', () => {
 		} );
 	} );
 
-	describe( '#resendAccountRecoveryEmailValidationSuccess', () => {
-		test( 'should return ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION_SUCCESS with target: email', () => {
-			const action = resendAccountRecoveryEmailValidationSuccess();
-			expect( action ).toEqual( {
-				type: ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION_SUCCESS,
-				target: 'email',
-			} );
-		} );
-	} );
-
-	describe( '#resendAccountRecoveryEmailValidationFailed', () => {
-		test( 'should return ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION_FAILED with target: email', () => {
-			const action = resendAccountRecoveryEmailValidationFailed( errorResponse );
-			expect( action ).toEqual( {
-				type: ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION_FAILED,
-				target: 'email',
-				error: expect.objectContaining( errorResponse ),
-			} );
-		} );
-	} );
-
 	generateSuccessAndFailedTestsForThunk( {
 		testBaseName: '#resendAccountRecoveryEmailValidation',
 		nockSettings: {
@@ -357,40 +330,6 @@ describe( 'account-recovery actions', () => {
 				type: ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION,
 				target: 'email',
 			} ),
-		postConditionSuccess: () =>
-			expect( spy ).toHaveBeenCalledWith( {
-				type: ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION_SUCCESS,
-				target: 'email',
-			} ),
-		postConditionFailed: () =>
-			expect( spy ).toHaveBeenCalledWith(
-				expect.objectContaining( {
-					type: ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION_FAILED,
-					target: 'email',
-					error: expect.objectContaining( errorResponse ),
-				} )
-			),
-	} );
-
-	describe( '#resendAccountRecoveryPhoneValidationSuccess', () => {
-		test( 'should return ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION_SUCCESS with target: phone', () => {
-			const action = resendAccountRecoveryPhoneValidationSuccess();
-			expect( action ).toEqual( {
-				type: ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION_SUCCESS,
-				target: 'phone',
-			} );
-		} );
-	} );
-
-	describe( '#resendAccountRecoveryPhoneValidationFailed', () => {
-		test( 'should return ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION_FAILED with target: phone', () => {
-			const action = resendAccountRecoveryPhoneValidationFailed( errorResponse );
-			expect( action ).toEqual( {
-				type: ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION_FAILED,
-				target: 'phone',
-				error: expect.objectContaining( errorResponse ),
-			} );
-		} );
 	} );
 
 	generateSuccessAndFailedTestsForThunk( {
@@ -407,19 +346,6 @@ describe( 'account-recovery actions', () => {
 				type: ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION,
 				target: 'phone',
 			} ),
-		postConditionSuccess: () =>
-			expect( spy ).toHaveBeenCalledWith( {
-				type: ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION_SUCCESS,
-				target: 'phone',
-			} ),
-		postConditionFailed: () =>
-			expect( spy ).toHaveBeenCalledWith(
-				expect.objectContaining( {
-					type: ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION_FAILED,
-					target: 'phone',
-					error: expect.objectContaining( errorResponse ),
-				} )
-			),
 	} );
 
 	describe( '#validateAccountRecoveryPhoneSuccess', () => {

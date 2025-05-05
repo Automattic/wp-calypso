@@ -21,8 +21,6 @@ import {
 	ACCOUNT_RECOVERY_SETTINGS_DELETE_SUCCESS,
 	ACCOUNT_RECOVERY_SETTINGS_DELETE_FAILED,
 	ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION,
-	ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION_SUCCESS,
-	ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION_FAILED,
 	ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE,
 	ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE_SUCCESS,
 	ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE_FAILED,
@@ -186,21 +184,6 @@ export const deleteAccountRecoveryEmail = () => ( dispatch ) => {
 		} );
 };
 
-export const resendAccountRecoveryEmailValidationSuccess = () => {
-	return {
-		type: ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION_SUCCESS,
-		target: 'email',
-	};
-};
-
-export const resendAccountRecoveryEmailValidationFailed = ( error ) => {
-	return {
-		type: ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION_FAILED,
-		target: 'email',
-		error,
-	};
-};
-
 export const resendAccountRecoveryEmailValidation = () => ( dispatch ) => {
 	dispatch( {
 		type: ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION,
@@ -210,28 +193,11 @@ export const resendAccountRecoveryEmailValidation = () => ( dispatch ) => {
 	return wpcom.req
 		.post( '/me/account-recovery/email/validation/new' )
 		.then( () => {
-			dispatch( resendAccountRecoveryEmailValidationSuccess() );
 			dispatch( onResentAccountRecoveryEmailValidationSuccess( { target: TARGET_EMAIL } ) );
 		} )
-		.catch( ( error ) => {
-			dispatch( resendAccountRecoveryEmailValidationFailed( error ) );
+		.catch( () => {
 			dispatch( onResentAccountRecoveryEmailValidationFailed( { target: TARGET_EMAIL } ) );
 		} );
-};
-
-export const resendAccountRecoveryPhoneValidationSuccess = () => {
-	return {
-		type: ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION_SUCCESS,
-		target: 'phone',
-	};
-};
-
-export const resendAccountRecoveryPhoneValidationFailed = ( error ) => {
-	return {
-		type: ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION_FAILED,
-		target: 'phone',
-		error,
-	};
 };
 
 export const resendAccountRecoveryPhoneValidation = () => ( dispatch ) => {
@@ -243,11 +209,9 @@ export const resendAccountRecoveryPhoneValidation = () => ( dispatch ) => {
 	return wpcom.req
 		.post( '/me/account-recovery/phone/validation/new' )
 		.then( () => {
-			dispatch( resendAccountRecoveryPhoneValidationSuccess() );
 			dispatch( onResentAccountRecoveryEmailValidationSuccess( { target: TARGET_PHONE } ) );
 		} )
-		.catch( ( error ) => {
-			dispatch( resendAccountRecoveryPhoneValidationFailed( error ) );
+		.catch( () => {
 			dispatch( onResentAccountRecoveryEmailValidationFailed( { target: TARGET_PHONE } ) );
 		} );
 };
