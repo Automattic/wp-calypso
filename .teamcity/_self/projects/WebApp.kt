@@ -1218,24 +1218,14 @@ object DataViewsChangelogCheck : BuildType({
 				#!/usr/bin/env bash
 				set -e
 
-				# Check if there are any changes to packages/dataviews
-				DATAVIEWS_CHANGES=${'$'}(git diff --name-only refs/remotes/origin/trunk...HEAD \
-					| grep -c ^packages/dataviews/ \
-					|| true)
+				CHANGES=${'$'}(git diff --name-only refs/remotes/origin/trunk...HEAD)
 
-				if [ "${'$'}DATAVIEWS_CHANGES" -eq 0 ]; then
-					exit 0
-				fi
-
-				# Check if the changelog file was modified
-				CHANGELOG_MODIFIED=${'$'}(git diff --name-only refs/remotes/origin/trunk...HEAD \
-					| grep -c '^packages/dataviews/CHANGELOG.automattic.md${'$'}' \
-					|| true)
-
-				if [ "${'$'}CHANGELOG_MODIFIED" -eq 0 ]; then
-					echo "ERROR: Changes to 'packages/dataviews' detected with no accompanying changelog entry."
-					echo "Please document your changes in 'packages/dataviews/CHANGELOG.automattic.md'."
-					exit 1
+				if grep -q ^packages/dataviews/ <<< "${'$'}CHANGES"; then
+					if ! grep -q ^packages/dataviews/CHANGELOG.automattic.md <<< "${'$'}CHANGES"; then
+						echo "ERROR: Changes to 'packages/dataviews' detected with no accompanying changelog entry."
+						echo "Please document your changes in 'packages/dataviews/CHANGELOG.automattic.md'."
+						exit 1
+					fi
 				fi
 			"""
 		}
