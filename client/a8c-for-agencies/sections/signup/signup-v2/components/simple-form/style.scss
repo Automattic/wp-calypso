@@ -9,10 +9,6 @@
 	width: 100%;
 	gap: 16px;
 
-	&.blueprint-form {
-		gap: 24px;
-	}
-
 	.a4a-form__heading-title {
 		@include heading-2x-large;
 		margin-bottom: 16px;
@@ -87,6 +83,30 @@
 		@include heading-medium;
 	}
 
+    .multi-checkbox {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px 24px;
+    }
+
+    .multi-checkbox label {
+        display: flex;
+        align-items: center;
+        margin: 0;
+        cursor: pointer;
+        @include body-medium;
+        color: var(--color-neutral-80);
+        flex: 0 1 100%; // Full width on mobile
+
+		@include break-xlarge {
+            flex: 0 1 calc(50% - 12px); // 2 columns
+        }
+    }
+
+    .multi-checkbox .form-checkbox + span {
+        margin-left: 8px;
+    }
+
 	@media (prefers-color-scheme: dark) {
 		.a4a-form__heading .a4a-form__heading-title,
 		.a4a-form__heading .a4a-form__heading-description,
@@ -95,6 +115,7 @@
 		.form-phone-input label,
 		.form-radio__label,
 		.components-form-token-field__suggestion,
+		.form-label span,
 		.field-mandatory-message {
 			color: var(--color-text-inverted);
 		}
@@ -151,7 +172,7 @@
 		cursor: pointer;
 		text-decoration: underline;
 		color: var(--color-primary);
-		text-align: left;
+		text-align: start;
 	}
 
 

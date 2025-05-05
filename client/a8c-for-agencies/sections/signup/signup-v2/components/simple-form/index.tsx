@@ -1,16 +1,21 @@
+import { SearchableDropdown } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useState } from 'react';
+import { ChangeEvent, useCallback, useMemo, useState } from 'react';
 import Form from 'calypso/a8c-for-agencies/components/form';
 import FormField from 'calypso/a8c-for-agencies/components/form/field';
 import FormFooter from 'calypso/a8c-for-agencies/components/form/footer';
+import LayoutBanner from 'calypso/a8c-for-agencies/components/layout/banner';
 import { AgencyDetailsSignupPayload } from 'calypso/a8c-for-agencies/sections/signup/types';
 import QuerySmsCountries from 'calypso/components/data/query-countries/sms';
 import FormPhoneInput from 'calypso/components/forms/form-phone-input';
+import FormSelect from 'calypso/components/forms/form-select';
 import FormTextInput from 'calypso/components/forms/form-text-input';
+import MultiCheckbox from 'calypso/components/forms/multi-checkbox';
 import { useGetSupportedSMSCountries } from 'calypso/jetpack-cloud/sections/agency-dashboard/downtime-monitoring/contact-editor/hooks';
+import { useCountriesAndStates } from 'calypso/jetpack-cloud/sections/partner-portal/company-details-form/hooks/use-countries-and-states';
 import { preventWidows } from 'calypso/lib/formatting';
-import useContactFormValidation from './hooks/use-contact-form-validation';
+import useSimpleFormValidation from './hooks/use-simple-form-validation';
 import TosModal from './tos-modal';
 
 import './style.scss';
@@ -19,18 +24,21 @@ const SimpleForm = () => {
 	const translate = useTranslate();
 	const [ showTosModal, setShowTosModal ] = useState( false );
 	const { validate, validationError, updateValidationError, isValidating } =
-		useContactFormValidation();
+		useSimpleFormValidation();
 
 	const countriesList = useGetSupportedSMSCountries();
+	const { countryOptions } = useCountriesAndStates();
 	const noCountryList = countriesList.length === 0;
-
 	const [ formData, setFormData ] = useState< Partial< AgencyDetailsSignupPayload > >( {
 		firstName: '',
 		lastName: '',
-		email: '',
 		agencyName: '',
 		agencyUrl: '',
 		phoneNumber: '',
+		userType: 'agency_owner',
+		managedSites: '1-5',
+		servicesOffered: [],
+		productsOffered: [],
 	} );
 
 	const handlePhoneInputChange = ( data: { phoneNumberFull: string } ) => {
@@ -40,15 +48,50 @@ const SimpleForm = () => {
 		} ) );
 	};
 
+	const handleSetServicesOffered = ( services: { value: string[] } ) => {
+		setFormData( ( prev ) => ( {
+			...prev,
+			servicesOffered: services.value,
+		} ) );
+		updateValidationError( { servicesOffered: undefined } );
+	};
+
+	const handleSetProductsOffered = ( products: { value: string[] } ) => {
+		setFormData( ( prev ) => ( {
+			...prev,
+			productsOffered: products.value,
+		} ) );
+		updateValidationError( { productsOffered: undefined } );
+	};
+
 	const handleInputChange =
-		( field: keyof AgencyDetailsSignupPayload ) =>
-		( event: React.ChangeEvent< HTMLInputElement > ) => {
+		( field: keyof AgencyDetailsSignupPayload ) => ( event: ChangeEvent< HTMLInputElement > ) => {
 			setFormData( ( prev ) => ( {
 				...prev,
 				[ field ]: event.target.value,
 			} ) );
 			updateValidationError( { [ field ]: undefined } );
 		};
+
+	const handleSelectChange =
+		( field: keyof AgencyDetailsSignupPayload ) => ( event: ChangeEvent< HTMLSelectElement > ) => {
+			setFormData( ( prev ) => ( {
+				...prev,
+				[ field ]: event.target.value,
+			} ) );
+		};
+
+	const handleSetCountry = ( value?: string | null ) => {
+		if ( ! value ) {
+			return;
+		}
+
+		setFormData( ( prev ) => ( {
+			...prev,
+			country: value,
+		} ) );
+		updateValidationError( { country: undefined } );
+	};
 
 	const handleSubmit = useCallback(
 		async ( e: React.FormEvent ) => {
@@ -60,6 +103,32 @@ const SimpleForm = () => {
 		},
 		[ formData, validate ]
 	);
+
+	const servicesOfferedOptions = useMemo(
+		() => [
+			{ value: 'strategy_consulting', label: translate( 'Strategy consulting' ) },
+			{ value: 'website_design_development', label: translate( 'Website design & development' ) },
+			{ value: 'performance_optimization', label: translate( 'Performance optimization' ) },
+			{ value: 'digital_strategy_marketing', label: translate( 'Digital strategy & marketing' ) },
+			{ value: 'maintenance_support_plans', label: translate( 'Maintenance & support plans' ) },
+			{ value: 'other', label: translate( 'Other' ) },
+		],
+		[ translate ]
+	);
+
+	const productsOfferedOptions = useMemo(
+		() => [
+			{ value: 'WordPress.com', label: translate( 'WordPress.com' ) },
+			{ value: 'WooCommerce', label: translate( 'WooCommerce' ) },
+			{ value: 'Jetpack', label: translate( 'Jetpack' ) },
+			{ value: 'Pressable', label: translate( 'Pressable' ) },
+			{ value: 'WordPress VIP', label: translate( 'WordPress VIP' ) },
+			{ value: 'None', label: translate( 'None' ) },
+		],
+		[ translate ]
+	);
+
+	const isUserSiteOwner = formData.userType === 'site_owner';
 
 	return (
 		<Form
@@ -105,16 +174,6 @@ const SimpleForm = () => {
 				</FormField>
 			</div>
 
-			<FormField error={ validationError.email } label={ translate( 'Email' ) } isRequired>
-				<FormTextInput
-					name="email"
-					type="email"
-					value={ formData.email }
-					onChange={ handleInputChange( 'email' ) }
-					placeholder={ translate( 'Your email' ) }
-				/>
-			</FormField>
-
 			<FormField
 				error={ validationError.agencyName }
 				label={ translate( 'Agency name' ) }
@@ -141,58 +200,161 @@ const SimpleForm = () => {
 				/>
 			</FormField>
 
-			{ noCountryList && <QuerySmsCountries /> }
-
-			<FormPhoneInput
-				isDisabled={ noCountryList }
-				countriesList={ countriesList }
-				onChange={ handlePhoneInputChange }
-				className="signup-v2-form__phone-input"
-				phoneInputProps={ {
-					placeholder: translate( 'Phone number' ),
-				} }
-				initialCountryCode="US"
-			/>
-			<TosModal
-				show={ showTosModal }
-				onClose={ () => {
-					setShowTosModal( false );
-				} }
-			/>
-
-			<div className="signup-v2-form__tos">
-				<p>
-					{ translate(
-						"By clicking 'Continue', you agree to the{{break}}{{/break}}{{link}}Terms of the Automattic for Agencies Platform Agreement ↗{{/link}}",
-						{
-							components: {
-								break: <br />,
-								link: (
-									<button
-										type="button"
-										className="signup-v2-form__tos-link"
-										onClick={ () => setShowTosModal( true ) }
-										aria-label={ translate(
-											'Terms of the Automattic for Agencies Platform Agreement'
-										) }
-									/>
-								),
-							},
-						}
-					) }
-				</p>
-			</div>
-
-			<FormFooter>
-				<Button
-					__next40pxDefaultSize
-					disabled={ isValidating }
-					variant="primary"
-					onClick={ handleSubmit }
+			<FormField label={ translate( 'How would you describe yourself?' ) } isRequired>
+				<FormSelect
+					id="user_type"
+					value={ formData.userType }
+					onChange={ handleSelectChange( 'userType' ) }
 				>
-					{ translate( 'Signup for free' ) }
-				</Button>
-			</FormFooter>
+					<option value="agency_owner">{ translate( 'Agency owner' ) }</option>
+					<option value="developer_at_agency">{ translate( 'Developer at an agency' ) }</option>
+					<option value="sales_marketing_operations_at_agency">
+						{ translate( 'Sales, marketing, or operations at an agency' ) }
+					</option>
+					<option value="freelancer">{ translate( 'Freelancer' ) }</option>
+					<option value="site_owner">{ translate( 'Site owner' ) }</option>
+				</FormSelect>
+			</FormField>
+
+			{ ! isUserSiteOwner ? (
+				<>
+					<FormField label={ translate( 'How many sites do you manage?' ) } isRequired>
+						<FormSelect
+							id="managed_sites"
+							value={ formData.managedSites }
+							onChange={ handleSelectChange( 'managedSites' ) }
+						>
+							<option value="1-5">{ translate( '1-5' ) }</option>
+							<option value="6-20">{ translate( '6-20' ) }</option>
+							<option value="21-50">{ translate( '21-50' ) }</option>
+							<option value="51-100">{ translate( '51-100' ) }</option>
+							<option value="101-500">{ translate( '101-500' ) }</option>
+							<option value="500+">{ translate( '500+' ) }</option>
+						</FormSelect>
+					</FormField>
+
+					<FormField
+						error={ validationError.servicesOffered }
+						label={ translate( 'What services do you offer?' ) }
+						isRequired
+					>
+						<MultiCheckbox
+							id="services_offered"
+							name="services_offered"
+							checked={ formData.servicesOffered }
+							options={ servicesOfferedOptions }
+							onChange={ handleSetServicesOffered as any }
+						/>
+					</FormField>
+
+					<FormField
+						error={ validationError.productsOffered }
+						label={ translate( 'What Automattic products do you currently offer your clients?' ) }
+						isRequired
+					>
+						<MultiCheckbox
+							id="products_offered"
+							name="products_offered"
+							checked={ formData.productsOffered }
+							options={ productsOfferedOptions }
+							onChange={ handleSetProductsOffered as any }
+						/>
+					</FormField>
+
+					<FormField
+						error={ validationError.country }
+						label={ translate( 'Where is your agency located?' ) }
+						isRequired
+					>
+						<SearchableDropdown
+							value={ formData.country }
+							onChange={ handleSetCountry }
+							options={ countryOptions }
+							placeholder={ translate( 'Select country' ) }
+						/>
+					</FormField>
+
+					{ noCountryList && <QuerySmsCountries /> }
+
+					<FormPhoneInput
+						isDisabled={ noCountryList }
+						countriesList={ countriesList }
+						onChange={ handlePhoneInputChange }
+						className="signup-v2-form__phone-input"
+						phoneInputProps={ {
+							placeholder: translate( 'Phone number' ),
+						} }
+						initialCountryCode="US"
+					/>
+
+					<TosModal
+						show={ showTosModal }
+						onClose={ () => {
+							setShowTosModal( false );
+						} }
+					/>
+
+					<div className="signup-v2-form__tos">
+						<p>
+							{ translate(
+								"By clicking 'Continue', you agree to the{{break}}{{/break}}{{link}}Terms of the Automattic for Agencies Platform Agreement ↗{{/link}}",
+								{
+									components: {
+										break: <br />,
+										link: (
+											<button
+												type="button"
+												className="signup-v2-form__tos-link"
+												onClick={ () => setShowTosModal( true ) }
+												aria-label={ translate(
+													'Terms of the Automattic for Agencies Platform Agreement'
+												) }
+											/>
+										),
+									},
+								}
+							) }
+						</p>
+					</div>
+
+					<FormFooter>
+						<Button
+							__next40pxDefaultSize
+							disabled={ isValidating }
+							variant="primary"
+							onClick={ handleSubmit }
+						>
+							{ translate( 'Signup for free' ) }
+						</Button>
+					</FormFooter>
+				</>
+			) : (
+				<LayoutBanner
+					hideCloseButton
+					level="warning"
+					title={ preventWidows(
+						translate( 'It seems like we might not be the perfect match right now.' )
+					) }
+				>
+					<div>
+						{ preventWidows(
+							translate(
+								'Automattic for Agencies is a program designed for agencies, developers, and freelancers who work with and provide services to their clients.' +
+									" Depending on what you are looking for, you may want to check out one of our individual products, like {{wp}}WordPress.com{{/wp}}, {{pressable}}Pressable.com{{/pressable}}, {{woo}}Woo.com{{/woo}}, {{jetpack}}Jetpack.com{{/jetpack}}. If you really aren't sure where to go, feel free to contact us at {{email}}partnerships@automattic.com{{/email}} and we'll point you in the right direction.",
+								{
+									components: {
+										wp: <a href="https://wordpress.com" target="_blank" rel="noreferrer" />,
+										pressable: <a href="https://pressable.com" target="_blank" rel="noreferrer" />,
+										woo: <a href="https://woocommerce.com" target="_blank" rel="noreferrer" />,
+										jetpack: <a href="https://jetpack.com" target="_blank" rel="noreferrer" />,
+										email: <a href="mailto:partnerships@automattic.com" />,
+									},
+								}
+							)
+						) }
+					</div>
+				</LayoutBanner>
+			) }
 		</Form>
 	);
 };

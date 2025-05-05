@@ -1,4 +1,3 @@
-import emailValidator from 'email-validator';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
 import { isSiteActive } from 'calypso/a8c-for-agencies/components/form/utils';
@@ -14,10 +13,11 @@ type ValidationState = {
 	lastName?: string;
 	agencyName?: string;
 	agencyUrl?: string;
-	email?: string;
+	servicesOffered?: string;
+	productsOffered?: string;
 };
 
-const useContactFormValidation = () => {
+const useSimpleFormValidation = () => {
 	const translate = useTranslate();
 	const [ validationError, setValidationError ] = useState< ValidationState >( {} );
 	const [ isValidating, setIsValidating ] = useState( false );
@@ -41,12 +41,6 @@ const useContactFormValidation = () => {
 				newValidationError.agencyName = translate( "Agency name can't be empty" );
 			}
 
-			if ( payload.email?.trim() === '' || typeof payload.email !== 'string' ) {
-				newValidationError.email = translate( "Email address can't be empty" );
-			} else if ( ! emailValidator.validate( payload.email ) ) {
-				newValidationError.email = translate( 'Please provide correct email address' );
-			}
-
 			if ( payload.agencyUrl?.trim() === '' || typeof payload.agencyUrl !== 'string' ) {
 				newValidationError.agencyUrl = translate( "Agency URL can't be empty" );
 			} else if ( ! CAPTURE_URL_RGX.test( payload.agencyUrl ) ) {
@@ -60,6 +54,19 @@ const useContactFormValidation = () => {
 						"Please enter a valid site URL for your business. If you're experiencing issues contact us at partnerships@automattic.com"
 					)
 				);
+			}
+
+			if ( ! payload.servicesOffered || payload.servicesOffered?.length < 1 ) {
+				newValidationError.servicesOffered = translate( 'Please select services you offer' );
+			}
+
+			if ( ! payload.productsOffered || payload.productsOffered.length < 1 ) {
+				newValidationError.productsOffered = translate( 'Please select products you offer' );
+			}
+
+			if ( Object.keys( newValidationError ).length > 0 ) {
+				setValidationError( newValidationError );
+				return newValidationError;
 			}
 
 			setIsValidating( false );
@@ -77,4 +84,4 @@ const useContactFormValidation = () => {
 	return { validate, validationError, updateValidationError, isValidating };
 };
 
-export default useContactFormValidation;
+export default useSimpleFormValidation;
