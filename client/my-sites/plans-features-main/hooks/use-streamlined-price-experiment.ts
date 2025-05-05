@@ -2,7 +2,7 @@ import { useExperiment, loadExperimentAssignment } from 'calypso/lib/explat';
 
 const STREAMLINED_PRICE_EXPERIMENT_NAME = 'calypso_streamlined_plans_checkout';
 
-export function useStreamlinedPriceExperiment() {
+export function useStreamlinedPriceExperiment(): [ boolean, string | null ] {
 	const [ isLoading, assignment ] = useExperiment( STREAMLINED_PRICE_EXPERIMENT_NAME );
 	return [ isLoading, assignment?.variationName ?? null ];
 }
