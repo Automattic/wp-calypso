@@ -44,8 +44,7 @@
 
 	.stats__summary--narrow-mobile {
 		@media (max-width: $break-medium) {
-			padding-left: 32px;
-			padding-right: 32px;
+			padding-inline: 0;
 		}
 
 		@media (max-width: ($break-small + 1px)) {
