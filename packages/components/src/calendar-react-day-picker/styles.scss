@@ -43,11 +43,26 @@
     justify-content: center;
     align-items: center;
     display: flex;
+    position: relative;
 
     width: var(--a8c-components-calendar-button-width);
     height: var(--a8c-components-calendar-button-height);
-    border: 1px solid transparent;
+
+    border: none;
     border-radius: 2px;
+
+    // Use a pseudo-element to render border and background, which keeps the
+    // button's border-radius intact, which in turns allows the focus ring to
+    // have rounded corners even when the background needs square corners (eg.
+    // in the middle of a date range).
+    &::before {
+      content: '';
+      position: absolute;
+      z-index: -1;
+      inset: 0;
+      border: 1px solid transparent;
+      border-radius: 2px;
+    }
 
     &:disabled {
       cursor: revert;
@@ -168,16 +183,20 @@
 
   /* DAY MODIFIERS */
   &__day--today &__day-button {
-    border-color: var(--gray-700);
+    &::before {
+      border-color: var(--gray-700);
+    }
 
-    &:disabled {
+    &:disabled::before {
       border-color: var(--gray-600);
     }
   }
 
   &__day--selected &__day-button {
-    border-color: transparent;
-    background-color: var(--gray-900);
+    &::before {
+      border-color: transparent;
+      background-color: var(--gray-900);
+    }
 
     &,
     &:hover:not(:disabled) {
@@ -190,14 +209,21 @@
   }
 
   &__range-start:not(&__range-end) &__day-button {
-    border-start-end-radius: 0;
-    border-end-end-radius: 0;
+	// Apply border-radius changes to the button itself too, because the
+	// focus-ring would look weird otherwise.
+    &, &::before {
+      border-start-end-radius: 0;
+      border-end-end-radius: 0;
+    }
   }
 
   &__range-middle &__day-button {
-    background-color: var(--gray-100);
-    border-radius: 0;
     color: var(--gray-900);
+
+    &::before {
+      background-color: var(--gray-100);
+      border-radius: 0;
+    }
 
     &:hover:not(:disabled) {
       color: var(--theme-accent)
@@ -205,28 +231,32 @@
   }
 
   &__range-end:not(&__range-start) &__day-button {
-    border-start-start-radius: 0;
-    border-end-start-radius: 0;
+	// Apply border-radius changes to the button itself too, because the
+	// focus-ring would look weird otherwise.
+    &, &::before {
+      border-start-start-radius: 0;
+      border-end-start-radius: 0;
+    }
   }
 
   /* PREVIEW RANGE (hovered range) */
-  &__day--preview:not(&__day--preview-start):not(&__day--preview-end) &__day-button {
+  &__day--preview:not(&__day--preview-start):not(&__day--preview-end) &__day-button::before {
     border-radius: 0;
   }
 
-  &__day--preview:not(&__range-start):not(&__range-end) &__day-button {
+  &__day--preview:not(&__range-start):not(&__range-end) &__day-button::before {
     border-block-color: var(--gray-600);
     border-inline-color: transparent; // override today's button styles
     border-style: dashed;
   }
 
-  &__day--preview-start:not(&__range-start):not(&__range-end) &__day-button {
+  &__day--preview-start:not(&__range-start):not(&__range-end) &__day-button::before {
     border-start-end-radius: 0;
     border-end-end-radius: 0;
     border-color: var(--gray-600);
   }
 
-  &__day--preview-end:not(&__range-start):not(&__range-end) &__day-button {
+  &__day--preview-end:not(&__range-start):not(&__range-end) &__day-button::before {
     border-start-start-radius: 0;
     border-end-start-radius: 0;
     border-color: var(--gray-600);
