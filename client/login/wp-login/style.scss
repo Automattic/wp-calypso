@@ -922,26 +922,3 @@ $image-height: 47px;
 	--login-form-column-max-width: 327px;
 }
 
-@include break-mobile {
-	:root {
-		--login-form-column-max-width: 600px;
-	}
-}
-
-@include break-small {
-	:root {
-		--login-form-column-max-width: 327px;
-	}
-}
-
-@include break-medium {
-	:root {
-		--login-form-column-max-width: 350px;
-	}
-}
-
-@include break-large {
-	:root {
-		--login-form-column-max-width: 327px;
-	}
-}
