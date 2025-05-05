@@ -11,11 +11,8 @@ module.exports = {
 							'!calypso/lib',
 							'calypso/lib/*',
 							'!calypso/lib/wp',
-							// Allowed:
-							// - calypso/components/wordpress-logo
 							'!calypso/components',
 							'calypso/components/*',
-							'!calypso/components/wordpress-logo',
 							// Allowed: calypso/assets/icons
 							'!calypso/assets',
 							'calypso/assets/*',

@@ -1,6 +1,6 @@
+import { WordPressLogo } from '@automattic/components';
 import { useIsFetching } from '@tanstack/react-query';
 import { Outlet, useRouterState } from '@tanstack/react-router';
-import WordPressLogo from 'calypso/components/wordpress-logo';
 import { useAppContext } from '../app/context';
 import CommandPalette from '../command-palette';
 import Header from '../header';

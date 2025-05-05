@@ -132,14 +132,7 @@ function DataViews< Item >( {
 					className="dataviews__search"
 				>
 					{ search && <DataViewsSearch label={ searchLabel } /> }
-					<FiltersToggle
-						filters={ filters }
-						view={ view! }
-						onChangeView={ onChangeView! }
-						setOpenedFilter={ setOpenedFilter }
-						setIsShowingFilter={ setIsShowingFilter }
-						isShowingFilter={ isShowingFilter }
-					/>
+					<FiltersToggle />
 				</HStack>
 				<HStack
 					spacing={ 1 }
@@ -150,7 +143,9 @@ function DataViews< Item >( {
 					{ header }
 				</HStack>
 			</HStack>
-			{ isShowingFilter && <DataViewsFilters /> }
+			{ isShowingFilter && (
+				<DataViewsFilters className="dataviews-filters__container" />
+			) }
 			<DataViewsLayout />
 			<DataViewsFooter />
 		</>
@@ -176,6 +171,9 @@ function DataViews< Item >( {
 				onClickItem,
 				containerWidth,
 				defaultLayouts,
+				filters,
+				isShowingFilter,
+				setIsShowingFilter,
 			} }
 		>
 			<div className="dataviews-wrapper" ref={ containerRef }>
@@ -188,6 +186,8 @@ function DataViews< Item >( {
 // Populate the DataViews sub components
 const DataViewsSubComponents = DataViews as typeof DataViews & {
 	BulkActionToolbar: typeof BulkActionsFooter;
+	Filters: typeof DataViewsFilters;
+	FiltersToggle: typeof FiltersToggle;
 	Layout: typeof DataViewsLayout;
 	LayoutSwitcher: typeof ViewTypeMenu;
 	Pagination: typeof DataViewsPagination;
@@ -196,6 +196,8 @@ const DataViewsSubComponents = DataViews as typeof DataViews & {
 };
 
 DataViewsSubComponents.BulkActionToolbar = BulkActionsFooter;
+DataViewsSubComponents.Filters = DataViewsFilters;
+DataViewsSubComponents.FiltersToggle = FiltersToggle;
 DataViewsSubComponents.Layout = DataViewsLayout;
 DataViewsSubComponents.LayoutSwitcher = ViewTypeMenu;
 DataViewsSubComponents.Pagination = DataViewsPagination;

@@ -1,7 +1,6 @@
-import { Card } from '@automattic/components';
+import { Card, WordPressLogo } from '@automattic/components';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
-import WordPressLogo from 'calypso/components/wordpress-logo';
 
 import './style.scss';
 

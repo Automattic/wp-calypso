@@ -15,8 +15,9 @@ export default function SitePreview( {
 			// @ts-expect-error For some reason there's no inert type.
 			inert="true"
 			title="Site Preview"
-			// See mu-plugins/theme-preview.php + preview hides cookie banners + iframe hides admin bar for atomic sites.
-			src={ `${ url }/?theme&hide_banners=true&preview_overlay=true&preview=true&iframe=true` }
+			// Hide banners + `preview` hides cookie banners + `iframe` hides
+			// admin bar for atomic sites.
+			src={ `${ url }/?hide_banners=true&preview=true&iframe=true` }
 			style={ {
 				display: 'block',
 				border: 'none',

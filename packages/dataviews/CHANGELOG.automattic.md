@@ -3,6 +3,8 @@
 ## Next 
 
 - Expose `<DataViews.BulkActionToolbar />` component.
+- Expose `<DataViews.Filters />` component.
+- Expose `<DataViews.FiltersToggle />` component.
 - Expose `<DataViews.Layout />` component.
 - Expose `<DataViews.LayoutSwitcher />` component.
 - Expose `<DataViews.Pagination />` component.
