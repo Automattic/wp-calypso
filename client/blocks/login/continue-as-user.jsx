@@ -1,4 +1,4 @@
-import { Button } from '@automattic/components';
+import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import Gravatar from 'calypso/components/gravatar';
@@ -96,10 +96,11 @@ export default function ContinueAsUser( {
 					</div>
 				</div>
 				<Button
-					primary
+					variant="primary"
 					className="continue-as-user__continue-button"
-					busy={ validatingPath }
+					isBusy={ validatingPath }
 					href={ validatedPath || '/' }
+					__next40pxDefaultSize
 				>
 					{ translate( 'Continue' ) }
 				</Button>
@@ -124,10 +125,11 @@ export default function ContinueAsUser( {
 					</div>
 				</div>
 				<Button
-					primary
+					variant="primary"
 					className="continue-as-user__continue-button"
-					busy={ validatingPath }
+					isBusy={ validatingPath }
 					href={ validatedPath || '/' }
+					__next40pxDefaultSize
 				>
 					{ `${ translate( 'Continue as', {
 						context: 'Continue as an existing WordPress.com user',
@@ -142,7 +144,13 @@ export default function ContinueAsUser( {
 		<div className="continue-as-user">
 			<div className="continue-as-user__user-info">
 				{ gravatarLink }
-				<Button primary busy={ validatingPath } href={ validatedPath || '/' }>
+				<Button
+					variant="primary"
+					isBusy={ validatingPath }
+					href={ validatedPath || '/' }
+					__next40pxDefaultSize
+					className="continue-as-user__continue-button"
+				>
 					{ translate( 'Continue' ) }
 				</Button>
 			</div>
