@@ -2,7 +2,6 @@ import { translate } from 'i18n-calypso';
 import wpcom from 'calypso/lib/wp';
 import {
 	KEYRING_CONNECTION_DELETE,
-	KEYRING_CONNECTION_DELETE_FAILURE,
 	KEYRING_CONNECTIONS_RECEIVE,
 	KEYRING_CONNECTIONS_REQUEST,
 	KEYRING_CONNECTIONS_REQUEST_FAILURE,
@@ -105,11 +104,6 @@ export function deleteStoredKeyringConnection( connection ) {
 					dispatch( deleteKeyringConnection( connection ) );
 					dispatch( deleteKeyringConnectionSuccess( connection ) );
 				}
-
-				dispatch( {
-					type: KEYRING_CONNECTION_DELETE_FAILURE,
-					error: { ...error, label: connection.label },
-				} );
 
 				dispatch(
 					errorNotice(
