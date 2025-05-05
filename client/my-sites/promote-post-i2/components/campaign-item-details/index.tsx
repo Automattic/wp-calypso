@@ -396,11 +396,11 @@ export default function CampaignItemDetails( props: Props ) {
 				break;
 
 			case ChartSourceDateRanges.LAST_30_DAYS:
-			case ChartSourceDateRanges.LAST_3_MONTHS:
 				newResolution = ChartResolution.Day;
 				break;
 
 			case ChartSourceDateRanges.LAST_6_MONTHS:
+			case ChartSourceDateRanges.LAST_3_MONTHS:
 				newResolution = ChartResolution.Week;
 				break;
 
