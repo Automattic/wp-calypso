@@ -214,6 +214,10 @@ export type Flow = {
 	 */
 	useSideEffect?: UseSideEffectHook< StepperStep[] >;
 	useTracksEventProps?: UseTracksEventPropsHook;
+	/**
+	 * Use this method to retrieve the initial step of the flow.
+	 */
+	getInitialStep?(): StepperStep[ 'slug' ];
 };
 
 /**
@@ -237,6 +241,13 @@ export interface FlowV2< FlowStepsInitialize extends DefaultFlowStepsConfig > {
 	 * Use `getSteps` instead.
 	 */
 	__flowSteps?: ReturnType< FlowStepsInitialize >;
+
+	/**
+	 * Use this method to retrieve the initial step of the flow.
+	 */
+	getInitialStep?(
+		reduxStore: Store
+	): Awaited< ReturnType< FlowStepsInitialize > >[ number ][ 'slug' ];
 
 	/**
 	 * Use this method to retrieve the steps of the flow.

@@ -1,7 +1,7 @@
 import { isFreeHostingTrial, isDotComPlan } from '@automattic/calypso-products';
 import { NEW_HOSTED_SITE_FLOW } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
-import { useDispatch, useSelect, dispatch } from '@wordpress/data';
+import { useDispatch, useSelect, dispatch, select } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { useEffect } from 'react';
 import { useIsValidWooPartner } from 'calypso/landing/stepper/hooks/use-is-valid-woo-partner';
@@ -31,49 +31,38 @@ async function initialize( reduxStore: Store ) {
 
 	await resetOnboardStore();
 
-	const queryParams = getCurrentQueryParams();
-	const showDomainStep = queryParams.has( 'showDomainStep' );
-	const productSlug = queryParams.get( 'plan' );
+	const steps = stepsWithRequiredLogin( [
+		STEPS.UNIFIED_DOMAINS,
+		STEPS.UNIFIED_PLANS,
+		STEPS.TRIAL_ACKNOWLEDGE,
+		STEPS.SITE_CREATION_STEP,
+		STEPS.PROCESSING,
+	] );
 
+	const queryParams = getCurrentQueryParams();
+	const productSlug = queryParams.get( 'plan' );
 	const eligibleForFreeHostingTrial = isUserEligibleForFreeHostingTrial( reduxStore.getState() );
 
-	const steps = [];
+	if ( ! productSlug || ! isDotComPlan( { product_slug: productSlug } ) ) {
+		return steps;
+	}
 
-	if ( showDomainStep ) {
-		steps.push( STEPS.UNIFIED_DOMAINS );
+	if ( isFreeHostingTrial( productSlug ) && ! eligibleForFreeHostingTrial ) {
+		return steps;
 	}
 
 	const utmSource = queryParams.get( 'utm_source' );
 
-	if ( ! productSlug || ! isDotComPlan( { product_slug: productSlug } ) ) {
-		steps.push( STEPS.UNIFIED_PLANS, STEPS.TRIAL_ACKNOWLEDGE );
-	} else if ( ! isFreeHostingTrial( productSlug ) ) {
-		await setPlanCartItem( {
-			product_slug: productSlug,
-			extra: {
-				...( utmSource && {
-					hideProductVariants: utmSource === 'wordcamp',
-				} ),
-			},
-		} );
-	} else if ( eligibleForFreeHostingTrial ) {
-		await setPlanCartItem( {
-			product_slug: productSlug,
-			extra: {
-				...( utmSource && {
-					hideProductVariants: utmSource === 'wordcamp',
-				} ),
-			},
-		} );
+	await setPlanCartItem( {
+		product_slug: productSlug,
+		extra: {
+			...( utmSource && {
+				hideProductVariants: utmSource === 'wordcamp',
+			} ),
+		},
+	} );
 
-		steps.push( STEPS.TRIAL_ACKNOWLEDGE, STEPS.UNIFIED_PLANS );
-	} else {
-		steps.push( STEPS.UNIFIED_PLANS );
-	}
-
-	steps.push( STEPS.SITE_CREATION_STEP, STEPS.PROCESSING );
-
-	return stepsWithRequiredLogin( steps );
+	return steps;
 }
 
 const hosting: FlowV2< typeof initialize > = {
@@ -81,6 +70,26 @@ const hosting: FlowV2< typeof initialize > = {
 	__experimentalUseBuiltinAuth: true,
 	isSignupFlow: true,
 	initialize,
+	getInitialStep() {
+		const queryParams = getCurrentQueryParams();
+		const showDomainStep = queryParams.has( 'showDomainStep' );
+
+		if ( showDomainStep ) {
+			return STEPS.UNIFIED_DOMAINS.slug;
+		}
+
+		const planCartItem = ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem();
+
+		if ( ! planCartItem ) {
+			return STEPS.UNIFIED_PLANS.slug;
+		}
+
+		if ( isFreeHostingTrial( planCartItem.product_slug ) ) {
+			return STEPS.TRIAL_ACKNOWLEDGE.slug;
+		}
+
+		return STEPS.SITE_CREATION_STEP.slug;
+	},
 	useStepNavigation( _currentStepSlug, navigate ) {
 		const {
 			setDomain,
