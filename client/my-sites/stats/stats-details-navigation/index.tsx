@@ -16,7 +16,7 @@ function StatsDetailsNavigation( { postId, period, statType, givenSiteId }: prop
 	const translate = useTranslate();
 	const tabs = useMemo(
 		() => ( {
-			highlights: translate( 'Highlights' ),
+			highlights: translate( 'Post traffic' ),
 			opens: translate( 'Email opens' ),
 			clicks: translate( 'Email clicks' ),
 		} ),
