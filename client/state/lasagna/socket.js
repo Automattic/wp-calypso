@@ -1,6 +1,6 @@
 import createDebug from 'debug';
 import { getCurrentUserLasagnaJwt } from 'calypso/state/current-user/selectors';
-import { socketConnected, socketDisconnected } from 'calypso/state/lasagna/actions';
+import { socketConnected } from 'calypso/state/lasagna/actions';
 import { lasagna } from './middleware';
 
 const debug = createDebug( 'lasagna:socket' );
@@ -15,7 +15,6 @@ export const socketConnect = async ( store ) => {
 			},
 			onClose: ( reason ) => {
 				debug( 'socket closed', reason );
-				store.dispatch( socketDisconnected() );
 			},
 			onError: ( reason ) => {
 				debug( 'socket error', reason );
@@ -26,9 +25,8 @@ export const socketConnect = async ( store ) => {
 	return lasagna.connect();
 };
 
-export const socketDisconnect = ( store ) => {
+export const socketDisconnect = () => {
 	lasagna.disconnect( () => {
 		debug( 'socket disconnected' );
-		store.dispatch( socketDisconnected() );
 	} );
 };
