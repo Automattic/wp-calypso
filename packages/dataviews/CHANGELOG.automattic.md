@@ -8,6 +8,7 @@
 - Expose `<DataViews.Layout />` component.
 - Expose `<DataViews.LayoutSwitcher />` component.
 - Expose `<DataViews.Pagination />` component.
+- Some change.
 - Expose `<DataViews.Search />` component.
 - Expose `<DataViews.ViewConfig />` component.
 - Add support for `free-composition` in the `DataViews` component
