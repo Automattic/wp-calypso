@@ -208,6 +208,29 @@
     border-start-start-radius: 0;
     border-end-start-radius: 0;
   }
+
+  /* PREVIEW RANGE (hovered range) */
+  &__day--preview:not(&__day--preview-start):not(&__day--preview-end) &__day-button {
+    border-radius: 0;
+  }
+
+  &__day--preview:not(&__range-start):not(&__range-end) &__day-button {
+    border-block-color: var(--gray-600);
+    border-inline-color: transparent; // override today's button styles
+    border-style: dashed;
+  }
+
+  &__day--preview-start:not(&__range-start):not(&__range-end) &__day-button {
+    border-start-end-radius: 0;
+    border-end-end-radius: 0;
+    border-color: var(--gray-600);
+  }
+
+  &__day--preview-end:not(&__range-start):not(&__range-end) &__day-button {
+    border-start-start-radius: 0;
+    border-end-start-radius: 0;
+    border-color: var(--gray-600);
+  }
 }
 
 

@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useState, useCallback } from 'react';
 import { DayPicker } from 'react-day-picker';
 import { useControlledValue } from './utils';
 import type { DateCalendarProps, DateRangeCalendarProps } from './types';
@@ -134,6 +134,66 @@ export const DateRangeCalendar = ( {
 		onChange: onSelect,
 	} );
 
+	const [ hoveredDate, setHoveredDate ] = useState< Date | undefined >( undefined );
+
+	// Compute the preview range for hover effect
+	const previewRange = useMemo( () => {
+		if ( ! hoveredDate || ! selected?.from ) {
+			return;
+		}
+
+		// Hovering on a date before the start of the selected range
+		if ( hoveredDate < selected.from ) {
+			return {
+				from: hoveredDate,
+				to: selected.from,
+			};
+		}
+
+		// Hovering on a date between the start and end of the selected range
+		if ( selected.to && hoveredDate > selected.from && hoveredDate < selected.to ) {
+			return {
+				from: selected.from,
+				to: hoveredDate,
+			};
+		}
+
+		// Hovering on a date after the end of the selected range (either
+		// because it's greater than selected.to, or because it's not defined)
+		if ( hoveredDate > selected.from ) {
+			return {
+				from: selected.to,
+				to: hoveredDate,
+			};
+		}
+	}, [ selected, hoveredDate ] );
+
+	const modifierProps = useMemo( () => {
+		return {
+			modifiers: {
+				preview: previewRange,
+				preview_start: previewRange?.from,
+				preview_end: previewRange?.to,
+			},
+			modifiersClassNames: {
+				preview: `${ BASE_CLASSNAME }__day--preview`,
+				preview_start: `${ BASE_CLASSNAME }__day--preview-start`,
+				preview_end: `${ BASE_CLASSNAME }__day--preview-end`,
+			},
+		};
+	}, [ previewRange ] );
+
+	const onDayMouseEnter = useCallback(
+		( day: Date ) => {
+			setHoveredDate( day );
+		},
+		[ setHoveredDate ]
+	);
+
+	const onDayMouseLeave = useCallback( () => {
+		setHoveredDate( undefined );
+	}, [ setHoveredDate ] );
+
 	return (
 		<DayPicker
 			aria-label={ ariaLabel }
@@ -141,6 +201,9 @@ export const DateRangeCalendar = ( {
 			mode="range"
 			selected={ selected }
 			onSelect={ setSelected }
+			onDayMouseEnter={ onDayMouseEnter }
+			onDayMouseLeave={ onDayMouseLeave }
+			{ ...modifierProps }
 			{ ...commonProps }
 		/>
 	);
