@@ -31,6 +31,7 @@ import { addQueryArgs } from 'calypso/lib/url';
 import { useDispatch, useSelector } from 'calypso/state';
 import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { resetSite, setPurchasedLicense } from 'calypso/state/jetpack-agency-dashboard/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { DEFAULT_SORT_DIRECTION, DEFAULT_SORT_FIELD } from '../../sites/constants';
@@ -50,6 +51,8 @@ export default function AssignLicense( { initialPage, initialSearch }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
+	const user = useSelector( getCurrentUser );
+
 	const { isFeedbackShown } = useShowFeedback( FeedbackType.PurchaseCompleted );
 
 	const [ selectedSite, setSelectedSite ] = useState( { ID: 0, domain: '' } );
@@ -58,7 +61,33 @@ export default function AssignLicense( { initialPage, initialSearch }: Props ) {
 	const [ totalSites, setTotalSites ] = useState< number >( 0 );
 
 	const { assignLicensesToSite, isReady } = useAssignLicensesToSite( selectedSite, {
-		onError: ( error: Error ) => {
+		onError: ( error: any ) => {
+			if ( error.code === 'partner_not_connected_to_site' ) {
+				dispatch(
+					errorNotice(
+						translate(
+							'You must have your {{b}}%(username)s{{/b}} WordPress.com user connected to the site as an administrator. {{a}}Learn more {{/a}}↗',
+							{
+								args: {
+									username: user?.display_name ?? '',
+								},
+								components: {
+									b: <b />,
+									a: (
+										<a
+											href="https://agencieshelp.automattic.com/knowledge-base/invite-and-manage-team-members/#limitations-for-the-team-member-role"
+											target="_blank"
+											rel="noopener noreferrer"
+										/>
+									),
+								},
+							}
+						),
+						{ isPersistent: true }
+					)
+				);
+				return;
+			}
 			dispatch( errorNotice( error.message, { isPersistent: true } ) );
 		},
 	} );
