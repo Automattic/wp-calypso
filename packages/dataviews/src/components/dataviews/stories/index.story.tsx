@@ -180,13 +180,16 @@ function PlanetOverview( { planets }: { planets: SpaceObject[] } ) {
 					</CardBody>
 				</Card>
 
-				<HStack justify="start">
-					<DataViews.FiltersToggle />
-					<DataViews.Search label={ __( 'moons by planet' ) } />
-				</HStack>
-
 				<VStack>
 					<HStack justify="start">
+						<DataViews.FiltersToggle />
+						<DataViews.Search label={ __( 'moons by planet' ) } />
+					</HStack>
+					<DataViews.Filters />
+				</VStack>
+
+				<VStack>
+					<HStack justify="end">
 						<DataViews.Pagination />
 						<DataViews.ViewConfig />
 						<DataViews.LayoutSwitcher />
@@ -194,8 +197,6 @@ function PlanetOverview( { planets }: { planets: SpaceObject[] } ) {
 
 					<DataViews.BulkActionToolbar />
 				</VStack>
-
-				<DataViews.Filters />
 			</Grid>
 
 			<DataViews.Layout />
