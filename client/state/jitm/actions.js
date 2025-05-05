@@ -1,12 +1,7 @@
 import { HelpCenter } from '@automattic/data-stores';
 import { dispatch as dataStoreDispatch } from '@wordpress/data';
 import { get } from 'lodash';
-import {
-	JITM_DISMISS,
-	JITM_FETCH,
-	JITM_SET,
-	JITM_OPEN_HELP_CENTER,
-} from 'calypso/state/action-types';
+import { JITM_DISMISS, JITM_FETCH, JITM_SET } from 'calypso/state/action-types';
 import 'calypso/state/data-layer/wpcom/sites/jitm';
 import 'calypso/state/jitm/init';
 
@@ -91,11 +86,8 @@ export const fetchJITM = ( siteId, messagePath, searchQuery, locale ) => ( {
  */
 export const openHelpCenterFromJITM =
 	( { route } ) =>
-	( dispatch ) => {
+	() => {
 		const HELP_CENTER_STORE = HelpCenter.register();
 		dataStoreDispatch( HELP_CENTER_STORE ).setNavigateToRoute( route );
 		dataStoreDispatch( HELP_CENTER_STORE ).setShowHelpCenter( true );
-		dispatch( {
-			type: JITM_OPEN_HELP_CENTER,
-		} );
 	};
