@@ -36,7 +36,9 @@
 .dataviews-filters__summary-operators-container {
 	padding: $grid-unit-10 $grid-unit-10 0;
 
-	&:has(+ .dataviews-filters__search-widget-listbox) {
+	&:has(+ .dataviews-filters__search-widget-listbox),
+	&:has(+ .dataviews-filters__datetime-widget)
+	{
 		border-bottom: 1px solid $gray-200;
 		padding-bottom: $grid-unit-10;
 	}
@@ -159,7 +161,8 @@
 	}
 }
 
-.dataviews-filters__search-widget-listbox {
+.dataviews-filters__search-widget-listbox,
+.dataviews-filters__datetime-widget {
 	padding: $grid-unit-05;
 	overflow: auto;
 }

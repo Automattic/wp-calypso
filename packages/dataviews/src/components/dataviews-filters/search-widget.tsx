@@ -11,7 +11,13 @@ import removeAccents from 'remove-accents';
 import { useInstanceId } from '@wordpress/compose';
 import { __, sprintf } from '@wordpress/i18n';
 import { useState, useMemo, useDeferredValue } from '@wordpress/element';
-import { VisuallyHidden, Icon, Composite } from '@wordpress/components';
+import {
+	VisuallyHidden,
+	Icon,
+	Composite,
+	__experimentalGrid as Grid,
+	__experimentalText as Text,
+} from '@wordpress/components';
 import { search, check } from '@wordpress/icons';
 import { SVG, Circle } from '@wordpress/primitives';
 
@@ -318,7 +324,110 @@ function ComboboxList( { view, filter, onChangeView }: SearchWidgetProps ) {
 	);
 }
 
+function DateWidget( { view, filter, onChangeView }: SearchWidgetProps ) {
+	const currentFilter = view.filters?.find(
+		( f ) => f.field === filter.field
+	);
+	const currentValue = getCurrentValue( filter, currentFilter );
+	return (
+		<div
+			className="dataviews-filters__datetime-widget"
+			style={ {
+				display: 'flex',
+				flexWrap: 'wrap',
+				gap: '8px',
+				marginBottom: '8px',
+			} }
+		>
+			{ filter.elements.map( ( element, index ) => {
+				let isActive = false;
+				if (
+					filter.singleSelection &&
+					currentValue === element.value
+				) {
+					isActive = true;
+				} else if (
+					! filter.singleSelection &&
+					currentValue.includes( element.value )
+				) {
+					isActive = true;
+				}
+				return (
+					<button
+						key={ index }
+						style={ {
+							backgroundColor: isActive
+								? 'var(--wp-admin-theme-color)'
+								: '#f0f0f0',
+							color: isActive ? 'white' : 'black',
+							border: '1px solid #ddd',
+							borderRadius: '16px',
+							padding: '6px 12px',
+							fontSize: '14px',
+							cursor: 'pointer',
+							transition: 'background-color 0.2s',
+							boxShadow: '0 1px 2px rgba(0,0,0,0.1)',
+						} }
+						onClick={ () => {
+							// TODO: need to convert the preset into a datetime.
+							const newFilters = currentFilter
+								? [
+										...( view.filters ?? [] ).map(
+											( _filter ) => {
+												if (
+													_filter.field ===
+													filter.field
+												) {
+													return {
+														..._filter,
+														operator:
+															currentFilter.operator ||
+															filter
+																.operators[ 0 ],
+														value: getNewValue(
+															filter,
+															currentFilter,
+															element.value
+														),
+													};
+												}
+												return _filter;
+											}
+										),
+								  ]
+								: [
+										...( view.filters ?? [] ),
+										{
+											field: filter.field,
+											operator: filter.operators[ 0 ],
+											value: getNewValue(
+												filter,
+												currentFilter,
+												element.value
+											),
+										},
+								  ];
+							const newView = {
+								...view,
+								page: 1,
+								filters: newFilters,
+							};
+							onChangeView( newView );
+						} }
+					>
+						{ element.label }
+					</button>
+				);
+			} ) }
+		</div>
+	);
+}
+
 export default function SearchWidget( props: SearchWidgetProps ) {
+	if ( props.filter.type === 'datetime' ) {
+		return <DateWidget { ...props } />;
+	}
+
 	const Widget = props.filter.elements.length > 10 ? ComboboxList : ListBox;
 	return <Widget { ...props } />;
 }
