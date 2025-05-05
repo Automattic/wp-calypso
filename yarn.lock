@@ -1354,12 +1354,12 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@dnd-kit/core": "npm:^6.3.1"
     "@dnd-kit/sortable": "npm:^10.0.0"
+    "@dnd-kit/utilities": "npm:^3.2.1"
     "@storybook/addon-actions": "npm:^8.6.9"
     "@storybook/addon-controls": "npm:^8.6.9"
     "@storybook/addon-docs": "npm:^8.6.9"
     "@storybook/react-webpack5": "npm:^8.6.9"
     "@wordpress/compose": "npm:^7.22.0"
-    clsx: "npm:^2.1.1"
     postcss: "npm:^8.5.3"
     storybook: "npm:^8.6.9"
     typescript: "npm:^5.8.2"
@@ -4847,7 +4847,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@dnd-kit/utilities@npm:^3.2.2":
+"@dnd-kit/utilities@npm:^3.2.1, @dnd-kit/utilities@npm:^3.2.2":
   version: 3.2.2
   resolution: "@dnd-kit/utilities@npm:3.2.2"
   dependencies:
