@@ -13,7 +13,12 @@ import { useGetHistoryChats } from '../hooks/use-get-history-chats';
 import { HELP_CENTER_STORE } from '../stores';
 import { HelpCenterSupportChatMessage } from './help-center-support-chat-message';
 import { getLastMessage } from './utils';
-import type { Conversations, SupportInteraction } from '@automattic/odie-client';
+import type {
+	Conversations,
+	OdieConversation,
+	SupportInteraction,
+	ZendeskConversation,
+} from '@automattic/odie-client';
 
 import './help-center-chat-history.scss';
 
@@ -59,17 +64,16 @@ const Conversations = ( {
 				const lastMessage = getLastMessage( { conversation } );
 
 				if ( lastMessage ) {
-					// Checks whether a conversation is of type ZendeskConversation (vs OdieConversation)
-					const hasMetadataAndParticipants = (
-						conv: typeof conversation
-					): conv is typeof conversation & { metadata: never; participants: never } =>
-						'metadata' in conv && 'participants' in conv;
+					const isZendeskConversation = (
+						conversation: OdieConversation | ZendeskConversation
+					): conversation is ZendeskConversation =>
+						'metadata' in conversation && 'participants' in conversation;
 
 					let conversationStatus: string = '';
 					let isUnread = false;
 					let lastSupportInteraction = undefined;
 
-					if ( hasMetadataAndParticipants( conversation ) ) {
+					if ( isZendeskConversation( conversation ) ) {
 						conversationStatus = conversation.metadata.status;
 						isUnread = conversation.participants[ 0 ]?.unreadCount > 0;
 

@@ -91,20 +91,17 @@ export const useGetHistoryChats = (): UseGetHistoryChatsResult => {
 		const archivedConversations: Conversations = [];
 
 		if ( Array.isArray( conversations ) ) {
-			const oneYearAgo = new Date();
-			oneYearAgo.setFullYear( oneYearAgo.getFullYear() - 1 );
+			const oneYearAgoDate = new Date();
+			oneYearAgoDate.setFullYear( oneYearAgoDate.getFullYear() - 1 );
+			const oneYearAgo = oneYearAgoDate.getTime();
 
 			conversations.forEach( ( conversation: OdieConversation | ZendeskConversation ) => {
 				const createdAt = getConversationCreatedAt( conversation );
 
-				if ( createdAt ) {
-					const createdAtDate = new Date( createdAt );
+				if ( typeof createdAt === 'number' && createdAt < oneYearAgo ) {
+					archivedConversations.push( conversation );
 
-					if ( createdAtDate < oneYearAgo ) {
-						archivedConversations.push( conversation );
-
-						return;
-					}
+					return;
 				}
 
 				recentConversations.push( conversation );

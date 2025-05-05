@@ -1,13 +1,16 @@
 import { useQuery } from '@tanstack/react-query';
 import apiFetch from '@wordpress/api-fetch';
+import { useI18n } from '@wordpress/react-i18n';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
 import { useOdieAssistantContext } from '../context';
+import { getTimestamp } from '../utils';
 import type { OdieConversation } from '../types';
 
 /**
  * Retrieves the list of conversations handled by AI.
  */
 export const useGetOdieConversations = ( enabled = true ) => {
+	const { __ } = useI18n();
 	const { botNameSlug, version } = useOdieAssistantContext();
 
 	return useQuery< OdieConversation[], Error >( {
@@ -18,18 +21,27 @@ export const useGetOdieConversations = ( enabled = true ) => {
 				items_per_page: '30',
 			} ).toString();
 
-			return (
-				canAccessWpcomApis()
-					? await wpcomRequest( {
-							method: 'GET',
-							path: `/odie/chats/${ botNameSlug }?${ queryParams }`,
-							apiNamespace: 'wpcom/v2',
-					  } )
-					: await apiFetch( {
-							path: `/help-center/odie/chats/${ botNameSlug }?${ queryParams }`,
-							method: 'GET',
-					  } )
-			) as OdieConversation[];
+			const response: any[] = canAccessWpcomApis()
+				? await wpcomRequest( {
+						method: 'GET',
+						path: `/odie/conversations/${ botNameSlug }?${ queryParams }`,
+						apiNamespace: 'wpcom/v2',
+				  } )
+				: await apiFetch( {
+						path: `/help-center/odie/conversations/${ botNameSlug }?${ queryParams }`,
+						method: 'GET',
+				  } );
+
+			return response.map( ( conversation: any ) => ( {
+				id: String( conversation.chat_id ?? '' ),
+				createdAt: getTimestamp( conversation.created_at ),
+				messages: ( conversation.messages ?? [] ).map( ( message: any ) => ( {
+					displayName: __( 'Support Assistant', __i18n_text_domain__ ),
+					received: getTimestamp( message.created_at ),
+					role: message.role ?? 'bot',
+					text: message.content ?? '',
+				} ) ),
+			} ) ) as OdieConversation[];
 		},
 		refetchOnMount: true,
 		refetchOnWindowFocus: false,

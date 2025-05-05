@@ -1,15 +1,17 @@
 import type { ZendeskConversation, OdieConversation } from '../types';
 
 /**
- * Retrieves the creation date of the specified conversation, if possible.
+ * Retrieves the creation date of the specified conversation.
+ *
+ * @returns The timestamp in milliseconds, or undefined if not available
  */
 export function getConversationCreatedAt(
 	conversation: ZendeskConversation | OdieConversation
 ): number | undefined {
 	if ( 'metadata' in conversation && conversation.metadata?.createdAt ) {
-		return conversation.metadata.createdAt;
+		return conversation.metadata.createdAt; // Format of this field is '1745936539027'
 	} else if ( 'createdAt' in conversation && conversation.createdAt ) {
-		return conversation.createdAt;
+		return conversation.createdAt * 1000; // Format of this field is '1745936542.513'
 	}
 
 	return undefined;
