@@ -47,7 +47,8 @@ const DomainsStep: Step< {
 				productSlug?: string;
 				domainItem?: DomainSuggestion;
 		  }
-		| { deferDomainSelection: true };
+		| { deferDomainSelection: true }
+		| undefined;
 } > = function DomainsStep( { navigation, flow } ) {
 	const { setHideFreePlan, setDomainCartItem, setDomain } = useDispatch( ONBOARD_STORE );
 	const { __ } = useI18n();
@@ -236,8 +237,7 @@ const DomainsStep: Step< {
 		dispatch( recordAddDomainButtonClickInTransferDomain( domain, getAnalyticsSection(), flow ) );
 
 		setDomainCartItem( domainCartItem );
-
-		submit?.();
+		submit( undefined );
 	};
 
 	const handleAddMapping = ( domain: string ) => {
@@ -247,7 +247,7 @@ const DomainsStep: Step< {
 
 		setDomainCartItem( domainCartItem );
 
-		submit?.();
+		submit( undefined );
 	};
 
 	const handleAddDomain = ( suggestion: DomainSuggestion, position: number ) => {

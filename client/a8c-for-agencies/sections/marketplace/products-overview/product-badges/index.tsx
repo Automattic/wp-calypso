@@ -1,4 +1,4 @@
-import CoreBadge from 'calypso/components/core/badge';
+import { CoreBadge } from '@automattic/components';
 import { useProductCategories } from '../../hooks/use-product-categories';
 import type { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 

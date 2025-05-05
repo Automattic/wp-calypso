@@ -9,7 +9,6 @@ import {
 import { dateI18n } from '@wordpress/date';
 import { __, sprintf } from '@wordpress/i18n';
 import SitePreview from '../site-preview';
-import { isA8CSite } from '../utils/site-owner';
 import { getSiteStatusLabel } from '../utils/site-status';
 import type { Site, SiteDomain, Plan } from '../data/types';
 
@@ -30,7 +29,7 @@ export default function SiteCard( {
 	const { options, URL: url, is_private } = site;
 	// If the site is a private A8C site, X-Frame-Options is set to same
 	// origin.
-	const iframeDisabled = isA8CSite( site ) && is_private;
+	const iframeDisabled = site.is_a8c && is_private;
 	return (
 		<Card>
 			<VStack spacing={ 6 }>

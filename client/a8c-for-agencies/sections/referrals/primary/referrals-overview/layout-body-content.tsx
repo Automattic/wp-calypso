@@ -1,4 +1,4 @@
-import { Button, WooLogo } from '@automattic/components';
+import { Button, WooLogo, WordPressLogo } from '@automattic/components';
 import NoticeBanner from '@automattic/components/src/notice-banner';
 import { formatNumber } from '@automattic/number-formatters';
 import { reusableBlock } from '@wordpress/icons';
@@ -20,7 +20,6 @@ import {
 import WooLogoColor from 'calypso/assets/images/icons/Woo_logo_color.svg';
 import pressableIcon from 'calypso/assets/images/pressable/pressable-icon.svg';
 import JetpackLogo from 'calypso/components/jetpack-logo';
-import WordPressLogo from 'calypso/components/wordpress-logo';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { savePreference } from 'calypso/state/preferences/actions';

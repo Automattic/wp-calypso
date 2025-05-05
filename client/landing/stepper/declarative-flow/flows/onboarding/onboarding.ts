@@ -29,7 +29,8 @@ import { ONBOARD_STORE } from '../../../stores';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
 import { recordStepNavigation } from '../../internals/analytics/record-step-navigation';
 import { STEPS } from '../../internals/steps';
-import type { FlowV2, ProvidedDependencies } from '../../internals/types';
+import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
+import type { FlowV2, ProvidedDependencies, SubmitHandler } from '../../internals/types';
 
 const clearUseMyDomainsQueryParams = ( currentStepSlug: string | undefined ) => {
 	const isDomainsStep = currentStepSlug === 'domains';
@@ -47,27 +48,25 @@ const withLocale = ( url: string, locale: string ) => {
 	return locale && locale !== 'en' ? `${ url }/${ locale }` : url;
 };
 
-const onboarding: FlowV2 = {
+function initialize() {
+	const steps = [
+		STEPS.UNIFIED_DOMAINS,
+		STEPS.USE_MY_DOMAIN,
+		STEPS.UNIFIED_PLANS,
+		STEPS.SITE_CREATION_STEP,
+		STEPS.PROCESSING,
+		STEPS.POST_CHECKOUT_ONBOARDING,
+		...( isPlaygroundEligible() ? [ STEPS.PLAYGROUND ] : [] ),
+	];
+
+	return stepsWithRequiredLogin( steps );
+}
+
+const onboarding: FlowV2< typeof initialize > = {
 	name: ONBOARDING_FLOW,
 	isSignupFlow: true,
 	__experimentalUseBuiltinAuth: true,
-	async initialize() {
-		const steps = stepsWithRequiredLogin( [
-			STEPS.UNIFIED_DOMAINS,
-			STEPS.USE_MY_DOMAIN,
-			STEPS.UNIFIED_PLANS,
-			STEPS.SITE_CREATION_STEP,
-			STEPS.PROCESSING,
-			STEPS.POST_CHECKOUT_ONBOARDING,
-		] );
-
-		if ( isPlaygroundEligible() ) {
-			steps.push( STEPS.PLAYGROUND );
-		}
-
-		return steps;
-	},
-
+	initialize,
 	useStepNavigation( currentStepSlug, navigate ) {
 		const flowName = this.name;
 		const isPlaygroundEligible = useIsPlaygroundEligible();
@@ -83,9 +82,8 @@ const onboarding: FlowV2 = {
 		} = useDispatch( ONBOARD_STORE ) as OnboardActions;
 		const locale = useFlowLocale();
 
-		const { planCartItem, signupDomainOrigin } = useSelect(
+		const { signupDomainOrigin } = useSelect(
 			( select ) => ( {
-				planCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem(),
 				signupDomainOrigin: ( select( ONBOARD_STORE ) as OnboardSelect ).getSignupDomainOrigin(),
 			} ),
 			[]
@@ -139,8 +137,9 @@ const onboarding: FlowV2 = {
 
 		clearUseMyDomainsQueryParams( currentStepSlug );
 
-		const submit = async ( providedDependencies: ProvidedDependencies = {} ) => {
-			switch ( currentStepSlug ) {
+		const submit: SubmitHandler< typeof initialize > = async ( submittedStep ) => {
+			const { slug, providedDependencies } = submittedStep;
+			switch ( slug ) {
 				case 'domains':
 					setSiteUrl( providedDependencies.siteUrl as string );
 					setDomain( providedDependencies.suggestion as DomainSuggestion );
@@ -167,7 +166,7 @@ const onboarding: FlowV2 = {
 							signup_domain_origin: signupDomainOrigin,
 							domain_item: providedDependencies.domainItem,
 						} );
-						return navigate( useMyDomainURL );
+						return navigate( useMyDomainURL as typeof currentStepSlug );
 					}
 
 					return navigate( 'plans' );
@@ -184,7 +183,7 @@ const onboarding: FlowV2 = {
 							step: providedDependencies.mode,
 							initialQuery: providedDependencies.domain,
 						} );
-						return navigate( destination );
+						return navigate( destination as typeof currentStepSlug );
 					}
 
 					// We trigger the event here, because we skip it in the domains step if
@@ -199,7 +198,7 @@ const onboarding: FlowV2 = {
 
 					return navigate( 'plans' );
 				case 'plans': {
-					const cartItems = providedDependencies.cartItems as Array< typeof planCartItem > | null;
+					const cartItems = providedDependencies.cartItems;
 					const [ pickedPlan, ...products ] = cartItems ?? [];
 
 					setPlanCartItem( pickedPlan );
@@ -234,41 +233,48 @@ const onboarding: FlowV2 = {
 						providedDependencies,
 						isPlaygroundEligible
 					);
+					if ( providedDependencies.processingResult === ProcessingResult.SUCCESS ) {
+						persistSignupDestination( destination );
+						setSignupCompleteFlowName( flowName );
+						setSignupCompleteSlug( providedDependencies.siteSlug );
 
-					persistSignupDestination( destination );
-					setSignupCompleteFlowName( flowName );
-					setSignupCompleteSlug( providedDependencies.siteSlug );
+						if ( providedDependencies.goToCheckout ) {
+							const siteSlug = providedDependencies.siteSlug as string;
 
-					if ( providedDependencies.goToCheckout ) {
-						const siteSlug = providedDependencies.siteSlug as string;
+							/**
+							 * If the user comes from the Playground onboarding flow,
+							 * redirect the user back to Playground to start the import.
+							 */
+							const playgroundId = getQueryArg( window.location.href, 'playground' );
+							const redirectTo: string = playgroundId
+								? addQueryArgs( withLocale( '/setup/site-setup/importerPlayground', locale ), {
+										siteSlug,
+										siteId: providedDependencies.siteId,
+										playground: playgroundId,
+								  } )
+								: addQueryArgs(
+										withLocale( '/setup/onboarding/post-checkout-onboarding', locale ),
+										{
+											siteSlug,
+										}
+								  );
 
-						/**
-						 * If the user comes from the Playground onboarding flow,
-						 * redirect the user back to Playground to start the import.
-						 */
-						const playgroundId = getQueryArg( window.location.href, 'playground' );
-						const redirectTo: string = playgroundId
-							? addQueryArgs( withLocale( '/setup/site-setup/importerPlayground', locale ), {
-									siteSlug,
-									siteId: providedDependencies.siteId,
-									playground: playgroundId,
-							  } )
-							: addQueryArgs( withLocale( '/setup/onboarding/post-checkout-onboarding', locale ), {
-									siteSlug,
-							  } );
-
-						// replace the location to delete processing step from history.
-						window.location.replace(
-							addQueryArgs( `/checkout/${ encodeURIComponent( siteSlug ) }`, {
-								redirect_to: redirectTo,
-								signup: 1,
-								checkoutBackUrl: pathToUrl( backDestination ?? '' ),
-								coupon,
-							} )
-						);
+							// replace the location to delete processing step from history.
+							window.location.replace(
+								addQueryArgs( `/checkout/${ encodeURIComponent( siteSlug ) }`, {
+									redirect_to: redirectTo,
+									signup: 1,
+									checkoutBackUrl: pathToUrl( backDestination ?? '' ),
+									coupon,
+								} )
+							);
+						} else {
+							// replace the location to delete processing step from history.
+							window.location.replace( destination );
+						}
 					} else {
-						// replace the location to delete processing step from history.
-						window.location.replace( destination );
+						// TODO: Handle errors
+						// navigate( 'error' );
 					}
 					return;
 				}

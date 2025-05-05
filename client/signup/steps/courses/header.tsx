@@ -1,4 +1,4 @@
-import WordPressLogo from 'calypso/components/wordpress-logo';
+import { WordPressLogo } from '@automattic/components';
 
 const CoursesHeader = () => (
 	<div className="courses__header">

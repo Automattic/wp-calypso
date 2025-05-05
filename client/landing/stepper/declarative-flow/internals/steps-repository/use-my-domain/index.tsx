@@ -27,11 +27,12 @@ import type { Step as StepType } from '../../types';
 import './style.scss';
 
 const UseMyDomain: StepType< {
-	submits: {
-		mode: 'transfer' | 'connect';
-		domain: string;
-		shouldSkipSubmitTracking?: boolean;
-	};
+	submits:
+		| {
+				mode: 'transfer' | 'connect';
+				domain: string;
+		  }
+		| undefined;
 } > = function UseMyDomain( { navigation, flow } ) {
 	const { __ } = useI18n();
 	const { setHideFreePlan, setDomainCartItem } = useDispatch( ONBOARD_STORE );
@@ -62,7 +63,7 @@ const UseMyDomain: StepType< {
 		setHideFreePlan( true );
 		setDomainCartItem( domainCartItem );
 
-		submit?.();
+		submit?.( undefined );
 	};
 
 	const handleOnConnect = async ( domain: string ) => {
@@ -70,7 +71,7 @@ const UseMyDomain: StepType< {
 		setHideFreePlan( true );
 		setDomainCartItem( domainCartItem );
 
-		submit?.();
+		submit?.( undefined );
 	};
 
 	const getInitialQuery = function () {

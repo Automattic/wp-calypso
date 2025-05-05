@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
-import { Button } from '@automattic/components';
+import { Button, WordPressLogo } from '@automattic/components';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -9,7 +9,6 @@ import { connect } from 'react-redux';
 import EmptyContent from 'calypso/components/empty-content';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import WooCommerceLogo from 'calypso/components/woocommerce-logo';
-import WordPressLogo from 'calypso/components/wordpress-logo';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import getGravatarOAuth2Flow from 'calypso/lib/get-gravatar-oauth2-flow';
 import {

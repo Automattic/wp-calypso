@@ -6,7 +6,13 @@ import { createContext } from '@wordpress/element';
 /**
  * Internal dependencies
  */
-import type { View, Action, NormalizedField } from '../../types';
+import type {
+	View,
+	Action,
+	NormalizedField,
+	SupportedLayouts,
+	NormalizedFilter,
+} from '../../types';
 import type { SetSelection } from '../../private-types';
 import { LAYOUT_TABLE } from '../../constants';
 
@@ -30,6 +36,10 @@ type DataViewsContextType< Item > = {
 	onClickItem?: ( item: Item ) => void;
 	isItemClickable: ( item: Item ) => boolean;
 	containerWidth: number;
+	defaultLayouts: SupportedLayouts;
+	filters: NormalizedFilter[];
+	isShowingFilter: boolean;
+	setIsShowingFilter: ( value: boolean ) => void;
 };
 
 const DataViewsContext = createContext< DataViewsContextType< any > >( {
@@ -48,6 +58,10 @@ const DataViewsContext = createContext< DataViewsContextType< any > >( {
 	getItemId: ( item ) => item.id,
 	isItemClickable: () => true,
 	containerWidth: 0,
+	defaultLayouts: { list: {}, grid: {}, table: {} },
+	filters: [],
+	isShowingFilter: false,
+	setIsShowingFilter: () => {},
 } );
 
 export default DataViewsContext;
