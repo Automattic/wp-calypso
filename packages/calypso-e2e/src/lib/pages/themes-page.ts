@@ -16,7 +16,7 @@ const selectors = {
 	// Search
 	showAllThemesButton: 'text=Show all themes',
 	searchToolbar: '.themes-magic-search',
-	searchInput: '.themes__content input.search__input',
+	searchInput: '.themes__content input.components-input-control__input',
 };
 
 /**
