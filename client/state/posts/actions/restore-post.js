@@ -1,11 +1,7 @@
 import { translate } from 'i18n-calypso';
 import { truncate } from 'lodash';
 import wpcom from 'calypso/lib/wp';
-import {
-	POST_RESTORE_FAILURE,
-	POST_RESTORE_SUCCESS,
-	POST_RESTORE,
-} from 'calypso/state/action-types';
+import { POST_RESTORE_FAILURE, POST_RESTORE } from 'calypso/state/action-types';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import { receivePost } from 'calypso/state/posts/actions/receive-post';
 import { getSitePost } from 'calypso/state/posts/selectors';
@@ -32,11 +28,6 @@ export function restorePost( siteId, postId, silent = false ) {
 
 		restoreResult.then(
 			( restoredPost ) => {
-				dispatch( {
-					type: POST_RESTORE_SUCCESS,
-					siteId,
-					postId,
-				} );
 				dispatch( receivePost( restoredPost ) );
 				if ( ! silent ) {
 					dispatch( successNotice( translate( 'Post successfully restored' ) ) );

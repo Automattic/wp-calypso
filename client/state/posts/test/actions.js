@@ -9,10 +9,8 @@ import {
 	POST_REQUEST_FAILURE,
 	POST_RESTORE,
 	POST_RESTORE_FAILURE,
-	POST_RESTORE_SUCCESS,
 	POST_SAVE,
 	POST_SAVE_SUCCESS,
-	POST_SAVE_FAILURE,
 	POSTS_RECEIVE,
 	POSTS_REQUEST,
 	POSTS_REQUEST_SUCCESS,
@@ -416,26 +414,12 @@ describe( 'actions', () => {
 			await expect(
 				savePost( 77203074, null, { title: 'Hello World' } )( dispatch )
 			).rejects.toThrow();
-
-			expect( dispatch ).toHaveBeenCalledWith( {
-				type: POST_SAVE_FAILURE,
-				siteId: 77203074,
-				postId: null,
-				error: expect.objectContaining( { message: 'User cannot edit posts' } ),
-			} );
 		} );
 
 		test( 'should dispatch failure action when saving existing post fails', async () => {
 			await expect(
 				savePost( 77203074, 102, { title: 'Hello World' } )( dispatch )
 			).rejects.toThrow();
-
-			expect( dispatch ).toHaveBeenCalledWith( {
-				type: POST_SAVE_FAILURE,
-				siteId: 77203074,
-				postId: 102,
-				error: expect.objectContaining( { message: 'User cannot edit post' } ),
-			} );
 		} );
 	} );
 
@@ -533,16 +517,6 @@ describe( 'actions', () => {
 				expect( dispatch ).toHaveBeenCalledWith( {
 					type: POSTS_RECEIVE,
 					posts: [ { ID: 13640, status: 'draft' } ],
-				} );
-			} );
-		} );
-
-		test( 'should dispatch success action when restoring post succeeds', () => {
-			return restorePost( 2916284, 13640 )( dispatch, getState ).then( () => {
-				expect( dispatch ).toHaveBeenCalledWith( {
-					type: POST_RESTORE_SUCCESS,
-					siteId: 2916284,
-					postId: 13640,
 				} );
 			} );
 		} );

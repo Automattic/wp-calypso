@@ -1,5 +1,5 @@
 import wpcom from 'calypso/lib/wp';
-import { POST_SAVE_FAILURE, POST_SAVE } from 'calypso/state/action-types';
+import { POST_SAVE } from 'calypso/state/action-types';
 import { receivePost } from 'calypso/state/posts/actions/receive-post';
 import { savePostSuccess } from 'calypso/state/posts/actions/save-post-success';
 import { normalizePostForApi } from 'calypso/state/posts/utils';
@@ -34,14 +34,7 @@ export function savePost( siteId, postId = null, post, silent = false ) {
 				dispatch( savePostSuccess( siteId, postId, savedPost, post, silent ) );
 				dispatch( receivePost( savedPost ) );
 			},
-			( error ) => {
-				dispatch( {
-					type: POST_SAVE_FAILURE,
-					siteId,
-					postId,
-					error,
-				} );
-			}
+			() => {}
 		);
 
 		return saveResult;
