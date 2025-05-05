@@ -206,21 +206,21 @@ export const Footer: Story = {
 
 const today = new Date();
 const oneWeekBefore = ( date: Date ) => {
-	const copy = new Date( date );
-	copy.setDate( date.getDate() - 7 );
-	return copy;
+	const toReturn = new Date( date );
+	toReturn.setDate( date.getDate() - 7 );
+	return toReturn;
 };
 const startOfMonth = ( date: Date ) => new Date( date.getFullYear(), date.getMonth(), 1 );
 const oneMonthBefore = ( date: Date ) => {
-	const copy = new Date( date );
-	copy.setMonth( date.getMonth() - 1 );
-	return copy;
+	const toReturn = new Date( date );
+	toReturn.setMonth( date.getMonth() - 1 );
+	return toReturn;
 };
 const startOfYear = ( date: Date ) => new Date( date.getFullYear(), 0, 1 );
 const oneYearBefore = ( date: Date ) => {
-	const copy = new Date( date );
-	copy.setFullYear( date.getFullYear() - 1 );
-	return copy;
+	const toReturn = new Date( date );
+	toReturn.setFullYear( date.getFullYear() - 1 );
+	return toReturn;
 };
 
 export const WithPresets: Story = {
