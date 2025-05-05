@@ -9901,7 +9901,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/jest@npm:^29.5.14":
+"@types/jest-when@npm:^3.5.5":
+  version: 3.5.5
+  resolution: "@types/jest-when@npm:3.5.5"
+  dependencies:
+    "@types/jest": "npm:*"
+  checksum: 65b4df6204860d71908cf1d5b31e03504628f7efdb275ec3a705d99deb5df3abed419a3387d6cbb7c785e64559f70e3c26f117ad26e3707b4241ae08d3d4467a
+  languageName: node
+  linkType: hard
+
+"@types/jest@npm:*, @types/jest@npm:^29.5.14":
   version: 29.5.14
   resolution: "@types/jest@npm:29.5.14"
   dependencies:
@@ -40043,6 +40052,7 @@ __metadata:
     "@types/ga-gtag": "npm:^1.2.0"
     "@types/gtag.js": "npm:^0.0.20"
     "@types/jest": "npm:^29.5.14"
+    "@types/jest-when": "npm:^3.5.5"
     "@types/lodash": "npm:^4.17.16"
     "@types/node": "npm:^22.15.3"
     "@types/page": "npm:^1.11.9"

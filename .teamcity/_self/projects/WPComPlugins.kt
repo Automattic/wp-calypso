@@ -43,6 +43,7 @@ object WPComPlugins : Project({
 					"happy-blocks-release-build",
 					"command-palette-wp-admin-release-build",
 					"help-center-release-build",
+					"design-system-docs-release-build",
 				)
 			}
 			dataToKeep = everything()
