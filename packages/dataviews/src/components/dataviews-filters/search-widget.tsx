@@ -4,6 +4,7 @@
 // eslint-disable-next-line no-restricted-imports
 import * as Ariakit from '@ariakit/react';
 import removeAccents from 'remove-accents';
+import clsx from 'clsx';
 
 /**
  * WordPress dependencies
@@ -11,15 +12,8 @@ import removeAccents from 'remove-accents';
 import { useInstanceId } from '@wordpress/compose';
 import { __, sprintf } from '@wordpress/i18n';
 import { useState, useMemo, useDeferredValue } from '@wordpress/element';
-import {
-	VisuallyHidden,
-	Icon,
-	Composite,
-	RadioControl,
-	CheckboxControl,
-} from '@wordpress/components';
-import { search } from '@wordpress/icons';
-import { SVG, Circle } from '@wordpress/primitives';
+import { VisuallyHidden, Icon, Composite } from '@wordpress/components';
+import { search, check } from '@wordpress/icons';
 
 /**
  * Internal dependencies
@@ -31,8 +25,6 @@ interface SearchWidgetProps {
 	filter: NormalizedFilter;
 	onChangeView: ( view: View ) => void;
 }
-
-const noop = () => {};
 
 function normalizeSearchInput( input = '' ) {
 	return removeAccents( input.trim().toLowerCase() );
@@ -82,6 +74,30 @@ function generateFilterElementCompositeItemId(
 ) {
 	return `${ prefix }-${ filterElementValue }`;
 }
+
+const Checkbox = ( { checked }: { checked: boolean } ) => {
+	return (
+		<span
+			className={ clsx(
+				'dataviews-filters__search-widget-listitem-Checkbox',
+				{ 'is-checked': checked }
+			) }
+		>
+			{ checked && <Icon icon={ check } /> }
+		</span>
+	);
+};
+
+const Radio = ( { checked }: { checked: boolean } ) => {
+	return (
+		<span
+			className={ clsx(
+				'dataviews-filters__search-widget-listitem-radio',
+				{ 'is-checked': checked }
+			) }
+		/>
+	);
+};
 
 function ListBox( { view, filter, onChangeView }: SearchWidgetProps ) {
 	const baseId = useInstanceId( ListBox, 'dataviews-filter-list-box' );
@@ -192,26 +208,14 @@ function ListBox( { view, filter, onChangeView }: SearchWidgetProps ) {
 					}
 				>
 					{ filter.singleSelection && (
-						<RadioControl
-							hideLabelFromVision
-							options={ [
-								{
-									label: element.label,
-									value: element.value,
-								},
-							] }
-							selected={ currentValue }
-							onChange={ noop }
-						/>
+						<Radio checked={ currentValue === element.value } />
 					) }
 					{ ! filter.singleSelection && (
-						<CheckboxControl
-							__nextHasNoMarginBottom
-							label={ element.label }
+						<Checkbox
 							checked={ currentValue.includes( element.value ) }
-							onChange={ noop }
 						/>
 					) }
+					<span>{ element.label }</span>
 				</Composite.Hover>
 			) ) }
 		</Composite>
@@ -301,25 +305,15 @@ function ComboboxList( { view, filter, onChangeView }: SearchWidgetProps ) {
 							focusOnHover
 						>
 							{ filter.singleSelection && (
-								<RadioControl
-									hideLabelFromVision
-									options={ [
-										{
-											label: element.label,
-											value: element.value,
-										},
-									] }
-									selected={ currentValue }
-									onChange={ noop }
+								<Radio
+									checked={ currentValue === element.value }
 								/>
 							) }
 							{ ! filter.singleSelection && (
-								<CheckboxControl
-									__nextHasNoMarginBottom
+								<Checkbox
 									checked={ currentValue.includes(
 										element.value
 									) }
-									onChange={ noop }
 								/>
 							) }
 							<span>
