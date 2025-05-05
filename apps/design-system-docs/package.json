@@ -14,7 +14,7 @@
 	"scripts": {
 		"docusaurus": "docusaurus",
 		"start": "docusaurus start -p 42987",
-		"build": "docusaurus build",
+		"build": "docusaurus build --out-dir dist",
 		"deploy": "docusaurus deploy",
 		"clear": "docusaurus clear",
 		"serve": "docusaurus serve -p 42987",
