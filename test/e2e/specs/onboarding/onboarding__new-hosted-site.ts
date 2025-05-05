@@ -17,6 +17,7 @@ import {
 	cancelSubscriptionFlow,
 	cancelAtomicPurchaseFlow,
 	WPAdminSidebarComponent,
+	SiteSettingsPage,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 import { apiCloseAccount } from '../shared';
@@ -93,6 +94,8 @@ describe(
 				await page.waitForURL( /wp-admin/, {
 					timeout: 180 * 1000,
 				} );
+
+				siteSlug = new URL( page.url() ).hostname;
 			} );
 
 			it( 'Navigate to Hosting > Site Settings', async function () {
@@ -101,11 +104,10 @@ describe(
 			} );
 
 			it( 'Navigate to Server > Server Settings', async function () {
-				await page.getByRole( 'link', { name: 'Server' } ).click();
-				await page.getByRole( 'heading', { name: 'Server Settings' } ).waitFor();
+				const siteSettings = new SiteSettingsPage( page );
+				await siteSettings.navigateToSubmenu( 'Server' );
 
-				const url = new URL( page.url() );
-				siteSlug = url.pathname.split( '/' ).at( -1 )!;
+				await page.getByRole( 'heading', { name: 'Server Settings' } ).waitFor();
 			} );
 		} );
 
