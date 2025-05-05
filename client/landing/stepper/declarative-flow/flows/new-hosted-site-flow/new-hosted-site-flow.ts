@@ -24,12 +24,7 @@ import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login
 import { useFlowState } from '../../internals/state-manager/store';
 import { STEPS } from '../../internals/steps';
 import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
-import type {
-	FlowV2,
-	SubmitHandler,
-	StepperStep,
-	InitializeParameters,
-} from '../../internals/types';
+import type { FlowV2, SubmitHandler, InitializeParameters } from '../../internals/types';
 
 async function initialize( { reduxStore, flowState }: InitializeParameters ) {
 	const { resetOnboardStore } = dispatch( ONBOARD_STORE ) as OnboardActions;
@@ -42,7 +37,7 @@ async function initialize( { reduxStore, flowState }: InitializeParameters ) {
 
 	const eligibleForFreeHostingTrial = isUserEligibleForFreeHostingTrial( reduxStore.getState() );
 
-	const steps: StepperStep[] = [];
+	const steps = [];
 
 	if ( showDomainStep ) {
 		steps.push( STEPS.UNIFIED_DOMAINS );
