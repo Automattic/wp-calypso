@@ -38,7 +38,7 @@ describe( '#injectFingerprint', () => {
 			await loadFingerprint();
 		} );
 
-		test( 'should inject fingering header for transactions path', () => {
+		test( 'should inject fingerprint header for transactions path', () => {
 			injectFingerprint( wpcom );
 
 			wpcom.request( { path: '/me/transactions' }, callback );
