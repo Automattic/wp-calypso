@@ -1,13 +1,8 @@
 import wpcom from 'calypso/lib/wp';
 import {
 	MEMBERSHIPS_COUPONS_LIST,
-	MEMBERSHIPS_COUPON_ADD,
-	MEMBERSHIPS_COUPON_ADD_FAILURE,
 	MEMBERSHIPS_COUPON_DELETE,
-	MEMBERSHIPS_COUPON_DELETE_FAILURE,
 	MEMBERSHIPS_COUPON_RECEIVE,
-	MEMBERSHIPS_COUPON_UPDATE,
-	MEMBERSHIPS_COUPON_UPDATE_FAILURE,
 } from 'calypso/state/action-types';
 import { membershipCouponFromApi } from 'calypso/state/data-layer/wpcom/sites/memberships';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
@@ -36,12 +31,6 @@ export function receiveDeleteCoupon( siteId, couponId ) {
 
 export const requestAddCoupon = ( siteId, coupon, noticeText ) => {
 	return ( dispatch ) => {
-		dispatch( {
-			coupon,
-			siteId,
-			type: MEMBERSHIPS_COUPON_ADD,
-		} );
-
 		return wpcom.req
 			.post(
 				{
@@ -67,11 +56,6 @@ export const requestAddCoupon = ( siteId, coupon, noticeText ) => {
 				return membershipCoupon;
 			} )
 			.catch( ( error ) => {
-				dispatch( {
-					error,
-					siteId,
-					type: MEMBERSHIPS_COUPON_ADD_FAILURE,
-				} );
 				dispatch(
 					errorNotice( error.message, {
 						duration: 10000,
@@ -83,12 +67,6 @@ export const requestAddCoupon = ( siteId, coupon, noticeText ) => {
 
 export const requestUpdateCoupon = ( siteId, coupon, noticeText ) => {
 	return ( dispatch ) => {
-		dispatch( {
-			type: MEMBERSHIPS_COUPON_UPDATE,
-			siteId,
-			coupon,
-		} );
-
 		return wpcom.req
 			.post(
 				{
@@ -111,11 +89,6 @@ export const requestUpdateCoupon = ( siteId, coupon, noticeText ) => {
 				return membershipCoupon;
 			} )
 			.catch( ( error ) => {
-				dispatch( {
-					type: MEMBERSHIPS_COUPON_UPDATE_FAILURE,
-					siteId,
-					error,
-				} );
 				dispatch(
 					errorNotice( error.message, {
 						duration: 10000,
@@ -148,12 +121,6 @@ export const requestDeleteCoupon = ( siteId, coupon, noticeText ) => {
 				return coupon.ID;
 			} )
 			.catch( ( error ) => {
-				dispatch( {
-					type: MEMBERSHIPS_COUPON_DELETE_FAILURE,
-					siteId,
-					error,
-					coupon,
-				} );
 				dispatch(
 					errorNotice( error.message, {
 						duration: 10000,

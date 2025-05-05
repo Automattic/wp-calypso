@@ -2,12 +2,7 @@ import wpcom from 'calypso/lib/wp';
 import {
 	MEMBERSHIPS_PRODUCTS_LIST,
 	MEMBERSHIPS_PRODUCT_RECEIVE,
-	MEMBERSHIPS_PRODUCT_ADD,
-	MEMBERSHIPS_PRODUCT_ADD_FAILURE,
-	MEMBERSHIPS_PRODUCT_UPDATE,
-	MEMBERSHIPS_PRODUCT_UPDATE_FAILURE,
 	MEMBERSHIPS_PRODUCT_DELETE,
-	MEMBERSHIPS_PRODUCT_DELETE_FAILURE,
 } from 'calypso/state/action-types';
 import { membershipProductFromApi } from 'calypso/state/data-layer/wpcom/sites/memberships';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
@@ -37,12 +32,6 @@ export function receiveDeleteProduct( siteId, productId ) {
 
 export const requestAddProduct = ( siteId, product, noticeText ) => {
 	return ( dispatch ) => {
-		dispatch( {
-			type: MEMBERSHIPS_PRODUCT_ADD,
-			siteId,
-			product,
-		} );
-
 		return wpcom.req
 			.post(
 				{
@@ -68,11 +57,6 @@ export const requestAddProduct = ( siteId, product, noticeText ) => {
 				return membershipProduct;
 			} )
 			.catch( ( error ) => {
-				dispatch( {
-					type: MEMBERSHIPS_PRODUCT_ADD_FAILURE,
-					siteId,
-					error,
-				} );
 				dispatch(
 					errorNotice( error.message, {
 						duration: 10000,
@@ -84,12 +68,6 @@ export const requestAddProduct = ( siteId, product, noticeText ) => {
 
 export const requestUpdateProduct = ( siteId, product, noticeText ) => {
 	return ( dispatch ) => {
-		dispatch( {
-			type: MEMBERSHIPS_PRODUCT_UPDATE,
-			siteId,
-			product,
-		} );
-
 		return wpcom.req
 			.post(
 				{
@@ -112,11 +90,6 @@ export const requestUpdateProduct = ( siteId, product, noticeText ) => {
 				return membershipProduct;
 			} )
 			.catch( ( error ) => {
-				dispatch( {
-					type: MEMBERSHIPS_PRODUCT_UPDATE_FAILURE,
-					siteId,
-					error,
-				} );
 				dispatch(
 					errorNotice( error.message, {
 						duration: 10000,
@@ -186,20 +159,6 @@ export const requestDeleteProduct = (
 				return product.ID;
 			} )
 			.catch( ( error ) => {
-				dispatch( {
-					type: MEMBERSHIPS_PRODUCT_DELETE_FAILURE,
-					siteId,
-					error,
-					product,
-				} );
-				if ( annualProduct ) {
-					dispatch( {
-						type: MEMBERSHIPS_PRODUCT_DELETE_FAILURE,
-						siteId,
-						error,
-						product: annualProduct,
-					} );
-				}
 				dispatch(
 					errorNotice( error.message, {
 						duration: 10000,
