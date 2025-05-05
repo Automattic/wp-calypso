@@ -19,9 +19,11 @@ import {
 	NoticeComponent,
 	PurchasesPage,
 	envVariables,
+	LoggedOutHomePage,
+	LoggedOutThemesPage,
+	ThemesDetailPage,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
-import { skipItIf } from '../../jest-helpers';
 import { apiCloseAccount } from '../shared';
 
 declare const browser: Browser;
@@ -59,68 +61,24 @@ describe( 'Lifecyle: Logged Out Home Page, signup, onboard, launch and cancel su
 			await page.goto( 'https://WordPress.com' );
 		} );
 
-		skipItIf( envVariables.VIEWPORT_NAME === 'mobile' )(
-			'Select a theme on desktop',
-			async function () {
-				// Hovering over the container to stop the carousel scrolling
-				// The force is necessary as the container is not considered stable due to the scrolling
-				const themeContainer = page.locator( '.lp-content.lp-content-area--scrolling' ).first();
-				await themeContainer.hover( { force: true } );
+		it( 'Select a theme', async function () {
+			const lohp = new LoggedOutHomePage( page );
 
-				// Hovering over the theme card is necessary to make the "Start with this theme" button visible.
-				const themeCard = themeContainer.locator( '.lp-image-top-row' ).last();
-				await themeCard.hover();
-
-				const themeButton = themeCard.getByText( 'Start with this theme' );
-				const calypsoUrl = new URL( DataHelper.getCalypsoURL() );
-				const themeButtonUrl = new URL( ( await themeButton.getAttribute( 'href' ) ) || '' );
-
-				if ( calypsoUrl.hostname !== 'wordpress.com' ) {
-					// Reroute the click to the current Calypso URL.
-					await page.route( themeButtonUrl.href, async ( route ) => {
-						themeButtonUrl.host = calypsoUrl.host;
-						themeButtonUrl.protocol = calypsoUrl.protocol;
-
-						await route.abort();
-						await page.unrouteAll( { behavior: 'ignoreErrors' } );
-						await page.goto( themeButtonUrl.href, { waitUntil: 'load' } );
-					} );
-				}
-				// Get theme slug
-				const pageMatch = new URL( themeButtonUrl.href ).search.match( 'theme=([a-z]*)?&' );
-				console.log( 'pm', pageMatch );
-				themeSlug = pageMatch?.[ 1 ] || null;
-
-				// Hover, otherwise the element isn't considered stable, and is out of the viewport.
-				await themeCard.hover( { force: true } );
-				await themeCard.getByText( 'Start with this theme' ).click( { force: true } );
+			if ( envVariables.VIEWPORT_NAME !== 'mobile' ) {
+				themeSlug = await lohp.selectFirstTheme();
+				return;
 			}
-		);
 
-		skipItIf( envVariables.VIEWPORT_NAME !== 'mobile' )(
-			'Select a theme on mobile',
-			async function () {
-				await Promise.all( [
-					page.waitForNavigation( { waitUntil: 'load' } ),
-					page.getByRole( 'link', { name: 'Explore themes' } ).click(),
-				] );
+			await lohp.clickExploreThemes();
 
-				await page.getByRole( 'button', { name: 'View: All' } ).click();
-				await page.getByRole( 'menuitem', { name: 'Free' } ).click();
+			const themeShowcase = new LoggedOutThemesPage( page );
 
-				const firstTheme = page.locator( '[data-e2e-theme]' ).first();
-				await firstTheme.waitFor( { state: 'visible' } );
+			await themeShowcase.filterBy( 'Free' );
+			await themeShowcase.clickFirstTheme();
 
-				themeSlug = await firstTheme.getAttribute( 'data-e2e-theme' );
-
-				await firstTheme.click();
-
-				await Promise.all( [
-					page.waitForNavigation( { waitUntil: 'load' } ),
-					page.getByRole( 'link', { name: 'Get started' } ).click(),
-				] );
-			}
-		);
+			const themeDetails = new ThemesDetailPage( page );
+			themeSlug = await themeDetails.pickThisDesign();
+		} );
 
 		it( 'Sign up as new user', async function () {
 			const userSignupPage = new UserSignupPage( page );
