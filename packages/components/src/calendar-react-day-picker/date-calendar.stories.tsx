@@ -203,3 +203,111 @@ export const Footer: Story = {
 		);
 	},
 };
+
+const today = new Date();
+const oneWeekBefore = ( date: Date ) => {
+	const copy = new Date( date );
+	copy.setDate( date.getDate() - 7 );
+	return copy;
+};
+const startOfMonth = ( date: Date ) => new Date( date.getFullYear(), date.getMonth(), 1 );
+const oneMonthBefore = ( date: Date ) => {
+	const copy = new Date( date );
+	copy.setMonth( date.getMonth() - 1 );
+	return copy;
+};
+const startOfYear = ( date: Date ) => new Date( date.getFullYear(), 0, 1 );
+const oneYearBefore = ( date: Date ) => {
+	const copy = new Date( date );
+	copy.setFullYear( date.getFullYear() - 1 );
+	return copy;
+};
+
+export const WithPresets: Story = {
+	render: function ControlledDateCalendar( args ) {
+		const [ selected, setSelected ] = useState< Date >();
+		const [ month, setMonth ] = useState< Date >();
+
+		return (
+			<>
+				<div style={ { display: 'flex', gap: 8, marginBottom: 16 } }>
+					<button
+						type="button"
+						onClick={ () => {
+							setSelected( today );
+							setMonth( today );
+						} }
+					>
+						Today
+					</button>
+					<button
+						type="button"
+						onClick={ () => {
+							const targetDate = oneWeekBefore( today );
+							setSelected( targetDate );
+							setMonth( targetDate );
+						} }
+					>
+						One week ago
+					</button>
+					<button
+						type="button"
+						onClick={ () => {
+							const targetDate = startOfMonth( today );
+							setSelected( targetDate );
+							setMonth( targetDate );
+						} }
+					>
+						Start of this month
+					</button>
+					<button
+						type="button"
+						onClick={ () => {
+							const targetDate = oneMonthBefore( today );
+							setSelected( targetDate );
+							setMonth( targetDate );
+						} }
+					>
+						One month ago
+					</button>
+					<button
+						type="button"
+						onClick={ () => {
+							const targetDate = startOfYear( today );
+							setSelected( targetDate );
+							setMonth( targetDate );
+						} }
+					>
+						Start of the year
+					</button>
+					<button
+						type="button"
+						onClick={ () => {
+							const targetDate = oneYearBefore( today );
+							setSelected( targetDate );
+							setMonth( targetDate );
+						} }
+					>
+						One year ago
+					</button>
+				</div>
+				<DateCalendar
+					{ ...args }
+					selected={ selected }
+					onSelect={ ( selectedDate, ...rest ) => {
+						setSelected( selectedDate );
+						// TS is strict about `onSelect` expecting a non-undefined date
+						// when the selection is required.
+						if ( ! args.required ) {
+							args.onSelect?.( selectedDate, ...rest );
+						} else if ( selectedDate ) {
+							args.onSelect?.( selectedDate, ...rest );
+						}
+					} }
+					month={ month }
+					onMonthChange={ setMonth }
+				/>
+			</>
+		);
+	},
+};

@@ -214,3 +214,130 @@ export const Footer: Story = {
 		);
 	},
 };
+
+const today = new Date();
+const lastSevedDays = ( date: Date ) => {
+	const toReturn = new Date( date );
+	toReturn.setDate( date.getDate() - 6 );
+	return {
+		from: toReturn,
+		to: date,
+	};
+};
+const monthToDate = ( date: Date ) => ( {
+	from: new Date( date.getFullYear(), date.getMonth(), 1 ),
+	to: date,
+} );
+const lastThirtyDays = ( date: Date ) => {
+	const toReturn = new Date( date );
+	toReturn.setDate( date.getDate() - 29 );
+	return {
+		from: toReturn,
+		to: date,
+	};
+};
+const yearToDate = ( date: Date ) => ( {
+	from: new Date( date.getFullYear(), 0, 1 ),
+	to: date,
+} );
+const lastTwelveMonths = ( date: Date ) => {
+	const toReturn = new Date( date );
+	toReturn.setFullYear( date.getFullYear() - 1 );
+	toReturn.setDate( date.getDate() + 1 );
+	return {
+		from: toReturn,
+		to: date,
+	};
+};
+
+export const WithPresets: Story = {
+	render: function ControlledDateCalendar( args ) {
+		const [ range, setRange ] = useState< typeof args.selected >( {
+			from: undefined,
+			to: undefined,
+		} );
+		const [ month, setMonth ] = useState< Date >();
+
+		return (
+			<>
+				<div style={ { display: 'flex', gap: 8, marginBottom: 16 } }>
+					<button
+						type="button"
+						onClick={ () => {
+							setRange( { from: today, to: today } );
+							setMonth( today );
+						} }
+					>
+						Today
+					</button>
+					<button
+						type="button"
+						onClick={ () => {
+							const targetRange = lastSevedDays( today );
+							setRange( targetRange );
+							setMonth( targetRange.to );
+						} }
+					>
+						Last 7 days
+					</button>
+					<button
+						type="button"
+						onClick={ () => {
+							const targetRange = lastThirtyDays( today );
+							setRange( targetRange );
+							setMonth( targetRange.to );
+						} }
+					>
+						Last 30 days
+					</button>
+					<button
+						type="button"
+						onClick={ () => {
+							const targetRange = monthToDate( today );
+							setRange( targetRange );
+							setMonth( targetRange.to );
+						} }
+					>
+						Month to date
+					</button>
+					<button
+						type="button"
+						onClick={ () => {
+							const targetRange = lastTwelveMonths( today );
+							setRange( targetRange );
+							setMonth( targetRange.to );
+						} }
+					>
+						Last 12 months
+					</button>
+					<button
+						type="button"
+						onClick={ () => {
+							const targetRange = yearToDate( today );
+							setRange( targetRange );
+							setMonth( targetRange.to );
+						} }
+					>
+						Year to date
+					</button>
+				</div>
+				<DateRangeCalendar
+					{ ...args }
+					selected={ range }
+					onSelect={ ( selectedDate, ...rest ) => {
+						setRange( selectedDate );
+						// TS is strict about `onSelect` expecting a non-undefined date
+						// when the selection is required.
+						if ( ! args.required ) {
+							args.onSelect?.( selectedDate, ...rest );
+						} else if ( selectedDate ) {
+							args.onSelect?.( selectedDate, ...rest );
+						}
+					} }
+					month={ month }
+					onMonthChange={ setMonth }
+				/>
+			</>
+		);
+	},
+};
