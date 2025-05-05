@@ -126,6 +126,7 @@ object CalypsoApps: BuildType({
 		apps/happy-blocks/release-files => happy-blocks.zip
 		apps/command-palette-wp-admin/dist => command-palette-wp-admin.zip
 		apps/help-center/dist => help-center.zip
+		apps/design-system-docs/build => design-system-docs.zip
 	""".trimIndent()
 
 	steps {
