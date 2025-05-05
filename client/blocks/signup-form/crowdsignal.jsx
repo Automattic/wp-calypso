@@ -1,4 +1,4 @@
-import { Button, Gridicon } from '@automattic/components';
+import { Button, Gridicon, WordPressLogo } from '@automattic/components';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -8,7 +8,6 @@ import FormButton from 'calypso/components/forms/form-button';
 import LoggedOutForm from 'calypso/components/logged-out-form';
 import LoggedOutFormBackLink from 'calypso/components/logged-out-form/back-link';
 import LoggedOutFormFooter from 'calypso/components/logged-out-form/footer';
-import WordPressLogo from 'calypso/components/wordpress-logo';
 import SocialSignupForm from './social';
 
 import './crowdsignal.scss';

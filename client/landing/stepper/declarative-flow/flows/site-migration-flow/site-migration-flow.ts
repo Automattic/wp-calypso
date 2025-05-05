@@ -32,7 +32,7 @@ import * as paths from './paths';
 import type {
 	AssertConditionResult,
 	FlowV2,
-	ProvidedDependencies,
+	SubmitHandler,
 } from 'calypso/landing/stepper/declarative-flow/internals/types';
 
 const BASE_STEPS = [
@@ -53,11 +53,15 @@ const BASE_STEPS = [
 	STEPS.PROCESSING,
 ];
 
+function initialize() {
+	return stepsWithRequiredLogin( BASE_STEPS );
+}
+
 const hasSite = ( siteId: number, siteSlug: string ) => {
 	return siteId && siteId !== 0 && siteSlug && siteSlug !== '';
 };
 
-const siteMigration: FlowV2 = {
+const siteMigration: FlowV2< typeof initialize > = {
 	name: SITE_MIGRATION_FLOW,
 	get isSignupFlow() {
 		const searchParams = new URLSearchParams( window.location.search );
@@ -69,7 +73,7 @@ const siteMigration: FlowV2 = {
 	},
 	__experimentalUseSessions: true,
 	__experimentalUseBuiltinAuth: true,
-
+	initialize,
 	useSideEffect() {
 		const { setIntent, resetOnboardStore } = useDispatch( ONBOARD_STORE );
 		useEffect( () => {
@@ -84,11 +88,6 @@ const siteMigration: FlowV2 = {
 			set( 'flow', { entryPoint: ref } );
 		}
 	},
-
-	initialize() {
-		return stepsWithRequiredLogin( BASE_STEPS );
-	},
-
 	useAssertConditions(): AssertConditionResult {
 		const { isAdmin } = useIsSiteAdmin();
 
@@ -128,8 +127,9 @@ const siteMigration: FlowV2 = {
 			triggerGuidesForStep( flowName, currentStep, siteId );
 		}, [ flowName, currentStep, siteId ] );
 
-		async function submit( providedDependencies: ProvidedDependencies = {} ) {
-			switch ( currentStep ) {
+		const submit: SubmitHandler< typeof initialize > = ( submittedStep ) => {
+			const { slug, providedDependencies } = submittedStep;
+			switch ( slug ) {
 				case STEPS.SITE_MIGRATION_IDENTIFY.slug: {
 					const { from, platform, action } = providedDependencies as {
 						from: string;
@@ -221,7 +221,10 @@ const siteMigration: FlowV2 = {
 						}
 						case 'create-site':
 							return navigate(
-								paths.siteCreationPath( { from: fromQueryParam, platform: platformQueryParam } )
+								paths.siteCreationPath( {
+									from: fromQueryParam,
+									platform: platformQueryParam,
+								} )
 							);
 					}
 				}
@@ -367,6 +370,7 @@ const siteMigration: FlowV2 = {
 						} );
 						return;
 					}
+					break;
 				}
 
 				case STEPS.SITE_MIGRATION_INSTRUCTIONS.slug: {
@@ -378,18 +382,7 @@ const siteMigration: FlowV2 = {
 				}
 
 				case STEPS.SITE_MIGRATION_CREDENTIALS.slug: {
-					const { action, from, authorizationUrl, platform } = providedDependencies as {
-						action:
-							| 'skip'
-							| 'submit'
-							| 'application-passwords-approval'
-							| 'credentials-required'
-							| 'already-wpcom'
-							| 'site-is-not-using-wordpress';
-						from: string;
-						authorizationUrl: string;
-						platform: ImporterPlatform;
-					};
+					const { action, from, authorizationUrl, platform } = providedDependencies;
 
 					if ( action === 'skip' ) {
 						return exitFlow( paths.calypsoOverviewPath( { ref: 'site-migration' }, { siteSlug } ) );
@@ -397,7 +390,11 @@ const siteMigration: FlowV2 = {
 
 					if ( action === 'already-wpcom' ) {
 						return navigate(
-							paths.alreadyWpcomPath( { siteId, from: from || fromQueryParam, siteSlug } )
+							paths.alreadyWpcomPath( {
+								siteId,
+								from: from || fromQueryParam,
+								siteSlug,
+							} )
 						);
 					}
 
@@ -469,10 +466,7 @@ const siteMigration: FlowV2 = {
 				}
 
 				case STEPS.SITE_MIGRATION_APPLICATION_PASSWORD_AUTHORIZATION.slug: {
-					const { action, authorizationUrl } = providedDependencies as {
-						action: string;
-						authorizationUrl: string;
-					};
+					const { action, authorizationUrl } = providedDependencies;
 
 					if ( action === 'authorization' ) {
 						const currentUrl = window.location.href;
@@ -495,7 +489,7 @@ const siteMigration: FlowV2 = {
 					return exitFlow( paths.calypsoOverviewPath( { ref: 'site-migration' }, { siteSlug } ) );
 				}
 			}
-		}
+		};
 
 		const goBack = () => {
 			const entryPoint = get( 'flow' )?.entryPoint;

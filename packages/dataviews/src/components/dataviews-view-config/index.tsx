@@ -61,10 +61,9 @@ const DATAVIEWS_CONFIG_POPOVER_PROPS = {
 	offset: 9,
 };
 
-function ViewTypeMenu( {
-	defaultLayouts = { list: {}, grid: {}, table: {} },
-}: ViewTypeMenuProps ) {
-	const { view, onChangeView } = useContext( DataViewsContext );
+export function ViewTypeMenu() {
+	const { view, onChangeView, defaultLayouts } =
+		useContext( DataViewsContext );
 	const availableLayouts = Object.keys( defaultLayouts );
 	if ( availableLayouts.length <= 1 ) {
 		return null;
@@ -761,7 +760,7 @@ function SettingsSection( {
 	);
 }
 
-function DataviewsViewConfigDropdown() {
+export function DataviewsViewConfigDropdown() {
 	const { view } = useContext( DataViewsContext );
 	const popoverId = useInstanceId(
 		_DataViewsViewConfig,
@@ -815,14 +814,10 @@ function DataviewsViewConfigDropdown() {
 	);
 }
 
-function _DataViewsViewConfig( {
-	defaultLayouts = { list: {}, grid: {}, table: {} },
-}: {
-	defaultLayouts?: SupportedLayouts;
-} ) {
+function _DataViewsViewConfig() {
 	return (
 		<>
-			<ViewTypeMenu defaultLayouts={ defaultLayouts } />
+			<ViewTypeMenu />
 			<DataviewsViewConfigDropdown />
 		</>
 	);

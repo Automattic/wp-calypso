@@ -1,0 +1,52 @@
+{
+	"name": "@automattic/design-system-docs",
+	"version": "0.0.0",
+	"private": true,
+	"license": "GPL-2.0-or-later",
+	"author": "Automattic Inc.",
+	"description": "Documentation site for the Automattic Design System.",
+	"homepage": "https://github.com/Automattic/wp-calypso/tree/trunk/apps/design-system-docs",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/Automattic/wp-calypso.git",
+		"directory": "apps/design-system-docs"
+	},
+	"scripts": {
+		"docusaurus": "docusaurus",
+		"start": "docusaurus start -p 42987",
+		"build": "docusaurus build",
+		"deploy": "docusaurus deploy",
+		"clear": "docusaurus clear",
+		"serve": "docusaurus serve -p 42987",
+		"teamcity:build-app": "yarn run build",
+		"write-heading-ids": "docusaurus write-heading-ids",
+		"typecheck": "tsc"
+	},
+	"dependencies": {
+		"@docusaurus/core": "^3.7.0",
+		"@docusaurus/preset-classic": "^3.7.0",
+		"@mdx-js/react": "^3.0.0",
+		"prism-react-renderer": "^2.3.0",
+		"react": "^18.3.1",
+		"react-dom": "^18.3.1"
+	},
+	"devDependencies": {
+		"@docusaurus/module-type-aliases": "^3.7.0",
+		"@docusaurus/tsconfig": "^3.7.0",
+		"@docusaurus/types": "^3.7.0",
+		"@types/react": "^18.3.20",
+		"@wordpress/browserslist-config": "^6.22.0",
+		"typescript": "^5.8.2"
+	},
+	"browserslist": [
+		"extends @wordpress/browserslist-config"
+	],
+	"engines": {
+		"node": ">=18.0",
+		"yarn": "^4.0.0"
+	},
+	"sideEffects": [
+		"*.css",
+		"*.scss"
+	]
+}

@@ -3,15 +3,13 @@ import debugFactory from 'debug';
 import { useEffect } from 'react';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import type { Flow, StepperStep, StepProps } from '../../types';
+import type { Flow, FlowV2, StepperStep } from '../../types';
 
 const debug = debugFactory( 'calypso:stepper:preloading' );
 
 export const lazyCache = new WeakMap<
-	() => Promise< {
-		default: React.ComponentType< StepProps >;
-	} >,
-	React.ComponentType< StepProps >
+	StepperStep[ 'asyncComponent' ],
+	Awaited< ReturnType< StepperStep[ 'asyncComponent' ] > >[ 'default' ]
 >();
 
 async function tryPreload( step?: StepperStep, followingStep?: StepperStep ) {
@@ -39,7 +37,7 @@ export function usePreloadSteps(
 	selectedSite: SiteDetails | undefined | null,
 	currentStepRoute: string,
 	flowSteps: readonly StepperStep[],
-	flow: Flow
+	flow: Flow | FlowV2< any >
 ) {
 	const isLoggedIn = useSelector( isUserLoggedIn );
 

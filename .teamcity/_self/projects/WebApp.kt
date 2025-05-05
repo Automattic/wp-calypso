@@ -583,15 +583,12 @@ object CheckCodeStyleBranch : BuildType({
 						|| true
 				}
 
-				# Use with `grep -c .` to prevent miscounts due to newlines
-				FILE_COUNT=${'$'}(_find_files_to_lint | grep -c . || true)
-
 				# Create temporary output directory. Export the variable so that it is
 				# available in the batch runs.
 				export RESULTS_DIR=checkstyle_results/eslint
 				mkdir -p "${'$'}RESULTS_DIR"
 
-				if [ "%run_full_eslint%" = true ] || [ "${'$'}FILE_COUNT" -eq 0 ]; then
+				if [ "%run_full_eslint%" = true ]; then
 					echo "Linting all files"
 					yarn run eslint --format checkstyle --output-file "${'$'}RESULTS_DIR/results.xml" .
 				else

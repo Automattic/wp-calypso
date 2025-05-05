@@ -1,6 +1,6 @@
 import { PLAN_100_YEARS, getPlan, domainProductSlugs } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
-import { Button } from '@automattic/components';
+import { Button, WordPressLogo } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { Global, css } from '@emotion/react';
@@ -9,7 +9,6 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import HundredYearLoaderView from 'calypso/components/hundred-year-loader-view';
-import WordPressLogo from 'calypso/components/wordpress-logo';
 import { getRegisteredDomains, getTransferredInDomains } from 'calypso/lib/domains';
 import { useDispatch, useSelector } from 'calypso/state';
 import { fetchReceipt } from 'calypso/state/receipts/actions';

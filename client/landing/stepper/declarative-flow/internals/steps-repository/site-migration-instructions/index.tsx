@@ -80,9 +80,10 @@ const usePreparationEventsAndLogs = ( {
 };
 
 const SiteMigrationInstructions: Step< {
-	submits:
-		| { destination: 'migration-started' }
-		| { how: ( typeof HOW_TO_MIGRATE_OPTIONS )[ 'DO_IT_FOR_ME' ] };
+	submits: {
+		destination?: 'migration-started';
+		how?: ( typeof HOW_TO_MIGRATE_OPTIONS )[ 'DO_IT_FOR_ME' ];
+	};
 } > = function ( { navigation, flow } ) {
 	const site = useSite();
 	const siteId = site?.ID ?? 0;
