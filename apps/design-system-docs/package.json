@@ -18,6 +18,7 @@
 		"deploy": "docusaurus deploy",
 		"clear": "docusaurus clear",
 		"serve": "docusaurus serve -p 42987",
+		"teamcity:build-app": "yarn run build",
 		"write-heading-ids": "docusaurus write-heading-ids",
 		"typecheck": "tsc"
 	},
