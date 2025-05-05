@@ -5,9 +5,16 @@ import { useI18n } from '@wordpress/react-i18n';
 import { useCallback, useMemo } from 'react';
 import { useQueryReaderTeams } from 'calypso/components/data/query-reader-teams';
 import JetpackLogo from 'calypso/components/jetpack-logo';
+import { navigate } from 'calypso/lib/navigate';
 import { SitePlan } from 'calypso/sites-dashboard/components/sites-site-plan';
+import {
+	isNotAtomicJetpack,
+	isP2Site,
+	isDisconnectedJetpackAndNotAtomic,
+} from 'calypso/sites-dashboard/utils';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { isA8cTeamMember } from 'calypso/state/teams/selectors';
 import { useActions } from './actions';
 import SiteField from './dataviews-fields/site-field';
@@ -15,7 +22,6 @@ import SiteIcon from './site-icon';
 import { SiteStats } from './sites-site-stats';
 import { SiteStatus } from './sites-site-status';
 import type { View } from '@wordpress/dataviews';
-
 import './style.scss';
 import './dataview-style.scss';
 
@@ -56,6 +62,7 @@ const DotcomSitesDataViews = ( {
 	sitePreviewPane,
 }: Props ) => {
 	const { __ } = useI18n();
+	const state = useSelector( ( state ) => state );
 	const userId = useSelector( getCurrentUserId );
 
 	// By default, DataViews is in an "uncontrolled" mode, meaning the current selection is handled internally.
@@ -70,16 +77,31 @@ const DotcomSitesDataViews = ( {
 			if ( dataViewsState.type !== 'list' ) {
 				return;
 			}
+
 			if ( selectedSiteIds.length === 0 ) {
 				return;
 			}
+
 			const site = sites.find( ( s ) => s.ID === Number( selectedSiteIds[ 0 ] ) );
 			if ( site && ! site.is_deleted ) {
-				sitePreviewPane.open( site, 'list_row_click' );
+				const isAdmin = canCurrentUser( state, site.ID, 'manage_options' );
+				const shouldOpenSitePreviewPane =
+					! isDisconnectedJetpackAndNotAtomic( site ) &&
+					! isNotAtomicJetpack( site ) &&
+					! isP2Site( site ) &&
+					isAdmin;
+
+				if ( shouldOpenSitePreviewPane ) {
+					sitePreviewPane.open( site, 'list_row_click' );
+					return;
+				}
+
+				navigate( site.options?.admin_url || '', true );
 			}
 		},
-		[ dataViewsState.type, sitePreviewPane, sites ]
+		[ dataViewsState.type, sitePreviewPane, sites, state ]
 	);
+
 	const getSelection = useCallback(
 		() => ( selectedItem ? [ selectedItem.ID.toString() ] : undefined ),
 		[ selectedItem ]
