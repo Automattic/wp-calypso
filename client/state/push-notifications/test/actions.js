@@ -1,10 +1,9 @@
 import {
-	PUSH_NOTIFICATIONS_API_NOT_READY,
 	PUSH_NOTIFICATIONS_RECEIVE_UNREGISTER_DEVICE,
 	PUSH_NOTIFICATIONS_RECEIVE_REGISTER_DEVICE,
 } from 'calypso/state/action-types';
 import useNock from 'calypso/test-helpers/use-nock';
-import { apiNotReady, receiveUnregisterDevice, sendSubscriptionToWPCOM } from '../actions';
+import { receiveUnregisterDevice, sendSubscriptionToWPCOM } from '../actions';
 
 const API_DOMAIN = 'https://public-api.wordpress.com:443';
 
@@ -30,14 +29,6 @@ describe( 'actions', () => {
 			expect( receiveUnregisterDevice( data ) ).toEqual( {
 				type: PUSH_NOTIFICATIONS_RECEIVE_UNREGISTER_DEVICE,
 				data,
-			} );
-		} );
-	} );
-
-	describe( 'apiNotReady()', () => {
-		test( 'should return an action object', () => {
-			expect( apiNotReady() ).toEqual( {
-				type: PUSH_NOTIFICATIONS_API_NOT_READY,
 			} );
 		} );
 	} );
