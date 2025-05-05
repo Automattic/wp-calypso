@@ -38,9 +38,7 @@ describe( '#injectFingerprint', () => {
 			await loadFingerprint();
 		} );
 
-		test( 'should inject fingering header for transactions path', async () => {
-			await loadFingerprint();
-
+		test( 'should inject fingering header for transactions path', () => {
 			injectFingerprint( wpcom );
 
 			wpcom.request( { path: '/me/transactions' }, callback );
@@ -56,9 +54,7 @@ describe( '#injectFingerprint', () => {
 			);
 		} );
 
-		test( 'should not inject header for other paths', async () => {
-			await loadFingerprint();
-
+		test( 'should not inject header for other paths', () => {
 			injectFingerprint( wpcom );
 
 			wpcom.request( { path: '/me/settings' }, callback );
@@ -66,9 +62,7 @@ describe( '#injectFingerprint', () => {
 			expect( originalRequest ).toHaveBeenCalledWith( { path: '/me/settings' }, callback );
 		} );
 
-		test( 'should merge with existing headers if present', async () => {
-			await loadFingerprint();
-
+		test( 'should merge with existing headers if present', () => {
 			injectFingerprint( wpcom );
 
 			wpcom.request(
