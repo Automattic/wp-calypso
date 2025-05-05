@@ -126,7 +126,7 @@ describe(
 				purchasesPage = new PurchasesPage( page );
 
 				await purchasesPage.clickOnPurchase( 'Storage Add-On Space Upgrade 50 GB', siteSlug );
-				await purchasesPage.purchaseAction( 'Cancel subscription' );
+				await purchasesPage.cancelPurchase( 'Cancel subscription' );
 			} );
 
 			it( 'Cancel add-on renewal', async function () {
@@ -156,7 +156,7 @@ describe(
 				purchasesPage = new PurchasesPage( page );
 
 				await purchasesPage.clickOnPurchase( `WordPress.com ${ planName }`, siteSlug );
-				await purchasesPage.purchaseAction( 'Cancel plan' );
+				await purchasesPage.cancelPurchase( 'Cancel plan' );
 			} );
 
 			it( 'Cancel plan renewal', async function () {
