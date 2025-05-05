@@ -5,15 +5,16 @@ import { Button, ExternalLink } from '@wordpress/components';
 import { useResizeObserver } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { Icon, check } from '@wordpress/icons';
-import { useState, useMemo } from 'react';
+import { useMemo } from 'react';
 import { sitesQuery } from '../app/queries';
+import { sitesRoute } from '../app/router';
 import DataViewsCard from '../components/dataviews-card';
 import PageLayout from '../components/page-layout';
 import { STATUS_LABELS, getSiteStatus, getSiteStatusLabel } from '../utils/site-status';
 import SiteIcon from './site-icon';
 import SitePreview from './site-preview';
 import type { Site } from '../data/types';
-import type { View, Operator } from '@automattic/dataviews';
+import type { View, Operator, ViewTable, ViewGrid } from '@automattic/dataviews';
 
 const actions = [
 	{
@@ -166,25 +167,37 @@ const DEFAULT_VIEW: View = {
 	page: 1,
 	perPage: 10,
 	sort: { field: 'name', direction: 'asc' },
+	search: '',
 };
 
 export default function Sites() {
-	const navigate = useNavigate();
+	const navigate = useNavigate( { from: sitesRoute.fullPath } );
 	const sites = useQuery( sitesQuery() ).data;
 	const hasA8CSites = sites?.some( ( site ) => site.is_a8c );
-	const [ view, setView ] = useState< View >(
-		hasA8CSites
-			? {
-					...DEFAULT_VIEW,
-					filters: [
-						{
-							field: 'is_a8c',
-							operator: 'is',
-							value: false,
-						},
-					],
-			  }
-			: DEFAULT_VIEW
+	const defaultView = useMemo(
+		() =>
+			hasA8CSites
+				? {
+						...DEFAULT_VIEW,
+						filters: [
+							{
+								field: 'is_a8c',
+								operator: 'is' as Operator,
+								value: false,
+							},
+						],
+				  }
+				: DEFAULT_VIEW,
+		[ hasA8CSites ]
+	);
+	const search: Partial< ViewTable | ViewGrid > = sitesRoute.useSearch();
+	const view = useMemo(
+		() => ( {
+			...defaultView,
+			...DEFAULT_LAYOUTS[ search.type ?? 'grid' ],
+			...Object.fromEntries( Object.entries( search ).filter( ( [ , v ] ) => v !== undefined ) ),
+		} ),
+		[ defaultView, search ]
 	);
 	const fields = useMemo(
 		() =>
@@ -219,7 +232,19 @@ export default function Sites() {
 						fields={ fields }
 						actions={ actions }
 						view={ view }
-						onChangeView={ setView }
+						onChangeView={ ( view ) => {
+							if ( view.type === 'list' ) {
+								return;
+							}
+							const _defaultView = { ...defaultView, ...( DEFAULT_LAYOUTS[ view.type ] ?? {} ) };
+							navigate( {
+								search: Object.fromEntries(
+									Object.entries( view ).filter(
+										( [ key, value ] ) => value !== _defaultView[ key as keyof View ]
+									)
+								),
+							} );
+						} }
 						onClickItem={ onClickItem }
 						defaultLayouts={ DEFAULT_LAYOUTS }
 						paginationInfo={ paginationInfo }
