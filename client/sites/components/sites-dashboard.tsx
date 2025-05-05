@@ -231,8 +231,8 @@ const SitesDashboard = ( {
 								width: '106px',
 							},
 						},
-						shouldPinActions: true,
 					},
+					shouldPinActions: true,
 			  } ),
 	};
 	const [ dataViewsState, setDataViewsState ] = useState< View >( defaultDataViewsState );

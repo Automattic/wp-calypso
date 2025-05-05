@@ -204,10 +204,9 @@ function TableRow< Item >( {
 				<td
 					className={ clsx( 'dataviews-view-table__actions-column', {
 						'dataviews-view-table__actions-column--sticky':
-							view.layout?.shouldPinActions,
+							view.shouldPinActions,
 						'dataviews-view-table__actions-column--stuck':
-							view.layout?.shouldPinActions &&
-							isActionsColumnSticky,
+							view.shouldPinActions && isActionsColumnSticky,
 					} ) }
 					onClick={ ( e ) => e.stopPropagation() }
 				>
@@ -297,7 +296,7 @@ function ViewTable< Item >( {
 
 	const isScrolledEnd = useIsScrolledEnd( {
 		scrollContainerRef: containerRef,
-		enabled: !! actions?.length && !! view.layout?.shouldPinActions,
+		enabled: !! actions?.length && !! view.shouldPinActions,
 	} );
 
 	return (
@@ -382,9 +381,9 @@ function ViewTable< Item >( {
 									'dataviews-view-table__actions-column',
 									{
 										'dataviews-view-table__actions-column--sticky':
-											view.layout?.shouldPinActions,
+											view.shouldPinActions,
 										'dataviews-view-table__actions-column--stuck':
-											view.layout?.shouldPinActions &&
+											view.shouldPinActions &&
 											! isScrolledEnd,
 									}
 								) }
