@@ -2,8 +2,8 @@ import config from '@automattic/calypso-config';
 import { isBusinessPlan, isPremiumPlan } from '@automattic/calypso-products';
 import { Onboard } from '@automattic/data-stores';
 import { AI_SITE_BUILDER_FLOW } from '@automattic/onboarding';
+import { isMobile } from '@automattic/viewport';
 import { useSelect } from '@wordpress/data';
-import { isTablet, isDesktop } from 'calypso/lib/user-agent';
 import { useIsSiteOwner } from '../hooks/use-is-site-owner';
 import { ONBOARD_STORE } from '../stores';
 import { useSite } from './use-site';
@@ -25,7 +25,7 @@ export function useIsBigSkyEligible( flowName?: string ) {
 	const { isOwner } = useIsSiteOwner();
 	const site = useSite();
 	const product_slug = site?.plan?.product_slug || '';
-	const onSupportedDevice = isTablet() || isDesktop();
+	const onSupportedDevice = ! isMobile();
 	const goals = useSelect(
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getGoals(),
 		[ site ]
