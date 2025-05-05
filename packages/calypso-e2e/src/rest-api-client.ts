@@ -1,5 +1,4 @@
-import fs from 'fs';
-import FormData from 'form-data';
+import fs from 'fs/promises';
 import { SecretsManager } from './secrets';
 import {
 	BearerTokenErrorResponse,
@@ -861,16 +860,17 @@ export class RestAPIClient {
 
 		if ( media ) {
 			const data = new FormData();
-			data.append( 'media[]', fs.createReadStream( media.fullpath ) );
+			const fileBuffer = await fs.readFile( media.fullpath );
+			const blob = new Blob( [ fileBuffer ] );
+			data.append( 'media[]', blob, media.basename );
 
 			params = {
 				method: 'post',
 				headers: {
 					// Important: include the boundary
 					Authorization: await this.getAuthorizationHeader( 'bearer' ),
-					...data.getHeaders(),
 				},
-				body: data.getBuffer(),
+				body: data,
 			};
 		}
 		if ( mediaURL ) {
