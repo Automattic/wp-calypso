@@ -1,62 +1,53 @@
 import {
 	__experimentalText as Text,
 	__experimentalHStack as HStack,
-	NavigableMenu,
 	Button,
-	Dropdown,
-	MenuItem,
 	VisuallyHidden,
 } from '@wordpress/components';
 import { useResizeObserver, useMergeRefs } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { useState, forwardRef, useRef } from 'react';
+import Menu from '../menu';
 import { BreadcrumbProps, BreadcrumbItemProps } from './types';
 import './style.scss';
 
-const popoverProps = {
-	placement: 'bottom-start',
-};
-
 function BreadcrumbsMenu( { items }: { items: BreadcrumbItemProps[] } ) {
 	return (
-		<Dropdown
-			className="breadcrumb__item-wrapper"
-			popoverProps={ popoverProps }
-			renderToggle={ ( { isOpen, onToggle } ) => (
-				<Button
-					size="compact"
-					className="breadcrumb__item"
-					text="…"
-					aria-expanded={ isOpen }
-					aria-haspopup="true"
-					onClick={ onToggle }
-					label={ __( 'More breadcrumb items' ) }
+		<span className="breadcrumb__item-wrapper">
+			<Menu placement="bottom-start">
+				<Menu.TriggerButton
+					render={
+						<Button
+							size="compact"
+							className="breadcrumb__item"
+							text="…"
+							label={ __( 'More breadcrumb items' ) }
+						/>
+					}
 				/>
-			) }
-			renderContent={ () => (
-				<NavigableMenu role="menu" aria-label={ __( 'More breadcrumb items' ) }>
+				<Menu.Popover>
 					{ items.map( ( item, index ) => (
-						<BreadcrumbItem key={ `${ item.label }-${ index }` } item={ item } as={ MenuItem } />
+						<Menu.Item
+							key={ `${ item.label }-${ index }` }
+							render={
+								<a href={ item.href } onClick={ item.onClick } className="breadcrumb__item" />
+							}
+						>
+							<Menu.ItemLabel>{ item.label }</Menu.ItemLabel>
+						</Menu.Item>
 					) ) }
-				</NavigableMenu>
-			) }
-		/>
+				</Menu.Popover>
+			</Menu>
+		</span>
 	);
 }
 
-function BreadcrumbItem( {
-	item: { label, href, onClick },
-	as = 'a',
-}: {
-	item: BreadcrumbItemProps;
-	as?: React.ElementType;
-} ) {
-	const ButtonComponent = as;
+function BreadcrumbItem( { item: { label, href, onClick } }: { item: BreadcrumbItemProps } ) {
 	return (
 		<span className="breadcrumb__item-wrapper">
-			<ButtonComponent href={ href } onClick={ onClick } className="breadcrumb__item">
+			<a href={ href } onClick={ onClick } className="breadcrumb__item">
 				{ label }
-			</ButtonComponent>
+			</a>
 		</span>
 	);
 }

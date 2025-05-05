@@ -70,3 +70,4 @@ export { default as EmbedContainer } from './embed-container';
 export { ExperienceControl } from './experience-control';
 export { default as SummaryButton } from './summary-button';
 export { default as CoreBadge } from './core-badge';
+export { default as Menu } from './menu';
