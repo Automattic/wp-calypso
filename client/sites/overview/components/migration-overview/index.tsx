@@ -15,7 +15,7 @@ const MigrationOverview = ( { site }: { site: SiteDetails } ) => {
 	}
 
 	if ( migrationType === 'difm' ) {
-		return <MigrationStartedDIFM />;
+		return <MigrationStartedDIFM site={ site } />;
 	}
 
 	if ( migrationType === 'diy' ) {

@@ -2,7 +2,9 @@ import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { globe, group, Icon, scheduled } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { ReactElement } from 'react';
+import CancelDifmMigrationForm from './cancel-difm-migration';
 import { Container, Header } from './layout';
+import type { SiteDetails } from '@automattic/data-stores';
 
 type MigrationStartedListProps = {
 	children: ReactElement< MigrationStartedItemProps > | ReactElement< MigrationStartedItemProps >[];
@@ -26,7 +28,7 @@ const MigrationStartedItem = ( { icon, text }: MigrationStartedItemProps ) => (
 	</li>
 );
 
-export const MigrationStartedDIFM = () => {
+export const MigrationStartedDIFM = ( { site }: { site: SiteDetails } ) => {
 	const translate = useTranslate();
 	const hasEnTranslation = useHasEnTranslation();
 
@@ -66,6 +68,7 @@ export const MigrationStartedDIFM = () => {
 						) }
 					/>
 				</MigrationStartedList>
+				<CancelDifmMigrationForm siteId={ site.ID } />
 			</div>
 		</Container>
 	);
