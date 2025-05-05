@@ -1,4 +1,4 @@
-import { isAndroid, isDesktop, isIos, isMobile, isTablet } from '..';
+import { isAndroid, isIos, isMobile, isTablet } from '..';
 import getDeviceType from '../get-device-type';
 import getOsName from '../get-os-name';
 
@@ -65,23 +65,6 @@ describe( 'user-agent', () => {
 		it( 'should return false when device type is undefined', () => {
 			( getDeviceType as unknown as jest.Mock ).mockReturnValue( undefined );
 			expect( isTablet() ).toBe( false );
-		} );
-	} );
-
-	describe( 'isDesktop', () => {
-		it( 'should return true when device type is undefined', () => {
-			( getDeviceType as unknown as jest.Mock ).mockReturnValue( undefined );
-			expect( isDesktop() ).toBe( true );
-		} );
-
-		it( 'should return false when device type is mobile', () => {
-			( getDeviceType as unknown as jest.Mock ).mockReturnValue( 'mobile' );
-			expect( isDesktop() ).toBe( false );
-		} );
-
-		it( 'should return false when device type is tablet', () => {
-			( getDeviceType as unknown as jest.Mock ).mockReturnValue( 'tablet' );
-			expect( isDesktop() ).toBe( false );
 		} );
 	} );
 } );

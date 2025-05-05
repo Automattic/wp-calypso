@@ -5,4 +5,3 @@ export const isAndroid = (): boolean => getOsName() === 'Android';
 export const isIos = (): boolean => getOsName() === 'iOS';
 export const isMobile = (): boolean => getDeviceType() === 'mobile';
 export const isTablet = (): boolean => getDeviceType() === 'tablet';
-export const isDesktop = (): boolean => getDeviceType() === undefined;
