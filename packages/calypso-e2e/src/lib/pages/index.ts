@@ -38,6 +38,7 @@ export * from './blaze-campaign-page';
 export * from './feedback-inbox-page';
 export * from './subscribers-page';
 export * from './subscription-management-page';
+export * from './wp-admin-media-page';
 
 export * from './external';
 export * from './me';

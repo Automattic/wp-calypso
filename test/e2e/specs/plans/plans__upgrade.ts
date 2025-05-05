@@ -14,12 +14,12 @@ import {
 	NewSiteResponse,
 	PostResponse,
 	PublishedPostPage,
-	NavbarComponent,
 	MediaHelper,
 	TestFile,
-	MediaPage,
+	CheckoutThankYouPage,
+	WPAdminMediaPage,
 } from '@automattic/calypso-e2e';
-import { Page, Browser } from 'playwright';
+import { Page, Browser, BrowserContext } from 'playwright';
 import { TEST_IMAGE_PATH } from '../constants';
 import { apiDeleteSite } from '../shared';
 
@@ -39,6 +39,7 @@ describe(
 		let newSiteDetails: NewSiteResponse;
 		let restAPIClient: RestAPIClient;
 		let page: Page;
+		let context: BrowserContext;
 
 		beforeAll( async function () {
 			// Set up the test site programmatically against simpleSiteFreePlanUser.
@@ -70,7 +71,8 @@ describe(
 			} );
 
 			// Launch browser.
-			page = await browser.newPage();
+			context = await browser.newContext();
+			page = await context.newPage();
 
 			// Authenticate as simpleSiteFreePlanUser.
 			const testAccount = new TestAccount( 'simpleSiteFreePlanUser' );
@@ -105,24 +107,19 @@ describe(
 			} );
 
 			it( 'Make purchase', async function () {
-				try {
-					await cartCheckoutPage.purchase( { timeout: 75 * 1000 } );
-				} catch {
-					// Work around an issue where purchase flow does not
-					// complete and redirect the user to the next screen
-					// beyond the timeout.
-					// See: https://github.com/Automattic/wp-calypso/issues/75867
-					await page.goto(
-						DataHelper.getCalypsoURL(
-							`checkout/thank-you/${ newSiteDetails.blog_details.site_slug }`
-						)
-					);
-				}
+				await Promise.all( [
+					page.waitForNavigation( {
+						url: '**/checkout/thank-you/**',
+						// Sometimes the testing domain third party system is really slow. It's better to wait a while than to throw a false positive.
+						timeout: 90 * 1000,
+					} ),
+					cartCheckoutPage.purchase( { timeout: 120 * 1000 } ),
+				] );
 			} );
 
 			it( 'Return to My Home dashboard', async function () {
-				const navbarComponent = new NavbarComponent( page );
-				await navbarComponent.clickMySites();
+				const thankYouPage = new CheckoutThankYouPage( page );
+				await thankYouPage.backToDashboard();
 			} );
 		} );
 
@@ -144,7 +141,7 @@ describe(
 			let testPage: Page;
 
 			beforeAll( async function () {
-				testPage = await browser.newPage();
+				testPage = await context.newPage();
 			} );
 
 			it.each( postTitles )( 'Post %s is preserved', async function ( postTitle: string ) {
@@ -158,9 +155,11 @@ describe(
 			} );
 
 			it( 'Uploaded media is preserved', async function () {
-				const mediaPage = new MediaPage( page );
-				await mediaPage.visit( newSiteDetails.blog_details.site_slug );
-				await mediaPage.selectItem( { name: testMediaFile.basename } );
+				const sidebarComponent = new SidebarComponent( page );
+				await sidebarComponent.navigate( 'Media' );
+
+				const mediaPage = new WPAdminMediaPage( page );
+				await mediaPage.selectItem( { name: testMediaFile.filename } );
 			} );
 		} );
 

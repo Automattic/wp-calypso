@@ -74,7 +74,11 @@ export class SidebarComponent {
 
 		// Top level menu item selector.
 		const itemSelector = `${ selectors.sidebar } :text-is("${ item }"):visible`;
-		await this.page.dispatchEvent( itemSelector, 'click' );
+
+		await Promise.all( [
+			subitem ? Promise.resolve() : this.page.waitForNavigation( { timeout: 30 * 1000 } ),
+			this.page.dispatchEvent( itemSelector, 'click' ),
+		] );
 
 		// Sub-level menu item selector.
 		if ( subitem ) {

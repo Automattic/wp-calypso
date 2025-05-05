@@ -28,4 +28,11 @@ export class CheckoutThankYouPage {
 
 		await locator.click();
 	}
+
+	/**
+	 * Clicks on the "Back to dashboard" button.
+	 */
+	async backToDashboard() {
+		await this.clickButton( 'Back to dashboard' );
+	}
 }

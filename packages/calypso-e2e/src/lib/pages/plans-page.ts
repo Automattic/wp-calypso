@@ -155,7 +155,10 @@ export class PlansPage {
 	 * @throws If the expected plan title is not found in the timeout period.
 	 */
 	async validateActivePlan( expectedPlan: Plans ): Promise< void > {
-		await this.page.locator( selectors.spotlightPlan ).getByText( expectedPlan ).waitFor();
+		await this.page
+			.locator( selectors.spotlightPlan )
+			.getByRole( 'heading', { name: expectedPlan } )
+			.waitFor();
 	}
 
 	/**
