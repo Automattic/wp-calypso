@@ -76,6 +76,7 @@ form {
 	.card.login__form {
 		box-shadow: none;
 		padding: 16px 16px 24px;
+		clip-path: unset;
 
 		@include break-mobile {
 			padding: 16px 0 24px;
