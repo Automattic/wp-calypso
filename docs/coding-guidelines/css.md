@@ -4,11 +4,13 @@
 
 We're transitioning to a component-based design system. When styling, adhere to the following principles:
 
- - Rely on the Design System components, props and variants as much as possible.
+ - Rely on the Design System components (@wordpress/components, @automattic/components and other packages), props and variants as much as possible.
  - If a design to be implemented doesn't match the existing components, discuss with the design team to see if the design should be adapted.
  - Consider whether the design system components need to be adapted/modified to accommodate the proposed designs.
  - Avoid writing custom CSS/Sass unless absolutely necessary.
  - If you do need to write custom CSS/Sass, follow the guidelines outlined on this document.
+
+For all questions related to the design system, available components or design considerations, consider asking in #components or #design-system Slack channels.
 
 ## Introduction
 
