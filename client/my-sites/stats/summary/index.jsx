@@ -99,11 +99,11 @@ class StatsSummary extends Component {
 			query.period = 'day'; // Override for custom date ranges.
 		}
 
+		const originalQuery = query;
 		const moduleQuery = merge( {}, statsQueryOptions, query );
 		const urlParams = new URLSearchParams( this.props.context.querystring );
 		const listItemClassName = 'stats__summary--narrow-mobile';
 		const isStatsNavigationImprovementEnabled = config.isEnabled( 'stats/navigation-improvement' );
-		let finalModuleQuery = moduleQuery;
 
 		switch ( this.props.context.params.module ) {
 			case 'referrers':
@@ -112,11 +112,11 @@ class StatsSummary extends Component {
 				statType = 'statsReferrers';
 				summaryView = (
 					<Fragment key="referrers-summary">
-						{ this.renderSummaryHeader( path, statType, false, finalModuleQuery ) }
+						{ this.renderSummaryHeader( path, statType, false, moduleQuery ) }
 						<StatsModuleReferrers
 							moduleStrings={ StatsStrings.referrers }
 							period={ this.props.period }
-							query={ finalModuleQuery }
+							query={ moduleQuery }
 							summary
 							listItemClassName={ listItemClassName }
 						/>
@@ -130,11 +130,11 @@ class StatsSummary extends Component {
 				statType = 'statsClicks';
 				summaryView = (
 					<Fragment key="clicks-summary">
-						{ this.renderSummaryHeader( path, statType, false, finalModuleQuery ) }
+						{ this.renderSummaryHeader( path, statType, false, moduleQuery ) }
 						<StatsModuleClicks
 							moduleStrings={ StatsStrings.clicks }
 							period={ this.props.period }
-							query={ finalModuleQuery }
+							query={ moduleQuery }
 							summary
 							listItemClassName={ listItemClassName }
 						/>
@@ -148,12 +148,12 @@ class StatsSummary extends Component {
 				statType = 'statsCountryViews';
 				summaryView = (
 					<Fragment key="countries-summary">
-						{ this.renderSummaryHeader( path, statType, false, finalModuleQuery ) }
+						{ this.renderSummaryHeader( path, statType, false, moduleQuery ) }
 						{ isEnabled( 'stats/locations' ) ? (
 							<StatsModuleLocations
 								moduleStrings={ StatsStrings.countries }
 								period={ this.props.period }
-								query={ finalModuleQuery }
+								query={ moduleQuery }
 								summary
 								listItemClassName={ listItemClassName }
 							/>
@@ -161,7 +161,7 @@ class StatsSummary extends Component {
 							<StatsModuleCountries
 								moduleStrings={ StatsStrings.countries }
 								period={ this.props.period }
-								query={ finalModuleQuery }
+								query={ moduleQuery }
 								summary
 								listItemClassName={ listItemClassName }
 							/>
@@ -176,11 +176,11 @@ class StatsSummary extends Component {
 				statType = 'statsCountryViews';
 				summaryView = (
 					<Fragment key="countries-summary">
-						{ this.renderSummaryHeader( path, statType, false, finalModuleQuery ) }
+						{ this.renderSummaryHeader( path, statType, false, moduleQuery ) }
 						<StatsModuleLocations
 							moduleStrings={ StatsStrings.countries }
 							period={ this.props.period }
-							query={ finalModuleQuery }
+							query={ moduleQuery }
 							summary
 							listItemClassName={ listItemClassName }
 							initialGeoMode={ urlParams.get( 'geoMode' ) }
@@ -195,11 +195,11 @@ class StatsSummary extends Component {
 				statType = 'statsTopPosts';
 				summaryView = (
 					<Fragment key="posts-summary">
-						{ this.renderSummaryHeader( path, statType, false, finalModuleQuery ) }
+						{ this.renderSummaryHeader( path, statType, false, moduleQuery ) }
 						<StatsModuleTopPosts
 							moduleStrings={ StatsStrings.posts }
 							period={ this.props.period }
-							query={ finalModuleQuery }
+							query={ moduleQuery }
 							summary
 							listItemClassName={ listItemClassName }
 						/>
@@ -254,14 +254,13 @@ class StatsSummary extends Component {
 				title = translate( 'File Downloads' );
 				path = 'filedownloads';
 				statType = 'statsFileDownloads';
-				finalModuleQuery = query;
 				summaryView = (
 					<Fragment key="filedownloads-summary">
-						{ this.renderSummaryHeader( path, statType, false, finalModuleQuery ) }
+						{ this.renderSummaryHeader( path, statType, false, query ) }
 						<StatsModuleDownloads
 							moduleStrings={ StatsStrings.filedownloads }
 							period={ this.props.period }
-							query={ finalModuleQuery }
+							query={ query }
 							summary
 							listItemClassName={ listItemClassName }
 						/>
@@ -316,11 +315,11 @@ class StatsSummary extends Component {
 				statType = 'statsSearchTerms';
 				summaryView = (
 					<Fragment key="search-terms-summary">
-						{ this.renderSummaryHeader( path, statType, false, finalModuleQuery ) }
+						{ this.renderSummaryHeader( path, statType, false, query ) }
 						<StatsModuleSearch
 							moduleStrings={ StatsStrings.search }
 							period={ this.props.period }
-							query={ finalModuleQuery }
+							query={ query }
 							summary
 							listItemClassName={ listItemClassName }
 						/>
@@ -384,7 +383,7 @@ class StatsSummary extends Component {
 										<DownloadCsv
 											skipQuery={ statType === 'utm' }
 											statType={ statType }
-											query={ finalModuleQuery }
+											query={ moduleQuery }
 											path={ path }
 											period={ this.props.period }
 										/>
