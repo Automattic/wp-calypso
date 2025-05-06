@@ -49,7 +49,7 @@ const OPTION_KEYS = {
 
 type GeoMode = 'country' | 'region' | 'city';
 
-const GEO_MODES: Record< string, GeoMode > = {
+export const GEO_MODES: Record< string, GeoMode > = {
 	[ OPTION_KEYS.COUNTRIES ]: 'country',
 	[ OPTION_KEYS.REGIONS ]: 'region',
 	[ OPTION_KEYS.CITIES ]: 'city',

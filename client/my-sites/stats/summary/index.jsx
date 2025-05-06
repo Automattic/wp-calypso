@@ -21,6 +21,7 @@ import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-e
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import PageHeader from '../components/headers/page-header';
 import StatsModuleLocations from '../features/modules/stats-locations';
+import { GEO_MODES } from '../features/modules/stats-locations/stats-locations';
 import StatsModuleUTM from '../features/modules/stats-utm';
 import { StatsGlobalValuesContext } from '../pages/providers/global-provider';
 import DownloadCsv from '../stats-download-csv';
@@ -361,6 +362,9 @@ class StatsSummary extends Component {
 		}
 		const navigationItems = [ { label: backLabel, href: backLink }, { label: title } ];
 
+		const geoMode = this.props.context.query?.geoMode;
+		const geoModeLabel = geoMode && geoMode in GEO_MODES ? GEO_MODES[ geoMode ].label : null;
+
 		return (
 			<Main fullWidthLayout>
 				<PageViewTracker
@@ -381,7 +385,7 @@ class StatsSummary extends Component {
 									<DownloadCsv
 										statType={ statType }
 										query={ moduleQuery }
-										path={ path }
+										path={ statType === 'statsCountryViews' ? `locations-${ geoModeLabel }` : path }
 										period={ this.props.period }
 										skipQuery={ statType === 'statsUTM' }
 									/>
