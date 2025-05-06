@@ -104,7 +104,7 @@ export class FeedbackInboxPage {
 			.fill( search );
 		await responseRequestPromise;
 		// And wait for the UI re-render by waiting until the tabs are re-enabled.
-		await this.page.getByRole( 'tab', { name: 'Inbox', exact: false, disabled: false } ).waitFor();
+		await this.page.getByRole( 'radio', { name: /^Inbox\s*\(\d+\)$/ } ).waitFor();
 	}
 
 	/**
