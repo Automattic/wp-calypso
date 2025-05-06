@@ -277,6 +277,11 @@ function ViewTable< Item >( {
 				headerMenuRefs.current.delete( column );
 			}
 		};
+	const headerStyle = view.layout?.headerStickyOffset
+		? {
+				insetBlockStart: view.layout.headerStickyOffset,
+		  }
+		: {};
 
 	return (
 		<>
@@ -291,7 +296,7 @@ function ViewTable< Item >( {
 				aria-busy={ isLoading }
 				aria-describedby={ tableNoticeId }
 			>
-				<thead>
+				<thead style={ headerStyle }>
 					<tr className="dataviews-view-table__row">
 						{ hasBulkActions && (
 							<th

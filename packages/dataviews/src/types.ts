@@ -366,6 +366,11 @@ export interface ViewTable extends ViewBase {
 		 * The density of the view.
 		 */
 		density?: Density;
+
+		/**
+		 * The offset of the table header.
+		 */
+		headerStickyOffset?: number;
 	};
 }
 
