@@ -68,12 +68,29 @@ class ImporterError extends PureComponent {
 		);
 		const { description = '' } = this.props;
 
+		const helpButton = (
+			<Button className="importer__error-pane is-link" onClick={ this.contactSupport } />
+		);
+
+		const generalMessage = this.props.translate(
+			'%(errorDescription)s{{br/}}Make sure you are using a valid export file in XML or ZIP format. {{cs}}Still need help{{/cs}}?',
+			{
+				args: {
+					errorDescription: description.length ? description : defaultError,
+				},
+				components: {
+					br: <br />,
+					cs: helpButton,
+				},
+			}
+		);
+
 		if ( isEnabled( 'importer/site-backups' ) && this.props.importerEngine === 'wordpress' ) {
 			return this.props.translate(
 				'The file type you uploaded is not supported. Please upload a WordPress export file in XML or ZIP format, or a Playground ZIP file. {{cs}}Still need help{{/cs}}?',
 				{
 					components: {
-						cs: <Button className="importer__error-pane is-link" onClick={ this.contactSupport } />,
+						cs: helpButton,
 					},
 				}
 			);
@@ -90,9 +107,7 @@ class ImporterError extends PureComponent {
 						},
 						components: {
 							br: <br />,
-							cs: (
-								<Button className="importer__error-pane is-link" onClick={ this.contactSupport } />
-							),
+							cs: helpButton,
 							doc: (
 								<a
 									href={ localizeUrl(
@@ -105,35 +120,11 @@ class ImporterError extends PureComponent {
 						},
 					}
 				),
-				oldCopy: this.props.translate(
-					'%(errorDescription)s{{br/}}Make sure you are using a valid export file in XML or ZIP format. {{cs}}Still need help{{/cs}}?',
-					{
-						args: {
-							errorDescription: description.length ? description : defaultError,
-						},
-						components: {
-							br: <br />,
-							cs: (
-								<Button className="importer__error-pane is-link" onClick={ this.contactSupport } />
-							),
-						},
-					}
-				),
+				oldCopy: generalMessage,
 			} );
 		}
 
-		return this.props.translate(
-			'%(errorDescription)s{{br/}}Make sure you are using a valid export file in XML or ZIP format. {{cs}}Still need help{{/cs}}?',
-			{
-				args: {
-					errorDescription: description.length ? description : defaultError,
-				},
-				components: {
-					br: <br />,
-					cs: <Button className="importer__error-pane is-link" onClick={ this.contactSupport } />,
-				},
-			}
-		);
+		return generalMessage;
 	};
 
 	getPreUploadError = () => {
