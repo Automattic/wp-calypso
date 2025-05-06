@@ -140,7 +140,7 @@ type MapStepToItsSubmitData< T extends StepperStep > = {
 	};
 }[ T[ 'slug' ] ];
 
-type MapStepToItsAcceptedData< T extends StepperStep[] > = Partial< {
+type MapStepsToTheirAcceptedProps< T extends StepperStep[] > = Partial< {
 	[ K in T[ number ] as K[ 'slug' ] ]: Omit<
 		Parameters< Awaited< ReturnType< K[ 'asyncComponent' ] > >[ 'default' ] >[ 0 ],
 		keyof StepProps
@@ -253,7 +253,7 @@ export interface FlowV2< FlowStepsInitialize extends DefaultFlowStepsConfig > {
 	/**
 	 * Use this method to pass props to the steps from the flow.
 	 */
-	useStepsProps?(): MapStepToItsAcceptedData< Awaited< ReturnType< FlowStepsInitialize > > >;
+	useStepsProps?(): MapStepsToTheirAcceptedProps< Awaited< ReturnType< FlowStepsInitialize > > >;
 
 	name: string;
 	/**
@@ -395,3 +395,17 @@ export interface FailureInfo {
 	code: number | string;
 	error: string;
 }
+/**
+ * Below are types used by State management
+ */
+type GroupBySlug< U extends StepperStep > = {
+	[ S in U[ 'slug' ] ]: U extends { slug: S }
+		? Parameters<
+				Parameters<
+					Awaited< ReturnType< U[ 'asyncComponent' ] > >[ 'default' ]
+				>[ 0 ][ 'navigation' ][ 'submit' ]
+		  >[ 0 ]
+		: never;
+};
+
+export type StepperStepsUnionedType = GroupBySlug< AsyncStepperStep >;
