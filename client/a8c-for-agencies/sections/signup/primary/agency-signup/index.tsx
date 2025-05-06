@@ -12,7 +12,7 @@ import {
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import SignupIntro from '../../intro';
 import SignupForm from '../../signup-form';
-import SignupFormV2 from '../../signup-v2';
+import SignupFormV2 from '../../signup-form-v2';
 
 export default function AgencySignup() {
 	const userLoggedIn = useSelector( isUserLoggedIn );
