@@ -327,26 +327,24 @@ function SingleProductAndCostOverridesList( { product }: { product: ResponseCart
 	);
 	const [ , streamlinedPriceExperimentAssignment ] = useStreamlinedPriceExperiment();
 	if ( streamlinedPriceExperimentAssignment ) {
-		let isDiscounted;
 		let streamlinedActualAmountDisplay;
-		let originalAmountDisplay;
-		if ( ! doesIntroductoryOfferHavePriceIncrease( product ) ) {
-			// logic taken from packages/wpcom-checkout/src/checkout-line-items.tsx
-			const originalAmountInteger = product.item_original_subtotal_integer;
-			originalAmountDisplay = formatCurrency( originalAmountInteger, product.currency, {
-				isSmallestUnit: true,
-				stripZeros: true,
-			} );
-			const itemSubtotalInteger = product.item_subtotal_integer;
-			streamlinedActualAmountDisplay = formatCurrency( itemSubtotalInteger, product.currency, {
-				isSmallestUnit: true,
-				stripZeros: true,
-			} );
-			isDiscounted = Boolean(
-				itemSubtotalInteger < originalAmountInteger && originalAmountDisplay
-			);
-		} else {
-			isDiscounted = false;
+
+		// logic taken from packages/wpcom-checkout/src/checkout-line-items.tsx
+		const originalAmountInteger = product.item_original_subtotal_integer;
+		const originalAmountDisplay = formatCurrency( originalAmountInteger, product.currency, {
+			isSmallestUnit: true,
+			stripZeros: true,
+		} );
+		const itemSubtotalInteger = product.item_subtotal_integer;
+		streamlinedActualAmountDisplay = formatCurrency( itemSubtotalInteger, product.currency, {
+			isSmallestUnit: true,
+			stripZeros: true,
+		} );
+		const isDiscounted = Boolean(
+			itemSubtotalInteger < originalAmountInteger && originalAmountDisplay
+		);
+
+		if ( ! isDiscounted ) {
 			streamlinedActualAmountDisplay = actualAmountDisplay;
 		}
 

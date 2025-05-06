@@ -31,8 +31,6 @@ import { formatCurrency } from '@automattic/number-formatters';
 import { isNewsletterFlow, isAnyHostingFlow } from '@automattic/onboarding';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import {
-	doesIntroductoryOfferHaveDifferentTermLengthThanProduct,
-	doesIntroductoryOfferHavePriceIncrease,
 	isBillingInfoEmpty,
 	getTaxBreakdownLineItemsFromCart,
 	getTotalLineItemFromCart,
@@ -193,22 +191,11 @@ function CheckoutSummaryPriceList() {
 	let totalDiscount = 0;
 	if ( streamlinedPriceExperimentAssignment ) {
 		for ( const product of responseCart.products ) {
-			// Calculate due today amount for introductory offers, based on the code from LineItemIntroOfferCostOverrideDetail
-			if (
-				doesIntroductoryOfferHaveDifferentTermLengthThanProduct(
-					product.cost_overrides,
-					product.introductory_offer_terms,
-					product.months_per_bill_period
-				) ||
-				doesIntroductoryOfferHavePriceIncrease( product )
-			) {
-				// While cost_overrides is an array, it seems that it only contains one item for now
-				const dueTodayAmount =
-					product.cost_overrides[ 0 ]?.new_subtotal_integer ?? product.item_subtotal_integer;
-				subtotalBeforeDiscounts += dueTodayAmount;
-			} else {
-				subtotalBeforeDiscounts += product.item_original_subtotal_integer;
-			}
+			// In specific cases (e.g. premium domains) the original price (renewal) is lower than the due price.
+			subtotalBeforeDiscounts += Math.max(
+				product.item_subtotal_integer,
+				product.item_original_subtotal_integer
+			);
 		}
 		totalDiscount = subtotalBeforeDiscounts - responseCart.sub_total_integer;
 	}
