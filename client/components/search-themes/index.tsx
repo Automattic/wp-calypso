@@ -1,7 +1,7 @@
 import { SearchControl } from '@wordpress/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import Search, { SEARCH_MODE_ON_ENTER } from 'calypso/components/search';
 import './style.scss';
 
@@ -14,6 +14,21 @@ const SearchThemes: React.FC< SearchThemesProps > = ( { query, onSearch, recordT
 	const translate = useTranslate();
 	const [ searchInput, setSearchInput ] = useState( query );
 
+	const onClearSearch = useCallback( () => {
+		onSearch( '' );
+		recordTracksEvent && recordTracksEvent( 'search_clear_icon_click' );
+	}, [ onSearch, recordTracksEvent ] );
+
+	const onChange = useCallback(
+		( value: string ) => {
+			setSearchInput( value );
+			if ( value === '' && query !== '' ) {
+				onClearSearch();
+			}
+		},
+		[ query, onClearSearch ]
+	);
+
 	const onKeyDown = useCallback(
 		( event: React.KeyboardEvent< HTMLInputElement > ) => {
 			if ( event.key === 'Enter' ) {
@@ -22,17 +37,6 @@ const SearchThemes: React.FC< SearchThemesProps > = ( { query, onSearch, recordT
 		},
 		[ onSearch, searchInput ]
 	);
-
-	const onClearSearch = useCallback( () => {
-		onSearch( '' );
-		recordTracksEvent && recordTracksEvent( 'search_clear_icon_click' );
-	}, [ onSearch, recordTracksEvent ] );
-
-	useEffect( () => {
-		if ( searchInput === '' && query !== '' ) {
-			onClearSearch();
-		}
-	}, [ searchInput, query, onClearSearch ] );
 
 	return (
 		<div>
@@ -45,7 +49,7 @@ const SearchThemes: React.FC< SearchThemesProps > = ( { query, onSearch, recordT
 					__nextHasNoMarginBottom
 					value={ searchInput }
 					placeholder={ translate( 'Search themes…' ) }
-					onChange={ setSearchInput }
+					onChange={ onChange }
 					onKeyDown={ onKeyDown }
 				/>
 			</div>
