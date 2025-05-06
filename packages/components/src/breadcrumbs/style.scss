@@ -1,10 +1,10 @@
 @import "@wordpress/base-styles/mixins";
 @import "@wordpress/base-styles/variables";
 
-.breadcrumbs {
+.a8c-components-breadcrumbs {
 	overflow: visible;
 
-	.breadcrumb__item-wrapper {
+	.a8c-components-breadcrumb__item-wrapper {
 		display: inline-flex;
 		flex-shrink: 0;
 
@@ -22,7 +22,7 @@
 		}
 	}
 
-	.breadcrumb__item {
+	.a8c-components-breadcrumb__item {
 		color: $gray-700;
 		text-decoration: none;
 		height: auto;

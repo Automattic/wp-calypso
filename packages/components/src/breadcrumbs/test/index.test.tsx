@@ -5,14 +5,14 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as React from 'react';
 import { useState } from 'react';
-import Breadcrumbs from '../index';
+import { Breadcrumbs } from '../index';
 import type { BreadcrumbItemProps } from '../types';
 
 describe( 'Breadcrumbs', () => {
 	it( 'renders nothing when there are no items or one item', () => {
 		const { container, rerender } = render( <Breadcrumbs items={ [] } /> );
 		expect( container ).toBeEmptyDOMElement();
-		rerender( <Breadcrumbs items={ [ { label: 'Home' } ] } /> );
+		rerender( <Breadcrumbs items={ [ { label: 'Home', href: '#' } ] } /> );
 		expect( container.firstChild ).toBeNull();
 	} );
 	it( 'renders two items correctly', () => {
@@ -50,7 +50,7 @@ describe( 'Breadcrumbs', () => {
 					{ label: 'Categories', href: '/products/categories' },
 					{ label: 'Electronics', href: '/products/categories/electronics' },
 				] }
-				isCompact
+				size="compact"
 			/>
 		);
 		expect( screen.getByRole( 'link', { name: 'Home' } ) ).toBeVisible();

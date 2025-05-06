@@ -13,13 +13,13 @@ import './style.scss';
 
 function BreadcrumbsMenu( { items }: { items: BreadcrumbItemProps[] } ) {
 	return (
-		<span className="breadcrumb__item-wrapper">
+		<span className="a8c-components-breadcrumb__item-wrapper">
 			<Menu placement="bottom-start">
 				<Menu.TriggerButton
 					render={
 						<Button
 							size="compact"
-							className="breadcrumb__item"
+							className="a8c-components-breadcrumb__item"
 							text="…"
 							label={ __( 'More breadcrumb items' ) }
 						/>
@@ -29,9 +29,7 @@ function BreadcrumbsMenu( { items }: { items: BreadcrumbItemProps[] } ) {
 					{ items.map( ( item, index ) => (
 						<Menu.Item
 							key={ `${ item.label }-${ index }` }
-							render={
-								<a href={ item.href } onClick={ item.onClick } className="breadcrumb__item" />
-							}
+							render={ <a href={ item.href } onClick={ item.onClick } /> }
 						>
 							<Menu.ItemLabel>{ item.label }</Menu.ItemLabel>
 						</Menu.Item>
@@ -44,8 +42,8 @@ function BreadcrumbsMenu( { items }: { items: BreadcrumbItemProps[] } ) {
 
 function BreadcrumbItem( { item: { label, href, onClick } }: { item: BreadcrumbItemProps } ) {
 	return (
-		<span className="breadcrumb__item-wrapper">
-			<a href={ href } onClick={ onClick } className="breadcrumb__item">
+		<span className="a8c-components-breadcrumb__item-wrapper">
+			<a href={ href } onClick={ onClick } className="a8c-components-breadcrumb__item">
 				{ label }
 			</a>
 		</span>
@@ -53,7 +51,7 @@ function BreadcrumbItem( { item: { label, href, onClick } }: { item: BreadcrumbI
 }
 
 function UnforwardedBreadcrumbs(
-	{ items, showCurrentItem = false, isCompact = false }: BreadcrumbProps,
+	{ items, showCurrentItem = false, size = 'default' }: BreadcrumbProps,
 	ref: React.ForwardedRef< HTMLElement >
 ) {
 	const scrollWidth = useRef( 0 );
@@ -95,12 +93,13 @@ function UnforwardedBreadcrumbs(
 	 * overflow, we set the `_isCompact` prop to true.
 	 * Noting that we prioritize the `isCompact` prop over the `scrollWidth` check.
 	 */
-	const _isCompact = hasMiddleItems && ( isCompact || containerWidth < scrollWidth.current );
+	const _isCompact =
+		hasMiddleItems && ( size === 'compact' || containerWidth < scrollWidth.current );
 	const currentItem = (
-		<span className="breadcrumb__item-wrapper is-current">
+		<span className="a8c-components-breadcrumb__item-wrapper is-current">
 			<Text
 				as="span"
-				className="breadcrumb__item"
+				className="a8c-components-breadcrumb__item"
 				aria-current="page"
 				aria-hidden={ ! showCurrentItem }
 			>
@@ -111,7 +110,7 @@ function UnforwardedBreadcrumbs(
 	return (
 		<HStack
 			as="nav"
-			className="breadcrumbs"
+			className="a8c-components-breadcrumbs"
 			ref={ mergedRefs }
 			spacing={ 0 }
 			justify="flex-start"
@@ -132,8 +131,6 @@ function UnforwardedBreadcrumbs(
 	);
 }
 
-export const Breadcrumbs = forwardRef( UnforwardedBreadcrumbs );
-
 /**
  * The breadcrumb component provides a secondary navigation aid that shows users their current
  * location within a site's or application's hierarchy. It helps users understand the structure
@@ -143,4 +140,4 @@ export const Breadcrumbs = forwardRef( UnforwardedBreadcrumbs );
  * breadcrumb trail. This ensures screen reader users receive the full navigational context.
  *
  */
-export default Breadcrumbs;
+export const Breadcrumbs = forwardRef( UnforwardedBreadcrumbs );

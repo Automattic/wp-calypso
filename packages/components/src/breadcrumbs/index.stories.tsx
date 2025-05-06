@@ -1,8 +1,8 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { BreadcrumbItemProps } from './types';
-import Breadcrumb from './index';
+import { Breadcrumbs } from './index';
 
-// Define example items for the controls
+// Define example items for the controls.
 const itemsOptions: Record< string, BreadcrumbItemProps[] > = {
 	'3 items': [
 		{ label: 'Home', href: '#' },
@@ -31,8 +31,8 @@ const itemsOptions: Record< string, BreadcrumbItemProps[] > = {
 };
 
 const meta = {
-	title: 'packages/components/Breadcrumb',
-	component: Breadcrumb,
+	title: 'packages/components/Breadcrumbs',
+	component: Breadcrumbs,
 	tags: [ 'autodocs' ],
 	argTypes: {
 		items: {
@@ -45,7 +45,7 @@ const meta = {
 	parameters: {
 		actions: { argTypesRegex: '^on.*' },
 	},
-} satisfies Meta< typeof Breadcrumb >;
+} satisfies Meta< typeof Breadcrumbs >;
 
 export default meta;
 type Story = StoryObj< typeof meta >;

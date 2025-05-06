@@ -6,7 +6,7 @@ export interface BreadcrumbItemProps {
 	/**
 	 * The URL that the breadcrumb item should link to.
 	 */
-	href?: string;
+	href: string;
 	/**
 	 * An optional callback to handle clicking on this breadcrumb item.
 	 */
@@ -26,11 +26,11 @@ export interface BreadcrumbProps {
 	 */
 	showCurrentItem?: boolean;
 	/**
-	 * A flag to force the component to be rendered in a compact
-	 * format, by rendering a dropdown of the middle items (if any).
-	 * If not set to `true` the component switches to compact mode
-	 * and back based on the available space.
-	 * @default false
+	 * The size of the breadcrumbs component.
+	 * - default: The component switches to compact mode and back based on the available space.
+	 * - compact: Forces the component to be rendered in a compact format, by rendering a dropdown
+	 *   of the middle items (if any).
+	 * @default 'default'
 	 */
-	isCompact?: boolean;
+	size?: 'default' | 'compact';
 }
