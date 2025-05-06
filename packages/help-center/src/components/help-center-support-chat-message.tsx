@@ -2,7 +2,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Gravatar, TimeSince } from '@automattic/components';
 import { getNumericDateTimeString, useLocale } from '@automattic/i18n-utils';
-import { HumanAvatar } from '@automattic/odie-client/src/assets';
+import { HumanAvatar, WapuuAvatar } from '@automattic/odie-client/src/assets';
 import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { chevronRight, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
@@ -51,6 +51,10 @@ export const HelpCenterSupportChatMessage = ( {
 		role === 'business' ? __( 'Happiness Engineer', __i18n_text_domain__ ) : displayName;
 
 	const renderAvatar = () => {
+		if ( role === 'bot' ) {
+			return <WapuuAvatar />;
+		}
+
 		if ( role === 'business' ) {
 			return <HumanAvatar title={ __( 'User Avatar', __i18n_text_domain__ ) } />;
 		}
