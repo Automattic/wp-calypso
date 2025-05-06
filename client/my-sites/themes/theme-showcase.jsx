@@ -15,7 +15,7 @@ import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QueryThemeFilters from 'calypso/components/data/query-theme-filters';
-import { SearchThemes } from 'calypso/components/search-themes';
+import { SearchThemes, SearchThemesV2 } from 'calypso/components/search-themes';
 import ThemeDesignYourOwnModal from 'calypso/components/theme-design-your-own-modal';
 import ThemeSiteSelectorModal from 'calypso/components/theme-site-selector-modal';
 import { THEME_TIERS } from 'calypso/components/theme-tier/constants';
@@ -697,7 +697,7 @@ class ThemeShowcase extends Component {
 									<div className="theme__search">
 										<div className="theme__search-input">
 											{ isSearchV2 ? (
-												<SearchThemes
+												<SearchThemesV2
 													query={ featureStringFilter + search }
 													onSearch={ this.doSearch }
 												/>
