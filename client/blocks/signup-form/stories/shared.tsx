@@ -24,7 +24,7 @@ export const A4AWrapper = ( Story: StoryFn ) => (
 
 export const AkismetWrapper = ( Story: StoryFn ) => (
 	<div className="layout is-akismet" style={ { maxWidth: '360px', padding: '30px' } }>
-		<div className="signup-form-social-first-email">
+		<div className="signup-form signup-form-social-first">
 			<div className="card logged-out-form__footer">
 				<Story />
 			</div>

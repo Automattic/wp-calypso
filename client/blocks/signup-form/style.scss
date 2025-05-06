@@ -21,18 +21,6 @@
 	}
 }
 
-.signup-form-social-first-email {
-	/**
-	* Akismet Signup
-	*/
-	@at-root .is-akismet & {
-		.signup-form__submit {
-			--color-accent: var(--color-akismet);
-			--color-accent-60: var(--color-akismet);
-		}
-	}
-}
-
 .signup-form .signup-form__input.form-text-input {
 	margin-bottom: 20px;
 	transition: none;
@@ -292,8 +280,7 @@ body.is-section-accept-invite {
 			}
 		}
 	}
-
-	}
+}
 
 .card.auth-form__social.is-signup {
 	background: inherit;
@@ -384,12 +371,18 @@ body.is-section-accept-invite {
 		}
 	}
 
+
+}
+
+.signup-form.signup-form-social-first,
+.card.auth-form__social.is-signup {
 	/**
 	* Akismet Signup
 	*/
 	@at-root .is-akismet & {
-		.auth-form__social-buttons .auth-form__social-buttons-container .social-buttons__button {
+		.components-button {
 			--color-accent: var(--color-akismet);
+			--color-accent-60: var(--color-akismet);
 		}
 	}
 }
