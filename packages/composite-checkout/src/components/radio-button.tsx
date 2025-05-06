@@ -9,9 +9,10 @@ interface RadioButtonWrapperProps {
 	isFocused?: boolean;
 	checked?: boolean;
 	hideRadioButton?: boolean;
+	isStreamlinedPriceStyle?: boolean;
 }
 
-const RadioButtonWrapper = styled.div<
+export const RadioButtonWrapper = styled.div<
 	RadioButtonWrapperProps & React.HTMLAttributes< HTMLDivElement >
 >`
 	position: relative;
@@ -32,10 +33,14 @@ const RadioButtonWrapper = styled.div<
 			top: 0;
 			left: 0;
 			content: '';
-			border: ${ props.checked ? '1px solid ' + getBorderColor( props ) : 'none' };
+			border: ${
+				props.checked || props.isStreamlinedPriceStyle
+					? '1px solid ' + getBorderColor( props )
+					: 'none'
+			};
 			border-bottom: 1px solid ${ getBorderColor( props ) };
 			box-sizing: border-box;
-			border-radius: ${ props.checked ? '3px' : 0 };
+			border-radius: ${ props.checked || props.isStreamlinedPriceStyle ? '3px' : 0 };
 			.rtl & {
 				right: 0;
 				left: auto;
@@ -206,6 +211,7 @@ export default function RadioButton( {
 	id,
 	ariaLabel,
 	hideRadioButton,
+	isStreamlinedPriceStyle,
 	...otherProps
 }: RadioButtonProps ) {
 	const [ isFocused, changeFocus ] = useState( false );
@@ -217,6 +223,7 @@ export default function RadioButton( {
 			hidden={ hidden }
 			hideRadioButton={ hideRadioButton }
 			className={ `${ checked ? 'is-checked' : '' }` }
+			isStreamlinedPriceStyle={ isStreamlinedPriceStyle }
 		>
 			<Radio
 				type="radio"
@@ -261,6 +268,7 @@ interface RadioButtonProps {
 	ariaLabel?: string;
 	children?: React.ReactNode;
 	hideRadioButton?: boolean;
+	isStreamlinedPriceStyle?: boolean;
 }
 
 RadioButton.propTypes = {
