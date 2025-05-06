@@ -24,6 +24,7 @@ const trackContactButtonClicked = ( sectionName: string ) => {
 export const HelpCenterSupportChatMessage = ( {
 	message,
 	badgeCount = 0,
+	odieId,
 	isUnread = false,
 	navigateTo = '',
 	supportInteraction,
@@ -36,6 +37,7 @@ export const HelpCenterSupportChatMessage = ( {
 	isUnread: boolean;
 	navigateTo: string;
 	altText?: string;
+	odieId?: number;
 	supportInteraction: SupportInteraction | undefined;
 	sectionName?: string;
 	conversationStatus?: string;
@@ -46,7 +48,7 @@ export const HelpCenterSupportChatMessage = ( {
 	const { displayName, received, role, text, altText } = message;
 	const helpCenterContext = useHelpCenterContext();
 	const helpCenterContextSectionName = helpCenterContext.sectionName;
-	const { setCurrentSupportInteraction } = useDataStoreDispatch( HELP_CENTER_STORE );
+	const { setCurrentSupportInteraction, setOdieId } = useDataStoreDispatch( HELP_CENTER_STORE );
 	const messageDisplayName =
 		role === 'business' ? __( 'Happiness Engineer', __i18n_text_domain__ ) : displayName;
 
@@ -73,7 +75,9 @@ export const HelpCenterSupportChatMessage = ( {
 			to={ navigateTo }
 			onClick={ () => {
 				trackContactButtonClicked( sectionName || helpCenterContextSectionName );
-				if ( supportInteraction ) {
+				if ( odieId ) {
+					setOdieId( odieId );
+				} else if ( supportInteraction ) {
 					setCurrentSupportInteraction( supportInteraction );
 				}
 			} }

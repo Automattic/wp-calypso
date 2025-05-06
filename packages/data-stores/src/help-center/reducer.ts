@@ -42,6 +42,13 @@ const currentSupportInteraction: Reducer< SupportInteraction | undefined, HelpCe
 	return state;
 };
 
+const odieId: Reducer< number | undefined, HelpCenterAction > = ( state, action ) => {
+	if ( action.type === 'HELP_CENTER_SET_ODIE_ID' ) {
+		return action.odieId;
+	}
+	return state;
+};
+
 const isMinimized: Reducer< boolean, HelpCenterAction > = ( state = false, action ) => {
 	switch ( action.type ) {
 		case 'HELP_CENTER_SET_MINIMIZED':
@@ -182,6 +189,7 @@ const reducer = combineReducers( {
 	zendeskClientId,
 	unreadCount,
 	navigateToRoute,
+	odieId,
 	odieInitialPromptText,
 	odieBotNameSlug,
 	allowPremiumSupport,
