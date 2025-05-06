@@ -1218,7 +1218,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/explat-client-react-helpers@workspace:packages/explat-client-react-helpers"
   dependencies:
-    "@automattic/calypso-polyfills": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/explat-client": "workspace:^"
     "@testing-library/dom": "npm:^10.4.0"
@@ -1235,7 +1234,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/explat-client@workspace:packages/explat-client"
   dependencies:
-    "@automattic/calypso-polyfills": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     jest: "npm:^29.7.0"
     tslib: "npm:^2.3.0"

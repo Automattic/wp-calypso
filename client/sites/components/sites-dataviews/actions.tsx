@@ -25,6 +25,7 @@ import {
 	isP2Site,
 	isSimpleSite,
 	isStagingSite,
+	isSitePreviewPaneEligible,
 } from 'calypso/sites-dashboard/utils';
 import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -40,13 +41,7 @@ export const isActionEligible = (
 ): ( ( site: SiteExcerptData ) => boolean ) => {
 	const canOpenHosting = ( site: SiteExcerptData ) => {
 		const canManageOptions = capabilities[ site.ID ]?.manage_options;
-		if (
-			site.is_deleted ||
-			! canManageOptions ||
-			isP2Site( site ) ||
-			isNotAtomicJetpack( site ) ||
-			isDisconnectedJetpackAndNotAtomic( site )
-		) {
+		if ( site.is_deleted || ! isSitePreviewPaneEligible( site, canManageOptions ) ) {
 			return false;
 		}
 		return true;

@@ -75,8 +75,14 @@ class FileImporter extends PureComponent {
 	};
 
 	render() {
-		const { title, overrideDestination, uploadDescription, optionalUrl, acceptedFileTypes } =
-			this.props.importerData;
+		const {
+			engine,
+			title,
+			overrideDestination,
+			uploadDescription,
+			optionalUrl,
+			acceptedFileTypes,
+		} = this.props.importerData;
 		const { importerStatus, site, fromSite, nextStepUrl, skipNextStep, invalidateCardData } =
 			this.props;
 		const { errorData, importerState } = importerStatus;
@@ -115,6 +121,7 @@ class FileImporter extends PureComponent {
 						retryImport={ () => {
 							this.props.cancelImport( site.ID, importerStatus.importerId );
 						} }
+						importerEngine={ engine }
 					/>
 				) }
 				{ includes( importingStates, importerState ) && (

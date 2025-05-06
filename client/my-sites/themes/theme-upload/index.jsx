@@ -326,7 +326,7 @@ class Upload extends Component {
 		}
 
 		return (
-			<Main className="theme-upload" wideLayout>
+			<Main className="theme-upload">
 				<PageViewTracker path="/themes/upload/:site" title="Themes > Install" />
 				<DocumentHead title={ translate( 'Install Theme' ) } />
 
