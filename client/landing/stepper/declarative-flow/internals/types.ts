@@ -140,12 +140,18 @@ type MapStepToItsSubmitData< T extends StepperStep > = {
 	};
 }[ T[ 'slug' ] ];
 
-type MapStepsToTheirAcceptedProps< T extends StepperStep[] > = Partial< {
-	[ K in T[ number ] as K[ 'slug' ] ]: Omit<
-		Parameters< Awaited< ReturnType< K[ 'asyncComponent' ] > >[ 'default' ] >[ 0 ],
-		keyof StepProps
-	>;
-} >;
+type RemoveEmptyObjects< T > = {
+	[ K in keyof T as keyof T[ K ] extends never ? never : K ]: T[ K ];
+};
+
+type MapStepsToTheirAcceptedProps< T extends StepperStep[] > = Partial<
+	RemoveEmptyObjects< {
+		[ K in T[ number ] as K[ 'slug' ] ]: Omit<
+			Parameters< Awaited< ReturnType< K[ 'asyncComponent' ] > >[ 'default' ] >[ 0 ],
+			keyof StepProps
+		>;
+	} >
+>;
 
 export type UseAssertConditionsHook = ( navigate?: Navigate ) => AssertConditionResult;
 
