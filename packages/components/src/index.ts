@@ -55,6 +55,7 @@ export { default as PlanPrice } from './plan-price';
 export { default as ExternalLink } from './external-link';
 export * from './theme-type-badge';
 export { default as FlowQuestion } from './flow-question';
+export { Calendar } from './calendar';
 
 // Logos
 export { JetpackLogo } from './logos/jetpack-logo';

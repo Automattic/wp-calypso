@@ -4,6 +4,7 @@
 // eslint-disable-next-line no-restricted-imports
 import * as Ariakit from '@ariakit/react';
 import removeAccents from 'remove-accents';
+import { Calendar } from '@automattic/components';
 
 /**
  * WordPress dependencies
@@ -329,96 +330,118 @@ function DateWidget( { view, filter, onChangeView }: SearchWidgetProps ) {
 		( f ) => f.field === filter.field
 	);
 	const currentValue = getCurrentValue( filter, currentFilter );
+	const getNewFilters = ( value: any ) => {
+		// TODO: need to convert the preset into a datetime.
+		const newFilters = currentFilter
+			? [
+					...( view.filters ?? [] ).map( ( _filter ) => {
+						if ( _filter.field === filter.field ) {
+							return {
+								..._filter,
+								operator:
+									currentFilter.operator ||
+									filter.operators[ 0 ],
+								value: getNewValue(
+									filter,
+									currentFilter,
+									value
+								),
+							};
+						}
+						return _filter;
+					} ),
+			  ]
+			: [
+					...( view.filters ?? [] ),
+					{
+						field: filter.field,
+						operator: filter.operators[ 0 ],
+						value: getNewValue( filter, currentFilter, value ),
+					},
+			  ];
+
+		return newFilters;
+	};
+
 	return (
 		<div
 			className="dataviews-filters__datetime-widget"
 			style={ {
 				display: 'flex',
-				flexWrap: 'wrap',
+				flexDirection: 'column',
 				gap: '8px',
 				marginBottom: '8px',
 			} }
 		>
-			{ filter.elements.map( ( element, index ) => {
-				let isActive = false;
-				if (
-					filter.singleSelection &&
-					currentValue === element.value
-				) {
-					isActive = true;
-				} else if (
-					! filter.singleSelection &&
-					currentValue.includes( element.value )
-				) {
-					isActive = true;
-				}
-				return (
-					<button
-						key={ index }
-						style={ {
-							backgroundColor: isActive
-								? 'var(--wp-admin-theme-color)'
-								: '#f0f0f0',
-							color: isActive ? 'white' : 'black',
-							border: '1px solid #ddd',
-							borderRadius: '16px',
-							padding: '6px 12px',
-							fontSize: '14px',
-							cursor: 'pointer',
-							transition: 'background-color 0.2s',
-							boxShadow: '0 1px 2px rgba(0,0,0,0.1)',
-						} }
-						onClick={ () => {
-							// TODO: need to convert the preset into a datetime.
-							const newFilters = currentFilter
-								? [
-										...( view.filters ?? [] ).map(
-											( _filter ) => {
-												if (
-													_filter.field ===
-													filter.field
-												) {
-													return {
-														..._filter,
-														operator:
-															currentFilter.operator ||
-															filter
-																.operators[ 0 ],
-														value: getNewValue(
-															filter,
-															currentFilter,
-															element.value
-														),
-													};
-												}
-												return _filter;
-											}
-										),
-								  ]
-								: [
-										...( view.filters ?? [] ),
-										{
-											field: filter.field,
-											operator: filter.operators[ 0 ],
-											value: getNewValue(
-												filter,
-												currentFilter,
-												element.value
-											),
-										},
-								  ];
-							const newView = {
-								...view,
-								page: 1,
-								filters: newFilters,
-							};
-							onChangeView( newView );
-						} }
-					>
-						{ element.label }
-					</button>
-				);
-			} ) }
+			<div
+				style={ {
+					display: 'flex',
+					flexWrap: 'wrap',
+					gap: '8px',
+				} }
+			>
+				{ filter.elements.map( ( element, index ) => {
+					let isActive = false;
+					if (
+						filter.singleSelection &&
+						currentValue === element.value
+					) {
+						isActive = true;
+					} else if (
+						! filter.singleSelection &&
+						currentValue.includes( element.value )
+					) {
+						isActive = true;
+					}
+					return (
+						<button
+							key={ index }
+							style={ {
+								backgroundColor: isActive
+									? 'var(--wp-admin-theme-color)'
+									: '#f0f0f0',
+								color: isActive ? 'white' : 'black',
+								border: '1px solid #ddd',
+								borderRadius: '16px',
+								padding: '6px 12px',
+								fontSize: '14px',
+								cursor: 'pointer',
+								transition: 'background-color 0.2s',
+								boxShadow: '0 1px 2px rgba(0,0,0,0.1)',
+							} }
+							onClick={ () => {
+								const newView = {
+									...view,
+									page: 1,
+									filters: getNewFilters( element.value ),
+								};
+								onChangeView( newView );
+							} }
+						>
+							{ element.label }
+						</button>
+					);
+				} ) }
+			</div>
+			<div
+				style={ {
+					width: '100%',
+					maxWidth: '100%',
+					overflow: 'hidden',
+				} }
+			>
+				<Calendar
+					currentDate={ new Date() }
+					onChange={ ( newDate: string ) => {
+						const newView = {
+							...view,
+							page: 1,
+							filters: getNewFilters( newDate ),
+						};
+						onChangeView( newView );
+					} }
+				/>
+			</div>
 		</div>
 	);
 }

@@ -241,6 +241,21 @@ export default function FilterSummary( {
 		}
 		return filterInView?.value?.includes( element.value );
 	} );
+	if (
+		activeElements.length === 0 &&
+		filter.type === 'datetime' &&
+		filterInView?.value !== undefined
+	) {
+		// The date widget enables users to select a day from the calendar.
+		// They are not defined in the field's elements,
+		// and so won't be picked up in the check before.
+		activeElements.push( {
+			value: filterInView.value,
+			label: filterInView.value,
+		} );
+	}
+
+	console.log( activeElements, filter, filterInView );
 	const isPrimary = filter.isPrimary;
 	const hasValues = filterInView?.value !== undefined;
 	const canResetOrRemove = ! isPrimary || hasValues;
