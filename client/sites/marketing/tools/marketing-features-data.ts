@@ -103,6 +103,7 @@ export const getMarketingFeaturesData = (
 			imageAlt: translate( 'A rocketship' ),
 			buttonText: translate( 'Register now' ),
 			buttonHref: localizeUrl( 'https://wordpress.com/support/courses/seo/' ),
+			buttonTarget: '_blank',
 			onClick: () => {
 				recordTracksEvent( 'calypso_marketing_tools_seo_course_button_click' );
 			},
