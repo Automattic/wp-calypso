@@ -32,7 +32,6 @@ import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import { clearStore } from 'calypso/lib/user/store';
 import wpcom from 'calypso/lib/wp';
 import AccountEmailField from 'calypso/me/account/account-email-field';
-import { DefaultInterface } from 'calypso/me/account/types';
 import { withDefaultInterface } from 'calypso/me/account/with-default-interface';
 import EmailVerificationBanner from 'calypso/me/email-verification-banner';
 import ReauthRequired from 'calypso/me/reauth-required';
@@ -658,15 +657,13 @@ class Account extends Component {
 					userSettings={ this.props.userSettings }
 				/>
 
-				{ this.props.defaultInterface === DefaultInterface.PRIMARY_SITE && (
-					<FormFieldset>
-						<FormLabel htmlFor="primary_site_ID">{ translate( 'Primary site' ) }</FormLabel>
-						{ this.renderPrimarySite() }
-						<FormSettingExplanation>
-							{ translate( "Choose the default site dashboard you'll see at login." ) }
-						</FormSettingExplanation>
-					</FormFieldset>
-				) }
+				<FormFieldset>
+					<FormLabel htmlFor="primary_site_ID">{ translate( 'Primary site' ) }</FormLabel>
+					{ this.renderPrimarySite() }
+					<FormSettingExplanation>
+						{ translate( "Choose the default site dashboard you'll see at login." ) }
+					</FormSettingExplanation>
+				</FormFieldset>
 
 				<FormButton
 					isSubmitting={ this.isSubmittingForm( ACCOUNT_FORM_NAME ) }
