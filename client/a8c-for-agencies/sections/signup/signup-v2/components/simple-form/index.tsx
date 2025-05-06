@@ -63,48 +63,39 @@ const SimpleForm = ( { initialValues, onSubmit, referer }: Props ) => {
 		} ) );
 	};
 
-	const handleSetServicesOffered = ( services: { value: string[] } ) => {
+	const setFormField = (
+		field: keyof AgencyDetailsSignupPayload,
+		value?: string | string[] | null
+	) => {
 		setFormData( ( prev ) => ( {
 			...prev,
-			servicesOffered: services.value,
+			[ field ]: value,
 		} ) );
-		updateValidationError( { servicesOffered: undefined } );
-	};
-
-	const handleSetProductsOffered = ( products: { value: string[] } ) => {
-		setFormData( ( prev ) => ( {
-			...prev,
-			productsOffered: products.value,
-		} ) );
-		updateValidationError( { productsOffered: undefined } );
+		updateValidationError( { [ field ]: undefined } );
 	};
 
 	const handleInputChange =
 		( field: keyof AgencyDetailsSignupPayload ) => ( event: ChangeEvent< HTMLInputElement > ) => {
-			setFormData( ( prev ) => ( {
-				...prev,
-				[ field ]: event.target.value,
-			} ) );
-			updateValidationError( { [ field ]: undefined } );
+			setFormField( field, event.target.value );
 		};
 
 	const handleSelectChange =
 		( field: keyof AgencyDetailsSignupPayload ) => ( event: ChangeEvent< HTMLSelectElement > ) => {
-			setFormData( ( prev ) => ( {
-				...prev,
-				[ field ]: event.target.value,
-			} ) );
-			updateValidationError( { [ field ]: undefined } );
+			setFormField( field, event.target.value );
 		};
 
 	const handleSearchDropdownChange =
 		( field: keyof AgencyDetailsSignupPayload ) => ( value?: string | null ) => {
-			setFormData( ( prev ) => ( {
-				...prev,
-				[ field ]: value,
-			} ) );
-			updateValidationError( { [ field ]: undefined } );
+			setFormField( field, value );
 		};
+
+	const handleSetServicesOffered = ( services: { value: string[] } ) => {
+		setFormField( 'servicesOffered', services.value );
+	};
+
+	const handleSetProductsOffered = ( products: { value: string[] } ) => {
+		setFormField( 'productsOffered', products.value );
+	};
 
 	const handleSubmit = useCallback(
 		async ( e: React.FormEvent ) => {
