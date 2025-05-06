@@ -131,14 +131,29 @@ async function getBlueprintFromUrl( recommendedPhpVersion: string ): Blueprint {
 
 	const blueprint = await resolveBlueprintFromURL( url );
 
+	// Create a deeply merged blueprint where custom properties override defaults
+	// but nested objects are merged properly
+	// Some properties are always set to an ensured value, like login: true and networking: true
+	// in the end, to ensure any new properties that might be added in the future are handled nicely
 	return {
 		...DEFAULT_BLUEPRINT,
 		...blueprint,
+		// Ensure steps are combined
 		steps: [ ...( DEFAULT_BLUEPRINT.steps || [] ), ...( blueprint.steps || [] ) ],
+		// Ensure nested objects like preferredVersions are merged properly
 		preferredVersions: {
-			wp: 'latest',
-			php: getPHPVersion( recommendedPhpVersion ),
+			...DEFAULT_BLUEPRINT.preferredVersions,
+			...blueprint.preferredVersions,
+			php: getPHPVersion( recommendedPhpVersion ), // Always ensure PHP version is set correctly
+			wp: 'latest', // Always ensure WordPress version is set to latest
 		},
+		// Ensure nested objects like features are merged properly
+		features: {
+			...DEFAULT_BLUEPRINT.features,
+			...blueprint.features,
+			networking: true, // ensure its always true
+		},
+		login: true, // ensure its always true, even though PG code already enforces this
 	};
 }
 

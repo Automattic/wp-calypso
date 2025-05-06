@@ -113,42 +113,130 @@ describe( 'getBlueprint', () => {
 		expect( blueprint ).toEqual( HASH_BLUEPRINT );
 	} );
 
-	it( 'returns blueprint after fetching from blueprint-url GET param', async () => {
-		// Mock URL to return blueprint-url parameter
-		jest.spyOn( global, 'URL' ).mockImplementation( () => ( {
-			searchParams: {
-				get: ( param ) =>
-					param === 'blueprint-url' ? 'https://example.com/blueprint.json' : null,
-				has: ( param ) => param === 'blueprint-url',
+	describe.each( [
+		{
+			testName: 'with a standard blueprint',
+			mockResponse: {
+				preferredVersions: {
+					php: '8.4',
+					wp: 'latest',
+				},
+				features: {
+					networking: true,
+				},
+				login: true,
+				landingPage: '/remote-blueprint',
 			},
-		} ) );
+		},
+		{
+			testName: 'when features property is not specified',
+			mockResponse: {
+				preferredVersions: {
+					php: '8.4',
+					wp: 'latest',
+				},
+				login: true,
+				landingPage: '/remote-blueprint',
+			},
+		},
+		{
+			testName: 'when features property is empty',
+			mockResponse: {
+				preferredVersions: {
+					php: '8.4',
+					wp: 'latest',
+				},
+				features: {},
+				login: true,
+				landingPage: '/remote-blueprint',
+			},
+		},
+		{
+			testName: 'with networking turned off',
+			mockResponse: {
+				preferredVersions: {
+					php: '8.4',
+					wp: 'latest',
+				},
+				features: {
+					networking: false,
+				},
+				login: true,
+				landingPage: '/remote-blueprint',
+			},
+		},
+		{
+			testName: 'with login turned off',
+			mockResponse: {
+				preferredVersions: {
+					php: '8.4',
+					wp: 'latest',
+				},
+				features: {
+					networking: true,
+				},
+				login: false,
+				landingPage: '/remote-blueprint',
+			},
+		},
+		{
+			testName: 'with modified PHP version',
+			mockResponse: {
+				preferredVersions: {
+					php: '99',
+					wp: 'latest',
+				},
+				features: {
+					networking: true,
+				},
+				login: true,
+				landingPage: '/remote-blueprint',
+			},
+		},
+		{
+			testName: 'with modified wp value',
+			mockResponse: {
+				preferredVersions: {
+					php: '8.4',
+					wp: '1.0',
+				},
+				features: {
+					networking: true,
+				},
+				login: true,
+				landingPage: '/remote-blueprint',
+			},
+		},
+	] )(
+		'returns blueprint after fetching from blueprint-url GET param $testName',
+		( { mockResponse } ) => {
+			it( 'fetches and returns the expected blueprint', async () => {
+				// Mock URL to return blueprint-url parameter
+				jest.spyOn( global, 'URL' ).mockImplementation( () => ( {
+					searchParams: {
+						get: ( param ) =>
+							param === 'blueprint-url' ? 'https://example.com/blueprint.json' : null,
+						has: ( param ) => param === 'blueprint-url',
+					},
+				} ) );
 
-		// Mock the fetch function
-		global.fetch = jest.fn().mockImplementation( () =>
-			Promise.resolve( {
-				json: () =>
+				// Mock the fetch function
+				global.fetch = jest.fn().mockImplementation( () =>
 					Promise.resolve( {
-						preferredVersions: {
-							php: '8.4',
-							wp: 'latest',
-						},
-						features: {
-							networking: true,
-						},
-						login: true,
-						landingPage: '/remote-blueprint',
-					} ),
-			} )
-		);
+						json: () => Promise.resolve( mockResponse ),
+					} )
+				);
 
-		const blueprint = await getBlueprint( false, '8.4' );
+				const blueprint = await getBlueprint( false, '8.4' );
 
-		// Verify fetch was called with the right URL
-		expect( global.fetch ).toHaveBeenCalledWith( 'https://example.com/blueprint.json', {
-			credentials: 'omit',
-		} );
-		expect( blueprint ).toEqual( REMOTE_BLUEPRINT );
-	} );
+				// Verify fetch was called with the right URL
+				expect( global.fetch ).toHaveBeenCalledWith( 'https://example.com/blueprint.json', {
+					credentials: 'omit',
+				} );
+				expect( blueprint ).toEqual( REMOTE_BLUEPRINT );
+			} );
+		}
+	);
 
 	afterEach( () => {
 		// Restore the original fetch
