@@ -77,7 +77,6 @@ const DotcomSitesDataViews = ( {
 			if ( dataViewsState.type !== 'list' ) {
 				return;
 			}
-
 			if ( selectedSiteIds.length === 0 ) {
 				return;
 			}
@@ -96,7 +95,7 @@ const DotcomSitesDataViews = ( {
 					return;
 				}
 
-				navigate( site.options?.admin_url || '', true );
+				navigate( site.options?.admin_url || '' );
 			}
 		},
 		[ dataViewsState.type, sitePreviewPane, sites, state ]
