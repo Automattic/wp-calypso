@@ -49,8 +49,23 @@ const withLocale = ( url: string, locale: string ) => {
 	return locale && locale !== 'en' ? `${ url }/${ locale }` : url;
 };
 
+// JUST FOR DEMO PURPOSES //
+export function useTime(): Date {
+	const [ time, setTime ] = useState( () => new Date() );
+
+	useEffect( () => {
+		const interval = setInterval( () => {
+			setTime( new Date() );
+		}, 1000 );
+		return () => clearInterval( interval );
+	}, [] );
+
+	return time;
+}
+
 function initialize() {
 	const steps = [
+		STEPS.IMPORT_LIST,
 		STEPS.UNIFIED_DOMAINS,
 		STEPS.USE_MY_DOMAIN,
 		STEPS.UNIFIED_PLANS,
@@ -68,6 +83,15 @@ const onboarding: FlowV2< typeof initialize > = {
 	isSignupFlow: true,
 	__experimentalUseBuiltinAuth: true,
 	initialize,
+	useStepsProps() {
+		const time = useTime();
+		return {
+			importList: {
+				title: 'Hello',
+				subTitle: time.toLocaleTimeString(),
+			},
+		};
+	},
 	useStepNavigation( currentStepSlug, navigate ) {
 		const flowName = this.name;
 		const isPlaygroundEligible = useIsPlaygroundEligible();
