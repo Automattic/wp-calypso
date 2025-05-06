@@ -263,7 +263,6 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( {
 		/>
 	) : (
 		<DownloadCsv
-			borderless
 			data={ locationCsvData }
 			path={ `locations-${ geoMode }` }
 			period={ period }

@@ -314,7 +314,6 @@ class StatsModule extends Component {
 					statType={ statType }
 					query={ query }
 					path={ path }
-					borderless
 					period={ period }
 					skipQuery={ skipQuery }
 				/>
