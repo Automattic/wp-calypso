@@ -382,6 +382,7 @@ class StatsSummary extends Component {
 								rightSection={
 									<div className="stats-module__header-nav-button">
 										<DownloadCsv
+											skipQuery={ statType === 'utm' }
 											statType={ statType }
 											query={ finalModuleQuery }
 											path={ path }
