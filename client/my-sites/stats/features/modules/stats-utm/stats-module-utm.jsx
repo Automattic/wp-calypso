@@ -6,7 +6,7 @@ import { memo } from '@wordpress/element';
 import { trendingUp } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useEffect, useMemo, useRef } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import StatsInfoArea from 'calypso/my-sites/stats/features/modules/shared/stats-info-area';
 import { useSelector, useDispatch } from 'calypso/state';
 import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
@@ -131,26 +131,12 @@ const StatsModuleUTM = ( {
 		postId
 	);
 
-	const prevQueryRef = useRef();
-	const querySignature = JSON.stringify( query );
-
-	const memoizedQuery = useMemo( () => {
-		if (
-			prevQueryRef.current === undefined ||
-			JSON.stringify( prevQueryRef.current ) !== querySignature
-		) {
-			// Store a deep clone to avoid reference issues
-			prevQueryRef.current = JSON.parse( querySignature );
-		}
-		return prevQueryRef.current;
-	}, [ querySignature ] );
-
 	// Use ref to track previous data and avoid unnecessary dispatches when data is the same.
 	useEffect( () => {
 		if ( data ) {
-			dispatch( receiveSiteStats( siteId, 'statsUTM', memoizedQuery, data, Date.now() ) );
+			dispatch( receiveSiteStats( siteId, 'statsUTM', query, data, Date.now() ) );
 		}
-	}, [ data, siteId, memoizedQuery, dispatch ] );
+	}, [ data, query, siteId, dispatch ] );
 
 	// Show error and loading based on the query
 	const hasError = false;

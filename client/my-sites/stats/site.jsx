@@ -27,7 +27,6 @@ import InlineSupportLink from 'calypso/components/inline-support-link';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import NavigationHeader from 'calypso/components/navigation-header';
 import StickyPanel from 'calypso/components/sticky-panel';
-import memoizeLast from 'calypso/lib/memoize-last';
 import version_compare from 'calypso/lib/version-compare';
 import Main from 'calypso/my-sites/stats/components/stats-main';
 import {
@@ -94,14 +93,6 @@ import { appendQueryStringForRedirection, getPathWithUpdatedQueryString } from '
 const HIDDABLE_MODULES = AVAILABLE_PAGE_MODULES.traffic.map( ( module ) => {
 	return module.key;
 } );
-
-const chartRangeToQuery = memoizeLast( ( chartRange ) => ( {
-	period: 'day',
-	start_date: chartRange.chartStart,
-	date: chartRange.chartEnd,
-	summarize: 1,
-	max: 10,
-} ) );
 
 const CHART_VIEWS = {
 	attr: 'views',
@@ -504,7 +495,16 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 		setActiveLegend( period !== 'hour' ? newActiveTab.legendOptions || [] : [] );
 	}, [ chartTab, period, activeTabState, context.query ] );
 
-	const query = chartRangeToQuery( customChartRange );
+	const query = useMemo(
+		() => ( {
+			period: 'day',
+			start_date: customChartRange.chartStart,
+			date: customChartRange.chartEnd,
+			summarize: 1,
+			max: 10,
+		} ),
+		[ customChartRange.chartStart, customChartRange.chartEnd ]
+	);
 
 	// For period option links
 	const traffic = {
