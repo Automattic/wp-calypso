@@ -314,11 +314,11 @@ class StatsSummary extends Component {
 				statType = 'statsSearchTerms';
 				summaryView = (
 					<Fragment key="search-terms-summary">
-						{ this.renderSummaryHeader( path, statType, false, query ) }
+						{ this.renderSummaryHeader( path, statType, false, moduleQuery ) }
 						<StatsModuleSearch
 							moduleStrings={ StatsStrings.search }
 							period={ this.props.period }
-							query={ query }
+							query={ moduleQuery }
 							summary
 							listItemClassName={ listItemClassName }
 						/>
