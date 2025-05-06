@@ -363,7 +363,7 @@ class StatsSummary extends Component {
 		const navigationItems = [ { label: backLabel, href: backLink }, { label: title } ];
 
 		const geoMode = this.props.context.query?.geoMode;
-		const geoModeLabel = geoMode && geoMode in GEO_MODES ? GEO_MODES[ geoMode ].label : null;
+		const geoModeLabel = geoMode && geoMode in GEO_MODES ? GEO_MODES[ geoMode ] : null;
 
 		return (
 			<Main fullWidthLayout>
