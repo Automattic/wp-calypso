@@ -22,10 +22,12 @@ import TosModal from './tos-modal';
 import './style.scss';
 
 type Props = {
-	initialValues?: Partial< AgencyDetailsPayload >;
+	initialValues?: AgencyDetailsPayload;
+	referer?: string | null;
+	onSubmit: ( payload: AgencyDetailsPayload ) => void;
 };
 
-const SimpleForm = ( { initialValues }: Props ) => {
+const SimpleForm = ( { initialValues, onSubmit, referer }: Props ) => {
 	const translate = useTranslate();
 	const [ showTosModal, setShowTosModal ] = useState( false );
 	const { validate, validationError, updateValidationError, isValidating } =
@@ -34,7 +36,7 @@ const SimpleForm = ( { initialValues }: Props ) => {
 	const countriesList = useGetSupportedSMSCountries();
 	const { countryOptions, stateOptionsMap } = useCountriesAndStates();
 	const noCountryList = countriesList.length === 0;
-	const [ formData, setFormData ] = useState< Partial< AgencyDetailsPayload > >( {
+	const [ formData, setFormData ] = useState< AgencyDetailsPayload >( {
 		firstName: initialValues?.firstName ?? '',
 		lastName: initialValues?.lastName ?? '',
 		agencyName: initialValues?.agencyName ?? '',
@@ -50,6 +52,8 @@ const SimpleForm = ( { initialValues }: Props ) => {
 		city: initialValues?.city ?? '',
 		postalCode: initialValues?.postalCode ?? '',
 		phone: initialValues?.phone ?? {},
+		tos: 'consented',
+		referer,
 	} );
 
 	const handlePhoneInputChange = ( data: { phoneNumberFull: string } ) => {
@@ -90,6 +94,7 @@ const SimpleForm = ( { initialValues }: Props ) => {
 				...prev,
 				[ field ]: event.target.value,
 			} ) );
+			updateValidationError( { [ field ]: undefined } );
 		};
 
 	const handleSearchDropdownChange =
@@ -98,6 +103,7 @@ const SimpleForm = ( { initialValues }: Props ) => {
 				...prev,
 				[ field ]: value,
 			} ) );
+			updateValidationError( { [ field ]: undefined } );
 		};
 
 	const handleSubmit = useCallback(
@@ -107,8 +113,10 @@ const SimpleForm = ( { initialValues }: Props ) => {
 			if ( error ) {
 				return;
 			}
+
+			onSubmit( formData );
 		},
-		[ formData, validate ]
+		[ formData, validate, onSubmit ]
 	);
 
 	const servicesOfferedOptions = useMemo(
@@ -382,7 +390,7 @@ const SimpleForm = ( { initialValues }: Props ) => {
 							variant="primary"
 							onClick={ handleSubmit }
 						>
-							{ translate( 'Signup for free' ) }
+							{ translate( 'Sign up for free' ) }
 						</Button>
 					</FormFooter>
 				</>
