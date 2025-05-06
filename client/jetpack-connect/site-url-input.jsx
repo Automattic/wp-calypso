@@ -1,10 +1,18 @@
-import { Card, Button, FormLabel, Gridicon, Spinner } from '@automattic/components';
+import {
+	Card,
+	Button,
+	FormLabel,
+	FormInputValidation,
+	Gridicon,
+	Spinner,
+} from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import SuggestionSearch from 'calypso/components/suggestion-search';
+import { NOT_EXISTS } from './connection-notice-types';
 
 const noop = () => {};
 
@@ -13,6 +21,7 @@ class JetpackConnectSiteUrlInput extends Component {
 		handleOnClickTos: PropTypes.func,
 		isError: PropTypes.oneOfType( [ PropTypes.string, PropTypes.bool ] ),
 		isFetching: PropTypes.bool,
+		isFetched: PropTypes.bool,
 		isInstall: PropTypes.bool,
 		onChange: PropTypes.func,
 		onSubmit: PropTypes.func,
@@ -85,7 +94,7 @@ class JetpackConnectSiteUrlInput extends Component {
 
 	isFormSubmitDisabled() {
 		const { isError, url } = this.props;
-		const hasError = isError && 'notExists' !== isError;
+		const hasError = isError && NOT_EXISTS !== isError;
 
 		return ! url || hasError;
 	}
@@ -130,6 +139,26 @@ class JetpackConnectSiteUrlInput extends Component {
 		);
 	}
 
+	renderError() {
+		const { isFetched } = this.props;
+		const errorMessage = this.getErrorMessage();
+
+		if ( ! isFetched || ! errorMessage ) {
+			return;
+		}
+
+		return <FormInputValidation isError text={ errorMessage } />;
+	}
+
+	getErrorMessage = () => {
+		const { isError, translate } = this.props;
+
+		switch ( isError ) {
+			case NOT_EXISTS:
+				return translate( 'Invalid site address. Enter a valid WordPress URL.' );
+		}
+	};
+
 	render() {
 		const { candidateSites, isFetching, onChange, onSubmit, isSearch, translate, url, autoFocus } =
 			this.props;
@@ -162,6 +191,7 @@ class JetpackConnectSiteUrlInput extends Component {
 						/>
 					) }
 					{ isFetching ? <Spinner /> : null }
+					{ this.renderError() }
 				</div>
 				<Card className="jetpack-connect__connect-button-card">
 					{ this.renderTermsOfServiceLink() }
