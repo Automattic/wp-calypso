@@ -4,6 +4,7 @@ export type ShoppingCartItem = APIProductFamilyProduct & {
 	quantity: number;
 	siteUrls?: string[];
 	licenseId?: number;
+	billing_product_id?: number;
 };
 
 export type MarketplaceType = 'referral' | 'regular';
