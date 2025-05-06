@@ -13,6 +13,15 @@ import type { NormalizedField } from './types';
 export function sanitizeOperators< Item >( field: NormalizedField< Item > ) {
 	let operators = field.filterBy?.operators;
 
+	// TODO: explore moving this logic to the field type.
+	if ( field.type === 'datetime' ) {
+		return (
+			operators?.filter( ( operator ) =>
+				[ OPERATOR_IS, OPERATOR_IS_NOT ].includes( operator )
+			) || []
+		);
+	}
+
 	// Assign default values.
 	if ( ! operators || ! Array.isArray( operators ) ) {
 		operators = [ OPERATOR_IS_ANY, OPERATOR_IS_NONE ];

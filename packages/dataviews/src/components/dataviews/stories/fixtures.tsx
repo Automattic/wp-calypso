@@ -650,9 +650,6 @@ export const fields: Field< SpaceObject >[] = [
 			{ value: 'past-month', label: 'Past month' },
 		],
 		filterBy: {
-			// TODO:
-			// - define before/after operators
-			// - filters for datetime types should be single value by default (is, isNot)?
 			operators: [ 'is', 'isNot' ],
 		},
 	},
