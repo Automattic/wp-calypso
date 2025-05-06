@@ -28,7 +28,7 @@ import {
 } from './fixtures';
 import { LAYOUT_GRID, LAYOUT_LIST, LAYOUT_TABLE } from '../../../constants';
 import { filterSortAndPaginate } from '../../../filter-and-sort-data-view';
-import type { View } from '../../../types';
+import type { View, NormalizedFilter } from '../../../types';
 
 import './style.css';
 
@@ -128,7 +128,13 @@ export const FieldsNoSortableNoHidable = () => {
 /**
  * Custom composition example
  */
-function PlanetOverview( { planets }: { planets: SpaceObject[] } ) {
+function PlanetOverview( {
+	planets,
+	extendedFilters,
+}: {
+	planets: SpaceObject[];
+	extendedFilters: NormalizedFilter[];
+} ) {
 	const moons = planets.reduce( ( sum, item ) => sum + item.satellites, 0 );
 
 	return (
@@ -182,10 +188,12 @@ function PlanetOverview( { planets }: { planets: SpaceObject[] } ) {
 
 				<VStack>
 					<HStack justify="start">
-						<DataViews.FiltersToggle />
+						<DataViews.FiltersToggle
+							extendedFilters={ extendedFilters }
+						/>
 						<DataViews.Search label={ __( 'moons by planet' ) } />
 					</HStack>
-					<DataViews.Filters />
+					<DataViews.Filters extendedFilters={ extendedFilters } />
 				</VStack>
 
 				<VStack>
@@ -235,6 +243,22 @@ export const FreeComposition = () => {
 		item.categories.includes( 'Planet' )
 	);
 
+	const extendedFilters: NormalizedFilter[] = [
+		{
+			field: 'title',
+			name: 'Title',
+			elements: [
+				{ value: 'Earth', label: 'Earth' },
+				{ value: 'Mars', label: 'Mars' },
+			],
+			singleSelection: false,
+			operators: [ 'isAny', 'isNone' ],
+			isVisible:
+				view.filters?.some( ( f ) => f.field === 'title' ) ?? false,
+			isPrimary: false,
+		},
+	];
+
 	return (
 		<DataViews
 			getItemId={ ( item ) => item.id.toString() }
@@ -249,7 +273,10 @@ export const FreeComposition = () => {
 				grid: {},
 			} }
 		>
-			<PlanetOverview planets={ planets } />
+			<PlanetOverview
+				planets={ planets }
+				extendedFilters={ extendedFilters }
+			/>
 		</DataViews>
 	);
 };
