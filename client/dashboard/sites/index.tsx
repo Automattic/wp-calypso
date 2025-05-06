@@ -236,7 +236,7 @@ export default function Sites() {
 							if ( view.type === 'list' ) {
 								return;
 							}
-							const _defaultView = { ...defaultView, ...( DEFAULT_LAYOUTS[ view.type ] ?? {} ) };
+							const _defaultView = { ...defaultView, ...DEFAULT_LAYOUTS[ view.type ] };
 							navigate( {
 								search: Object.fromEntries(
 									Object.entries( view ).filter(
