@@ -1,7 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { localize } from 'i18n-calypso';
+import { localize, fixMe } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import { WPImportError, FileTooLarge } from 'calypso/blocks/importer/wordpress/types';
@@ -80,27 +80,46 @@ class ImporterError extends PureComponent {
 		}
 
 		if ( this.props.importerEngine === 'substack' ) {
-			return this.props.translate(
-				'%(errorDescription)s{{br/}}Make sure you are using {{doc}}a valid export file{{/doc}} in XML or ZIP format.{{br/}}{{cs}}Still need help{{/cs}}?',
-				{
-					args: {
-						errorDescription: description.length ? description : defaultError,
-					},
-					components: {
-						br: <br />,
-						cs: <Button className="importer__error-pane is-link" onClick={ this.contactSupport } />,
-						doc: (
-							<a
-								href={ localizeUrl(
-									'https://wordpress.com/support/import-from-substack/import-content/'
-								) }
-								target="_blank"
-								rel="noreferrer"
-							/>
-						),
-					},
-				}
-			);
+			return fixMe( {
+				text: '%(errorDescription)s{{br/}}Make sure you are using {{doc}}a valid export file{{/doc}} in XML or ZIP format.{{br/}}{{cs}}Still need help{{/cs}}?',
+				newCopy: this.props.translate(
+					'%(errorDescription)s{{br/}}Make sure you are using {{doc}}a valid export file{{/doc}} in XML or ZIP format.{{br/}}{{cs}}Still need help{{/cs}}?',
+					{
+						args: {
+							errorDescription: description.length ? description : defaultError,
+						},
+						components: {
+							br: <br />,
+							cs: (
+								<Button className="importer__error-pane is-link" onClick={ this.contactSupport } />
+							),
+							doc: (
+								<a
+									href={ localizeUrl(
+										'https://wordpress.com/support/import-from-substack/import-content/'
+									) }
+									target="_blank"
+									rel="noreferrer"
+								/>
+							),
+						},
+					}
+				),
+				oldCopy: this.props.translate(
+					'%(errorDescription)s{{br/}}Make sure you are using a valid export file in XML or ZIP format. {{cs}}Still need help{{/cs}}?',
+					{
+						args: {
+							errorDescription: description.length ? description : defaultError,
+						},
+						components: {
+							br: <br />,
+							cs: (
+								<Button className="importer__error-pane is-link" onClick={ this.contactSupport } />
+							),
+						},
+					}
+				),
+			} );
 		}
 
 		return this.props.translate(
