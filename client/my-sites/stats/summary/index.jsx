@@ -379,11 +379,11 @@ class StatsSummary extends Component {
 							rightSection={
 								<div className="stats-module__header-nav-button">
 									<DownloadCsv
-										skipQuery={ statType === 'utm' }
 										statType={ statType }
 										query={ moduleQuery }
 										path={ path }
 										period={ this.props.period }
+										skipQuery={ statType === 'statsUTM' }
 									/>
 								</div>
 							}
