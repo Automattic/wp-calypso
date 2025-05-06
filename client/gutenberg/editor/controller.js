@@ -297,6 +297,14 @@ export const exitPost = ( context, next ) => {
 	next();
 };
 
+export const redirectPostEditor = async ( context ) => {
+	const state = context.store.getState();
+	const siteId = getSelectedSiteId( state );
+	const siteAdminUrl = getSiteAdminUrl( state, siteId );
+
+	return window.location.replace( addQueryArgs( context.query, `${ siteAdminUrl }post-new.php` ) );
+};
+
 /**
  * Redirects to the un-iframed Site Editor if the config is enabled.
  * @param {Object} context Shared context in the route.

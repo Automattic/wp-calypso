@@ -3,11 +3,11 @@ import { makeLayout, redirectLoggedOut, render as clientRender } from 'calypso/c
 import { siteSelection, sites } from 'calypso/my-sites/controller';
 import {
 	authenticate,
-	post,
 	redirect,
 	exitPost,
 	redirectSiteEditor,
 	redirectToPermalinkIfLoggedOut,
+	redirectPostEditor,
 } from './controller';
 
 export default function () {
@@ -20,7 +20,7 @@ export default function () {
 		siteSelection,
 		redirect,
 		authenticate,
-		post,
+		redirectPostEditor,
 		makeLayout,
 		clientRender
 	);
@@ -35,7 +35,7 @@ export default function () {
 		siteSelection,
 		redirect,
 		authenticate,
-		post,
+		redirectPostEditor,
 		makeLayout,
 		clientRender
 	);
@@ -56,7 +56,7 @@ export default function () {
 		siteSelection,
 		redirect,
 		authenticate,
-		post,
+		redirectPostEditor,
 		makeLayout,
 		clientRender
 	);
