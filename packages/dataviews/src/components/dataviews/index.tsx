@@ -165,6 +165,18 @@ function DataViews< Item >( {
 		( filters || [] ).some( ( filter ) => filter.isPrimary )
 	);
 
+	const defaultLayout = useMemo(
+		() => (
+			<DefaultLayout
+				header={ header }
+				search={ search }
+				searchLabel={ searchLabel }
+				isShowingFilter={ isShowingFilter }
+			/>
+		),
+		[ header, search, searchLabel, isShowingFilter ]
+	);
+
 	return (
 		<DataViewsContext.Provider
 			value={ {
@@ -191,14 +203,7 @@ function DataViews< Item >( {
 			} }
 		>
 			<div className="dataviews-wrapper" ref={ containerRef }>
-				{ children || (
-					<DefaultLayout
-						header={ header }
-						search={ search }
-						searchLabel={ searchLabel }
-						isShowingFilter={ isShowingFilter }
-					/>
-				) }
+				{ children || defaultLayout }
 			</div>
 		</DataViewsContext.Provider>
 	);
