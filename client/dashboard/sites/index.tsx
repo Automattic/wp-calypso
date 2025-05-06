@@ -14,7 +14,7 @@ import { STATUS_LABELS, getSiteStatus, getSiteStatusLabel } from '../utils/site-
 import SiteIcon from './site-icon';
 import SitePreview from './site-preview';
 import type { Site } from '../data/types';
-import type { View, Operator, ViewTable, ViewGrid } from '@automattic/dataviews';
+import type { Operator, ViewTable, ViewGrid } from '@automattic/dataviews';
 
 const actions = [
 	{
@@ -161,12 +161,12 @@ const DEFAULT_LAYOUTS = {
 	},
 };
 
-const DEFAULT_VIEW: View = {
+const DEFAULT_VIEW = {
 	...DEFAULT_LAYOUTS.grid,
-	type: 'grid',
+	type: 'grid' as const,
 	page: 1,
 	perPage: 10,
-	sort: { field: 'name', direction: 'asc' },
+	sort: { field: 'name', direction: 'asc' as const },
 	search: '',
 };
 
@@ -194,7 +194,7 @@ export default function Sites() {
 	const view = useMemo(
 		() => ( {
 			...defaultView,
-			...DEFAULT_LAYOUTS[ search.type ?? 'grid' ],
+			...DEFAULT_LAYOUTS[ search.type ?? DEFAULT_VIEW.type ],
 			...Object.fromEntries( Object.entries( search ).filter( ( [ , v ] ) => v !== undefined ) ),
 		} ),
 		[ defaultView, search ]
@@ -239,9 +239,9 @@ export default function Sites() {
 							const _defaultView = { ...defaultView, ...DEFAULT_LAYOUTS[ view.type ] };
 							navigate( {
 								search: Object.fromEntries(
-									Object.entries( view ).filter(
-										( [ key, value ] ) => value !== _defaultView[ key as keyof View ]
-									)
+									Object.entries( view ).filter( ( [ key, value ] ) => {
+										return value !== _defaultView[ key as keyof typeof _defaultView ];
+									} )
 								),
 							} );
 						} }
