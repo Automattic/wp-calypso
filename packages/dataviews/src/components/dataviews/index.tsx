@@ -69,7 +69,7 @@ type DefaultUIProps = Pick<
 	isShowingFilter: boolean;
 };
 
-function DefaultLayout( {
+function DefaultUI( {
 	header,
 	search = true,
 	searchLabel = undefined,
@@ -165,9 +165,9 @@ function DataViews< Item >( {
 		( filters || [] ).some( ( filter ) => filter.isPrimary )
 	);
 
-	const defaultLayout = useMemo(
+	const defaultUI = useMemo(
 		() => (
-			<DefaultLayout
+			<DefaultUI
 				header={ header }
 				search={ search }
 				searchLabel={ searchLabel }
@@ -203,7 +203,7 @@ function DataViews< Item >( {
 			} }
 		>
 			<div className="dataviews-wrapper" ref={ containerRef }>
-				{ children || defaultLayout }
+				{ children || defaultUI }
 			</div>
 		</DataViewsContext.Provider>
 	);
