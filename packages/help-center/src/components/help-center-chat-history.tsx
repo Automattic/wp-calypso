@@ -13,12 +13,7 @@ import { useGetHistoryChats } from '../hooks/use-get-history-chats';
 import { HELP_CENTER_STORE } from '../stores';
 import { HelpCenterSupportChatMessage } from './help-center-support-chat-message';
 import { getLastMessage } from './utils';
-import type {
-	Conversations,
-	OdieConversation,
-	SupportInteraction,
-	ZendeskConversation,
-} from '@automattic/odie-client';
+import type { Conversations, SupportInteraction } from '@automattic/odie-client';
 
 import './help-center-chat-history.scss';
 
@@ -33,7 +28,6 @@ const TAB_STATES = {
 
 const Conversations = ( {
 	conversations,
-	supportInteractions,
 	isLoadingInteractions,
 }: {
 	conversations: Conversations;
@@ -50,7 +44,7 @@ const Conversations = ( {
 		);
 	}
 
-	if ( ! conversations || ! conversations.length ) {
+	if ( ! conversations.length ) {
 		return (
 			<div className="help-center-chat-history__no-results">
 				{ __( 'Nothing found…', __i18n_text_domain__ ) }
@@ -63,37 +57,18 @@ const Conversations = ( {
 			{ conversations.map( ( conversation ) => {
 				const lastMessage = getLastMessage( { conversation } );
 
-				if ( lastMessage ) {
-					const isZendeskConversation = (
-						conversation: OdieConversation | ZendeskConversation
-					): conversation is ZendeskConversation =>
-						'metadata' in conversation && 'participants' in conversation;
-
-					let conversationStatus: string = '';
-					let isUnread = false;
-					let lastSupportInteraction = undefined;
-
-					if ( isZendeskConversation( conversation ) ) {
-						conversationStatus = conversation.metadata.status;
-						isUnread = conversation.participants[ 0 ]?.unreadCount > 0;
-
-						lastSupportInteraction = supportInteractions.find(
-							( interaction ) => interaction.uuid === conversation.metadata.supportInteractionId
-						);
-					}
-
-					return (
-						<HelpCenterSupportChatMessage
-							sectionName="chat_history"
-							navigateTo="/odie"
-							supportInteraction={ lastSupportInteraction }
-							key={ conversation.id }
-							message={ lastMessage }
-							isUnread={ isUnread }
-							conversationStatus={ conversationStatus }
-						/>
-					);
+				if ( ! lastMessage ) {
+					return null;
 				}
+
+				return (
+					<HelpCenterSupportChatMessage
+						sectionName="chat_history"
+						key={ conversation.id }
+						message={ lastMessage }
+						conversation={ conversation }
+					/>
+				);
 			} ) }
 		</>
 	);

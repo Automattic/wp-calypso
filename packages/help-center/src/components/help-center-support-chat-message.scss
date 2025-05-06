@@ -23,17 +23,8 @@
 		}
 	}
 
-	&.is-unread-message {
-		background-color: #EBF2FC;
-		.help-center-support-chat__open-conversation {
-			fill: $help-center-blue;
-		}
-	}
-
-	&:not(.is-unread-message) {
-		&.is-closed, &.is-solved {
-			background-color: var(--studio-gray-0);
-		}
+	&.is-closed, &.is-solved {
+		background-color: var(--studio-gray-0);
 	}
 
 	& > * {
@@ -47,28 +38,6 @@
 
 		img {
 			border-radius: 50%;
-		}
-
-		&.has-badge {
-			margin-right: 10px;
-		}
-
-		.help-center-support-chat__conversation-badge {
-			position: absolute;
-			top: 50%;
-			right: -0%;
-			transform: translate(50%, -50%);
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			border: 2px solid #FFF;
-			border-radius: 12px; /* stylelint-disable-line scales/radii */
-			box-sizing: border-box;
-			min-width: 26px;
-			height: 20px;
-			font-size: 12px;
-			background-color: $help-center-blue;
-			color: #FFF;
 		}
 	}
 
