@@ -5,6 +5,7 @@
 	display: flex;
 	flex-flow: row wrap;
 	justify-content: space-between;
+	gap: 8px 20px;
 	align-items: center;
 	margin: 1.5em 0;
 	padding: 0 20px;
@@ -12,16 +13,16 @@
 	&.stats-period-navigation__is-with-new-date-control {
 		padding: 0;
 		align-items: flex-start;
-		row-gap: 8px;
-	
-		.stats-navigation-arrows {
-			justify-content: flex-end;
-		}
 	
 		.stats-period-navigation__date-range-control {
+			margin-left: auto;
+
 			display:flex;
-			flex-direction: row;
 			gap: 20px;
+
+			@media (max-width: $break-mobile) {
+				flex-grow: 1;
+			}
 		}
 	}
 

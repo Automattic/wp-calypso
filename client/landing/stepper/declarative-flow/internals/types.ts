@@ -383,3 +383,18 @@ export interface FailureInfo {
 	code: number | string;
 	error: string;
 }
+
+/**
+ * Below are types used by State management
+ */
+type GroupBySlug< U extends StepperStep > = {
+	[ S in U[ 'slug' ] ]: U extends { slug: S }
+		? Parameters<
+				Parameters<
+					Awaited< ReturnType< U[ 'asyncComponent' ] > >[ 'default' ]
+				>[ 0 ][ 'navigation' ][ 'submit' ]
+		  >[ 0 ]
+		: never;
+};
+
+export type StepperStepsUnionedType = GroupBySlug< AsyncStepperStep >;

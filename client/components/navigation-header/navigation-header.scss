@@ -5,7 +5,9 @@
 .calypso-navigation-header {
 	background-color: var(--wp-components-color-background, #fff);
 	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-	padding: 24px 0;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
 
 	&__head {
 		display: flex;
@@ -35,11 +37,15 @@
 		}
 	}
 
+	// Increased specificity to override the default link color for anchor elements on Atomic.
+	& &__back-link {
+		color: var(--wp-components-color-gray-600, #666);
+	}
+
 	&__back-link {
 		display: flex;
 		align-items: center;
 		text-decoration: none;
-		color: var(--wp-components-color-gray-600, #666);
 		font-size: $default-font-size;
 		transition: color 0.2s ease;
 
