@@ -1,6 +1,8 @@
 <!-- This file lists the modifications done to the base package `@wordpress/dataviews` that are published under `@automattic/dataviews`. -->
 
-## Next 
+## Next
+
+## 0.1.1
 
 - Extract `<DefaultUI />` as a standalone component to clarify layout logic and prepare for custom UI compositions.
 - Expose `<DataViews.BulkActionToolbar />` component.
