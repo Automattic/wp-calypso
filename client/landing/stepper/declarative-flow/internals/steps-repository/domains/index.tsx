@@ -46,8 +46,10 @@ const DomainsStep: Step< {
 				domainName?: string;
 				productSlug?: string;
 				domainItem?: DomainSuggestion;
+				deferDomainSelection?: true;
+				// Fake type just to make the this step types isomorphic to unified-domains.
+				domainCart?: undefined;
 		  }
-		| { deferDomainSelection: true }
 		| undefined;
 } > = function DomainsStep( { navigation, flow } ) {
 	const { setHideFreePlan, setDomainCartItem, setDomain } = useDispatch( ONBOARD_STORE );
