@@ -1,5 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
@@ -73,6 +74,30 @@ class ImporterError extends PureComponent {
 				{
 					components: {
 						cs: <Button className="importer__error-pane is-link" onClick={ this.contactSupport } />,
+					},
+				}
+			);
+		}
+
+		if ( this.props.importerEngine === 'substack' ) {
+			return this.props.translate(
+				'%(errorDescription)s{{br/}}Make sure you are using {{doc}}a valid export file{{/doc}} in XML or ZIP format.{{br/}}{{cs}}Still need help{{/cs}}?',
+				{
+					args: {
+						errorDescription: description.length ? description : defaultError,
+					},
+					components: {
+						br: <br />,
+						cs: <Button className="importer__error-pane is-link" onClick={ this.contactSupport } />,
+						doc: (
+							<a
+								href={ localizeUrl(
+									'https://wordpress.com/support/import-from-substack/import-content/'
+								) }
+								target="_blank"
+								rel="noreferrer"
+							/>
+						),
 					},
 				}
 			);
