@@ -661,10 +661,10 @@ class Account extends Component {
 				{ this.props.defaultInterface === DefaultInterface.PRIMARY_SITE && (
 					<FormFieldset>
 						<FormLabel htmlFor="primary_site_ID">{ translate( 'Primary site' ) }</FormLabel>
+						{ this.renderPrimarySite() }
 						<FormSettingExplanation>
 							{ translate( "Choose the default site dashboard you'll see at login." ) }
 						</FormSettingExplanation>
-						{ this.renderPrimarySite() }
 					</FormFieldset>
 				) }
 
