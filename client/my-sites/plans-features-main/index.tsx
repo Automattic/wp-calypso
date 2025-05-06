@@ -479,6 +479,8 @@ const PlansFeaturesMain = ( {
 	let enableTermSavingsPriceDisplay = true;
 	// In the "purchase a plan and free domain" flow we do not want to show
 	// monthly plans because monthly plans do not come with a free domain.
+	// We are also hiding the plan interval selector and showing terms savings prices
+	// for the compatible streamlined price experiment variations.
 	if (
 		redirectToAddDomainFlow === undefined &&
 		! hidePlanTypeSelector &&
