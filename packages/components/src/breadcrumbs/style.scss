@@ -10,14 +10,15 @@
 
 		&.is-current {
 			.breadcrumb__item {
-				color: var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9));
+				color: $gray-900;
 			}
 		}
 
 		&:not(.is-current)::after {
 			content: '/';
-			color: $gray-700;
+			color: $gray-200;
 			margin: 0 8px;
+			@include body-medium;
 		}
 	}
 
@@ -29,7 +30,7 @@
 		@include body-medium;
 
 		&:hover {
-			color: var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9));
+			color: $gray-900;
 		}
 	}
 }
