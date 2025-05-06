@@ -21,9 +21,19 @@
 	.is-fixed-row-header tbody > tr:nth-child(odd) > th {
 		background-color: var(--studio-gray-0);
 	}
+
+	&.stats {
+		@media (min-width: $break-medium) {
+			padding-bottom: 24px;
+		}
+	}
 }
 
 .stats-summary__positioned {
+	@media (min-width: $break-small) {
+		margin-top: 32px;
+	}
+
 	@media (min-width: ($break-medium + 1px)) and (max-width: 1380px) {
 		padding: 0 32px;
 	}
@@ -36,8 +46,7 @@
 
 	.stats__summary--narrow-mobile {
 		@media (max-width: $break-medium) {
-			padding-left: 32px;
-			padding-right: 32px;
+			padding-inline: 0;
 		}
 
 		@media (max-width: ($break-small + 1px)) {
