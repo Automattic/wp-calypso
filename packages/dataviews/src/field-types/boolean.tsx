@@ -31,5 +31,5 @@ function isValid( value: any, context?: ValidationContext ) {
 export default {
 	sort,
 	isValid,
-	Edit: () => null,
+	Edit: 'boolean',
 };
