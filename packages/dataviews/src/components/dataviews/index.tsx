@@ -62,6 +62,53 @@ const defaultGetItemId = ( item: ItemWithId ) => item.id;
 const defaultIsItemClickable = () => true;
 const EMPTY_ARRAY: any[] = [];
 
+type DefaultUIProps = Pick<
+	DataViewsProps< any >,
+	'header' | 'search' | 'searchLabel'
+> & {
+	isShowingFilter: boolean;
+};
+
+function DefaultLayout( {
+	header,
+	search = true,
+	searchLabel = undefined,
+	isShowingFilter,
+}: DefaultUIProps ) {
+	return (
+		<>
+			<HStack
+				alignment="top"
+				justify="space-between"
+				className="dataviews__view-actions"
+				spacing={ 1 }
+			>
+				<HStack
+					justify="start"
+					expanded={ false }
+					className="dataviews__search"
+				>
+					{ search && <DataViewsSearch label={ searchLabel } /> }
+					<FiltersToggle />
+				</HStack>
+				<HStack
+					spacing={ 1 }
+					expanded={ false }
+					style={ { flexShrink: 0 } }
+				>
+					<DataViewsViewConfig />
+					{ header }
+				</HStack>
+			</HStack>
+			{ isShowingFilter && (
+				<DataViewsFilters className="dataviews-filters__container" />
+			) }
+			<DataViewsLayout />
+			<DataViewsFooter />
+		</>
+	);
+}
+
 function DataViews< Item >( {
 	view,
 	onChangeView,
@@ -118,39 +165,6 @@ function DataViews< Item >( {
 		( filters || [] ).some( ( filter ) => filter.isPrimary )
 	);
 
-	const defaultUI = (
-		<>
-			<HStack
-				alignment="top"
-				justify="space-between"
-				className="dataviews__view-actions"
-				spacing={ 1 }
-			>
-				<HStack
-					justify="start"
-					expanded={ false }
-					className="dataviews__search"
-				>
-					{ search && <DataViewsSearch label={ searchLabel } /> }
-					<FiltersToggle />
-				</HStack>
-				<HStack
-					spacing={ 1 }
-					expanded={ false }
-					style={ { flexShrink: 0 } }
-				>
-					<DataViewsViewConfig />
-					{ header }
-				</HStack>
-			</HStack>
-			{ isShowingFilter && (
-				<DataViewsFilters className="dataviews-filters__container" />
-			) }
-			<DataViewsLayout />
-			<DataViewsFooter />
-		</>
-	);
-
 	return (
 		<DataViewsContext.Provider
 			value={ {
@@ -177,7 +191,14 @@ function DataViews< Item >( {
 			} }
 		>
 			<div className="dataviews-wrapper" ref={ containerRef }>
-				{ children || defaultUI }
+				{ children || (
+					<DefaultLayout
+						header={ header }
+						search={ search }
+						searchLabel={ searchLabel }
+						isShowingFilter={ isShowingFilter }
+					/>
+				) }
 			</div>
 		</DataViewsContext.Provider>
 	);
