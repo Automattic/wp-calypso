@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { DomainSuggestion, OnboardActions, OnboardSelect } from '@automattic/data-stores';
 import { ONBOARDING_FLOW, clearStepPersistedState } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
@@ -116,6 +117,21 @@ const onboarding: FlowV2< typeof initialize > = {
 						playground: playgroundId,
 					} ),
 					null,
+				];
+			}
+
+			/**
+			 * If the dashboard/v2/onboarding feature flag is enabled, we'll redirect the user to the new hosting Dashboard.
+			 * We aren't using the dashboard/v2 FF because it's enabled by default on wpcalypso.json which would break e2e tests.
+			 * Since we're aiming to remove steps after the isMvpOnboarding experiment ends,
+			 * we'll redirect the user to the new Dashboard here.
+			 */
+			if ( isEnabled( 'dashboard/v2/onboarding' ) ) {
+				return [
+					addQueryArgs( `/v2/sites/${ providedDependencies.siteSlug }`, { ref: flowName } ),
+					addQueryArgs( withLocale( `/setup/${ flowName }/plans`, locale ), {
+						siteSlug: providedDependencies.siteSlug,
+					} ),
 				];
 			}
 

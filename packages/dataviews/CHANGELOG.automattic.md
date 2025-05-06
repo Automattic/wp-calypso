@@ -2,6 +2,7 @@
 
 ## Next 
 
+- Extract `<DefaultUI />` as a standalone component to clarify layout logic and prepare for custom UI compositions.
 - Expose `<DataViews.BulkActionToolbar />` component.
 - Expose `<DataViews.Filters />` component.
 - Expose `<DataViews.FiltersToggle />` component.

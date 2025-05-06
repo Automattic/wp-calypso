@@ -228,7 +228,7 @@ describe( 'Lifecyle: Signup, onboard, launch and cancel subscription', function 
 				`WordPress.com ${ planName }`,
 				newSiteDetails.blog_details.site_slug
 			);
-			await purchasesPage.purchaseAction( 'Cancel plan' );
+			await purchasesPage.cancelPurchase( 'Cancel plan' );
 		} );
 
 		it( 'Cancel plan renewal', async function () {

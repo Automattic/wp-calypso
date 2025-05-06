@@ -35,7 +35,8 @@ export default function usePlanBillingDescription( {
 }: UsePlanBillingDescriptionProps ) {
 	const translate = useTranslate();
 	const { currencyCode, originalPrice, discountedPrice, billingPeriod, introOffer } = pricing || {};
-	const { reflectStorageSelectionInPlanPrices } = usePlansGridContext();
+	const { reflectStorageSelectionInPlanPrices, showStreamlinedBillingDescription } =
+		usePlansGridContext();
 	const yearlyVariantPlanSlug = getPlanSlugForTermVariant( planSlug, TERM_ANNUALLY );
 
 	const yearlyVariantPricing = Plans.usePricingMetaForGridPlans( {
@@ -282,6 +283,19 @@ export default function usePlanBillingDescription( {
 					comment: 'Excl. Taxes is short for excluding taxes',
 				}
 			);
+		}
+	} else if ( showStreamlinedBillingDescription ) {
+		// When streamlined price experiment is active, use simplified billing description
+		if ( PLAN_ANNUAL_PERIOD === billingPeriod ) {
+			return translate( 'per month, billed annually' );
+		}
+
+		if ( PLAN_BIENNIAL_PERIOD === billingPeriod ) {
+			return translate( 'per month, billed every 2 years' );
+		}
+
+		if ( PLAN_TRIENNIAL_PERIOD === billingPeriod ) {
+			return translate( 'per month, billed every 3 years' );
 		}
 	} else if ( originalPriceFullTermText ) {
 		if ( PLAN_ANNUAL_PERIOD === billingPeriod ) {
