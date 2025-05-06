@@ -59,6 +59,7 @@ const DEFAULT_FIELDS = [
 	},
 	{
 		id: 'backups',
+		type: 'boolean',
 		label: __( 'Backups' ),
 		getValue: ( { item }: { item: Site } ) => !! item.plan?.features?.active?.includes( 'backups' ),
 		elements: [
@@ -74,10 +75,10 @@ const DEFAULT_FIELDS = [
 		filterBy: {
 			operators: [ 'is' as Operator ],
 		},
-		enableSorting: false,
 	},
 	{
 		id: 'protect',
+		type: 'boolean',
 		label: __( 'Protect' ),
 		getValue: ( { item }: { item: Site } ) => !! item.active_modules?.includes( 'protect' ),
 		render: ( { item }: { item: Site } ) =>
@@ -89,7 +90,6 @@ const DEFAULT_FIELDS = [
 		filterBy: {
 			operators: [ 'is' as Operator ],
 		},
-		enableSorting: false,
 	},
 	{
 		id: 'status',
@@ -100,6 +100,7 @@ const DEFAULT_FIELDS = [
 	},
 	{
 		id: 'is_a8c',
+		type: 'boolean',
 		label: __( 'A8C Owned' ),
 		elements: [
 			{ value: true, label: __( 'Yes' ) },
@@ -109,7 +110,6 @@ const DEFAULT_FIELDS = [
 			operators: [ 'is' as Operator ],
 		},
 		render: ( { item }: { item: Site } ) => ( item.is_a8c ? __( 'Yes' ) : __( 'No' ) ),
-		enableSorting: false,
 	},
 	{
 		id: 'preview',
