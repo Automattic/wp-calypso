@@ -530,7 +530,7 @@ const siteSetupFlow: Flow = {
 						return window.location.assign( `${ adminUrl }import.php` );
 					}
 
-					return exitFlow( `/setup/site-migration?siteSlug=${ siteSlug }` );
+					return goToFlow( `site-migration?siteSlug=${ siteSlug }` );
 				}
 
 				case 'importerBlogger':
@@ -550,7 +550,7 @@ const siteSetupFlow: Flow = {
 						return navigate( `importList?siteSlug=${ siteSlug }` );
 					}
 
-					return exitFlow( `/setup/site-migration?siteSlug=${ siteSlug }` );
+					return goToFlow( `site-migration?siteSlug=${ siteSlug }` );
 				case 'importerWix':
 				case 'importReady':
 				case 'importReadyNot':
