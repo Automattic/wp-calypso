@@ -8,7 +8,7 @@ import type { Meta, StoryObj } from '@storybook/react';
  * from `@wordpress/components` instead.
  */
 const meta: Meta< typeof Button > = {
-	title: 'packages/components/Button',
+	title: 'Deprecated/Button',
 	component: Button,
 	args: {
 		onClick: fn(),

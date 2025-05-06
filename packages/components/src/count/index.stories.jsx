@@ -1,6 +1,6 @@
 import Count from '.';
 
-export default { component: Count, title: 'packages/components/Count' };
+export default { component: Count, title: 'Unaudited/Count' };
 
 const Template = ( args ) => {
 	return <Count { ...args } />;
