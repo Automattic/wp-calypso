@@ -4,7 +4,6 @@
 
 .signup-v2-form {
 	max-width: 600px;
-	margin-block-start: 56px;
 	box-sizing: border-box;
 	width: 100%;
 	gap: 16px;
@@ -128,6 +127,7 @@
 		input[type="number"].form-text-input,
 		input[type="search"].form-text-input,
 		.components-form-token-field__input,
+		.components-combobox-control__input[type="text"],
 		.form-select,
 		.form-checkbox,
 		.form-radio,
@@ -138,6 +138,14 @@
 			color: var(--color-text-inverted);
 			&::placeholder {
 				color: #E6F5FF99;
+			}
+		}
+
+		.searchable-dropdown .components-combobox-control__suggestions-container {
+			.components-flex {
+				background-color: #022836;
+				border-color: #E6F5FF1A;
+				color: var(--color-text-inverted);
 			}
 		}
 

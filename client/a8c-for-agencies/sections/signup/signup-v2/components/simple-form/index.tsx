@@ -15,30 +15,41 @@ import MultiCheckbox from 'calypso/components/forms/multi-checkbox';
 import { useGetSupportedSMSCountries } from 'calypso/jetpack-cloud/sections/agency-dashboard/downtime-monitoring/contact-editor/hooks';
 import { useCountriesAndStates } from 'calypso/jetpack-cloud/sections/partner-portal/company-details-form/hooks/use-countries-and-states';
 import { preventWidows } from 'calypso/lib/formatting';
+import { AgencyDetailsPayload } from '../../../agency-details-form/types';
 import useSimpleFormValidation from './hooks/use-simple-form-validation';
 import TosModal from './tos-modal';
 
 import './style.scss';
 
-const SimpleForm = () => {
+type Props = {
+	initialValues?: Partial< AgencyDetailsPayload >;
+};
+
+const SimpleForm = ( { initialValues }: Props ) => {
 	const translate = useTranslate();
 	const [ showTosModal, setShowTosModal ] = useState( false );
 	const { validate, validationError, updateValidationError, isValidating } =
 		useSimpleFormValidation();
 
 	const countriesList = useGetSupportedSMSCountries();
-	const { countryOptions } = useCountriesAndStates();
+	const { countryOptions, stateOptionsMap } = useCountriesAndStates();
 	const noCountryList = countriesList.length === 0;
-	const [ formData, setFormData ] = useState< Partial< AgencyDetailsSignupPayload > >( {
-		firstName: '',
-		lastName: '',
-		agencyName: '',
-		agencyUrl: '',
-		phoneNumber: '',
-		userType: 'agency_owner',
-		managedSites: '1-5',
-		servicesOffered: [],
-		productsOffered: [],
+	const [ formData, setFormData ] = useState< Partial< AgencyDetailsPayload > >( {
+		firstName: initialValues?.firstName ?? '',
+		lastName: initialValues?.lastName ?? '',
+		agencyName: initialValues?.agencyName ?? '',
+		agencyUrl: initialValues?.agencyUrl ?? '',
+		userType: initialValues?.userType ?? 'agency_owner',
+		managedSites: initialValues?.managedSites ?? '1-5',
+		servicesOffered: initialValues?.servicesOffered ?? [],
+		productsOffered: initialValues?.productsOffered ?? [],
+		country: initialValues?.country ?? '',
+		state: initialValues?.state ?? '',
+		line1: initialValues?.line1 ?? '',
+		line2: initialValues?.line2 ?? '',
+		city: initialValues?.city ?? '',
+		postalCode: initialValues?.postalCode ?? '',
+		phone: initialValues?.phone ?? {},
 	} );
 
 	const handlePhoneInputChange = ( data: { phoneNumberFull: string } ) => {
@@ -81,17 +92,13 @@ const SimpleForm = () => {
 			} ) );
 		};
 
-	const handleSetCountry = ( value?: string | null ) => {
-		if ( ! value ) {
-			return;
-		}
-
-		setFormData( ( prev ) => ( {
-			...prev,
-			country: value,
-		} ) );
-		updateValidationError( { country: undefined } );
-	};
+	const handleSearchDropdownChange =
+		( field: keyof AgencyDetailsSignupPayload ) => ( value?: string | null ) => {
+			setFormData( ( prev ) => ( {
+				...prev,
+				[ field ]: value,
+			} ) );
+		};
 
 	const handleSubmit = useCallback(
 		async ( e: React.FormEvent ) => {
@@ -129,6 +136,8 @@ const SimpleForm = () => {
 	);
 
 	const isUserSiteOwner = formData.userType === 'site_owner';
+
+	const stateOptions = formData.country ? stateOptionsMap[ formData.country ] : [];
 
 	return (
 		<Form
@@ -261,18 +270,67 @@ const SimpleForm = () => {
 						/>
 					</FormField>
 
-					<FormField
-						error={ validationError.country }
-						label={ translate( 'Where is your agency located?' ) }
-						isRequired
-					>
-						<SearchableDropdown
-							value={ formData.country }
-							onChange={ handleSetCountry }
-							options={ countryOptions }
-							placeholder={ translate( 'Select country' ) }
-						/>
-					</FormField>
+					<div className="signup-v2-form__address-fields">
+						<FormField
+							error={ validationError.country }
+							label={ translate( 'Where is your agency located?' ) }
+							isRequired
+						>
+							<SearchableDropdown
+								value={ formData.country }
+								onChange={ handleSearchDropdownChange( 'country' ) }
+								options={ countryOptions }
+								placeholder={ translate( 'Select country' ) }
+							/>
+						</FormField>
+
+						{ formData.country && stateOptions?.length && (
+							<FormField error={ validationError.state }>
+								<SearchableDropdown
+									value={ formData.state }
+									onChange={ handleSearchDropdownChange( 'state' ) }
+									options={ stateOptions }
+									placeholder={ translate( 'Select state' ) }
+								/>
+							</FormField>
+						) }
+
+						<FormField error={ validationError.line1 }>
+							<FormTextInput
+								name="line1"
+								value={ formData.line1 }
+								onChange={ handleInputChange( 'line1' ) }
+								placeholder={ translate( 'Street name and house number' ) }
+							/>
+						</FormField>
+
+						<FormField error={ validationError.line2 }>
+							<FormTextInput
+								name="line2"
+								value={ formData.line2 }
+								onChange={ handleInputChange( 'line2' ) }
+								placeholder={ translate( 'Apartment, floor, suite or unit number' ) }
+							/>
+						</FormField>
+
+						<FormField error={ validationError.city }>
+							<FormTextInput
+								name="city"
+								value={ formData.city }
+								onChange={ handleInputChange( 'city' ) }
+								placeholder={ translate( 'City' ) }
+							/>
+						</FormField>
+
+						<FormField error={ validationError.postalCode }>
+							<FormTextInput
+								name="postalCode"
+								value={ formData.postalCode }
+								onChange={ handleInputChange( 'postalCode' ) }
+								placeholder={ translate( 'Postal code' ) }
+							/>
+						</FormField>
+					</div>
 
 					{ noCountryList && <QuerySmsCountries /> }
 

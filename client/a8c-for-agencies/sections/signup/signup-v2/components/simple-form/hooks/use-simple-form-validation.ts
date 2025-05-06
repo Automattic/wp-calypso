@@ -1,6 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
 import { isSiteActive } from 'calypso/a8c-for-agencies/components/form/utils';
+import { useCountriesAndStates } from 'calypso/a8c-for-agencies/sections/signup/agency-details-form/hooks/use-countries-and-states';
 import { AgencyDetailsSignupPayload } from 'calypso/a8c-for-agencies/sections/signup/types';
 import { CAPTURE_URL_RGX } from 'calypso/blocks/import/util';
 import { preventWidows } from 'calypso/lib/formatting';
@@ -15,12 +16,20 @@ type ValidationState = {
 	agencyUrl?: string;
 	servicesOffered?: string;
 	productsOffered?: string;
+	country?: string;
+	state?: string;
+	line1?: string;
+	line2?: string;
+	city?: string;
+	postalCode?: string;
 };
 
 const useSimpleFormValidation = () => {
 	const translate = useTranslate();
 	const [ validationError, setValidationError ] = useState< ValidationState >( {} );
 	const [ isValidating, setIsValidating ] = useState( false );
+
+	const { stateOptionsMap } = useCountriesAndStates();
 
 	const updateValidationError = ( newState: ValidationState ) => {
 		return setValidationError( ( prev ) => ( { ...prev, ...newState } ) );
@@ -64,6 +73,14 @@ const useSimpleFormValidation = () => {
 				newValidationError.productsOffered = translate( 'Please select products you offer' );
 			}
 
+			if ( ! payload.country ) {
+				newValidationError.country = translate( 'Please select a country' );
+			}
+
+			if ( payload.country && stateOptionsMap[ payload.country ]?.length && ! payload.state ) {
+				newValidationError.state = translate( 'Please select a state' );
+			}
+
 			if ( Object.keys( newValidationError ).length > 0 ) {
 				setValidationError( newValidationError );
 				return newValidationError;
@@ -78,7 +95,7 @@ const useSimpleFormValidation = () => {
 
 			return null;
 		},
-		[ setValidationError, translate ]
+		[ stateOptionsMap, translate ]
 	);
 
 	return { validate, validationError, updateValidationError, isValidating };
