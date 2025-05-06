@@ -71,9 +71,13 @@ export function useFilters( fields: NormalizedField< any >[], view: View ) {
 	}, [ fields, view ] );
 }
 
-export function FiltersToggle() {
+export function FiltersToggle( {
+	extendedFilters = [],
+}: {
+	extendedFilters?: NormalizedFilter[];
+} ) {
 	const {
-		filters,
+		filters: defaultFilters,
 		view,
 		onChangeView,
 		setOpenedFilter,
@@ -89,6 +93,11 @@ export function FiltersToggle() {
 		},
 		[ onChangeView, setIsShowingFilter ]
 	);
+	const filters = useMemo(
+		() => [ ...defaultFilters, ...extendedFilters ],
+		[ defaultFilters, extendedFilters ]
+	);
+
 	const visibleFilters = filters.filter( ( filter ) => filter.isVisible );
 
 	const hasVisibleFilters = !! visibleFilters.length;
@@ -173,11 +182,22 @@ function FilterVisibilityToggle( {
 	);
 }
 
-function Filters( { className }: { className?: string } ) {
+function Filters( {
+	className,
+	extendedFilters = [],
+}: {
+	className?: string;
+	extendedFilters?: NormalizedFilter[];
+} ) {
 	const { fields, view, onChangeView, openedFilter, setOpenedFilter } =
 		useContext( DataViewsContext );
 	const addFilterRef = useRef< HTMLButtonElement >( null );
-	const filters = useFilters( fields, view );
+	const defaultFilters = useFilters( fields, view );
+	const filters = useMemo(
+		() => [ ...defaultFilters, ...extendedFilters ],
+		[ defaultFilters, extendedFilters ]
+	);
+
 	const addFilter = (
 		<AddFilter
 			key="add-filter"
