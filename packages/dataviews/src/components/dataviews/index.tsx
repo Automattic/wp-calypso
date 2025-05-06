@@ -7,7 +7,7 @@ import type { ReactNode } from 'react';
  * WordPress dependencies
  */
 import { __experimentalHStack as HStack } from '@wordpress/components';
-import { useMemo, useState } from '@wordpress/element';
+import { useContext, useMemo, useState } from '@wordpress/element';
 import { useResizeObserver } from '@wordpress/compose';
 
 /**
@@ -65,16 +65,14 @@ const EMPTY_ARRAY: any[] = [];
 type DefaultUIProps = Pick<
 	DataViewsProps< any >,
 	'header' | 'search' | 'searchLabel'
-> & {
-	isShowingFilter: boolean;
-};
+>;
 
 function DefaultUI( {
 	header,
 	search = true,
 	searchLabel = undefined,
-	isShowingFilter,
 }: DefaultUIProps ) {
+	const { isShowingFilter } = useContext( DataViewsContext );
 	return (
 		<>
 			<HStack
@@ -196,7 +194,6 @@ function DataViews< Item >( {
 						header={ header }
 						search={ search }
 						searchLabel={ searchLabel }
-						isShowingFilter={ isShowingFilter }
 					/>
 				) }
 			</div>
