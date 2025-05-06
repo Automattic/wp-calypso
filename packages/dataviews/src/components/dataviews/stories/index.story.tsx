@@ -2,7 +2,7 @@
  * WordPress dependencies
  */
 import type { Meta } from '@storybook/react';
-import { useState, useMemo } from '@wordpress/element';
+import { useState, useMemo, useRef } from '@wordpress/element';
 import { createInterpolateElement } from '@wordpress/element';
 import {
 	Card,
@@ -133,18 +133,15 @@ function PlanetOverview( { planets }: { planets: SpaceObject[] } ) {
 
 	return (
 		<>
+			<Heading className="free-composition-heading" level={ 2 }>
+				{ __( 'Solar System numbers' ) }
+			</Heading>
 			<Grid
 				templateColumns="repeat(auto-fit, minmax(330px, 1fr))"
 				align="flex-start"
 				className="free-composition-header"
 			>
 				<Card variant="secondary">
-					<CardHeader>
-						<Heading level={ 2 }>
-							{ __( 'Solar System numbers' ) }
-						</Heading>
-					</CardHeader>
-
 					<CardBody>
 						<VStack>
 							<Text size={ 18 } as="p">
@@ -225,6 +222,9 @@ export const FreeComposition = () => {
 		titleField: 'title',
 		descriptionField: 'description',
 		mediaField: 'image',
+		layout: {
+			headerStickyOffset: 67,
+		},
 	} );
 
 	const { data: processedData, paginationInfo } = useMemo( () => {
@@ -236,20 +236,22 @@ export const FreeComposition = () => {
 	);
 
 	return (
-		<DataViews
-			getItemId={ ( item ) => item.id.toString() }
-			paginationInfo={ paginationInfo }
-			data={ processedData }
-			view={ view }
-			fields={ fields }
-			actions={ actions }
-			onChangeView={ setView }
-			defaultLayouts={ {
-				table: {},
-				grid: {},
-			} }
-		>
-			<PlanetOverview planets={ planets } />
-		</DataViews>
+		<div className="free-composition">
+			<DataViews
+				getItemId={ ( item ) => item.id.toString() }
+				paginationInfo={ paginationInfo }
+				data={ processedData }
+				view={ view }
+				fields={ fields }
+				actions={ actions }
+				onChangeView={ setView }
+				defaultLayouts={ {
+					table: {},
+					grid: {},
+				} }
+			>
+				<PlanetOverview planets={ planets } />
+			</DataViews>
+		</div>
 	);
 };

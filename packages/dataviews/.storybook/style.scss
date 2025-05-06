@@ -5,6 +5,7 @@
 @import "@wordpress/base-styles/variables";
 @import "@wordpress/base-styles/mixins";
 @import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/z-index";
 @import "@wordpress/components/build-style/style";
 
 @import "../src/style.scss";
