@@ -99,7 +99,6 @@ class StatsSummary extends Component {
 			query.period = 'day'; // Override for custom date ranges.
 		}
 
-		const originalQuery = query;
 		const moduleQuery = merge( {}, statsQueryOptions, query );
 		const urlParams = new URLSearchParams( this.props.context.querystring );
 		const listItemClassName = 'stats__summary--narrow-mobile';
