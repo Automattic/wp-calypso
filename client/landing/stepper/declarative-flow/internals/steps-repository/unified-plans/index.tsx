@@ -24,9 +24,9 @@ import { getTheme, getThemeType } from 'calypso/state/themes/selectors';
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
 import UnifiedPlansStep from './unified-plans-step';
 import { getIntervalType } from './util';
-import type { ProvidedDependencies, Step as StepType } from '../../types';
+import type { Step as StepType } from '../../types';
 import type { PlansIntent } from '@automattic/plans-grid-next';
-
+import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import './style.scss';
 
 /**
@@ -44,14 +44,20 @@ function getPlansIntent( flowName: string | null, isWordCampPromo?: boolean ): P
 				return 'plans-new-hosted-site-business-only';
 			}
 			return 'plans-new-hosted-site';
+		case AI_SITE_BUILDER_FLOW:
+			return 'plans-ai-assembler-free-trial';
 		default:
 			return null;
 	}
 }
 
+type ProvidedDependencies = {
+	stepName: 'plans';
+	cartItems: MinimalRequestCartProduct[] | null;
+};
+
 const PlansStepAdaptor: StepType< {
-	// TODO: work on more specific types
-	submits: Record< string, unknown >;
+	submits: ProvidedDependencies;
 } > = ( props ) => {
 	const [ stepState, setStepState ] = useStepPersistedState< ProvidedDependencies >( 'plans-step' );
 	const siteSlug = useSiteSlug();
@@ -113,18 +119,6 @@ const PlansStepAdaptor: StepType< {
 	const isWordCampPromo = new URLSearchParams( location.search ).has( 'utm_source', 'wordcamp' );
 	const plansIntent = getPlansIntent( props.flow, isWordCampPromo );
 
-	let hidePlanProps;
-	if ( props.flow === AI_SITE_BUILDER_FLOW ) {
-		hidePlanProps = {
-			hideFreePlan: true,
-			hidePersonalPlan: true,
-			hideEcommercePlan: true,
-			hideEnterprisePlan: true,
-		};
-	} else {
-		hidePlanProps = getHidePlanPropsBasedOnThemeType( selectedThemeType || '' );
-	}
-
 	/**
 	 * The plans step has a quirk where it calls `submitSignupStep` then synchronously calls `goToNextStep` after it.
 	 * This doesn't give `setStepState` a chance to update and the data is not passed to `submit`.
@@ -144,22 +138,29 @@ const PlansStepAdaptor: StepType< {
 
 	return (
 		<UnifiedPlansStep
-			{ ...hidePlanProps }
+			{ ...getHidePlanPropsBasedOnThemeType( selectedThemeType || '' ) }
 			selectedSite={ site ?? undefined }
 			saveSignupStep={ ( step ) => {
-				setStepState( ( mostRecentState = { ...stepState, ...step } ) );
+				setStepState( ( mostRecentState = { ...stepState, ...step } as ProvidedDependencies ) );
 			} }
 			submitSignupStep={ ( stepInfo ) => {
 				if ( stepInfo.stepName === 'domains' && stepInfo.siteUrl ) {
 					setSiteUrl( stepInfo.siteUrl );
 				} else {
-					setStepState( ( mostRecentState = { ...stepState, ...stepInfo } ) );
+					setStepState(
+						( mostRecentState = { ...stepState, ...( stepInfo as ProvidedDependencies ) } )
+					);
 				}
 			} }
 			goToNextStep={ () => {
 				props.navigation.submit?.( { ...stepState, ...mostRecentState } );
 			} }
-			step={ stepState }
+			step={
+				stepState as {
+					status?: string | undefined;
+					errors?: { message: string } | undefined;
+				}
+			}
 			customerType={ customerType }
 			signupDependencies={ signupDependencies }
 			stepName="plans"

@@ -117,6 +117,15 @@ module.exports = {
 					'return-await': 'off',
 					semi: 'off',
 					'space-before-function-paren': 'off',
+					'@typescript-eslint/ban-ts-comment': [
+						'error',
+						{
+							'ts-check': 'allow-with-description',
+							'ts-expect-error': 'allow-with-description',
+							'ts-ignore': 'allow-with-description',
+							'ts-nocheck': 'allow-with-description',
+						},
+					],
 					'@typescript-eslint/ban-types': [
 						'error',
 						{
@@ -416,6 +425,7 @@ module.exports = {
 		'no-unused-expressions': 'off',
 
 		'react/forbid-foreign-prop-types': 'error',
+		'react/display-name': 'error',
 		'react/jsx-curly-brace-presence': [ 'error', { props: 'never', children: 'never' } ],
 		'react/jsx-boolean-value': 'error',
 		// enforce our classname namespacing rules

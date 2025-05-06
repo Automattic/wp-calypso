@@ -11,15 +11,8 @@ module.exports = {
 							'!calypso/lib',
 							'calypso/lib/*',
 							'!calypso/lib/wp',
-							// Allowed:
-							// - calypso/components/core/badge
-							// - calypso/components/wordpress-logo
 							'!calypso/components',
 							'calypso/components/*',
-							'!calypso/components/wordpress-logo',
-							'!calypso/components/core',
-							'calypso/components/core/*',
-							'!calypso/components/core/badge',
 							// Allowed: calypso/assets/icons
 							'!calypso/assets',
 							'calypso/assets/*',
@@ -33,6 +26,13 @@ module.exports = {
 						group: [
 							'@automattic/*',
 							'!@automattic/calypso-config',
+							'!@automattic/components',
+							'@automattic/components/*',
+							'!@automattic/components/src',
+							'@automattic/components/src/*',
+							'!@automattic/components/src/summary-button',
+							'!@automattic/components/src/core-badge',
+							'!@automattic/dataviews',
 							// Please do not add exceptions unless agreed on
 							// with the #architecture group.
 						],

@@ -173,8 +173,6 @@ const SiteMigrationCredentials: StepType< {
 				stepName="site-migration-credentials"
 				flowName="site-migration"
 				goBack={ navigation?.goBack }
-				goNext={ navigation?.submit }
-				hideSkip
 				isFullLayout
 				formattedHeader={
 					<FormattedHeader

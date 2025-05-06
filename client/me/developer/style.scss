@@ -40,22 +40,34 @@
 	}
 }
 
-.developer__form {
-	text-align: center;
-}
-
-.form-fieldset.developer__is_dev_account-fieldset {
-	border-radius: 2px;
-	background: var(--studio-blue-0);
-	padding: 16px;
+.card.developer__is-dev-account-card {
 	margin: 0 auto 30px;
-	display: inline-block;
 
 	.components-toggle-control {
 		font-family: $font-sf-pro-text;
 		font-size: rem(14px);
 		display: inline-block;
-		margin-bottom: 0;
+	}
+
+	.components-h-stack {
+		align-items: start;
+	}
+
+	.components-toggle-control__label {
+		display:flex;
+		flex-flow: column wrap;
+	}
+
+	.components-toggle-control__label span {
+		font-size: rem(14px);
+		color: var(--color-text-subtle);
+		line-height: 20px;
+		letter-spacing: -0.15px;
+		margin-top: 10px;
+	}
+
+	.form-fieldset {
+		margin-bottom: 5px;
 	}
 
 	&.is-loading {
@@ -78,12 +90,16 @@
 		}
 	}
 
+	@media (max-width: $break-large) {
+		margin: 0 32px 24px 32px;
+	}
+
 	@media (max-width: $break-medium) {
 		position: fixed;
 		left: 0;
 		bottom: 0;
 		width: 100%;
-		margin-bottom: 0;
+		margin: 0 auto;
 		text-align: left;
 		padding: 16px 32px;
 		z-index: 2;

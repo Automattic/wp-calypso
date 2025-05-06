@@ -72,7 +72,7 @@ const translation4 = i18n.translate(
 		'from Marathon to Waterloo, in order categorical.'
 );
 
-const emoji = i18n.translate( 'Let us celebrate 🎉');
+const emoji = i18n.translate( 'Let us celebrate 🎉' );
 ```
 
 ### String Substitution
@@ -421,7 +421,7 @@ i18n.numberFormat( 2500.33, { decimals: 3 } ); // '2.500,330'
 
 ### geolocateCurrencySymbol()
 
-`geolocateCurrencySymbol(): Promise<void>`
+`geolocateCurrencySymbol( callback?: ( geoLocation: string ) => void ): Promise<void>`
 
 This will attempt to make an unauthenticated network request to `https://public-api.wordpress.com/geo/`. This is to determine the country code to provide better USD formatting. By default, the currency symbol for USD will be based on the locale (unlike other currency codes which use a hard-coded list of overrides); for `en-US`/`en` it will be `$` and for all other locales it will be `US$`. However, if the geolocation determines that the country is not inside the US, the USD symbol will be `US$` regardless of locale. This is to prevent confusion for users in non-US countries using an English locale.
 
@@ -438,11 +438,11 @@ Formatting currency amounts can be surprisingly complex. Most people assume that
 Technically this package just provides a wrapper for `Intl.NumberFormat`, but it handles a lot of things automatically to make things simple and provide consistency. Here's what the functions of this package provide:
 
 - A cached number formatter for performance, keyed by currency and locale as well as any other options which must be passed to the `Intl` formatter (whether to show non-zero decimals, and whether to display a `+` sign for positive amounts).
-- The locale is set from WordPress, if available, but also falls back to the browser’s locale, and can be set explicitly if WordPress is not available (eg: for a logged-out pricing page).
+- The locale is set from WordPress, if available, but also falls back to the browser's locale, and can be set explicitly if WordPress is not available (eg: for a logged-out pricing page).
 - This uses a forced latin character set to make sure we always display latin numbers for consistency.
 - We override currency codes with a hard-coded list. This is for consistency and so that some currencies seem less confusing when viewed in EN locales, since those are the default locales for many users (eg: always use `C$` for CAD instead of `CA$` or just `$` which are the CLDR standard depending on locale since `$` might imply CAD and it might imply USD).
-- We always show `US$` for USD when the user’s geolocation is not inside the US. This is important because other currencies use `$` for their currency and are surprised sometimes if they are actually charged in USD (which is the default for many users). We can’t safely display `US$` for everyone because we've found that US users are confused by that style and it decreases confidence in the product.
-- An option to format currency from the currency’s smallest unit (eg: cents in USD, yen in JPY). This is important because doing price math with floating point numbers in code produces unexpected rounding errors, so most currency amounts should be provided and manipulated as integers.
+- We always show `US$` for USD when the user's geolocation is not inside the US. This is important because other currencies use `$` for their currency and are surprised sometimes if they are actually charged in USD (which is the default for many users). We can't safely display `US$` for everyone because we've found that US users are confused by that style and it decreases confidence in the product.
+- An option to format currency from the currency's smallest unit (eg: cents in USD, yen in JPY). This is important because doing price math with floating point numbers in code produces unexpected rounding errors, so most currency amounts should be provided and manipulated as integers.
 - An optional API to return the formatted pieces of a price separately, so the consumer can decide how best to render them (eg: this is used to wrap different HTML tags around prices and currency symbols). JS already includes this feature as `Intl.NumberFormat.formatToParts()` but our API must also include the other features listed here and extra information like the position of the currency symbol (before or after the number).
 
 #### Usage

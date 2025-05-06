@@ -1,11 +1,82 @@
-@import "@automattic/calypso-color-schemes";
+@import '@automattic/calypso-color-schemes';
 
 $breakpoint-mobile: 782px; //Mobile size.
 $breakpoint-tablet: 1224px; //Large tablet size.
 $breakpoint-desktop: 1440px; //Desktop size.
 $search-icon: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none"%3E%3Cpath d="M9.16667 15.8333C12.8486 15.8333 15.8333 12.8486 15.8333 9.16667C15.8333 5.48477 12.8486 2.5 9.16667 2.5C5.48477 2.5 2.5 5.48477 2.5 9.16667C2.5 12.8486 5.48477 15.8333 9.16667 15.8333Z" stroke="%238C8F94" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/%3E%3Cpath d="M17.5 17.5L13.875 13.875" stroke="%238C8F94" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/%3E%3C/svg%3E';
-$system-font-family: -apple-system, BlinkMacSystemFont, "Noto Sans", "Segoe UI", "Roboto",
-	"Oxygen-Sans", "Ubuntu", "Cantarell", "Helvetica Neue", sans-serif;
+$system-font-family: -apple-system, BlinkMacSystemFont, 'Noto Sans', 'Segoe UI', 'Roboto',
+	'Oxygen-Sans', 'Ubuntu', 'Cantarell', 'Helvetica Neue', sans-serif;
+$recoleta-font-family: 'Recoleta', serif;
+
+.happy-blocks-new-support-content-footer {
+	padding: 64px 96px;
+
+	@media ( max-width: $breakpoint-mobile ) {
+		padding: 32px 16px;
+	}
+
+	.support-footer__heading {
+		font-family: var( --wp--preset--font-family--recoleta );
+		font-size: 2.25rem;
+		margin-bottom: 24px;
+
+		@media ( max-width: $breakpoint-mobile ) {
+			font-size: 1.5rem;
+		}
+	}
+
+	.support-content-resources {
+		display: flex;
+		gap: 18px;
+
+		@media ( max-width: $breakpoint-mobile ) {
+			flex-direction: column;
+		}
+
+		.support-content-resource {
+			background-color: var( --studio-blue-5, #f7f8fe );
+			border-radius: 4px;
+			padding: 40px;
+			flex: 1;
+			display: flex;
+			flex-direction: column;
+			align-items: flex-start;
+
+			@media ( max-width: $breakpoint-mobile ) {
+				padding: 24px;
+			}
+		}
+
+		.support-footer__icon-wrapper {
+			background-color: var( --studio-blue-50, #3858e9 );
+			border-radius: 50%;
+			padding: 8px;
+			margin-bottom: 24px;
+			display: inline-flex;
+		}
+
+		.support-footer__card-title {
+			font-size: 1.25rem;
+			margin-top: 0;
+			margin-bottom: 8px;
+
+			@media ( max-width: $breakpoint-mobile ) {
+				font-size: 1.125rem; /* stylelint-disable-line scales/font-sizes */
+			}
+		}
+
+		.support-footer__card-description {
+			font-size: 1rem;
+			color: var( --studio-gray-50, #646970 );
+			line-height: 24px;
+			margin: 0;
+
+			@media ( max-width: $breakpoint-mobile ) {
+				font-size: 0.875rem;
+			}
+		}
+	}
+}
 
 .happy-blocks-support-content-footer {
 	max-width: none !important;
@@ -24,10 +95,10 @@ $system-font-family: -apple-system, BlinkMacSystemFont, "Noto Sans", "Segoe UI",
 		margin-bottom: 0;
 	}
 
-	>* {
+	> * {
 		margin-left: auto !important;
 		margin-right: auto !important;
-		max-width: var(--wp--style--global--wide-size);
+		max-width: var( --wp--style--global--wide-size );
 	}
 
 	.support-content-resources {
@@ -40,13 +111,13 @@ $system-font-family: -apple-system, BlinkMacSystemFont, "Noto Sans", "Segoe UI",
 			min-width: 0;
 			overflow-wrap: break-word;
 			word-break: break-word;
-			border-bottom: 1px solid var(--studio-gray-0);
+			border-bottom: 1px solid var( --studio-gray-0 );
 			padding: 0 16px 32px 0;
 			font-size: 1.25rem;
 		}
 
 		p {
-			color: var(--studio-gray-60);
+			color: var( --studio-gray-60 );
 			margin-top: 16px;
 			margin-bottom: 28px;
 		}
@@ -58,10 +129,10 @@ $system-font-family: -apple-system, BlinkMacSystemFont, "Noto Sans", "Segoe UI",
 
 	.support-content-resource__title {
 		margin-top: 0;
-		font-family: var(--wp--preset--font-family--system-font);
+		font-family: var( --wp--preset--font-family--system-font );
 	}
 
-	@media (min-width: $breakpoint-mobile) {
+	@media ( min-width: $breakpoint-mobile ) {
 		.support-content-resource {
 			flex-basis: 0;
 			flex-grow: 1;
@@ -91,9 +162,8 @@ $system-font-family: -apple-system, BlinkMacSystemFont, "Noto Sans", "Segoe UI",
 			margin-top: 0;
 		}
 
-
 		.support-content-subscribe-disclaimer {
-			color: var(--studio-gray-60);
+			color: var( --studio-gray-60 );
 			font-size: 0.75rem;
 			line-height: 20px;
 
@@ -126,7 +196,7 @@ $system-font-family: -apple-system, BlinkMacSystemFont, "Noto Sans", "Segoe UI",
 				}
 			}
 
-			@media screen and (max-width: 782px) {
+			@media screen and ( max-width: 782px ) {
 				flex-direction: column;
 				align-items: flex-start;
 
@@ -137,7 +207,7 @@ $system-font-family: -apple-system, BlinkMacSystemFont, "Noto Sans", "Segoe UI",
 		}
 	}
 
-	@media (max-width: $breakpoint-mobile) {
+	@media ( max-width: $breakpoint-mobile ) {
 		padding: 12px 24px !important;
 
 		h4 {
@@ -161,7 +231,6 @@ $system-font-family: -apple-system, BlinkMacSystemFont, "Noto Sans", "Segoe UI",
 				.resource-link {
 					line-height: 20px;
 				}
-
 
 				p {
 					margin-top: 4px;

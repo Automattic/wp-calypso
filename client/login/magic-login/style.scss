@@ -42,6 +42,22 @@
 			.magic-login__form-header {
 				padding: 0 24px 0 24px;
 			}
+
+			.magic-login__form-action {
+				.button.is-primary {
+					background-color: var(--studio-jetpack-green-50);
+					border-color: var(--studio-jetpack-green-50);
+		
+					&:hover,
+					&:focus {
+						background-color: var(--studio-jetpack-green-60);
+					}
+		
+					.accessible-focus &:focus {
+						box-shadow: 0 0 0 2px var(--studio-jetpack-green-30);
+					}
+				}
+			}
 		}
 
 		.magic-login__form-header {
@@ -430,11 +446,11 @@
 			padding-right: 30px;
 			border-radius: 2px;
 
-			.notice__icon-wrapper {
+			.calypso-notice__icon-wrapper {
 				display: flex;
 			}
 
-			.notice__content {
+			.calypso-notice__content {
 				padding-left: 13px;
 			}
 		}
@@ -510,11 +526,11 @@
 		border-radius: 8px;
 		padding: 20px;
 
-		.notice__icon-wrapper {
+		.calypso-notice__icon-wrapper {
 			display: none;
 		}
 
-		.notice__content {
+		.calypso-notice__content {
 			padding-left: 0;
 		}
 

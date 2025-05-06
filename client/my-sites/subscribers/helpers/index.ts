@@ -1,4 +1,6 @@
+import config from '@automattic/calypso-config';
 import { SubscribersFilterBy } from '../constants';
+import type { Subscriber } from '../types';
 
 const getSubscribersCacheKey = ( {
 	siteId,
@@ -39,4 +41,22 @@ const getSubscriberDetailsCacheKey = (
 
 const getSubscriberDetailsType = ( userId: number | undefined ) => ( userId ? 'wpcom' : 'email' );
 
-export { getSubscriberDetailsCacheKey, getSubscriberDetailsType, getSubscribersCacheKey };
+const getSubscriptionIdFromSubscriber = ( subscriber: Subscriber ): number | string => {
+	const useNewHelper = config.isEnabled( 'subscribers-helper-library' );
+	if ( useNewHelper ) {
+		return (
+			subscriber.email_subscription_id ||
+			subscriber.subscription_id ||
+			subscriber.wpcom_subscription_id ||
+			0
+		);
+	}
+	return subscriber.subscription_id || 0;
+};
+
+export {
+	getSubscriberDetailsCacheKey,
+	getSubscriberDetailsType,
+	getSubscribersCacheKey,
+	getSubscriptionIdFromSubscriber,
+};

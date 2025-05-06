@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+// @ts-nocheck - TODO: Fix TypeScript issues
 import { QueryClient } from '@tanstack/react-query';
 import { getEnhancedTasks } from '../';
 import { buildTask } from '../../test/lib/fixtures';

@@ -17,6 +17,7 @@ import { AssertConditionState } from 'calypso/landing/stepper/declarative-flow/i
 import { goToImporter } from 'calypso/landing/stepper/declarative-flow/migration/helpers';
 import { useIsSiteAdmin } from 'calypso/landing/stepper/hooks/use-is-site-admin';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
+import { useRecordSignupComplete } from 'calypso/landing/stepper/hooks/use-record-signup-complete';
 import { useSiteData } from 'calypso/landing/stepper/hooks/use-site-data';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { goToCheckout } from 'calypso/landing/stepper/utils/checkout';
@@ -31,7 +32,7 @@ import * as paths from './paths';
 import type {
 	AssertConditionResult,
 	FlowV2,
-	ProvidedDependencies,
+	SubmitHandler,
 } from 'calypso/landing/stepper/declarative-flow/internals/types';
 
 const BASE_STEPS = [
@@ -52,16 +53,27 @@ const BASE_STEPS = [
 	STEPS.PROCESSING,
 ];
 
+function initialize() {
+	return stepsWithRequiredLogin( BASE_STEPS );
+}
+
 const hasSite = ( siteId: number, siteSlug: string ) => {
 	return siteId && siteId !== 0 && siteSlug && siteSlug !== '';
 };
 
-const siteMigration: FlowV2 = {
+const siteMigration: FlowV2< typeof initialize > = {
 	name: SITE_MIGRATION_FLOW,
-	isSignupFlow: false,
+	get isSignupFlow() {
+		const searchParams = new URLSearchParams( window.location.search );
+		const hasDestinationSite = [
+			searchParams.has( 'siteSlug' ),
+			searchParams.has( 'siteId' ),
+		].some( Boolean );
+		return ! hasDestinationSite;
+	},
 	__experimentalUseSessions: true,
 	__experimentalUseBuiltinAuth: true,
-
+	initialize,
 	useSideEffect() {
 		const { setIntent, resetOnboardStore } = useDispatch( ONBOARD_STORE );
 		useEffect( () => {
@@ -76,11 +88,6 @@ const siteMigration: FlowV2 = {
 			set( 'flow', { entryPoint: ref } );
 		}
 	},
-
-	initialize() {
-		return stepsWithRequiredLogin( BASE_STEPS );
-	},
-
 	useAssertConditions(): AssertConditionResult {
 		const { isAdmin } = useIsSiteAdmin();
 
@@ -113,13 +120,16 @@ const siteMigration: FlowV2 = {
 			return window.location.assign( addQueryArgs( { sessionId }, to ) );
 		};
 
+		const recordSignupComplete = useRecordSignupComplete( flowName );
+
 		// Call triggerGuidesForStep for the current step
 		useEffect( () => {
 			triggerGuidesForStep( flowName, currentStep, siteId );
 		}, [ flowName, currentStep, siteId ] );
 
-		async function submit( providedDependencies: ProvidedDependencies = {} ) {
-			switch ( currentStep ) {
+		const submit: SubmitHandler< typeof initialize > = ( submittedStep ) => {
+			const { slug, providedDependencies } = submittedStep;
+			switch ( slug ) {
 				case STEPS.SITE_MIGRATION_IDENTIFY.slug: {
 					const { from, platform, action } = providedDependencies as {
 						from: string;
@@ -211,7 +221,10 @@ const siteMigration: FlowV2 = {
 						}
 						case 'create-site':
 							return navigate(
-								paths.siteCreationPath( { from: fromQueryParam, platform: platformQueryParam } )
+								paths.siteCreationPath( {
+									from: fromQueryParam,
+									platform: platformQueryParam,
+								} )
 							);
 					}
 				}
@@ -238,6 +251,8 @@ const siteMigration: FlowV2 = {
 							message: 'Site not created',
 						} );
 					}
+
+					recordSignupComplete( { siteId } );
 
 					//NOTE: There are links pointing to this step with the action=migrate query param, so we need to ignore the platform
 					if ( actionQueryParam === 'migrate' ) {
@@ -355,6 +370,7 @@ const siteMigration: FlowV2 = {
 						} );
 						return;
 					}
+					break;
 				}
 
 				case STEPS.SITE_MIGRATION_INSTRUCTIONS.slug: {
@@ -366,18 +382,7 @@ const siteMigration: FlowV2 = {
 				}
 
 				case STEPS.SITE_MIGRATION_CREDENTIALS.slug: {
-					const { action, from, authorizationUrl, platform } = providedDependencies as {
-						action:
-							| 'skip'
-							| 'submit'
-							| 'application-passwords-approval'
-							| 'credentials-required'
-							| 'already-wpcom'
-							| 'site-is-not-using-wordpress';
-						from: string;
-						authorizationUrl: string;
-						platform: ImporterPlatform;
-					};
+					const { action, from, authorizationUrl, platform } = providedDependencies;
 
 					if ( action === 'skip' ) {
 						return exitFlow( paths.calypsoOverviewPath( { ref: 'site-migration' }, { siteSlug } ) );
@@ -385,7 +390,11 @@ const siteMigration: FlowV2 = {
 
 					if ( action === 'already-wpcom' ) {
 						return navigate(
-							paths.alreadyWpcomPath( { siteId, from: from || fromQueryParam, siteSlug } )
+							paths.alreadyWpcomPath( {
+								siteId,
+								from: from || fromQueryParam,
+								siteSlug,
+							} )
 						);
 					}
 
@@ -457,10 +466,7 @@ const siteMigration: FlowV2 = {
 				}
 
 				case STEPS.SITE_MIGRATION_APPLICATION_PASSWORD_AUTHORIZATION.slug: {
-					const { action, authorizationUrl } = providedDependencies as {
-						action: string;
-						authorizationUrl: string;
-					};
+					const { action, authorizationUrl } = providedDependencies;
 
 					if ( action === 'authorization' ) {
 						const currentUrl = window.location.href;
@@ -483,7 +489,7 @@ const siteMigration: FlowV2 = {
 					return exitFlow( paths.calypsoOverviewPath( { ref: 'site-migration' }, { siteSlug } ) );
 				}
 			}
-		}
+		};
 
 		const goBack = () => {
 			const entryPoint = get( 'flow' )?.entryPoint;

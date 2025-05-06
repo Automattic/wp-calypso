@@ -39,6 +39,7 @@
 	"homepage": "https://github.com/Automattic/wp-calypso/tree/HEAD/packages/mini-cart#readme",
 	"dependencies": {
 		"@automattic/composite-checkout": "workspace:^",
+		"@automattic/number-formatters": "^1.0.0",
 		"@automattic/shopping-cart": "workspace:^",
 		"@automattic/wpcom-checkout": "workspace:^",
 		"@emotion/styled": "^11.11.0",
@@ -51,7 +52,7 @@
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"@testing-library/dom": "^10.4.0",
 		"@testing-library/jest-dom": "^6.6.3",
-		"@testing-library/react": "^16.2.0",
+		"@testing-library/react": "^16.3.0",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
 		"typescript": "^5.8.2"

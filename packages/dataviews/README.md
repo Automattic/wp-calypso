@@ -1,4 +1,6 @@
-# The `@wordpress/dataviews` package
+# The `@automattic/dataviews` package
+
+> This package is based on the `@wordpress/dataviews` package and extends its functionality. See the "Contributing to this package" section for more info.
 
 The DataViews package offers two React components and a few utilities to work with a list of data:
 
@@ -10,14 +12,14 @@ The DataViews package offers two React components and a few utilities to work wi
 Install the module
 
 ```bash
-npm install @wordpress/dataviews --save
+npm install @automattic/dataviews --save
 ```
 
 ## `DataViews`
 
 <div class="callout callout-info">At <a href="https://wordpress.github.io/gutenberg/">WordPress Gutenberg's Storybook</a> there's an <a href="https://wordpress.github.io/gutenberg/?path=/docs/dataviews-dataviews--docs">example implementation of the Dataviews component</a>.</div>
 
-**Important note** If you're trying to use the `DataViews` component in a WordPress plugin or theme and you're building your scripts using the `@wordpress/scripts` package, you need to import the components from `@wordpress/dataviews/wp` instead of `@wordpress/dataviews`.
+**Important note** If you're trying to use the `DataViews` component in a WordPress plugin or theme and you're building your scripts using the `@wordpress/scripts` package, you need to import the components from `@automattic/dataviews/wp` instead of `@automattic/dataviews`.
 
 ### Usage
 
@@ -393,6 +395,78 @@ A callback function that is triggered when a user clicks on a media field or pri
 #### `header`: React component
 
 React component to be rendered next to the view config button.
+
+### Composition modes
+
+The `DataViews` component supports two composition modes:
+
+* **Controlled**: This is the default usage mode. `DataViews` renders a full layout out-of-the-box — including search, filters, view switcher, layout grid or table, actions, and pagination. It’s the simplest way to get started and requires minimal setup.
+
+* **Free composition**: This mode gives developers full control over the layout. You can compose your own UI using internal components — placing them exactly where they’re needed in your interface. This is useful for more advanced or custom layouts, while still relying on the same shared context for user interactions.
+
+The component automatically detects the mode based on the `children` prop. If no `children` are passed, `DataViews` renders its internal layout (controlled mode). If `children` are provided, the component switches to free composition mode, skipping the default layout entirely.
+
+In both modes, user interactions update the same `view` object and share the same behavior. Free composition components rely on context state and don’t require additional props to work, making them safe to use without extra boilerplate.
+
+### Free composition
+
+When you pass the `children` prop to the `DataViews` component, it enters free composition mode. In this mode, `DataViews` no longer renders its built-in layout — instead, it acts as a wrapper that provides access to internal state and shared behavior through context.
+
+This allows you to build your own layout from scratch using the subcomponents exposed by `DataViews`. Each subcomponent automatically connects to the shared context, so you don't need to wire props manually. You can arrange these components however you want and combine them with your own custom elements.
+
+This pattern enables full layout flexibility while keeping the data logic centralized.
+
+The following components are available directly under `DataViews`:
+
+* `DataViews.Search`
+* `DataViews.FiltersToggle`
+* `DataViews.Filters`
+* `DataViews.Layout`
+* `DataViews.LayoutSwitcher`
+* `DataViews.Pagination`
+* `DataViews.BulkActionToolbar`
+* `DataViews.ViewConfig`
+
+#### example
+
+```jsx
+import DataViews from '@automattic/dataviews';
+import { __ } from '@wordpress/i18n';
+
+const CustomLayout = () => {
+	// Declare data, fields, etc.
+
+	return (
+		<DataViews
+			data={ data }
+			fields={ fields }
+			view={ view }
+			onChangeView={ onChangeView }
+			paginationInfo={ paginationInfo }
+			defaultLayouts={ { table: {} } }
+		>
+			<h1>{ __( 'Free composition' ) }</h1>
+			<DataViews.Search />
+			<DataViews.FiltersToggle />
+			<DataViews.Filters />
+			<DataViews.Layout />
+			<DataViews.Pagination />
+		</DataViews>
+	);
+};
+```
+
+> You can render only the pieces you need, rearrange them freely, or combine them with custom components.
+
+### Accessibility considerations
+
+All `DataViews` subcomponents are designed with accessibility in mind — including keyboard interactions, focus management, and semantic roles. Components like `Search`, `Pagination`, `FiltersToggle`, and `Filters` already handle these responsibilities internally and can be safely used in custom layouts.
+
+When using free composition, developers are responsible for the outer structure of the layout.
+
+Developers don't need to worry about the internal accessibility logic for individual features. The core behaviors — like search semantics, filter toggles, or pagination focus — are encapsulated.
+
+`FiltersToggle` controls the visibility of the filters panel, and `Filters` renders the actual filters inside it. They work together and should always be used as a pair. While their internal behavior is accessible by default, how they’re positioned and grouped in custom layouts may affect the overall experience — especially for assistive technologies. Extra care is recommended.
 
 ## `DataForm`
 
@@ -1221,8 +1295,11 @@ Example:
 
 ## Contributing to this package
 
-This is an individual package that's part of the Gutenberg project. The project is organized as a monorepo. It's made up of multiple self-contained software packages, each with a specific purpose. The packages in this monorepo are published to [npm](https://www.npmjs.com/) and used by [WordPress](https://make.wordpress.org/core/) as well as other software projects.
+This package is based on the [`@wordpress/dataviews` package](https://www.npmjs.com/package/@wordpress/dataviews). We aim to synchronize changes from upstream (Gutenberg repo, `@wordpress/dataviews` package) while extending its core functionality.
 
-To find out more about contributing to this package or Gutenberg as a whole, please read the project's main [contributor guide](https://github.com/WordPress/gutenberg/tree/HEAD/CONTRIBUTING.md).
+There's two workflows: adding new features to this package and synchronizing changes from upstream. See [SYNC.md](https://github.com/Automattic/wp-calypso/blob/trunk/packages/dataviews/SYNC.md) for details about the second workflow.
 
-<br /><br /><p align="center"><img src="https://s.w.org/style/images/codeispoetry.png?1" alt="Code is Poetry." /></p>
+- When adding new features, document every change in the `CHANGELOG.automattic.md` file.
+- When synchronizing changes from upstream, document it in the `CHANGELOG.automattic.md` as well. For example, add a line such as `Bring changes from @wordpress/dataviews X.Y.Z`. Ideally, synchronizations should happen every time there's new release of `@wordpress/packages`, as this makes it easier to pinpoint changes. If it brings upstream changes that cannot be pinpointed to a package release, document the upstream git commit that's being pulled into this package.
+
+This is an individual package that's part of the wp-calypso project. The project is organized as a monorepo. It's made up of multiple self-contained software packages, each with a specific purpose. The packages in this monorepo are published to [npm](https://www.npmjs.com/) and used by [wp-calypso](https://github.com/automattic/wp-calypso/) as well as other software projects. To find out more about contributing to this package or wp-calypso as a whole, please read the project's main [contributor guide](https://github.com/Automattic/wp-calypso/blob/trunk/docs/CONTRIBUTING.md).

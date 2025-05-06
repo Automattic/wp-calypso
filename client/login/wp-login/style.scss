@@ -1,4 +1,5 @@
-@import "jetpack-connect/colors";
+@import "../../jetpack-connect/colors";
+@import "../../assets/stylesheets/shared/mixins/elevation";
 @import "@automattic/onboarding/styles/mixins";
 @import "@automattic/typography/styles/fonts";
 @import "@wordpress/base-styles/breakpoints";
@@ -33,6 +34,16 @@ $image-height: 47px;
 
 .wp-login__main.main {
 	max-width: 400px;
+
+	&.is-jetpack {
+		max-width: 450px;
+
+		// This is margin based on the layout + padding height.
+		margin-top: calc(96px - 48px);
+		@include break-small {
+			margin-top: calc(170px - 48px);
+		}
+	}
 }
 
 .wp-login__header {
@@ -157,6 +168,10 @@ $image-height: 47px;
 
 .layout.is-jetpack-login:not(.is-wccom-oauth-flow):not(.is-woocommerce-core-profiler-flow) {
 	@include jetpack-connect-colors();
+
+	.auth-form__social-buttons {
+		--color-accent: var(--studio-jetpack-green-50);
+	}
 }
 
 .layout.is-wccom-oauth-flow,
@@ -616,7 +631,7 @@ $image-height: 47px;
 
 	.wp-login__main .locale-suggestions .locale-suggestions__notice.is-light {		
 		&,
-		.notice__icon-wrapper {
+		.calypso-notice__icon-wrapper {
 			background-color: var(--studio-gray-0);
 		}
 	}
@@ -646,7 +661,7 @@ $image-height: 47px;
 		font-size: 14px;
 		line-height: 1.5;
 
-		a:not(.notice.is-error a) {
+		a:not(.calypso-notice.is-error a) {
 			color: var(--color-gravatar);
 		}
 

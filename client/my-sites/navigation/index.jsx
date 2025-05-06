@@ -6,11 +6,7 @@ import { withCurrentRoute } from 'calypso/components/route';
 import GlobalSidebar, { GLOBAL_SIDEBAR_EVENTS } from 'calypso/layout/global-sidebar';
 import MySitesSidebarUnifiedBody from 'calypso/my-sites/sidebar/body';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import {
-	getShouldShowCollapsedGlobalSidebar,
-	getShouldShowGlobalSidebar,
-	getShouldShowUnifiedSiteSidebar,
-} from 'calypso/state/global-sidebar/selectors';
+import { getSidebarType, SidebarType } from 'calypso/state/global-sidebar/selectors';
 import { getSiteDomain } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
@@ -73,23 +69,22 @@ class MySitesNavigation extends Component {
 
 export default withCurrentRoute(
 	connect(
-		( state, { currentSection } ) => {
-			const sectionGroup = currentSection?.group ?? null;
-			const sectionName = currentSection?.name ?? null;
+		( state, { currentSection, currentRoute } ) => {
 			const siteId = getSelectedSiteId( state );
 			const siteDomain = getSiteDomain( state, siteId );
-			const shouldShowGlobalSidebar = getShouldShowGlobalSidebar( state, siteId, sectionGroup );
-			const shouldShowCollapsedGlobalSidebar = getShouldShowCollapsedGlobalSidebar(
+
+			const sidebarType = getSidebarType( {
 				state,
 				siteId,
-				sectionGroup
-			);
-			const shouldShowUnifiedSiteSidebar = getShouldShowUnifiedSiteSidebar(
-				state,
-				siteId,
-				sectionGroup,
-				sectionName
-			);
+				section: currentSection,
+				route: currentRoute,
+			} );
+
+			const shouldShowGlobalSidebar =
+				sidebarType === SidebarType.Global || sidebarType === SidebarType.GlobalCollapsed;
+			const shouldShowCollapsedGlobalSidebar = sidebarType === SidebarType.GlobalCollapsed;
+			const shouldShowUnifiedSiteSidebar = sidebarType === SidebarType.UnifiedSiteClassic;
+
 			return {
 				siteDomain,
 				isGlobalSidebarVisible: shouldShowGlobalSidebar,

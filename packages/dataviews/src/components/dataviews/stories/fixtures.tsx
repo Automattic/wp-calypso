@@ -583,6 +583,7 @@ export const actions: Action< SpaceObject >[] = [
 		icon: trash,
 		hideModalHeader: true,
 		modalFocusOnMount: 'firstContentElement',
+		supportsBulk: true,
 		RenderModal: ( { items, closeModal } ) => {
 			return (
 				<VStack spacing="5">

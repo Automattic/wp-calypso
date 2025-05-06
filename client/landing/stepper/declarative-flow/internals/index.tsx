@@ -3,7 +3,7 @@ import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import React, { lazy, useEffect, useMemo } from 'react';
 import Modal from 'react-modal';
-import { createPath, generatePath, useParams } from 'react-router';
+import { createPath, generatePath, Navigate, useParams } from 'react-router';
 import { Route, Routes } from 'react-router-dom';
 import DocumentHead from 'calypso/components/data/document-head';
 import Loading from 'calypso/components/loading';
@@ -27,7 +27,7 @@ import { usePreloadSteps, lazyCache } from './hooks/use-preload-steps';
 import { useSignUpStartTracking } from './hooks/use-sign-up-start-tracking';
 import { useStepNavigationWithTracking } from './hooks/use-step-navigation-with-tracking';
 import { PRIVATE_STEPS } from './steps';
-import { AssertConditionState, type Flow, type StepperStep } from './types';
+import { AssertConditionState, FlowV2, StepProps, type Flow, type StepperStep } from './types';
 import type { StepperInternalSelect } from '@automattic/data-stores';
 import './global.scss';
 
@@ -38,7 +38,9 @@ function flowStepComponent( flowStep: StepperStep | undefined ) {
 
 	let lazyComponent = lazyCache.get( flowStep.asyncComponent );
 	if ( ! lazyComponent ) {
-		lazyComponent = lazy( flowStep.asyncComponent );
+		lazyComponent = lazy(
+			flowStep.asyncComponent as () => Promise< { default: React.ComponentType< StepProps > } >
+		);
 		lazyCache.set( flowStep.asyncComponent, lazyComponent );
 	}
 	return lazyComponent;
@@ -55,10 +57,10 @@ function flowStepComponent( flowStep: StepperStep | undefined ) {
  * @param props.steps the steps of the flow.
  * @returns A React router switch will all the routes
  */
-export const FlowRenderer: React.FC< { flow: Flow; steps: readonly StepperStep[] | null } > = ( {
-	flow,
-	steps,
-} ) => {
+export const FlowRenderer: React.FC< {
+	flow: Flow | FlowV2< any >;
+	steps: readonly StepperStep[] | null;
+} > = ( { flow, steps } ) => {
 	// Configure app element that React Modal will aria-hide when modal is open
 	Modal.setAppElement( '#wpcom' );
 	const deprecatedFlowSteps = 'useSteps' in flow ? flow.useSteps() : null;
@@ -67,10 +69,10 @@ export const FlowRenderer: React.FC< { flow: Flow; steps: readonly StepperStep[]
 	const stepPaths = flowSteps.map( ( step ) => step.slug );
 	const firstStepSlug = useFirstStep( stepPaths );
 	const { navigate, params } = useFlowNavigation( flow );
-	const currentStepRoute = params.step || '';
+	const currentStepRoute = ( params.step || '' ) as StepperStep[ 'slug' ];
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const { lang = null } = useParams();
-	const isValidStep = params.step != null && stepPaths.includes( params.step );
+	const isValidStep = params.step != null && stepPaths.includes( currentStepRoute );
 
 	// Start tracking performance for this step.
 	useStartStepperPerformanceTracking( params.flow || '', currentStepRoute );
@@ -112,7 +114,8 @@ export const FlowRenderer: React.FC< { flow: Flow; steps: readonly StepperStep[]
 		window.scrollTo( 0, 0 );
 	}, [ currentStepRoute ] );
 
-	const assertCondition = flow.useAssertConditions?.( navigate ) ?? {
+	const assertCondition = ( 'useAssertConditions' in flow &&
+		flow.useAssertConditions?.( navigate ) ) ?? {
 		state: AssertConditionState.SUCCESS,
 	};
 
@@ -126,16 +129,18 @@ export const FlowRenderer: React.FC< { flow: Flow; steps: readonly StepperStep[]
 	);
 
 	const renderStep = ( step: StepperStep ) => {
-		switch ( assertCondition.state ) {
-			case AssertConditionState.CHECKING:
-				return shouldUseStepContainerV2( flow.name ) ? (
-					<Step.Loading />
-				) : (
-					<Loading className="wpcom-loading__boot" />
-				);
-			case AssertConditionState.FAILURE:
-				console.error( assertCondition.message ); // eslint-disable-line no-console
-				return null;
+		if ( assertCondition ) {
+			switch ( assertCondition.state ) {
+				case AssertConditionState.CHECKING:
+					return shouldUseStepContainerV2( flow.name ) ? (
+						<Step.Loading />
+					) : (
+						<Loading className="wpcom-loading__boot" />
+					);
+				case AssertConditionState.FAILURE:
+					console.error( assertCondition.message ); // eslint-disable-line no-console
+					return null;
+			}
 		}
 
 		const StepComponent = flowStepComponent( flowSteps.find( ( { slug } ) => slug === step.slug ) );
@@ -188,10 +193,10 @@ export const FlowRenderer: React.FC< { flow: Flow; steps: readonly StepperStep[]
 		}
 
 		if ( step.slug === PRIVATE_STEPS.USER.slug ) {
-			// eslint-disable-next-line no-console
-			console.warn(
-				'Please define the next step after auth explicitly as we cannot find the user step automatically.'
-			);
+			// In this case, the user step is not able to determine the next step after auth. This happens when users somehow land in /flow/user directly.
+			// So we navigate to the landing page of the flow and let the flow decide what to do.
+			// If you intend to land in /flow/user, please point your URL to the step itself and Stepper will automatically redirect to the user step if needed.
+			return <Navigate to={ `/${ flow.variantSlug ?? flow.name }/` } replace />;
 		}
 
 		return (

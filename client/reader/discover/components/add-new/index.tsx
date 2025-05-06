@@ -34,7 +34,7 @@ const DiscoverAddNew = () => {
 						showDismiss={ false }
 						text={ translate( 'Please verify your email before subscribing.' ) }
 					>
-						<a href="/me/account" className="notice__action">
+						<a href="/me/account" className="calypso-notice__action">
 							{ translate( 'Account Settings' ) }
 						</a>
 					</Notice>

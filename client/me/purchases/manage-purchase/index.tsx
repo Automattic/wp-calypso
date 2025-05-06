@@ -437,20 +437,6 @@ class ManagePurchase extends Component<
 		);
 	}
 
-	renderSelectNewButton() {
-		const { translate, siteId, purchase } = this.props;
-
-		if ( purchase && this.isPendingDomainRegistration( purchase ) ) {
-			return null;
-		}
-
-		return (
-			<Button className="manage-purchase__renew-button" href={ `/plans/${ siteId }` } compact>
-				{ translate( 'Select a new plan' ) }
-			</Button>
-		);
-	}
-
 	renderRenewalNavItem( content: JSX.Element | string, onClick: () => void ) {
 		const { purchase } = this.props;
 		if ( ! purchase ) {
@@ -628,20 +614,6 @@ class ManagePurchase extends Component<
 		);
 	}
 
-	renderSelectNewNavItem() {
-		const { translate, siteId, purchase } = this.props;
-
-		if ( purchase && this.isPendingDomainRegistration( purchase ) ) {
-			return null;
-		}
-
-		return (
-			<CompactCard tagName="button" displayAsLink href={ `/plans/${ siteId }` }>
-				{ translate( 'Select a new plan' ) }
-			</CompactCard>
-		);
-	}
-
 	handleEditPaymentMethodNavItem = () => {
 		recordTracksEvent( 'calypso_purchases_edit_payment_method' );
 	};
@@ -697,26 +669,21 @@ class ManagePurchase extends Component<
 	}
 
 	renderCrmDownloadsNavItem() {
-		const { purchase, translate, siteSlug } = this.props;
-
-		if ( ! purchase ) {
-			return null;
-		}
+		const { purchase, translate } = this.props;
 
 		// Only show for Jetpack CRM Products
-		const productSlug = purchase.productSlug || '';
-		if ( ! isJetpackCrmProduct( productSlug ) ) {
+		if ( ! isJetpackCrmProduct( purchase?.productSlug ) ) {
 			return null;
 		}
 
 		const handleCrmDownloadsClick = () => {
 			recordTracksEvent( 'calypso_purchases_crm_downloads_click', {
-				product_slug: productSlug,
+				product_slug: purchase?.productSlug || '',
 			} );
 		};
 
 		// We'll pass the purchase ID in the URL, and the CRM Downloads component will fetch the actual license key
-		const path = `/purchases/crm-downloads/${ siteSlug }/${ purchase.id }`;
+		const path = `/purchases/crm-downloads/${ purchase?.id }`;
 
 		return (
 			<CompactCard href={ path } onClick={ handleCrmDownloadsClick }>
@@ -1335,7 +1302,7 @@ class ManagePurchase extends Component<
 		);
 	}
 
-	renderPurchaseDetail( preventRenewal: boolean, isJetpackLegacyPlan: boolean ) {
+	renderPurchaseDetail( preventRenewal: boolean ) {
 		if ( this.isDataLoading( this.props ) || this.isDomainsLoading( this.props ) ) {
 			return this.renderPlaceholder();
 		}
@@ -1410,7 +1377,6 @@ class ManagePurchase extends Component<
 						</div>
 						{ isProductOwner && ! purchase.isLocked && (
 							<div className="manage-purchase__renew-upgrade-buttons">
-								{ preventRenewal && isJetpackLegacyPlan && this.renderSelectNewButton() }
 								{ this.renderUpgradeButton( preventRenewal ) }
 								{ ! preventRenewal && this.renderRenewButton() }
 							</div>
@@ -1437,7 +1403,6 @@ class ManagePurchase extends Component<
 				) }
 				{ isProductOwner && ! purchase.isLocked && (
 					<>
-						{ preventRenewal && isJetpackLegacyPlan && this.renderSelectNewNavItem() }
 						{ ! preventRenewal &&
 							! renderMonthlyRenewalOption &&
 							! isActive100YearPurchase &&
@@ -1508,17 +1473,15 @@ class ManagePurchase extends Component<
 		}
 
 		let showExpiryNotice = false;
-		let preventRenewal = false;
-		let isJetpackLegacyPlan = false;
 
 		if (
 			purchase &&
 			( JETPACK_LEGACY_PLANS as ReadonlyArray< string > ).includes( purchase.productSlug )
 		) {
 			showExpiryNotice = isCloseToExpiration( purchase );
-			isJetpackLegacyPlan = true;
-			preventRenewal = ! isRenewable( purchase );
 		}
+
+		let preventRenewal = false;
 
 		if ( ! canExplicitRenew( purchase ) ) {
 			preventRenewal = true;
@@ -1570,7 +1533,7 @@ class ManagePurchase extends Component<
 					siteId={ this.props.siteId ?? 0 }
 					purchase={ purchase }
 				/>
-				{ this.renderPurchaseDetail( preventRenewal, isJetpackLegacyPlan ) }
+				{ this.renderPurchaseDetail( preventRenewal ) }
 				{ this.renderWordAdsEligibilityWarningDialog( purchase ) }
 				{ site && this.renderNonPrimaryDomainWarningDialog( site, purchase ) }
 			</Fragment>

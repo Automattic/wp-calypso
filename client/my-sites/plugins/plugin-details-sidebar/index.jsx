@@ -4,7 +4,8 @@ import {
 	WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS,
 } from '@automattic/calypso-products';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { useTranslate, numberFormatCompact } from 'i18n-calypso';
+import { formatNumberCompact } from '@automattic/number-formatters';
+import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import './style.scss';
@@ -96,7 +97,6 @@ const PluginDetailsSidebar = ( {
 					first
 				/>
 			) }
-
 			{ isWooCommercePluginRequired && (
 				<PluginDetailsSidebarUSP
 					id="woo"
@@ -112,7 +112,6 @@ const PluginDetailsSidebar = ( {
 					first={ ! isPremiumVersionAvailable }
 				/>
 			) }
-
 			{ selectedSite && (
 				<USPS
 					shouldUpgrade={ shouldUpgrade }
@@ -121,7 +120,6 @@ const PluginDetailsSidebar = ( {
 					billingPeriod={ billingPeriod }
 				/>
 			) }
-
 			{ selectedSite && (
 				<PlanUSPS
 					pluginSlug={ slug }
@@ -131,7 +129,6 @@ const PluginDetailsSidebar = ( {
 					billingPeriod={ billingPeriod }
 				/>
 			) }
-
 			{ demo_url && (
 				<PluginDetailsSidebarUSP
 					id="demo"
@@ -143,7 +140,6 @@ const PluginDetailsSidebar = ( {
 					first
 				/>
 			) }
-
 			{ isMarketplaceProduct && (
 				<PluginDetailsSidebarUSP
 					id="support"
@@ -153,14 +149,13 @@ const PluginDetailsSidebar = ( {
 					first
 				/>
 			) }
-
 			{ Boolean( active_installs ) && (
 				<div className="plugin-details-sidebar__active-installs">
 					<div className="plugin-details-sidebar__active-installs-text title">
 						{ translate( 'Active installations' ) }
 					</div>
 					<div className="plugin-details-sidebar__active-installs-value value">
-						{ numberFormatCompact( active_installs ) }
+						{ formatNumberCompact( active_installs ) }
 					</div>
 				</div>
 			) }

@@ -29,7 +29,7 @@ const entrepreneurFlow: Flow = {
 		const surveyStep = {
 			...STEPS.SEGMENTATION_SURVEY,
 			...{ slug: SEGMENTATION_SURVEY_SLUG as StepperStep[ 'slug' ] },
-		};
+		} as StepperStep;
 
 		const steps: StepperStep[] = [
 			surveyStep,
@@ -76,7 +76,7 @@ const entrepreneurFlow: Flow = {
 			};
 
 			switch ( currentStep ) {
-				case SEGMENTATION_SURVEY_SLUG: {
+				case SEGMENTATION_SURVEY_SLUG as StepperStep[ 'slug' ]: {
 					setIsMigrationFlow( !! providedDependencies.isMigrationFlow );
 
 					if ( providedDependencies.lastQuestionPath ) {

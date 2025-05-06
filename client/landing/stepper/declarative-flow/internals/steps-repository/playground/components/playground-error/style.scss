@@ -1,0 +1,45 @@
+.playground-error {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+  background-color: var(--studio-gray-5);
+
+  &__content {
+    max-width: 500px;
+    padding: 2rem;
+    text-align: center;
+    background-color: var(--color-surface);
+    border-radius: 4px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  }
+
+  &__title {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    color: var(--studio-gray-100);
+  }
+
+  &__message {
+    margin-bottom: 1.5rem;
+    color: var(--studio-gray-80);
+    line-height: 1.5;
+  }
+
+  &__button {
+    margin-top: 1rem;
+  }
+
+  &__loader {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+
+    p {
+      margin: 0;
+      color: var(--studio-gray-80);
+      line-height: 1.5;
+    }
+  }
+}

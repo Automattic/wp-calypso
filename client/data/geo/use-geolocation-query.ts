@@ -13,8 +13,8 @@ export const useGeoLocationQuery = ( options = {} ) =>
 	useQuery< GeoLocationData >( {
 		queryKey: [ 'geo' ],
 		queryFn: () =>
-			globalThis
-				.fetch( 'https://public-api.wordpress.com/geo/' )
-				.then( ( response ) => response.json() ),
+			fetch( 'https://public-api.wordpress.com/geo/' ).then( ( response ) => response.json() ),
+		staleTime: Infinity,
+		meta: { persist: false },
 		...options,
 	} );

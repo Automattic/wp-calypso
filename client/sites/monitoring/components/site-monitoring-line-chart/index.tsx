@@ -1,6 +1,6 @@
+import { formatNumber } from '@automattic/number-formatters';
 import { Spinner } from '@wordpress/components';
 import clsx from 'clsx';
-import { numberFormat } from 'i18n-calypso';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import uPlot from 'uplot';
 import UplotReact from 'uplot-react';
@@ -88,7 +88,7 @@ function createSeries( series: Array< SeriesProp > ) {
 						return '-';
 					}
 
-					return numberFormat( rawValue, { decimals: 0 } );
+					return formatNumber( rawValue, { decimals: 0 } );
 				},
 			},
 		};

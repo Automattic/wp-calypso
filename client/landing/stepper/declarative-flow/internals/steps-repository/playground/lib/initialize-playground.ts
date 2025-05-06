@@ -20,8 +20,9 @@ export async function initializeWordPressPlayground(
 	let isWordPressInstalled = false;
 
 	const url = new URL( window.location.href );
-	let playgroundId = url.searchParams.get( 'playground' );
+	let playgroundId: string | null = url.searchParams.get( 'playground' );
 	if ( ! playgroundId ) {
+		// Create a new playground ID if none exists
 		playgroundId = crypto.randomUUID();
 		// update url in browser history
 		url.searchParams.set( 'playground', playgroundId );
@@ -32,7 +33,7 @@ export async function initializeWordPressPlayground(
 			return prev;
 		} );
 	} else {
-		// TODO: check if WordPress is installed using playgroundAvailableInOpfs from @wp-playground/website
+		// Assume we have WP installed, we will attempt to boot and capture the error when boot fails
 		isWordPressInstalled = true;
 	}
 
@@ -43,16 +44,20 @@ export async function initializeWordPressPlayground(
 				path: `${ OPFS_PATH_PREFIX }/${ playgroundId }/`,
 			},
 			mountpoint: '/wordpress',
-			initialSyncDirection: 'opfs-to-memfs',
+			initialSyncDirection: isWordPressInstalled ? 'opfs-to-memfs' : 'memfs-to-opfs',
 		};
 
 		const client = await startPlaygroundWeb( {
 			iframe,
-			remoteUrl: 'https://playground.wordpress.net/remote.html',
+			remoteUrl: 'https://wordpress-playground.atomicsites.blog/remote.html',
 			blueprint: await getBlueprint( isWordPressInstalled, recommendedPhpVersion ),
 			shouldInstallWordPress: ! isWordPressInstalled,
-			mounts: [ mountDescriptor ],
+			mounts: isWordPressInstalled ? [ mountDescriptor ] : [],
 		} );
+
+		if ( ! isWordPressInstalled ) {
+			await client.mountOpfs( mountDescriptor );
+		}
 
 		await client.isReady();
 		return client;

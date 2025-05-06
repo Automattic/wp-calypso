@@ -5,8 +5,9 @@
 .calypso-navigation-header {
 	background-color: var(--wp-components-color-background, #fff);
 	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-	width: 100%;
-	padding: 24px 0;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
 
 	&__head {
 		display: flex;
@@ -17,24 +18,39 @@
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
+		height: 32px;
+		padding-bottom: 24px;
 	}
 
 	&__left-section {
 		display: flex;
 		align-items: center;
-		gap: $grid-unit-20;
+	}
+
+	&__right-section {
+		display: flex;
+		align-items: center;
+
+		.components-button {
+			height: 32px;
+			padding: 4px 8px;
+		}
+	}
+
+	// Increased specificity to override the default link color for anchor elements on Atomic.
+	& &__back-link {
+		color: var(--wp-components-color-gray-600, #666);
 	}
 
 	&__back-link {
 		display: flex;
 		align-items: center;
 		text-decoration: none;
-		color: var(--wp-components-color-gray-600, #666);
 		font-size: $default-font-size;
 		transition: color 0.2s ease;
 
 		&:hover {
-			color: var(--wp-components-color-gray-900, #333);
+			color: var(--wp-components-color-gray-900, $gray-900);
 		}
 
 		svg {
@@ -43,19 +59,32 @@
 	}
 
 	&__title {
-		margin: 0;
-		font-size: 24px;
+		font-size: 20px;
 		font-weight: 500;
-		color: var(--wp-components-color-gray-900, #333);
+		font-family: "SF Pro Display", $sans;
+		color: var(--wp-components-color-gray-900, $gray-900);
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		line-height: 1;
+		height: 32px;
 
 		@media (max-width: $break-small) {
 			font-size: 20px;
 		}
 	}
 
-	&__right-section {
+	&__title-logo {
+		padding: 4px;
 		display: flex;
 		align-items: center;
+		height: 24px;
+		width: 24px;
+
+		img, svg {
+			max-height: 100%;
+			width: auto;
+		}
 	}
 
 	// Add extra space when there is a classic/non classic option tab at the top on mobile that collides with cta's

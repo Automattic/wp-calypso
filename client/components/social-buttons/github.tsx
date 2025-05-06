@@ -38,7 +38,7 @@ type ExchangeCodeForTokenResponse = {
 	access_token: string;
 };
 
-const GitHubLoginButton = ( {
+export const GitHubLoginButton = ( {
 	children,
 	responseHandler,
 	onClick,

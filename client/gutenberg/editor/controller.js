@@ -1,5 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { makeLayout, render } from 'calypso/controller';
+import { recordPageView } from 'calypso/lib/analytics/page-view';
 import { addQueryArgs, getSiteFragment } from 'calypso/lib/route';
 import { EDITOR_START, POST_EDIT } from 'calypso/state/action-types';
 import { requestAdminMenu } from 'calypso/state/admin-menu/actions';
@@ -236,11 +237,6 @@ function getBloggingPromptData( query ) {
 	return answer_prompt ? { answer_prompt } : null;
 }
 
-function getAnchorFmData( query ) {
-	const { anchor_podcast, anchor_episode, spotify_url } = query;
-	return { anchor_podcast, anchor_episode, spotify_url };
-}
-
 function getSessionStorageOneTimeValue( key ) {
 	const value = window.sessionStorage.getItem( key );
 	window.sessionStorage.removeItem( key );
@@ -248,6 +244,11 @@ function getSessionStorageOneTimeValue( key ) {
 }
 
 export const post = ( context, next ) => {
+	recordPageView( context.path, 'iFramed Editor', {
+		iframedEditor: true,
+		previousPath: context.previousPath,
+	} );
+
 	const postId = getPostID( context );
 	const postType = determinePostType( context );
 	const jetpackCopy = parseInt( context.query[ 'jetpack-copy' ] );
@@ -259,7 +260,6 @@ export const post = ( context, next ) => {
 	const siteId = getSelectedSiteId( state );
 	const pressThisData = getPressThisData( context.query );
 	const bloggingPromptData = getBloggingPromptData( context.query );
-	const anchorFmData = getAnchorFmData( context.query );
 	const parentPostId = parseInt( context.query.parent_post, 10 ) || null;
 
 	// Set postId on state.editor.postId, so components like editor revisions can read from it.
@@ -276,7 +276,6 @@ export const post = ( context, next ) => {
 			duplicatePostId={ duplicatePostId }
 			pressThisData={ pressThisData }
 			bloggingPromptData={ bloggingPromptData }
-			anchorFmData={ anchorFmData }
 			parentPostId={ parentPostId }
 			creatingNewHomepage={ postType === 'page' && context.query.hasOwnProperty( 'new-homepage' ) }
 			stripeConnectSuccess={ context.query.stripe_connect_success ?? null }

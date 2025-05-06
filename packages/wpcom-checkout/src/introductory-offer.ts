@@ -1,5 +1,6 @@
 import { isDomainRegistration } from '@automattic/calypso-products';
-import i18n, { formatCurrency } from 'i18n-calypso';
+import { formatCurrency } from '@automattic/number-formatters';
+import i18n from 'i18n-calypso';
 import { doesIntroductoryOfferHavePriceIncrease } from './transformations';
 import type { ResponseCartProduct } from '@automattic/shopping-cart';
 

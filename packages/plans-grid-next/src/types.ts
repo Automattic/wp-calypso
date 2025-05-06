@@ -55,6 +55,7 @@ export type GridSize = 'small' | 'smedium' | 'medium' | 'large' | 'xlarge';
 
 export type PlansIntent =
 	| 'plans-affiliate'
+	| 'plans-ai-assembler-free-trial'
 	| 'plans-blog-onboarding'
 	| 'plans-newsletter'
 	| 'plans-new-hosted-site'
@@ -239,6 +240,11 @@ export type GridContextProps = {
 	 * calculating prices.
 	 */
 	reflectStorageSelectionInPlanPrices?: boolean;
+
+	/**
+	 * Enable streamlined billing description
+	 */
+	showStreamlinedBillingDescription?: boolean;
 };
 
 export type ComparisonGridExternalProps = Omit<

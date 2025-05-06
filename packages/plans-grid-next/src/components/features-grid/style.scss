@@ -211,6 +211,7 @@
 	color: var(--studio-gray-80);
 	font-weight: 400;
 	padding: 0 20px 24px 20px;
+	margin-bottom: 0;
 
 	@include plans-grid-medium-large {
 		font-size: $font-body-small;
@@ -352,7 +353,8 @@
 		font-weight: 400;
 		line-height: 20px;
 		overflow-wrap: break-word;
-		text-wrap: balance;
+		text-wrap: balance; // Fallback until Safari supports `pretty`.
+		text-wrap: pretty;
 		margin: 0;
 		flex: 1 0 0;
 		width: 100%;
