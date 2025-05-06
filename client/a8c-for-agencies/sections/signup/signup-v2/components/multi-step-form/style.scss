@@ -1,0 +1,149 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
+
+.signup-multi-step-form {
+	.a4a-form {
+		max-width: 600px;
+		margin-block-start: 56px;
+		box-sizing: border-box;
+		width: 100%;
+		gap: 16px;
+
+		&.blueprint-form {
+			gap: 24px;
+		}
+	}
+
+	.multi-step-form__logo-narrow {
+		width: 100%;
+		margin-block-end: 16px;
+
+		@media (min-width: #{ ($break-xlarge + 1) }) {
+			display: none;
+		}
+	}
+
+	.a4a-form__heading {
+		.a4a-form__heading-title {
+			@include heading-2x-large;
+			margin-bottom: 16px;
+			color: var(--color-neutral-100);
+		}
+
+		.a4a-form__heading-description {
+			@include body-large;
+			color: var(--color-neutral-60);
+			max-width: 460px;
+		}
+	}
+
+	.a4a-layout__banner .notice-banner{
+		padding-inline: 16px;
+	}
+
+	.form-select,
+    .searchable-dropdown {
+        width: 100%;
+    }
+
+	.form-fieldset {
+		margin: 0;
+	}
+
+	.form-checkbox, .form-radio {
+		width: 20px;
+		height: 20px;
+
+		@include break-xlarge {
+			width: 16px;
+			height: 16px;
+		}
+	}
+
+	.form-checkbox {
+		line-height: 1;
+
+		@include break-xlarge {
+			line-height: 0.5;
+		}
+	}
+
+	.form-radio {
+		position: relative;
+		top: -2px;
+		margin-inline-end: 8px;
+
+		&:checked::before {
+			margin: 4px;
+			width: 10px;
+			height: 10px;
+		}
+
+		@include break-xlarge {
+			top: 0;
+			margin-inline-end: 4px;
+
+			&:checked::before {
+				margin: 3px;
+				width: 8px;
+				height: 8px;
+			}
+		}
+	}
+
+	.a4a-form__section-field-label,
+	.a4a-form__section-field-required {
+		@include heading-medium;
+	}
+
+	@media (prefers-color-scheme: dark) {
+		.a4a-form__heading .a4a-form__heading-title,
+		.a4a-form__heading .a4a-form__heading-description,
+		.a4a-form__section-field-label,
+		.a4a-form__section-field-required,
+		.signup-personalization-form .multi-checkbox label,
+		.choice-blueprint__content li,
+		.choice-blueprint__content p,
+		.form-phone-input label,
+		.form-radio__label,
+		.components-form-token-field__suggestion,
+		.choice-blueprint__cancel-button.choice-blueprint__cancel-button.choice-blueprint__cancel-button {
+			color: var(--color-text-inverted);
+		}
+
+		.signup-multi-step-form__back-button.signup-multi-step-form__back-button.signup-multi-step-form__back-button {
+			color: #E6F5FF;
+		}
+
+		input[type="text"].form-text-input,
+		input[type="url"].form-text-input,
+		input[type="password"].form-text-input,
+		input[type="email"].form-text-input,
+		input[type="tel"].form-text-input,
+		input[type="number"].form-text-input,
+		input[type="search"].form-text-input,
+		.components-form-token-field__input,
+		.form-select,
+		.form-checkbox,
+		.form-radio,
+		.form-textarea,
+		.components-button.is-secondary {
+			background-color: #022836;
+			border-color: #E6F5FF1A;
+			color: var(--color-text-inverted);
+			&::placeholder {
+				color: #E6F5FF99;
+			}
+		}
+
+		.form-checkbox:checked,
+		.form-radio:checked::before {
+			background-color: var(--color-text-inverted);
+		}
+	}
+}
+
+.signup-multi-step-form__back-button.signup-multi-step-form__back-button.signup-multi-step-form__back-button {
+	color: var(--color-neutral-50);
+}
