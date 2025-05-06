@@ -139,7 +139,7 @@ async function getBlueprintFromUrl( recommendedPhpVersion: string ): Blueprint {
 		...DEFAULT_BLUEPRINT,
 		...blueprint,
 		// Ensure steps are combined
-		steps: [ ...( DEFAULT_BLUEPRINT.steps || [] ), ...( blueprint.steps || [] ) ],
+		steps: [ ...( DEFAULT_BLUEPRINT.steps || [] ), ...( blueprint.steps || [] ) ].filter( Boolean ),
 		// Ensure nested objects like preferredVersions are merged properly
 		preferredVersions: {
 			...DEFAULT_BLUEPRINT.preferredVersions,
