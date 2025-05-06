@@ -46,13 +46,8 @@ export function PlaygroundIframe( {
 					setPlaygroundError( 'UNKNOWN_ERROR' );
 				}
 			} );
-	}, [
-		playgroundClient,
-		playgroundError,
-		recommendedPHPVersion,
-		setPlaygroundClient,
-		setSearchParams,
-	] );
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ playgroundError ] );
 
 	if ( playgroundError === 'PLAYGROUND_NOT_FOUND' ) {
 		return <PlaygroundError createNewPlayground={ createNewPlayground } />;
