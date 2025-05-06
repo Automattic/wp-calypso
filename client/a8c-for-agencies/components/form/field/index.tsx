@@ -6,7 +6,7 @@ import withErrorHandling from '../hoc/with-error-handling';
 import './style.scss';
 
 type Props = {
-	label: string;
+	label?: string;
 	sub?: string;
 	description?: string | ReactNode;
 	showOptionalLabel?: boolean;

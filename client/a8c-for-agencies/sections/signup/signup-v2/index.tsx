@@ -1,10 +1,10 @@
-import MultiStepForm from './components/multi-step-form';
 import SignupWrapper from './components/signup-wrapper';
+import SimpleForm from './components/simple-form';
 
 const AgencySignupV2 = () => {
 	return (
 		<SignupWrapper>
-			<MultiStepForm />
+			<SimpleForm />
 		</SignupWrapper>
 	);
 };
