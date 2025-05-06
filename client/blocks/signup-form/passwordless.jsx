@@ -8,7 +8,6 @@ import { debounce } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import SignupSubmitButton from 'calypso/blocks/signup-form/signup-submit-button';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import LoggedOutForm from 'calypso/components/logged-out-form';
 import LoggedOutFormFooter from 'calypso/components/logged-out-form/footer';
@@ -21,6 +20,7 @@ import wpcom from 'calypso/lib/wp';
 import ValidationFieldset from 'calypso/signup/validation-fieldset';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
+import SignupSubmitButton from './signup-submit-button';
 
 class PasswordlessSignupForm extends Component {
 	static propTypes = {

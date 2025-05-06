@@ -27,7 +27,6 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import { FormDivider } from 'calypso/blocks/authentication';
 import ContinueAsUser from 'calypso/blocks/login/continue-as-user';
-import SignupSubmitButton from 'calypso/blocks/signup-form/signup-submit-button';
 import FormPasswordInput from 'calypso/components/forms/form-password-input';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
@@ -61,6 +60,7 @@ import { getSectionName } from 'calypso/state/ui/selectors';
 import CrowdsignalSignupForm from './crowdsignal';
 import PasswordlessSignupForm from './passwordless';
 import SignupFormSocialFirst from './signup-form-social-first';
+import SignupSubmitButton from './signup-submit-button';
 import SocialSignupForm from './social';
 
 import './style.scss';
