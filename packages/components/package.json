@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/components",
-	"version": "2.2.1",
+	"version": "2.3.0",
 	"description": "Automattic Components.",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",
