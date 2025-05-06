@@ -10,10 +10,15 @@
 $image-height: 47px;
 
 .layout.is-section-login {
-	padding-bottom: $image-height;
 	position: relative;
-	min-height: calc(100% - #{$image-height});
 
+	// This adjustment is only necessary when rendering the Jetpack colophon.
+	// isWhiteLogin screens don't need it.
+	&:where(:not(.is-white-login)) {
+		padding-bottom: $image-height;
+		min-height: calc(100% - #{$image-height});
+	}
+	
 	.layout__content {
 		position: static;
 	}
