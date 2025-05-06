@@ -267,25 +267,9 @@
 		}
 
 		.magic-login form {
-
-			input[type="text"],
-			input[type="email"],
-			input[type="password"] {
-				padding: 10px 20px;
-			}
-
 			label {
 				color: var(--color-text);
 				font-weight: 400;
-			}
-		}
-
-		.magic-login .button {
-			margin: 0;
-
-			&:disabled {
-				background-color: var(--color-neutral-5);
-				color: var(--color-text-inverted);
 			}
 		}
 
