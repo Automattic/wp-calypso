@@ -51,7 +51,7 @@ function BreadcrumbItem( { item: { label, href, onClick } }: { item: BreadcrumbI
 }
 
 function UnforwardedBreadcrumbs(
-	{ items, showCurrentItem = false, size = 'default' }: BreadcrumbProps,
+	{ items, showCurrentItem = false, variant = 'default' }: BreadcrumbProps,
 	ref: React.ForwardedRef< HTMLElement >
 ) {
 	const scrollWidth = useRef( 0 );
@@ -94,7 +94,7 @@ function UnforwardedBreadcrumbs(
 	 * Noting that we prioritize the `isCompact` prop over the `scrollWidth` check.
 	 */
 	const _isCompact =
-		hasMiddleItems && ( size === 'compact' || containerWidth < scrollWidth.current );
+		hasMiddleItems && ( variant === 'compact' || containerWidth < scrollWidth.current );
 	const currentItem = (
 		<span className="a8c-components-breadcrumb__item-wrapper is-current">
 			<Text

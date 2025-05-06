@@ -26,11 +26,11 @@ export interface BreadcrumbProps {
 	 */
 	showCurrentItem?: boolean;
 	/**
-	 * The size of the breadcrumbs component.
+	 * The variant of the breadcrumbs component.
 	 * - default: The component switches to compact mode and back based on the available space.
 	 * - compact: Forces the component to be rendered in a compact format, by rendering a dropdown
 	 *   of the middle items (if any).
 	 * @default 'default'
 	 */
-	size?: 'default' | 'compact';
+	variant?: 'default' | 'compact';
 }

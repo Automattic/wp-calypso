@@ -50,14 +50,14 @@ describe( 'Breadcrumbs', () => {
 					{ label: 'Categories', href: '/products/categories' },
 					{ label: 'Electronics', href: '/products/categories/electronics' },
 				] }
-				size="compact"
+				variant="compact"
 			/>
 		);
 		expect( screen.getByRole( 'link', { name: 'Home' } ) ).toBeVisible();
 		expect( screen.getByRole( 'button', { name: 'More breadcrumb items' } ) ).toBeVisible();
 		expect( screen.getByRole( 'link', { name: 'Categories' } ) ).toBeVisible();
 	} );
-	// Integration test for state changes
+	// Integration test for state changes.
 	it( 'updates correctly when items change', async () => {
 		const user = userEvent.setup();
 		const TestComponent = () => {
