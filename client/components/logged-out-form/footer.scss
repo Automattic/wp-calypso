@@ -1,3 +1,5 @@
+@import "../../assets/stylesheets/shared/mixins/elevation";
+
 .card.logged-out-form__footer {
 	box-shadow: none;
 	background: none;
@@ -10,7 +12,14 @@
 		padding-top: 0;
 	}
 
-	.signup-form__submit {
+	.button.is-primary {
+		float: none;
+		margin: 0;
+		width: 100%;
+		@include elevation( 1dp );
+	}
+
+	.components-button.is-primary {
 		width: 100%;
 		justify-content: center;
 	}
