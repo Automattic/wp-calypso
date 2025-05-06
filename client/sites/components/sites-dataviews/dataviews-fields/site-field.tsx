@@ -6,7 +6,6 @@ import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import * as React from 'react';
 import { navigate } from 'calypso/lib/navigate';
-import { isP2Theme } from 'calypso/lib/site/utils';
 import SitesMigrationTrialBadge from 'calypso/sites-dashboard/components/sites-migration-trial-badge';
 import SitesP2Badge from 'calypso/sites-dashboard/components/sites-p2-badge';
 import { SiteName } from 'calypso/sites-dashboard/components/sites-site-name';
@@ -14,10 +13,10 @@ import { Truncated } from 'calypso/sites-dashboard/components/sites-site-url';
 import SitesStagingBadge from 'calypso/sites-dashboard/components/sites-staging-badge';
 import {
 	displaySiteUrl,
-	isNotAtomicJetpack,
 	getMigrationStatus,
+	isP2Site as getIsP2Site,
 	isStagingSite,
-	isDisconnectedJetpackAndNotAtomic,
+	isSitePreviewPaneEligible as getIsSitePreviewPaneEligible,
 } from 'calypso/sites-dashboard/utils';
 import { useSelector } from 'calypso/state';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
@@ -116,21 +115,18 @@ const SiteField = ( { site, sitePreviewPane }: Props ) => {
 	const title = __( 'View Site Details' );
 	const { adminUrl } = useSiteAdminInterfaceData( site.ID );
 
-	const isP2Site = site.options?.theme_slug && isP2Theme( site.options?.theme_slug );
 	const isWpcomStagingSite = isStagingSite( site );
 	const isTrialSitePlan = useSelector( ( state ) => isTrialSite( state, site.ID ) );
 
-	const isAdmin = useSelector( ( state ) => canCurrentUser( state, site.ID, 'manage_options' ) );
+	const canManageOptions = useSelector( ( state ) =>
+		canCurrentUser( state, site.ID, 'manage_options' )
+	);
 
-	// TODO: Consolidate with `isActionEligible` logic in actions.tsx
-	const shouldOpenSitePreviewPane =
-		isAdmin &&
-		! isP2Site &&
-		! isNotAtomicJetpack( site ) &&
-		! isDisconnectedJetpackAndNotAtomic( site );
+	const isP2Site = getIsP2Site( site );
+	const isSitePreviewPaneEligible = getIsSitePreviewPaneEligible( site, canManageOptions );
 
 	const onSiteClick = ( shouldOpenNewTab: boolean ) => {
-		if ( shouldOpenSitePreviewPane ) {
+		if ( isSitePreviewPaneEligible ) {
 			sitePreviewPane.open( site, 'site_field', shouldOpenNewTab );
 		} else {
 			navigate( adminUrl, shouldOpenNewTab );
@@ -145,7 +141,7 @@ const SiteField = ( { site, sitePreviewPane }: Props ) => {
 		<Link
 			className="sites-dataviews__site"
 			disabled={ site.is_deleted }
-			href={ shouldOpenSitePreviewPane ? sitePreviewPane.getUrl( site ) : adminUrl }
+			href={ isSitePreviewPaneEligible ? sitePreviewPane.getUrl( site ) : adminUrl }
 			onNavigate={ onSiteClick }
 		>
 			<SiteListTile

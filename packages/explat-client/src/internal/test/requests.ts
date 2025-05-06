@@ -1,6 +1,3 @@
-// This is required to fix the "regeneratorRuntime is not defined" error
-import '@automattic/calypso-polyfills';
-
 import * as ExperimentAssignments from '../experiment-assignments';
 import localStorage from '../local-storage';
 import * as Requests from '../requests';

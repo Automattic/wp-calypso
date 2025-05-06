@@ -7,7 +7,7 @@ import type { ReactNode } from 'react';
  * WordPress dependencies
  */
 import { __experimentalHStack as HStack } from '@wordpress/components';
-import { useMemo, useState } from '@wordpress/element';
+import { useContext, useMemo, useState } from '@wordpress/element';
 import { useResizeObserver } from '@wordpress/compose';
 
 /**
@@ -61,6 +61,51 @@ type DataViewsProps< Item > = {
 const defaultGetItemId = ( item: ItemWithId ) => item.id;
 const defaultIsItemClickable = () => true;
 const EMPTY_ARRAY: any[] = [];
+
+type DefaultUIProps = Pick<
+	DataViewsProps< any >,
+	'header' | 'search' | 'searchLabel'
+>;
+
+function DefaultUI( {
+	header,
+	search = true,
+	searchLabel = undefined,
+}: DefaultUIProps ) {
+	const { isShowingFilter } = useContext( DataViewsContext );
+	return (
+		<>
+			<HStack
+				alignment="top"
+				justify="space-between"
+				className="dataviews__view-actions"
+				spacing={ 1 }
+			>
+				<HStack
+					justify="start"
+					expanded={ false }
+					className="dataviews__search"
+				>
+					{ search && <DataViewsSearch label={ searchLabel } /> }
+					<FiltersToggle />
+				</HStack>
+				<HStack
+					spacing={ 1 }
+					expanded={ false }
+					style={ { flexShrink: 0 } }
+				>
+					<DataViewsViewConfig />
+					{ header }
+				</HStack>
+			</HStack>
+			{ isShowingFilter && (
+				<DataViewsFilters className="dataviews-filters__container" />
+			) }
+			<DataViewsLayout />
+			<DataViewsFooter />
+		</>
+	);
+}
 
 function DataViews< Item >( {
 	view,
@@ -118,39 +163,6 @@ function DataViews< Item >( {
 		( filters || [] ).some( ( filter ) => filter.isPrimary )
 	);
 
-	const defaultUI = (
-		<>
-			<HStack
-				alignment="top"
-				justify="space-between"
-				className="dataviews__view-actions"
-				spacing={ 1 }
-			>
-				<HStack
-					justify="start"
-					expanded={ false }
-					className="dataviews__search"
-				>
-					{ search && <DataViewsSearch label={ searchLabel } /> }
-					<FiltersToggle />
-				</HStack>
-				<HStack
-					spacing={ 1 }
-					expanded={ false }
-					style={ { flexShrink: 0 } }
-				>
-					<DataViewsViewConfig />
-					{ header }
-				</HStack>
-			</HStack>
-			{ isShowingFilter && (
-				<DataViewsFilters className="dataviews-filters__container" />
-			) }
-			<DataViewsLayout />
-			<DataViewsFooter />
-		</>
-	);
-
 	return (
 		<DataViewsContext.Provider
 			value={ {
@@ -177,7 +189,13 @@ function DataViews< Item >( {
 			} }
 		>
 			<div className="dataviews-wrapper" ref={ containerRef }>
-				{ children || defaultUI }
+				{ children ?? (
+					<DefaultUI
+						header={ header }
+						search={ search }
+						searchLabel={ searchLabel }
+					/>
+				) }
 			</div>
 		</DataViewsContext.Provider>
 	);
