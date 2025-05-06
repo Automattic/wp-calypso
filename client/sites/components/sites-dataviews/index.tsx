@@ -7,11 +7,7 @@ import { useQueryReaderTeams } from 'calypso/components/data/query-reader-teams'
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import { navigate } from 'calypso/lib/navigate';
 import { SitePlan } from 'calypso/sites-dashboard/components/sites-site-plan';
-import {
-	isNotAtomicJetpack,
-	isP2Site,
-	isDisconnectedJetpackAndNotAtomic,
-} from 'calypso/sites-dashboard/utils';
+import { isSitePreviewPaneEligible } from 'calypso/sites-dashboard/utils';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
@@ -83,14 +79,8 @@ const DotcomSitesDataViews = ( {
 
 			const site = sites.find( ( s ) => s.ID === Number( selectedSiteIds[ 0 ] ) );
 			if ( site && ! site.is_deleted ) {
-				const isAdmin = canCurrentUser( state, site.ID, 'manage_options' );
-				const shouldOpenSitePreviewPane =
-					! isDisconnectedJetpackAndNotAtomic( site ) &&
-					! isNotAtomicJetpack( site ) &&
-					! isP2Site( site ) &&
-					isAdmin;
-
-				if ( shouldOpenSitePreviewPane ) {
+				const canManageOptions = canCurrentUser( state, site.ID, 'manage_options' );
+				if ( isSitePreviewPaneEligible( site, canManageOptions ) ) {
 					sitePreviewPane.open( site, 'list_row_click' );
 					return;
 				}

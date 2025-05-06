@@ -135,6 +135,14 @@ export const siteUsesWpAdminInterface = ( site: SiteExcerptNetworkData ) => {
 	return ( site.jetpack && ! site.is_wpcom_atomic ) || getAdminInterface( site ) === 'wp-admin';
 };
 
+export const isSitePreviewPaneEligible = ( site: SiteExcerptData, canManageOptions: boolean ) => {
+	return (
+		! isDisconnectedJetpackAndNotAtomic( site ) &&
+		! isNotAtomicJetpack( site ) &&
+		! isP2Site( site ) &&
+		canManageOptions
+	);
+};
 export interface InterfaceURLFragment {
 	calypso: `/${ string }`;
 	wpAdmin: `/${ string }`;
