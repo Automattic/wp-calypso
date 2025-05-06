@@ -394,7 +394,7 @@ function LineItemWrapper( {
 		const isAkismet = isAkismetProduct( { product_slug: variant.productSlug } );
 		const isMarketplace = product.extra?.is_marketplace_product;
 
-		if ( isJetpack || isAkismet || isMarketplace ) {
+		if ( isJetpack || isAkismet || isMarketplace || streamlinedPriceExperimentAssignment ) {
 			return true;
 		}
 
