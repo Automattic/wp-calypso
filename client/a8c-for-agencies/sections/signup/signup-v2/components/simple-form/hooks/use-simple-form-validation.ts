@@ -81,11 +81,6 @@ const useSimpleFormValidation = () => {
 				newValidationError.state = translate( 'Please select a state' );
 			}
 
-			if ( Object.keys( newValidationError ).length > 0 ) {
-				setValidationError( newValidationError );
-				return newValidationError;
-			}
-
 			setIsValidating( false );
 
 			if ( Object.keys( newValidationError ).length > 0 ) {
