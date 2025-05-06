@@ -1,8 +1,4 @@
-import {
-	isDomainRegistration,
-	isDomainMapping,
-	isDomainTransfer,
-} from '@automattic/calypso-products';
+import { isDomainRegistration, isDomainMapping } from '@automattic/calypso-products';
 import { CompactCard, FormLabel } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { UPDATE_NAMESERVERS } from '@automattic/urls';
