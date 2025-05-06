@@ -7,11 +7,11 @@ import { __ } from '@wordpress/i18n';
 import { Icon, check } from '@wordpress/icons';
 import { useState, useMemo } from 'react';
 import { sitesQuery } from '../app/queries';
-import DataViewsCard from '../dataviews-card';
-import PageLayout from '../page-layout';
-import SiteIcon from '../site-icon';
-import SitePreview from '../site-preview';
+import DataViewsCard from '../components/dataviews-card';
+import PageLayout from '../components/page-layout';
 import { STATUS_LABELS, getSiteStatus, getSiteStatusLabel } from '../utils/site-status';
+import SiteIcon from './site-icon';
+import SitePreview from './site-preview';
 import type { Site } from '../data/types';
 import type { View, Operator } from '@automattic/dataviews';
 

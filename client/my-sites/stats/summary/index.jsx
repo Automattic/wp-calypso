@@ -1,4 +1,4 @@
-import { isEnabled } from '@automattic/calypso-config';
+import config, { isEnabled } from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
 import { merge } from 'lodash';
 import { Component, Fragment } from 'react';
@@ -19,6 +19,7 @@ import StatsModuleTopPosts from 'calypso/my-sites/stats/features/modules/stats-t
 import getMediaItem from 'calypso/state/selectors/get-media-item';
 import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import PageHeader from '../components/headers/page-header';
 import StatsModuleLocations from '../features/modules/stats-locations';
 import StatsModuleUTM from '../features/modules/stats-utm';
 import { StatsGlobalValuesContext } from '../pages/providers/global-provider';
@@ -43,7 +44,7 @@ class StatsSummary extends Component {
 		const period = this.props.period;
 
 		const headerCSVButton = (
-			<div className="stats-module__heaver-nav-button">
+			<div className="stats-module__header-nav-button">
 				<DownloadCsv statType={ statType } query={ query } path={ path } period={ period } />
 			</div>
 		);
@@ -101,13 +102,13 @@ class StatsSummary extends Component {
 		const moduleQuery = merge( {}, statsQueryOptions, query );
 		const urlParams = new URLSearchParams( this.props.context.querystring );
 		const listItemClassName = 'stats__summary--narrow-mobile';
+		const isStatsNavigationImprovementEnabled = config.isEnabled( 'stats/navigation-improvement' );
 
 		switch ( this.props.context.params.module ) {
 			case 'referrers':
 				title = translate( 'Referrers' );
 				path = 'referrers';
 				statType = 'statsReferrers';
-
 				summaryView = (
 					<Fragment key="referrers-summary">
 						{ this.renderSummaryHeader( path, statType, false, moduleQuery ) }
@@ -126,7 +127,6 @@ class StatsSummary extends Component {
 				title = translate( 'Clicks' );
 				path = 'clicks';
 				statType = 'statsClicks';
-
 				summaryView = (
 					<Fragment key="clicks-summary">
 						{ this.renderSummaryHeader( path, statType, false, moduleQuery ) }
@@ -145,7 +145,6 @@ class StatsSummary extends Component {
 				title = translate( 'Countries' );
 				path = 'countryviews';
 				statType = 'statsCountryViews';
-
 				summaryView = (
 					<Fragment key="countries-summary">
 						{ this.renderSummaryHeader( path, statType, false, moduleQuery ) }
@@ -193,7 +192,6 @@ class StatsSummary extends Component {
 				title = translate( 'Posts & pages' );
 				path = 'posts';
 				statType = 'statsTopPosts';
-
 				summaryView = (
 					<Fragment key="posts-summary">
 						{ this.renderSummaryHeader( path, statType, false, moduleQuery ) }
@@ -212,7 +210,6 @@ class StatsSummary extends Component {
 				title = translate( 'Authors' );
 				path = 'authors';
 				statType = 'statsTopAuthors';
-
 				// TODO: should be refactored so that className doesn't have to be passed in
 				/* eslint-disable wpcalypso/jsx-classname-namespace */
 				summaryView = (
@@ -235,7 +232,6 @@ class StatsSummary extends Component {
 				title = translate( 'Videos' );
 				path = 'videoplays';
 				statType = 'statsVideoPlays';
-
 				summaryView = (
 					<Fragment key="videopress-stats-module">
 						{ /* For CSV button to work, video page needs to pass custom data to the button.
@@ -257,7 +253,6 @@ class StatsSummary extends Component {
 				title = translate( 'File Downloads' );
 				path = 'filedownloads';
 				statType = 'statsFileDownloads';
-
 				summaryView = (
 					<Fragment key="filedownloads-summary">
 						{ this.renderSummaryHeader( path, statType, false, query ) }
@@ -317,7 +312,6 @@ class StatsSummary extends Component {
 				title = translate( 'Search Terms' );
 				path = 'searchterms';
 				statType = 'statsSearchTerms';
-
 				summaryView = (
 					<Fragment key="search-terms-summary">
 						{ this.renderSummaryHeader( path, statType, false, moduleQuery ) }
@@ -368,39 +362,65 @@ class StatsSummary extends Component {
 		const navigationItems = [ { label: backLabel, href: backLink }, { label: title } ];
 
 		return (
-			<Main className="has-fixed-nav" wideLayout>
+			<Main fullWidthLayout>
 				<PageViewTracker
 					path={ `/stats/${ period }/${ module }/:site` }
 					title={ `Stats > ${ titlecase( period ) } > ${ titlecase( module ) }` }
 				/>
-				<NavigationHeader className="stats-summary-view" navigationItems={ navigationItems } />
-
-				<div id="my-stats-content" className="stats-summary-view stats-summary__positioned">
-					{ this.props.context.params.module === 'utm' ? (
-						<StatsGlobalValuesContext.Consumer>
-							{ ( isInternal ) => (
-								<>
-									{ supportsUTMStats || isInternal ? (
-										<>
-											{ this.renderSummaryHeader( path, statType, false, moduleQuery ) }
-											<StatsModuleUTM
-												siteId={ siteId }
-												period={ this.props.period }
-												query={ moduleQuery }
-												summary
-												context={ this.props.context }
-											/>
-										</>
-									) : (
-										<div>{ translate( 'This path is not available.' ) }</div>
-									) }
-								</>
-							) }
-						</StatsGlobalValuesContext.Consumer>
-					) : (
-						summaryViews
+				<div className="stats stats-summary-view">
+					{ isStatsNavigationImprovementEnabled && (
+						<PageHeader
+							className="stats__section-header modernized-header"
+							titleProps={ { title, titleLogo: null } }
+							backLinkProps={ {
+								url: backLink,
+								text: backLabel,
+							} }
+							rightSection={
+								<div className="stats-module__header-nav-button">
+									<DownloadCsv
+										skipQuery={ statType === 'utm' }
+										statType={ statType }
+										query={ moduleQuery }
+										path={ path }
+										period={ this.props.period }
+									/>
+								</div>
+							}
+						/>
 					) }
-					<JetpackColophon />
+
+					{ ! isStatsNavigationImprovementEnabled && (
+						<NavigationHeader className="stats-summary-view" navigationItems={ navigationItems } />
+					) }
+
+					<div id="my-stats-content" className="stats-summary-view stats-summary__positioned">
+						{ this.props.context.params.module === 'utm' ? (
+							<StatsGlobalValuesContext.Consumer>
+								{ ( isInternal ) => (
+									<>
+										{ supportsUTMStats || isInternal ? (
+											<>
+												{ this.renderSummaryHeader( path, statType, false, moduleQuery ) }
+												<StatsModuleUTM
+													siteId={ siteId }
+													period={ this.props.period }
+													query={ moduleQuery }
+													summary
+													context={ this.props.context }
+												/>
+											</>
+										) : (
+											<div>{ translate( 'This path is not available.' ) }</div>
+										) }
+									</>
+								) }
+							</StatsGlobalValuesContext.Consumer>
+						) : (
+							summaryViews
+						) }
+						<JetpackColophon />
+					</div>
 				</div>
 			</Main>
 		);

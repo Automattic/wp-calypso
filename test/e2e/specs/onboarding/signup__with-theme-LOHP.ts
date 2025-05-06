@@ -161,7 +161,7 @@ describe( 'Lifecyle: Logged Out Home Page, signup, onboard, launch and cancel su
 				`WordPress.com ${ planName }`,
 				newSiteDetails.blog_details.site_slug
 			);
-			await purchasesPage.purchaseAction( 'Cancel plan' );
+			await purchasesPage.cancelPurchase( 'Cancel plan' );
 		} );
 
 		it( 'Cancel plan renewal', async function () {
