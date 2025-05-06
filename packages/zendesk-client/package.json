@@ -12,9 +12,6 @@
 			"types": "./dist/types/index.d.ts",
 			"import": "./dist/esm/index.js",
 			"require": "./dist/cjs/index.js"
-		},
-		"./src/*": {
-			"calypso:src": "./src/*"
 		}
 	},
 	"homepage": "https://github.com/Automattic/wp-calypso",

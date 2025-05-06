@@ -11,5 +11,7 @@ export {
 	ZENDESK_SOURCE_URL_TICKET_FIELD_ID,
 	ZENDESK_STAGING_SUPPORT_CHAT_KEY,
 	ZENDESK_SUPPORT_CHAT_KEY,
+	SMOOCH_INTEGRATION_ID,
+	SMOOCH_INTEGRATION_ID_STAGING,
 } from './constants';
 export type { ZendeskConfigName, MessagingGroup } from './types';
