@@ -26,7 +26,7 @@ const HASH_BLUEPRINT = {
 	},
 	login: true,
 	landingPage: '/hash',
-	steps: [], // @TODO remove this, temporarily added to satisfy tests
+	steps: [],
 };
 
 const WOOCOMMERCE_PREDEFINED_BLUEPRINT = {
@@ -70,7 +70,7 @@ const REMOTE_BLUEPRINT = {
 	},
 	login: true,
 	landingPage: '/remote-blueprint',
-	steps: [], // @TODO remove this, temporarily added to satisfy tests
+	steps: [],
 };
 
 describe( 'getBlueprint', () => {
