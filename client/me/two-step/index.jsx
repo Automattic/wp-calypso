@@ -1,4 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
+import page from '@automattic/calypso-router';
 import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -42,19 +43,13 @@ class TwoStep extends Component {
 
 	componentDidMount() {
 		if ( ! this.props.isFetchingUserSettings && ! this.props.isEmailVerified ) {
-			window.location.href = '/me/security';
+			page.redirect( '/me/security' );
 		}
 	}
 
-	componentDidUpdate( prevProps ) {
-		// Check if fetching just completed
-		if (
-			prevProps.isFetchingUserSettings &&
-			! this.props.isFetchingUserSettings &&
-			prevProps.isEmailVerified &&
-			! this.props.isEmailVerified
-		) {
-			window.location.href = '/me/security';
+	componentDidUpdate() {
+		if ( ! this.props.isFetchingUserSettings && ! this.props.isEmailVerified ) {
+			page.redirect( '/me/security' );
 		}
 	}
 
