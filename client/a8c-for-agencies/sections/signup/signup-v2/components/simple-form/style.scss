@@ -103,7 +103,7 @@
     }
 
     .multi-checkbox .form-checkbox + span {
-        margin-left: 8px;
+        margin-inline-start: 8px;
     }
 
 	@media (prefers-color-scheme: dark) {
@@ -201,22 +201,6 @@
     > * {
         flex-grow: 1;
     }
-}
-
-.signup-v2-form__terms {
-	text-align: center;
-	@include body-medium;
-	color: var(--color-neutral-40);
-	margin-top: 16px;
-
-	a {
-		color: var(--color-primary);
-		text-decoration: none;
-	}
-
-	.signup-v2-form__terms a:hover {
-		text-decoration: underline;
-	}
 }
 
 .signup-v2-form__a4a-span {
