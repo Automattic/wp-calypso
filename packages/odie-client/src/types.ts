@@ -33,20 +33,20 @@ export type OdieAssistantContextInterface = {
 };
 
 export type OdieAssistantProviderProps = {
+	canConnectToZendesk?: boolean;
 	botName?: string;
 	botNameSlug?: OdieAllowedBots;
-	canConnectToZendesk?: boolean;
-	chatId?: number | null | undefined;
+	isUserEligibleForPaidSupport?: boolean;
+	isMinimized?: boolean;
 	currentUser: CurrentUser;
 	extraContactOptions?: ReactNode;
-	isMinimized?: boolean;
-	isUserEligibleForPaidSupport?: boolean;
 	selectedSiteId?: number | null;
 	selectedSiteURL?: string | null;
-	setChatStatus?: ( status: ChatStatus ) => void;
-	userFieldFlowName?: string | null;
 	userFieldMessage?: string | null;
+	userFieldFlowName?: string | null;
 	version?: string | null;
+	children?: ReactNode;
+	setChatStatus?: ( status: ChatStatus ) => void;
 } & PropsWithChildren;
 
 export type CurrentUser = {
@@ -209,7 +209,6 @@ export type OdieMessage = {
 	role: string;
 	text: string;
 	altText?: string;
-	odieChatId?: number;
 };
 
 export type ZendeskMessage = OdieMessage & {
