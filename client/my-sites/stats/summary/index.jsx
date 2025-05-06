@@ -362,72 +362,67 @@ class StatsSummary extends Component {
 		const navigationItems = [ { label: backLabel, href: backLink }, { label: title } ];
 
 		return (
-			<>
-				<Main fullWidthLayout>
-					<PageViewTracker
-						path={ `/stats/${ period }/${ module }/:site` }
-						title={ `Stats > ${ titlecase( period ) } > ${ titlecase( module ) }` }
-					/>
-					<div className="stats stats-summary-view">
-						{ isStatsNavigationImprovementEnabled && (
-							<PageHeader
-								className="stats__section-header modernized-header"
-								titleProps={ { title, titleLogo: null } }
-								backLinkProps={ {
-									url: backLink,
-									text: backLabel,
-								} }
-								rightSection={
-									<div className="stats-module__header-nav-button">
-										<DownloadCsv
-											skipQuery={ statType === 'utm' }
-											statType={ statType }
-											query={ moduleQuery }
-											path={ path }
-											period={ this.props.period }
-										/>
-									</div>
-								}
-							/>
-						) }
+			<Main fullWidthLayout>
+				<PageViewTracker
+					path={ `/stats/${ period }/${ module }/:site` }
+					title={ `Stats > ${ titlecase( period ) } > ${ titlecase( module ) }` }
+				/>
+				<div className="stats stats-summary-view">
+					{ isStatsNavigationImprovementEnabled && (
+						<PageHeader
+							className="stats__section-header modernized-header"
+							titleProps={ { title, titleLogo: null } }
+							backLinkProps={ {
+								url: backLink,
+								text: backLabel,
+							} }
+							rightSection={
+								<div className="stats-module__header-nav-button">
+									<DownloadCsv
+										skipQuery={ statType === 'utm' }
+										statType={ statType }
+										query={ moduleQuery }
+										path={ path }
+										period={ this.props.period }
+									/>
+								</div>
+							}
+						/>
+					) }
 
-						{ ! isStatsNavigationImprovementEnabled && (
-							<NavigationHeader
-								className="stats-summary-view"
-								navigationItems={ navigationItems }
-							/>
-						) }
+					{ ! isStatsNavigationImprovementEnabled && (
+						<NavigationHeader className="stats-summary-view" navigationItems={ navigationItems } />
+					) }
 
-						<div id="my-stats-content" className="stats-summary-view stats-summary__positioned">
-							{ this.props.context.params.module === 'utm' ? (
-								<StatsGlobalValuesContext.Consumer>
-									{ ( isInternal ) => (
-										<>
-											{ supportsUTMStats || isInternal ? (
-												<>
-													{ this.renderSummaryHeader( path, statType, false, moduleQuery ) }
-													<StatsModuleUTM
-														siteId={ siteId }
-														period={ this.props.period }
-														query={ moduleQuery }
-														summary
-														context={ this.props.context }
-													/>
-												</>
-											) : (
-												<div>{ translate( 'This path is not available.' ) }</div>
-											) }
-										</>
-									) }
-								</StatsGlobalValuesContext.Consumer>
-							) : (
-								summaryViews
-							) }
-							<JetpackColophon />
-						</div>
+					<div id="my-stats-content" className="stats-summary-view stats-summary__positioned">
+						{ this.props.context.params.module === 'utm' ? (
+							<StatsGlobalValuesContext.Consumer>
+								{ ( isInternal ) => (
+									<>
+										{ supportsUTMStats || isInternal ? (
+											<>
+												{ this.renderSummaryHeader( path, statType, false, moduleQuery ) }
+												<StatsModuleUTM
+													siteId={ siteId }
+													period={ this.props.period }
+													query={ moduleQuery }
+													summary
+													context={ this.props.context }
+												/>
+											</>
+										) : (
+											<div>{ translate( 'This path is not available.' ) }</div>
+										) }
+									</>
+								) }
+							</StatsGlobalValuesContext.Consumer>
+						) : (
+							summaryViews
+						) }
+						<JetpackColophon />
 					</div>
-				</Main>
-			</>
+				</div>
+			</Main>
 		);
 	}
 }
