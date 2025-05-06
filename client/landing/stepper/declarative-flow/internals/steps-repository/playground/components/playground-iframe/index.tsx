@@ -46,7 +46,13 @@ export function PlaygroundIframe( {
 					setPlaygroundError( 'UNKNOWN_ERROR' );
 				}
 			} );
-	}, [ playgroundError ] );
+	}, [
+		playgroundClient,
+		playgroundError,
+		recommendedPHPVersion,
+		setPlaygroundClient,
+		setSearchParams,
+	] );
 
 	if ( playgroundError === 'PLAYGROUND_NOT_FOUND' ) {
 		return <PlaygroundError createNewPlayground={ createNewPlayground } />;
