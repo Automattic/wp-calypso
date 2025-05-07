@@ -21,10 +21,10 @@ export function setCurrentSupportInteraction( supportInteraction: SupportInterac
 	} as const;
 }
 
-export const setOdieId = ( odieId: number | undefined ) =>
+export const setOdieChatId = ( odieChatId: number | undefined ) =>
 	( {
 		type: 'HELP_CENTER_SET_ODIE_ID',
-		odieId,
+		odieChatId,
 	} ) as const;
 
 export const setNavigateToRoute = ( route?: string ) =>
@@ -242,6 +242,6 @@ export type HelpCenterAction =
 			| typeof setCurrentSupportInteraction
 			| typeof setAllowPremiumSupport
 			| typeof setHelpCenterOptions
-			| typeof setOdieId
+			| typeof setOdieChatId
 	  >
 	| GeneratorReturnType< typeof setShowHelpCenter >;

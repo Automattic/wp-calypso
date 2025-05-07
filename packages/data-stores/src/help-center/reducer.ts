@@ -42,9 +42,9 @@ const currentSupportInteraction: Reducer< SupportInteraction | undefined, HelpCe
 	return state;
 };
 
-const odieId: Reducer< number | undefined, HelpCenterAction > = ( state, action ) => {
+const odieChatId: Reducer< number | undefined, HelpCenterAction > = ( state, action ) => {
 	if ( action.type === 'HELP_CENTER_SET_ODIE_ID' ) {
-		return action.odieId;
+		return action.odieChatId;
 	}
 	return state;
 };
@@ -189,7 +189,7 @@ const reducer = combineReducers( {
 	zendeskClientId,
 	unreadCount,
 	navigateToRoute,
-	odieId,
+	odieChatId,
 	odieInitialPromptText,
 	odieBotNameSlug,
 	allowPremiumSupport,

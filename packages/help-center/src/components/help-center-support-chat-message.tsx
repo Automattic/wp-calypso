@@ -48,7 +48,7 @@ export const HelpCenterSupportChatMessage = ( {
 	const { displayName, received, role, text, altText } = message;
 	const helpCenterContext = useHelpCenterContext();
 	const helpCenterContextSectionName = helpCenterContext.sectionName;
-	const { setCurrentSupportInteraction, setOdieId } = useDataStoreDispatch( HELP_CENTER_STORE );
+	const { setCurrentSupportInteraction, setOdieChatId } = useDataStoreDispatch( HELP_CENTER_STORE );
 	const messageDisplayName =
 		role === 'business' ? __( 'Happiness Engineer', __i18n_text_domain__ ) : displayName;
 
@@ -76,8 +76,9 @@ export const HelpCenterSupportChatMessage = ( {
 			onClick={ () => {
 				trackContactButtonClicked( sectionName || helpCenterContextSectionName );
 				if ( odieId ) {
-					setOdieId( odieId );
+					setOdieChatId( odieId );
 				} else if ( supportInteraction ) {
+					setOdieChatId( undefined );
 					setCurrentSupportInteraction( supportInteraction );
 				}
 			} }
