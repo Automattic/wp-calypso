@@ -13,6 +13,20 @@ const ButtonContent = styled.span`
 	align-items: center;
 	gap: 2px;
 	font-size: 14px;
+
+	.components-button.is-tertiary & {
+		color: var( --color-text-subtle );
+	}
+
+	.components-button.is-tertiary:hover:not( :disabled ) & {
+		color: var( --color-text );
+	}
+`;
+
+const TertiaryButtonWrapper = styled.div`
+	.components-button.is-tertiary:hover:not( :disabled ) {
+		background: var( --color-surface );
+	}
 `;
 
 type ConfirmationModalButtonProps = {
@@ -21,7 +35,6 @@ type ConfirmationModalButtonProps = {
 	isBusy?: boolean;
 	isPrimary?: boolean;
 	isScary?: boolean;
-	isBorderless?: boolean;
 	isPlain?: boolean;
 	isTransparent?: boolean;
 	isConfirmationDisabled?: boolean;
@@ -33,7 +46,6 @@ type ConfirmationModalButtonProps = {
 	extraModalContent?: React.ReactNode;
 	confirmLabel: string;
 	cancelLabel: string;
-	isSynchronize?: boolean;
 };
 
 export function ConfirmationModal( {
@@ -44,7 +56,6 @@ export function ConfirmationModal( {
 	isBusy = false,
 	isPrimary = false,
 	isScary = false,
-	isBorderless = false,
 	isPlain = false,
 	isTransparent = false,
 	children,
@@ -54,20 +65,16 @@ export function ConfirmationModal( {
 	extraModalContent,
 	confirmLabel,
 	cancelLabel,
-	isSynchronize = false,
 }: ConfirmationModalButtonProps ) {
 	const [ isOpen, setOpen ] = useState( false );
 	const openModal = () => setOpen( true );
 	const closeModal = () => setOpen( false );
 
 	const getButtonVariant = () => {
-		if ( isSynchronize ) {
-			return 'tertiary';
-		}
 		if ( isPrimary ) {
 			return 'primary';
 		}
-		if ( isBorderless || isPlain || isTransparent ) {
+		if ( isPlain || isTransparent ) {
 			return 'tertiary';
 		}
 		return 'secondary';
@@ -75,16 +82,18 @@ export function ConfirmationModal( {
 
 	return (
 		<>
-			<Button
-				variant={ getButtonVariant() }
-				isDestructive={ isScary }
-				isBusy={ isBusy }
-				disabled={ disabled }
-				onClick={ openModal }
-				__next40pxDefaultSize
-			>
-				<ButtonContent>{ children }</ButtonContent>
-			</Button>
+			<TertiaryButtonWrapper>
+				<Button
+					variant={ getButtonVariant() }
+					isDestructive={ isScary }
+					isBusy={ isBusy }
+					disabled={ disabled }
+					onClick={ openModal }
+					__next40pxDefaultSize
+				>
+					<ButtonContent>{ children }</ButtonContent>
+				</Button>
+			</TertiaryButtonWrapper>
 			{ isOpen && (
 				<Modal
 					title={ modalTitle }
@@ -94,16 +103,18 @@ export function ConfirmationModal( {
 					{ modalMessage && <p>{ modalMessage }</p> }
 					{ extraModalContent }
 					<ActionButtons>
-						<Button
-							onClick={ () => {
-								onCancel?.();
-								closeModal();
-							} }
-							variant="tertiary"
-							__next40pxDefaultSize
-						>
-							<ButtonContent>{ cancelLabel }</ButtonContent>
-						</Button>
+						<TertiaryButtonWrapper>
+							<Button
+								onClick={ () => {
+									onCancel?.();
+									closeModal();
+								} }
+								variant="tertiary"
+								__next40pxDefaultSize
+							>
+								<ButtonContent>{ cancelLabel }</ButtonContent>
+							</Button>
+						</TertiaryButtonWrapper>
 						<Button
 							disabled={ isConfirmationDisabled }
 							variant="primary"
