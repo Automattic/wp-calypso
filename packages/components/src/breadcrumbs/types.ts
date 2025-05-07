@@ -13,7 +13,7 @@ export interface BreadcrumbItemProps {
 	onClick?: React.MouseEventHandler;
 }
 
-export interface BreadcrumbProps {
+export interface BreadcrumbProps extends React.HTMLAttributes< HTMLElement > {
 	/**
 	 * An array of items to display in the breadcrumb trail.
 	 * The last item is considered the current item.

@@ -51,7 +51,7 @@ const BreadcrumbsNav = forwardRef<
 	HTMLElement,
 	BreadcrumbProps & {
 		isOffscreen?: boolean;
-	} & React.HTMLAttributes< HTMLElement >
+	}
 >( function BreadcrumbsNav(
 	{
 		isOffscreen,
