@@ -2,8 +2,6 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { FEATURE_INSTALL_THEMES } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
-import { Button, Dropdown, MenuGroup, MenuItem } from '@wordpress/components';
-import { chevronDown } from '@wordpress/icons';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { compact, pickBy } from 'lodash';
@@ -58,6 +56,7 @@ import ThemeErrors from './theme-errors';
 import ThemePreview from './theme-preview';
 import ThemeShowcaseHeader from './theme-showcase-header';
 import ThemesSelection from './themes-selection';
+import ThemesTiersDropdown from './themes-tiers-dropdown';
 import ThemesToolbarGroup from './themes-toolbar-group';
 import './theme-showcase.scss';
 
@@ -546,6 +545,29 @@ class ThemeShowcase extends Component {
 		}
 	};
 
+	renderThemesTiersDropdown = () => {
+		const { isMultisite, premiumThemesEnabled, tier = 'all', translate } = this.props;
+		const tabFilters = this.getTabFilters();
+		const tiers = this.getTiers();
+
+		if ( isMultisite || ! premiumThemesEnabled || ! tabFilters ) {
+			return null;
+		}
+
+		return (
+			<ThemesTiersDropdown
+				tiers={ tiers }
+				selectedTier={ tier }
+				buttonText={ translate( 'View: %s', {
+					args: getOptionLabel( tiers, tier ) || '',
+				} ) }
+				onSelect={ ( item ) => {
+					this.onTierSelectFilter( item );
+				} }
+			/>
+		);
+	};
+
 	getScreenshotUrl = ( theme, themeOptions ) => {
 		const { getScreenshotOption, locale, isLoggedIn } = this.props;
 
@@ -595,16 +617,12 @@ class ThemeShowcase extends Component {
 			featureStringFilter,
 			filterString,
 			isJetpackSite,
-			isMultisite,
-			premiumThemesEnabled,
 			isSiteECommerceFreeTrial,
 			isSiteWooExpressOrEcomFreeTrial,
 			isSiteWooExpress,
 			isCollectionView,
 			lastNonEditorRoute,
-			translate,
 		} = this.props;
-		const tier = this.props.tier || 'all';
 		const canonicalUrl = 'https://wordpress.com' + pathName;
 		const staticFilters = this.getStaticFilters();
 
@@ -637,8 +655,6 @@ class ThemeShowcase extends Component {
 		};
 
 		const tabFilters = this.getTabFilters();
-		const tiers = this.getTiers();
-
 		const classnames = clsx( 'theme-showcase', {
 			'is-collection-view': isCollectionView,
 		} );
@@ -709,42 +725,7 @@ class ThemeShowcase extends Component {
 												/>
 											) }
 										</div>
-										{ tabFilters && premiumThemesEnabled && ! isMultisite && (
-											<Dropdown
-												className="section-nav-tabs__dropdown"
-												renderToggle={ ( { isOpen, onToggle } ) => (
-													<Button
-														size="compact"
-														variant="secondary"
-														icon={ chevronDown }
-														iconPosition="right"
-														aria-expanded={ isOpen }
-														onClick={ onToggle }
-													>
-														{ translate( 'View: %s', {
-															args: getOptionLabel( tiers, tier ) || '',
-														} ) }
-													</Button>
-												) }
-												renderContent={ ( { onClose } ) => (
-													<MenuGroup>
-														{ tiers.map( ( item ) => (
-															<MenuItem
-																key={ item.value }
-																role="menuitemradio"
-																isSelected={ item.value === tier }
-																onClick={ () => {
-																	this.onTierSelectFilter( item );
-																	onClose();
-																} }
-															>
-																{ item.label }
-															</MenuItem>
-														) ) }
-													</MenuGroup>
-												) }
-											/>
-										) }
+										{ this.renderThemesTiersDropdown() }
 									</div>
 								</div>
 								<div
