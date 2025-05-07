@@ -12,6 +12,7 @@ const ButtonContent = styled.span`
 	display: flex;
 	align-items: center;
 	gap: 2px;
+	font-size: 14px;
 `;
 
 type ConfirmationModalButtonProps = {
@@ -101,7 +102,7 @@ export function ConfirmationModal( {
 							variant="tertiary"
 							__next40pxDefaultSize
 						>
-							{ cancelLabel }
+							<ButtonContent>{ cancelLabel }</ButtonContent>
 						</Button>
 						<Button
 							disabled={ isConfirmationDisabled }
@@ -113,7 +114,7 @@ export function ConfirmationModal( {
 							isBusy={ isBusy }
 							__next40pxDefaultSize
 						>
-							{ confirmLabel }
+							<ButtonContent>{ confirmLabel }</ButtonContent>
 						</Button>
 					</ActionButtons>
 				</Modal>
