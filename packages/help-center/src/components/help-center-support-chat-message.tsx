@@ -24,7 +24,7 @@ const trackContactButtonClicked = ( sectionName: string ) => {
 export const HelpCenterSupportChatMessage = ( {
 	message,
 	badgeCount = 0,
-	odieId,
+	odieChatId,
 	isUnread = false,
 	navigateTo = '',
 	supportInteraction,
@@ -37,7 +37,7 @@ export const HelpCenterSupportChatMessage = ( {
 	isUnread: boolean;
 	navigateTo: string;
 	altText?: string;
-	odieId?: number;
+	odieChatId?: number;
 	supportInteraction: SupportInteraction | undefined;
 	sectionName?: string;
 	conversationStatus?: string;
@@ -75,8 +75,8 @@ export const HelpCenterSupportChatMessage = ( {
 			to={ navigateTo }
 			onClick={ () => {
 				trackContactButtonClicked( sectionName || helpCenterContextSectionName );
-				if ( odieId ) {
-					setOdieChatId( odieId );
+				if ( odieChatId ) {
+					setOdieChatId( odieChatId );
 				} else if ( supportInteraction ) {
 					setOdieChatId( undefined );
 					setCurrentSupportInteraction( supportInteraction );
