@@ -80,7 +80,7 @@ export const Content = () => {
 					} }
 				/>
 			</Column>
-			<Column heading={ translate( 'Migrate and Import' ) }>
+			<Column heading={ translate( 'Migrate and import' ) }>
 				<MenuItem
 					icon={ <Icon icon={ reusableBlock } size={ 18 } /> }
 					heading={ translate( 'Migrate' ) }
@@ -109,8 +109,8 @@ export const Content = () => {
 			<Column>
 				<MenuItem
 					isBanner
-					icon={ <img src={ devSiteBanner } alt="Get a Free Domain and Up to 55% off" /> }
-					heading={ translate( 'Get a Free Domain and Up to %(percentage)s off', {
+					icon={ <img src={ devSiteBanner } alt="Get a free domain and up to 55% off" /> }
+					heading={ translate( 'Get a free domain and up to %(percentage)s off', {
 						args: {
 							percentage: formatNumber( 0.55, {
 								numberFormatOptions: { style: 'percent' },
@@ -137,7 +137,7 @@ export const Content = () => {
 				>
 					<div>
 						<div className={ clsx( 'sites-add-new-site-popover__cta' ) }>
-							{ translate( 'Unlock Offer' ) }
+							{ translate( 'Unlock offer' ) }
 						</div>
 					</div>
 				</MenuItem>

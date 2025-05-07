@@ -44,13 +44,14 @@ export const HelpCenterSupportChatMessage = ( {
 	const helpCenterContext = useHelpCenterContext();
 	const helpCenterContextSectionName = helpCenterContext.sectionName;
 	const { supportInteractions } = useGetHistoryChats();
-	const { setCurrentSupportInteraction } = useDataStoreDispatch( HELP_CENTER_STORE );
+	const { setCurrentSupportInteraction, setOdieChatId } = useDataStoreDispatch( HELP_CENTER_STORE );
 
 	const isZendeskConversation = (
 		conversation: OdieConversation | ZendeskConversation
 	): conversation is ZendeskConversation =>
 		'metadata' in conversation && 'participants' in conversation;
 
+	let odieChatId = undefined;
 	let conversationStatus: string = '';
 	let supportInteraction = undefined;
 
@@ -60,6 +61,8 @@ export const HelpCenterSupportChatMessage = ( {
 		supportInteraction = supportInteractions.find(
 			( interaction ) => interaction.uuid === conversation.metadata.supportInteractionId
 		);
+	} else {
+		odieChatId = parseInt( conversation.id );
 	}
 
 	const messageDisplayName =
@@ -88,7 +91,11 @@ export const HelpCenterSupportChatMessage = ( {
 			to="/odie"
 			onClick={ () => {
 				trackContactButtonClicked( sectionName || helpCenterContextSectionName );
-				if ( supportInteraction ) {
+
+				if ( odieChatId ) {
+					setOdieChatId( odieChatId );
+				} else if ( supportInteraction ) {
+					setOdieChatId( undefined );
 					setCurrentSupportInteraction( supportInteraction );
 				}
 			} }
