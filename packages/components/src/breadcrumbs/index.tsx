@@ -5,7 +5,7 @@ import {
 	VisuallyHidden,
 } from '@wordpress/components';
 import { useResizeObserver, useMergeRefs } from '@wordpress/compose';
-import { __ } from '@wordpress/i18n';
+import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import React, { useState, forwardRef, useRef, useLayoutEffect } from 'react';
 import Menu from '../menu';
@@ -13,6 +13,7 @@ import { BreadcrumbProps, BreadcrumbItemProps } from './types';
 import './style.scss';
 
 function BreadcrumbsMenu( { items }: { items: BreadcrumbItemProps[] } ) {
+	const { __ } = useI18n();
 	return (
 		<span className="a8c-components-breadcrumbs__item-wrapper">
 			<Menu placement="bottom-start">
@@ -52,8 +53,12 @@ const BreadcrumbsNav = forwardRef<
 		isOffscreen?: boolean;
 		shouldRenderCompact: boolean;
 	}
->( function BreadcrumbsNav( { isOffscreen, shouldRenderCompact, ...breadcrumbProps }, ref ) {
-	const { items, showCurrentItem = false, variant = 'default' } = breadcrumbProps;
+>( function BreadcrumbsNav(
+	{ isOffscreen, shouldRenderCompact, items, showCurrentItem = false, variant = 'default' },
+	ref
+) {
+	const { __ } = useI18n();
+
 	// Always show the first item. The last item (current page) is rendered
 	// conditionally based on the `showCurrentItem` prop.
 	const hasMiddleItems = items.length > 3;
