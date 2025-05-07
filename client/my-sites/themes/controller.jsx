@@ -32,6 +32,7 @@ export function getProps( context ) {
 		isCollectionView: view === 'collection',
 		pathName: context.pathname,
 		trackScrollPage: boundTrackScrollPage,
+		isServerSide: context.isServerSide,
 	};
 }
 

@@ -596,6 +596,7 @@ class ThemeShowcase extends Component {
 			filterString,
 			isJetpackSite,
 			isMultisite,
+			isServerSide,
 			premiumThemesEnabled,
 			isSiteECommerceFreeTrial,
 			isSiteWooExpressOrEcomFreeTrial,
@@ -709,25 +710,23 @@ class ThemeShowcase extends Component {
 												/>
 											) }
 										</div>
-										{ tabFilters && premiumThemesEnabled && ! isMultisite && ! isSearchV2 && (
-											<>
-												<CustomSelectControl
-													className="theme__tier-select"
-													label={ translate( 'Filters' ) }
-													hideLabelFromVision
-													__next40pxDefaultSize
-													options={ tiers.map( ( t ) => {
-														return { ...t, className: t.key === tier ? 'is-selected' : '' };
-													} ) }
-													value={ {
-														key: tier,
-														name: translate( 'View: %s', {
-															args: this.getTiers().find( ( t ) => t.key === tier ).name,
-														} ),
-													} }
-													onChange={ this.onTierSelectFilter }
-												/>
-											</>
+										{ tabFilters && premiumThemesEnabled && ! isMultisite && ! isServerSide && (
+											<CustomSelectControl
+												className="theme__tier-select"
+												label={ translate( 'Filters' ) }
+												hideLabelFromVision
+												__next40pxDefaultSize
+												options={ tiers.map( ( t ) => {
+													return { ...t, className: t.key === tier ? 'is-selected' : '' };
+												} ) }
+												value={ {
+													key: tier,
+													name: translate( 'View: %s', {
+														args: this.getTiers().find( ( t ) => t.key === tier ).name,
+													} ),
+												} }
+												onChange={ this.onTierSelectFilter }
+											/>
 										) }
 									</div>
 								</div>
