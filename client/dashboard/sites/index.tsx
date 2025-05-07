@@ -152,7 +152,6 @@ const DEFAULT_LAYOUTS = {
 		fields: [ 'subscribers_count', 'status', 'backups', 'protect' ],
 		titleField: 'name',
 		descriptionField: 'URL',
-		shouldPinActions: true,
 	},
 	grid: {
 		mediaField: 'preview',

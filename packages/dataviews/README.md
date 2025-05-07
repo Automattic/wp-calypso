@@ -211,7 +211,6 @@ Properties:
 -   `showLevels`: Whether to display the hierarchical levels for the data. `false` by default. See related `getItemLevel` DataView prop.
 -   `fields`: a list of remaining field `id` that are visible in the UI and the specific order in which they are displayed.
 -   `layout`: config that is specific to a particular layout type.
--   `shouldPinActions`: Whether to pin actions column when the width is insufficient. It's supported only by the table view.
 
 ##### Properties of `layout`
 

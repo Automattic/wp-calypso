@@ -203,10 +203,9 @@ function TableRow< Item >( {
 				/* eslint-disable jsx-a11y/no-noninteractive-element-interactions, jsx-a11y/click-events-have-key-events */
 				<td
 					className={ clsx( 'dataviews-view-table__actions-column', {
-						'dataviews-view-table__actions-column--sticky':
-							view.shouldPinActions,
+						'dataviews-view-table__actions-column--sticky': true,
 						'dataviews-view-table__actions-column--stuck':
-							view.shouldPinActions && isActionsColumnSticky,
+							isActionsColumnSticky,
 					} ) }
 					onClick={ ( e ) => e.stopPropagation() }
 				>
@@ -296,7 +295,7 @@ function ViewTable< Item >( {
 
 	const isScrolledEnd = useIsScrolledEnd( {
 		scrollContainerRef: containerRef,
-		enabled: !! actions?.length && !! view.shouldPinActions,
+		enabled: !! actions?.length,
 	} );
 
 	return (
@@ -381,9 +380,8 @@ function ViewTable< Item >( {
 									'dataviews-view-table__actions-column',
 									{
 										'dataviews-view-table__actions-column--sticky':
-											view.shouldPinActions,
+											true,
 										'dataviews-view-table__actions-column--stuck':
-											view.shouldPinActions &&
 											! isScrolledEnd,
 									}
 								) }

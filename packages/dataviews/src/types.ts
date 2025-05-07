@@ -373,11 +373,6 @@ export interface ViewTable extends ViewBase {
 		 */
 		density?: Density;
 	};
-
-	/**
-	 * Whether to pin actions.
-	 */
-	shouldPinActions?: boolean;
 }
 
 export interface ViewList extends ViewBase {
