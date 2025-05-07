@@ -370,16 +370,13 @@ body.is-section-accept-invite {
 
 }
 
-.signup-form.signup-form-social-first,
-.card.auth-form__social.is-signup {
-	/**
-	* Akismet Signup
-	*/
-	@at-root .is-akismet & {
-		.components-button {
-			--color-accent: var(--color-akismet);
-			--color-accent-60: var(--color-akismet);
-		}
+/**
+* Akismet Signup
+*/
+.is-akismet .signup-form {
+	.components-button {
+		--color-accent: var(--color-akismet);
+		--color-accent-60: var(--color-akismet);
 	}
 }
 

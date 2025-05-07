@@ -1,5 +1,10 @@
 import SignupSubmitButton from '../../signup-submit-button';
-import { submitButtonArgs, type SubmitButtonStory, AkismetWrapper } from '../shared';
+import {
+	submitButtonArgs,
+	type SubmitButtonStory,
+	AkismetWrapper,
+	SignupFormWrapper,
+} from '../shared';
 import type { Meta } from '@storybook/react';
 
 const meta: Meta = {
@@ -11,5 +16,5 @@ const meta: Meta = {
 export default meta;
 
 export const Akismet: SubmitButtonStory = {
-	decorators: [ AkismetWrapper ],
+	decorators: [ SignupFormWrapper, AkismetWrapper ],
 };
