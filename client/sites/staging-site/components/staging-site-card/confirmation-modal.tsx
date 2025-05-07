@@ -8,6 +8,12 @@ const ActionButtons = styled.div( {
 	justifyContent: 'flex-end',
 } );
 
+const ButtonContent = styled.span`
+	display: flex;
+	align-items: center;
+	gap: 2px;
+`;
+
 type ConfirmationModalButtonProps = {
 	onConfirm?: () => void;
 	onCancel?: () => void;
@@ -76,7 +82,7 @@ export function ConfirmationModal( {
 				onClick={ openModal }
 				__next40pxDefaultSize
 			>
-				{ children }
+				<ButtonContent>{ children }</ButtonContent>
 			</Button>
 			{ isOpen && (
 				<Modal
