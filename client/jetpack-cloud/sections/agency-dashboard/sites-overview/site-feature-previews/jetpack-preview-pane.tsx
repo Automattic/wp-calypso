@@ -83,7 +83,7 @@ export function JetpackPreviewPane( {
 				setSelectedSiteFeature,
 				<JetpackPluginsPreview
 					link={ '/plugins/manage/' + site.url }
-					linkLabel={ translate( 'Manage Plugins' ) }
+					linkLabel={ translate( 'Manage plugins' ) }
 					featureText={ translate( 'Manage all plugins installed on %(siteUrl)s', {
 						args: { siteUrl: site.url },
 					} ) }

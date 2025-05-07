@@ -58,7 +58,7 @@ export function useFields(
 			},
 			{
 				id: 'plugins',
-				label: translate( 'Installed Plugins' ),
+				label: translate( 'Installed plugins' ),
 				getValue: ( { item }: { item: Plugin } ) => item.name,
 				enableGlobalSearch: true,
 				render: ( { item }: { item: Plugin } ) => {
