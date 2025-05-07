@@ -912,6 +912,7 @@ const CheckoutSummaryCard = styled.div< { isStreamlinedPrice: boolean } >`
 			box-shadow:
 				0 3px 1px rgb( 0 0 0 / 4% ),
 				0 3px 8px rgb( 0 0 0 / 12% );
+			margin-bottom: 20px;
 		` }
 `;
 const CheckoutSummaryFeatures = styled.div`
