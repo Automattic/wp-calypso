@@ -2,7 +2,8 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { FEATURE_INSTALL_THEMES } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
-import { SelectDropdown } from '@automattic/components';
+import { Button, Dropdown, MenuGroup, MenuItem } from '@wordpress/components';
+import { chevronDown } from '@wordpress/icons';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { compact, pickBy } from 'lodash';
@@ -709,17 +710,40 @@ class ThemeShowcase extends Component {
 											) }
 										</div>
 										{ tabFilters && premiumThemesEnabled && ! isMultisite && (
-											<>
-												<SelectDropdown
-													className="section-nav-tabs__dropdown"
-													onSelect={ this.onTierSelectFilter }
-													selectedText={ translate( 'View: %s', {
-														args: getOptionLabel( tiers, tier ) || '',
-													} ) }
-													options={ tiers }
-													initialSelected={ tier }
-												></SelectDropdown>
-											</>
+											<Dropdown
+												className="section-nav-tabs__dropdown"
+												renderToggle={ ( { isOpen, onToggle } ) => (
+													<Button
+														size="compact"
+														variant="secondary"
+														icon={ chevronDown }
+														iconPosition="right"
+														aria-expanded={ isOpen }
+														onClick={ onToggle }
+													>
+														{ translate( 'View: %s', {
+															args: getOptionLabel( tiers, tier ) || '',
+														} ) }
+													</Button>
+												) }
+												renderContent={ ( { onClose } ) => (
+													<MenuGroup>
+														{ tiers.map( ( item ) => (
+															<MenuItem
+																key={ item.value }
+																role="menuitemradio"
+																isSelected={ item.value === tier }
+																onClick={ () => {
+																	this.onTierSelectFilter( item );
+																	onClose();
+																} }
+															>
+																{ item.label }
+															</MenuItem>
+														) ) }
+													</MenuGroup>
+												) }
+											/>
 										) }
 									</div>
 								</div>
