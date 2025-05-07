@@ -388,7 +388,7 @@ class StatsSummary extends Component {
 							} }
 							rightSection={
 								<div className="stats-module__header-nav-button">
-									{ shouldGateStatsCsvDownload && statType === 'statsCountryViews' ? (
+									{ shouldGateStatsCsvDownload ? (
 										<DownloadCsvUpsell siteId={ siteId } borderless />
 									) : (
 										<DownloadCsv
