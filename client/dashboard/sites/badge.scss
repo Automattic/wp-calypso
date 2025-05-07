@@ -1,0 +1,12 @@
+.sites-core-badge-custom-icon,
+.sites-core-badge-no-icon {
+	// This is hacky way of hiding the badge icon for now.
+	// We need to handle this in the core Badge component.
+	> svg {
+		display: none;
+	}
+}
+
+.sites-core-badge-no-icon.has-icon {
+	padding-inline-start: 8px;
+}

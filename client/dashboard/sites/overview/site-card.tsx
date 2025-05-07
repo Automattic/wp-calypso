@@ -1,3 +1,4 @@
+import CoreBadge from '@automattic/components/src/core-badge';
 import {
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
@@ -8,7 +9,7 @@ import {
 } from '@wordpress/components';
 import { dateI18n } from '@wordpress/date';
 import { __, sprintf } from '@wordpress/i18n';
-import { getSiteStatusLabel } from '../../utils/site-status';
+import { getSiteStatusLabel, getSiteStatusIntent } from '../../utils/site-status';
 import SitePreview from '../site-preview';
 import type { Site, SiteDomain, Plan } from '../../data/types';
 
@@ -67,7 +68,14 @@ export default function SiteCard( {
 						</Field>
 					) }
 					<HStack justify="space-between">
-						<Field title={ __( 'Status' ) }>{ getSiteStatusLabel( site ) }</Field>
+						<Field title={ __( 'Status' ) }>
+							<CoreBadge
+								className="sites-core-badge-no-icon"
+								intent={ getSiteStatusIntent( site ) }
+							>
+								{ getSiteStatusLabel( site ) }
+							</CoreBadge>
+						</Field>
 					</HStack>
 					<HStack justify="space-between">
 						{ options?.software_version && (

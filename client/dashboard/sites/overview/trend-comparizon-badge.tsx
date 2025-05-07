@@ -2,6 +2,8 @@ import CoreBadge from '@automattic/components/src/core-badge';
 import { __experimentalHStack as HStack, Icon } from '@wordpress/components';
 import { arrowDown, arrowUp } from '@wordpress/icons';
 
+import '../badge.scss';
+
 interface TrendComparisonBadgeProps {
 	count: number;
 	previousCount: number;
@@ -33,9 +35,7 @@ export default function TrendComparisonBadge( {
 		<CoreBadge
 			intent={ negative ? 'error' : 'success' }
 			style={ { width: 'fit-content' } }
-			className={ `site-overview-card__badge site-overview-card__badge-${
-				negative ? 'negative' : 'positive'
-			}` }
+			className="sites-core-badge-custom-icon"
 		>
 			<HStack spacing={ 0 }>
 				<Icon

@@ -1,3 +1,4 @@
+import CoreBadge from '@automattic/components/src/core-badge';
 import { DataViews, filterSortAndPaginate } from '@automattic/dataviews';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
@@ -10,11 +11,18 @@ import { sitesQuery } from '../app/queries';
 import { sitesRoute } from '../app/router';
 import DataViewsCard from '../components/dataviews-card';
 import PageLayout from '../components/page-layout';
-import { STATUS_LABELS, getSiteStatus, getSiteStatusLabel } from '../utils/site-status';
+import {
+	STATUS_LABELS,
+	getSiteStatus,
+	getSiteStatusLabel,
+	getSiteStatusIntent,
+} from '../utils/site-status';
 import SiteIcon from './site-icon';
 import SitePreview from './site-preview';
 import type { Site } from '../data/types';
 import type { Operator, ViewTable, ViewGrid, SortDirection } from '@automattic/dataviews';
+
+import './badge.scss';
 
 const actions = [
 	{
@@ -96,7 +104,13 @@ const DEFAULT_FIELDS = [
 		label: __( 'Status' ),
 		getValue: ( { item }: { item: Site } ) => getSiteStatus( item ),
 		elements: Object.entries( STATUS_LABELS ).map( ( [ value, label ] ) => ( { value, label } ) ),
-		render: ( { item }: { item: Site } ) => getSiteStatusLabel( item ),
+		render: ( { item }: { item: Site } ) => {
+			return (
+				<CoreBadge className="sites-core-badge-no-icon" intent={ getSiteStatusIntent( item ) }>
+					{ getSiteStatusLabel( item ) }
+				</CoreBadge>
+			);
+		},
 	},
 	{
 		id: 'is_a8c',
@@ -155,7 +169,7 @@ const DEFAULT_LAYOUTS = {
 	},
 	grid: {
 		mediaField: 'preview',
-		fields: [],
+		fields: [ 'status' ],
 		titleField: 'name',
 		descriptionField: 'URL',
 	},

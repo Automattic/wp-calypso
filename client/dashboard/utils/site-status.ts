@@ -11,6 +11,16 @@ export const STATUS_LABELS = {
 	migration_started: __( 'Migration Started' ),
 };
 
+const STATUS_INTENTS = {
+	public: 'success' as const,
+	private: 'warning' as const,
+	coming_soon: 'warning' as const,
+	deleted: 'error' as const,
+	redirect: 'success' as const,
+	migration_pending: 'info' as const,
+	migration_started: 'info' as const,
+};
+
 export function getSiteStatus( item: Site ) {
 	if ( item.site_migration?.migration_status.startsWith( 'migration-pending' ) ) {
 		return 'migration_pending';
@@ -41,4 +51,8 @@ export function getSiteStatus( item: Site ) {
 
 export function getSiteStatusLabel( item: Site ) {
 	return STATUS_LABELS[ getSiteStatus( item ) ];
+}
+
+export function getSiteStatusIntent( item: Site ) {
+	return STATUS_INTENTS[ getSiteStatus( item ) ];
 }
