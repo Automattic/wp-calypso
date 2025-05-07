@@ -1,7 +1,6 @@
 export interface ReferralProduct {
 	status: string;
 	product_id: number;
-	billing_product_id?: number;
 	quantity: number;
 	license: {
 		license_key: string;
