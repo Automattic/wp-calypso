@@ -30,7 +30,7 @@ function PageLayout( {
 } ) {
 	return (
 		<VStack spacing={ 8 } className="dashboard-page-layout" style={ sizes[ size ] }>
-			<VStack spacing={ 4 }>
+			<VStack>
 				<HStack justify="space-between" alignment="center">
 					<Heading level={ 1 } style={ { flexShrink: 0 } }>
 						{ title }
