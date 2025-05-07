@@ -63,6 +63,12 @@ module.exports = {
 			files: [ 'bin/**/*', 'test/**/*' ],
 			...nodeConfig,
 		},
+		{
+			files: [ '**/test/**/*' ],
+			rules: {
+				'react/display-name': 'off',
+			},
+		},
 		merge(
 			// ESLint doesn't allow the `extends` field inside `overrides`, so we need to compose
 			// the TypeScript config manually using internal bits from various plugins

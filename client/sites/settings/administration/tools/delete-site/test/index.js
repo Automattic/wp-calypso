@@ -37,9 +37,6 @@ const initialState = {
 		hasLoadedSitePurchasesFromServer: true,
 		data: [],
 	},
-	explatExperiments: {
-		experimentAssignments: {},
-	},
 	preferences: {},
 };
 
