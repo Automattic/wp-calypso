@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import { Step, StepContainer } from '@automattic/onboarding';
+import { ProgressBar } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import { useEffect, useMemo } from 'react';
@@ -185,10 +186,18 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 		}
 
 		const renderStepContent = () => {
-			if ( isLoading ) {
+			if ( ! useContainerV2 && isLoading ) {
 				return (
 					<div className="import-layout__center">
 						<Loading />
+					</div>
+				);
+			}
+
+			if ( useContainerV2 && isLoading ) {
+				return (
+					<div className="step-container-v2--loading import-layout__center">
+						<ProgressBar className="step-container-v2--loading__progress-bar" />
 					</div>
 				);
 			}
@@ -222,8 +231,10 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 		};
 
 		const importJob = getImportJob( importer );
+
 		if ( useContainerV2 ) {
 			const importerData = getImportDragConfig( importer, stepNavigator?.supportLinkModal );
+
 			return (
 				<>
 					<QuerySites siteId={ siteId } />
