@@ -802,7 +802,7 @@ const mapStateToProps = ( state, { siteId, filter } ) => {
 		isSiteWooExpress: isSiteOnWooExpress( state, siteId ),
 		isSiteWooExpressOrEcomFreeTrial:
 			isSiteOnECommerceTrial( state, siteId ) || isSiteOnWooExpress( state, siteId ),
-		isSearchV2: ! isUserLoggedIn( state ) && config.isEnabled( 'themes/text-search-lots' ),
+		isSearchV2: ! isUserLoggedIn( state ),
 		lastNonEditorRoute: getLastNonEditorRoute( state ),
 		themeTiers: getThemeTiers( state ),
 	};
