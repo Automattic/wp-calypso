@@ -134,11 +134,7 @@ export const Default = ( {
 			fields: [
 				'title',
 				'order',
-				{
-					id: 'sticky',
-					layout: 'regular',
-					labelPosition: 'side',
-				},
+				'sticky',
 				'author',
 				'reviewer',
 				'password',
