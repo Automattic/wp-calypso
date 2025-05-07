@@ -190,12 +190,14 @@ export default function Sites() {
 				: DEFAULT_VIEW,
 		[ hasA8CSites ]
 	);
-	const search: Partial< ViewTable | ViewGrid > = sitesRoute.useSearch();
+	const search: Partial< ViewTable | ViewGrid > | undefined = sitesRoute.useSearch().view;
 	const view = useMemo(
 		() => ( {
 			...defaultView,
-			...DEFAULT_LAYOUTS[ search.type ?? DEFAULT_VIEW.type ],
-			...Object.fromEntries( Object.entries( search ).filter( ( [ , v ] ) => v !== undefined ) ),
+			...DEFAULT_LAYOUTS[ search?.type ?? DEFAULT_VIEW.type ],
+			...( search
+				? Object.fromEntries( Object.entries( search ).filter( ( [ , v ] ) => v !== undefined ) )
+				: {} ),
 		} ),
 		[ defaultView, search ]
 	);
@@ -238,11 +240,13 @@ export default function Sites() {
 							}
 							const _defaultView = { ...defaultView, ...DEFAULT_LAYOUTS[ view.type ] };
 							navigate( {
-								search: Object.fromEntries(
-									Object.entries( view ).filter( ( [ key, value ] ) => {
-										return value !== _defaultView[ key as keyof typeof _defaultView ];
-									} )
-								),
+								search: {
+									view: Object.fromEntries(
+										Object.entries( view ).filter( ( [ key, value ] ) => {
+											return value !== _defaultView[ key as keyof typeof _defaultView ];
+										} )
+									),
+								},
 							} );
 						} }
 						onClickItem={ onClickItem }
