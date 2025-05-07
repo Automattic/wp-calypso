@@ -2,34 +2,36 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
-.section-nav-tabs__dropdown {
-	width: 100%;
-	flex-shrink: 0;
+.theme-showcase {
+    .section-nav-tabs__dropdown {
+    	width: 100%;
+    	flex-shrink: 0;
 
-	@include break-mobile {
-		width: auto;
-	}
+    	@include break-mobile {
+    		width: auto;
+    	}
 
-	button {
-		border: 1px solid var(--color-neutral-10);
-		box-shadow: none;
-		color: var(--color-neutral-70);
-		font-size: $font-body-small;
-		height: 42px;
-		padding: 8px 14px;
+    	.components-button {
+    		border: 1px solid var(--color-neutral-10);
+    		box-shadow: none;
+    		color: var(--color-neutral-70);
+    		font-size: $font-body-small;
+    		height: 42px;
+    		padding: 8px 14px;
 
-		&:hover,
-		&:focus{
-			background-color: transparent;
-			border: 1px solid var(--color-neutral-20);
-			box-shadow: none;
-			color: var(--color-neutral-70);
-		}
-	}
+    		&:hover,
+    		&:focus{
+    			background-color: transparent;
+    			border: 1px solid var(--color-neutral-20);
+    			box-shadow: none;
+    			color: var(--color-neutral-70);
+    		}
+    	}
+    }
 }
 
 .is-logged-out {
-	.section-nav-tabs__dropdown {
+	.theme-showcase .section-nav-tabs__dropdown {
 		align-self: flex-start;
 		box-shadow:
 			0 0 0 0 rgba(38, 19, 19, 0.03),
@@ -40,7 +42,7 @@
 			0 25px 7px 0 rgba(38, 19, 19, 0);
 		width: auto;
 
-		button {
+		.components-button {
 			background-color: var(--color-surface);
 			border-width: 0;
 			height: 55px;
