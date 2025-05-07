@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
-import { PerformanceReport } from 'client/data/site-profiler/types';
 import { siteSettingsQuery, basicMetricsQuery, performanceInsightsQuery } from '../../app/queries';
+import { PerformanceReport } from '../../data/types';
 
 interface PerformanceData {
 	hash: string | undefined;

@@ -11,9 +11,12 @@
     --studio-green-60: #007017;
     --studio-green-80: #00450c;
 
+    --studio-orange-5: #ffd7b5;
     --studio-orange-40: #d67709;
     --studio-orange-60: #8a4d00;
+    --studio-orange-80: #543100;
 
+    --studio-red-5: #facfd2;
     --studio-red-50: #d63638;
 
     --color-surface: var(--studio-white);
@@ -30,6 +33,7 @@
 
 .site-performance-report .l-block-wrapper {
     background: #fcfcfc;
+    padding-top: 32px;
 }
 
 .site-performance-report button {
@@ -38,10 +42,6 @@
 
 .site-performance-report .core-web-vitals-display__details {
     background: #fff;
-}
-
-.site-performance-report .metric-tab-bar__tab {
-    border-radius: inherit;
 }
 
 .site-performance-report .core-web-vitals-display + *,
