@@ -242,7 +242,6 @@ module.exports = {
 						'./client/package.json',
 						'./desktop/package.json',
 						'./test/e2e/package.json',
-						'./packages/calypso-codemods/package.json',
 						'./packages/wpcom-proxy-request/package.json',
 						'./packages/wpcom-xhr-request/package.json',
 						'./packages/wpcom.js/package.json',

@@ -61,8 +61,8 @@ const PluginsSidebar = ( { path, isCollapsed }: Props ) => {
 				<SidebarItem
 					className="sidebar__menu-item--plugins"
 					link="/plugins/manage/sites"
-					label={ translate( 'Manage Plugins' ) }
-					tooltip={ isCollapsed && translate( 'Manage Plugins' ) }
+					label={ translate( 'Manage plugins' ) }
+					tooltip={ isCollapsed && translate( 'Manage plugins' ) }
 					selected={ isManagedPluginSelected }
 					icon={ settings }
 					onNavigate={ ( _e: SyntheticEvent, link: string ) => setPreviousPath( link ) }
@@ -71,8 +71,8 @@ const PluginsSidebar = ( { path, isCollapsed }: Props ) => {
 				<SidebarItem
 					className="sidebar__menu-item--plugins"
 					link="/plugins/scheduled-updates"
-					label={ translate( 'Scheduled Updates' ) }
-					tooltip={ isCollapsed && translate( 'Scheduled Updates' ) }
+					label={ translate( 'Scheduled updates' ) }
+					tooltip={ isCollapsed && translate( 'Scheduled updates' ) }
 					selected={ path.startsWith( '/plugins/scheduled-updates' ) }
 					customIcon={ <SidebarIconCalendar /> }
 				/>
