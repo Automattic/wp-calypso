@@ -221,6 +221,10 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( {
 		return normalizedStats;
 	}, [ countriesList, query, isRequestingCountriesList ] );
 
+	// Date is fetched from three ways but only one is displayed, we use that for downloading as CSV.
+	// If supportsLocationsStatsFeature is false, we use the legacy endpoint.
+	// If geoMode is country, we use the countriesList.
+	// Otherwise, we use the locationsViewsData.
 	const dataToDispatch = useMemo( () => {
 		if ( isRequestingCountriesList || isRequestingData || isRequestingCountriesList ) {
 			return;
