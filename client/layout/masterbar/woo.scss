@@ -1308,13 +1308,30 @@ $breakpoint-mobile: 660px;
 				height: 48px;
 
 				&:focus:not(:disabled) {
+					--color-accent: var(--woo-purple-60);
+				}
+			}
+
+			&.social-buttons__button {
+				&:focus:not(:disabled) {
 					box-shadow: inset 0 0 0 1px var(--wp-components-color-background, #fff), 0 0 0 2px var(--wp-components-color-accent);
+				}
+			}
+
+			&.is-primary {
+				&:focus:not(:disabled) {
+					box-shadow: 0 0 0 2px var(--wp-components-color-accent);
+				}
+
+				&:disabled {
+					--color-accent: var(--studio-gray-5);
+
+					color: var(--studio-gray-50);
 				}
 
 				.components-spinner {
 					margin-top: 0;
 				}
-
 			}
 		}
 
