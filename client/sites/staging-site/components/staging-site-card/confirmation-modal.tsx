@@ -1,6 +1,5 @@
-import { Button } from '@automattic/components';
 import styled from '@emotion/styled';
-import { Modal } from '@wordpress/components';
+import { Modal, Button } from '@wordpress/components';
 import { useState } from 'react';
 
 const ActionButtons = styled.div( {
@@ -18,7 +17,6 @@ type ConfirmationModalButtonProps = {
 	isBorderless?: boolean;
 	isPlain?: boolean;
 	isTransparent?: boolean;
-	isCompact?: boolean;
 	isConfirmationDisabled?: boolean;
 	disabled?: boolean;
 	children: React.ReactNode;
@@ -28,6 +26,7 @@ type ConfirmationModalButtonProps = {
 	extraModalContent?: React.ReactNode;
 	confirmLabel: string;
 	cancelLabel: string;
+	isSynchronize?: boolean;
 };
 
 export function ConfirmationModal( {
@@ -41,7 +40,6 @@ export function ConfirmationModal( {
 	isBorderless = false,
 	isPlain = false,
 	isTransparent = false,
-	isCompact = false,
 	children,
 	modalTitle,
 	modalMessage,
@@ -49,23 +47,34 @@ export function ConfirmationModal( {
 	extraModalContent,
 	confirmLabel,
 	cancelLabel,
+	isSynchronize = false,
 }: ConfirmationModalButtonProps ) {
 	const [ isOpen, setOpen ] = useState( false );
 	const openModal = () => setOpen( true );
 	const closeModal = () => setOpen( false );
 
+	const getButtonVariant = () => {
+		if ( isSynchronize ) {
+			return 'tertiary';
+		}
+		if ( isPrimary ) {
+			return 'primary';
+		}
+		if ( isBorderless || isPlain || isTransparent ) {
+			return 'tertiary';
+		}
+		return 'secondary';
+	};
+
 	return (
 		<>
 			<Button
-				primary={ isPrimary }
-				compact={ isCompact }
-				scary={ isScary }
-				borderless={ isBorderless }
-				plain={ isPlain }
-				transparent={ isTransparent }
-				busy={ isBusy }
+				variant={ getButtonVariant() }
+				isDestructive={ isScary }
+				isBusy={ isBusy }
 				disabled={ disabled }
 				onClick={ openModal }
+				__next40pxDefaultSize
 			>
 				{ children }
 			</Button>
@@ -83,18 +92,20 @@ export function ConfirmationModal( {
 								onCancel?.();
 								closeModal();
 							} }
-							borderless
+							variant="tertiary"
+							__next40pxDefaultSize
 						>
 							{ cancelLabel }
 						</Button>
 						<Button
 							disabled={ isConfirmationDisabled }
-							primary
+							variant="primary"
 							onClick={ () => {
 								onConfirm?.();
 								closeModal();
 							} }
-							busy={ isBusy }
+							isBusy={ isBusy }
+							__next40pxDefaultSize
 						>
 							{ confirmLabel }
 						</Button>
