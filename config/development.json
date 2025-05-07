@@ -136,7 +136,6 @@
 		"onboarding/import-from-squarespace": true,
 		"onboarding/import-from-wix": true,
 		"onboarding/import-from-wordpress": true,
-		"onboarding/import-light": false,
 		"onboarding/interval-dropdown": true,
 		"onboarding/playground": true,
 		"onboarding/step-container-v2-migration-flow": true,
