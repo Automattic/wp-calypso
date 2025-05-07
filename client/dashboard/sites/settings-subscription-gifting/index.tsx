@@ -33,6 +33,12 @@ const form = {
 	fields,
 };
 
+export function getSubscriptionGiftingSettingBadges( settings: SiteSettings ) {
+	return settings.wpcom_gifting_subscription
+		? [ { text: __( 'Enabled' ), intent: 'success' } ]
+		: [ { text: __( 'Disabled' ) } ];
+}
+
 export default function SubscriptionGiftingSettings() {
 	const { siteSlug } = siteSettingsSubscriptionGiftingRoute.useParams();
 	const { data } = useQuery( siteSettingsQuery( siteSlug ) );

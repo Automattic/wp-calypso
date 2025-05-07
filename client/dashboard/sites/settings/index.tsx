@@ -8,7 +8,8 @@ import { __ } from '@wordpress/i18n';
 import { siteSettingsQuery } from '../../app/queries';
 import { siteRoute } from '../../app/router';
 import PageLayout from '../../components/page-layout';
-import SubscriptionGiftingSettingsSummary from '../settings-subscription-gifting/summary';
+import RouterLinkSummaryButton from '../../components/router-link-summary-button';
+import { getSubscriptionGiftingSettingBadges } from '../settings-subscription-gifting';
 
 export default function SiteSettings() {
 	const { siteSlug } = siteRoute.useParams();
@@ -23,7 +24,12 @@ export default function SiteSettings() {
 			<Heading>{ __( 'General' ) }</Heading>
 			<Card>
 				<VStack>
-					<SubscriptionGiftingSettingsSummary siteSlug={ siteSlug } settings={ settings } />
+					<RouterLinkSummaryButton
+						to={ `/sites/${ siteSlug }/settings/subscription-gifting` }
+						title={ __( 'Accept a gift subscription' ) }
+						density="medium"
+						badges={ getSubscriptionGiftingSettingBadges( settings ) }
+					/>
 				</VStack>
 			</Card>
 		</PageLayout>
