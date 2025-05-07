@@ -24,6 +24,7 @@ export interface CheckoutStepProps {
 	nextStepButtonAriaLabel?: string;
 	validatingButtonText?: string;
 	validatingButtonAriaLabel?: string;
+	children?: React.ReactNode;
 }
 
 export type IsCompleteCallback = () => boolean | Promise< boolean >;

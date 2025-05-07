@@ -1182,6 +1182,16 @@ export function CheckoutStepGroup( {
 
 const paymentMethodStepProps = getDefaultPaymentMethodStep();
 export function PaymentMethodStep( props: Partial< CheckoutStepProps > ) {
-	return <CheckoutStep { ...{ ...paymentMethodStepProps, ...props } } />;
+	return (
+		<CheckoutStep
+			{ ...{ ...paymentMethodStepProps, ...props } }
+			activeStepContent={
+				<>
+					{ paymentMethodStepProps.activeStepContent }
+					{ props.children }
+				</>
+			}
+		/>
+	);
 }
 PaymentMethodStep.isCheckoutStep = true;

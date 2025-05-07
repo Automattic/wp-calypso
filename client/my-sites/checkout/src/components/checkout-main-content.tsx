@@ -818,15 +818,15 @@ export default function CheckoutMainContent( {
 						// automatically collapsing when checkout loads.
 						return Boolean( paymentMethod ) && ! paymentMethod?.hasRequiredFields;
 					} }
-				/>
-
-				<CouponFieldArea
-					isCouponFieldVisible={ isCouponFieldVisible }
-					setCouponFieldVisible={ setCouponFieldVisible }
-					isPurchaseFree={ isPurchaseFree }
-					couponStatus={ couponStatus }
-					couponFieldStateProps={ couponFieldStateProps }
-				/>
+				>
+					<CouponFieldArea
+						isCouponFieldVisible={ isCouponFieldVisible }
+						setCouponFieldVisible={ setCouponFieldVisible }
+						isPurchaseFree={ isPurchaseFree }
+						couponStatus={ couponStatus }
+						couponFieldStateProps={ couponFieldStateProps }
+					/>
+				</PaymentMethodStep>
 
 				<CheckoutTermsAndCheckboxes
 					is3PDAccountConsentAccepted={ is3PDAccountConsentAccepted }
