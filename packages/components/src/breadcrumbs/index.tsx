@@ -51,16 +51,13 @@ function BreadcrumbItem( { item: { label, href, onClick } }: { item: BreadcrumbI
 	);
 }
 
-function BreadcrumbsNav( {
-	isOffscreen,
-	navRef,
-	shouldRenderCompact,
-	...breadcrumbProps
-}: BreadcrumbProps & {
-	isOffscreen?: boolean;
-	navRef: React.RefObject< HTMLElement > | React.RefCallback< HTMLElement >;
-	shouldRenderCompact: boolean;
-} ) {
+const BreadcrumbsNav = forwardRef<
+	HTMLElement,
+	BreadcrumbProps & {
+		isOffscreen?: boolean;
+		shouldRenderCompact: boolean;
+	}
+>( function BreadcrumbsNav( { isOffscreen, shouldRenderCompact, ...breadcrumbProps }, ref ) {
 	const { items, showCurrentItem = false, variant = 'default' } = breadcrumbProps;
 	// Always show the first item. The last item (current page) is rendered
 	// conditionally based on the `showCurrentItem` prop.
@@ -96,7 +93,7 @@ function BreadcrumbsNav( {
 		<HStack
 			as="nav"
 			className={ clsx( 'a8c-components-breadcrumbs', { 'is-offscreen': isOffscreen } ) }
-			ref={ navRef }
+			ref={ ref }
 			spacing={ 0 }
 			justify="flex-start"
 			aria-label={ __( 'Breadcrumbs' ) }
@@ -115,7 +112,7 @@ function BreadcrumbsNav( {
 			{ showCurrentItem ? currentItem : <VisuallyHidden as="span">{ currentItem }</VisuallyHidden> }
 		</HStack>
 	);
-}
+} );
 
 function UnforwardedBreadcrumbs( props: BreadcrumbProps, ref: React.ForwardedRef< HTMLElement > ) {
 	const { items } = props;
@@ -146,15 +143,11 @@ function UnforwardedBreadcrumbs( props: BreadcrumbProps, ref: React.ForwardedRef
 		<>
 			<BreadcrumbsNav
 				isOffscreen
-				navRef={ offScreenRef }
+				ref={ offScreenRef }
 				shouldRenderCompact={ shouldRenderCompact }
 				{ ...props }
 			/>
-			<BreadcrumbsNav
-				navRef={ mergedRefs }
-				shouldRenderCompact={ shouldRenderCompact }
-				{ ...props }
-			/>
+			<BreadcrumbsNav ref={ mergedRefs } shouldRenderCompact={ shouldRenderCompact } { ...props } />
 		</>
 	);
 }
