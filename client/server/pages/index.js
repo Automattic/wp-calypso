@@ -115,12 +115,16 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 		request.cookies.sensitive_pixel_option
 	);
 
+	const countryCodeCookie = request.cookies.country_code;
+	const validCountryCodeCookie =
+		countryCodeCookie && countryCodeCookie !== 'unknown' ? countryCodeCookie : undefined;
+
 	const showGdprBanner = shouldSeeCookieBanner(
-		request.cookies.country_code || geoIPCountryCode,
+		validCountryCodeCookie || geoIPCountryCode,
 		trackingPrefs
 	);
 
-	if ( ! request.cookies.country_code && geoIPCountryCode ) {
+	if ( ! validCountryCodeCookie && geoIPCountryCode ) {
 		response.cookie( 'country_code', geoIPCountryCode );
 	}
 
