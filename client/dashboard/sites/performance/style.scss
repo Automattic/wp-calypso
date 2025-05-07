@@ -18,6 +18,7 @@
 
     --studio-red-5: #facfd2;
     --studio-red-50: #d63638;
+   --studio-red-60: #b32d2e
 
     --color-surface: var(--studio-white);
 
@@ -28,12 +29,13 @@
     --color-neutral: var(--studio-gray-50);
     --color-neutral-10: var(--studio-gray-10);
 
+    --studio-gray-70: #3c434a;
 
 }
 
 .site-performance-report .l-block-wrapper {
     background: #fcfcfc;
-    padding-top: 32px;
+    padding-top: 0;
 }
 
 .site-performance-report button {
@@ -52,4 +54,13 @@
 
 .site-performance-report .core-web-vitals-display__metric {
     line-height: 48px;
+}
+
+.site-performance-report .metrics-insight-item button {
+    border: 0;
+}
+
+.site-performance-report  .performance-profiler-insights-section .metrics-insight-item.foldable-card {
+    padding-left: 0;
+    padding-right: 0;
 }
