@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { useTranslate } from 'i18n-calypso';
+import { useTranslate, TranslateResult } from 'i18n-calypso';
 import { capitalize } from 'lodash';
 import A4APlusWpComLogo from 'calypso/a8c-for-agencies/components/a4a-plus-wpcom-logo';
 import VisitSite from 'calypso/blocks/visit-site';
@@ -51,107 +51,77 @@ interface LoginHeaderProps {
 	showContinueAsUser: () => boolean;
 }
 
-export function GetHeaderText( {
-	isSocialFirst,
-	twoFactorAuthType,
-	isManualRenewalImmediateLoginAttempt,
-	twoStepNonce = null,
-	socialConnect,
-	linkingSocialService,
-	action,
-	privateSite,
-	oauth2Client,
-	isWooJPC,
-	isFromMigrationPlugin,
-	isJetpack,
-	isWCCOM,
-	isFromAkismet,
-	isFromAutomatticForAgenciesPlugin,
-	isGravPoweredClient,
-	wccomFrom,
-	twoFactorEnabled,
-	currentQuery,
-	showContinueAsUser,
-}: {
-	isSocialFirst: boolean;
-	twoFactorAuthType: string | null;
-	isManualRenewalImmediateLoginAttempt: boolean;
-	twoStepNonce: string | null;
-	socialConnect: boolean;
-	linkingSocialService: string;
-	action: string;
-	privateSite: boolean;
-	oauth2Client: { title: string; icon: string } | null;
-	isWooJPC: boolean;
-	isFromMigrationPlugin: boolean;
-	isJetpack: boolean;
-	isWCCOM: boolean;
-	isFromAkismet: boolean;
-	isFromAutomatticForAgenciesPlugin: boolean;
-	isGravPoweredClient: boolean;
-	wccomFrom: string;
-	twoFactorEnabled: boolean;
-	currentQuery: Record< string, string >;
-	showContinueAsUser: () => boolean;
-} ): JSX.Element {
-	const translate = useTranslate();
-
-	let headerText = <></>;
+export function getHeaderText(
+	isSocialFirst: boolean,
+	twoFactorAuthType: string | null,
+	isManualRenewalImmediateLoginAttempt: boolean,
+	socialConnect: boolean,
+	linkingSocialService: string,
+	action: string,
+	privateSite: boolean,
+	oauth2Client: { title: string; icon: string } | null,
+	isWooJPC: boolean,
+	isFromMigrationPlugin: boolean,
+	isJetpack: boolean,
+	isWCCOM: boolean,
+	isFromAkismet: boolean,
+	isFromAutomatticForAgenciesPlugin: boolean,
+	isGravPoweredClient: boolean,
+	wccomFrom: string,
+	twoFactorEnabled: boolean,
+	currentQuery: Record< string, string >,
+	showContinueAsUser: () => boolean,
+	translate: ( arg0: string, arg1?: object ) => TranslateResult,
+	twoStepNonce: string | null = null
+): TranslateResult {
+	let headerText = translate( 'Log in to your account' );
 
 	if ( isSocialFirst ) {
-		headerText = <>{ translate( 'Log in to WordPress.com' ) }</>;
+		headerText = translate( 'Log in to WordPress.com' );
 	}
 
 	if ( twoFactorAuthType === 'authenticator' ) {
-		headerText = <>{ translate( 'Continue with an authentication code' ) }</>;
+		headerText = translate( 'Continue with an authentication code' );
 	}
 
 	if ( twoFactorAuthType === 'push' ) {
-		headerText = <>{ translate( 'Continue with the Jetpack app' ) }</>;
-	}
-
-	if ( twoFactorAuthType === 'backup' ) {
-		headerText = <>{ translate( 'Continue with a backup code' ) }</>;
+		headerText = translate( 'Continue with the Jetpack app' );
+	} else if ( twoFactorAuthType === 'backup' ) {
+		headerText = translate( 'Continue with a backup code' );
 	}
 
 	if ( isManualRenewalImmediateLoginAttempt ) {
-		headerText = (
-			<>{ translate( 'Log in to update your payment details and renew your subscription' ) }</>
-		);
+		headerText = translate( 'Log in to update your payment details and renew your subscription' );
 	}
 
 	if ( twoStepNonce ) {
-		headerText = <>{ translate( 'Two-Step Authentication' ) }</>;
+		headerText = translate( 'Two-Step Authentication' );
 	}
 
 	if ( socialConnect ) {
-		headerText = (
-			<>
-				{ translate( 'Connect your %(service)s account', {
-					args: {
-						service: capitalize( linkingSocialService ),
-					},
-				} ) }
-			</>
-		);
+		headerText = translate( 'Connect your %(service)s account', {
+			args: {
+				service: capitalize( linkingSocialService ),
+			},
+		} );
 	}
 
 	if ( action === 'lostpassword' ) {
-		headerText = <>{ translate( 'Forgot your password?' ) }</>;
+		headerText = translate( 'Forgot your password?' );
 	}
 
 	if ( privateSite ) {
-		headerText = <>{ translate( 'This is a private WordPress.com site' ) }</>;
+		headerText = translate( 'This is a private WordPress.com site' );
 	}
 
 	if ( oauth2Client ) {
 		if ( isWCCOM ) {
 			if ( wccomFrom === 'cart' ) {
-				headerText = <>{ translate( 'Log in with a WordPress.com account' ) }</>;
+				headerText = translate( 'Log in with a WordPress.com account' );
 			} else if ( twoFactorEnabled ) {
-				headerText = <>{ translate( 'Authenticate your login' ) }</>;
+				headerText = translate( 'Authenticate your login' );
 			} else if ( currentQuery.lostpassword_flow ) {
-				headerText = <>{ translate( 'Log in to your account' ) }</>;
+				headerText = translate( 'Log in to your account' );
 			} else if ( showContinueAsUser() ) {
 				headerText = (
 					<>
@@ -161,75 +131,53 @@ export function GetHeaderText( {
 					</>
 				);
 			}
-			headerText = <>{ translate( 'Log in to your account' ) }</>;
+			headerText = translate( 'Log in to your account' );
 		}
 
 		if ( isJetpackCloudOAuth2Client( oauth2Client ) ) {
-			headerText = (
-				<>{ translate( 'Howdy! Log in to Jetpack.com with your WordPress.com account.' ) }</>
-			);
+			headerText = translate( 'Howdy! Log in to Jetpack.com with your WordPress.com account.' );
 		}
 
 		if ( isA4AOAuth2Client( oauth2Client ) ) {
-			headerText = (
-				<>
-					{ translate(
-						'Howdy! Log in to Automattic for Agencies with your WordPress.com{{nbsp/}}account.',
-						{
-							components: { nbsp: <>&nbsp;</> },
-							comment: 'The {{nbsp/}} is a non-breaking space',
-						}
-					) }
-				</>
+			headerText = translate(
+				'Howdy! Log in to Automattic for Agencies with your WordPress.com{{nbsp/}}account.',
+				{
+					components: { nbsp: <>&nbsp;</> },
+					comment: 'The {{nbsp/}} is a non-breaking space',
+				}
 			);
 		}
 
 		if ( isPartnerPortalOAuth2Client( oauth2Client ) ) {
 			if ( document.location.search?.includes( 'wpcloud' ) ) {
-				headerText = <>{ translate( 'Log in to WP Cloud with WordPress.com' ) }</>;
+				headerText = translate( 'Log in to WP Cloud with WordPress.com' );
 			} else if ( document.location.search?.includes( 'jetpack' ) ) {
-				headerText = (
-					<>
-						{ translate(
-							'Howdy! Log into the Jetpack Partner Portal with your WordPress.com account.'
-						) }
-					</>
+				headerText = translate(
+					'Howdy! Log into the Jetpack Partner Portal with your WordPress.com account.'
 				);
 			} else {
-				headerText = (
-					<>
-						{ translate(
-							'Howdy! Log into the Automattic Partner Portal with your WordPress.com account.'
-						) }
-					</>
+				headerText = translate(
+					'Howdy! Log into the Automattic Partner Portal with your WordPress.com account.'
 				);
 			}
 		}
 
 		if ( isCrowdsignalOAuth2Client( oauth2Client ) ) {
-			headerText = (
-				<>
-					{ translate( 'Sign in to %(clientTitle)s', {
-						args: {
-							clientTitle: oauth2Client.title,
-						},
-					} ) }
-				</>
-			);
+			headerText = translate( 'Sign in to %(clientTitle)s', {
+				args: {
+					clientTitle: oauth2Client.title,
+				},
+			} );
 		}
 
 		if ( isGravPoweredClient ) {
-			headerText = (
-				<>
-					{ translate( 'Login to %(clientTitle)s', {
-						args: { clientTitle: oauth2Client.title },
-					} ) }
-				</>
-			);
+			headerText = translate( 'Login to %(clientTitle)s', {
+				args: { clientTitle: oauth2Client.title },
+			} );
 		}
 
 		if ( isBlazeProOAuth2Client( oauth2Client ) ) {
-			headerText = <>{ translate( 'Log in to your Blaze Pro account' ) }</>;
+			headerText = translate( 'Log in to your Blaze Pro account' );
 		}
 	}
 
@@ -237,37 +185,33 @@ export function GetHeaderText( {
 		const isLostPasswordFlow = currentQuery.lostpassword_flow === 'true';
 		switch ( true ) {
 			case isLostPasswordFlow:
-				headerText = <>{ translate( "You've got mail" ) }</>;
+				headerText = translate( "You've got mail" );
 			case twoFactorEnabled:
-				headerText = <>{ translate( 'Authenticate your login' ) }</>;
+				headerText = translate( 'Authenticate your login' );
 			default:
-				headerText = <>{ translate( 'Log in to your account' ) }</>;
+				headerText = translate( 'Log in to your account' );
 		}
 	}
 
 	if ( isFromMigrationPlugin ) {
-		headerText = <>{ translate( 'Log in to your account' ) }</>;
+		headerText = translate( 'Log in to your account' );
 	}
 
 	if ( isJetpack && ! isFromAutomatticForAgenciesPlugin ) {
 		const isJetpackMagicLinkSignUpFlow = config.isEnabled( 'jetpack/magic-link-signup' );
-		headerText = (
-			<>
-				{ isJetpackMagicLinkSignUpFlow
-					? translate(
-							'Log in or create a WordPress.com account to supercharge your site with powerful growth, performance, and security tools.'
-					  )
-					: translate( 'Log in or create a WordPress.com account to set up Jetpack' ) }
-			</>
-		);
+		headerText = isJetpackMagicLinkSignUpFlow
+			? translate(
+					'Log in or create a WordPress.com account to supercharge your site with powerful growth, performance, and security tools.'
+			  )
+			: translate( 'Log in or create a WordPress.com account to set up Jetpack' );
 	}
 
 	if ( isFromAkismet ) {
-		headerText = <>{ translate( 'Log in to Akismet with WordPress.com' ) }</>;
+		headerText = translate( 'Log in to Akismet with WordPress.com' );
 	}
 
 	if ( isFromAutomatticForAgenciesPlugin ) {
-		headerText = <>{ translate( 'Log in to Automattic for Agencies' ) }</>;
+		headerText = translate( 'Log in to Automattic for Agencies' );
 	}
 
 	return headerText;
@@ -303,29 +247,28 @@ export function LoginHeader( {
 }: LoginHeaderProps ) {
 	const translate = useTranslate();
 
-	const headerText = (
-		<GetHeaderText
-			isSocialFirst={ isSocialFirst }
-			twoFactorAuthType={ twoFactorAuthType }
-			isManualRenewalImmediateLoginAttempt={ isManualRenewalImmediateLoginAttempt }
-			twoStepNonce={ twoStepNonce }
-			socialConnect={ socialConnect }
-			linkingSocialService={ linkingSocialService }
-			action={ action }
-			privateSite={ privateSite }
-			oauth2Client={ oauth2Client }
-			isWooJPC={ isWooJPC }
-			isFromMigrationPlugin={ isFromMigrationPlugin }
-			isJetpack={ isJetpack }
-			isWCCOM={ isWCCOM }
-			isFromAkismet={ isFromAkismet }
-			isFromAutomatticForAgenciesPlugin={ isFromAutomatticForAgenciesPlugin }
-			isGravPoweredClient={ isGravPoweredClient }
-			wccomFrom={ wccomFrom }
-			twoFactorEnabled={ twoFactorEnabled }
-			currentQuery={ currentQuery }
-			showContinueAsUser={ showContinueAsUser }
-		/>
+	const headerText = getHeaderText(
+		isSocialFirst,
+		twoFactorAuthType,
+		isManualRenewalImmediateLoginAttempt,
+		socialConnect,
+		linkingSocialService,
+		action,
+		privateSite,
+		oauth2Client,
+		isWooJPC,
+		isFromMigrationPlugin,
+		isJetpack,
+		isWCCOM,
+		isFromAkismet,
+		isFromAutomatticForAgenciesPlugin,
+		isGravPoweredClient,
+		wccomFrom,
+		twoFactorEnabled,
+		currentQuery,
+		showContinueAsUser,
+		translate,
+		twoStepNonce
 	);
 
 	let preHeader = null;

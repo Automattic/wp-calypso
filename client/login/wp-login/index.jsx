@@ -10,7 +10,7 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import LoginBlock from 'calypso/blocks/login';
-import { GetHeaderText } from 'calypso/blocks/login/login-header';
+import { getHeaderText } from 'calypso/blocks/login/login-header';
 import AutomatticLogo from 'calypso/components/automattic-logo';
 import DocumentHead from 'calypso/components/data/document-head';
 import LocaleSuggestions from 'calypso/components/locale-suggestions';
@@ -627,28 +627,27 @@ export class Login extends Component {
 			</Main>
 		);
 
-		const headerText = (
-			<GetHeaderText
-				isSocialFirst={ isSocialFirst }
-				twoFactorAuthType={ twoFactorAuthType }
-				isManualRenewalImmediateLoginAttempt={ isManualRenewalImmediateLoginAttempt }
-				socialConnect={ socialConnect }
-				linkingSocialService={ linkingSocialService }
-				action={ action }
-				privateSite={ privateSite }
-				oauth2Client={ oauth2Client }
-				isWooJPC={ isWooJPC }
-				isFromMigrationPlugin={ isFromMigrationPlugin }
-				isJetpack={ isJetpack }
-				isWCCOM={ isWCCOM }
-				isFromAkismet={ isFromAkismet }
-				isFromAutomatticForAgenciesPlugin={ isFromAutomatticForAgenciesPlugin }
-				isGravPoweredClient={ isGravPoweredClient }
-				wccomFrom={ wccomFrom }
-				twoFactorEnabled={ twoFactorEnabled }
-				currentQuery={ currentQuery }
-				showContinueAsUser={ showContinueAsUser }
-			/>
+		const headerText = getHeaderText(
+			isSocialFirst,
+			twoFactorAuthType,
+			isManualRenewalImmediateLoginAttempt,
+			socialConnect,
+			linkingSocialService,
+			action,
+			privateSite,
+			oauth2Client,
+			isWooJPC,
+			isFromMigrationPlugin,
+			isJetpack,
+			isWCCOM,
+			isFromAkismet,
+			isFromAutomatticForAgenciesPlugin,
+			isGravPoweredClient,
+			wccomFrom,
+			twoFactorEnabled,
+			currentQuery,
+			showContinueAsUser,
+			translate
 		);
 
 		let brandLogo;
