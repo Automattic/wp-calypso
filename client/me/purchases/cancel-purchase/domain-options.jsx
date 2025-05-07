@@ -3,7 +3,7 @@ import { CompactCard, FormLabel } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { UPDATE_NAMESERVERS } from '@automattic/urls';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormRadio from 'calypso/components/forms/form-radio';
 import { getName, isRefundable, isSubscription } from 'calypso/lib/purchases';
@@ -12,16 +12,12 @@ const CancelPurchaseDomainOptions = ( {
 	includedDomainPurchase,
 	includedDomainTransfer,
 	cancelBundledDomain,
-	confirmCancelBundledDomain = false,
 	purchase,
 	onCancelConfirmationStateChange,
 } ) => {
 	const translate = useTranslate();
-	const [ confirmCancel, setConfirmCancel ] = useState( confirmCancelBundledDomain );
+	const [ confirmCancel, setConfirmCancel ] = useState( false );
 
-	useEffect( () => {
-		setConfirmCancel( confirmCancelBundledDomain );
-	}, [ confirmCancelBundledDomain ] );
 
 	if ( ( ! includedDomainPurchase && ! includedDomainTransfer ) || ! isSubscription( purchase ) ) {
 		return null;
