@@ -363,24 +363,23 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( {
 
 	let downloadCsvElement;
 	if ( ! isStatsNavigationImprovementEnabled ) {
-		downloadCsvElement =
-			! isStatsNavigationImprovementEnabled && shouldGateDownloads ? (
-				<DownloadCsvUpsell
-					className="stats-module-locations__download-csv-upsell"
-					siteId={ siteId }
-					borderless
-				/>
-			) : (
-				<DownloadCsv
-					borderless
-					data={ locationCsvData }
-					path={ `locations-${ geoMode }` }
-					period={ period }
-					query={ query }
-					skipQuery
-					statType={ statType }
-				/>
-			);
+		downloadCsvElement = shouldGateDownloads ? (
+			<DownloadCsvUpsell
+				className="stats-module-locations__download-csv-upsell"
+				siteId={ siteId }
+				borderless
+			/>
+		) : (
+			<DownloadCsv
+				borderless
+				data={ locationCsvData }
+				path={ `locations-${ geoMode }` }
+				period={ period }
+				query={ query }
+				skipQuery
+				statType={ statType }
+			/>
+		);
 	}
 
 	const heroElementActions = (
