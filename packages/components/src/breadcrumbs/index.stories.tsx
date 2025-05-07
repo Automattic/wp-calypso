@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { BreadcrumbItemProps } from './types';
-import { Breadcrumbs } from './index';
+import { Breadcrumbs } from './';
 
 // Define example items for the controls.
 const itemsOptions: Record< string, BreadcrumbItemProps[] > = {
@@ -30,7 +30,7 @@ const itemsOptions: Record< string, BreadcrumbItemProps[] > = {
 	],
 };
 
-const meta = {
+const meta: Meta< typeof Breadcrumbs > = {
 	title: 'packages/components/Breadcrumbs',
 	component: Breadcrumbs,
 	tags: [ 'autodocs' ],
@@ -45,7 +45,7 @@ const meta = {
 	parameters: {
 		actions: { argTypesRegex: '^on.*' },
 	},
-} satisfies Meta< typeof Breadcrumbs >;
+};
 
 export default meta;
 type Story = StoryObj< typeof meta >;
