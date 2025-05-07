@@ -1,21 +1,5 @@
 @import "@wordpress/edit-post/build-style/style.css";
 
-.is-group-gutenberg.layout {
-	background-color: var(--color-surface);
-}
-
-.is-group-gutenberg::before {
-	content: "";
-	position: fixed;
-	top: 0;
-	right: 0;
-	bottom: 0;
-	left: 0;
-	background-color: var(--color-surface);
-	pointer-events: none;
-	z-index: z-index("root", ".is-group-gutenberg::before");
-}
-
 // Placeholder styles
 
 .editor__placeholder {
