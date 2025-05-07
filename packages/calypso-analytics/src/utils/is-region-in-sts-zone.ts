@@ -16,14 +16,17 @@ const STS_US_REGIONS = [
  * @returns Whether the region is in the STS zone
  */
 
-export default function isRegionInStsZone( countryCode?: string, region?: string ): boolean {
+export default function isRegionInStsZone(
+	countryCode: string | undefined,
+	region: string | undefined
+): boolean {
 	if ( 'US' !== countryCode ) {
 		return false;
 	}
-	if ( 'unknown' === region ) {
+	if ( 'unknown' === region || undefined === region ) {
 		// If we don't know the region, assume it's not in an STS zone.
 		return true;
 	}
 
-	return region !== undefined && STS_US_REGIONS.includes( region.toLowerCase() );
+	return STS_US_REGIONS.includes( region.toLowerCase() );
 }

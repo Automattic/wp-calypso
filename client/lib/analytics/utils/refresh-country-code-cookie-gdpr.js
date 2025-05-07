@@ -20,35 +20,34 @@ export default async function refreshCountryCodeCookieGdpr( signal = undefined )
 	}
 
 	if ( refreshRequest === null ) {
-		refreshRequest = requestGeoData( signal ).then( ( { countryCode, region } ) => {
-			setCountryCodeCookie( countryCode );
-			setRegionCookie( region );
-		} );
+		refreshRequest = requestGeoData( signal )
+			.then( ( { country_short, region } ) => {
+				setCountryCodeCookie( country_short );
+				// For some IP ranges we don't detect the region and the value returned by the `/geo` endpoint is `"-"`.
+				// In that case set the cookie to `unknown` This cannot happen for `country_short` because the `/geo`
+				// endpoint returns a 404 HTTP status when not even the country can be detected.
+				setRegionCookie( region === '-' ? 'unknown' : region );
+			} )
+			.catch( ( err ) => {
+				debug( 'refreshCountryCodeCookieGdpr: error: ', err );
+			} )
+			.finally( () => {
+				refreshRequest = null;
+			} );
 	}
 
 	await refreshRequest;
-	refreshRequest = null;
 }
 
 function requestGeoData( signal = undefined ) {
 	// cache buster
 	const v = new Date().getTime();
-	return fetch( 'https://public-api.wordpress.com/geo/?v=' + v, { signal } )
-		.then( ( res ) => {
-			if ( ! res.ok ) {
-				return res.body().then( ( body ) => {
-					throw new Error( body );
-				} );
-			}
-			return res.json();
-		} )
-		.then( ( json ) => {
-			return { countryCode: json.country_short, region: json.region };
-		} )
-		.catch( ( err ) => {
-			debug( 'refreshCountryCodeCookieGdpr: error: ', err );
-			return { countryCode: 'unknown', region: 'unknown' };
-		} );
+	return fetch( 'https://public-api.wordpress.com/geo/?v=' + v, { signal } ).then( ( res ) => {
+		if ( ! res.ok ) {
+			return res.body().then( ( body ) => Promise.reject( new Error( body ) ) );
+		}
+		return res.json();
+	} );
 }
 
 function setCountryCodeCookie( countryCode ) {
