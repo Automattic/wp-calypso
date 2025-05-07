@@ -116,9 +116,7 @@ export function siteSettingsQuery( siteId: string ) {
 export function siteSettingsMutation( siteId: string ) {
 	return {
 		mutationFn: ( newData: Partial< SiteSettings > ) => updateSiteSettings( siteId, newData ),
-		/* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-		onSuccess: ( newData: any ) => {
-			const { updated } = newData;
+		onSuccess: ( { updated }: { updated: Partial< SiteSettings > } ) => {
 			queryClient.setQueryData( [ 'site-settings', siteId ], ( oldData: SiteSettings ) => ( {
 				...oldData,
 				...updated,
