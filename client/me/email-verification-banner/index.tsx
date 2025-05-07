@@ -1,4 +1,4 @@
-import { useTranslate } from 'i18n-calypso';
+import { Substitution, useTranslate } from 'i18n-calypso';
 import React, { useCallback, useState } from 'react';
 import Banner from 'calypso/components/banner';
 import EmailVerificationDialog from 'calypso/components/email-verification/email-verification-dialog';
@@ -83,7 +83,7 @@ const EmailVerificationBannerV2: React.FC< Props > = ( { setIsBusy } ) => {
 					translate(
 						'We sent an email to %(email)s. Please check your inbox to verify your email.',
 						{
-							args: { email: emailToVerify },
+							args: { email: emailToVerify as Substitution },
 						}
 					)
 				)
@@ -109,7 +109,7 @@ const EmailVerificationBannerV2: React.FC< Props > = ( { setIsBusy } ) => {
 	const description = translate(
 		'Check your inbox at {{strong}}%(email)s{{/strong}} for the confirmation email, or click "Resend email" to get a new one.',
 		{
-			args: { email: emailToVerify },
+			args: { email: emailToVerify as Substitution },
 			components: {
 				strong: <strong className="email-verification-banner__highlight" />,
 			},
