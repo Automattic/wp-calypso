@@ -3,15 +3,24 @@
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 
-import { screen } from '@testing-library/react';
+import { screen, waitFor, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import PlaygroundStep from '..';
 import { StepProps } from '../../../types';
 import { renderStep, mockStepProps, RenderStepOptions } from '../../test/helpers';
+import { initializeWordPressPlayground } from '../lib/initialize-playground';
 
 // Be sure to mock this hook to return true so that the step is rendered.
 jest.mock( 'calypso/landing/stepper/hooks/use-is-playground-eligible', () => ( {
 	useIsPlaygroundEligible: () => true,
+} ) );
+
+// Mock the initializeWordPressPlayground function to cause an error
+jest.mock( '../lib/initialize-playground' );
+
+// Mock the PlaygroundError component to simplify testing
+jest.mock( '../components/playground-error', () => ( {
+	PlaygroundError: () => <div data-testid="playground-error">Playground Error Component</div>,
 } ) );
 
 const renderPlaygroundStep = (
@@ -26,9 +35,19 @@ const renderPlaygroundStep = (
 const getLaunchButton = () => screen.getByRole( 'button', { name: 'Launch on WordPress.com' } );
 
 describe( 'Playground', () => {
+	beforeEach( () => {
+		jest.resetAllMocks();
+	} );
+
 	describe( 'step', () => {
-		it( 'should render the iframe and the launch button', () => {
-			const { container } = renderPlaygroundStep();
+		it( 'should render the iframe and the launch button', async () => {
+			let container;
+			initializeWordPressPlayground.mockReturnValue( Promise.resolve( {} ) );
+
+			await act( async () => {
+				const result = renderPlaygroundStep();
+				container = result.container;
+			} );
 
 			expect( getLaunchButton() ).toBeVisible();
 			expect( container.querySelector( 'iframe' ) ).toBeVisible();
@@ -36,10 +55,29 @@ describe( 'Playground', () => {
 
 		it( 'should change page when the user clicks the launch button', async () => {
 			const submit = jest.fn();
-			renderPlaygroundStep( { navigation: { submit } } );
+			initializeWordPressPlayground.mockReturnValue( Promise.resolve( {} ) );
+
+			await act( async () => {
+				renderPlaygroundStep( { navigation: { submit } } );
+			} );
 
 			await userEvent.click( getLaunchButton() );
 			expect( submit ).toHaveBeenCalled();
+		} );
+	} );
+
+	describe( 'PlaygroundIframe error handling', () => {
+		it( 'should render PlaygroundError when initialization fails', async () => {
+			initializeWordPressPlayground.mockRejectedValue(
+				new Error( 'WordPress installation has failed.' )
+			);
+
+			await act( async () => renderPlaygroundStep() );
+
+			// Verify the error component is displayed
+			await waitFor( () => {
+				expect( screen.getByTestId( 'playground-error' ) ).toBeVisible();
+			} );
 		} );
 	} );
 } );

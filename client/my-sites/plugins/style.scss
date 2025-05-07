@@ -132,11 +132,6 @@ body.is-section-plugins {
 		@include breakpoint-deprecated( "<960px" ) {
 			display: none;
 		}
-
-		.empty-state {
-			max-width: 100%;
-			padding: 0 1rem;
-		}
 	}
 
 	.hosting-dashboard-layout-column.scheduled-updates-list {
@@ -156,14 +151,6 @@ body.is-section-plugins {
 				margin-bottom: 0;
 				font-size: 0.875rem;
 				color: var(--color-neutral-60);
-			}
-		}
-
-		.empty-state {
-			padding: 0 4rem;
-
-			@include breakpoint-deprecated( "<960px" ) {
-				padding: 0 1rem;
 			}
 		}
 	}

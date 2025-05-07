@@ -61,16 +61,22 @@ form {
 		background-color: var(--color-akismet);
 
 		&:hover,
-    	&:focus {
-        	background-color: var(--color-akismet);
-    	}
-    }
+		&:focus {
+			background-color: var(--color-akismet);
+		}
+	}
+
+	.components-button.is-primary {
+		--color-accent: var(--color-akismet);
+		--color-accent-60: var(--color-akismet);
+	}
 }
 
 .login__form-jetpack {
 	.card.login__form {
 		box-shadow: none;
 		padding: 16px 16px 24px;
+		clip-path: unset;
 
 		@include break-mobile {
 			padding: 16px 0 24px;

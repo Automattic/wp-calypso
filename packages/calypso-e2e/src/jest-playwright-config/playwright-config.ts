@@ -44,6 +44,7 @@ const launchOptions: LaunchOptions = {
 const contextOptions: BrowserContextOptions = {
 	...targetDeviceOptions,
 	userAgent: `${ targetDeviceOptions.userAgent } wp-e2e-tests`,
+	locale: envVariables.TEST_LOCALES[ 0 ],
 };
 
 export default Object.freeze( {
