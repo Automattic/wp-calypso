@@ -1,5 +1,9 @@
-import { __experimentalSummaryButtonList as SummaryButtonList } from '@automattic/components';
 import { useQuery } from '@tanstack/react-query';
+import {
+	__experimentalHeading as Heading,
+	__experimentalVStack as VStack,
+	Card,
+} from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { siteSettingsQuery } from '../../app/queries';
 import { siteRoute } from '../../app/router';
@@ -16,9 +20,12 @@ export default function SiteSettings() {
 
 	return (
 		<PageLayout title={ __( 'Settings' ) } size="small">
-			<SummaryButtonList title={ __( 'General' ) }>
-				<SubscriptionGiftingSettingsSummary siteSlug={ siteSlug } settings={ settings } />
-			</SummaryButtonList>
+			<Heading>{ __( 'General' ) }</Heading>
+			<Card>
+				<VStack>
+					<SubscriptionGiftingSettingsSummary siteSlug={ siteSlug } settings={ settings } />
+				</VStack>
+			</Card>
 		</PageLayout>
 	);
 }
