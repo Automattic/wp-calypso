@@ -85,6 +85,9 @@ const Conversations = ( {
 					return (
 						<HelpCenterSupportChatMessage
 							sectionName="chat_history"
+							odieChatId={
+								isZendeskConversation( conversation ) ? undefined : parseInt( conversation.id )
+							}
 							navigateTo="/odie"
 							supportInteraction={ lastSupportInteraction }
 							key={ conversation.id }
