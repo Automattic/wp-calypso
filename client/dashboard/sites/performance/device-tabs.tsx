@@ -30,6 +30,7 @@ export default function DeviceTabControls( { value, onChange }: DeviceTabControl
 				value={ value }
 				isBlock
 				__next40pxDefaultSize
+				__nextHasNoMarginBottom
 				onChange={ ( value ) => onChange( value as TabType ) }
 			>
 				{ options.map( ( option ) => {

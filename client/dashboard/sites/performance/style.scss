@@ -12,6 +12,8 @@
     --studio-green-80: #00450c;
 
     --studio-orange-40: #d67709;
+    --studio-orange-60: #8a4d00;
+
     --studio-red-50: #d63638;
 
     --color-surface: var(--studio-white);
@@ -22,6 +24,8 @@
 
     --color-neutral: var(--studio-gray-50);
     --color-neutral-10: var(--studio-gray-10);
+
+
 }
 
 .site-performance-report .l-block-wrapper {
@@ -48,4 +52,15 @@
 
 .site-performance-report .core-web-vitals-display__metric {
     line-height: 48px;
+}
+
+.site-performance-device-tab__container .components-base-control__field {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.site-performance-device-tab__container .components-base-control__label {
+    margin-bottom: 0;
 }

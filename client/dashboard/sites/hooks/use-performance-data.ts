@@ -1,10 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
+import { PerformanceReport } from 'client/data/site-profiler/types';
 import { siteSettingsQuery, basicMetricsQuery, performanceInsightsQuery } from '../../app/queries';
-import { UrlPerformanceInsights } from '../../data/types';
 
 interface PerformanceData {
-	performanceData: UrlPerformanceInsights | undefined;
 	hash: string | undefined;
+	mobileReport: PerformanceReport | undefined;
+	desktopReport: PerformanceReport | undefined;
 	desktopScore: number | undefined;
 	mobileScore: number | undefined;
 	desktopLoaded: boolean;
@@ -50,9 +51,20 @@ export function usePerformanceData( siteId: string, url: string ): PerformanceDa
 			? Math.round( performanceData.pagespeed.mobile.overall_score * 100 )
 			: undefined;
 
+	const desktopReport =
+		typeof performanceData?.pagespeed?.desktop === 'object'
+			? performanceData.pagespeed.desktop
+			: undefined;
+
+	const mobileReport =
+		typeof performanceData?.pagespeed?.mobile === 'object'
+			? performanceData.pagespeed.mobile
+			: undefined;
+
 	return {
-		performanceData,
 		hash: token,
+		mobileReport,
+		desktopReport,
 		desktopScore,
 		mobileScore,
 		desktopLoaded,
