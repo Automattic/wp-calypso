@@ -538,7 +538,12 @@ export class Login extends Component {
 	}
 
 	renderTopBar( isSocialFirst ) {
-		const { isFromAkismet, isJetpack } = this.props;
+		const { isFromAkismet, isJetpack, isWooJPC } = this.props;
+
+		if ( isWooJPC ) {
+			// The Woo flow already displays the Woo logo in the header.
+			return null;
+		}
 
 		const akismetLogo = (
 			<svg
