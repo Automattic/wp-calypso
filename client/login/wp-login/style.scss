@@ -72,9 +72,9 @@ $image-height: 47px;
 }
 
 .wp-login__links {
-
 	a,
-	button {
+	button,
+	.components-button {
 		border-bottom: 1px solid var(--color-neutral-10);
 		box-sizing: border-box;
 		cursor: pointer;
@@ -169,8 +169,9 @@ $image-height: 47px;
 .layout.is-jetpack-login:not(.is-wccom-oauth-flow):not(.is-woocommerce-core-profiler-flow) {
 	@include jetpack-connect-colors();
 
-	.auth-form__social-buttons {
+	.components-button {
 		--color-accent: var(--studio-jetpack-green-50);
+		--color-accent-60: var(--studio-jetpack-green-60);
 	}
 }
 
@@ -364,6 +365,10 @@ $image-height: 47px;
 		}
 	}
 
+	.login__form-action .components-button.is-primary {
+		margin: 6px auto 13px;
+	}
+
 	.login form {
 
 		// We shouldn't regularly use .components-* classnames. The following is
@@ -371,10 +376,9 @@ $image-height: 47px;
 		// input instances would come from `@wordpress/components` and the
 		// following overrides could be safely deleted.
 		input:not(.components-text-control__input),
-		button:not(.social-buttons__button) {
+		button:not(.components-button) {
 			/* Note: Same as `button.signup-form__submit, .signup-form__input.form-text-input` */
-			height: 44px;
-			border-radius: 4px;
+			height: 40px; // Matches .components-button height __next40pxDefaultSize
 			border: 1px solid var(--studio-gray-10);
 			font-size: $font-body;
 
@@ -383,10 +387,6 @@ $image-height: 47px;
 			&.disabled {
 				background-color: #fdfdfd;
 			}
-		}
-
-		.social-buttons__button {
-			border-radius: 4px;
 		}
 
 		.login__form-userdata input {
@@ -624,12 +624,13 @@ $image-height: 47px;
 			}
 		}
 
-		.social-buttons__button {
+		.components-button {
 			--color-accent: var(--color-wp-job-manager);
+			--color-accent-60: color-mix(in srgb, var(--color-wp-job-manager), #000 10%);
 		}
 	}
 
-	.wp-login__main .locale-suggestions .locale-suggestions__notice.is-light {		
+	.wp-login__main .locale-suggestions .locale-suggestions__notice.is-light {
 		&,
 		.calypso-notice__icon-wrapper {
 			background-color: var(--studio-gray-0);
@@ -750,10 +751,6 @@ $image-height: 47px;
 	.login__form-terms {
 		color: rgba(#00101c, 0.6);
 		margin: 24px 0 0;
-
-		a {
-			text-decoration: none;
-		}
 	}
 
 	button.form-button.is-primary,
@@ -783,6 +780,13 @@ $image-height: 47px;
 		&:focus {
 			background-color: darken(#1d4fc4, 10%);
 		}
+	}
+
+	.login__form-action .components-button.is-primary {
+		min-height: 56px;
+		margin-top: 16px;
+		font-size: 16px;
+		font-weight: 600;
 	}
 
 	.two-factor-authentication__actions {
@@ -834,9 +838,12 @@ $image-height: 47px;
 		clip-path: unset;
 	}
 
-	.social-buttons__button {
+	.components-button {
 		--color-accent: var(--color-gravatar);
+		--color-accent-60: color-mix(in srgb, var(--color-gravatar), #000 13%);
+	}
 
+	.social-buttons__button {
 		box-shadow: none;
 		padding: unset;
 		height: auto;

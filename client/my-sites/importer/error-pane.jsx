@@ -1,6 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
-import { localize } from 'i18n-calypso';
+import { localizeUrl } from '@automattic/i18n-utils';
+import { localize, fixMe } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import { WPImportError, FileTooLarge } from 'calypso/blocks/importer/wordpress/types';
@@ -67,18 +68,11 @@ class ImporterError extends PureComponent {
 		);
 		const { description = '' } = this.props;
 
-		if ( isEnabled( 'importer/site-backups' ) && this.props.importerEngine === 'wordpress' ) {
-			return this.props.translate(
-				'The file type you uploaded is not supported. Please upload a WordPress export file in XML or ZIP format, or a Playground ZIP file. {{cs}}Still need help{{/cs}}?',
-				{
-					components: {
-						cs: <Button className="importer__error-pane is-link" onClick={ this.contactSupport } />,
-					},
-				}
-			);
-		}
+		const helpButton = (
+			<Button className="importer__error-pane is-link" onClick={ this.contactSupport } />
+		);
 
-		return this.props.translate(
+		const generalMessage = this.props.translate(
 			'%(errorDescription)s{{br/}}Make sure you are using a valid export file in XML or ZIP format. {{cs}}Still need help{{/cs}}?',
 			{
 				args: {
@@ -86,10 +80,51 @@ class ImporterError extends PureComponent {
 				},
 				components: {
 					br: <br />,
-					cs: <Button className="importer__error-pane is-link" onClick={ this.contactSupport } />,
+					cs: helpButton,
 				},
 			}
 		);
+
+		if ( isEnabled( 'importer/site-backups' ) && this.props.importerEngine === 'wordpress' ) {
+			return this.props.translate(
+				'The file type you uploaded is not supported. Please upload a WordPress export file in XML or ZIP format, or a Playground ZIP file. {{cs}}Still need help{{/cs}}?',
+				{
+					components: {
+						cs: helpButton,
+					},
+				}
+			);
+		}
+
+		if ( this.props.importerEngine === 'substack' ) {
+			return fixMe( {
+				text: '%(errorDescription)s{{br/}}Make sure you are using {{doc}}a valid export file{{/doc}} in XML or ZIP format.{{br/}}{{cs}}Still need help{{/cs}}?',
+				newCopy: this.props.translate(
+					'%(errorDescription)s{{br/}}Make sure you are using {{doc}}a valid export file{{/doc}} in XML or ZIP format.{{br/}}{{cs}}Still need help{{/cs}}?',
+					{
+						args: {
+							errorDescription: description.length ? description : defaultError,
+						},
+						components: {
+							br: <br />,
+							cs: helpButton,
+							doc: (
+								<a
+									href={ localizeUrl(
+										'https://wordpress.com/support/import-from-substack/import-content/'
+									) }
+									target="_blank"
+									rel="noreferrer"
+								/>
+							),
+						},
+					}
+				),
+				oldCopy: generalMessage,
+			} );
+		}
+
+		return generalMessage;
 	};
 
 	getPreUploadError = () => {

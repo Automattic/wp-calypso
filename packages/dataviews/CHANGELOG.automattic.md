@@ -1,17 +1,10 @@
 <!-- This file lists the modifications done to the base package `@wordpress/dataviews` that are published under `@automattic/dataviews`. -->
 
-## Next 
+## Next
 
-- Extract `<DefaultUI />` as a standalone component to clarify layout logic and prepare for custom UI compositions.
-- Expose `<DataViews.BulkActionToolbar />` component.
-- Expose `<DataViews.Filters />` component.
-- Expose `<DataViews.FiltersToggle />` component.
-- Expose `<DataViews.Layout />` component.
-- Expose `<DataViews.LayoutSwitcher />` component.
-- Expose `<DataViews.Pagination />` component.
-- Expose `<DataViews.Search />` component.
-- Expose `<DataViews.ViewConfig />` component.
-- Add support for `free-composition` in the `DataViews` component
+## 0.1.1
+
+- Add support for free composition in the `DataViews` component by exporting subcomponents: `<DataViews.ViewConfig />`, `<DataViews.Search />`, `<DataViews.Pagination />`, `<DataViews.LayoutSwitcher />`, `<DataViews.Layout />`, `<DataViews.FiltersToggle />`, `<DataViews.Filters />`, `<DataViews.BulkActionToolbar />`.
 - Fix `filterSortAndPaginate` to handle undefined values for the `is` filter.
 
 ## 0.1.0
