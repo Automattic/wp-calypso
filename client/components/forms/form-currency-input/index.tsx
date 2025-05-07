@@ -54,7 +54,7 @@ function renderAffix(
 	onCurrencyChange: ( ( event: ChangeEvent< HTMLSelectElement > ) => void ) | undefined,
 	currencyList: Currency[] | undefined
 ): JSX.Element | null {
-	// If the currency value is not defined, don't render this affix at all
+	// If the currency symbol is not defined, don't render this affix at all
 	if ( ! currencySymbol ) {
 		return null;
 	}
