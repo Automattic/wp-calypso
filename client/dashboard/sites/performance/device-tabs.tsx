@@ -24,25 +24,24 @@ export default function DeviceTabControls( { value, onChange }: DeviceTabControl
 	];
 
 	return (
-		<div className="site-performance-device-tab__container">
-			<ToggleGroupControl
-				label={ __( 'Device' ) }
-				value={ value }
-				isBlock
-				__next40pxDefaultSize
-				__nextHasNoMarginBottom
-				onChange={ ( value ) => onChange( value as TabType ) }
-			>
-				{ options.map( ( option ) => {
-					return (
-						<ToggleGroupControlOption
-							key={ option.value }
-							value={ option.value }
-							label={ option.label }
-						/>
-					);
-				} ) }
-			</ToggleGroupControl>
-		</div>
+		<ToggleGroupControl
+			label={ __( 'Device' ) }
+			value={ value }
+			isBlock
+			hideLabelFromVision
+			__next40pxDefaultSize
+			__nextHasNoMarginBottom
+			onChange={ ( value ) => onChange( value as TabType ) }
+		>
+			{ options.map( ( option ) => {
+				return (
+					<ToggleGroupControlOption
+						key={ option.value }
+						value={ option.value }
+						label={ option.label }
+					/>
+				);
+			} ) }
+		</ToggleGroupControl>
 	);
 }
