@@ -16,6 +16,7 @@ import {
 } from '@automattic/design-picker';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
+import { Modal } from '@wordpress/components';
 import { createHigherOrderComponent } from '@wordpress/compose';
 import { Icon, external } from '@wordpress/icons';
 import { hasQueryArg } from '@wordpress/url';
@@ -26,6 +27,7 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
+import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
 import AsyncLoad from 'calypso/components/async-load';
 import Banner from 'calypso/components/banner';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -43,7 +45,6 @@ import PremiumGlobalStylesUpgradeModal from 'calypso/components/premium-global-s
 import ThemeSiteSelectorModal from 'calypso/components/theme-site-selector-modal';
 import ThemeTierBadge from 'calypso/components/theme-tier/theme-tier-badge';
 import { HOSTING_THEME_SELCETED_HASH } from 'calypso/hosting/constants';
-import { EligibilityWarningsModal } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/design-setup/eligibility-warnings-modal';
 import { withCompleteLaunchpadTasksWithNotice } from 'calypso/launchpad/hooks/with-complete-launchpad-tasks-with-notice';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { decodeEntities } from 'calypso/lib/formatting';
@@ -1255,7 +1256,40 @@ class ThemeSheet extends Component {
 						onFailure={ this.onAtomicThemeActiveFailure }
 					/>
 				) }
-				<EligibilityWarningsModal
+				{ this.state.showEligibilityWarningsModal && (
+					<Modal
+						className="eligibility-warnings-modal__dialog-content"
+						title={ translate( 'Before you continue' ) }
+						onRequestClose={ () => {
+							recordTracksEvent( 'calypso_automated_transfer_eligibility_modal_dismiss', {
+								// flow: 'onboarding',
+								theme: themeId,
+							} );
+							this.setState( { showEligibilityWarningsModal: false } );
+						} }
+						size="medium"
+					>
+						<EligibilityWarnings
+							siteId={ site?.ID }
+							standaloneProceed
+							// isOnboarding
+							isMarketplace={ isExternallyManagedTheme }
+							// currentContext="plugin-details"
+							onProceed={ () => {
+								this.onButtonClick();
+								this.setState( { showEligibilityWarningsModal: false } );
+							} }
+							onDismiss={ () => {
+								recordTracksEvent( 'calypso_automated_transfer_eligibility_modal_dismiss', {
+									// flow: 'onboarding',
+									theme: themeId,
+								} );
+								this.setState( { showEligibilityWarningsModal: false } );
+							} }
+						/>
+					</Modal>
+				) }
+				{ /* <EligibilityWarningsModal
 					site={ site ?? undefined }
 					isMarketplace={ isExternallyManagedTheme }
 					isOpen={ this.state.showEligibilityWarningsModal }
@@ -1270,7 +1304,7 @@ class ThemeSheet extends Component {
 						this.onButtonClick();
 						this.setState( { showEligibilityWarningsModal: false } );
 					} }
-				/>
+				/> */ }
 			</Main>
 		);
 	};
@@ -1285,6 +1319,7 @@ class ThemeSheet extends Component {
 }
 
 const withSiteGlobalStylesStatus = createHigherOrderComponent(
+	// eslint-disable-next-line react/display-name -- The display name is the second param
 	( Wrapped ) => ( props ) => {
 		const { siteId } = props;
 		const { shouldLimitGlobalStyles } = useSiteGlobalStylesStatus( siteId );
