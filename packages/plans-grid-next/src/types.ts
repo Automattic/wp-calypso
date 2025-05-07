@@ -240,6 +240,11 @@ export type GridContextProps = {
 	 * calculating prices.
 	 */
 	reflectStorageSelectionInPlanPrices?: boolean;
+
+	/**
+	 * Enable streamlined billing description
+	 */
+	showStreamlinedBillingDescription?: boolean;
 };
 
 export type ComparisonGridExternalProps = Omit<

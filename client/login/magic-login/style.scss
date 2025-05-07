@@ -42,6 +42,22 @@
 			.magic-login__form-header {
 				padding: 0 24px 0 24px;
 			}
+
+			.magic-login__form-action {
+				.button.is-primary {
+					background-color: var(--studio-jetpack-green-50);
+					border-color: var(--studio-jetpack-green-50);
+		
+					&:hover,
+					&:focus {
+						background-color: var(--studio-jetpack-green-60);
+					}
+		
+					.accessible-focus &:focus {
+						box-shadow: 0 0 0 2px var(--studio-jetpack-green-30);
+					}
+				}
+			}
 		}
 
 		.magic-login__form-header {

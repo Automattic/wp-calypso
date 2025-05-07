@@ -21,7 +21,7 @@ const PlanStorage = ( {
 	showUpgradeableStorage,
 }: Props ) => {
 	const { siteId, gridPlansIndex } = usePlansGridContext();
-	const { availableForPurchase, current } = gridPlansIndex[ planSlug ];
+	const { availableForPurchase, current, planTitle } = gridPlansIndex[ planSlug ];
 	const availableStorageAddOns = AddOns.useAvailableStorageAddOns( { siteId } );
 
 	if ( ! options?.isTableCell && isWpcomEnterpriseGridPlan( planSlug ) ) {
@@ -38,7 +38,7 @@ const PlanStorage = ( {
 		ELIGIBLE_PLANS_FOR_STORAGE_UPGRADE.includes( planSlug );
 
 	return (
-		<div className="plans-grid-next-plan-storage">
+		<div className="plans-grid-next-plan-storage" data-plan-title={ planTitle }>
 			{ canUpgradeStorageForPlan ? (
 				<StorageDropdown planSlug={ planSlug } onStorageAddOnClick={ onStorageAddOnClick } />
 			) : (

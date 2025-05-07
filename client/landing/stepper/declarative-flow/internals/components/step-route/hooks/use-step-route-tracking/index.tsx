@@ -20,7 +20,7 @@ import {
 } from 'calypso/signup/storageUtils';
 import { useSelector } from 'calypso/state';
 import { isRequestingSite } from 'calypso/state/sites/selectors';
-import type { Flow } from 'calypso/landing/stepper/declarative-flow/internals/types';
+import type { Flow, FlowV2 } from 'calypso/landing/stepper/declarative-flow/internals/types';
 
 /**
  * We wait for the site to be fetched before tracking the step route when a site ID/slug are defined in the params.
@@ -37,7 +37,7 @@ const useHasRequestedSelectedSite = () => {
 };
 
 interface Props {
-	flow: Flow;
+	flow: Flow | FlowV2< any >;
 	stepSlug: string;
 	skipStepRender?: boolean;
 }

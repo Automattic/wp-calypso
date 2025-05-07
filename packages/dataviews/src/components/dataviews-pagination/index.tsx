@@ -15,7 +15,7 @@ import { next, previous } from '@wordpress/icons';
  */
 import DataViewsContext from '../dataviews-context';
 
-function DataViewsPagination() {
+export function DataViewsPagination() {
 	const {
 		view,
 		onChangeView,

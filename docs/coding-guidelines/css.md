@@ -1,5 +1,19 @@
 # CSS/Sass Coding Guidelines
 
+## Principles
+
+We're transitioning to a component-based design system. When styling, adhere to the following principles:
+
+ - Rely on the Design System components (@wordpress/components, @automattic/components and other packages), props and variants as much as possible.
+ - If a design to be implemented doesn't match the existing components, discuss with the design team to see if the design should be adapted.
+ - Consider whether the design system components need to be adapted/modified to accommodate the proposed designs.
+ - Avoid writing custom CSS/Sass unless absolutely necessary.
+ - If you do need to write custom CSS/Sass, follow the guidelines outlined on this document.
+
+For all questions related to the design system, available components or design considerations, consider asking in #components or #design-system Slack channels.
+
+## Introduction
+
 Every stylesheet should be easy to read, scan, add to, and collaborate on. Our current system and nomenclature builds on top of _components_, where CSS files live alongside the component they are styling: `component/style.scss`. These files are all imported into the React components' JavaScript sources and then bundled by webpack to the production CSS files.
 
 This is an example of a declaration:
@@ -117,9 +131,8 @@ Classes are the fundamental building block of our stylesheets. Using them approp
 
 Calypso already provides helpers for many common solutions. Please, use them! We are transitioning towards a component-based structure where each React component will have its own stylesheet. However, there will be a few files that are by its nature shared resources across all components. (Colors, typography, some mixins, etc.)
 
-- Don't use custom colors, always utilize what `_colors.scss` provides. If you have to set a color, use lowercase hex values, and shorten them to their smallest expression (like `#aaa`).
-- Render icons using `<Gridicon>`.
-- Don't define your own media queries or breakpoints — use the provided `breakpoint( "value" )` mixin.
+- Don't use custom colors, always utilize what `@wordpress/base-styles` provides. If you have to set a color, use lowercase hex values, and shorten them to their smallest expression (like `#aaa`).
+- Render icons using `@wordpress/icons`. As a fallback, you can also use `<Gridicon>`.
 - Calypso runs Sass with autoprefixer, that means you DON'T need to directly use vendor specific properties.
 
 ## Sass Guidelines

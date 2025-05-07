@@ -66,7 +66,6 @@ export interface SiteOptions {
 	is_wpcom_atomic?: boolean;
 	blog_public: number;
 	is_redirect?: boolean;
-	unmapped_url?: string;
 }
 
 export interface Site {
@@ -77,11 +76,12 @@ export interface Site {
 	icon?: {
 		ico: string;
 	};
-	plan: SitePlan;
+	plan?: SitePlan;
 	active_modules?: string[];
 	subscribers_count: number;
 	// Can be undefined for deleted sites.
 	options?: SiteOptions;
+	is_a8c: boolean;
 	is_deleted: boolean;
 	is_coming_soon: boolean;
 	is_private: boolean;
@@ -89,7 +89,6 @@ export interface Site {
 	site_migration: {
 		migration_status: string;
 	} | null;
-	site_owner: number;
 	jetpack: boolean;
 	jetpack_modules: string[];
 }
@@ -140,9 +139,19 @@ export interface EngagementStats {
 	previousData: EngagementStatsDataPoint;
 }
 
-export type PerformanceReport = {
+export interface SiteSettings {
+	wpcom_gifting_subscription?: boolean;
+	wpcom_performance_report_url?: string;
+}
+
+export interface BasicMetricsData {
+	token?: string;
+}
+
+export interface PerformanceReport {
 	overall_score: number;
-};
+}
+
 export interface UrlPerformanceInsights {
 	pagespeed: {
 		status: string;

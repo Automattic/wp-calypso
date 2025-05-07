@@ -126,6 +126,7 @@ export interface SiteDetails {
 	description: string;
 	domain: string;
 	icon?: { ico: string; img: string; media_id: number };
+	is_a8c?: boolean;
 	is_coming_soon?: boolean;
 	is_multisite?: boolean;
 	is_private?: boolean;

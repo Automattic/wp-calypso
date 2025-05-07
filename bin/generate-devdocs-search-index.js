@@ -12,7 +12,6 @@
 const fs = require( 'fs' );
 const globby = require( 'globby' );
 const lunr = require( 'lunr' );
-const mkdirp = require( 'mkdirp' );
 
 function main() {
 	// Build a list of all .md files in allowed subdirectories...
@@ -36,7 +35,7 @@ function main() {
 		.map( documentFromFile )
 		.filter( ( doc ) => doc.title && doc.body /* skip empty/invalid files */ );
 
-	mkdirp.sync( 'build' );
+	fs.mkdirSync( 'build', { recursive: true } );
 	writeSearchIndex( documents, 'build/devdocs-search-index.json' );
 }
 

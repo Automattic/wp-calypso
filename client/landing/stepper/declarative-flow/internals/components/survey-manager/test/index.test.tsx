@@ -6,7 +6,7 @@ import { SITE_MIGRATION_FLOW } from '@automattic/onboarding';
 import { render } from '@testing-library/react';
 import React from 'react';
 import SurveyManager from '../';
-import { type Flow } from '../../../types';
+import { type FlowV2 } from '../../../types';
 
 jest.mock( '../../../steps-repository/components/migration-survey/async', () => {
 	const AsyncMigrationSurvey = () => 'Mock Survey';
@@ -23,7 +23,7 @@ jest.mock( '../../deferred-render', () => {
 
 describe( 'SurveyManager', () => {
 	it( 'should render null when disabled prop is true', () => {
-		const flow: Flow = {
+		const flow: FlowV2< any > = {
 			name: SITE_MIGRATION_FLOW,
 			isSignupFlow: true,
 			initialize: jest.fn(),
@@ -42,7 +42,7 @@ describe( 'SurveyManager', () => {
 	} );
 
 	it( 'should render null for flows not associated with a survey', () => {
-		const nonMigrationFlow: Flow = {
+		const nonMigrationFlow: FlowV2< any > = {
 			name: 'other-flow',
 			isSignupFlow: true,
 			initialize: jest.fn(),
@@ -55,7 +55,7 @@ describe( 'SurveyManager', () => {
 	} );
 
 	it( 'should render survey for site migration flow', () => {
-		const testFlow: Flow = {
+		const testFlow: FlowV2< any > = {
 			name: SITE_MIGRATION_FLOW,
 			isSignupFlow: true,
 			initialize: jest.fn(),

@@ -60,7 +60,7 @@ function Upsell( { image, ...props }: UpsellProps ) {
 						{ props.acceptButtonText }
 					</Button>
 					<Button
-						variant="primary"
+						variant="secondary"
 						onClick={ () => {
 							setBusyButton( 'decline' );
 							props.onDecline?.();

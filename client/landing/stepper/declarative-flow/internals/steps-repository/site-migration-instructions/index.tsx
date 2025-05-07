@@ -80,9 +80,10 @@ const usePreparationEventsAndLogs = ( {
 };
 
 const SiteMigrationInstructions: Step< {
-	submits:
-		| { destination: 'migration-started' }
-		| { how: ( typeof HOW_TO_MIGRATE_OPTIONS )[ 'DO_IT_FOR_ME' ] };
+	submits: {
+		destination?: 'migration-started';
+		how?: ( typeof HOW_TO_MIGRATE_OPTIONS )[ 'DO_IT_FOR_ME' ];
+	};
 } > = function ( { navigation, flow } ) {
 	const site = useSite();
 	const siteId = site?.ID ?? 0;
@@ -110,12 +111,12 @@ const SiteMigrationInstructions: Step< {
 	// Site preparation.
 	const {
 		detailedStatus,
-		completed: preparationCompleted,
+		softwareTransferCompleted: preparationCompleted,
 		error: preparationError,
 		migrationKey,
 	} = usePrepareSiteForMigration( siteId, fromUrl, { retry: 10 } );
 
-	const migrationKeyStatus = detailedStatus.migrationKey;
+	const migrationKeyStatus = detailedStatus.migrationKeyStatus;
 
 	// Register events and logs.
 	usePreparationEventsAndLogs( {

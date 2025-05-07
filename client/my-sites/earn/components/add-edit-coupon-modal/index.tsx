@@ -38,7 +38,7 @@ import { Product, Coupon } from '../../types';
 import FormTextInputWithRandomCodeGeneration from '../form-text-input-with-value-generation';
 import './style.scss';
 
-type RecurringPaymentsPlanAddEditModalProps = {
+type RecurringPaymentsCouponAddEditModalProps = {
 	closeDialog: () => void;
 	coupon: Coupon;
 	siteId?: number;
@@ -67,7 +67,7 @@ function minimumCurrencyTransactionAmount(
 const RecurringPaymentsCouponAddEditModal = ( {
 	closeDialog,
 	coupon,
-}: RecurringPaymentsPlanAddEditModalProps ) => {
+}: RecurringPaymentsCouponAddEditModalProps ) => {
 	const today = new Date();
 
 	const dispatch = useDispatch();
@@ -526,8 +526,6 @@ const RecurringPaymentsCouponAddEditModal = ( {
 								onCurrencyChange={ onDiscountCurrencyChange }
 								currencyList={ currencyList.map( ( code ) => ( { code } ) ) }
 								placeholder="0.00"
-								className={ null }
-								currencySymbolSuffix={ null }
 								role="textbox"
 								aria-label={ translate( 'Discount value' ) }
 							/>

@@ -70,7 +70,3 @@ Imagine you want to change the border color of a `SiteIcon` component when it is
 If we were doing inline styles it would mean we need to pass down a style prop from `sidebar` (the component that wants to make the modification) all the way down to `site-icon` to modify that specific border style value. Which is messy, obscure, and requires passing down a meaningless attribute through components that don't care about it, coupling them with a design intent you want to express in the "Sidebar". Now, with CSS and our naming guidelines it becomes just an old `.sidebar .site-icon {}` on the sidebar's `style.scss` file.
 
 That remains expressive, simple to read, and given our convention it immediately signals `site-icon` is a child component of `sidebar` at some level to whoever reads the styles or inspects them, reflecting the composition tree naturally in the stylesheet, and the intention of only modifying that individual component in this specific context. Since specificity also increases, it means it doesn't matter where in the build process the sidebar stylesheet order comes.
-
-## Adding A New Component
-
-If you'd like to add a new component to Calypso, please review our [new component checklist](new-component-checklist.md).

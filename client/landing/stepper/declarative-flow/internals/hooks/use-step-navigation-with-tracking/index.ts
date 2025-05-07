@@ -13,13 +13,13 @@ import {
 	recordStepNavigation,
 	type RecordStepNavigationParams,
 } from '../../analytics/record-step-navigation';
-import type { Flow, Navigate, ProvidedDependencies, StepperStep } from '../../types';
+import type { Flow, FlowV2, Navigate, ProvidedDependencies, StepperStep } from '../../types';
 
-interface Params< FlowSteps extends StepperStep[] > {
-	flow: Flow;
+interface Params {
+	flow: Flow | FlowV2< any >;
 	stepSlugs: string[];
-	currentStepRoute: string;
-	navigate: Navigate< FlowSteps >;
+	currentStepRoute: StepperStep[ 'slug' ];
+	navigate: Navigate;
 }
 
 export const useStepNavigationWithTracking = ( {
@@ -27,7 +27,7 @@ export const useStepNavigationWithTracking = ( {
 	stepSlugs,
 	currentStepRoute,
 	navigate,
-}: Params< StepperStep[] > ) => {
+}: Params ) => {
 	// We don't know the type of the return value of useStepNavigation, because we don't know which flow is this.
 	// So we cast it to any.
 	const stepNavigation: any = flow.useStepNavigation( currentStepRoute, navigate );
@@ -99,7 +99,13 @@ export const useStepNavigationWithTracking = ( {
 							providedDependencies,
 						} );
 					}
-					stepNavigation.submit?.( providedDependencies );
+					// FlowV2 have a different signature for the submit handler.
+					// We use `initialize` to deduce the version of the flow.
+					if ( 'initialize' in flow ) {
+						stepNavigation.submit?.( { slug: currentStepRoute, providedDependencies } );
+					} else {
+						stepNavigation.submit?.( providedDependencies );
+					}
 				},
 			} ),
 			...( stepNavigation.exitFlow && {

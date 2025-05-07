@@ -2,11 +2,6 @@
 // Project: i18n-calypso
 
 import * as React from 'react';
-import type {
-	NumberFormatParams,
-	NumberFormatCurrencyParams,
-	CurrencyObject,
-} from '../number-formatters';
 
 type LocaleData = Record< string, unknown >;
 type NormalizedTranslateArgs =
@@ -76,21 +71,6 @@ export type ComponentUpdateHook = ( ...args: any ) => any;
 
 export type EventListener = ( ...payload: any ) => any;
 
-/**
- * Omit `number` as it's an argument to the function.
- * Omit `browserSafeLocale` as it's pulled from the i18n instance state.
- */
-export type NumberFormatOptions = Omit< NumberFormatParams, 'number' | 'browserSafeLocale' >;
-
-/**
- * Omit `number` and `currency` as they're arguments to the function.
- * Omit `browserSafeLocale` and `geoLocation` as they're pulled from the i18n instance state.
- */
-export type FormatCurrencyOptions = Omit<
-	NumberFormatCurrencyParams,
-	'number' | 'currency' | 'browserSafeLocale' | 'geoLocation'
->;
-
 export interface I18N {
 	/**
 	 * Translate a string.
@@ -107,15 +87,6 @@ export interface I18N {
 	translate( original: string, options: TranslateOptionsText ): string;
 	translate( original: string, plural: string, options: TranslateOptionsPlural ): ExistingReactNode;
 	translate( original: string, plural: string, options: TranslateOptionsPluralText ): string;
-
-	numberFormat( number: number, options?: NumberFormatOptions ): string;
-	numberFormatCompact( number: number, options?: NumberFormatOptions ): string;
-	formatCurrency( number: number, currency: string, options?: FormatCurrencyOptions ): string;
-	getCurrencyObject(
-		number: number,
-		currency: string,
-		options?: FormatCurrencyOptions
-	): CurrencyObject;
 
 	setLocale( localeData: LocaleData ): void;
 	addTranslations( localeData: LocaleData ): void;
@@ -192,10 +163,6 @@ export interface I18N {
 declare const i18n: I18N;
 export default i18n;
 export declare const translate: typeof i18n.translate;
-export declare const numberFormat: typeof i18n.numberFormat;
-export declare const numberFormatCompact: typeof i18n.numberFormatCompact;
-export declare const formatCurrency: typeof i18n.formatCurrency;
-export declare const getCurrencyObject: typeof i18n.getCurrencyObject;
 export declare const geolocateCurrencySymbol: typeof i18n.geolocateCurrencySymbol;
 export declare const setLocale: typeof i18n.setLocale;
 export declare const addTranslations: typeof i18n.addTranslations;
@@ -216,7 +183,6 @@ export declare const fixMe: typeof i18n.fixMe;
 export interface LocalizeProps {
 	locale: string;
 	translate: typeof translate;
-	numberFormat: typeof numberFormat;
 }
 
 export type WithoutLocalizedProps< OrigProps > = Pick<

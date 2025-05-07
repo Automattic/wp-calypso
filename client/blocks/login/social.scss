@@ -41,25 +41,8 @@
 	@at-root .is-jetpack-login & {
 		padding: 16px;
 
-		.auth-form__social-buttons .auth-form__social-buttons-container .social-buttons__button {
-			border-radius: 2px;
-
-			> svg {
-				margin-right: 0;
-			}
-
-			span {
-				font-weight: 400;
-				font-family: inherit;
-				letter-spacing: normal;
-				line-height: 22px;
-				margin-left: 9px;
-				margin-right: 0;
-			}
-		}
-
 		@include break-mobile {
-			padding: 24px;
+			padding: 24px 0;
 		}
 	}
 }
@@ -103,23 +86,6 @@
 	@at-root .is-jetpack-login & {
 		padding: 16px;
 
-		.auth-form__social-buttons .auth-form__social-buttons-container .social-buttons__button {
-			border-radius: 2px;
-
-			> svg {
-				margin-right: 0;
-			}
-
-			span {
-				font-weight: 400;
-				font-family: inherit;
-				letter-spacing: normal;
-				line-height: 22px;
-				margin-left: 9px;
-				margin-right: 0;
-			}
-		}
-
 		@include break-mobile {
 			padding: 24px;
 		}
@@ -130,8 +96,6 @@
 	*/
 	@at-root .crowdsignal & {
 		.auth-form__social-buttons .auth-form__social-buttons-container .social-buttons__button {
-			height: 44px;
-			border-radius: 2px;
 			display: none;
 
 			&.google {

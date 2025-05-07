@@ -24,9 +24,9 @@ import { getTheme, getThemeType } from 'calypso/state/themes/selectors';
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
 import UnifiedPlansStep from './unified-plans-step';
 import { getIntervalType } from './util';
-import type { ProvidedDependencies, Step as StepType } from '../../types';
+import type { Step as StepType } from '../../types';
 import type { PlansIntent } from '@automattic/plans-grid-next';
-
+import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import './style.scss';
 
 /**
@@ -51,9 +51,13 @@ function getPlansIntent( flowName: string | null, isWordCampPromo?: boolean ): P
 	}
 }
 
+type ProvidedDependencies = {
+	stepName: 'plans';
+	cartItems: MinimalRequestCartProduct[] | null;
+};
+
 const PlansStepAdaptor: StepType< {
-	// TODO: work on more specific types
-	submits: Record< string, unknown >;
+	submits: ProvidedDependencies;
 } > = ( props ) => {
 	const [ stepState, setStepState ] = useStepPersistedState< ProvidedDependencies >( 'plans-step' );
 	const siteSlug = useSiteSlug();
@@ -137,19 +141,26 @@ const PlansStepAdaptor: StepType< {
 			{ ...getHidePlanPropsBasedOnThemeType( selectedThemeType || '' ) }
 			selectedSite={ site ?? undefined }
 			saveSignupStep={ ( step ) => {
-				setStepState( ( mostRecentState = { ...stepState, ...step } ) );
+				setStepState( ( mostRecentState = { ...stepState, ...step } as ProvidedDependencies ) );
 			} }
 			submitSignupStep={ ( stepInfo ) => {
 				if ( stepInfo.stepName === 'domains' && stepInfo.siteUrl ) {
 					setSiteUrl( stepInfo.siteUrl );
 				} else {
-					setStepState( ( mostRecentState = { ...stepState, ...stepInfo } ) );
+					setStepState(
+						( mostRecentState = { ...stepState, ...( stepInfo as ProvidedDependencies ) } )
+					);
 				}
 			} }
 			goToNextStep={ () => {
 				props.navigation.submit?.( { ...stepState, ...mostRecentState } );
 			} }
-			step={ stepState }
+			step={
+				stepState as {
+					status?: string | undefined;
+					errors?: { message: string } | undefined;
+				}
+			}
 			customerType={ customerType }
 			signupDependencies={ signupDependencies }
 			stepName="plans"

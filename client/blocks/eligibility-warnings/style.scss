@@ -88,6 +88,10 @@
 		}
 	}
 
+	.eligibility-warnings__message-description {
+		margin-bottom: 0;
+	}
+
 	&.eligibility-warnings--without-title {
 		padding: 24px;
 		box-shadow: 0 0 0 1px var(--color-border-subtle);

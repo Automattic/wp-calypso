@@ -2,13 +2,8 @@ import { translate } from 'i18n-calypso';
 import * as React from 'react';
 import SiteFavicon from 'calypso/blocks/site-favicon';
 import { navigate } from 'calypso/lib/navigate';
-import { isP2Theme } from 'calypso/lib/site/utils';
 import { ThumbnailLink } from 'calypso/sites-dashboard/components/thumbnail-link';
-import {
-	isNotAtomicJetpack,
-	getMigrationStatus,
-	isDisconnectedJetpackAndNotAtomic,
-} from 'calypso/sites-dashboard/utils';
+import { getMigrationStatus, isSitePreviewPaneEligible } from 'calypso/sites-dashboard/utils';
 import { useSelector } from 'calypso/state';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { useSiteAdminInterfaceData } from 'calypso/state/sites/hooks';
@@ -29,22 +24,17 @@ export default function SiteIcon( {
 	disableClick?: boolean;
 } ) {
 	const { adminUrl } = useSiteAdminInterfaceData( site.ID );
-	const isP2Site = site.options?.theme_slug && isP2Theme( site.options?.theme_slug );
-	const isAdmin = useSelector( ( state ) => canCurrentUser( state, site.ID, 'manage_options' ) );
+	const canManageOptions = useSelector( ( state ) =>
+		canCurrentUser( state, site.ID, 'manage_options' )
+	);
 
 	const onClick = ( event: React.MouseEvent ) => {
 		event.preventDefault();
-
 		if ( site.is_deleted ) {
 			return;
 		}
 
-		if (
-			isAdmin &&
-			! isP2Site &&
-			! isNotAtomicJetpack( site ) &&
-			! isDisconnectedJetpackAndNotAtomic( site )
-		) {
+		if ( isSitePreviewPaneEligible( site, canManageOptions ) ) {
 			openSitePreviewPane && openSitePreviewPane( site, 'site_field' );
 		} else {
 			navigate( adminUrl );

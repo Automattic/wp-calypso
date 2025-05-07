@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { protect, akismet } from '@automattic/components/src/icons';
 import { formatNumberCompact } from '@automattic/number-formatters';
@@ -52,6 +53,7 @@ const ModuleCard: FunctionComponent< ModuleCardProps > = ( {
 		setDisabled( true );
 		activateProduct().catch( () => setDisabled( false ) );
 	};
+
 	return (
 		<div
 			className={ clsx( 'stats-widget-module stats-widget-card', className ) }
@@ -173,6 +175,13 @@ const ProtectModule: FunctionComponent< ProtectModuleProps > = ( { siteId } ) =>
 };
 
 export default function Modules( { siteId, adminBaseUrl }: ModulesProps ) {
+	const isWPAdminAndNotSimpleSite = config.isEnabled( 'is_running_in_jetpack_site' );
+
+	// Akismet and Protect modules are not available on Simple sites.
+	if ( ! isWPAdminAndNotSimpleSite ) {
+		return null;
+	}
+
 	return (
 		<div className="stats-widget-modules">
 			<ProtectModule siteId={ siteId } />

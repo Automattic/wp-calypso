@@ -74,7 +74,8 @@
 		"upgrades/redirect-payments": true,
 		"jetpack/pricing-page-cart": true,
 		"yolo/command-palette": false,
-		"importers/newsletter": true
+		"importers/newsletter": true,
+		"jetpack/crm-downloads": true
 	},
 	"enable_all_sections": false,
 	"sections": {

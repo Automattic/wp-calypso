@@ -71,8 +71,8 @@ const COPY_SITE_STEPS = [
 	STEPS.PROCESSING,
 	STEPS.AUTOMATED_COPY_SITE,
 	STEPS.PROCESSING_COPY_SITE_FLOW,
-	{ ...STEPS.PROCESSING, slug: 'resuming' as StepperStep[ 'slug' ] },
-] as const;
+	{ ...STEPS.PROCESSING, slug: 'resuming' as StepperStep[ 'slug' ] } as StepperStep,
+];
 
 const copySite: Flow = {
 	name: COPY_SITE_FLOW,
@@ -141,7 +141,7 @@ const copySite: Flow = {
 			return;
 		};
 
-		const goToStep = ( step: StepperStep[ 'slug' ] ) => {
+		const goToStep = ( step: string ) => {
 			navigate( step );
 		};
 

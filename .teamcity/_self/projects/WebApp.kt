@@ -456,6 +456,26 @@ object RunAllUnitTests : BuildType({
 			""".trimIndent()
 		}
 		bashNodeScript {
+			name = "Check DataViews changelog"
+			scriptContent = """
+				#!/usr/bin/env bash
+				set -e
+
+				# List files affected by the branch's commits
+				CHANGES=${'$'}(git diff --name-only refs/remotes/origin/trunk...HEAD)
+
+				# If there are changes within the DataViews package, ensure
+				# CHANGELOG.automattic.md has been updated too.
+				if grep -q ^packages/dataviews/ <<< "${'$'}CHANGES"; then
+					if ! grep -q ^packages/dataviews/CHANGELOG.automattic.md <<< "${'$'}CHANGES"; then
+						echo "ERROR: Changes to 'packages/dataviews' detected with no accompanying changelog entry."
+						echo "Please document your changes in 'packages/dataviews/CHANGELOG.automattic.md'."
+						exit 1
+					fi
+				fi
+			""".trimIndent()
+		}
+		bashNodeScript {
 			name = "Run parallelized tests"
 			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 			scriptContent = "./bin/unit-test-suite.mjs"
@@ -583,15 +603,12 @@ object CheckCodeStyleBranch : BuildType({
 						|| true
 				}
 
-				# Use with `grep -c .` to prevent miscounts due to newlines
-				FILE_COUNT=${'$'}(_find_files_to_lint | grep -c . || true)
-
 				# Create temporary output directory. Export the variable so that it is
 				# available in the batch runs.
 				export RESULTS_DIR=checkstyle_results/eslint
 				mkdir -p "${'$'}RESULTS_DIR"
 
-				if [ "%run_full_eslint%" = true ] || [ "${'$'}FILE_COUNT" -eq 0 ]; then
+				if [ "%run_full_eslint%" = true ]; then
 					echo "Linting all files"
 					yarn run eslint --format checkstyle --output-file "${'$'}RESULTS_DIR/results.xml" .
 				else

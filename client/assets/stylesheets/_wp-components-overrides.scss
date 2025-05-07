@@ -7,19 +7,27 @@
 
 /* @wordpress/components Button overrides */
 .components-button.is-primary:not(.is-destructive) {
+	// Background color, focus ring color
 	--wp-components-color-accent: var(--color-accent);
+	// Text color
 	--wp-components-color-accent-inverted: var(--color-text-inverted);
+	// Hover background color
 	--wp-components-color-accent-darker-10: var(--color-accent-60);
+	// Active and busy states background color
 	--wp-components-color-accent-darker-20: var(--color-accent-60);
 }
 
 .components-button.is-secondary:not(.is-destructive) {
+	// Text color, border color, focus ring color, hover background color tint
 	--wp-components-color-accent: var(--color-accent);
+	// Hover text color, border color
 	--wp-components-color-accent-darker-20: var(--color-accent-60);
 }
 
 .components-button.is-tertiary:not(.is-destructive) {
+	// Text color, focus ring color, active background color tint
 	--wp-components-color-accent: var(--color-accent);
+	// Hover text color
 	--wp-components-color-accent-darker-20: var(--color-accent-60);
 }
 

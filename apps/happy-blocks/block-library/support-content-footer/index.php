@@ -11,7 +11,7 @@ if ( ! isset( $args ) ) {
 	$args = array();
 }
 
-$site_type = isset( $args['site_type'] ) ? $args['site_type'] : '';
+$site_type         = isset( $args['site_type'] ) ? $args['site_type'] : '';
 $current_page_slug = isset( $args['current_page_slug'] ) ? $args['current_page_slug'] : '';
 
 if ( 'support_lp_2025' === $current_page_slug ) {
@@ -45,7 +45,7 @@ if ( 'support_lp_2025' === $current_page_slug ) {
 	//phpcs:ignore WPCOM.I18nRules.LocalizedUrl.LocalizedUrlAssignedToVariable
 	$subscribe_block = '[wpcom_guides_learn_button is_unsubscribed_caption="' . __( 'Subscribe now!', 'happy-blocks' ) . '" is_subscribed_caption="' . __( 'Unsubscribe', 'happy-blocks' ) . '" busy_caption="' . __( 'Just a moment...', 'happy-blocks' ) . '"]';
 	$signup_url      = localized_wpcom_url( 'https://wordpress.com/log-in?redirect_to=https%3A%2F%2Fwordpress.com%2Flearn%23support-content-subscribe' );
-?>
+	?>
 
 <div class="happy-blocks-support-content-footer">
 	<div class="support-content-resources alignwide" style="border-radius:0px; margin-bottom:0px">
@@ -54,7 +54,7 @@ if ( 'support_lp_2025' === $current_page_slug ) {
 				<?php esc_html_e( 'Go further', 'happy-blocks' ); ?>
 			</h4>
 			<p>
-			<?php esc_html_e( 'Upgrade and unlock features, tools, and expert help with a paid plan.', 'happy-blocks' ); ?>
+	<?php esc_html_e( 'Upgrade and unlock features, tools, and expert help with a paid plan.', 'happy-blocks' ); ?>
 			</p>
 			<div class="resource-link">
 				<a href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/pricing' ) ); ?>">
@@ -75,34 +75,34 @@ if ( 'support_lp_2025' === $current_page_slug ) {
 				</a>
 			</div>
 		</div>
-		<?php if ( $site_type === 'support' ) : ?>
+	<?php if ( $site_type === 'support' ) : ?>
 			<div class="support-content-resource">
 				<h4 class="support-content-resource__title">
-					<?php if ( get_locale() === 'en' ) : ?>
-						<?php esc_html_e( 'Watch a course', 'happy-blocks' ); ?>
+		<?php if ( get_locale() === 'en' ) : ?>
+			<?php esc_html_e( 'Watch a course', 'happy-blocks' ); ?>
 					<?php else : ?>
 						<?php esc_html_e( 'Watch a course (in English)', 'happy-blocks' ); ?>
 					<?php endif; ?>
 				</h4>
 				<p>
-					<?php esc_html_e( 'Learn how to create a website with our step-by-step video course.', 'happy-blocks' ); ?>
-					<?php if ( get_locale() !== 'en' ) : ?>
+		<?php esc_html_e( 'Learn how to create a website with our step-by-step video course.', 'happy-blocks' ); ?>
+		<?php if ( get_locale() !== 'en' ) : ?>
 						<br /> <br /><em><?php esc_html_e( 'Available in English only.', 'happy-blocks' ); ?></em>
-					<?php endif; ?>
+		<?php endif; ?>
 				</p>
 				<div class="resource-link">
 					<a href="<?php echo esc_url( '//wordpress.com/support/courses/create-your-website/' ); ?>">
-						<?php esc_html_e( 'Create your website', 'happy-blocks' ); ?>
+		<?php esc_html_e( 'Create your website', 'happy-blocks' ); ?>
 					</a>
 				</div>
 			</div>
 		<?php else : ?>
 			<div class="support-content-resource">
 				<h4 class="support-content-resource__title">
-					<?php esc_html_e( 'Check our guides', 'happy-blocks' ); ?>
+			<?php esc_html_e( 'Check our guides', 'happy-blocks' ); ?>
 				</h4>
 				<p>
-					<?php esc_html_e( 'Find and follow step-by-step guides for every WordPress.com question.', 'happy-blocks' ); ?>
+			<?php esc_html_e( 'Find and follow step-by-step guides for every WordPress.com question.', 'happy-blocks' ); ?>
 				</p>
 				<div class="resource-link">
 					<a href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/support/' ) ); ?>">
@@ -113,9 +113,9 @@ if ( 'support_lp_2025' === $current_page_slug ) {
 		<?php endif; ?>
 	</div>
 	<div class="support-content-links-subscribe">
-		<?php
-			require WP_CONTENT_DIR . '/a8c-plugins/happy-blocks/block-library/support-content-links/index.php';
-		?>
+	<?php
+	include WP_CONTENT_DIR . '/a8c-plugins/happy-blocks/block-library/support-content-links/index.php';
+	?>
 		<div name="support-content-subscribe" class="support-content-subscribe">
 			<p><?php esc_html_e( 'Get the latest learning in your inbox:', 'happy-blocks' ); ?></p>
 			<div class="subscribe-shortcode-wrapper">
