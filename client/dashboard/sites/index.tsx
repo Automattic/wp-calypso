@@ -14,7 +14,7 @@ import { STATUS_LABELS, getSiteStatus, getSiteStatusLabel } from '../utils/site-
 import SiteIcon from './site-icon';
 import SitePreview from './site-preview';
 import type { Site } from '../data/types';
-import type { Operator, ViewTable, ViewGrid } from '@automattic/dataviews';
+import type { Operator, ViewTable, ViewGrid, SortDirection } from '@automattic/dataviews';
 
 const actions = [
 	{
@@ -166,7 +166,7 @@ const DEFAULT_VIEW = {
 	type: 'grid' as const,
 	page: 1,
 	perPage: 10,
-	sort: { field: 'name', direction: 'asc' as const },
+	sort: { field: 'name', direction: 'asc' as SortDirection },
 	search: '',
 };
 
