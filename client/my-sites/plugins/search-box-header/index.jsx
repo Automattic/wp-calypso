@@ -1,6 +1,6 @@
 import page from '@automattic/calypso-router';
-import { isDesktop } from '@automattic/viewport';
 import { SearchControl } from '@wordpress/components';
+import { useViewportMatch } from '@wordpress/compose';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useDispatch, useSelector } from 'react-redux';
@@ -24,6 +24,7 @@ const SearchBoxHeader = ( props ) => {
 		searchTerms,
 	} = props;
 
+	const isDesktop = useViewportMatch( 'large' );
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const selectedSite = useSelector( getSelectedSite );
@@ -49,7 +50,7 @@ const SearchBoxHeader = ( props ) => {
 					__nextHasNoMarginBottom
 					value={ searchTerm }
 					className={ clsx( 'search-box-header__searchbox', {
-						'components-search-control--mobile': ! isDesktop(),
+						'components-search-control--mobile': ! isDesktop,
 					} ) }
 					placeholder={ translate( 'Try searching "%(searchTermSuggestion)s"', {
 						args: { searchTermSuggestion: useTermsSuggestions( searchTerms ) || 'ecommerce' },
