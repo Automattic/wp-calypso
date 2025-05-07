@@ -24,6 +24,10 @@ $color-big-sky-background: #000cb2;
 			width: 100%;
 			max-width: 188px;
 
+			&:has(.processing-step__error) {
+				max-width: 260px;
+			}
+
 			.processing-step__error {
 				color: $color-white;
 			}
