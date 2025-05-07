@@ -15,7 +15,7 @@ import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QueryThemeFilters from 'calypso/components/data/query-theme-filters';
-import { SearchThemes, SearchThemesV2 } from 'calypso/components/search-themes';
+import { SearchThemes } from 'calypso/components/search-themes';
 import ThemeDesignYourOwnModal from 'calypso/components/theme-design-your-own-modal';
 import ThemeSiteSelectorModal from 'calypso/components/theme-site-selector-modal';
 import { THEME_TIERS } from 'calypso/components/theme-tier/constants';
@@ -292,11 +292,11 @@ class ThemeShowcase extends Component {
 
 	doSearch = ( searchBoxContent ) => {
 		const filterRegex = /([\w-]*):([\w-]*)/g;
-		const { filterToTermTable, subjectStringFilter, isSearchV2 } = this.props;
+		const { filterToTermTable, subjectStringFilter, isLoggedIn } = this.props;
 		const staticFilters = this.getStaticFilters();
 
-		const filters =
-			`${ searchBoxContent } ${ isSearchV2 ? subjectStringFilter : '' }`.match( filterRegex ) || [];
+		const searchString = `${ searchBoxContent } ${ ! isLoggedIn ? subjectStringFilter : '' }`;
+		const filters = searchString.match( filterRegex ) || [];
 
 		const validFilters = filters.map( ( filter ) => filterToTermTable[ filter ] );
 		const filterString = compact( validFilters ).join( '+' );
@@ -590,7 +590,6 @@ class ThemeShowcase extends Component {
 			search,
 			filter,
 			isLoggedIn,
-			isSearchV2,
 			pathName,
 			featureStringFilter,
 			filterString,
@@ -697,18 +696,11 @@ class ThemeShowcase extends Component {
 								<div className="theme__search-container">
 									<div className="theme__search">
 										<div className="theme__search-input">
-											{ isSearchV2 ? (
-												<SearchThemesV2
-													query={ featureStringFilter + search }
-													onSearch={ this.doSearch }
-												/>
-											) : (
-												<SearchThemes
-													query={ filterString + search }
-													onSearch={ this.doSearch }
-													recordTracksEvent={ this.recordSearchThemesTracksEvent }
-												/>
-											) }
+											<SearchThemes
+												query={ isLoggedIn ? filterString + search : featureStringFilter + search }
+												onSearch={ this.doSearch }
+												recordTracksEvent={ this.recordSearchThemesTracksEvent }
+											/>
 										</div>
 										{ tabFilters && premiumThemesEnabled && ! isMultisite && ! isServerSide && (
 											<CustomSelectControl
@@ -802,7 +794,6 @@ const mapStateToProps = ( state, { siteId, filter } ) => {
 		isSiteWooExpress: isSiteOnWooExpress( state, siteId ),
 		isSiteWooExpressOrEcomFreeTrial:
 			isSiteOnECommerceTrial( state, siteId ) || isSiteOnWooExpress( state, siteId ),
-		isSearchV2: ! isUserLoggedIn( state ),
 		lastNonEditorRoute: getLastNonEditorRoute( state ),
 		themeTiers: getThemeTiers( state ),
 	};
