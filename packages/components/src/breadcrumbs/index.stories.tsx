@@ -1,47 +1,10 @@
 import { Meta, StoryObj } from '@storybook/react';
-import { BreadcrumbItemProps } from './types';
 import { Breadcrumbs } from './';
-
-// Define example items for the controls.
-const itemsOptions: Record< string, BreadcrumbItemProps[] > = {
-	'3 items': [
-		{ label: 'Home', href: '#' },
-		{ label: 'Products', href: '#' },
-		{ label: 'Electronics', href: '#' },
-	],
-	'5 items': [
-		{ label: 'Dashboard', href: '#' },
-		{ label: 'Settings', href: '#' },
-		{ label: 'Profile', href: '#' },
-		{ label: 'Account', href: '#' },
-		{ label: 'Security', href: '#' },
-	],
-	'7 items': [
-		{ label: 'Home', href: '#' },
-		{ label: 'Products', href: '#' },
-		{ label: 'Electronics', href: '#' },
-		{ label: 'Computers', href: '#' },
-		{ label: 'Laptops', href: '#' },
-		{ label: 'Gaming', href: '#' },
-		{
-			label: 'Alienware X17',
-			href: '#',
-		},
-	],
-};
 
 const meta: Meta< typeof Breadcrumbs > = {
 	title: 'packages/components/Breadcrumbs',
 	component: Breadcrumbs,
 	tags: [ 'autodocs' ],
-	argTypes: {
-		items: {
-			control: 'select',
-			options: Object.keys( itemsOptions ),
-			mapping: itemsOptions,
-			description: 'Pre-defined breadcrumb trails',
-		},
-	},
 	parameters: {
 		actions: { argTypesRegex: '^on.*' },
 	},
@@ -52,19 +15,37 @@ type Story = StoryObj< typeof meta >;
 
 export const Default: Story = {
 	args: {
-		items: itemsOptions[ '3 items' ],
+		items: [
+			{ label: 'Home', href: '#' },
+			{ label: 'Products', href: '#' },
+			{ label: 'Electronics', href: '#' },
+			{ label: 'Computers', href: '#' },
+		],
 	},
 };
 
-export const VisibleCurrentPage: Story = {
+export const WithCurrentItemVisible: Story = {
 	args: {
-		items: itemsOptions[ '5 items' ],
+		...Default.args,
 		showCurrentItem: true,
 	},
 };
 
-export const LongPath: Story = {
+export const WithLongPath: Story = {
 	args: {
-		items: itemsOptions[ '7 items' ],
+		...Default.args,
+		items: [
+			{ label: 'Home', href: '#' },
+			{ label: 'Products', href: '#' },
+			{ label: 'Electronics', href: '#' },
+			{ label: 'Computers', href: '#' },
+			{ label: 'Laptops', href: '#' },
+			{ label: 'Gaming', href: '#' },
+			{ label: '17 inch', href: '#' },
+			{
+				label: 'Alienware X17',
+				href: '#',
+			},
+		],
 	},
 };
