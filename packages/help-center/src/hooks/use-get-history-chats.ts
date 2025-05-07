@@ -29,39 +29,30 @@ export const useGetHistoryChats = (): UseGetHistoryChatsResult => {
 	const [ conversations, setConversations ] = useState< Conversations >( [] );
 	const [ supportInteractions, setSupportInteractions ] = useState< SupportInteraction[] >( [] );
 
-	const { data: supportInteractionsOpen, isLoading: isLoadingOpenInteractions } =
+	const { data: openSupportInteraction, isLoading: isLoadingOpenInteractions } =
 		useGetSupportInteractions( 'zendesk', 10, 'open' );
-	const { data: supportInteractionsResolved, isLoading: isLoadingResolvedInteractions } =
-		useGetSupportInteractions( 'zendesk', 100, 'resolved' );
-	const { data: supportInteractionsSolved, isLoading: isLoadingSolvedInteractions } =
-		useGetSupportInteractions( 'zendesk', 100, 'solved' );
-	const { data: supportInteractionsClosed, isLoading: isLoadingClosedInteractions } =
-		useGetSupportInteractions( 'zendesk', 100, 'closed' );
+	const { data: otherSupportInteractions, isLoading: isLoadingOtherSupportInteractions } =
+		useGetSupportInteractions( 'zendesk', 100, [ 'resolved', 'solved', 'closed' ] );
 	const { data: odieConversations, isLoading: isLoadingOdieConversations } =
 		useGetOdieConversations();
 
 	const { isChatLoaded } = useSelect( ( select ) => {
 		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
+
 		return {
 			isChatLoaded: store.getIsChatLoaded(),
 		};
 	}, [] );
 
 	const isLoadingInteractions =
-		isLoadingResolvedInteractions ||
-		isLoadingClosedInteractions ||
-		isLoadingOpenInteractions ||
-		isLoadingSolvedInteractions ||
-		isLoadingOdieConversations;
+		isLoadingOpenInteractions || isLoadingOtherSupportInteractions || isLoadingOdieConversations;
 
 	useEffect( () => {
 		if ( isChatLoaded && getZendeskConversations && ! isLoadingInteractions ) {
 			const allConversations = getZendeskConversations();
 			const allSupportInteractions = [
-				...( supportInteractionsResolved || [] ),
-				...( supportInteractionsOpen || [] ),
-				...( supportInteractionsClosed || [] ),
-				...( supportInteractionsSolved || [] ),
+				...( openSupportInteraction || [] ),
+				...( otherSupportInteractions || [] ),
 			];
 
 			const conversationsWithUpdatedStatuses = filterAndUpdateConversationsWithStatus(
@@ -72,14 +63,7 @@ export const useGetHistoryChats = (): UseGetHistoryChatsResult => {
 			setConversations( conversationsWithUpdatedStatuses );
 			setSupportInteractions( allSupportInteractions );
 		}
-	}, [
-		isLoadingInteractions,
-		supportInteractionsResolved,
-		supportInteractionsOpen,
-		isChatLoaded,
-		supportInteractionsClosed,
-		supportInteractionsSolved,
-	] );
+	}, [ isChatLoaded, isLoadingInteractions, openSupportInteraction, otherSupportInteractions ] );
 
 	// We need to import this function from utils, but for now we'll define it here
 	const getSortedRecentAndArchivedConversations = ( {

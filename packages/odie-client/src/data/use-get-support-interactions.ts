@@ -34,5 +34,6 @@ export const useGetSupportInteractions = (
 			return response;
 		},
 		enabled,
+		staleTime: 1000 * 10, // 10 seconds
 	} );
 };

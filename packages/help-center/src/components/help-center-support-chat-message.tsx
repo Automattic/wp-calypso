@@ -9,10 +9,17 @@ import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import { Link } from 'react-router-dom';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
+import { useGetHistoryChats } from '../hooks';
 import { HELP_CENTER_STORE } from '../stores';
-import type { OdieMessage, SupportInteraction, ZendeskMessage } from '@automattic/odie-client';
+import type {
+	OdieConversation,
+	OdieMessage,
+	ZendeskConversation,
+	ZendeskMessage,
+} from '@automattic/odie-client';
 
 import './help-center-support-chat-message.scss';
+
 const trackContactButtonClicked = ( sectionName: string ) => {
 	recordTracksEvent( 'calypso_inlinehelp_support_chat_message_click', {
 		force_site_id: true,
@@ -23,24 +30,12 @@ const trackContactButtonClicked = ( sectionName: string ) => {
 
 export const HelpCenterSupportChatMessage = ( {
 	message,
-	badgeCount = 0,
-	odieChatId,
-	isUnread = false,
-	navigateTo = '',
-	supportInteraction,
 	sectionName,
-	conversationStatus,
+	conversation,
 }: {
 	message: OdieMessage | ZendeskMessage;
-	badgeCount?: number;
-	avatarSize?: number;
-	isUnread: boolean;
-	navigateTo: string;
-	altText?: string;
-	odieChatId?: number;
-	supportInteraction: SupportInteraction | undefined;
 	sectionName?: string;
-	conversationStatus?: string;
+	conversation: OdieConversation | ZendeskConversation;
 } ) => {
 	const { __ } = useI18n();
 	const locale = useLocale();
@@ -48,7 +43,28 @@ export const HelpCenterSupportChatMessage = ( {
 	const { displayName, received, role, text, altText } = message;
 	const helpCenterContext = useHelpCenterContext();
 	const helpCenterContextSectionName = helpCenterContext.sectionName;
+	const { supportInteractions } = useGetHistoryChats();
 	const { setCurrentSupportInteraction, setOdieChatId } = useDataStoreDispatch( HELP_CENTER_STORE );
+
+	const isZendeskConversation = (
+		conversation: OdieConversation | ZendeskConversation
+	): conversation is ZendeskConversation =>
+		'metadata' in conversation && 'participants' in conversation;
+
+	let odieChatId = undefined;
+	let conversationStatus: string = '';
+	let supportInteraction = undefined;
+
+	if ( isZendeskConversation( conversation ) ) {
+		conversationStatus = conversation.metadata.status;
+
+		supportInteraction = supportInteractions.find(
+			( interaction ) => interaction.uuid === conversation.metadata.supportInteractionId
+		);
+	} else {
+		odieChatId = parseInt( conversation.id );
+	}
+
 	const messageDisplayName =
 		role === 'business' ? __( 'Happiness Engineer', __i18n_text_domain__ ) : displayName;
 
@@ -72,9 +88,10 @@ export const HelpCenterSupportChatMessage = ( {
 
 	return (
 		<Link
-			to={ navigateTo }
+			to="/odie"
 			onClick={ () => {
 				trackContactButtonClicked( sectionName || helpCenterContextSectionName );
+
 				if ( odieChatId ) {
 					setOdieChatId( odieChatId );
 				} else if ( supportInteraction ) {
@@ -83,20 +100,11 @@ export const HelpCenterSupportChatMessage = ( {
 				}
 			} }
 			className={ clsx( 'help-center-support-chat__conversation-container', {
-				'is-unread-message': isUnread,
 				[ `is-${ conversationStatus }` ]: conversationStatus,
 			} ) }
 		>
-			<div
-				className={ clsx( 'help-center-support-chat__conversation-avatar', {
-					'has-badge': badgeCount > 0,
-				} ) }
-			>
+			<div className={ clsx( 'help-center-support-chat__conversation-avatar' ) }>
 				{ renderAvatar() }
-
-				{ badgeCount > 0 && (
-					<div className="help-center-support-chat__conversation-badge">+{ badgeCount }</div>
-				) }
 			</div>
 			<div className="help-center-support-chat__conversation-information">
 				<div className="help-center-support-chat__conversation-information-message">

@@ -48,7 +48,7 @@
 			border-radius: 4px;
 			border: 1.5px solid #C3C4C7;
 
-			&:hover, &.is-unread-message {
+			&:hover {
 				border: 1.5px solid $help-center-blue !important;
 			}
 		}
