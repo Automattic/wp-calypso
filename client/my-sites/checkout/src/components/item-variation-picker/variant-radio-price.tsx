@@ -1,4 +1,4 @@
-import { getCurrencyObject } from '@automattic/number-formatters';
+import { formatCurrency } from '@automattic/number-formatters';
 import { styled } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
@@ -7,11 +7,14 @@ import type { WPCOMProductVariant } from './types';
 
 const Discount = styled.span`
 	text-align: center;
-	color: #234929;
+	color: var( --studio-green-80, rgba( 0, 69, 12, 1 ) );
+
 	display: block;
 	background-color: #b8e6bf;
-	padding: 0 1em;
+	padding: 0 10px;
 	border-radius: 4px;
+	font-size: 12px;
+	line-height: 20px;
 
 	.rtl & {
 		margin-right: 0;
@@ -26,10 +29,10 @@ const Price = styled.span`
 const Variant = styled.div`
 	align-items: center;
 	display: flex;
-	font-size: 14px;
+	font-size: 16px;
 	font-weight: 400;
 	justify-content: space-between;
-	line-height: 20px;
+	line-height: 24px;
 	width: 100%;
 `;
 
@@ -44,6 +47,7 @@ const PriceArea = styled.span`
 	display: flex;
 	flex-direction: column;
 	gap: 2px;
+	align-items: flex-end;
 `;
 
 const DiscountPercentage: FunctionComponent< { percent: number } > = ( { percent } ) => {
@@ -59,64 +63,32 @@ const DiscountPercentage: FunctionComponent< { percent: number } > = ( { percent
 	);
 };
 
-const VariantBillingTotal = styled.div`
-	font-size: small;
-	color: #777;
-`;
-
 export const ItemVariantRadioPrice: FunctionComponent< {
 	variant: WPCOMProductVariant;
 	compareTo?: WPCOMProductVariant;
 } > = ( { variant, compareTo } ) => {
 	const translate = useTranslate();
 	const discountPercentage = getItemVariantDiscountPercentage( variant, compareTo );
-	const formattedCurrentPrice = getCurrencyObject( variant.priceInteger, variant.currency, {
-		stripZeros: true,
-		isSmallestUnit: true,
-	} );
 
 	const pricePerMonth = Math.round( variant.priceInteger / variant.termIntervalInMonths );
-	const pricePerYear = pricePerMonth * 12;
 
-	const pricePerYearFormatted = getCurrencyObject( pricePerYear, variant.currency, {
-		stripZeros: true,
-		isSmallestUnit: true,
-	} );
-	const pricePerMonthFormatted = getCurrencyObject( pricePerMonth, variant.currency, {
+	const pricePerMonthFormatted = formatCurrency( pricePerMonth, variant.currency, {
 		stripZeros: true,
 		isSmallestUnit: true,
 	} );
 
-	const shouldShowMonthlyPrice =
-		compareTo?.termIntervalInMonths === 1 || variant.termIntervalInMonths === 1;
 	const priceDisplay = ( () => {
-		if ( shouldShowMonthlyPrice ) {
-			return translate( '%(pricePerMonth)s / month', {
-				args: {
-					pricePerMonth: pricePerMonthFormatted.integer,
-				},
-			} );
-		}
-		return translate( '%(pricePerYear)s / year', {
+		return translate( '%(pricePerMonth)s /mo', {
 			args: {
-				pricePerYear: pricePerYearFormatted.integer,
+				pricePerMonth: pricePerMonthFormatted,
 			},
 		} );
 	} )();
-
-	const shouldShowBillingTotal = variant.termIntervalInMonths !== compareTo?.termIntervalInMonths;
-	const billingTotal = translate( 'Billed as one payment of %(totalPrice)s', {
-		args: {
-			totalPrice: formattedCurrentPrice.integer,
-		},
-	} );
-
+	const label =
+		variant.termIntervalInMonths === 1 ? translate( 'Month' ) : variant.variantLabel.noun;
 	return (
 		<Variant>
-			<VariantTermLabel>
-				{ variant.variantLabel.noun }
-				{ shouldShowBillingTotal && <VariantBillingTotal>{ billingTotal }</VariantBillingTotal> }
-			</VariantTermLabel>
+			<VariantTermLabel>{ label }</VariantTermLabel>
 			<PriceArea>
 				<Price>{ priceDisplay }</Price>
 				{ discountPercentage > 0 && <DiscountPercentage percent={ discountPercentage } /> }
