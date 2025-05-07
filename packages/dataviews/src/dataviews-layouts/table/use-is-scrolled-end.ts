@@ -14,6 +14,9 @@ const isScrolledToEnd = ( element: Element ) => {
 	return element.scrollLeft + element.clientWidth >= element.scrollWidth - 1;
 };
 
+/**
+ * A hook to check if a given scroll container has reached the horizontal scroll end.
+ */
 export function useIsScrolledEnd( {
 	scrollContainerRef,
 	enabled = false,
