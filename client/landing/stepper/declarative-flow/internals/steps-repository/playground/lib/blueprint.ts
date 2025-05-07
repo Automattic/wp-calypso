@@ -105,12 +105,33 @@ function getDefaultBlueprint( recommendedPhpVersion: string ): Blueprint {
 	};
 }
 
-export function getBlueprintName( name: string | null ): string | null {
+function getBlueprintName( name: string | null ): string | null {
 	if ( name && name in PREDEFINED_BLUEPRINTS ) {
 		return name;
 	}
 
 	return null;
+}
+
+// Used in sending the Tracks event
+export function getBlueprintLabelForTracking( query: URLSearchParams ): string {
+	const name = query.get( 'blueprint' );
+
+	if ( name && name in PREDEFINED_BLUEPRINTS ) {
+		return name;
+	}
+
+	// If its a blueprintlibrary.wordpress.com url for blueprint, use its id to construct the label
+	const blueprintUrl = query.get( 'blueprint-url' );
+	if ( blueprintUrl ) {
+		const src = new URL( blueprintUrl );
+		if ( src.host === 'blueprintlibrary.wordpress.com' ) {
+			const id = src.searchParams.get( 'blueprint' );
+			return 'bpl-' + id;
+		}
+	}
+
+	return 'unknown';
 }
 
 async function getBlueprintFromUrl( recommendedPhpVersion: string ): Blueprint {
