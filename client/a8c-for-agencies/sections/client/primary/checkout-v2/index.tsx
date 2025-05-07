@@ -58,7 +58,7 @@ function ClientCheckoutContent() {
 		const productsToAdd = referredProducts.map( ( product ) => {
 			return createRequestCartProduct( {
 				// When using the wpcom checkout we use alternative a4a-specific billing product ids for wpcom and jetpack products.
-				product_id: product.billing_product_id || product.product_id,
+				product_id: product.alternative_product_id || product.product_id,
 				product_slug: product.slug,
 				extra: {
 					isA4ASitelessCheckout: true,
