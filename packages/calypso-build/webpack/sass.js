@@ -1,3 +1,4 @@
+const path = require( 'path' );
 const WebpackRTLPlugin = require( '@automattic/webpack-rtl-plugin' );
 const MiniCssExtractPlugin = require( 'mini-css-extract-plugin' );
 const MiniCSSWithRTLPlugin = require( './mini-css-with-rtl' );
@@ -36,10 +37,17 @@ module.exports.loader = ( { includePaths, prelude, postCssOptions } ) => ( {
 		{
 			loader: require.resolve( 'sass-loader' ),
 			options: {
+				implementation: require( 'sass-embedded' ),
+				api: 'modern',
 				additionalData: prelude,
 				sassOptions: {
-					includePaths,
+					loadPaths: [
+						'node_modules',
+						'/Users/omaralshaker/Work.nosync/Automattic/wp-calypso',
+						'/Users/omaralshaker/Work.nosync/Automattic/wp-calypso/packages',
+					],
 					quietDeps: true,
+					verbose: true,
 				},
 				// The warnRuleAsWarning can be removed once sass-loader is updated to v14. It defaults to true in that version.
 				// @see https://github.com/webpack-contrib/sass-loader/tree/v14.0.0?tab=readme-ov-file#warnruleaswarning

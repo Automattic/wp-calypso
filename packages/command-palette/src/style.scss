@@ -1,6 +1,6 @@
-@import "~@wordpress/base-styles/variables";
-@import "~@wordpress/base-styles/mixins";
-@import "~@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/variables";
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/breakpoints";
 
 .commands-command-menu__overlay {
 	z-index: z-index("root", ".commands-commands-menu__overlay");
@@ -23,4 +23,4 @@ div.commands-command-menu {
 	fill: #1e1e1e;
 }
 
-@import '~@wordpress/commands/src/style';
+@import '@wordpress/commands/src/style';
