@@ -14,13 +14,13 @@ import './style.scss';
 
 function BreadcrumbsMenu( { items }: { items: BreadcrumbItemProps[] } ) {
 	return (
-		<span className="a8c-components-breadcrumb__item-wrapper">
+		<span className="a8c-components-breadcrumbs__item-wrapper">
 			<Menu placement="bottom-start">
 				<Menu.TriggerButton
 					render={
 						<Button
 							size="compact"
-							className="a8c-components-breadcrumb__item"
+							className="a8c-components-breadcrumbs__item"
 							text="…"
 							label={ __( 'More breadcrumb items' ) }
 						/>
@@ -43,8 +43,8 @@ function BreadcrumbsMenu( { items }: { items: BreadcrumbItemProps[] } ) {
 
 function BreadcrumbItem( { item: { label, href, onClick } }: { item: BreadcrumbItemProps } ) {
 	return (
-		<span className="a8c-components-breadcrumb__item-wrapper">
-			<a href={ href } onClick={ onClick } className="a8c-components-breadcrumb__item">
+		<span className="a8c-components-breadcrumbs__item-wrapper">
+			<a href={ href } onClick={ onClick } className="a8c-components-breadcrumbs__item">
 				{ label }
 			</a>
 		</span>
@@ -81,10 +81,10 @@ function BreadcrumbsNav( {
 	const isCompact =
 		! isOffscreen && hasMiddleItems && ( variant === 'compact' || shouldRenderCompact );
 	const currentItem = (
-		<span className="a8c-components-breadcrumb__item-wrapper is-current">
+		<span className="a8c-components-breadcrumbs__item-wrapper is-current">
 			<Text
 				as="span"
-				className="a8c-components-breadcrumb__item"
+				className="a8c-components-breadcrumbs__item"
 				aria-current="page"
 				aria-hidden={ ! showCurrentItem }
 			>
