@@ -307,9 +307,9 @@ body.is-section-signup .layout:not(.dops):not(.is-wccom-oauth-flow) {
 
 	.signup__step.is-user,
 	.signup__step.is-user-social {
-		button.signup-form__submit[disabled],
-		button.signup-form__submit:disabled,
-		button.signup-form__submit.disabled {
+		.button.signup-form__submit[disabled],
+		.button.signup-form__submit:disabled,
+		.button.signup-form__submit.disabled {
 			background-color: var(--studio-gray-20);
 			color: var(--color-surface);
 		}
