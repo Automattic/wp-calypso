@@ -709,7 +709,7 @@ class ThemeShowcase extends Component {
 												/>
 											) }
 										</div>
-										{ tabFilters && premiumThemesEnabled && ! isMultisite && (
+										{ tabFilters && premiumThemesEnabled && ! isMultisite && ! isSearchV2 && (
 											<>
 												<CustomSelectControl
 													className="theme__tier-select"
