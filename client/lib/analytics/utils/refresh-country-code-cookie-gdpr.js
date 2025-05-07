@@ -30,6 +30,14 @@ export default async function refreshCountryCodeCookieGdpr( signal = undefined )
 			} )
 			.catch( ( err ) => {
 				debug( 'refreshCountryCodeCookieGdpr: error: ', err );
+				// Set the cookies to `unknown` to signal that the `/geo` request already failed and there's no point
+				// sending it again. But set them only if they don't already exist, don't overwrite valid values!
+				if ( ! cookies.country_code ) {
+					setCountryCodeCookie( 'unknown' );
+				}
+				if ( ! cookies.region ) {
+					setRegionCookie( 'unknown' );
+				}
 			} )
 			.finally( () => {
 				refreshRequest = null;
@@ -39,15 +47,14 @@ export default async function refreshCountryCodeCookieGdpr( signal = undefined )
 	await refreshRequest;
 }
 
-function requestGeoData( signal = undefined ) {
+async function requestGeoData( signal = undefined ) {
 	// cache buster
 	const v = new Date().getTime();
-	return fetch( 'https://public-api.wordpress.com/geo/?v=' + v, { signal } ).then( ( res ) => {
-		if ( ! res.ok ) {
-			return res.body().then( ( body ) => Promise.reject( new Error( body ) ) );
-		}
-		return res.json();
-	} );
+	const res = await fetch( 'https://public-api.wordpress.com/geo/?v=' + v, { signal } );
+	if ( ! res.ok ) {
+		throw new Error( `The /geo endpoint returned an error: ${ res.status } ${ res.statusText }` );
+	}
+	return await res.json();
 }
 
 function setCountryCodeCookie( countryCode ) {
