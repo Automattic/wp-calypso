@@ -79,7 +79,7 @@ const Checkbox = ( { checked }: { checked: boolean } ) => {
 	return (
 		<span
 			className={ clsx(
-				'dataviews-filters__search-widget-listitem-Checkbox',
+				'dataviews-filters__search-widget-listitem-checkbox',
 				{ 'is-checked': checked }
 			) }
 		>
