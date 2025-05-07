@@ -29,6 +29,16 @@ const TertiaryButtonWrapper = styled.div`
 	}
 `;
 
+const SynchronizeButtonWrapper = styled.div`
+	.components-button.is-tertiary {
+		border: 1px solid var( --color-border );
+	}
+
+	.components-button.is-tertiary:hover:not( :disabled ) {
+		background: var( --color-surface );
+	}
+`;
+
 type ConfirmationModalButtonProps = {
 	onConfirm?: () => void;
 	onCancel?: () => void;
@@ -46,6 +56,7 @@ type ConfirmationModalButtonProps = {
 	extraModalContent?: React.ReactNode;
 	confirmLabel: string;
 	cancelLabel: string;
+	isSynchronize?: boolean;
 };
 
 export function ConfirmationModal( {
@@ -65,6 +76,7 @@ export function ConfirmationModal( {
 	extraModalContent,
 	confirmLabel,
 	cancelLabel,
+	isSynchronize = false,
 }: ConfirmationModalButtonProps ) {
 	const [ isOpen, setOpen ] = useState( false );
 	const openModal = () => setOpen( true );
@@ -82,7 +94,20 @@ export function ConfirmationModal( {
 
 	return (
 		<>
-			<TertiaryButtonWrapper>
+			{ isSynchronize ? (
+				<SynchronizeButtonWrapper>
+					<Button
+						variant="tertiary"
+						isDestructive={ isScary }
+						isBusy={ isBusy }
+						disabled={ disabled }
+						onClick={ openModal }
+						__next40pxDefaultSize
+					>
+						<ButtonContent>{ children }</ButtonContent>
+					</Button>
+				</SynchronizeButtonWrapper>
+			) : (
 				<Button
 					variant={ getButtonVariant() }
 					isDestructive={ isScary }
@@ -93,7 +118,7 @@ export function ConfirmationModal( {
 				>
 					<ButtonContent>{ children }</ButtonContent>
 				</Button>
-			</TertiaryButtonWrapper>
+			) }
 			{ isOpen && (
 				<Modal
 					title={ modalTitle }
