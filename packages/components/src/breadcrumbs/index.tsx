@@ -148,12 +148,13 @@ function UnforwardedBreadcrumbs( props: BreadcrumbProps, ref: React.ForwardedRef
 }
 
 /**
- * The breadcrumb component provides a secondary navigation aid that shows users their current
- * location within a site's or application's hierarchy. It helps users understand the structure
- * of the site, retrace their steps, and easily navigate to higher-level pages.
+ * The `Breadcrumbs` component provides a secondary navigation aid that shows
+ * users their current location within a site's or application's hierarchy.
+ * It helps users understand the structure of the site, retrace their steps,
+ * and easily navigate to higher-level pages.
  *
- * For accessibility, it is important that the current page is included as the final item in the
- * breadcrumb trail. This ensures screen reader users receive the full navigational context.
- *
+ * For accessibility, **it is important that the current page is included as the
+ * final item in the breadcrumb trail**. This ensures screen reader users
+ * receive the full navigational context.
  */
 export const Breadcrumbs = forwardRef( UnforwardedBreadcrumbs );
