@@ -96,7 +96,7 @@ export const InsightsSection = forwardRef(
 						/>
 					</div>
 				</div>
-				{ filteredAudits.map( ( key, index ) => (
+				{ /* { filteredAudits.map( ( key, index ) => (
 					<MetricsInsight
 						key={ key }
 						insight={ { ...audits[ key ], id: key } }
@@ -113,7 +113,7 @@ export const InsightsSection = forwardRef(
 							} )
 						}
 					/>
-				) ) }
+				) ) } */ }
 			</div>
 		);
 	}

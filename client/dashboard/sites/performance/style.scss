@@ -1,0 +1,51 @@
+:root {
+    --studio-white: #fff;
+    --studio-gray-5: #dcdcde;
+    --studio-gray-10: #c3c4c7;
+    --studio-gray-50: #646970;
+
+    --studio-gray-100: #101517;
+
+    --studio-green-5: #b8e6bf;
+    --studio-green-30: #00ba37;
+    --studio-green-60: #007017;
+    --studio-green-80: #00450c;
+
+    --studio-orange-40: #d67709;
+    --studio-red-50: #d63638;
+
+    --color-surface: var(--studio-white);
+
+    --theme-highlight-color: #3858e9;
+    --color-accent: var(--theme-highlight-color);
+    --color-text-inverted: var(--studio-white);
+
+    --color-neutral: var(--studio-gray-50);
+    --color-neutral-10: var(--studio-gray-10);
+}
+
+.site-performance-report .l-block-wrapper {
+    background: #fcfcfc;
+}
+
+.site-performance-report button {
+    background: inherit;
+}
+
+.site-performance-report .core-web-vitals-display__details {
+    background: #fff;
+}
+
+.site-performance-report .metric-tab-bar__tab {
+    border-radius: inherit;
+}
+
+.site-performance-report .core-web-vitals-display + *,
+.site-performance-report .performance-profiler-insights-section,
+.site-performance-report .metric-tab-bar {
+    background: #fff;
+}
+
+.site-performance-report .core-web-vitals-display__metric {
+    line-height: 48px;
+}
