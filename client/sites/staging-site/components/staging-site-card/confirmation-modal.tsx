@@ -43,10 +43,7 @@ type ConfirmationModalButtonProps = {
 	onConfirm?: () => void;
 	onCancel?: () => void;
 	isBusy?: boolean;
-	isPrimary?: boolean;
 	isScary?: boolean;
-	isPlain?: boolean;
-	isTransparent?: boolean;
 	isConfirmationDisabled?: boolean;
 	disabled?: boolean;
 	children: React.ReactNode;
@@ -65,10 +62,7 @@ export function ConfirmationModal( {
 	disabled = false,
 	isConfirmationDisabled,
 	isBusy = false,
-	isPrimary = false,
 	isScary = false,
-	isPlain = false,
-	isTransparent = false,
 	children,
 	modalTitle,
 	modalMessage,
@@ -81,16 +75,6 @@ export function ConfirmationModal( {
 	const [ isOpen, setOpen ] = useState( false );
 	const openModal = () => setOpen( true );
 	const closeModal = () => setOpen( false );
-
-	const getButtonVariant = () => {
-		if ( isPrimary ) {
-			return 'primary';
-		}
-		if ( isPlain || isTransparent ) {
-			return 'tertiary';
-		}
-		return 'secondary';
-	};
 
 	return (
 		<>
@@ -109,7 +93,7 @@ export function ConfirmationModal( {
 				</SynchronizeButtonWrapper>
 			) : (
 				<Button
-					variant={ getButtonVariant() }
+					variant="secondary"
 					isDestructive={ isScary }
 					isBusy={ isBusy }
 					disabled={ disabled }
