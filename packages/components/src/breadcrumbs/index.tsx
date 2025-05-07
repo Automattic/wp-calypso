@@ -51,10 +51,9 @@ const BreadcrumbsNav = forwardRef<
 	HTMLElement,
 	BreadcrumbProps & {
 		isOffscreen?: boolean;
-		shouldRenderCompact: boolean;
 	}
 >( function BreadcrumbsNav(
-	{ isOffscreen, shouldRenderCompact, items, showCurrentItem = false, variant = 'default' },
+	{ isOffscreen, items, showCurrentItem = false, variant = 'default' },
 	ref
 ) {
 	const { __ } = useI18n();
@@ -75,8 +74,7 @@ const BreadcrumbsNav = forwardRef<
 	 * would overflow, we should render the compact variant.
 	 * Noting that we prioritize the `isCompact` prop over the `width` checks.
 	 */
-	const isCompact =
-		! isOffscreen && hasMiddleItems && ( variant === 'compact' || shouldRenderCompact );
+	const isCompact = ! isOffscreen && hasMiddleItems && variant === 'compact';
 	const currentItem = (
 		<span className="a8c-components-breadcrumbs__item-wrapper is-current">
 			<Text
@@ -139,15 +137,13 @@ function UnforwardedBreadcrumbs( props: BreadcrumbProps, ref: React.ForwardedRef
 	if ( ! items.length || items.length === 1 ) {
 		return null;
 	}
+
+	const computedVariant = shouldRenderCompact ? 'compact' : props.variant;
+
 	return (
 		<>
-			<BreadcrumbsNav
-				isOffscreen
-				ref={ offScreenRef }
-				shouldRenderCompact={ shouldRenderCompact }
-				{ ...props }
-			/>
-			<BreadcrumbsNav ref={ mergedRefs } shouldRenderCompact={ shouldRenderCompact } { ...props } />
+			<BreadcrumbsNav ref={ offScreenRef } { ...props } variant={ computedVariant } isOffscreen />
+			<BreadcrumbsNav ref={ mergedRefs } { ...props } variant={ computedVariant } />
 		</>
 	);
 }
