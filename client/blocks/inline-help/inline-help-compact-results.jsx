@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
+import { decodeEntities } from 'calypso/lib/formatting';
 
 function InlineHelpCompactResults( { helpLinks, onClick } ) {
 	return (
@@ -12,7 +12,7 @@ function InlineHelpCompactResults( { helpLinks, onClick } ) {
 						onClick={ ( event ) => onClick( event, link ) }
 						tabIndex={ -1 }
 					>
-						{ preventWidows( decodeEntities( link.title ) ) }
+						{ decodeEntities( link.title ) }
 					</a>
 				</li>
 			) ) }
