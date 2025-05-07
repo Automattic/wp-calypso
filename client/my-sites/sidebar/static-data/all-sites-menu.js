@@ -58,7 +58,7 @@ export default function allSitesMenu( { showManagePlugins = false } = {} ) {
 					{
 						parent: 'plugins',
 						slug: 'all-sites-plugins-installed-plugins',
-						title: translate( 'Installed Plugins' ),
+						title: translate( 'Installed plugins' ),
 						type: 'submenu-item',
 						url: '/plugins/manage',
 					},

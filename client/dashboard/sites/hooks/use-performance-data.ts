@@ -19,8 +19,7 @@ export function usePerformanceData( siteId: string, url: string ): PerformanceDa
 		enabled: !! siteId,
 	} );
 
-	const wpcomPerformanceReportUrl: string =
-		siteSettings?.settings?.wpcom_performance_report_url || '';
+	const wpcomPerformanceReportUrl: string = siteSettings?.wpcom_performance_report_url || '';
 	const [ , cachedHash ] = wpcomPerformanceReportUrl.split( '&hash=' );
 
 	const { data: basicMetricsData, isLoading: isLoadingBasicMetrics } = useQuery( {

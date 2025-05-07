@@ -76,7 +76,7 @@ const ManageButton = ( {
 
 	return (
 		<Button className="plugins-browser__button" href={ managePluginsDestination }>
-			<span className="plugins-browser__button-text">{ translate( 'Installed Plugins' ) }</span>
+			<span className="plugins-browser__button-text">{ translate( 'Installed plugins' ) }</span>
 		</Button>
 	);
 };

@@ -1,11 +1,10 @@
 <!--
-Link a related issue to this PR. If the PR does not immediately resolve the issue,
+Link a related Github/Linear issue to this PR. If the PR does not immediately resolve the issue,
 for example, it requires a separate deployment to production, avoid
-using the "fixes" keyword and instead attach the [Status] Fix Inbound label to
-the linked issue.
+using the "fixes" keyword. Consider using "part of" instead.
 -->
 
-Related to #
+Part of #
 
 ## Proposed Changes
 
