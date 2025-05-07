@@ -212,12 +212,16 @@ export function CheckoutSidebarPlanUpsell() {
 		<>
 			<PromoCard title={ cardTitle } className={ checkoutSidebarPlanUpsellClassName }>
 				<div className="checkout-sidebar-plan-upsell__plan-grid">
-					<div className="checkout-sidebar-plan-upsell__plan-grid-cell">
-						<strong>{ __( 'Plan' ) }</strong>
-					</div>
-					<div className="checkout-sidebar-plan-upsell__plan-grid-cell">
-						<strong>{ isComparisonWithIntroOffer ? cellLabel : __( 'Cost' ) }</strong>
-					</div>
+					{ ! streamlinedPriceExperimentAssignment && (
+						<>
+							<div className="checkout-sidebar-plan-upsell__plan-grid-cell">
+								<strong>{ __( 'Plan' ) }</strong>
+							</div>
+							<div className="checkout-sidebar-plan-upsell__plan-grid-cell">
+								<strong>{ isComparisonWithIntroOffer ? cellLabel : __( 'Cost' ) }</strong>
+							</div>
+						</>
+					) }
 					<div className="checkout-sidebar-plan-upsell__plan-grid-cell">
 						{ currentVariant.variantLabel.adjective }
 					</div>
