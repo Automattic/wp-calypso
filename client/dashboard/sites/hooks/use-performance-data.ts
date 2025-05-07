@@ -4,6 +4,7 @@ import { UrlPerformanceInsights } from '../../data/types';
 
 interface PerformanceData {
 	performanceData: UrlPerformanceInsights | undefined;
+	hash: string | undefined;
 	desktopScore: number | undefined;
 	mobileScore: number | undefined;
 	desktopLoaded: boolean;
@@ -51,6 +52,7 @@ export function usePerformanceData( siteId: string, url: string ): PerformanceDa
 
 	return {
 		performanceData,
+		hash: token,
 		desktopScore,
 		mobileScore,
 		desktopLoaded,

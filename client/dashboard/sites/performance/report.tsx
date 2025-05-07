@@ -1,6 +1,6 @@
 import { useSearch } from '@tanstack/react-router';
 import { useState } from 'react';
-import { PerformanceReport } from 'calypso/hosting/performance/components/PerformanceReport';
+import { PerformanceProfilerDashboardContent } from 'calypso/performance-profiler/components/dashboard-content';
 import { sitePerformanceRoute } from '../../app/router';
 import { usePerformanceData } from '../hooks/use-performance-data';
 import type { Site } from '../../data/types';
@@ -10,7 +10,7 @@ import './style.scss';
 export default function Report( { site }: { site: Site } ) {
 	const { filter } = useSearch( { from: sitePerformanceRoute.fullPath } );
 	const [ recommendationsFilter, setRecommendationsFilter ] = useState( filter );
-	const { performanceData, isLoading } = usePerformanceData( site.ID, site.URL );
+	const { performanceData, isLoading, hash } = usePerformanceData( site.ID, site.URL );
 
 	const handleRecommendationsFilterChange = ( filter?: string ) => {
 		setRecommendationsFilter( filter );
@@ -30,17 +30,25 @@ export default function Report( { site }: { site: Site } ) {
 			? performanceData?.pagespeed.desktop
 			: undefined;
 
+	if ( isLoading ) {
+		return 'loading...';
+	}
+
+	if ( ! report ) {
+		return 'no report';
+	}
+
 	return (
 		<div className="site-performance-report">
-			<PerformanceReport
-				isLoading={ isLoading }
-				isRetesting={ false }
-				isError={ false }
+			<PerformanceProfilerDashboardContent
 				performanceReport={ report }
-				pageTitle="Temporary title"
-				onRetestClick={ () => {} }
-				onFilterChange={ handleRecommendationsFilterChange }
+				url={ site.URL }
+				hash={ hash || '' }
+				overallScoreIsTab
 				filter={ recommendationsFilter }
+				displayNewsletterBanner={ false }
+				displayMigrationBanner={ false }
+				onRecommendationsFilterChange={ handleRecommendationsFilterChange }
 			/>
 		</div>
 	);
