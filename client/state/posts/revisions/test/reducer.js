@@ -2,7 +2,6 @@ import deepFreeze from 'deep-freeze';
 import {
 	POST_EDIT,
 	POST_REVISIONS_DIALOG_CLOSE,
-	POST_REVISIONS_DIALOG_OPEN,
 	POST_REVISIONS_RECEIVE,
 	POST_REVISIONS_SELECT,
 	SELECTED_SITE_SET,
@@ -339,22 +338,6 @@ describe( 'reducer', () => {
 			const state = ui( undefined, {} );
 
 			expect( state ).toEqual( {} );
-		} );
-
-		describe( 'when POST_REVISIONS_DIALOG_OPEN action is disptached', () => {
-			test( 'should set isDialogVisible to true', () => {
-				const state = ui(
-					deepFreeze( {
-						isDialogVisible: false,
-					} ),
-					{
-						type: POST_REVISIONS_DIALOG_OPEN,
-					}
-				);
-				expect( state ).toEqual( {
-					isDialogVisible: true,
-				} );
-			} );
 		} );
 
 		describe( 'when POST_REVISIONS_DIALOG_CLOSE action is disptached', () => {
