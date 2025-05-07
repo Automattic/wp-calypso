@@ -7,7 +7,7 @@ import {
 import { useResizeObserver, useMergeRefs } from '@wordpress/compose';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
-import React, { useState, forwardRef, useRef, useLayoutEffect } from 'react';
+import React, { useState, forwardRef, useRef } from 'react';
 import Menu from '../menu';
 import { BreadcrumbProps, BreadcrumbItemProps } from './types';
 import './style.scss';
@@ -123,25 +123,22 @@ const BreadcrumbsNav = forwardRef<
 
 function UnforwardedBreadcrumbs( props: BreadcrumbProps, ref: React.ForwardedRef< HTMLElement > ) {
 	const { items } = props;
-	const offScreenRef = useRef< HTMLElement >( null );
+	const offScreenWidth = useRef( 0 );
 	const containerWidth = useRef( 0 );
 	const [ shouldRenderCompact, setShouldRenderCompact ] = useState( false );
-	const containerRef = useResizeObserver( ( resizeObserverEntries ) => {
-		const [ entry ] = resizeObserverEntries;
-		const { inlineSize } = entry.borderBoxSize[ 0 ];
-		if ( ! offScreenRef.current ) {
-			return;
-		}
-		setShouldRenderCompact( offScreenRef.current.scrollWidth > inlineSize );
-		containerWidth.current = inlineSize;
+
+	const computeShouldRenderCompact = () => {
+		setShouldRenderCompact( offScreenWidth.current > containerWidth.current );
+	};
+	const offScreenRef = useResizeObserver( ( resizeObserverEntries ) => {
+		offScreenWidth.current = resizeObserverEntries[ 0 ].borderBoxSize[ 0 ].inlineSize;
+		computeShouldRenderCompact();
 	} );
-	// If `items` change we need to recalculate whether we should render the compact variant.
-	useLayoutEffect( () => {
-		if ( ! offScreenRef.current ) {
-			return;
-		}
-		setShouldRenderCompact( offScreenRef.current.scrollWidth > containerWidth.current );
-	}, [ items, setShouldRenderCompact ] );
+	const containerRef = useResizeObserver( ( resizeObserverEntries ) => {
+		containerWidth.current = resizeObserverEntries[ 0 ].borderBoxSize[ 0 ].inlineSize;
+		computeShouldRenderCompact();
+	} );
+
 	const mergedRefs = useMergeRefs( [ ref, containerRef ] );
 	if ( ! items.length || items.length === 1 ) {
 		return null;
