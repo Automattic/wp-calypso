@@ -2364,6 +2364,7 @@ __metadata:
   resolution: "@automattic/wpcom-template-parts@workspace:packages/wpcom-template-parts"
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
+    "@automattic/color-studio": "npm:^4.1.0"
     "@automattic/components": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
     "@wordpress/url": "npm:^4.22.0"
