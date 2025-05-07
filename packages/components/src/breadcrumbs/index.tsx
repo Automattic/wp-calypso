@@ -51,12 +51,20 @@ const BreadcrumbsNav = forwardRef<
 	HTMLElement,
 	BreadcrumbProps & {
 		isOffscreen?: boolean;
-	}
+	} & React.HTMLAttributes< HTMLElement >
 >( function BreadcrumbsNav(
-	{ isOffscreen, items, showCurrentItem = false, variant = 'default' },
+	{
+		isOffscreen,
+		items,
+		showCurrentItem = false,
+		variant = 'default',
+		[ 'aria-label' ]: ariaLabel,
+		...props
+	},
 	ref
 ) {
 	const { __ } = useI18n();
+	ariaLabel = ariaLabel ?? __( 'Breadcrumbs' );
 
 	// Always show the first item. The last item (current page) is rendered
 	// conditionally based on the `showCurrentItem` prop.
@@ -94,9 +102,10 @@ const BreadcrumbsNav = forwardRef<
 			ref={ ref }
 			spacing={ 0 }
 			justify="flex-start"
-			aria-label={ __( 'Breadcrumbs' ) }
+			aria-label={ ariaLabel }
 			expanded={ false }
 			aria-hidden={ isOffscreen }
+			{ ...props }
 		>
 			<BreadcrumbItem item={ firstItem } />
 			{ isCompact ? (
