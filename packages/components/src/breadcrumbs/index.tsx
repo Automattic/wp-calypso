@@ -15,7 +15,7 @@ import './style.scss';
 function BreadcrumbsMenu( { items }: { items: BreadcrumbItemProps[] } ) {
 	const { __ } = useI18n();
 	return (
-		<span className="a8c-components-breadcrumbs__item-wrapper">
+		<li className="a8c-components-breadcrumbs__item-wrapper">
 			<Menu placement="bottom-start">
 				<Menu.TriggerButton
 					className="a8c-components-breadcrumbs__item"
@@ -33,17 +33,36 @@ function BreadcrumbsMenu( { items }: { items: BreadcrumbItemProps[] } ) {
 					) ) }
 				</Menu.Popover>
 			</Menu>
-		</span>
+		</li>
 	);
 }
 
 function BreadcrumbItem( { item: { label, href, onClick } }: { item: BreadcrumbItemProps } ) {
 	return (
-		<span className="a8c-components-breadcrumbs__item-wrapper">
+		<li className="a8c-components-breadcrumbs__item-wrapper">
 			<a href={ href } onClick={ onClick } className="a8c-components-breadcrumbs__item">
 				{ label }
 			</a>
-		</span>
+		</li>
+	);
+}
+
+function BreadcrumbCurrentItem( {
+	item: { label },
+	visible = false,
+}: {
+	item: BreadcrumbItemProps;
+	visible: boolean;
+} ) {
+	const content = (
+		<Text as="span" className="a8c-components-breadcrumbs__item" aria-current="page">
+			{ label }
+		</Text>
+	);
+	return visible ? (
+		<li className="a8c-components-breadcrumbs__item-wrapper is-current">{ content }</li>
+	) : (
+		<VisuallyHidden as="li">{ content }</VisuallyHidden>
 	);
 }
 
@@ -73,40 +92,34 @@ const BreadcrumbsNav = forwardRef<
 	 * Noting that we prioritize the `isCompact` prop over the `width` checks.
 	 */
 	const isCompact = ! isOffscreen && hasMiddleItems && variant === 'compact';
-	const currentItem = (
-		<span className="a8c-components-breadcrumbs__item-wrapper is-current">
-			<Text
-				as="span"
-				className="a8c-components-breadcrumbs__item"
-				aria-current="page"
-				aria-hidden={ ! showCurrentItem }
-			>
-				{ items[ items.length - 1 ].label }
-			</Text>
-		</span>
-	);
+
 	return (
-		<HStack
-			as="nav"
+		<nav
 			className={ clsx( 'a8c-components-breadcrumbs', { 'is-offscreen': isOffscreen } ) }
 			ref={ ref }
-			spacing={ 0 }
-			justify="flex-start"
-			expanded={ false }
-			inert={ isOffscreen }
+			aria-hidden={ isOffscreen }
+			inert={ isOffscreen ? '' : undefined }
 			{ ...props }
 		>
-			<BreadcrumbItem item={ firstItem } />
-			{ isCompact ? (
-				<BreadcrumbsMenu items={ middleItems } />
-			) : (
-				middleItems.map( ( item, index ) => (
-					<BreadcrumbItem key={ `${ item.label }-${ index }` } item={ item } />
-				) )
-			) }
-			{ parentItem && <BreadcrumbItem item={ parentItem } /> }
-			{ showCurrentItem ? currentItem : <VisuallyHidden as="span">{ currentItem }</VisuallyHidden> }
-		</HStack>
+			<HStack
+				as="ul"
+				className="a8c-components-breadcrumbs__list"
+				spacing={ 0 }
+				justify="flex-start"
+				expanded={ false }
+			>
+				<BreadcrumbItem item={ firstItem } />
+				{ isCompact ? (
+					<BreadcrumbsMenu items={ middleItems } />
+				) : (
+					middleItems.map( ( item, index ) => (
+						<BreadcrumbItem key={ `${ item.label }-${ index }` } item={ item } />
+					) )
+				) }
+				{ parentItem && <BreadcrumbItem item={ parentItem } /> }
+				<BreadcrumbCurrentItem item={ items[ items.length - 1 ] } visible={ showCurrentItem } />
+			</HStack>
+		</nav>
 	);
 } );
 

@@ -4,6 +4,12 @@
 .a8c-components-breadcrumbs {
 	overflow: visible;
 
+	.a8c-components-breadcrumbs__list {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+	}
+
 	.a8c-components-breadcrumbs__item-wrapper {
 		display: inline-flex;
 		flex-shrink: 0;
