@@ -57,11 +57,6 @@ describe( 'index', () => {
 			deleteSite: mockDeleteSite,
 		};
 	} );
-	jest.mock( 'calypso/state/explat-experiments/actions', () => {
-		return {
-			getRemoveDuplicateViewsExperimentAssignment: jest.fn(),
-		};
-	} );
 
 	test( 'Check DeleteSite renders as expected', async () => {
 		const mockStore = configureStore( [ thunk ] );
