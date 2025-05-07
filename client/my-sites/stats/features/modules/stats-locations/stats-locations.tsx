@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import page from '@automattic/calypso-router';
 import { SimplifiedSegmentedControl, StatsCard } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { mapMarker } from '@wordpress/icons';
@@ -19,6 +20,7 @@ import {
 	trackStatsAnalyticsEvent,
 } from 'calypso/my-sites/stats/utils';
 import { useDispatch, useSelector } from 'calypso/state';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
 import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
 import { receiveSiteStats } from 'calypso/state/stats/lists/actions';
 import { getSiteStatsNormalizedData } from 'calypso/state/stats/lists/selectors';
@@ -65,6 +67,11 @@ type SelectOptionType = {
 interface StatsModuleLocationsProps extends StatsDefaultModuleProps {
 	initialGeoMode?: string;
 	query: StatsQueryType;
+	context: {
+		query: {
+			[ key: string ]: string | undefined;
+		};
+	};
 }
 
 const StatsLocations: React.FC< StatsModuleLocationsProps > = ( {
@@ -72,23 +79,51 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( {
 	period,
 	query,
 	summaryUrl,
+	context,
+	summary,
 } ) => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId ) as number;
+	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 	const statType = STAT_TYPE_COUNTRY_VIEWS;
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 	const supportUrl = isOdysseyStats
 		? `${ JETPACK_SUPPORT_URL_TRAFFIC }#views-by-locations`
 		: LOCATIONS_SUPPORT_URL;
 	const dispatch = useDispatch();
-	const urlGeoMode =
-		initialGeoMode || new URLSearchParams( window.location.search ).get( 'geoMode' );
-	const [ selectedOption, setSelectedOption ] = useState(
-		urlGeoMode && urlGeoMode in GEO_MODES ? urlGeoMode : OPTION_KEYS.COUNTRIES
-	);
+	const [ selectedOption, setSelectedOption ] = useState( () => {
+		const urlGeoMode = initialGeoMode || context.query.geoMode;
+		return urlGeoMode && urlGeoMode in GEO_MODES ? urlGeoMode : OPTION_KEYS.COUNTRIES;
+	} );
 	const isStatsNavigationImprovementEnabled = config.isEnabled( 'stats/navigation-improvement' );
 
 	const [ countryFilter, setCountryFilter ] = useState< string | null >( null );
+
+	const basePath = useMemo(
+		() => `/stats/${ period.period }/locations/${ siteSlug }`,
+		[ period.period, siteSlug ]
+	);
+
+	useEffect( () => {
+		if ( ! summary ) {
+			return;
+		}
+
+		const geoModeParam = context.query[ 'geoMode' ];
+		const isValidGeoModeParam =
+			geoModeParam && Object.values( OPTION_KEYS ).includes( geoModeParam );
+
+		if ( ! isValidGeoModeParam ) {
+			return;
+		}
+
+		// If URL has valid param and it's different from state, update state
+		if ( geoModeParam !== selectedOption ) {
+			const updatedQuery = { ...context.query, [ 'geoMode' ]: selectedOption };
+			const queryString = new URLSearchParams( updatedQuery ).toString();
+			page( `${ basePath }?${ queryString }` );
+		}
+	}, [ context.query, selectedOption, basePath, summary ] );
 
 	const optionLabels = {
 		[ OPTION_KEYS.COUNTRIES ]: {

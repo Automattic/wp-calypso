@@ -156,6 +156,7 @@ class StatsSummary extends Component {
 								query={ moduleQuery }
 								summary
 								listItemClassName={ listItemClassName }
+								context={ this.props.context }
 							/>
 						) : (
 							<StatsModuleCountries
@@ -184,6 +185,7 @@ class StatsSummary extends Component {
 							summary
 							listItemClassName={ listItemClassName }
 							initialGeoMode={ urlParams.get( 'geoMode' ) }
+							context={ this.props.context }
 						/>
 					</Fragment>
 				);
