@@ -14,15 +14,31 @@ export default function Boolean< Item >( {
 	data,
 	hideLabelFromVision,
 }: DataFormControlProps< Item > ) {
-	const { id, getValue } = field;
+	const { id, getValue, label } = field;
+	if ( hideLabelFromVision ) {
+		return (
+			<ToggleControl
+				__nextHasNoMarginBottom
+				label={ '' }
+				checked={ getValue( { item: data } ) }
+				onChange={ () =>
+					onChange( { [ id ]: ! getValue( { item: data } ) } )
+				}
+			/>
+		);
+	}
+
 	return (
-		<ToggleControl
-			__nextHasNoMarginBottom
-			label={ hideLabelFromVision ? '' : field.label }
-			checked={ getValue( { item: data } ) }
-			onChange={ () =>
-				onChange( { [ id ]: ! getValue( { item: data } ) } )
-			}
-		/>
+		<label>
+			{ label }
+			<ToggleControl
+				__nextHasNoMarginBottom
+				label={ '' }
+				checked={ getValue( { item: data } ) }
+				onChange={ () =>
+					onChange( { [ id ]: ! getValue( { item: data } ) } )
+				}
+			/>
+		</label>
 	);
 }
