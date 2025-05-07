@@ -239,7 +239,7 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 								[ `importer-wrapper__${ importer }` ]: !! importer,
 							}
 						) }
-						columnWidth={ 4 }
+						columnWidth={ 6 }
 						topBar={ <Step.TopBar leftElement={ <Step.BackButton onClick={ onGoBack } /> } /> }
 						heading={
 							<Step.Heading text={ importerData.title } subText={ importerData.description } />
