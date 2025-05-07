@@ -3,7 +3,7 @@ import { Step, StepContainer } from '@automattic/onboarding';
 import { ProgressBar } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
-import { useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { getImportDragConfig } from 'calypso/blocks/importer/components/importer-drag/config';
 import NotAuthorized from 'calypso/blocks/importer/components/not-authorized';
 import NotFound from 'calypso/blocks/importer/components/not-found';
@@ -90,6 +90,13 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 		const isLoading = useMemo( () => {
 			return ! isImporterStatusHydrated || ! hasAllSitesFetched || isRequestingCurrentSite;
 		}, [ isImporterStatusHydrated, hasAllSitesFetched, isRequestingCurrentSite ] );
+
+		const skipToDashboardAction = useCallback( () => {
+			recordTracksEvent( 'calypso_site_importer_skip_to_dashboard', {
+				from: 'success-step',
+			} );
+			stepNavigator?.goToDashboardPage?.();
+		}, [ stepNavigator ] );
 
 		useSaveHostingFlowPathStep( flow, currentPath );
 
@@ -234,7 +241,13 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 
 		if ( useContainerV2 ) {
 			const importerData = getImportDragConfig( importer, stepNavigator?.supportLinkModal );
+			const showHeading =
+				importJob?.importerState === appStates.MAP_AUTHORS ||
+				importJob?.importerState === appStates.READY_FOR_UPLOAD ||
+				importJob?.importerState === appStates.UPLOAD_PROCESSING ||
+				importJob?.importerState === appStates.UPLOADING;
 
+			const showBackButton = importJob?.importerState !== appStates.IMPORT_SUCCESS;
 			return (
 				<>
 					<QuerySites siteId={ siteId } />
@@ -251,9 +264,22 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 							}
 						) }
 						columnWidth={ 6 }
-						topBar={ <Step.TopBar leftElement={ <Step.BackButton onClick={ onGoBack } /> } /> }
+						topBar={
+							<Step.TopBar
+								leftElement={ showBackButton ? <Step.BackButton onClick={ onGoBack } /> : null }
+								rightElement={
+									! showBackButton ? (
+										<Step.SkipButton onClick={ skipToDashboardAction }>
+											{ __( 'Skip to dashboard' ) }
+										</Step.SkipButton>
+									) : null
+								}
+							/>
+						}
 						heading={
-							<Step.Heading text={ importerData.title } subText={ importerData.description } />
+							showHeading && (
+								<Step.Heading text={ importerData.title } subText={ importerData.description } />
+							)
 						}
 					>
 						{ renderStepContent() }
