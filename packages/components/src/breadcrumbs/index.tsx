@@ -53,19 +53,9 @@ const BreadcrumbsNav = forwardRef<
 		isOffscreen?: boolean;
 	}
 >( function BreadcrumbsNav(
-	{
-		isOffscreen,
-		items,
-		showCurrentItem = false,
-		variant = 'default',
-		[ 'aria-label' ]: ariaLabel,
-		...props
-	},
+	{ isOffscreen, items, showCurrentItem = false, variant = 'default', ...props },
 	ref
 ) {
-	const { __ } = useI18n();
-	ariaLabel = ariaLabel ?? __( 'Breadcrumbs' );
-
 	// Always show the first item. The last item (current page) is rendered
 	// conditionally based on the `showCurrentItem` prop.
 	const hasMiddleItems = items.length > 3;
@@ -102,7 +92,6 @@ const BreadcrumbsNav = forwardRef<
 			ref={ ref }
 			spacing={ 0 }
 			justify="flex-start"
-			aria-label={ ariaLabel }
 			expanded={ false }
 			inert={ isOffscreen }
 			{ ...props }
@@ -121,8 +110,13 @@ const BreadcrumbsNav = forwardRef<
 	);
 } );
 
-function UnforwardedBreadcrumbs( props: BreadcrumbProps, ref: React.ForwardedRef< HTMLElement > ) {
-	const { items } = props;
+function UnforwardedBreadcrumbs(
+	{ items, 'aria-label': ariaLabel, ...props }: BreadcrumbProps,
+	ref: React.ForwardedRef< HTMLElement >
+) {
+	const { __ } = useI18n();
+	const computedAriaLabel = ariaLabel ?? __( 'Breadcrumbs' );
+
 	const offScreenWidth = useRef( 0 );
 	const containerWidth = useRef( 0 );
 	const [ shouldRenderCompact, setShouldRenderCompact ] = useState( false );
@@ -148,8 +142,20 @@ function UnforwardedBreadcrumbs( props: BreadcrumbProps, ref: React.ForwardedRef
 
 	return (
 		<>
-			<BreadcrumbsNav ref={ offScreenRef } { ...props } variant={ computedVariant } isOffscreen />
-			<BreadcrumbsNav ref={ mergedRefs } { ...props } variant={ computedVariant } />
+			<BreadcrumbsNav
+				ref={ offScreenRef }
+				items={ items }
+				{ ...props }
+				variant={ computedVariant }
+				isOffscreen
+			/>
+			<BreadcrumbsNav
+				ref={ mergedRefs }
+				items={ items }
+				{ ...props }
+				variant={ computedVariant }
+				aria-label={ computedAriaLabel }
+			/>
 		</>
 	);
 }
