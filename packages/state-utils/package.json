@@ -8,6 +8,7 @@
 	"sideEffects": true,
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
+	"calypso:src": "src/index.ts",
 	"exports": {
 		".": {
 			"calypso:src": "./src/index.ts",
