@@ -106,7 +106,7 @@ const DotcomSitesDataViews = ( {
 		const dataViewFields: Field< SiteExcerptData >[] = [
 			{
 				id: 'icon',
-				label: __( 'Site Icon' ),
+				label: __( 'Site icon' ),
 				render: ( { item }: { item: SiteExcerptData } ) => {
 					return (
 						<SiteIcon
@@ -152,7 +152,7 @@ const DotcomSitesDataViews = ( {
 			},
 			{
 				id: 'last-publish',
-				label: __( 'Last Published' ),
+				label: __( 'Last published' ),
 				render: ( { item }: { item: SiteExcerptData } ) =>
 					item.options?.updated_at ? <TimeSince date={ item.options.updated_at } /> : '',
 				enableHiding: false,
@@ -173,7 +173,7 @@ const DotcomSitesDataViews = ( {
 			},
 			{
 				id: 'last-interacted',
-				label: __( 'Last Interacted' ),
+				label: __( 'Last interacted' ),
 				render: () => null,
 				enableHiding: false,
 				enableSorting: true,
