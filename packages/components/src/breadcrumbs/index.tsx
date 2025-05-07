@@ -17,20 +17,15 @@ function BreadcrumbsMenu( { items }: { items: BreadcrumbItemProps[] } ) {
 		<span className="a8c-components-breadcrumbs__item-wrapper">
 			<Menu placement="bottom-start">
 				<Menu.TriggerButton
-					render={
-						<Button
-							size="compact"
-							className="a8c-components-breadcrumbs__item"
-							text="…"
-							label={ __( 'More breadcrumb items' ) }
-						/>
-					}
+					className="a8c-components-breadcrumbs__item"
+					render={ <Button size="compact" text="…" label={ __( 'More breadcrumb items' ) } /> }
 				/>
 				<Menu.Popover>
 					{ items.map( ( item, index ) => (
 						<Menu.Item
 							key={ `${ item.label }-${ index }` }
-							render={ <a href={ item.href } onClick={ item.onClick } /> }
+							onClick={ item.onClick }
+							render={ <a href={ item.href } /> }
 						>
 							<Menu.ItemLabel>{ item.label }</Menu.ItemLabel>
 						</Menu.Item>
