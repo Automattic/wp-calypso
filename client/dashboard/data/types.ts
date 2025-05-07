@@ -150,6 +150,7 @@ export interface BasicMetricsData {
 
 export interface PerformanceReport {
 	overall_score: number;
+	timestamp: string;
 }
 
 export interface UrlPerformanceInsights {

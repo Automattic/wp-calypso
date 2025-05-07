@@ -11,10 +11,19 @@ interface PerformanceData {
 	desktopLoaded: boolean;
 	mobileLoaded: boolean;
 	isLoading: boolean;
+	isRunningDesktopReport: boolean;
+	isRunningMobileReport: boolean;
+	isError: boolean;
 }
 
+const isReportFailed = ( report: unknown ) => report === 'failed';
+
 export function usePerformanceData( siteId: string, url: string ): PerformanceData {
-	const { data: siteSettings, isLoading: isLoadingSiteSettings } = useQuery( {
+	const {
+		data: siteSettings,
+		isLoading: isLoadingSiteSettings,
+		isError: isSiteSettingsError,
+	} = useQuery( {
 		...siteSettingsQuery( siteId ),
 		refetchOnWindowFocus: false,
 		retry: false,
@@ -24,7 +33,11 @@ export function usePerformanceData( siteId: string, url: string ): PerformanceDa
 	const wpcomPerformanceReportUrl: string = siteSettings?.wpcom_performance_report_url || '';
 	const [ , cachedHash ] = wpcomPerformanceReportUrl.split( '&hash=' );
 
-	const { data: basicMetricsData, isLoading: isLoadingBasicMetrics } = useQuery( {
+	const {
+		data: basicMetricsData,
+		isLoading: isLoadingBasicMetrics,
+		isError: isBasicMetricsError,
+	} = useQuery( {
 		...basicMetricsQuery( url ),
 		refetchOnWindowFocus: false,
 		enabled: !! url && ! isLoadingSiteSettings && ! cachedHash,
@@ -32,7 +45,11 @@ export function usePerformanceData( siteId: string, url: string ): PerformanceDa
 
 	const token = cachedHash || basicMetricsData?.token;
 
-	const { data: performanceData, isLoading: isLoadingPerformanceInsights } = useQuery( {
+	const {
+		data: performanceData,
+		isLoading: isLoadingPerformanceInsights,
+		isError: isInsightsError,
+	} = useQuery( {
 		...performanceInsightsQuery( url, token || '' ),
 		refetchOnWindowFocus: false,
 		enabled: !! url && !! token,
@@ -61,6 +78,13 @@ export function usePerformanceData( siteId: string, url: string ): PerformanceDa
 			? performanceData.pagespeed.mobile
 			: undefined;
 
+	const isError =
+		isSiteSettingsError ||
+		isBasicMetricsError ||
+		isInsightsError ||
+		isReportFailed( performanceData?.pagespeed?.mobile ) ||
+		isReportFailed( performanceData?.pagespeed.desktop );
+
 	return {
 		hash: token,
 		mobileReport,
@@ -70,5 +94,8 @@ export function usePerformanceData( siteId: string, url: string ): PerformanceDa
 		desktopLoaded,
 		mobileLoaded,
 		isLoading: isLoadingSiteSettings || isLoadingBasicMetrics || isLoadingPerformanceInsights,
+		isRunningDesktopReport: ! desktopLoaded && 'running' === performanceData?.pagespeed?.desktop,
+		isRunningMobileReport: ! mobileLoaded && 'running' === performanceData?.pagespeed?.mobile,
+		isError,
 	};
 }
