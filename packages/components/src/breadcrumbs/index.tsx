@@ -6,7 +6,8 @@ import {
 } from '@wordpress/components';
 import { useResizeObserver, useMergeRefs } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
-import { useState, forwardRef, useRef } from 'react';
+import clsx from 'clsx';
+import React, { useState, forwardRef, useRef, useLayoutEffect } from 'react';
 import Menu from '../menu';
 import { BreadcrumbProps, BreadcrumbItemProps } from './types';
 import './style.scss';
@@ -50,33 +51,17 @@ function BreadcrumbItem( { item: { label, href, onClick } }: { item: BreadcrumbI
 	);
 }
 
-function UnforwardedBreadcrumbs(
-	{ items, showCurrentItem = false, variant = 'default' }: BreadcrumbProps,
-	ref: React.ForwardedRef< HTMLElement >
-) {
-	const scrollWidth = useRef( 0 );
-	const [ containerWidth, setContainerWidth ] = useState( 0 );
-	const containerRef = useResizeObserver( ( resizeObserverEntries ) => {
-		const [ entry ] = resizeObserverEntries;
-		const { inlineSize } = entry.borderBoxSize[ 0 ];
-		/**
-		 * We only need to set the `scrollWidth` once, but we also need to ensure
-		 * that it is only set when there was no previous value and it's different
-		 * than the container's `inlineSize`. This is because the `nav` element expands
-		 * to the available space and in a large container where the `nav` doesn't overflow,
-		 * would have the same value for `scrollWidth` and `inlineSize`.
-		 * We cannot set something like `width: fit-content`, as it would never
-		 * expand (hide the dropdown) in future resizes.
-		 */
-		if ( ! scrollWidth?.current && entry.target.scrollWidth !== inlineSize ) {
-			scrollWidth.current = entry.target.scrollWidth;
-		}
-		setContainerWidth( resizeObserverEntries[ 0 ].borderBoxSize[ 0 ].inlineSize );
-	} );
-	const mergedRefs = useMergeRefs( [ ref, containerRef ] );
-	if ( ! items.length || items.length === 1 ) {
-		return null;
-	}
+function BreadcrumbsNav( {
+	isOffscreen,
+	navRef,
+	shouldRenderCompact,
+	...breadcrumbProps
+}: BreadcrumbProps & {
+	isOffscreen?: boolean;
+	navRef: React.RefObject< HTMLElement > | React.RefCallback< HTMLElement >;
+	shouldRenderCompact: boolean;
+} ) {
+	const { items, showCurrentItem = false, variant = 'default' } = breadcrumbProps;
 	// Always show the first item. The last item (current page) is rendered
 	// conditionally based on the `showCurrentItem` prop.
 	const hasMiddleItems = items.length > 3;
@@ -88,13 +73,13 @@ function UnforwardedBreadcrumbs(
 	/**
 	 * As the container shrinks, multiple breadcrumb items between the first and
 	 * last visible item should collapse into a dropdown menu to avoid wrapping.
-	 * The current approach is to calcualte and keep the original `scrollWidth` of
-	 * the container and observe for `inlineSize` changes. If the container would
-	 * overflow, we set the `_isCompact` prop to true.
-	 * Noting that we prioritize the `isCompact` prop over the `scrollWidth` check.
+	 * The current approach is to keep a ref of the `offScreen (full-width)`
+	 * container and observe for `inlineSize` changes. If the `offScreen` container
+	 * would overflow, we should render the compact variant.
+	 * Noting that we prioritize the `isCompact` prop over the `width` checks.
 	 */
-	const _isCompact =
-		hasMiddleItems && ( variant === 'compact' || containerWidth < scrollWidth.current );
+	const isCompact =
+		! isOffscreen && hasMiddleItems && ( variant === 'compact' || shouldRenderCompact );
 	const currentItem = (
 		<span className="a8c-components-breadcrumb__item-wrapper is-current">
 			<Text
@@ -110,15 +95,16 @@ function UnforwardedBreadcrumbs(
 	return (
 		<HStack
 			as="nav"
-			className="a8c-components-breadcrumbs"
-			ref={ mergedRefs }
+			className={ clsx( 'a8c-components-breadcrumbs', { 'is-offscreen': isOffscreen } ) }
+			ref={ navRef }
 			spacing={ 0 }
 			justify="flex-start"
 			aria-label={ __( 'Breadcrumbs' ) }
 			expanded={ false }
+			aria-hidden={ isOffscreen }
 		>
 			<BreadcrumbItem item={ firstItem } />
-			{ _isCompact ? (
+			{ isCompact ? (
 				<BreadcrumbsMenu items={ middleItems } />
 			) : (
 				middleItems.map( ( item, index ) => (
@@ -128,6 +114,48 @@ function UnforwardedBreadcrumbs(
 			{ parentItem && <BreadcrumbItem item={ parentItem } /> }
 			{ showCurrentItem ? currentItem : <VisuallyHidden as="span">{ currentItem }</VisuallyHidden> }
 		</HStack>
+	);
+}
+
+function UnforwardedBreadcrumbs( props: BreadcrumbProps, ref: React.ForwardedRef< HTMLElement > ) {
+	const { items } = props;
+	const offScreenRef = useRef< HTMLElement >( null );
+	const containerWidth = useRef( 0 );
+	const [ shouldRenderCompact, setShouldRenderCompact ] = useState( false );
+	const containerRef = useResizeObserver( ( resizeObserverEntries ) => {
+		const [ entry ] = resizeObserverEntries;
+		const { inlineSize } = entry.borderBoxSize[ 0 ];
+		if ( ! offScreenRef.current ) {
+			return;
+		}
+		setShouldRenderCompact( offScreenRef.current.scrollWidth > inlineSize );
+		containerWidth.current = inlineSize;
+	} );
+	// If `items` change we need to recalculate whether we should render the compact variant.
+	useLayoutEffect( () => {
+		if ( ! offScreenRef.current ) {
+			return;
+		}
+		setShouldRenderCompact( offScreenRef.current.scrollWidth > containerWidth.current );
+	}, [ items, setShouldRenderCompact ] );
+	const mergedRefs = useMergeRefs( [ ref, containerRef ] );
+	if ( ! items.length || items.length === 1 ) {
+		return null;
+	}
+	return (
+		<>
+			<BreadcrumbsNav
+				isOffscreen
+				navRef={ offScreenRef }
+				shouldRenderCompact={ shouldRenderCompact }
+				{ ...props }
+			/>
+			<BreadcrumbsNav
+				navRef={ mergedRefs }
+				shouldRenderCompact={ shouldRenderCompact }
+				{ ...props }
+			/>
+		</>
 	);
 }
 

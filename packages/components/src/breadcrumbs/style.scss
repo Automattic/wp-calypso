@@ -33,4 +33,11 @@
 			color: $gray-900;
 		}
 	}
+
+	&.is-offscreen {
+		position: absolute;
+		top: -9999em;
+		width: fit-content;
+		visibility: hidden;
+	}
 }
