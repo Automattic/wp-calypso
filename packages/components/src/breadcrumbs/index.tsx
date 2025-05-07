@@ -104,7 +104,7 @@ const BreadcrumbsNav = forwardRef<
 			justify="flex-start"
 			aria-label={ ariaLabel }
 			expanded={ false }
-			aria-hidden={ isOffscreen }
+			inert={ isOffscreen }
 			{ ...props }
 		>
 			<BreadcrumbItem item={ firstItem } />
