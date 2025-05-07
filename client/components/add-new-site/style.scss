@@ -129,6 +129,7 @@ button, a {
 		.add-new-site__popover-button-heading {
 			font-size: rem(14px);
 			font-weight: 600;
+			text-wrap: pretty;
 		}
 
 		.add-new-site__popover-button-description {
@@ -136,6 +137,7 @@ button, a {
 			font-weight: 400;
 			color: var(--color-text-black);
 			padding-top: 4px;
+			text-wrap: pretty;
 		}
 	}
 }
