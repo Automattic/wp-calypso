@@ -37,7 +37,7 @@ import type {
 import type { SetSelection } from '../../private-types';
 import ColumnHeaderMenu from './column-header-menu';
 import ColumnPrimary from './column-primary';
-import { useIsScrolledEnd } from './use-is-scrolled-end';
+import { useIsHorizontalScrollEnd } from './use-is-horizontal-scroll-end';
 
 interface TableColumnFieldProps< Item > {
 	fields: NormalizedField< Item >[];
@@ -293,7 +293,7 @@ function ViewTable< Item >( {
 			}
 		};
 
-	const isScrolledEnd = useIsScrolledEnd( {
+	const isHorizontalScrollEnd = useIsHorizontalScrollEnd( {
 		scrollContainerRef: containerRef,
 		enabled: !! actions?.length,
 	} );
@@ -382,7 +382,7 @@ function ViewTable< Item >( {
 										'dataviews-view-table__actions-column--sticky':
 											true,
 										'dataviews-view-table__actions-column--stuck':
-											! isScrolledEnd,
+											! isHorizontalScrollEnd,
 									}
 								) }
 							>
@@ -418,7 +418,9 @@ function ViewTable< Item >( {
 								onChangeSelection={ onChangeSelection }
 								onClickItem={ onClickItem }
 								isItemClickable={ isItemClickable }
-								isActionsColumnSticky={ ! isScrolledEnd }
+								isActionsColumnSticky={
+									! isHorizontalScrollEnd
+								}
 							/>
 						) ) }
 				</tbody>

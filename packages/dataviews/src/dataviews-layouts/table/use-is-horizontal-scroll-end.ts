@@ -17,22 +17,22 @@ const isScrolledToEnd = ( element: Element ) => {
 /**
  * A hook to check if a given scroll container has reached the horizontal scroll end.
  */
-export function useIsScrolledEnd( {
+export function useIsHorizontalScrollEnd( {
 	scrollContainerRef,
 	enabled = false,
 }: {
 	scrollContainerRef: React.MutableRefObject< HTMLDivElement | null >;
 	enabled?: boolean;
 } ): boolean {
-	const [ isScrolledEnd, setIsScrolledEnd ] = useState( false );
+	const [ isHorizontalScrollEnd, setIsHorizontalScrollEnd ] = useState( false );
 
-	const handleIsScrolledEnd = useDebounce(
+	const handleIsHorizontalScrollEnd = useDebounce(
 		useCallback( () => {
 			const scrollContainer = scrollContainerRef.current;
 			if ( scrollContainer ) {
-				setIsScrolledEnd( isScrolledToEnd( scrollContainer ) );
+				setIsHorizontalScrollEnd( isScrolledToEnd( scrollContainer ) );
 			}
-		}, [ scrollContainerRef, setIsScrolledEnd ] ),
+		}, [ scrollContainerRef, setIsHorizontalScrollEnd ] ),
 		200
 	);
 
@@ -45,21 +45,21 @@ export function useIsScrolledEnd( {
 			return () => {};
 		}
 
-		handleIsScrolledEnd();
+		handleIsHorizontalScrollEnd();
 		scrollContainerRef.current.addEventListener(
 			'scroll',
-			handleIsScrolledEnd
+			handleIsHorizontalScrollEnd
 		);
-		window.addEventListener( 'resize', handleIsScrolledEnd );
+		window.addEventListener( 'resize', handleIsHorizontalScrollEnd );
 
 		return () => {
 			scrollContainerRef.current?.removeEventListener(
 				'scroll',
-				handleIsScrolledEnd
+				handleIsHorizontalScrollEnd
 			);
-			window.removeEventListener( 'resize', handleIsScrolledEnd );
+			window.removeEventListener( 'resize', handleIsHorizontalScrollEnd );
 		};
 	}, [ scrollContainerRef, enabled ] );
 
-	return isScrolledEnd;
+	return isHorizontalScrollEnd;
 }
