@@ -10,6 +10,7 @@ import { getName, isRefundable, isSubscription } from 'calypso/lib/purchases';
 
 const CancelPurchaseDomainOptions = ( {
 	includedDomainPurchase,
+	includedDomainTransfer,
 	cancelBundledDomain,
 	confirmCancelBundledDomain = false,
 	purchase,
@@ -22,7 +23,7 @@ const CancelPurchaseDomainOptions = ( {
 		setConfirmCancel( confirmCancelBundledDomain );
 	}, [ confirmCancelBundledDomain ] );
 
-	if ( ! includedDomainPurchase || ! isSubscription( purchase ) ) {
+	if ( ( ! includedDomainPurchase && ! includedDomainTransfer ) || ! isSubscription( purchase ) ) {
 		return null;
 	}
 
@@ -116,6 +117,36 @@ const CancelPurchaseDomainOptions = ( {
 		</div>
 	);
 
+	const DomainTransferMessage = () => (
+		<div>
+			<p>
+				{ translate(
+					'This plan includes a domain transfer, %(domain)s, normally a %(domainCost)s purchase. ' +
+						'The domain will not be removed along with the plan, to avoid any interruptions for your visitors.',
+					{
+						args: {
+							domain: includedDomainTransfer.meta,
+							domainCost: includedDomainTransfer.priceText,
+						},
+					}
+				) }
+			</p>
+			<p>
+				{ translate(
+					'You will receive a partial refund of %(refundAmount)s which is %(planCost)s for the plan ' +
+						'minus %(domainCost)s for the domain.',
+					{
+						args: {
+							domainCost: includedDomainTransfer.priceText,
+							planCost: planCostText,
+							refundAmount: purchase.refundText,
+						},
+					}
+				) }
+			</p>
+		</div>
+	);
+
 	const RefundablePurchaseWithNonRefundableDomainMessage = () => (
 		<div>
 			<p>
@@ -145,6 +176,10 @@ const CancelPurchaseDomainOptions = ( {
 			</p>
 		</div>
 	);
+
+	if ( includedDomainTransfer ) {
+		return <DomainTransferMessage />;
+	}
 
 	if (
 		! isDomainMapping( includedDomainPurchase ) &&
