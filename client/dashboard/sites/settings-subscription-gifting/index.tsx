@@ -35,7 +35,7 @@ const form = {
 
 export function getSubscriptionGiftingSettingBadges( settings: SiteSettings ) {
 	return settings.wpcom_gifting_subscription
-		? [ { text: __( 'Enabled' ), intent: 'success' } ]
+		? [ { text: __( 'Enabled' ), intent: 'success' as const } ]
 		: [ { text: __( 'Disabled' ) } ];
 }
 
