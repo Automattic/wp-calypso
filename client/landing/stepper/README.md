@@ -22,19 +22,17 @@ Stepper steps should be a lot like native form inputs. They may receive some pro
 2. They should not communicate with other steps (eg via query params).
 3. **They should not have side effects (eg persisting stuff in local storage).**
 
-They should _only submit_ and the flow should do all the thinking, persisting, and the navigation.
+They should **only submit** to the flow, and the flow should do all the thinking, persisting, and the navigation.
 
-_Common question_: What if a step wants to cancel/skip/drop out? Then it should submit something like `{ action: skip }`.
+**Common question**: What if a step wants to cancel/skip/drop out? Then it should submit something like `{ action: skip }`.
 
 **If you're curious why:**
 
-1. When steps make navigational decisions, the finite-state machine is thrown out of the window. The dependency graph explodes and things get out of control quickly. Especially if you consider that steps are reusable across flows.
+1. When steps make navigational decisions, the aforementioned finite-state machine is thrown out of the window. The dependency graph explodes and things get out of control quickly. Especially if you consider that steps are reusable across flows.
 2. Same thing happens when steps communicate. Plus, when steps communicate, it means the flow is blind to some decisions, and the steps are less re-usable now.
 3. When a step has side effects in Flow A, they may effect the step's behaviour of Flow B. Only the flow should persist things.
 
 In general, the smarter the step, the more problematic and tailored it is. Please treat your steps as buttons or inputs.
-
-The most important principle of Stepper is that steps should not interact with each other. Rather, they should only interact with the flow.
 
 ### Making a flow
 
@@ -60,8 +58,6 @@ A flow is a collection of steps. Each of these steps submit some information to 
 }
 
 export const exampleFlow: FlowV2< typeof initialize > = {
-	// The name of the flow is what appears in the pathname. It must be unique.
-	// This flow will be under /setup/my-flow.
 	/**
 	 * The name of the flow is what appears in the pathname. It must be unique.
 	 * This flow will be under /setup/my-flow.
@@ -69,7 +65,7 @@ export const exampleFlow: FlowV2< typeof initialize > = {
 	name: 'my-flow',
 
 	/**
-	 * This flag that _MUST be `true` for signup flows_ (generally where a new site may be created), and should be `false` for other flows.
+	 * This flag MUST be `true` for signup flows (generally where a new site may be created), and should be `false` for other flows.
 	 * It controls whether we'll trigger a `calypso_signup_start` Tracks event when the flow starts.
 	 * */
 	isSignupFlow: true,
@@ -94,15 +90,14 @@ export const exampleFlow: FlowV2< typeof initialize > = {
 					const domainItem = providedDependencies.domainItem;
 					// By calling this, we're updating the state of the flow to save the picked domain.
 					// This will be precisely persisted for the whole session, but not longer.
-					set( 'domains', domainItem );
-					// Because the flow knows the steps it contains, `navigate` will only only allow `'plans' | 'domains'` are the first argument.
+					set( 'domains', providedDependencies );
+					// Because the flow knows the steps it contains, `navigate` will only only allow `'plans' | 'domains' | 'processing'` are the first argument.
 					navigate( 'plans' );
 					break;
 				}
 				case 'plans': {
 					// Here we have the data submitted by the plans step.
-					const planItem = providedDependencies.planItem;
-					set( 'plans', planItem );
+					set( 'plans', providedDependencies );
 
 					// setPendingAction allows you to enqueue any promise.
 					setPendingAction( () => createSite() );
@@ -111,7 +106,7 @@ export const exampleFlow: FlowV2< typeof initialize > = {
 				case 'processing': {
 					// The processing step will pick up the pending action we set above, run it, and await it.
 					// It will show a progress bar during that time.
-					// Then it will `submit` whatever your pendingAction resolves to.
+					// Then it will `submit` whatever your pendingAction resolves to. In this example, that would be a site object.
 					const createdSiteId = providedDependencies.sideId;
 					window.location = `/checkout/${ createdSiteId }`;
 					break;
@@ -130,11 +125,11 @@ Flows have to be registered [here](/client/landing/stepper/declarative-flow/regi
 
 #### File hierarchy convention
 
-Please put your flow in a folder, not a loose file. And include a README file with cursory information about your flow.
+[Please put your flow in a folder](https://dotcom.wordpress.com/2025/03/14/stepper-move-flows-into-their-own-folder/), not a loose file. And include a README file with cursory information about your flow.
 
 #### Managing authentication
 
-Stepper takes care of authenticating your users. You should not have to worry about auth at all. All you need to do, is mark the steps as gated behind auth.
+Stepper takes care of authenticating your users. You should not have to worry about auth at all. All you need to do is mark the steps as gated behind auth.
 
 ```ts
 function initialize() {
@@ -174,9 +169,9 @@ async function initialize() {
 
 Note: Before making a step, please make sure there isn't already a suitable step in [`steps.tsx`](/client/landing/stepper/declarative-flow/internals/steps.tsx) file. If you do make a step you'll have to add it to that file.
 
-A step is simply a React component that:
+**A step is simply a React component that**:
 
-1. Renders stuff that collects user input.
+1. Renders UI that collects user input.
 2. Submit said input to the flow.
 3. May or may not accept props from the flow.
 
@@ -247,12 +242,10 @@ It is often the case that you want to customize steps around your flow. You can 
 
 Stepper aims to create a big `steps-repository` that contains the steps and allows them to be recycled and reused. Every step you create is inherently reusable by any future flow. Because steps are like components, they're not parts of the flows, flows just happen to use them.
 
-This creates a couple of restrictions.
-
-To maintain the reusability:
+**This creates a couple of restrictions.**
 
 1. Flow-specific styling should be done in a `style.scss` file put in the flow's folder. Each step should have the basic styling necessary to operate on its own.
-2. Steps should not do `if (flow === 'X') do Y`. This is a very common pattern. It was a necessary evil before we introduced `useStepsProps`. But now, it's an unnecessary evil 😬
+2. Steps should not do `if ( flow === 'X' ) do Y`. This is a very common pattern. It was a necessary evil before we introduced `useStepsProps`. But now, it's an unnecessary evil 😬
 
 #### Renaming Steps
 
@@ -262,7 +255,7 @@ There may be a time when a step needs to be renamed. In order to preserve Tracks
 
 The `useFlowState` hook will allow you to store and retrieve any information for the duration of the session (defined [here](https://vertexp2.wordpress.com/2025/01/20/proposal-signup-state-management-and-persistence/#iii-the-proposal)). Sessions can live a long time. They're not limited by time.
 
-**Note: **You'll need to set `__experimentalUseSessions` flag to `true` to be able to use this new API.
+**Note:** You'll need to set `__experimentalUseSessions` flag to `true` to be able to use this new API.
 
 #### Typed state
 
@@ -278,23 +271,27 @@ set( 'plans', data );
 
 In some cases, flows will need state that is not submitted from a step. In which case, it should be specified and typed in the [manifest](client/landing/stepper/declarative-flow/internals/state-manager/stepper-state-manifest.ts).
 
-### The API
+## The API
 
 | Field Name | Description | Notes |
 |------------|-------------|-------|
-| initialize | <kbd>Required</kbd> Method to define flow steps and pre-flow actions | Required method that runs once when flow is mounted. Can be asynchronous |
-| name | <kbd>Required</kbd> Identifier for the flow | Required string field |
-| useStepNavigation | <kbd>Required</kbd>  Hook for step navigation | Required hook for handling step navigation |
-| isSignupFlow | <kbd>Required</kbd> Indicates if the flow is for signup | Required boolean flag |
-| __experimentalUseBuiltinAuth | Enables built-in authentication within Stepper | Optional boolean flag. When true, the flow will login the user without leaving Stepper |
-| __experimentalUseSessions | Enables session-based progress storage | Optional boolean flag. When true, the flow will use sessions to store the user's progress. **This flag is required if you use `useFlowState` hook. |
-| getSteps | Method to retrieve flow steps | Optional method that returns the flow steps. **In most cases, using this function results in bad practices. Try to avoid it, unless you really have to**. |
-| classnames | CSS classes for styling | Optional string or array of strings |
-| useLoginParams | Hook to configure login URL | Optional hook that returns login configuration object with customLoginPath and extraQueryParams |
-| useSideEffect | Hook for flow-level side effects | Optional hook called at every render in the flow's root. **You can use `useEffect` or other hooks inside this hook**. |
-| useTracksEventProps | Hook for customizing Tracks event properties | Optional hook for overriding default Tracks event logging |
+| `initialize` | <kbd>Required</kbd> Method to define flow steps and pre-flow actions | Required method that runs once when flow is mounted. Can be asynchronous |
+| `name` | <kbd>Required</kbd> Identifier for the flow | Required string field |
+| `useStepNavigation` | <kbd>Required</kbd>  Hook for step navigation | Required hook for handling step navigation |
+| `isSignupFlow` | <kbd>Required</kbd> Indicates if the flow is for signup | Required boolean flag |
+| `__experimentalUseBuiltinAuth` | Enables built-in authentication within Stepper | Optional boolean flag. When true, the flow will login the user without leaving Stepper |
+| `__experimentalUseSessions` | Enables session-based progress storage | Optional boolean flag. When true, the flow will use sessions to store the user's progress. **This flag is required if you use `useFlowState` hook. |
+| `getSteps` | Method to retrieve flow steps | Optional method that returns the flow steps. **In most cases, using this function results in bad practices. Try to avoid it, unless you really have to**. |
+| `classnames` | CSS classes for styling | Optional string or array of strings |
+| `useLoginParams` | Hook to configure login URL | Optional hook that returns login configuration object with customLoginPath and extraQueryParams |
+| `useSideEffect` | Hook for flow-level side effects | Optional hook called at every render in the flow's root. **You can use `useEffect` or other hooks inside this hook**. |
+| `useTracksEventProps` | Hook for customizing Tracks event properties | Optional hook for overriding default Tracks event logging |
+
+
+## Useful utilities and hooks
+
+Please check out the [hooks](/client/landing/stepper/hooks) and [utils](/client/landing/stepper/utils) folders. They have many useful utilities that make building flows easier.
 
 ## Help and feedback
 
 Please feel free to reach out to Team T-Rex for any feedback or if you need help.
-```
