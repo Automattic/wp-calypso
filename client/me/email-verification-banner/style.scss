@@ -1,4 +1,8 @@
 .email-verification-banner {
 	--color-accent: var(--studio-red);
 	--color-accent-60: var(--studio-red-60);
+
+	.banner__action {
+		display: flex;
+	}
 }
