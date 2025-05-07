@@ -1,6 +1,7 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 @import "@wordpress/base-styles/variables";
+@import "@automattic/typography/styles/variables";
 
 .calypso-navigation-header {
 	background-color: var(--wp-components-color-background, #fff);

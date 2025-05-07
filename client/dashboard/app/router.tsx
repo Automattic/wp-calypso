@@ -116,6 +116,17 @@ const siteSettingsRoute = createRoute( {
 	)
 );
 
+const siteSettingsSubscriptionGiftingRoute = createRoute( {
+	getParentRoute: () => siteRoute,
+	path: 'settings/subscription-gifting',
+} ).lazy( () =>
+	import( '../sites/settings-subscription-gifting' ).then( ( d ) =>
+		createLazyRoute( 'site-settings-subscription-gifting' )( {
+			component: d.default,
+		} )
+	)
+);
+
 const domainsRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'domains',
@@ -279,6 +290,7 @@ const createRouteTree = ( config: AppConfig ) => {
 				siteDeploymentsRoute,
 				sitePerformanceRoute,
 				siteSettingsRoute,
+				siteSettingsSubscriptionGiftingRoute,
 			] )
 		);
 	}
@@ -330,6 +342,7 @@ export {
 	siteDeploymentsRoute,
 	sitePerformanceRoute,
 	siteSettingsRoute,
+	siteSettingsSubscriptionGiftingRoute,
 	domainsRoute,
 	emailsRoute,
 	meRoute,

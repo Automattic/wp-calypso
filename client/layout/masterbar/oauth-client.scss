@@ -192,12 +192,6 @@
 				padding: 35px 55px 20px;
 				width: 550px;
 			}
-
-			input[type="text"],
-			input[type="email"],
-			input[type="password"] {
-				padding: 10px 20px;
-			}
 		}
 
 		.login__form {
@@ -627,7 +621,7 @@
 		box-shadow: 0 0 0 2px var(--color-primary-10);
 	}
 
-	.button:not(.social-buttons__button) {
+	.button {
 		color: var(--studio-jetpack-green-60);
 		background: var(--studio-white);
 		border: 1px solid var(--studio-jetpack-green-40);
@@ -680,6 +674,11 @@
 		}
 	}
 
+	.components-button {
+		--color-accent: var(--studio-jetpack-green-40);
+		--color-accent-60: var(--studio-jetpack-green-30);
+	}
+
 	a,
 	a:visited,
 	.login__form-change-username,
@@ -691,10 +690,6 @@
 			color: var(--studio-jetpack-green-60);
 		}
 	}
-
-	.social-buttons__button {
-		--color-accent: var(--studio-jetpack-green-40);
-	}
 }
 
 .a8c-for-agencies {
@@ -703,7 +698,7 @@
 		box-shadow: 0 0 0 2px var(--color-primary-10);
 	}
 
-	.button:not(.social-buttons__button) {
+	.button {
 		color: var(--color-primary-60);
 		background: var(--studio-white);
 		border: 1px solid var(--color-primary-40);
@@ -756,6 +751,11 @@
 		}
 	}
 
+	.components-button {
+		--color-accent: var(--color-primary-40);
+		--color-accent-60: var(--color-primary-60);
+	}
+
 	a,
 	a:visited,
 	.login__form-change-username,
@@ -766,10 +766,6 @@
 		&:focus {
 			color: var(--color-primary-60);
 		}
-	}
-
-	.social-buttons__button {
-		--color-accent: var(--color-primary-40);
 	}
 }
 

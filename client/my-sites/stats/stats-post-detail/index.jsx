@@ -10,6 +10,7 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
 import IllustrationStats from 'calypso/assets/images/stats/illustration-stats.svg';
+import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import QueryPostStats from 'calypso/components/data/query-post-stats';
 import QueryPosts from 'calypso/components/data/query-posts';
 import EmptyContent from 'calypso/components/empty-content';
@@ -19,9 +20,16 @@ import WebPreview from 'calypso/components/web-preview';
 import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
 import PageHeader from 'calypso/my-sites/stats/components/headers/page-header';
 import Main from 'calypso/my-sites/stats/components/stats-main';
+import StatsDetailsNavigation from 'calypso/my-sites/stats/stats-details-navigation';
 import { getSitePost, getPostPreviewUrl } from 'calypso/state/posts/selectors';
 import { countPostLikes } from 'calypso/state/posts/selectors/count-post-likes';
-import { getSiteSlug, isJetpackSite, isSitePreviewable } from 'calypso/state/sites/selectors';
+import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
+import {
+	getSiteSlug,
+	isJetpackSite,
+	isSitePreviewable,
+	isSimpleSite,
+} from 'calypso/state/sites/selectors';
 import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
 import { getPostStat, isRequestingPostStats } from 'calypso/state/stats/posts/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -116,7 +124,9 @@ class StatsPostDetail extends Component {
 	}
 
 	hasDontSendEmailPostToSubs( metadata ) {
-		return metadata?.some( ( { key } ) => key === '_jetpack_dont_email_post_to_subs' );
+		return metadata?.some(
+			( { key, value } ) => key === '_jetpack_dont_email_post_to_subs' && !! value
+		);
 	}
 
 	getPost() {
@@ -167,6 +177,9 @@ class StatsPostDetail extends Component {
 			showViewLink,
 			previewUrl,
 			supportsUTMStats,
+			isSubscriptionsModuleActive,
+			supportsEmailStats,
+			isSimple,
 		} = this.props;
 
 		const isLoading = isRequestingStats && ! countViews;
@@ -205,6 +218,17 @@ class StatsPostDetail extends Component {
 			titleLogo: null,
 		};
 
+		const subscriptionsEnabled = isSimple || isSubscriptionsModuleActive;
+		// postId > 0: Show the tabs for posts except for the Home Page (postId = 0).
+		const isEmailTabsAvailable =
+			subscriptionsEnabled &&
+			postId > 0 &&
+			! passedPost?.dont_email_post_to_subs &&
+			passedPost?.date &&
+			// The Newsletter Stats data was never backfilled (internal ref pdDOJh-1Uy-p2).
+			new Date( passedPost?.date ) >= new Date( '2023-05-30' ) &&
+			supportsEmailStats;
+
 		return (
 			<Main fullWidthLayout>
 				<PageViewTracker
@@ -213,6 +237,7 @@ class StatsPostDetail extends Component {
 				/>
 				{ siteId && ! isPostHomepage && <QueryPosts siteId={ siteId } postId={ postId } /> }
 				{ siteId && <QueryPostStats siteId={ siteId } postId={ postId } /> }
+				{ siteId && <QueryJetpackModules siteId={ siteId } /> }
 
 				<div className={ postDetailPageClasses }>
 					{ config.isEnabled( 'stats/navigation-improvement' ) ? (
@@ -235,6 +260,16 @@ class StatsPostDetail extends Component {
 								</Button>
 							) }
 						</NavigationHeader>
+					) }
+
+					{ isEmailTabsAvailable && (
+						<div
+							className={ clsx( 'stats-navigation', 'stats-navigation--modernized', {
+								'stats-navigation--improved': config.isEnabled( 'stats/navigation-improvement' ),
+							} ) }
+						>
+							<StatsDetailsNavigation postId={ postId } givenSiteId={ siteId } />
+						</div>
 					) }
 
 					<PostDetailHighlightsSection siteId={ siteId } postId={ postId } post={ passedPost } />
@@ -290,7 +325,8 @@ const connectComponent = connect( ( state, { postId } ) => {
 	const isPreviewable = isSitePreviewable( state, siteId );
 	const isPostHomepage = postId === 0;
 	const countLikes = countPostLikes( state, siteId, postId ) || 0;
-	const { supportsUTMStats } = getEnvStatsFeatureSupportChecks( state, siteId );
+	const { supportsUTMStats, supportsEmailStats } = getEnvStatsFeatureSupportChecks( state, siteId );
+	const isSimple = isSimpleSite( state, siteId );
 
 	return {
 		post: getSitePost( state, siteId, postId ),
@@ -305,6 +341,9 @@ const connectComponent = connect( ( state, { postId } ) => {
 		previewUrl: getPostPreviewUrl( state, siteId, postId ),
 		siteId,
 		supportsUTMStats,
+		isSubscriptionsModuleActive: isJetpackModuleActive( state, siteId, 'subscriptions', true ),
+		supportsEmailStats,
+		isSimple,
 	};
 } );
 

@@ -4,7 +4,7 @@ import { Button, Card, FormInputValidation, FormLabel, Gridicon } from '@automat
 import { alert } from '@automattic/components/src/icons';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { suggestEmailCorrection } from '@automattic/onboarding';
-import { Spinner, TextControl } from '@wordpress/components';
+import { TextControl } from '@wordpress/components';
 import { Icon } from '@wordpress/icons';
 import clsx from 'clsx';
 import cookie from 'cookie';
@@ -17,7 +17,7 @@ import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import { FormDivider } from 'calypso/blocks/authentication';
 import JetpackConnectSiteOnly from 'calypso/blocks/jetpack-connect-site-only';
-import FormsButton from 'calypso/components/forms/form-button';
+import LoginSubmitButton from 'calypso/blocks/login/login-submit-button';
 import FormPasswordInput from 'calypso/components/forms/form-password-input';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import Notice from 'calypso/components/notice';
@@ -1028,14 +1028,14 @@ export class LoginForm extends Component {
 						) }
 
 						{ shouldRenderForgotPasswordLink && this.renderLostPasswordLink() }
+
 						<div className="login__form-action">
-							<FormsButton
-								primary
-								busy={ ! isWoo && isSendingEmail }
-								disabled={ isSubmitButtonDisabled }
-							>
-								{ isWoo && isSendingEmail ? <Spinner /> : this.getLoginButtonText() }
-							</FormsButton>
+							<LoginSubmitButton
+								isWoo={ isWoo }
+								isSendingEmail={ isSendingEmail }
+								isDisabled={ isSubmitButtonDisabled }
+								buttonText={ this.getLoginButtonText() }
+							/>
 						</div>
 
 						{ ! isBlazePro && isJetpack && (

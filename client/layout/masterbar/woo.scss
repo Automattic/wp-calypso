@@ -1296,6 +1296,28 @@ $breakpoint-mobile: 660px;
 			}
 		}
 
+		.components-button {
+			--color-accent: var(--woo-purple-40);
+			--color-accent-60: var(--woo-purple-60);
+
+			&.is-primary,
+			&.social-buttons__button {
+				border-radius: 8px; /* stylelint-disable-line scales/radii */
+				font-size: 1rem;
+				font-weight: 500;
+				height: 48px;
+
+				&:focus:not(:disabled) {
+					box-shadow: inset 0 0 0 1px var(--wp-components-color-background, #fff), 0 0 0 2px var(--wp-components-color-accent);
+				}
+
+				.components-spinner {
+					margin-top: 0;
+				}
+
+			}
+		}
+
 		input[type="text"].form-text-input,
 		input[type="email"].form-text-input,
 		input[type="password"].form-text-input,
@@ -1559,19 +1581,10 @@ $breakpoint-mobile: 660px;
 				}
 
 				.social-buttons__button {
-					--color-accent: var(--woo-purple-40);
-
-					height: 48px;
 					padding: 8px 16px;
-					border-radius: 8px; // stylelint-disable-line scales/radii
-					margin: 0;
 
 					&:not(:focus) {
 						box-shadow: inset 0 0 0 2px $gray-300, 0 0 0 currentColor;
-					}
-
-					&:focus {
-						box-shadow: 0 0 0 currentColor inset, 0 0 0 2px var(--wp-components-color-accent);
 					}
 
 					> span {

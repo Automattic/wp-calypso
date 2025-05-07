@@ -32,7 +32,8 @@ import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import { clearStore } from 'calypso/lib/user/store';
 import wpcom from 'calypso/lib/wp';
 import AccountEmailField from 'calypso/me/account/account-email-field';
-import { EmailVerificationBannerV2 } from 'calypso/me/email-verification-banner';
+import { withDefaultInterface } from 'calypso/me/account/with-default-interface';
+import EmailVerificationBanner from 'calypso/me/email-verification-banner';
 import ReauthRequired from 'calypso/me/reauth-required';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
@@ -98,7 +99,6 @@ class Account extends Component {
 		formsSubmitting: {},
 		usernameAction: 'new',
 		validationResult: false,
-		accountSubmitDisable: false,
 	};
 
 	componentDidUpdate() {
@@ -516,7 +516,6 @@ class Account extends Component {
 
 	shouldDisableAccountSubmitButton() {
 		return (
-			this.state.accountSubmitDisable ||
 			! this.hasUnsavedUserSettings( ACCOUNT_FIELDS ) ||
 			this.getDisabledState( ACCOUNT_FORM_NAME ) ||
 			this.hasEmailValidationError()
@@ -661,6 +660,9 @@ class Account extends Component {
 				<FormFieldset>
 					<FormLabel htmlFor="primary_site_ID">{ translate( 'Primary site' ) }</FormLabel>
 					{ this.renderPrimarySite() }
+					<FormSettingExplanation>
+						{ translate( "Choose the default site dashboard you'll see at login." ) }
+					</FormSettingExplanation>
 				</FormFieldset>
 
 				<FormButton
@@ -876,11 +878,7 @@ class Account extends Component {
 						}
 					) }
 				/>
-				<EmailVerificationBannerV2
-					setIsBusy={ ( isBusy ) => {
-						this.state.accountSubmitDisable = isBusy;
-					} }
-				/>
+				<EmailVerificationBanner />
 				<SectionHeader label={ translate( 'Account Information' ) } />
 				<Card className="account__settings">
 					<form onChange={ markChanged } onSubmit={ this.saveAccountSettings }>
@@ -978,7 +976,7 @@ class Account extends Component {
 							<FormLabel id="account__default_landing_page">
 								{ translate( 'Default landing page' ) }
 							</FormLabel>
-							<ToggleLandingPageSettings />
+							<ToggleLandingPageSettings defaultInterface={ this.props.defaultInterface } />
 							<FormSettingExplanation>
 								{ fixMe( {
 									text: "Select what you'll see by default when visiting WordPress.com",
@@ -1016,6 +1014,7 @@ export default compose(
 	withLocalizedMoment,
 	withGeoLocation,
 	protectForm,
+	withDefaultInterface,
 	connect(
 		( state ) => ( {
 			canDisplayCommunityTranslator: canDisplayCommunityTranslator( state ),
