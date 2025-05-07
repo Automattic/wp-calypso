@@ -33,7 +33,7 @@ function ClientCheckoutContent() {
 	const { referredProducts } = useProductsById( referral?.products ?? [] );
 
 	// Access the shopping cart API
-	const { addProductsToCart, responseCart } = useShoppingCart( 'no-site' );
+	const { replaceProductsInCart, responseCart } = useShoppingCart( 'no-site' );
 
 	const userEmail = useSelector( ( state ) => getCurrentUser( state )?.email );
 
@@ -69,9 +69,9 @@ function ClientCheckoutContent() {
 
 		debug( '[A4A Checkout] Products to add', productsToAdd );
 
-		// Add products to cart
+		// Replace products in cart
 		if ( productsToAdd.length > 0 ) {
-			addProductsToCart( productsToAdd )
+			replaceProductsInCart( productsToAdd )
 				.then( () => {
 					debug( '[A4A Checkout] Products added to cart successfully' );
 					debug( '[A4A Checkout] Cart', responseCart );
@@ -90,7 +90,7 @@ function ClientCheckoutContent() {
 		error,
 		referredProducts,
 		referral,
-		addProductsToCart,
+		replaceProductsInCart,
 		responseCart,
 		queryArgs.referralId,
 		queryArgs.agencyId,
