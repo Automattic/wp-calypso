@@ -35,12 +35,16 @@ export const useGetOdieConversations = ( enabled = true ) => {
 			return response.map( ( conversation: any ) => ( {
 				id: String( conversation.chat_id ?? '' ),
 				createdAt: getTimestamp( conversation.created_at ),
-				messages: ( conversation.messages ?? [] ).map( ( message: any ) => ( {
-					displayName: __( 'Support Assistant', __i18n_text_domain__ ),
-					received: getTimestamp( message.created_at ),
-					role: message.role ?? 'bot',
-					text: message.content ?? '',
-				} ) ),
+				messages: conversation.last_message
+					? [
+							{
+								displayName: __( 'Support Assistant', __i18n_text_domain__ ),
+								received: getTimestamp( conversation.last_message.created_at ),
+								role: conversation.last_message.role ?? 'bot',
+								text: conversation.last_message.content ?? '',
+							},
+					  ]
+					: [],
 			} ) ) as OdieConversation[];
 		},
 		refetchOnMount: true,
