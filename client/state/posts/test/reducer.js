@@ -1,7 +1,6 @@
 import deepFreeze from 'deep-freeze';
 import PostQueryManager from 'calypso/lib/query-manager/post';
 import {
-	EDITOR_START,
 	EDITOR_STOP,
 	POST_DELETE,
 	POST_DELETE_SUCCESS,
@@ -1485,36 +1484,6 @@ describe( 'reducer', () => {
 
 			expect( state ).toEqual( {
 				2916284: {
-					'': {
-						title: 'Ribs & Chicken',
-					},
-				},
-			} );
-		} );
-
-		test( 'should reset edits when we start editing a post', () => {
-			const state = edits(
-				deepFreeze( {
-					2916284: {
-						841: {
-							title: 'Hello World',
-						},
-						'': {
-							title: 'Ribs & Chicken',
-						},
-					},
-				} ),
-				{
-					type: EDITOR_START,
-					siteId: 2916284,
-					postId: 841,
-					postType: 'jetpack-testimonial',
-				}
-			);
-
-			expect( state ).toEqual( {
-				2916284: {
-					841: null,
 					'': {
 						title: 'Ribs & Chicken',
 					},
