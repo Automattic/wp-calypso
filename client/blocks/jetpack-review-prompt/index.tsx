@@ -2,7 +2,6 @@ import { Button, Card, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent, useCallback, useEffect } from 'react';
 import QueryPreferences from 'calypso/components/data/query-preferences';
-import { preventWidows } from 'calypso/lib/formatting';
 import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { dismiss } from 'calypso/state/jetpack-review-prompt/actions';
@@ -74,10 +73,8 @@ const JetpackReviewPrompt: FunctionComponent< Props > = ( { align = 'center', ty
 			case 'restore':
 				return (
 					<p>
-						{ preventWidows(
-							translate(
-								'Was it easy to restore your site? Leave us a review and help spread the word.'
-							)
+						{ translate(
+							'Was it easy to restore your site? Leave us a review and help spread the word.'
 						) }
 					</p>
 				);
@@ -85,10 +82,8 @@ const JetpackReviewPrompt: FunctionComponent< Props > = ( { align = 'center', ty
 			default:
 				return (
 					<p>
-						{ preventWidows(
-							translate(
-								'Are you happy with Jetpack Scan? Leave us a review and help spread the word.'
-							)
+						{ translate(
+							'Are you happy with Jetpack Scan? Leave us a review and help spread the word.'
 						) }
 					</p>
 				);
