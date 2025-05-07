@@ -14,6 +14,6 @@ declare module 'react' {
 	 * @todo Remove when switched to React 19+
 	 */
 	interface HTMLAttributes< T > extends AriaAttributes, DOMAttributes< T > {
-		inert?: boolean | 'true' | 'false';
+		inert?: '';
 	}
 }
