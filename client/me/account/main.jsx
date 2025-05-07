@@ -99,6 +99,7 @@ class Account extends Component {
 		formsSubmitting: {},
 		usernameAction: 'new',
 		validationResult: false,
+		accountSubmitDisable: false,
 	};
 
 	componentDidUpdate() {
@@ -516,6 +517,7 @@ class Account extends Component {
 
 	shouldDisableAccountSubmitButton() {
 		return (
+			this.state.accountSubmitDisable ||
 			! this.hasUnsavedUserSettings( ACCOUNT_FIELDS ) ||
 			this.getDisabledState( ACCOUNT_FORM_NAME ) ||
 			this.hasEmailValidationError()
@@ -878,7 +880,11 @@ class Account extends Component {
 						}
 					) }
 				/>
-				<EmailVerificationBannerV2 />
+				<EmailVerificationBannerV2
+					setIsBusy={ ( isBusy ) => {
+						this.state.accountSubmitDisable = isBusy;
+					} }
+				/>
 				<SectionHeader label={ translate( 'Account Information' ) } />
 				<Card className="account__settings">
 					<form onChange={ markChanged } onSubmit={ this.saveAccountSettings }>
