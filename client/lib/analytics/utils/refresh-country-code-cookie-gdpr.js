@@ -22,21 +22,21 @@ export default async function refreshCountryCodeCookieGdpr( signal = undefined )
 	if ( refreshRequest === null ) {
 		refreshRequest = requestGeoData( signal )
 			.then( ( { country_short, region } ) => {
-				setCountryCodeCookie( country_short );
+				setCookie( 'country_code', country_short );
 				// For some IP ranges we don't detect the region and the value returned by the `/geo` endpoint is `"-"`.
 				// In that case set the cookie to `unknown` This cannot happen for `country_short` because the `/geo`
 				// endpoint returns a 404 HTTP status when not even the country can be detected.
-				setRegionCookie( region === '-' ? 'unknown' : region );
+				setCookie( 'region', region === '-' ? 'unknown' : region );
 			} )
 			.catch( ( err ) => {
 				debug( 'refreshCountryCodeCookieGdpr: error: ', err );
 				// Set the cookies to `unknown` to signal that the `/geo` request already failed and there's no point
 				// sending it again. But set them only if they don't already exist, don't overwrite valid values!
 				if ( ! cookies.country_code ) {
-					setCountryCodeCookie( 'unknown' );
+					setCookie( 'country_code', 'unknown' );
 				}
 				if ( ! cookies.region ) {
-					setRegionCookie( 'unknown' );
+					setCookie( 'region', 'unknown' );
 				}
 			} )
 			.finally( () => {
@@ -57,14 +57,8 @@ async function requestGeoData( signal = undefined ) {
 	return await res.json();
 }
 
-function setCountryCodeCookie( countryCode ) {
+function setCookie( name, value ) {
 	const maxAge = 6 * 60 * 60; // 6 hours in seconds
-	document.cookie = cookie.serialize( 'country_code', countryCode, { path: '/', maxAge } );
-	debug( 'refreshCountryCodeCookieGdpr: country_code cookie set to %s', countryCode );
-}
-
-function setRegionCookie( region ) {
-	const maxAge = 6 * 60 * 60;
-	document.cookie = cookie.serialize( 'region', region, { path: '/', maxAge } );
-	debug( 'refreshRegionCookieCcpa: region cookie set to %s', region );
+	document.cookie = cookie.serialize( name, value, { path: '/', maxAge } );
+	debug( 'refreshCountryCodeCookieGdpr: %s cookie set to %s', name, value );
 }
