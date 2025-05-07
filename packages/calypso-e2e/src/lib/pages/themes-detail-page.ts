@@ -59,9 +59,30 @@ export class ThemesDetailPage {
 
 	/**
 	 * Click on the Activate button displayed in Logged out theme details.
+	 *
+	 * @returns {Promise<string>} The slug of the selected theme.
 	 */
-	async pickThisDesign(): Promise< void > {
-		await this.page.getByRole( 'link', { name: 'Get started' } ).click();
+	async pickThisDesign(): Promise< string > {
+		const getStartedButton = this.page.getByRole( 'link', { name: 'Get started' } );
+
+		await getStartedButton.waitFor();
+
+		const destinationUrl = await getStartedButton.getAttribute( 'href' );
+
+		if ( ! destinationUrl ) {
+			throw new Error( 'Destination URL not found' );
+		}
+
+		const baseUrl = new URL( this.page.url() );
+		const themeSlug = new URL( destinationUrl, baseUrl ).searchParams.get( 'theme' );
+
+		if ( ! themeSlug ) {
+			throw new Error( 'Theme slug not found' );
+		}
+
+		await getStartedButton.click();
+
+		return themeSlug;
 	}
 
 	/**
