@@ -69,7 +69,7 @@ Once you know what the first small piece of your feature will be, follow this ge
 1. [Fork](https://help.github.com/articles/fork-a-repo/) the project and create a new branch, using [the branch naming scheme](../docs/git-workflow.md#branch-naming-scheme), _e.g._ `add/video-preview` or `fix/1337-language-too-geeky`.
 2. Make your first commit: any will do even if empty or trivial, but we need something in order to create the initial pull request. [Create the pull request](https://help.github.com/articles/creating-a-pull-request-from-a-fork/) and prefix the name with the section of the product, _e.g._ _Posts: Prepare store for desktop app_. Don’t worry too much if there’s no obvious prefix.
    - Write a detailed description of the problem you are solving, the part of Calypso it affects, and how you plan on going about solving it.
-   - If you have write access, add the **<span class="label status-in-progress">[Status] In Progress</span>** label or wait until somebody adds it. This indicates that the pull request isn’t ready for a review and may still be incomplete. On the other hand, it welcomes early feedback and encourages collaboration during the development process.
+   - Create a draft PR initially. This indicates that the pull request isn’t ready for a review and may still be incomplete. On the other hand, it welcomes early feedback and encourages collaboration during the development process.
 3. Start developing and pushing out commits to your new branch.
    - You can use a branch prefix like `add/`, `update/`, `try/` or `fix/` that represents the type of work you're doing. Avoid using the `renovate/` prefix in your branch name (it is used by the [Renovate Bot](https://renovatebot.com/) that automatically updates our NPM dependencies and your `renovate/*` branch will confuse the bot).
    - Push your changes out frequently and try to avoid getting stuck in a long-running branch or a merge nightmare. Smaller changes are much easier to review and to deal with potential conflicts.
@@ -83,8 +83,8 @@ Once you know what the first small piece of your feature will be, follow this ge
    - If there are visual changes, add before and after screenshots in the pull request comments.
    - Add unit tests, or at a minimum, provide helpful instructions for the reviewer so they can test your changes. This will help speed up the review process.
    - Ensure that your commit messages are [meaningful](http://robots.thoughtbot.com/5-useful-tips-for-a-better-commit-message).
-6. Mention that the PR is ready for review or if you have write access remove the **<span class="label status-in-progress">[Status] In Progress</span>** label from the pull request and add the **<span class="label status-needs-review">[Status] Needs Review</span>** label - someone will provide feedback on the latest unreviewed changes. The reviewer will also mark the pull request as **<span class="label status-needs-author-reply">[Status] Needs Author Reply</span>** if they think you need to change anything.
-7. If you get a 👍, 💥, 🚢, <img src="https://github.githubassets.com/images/icons/emoji/shipit.png" class="emoji" height="14px" />, or a LGTM and the status has been changed to **<span class="label status-ready-to-merge">[Status] Ready to Merge</span>** – this is great – the pull request is ready to be merged into `trunk`.
+6. Mark your PR as ready, someone will provide feedback on the latest unreviewed changes.
+7. If you get an approval, the pull request is ready to be merged into `trunk`.
 
 Whether somebody is reviewing your code or you are reviewing somebody else’s code, [a positive mindset towards code reviews](https://medium.com/medium-eng/the-code-review-mindset-3280a4af0a89) helps a ton. We’re building something together that is greater than the sum of its parts.
 
