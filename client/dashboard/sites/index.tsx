@@ -50,6 +50,7 @@ const DEFAULT_FIELDS = [
 		id: 'icon.ico',
 		label: __( 'Media' ),
 		render: ( { item }: { item: Site } ) => <SiteIcon site={ item } />,
+		enableSorting: false,
 	},
 	{
 		id: 'subscribers_count',
@@ -72,6 +73,7 @@ const DEFAULT_FIELDS = [
 		filterBy: {
 			operators: [ 'is' as Operator ],
 		},
+		enableSorting: false,
 	},
 	{
 		id: 'protect',
@@ -86,6 +88,7 @@ const DEFAULT_FIELDS = [
 		filterBy: {
 			operators: [ 'is' as Operator ],
 		},
+		enableSorting: false,
 	},
 	{
 		id: 'status',
@@ -105,6 +108,7 @@ const DEFAULT_FIELDS = [
 			operators: [ 'is' as Operator ],
 		},
 		render: ( { item }: { item: Site } ) => ( item.is_a8c ? __( 'Yes' ) : __( 'No' ) ),
+		enableSorting: false,
 	},
 	{
 		id: 'preview',
@@ -137,6 +141,7 @@ const DEFAULT_FIELDS = [
 				</>
 			);
 		},
+		enableSorting: false,
 	},
 ];
 

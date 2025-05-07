@@ -37,7 +37,7 @@
 			"last 2 Edge versions",
 			"last 2 Opera versions",
 			"Firefox ESR",
-			"Electron >= 11",
+			"Electron >= 26",
 			"unreleased Chrome versions",
 			"unreleased ChromeAndroid versions",
 			"unreleased Firefox versions",
