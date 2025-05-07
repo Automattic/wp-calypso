@@ -63,6 +63,7 @@
 		"jetpack/simplify-pricing-structure": false,
 		"jetpack/social-plans-v1": true,
 		"jetpack/standalone-plugin-onboarding-update-v1": true,
+		"jetpack/crm-downloads": true,
 		"jitms": true,
 		"lasagna": true,
 		"launchpad-updates": false,
