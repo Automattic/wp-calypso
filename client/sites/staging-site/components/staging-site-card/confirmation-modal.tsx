@@ -2,6 +2,21 @@ import styled from '@emotion/styled';
 import { Modal, Button } from '@wordpress/components';
 import { useState } from 'react';
 
+const ButtonContent = styled.span( {
+	display: 'flex',
+	alignItems: 'center',
+	gap: '2px',
+	fontSize: '14px',
+
+	'.components-button.is-tertiary &': {
+		color: 'var( --color-text-subtle )',
+	},
+
+	'.components-button.is-tertiary:hover:not( :disabled ) &': {
+		color: 'var( --color-text )',
+	},
+} );
+
 const ActionButtons = styled.div( {
 	display: 'flex',
 	gap: '1em',
@@ -15,21 +30,6 @@ const ActionButtons = styled.div( {
 
 	'.components-button.is-primary:disabled span': {
 		color: 'var( --color-neutral-20 )',
-	},
-} );
-
-const ButtonContent = styled.span( {
-	display: 'flex',
-	alignItems: 'center',
-	gap: '2px',
-	fontSize: '14px',
-
-	'.components-button.is-tertiary &': {
-		color: 'var( --color-text-subtle )',
-	},
-
-	'.components-button.is-tertiary:hover:not( :disabled ) &': {
-		color: 'var( --color-text )',
 	},
 } );
 
@@ -79,6 +79,49 @@ type ConfirmationModalButtonProps = {
 	isSynchronize?: boolean;
 };
 
+function ModalContent( {
+	modalMessage,
+	extraModalContent,
+	onCancel,
+	onConfirm,
+	isConfirmationDisabled,
+	isBusy,
+	confirmLabel,
+	cancelLabel,
+}: {
+	modalMessage?: string;
+	extraModalContent?: React.ReactNode;
+	onCancel?: () => void;
+	onConfirm?: () => void;
+	isConfirmationDisabled?: boolean;
+	isBusy?: boolean;
+	confirmLabel: string;
+	cancelLabel: string;
+} ) {
+	return (
+		<>
+			{ modalMessage && <p>{ modalMessage }</p> }
+			{ extraModalContent }
+			<ActionButtons>
+				<TertiaryButtonWrapper>
+					<Button onClick={ onCancel } variant="tertiary" __next40pxDefaultSize>
+						<ButtonContent>{ cancelLabel }</ButtonContent>
+					</Button>
+				</TertiaryButtonWrapper>
+				<Button
+					disabled={ isConfirmationDisabled }
+					variant="primary"
+					onClick={ onConfirm }
+					isBusy={ isBusy }
+					__next40pxDefaultSize
+				>
+					<ButtonContent>{ confirmLabel }</ButtonContent>
+				</Button>
+			</ActionButtons>
+		</>
+	);
+}
+
 export function ConfirmationModal( {
 	onConfirm,
 	onCancel,
@@ -98,6 +141,16 @@ export function ConfirmationModal( {
 	const [ isOpen, setOpen ] = useState( false );
 	const openModal = () => setOpen( true );
 	const closeModal = () => setOpen( false );
+
+	const handleConfirm = () => {
+		onConfirm?.();
+		closeModal();
+	};
+
+	const handleCancel = () => {
+		onCancel?.();
+		closeModal();
+	};
 
 	return (
 		<>
@@ -132,34 +185,16 @@ export function ConfirmationModal( {
 					onRequestClose={ closeModal }
 					{ ...( modalSize && { size: modalSize } ) }
 				>
-					{ modalMessage && <p>{ modalMessage }</p> }
-					{ extraModalContent }
-					<ActionButtons>
-						<TertiaryButtonWrapper>
-							<Button
-								onClick={ () => {
-									onCancel?.();
-									closeModal();
-								} }
-								variant="tertiary"
-								__next40pxDefaultSize
-							>
-								<ButtonContent>{ cancelLabel }</ButtonContent>
-							</Button>
-						</TertiaryButtonWrapper>
-						<Button
-							disabled={ isConfirmationDisabled }
-							variant="primary"
-							onClick={ () => {
-								onConfirm?.();
-								closeModal();
-							} }
-							isBusy={ isBusy }
-							__next40pxDefaultSize
-						>
-							<ButtonContent>{ confirmLabel }</ButtonContent>
-						</Button>
-					</ActionButtons>
+					<ModalContent
+						modalMessage={ modalMessage }
+						extraModalContent={ extraModalContent }
+						onCancel={ handleCancel }
+						onConfirm={ handleConfirm }
+						isConfirmationDisabled={ isConfirmationDisabled }
+						isBusy={ isBusy }
+						confirmLabel={ confirmLabel }
+						cancelLabel={ cancelLabel }
+					/>
 				</Modal>
 			) }
 		</>
