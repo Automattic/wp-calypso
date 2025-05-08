@@ -544,7 +544,7 @@ export const normalizers = {
 			}
 		} );
 
-		return newData?.map( ( row ) => {
+		return newData.map( ( row ) => {
 			// Label should include parent context if present.
 			// ie: "parent label > child label" -- including surrounding quotes.
 			let label = row?.context ? `${ row.context } > ${ row.label }` : row.label;
