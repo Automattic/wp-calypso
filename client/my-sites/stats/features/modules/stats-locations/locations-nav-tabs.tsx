@@ -2,7 +2,10 @@ import page from '@automattic/calypso-router';
 import { TabPanel } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
-import { getPathWithUpdatedQueryString } from 'calypso/my-sites/stats/utils';
+import {
+	getPathWithUpdatedQueryString,
+	trackStatsAnalyticsEvent,
+} from 'calypso/my-sites/stats/utils';
 import {
 	STATS_FEATURE_LOCATION_REGION_VIEWS,
 	STATS_FEATURE_LOCATION_COUNTRY_VIEWS,
@@ -45,9 +48,10 @@ function LocationsNavTabs( { query }: { query: StatsQueryType & { geoMode?: UrlG
 				path: getPathWithUpdatedQueryString( {
 					geoMode: key,
 				} ),
+				feature: item.feature,
 			};
 		} );
-	}, [] );
+	}, [ translate ] );
 
 	const selectedTab = query.geoMode || OPTION_KEYS.COUNTRIES;
 
@@ -57,9 +61,11 @@ function LocationsNavTabs( { query }: { query: StatsQueryType & { geoMode?: UrlG
 			tabs={ tabPanelTabs }
 			initialTabName={ selectedTab }
 			onSelect={ ( tabName ) => {
-				// TODO add analytics tracking here.
 				const tab = tabPanelTabs.find( ( tab ) => tab.name === tabName );
 				if ( tab?.path ) {
+					trackStatsAnalyticsEvent( 'stats_locations_module_menu_clicked', {
+						stat_type: tab.feature,
+					} );
 					page( tab.path );
 				}
 			} }
