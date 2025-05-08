@@ -397,11 +397,13 @@ class StatsSummary extends Component {
 
 					{ isStatsNavigationImprovementEnabled &&
 						this.props.context.params.module === 'locations' && (
-							<LocationsTabNav
-								period={ this.props.period }
-								query={ moduleQuery }
-								givenSiteId={ siteId }
-							/>
+							<div className="stats-navigation stats-navigation--improved">
+								<LocationsTabNav
+									period={ this.props.period }
+									query={ moduleQuery }
+									givenSiteId={ siteId }
+								/>
+							</div>
 						) }
 
 					<div id="my-stats-content" className="stats-summary-view stats-summary__positioned">

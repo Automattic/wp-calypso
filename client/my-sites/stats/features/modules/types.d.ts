@@ -59,6 +59,7 @@ type StatsPeriodType = {
 type StatsQueryType = {
 	date: string;
 	period: StatsPeriodGrainType;
+	geoMode?: 'country' | 'region' | 'city';
 };
 
 type StatsPeriodGrainType = 'day' | 'week' | 'month' | 'year';
