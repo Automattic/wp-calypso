@@ -7,7 +7,7 @@ import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { compact, pickBy } from 'lodash';
 import PropTypes from 'prop-types';
-import { createRef, Component } from 'react';
+import { createRef, Component, useLayoutEffect, useState } from 'react';
 import { InView } from 'react-intersection-observer';
 import { connect } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
@@ -66,12 +66,27 @@ const optionShape = PropTypes.shape( {
 	action: PropTypes.func,
 } );
 
+// Wrapper component to handle SSR for CustomSelectControl
+// This is needed because CustomSelectControl is not SSR-compatible
+const CustomSelectWrapper = ( props ) => {
+	const [ isMounted, setIsMounted ] = useState( false );
+
+	useLayoutEffect( () => {
+		setIsMounted( true );
+	}, [] );
+
+	if ( ! isMounted ) {
+		return null;
+	}
+
+	return <CustomSelectControl { ...props } />;
+};
+
 class ThemeShowcase extends Component {
 	state = {
 		isDesignThemeModalVisible: false,
 		isSiteSelectorModalVisible: false,
 		shouldThemeControlsSticky: false,
-		isClientSide: typeof window !== 'undefined',
 	};
 
 	constructor( props ) {
@@ -703,27 +718,24 @@ class ThemeShowcase extends Component {
 												recordTracksEvent={ this.recordSearchThemesTracksEvent }
 											/>
 										</div>
-										{ tabFilters &&
-											premiumThemesEnabled &&
-											! isMultisite &&
-											this.state.isClientSide && (
-												<CustomSelectControl
-													className="theme__tier-select"
-													label={ translate( 'Filters' ) }
-													hideLabelFromVision
-													__next40pxDefaultSize
-													options={ tiers.map( ( t ) => {
-														return { ...t, className: t.key === tier ? 'is-selected' : '' };
-													} ) }
-													value={ {
-														key: tier,
-														name: translate( 'View: %s', {
-															args: this.getTiers().find( ( t ) => t.key === tier ).name,
-														} ),
-													} }
-													onChange={ this.onTierSelectFilter }
-												/>
-											) }
+										{ tabFilters && premiumThemesEnabled && ! isMultisite && (
+											<CustomSelectWrapper
+												className="theme__tier-select"
+												label={ translate( 'Filters' ) }
+												hideLabelFromVision
+												__next40pxDefaultSize
+												options={ tiers.map( ( t ) => {
+													return { ...t, className: t.key === tier ? 'is-selected' : '' };
+												} ) }
+												value={ {
+													key: tier,
+													name: translate( 'View: %s', {
+														args: this.getTiers().find( ( t ) => t.key === tier ).name,
+													} ),
+												} }
+												onChange={ this.onTierSelectFilter }
+											/>
+										) }
 									</div>
 								</div>
 								<div
