@@ -18,13 +18,7 @@ import {
 	isAkismetProduct,
 } from '@automattic/calypso-products';
 import { Gridicon, Popover } from '@automattic/components';
-import {
-	CheckoutModal,
-	FormStatus,
-	useFormStatus,
-	Button,
-	Theme,
-} from '@automattic/composite-checkout';
+import { FormStatus, useFormStatus, Button, Theme } from '@automattic/composite-checkout';
 import { formatCurrency } from '@automattic/number-formatters';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
@@ -216,16 +210,12 @@ function WPNonProductLineItem( {
 	isSummary,
 	hasDeleteButton,
 	removeProductFromCart,
-	createUserAndSiteBeforeTransaction,
-	isPwpoUser,
 }: {
 	lineItem: LineItemType;
 	className?: string | null;
 	isSummary?: boolean;
 	hasDeleteButton?: boolean;
 	removeProductFromCart?: () => void;
-	createUserAndSiteBeforeTransaction?: boolean;
-	isPwpoUser?: boolean;
 } ) {
 	const id = lineItem.id;
 	const itemSpanId = `checkout-line-item-${ id }`;
@@ -233,14 +223,7 @@ function WPNonProductLineItem( {
 	const actualAmountDisplay = lineItem.formattedAmount;
 	const { formStatus } = useFormStatus();
 	const isDisabled = formStatus !== FormStatus.READY;
-	const [ isModalVisible, setIsModalVisible ] = useState( false );
 	const translate = useTranslate();
-	const modalCopy = returnModalCopy(
-		lineItem.type,
-		translate,
-		createUserAndSiteBeforeTransaction || false,
-		isPwpoUser || false
-	);
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
@@ -270,28 +253,12 @@ function WPNonProductLineItem( {
 							) }
 							disabled={ isDisabled }
 							onClick={ () => {
-								setIsModalVisible( true );
+								removeProductFromCart();
 							} }
 						>
 							{ translate( 'Remove from cart' ) }
 						</DeleteButton>
 					</DeleteButtonWrapper>
-
-					<CheckoutModal
-						isVisible={ isModalVisible }
-						closeModal={ () => {
-							setIsModalVisible( false );
-						} }
-						secondaryAction={ () => {
-							setIsModalVisible( false );
-						} }
-						primaryAction={ () => {
-							removeProductFromCart();
-						} }
-						secondaryButtonCTA={ String( 'Cancel' ) }
-						title={ modalCopy.title }
-						copy={ modalCopy.description }
-					/>
 				</>
 			) }
 		</div>
@@ -305,8 +272,6 @@ function WPCouponLineItem( {
 	isSummary,
 	hasDeleteButton,
 	removeProductFromCart,
-	createUserAndSiteBeforeTransaction,
-	isPwpoUser,
 	hasPartnerCoupon,
 }: {
 	lineItem: LineItemType;
@@ -328,8 +293,6 @@ function WPCouponLineItem( {
 				isSummary={ isSummary }
 				hasDeleteButton={ hasDeleteButton }
 				removeProductFromCart={ removeProductFromCart }
-				createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
-				isPwpoUser={ isPwpoUser }
 			/>
 			{ !! hasPartnerCoupon && <PartnerLogo /> }
 		</div>
@@ -397,160 +360,6 @@ function EmailMeta( { product, isRenewal }: { product: ResponseCartProduct; isRe
 			} ) }
 		</>
 	);
-}
-
-interface ModalCopy {
-	title: string;
-	description: string;
-}
-
-function returnModalCopy(
-	productType: string,
-	translate: ReturnType< typeof useTranslate >,
-	createUserAndSiteBeforeTransaction: boolean,
-	isRenewal = false,
-	product?: ResponseCartProduct
-): ModalCopy {
-	const domainNameString = product ? product.meta : translate( 'your selected domain' );
-
-	switch ( productType ) {
-		case 'gift purchase':
-			return {
-				title: String( translate( 'You are about to remove your gift from the cart' ) ),
-				description: String(
-					translate(
-						'When you press Continue, all gift products in the cart will be removed, and your gift will not be given.'
-					)
-				),
-			};
-		case 'plan with marketplace dependencies':
-			if ( isRenewal ) {
-				return {
-					title: String( translate( 'You are about to remove your plan renewal from the cart' ) ),
-					description: String(
-						translate(
-							"Some of your other product(s) depend on your plan to be renewed. When you press Continue, the plan renewal will be removed from the cart and your plan will keep its current expiry date. When the plan expires these product(s) will stop working even if they haven't expired yet."
-						)
-					),
-				};
-			}
-
-			return {
-				title: String( translate( 'You are about to remove your plan from the cart' ) ),
-				description: String(
-					translate(
-						'Since some of your other product(s) depend on your plan to be purchased, they will also be removed from the cart. When you press Continue, these product(s) along with your new plan will be removed from the cart, and your site will continue to run on its current plan.'
-					)
-				),
-			};
-		case 'plan with domain dependencies': {
-			if ( isRenewal ) {
-				return {
-					title: String( translate( 'You are about to remove your plan renewal from the cart' ) ),
-					description: String(
-						translate(
-							'When you press Continue, your plan renewal will be removed from the cart and your plan will keep its current expiry date.'
-						)
-					),
-				};
-			}
-			const title = String( translate( 'You are about to remove your plan from the cart' ) );
-			let description = '';
-
-			if ( createUserAndSiteBeforeTransaction ) {
-				description = String(
-					translate(
-						'When you press Continue, your plan will be removed from the cart. Your site will be created with the free plan when you complete payment for the other product(s) in your cart.'
-					)
-				);
-			} else {
-				description = String(
-					translate(
-						'Since some of your other product(s) depend on your plan to be purchased, they will also be removed from the cart. When you press Continue, these product(s) will be removed along with your new plan in the cart, and your site will continue to run with its current plan.'
-					)
-				);
-			}
-			return { title, description };
-		}
-		case 'plan':
-			if ( isRenewal ) {
-				return {
-					title: String( translate( 'You are about to remove your plan renewal from the cart' ) ),
-					description: String(
-						translate(
-							'When you press Continue, your plan renewal will be removed from the cart and your plan will keep its current expiry date.'
-						)
-					),
-				};
-			}
-
-			return {
-				title: String( translate( 'You are about to remove your plan from the cart' ) ),
-				description: String(
-					createUserAndSiteBeforeTransaction
-						? translate( 'When you press Continue, your plan will be removed from the cart.' )
-						: translate(
-								'When you press Continue, your plan will be removed from the cart and your site will continue to run with its current plan.'
-						  )
-				),
-			};
-		case 'domain':
-			if ( isRenewal ) {
-				return {
-					title: String( translate( 'You are about to remove your domain renewal from the cart' ) ),
-					description: String(
-						translate(
-							'When you press Continue, your domain renewal will be removed from the cart and your domain will keep its current expiry date.'
-						)
-					),
-				};
-			}
-
-			return {
-				title: String(
-					translate( 'You are about to remove %(domainName)s from the cart', {
-						args: { domainName: domainNameString },
-					} )
-				),
-				description: String(
-					translate(
-						'When you press Continue, %(domainName)s will be removed from the cart and will become available for anyone to register.',
-						{
-							args: { domainName: domainNameString },
-						}
-					)
-				),
-			};
-		case 'coupon':
-			return {
-				title: String( translate( 'You are about to remove your coupon from the cart' ) ),
-				description: String(
-					translate( 'When you press Continue, you will need to confirm your payment details.' )
-				),
-			};
-		default:
-			if ( isRenewal ) {
-				return {
-					title: String( translate( 'You are about to remove your renewal from the cart' ) ),
-					description: String(
-						translate(
-							'When you press Continue, your renewal will be removed from the cart and your product will keep its current expiry date.'
-						)
-					),
-				};
-			}
-
-			return {
-				title: String( translate( 'You are about to remove your product from the cart' ) ),
-				description: String(
-					createUserAndSiteBeforeTransaction
-						? translate( 'When you press Continue, your product will be removed from the cart.' )
-						: translate(
-								'When you press Continue, your product will be removed from the cart and your site will continue to run without it.'
-						  )
-				),
-			};
-	}
 }
 
 function JetpackSearchMeta( { product }: { product: ResponseCartProduct } ) {
