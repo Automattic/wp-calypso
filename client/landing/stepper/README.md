@@ -376,4 +376,4 @@ const YourStep: Step< {
 
 ## Help and feedback
 
-Please feel free to reach out to Team T-Rex for any feedback or if you need help.
+Please feel free to reach out to Team T-Rex, or post in `#dotcom-stepper` for any feedback or if you need help.
