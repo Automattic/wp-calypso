@@ -4,7 +4,7 @@ import { AppleLoginButton } from '../apple';
 import { GitHubLoginButton } from '../github';
 import { GoogleSocialButton } from '../google';
 import { MagicLoginButton } from '../magic-login';
-import { QrCodeLoginButton } from '../qr-code';
+import QrCodeLoginButton from '../qr-code';
 import { UsernameOrEmailButton } from '../username-or-email';
 import type { StoryFn, StoryObj } from '@storybook/react';
 import './style.scss';
