@@ -9,7 +9,6 @@ export { getPostLikeCount } from 'calypso/state/posts/selectors/get-post-like-co
 export { getPostLikeLastUpdated } from 'calypso/state/posts/selectors/get-post-like-last-updated';
 export { getPostLikes } from 'calypso/state/posts/selectors/get-post-likes';
 export { getPostPreviewUrl } from 'calypso/state/posts/selectors/get-post-preview-url';
-export { getPostRevision } from 'calypso/state/posts/selectors/get-post-revision';
 export { getPostRevisionsDiff } from 'calypso/state/posts/selectors/get-post-revisions-diff';
 export { getPostsForQuery } from 'calypso/state/posts/selectors/get-posts-for-query';
 export { getPostsForQueryIgnoringPage } from 'calypso/state/posts/selectors/get-posts-for-query-ignoring-page';
