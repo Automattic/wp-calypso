@@ -1,45 +1,17 @@
 import page from '@automattic/calypso-router';
 import { TabPanel } from '@wordpress/components';
-import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import {
 	getPathWithUpdatedQueryString,
 	trackStatsAnalyticsEvent,
 } from 'calypso/my-sites/stats/utils';
-import {
-	STATS_FEATURE_LOCATION_REGION_VIEWS,
-	STATS_FEATURE_LOCATION_COUNTRY_VIEWS,
-	STATS_FEATURE_LOCATION_CITY_VIEWS,
-} from '../../../constants';
 import { StatsQueryType } from '../types';
 import { UrlGeoMode, OPTION_KEYS } from './types';
+import useOptionLabels from './use-option-labels';
 
 function LocationsNavTabs( { query }: { query: StatsQueryType & { geoMode?: UrlGeoMode } } ) {
-	const translate = useTranslate();
+	const optionLabels = useOptionLabels();
 	const tabPanelTabs = useMemo( () => {
-		const optionLabels = {
-			[ OPTION_KEYS.COUNTRIES ]: {
-				selectLabel: translate( 'Countries' ),
-				headerLabel: translate( 'Top countries' ),
-				analyticsId: 'countries',
-				feature: STATS_FEATURE_LOCATION_COUNTRY_VIEWS,
-				countryFilterLabel: translate( 'All countries' ),
-			},
-			[ OPTION_KEYS.REGIONS ]: {
-				selectLabel: translate( 'Regions' ),
-				headerLabel: translate( 'Top regions' ),
-				analyticsId: 'regions',
-				feature: STATS_FEATURE_LOCATION_REGION_VIEWS,
-				countryFilterLabel: translate( 'All regions' ),
-			},
-			[ OPTION_KEYS.CITIES ]: {
-				selectLabel: translate( 'Cities' ),
-				headerLabel: translate( 'Top cities' ),
-				analyticsId: 'cities',
-				feature: STATS_FEATURE_LOCATION_CITY_VIEWS,
-				countryFilterLabel: translate( 'All cities' ),
-			},
-		};
 		return Object.entries( optionLabels ).map( ( [ key, item ] ) => {
 			return {
 				name: key,
@@ -51,7 +23,7 @@ function LocationsNavTabs( { query }: { query: StatsQueryType & { geoMode?: UrlG
 				feature: item.feature,
 			};
 		} );
-	}, [ translate ] );
+	}, [ optionLabels ] );
 
 	const selectedTab = query.geoMode || OPTION_KEYS.COUNTRIES;
 

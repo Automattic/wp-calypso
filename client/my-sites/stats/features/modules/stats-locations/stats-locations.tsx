@@ -25,13 +25,7 @@ import { getSiteStatsNormalizedData } from 'calypso/state/stats/lists/selectors'
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import EmptyModuleCard from '../../../components/empty-module-card/empty-module-card';
 import { LOCATIONS_SUPPORT_URL, JETPACK_SUPPORT_URL_TRAFFIC } from '../../../const';
-import {
-	STAT_TYPE_COUNTRY_VIEWS,
-	STATS_FEATURE_LOCATION_REGION_VIEWS,
-	STATS_FEATURE_LOCATION_COUNTRY_VIEWS,
-	STATS_FEATURE_LOCATION_CITY_VIEWS,
-	STATS_FEATURE_DOWNLOAD_CSV,
-} from '../../../constants';
+import { STAT_TYPE_COUNTRY_VIEWS, STATS_FEATURE_DOWNLOAD_CSV } from '../../../constants';
 import Geochart from '../../../geochart';
 import StatsCardUpdateJetpackVersion from '../../../stats-card-upsell/stats-card-update-jetpack-version';
 import StatsCardSkeleton from '../shared/stats-card-skeleton';
@@ -40,6 +34,7 @@ import { StatsDefaultModuleProps, StatsQueryType } from '../types';
 import CountryFilter from './country-filter';
 import sampleLocations from './sample-locations';
 import { OPTION_KEYS, UrlGeoMode, GEO_MODES } from './types';
+import useOptionLabels from './use-option-labels';
 
 import './style.scss';
 
@@ -89,29 +84,7 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( {
 
 	const [ countryFilter, setCountryFilter ] = useState< string | null >( null );
 
-	const optionLabels = {
-		[ OPTION_KEYS.COUNTRIES ]: {
-			selectLabel: translate( 'Countries' ),
-			headerLabel: translate( 'Top countries' ),
-			analyticsId: 'countries',
-			feature: STATS_FEATURE_LOCATION_COUNTRY_VIEWS,
-			countryFilterLabel: translate( 'All countries' ),
-		},
-		[ OPTION_KEYS.REGIONS ]: {
-			selectLabel: translate( 'Regions' ),
-			headerLabel: translate( 'Top regions' ),
-			analyticsId: 'regions',
-			feature: STATS_FEATURE_LOCATION_REGION_VIEWS,
-			countryFilterLabel: translate( 'All regions' ),
-		},
-		[ OPTION_KEYS.CITIES ]: {
-			selectLabel: translate( 'Cities' ),
-			headerLabel: translate( 'Top cities' ),
-			analyticsId: 'cities',
-			feature: STATS_FEATURE_LOCATION_CITY_VIEWS,
-			countryFilterLabel: translate( 'All cities' ),
-		},
-	};
+	const optionLabels = useOptionLabels();
 
 	// Use StatsModule to display paywall upsell.
 	const shouldGateStatsModule = useShouldGateStats( statType );
@@ -183,7 +156,7 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( {
 		} );
 	};
 
-	const toggleControlComponent = config.isEnabled( 'stats/navigation-improvement' ) && (
+	const toggleControlComponent = ! config.isEnabled( 'stats/navigation-improvement' ) && (
 		<>
 			<SimplifiedSegmentedControl
 				className="stats-module-locations__tabs"
