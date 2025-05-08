@@ -12,6 +12,7 @@ class SecurityAccountRecoveryManageContactButtons extends Component {
 		saveText: PropTypes.string,
 		onSave: PropTypes.func.isRequired,
 		onDelete: PropTypes.func.isRequired,
+		onCancel: PropTypes.func.isRequired,
 	};
 
 	render() {
@@ -24,6 +25,12 @@ class SecurityAccountRecoveryManageContactButtons extends Component {
 				{ this.props.isDeletable ? (
 					<FormButton isPrimary={ false } scary onClick={ this.props.onDelete }>
 						{ this.props.translate( 'Remove' ) }
+					</FormButton>
+				) : null }
+
+				{ this.props.onCancel ? (
+					<FormButton isPrimary={ false } onClick={ this.props.onCancel }>
+						{ this.props.translate( 'Cancel' ) }
 					</FormButton>
 				) : null }
 			</div>

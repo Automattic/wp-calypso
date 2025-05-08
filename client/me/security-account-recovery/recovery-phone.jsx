@@ -42,6 +42,7 @@ class RecoveryPhone extends Component {
 				hasValue={ !! phone }
 				disabled={ disabled }
 				onSave={ this.onSave }
+				onCancel={ this.onCancel }
 			>
 				<EditPhone storedPhone={ phone } />
 			</ManageContact>
@@ -64,6 +65,10 @@ class RecoveryPhone extends Component {
 				deletePhone();
 			}
 		} );
+	};
+
+	onCancel = () => {
+		this.setState( { isEditing: false } );
 	};
 }
 

@@ -22,7 +22,7 @@ class SecurityAccountRecoveryRecoveryPhoneEdit extends Component {
 			numberFull: PropTypes.string,
 		} ),
 		onSave: PropTypes.func,
-		onDelete: PropTypes.func,
+		onCancel: PropTypes.func,
 	};
 
 	state = {};
@@ -44,6 +44,7 @@ class SecurityAccountRecoveryRecoveryPhoneEdit extends Component {
 						phoneInputProps={ {
 							onKeyUp: this.onKeyUp,
 						} }
+						isHideLabels
 						onChange={ this.onChange }
 					/>
 
@@ -54,10 +55,10 @@ class SecurityAccountRecoveryRecoveryPhoneEdit extends Component {
 
 				<Buttons
 					isSavable={ this.isSavable() }
-					isDeletable={ havePhone }
+					isDeletable={ false }
 					saveText={ this.props.translate( 'Save Number' ) }
 					onSave={ this.onSave }
-					onDelete={ this.onDelete }
+					onCancel={ this.onCancel }
 				/>
 			</div>
 		);
@@ -112,8 +113,8 @@ class SecurityAccountRecoveryRecoveryPhoneEdit extends Component {
 		} );
 	};
 
-	onDelete = () => {
-		this.props.onDelete();
+	onCancel = () => {
+		this.props.onCancel();
 	};
 }
 
