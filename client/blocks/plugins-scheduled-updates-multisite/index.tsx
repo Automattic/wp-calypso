@@ -1,4 +1,5 @@
 import { useBreakpoint } from '@automattic/viewport-react';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { useLoadScheduleFromId } from 'calypso/blocks/plugins-scheduled-updates-multisite/hooks/use-load-schedule-from-id';
@@ -47,7 +48,11 @@ export const PluginsScheduledUpdatesMultisite = ( {
 
 	return (
 		<MultisitePluginUpdateManagerContextProvider>
-			<Layout title={ title } wide>
+			<Layout
+				className={ clsx( 'sites-dashboard', 'sites-dashboard__layout' ) }
+				title={ title }
+				wide
+			>
 				{ context === 'create' || context === 'edit' ? (
 					<LayoutColumn className="scheduled-updates-list-compact">
 						<ScheduleList

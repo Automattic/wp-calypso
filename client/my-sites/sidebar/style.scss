@@ -1,5 +1,6 @@
 @import "@wordpress/base-styles/variables";
 @import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 // The following changes should be merged in their respective files before nav unification goes to production
 @import url( //s0.wp.com/wp-includes/css/dashicons.min.css?v=20250127 );
 @import "@automattic/typography/styles/variables";

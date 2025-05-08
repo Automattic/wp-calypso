@@ -94,7 +94,6 @@ export function sitesDashboard( context: Context, next: () => void ) {
 				.layout__primary > main {
 					background: var( --color-surface );
 					border-radius: 8px;
-					border: 1px solid rgba( 0, 0, 0, 0.1 );
 					height: calc( 100vh - 32px );
 					overflow: auto;
 				}

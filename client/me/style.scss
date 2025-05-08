@@ -50,7 +50,6 @@ body.is-section-me {
 				padding: 24px;
 				background: var(--color-surface);
 				border-radius: 8px; /* stylelint-disable-line scales/radii */
-				border: 1px solid $gray-200;
 				overflow-y: auto;
 				overflow-x: hidden;
 				max-width: none;
@@ -58,6 +57,10 @@ body.is-section-me {
 					max-width: 1040px;
 					margin-left: auto;
 					margin-right: auto;
+				}
+
+				@include break-small {
+					border: 1px solid $gray-200;
 				}
 			}
 		}

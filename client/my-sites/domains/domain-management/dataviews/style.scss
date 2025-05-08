@@ -152,5 +152,12 @@ body.is-section-domains.is-bulk-all-domains-page {
 			}
 		}
 	}
+
+	@include break-small {
+		.layout__primary > main.dataviews {
+			border: 1px solid $gray-200;
+			border-radius: 8px; /* stylelint-disable-line scales/radii */
+		}
+	}
 }
 
