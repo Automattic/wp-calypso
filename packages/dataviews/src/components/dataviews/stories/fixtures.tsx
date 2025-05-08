@@ -633,6 +633,7 @@ export const fields: Field< SpaceObject >[] = [
 	{
 		label: 'Image',
 		id: 'image',
+		type: 'media',
 		header: (
 			<HStack spacing={ 1 } justify="start">
 				<Icon icon={ image } />
