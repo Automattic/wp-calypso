@@ -59,7 +59,6 @@ type StatsPeriodType = {
 type StatsQueryType = {
 	date: string;
 	period: StatsPeriodGrainType;
-	max?: number;
 };
 
 type StatsPeriodGrainType = 'day' | 'week' | 'month' | 'year';

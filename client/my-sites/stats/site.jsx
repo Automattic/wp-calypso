@@ -686,8 +686,6 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 										query={ query }
 										summaryUrl={ getStatHref( 'locations', query ) }
 										className={ clsx( 'stats__flexible-grid-item--full' ) }
-										context={ context }
-										summary={ false }
 									/>
 								</>
 							) : (
