@@ -530,7 +530,7 @@ const siteSetupFlow: Flow = {
 						return window.location.assign( `${ adminUrl }import.php` );
 					}
 
-					return navigate( `import?siteSlug=${ siteSlug }` );
+					return goToFlow( `site-migration?siteSlug=${ siteSlug }` );
 				}
 
 				case 'importerBlogger':
@@ -550,8 +550,7 @@ const siteSetupFlow: Flow = {
 						return navigate( `importList?siteSlug=${ siteSlug }` );
 					}
 
-					// Ensure we override the from param, as we end up in a loop if we don't.
-					return navigate( `import?siteSlug=${ siteSlug }&from` );
+					return goToFlow( `site-migration?siteSlug=${ siteSlug }` );
 				case 'importerWix':
 				case 'importReady':
 				case 'importReadyNot':

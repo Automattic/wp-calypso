@@ -10,6 +10,7 @@ export { getByPurchaseId } from './get-by-purchase-id';
 export { getDowngradePlanFromPurchase } from './get-downgrade-plan-from-purchase';
 export { getDowngradePlanToMonthlyFromPurchase } from './get-downgrade-plan-to-monthly-from-purchase';
 export { getIncludedDomainPurchase } from './get-included-domain-purchase';
+export { getIncludedDomainTransfer } from './get-included-domain-transfer';
 export { getPurchases } from './get-purchases';
 export { getPurchasesError } from './get-purchases-error';
 export { getRenewableSitePurchases } from './get-renewable-site-purchases';

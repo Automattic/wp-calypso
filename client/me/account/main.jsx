@@ -32,6 +32,7 @@ import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import { clearStore } from 'calypso/lib/user/store';
 import wpcom from 'calypso/lib/wp';
 import AccountEmailField from 'calypso/me/account/account-email-field';
+import { withDefaultInterface } from 'calypso/me/account/with-default-interface';
 import EmailVerificationBanner from 'calypso/me/email-verification-banner';
 import ReauthRequired from 'calypso/me/reauth-required';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -47,6 +48,7 @@ import canDisplayCommunityTranslator from 'calypso/state/selectors/can-display-c
 import getUnsavedUserSettings from 'calypso/state/selectors/get-unsaved-user-settings';
 import getUserSettings from 'calypso/state/selectors/get-user-settings';
 import isRequestingMissingSites from 'calypso/state/selectors/is-requesting-missing-sites';
+import { isA8cTeamMember } from 'calypso/state/teams/selectors';
 import {
 	clearUnsavedUserSettings,
 	removeUnsavedUserSetting,
@@ -486,6 +488,22 @@ class Account extends Component {
 		);
 	}
 
+	renderUsernameDescription() {
+		const { translate, isAutomattician, isEmailVerified } = this.props;
+
+		if ( ! isEmailVerified ) {
+			return (
+				<span>{ translate( 'Username can be changed once your email address is verified.' ) }</span>
+			);
+		}
+
+		if ( isAutomattician ) {
+			return <span>{ translate( 'Automatticians cannot change their username.' ) }</span>;
+		}
+
+		return this.renderJoinDate();
+	}
+
 	renderPrimarySite() {
 		const { requestingMissingSites, translate, visibleSiteCount } = this.props;
 
@@ -659,6 +677,9 @@ class Account extends Component {
 				<FormFieldset>
 					<FormLabel htmlFor="primary_site_ID">{ translate( 'Primary site' ) }</FormLabel>
 					{ this.renderPrimarySite() }
+					<FormSettingExplanation>
+						{ translate( "Choose the default site dashboard you'll see at login." ) }
+					</FormSettingExplanation>
 				</FormFieldset>
 
 				<FormButton
@@ -903,15 +924,7 @@ class Account extends Component {
 								this.renderUsernameValidation()
 							) : (
 								<FormSettingExplanation>
-									{ ! this.props.isEmailVerified ? (
-										<span>
-											{ translate(
-												'Username can be changed once your email address is verified.'
-											) }
-										</span>
-									) : (
-										this.renderJoinDate()
-									) }
+									{ this.renderUsernameDescription() }
 								</FormSettingExplanation>
 							) }
 						</FormFieldset>
@@ -972,7 +985,7 @@ class Account extends Component {
 							<FormLabel id="account__default_landing_page">
 								{ translate( 'Default landing page' ) }
 							</FormLabel>
-							<ToggleLandingPageSettings />
+							<ToggleLandingPageSettings defaultInterface={ this.props.defaultInterface } />
 							<FormSettingExplanation>
 								{ fixMe( {
 									text: "Select what you'll see by default when visiting WordPress.com",
@@ -1010,6 +1023,7 @@ export default compose(
 	withLocalizedMoment,
 	withGeoLocation,
 	protectForm,
+	withDefaultInterface,
 	connect(
 		( state ) => ( {
 			canDisplayCommunityTranslator: canDisplayCommunityTranslator( state ),
@@ -1022,6 +1036,7 @@ export default compose(
 			unsavedUserSettings: getUnsavedUserSettings( state ),
 			visibleSiteCount: getCurrentUserVisibleSiteCount( state ),
 			isEmailVerified: isCurrentUserEmailVerified( state ),
+			isAutomattician: isA8cTeamMember( state ),
 		} ),
 		{
 			clearUnsavedUserSettings,

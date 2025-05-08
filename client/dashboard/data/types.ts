@@ -140,9 +140,8 @@ export interface EngagementStats {
 }
 
 export interface SiteSettings {
-	settings: {
-		wpcom_performance_report_url?: string;
-	};
+	wpcom_gifting_subscription?: boolean;
+	wpcom_performance_report_url?: string;
 }
 
 export interface BasicMetricsData {

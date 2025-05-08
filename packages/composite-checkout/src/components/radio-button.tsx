@@ -52,7 +52,7 @@ const RadioButtonWrapper = styled.div<
 		display: none;
 
 		@media ( ${ ( props ) => props.theme.breakpoints.smallPhoneUp } ) {
-			display: block;
+			display: flex;
 			filter: grayscale( ${ getGrayscaleValue } );
 		}
 	}
