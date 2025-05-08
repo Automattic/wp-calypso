@@ -2,7 +2,7 @@
 
 ## Next
 
-- Add new `boolean` field type and edit control.
+- Add new `boolean` field type definition and edit control. Field type definitions are able to define a default render function that will be used if the field doesn't define one.
 
 ## 0.1.1
 
