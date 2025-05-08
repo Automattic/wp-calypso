@@ -124,11 +124,7 @@ function getPluginsSelector( state, siteIds, pluginFilter ) {
 
 export const getPlugins = createSelector(
 	getPluginsSelector,
-	( state, siteIds ) => [
-		state.plugins.installed.plugins,
-		isRequestingForAllSites( state ),
-		...siteIds.map( ( siteId ) => isRequesting( state, siteId ) ),
-	],
+	( state ) => state.plugins.installed.plugins,
 	( state, siteIds, pluginFilter ) => {
 		return [ siteIds, pluginFilter ].flat().join( '-' );
 	}

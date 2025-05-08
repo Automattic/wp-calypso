@@ -82,7 +82,8 @@ const MarketplaceThankYou = ( {
 		}
 	}, [ dispatch, firstTheme, styleVariationSlug ] );
 
-	const [ hasThemes ] = [ themeSlugs ].map( ( slugs ) => slugs.length !== 0 );
+	const hasPlugins = pluginSlugs.length > 0;
+	const hasThemes = themeSlugs.length > 0;
 
 	const [ title, subtitle ] = usePageTexts( {
 		pluginSlugs,
@@ -102,7 +103,7 @@ const MarketplaceThankYou = ( {
 		allPluginsActivated &&
 		allThemesFetched &&
 		isAtomicTransferCheckComplete &&
-		isLoadedPlugins &&
+		( ! hasPlugins || isLoadedPlugins ) &&
 		( ! hasThemes || isLoadedThemes );
 
 	const transferStatus = useSelector( ( state ) => getAutomatedTransferStatus( state, siteId ) );
