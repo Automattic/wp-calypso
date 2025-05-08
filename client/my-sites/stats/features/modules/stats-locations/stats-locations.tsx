@@ -38,7 +38,7 @@ import useOptionLabels from './use-option-labels';
 
 import './style.scss';
 
-export type SelectOptionType = {
+type SelectOptionType = {
 	label: string;
 	value: string;
 };
