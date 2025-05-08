@@ -1,7 +1,7 @@
 /**
  * WordPress dependencies
  */
-import { ToggleControl } from '@wordpress/components';
+import { BaseControl, ToggleControl } from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -17,20 +17,21 @@ export default function Boolean< Item >( {
 	const { id, getValue, label } = field;
 	if ( hideLabelFromVision ) {
 		return (
-			<ToggleControl
-				__nextHasNoMarginBottom
-				label={ '' }
-				checked={ getValue( { item: data } ) }
-				onChange={ () =>
-					onChange( { [ id ]: ! getValue( { item: data } ) } )
-				}
-			/>
+			<BaseControl>
+				<ToggleControl
+					__nextHasNoMarginBottom
+					label={ '' }
+					checked={ getValue( { item: data } ) }
+					onChange={ () =>
+						onChange( { [ id ]: ! getValue( { item: data } ) } )
+					}
+				/>
+			</BaseControl>
 		);
 	}
 
 	return (
-		<label>
-			{ label }
+		<BaseControl label={ label }>
 			<ToggleControl
 				__nextHasNoMarginBottom
 				label={ '' }
@@ -39,6 +40,6 @@ export default function Boolean< Item >( {
 					onChange( { [ id ]: ! getValue( { item: data } ) } )
 				}
 			/>
-		</label>
+		</BaseControl>
 	);
 }
