@@ -530,10 +530,14 @@ export const normalizers = {
 	},
 
 	statsUTM( originalData ) {
+		if ( ! Array.isArray( originalData ) ) {
+			return [];
+		}
+
 		const newData = [];
 
 		// Flatten the data into a shallow array.
-		originalData?.forEach( ( row ) => {
+		originalData.forEach( ( row ) => {
 			newData.push( row );
 			const children = row?.children;
 			if ( children ) {
