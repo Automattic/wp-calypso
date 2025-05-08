@@ -42,16 +42,9 @@ export function loggedOut( context, next ) {
 		return next();
 	}
 
-	// Skip rendering logged-out component for logged-in users
-	if ( context.store?.getState()?.currentUser?.user ) {
-		return next();
-	}
-
 	const props = getProps( context );
 
-	// We need to pass isServerSide to LoggedOutComponent to hide the search bar
-	// because SearchControl is not server-side renderable
-	context.primary = <LoggedOutComponent { ...props } isServerSide={ context.isServerSide } />;
+	context.primary = <LoggedOutComponent { ...props } />;
 	next();
 }
 
