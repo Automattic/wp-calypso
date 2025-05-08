@@ -1,4 +1,9 @@
 /**
+ * WordPress dependencies
+ */
+import { __ } from '@wordpress/i18n';
+
+/**
  * Internal dependencies
  */
 import type {
@@ -43,11 +48,11 @@ export default {
 		}
 
 		if ( field.getValue( { item } ) === true ) {
-			return 'true';
+			return __( 'True' );
 		}
 
 		if ( field.getValue( { item } ) === false ) {
-			return 'false';
+			return __( 'False' );
 		}
 
 		return null;
