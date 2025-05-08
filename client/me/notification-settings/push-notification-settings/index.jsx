@@ -1,5 +1,5 @@
 import { Card, Button, Dialog, ScreenReaderText, Gridicon } from '@automattic/components';
-import clsx from 'clsx';
+import { ToggleControl } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -636,6 +636,7 @@ class PushNotificationSettings extends Component {
 					<Notice
 						className="push-notification-settings__instruction-refresh-notice"
 						showDismiss={ false }
+						status="is-info"
 						text={ this.props.translate(
 							"Once you've allowed notifications, you may need to refresh your browser."
 						) }
@@ -654,68 +655,44 @@ class PushNotificationSettings extends Component {
 	};
 
 	render() {
-		let blockedInstruction;
-		let buttonClass;
 		let buttonDisabled;
-		let buttonPrimary;
-		let buttonText;
+		let isActive;
 		let deniedText;
-		let stateClass;
-		let stateText;
 
 		if ( ! this.props.apiReady ) {
 			return null;
 		}
 
+		const blockedInstruction = this.getBlockedInstruction();
+
 		switch ( this.props.status ) {
 			case 'disabling':
-				buttonClass = { 'is-enable': true };
 				buttonDisabled = true;
-				buttonPrimary = true;
-				buttonText = this.props.translate( 'Enable' );
-				stateClass = { 'is-disabled': true };
-				stateText = this.props.translate( 'Disabled' );
+				isActive = false;
 				break;
 			case 'enabling':
-				buttonClass = { 'is-disable': true };
 				buttonDisabled = true;
-				buttonPrimary = false;
-				buttonText = this.props.translate( 'Disable' );
-				stateClass = { 'is-enabled': true };
-				stateText = this.props.translate( 'Enabled' );
+				isActive = true;
 				break;
 			case 'unsubscribed':
-				buttonClass = { 'is-enable': true };
 				buttonDisabled = false;
-				buttonPrimary = true;
-				buttonText = this.props.translate( 'Enable' );
-				stateClass = { 'is-disabled': true };
-				stateText = this.props.translate( 'Disabled' );
+				isActive = false;
 				break;
 			case 'subscribed':
-				buttonClass = { 'is-disable': true };
 				buttonDisabled = false;
-				buttonPrimary = false;
-				buttonText = this.props.translate( 'Disable' );
-				stateClass = { 'is-enabled': true };
-				stateText = this.props.translate( 'Enabled' );
+				isActive = true;
 				break;
 			case 'denied':
-				blockedInstruction = this.getBlockedInstruction();
-				buttonClass = { 'is-enable': true };
 				buttonDisabled = true;
-				buttonPrimary = true;
-				buttonText = this.props.translate( 'Enable' );
-				stateClass = { 'is-disabled': true };
-				stateText = this.props.translate( 'Disabled' );
+				isActive = false;
 
 				deniedText = (
-					/* eslint-disable wpcalypso/jsx-classname-namespace */
 					<Notice
 						className="notification-settings-push-notification-settings__instruction"
 						showDismiss={ false }
+						status="is-info"
 						text={
-							<div>
+							<div className="notification-settings-push-notification-settings__instruction-actions">
 								<div>
 									{ this.props.translate(
 										'Your browser is currently set to block notifications from WordPress.com.'
@@ -740,7 +717,6 @@ class PushNotificationSettings extends Component {
 							</div>
 						}
 					/>
-					/* eslint-enable wpcalypso/jsx-classname-namespace */
 				);
 				break;
 
@@ -749,43 +725,20 @@ class PushNotificationSettings extends Component {
 		}
 
 		return (
-			/* eslint-disable wpcalypso/jsx-classname-namespace */
-			<Card className="notification-settings-push-notification-settings__settings">
-				<h2 className="notification-settings-push-notification-settings__settings-heading">
-					<Gridicon
-						size={ 24 }
-						className="notification-settings-push-notification-settings__settings-icon"
-						icon="bell"
-					/>
-					{ this.props.translate( 'Browser notifications' ) }
-					<small
-						className={ clsx(
-							'notification-settings-push-notification-settings__settings-state',
-							stateClass
-						) }
-					>
-						{ stateText }
-					</small>
-				</h2>
-				<p className="notification-settings-push-notification-settings__settings-description">
-					{ this.props.translate(
-						'Get instant notifications for new comments and likes, even when you are not actively using WordPress.com.'
-					) }
-				</p>
-				<Button
-					className={ clsx(
-						'notification-settings-push-notification-settings__settings-button',
-						buttonClass
-					) }
-					disabled={ buttonDisabled }
-					primary={ buttonPrimary }
-					onClick={ this.clickHandler }
-				>
-					{ buttonText }
-				</Button>
+			<>
 				{ deniedText }
-			</Card>
-			/* eslint-enable wpcalypso/jsx-classname-namespace */
+				<Card className="notification-settings-push-notification-settings__settings">
+					<ToggleControl
+						disabled={ buttonDisabled }
+						checked={ isActive }
+						help={ this.props.translate(
+							'Get instant notifications for new comments and likes, even when you are not actively using WordPress.com'
+						) }
+						label={ this.props.translate( 'Browser notifications' ) }
+						onChange={ this.clickHandler }
+					/>
+				</Card>
+			</>
 		);
 	}
 }
