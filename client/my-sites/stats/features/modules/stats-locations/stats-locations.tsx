@@ -63,7 +63,7 @@ type SelectOptionType = {
 
 interface StatsModuleLocationsProps extends StatsDefaultModuleProps {
 	initialGeoMode?: string;
-	query: StatsQueryType;
+	query: StatsQueryType & { geoMode?: GeoMode };
 }
 
 const StatsLocations: React.FC< StatsModuleLocationsProps > = ( {
