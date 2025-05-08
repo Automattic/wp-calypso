@@ -21,7 +21,7 @@ import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-e
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import PageHeader from '../components/headers/page-header';
 import StatsModuleLocations from '../features/modules/stats-locations';
-import LocationsTabNav from '../features/modules/stats-locations/locations-nav-tabs';
+import LocationsNavTabs from '../features/modules/stats-locations/locations-nav-tabs';
 import StatsModuleUTM from '../features/modules/stats-utm';
 import { StatsGlobalValuesContext } from '../pages/providers/global-provider';
 import DownloadCsv from '../stats-download-csv';
@@ -398,7 +398,7 @@ class StatsSummary extends Component {
 					{ isStatsNavigationImprovementEnabled &&
 						this.props.context.params.module === 'locations' && (
 							<div className="stats-navigation stats-navigation--improved">
-								<LocationsTabNav
+								<LocationsNavTabs
 									period={ this.props.period }
 									query={ moduleQuery }
 									givenSiteId={ siteId }
