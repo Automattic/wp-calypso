@@ -5,7 +5,7 @@ import './style.scss';
 export const submitButtonArgs = {
 	isDisabled: false,
 	isBusy: false,
-	children: 'Create your account',
+	children: 'Continue',
 };
 
 export const SignupFormWrapper = ( Story: StoryFn ) => (

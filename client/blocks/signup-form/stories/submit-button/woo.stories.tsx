@@ -7,7 +7,7 @@ const meta: Meta = {
 	title: 'client/blocks/Signup/Submit Button/Brands',
 	decorators: [ SignupFormWrapper, WooWrapper ],
 	component: SignupSubmitButton,
-	args: { ...submitButtonArgs, children: 'Continue' },
+	args: { ...submitButtonArgs },
 };
 
 export default meta;
