@@ -1,4 +1,4 @@
-import { Button, Card, Gridicon } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { Fragment, useState } from 'react';
@@ -64,7 +64,7 @@ function ApplicationPasswords() {
 					</Button>
 				) }
 			</SectionHeader>
-			<Card>
+			<div>
 				{ newAppPassword ? (
 					<NewAppPassword
 						newAppPassword={ newAppPassword }
@@ -110,7 +110,7 @@ function ApplicationPasswords() {
 				</p>
 
 				<AppPasswordsList appPasswords={ appPasswords } />
-			</Card>
+			</div>
 		</Fragment>
 	);
 }
