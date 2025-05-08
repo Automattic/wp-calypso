@@ -16,10 +16,10 @@ type Story = StoryObj< typeof meta >;
 export const Default: Story = {
 	args: {
 		items: [
-			{ label: 'Home', href: '#' },
-			{ label: 'Products', href: '#' },
-			{ label: 'Electronics', href: '#' },
-			{ label: 'Computers', href: '#' },
+			{ label: 'Home', href: 'javascript:void(0)' },
+			{ label: 'Products', href: 'javascript:void(0)' },
+			{ label: 'Electronics', href: 'javascript:void(0)' },
+			{ label: 'Computers', href: 'javascript:void(0)' },
 		],
 	},
 };
