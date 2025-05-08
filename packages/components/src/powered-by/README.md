@@ -24,4 +24,5 @@ export default function Example() {
 
 - `brand` : (string, required) One of `'jetpack'`, `'woocommerce'`, `'wpcom'`
 - `colorVariant` : (string) One of `'color'`, `'black'`, `'white'`. Default is `'color'`
+- `height`: (number) The height of the brand logo. The width is calculated automatically as needed. Default is `25`
 - `className` : (string) Additional CSS class names

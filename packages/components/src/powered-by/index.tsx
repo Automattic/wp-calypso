@@ -20,6 +20,7 @@ export type PoweredByVariant = 'color' | 'black' | 'white';
 interface PoweredByProps {
 	brand: PoweredByBrand;
 	colorVariant?: PoweredByVariant;
+	height?: number;
 	className?: string;
 }
 
@@ -45,21 +46,25 @@ const getWordPressWordmarkColor = ( colorVariant: PoweredByVariant ) => {
 	}
 };
 
-const PoweredBy = ( { brand, colorVariant = 'color', className }: PoweredByProps ) => {
+const PoweredBy = ( { brand, colorVariant = 'color', height = 25, className }: PoweredByProps ) => {
 	let LogoComponent: React.ReactNode = null;
 
 	switch ( brand ) {
 		case 'jetpack':
-			LogoComponent = <JetpackLogo colorVariant={ colorVariant } size={ 25 } full />;
+			LogoComponent = <JetpackLogo colorVariant={ colorVariant } size={ height } full />;
 			break;
-		case 'woocommerce':
-			LogoComponent = <WooLogo colorVariant={ colorVariant } height={ 25 } width={ 66 } />;
+		case 'woocommerce': {
+			const wooLogoWidth = ( 66 / 25 ) * height;
+			LogoComponent = (
+				<WooLogo colorVariant={ colorVariant } height={ height } width={ wooLogoWidth } />
+			);
 			break;
+		}
 		case 'wpcom':
 			LogoComponent = (
 				<WordPressWordmark
 					color={ getWordPressWordmarkColor( colorVariant ) }
-					size={ { height: 25, width: 'auto' } }
+					size={ { height: height, width: 'auto' } }
 				/>
 			);
 			break;
