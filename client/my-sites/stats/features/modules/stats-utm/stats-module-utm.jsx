@@ -2,7 +2,6 @@ import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { StatsCard } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { memo } from '@wordpress/element';
 import { trendingUp } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
@@ -279,7 +278,4 @@ const StatsModuleUTM = ( {
 	);
 };
 
-const MemoizedStatsModuleUTM = memo( StatsModuleUTM );
-
-export default MemoizedStatsModuleUTM;
-export { OPTION_KEYS };
+export { StatsModuleUTM as default, OPTION_KEYS };
