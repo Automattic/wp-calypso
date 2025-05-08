@@ -4,7 +4,7 @@ import { SimplifiedSegmentedControl, StatsCard } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { mapMarker } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import useLocationViewsQuery, {
 	StatsLocationViewsData,
@@ -39,32 +39,19 @@ import StatsInfoArea from '../shared/stats-info-area';
 import { StatsDefaultModuleProps, StatsQueryType } from '../types';
 import CountryFilter from './country-filter';
 import sampleLocations from './sample-locations';
+import { OPTION_KEYS, UrlGeoMode, GEO_MODES } from './types';
 
 import './style.scss';
 
-const OPTION_KEYS = {
-	COUNTRIES: 'countries',
-	REGIONS: 'regions',
-	CITIES: 'cities',
-};
+interface StatsModuleLocationsProps extends StatsDefaultModuleProps {
+	initialGeoMode?: string;
+	query: StatsQueryType & { geoMode?: UrlGeoMode };
+}
 
-type GeoMode = 'country' | 'region' | 'city';
-
-export const GEO_MODES: Record< string, GeoMode > = {
-	[ OPTION_KEYS.COUNTRIES ]: 'country',
-	[ OPTION_KEYS.REGIONS ]: 'region',
-	[ OPTION_KEYS.CITIES ]: 'city',
-};
-
-type SelectOptionType = {
+export type SelectOptionType = {
 	label: string;
 	value: string;
 };
-
-interface StatsModuleLocationsProps extends StatsDefaultModuleProps {
-	initialGeoMode?: string;
-	query: StatsQueryType & { geoMode?: GeoMode };
-}
 
 const StatsLocations: React.FC< StatsModuleLocationsProps > = ( {
 	initialGeoMode,
@@ -80,23 +67,14 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( {
 	const supportUrl = isOdysseyStats
 		? `${ JETPACK_SUPPORT_URL_TRAFFIC }#views-by-locations`
 		: LOCATIONS_SUPPORT_URL;
+
+	// selectOption is in plural form i.e. 'countries'! Possible something to unify in the future.
 	const [ selectedOption, setSelectedOption ] = useState( () => {
 		const urlGeoMode = query.geoMode ?? initialGeoMode;
 		return urlGeoMode && urlGeoMode in GEO_MODES ? urlGeoMode : OPTION_KEYS.COUNTRIES;
 	} );
 
 	const [ countryFilter, setCountryFilter ] = useState< string | null >( null );
-
-	useEffect( () => {
-		if ( ! summary ) {
-			return;
-		}
-
-		// If URL has valid param and it's different from state, update state
-		if ( query.geoMode !== selectedOption ) {
-			page( getPathWithUpdatedQueryString( { geoMode: selectedOption } ) );
-		}
-	}, [ query.geoMode, selectedOption, summary ] );
 
 	const optionLabels = {
 		[ OPTION_KEYS.COUNTRIES ]: {
@@ -127,6 +105,7 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( {
 	const shouldGateDownloads = useShouldGateStats( STATS_FEATURE_DOWNLOAD_CSV );
 	const shouldGateTab = useShouldGateStats( optionLabels[ selectedOption ].feature );
 	const shouldGate = shouldGateStatsModule || shouldGateTab;
+	// Mapping plural to singular form where all other places are using.
 	const geoMode = GEO_MODES[ selectedOption ];
 	const title = translate( 'Locations' );
 
@@ -179,6 +158,11 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( {
 		} );
 
 		setSelectedOption( filter );
+
+		// If URL has valid param and it's different from state, update URL; only intended for summary page.
+		if ( summary && query.geoMode !== selectedOption ) {
+			page( getPathWithUpdatedQueryString( { geoMode: selectedOption } ) );
+		}
 	};
 
 	const onShowMoreClick = () => {

@@ -2,19 +2,16 @@ import page from '@automattic/calypso-router';
 import { TabPanel } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
+import { getPathWithUpdatedQueryString } from 'calypso/my-sites/stats/utils';
 import {
 	STATS_FEATURE_LOCATION_REGION_VIEWS,
 	STATS_FEATURE_LOCATION_COUNTRY_VIEWS,
 	STATS_FEATURE_LOCATION_CITY_VIEWS,
 } from '../../../constants';
+import { StatsQueryType } from '../types';
+import { UrlGeoMode, OPTION_KEYS } from './types';
 
-const OPTION_KEYS = {
-	COUNTRIES: 'countries',
-	REGIONS: 'regions',
-	CITIES: 'cities',
-};
-
-function LocationsNavTabs( { period, query, givenSiteId } ) {
+function LocationsNavTabs( { query }: { query: StatsQueryType & { geoMode?: UrlGeoMode } } ) {
 	const translate = useTranslate();
 	const tabPanelTabs = useMemo( () => {
 		const optionLabels = {
@@ -41,15 +38,13 @@ function LocationsNavTabs( { period, query, givenSiteId } ) {
 			},
 		};
 		return Object.entries( optionLabels ).map( ( [ key, item ] ) => {
-			const updateQuery = { ...query, geoMode: key };
-
 			return {
 				name: key,
 				title: item.selectLabel,
 				className: `stats-navigation__${ key }`,
-				path: `/stats/${ period.period || 'day' }/locations/${ givenSiteId }?${ new URLSearchParams(
-					updateQuery
-				).toString() }`,
+				path: getPathWithUpdatedQueryString( {
+					geoMode: key,
+				} ),
 			};
 		} );
 	}, [] );
