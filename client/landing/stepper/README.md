@@ -26,6 +26,7 @@ Stepper is a framework that allows you to make all kinds of walkthroughs. It's g
   - [Miscellaneous fields](#miscellaneous-fields)
 - [The API](#the-api)
 - [Useful utilities and hooks](#useful-utilities-and-hooks)
+- [Troubleshooting](#troubleshooting)
 - [Help and feedback](#help-and-feedback)
 
 ## How does it work
