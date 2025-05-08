@@ -3,14 +3,13 @@ import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
 const REFRESH_REPORT_INTERVAL = 24; // 24 hours
 
-type ExpiredReportNoticeProps = {
+type ReportExpiredNotice = {
 	onRetest: () => void;
 	reportTimestamp?: string;
 };
 
 /**
  * Checks if the report should be refreshed based on the timestamp and refresh interval.
- *
  * @param reportTimestamp - The timestamp of the report.
  * @param refreshInterval - The interval in hours to refresh the report.
  * @returns True if the report should be refreshed, false otherwise.
@@ -29,7 +28,7 @@ function shouldRefreshReport( reportTimestamp: string, refreshInterval: number )
 	return diffInHours > refreshInterval;
 }
 
-export const ExpiredReportNotice = ( { onRetest, reportTimestamp }: ExpiredReportNoticeProps ) => {
+export const ReportExpiredNotice = ( { onRetest, reportTimestamp }: ReportExpiredNotice ) => {
 	const [ showExpiredReportNotice, setShowExpiredReportNotice ] = useState< boolean >( true );
 
 	if ( ! showExpiredReportNotice ) {
@@ -45,7 +44,13 @@ export const ExpiredReportNotice = ( { onRetest, reportTimestamp }: ExpiredRepor
 	}
 
 	return (
-		<Notice status="info" isDismissible onDismiss={ setShowExpiredReportNotice }>
+		<Notice
+			status="info"
+			isDismissible
+			onRemove={ () => {
+				setShowExpiredReportNotice( false );
+			} }
+		>
 			<p>
 				<b>{ __( 'These results are more than 24 hours old' ) }</b>
 			</p>

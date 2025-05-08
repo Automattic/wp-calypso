@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { siteSettingsQuery, basicMetricsQuery, performanceInsightsQuery } from '../../app/queries';
+import { basicMetricsQuery, performanceInsightsQuery } from '../../app/queries';
 import { PerformanceReport } from '../../data/types';
 
 interface PerformanceData {
@@ -14,44 +14,36 @@ interface PerformanceData {
 	isRunningDesktopReport: boolean;
 	isRunningMobileReport: boolean;
 	isError: boolean;
+	refetch: () => void;
 }
 
 const isReportFailed = ( report: unknown ) => report === 'failed';
 
-export function usePerformanceData( siteId: string, url: string ): PerformanceData {
-	const {
-		data: siteSettings,
-		isLoading: isLoadingSiteSettings,
-		isError: isSiteSettingsError,
-	} = useQuery( {
-		...siteSettingsQuery( siteId ),
-		refetchOnWindowFocus: false,
-		retry: false,
-		enabled: !! siteId,
-	} );
-
-	const wpcomPerformanceReportUrl: string = siteSettings?.wpcom_performance_report_url || '';
-	const [ , cachedHash ] = wpcomPerformanceReportUrl.split( '&hash=' );
-
+export function usePerformanceData(
+	url: string | undefined,
+	hash: string | undefined
+): PerformanceData {
 	const {
 		data: basicMetricsData,
 		isLoading: isLoadingBasicMetrics,
 		isError: isBasicMetricsError,
 	} = useQuery( {
-		...basicMetricsQuery( url ),
+		...basicMetricsQuery( url as string ),
 		refetchOnWindowFocus: false,
-		enabled: !! url && ! isLoadingSiteSettings && ! cachedHash,
+		enabled: !! url && ! hash,
 	} );
 
-	const token = cachedHash || basicMetricsData?.token;
+	const token = hash || basicMetricsData?.token;
 
 	const {
 		data: performanceData,
 		isLoading: isLoadingPerformanceInsights,
 		isError: isInsightsError,
+		refetch,
 	} = useQuery( {
-		...performanceInsightsQuery( url, token || '' ),
+		...performanceInsightsQuery( url as string, token || '' ),
 		refetchOnWindowFocus: false,
+		retry: false,
 		enabled: !! url && !! token,
 	} );
 
@@ -79,7 +71,6 @@ export function usePerformanceData( siteId: string, url: string ): PerformanceDa
 			: undefined;
 
 	const isError =
-		isSiteSettingsError ||
 		isBasicMetricsError ||
 		isInsightsError ||
 		isReportFailed( performanceData?.pagespeed?.mobile ) ||
@@ -93,9 +84,10 @@ export function usePerformanceData( siteId: string, url: string ): PerformanceDa
 		mobileScore,
 		desktopLoaded,
 		mobileLoaded,
-		isLoading: isLoadingSiteSettings || isLoadingBasicMetrics || isLoadingPerformanceInsights,
+		isLoading: isLoadingBasicMetrics || isLoadingPerformanceInsights,
 		isRunningDesktopReport: ! desktopLoaded && 'running' === performanceData?.pagespeed?.desktop,
 		isRunningMobileReport: ! mobileLoaded && 'running' === performanceData?.pagespeed?.mobile,
 		isError,
+		refetch,
 	};
 }
