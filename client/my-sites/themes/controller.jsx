@@ -32,7 +32,6 @@ export function getProps( context ) {
 		isCollectionView: view === 'collection',
 		pathName: context.pathname,
 		trackScrollPage: boundTrackScrollPage,
-		isServerSide: context.isServerSide,
 	};
 }
 
@@ -45,7 +44,9 @@ export function loggedOut( context, next ) {
 
 	const props = getProps( context );
 
-	context.primary = <LoggedOutComponent { ...props } />;
+	// We need to pass isServerSide to LoggedOutComponent to hide the search bar
+	// because SearchControl is not server-side renderable
+	context.primary = <LoggedOutComponent { ...props } isServerSide={ context.isServerSide } />;
 	next();
 }
 
