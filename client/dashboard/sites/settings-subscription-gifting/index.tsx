@@ -2,9 +2,11 @@ import { DataForm } from '@automattic/dataviews';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { Card, CardBody, ToggleControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { siteSettingsMutation, siteSettingsQuery } from '../../app/queries';
+import NotFound from '../../app/404';
+import { siteFeaturesQuery, siteSettingsMutation, siteSettingsQuery } from '../../app/queries';
 import { siteSettingsSubscriptionGiftingRoute } from '../../app/router';
 import PageLayout from '../../components/page-layout';
+import { hasSubscriptionGiftingFeature } from './utils';
 import type { SiteSettings } from '../../data/types';
 import type { Field } from '@automattic/dataviews';
 
@@ -33,19 +35,18 @@ const form = {
 	fields,
 };
 
-export function getSubscriptionGiftingSettingBadges( settings: SiteSettings ) {
-	return settings.wpcom_gifting_subscription
-		? [ { text: __( 'Enabled' ), intent: 'success' as const } ]
-		: [ { text: __( 'Disabled' ) } ];
-}
-
 export default function SubscriptionGiftingSettings() {
 	const { siteSlug } = siteSettingsSubscriptionGiftingRoute.useParams();
+	const { data: features } = useQuery( siteFeaturesQuery( siteSlug ) );
 	const { data } = useQuery( siteSettingsQuery( siteSlug ) );
 	const mutation = useMutation( siteSettingsMutation( siteSlug ) );
 
-	if ( ! data ) {
+	if ( ! data || ! features ) {
 		return null;
+	}
+
+	if ( ! hasSubscriptionGiftingFeature( features ) ) {
+		return <NotFound />;
 	}
 
 	const handleSubmit = ( edits: Partial< SiteSettings > ) => {

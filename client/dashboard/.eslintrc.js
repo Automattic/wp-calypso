@@ -26,6 +26,7 @@ module.exports = {
 						group: [
 							'@automattic/*',
 							'!@automattic/calypso-config',
+							'!@automattic/calypso-products',
 							'!@automattic/components',
 							'@automattic/components/*',
 							'!@automattic/components/src',

@@ -11,6 +11,7 @@ import {
 	fetchEmails,
 	fetchProfile,
 	updateProfile,
+	fetchSiteFeatures,
 	fetchSiteSettings,
 	fetchBasicMetrics,
 	fetchPerformanceInsights,
@@ -100,6 +101,15 @@ export function profileMutation() {
 			queryClient.setQueryData( profileQueryKey, ( oldData: Profile | undefined ) =>
 				oldData ? { ...oldData, ...newData } : newData
 			);
+		},
+	};
+}
+
+export function siteFeaturesQuery( siteIdOrSlug: string ) {
+	return {
+		queryKey: [ 'site-features', siteIdOrSlug ],
+		queryFn: () => {
+			return fetchSiteFeatures( siteIdOrSlug );
 		},
 	};
 }
