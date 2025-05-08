@@ -4,7 +4,6 @@ import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useWPCOMPlugins } from 'calypso/data/marketplace/use-wpcom-plugins-query';
-import { waitFor } from 'calypso/my-sites/marketplace/util';
 import { useSelector, useDispatch } from 'calypso/state';
 import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
@@ -15,7 +14,7 @@ import {
 import { pluginInstallationStateChange } from 'calypso/state/marketplace/purchase-flow/actions';
 import { MARKETPLACE_ASYNC_PROCESS_STATUS } from 'calypso/state/marketplace/types';
 import { fetchSitePlugins } from 'calypso/state/plugins/installed/actions';
-import { getPluginsOnSite, isRequesting } from 'calypso/state/plugins/installed/selectors';
+import { getPluginsOnSite } from 'calypso/state/plugins/installed/selectors';
 import { isPluginActive } from 'calypso/state/plugins/installed/selectors-ts';
 import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/wporg/actions';
 import { areFetched, areFetching, getPlugins } from 'calypso/state/plugins/wporg/selectors';
@@ -62,7 +61,6 @@ export default function usePluginsThankYouData( pluginSlugs: string[] ): ThankYo
 		wpComPluginData ? wpComPluginData.software_slug || wpComPluginData.org_slug : pluginSlugs[ i ]
 	);
 
-	const isRequestingPlugins = useSelector( ( state ) => isRequesting( state, siteId ) );
 	const pluginsOnSite: Plugin[] = useSelector( ( state ) =>
 		getPluginsOnSite( state, siteId, softwareSlugs )
 	);
@@ -161,11 +159,23 @@ export default function usePluginsThankYouData( pluginSlugs: string[] ): ThankYo
 			return;
 		}
 
-		if ( ! isRequestingPlugins ) {
-			waitFor( 1 ).then( () => dispatch( fetchSitePlugins( siteId ) ) );
+		const abortController = new AbortController();
+
+		async function fetchPlugins() {
+			if ( abortController.signal.aborted ) {
+				return;
+			}
+
+			await dispatch( fetchSitePlugins( siteId ) );
+			fetchPlugins();
 		}
+
+		fetchPlugins();
+
+		return () => {
+			abortController.abort();
+		};
 	}, [
-		isRequestingPlugins,
 		dispatch,
 		siteId,
 		transferStatus,
