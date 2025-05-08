@@ -4,13 +4,7 @@
 
 
 .is-section-themes {
-	&.theme-default.color-scheme {
-		--color-surface-backdrop: var(--studio-white);
-	}
-
 	&.is-global-sidebar-visible {
-		background: var(--studio-gray-0);
-
 		.layout__content {
 			min-height: 100vh;
 			@media screen and (min-width: 782px) {

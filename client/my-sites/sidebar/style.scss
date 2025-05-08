@@ -16,7 +16,7 @@ $brand-text: "SF Pro Text", $sans;
 		--sidebar-width-max: 295px;
 		--sidebar-width-min: 295px;
 
-		--color-sidebar-background: var(--studio-gray-0);
+		--color-sidebar-background: var(--color-main-background);
 		// Resetting these colors to prevent bleeding from dashboard color schemes
 		--color-sidebar-text: var(--studio-gray-80);
 		--color-sidebar-text-alternative: var(--studio-gray-40);

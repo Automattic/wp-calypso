@@ -13,10 +13,6 @@ $button-border: 4px;
 		z-index: 100201;
 	}
 
-	&.theme-default.color-scheme {
-		--color-surface-backdrop: var(--studio-white);
-	}
-
 	.layout.is-logged-in .layout__content {
 		overflow: clip;
 		padding-top: 47px;
@@ -40,8 +36,6 @@ $button-border: 4px;
 	}
 
 	&.is-global-sidebar-visible {
-		background: var(--studio-gray-0);
-
 		&.layout.is-logged-in .layout__content {
 			min-height: 100vh;
 
