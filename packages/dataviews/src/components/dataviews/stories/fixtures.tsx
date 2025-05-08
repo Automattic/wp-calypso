@@ -645,7 +645,6 @@ export const fields: Field< SpaceObject >[] = [
 				<img src={ item.image } alt="" style={ { width: '100%' } } />
 			);
 		},
-		enableSorting: false,
 	},
 	{
 		label: 'Title',

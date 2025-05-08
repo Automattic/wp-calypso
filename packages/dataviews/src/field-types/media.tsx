@@ -21,6 +21,7 @@ function isValid( value: any, context?: ValidationContext ) {
 export default {
 	sort,
 	isValid,
-	Edit: 'text',
+	Edit: () => null,
 	render: () => null,
+	enableSorting: false,
 };

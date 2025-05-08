@@ -69,5 +69,6 @@ export default function getFieldTypeDefinition< Item >( type?: FieldType ) {
 				? renderFromElements( { item, field } )
 				: field.getValue( { item } );
 		},
+		enableSorting: true,
 	};
 }
