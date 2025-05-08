@@ -36,7 +36,9 @@ export const Tabs = Object.assign( CoreTabs as ( props: TabsProps ) => React.JSX
 	Tab: Object.assign( CoreTabs.Tab, {
 		displayName: 'Tabs.Tab',
 	} ) as React.ForwardRefExoticComponent<
-		TabProps & React.HTMLAttributes< HTMLButtonElement > & React.RefAttributes< HTMLButtonElement >
+		TabProps &
+			Omit< React.HTMLAttributes< HTMLButtonElement >, 'id' > &
+			React.RefAttributes< HTMLButtonElement >
 	>,
 	/**
 	 * A wrapper component for the `Tab` components.
