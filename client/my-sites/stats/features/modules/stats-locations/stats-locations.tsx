@@ -1,9 +1,10 @@
 import config from '@automattic/calypso-config';
+import page from '@automattic/calypso-router';
 import { SimplifiedSegmentedControl, StatsCard } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { mapMarker } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import useLocationViewsQuery, {
 	StatsLocationViewsData,
@@ -35,7 +36,7 @@ import Geochart from '../../../geochart';
 import StatsCardUpdateJetpackVersion from '../../../stats-card-upsell/stats-card-update-jetpack-version';
 import StatsCardSkeleton from '../shared/stats-card-skeleton';
 import StatsInfoArea from '../shared/stats-info-area';
-import { StatsDefaultModuleProps } from '../types';
+import { StatsDefaultModuleProps, StatsQueryType } from '../types';
 import CountryFilter from './country-filter';
 import sampleLocations from './sample-locations';
 
@@ -49,7 +50,7 @@ const OPTION_KEYS = {
 
 type GeoMode = 'country' | 'region' | 'city';
 
-const GEO_MODES: Record< string, GeoMode > = {
+export const GEO_MODES: Record< string, GeoMode > = {
 	[ OPTION_KEYS.COUNTRIES ]: 'country',
 	[ OPTION_KEYS.REGIONS ]: 'region',
 	[ OPTION_KEYS.CITIES ]: 'city',
@@ -62,6 +63,7 @@ type SelectOptionType = {
 
 interface StatsModuleLocationsProps extends StatsDefaultModuleProps {
 	initialGeoMode?: string;
+	query: StatsQueryType;
 }
 
 const StatsLocations: React.FC< StatsModuleLocationsProps > = ( {
@@ -69,6 +71,7 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( {
 	period,
 	query,
 	summaryUrl,
+	summary = false,
 } ) => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId ) as number;
@@ -77,14 +80,23 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( {
 	const supportUrl = isOdysseyStats
 		? `${ JETPACK_SUPPORT_URL_TRAFFIC }#views-by-locations`
 		: LOCATIONS_SUPPORT_URL;
-
-	const urlGeoMode =
-		initialGeoMode || new URLSearchParams( window.location.search ).get( 'geoMode' );
-	const [ selectedOption, setSelectedOption ] = useState(
-		urlGeoMode && urlGeoMode in GEO_MODES ? urlGeoMode : OPTION_KEYS.COUNTRIES
-	);
+	const [ selectedOption, setSelectedOption ] = useState( () => {
+		const urlGeoMode = query.geoMode ?? initialGeoMode;
+		return urlGeoMode && urlGeoMode in GEO_MODES ? urlGeoMode : OPTION_KEYS.COUNTRIES;
+	} );
 
 	const [ countryFilter, setCountryFilter ] = useState< string | null >( null );
+
+	useEffect( () => {
+		if ( ! summary ) {
+			return;
+		}
+
+		// If URL has valid param and it's different from state, update state
+		if ( query.geoMode !== selectedOption ) {
+			page( getPathWithUpdatedQueryString( { geoMode: selectedOption } ) );
+		}
+	}, [ query.geoMode, selectedOption, summary ] );
 
 	const optionLabels = {
 		[ OPTION_KEYS.COUNTRIES ]: {
@@ -184,7 +196,6 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( {
 					label: entry[ 1 ].selectLabel, // optionLabels object value
 				} ) ) }
 				initialSelected={ selectedOption }
-				// @ts-expect-error TODO: missing TS type
 				onSelect={ changeViewButton }
 			/>
 		</>
