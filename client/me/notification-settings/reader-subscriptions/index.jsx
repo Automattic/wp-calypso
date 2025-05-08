@@ -1,11 +1,11 @@
 import { Card, FormLabel, Dialog } from '@automattic/components';
+import { CheckboxControl } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
 import { flowRight as compose } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryReaderTeams from 'calypso/components/data/query-reader-teams';
 import FormButton from 'calypso/components/forms/form-button';
-import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLegend from 'calypso/components/forms/form-legend';
 import FormSectionHeading from 'calypso/components/forms/form-section-heading';
@@ -32,6 +32,12 @@ class NotificationSubscriptions extends Component {
 		showConfirmModal: false,
 	};
 
+	checkboxNameToActionMap = {
+		subscription_delivery_jabber_default: 'Notification delivery by Jabber',
+		subscription_delivery_email_blocked: 'Block All Email Updates',
+		p2_disable_autofollow_on_comment: 'Enable auto-follow P2 upon comment',
+	};
+
 	handleClickEvent( action ) {
 		return () => this.props.recordGoogleEvent( 'Me', 'Clicked on ' + action );
 	}
@@ -41,9 +47,23 @@ class NotificationSubscriptions extends Component {
 	}
 
 	handleCheckboxEvent( action, invert = false ) {
-		return ( event ) => {
-			const optionValue = invert ? ! event.target.checked : event.target.checked;
-			this.props.recordGoogleEvent( 'Me', `Clicked ${ action } checkbox`, 'checked', +optionValue );
+		return ( checked ) => {
+			const optionValue = invert ? ! checked : checked;
+			// Create a synthetic event object that matches what updateSetting expects
+			const syntheticEvent = {
+				currentTarget: {
+					name: action,
+					value: optionValue,
+				},
+			};
+			this.props.toggleSetting( syntheticEvent );
+			const actionLabel = this.checkboxNameToActionMap[ action ];
+			this.props.recordGoogleEvent(
+				'Me',
+				`Clicked ${ actionLabel } checkbox`,
+				'checked',
+				+optionValue
+			);
 		};
 	}
 
@@ -226,42 +246,36 @@ class NotificationSubscriptions extends Component {
 
 						<FormFieldset>
 							<FormLegend>{ this.props.translate( 'Jabber subscription delivery' ) }</FormLegend>
-							<FormLabel>
-								<FormCheckbox
-									checked={ this.props.getSetting( 'subscription_delivery_jabber_default' ) }
-									disabled={ this.props.getDisabledState() }
-									id="subscription_delivery_jabber_default"
-									name="subscription_delivery_jabber_default"
-									onChange={ this.props.toggleSetting }
-									onClick={ this.handleCheckboxEvent( 'Notification delivery by Jabber' ) }
-								/>
-								<span>
-									{ this.props.translate( 'Receive subscription updates via instant message.' ) }{ ' ' }
-									<InlineSupportLink
-										supportContext="jabber-subscription-updates"
-										showIcon={ false }
-									/>
-								</span>
-							</FormLabel>
+							<CheckboxControl
+								checked={ this.props.getSetting( 'subscription_delivery_jabber_default' ) }
+								disabled={ this.props.getDisabledState() }
+								id="subscription_delivery_jabber_default"
+								name="subscription_delivery_jabber_default"
+								onChange={ this.handleCheckboxEvent( 'subscription_delivery_jabber_default' ) }
+								label={
+									<span>
+										{ this.props.translate( 'Receive subscription updates via instant message.' ) }{ ' ' }
+										<InlineSupportLink
+											supportContext="jabber-subscription-updates"
+											showIcon={ false }
+										/>
+									</span>
+								}
+							/>
 						</FormFieldset>
 
 						<FormFieldset>
 							<FormLegend>{ this.props.translate( 'Pause emails' ) }</FormLegend>
-							<FormLabel>
-								<FormCheckbox
-									checked={ this.props.getSetting( 'subscription_delivery_email_blocked' ) }
-									disabled={ this.props.getDisabledState() }
-									id="subscription_delivery_email_blocked"
-									name="subscription_delivery_email_blocked"
-									onChange={ this.props.toggleSetting }
-									onClick={ this.handleCheckboxEvent( 'Block All Notification Emails' ) }
-								/>
-								<span>
-									{ this.props.translate(
-										'Pause all email updates from sites you’re subscribed to on WordPress.com'
-									) }
-								</span>
-							</FormLabel>
+							<CheckboxControl
+								checked={ this.props.getSetting( 'subscription_delivery_email_blocked' ) }
+								disabled={ this.props.getDisabledState() }
+								id="subscription_delivery_email_blocked"
+								name="subscription_delivery_email_blocked"
+								onChange={ this.handleCheckboxEvent( 'subscription_delivery_email_blocked' ) }
+								label={ this.props.translate(
+									'Pause all email updates from sites you’re subscribed to on WordPress.com'
+								) }
+							/>
 							<FormSettingExplanation>
 								{ this.props.translate(
 									'Newsletters are sent via WordPress.com. If you pause emails, you will not receive newsletters from the sites you are subscribed to.'
@@ -272,22 +286,16 @@ class NotificationSubscriptions extends Component {
 						{ isAutomattician && (
 							<FormFieldset>
 								<FormLegend>Auto-follow P2 posts (Automatticians only)</FormLegend>
-								<FormLabel>
-									<FormCheckbox
-										checked={ ! this.props.getSetting( 'p2_disable_autofollow_on_comment' ) }
-										disabled={ this.props.getDisabledState() }
-										id="p2_disable_autofollow_on_comment"
-										name="p2_disable_autofollow_on_comment"
-										onChange={ this.props.toggleSetting }
-										onClick={ this.handleCheckboxEvent(
-											'Enable auto-follow P2 upon comment',
-											true
-										) }
-									/>
-									<span>
-										Automatically subscribe to P2 post notifications when you leave a comment.
-									</span>
-								</FormLabel>
+								<CheckboxControl
+									checked={ ! this.props.getSetting( 'p2_disable_autofollow_on_comment' ) }
+									disabled={ this.props.getDisabledState() }
+									id="p2_disable_autofollow_on_comment"
+									name="p2_disable_autofollow_on_comment"
+									onChange={ this.handleCheckboxEvent( 'p2_disable_autofollow_on_comment', true ) }
+									label={ this.props.translate(
+										'Automatically subscribe to P2 post notifications when you leave a comment.'
+									) }
+								/>
 							</FormFieldset>
 						) }
 
