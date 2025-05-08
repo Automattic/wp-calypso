@@ -8,6 +8,152 @@ import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormRadio from 'calypso/components/forms/form-radio';
 import { getName, isRefundable, isSubscription } from 'calypso/lib/purchases';
 
+const NonRefundableDomainMappingMessage = ( { includedDomainPurchase } ) => {
+	const translate = useTranslate();
+	return (
+		<div>
+			<p>
+				{ translate(
+					'This plan includes the custom domain mapping for %(mappedDomain)s. ' +
+						'The domain will not be removed along with the plan, to avoid any interruptions for your visitors.',
+					{
+						args: {
+							mappedDomain: includedDomainPurchase.meta,
+						},
+					}
+				) }
+			</p>
+		</div>
+	);
+};
+
+const CancelableDomainMappingMessage = ( { includedDomainPurchase, purchase } ) => {
+	const translate = useTranslate();
+	return (
+		<div>
+			<p>
+				{ translate(
+					'This plan includes mapping for the domain %(mappedDomain)s. ' +
+						"Cancelling will remove all the plan's features from your site, including the domain.",
+					{
+						args: {
+							mappedDomain: includedDomainPurchase.meta,
+						},
+					}
+				) }
+			</p>
+			<p>
+				{ translate(
+					'Your site will no longer be available at %(mappedDomain)s. Instead, it will be at %(wordpressSiteUrl)s',
+					{
+						args: {
+							mappedDomain: includedDomainPurchase.meta,
+							wordpressSiteUrl: purchase.domain,
+						},
+					}
+				) }
+			</p>
+			<p>
+				{ translate(
+					'The domain %(mappedDomain)s itself is not canceled. Only the connection between WordPress.com and ' +
+						'your domain is removed. %(mappedDomain)s is registered elsewhere and you can still use it with other sites.',
+					{
+						args: {
+							mappedDomain: includedDomainPurchase.meta,
+						},
+					}
+				) }
+			</p>
+		</div>
+	);
+};
+
+const NonRefundableDomainPurchaseMessage = ( { includedDomainPurchase } ) => {
+	const translate = useTranslate();
+	return (
+		<div>
+			<p>
+				{ translate(
+					'This plan includes the custom domain, %(domain)s. The domain will not be removed along with the plan, to avoid any interruptions for your visitors.',
+					{
+						args: {
+							domain: includedDomainPurchase.meta,
+						},
+					}
+				) }
+			</p>
+		</div>
+	);
+};
+
+const DomainTransferMessage = ( { includedDomainTransfer, planCostText, purchase } ) => {
+	const translate = useTranslate();
+	return (
+		<div>
+			<p>
+				{ translate(
+					'This plan includes a domain transfer, %(domain)s, normally a %(domainCost)s purchase. ' +
+						'The domain will not be removed along with the plan, to avoid any interruptions for your visitors.',
+					{
+						args: {
+							domain: includedDomainTransfer.meta,
+							domainCost: includedDomainTransfer.priceText,
+						},
+					}
+				) }
+			</p>
+			<p>
+				{ translate(
+					'You will receive a partial refund of %(refundAmount)s which is %(planCost)s for the plan ' +
+						'minus %(domainCost)s for the domain.',
+					{
+						args: {
+							domainCost: includedDomainTransfer.priceText,
+							planCost: planCostText,
+							refundAmount: purchase.refundText,
+						},
+					}
+				) }
+			</p>
+		</div>
+	);
+};
+
+const RefundablePurchaseWithNonRefundableDomainMessage = ( {
+	includedDomainPurchase,
+	planCostText,
+	purchase,
+} ) => {
+	const translate = useTranslate();
+	return (
+		<div>
+			<p>
+				{ translate(
+					'This plan includes the custom domain, %(domain)s. The domain will not be removed along with the plan, to avoid any interruptions for your visitors.',
+					{
+						args: {
+							domain: includedDomainPurchase.meta,
+						},
+					}
+				) }
+			</p>
+			<p>
+				{ translate(
+					'You will receive a partial refund of %(refundAmount)s which is %(planCost)s for the plan ' +
+						'minus %(domainCost)s for the domain.',
+					{
+						args: {
+							domainCost: includedDomainPurchase.costToUnbundleText,
+							planCost: planCostText,
+							refundAmount: purchase.refundText,
+						},
+					}
+				) }
+			</p>
+		</div>
+	);
+};
+
 const CancelPurchaseDomainOptions = ( {
 	includedDomainPurchase,
 	includedDomainTransfer,
@@ -43,154 +189,18 @@ const CancelPurchaseDomainOptions = ( {
 		[ cancelBundledDomain, onCancelConfirmationStateChange ]
 	);
 
-	const NonRefundableDomainMappingMessage = useCallback(
-		() => (
-			<div>
-				<p>
-					{ translate(
-						'This plan includes the custom domain mapping for %(mappedDomain)s. ' +
-							'The domain will not be removed along with the plan, to avoid any interruptions for your visitors.',
-						{
-							args: {
-								mappedDomain: includedDomainPurchase.meta,
-							},
-						}
-					) }
-				</p>
-			</div>
-		),
-		[ includedDomainPurchase, translate ]
-	);
-
-	const CancelableDomainMappingMessage = useCallback(
-		() => (
-			<div>
-				<p>
-					{ translate(
-						'This plan includes mapping for the domain %(mappedDomain)s. ' +
-							"Cancelling will remove all the plan's features from your site, including the domain.",
-						{
-							args: {
-								mappedDomain: includedDomainPurchase.meta,
-							},
-						}
-					) }
-				</p>
-				<p>
-					{ translate(
-						'Your site will no longer be available at %(mappedDomain)s. Instead, it will be at %(wordpressSiteUrl)s',
-						{
-							args: {
-								mappedDomain: includedDomainPurchase.meta,
-								wordpressSiteUrl: purchase.domain,
-							},
-						}
-					) }
-				</p>
-				<p>
-					{ translate(
-						'The domain %(mappedDomain)s itself is not canceled. Only the connection between WordPress.com and ' +
-							'your domain is removed. %(mappedDomain)s is registered elsewhere and you can still use it with other sites.',
-						{
-							args: {
-								mappedDomain: includedDomainPurchase.meta,
-							},
-						}
-					) }
-				</p>
-			</div>
-		),
-		[ includedDomainPurchase, purchase, translate ]
-	);
-
-	const NonRefundableDomainPurchaseMessage = useCallback(
-		() => (
-			<div>
-				<p>
-					{ translate(
-						'This plan includes the custom domain, %(domain)s. The domain will not be removed along with the plan, to avoid any interruptions for your visitors.',
-						{
-							args: {
-								domain: includedDomainPurchase.meta,
-							},
-						}
-					) }
-				</p>
-			</div>
-		),
-		[ includedDomainPurchase, translate ]
-	);
-
-	const DomainTransferMessage = useCallback(
-		() => (
-			<div>
-				<p>
-					{ translate(
-						'This plan includes a domain transfer, %(domain)s, normally a %(domainCost)s purchase. ' +
-							'The domain will not be removed along with the plan, to avoid any interruptions for your visitors.',
-						{
-							args: {
-								domain: includedDomainTransfer.meta,
-								domainCost: includedDomainTransfer.priceText,
-							},
-						}
-					) }
-				</p>
-				<p>
-					{ translate(
-						'You will receive a partial refund of %(refundAmount)s which is %(planCost)s for the plan ' +
-							'minus %(domainCost)s for the domain.',
-						{
-							args: {
-								domainCost: includedDomainTransfer.priceText,
-								planCost: planCostText,
-								refundAmount: purchase.refundText,
-							},
-						}
-					) }
-				</p>
-			</div>
-		),
-		[ includedDomainTransfer, planCostText, purchase, translate ]
-	);
-
-	const RefundablePurchaseWithNonRefundableDomainMessage = useCallback(
-		() => (
-			<div>
-				<p>
-					{ translate(
-						'This plan includes the custom domain, %(domain)s. The domain will not be removed along with the plan, to avoid any interruptions for your visitors.',
-						{
-							args: {
-								domain: includedDomainPurchase.meta,
-							},
-						}
-					) }
-				</p>
-				<p>
-					{ translate(
-						'You will receive a partial refund of %(refundAmount)s which is %(planCost)s for the plan ' +
-							'minus %(domainCost)s for the domain.',
-						{
-							args: {
-								domainCost: includedDomainPurchase.costToUnbundleText,
-								planCost: planCostText,
-								refundAmount: purchase.refundText,
-							},
-						}
-					) }
-				</p>
-			</div>
-		),
-		[ includedDomainPurchase, planCostText, purchase, translate ]
-	);
-
 	if ( ( ! includedDomainPurchase && ! includedDomainTransfer ) || ! isSubscription( purchase ) ) {
 		return null;
 	}
 
 	if ( includedDomainTransfer ) {
-		return <DomainTransferMessage />;
+		return (
+			<DomainTransferMessage
+				includedDomainTransfer={ includedDomainTransfer }
+				purchase={ purchase }
+				planCostText={ planCostText }
+			/>
+		);
 	}
 
 	if (
@@ -203,19 +213,32 @@ const CancelPurchaseDomainOptions = ( {
 	// Domain mapping.
 	if ( isDomainMapping( includedDomainPurchase ) ) {
 		if ( ! isRefundable( purchase ) ) {
-			return <NonRefundableDomainMappingMessage />;
+			return (
+				<NonRefundableDomainMappingMessage includedDomainPurchase={ includedDomainPurchase } />
+			);
 		}
 
-		return <CancelableDomainMappingMessage />;
+		return (
+			<CancelableDomainMappingMessage
+				includedDomainPurchase={ includedDomainPurchase }
+				purchase={ purchase }
+			/>
+		);
 	}
 
 	// Domain registration.
 	if ( ! isRefundable( purchase ) ) {
-		return <NonRefundableDomainPurchaseMessage />;
+		return <NonRefundableDomainPurchaseMessage includedDomainPurchase={ includedDomainPurchase } />;
 	}
 
 	if ( isRefundable( purchase ) && ! isRefundable( includedDomainPurchase ) ) {
-		return <RefundablePurchaseWithNonRefundableDomainMessage />;
+		return (
+			<RefundablePurchaseWithNonRefundableDomainMessage
+				includedDomainPurchase={ includedDomainPurchase }
+				purchase={ purchase }
+				planCostText={ planCostText }
+			/>
+		);
 	}
 
 	return (
