@@ -77,14 +77,15 @@ async function initialize( calypsoReduxStore: Store ) {
 	const hasAnySites = userHasAnySites( calypsoReduxStore.getState() );
 
 	if ( includeDomainsStep ) {
-		return [ STEPS.DOMAINS, STEPS.PLANS, STEPS.PROCESSING ] as const;
+		return [ STEPS.UNIFIED_DOMAINS, STEPS.UNIFIED_PLANS, STEPS.PROCESSING ] as const;
 	}
 
 	if ( hasAnySites ) {
-		return [ STEPS.PICK_SITE, STEPS.DOMAINS, STEPS.PLANS, STEPS.PROCESSING ] as const;
+		return [ STEPS.PICK_SITE, STEPS.UNIFIED_DOMAINS, STEPS.UNIFIED_PLANS, STEPS.PROCESSING ] as const;
 	}
 
-	return [ STEPS.PLANS, STEPS.PROCESSING ] as const;
+	// We need `as const` to promise TS that these steps won't change later.
+	return [ STEPS.UNIFIED_PLANS, STEPS.PROCESSING ] as const;
 }
 
 export const exampleFlow: FlowV2< typeof initialize > = {
@@ -164,10 +165,10 @@ Stepper takes care of authenticating your users. You should not have to worry ab
 ```ts
 function initialize() {
 	// Gate all the steps
-	return stepsWithRequiredLogin( [ STEPS.DOMAINS, STEPS.PLANS, STEPS.PROCESSING ] );
+	return stepsWithRequiredLogin( [ STEPS.UNIFIED_DOMAINS, STEPS.UNIFIED_PLANS, STEPS.PROCESSING ] );
 
 	// Gate some
-	return [ STEPS.DOMAINS, ...stepsWithRequiredLogin( [ STEPS.PLANS, STEPS.PROCESSING ] ) ] as const;
+	return [ STEPS.UNIFIED_DOMAINS, ...stepsWithRequiredLogin( [ STEPS.UNIFIED_PLANS, STEPS.PROCESSING ] ) ] as const;
 }
 ```
 
@@ -191,7 +192,7 @@ async function initialize() {
 		return false;
 	}
 
-	return [ STEPS.PLANS, STEPS.PROCESSING ] as const;
+	return [ STEPS.UNIFIED_PLANS, STEPS.PROCESSING ] as const;
 }
 ```
 
@@ -293,6 +294,7 @@ Stepper aims to create a big `steps-repository` that contains the steps and allo
 #### Renaming steps
 
 There may be a time when a step needs to be renamed. In order to preserve Tracks data and funnels, we recommend adding a new entry to `getStepOldSlug` in the `FlowRenderer` component. This ensures that tracks events will fire with both the new step slug and the old step slug.
+
 
 ### State management
 
