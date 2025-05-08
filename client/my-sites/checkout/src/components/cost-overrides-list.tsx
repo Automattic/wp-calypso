@@ -57,6 +57,9 @@ const CostOverridesListStyle = styled.div< {
 				padding-right: 24px;
 				padding-left: 0;
 			}
+			& svg {
+				top: 0px;
+			}
 		` }
 
 	& .cost-overrides-list-item {
