@@ -672,9 +672,10 @@ export const fields: Field< SpaceObject >[] = [
 		id: 'isPlanet',
 		label: 'Is Planet',
 		type: 'boolean',
-		render: ( { item } ) => {
-			return item.isPlanet ? 'Yes' : 'No';
-		},
+		elements: [
+			{ value: true, label: 'True' },
+			{ value: false, label: 'False' },
+		],
 	},
 	{
 		label: 'Satellites',
