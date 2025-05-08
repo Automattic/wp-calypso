@@ -64,6 +64,7 @@ export default function ReportsComponent() {
 
 	// Step 3: Schedule and Send State
 	const [ scheduleDate, setScheduleDate ] = useState( new Date() );
+	const [ sendMonthly, setSendMonthly ] = useState( false );
 
 	const openModal = () => {
 		setCurrentStep( 1 );
@@ -212,6 +213,19 @@ export default function ReportsComponent() {
 							<label>{ translate( 'When should it send?' ) }</label>
 							<DateTimePicker currentDate={ scheduleDate } onChange={ handleDateChange } is12Hour />
 						</div>
+						<CheckboxControl
+							label={ translate( 'Send monthly?' ) }
+							checked={ sendMonthly }
+							onChange={ setSendMonthly }
+							className="a4a-reports-modal__form-field"
+						/>
+						{ sendMonthly && (
+							<p className="a4a-reports-modal__form-field a4a-reports-modal__conditional-text">
+								{ translate(
+									'Your custom text from step one, will be included in each sent report'
+								) }
+							</p>
+						) }
 						<p className="a4a-reports-modal__form-field">
 							{ translate( 'Preview external link: ' ) }
 							<span
