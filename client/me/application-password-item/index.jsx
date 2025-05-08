@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import useDeleteAppPasswordMutation from 'calypso/data/application-passwords/use-delete-app-password-mutation';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
-import { errorNotice } from 'calypso/state/notices/actions';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import './style.scss';
 
 function ApplicationPasswordsItem( { password } ) {
@@ -13,6 +13,13 @@ function ApplicationPasswordsItem( { password } ) {
 	const translate = useTranslate();
 
 	const { deleteAppPassword } = useDeleteAppPasswordMutation( {
+		onSuccess() {
+			dispatch(
+				successNotice( translate( 'Application password successfully deleted.' ), {
+					duration: 2000,
+				} )
+			);
+		},
 		onError() {
 			dispatch(
 				errorNotice(
