@@ -4,7 +4,7 @@ import { SimplifiedSegmentedControl, StatsCard } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { mapMarker } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import useLocationViewsQuery, {
 	StatsLocationViewsData,
@@ -69,10 +69,23 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( {
 		: LOCATIONS_SUPPORT_URL;
 
 	// selectOption is in plural form i.e. 'countries'! Possible something to unify in the future.
-	const [ selectedOption, setSelectedOption ] = useState( () => {
+	const appliedGeoModeFromUrl = useMemo( () => {
 		const urlGeoMode = query.geoMode ?? initialGeoMode;
 		return urlGeoMode && urlGeoMode in GEO_MODES ? urlGeoMode : OPTION_KEYS.COUNTRIES;
+	}, [ query.geoMode, initialGeoMode ] );
+
+	// Set the state locally to avoid a page being reloaded by URL changes.
+	const [ selectedLocalOption, setSelectedLocalOption ] = useState( () => {
+		return appliedGeoModeFromUrl;
 	} );
+
+	const selectedOption = useMemo( () => {
+		if ( summary ) {
+			return appliedGeoModeFromUrl;
+		}
+
+		return selectedLocalOption;
+	}, [ summary, appliedGeoModeFromUrl, selectedLocalOption ] );
 
 	const [ countryFilter, setCountryFilter ] = useState< string | null >( null );
 
@@ -157,11 +170,10 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( {
 			stat_type: optionLabels[ filter ].feature,
 		} );
 
-		setSelectedOption( filter );
-
-		// If URL has valid param and it's different from state, update URL; only intended for summary page.
-		if ( summary && query.geoMode !== filter ) {
+		if ( summary ) {
 			page( getPathWithUpdatedQueryString( { geoMode: filter } ) );
+		} else {
+			setSelectedLocalOption( filter );
 		}
 	};
 
