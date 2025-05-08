@@ -1,11 +1,17 @@
 /**
  * Internal dependencies
  */
-import type { FieldType, SortDirection, ValidationContext } from '../types';
+import type {
+	DataViewRenderFieldProps,
+	FieldType,
+	SortDirection,
+	ValidationContext,
+} from '../types';
 import { default as integer } from './integer';
 import { default as text } from './text';
 import { default as datetime } from './datetime';
 import { default as boolean } from './boolean';
+import { renderFromElements } from '../utils';
 
 /**
  *
@@ -13,7 +19,7 @@ import { default as boolean } from './boolean';
  *
  * @return A field type definition.
  */
-export default function getFieldTypeDefinition( type?: FieldType ) {
+export default function getFieldTypeDefinition< Item >( type?: FieldType ) {
 	if ( 'integer' === type ) {
 		return integer;
 	}
@@ -51,5 +57,10 @@ export default function getFieldTypeDefinition( type?: FieldType ) {
 			return true;
 		},
 		Edit: () => null,
+		render: ( { item, field }: DataViewRenderFieldProps< Item > ) => {
+			return field.elements
+				? renderFromElements( { item, field } )
+				: field.getValue( { item } );
+		},
 	};
 }

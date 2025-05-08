@@ -1,7 +1,12 @@
 /**
  * Internal dependencies
  */
-import type { SortDirection, ValidationContext } from '../types';
+import type {
+	DataViewRenderFieldProps,
+	SortDirection,
+	ValidationContext,
+} from '../types';
+import { renderFromElements } from '../utils';
 
 function sort( a: any, b: any, direction: SortDirection ) {
 	const boolA = Boolean( a );
@@ -32,4 +37,19 @@ export default {
 	sort,
 	isValid,
 	Edit: 'boolean',
+	render: ( { item, field }: DataViewRenderFieldProps< any > ) => {
+		if ( field.elements ) {
+			return renderFromElements( { item, field } );
+		}
+
+		if ( field.getValue( { item } ) === true ) {
+			return 'true';
+		}
+
+		if ( field.getValue( { item } ) === false ) {
+			return 'false';
+		}
+
+		return null;
+	},
 };

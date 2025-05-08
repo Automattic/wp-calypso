@@ -68,7 +68,7 @@ function TableColumnField< Item >( {
 
 	return (
 		<div className="dataviews-view-table__cell-content-wrapper">
-			<field.render { ...{ item } } />
+			<field.render item={ item } field={ field } />
 		</div>
 	);
 }
