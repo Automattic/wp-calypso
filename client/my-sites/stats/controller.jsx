@@ -304,8 +304,8 @@ export function summary( context, next ) {
 	let statsQueryOptions = {};
 
 	// All Time Summary Support
-	if ( queryOptions.summarize && queryOptions.num ) {
-		statsQueryOptions = pick( queryOptions, [ 'num', 'summarize' ] );
+	if ( queryOptions.summarize ) {
+		statsQueryOptions = pick( queryOptions, [ 'num', 'summarize', 'geoMode' ] );
 		statsQueryOptions.period = 'day';
 	}
 

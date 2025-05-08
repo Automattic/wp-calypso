@@ -57,6 +57,7 @@ type StatsPeriodType = {
 };
 
 type StatsQueryType = {
+	geoMode: 'countries' | 'regions' | 'cities';
 	date: string;
 	period: StatsPeriodGrainType;
 };
