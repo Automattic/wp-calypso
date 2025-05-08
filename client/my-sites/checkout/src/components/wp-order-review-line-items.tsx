@@ -70,12 +70,9 @@ export function WPOrderReviewLineItems( {
 	replaceProductInCart,
 	removeCoupon,
 	onChangeSelection,
-	createUserAndSiteBeforeTransaction,
 	responseCart,
-	isPwpoUser,
 	onRemoveProduct,
 	onRemoveProductClick,
-	onRemoveProductCancel,
 }: {
 	className?: string;
 	isSummary?: boolean;
@@ -83,12 +80,9 @@ export function WPOrderReviewLineItems( {
 	replaceProductInCart: ReplaceProductInCart;
 	removeCoupon: RemoveCouponFromCart;
 	onChangeSelection?: OnChangeItemVariant;
-	createUserAndSiteBeforeTransaction?: boolean;
 	responseCart: ResponseCart;
-	isPwpoUser: boolean;
 	onRemoveProduct?: ( label: string ) => void;
 	onRemoveProductClick?: ( label: string ) => void;
-	onRemoveProductCancel?: ( label: string ) => void;
 } ) {
 	const reduxDispatch = useDispatch();
 	const creditsLineItem = getCreditsLineItemFromCart( responseCart );
@@ -195,12 +189,9 @@ export function WPOrderReviewLineItems( {
 					isSummary={ isSummary }
 					removeProductFromCart={ removeProductFromCart }
 					onChangeSelection={ onChangeSelection }
-					createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
 					responseCart={ responseCart }
-					isPwpoUser={ isPwpoUser }
 					onRemoveProduct={ onRemoveProduct }
 					onRemoveProductClick={ onRemoveProductClick }
-					onRemoveProductCancel={ onRemoveProductCancel }
 					hasPartnerCoupon={ hasPartnerCoupon }
 					isDisabled={ isDisabled }
 					initialVariantTerm={
@@ -226,19 +217,12 @@ export function WPOrderReviewLineItems( {
 						isSummary={ isSummary }
 						hasDeleteButton={ couponLineItem.hasDeleteButton }
 						removeProductFromCart={ removeCoupon }
-						createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
-						isPwpoUser={ isPwpoUser }
 						hasPartnerCoupon={ hasPartnerCoupon }
 					/>
 				</WPOrderReviewListItem>
 			) }
 			{ creditsLineItem && responseCart.sub_total_integer > 0 && (
-				<NonProductLineItem
-					subtotal
-					lineItem={ creditsLineItem }
-					isSummary={ isSummary }
-					isPwpoUser={ isPwpoUser }
-				/>
+				<NonProductLineItem subtotal lineItem={ creditsLineItem } isSummary={ isSummary } />
 			) }
 		</WPOrderReviewList>
 	);
@@ -253,12 +237,9 @@ function LineItemWrapper( {
 	isSummary,
 	removeProductFromCart,
 	onChangeSelection,
-	createUserAndSiteBeforeTransaction,
 	responseCart,
-	isPwpoUser,
 	onRemoveProduct,
 	onRemoveProductClick,
-	onRemoveProductCancel,
 	hasPartnerCoupon,
 	isDisabled,
 	initialVariantTerm,
@@ -274,12 +255,9 @@ function LineItemWrapper( {
 	isSummary?: boolean;
 	removeProductFromCart?: RemoveProductFromCart;
 	onChangeSelection?: OnChangeItemVariant;
-	createUserAndSiteBeforeTransaction?: boolean;
 	responseCart: ResponseCart;
-	isPwpoUser: boolean;
 	onRemoveProduct?: ( label: string ) => void;
 	onRemoveProductClick?: ( label: string ) => void;
-	onRemoveProductCancel?: ( label: string ) => void;
 	hasPartnerCoupon: boolean;
 	isDisabled: boolean;
 	initialVariantTerm: number | null | undefined;
@@ -407,12 +385,9 @@ function LineItemWrapper( {
 				hasDeleteButton={ isDeletable }
 				removeProductFromCart={ removeProductFromCart }
 				isSummary={ isSummary }
-				createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
 				responseCart={ responseCart }
-				isPwpoUser={ isPwpoUser }
 				onRemoveProduct={ onRemoveProduct }
 				onRemoveProductClick={ onRemoveProductClick }
-				onRemoveProductCancel={ onRemoveProductCancel }
 				isAkPro500Cart={ isAkPro500Cart }
 				shouldShowBillingInterval={ ! finalShouldShowVariantSelector }
 			>

@@ -279,8 +279,6 @@ function WPCouponLineItem( {
 	isSummary?: boolean;
 	hasDeleteButton?: boolean;
 	removeProductFromCart?: () => void;
-	createUserAndSiteBeforeTransaction?: boolean;
-	isPwpoUser?: boolean;
 	hasPartnerCoupon?: boolean;
 } ) {
 	return (
@@ -954,9 +952,7 @@ function CheckoutLineItem( {
 	hasDeleteButton?: boolean;
 	removeProductFromCart?: RemoveProductFromCart;
 	isSummary?: boolean;
-	createUserAndSiteBeforeTransaction?: boolean;
 	responseCart: ResponseCart;
-	isPwpoUser?: boolean;
 	onRemoveProduct?: ( label: string ) => void;
 	onRemoveProductClick?: ( label: string ) => void;
 	isAkPro500Cart?: boolean;

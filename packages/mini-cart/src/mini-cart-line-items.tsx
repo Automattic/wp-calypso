@@ -33,12 +33,10 @@ const MiniCartLineItemWrapper = styled.li`
 export function MiniCartLineItems( {
 	removeProductFromCart,
 	removeCoupon,
-	createUserAndSiteBeforeTransaction,
 	responseCart,
 }: {
 	removeProductFromCart: RemoveProductFromCart;
 	removeCoupon: RemoveCouponFromCart;
-	createUserAndSiteBeforeTransaction?: boolean;
 	responseCart: ResponseCart;
 } ) {
 	const creditsLineItem = getCreditsLineItemFromCart( responseCart );
@@ -53,7 +51,6 @@ export function MiniCartLineItems( {
 							product={ product }
 							hasDeleteButton={ canItemBeRemovedFromCart( product, responseCart ) }
 							removeProductFromCart={ removeProductFromCart }
-							createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
 							responseCart={ responseCart }
 						/>
 					</MiniCartLineItemWrapper>
@@ -64,7 +61,6 @@ export function MiniCartLineItems( {
 					<NonProductLineItem
 						lineItem={ couponLineItem }
 						removeProductFromCart={ removeCoupon }
-						createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
 						hasDeleteButton={ couponLineItem.hasDeleteButton }
 					/>
 				</MiniCartLineItemWrapper>
