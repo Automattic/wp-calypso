@@ -1,7 +1,7 @@
 import { Button, CompactCard, Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
-import { Fragment, useState } from 'react';
+import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import InlineSupportLink from 'calypso/components/inline-support-link';
@@ -49,7 +49,7 @@ function ApplicationPasswords() {
 	};
 
 	return (
-		<Fragment>
+		<div className="application-passwords">
 			<SectionHeader label={ translate( 'Application passwords' ) }>
 				{ ! newAppPassword && (
 					<Button
@@ -115,7 +115,7 @@ function ApplicationPasswords() {
 			{ ! showAddPasswordForm && ! newAppPassword && (
 				<AppPasswordsList appPasswords={ appPasswords } />
 			) }
-		</Fragment>
+		</div>
 	);
 }
 
