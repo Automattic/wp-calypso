@@ -44,7 +44,9 @@ export default function PaidImportSubscribersError( { error }: Props ) {
 						return __( 'Please double check your CSV file to make sure that it contains emails.' );
 
 					default:
-						return typeof error.message === 'string' ? error.message : '';
+						return typeof error.message === 'string'
+							? error.message
+							: __( 'There was an error processing your request. Please try again.' );
 				}
 			} )() }
 		</FormInputValidation>
