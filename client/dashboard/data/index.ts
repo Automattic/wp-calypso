@@ -12,7 +12,6 @@ import type {
 	EngagementStatsDataPoint,
 	SiteDomain,
 	BasicMetricsData,
-	SiteFeatures,
 	SiteSettings,
 	UrlPerformanceInsights,
 } from './types';
@@ -294,13 +293,6 @@ export const fetchUser = async (): Promise< User > => {
 
 export const fetchTwoStep = async (): Promise< TwoStep > => {
 	return wpcom.req.get( '/me/two-step' );
-};
-
-export const fetchSiteFeatures = async ( siteIdOrSlug: string ): Promise< SiteFeatures > => {
-	return await wpcom.req.get( {
-		path: `/sites/${ siteIdOrSlug }/features`,
-		apiVersion: '1.1',
-	} );
 };
 
 export const fetchSiteSettings = async ( siteIdOrSlug: string ): Promise< SiteSettings > => {

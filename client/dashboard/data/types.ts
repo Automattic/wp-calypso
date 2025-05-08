@@ -139,10 +139,6 @@ export interface EngagementStats {
 	previousData: EngagementStatsDataPoint;
 }
 
-export interface SiteFeatures {
-	active: string[];
-}
-
 export interface SiteSettings {
 	wpcom_gifting_subscription?: boolean;
 	wpcom_performance_report_url?: string;

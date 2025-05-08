@@ -1,18 +1,18 @@
 import { __ } from '@wordpress/i18n';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
 import { hasSubscriptionGiftingFeature } from './utils';
-import type { SiteSettings, SiteFeatures } from '../../data/types';
+import type { Site, SiteSettings } from '../../data/types';
 
 export default function SubscriptionGiftingSettingsSummary( {
 	siteSlug,
-	features,
+	site,
 	settings,
 }: {
 	siteSlug: string;
-	features: SiteFeatures;
+	site: Site;
 	settings: SiteSettings;
 } ) {
-	if ( ! hasSubscriptionGiftingFeature( features ) ) {
+	if ( ! hasSubscriptionGiftingFeature( site ) ) {
 		return null;
 	}
 	return (

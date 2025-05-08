@@ -3,7 +3,7 @@ import { useQuery, useMutation } from '@tanstack/react-query';
 import { Card, CardBody, ToggleControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import NotFound from '../../app/404';
-import { siteFeaturesQuery, siteSettingsMutation, siteSettingsQuery } from '../../app/queries';
+import { siteQuery, siteSettingsMutation, siteSettingsQuery } from '../../app/queries';
 import { siteSettingsSubscriptionGiftingRoute } from '../../app/router';
 import PageLayout from '../../components/page-layout';
 import { hasSubscriptionGiftingFeature } from './utils';
@@ -37,15 +37,15 @@ const form = {
 
 export default function SubscriptionGiftingSettings() {
 	const { siteSlug } = siteSettingsSubscriptionGiftingRoute.useParams();
-	const { data: features } = useQuery( siteFeaturesQuery( siteSlug ) );
+	const { data: siteData } = useQuery( siteQuery( siteSlug ) );
 	const { data } = useQuery( siteSettingsQuery( siteSlug ) );
 	const mutation = useMutation( siteSettingsMutation( siteSlug ) );
 
-	if ( ! data || ! features ) {
+	if ( ! data || ! siteData ) {
 		return null;
 	}
 
-	if ( ! hasSubscriptionGiftingFeature( features ) ) {
+	if ( ! hasSubscriptionGiftingFeature( siteData.site ) ) {
 		return <NotFound />;
 	}
 

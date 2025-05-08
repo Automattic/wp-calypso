@@ -5,17 +5,17 @@ import {
 	Card,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { siteFeaturesQuery, siteSettingsQuery } from '../../app/queries';
+import { siteQuery, siteSettingsQuery } from '../../app/queries';
 import { siteRoute } from '../../app/router';
 import PageLayout from '../../components/page-layout';
 import SubscriptionGiftingSettingsSummary from '../settings-subscription-gifting/summary';
 
 export default function SiteSettings() {
 	const { siteSlug } = siteRoute.useParams();
-	const { data: features } = useQuery( siteFeaturesQuery( siteSlug ) );
+	const { data: siteData } = useQuery( siteQuery( siteSlug ) );
 	const { data: settings } = useQuery( siteSettingsQuery( siteSlug ) );
 
-	if ( ! features || ! settings ) {
+	if ( ! siteData || ! settings ) {
 		return null;
 	}
 
@@ -26,7 +26,7 @@ export default function SiteSettings() {
 				<VStack>
 					<SubscriptionGiftingSettingsSummary
 						siteSlug={ siteSlug }
-						features={ features }
+						site={ siteData.site }
 						settings={ settings }
 					/>
 				</VStack>
