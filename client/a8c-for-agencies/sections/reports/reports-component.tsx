@@ -168,7 +168,9 @@ export default function ReportsComponent() {
 						<h2 className="a4a-reports-modal__step-title">
 							{ translate( 'Step 2: Pick Content' ) }
 						</h2>
-						<h3 className="a4a-reports-modal__group-label">{ translate( 'Stats' ) }</h3>
+						<h3 className="a4a-reports-modal__group-label a4a-reports-modal__group-label--first">
+							{ translate( 'Stats' ) }
+						</h3>
 						{ STATS_OPTIONS.map( ( item ) => (
 							<CheckboxControl
 								key={ item.value }

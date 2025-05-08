@@ -5,48 +5,68 @@
 
 // Wizard Modal Styles
 .a4a-reports-modal {
-	// General modal container styles if needed
-
-	.a4a-reports-modal__step-content {
-		padding: 16px 24px; // Similar to .a4a-form__section padding
+	// This is the outermost frame of the modal
+	&.components-modal__frame {
+		// This is the outermost modal container. It should be a flex container
+		// to manage the header and the main content area (.components-modal__content).
 		display: flex;
 		flex-direction: column;
-		gap: 24px; // Similar to .a4a-form__section-body gap
-		// padding-bottom: 24px; // If actions are outside this, ensure space before them
+		// max-height: 85vh; // Example: WordPress might set a max-height for size="large"
+	}
+
+	// This is the wrapper for the header, our custom content, and our custom actions footer
+	// It's a child of .components-modal__frame and sibling to .components-modal__header (if not hidden)
+	.components-modal__content {
+		// This div is a child of .components-modal__frame and sibling of .components-modal__header.
+		// It wraps our .a4a-reports-modal__step-content and .a4a-reports-modal__actions.
+		display: flex;
+		flex-direction: column;
+		flex-grow: 1; // Crucial: allows this area to take available space below the header.
+		min-height: 0; // Crucial for flex children that need to scroll or shrink.
+		// removed overflow: hidden from here, as it might prevent children from scrolling correctly.
+	}
+
+	.a4a-reports-modal__step-content {
+		flex-grow: 1; // Takes up available space within .components-modal__content.
+		overflow-y: auto; // Enables vertical scrolling for this specific area.
+		min-height: 0; // Allows this area to shrink if content is smaller than available space.
+		padding: 16px 24px;
+		display: flex;
+		flex-direction: column;
+		gap: 20px;
+		padding-bottom: 70px; // Example: adjust this based on footer height
 	}
 
 	.a4a-reports-modal__step-title {
-		@include heading-large; // Similar to .a4a-form__section-heading-title
-		margin-bottom: 16px; // Add some space after the title
-	}
-
-	// General styling for form fields within the wizard for consistent spacing
-	.a4a-reports-modal__form-field,
-	.a4a-reports-modal__file-upload,
-	.a4a-reports-modal__checkbox-control,
-	.a4a-reports-modal__group-label {
-		// Direct children of __step-content will get gap from flexbox.
-		// These classes can be used for more specific field styling if needed
-		// or if fields are nested further.
-	}
-
-	.a4a-reports-modal__select-control,
-	.a4a-reports-modal__toggle-control, // If this was still used
-	.a4a-reports-modal__textarea-control,
-	.a4a-reports-modal__checkbox-control {
-		// Ensure labels and inputs are aligned well if not already handled by WordPress components
+		@include heading-large;
+		margin-bottom: 12px;
 	}
 
 	.a4a-reports-modal__group-label {
-		@include heading-medium; // Example, adjust as needed for group titles like "Stats"
-		margin-top: 8px; // Add some space before a new group of checkboxes
+		@include heading-medium;
+		margin-top: 12px;
 		margin-bottom: 8px;
+		border-top: 1px solid var( --color-neutral-10 );
+		padding-top: 16px;
+		// flex-shrink: 0; // Removed
+	}
+
+	.a4a-reports-modal__group-label--first {
+		border-top: none;
+		padding-top: 0;
+		margin-top: 0;
+	}
+
+	.a4a-reports-modal__checkbox-control {
+		margin-bottom: 4px;
+		// flex-shrink: 0; // Removed
 	}
 
 	.a4a-reports-modal__preview-link {
 		color: var( --color-primary );
 		text-decoration: underline;
 		cursor: pointer;
+		// flex-shrink: 0; // Removed
 		&:hover,
 		&:focus {
 			color: var( --color-primary-dark );
@@ -54,10 +74,14 @@
 	}
 
 	.a4a-reports-modal__actions {
+		position: absolute;
+		bottom: 0;
+		inset-inline: 0;
+		z-index: 10; // Ensure it's above the scrolling content
 		display: flex;
 		justify-content: flex-end;
 		gap: 8px;
-		padding: 16px 24px; // Add padding to action bar as well
-		border-top: 1px solid var( --color-neutral-10 ); // Separator line
+		padding: 16px 24px;
+		background-color: var( --color-surface );
 	}
 }
