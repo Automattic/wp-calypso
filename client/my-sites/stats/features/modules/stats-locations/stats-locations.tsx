@@ -4,7 +4,7 @@ import { SimplifiedSegmentedControl, StatsCard } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { mapMarker } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import useLocationViewsQuery, {
 	StatsLocationViewsData,
@@ -80,23 +80,26 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( {
 	const supportUrl = isOdysseyStats
 		? `${ JETPACK_SUPPORT_URL_TRAFFIC }#views-by-locations`
 		: LOCATIONS_SUPPORT_URL;
-	const [ selectedOption, setSelectedOption ] = useState( () => {
+
+	const appliedGeoModeFromUrl = useMemo( () => {
 		const urlGeoMode = query.geoMode ?? initialGeoMode;
 		return urlGeoMode && urlGeoMode in GEO_MODES ? urlGeoMode : OPTION_KEYS.COUNTRIES;
+	}, [ query.geoMode, initialGeoMode ] );
+
+	// Set the state locally to avoid a page being reloaded by URL changes.
+	const [ selectedLocalOption, setSelectedLocalOption ] = useState( () => {
+		return appliedGeoModeFromUrl;
 	} );
 
+	const selectedOption = useMemo( () => {
+		if ( summary ) {
+			return appliedGeoModeFromUrl;
+		}
+
+		return selectedLocalOption;
+	}, [ summary, appliedGeoModeFromUrl, selectedLocalOption ] );
+
 	const [ countryFilter, setCountryFilter ] = useState< string | null >( null );
-
-	useEffect( () => {
-		if ( ! summary ) {
-			return;
-		}
-
-		// If URL has valid param and it's different from state, update state
-		if ( query.geoMode !== selectedOption ) {
-			page( getPathWithUpdatedQueryString( { geoMode: selectedOption } ) );
-		}
-	}, [ query.geoMode, selectedOption, summary ] );
 
 	const optionLabels = {
 		[ OPTION_KEYS.COUNTRIES ]: {
@@ -178,7 +181,12 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( {
 			stat_type: optionLabels[ filter ].feature,
 		} );
 
-		setSelectedOption( filter );
+		// Update the URL with the `geoMode` parameter if the module is on the summary page.
+		if ( summary ) {
+			page( getPathWithUpdatedQueryString( { geoMode: filter } ) );
+		} else {
+			setSelectedLocalOption( filter );
+		}
 	};
 
 	const onShowMoreClick = () => {
