@@ -43,15 +43,15 @@ import { OPTION_KEYS, UrlGeoMode, GEO_MODES } from './types';
 
 import './style.scss';
 
-interface StatsModuleLocationsProps extends StatsDefaultModuleProps {
-	initialGeoMode?: string;
-	query: StatsQueryType & { geoMode?: UrlGeoMode };
-}
-
 export type SelectOptionType = {
 	label: string;
 	value: string;
 };
+
+interface StatsModuleLocationsProps extends StatsDefaultModuleProps {
+	initialGeoMode?: string;
+	query: StatsQueryType & { geoMode?: UrlGeoMode };
+}
 
 const StatsLocations: React.FC< StatsModuleLocationsProps > = ( {
 	initialGeoMode,
