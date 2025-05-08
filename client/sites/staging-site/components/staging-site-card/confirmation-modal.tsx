@@ -37,6 +37,10 @@ const SynchronizeButtonWrapper = styled.div`
 	.components-button.is-tertiary:hover:not( :disabled ) {
 		background: var( --color-surface );
 	}
+
+	.components-button.is-tertiary span {
+		color: var( --color-text );
+	}
 `;
 
 type ConfirmationModalButtonProps = {
