@@ -9,7 +9,7 @@ class ManageContact extends Component {
 			<div className="security-account-recovery-contact__detail">
 				{ cloneElement( this.props.children, {
 					onSave: this.onSave,
-					onDelete: this.onDelete,
+					onDelete: this.props.onDelete && this.onDelete,
 					onCancel: this.props.onCancel && this.onCancel,
 				} ) }
 			</div>

@@ -22,7 +22,7 @@ class SecurityAccountRecoveryManageContactButtons extends Component {
 					{ this.props.saveText ? this.props.saveText : this.props.translate( 'Save' ) }
 				</FormButton>
 
-				{ this.props.isDeletable ? (
+				{ this.props.isDeletable && this.props.onDelete ? (
 					<FormButton isPrimary={ false } scary onClick={ this.props.onDelete }>
 						{ this.props.translate( 'Remove' ) }
 					</FormButton>

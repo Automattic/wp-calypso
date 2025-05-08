@@ -55,9 +55,10 @@ class SecurityAccountRecoveryRecoveryPhoneEdit extends Component {
 
 				<Buttons
 					isSavable={ this.isSavable() }
-					isDeletable={ false }
+					isDeletable={ havePhone }
 					saveText={ this.props.translate( 'Save Number' ) }
 					onSave={ this.onSave }
+					onDelete={ this.props.onDelete }
 					onCancel={ this.props.onCancel }
 				/>
 			</div>

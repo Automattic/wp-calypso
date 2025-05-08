@@ -42,7 +42,7 @@ class RecoveryPhone extends Component {
 				hasValue={ !! phone }
 				disabled={ disabled }
 				onSave={ this.onSave }
-				onCancel={ isEditing && this.onCancel }
+				{ ...( isEditing ? { onCancel: this.onCancel } : { onDelete: this.onDelete } ) }
 			>
 				<EditPhone storedPhone={ phone } />
 			</ManageContact>
