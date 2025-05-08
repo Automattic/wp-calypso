@@ -94,7 +94,7 @@ export default function ReportsComponent() {
 				{ isModalOpen && (
 					<Modal
 						size="large"
-						title={ translate( 'Build Report' ) }
+						title={ translate( 'Build a report for your client' ) }
 						onRequestClose={ closeModal }
 						className="a4a-reports-modal"
 					>
