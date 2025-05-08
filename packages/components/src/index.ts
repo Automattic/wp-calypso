@@ -56,6 +56,12 @@ export { default as PlanPrice } from './plan-price';
 export { default as ExternalLink } from './external-link';
 export * from './theme-type-badge';
 export { default as FlowQuestion } from './flow-question';
+export { ExperienceControl } from './experience-control';
+export { default as SummaryButton } from './summary-button';
+export { default as CoreBadge } from './core-badge';
+export { default as Menu } from './menu';
+export { PoweredBy } from './powered-by';
+export { Tabs } from './tabs';
 
 // Logos
 export { JetpackLogo } from './logos/jetpack-logo';
@@ -67,9 +73,3 @@ export { WooCommerceWooLogo } from './logos/woocommerce-woo-logo';
 export { default as Swipeable } from './swipeable';
 export { default as DotPager } from './dot-pager';
 export { default as EmbedContainer } from './embed-container';
-export { ExperienceControl } from './experience-control';
-export { default as SummaryButton } from './summary-button';
-export { default as CoreBadge } from './core-badge';
-export { default as Menu } from './menu';
-export { PoweredBy } from './powered-by';
-export { Tabs } from './tabs';
