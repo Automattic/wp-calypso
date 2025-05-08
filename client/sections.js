@@ -911,6 +911,12 @@ const sections = [
 		module: 'calypso/a8c-for-agencies/sections/woopayments',
 		group: 'a8c-for-agencies',
 	},
+	{
+		name: 'a8c-for-agencies-reports',
+		paths: [ '/reports' ],
+		module: 'calypso/a8c-for-agencies/sections/reports',
+		group: 'a8c-for-agencies',
+	},
 ];
 
 module.exports = sections;

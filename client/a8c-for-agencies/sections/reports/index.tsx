@@ -1,11 +1,8 @@
-import { useTranslate } from 'i18n-calypso';
+import page from '@automattic/calypso-router';
+import { requireAccessContext } from 'calypso/a8c-for-agencies/controller';
+import { makeLayout, render as clientRender } from 'calypso/controller';
+import { reportsContext } from './controller';
 
-export default function Reports() {
-	const translate = useTranslate();
-	return (
-		<div style={ { padding: 32 } }>
-			<h1>{ translate( 'Reports' ) }</h1>
-			<p>{ translate( 'This is the Reports section. Content coming soon.' ) }</p>
-		</div>
-	);
+export default function () {
+	page( '/reports', requireAccessContext, reportsContext, makeLayout, clientRender );
 }
