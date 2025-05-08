@@ -1,6 +1,5 @@
 import {
 	isAddOn,
-	isDomainRegistration,
 	isPlan,
 	isMonthlyProduct,
 	isYearly,
@@ -403,56 +402,6 @@ function EmailMeta( { product, isRenewal }: { product: ResponseCartProduct; isRe
 interface ModalCopy {
 	title: string;
 	description: string;
-}
-
-function returnModalCopyForProduct(
-	product: ResponseCartProduct,
-	translate: ReturnType< typeof useTranslate >,
-	hasBundledDomainInCart: boolean,
-	hasMarketplaceProductsInCart: boolean,
-	createUserAndSiteBeforeTransaction: boolean,
-	isPwpoUser: boolean
-): ModalCopy {
-	const productType = getProductTypeForModalCopy(
-		product,
-		hasBundledDomainInCart,
-		hasMarketplaceProductsInCart,
-		isPwpoUser
-	);
-	const isRenewal = isWpComProductRenewal( product );
-	return returnModalCopy(
-		productType,
-		translate,
-		createUserAndSiteBeforeTransaction,
-		isRenewal,
-		product
-	);
-}
-
-function getProductTypeForModalCopy(
-	product: ResponseCartProduct,
-	hasBundledDomainInCart: boolean,
-	hasMarketplaceProductsInCart: boolean,
-	isPwpoUser: boolean
-): string {
-	if ( product.is_gift_purchase ) {
-		return 'gift purchase';
-	}
-	if ( isWpComPlan( product.product_slug ) ) {
-		if ( hasMarketplaceProductsInCart ) {
-			return 'plan with marketplace dependencies';
-		}
-		if ( hasBundledDomainInCart && ! isPwpoUser ) {
-			return 'plan with domain dependencies';
-		}
-		return 'plan';
-	}
-
-	if ( isDomainRegistration( product ) ) {
-		return 'domain';
-	}
-
-	return product.product_slug;
 }
 
 function returnModalCopy(
@@ -1186,12 +1135,9 @@ function CheckoutLineItem( {
 	hasDeleteButton,
 	removeProductFromCart,
 	isSummary,
-	createUserAndSiteBeforeTransaction,
 	responseCart,
-	isPwpoUser,
 	onRemoveProduct,
 	onRemoveProductClick,
-	onRemoveProductCancel,
 	isAkPro500Cart,
 }: PropsWithChildren< {
 	product: ResponseCartProduct;
@@ -1204,33 +1150,13 @@ function CheckoutLineItem( {
 	isPwpoUser?: boolean;
 	onRemoveProduct?: ( label: string ) => void;
 	onRemoveProductClick?: ( label: string ) => void;
-	onRemoveProductCancel?: ( label: string ) => void;
 	isAkPro500Cart?: boolean;
 	shouldShowBillingInterval?: boolean;
 } > ) {
 	const id = product.uuid;
 	const translate = useTranslate();
-	const hasBundledDomainsInCart = responseCart.products.some(
-		( product ) =>
-			( product.is_domain_registration || product.product_slug === 'domain_transfer' ) &&
-			product.is_bundled
-	);
-	const hasMarketplaceProductsInCart = responseCart.products.some(
-		( product ) =>
-			product.extra.is_marketplace_product === true ||
-			product.product_slug.startsWith( 'wp_mp_theme' )
-	);
 	const { formStatus } = useFormStatus();
 	const itemSpanId = `checkout-line-item-${ id }`;
-	const [ isModalVisible, setIsModalVisible ] = useState( false );
-	const modalCopy = returnModalCopyForProduct(
-		product,
-		translate,
-		hasBundledDomainsInCart,
-		hasMarketplaceProductsInCart,
-		createUserAndSiteBeforeTransaction || false,
-		isPwpoUser || false
-	);
 	const isDisabled = formStatus !== FormStatus.READY;
 
 	const isRenewal = isWpComProductRenewal( product );
@@ -1336,49 +1262,31 @@ function CheckoutLineItem( {
 							) }
 							disabled={ isDisabled }
 							onClick={ () => {
-								setIsModalVisible( true );
 								onRemoveProductClick?.( label );
+
+								let product_uuids_to_remove = [ product.uuid ];
+
+								// Gifts need to be all or nothing, to prevent leaving
+								// the site in a state where it requires other purchases
+								// in order to actually work correctly for the period of
+								// the gift (for example, gifting a plan renewal without
+								// a domain renewal would likely lead the site's domain
+								// to expire soon afterwards).
+								if ( product.is_gift_purchase ) {
+									product_uuids_to_remove = responseCart.products
+										.filter( ( cart_product ) => cart_product.is_gift_purchase )
+										.map( ( cart_product ) => cart_product.uuid );
+								}
+
+								Promise.all( product_uuids_to_remove.map( removeProductFromCart ) ).catch( () => {
+									// Nothing needs to be done here. CartMessages will display the error to the user.
+								} );
+								onRemoveProduct?.( label );
 							} }
 						>
 							{ translate( 'Remove from cart' ) }
 						</DeleteButton>
 					</DeleteButtonWrapper>
-
-					<CheckoutModal
-						isVisible={ isModalVisible }
-						closeModal={ () => {
-							setIsModalVisible( false );
-						} }
-						primaryAction={ () => {
-							let product_uuids_to_remove = [ product.uuid ];
-
-							// Gifts need to be all or nothing, to prevent leaving
-							// the site in a state where it requires other purchases
-							// in order to actually work correctly for the period of
-							// the gift (for example, gifting a plan renewal without
-							// a domain renewal would likely lead the site's domain
-							// to expire soon afterwards).
-							if ( product.is_gift_purchase ) {
-								product_uuids_to_remove = responseCart.products
-									.filter( ( cart_product ) => cart_product.is_gift_purchase )
-									.map( ( cart_product ) => cart_product.uuid );
-							}
-
-							Promise.all( product_uuids_to_remove.map( removeProductFromCart ) ).catch( () => {
-								// Nothing needs to be done here. CartMessages will display the error to the user.
-							} );
-							onRemoveProduct?.( label );
-						} }
-						cancelAction={ () => {
-							onRemoveProductCancel?.( label );
-						} }
-						secondaryAction={ () => {
-							onRemoveProductCancel?.( label );
-						} }
-						secondaryButtonCTA={ String( translate( 'Cancel' ) ) }
-						title={ modalCopy.title }
-						copy={ modalCopy.description }
-					/>
 				</>
 			) }
 		</div>
