@@ -13,6 +13,7 @@
 ### Enhancements
 
 - Add `FlowQuestion` component
+- Add `Breadcrumbs` and `Menu` components ([#102998](https://github.com/Automattic/wp-calypso/pull/102998)).
 - Add `SummaryButton` component ([#102827](https://github.com/Automattic/wp-calypso/pull/102827)).
 - Add `CoreBadge` component ([#103069](https://github.com/Automattic/wp-calypso/pull/103069)).
 

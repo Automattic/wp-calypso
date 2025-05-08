@@ -22,6 +22,25 @@
 			text-align: right;
 		}
 
+		&.dataviews-view-table__actions-column--sticky {
+			position: sticky;
+			right: 0;
+			background-color: $white;
+		}
+
+		&.dataviews-view-table__actions-column--stuck {
+			&::after {
+				display: block;
+				content: '';
+				position: absolute;
+				top: 0;
+				bottom: 0;
+				left: 0;
+				width: 1px;
+				background-color: $gray-100;
+			}
+		}
+
 		&.dataviews-view-table__checkbox-column {
 			padding-right: 0;
 			width: 1%;
@@ -52,7 +71,8 @@
 			border-bottom: 0;
 		}
 
-		&.is-hovered {
+		&.is-hovered,
+		&.is-hovered .dataviews-view-table__actions-column--sticky {
 			background-color: #f8f8f8;
 		}
 

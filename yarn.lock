@@ -539,7 +539,7 @@ __metadata:
     "@playwright/browser-chromium": "npm:1.48.2"
     "@playwright/browser-firefox": "npm:1.48.2"
     "@types/node": "npm:^22.7.5"
-    "@types/totp-generator": "npm:^0.0.3"
+    "@types/totp-generator": "npm:^0.0.8"
     "@wordpress/i18n": "npm:^5.22.0"
     asana-phrase: "npm:^0.0.8"
     form-data: "npm:^4.0.2"
@@ -547,7 +547,7 @@ __metadata:
     mailosaur: "npm:^8.4.0"
     nock: "npm:^14.0.4"
     playwright: "npm:1.48.2"
-    totp-generator: "npm:^0.0.12"
+    totp-generator: "npm:^0.0.14"
     typescript: "npm:^5.8.2"
   languageName: unknown
   linkType: soft
@@ -10135,10 +10135,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/totp-generator@npm:^0.0.3":
-  version: 0.0.3
-  resolution: "@types/totp-generator@npm:0.0.3"
-  checksum: e53ff5d86b9d45dd0f607fb84d51dbbafa1a87a148daef612743ff8637eab65605b5a31fe67496e9a44deba095af585325dae8da94d4ced32bc7fbaece99f4de
+"@types/totp-generator@npm:^0.0.8":
+  version: 0.0.8
+  resolution: "@types/totp-generator@npm:0.0.8"
+  checksum: 7051ac7f991ca0f93737276d6595bd51ffe2fd9d1c309e0eef745cb57976514612afa52bc455268f4cdcc101d11e3728f473d9364eb0b9dc644381d624293402
   languageName: node
   linkType: hard
 
@@ -35046,12 +35046,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"totp-generator@npm:^0.0.12":
-  version: 0.0.12
-  resolution: "totp-generator@npm:0.0.12"
+"totp-generator@npm:^0.0.14":
+  version: 0.0.14
+  resolution: "totp-generator@npm:0.0.14"
   dependencies:
     jssha: "npm:^3.1.2"
-  checksum: b79886c39bbfef4c60313ac26240a1f11dd3645948f84286ab1d11684163d3628e1b3fb7dd2803c2b3c337535d96eb9167b5b03f807463223ceef75b9cc51e8d
+  checksum: 8a265f75bfabd3cbd5b37de42fbc275f4752b86d50ed8f8b8d4c26f03fa65e2230ee725f21df833be73898a92f7284cb01ebb33f61a4efbfad2381ce8acc9543
   languageName: node
   linkType: hard
 
