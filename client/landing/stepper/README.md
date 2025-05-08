@@ -104,7 +104,7 @@ export const exampleFlow: FlowV2< typeof initialize > = {
 	 * 1. You handle and use the information submitted by the steps.
 	 * 2. You decide to navigate to which steps when.
 	 * 3. You manage the state of the flow.
-	 * */
+	 */
 	useStepNavigation( currentStepSlug, navigate ) {
 		// This hook should be enough to manage and persist all the state your flows needs.
 		const { get, set } = useFlowState();
@@ -221,7 +221,7 @@ Note: Before making a step, please make sure there isn't already a suitable step
 ```tsx
 /**
  * Each step must be typed as Step. And it should declare the types of the data it submits and the data it accepts.
- * */
+ */
 const SelectImportedSiteSource: Step< {
 	// This steps submits `platform` and `url` strings.
 	submits: {
@@ -237,7 +237,7 @@ const SelectImportedSiteSource: Step< {
 	const siteSlug = useSiteSlug();
 	/**
 	 * `navigation` prop is provided by Stepper. It allows your step to submit.
-	 * */
+	 */
 	const { navigation, title, subTitle } = props;
 
 	return (
