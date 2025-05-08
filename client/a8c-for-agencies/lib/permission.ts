@@ -48,6 +48,7 @@ import {
 	A4A_WOOPAYMENTS_PAYMENT_SETTINGS_LINK,
 	A4A_WOOPAYMENTS_SITE_SETUP_LINK,
 	A4A_WOOPAYMENTS_OVERVIEW_LINK,
+	A4A_REPORTS_LINK,
 } from '../components/sidebar-menu/lib/constants';
 import type { Agency } from 'calypso/state/a8c-for-agencies/types';
 
@@ -101,6 +102,7 @@ const MEMBER_ACCESSIBLE_PATHS: Record< string, string[] > = {
 	[ A4A_WOOPAYMENTS_PAYMENT_SETTINGS_LINK ]: [ 'a4a_read_referrals' ],
 	[ A4A_WOOPAYMENTS_SITE_SETUP_LINK ]: [ 'a4a_read_referrals' ],
 	[ A4A_WOOPAYMENTS_OVERVIEW_LINK ]: [ 'a4a_read_referrals' ],
+	[ A4A_REPORTS_LINK ]: [ 'a4a_read_managed_sites' ],
 };
 
 const MEMBER_ACCESSIBLE_DYNAMIC_PATHS: Record< string, string[] > = {
@@ -110,6 +112,7 @@ const MEMBER_ACCESSIBLE_DYNAMIC_PATHS: Record< string, string[] > = {
 	licenses: [ 'a4a_jetpack_licensing' ],
 	plugins: [ 'a4a_read_managed_sites' ],
 	referrals: [ 'a4a_read_referrals' ],
+	reports: [ 'a4a_read_managed_sites' ],
 };
 
 const DYNAMIC_PATH_PATTERNS: Record< string, RegExp > = {
@@ -119,6 +122,7 @@ const DYNAMIC_PATH_PATTERNS: Record< string, RegExp > = {
 	team: /^\/team(\/.*)?$/,
 	plugins: /^\/plugins(\/.*)?$/,
 	referrals: /^\/referrals(\/.*)?$/,
+	reports: /^\/reports(\/.*)?$/,
 };
 
 export const isPathAllowed = ( pathname: string, agency: Agency | null ) => {

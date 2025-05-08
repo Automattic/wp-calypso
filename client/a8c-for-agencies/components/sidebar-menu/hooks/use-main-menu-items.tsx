@@ -11,6 +11,7 @@ import {
 	people,
 	starEmpty,
 	plugins,
+	chartBar,
 } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
@@ -36,6 +37,7 @@ import {
 	A4A_AGENCY_TIER_LINK,
 	A4A_MIGRATIONS_OVERVIEW_LINK,
 	A4A_WOOPAYMENTS_LINK,
+	A4A_REPORTS_LINK,
 } from '../lib/constants';
 import { createItem } from '../lib/utils';
 
@@ -83,6 +85,15 @@ const useMainMenuItems = ( path: string ) => {
 				title: translate( 'Overview' ),
 				trackEventProps: {
 					menu_item: 'Automattic for Agencies / Overview',
+				},
+			},
+			{
+				icon: chartBar,
+				path: '/',
+				link: A4A_REPORTS_LINK,
+				title: translate( 'Reports' ),
+				trackEventProps: {
+					menu_item: 'Automattic for Agencies / Reports',
 				},
 			},
 			{
