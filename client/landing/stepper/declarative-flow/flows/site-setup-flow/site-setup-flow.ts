@@ -556,7 +556,7 @@ const siteSetupFlow: Flow = {
 				case 'importReadyNot':
 				case 'importReadyWpcom':
 				case 'importReadyPreview':
-					return navigate( `import?siteSlug=${ siteSlug }` );
+					return goToFlow( `site-migration?siteSlug=${ siteSlug }` );
 
 				case 'options':
 					return navigate( 'goals' );
