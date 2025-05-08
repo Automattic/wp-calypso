@@ -31,7 +31,7 @@ export const clientSubscriptionsContext: Callback = ( context, next ) => {
 export const clientPaymentMethodsContext: Callback = ( context, next ) => {
 	context.primary = (
 		<>
-			<PageViewTracker title="Client > Payment Methods" path={ context.path } />
+			<PageViewTracker title="Client > Payment methods" path={ context.path } />
 			<PaymentMethodOverview />
 		</>
 	);
@@ -44,7 +44,7 @@ export const clientPaymentMethodsAddContext: Callback = ( context, next ) => {
 	const agencyId = query && query.return && getQueryArg( query.return, 'agency_id' );
 	context.primary = (
 		<>
-			<PageViewTracker title="Client > Payment Methods > Add" path={ context.path } />
+			<PageViewTracker title="Client > Payment methods > Add" path={ context.path } />
 			<PaymentMethodAdd isClientCheckout={ agencyId } />
 		</>
 	);

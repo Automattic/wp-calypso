@@ -35,7 +35,7 @@ export default function PartnerDirectoryOnboardingCard() {
 		<StickyCard
 			className="partner-directory-onboarding-card"
 			position="bottom right"
-			title="Announcing Partner Directories"
+			title="Announcing partner directories"
 			dismissable
 			onClose={ onDismiss }
 		>

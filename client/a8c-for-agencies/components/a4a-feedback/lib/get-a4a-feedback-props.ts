@@ -59,11 +59,11 @@ export const getA4AfeedbackProps = (
 					),
 					options: [
 						{
-							label: translate( 'Discovering the Partner Directories feature' ),
+							label: translate( 'Discovering the partner directories feature' ),
 							value: 'discovering-the-partner-directories-feature',
 						},
 						{
-							label: translate( 'Understanding how Partner Directories can benefit my agency' ),
+							label: translate( 'Understanding how partner directories can benefit my agency' ),
 							value: 'understanding-how-partner-directories-can-benefit-my-agency',
 						},
 						{

@@ -60,7 +60,7 @@ export default function TeamList( { currentTab }: Props ) {
 		const items: Tab[] = [
 			{
 				key: TAB_ACTIVE_MEMBERS,
-				label: translate( 'Active Members' ),
+				label: translate( 'Active members' ),
 				count: activeMembers?.length,
 				selected: currentTab === TAB_ACTIVE_MEMBERS,
 				path: `${ A4A_TEAM_LINK }/${ TAB_ACTIVE_MEMBERS }`,

@@ -94,7 +94,7 @@ export default function SitesDashboard() {
 		showOnlyDevelopmentSites,
 	] );
 
-	// Reset back to page one when entering Needs Attention, Favourites, or Development page.
+	// Reset back to page one when entering Needs attention, Favourites, or Development page.
 	const selectedFilters = getSelectedFilters( dataViewsState.filters );
 	const isOnNeedsAttentionPage = selectedFilters.includes( 'all_issues' );
 	const prevIsOnFavouritesPageRef = useRef( showOnlyFavorites );

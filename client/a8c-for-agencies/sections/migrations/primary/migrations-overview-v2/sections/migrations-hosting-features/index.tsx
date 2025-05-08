@@ -77,7 +77,7 @@ export default function MigrationsHostingFeatures() {
 
 					<FeatureCard
 						icon={ code }
-						title={ translate( 'Dev Tools' ) }
+						title={ translate( 'Dev tools' ) }
 						items={ [
 							translate( 'Local development environment' ),
 							translate( 'Free staging site' ),
@@ -93,7 +93,7 @@ export default function MigrationsHostingFeatures() {
 
 					<FeatureCard
 						icon={ plus }
-						title={ translate( 'And More!' ) }
+						title={ translate( 'And more!' ) }
 						items={ [
 							translate( '24/7 priority expert support' ),
 							translate( 'Free managed migrations' ),

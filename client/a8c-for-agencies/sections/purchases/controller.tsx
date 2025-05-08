@@ -82,7 +82,7 @@ export const paymentMethodsContext: Callback = ( context, next ) => {
 	context.secondary = <PurchasesSidebar path={ context.path } />;
 	context.primary = (
 		<>
-			<PageViewTracker title="Purchases > Payment Methods" path={ context.path } />
+			<PageViewTracker title="Purchases > Payment methods" path={ context.path } />
 			<PaymentMethodOverview />
 		</>
 	);
@@ -94,7 +94,7 @@ export const paymentMethodsAddContext: Callback = ( context, next ) => {
 	context.secondary = <PurchasesSidebar path={ context.path } />;
 	context.primary = (
 		<>
-			<PageViewTracker title="Purchases > Payment Methods > Add" path={ context.path } />
+			<PageViewTracker title="Purchases > Payment methods > Add" path={ context.path } />
 			<PaymentMethodAdd />
 		</>
 	);

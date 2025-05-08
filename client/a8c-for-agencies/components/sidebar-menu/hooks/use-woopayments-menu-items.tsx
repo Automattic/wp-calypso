@@ -51,9 +51,9 @@ const useWooPaymentsMenuItems = ( path: string ) => {
 					icon: cog,
 					path: A4A_WOOPAYMENTS_LINK,
 					link: A4A_WOOPAYMENTS_PAYMENT_SETTINGS_LINK,
-					title: translate( 'Payout Settings' ),
+					title: translate( 'Payout settings' ),
 					trackEventProps: {
-						menu_item: 'Automattic for Agencies / WooPayments / Payment Settings',
+						menu_item: 'Automattic for Agencies / WooPayments / Payment settings',
 					},
 					...( showIndicator && {
 						extraContent: (
