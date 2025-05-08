@@ -20,7 +20,6 @@ import {
 	trackStatsAnalyticsEvent,
 } from 'calypso/my-sites/stats/utils';
 import { useSelector } from 'calypso/state';
-import { getSiteSlug } from 'calypso/state/sites/selectors';
 import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
 import { getSiteStatsNormalizedData } from 'calypso/state/stats/lists/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -76,7 +75,6 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( {
 } ) => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId ) as number;
-	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 	const statType = STAT_TYPE_COUNTRY_VIEWS;
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 	const supportUrl = isOdysseyStats
@@ -94,22 +92,11 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( {
 			return;
 		}
 
-		const basePath = `/stats/${ period.period }/locations/${ siteSlug }`;
-		const geoModeParam = query.geoMode;
-		const isValidGeoModeParam =
-			geoModeParam && Object.values( OPTION_KEYS ).includes( geoModeParam );
-
-		if ( ! isValidGeoModeParam ) {
-			return;
-		}
-
 		// If URL has valid param and it's different from state, update state
-		if ( geoModeParam !== selectedOption ) {
-			const updatedQuery = { ...query, geoMode: selectedOption };
-			const queryString = new URLSearchParams( updatedQuery ).toString();
-			page( `${ basePath }?${ queryString }` );
+		if ( query.geoMode !== selectedOption ) {
+			page( getPathWithUpdatedQueryString( { geoMode: selectedOption } ) );
 		}
-	}, [ query, selectedOption, summary ] );
+	}, [ query.geoMode, selectedOption, summary ] );
 
 	const optionLabels = {
 		[ OPTION_KEYS.COUNTRIES ]: {

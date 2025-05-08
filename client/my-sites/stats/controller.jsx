@@ -301,11 +301,10 @@ export function summary( context, next ) {
 	const extraProps =
 		context.params.module === 'videodetails' ? { postId: parseInt( queryOptions.post, 10 ) } : {};
 
-	let statsQueryOptions = {};
+	// The option is used for stats queries only.
+	const statsQueryOptions = pick( queryOptions, [ 'num', 'summarize', 'geoMode', 'utmParam' ] );
 
-	// All Time Summary Support
 	if ( queryOptions.summarize ) {
-		statsQueryOptions = pick( queryOptions, [ 'num', 'summarize', 'geoMode' ] );
 		statsQueryOptions.period = 'day';
 	}
 
