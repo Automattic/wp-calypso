@@ -10,7 +10,7 @@ class ManageContact extends Component {
 				{ cloneElement( this.props.children, {
 					onSave: this.onSave,
 					onDelete: this.onDelete,
-					onCancel: this.onCancel,
+					onCancel: this.props.onCancel && this.onCancel,
 				} ) }
 			</div>
 		);

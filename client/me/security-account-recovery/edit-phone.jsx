@@ -58,7 +58,7 @@ class SecurityAccountRecoveryRecoveryPhoneEdit extends Component {
 					isDeletable={ false }
 					saveText={ this.props.translate( 'Save Number' ) }
 					onSave={ this.onSave }
-					onCancel={ this.onCancel }
+					onCancel={ this.props.onCancel }
 				/>
 			</div>
 		);
@@ -111,10 +111,6 @@ class SecurityAccountRecoveryRecoveryPhoneEdit extends Component {
 			number: phoneNumber.phoneNumber,
 			numberFull: phoneNumber.phoneNumberFull,
 		} );
-	};
-
-	onCancel = () => {
-		this.props.onCancel();
 	};
 }
 
