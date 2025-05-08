@@ -22,7 +22,6 @@ class JetpackConnectSiteUrlInput extends Component {
 		handleOnClickTos: PropTypes.func,
 		isError: PropTypes.oneOfType( [ PropTypes.string, PropTypes.bool ] ),
 		isFetching: PropTypes.bool,
-		isFetched: PropTypes.bool,
 		isInstall: PropTypes.bool,
 		onChange: PropTypes.func,
 		onSubmit: PropTypes.func,

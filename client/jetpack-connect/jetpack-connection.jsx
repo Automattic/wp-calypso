@@ -326,7 +326,6 @@ const jetpackConnection = ( WrappedComponent ) => {
 					renderFooter={ this.renderFooter }
 					renderNotices={ this.renderNotices }
 					isCurrentUrlFetching={ this.isCurrentUrlFetching() }
-					isCurrentUrlFetched={ this.isCurrentUrlFetched() }
 					{ ...props }
 				/>
 			);
