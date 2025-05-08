@@ -14,11 +14,13 @@ Stepper is a framework that allows you to make all kinds of walkthroughs. It's g
   - [File hierarchy convention](#file-hierarchy-convention)
   - [Managing authentication](#managing-authentication)
   - [Asserting conditions before running the flow](#asserting-conditions-before-running-the-flow)
+- [Notes](#notes)
+- [Deleting your flow](#deleting-your-flow)
 - [Making a Step](#making-a-step)
   - [Code example](#code-example-1)
   - [Passing data down to steps](#passing-data-down-to-steps)
   - [Reusability](#reusability)
-  - [Renaming Steps](#renaming-steps)
+  - [Renaming steps](#renaming-steps)
 - [State management](#state-management)
   - [Typed state](#typed-state)
   - [Miscellaneous fields](#miscellaneous-fields)
@@ -46,17 +48,23 @@ They should **only submit** to the flow, and the flow should do all the thinking
 
 **Common question**: What if a step wants to cancel/skip/drop out? Then it should submit something like `{ action: skip }`.
 
-**If you're curious why:**
-
-1. When steps make navigational decisions, the aforementioned finite-state machine is thrown out of the window. The dependency graph explodes and things get out of control quickly. Especially if you consider that steps are reusable across flows.
-2. Same thing happens when steps communicate. Plus, when steps communicate, it means the flow is blind to some decisions, and the steps are less re-usable now.
-3. When a step has side effects in Flow A, they may effect the step's behaviour of Flow B. Only the flow should persist things.
+<details><summary><strong>Expand if you're curious why.</strong></summary>
+<p>
+	<ol>
+		<li>When steps make navigational decisions, the aforementioned finite-state machine is thrown out of the window. The dependency graph explodes and things get out of control quickly. Especially if you consider that steps are reusable across flows.</li>
+		<li>Same thing happens when steps communicate. Plus, when steps communicate, it means the flow is blind to some decisions, and the steps are less re-usable now.</li>
+		<li>When a step has side effects in Flow A, they may effect the step's behaviour of Flow B. Only the flow should persist things.</li>
+	</ol>
+</p>
+</details>
 
 In general, the smarter the step, the more problematic and tailored it is. Please treat your steps as buttons or inputs.
 
 ### Making a flow
 
 A flow is a collection of steps. Each of these steps submit some information to the flow, which means the state of the flow is largely the sum of these submitted data. For that reason, the `FlowV2` interface requires the steps collection to be defined before the flow itself. This way, the flow can shape its state around the submissions and properties of these steps.
+
+**Note:** We have an example flow you can use as a reference [here](/client/landing/stepper/declarative-flow/flows/00-example-flow/example.ts).
 
 #### Code example
 
@@ -85,7 +93,7 @@ export const exampleFlow: FlowV2< typeof initialize > = {
 	name: 'my-flow',
 
 	/**
-	 * This flag MUST be `true` for signup flows (generally where a new site may be created), and should be `false` for other flows.
+	 * This flag must be `true` for signup flows (generally where a new site may be created), and should be `false` for other flows.
 	 * It controls whether we'll trigger a `calypso_signup_start` Tracks event when the flow starts.
 	 * */
 	isSignupFlow: true,
@@ -145,7 +153,7 @@ Flows have to be registered [here](/client/landing/stepper/declarative-flow/regi
 
 #### File hierarchy convention
 
-[Please put your flow in a folder](https://dotcom.wordpress.com/2025/03/14/stepper-move-flows-into-their-own-folder/), not a loose file. And include a README file with cursory information about your flow.
+[Please put your flow in a folder](https://dotcom.wordpress.com/2025/03/14/stepper-move-flows-into-their-own-folder/), not a loose file. And include a README file with cursory information about your flow **and testing steps**. Then simply link to them in your PRs (win-win).
 
 #### Managing authentication
 
@@ -169,7 +177,7 @@ function initialize() {
 
 #### Asserting conditions before running the flow
 
-Say, you want your flow to only be accessible to a certain type of user. You can assert these condition in the `initialize` function.
+Say, you want your flow to be only be accessible to a certain type of user. You can assert these condition in the `initialize` function.
 
 ```ts
 async function initialize() {
@@ -185,9 +193,22 @@ async function initialize() {
 }
 ```
 
+### Notes
+
+1. A successful flow is a rare event, so most flows are sadly ephemeral. Please keep as much logic, CSS, and code as possible into the flow folder itself. So that when it's deleted, clean up is easy.
+2. Adding testing steps in your flow's README goes a long way. It would be really appreciated.
+3. Feel free to ask for help any time. You can post in `#dotcom-stepper` or ping `@alshakero`.
+4. Please try to avoid modifying the framework's code around your flow. It should be the very last resort.
+
+### Deleting your flow
+
+After deleting your flow, please setup a redirect for it [here](/client/landing/stepper/utils/flow-redirect-handler.ts), this redirect users who land on it to a happy path.
+
 ### Making a Step
 
 Note: Before making a step, please make sure there isn't already a suitable step in [`steps.tsx`](/client/landing/stepper/declarative-flow/internals/steps.tsx) file. If you do make a step you'll have to add it to that file.
+
+**Note**: Please make sure that your step has a unique slug.
 
 **A step is simply a React component that**:
 
@@ -267,7 +288,7 @@ Stepper aims to create a big `steps-repository` that contains the steps and allo
 1. Flow-specific styling should be done in a `style.scss` file put in the flow's folder. Each step should have the basic styling necessary to operate on its own.
 2. Steps should not do `if ( flow === 'X' ) do Y`. This is a very common pattern. It was a necessary evil before we introduced `useStepsProps`. But now, it's an unnecessary evil 😬
 
-#### Renaming Steps
+#### Renaming steps
 
 There may be a time when a step needs to be renamed. In order to preserve Tracks data and funnels, we recommend adding a new entry to `getStepOldSlug` in the `FlowRenderer` component. This ensures that tracks events will fire with both the new step slug and the old step slug.
 
@@ -293,20 +314,19 @@ In some cases, flows will need state that is not submitted from a step. In which
 
 ## The API
 
-| Field Name | Description | Notes |
-|------------|-------------|-------|
-| `initialize` | <kbd>Required</kbd> Method to define flow steps and pre-flow actions | Required method that runs once when flow is mounted. Can be asynchronous |
-| `name` | <kbd>Required</kbd> Identifier for the flow | Required string field |
-| `useStepNavigation` | <kbd>Required</kbd>  Hook for step navigation | Required hook for handling step navigation |
-| `isSignupFlow` | <kbd>Required</kbd> Indicates if the flow is for signup | Required boolean flag |
-| `__experimentalUseBuiltinAuth` | Enables built-in authentication within Stepper | Optional boolean flag. When true, the flow will login the user without leaving Stepper |
-| `__experimentalUseSessions` | Enables session-based progress storage | Optional boolean flag. When true, the flow will use sessions to store the user's progress. **This flag is required if you use `useFlowState` hook. |
-| `getSteps` | Method to retrieve flow steps | Optional method that returns the flow steps. **In most cases, using this function results in bad practices. Try to avoid it, unless you really have to**. |
-| `classnames` | CSS classes for styling | Optional string or array of strings |
-| `useLoginParams` | Hook to configure login URL | Optional hook that returns login configuration object with customLoginPath and extraQueryParams |
-| `useSideEffect` | Hook for flow-level side effects | Optional hook called at every render in the flow's root. **You can use `useEffect` or other hooks inside this hook**. |
-| `useTracksEventProps` | Hook for customizing Tracks event properties | Optional hook for overriding default Tracks event logging |
-
+| Field Name                     | Description                                                          | Notes                                                                                                                                                     |
+| ------------------------------ | -------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `initialize`                   | <kbd>Required</kbd> Method to define flow steps and pre-flow actions | Required method that runs once when flow is mounted. Can be asynchronous                                                                                  |
+| `name`                         | <kbd>Required</kbd> Identifier for the flow                          | Required string field                                                                                                                                     |
+| `useStepNavigation`            | <kbd>Required</kbd> Hook for step navigation                         | Required hook for handling step navigation                                                                                                                |
+| `isSignupFlow`                 | <kbd>Required</kbd> Indicates if the flow is for signup              | Required boolean flag                                                                                                                                     |
+| `__experimentalUseBuiltinAuth` | Enables built-in authentication within Stepper                       | Optional boolean flag. When true, the flow will login the user without leaving Stepper                                                                    |
+| `__experimentalUseSessions`    | Enables session-based progress storage                               | Optional boolean flag. When true, the flow will use sessions to store the user's progress. \*\*This flag is required if you use `useFlowState` hook.      |
+| `getSteps`                     | Method to retrieve flow steps                                        | Optional method that returns the flow steps. **In most cases, using this function results in bad practices. Try to avoid it, unless you really have to**. |
+| `classnames`                   | CSS classes for styling                                              | Optional string or array of strings                                                                                                                       |
+| `useLoginParams`               | Hook to configure login URL                                          | Optional hook that returns login configuration object with customLoginPath and extraQueryParams                                                           |
+| `useSideEffect`                | Hook for flow-level side effects                                     | Optional hook called at every render in the flow's root. **You can use `useEffect` or other hooks inside this hook**.                                     |
+| `useTracksEventProps`          | Hook for customizing Tracks event properties                         | Optional hook for overriding default Tracks event logging                                                                                                 |
 
 ## Useful utilities and hooks
 
