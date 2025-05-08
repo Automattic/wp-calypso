@@ -47,7 +47,7 @@ describe( 'Onboarding Free Flow - FreeSetup', () => {
 				expect( screen.getByText( 'Personalize your Site' ) ).toBeInTheDocument();
 				expect( screen.getByText( 'Site name' ) ).toBeInTheDocument();
 				expect( screen.getByText( 'Brief description' ) ).toBeInTheDocument();
-				expect( screen.getByText( 'Jetpack powered' ) ).toBeInTheDocument();
+				expect( screen.getByText( 'Powered by' ) ).toBeInTheDocument();
 				expect( screen.getByText( 'Add a site icon' ) ).toBeInTheDocument();
 			} );
 		} );
