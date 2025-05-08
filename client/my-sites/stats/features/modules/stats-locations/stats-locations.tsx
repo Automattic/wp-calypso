@@ -156,7 +156,9 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( {
 		} );
 	};
 
-	const toggleControlComponent = ! config.isEnabled( 'stats/navigation-improvement' ) && (
+	// Need to keep the old tabs on Traffic page.
+	const toggleControlComponent = ( ! summary ||
+		! config.isEnabled( 'stats/navigation-improvement' ) ) && (
 		<>
 			<SimplifiedSegmentedControl
 				className="stats-module-locations__tabs"
