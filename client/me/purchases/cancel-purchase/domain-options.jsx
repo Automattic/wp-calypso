@@ -119,12 +119,10 @@ const CancelPurchaseDomainOptions = ( {
 		<div>
 			<p>
 				{ translate(
-					'This plan includes a domain transfer, %(domain)s, normally a %(domainCost)s purchase. ' +
-						'The domain will not be removed along with the plan, to avoid any interruptions for your visitors.',
+					'This plan includes a domain transfer, %(domain)s. The domain will not be removed along with the plan, to avoid any interruptions for your visitors.',
 					{
 						args: {
 							domain: includedDomainTransfer.meta,
-							domainCost: includedDomainTransfer.priceText,
 						},
 					}
 				) }
@@ -135,7 +133,7 @@ const CancelPurchaseDomainOptions = ( {
 						'minus %(domainCost)s for the domain.',
 					{
 						args: {
-							domainCost: includedDomainTransfer.priceText,
+							domainCost: includedDomainTransfer.costToUnbundleText,
 							planCost: planCostText,
 							refundAmount: purchase.refundText,
 						},
