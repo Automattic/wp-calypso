@@ -1,25 +1,66 @@
 /**
  * @jest-environment jsdom
  */
-import { render } from '@testing-library/react';
+import { act, render } from '@testing-library/react';
 import JetpackConnectSiteUrlInput from '../site-url-input';
 
 const requiredProps = { translate: ( string ) => string };
 
 describe( 'JetpackConnectSiteUrlInput', () => {
-	test( 'Should render error when the error type is "notExists" and the site info is fetched', () => {
+	test( 'Should render an error when URL is invalid', () => {
 		const { container } = render(
-			<JetpackConnectSiteUrlInput { ...requiredProps } isError="notExists" isFetched />
+			<JetpackConnectSiteUrlInput { ...requiredProps } url="invalid-url" />
 		);
-		expect( container ).toHaveTextContent( 'Invalid site address. Enter a valid WordPress URL.' );
+		const button = container.querySelector( '.jetpack-connect__connect-button' );
+
+		act( () => {
+			button.click();
+		} );
+
+		expect( container ).toHaveTextContent( 'Please enter a valid URL.' );
 	} );
 
-	test( 'Should not render error when the error type is "notExists" and the site info is not fetched', () => {
+	test( 'Should not render an error when URL is valid and has protocol', () => {
 		const { container } = render(
-			<JetpackConnectSiteUrlInput { ...requiredProps } isError="notExists" />
+			<JetpackConnectSiteUrlInput
+				{ ...requiredProps }
+				url="http://valid.com"
+				onSubmit={ () => {} }
+			/>
 		);
-		expect( container ).not.toHaveTextContent(
-			'Invalid site address. Enter a valid WordPress URL.'
+		const button = container.querySelector( '.jetpack-connect__connect-button' );
+
+		act( () => {
+			button.click();
+		} );
+
+		expect( container ).not.toHaveTextContent( 'Please enter a valid URL.' );
+	} );
+
+	test( 'Should not render an error when URL is valid and has no protocol', () => {
+		const { container } = render(
+			<JetpackConnectSiteUrlInput { ...requiredProps } url="valid.com" onSubmit={ () => {} } />
 		);
+		const button = container.querySelector( '.jetpack-connect__connect-button' );
+
+		act( () => {
+			button.click();
+		} );
+
+		expect( container ).not.toHaveTextContent( 'Please enter a valid URL.' );
+	} );
+
+	test( 'Should call onSubmit when URL is valid', () => {
+		const onSubmit = jest.fn();
+		const { container } = render(
+			<JetpackConnectSiteUrlInput { ...requiredProps } url="valid.com" onSubmit={ onSubmit } />
+		);
+		const button = container.querySelector( '.jetpack-connect__connect-button' );
+
+		act( () => {
+			button.click();
+		} );
+
+		expect( onSubmit ).toHaveBeenCalledTimes( 1 );
 	} );
 } );

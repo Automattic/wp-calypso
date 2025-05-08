@@ -12,6 +12,7 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import SuggestionSearch from 'calypso/components/suggestion-search';
+import { isValidUrl } from 'calypso/lib/importer/url-validation';
 import { NOT_EXISTS } from './connection-notice-types';
 
 const noop = () => {};
@@ -36,6 +37,10 @@ class JetpackConnectSiteUrlInput extends Component {
 		onChange: noop,
 		url: '',
 		autoFocus: true,
+	};
+
+	state = {
+		errorMessage: null,
 	};
 
 	focusInput = noop;
@@ -68,7 +73,7 @@ class JetpackConnectSiteUrlInput extends Component {
 
 	handleKeyPress = ( event ) => {
 		if ( 13 === event.keyCode && ! this.isFormSubmitDisabled() && ! this.isFormSubmitBusy() ) {
-			this.props.onSubmit();
+			this.handleFormSubmit();
 		}
 	};
 
@@ -106,6 +111,47 @@ class JetpackConnectSiteUrlInput extends Component {
 		return isFetching || isUnloading;
 	}
 
+	validateForm() {
+		const { url, translate } = this.props;
+		let errorMessage;
+
+		if ( ! isValidUrl( url ) ) {
+			errorMessage = translate( 'Please enter a valid URL.' );
+		}
+
+		if ( errorMessage ) {
+			this.setState( { errorMessage } );
+			return false;
+		}
+
+		return true;
+	}
+
+	handleFormSubmit = () => {
+		const { onSubmit } = this.props;
+
+		const isFormValid = this.validateForm();
+
+		if ( isFormValid ) {
+			onSubmit();
+		}
+	};
+
+	handleChange = ( event ) => {
+		const { onChange } = this.props;
+
+		this.setState( { errorMessage: null } );
+		onChange( event );
+	};
+
+	renderError() {
+		const { errorMessage } = this.state;
+
+		if ( errorMessage ) {
+			return <FormInputValidation isError text={ errorMessage } />;
+		}
+	}
+
 	renderTermsOfServiceLink() {
 		return (
 			<p className="jetpack-connect__tos-link">
@@ -139,29 +185,8 @@ class JetpackConnectSiteUrlInput extends Component {
 		);
 	}
 
-	renderError() {
-		const { isFetched } = this.props;
-		const errorMessage = this.getErrorMessage();
-
-		if ( ! isFetched || ! errorMessage ) {
-			return;
-		}
-
-		return <FormInputValidation isError text={ errorMessage } />;
-	}
-
-	getErrorMessage = () => {
-		const { isError, translate } = this.props;
-
-		switch ( isError ) {
-			case NOT_EXISTS:
-				return translate( 'Invalid site address. Enter a valid WordPress URL.' );
-		}
-	};
-
 	render() {
-		const { candidateSites, isFetching, onChange, onSubmit, isSearch, translate, url, autoFocus } =
-			this.props;
+		const { candidateSites, isFetching, isSearch, translate, url, autoFocus } = this.props;
 
 		return (
 			<div>
@@ -174,7 +199,7 @@ class JetpackConnectSiteUrlInput extends Component {
 							id="siteUrl"
 							autoCapitalize="off"
 							autoFocus={ autoFocus } // eslint-disable-line jsx-a11y/no-autofocus
-							onChange={ onChange }
+							onChange={ this.handleChange }
 							disabled={ isFetching }
 							placeholder="https://yourjetpack.blog"
 							onKeyUp={ this.handleKeyPress }
@@ -185,7 +210,7 @@ class JetpackConnectSiteUrlInput extends Component {
 						<SuggestionSearch
 							id="siteSelection"
 							placeholder="Type your site"
-							onChange={ onChange }
+							onChange={ this.handleChange }
 							suggestions={ candidateSites }
 							value={ url }
 						/>
@@ -200,7 +225,7 @@ class JetpackConnectSiteUrlInput extends Component {
 						primary
 						disabled={ this.isFormSubmitDisabled() }
 						busy={ this.isFormSubmitBusy() }
-						onClick={ onSubmit }
+						onClick={ this.handleFormSubmit }
 					>
 						{ this.renderButtonLabel() }
 					</Button>
