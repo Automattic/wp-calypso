@@ -816,7 +816,6 @@ export default function CheckoutMain( {
 					addItemToCart={ addItemAndLog }
 					changeSelection={ changeSelection }
 					countriesList={ countriesList }
-					createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
 					infoMessage={ <PrePurchaseNotices siteId={ updatedSiteId } isSiteless={ isSiteless } /> }
 					isLoggedOutCart={ !! isLoggedOutCart }
 					onPageLoadError={ onPageLoadError }

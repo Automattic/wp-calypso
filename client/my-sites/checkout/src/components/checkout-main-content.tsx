@@ -336,7 +336,6 @@ export default function CheckoutMainContent( {
 	addItemToCart,
 	changeSelection,
 	countriesList,
-	createUserAndSiteBeforeTransaction,
 	infoMessage,
 	isLoggedOutCart,
 	onPageLoadError,
@@ -359,7 +358,6 @@ export default function CheckoutMainContent( {
 	changeSelection: OnChangeItemVariant;
 	onStepChanged?: StepChangedCallback;
 	countriesList: CountryListItem[];
-	createUserAndSiteBeforeTransaction: boolean;
 	infoMessage?: JSX.Element;
 	isLoggedOutCart: boolean;
 	onPageLoadError: CheckoutPageErrorCallback;
@@ -677,7 +675,6 @@ export default function CheckoutMainContent( {
 							setCouponFieldVisible={ setCouponFieldVisible }
 							onChangeSelection={ changeSelection }
 							siteUrl={ siteUrl }
-							createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
 						/>
 					}
 					formStatus={ formStatus }

@@ -12,8 +12,6 @@ import { hasP2PlusPlan } from 'calypso/lib/cart-values/cart-items';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
-import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getIsOnboardingAffiliateFlow } from 'calypso/state/signup/flow/selectors';
 import getSelectedSite from 'calypso/state/ui/selectors/get-selected-site';
 import Coupon from './coupon';
@@ -84,7 +82,6 @@ export default function WPCheckoutOrderReview( {
 	onChangeSelection,
 	siteUrl,
 	isSummary,
-	createUserAndSiteBeforeTransaction,
 }: {
 	className?: string;
 	removeProductFromCart?: RemoveProductFromCart;
@@ -96,16 +93,12 @@ export default function WPCheckoutOrderReview( {
 	setCouponFieldVisible: SetCouponFieldVisible;
 	siteUrl?: string;
 	isSummary?: boolean;
-	createUserAndSiteBeforeTransaction?: boolean;
 } ) {
 	const translate = useTranslate();
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 	const reduxDispatch = useDispatch();
 
-	const onRemoveProductCancel = useCallback( () => {
-		reduxDispatch( recordTracksEvent( 'calypso_checkout_composite_cancel_delete_product' ) );
-	}, [ reduxDispatch ] );
 	const onRemoveProduct = useCallback(
 		( label: string ) => {
 			reduxDispatch(
@@ -133,11 +126,6 @@ export default function WPCheckoutOrderReview( {
 	const domainUrl = getDomainToDisplayInCheckoutHeader( responseCart, selectedSiteData, siteUrl );
 
 	const planIsP2Plus = hasP2PlusPlan( responseCart );
-
-	const isPwpoUser = useSelector(
-		( state ) =>
-			getCurrentUser( state ) && currentUserHasFlag( state, NON_PRIMARY_DOMAINS_TO_FREE_USERS )
-	);
 
 	return (
 		<>
@@ -167,12 +155,9 @@ export default function WPCheckoutOrderReview( {
 						removeCoupon={ removeCouponAndClearField }
 						onChangeSelection={ onChangeSelection }
 						isSummary={ isSummary }
-						createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
 						responseCart={ responseCart }
-						isPwpoUser={ isPwpoUser ?? false }
 						onRemoveProduct={ onRemoveProduct }
 						onRemoveProductClick={ onRemoveProductClick }
-						onRemoveProductCancel={ onRemoveProductCancel }
 					/>
 				</WPOrderReviewSection>
 			</div>
