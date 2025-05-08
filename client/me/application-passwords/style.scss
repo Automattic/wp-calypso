@@ -16,6 +16,10 @@
 
 .application-passwords__new-password {
 	margin-bottom: 1em;
+
+	.form-buttons-bar {
+		text-align: right;
+	}
 }
 
 .application-passwords__new-password-display {
@@ -29,6 +33,17 @@
 	margin: 10px auto;
 	padding: 5px;
 	letter-spacing: 2px;
+	position: relative;
+
+	.button {
+		position: absolute;
+		right: 12px;
+		top: 12px;
+		svg {
+			height: 18px;
+			width: 18px;
+		}
+	}
 }
 
 .application-passwords__new-password-message {
