@@ -88,15 +88,6 @@ const useMainMenuItems = ( path: string ) => {
 				},
 			},
 			{
-				icon: chartBar,
-				path: '/',
-				link: A4A_REPORTS_LINK,
-				title: translate( 'Reports' ),
-				trackEventProps: {
-					menu_item: 'Automattic for Agencies / Reports',
-				},
-			},
-			{
 				icon: category,
 				path: '/',
 				link: A4A_SITES_LINK,
@@ -150,6 +141,15 @@ const useMainMenuItems = ( path: string ) => {
 						},
 				  ]
 				: [] ),
+			{
+				icon: chartBar,
+				path: '/',
+				link: A4A_REPORTS_LINK,
+				title: translate( 'Reports' ),
+				trackEventProps: {
+					menu_item: 'Automattic for Agencies / Reports',
+				},
+			},
 			...( config.isEnabled( 'a4a-partner-directory' ) ||
 			config.isEnabled( 'a8c-for-agencies-agency-tier' )
 				? [
