@@ -73,4 +73,8 @@
 			@include body-medium;
 		}
 	}
+
+	&:focus {
+		box-shadow: 0 0 0 1.5px var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9));
+	}
 }
