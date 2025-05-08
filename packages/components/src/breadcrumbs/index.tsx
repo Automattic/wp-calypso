@@ -19,7 +19,9 @@ function BreadcrumbsMenu( { items }: { items: BreadcrumbItemProps[] } ) {
 			<Menu placement="bottom-start">
 				<Menu.TriggerButton
 					className="a8c-components-breadcrumbs__item"
-					render={ <Button size="compact" text="…" label={ __( 'More breadcrumb items' ) } /> }
+					render={
+						<Button size="compact" text="__( … )" label={ __( 'More breadcrumb items' ) } />
+					}
 				/>
 				<Menu.Popover>
 					{ items.map( ( item, index ) => (
