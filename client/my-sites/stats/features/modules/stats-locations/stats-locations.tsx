@@ -69,6 +69,8 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( {
 		return urlGeoMode && urlGeoMode in GEO_MODES ? urlGeoMode : OPTION_KEYS.COUNTRIES;
 	}, [ query.geoMode, initialGeoMode ] );
 
+	const [ countryFilter, setCountryFilter ] = useState< string | null >( null );
+
 	// Set the state locally to avoid a page being reloaded by URL changes.
 	const [ selectedLocalOption, setSelectedLocalOption ] = useState( () => {
 		return appliedGeoModeFromUrl;
@@ -81,8 +83,6 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( {
 
 		return selectedLocalOption;
 	}, [ summary, appliedGeoModeFromUrl, selectedLocalOption ] );
-
-	const [ countryFilter, setCountryFilter ] = useState< string | null >( null );
 
 	const optionLabels = useOptionLabels();
 
