@@ -39,8 +39,8 @@ const sitesDashboardGlobalStyles = css`
 			.is-global-sidebar-visible {
 				.layout__primary > main {
 					background: var( --color-surface );
+					border: 1px solid #e0e0e0;
 					border-radius: 8px;
-					box-shadow: 0px 0px 17.4px 0px rgba( 0, 0, 0, 0.05 );
 					overflow: hidden;
 					max-width: none;
 				}
