@@ -2,7 +2,6 @@ import { SearchControl } from '@wordpress/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useCallback } from 'react';
-import Search, { SEARCH_MODE_ON_ENTER } from 'calypso/components/search';
 import './style.scss';
 
 interface SearchThemesProps {
@@ -57,26 +56,4 @@ const SearchThemes: React.FC< SearchThemesProps > = ( { query, onSearch, recordT
 	);
 };
 
-interface SearchThemesV2Props {
-	query: string;
-	onSearch: ( query: string ) => void;
-}
-
-const SearchThemesV2: React.FC< SearchThemesV2Props > = ( { query, onSearch } ) => {
-	const translate = useTranslate();
-
-	return (
-		<div className="search-themes-card" role="presentation" data-tip-target="search-themes-card">
-			<Search
-				initialValue={ query }
-				value={ query }
-				placeholder={ translate( 'Search themes…' ) }
-				analyticsGroup="Themes"
-				searchMode={ SEARCH_MODE_ON_ENTER }
-				onSearch={ onSearch }
-			/>
-		</div>
-	);
-};
-
-export { SearchThemes, SearchThemesV2 };
+export { SearchThemes };
