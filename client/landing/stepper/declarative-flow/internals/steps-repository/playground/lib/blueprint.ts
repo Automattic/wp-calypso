@@ -121,7 +121,7 @@ export function getBlueprintLabelForTracking( query: URLSearchParams ): string {
 		return name;
 	}
 
-	// If its a blueprintlibrary.wordpress.com url for blueprint, use its id to construct the label
+	// If it's a blueprintlibrary.wordpress.com url for blueprint, use it's id to construct the label
 	const blueprintUrl = query.get( 'blueprint-url' );
 	if ( blueprintUrl ) {
 		const src = new URL( blueprintUrl );
