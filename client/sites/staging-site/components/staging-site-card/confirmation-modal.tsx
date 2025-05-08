@@ -38,8 +38,17 @@ const SynchronizeButtonWrapper = styled.div`
 		background: var( --color-surface );
 	}
 
-	.components-button.is-tertiary span {
+	.components-button.is-tertiary:not( :disabled ) span {
 		color: var( --color-text );
+	}
+
+	.components-button.is-tertiary:disabled {
+		background-color: var( --color-surface );
+		border-color: var( --color-neutral-5 );
+	}
+
+	.components-button.is-tertiary:disabled span {
+		color: var( --color-neutral-20 );
 	}
 `;
 
