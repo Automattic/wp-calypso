@@ -326,7 +326,7 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( {
 		  ] )
 		: [];
 
-	let downloadCsvElement;
+	let downloadCsvElement = null;
 	if ( ! isStatsNavigationImprovementEnabled ) {
 		downloadCsvElement = shouldGateDownloads ? (
 			<DownloadCsvUpsell
