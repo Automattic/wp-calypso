@@ -8,7 +8,14 @@ import {
 import { fetchTwoStep } from '../data';
 import NotFound from './404';
 import UnknownError from './500';
-import { sitesQuery, siteQuery, domainsQuery, emailsQuery, profileQuery } from './queries';
+import {
+	sitesQuery,
+	siteQuery,
+	siteSettingsQuery,
+	domainsQuery,
+	emailsQuery,
+	profileQuery,
+} from './queries';
 import { queryClient } from './query-client';
 import Root from './root';
 import type { AppConfig } from './context';
@@ -108,6 +115,7 @@ const sitePerformanceRoute = createRoute( {
 const siteSettingsRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: 'settings',
+	loader: ( { params: { siteSlug } } ) => maybeAwaitFetch( siteSettingsQuery( siteSlug ) ),
 } ).lazy( () =>
 	import( '../sites/settings' ).then( ( d ) =>
 		createLazyRoute( 'site-settings' )( {
