@@ -4,15 +4,15 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
-export type TabType = 'mobile' | 'desktop';
+export type ToggleType = 'mobile' | 'desktop';
 
-type DeviceTabControlsProps = {
-	value: TabType;
-	onChange: ( value: TabType ) => void;
+type DeviceToggleProps = {
+	value: ToggleType;
+	onChange: ( value: ToggleType ) => void;
 };
 
-export default function DeviceTabControls( { value, onChange }: DeviceTabControlsProps ) {
-	const options: { value: TabType; label: string }[] = [
+export default function DeviceToggle( { value, onChange }: DeviceToggleProps ) {
+	const options: { value: ToggleType; label: string }[] = [
 		{
 			value: 'mobile',
 			label: __( 'Mobile' ),
@@ -31,7 +31,7 @@ export default function DeviceTabControls( { value, onChange }: DeviceTabControl
 			hideLabelFromVision
 			__next40pxDefaultSize
 			__nextHasNoMarginBottom
-			onChange={ ( value ) => onChange( value as TabType ) }
+			onChange={ ( value ) => onChange( value as ToggleType ) }
 		>
 			{ options.map( ( option ) => {
 				return (

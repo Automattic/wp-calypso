@@ -3,11 +3,11 @@ import { useState } from 'react';
 import { PerformanceProfilerDashboardContent } from 'calypso/performance-profiler/components/dashboard-content';
 import { sitePerformanceRoute } from '../../app/router';
 import { usePerformanceData } from '../hooks/use-performance-data';
-import type { TabType } from './device-tabs';
-import type { Site } from '../../data/types';
-import { ReportLoading } from './report-loading';
 import { ExpiredReportNotice } from './expired-report-notice';
 import { ReportError } from './report-error';
+import { ReportLoading } from './report-loading';
+import type { ToggleType } from './device-toggle';
+import type { Site } from '../../data/types';
 
 import './style.scss';
 
@@ -21,7 +21,7 @@ const updateUrl = ( filter?: string ) => {
 	window.history.replaceState( {}, '', url.toString() );
 };
 
-export default function Report( { site, deviceType }: { site: Site; deviceType: TabType } ) {
+export default function Report( { site, deviceType }: { site: Site; deviceType: ToggleType } ) {
 	const { filter } = useSearch( { from: sitePerformanceRoute.fullPath } );
 	const [ recommendationsFilter, setRecommendationsFilter ] = useState( filter );
 	const {
