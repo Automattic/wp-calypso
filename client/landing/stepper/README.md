@@ -146,7 +146,6 @@ export const exampleFlow: FlowV2< typeof initialize > = {
 	},
 };
 ```
-
 #### Registering the flow
 
 Flows have to be registered [here](/client/landing/stepper/declarative-flow/registered-flows.ts).
@@ -228,7 +227,7 @@ const SelectImportedSiteSource: Step< {
 		platform: 'Wix' | 'Squarespace';
 		url: string;
 	};
-	// And it accepts the following props.
+	// And it accepts the following props. Adding them here will make them available in the `props` object.
 	accepts: {
 		title?: string;
 		subTitle?: string;
@@ -331,6 +330,37 @@ In some cases, flows will need state that is not submitted from a step. In which
 ## Useful utilities and hooks
 
 Please check out the [hooks](/client/landing/stepper/hooks) and [utils](/client/landing/stepper/utils) folders. They have many useful utilities that make building flows easier.
+
+## Troubleshooting
+
+**TypeScript is complaining about the type of `useStepProps`**
+
+The `useStepProps` hooks allows you to pass props to your steps. TS will compare its return type and see if all the steps slugs and the props match your steps' slugs and their props. And if not, it will complain about the whole function, not a single slug or a prop. To debug, it's best to remove the props of all the steps and add them one by one.
+
+```ts
+useStepsProps() { // <-- the TS red line will be here
+	domains: {
+		allowFree: true,
+	},
+	nonExistentStep: { // <--- not here
+		title: 'this step does not exist',
+	}
+}
+```
+
+**TypeScript is complaining about the arguments I'm passing to `submit`**
+
+Sometimes, in your step, you call `submit({ answer: 'yes' })` and TS will complain about the argument. This means you haven't typed your step correctly.
+
+In this example, the step's type should look like so
+
+```ts
+const YourStep: Step< {
+	submits: {
+		answer: 'yes' | 'no';
+	};
+} >
+```
 
 ## Help and feedback
 
