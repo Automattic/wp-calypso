@@ -71,7 +71,7 @@ A flow is a collection of steps. Each of these steps submit some information to 
 
 ```ts
 // We define our steps collection upfront because it is a prerequisite of shaping the flow.
-(async) function initialize( calypsoReduxStore: Store ) {
+async function initialize( calypsoReduxStore: Store ) {
 	const includeDomainsStep = await isTheMoonFull();
 	const hasAnySites = userHasAnySites( calypsoReduxStore.getState() );
 
@@ -90,13 +90,13 @@ export const exampleFlow: FlowV2< typeof initialize > = {
 	/**
 	 * The name of the flow is what appears in the pathname. It must be unique.
 	 * This flow will be under /setup/my-flow.
-	 * */
+	 */
 	name: 'my-flow',
 
 	/**
 	 * This flag must be `true` for signup flows (generally where a new site may be created), and should be `false` for other flows.
 	 * It controls whether we'll trigger a `calypso_signup_start` Tracks event when the flow starts.
-	 * */
+	 */
 	isSignupFlow: true,
 	initialize,
 	/**
@@ -147,6 +147,7 @@ export const exampleFlow: FlowV2< typeof initialize > = {
 	},
 };
 ```
+
 #### Registering the flow
 
 Flows have to be registered [here](/client/landing/stepper/declarative-flow/registered-flows.ts).
@@ -303,9 +304,13 @@ The `useFlowState` hook will allow you to store and retrieve any information for
 There shouldn't be any state that is untyped in Stepper.
 
 ```ts
-const { set } = useFlowState();
-// The `useFlowState` will infer the types of `plans` from the types of the steps whose slug is `plans`. It will use the `submits:` part of the step types.
-set( 'plans', data );
+const flow = {
+	useStepNavigation() {
+		const { set } = useFlowState();
+		// The `useFlowState` will infer the types of `plans` from the types of the steps whose slug is `plans`. It will use the `submits:` part of the step types.
+		set( 'plans', data );
+	},
+};
 ```
 
 ##### Miscellaneous fields
@@ -334,22 +339,28 @@ Please check out the [hooks](/client/landing/stepper/hooks) and [utils](/client/
 
 ## Troubleshooting
 
-**TypeScript is complaining about the type of `useStepProps`**
+### TypeScript is complaining about the type of `useStepProps`
 
-The `useStepProps` hooks allows you to pass props to your steps. TS will compare its return type and see if all the steps slugs and the props match your steps' slugs and their props. And if not, it will complain about the whole function, not a single slug or a prop. To debug, it's best to remove the props of all the steps and add them one by one.
+The `useStepProps` hooks allows you to pass props to your steps. TS will only allow your return value to match the steps that exist in your flow and their props. And the return value does not match, it will complain about the whole function, not a single slug or a prop. To debug, it's best to remove the props of all the steps and add them one by one until it becomes red again.
 
 ```ts
-useStepsProps() { // <-- the TS red line will be here
-	domains: {
-		allowFree: true,
+const flow = {
+	//👇 the TS red line will be here 
+	useStepsProps() {
+		return {
+			domains: {
+				allowFree: true,
+			},
+			//👇 not here
+			nonExistentStep: {				
+				title: 'this step does not exist',
+			},
+		};
 	},
-	nonExistentStep: { // <--- not here
-		title: 'this step does not exist',
-	}
-}
+};
 ```
 
-**TypeScript is complaining about the arguments I'm passing to `submit`**
+### TypeScript is complaining about the arguments I'm passing to `submit`
 
 Sometimes, in your step, you call `submit({ answer: 'yes' })` and TS will complain about the argument. This means you haven't typed your step correctly.
 
@@ -360,7 +371,7 @@ const YourStep: Step< {
 	submits: {
 		answer: 'yes' | 'no';
 	};
-} >
+} >;
 ```
 
 ## Help and feedback
