@@ -25,7 +25,7 @@ export default function ReportsComponent() {
 					</Button>
 				</div>
 				{ isModalOpen && (
-					<Modal title={ translate( 'Build Report' ) } onRequestClose={ closeModal }>
+					<Modal size="large" title={ translate( 'Build Report' ) } onRequestClose={ closeModal }>
 						{ /* Modal content will go here */ }
 						<p>{ translate( 'Modal content is under construction.' ) }</p>
 						<Button variant="secondary" onClick={ closeModal }>
