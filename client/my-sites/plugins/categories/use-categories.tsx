@@ -110,7 +110,7 @@ export const getCategories: () => Record< string, Category > = () => ( {
 		preview: [],
 	},
 	seo: {
-		menu: __( 'Search Engine Optimization' ),
+		menu: __( 'Search engine optimization' ),
 		title: __( 'Search engine optimization' ),
 		description: __( 'Fine-tune your site’s content and metadata for search engine success.' ),
 		icon: 'grid',
