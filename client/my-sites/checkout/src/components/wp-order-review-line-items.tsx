@@ -23,7 +23,10 @@ import { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import { has100YearPlan } from 'calypso/lib/cart-values/cart-items';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
 import { useGetProductVariants } from 'calypso/my-sites/checkout/src/hooks/product-variants';
-import { useStreamlinedPriceExperiment } from 'calypso/my-sites/plans-features-main/hooks/use-streamlined-price-experiment';
+import {
+	isStreamlinedPriceRadioTreatment,
+	useStreamlinedPriceExperiment,
+} from 'calypso/my-sites/plans-features-main/hooks/use-streamlined-price-experiment';
 import { getSignupCompleteFlowName } from 'calypso/signup/storageUtils';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -378,7 +381,8 @@ function LineItemWrapper( {
 		isJetpackPurchasableItem( product.product_slug )
 	);
 
-	const [ , streamlinedPriceExperimentAssignment ] = useStreamlinedPriceExperiment();
+	const [ isStreamlinedPriceExperimentLoading, streamlinedPriceExperimentAssignment ] =
+		useStreamlinedPriceExperiment();
 	const variants = useGetProductVariants( product, ( variant ) => {
 		// Only show term variants which are equal to or longer than the variant that
 		// was in the cart when checkout finished loading (not necessarily the
@@ -390,7 +394,15 @@ function LineItemWrapper( {
 		const isAkismet = isAkismetProduct( { product_slug: variant.productSlug } );
 		const isMarketplace = product.extra?.is_marketplace_product;
 
-		if ( isJetpack || isAkismet || isMarketplace || streamlinedPriceExperimentAssignment ) {
+		if ( isJetpack || isAkismet || isMarketplace ) {
+			return true;
+		}
+
+		if (
+			isWpComPlan( variant.productSlug ) &&
+			! isStreamlinedPriceExperimentLoading &&
+			isStreamlinedPriceRadioTreatment( streamlinedPriceExperimentAssignment )
+		) {
 			return true;
 		}
 
