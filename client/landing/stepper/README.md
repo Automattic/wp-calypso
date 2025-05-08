@@ -24,6 +24,7 @@ Stepper is a framework that allows you to make all kinds of walkthroughs. It's g
 - [State management](#state-management)
   - [Typed state](#typed-state)
   - [Miscellaneous fields](#miscellaneous-fields)
+- [Creating a site](#creating-a-site)
 - [The API](#the-api)
 - [Useful utilities and hooks](#useful-utilities-and-hooks)
 - [Troubleshooting](#troubleshooting)
@@ -312,6 +313,11 @@ const flow = {
 	},
 };
 ```
+
+### Creating a site
+It's quite common that you'd want to create a site by the end of your flow. To do that, Stepper offers `useCreateSite` hook. This hook collects the state you set in `useFlowState` and some arguments and makes a site for you. 
+
+Please check the [example flow](](/client/landing/stepper/declarative-flow/flows/00-example-flow/example.ts)) to see how that works.
 
 ##### Miscellaneous fields
 
