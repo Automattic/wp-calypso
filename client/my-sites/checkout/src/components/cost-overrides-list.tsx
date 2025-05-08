@@ -22,6 +22,7 @@ import {
 	getLabel,
 	isOverrideCodeIntroductoryOffer,
 } from '@automattic/wpcom-checkout';
+import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useStreamlinedPriceExperiment } from 'calypso/my-sites/plans-features-main/hooks/use-streamlined-price-experiment';
@@ -37,13 +38,26 @@ const PALETTE = colorStudio.colors;
 const COLOR_GRAY_40 = PALETTE[ 'Gray 40' ];
 const COLOR_GREEN_60 = PALETTE[ 'Green 60' ];
 
-const CostOverridesListStyle = styled.div`
+const CostOverridesListStyle = styled.div< {
+	isStreamlinedPrice?: boolean;
+} >`
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
 	font-size: 12px;
 	font-weight: 400;
 	gap: 2px;
+	${ ( props ) =>
+		props.isStreamlinedPrice &&
+		css`
+			padding-left: 24px;
+			position: relative;
+
+			.rtl & {
+				padding-right: 24px;
+				padding-left: 0;
+			}
+		` }
 
 	& .cost-overrides-list-item {
 		display: grid;
@@ -68,6 +82,12 @@ const CostOverridesListStyle = styled.div`
 
 	& .cost-overrides-list-item__discount {
 		white-space: nowrap;
+		${ ( props ) =>
+			props.isStreamlinedPrice &&
+			css`
+				color: ${ COLOR_GREEN_60 };
+				font-weight: 500;
+			` }
 	}
 `;
 
@@ -298,6 +318,54 @@ const ProductTitleAreaForCostOverridesList = styled.div`
 	}
 `;
 
+const StreamlinedSingleProductAndCostOverridesListWrapper = styled(
+	SingleProductAndCostOverridesListWrapper
+)`
+	padding-left: 24px;
+	position: relative;
+
+	.rtl & {
+		padding-right: 24px;
+		padding-left: 0;
+	}
+`;
+
+const StreamlinedLineItemPriceWrapper = styled.span`
+	display: flex;
+	flex: 0 0 auto;
+	gap: 4px;
+	margin-left: 12px;
+	font-size: inherit;
+
+	.rtl & {
+		margin-right: 12px;
+		margin-left: 0;
+	}
+
+	& s {
+		color: ${ COLOR_GRAY_40 };
+	}
+
+	& span {
+		font-weight: 500;
+	}
+`;
+
+const StreamlinedLineItemPrice = function ( {
+	actualAmount,
+	crossedOutAmount,
+}: {
+	actualAmount?: string;
+	crossedOutAmount?: string;
+} ) {
+	return (
+		<StreamlinedLineItemPriceWrapper>
+			{ crossedOutAmount && <s>{ crossedOutAmount }</s> }
+			<span>{ actualAmount }</span>
+		</StreamlinedLineItemPriceWrapper>
+	);
+};
+
 const WPCheckoutCheckIcon = styled( CheckIcon )`
 	fill: ${ ( props ) => props.theme.colors.success };
 	margin-right: 4px;
@@ -348,54 +416,6 @@ function SingleProductAndCostOverridesList( { product }: { product: ResponseCart
 			streamlinedActualAmountDisplay = actualAmountDisplay;
 		}
 
-		const StreamlinedSingleProductAndCostOverridesListWrapper = styled(
-			SingleProductAndCostOverridesListWrapper
-		)`
-			padding-left: 24px;
-			position: relative;
-
-			.rtl & {
-				padding-right: 24px;
-				padding-left: 0;
-			}
-		`;
-
-		const StreamlinedLineItemPriceWrapper = styled.span`
-			display: flex;
-			flex: 0 0 auto;
-			gap: 4px;
-			margin-left: 12px;
-			font-size: inherit;
-
-			.rtl & {
-				margin-right: 12px;
-				margin-left: 0;
-			}
-
-			& s {
-				color: ${ COLOR_GRAY_40 };
-			}
-
-			& span {
-				font-weight: 500;
-			}
-		`;
-
-		const StreamlinedLineItemPrice = function ( {
-			actualAmount,
-			crossedOutAmount,
-		}: {
-			actualAmount?: string;
-			crossedOutAmount?: string;
-		} ) {
-			return (
-				<StreamlinedLineItemPriceWrapper>
-					{ crossedOutAmount && <s>{ crossedOutAmount }</s> }
-					<span>{ actualAmount }</span>
-				</StreamlinedLineItemPriceWrapper>
-			);
-		};
-
 		return (
 			<StreamlinedSingleProductAndCostOverridesListWrapper>
 				<WPCheckoutCheckIcon />
@@ -445,53 +465,9 @@ export function CouponCostOverride( {
 
 	const label = isOnboardingAffiliateFlow ? getAffiliateCouponLabel() : couponLabel;
 
-	if ( streamlinedPriceExperimentAssignment ) {
-		const StreamlinedCostOverridesListStyle = styled( CostOverridesListStyle )`
-			padding-left: 24px;
-			position: relative;
-
-			.rtl & {
-				padding-right: 24px;
-				padding-left: 0;
-			}
-
-			& .cost-overrides-list-item__discount {
-				color: ${ COLOR_GREEN_60 };
-				font-weight: 500;
-			}
-		`;
-		return (
-			<StreamlinedCostOverridesListStyle>
-				<WPCheckoutCheckIcon />
-				<div className="cost-overrides-list-item cost-overrides-list-item--coupon">
-					<span className="cost-overrides-list-item__reason cost-overrides-list-item__reason--is-discount">
-						{ label }
-					</span>
-					<span className="cost-overrides-list-item__discount">
-						{ formatCurrency( -responseCart.coupon_savings_total_integer, responseCart.currency, {
-							isSmallestUnit: true,
-						} ) }
-					</span>
-				</div>
-				{ removeCoupon && (
-					<span className="cost-overrides-list-item__actions">
-						<DeleteButton
-							buttonType="text-button"
-							disabled={ isDisabled }
-							className="cost-overrides-list-item__actions-remove"
-							onClick={ removeCoupon }
-							aria-label={ translate( 'Remove coupon' ) }
-						>
-							{ translate( 'Remove' ) }
-						</DeleteButton>
-					</span>
-				) }
-			</StreamlinedCostOverridesListStyle>
-		);
-	}
-
 	return (
-		<CostOverridesListStyle>
+		<CostOverridesListStyle isStreamlinedPrice={ streamlinedPriceExperimentAssignment !== null }>
+			{ streamlinedPriceExperimentAssignment && <WPCheckoutCheckIcon /> }
 			<div className="cost-overrides-list-item cost-overrides-list-item--coupon">
 				<span className="cost-overrides-list-item__reason cost-overrides-list-item__reason--is-discount">
 					{ label }
