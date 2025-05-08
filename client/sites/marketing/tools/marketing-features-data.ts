@@ -25,10 +25,9 @@ export const getMarketingFeaturesData = (
 			categories: [ 'design', 'favourite' ],
 			imagePath: wordPressLogo,
 			buttonText: translate( 'Get started' ),
-			buttonHref: localizeUrl( 'https://wordpress.com/website-design-service/?ref=tools-banner' ),
-			buttonTarget: '_blank',
 			onClick: () => {
 				recordTracksEvent( 'calypso_marketing_tools_built_by_wp_button_click' );
+				page( '/start/do-it-for-me/new-or-existing-site' );
 			},
 		},
 		{

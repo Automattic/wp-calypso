@@ -24,8 +24,7 @@ const selectors = {
 	annualPricing: '.plugins-browser-item__period:text("per year")',
 
 	// Search
-	searchIcon: '.search-component__open-icon',
-	searchInput: 'input.search-component__input',
+	searchInput: '.components-search-control .components-input-control__input',
 	searchResult: ( text: string ) => `.plugins-browser-item__title:text("${ text }")`,
 	// eslint-disable-next-line no-useless-escape
 	searchResultTitle: ( text: string ) => `:text('plugins for "${ text }"')`,
@@ -248,11 +247,6 @@ export class PluginsPage {
 	 * @param {string} query String to search for.
 	 */
 	async search( query: string ): Promise< void > {
-		// On mobile viewports the Loupe icon must be
-		// clicked to activate the search field.
-		const searchInputIconLocator = this.page.locator( selectors.searchIcon );
-		await searchInputIconLocator.click();
-
 		await this.page.fill( selectors.searchInput, query );
 		await this.page.press( selectors.searchInput, 'Enter' );
 		await this.page.waitForSelector( selectors.searchResultTitle( query ) );
