@@ -792,7 +792,7 @@ const Settings = ( {
 		);
 	};
 
-	if ( ! domain || isLoadingPurchase ) {
+	if ( ! domain ) {
 		// TODO: Update this placeholder
 		return <DomainMainPlaceholder breadcrumbs={ renderHeader } />;
 	}
