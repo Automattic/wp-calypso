@@ -26,7 +26,7 @@ export const MissingPaymentSettingsNotice = () => {
 		>
 			<div>
 				{ translate(
-					'Ensure you receive your share of revenue by providing your payout details in the Payout settings screen.'
+					'Ensure you receive your share of revenue by providing your payout details in the payout settings screen.'
 				) }
 			</div>
 			<Button
