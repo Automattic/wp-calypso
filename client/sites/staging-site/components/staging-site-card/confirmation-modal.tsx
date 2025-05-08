@@ -18,49 +18,49 @@ const ActionButtons = styled.div( {
 	},
 } );
 
-const ButtonContent = styled.span`
-	display: flex;
-	align-items: center;
-	gap: 2px;
-	font-size: 14px;
+const ButtonContent = styled.span( {
+	display: 'flex',
+	alignItems: 'center',
+	gap: '2px',
+	fontSize: '14px',
 
-	.components-button.is-tertiary & {
-		color: var( --color-text-subtle );
-	}
+	'.components-button.is-tertiary &': {
+		color: 'var( --color-text-subtle )',
+	},
 
-	.components-button.is-tertiary:hover:not( :disabled ) & {
-		color: var( --color-text );
-	}
-`;
+	'.components-button.is-tertiary:hover:not( :disabled ) &': {
+		color: 'var( --color-text )',
+	},
+} );
 
-const TertiaryButtonWrapper = styled.div`
-	.components-button.is-tertiary:hover:not( :disabled ) {
-		background: var( --color-surface );
-	}
-`;
+const TertiaryButtonWrapper = styled.div( {
+	'.components-button.is-tertiary:hover:not( :disabled )': {
+		background: 'var( --color-surface )',
+	},
+} );
 
-const SynchronizeButtonWrapper = styled.div`
-	.components-button.is-tertiary {
-		border: 1px solid var( --color-border );
-	}
+const SynchronizeButtonWrapper = styled.div( {
+	'.components-button.is-tertiary': {
+		border: '1px solid var( --color-border )',
+	},
 
-	.components-button.is-tertiary:hover:not( :disabled ) {
-		background: var( --color-surface );
-	}
+	'.components-button.is-tertiary:hover:not( :disabled )': {
+		background: 'var( --color-surface )',
+	},
 
-	.components-button.is-tertiary:not( :disabled ) span {
-		color: var( --color-text );
-	}
+	'.components-button.is-tertiary:not( :disabled ) span': {
+		color: 'var( --color-text )',
+	},
 
-	.components-button.is-tertiary:disabled {
-		background-color: var( --color-surface );
-		border-color: var( --color-neutral-5 );
-	}
+	'.components-button.is-tertiary:disabled': {
+		backgroundColor: 'var( --color-surface )',
+		borderColor: 'var( --color-neutral-5 )',
+	},
 
-	.components-button.is-tertiary:disabled span {
-		color: var( --color-neutral-20 );
-	}
-`;
+	'.components-button.is-tertiary:disabled span': {
+		color: 'var( --color-neutral-20 )',
+	},
+} );
 
 type ConfirmationModalButtonProps = {
 	onConfirm?: () => void;
