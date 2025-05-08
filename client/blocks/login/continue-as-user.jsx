@@ -38,7 +38,6 @@ export default function ContinueAsUser( {
 	redirectPath,
 	isWoo,
 	isBlazePro,
-	notYouText,
 } ) {
 	const translate = useTranslate();
 
@@ -51,23 +50,21 @@ export default function ContinueAsUser( {
 	// like that, but it is better than the alternative, and in practice it should happen quicker than
 	// the user can notice.
 
-	const notYouDisplayedText = notYouText
-		? notYouText
-		: translate( 'Not you?{{br/}}Log in with {{link}}another account{{/link}}', {
-				components: {
-					br: <br />,
-					link: (
-						<button
-							type="button"
-							id="loginAsAnotherUser"
-							className="continue-as-user__change-user-link"
-							onClick={ onChangeAccount }
-						/>
-					),
-				},
-				args: { userName },
-				comment: 'Link to continue login as different user',
-		  } );
+	const notYouText = translate( 'Not you?{{br/}}Log in with {{link}}another account{{/link}}', {
+		components: {
+			br: <br />,
+			link: (
+				<button
+					type="button"
+					id="loginAsAnotherUser"
+					className="continue-as-user__change-user-link"
+					onClick={ onChangeAccount }
+				/>
+			),
+		},
+		args: { userName },
+		comment: 'Link to continue login as different user',
+	} );
 
 	const gravatarLink = (
 		<div className="continue-as-user__gravatar-content">
@@ -149,7 +146,7 @@ export default function ContinueAsUser( {
 					{ translate( 'Continue' ) }
 				</Button>
 			</div>
-			<div className="continue-as-user__not-you">{ notYouDisplayedText }</div>
+			<div className="continue-as-user__not-you">{ notYouText }</div>
 		</div>
 	);
 }
