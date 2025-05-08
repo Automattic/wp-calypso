@@ -6,6 +6,26 @@ Stepper is a framework that allows you to make all kinds of walkthroughs. It's g
 
 ## Table of Contents
 
+- [How does it work](#how-does-it-work)
+  - [The most important principle: Steps shouldn't make decisions or communicate](#the-most-important-principle-steps-shouldnt-make-decisions-or-communicate)
+- [Making a flow](#making-a-flow)
+  - [Code example](#code-example)
+  - [Registering the flow](#registering-the-flow)
+  - [File hierarchy convention](#file-hierarchy-convention)
+  - [Managing authentication](#managing-authentication)
+  - [Asserting conditions before running the flow](#asserting-conditions-before-running-the-flow)
+- [Making a Step](#making-a-step)
+  - [Code example](#code-example-1)
+  - [Passing data down to steps](#passing-data-down-to-steps)
+  - [Reusability](#reusability)
+  - [Renaming Steps](#renaming-steps)
+- [State management](#state-management)
+  - [Typed state](#typed-state)
+  - [Miscellaneous fields](#miscellaneous-fields)
+- [The API](#the-api)
+- [Useful utilities and hooks](#useful-utilities-and-hooks)
+- [Help and feedback](#help-and-feedback)
+
 ## How does it work
 
 A Stepper flow **is not a series of steps**, it's a graph of steps with a non-deterministic order. The first step of the flow is deterministic, but the following steps are decided on the fly by the flow depending on state (user input, user status, site status, etc...).
