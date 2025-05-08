@@ -59,7 +59,7 @@ export function sanitizeQueryParameters( context: PageJSContext, next: () => voi
 export function sitesDashboard( context: Context, next: () => void ) {
 	const sitesDashboardGlobalStyles = css`
 		body.is-group-sites-dashboard {
-			background: var( --studio-gray-0 );
+			background: var( --color-main-background, #fcfcfc );
 
 			.layout__content {
 				// Add border around everything

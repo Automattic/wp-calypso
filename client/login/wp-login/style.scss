@@ -305,7 +305,7 @@ $image-height: 47px;
 }
 
 .layout.is-white-login {
-	background-color: #fdfdfd;
+	background-color: var( --color-main-background, #fcfcfc );
 
 	// Specificity bump.
 	.layout__content.layout__content {
