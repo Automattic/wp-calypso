@@ -1,8 +1,8 @@
 import { DataForm } from '@automattic/dataviews';
 import { useQuery, useMutation } from '@tanstack/react-query';
+import { notFound } from '@tanstack/react-router';
 import { Card, CardBody, ToggleControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import NotFound from '../../app/404';
 import { siteQuery, siteSettingsMutation, siteSettingsQuery } from '../../app/queries';
 import { siteSettingsSubscriptionGiftingRoute } from '../../app/router';
 import PageLayout from '../../components/page-layout';
@@ -46,7 +46,7 @@ export default function SubscriptionGiftingSettings() {
 	}
 
 	if ( ! hasSubscriptionGiftingFeature( siteData.site ) ) {
-		return <NotFound />;
+		throw notFound();
 	}
 
 	const handleSubmit = ( edits: Partial< SiteSettings > ) => {
