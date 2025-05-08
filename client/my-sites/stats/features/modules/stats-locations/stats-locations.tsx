@@ -160,8 +160,8 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( {
 		setSelectedOption( filter );
 
 		// If URL has valid param and it's different from state, update URL; only intended for summary page.
-		if ( summary && query.geoMode !== selectedOption ) {
-			page( getPathWithUpdatedQueryString( { geoMode: selectedOption } ) );
+		if ( summary && query.geoMode !== filter ) {
+			page( getPathWithUpdatedQueryString( { geoMode: filter } ) );
 		}
 	};
 
