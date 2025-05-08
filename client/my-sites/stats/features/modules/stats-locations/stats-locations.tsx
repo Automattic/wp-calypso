@@ -187,7 +187,7 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( {
 		} );
 	};
 
-	const toggleControlComponent = (
+	const toggleControlComponent = config.isEnabled( 'stats/navigation-improvement' ) ? null : (
 		<>
 			<SimplifiedSegmentedControl
 				className="stats-module-locations__tabs"
