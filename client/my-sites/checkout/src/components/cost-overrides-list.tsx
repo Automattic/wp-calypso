@@ -373,7 +373,7 @@ function SingleProductAndCostOverridesList( { product }: { product: ResponseCart
 			}
 
 			& s {
-				color: #787c82;
+				color: ${ COLOR_GRAY_40 };
 			}
 
 			& span {
@@ -456,7 +456,7 @@ export function CouponCostOverride( {
 			}
 
 			& .cost-overrides-list-item__discount {
-				color: #008a20;
+				color: ${ COLOR_GREEN_60 };
 				font-weight: 500;
 			}
 		`;

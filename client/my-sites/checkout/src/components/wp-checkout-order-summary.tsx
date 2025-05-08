@@ -24,6 +24,7 @@ import {
 	isSenseiProduct,
 	PLAN_100_YEARS,
 } from '@automattic/calypso-products';
+import colorStudio from '@automattic/color-studio';
 import { Gridicon } from '@automattic/components';
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
@@ -60,6 +61,10 @@ import type { TranslateResult } from 'i18n-calypso';
 
 // This will make converting to TS less noisy. The order of components can be reorganized later
 /* eslint-disable @typescript-eslint/no-use-before-define */
+
+const PALETTE = colorStudio.colors;
+const COLOR_GRAY_40 = PALETTE[ 'Gray 40' ];
+const COLOR_GREEN_60 = PALETTE[ 'Green 60' ];
 
 const StyledIcon = styled( Icon )`
 	fill: '#1E1E1E';
@@ -1067,7 +1072,7 @@ const CheckoutSummarySubtotal = styled( CheckoutSummaryLineItem )`
 		}
 
 		& s {
-			color: #787c82;
+			color: ${ COLOR_GRAY_40 };
 		}
 
 		& span {
@@ -1078,7 +1083,7 @@ const CheckoutSummarySubtotal = styled( CheckoutSummaryLineItem )`
 
 const CheckoutSummaryTotalDiscount = styled( CheckoutSummaryLineItem )`
 	& .wp-checkout-order-summary__subtotal-discount {
-		color: #008a20;
+		color: ${ COLOR_GREEN_60 };
 		font-weight: 500;
 	}
 `;
