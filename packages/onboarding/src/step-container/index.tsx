@@ -1,4 +1,4 @@
-import { JetpackLogo, WooCommerceWooLogo } from '@automattic/components';
+import { PoweredBy } from '@automattic/components';
 import clsx from 'clsx';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { ReactElement } from 'react';
@@ -198,7 +198,7 @@ const StepContainer: React.FC< Props > = ( {
 					{ headerButton && <div className="step-container__header-button">{ headerButton }</div> }
 					{ showHeaderJetpackPowered && (
 						<div className="step-container__header-jetpack-powered">
-							<JetpackLogo monochrome size={ 18 } /> <span>{ translate( 'Jetpack powered' ) }</span>
+							<PoweredBy brand="jetpack" />
 						</div>
 					) }
 				</div>
@@ -214,13 +214,13 @@ const StepContainer: React.FC< Props > = ( {
 			) }
 			{ showJetpackPowered && (
 				<div className="step-container__jetpack-powered">
-					<JetpackLogo monochrome size={ 18 } /> <span>{ translate( 'Jetpack powered' ) }</span>
+					<PoweredBy brand="jetpack" colorVariant="black" height={ 18 } />
 				</div>
 			) }
 
 			{ showFooterWooCommercePowered && (
 				<div className="step-container__woocommerce-powered">
-					<WooCommerceWooLogo /> <span>{ translate( 'WooCommerce powered' ) }</span>
+					<PoweredBy brand="woocommerce" colorVariant="black" height={ 18 } />
 				</div>
 			) }
 		</div>
