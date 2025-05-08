@@ -1,4 +1,3 @@
-import { Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import FormButton from 'calypso/components/forms/form-button';
 import FormButtonsBar from 'calypso/components/forms/form-buttons-bar';
@@ -7,7 +6,7 @@ export default function NewAppPassword( { appName, newAppPassword, onClickDone }
 	const translate = useTranslate();
 
 	return (
-		<Card className="application-passwords__new-password">
+		<div className="application-passwords__new-password">
 			<p className="application-passwords__new-password-display">{ newAppPassword }</p>
 
 			<p className="application-passwords__new-password-help">
@@ -23,6 +22,6 @@ export default function NewAppPassword( { appName, newAppPassword, onClickDone }
 			<FormButtonsBar>
 				<FormButton onClick={ onClickDone }>{ translate( 'Done' ) }</FormButton>
 			</FormButtonsBar>
-		</Card>
+		</div>
 	);
 }
