@@ -8,8 +8,9 @@ import {
 	FormFileUpload,
 	DateTimePicker,
 } from '@wordpress/components';
-import { useState, Dispatch, SetStateAction } from '@wordpress/element';
+import { useState } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
+import { Dispatch, SetStateAction } from 'react';
 import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
 import LayoutBody from 'calypso/layout/hosting-dashboard/body';
 
@@ -115,6 +116,7 @@ export default function ReportsComponent() {
 			case 1:
 				return (
 					<>
+						<h2 className="a4a-reports-modal__step-title">{ translate( 'Step 1: Setup' ) }</h2>
 						<FormFileUpload
 							accept="image/*"
 							onChange={ handleFileUpload }
@@ -163,6 +165,9 @@ export default function ReportsComponent() {
 			case 2:
 				return (
 					<>
+						<h2 className="a4a-reports-modal__step-title">
+							{ translate( 'Step 2: Pick Content' ) }
+						</h2>
 						<h3 className="a4a-reports-modal__group-label">{ translate( 'Stats' ) }</h3>
 						{ STATS_OPTIONS.map( ( item ) => (
 							<CheckboxControl
@@ -198,6 +203,9 @@ export default function ReportsComponent() {
 			case 3:
 				return (
 					<>
+						<h2 className="a4a-reports-modal__step-title">
+							{ translate( 'Step 3: Schedule & Send' ) }
+						</h2>
 						<div className="a4a-reports-modal__form-field">
 							<label>{ translate( 'When should it send?' ) }</label>
 							<DateTimePicker currentDate={ scheduleDate } onChange={ handleDateChange } is12Hour />

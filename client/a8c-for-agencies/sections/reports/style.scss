@@ -1,1 +1,63 @@
+@import '@wordpress/base-styles/mixins';
+@import '@wordpress/base-styles/variables'; // Also import variables, as mixins might use them
+
 /* Placeholder for A4A Reports section styles */
+
+// Wizard Modal Styles
+.a4a-reports-modal {
+	// General modal container styles if needed
+
+	.a4a-reports-modal__step-content {
+		padding: 16px 24px; // Similar to .a4a-form__section padding
+		display: flex;
+		flex-direction: column;
+		gap: 24px; // Similar to .a4a-form__section-body gap
+		// padding-bottom: 24px; // If actions are outside this, ensure space before them
+	}
+
+	.a4a-reports-modal__step-title {
+		@include heading-large; // Similar to .a4a-form__section-heading-title
+		margin-bottom: 16px; // Add some space after the title
+	}
+
+	// General styling for form fields within the wizard for consistent spacing
+	.a4a-reports-modal__form-field,
+	.a4a-reports-modal__file-upload,
+	.a4a-reports-modal__checkbox-control,
+	.a4a-reports-modal__group-label {
+		// Direct children of __step-content will get gap from flexbox.
+		// These classes can be used for more specific field styling if needed
+		// or if fields are nested further.
+	}
+
+	.a4a-reports-modal__select-control,
+	.a4a-reports-modal__toggle-control, // If this was still used
+	.a4a-reports-modal__textarea-control,
+	.a4a-reports-modal__checkbox-control {
+		// Ensure labels and inputs are aligned well if not already handled by WordPress components
+	}
+
+	.a4a-reports-modal__group-label {
+		@include heading-medium; // Example, adjust as needed for group titles like "Stats"
+		margin-top: 8px; // Add some space before a new group of checkboxes
+		margin-bottom: 8px;
+	}
+
+	.a4a-reports-modal__preview-link {
+		color: var( --color-primary );
+		text-decoration: underline;
+		cursor: pointer;
+		&:hover,
+		&:focus {
+			color: var( --color-primary-dark );
+		}
+	}
+
+	.a4a-reports-modal__actions {
+		display: flex;
+		justify-content: flex-end;
+		gap: 8px;
+		padding: 16px 24px; // Add padding to action bar as well
+		border-top: 1px solid var( --color-neutral-10 ); // Separator line
+	}
+}
