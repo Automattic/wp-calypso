@@ -20,10 +20,13 @@ import getMediaItem from 'calypso/state/selectors/get-media-item';
 import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import PageHeader from '../components/headers/page-header';
+import { STATS_FEATURE_DOWNLOAD_CSV } from '../constants';
 import StatsModuleLocations from '../features/modules/stats-locations';
 import StatsModuleUTM from '../features/modules/stats-utm';
+import { shouldGateStats } from '../hooks/use-should-gate-stats';
 import { StatsGlobalValuesContext } from '../pages/providers/global-provider';
 import DownloadCsv from '../stats-download-csv';
+import DownloadCsvUpsell from '../stats-download-csv-upsell';
 import AllTimeNav from '../stats-module/all-time-nav';
 import PageViewTracker from '../stats-page-view-tracker';
 import statsStringsFactory from '../stats-strings';
@@ -62,7 +65,8 @@ class StatsSummary extends Component {
 	}
 
 	render() {
-		const { translate, statsQueryOptions, siteId, supportsUTMStats } = this.props;
+		const { translate, statsQueryOptions, siteId, supportsUTMStats, shouldGateStatsCsvDownload } =
+			this.props;
 		const summaryViews = [];
 		let title;
 		let summaryView;
@@ -155,6 +159,7 @@ class StatsSummary extends Component {
 								query={ moduleQuery }
 								summary
 								listItemClassName={ listItemClassName }
+								context={ this.props.context }
 							/>
 						) : (
 							<StatsModuleCountries
@@ -183,6 +188,7 @@ class StatsSummary extends Component {
 							summary
 							listItemClassName={ listItemClassName }
 							initialGeoMode={ urlParams.get( 'geoMode' ) }
+							context={ this.props.context }
 						/>
 					</Fragment>
 				);
@@ -378,13 +384,17 @@ class StatsSummary extends Component {
 							} }
 							rightSection={
 								<div className="stats-module__header-nav-button">
-									<DownloadCsv
-										skipQuery={ statType === 'utm' }
-										statType={ statType }
-										query={ moduleQuery }
-										path={ path }
-										period={ this.props.period }
-									/>
+									{ shouldGateStatsCsvDownload ? (
+										<DownloadCsvUpsell siteId={ siteId } borderless />
+									) : (
+										<DownloadCsv
+											statType={ statType }
+											query={ moduleQuery }
+											path={ path }
+											period={ this.props.period }
+											skipQuery={ statType === 'statsUTM' }
+										/>
+									) }
 								</div>
 							}
 						/>
@@ -437,5 +447,6 @@ export default connect( ( state, { context, postId } ) => {
 		siteSlug: getSelectedSiteSlug( state, siteId ),
 		media: context.params.module === 'videodetails' ? getMediaItem( state, siteId, postId ) : false,
 		supportsUTMStats,
+		shouldGateStatsCsvDownload: shouldGateStats( state, siteId, STATS_FEATURE_DOWNLOAD_CSV ),
 	};
 } )( localize( StatsSummary ) );
