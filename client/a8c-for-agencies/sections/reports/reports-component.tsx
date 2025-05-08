@@ -2,90 +2,257 @@ import {
 	Button,
 	Modal,
 	SelectControl,
-	ToggleControl,
 	TextareaControl,
 	CheckboxControl,
-	Flex,
-	FlexItem,
+	TextControl,
+	FormFileUpload,
+	DateTimePicker,
 } from '@wordpress/components';
-import { useState } from '@wordpress/element';
+import { useState, Dispatch, SetStateAction } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
 import LayoutBody from 'calypso/layout/hosting-dashboard/body';
 
 import './style.scss';
 
-// Mock data for dropdowns - replace with actual data fetching as needed
-const MOCK_SITES = [
-	{ label: 'totoros.blog', value: 'totoros.blog' },
-	{ label: 'another.site', value: 'another.site' },
-];
-
+// Mock data - replace with actual data fetching as needed
 const MOCK_TIMEFRAMES = [
 	{ label: 'Last month', value: 'last_month' },
 	{ label: 'Last week', value: 'last_week' },
 	{ label: 'Last 24 hours', value: 'last_24_hours' },
 ];
 
-const REPORT_ITEMS = [
-	{ label: 'Stats', value: 'stats' },
-	{ label: 'Protect status', value: 'protect_status' },
-	{ label: 'Top performing pages', value: 'top_pages' },
-	{ label: 'VaultPress Backup status', value: 'backup_status' },
-	{ label: 'Activity log', value: 'activity_log' },
-	{ label: 'Downtime Monitoring status', value: 'monitoring_status' },
-	{ label: 'Jetpack Scan status', value: 'scan_status' },
-	{ label: 'Akismet Anti-spam status', value: 'akismet_status' },
-	{ label: 'Jetpack and WordPress status', value: 'jetpack_wp_status' },
+// Checkbox groups for Step 2
+const STATS_OPTIONS = [
+	{ label: 'Total traffic this month', value: 'total_traffic' },
+	{ label: 'Top 5 pages', value: 'top_pages' },
+	{ label: 'Top devices', value: 'top_devices' },
+	{ label: 'Top locations', value: 'top_locations' },
 ];
+
+const SECURITY_OPTIONS = [ { label: 'Backups made', value: 'backups_made' } ];
+
+const PERFORMANCE_OPTIONS = [ { label: 'Uptime information', value: 'uptime_info' } ];
+
+type CheckedItemsState = Record< string, boolean >;
 
 export default function ReportsComponent() {
 	const translate = useTranslate();
-	const title = translate( 'Reports' );
+	const pageTitle = translate( 'Reports' );
 	const [ isModalOpen, setModalOpen ] = useState( false );
+	const [ currentStep, setCurrentStep ] = useState( 1 );
 
-	// Form state
-	const [ selectedSite, setSelectedSite ] = useState( MOCK_SITES[ 0 ].value );
+	// Step 1: Setup State
+	const [ logoFile, setLogoFile ] = useState< File | null >( null );
 	const [ selectedTimeframe, setSelectedTimeframe ] = useState( MOCK_TIMEFRAMES[ 0 ].value );
-	const [ includeCustomText, setIncludeCustomText ] = useState( true );
-	const [ customText, setCustomText ] = useState(
-		"In line with our commitment to maintaining the highest security standards for your website, we've conducted a thorough review and update of your site's security measures."
+	const [ clientEmail, setClientEmail ] = useState( '' );
+	const [ clientName, setClientName ] = useState( '' );
+	const [ customIntroText, setCustomIntroText ] = useState( '' );
+	const [ sendMeACopy, setSendMeACopy ] = useState( false );
+
+	// Step 2: Pick Content State
+	const [ statsCheckedItems, setStatsCheckedItems ] = useState< CheckedItemsState >(
+		STATS_OPTIONS.reduce( ( acc, item ) => ( { ...acc, [ item.value ]: false } ), {} )
 	);
-	const [ includedReportItems, setIncludedReportItems ] = useState(
-		REPORT_ITEMS.reduce(
-			( acc, item ) => {
-				acc[ item.value ] = true;
-				return acc;
-			},
-			{} as Record< string, boolean >
-		)
+	const [ securityCheckedItems, setSecurityCheckedItems ] = useState< CheckedItemsState >(
+		SECURITY_OPTIONS.reduce( ( acc, item ) => ( { ...acc, [ item.value ]: false } ), {} )
+	);
+	const [ performanceCheckedItems, setPerformanceCheckedItems ] = useState< CheckedItemsState >(
+		PERFORMANCE_OPTIONS.reduce( ( acc, item ) => ( { ...acc, [ item.value ]: false } ), {} )
 	);
 
-	const openModal = () => setModalOpen( true );
+	// Step 3: Schedule and Send State
+	const [ scheduleDate, setScheduleDate ] = useState( new Date() );
+
+	const openModal = () => {
+		setCurrentStep( 1 );
+		setModalOpen( true );
+	};
 	const closeModal = () => setModalOpen( false );
 
-	const handleReportItemChange = ( itemName: string ) => {
-		setIncludedReportItems( ( prev ) => ( {
+	const handleNextStep = () => setCurrentStep( ( prev ) => prev + 1 );
+	const handlePrevStep = () => setCurrentStep( ( prev ) => prev - 1 );
+
+	const handleFileUpload = ( event: React.ChangeEvent< HTMLInputElement > ) => {
+		if ( event.target.files && event.target.files.length > 0 ) {
+			setLogoFile( event.target.files[ 0 ] );
+		}
+	};
+
+	const handleStep2CheckboxChange = (
+		groupKey: 'stats' | 'security' | 'performance',
+		itemName: string
+	) => {
+		const setterMap: Record< string, Dispatch< SetStateAction< CheckedItemsState > > > = {
+			stats: setStatsCheckedItems,
+			security: setSecurityCheckedItems,
+			performance: setPerformanceCheckedItems,
+		};
+		setterMap[ groupKey ]?.( ( prev: CheckedItemsState ) => ( {
 			...prev,
 			[ itemName ]: ! prev[ itemName ],
 		} ) );
 	};
 
-	const handleCreateReport = () => {
-		// Logic to create report will go here
-		closeModal();
+	const handlePreviewLinkClick = () => {
+		window.open( '#', '_blank' ); // Placeholder action
 	};
 
-	// Split report items for two-column layout
-	const halfwayPoint = Math.ceil( REPORT_ITEMS.length / 2 );
-	const reportItemsCol1 = REPORT_ITEMS.slice( 0, halfwayPoint );
-	const reportItemsCol2 = REPORT_ITEMS.slice( halfwayPoint );
+	const handlePreviewLinkKeyDown = ( event: React.KeyboardEvent< HTMLSpanElement > ) => {
+		if ( event.key === 'Enter' || event.key === ' ' ) {
+			handlePreviewLinkClick();
+		}
+	};
+
+	const handleDateChange = ( newDate: string | null ) => {
+		if ( newDate ) {
+			setScheduleDate( new Date( newDate ) );
+		}
+	};
+
+	const renderStepContent = () => {
+		switch ( currentStep ) {
+			case 1:
+				return (
+					<>
+						<FormFileUpload
+							accept="image/*"
+							onChange={ handleFileUpload }
+							render={ ( { openFileDialog } ) => (
+								<Button onClick={ openFileDialog } variant="secondary">
+									{ logoFile ? logoFile.name : translate( 'Add your logo (optional)' ) }
+								</Button>
+							) }
+							className="a4a-reports-modal__file-upload"
+						/>
+						<SelectControl
+							label={ translate( 'Pick a timeframe:' ) }
+							value={ selectedTimeframe }
+							options={ MOCK_TIMEFRAMES }
+							onChange={ setSelectedTimeframe }
+							className="a4a-reports-modal__form-field"
+						/>
+						<TextControl
+							label={ translate( 'Client email' ) }
+							value={ clientEmail }
+							onChange={ setClientEmail }
+							type="email"
+							className="a4a-reports-modal__form-field"
+						/>
+						<TextControl
+							label={ translate( 'Client name (optional)' ) }
+							value={ clientName }
+							onChange={ setClientName }
+							className="a4a-reports-modal__form-field"
+						/>
+						<TextareaControl
+							label={ translate( 'Custom intro text (optional)' ) }
+							value={ customIntroText }
+							onChange={ setCustomIntroText }
+							rows={ 4 }
+							className="a4a-reports-modal__form-field"
+						/>
+						<CheckboxControl
+							label={ translate( 'Send me a copy' ) }
+							checked={ sendMeACopy }
+							onChange={ setSendMeACopy }
+							className="a4a-reports-modal__form-field"
+						/>
+					</>
+				);
+			case 2:
+				return (
+					<>
+						<h3 className="a4a-reports-modal__group-label">{ translate( 'Stats' ) }</h3>
+						{ STATS_OPTIONS.map( ( item ) => (
+							<CheckboxControl
+								key={ item.value }
+								label={ item.label }
+								checked={ statsCheckedItems[ item.value ] }
+								onChange={ () => handleStep2CheckboxChange( 'stats', item.value ) }
+								className="a4a-reports-modal__checkbox-control"
+							/>
+						) ) }
+						<h3 className="a4a-reports-modal__group-label">{ translate( 'Security' ) }</h3>
+						{ SECURITY_OPTIONS.map( ( item ) => (
+							<CheckboxControl
+								key={ item.value }
+								label={ item.label }
+								checked={ securityCheckedItems[ item.value ] }
+								onChange={ () => handleStep2CheckboxChange( 'security', item.value ) }
+								className="a4a-reports-modal__checkbox-control"
+							/>
+						) ) }
+						<h3 className="a4a-reports-modal__group-label">{ translate( 'Performance' ) }</h3>
+						{ PERFORMANCE_OPTIONS.map( ( item ) => (
+							<CheckboxControl
+								key={ item.value }
+								label={ item.label }
+								checked={ performanceCheckedItems[ item.value ] }
+								onChange={ () => handleStep2CheckboxChange( 'performance', item.value ) }
+								className="a4a-reports-modal__checkbox-control"
+							/>
+						) ) }
+					</>
+				);
+			case 3:
+				return (
+					<>
+						<div className="a4a-reports-modal__form-field">
+							<label>{ translate( 'When should it send?' ) }</label>
+							<DateTimePicker currentDate={ scheduleDate } onChange={ handleDateChange } is12Hour />
+						</div>
+						<p className="a4a-reports-modal__form-field">
+							{ translate( 'Preview external link: ' ) }
+							<span
+								role="link"
+								tabIndex={ 0 }
+								onClick={ handlePreviewLinkClick }
+								onKeyDown={ handlePreviewLinkKeyDown }
+								className="a4a-reports-modal__preview-link"
+							>
+								{ translate( 'View Preview (link placeholder)' ) }
+							</span>
+						</p>
+						<Button
+							variant="secondary"
+							onClick={ () => alert( 'Send test report clicked' ) }
+							className="a4a-reports-modal__form-field"
+						>
+							{ translate( 'Send me test report' ) }
+						</Button>
+					</>
+				);
+			default:
+				return null;
+		}
+	};
+
+	const renderModalActions = () => (
+		<div className="a4a-reports-modal__actions">
+			{ currentStep > 1 && (
+				<Button variant="secondary" onClick={ handlePrevStep }>
+					{ translate( 'Prev' ) }
+				</Button>
+			) }
+			{ currentStep < 3 && (
+				<Button variant="primary" onClick={ handleNextStep }>
+					{ translate( 'Next' ) }
+				</Button>
+			) }
+			{ currentStep === 3 && (
+				<Button variant="primary" onClick={ () => alert( 'Schedule and Send clicked' ) }>
+					{ translate( 'Schedule and Send' ) }
+				</Button>
+			) }
+		</div>
+	);
 
 	return (
-		<Layout title={ title } wide>
+		<Layout title={ pageTitle } wide>
 			<LayoutBody className="a4a-reports-content">
 				<div style={ { padding: 32 } }>
-					<h1>{ title }</h1>
+					<h1>{ pageTitle }</h1>
 					<p>{ translate( 'This is the Reports section. Content coming soon.' ) }</p>
 					<Button variant="primary" onClick={ openModal }>
 						{ translate( 'Build Report' ) }
@@ -96,71 +263,10 @@ export default function ReportsComponent() {
 						size="large"
 						title={ translate( 'Build a report for your client' ) }
 						onRequestClose={ closeModal }
-						className="a4a-reports-modal"
+						className={ `a4a-reports-modal is-wizard-step-${ currentStep }` }
 					>
-						<SelectControl
-							label={ translate( 'Pick a site:' ) }
-							value={ selectedSite }
-							options={ MOCK_SITES }
-							onChange={ setSelectedSite }
-							className="a4a-reports-modal__select-control"
-						/>
-						<SelectControl
-							label={ translate( 'Pick a timeframe:' ) }
-							value={ selectedTimeframe }
-							options={ MOCK_TIMEFRAMES }
-							onChange={ setSelectedTimeframe }
-							className="a4a-reports-modal__select-control"
-						/>
-						<ToggleControl
-							label={ translate( 'Include custom text' ) }
-							checked={ includeCustomText }
-							onChange={ setIncludeCustomText }
-							className="a4a-reports-modal__toggle-control"
-						/>
-						{ includeCustomText && (
-							<TextareaControl
-								value={ customText }
-								onChange={ setCustomText }
-								rows={ 4 }
-								className="a4a-reports-modal__textarea-control"
-							/>
-						) }
-						<p className="a4a-reports-modal__section-label">
-							{ translate( 'Decide what to include into the report:' ) }
-						</p>
-						<Flex className="a4a-reports-modal__checkbox-group" justify="space-between">
-							<FlexItem>
-								{ reportItemsCol1.map( ( item ) => (
-									<CheckboxControl
-										key={ item.value }
-										label={ item.label }
-										checked={ includedReportItems[ item.value ] }
-										onChange={ () => handleReportItemChange( item.value ) }
-										className="a4a-reports-modal__checkbox-control"
-									/>
-								) ) }
-							</FlexItem>
-							<FlexItem>
-								{ reportItemsCol2.map( ( item ) => (
-									<CheckboxControl
-										key={ item.value }
-										label={ item.label }
-										checked={ includedReportItems[ item.value ] }
-										onChange={ () => handleReportItemChange( item.value ) }
-										className="a4a-reports-modal__checkbox-control"
-									/>
-								) ) }
-							</FlexItem>
-						</Flex>
-						<div className="a4a-reports-modal__actions">
-							<Button variant="secondary" onClick={ closeModal }>
-								{ translate( 'Cancel' ) }
-							</Button>
-							<Button variant="primary" onClick={ handleCreateReport }>
-								{ translate( 'Create report' ) }
-							</Button>
-						</div>
+						<div className="a4a-reports-modal__step-content">{ renderStepContent() }</div>
+						{ renderModalActions() }
 					</Modal>
 				) }
 			</LayoutBody>
