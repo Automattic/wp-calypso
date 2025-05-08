@@ -6,6 +6,16 @@ const ActionButtons = styled.div( {
 	display: 'flex',
 	gap: '1em',
 	justifyContent: 'flex-end',
+
+	'.components-button.is-primary:disabled': {
+		backgroundColor: 'var( --color-surface )',
+		borderColor: 'var( --color-neutral-5 )',
+		border: '1px solid var( --color-neutral-5 )',
+	},
+
+	'.components-button.is-primary:disabled span': {
+		color: 'var( --color-neutral-20 )',
+	},
 } );
 
 const ButtonContent = styled.span`
