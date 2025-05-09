@@ -58,7 +58,7 @@ export const useDIFMHeading = ( {
 
 	const subHeaderText = hasCurrentPlanOrHigherPlan
 		? translate(
-				'One time fee. A WordPress.com professional will create layouts for up to %(freePages)d pages of your site. It only takes 4 simple steps:',
+				"It's a one time fee. A WordPress.com professional will create layouts for up to %(freePages)d pages of your site. It only takes 4 simple steps:",
 				{
 					args: {
 						freePages: 5,
@@ -66,7 +66,7 @@ export const useDIFMHeading = ( {
 				}
 		  )
 		: translate(
-				'One time fee, plus an additional purchase of the %(plan)s plan. A WordPress.com professional will create layouts for up to %(freePages)d pages of your site. It only takes 4 simple steps:',
+				"It's a one time fee, plus an additional purchase of the %(plan)s plan. A WordPress.com professional will create layouts for up to %(freePages)d pages of your site. It only takes 4 simple steps:",
 				{
 					args: {
 						plan: planTitle ?? '',
