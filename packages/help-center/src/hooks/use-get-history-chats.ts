@@ -13,7 +13,6 @@ import { HELP_CENTER_STORE } from '../stores';
 import type { Conversations, SupportInteraction } from '@automattic/odie-client';
 
 interface UseGetHistoryChatsResult {
-	conversations: Conversations;
 	supportInteractions: SupportInteraction[];
 	isLoadingInteractions: boolean;
 	recentConversations: Conversations;
@@ -21,7 +20,6 @@ interface UseGetHistoryChatsResult {
 }
 
 export const useGetHistoryChats = (): UseGetHistoryChatsResult => {
-	const [ conversations, setConversations ] = useState< Conversations >( [] );
 	const [ supportInteractions, setSupportInteractions ] = useState< SupportInteraction[] >( [] );
 	const [ recentConversations, setRecentConversations ] = useState< Conversations >( [] );
 	const [ archivedConversations, setArchivedConversations ] = useState< Conversations >( [] );
@@ -35,6 +33,7 @@ export const useGetHistoryChats = (): UseGetHistoryChatsResult => {
 
 	const { isChatLoaded } = useSelect( ( select ) => {
 		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
+
 		return { isChatLoaded: store.getIsChatLoaded() };
 	}, [] );
 
@@ -46,23 +45,21 @@ export const useGetHistoryChats = (): UseGetHistoryChatsResult => {
 			return;
 		}
 
-		const allConversations = getZendeskConversations();
-		const allSupportInteractions = [
+		const supportInteractions = [
 			...( openSupportInteraction || [] ),
 			...( otherSupportInteractions || [] ),
 		];
 
 		const conversationsWithUpdatedStatuses = filterAndUpdateConversationsWithStatus(
-			allConversations,
-			allSupportInteractions
+			getZendeskConversations(),
+			supportInteractions
 		);
 
-		setConversations( conversationsWithUpdatedStatuses );
-		setSupportInteractions( allSupportInteractions );
+		setSupportInteractions( supportInteractions );
 
-		// Filter Odie conversations not already present in support interactions
+		// Filter Odie conversations not already present in Zendesk support interactions
 		const eventExternalIds = new Set(
-			allSupportInteractions
+			supportInteractions
 				.flatMap( ( interaction ) => interaction.events || [] )
 				.filter( ( event ) => event.event_source === 'odie' )
 				.map( ( event ) => event.event_external_id )
@@ -78,6 +75,7 @@ export const useGetHistoryChats = (): UseGetHistoryChatsResult => {
 		].sort( ( a, b ) => {
 			const createdAtA = getConversationCreatedAt( a ) ?? 0;
 			const createdAtB = getConversationCreatedAt( b ) ?? 0;
+
 			return createdAtB - createdAtA;
 		} );
 
@@ -91,6 +89,7 @@ export const useGetHistoryChats = (): UseGetHistoryChatsResult => {
 
 		mergedAndSortedConversations.forEach( ( conversation ) => {
 			const createdAt = getConversationCreatedAt( conversation );
+
 			if ( typeof createdAt === 'number' && createdAt < oneYearAgo ) {
 				archived.push( conversation );
 			} else {
@@ -109,10 +108,9 @@ export const useGetHistoryChats = (): UseGetHistoryChatsResult => {
 	] );
 
 	return {
-		conversations,
-		supportInteractions,
 		isLoadingInteractions,
 		recentConversations,
 		archivedConversations,
+		supportInteractions,
 	};
 };
