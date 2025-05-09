@@ -24,7 +24,7 @@ const Discount = styled.span`
 `;
 
 const Price = styled.span`
-	color: #000;
+	color: ${ colorStudio.colors[ 'Black' ] };
 `;
 
 const Variant = styled.div`
