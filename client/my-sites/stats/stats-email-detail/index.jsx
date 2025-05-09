@@ -29,7 +29,7 @@ import StatsEmailModule from 'calypso/my-sites/stats/stats-email-module';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { getSitePost } from 'calypso/state/posts/selectors';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
-import { getSiteSlug } from 'calypso/state/sites/selectors';
+import { getSiteSlug, isJetpackSite, isSitePreviewable } from 'calypso/state/sites/selectors';
 import { PERIOD_ALL_TIME } from 'calypso/state/stats/emails/constants';
 import { getEmailStat, isRequestingEmailStats } from 'calypso/state/stats/emails/selectors';
 import { getPeriodWithFallback, getCharts } from 'calypso/state/stats/emails/utils';
@@ -405,6 +405,8 @@ const connectComponent = connect(
 	( state, ownProps ) => {
 		const { postId, statType, isValidStartDate } = ownProps;
 		const siteId = getSelectedSiteId( state );
+		const isJetpack = isJetpackSite( state, siteId );
+		const isPreviewable = isSitePreviewable( state, siteId );
 		const postFallback = getPostStat( state, siteId, postId, 'post' );
 		const post = getSitePost( state, siteId, postId ) ?? {
 			title: postFallback?.post_title,
@@ -443,6 +445,7 @@ const connectComponent = connect(
 			date,
 			hasValidDate,
 			showNoDataInfo,
+			showViewLink: ! isJetpack && isPreviewable,
 		};
 	},
 	{ recordGoogleEvent }
