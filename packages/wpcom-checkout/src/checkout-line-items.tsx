@@ -150,7 +150,7 @@ const UpgradeCreditPopover = styled( Popover )< { theme?: Theme } >`
 `;
 
 const DiscountCallout = styled.div< { theme?: Theme } >`
-	color: ${ ( props ) => props.theme.colors.success };
+	color: ${ ( props ) => props.theme.colors.discount };
 	display: block;
 `;
 

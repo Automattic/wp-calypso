@@ -5,6 +5,7 @@ import {
 	isTriennially,
 	isYearly,
 } from '@automattic/calypso-products';
+import colorStudio from '@automattic/color-studio';
 import { FormStatus, useFormStatus, Button } from '@automattic/composite-checkout';
 import { formatCurrency } from '@automattic/number-formatters';
 import {
@@ -30,6 +31,10 @@ import { getAffiliateCouponLabel } from '../../utils';
 import type { Theme } from '@automattic/composite-checkout';
 import type { LineItemCostOverrideForDisplay } from '@automattic/wpcom-checkout';
 
+const PALETTE = colorStudio.colors;
+const COLOR_GRAY_40 = PALETTE[ 'Gray 40' ];
+const COLOR_GREEN_60 = PALETTE[ 'Green 60' ];
+
 const CostOverridesListStyle = styled.div`
 	display: flex;
 	flex-direction: column;
@@ -52,11 +57,11 @@ const CostOverridesListStyle = styled.div`
 	}
 
 	& .cost-overrides-list-item__actions-remove {
-		color: #787c82;
+		color: ${ COLOR_GRAY_40 };
 	}
 
 	& .cost-overrides-list-item__reason--is-discount {
-		color: #008a20;
+		color: ${ COLOR_GREEN_60 };
 	}
 
 	& .cost-overrides-list-item__discount {

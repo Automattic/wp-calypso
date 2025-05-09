@@ -56,7 +56,10 @@ describe(
 		it( `Pick the ${ planName } plan`, async function () {
 			plansPage = new PlansPage( page );
 
-			await plansPage.selectPlan( planName );
+			await Promise.all( [
+				plansPage.selectPlan( planName ),
+				page.waitForURL( /.*\/checkout\/.*/, { timeout: 30 * 1000 } ),
+			] );
 		} );
 
 		it( 'See domain and plan at checkout', async function () {

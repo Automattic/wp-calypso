@@ -33,7 +33,7 @@ import { clearStore } from 'calypso/lib/user/store';
 import wpcom from 'calypso/lib/wp';
 import AccountEmailField from 'calypso/me/account/account-email-field';
 import { withDefaultInterface } from 'calypso/me/account/with-default-interface';
-import EmailVerificationBanner from 'calypso/me/email-verification-banner';
+import { EmailVerificationBannerV2 } from 'calypso/me/email-verification-banner';
 import ReauthRequired from 'calypso/me/reauth-required';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
@@ -100,6 +100,7 @@ class Account extends Component {
 		formsSubmitting: {},
 		usernameAction: 'new',
 		validationResult: false,
+		accountSubmitDisable: false,
 	};
 
 	componentDidUpdate() {
@@ -533,6 +534,7 @@ class Account extends Component {
 
 	shouldDisableAccountSubmitButton() {
 		return (
+			this.state.accountSubmitDisable ||
 			! this.hasUnsavedUserSettings( ACCOUNT_FIELDS ) ||
 			this.getDisabledState( ACCOUNT_FORM_NAME ) ||
 			this.hasEmailValidationError()
@@ -895,7 +897,11 @@ class Account extends Component {
 						}
 					) }
 				/>
-				<EmailVerificationBanner />
+				<EmailVerificationBannerV2
+					setIsBusy={ ( isBusy ) => {
+						this.state.accountSubmitDisable = isBusy;
+					} }
+				/>
 				<SectionHeader label={ translate( 'Account Information' ) } />
 				<Card className="account__settings">
 					<form onChange={ markChanged } onSubmit={ this.saveAccountSettings }>

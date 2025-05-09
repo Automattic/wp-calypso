@@ -1,4 +1,24 @@
+@import "@wordpress/base-styles/breakpoints";
+
 .email-verification-banner {
 	--color-accent: var(--studio-red);
 	--color-accent-60: var(--studio-red-60);
+
+	.banner__action {
+		display: flex;
+	}
+
+	@media (max-width: $break-xlarge) {
+		.banner__content {
+			flex-direction: column;
+		}
+		.banner__action {
+			padding-top: 12px;
+			width: 100%;
+			justify-content: flex-end;
+		}
+		.banner__icons {
+			align-self: flex-start;
+		}
+	}
 }
