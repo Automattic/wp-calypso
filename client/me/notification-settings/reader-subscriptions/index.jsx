@@ -11,6 +11,7 @@ import FormLegend from 'calypso/components/forms/form-legend';
 import FormSectionHeading from 'calypso/components/forms/form-section-heading';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
@@ -235,7 +236,11 @@ class NotificationSubscriptions extends Component {
 									onClick={ this.handleCheckboxEvent( 'Notification delivery by Jabber' ) }
 								/>
 								<span>
-									{ this.props.translate( 'Default delivery via Jabber instant message' ) }
+									{ this.props.translate( 'Receive subscription updates via instant message.' ) }{ ' ' }
+									<InlineSupportLink
+										supportContext="jabber-subscription-updates"
+										showIcon={ false }
+									/>
 								</span>
 							</FormLabel>
 						</FormFieldset>
