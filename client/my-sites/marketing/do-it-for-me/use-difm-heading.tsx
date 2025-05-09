@@ -49,11 +49,11 @@ export const useDIFMHeading = ( {
 
 	const headerText = isStoreFlow
 		? translate(
-				'Let us build your store in %(days)d days for {{PriceWrapper}}%(displayCost)s{{/PriceWrapper}}{{sup}}*{{/sup}}',
+				'Let us build your store in %(days)d days for {{PriceWrapper}}%(displayCost)s{{/PriceWrapper}}',
 				headerTextTranslateArgs
 		  )
 		: translate(
-				'Let us build your site in %(days)d days for {{PriceWrapper}}%(displayCost)s{{/PriceWrapper}}{{sup}}*{{/sup}}',
+				'Let us build your site in %(days)d days for {{PriceWrapper}}%(displayCost)s{{/PriceWrapper}}',
 				headerTextTranslateArgs
 		  );
 
