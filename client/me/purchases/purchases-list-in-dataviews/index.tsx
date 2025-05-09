@@ -123,6 +123,33 @@ class PurchasesListDataView extends Component<
 					</Main>
 				);
 			}
+			content = (
+				<>
+					{ this.renderConciergeBanner() }
+					<CompactCard className="purchases-list__no-content">
+						<>
+							<TrackComponentView
+								eventName="calypso_no_purchases_upgrade_nudge_impression"
+								eventProperties={ commonEventProps }
+							/>
+							{ this.renderPurchasesByOtherAdminsNotice() }
+							<EmptyContent
+								title={ translate( 'Looking to upgrade?' ) }
+								line={ translate(
+									'Our plans give your site the power to thrive. ' +
+										'Find the plan that works for you.'
+								) }
+								action={ translate( 'Upgrade now' ) }
+								actionURL="/plans"
+								illustration={ noSitesIllustration }
+								actionCallback={ () => {
+									recordTracksEvent( 'calypso_no_purchases_upgrade_nudge_click', commonEventProps );
+								} }
+							/>
+						</>
+					</CompactCard>
+				</>
+			);
 		}
 
 		return (
