@@ -75,25 +75,25 @@ function generateFilterElementCompositeItemId(
 	return `${ prefix }-${ filterElementValue }`;
 }
 
-const Checkbox = ( { checked }: { checked: boolean } ) => {
+const MultiSelectionOption = ( { selected }: { selected: boolean } ) => {
 	return (
 		<span
 			className={ clsx(
-				'dataviews-filters__search-widget-listitem-checkbox',
-				{ 'is-checked': checked }
+				'dataviews-filters__search-widget-listitem-multi-selection',
+				{ 'is-selected': selected }
 			) }
 		>
-			{ checked && <Icon icon={ check } /> }
+			{ selected && <Icon icon={ check } /> }
 		</span>
 	);
 };
 
-const Radio = ( { checked }: { checked: boolean } ) => {
+const SingleSelectionOption = ( { selected }: { selected: boolean } ) => {
 	return (
 		<span
 			className={ clsx(
-				'dataviews-filters__search-widget-listitem-radio',
-				{ 'is-checked': checked }
+				'dataviews-filters__search-widget-listitem-single-selection',
+				{ 'is-selected': selected }
 			) }
 		/>
 	);
@@ -208,11 +208,13 @@ function ListBox( { view, filter, onChangeView }: SearchWidgetProps ) {
 					}
 				>
 					{ filter.singleSelection && (
-						<Radio checked={ currentValue === element.value } />
+						<SingleSelectionOption
+							selected={ currentValue === element.value }
+						/>
 					) }
 					{ ! filter.singleSelection && (
-						<Checkbox
-							checked={ currentValue.includes( element.value ) }
+						<MultiSelectionOption
+							selected={ currentValue.includes( element.value ) }
 						/>
 					) }
 					<span>{ element.label }</span>
@@ -305,13 +307,13 @@ function ComboboxList( { view, filter, onChangeView }: SearchWidgetProps ) {
 							focusOnHover
 						>
 							{ filter.singleSelection && (
-								<Radio
-									checked={ currentValue === element.value }
+								<SingleSelectionOption
+									selected={ currentValue === element.value }
 								/>
 							) }
 							{ ! filter.singleSelection && (
-								<Checkbox
-									checked={ currentValue.includes(
+								<MultiSelectionOption
+									selected={ currentValue.includes(
 										element.value
 									) }
 								/>
