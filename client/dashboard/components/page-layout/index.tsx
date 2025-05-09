@@ -4,6 +4,7 @@ import {
 	__experimentalHeading as Heading,
 	__experimentalText as Text,
 } from '@wordpress/components';
+import Breadcrumbs from '../../app/breadcrumbs';
 import './style.scss';
 
 const sizes = {
@@ -31,6 +32,7 @@ function PageLayout( {
 	return (
 		<VStack spacing={ 8 } className="dashboard-page-layout" style={ sizes[ size ] }>
 			<VStack spacing={ 4 }>
+				<Breadcrumbs />
 				<HStack justify="space-between" alignment="center">
 					<Heading level={ 1 } style={ { flexShrink: 0 } }>
 						{ title }

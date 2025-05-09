@@ -30,8 +30,9 @@ module.exports = {
 							'@automattic/components/*',
 							'!@automattic/components/src',
 							'@automattic/components/src/*',
-							'!@automattic/components/src/summary-button',
 							'!@automattic/components/src/core-badge',
+							'!@automattic/components/src/breadcrumbs',
+							'!@automattic/components/src/summary-button',
 							'!@automattic/dataviews',
 							// Please do not add exceptions unless agreed on
 							// with the #architecture group.

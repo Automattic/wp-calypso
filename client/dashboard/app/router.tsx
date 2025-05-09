@@ -5,6 +5,7 @@ import {
 	redirect,
 	createLazyRoute,
 } from '@tanstack/react-router';
+import { __ } from '@wordpress/i18n';
 import { fetchTwoStep } from '../data';
 import NotFound from './404';
 import UnknownError from './500';
@@ -22,6 +23,7 @@ import type { AppConfig } from './context';
 
 interface RouteContext {
 	config?: AppConfig;
+	breadcrumbItemLabel?: string;
 }
 
 const rootRoute = createRootRoute( { component: Root } );
@@ -107,8 +109,12 @@ const sitePerformanceRoute = createRoute( {
 const siteSettingsRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: 'settings',
-	loader: ( { params: { siteSlug } } ) =>
-		queryClient.ensureQueryData( siteSettingsQuery( siteSlug ) ),
+	loader: async ( { params: { siteSlug } } ) => {
+		await queryClient.ensureQueryData( siteSettingsQuery( siteSlug ) );
+		return {
+			breadcrumbItemLabel: __( 'Settings' ),
+		};
+	},
 } ).lazy( () =>
 	import( '../sites/settings' ).then( ( d ) =>
 		createLazyRoute( 'site-settings' )( {
@@ -118,10 +124,8 @@ const siteSettingsRoute = createRoute( {
 );
 
 const siteSettingsSubscriptionGiftingRoute = createRoute( {
-	getParentRoute: () => siteRoute,
-	path: 'settings/subscription-gifting',
-	loader: ( { params: { siteSlug } } ) =>
-		queryClient.ensureQueryData( siteSettingsQuery( siteSlug ) ),
+	getParentRoute: () => siteSettingsRoute,
+	path: 'subscription-gifting',
 } ).lazy( () =>
 	import( '../sites/settings-subscription-gifting' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-subscription-gifting' )( {
@@ -292,8 +296,7 @@ const createRouteTree = ( config: AppConfig ) => {
 				siteOverviewRoute,
 				siteDeploymentsRoute,
 				sitePerformanceRoute,
-				siteSettingsRoute,
-				siteSettingsSubscriptionGiftingRoute,
+				siteSettingsRoute.addChildren( [ siteSettingsSubscriptionGiftingRoute ] ),
 			] )
 		);
 	}
