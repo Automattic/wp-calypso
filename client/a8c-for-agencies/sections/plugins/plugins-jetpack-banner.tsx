@@ -1,4 +1,3 @@
-import { JetpackLogo } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import Banner from 'calypso/components/banner';
 import { useSelector } from 'calypso/state';
@@ -23,7 +22,6 @@ export default function A4APluginsJetpackBanner() {
 				description={ translate(
 					'To manage plugins, Jetpack must be activated on each site. Your Pressable plan includes Jetpack Complete for free. Activate it to access plugin management in this dashboard.'
 				) }
-				icon={ <JetpackLogo size={ 16 } /> }
 				className="plugins__jetpack-banner"
 				dismissPreferenceName={ JETPACK_BANNER_DISMISS_PREFERENCE }
 				disableCircle
