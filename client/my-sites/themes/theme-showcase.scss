@@ -160,6 +160,24 @@
 				padding: 0 32px;
 			}
 		}
+
+		.theme__search {
+			.theme__search-input {
+				.components-input-control__container {
+					background-color: #fff;
+				}
+
+				.components-input-base {
+					height: 55px;
+				}
+			}
+
+			.theme__tier-select {
+				.components-input-control__container {
+					height: 55px;
+				}
+			}
+		}
 	}
 
 	.search-themes-card {
@@ -413,6 +431,20 @@
 			line-height: 20px;
 			padding: 8px 16px;
 			white-space: nowrap;
+		}
+	}
+
+	.theme__tier-select {
+		min-width: 220px;
+		width: 220px;
+
+		@media ( max-width: $break-small ) {
+			width: 100%;
+			min-width: auto;
+		}
+
+		.components-custom-select-control__item.is-selected {
+			background-color: var(--wp-components-color-gray-300, #ddd);
 		}
 	}
 }

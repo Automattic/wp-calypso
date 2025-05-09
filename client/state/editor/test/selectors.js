@@ -1,10 +1,5 @@
 import PostQueryManager from 'calypso/lib/query-manager/post';
-import {
-	getEditorPostId,
-	isEditorNewPost,
-	getEditorNewPostPath,
-	getEditorPath,
-} from '../selectors';
+import { getEditorPostId, getEditorNewPostPath, getEditorPath } from '../selectors';
 
 describe( 'selectors', () => {
 	describe( '#getEditorPostId()', () => {
@@ -16,28 +11,6 @@ describe( 'selectors', () => {
 			} );
 
 			expect( postId ).toEqual( 183 );
-		} );
-	} );
-
-	describe( '#isEditorNewPost()', () => {
-		test( 'should return false if a post ID is currently set', () => {
-			const isNew = isEditorNewPost( {
-				editor: {
-					postId: 183,
-				},
-			} );
-
-			expect( isNew ).toBe( false );
-		} );
-
-		test( 'should return true if no post ID is currently set', () => {
-			const isNew = isEditorNewPost( {
-				editor: {
-					postId: null,
-				},
-			} );
-
-			expect( isNew ).toBe( true );
 		} );
 	} );
 

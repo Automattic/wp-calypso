@@ -45,9 +45,9 @@
 		"@automattic/shopping-cart": "workspace:^",
 		"@emotion/styled": "^11.11.0",
 		"@stripe/stripe-js": "^1.54.2",
-		"@wordpress/data": "^10.22.0",
-		"@wordpress/i18n": "^5.22.0",
-		"@wordpress/react-i18n": "^4.22.0",
+		"@wordpress/data": "^10.23.0",
+		"@wordpress/i18n": "^5.23.0",
+		"@wordpress/react-i18n": "^4.23.0",
 		"debug": "^4.4.0",
 		"i18n-calypso": "workspace:^",
 		"prop-types": "^15.8.1"

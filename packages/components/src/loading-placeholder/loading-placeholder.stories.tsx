@@ -1,7 +1,7 @@
 import { css } from '@emotion/css';
 import { LoadingPlaceholder } from '.';
 
-export default { title: 'packages/components/LoadingPlaceholder' };
+export default { title: 'Unaudited/LoadingPlaceholder' };
 
 export const Normal = () => <LoadingPlaceholder />;
 export const Width = () => <LoadingPlaceholder className={ css( { maxWidth: 300 } ) } />;

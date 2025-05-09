@@ -1,10 +1,5 @@
 import { withStorageKey } from '@automattic/state-utils';
-import {
-	EDITOR_IFRAME_LOADED,
-	EDITOR_START,
-	EDITOR_STOP,
-	POST_SAVE_SUCCESS,
-} from 'calypso/state/action-types';
+import { EDITOR_STOP, POST_SAVE_SUCCESS } from 'calypso/state/action-types';
 import { combineReducers } from 'calypso/state/utils';
 import imageEditor from './image-editor/reducer';
 import videoEditor from './video-editor/reducer';
@@ -18,8 +13,6 @@ import videoEditor from './video-editor/reducer';
  */
 export function postId( state = null, action ) {
 	switch ( action.type ) {
-		case EDITOR_START:
-			return action.postId;
 		case EDITOR_STOP:
 			return null;
 		case POST_SAVE_SUCCESS:
@@ -29,32 +22,8 @@ export function postId( state = null, action ) {
 	return state;
 }
 
-export function isIframeLoaded( state = false, action ) {
-	switch ( action.type ) {
-		case EDITOR_IFRAME_LOADED: {
-			const loaded = action.isIframeLoaded;
-			return loaded !== undefined ? loaded : state;
-		}
-	}
-
-	return state;
-}
-
-export const iframePort = ( state = null, action ) => {
-	switch ( action.type ) {
-		case EDITOR_IFRAME_LOADED: {
-			const loaded = action.isIframeLoaded;
-			return loaded && action.iframePort ? action.iframePort : null;
-		}
-	}
-
-	return state;
-};
-
 const combinedReducer = combineReducers( {
 	postId,
-	isIframeLoaded,
-	iframePort,
 	imageEditor,
 	videoEditor,
 } );

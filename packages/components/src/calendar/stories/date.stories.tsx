@@ -13,7 +13,7 @@ import { isWeekend } from './utils';
 import type { Meta, StoryFn } from '@storybook/react';
 
 const meta: Meta< typeof Calendar > = {
-	title: 'packages/components/Calendar',
+	title: 'Unaudited/Calendar',
 	id: 'packages-components-calendar',
 	component: Calendar,
 	argTypes: {
