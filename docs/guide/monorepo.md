@@ -213,3 +213,5 @@ To verify it worked, use `yarn npm whoami --scope automattic` or `yarn npm whoam
 To publish the package, run: `cd packages/<your-package> && yarn npm publish`.
 
 Done!
+
+Previous: [The Technology Behind Calypso](tech-behind-calypso.md) Next: [Contributing to Calypso](../../docs/CONTRIBUTING.md)
