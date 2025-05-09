@@ -31,6 +31,11 @@ interface FilterByConfig {
 	operators?: Operator[];
 
 	/**
+	 * Whether the filter allows user input.
+	 */
+	userInput?: boolean;
+
+	/**
 	 * Whether it is a primary filter.
 	 *
 	 * A primary filter is always visible and is not listed in the "Add filter" component,
@@ -233,9 +238,19 @@ export interface NormalizedFilter {
 	name: string;
 
 	/**
+	 * The field type.
+	 */
+	type?: FieldType;
+
+	/**
 	 * The list of options to pick from when using the field as a filter.
 	 */
 	elements: Option[];
+
+	/**
+	 * Whether the filter allows user input instead of selecting from the list of options.
+	 */
+	userInput?: boolean;
 
 	/**
 	 * Is a single selection filter.
