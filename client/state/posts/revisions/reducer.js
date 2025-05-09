@@ -7,7 +7,6 @@ import {
 	SELECTED_SITE_SET,
 } from 'calypso/state/action-types';
 import { combineReducers } from 'calypso/state/utils';
-import authors from './authors/reducer';
 
 export function diffs(
 	state = {},
@@ -95,5 +94,4 @@ export default combineReducers( {
 	diffs,
 	selection,
 	ui,
-	authors,
 } );
