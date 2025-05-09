@@ -73,3 +73,8 @@ main .dashboard-page-layout > div:last-child {
 	max-width: 100%;
 	height: auto;
 }
+
+::view-transition-image-pair(main-content) {
+    display: flex;
+    justify-content: center;
+}
