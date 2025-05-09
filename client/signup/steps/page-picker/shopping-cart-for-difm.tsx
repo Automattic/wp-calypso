@@ -121,7 +121,7 @@ const Total = styled.div`
 			font-size: 32px;
 			font-weight: 400;
 			@media ( max-width: 600px ) {
-				font-size: 16px;
+				font-size: 20px;
 			}
 		}
 	}
