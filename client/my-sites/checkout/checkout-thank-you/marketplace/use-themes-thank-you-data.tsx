@@ -18,14 +18,12 @@ import {
 import { hasExternallyManagedThemes as getHasExternallyManagedThemes } from 'calypso/state/themes/selectors/is-externally-managed-theme';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { Theme } from 'calypso/types';
-import MasterbarStyled from '../redesign-v2/masterbar-styled';
 import { ThankYouThemeSection } from './marketplace-thank-you-theme-section';
 
 type ThankYouThemeData = [
 	Theme,
 	React.ReactElement[],
 	boolean,
-	JSX.Element,
 	string,
 	string,
 	string[],
@@ -87,8 +85,6 @@ export function useThemesThankYouData(
 				/>
 			);
 		} );
-
-	const goBackSection = <MasterbarStyled />;
 
 	const thankyouSteps = useMemo(
 		() =>
@@ -178,7 +174,6 @@ export function useThemesThankYouData(
 		firstTheme,
 		themesSection,
 		allThemesFetched,
-		goBackSection,
 		title,
 		subtitle,
 		thankyouSteps,

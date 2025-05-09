@@ -20,14 +20,12 @@ import { areFetched, areFetching, getPlugins } from 'calypso/state/plugins/wporg
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import MasterbarStyled from '../redesign-v2/masterbar-styled';
 import { ThankYouPluginSection } from './marketplace-thank-you-plugin-section';
 
 type ThankYouData = [
 	React.ReactElement[],
 	boolean,
 	boolean,
-	JSX.Element,
 	string,
 	string,
 	string[],
@@ -188,8 +186,6 @@ export default function usePluginsThankYouData( pluginSlugs: string[] ): ThankYo
 		return <ThankYouPluginSection plugin={ plugin } key={ `plugin_${ plugin.slug }` } />;
 	} );
 
-	const goBackSection = <MasterbarStyled />;
-
 	const thankyouSteps = useMemo(
 		() =>
 			isJetpack
@@ -236,7 +232,6 @@ export default function usePluginsThankYouData( pluginSlugs: string[] ): ThankYo
 		pluginsSection,
 		allPluginsFetched,
 		allPluginsActivated,
-		goBackSection,
 		title,
 		subtitle,
 		thankyouSteps,
