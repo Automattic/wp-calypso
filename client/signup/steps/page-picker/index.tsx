@@ -362,7 +362,12 @@ interface StepProps {
 
 const StyledButton = styled( Button )`
 	&.button.is-primary {
+		min-width: 230px;
 		padding: 10px 27px 10px 28px;
+
+		@media ( max-width: 600px ) {
+			min-width: auto;
+		}
 	}
 `;
 
