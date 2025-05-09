@@ -6,7 +6,7 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import Notice from 'calypso/components/notice';
 import userAgent from 'calypso/lib/user-agent';
-import { toggleEnabled } from 'calypso/state/push-notifications/actions';
+import { setEnabledState } from 'calypso/state/push-notifications/actions';
 import { getStatus, isApiReady, isEnabled } from 'calypso/state/push-notifications/selectors';
 
 import './style.scss';
@@ -22,11 +22,11 @@ function getPlatform( os ) {
 
 class PushNotificationSettings extends Component {
 	static propTypes = {
-		toggleEnabled: PropTypes.func.isRequired,
+		setEnabledState: PropTypes.func.isRequired,
 	};
 
-	clickHandler = () => {
-		this.props.toggleEnabled();
+	clickHandler = ( value ) => {
+		this.props.setEnabledState( value );
 	};
 
 	getBlockedInstructionURL = () => {
@@ -166,6 +166,6 @@ export default connect(
 		};
 	},
 	{
-		toggleEnabled,
+		setEnabledState: setEnabledState,
 	}
 )( localize( PushNotificationSettings ) );

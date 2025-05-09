@@ -183,7 +183,7 @@ export function receivePermissionState( permission ) {
 
 		if ( isEnabled( getState() ) ) {
 			// The user dismissed the prompt -- disable
-			dispatch( toggleEnabled() );
+			dispatch( setEnabledState() );
 		}
 		dispatch( mustPrompt() );
 	};
@@ -314,9 +314,9 @@ export function block() {
 	};
 }
 
-export function toggleEnabled() {
-	return ( dispatch, getState ) => {
-		const enabling = ! isEnabled( getState() );
+export function setEnabledState( state ) {
+	return ( dispatch ) => {
+		const enabling = state;
 		const doing = enabling ? 'enabling' : 'disabling';
 		debug( doing );
 		dispatch( {
