@@ -33,11 +33,10 @@ function ColumnPrimary< Item >( {
 		item,
 		isItemClickable,
 		onClickItem,
-		className:
-			'dataviews-view-table__cell-content-wrapper dataviews-title-field',
+		className: 'dataviews-column-primary',
 	} );
 	return (
-		<HStack spacing={ 3 } justify="flex-start">
+		<HStack spacing={ 3 } justify="flex-start" { ...clickableProps }>
 			{ mediaField && (
 				<div className="dataviews-view-table__cell-content-wrapper dataviews-column-primary__media">
 					<mediaField.render item={ item } field={ mediaField } />
@@ -45,7 +44,7 @@ function ColumnPrimary< Item >( {
 			) }
 			<VStack spacing={ 0 }>
 				{ titleField && (
-					<div { ...clickableProps }>
+					<div className="dataviews-view-table__cell-content-wrapper dataviews-title-field">
 						{ level !== undefined && (
 							<span className="dataviews-view-table__level">
 								{ '—'.repeat( level ) }&nbsp;

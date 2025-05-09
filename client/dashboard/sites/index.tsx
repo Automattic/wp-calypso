@@ -1,7 +1,7 @@
 import { DataViews, filterSortAndPaginate } from '@automattic/dataviews';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
-import { Button, ExternalLink } from '@wordpress/components';
+import { Button } from '@wordpress/components';
 import { useResizeObserver } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { Icon, check } from '@wordpress/icons';
@@ -41,11 +41,7 @@ const DEFAULT_FIELDS: Field< Site >[] = [
 		id: 'URL',
 		label: __( 'URL' ),
 		enableGlobalSearch: true,
-		render: ( { item }: { item: Site } ) => (
-			<ExternalLink href={ item.URL } style={ { overflowWrap: 'anywhere' } }>
-				{ new URL( item.URL ).hostname }
-			</ExternalLink>
-		),
+		getValue: ( { item } ) => new URL( item.URL ).hostname,
 	},
 	{
 		id: 'icon.ico',
