@@ -1,3 +1,4 @@
+import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -8,6 +9,9 @@ import Security2faSetupBackupCodes from 'calypso/me/security-2fa-setup-backup-co
 import Security2faSMSSettings from 'calypso/me/security-2fa-sms-settings';
 import { successNotice } from 'calypso/state/notices/actions';
 
+export const SMS_BASED_2FA_SETUP = 'sms-settings';
+export const APP_BASED_2FA_SETUP = 'app-based';
+
 class Security2faSetup extends Component {
 	static propTypes = {
 		onFinished: PropTypes.func.isRequired,
@@ -16,7 +20,7 @@ class Security2faSetup extends Component {
 
 	state = {
 		step: 'initial-setup',
-		authMethod: 'app-based',
+		authMethod: APP_BASED_2FA_SETUP,
 	};
 
 	onCancelSetup = ( event ) => {
@@ -43,7 +47,7 @@ class Security2faSetup extends Component {
 	};
 
 	onVerifyByApp = () => {
-		this.setState( { step: 'app-based' } );
+		this.setState( { step: APP_BASED_2FA_SETUP } );
 	};
 
 	onVerifyBySMS = () => {
@@ -51,41 +55,48 @@ class Security2faSetup extends Component {
 	};
 
 	render() {
-		const isSmsFlow = [ 'sms-based', 'sms-settings' ].includes( this.state.authMethod );
-		return (
-			<div className="security-2fa-setup__steps-container">
-				{ 'initial-setup' === this.state.step ? (
+		const isSmsFlow = [ 'sms-based', SMS_BASED_2FA_SETUP ].includes( this.state.authMethod );
+
+		if ( this.state.step === 'initial-setup' ) {
+			return (
+				<div className="security-2fa-setup__steps-container">
 					<Security2faInitialSetup onSuccess={ this.onInitialSetupSuccess } />
-				) : null }
+				</div>
+			);
+		}
 
-				{ 'sms-settings' === this.state.step ? (
-					<Security2faSMSSettings
-						onCancel={ this.onCancelSetup }
-						onVerifyByApp={ this.onVerifyByApp }
-						onVerifyBySMS={ this.onVerifyBySMS }
-					/>
-				) : null }
+		return (
+			<Card>
+				<div className="security-2fa-setup__steps-container">
+					{ SMS_BASED_2FA_SETUP === this.state.step ? (
+						<Security2faSMSSettings
+							onCancel={ this.onCancelSetup }
+							onVerifyByApp={ this.onVerifyByApp }
+							onVerifyBySMS={ this.onVerifyBySMS }
+						/>
+					) : null }
 
-				{ 'app-based' === this.state.step ? (
-					<Security2faEnable
-						isSmsFlow={ false }
-						onCancel={ this.onCancelSetup }
-						onSuccess={ this.onSetupSuccess }
-					/>
-				) : null }
+					{ APP_BASED_2FA_SETUP === this.state.step ? (
+						<Security2faEnable
+							isSmsFlow={ false }
+							onCancel={ this.onCancelSetup }
+							onSuccess={ this.onSetupSuccess }
+						/>
+					) : null }
 
-				{ 'sms-based' === this.state.step ? (
-					<Security2faEnable
-						isSmsFlow
-						onCancel={ this.onCancelSetup }
-						onSuccess={ this.onSetupSuccess }
-					/>
-				) : null }
+					{ 'sms-based' === this.state.step ? (
+						<Security2faEnable
+							isSmsFlow
+							onCancel={ this.onCancelSetup }
+							onSuccess={ this.onSetupSuccess }
+						/>
+					) : null }
 
-				{ 'backup-codes' === this.state.step ? (
-					<Security2faSetupBackupCodes isSmsFlow={ isSmsFlow } onFinished={ this.onFinished } />
-				) : null }
-			</div>
+					{ 'backup-codes' === this.state.step ? (
+						<Security2faSetupBackupCodes isSmsFlow={ isSmsFlow } onFinished={ this.onFinished } />
+					) : null }
+				</div>
+			</Card>
 		);
 	}
 }
