@@ -23,8 +23,14 @@
 	width: 100%;
 }
 
-fieldset.account__settings-admin-home {
-	margin: 30px 0 20px 0;
+.account__settings {
+	.form-fieldset {
+		margin-bottom: 30px;
+
+		&:last-child {
+			margin-bottom: 0;
+		}
+	}
 }
 
 .form-setting-explanation {
@@ -96,8 +102,4 @@ main.account {
 			padding-bottom: 0;
 		}
 	}
-}
-
-.sites-dropdown {
-	padding-top: 15px;
 }
