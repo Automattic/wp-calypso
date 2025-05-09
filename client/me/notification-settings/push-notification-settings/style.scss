@@ -1,9 +1,14 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
 .notification-settings-push-notification-settings__instruction {
 	margin: 24px 0 0;
 
-	&-actions {
-		display: flex;
-		justify-content: space-between;
+	@include break-medium {
+		&-actions {
+			display: flex;
+			justify-content: space-between;
+		}
 	}
 
 	.is-link {
