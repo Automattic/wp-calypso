@@ -36,7 +36,8 @@
 .dataviews-filters__summary-operators-container {
 	padding: $grid-unit-10 $grid-unit-10 0;
 
-	&:has(+ .dataviews-filters__search-widget-listbox) {
+	&:has(+ .dataviews-filters__search-widget-listbox),
+	&:has(+ .dataviews-filters__user-input-widget) {
 		border-bottom: 1px solid $gray-200;
 		padding-bottom: $grid-unit-10;
 	}
@@ -288,4 +289,12 @@
 
 .dataviews-search {
 	width: fit-content;
+}
+
+.dataviews-filters__user-input-widget {
+	padding: $grid-unit-20;
+
+	.components-input-control__prefix {
+		padding-left: $grid-unit-10;
+	}
 }

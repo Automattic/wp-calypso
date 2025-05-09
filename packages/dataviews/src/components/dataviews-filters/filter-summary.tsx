@@ -27,6 +27,7 @@ const SPACE = ' ';
  * Internal dependencies
  */
 import SearchWidget from './search-widget';
+import UserInputWidget from './user-input-widget';
 import {
 	OPERATORS,
 	OPERATOR_IS,
@@ -235,12 +236,24 @@ export default function FilterSummary( {
 	const filterInView = view.filters?.find(
 		( f ) => f.field === filter.field
 	);
-	const activeElements = filter.elements.filter( ( element ) => {
-		if ( filter.singleSelection ) {
-			return element.value === filterInView?.value;
-		}
-		return filterInView?.value?.includes( element.value );
-	} );
+
+	let activeElements = [];
+	if ( filter.userInput ) {
+		activeElements = filterInView?.value
+			? [ filterInView?.value ].flat().map( ( value ) => ( {
+					value: value,
+					label: String( value ),
+			  } ) )
+			: [];
+	} else {
+		activeElements = filter.elements.filter( ( element ) => {
+			if ( filter.singleSelection ) {
+				return element.value === filterInView?.value;
+			}
+			return filterInView?.value?.includes( element.value );
+		} );
+	}
+
 	const isPrimary = filter.isPrimary;
 	const hasValues = filterInView?.value !== undefined;
 	const canResetOrRemove = ! isPrimary || hasValues;
@@ -329,7 +342,11 @@ export default function FilterSummary( {
 				return (
 					<VStack spacing={ 0 } justify="flex-start">
 						<OperatorSelector { ...commonProps } />
-						<SearchWidget { ...commonProps } />
+						{ filter.userInput ? (
+							<UserInputWidget { ...commonProps } />
+						) : (
+							<SearchWidget { ...commonProps } />
+						) }
 					</VStack>
 				);
 			} }

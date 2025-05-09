@@ -3,9 +3,7 @@
  */
 import { __ } from '@wordpress/i18n';
 import { useEffect } from '@wordpress/element';
-import {
-	__experimentalNumberControl as NumberControl,
-} from '@wordpress/components';
+import { __experimentalNumberControl as NumberControl } from '@wordpress/components';
 import { useDebouncedInput } from '@wordpress/compose';
 
 /**
@@ -14,11 +12,7 @@ import { useDebouncedInput } from '@wordpress/compose';
 import { OPERATOR_IS, OPERATOR_IS_NOT } from '../../constants';
 import type { View, NormalizedFilter, Filter } from '../../types';
 
-
-const singleSelectionOperators = [
-	OPERATOR_IS,
-	OPERATOR_IS_NOT,
-];
+const singleSelectionOperators = [ OPERATOR_IS, OPERATOR_IS_NOT ];
 
 interface UserInputWidgetProps {
 	view: View;
@@ -57,31 +51,38 @@ function applyFilterChange( {
 	value,
 	valueGetter = ( _filter, _currentFilter, val ) => val,
 }: CreateNewFiltersArgs ) {
-	const processedValue = valueGetter( filter, currentFilter, value ) || undefined;
+	const processedValue =
+		valueGetter( filter, currentFilter, value ) || undefined;
 
 	if ( currentFilter ) {
-		return (view.filters ?? []).map((_filter) =>
+		return ( view.filters ?? [] ).map( ( _filter ) =>
 			_filter.field === filter.field
 				? {
-					..._filter,
-					operator: currentFilter.operator || filter.operators[0],
-					value: processedValue,
-				}
+						..._filter,
+						operator:
+							currentFilter.operator || filter.operators[ 0 ],
+						value: processedValue,
+				  }
 				: _filter
 		);
 	}
 
 	return [
-		...(view.filters ?? []),
+		...( view.filters ?? [] ),
 		{
 			field: filter.field,
-			operator: filter.operators[0],
+			operator: filter.operators[ 0 ],
 			value: processedValue,
 		},
 	];
-};
+}
 
-function SingleInputSummary( { view, filter, onChangeView, currentFilter }: SingleInputSummaryProps ) {
+function SingleInputSummary( {
+	view,
+	filter,
+	onChangeView,
+	currentFilter,
+}: SingleInputSummaryProps ) {
 	const currentValue = currentFilter.value;
 	const [ value, setValue, debouncedValue ] =
 		useDebouncedInput( currentValue );
@@ -117,7 +118,7 @@ function SingleInputSummary( { view, filter, onChangeView, currentFilter }: Sing
 			placeholder={ __( 'Type value' ) }
 		/>
 	);
-};
+}
 
 export default function UserInputWidget( {
 	filter,
@@ -144,7 +145,6 @@ export default function UserInputWidget( {
 						/>
 					);
 				}
-
 
 				// TODO: Implement the rest of the filter types.
 				return null;
