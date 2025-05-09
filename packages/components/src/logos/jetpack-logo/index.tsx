@@ -123,6 +123,7 @@ export const JetpackLogo = ( {
 			{ ...props }
 			viewBox={ `0 0 ${ full ? LOGO_WIDTH_FULL : LOGO_WIDTH } ${ LOGO_HEIGHT }` }
 		>
+			<title>Jetpack</title>
 			<LogoMark monochrome={ monochrome } />
 			{ full ? <LogoText monochrome={ monochrome } theme={ theme } /> : null }
 		</svg>
