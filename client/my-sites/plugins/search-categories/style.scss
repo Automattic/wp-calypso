@@ -10,64 +10,12 @@ $search-categories-padding-top: 16px;
 	padding-inline: 0;
 	padding-top: $search-categories-padding-top;
 
-	.search-categories__searchbox {
-		max-width: 265px;
+	.components-search-control {
 		width: 100%;
-		height: 36px;
-		z-index: 0;
-		margin: 0;
-		border-radius: 4px;
+		max-width: 265px;
 
-		&.search-categories__searchbox--mobile {
-			max-width: none;
-		}
-
-		box-shadow: 0 0 0 1px var(--studio-gray-10);
-
-		.search-component__icon-navigation:focus {
-			box-shadow: none;
-		}
-
-		.search-component__open-icon,
-		.search-component__close-icon {
-			color: var(--studio-gray-30);
-
-			&:hover {
-				color: var(--studio-gray-60);
-			}
-		}
-
-		.search-component__icon-navigation {
-			margin-right: 2px;
-		}
-
-		.search-component__icon-navigation-separator {
-			user-select: none;
-			color: var(--studio-gray-5);
-			margin-bottom: 3px;
-		}
-
-		&.is-searching {
-			.components-spinner {
-				margin: 5px -9px 5px 0;
-				width: 50px;
-			}
-		}
-
-		.search-component__input-fade {
-			font-size: $font-body-small !important;
-			padding-left: 8px !important;
-		}
-
-		.search-component__open-icon {
-			height: 24px;
-			margin-right: -9px;
-		}
-
-		.search-component__close-icon {
-			height: 20px;
-			margin-left: -9px;
-			margin-right: -10px;
+		&.components-search-control--mobile {
+			width: none;
 		}
 	}
 

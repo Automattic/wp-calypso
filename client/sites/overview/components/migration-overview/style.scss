@@ -71,5 +71,23 @@
 			background-color: #F7F8FE;
 			flex-shrink: 0;
 		}
+
+		.migration-started-difm__cancel-form {
+			display: flex;
+			justify-content: center;
+
+			button {
+				color: var(--studio-gray-80);
+			}
+		}
+	}
+}
+
+.migration-started-difm__cancel-dialog {
+	.migration-started-difm__cancel-dialog-buttons {
+		display: flex;
+		flex-direction: row;
+		gap: 1rem;
+		justify-content: flex-end;
 	}
 }

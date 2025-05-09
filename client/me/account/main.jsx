@@ -33,7 +33,7 @@ import { clearStore } from 'calypso/lib/user/store';
 import wpcom from 'calypso/lib/wp';
 import AccountEmailField from 'calypso/me/account/account-email-field';
 import { withDefaultInterface } from 'calypso/me/account/with-default-interface';
-import EmailVerificationBanner from 'calypso/me/email-verification-banner';
+import { EmailVerificationBannerV2 } from 'calypso/me/email-verification-banner';
 import ReauthRequired from 'calypso/me/reauth-required';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
@@ -100,6 +100,7 @@ class Account extends Component {
 		formsSubmitting: {},
 		usernameAction: 'new',
 		validationResult: false,
+		accountSubmitDisable: false,
 	};
 
 	componentDidUpdate() {
@@ -533,6 +534,7 @@ class Account extends Component {
 
 	shouldDisableAccountSubmitButton() {
 		return (
+			this.state.accountSubmitDisable ||
 			! this.hasUnsavedUserSettings( ACCOUNT_FIELDS ) ||
 			this.getDisabledState( ACCOUNT_FORM_NAME ) ||
 			this.hasEmailValidationError()
@@ -811,6 +813,16 @@ class Account extends Component {
 			this.getUserSetting( 'user_login' ) === this.state.userLoginConfirm &&
 			this.state.userLoginConfirm.length > 0;
 
+		const usernameValidationFailureMessage = this.getUsernameValidationFailureMessage();
+		const isError = ! usernameMatch || usernameValidationFailureMessage;
+
+		let validationMessage = translate( 'Please re-enter your new username to confirm it.' );
+		if ( usernameMatch ) {
+			validationMessage = usernameValidationFailureMessage
+				? usernameValidationFailureMessage
+				: translate( 'Thanks for confirming your new username!' );
+		}
+
 		return (
 			<div className="account__username-form" key="usernameForm">
 				<FormFieldset>
@@ -825,13 +837,9 @@ class Account extends Component {
 						value={ this.state.userLoginConfirm ?? '' }
 						onChange={ this.updateUserLoginConfirm }
 						isValid={ usernameMatch }
-						isError={ ! usernameMatch }
+						isError={ isError }
 					/>
-					<FormInputValidation isError={ ! usernameMatch }>
-						{ usernameMatch
-							? translate( 'Thanks for confirming your new username!' )
-							: translate( 'Please re-enter your new username to confirm it.' ) }
-					</FormInputValidation>
+					<FormInputValidation isError={ isError }>{ validationMessage }</FormInputValidation>
 				</FormFieldset>
 
 				{ this.renderBlogActionFields() }
@@ -895,7 +903,11 @@ class Account extends Component {
 						}
 					) }
 				/>
-				<EmailVerificationBanner />
+				<EmailVerificationBannerV2
+					setIsBusy={ ( isBusy ) => {
+						this.state.accountSubmitDisable = isBusy;
+					} }
+				/>
 				<SectionHeader label={ translate( 'Account Information' ) } />
 				<Card className="account__settings">
 					<form onChange={ markChanged } onSubmit={ this.saveAccountSettings }>

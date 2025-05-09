@@ -11,7 +11,7 @@ import '@automattic/components/styles/wp-button-override.scss';
  * See the [WordPress Storybook](https://wordpress.github.io/gutenberg/?path=/docs/components-button--docs) docs for more information.
  */
 const meta: Meta< typeof Button > = {
-	title: 'packages/components/WP Overrides/Button',
+	title: 'WP Overrides/Button',
 	component: Button,
 	decorators: [
 		( Story ) => (

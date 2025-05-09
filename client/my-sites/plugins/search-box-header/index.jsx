@@ -1,7 +1,8 @@
 import page from '@automattic/calypso-router';
-import Search from '@automattic/search';
+import { SearchControl } from '@wordpress/components';
+import { useViewportMatch } from '@wordpress/compose';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setQueryArgs } from 'calypso/lib/query-args';
 import scrollTo from 'calypso/lib/scroll-to';
@@ -11,66 +12,6 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { useTermsSuggestions } from '../use-terms-suggestions';
 import './style.scss';
 
-const SearchBox = ( {
-	isMobile,
-	searchTerm,
-	searchBoxRef,
-	categoriesRef,
-	isSearching,
-	searchTerms,
-} ) => {
-	const dispatch = useDispatch();
-	const translate = useTranslate();
-	const selectedSite = useSelector( getSelectedSite );
-	const { localizePath } = useLocalizedPlugins();
-
-	const searchTermSuggestion = useTermsSuggestions( searchTerms ) || 'ecommerce';
-
-	const pageToSearch = useCallback(
-		( search ) => {
-			page.show( localizePath( `/plugins/${ selectedSite?.slug || '' }` ) ); // Ensures location.href is on the main Plugins page before setQueryArgs uses it to construct the redirect.
-			setQueryArgs( '' !== search ? { s: search } : {} );
-
-			if ( search ) {
-				searchBoxRef.current.blur();
-				scrollTo( {
-					x: 0,
-					y:
-						categoriesRef.current?.getBoundingClientRect().y - // Get to the top of categories
-						categoriesRef.current?.getBoundingClientRect().height, // But don't show the categories
-					duration: 300,
-				} );
-			}
-		},
-		[ searchBoxRef, categoriesRef, selectedSite, localizePath ]
-	);
-
-	const recordSearchEvent = ( eventName ) =>
-		dispatch( recordGoogleEvent( 'PluginsBrowser', eventName ) );
-
-	return (
-		<div className="search-box-header__searchbox">
-			<Search
-				ref={ searchBoxRef }
-				pinned={ isMobile }
-				fitsContainer={ isMobile }
-				onSearch={ pageToSearch }
-				defaultValue={ searchTerm }
-				searchMode="on-enter"
-				placeholder={ translate( 'Try searching "%(searchTermSuggestion)s"', {
-					args: { searchTermSuggestion },
-				} ) }
-				delaySearch={ false }
-				recordEvent={ recordSearchEvent }
-				searching={ isSearching }
-				submitOnOpenIconClick
-				openIconSide="right"
-				displayOpenAndCloseIcons
-			/>
-		</div>
-	);
-};
-
 const SearchBoxHeader = ( props ) => {
 	const {
 		searchTerm,
@@ -78,20 +19,20 @@ const SearchBoxHeader = ( props ) => {
 		subtitle,
 		isSticky,
 		stickySearchBoxRef,
-		isSearching,
-		searchRef,
 		categoriesRef,
 		renderTitleInH1,
 		searchTerms,
 	} = props;
 
-	// Update the search box with the value from the url everytime it changes
-	// This allows the component to be refilled with a keyword
-	// when navigating back to a page via breadcrumb,
-	// and get empty when the user accesses a non-search page
-	useEffect( () => {
-		searchRef?.current?.setKeyword( searchTerm ?? '' );
-	}, [ searchRef, searchTerm ] );
+	const isDesktop = useViewportMatch( 'large' );
+	const translate = useTranslate();
+	const dispatch = useDispatch();
+	const selectedSite = useSelector( getSelectedSite );
+	const { localizePath } = useLocalizedPlugins();
+
+	const recordSearchEvent = ( eventName ) => {
+		dispatch( recordGoogleEvent( 'PluginsBrowser', eventName ) );
+	};
 
 	const classNames = [ 'search-box-header' ];
 
@@ -100,17 +41,48 @@ const SearchBoxHeader = ( props ) => {
 	}
 
 	return (
-		<div className={ classNames.join( ' ' ) }>
+		<div className={ clsx( classNames ) }>
 			{ renderTitleInH1 && <h1 className="search-box-header__header">{ title }</h1> }
 			{ ! renderTitleInH1 && <div className="search-box-header__header">{ title }</div> }
 			{ subtitle && <p className="search-box-header__subtitle">{ subtitle }</p> }
 			<div className="search-box-header__search">
-				<SearchBox
-					searchTerm={ searchTerm }
-					searchBoxRef={ searchRef }
-					isSearching={ isSearching }
-					categoriesRef={ categoriesRef }
-					searchTerms={ searchTerms }
+				<SearchControl
+					__nextHasNoMarginBottom
+					value={ searchTerm }
+					className={ clsx( 'search-box-header__searchbox', {
+						'components-search-control--mobile': ! isDesktop,
+					} ) }
+					placeholder={ translate( 'Try searching "%(searchTermSuggestion)s"', {
+						args: { searchTermSuggestion: useTermsSuggestions( searchTerms ) || 'ecommerce' },
+						textOnly: true,
+					} ) }
+					onChange={ ( newValue ) => {
+						// Only update URL on clear
+						if ( newValue === '' ) {
+							recordSearchEvent( 'SearchCleared' );
+							page.show( localizePath( `/plugins/${ selectedSite?.slug || '' }` ) );
+							setQueryArgs( {} );
+						}
+					} }
+					onKeyDown={ ( event ) => {
+						if ( event.key === 'Enter' && event.target ) {
+							event.preventDefault();
+							const value = event.target.value;
+							recordSearchEvent( 'SearchInitiated' );
+							page.show( localizePath( `/plugins/${ selectedSite?.slug || '' }` ) );
+							setQueryArgs( value ? { s: value } : {} );
+
+							if ( value && categoriesRef?.current ) {
+								scrollTo( {
+									x: 0,
+									y:
+										categoriesRef.current.getBoundingClientRect().y - // Get to the top of categories
+										categoriesRef.current.getBoundingClientRect().height, // But don't show the categories
+									duration: 300,
+								} );
+							}
+						}
+					} }
 				/>
 			</div>
 			<div className="search-box-header__sticky-ref" ref={ stickySearchBoxRef }></div>

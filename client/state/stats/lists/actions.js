@@ -15,7 +15,7 @@ export const ALL_SITES_ID = -1;
  * @param  {number} siteId   Site ID
  * @param  {string} statType Stat Key
  * @param  {Object} query    Stats query
- * @param  {Array}  data     Stat Data
+ * @param  {Array|Object}  data     Stat Data
  * @param  {Object} date	 Date
  * @returns {Object}          Action object
  */
