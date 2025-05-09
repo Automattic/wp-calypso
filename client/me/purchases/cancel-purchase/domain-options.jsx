@@ -218,14 +218,13 @@ const CancelPurchaseDomainOptions = ( {
 	}
 
 	if ( includedDomainTransfer ) {
-
 		if ( ! isRefundable( purchase ) ) {
 			return (
 				<NonRefundablePurchaseWithDomainTransferMessage
-				includedDomainTransfer={ includedDomainTransfer }
-				purchase={ purchase }
-				planCostText={ planCostText }
-			/>
+					includedDomainTransfer={ includedDomainTransfer }
+					purchase={ purchase }
+					planCostText={ planCostText }
+				/>
 			);
 		}
 
