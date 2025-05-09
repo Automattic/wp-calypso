@@ -2,7 +2,7 @@
 @import "@wordpress/base-styles/variables";
 
 .summary-button.components-button {
-	padding: 24px;
+	padding: $grid-unit-30;
 	display: block;
 	height: auto;
 	transition: none;
@@ -70,7 +70,7 @@
 	}
 
 	&.has-density-medium {
-		padding: 12px;
+		padding: $grid-unit-15;
 		box-shadow: 0 2px 1px -1px $gray-100;
 
 		// TODO: this should be handled better in `SummaryButtonList` component.
