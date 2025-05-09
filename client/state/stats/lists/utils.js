@@ -459,7 +459,8 @@ export const normalizers = {
 	},
 
 	/**
-	 * Returns a normalized statsVideoPlaysCompleteStats array, ready for use in stats-module
+	 * Returns a normalized data for the `stats/video-plays` API request with `complete_stats` query param set to `1`
+	 * This returns more enriched data about the video plays, including impressions, watch time, and retention rate.
 	 * @param   {Object} data    Stats data
 	 * @param   {Object} query   Stats query
 	 * @returns {Array}          Parsed data array
@@ -469,7 +470,13 @@ export const normalizers = {
 			return [];
 		}
 
-		const videoPlaysData = get( data, [ 'days', 'summary', 'data' ], [] );
+		const { startOf } = rangeOfPeriod( query.period, query.date );
+		const videoPlaysData = get(
+			data,
+			query.summarize ? [ 'days', 'summary', 'data' ] : [ 'days', startOf, 'data' ],
+			[]
+		);
+
 		const normalizedData = videoPlaysData.map( ( item ) => {
 			return {
 				post_id: item.post_id,
