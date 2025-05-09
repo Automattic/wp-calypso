@@ -1,6 +1,8 @@
-import { Outlet, useLoaderData } from '@tanstack/react-router';
+import { useQuery } from '@tanstack/react-query';
+import { Outlet } from '@tanstack/react-router';
 import { __experimentalHStack as HStack, Dropdown, Button } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
+import { siteQuery } from '../../app/queries';
 import { siteRoute } from '../../app/router';
 import HeaderBar from '../../components/header-bar';
 import MenuDivider from '../../components/menu-divider';
@@ -11,7 +13,13 @@ import Switcher from './switcher';
 function Site() {
 	const isDesktop = useViewportMatch( 'medium' );
 	const { siteSlug } = siteRoute.useParams();
-	const { site } = useLoaderData( { from: siteRoute.id } );
+	const { data } = useQuery( siteQuery( siteSlug ) );
+
+	if ( ! data ) {
+		return;
+	}
+
+	const { site } = data;
 
 	return (
 		<>
