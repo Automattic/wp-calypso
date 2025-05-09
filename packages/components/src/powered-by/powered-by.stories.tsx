@@ -2,7 +2,7 @@ import { PoweredBy } from './index';
 import type { Meta, StoryObj } from '@storybook/react';
 
 const meta: Meta< typeof PoweredBy > = {
-	title: 'packages/components/PoweredBy',
+	title: 'Unaudited/PoweredBy',
 	component: PoweredBy,
 };
 export default meta;
