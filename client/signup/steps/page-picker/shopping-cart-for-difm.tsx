@@ -211,7 +211,7 @@ export default function ShoppingCartForDIFM( {
 					) ) }
 
 					<Total>
-						<div>{ translate( 'Total' ) }</div>
+						<div>{ translate( 'Subtotal' ) }</div>
 						<div className="page-picker__value">{ total }*</div>
 						<RefundText>
 							<StyledBraveTickIcon />
