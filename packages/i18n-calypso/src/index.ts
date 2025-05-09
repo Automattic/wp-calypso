@@ -24,10 +24,6 @@ export const reRenderTranslations = i18n.reRenderTranslations.bind( i18n );
 export const registerComponentUpdateHook = i18n.registerComponentUpdateHook.bind( i18n );
 export const registerTranslateHook = i18n.registerTranslateHook.bind( i18n );
 export const state = i18n.state;
-export const stateObserver = i18n.stateObserver;
-export const on = i18n.on.bind( i18n );
-export const off = i18n.off.bind( i18n );
-export const emit = i18n.emit.bind( i18n );
 export const fixMe = i18n.fixMe.bind( i18n );
 
 export type * from './types';
