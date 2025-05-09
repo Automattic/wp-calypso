@@ -48,7 +48,8 @@ const FoldableFAQ = styled( FoldableFAQComponent )`
 		padding: 24px;
 		flex-direction: row-reverse;
 		width: 100%;
-		svg {
+		.gridicon {
+			transform: rotate( 90deg );
 			margin-inline-end: 0;
 			margin-inline-start: auto;
 			flex-shrink: 0;
@@ -62,6 +63,10 @@ const FoldableFAQ = styled( FoldableFAQComponent )`
 	&.is-expanded {
 		.foldable-faq__question {
 			padding-bottom: 16px;
+
+			.gridicon {
+				transform: rotate( 270deg );
+			}
 		}
 
 		.foldable-faq__answer {
