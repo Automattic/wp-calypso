@@ -1,7 +1,7 @@
 import AnnualCards from '../annual-highlight-cards';
 
 export default {
-	title: 'packages/components/Highlight Cards/AnnualHighlightCards',
+	title: 'Unaudited/Highlight Cards/AnnualHighlightCards',
 	component: AnnualCards,
 	argTypes: {
 		year: { control: 'number' },

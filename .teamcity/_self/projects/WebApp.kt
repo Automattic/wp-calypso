@@ -464,9 +464,9 @@ object RunAllUnitTests : BuildType({
 				# List files affected by the branch's commits
 				CHANGES=${'$'}(git diff --name-only refs/remotes/origin/trunk...HEAD)
 
-				# If there are changes within the DataViews package, ensure
-				# CHANGELOG.automattic.md has been updated too.
-				if grep -q ^packages/dataviews/ <<< "${'$'}CHANGES"; then
+				# If there are changes within the DataViews package (excluding package.json),
+				# ensure CHANGELOG.automattic.md has been updated too.
+				if grep ^packages/dataviews/ <<< "${'$'}CHANGES" | grep -vq ^packages/dataviews/package.json; then
 					if ! grep -q ^packages/dataviews/CHANGELOG.automattic.md <<< "${'$'}CHANGES"; then
 						echo "ERROR: Changes to 'packages/dataviews' detected with no accompanying changelog entry."
 						echo "Please document your changes in 'packages/dataviews/CHANGELOG.automattic.md'."

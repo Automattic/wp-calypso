@@ -8,21 +8,20 @@ import {
 import { fetchTwoStep } from '../data';
 import NotFound from './404';
 import UnknownError from './500';
-import { sitesQuery, siteQuery, domainsQuery, emailsQuery, profileQuery } from './queries';
+import {
+	sitesQuery,
+	siteQuery,
+	siteSettingsQuery,
+	domainsQuery,
+	emailsQuery,
+	profileQuery,
+} from './queries';
 import { queryClient } from './query-client';
 import Root from './root';
 import type { AppConfig } from './context';
-import type { FetchQueryOptions } from '@tanstack/react-query';
 
 interface RouteContext {
 	config?: AppConfig;
-}
-
-async function maybeAwaitFetch( options: FetchQueryOptions ) {
-	const cachedData = queryClient.getQueryData( options.queryKey );
-	if ( ! cachedData ) {
-		await queryClient.fetchQuery( options );
-	}
 }
 
 const rootRoute = createRootRoute( { component: Root } );
@@ -51,7 +50,7 @@ const overviewRoute = createRoute( {
 const sitesRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'sites',
-	loader: () => maybeAwaitFetch( sitesQuery() ),
+	loader: () => queryClient.ensureQueryData( sitesQuery() ),
 } ).lazy( () =>
 	import( '../sites' ).then( ( d ) =>
 		createLazyRoute( 'sites' )( {
@@ -63,7 +62,7 @@ const sitesRoute = createRoute( {
 const siteRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'sites/$siteSlug',
-	loader: ( { params: { siteSlug } } ) => maybeAwaitFetch( siteQuery( siteSlug ) ),
+	loader: ( { params: { siteSlug } } ) => queryClient.ensureQueryData( siteQuery( siteSlug ) ),
 } ).lazy( () =>
 	import( '../sites/site' ).then( ( d ) =>
 		createLazyRoute( 'site' )( {
@@ -108,6 +107,8 @@ const sitePerformanceRoute = createRoute( {
 const siteSettingsRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: 'settings',
+	loader: ( { params: { siteSlug } } ) =>
+		queryClient.ensureQueryData( siteSettingsQuery( siteSlug ) ),
 } ).lazy( () =>
 	import( '../sites/settings' ).then( ( d ) =>
 		createLazyRoute( 'site-settings' )( {
@@ -119,6 +120,8 @@ const siteSettingsRoute = createRoute( {
 const siteSettingsSubscriptionGiftingRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: 'settings/subscription-gifting',
+	loader: ( { params: { siteSlug } } ) =>
+		queryClient.ensureQueryData( siteSettingsQuery( siteSlug ) ),
 } ).lazy( () =>
 	import( '../sites/settings-subscription-gifting' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-subscription-gifting' )( {
@@ -130,7 +133,7 @@ const siteSettingsSubscriptionGiftingRoute = createRoute( {
 const domainsRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'domains',
-	loader: () => maybeAwaitFetch( domainsQuery() ),
+	loader: () => queryClient.ensureQueryData( domainsQuery() ),
 } ).lazy( () =>
 	import( '../domains' ).then( ( d ) =>
 		createLazyRoute( 'domains' )( {
@@ -142,7 +145,7 @@ const domainsRoute = createRoute( {
 const emailsRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'emails',
-	loader: () => maybeAwaitFetch( emailsQuery() ),
+	loader: () => queryClient.ensureQueryData( emailsQuery() ),
 } ).lazy( () =>
 	import( '../emails' ).then( ( d ) =>
 		createLazyRoute( 'emails' )( {
@@ -154,7 +157,7 @@ const emailsRoute = createRoute( {
 const meRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'me',
-	loader: () => maybeAwaitFetch( profileQuery() ),
+	loader: () => queryClient.ensureQueryData( profileQuery() ),
 	beforeLoad: async ( { cause } ) => {
 		if ( cause !== 'enter' ) {
 			return;

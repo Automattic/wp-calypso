@@ -35,7 +35,7 @@
 		"@docusaurus/tsconfig": "^3.7.0",
 		"@docusaurus/types": "^3.7.0",
 		"@types/react": "^18.3.20",
-		"@wordpress/browserslist-config": "^6.22.0",
+		"@wordpress/browserslist-config": "^6.23.0",
 		"typescript": "^5.8.2"
 	},
 	"browserslist": [

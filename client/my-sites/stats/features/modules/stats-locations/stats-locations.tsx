@@ -1,9 +1,10 @@
 import config from '@automattic/calypso-config';
+import page from '@automattic/calypso-router';
 import { SimplifiedSegmentedControl, StatsCard } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { mapMarker } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import React, { useState } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import useLocationViewsQuery, {
 	StatsLocationViewsData,
@@ -18,42 +19,26 @@ import {
 	getPathWithUpdatedQueryString,
 	trackStatsAnalyticsEvent,
 } from 'calypso/my-sites/stats/utils';
-import { useSelector } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
 import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
+import { receiveSiteStats } from 'calypso/state/stats/lists/actions';
 import { getSiteStatsNormalizedData } from 'calypso/state/stats/lists/selectors';
+import { normalizers } from 'calypso/state/stats/lists/utils';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import EmptyModuleCard from '../../../components/empty-module-card/empty-module-card';
 import { LOCATIONS_SUPPORT_URL, JETPACK_SUPPORT_URL_TRAFFIC } from '../../../const';
-import {
-	STAT_TYPE_COUNTRY_VIEWS,
-	STATS_FEATURE_LOCATION_REGION_VIEWS,
-	STATS_FEATURE_LOCATION_COUNTRY_VIEWS,
-	STATS_FEATURE_LOCATION_CITY_VIEWS,
-	STATS_FEATURE_DOWNLOAD_CSV,
-} from '../../../constants';
+import { STAT_TYPE_COUNTRY_VIEWS, STATS_FEATURE_DOWNLOAD_CSV } from '../../../constants';
 import Geochart from '../../../geochart';
 import StatsCardUpdateJetpackVersion from '../../../stats-card-upsell/stats-card-update-jetpack-version';
 import StatsCardSkeleton from '../shared/stats-card-skeleton';
 import StatsInfoArea from '../shared/stats-info-area';
-import { StatsDefaultModuleProps } from '../types';
+import { StatsDefaultModuleProps, StatsQueryType } from '../types';
 import CountryFilter from './country-filter';
 import sampleLocations from './sample-locations';
+import { OPTION_KEYS, UrlGeoMode, GEO_MODES } from './types';
+import useOptionLabels from './use-option-labels';
 
 import './style.scss';
-
-const OPTION_KEYS = {
-	COUNTRIES: 'countries',
-	REGIONS: 'regions',
-	CITIES: 'cities',
-};
-
-type GeoMode = 'country' | 'region' | 'city';
-
-const GEO_MODES: Record< string, GeoMode > = {
-	[ OPTION_KEYS.COUNTRIES ]: 'country',
-	[ OPTION_KEYS.REGIONS ]: 'region',
-	[ OPTION_KEYS.CITIES ]: 'city',
-};
 
 type SelectOptionType = {
 	label: string;
@@ -62,6 +47,7 @@ type SelectOptionType = {
 
 interface StatsModuleLocationsProps extends StatsDefaultModuleProps {
 	initialGeoMode?: string;
+	query: StatsQueryType & { geoMode?: UrlGeoMode };
 }
 
 const StatsLocations: React.FC< StatsModuleLocationsProps > = ( {
@@ -69,7 +55,9 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( {
 	period,
 	query,
 	summaryUrl,
+	summary = false,
 } ) => {
+	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const statType = STAT_TYPE_COUNTRY_VIEWS;
@@ -78,43 +66,36 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( {
 		? `${ JETPACK_SUPPORT_URL_TRAFFIC }#views-by-locations`
 		: LOCATIONS_SUPPORT_URL;
 
-	const urlGeoMode =
-		initialGeoMode || new URLSearchParams( window.location.search ).get( 'geoMode' );
-	const [ selectedOption, setSelectedOption ] = useState(
-		urlGeoMode && urlGeoMode in GEO_MODES ? urlGeoMode : OPTION_KEYS.COUNTRIES
-	);
+	// selectOption is in plural form i.e. 'countries'! Possible something to unify in the future.
+	const appliedGeoModeFromUrl = useMemo( () => {
+		const urlGeoMode = query.geoMode ?? initialGeoMode;
+		return urlGeoMode && urlGeoMode in GEO_MODES ? urlGeoMode : OPTION_KEYS.COUNTRIES;
+	}, [ query.geoMode, initialGeoMode ] );
 
+	const isStatsNavigationImprovementEnabled = config.isEnabled( 'stats/navigation-improvement' );
 	const [ countryFilter, setCountryFilter ] = useState< string | null >( null );
 
-	const optionLabels = {
-		[ OPTION_KEYS.COUNTRIES ]: {
-			selectLabel: translate( 'Countries' ),
-			headerLabel: translate( 'Top countries' ),
-			analyticsId: 'countries',
-			feature: STATS_FEATURE_LOCATION_COUNTRY_VIEWS,
-			countryFilterLabel: translate( 'All countries' ),
-		},
-		[ OPTION_KEYS.REGIONS ]: {
-			selectLabel: translate( 'Regions' ),
-			headerLabel: translate( 'Top regions' ),
-			analyticsId: 'regions',
-			feature: STATS_FEATURE_LOCATION_REGION_VIEWS,
-			countryFilterLabel: translate( 'All regions' ),
-		},
-		[ OPTION_KEYS.CITIES ]: {
-			selectLabel: translate( 'Cities' ),
-			headerLabel: translate( 'Top cities' ),
-			analyticsId: 'cities',
-			feature: STATS_FEATURE_LOCATION_CITY_VIEWS,
-			countryFilterLabel: translate( 'All cities' ),
-		},
-	};
+	// Set the state locally to avoid a page being reloaded by URL changes.
+	const [ selectedLocalOption, setSelectedLocalOption ] = useState( () => {
+		return appliedGeoModeFromUrl;
+	} );
+
+	const selectedOption = useMemo( () => {
+		if ( summary ) {
+			return appliedGeoModeFromUrl;
+		}
+
+		return selectedLocalOption;
+	}, [ summary, appliedGeoModeFromUrl, selectedLocalOption ] );
+
+	const optionLabels = useOptionLabels();
 
 	// Use StatsModule to display paywall upsell.
 	const shouldGateStatsModule = useShouldGateStats( statType );
 	const shouldGateDownloads = useShouldGateStats( STATS_FEATURE_DOWNLOAD_CSV );
 	const shouldGateTab = useShouldGateStats( optionLabels[ selectedOption ].feature );
 	const shouldGate = shouldGateStatsModule || shouldGateTab;
+	// Mapping plural to singular form where all other places are using.
 	const geoMode = GEO_MODES[ selectedOption ];
 	const title = translate( 'Locations' );
 
@@ -124,12 +105,29 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( {
 
 	// Main location data query
 	const {
-		data: locationsViewsData = [],
+		data: locationsViewsData,
 		isLoading: isRequestingData,
 		isError,
 	} = useLocationViewsQuery< StatsLocationViewsData >( siteId, geoMode, query, countryFilter, {
 		enabled: ! shouldGate && supportsLocationsStatsFeature,
 	} );
+
+	const normalizedLocationsViewsData = useMemo( () => {
+		if ( isRequestingData || ! locationsViewsData ) {
+			return [];
+		}
+
+		const normalizedStats = normalizers.statsCountryViews(
+			locationsViewsData as StatsLocationViewsData,
+			query
+		);
+
+		if ( ! Array.isArray( normalizedStats ) ) {
+			return [];
+		}
+
+		return query?.max ? normalizedStats.slice( 0, query.max ) : normalizedStats;
+	}, [ locationsViewsData, query, isRequestingData ] );
 
 	// The legacy endpoint that only supports countries (not regions or cities)
 	// will be used when the new Locations Stats feature is not available.
@@ -137,19 +135,69 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( {
 		getSiteStatsNormalizedData( state, siteId, statType, query )
 	) as [ id: number, label: string ];
 
-	const data = supportsLocationsStatsFeature ? locationsViewsData : legacyCountriesViewsData;
+	const data = supportsLocationsStatsFeature
+		? normalizedLocationsViewsData
+		: legacyCountriesViewsData;
 
 	// Only fetch separate countries list if we're not already in country tab
 	// This is to avoid fetching the same data twice.
-	const { data: countriesList = [] } = useLocationViewsQuery< StatsLocationViewsData >(
-		siteId,
-		'country',
-		query,
-		null,
-		{
+	const { data: countriesList, isLoading: isRequestingCountriesList } =
+		useLocationViewsQuery< StatsLocationViewsData >( siteId, 'country', query, null, {
 			enabled: ! shouldGate && supportsLocationsStatsFeature && geoMode !== 'country',
+		} );
+
+	const normalizedCountriesList = useMemo( () => {
+		if ( isRequestingCountriesList || ! countriesList ) {
+			return [];
 		}
-	);
+
+		const normalizedStats = normalizers.statsCountryViews(
+			countriesList as StatsLocationViewsData,
+			query
+		);
+
+		if ( ! Array.isArray( normalizedStats ) ) {
+			return [];
+		}
+
+		return normalizedStats;
+	}, [ countriesList, query, isRequestingCountriesList ] );
+
+	// Data is fetched from three ways but only one is displayed, we use that for downloading as CSV.
+	// If supportsLocationsStatsFeature is false, we use the legacy endpoint.
+	// If geoMode is country, we use the countriesList.
+	// Otherwise, we use the locationsViewsData.
+	const dataToDispatch = useMemo( () => {
+		if ( isRequestingCountriesList || isRequestingData || isRequestingCountriesList ) {
+			return;
+		}
+
+		if ( ! supportsLocationsStatsFeature ) {
+			return legacyCountriesViewsData;
+		}
+
+		if ( geoMode === 'country' ) {
+			return countriesList;
+		}
+
+		return locationsViewsData;
+	}, [
+		countriesList,
+		geoMode,
+		supportsLocationsStatsFeature,
+		locationsViewsData,
+		legacyCountriesViewsData,
+		isRequestingCountriesList,
+		isRequestingData,
+	] );
+
+	useEffect( () => {
+		if ( dataToDispatch ) {
+			dispatch(
+				receiveSiteStats( siteId, 'statsCountryViews', query, dataToDispatch, Date.now() )
+			);
+		}
+	}, [ dataToDispatch, dispatch, query, siteId ] );
 
 	const onCountryChange = ( value: string ) => {
 		trackStatsAnalyticsEvent( 'stats_locations_module_country_filter_changed', {
@@ -166,7 +214,11 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( {
 			stat_type: optionLabels[ filter ].feature,
 		} );
 
-		setSelectedOption( filter );
+		if ( summary ) {
+			page( getPathWithUpdatedQueryString( { geoMode: filter } ) );
+		} else {
+			setSelectedLocalOption( filter );
+		}
 	};
 
 	const onShowMoreClick = () => {
@@ -175,7 +227,9 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( {
 		} );
 	};
 
-	const toggleControlComponent = (
+	// Need to keep the old tabs on Traffic page.
+	const toggleControlComponent = ( ! summary ||
+		! config.isEnabled( 'stats/navigation-improvement' ) ) && (
 		<>
 			<SimplifiedSegmentedControl
 				className="stats-module-locations__tabs"
@@ -184,7 +238,6 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( {
 					label: entry[ 1 ].selectLabel, // optionLabels object value
 				} ) ) }
 				initialSelected={ selectedOption }
-				// @ts-expect-error TODO: missing TS type
 				onSelect={ changeViewButton }
 			/>
 		</>
@@ -255,29 +308,32 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( {
 		  ] )
 		: [];
 
-	const downloadCsvElement = shouldGateDownloads ? (
-		<DownloadCsvUpsell
-			className="stats-module-locations__download-csv-upsell"
-			siteId={ siteId }
-			borderless
-		/>
-	) : (
-		<DownloadCsv
-			borderless
-			data={ locationCsvData }
-			path={ `locations-${ geoMode }` }
-			period={ period }
-			query={ query }
-			skipQuery
-			statType={ statType }
-		/>
-	);
+	let downloadCsvElement = null;
+	if ( ! isStatsNavigationImprovementEnabled ) {
+		downloadCsvElement = shouldGateDownloads ? (
+			<DownloadCsvUpsell
+				className="stats-module-locations__download-csv-upsell"
+				siteId={ siteId }
+				borderless
+			/>
+		) : (
+			<DownloadCsv
+				borderless
+				data={ locationCsvData }
+				path={ `locations-${ geoMode }` }
+				period={ period }
+				query={ query }
+				skipQuery
+				statType={ statType }
+			/>
+		);
+	}
 
 	const heroElementActions = (
 		<div className="stats-module-locations__actions">
 			{ geoMode !== 'country' && (
 				<CountryFilter
-					countries={ countriesList }
+					countries={ normalizedCountriesList }
 					defaultLabel={ optionLabels[ selectedOption ].countryFilterLabel }
 					selectedCountry={ countryFilter }
 					onCountryChange={ onCountryChange }

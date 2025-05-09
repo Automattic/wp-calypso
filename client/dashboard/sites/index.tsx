@@ -5,15 +5,16 @@ import { Button, ExternalLink } from '@wordpress/components';
 import { useResizeObserver } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { Icon, check } from '@wordpress/icons';
-import { useState, useMemo } from 'react';
+import { useMemo } from 'react';
 import { sitesQuery } from '../app/queries';
+import { sitesRoute } from '../app/router';
 import DataViewsCard from '../components/dataviews-card';
 import PageLayout from '../components/page-layout';
 import { STATUS_LABELS, getSiteStatus, getSiteStatusLabel } from '../utils/site-status';
 import SiteIcon from './site-icon';
 import SitePreview from './site-preview';
 import type { Site } from '../data/types';
-import type { View, Operator } from '@automattic/dataviews';
+import type { Field, Operator, SortDirection, ViewTable, ViewGrid } from '@automattic/dataviews';
 
 const actions = [
 	{
@@ -30,7 +31,7 @@ const actions = [
 	},
 ];
 
-const DEFAULT_FIELDS = [
+const DEFAULT_FIELDS: Field< Site >[] = [
 	{
 		id: 'name',
 		label: __( 'Site' ),
@@ -58,6 +59,7 @@ const DEFAULT_FIELDS = [
 	},
 	{
 		id: 'backups',
+		type: 'boolean',
 		label: __( 'Backups' ),
 		getValue: ( { item }: { item: Site } ) => !! item.plan?.features?.active?.includes( 'backups' ),
 		elements: [
@@ -73,10 +75,10 @@ const DEFAULT_FIELDS = [
 		filterBy: {
 			operators: [ 'is' as Operator ],
 		},
-		enableSorting: false,
 	},
 	{
 		id: 'protect',
+		type: 'boolean',
 		label: __( 'Protect' ),
 		getValue: ( { item }: { item: Site } ) => !! item.active_modules?.includes( 'protect' ),
 		render: ( { item }: { item: Site } ) =>
@@ -88,7 +90,6 @@ const DEFAULT_FIELDS = [
 		filterBy: {
 			operators: [ 'is' as Operator ],
 		},
-		enableSorting: false,
 	},
 	{
 		id: 'status',
@@ -99,6 +100,7 @@ const DEFAULT_FIELDS = [
 	},
 	{
 		id: 'is_a8c',
+		type: 'boolean',
 		label: __( 'A8C Owned' ),
 		elements: [
 			{ value: true, label: __( 'Yes' ) },
@@ -108,7 +110,6 @@ const DEFAULT_FIELDS = [
 			operators: [ 'is' as Operator ],
 		},
 		render: ( { item }: { item: Site } ) => ( item.is_a8c ? __( 'Yes' ) : __( 'No' ) ),
-		enableSorting: false,
 	},
 	{
 		id: 'preview',
@@ -160,31 +161,45 @@ const DEFAULT_LAYOUTS = {
 	},
 };
 
-const DEFAULT_VIEW: View = {
+const DEFAULT_VIEW = {
 	...DEFAULT_LAYOUTS.grid,
-	type: 'grid',
+	type: 'grid' as const,
 	page: 1,
 	perPage: 10,
-	sort: { field: 'name', direction: 'asc' },
+	sort: { field: 'name', direction: 'asc' as SortDirection },
+	search: '',
 };
 
 export default function Sites() {
-	const navigate = useNavigate();
+	const navigate = useNavigate( { from: sitesRoute.fullPath } );
 	const sites = useQuery( sitesQuery() ).data;
 	const hasA8CSites = sites?.some( ( site ) => site.is_a8c );
-	const [ view, setView ] = useState< View >(
-		hasA8CSites
-			? {
-					...DEFAULT_VIEW,
-					filters: [
-						{
-							field: 'is_a8c',
-							operator: 'is',
-							value: false,
-						},
-					],
-			  }
-			: DEFAULT_VIEW
+	const defaultView = useMemo(
+		() =>
+			hasA8CSites
+				? {
+						...DEFAULT_VIEW,
+						filters: [
+							{
+								field: 'is_a8c',
+								operator: 'is' as Operator,
+								value: false,
+							},
+						],
+				  }
+				: DEFAULT_VIEW,
+		[ hasA8CSites ]
+	);
+	const search: Partial< ViewTable | ViewGrid > | undefined = sitesRoute.useSearch().view;
+	const view = useMemo(
+		() => ( {
+			...defaultView,
+			...DEFAULT_LAYOUTS[ search?.type ?? DEFAULT_VIEW.type ],
+			...( search
+				? Object.fromEntries( Object.entries( search ).filter( ( [ , v ] ) => v !== undefined ) )
+				: {} ),
+		} ),
+		[ defaultView, search ]
 	);
 	const fields = useMemo(
 		() =>
@@ -219,7 +234,21 @@ export default function Sites() {
 						fields={ fields }
 						actions={ actions }
 						view={ view }
-						onChangeView={ setView }
+						onChangeView={ ( view ) => {
+							if ( view.type === 'list' ) {
+								return;
+							}
+							const _defaultView = { ...defaultView, ...DEFAULT_LAYOUTS[ view.type ] };
+							navigate( {
+								search: {
+									view: Object.fromEntries(
+										Object.entries( view ).filter( ( [ key, value ] ) => {
+											return value !== _defaultView[ key as keyof typeof _defaultView ];
+										} )
+									),
+								},
+							} );
+						} }
 						onClickItem={ onClickItem }
 						defaultLayouts={ DEFAULT_LAYOUTS }
 						paginationInfo={ paginationInfo }

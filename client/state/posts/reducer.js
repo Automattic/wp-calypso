@@ -15,7 +15,6 @@ import {
 import PostQueryManager from 'calypso/lib/query-manager/post';
 import withQueryManager from 'calypso/lib/query-manager/with-query-manager';
 import {
-	EDITOR_START,
 	EDITOR_STOP,
 	POST_DELETE,
 	POST_DELETE_SUCCESS,
@@ -37,7 +36,6 @@ import { getFeaturedImageId } from 'calypso/state/posts/utils';
 import { combineReducers, withSchemaValidation, withPersistence } from 'calypso/state/utils';
 import counts from './counts/reducer';
 import likes from './likes/reducer';
-import revisions from './revisions/reducer';
 import { itemsSchema, queriesSchema, allSitesQueriesSchema } from './schema';
 import {
 	appendToPostEditsLog,
@@ -417,14 +415,6 @@ export function edits( state = {}, action ) {
 			};
 		}
 
-		case EDITOR_START:
-			return Object.assign( {}, state, {
-				[ action.siteId ]: {
-					...state[ action.siteId ],
-					[ action.postId || '' ]: null,
-				},
-			} );
-
 		case EDITOR_STOP:
 			if ( ! state.hasOwnProperty( action.siteId ) ) {
 				break;
@@ -469,5 +459,4 @@ export default combineReducers( {
 	allSitesQueries,
 	edits,
 	likes,
-	revisions,
 } );

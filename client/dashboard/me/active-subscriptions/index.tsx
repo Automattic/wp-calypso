@@ -3,7 +3,7 @@ import PageLayout from '../../components/page-layout';
 
 export default function ActiveSubscriptions() {
 	return (
-		<PageLayout title={ __( 'Active Subscriptions' ) }>
+		<PageLayout title={ __( 'Active Subscriptions' ) } size="small">
 			<div>Active subscriptions content will go here</div>
 		</PageLayout>
 	);

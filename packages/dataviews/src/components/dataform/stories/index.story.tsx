@@ -2,7 +2,6 @@
  * WordPress dependencies
  */
 import { useMemo, useState } from '@wordpress/element';
-import { ToggleControl } from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -106,20 +105,7 @@ const fields = [
 	{
 		id: 'sticky',
 		label: 'Sticky',
-		type: 'integer',
-		Edit: ( { field, onChange, data, hideLabelFromVision } ) => {
-			const { id, getValue } = field;
-			return (
-				<ToggleControl
-					__nextHasNoMarginBottom
-					label={ hideLabelFromVision ? '' : field.label }
-					checked={ getValue( { item: data } ) }
-					onChange={ () =>
-						onChange( { [ id ]: ! getValue( { item: data } ) } )
-					}
-				/>
-			);
-		},
+		type: 'boolean',
 	},
 ] as Field< SamplePost >[];
 
@@ -148,11 +134,7 @@ export const Default = ( {
 			fields: [
 				'title',
 				'order',
-				{
-					id: 'sticky',
-					layout: 'regular',
-					labelPosition: 'side',
-				},
+				'sticky',
 				'author',
 				'reviewer',
 				'password',

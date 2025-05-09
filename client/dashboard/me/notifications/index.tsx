@@ -6,6 +6,7 @@ function Notifications() {
 		<PageLayout
 			title={ __( 'Notifications' ) }
 			description={ __( 'Manage your notification settings.' ) }
+			size="small"
 		/>
 	);
 }

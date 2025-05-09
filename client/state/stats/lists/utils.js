@@ -529,6 +529,38 @@ export const normalizers = {
 		return { total_wpcom, total_email, total, subscribers };
 	},
 
+	statsUTM( originalData ) {
+		if ( ! Array.isArray( originalData ) ) {
+			return [];
+		}
+
+		const newData = [];
+
+		// Flatten the data into a shallow array.
+		originalData.forEach( ( row ) => {
+			newData.push( row );
+			const children = row?.children;
+			if ( children ) {
+				const newChildren = children.map( ( child ) => {
+					return { ...child, context: row.label };
+				} );
+				newData.push( ...newChildren );
+			}
+		} );
+
+		return newData.map( ( row ) => {
+			// Label should include parent context if present.
+			// ie: "parent label > child label" -- including surrounding quotes.
+			let label = row?.context ? `${ row.context } > ${ row.label }` : row.label;
+			label = label.replace( /"/g, '""' ); // Escape double quotes
+
+			return {
+				label,
+				value: row.value,
+			};
+		} );
+	},
+
 	statsCommentFollowers( data ) {
 		if ( ! data ) {
 			return null;

@@ -1,7 +1,12 @@
 /**
  * Internal dependencies
  */
-import type { SortDirection, ValidationContext } from '../types';
+import type {
+	DataViewRenderFieldProps,
+	SortDirection,
+	ValidationContext,
+} from '../types';
+import { renderFromElements } from '../utils';
 
 function sort( valueA: any, valueB: any, direction: SortDirection ) {
 	return direction === 'asc'
@@ -24,4 +29,9 @@ export default {
 	sort,
 	isValid,
 	Edit: 'text',
+	render: ( { item, field }: DataViewRenderFieldProps< any > ) => {
+		return field.elements
+			? renderFromElements( { item, field } )
+			: field.getValue( { item } );
+	},
 };

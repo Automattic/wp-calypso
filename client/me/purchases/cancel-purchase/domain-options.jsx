@@ -3,50 +3,14 @@ import { CompactCard, FormLabel } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { UPDATE_NAMESERVERS } from '@automattic/urls';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormRadio from 'calypso/components/forms/form-radio';
 import { getName, isRefundable, isSubscription } from 'calypso/lib/purchases';
 
-const CancelPurchaseDomainOptions = ( {
-	includedDomainPurchase,
-	includedDomainTransfer,
-	cancelBundledDomain,
-	confirmCancelBundledDomain = false,
-	purchase,
-	onCancelConfirmationStateChange,
-} ) => {
+const NonRefundableDomainMappingMessage = ( { includedDomainPurchase } ) => {
 	const translate = useTranslate();
-	const [ confirmCancel, setConfirmCancel ] = useState( confirmCancelBundledDomain );
-
-	useEffect( () => {
-		setConfirmCancel( confirmCancelBundledDomain );
-	}, [ confirmCancelBundledDomain ] );
-
-	if ( ( ! includedDomainPurchase && ! includedDomainTransfer ) || ! isSubscription( purchase ) ) {
-		return null;
-	}
-
-	const onCancelBundledDomainChange = ( event ) => {
-		const newCancelBundledDomainValue = event.currentTarget.value === 'cancel';
-		onCancelConfirmationStateChange( {
-			cancelBundledDomain: newCancelBundledDomainValue,
-			confirmCancelBundledDomain: newCancelBundledDomainValue && confirmCancel,
-		} );
-	};
-
-	const onConfirmCancelBundledDomainChange = ( event ) => {
-		const checked = event.target.checked;
-		setConfirmCancel( checked );
-		onCancelConfirmationStateChange( {
-			cancelBundledDomain,
-			confirmCancelBundledDomain: checked,
-		} );
-	};
-
-	const planCostText = purchase.totalRefundText;
-
-	const NonRefundableDomainMappingMessage = () => (
+	return (
 		<div>
 			<p>
 				{ translate(
@@ -61,8 +25,11 @@ const CancelPurchaseDomainOptions = ( {
 			</p>
 		</div>
 	);
+};
 
-	const CancelableDomainMappingMessage = () => (
+const CancelableDomainMappingMessage = ( { includedDomainPurchase, purchase } ) => {
+	const translate = useTranslate();
+	return (
 		<div>
 			<p>
 				{ translate(
@@ -99,25 +66,29 @@ const CancelPurchaseDomainOptions = ( {
 			</p>
 		</div>
 	);
+};
 
-	const NonRefundableDomainPurchaseMessage = () => (
+const NonRefundableDomainPurchaseMessage = ( { includedDomainPurchase } ) => {
+	const translate = useTranslate();
+	return (
 		<div>
 			<p>
 				{ translate(
-					'This plan includes the custom domain, %(domain)s, normally a %(domainCost)s purchase. ' +
-						'The domain will not be removed along with the plan, to avoid any interruptions for your visitors.',
+					'This plan includes the custom domain, %(domain)s. The domain will not be removed along with the plan, to avoid any interruptions for your visitors.',
 					{
 						args: {
 							domain: includedDomainPurchase.meta,
-							domainCost: includedDomainPurchase.priceText,
 						},
 					}
 				) }
 			</p>
 		</div>
 	);
+};
 
-	const DomainTransferMessage = () => (
+const DomainTransferMessage = ( { includedDomainTransfer, planCostText, purchase } ) => {
+	const translate = useTranslate();
+	return (
 		<div>
 			<p>
 				{ translate(
@@ -146,17 +117,22 @@ const CancelPurchaseDomainOptions = ( {
 			</p>
 		</div>
 	);
+};
 
-	const RefundablePurchaseWithNonRefundableDomainMessage = () => (
+const RefundablePurchaseWithNonRefundableDomainMessage = ( {
+	includedDomainPurchase,
+	planCostText,
+	purchase,
+} ) => {
+	const translate = useTranslate();
+	return (
 		<div>
 			<p>
 				{ translate(
-					'This plan includes the custom domain, %(domain)s, normally a %(domainCost)s purchase. ' +
-						'The domain will not be removed along with the plan, to avoid any interruptions for your visitors.',
+					'This plan includes the custom domain, %(domain)s. The domain will not be removed along with the plan, to avoid any interruptions for your visitors.',
 					{
 						args: {
 							domain: includedDomainPurchase.meta,
-							domainCost: includedDomainPurchase.priceText,
 						},
 					}
 				) }
@@ -167,7 +143,7 @@ const CancelPurchaseDomainOptions = ( {
 						'minus %(domainCost)s for the domain.',
 					{
 						args: {
-							domainCost: includedDomainPurchase.priceText,
+							domainCost: includedDomainPurchase.costToUnbundleText,
 							planCost: planCostText,
 							refundAmount: purchase.refundText,
 						},
@@ -176,9 +152,55 @@ const CancelPurchaseDomainOptions = ( {
 			</p>
 		</div>
 	);
+};
+
+const CancelPurchaseDomainOptions = ( {
+	includedDomainPurchase,
+	includedDomainTransfer,
+	cancelBundledDomain,
+	purchase,
+	onCancelConfirmationStateChange,
+} ) => {
+	const translate = useTranslate();
+	const [ confirmCancel, setConfirmCancel ] = useState( false );
+
+	const planCostText = purchase.totalRefundText;
+
+	const onCancelBundledDomainChange = useCallback(
+		( event ) => {
+			const newCancelBundledDomainValue = event.currentTarget.value === 'cancel';
+			onCancelConfirmationStateChange( {
+				cancelBundledDomain: newCancelBundledDomainValue,
+				confirmCancelBundledDomain: newCancelBundledDomainValue && confirmCancel,
+			} );
+		},
+		[ confirmCancel, onCancelConfirmationStateChange ]
+	);
+
+	const onConfirmCancelBundledDomainChange = useCallback(
+		( event ) => {
+			const checked = event.target.checked;
+			setConfirmCancel( checked );
+			onCancelConfirmationStateChange( {
+				cancelBundledDomain,
+				confirmCancelBundledDomain: checked,
+			} );
+		},
+		[ cancelBundledDomain, onCancelConfirmationStateChange ]
+	);
+
+	if ( ( ! includedDomainPurchase && ! includedDomainTransfer ) || ! isSubscription( purchase ) ) {
+		return null;
+	}
 
 	if ( includedDomainTransfer ) {
-		return <DomainTransferMessage />;
+		return (
+			<DomainTransferMessage
+				includedDomainTransfer={ includedDomainTransfer }
+				purchase={ purchase }
+				planCostText={ planCostText }
+			/>
+		);
 	}
 
 	if (
@@ -191,19 +213,32 @@ const CancelPurchaseDomainOptions = ( {
 	// Domain mapping.
 	if ( isDomainMapping( includedDomainPurchase ) ) {
 		if ( ! isRefundable( purchase ) ) {
-			return <NonRefundableDomainMappingMessage />;
+			return (
+				<NonRefundableDomainMappingMessage includedDomainPurchase={ includedDomainPurchase } />
+			);
 		}
 
-		return <CancelableDomainMappingMessage />;
+		return (
+			<CancelableDomainMappingMessage
+				includedDomainPurchase={ includedDomainPurchase }
+				purchase={ purchase }
+			/>
+		);
 	}
 
 	// Domain registration.
 	if ( ! isRefundable( purchase ) ) {
-		return <NonRefundableDomainPurchaseMessage />;
+		return <NonRefundableDomainPurchaseMessage includedDomainPurchase={ includedDomainPurchase } />;
 	}
 
 	if ( isRefundable( purchase ) && ! isRefundable( includedDomainPurchase ) ) {
-		return <RefundablePurchaseWithNonRefundableDomainMessage />;
+		return (
+			<RefundablePurchaseWithNonRefundableDomainMessage
+				includedDomainPurchase={ includedDomainPurchase }
+				purchase={ purchase }
+				planCostText={ planCostText }
+			/>
+		);
 	}
 
 	return (

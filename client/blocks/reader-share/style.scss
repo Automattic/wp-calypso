@@ -163,11 +163,21 @@
 }
 
 .reader-popover.reader-share__popover {
+	// Since this is in popover context, it won't inherit variable overrides from the global sidebar
+	// or main reader frame. We set them here, otherwise they inherit the dark theme values used for
+	// the global masterbar.
+	--color-sidebar-submenu-background: var(--studio-gray-0);
+	--color-sidebar-text: var(--studio-gray-80);
 	min-width: 240px;
 
 	.site-selector {
 		height: auto;
 		max-height: 220px;
+		// The long-content-fade mixin applied further below fades to --color-surface, but for
+		// the highlighted item we need to ensure that matches the background.
+		.site.is-highlighted {
+			--color-surface: var(--color-sidebar-submenu-background);
+		}
 	}
 
 	&.is-top .popover__arrow::before,
@@ -198,6 +208,5 @@
 .reader-share__site-selector .site__domain {
 	&::after {
 		@include long-content-fade();
-		border-radius: 50%;
 	}
 }
