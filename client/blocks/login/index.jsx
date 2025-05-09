@@ -657,7 +657,7 @@ class Login extends Component {
 						initialQuery={ initialQuery }
 						partnerSlug={ partnerSlug }
 						getSignupLinkComponent={ this.getSignupLinkComponent }
-						showContinueAsUser={ this.showContinueAsUser }
+						showContinueAsUser={ this.showContinueAsUser() }
 					/>
 				) }
 

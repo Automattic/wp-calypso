@@ -551,7 +551,6 @@ export class Login extends Component {
 			isWCCOM,
 			isFromAutomatticForAgenciesPlugin,
 			currentQuery,
-			showContinueAsUser,
 			wccomFrom,
 			twoFactorEnabled,
 		} = this.props;
@@ -646,7 +645,6 @@ export class Login extends Component {
 			wccomFrom,
 			twoFactorEnabled,
 			currentQuery,
-			showContinueAsUser,
 			translate
 		);
 

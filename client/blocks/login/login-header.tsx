@@ -48,7 +48,7 @@ interface LoginHeaderProps {
 	twoFactorEnabled: boolean;
 	initialQuery: { 'client-id': string; redirect_to: string } | null;
 	getSignupLinkComponent: () => JSX.Element;
-	showContinueAsUser: () => boolean;
+	showContinueAsUser: boolean;
 }
 
 export function getHeaderText(
@@ -70,8 +70,8 @@ export function getHeaderText(
 	wccomFrom: string,
 	twoFactorEnabled: boolean,
 	currentQuery: Record< string, string >,
-	showContinueAsUser: () => boolean,
 	translate: ( arg0: string, arg1?: object ) => TranslateResult,
+	showContinueAsUser: boolean = false,
 	twoStepNonce: string | null = null
 ): TranslateResult {
 	let headerText = translate( 'Log in to your account' );
@@ -122,7 +122,7 @@ export function getHeaderText(
 				headerText = translate( 'Authenticate your login' );
 			} else if ( currentQuery.lostpassword_flow ) {
 				headerText = translate( 'Log in to your account' );
-			} else if ( showContinueAsUser() ) {
+			} else if ( showContinueAsUser ) {
 				headerText = (
 					<>
 						{ wccomFrom === 'nux'
@@ -266,8 +266,8 @@ export function LoginHeader( {
 		wccomFrom,
 		twoFactorEnabled,
 		currentQuery,
-		showContinueAsUser,
 		translate,
+		showContinueAsUser,
 		twoStepNonce
 	);
 
@@ -326,7 +326,7 @@ export function LoginHeader( {
 						) }
 					</p>
 				);
-			} else if ( showContinueAsUser() ) {
+			} else if ( showContinueAsUser ) {
 				header = <h3>{ headerText }</h3>;
 				postHeader = (
 					<p className="login__header-subtitle">
@@ -434,7 +434,7 @@ export function LoginHeader( {
 				</p>
 			);
 
-			if ( showContinueAsUser() ) {
+			if ( showContinueAsUser ) {
 				postHeader = (
 					<p className="login__header-subtitle">
 						{ translate( 'Select the account you’d like to use' ) }
