@@ -1,5 +1,5 @@
-import { Button } from '@automattic/components';
-import { Icon, check, copy } from '@wordpress/icons';
+import { Button } from '@wordpress/components';
+import { check, copy } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import FormButton from 'calypso/components/forms/form-button';
@@ -43,12 +43,15 @@ export default function NewAppPassword( { appName, newAppPassword, onClickDone }
 
 	return (
 		<div className="application-passwords__new-password">
-			<p className="application-passwords__new-password-display">
-				<>{ newAppPassword }</>
-				<Button compact onClick={ copyToClipboard }>
-					<Icon icon={ 'success' === copyStatus ? check : copy } />
-				</Button>
-			</p>
+			<div className="application-passwords__new-password-display">
+				<div className="application-passwords__new-password-content">{ newAppPassword }</div>
+				<Button
+					className="application-passwords__new-password-copy"
+					icon={ 'success' === copyStatus ? check : copy }
+					label={ 'success' === copyStatus ? translate( 'Copied!' ) : translate( 'Copy' ) }
+					onClick={ copyToClipboard }
+				/>
+			</div>
 
 			<p className="application-passwords__new-password-help">
 				{ translate(
