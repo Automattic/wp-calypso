@@ -2,7 +2,7 @@ import { useExperiment, loadExperimentAssignment } from 'calypso/lib/explat';
 import { useIsPlaygroundEligible, isPlaygroundEligible } from './use-is-playground-eligible';
 import { useQuery } from './use-query';
 
-const HOSTING_ONBOARDING_EXPERIMENT_NAME = 'calypso_signup_onboarding_simplified_hosting_flow_v2';
+const HOSTING_ONBOARDING_EXPERIMENT_NAME = 'calypso_signup_onboarding_simplified_hosting_flow_v3';
 
 export function useMvpOnboardingExperiment() {
 	const isPlaygroundEligible = useIsPlaygroundEligible();
