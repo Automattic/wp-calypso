@@ -690,7 +690,7 @@ __metadata:
     "@storybook/addon-themes": "npm:^8.6.12"
     "@storybook/addon-toolbars": "npm:^8.6.12"
     "@storybook/addon-viewport": "npm:^8.6.12"
-    "@storybook/addon-webpack5-compiler-babel": "npm:^3.0.5"
+    "@storybook/addon-webpack5-compiler-babel": "npm:^3.0.6"
     "@storybook/react-webpack5": "npm:^8.6.12"
     "@storybook/test": "npm:^8.6.12"
     css-loader: "npm:^6.11.0"
@@ -8071,13 +8071,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@storybook/addon-webpack5-compiler-babel@npm:^3.0.5":
-  version: 3.0.5
-  resolution: "@storybook/addon-webpack5-compiler-babel@npm:3.0.5"
+"@storybook/addon-webpack5-compiler-babel@npm:^3.0.6":
+  version: 3.0.6
+  resolution: "@storybook/addon-webpack5-compiler-babel@npm:3.0.6"
   dependencies:
     "@babel/core": "npm:^7.26.0"
     babel-loader: "npm:^9.2.1"
-  checksum: 84c0a90ae4143694e4426f056f75392cb47d398ac6e673dfec626b2d0a49c5e0ef8892beda1cc12a283baa4864e439dadf48b147ca513d0dc7a57b62c504dc1b
+  checksum: c423fbc7290a4d3961f4e4a13b2832b3762f120414fd7cfd06fe0d8ccf9e66328a21af135054ff5dbf2e08faefe4492fbc44c2ae7731911c164f185358b84e0a
   languageName: node
   linkType: hard
 
