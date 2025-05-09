@@ -1,0 +1,144 @@
+$breakpoint-mobile: 782px; //Mobile size.
+$breakpoint-tablet: 1224px; //Large tablet size.
+$breakpoint-desktop: 1440px; //Desktop size.
+
+.happy-blocks-search-card {
+	position: relative;
+	z-index: 1;
+
+	&::before {
+		content: "";
+		position: absolute;
+		inset: 0;
+		z-index: -1;
+
+		opacity: 0.6;
+
+		background:
+			linear-gradient(90deg, #F7F8FE 31.63%, rgba(247, 248, 254, 0.00) 100%),
+			linear-gradient(0deg, #F7F8FE 0%, rgba(247, 248, 254, 0.00) 100%),
+			url(./assets/pattern.png) #D3D3D3 0 0 / 23px 23px repeat;
+		pointer-events: none;
+	}
+
+	flex-shrink: 0;
+	padding: 16px 24px;
+
+	.navigation {
+		display: flex;
+		align-items: center;
+		gap: 16px;
+		list-style: none;
+		margin: 0;
+		padding: 0;
+
+		li {
+			&.active {
+				color: #000;
+				font-weight: 600;
+			}
+			overflow: hidden;
+			color: #50575E;
+			text-align: justify;
+			text-overflow: ellipsis;
+			font-size: 13px;
+			font-style: normal;
+			font-weight: 400;
+			line-height: 20px;
+
+			&.separator::before {
+				content: "|";
+				stroke: #ccc;
+			}
+		}
+	}
+
+	div.content {
+		max-width: 1260px;
+		margin-left: auto;
+		margin-right: auto;
+
+		@media ( max-width: $breakpoint-mobile ) {
+			margin-left: 0;
+		}
+
+		h2 {
+			margin-top: 54px;
+			margin-bottom: 24px;
+
+			font-size: 50px;
+			font-style: normal;
+			font-weight: 400;
+			line-height: 1.2;
+		}
+
+		.input-wrapper {
+			width: 570px;
+			position: relative;
+			direction: inherit;
+
+			@media ( max-width: $breakpoint-mobile ) {
+				width: 100%;
+			}
+
+		}
+
+		.input-wrapper input {
+			height: 62px;
+			width: 100%;
+			padding-inline-start: 24px;
+			padding-inline-end: 52px;
+			border-radius: 4px;
+			border: none;
+			box-shadow: 0 0 4px 0 rgba(56, 88, 233, 0.12);
+			font-size: 16px;
+		}
+
+		.input-wrapper .search-icon {
+			position: absolute;
+			inset-block-start: 50%;
+			transform: translateY(-50%);
+			inset-inline-end: 20px;
+			pointer-events: none;
+		}
+
+		.search-terms {
+			margin-top: 16px;
+			margin-bottom: 88px;
+
+			display: flex;
+			align-items: flex-start;
+			gap: 16px;
+			list-style: none;
+			padding: 0;
+
+			overflow-x: auto;
+			white-space: nowrap;
+
+			scrollbar-width: none;
+			&::-webkit-scrollbar {
+				display: none;
+			}
+
+
+			li {
+				box-sizing: border-box;
+				border-radius: 4px;
+				background: #EDF1FF;
+				height: 32px;
+				padding: 14px;
+				flex-direction: column;
+				justify-content: center;
+				display: flex;
+
+				a {
+					color: #2C3338;
+					font-size: 12px;
+					font-style: normal;
+					font-weight: 400;
+					line-height: 20px;
+				}
+			}
+		}
+	}
+}
