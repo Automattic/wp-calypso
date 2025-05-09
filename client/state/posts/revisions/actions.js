@@ -1,4 +1,4 @@
-import { POST_REVISIONS_RECEIVE, POST_REVISIONS_SELECT } from 'calypso/state/action-types';
+import { POST_REVISIONS_RECEIVE } from 'calypso/state/action-types';
 
 import 'calypso/state/data-layer/wpcom/posts/revisions';
 
@@ -14,9 +14,4 @@ export const receivePostRevisions = ( { diffs, postId, revisions, revision_field
 	revisions,
 	revision_fields,
 	siteId,
-} );
-
-export const selectPostRevision = ( revisionId ) => ( {
-	type: POST_REVISIONS_SELECT,
-	revisionId,
 } );
