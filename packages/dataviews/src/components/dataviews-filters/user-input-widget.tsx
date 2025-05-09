@@ -24,66 +24,46 @@ interface SingleInputSummaryProps {
 	view: View;
 	filter: NormalizedFilter;
 	onChangeView: ( view: View ) => void;
-	currentFilter: Filter;
+	activeFilter: Filter;
 }
 
 interface CreateNewFiltersArgs {
 	view: { filters?: Filter[] };
 	filter: NormalizedFilter;
-	currentFilter: Filter | undefined;
-	value: any;
-	valueGetter?: (
-		filter: NormalizedFilter,
-		currentFilter: Filter | undefined,
-		value: any
-	) => any;
+	activeFilter: Filter;
+	value: string;
 }
 
 /**
  * Updates or adds a filter in the view's filters array.
  * If currentFilter exists, updates its value and operator; otherwise, adds a new filter.
- * Optionally transforms the value using valueGetter.
  */
 function applyFilterChange( {
 	view,
 	filter,
-	currentFilter,
+	activeFilter,
 	value,
-	valueGetter = ( _filter, _currentFilter, val ) => val,
 }: CreateNewFiltersArgs ) {
-	const processedValue =
-		valueGetter( filter, currentFilter, value ) || undefined;
+	const newValue = value === '' ? undefined : Number( value );
 
-	if ( currentFilter ) {
-		return ( view.filters ?? [] ).map( ( _filter ) =>
-			_filter.field === filter.field
-				? {
-						..._filter,
-						operator:
-							currentFilter.operator || filter.operators[ 0 ],
-						value: processedValue,
-				  }
-				: _filter
-		);
-	}
-
-	return [
-		...( view.filters ?? [] ),
-		{
-			field: filter.field,
-			operator: filter.operators[ 0 ],
-			value: processedValue,
-		},
-	];
+	return ( view.filters ?? [] ).map( ( _filter ) =>
+		_filter.field === filter.field
+			? {
+					..._filter,
+					operator: activeFilter.operator || filter.operators[ 0 ],
+					value: newValue,
+			  }
+			: _filter
+	);
 }
 
 function SingleInputSummary( {
 	view,
 	filter,
 	onChangeView,
-	currentFilter,
+	activeFilter,
 }: SingleInputSummaryProps ) {
-	const currentValue = currentFilter.value;
+	const currentValue = activeFilter.value;
 	const [ value, setValue, debouncedValue ] =
 		useDebouncedInput( currentValue );
 
@@ -95,7 +75,7 @@ function SingleInputSummary( {
 		const newFilters = applyFilterChange( {
 			view,
 			filter,
-			currentFilter,
+			activeFilter,
 			value: debouncedValue,
 		} );
 
@@ -128,27 +108,21 @@ export default function UserInputWidget( {
 	const activeFilter = view.filters?.find(
 		( f ) => f.field === filter.field
 	);
+	if (
+		! activeFilter ||
+		! singleSelectionOperators.includes( activeFilter.operator )
+	) {
+		return null;
+	}
 
 	return (
 		<div className="dataviews-filters__user-input-widget">
-			{ ( () => {
-				if (
-					activeFilter &&
-					singleSelectionOperators.includes( activeFilter.operator )
-				) {
-					return (
-						<SingleInputSummary
-							view={ view }
-							filter={ filter }
-							currentFilter={ activeFilter }
-							onChangeView={ onChangeView }
-						/>
-					);
-				}
-
-				// TODO: Implement the rest of the filter types.
-				return null;
-			} )() }
+			<SingleInputSummary
+				view={ view }
+				filter={ filter }
+				activeFilter={ activeFilter }
+				onChangeView={ onChangeView }
+			/>
 		</div>
 	);
 }
