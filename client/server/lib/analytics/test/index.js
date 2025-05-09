@@ -1,4 +1,3 @@
-import UserAgent from 'express-useragent';
 import superagent from 'superagent';
 import analytics from '../index';
 
@@ -27,12 +26,11 @@ describe( 'Server-Side Analytics', () => {
 						return 'test';
 					case 'x-forwarded-for':
 						return '1.1.1.1';
+					case 'user-agent':
+						return 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:93.0) Gecko/20100101 Firefox/93.0';
 				}
 				throw 'no ' + header;
 			},
-			useragent: UserAgent.parse(
-				'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:93.0) Gecko/20100101 Firefox/93.0'
-			),
 		};
 
 		test( 'sends an HTTP request to the tracks URL', () => {

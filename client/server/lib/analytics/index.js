@@ -76,7 +76,7 @@ const analytics = {
 				_dl: req.get( 'Referer' ),
 				_lg: acceptLanguageHeader.split( ',' )[ 0 ],
 				_via_ip: req.get( 'x-forwarded-for' ) || req.connection.remoteAddress,
-				_via_ua: req.useragent.source,
+				_via_ua: req.get( 'user-agent' ),
 				...getUserFromRequest( req ),
 				...eventProperties,
 			} );
