@@ -47,14 +47,6 @@ const Cart = styled.div`
 		width: 100%;
 		border-top: 1px solid var( --studio-gray-5 );
 	}
-	.page-picker__disclaimer {
-		color: var( --studio-gray-50 );
-		font-size: 12px;
-
-		@media ( max-width: 600px ) {
-			padding: 5px 0;
-		}
-	}
 `;
 const DummyLineItemContainer = styled.div`
 	display: flex;
@@ -212,7 +204,7 @@ export default function ShoppingCartForDIFM( {
 
 					<Total>
 						<div>{ translate( 'Subtotal' ) }</div>
-						<div className="page-picker__value">{ total }*</div>
+						<div className="page-picker__value">{ total }</div>
 						<RefundText>
 							<StyledBraveTickIcon />
 							{ translate( '%(days)d-day money-back guarantee', {
@@ -221,9 +213,6 @@ export default function ShoppingCartForDIFM( {
 						</RefundText>
 					</Total>
 				</LineItemsWrapper>
-				<div className="page-picker__disclaimer">
-					{ translate( '*Final price will be calculated at checkout.' ) }
-				</div>
 			</Cart>
 		</CartContainer>
 	);
