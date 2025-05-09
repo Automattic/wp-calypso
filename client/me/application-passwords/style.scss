@@ -1,3 +1,6 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
 .application-passwords {
 	margin-bottom: 16px;
 }
@@ -31,7 +34,7 @@
 	background: var(--color-neutral-0);
 	border: 1px solid var(--color-border-subtle);
 	display: flex;
-	font-size: 200%;
+	font-size: 150%;
 	font-weight: 600;
 	justify-content: space-between;
 	letter-spacing: 2px;
@@ -39,6 +42,10 @@
 	padding: 5px;
 	text-align: center;
 	max-width: 70%;
+
+	@include break-mobile {
+		font-size: 200%;
+	}
 
 	.application-passwords__new-password-content {
 		flex-grow: 1;

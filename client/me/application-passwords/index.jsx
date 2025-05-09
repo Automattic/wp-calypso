@@ -1,5 +1,6 @@
 import { Button, CompactCard, Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
@@ -21,6 +22,8 @@ function ApplicationPasswords() {
 
 	const [ applicationName, setApplicationName ] = useState( '' );
 	const [ showAddPasswordForm, setShowAddPasswordForm ] = useState( false );
+
+	const isMobile = useMobileBreakpoint();
 
 	const { data: appPasswords } = useAppPasswordsQuery();
 	const {
@@ -61,7 +64,9 @@ function ApplicationPasswords() {
 						{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
 						<Gridicon icon="plus-small" size={ 16 } />
 						{ /* eslint-enable wpcalypso/jsx-gridicon-size */ }
-						{ translate( 'Add new application password' ) }
+						{ isMobile
+							? translate( 'Add New', { context: 'application password' } )
+							: translate( 'Add new application password' ) }
 					</Button>
 				) }
 			</SectionHeader>
