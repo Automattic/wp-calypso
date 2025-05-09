@@ -3,7 +3,6 @@ import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { debounce } from 'lodash';
 import { createRef } from 'react';
-import titlecase from 'to-title-case';
 import StickyPanel from 'calypso/components/sticky-panel';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
@@ -37,7 +36,7 @@ const TagsColumn = ( props: TagsColProps ) => {
 	return (
 		<div key={ props.slug }>
 			<a href={ path } onClick={ trackTagClick.bind( null, props.slug ) }>
-				<span className="alphabetic-tags__title">{ titlecase( props.title ) }</span>
+				<span className="alphabetic-tags__title">{ props.title }</span>
 			</a>
 		</div>
 	);
