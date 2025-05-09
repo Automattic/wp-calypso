@@ -31,11 +31,11 @@ class CommunityTranslator extends Component {
 		// callback when translated component changes.
 		// the callback is overwritten by the translator on load/unload, so we're returning it within an anonymous function.
 		i18n.registerComponentUpdateHook( () => {} );
-		this.i18nUnsubscribe = i18n.subscribe( this.refresh );
+		i18n.on( 'change', this.refresh );
 	}
 
 	componentWillUnmount() {
-		this.i18nUnsubscribe();
+		i18n.off( 'change', this.refresh );
 	}
 
 	setLanguage() {

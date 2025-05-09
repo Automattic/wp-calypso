@@ -132,8 +132,9 @@ export interface I18N {
 	registerTranslateHook( hook: TranslateHook ): void;
 	registerComponentUpdateHook( hook: ComponentUpdateHook ): void;
 
-	subscribe( callback: () => any ): () => void;
-	emitChange(): void;
+	on( eventName: string, listener: EventListener ): void;
+	off( eventName: string, listener: EventListener ): void;
+	emit( eventName: string, ...payload: any ): void;
 
 	/**
 	 * Returns `newCopy` if given `text` is translated or locale is English, otherwise returns the `oldCopy`.

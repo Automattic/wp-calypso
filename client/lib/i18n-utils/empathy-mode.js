@@ -3,7 +3,7 @@ import i18n, { I18N, translate } from 'i18n-calypso';
 let defaultUntranslatedPlacehoder = translate( "I don't understand" );
 
 // keep `defaultUntranslatedPlacehoder` in sync with i18n changes
-i18n.subscribe( () => {
+i18n.on( 'change', () => {
 	defaultUntranslatedPlacehoder = translate( "I don't understand" );
 } );
 

@@ -59,12 +59,12 @@ class TranslatorLauncher extends Component {
 	highlightRef = createRef();
 
 	componentDidMount() {
-		this.i18nUnsubscribe = i18n.subscribe( this.onI18nChange );
+		i18n.on( 'change', this.onI18nChange );
 		window.addEventListener( 'keydown', this.handleKeyDown );
 	}
 
 	componentWillUnmount() {
-		this.i18nUnsubscribe();
+		i18n.off( 'change', this.onI18nChange );
 		window.removeEventListener( 'keydown', this.handleKeyDown );
 	}
 

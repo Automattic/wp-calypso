@@ -13,7 +13,8 @@ export default function useTranslate() {
 
 	useEffect( () => {
 		const onChange = () => setCounter( ( c ) => c + 1 );
-		return i18n.subscribe( onChange );
+		i18n.on( 'change', onChange );
+		return () => i18n.off( 'change', onChange );
 	}, [ i18n ] );
 
 	return useMemo( () => bindTranslate( i18n, counter ), [ i18n, counter ] );

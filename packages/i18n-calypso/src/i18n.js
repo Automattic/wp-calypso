@@ -1,3 +1,4 @@
+import { EventEmitter } from 'events';
 import interpolateComponents from '@automattic/interpolate-components';
 import sprintf from '@tannin/sprintf';
 import debugFactory from 'debug';
@@ -144,7 +145,11 @@ function I18N() {
 	};
 	this.componentUpdateHooks = [];
 	this.translateHooks = [];
-	this.subscribers = [];
+	this.stateObserver = new EventEmitter();
+	// Because the higher-order component can wrap a ton of React components,
+	// we need to bump the number of listeners to infinity and beyond
+	// FIXME: still valid?
+	this.stateObserver.setMaxListeners( 0 );
 	// default configuration
 	this.configure();
 }
@@ -186,15 +191,16 @@ I18N.prototype.geolocateCurrencySymbol = async function ( callback ) {
 	callback?.( 'string' === typeof geoData?.country_short ? geoData.country_short : '' );
 };
 
-I18N.prototype.subscribe = function ( callback ) {
-	this.subscribers.push( callback );
-	return () => {
-		this.subscribers = this.subscribers.filter( ( c ) => c !== callback );
-	};
+I18N.prototype.on = function ( ...args ) {
+	this.stateObserver.on( ...args );
 };
 
-I18N.prototype.emitChange = function () {
-	this.subscribers.forEach( ( callback ) => callback() );
+I18N.prototype.off = function ( ...args ) {
+	this.stateObserver.off( ...args );
+};
+
+I18N.prototype.emit = function ( ...args ) {
+	this.stateObserver.emit( ...args );
 };
 
 /**
@@ -298,7 +304,7 @@ I18N.prototype.setLocale = function ( localeData ) {
 
 	this.state.tannin = new Tannin( { [ domain_key ]: this.state.locale } );
 
-	this.emitChange();
+	this.stateObserver.emit( 'change' );
 };
 
 I18N.prototype.getLocale = function () {
@@ -341,7 +347,7 @@ I18N.prototype.addTranslations = function ( localeData ) {
 		}
 	}
 
-	this.emitChange();
+	this.stateObserver.emit( 'change' );
 };
 
 /**
@@ -446,7 +452,7 @@ I18N.prototype.translate = function () {
  */
 I18N.prototype.reRenderTranslations = function () {
 	debug( 'Re-rendering all translations due to external request' );
-	this.emitChange();
+	this.stateObserver.emit( 'change' );
 };
 
 I18N.prototype.registerComponentUpdateHook = function ( callback ) {
