@@ -208,7 +208,7 @@ class StatsEmailDetail extends Component {
 		const pathTemplate = `${ traffic.path }/{{ interval }}/${ postId }${ slugPath }`;
 
 		// TODO: Refactor navigationItems to a single object with backLink and title attributes.
-		const navigationItems = this.getNavigationItemsWithTitle( this.getTitle() );
+		const navigationItems = this.getNavigationItemsWithTitle( this.getNavigationTitle() );
 
 		const backLinkProps = {
 			text: navigationItems[ 0 ].label,
