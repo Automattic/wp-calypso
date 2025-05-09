@@ -552,11 +552,12 @@ const siteSetupFlow: Flow = {
 
 					return goToFlow( `site-migration?siteSlug=${ siteSlug }` );
 				case 'importerWix':
+					return goToFlow( `site-migration?siteSlug=${ siteSlug }` );
 				case 'importReady':
 				case 'importReadyNot':
 				case 'importReadyWpcom':
 				case 'importReadyPreview':
-					return goToFlow( `site-migration?siteSlug=${ siteSlug }` );
+					return navigate( `import?siteSlug=${ siteSlug }` );
 
 				case 'options':
 					return navigate( 'goals' );
