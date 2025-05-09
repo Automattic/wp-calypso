@@ -298,6 +298,23 @@ describe( 'I18n', function () {
 			expect( callback1 ).toHaveBeenCalled();
 			expect( callback2 ).toHaveBeenCalled();
 		} );
+
+		it( 'should not call unsubscribed callbacks', () => {
+			const callback1 = jest.fn();
+			const callback2 = jest.fn();
+			const callback3 = jest.fn();
+
+			i18n.subscribe( callback1 );
+			const unsubscribe2 = i18n.subscribe( callback2 );
+			i18n.subscribe( callback3 );
+
+			unsubscribe2();
+			i18n.emitChange();
+
+			expect( callback1 ).toHaveBeenCalled();
+			expect( callback2 ).not.toHaveBeenCalled();
+			expect( callback3 ).toHaveBeenCalled();
+		} );
 	} );
 
 	describe( 'reRenderTranslations()', () => {
