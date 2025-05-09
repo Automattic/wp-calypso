@@ -59,7 +59,7 @@
 		"stream-browserify": "^3.0.0",
 		"terser-webpack-plugin": "^5.3.11",
 		"thread-loader": "^3.0.4",
-		"typescript": "^5.8.2",
+		"typescript": "^5.8.3",
 		"webpack-cli": "^4.10.0",
 		"yargs": "^17.7.2"
 	},
