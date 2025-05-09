@@ -69,17 +69,21 @@ function MembershipSubscriptions({
 	) );
 }
 
+function isDataLoading( {
+	isFetchingUserPurchases,
+	hasLoadedUserPurchasesFromServer,
+}: {
+	hasLoadedUserPurchasesFromServer: boolean;
+	isFetchingUserPurchases: boolean;
+} ) {
+	if ( isFetchingUserPurchases && ! hasLoadedUserPurchasesFromServer ) {
+		return true;
+	}
+}
+
 class PurchasesListDataView extends Component<
 	PurchasesListProps & PurchasesListConnectedProps & WithStoredPaymentMethodsProps & LocalizeProps
 > {
-	isDataLoading() {
-		if ( this.props.isFetchingUserPurchases && ! this.props.hasLoadedUserPurchasesFromServer ) {
-			return true;
-		}
-
-		return ! this.props.sites.length && ! this.props.subscriptions.length;
-	}
-
 	renderConciergeBanner() {
 		const { nextAppointment, availableSessions, isUserBlocked } = this.props;
 		return (
