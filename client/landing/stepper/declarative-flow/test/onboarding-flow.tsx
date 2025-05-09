@@ -22,6 +22,10 @@ jest.mock( '../../hooks/use-marketplace-theme-products', () => ( {
 	} ),
 } ) );
 
+jest.mock( '../../hooks/use-mvp-onboarding-experiment', () => ( {
+	isMvpOnboardingExperiment: () => Promise.resolve( false ),
+} ) );
+
 describe( 'Onboarding Flow', () => {
 	beforeAll( () => {
 		Object.defineProperty( window, 'location', {
@@ -55,7 +59,7 @@ describe( 'Onboarding Flow', () => {
 		it( 'should redirect to home when hasPluginByGoal true and hasExternalTheme false', async () => {
 			const { runUseStepNavigationSubmit } = renderFlow( onboarding );
 
-			runUseStepNavigationSubmit( {
+			await runUseStepNavigationSubmit( {
 				currentStep: STEPS.PROCESSING.slug,
 				dependencies: {
 					hasExternalTheme: false,
@@ -65,13 +69,16 @@ describe( 'Onboarding Flow', () => {
 				},
 			} );
 
+			// Wait for the next tick to allow async operations to complete
+			await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
+
 			expect( window.location.replace ).toHaveBeenCalledWith( '/home/test-site.wordpress.com' );
 		} );
 
 		it( 'should redirect to home when hasExternalTheme true', async () => {
 			const { runUseStepNavigationSubmit } = renderFlow( onboarding );
 
-			runUseStepNavigationSubmit( {
+			await runUseStepNavigationSubmit( {
 				currentStep: STEPS.PROCESSING.slug,
 				dependencies: {
 					hasExternalTheme: true,
@@ -79,6 +86,9 @@ describe( 'Onboarding Flow', () => {
 					processingResult: ProcessingResult.SUCCESS,
 				},
 			} );
+
+			// Wait for the next tick to allow async operations to complete
+			await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
 
 			expect( window.location.replace ).toHaveBeenCalledWith(
 				addQueryArgs( '/setup/site-setup', {
