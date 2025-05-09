@@ -21,11 +21,15 @@
 		}
 
 		&.has-density-low {
-			box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9)) 12%, transparent);
+			&:not(:focus-visible) {
+				box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9)) 12%, transparent);
+			}
 		}
 
 		&.has-density-medium {
-			box-shadow: 0 2px 1px -1px color-mix(in srgb, var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9)) 12%, transparent);
+			&:not(:focus-visible) {
+				box-shadow: 0 2px 1px -1px color-mix(in srgb, var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9)) 12%, transparent);
+			}
 		}
 	}
 
@@ -69,12 +73,19 @@
 		padding: 12px;
 		box-shadow: 0 2px 1px -1px $gray-100;
 
+		// TODO: this should be handled better in `SummaryButtonList` component.
+		// @see: https://github.com/Automattic/wp-calypso/pull/103233#issuecomment-2862541935
+		&:focus-visible {
+			/* stylelint-disable-next-line scales/radii */
+			border-radius: 7px;
+		}
+
 		.summary-button-title {
 			@include body-medium;
 		}
 	}
 
-	&:focus {
-		box-shadow: 0 0 0 1.5px var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9));
+	&:focus-visible {
+		@include button-style__focus();
 	}
 }
