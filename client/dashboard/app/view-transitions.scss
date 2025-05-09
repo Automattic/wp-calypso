@@ -70,7 +70,8 @@ main .dashboard-page-layout > div:last-child {
 ::view-transition-new(main-content) {
 	// Never expand the main content horizontally, but allow it to shrink.
 	width: auto;
-	max-width: 100%;
+    // Also disable shrinking. Leaving it commented out to test.
+	// max-width: 100%;
 	height: auto;
 }
 
