@@ -235,7 +235,9 @@ export const QuickLinks = ( {
 						<>
 							<ActionBox
 								hideLinkIndicator
-								gridicon="plans"
+								iconComponent={
+									<JetpackLogo monochrome className="quick-links__action-box-icon" />
+								}
 								label={ translate( 'Create a logo with Jetpack AI' ) }
 								onClick={ () => setIsAILogoGeneratorOpen( true ) }
 							/>
