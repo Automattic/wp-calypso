@@ -19,7 +19,6 @@ const CartContainer = styled.div`
 		align-items: center;
 		justify-content: center;
 	}
-	margin-bottom: 48px;
 `;
 
 const LoadingContainer = styled.div`
@@ -101,7 +100,6 @@ const LineItemsWrapper = styled.div`
 	max-height: 75vh;
 	width: 100%;
 	max-width: 365px;
-	border-bottom: 1px solid var( --studio-gray-5 );
 	@media ( max-width: 600px ) {
 		margin: 0 0px;
 		border: none;
@@ -131,7 +129,6 @@ const Total = styled.div`
 		font-size: 16px;
 		margin-top: 6px;
 		padding: 5px 0px;
-		border-bottom: 1px solid var( --studio-gray-5 );
 	}
 `;
 
