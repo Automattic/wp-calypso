@@ -12,6 +12,7 @@ import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import {
 	getSiteStatsCSVData,
+	getSiteStatsNormalizedData,
 	isRequestingSiteStatsForQuery,
 } from 'calypso/state/stats/lists/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -125,7 +126,10 @@ const connectComponent = connect(
 		}
 
 		const { statType, query } = ownProps;
-		const data = getSiteStatsCSVData( state, siteId, statType, query );
+		const data =
+			statType === 'statsVideoPlays'
+				? getSiteStatsNormalizedData( state, siteId, statType, query )
+				: getSiteStatsCSVData( state, siteId, statType, query );
 		const isLoading = isRequestingSiteStatsForQuery( state, siteId, statType, query );
 
 		return { data, siteSlug, siteId, isLoading };

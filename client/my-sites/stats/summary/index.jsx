@@ -239,6 +239,7 @@ class StatsSummary extends Component {
 				title = translate( 'Videos' );
 				path = 'videoplays';
 				statType = 'statsVideoPlays';
+				moduleQuery.complete_stats = 1;
 				summaryView = (
 					<Fragment key="videopress-stats-module">
 						{ /* For CSV button to work, video page needs to pass custom data to the button.
