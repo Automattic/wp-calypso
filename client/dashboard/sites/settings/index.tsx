@@ -1,23 +1,18 @@
-import { useQuery } from '@tanstack/react-query';
+import { useLoaderData } from '@tanstack/react-router';
 import {
 	__experimentalHeading as Heading,
 	__experimentalVStack as VStack,
 	Card,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { siteQuery, siteSettingsQuery } from '../../app/queries';
-import { siteRoute } from '../../app/router';
+import { siteRoute, siteSettingsRoute } from '../../app/router';
 import PageLayout from '../../components/page-layout';
 import SubscriptionGiftingSettingsSummary from '../settings-subscription-gifting/summary';
 
 export default function SiteSettings() {
 	const { siteSlug } = siteRoute.useParams();
-	const { data: siteData } = useQuery( siteQuery( siteSlug ) );
-	const { data: settings } = useQuery( siteSettingsQuery( siteSlug ) );
-
-	if ( ! siteData || ! settings ) {
-		return null;
-	}
+	const { site } = useLoaderData( { from: siteRoute.id } );
+	const settings = useLoaderData( { from: siteSettingsRoute.id } );
 
 	return (
 		<PageLayout title={ __( 'Settings' ) } size="small">
@@ -26,7 +21,7 @@ export default function SiteSettings() {
 				<VStack>
 					<SubscriptionGiftingSettingsSummary
 						siteSlug={ siteSlug }
-						site={ siteData.site }
+						site={ site }
 						settings={ settings }
 					/>
 				</VStack>
