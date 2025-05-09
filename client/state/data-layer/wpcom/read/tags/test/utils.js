@@ -25,14 +25,14 @@ const normalizedFollowedTagsResponse = deepFreeze( [
 		id: '307',
 		slug: 'chickens',
 		title: 'Chickens',
-		displayName: 'chickens',
+		displayName: 'Chickens',
 		url: '/tag/chickens',
 	},
 	{
 		id: '148',
 		slug: 'design',
 		title: 'Design',
-		displayName: 'design',
+		displayName: 'Design',
 		url: '/tag/design',
 	},
 ] );
@@ -52,7 +52,7 @@ const normalizedSuccessfulSingleTagResponse = deepFreeze( [
 		id: '307',
 		slug: 'chickens',
 		title: 'Chickens',
-		displayName: 'chickens',
+		displayName: 'Chickens',
 		url: '/tag/chickens',
 	},
 ] );
