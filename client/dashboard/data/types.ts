@@ -12,6 +12,7 @@ export interface User {
 	username: string;
 	display_name: string;
 	avatar_URL?: string;
+	language: string;
 }
 
 export interface SiteDomain {
