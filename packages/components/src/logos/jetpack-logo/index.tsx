@@ -1,6 +1,6 @@
 import colorStudio from '@automattic/color-studio';
 import clsx from 'clsx';
-
+import { useId } from 'react';
 /**
  * Module constants
  */
@@ -114,16 +114,18 @@ export const JetpackLogo = ( {
 	className,
 	...props
 }: JetpackLogoProps & React.SVGProps< SVGSVGElement > ) => {
+	const titleId = useId();
 	return (
 		<svg
 			// TODO: prefix classname with a8c-components-* (or remove it entirely with CSS modules)
 			className={ clsx( 'jetpack-logo', className ) }
 			// Set the height, the width will be automatically set according to the viewBox
 			height={ size }
+			aria-labelledby={ titleId }
 			{ ...props }
 			viewBox={ `0 0 ${ full ? LOGO_WIDTH_FULL : LOGO_WIDTH } ${ LOGO_HEIGHT }` }
 		>
-			<title>Jetpack</title>
+			<title id={ titleId }>Jetpack</title>
 			<LogoMark monochrome={ monochrome } />
 			{ full ? <LogoText monochrome={ monochrome } theme={ theme } /> : null }
 		</svg>
