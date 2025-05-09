@@ -71,7 +71,7 @@ const DIFMStartingPoint: StepType< {
 									/>
 								) : (
 									<Step.SkipButton onClick={ goNext }>
-										{ translate( 'No Thanks, I’ll Build It' ) }
+										{ translate( 'No thanks, I’ll build it' ) }
 									</Step.SkipButton>
 								)
 							}
@@ -99,7 +99,7 @@ const DIFMStartingPoint: StepType< {
 				isWideLayout
 				isLargeSkipLayout={ false }
 				skipLabelText={
-					shouldRenderHelpCenter ? undefined : translate( 'No Thanks, I’ll Build It' )
+					shouldRenderHelpCenter ? undefined : translate( 'No thanks, I’ll build it' )
 				}
 				hideSkip={ shouldRenderHelpCenter }
 				customizedActionButtons={
