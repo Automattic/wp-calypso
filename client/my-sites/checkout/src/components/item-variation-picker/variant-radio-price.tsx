@@ -1,3 +1,4 @@
+import colorStudio from '@automattic/color-studio';
 import { formatCurrency } from '@automattic/number-formatters';
 import { styled } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
@@ -7,10 +8,10 @@ import type { WPCOMProductVariant } from './types';
 
 const Discount = styled.span`
 	text-align: center;
-	color: var( --studio-green-80, rgba( 0, 69, 12, 1 ) );
+	color: ${ colorStudio.colors[ 'Green 80' ] };
 
 	display: block;
-	background-color: #b8e6bf;
+	background-color: ${ colorStudio.colors[ 'Green 5' ] };
 	padding: 0 10px;
 	border-radius: 4px;
 	font-size: 12px;
