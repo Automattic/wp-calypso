@@ -1,5 +1,4 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useMemo } from 'react';
@@ -189,14 +188,7 @@ export default function usePluginsThankYouData( pluginSlugs: string[] ): ThankYo
 		return <ThankYouPluginSection plugin={ plugin } key={ `plugin_${ plugin.slug }` } />;
 	} );
 
-	const goBackSection = (
-		<MasterbarStyled
-			onClick={ () => page( `/plugins/${ siteSlug }` ) }
-			backText={ translate( 'Back to plugins' ) }
-			canGoBack={ allPluginsFetched }
-			showContact={ allPluginsFetched }
-		/>
-	);
+	const goBackSection = <MasterbarStyled />;
 
 	const thankyouSteps = useMemo(
 		() =>
