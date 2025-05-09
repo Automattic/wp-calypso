@@ -2,12 +2,11 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { FEATURE_INSTALL_THEMES } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
-import { CustomSelectControl } from '@wordpress/components';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { compact, pickBy } from 'lodash';
 import PropTypes from 'prop-types';
-import { createRef, Component, useLayoutEffect, useState } from 'react';
+import { createRef, Component } from 'react';
 import { InView } from 'react-intersection-observer';
 import { connect } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
@@ -44,6 +43,7 @@ import {
 } from 'calypso/state/themes/selectors';
 import { getThemesBookmark } from 'calypso/state/themes/themes-ui/selectors';
 import EligibilityWarningModal from './atomic-transfer-dialog';
+import { CustomSelectWrapper } from './custom-select-wrapper';
 import {
 	addTracking,
 	getSubjectsFromTermTable,
@@ -65,22 +65,6 @@ const optionShape = PropTypes.shape( {
 	getUrl: PropTypes.func,
 	action: PropTypes.func,
 } );
-
-// Wrapper component to handle SSR for CustomSelectControl
-// This is needed because CustomSelectControl is not SSR-compatible
-const CustomSelectWrapper = ( props ) => {
-	const [ isMounted, setIsMounted ] = useState( false );
-
-	useLayoutEffect( () => {
-		setIsMounted( true );
-	}, [] );
-
-	if ( ! isMounted ) {
-		return null;
-	}
-
-	return <CustomSelectControl { ...props } />;
-};
 
 class ThemeShowcase extends Component {
 	state = {
