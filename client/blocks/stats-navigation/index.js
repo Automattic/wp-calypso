@@ -61,6 +61,66 @@ function withNoticeHook( HookedComponent ) {
 	};
 }
 
+const TabsBeforeNavigationImprovements = ( {
+	validNavItems,
+	label,
+	interval,
+	slugPath,
+	selectedItem,
+	showLock,
+	isLegacy,
+	showIntervals,
+	pathTemplate,
+} ) => {
+	return (
+		<>
+			<SectionNav selectedText={ label }>
+				<NavTabs selectedText={ label }>
+					{ validNavItems.map( ( item ) => {
+						const navItem = navItems[ item ];
+						const intervalPath = navItem.showIntervals ? `/${ interval || 'day' }` : '';
+						const itemPath = `${ navItem.path }${ intervalPath }${ slugPath }`;
+						const className = 'stats-navigation__' + item;
+						if ( item === 'store' && config.isEnabled( 'is_running_in_jetpack_site' ) ) {
+							return (
+								<NavItem
+									className={ className }
+									key={ item }
+									onClick={ () =>
+										( window.location.href = `${ this.props.adminUrl }admin.php?page=wc-admin&path=%2Fanalytics%2Foverview` )
+									}
+									selected={ false }
+								>
+									{ navItem.label }
+								</NavItem>
+							);
+						}
+						return (
+							<NavItem
+								className={ className }
+								key={ item }
+								path={ itemPath }
+								selected={ selectedItem === item }
+							>
+								{ navItem.label }
+								{ navItem.paywall && showLock && ' 🔒' }
+							</NavItem>
+						);
+					} ) }
+				</NavTabs>
+
+				{ isLegacy && showIntervals && (
+					<Intervals selected={ interval } pathTemplate={ pathTemplate } />
+				) }
+			</SectionNav>
+
+			{ isLegacy && showIntervals && (
+				<Intervals selected={ interval } pathTemplate={ pathTemplate } standalone />
+			) }
+		</>
+	);
+};
+
 class StatsNavigation extends Component {
 	static propTypes = {
 		interval: PropTypes.oneOf( intervalConstants.map( ( i ) => i.value ) ),
@@ -183,25 +243,25 @@ class StatsNavigation extends Component {
 
 		// @TODO: Add loading status of modules settings to avoid toggling modules before they are loaded.
 
+		const validNavItems = Object.keys( navItems ).filter( this.isValidItem );
+
 		return (
 			<div className={ wrapperClass }>
 				{ siteId && <QueryJetpackModules siteId={ siteId } /> }
-				{ isStatsNavigationImprovementEnabled ? (
+				{ isStatsNavigationImprovementEnabled && (
 					<TabPanel
 						className="stats-navigation__tabs"
-						tabs={ Object.keys( navItems )
-							.filter( this.isValidItem )
-							.map( ( item ) => {
-								const navItem = navItems[ item ];
-								const intervalPath = navItem.showIntervals ? `/${ interval || 'day' }` : '';
-								const itemPath = `${ navItem.path }${ intervalPath }${ slugPath }`;
-								return {
-									name: item,
-									title: navItem.label + ( navItem.paywall && showLock ? ' 🔒' : '' ),
-									className: 'stats-navigation__' + item,
-									path: itemPath,
-								};
-							} ) }
+						tabs={ validNavItems.map( ( item ) => {
+							const navItem = navItems[ item ];
+							const intervalPath = navItem.showIntervals ? `/${ interval || 'day' }` : '';
+							const itemPath = `${ navItem.path }${ intervalPath }${ slugPath }`;
+							return {
+								name: item,
+								title: navItem.label + ( navItem.paywall && showLock ? ' 🔒' : '' ),
+								className: 'stats-navigation__' + item,
+								path: itemPath,
+							};
+						} ) }
 						initialTabName={ selectedItem }
 					>
 						{ ( tab ) => {
@@ -213,55 +273,20 @@ class StatsNavigation extends Component {
 							return <div className="stats-navigation__content" />; // Placeholder div since content is rendered elsewhere
 						} }
 					</TabPanel>
-				) : (
-					//TODO: remove this SectionNav in favour of above TabPanel once Navigation Improvement is fully launched
-					<>
-						<SectionNav selectedText={ label }>
-							<NavTabs selectedText={ label }>
-								{ Object.keys( navItems )
-									.filter( this.isValidItem )
-									.map( ( item ) => {
-										const navItem = navItems[ item ];
-										const intervalPath = navItem.showIntervals ? `/${ interval || 'day' }` : '';
-										const itemPath = `${ navItem.path }${ intervalPath }${ slugPath }`;
-										const className = 'stats-navigation__' + item;
-										if ( item === 'store' && config.isEnabled( 'is_running_in_jetpack_site' ) ) {
-											return (
-												<NavItem
-													className={ className }
-													key={ item }
-													onClick={ () =>
-														( window.location.href = `${ this.props.adminUrl }admin.php?page=wc-admin&path=%2Fanalytics%2Foverview` )
-													}
-													selected={ false }
-												>
-													{ navItem.label }
-												</NavItem>
-											);
-										}
-										return (
-											<NavItem
-												className={ className }
-												key={ item }
-												path={ itemPath }
-												selected={ selectedItem === item }
-											>
-												{ navItem.label }
-												{ navItem.paywall && showLock && ' 🔒' }
-											</NavItem>
-										);
-									} ) }
-							</NavTabs>
-
-							{ isLegacy && showIntervals && (
-								<Intervals selected={ interval } pathTemplate={ pathTemplate } />
-							) }
-						</SectionNav>
-
-						{ isLegacy && showIntervals && (
-							<Intervals selected={ interval } pathTemplate={ pathTemplate } standalone />
-						) }
-					</>
+				) }
+				{ ! isStatsNavigationImprovementEnabled && (
+					// TODO: remove TabsBeforeNavigationImprovements after 'stats/navigation-improvement' launch.
+					<TabsBeforeNavigationImprovements
+						validNavItems={ validNavItems }
+						label={ label }
+						interval={ interval }
+						slugPath={ slugPath }
+						selectedItem={ selectedItem }
+						showLock={ showLock }
+						isLegacy={ isLegacy }
+						showIntervals={ showIntervals }
+						pathTemplate={ pathTemplate }
+					/>
 				) }
 
 				{ ! isStatsNavigationImprovementEnabled && shouldRenderModuleToggler && (
