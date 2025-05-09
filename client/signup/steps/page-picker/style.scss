@@ -27,6 +27,10 @@
 			.step-wrapper__header-button {
 				margin-top: 10px;
 
+				@media (max-width: $break-small) {
+					margin-top: 34px;
+				}
+
 				.refund-text {
 					@media (max-width: $break-small) {
 						display: none;
