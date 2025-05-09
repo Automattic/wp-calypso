@@ -75,7 +75,7 @@
 
 		// TODO: this should be handled better in `SummaryButtonList` component.
 		// @see: https://github.com/Automattic/wp-calypso/pull/103233#issuecomment-2862541935
-		&:focus-visible {
+		&:focus-visible, &:hover:not(:disabled, [aria-disabled="true"]) {
 			/* stylelint-disable-next-line scales/radii */
 			border-radius: 7px;
 		}
