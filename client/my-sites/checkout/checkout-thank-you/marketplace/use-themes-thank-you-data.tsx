@@ -9,7 +9,7 @@ import {
 	hasLoadedSitePurchasesFromServer,
 	isFetchingSitePurchases,
 } from 'calypso/state/purchases/selectors';
-import { isJetpackSite, getSiteAdminUrl, getSiteOption } from 'calypso/state/sites/selectors';
+import { isJetpackSite, getSiteOption } from 'calypso/state/sites/selectors';
 import { clearActivated } from 'calypso/state/themes/actions';
 import {
 	getThemes,
@@ -73,14 +73,6 @@ export function useThemesThankYouData(
 
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
 
-	const adminInterface = useSelector( ( state ) =>
-		getSiteOption( state, siteId, 'wpcom_admin_interface' )
-	);
-
-	const siteAdminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
-	const themeUrl =
-		adminInterface === 'wp-admin' ? `${ siteAdminUrl }themes.php` : `/themes/${ siteSlug }`;
-
 	useQueryThemes( 'wpcom', themeSlugs );
 	useQueryThemes( 'wporg', themeSlugs );
 
@@ -96,14 +88,7 @@ export function useThemesThankYouData(
 			);
 		} );
 
-	const goBackSection = (
-		<MasterbarStyled
-			onClick={ () => page( themeUrl ) }
-			backText={ translate( 'Back to dashboard' ) }
-			canGoBack={ allThemesFetched }
-			showContact={ allThemesFetched }
-		/>
-	);
+	const goBackSection = <MasterbarStyled />;
 
 	const thankyouSteps = useMemo(
 		() =>
