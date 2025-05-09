@@ -45,8 +45,14 @@ main div.dashboard-header-bar {
 	view-transition-name: main-heading;
 }
 
+.dashboard-page-layout > div:first-child .dasboard-page-layout__description {
+	view-transition-name: main-description;
+}
+
 ::view-transition-old(main-heading),
-::view-transition-new(main-heading) {
+::view-transition-new(main-heading),
+::view-transition-old(main-description),
+::view-transition-new(main-description) {
 	// Do not shrink/expand the heading horizontally
 	width: auto;
 }
