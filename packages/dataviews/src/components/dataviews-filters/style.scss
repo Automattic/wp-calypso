@@ -179,9 +179,7 @@
 		margin-block-end: 0;
 	}
 
-	&:hover,
-	&[data-active-item],
-	&:focus {
+	&[data-focus-visible] {
 		background-color: var(--wp-admin-theme-color);
 		color: $white;
 
@@ -257,8 +255,8 @@
 		}
 
 		&.is-checked {
-			background: var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9));
-			border-color: var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9));
+			background:  var(--wp-components-color-accent-darker-10, var(--wp-admin-theme-color-darker-10, #2145e6));
+			border-color:  var(--wp-components-color-accent-darker-10, var(--wp-admin-theme-color-darker-10, #2145e6));
 
 			svg {
 				--checkmark-size: var(--checkbox-size);
