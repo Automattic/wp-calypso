@@ -1,10 +1,11 @@
-import superagent from 'superagent';
+import { type Request } from 'express';
+import superagent, { type SuperAgentRequest } from 'superagent';
 import analytics from '../index';
 
 describe( 'Server-Side Analytics', () => {
 	describe( 'tracks.recordEvent', () => {
-		beforeAll( function () {
-			jest.spyOn( superagent, 'get' ).mockReturnValue( { end: () => {} } );
+		beforeAll( () => {
+			jest.spyOn( superagent, 'get' ).mockReturnValue( { end: () => {} } as SuperAgentRequest );
 			jest.useFakeTimers();
 			jest.setSystemTime( 1704067200000 );
 		} );
@@ -14,11 +15,11 @@ describe( 'Server-Side Analytics', () => {
 		} );
 
 		afterEach( () => {
-			superagent.get.mockClear();
+			( superagent.get as jest.Mock ).mockClear();
 		} );
 
 		const req = {
-			get: ( header ) => {
+			get: ( header: string ) => {
 				switch ( header.toLowerCase() ) {
 					case 'accept-language':
 						return 'cs';
@@ -31,13 +32,13 @@ describe( 'Server-Side Analytics', () => {
 				}
 				throw 'no ' + header;
 			},
-		};
+		} as Request;
 
 		test( 'sends an HTTP request to the tracks URL', () => {
 			analytics.tracks.recordEvent( 'calypso_test', { a: 'foo' }, req );
 
 			expect( superagent.get ).toHaveBeenCalled();
-			const url = new URL( superagent.get.mock.calls[ 0 ][ 0 ] );
+			const url = new URL( ( superagent.get as jest.Mock ).mock.calls[ 0 ][ 0 ] );
 			expect( url.origin ).toBe( 'http://pixel.wp.com' );
 			expect( url.pathname ).toBe( '/t.gif' );
 			expect( url.searchParams.get( '_en' ) ).toBe( 'calypso_test' );
@@ -62,11 +63,11 @@ describe( 'Server-Side Analytics', () => {
 				cookies: {
 					wordpress_logged_in: encodeURIComponent( 'testuser|12345|token' ),
 				},
-			};
+			} as Request;
 			analytics.tracks.recordEvent( 'calypso_user_test', { b: 'bar' }, reqWithCookie );
 
 			expect( superagent.get ).toHaveBeenCalled();
-			const url = new URL( superagent.get.mock.calls[ 0 ][ 0 ] );
+			const url = new URL( ( superagent.get as jest.Mock ).mock.calls[ 0 ][ 0 ] );
 			expect( url.origin ).toBe( 'http://pixel.wp.com' );
 			expect( url.pathname ).toBe( '/t.gif' );
 			expect( url.searchParams.get( '_en' ) ).toBe( 'calypso_user_test' );
@@ -92,11 +93,11 @@ describe( 'Server-Side Analytics', () => {
 					_ui: 'queryuser',
 					_ut: 'querytype',
 				},
-			};
+			} as unknown as Request;
 			analytics.tracks.recordEvent( 'calypso_query_test', { c: 'baz' }, reqWithQuery );
 
 			expect( superagent.get ).toHaveBeenCalled();
-			const url = new URL( superagent.get.mock.calls[ 0 ][ 0 ] );
+			const url = new URL( ( superagent.get as jest.Mock ).mock.calls[ 0 ][ 0 ] );
 			expect( url.origin ).toBe( 'http://pixel.wp.com' );
 			expect( url.pathname ).toBe( '/t.gif' );
 			expect( url.searchParams.get( '_en' ) ).toBe( 'calypso_query_test' );
@@ -118,7 +119,7 @@ describe( 'Server-Side Analytics', () => {
 			analytics.tracks.recordEvent( 'calypso_test', { a: undefined }, req );
 
 			expect( superagent.get ).toHaveBeenCalled();
-			const url = new URL( superagent.get.mock.calls[ 0 ][ 0 ] );
+			const url = new URL( ( superagent.get as jest.Mock ).mock.calls[ 0 ][ 0 ] );
 			expect( url.searchParams.get( 'a' ) ).toBeNull();
 		} );
 	} );
