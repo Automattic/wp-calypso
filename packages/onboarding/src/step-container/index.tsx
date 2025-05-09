@@ -198,7 +198,12 @@ const StepContainer: React.FC< Props > = ( {
 					{ headerButton && <div className="step-container__header-button">{ headerButton }</div> }
 					{ showHeaderJetpackPowered && (
 						<div className="step-container__header-jetpack-powered">
-							<JetpackLogo monochrome size={ 18 } /> <span>{ translate( 'Jetpack powered' ) }</span>
+							<JetpackLogo
+								className="step-container__jetpack-powered-logo"
+								monochrome
+								size={ 18 }
+							/>{ ' ' }
+							<span>{ translate( 'Jetpack powered' ) }</span>
 						</div>
 					) }
 				</div>
@@ -214,7 +219,8 @@ const StepContainer: React.FC< Props > = ( {
 			) }
 			{ showJetpackPowered && (
 				<div className="step-container__jetpack-powered">
-					<JetpackLogo monochrome size={ 18 } /> <span>{ translate( 'Jetpack powered' ) }</span>
+					<JetpackLogo className="step-container__jetpack-powered-logo" monochrome size={ 18 } />{ ' ' }
+					<span>{ translate( 'Jetpack powered' ) }</span>
 				</div>
 			) }
 

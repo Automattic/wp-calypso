@@ -346,7 +346,7 @@
 body.is-section-stepper,
 body.is-section-signup {
 	&:not(:has(.step-container-v2)) {
-		svg:not(.jetpack-logo, .social-buttons__button svg) {
+		svg:not(.step-container__jetpack-powered-logo, .social-buttons__button svg) {
 			padding-top: 0;
 			margin-right: 0;
 		}
