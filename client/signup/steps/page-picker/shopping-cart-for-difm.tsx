@@ -1,4 +1,3 @@
-import { BraveTick } from '@automattic/components/src/icons';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
@@ -136,24 +135,6 @@ const Total = styled.div`
 	}
 `;
 
-const StyledBraveTickIcon = styled( BraveTick )`
-	margin-inline-end: 6px;
-	path {
-		fill: var( --color-accent );
-	}
-`;
-
-const RefundText = styled.div`
-	display: flex;
-	width: 100%;
-	justify-content: flex-end;
-	margin-top: 8px;
-
-	@media ( max-width: 600px ) {
-		font-size: smaller;
-	}
-`;
-
 function DummyLineItem( {
 	productDisplayCost,
 	productOriginalName,
@@ -205,12 +186,6 @@ export default function ShoppingCartForDIFM( {
 					<Total>
 						<div>{ translate( 'Subtotal' ) }</div>
 						<div className="page-picker__value">{ total }</div>
-						<RefundText>
-							<StyledBraveTickIcon />
-							{ translate( '%(days)d-day money-back guarantee', {
-								args: { days: 14 },
-							} ) }
-						</RefundText>
 					</Total>
 				</LineItemsWrapper>
 			</Cart>
