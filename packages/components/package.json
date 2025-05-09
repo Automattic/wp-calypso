@@ -40,7 +40,7 @@
 		"@emotion/css": "^11.11.2",
 		"@emotion/react": "^11.11.1",
 		"@emotion/styled": "^11.11.0",
-		"@storybook/addon-actions": "^8.6.9",
+		"@storybook/addon-actions": "^8.6.12",
 		"@wordpress/base-styles": "^5.23.0",
 		"@wordpress/components": "^29.9.0",
 		"@wordpress/compose": "7.23.0",
@@ -79,7 +79,7 @@
 		"@types/canvas-confetti": "^1.6.0",
 		"@types/node": "^22.7.5",
 		"postcss": "^8.5.3",
-		"storybook": "^8.6.9",
+		"storybook": "^8.6.12",
 		"typescript": "^5.8.2",
 		"webpack": "^5.97.1"
 	},
