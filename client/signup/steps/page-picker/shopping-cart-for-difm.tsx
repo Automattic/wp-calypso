@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import LoadingLine from './loading-content';
 import useCartForDIFM, { CartItem } from './use-cart-for-difm';
+import type { ReactNode } from 'react';
 
 const CartContainer = styled.div`
 	position: relative;
@@ -153,10 +154,12 @@ export default function ShoppingCartForDIFM( {
 	selectedPages,
 	isStoreFlow,
 	currentPlanSlug,
+	children,
 }: {
 	selectedPages: string[];
 	isStoreFlow: boolean;
 	currentPlanSlug?: string | null;
+	children?: ReactNode;
 } ) {
 	const translate = useTranslate();
 	const { items, total, isProductsLoading } = useCartForDIFM( {
@@ -185,6 +188,8 @@ export default function ShoppingCartForDIFM( {
 						<div className="page-picker__value">{ total }</div>
 					</Total>
 				</LineItemsWrapper>
+
+				{ children }
 			</Cart>
 		</CartContainer>
 	);

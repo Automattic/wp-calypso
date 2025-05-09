@@ -26,6 +26,22 @@
 
 			.step-wrapper__header-button {
 				margin-top: 10px;
+
+				.refund-text {
+					@media (max-width: $break-small) {
+						display: none;
+					}
+				}
+			}
+
+			.step-wrapper__header-content {
+				.refund-text {
+					margin-top: 10px;
+
+					@media (min-width: $break-small) {
+						display: none;
+					}
+				}
 			}
 		}
 	}

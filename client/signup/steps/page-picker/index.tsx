@@ -603,6 +603,17 @@ function DIFMPagePicker( props: StepProps ) {
 				}
 		  );
 
+	const renderRefundText = () => {
+		return (
+			<RefundText className="refund-text">
+				<StyledBraveTickIcon />
+				{ translate( '%(days)d-day money-back guarantee', {
+					args: { days: 14 },
+				} ) }
+			</RefundText>
+		);
+	};
+
 	return (
 		<StepWrapper
 			headerText={ headerText }
@@ -644,12 +655,7 @@ function DIFMPagePicker( props: StepProps ) {
 						{ translate( 'Go to Checkout' ) }
 					</StyledButton>
 
-					<RefundText>
-						<StyledBraveTickIcon />
-						{ translate( '%(days)d-day money-back guarantee', {
-							args: { days: 14 },
-						} ) }
-					</RefundText>
+					{ renderRefundText() }
 				</>
 			}
 			headerContent={
@@ -657,7 +663,9 @@ function DIFMPagePicker( props: StepProps ) {
 					selectedPages={ selectedPages }
 					isStoreFlow={ isStoreFlow }
 					currentPlanSlug={ currentPlan?.product_slug }
-				/>
+				>
+					{ renderRefundText() }
+				</ShoppingCartForDIFM>
 			}
 			{ ...props }
 		/>
