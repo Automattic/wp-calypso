@@ -7,5 +7,9 @@
         @media (min-width: $break-mobile) {
             color: var(--color-primary-50)
         }
+
+        &:disabled {
+            color: var(--studio-gray-50);
+        }
     }
 }
