@@ -30,36 +30,47 @@ main div.dashboard-header-bar {
 	height: auto;
 }
 
-// Move the main button independently so that it expands/shrinks horizontally.
-.dashboard-page-layout > div:first-child .components-button.is-primary {
-	view-transition-name: main-button;
+.dashboard-page-layout.is-large > div:first-child .components-heading {
+	view-transition-name: main-heading-large;
+}
+.dashboard-page-layout.is-small > div:first-child .components-heading {
+	view-transition-name: main-heading-small;
 }
 
-::view-transition-old(main-button),
-::view-transition-new(main-button) {
-	// Never shrink/expand buttons vertically
-	height: 100%;
+.dashboard-page-layout.is-large > div:first-child .client-dashboard-components-page-header__actions {
+	view-transition-name: main-actions-large;
+}
+.dashboard-page-layout.is-small > div:first-child .client-dashboard-components-page-header__actions {
+	view-transition-name: main-actions-small;
 }
 
-.dashboard-page-layout > div:first-child .components-heading {
-	view-transition-name: main-heading;
+::view-transition-image-pair(main-actions-large),
+::view-transition-image-pair(main-actions-small) {
+    display: flex;
+    justify-content: flex-end;
 }
 
-.dashboard-page-layout > div:first-child .dasboard-page-layout__description {
-	view-transition-name: main-description;
+.dashboard-page-layout.is-large > div:first-child .dasboard-page-layout__description {
+	view-transition-name: main-description-large;
+}
+.dashboard-page-layout.is-small > div:first-child .dasboard-page-layout__description {
+	view-transition-name: main-description-small;
 }
 
-::view-transition-old(main-heading),
-::view-transition-new(main-heading),
-::view-transition-old(main-description),
-::view-transition-new(main-description) {
-	// Do not shrink/expand the heading horizontally
+::view-transition-old(main-heading-large),
+::view-transition-new(main-heading-large),
+::view-transition-old(main-heading-small),
+::view-transition-new(main-heading-small),
+::view-transition-old(main-actions-large),
+::view-transition-new(main-actions-large),
+::view-transition-old(main-actions-small),
+::view-transition-new(main-actions-small),
+::view-transition-old(main-description-large),
+::view-transition-new(main-description-large),
+::view-transition-old(main-description-small),
+::view-transition-new(main-description-small) {
+	// Do not shrink/expand horizontally.
 	width: auto;
-}
-
-// Any other content is the main title header should move along.
-.dashboard-page-layout > div:first-child {
-	view-transition-name: main-title-header;
 }
 
 main .dashboard-page-layout > div:last-child {

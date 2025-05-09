@@ -14,7 +14,11 @@ function PageLayout( {
 	size?: 'large' | 'small';
 } ) {
 	return (
-		<VStack spacing={ 8 } className="dashboard-page-layout" style={ sizes[ size ] }>
+		<VStack
+			spacing={ 8 }
+			className={ `dashboard-page-layout is-${ size }` }
+			style={ sizes[ size ] }
+		>
 			{ children }
 		</VStack>
 	);
