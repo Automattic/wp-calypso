@@ -163,24 +163,25 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( {
 		return normalizedStats;
 	}, [ countriesList, query, isRequestingCountriesList ] );
 
-	// Data is fetched from three ways but only one is displayed, we use that for downloading as CSV.
-	// If supportsLocationsStatsFeature is false, we use the legacy endpoint.
-	// If geoMode is country, we use the countriesList.
-	// Otherwise, we use the locationsViewsData.
-	const dataToDispatch = useMemo( () => {
+	useEffect( () => {
 		if ( isRequestingCountriesList || isRequestingData || isRequestingCountriesList ) {
 			return;
 		}
 
+		let dataToDispatch;
 		if ( ! supportsLocationsStatsFeature ) {
-			return legacyCountriesViewsData;
+			dataToDispatch = legacyCountriesViewsData;
+		} else if ( geoMode === 'country' ) {
+			dataToDispatch = countriesList;
+		} else {
+			dataToDispatch = locationsViewsData;
 		}
 
-		if ( geoMode === 'country' ) {
-			return countriesList;
+		if ( dataToDispatch ) {
+			dispatch(
+				receiveSiteStats( siteId, 'statsCountryViews', query, dataToDispatch, Date.now() )
+			);
 		}
-
-		return locationsViewsData;
 	}, [
 		countriesList,
 		geoMode,
@@ -189,15 +190,10 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( {
 		legacyCountriesViewsData,
 		isRequestingCountriesList,
 		isRequestingData,
+		dispatch,
+		query,
+		siteId,
 	] );
-
-	useEffect( () => {
-		if ( dataToDispatch ) {
-			dispatch(
-				receiveSiteStats( siteId, 'statsCountryViews', query, dataToDispatch, Date.now() )
-			);
-		}
-	}, [ dataToDispatch, dispatch, query, siteId ] );
 
 	const onCountryChange = ( value: string ) => {
 		trackStatsAnalyticsEvent( 'stats_locations_module_country_filter_changed', {
