@@ -99,9 +99,9 @@ class StatsDownloadCsv extends Component {
 		} catch ( e ) {
 			return null;
 		}
-		const hasNoData = isLoading || ! data.length;
+		const disabled = isLoading || ! data.length;
 
-		if ( hideIfNoData && hasNoData ) {
+		if ( hideIfNoData && ! data.length && ! isLoading ) {
 			return null;
 		}
 
@@ -109,7 +109,7 @@ class StatsDownloadCsv extends Component {
 			<Button
 				className="stats-download-csv"
 				onClick={ this.downloadCsv }
-				disabled={ hasNoData }
+				disabled={ disabled }
 				borderless={ borderless }
 				icon={ download }
 			>
