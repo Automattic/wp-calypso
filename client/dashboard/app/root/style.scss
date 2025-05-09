@@ -71,18 +71,21 @@ main .dashboard-page-layout > div:last-child {
 }
 
 ::view-transition-old(main-button),
-::view-transition-new(main-button),
-::view-transition-old(main-heading),
-::view-transition-new(main-heading) {
+::view-transition-new(main-button) {
 	// Never shrink/expand buttons vertically
 	height: 100%;
 }
 
+::view-transition-old(main-heading),
+::view-transition-new(main-heading) {
+	// Do not shrink/expand the heading horizontally
+	width: auto;
+}
+
 ::view-transition-old(main-content),
 ::view-transition-new(main-content) {
-	// Never shrink/expand the main content horizontally
-	// width: auto;
-	// max-width: 100%;
-	// height: auto;
-	// overflow: hidden;
+	// Never expand the main content horizontally, but allow it to shrink.
+	width: auto;
+	max-width: 100%;
+	height: auto;
 }
