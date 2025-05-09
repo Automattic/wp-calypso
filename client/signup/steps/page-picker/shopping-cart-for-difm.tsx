@@ -126,7 +126,6 @@ const Total = styled.div`
 	padding: 30px 0;
 	div {
 		display: flex;
-		align-items: center;
 		&.page-picker__value {
 			font-family: Recoleta;
 			font-size: 32px;
