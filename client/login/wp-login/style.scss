@@ -11,6 +11,7 @@ $image-height: 47px;
 
 .layout.is-section-login {
 	position: relative;
+	min-height: 100%; // Needed for any screen not yet using a StepContainerV2 wireframe (e.g. magic login).
 
 	// This adjustment is only necessary when rendering the Jetpack colophon.
 	// isWhiteLogin screens don't need it.
