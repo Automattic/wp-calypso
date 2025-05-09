@@ -1,5 +1,6 @@
 import { Button, __experimentalHStack as HStack } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
+import { useState } from 'react';
 import useRemoveSiteMutation from 'calypso/a8c-for-agencies/data/sites/use-remove-site';
 import { useDispatch } from 'calypso/state';
 import { successNotice } from 'calypso/state/notices/actions';
@@ -29,6 +30,9 @@ function RemoveSiteActionModal( {
 	const dispatch = useDispatch();
 	const { mutate: removeSite } = useRemoveSiteMutation();
 
+	// We won't rely on mutation's isPending state as we have include 1 second delay to refetch sites to give time for site profile to be reindexed properly.
+	const [ isPending, setIsPending ] = useState( false );
+
 	recordTracksEventRemoveSite();
 
 	const item = items[ 0 ];
@@ -40,6 +44,8 @@ function RemoveSiteActionModal( {
 			return;
 		}
 
+		setIsPending( true );
+
 		removeSite(
 			{ siteId },
 			{
@@ -50,8 +56,12 @@ function RemoveSiteActionModal( {
 							closeModal?.();
 							onActionPerformed?.();
 							dispatch( successNotice( translate( 'The site has been successfully removed.' ) ) );
+							setIsPending( false );
 						} );
 					}, 1000 );
+				},
+				onSettled: () => {
+					setIsPending( false );
 				},
 			}
 		);
@@ -84,7 +94,14 @@ function RemoveSiteActionModal( {
 				>
 					{ translate( 'Cancel' ) }
 				</Button>
-				<Button __next40pxDefaultSize variant="primary" type="submit" isDestructive>
+				<Button
+					__next40pxDefaultSize
+					variant="primary"
+					type="submit"
+					isDestructive
+					isBusy={ isPending }
+					disabled={ isPending }
+				>
 					{ translate( 'Remove site' ) }
 				</Button>
 			</HStack>
