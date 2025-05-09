@@ -42,7 +42,6 @@ describe( 'reducer', () => {
 				'allSitesQueries',
 				'edits',
 				'likes',
-				'revisions',
 			] )
 		);
 	} );
