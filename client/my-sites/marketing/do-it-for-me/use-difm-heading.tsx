@@ -39,7 +39,6 @@ export const useDIFMHeading = ( {
 	const headerTextTranslateArgs = {
 		components: {
 			PriceWrapper: ! hasPriceDataLoaded ? <Placeholder /> : <span />,
-			sup: <sup />,
 		},
 		args: {
 			displayCost,
@@ -64,9 +63,6 @@ export const useDIFMHeading = ( {
 					args: {
 						freePages: 5,
 					},
-					components: {
-						sup: <sup />,
-					},
 				}
 		  )
 		: translate(
@@ -75,9 +71,6 @@ export const useDIFMHeading = ( {
 					args: {
 						plan: planTitle ?? '',
 						freePages: 5,
-					},
-					components: {
-						sup: <sup />,
 					},
 				}
 		  );
