@@ -40,28 +40,3 @@ export const requestAddGift = ( siteId, gift, noticeText, onConfirm ) => {
 			} );
 	};
 };
-
-export const requestDeleteGift = ( siteId, giftId, noticeText ) => {
-	return ( dispatch ) => {
-		return wpcom.req
-			.post( {
-				method: 'DELETE',
-				path: `/sites/${ siteId }/memberships/gift/${ giftId }`,
-				apiNamespace: 'wpcom/v2',
-			} )
-			.then( () => {
-				dispatch(
-					successNotice( noticeText, {
-						duration: 5000,
-					} )
-				);
-			} )
-			.catch( ( error ) => {
-				dispatch(
-					errorNotice( error.message, {
-						duration: 10000,
-					} )
-				);
-			} );
-	};
-};
