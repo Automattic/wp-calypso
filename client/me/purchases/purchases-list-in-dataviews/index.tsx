@@ -55,6 +55,20 @@ export interface PurchasesListConnectedProps {
 	siteId: number | null;
 }
 
+function MembershipSubscriptions({
+	subscriptions,
+}:{
+	subscriptions: Array< MembershipSubscription >;
+} ) {
+	if ( ! subscriptions.length ) {
+		return null;
+	}
+
+	return getSubscriptionsBySite( subscriptions ).map( ( site ) => (
+		<SubscriptionsDataView site={ site } key={ site.id } />
+	) );
+}
+
 class PurchasesListDataView extends Component<
 	PurchasesListProps & PurchasesListConnectedProps & WithStoredPaymentMethodsProps & LocalizeProps
 > {
@@ -77,23 +91,16 @@ class PurchasesListDataView extends Component<
 		);
 	}
 
-	renderMembershipSubscriptions() {
-		const { subscriptions } = this.props;
-
-		if ( ! subscriptions.length || this.isDataLoading() ) {
-			return null;
-		}
-
-		return getSubscriptionsBySite( subscriptions ).map( ( site ) => (
-			<MembershipSite site={ site } key={ site.id } />
-		) );
-	}
-
 	render() {
 		const { purchases, sites, translate, subscriptions } = this.props;
 		let content;
 
-		if ( this.isDataLoading() ) {
+		if (
+			isDataLoading( {
+				isFetchingUserPurchases: this.props.isFetchingUserPurchases,
+				hasLoadedUserPurchasesFromServer: this.props.hasLoadedUserPurchasesFromServer,
+			} )
+		) {
 			content = <PurchasesSite isPlaceholder />;
 		}
 
@@ -134,7 +141,7 @@ class PurchasesListDataView extends Component<
 				/>
 				<PurchasesNavigation section="activeUpgrades" />
 				{ content }
-				{ this.renderMembershipSubscriptions() }
+				<MembershipSubscriptions subscriptions={ subscriptions } />
 				<QueryConciergeInitial />
 			</Main>
 		);
