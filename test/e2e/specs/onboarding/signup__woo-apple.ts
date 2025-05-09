@@ -66,19 +66,18 @@ skipDescribeIf(
 			it( 'Handle 2FA challenge', async function () {
 				const url = page.url();
 
+				// Check for rate limit message
+				const hasRateLimit = await appleLoginPage.hasRateLimitMessage();
+
+				if ( hasRateLimit ) {
+					// For now, we'll mark the test as skipped with a meaningful message
+					// @ts-ignore - this is a valid Jest context property
+					this.skip();
+					return;
+				}
+
 				// Handle potential 2FA challenge.
 				if ( url.includes( 'appleid.apple.com/auth/authorize' ) ) {
-					// Check for rate limit message
-					const hasRateLimit = await appleLoginPage.hasRateLimitMessage();
-
-					if ( hasRateLimit ) {
-						// TODO: Implement phone number rotation logic here
-						// For now, we'll mark the test as skipped with a meaningful message
-						// @ts-ignore - this is a valid Jest context property
-						this.skip();
-						return;
-					}
-
 					const sendCodeVisible = await appleLoginPage.hasButtonWithExactText( 'Send code' );
 
 					// Only click 'Send code' if the button is visible
