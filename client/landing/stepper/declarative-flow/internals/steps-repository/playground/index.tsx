@@ -7,7 +7,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useIsPlaygroundEligible } from '../../../../hooks/use-is-playground-eligible';
 import { PlaygroundIframe } from './components/playground-iframe';
-import { getBlueprintName } from './lib/blueprint';
+import { getBlueprintLabelForTracking } from './lib/blueprint';
 import type { Step as StepType } from '../../types';
 import './style.scss';
 
@@ -32,12 +32,10 @@ export const PlaygroundStep: StepType = ( { navigation, flow } ) => {
 			return;
 		}
 
-		const blueprintName = getBlueprintName( query.get( 'blueprint' ) );
-
 		recordTracksEvent( 'calypso_playground_launch_site', {
 			flow,
 			step: 'playground',
-			blueprint: blueprintName ?? 'unknown',
+			blueprint: getBlueprintLabelForTracking( query ),
 		} );
 
 		submit();

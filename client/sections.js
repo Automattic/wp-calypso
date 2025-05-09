@@ -531,12 +531,6 @@ const sections = [
 		group: 'sites',
 	},
 	{
-		name: 'preview',
-		paths: [ '/view' ],
-		module: 'calypso/my-sites/preview',
-		group: 'sites',
-	},
-	{
 		name: 'domain-connect-authorize',
 		paths: [ '/domain-connect' ],
 		module: 'calypso/my-sites/domains/domain-management/domain-connect',
@@ -579,6 +573,12 @@ const sections = [
 		module: 'calypso/my-sites/customer-home',
 		group: 'sites',
 		trackLoadPerformance: true,
+	},
+	{
+		name: 'preview',
+		paths: [ '/view' ],
+		module: 'calypso/my-sites/customer-home',
+		group: 'sites',
 	},
 	{
 		name: 'site-settings',

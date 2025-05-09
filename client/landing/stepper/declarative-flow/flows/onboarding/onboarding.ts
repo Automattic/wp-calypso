@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { DomainSuggestion, OnboardActions, OnboardSelect } from '@automattic/data-stores';
 import { ONBOARDING_FLOW, clearStepPersistedState } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
@@ -23,7 +24,6 @@ import { useDispatch as useReduxDispatch } from 'calypso/state';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT } from '../../../constants';
 import { useFlowLocale } from '../../../hooks/use-flow-locale';
-import { useMarketplaceThemeProducts } from '../../../hooks/use-marketplace-theme-products';
 import { useQuery } from '../../../hooks/use-query';
 import { ONBOARD_STORE } from '../../../stores';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
@@ -92,8 +92,6 @@ const onboarding: FlowV2< typeof initialize > = {
 
 		const [ useMyDomainTracksEventProps, setUseMyDomainTracksEventProps ] = useState( {} );
 
-		const { selectedMarketplaceProduct } = useMarketplaceThemeProducts();
-
 		/**
 		 * Returns [destination, backDestination] for the post-checkout destination.
 		 */
@@ -116,6 +114,21 @@ const onboarding: FlowV2< typeof initialize > = {
 						playground: playgroundId,
 					} ),
 					null,
+				];
+			}
+
+			/**
+			 * If the dashboard/v2/onboarding feature flag is enabled, we'll redirect the user to the new hosting Dashboard.
+			 * We aren't using the dashboard/v2 FF because it's enabled by default on wpcalypso.json which would break e2e tests.
+			 * Since we're aiming to remove steps after the isMvpOnboarding experiment ends,
+			 * we'll redirect the user to the new Dashboard here.
+			 */
+			if ( isEnabled( 'dashboard/v2/onboarding' ) ) {
+				return [
+					addQueryArgs( `/v2/sites/${ providedDependencies.siteSlug }`, { ref: flowName } ),
+					addQueryArgs( withLocale( `/setup/${ flowName }/plans`, locale ), {
+						siteSlug: providedDependencies.siteSlug,
+					} ),
 				];
 			}
 
@@ -216,10 +229,7 @@ const onboarding: FlowV2< typeof initialize > = {
 					}
 
 					// Make sure to put the rest of products into the cart, e.g. the storage add-ons.
-					setProductCartItems( [
-						...( selectedMarketplaceProduct ? [ selectedMarketplaceProduct ] : [] ),
-						...products.filter( ( product ) => product !== null ),
-					] );
+					setProductCartItems( products.filter( ( product ) => product !== null ) );
 
 					setSignupCompleteFlowName( flowName );
 					return navigate( 'create-site', undefined, false );

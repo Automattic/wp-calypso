@@ -8,7 +8,7 @@ import {
 } from '@automattic/sites';
 import { useQueryClient } from '@tanstack/react-query';
 import { sprintf } from '@wordpress/i18n';
-import { drawerLeft, external, wordpress } from '@wordpress/icons';
+import { backup, drawerLeft, external, wordpress } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { useMemo } from 'react';
@@ -25,6 +25,7 @@ import {
 	isP2Site,
 	isSimpleSite,
 	isStagingSite,
+	isSitePreviewPaneEligible,
 } from 'calypso/sites-dashboard/utils';
 import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -40,13 +41,7 @@ export const isActionEligible = (
 ): ( ( site: SiteExcerptData ) => boolean ) => {
 	const canOpenHosting = ( site: SiteExcerptData ) => {
 		const canManageOptions = capabilities[ site.ID ]?.manage_options;
-		if (
-			site.is_deleted ||
-			! canManageOptions ||
-			isP2Site( site ) ||
-			isNotAtomicJetpack( site ) ||
-			isDisconnectedJetpackAndNotAtomic( site )
-		) {
+		if ( site.is_deleted || ! isSitePreviewPaneEligible( site, canManageOptions ) ) {
 			return false;
 		}
 		return true;
@@ -471,6 +466,8 @@ export function useActions( {
 
 			{
 				id: 'restore',
+				isPrimary: true,
+				icon: backup,
 				label: __( 'Restore' ),
 				callback: ( sites ) => {
 					const site = sites[ 0 ];

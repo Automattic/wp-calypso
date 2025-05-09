@@ -11,7 +11,7 @@ export type SummaryButtonBadgeProps = {
 	 */
 	text: string;
 	/**
-	 * Optional property to specify the color of the badge.
+	 * Optional property to specify the intent of the badge.
 	 * @default 'default'
 	 */
 	intent?: 'default' | 'info' | 'success' | 'warning' | 'error';
@@ -61,7 +61,7 @@ export interface SummaryButtonProps {
 	 */
 	badges?: SummaryButtonBadgeProps[];
 	/**
-	 * A flag that indicates whether to show a chevron at the right-top UI.
+	 * A flag that indicates whether to show an arrow at the UI.
 	 * @default true
 	 */
 	showArrow?: boolean;

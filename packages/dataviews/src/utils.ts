@@ -8,7 +8,7 @@ import {
 	OPERATOR_IS_ANY,
 	OPERATOR_IS_NONE,
 } from './constants';
-import type { NormalizedField } from './types';
+import type { DataViewRenderFieldProps, NormalizedField } from './types';
 
 export function sanitizeOperators< Item >( field: NormalizedField< Item > ) {
 	let operators = field.filterBy?.operators;
@@ -35,4 +35,15 @@ export function sanitizeOperators< Item >( field: NormalizedField< Item > ) {
 	}
 
 	return operators;
+}
+
+export function renderFromElements< Item >( {
+	item,
+	field,
+}: DataViewRenderFieldProps< Item > ) {
+	const value = field.getValue( { item } );
+	return (
+		field?.elements?.find( ( element ) => element.value === value )
+			?.label || field.getValue( { item } )
+	);
 }

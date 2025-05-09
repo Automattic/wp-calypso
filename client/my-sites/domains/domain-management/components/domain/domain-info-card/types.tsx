@@ -45,7 +45,6 @@ export type DomainInfoCardProps = {
 	selectedSite: SiteDetails;
 };
 export type DomainDeleteInfoCardProps = DomainInfoCardProps & {
-	selectedSite: SiteDetails;
 	purchase?: Purchase | null;
 	isLoadingPurchase: boolean;
 };

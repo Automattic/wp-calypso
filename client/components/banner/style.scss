@@ -204,12 +204,20 @@
 	font-size: $font-body-extra-small;
 }
 
+.email-verification-banner__highlight {
+	text-transform: none;
+}
+
 .banner__action {
 	align-self: center;
 	font-size: $font-body-extra-small;
 	margin: 12px 0 0;
 	text-align: left;
 	width: 100%;
+
+	.is-primary {
+		margin-left: 8px;
+	}
 
 	.banner__prices {
 		display: flex;

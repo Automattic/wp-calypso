@@ -70,7 +70,7 @@ const theme: Theme = {
 		highlightBorder: colorStudio.colors[ 'WordPress Blue 80' ],
 		highlightOver: colorStudio.colors[ 'WordPress Blue 60' ],
 		success: colorStudio.colors[ 'Green 30' ],
-		discount: colorStudio.colors[ 'Green 30' ],
+		discount: colorStudio.colors[ 'Green 60' ],
 		disabledPaymentButtons: colorStudio.colors[ 'Gray 5' ],
 		disabledPaymentButtonsAccent: colorStudio.colors[ 'Gray 20' ],
 		disabledButtons: colorStudio.colors[ 'White' ],

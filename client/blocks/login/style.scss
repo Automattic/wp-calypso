@@ -1,7 +1,9 @@
+@import "@automattic/typography/styles/fonts";
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 @import "@automattic/color-studio/dist/color-variables";
 @import "@wordpress/base-styles/variables";
+@import "../../assets/stylesheets/shared/mixins/breakpoints";
 
 $breakpoint-mobile: 782px; //Mobile size.
 
@@ -19,9 +21,6 @@ $breakpoint-mobile: 782px; //Mobile size.
 			.accessible-focus &:focus {
 				box-shadow: 0 0 0 2px var(--studio-jetpack-green-30);
 			}
-		}
-		.button, .components-button, input[type="text"] {
-			border-radius: 4px;
 		}
 	}
 }
@@ -237,6 +236,7 @@ $breakpoint-mobile: 782px; //Mobile size.
 .login__form-action {
 	button {
 		width: 100%;
+		justify-content: center;
 	}
 }
 
@@ -330,7 +330,7 @@ $breakpoint-mobile: 782px; //Mobile size.
 .login__jetpack-header {
 	@include body-large;
 	text-align: initial;
-}	
+}
 
 .login__form-gutenboarding-wordpress-logo {
 	height: 64px;

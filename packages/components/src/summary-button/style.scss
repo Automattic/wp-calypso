@@ -8,7 +8,7 @@
 	transition: none;
 
 	&:hover:not(:disabled, [aria-disabled="true"]) {
-		background: color-mix(in srgb, var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9)) 2%, transparent);
+		background: color-mix(in srgb, #fff 98%, var(--wp-admin-theme-color, #3858e9));
 		color: var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9));
 
 		.summary-button-title {
