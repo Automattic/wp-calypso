@@ -60,8 +60,6 @@ const FoldableFAQ = styled( FoldableFAQComponent )`
 		}
 	}
 	&.is-expanded {
-		border: 2px solid var( --studio-wordpress-blue-50 );
-
 		.foldable-faq__question {
 			padding-bottom: 16px;
 		}
