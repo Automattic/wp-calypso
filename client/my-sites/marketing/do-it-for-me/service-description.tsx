@@ -130,13 +130,6 @@ export const DIFMServiceDescription = ( { isStoreFlow }: { isStoreFlow: boolean 
 					}
 				/>
 			</VerticalStepProgress>
-			<p css={ { fontSize: '0.875rem', lineHeight: 1.5, color: 'var( --color-text )' } }>
-				{ translate( 'Share your finished site with the world in %(days)d business days or less!', {
-					args: {
-						days: 4,
-					},
-				} ) }
-			</p>
 		</ServiceDescription>
 	);
 };
