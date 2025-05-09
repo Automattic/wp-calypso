@@ -1,9 +1,4 @@
-import {
-	POST_REVISIONS_DIALOG_CLOSE,
-	POST_REVISIONS_RECEIVE,
-	POST_REVISIONS_REQUEST,
-	POST_REVISIONS_SELECT,
-} from 'calypso/state/action-types';
+import { POST_REVISIONS_RECEIVE, POST_REVISIONS_SELECT } from 'calypso/state/action-types';
 
 import 'calypso/state/data-layer/wpcom/posts/revisions';
 
@@ -24,8 +19,4 @@ export const receivePostRevisions = ( { diffs, postId, revisions, revision_field
 export const selectPostRevision = ( revisionId ) => ( {
 	type: POST_REVISIONS_SELECT,
 	revisionId,
-} );
-
-export const closePostRevisionsDialog = () => ( {
-	type: POST_REVISIONS_DIALOG_CLOSE,
 } );
