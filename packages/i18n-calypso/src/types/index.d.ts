@@ -179,9 +179,6 @@ export declare const isRtl: typeof i18n.isRtl;
 export declare const defaultLocaleSlug: typeof i18n.defaultLocaleSlug;
 export declare const registerTranslateHook: typeof i18n.registerTranslateHook;
 export declare const registerComponentUpdateHook: typeof i18n.registerComponentUpdateHook;
-export declare const on: typeof i18n.on;
-export declare const off: typeof i18n.off;
-export declare const emit: typeof i18n.emit;
 export declare const fixMe: typeof i18n.fixMe;
 
 export interface LocalizeProps {
