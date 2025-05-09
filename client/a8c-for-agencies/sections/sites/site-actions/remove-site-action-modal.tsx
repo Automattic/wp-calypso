@@ -6,6 +6,8 @@ import { useDispatch } from 'calypso/state';
 import { successNotice } from 'calypso/state/notices/actions';
 import type { SiteData } from '../../../../jetpack-cloud/sections/agency-dashboard/sites-overview/types';
 
+import './style.scss';
+
 type ActionProps = {
 	onRefetchSite?: () => Promise< unknown >;
 	recordTracksEventRemoveSite: () => void;
@@ -56,11 +58,10 @@ function RemoveSiteActionModal( {
 							closeModal?.();
 							onActionPerformed?.();
 							dispatch( successNotice( translate( 'The site has been successfully removed.' ) ) );
-							setIsPending( false );
 						} );
 					}, 1000 );
 				},
-				onSettled: () => {
+				onError: () => {
 					setIsPending( false );
 				},
 			}
@@ -73,17 +74,20 @@ function RemoveSiteActionModal( {
 	};
 
 	return (
-		<form onSubmit={ onSubmit }>
-			{ translate(
-				'Are you sure you want to remove the site {{b}}%(siteName)s{{/b}} from the dashboard?',
-				{
-					args: { siteName },
-					components: {
-						b: <b />,
-					},
-					comment: '%(siteName)s is the site name',
-				}
-			) }
+		<form className="remove-site-action-form" onSubmit={ onSubmit }>
+			<div className="remove-site-action-form__message">
+				{ translate(
+					'Are you sure you want to remove the site {{b}}%(siteName)s{{/b}} from the dashboard?',
+					{
+						args: { siteName },
+						components: {
+							b: <b />,
+						},
+						comment: '%(siteName)s is the site name',
+					}
+				) }
+			</div>
+
 			<HStack justify="right">
 				<Button
 					__next40pxDefaultSize
