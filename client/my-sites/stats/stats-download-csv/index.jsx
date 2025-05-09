@@ -29,6 +29,7 @@ class StatsDownloadCsv extends Component {
 		siteId: PropTypes.number,
 		borderless: PropTypes.bool,
 		isMobile: PropTypes.bool,
+		hideIfNoData: PropTypes.bool,
 	};
 
 	processExportData = ( data ) => {
@@ -81,20 +82,34 @@ class StatsDownloadCsv extends Component {
 	};
 
 	render() {
-		const { data, siteId, statType, query, translate, isLoading, borderless, skipQuery, isMobile } =
-			this.props;
+		const {
+			data,
+			siteId,
+			statType,
+			query,
+			translate,
+			isLoading,
+			borderless,
+			skipQuery,
+			isMobile,
+			hideIfNoData = false,
+		} = this.props;
 		try {
 			new Blob(); // eslint-disable-line no-new
 		} catch ( e ) {
 			return null;
 		}
-		const disabled = isLoading || ! data.length;
+		const hasNoData = isLoading || ! data.length;
+
+		if ( hideIfNoData && hasNoData ) {
+			return null;
+		}
 
 		return (
 			<Button
 				className="stats-download-csv"
 				onClick={ this.downloadCsv }
-				disabled={ disabled }
+				disabled={ hasNoData }
 				borderless={ borderless }
 				icon={ download }
 			>

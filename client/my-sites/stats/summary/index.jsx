@@ -394,6 +394,7 @@ class StatsSummary extends Component {
 											path={ path }
 											period={ this.props.period }
 											skipQuery={ statType === 'statsUTM' }
+											hideIfNoData
 										/>
 									) }
 								</div>
