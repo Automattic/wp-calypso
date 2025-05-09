@@ -813,6 +813,16 @@ class Account extends Component {
 			this.getUserSetting( 'user_login' ) === this.state.userLoginConfirm &&
 			this.state.userLoginConfirm.length > 0;
 
+		const usernameValidationFailureMessage = this.getUsernameValidationFailureMessage();
+		const isError = ! usernameMatch || usernameValidationFailureMessage;
+
+		let validationMessage = translate( 'Please re-enter your new username to confirm it.' );
+		if ( usernameMatch ) {
+			validationMessage = usernameValidationFailureMessage
+				? usernameValidationFailureMessage
+				: translate( 'Thanks for confirming your new username!' );
+		}
+
 		return (
 			<div className="account__username-form" key="usernameForm">
 				<FormFieldset>
@@ -827,13 +837,9 @@ class Account extends Component {
 						value={ this.state.userLoginConfirm ?? '' }
 						onChange={ this.updateUserLoginConfirm }
 						isValid={ usernameMatch }
-						isError={ ! usernameMatch }
+						isError={ isError }
 					/>
-					<FormInputValidation isError={ ! usernameMatch }>
-						{ usernameMatch
-							? translate( 'Thanks for confirming your new username!' )
-							: translate( 'Please re-enter your new username to confirm it.' ) }
-					</FormInputValidation>
+					<FormInputValidation isError={ isError }>{ validationMessage }</FormInputValidation>
 				</FormFieldset>
 
 				{ this.renderBlogActionFields() }

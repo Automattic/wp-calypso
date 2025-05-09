@@ -1,23 +1,5 @@
 @import "@wordpress/edit-post/build-style/style.css";
 
-.is-group-gutenberg.layout {
-	background-color: var(--color-surface);
-}
-
-.is-group-gutenberg::before {
-	content: "";
-	position: fixed;
-	top: 0;
-	right: 0;
-	bottom: 0;
-	left: 0;
-	background-color: var(--color-surface);
-	pointer-events: none;
-	z-index: z-index("root", ".is-group-gutenberg::before");
-}
-
-// Placeholder styles
-
 .editor__placeholder {
 	.placeholder {
 		@include placeholder();
@@ -57,81 +39,5 @@
 		height: 40px;
 		border-radius: 20px; /* stylelint-disable-line scales/radii */
 		margin: 18px;
-	}
-}
-
-.layout.is-section-gutenberg-editor {
-	.edit-post-layout {
-		.edit-post-layout__content {
-			//fixes a notice display issue in Safari
-			margin-left: 0;
-			@media (min-width: 600px) {
-				top: 56px;
-			}
-			// Fixes a color consistency issue.
-			.edit-post-visual-editor {
-				background-color: transparent;
-			}
-		}
-
-		.editor-post-publish-panel {
-			top: 0;
-		}
-
-		.components-notice-list {
-			@media (max-width: 600px) {
-				top: auto;
-			}
-
-			left: 0;
-		}
-	}
-
-	.edit-post-header {
-		padding: 0 10px 0 0;
-		left: 0;
-		top: 0;
-	}
-}
-
-// End Placeholder styles
-
-// Gutenframe
-
-html.is-iframe {
-	overflow: hidden;
-}
-
-.main.calypsoify.is-iframe {
-	background-color: var(--color-neutral-0);
-	margin: 0;
-	padding: 0;
-	z-index: z-index("root", ".main.calypsoify.is-iframe");
-	-webkit-overflow-scrolling: touch;
-	min-height: 0;
-	position: fixed;
-	bottom: 0;
-	left: 0;
-	right: 0;
-	top: 0;
-	width: auto;
-
-	@supports ( -webkit-overflow-scrolling: touch ) {
-		/* iOS devices only */
-		-webkit-overflow-scrolling: touch;
-		overflow: auto;
-	}
-
-	iframe {
-		position: absolute;
-		top: 0;
-		width: 100%;
-		height: 100%;
-	}
-}
-
-.main {
-	&.calypsoify {
-		max-width: 100%;
 	}
 }

@@ -2,7 +2,7 @@ import { Icon, institution } from '@wordpress/icons';
 import CountComparisonCard from '../count-comparison-card';
 
 export default {
-	title: 'packages/components/Highlight Cards/CountComparisonCard',
+	title: 'Unaudited/Highlight Cards/CountComparisonCard',
 	component: CountComparisonCard,
 	argTypes: {
 		heading: { control: 'text' },

@@ -15,7 +15,6 @@ import {
 import PostQueryManager from 'calypso/lib/query-manager/post';
 import withQueryManager from 'calypso/lib/query-manager/with-query-manager';
 import {
-	EDITOR_START,
 	EDITOR_STOP,
 	POST_DELETE,
 	POST_DELETE_SUCCESS,
@@ -416,14 +415,6 @@ export function edits( state = {}, action ) {
 				},
 			};
 		}
-
-		case EDITOR_START:
-			return Object.assign( {}, state, {
-				[ action.siteId ]: {
-					...state[ action.siteId ],
-					[ action.postId || '' ]: null,
-				},
-			} );
 
 		case EDITOR_STOP:
 			if ( ! state.hasOwnProperty( action.siteId ) ) {
