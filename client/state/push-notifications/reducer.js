@@ -9,7 +9,6 @@ import {
 	PUSH_NOTIFICATIONS_RECEIVE_REGISTER_DEVICE,
 	PUSH_NOTIFICATIONS_RECEIVE_UNREGISTER_DEVICE,
 	PUSH_NOTIFICATIONS_TOGGLE_ENABLED,
-	PUSH_NOTIFICATIONS_TOGGLE_UNBLOCK_INSTRUCTIONS,
 } from 'calypso/state/action-types';
 import { combineReducers, withSchemaValidation, withPersistence } from 'calypso/state/utils';
 import { settingsSchema, systemSchema } from './schema';
@@ -95,12 +94,6 @@ const settingsReducer = ( state = { enabled: false }, action ) => {
 		case PUSH_NOTIFICATIONS_TOGGLE_ENABLED: {
 			return Object.assign( {}, state, {
 				enabled: ! state.enabled,
-			} );
-		}
-
-		case PUSH_NOTIFICATIONS_TOGGLE_UNBLOCK_INSTRUCTIONS: {
-			return Object.assign( {}, state, {
-				showingUnblockInstructions: ! state.showingUnblockInstructions,
 			} );
 		}
 

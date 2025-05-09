@@ -11,7 +11,6 @@ import {
 	PUSH_NOTIFICATIONS_MUST_PROMPT,
 	PUSH_NOTIFICATIONS_RECEIVE_REGISTER_DEVICE,
 	PUSH_NOTIFICATIONS_RECEIVE_UNREGISTER_DEVICE,
-	PUSH_NOTIFICATIONS_TOGGLE_UNBLOCK_INSTRUCTIONS,
 } from 'calypso/state/action-types';
 import { recordTracksEvent, bumpStat } from 'calypso/state/analytics/actions';
 import { isApiReady, getDeviceId, getStatus, isBlocked, isEnabled } from './selectors';
@@ -330,11 +329,5 @@ export function toggleEnabled() {
 			dispatch( deactivateSubscription() );
 			dispatch( recordTracksEvent( 'calypso_web_push_notifications_disabled' ) );
 		}
-	};
-}
-
-export function toggleUnblockInstructions() {
-	return {
-		type: PUSH_NOTIFICATIONS_TOGGLE_UNBLOCK_INSTRUCTIONS,
 	};
 }
