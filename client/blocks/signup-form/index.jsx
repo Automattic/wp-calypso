@@ -33,7 +33,6 @@ import FormTextInput from 'calypso/components/forms/form-text-input';
 import LoggedOutForm from 'calypso/components/logged-out-form';
 import LoggedOutFormFooter from 'calypso/components/logged-out-form/footer';
 import LoggedOutFormLinkItem from 'calypso/components/logged-out-form/link-item';
-import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';
 import Notice from 'calypso/components/notice';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -1041,14 +1040,11 @@ class SignupForm extends Component {
 
 		if ( isBlazePro ) {
 			return (
-				<div>
-					<LoggedOutFormLinks>
-						<span>{ this.props.translate( 'Already have an account?' ) }&nbsp;</span>
-						<LoggedOutFormLinkItem href={ this.getLoginLink() }>
-							{ this.props.translate( 'Log in here' ) }
-						</LoggedOutFormLinkItem>
-					</LoggedOutFormLinks>
-				</div>
+				<p className="signup-form__login-link">
+					{ this.props.translate( 'Already have an account? {{link}}Log in here{{/link}}.', {
+						components: { link: <a href={ this.getLoginLink() } /> },
+					} ) }
+				</p>
 			);
 		}
 

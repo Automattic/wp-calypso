@@ -426,7 +426,7 @@ body.is-section-signup {
 		a.logged-out-form__link-item,
 		a {
 			padding: 0;
-			text-decoration: none;
+			text-decoration: underline;
 		}
 
 		a.logged-out-form__link-item,
@@ -436,6 +436,14 @@ body.is-section-signup {
 			font-weight: 500;
 			line-height: 25px;
 		}
+	}
+
+	.signup-form__login-link {
+		color: var(--studio-gray-60);
+		font-size: rem(18px);
+		font-weight: 500;
+		line-height: 25px;
+		text-align: center;
 	}
 
 	.login__lost-password-footer {
