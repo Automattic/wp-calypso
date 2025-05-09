@@ -83,14 +83,15 @@ const useSubscriberRemoveMutation = (
 					await Promise.all( promises );
 				}
 
-				let wasRemoved = false;
+				let emailRemoved = false;
+				let wpcomRemoved = false;
 
 				// Remove the subscriber from the followers if they have a numeric user_id
 				const numericUserId = Number( subscriber.user_id );
 				if ( ! isNaN( numericUserId ) ) {
 					try {
 						await wpcom.req.post( `/sites/${ siteId }/followers/${ numericUserId }/delete` );
-						wasRemoved = true;
+						wpcomRemoved = true;
 					} catch ( e ) {
 						// Only throw if they don't have an email subscription ID to try next
 						const emailSubscriptionId = getEmailSubscriptionId( subscriber );
@@ -107,16 +108,22 @@ const useSubscriberRemoveMutation = (
 						await wpcom.req.post(
 							`/sites/${ siteId }/email-followers/${ emailSubscriptionId }/delete`
 						);
-						wasRemoved = true;
+						emailRemoved = true;
 					} catch ( e ) {
 						// Only throw if we haven't successfully removed them through any other method.
-						if ( ! wasRemoved ) {
+						if ( ! wpcomRemoved ) {
 							throw new Error( ( e as ApiResponseError )?.message );
 						}
 					}
 				}
 
-				return wasRemoved;
+				// Consider removal successful if:
+				// 1. We removed the email subscription (if it existed)
+				// 2. We removed the wpcom following (if it existed)
+				const emailSuccess = ! emailSubscriptionId || emailRemoved;
+				const wpcomSuccess = ! isNaN( numericUserId ) ? wpcomRemoved : true;
+
+				return emailSuccess && wpcomSuccess;
 			} );
 			const promiseResults = await Promise.allSettled( subscriberPromises );
 			if (
