@@ -26,6 +26,7 @@ interface PageSelectorProps {
 }
 
 interface PageSelectorProps extends ComponentProps< typeof SearchableDropdown > {
+	disabled: boolean;
 	onBlur?: ( event: React.FocusEvent< HTMLDivElement > ) => void;
 }
 
@@ -73,8 +74,10 @@ export const PageSelector = ( { onBlur, ...props }: PageSelectorProps ) => {
 };
 
 interface PageSelectorWrapperProps {
+	siteId: string;
 	pages: PageReport[];
 	currentPage: PageReport | undefined;
+	disabled: boolean;
 	onChange: ( page_id: string | null | undefined ) => void;
 }
 
@@ -82,7 +85,7 @@ export const PageSelectorWrapper: React.FC< PageSelectorWrapperProps > = ( {
 	pages,
 	currentPage,
 	onChange,
-	//disableControls,
+	disabled,
 	// statType,
 	// statsQuery,
 } ) => {
@@ -152,7 +155,7 @@ export const PageSelectorWrapper: React.FC< PageSelectorWrapperProps > = ( {
 				}
 			} }
 			options={ options }
-			disabled={ false }
+			disabled={ disabled }
 			onChange={ ( page_id ) => {
 				recordTracksEvent( 'calypso_performance_profiler_page_selector_change', {
 					is_home: page_id === '0',

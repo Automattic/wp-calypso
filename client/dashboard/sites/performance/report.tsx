@@ -2,10 +2,11 @@ import { useSearch } from '@tanstack/react-router';
 import { useState } from 'react';
 import { PerformanceProfilerDashboardContent } from 'calypso/performance-profiler/components/dashboard-content';
 import { sitePerformanceRoute } from '../../app/router';
+import { type PageReport } from '../hooks/use-site-pages';
 import { ReportError } from './report-error';
 import { ReportExpiredNotice } from './report-expired-notice';
 import { ReportLoading } from './report-loading';
-import type { PerformanceReport, Site } from '../../data/types';
+import type { PerformanceReport } from '../../data/types';
 
 import './style.scss';
 
@@ -21,56 +22,57 @@ const updateUrl = ( filter: string | undefined ) => {
 };
 
 export default function Report( {
-	site,
 	report,
-	hash,
+	currentPage,
 	isLoading,
-	isRunningReport,
 	isError,
+	isRunningReport,
+	onRetest,
 }: {
-	site: Site;
-	report: PerformanceReport;
-	hash: string;
+	report: PerformanceReport | undefined;
+	currentPage: PageReport | undefined;
 	isLoading: boolean;
-	isRunningReport: boolean;
 	isError: boolean;
+	isRunningReport: boolean;
+	onRetest: () => void;
 } ) {
 	const { filter } = useSearch( { from: sitePerformanceRoute.fullPath } );
 	const [ recommendationsFilter, setRecommendationsFilter ] = useState( filter );
-	const isSitePublic = site && site.options?.blog_public === 1;
+
+	if ( isError ) {
+		return <ReportError onRetestClick={ onRetest } />;
+	}
+
+	if ( isLoading ) {
+		return 'Loading the report...';
+	}
+
+	if ( isRunningReport ) {
+		return (
+			<ReportLoading
+				pageTitle={ currentPage.label }
+				isLoadingPages={ false }
+				isSavedReport={ false }
+			/>
+		);
+	}
+
+	if ( ! report ) {
+		return null;
+	}
 
 	const handleRecommendationsFilterChange = ( filter: string ) => {
 		setRecommendationsFilter( filter );
 		updateUrl( filter );
 	};
 
-	if ( ! isSitePublic ) {
-		return 'This site is not public. Please make it public to view the performance report.';
-	}
-
-	if ( isLoading ) {
-		return 'loading...';
-	}
-
-	if ( isRunningReport ) {
-		return <ReportLoading pageTitle="" isSavedReport={ false } />;
-	}
-
-	if ( isError ) {
-		return <ReportError onRetestClick={ () => {} } />;
-	}
-
-	if ( ! report || ! hash ) {
-		return 'no report';
-	}
-
 	return (
 		<div className="site-performance-report">
-			<ReportExpiredNotice reportTimestamp={ report?.timestamp } onRetest={ () => {} } />
+			<ReportExpiredNotice reportTimestamp={ report?.timestamp } onRetest={ onRetest } />
 			<PerformanceProfilerDashboardContent
 				performanceReport={ report }
-				url={ site.URL }
-				hash={ hash }
+				url={ currentPage.url }
+				hash={ currentPage.wpcom_performance_report_url.hash }
 				overallScoreIsTab
 				filter={ recommendationsFilter }
 				displayNewsletterBanner={ false }

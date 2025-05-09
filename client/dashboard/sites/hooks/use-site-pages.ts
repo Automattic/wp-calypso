@@ -6,7 +6,7 @@ import wpcomRequest from 'wpcom-proxy-request';
 
 const FIELDS_TO_RETRIEVE = [ 'id', 'link', 'title', 'wpcom_performance_report_url' ];
 
-interface PerformanceReportUrl {
+export interface PerformanceReportUrl {
 	url: string;
 	hash: string;
 }
@@ -23,6 +23,7 @@ export interface PageReport {
 	path: string;
 	label: string;
 	value: string;
+	disabled: boolean;
 	wpcom_performance_report_url: {
 		url: string;
 		hash: string;
@@ -59,6 +60,19 @@ const getPages = ( siteId: string, query = '' ) => {
 	} );
 };
 
+const savePageMeta = ( siteId: number, pageId: number, url: string ) => {
+	return wpcomRequest< SitePage >( {
+		path: addQueryArgs( `/sites/${ siteId }/pages/${ pageId }`, {
+			_fields: FIELDS_TO_RETRIEVE,
+		} ),
+		method: 'POST',
+		apiNamespace: 'wp/v2',
+		body: {
+			wpcom_performance_report_url: url,
+		},
+	} );
+};
+
 const mapPageToPageReport = ( page: SitePage, siteUrl: string | undefined ): PageReport => {
 	let path = page.link.replace( siteUrl ?? '', '' );
 	path = path.length > 1 ? path.replace( /\/$/, '' ) : path;
@@ -68,6 +82,7 @@ const mapPageToPageReport = ( page: SitePage, siteUrl: string | undefined ): Pag
 		path,
 		label: page.title.rendered || __( 'No Title' ),
 		value: page.id.toString(),
+		disabled: false,
 		wpcom_performance_report_url: toPerformanceReportParts(
 			page.link,
 			page.wpcom_performance_report_url
@@ -87,7 +102,7 @@ export function useSitePages( {
 	homepageHash: string;
 	defaultHomepageID: string;
 	query?: string;
-} ) {
+} ): { pages: PageReport[]; refetch: () => void; isLoading: boolean; isError: boolean } {
 	const { data, isLoading, isError, refetch } = useQuery( {
 		queryKey: [ 'useSitePerformancePageReports', siteId, query ],
 		queryFn: () => getPages( siteId!, query ),
@@ -100,7 +115,7 @@ export function useSitePages( {
 		enabled: !! homepageHash,
 	} );
 
-	const pages = useMemo( () => {
+	const pages: PageReport[] = useMemo( () => {
 		if ( ! siteUrl ) {
 			return [];
 		}
@@ -112,6 +127,7 @@ export function useSitePages( {
 					path: '/',
 					label: __( 'Home' ),
 					value: defaultHomepageID,
+					disabled: false,
 					wpcom_performance_report_url: {
 						url: siteUrl,
 						hash: homepageHash,
@@ -122,7 +138,7 @@ export function useSitePages( {
 		}
 
 		return data ?? [];
-	}, [ query, data, siteUrl, homepageHash ] );
+	}, [ query, data, siteUrl, homepageHash, defaultHomepageID ] );
 
 	return { pages, refetch, isLoading, isError };
 }

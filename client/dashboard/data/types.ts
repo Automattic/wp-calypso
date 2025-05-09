@@ -184,6 +184,7 @@ export interface PerformanceReport {
 	ttfb?: number;
 	inp?: number;
 	tbt?: number;
+	overall?: number;
 }
 
 export interface UrlPerformanceInsights {

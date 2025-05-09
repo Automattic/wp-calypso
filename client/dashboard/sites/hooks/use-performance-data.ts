@@ -27,19 +27,19 @@ export function usePerformanceData(
 		data: basicMetricsData,
 		isLoading: isLoadingBasicMetrics,
 		isError: isBasicMetricsError,
+		refetch,
 	} = useQuery( {
 		...basicMetricsQuery( url as string ),
 		refetchOnWindowFocus: false,
 		enabled: !! url && ! hash,
 	} );
 
-	const token = hash || basicMetricsData?.token;
+	const token = basicMetricsData?.token || hash;
 
 	const {
 		data: performanceData,
 		isLoading: isLoadingPerformanceInsights,
 		isError: isInsightsError,
-		refetch,
 	} = useQuery( {
 		...performanceInsightsQuery( url as string, token || '' ),
 		refetchOnWindowFocus: false,

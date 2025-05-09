@@ -333,6 +333,6 @@ export const fetchPerformanceInsights = async (
 			path: '/site-profiler/metrics/advanced/insights',
 			apiNamespace: 'wpcom/v2',
 		},
-		{ url, advance: '1', hash: token }
+		{ url, hash: token }
 	);
 };

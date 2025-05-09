@@ -129,6 +129,7 @@ export function basicMetricsQuery( url: string ) {
 	return {
 		queryKey: [ 'url', 'basic-metrics', url ],
 		queryFn: () => {
+			console.log( 'basicMetricsQuery', url );
 			return fetchBasicMetrics( url );
 		},
 	};
