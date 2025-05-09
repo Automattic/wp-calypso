@@ -473,6 +473,15 @@ object RunAllUnitTests : BuildType({
 						exit 1
 					fi
 				fi
+
+				# If there are changes on the CHANGELOG.md prevent the PR from merging.
+				# In this case, we want to merge via specific instructions on the CLI.
+				if grep -q ^packages/dataviews/CHANGELOG.md <<< "${'$'}CHANGES"; then
+					echo "ERROR: changes to 'packages/dataviews/CHANGELOG.md detected'."
+					echo "PRs that sync changes from upstream cannot be merged via GitHub UI."
+					echo "Please, check packages/dataviews/SYNC.md to merge via the CLI commands."
+					exit 1
+				fi
 			""".trimIndent()
 		}
 		bashNodeScript {
