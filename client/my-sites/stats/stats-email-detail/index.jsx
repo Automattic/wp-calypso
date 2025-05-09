@@ -1,6 +1,9 @@
+import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Spinner } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { Button as CoreButton } from '@wordpress/components';
+import clsx from 'clsx';
 import { localize, translate } from 'i18n-calypso';
 import { find, flowRight } from 'lodash';
 import moment from 'moment';
@@ -19,6 +22,7 @@ import EmptyContent from 'calypso/components/empty-content';
 import NavigationHeader from 'calypso/components/navigation-header';
 import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
 import memoizeLast from 'calypso/lib/memoize-last';
+import PageHeader from 'calypso/my-sites/stats/components/headers/page-header';
 import Main from 'calypso/my-sites/stats/components/stats-main';
 import { STATS_PRODUCT_NAME } from 'calypso/my-sites/stats/constants';
 import StatsEmailModule from 'calypso/my-sites/stats/stats-email-module';
@@ -186,6 +190,7 @@ class StatsEmailDetail extends Component {
 			statType,
 			hasValidDate,
 			showNoDataInfo,
+			showViewLink,
 		} = this.props;
 		const { maxBars } = this.state;
 
@@ -201,6 +206,28 @@ class StatsEmailDetail extends Component {
 		const query = memoizedQuery( period, endOf.format( 'YYYY-MM-DD' ) );
 		const slugPath = slug ? `/${ slug }` : '';
 		const pathTemplate = `${ traffic.path }/{{ interval }}/${ postId }${ slugPath }`;
+
+		// TODO: Refactor navigationItems to a single object with backLink and title attributes.
+		const navigationItems = this.getNavigationItemsWithTitle( this.getTitle() );
+
+		const backLinkProps = {
+			text: navigationItems[ 0 ].label,
+			url: navigationItems[ 0 ].href,
+		};
+		const titleProps = {
+			title: navigationItems[ 1 ].label,
+			// Remove the default logo for Odyssey stats.
+			titleLogo: null,
+		};
+
+		let actionLabel;
+		const postType = post && post.type !== null ? post.type : 'post';
+		if ( postType === 'page' ) {
+			actionLabel = translate( 'View Page' );
+		} else {
+			actionLabel = translate( 'View Post' );
+		}
+
 		return (
 			<>
 				<Main className="has-fixed-nav stats__email-detail stats">
@@ -223,9 +250,24 @@ class StatsEmailDetail extends Component {
 						path="/stats/email/:statType/:site/:period/:email_id"
 						title="Stats > Single Email"
 					/>
-					<NavigationHeader
-						navigationItems={ this.getNavigationItemsWithTitle( this.getNavigationTitle() ) }
-					/>
+
+					{ config.isEnabled( 'stats/navigation-improvement' ) ? (
+						<PageHeader
+							backLinkProps={ backLinkProps }
+							titleProps={ titleProps }
+							rightSection={
+								showViewLink && (
+									<CoreButton onClick={ this.openPreview } variant="primary">
+										<span>{ actionLabel }</span>
+									</CoreButton>
+								)
+							}
+						/>
+					) : (
+						<NavigationHeader
+							navigationItems={ this.getNavigationItemsWithTitle( this.getNavigationTitle() ) }
+						/>
+					) }
 
 					{ ! isRequestingStats && ! countViews && post && (
 						<EmptyContent
@@ -242,7 +284,11 @@ class StatsEmailDetail extends Component {
 					) }
 					{ post ? (
 						<>
-							<div className="stats-navigation stats-navigation--modernized">
+							<div
+								className={ clsx( 'stats-navigation', 'stats-navigation--modernized', {
+									'stats-navigation--improved': config.isEnabled( 'stats/navigation-improvement' ),
+								} ) }
+							>
 								<StatsDetailsNavigation
 									postId={ postId }
 									period={ period }
