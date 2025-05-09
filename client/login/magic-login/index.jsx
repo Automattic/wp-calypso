@@ -1355,6 +1355,11 @@ class MagicLogin extends Component {
 			);
 		}
 
+		const isWhiteLogin =
+			! this.props.isWCCOM &&
+			! this.props.isFromAutomatticForAgenciesPlugin &&
+			! this.props.isJetpackLogin;
+
 		// If this is part of the Jetpack login flow and the `jetpack/magic-link-signup` feature
 		// flag is enabled, some steps will display a different UI
 		const requestLoginEmailFormProps = {
@@ -1364,7 +1369,11 @@ class MagicLogin extends Component {
 		};
 
 		return (
-			<Main className="magic-login magic-login__request-link is-white-login">
+			<Main
+				className={ clsx( 'magic-login magic-login__request-link', {
+					'is-white-login': isWhiteLogin,
+				} ) }
+			>
 				{ this.renderGutenboardingLogo() }
 				{ this.props.isFromAutomatticForAgenciesPlugin && (
 					<A4ALogo fullA4A size={ 58 } className="magic-login__a4a-logo" />
