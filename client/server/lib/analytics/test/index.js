@@ -2,10 +2,19 @@ import UserAgent from 'express-useragent';
 import superagent from 'superagent';
 import analytics from '../index';
 
+const mockTimestamp = new Date( '2024-01-01T00:00:00.000Z' ).getTime();
+const mockTimezoneOffset = new Date( '2024-01-01T00:00:00.000Z' ).getTimezoneOffset() / 60;
+
 describe( 'Server-Side Analytics', () => {
 	describe( 'tracks.recordEvent', () => {
 		beforeAll( function () {
 			jest.spyOn( superagent, 'get' ).mockReturnValue( { end: () => {} } );
+			jest.useFakeTimers();
+			jest.setSystemTime( mockTimestamp );
+		} );
+
+		afterAll( () => {
+			jest.useRealTimers();
 		} );
 
 		afterEach( () => {
@@ -36,8 +45,84 @@ describe( 'Server-Side Analytics', () => {
 			const url = new URL( superagent.get.mock.calls[ 0 ][ 0 ] );
 			expect( url.origin ).toBe( 'http://pixel.wp.com' );
 			expect( url.pathname ).toBe( '/t.gif' );
+			expect( url.searchParams.get( '_en' ) ).toBe( 'calypso_test' );
+			expect( url.searchParams.get( '_ts' ) ).toBe( mockTimestamp.toString() );
+			expect( url.searchParams.get( '_tz' ) ).toBe( mockTimezoneOffset.toString() );
+			expect( url.searchParams.get( '_dl' ) ).toBe( 'test' );
 			expect( url.searchParams.get( '_lg' ) ).toBe( 'cs' );
+			expect( url.searchParams.get( '_pf' ) ).toBe( 'Apple Mac' );
+			expect( url.searchParams.get( '_via_ip' ) ).toBe( '1.1.1.1' );
+			expect( url.searchParams.get( '_via_ua' ) ).toBe(
+				'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:93.0) Gecko/20100101 Firefox/93.0'
+			);
+			// For anonymous user, as req.cookies is not defined in the test setup for this case
+			expect( url.searchParams.get( '_ut' ) ).toBe( 'anon' );
+			expect( url.searchParams.get( '_ui' ) ).toEqual( expect.stringMatching( /^[a-f0-9-]+$/i ) );
+			expect( url.searchParams.get( '_rt' ) ).toBe( mockTimestamp.toString() );
+			expect( url.searchParams.get( '_' ) ).toBe( '_' );
 			expect( url.searchParams.get( 'a' ) ).toBe( 'foo' );
+		} );
+
+		test( 'sends an HTTP request with user details from cookie', () => {
+			const reqWithCookie = {
+				...req,
+				cookies: {
+					wordpress_logged_in: encodeURIComponent( 'testuser|12345|token' ),
+				},
+			};
+			analytics.tracks.recordEvent( 'calypso_user_test', { b: 'bar' }, reqWithCookie );
+
+			expect( superagent.get ).toHaveBeenCalled();
+			const url = new URL( superagent.get.mock.calls[ 0 ][ 0 ] );
+			expect( url.origin ).toBe( 'http://pixel.wp.com' );
+			expect( url.pathname ).toBe( '/t.gif' );
+			expect( url.searchParams.get( '_en' ) ).toBe( 'calypso_user_test' );
+			expect( url.searchParams.get( '_ts' ) ).toBe( mockTimestamp.toString() );
+			expect( url.searchParams.get( '_tz' ) ).toBe( mockTimezoneOffset.toString() );
+			expect( url.searchParams.get( '_dl' ) ).toBe( 'test' );
+			expect( url.searchParams.get( '_lg' ) ).toBe( 'cs' );
+			expect( url.searchParams.get( '_pf' ) ).toBe( 'Apple Mac' );
+			expect( url.searchParams.get( '_via_ip' ) ).toBe( '1.1.1.1' );
+			expect( url.searchParams.get( '_via_ua' ) ).toBe(
+				'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:93.0) Gecko/20100101 Firefox/93.0'
+			);
+			expect( url.searchParams.get( '_ul' ) ).toBe( 'testuser' );
+			expect( url.searchParams.get( '_ui' ) ).toBe( '12345' );
+			expect( url.searchParams.get( '_ut' ) ).toBe( 'wpcom:user_id' );
+			expect( url.searchParams.get( '_rt' ) ).toBe( mockTimestamp.toString() );
+			expect( url.searchParams.get( '_' ) ).toBe( '_' );
+			expect( url.searchParams.get( 'b' ) ).toBe( 'bar' );
+		} );
+
+		test( 'sends an HTTP request with user details from query params', () => {
+			const reqWithQuery = {
+				...req,
+				query: {
+					_ui: 'queryuser',
+					_ut: 'querytype',
+				},
+			};
+			analytics.tracks.recordEvent( 'calypso_query_test', { c: 'baz' }, reqWithQuery );
+
+			expect( superagent.get ).toHaveBeenCalled();
+			const url = new URL( superagent.get.mock.calls[ 0 ][ 0 ] );
+			expect( url.origin ).toBe( 'http://pixel.wp.com' );
+			expect( url.pathname ).toBe( '/t.gif' );
+			expect( url.searchParams.get( '_en' ) ).toBe( 'calypso_query_test' );
+			expect( url.searchParams.get( '_ts' ) ).toBe( mockTimestamp.toString() );
+			expect( url.searchParams.get( '_tz' ) ).toBe( mockTimezoneOffset.toString() );
+			expect( url.searchParams.get( '_dl' ) ).toBe( 'test' );
+			expect( url.searchParams.get( '_lg' ) ).toBe( 'cs' );
+			expect( url.searchParams.get( '_pf' ) ).toBe( 'Apple Mac' );
+			expect( url.searchParams.get( '_via_ip' ) ).toBe( '1.1.1.1' );
+			expect( url.searchParams.get( '_via_ua' ) ).toBe(
+				'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:93.0) Gecko/20100101 Firefox/93.0'
+			);
+			expect( url.searchParams.get( '_ui' ) ).toBe( 'queryuser' );
+			expect( url.searchParams.get( '_ut' ) ).toBe( 'querytype' );
+			expect( url.searchParams.get( '_rt' ) ).toBe( mockTimestamp.toString() );
+			expect( url.searchParams.get( '_' ) ).toBe( '_' );
+			expect( url.searchParams.get( 'c' ) ).toBe( 'baz' );
 		} );
 
 		test( 'omits an undefined event property', () => {
