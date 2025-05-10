@@ -236,7 +236,7 @@ const webpackConfig = {
 				include: shouldTranspileDependency,
 			} ),
 			SassConfig.loader( {
-				includePaths: [ __dirname ],
+				includePaths: [ __dirname, '../packages' ],
 				postCssOptions: {
 					// Do not use postcss.config.js. This ensure we have the final say on how PostCSS is used in calypso.
 					// This is required because Calypso imports `@automattic/notifications` and that package defines its
@@ -250,7 +250,7 @@ const webpackConfig = {
 				prelude: `@use '${
 					path
 						// Path, relative to Node CWD
-						.relative(
+						.resolve(
 							process.cwd(),
 							path.join( __dirname, 'assets/stylesheets/shared/_utils.scss' )
 						)

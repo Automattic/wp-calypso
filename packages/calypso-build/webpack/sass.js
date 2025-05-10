@@ -1,6 +1,7 @@
 const WebpackRTLPlugin = require( '@automattic/webpack-rtl-plugin' );
 const MiniCssExtractPlugin = require( 'mini-css-extract-plugin' );
 const MiniCSSWithRTLPlugin = require( './mini-css-with-rtl' );
+const { getDiskCache, setDiskCache } = require( './sass-cache' );
 
 /**
  * Return a webpack loader object containing our styling (Sass -> CSS) stack.
@@ -36,7 +37,22 @@ module.exports.loader = ( { includePaths, prelude, postCssOptions } ) => ( {
 		{
 			loader: require.resolve( 'sass-loader' ),
 			options: {
+				api: 'modern',
+				implementation: {
+					...require( 'sass' ),
+					compileStringAsync: async ( data, rest ) => {
+						const url = rest.url.href;
+						const cache = getDiskCache( url );
+						if ( cache ) {
+							return cache;
+						}
+						const result = await require( 'sass' ).compileStringAsync( data, rest );
+						setDiskCache( url, result );
+						return result;
+					},
+				},
 				additionalData: prelude,
+				webpackImporter: true,
 				sassOptions: {
 					includePaths,
 					quietDeps: true,
