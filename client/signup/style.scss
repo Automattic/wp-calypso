@@ -61,6 +61,7 @@ body.is-section-signup {
 // Notice the :not(.dops) selector. I've added this to try and
 // avoid stepping on the toes of our oauth users, like Crowdsignal.
 body.is-section-signup .layout:not(.dops) {
+
 	// If there's an error lets make it look a little better
 	// on the primary colored background.
 	.empty-content {
@@ -116,7 +117,7 @@ body.is-section-signup .layout:not(.dops) {
 }
 
 .layout.is-wccom-oauth-flow {
-	@import "jetpack-connect/colors";
+	@import "../jetpack-connect/colors";
 	@include woocommerce-colors();
 	background-color: var(--color-woocommerce-onboarding-background);
 	height: 100%;
@@ -259,6 +260,7 @@ body.is-section-signup .layout:not(.dops):not(.is-wccom-oauth-flow) {
 	.signup:not(.is-onboarding-2023-pricing-grid) .step-wrapper:not(.is-horizontal-layout),
 	// Stepper's header.
 	.step-container:not(.is-horizontal-layout) {
+
 		// Stepper's header.
 		.step-container__header,
 		.step-wrapper__header {
@@ -516,6 +518,7 @@ body.is-section-signup .layout:not(.dops):not(.is-wccom-oauth-flow) {
 	.is-onboarding-pm .signup__step.is-user.is-passwordless-experiment {
 		.social-buttons__button {
 			border: 0;
+
 			> svg {
 				border: none;
 				padding: 0;

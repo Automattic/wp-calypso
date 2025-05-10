@@ -1,7 +1,8 @@
+const path = require( 'path' );
 const WebpackRTLPlugin = require( '@automattic/webpack-rtl-plugin' );
 const MiniCssExtractPlugin = require( 'mini-css-extract-plugin' );
+const cachedSass = require( './disk-cached-sass' );
 const MiniCSSWithRTLPlugin = require( './mini-css-with-rtl' );
-const { getDiskCache, setDiskCache } = require( './sass-cache' );
 
 /**
  * Return a webpack loader object containing our styling (Sass -> CSS) stack.
@@ -24,7 +25,7 @@ module.exports.loader = ( { includePaths, prelude, postCssOptions } ) => ( {
 				// but starting with css-loader v4, it started trying to handle
 				// absolute paths itself.
 				url: {
-					filter: ( path ) => ! path.startsWith( '/' ),
+					filter: ( filePath ) => ! filePath.startsWith( '/' ),
 				},
 			},
 		},
@@ -38,24 +39,16 @@ module.exports.loader = ( { includePaths, prelude, postCssOptions } ) => ( {
 			loader: require.resolve( 'sass-loader' ),
 			options: {
 				api: 'modern',
-				implementation: {
-					...require( 'sass' ),
-					compileStringAsync: async ( data, rest ) => {
-						const url = rest.url.href;
-						const cache = getDiskCache( url );
-						if ( cache ) {
-							return cache;
-						}
-						const result = await require( 'sass' ).compileStringAsync( data, rest );
-						setDiskCache( url, result );
-						return result;
-					},
-				},
+				implementation: cachedSass,
 				additionalData: prelude,
 				webpackImporter: true,
 				sassOptions: {
 					includePaths,
 					quietDeps: true,
+					loadPaths: [
+						path.resolve( process.cwd(), 'node_modules' ),
+						path.resolve( process.cwd(), 'packages' ),
+					],
 				},
 				// The warnRuleAsWarning can be removed once sass-loader is updated to v14. It defaults to true in that version.
 				// @see https://github.com/webpack-contrib/sass-loader/tree/v14.0.0?tab=readme-ov-file#warnruleaswarning
