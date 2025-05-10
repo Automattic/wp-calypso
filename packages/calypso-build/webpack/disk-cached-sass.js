@@ -25,7 +25,7 @@ function cachedReadFile( fullPath ) {
 	return null;
 }
 
-// Preload all the files in memory upfront. This is incredibly fast (under 500ms).
+// Preload all the files in memory upfront. This is fast (under 500ms).
 if ( ! fs.existsSync( cacheDir ) ) {
 	fs.mkdirSync( cacheDir, { recursive: true } );
 } else {
@@ -60,7 +60,6 @@ const get = ( url ) => {
 			const cachedStat = file.mtime;
 
 			if ( sourceStat.mtime > cachedStat ) {
-				console.log( 'Deleting stale cache file', cachePath );
 				// Delete the stale cache file without blocking the main thread.
 				fs.promises.unlink( cachePath );
 				return null;
@@ -85,6 +84,10 @@ const set = ( url, resultPromise ) => {
 		const cachePath = path.join( cacheDir, `${ cacheKey }.json` );
 
 		fs.promises.writeFile( cachePath, JSON.stringify( result ), 'utf8' ).catch();
+		cacheMap[ cachePath ] = {
+			mtime: Date.now(),
+			content: result,
+		};
 	} );
 };
 
