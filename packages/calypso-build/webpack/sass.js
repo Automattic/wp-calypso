@@ -42,9 +42,9 @@ module.exports.loader = ( { includePaths, prelude, postCssOptions } ) => ( {
 				implementation: cachedSass,
 				additionalData: prelude,
 				sassOptions: {
-					includePaths,
 					quietDeps: true,
 					loadPaths: [
+						...includePaths,
 						path.resolve( process.cwd(), 'node_modules' ),
 						path.resolve( process.cwd(), 'packages' ),
 					],

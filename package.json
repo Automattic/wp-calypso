@@ -229,6 +229,7 @@
 		"react-intersection-observer": "^9.4.3",
 		"react-modal": "^3.16.3",
 		"redux": "^5.0.1",
+		"sass-embedded": "^1.88.0",
 		"swiper": "^10.1.0",
 		"wpcom": "workspace:^"
 	},
@@ -308,7 +309,7 @@
 		"replace": "^1.1.5",
 		"resize-observer-polyfill": "^1.5.1",
 		"sass": "1.54.0",
-		"sass-loader": "^13.3.3",
+		"sass-loader": "^16.0.5",
 		"source-map": "^0.7.4",
 		"stackframe": "^1.1.1",
 		"stacktrace-gps": "^3.0.3",

@@ -269,8 +269,8 @@
 
 .comment__content-body.with-blocks {
 	// This encloses the blocks CSS to this div only.
-	@include meta.load-css( "node_modules/@wordpress/block-library/build-style/style.css");
-	@include meta.load-css( "node_modules/@wordpress/block-library/build-style/theme.css");
+	@include meta.load-css( "@wordpress/block-library/build-style/style.css");
+	@include meta.load-css( "@wordpress/block-library/build-style/theme.css");
 }
 
 .comment__content-preview {

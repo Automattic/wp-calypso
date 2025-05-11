@@ -1,6 +1,7 @@
 const crypto = require( 'crypto' );
 const fs = require( 'fs' );
 const path = require( 'path' );
+const sass = require( 'sass' );
 
 const cacheDir = path.join( process.cwd(), '.sass-cache' );
 const cacheMap = {};
@@ -17,10 +18,14 @@ function cachedReadFile( fullPath ) {
 		const cacheContent = fs.readFileSync( fullPath, 'utf8' );
 		const { mtime } = fs.statSync( fullPath );
 
-		return ( cacheMap[ fullPath ] = {
-			mtime: mtime,
-			content: JSON.parse( cacheContent ),
-		} );
+		try {
+			return ( cacheMap[ fullPath ] = {
+				mtime: mtime,
+				content: JSON.parse( cacheContent ),
+			} );
+		} catch ( error ) {
+			return null;
+		}
 	}
 	return null;
 }
@@ -94,14 +99,14 @@ const set = ( url, resultPromise ) => {
 };
 
 module.exports = {
-	...require( 'sass' ),
+	...sass,
 	compileStringAsync: ( data, rest ) => {
 		const url = rest.url.href;
 		const cache = get( url );
 		if ( cache ) {
 			return cache;
 		}
-		const result = require( 'sass' ).compileStringAsync( data, rest );
+		const result = sass.compileStringAsync( data, rest );
 		set( url, result );
 		return result;
 	},
