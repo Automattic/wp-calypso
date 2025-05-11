@@ -74,7 +74,7 @@ export function usePerformanceData(
 		isBasicMetricsError ||
 		isInsightsError ||
 		isReportFailed( performanceData?.pagespeed?.mobile ) ||
-		isReportFailed( performanceData?.pagespeed.desktop );
+		isReportFailed( performanceData?.pagespeed?.desktop );
 
 	return {
 		hash: token,

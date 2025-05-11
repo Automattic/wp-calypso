@@ -115,7 +115,6 @@ export function requestSiteStats( siteId, statType, query ) {
 						options,
 						'statsVideo' === statType ? { statType: query.statType, period: query.period } : {}
 					);
-
 		return requestStats
 			.then( ( data ) => dispatch( receiveSiteStats( siteId, statType, query, data, Date.now() ) ) )
 			.catch( ( error ) => {

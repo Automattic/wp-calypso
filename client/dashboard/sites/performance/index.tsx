@@ -8,12 +8,7 @@ import { siteRoute, sitePerformanceRoute } from '../../app/router';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { usePerformanceData } from '../hooks/use-performance-data';
-import {
-	useSitePages,
-	savePageMeta,
-	type PageReport,
-	type PerformanceReportUrl,
-} from '../hooks/use-site-pages';
+import { useSitePages, type PageReport, type PerformanceReportUrl } from '../hooks/use-site-pages';
 import DeviceTabControls, { ToggleType } from './device-toggle';
 import { PageSelectorWrapper } from './page-selector';
 import Report from './report';
@@ -84,22 +79,22 @@ function SitePerformanceContent( { site }: { site: Site } ) {
 	 * @param reportUrl The performance report URL to save.
 	 * @returns A promise that resolves to the saved performance report URL.
 	 */
-	const savePerformanceReportUrl = async ( pageId: string, reportUrl: PerformanceReportUrl ) => {
-		const performanceReportUrl = `${ reportUrl.url }&hash=${ reportUrl.hash }`;
+	// const savePerformanceReportUrl = async ( pageId: string, reportUrl: PerformanceReportUrl ) => {
+	// 	const performanceReportUrl = `${ reportUrl.url }&hash=${ reportUrl.hash }`;
 
-		// if ( ! isValidURL( performanceReportUrl ) ) {
-		// 	return;
-		// }
+	// 	// if ( ! isValidURL( performanceReportUrl ) ) {
+	// 	// 	return;
+	// 	// }
 
-		// Update default site settings if the page is the homepage
-		if ( pageId === DEFAULT_HOMEPAGE_ID ) {
-			return mutation.mutate( {
-				wpcom_performance_report_url: performanceReportUrl,
-			} );
-		}
+	// 	// Update default site settings if the page is the homepage
+	// 	if ( pageId === DEFAULT_HOMEPAGE_ID ) {
+	// 		return mutation.mutate( {
+	// 			wpcom_performance_report_url: performanceReportUrl,
+	// 		} );
+	// 	}
 
-		return await savePageMeta( site.ID, parseInt( pageId, 10 ), performanceReportUrl );
-	};
+	// 	return await savePageMeta( site.ID, parseInt( pageId, 10 ), performanceReportUrl );
+	// };
 
 	// TODO: Remove this once we have a way to handle the report for private sites
 	if ( 1 !== site.options?.blog_public ) {
@@ -112,7 +107,7 @@ function SitePerformanceContent( { site }: { site: Site } ) {
 				title={ __( 'Performance' ) }
 				description={
 					<Button isPrimary onClick={ refetch }>
-						{ __( 'Retest' ) }
+						Retest
 					</Button>
 				}
 				actions={
