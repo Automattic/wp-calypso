@@ -101,7 +101,7 @@ class StatsDownloadCsv extends Component {
 		}
 		const disabled = isLoading || ! data.length;
 
-		if ( hideIfNoData && ! data.length && ! isLoading ) {
+		if ( hideIfNoData && disabled ) {
 			return null;
 		}
 
