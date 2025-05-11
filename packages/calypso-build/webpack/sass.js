@@ -41,7 +41,6 @@ module.exports.loader = ( { includePaths, prelude, postCssOptions } ) => ( {
 				api: 'modern',
 				implementation: cachedSass,
 				additionalData: prelude,
-				webpackImporter: true,
 				sassOptions: {
 					includePaths,
 					quietDeps: true,

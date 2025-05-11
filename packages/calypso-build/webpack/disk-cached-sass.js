@@ -6,7 +6,7 @@ const cacheDir = path.join( process.cwd(), '.sass-cache' );
 const cacheMap = {};
 
 /**
- * readFileSync but keeps the file in memory.
+ * readFileSync but keeps the file in memory and parses it as JSON.
  * @param {string} fullPath - The path to the file to read
  * @returns {Object | null} The (cached) file and its mtime or null if the file does not exist.
  */
@@ -15,20 +15,21 @@ function cachedReadFile( fullPath ) {
 		return cacheMap[ fullPath ];
 	} else if ( fs.existsSync( fullPath ) ) {
 		const cacheContent = fs.readFileSync( fullPath, 'utf8' );
-		const cachedState = fs.statSync( fullPath );
+		const { mtime } = fs.statSync( fullPath );
 
 		return ( cacheMap[ fullPath ] = {
-			mtime: cachedState.mtime,
+			mtime: mtime,
 			content: JSON.parse( cacheContent ),
 		} );
 	}
 	return null;
 }
 
-// Preload all the files in memory upfront. This is fast (under 500ms).
 if ( ! fs.existsSync( cacheDir ) ) {
 	fs.mkdirSync( cacheDir, { recursive: true } );
 } else {
+	// Preload all the files in memory upfront. This is fast (under 500ms).
+	// Reading the files in one go adds overhead, but this is still faster (probably because it gets rid of context switching).
 	const files = fs.readdirSync( cacheDir );
 	for ( const file of files ) {
 		cachedReadFile( path.join( cacheDir, file ) );
@@ -62,6 +63,7 @@ const get = ( url ) => {
 			if ( sourceStat.mtime > cachedStat ) {
 				// Delete the stale cache file without blocking the main thread.
 				fs.promises.unlink( cachePath );
+				delete cacheMap[ cachePath ];
 				return null;
 			}
 		} catch {}
