@@ -172,8 +172,10 @@
 	gap: $grid-unit-10;
 	border-radius: $radius-small;
 	box-sizing: border-box;
-	padding: $grid-unit-10 $grid-unit-15;
+	padding: $grid-unit-05 $grid-unit-15;
 	cursor: default;
+	min-height: $grid-unit-40;
+	@include body-medium();
 
 	&:last-child {
 		margin-block-end: 0;
@@ -190,7 +192,12 @@
 		}
 
 		.dataviews-filters__search-widget-listitem-single-selection {
-			border-color: $white;
+			border-color: var(--wp-components-color-accent-darker-20, var(--wp-admin-theme-color-darker-20, #183ad6));
+			background: $white;
+			&.is-selected {
+				border-color: var(--wp-components-color-accent-darker-20, var(--wp-admin-theme-color-darker-20, #183ad6));
+				background:	var(--wp-components-color-accent-darker-20, var(--wp-admin-theme-color-darker-20, #183ad6));
+			}
 		}
 
 		.dataviews-filters__search-widget-listitem-multi-selection {
@@ -217,6 +224,7 @@
 
 		@include radio-control;
 		margin: 0;
+		padding: 0;
 
 		&.is-selected {
 			background: var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9));
@@ -254,6 +262,7 @@
 		background: $white;
 		color: $gray-900;
 		margin: 0;
+		padding: 0;
 		width: var(--checkbox-size);
 		height: var(--checkbox-size);
 
