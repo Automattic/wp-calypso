@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
+import { ComponentSwapper } from '@automattic/components';
 import { TabPanel } from '@wordpress/components';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
@@ -118,6 +119,83 @@ const TabsBeforeNavigationImprovements = ( {
 				<Intervals selected={ interval } pathTemplate={ pathTemplate } standalone />
 			) }
 		</>
+	);
+};
+
+const SelectNav = ( {
+	label,
+	validNavItems,
+	adminUrl,
+	interval,
+	slugPath,
+	selectedItem,
+	showLock,
+} ) => {
+	return (
+		<SectionNav selectedText={ label }>
+			<NavTabs selectedText={ label }>
+				{ validNavItems.map( ( item ) => {
+					const navItem = navItems[ item ];
+					const intervalPath = navItem.showIntervals ? `/${ interval || 'day' }` : '';
+					const itemPath = `${ navItem.path }${ intervalPath }${ slugPath }`;
+					const className = 'stats-navigation__' + item;
+					if ( item === 'store' && config.isEnabled( 'is_running_in_jetpack_site' ) ) {
+						return (
+							<NavItem
+								className={ className }
+								key={ item }
+								onClick={ () =>
+									( window.location.href = `${ adminUrl }admin.php?page=wc-admin&path=%2Fanalytics%2Foverview` )
+								}
+								selected={ false }
+							>
+								{ navItem.label }
+							</NavItem>
+						);
+					}
+					return (
+						<NavItem
+							className={ className }
+							key={ item }
+							path={ itemPath }
+							selected={ selectedItem === item }
+						>
+							{ navItem.label }
+							{ navItem.paywall && showLock && ' 🔒' }
+						</NavItem>
+					);
+				} ) }
+			</NavTabs>
+		</SectionNav>
+	);
+};
+
+const TabNav = ( { validNavItems, interval, slugPath, selectedItem, showLock, adminUrl } ) => {
+	return (
+		<TabPanel
+			className="stats-navigation__tabs"
+			tabs={ validNavItems.map( ( item ) => {
+				const navItem = navItems[ item ];
+				const intervalPath = navItem.showIntervals ? `/${ interval || 'day' }` : '';
+				const itemPath = `${ navItem.path }${ intervalPath }${ slugPath }`;
+				return {
+					name: item,
+					title: navItem.label + ( navItem.paywall && showLock ? ' 🔒' : '' ),
+					className: 'stats-navigation__' + item,
+					path: itemPath,
+				};
+			} ) }
+			initialTabName={ selectedItem }
+		>
+			{ ( tab ) => {
+				if ( tab.name === 'store' && config.isEnabled( 'is_running_in_jetpack_site' ) ) {
+					window.location.href = `${ adminUrl }admin.php?page=wc-admin&path=%2Fanalytics%2Foverview`;
+				} else if ( tab.path ) {
+					page( tab.path );
+				}
+				return <div className="stats-navigation__content" />; // Placeholder div since content is rendered elsewhere
+			} }
+		</TabPanel>
 	);
 };
 
@@ -249,30 +327,35 @@ class StatsNavigation extends Component {
 			<div className={ wrapperClass }>
 				{ siteId && <QueryJetpackModules siteId={ siteId } /> }
 				{ isStatsNavigationImprovementEnabled && (
-					<TabPanel
-						className="stats-navigation__tabs"
-						tabs={ validNavItems.map( ( item ) => {
-							const navItem = navItems[ item ];
-							const intervalPath = navItem.showIntervals ? `/${ interval || 'day' }` : '';
-							const itemPath = `${ navItem.path }${ intervalPath }${ slugPath }`;
-							return {
-								name: item,
-								title: navItem.label + ( navItem.paywall && showLock ? ' 🔒' : '' ),
-								className: 'stats-navigation__' + item,
-								path: itemPath,
-							};
-						} ) }
-						initialTabName={ selectedItem }
-					>
-						{ ( tab ) => {
-							if ( tab.name === 'store' && config.isEnabled( 'is_running_in_jetpack_site' ) ) {
-								window.location.href = `${ this.props.adminUrl }admin.php?page=wc-admin&path=%2Fanalytics%2Foverview`;
-							} else if ( tab.path ) {
-								page( tab.path );
-							}
-							return <div className="stats-navigation__content" />; // Placeholder div since content is rendered elsewhere
-						} }
-					</TabPanel>
+					<ComponentSwapper
+						breakpoint="<480px"
+						breakpointActiveComponent={
+							<SelectNav
+								validNavItems={ validNavItems }
+								label={ label }
+								interval={ interval }
+								slugPath={ slugPath }
+								selectedItem={ selectedItem }
+								showLock={ showLock }
+								isLegacy={ isLegacy }
+								showIntervals={ showIntervals }
+								pathTemplate={ pathTemplate }
+							/>
+						}
+						breakpointInactiveComponent={
+							<TabNav
+								validNavItems={ validNavItems }
+								label={ label }
+								interval={ interval }
+								slugPath={ slugPath }
+								selectedItem={ selectedItem }
+								showLock={ showLock }
+								isLegacy={ isLegacy }
+								showIntervals={ showIntervals }
+								pathTemplate={ pathTemplate }
+							/>
+						}
+					/>
 				) }
 				{ ! isStatsNavigationImprovementEnabled && (
 					// TODO: remove TabsBeforeNavigationImprovements after 'stats/navigation-improvement' launch.
@@ -347,6 +430,7 @@ export default connect(
 				config.isEnabled( 'stats/paid-wpcom-v3' ) &&
 				shouldGateStats( state, siteId, STATS_FEATURE_PAGE_TRAFFIC ),
 			isStatsNavigationImprovementEnabled: config.isEnabled( 'stats/navigation-improvement' ),
+			// isStatsNavigationImprovementEnabled: false,
 		};
 	},
 	{ requestModuleToggles, updateModuleToggles }
