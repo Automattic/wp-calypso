@@ -3,7 +3,7 @@ import { HelpCenterSelect } from '@automattic/data-stores';
 import { useGetOdieConversations } from '@automattic/odie-client/src/data/use-get-odie-conversations';
 import { useGetSupportInteractions } from '@automattic/odie-client/src/data/use-get-support-interactions';
 import { useSelect } from '@wordpress/data';
-import { useEffect, useState } from '@wordpress/element';
+import { useEffect, useMemo, useState } from '@wordpress/element';
 import {
 	filterAndUpdateConversationsWithStatus,
 	getLastMessage,
@@ -26,7 +26,6 @@ interface UseGetHistoryChatsResult {
 
 /**
  * Retrieves the date when the last message from the specified conversation was received.
- *
  * @returns The timestamp in milliseconds (e.g. 1745936539027), or 0 if not available
  */
 const getLastMessageReceived = ( conversation: OdieConversation | ZendeskConversation ) => {
@@ -77,7 +76,6 @@ const splitConversationsByRecency = (
 };
 
 export const useGetHistoryChats = (): UseGetHistoryChatsResult => {
-	const [ supportInteractions, setSupportInteractions ] = useState< SupportInteraction[] >( [] );
 	const [ recentConversations, setRecentConversations ] = useState< Conversations >( [] );
 	const [ archivedConversations, setArchivedConversations ] = useState< Conversations >( [] );
 
@@ -90,29 +88,26 @@ export const useGetHistoryChats = (): UseGetHistoryChatsResult => {
 
 	const { isChatLoaded } = useSelect( ( select ) => {
 		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
-
 		return { isChatLoaded: store.getIsChatLoaded() };
 	}, [] );
 
 	const isLoadingInteractions =
 		isLoadingOpenInteractions || isLoadingOtherSupportInteractions || isLoadingOdieConversations;
 
+	const supportInteractions: SupportInteraction[] = useMemo(
+		() => [ ...( openSupportInteraction || [] ), ...( otherSupportInteractions || [] ) ],
+		[ openSupportInteraction, otherSupportInteractions ]
+	);
+
 	useEffect( () => {
 		if ( ! isChatLoaded || ! getZendeskConversations || isLoadingInteractions ) {
 			return;
 		}
 
-		const supportInteractions = [
-			...( openSupportInteraction || [] ),
-			...( otherSupportInteractions || [] ),
-		];
-
 		const zendeskConversationsWithStatusesUpdated = filterAndUpdateConversationsWithStatus(
 			getZendeskConversations(),
 			supportInteractions
 		);
-
-		setSupportInteractions( supportInteractions );
 
 		const odieConversationsWithNoSupportInteractions =
 			getOdieConversationsWithNoSupportInteractions( odieConversations, supportInteractions );
@@ -134,6 +129,7 @@ export const useGetHistoryChats = (): UseGetHistoryChatsResult => {
 		openSupportInteraction,
 		otherSupportInteractions,
 		odieConversations,
+		supportInteractions,
 	] );
 
 	return {
