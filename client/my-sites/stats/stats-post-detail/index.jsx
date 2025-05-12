@@ -71,7 +71,7 @@ class StatsPostDetail extends Component {
 			insights: '/stats/insights/',
 			store: '/stats/store/',
 			ads: '/stats/ads/',
-			subscribers: '/stats/subscribers',
+			subscribers: '/stats/subscribers/',
 		};
 		// We track the parent tab via sessionStorage.
 		const lastClickedTab = sessionStorage.getItem( 'jp-stats-last-tab' );
