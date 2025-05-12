@@ -193,7 +193,7 @@ class NotificationSubscriptions extends Component {
 								value={ this.props.getSetting( 'subscription_delivery_mail_option' ) }
 							>
 								<option value="html">{ this.props.translate( 'HTML' ) }</option>
-								<option value="text">{ this.props.translate( 'Plain Text' ) }</option>
+								<option value="text">{ this.props.translate( 'Plain text' ) }</option>
 							</FormSelect>
 						</FormFieldset>
 
@@ -210,13 +210,13 @@ class NotificationSubscriptions extends Component {
 								onFocus={ this.handleFocusEvent( 'Email delivery window day' ) }
 								value={ this.props.getSetting( 'subscription_delivery_day' ) }
 							>
-								<option value="0">{ this.props.translate( 'Sunday' ) }</option>
 								<option value="1">{ this.props.translate( 'Monday' ) }</option>
 								<option value="2">{ this.props.translate( 'Tuesday' ) }</option>
 								<option value="3">{ this.props.translate( 'Wednesday' ) }</option>
 								<option value="4">{ this.props.translate( 'Thursday' ) }</option>
 								<option value="5">{ this.props.translate( 'Friday' ) }</option>
 								<option value="6">{ this.props.translate( 'Saturday' ) }</option>
+								<option value="0">{ this.props.translate( 'Sunday' ) }</option>
 							</FormSelect>
 
 							<FormSelect
