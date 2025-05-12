@@ -1,4 +1,3 @@
-import { PageHeader } from '@automattic/components/src/page-header';
 import { DataForm } from '@automattic/dataviews';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { notFound } from '@tanstack/react-router';
@@ -6,6 +5,7 @@ import { Card, CardBody, ToggleControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { siteQuery, siteSettingsMutation, siteSettingsQuery } from '../../app/queries';
 import { siteSettingsSubscriptionGiftingRoute } from '../../app/router';
+import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { hasSubscriptionGiftingFeature } from './utils';
 import type { SiteSettings } from '../../data/types';

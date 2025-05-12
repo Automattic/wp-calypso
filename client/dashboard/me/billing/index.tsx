@@ -1,4 +1,3 @@
-import { PageHeader } from '@automattic/components/src/page-header';
 import { __experimentalVStack as VStack, Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { backup, payment, receipt, institution } from '@wordpress/icons';
@@ -8,6 +7,7 @@ import {
 	paymentMethodsRoute,
 	taxDetailsRoute,
 } from '../../app/router';
+import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
 

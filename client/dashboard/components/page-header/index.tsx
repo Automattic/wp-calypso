@@ -1,10 +1,10 @@
+import { Breadcrumbs } from '@automattic/components/src/breadcrumbs';
 import {
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
 	__experimentalHeading as Heading,
 } from '@wordpress/components';
-import { Breadcrumbs } from '../breadcrumbs';
 import type { PageHeaderProps } from './types';
 
 import './style.scss';

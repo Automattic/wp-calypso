@@ -1,5 +1,5 @@
 import React from 'react';
-import type { BreadcrumbItemProps } from '../breadcrumbs/types';
+import type { BreadcrumbItemProps } from '@automattic/components/src/breadcrumbs/types';
 
 export type HeadingLevel = 1 | 2 | 3 | 4 | 5 | 6;
 

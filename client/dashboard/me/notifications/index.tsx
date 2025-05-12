@@ -1,5 +1,5 @@
-import { PageHeader } from '@automattic/components/src/page-header';
 import { __ } from '@wordpress/i18n';
+import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 
 function Notifications() {

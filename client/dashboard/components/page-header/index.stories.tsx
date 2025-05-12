@@ -4,7 +4,7 @@ import { help, wordpress, moreVertical } from '@wordpress/icons';
 import { PageHeader } from './index';
 
 const meta = {
-	title: 'Unaudited/PageHeader',
+	title: 'client/dashboard/PageHeader',
 	component: PageHeader,
 	tags: [ 'autodocs' ],
 	parameters: {

@@ -1,4 +1,3 @@
-import { PageHeader } from '@automattic/components/src/page-header';
 import { DataViews, filterSortAndPaginate } from '@automattic/dataviews';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
@@ -10,6 +9,7 @@ import { useMemo } from 'react';
 import { sitesQuery } from '../app/queries';
 import { sitesRoute } from '../app/router';
 import DataViewsCard from '../components/dataviews-card';
+import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
 import { STATUS_LABELS, getSiteStatus, getSiteStatusLabel } from '../utils/site-status';
 import SiteIcon from './site-icon';

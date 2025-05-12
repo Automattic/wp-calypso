@@ -1,4 +1,3 @@
-import { PageHeader } from '@automattic/components/src/page-header';
 import { DataForm } from '@automattic/dataviews';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import {
@@ -19,6 +18,7 @@ import { createInterpolateElement, useMemo } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useState } from 'react';
 import { profileQuery, profileMutation } from '../../app/queries';
+import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import EditGravatar from '../edit-gravatar';
 import type { Profile as ProfileType } from '../../data/types';
