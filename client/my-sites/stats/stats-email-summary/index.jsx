@@ -60,21 +60,25 @@ const StatsEmailSummary = ( { period, query } ) => {
 
 	const isStatsNavigationImprovementEnabled = config.isEnabled( 'stats/navigation-improvement' );
 
+	const backLinkProps = {
+		text: navigationItems[ 0 ].label,
+		url: navigationItems[ 0 ].href,
+	};
+	const titleProps = {
+		title: navigationItems[ 1 ].label,
+		// Remove the default logo for Odyssey stats.
+		titleLogo: null,
+	};
+
 	return (
 		<Main className="has-fixed-nav" fullWidthLayout>
-			<PageViewTracker
-				path={ `/stats/${ module }/:site` }
-				title={ `Stats > ${ titlecase( module ) }` }
-			/>
+			<PageViewTracker path="/stats/emails/:site" title="Stats > Emails" />
 			<div className="stats stats-summary-view">
 				{ isStatsNavigationImprovementEnabled && (
 					<PageHeader
 						className="stats__section-header modernized-header"
-						titleProps={ { title, titleLogo: null } }
-						backLinkProps={ {
-							url: backLink,
-							text: backLabel,
-						} }
+						titleProps={ titleProps }
+						backLinkProps={ backLinkProps }
 					/>
 				) }
 
