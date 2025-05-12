@@ -59,8 +59,12 @@ body.is-section-signup {
 
 	$login-form-max-width: 327px;
 
-	.components-button {
+	.components-button,
+	.components-input-control {
 		--color-accent: var(--color-orange);
+	}
+
+	.components-button {
 		--color-accent-60: var(--color-orange);
 
 		font-weight: 600;
