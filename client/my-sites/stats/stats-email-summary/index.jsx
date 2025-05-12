@@ -66,7 +66,7 @@ const StatsEmailSummary = ( { translate, period, siteSlug } ) => {
 				) }
 
 				{ ! isStatsNavigationImprovementEnabled && (
-					<NavigationHeader navigationItems={ navigationItems } />
+					<NavigationHeader className="stats-summary-view" navigationItems={ navigationItems } />
 				) }
 
 				<div id="my-stats-content" className="stats stats-summary-view stats-summary__positioned">
