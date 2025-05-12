@@ -24,6 +24,7 @@ import {
 	isSenseiProduct,
 	PLAN_100_YEARS,
 } from '@automattic/calypso-products';
+import colorStudio from '@automattic/color-studio';
 import { Gridicon } from '@automattic/components';
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
@@ -60,6 +61,10 @@ import type { TranslateResult } from 'i18n-calypso';
 
 // This will make converting to TS less noisy. The order of components can be reorganized later
 /* eslint-disable @typescript-eslint/no-use-before-define */
+
+const PALETTE = colorStudio.colors;
+const COLOR_GRAY_40 = PALETTE[ 'Gray 40' ];
+const COLOR_GREEN_60 = PALETTE[ 'Green 60' ];
 
 const StyledIcon = styled( Icon )`
 	fill: '#1E1E1E';
@@ -187,6 +192,19 @@ function CheckoutSummaryPriceList() {
 	const translate = useTranslate();
 	const [ , streamlinedPriceExperimentAssignment ] = useStreamlinedPriceExperiment();
 
+	let subtotalBeforeDiscounts = 0;
+	let totalDiscount = 0;
+	if ( streamlinedPriceExperimentAssignment ) {
+		for ( const product of responseCart.products ) {
+			// In specific cases (e.g. premium domains) the original price (renewal) is lower than the due price.
+			subtotalBeforeDiscounts += Math.max(
+				product.item_subtotal_integer,
+				product.item_original_subtotal_integer
+			);
+		}
+		totalDiscount = subtotalBeforeDiscounts - responseCart.sub_total_integer;
+	}
+
 	return (
 		<>
 			{ streamlinedPriceExperimentAssignment && (
@@ -203,13 +221,35 @@ function CheckoutSummaryPriceList() {
 						<CheckoutSummarySubtotal key="checkout-summary-line-item-subtotal">
 							<span>{ translate( 'Subtotal' ) }</span>
 							<span className="wp-checkout-order-summary__subtotal-price">
-								{ formatCurrency( responseCart.sub_total_integer, responseCart.currency, {
+								{ totalDiscount > 0 && (
+									<s>
+										{ formatCurrency( subtotalBeforeDiscounts, responseCart.currency, {
+											isSmallestUnit: true,
+											stripZeros: true,
+										} ) }
+									</s>
+								) }
+								<span>
+									{ formatCurrency( responseCart.sub_total_integer, responseCart.currency, {
+										isSmallestUnit: true,
+										stripZeros: true,
+									} ) }
+								</span>
+							</span>
+						</CheckoutSummarySubtotal>
+					) }
+					{ streamlinedPriceExperimentAssignment && totalDiscount > 0 && (
+						<CheckoutSummaryTotalDiscount>
+							<span>{ translate( 'Discount' ) }</span>
+							<span className="wp-checkout-order-summary__subtotal-discount">
+								{ formatCurrency( totalDiscount, responseCart.currency, {
 									isSmallestUnit: true,
 									stripZeros: true,
 								} ) }
 							</span>
-						</CheckoutSummarySubtotal>
+						</CheckoutSummaryTotalDiscount>
 					) }
+
 					{ ! streamlinedPriceExperimentAssignment && (
 						<CheckoutSummaryLineItem key="checkout-summary-line-item-subtotal">
 							<span>{ translate( 'Subtotal' ) }</span>
@@ -877,6 +917,7 @@ const CheckoutSummaryCard = styled.div< { isStreamlinedPrice: boolean } >`
 			box-shadow:
 				0 3px 1px rgb( 0 0 0 / 4% ),
 				0 3px 8px rgb( 0 0 0 / 12% );
+			margin-bottom: 20px;
 		` }
 `;
 const CheckoutSummaryFeatures = styled.div`
@@ -1019,6 +1060,31 @@ const CheckoutSummarySubtotal = styled( CheckoutSummaryLineItem )`
 	font-size: 20px;
 	& .wp-checkout-order-summary__subtotal-price {
 		font-size: 14px;
+
+		display: flex;
+		flex: 0 0 auto;
+		gap: 4px;
+		margin-left: 12px;
+
+		.rtl & {
+			margin-right: 12px;
+			margin-left: 0;
+		}
+
+		& s {
+			color: ${ COLOR_GRAY_40 };
+		}
+
+		& span {
+			font-weight: 500;
+		}
+	}
+`;
+
+const CheckoutSummaryTotalDiscount = styled( CheckoutSummaryLineItem )`
+	& .wp-checkout-order-summary__subtotal-discount {
+		color: ${ COLOR_GREEN_60 };
+		font-weight: 500;
 	}
 `;
 

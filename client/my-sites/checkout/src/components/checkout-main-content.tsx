@@ -288,6 +288,7 @@ function CheckoutSidebarNudge( {
 	const hasMonthlyProduct = responseCart?.products?.some( isMonthlyProduct );
 	const isPurchaseRenewal = responseCart?.products?.some?.( ( product ) => product.is_renewal );
 	const selectedSite = useSelector( ( state ) => getSelectedSite( state ) );
+	const [ , streamlinedPriceExperimentAssignment ] = useStreamlinedPriceExperiment();
 
 	const domainWithoutPlanInCartOrSite =
 		areThereDomainProductsInCart && ! hasPlan( responseCart ) && ! siteHasPaidPlan( selectedSite );
@@ -302,7 +303,9 @@ function CheckoutSidebarNudge( {
 
 	if ( isDIFMInCart ) {
 		return (
-			<CheckoutSidebarNudgeWrapper>
+			<CheckoutSidebarNudgeWrapper
+				isStreamlinedPrice={ streamlinedPriceExperimentAssignment !== null }
+			>
 				<CheckoutNextSteps responseCart={ responseCart } />
 			</CheckoutSidebarNudgeWrapper>
 		);
@@ -314,7 +317,9 @@ function CheckoutSidebarNudge( {
 	 */
 
 	return (
-		<CheckoutSidebarNudgeWrapper>
+		<CheckoutSidebarNudgeWrapper
+			isStreamlinedPrice={ streamlinedPriceExperimentAssignment !== null }
+		>
 			{ ! ( productsWithVariants.length > 1 ) && (
 				<>
 					<CheckoutSidebarPlanUpsell />
@@ -1217,7 +1222,9 @@ const CheckoutSummaryBody = styled.div`
 	}
 `;
 
-const CheckoutSidebarNudgeWrapper = styled.div`
+const CheckoutSidebarNudgeWrapper = styled.div< {
+	isStreamlinedPrice: boolean;
+} >`
 	display: flex;
 	flex-direction: column;
 	grid-area: nudge;
@@ -1225,6 +1232,11 @@ const CheckoutSidebarNudgeWrapper = styled.div`
 
 	& > * {
 		max-width: 288px;
+		${ ( props ) =>
+			props.isStreamlinedPrice &&
+			css`
+				max-width: 384px;
+			` }
 	}
 
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {

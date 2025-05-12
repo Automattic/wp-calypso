@@ -1,9 +1,10 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
 
 body.is-group-me.is-section-help,
 body.is-section-me {
-	background: var(--studio-gray-0);
+	background: var(--color-main-background);
 
 	&.rtl .layout__content {
 		padding: calc(var(--masterbar-height) + var(--content-padding-top)) calc(var(--sidebar-width-max)) var(--content-padding-bottom) 16px;
@@ -47,10 +48,8 @@ body.is-section-me {
 		.layout__primary {
 			.main {
 				padding: 24px;
-				border-block-end: 1px solid var(--studio-gray-0);
 				background: var(--color-surface);
 				border-radius: 8px; /* stylelint-disable-line scales/radii */
-				box-shadow: 0 0 17.4px 0 rgba(0, 0, 0, 0.05);
 				overflow-y: auto;
 				overflow-x: hidden;
 				max-width: none;
@@ -58,6 +57,10 @@ body.is-section-me {
 					max-width: 1040px;
 					margin-left: auto;
 					margin-right: auto;
+				}
+
+				@include break-small {
+					border: 1px solid $gray-200;
 				}
 			}
 		}

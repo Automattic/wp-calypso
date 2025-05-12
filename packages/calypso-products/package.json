@@ -46,13 +46,13 @@
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
-		"@wordpress/data": "^10.22.0",
+		"@wordpress/data": "^10.23.0",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
 		"typescript": "^5.8.2"
 	},
 	"peerDependencies": {
-		"@wordpress/data": "^10.22.0",
+		"@wordpress/data": "^10.23.0",
 		"react": "^18.3.1"
 	}
 }

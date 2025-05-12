@@ -3,7 +3,7 @@ import PageLayout from '../../components/page-layout';
 
 export default function TaxDetails() {
 	return (
-		<PageLayout title={ __( 'Tax Details' ) }>
+		<PageLayout title={ __( 'Tax Details' ) } size="small">
 			<div>Tax details content will go here</div>
 		</PageLayout>
 	);

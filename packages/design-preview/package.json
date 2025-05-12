@@ -34,10 +34,10 @@
 		"@automattic/global-styles": "workspace:^",
 		"@automattic/i18n-utils": "workspace:^",
 		"@automattic/onboarding": "workspace:^",
-		"@wordpress/components": "^29.8.0",
-		"@wordpress/html-entities": "^4.22.0",
-		"@wordpress/icons": "^10.22.0",
-		"@wordpress/react-i18n": "^4.22.0",
+		"@wordpress/components": "^29.9.0",
+		"@wordpress/html-entities": "^4.23.0",
+		"@wordpress/icons": "^10.23.0",
+		"@wordpress/react-i18n": "^4.23.0",
 		"clsx": "^2.1.1",
 		"tslib": "^2.3.0"
 	},
@@ -51,9 +51,9 @@
 		"typescript": "^5.8.2"
 	},
 	"peerDependencies": {
-		"@wordpress/data": "^10.22.0",
-		"@wordpress/element": "^6.22.0",
-		"@wordpress/i18n": "^5.22.0",
+		"@wordpress/data": "^10.23.0",
+		"@wordpress/element": "^6.23.0",
+		"@wordpress/i18n": "^5.23.0",
 		"debug": "^4.4.0",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",

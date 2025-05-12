@@ -12,7 +12,7 @@ import PropTypes from 'prop-types';
 import { Fragment, useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
-import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
+import { decodeEntities } from 'calypso/lib/formatting';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getAdminHelpResults from 'calypso/state/selectors/get-admin-help-results';
 import hasCancelableUserPurchases from 'calypso/state/selectors/has-cancelable-user-purchases';
@@ -178,7 +178,7 @@ function HelpSearchResults( {
 							{ /* Old stuff - leaving this incase we need to quick revert
 							{ icon && <Gridicon icon={ icon } size={ 18 } /> } */ }
 							<LinkIcon />
-							<span>{ preventWidows( decodeEntities( title ) ) }</span>
+							<span>{ decodeEntities( title ) }</span>
 						</a>
 					</div>
 				</li>

@@ -1,5 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
 @import "@wordpress/dataviews/build-style/style.css";
 
 body.is-section-domains.is-bulk-all-domains-page {
@@ -149,6 +150,13 @@ body.is-section-domains.is-bulk-all-domains-page {
 					color: var(--studio-red-50);
 				}
 			}
+		}
+	}
+
+	@include break-small {
+		.layout__primary > main.dataviews {
+			border: 1px solid $gray-200;
+			border-radius: 8px; /* stylelint-disable-line scales/radii */
 		}
 	}
 }

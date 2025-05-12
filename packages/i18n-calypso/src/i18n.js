@@ -371,14 +371,18 @@ I18N.prototype.hasTranslation = function () {
  * @param {string} options.text - The text to check for translation.
  * @param {string | Object} options.newCopy - The translation to return if the text is translated.
  * @param {string | Object | undefined } options.oldCopy - The fallback to return if the text is not translated.
+ * @param {Object} options.translationOptions - The options to pass to the `hasTranslation` method, e.g. translation context.
  */
-I18N.prototype.fixMe = function ( { text, newCopy, oldCopy } ) {
+I18N.prototype.fixMe = function ( { text, newCopy, oldCopy, translationOptions = {} } ) {
 	if ( typeof text !== 'string' ) {
 		warn( 'fixMe() requires an object with a proper text property (string)' );
 		return null;
 	}
 
-	if ( [ 'en', 'en-gb' ].includes( this.getLocaleSlug() ) || this.hasTranslation( text ) ) {
+	if (
+		[ 'en', 'en-gb' ].includes( this.getLocaleSlug() ) ||
+		this.hasTranslation( text, translationOptions )
+	) {
 		return newCopy;
 	}
 

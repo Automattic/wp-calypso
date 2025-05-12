@@ -56,7 +56,8 @@ form {
 }
 
 .layout.is-white-login .login.is-akismet .login__form,
-.layout.is-white-login .login.is-akismet .continue-as-user {
+.layout.is-white-login .login.is-akismet .continue-as-user,
+.layout.is-white-login.is-akismet .magic-login__form-action {
 	.button.is-primary {
 		background-color: var(--color-akismet);
 
