@@ -1,5 +1,6 @@
 import { parse } from 'path';
 import config from '@automattic/calypso-config';
+import { WordPressLogo } from '@automattic/components';
 import { isLocaleRtl } from '@automattic/i18n-utils';
 import { Step } from '@automattic/onboarding';
 import clsx from 'clsx';
@@ -19,7 +20,6 @@ import Head from 'calypso/components/head';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import Loading from 'calypso/components/loading';
 import WooCommerceLogo from 'calypso/components/woocommerce-logo';
-import WordPressLogo from 'calypso/components/wordpress-logo';
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import { isGravPoweredOAuth2Client, isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { jsonStringifyForHtml } from 'calypso/server/sanitize';

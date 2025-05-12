@@ -1,8 +1,9 @@
 import page from '@automattic/calypso-router';
+import { useBreakpoint } from '@automattic/viewport-react';
 import { Icon, starEmpty } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { isClientView } from 'calypso/a8c-for-agencies/sections/purchases/payment-methods/lib/is-client-view';
 import JetpackIcons from 'calypso/components/jetpack/jetpack-icons';
 import Sidebar, {
@@ -14,6 +15,7 @@ import Sidebar, {
 } from 'calypso/layout/sidebar-v2';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import A4AContactSupportWidget, { CONTACT_URL_HASH_FRAGMENT } from '../a4a-contact-support-widget';
 import ProvideFeedback from '../a4a-feedback/provide-feedback';
 import SidebarHeader from './header';
@@ -61,6 +63,7 @@ const A4ASidebar = ( {
 	const dispatch = useDispatch();
 
 	const isClient = isClientView();
+	const isNarrowView = useBreakpoint( '<660px' );
 
 	const onShowUserSupportForm = useCallback( () => {
 		dispatch( recordTracksEvent( 'calypso_jetpack_sidebar_share_product_feedback_click' ) );
@@ -69,6 +72,15 @@ const A4ASidebar = ( {
 	const contactUsText = isClient
 		? translate( 'Contact support' )
 		: translate( 'Contact sales & support' );
+
+	// When the sidebar is not displayed (narrow view), we need to set the layout focus to the preview.
+	// This is because, on a narrow view, we want to display the sidebar to navigate to all available pages
+	// rather than showing the default page of the nested sidebar directly.
+	useEffect( () => {
+		if ( path && isNarrowView ) {
+			dispatch( setLayoutFocus( 'preview' ) );
+		}
+	}, [ dispatch, path, isNarrowView ] );
 
 	return (
 		<Sidebar className={ clsx( 'a4a-sidebar', className ) }>

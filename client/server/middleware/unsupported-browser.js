@@ -3,6 +3,23 @@ import { addQueryArgs } from 'calypso/lib/url';
 import analytics from 'calypso/server/lib/analytics';
 
 /**
+ * The locales that are supported in exempting browser support checks.
+ */
+const SUPPORTED_LOCALES = [ 'en', ...config( 'magnificent_non_en_locales' ) ];
+
+/**
+ * The paths that are allowed even if the browser is unsupported.
+ */
+const ALLOWED_PATHS = [ 'browsehappy', 'themes', 'theme', 'calypso' ];
+
+/**
+ * We allow some paths even if the browser is unsupported.
+ */
+const ALLOWED_PATH_PATTERN = new RegExp(
+	`^/((${ SUPPORTED_LOCALES.join( '|' ) })/)?(${ ALLOWED_PATHS.join( '|' ) })($|/)`
+);
+
+/**
  * @typedef {import('express-useragent').Details} UserAgentDetails
  */
 
@@ -55,21 +72,7 @@ const isUnsupportedBrowser = ( req ) =>
 /**
  * These public pages work even in unsupported browsers, so we do not redirect them.
  */
-function allowPath( path ) {
-	const locales = [ 'en', ...config( 'magnificent_non_en_locales' ) ];
-	const prefixedLocale = locales.find( ( locale ) => path.startsWith( `/${ locale }/` ) );
-
-	// If the path starts with a locale, replace it (e.g. '/es/log-in' => '/log-in')
-	const parsedPath = prefixedLocale
-		? path.replace( new RegExp( `^/${ prefixedLocale }` ), '' )
-		: path;
-
-	// '/calypso' is the static assets path, and should never be redirected. (Can
-	// cause CDN caching issues if an asset gets cached with a redirect.)
-	const allowedPaths = [ '/browsehappy', '/themes', '/theme', '/calypso' ];
-	// For example, match either exactly "/themes" or "/themes/*"
-	return allowedPaths.some( ( p ) => parsedPath === p || parsedPath.startsWith( p + '/' ) );
-}
+const isAllowedPath = ( path ) => ALLOWED_PATH_PATTERN.test( path );
 
 export default () => ( req, res, next ) => {
 	if ( ! config.isEnabled( 'redirect-fallback-browsers' ) ) {
@@ -78,7 +81,7 @@ export default () => ( req, res, next ) => {
 	}
 
 	// Permitted paths even if the browser is unsupported.
-	if ( allowPath( req.path ) ) {
+	if ( isAllowedPath( req.path ) ) {
 		next();
 		return;
 	}

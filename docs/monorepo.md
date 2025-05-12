@@ -8,11 +8,11 @@ These packages live under the `packages` and `apps` directories, one folder per 
 
 Directories with packages are:
 
-`/packages` — projects and libraries that we might publish as [NPM packages](https://docs.npmjs.com/about-packages-and-modules). Typically used also elsewhere in Calypso. See "Publishing" below.
-`/apps` — WPCOM plugins
-`/desktop` - WP Desktop app. Currently this is not part of the monorepo in the sense that it has its own dependency tree (its own `yarn.lock`). The reason is we want a lean `node_modules` because it will be bundled with the WP Desktop app.
-`/client` - Calypso app.
-`/test/e2e` - Package to run e2e tests
+- `/packages` — projects and libraries that we might publish as [NPM packages](https://docs.npmjs.com/about-packages-and-modules). Typically used also elsewhere in Calypso. See "Publishing" below.
+- `/apps` — WPCOM plugins
+- `/desktop` - WP Desktop app. Currently this is not part of the monorepo in the sense that it has its own dependency tree (its own `yarn.lock`). The reason is we want a lean `node_modules` because it will be bundled with the WP Desktop app.
+- `/client` - Calypso app.
+- `/test/e2e` - Package to run e2e tests
 
 Except those inside `/packages/*`, packages are not published to NPM.
 

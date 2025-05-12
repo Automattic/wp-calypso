@@ -9,7 +9,7 @@ import recordStepComplete, {
 } from 'calypso/landing/stepper/declarative-flow/internals/analytics/record-step-complete';
 import recordStepStart from 'calypso/landing/stepper/declarative-flow/internals/analytics/record-step-start';
 import { useIntent } from 'calypso/landing/stepper/hooks/use-intent';
-import { useMvpOnboardingExperiment } from 'calypso/landing/stepper/hooks/use-mvp-onboarding-experiment';
+import { isMvpOnboardingExperiment } from 'calypso/landing/stepper/hooks/use-mvp-onboarding-experiment';
 import { useSiteData } from 'calypso/landing/stepper/hooks/use-site-data';
 import kebabCase from 'calypso/landing/stepper/utils/kebabCase';
 import useSnakeCasedKeys from 'calypso/landing/stepper/utils/use-snake-cased-keys';
@@ -20,7 +20,7 @@ import {
 } from 'calypso/signup/storageUtils';
 import { useSelector } from 'calypso/state';
 import { isRequestingSite } from 'calypso/state/sites/selectors';
-import type { Flow } from 'calypso/landing/stepper/declarative-flow/internals/types';
+import type { Flow, FlowV2 } from 'calypso/landing/stepper/declarative-flow/internals/types';
 
 /**
  * We wait for the site to be fetched before tracking the step route when a site ID/slug are defined in the params.
@@ -37,7 +37,7 @@ const useHasRequestedSelectedSite = () => {
 };
 
 interface Props {
-	flow: Flow;
+	flow: Flow | FlowV2< any >;
 	stepSlug: string;
 	skipStepRender?: boolean;
 }
@@ -47,7 +47,6 @@ interface Props {
  */
 export const useStepRouteTracking = ( { flow, stepSlug, skipStepRender }: Props ) => {
 	const intent = useIntent();
-	const [ , isMvpOnboarding ] = useMvpOnboardingExperiment();
 	const hasRequestedSelectedSite = useHasRequestedSelectedSite();
 	const stepCompleteEventPropsRef = useRef< RecordStepCompleteProps | null >( null );
 	const pathname = window.location.pathname;
@@ -127,13 +126,20 @@ export const useStepRouteTracking = ( { flow, stepSlug, skipStepRender }: Props 
 
 		// Also record page view for data and analytics
 		const pageTitle = `Setup > ${ flowName } > ${ stepSlug }`;
-		const params = {
-			flow: flowName,
-			is_simplified_onboarding: isMvpOnboarding,
-			skip_step_render: skipStepRender,
-			...reenteringStepAfterSignupCompleteProps,
-		};
-		recordPageView( pathname, pageTitle, params );
+
+		// Create an async IIFE to handle the async operation
+		( async () => {
+			const params = {
+				flow: flowName,
+				is_simplified_onboarding:
+					flowName === 'onboarding' &&
+					stepSlug === 'plans' &&
+					( await isMvpOnboardingExperiment() ),
+				skip_step_render: skipStepRender,
+				...reenteringStepAfterSignupCompleteProps,
+			};
+			recordPageView( pathname, pageTitle, params );
+		} )();
 
 		// We leave out intent and design from the dependency list, due to the ONBOARD_STORE being reset in the exit flow.
 		// The store reset causes these values to become empty, and may trigger this event again.

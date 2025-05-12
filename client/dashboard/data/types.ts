@@ -81,6 +81,7 @@ export interface Site {
 	subscribers_count: number;
 	// Can be undefined for deleted sites.
 	options?: SiteOptions;
+	is_a8c: boolean;
 	is_deleted: boolean;
 	is_coming_soon: boolean;
 	is_private: boolean;
@@ -88,7 +89,6 @@ export interface Site {
 	site_migration: {
 		migration_status: string;
 	} | null;
-	site_owner: number;
 	jetpack: boolean;
 	jetpack_modules: string[];
 }
@@ -140,9 +140,8 @@ export interface EngagementStats {
 }
 
 export interface SiteSettings {
-	settings: {
-		wpcom_performance_report_url?: string;
-	};
+	wpcom_gifting_subscription?: boolean;
+	wpcom_performance_report_url?: string;
 }
 
 export interface BasicMetricsData {

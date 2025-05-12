@@ -28,7 +28,6 @@
 		"tslib": "^2.3.0"
 	},
 	"devDependencies": {
-		"@automattic/calypso-polyfills": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"jest": "^29.7.0",
 		"typescript": "^5.8.2"

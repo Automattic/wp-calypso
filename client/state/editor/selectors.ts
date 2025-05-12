@@ -17,15 +17,6 @@ export function getEditorPostId( state: AppState ): number | undefined {
 }
 
 /**
- * Returns whether editing a new post in the post editor.
- * @param  {Object}  state Global state tree
- * @returns {boolean}       Whether editing new post in editor
- */
-export function isEditorNewPost( state: AppState ): boolean {
-	return ! getEditorPostId( state );
-}
-
-/**
  * Returns the editor URL for duplicating a given site ID, post ID pair.
  * @param  {Object} state       Global state tree
  * @param  {number} siteId      Site ID

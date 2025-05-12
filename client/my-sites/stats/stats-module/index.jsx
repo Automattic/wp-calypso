@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { includes, isEqual } from 'lodash';
@@ -291,8 +292,14 @@ class StatsModule extends Component {
 		const summaryLink = ! this.props.hideSummaryLink && this.getSummaryLink();
 		const displaySummaryLink = data && summaryLink;
 		const isAllTime = this.isAllTimeList();
+		const isStatsNavigationImprovementEnabled = config.isEnabled( 'stats/navigation-improvement' );
 
 		const renderDownloadCsv = () => {
+			// Disable the Download button for the new navigation.
+			if ( isStatsNavigationImprovementEnabled ) {
+				return null;
+			}
+
 			// Disable for the email module as it doesn't work correctly.
 			if ( statType === 'statsEmailsSummary' ) {
 				return null;

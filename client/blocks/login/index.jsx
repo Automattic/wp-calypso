@@ -369,6 +369,7 @@ class Login extends Component {
 
 		let headerText = translate( 'Log in to your account' );
 		let preHeader = null;
+		let headerElement = null;
 		let postHeader = null;
 		const signupLink = this.getSignupLinkComponent();
 
@@ -656,21 +657,15 @@ class Login extends Component {
 			postHeader = <p className="login__header-subtitle">{ subtitle }</p>;
 		} else if ( isFromMigrationPlugin ) {
 			headerText = translate( 'Log in to your account' );
-		} else if ( isJetpack ) {
+		} else if ( isJetpack && ! isFromAutomatticForAgenciesPlugin ) {
 			const isJetpackMagicLinkSignUpFlow = config.isEnabled( 'jetpack/magic-link-signup' );
 			headerText = isJetpackMagicLinkSignUpFlow
-				? translate( 'Log in or create a WordPress.com account to get started with Jetpack' )
+				? translate(
+						'Log in or create a WordPress.com account to supercharge your site with powerful growth, performance, and security tools.'
+				  )
 				: translate( 'Log in or create a WordPress.com account to set up Jetpack' );
-			preHeader = (
-				<div className="login__jetpack-logo">
-					<AsyncLoad
-						require="calypso/components/jetpack-header"
-						placeholder={ null }
-						partnerSlug={ this.props.partnerSlug }
-						darkColorScheme
-					/>
-				</div>
-			);
+			preHeader = <p className="login__jetpack-pre-header">{ translate( 'Log in or sign up' ) }</p>;
+			headerElement = <p className="login__jetpack-header">{ headerText }</p>;
 		} else if ( fromSite ) {
 			// if redirected from Calypso URL with a site slug, offer a link to that site's frontend
 			postHeader = <VisitSite siteSlug={ fromSite } />;
@@ -738,7 +733,11 @@ class Login extends Component {
 		}
 
 		return (
-			<div className="login__form-header-wrapper">
+			<div
+				className={ clsx( 'login__form-header-wrapper', {
+					'is-jetpack-login': isJetpack,
+				} ) }
+			>
 				{ isGravPoweredClient && (
 					<GravatarLoginLogo
 						iconUrl={ oauth2Client.icon }
@@ -747,7 +746,7 @@ class Login extends Component {
 					/>
 				) }
 				{ ! isWhiteLogin && preHeader }
-				<div className="login__form-header">{ headerText }</div>
+				{ headerElement ? headerElement : <div className="login__form-header">{ headerText }</div> }
 				{ postHeader }
 			</div>
 		);

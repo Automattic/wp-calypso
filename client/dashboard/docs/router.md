@@ -19,16 +19,13 @@ Routes use loaders to prefetch data before rendering. This ensures that componen
 
 ```typescript
 loader: () =>
-  maybeAwaitFetch({
-    queryKey: ['profile'],
-    queryFn: fetchProfile,
-  }),
+  maybeAwaitFetch(profileQuery()),
 ```
 
 later the component can use the `useQuery` hook to access the data:
 
 ```typescript
-const { data: profile } = useQuery(['profile'], fetchProfile);
+const { data: profile } = useQuery(profileQuery());
 ```
 
 ## Adding New Routes

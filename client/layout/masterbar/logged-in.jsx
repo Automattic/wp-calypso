@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import { isEcommercePlan } from '@automattic/calypso-products/src';
 import page from '@automattic/calypso-router';
+import { CoreBadge } from '@automattic/components';
 import { isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
 import { Button } from '@wordpress/components';
 import clsx from 'clsx';
@@ -11,7 +12,6 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import ReaderIcon from 'calypso/assets/icons/reader/reader-icon';
 import AsyncLoad from 'calypso/components/async-load';
-import CoreBadge from 'calypso/components/core/badge';
 import Gravatar from 'calypso/components/gravatar';
 import { getStatsPathForTab } from 'calypso/lib/route';
 import wpcom from 'calypso/lib/wp';

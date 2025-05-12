@@ -1,6 +1,7 @@
 import page from '@automattic/calypso-router';
-import Search, { ImperativeHandle } from '@automattic/search';
+import { ImperativeHandle } from '@automattic/search';
 import { isDesktop } from '@automattic/viewport';
+import { SearchControl } from '@wordpress/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { FC, useCallback, MutableRefObject, useRef, RefObject, useEffect } from 'react';
@@ -23,11 +24,12 @@ import './style.scss';
 
 const SearchBox: FC< {
 	categoriesRef: RefObject< HTMLDivElement >;
-	isSearching: boolean;
 	searchBoxRef: MutableRefObject< ImperativeHandle >;
 	searchTerm: string;
 	searchTerms: string[];
-} > = ( { categoriesRef, isSearching, searchBoxRef, searchTerm, searchTerms } ) => {
+} > = ( { categoriesRef, searchBoxRef, searchTerm, searchTerms } ) => {
+	// Create a ref for the SearchControl input
+	const inputRef = useRef< HTMLInputElement >( null );
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const selectedSite = useSelector( getSelectedSite );
@@ -35,14 +37,16 @@ const SearchBox: FC< {
 
 	const searchTermSuggestion = useTermsSuggestions( searchTerms ) || 'ecommerce';
 
-	const pageToSearch = useCallback(
+	// Update search in URL and handle side effects
+	const updateSearch = useCallback(
 		( search: string ) => {
-			page.show( localizePath( `/plugins/${ selectedSite?.slug || '' }` ) ); // Ensures location.href is on the main Plugins page before setQueryArgs uses it to construct the redirect.
-			setQueryArgs( '' !== search ? { s: search } : {} );
+			// Update URL query params
+			page.show( localizePath( `/plugins/${ selectedSite?.slug || '' }` ) );
+			setQueryArgs( search ? { s: search } : {} );
 
+			// Handle side effects when search is not empty
 			if ( search ) {
-				searchBoxRef.current.blur();
-
+				searchBoxRef.current?.blur();
 				categoriesRef.current &&
 					scrollTo( {
 						x: 0,
@@ -52,32 +56,70 @@ const SearchBox: FC< {
 						duration: 300,
 					} );
 			}
+
+			// Track search event
+			dispatch(
+				recordGoogleEvent( 'PluginsBrowser', search ? 'SearchInitiated' : 'SearchCleared' )
+			);
 		},
-		[ searchBoxRef, categoriesRef, selectedSite, localizePath ]
+		[ searchBoxRef, categoriesRef, selectedSite, localizePath, dispatch ]
 	);
 
-	const recordSearchEvent = ( eventName: string ) =>
-		dispatch( recordGoogleEvent( 'PluginsBrowser', eventName ) );
+	// Sync the imperative handle with the SearchControl input
+	useEffect( () => {
+		if ( inputRef.current ) {
+			searchBoxRef.current = {
+				blur: () => inputRef.current?.blur(),
+				focus: () => inputRef.current?.focus(),
+				clear: () => {
+					// Clear the search by updating the URL
+					updateSearch( '' );
+				},
+				setKeyword: ( value: string ) => {
+					// Update search with the new value
+					updateSearch( value );
+				},
+			};
+		}
+	}, [ searchBoxRef, inputRef, updateSearch ] );
+
+	// Handle controlled input changes
+	const onChange = useCallback(
+		( newValue: string ) => {
+			// Only update URL on clear
+			if ( newValue === '' ) {
+				updateSearch( '' );
+			}
+		},
+		[ updateSearch ]
+	);
+
+	// Handle Enter key press
+	const onKeyDown = useCallback(
+		( event: React.KeyboardEvent< HTMLInputElement > ) => {
+			if ( event.key === 'Enter' && event.target ) {
+				event.preventDefault();
+				const value = ( event.target as HTMLInputElement ).value;
+				updateSearch( value );
+			}
+		},
+		[ updateSearch ]
+	);
 
 	return (
-		<Search
-			className={ clsx( 'search-categories__searchbox', {
-				'search-categories__searchbox--mobile': ! isDesktop(),
+		<SearchControl
+			__nextHasNoMarginBottom
+			ref={ inputRef }
+			className={ clsx( {
+				'components-search-control--mobile': ! isDesktop(),
 			} ) }
-			ref={ searchBoxRef }
-			onSearch={ pageToSearch }
-			defaultValue={ searchTerm }
-			searchMode="on-enter"
+			value={ searchTerm }
 			placeholder={ translate( 'Try searching "%(searchTermSuggestion)s"', {
 				args: { searchTermSuggestion },
 				textOnly: true,
 			} ) }
-			delaySearch={ false }
-			recordEvent={ recordSearchEvent }
-			searching={ isSearching }
-			submitOnOpenIconClick
-			openIconSide="right"
-			displayOpenAndCloseIcons
+			onChange={ onChange }
+			onKeyDown={ onKeyDown }
 		/>
 	);
 };
@@ -89,7 +131,7 @@ const SearchCategories: FC< {
 	searchRef: MutableRefObject< ImperativeHandle >;
 	searchTerm: string;
 	searchTerms: string[];
-} > = ( { category, isSearching, isSticky, searchRef, searchTerm, searchTerms } ) => {
+} > = ( { category, isSticky, searchRef, searchTerm, searchTerms } ) => {
 	const dispatch = useDispatch();
 	const getCategoryUrl = useGetCategoryUrl();
 	const categoriesRef = useRef< HTMLDivElement >( null );
@@ -102,19 +144,10 @@ const SearchCategories: FC< {
 		( item ) => ! item.showOnlyActive || item.slug === category
 	);
 
-	// Update the search box with the value from the url everytime it changes
-	// This allows the component to be refilled with a keyword
-	// when navigating back to a page via breadcrumb,
-	// and get empty when the user accesses a non-search page
-	useEffect( () => {
-		searchRef?.current?.setKeyword( searchTerm ?? '' );
-	}, [ searchRef, searchTerm ] );
-
 	return (
 		<>
 			<div className={ clsx( 'search-categories', { 'fixed-top': isSticky } ) }>
 				<SearchBox
-					isSearching={ isSearching }
 					searchBoxRef={ searchRef }
 					searchTerm={ searchTerm }
 					categoriesRef={ categoriesRef }

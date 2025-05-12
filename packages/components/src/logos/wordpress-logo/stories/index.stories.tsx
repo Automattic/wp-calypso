@@ -2,7 +2,7 @@ import { WordPressLogo } from '..';
 import type { Meta, StoryObj } from '@storybook/react';
 
 const meta: Meta< typeof WordPressLogo > = {
-	title: 'packages/components/Logos/WordPressLogo',
+	title: 'Unaudited/Logos/WordPressLogo',
 	component: WordPressLogo,
 	decorators: [
 		( Story ) => (

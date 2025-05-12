@@ -47,7 +47,7 @@ export type Operator =
 	| 'isAll'
 	| 'isNotAll';
 
-export type FieldType = 'text' | 'integer' | 'datetime' | 'media';
+export type FieldType = 'text' | 'integer' | 'datetime' | 'media' | 'boolean';
 
 export type ValidationContext = {
 	elements?: Option[];
@@ -71,6 +71,11 @@ export type FieldTypeDefinition< Item > = {
 	 * Callback used to render an edit control for the field or control name.
 	 */
 	Edit: ComponentType< DataFormControlProps< Item > > | string;
+
+	/**
+	 * Callback used to render the field.
+	 */
+	render: ComponentType< DataViewRenderFieldProps< Item > >;
 };
 
 /**
@@ -193,6 +198,7 @@ export type DataFormControlProps< Item > = {
 
 export type DataViewRenderFieldProps< Item > = {
 	item: Item;
+	field: NormalizedField< Item >;
 };
 
 /**

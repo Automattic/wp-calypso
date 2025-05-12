@@ -4,8 +4,9 @@ import {
 	isWooExpressPlan,
 	isFreePlan,
 } from '@automattic/calypso-products';
+import { formatCurrency } from '@automattic/number-formatters';
 import styled from '@emotion/styled';
-import { useTranslate, formatCurrency, fixMe } from 'i18n-calypso';
+import { useTranslate, fixMe } from 'i18n-calypso';
 import { usePlansGridContext } from '../../../grid-context';
 import usePlanBillingDescription from '../../../hooks/data-store/use-plan-billing-description';
 import type { GridPlan } from '../../../types';

@@ -23,10 +23,12 @@ export const Scanning = () => {
 };
 
 const SiteMigrationOtherPlatform: StepType< {
-	submits: {
-		action: 'import' | 'skip';
-		platform?: ImporterPlatform | null;
-	};
+	submits:
+		| {
+				action: 'import' | 'skip';
+				platform?: ImporterPlatform | null;
+		  }
+		| undefined;
 } > = function ( { navigation, flow } ) {
 	const translate = useTranslate();
 	const [ query ] = useSearchParams();

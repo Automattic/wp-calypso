@@ -107,13 +107,6 @@ body.command-palette-modal-open {
 		}
 	}
 
-	// This is needed to ensure the WebPreview component
-	// displays at full height.
-	.is-section-preview & {
-		height: 100%;
-		padding: calc(var(--masterbar-height) + 1px) 0 0 calc(var(--sidebar-width-max) + 1px);
-	}
-
 	// Tablets
 	@include breakpoint-deprecated( "<960px" ) {
 		padding: 71px 24px 24px calc(var(--sidebar-width-min) + 24px + 1px);
@@ -131,10 +124,6 @@ body.command-palette-modal-open {
 		.is-section-themes.has-no-sidebar.is-logged-in & {
 			padding: 47px 0 0;
 		}
-
-		.is-section-preview & {
-			padding: calc(var(--masterbar-height) + 1px) 0 0 ( 228px + 1px );
-		}
 	}
 
 	// Mobile (Full Width)
@@ -145,10 +134,6 @@ body.command-palette-modal-open {
 
 		.has-no-sidebar & {
 			padding-left: 0;
-		}
-
-		.is-section-preview & {
-			padding: calc(var(--masterbar-height) + 1px) 0 0;
 		}
 	}
 }
@@ -345,15 +330,6 @@ body.is-mobile-app-view {
 .layout.focus-content .layout__secondary {
 	@media only screen and (max-width: 781px) {
 		transform: translateX(-100%);
-	}
-}
-
-// Use all available space for the WebPreview component on /view
-.layout.is-section-preview {
-	height: 100%;
-
-	.layout__primary {
-		height: 100%;
 	}
 }
 

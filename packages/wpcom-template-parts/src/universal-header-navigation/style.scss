@@ -1,10 +1,11 @@
+@import "@automattic/color-studio/dist/color-variables";
+@import "@automattic/color-studio/dist/color-variables-rgb";
 @import "@automattic/typography/styles/variables";
 
 $lp-font-stack-emoji: "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
 $lp-font-stack-default: -apple-system, "BlinkMacSystemFont", "Segoe UI", "Roboto", "Helvetica", "Arial", sans-serif, $lp-font-stack-emoji;
 $x-content-font-stack: $lp-font-stack-default;
 $studio-blue-15: #e5f4ff;
-$studio-blue-30: #0675c4;
 
 .x-hidden {
 	border: 0;
@@ -147,22 +148,12 @@ $x-nav-breakpoint-medium: $lp-breakpoint-M;
 $x-nav-breakpoint-medium-wide: 864px;
 $x-nav-breakpoint-wide: $lp-breakpoint-L;
 
-$studio-pink-50-rgb: 201, 53, 110;
-$studio-white: #fff;
-$studio-gray-100: #101517;
-$studio-gray-5: #dcdcde;
-$studio-blue-60: #055d9c;
-$studio-blue-0: #e9f0f5;
-$studio-blue-5: #bbe0fa;
-$studio-blue-70: #044b7a;
-$studio-blue-90: #01283d;
 $x-color-link-active: var( --studio-wordpress-blue-80 );
 $x-color-link-background-active: var( --studio-wordpress-blue-10 );
 $x-color-link-hover: var( --studio-wordpress-blue-60 );
 $x-color-link-background-hover: var( --studio-wordpress-blue-5 );
 $x-color-link: var( --studio-wordpress-blue-50 );
 $x-color-content-separator: rgba( $studio-gray-5, 0.85 );
-$studio-white-rgb: 255, 255, 255;
 $x-content-min-z-index: 801;
 $lp-font-weight-bold: 600;
 $lp-font-weight-semi-bold: 600;
@@ -208,7 +199,7 @@ $x-nav-height: $x-nav-padding-top + $x-nav-item-height + $x-nav-item-padding-x-w
 
 	.cta-btn-nav {
 		border-radius: 4px;
-		background: $studio-blue-30 !important;
+		background: $studio-blue-50 !important;
 		margin: 11px 18px 0 9px;
 		padding: 8px 9px !important;
 		text-decoration: none !important;
@@ -541,8 +532,6 @@ $x-dropdown-item-line-height: 19px;
 
 $lp-transition-properties: 0.15s ease-out;
 $lp-chevron-transform-right: translate3d(0.15em, 0, 0);
-$studio-gray-50: #646970;
-$studio-gray-30: #8c8f94;
 $x-color-content-icon: $studio-gray-30;
 $x-color-content-heading: $studio-gray-50;
 

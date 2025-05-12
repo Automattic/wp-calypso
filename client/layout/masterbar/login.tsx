@@ -1,7 +1,6 @@
-import { Gridicon } from '@automattic/components';
+import { Gridicon, WordPressLogo } from '@automattic/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
-import WordPressLogo from 'calypso/components/wordpress-logo';
 
 import './login.scss';
 

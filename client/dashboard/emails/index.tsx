@@ -5,8 +5,8 @@ import { Button, ExternalLink, Notice } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useState, useMemo } from 'react';
 import { emailsQuery } from '../app/queries';
-import DataViewsCard from '../dataviews-card';
-import PageLayout from '../page-layout';
+import DataViewsCard from '../components/dataviews-card';
+import PageLayout from '../components/page-layout';
 import type { Email } from '../data/types';
 import type { View } from '@automattic/dataviews';
 

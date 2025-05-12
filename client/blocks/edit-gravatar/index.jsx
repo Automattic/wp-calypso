@@ -47,6 +47,7 @@ export class EditGravatar extends Component {
 		this.quickEditor = new GravatarQuickEditorCore( {
 			email: user.email,
 			scope: [ 'avatars' ],
+			utm: 'wpcomme',
 			onProfileUpdated: () => {
 				recordAvatarUpdatedEvent();
 				// Update the avatar URL to force a refresh.

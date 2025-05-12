@@ -65,13 +65,7 @@ export const signUpContext: Callback = ( context, next ) => {
 	next();
 };
 
-export const finishSignUpContext: Callback = ( context, next ) => {
-	context.store.dispatch( hideMasterbar() );
-	context.primary = <AgencySignupFinish />;
-	next();
-};
-
-export const wcAsiaSignupContext: Callback = ( context, next ) => {
+export const signupV2Context: Callback = ( context, next ) => {
 	context.store.dispatch( hideMasterbar() );
 	context.primary = (
 		<>
@@ -79,6 +73,12 @@ export const wcAsiaSignupContext: Callback = ( context, next ) => {
 			<AgencySignupV2 />
 		</>
 	);
+	next();
+};
+
+export const finishSignUpContext: Callback = ( context, next ) => {
+	context.store.dispatch( hideMasterbar() );
+	context.primary = <AgencySignupFinish />;
 	next();
 };
 

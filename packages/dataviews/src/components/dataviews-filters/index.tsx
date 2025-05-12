@@ -71,21 +71,16 @@ export function useFilters( fields: NormalizedField< any >[], view: View ) {
 	}, [ fields, view ] );
 }
 
-export function FiltersToggle( {
-	filters,
-	view,
-	onChangeView,
-	setOpenedFilter,
-	isShowingFilter,
-	setIsShowingFilter,
-}: {
-	filters: NormalizedFilter[];
-	view: View;
-	onChangeView: ( view: View ) => void;
-	setOpenedFilter: ( filter: string | null ) => void;
-	isShowingFilter: boolean;
-	setIsShowingFilter: React.Dispatch< React.SetStateAction< boolean > >;
-} ) {
+export function FiltersToggle() {
+	const {
+		filters,
+		view,
+		onChangeView,
+		setOpenedFilter,
+		isShowingFilter,
+		setIsShowingFilter,
+	} = useContext( DataViewsContext );
+
 	const buttonRef = useRef< HTMLButtonElement >( null );
 	const onChangeViewWithFilterVisibility = useCallback(
 		( _view: View ) => {
@@ -178,7 +173,7 @@ function FilterVisibilityToggle( {
 	);
 }
 
-function Filters() {
+function Filters( { className }: { className?: string } ) {
 	const { fields, view, onChangeView, openedFilter, setOpenedFilter } =
 		useContext( DataViewsContext );
 	const addFilterRef = useRef< HTMLButtonElement >( null );
@@ -226,8 +221,8 @@ function Filters() {
 		<HStack
 			justify="flex-start"
 			style={ { width: 'fit-content' } }
-			className="dataviews-filters__container"
 			wrap
+			className={ className }
 		>
 			{ filterComponents }
 		</HStack>

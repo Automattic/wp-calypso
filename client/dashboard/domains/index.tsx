@@ -5,8 +5,8 @@ import { dateI18n } from '@wordpress/date';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
 import { domainsQuery } from '../app/queries';
-import DataViewsCard from '../dataviews-card';
-import PageLayout from '../page-layout';
+import DataViewsCard from '../components/dataviews-card';
+import PageLayout from '../components/page-layout';
 import type { Domain } from '../data/types';
 
 const fields = [

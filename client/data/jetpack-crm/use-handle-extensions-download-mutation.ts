@@ -5,7 +5,7 @@ const BASE_CRM_APP_URL =
 		? 'https://devapp.jetpackcrm.com'
 		: 'https://app.jetpackcrm.com';
 
-async function fetchExtensionDownloads( licenseKey: string, extensionSlug: string ) {
+async function fetchExtensionDownloads( extensionSlug: string, licenseKey?: string ) {
 	// API URL for downloads
 	const apiUrl = `${ BASE_CRM_APP_URL }/api/downloads/jetpack-complete`;
 
@@ -48,9 +48,9 @@ async function fetchExtensionDownloads( licenseKey: string, extensionSlug: strin
 	return data;
 }
 
-export default function useHandleExtensionsDownloadMutation( licenseKey: string ) {
+export default function useHandleExtensionsDownloadMutation( licenseKey?: string ) {
 	return useMutation( {
 		mutationKey: [ 'use-handle-jetpack-crm-extensions-download', licenseKey ],
-		mutationFn: ( extensionSlug: string ) => fetchExtensionDownloads( licenseKey, extensionSlug ),
+		mutationFn: ( extensionSlug: string ) => fetchExtensionDownloads( extensionSlug, licenseKey ),
 	} );
 }

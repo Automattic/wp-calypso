@@ -63,27 +63,6 @@ describe( 'unsupported-browser', () => {
 		expect( res.redirect ).not.toHaveBeenCalled();
 	} );
 
-	it( 'should call next() for allowed paths', () => {
-		// Use an unsupported browser that should normally be redirected
-		req.useragent = parseUserAgent(
-			'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.132 Safari/537.36'
-		);
-
-		const allowedPaths = [
-			'/browsehappy',
-			'/themes',
-			'/es/themes',
-			'/theme/twentytwenty',
-			'/calypso/style.css',
-		];
-
-		allowedPaths.forEach( ( path ) => {
-			unsupportedBrowserMiddleware()( { ...req, path }, res, next );
-			expect( next ).toHaveBeenCalled();
-			expect( res.redirect ).not.toHaveBeenCalled();
-		} );
-	} );
-
 	it( 'should call next() if bypass_target_redirection cookie is true', () => {
 		req.cookies.bypass_target_redirection = 'true';
 
@@ -111,6 +90,29 @@ describe( 'unsupported-browser', () => {
 		);
 		expect( next ).toHaveBeenCalled();
 		expect( res.redirect ).not.toHaveBeenCalled();
+	} );
+
+	describe( 'allowed paths', () => {
+		beforeEach( () => {
+			// Use an unsupported browser that should normally be redirected
+			req.useragent = parseUserAgent(
+				'Mozilla/5.0 (Windows NT 10.0; Trident/7.0; rv:11.0) like Gecko'
+			);
+		} );
+
+		it.each( [
+			{ path: '/browsehappy', allowed: true },
+			{ path: '/themes', allowed: true },
+			{ path: '/es/themes', allowed: true },
+			{ path: '/theme/twentytwenty', allowed: true },
+			{ path: '/calypso/style.css', allowed: true },
+			{ path: '/themeshaper', allowed: false },
+		] )( 'should not redirect for allowed paths', ( { path, allowed } ) => {
+			unsupportedBrowserMiddleware()( { ...req, path }, res, next );
+
+			expect( next ).toHaveBeenCalledTimes( allowed ? 1 : 0 );
+			expect( res.redirect ).toHaveBeenCalledTimes( allowed ? 0 : 1 );
+		} );
 	} );
 
 	describe( 'unsupported browsers', () => {

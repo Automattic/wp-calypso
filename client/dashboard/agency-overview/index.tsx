@@ -1,6 +1,6 @@
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import PageLayout from '../page-layout';
+import PageLayout from '../components/page-layout';
 
 export default function AgencyOverview() {
 	return (

@@ -38,16 +38,17 @@
 		"@automattic/i18n-utils": "workspace:^",
 		"@automattic/js-utils": "workspace:^",
 		"@automattic/load-script": "workspace:^",
+		"@automattic/number-formatters": "^1.0.0",
 		"@automattic/oauth-token": "workspace:^",
 		"@automattic/shopping-cart": "workspace:^",
 		"@tanstack/react-query": "^5.15.5",
-		"@wordpress/api-fetch": "^7.22.0",
-		"@wordpress/data-controls": "^4.22.0",
-		"@wordpress/deprecated": "^4.22.0",
-		"@wordpress/element": "^6.22.0",
-		"@wordpress/i18n": "^5.22.0",
-		"@wordpress/primitives": "^4.22.0",
-		"@wordpress/url": "^4.22.0",
+		"@wordpress/api-fetch": "^7.23.0",
+		"@wordpress/data-controls": "^4.23.0",
+		"@wordpress/deprecated": "^4.23.0",
+		"@wordpress/element": "^6.23.0",
+		"@wordpress/i18n": "^5.23.0",
+		"@wordpress/primitives": "^4.23.0",
+		"@wordpress/url": "^4.23.0",
 		"debug": "^4.4.0",
 		"fast-json-stable-stringify": "^2.1.0",
 		"i18n-calypso": "workspace:^",
@@ -62,7 +63,7 @@
 		"wpcom-proxy-request": "workspace:^"
 	},
 	"peerDependencies": {
-		"@wordpress/data": "^10.22.0",
+		"@wordpress/data": "^10.23.0",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1"
 	},
@@ -73,7 +74,6 @@
 		"@types/validator": "^13.7.1",
 		"jest-fetch-mock": "^3.0.3",
 		"nock": "^13.5.6",
-		"node-fetch": "^2.7.0",
 		"typescript": "^5.8.2",
 		"wait-for-expect": "^3.0.2"
 	}

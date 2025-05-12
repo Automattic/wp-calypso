@@ -5,7 +5,7 @@
 import { clearSignupDestinationCookie } from 'calypso/signup/storageUtils';
 import siteSetupFlow from '../flows/site-setup-flow/site-setup-flow';
 import { STEPS } from '../internals/steps';
-import { getFlowLocation, renderFlow } from './helpers';
+import { renderFlow } from './helpers';
 // we need to save the original object for later to not affect tests from other files
 const originalLocation = window.location;
 
@@ -84,17 +84,16 @@ describe( 'Site Setup Flow', () => {
 	} );
 
 	describe( 'goBack', () => {
-		it( 'redirects the user to preview STEP using the regular flow', () => {
+		it( 'redirects the user to site-migration flow when clicking back on importList step without backToFlow', () => {
 			const { runUseStepNavigationGoBack } = renderFlow( siteSetupFlow );
 
 			runUseStepNavigationGoBack( {
 				currentStep: STEPS.IMPORT_LIST.slug,
 			} );
 
-			expect( getFlowLocation() ).toEqual( {
-				path: '/import?siteSlug=example.wordpress.com',
-				state: null,
-			} );
+			expect( window.location.assign ).toHaveBeenCalledWith(
+				expect.stringContaining( '/setup/site-migration' )
+			);
 		} );
 
 		it( 'redirects the users to previous FLOW when backToFlow is defined', () => {
