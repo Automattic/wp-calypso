@@ -2140,7 +2140,7 @@ __metadata:
     "@automattic/calypso-color-schemes": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/languages": "workspace:^"
-    "@swc/core": "npm:^1.11.21"
+    "@swc/core": "npm:^1.11.24"
     "@types/wordpress__block-editor": "npm:^11.5.16"
     "@types/wordpress__blocks": "npm:^12.5.17"
     "@typescript-eslint/eslint-plugin": "npm:^6.21.0"
@@ -8678,7 +8678,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@swc/core@npm:^1.11.21":
+"@swc/core@npm:^1.11.24":
   version: 1.11.24
   resolution: "@swc/core@npm:1.11.24"
   dependencies:
