@@ -144,6 +144,91 @@ class StatsNavigation extends Component {
 		this.props.requestModuleToggles( this.props.siteId );
 	}
 
+	renderNavigation( { selectedItem, interval, slugPath, showLock } ) {
+		return (
+			<TabPanel
+				className="stats-navigation__tabs"
+				tabs={ Object.keys( navItems )
+					.filter( this.isValidItem )
+					.map( ( item ) => {
+						const navItem = navItems[ item ];
+						const intervalPath = navItem.showIntervals ? `/${ interval || 'day' }` : '';
+						const itemPath = `${ navItem.path }${ intervalPath }${ slugPath }`;
+						return {
+							name: item,
+							title: navItem.label + ( navItem.paywall && showLock ? ' 🔒' : '' ),
+							className: 'stats-navigation__' + item,
+							path: itemPath,
+						};
+					} ) }
+				initialTabName={ selectedItem }
+			>
+				{ ( tab ) => {
+					if ( tab.name === 'store' && config.isEnabled( 'is_running_in_jetpack_site' ) ) {
+						window.location.href = `${ this.props.adminUrl }admin.php?page=wc-admin&path=%2Fanalytics%2Foverview`;
+					} else if ( tab.path ) {
+						page( tab.path );
+					}
+					return <div className="stats-navigation__content" />; // Placeholder div since content is rendered elsewhere
+				} }
+			</TabPanel>
+		);
+	}
+
+	renderLegacyNavigation( {
+		selectedItem,
+		interval,
+		slugPath,
+		showLock,
+		isLegacy,
+		showIntervals,
+		pathTemplate,
+		label,
+	} ) {
+		return (
+			<SectionNav selectedText={ label }>
+				<NavTabs selectedText={ label }>
+					{ Object.keys( navItems )
+						.filter( this.isValidItem )
+						.map( ( item ) => {
+							const navItem = navItems[ item ];
+							const intervalPath = navItem.showIntervals ? `/${ interval || 'day' }` : '';
+							const itemPath = `${ navItem.path }${ intervalPath }${ slugPath }`;
+							const className = 'stats-navigation__' + item;
+							if ( item === 'store' && config.isEnabled( 'is_running_in_jetpack_site' ) ) {
+								return (
+									<NavItem
+										className={ className }
+										key={ item }
+										onClick={ () =>
+											( window.location.href = `${ this.props.adminUrl }admin.php?page=wc-admin&path=%2Fanalytics%2Foverview` )
+										}
+										selected={ false }
+									>
+										{ navItem.label }
+									</NavItem>
+								);
+							}
+							return (
+								<NavItem
+									className={ className }
+									key={ item }
+									path={ itemPath }
+									selected={ selectedItem === item }
+								>
+									{ navItem.label }
+									{ navItem.paywall && showLock && ' 🔒' }
+								</NavItem>
+							);
+						} ) }
+				</NavTabs>
+				{ isLegacy && showIntervals && (
+					<Intervals selected={ interval } pathTemplate={ pathTemplate } />
+				) }
+			</SectionNav>
+		);
+	}
+
 	render() {
 		const {
 			slug,
@@ -182,81 +267,6 @@ class StatsNavigation extends Component {
 			! hideModuleSettings &&
 			! gatedTrafficPage;
 
-		const coreNavTabsComponent = (
-			<TabPanel
-				className="stats-navigation__tabs"
-				tabs={ Object.keys( navItems )
-					.filter( this.isValidItem )
-					.map( ( item ) => {
-						const navItem = navItems[ item ];
-						const intervalPath = navItem.showIntervals ? `/${ interval || 'day' }` : '';
-						const itemPath = `${ navItem.path }${ intervalPath }${ slugPath }`;
-						return {
-							name: item,
-							title: navItem.label + ( navItem.paywall && showLock ? ' 🔒' : '' ),
-							className: 'stats-navigation__' + item,
-							path: itemPath,
-						};
-					} ) }
-				initialTabName={ selectedItem }
-			>
-				{ ( tab ) => {
-					if ( tab.name === 'store' && config.isEnabled( 'is_running_in_jetpack_site' ) ) {
-						window.location.href = `${ this.props.adminUrl }admin.php?page=wc-admin&path=%2Fanalytics%2Foverview`;
-					} else if ( tab.path ) {
-						page( tab.path );
-					}
-					return <div className="stats-navigation__content" />; // Placeholder div since content is rendered elsewhere
-				} }
-			</TabPanel>
-		);
-
-		const legacyNavTabsComponent = (
-			<SectionNav selectedText={ label }>
-				<NavTabs selectedText={ label }>
-					{ Object.keys( navItems )
-						.filter( this.isValidItem )
-						.map( ( item ) => {
-							const navItem = navItems[ item ];
-							const intervalPath = navItem.showIntervals ? `/${ interval || 'day' }` : '';
-							const itemPath = `${ navItem.path }${ intervalPath }${ slugPath }`;
-							const className = 'stats-navigation__' + item;
-							if ( item === 'store' && config.isEnabled( 'is_running_in_jetpack_site' ) ) {
-								return (
-									<NavItem
-										className={ className }
-										key={ item }
-										onClick={ () =>
-											( window.location.href = `${ this.props.adminUrl }admin.php?page=wc-admin&path=%2Fanalytics%2Foverview` )
-										}
-										selected={ false }
-									>
-										{ navItem.label }
-									</NavItem>
-								);
-							}
-							return (
-								<NavItem
-									className={ className }
-									key={ item }
-									path={ itemPath }
-									selected={ selectedItem === item }
-								>
-									{ navItem.label }
-									{ navItem.paywall && showLock && ' 🔒' }
-								</NavItem>
-							);
-						} ) }
-				</NavTabs>
-
-				{ isLegacy && showIntervals && (
-					<Intervals selected={ interval } pathTemplate={ pathTemplate } />
-				) }
-			</SectionNav>
-		);
-
-		// @TODO: Add loading status of modules settings to avoid toggling modules before they are loaded.
-
 		return (
 			<div className={ wrapperClass }>
 				{ siteId && <QueryJetpackModules siteId={ siteId } /> }
@@ -264,13 +274,36 @@ class StatsNavigation extends Component {
 					<ComponentSwapper
 						className="stats-navigation__tabs-swapper"
 						breakpoint="<480px"
-						breakpointActiveComponent={ legacyNavTabsComponent }
-						breakpointInactiveComponent={ coreNavTabsComponent }
+						breakpointActiveComponent={ this.renderLegacyNavigation( {
+							selectedItem,
+							interval,
+							slugPath,
+							showLock,
+							isLegacy,
+							showIntervals,
+							pathTemplate,
+							label,
+						} ) }
+						breakpointInactiveComponent={ this.renderNavigation( {
+							selectedItem,
+							interval,
+							slugPath,
+							showLock,
+						} ) }
 					/>
 				) : (
 					//TODO: remove this SectionNav in favour of above TabPanel once Navigation Improvement is fully launched
 					<>
-						{ legacyNavTabsComponent }
+						{ this.renderLegacyNavigation( {
+							selectedItem,
+							interval,
+							slugPath,
+							showLock,
+							isLegacy,
+							showIntervals,
+							pathTemplate,
+							label,
+						} ) }
 						{ isLegacy && showIntervals && (
 							<Intervals selected={ interval } pathTemplate={ pathTemplate } standalone />
 						) }
