@@ -24,7 +24,11 @@ form {
 
 	form {
 		max-width: 400px;
+
+	body:not(.theme-a8c-for-agencies ) & {
 		margin: 0;
+	} 
+		
 
 		&.is-social-first {
 			display: flex;
