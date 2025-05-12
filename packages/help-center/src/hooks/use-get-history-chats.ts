@@ -6,10 +6,16 @@ import { useSelect } from '@wordpress/data';
 import { useEffect, useState } from '@wordpress/element';
 import {
 	filterAndUpdateConversationsWithStatus,
+	getLastMessage,
 	getZendeskConversations,
 } from '../components/utils';
 import { HELP_CENTER_STORE } from '../stores';
-import type { Conversations, SupportInteraction } from '@automattic/odie-client';
+import type {
+	Conversations,
+	OdieConversation,
+	SupportInteraction,
+	ZendeskConversation,
+} from '@automattic/odie-client';
 
 interface UseGetHistoryChatsResult {
 	supportInteractions: SupportInteraction[];
@@ -17,6 +23,11 @@ interface UseGetHistoryChatsResult {
 	recentConversations: Conversations;
 	archivedConversations: Conversations;
 }
+
+const getLastMessageReceived = ( conversation: OdieConversation | ZendeskConversation ) => {
+	const lastMessage = getLastMessage( { conversation } );
+	return lastMessage?.received || 0;
+};
 
 export const useGetHistoryChats = (): UseGetHistoryChatsResult => {
 	const [ supportInteractions, setSupportInteractions ] = useState< SupportInteraction[] >( [] );
@@ -72,10 +83,10 @@ export const useGetHistoryChats = (): UseGetHistoryChatsResult => {
 			...conversationsWithUpdatedStatuses,
 			...filteredOdieConversations,
 		].sort( ( a, b ) => {
-			const createdAtA = Number( a.messages?.[ 0 ]?.received ) * 1000 || 0;
-			const createdAtB = Number( b.messages?.[ 0 ]?.received ) * 1000 || 0;
+			const receviedA = getLastMessageReceived( a );
+			const receviedB = getLastMessageReceived( b );
 
-			return createdAtB - createdAtA;
+			return receviedB - receviedA;
 		} );
 
 		// Split into recent and archived
@@ -87,8 +98,8 @@ export const useGetHistoryChats = (): UseGetHistoryChatsResult => {
 		const archived: Conversations = [];
 
 		mergedAndSortedConversations.forEach( ( conversation ) => {
-			const createdAt = Number( conversation.messages?.[ 0 ]?.received ) * 1000 || 0;
-			if ( typeof createdAt === 'number' && createdAt < oneYearAgo ) {
+			const received = getLastMessageReceived( conversation ) || 0;
+			if ( typeof received === 'number' && received < oneYearAgo ) {
 				archived.push( conversation );
 			} else {
 				recent.push( conversation );
