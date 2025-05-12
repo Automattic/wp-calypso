@@ -7,6 +7,7 @@ import JetpackColophon from 'calypso/components/jetpack-colophon';
 import NavigationHeader from 'calypso/components/navigation-header';
 import Main from 'calypso/my-sites/stats/components/stats-main';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import PageHeader from '../components/headers/page-header';
 import {
 	TooltipWrapper,
 	OpensTooltipContent,
@@ -17,7 +18,6 @@ import PageViewTracker from '../stats-page-view-tracker';
 import statsStringsFactory from '../stats-strings';
 import '../summary/style.scss';
 import '../stats-module/summary-nav.scss';
-import PageHeader from '../components/headers/page-header';
 
 const StatsStrings = statsStringsFactory();
 
