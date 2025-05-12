@@ -92,7 +92,7 @@ const SecurityAccountRecovery = ( props ) => (
 		</div>
 
 		<div className="security-account-recovery__recovery-sms-number">
-			<SectionHeader label={ props.translate( 'Recovery phone number' ) } />
+			<SectionHeader label={ props.translate( 'Recovery SMS number' ) } />
 			<Card>
 				<RecoveryPhone
 					phone={ props.accountRecoveryPhone }

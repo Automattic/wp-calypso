@@ -42,7 +42,6 @@ class SecurityAccountRecoveryRecoveryPhoneEdit extends Component {
 						phoneInputProps={ {
 							onKeyUp: this.onKeyUp,
 						} }
-						isHideLabels
 						onChange={ this.onChange }
 					/>
 
@@ -68,7 +67,7 @@ class SecurityAccountRecoveryRecoveryPhoneEdit extends Component {
 			return false;
 		}
 
-		if ( ! this.state.phoneNumber.phoneNumberFull ) {
+		if ( ! this.state.phoneNumber.phoneNumber || ! this.state.phoneNumber.phoneNumberFull ) {
 			return false;
 		}
 
