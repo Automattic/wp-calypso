@@ -76,6 +76,7 @@ export type PlansIntent =
 	| 'plans-guided-segment-consumer-or-business'
 	| 'plans-site-selected-legacy'
 	| 'plans-playground'
+	| 'plans-playground-premium'
 	| 'default';
 
 export interface PlanActionOverrides {

@@ -210,6 +210,9 @@ export const usePlanTypesWithIntent = ( {
 		case 'plans-playground':
 			planTypes = [ TYPE_BUSINESS, TYPE_ECOMMERCE ];
 			break;
+		case 'plans-playground-premium':
+			planTypes = [ TYPE_PREMIUM, TYPE_BUSINESS, TYPE_ECOMMERCE ];
+			break;
 		default:
 			planTypes = availablePlanTypes;
 	}
