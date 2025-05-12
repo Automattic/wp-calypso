@@ -123,6 +123,12 @@
 		line-height: 1;
 		padding: 7px;
 	}
+
+	.stats-navigation.stats-navigation--improved .stats-navigation__tabs {
+		.components-tab-panel__tabs-item::after {
+			background-color: var(--color-primary-50);
+		}
+	}
 }
 
 .inner-notice-container .card.banner.is-jetpack {

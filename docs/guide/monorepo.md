@@ -16,7 +16,22 @@ Directories with packages are:
 
 Except those inside `/packages/*`, packages are not published to NPM.
 
-Modules should follow our convention for layout:
+## Creating a new package package
+
+### Package guidelines
+
+Not everything should be a package, only extract or create packages that adhere the following rules:
+
+ - A package should have one clear purpose.
+ - Avoid kitchen sink packages, utils packages or packages without a clear purpose but only exists to share code between different areas of the code base.
+ - A package should have a clear and well documented public API.
+ - Package requirements should be mentioned explicitely in the README. (For instance, if it depends on WP.com REST API or can only run in a specific context). The ideal packages don't have much requirements but it's understandable that some might require some context.
+
+**Note** Unfortunately, a lot of existing packages in Calypso don't follow these rules. This is a work in progress and we are trying to improve this over time. If you are creating a new package, please follow these rules.
+
+### Folder structure
+
+Packages should follow should follow our convention for layout:
 
 ```
 # your package.json
@@ -44,11 +59,7 @@ test/
 	module-b.js
 ```
 
-Your `package.json` can have any of the [normal properties](https://docs.npmjs.com/files/package.json) but at a minimum should contain `main`, `module`, `calypso:src` and `sideEffects`.
-
-### devDependencies
-
-It used to be that `devDependencies` needed to be added to the root `package.json` but since we moved to `yarn` workspaces we're able to add them as regular `devDependencies` within the package that uses them.
+Your `package.json` can have any of the [normal properties](https://docs.npmjs.com/files/package.json) but at a minimum should contain `main`, `module`, `calypso:src`, `exports` and `sideEffects`.
 
 ### sideEffects
 
@@ -71,9 +82,18 @@ failing to do so, will make your package work correctly in the dev build but tre
 	"name": "@automattic/your-package",
 	"version": "1.0.0",
 	"description": "My new package",
-	"calypso:src": "src/index.js",
+	"calypso:src": "src/index.ts",
+	"types": "dist/types/index.d.ts",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
+	"exports": {
+		".": {
+			"calypso:src": "./src/index.ts",
+			"types": "./dist/types/index.d.ts",
+			"import": "./dist/esm/index.js",
+			"require": "./dist/cjs/index.js"
+		}
+	},
 	"sideEffects": false,
 	"keywords": [ "wordpress" ],
 	"author": "Automattic Inc.",
@@ -102,7 +122,7 @@ failing to do so, will make your package work correctly in the dev build but tre
 
 If your package requires compilation, the `package.json` `build` script should compile the package:
 
-- If it contains ES6+ code that needs to be transpiled, use `transpile` (from `@automattic/calypso-build`) which will automatically compile code in `src/` to `dist/cjs` (CommonJS) and `dist/esm` (ECMAScript Modules) by running `babel` over any source files it finds. Also, make sure to add `@automattic/calypso-build` in `devDependencies`.
+- If it contains code that needs to be transpiled, use `transpile` (from `@automattic/calypso-build`) which will automatically compile code in `src/` to `dist/cjs` (CommonJS) and `dist/esm` (ECMAScript Modules) by running `babel` over any source files it finds. Also, make sure to add `@automattic/calypso-build` in `devDependencies`.
 - If it contains [assets](https://github.com/Automattic/wp-calypso/blob/d709f0e79ba29f2feb35690d275087179b18f632/packages/calypso-build/bin/copy-assets.js#L17-L25) (eg `.scss`) then after `transpile` append `&& copy-assets` ie `"build": "transpile && copy-assets"`.
 
 `package.json` is linted using ESLint. Run `yarn eslint packages/*/package.json apps/*/package.json` to validate them.
@@ -204,3 +224,5 @@ To verify it worked, use `yarn npm whoami --scope automattic` or `yarn npm whoam
 To publish the package, run: `cd packages/<your-package> && yarn npm publish`.
 
 Done!
+
+Previous: [The Technology Behind Calypso](tech-behind-calypso.md) Next: [Contributing to Calypso](../../docs/CONTRIBUTING.md)

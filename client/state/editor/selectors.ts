@@ -96,11 +96,3 @@ export function getEditorPath(
 
 	return path;
 }
-
-export function isEditorIframeLoaded( state: AppState ): boolean {
-	return state.editor.isIframeLoaded;
-}
-
-export function getEditorIframePort( state: AppState ): boolean {
-	return state.editor.iframePort;
-}

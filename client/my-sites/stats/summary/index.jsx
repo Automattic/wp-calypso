@@ -393,7 +393,8 @@ class StatsSummary extends Component {
 											query={ moduleQuery }
 											path={ path }
 											period={ this.props.period }
-											skipQuery={ statType === 'statsUTM' }
+											skipQuery
+											hideIfNoData
 										/>
 									) }
 								</div>

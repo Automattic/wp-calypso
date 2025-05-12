@@ -6,6 +6,14 @@
 	"module": "dist/esm/public-api.js",
 	"types": "dist/types/public-api.d.ts",
 	"calypso:src": "src/public-api.ts",
+	"exports": {
+		".": {
+			"calypso:src": "./src/public-api.ts",
+			"types": "./dist/types/public-api.d.ts",
+			"import": "./dist/esm/public-api.js",
+			"require": "./dist/cjs/public-api.js"
+		}
+	},
 	"sideEffects": false,
 	"scripts": {
 		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",

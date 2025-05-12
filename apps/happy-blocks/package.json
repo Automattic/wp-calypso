@@ -15,6 +15,7 @@
 		"teamcity:build-app": "./bin/ci-build-steps.sh",
 		"build-calypso-strings": "wp-babel-makepot '../../{client,packages,apps}/**/*.{js,jsx,ts,tsx}' --ignore '**/node_modules/**,**/test/**,**/*.d.ts' --base '../../' --dir 'dist/strings' --output './dist/calypso-strings.pot' && rm -rf dist/strings",
 		"build:pricing-plans": "calypso-build --env block='pricing-plans'",
+		"build:search-card": "calypso-build --env block='search-card'",
 		"build:universal-header": "calypso-build --env block='universal-header'",
 		"build:support-content-footer": "calypso-build --env block='support-content-footer'",
 		"build:education-header": "calypso-build --env block='education-header'",

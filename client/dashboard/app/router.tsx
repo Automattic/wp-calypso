@@ -332,6 +332,8 @@ export const getRouter = ( config: AppConfig ) => {
 		basepath: config.basePath,
 		defaultErrorComponent: UnknownError,
 		defaultNotFoundComponent: NotFound,
+		defaultPreload: 'intent',
+		defaultPreloadStaleTime: 0,
 	} );
 };
 

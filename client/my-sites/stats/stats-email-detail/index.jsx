@@ -111,12 +111,14 @@ class StatsEmailDetail extends Component {
 			insights: this.props.translate( 'Insights' ),
 			store: this.props.translate( 'Store' ),
 			ads: this.props.translate( 'Ads' ),
+			subscribers: this.props.translate( 'Subscribers' ),
 		};
 		const possibleBackLinks = {
 			traffic: '/stats/day/',
 			insights: '/stats/insights/',
 			store: '/stats/store/',
 			ads: '/stats/ads/',
+			subscribers: '/stats/subscribers/',
 		};
 		// We track the parent tab via sessionStorage.
 		const lastClickedTab = sessionStorage.getItem( 'jp-stats-last-tab' );

@@ -8,6 +8,17 @@
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
 	"calypso:src": "src/index.tsx",
+	"exports": {
+		".": {
+			"calypso:src": "./src/index.tsx",
+			"types": "./dist/types/index.d.ts",
+			"import": "./dist/esm/index.js",
+			"require": "./dist/cjs/index.js"
+		},
+		"./src/*": {
+			"calypso:src": "./src/*"
+		}
+	},
 	"sideEffects": [
 		"*.css",
 		"*.scss"
