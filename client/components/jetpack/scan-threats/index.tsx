@@ -1,5 +1,6 @@
 import { Button, Card, FoldableCard } from '@automattic/components';
-import { numberFormat, translate } from 'i18n-calypso';
+import { formatNumber } from '@automattic/number-formatters';
+import { translate } from 'i18n-calypso';
 import * as React from 'react';
 import InfoPopover from 'calypso/components/info-popover';
 import FixAllThreatsDialog from 'calypso/components/jetpack/fix-all-threats-dialog';
@@ -65,7 +66,7 @@ const getThreatCountMessage = (
 		lowThreatsSummary = String(
 			translate( '%(lowCount)s low risk item', '%(lowCount)s low risk items', {
 				args: {
-					lowCount: numberFormat( countLowSeverity ),
+					lowCount: formatNumber( countLowSeverity ),
 				},
 				comment: '$(lowCount)s is the number of low severity items found.',
 				count: countLowSeverity,
@@ -78,7 +79,7 @@ const getThreatCountMessage = (
 		highThreatsSummary = String(
 			translate( '%(threatCount)s threat', '%(threatCount)s threats', {
 				args: {
-					threatCount: numberFormat( countHighSeverity ),
+					threatCount: formatNumber( countHighSeverity ),
 				},
 				comment: '%(threatCount)s represents the number of higher severity threats found.',
 				count: countHighSeverity,

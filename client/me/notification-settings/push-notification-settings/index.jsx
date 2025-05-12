@@ -767,13 +767,11 @@ class PushNotificationSettings extends Component {
 						{ stateText }
 					</small>
 				</h2>
-
 				<p className="notification-settings-push-notification-settings__settings-description">
 					{ this.props.translate(
 						'Get instant notifications for new comments and likes, even when you are not actively using WordPress.com.'
 					) }
 				</p>
-
 				<Button
 					className={ clsx(
 						'notification-settings-push-notification-settings__settings-button',
@@ -785,7 +783,6 @@ class PushNotificationSettings extends Component {
 				>
 					{ buttonText }
 				</Button>
-
 				{ deniedText }
 			</Card>
 			/* eslint-enable wpcalypso/jsx-classname-namespace */

@@ -33,7 +33,6 @@ export const UnwrappedUpgradePlan: React.FunctionComponent< UpgradePlanProps > =
 	const {
 		site,
 		navigateToVerifyEmailStep,
-		onContentOnlyClick,
 		ctaText,
 		subTitleText,
 		hideTitleAndSubTitle = false,
@@ -200,17 +199,6 @@ export const UnwrappedUpgradePlan: React.FunctionComponent< UpgradePlanProps > =
 										},
 									}
 							  ) }
-						<br />
-						{ ! isEligibleForTrialPlan &&
-							onContentOnlyClick &&
-							translate(
-								'To just migrate the content, use the {{link}}free content-only import option{{/link}}.',
-								{
-									components: {
-										link: <Button borderless onClick={ onContentOnlyClick } />,
-									},
-								}
-							) }
 					</SubTitle>
 				</div>
 			) }

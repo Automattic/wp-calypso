@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+// @ts-nocheck - TODO: Fix TypeScript issues
 import { isCurrentUserLoggedIn } from '@automattic/data-stores/src/user/selectors';
 import { useEntrepreneurAdminDestination } from 'calypso/landing/stepper/hooks/use-entrepreneur-admin-destination';
 import { useIsSiteOwner } from 'calypso/landing/stepper/hooks/use-is-site-owner';

@@ -24,11 +24,13 @@ import {
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Card, Gridicon } from '@automattic/components';
+import { formatCurrency } from '@automattic/number-formatters';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import HeaderCake from 'calypso/components/header-cake';
+import { hasAmountAvailableToRefund, isRefundable } from 'calypso/lib/purchases';
 import { cancelAndRefundPurchaseAsync } from 'calypso/lib/purchases/actions';
 import { Purchase } from 'calypso/lib/purchases/types';
 import { managePurchase } from 'calypso/me/purchases/paths';
@@ -123,11 +125,31 @@ export const Downgrade: React.FC< DowngradeProps > = ( props ) => {
 	const featureSlugs = getFeatureDifference(
 		downgradePath[ purchase?.productSlug ?? '' ],
 		purchase?.productSlug ?? '',
-		'getCheckoutFeatures'
+		'getCancellationFeatures'
 	);
 	const features = featureSlugs.map( ( slug ) => getFeatureByKey( slug ) );
 	const isAtomicSiteDowngrade =
 		isAtomicSite && ! targetPlan?.getIncludedFeatures?.().includes( WPCOM_FEATURES_ATOMIC );
+
+	const refundAmount = useMemo( () => {
+		if ( ! purchase ) {
+			return '0';
+		}
+
+		const { refundOptions, currencyCode } = purchase;
+		const defaultFormatter = new Intl.NumberFormat( 'en-US', {
+			style: 'currency',
+			currency: currencyCode,
+		} );
+		const precision = defaultFormatter.resolvedOptions().maximumFractionDigits;
+		const matchingRefundOption =
+			isRefundable( purchase ) && Array.isArray( refundOptions )
+				? refundOptions.find( ( option ) => option.to_product_id === targetPlan?.getProductId() )
+				: null;
+		const refundAmount = matchingRefundOption?.refund_amount ?? 0;
+
+		return parseFloat( refundAmount ).toFixed( precision );
+	}, [ purchase, targetPlan ] );
 
 	if (
 		isDataLoading( { hasLoadedSites, hasLoadedUserPurchasesFromServer: loadedFromServer } ) ||
@@ -196,6 +218,28 @@ export const Downgrade: React.FC< DowngradeProps > = ( props ) => {
 		}
 	};
 
+	const getDowngradeMessage = () => {
+		const hasRefund = hasAmountAvailableToRefund( purchase ) && purchase?.mostRecentRenewDate;
+		const basePlanArgs = {
+			currentPlan: currentPlan?.getTitle() ?? '',
+			targetPlan: targetPlan?.getTitle() ?? '',
+		};
+
+		return hasRefund
+			? translate(
+					"When you downgrade from %(currentPlan)s to %(targetPlan)s, we'll process a refund of %(amount)s to your original payment method.",
+					{
+						args: {
+							...basePlanArgs,
+							amount: formatCurrency( parseFloat( refundAmount ), purchase.currencyCode ),
+						},
+					}
+			  )
+			: translate( 'We will change the plan immediately from %(currentPlan)s to %(targetPlan)s.', {
+					args: basePlanArgs,
+			  } );
+	};
+
 	if ( isAtomicWarningVisible ) {
 		return (
 			<AtomicWarning
@@ -222,17 +266,7 @@ export const Downgrade: React.FC< DowngradeProps > = ( props ) => {
 				<div className="downgrade__inner-wrapper">
 					<div className="downgrade__content">
 						<div>
-							<strong>
-								{ translate(
-									'We will change the plan immediately from %(currentPlan)s to %(targetPlan)s.',
-									{
-										args: {
-											currentPlan: currentPlan?.getTitle() ?? '',
-											targetPlan: targetPlan?.getTitle() ?? '',
-										},
-									}
-								) }
-							</strong>
+							<strong>{ getDowngradeMessage() }</strong>
 						</div>
 
 						{ features.length > 0 && (

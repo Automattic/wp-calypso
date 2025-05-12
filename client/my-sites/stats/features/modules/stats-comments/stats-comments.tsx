@@ -143,7 +143,6 @@ const StatsComments: React.FC< StatsDefaultModuleProps > = ( { className } ) => 
 					splitHeader
 					useShortNumber
 					toggleControl={
-						// @ts-expect-error TODO: Refactor SimplifiedSegmentedControl with TypeScript - onSelect assumed type is incorrect.
 						<SimplifiedSegmentedControl options={ selectOptions } onSelect={ handleFilterChange } />
 					}
 					className={ clsx( 'stats__modernised-comments', className ) }
@@ -163,7 +162,7 @@ const StatsComments: React.FC< StatsDefaultModuleProps > = ( { className } ) => 
 			{ ! isRequestingData && ! hasPosts && ! shouldGateStatsModule && (
 				// show empty state
 				<StatsCard
-					className={ clsx( 'stats-card--empty-variant', className ) }
+					className={ className }
 					title={ moduleTitle }
 					isEmpty
 					emptyMessage={

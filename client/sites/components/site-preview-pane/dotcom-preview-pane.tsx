@@ -3,7 +3,6 @@ import { SiteExcerptData } from '@automattic/sites';
 import { useI18n } from '@wordpress/react-i18n';
 import React, { useMemo } from 'react';
 import ItemView from 'calypso/layout/hosting-dashboard/item-view';
-import { useRemoveDuplicateViewsExperimentEnabled } from 'calypso/lib/remove-duplicate-views-experiment';
 import { useSetTabBreadcrumb } from 'calypso/sites/hooks/breadcrumbs/use-set-tab-breadcrumb';
 import HostingFeaturesIcon from 'calypso/sites/hosting/components/hosting-features-icon';
 import { useStagingSite } from 'calypso/sites/staging-site/hooks/use-staging-site';
@@ -15,31 +14,30 @@ import { useBreadcrumbs } from '../../hooks/breadcrumbs/use-breadcrumbs';
 import { showSitesPage } from '../sites-dashboard';
 import { SiteStatus } from '../sites-dataviews/sites-site-status';
 import {
+	DEPLOYMENTS,
 	FEATURE_TO_ROUTE_MAP,
-	HOSTING_CONFIG,
-	OVERVIEW,
-	MONITORING,
-	PERFORMANCE,
+	HOSTING_FEATURES,
 	LOGS_PHP,
 	LOGS_WEB,
-	DEPLOYMENTS,
-	HOSTING_FEATURES,
-	STAGING_SITE,
-	SETTINGS_SITE,
+	MONITORING,
+	OVERVIEW,
+	PERFORMANCE,
+	PLAN,
+	SETTINGS_ADMINISTRATION_DELETE_SITE,
 	SETTINGS_ADMINISTRATION_RESET_SITE,
 	SETTINGS_ADMINISTRATION_TRANSFER_SITE,
-	SETTINGS_ADMINISTRATION_DELETE_SITE,
-	SETTINGS_SERVER,
-	SETTINGS_SFTP_SSH,
 	SETTINGS_DATABASE,
 	SETTINGS_PERFORMANCE,
-	PLAN,
+	SETTINGS_SERVER,
+	SETTINGS_SFTP_SSH,
+	SETTINGS_SITE,
+	STAGING_SITE,
 } from './constants';
 import PreviewPaneHeaderButtons from './preview-pane-header-buttons';
 import SiteEnvironmentSwitcher from './site-environment-switcher';
 import type {
-	ItemData,
 	FeaturePreviewInterface,
+	ItemData,
 } from 'calypso/layout/hosting-dashboard/item-view/types';
 
 interface Props {
@@ -64,8 +62,6 @@ const DotcomPreviewPane = ( {
 	const isSimpleSite = ! site.jetpack && ! site.is_wpcom_atomic;
 	const isPlanExpired = !! site.plan?.expired;
 	const isMigrationPending = getMigrationStatus( site ) === 'pending';
-
-	const isRemoveDuplicateViewsExperimentEnabled = useRemoveDuplicateViewsExperimentEnabled();
 
 	const features: FeaturePreviewInterface[] = useMemo( () => {
 		const isActiveAtomicSite = isAtomicSite && ! isPlanExpired;
@@ -112,7 +108,7 @@ const DotcomPreviewPane = ( {
 			},
 			{
 				label: __( 'Settings' ),
-				enabled: isRemoveDuplicateViewsExperimentEnabled,
+				enabled: true,
 				featureIds: [
 					SETTINGS_SITE,
 					SETTINGS_ADMINISTRATION_RESET_SITE,
@@ -123,13 +119,6 @@ const DotcomPreviewPane = ( {
 					SETTINGS_DATABASE,
 					SETTINGS_PERFORMANCE,
 				],
-			},
-			{
-				label: hasEnTranslation( 'Server Settings' )
-					? __( 'Server Settings' )
-					: __( 'Server Config' ),
-				enabled: ! isRemoveDuplicateViewsExperimentEnabled && isActiveAtomicSite,
-				featureIds: [ HOSTING_CONFIG ],
 			},
 			{
 				enabled: true,
@@ -170,7 +159,6 @@ const DotcomPreviewPane = ( {
 		hasEnTranslation,
 		isSimpleSite,
 		site,
-		isRemoveDuplicateViewsExperimentEnabled,
 		selectedSiteFeature,
 		selectedSiteFeaturePreview,
 	] );

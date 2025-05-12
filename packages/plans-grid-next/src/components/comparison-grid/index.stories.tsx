@@ -45,7 +45,7 @@ const defaultProps = {
 	currentSitePlanSlug: undefined,
 	featureGroupMap: getPlanFeaturesGroupedForComparisonGrid(),
 	hideUnavailableFeatures: false,
-	intervalType: 'yearly',
+	intervalType: 'yearly' as const,
 	isInAdmin: false,
 	isInSiteDashboard: false,
 	isInSignup: true,

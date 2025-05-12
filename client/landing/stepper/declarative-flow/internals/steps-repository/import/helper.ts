@@ -6,7 +6,6 @@ import {
 	getWpComOnboardingUrl,
 	getWpOrgImporterUrl,
 } from 'calypso/blocks/import/util';
-import { WPImportOption } from 'calypso/blocks/importer/wordpress/types';
 import { getImporterEngines } from 'calypso/lib/importer/importer-config';
 import { ImporterPlatform } from 'calypso/lib/importer/types';
 import { BASE_ROUTE } from './config';
@@ -27,11 +26,7 @@ export function getFinalImporterUrl(
 			? getWpComOnboardingUrl( targetSlug, platform, encodedFromSite )
 			: getImporterUrl( targetSlug, platform, encodedFromSite );
 
-		if ( platform === 'wordpress' && ! fromSite ) {
-			importerUrl = addQueryArgs( importerUrl, {
-				option: WPImportOption.CONTENT_ONLY,
-			} );
-		} else if ( platform === 'wix' && fromSite ) {
+		if ( platform === 'wix' && fromSite ) {
 			importerUrl = addQueryArgs( importerUrl, {
 				run: true,
 			} );
@@ -74,4 +69,47 @@ export function generateStepPath( stepName: string, stepSectionName?: string ) {
 			return camelCase( path ) as string;
 		}
 	}
+}
+
+/**
+ * Returns true if the platform is importable
+ *
+ * @param platform - The platform to check
+ * @returns True if the platform is importable, false otherwise
+ */
+export function isPlatformImportable( platform: ImporterPlatform ) {
+	const productImporters = getImporterEngines();
+	return productImporters.includes( platform );
+}
+
+/**
+ * Returns the full importer URL for the given platform
+ *
+ * @param platform - The platform to get the importer URL for
+ * @param targetSlug - The target slug for the importer URL
+ * @param fromSite - The from site for the importer URL
+ */
+export function getFullImporterUrl(
+	platform: ImporterPlatform,
+	targetSlug: string,
+	fromSite: string
+) {
+	if ( ! isPlatformImportable( platform ) ) {
+		return getWpOrgImporterUrl( targetSlug, platform );
+	}
+
+	const hasSiteSetupImporter = [ 'blogger', 'medium', 'squarespace', 'wix', 'wordpress' ];
+	if ( hasSiteSetupImporter.includes( platform ) ) {
+		let url = '/setup/site-setup/' + getWpComOnboardingUrl( targetSlug, platform, fromSite );
+
+		if ( platform === 'wix' ) {
+			url = addQueryArgs( url, {
+				run: true,
+			} );
+		}
+
+		return url;
+	}
+
+	return getImporterUrl( targetSlug, platform, fromSite );
 }

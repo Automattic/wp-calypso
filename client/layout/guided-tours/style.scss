@@ -6,7 +6,7 @@
 	background: var(--color-neutral-90);
 	box-shadow:
 		0 0 0 1px rgbs(255, 255, 255, 0.6),
-		0 2px 24px 0 rgba(var(--color-neutral-80-rgb), 0.5);
+		0 2px 24px 0 color-mix(in srgb, var(--color-neutral-80) 50%, transparent);
 	border-radius: 2px;
 	padding-top: 19px;
 	margin-left: 5px;
@@ -53,7 +53,6 @@
 	}
 
 	.tours__title {
-		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		font-size: 140%;
 		display: flex;
 		align-items: center;
@@ -133,7 +132,7 @@
 	a.button {
 		color: var(--color-neutral-10);
 		background: none;
-		border: 1px rgba(var(--color-surface-rgb), 0.2) solid;
+		border: 1px color-mix(in srgb, var(--color-surface) 20%, transparent) solid;
 	}
 
 	a.button {
@@ -142,7 +141,7 @@
 
 		&:hover,
 		&:focus {
-			border-color: rgba(var(--color-surface-rgb), 0.3);
+			border-color: color-mix(in srgb, var(--color-surface) 30%, transparent);
 		}
 
 		.gridicon {
@@ -189,7 +188,6 @@ a.config-elements__text-link,
 	position: relative;
 	top: 3px;
 	font-style: normal;
-	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	font-size: 190%;
 	line-height: 0;
 }

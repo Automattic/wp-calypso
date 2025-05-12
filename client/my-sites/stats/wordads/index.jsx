@@ -1,9 +1,10 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { eye } from '@automattic/components/src/icons';
+import { formatNumber } from '@automattic/number-formatters';
 import { Icon, chartBar, trendingUp } from '@wordpress/icons';
 import clsx from 'clsx';
-import { localize, translate, numberFormat } from 'i18n-calypso';
+import { localize, translate } from 'i18n-calypso';
 import { find } from 'lodash';
 import moment from 'moment';
 import { stringify as stringifyQs } from 'qs';
@@ -18,6 +19,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import EmptyContent from 'calypso/components/empty-content';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import NavigationHeader from 'calypso/components/navigation-header';
+import PageHeader from 'calypso/my-sites/stats/components/headers/page-header';
 import Main from 'calypso/my-sites/stats/components/stats-main';
 import { STATS_PRODUCT_NAME } from 'calypso/my-sites/stats/constants';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
@@ -41,7 +43,7 @@ import './style.scss';
 import 'calypso/my-sites/earn/ads/style.scss';
 
 const formatCurrency = ( value ) => {
-	return '$' + numberFormat( value, { decimals: 2 } );
+	return '$' + formatNumber( value, { decimals: 2 } );
 };
 
 const CHARTS = [
@@ -144,6 +146,7 @@ class WordAds extends Component {
 			this.props;
 
 		const { period, endOf } = this.props.period;
+		const isStatsNavigationImprovementEnabled = config.isEnabled( 'stats/navigation-improvement' );
 
 		const yesterday = moment.utc().subtract( 1, 'days' ).format( 'YYYY-MM-DD' );
 
@@ -176,12 +179,16 @@ class WordAds extends Component {
 				/>
 
 				<div className={ wordAdsPageClasses }>
-					<NavigationHeader
-						className="stats__section-header modernized-header"
-						title={ STATS_PRODUCT_NAME }
-						subtitle={ translate( 'See how ads are performing on your site.' ) }
-						screenReader={ navItems.wordads?.label }
-					></NavigationHeader>
+					{ ! isStatsNavigationImprovementEnabled ? (
+						<NavigationHeader
+							className="stats__section-header modernized-header"
+							title={ STATS_PRODUCT_NAME }
+							subtitle={ translate( 'See how ads are performing on your site.' ) }
+							screenReader={ navItems.wordads?.label }
+						></NavigationHeader>
+					) : (
+						<PageHeader />
+					) }
 
 					{ ! canAccessAds && (
 						<EmptyContent

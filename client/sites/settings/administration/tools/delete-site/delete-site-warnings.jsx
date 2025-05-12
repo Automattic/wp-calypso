@@ -2,12 +2,10 @@ import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { PanelCard, PanelCardHeading } from 'calypso/components/panel';
-import { useRemoveDuplicateViewsExperimentEnabled } from 'calypso/lib/remove-duplicate-views-experiment';
 import { purchasesRoot } from 'calypso/me/purchases/paths';
 
 function DeleteSiteWarnings( { p2HubP2Count, isAtomicRemovalInProgress, isTrialSite = false } ) {
 	const translate = useTranslate();
-	const isUntangled = useRemoveDuplicateViewsExperimentEnabled();
 
 	const getButtons = () => {
 		if ( isAtomicRemovalInProgress ) {
@@ -69,9 +67,7 @@ function DeleteSiteWarnings( { p2HubP2Count, isAtomicRemovalInProgress, isTrialS
 	return (
 		<PanelCard>
 			<>
-				{ isUntangled && (
-					<PanelCardHeading>{ translate( 'Unable to delete site' ) }</PanelCardHeading>
-				) }
+				<PanelCardHeading>{ translate( 'Unable to delete site' ) }</PanelCardHeading>
 				<p>{ renderWarningContent() }</p>
 				{ getButtons() }
 			</>

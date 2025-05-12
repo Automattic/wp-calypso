@@ -5,7 +5,7 @@
 }
 
 .plugin-details-cta__modal-overlay.dialog__backdrop {
-	background-color: rgba(var(--color-neutral-100-rgb), 0.7);
+	background-color: color-mix(in srgb, var(--color-neutral-100) 70%, transparent);
 }
 
 .plugin-details-cta__dialog-content {

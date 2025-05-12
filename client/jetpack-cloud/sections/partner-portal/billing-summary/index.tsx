@@ -1,5 +1,6 @@
 import { Button, Card, Gridicon, Tooltip } from '@automattic/components';
-import { numberFormat, useTranslate, formatCurrency } from 'i18n-calypso';
+import { formatCurrency, formatNumber } from '@automattic/number-formatters';
+import { useTranslate } from 'i18n-calypso';
 import { useCallback, useRef, useState } from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
@@ -68,36 +69,33 @@ export default function BillingSummary() {
 			<div className="billing-summary__stat billing-summary__total-licenses">
 				<span className="billing-summary__label">{ translate( 'Total licenses' ) }</span>
 				<strong className="billing-summary__value">
-					{ billing.isSuccess && numberFormat( billing.data.licenses.total ) }
+					{ billing.isSuccess && formatNumber( billing.data.licenses.total ) }
 
 					{ billing.isLoading && <TextPlaceholder /> }
 
 					{ billing.isError && <Gridicon icon="minus" /> }
 				</strong>
 			</div>
-
 			<div className="billing-summary__stat billing-summary__assigned-licenses">
 				<span className="billing-summary__label">{ translate( 'Assigned licenses' ) }</span>
 				<strong className="billing-summary__value">
-					{ billing.isSuccess && numberFormat( billing.data.licenses.assigned ) }
+					{ billing.isSuccess && formatNumber( billing.data.licenses.assigned ) }
 
 					{ billing.isLoading && <TextPlaceholder /> }
 
 					{ billing.isError && <Gridicon icon="minus" /> }
 				</strong>
 			</div>
-
 			<div className="billing-summary__stat billing-summary__unassigned-licenses">
 				<span className="billing-summary__label">{ translate( 'Unassigned licenses' ) }</span>
 				<strong className="billing-summary__value">
-					{ billing.isSuccess && numberFormat( billing.data.licenses.unassigned ) }
+					{ billing.isSuccess && formatNumber( billing.data.licenses.unassigned ) }
 
 					{ billing.isLoading && <TextPlaceholder /> }
 
 					{ billing.isError && <Gridicon icon="minus" /> }
 				</strong>
 			</div>
-
 			<div className="billing-summary__stat billing-summary__cost">
 				<span className="billing-summary__label">
 					{ billing.isSuccess && <CostTooltip /> }

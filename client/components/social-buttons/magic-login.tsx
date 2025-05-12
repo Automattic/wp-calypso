@@ -14,7 +14,7 @@ type MagicLoginButtonProps = {
 	loginUrl: string;
 };
 
-const MagicLoginButton = ( { loginUrl }: MagicLoginButtonProps ) => {
+export const MagicLoginButton = ( { loginUrl }: MagicLoginButtonProps ) => {
 	const translate = useTranslate();
 	const isDisabled = useSelector( isFormDisabled );
 	const dispatch = useDispatch();

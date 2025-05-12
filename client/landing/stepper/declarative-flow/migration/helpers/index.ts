@@ -49,7 +49,6 @@ export const goToImporter = ( {
 			siteId,
 			siteSlug,
 			ref: ref,
-			...( platform === 'wordpress' ? { option: 'content' } : {} ),
 		},
 		`/setup/${ SITE_SETUP_FLOW }/${ path }`
 	);

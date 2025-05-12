@@ -10,7 +10,7 @@
 	background: #fff;
 	color: var(--studio-black);
 	font-family: $font-sf-pro-text;
-	font-size: 13px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+	font-size: 13px;
 	font-weight: 400;
 
 	>.components-button[aria-expanded="true"],
@@ -68,7 +68,7 @@
 // Mimic the style of Button component.
 .stats-interval-display {
 	font-family: $font-sf-pro-text;
-	font-size: 13px; // stylelint-disable-line declaration-property-unit-allowed-list
+	font-size: 13px;
 	font-weight: 400;
 	line-height: 36px;
 }

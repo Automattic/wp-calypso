@@ -3,8 +3,6 @@ import { Button } from '@wordpress/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useRef, useState } from 'react';
-import { A4AFeedback } from 'calypso/a8c-for-agencies/components/a4a-feedback';
-import useShowFeedback from 'calypso/a8c-for-agencies/components/a4a-feedback/hooks/use-show-a4a-feedback';
 import {
 	DATAVIEWS_TABLE,
 	initialDataViewsState,
@@ -27,33 +25,26 @@ import LayoutHeader, {
 	LayoutHeaderActions as Actions,
 } from 'calypso/layout/hosting-dashboard/header';
 import { useDispatch, useSelector } from 'calypso/state';
-import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
-import { ApprovalStatus } from 'calypso/state/a8c-for-agencies/types';
+import { hasApprovedAgencyStatus } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import MissingPaymentSettingsNotice from '../../common/missing-payment-settings-notice';
 import useFetchReferrals from '../../hooks/use-fetch-referrals';
 import useGetTipaltiPayee from '../../hooks/use-get-tipalti-payee';
 import ReferralDetails from '../../referral-details';
-import ReferralsFooter from '../footer';
-import AutomatedReferralComingSoonBanner from './automated-referral-coming-soon-banner';
 import LayoutBodyContent from './layout-body-content';
 import NewReferralOrderNotification from './new-referral-order-notification';
 
 import './style.scss';
 
 export default function ReferralsOverview( {
-	isAutomatedReferral = false,
 	isArchiveView = false,
 }: {
-	isAutomatedReferral?: boolean;
 	isArchiveView?: boolean;
 } ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const agency = useSelector( getActiveAgency );
-
-	const isAgencyApproved = agency?.approval_status === ApprovalStatus.APPROVED;
+	const isAgencyApproved = useSelector( hasApprovedAgencyStatus );
 
 	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( {
 		...initialDataViewsState,
@@ -65,14 +56,12 @@ export default function ReferralsOverview( {
 		REFERRAL_EMAIL_QUERY_PARAM_KEY
 	);
 
-	const { showFeedback, feedbackProps } = useShowFeedback( 'referral-complete' );
-
 	const isDesktop = useDesktopBreakpoint();
 
 	const selectedItem = dataViewsState.selectedItem;
 
 	const title =
-		isAutomatedReferral && isDesktop && ! selectedItem
+		isDesktop && ! selectedItem
 			? translate( 'Your referrals and commissions' )
 			: translate( 'Referrals' );
 
@@ -84,7 +73,7 @@ export default function ReferralsOverview( {
 		data: referrals,
 		isFetching: isFetchingReferrals,
 		refetch: refetchReferrals,
-	} = useFetchReferrals( isAutomatedReferral );
+	} = useFetchReferrals();
 
 	const hasReferrals = !! referrals?.length;
 
@@ -98,65 +87,54 @@ export default function ReferralsOverview( {
 	return (
 		<Layout
 			className={ clsx( 'referrals-layout', {
-				'referrals-layout--automated': isAutomatedReferral,
-				'full-width-layout-with-table': isAutomatedReferral && hasReferrals,
+				'full-width-layout-with-table': hasReferrals,
 				'referrals-layout--has-selected': selectedItem,
 			} ) }
 			title={ title }
 			wide
-			sidebarNavigation={ ! isAutomatedReferral && <MobileSidebarNavigation /> }
-			withBorder={ isAutomatedReferral }
+			withBorder
 		>
 			<LayoutColumn wide className="referrals-layout__column">
-				<LayoutTop>
+				<LayoutTop isFullWidth={ hasReferrals }>
 					{ !! referralEmail && (
 						<NewReferralOrderNotification
 							email={ referralEmail }
 							onClose={ () => setReferralEmail( '' ) }
+							isFullWidth={ hasReferrals }
 						/>
 					) }
 
-					<MissingPaymentSettingsNotice />
-
-					{ ! isAutomatedReferral && <AutomatedReferralComingSoonBanner /> }
+					<MissingPaymentSettingsNotice isFullWidth />
 
 					<LayoutHeader>
 						<Title>{ title } </Title>
-						{ isAutomatedReferral && (
-							<Actions>
-								<MobileSidebarNavigation />
-								{ isAgencyApproved && (
-									<Button
-										variant="primary"
-										href={ A4A_MARKETPLACE_PRODUCTS_LINK }
-										onClick={ makeAReferral }
-										ref={ wrapperRef }
-									>
-										{ hasReferrals ? translate( 'New referral' ) : translate( 'Make a referral' ) }
-									</Button>
-								) }
-							</Actions>
-						) }
+
+						<Actions>
+							<MobileSidebarNavigation />
+							{ isAgencyApproved && (
+								<Button
+									variant="primary"
+									href={ A4A_MARKETPLACE_PRODUCTS_LINK }
+									onClick={ makeAReferral }
+									ref={ wrapperRef }
+								>
+									{ hasReferrals ? translate( 'New referral' ) : translate( 'Make a referral' ) }
+								</Button>
+							) }
+						</Actions>
 					</LayoutHeader>
 				</LayoutTop>
 
 				<LayoutBody>
-					{ showFeedback ? (
-						<A4AFeedback { ...feedbackProps } />
-					) : (
-						<LayoutBodyContent
-							isAutomatedReferral={ isAutomatedReferral }
-							tipaltiData={ tipaltiData }
-							referrals={ referrals }
-							isLoading={ isLoading }
-							dataViewsState={ dataViewsState }
-							setDataViewsState={ setDataViewsState }
-							isArchiveView={ isArchiveView }
-							onReferralRefetch={ refetchReferrals }
-						/>
-					) }
-
-					{ ! isFetching && ! isAutomatedReferral && <ReferralsFooter /> }
+					<LayoutBodyContent
+						tipaltiData={ tipaltiData }
+						referrals={ referrals }
+						isLoading={ isLoading }
+						dataViewsState={ dataViewsState }
+						setDataViewsState={ setDataViewsState }
+						isArchiveView={ isArchiveView }
+						onReferralRefetch={ refetchReferrals }
+					/>
 				</LayoutBody>
 			</LayoutColumn>
 			{ dataViewsState.selectedItem && (

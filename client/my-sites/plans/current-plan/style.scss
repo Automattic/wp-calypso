@@ -3,7 +3,7 @@
 }
 
 .current-plan__dialog.dialog__backdrop {
-	background-color: rgba(var(--color-neutral-dark-rgb), 0.85);
+	background-color: color-mix(in srgb, var(--color-neutral-dark) 85%, transparent);
 	box-shadow: none;
 	margin: 0;
 
@@ -23,7 +23,7 @@
 	padding: 14px 32px;
 	background-color: var(--color-surface);
 	box-shadow:
-		0 0 0 1px rgba(var(--color-neutral-10-rgb), 0.5),
+		0 0 0 1px color-mix(in srgb, var(--color-neutral-10) 50%, transparent),
 		0 1px 2px var(--color-neutral-0);
 
 	&-main {

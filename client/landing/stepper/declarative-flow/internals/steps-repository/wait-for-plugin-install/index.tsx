@@ -1,11 +1,13 @@
 import config from '@automattic/calypso-config';
+import { Step } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect } from 'react';
 import wpcomRequest from 'wpcom-proxy-request';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { ONBOARD_STORE } from '../../../../stores';
-import type { Step, PluginsResponse, FailureInfo } from '../../types';
+import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
+import type { Step as StepType, PluginsResponse, FailureInfo } from '../../types';
 import type { OnboardSelect } from '@automattic/data-stores';
 
 export const installedStates = {
@@ -16,7 +18,7 @@ export const installedStates = {
 
 const wait = ( ms: number ) => new Promise( ( res ) => setTimeout( res, ms ) );
 
-const WaitForPluginInstall: Step = function WaitForAtomic( { navigation, data } ) {
+const WaitForPluginInstall: StepType = function WaitForAtomic( { navigation, data, flow } ) {
 	const { submit } = navigation;
 	const { setPendingAction } = useDispatch( ONBOARD_STORE );
 	const pluginsToVerify = useSelect(
@@ -118,6 +120,10 @@ const WaitForPluginInstall: Step = function WaitForAtomic( { navigation, data } 
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ siteId, siteSlug ] );
+
+	if ( shouldUseStepContainerV2( flow ) ) {
+		return <Step.Loading />;
+	}
 
 	return null;
 };

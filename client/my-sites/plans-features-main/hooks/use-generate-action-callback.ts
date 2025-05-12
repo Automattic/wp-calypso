@@ -12,7 +12,6 @@ import { AddOns, Plans } from '@automattic/data-stores';
 import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { useDispatch } from '@wordpress/data';
 import { useCallback } from '@wordpress/element';
-import { useTranslate } from 'i18n-calypso';
 import { getPlanCartItem } from 'calypso/lib/cart-values/cart-items';
 import { addQueryArgs } from 'calypso/lib/url';
 import { cancelPurchase } from 'calypso/me/purchases/paths';
@@ -111,8 +110,7 @@ function useDowngradeHandler( {
 	siteSlug?: string | null;
 	currentPlan: Plans.SitePlan | undefined;
 } ) {
-	const { setShowHelpCenter, setNavigateToRoute, setMessage } = useDispatch( HELP_CENTER_STORE );
-	const translate = useTranslate();
+	const { setNewMessagingChat } = useDispatch( HELP_CENTER_STORE );
 
 	return useCallback(
 		( planSlug: PlanSlug ) => {
@@ -122,23 +120,12 @@ function useDowngradeHandler( {
 				return;
 			}
 
-			const chatUrl = `/contact-form?${ new URLSearchParams( {
-				mode: 'CHAT',
-				'disable-gpt': 'true',
-				'skip-resources': 'true',
-			} ).toString() }`;
-			setMessage( translate( 'I want to downgrade my plan.' ) );
-			setNavigateToRoute( chatUrl );
-			setShowHelpCenter( true );
+			setNewMessagingChat( {
+				initialMessage: 'User wants to downgrade plan.',
+				siteUrl: siteSlug,
+			} );
 		},
-		[
-			currentPlan?.purchaseId,
-			setNavigateToRoute,
-			setMessage,
-			setShowHelpCenter,
-			siteSlug,
-			translate,
-		]
+		[ currentPlan?.purchaseId, setNewMessagingChat, siteSlug ]
 	);
 }
 

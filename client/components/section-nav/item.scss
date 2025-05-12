@@ -18,7 +18,7 @@
 		}
 
 		&:hover:not(.is-selected) {
-			border-bottom-color: var(--color-primary-0);
+			border-bottom-color: #d5dffa;
 		}
 	}
 
@@ -47,11 +47,11 @@
 	font-size: $font-body-small;
 	font-weight: 600;
 	line-height: 18px;
-	color: var(--color-neutral-70);
+	color: var(--color-neutral-100);
 	cursor: pointer;
 
 	&:visited {
-		color: var(--color-neutral-70);
+		color: var(--color-neutral-100);
 	}
 
 	&[disabled],
@@ -89,8 +89,7 @@
 
 	.notouch & {
 		&:hover {
-			background-color: var(--color-primary-0);
-			color: var(--color-primary);
+			color: var(--color-neutral-100);
 		}
 	}
 
@@ -102,7 +101,7 @@
 
 	.notouch .is-selected & {
 		&:hover {
-			color: var(--color-text-inverted);
+			color: var(--color-neutral-100);
 		}
 	}
 
@@ -110,16 +109,16 @@
 		display: block;
 		width: auto;
 		padding: 16px 16px 14px;
-		color: var(--color-primary);
+		color: var(--color-neutral-100);
 		font-weight: 400;
 
 		&:visited {
-			color: var(--color-primary);
+			color: var(--color-neutral-100);
 		}
 	}
 
 	@mixin tabs-view-selected-styles {
-		color: var(--color-neutral-70);
+		color: var(--color-neutral-100);
 		background-color: transparent;
 
 		&::after {
@@ -128,13 +127,13 @@
 
 		.notouch & {
 			&:hover {
-				color: var(--color-neutral-70);
+				color: var(--color-neutral-100);
 			}
 		}
 	}
 
 	@mixin tabs-view-minimal-styles {
-		color: var(--color-neutral-70);
+		color: var(--color-neutral-100);
 	}
 
 	.enforce-tabs-view & {
@@ -166,7 +165,6 @@
 	display: block;
 	flex: 1 0 auto;
 	width: 0;
-	color: inherit;
 
 	@mixin tabs-view-styles {
 		display: inline;
@@ -226,12 +224,6 @@
 	margin-bottom: 0;
 	@include breakpoint-deprecated( ">660px" ) {
 		box-shadow: none;
-	}
-}
-
-.theme-jetpack-cloud .section-nav-updated.section-nav {
-	@include breakpoint-deprecated( ">660px" ) {
-		background: var(--color-primary-0);
 	}
 }
 

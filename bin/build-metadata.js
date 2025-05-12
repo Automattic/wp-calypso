@@ -3,7 +3,6 @@ const fs = require( 'fs' );
 const path = require( 'path' );
 const vm = require( 'vm' );
 const _ = require( 'lodash' );
-const request = require( 'request' );
 
 const areaCodes = {
 	CA: [
@@ -132,33 +131,25 @@ const aliases = {
 	UK: 'GB',
 };
 
-function getLibPhoneNumberData() {
-	return new Promise( function ( resolve, reject ) {
-		request.get( LIBPHONENUMBER_METADATA_URL, function ( error, response, body ) {
-			if ( error || response.statusCode >= 400 ) {
-				throw error || response.statusCode;
-			}
+async function getLibPhoneNumberData() {
+	const response = await fetch( LIBPHONENUMBER_METADATA_URL );
+	if ( response.status >= 400 ) {
+		throw response.status;
+	}
 
-			const capture = body.substring(
-				body.indexOf( 'countryToMetadata = ' ) + 20,
-				body.length - 2
-			);
-			const sandbox = { container: {} };
-			const script = new vm.Script( 'container.data = ' + capture );
+	const body = await response.text();
 
-			try {
-				script.runInNewContext( sandbox );
-			} catch ( e ) {
-				reject( e );
-			}
+	const capture = body.substring( body.indexOf( 'countryToMetadata = ' ) + 20, body.length - 2 );
+	const sandbox = { container: {} };
+	const script = new vm.Script( 'container.data = ' + capture );
 
-			if ( sandbox.container.data ) {
-				resolve( sandbox.container.data );
-			} else {
-				reject( new Error( 'Failed to parse data' ) );
-			}
-		} );
-	} );
+	script.runInNewContext( sandbox );
+
+	if ( ! sandbox.container.data ) {
+		throw new Error( 'Failed to parse data' );
+	}
+
+	return sandbox.container.data;
 }
 
 function processNumberFormat( format ) {

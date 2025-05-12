@@ -1,0 +1,11 @@
+@import '@wordpress/base-styles/variables';
+@import '@wordpress/base-styles/colors';
+
+.dashboard-page-layout {
+	margin: auto;
+	padding: $grid-unit-60 $grid-unit-20;
+}
+
+.dasboard-page-layout__description {
+	color: $gray-700 !important;
+}

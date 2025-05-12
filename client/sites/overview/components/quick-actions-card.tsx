@@ -1,6 +1,6 @@
 import { Button } from '@automattic/components';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
-import { chevronRightSmall, Icon } from '@wordpress/icons';
+import { Icon, chevronRightSmall, download } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { FC, ReactNode } from 'react';
 import { useSelector } from 'react-redux';
@@ -8,11 +8,11 @@ import { HostingCard, HostingCardDescription } from 'calypso/components/hosting-
 import { useActiveThemeQuery } from 'calypso/data/themes/use-active-theme-query';
 import { WriteIcon } from 'calypso/layout/masterbar/write-icon';
 import SidebarCustomIcon from 'calypso/layout/sidebar/custom-icon';
+import { addQueryArgs } from 'calypso/lib/url';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getCustomizeUrl from 'calypso/state/selectors/get-customize-url';
 import getEditorUrl from 'calypso/state/selectors/get-editor-url';
-import getPluginInstallUrl from 'calypso/state/selectors/get-plugin-install-url';
 import getStatsUrl from 'calypso/state/selectors/get-stats-url';
 import getThemeInstallUrl from 'calypso/state/selectors/get-theme-install-url';
 import { useSiteAdminInterfaceData } from 'calypso/state/sites/hooks';
@@ -68,7 +68,6 @@ const QuickActionsCard: FC = () => {
 		site?.ID ? getEditorUrl( state, site?.ID ) : '#'
 	);
 	const themeInstallUrl = useSelector( ( state ) => getThemeInstallUrl( state, site?.ID ) ?? '' );
-	const pluginInstallUrl = useSelector( ( state ) => getPluginInstallUrl( state, site?.ID ) ?? '' );
 	const statsUrl = useSelector( ( state ) => getStatsUrl( state, site?.ID ) ?? '' );
 	const siteEditorUrl = useSelector( ( state ) =>
 		site?.ID && activeThemeData
@@ -80,6 +79,7 @@ const QuickActionsCard: FC = () => {
 			  )
 			: ''
 	);
+	const importSiteUrl = addQueryArgs( { siteSlug: site?.slug }, '/setup/site-migration' );
 
 	const { adminLabel, adminUrl } = useSiteAdminInterfaceData( site?.ID );
 
@@ -135,16 +135,16 @@ const QuickActionsCard: FC = () => {
 					commandName="installTheme"
 				/>
 				<Action
-					icon={ <SidebarCustomIcon icon="dashicons-admin-plugins hosting-overview__dashicon" /> }
-					href={ pluginInstallUrl }
-					text={ translate( 'Install plugins' ) }
-					commandName="installPlugin"
-				/>
-				<Action
 					icon={ <SidebarCustomIcon icon="dashicons-chart-bar hosting-overview__dashicon" /> }
 					href={ statsUrl }
 					text={ translate( 'See Jetpack Stats' ) }
 					commandName="openJetpackStats"
+				/>
+				<Action
+					icon={ <Icon className="hosting-overview__dashicon" icon={ download } /> }
+					href={ importSiteUrl }
+					text={ translate( 'Import site to WordPress.com' ) }
+					commandName="importSite"
 				/>
 			</ul>
 		</HostingCard>

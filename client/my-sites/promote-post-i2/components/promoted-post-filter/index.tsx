@@ -1,4 +1,4 @@
-import { numberFormat } from 'i18n-calypso';
+import { formatNumber } from '@automattic/number-formatters';
 import { useRef } from 'react';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
@@ -44,7 +44,7 @@ export default function PromotePostTabBar( { tabs, selectedTab }: Props ) {
 								{ itemCount && itemCount !== 0 ? (
 									<span className="count">
 										{ isCountAmount ? '$' : null }
-										{ numberFormat( itemCount, { decimals: isCountAmount ? 2 : 0 } ) }
+										{ formatNumber( itemCount, { decimals: isCountAmount ? 2 : 0 } ) }
 									</span>
 								) : null }
 							</NavItem>

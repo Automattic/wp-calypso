@@ -133,7 +133,7 @@ $theme-card-info-margin-top: 16px;
 
 .theme-card__loading {
 	bottom: $theme-card-info-height + $theme-card-info-margin-top;
-	background: rgba(var(--color-neutral-dark-rgb), 0.5);
+	background: color-mix(in srgb, var(--color-neutral-dark) 50%, transparent);
 	left: 0;
 	position: absolute;
 	top: 0;

@@ -1,4 +1,4 @@
-## Next
+## 2.3.0
 
 ### Breaking changes
 
@@ -8,10 +8,15 @@
 - Remove `ClientLogoList` ([#99463](https://github.com/Automattic/wp-calypso/pull/99463)).
 - Remove `number-formatters` component and utility functions ([#99405](https://github.com/Automattic/wp-calypso/pull/99405))
 - Remove `PostStatsCard` ([#99665](https://github.com/Automattic/wp-calypso/pull/99665)).
+- Remove `PricingSlider` ([#102362](https://github.com/Automattic/wp-calypso/pull/102362)).
 
 ### Enhancements
 
-- Add FlowQuestion component
+- Add `FlowQuestion` component
+- Add `Breadcrumbs` and `Menu` components ([#102998](https://github.com/Automattic/wp-calypso/pull/102998)).
+- Add `SummaryButton` component ([#102827](https://github.com/Automattic/wp-calypso/pull/102827)).
+- Add `CoreBadge` component ([#103069](https://github.com/Automattic/wp-calypso/pull/103069)).
+- Add `Tabs` component ([#103231](https://github.com/Automattic/wp-calypso/pull/103231)).
 
 ## 2.1.1
 

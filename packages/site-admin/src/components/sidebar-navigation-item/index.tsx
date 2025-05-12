@@ -10,6 +10,7 @@ import { useContext } from '@wordpress/element';
 import { isRTL } from '@wordpress/i18n';
 import { chevronRightSmall, chevronLeftSmall, Icon } from '@wordpress/icons';
 import clsx from 'clsx';
+import { ComponentProps } from 'react';
 /**
  * Internal dependencies
  */
@@ -19,23 +20,18 @@ import { useHistory, useLink } from '../../router';
 import './style.scss';
 
 type SidebarNavigationItemProps = {
-	className?: string;
 	suffix?: 'CHEVRON' | React.ReactNode;
 	uid: string;
 	to?: string;
-	as?: 'button' | 'a';
-	onClick?: ( e: React.MouseEvent ) => void;
-	children: React.ReactNode;
 	icon?: React.ReactElement;
-};
+} & ComponentProps< typeof Item >;
 
 export function SidebarNavigationItem( {
-	className,
-	icon,
 	suffix,
 	uid,
 	to = '',
-	as = 'button',
+	icon,
+	className,
 	onClick,
 	children,
 	...props
@@ -44,7 +40,7 @@ export function SidebarNavigationItem( {
 	const { navigate } = useContext( SidebarNavigationContext );
 
 	// If there is no custom click handler, create one that navigates to `params`.
-	function handleClick( e: React.MouseEvent ) {
+	function handleClick( e: React.MouseEvent< HTMLDivElement > ) {
 		if ( onClick ) {
 			onClick( e );
 			navigate( 'forward' );
@@ -54,7 +50,8 @@ export function SidebarNavigationItem( {
 			navigate( 'forward', `[id="${ uid }"]` );
 		}
 	}
-	const linkProps = useLink( to );
+
+	const { href } = useLink( to );
 
 	return (
 		<Item
@@ -64,10 +61,10 @@ export function SidebarNavigationItem( {
 				className
 			) }
 			id={ uid }
-			onClick={ handleClick }
-			href={ to ? linkProps.href : undefined }
-			as={ as }
+			as={ onClick ? 'button' : 'a' }
 			{ ...props }
+			onClick={ handleClick }
+			href={ to ? href : undefined }
 		>
 			<HStack justify="flex-start">
 				{ icon && <Icon icon={ icon } size={ 24 } /> }

@@ -33,7 +33,7 @@ const selectors = {
 	whereNextAnotherReasonInput: 'input[id="inspector-text-control-1"]',
 
 	// Cancellation
-	dismissBanner: '.notice__dismiss',
+	dismissBanner: '.calypso-notice__dismiss',
 };
 
 /**

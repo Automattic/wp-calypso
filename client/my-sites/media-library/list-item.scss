@@ -15,7 +15,7 @@
 		height: 28px;
 		padding: 0;
 		transition: color 90ms ease;
-		box-shadow: 0 0 8px rgba(var(--color-neutral-70-rgb), 0.4);
+		box-shadow: 0 0 8px color-mix(in srgb, var(--color-neutral-70) 40%, transparent);
 		background: var(--color-accent);
 		border-radius: 50%;
 		font-size: $font-body-small;
@@ -81,7 +81,7 @@
 	right: 0;
 	bottom: 0;
 	left: 0;
-	background-color: rgba(var(--color-surface-rgb), 0.75);
+	background-color: color-mix(in srgb, var(--color-surface) 75%, transparent);
 	border-radius: 0;
 	z-index: z-index(".media-library__list-item", ".media-library__list-item.is-transient .media-library__list-item-figure::after");
 }

@@ -144,7 +144,6 @@
 
 	&.has-thumbnail {
 		.reader-related-card__title {
-			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 			font-size: 17px;
 		}
 
@@ -250,7 +249,6 @@
 
 .reader-related-card__byline-author {
 	cursor: pointer;
-	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	font-size: 12px;
 	margin-top: 2px;
 	white-space: nowrap;
@@ -322,7 +320,6 @@
 }
 
 .reader-related-card__title {
-	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	font-size: 17px;
 	font-weight: 700;
 	line-height: 25px;

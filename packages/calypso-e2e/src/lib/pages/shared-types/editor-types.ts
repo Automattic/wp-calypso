@@ -6,5 +6,5 @@ export interface BlockInserter {
 	selectBlockInserterResult(
 		name: string,
 		options?: { type?: 'block' | 'pattern'; blockFallBackName?: string }
-	): Promise< void >;
+	): Promise< Locator >;
 }

@@ -1,8 +1,17 @@
+import config from '@automattic/calypso-config';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { fetchJITM, dismissJITM } from 'calypso/state/jitm/actions';
 import { doFetchJITM, doDismissJITM } from '..';
 
+jest.mock( '@automattic/calypso-config' );
+
+const configMock = ( values ) => ( key ) => values[ key ];
+
 describe( 'jitms', () => {
+	beforeAll( () => {
+		config.isEnabled.mockImplementation( configMock( { is_running_in_jetpack_site: false } ) );
+	} );
+
 	describe( '#doFetchJITM', () => {
 		test( 'should dispatch a get action with the site id and the message path', () => {
 			const siteId = 123;
@@ -13,14 +22,14 @@ describe( 'jitms', () => {
 				http(
 					{
 						method: 'GET',
-						path: `/jetpack-blogs/${ siteId }/rest-api/`,
+						apiNamespace: 'wpcom/v3',
+						path: `/sites/${ siteId }/jitm`,
 						query: {
-							path: '/jetpack/v4/jitm',
-							query: JSON.stringify( {
-								message_path: messagePath,
-							} ),
-							http_envelope: 1,
+							message_path: messagePath,
+							query: undefined,
+							locale: undefined,
 						},
+						isLocalApiCall: true, // required to use the wpcom/v3 namespace
 					},
 					action
 				)
@@ -39,20 +48,49 @@ describe( 'jitms', () => {
 				http(
 					{
 						method: 'POST',
-						path: `/jetpack-blogs/${ siteId }/rest-api/`,
-						query: {
-							path: '/jetpack/v4/jitm',
-							body: JSON.stringify( {
-								feature_class: featureClass,
-								id: messageId,
-							} ),
-							http_envelope: 1,
-							json: false,
+						apiNamespace: 'wpcom/v3',
+						path: `/sites/${ siteId }/jitm`,
+						body: {
+							feature_class: featureClass,
+							id: messageId,
 						},
+						isLocalApiCall: true, // required to use the wpcom/v3 namespace
 					},
 					action
 				)
 			);
 		} );
+	} );
+
+	describe( 'path modification based on running in Jetpack', () => {
+		const siteId = 123;
+		const actions = [
+			{
+				name: 'fetchJITM',
+				action: fetchJITM( siteId, 'test:path' ),
+				handler: doFetchJITM,
+			},
+			{
+				name: 'dismissJITM',
+				action: dismissJITM( siteId, 'test-id', 'test-class' ),
+				handler: doDismissJITM,
+			},
+		];
+
+		test.each( actions )(
+			'$name should use /jitm path when in Jetpack',
+			( { action, handler } ) => {
+				config.isEnabled.mockImplementation( configMock( { is_running_in_jetpack_site: true } ) );
+				expect( handler( action ).path ).toBe( '/jitm' );
+			}
+		);
+
+		test.each( actions )(
+			'$name should use /sites/{siteId}/jitm path when not in Jetpack',
+			( { action, handler } ) => {
+				config.isEnabled.mockImplementation( configMock( { is_running_in_jetpack_site: false } ) );
+				expect( handler( action ).path ).toBe( `/sites/${ siteId }/jitm` );
+			}
+		);
 	} );
 } );

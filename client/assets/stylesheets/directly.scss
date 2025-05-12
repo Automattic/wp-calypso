@@ -57,7 +57,6 @@ textarea {
 	color: var(--color-text-inverted);
 	border-width: 1px 1px 2px;
 	cursor: pointer;
-	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	font-size: 14px;
 	font-weight: 500;
 	vertical-align: top;
@@ -128,7 +127,6 @@ textarea {
 
 	.header-title {
 		text-transform: uppercase;
-		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		font-size: 11px;
 		font-weight: 700;
 		color: var(--color-neutral-light);
@@ -185,7 +183,6 @@ textarea {
 	padding: 18px 10px 18px 24px;
 	.chat-list-item-title {
 		margin-bottom: 2px;
-		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		font-size: 16px;
 	}
 	.chat-list-item-meta {
@@ -216,7 +213,6 @@ textarea {
 		margin-top: 0;
 		label {
 			text-transform: none;
-			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 			font-size: 14px;
 			font-weight: 600;
 			margin-bottom: 5px;
@@ -248,7 +244,6 @@ textarea {
 
 // Message bubbles
 .message-container {
-	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	font-size: 14px;
 	border-radius: 8px; /* stylelint-disable-line scales/radii */
 
@@ -304,7 +299,6 @@ textarea {
 // Avatar + name + reputation, used inside .message-container.is-expert
 .author {
 	.name-wrapper {
-		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		font-size: 12px;
 		font-weight: 500;
 	}
@@ -319,7 +313,6 @@ textarea {
 .system-message {
 	border: 1px solid var(--color-neutral-5);
 	background: var(--color-neutral-0);
-	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	font-size: 14px;
 	margin-right: 0;
 	border-radius: 8px; /* stylelint-disable-line scales/radii */
@@ -424,7 +417,6 @@ textarea {
 	}
 	.notification {
 		background: var(--color-primary);
-		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		font-size: 12px;
 		font-weight: 500;
 		min-width: 24px;

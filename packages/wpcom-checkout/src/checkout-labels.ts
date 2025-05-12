@@ -16,7 +16,8 @@ import {
 	isJetpackAISlug,
 	isJetpackStatsPaidTieredProductSlug,
 } from '@automattic/calypso-products';
-import { translate, numberFormat } from 'i18n-calypso';
+import { formatNumber } from '@automattic/number-formatters';
+import { translate } from 'i18n-calypso';
 import { isWpComProductRenewal as isRenewal } from './is-wpcom-product-renewal';
 import type { ResponseCartProduct } from '@automattic/shopping-cart';
 
@@ -113,7 +114,7 @@ export function getLabel( product: ResponseCartProduct ): string {
 		return translate( '%(productName)s - %(quantity)s views per month', {
 			args: {
 				productName: product.product_name,
-				quantity: numberFormat( product.quantity, { decimals: 0 } ),
+				quantity: formatNumber( product.quantity, { decimals: 0 } ),
 			},
 			textOnly: true,
 		} );

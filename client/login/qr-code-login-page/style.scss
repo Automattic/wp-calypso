@@ -3,35 +3,35 @@
 
 .qr-code-login-page {
 	margin: 0 auto;
-	max-width: 780px;
+	max-width: 700px;
 	text-align: center;
 }
 
+.layout:has(.qr-code-login-page) {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
 .qr-code-login-page__heading {
-	font-size: $font-title-small;
-	margin-bottom: 32px;
-	margin-top: 16px;
-	text-align: center;
+	@include onboarding-heading-text-mobile;
+	margin-bottom: 16px;
+	text-align: left !important;
 }
 
 .qr-code-login-page__footer {
 	a {
-		color: var(--color-neutral-50);
 		display: block;
-		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-		line-height: 4em;
 		font-size: $font-body-small;
+		color: var(--color-text);
 		font-weight: 600;
 		padding: 0 24px;
 		text-align: center;
-		text-decoration: none;
+		text-decoration: underline;
 
 		&:hover {
 			color: var(--color-primary);
 		}
-	}
-	.gridicon {
-		vertical-align: text-bottom;
 	}
 }
 

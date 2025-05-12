@@ -246,9 +246,9 @@ export default function SitesDashboard() {
 			title={ dataViewsState.selectedItem ? null : translate( 'Sites' ) }
 		>
 			<LayoutColumn className="sites-overview" wide>
-				<LayoutTop withNavigation={ navItems.length > 1 }>
+				<LayoutTop isFullWidth withNavigation={ navItems.length > 1 }>
 					<ProvisioningSiteNotification />
-					<A4AAgencyApprovalNotice />
+					<A4AAgencyApprovalNotice isFullWidth />
 
 					<LayoutHeader>
 						<Title>{ translate( 'Sites' ) }</Title>

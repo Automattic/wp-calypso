@@ -1,11 +1,14 @@
 import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
-import { getQueryArg } from '@wordpress/url';
+import { getQueryArg, addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect } from 'react';
+import useShowFeedback from 'calypso/a8c-for-agencies/components/a4a-feedback/hooks/use-show-a4a-feedback';
+import { FeedbackType } from 'calypso/a8c-for-agencies/components/a4a-feedback/types';
 import {
 	A4A_LICENSES_LINK,
 	A4A_SITES_LINK,
+	A4A_FEEDBACK_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import useProductsQuery from 'calypso/a8c-for-agencies/data/marketplace/use-products-query';
 import {
@@ -22,6 +25,8 @@ export default function DownloadProductsForm() {
 	const translate = useTranslate();
 	const sites = useSelector( getSites );
 	const { data: allProducts } = useProductsQuery();
+
+	const { isFeedbackShown } = useShowFeedback( FeedbackType.PurchaseCompleted );
 
 	const attachedSiteId = getQueryArg( window.location.href, 'attachedSiteId' ) as string;
 	const licenseKeys = getQueryArg( window.location.href, 'products' ) as string;
@@ -61,10 +66,29 @@ export default function DownloadProductsForm() {
 				allProducts={ allProducts }
 			/>
 		) );
-
-	const onNavigate = useCallback( () => {
-		return page.redirect( 'dashboard' === source ? A4A_SITES_LINK : A4A_LICENSES_LINK );
-	}, [ source ] );
+	const onNavigate = useCallback(
+		( showFeedback = true ) => {
+			const redirectUrl = 'dashboard' === source ? A4A_SITES_LINK : A4A_LICENSES_LINK;
+			const wooProduct = wooKeys?.[ 0 ];
+			const productSlug = getProductSlugFromLicenseKey( wooProduct );
+			const product = allProducts?.find(
+				( product ) => productSlug && product.slug.startsWith( productSlug )
+			);
+			// We want to show feedback only if product is not free and the user has not already submitted feedback
+			const isFreeProduct = product?.price_per_unit === 0;
+			if ( ! isFeedbackShown && showFeedback && ! isFreeProduct ) {
+				page.redirect(
+					addQueryArgs( A4A_FEEDBACK_LINK, {
+						redirectUrl: redirectUrl,
+						type: FeedbackType.PurchaseCompleted,
+					} )
+				);
+				return;
+			}
+			page.redirect( redirectUrl );
+		},
+		[ allProducts, isFeedbackShown, source, wooKeys ]
+	);
 
 	// redirect if licenseKeys does not contain a valid product
 	useEffect( () => {
@@ -80,7 +104,8 @@ export default function DownloadProductsForm() {
 		} );
 
 		if ( invalidKeys.length ) {
-			onNavigate();
+			// If there are invalid keys, we don't want to show feedback
+			onNavigate( false );
 		}
 	}, [ licenseKeys, allProducts, site, onNavigate ] );
 
@@ -100,7 +125,13 @@ export default function DownloadProductsForm() {
 						) }
 				</p>
 				<div className="download-products-form__controls">
-					<Button primary className="download-products-form__navigate" onClick={ onNavigate }>
+					<Button
+						primary
+						className="download-products-form__navigate"
+						onClick={ () => {
+							onNavigate();
+						} }
+					>
 						{ translate( 'Done' ) }
 					</Button>
 				</div>

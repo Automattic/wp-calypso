@@ -4,7 +4,8 @@ import {
 	FEATURE_RECURRING_PAYMENTS,
 } from '@automattic/calypso-products';
 import { CompactCard, Button, Badge, Gridicon } from '@automattic/components';
-import { formatCurrency, useTranslate } from 'i18n-calypso';
+import { formatCurrency } from '@automattic/number-formatters';
+import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import QueryMembershipsCoupons from 'calypso/components/data/query-memberships-coupons';
 import QueryMembershipsSettings from 'calypso/components/data/query-memberships-settings';

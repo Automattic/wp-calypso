@@ -1,8 +1,9 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
 
 .sites-with-woopayments-list-mobile-view__column {
-	@include a4a-font-body-md;
+	@include body-medium;
 }
 
 .woopayments-dashboard {

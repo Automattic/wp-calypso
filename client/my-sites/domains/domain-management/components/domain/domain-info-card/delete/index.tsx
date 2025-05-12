@@ -1,19 +1,12 @@
 import config from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
-import { connect } from 'react-redux';
 import { transferStatus, type as domainType } from 'calypso/lib/domains/constants';
 import { isCancelable, isRemovable } from 'calypso/lib/purchases';
 import { cancelPurchase } from 'calypso/me/purchases/paths';
 import RemovePurchase from 'calypso/me/purchases/remove-purchase';
 import { getCancelPurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
-import {
-	getByPurchaseId,
-	hasLoadedSitePurchasesFromServer,
-	isFetchingSitePurchases,
-} from 'calypso/state/purchases/selectors';
-import { IAppState } from 'calypso/state/types';
 import DomainInfoCard from '..';
-import type { DomainDeleteInfoCardProps, DomainInfoCardProps } from '../types';
+import type { DomainDeleteInfoCardProps } from '../types';
 
 const DomainDeleteInfoCard = ( {
 	domain,
@@ -97,11 +90,4 @@ const DomainDeleteInfoCard = ( {
 	);
 };
 
-export default connect( ( state: IAppState, ownProps: DomainInfoCardProps ) => {
-	const { subscriptionId } = ownProps.domain;
-	return {
-		purchase: getByPurchaseId( state, Number( subscriptionId ) ),
-		isLoadingPurchase:
-			isFetchingSitePurchases( state ) && ! hasLoadedSitePurchasesFromServer( state ),
-	};
-} )( DomainDeleteInfoCard );
+export default DomainDeleteInfoCard;

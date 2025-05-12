@@ -5,8 +5,6 @@ import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import { withCurrentRoute } from 'calypso/components/route';
 import LayoutLoader from 'calypso/layout/loader';
-import OfflineStatus from 'calypso/layout/offline-status';
-import { isOffline } from 'calypso/state/application/selectors';
 import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
 
 class Layout extends Component {
@@ -16,7 +14,6 @@ class Layout extends Component {
 		focus: PropTypes.object,
 		// connected props
 		currentLayoutFocus: PropTypes.string,
-		isOffline: PropTypes.bool,
 	};
 
 	render() {
@@ -35,7 +32,6 @@ class Layout extends Component {
 			<div className={ sectionClass }>
 				<DocumentHead />
 				<LayoutLoader />
-				{ this.props.isOffline && <OfflineStatus /> }
 				<div id="content" className="layout__content">
 					<div id="secondary" className="layout__secondary" role="navigation">
 						{ this.props.secondary }
@@ -52,7 +48,6 @@ class Layout extends Component {
 export default withCurrentRoute(
 	connect( ( state ) => {
 		return {
-			isOffline: isOffline( state ),
 			currentLayoutFocus: getCurrentLayoutFocus( state ),
 		};
 	} )( Layout )

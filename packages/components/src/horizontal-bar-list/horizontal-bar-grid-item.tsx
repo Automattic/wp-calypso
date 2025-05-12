@@ -1,7 +1,7 @@
+import { formatNumber, formatNumberCompact } from '@automattic/number-formatters';
 import { decodeEntities } from '@wordpress/html-entities';
 import { Icon, chevronDown, chevronUp, tag, file } from '@wordpress/icons';
 import clsx from 'clsx';
-import { numberFormat, numberFormatCompact } from 'i18n-calypso';
 import React, { Fragment, useState } from 'react';
 import type { HorizontalBarListItemProps } from './types';
 
@@ -105,14 +105,14 @@ const HorizontalBarListItem = ( {
 
 	const renderValue = () => {
 		if ( useShortNumber ) {
-			return <span>{ numberFormatCompact( value ) }</span>;
+			return <span>{ formatNumberCompact( value ) }</span>;
 		}
 
 		if ( formatValue ) {
 			return formatValue( value, data );
 		}
 
-		return usePlainCard ? value : numberFormat( value, { decimals: 0 } );
+		return usePlainCard ? value : formatNumber( value, { decimals: 0 } );
 	};
 
 	return (

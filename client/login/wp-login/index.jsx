@@ -1,8 +1,8 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
-import { getUrlParts } from '@automattic/calypso-url';
 import { Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { Step } from '@automattic/onboarding';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { get, startsWith } from 'lodash';
@@ -15,6 +15,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import LocaleSuggestions from 'calypso/components/locale-suggestions';
 import LoggedOutFormBackLink from 'calypso/components/logged-out-form/back-link';
 import Main from 'calypso/components/main';
+import isAkismetRedirect from 'calypso/lib/akismet/is-akismet-redirect';
 import { getSignupUrl, pathWithLeadingSlash } from 'calypso/lib/login';
 import {
 	isJetpackCloudOAuth2Client,
@@ -33,7 +34,6 @@ import {
 	recordTracksEventWithClientId as recordTracksEvent,
 	enhanceWithSiteType,
 } from 'calypso/state/analytics/actions';
-import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { getRedirectToOriginal } from 'calypso/state/login/selectors';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
@@ -47,14 +47,12 @@ import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
 import { withEnhancers } from 'calypso/state/utils';
 import LoginFooter from './login-footer';
 import LoginLinks from './login-links';
-import PrivateSite from './private-site';
 
 import './style.scss';
 
 export class Login extends Component {
 	static propTypes = {
 		clientId: PropTypes.string,
-		isLoggedIn: PropTypes.bool.isRequired,
 		isLoginView: PropTypes.bool,
 		isJetpack: PropTypes.bool.isRequired,
 		isFromMigrationPlugin: PropTypes.bool,
@@ -62,7 +60,6 @@ export class Login extends Component {
 		locale: PropTypes.string.isRequired,
 		oauth2Client: PropTypes.object,
 		path: PropTypes.string.isRequired,
-		privateSite: PropTypes.bool,
 		recordPageView: PropTypes.func.isRequired,
 		socialConnect: PropTypes.bool,
 		socialService: PropTypes.string,
@@ -128,29 +125,6 @@ export class Login extends Component {
 		this.setState( { usernameOrEmail } );
 	}
 
-	renderP2Logo() {
-		return (
-			<div className="wp-login__p2-logo">
-				<img src="/calypso/images/p2/logo.png" width="67" height="32" alt="P2 logo" />
-			</div>
-		);
-	}
-
-	renderP2PoweredBy() {
-		return (
-			<div className="wp-login__p2-powered-by">
-				<img
-					src="/calypso/images/p2/w-logo.png"
-					className="wp-login__p2-powered-by-logo"
-					alt="WP.com logo"
-				/>
-				<span className="wp-login__p2-powered-by-text">
-					{ this.props.translate( 'Powered by WordPress.com' ) }
-				</span>
-			</div>
-		);
-	}
-
 	renderI18nSuggestions() {
 		const { locale, path, isLoginView } = this.props;
 
@@ -162,10 +136,10 @@ export class Login extends Component {
 	}
 
 	renderFooter() {
-		const { isJetpack, isWhiteLogin, isP2Login, translate } = this.props;
+		const { isJetpack, isWhiteLogin, translate } = this.props;
 		const isOauthLogin = !! this.props.oauth2Client;
 
-		if ( isJetpack || isWhiteLogin || isP2Login ) {
+		if ( isJetpack || isWhiteLogin ) {
 			return null;
 		}
 
@@ -314,7 +288,7 @@ export class Login extends Component {
 	};
 
 	getLostPasswordLink() {
-		if ( this.props.twoFactorAuthType || this.props.privateSite ) {
+		if ( this.props.twoFactorAuthType ) {
 			return null;
 		}
 
@@ -380,7 +354,6 @@ export class Login extends Component {
 		// Taken from client/layout/masterbar/logged-out.jsx
 		const {
 			currentRoute,
-			isP2Login,
 			locale,
 			oauth2Client,
 			pathname,
@@ -400,20 +373,13 @@ export class Login extends Component {
 			return null;
 		}
 
-		if ( isP2Login && currentQuery?.redirect_to ) {
-			const urlParts = getUrlParts( currentQuery.redirect_to );
-			if ( urlParts.pathname.startsWith( '/accept-invite/' ) ) {
-				return null;
-			}
-		}
-
 		// use '?signup_url' if explicitly passed as URL query param
 		const signupUrl = this.props.signupUrl
 			? window.location.origin + pathWithLeadingSlash( this.props.signupUrl )
 			: getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, pathname );
 
 		return (
-			<a
+			<Step.LinkButton
 				href={ addQueryArgs(
 					{
 						user_email: usernameOrEmail,
@@ -425,25 +391,19 @@ export class Login extends Component {
 				rel="external"
 			>
 				{ signupLinkText ?? translate( 'Create a new account' ) }
-			</a>
+			</Step.LinkButton>
 		);
 	}
 
 	renderLoginHeaderNavigation() {
-		return (
-			<div className="wp-login__header-navigation">
-				{ this.renderSignUpLink( this.props.translate( 'Create an account' ) ) }
-			</div>
-		);
+		return this.renderSignUpLink( this.props.translate( 'Create an account' ) );
 	}
 
 	renderLoginBlockFooter( { isGravPoweredLoginPage, isSocialFirst } ) {
 		const {
 			isJetpack,
 			isWhiteLogin,
-			isP2Login,
 			isGravPoweredClient,
-			privateSite,
 			socialConnect,
 			twoFactorAuthType,
 			locale,
@@ -496,10 +456,8 @@ export class Login extends Component {
 				<>
 					<LoginLinks
 						locale={ locale }
-						privateSite={ privateSite }
 						twoFactorAuthType={ twoFactorAuthType }
 						isWhiteLogin={ isWhiteLogin }
-						isP2Login={ isP2Login }
 						isGravPoweredClient={ isGravPoweredClient }
 						signupUrl={ signupUrl }
 						usernameOrEmail={ this.state.usernameOrEmail }
@@ -518,13 +476,10 @@ export class Login extends Component {
 		const {
 			clientId,
 			domain,
-			isLoggedIn,
 			isJetpack,
 			isWhiteLogin,
-			isP2Login,
 			isGravPoweredClient,
 			oauth2Client,
-			privateSite,
 			socialConnect,
 			twoFactorAuthType,
 			socialService,
@@ -535,10 +490,6 @@ export class Login extends Component {
 			action,
 			currentRoute,
 		} = this.props;
-
-		if ( privateSite && isLoggedIn ) {
-			return <PrivateSite />;
-		}
 
 		// It's used to toggle UIs for the login page of Gravatar powered clients only (excluding 2FA relevant pages).
 		const isGravPoweredLoginPage =
@@ -554,11 +505,9 @@ export class Login extends Component {
 				action={ action }
 				twoFactorAuthType={ twoFactorAuthType }
 				socialConnect={ socialConnect }
-				privateSite={ privateSite }
 				clientId={ clientId }
 				isJetpack={ isJetpack }
 				isWhiteLogin={ isWhiteLogin }
-				isP2Login={ isP2Login }
 				isGravPoweredClient={ isGravPoweredClient }
 				isGravPoweredLoginPage={ isGravPoweredLoginPage }
 				oauth2Client={ oauth2Client }
@@ -575,6 +524,65 @@ export class Login extends Component {
 		);
 	}
 
+	renderTopBar( isSocialFirst ) {
+		const { isFromAkismet, isJetpack, isWooJPC } = this.props;
+
+		if ( isWooJPC ) {
+			// The Woo flow already displays the Woo logo in the header.
+			return null;
+		}
+
+		const akismetLogo = (
+			<svg
+				xmlns="http://www.w3.org/2000/svg"
+				width="24"
+				height="24"
+				viewBox="0 0 44 44"
+				fill="none"
+			>
+				<rect width="44" height="44" fill="#357B49" rx="6" />
+				<path
+					fill="#fff"
+					fillRule="evenodd"
+					d="m29.746 28.31-6.392-16.797c-.152-.397-.305-.672-.789-.675-.673 0-1.408.611-1.746 1.316l-7.378 16.154c-.072.16-.143.311-.214.454-.5.995-1.045 1.546-2.357 1.626a.399.399 0 0 0-.16.033l-.01.004a.399.399 0 0 0-.23.392v.01c0 .054.01.106.03.155l.004.01a.416.416 0 0 0 .394.252h6.212a.417.417 0 0 0 .307-.12.416.416 0 0 0 .124-.305.398.398 0 0 0-.105-.302.399.399 0 0 0-.294-.127c-.757 0-2.197-.062-2.197-1.164.02-.318.103-.63.245-.916l1.399-3.152c.52-1.163 1.654-1.163 2.572-1.163h5.843c.023 0 .044 0 .062.003.13.014.16.081.214.242l1.534 4.07a2.857 2.857 0 0 1 .216 1.04c0 .054-.003.104-.01.153-.09.726-.831.887-1.49.887a.4.4 0 0 0-.294.127l-.007.008-.007.008a.401.401 0 0 0-.092.286v.01c0 .054.01.106.03.155l.005.01a.42.42 0 0 0 .395.252h7.011a.413.413 0 0 0 .279-.13.412.412 0 0 0 .11-.297.387.387 0 0 0-.09-.294.388.388 0 0 0-.277-.135c-1.448-.122-2.295-.643-2.847-2.08Zm-11.985-5.844 2.847-6.304c.361-.728.659-1.486.889-2.265 0-.06.03-.092.06-.092s.061.032.061.091c.02.122.045.247.073.374.197.888.584 1.878.914 2.723l.176.453 1.684 4.529a.927.927 0 0 1 .092.4.473.473 0 0 1-.009.094c-.041.202-.228.272-.602.272h-6.063c-.122 0-.184-.03-.184-.092a.36.36 0 0 1 .062-.183Zm17.107-.721c0 .786-.446 1.231-1.25 1.231-.806 0-1.125-.409-1.125-1.034 0-.786.465-1.231 1.25-1.231.785 0 1.125.427 1.125 1.034ZM9.629 23.002c.803 0 1.25-.447 1.25-1.231 0-.607-.343-1.036-1.128-1.036-.785 0-1.25.447-1.25 1.231 0 .625.325 1.036 1.128 1.036Z"
+					clipRule="evenodd"
+				/>
+			</svg>
+		);
+
+		const jetpackLogo = (
+			<div className="magic-login__gutenboarding-wordpress-logo">
+				<svg
+					xmlns="http://www.w3.org/2000/svg"
+					width="24"
+					height="24"
+					viewBox="0 0 24 24"
+					fill="none"
+				>
+					<path
+						d="M12 0C9.62663 0 7.30655 0.703788 5.33316 2.02236C3.35977 3.34094 1.8217 5.21508 0.913451 7.4078C0.00519938 9.60051 -0.232441 12.0133 0.230582 14.3411C0.693605 16.6689 1.83649 18.807 3.51472 20.4853C5.19295 22.1635 7.33115 23.3064 9.65892 23.7694C11.9867 24.2324 14.3995 23.9948 16.5922 23.0865C18.7849 22.1783 20.6591 20.6402 21.9776 18.6668C23.2962 16.6934 24 14.3734 24 12C24 8.8174 22.7357 5.76515 20.4853 3.51472C18.2348 1.26428 15.1826 0 12 0ZM11.3684 13.9895H5.40632L11.3684 2.35579V13.9895ZM12.5811 21.6189V9.98526H18.5621L12.5811 21.6189Z"
+						fill="#069E08"
+					/>
+				</svg>
+			</div>
+		);
+
+		if ( isJetpack && ! this.props.isFromAutomatticForAgenciesPlugin ) {
+			return jetpackLogo;
+		}
+
+		if ( isSocialFirst ) {
+			return (
+				<Step.TopBar
+					rightElement={ this.renderLoginHeaderNavigation() }
+					logo={ isFromAkismet && akismetLogo }
+				/>
+			);
+		}
+
+		return null;
+	}
+
 	render() {
 		const {
 			locale,
@@ -585,6 +593,7 @@ export class Login extends Component {
 			isWoo,
 			isBlazePro,
 			isWhiteLogin,
+			isJetpack,
 		} = this.props;
 		const canonicalUrl = localizeUrl( 'https://wordpress.com/log-in', locale );
 		const isSocialFirst =
@@ -595,13 +604,14 @@ export class Login extends Component {
 			! isBlazePro;
 
 		return (
-			<div>
-				{ this.props.isP2Login && this.renderP2Logo() }
+			<>
+				{ this.renderTopBar( isSocialFirst ) }
 				<Main
 					className={ clsx( 'wp-login__main', {
 						'is-wpcom-migration': isFromMigrationPlugin,
 						'is-social-first': isSocialFirst,
 						'is-generic-oauth': isGenericOauth,
+						'is-jetpack': isJetpack,
 					} ) }
 				>
 					{ this.renderI18nSuggestions() }
@@ -619,13 +629,11 @@ export class Login extends Component {
 						] }
 					/>
 
-					{ isSocialFirst && this.renderLoginHeaderNavigation() }
 					<div className="wp-login__container">{ this.renderContent( isSocialFirst ) }</div>
 				</Main>
 
 				{ this.renderFooter() }
-				{ this.props.isP2Login && this.renderP2PoweredBy() }
-			</div>
+			</>
 		);
 	}
 }
@@ -637,7 +645,6 @@ export default connect(
 		const currentRoute = getCurrentRoute( state );
 
 		return {
-			isLoggedIn: Boolean( getCurrentUserId( state ) ),
 			locale: getCurrentLocaleSlug( state ),
 			oauth2Client,
 			isLoginView:
@@ -650,6 +657,9 @@ export default connect(
 				! currentRoute.includes( '/start' ),
 			emailQueryParam:
 				currentQuery.email_address || getInitialQueryArguments( state ).email_address,
+			isFromAkismet: isAkismetRedirect(
+				new URLSearchParams( getRedirectToOriginal( state )?.split( '?' )[ 1 ] ).get( 'back' )
+			),
 			isFromMigrationPlugin: startsWith( get( currentQuery, 'from' ), 'wpcom-migration' ),
 			isWooJPC: isWooJPCFlow( state ),
 			isWCCOM: getIsWCCOM( state ),
@@ -665,6 +675,10 @@ export default connect(
 			currentRoute,
 			currentQuery,
 			redirectTo: getRedirectToOriginal( state ),
+			isFromAutomatticForAgenciesPlugin:
+				'automattic-for-agencies-client' === get( getCurrentQueryArguments( state ), 'from' ) ||
+				'automattic-for-agencies-client' ===
+					new URLSearchParams( getRedirectToOriginal( state )?.split( '?' )[ 1 ] ).get( 'from' ),
 		};
 	},
 	{

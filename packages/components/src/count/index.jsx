@@ -1,5 +1,6 @@
+import { formatNumber, formatNumberCompact } from '@automattic/number-formatters';
 import clsx from 'clsx';
-import { localize, numberFormat, numberFormatCompact } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 
 import './style.scss';
@@ -14,11 +15,11 @@ export const Count = ( {
 	locale,
 	...props
 } ) => {
-	const effectiveNumberFormat = numberFormatFromProps ?? numberFormat;
+	const effectiveNumberFormat = numberFormatFromProps ?? formatNumber;
 
 	return (
 		<span ref={ forwardRef } className={ clsx( 'count', { 'is-primary': primary } ) } { ...props }>
-			{ compact ? numberFormatCompact( count ) : effectiveNumberFormat( count ) }
+			{ compact ? formatNumberCompact( count ) : effectiveNumberFormat( count ) }
 		</span>
 	);
 };

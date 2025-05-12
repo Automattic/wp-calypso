@@ -21,7 +21,7 @@ in the root of the repository to get the required `devDependencies`.
 
 ## Using [Storybook](https://storybook.js.org/)
 
-`yarn workspace @automattic/search run storybook`
+`yarn workspace @automattic/search run storybook:start`
 
 ## What's Included?
 

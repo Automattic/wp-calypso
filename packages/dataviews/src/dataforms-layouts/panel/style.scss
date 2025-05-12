@@ -1,0 +1,50 @@
+.dataforms-layouts-panel__field {
+	width: 100%;
+	min-height: $grid-unit-40;
+	justify-content: flex-start !important;
+	align-items: flex-start !important;
+}
+
+.dataforms-layouts-panel__field-label {
+	width: 38%;
+	flex-shrink: 0;
+	min-height: $grid-unit-40;
+	display: flex;
+	align-items: center;
+	padding: 6px 0; // Matches button to ensure alignment
+	line-height: $grid-unit-05 * 5;
+	hyphens: auto;
+}
+
+.dataforms-layouts-panel__field-control {
+	flex-grow: 1;
+	min-height: $grid-unit-40;
+	display: flex;
+	align-items: center;
+
+	.components-button {
+		max-width: 100%;
+		text-align: left;
+		white-space: normal;
+		text-wrap: balance; // Fallback for Safari.
+		text-wrap: pretty;
+		min-height: $button-size-compact;
+	}
+
+	.components-dropdown {
+		max-width: 100%;
+	}
+}
+
+.dataforms-layouts-panel__field-dropdown .components-popover__content {
+	min-width: 320px;
+	padding: $grid-unit-20;
+}
+
+.dataforms-layouts-panel__dropdown-header {
+	margin-bottom: $grid-unit-20;
+}
+
+.components-popover.components-dropdown__content.dataforms-layouts-panel__field-dropdown {
+	z-index: z-index(".components-popover.components-dropdown__content.dataforms-layouts-panel__field-dropdown");
+}

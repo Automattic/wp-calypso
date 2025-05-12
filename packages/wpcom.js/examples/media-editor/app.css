@@ -1,7 +1,6 @@
 body {
 	font-family: sans-serif;
 	color: #444;
-	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	font-size: 12px;
 }
 
@@ -23,7 +22,6 @@ h3 {
 	height: 24px;
 	line-height: 24px;
 	color: var(--color-text-inverted);
-	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	font-size: 10px;
 	text-transform: uppercase;
 }
@@ -37,7 +35,6 @@ h3 {
 	margin: 0 10px 10px;
 	border: 1px solid #bbb;
 	padding: 10px;
-	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	font-size: 12px;
 	background-color: var(--studio-white);
 }
@@ -83,12 +80,10 @@ h3 {
 
 .image-container .image-summary span {
 	display: block;
-	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	font-size: 10px;
 }
 
 .image-container .image-summary span.image-revision-number {
-	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	font-size: 10px;
 	font-weight: bold;
 	position: absolute;

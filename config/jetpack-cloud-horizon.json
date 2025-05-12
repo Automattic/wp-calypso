@@ -67,14 +67,15 @@
 		"marketplace-test": false,
 		"newsletter-categories": true,
 		"oauth": false,
-		"p2-enabled": false,
 		"purchases/new-payment-methods": true,
 		"realtime-site-count": true,
 		"site-indicator": false,
+		"subscribers-helper-library": true,
 		"upgrades/redirect-payments": true,
 		"jetpack/pricing-page-cart": true,
 		"yolo/command-palette": false,
-		"importers/newsletter": true
+		"importers/newsletter": true,
+		"jetpack/crm-downloads": true
 	},
 	"enable_all_sections": false,
 	"sections": {

@@ -1,6 +1,7 @@
 import { Button } from '@automattic/components';
 import { addLocaleToPathLocaleInFront } from '@automattic/i18n-utils';
-import { useTranslate, numberFormatCompact } from 'i18n-calypso';
+import { formatNumberCompact } from '@automattic/number-formatters';
+import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
 import { connect, useDispatch, useSelector } from 'react-redux';
 import TagLink from 'calypso/blocks/reader-post-card/tag-link';
@@ -85,13 +86,13 @@ const ReaderTagSidebar = ( {
 				<div className="reader-tag-sidebar-stats">
 					<div className="reader-tag-sidebar-stats__item">
 						<span className="reader-tag-sidebar-stats__count">
-							{ numberFormatCompact( tagStats?.data?.total_posts ) }
+							{ formatNumberCompact( tagStats?.data?.total_posts ) }
 						</span>
 						<span className="reader-tag-sidebar-stats__title">{ translate( 'Posts' ) }</span>
 					</div>
 					<div className="reader-tag-sidebar-stats__item">
 						<span className="reader-tag-sidebar-stats__count">
-							{ numberFormatCompact( tagStats?.data?.total_sites ) }
+							{ formatNumberCompact( tagStats?.data?.total_sites ) }
 						</span>
 						<span className="reader-tag-sidebar-stats__title">{ translate( 'Sites' ) }</span>
 					</div>

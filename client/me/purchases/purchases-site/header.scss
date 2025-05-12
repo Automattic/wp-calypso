@@ -15,11 +15,15 @@
 		height: 32px;
 		width: 32px;
 		line-height: 32px;
-		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		font-size: 32px;
 	}
 
 	.site .site__content {
 		padding: 11px 24px;
+	}
+
+	.site > .site__content > .site__info > .site__title::after,
+	.site > .site__content > .site__info > .site__domain::after {
+		background: none;
 	}
 }

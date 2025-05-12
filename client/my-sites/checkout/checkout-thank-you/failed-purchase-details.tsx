@@ -50,7 +50,7 @@ export default function FailedPurchaseDetails( {
 			{ failedPurchasesForDisplay }
 			<p>
 				{ translate(
-					'We added credits to your account, so you can try adding these items again. ' +
+					'We refunded the failed purchases so you can try adding these items again. ' +
 						"If the problem persists, please don't hesitate to {{a}}contact support{{/a}}.",
 					{
 						components: {

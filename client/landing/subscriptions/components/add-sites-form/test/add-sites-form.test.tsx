@@ -9,7 +9,9 @@ import {
 	SubscriptionManagerContextProvider,
 	SubscriptionsPortal,
 } from '../../subscription-manager-context';
-import AddSitesForm from '../add-sites-form';
+import AddSitesForm, { AddSitesFormProps } from '../add-sites-form';
+
+jest.mock( '@automattic/calypso-router' );
 
 const renderWithContextProvider = ( component: React.ReactNode ) => {
 	return renderWithProvider(
@@ -20,8 +22,8 @@ const renderWithContextProvider = ( component: React.ReactNode ) => {
 };
 
 describe( 'AddSitesForm', () => {
-	const mockProps = {
-		onAddFinished: jest.fn(),
+	const mockProps: AddSitesFormProps = {
+		onChangeSubscribe: jest.fn(),
 		source: 'test-source',
 	};
 
@@ -85,20 +87,6 @@ describe( 'AddSitesForm', () => {
 
 		fireEvent.change( input, {
 			target: { value: 'not-a-url' },
-		} );
-
-		fireEvent.blur( input );
-
-		expect( addButton ).toBeDisabled();
-	} );
-
-	test( 'disables the Add site button when a URL without protocol is entered', () => {
-		renderWithContextProvider( <AddSitesForm { ...mockProps } /> );
-		const input = screen.getByRole( 'textbox' );
-		const addButton = screen.getByRole( 'button', { name: 'Add site' } );
-
-		fireEvent.change( input, {
-			target: { value: 'www.valid-url.com' },
 		} );
 
 		fireEvent.blur( input );

@@ -26,7 +26,8 @@ describe( 'Video player', () => {
 		renderer.render( <VideoPlayer intent="build" course={ course } videoData={ videoData } /> );
 		const result = renderer.getRenderOutput();
 
-		result.props.children.props.onPlay();
+		// Video element.
+		result.props.children[ 0 ].props.onPlay();
 
 		expect( window._tkq.push ).toHaveBeenCalledWith( [
 			'recordEvent',
@@ -42,7 +43,8 @@ describe( 'Video player', () => {
 		renderer.render( <VideoPlayer course={ course } videoData={ videoData } /> );
 		const result = renderer.getRenderOutput();
 
-		result.props.children.props.onPlay();
+		// Video element.
+		result.props.children[ 0 ].props.onPlay();
 
 		expect( window._tkq.push ).toHaveBeenCalledWith( [
 			'recordEvent',

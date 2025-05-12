@@ -1,7 +1,14 @@
+@import "@automattic/color-studio/dist/color-variables";
 @import "client/landing/subscriptions/components/site-subscriptions-list/styles/placeholders";
 
 .reader-feed-item {
-	@extend %site-subscriptions-list-site-row;
+	border-block-end: 1px solid $studio-gray-5;
+	padding-top: 20px;
+	padding-bottom: 20px;
+
+	&:first-child {
+		border-block-start: 1px solid $studio-gray-5;
+	}
 
 	@include breakpoint-deprecated( "<660px" ) {
 		padding: 10px 0 16px;

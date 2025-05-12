@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
 import { localize, useTranslate } from 'i18n-calypso';
@@ -21,6 +22,7 @@ import {
 import PurchasesNavigation from 'calypso/me/purchases/purchases-navigation';
 import { useTaxName } from 'calypso/my-sites/checkout/src/hooks/use-country-list';
 import { logStashLoadErrorEvent } from 'calypso/my-sites/checkout/src/lib/analytics';
+import CrmDownloads from 'calypso/my-sites/purchases/crm-downloads';
 import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
 import CancelPurchase from './cancel-purchase';
 import ConfirmCancelDomain from './confirm-cancel-domain';
@@ -28,9 +30,12 @@ import { Downgrade } from './downgrade';
 import ManagePurchase from './manage-purchase';
 import { ManagePurchaseByOwnership } from './manage-purchase/manage-purchase-by-ownership';
 import PurchasesList from './purchases-list';
+import PurchasesListDataView from './purchases-list-in-dataviews';
 import titles from './titles';
 import VatInfoPage from './vat-info';
 import useVatDetails from './vat-info/use-vat-details';
+
+const useDataViewPurchasesList = config.isEnabled( 'purchases/purchase-list-dataview' );
 
 function useLogPurchasesError( message ) {
 	return useCallback(
@@ -139,7 +144,11 @@ export function list( context, next ) {
 	const ListWrapper = localize( () => {
 		return (
 			<PurchasesWrapper>
-				<PurchasesList noticeType={ context.params.noticeType } />
+				{ useDataViewPurchasesList ? (
+					<PurchasesListDataView noticeType={ context.params.noticeType } />
+				) : (
+					<PurchasesList noticeType={ context.params.noticeType } />
+				) }
 			</PurchasesWrapper>
 		);
 	} );
@@ -264,5 +273,10 @@ export function changePaymentMethod( context, next ) {
 	};
 
 	context.primary = <ChangePaymentMethodWrapper />;
+	next();
+}
+
+export function crmDownloads( context, next ) {
+	context.primary = <CrmDownloads subscription={ context.params.subscription } />;
 	next();
 }

@@ -42,12 +42,13 @@ export default function LicenseDetails( {
 	const issuedAt = license.issuedAt;
 	const attachedAt = license.attachedAt;
 	const revokedAt = license.revokedAt;
+	const productId = license.productId;
 
 	const translate = useTranslate();
 	const licenseState = getLicenseState( attachedAt, revokedAt );
 	const isPressableLicense = isPressableHostingProduct( licenseKey );
 
-	const pressablePlan = useGetPressablePlanByProductId( { product_id: license.productId } );
+	const pressablePlan = useGetPressablePlanByProductId( { product_id: productId } );
 
 	return (
 		<Card
@@ -131,6 +132,7 @@ export default function LicenseDetails( {
 				isChildLicense={ isChildLicense }
 				isClientLicense={ !! referral }
 				isDevSite={ isDevSite }
+				productId={ productId }
 			/>
 		</Card>
 	);

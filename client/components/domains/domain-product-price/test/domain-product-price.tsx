@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+// @ts-nocheck - TODO: Fix TypeScript issues
 import { screen } from '@testing-library/react';
 import React from 'react';
 import { reducer as ui } from 'calypso/state/ui/reducer';

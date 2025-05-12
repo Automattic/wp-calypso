@@ -1,4 +1,8 @@
+import { useRef } from 'react';
+import { shouldUseStepContainerV2 } from 'calypso/landing/stepper/declarative-flow/helpers/should-use-step-container-v2';
+import { DEFAULT_FLOW, getFlowFromURL } from 'calypso/landing/stepper/utils/get-flow-from-url';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
+
 let lastScrollPosition = 0; // Used for calculating scroll direction.
 let sidebarTop = 0; // Current sidebar top position.
 let pinnedSidebarTop = true; // We pin sidebar to the top by default.
@@ -164,4 +168,70 @@ export const handleScroll = ( event: React.UIEvent< HTMLElement > ): void => {
 		} );
 		ticking = true;
 	}
+};
+
+const isRedirectingToStepContainerV2Flow = ( redirectTo: string ) => {
+	const { pathname, search } = new URL( redirectTo, 'http://example.com' );
+
+	return shouldUseStepContainerV2( getFlowFromURL( pathname, search ) );
+};
+
+const isMarketplaceThankYouRedirect = ( redirectTo: string ) => {
+	const { pathname, searchParams } = new URL( redirectTo, 'http://example.com' );
+
+	return pathname.startsWith( '/marketplace' ) && searchParams.has( 'onboarding' );
+};
+
+/**
+ * Returns whether to display the StepContainerV2 features from up in the tree.
+ * This can be used, for example, to determine if we should show
+ * the StepContainerV2 loader or hide the masterbar.
+ */
+export const isInStepContainerV2FlowContext = ( pathname: string, query: string ) => {
+	if ( pathname.startsWith( '/setup' ) ) {
+		return shouldUseStepContainerV2( getFlowFromURL( pathname, query ) || DEFAULT_FLOW );
+	}
+
+	if ( pathname.startsWith( '/checkout' ) ) {
+		// The checkout isn't technically part of a stepper flow, but we can infer what stepper
+		// flow it came from (if any) by inspecting the redirect_to query param (in the case
+		// of the onboarding flow).
+		const params = new URLSearchParams( query );
+		const redirectTo = params.get( 'redirect_to' ) ?? '';
+		const cancelTo = params.get( 'cancel_to' ) ?? '';
+
+		if ( isRedirectingToStepContainerV2Flow( redirectTo ) ) {
+			return true;
+		}
+
+		if ( isRedirectingToStepContainerV2Flow( cancelTo ) ) {
+			return true;
+		}
+
+		if ( isMarketplaceThankYouRedirect( redirectTo ) ) {
+			return true;
+		}
+	}
+
+	if ( pathname.startsWith( '/marketplace' ) ) {
+		const params = new URLSearchParams( query );
+
+		if ( params.has( 'onboarding' ) ) {
+			return true;
+		}
+
+		const redirectTo = params.get( 'redirect_to' ) ?? '';
+
+		return isMarketplaceThankYouRedirect( redirectTo );
+	}
+
+	return false;
+};
+
+export const useInitialIsInStepContainerV2FlowContext = () => {
+	const ref = useRef(
+		isInStepContainerV2FlowContext( window.location.pathname, window.location.search )
+	);
+
+	return ref.current;
 };

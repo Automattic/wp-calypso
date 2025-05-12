@@ -1,9 +1,9 @@
+import { WordPressLogo } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { Icon, external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import pressableIcon from 'calypso/assets/images/pressable/pressable-icon.svg';
 import DocumentHead from 'calypso/components/data/document-head';
-import WordPressLogo from 'calypso/components/wordpress-logo';
 import { Site } from '../../types';
 
 import './style.scss';

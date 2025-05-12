@@ -228,7 +228,7 @@ class PurchasesList extends Component<
 					navigationItems={ [] }
 					title={ titles.sectionTitle }
 					subtitle={ translate(
-						'View, manage, or cancel your plan and other purchases. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+						'Manage your sites’ plans and upgrades. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
 						{
 							components: {
 								learnMoreLink: <InlineSupportLink supportContext="purchases" showIcon={ false } />,

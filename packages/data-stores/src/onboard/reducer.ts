@@ -489,16 +489,6 @@ const domainCartItems: Reducer< MinimalRequestCartProduct[] | undefined, Onboard
 	return state;
 };
 
-const isMigrateFromWp: Reducer< boolean, OnboardAction > = ( state = false, action ) => {
-	if ( action.type === 'SET_IS_MIGRATE_FROM_WP' ) {
-		return action.isMigrateFromWp;
-	}
-	if ( action.type === 'RESET_ONBOARD_STORE' ) {
-		return false;
-	}
-	return state;
-};
-
 const pluginsToVerify: Reducer< string[] | undefined, OnboardAction > = ( state, action ) => {
 	if ( action.type === 'SET_PLUGIN_SLUGS_TO_VERIFY' ) {
 		return action.pluginSlugs;
@@ -622,20 +612,6 @@ const signupDomainOrigin: Reducer< string | undefined, OnboardAction > = (
 	return state;
 };
 
-const createWithBigSky: Reducer< boolean | undefined, OnboardAction > = (
-	state = undefined,
-	action
-) => {
-	if ( action.type === 'SET_CREATE_WITH_BIG_SKY' ) {
-		return action.createWithBigSky;
-	}
-	if ( action.type === 'RESET_ONBOARD_STORE' ) {
-		return undefined;
-	}
-
-	return state;
-};
-
 const reducer = combineReducers( {
 	domain,
 	domainCartItem,
@@ -678,14 +654,12 @@ const reducer = combineReducers( {
 	storageAddonSlug,
 	planCartItem,
 	productCartItems,
-	isMigrateFromWp,
 	domainCartItems,
 	pluginsToVerify,
 	profilerData,
 	paidSubscribers,
 	partnerBundle,
 	signupDomainOrigin,
-	createWithBigSky,
 } );
 
 export type State = ReturnType< typeof reducer >;

@@ -12,7 +12,7 @@ $section-border: solid 1px var(--color-neutral-5);
 	position: relative;
 	background-color: var(--color-surface);
 
-	.notice {
+	.calypso-notice {
 		margin-bottom: 0;
 
 		+ div > .post-share__main {
@@ -20,7 +20,7 @@ $section-border: solid 1px var(--color-neutral-5);
 		}
 
 		&,
-		.notice__icon-wrapper {
+		.calypso-notice__icon-wrapper {
 			border-radius: 0;
 		}
 	}
@@ -49,7 +49,7 @@ $section-border: solid 1px var(--color-neutral-5);
 
 .post-share__wrapper.is-placeholder {
 	padding-bottom: 24px;
-	border-bottom: 1px solid rgba(var(--color-neutral-10-rgb), 0.5);
+	border-bottom: 1px solid color-mix(in srgb, var(--color-neutral-10) 50%, transparent);
 }
 
 .post-share__placeholder {

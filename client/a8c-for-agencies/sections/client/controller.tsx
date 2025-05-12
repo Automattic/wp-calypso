@@ -8,6 +8,7 @@ import PaymentMethodAdd from '../purchases/payment-methods/payment-method-add';
 import PaymentMethodOverview from '../purchases/payment-methods/payment-method-overview';
 import ClientLanding from './client-landing';
 import ClientCheckout from './primary/checkout';
+import ClientCheckoutV2 from './primary/checkout-v2';
 import SubscriptionsList from './primary/subscriptions-list';
 
 export const clientLandingContext: Callback = ( context, next ) => {
@@ -70,6 +71,16 @@ export const clientCheckoutContext: Callback = ( context, next ) => {
 		<>
 			<PageViewTracker title="Client > Checkout" path={ context.path } />
 			<ClientCheckout />
+		</>
+	);
+	next();
+};
+
+export const clientCheckoutV2Context: Callback = ( context, next ) => {
+	context.primary = (
+		<>
+			<PageViewTracker title="Client > Checkout V2" path="/client/checkout/v2" />
+			<ClientCheckoutV2 />
 		</>
 	);
 	next();

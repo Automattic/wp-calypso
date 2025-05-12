@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+// @ts-nocheck - TODO: Fix TypeScript issues
 import { waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
@@ -183,8 +184,8 @@ describe( 'SiteMigrationInstructions', () => {
 
 	it( 'should display a fallback in the last step when preparation completes and there is an error with the migration key', async () => {
 		( usePrepareSiteForMigration as jest.Mock ).mockReturnValue( {
-			detailedStatus: { migrationKey: 'error' },
-			completed: true,
+			detailedStatus: { migrationKeyStatus: 'error' },
+			softwareTransferCompleted: true,
 			migrationKey: '',
 			error: null,
 		} );

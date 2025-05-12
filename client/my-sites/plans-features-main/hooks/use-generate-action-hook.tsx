@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import {
 	type PlanSlug,
 	isFreePlan,
@@ -21,7 +22,10 @@ import { useState } from '@wordpress/element';
 import { type LocalizeProps, type TranslateResult, useTranslate } from 'i18n-calypso';
 import { useSelector } from 'calypso/state';
 import getDomainFromHomeUpsellInQuery from 'calypso/state/selectors/get-domain-from-home-upsell-in-query';
-import { isUserEligibleForFreeHostingTrial } from 'calypso/state/selectors/is-user-eligible-for-free-hosting-trial';
+import {
+	FREE_HOSTING_TRIAL_ENABLED,
+	isUserEligibleForFreeHostingTrial,
+} from 'calypso/state/selectors/is-user-eligible-for-free-hosting-trial';
 import { isCurrentUserCurrentPlanOwner } from 'calypso/state/sites/plans/selectors/is-current-user-current-plan-owner';
 import isCurrentPlanPaid from 'calypso/state/sites/selectors/is-current-plan-paid';
 import { IAppState } from 'calypso/state/types';
@@ -319,7 +323,8 @@ function getSignupAction( {
 	if (
 		isBusinessPlan( planSlug ) &&
 		! eligibleForFreeHostingTrial &&
-		plansIntent === 'plans-new-hosted-site'
+		plansIntent === 'plans-new-hosted-site' &&
+		FREE_HOSTING_TRIAL_ENABLED
 	) {
 		return createSignupAction(
 			translate( 'Get %(plan)s', {
@@ -423,6 +428,15 @@ function getLoggedInPlansAction( {
 
 	// Downgrade action if the plan is not available for purchase
 	if ( ! availableForPurchase ) {
+		if ( isEnabled( 'plans/self-service-downgrade' ) ) {
+			return {
+				primary: {
+					callback: () => {},
+					text: translate( 'Requires downgrade' ),
+					status: 'disabled',
+				},
+			};
+		}
 		return createLoggedInPlansAction( translate( 'Downgrade', { context: 'verb' } ), 'secondary' );
 	}
 

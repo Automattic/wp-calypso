@@ -75,6 +75,10 @@ $blueberry-color: #3858e9;
 					color: var(--studio-gray-30);
 					margin-right: 8px;
 				}
+
+				svg {
+					fill: var(--studio-gray-30);
+				}
 			}
 
 			&:last-child {
@@ -328,7 +332,7 @@ $blueberry-color: #3858e9;
 
 	.domains-table__primary-domain-label {
 		background-color: inherit;
-		color: var(--studio-green-40, #00a32a);
+		color: var(--studio-green-60);
 		font-family: "SF Pro", $sans;
 		font-size: $font-body-extra-small;
 		font-weight: 500;

@@ -46,6 +46,14 @@ export const ODIE_TRANSFER_MESSAGE: Message[] = [
 	},
 ];
 
+export const ODIE_THIRD_PARTY_MESSAGE = `${ __(
+	'I’m happy to connect you to a human! However, it looks like 3rd party cookies are disabled in your browser. Please turn them on for our live chat to work properly. [Use our guide](https://wordpress.com/support/third-party-cookies/)',
+	__i18n_text_domain__
+) } \n\n ${ __(
+	'Once you’re done, you can come back here to start talking with someone by clicking on the following button.',
+	__i18n_text_domain__
+) }`;
+
 export const ODIE_WRONG_FILE_TYPE_MESSAGE: Message = {
 	content: __(
 		'Sorry! The file you are trying to upload is not supported. Please upload a .jpg, .png, or .gif file.',

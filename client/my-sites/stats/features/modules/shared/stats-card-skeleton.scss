@@ -9,7 +9,7 @@
 	// use separate animation to match the cycle actoss card
 	.stats-card-skeleton__placeholder {
 		animation: stats-skeleton-card 2.5s ease-in-out infinite;
-		background-color: rgba(var(--color-neutral-5-rgb), 0.8);
+		background-color: color-mix(in srgb, var(--color-neutral-5) 80%, var(--color-neutral-0));
 		border-radius: 4px;
 	}
 
@@ -63,7 +63,10 @@
 }
 
 @keyframes stats-skeleton-card {
-	50% {
-		background-color: var(--color-neutral-0);
-	}
+    0%, 100% {
+        background-color: color-mix(in srgb, var(--color-neutral-5) 80%, var(--color-neutral-0));
+    }
+    50% {
+        background-color: var(--color-neutral-0);
+    }
 }

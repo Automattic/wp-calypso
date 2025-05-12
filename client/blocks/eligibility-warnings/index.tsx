@@ -6,27 +6,23 @@ import {
 	FEATURE_INSTALL_PLUGINS,
 	PLAN_BUSINESS,
 	WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS,
-	PLAN_BUSINESS_MONTHLY,
-	getPlan,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
-import { Button, CompactCard, Gridicon } from '@automattic/components';
+import { CompactCard, Gridicon } from '@automattic/components';
+import { Button } from '@wordpress/components';
 import clsx from 'clsx';
 import { localize, LocalizeProps } from 'i18n-calypso';
 import { includes } from 'lodash';
 import { useState } from 'react';
 import { connect } from 'react-redux';
 import DataCenterPicker from 'calypso/blocks/data-center-picker';
-import ActionPanelLink from 'calypso/components/action-panel/link';
 import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
-import { useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	getEligibility,
 	isEligibleForAutomatedTransfer,
 } from 'calypso/state/automated-transfer/selectors';
-import { getProductDisplayCost } from 'calypso/state/products-list/selectors';
 import getRequest from 'calypso/state/selectors/get-request';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { saveSiteSettings } from 'calypso/state/site-settings/actions';
@@ -34,6 +30,7 @@ import { isSavingSiteSettings } from 'calypso/state/site-settings/selectors';
 import { launchSite } from 'calypso/state/sites/launch/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import HoldList, { hasBlockingHold, HardBlockingNotice, getBlockingMessages } from './hold-list';
+import SupportLink from './support-link';
 import { isAtomicSiteWithoutBusinessPlan } from './utils';
 import WarningList from './warning-list';
 import type { EligibilityData } from 'calypso/state/automated-transfer/selectors';
@@ -46,6 +43,7 @@ interface ExternalProps {
 	siteId?: number | null;
 	isEligible?: boolean;
 	backUrl?: string;
+	onDismiss?: () => void; // If rendered in a modal this is required. Used to dismiss the modal when accessing the help assistant.
 	onProceed: ( options: { geo_affinity?: string } ) => void;
 	standaloneProceed: boolean;
 	className?: string;
@@ -69,6 +67,7 @@ export const EligibilityWarnings = ( {
 	isEligible,
 	isMarketplace,
 	isPlaceholder,
+	onDismiss,
 	onProceed,
 	standaloneProceed,
 	recordUpgradeClick,
@@ -152,10 +151,6 @@ export const EligibilityWarnings = ( {
 		filteredHolds = listHolds.filter( ( hold ) => hold !== 'NO_BUSINESS_PLAN' );
 	}
 
-	const monthlyCost = useSelector( ( state ) =>
-		getProductDisplayCost( state, PLAN_BUSINESS_MONTHLY )
-	) as string;
-
 	return (
 		<div className={ classes }>
 			<QueryEligibility siteId={ siteId } />
@@ -170,41 +165,6 @@ export const EligibilityWarnings = ( {
 						translate={ translate }
 						blockingMessages={ blockingMessages }
 					/>
-				</CompactCard>
-			) }
-			{ ! isPlaceholder && context === 'plugin-details' && (
-				<CompactCard>
-					<div className="eligibility-warnings__header">
-						<div className="eligibility-warnings__title">
-							{ listHolds.indexOf( 'NO_BUSINESS_PLAN' ) !== -1
-								? translate( 'Upgrade your plan to install plugins' )
-								: translate( 'Before you continue' ) }
-						</div>
-						<div className="eligibility-warnings__primary-text">
-							{ listHolds.indexOf( 'NO_BUSINESS_PLAN' ) !== -1
-								? translate(
-										// Translators: %(planName)s is the plan - Business or Creator, and %(monthlyCost)s is the monthly cost.
-										'Installing plugins is a premium feature. Unlock the ability to install this and 50,000 other plugins by upgrading to the %(planName)s plan for %(monthlyCost)s/month.',
-										{
-											args: {
-												monthlyCost,
-												planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '',
-											},
-										}
-								  )
-								: '' }
-						</div>
-					</div>
-				</CompactCard>
-			) }
-
-			{ context === 'hosting-features' && (
-				<CompactCard>
-					<div className="eligibility-warnings__header">
-						<div className="eligibility-warnings__title">
-							{ translate( 'Activate hosting features' ) }
-						</div>
-					</div>
 				</CompactCard>
 			) }
 
@@ -251,23 +211,17 @@ export const EligibilityWarnings = ( {
 
 			<CompactCard>
 				<div className="eligibility-warnings__confirm-buttons">
-					<div className="support-block">
-						<span>{ translate( 'Need help?' ) }</span>
-						{ translate( '{{a}}Contact support{{/a}}', {
-							components: {
-								a: <ActionPanelLink href="/help/contact" />,
-							},
-						} ) }
-					</div>
+					<SupportLink onShowHelpAssistant={ onDismiss } />
 					<Button
-						primary
+						variant="primary"
+						__next40pxDefaultSize
 						disabled={
 							isProceedButtonDisabled( isEligible, listHolds ) ||
 							siteIsSavingSettings ||
 							siteIsLaunching ||
 							disableContinueButton
 						}
-						busy={ siteIsLaunching || siteIsSavingSettings || disableContinueButton }
+						isBusy={ siteIsLaunching || siteIsSavingSettings || disableContinueButton }
 						onClick={ logEventAndProceed }
 					>
 						{ getProceedButtonText( listHolds, translate, context, showFreeTrial ) }

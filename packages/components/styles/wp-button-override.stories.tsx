@@ -1,12 +1,9 @@
-import { Button } from '@wordpress/components';
 import React from 'react';
+import { Button } from './storybook-utils/typed-wp-components';
 import type { Meta, StoryObj } from '@storybook/react';
 
 // Not using a relative path here to ensure that the build is working.
 import '@automattic/components/styles/wp-button-override.scss';
-
-// TODO: Investigate why displayName becomes `UnforwardedButton` when imported.
-Button.displayName = 'Button';
 
 /**
  * This reference is for A8C-specific style overrides for the `Button` component from `@wordpress/components`.
@@ -14,7 +11,7 @@ Button.displayName = 'Button';
  * See the [WordPress Storybook](https://wordpress.github.io/gutenberg/?path=/docs/components-button--docs) docs for more information.
  */
 const meta: Meta< typeof Button > = {
-	title: 'packages/components/WP Overrides/Button',
+	title: 'WP Overrides/Button',
 	component: Button,
 	decorators: [
 		( Story ) => (

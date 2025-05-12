@@ -37,13 +37,13 @@
 	right: 0;
 	bottom: 0;
 	display: block;
-	background: rgba(var(--color-neutral-0-rgb), 0.8);
+	background: color-mix(in srgb, var(--color-neutral-0) 80%, transparent);
 }
 
 .web-preview__content {
 	display: flex;
 	flex-direction: column;
-	box-shadow: 0 0 0 1px rgba(var(--color-neutral-light-rgb), 0.5);
+	box-shadow: 0 0 0 1px color-mix(in srgb, var(--color-neutral-light) 50%, transparent);
 	background: var(--color-neutral-0);
 	border-radius: 2px 2px 0 0;
 	position: absolute;

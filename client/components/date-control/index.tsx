@@ -70,6 +70,7 @@ const DateControl = ( {
 									onTriggerClick();
 								} }
 								ref={ buttonRef }
+								__next40pxDefaultSize
 							>
 								{ getButtonLabel() }
 								<Icon className="gridicon" icon={ calendar } />

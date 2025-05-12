@@ -30,6 +30,7 @@ interface ReaderFeedItemProps {
 	feed: Reader.FeedItem;
 	source: string; // Indicates where the feed item is rendered.
 	shouldHideOnSubscribedState?: boolean; // To not render anything if the feed is in subscribed state.
+	onChangeSubscribe?: ( subscribed: boolean ) => void;
 }
 
 /**
@@ -45,6 +46,7 @@ export default function ReaderFeedItem( props: ReaderFeedItemProps ): JSX.Elemen
 		},
 		source,
 		shouldHideOnSubscribedState,
+		onChangeSubscribe,
 	} = props;
 	const isWpcomFeed = !! blogId;
 	const translate = useTranslate();
@@ -64,11 +66,7 @@ export default function ReaderFeedItem( props: ReaderFeedItemProps ): JSX.Elemen
 
 	// Fetch feed and site data.
 	const queryFeed: boolean = ! isWpcomFeed; // No need to query feed data for WPCOM feeds.
-	const {
-		data: feed,
-		isLoading: isFeedLoading,
-		refetch: refetchFeed, // For cache invalidation and manually refetching the feed data.
-	} = Reader.useReadFeedQuery( queryFeed, feedId );
+	const { data: feed, isLoading: isFeedLoading } = Reader.useReadFeedQuery( queryFeed, feedId );
 	const { data: site, isLoading: isSiteLoading } = Reader.useReadFeedSiteQuery( Number( blogId ) );
 
 	if ( isFeedLoading || ( isWpcomFeed && isSiteLoading ) ) {
@@ -102,47 +100,43 @@ export default function ReaderFeedItem( props: ReaderFeedItemProps ): JSX.Elemen
 			return;
 		}
 
-		const noticeOptions: NoticeOptions = { duration: 2000 };
+		const noticeOptions: NoticeOptions = { duration: 5000 };
 		if ( subscriptionId ) {
-			onUnsubscribe(
-				{
-					subscriptionId: subscriptionId,
-					blog_id: blogId ?? undefined,
-					url: subscribeUrl,
+			onUnsubscribe( {
+				subscriptionId: subscriptionId,
+				blog_id: blogId ?? undefined,
+				url: subscribeUrl,
+				onSuccess: () => {
+					dispatch(
+						successNotice(
+							translate( 'Success! You are now unsubscribed to "%s".', {
+								args: title ?? filteredDisplayUrl,
+							} ),
+							noticeOptions
+						)
+					);
+
+					recordSiteUnsubscribed( { blog_id: blogId, url: subscribeUrl, source } );
+					onChangeSubscribe?.( false );
+
+					if ( shouldTrackRecommendedSearch ) {
+						// reader: action: site_followed, railcar, ui_algo, ui_position, fetch_algo, fetch_position, fetch_lang, rec_blog_id, (incorrect: only railcar & action accepted)
+						// subscriptions: action: recommended_search_item_site_subscribed, railcar
+						recordTrainTracksInteract( {
+							railcarId: railcar.railcar,
+							action: 'recommended_search_item_site_unsubscribed',
+						} );
+					}
 				},
-				{
-					onSuccess: () => {
-						dispatch(
-							successNotice(
-								translate( 'Success! You are now subscribed to "%s".', {
-									args: title ?? filteredDisplayUrl,
-								} ),
-								noticeOptions
-							)
-						);
-
-						recordSiteUnsubscribed( { blog_id: blogId, url: subscribeUrl, source } );
-						refetchFeed();
-
-						if ( shouldTrackRecommendedSearch ) {
-							// reader: action: site_followed, railcar, ui_algo, ui_position, fetch_algo, fetch_position, fetch_lang, rec_blog_id, (incorrect: only railcar & action accepted)
-							// subscriptions: action: recommended_search_item_site_subscribed, railcar
-							recordTrainTracksInteract( {
-								railcarId: railcar.railcar,
-								action: 'recommended_search_item_site_unsubscribed',
-							} );
-						}
-					},
-					onError: () => {
-						dispatch(
-							errorNotice(
-								translate( 'Sorry, we had a problem unsubscribing. Please try again.' ),
-								noticeOptions
-							)
-						);
-					},
-				}
-			);
+				onError: () => {
+					dispatch(
+						errorNotice(
+							translate( 'Sorry, we had a problem unsubscribing. Please try again.' ),
+							noticeOptions
+						)
+					);
+				},
+			} );
 		} else {
 			onSubscribe( {
 				blog_id: blogId ?? undefined,
@@ -156,6 +150,7 @@ export default function ReaderFeedItem( props: ReaderFeedItemProps ): JSX.Elemen
 						)
 					);
 
+					onChangeSubscribe?.( true );
 					recordSiteSubscribed( { blog_id: blogId, url: subscribeUrl, source } );
 
 					if ( railcar ) {

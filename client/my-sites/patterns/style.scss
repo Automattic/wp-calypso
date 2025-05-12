@@ -10,6 +10,9 @@
 			// Makes sure the navigation bar header appears below the masterbar and notices
 			z-index: z-index("root", ".main") - 1;
 		}
+		a {
+			text-decoration: none;
+		}
 	}
 
 	.layout__primary {

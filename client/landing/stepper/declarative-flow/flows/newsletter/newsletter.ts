@@ -2,10 +2,10 @@ import { Onboard, updateLaunchpadSettings } from '@automattic/data-stores';
 import { NEWSLETTER_FLOW } from '@automattic/onboarding';
 import { useDispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
-import { translate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { useLaunchpadDecider } from 'calypso/landing/stepper/declarative-flow/internals/hooks/use-launchpad-decider';
-import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
+import { useSite } from 'calypso/landing/stepper/hooks/use-site';
+import { getStepFromURL } from 'calypso/landing/stepper/utils/get-flow-from-url';
 import { skipLaunchpad } from 'calypso/landing/stepper/utils/skip-launchpad';
 import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
 import {
@@ -14,6 +14,7 @@ import {
 	persistSignupDestination,
 	setSignupCompleteFlowName,
 } from 'calypso/signup/storageUtils';
+import { shouldShowLaunchpadFirst } from 'calypso/state/selectors/should-show-launchpad-first';
 import { useExitFlow } from '../../../hooks/use-exit-flow';
 import { useSiteIdParam } from '../../../hooks/use-site-id-param';
 import { useSiteSlug } from '../../../hooks/use-site-slug';
@@ -26,17 +27,9 @@ import type { Flow } from '../../internals/types';
 const newsletter: Flow = {
 	name: NEWSLETTER_FLOW,
 	__experimentalUseBuiltinAuth: true,
-	get title() {
-		return translate( 'Newsletter' );
-	},
 	isSignupFlow: true,
 	useSteps() {
-		const query = useQuery();
-		const isComingFromMarketingPage = query.get( 'ref' ) === 'newsletter-lp';
-
-		const publicSteps = [ ...( ! isComingFromMarketingPage ? [ STEPS.INTRO ] : [] ) ];
-
-		const privateSteps = stepsWithRequiredLogin( [
+		return stepsWithRequiredLogin( [
 			STEPS.NEWSLETTER_SETUP,
 			STEPS.NEWSLETTER_GOALS,
 			STEPS.DOMAINS,
@@ -46,8 +39,22 @@ const newsletter: Flow = {
 			STEPS.SITE_CREATION_STEP,
 			STEPS.LAUNCHPAD,
 		] );
+	},
+	useTracksEventProps() {
+		const site = useSite();
+		const step = getStepFromURL();
+		if ( site && shouldShowLaunchpadFirst( site ) && step === 'launchpad' ) {
+			//prevent track events from firing until we're sure we won't redirect away from Launchpad
+			return {
+				isLoading: true,
+				eventsProperties: {},
+			};
+		}
 
-		return [ ...publicSteps, ...privateSteps ];
+		return {
+			isLoading: false,
+			eventsProperties: {},
+		};
 	},
 	useSideEffect() {
 		const { setHidePlansFeatureComparison, setIntent } = useDispatch( ONBOARD_STORE );
@@ -61,9 +68,7 @@ const newsletter: Flow = {
 		const flowName = this.name;
 		const siteId = useSiteIdParam();
 		const siteSlug = useSiteSlug();
-		const query = useQuery();
 		const { exitFlow } = useExitFlow();
-		const isComingFromMarketingPage = query.get( 'ref' ) === 'newsletter-lp';
 
 		const { getPostFlowUrl, initializeLaunchpadState } = useLaunchpadDecider( {
 			exitFlow,
@@ -80,13 +85,10 @@ const newsletter: Flow = {
 
 		triggerGuidesForStep( flowName, _currentStep );
 
-		function submit( providedDependencies: ProvidedDependencies = {} ) {
+		async function submit( providedDependencies: ProvidedDependencies = {} ) {
 			const launchpadUrl = `/setup/${ flowName }/launchpad?siteSlug=${ providedDependencies.siteSlug }`;
 
 			switch ( _currentStep ) {
-				case 'intro':
-					return navigate( 'newsletterSetup' );
-
 				case 'newsletterSetup':
 					return navigate( 'newsletterGoals' );
 
@@ -138,14 +140,10 @@ const newsletter: Flow = {
 					);
 
 				case 'subscribers':
-					completeSubscribersTask();
+					await completeSubscribersTask();
 					return navigate( 'launchpad' );
 			}
 		}
-
-		const goBack = () => {
-			return;
-		};
 
 		const goNext = async () => {
 			switch ( _currentStep ) {
@@ -157,7 +155,7 @@ const newsletter: Flow = {
 					return;
 
 				default:
-					return navigate( isComingFromMarketingPage ? 'newsletterSetup' : 'intro' );
+					return navigate( 'newsletterSetup' );
 			}
 		};
 
@@ -165,7 +163,7 @@ const newsletter: Flow = {
 			navigate( step );
 		};
 
-		return { goNext, goBack, goToStep, submit };
+		return { goNext, goToStep, submit };
 	},
 };
 

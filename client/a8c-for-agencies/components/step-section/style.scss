@@ -31,10 +31,3 @@
 		}
 	}
 }
-
-.referrals-layout--automated,
-.commission-overview__layout-automated {
-	.step-section .step-section__header .step-section__step-heading {
-		@include heading-large;
-	}
-}

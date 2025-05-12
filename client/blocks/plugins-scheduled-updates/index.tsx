@@ -71,7 +71,7 @@ export const PluginsScheduledUpdates = ( props: Props ) => {
 					setNavigationTitle={ setNavigationTitle }
 				/>
 			),
-			title: translate( 'Scheduled Updates Logs' ),
+			title: translate( 'Scheduled updates logs' ),
 		},
 		list: {
 			component: (
@@ -82,7 +82,7 @@ export const PluginsScheduledUpdates = ( props: Props ) => {
 					onShowLogs={ onShowLogs }
 				/>
 			),
-			title: translate( 'Scheduled Updates' ),
+			title: translate( 'Scheduled updates' ),
 		},
 		create: {
 			component: <ScheduleCreate onNavBack={ onNavBack } />,

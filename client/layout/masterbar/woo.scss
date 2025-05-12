@@ -158,16 +158,16 @@ $breakpoint-mobile: 660px;
 	.wp-login__links button,
 	.button:not(.social-buttons__button),
 	.magic-login__footer a {
-		font-size: $woo-font-size-base;
-		line-height: 28px;
-		text-align: center;
 		color: $gray-50;
 		text-decoration: underline;
-		letter-spacing: 0;
 
-		&:hover,
 		&:visited {
 			color: $gray-50;
+		}
+
+		&:hover,
+		&:focus {
+			color: $woo-gray-100;
 		}
 	}
 
@@ -207,13 +207,13 @@ $breakpoint-mobile: 660px;
 		background-color: initial;
 	}
 
-	.login__form-user-exists-notice.notice {
+	.login__form-user-exists-notice.calypso-notice {
 		border-radius: 8px; // stylelint-disable-line scales/radii
 		overflow: auto;
 		padding: 16px 20px;
 		background-color: #f6f7f7;
 
-		.notice__icon-wrapper {
+		.calypso-notice__icon-wrapper {
 			background-color: #f6f7f7;
 			color: #2c3338;
 			width: auto;
@@ -221,19 +221,19 @@ $breakpoint-mobile: 660px;
 			align-items: flex-start;
 		}
 
-		.notice__dismiss {
+		.calypso-notice__dismiss {
 			padding: 0;
 			background-color: #f6f7f7;
 			color: #a7aaad;
 		}
 
-		.notice__content {
+		.calypso-notice__content {
 			padding: 0 16px;
 			background-color: #f6f7f7;
 			color: #2c3338;
 		}
 
-		.notice__text {
+		.calypso-notice__text {
 			color: #2c3338;
 			font-size: rem(14px);
 			font-style: normal;
@@ -722,7 +722,6 @@ $breakpoint-mobile: 660px;
 
 		a {
 			color: var(--woo-purple-70);
-			font-size: $font-body;
 			text-decoration: none;
 		}
 
@@ -1297,6 +1296,45 @@ $breakpoint-mobile: 660px;
 			}
 		}
 
+		.components-button {
+			--color-accent: var(--woo-purple-40);
+			--color-accent-60: var(--woo-purple-60);
+
+			&.is-primary,
+			&.social-buttons__button {
+				border-radius: 8px; /* stylelint-disable-line scales/radii */
+				font-size: 1rem;
+				font-weight: 500;
+				height: 48px;
+
+				&:focus:not(:disabled) {
+					--color-accent: var(--woo-purple-60);
+				}
+			}
+
+			&.social-buttons__button {
+				&:focus:not(:disabled) {
+					box-shadow: inset 0 0 0 1px var(--wp-components-color-background, #fff), 0 0 0 2px var(--wp-components-color-accent);
+				}
+			}
+
+			&.is-primary {
+				&:focus:not(:disabled) {
+					box-shadow: 0 0 0 2px var(--wp-components-color-accent);
+				}
+
+				&:disabled {
+					--color-accent: var(--studio-gray-5);
+
+					color: var(--studio-gray-50);
+				}
+
+				.components-spinner {
+					margin-top: 0;
+				}
+			}
+		}
+
 		input[type="text"].form-text-input,
 		input[type="email"].form-text-input,
 		input[type="password"].form-text-input,
@@ -1525,6 +1563,7 @@ $breakpoint-mobile: 660px;
 				color: var(--woo-purple-40);
 				text-align: center;
 				font-weight: 400;
+				font-size: $woo-font-size-base;
 				line-height: 20px;
 				margin-block-start: 24px;
 				text-decoration: underline;
@@ -1559,19 +1598,10 @@ $breakpoint-mobile: 660px;
 				}
 
 				.social-buttons__button {
-					--color-accent: var(--woo-purple-40);
-
-					height: 48px;
 					padding: 8px 16px;
-					border-radius: 8px; // stylelint-disable-line scales/radii
-					margin: 0;
 
 					&:not(:focus) {
 						box-shadow: inset 0 0 0 2px $gray-300, 0 0 0 currentColor;
-					}
-
-					&:focus {
-						box-shadow: 0 0 0 currentColor inset, 0 0 0 2px var(--wp-components-color-accent);
 					}
 
 					> span {
@@ -2273,8 +2303,8 @@ $breakpoint-mobile: 660px;
 		@include button-primary;
 	}
 
-	.notice__text a,
-	.notice__text a:visited {
+	.calypso-notice__text a,
+	.calypso-notice__text a:visited {
 		@include link-woo;
 	}
 

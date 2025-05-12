@@ -1,0 +1,9 @@
+@import '@wordpress/base-styles/colors';
+
+.story-link {
+	color: $alert-green;
+}
+
+strong {
+	color: $alert-red;
+}

@@ -1,7 +1,10 @@
-import { globe, group, Icon, scheduled, envelope } from '@wordpress/icons';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
+import { globe, group, Icon, scheduled } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { ReactElement } from 'react';
+import CancelDifmMigrationForm from './cancel-difm-migration';
 import { Container, Header } from './layout';
+import type { SiteDetails } from '@automattic/data-stores';
 
 type MigrationStartedListProps = {
 	children: ReactElement< MigrationStartedItemProps > | ReactElement< MigrationStartedItemProps >[];
@@ -25,13 +28,20 @@ const MigrationStartedItem = ( { icon, text }: MigrationStartedItemProps ) => (
 	</li>
 );
 
-export const MigrationStartedDIFM = () => {
+export const MigrationStartedDIFM = ( { site }: { site: SiteDetails } ) => {
 	const translate = useTranslate();
+	const hasEnTranslation = useHasEnTranslation();
 
 	const title = translate( "We've received your migration request" );
-	const subTitle = translate(
-		"Our team has received your details. We will review your site to make sure we have everything we need. Here's what you can expect next:"
-	) as string;
+	const subTitle = hasEnTranslation(
+		"We will review your site to make sure we have everything we need. Here's what you can expect next:"
+	)
+		? translate(
+				"We will review your site to make sure we have everything we need. Here's what you can expect next:"
+		  )
+		: translate(
+				"Our team has received your details. We will review your site to make sure we have everything we need. Here's what you can expect next:"
+		  );
 
 	return (
 		<Container>
@@ -39,12 +49,6 @@ export const MigrationStartedDIFM = () => {
 			<div className="migration-started-difm">
 				<h2 className="migration-started-difm__title">{ translate( 'What to expect' ) }</h2>
 				<MigrationStartedList>
-					<MigrationStartedItem
-						icon={ envelope }
-						text={ translate(
-							"We'll send you an email with more details on the process and we'll let you know when we start the migration."
-						) }
-					/>
 					<MigrationStartedItem
 						icon={ group }
 						text={ translate(
@@ -64,6 +68,7 @@ export const MigrationStartedDIFM = () => {
 						) }
 					/>
 				</MigrationStartedList>
+				<CancelDifmMigrationForm siteId={ site.ID } />
 			</div>
 		</Container>
 	);

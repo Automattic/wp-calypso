@@ -192,6 +192,8 @@ import {
 	FEATURE_SECURITY_MALWARE,
 	FEATURE_SECURITY_DDOS,
 	FEATURE_DEV_TOOLS,
+	FEATURE_DEV_TOOLS_SSH,
+	FEATURE_DEV_TOOLS_GIT,
 	FEATURE_WP_UPDATES,
 	FEATURE_MULTI_SITE,
 	FEATURE_SELL_SHIP,
@@ -1942,6 +1944,19 @@ const FEATURES_LIST: FeatureList = {
 		getDescription: () =>
 			i18n.translate( 'Use familiar developer tools to manage and deploy your site.' ),
 	},
+	[ FEATURE_DEV_TOOLS_SSH ]: {
+		getSlug: () => FEATURE_DEV_TOOLS_SSH,
+		getTitle: () => i18n.translate( 'SFTP/SSH, WP-CLI' ),
+		getDescription: () => i18n.translate( 'Access your site via SSH and manage it with WP-CLI.' ),
+	},
+	[ FEATURE_DEV_TOOLS_GIT ]: {
+		getSlug: () => FEATURE_DEV_TOOLS_GIT,
+		getTitle: () => i18n.translate( 'Git commands and GitHub Deployments' ),
+		getDescription: () =>
+			i18n.translate(
+				'Deploy from GitHub with a few clicks. Simple and advanced deployment modes supported.'
+			),
+	},
 	[ FEATURE_SITE_STAGING_SITES ]: {
 		getSlug: () => FEATURE_SITE_STAGING_SITES,
 		getTitle: () => i18n.translate( 'Free staging site' ),
@@ -2292,9 +2307,11 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_WOOCOMMERCE_HOSTING ]: {
 		getSlug: () => FEATURE_WOOCOMMERCE_HOSTING,
-		getTitle: () => {
-			return i18n.translate( 'eCommerce tools and optimized WooCommerce hosting' );
-		},
+		getTitle: () =>
+			i18n.getLocaleSlug()?.startsWith( 'en' ) ||
+			i18n.hasTranslation( 'eCommerce tools and optimized WooCommerce experience' )
+				? i18n.translate( 'eCommerce tools and optimized WooCommerce experience' )
+				: i18n.translate( 'eCommerce tools and optimized WooCommerce hosting' ),
 		getDescription: () =>
 			i18n.translate(
 				'Enjoy a hosting solution tailored to enhance the performance and security of sites running WooCommerce.'

@@ -1,4 +1,4 @@
-import { numberFormat } from 'i18n-calypso';
+import { formatNumber as formatNumberI18n } from '@automattic/number-formatters';
 
 export function formatNumber( number: number | null, isShortened = true, showSign = false ) {
 	const numberFormatOptions: Intl.NumberFormatOptions = isShortened
@@ -9,7 +9,7 @@ export function formatNumber( number: number | null, isShortened = true, showSig
 		  }
 		: { notation: 'standard', ...( showSign && { signDisplay: 'exceptZero' } ) };
 
-	return number !== null ? numberFormat( number, { numberFormatOptions } ) : '-';
+	return number !== null ? formatNumberI18n( number, { numberFormatOptions } ) : '-';
 }
 
 export function formatPercentage(
@@ -22,7 +22,7 @@ export function formatPercentage(
 		usePreciseSmallPercentages && number && number < 0.01
 			? { style: 'percent', maximumFractionDigits: 2, maximumSignificantDigits: 2 }
 			: { style: 'percent' };
-	return number !== null ? numberFormat( number, { numberFormatOptions } ) : '-';
+	return number !== null ? formatNumberI18n( number, { numberFormatOptions } ) : '-';
 }
 
 export function subtract( a: number | null, b: number | null | undefined ): number | null {

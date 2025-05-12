@@ -1,4 +1,7 @@
 import PopupMonitor from '@automattic/popup-monitor';
+import debugFactory from 'debug';
+
+const debug = debugFactory( 'calypso:request-external-access' );
 
 /**
  * The callback function of the requestExternalAccess utility.
@@ -24,6 +27,8 @@ const requestExternalAccess = ( url, cb ) => {
 		'toolbar=0,location=0,status=0,menubar=0,' + popupMonitor.getScreenCenterSpecs( 780, 700 )
 	);
 
+	debug( 'popupMonitor.open', url );
+
 	popupMonitor.once( 'close', () => {
 		const result = {};
 		if ( lastMessage && lastMessage.keyring_id ) {
@@ -31,6 +36,8 @@ const requestExternalAccess = ( url, cb ) => {
 			result.id_token = lastMessage.id_token;
 			result.user = lastMessage.user;
 		}
+
+		debug( 'popupMonitor.once close', lastMessage );
 		cb( result );
 	} );
 

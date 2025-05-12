@@ -1,5 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@automattic/components/src/styles/typography";
+@import "@automattic/typography/styles/variables";
 
 @font-face {
 	font-family: Inter;
@@ -54,6 +55,13 @@ body.is-section-signup {
 	min-height: 100%;
 
 	$login-form-max-width: 327px;
+
+	.components-button {
+		--color-accent: var(--color-orange);
+		--color-accent-60: var(--color-orange);
+
+		font-weight: 600;
+	}
 
 	.masterbar__blaze-pro-nav {
 		display: flex;
@@ -212,7 +220,6 @@ body.is-section-signup {
 			justify-content: center;
 			align-items: center;
 			align-self: stretch;
-			border-radius: 4px;
 			border: 1px solid #ccc;
 			height: 221px;
 			box-sizing: border-box;
@@ -288,7 +295,6 @@ body.is-section-signup {
 		.continue-as-user__continue-button {
 			background: var(--color-orange);
 			border-color: var(--color-orange);
-			border-radius: 4px;
 			font-family: $inter;
 			font-size: rem(13px);
 			font-weight: 600;
@@ -325,12 +331,9 @@ body.is-section-signup {
 		margin-bottom: 24px;
 
 		.social-buttons__button {
-			--color-accent: var(--color-orange);
-
 			> span {
 				font-family: $inter;
 				font-size: rem(13px);
-				font-weight: 600;
 			}
 
 		}
@@ -460,7 +463,6 @@ body.is-section-signup {
 
 		.form-text-input {
 			border: 1px solid #dddddf;
-			border-radius: 4px;
 
 			&:focus,
 			&:focus-visible,
@@ -492,7 +494,6 @@ body.is-section-signup {
 		.form-button {
 			background: var(--color-orange);
 			border-color: var(--color-orange);
-			border-radius: 4px;
 			color: var(--color-white);
 			font-size: rem(13px);
 			font-weight: 600;

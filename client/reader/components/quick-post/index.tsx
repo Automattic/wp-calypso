@@ -110,7 +110,10 @@ function QuickPost( {
 				status: 'publish',
 			} )
 			.then( ( postData: PostItem ) => {
-				recordReaderTracksEvent( 'calypso_reader_quick_post_submitted' );
+				recordReaderTracksEvent( 'calypso_reader_quick_post_submitted', {
+					post_id: postData.ID,
+					post_url: postData.URL,
+				} );
 				clearEditor();
 
 				successNotice( translate( 'Post successful! Your post will appear in the feed soon.' ), {
@@ -141,10 +144,6 @@ function QuickPost( {
 			.finally( () => {
 				setIsSubmitting( false );
 			} );
-	};
-
-	const handleCancel = () => {
-		clearEditor();
 	};
 
 	const handleSiteSelect = ( siteId: number ) => {
@@ -230,13 +229,6 @@ function QuickPost( {
 				</div>
 			</div>
 			<div className="quick-post-input__actions">
-				<Button
-					onClick={ handleCancel }
-					disabled={ isDisabled }
-					className="quick-post-input__cancel"
-				>
-					{ translate( 'Cancel' ) }
-				</Button>
 				<Button
 					variant="primary"
 					onClick={ handleSubmit }

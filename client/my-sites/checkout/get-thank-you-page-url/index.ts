@@ -298,6 +298,13 @@ export default function getThankYouPageUrl( {
 		return `/checkout/akismet/thank-you/${ productSlug }`;
 	}
 
+	// A4A client checkout uses a custom thank you page
+	if ( sitelessCheckoutType === 'a4a' ) {
+		debug( 'redirecting to A4A client subscriptions page' );
+		// If redirectTo is specified, use it. Otherwise, redirect to the client subscriptions page
+		return redirectTo || '/client/subscriptions';
+	}
+
 	// If there is no purchase, then send the user to a generic page (not
 	// post-purchase related).
 	if ( noPurchaseMade ) {

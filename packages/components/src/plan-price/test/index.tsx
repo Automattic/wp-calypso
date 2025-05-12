@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+import { setGeoLocation, setLocale } from '@automattic/number-formatters';
 import { render, screen } from '@testing-library/react';
 import i18n, { geolocateCurrencySymbol } from 'i18n-calypso';
 import React from 'react';
@@ -213,7 +214,7 @@ describe( 'PlanPrice', () => {
 							: Promise.resolve( 'invalid' ),
 				} ) as any
 		);
-		await geolocateCurrencySymbol();
+		await geolocateCurrencySymbol( setGeoLocation );
 		render( <PlanPrice rawPrice={ 96.05 } currencyCode="USD" displayFlatPrice /> );
 		expect( document.body ).toHaveTextContent( '$96.05' );
 		expect( document.body ).not.toHaveTextContent( 'US$96.05' );
@@ -229,7 +230,7 @@ describe( 'PlanPrice', () => {
 							: Promise.resolve( 'invalid' ),
 				} ) as any
 		);
-		await geolocateCurrencySymbol();
+		await geolocateCurrencySymbol( setGeoLocation );
 		render( <PlanPrice rawPrice={ 96.05 } currencyCode="USD" displayFlatPrice /> );
 		expect( document.body ).toHaveTextContent( 'US$96.05' );
 	} );
@@ -386,6 +387,7 @@ describe( 'PlanPrice', () => {
 				localeSlug: 'fr',
 			},
 		} );
+		setLocale( 'fr-CA' );
 		render( <PlanPrice rawPrice={ 48 } currencyCode="CAD" /> );
 		expect( document.body ).toHaveTextContent( '48C$' );
 	} );

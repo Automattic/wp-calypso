@@ -58,7 +58,6 @@ const SiteSettingsJetpack = ( {
 			<DocumentHead title={ translate( 'Jetpack Settings' ) } />
 			<JetpackDevModeNotice />
 			<NavigationHeader navigationItems={ [] } title={ translate( 'Jetpack Settings' ) } />
-
 			<SiteSettingsNavigation site={ site } section="jetpack" />
 			{ config.isEnabled( 'jetpack/backup-retention-settings' ) ? (
 				// @TODO: Maybe we should move HasRetentionCapabilitiesSwitch to BackupRetentionManagement

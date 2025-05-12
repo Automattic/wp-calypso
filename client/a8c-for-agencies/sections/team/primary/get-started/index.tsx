@@ -60,7 +60,6 @@ export default function GetStarted() {
 
 				<StepSection heading={ translate( 'How do I start?' ) }>
 					<StepSectionItem
-						isNewLayout
 						stepNumber={ 1 }
 						heading={ translate( 'Invite a team member' ) }
 						description={

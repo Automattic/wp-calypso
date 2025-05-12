@@ -117,19 +117,15 @@ const useMainMenuItems = ( path: string ) => {
 			},
 			...referralItems,
 			migrationMenuItem,
-			...( isSectionNameEnabled( 'a8c-for-agencies-woopayments' )
-				? [
-						{
-							icon: <img src={ wooPaymentsIcon } alt="WooPayments" />,
-							path: '/',
-							link: A4A_WOOPAYMENTS_LINK,
-							title: translate( 'WooPayments' ),
-							trackEventProps: {
-								menu_item: 'Automattic for Agencies / WooPayments',
-							},
-						},
-				  ]
-				: [] ),
+			{
+				icon: <img src={ wooPaymentsIcon } alt="WooPayments" />,
+				path: '/',
+				link: A4A_WOOPAYMENTS_LINK,
+				title: translate( 'WooPayments' ),
+				trackEventProps: {
+					menu_item: 'Automattic for Agencies / WooPayments',
+				},
+			},
 			...( isSectionNameEnabled( 'a8c-for-agencies-plugins' )
 				? [
 						{

@@ -10,6 +10,6 @@ export const useSitesDashboardImportSiteUrl = (
 			source: TRACK_SOURCE_NAME,
 			...additionalParameters,
 		},
-		'/setup/hosted-site-migration'
+		'/setup/site-migration'
 	);
 };

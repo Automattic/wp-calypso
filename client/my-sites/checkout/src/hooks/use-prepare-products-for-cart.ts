@@ -144,6 +144,7 @@ export default function usePrepareProductsForCart( {
 			sitelessCheckoutType === 'jetpack' ||
 			sitelessCheckoutType === 'akismet' ||
 			sitelessCheckoutType === 'marketplace' ||
+			sitelessCheckoutType === 'a4a' ||
 			isGiftPurchase
 	);
 	useStripProductsFromUrl( siteSlug, doNotStripProducts );

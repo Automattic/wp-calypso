@@ -16,81 +16,44 @@ $notification-color: #69a8bb;
 .color-scheme.is-midnight {
 	/* Variables used in Calypso Midnight */
 	--theme-text-color: #fff; /* $text-color */
-	--theme-text-color-rgb: 255, 255, 255; /* Manual conversion */
 	--theme-base-color: #363b3f; /* $base-color */
-	--theme-base-color-rgb: 54, 59, 63; /* Manually computed https://www.rapidtables.com/convert/color/hex-to-rgb.html */
 	--theme-submenu-text-color: #c3c4c5; /* $menu-submenu-text */
 	--theme-submenu-background-color: #26292c; /* $menu-submenu-background */
 	--theme-icon-color: #ece6f6; /* $icon-color */
 	--theme-highlight-color: #e14d43; /* highlight-color */
-	--theme-highlight-color-rgb: 225, 77, 67; /* Manually computed https://www.rapidtables.com/convert/color/hex-to-rgb.html */
 	--theme-notification-color: #69a8bb; /* Direct from wp-admin */
 
 	/* Primary */
 	--color-primary: var(--theme-highlight-color);
-	--color-primary-rgb: var(--theme-highlight-color-rgb);
 	--color-primary-dark: var(--studio-red-70);
-	--color-primary-dark-rgb: var(--studio-red-70-rgb);
 	--color-primary-light: var(--studio-red-30);
-	--color-primary-light-rgb: var(--studio-red-30-rgb);
 	--color-primary-0: var(--studio-red-0);
-	--color-primary-0-rgb: var(--studio-red-0-rgb);
 	--color-primary-5: var(--studio-red-5);
-	--color-primary-5-rgb: var(--studio-red-5-rgb);
 	--color-primary-10: var(--studio-red-10);
-	--color-primary-10-rgb: var(--studio-red-10-rgb);
 	--color-primary-20: var(--studio-red-20);
-	--color-primary-20-rgb: var(--studio-red-20-rgb);
 	--color-primary-30: var(--studio-red-30);
-	--color-primary-30-rgb: var(--studio-red-30-rgb);
 	--color-primary-40: var(--studio-red-40);
-	--color-primary-40-rgb: var(--studio-red-40-rgb);
 	--color-primary-50: var(--studio-red-50);
-	--color-primary-50-rgb: var(--studio-red-50-rgb);
 	--color-primary-60: var(--studio-red-60);
-	--color-primary-60-rgb: var(--studio-red-60-rgb);
 	--color-primary-70: var(--studio-red-70);
-	--color-primary-70-rgb: var(--studio-red-70-rgb);
 	--color-primary-80: var(--studio-red-80);
-	--color-primary-80-rgb: var(--studio-red-80-rgb);
 	--color-primary-90: var(--studio-red-90);
-	--color-primary-90-rgb: var(--studio-red-90-rgb);
 	--color-primary-100: var(--studio-red-100);
-	--color-primary-100-rgb: var(--studio-red-100-rgb);
-
-	/* Accent */
 	--color-accent: var(--theme-highlight-color);
-	--color-accent-rgb: var(--theme-highlight-color-rgb);
 	--color-accent-dark: var(--studio-red-70);
-	--color-accent-dark-rgb: var(--studio-red-70-rgb);
 	--color-accent-light: var(--studio-red-30);
-	--color-accent-light-rgb: var(--studio-red-30-rgb);
 	--color-accent-0: var(--studio-red-0);
-	--color-accent-0-rgb: var(--studio-red-0-rgb);
 	--color-accent-5: var(--studio-red-5);
-	--color-accent-5-rgb: var(--studio-red-5-rgb);
 	--color-accent-10: var(--studio-red-10);
-	--color-accent-10-rgb: var(--studio-red-10-rgb);
 	--color-accent-20: var(--studio-red-20);
-	--color-accent-20-rgb: var(--studio-red-20-rgb);
 	--color-accent-30: var(--studio-red-30);
-	--color-accent-30-rgb: var(--studio-red-30-rgb);
 	--color-accent-40: var(--studio-red-40);
-	--color-accent-40-rgb: var(--studio-red-40-rgb);
 	--color-accent-50: var(--studio-red-50);
-	--color-accent-50-rgb: var(--studio-red-50-rgb);
 	--color-accent-60: var(--studio-red-60);
-	--color-accent-60-rgb: var(--studio-red-60-rgb);
 	--color-accent-70: var(--studio-red-70);
-	--color-accent-70-rgb: var(--studio-red-70-rgb);
 	--color-accent-80: var(--studio-red-80);
-	--color-accent-80-rgb: var(--studio-red-80-rgb);
 	--color-accent-90: var(--studio-red-90);
-	--color-accent-90-rgb: var(--studio-red-90-rgb);
 	--color-accent-100: var(--studio-red-100);
-	--color-accent-100-rgb: var(--studio-red-100-rgb);
-
-	/* Masterbar */
 	--color-masterbar-background: var(--theme-base-color);
 	--color-masterbar-border: #464d52; /* $adminbar-avatar-frame */
 	--color-masterbar-text: var(--theme-text-color);
@@ -110,22 +73,15 @@ $notification-color: #69a8bb;
 
 	/* Sidebar */
 	--color-sidebar-background: var(--theme-base-color);
-	--color-sidebar-background-rgb: var(--theme-base-color-rgb);
 	--color-sidebar-border: var(--theme-submenu-background-color);
 	--color-sidebar-text: var(--theme-text-color);
-	--color-sidebar-text-rgb: var(--theme-text-color-rgb);
 	--color-sidebar-text-alternative: var(--theme-text-color);
 	--color-sidebar-gridicon-fill: var(--theme-icon-color);
 
 	/* Sidebar Selected */
 	--color-sidebar-menu-selected-background: var(--theme-highlight-color);
-	--color-sidebar-menu-selected-background-rgb: var(--theme-highlight-color-rgb);
 	--color-sidebar-menu-selected-text: var(--theme-text-color);
-	--color-sidebar-menu-selected-text-rgb: var(--theme-text-color-rgb);
-
-	/* Sidebar Hover */
 	--color-sidebar-menu-hover-background: var(--theme-highlight-color);
-	--color-sidebar-menu-hover-background-rgb: var(--theme-highlight-color-rgb);
 	--color-sidebar-menu-hover-text: var(--theme-text-color);
 
 	/* Sidebar Submenu - Nav Unification */

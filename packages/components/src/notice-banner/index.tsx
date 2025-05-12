@@ -1,7 +1,7 @@
-import { alert } from '@automattic/components/src/icons';
 import { Icon, warning, info, check, closeSmall } from '@wordpress/icons';
 import clsx from 'clsx';
 import React from 'react';
+import { alert } from '../icons';
 import './style.scss';
 
 type NoticeBannerProps = {

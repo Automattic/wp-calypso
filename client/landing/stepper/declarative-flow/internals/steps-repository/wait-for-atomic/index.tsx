@@ -1,5 +1,6 @@
 /* eslint-disable no-console */
 import config from '@automattic/calypso-config';
+import { isTransferringHostedSiteCreationFlow, Step } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
@@ -8,13 +9,14 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { useWaitForAtomic, FailureInfo } from '../../../../hooks/use-wait-for-atomic';
 import { ONBOARD_STORE } from '../../../../stores';
-import type { Step } from '../../types';
+import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
+import type { Step as StepType } from '../../types';
 import type { OnboardSelect } from '@automattic/data-stores';
 
-const WaitForAtomic: Step = function WaitForAtomic( { navigation, data } ) {
+const WaitForAtomic: StepType = function WaitForAtomic( { navigation, data, flow } ) {
 	const [ searchParams ] = useSearchParams();
 	const { submit } = navigation;
-	const { setPendingAction, setProgress } = useDispatch( ONBOARD_STORE );
+	const { setPendingAction, setProgress: setProgressAction } = useDispatch( ONBOARD_STORE );
 	const site = useSite();
 
 	let siteId = site?.ID as number;
@@ -57,6 +59,14 @@ const WaitForAtomic: Step = function WaitForAtomic( { navigation, data } ) {
 			return;
 		}
 
+		const setProgress = ( progress: number ) => {
+			if ( isTransferringHostedSiteCreationFlow( flow ) ) {
+				return;
+			}
+
+			setProgressAction( progress );
+		};
+
 		setPendingAction( async () => {
 			setProgress( 10 );
 			await waitForInitiateTransfer();
@@ -81,6 +91,10 @@ const WaitForAtomic: Step = function WaitForAtomic( { navigation, data } ) {
 		// Only trigger when the siteId changes.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ siteId ] );
+
+	if ( shouldUseStepContainerV2( flow ) ) {
+		return <Step.Loading />;
+	}
 
 	return null;
 };

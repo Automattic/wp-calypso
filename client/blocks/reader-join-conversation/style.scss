@@ -70,5 +70,5 @@
 
 .dialog__backdrop,
 .dialog__backdrop.card {
-	background-color: rgba(var(--color-neutral-70-rgb), 0.8) !important;
+	background-color: color-mix(in srgb, var(--color-neutral-70) 80%, transparent) !important;
 }

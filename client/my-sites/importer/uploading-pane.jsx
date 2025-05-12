@@ -142,7 +142,7 @@ export class UploadingPane extends PureComponent {
 											br: <br />,
 											a: (
 												<a
-													href={ `/setup/site-setup/importerWordpress?siteSlug=${ this.props.site.slug }&option=content` }
+													href={ `/setup/site-setup/importerWordpress?siteSlug=${ this.props.site.slug }` }
 												/>
 											),
 										},

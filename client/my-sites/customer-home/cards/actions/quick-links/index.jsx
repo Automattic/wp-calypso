@@ -1,13 +1,13 @@
 import config from '@automattic/calypso-config';
-import { getAllFeaturesForPlan } from '@automattic/calypso-products/';
+import { getAllFeaturesForPlan } from '@automattic/calypso-products';
 import { JetpackLogo, FoldableCard } from '@automattic/components';
+import { blaze } from '@automattic/components/src/icons';
 import { GeneratorModal } from '@automattic/jetpack-ai-calypso';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { connect, useSelector } from 'react-redux';
 import { useDebouncedCallback } from 'use-debounce';
 import fiverrIcon from 'calypso/assets/images/customer-home/fiverr-logo-grey.svg';
-import blazeIcon from 'calypso/assets/images/icons/blaze-icon.svg';
 import withIsFSEActive from 'calypso/data/themes/with-is-fse-active';
 import { usePromoteWidget, PromoteWidgetStatus } from 'calypso/lib/promote-post';
 import useAdvertisingUrl from 'calypso/my-sites/advertising/useAdvertisingUrl';
@@ -15,7 +15,6 @@ import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/ana
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference } from 'calypso/state/preferences/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
-import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
 import getSiteEditorUrl from 'calypso/state/selectors/get-site-editor-url';
 import isSiteAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
@@ -23,7 +22,6 @@ import {
 	getSiteFrontPage,
 	getCustomizerUrl,
 	getSiteOption,
-	isNewSite,
 	getSitePlanSlug,
 	getSite,
 	isAdminInterfaceWPAdmin,
@@ -116,7 +114,7 @@ export const QuickLinks = ( {
 				customizerLinks
 			) }
 			<ActionBox
-				href={ usesWpAdminInterface ? `${ siteAdminUrl }post-new.php` : `/post/${ siteSlug }` }
+				href={ `${ siteAdminUrl }post-new.php` }
 				hideLinkIndicator
 				onClick={ trackWritePostAction }
 				label={ translate( 'Write blog post' ) }
@@ -128,14 +126,12 @@ export const QuickLinks = ( {
 					hideLinkIndicator
 					onClick={ trackPromotePostAction }
 					label={ translate( 'Promote with Blaze' ) }
-					iconSrc={ blazeIcon }
+					svgIcon={ blaze }
 				/>
 			) }
 			{ ! isStaticHomePage && canModerateComments && (
 				<ActionBox
-					href={
-						usesWpAdminInterface ? `${ siteAdminUrl }edit-comments.php` : `/comments/${ siteSlug }`
-					}
+					href={ `${ siteAdminUrl }edit-comments.php` }
 					hideLinkIndicator
 					onClick={ trackManageCommentsAction }
 					label={ translate( 'Manage comments' ) }
@@ -144,11 +140,7 @@ export const QuickLinks = ( {
 			) }
 			{ canEditPages && (
 				<ActionBox
-					href={
-						usesWpAdminInterface
-							? `${ siteAdminUrl }post-new.php?post_type=page`
-							: `/page/${ siteSlug }`
-					}
+					href={ `${ siteAdminUrl }post-new.php?post_type=page` }
 					hideLinkIndicator
 					onClick={ trackAddPageAction }
 					label={ translate( 'Add a page' ) }
@@ -390,14 +382,6 @@ const trackDesignLogoAction = ( isStaticHomePage ) =>
 		bumpStat( 'calypso_customer_home', 'my_site_design_logo' )
 	);
 
-const trackAnchorPodcastAction = ( isStaticHomePage ) =>
-	composeAnalytics(
-		recordTracksEvent( 'calypso_customer_home_my_site_anchor_podcast_click', {
-			is_static_home_page: isStaticHomePage,
-		} ),
-		bumpStat( 'calypso_customer_home', 'my_site_anchor_podcast' )
-	);
-
 const trackExplorePluginsAction = ( isStaticHomePage ) => ( dispatch ) => {
 	dispatch(
 		composeAnalytics(
@@ -444,9 +428,7 @@ export const trackManageEmailsAction = ( isStaticHomePage ) => ( dispatch ) => {
 
 const mapStateToProps = ( state ) => {
 	const siteId = getSelectedSiteId( state );
-	const isClassicEditor = getSelectedEditor( state, siteId ) === 'classic';
-	const isStaticHomePage =
-		! isClassicEditor && 'page' === getSiteOption( state, siteId, 'show_on_front' );
+	const isStaticHomePage = 'page' === getSiteOption( state, siteId, 'show_on_front' );
 	const siteSlug = getSelectedSiteSlug( state );
 	const staticHomePageId = getSiteFrontPage( state, siteId );
 	const editHomePageUrl = isStaticHomePage && `/page/${ siteSlug }/${ staticHomePageId }`;
@@ -459,7 +441,6 @@ const mapStateToProps = ( state ) => {
 		canModerateComments: canCurrentUser( state, siteId, 'moderate_comments' ),
 		customizeUrl: getCustomizerUrl( state, siteId ),
 		menusUrl: getCustomizerUrl( state, siteId, 'menus' ),
-		isNewlyCreatedSite: isNewSite( state, siteId ),
 		siteSlug,
 		isStaticHomePage,
 		editHomePageUrl,
@@ -483,7 +464,6 @@ const mapDispatchToProps = {
 	trackCustomizeThemeAction,
 	trackChangeThemeAction,
 	trackDesignLogoAction,
-	trackAnchorPodcastAction,
 	trackAddDomainAction,
 	trackManageAllDomainsAction,
 	trackManageEmailsAction,
@@ -506,7 +486,6 @@ const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
 		trackCustomizeThemeAction: () => dispatchProps.trackCustomizeThemeAction( isStaticHomePage ),
 		trackChangeThemeAction: () => dispatchProps.trackChangeThemeAction( isStaticHomePage ),
 		trackDesignLogoAction: () => dispatchProps.trackDesignLogoAction( isStaticHomePage ),
-		trackAnchorPodcastAction: () => dispatchProps.trackAnchorPodcastAction( isStaticHomePage ),
 		trackAddDomainAction: () => dispatchProps.trackAddDomainAction( isStaticHomePage ),
 		trackManageAllDomainsAction: () =>
 			dispatchProps.trackManageAllDomainsAction( isStaticHomePage ),

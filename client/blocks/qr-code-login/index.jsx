@@ -1,7 +1,8 @@
 import { getTracksAnonymousUserId } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
-import { Card, Gridicon, ExternalLink } from '@automattic/components';
+import { ExternalLink } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { Notice } from '@wordpress/components';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { QRCodeSVG } from 'qrcode.react';
@@ -9,7 +10,6 @@ import { useEffect, useState } from 'react';
 import qrCenter from 'calypso/assets/images/qr-login/app.png';
 import { setStoredItem, getStoredItem } from 'calypso/lib/browser-storage';
 import { useInterval } from 'calypso/lib/interval';
-import { login } from 'calypso/lib/paths';
 import { postLoginRequest, getErrorFromHTTPError } from 'calypso/state/login/utils';
 
 import './style.scss';
@@ -73,26 +73,20 @@ function QRCodePlaceholder() {
 	);
 }
 
-function QRCodeErrorCard( { redirectToAfterLoginUrl, locale } ) {
+function QRCodeErrorCard() {
 	const translate = useTranslate();
 
-	const loginUrl = login( {
-		redirectTo: redirectToAfterLoginUrl,
-		locale,
-	} );
 	return (
-		<Card className="qr-code-login">
+		<div className="qr-code-login is-error">
 			<div className="qr-code-login__token-error">
+				<h1 className="qr-code-login-page__heading">{ translate( 'Log in via Jetpack app' ) }</h1>
 				<p>{ translate( 'Mobile App QR Code login is currently unavailable.' ) }</p>
-				<p>
-					<a href={ loginUrl }>{ translate( 'Back to login' ) }</a>
-				</p>
 			</div>
-		</Card>
+		</div>
 	);
 }
 
-function QRCodeLogin( { locale, redirectToAfterLoginUrl } ) {
+function QRCodeLogin( { redirectToAfterLoginUrl } ) {
 	const translate = useTranslate();
 	const [ tokenState, setTokenState ] = useState( null );
 	const [ authState, setAuthState ] = useState( false );
@@ -217,7 +211,11 @@ function QRCodeLogin( { locale, redirectToAfterLoginUrl } ) {
 				),
 			},
 		} ),
-		translate( 'Tap the Me Tab.' ),
+		translate( 'Tap the {{strong}}Me{{/strong}} tab.', {
+			components: {
+				strong: <strong />,
+			},
+		} ),
 		translate( 'Tap the {{strong}}Scan Login Code{{/strong}} option.', {
 			components: {
 				strong: <strong />,
@@ -227,7 +225,7 @@ function QRCodeLogin( { locale, redirectToAfterLoginUrl } ) {
 	];
 
 	const notice = translate(
-		"Logging in via the Jetpack app is {{strong}}not available{{/strong}} if you've enabled two-step authentication on your account.",
+		'Logging in via the Jetpack app is {{strong}}not available{{/strong}} to accounts with two-factor authentication enabled.',
 		{
 			components: {
 				strong: <strong />,
@@ -236,19 +234,20 @@ function QRCodeLogin( { locale, redirectToAfterLoginUrl } ) {
 	);
 
 	if ( isErrorState ) {
-		return (
-			<QRCodeErrorCard locale={ locale } redirectToAfterLoginUrl={ redirectToAfterLoginUrl } />
-		);
+		return <QRCodeErrorCard />;
 	}
 
 	return (
-		<Card className="qr-code-login">
+		<div className="qr-code-login">
 			<div className="qr-code-login__token">
 				<TokenQRCode tokenData={ tokenState } />
 			</div>
 
 			<div className="qr-code-login__instructions">
-				<h2 className="qr-code-login__heading">{ translate( 'Use QR Code to login' ) }</h2>
+				<h1 className="qr-code-login-page__heading">{ translate( 'Log in via Jetpack app' ) }</h1>
+				<Notice isDismissible={ false } status="warning">
+					<p>{ notice }</p>
+				</Notice>
 				<ol className="qr-code-login__steps">
 					{ steps.map( ( step, index ) => (
 						<li key={ 'step-' + index } className="qr-code-login__step">
@@ -256,12 +255,8 @@ function QRCodeLogin( { locale, redirectToAfterLoginUrl } ) {
 						</li>
 					) ) }
 				</ol>
-				<div className="qr-code-login__info">
-					<Gridicon icon="info-outline" size={ 18 } />
-					<p>{ notice }</p>
-				</div>
 			</div>
-		</Card>
+		</div>
 	);
 }
 

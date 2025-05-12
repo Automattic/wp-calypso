@@ -9,7 +9,8 @@ import {
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Card, CompactCard } from '@automattic/components';
-import { formatCurrency, localize } from 'i18n-calypso';
+import { formatCurrency } from '@automattic/number-formatters';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -42,6 +43,7 @@ import {
 	getSitePurchases,
 	hasLoadedUserPurchasesFromServer,
 	getIncludedDomainPurchase,
+	getIncludedDomainTransfer,
 } from 'calypso/state/purchases/selectors';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { isRequestingSites, getSite } from 'calypso/state/sites/selectors';
@@ -350,6 +352,7 @@ class CancelPurchase extends Component {
 
 						<CancelPurchaseDomainOptions
 							includedDomainPurchase={ this.props.includedDomainPurchase }
+							includedDomainTransfer={ this.props.includedDomainTransfer }
 							cancelBundledDomain={ this.state.cancelBundledDomain }
 							onCancelConfirmationStateChange={ this.onCancelConfirmationStateChange }
 							purchase={ purchase }
@@ -428,6 +431,7 @@ export default connect( ( state, props ) => {
 		purchases,
 		productsList,
 		includedDomainPurchase: getIncludedDomainPurchase( state, purchase ),
+		includedDomainTransfer: getIncludedDomainTransfer( state, purchase ),
 		site: getSite( state, purchase ? purchase.siteId : null ),
 		isHundredYearDomain: selectedDomain?.isHundredYearDomain,
 	};

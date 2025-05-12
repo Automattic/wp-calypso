@@ -2,9 +2,6 @@
 	// Ensure you apply these styles only if .color-scheme.is-classic-dark has been set on the body.
 	// Override classic-dark's primary-dark color, which lacks sufficient contrast.
 	--color-primary: var(--studio-gray-50);
-	--color-primary-rgb: var(--studio-gray-50-rgb);
 	--color-primary-dark: var(--studio-gray-100);
-	--color-primary-dark-rgb: var(--studio-gray-100-rgb);
 	--color-primary-light: var(--studio-gray-20);
-	--color-primary-light-rgb: var(--studio-gray-20-rgb);
-}
+	}

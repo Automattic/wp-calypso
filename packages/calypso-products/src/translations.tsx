@@ -1,3 +1,4 @@
+import { formatNumber } from '@automattic/number-formatters';
 import { translate, useTranslate, getLocaleSlug } from 'i18n-calypso';
 import { useCallback, useMemo } from 'react';
 import {
@@ -1102,7 +1103,14 @@ export const getJetpackProductsLightboxDescription = (): Record< string, Transla
 		'Seamlessly accept purchase orders as a payment method on your WooCommerce store.'
 	);
 	const woocommerceShippingLightboxDescription = translate(
-		'Print USPS and DHL labels right from the WooCommerce desktop and save up to 90% instantly. WooCommerce Shipping is free and saves you time and money.'
+		'Print USPS and DHL labels right from the WooCommerce desktop and save up to %(discountPercent)s instantly. WooCommerce Shipping is free and saves you time and money.',
+		{
+			args: {
+				discountPercent: formatNumber( 0.9, {
+					numberFormatOptions: { style: 'percent' },
+				} ),
+			},
+		}
 	);
 	const woocommerceAccommodationsBookingsLightboxDescription = translate(
 		'Book accommodation using WooCommerce and the WooCommerce Bookings extension.'
@@ -1332,7 +1340,13 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 		translate( 'Paywall access' ),
 		translate( 'Newsletter' ),
 		translate( 'Priority support' ),
-		translate( '2% transaction fees' ),
+		translate( '%(transactionFee)s transaction fees', {
+			args: {
+				transactionFee: formatNumber( 0.02, {
+					numberFormatOptions: { style: 'percent' },
+				} ),
+			},
+		} ),
 	];
 	const antiSpamIncludesInfo = [
 		translate( 'Comment and form spam protection' ),
@@ -2001,7 +2015,14 @@ export const getJetpackProductsBenefits = (): Record< string, Array< TranslateRe
 		translate( 'Send targeted, multi-step campaigns and offer customer incentives' ),
 		translate( 'Measure the success of your campaigns' ),
 		translate( 'Unlimited email sends' ),
-		translate( 'AutomateWoo is 100% extendable' ),
+		translate( 'AutomateWoo is %(extentablePercent)s extendable', {
+			args: {
+				extentablePercent: formatNumber( 1, {
+					numberFormatOptions: { style: 'percent' },
+				} ),
+			},
+			comment: '100% extendable',
+		} ),
 		translate( 'Multilingual support. AutomateWoo has support for the popular WPML plugin' ),
 		translate( 'AutomateWoo integrates with your favorite plugins and services' ),
 	];
@@ -2640,7 +2661,13 @@ export const getJetpackPlansAlsoIncludedFeatures = (): Record<
 		translate( 'Paywall access' ),
 		translate( 'Newsletter' ),
 		translate( 'Priority support' ),
-		translate( '2% transaction fees' ),
+		translate( '%(transactionFee)s transaction fees', {
+			args: {
+				transactionFee: formatNumber( 0.02, {
+					numberFormatOptions: { style: 'percent' },
+				} ),
+			},
+		} ),
 	];
 
 	return {

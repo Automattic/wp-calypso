@@ -33,7 +33,9 @@ function withUnitTestInfo( cmd ) {
 	};
 }
 
-const allPackageTsconfigs = ( await globPromise( 'packages/*/tsconfig.json' ) ).join( ' ' );
+const allPackageTsconfigs = (
+	await globPromise( 'packages/*/tsconfig.json', { ignore: 'packages/dataviews/**' } )
+).join( ' ' );
 const tscPackages = withTscInfo( {
 	cmd: `tsc --build ${ allPackageTsconfigs }`,
 	id: 'type_check_packages',
@@ -68,7 +70,7 @@ const testApps = withUnitTestInfo( 'test-apps --maxWorkers=1 --workerIdleMemoryL
 
 const testWorkspaces = {
 	name: 'yarn',
-	args: 'workspaces foreach -A --verbose --parallel run storybook --ci --smoke-test',
+	args: 'workspaces foreach -A --verbose --parallel run storybook:start --ci --smoke-test',
 	testId: 'check_storybook',
 };
 

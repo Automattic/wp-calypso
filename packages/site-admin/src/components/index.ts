@@ -1,3 +1,4 @@
+export { Page } from './page';
 export { SidebarButton } from './sidebar-button';
 export { SidebarContent, SidebarNavigationContext, createNavState } from './sidebar';
 export { SidebarNavigationItem } from './sidebar-navigation-item';

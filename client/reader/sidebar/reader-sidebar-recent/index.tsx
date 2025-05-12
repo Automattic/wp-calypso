@@ -1,18 +1,17 @@
+import './style.scss';
 import page from '@automattic/calypso-router';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
+import ReaderIcon from 'calypso/assets/icons/reader/reader-icon';
 import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
 import Favicon from 'calypso/reader/components/favicon';
-import ReaderFollowingIcon from 'calypso/reader/components/icons/following-icon';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { useRecordReaderTracksEvent } from 'calypso/state/reader/analytics/useRecordReaderTracksEvent';
 import getReaderFollowedSites from 'calypso/state/reader/follows/selectors/get-reader-followed-sites';
 import { getSelectedRecentFeedId } from 'calypso/state/reader-ui/sidebar/selectors';
 import { AppState } from 'calypso/types';
-
-import './style.scss';
 
 // Not complete, just useful fields for now
 type Site = {
@@ -102,7 +101,7 @@ const ReaderSidebarRecent = ( {
 			expanded={ isOpen }
 			title={ translate( 'Recent' ) }
 			onClick={ selectMenu }
-			customIcon={ <ReaderFollowingIcon viewBox="-3 0 24 24" /> }
+			customIcon={ <ReaderIcon className="sidebar__menu-icon" viewBox="0 0 24 11" /> }
 			disableFlyout
 			className={ clsx( 'reader-sidebar-recent', className, {
 				'sidebar__menu--selected': ! isOpen && isRecentStream,

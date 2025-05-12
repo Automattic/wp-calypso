@@ -1,6 +1,7 @@
 import { localizeUrl } from '@automattic/i18n-utils';
+import { formatCurrency } from '@automattic/number-formatters';
 import { Notice } from '@wordpress/components';
-import { useTranslate, formatCurrency } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import InlineSupportLink from 'calypso/components/inline-support-link';

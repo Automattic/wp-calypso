@@ -39,9 +39,9 @@ const HostingOverview: FC = () => {
 			<PlanCreditNotice />
 			<PlanCard />
 			<QuickActionsCard />
+			<ActiveDomainsCard />
 			<SiteBackupCard />
 			<SupportCard />
-			<ActiveDomainsCard />
 		</div>
 	);
 };

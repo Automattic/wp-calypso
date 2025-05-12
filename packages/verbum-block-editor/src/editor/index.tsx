@@ -128,12 +128,10 @@ export const Editor: FC< EditorProps > = ( {
 							<div className="editor__header-toolbar">
 								<BlockToolbar hideDragHandle />
 							</div>
-							{ /* @ts-expect-error - Slot type missing */ }
 							<Popover.Slot />
 						</div>
 					</div>
 					<div className="editor__main">
-						{ /* @ts-expect-error - Slot type missing */ }
 						<Popover.Slot />
 						<BlockTools>
 							<BlockCanvas

@@ -1,5 +1,6 @@
 import { Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
+import { getSiteReviewStatus } from '../lib/utils';
 import type { TaggedSite } from '../types';
 
 import './style.scss';
@@ -13,13 +14,19 @@ export default function MigrationsConsolidatedCommissions( { items }: { items: T
 	const translate = useTranslate();
 
 	const migrationCommissions =
-		items.filter(
-			( item ) =>
-				// Consider only confirmed migrations for the current quarter
-				item.state === 'confirmed' && getQuarter( new Date( item.created_at ) ) === getQuarter()
-		).length * 100; // FIXME: Consider the maximum commission value when the MC tool is implemented
+		items.filter( ( item ) => {
+			const tags = item.tags.map( ( tag ) => tag.name );
+			// Consider only confirmed migrations for the current quarter
+			return (
+				getSiteReviewStatus( tags ) === 'confirmed' &&
+				getQuarter( new Date( item.created_at ) ) === getQuarter()
+			);
+		} ).length * 100; // FIXME: Consider the maximum commission value when the MC tool is implemented
 
-	const sitesPendingReview = items.filter( ( item ) => item.state !== 'confirmed' ).length;
+	const sitesPendingReview = items.filter( ( item ) => {
+		const tags = item.tags.map( ( tag ) => tag.name );
+		return getSiteReviewStatus( tags ) === 'pending';
+	} ).length;
 
 	const currentQuarter = getQuarter();
 

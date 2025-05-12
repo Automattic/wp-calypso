@@ -7,7 +7,7 @@
 	color: var(--color-text-subtle);
 	font-size: $font-body-small;
 	text-align: center;
-	height: calc(65vh - 80px); /* The values here are set so that the Not-you line gets pushed to the bottom of the screen on mobile */
+	height: calc(65vh - 47px); /* The values here are set so that the Not-you line gets pushed to the bottom of the screen on mobile */
 	margin: 48px auto 0;
 	position: relative;
 	max-width: 400px;
@@ -50,7 +50,6 @@
 	.continue-as-user__not-you {
 		display: block;
 		bottom: 0;
-		margin-bottom: -33px;
 		position: absolute;
 		text-align: center;
 		width: 100%;

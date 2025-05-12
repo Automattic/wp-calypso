@@ -3,13 +3,13 @@
 
 .two-columns-layout {
 	@include break-xlarge {
-		display: grid;
-		grid-template-columns: minmax(0, 1fr) 315px;
-		column-gap: 48px;
+		display: flex;
+		flex-direction: row;
 	}
 
 	&__content {
-		grid-column: 1 / 2;
+		flex: 1 1 0;
+		min-width: 0;
 		padding-bottom: 1px;
 		@include break-xlarge {
 			padding-bottom: 0;
@@ -17,6 +17,13 @@
 	}
 
 	&__sidebar {
-		grid-column: 2 / 3;
+		@include break-xlarge {
+			width: 315px;
+			flex: 0 0 315px;
+			margin-left: 48px;
+		}
+		&:empty {
+			display: none;
+		}
 	}
 }

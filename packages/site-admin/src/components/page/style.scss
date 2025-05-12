@@ -1,0 +1,52 @@
+@import "@wordpress/base-styles/variables";
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/z-index";
+
+.a8c-site-admin-page {
+	color: $gray-800;
+	background: $white;
+	container: a8c-site-admin-page / inline-size;
+
+	@include break-medium() {
+		height: 100%;
+	}
+}
+
+.a8c-site-admin-page-header {
+	padding: $grid-unit-20 $grid-unit-60;
+	border-bottom: 1px solid $gray-100;
+	background: $white;
+	position: sticky;
+	top: 0;
+	z-index: 2; // hardcoded for now ARC-95
+
+	&__title-container {
+		min-height: $grid-unit-50;
+
+		.a8c-site-admin-page-header__title {
+			color: $gray-900;
+			flex-grow: 1;
+			flex-basis: 0;
+			white-space: nowrap;
+		}
+	}
+
+	&__sub-title {
+		margin-bottom: $grid-unit-10;
+	}
+}
+
+@container (max-width: 430px) {
+	.a8c-site-admin-page-header {
+		padding: $grid-unit-20 $grid-unit-30;
+	}
+}
+
+.a8c-site-admin-page__content {
+	height: 100%;
+	display: flex;
+	flex-flow: column;
+	position: relative;
+	z-index: 1; // hardcoded for now ARC-95
+}

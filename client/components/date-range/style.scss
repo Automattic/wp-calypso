@@ -259,7 +259,7 @@ $date-range-mobile-layout-switch: $break-small;
 
 
 .date-range__picker {
-	--date-range-picker-highlight-color: rgba(var(--color-primary-light-rgb), 0.4);
+	--date-range-picker-highlight-color: color-mix(in srgb, var(--color-primary-light) 40%, transparent);
 
 	.DayPicker-Day,
 	.DayPicker-Day:not(.DayPicker-Day--disabled):not(.DayPicker-Day--outside),

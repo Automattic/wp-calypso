@@ -1,5 +1,6 @@
 import page from '@automattic/calypso-router';
 import { BillingHistory, ReceiptView } from 'calypso/my-sites/purchases/billing-history';
+import CrmDownloads from 'calypso/my-sites/purchases/crm-downloads';
 import {
 	Purchases,
 	PurchaseDetails,
@@ -100,5 +101,10 @@ export const receiptView = ( context, next ) => {
 			siteSlug={ context.params.site }
 		/>
 	);
+	next();
+};
+
+export const crmDownloads = ( context, next ) => {
+	context.primary = <CrmDownloads subscription={ context.params.subscription } />;
 	next();
 };

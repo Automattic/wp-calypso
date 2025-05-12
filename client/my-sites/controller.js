@@ -116,20 +116,7 @@ export function createNavigation( context ) {
 		basePath = sectionify( context.pathname );
 	}
 
-	let allSitesPath = basePath === '/home' ? '/sites' : basePath;
-
-	// Update allSitesPath if it is plugins page in Jetpack Cloud
-	if ( isJetpackCloud() && basePath.startsWith( '/plugins' ) ) {
-		allSitesPath = '/plugins';
-	}
-
-	return (
-		<NavigationComponent
-			path={ context.path }
-			allSitesPath={ allSitesPath }
-			siteBasePath={ basePath }
-		/>
-	);
+	return <NavigationComponent path={ context.path } siteBasePath={ basePath } />;
 }
 
 export function renderRebloggingEmptySites( context ) {

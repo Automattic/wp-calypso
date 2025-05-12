@@ -3,7 +3,6 @@ import I18NContext from './context';
 
 function bindI18nProps( i18n ) {
 	return {
-		numberFormat: i18n.numberFormat.bind( i18n ),
 		translate: i18n.translate.bind( i18n ),
 		locale: i18n.getLocaleSlug(),
 	};

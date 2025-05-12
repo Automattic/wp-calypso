@@ -10,7 +10,6 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect, useRef } from '@wordpress/element';
 import React from 'react';
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
-import { v4 as uuidv4 } from 'uuid';
 /**
  * Internal Dependencies
  */
@@ -55,8 +54,10 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 	const { sectionName } = useHelpCenterContext();
 	const { startNewInteraction } = useManageSupportInteraction();
 	const { data } = useSupportStatus();
-	const { data: openSupportInteraction, isLoading: isLoadingOpenSupportInteractions } =
-		useGetSupportInteractions( 'help-center' );
+	const { data: openSupportInteractions, isLoading: isLoadingOpenSupportInteractions } =
+		useGetSupportInteractions( 'help-center', 1, 'open' );
+	const { data: resolvedSupportInteractions, isLoading: isLoadingResolvedSupportInteractions } =
+		useGetSupportInteractions( 'help-center', 1, 'resolved' );
 
 	const { currentSupportInteraction, navigateToRoute, isMinimized, allowPremiumSupport } =
 		useSelect( ( select ) => {
@@ -70,6 +71,8 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 		}, [] );
 	const isUserEligibleForPaidSupport =
 		Boolean( data?.eligibility?.is_user_eligible ) || allowPremiumSupport;
+
+	const userFieldFlowName = data?.eligibility?.user_field_flow_name;
 
 	useEffect( () => {
 		recordTracksEvent( 'calypso_helpcenter_page_open', {
@@ -85,18 +88,32 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 	useEffect( () => {
 		if (
 			! isLoadingOpenSupportInteractions &&
-			openSupportInteraction === null &&
+			! isLoadingResolvedSupportInteractions &&
+			openSupportInteractions === null &&
+			resolvedSupportInteractions === null &&
 			! currentSupportInteraction
 		) {
 			startNewInteraction( {
 				event_source: 'help-center',
-				event_external_id: uuidv4(),
+				event_external_id: crypto.randomUUID(),
 			} );
-		} else if ( openSupportInteraction && ! currentSupportInteraction ) {
-			setCurrentSupportInteraction( openSupportInteraction[ 0 ] );
+		} else if (
+			( openSupportInteractions || resolvedSupportInteractions ) &&
+			! currentSupportInteraction
+		) {
+			if ( resolvedSupportInteractions?.length ) {
+				setCurrentSupportInteraction( resolvedSupportInteractions[ 0 ] );
+			} else if ( openSupportInteractions?.length ) {
+				setCurrentSupportInteraction( openSupportInteractions[ 0 ] );
+			}
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ openSupportInteraction, isLoadingOpenSupportInteractions ] );
+	}, [
+		openSupportInteractions,
+		resolvedSupportInteractions,
+		isLoadingOpenSupportInteractions,
+		isLoadingResolvedSupportInteractions,
+	] );
 
 	useEffect( () => {
 		if ( navigateToRoute ) {
@@ -132,7 +149,10 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 					<Route
 						path="/odie"
 						element={
-							<HelpCenterChat isUserEligibleForPaidSupport={ isUserEligibleForPaidSupport } />
+							<HelpCenterChat
+								isUserEligibleForPaidSupport={ isUserEligibleForPaidSupport }
+								userFieldFlowName={ userFieldFlowName }
+							/>
 						}
 					/>
 					<Route path="/chat-history" element={ <HelpCenterChatHistory /> } />

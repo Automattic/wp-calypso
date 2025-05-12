@@ -1,11 +1,14 @@
 import {
 	FEATURE_SIMPLE_PAYMENTS,
 	FEATURE_WORDADS_INSTANT,
+	GROUP_WPCOM,
 	PLAN_BUSINESS,
 	PLAN_ECOMMERCE,
 	PLAN_JETPACK_SECURITY_DAILY,
 	PLAN_PREMIUM,
 	getPlan,
+	isMonthly,
+	planMatches,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { getCalypsoUrl } from '@automattic/calypso-url';
@@ -384,39 +387,56 @@ const Home = () => {
 			return;
 		}
 
-		const cta: CtaButton = {
-			text: translate( 'Earn free credits' ) as string,
-			action: () => {
-				trackCtaButton( 'peer-referral-wpcom' );
-				onPeerReferralCtaClick();
-			},
-			disabled: isPeerReferralCtaDisabled,
-		};
+		const isEligible =
+			planMatches( sitePlanSlug ?? '', { group: GROUP_WPCOM } ) &&
+			! isMonthly( sitePlanSlug ?? '' );
 
-		if ( peerReferralLink ) {
+		const cta: CtaButton = isEligible
+			? {
+					text: translate( 'Earn free credits' ),
+					action: () => {
+						trackCtaButton( 'peer-referral-wpcom' );
+						onPeerReferralCtaClick();
+					},
+					disabled: isPeerReferralCtaDisabled,
+			  }
+			: {
+					text: translate( 'Unlock this feature' ),
+					isPrimary: true,
+					action: () => {
+						trackUpgrade( 'plans', 'peer-referral' );
+						page( `/plans/${ site?.slug }` );
+					},
+			  };
+
+		if ( peerReferralLink && isEligible ) {
 			cta.component = <ClipboardButtonInput value={ localizeUrl( peerReferralLink ) } />;
 		}
 
+		const defaultBody = translate(
+			'Share WordPress.com with friends, family, and website visitors. For every paying customer you send our way, you’ll both earn US$25 in free credits.'
+		);
+		const eligibleBody = peerReferralLink
+			? translate(
+					'Share the link below and, for every paying customer you send our way, you’ll both earn US$25 in credits.'
+			  )
+			: translate(
+					'Share WordPress.com with friends, family, and website visitors. For every paying customer you send our way, you’ll both earn US$25 in free credits. By clicking “Earn free credits”, you agree to {{a}}these terms{{/a}}.',
+					{
+						components: {
+							a: (
+								<a
+									href="https://wordpress.org/about/privacy/"
+									target="_blank"
+									rel="noopener noreferrer"
+								/>
+							),
+						},
+					}
+			  );
 		return {
 			title: translate( 'Refer a friend' ),
-			body: peerReferralLink
-				? translate(
-						'Share the link below and, for every paying customer you send our way, you’ll both earn US$25 in credits.'
-				  )
-				: translate(
-						'Share WordPress.com with friends, family, and website visitors. For every paying customer you send our way, you’ll both earn US$25 in free credits. By clicking “Earn free credits”, you agree to {{a}}these terms{{/a}}.',
-						{
-							components: {
-								a: (
-									<a
-										href="https://wordpress.com/refer-a-friend-program-terms-of-service/"
-										target="_blank"
-										rel="noopener noreferrer"
-									/>
-								),
-							},
-						}
-				  ),
+			body: isEligible ? eligibleBody : defaultBody,
 			icon: 'user-add',
 			variation: PromoCardVariation.Compact,
 			actions: {

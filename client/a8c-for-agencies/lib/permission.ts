@@ -5,6 +5,7 @@ import {
 } from 'calypso/a8c-for-agencies/sections/partner-directory/constants';
 import {
 	A4A_LANDING_LINK,
+	A4A_FEEDBACK_LINK,
 	A4A_OVERVIEW_LINK,
 	A4A_SITES_LINK,
 	A4A_SITES_LINK_NEEDS_ATTENTION,
@@ -24,8 +25,6 @@ import {
 	A4A_MARKETPLACE_ASSIGN_LICENSE_LINK,
 	A4A_MARKETPLACE_DOWNLOAD_PRODUCTS_LINK,
 	A4A_REFERRALS_LINK,
-	A4A_REFERRALS_BANK_DETAILS_LINK,
-	A4A_REFERRALS_COMMISSIONS_LINK,
 	A4A_REFERRALS_DASHBOARD,
 	A4A_REFERRALS_PAYMENT_SETTINGS,
 	A4A_REFERRALS_FAQ,
@@ -48,6 +47,7 @@ import {
 	A4A_WOOPAYMENTS_DASHBOARD_LINK,
 	A4A_WOOPAYMENTS_PAYMENT_SETTINGS_LINK,
 	A4A_WOOPAYMENTS_SITE_SETUP_LINK,
+	A4A_WOOPAYMENTS_OVERVIEW_LINK,
 } from '../components/sidebar-menu/lib/constants';
 import type { Agency } from 'calypso/state/a8c-for-agencies/types';
 
@@ -73,8 +73,6 @@ const MEMBER_ACCESSIBLE_PATHS: Record< string, string[] > = {
 	[ A4A_MARKETPLACE_ASSIGN_LICENSE_LINK ]: [ 'a4a_read_marketplace' ],
 	[ A4A_MARKETPLACE_DOWNLOAD_PRODUCTS_LINK ]: [ 'a4a_read_marketplace' ],
 	[ A4A_REFERRALS_LINK ]: [ 'a4a_read_referrals' ],
-	[ A4A_REFERRALS_BANK_DETAILS_LINK ]: [ 'a4a_read_referrals' ],
-	[ A4A_REFERRALS_COMMISSIONS_LINK ]: [ 'a4a_read_referrals' ],
 	[ A4A_REFERRALS_DASHBOARD ]: [ 'a4a_read_referrals' ],
 	[ A4A_REFERRALS_PAYMENT_SETTINGS ]: [ 'a4a_read_referrals' ],
 	[ A4A_REFERRALS_FAQ ]: [ 'a4a_read_referrals' ],
@@ -102,6 +100,7 @@ const MEMBER_ACCESSIBLE_PATHS: Record< string, string[] > = {
 	[ A4A_WOOPAYMENTS_DASHBOARD_LINK ]: [ 'a4a_read_referrals' ],
 	[ A4A_WOOPAYMENTS_PAYMENT_SETTINGS_LINK ]: [ 'a4a_read_referrals' ],
 	[ A4A_WOOPAYMENTS_SITE_SETUP_LINK ]: [ 'a4a_read_referrals' ],
+	[ A4A_WOOPAYMENTS_OVERVIEW_LINK ]: [ 'a4a_read_referrals' ],
 };
 
 const MEMBER_ACCESSIBLE_DYNAMIC_PATHS: Record< string, string[] > = {
@@ -128,7 +127,7 @@ export const isPathAllowed = ( pathname: string, agency: Agency | null ) => {
 	}
 
 	// Everyone can access the landing page and the overview page
-	if ( [ A4A_LANDING_LINK, A4A_OVERVIEW_LINK ].includes( pathname ) ) {
+	if ( [ A4A_LANDING_LINK, A4A_OVERVIEW_LINK, A4A_FEEDBACK_LINK ].includes( pathname ) ) {
 		return true;
 	}
 

@@ -76,8 +76,8 @@ html.accessible-focus .a4a-sidebar__profile-dropdown-button:focus {
 	border: 1px solid var(--color-accent-0);
 	border-radius: 4px;
 	box-shadow:
-		0 4px 6px rgba(var(--color-accent-100-rgb), 0.1),
-		0 1px 2px rgba(var(--color-accent-100-rgb), 0.1);
+		0 4px 6px color-mix(in srgb, var(--color-accent-100) 10%, transparent),
+		0 1px 2px color-mix(in srgb, var(--color-accent-100) 10%, transparent);
 	list-style-type: none;
 
 	@include body-medium;

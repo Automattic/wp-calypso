@@ -1,4 +1,4 @@
-import { Page } from 'playwright';
+import { Page, Locator } from 'playwright';
 import envVariables from '../../env-variables';
 import { EditorComponent } from './editor-component';
 
@@ -74,7 +74,7 @@ export class EditorSidebarBlockInserterComponent {
 			type = 'block',
 			blockFallBackName = '',
 		}: { type?: 'block' | 'pattern'; blockFallBackName?: string } = {}
-	): Promise< void > {
+	): Promise< Locator > {
 		const editorParent = await this.editor.parent();
 		let locator;
 
@@ -98,5 +98,7 @@ export class EditorSidebarBlockInserterComponent {
 
 		await Promise.all( [ locator.hover(), locator.focus() ] );
 		await locator.click();
+
+		return locator;
 	}
 }

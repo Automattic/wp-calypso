@@ -26,11 +26,7 @@ import wpcom from 'calypso/lib/wp';
 import { cartManagerClient } from 'calypso/my-sites/checkout/cart-manager-client';
 import flows from 'calypso/signup/config/flows';
 import steps from 'calypso/signup/config/steps';
-import {
-	getCurrentUserName,
-	isUserLoggedIn,
-	getCurrentUser,
-} from 'calypso/state/current-user/selectors';
+import { getCurrentUserName, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import {
 	buildDIFMCartExtrasObject,
 	buildDIFMWebsiteContentRequestDTO,
@@ -1042,52 +1038,6 @@ export function createSite( callback, dependencies, stepData, reduxStore ) {
 	} );
 }
 
-export function createWpForTeamsSite( callback, dependencies, stepData, reduxStore ) {
-	const { site, siteTitle } = stepData;
-
-	// The new p2 theme for WP for Teams project.
-	// More info: https://wp.me/p9lV3a-1dM-p2
-	const themeSlugWithRepo = 'pub/p2020';
-
-	const locale = getLocaleSlug();
-
-	const data = {
-		blog_name: site,
-		blog_title: siteTitle,
-		public: -1, // wp for teams sites are not supposed to be public
-		options: {
-			theme: themeSlugWithRepo,
-			timezone_string: guessTimezone(),
-			is_wpforteams_site: true,
-			p2_initialize_as_hub: true,
-			...( stepData.campaign && { p2_signup_campaign: stepData.campaign } ),
-		},
-		validate: false,
-		locale,
-		lang_id: getLanguage( locale ).value,
-		client_id: config( 'wpcom_signup_id' ),
-		client_secret: config( 'wpcom_signup_key' ),
-	};
-
-	wpcom.req.post( '/sites/new', data, function ( errors, response ) {
-		let providedDependencies;
-		let siteSlug;
-
-		if ( response && response.blog_details ) {
-			const parsedBlogURL = getUrlParts( response.blog_details.url );
-			siteSlug = parsedBlogURL.hostname;
-
-			providedDependencies = { siteSlug };
-		}
-
-		if ( isUserLoggedIn( reduxStore.getState() ) && isEmpty( errors ) ) {
-			fetchSitesAndUser( siteSlug, () => callback( undefined, providedDependencies ), reduxStore );
-		} else {
-			callback( isEmpty( errors ) ? undefined : [ errors ], providedDependencies );
-		}
-	} );
-}
-
 function recordExcludeStepEvent( step, value ) {
 	recordTracksEvent( 'calypso_signup_actions_exclude_step', {
 		step,
@@ -1164,51 +1114,6 @@ export function maybeRemoveStepForUserlessCheckout( stepName, defaultDependencie
 	} else if ( includes( flows.excludedSteps, stepName ) ) {
 		flows.resetExcludedStep( stepName );
 		nextProps.removeStep( { stepName } );
-	}
-}
-
-export function excludeStepIfEmailVerified( stepName, defaultDependencies, nextProps ) {
-	if ( includes( flows.excludedSteps, stepName ) ) {
-		return;
-	}
-
-	/* For the P2 signup flow, if we displayed the email verification step before,
-	   we need to display it again when the user comes back to the flow
-	   after verification. */
-	if ( nextProps.flowName === 'p2' && nextProps?.progress[ stepName ]?.status === 'in-progress' ) {
-		debug( 'User email verification is in progress, do not skip this step' );
-		return;
-	}
-
-	debug( 'User email is verified: %s', nextProps?.isEmailVerified );
-	if ( ! nextProps.isEmailVerified ) {
-		return;
-	}
-
-	debug( 'Skipping P2 email confirmation step' );
-	recordTracksEvent( 'calypso_signup_p2_confirm_email_autoskip' );
-	nextProps.submitSignupStep( { stepName, wasSkipped: true } );
-	flows.excludeStep( stepName );
-}
-
-export function excludeStepIfProfileComplete( stepName, defaultDependencies, nextProps ) {
-	if ( includes( flows.excludedSteps, stepName ) ) {
-		return;
-	}
-
-	const state = nextProps?.store?.getState();
-
-	if ( ! state ) {
-		return;
-	}
-
-	const currentUser = getCurrentUser( state );
-	debug( 'Checking profile for current user', currentUser );
-	if ( currentUser?.display_name !== currentUser?.username ) {
-		debug( 'Skipping P2 complete profile step' );
-		recordTracksEvent( 'calypso_signup_p2_complete_profile_autoskip' );
-		nextProps.submitSignupStep( { stepName, wasSkipped: true } );
-		flows.excludeStep( stepName );
 	}
 }
 

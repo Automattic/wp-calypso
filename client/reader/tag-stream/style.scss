@@ -60,7 +60,7 @@
 .tag-stream__header-controls {
 	display: flex;
 	justify-content: space-between;
-	align-items: flex-start;
+	align-items: center;
 	padding-top: 3px;
 
 	@include breakpoint-deprecated( "<660px" ) {

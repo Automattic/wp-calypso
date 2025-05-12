@@ -91,8 +91,8 @@ export function fetchThemeFilters( context, next ) {
 
 export function details( context, next ) {
 	const { slug, section } = context.params;
-	if ( context.prevPath && context.prevPath.startsWith( '/themes' ) ) {
-		context.store.dispatch( setBackPath( context.prevPath ) );
+	if ( context.previousPath && context.previousPath.startsWith( '/themes' ) ) {
+		context.store.dispatch( setBackPath( context.previousPath ) );
 	}
 
 	context.primary = (

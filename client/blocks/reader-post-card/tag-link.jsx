@@ -32,6 +32,7 @@ class TagLink extends Component {
 	render() {
 		const { tag } = this.props;
 		const path = addLocaleToPathLocaleInFront( `/tag/${ encodeURIComponent( tag.slug ) }` );
+		const decodedSlug = decodeURIComponent( tag.slug ); // Other languages may contain non-ASCII characters so we need to decode it.
 
 		return (
 			<span className="reader-post-card__tag">
@@ -40,7 +41,7 @@ class TagLink extends Component {
 					className="reader-post-card__tag-link ignore-click"
 					onClick={ this.recordSingleTagClick }
 				>
-					{ tag.name || tag.slug }
+					{ tag.name || decodedSlug }
 				</a>
 			</span>
 		);

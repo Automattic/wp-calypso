@@ -13,6 +13,7 @@ import { useSelector } from 'calypso/state';
 import { getRedirectToOriginal } from 'calypso/state/login/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import { isWooCommercePaymentsOnboardingFlow } from 'calypso/state/selectors/is-woo-jpc-flow';
 
 // Masterbar for WooCommerce Core Profiler Jetpack step
 const WooCoreProfilerMasterbar = ( { translate }: { translate: ( text: string ) => string } ) => {
@@ -39,6 +40,13 @@ const WooCoreProfilerMasterbar = ( { translate }: { translate: ( text: string ) 
 	) {
 		shouldShowProgressBar = false;
 		shouldShowNoThanks = false;
+	}
+
+	const state = useSelector( ( state ) => state );
+	const isWooPaymentsFlow = isWooCommercePaymentsOnboardingFlow( state );
+
+	if ( isWooPaymentsFlow ) {
+		shouldShowProgressBar = false;
 	}
 
 	return (

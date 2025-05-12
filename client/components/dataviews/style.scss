@@ -5,6 +5,11 @@
 .dataviews-wrapper {
 	// Maybe move upstream to the gutenberg repository
 	width: 100%;
+	padding-block-end: 40px;
+
+	@include break-mobile {
+		padding-block-end: 0;
+	}
 
 	tr.dataviews-view-table__row {
 		background: var( --studio-white );

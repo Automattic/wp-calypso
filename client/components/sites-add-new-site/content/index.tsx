@@ -2,6 +2,7 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import page from '@automattic/calypso-router';
 import { WordPressLogo, JetpackLogo } from '@automattic/components';
 import { localizeUrl, useHasEnTranslation } from '@automattic/i18n-utils';
+import { formatNumber } from '@automattic/number-formatters';
 import { download, reusableBlock, Icon } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
@@ -32,9 +33,7 @@ const migrateClick = () => {
 	recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_item', {
 		action: 'migrate',
 	} );
-	page(
-		'/setup/hosted-site-migration/site-migration-identify?source=sites-dashboard&ref=new-site-popover&action=migrate'
-	);
+	page( '/setup/site-migration?source=sites-dashboard&ref=new-site-popover&action=migrate' );
 };
 
 const importClick = () => {
@@ -43,7 +42,7 @@ const importClick = () => {
 		action: 'import',
 	} );
 	page(
-		'/setup/hosted-site-migration/create-site?source=sites-dashboard&ref=new-site-popover&action=import'
+		'/setup/site-migration/create-site?source=sites-dashboard&ref=new-site-popover&action=import'
 	);
 };
 
@@ -51,7 +50,7 @@ const offerClick = () => {
 	recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_item', {
 		action: 'offer',
 	} );
-	window.location.assign( localizeUrl( 'https://wordpress.com/pricing/' ) );
+	window.location.assign( localizeUrl( 'https://wordpress.com/setup/onboarding' ) );
 };
 
 export const Content = () => {
@@ -59,7 +58,7 @@ export const Content = () => {
 	const hasEnTranslation = useHasEnTranslation();
 	return (
 		<>
-			<Column heading={ translate( 'Add a new site' ) }>
+			<Column heading={ translate( 'Add new site' ) }>
 				<MenuItem
 					icon={ <WordPressLogo /> }
 					heading={ translate( 'WordPress.com' ) }
@@ -81,10 +80,10 @@ export const Content = () => {
 					} }
 				/>
 			</Column>
-			<Column heading={ translate( 'Migrate & Import' ) }>
+			<Column heading={ translate( 'Migrate and import' ) }>
 				<MenuItem
 					icon={ <Icon icon={ reusableBlock } size={ 18 } /> }
-					heading="Migrate"
+					heading={ translate( 'Migrate' ) }
 					description={ preventWidows(
 						hasEnTranslation( 'Bring your entire WordPress site to WordPress.com.' )
 							? translate( 'Bring your entire WordPress site to WordPress.com.' )
@@ -96,7 +95,7 @@ export const Content = () => {
 				/>
 				<MenuItem
 					icon={ <Icon icon={ download } size={ 18 } /> }
-					heading="Import"
+					heading={ translate( 'Import' ) }
 					description={ preventWidows(
 						hasEnTranslation( 'Use a backup to only import content from other platforms.' )
 							? translate( 'Use a backup to only import content from other platforms.' )
@@ -110,11 +109,26 @@ export const Content = () => {
 			<Column>
 				<MenuItem
 					isBanner
-					icon={ <img src={ devSiteBanner } alt="Get a Free Domain and Up to 55% off" /> }
-					heading={ translate( 'Get a Free Domain and Up to 55% off' ) }
+					icon={ <img src={ devSiteBanner } alt="Get a free domain and up to 55% off" /> }
+					heading={ translate( 'Get a free domain and up to %(percentage)s off', {
+						args: {
+							percentage: formatNumber( 0.55, {
+								numberFormatOptions: { style: 'percent' },
+							} ),
+							comment: 'percentage like 55% off',
+						},
+					} ) }
 					description={ preventWidows(
 						translate(
-							'Save up to 55% on annual plans and get a free custom domain for a year. Your next site is just a step away.'
+							'Save up to %(percentage)s on annual plans and get a free custom domain for a year. Your next site is just a step away.',
+							{
+								args: {
+									percentage: formatNumber( 0.55, {
+										numberFormatOptions: { style: 'percent' },
+									} ),
+									comment: 'percentage like 55% off',
+								},
+							}
 						)
 					) }
 					buttonProps={ {
@@ -123,7 +137,7 @@ export const Content = () => {
 				>
 					<div>
 						<div className={ clsx( 'sites-add-new-site-popover__cta' ) }>
-							{ translate( 'Unlock Offer' ) }
+							{ translate( 'Unlock offer' ) }
 						</div>
 					</div>
 				</MenuItem>

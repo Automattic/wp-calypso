@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import {
 	A4A_CLIENT_LANDING_LINK,
@@ -7,7 +8,10 @@ import {
 	A4A_CLIENT_INVOICES_LINK,
 	A4A_CLIENT_CHECKOUT,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
-import { requireClientAccessContext } from 'calypso/a8c-for-agencies/controller';
+import {
+	requireClientAccessContext,
+	requireLegacyClientBillingContext,
+} from 'calypso/a8c-for-agencies/controller';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import * as controller from './controller';
 
@@ -23,6 +27,7 @@ export default function () {
 	page(
 		A4A_CLIENT_PAYMENT_METHODS_LINK,
 		requireClientAccessContext,
+		requireLegacyClientBillingContext,
 		controller.clientPaymentMethodsContext,
 		makeLayout,
 		clientRender
@@ -30,6 +35,7 @@ export default function () {
 	page(
 		A4A_CLIENT_PAYMENT_METHODS_ADD_LINK,
 		requireClientAccessContext,
+		requireLegacyClientBillingContext,
 		controller.clientPaymentMethodsAddContext,
 		makeLayout,
 		clientRender
@@ -37,6 +43,7 @@ export default function () {
 	page(
 		A4A_CLIENT_INVOICES_LINK,
 		requireClientAccessContext,
+		requireLegacyClientBillingContext,
 		controller.clientInvoicesContext,
 		makeLayout,
 		clientRender
@@ -48,4 +55,15 @@ export default function () {
 		makeLayout,
 		clientRender
 	);
+
+	// New v2 route for WP.com-based checkout implementation
+	if ( isEnabled( 'a4a-client-checkout-v2' ) ) {
+		page(
+			'/client/checkout/v2',
+			requireClientAccessContext,
+			controller.clientCheckoutV2Context,
+			makeLayout,
+			clientRender
+		);
+	}
 }

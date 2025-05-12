@@ -23,7 +23,7 @@
 .licensing-prompt-dialog {
 	// Add ".dialog__backdrop" to override the default dialog backdrop
 	&__backdrop.dialog__backdrop {
-		background-color: rgba(var(--color-neutral-100-rgb), 0.6);
+		background-color: color-mix(in srgb, var(--color-neutral-100) 60%, transparent);
 	}
 }
 

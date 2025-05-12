@@ -108,7 +108,7 @@
 				top: 0;
 				height: 100%;
 				width: var(--bar-fill-percentage, 0%);
-				background-color: rgba(var(--color-primary-rgb), 15%);
+				background-color: color-mix(in srgb, var(--color-primary) 15%, transparent);
 				border-radius: 2px;
 				transition: background-color 0.2s ease-out;
 				z-index: 0;
@@ -128,7 +128,7 @@
 			background-color: var(--theme-highlight-color);
 
 			.videopress-stats-module__bar::before {
-				background-color: rgba(var(--color-primary-rgb), 15%);
+				background-color: color-mix(in srgb, var(--color-primary) 15%, transparent);
 			}
 
 			.videopress-stats-module__grid-metric span,

@@ -51,7 +51,7 @@
 
 		.entry-wrapper {
 			bottom: 0;
-			background-color: rgba(var(--color-text-rgb), 0.5);
+			background-color: color-mix(in srgb, var(--color-text) 50%, transparent);
 			color: var(--studio-white);
 			left: 0;
 			padding: 1.5em;

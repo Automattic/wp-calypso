@@ -9,9 +9,16 @@ import {
 	warningNotice,
 } from '../actions';
 
-jest.mock( 'uuid', () => ( {
-	v4: () => 'someid',
-} ) );
+let originalRandomUUID;
+
+beforeAll( () => {
+	originalRandomUUID = global.crypto.randomUUID;
+	global.crypto.randomUUID = () => 'fake-uuid';
+} );
+
+afterAll( () => {
+	global.crypto.randomUUID = originalRandomUUID;
+} );
 
 describe( 'actions', () => {
 	describe( 'removeNotice()', () => {

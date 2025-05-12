@@ -118,7 +118,12 @@ export const onError = (
 	error
 ) => [
 	...( loginFormFlow || requestLoginEmailFormFlow
-		? [ { type: MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_ERROR, error: error.message } ]
+		? [
+				{
+					type: MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_ERROR,
+					error: { code: error.error, message: error.message },
+				},
+		  ]
 		: [] ),
 	...( requestLoginEmailFormFlow
 		? [

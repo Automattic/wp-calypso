@@ -25,7 +25,7 @@ export const useGetUnreadConversations = () => {
 
 	return useCallback(
 		( conversations?: Conversation[] | ZendeskConversation[] ) => {
-			const conversationsToCheck = conversations ? conversations : Smooch.getConversations();
+			const conversationsToCheck = conversations ? conversations : Smooch?.getConversations?.();
 			const { unreadConversations, unreadMessages } = calculateUnread( conversationsToCheck );
 			setUnreadCount( unreadConversations );
 

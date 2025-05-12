@@ -1,6 +1,4 @@
-import page, { type Callback, type Context } from '@automattic/calypso-router';
-import { SiteDetails } from '@automattic/data-stores';
-import wpcom from 'calypso/lib/wp';
+import page, { type Callback } from '@automattic/calypso-router';
 import {
 	follows,
 	insights,
@@ -17,67 +15,12 @@ import {
 	emailSummary,
 	redirectToDaySummary,
 } from 'calypso/my-sites/stats/controller';
-import {
-	SITE_REQUEST,
-	SITE_REQUEST_FAILURE,
-	SITE_REQUEST_SUCCESS,
-	ODYSSEY_SITE_RECEIVE,
-} from 'calypso/state/action-types';
-import { getSite, isRequestingSite } from 'calypso/state/sites/selectors';
-import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import config from './lib/config-api';
-import { getApiNamespace, getApiPath } from './lib/get-api';
 import { makeLayout, render as clientRender } from './page-middleware/layout';
 import 'calypso/my-sites/stats/style.scss';
 
-const siteSelection = ( context: Context, next: () => void ) => {
-	const siteId = config( 'blog_id' );
-	const dispatch = context.store.dispatch;
-	const state = context.store.getState();
-
-	dispatch( setSelectedSiteId( siteId ) );
-
-	const isRequesting = isRequestingSite( state, siteId );
-	const site = getSite( state, siteId );
-
-	// If options stored on WPCOM exists or it's already requesting, we do not need to fetch it again.
-	if ( ( site?.options && 'is_commercial' in site.options ) || isRequesting ) {
-		next();
-		return;
-	}
-
-	dispatch( { type: SITE_REQUEST, siteId: siteId } );
-	wpcom.req
-		.get(
-			{
-				path: getApiPath( '/site', { siteId } ),
-				apiNamespace: getApiNamespace(),
-			},
-			{
-				// Only add the http_envelope flag if it's a Simple Classic site.
-				http_envelope: ! config.isEnabled( 'is_running_in_jetpack_site' ),
-			}
-		)
-		.then( ( data: { data: string } | SiteDetails ) => {
-			// For Jetpack/Atomic sites, data format is { data: JSON string of SiteDetails }
-			if ( config.isEnabled( 'is_running_in_jetpack_site' ) && 'data' in data ) {
-				return JSON.parse( data.data );
-			}
-			// For Simple sites, data is SiteDetails, so we directly pass it.
-			return data;
-		} )
-		.then( ( site: SiteDetails ) => {
-			dispatch( { type: ODYSSEY_SITE_RECEIVE, site } );
-			dispatch( { type: SITE_REQUEST_SUCCESS, siteId } );
-		} )
-		.catch( () => {
-			dispatch( { type: SITE_REQUEST_FAILURE, siteId } );
-		} )
-		.finally( next );
-};
-
 const statsPage = ( url: string, controller: Callback ) => {
-	page( url, controller, siteSelection, makeLayout, clientRender );
+	page( url, controller, makeLayout, clientRender );
 };
 
 const redirectToSiteTrafficPage = () => {

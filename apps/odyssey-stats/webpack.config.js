@@ -22,6 +22,7 @@ const shouldEmitStats = process.env.EMIT_STATS && process.env.EMIT_STATS !== 'fa
 const isDevelopment = process.env.NODE_ENV !== 'production';
 const outBasePath = process.env.STATS_PACKAGE_PATH ? process.env.STATS_PACKAGE_PATH : __dirname;
 const outputPath = path.join( outBasePath, 'dist' );
+const sourceMap = isDevelopment ? 'source-map' : false;
 
 const defaultBrowserslistEnv = 'evergreen';
 const browserslistEnv = process.env.BROWSERSLIST_ENV || defaultBrowserslistEnv;
@@ -55,7 +56,7 @@ module.exports = {
 		'widget-loader': path.join( __dirname, 'src', 'widget-loader' ),
 	},
 	mode: isDevelopment ? 'development' : 'production',
-	devtool: false,
+	devtool: sourceMap,
 	output: {
 		path: outputPath,
 		filename: '[name].min.js',

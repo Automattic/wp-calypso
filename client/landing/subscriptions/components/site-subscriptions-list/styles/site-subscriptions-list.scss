@@ -10,7 +10,9 @@
 	margin: 0 0 32px 0;
 
 	.row {
-		@extend %site-subscriptions-list-site-row;
+		border-block-end: 1px solid $studio-gray-5;
+		padding-top: 20px;
+		padding-bottom: 20px;
 
 		* {
 			flex: 1;

@@ -6,6 +6,7 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { Button, DropdownMenu, Spinner } from '@wordpress/components';
 import { __, _n, _x, sprintf } from '@wordpress/i18n';
 import { chevronDown, chevronLeft, Icon } from '@wordpress/icons';
+import clsx from 'clsx';
 import cookie from 'cookie';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment/moment';
@@ -103,6 +104,9 @@ enum ChartSourceDateRanges {
 	LAST_7_DAYS = 'last_7_days',
 	LAST_14_DAYS = 'last_14_days',
 	LAST_30_DAYS = 'last_30_days',
+	LAST_3_MONTHS = 'last_3_months',
+	LAST_6_MONTHS = 'last_6_months',
+	LAST_YEAR = 'last_year',
 	WHOLE_CAMPAIGN = 'whole_campaign',
 }
 
@@ -112,6 +116,9 @@ const ChartSourceDateRangeLabels = {
 	[ ChartSourceDateRanges.LAST_7_DAYS ]: __( 'Last 7 days' ),
 	[ ChartSourceDateRanges.LAST_14_DAYS ]: __( 'Last 14 days' ),
 	[ ChartSourceDateRanges.LAST_30_DAYS ]: __( 'Last 30 days' ),
+	[ ChartSourceDateRanges.LAST_3_MONTHS ]: __( 'Last 3 months' ),
+	[ ChartSourceDateRanges.LAST_6_MONTHS ]: __( 'Last 6 months' ),
+	[ ChartSourceDateRanges.LAST_YEAR ]: __( 'Last year' ),
 	[ ChartSourceDateRanges.WHOLE_CAMPAIGN ]: __( 'Whole Campaign' ),
 };
 
@@ -352,6 +359,16 @@ export default function CampaignItemDetails( props: Props ) {
 			case ChartSourceDateRanges.LAST_30_DAYS:
 				startDate.setDate( effectiveEndDate.getDate() - 30 );
 				break;
+			case ChartSourceDateRanges.LAST_3_MONTHS:
+				startDate.setDate( effectiveEndDate.getDate() - 92 );
+				break;
+			case ChartSourceDateRanges.LAST_6_MONTHS:
+				startDate.setDate( effectiveEndDate.getDate() - 183 );
+				break;
+			case ChartSourceDateRanges.LAST_YEAR:
+				startDate.setDate( effectiveEndDate.getDate() - 365 );
+				break;
+
 			case ChartSourceDateRanges.WHOLE_CAMPAIGN:
 				if ( campaign?.start_date ) {
 					startDate = new Date( campaign.start_date );
@@ -370,10 +387,43 @@ export default function CampaignItemDetails( props: Props ) {
 
 	const updateChartParams = ( newDateRange: ChartSourceDateRanges ) => {
 		// These shorter time frames can show hourly data, we can show up to 30 days of hourly data (max days stored in Druid)
-		const newResolution =
-			newDateRange === ChartSourceDateRanges.YESTERDAY || activeDays < 3
-				? ChartResolution.Hour
-				: ChartResolution.Day;
+		let newResolution: ChartResolution;
+
+		switch ( newDateRange ) {
+			case ChartSourceDateRanges.YESTERDAY:
+			case ChartSourceDateRanges.LAST_7_DAYS:
+				newResolution = ChartResolution.Hour;
+				break;
+
+			case ChartSourceDateRanges.LAST_30_DAYS:
+				newResolution = ChartResolution.Day;
+				break;
+
+			case ChartSourceDateRanges.LAST_6_MONTHS:
+			case ChartSourceDateRanges.LAST_3_MONTHS:
+				newResolution = ChartResolution.Week;
+				break;
+
+			case ChartSourceDateRanges.LAST_YEAR:
+				newResolution = ChartResolution.Month;
+				break;
+
+			case ChartSourceDateRanges.WHOLE_CAMPAIGN:
+				if ( activeDays < 3 ) {
+					newResolution = ChartResolution.Hour;
+				} else if ( activeDays <= 30 ) {
+					newResolution = ChartResolution.Day;
+				} else if ( activeDays < 183 ) {
+					newResolution = ChartResolution.Week;
+				} else {
+					newResolution = ChartResolution.Month;
+				}
+				break;
+
+			default:
+				newResolution = ChartResolution.Day;
+				break;
+		}
 
 		const newStartDate = getChartStartDate( newDateRange );
 
@@ -552,6 +602,36 @@ export default function CampaignItemDetails( props: Props ) {
 					onClick: () => updateChartParams( ChartSourceDateRanges.LAST_30_DAYS ),
 					title: ChartSourceDateRangeLabels[ ChartSourceDateRanges.LAST_30_DAYS ],
 					isDisabled: selectedDateRange === ChartSourceDateRanges.LAST_30_DAYS,
+				},
+			],
+		},
+		{
+			condition: activeDays > 92,
+			controls: [
+				{
+					onClick: () => updateChartParams( ChartSourceDateRanges.LAST_3_MONTHS ),
+					title: ChartSourceDateRangeLabels[ ChartSourceDateRanges.LAST_3_MONTHS ],
+					isDisabled: selectedDateRange === ChartSourceDateRanges.LAST_3_MONTHS,
+				},
+			],
+		},
+		{
+			condition: activeDays > 183,
+			controls: [
+				{
+					onClick: () => updateChartParams( ChartSourceDateRanges.LAST_6_MONTHS ),
+					title: ChartSourceDateRangeLabels[ ChartSourceDateRanges.LAST_6_MONTHS ],
+					isDisabled: selectedDateRange === ChartSourceDateRanges.LAST_6_MONTHS,
+				},
+			],
+		},
+		{
+			condition: activeDays > 365,
+			controls: [
+				{
+					onClick: () => updateChartParams( ChartSourceDateRanges.LAST_YEAR ),
+					title: ChartSourceDateRangeLabels[ ChartSourceDateRanges.LAST_YEAR ],
+					isDisabled: selectedDateRange === ChartSourceDateRanges.LAST_YEAR,
 				},
 			],
 		},
@@ -1180,6 +1260,13 @@ export default function CampaignItemDetails( props: Props ) {
 															<FlexibleSkeleton />
 														) }
 													</span>
+													{ weeklySpend > displayBudget && (
+														<span className="campaign-item-details__details outperformed_notice">
+															{ __(
+																'Your campaign outperformed this week! You’ll only be charged up to your budget.'
+															) }
+														</span>
+													) }
 												</div>
 											) : (
 												<div>
@@ -1390,7 +1477,11 @@ export default function CampaignItemDetails( props: Props ) {
 												<div className="campaign-item-details__weekly-orders-seperator"></div>
 											</div>
 										) }
-										<div className="campaign-item-details__secondary-payment-row">
+										<div
+											className={ clsx( 'campaign-item-details__secondary-payment-row', {
+												'no-payment-method': ! payment_method || ! card_name,
+											} ) }
+										>
 											{ payment_method && card_name && (
 												<>
 													<div className="campaign-item-details__payment-method">

@@ -429,15 +429,6 @@ function setupBrowserProxyTrap( browser: Browser ): Browser {
 						}
 					} );
 
-					// Disable the WhatsNewGuide to prevent the element we want to click from
-					// being covered by it so that the element isn't clickable.
-					await page.route( /wpcom\/v2\/whats-new\/list/, ( route ) =>
-						route.fulfill( {
-							status: 200,
-							body: undefined,
-						} )
-					);
-
 					// Add route abort for slow requests on AT sites.
 					await page.route( /store\/v1\/cart/, ( route ) => {
 						route.abort();

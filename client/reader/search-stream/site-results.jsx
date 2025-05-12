@@ -7,6 +7,8 @@ import withDimensions from 'calypso/lib/with-dimensions';
 import ReaderInfiniteStream from 'calypso/reader/components/reader-infinite-stream';
 import { siteRowRenderer } from 'calypso/reader/components/reader-infinite-stream/row-renderers';
 import { SEARCH_RESULTS_SITES } from 'calypso/reader/follow-sources';
+import { MAX_POSTS_FOR_LOGGED_OUT_USERS } from 'calypso/reader/reader.const';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import {
 	requestFeedSearch,
 	SORT_BY_RELEVANCE,
@@ -30,6 +32,10 @@ class SiteResults extends Component {
 	};
 
 	fetchNextPage = ( offset ) => {
+		if ( this.isLoginPromptVisible( offset ) ) {
+			return;
+		}
+
 		this.props.requestFeedSearch( {
 			query: this.props.query,
 			offset,
@@ -38,7 +44,17 @@ class SiteResults extends Component {
 		} );
 	};
 
-	hasNextPage = ( offset ) => offset < this.props.searchResultsCount;
+	hasNextPage = ( offset ) => {
+		if ( this.isLoginPromptVisible( offset ) ) {
+			return false;
+		}
+		return offset < this.props.searchResultsCount;
+	};
+
+	isLoginPromptVisible( offset ) {
+		// Show login prompt for all logged out users after few posts.
+		return ! this.props.isLoggedIn && offset > MAX_POSTS_FOR_LOGGED_OUT_USERS;
+	}
 
 	render() {
 		const { query, searchResults, width, sort } = this.props;
@@ -120,6 +136,7 @@ export default connect(
 			ownProps.onReceiveSearchResults( feedResults );
 		}
 		return {
+			isLoggedIn: isUserLoggedIn( state ),
 			searchResults: searchResults,
 			searchResultsCount: getReaderFeedsCountForQuery( state, {
 				query: ownProps.query,

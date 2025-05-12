@@ -24,9 +24,11 @@ import {
 	isSenseiProduct,
 	PLAN_100_YEARS,
 } from '@automattic/calypso-products';
+import colorStudio from '@automattic/color-studio';
 import { Gridicon } from '@automattic/components';
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
+import { formatCurrency } from '@automattic/number-formatters';
 import { isNewsletterFlow, isAnyHostingFlow } from '@automattic/onboarding';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import {
@@ -35,14 +37,15 @@ import {
 	getTotalLineItemFromCart,
 	getCreditsLineItemFromCart,
 } from '@automattic/wpcom-checkout';
-import { keyframes } from '@emotion/react';
+import { css, keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Icon, reusableBlock } from '@wordpress/icons';
-import { formatCurrency, useTranslate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import * as React from 'react';
 import { hasFreeCouponTransfersOnly } from 'calypso/lib/cart-values/cart-items';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
+import { useStreamlinedPriceExperiment } from 'calypso/my-sites/plans-features-main/hooks/use-streamlined-price-experiment';
 import { getSignupCompleteFlowName } from 'calypso/signup/storageUtils';
 import { useSelector } from 'calypso/state';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
@@ -58,6 +61,10 @@ import type { TranslateResult } from 'i18n-calypso';
 
 // This will make converting to TS less noisy. The order of components can be reorganized later
 /* eslint-disable @typescript-eslint/no-use-before-define */
+
+const PALETTE = colorStudio.colors;
+const COLOR_GRAY_40 = PALETTE[ 'Gray 40' ];
+const COLOR_GREEN_60 = PALETTE[ 'Green 60' ];
 
 const StyledIcon = styled( Icon )`
 	fill: '#1E1E1E';
@@ -87,11 +94,13 @@ export function WPCheckoutOrderSummary( {
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 	const isCartUpdating = FormStatus.VALIDATING === formStatus;
+	const [ , streamlinedPriceExperimentAssignment ] = useStreamlinedPriceExperiment();
 
 	return (
 		<CheckoutSummaryCard
 			className={ isCartUpdating ? 'is-loading' : '' }
 			data-e2e-cart-is-loading={ isCartUpdating }
+			isStreamlinedPrice={ streamlinedPriceExperimentAssignment !== null }
 		>
 			{ showFeaturesList && (
 				<CheckoutSummaryFeaturedList
@@ -139,7 +148,7 @@ export function CheckoutSummaryFeaturedList( {
 
 	return (
 		<>
-			<CheckoutSummaryFeatures>
+			<CheckoutSummaryFeatures className="checkout__summary-features">
 				<CheckoutSummaryFeaturesTitle>
 					{ responseCart.is_gift_purchase
 						? translate( 'WordPress.com Gift Subscription' )
@@ -181,21 +190,77 @@ function CheckoutSummaryPriceList() {
 	const taxLineItems = getTaxBreakdownLineItemsFromCart( responseCart );
 	const totalLineItem = getTotalLineItemFromCart( responseCart );
 	const translate = useTranslate();
+	const [ , streamlinedPriceExperimentAssignment ] = useStreamlinedPriceExperiment();
+
+	let subtotalBeforeDiscounts = 0;
+	let totalDiscount = 0;
+	if ( streamlinedPriceExperimentAssignment ) {
+		for ( const product of responseCart.products ) {
+			// In specific cases (e.g. premium domains) the original price (renewal) is lower than the due price.
+			subtotalBeforeDiscounts += Math.max(
+				product.item_subtotal_integer,
+				product.item_original_subtotal_integer
+			);
+		}
+		totalDiscount = subtotalBeforeDiscounts - responseCart.sub_total_integer;
+	}
 
 	return (
 		<>
+			{ streamlinedPriceExperimentAssignment && (
+				<CheckoutSummaryTitle>
+					<span>{ translate( 'Your order' ) }</span>
+				</CheckoutSummaryTitle>
+			) }
 			<ProductsAndCostOverridesList responseCart={ responseCart } />
-			<CheckoutSummaryAmountWrapper>
+			<CheckoutSummaryAmountWrapper
+				isStreamlinedPrice={ streamlinedPriceExperimentAssignment !== null }
+			>
 				<CheckoutSubtotalSection>
-					<CheckoutSummaryLineItem key="checkout-summary-line-item-subtotal">
-						<span>{ translate( 'Subtotal' ) }</span>
-						<span>
-							{ formatCurrency( responseCart.sub_total_integer, responseCart.currency, {
-								isSmallestUnit: true,
-								stripZeros: true,
-							} ) }
-						</span>
-					</CheckoutSummaryLineItem>
+					{ streamlinedPriceExperimentAssignment && (
+						<CheckoutSummarySubtotal key="checkout-summary-line-item-subtotal">
+							<span>{ translate( 'Subtotal' ) }</span>
+							<span className="wp-checkout-order-summary__subtotal-price">
+								{ totalDiscount > 0 && (
+									<s>
+										{ formatCurrency( subtotalBeforeDiscounts, responseCart.currency, {
+											isSmallestUnit: true,
+											stripZeros: true,
+										} ) }
+									</s>
+								) }
+								<span>
+									{ formatCurrency( responseCart.sub_total_integer, responseCart.currency, {
+										isSmallestUnit: true,
+										stripZeros: true,
+									} ) }
+								</span>
+							</span>
+						</CheckoutSummarySubtotal>
+					) }
+					{ streamlinedPriceExperimentAssignment && totalDiscount > 0 && (
+						<CheckoutSummaryTotalDiscount>
+							<span>{ translate( 'Discount' ) }</span>
+							<span className="wp-checkout-order-summary__subtotal-discount">
+								{ formatCurrency( totalDiscount, responseCart.currency, {
+									isSmallestUnit: true,
+									stripZeros: true,
+								} ) }
+							</span>
+						</CheckoutSummaryTotalDiscount>
+					) }
+
+					{ ! streamlinedPriceExperimentAssignment && (
+						<CheckoutSummaryLineItem key="checkout-summary-line-item-subtotal">
+							<span>{ translate( 'Subtotal' ) }</span>
+							<span>
+								{ formatCurrency( responseCart.sub_total_integer, responseCart.currency, {
+									isSmallestUnit: true,
+									stripZeros: true,
+								} ) }
+							</span>
+						</CheckoutSummaryLineItem>
+					) }
 					{ taxLineItems.map( ( taxLineItem ) => (
 						<CheckoutSummaryLineItem key={ 'checkout-summary-line-item-' + taxLineItem.id }>
 							<span>{ taxLineItem.label }</span>
@@ -211,7 +276,7 @@ function CheckoutSummaryPriceList() {
 					) }
 				</CheckoutSubtotalSection>
 
-				<CheckoutSummaryTotal>
+				<CheckoutSummaryTotal isStreamlinedPrice={ streamlinedPriceExperimentAssignment !== null }>
 					<span className="wp-checkout-order-summary__label">
 						{ translate( 'Total', {
 							context: 'The label of the total line item in checkout',
@@ -413,7 +478,7 @@ export function CheckoutSummaryRefundWindows( {
 		<>
 			{ includeRefundIcon && <StyledIcon icon={ reusableBlock } size={ 24 } /> }
 			<CheckoutSummaryFeaturesListItem>
-				<WPCheckoutCheckIcon id="features-list-refund-text" />
+				{ ! includeRefundIcon && <WPCheckoutCheckIcon /> }
 				{ highlight ? <strong>{ text }</strong> : text }
 			</CheckoutSummaryFeaturesListItem>
 		</>
@@ -491,7 +556,7 @@ export function CheckoutSummaryFeaturesList( props: {
 
 			{ hasNoAdsAddOn && (
 				<CheckoutSummaryFeaturesListItem>
-					<WPCheckoutCheckIcon id="features-list-support-text" />
+					<WPCheckoutCheckIcon />
 					{ translate( 'Remove ads from your site with the No Ads add-on' ) }
 				</CheckoutSummaryFeaturesListItem>
 			) }
@@ -499,13 +564,13 @@ export function CheckoutSummaryFeaturesList( props: {
 			{ hasDomainTransferProduct && (
 				<>
 					<CheckoutSummaryFeaturesListItem>
-						<WPCheckoutCheckIcon id="features-list-support-another-year" />
+						<WPCheckoutCheckIcon />
 						{ hasFreeCouponTransfersOnly( responseCart )
 							? translate( "Transfer is free and we'll pay for an extra year of registration." )
 							: translate( '1-year extension on your domain' ) }
 					</CheckoutSummaryFeaturesListItem>
 					<CheckoutSummaryFeaturesListItem>
-						<WPCheckoutCheckIcon id="features-list-support-privacy" />
+						<WPCheckoutCheckIcon />
 						{ translate( 'Private domain registration and SSL certificate included for free' ) }
 					</CheckoutSummaryFeaturesListItem>
 				</>
@@ -513,7 +578,7 @@ export function CheckoutSummaryFeaturesList( props: {
 
 			{ ! hasPlanInCart && hasEmailInCart && (
 				<CheckoutSummaryFeaturesListItem>
-					<WPCheckoutCheckIcon id="features-list-support-email" />
+					<WPCheckoutCheckIcon />
 					{ translate( 'Fast support' ) }
 				</CheckoutSummaryFeaturesListItem>
 			) }
@@ -566,7 +631,7 @@ function CheckoutSummaryFlowFeaturesList( {
 			{ planFeatures.map( ( feature ) => {
 				return (
 					<CheckoutSummaryFeaturesListItem key={ `feature-list-${ feature.getSlug() }` }>
-						<WPCheckoutCheckIcon id={ `feature-list-${ feature.getSlug() }-icon` } />
+						<WPCheckoutCheckIcon />
 						{ feature.isHighlightedFeature ? (
 							<strong>{ feature.getTitle() }</strong>
 						) : (
@@ -614,7 +679,7 @@ function CheckoutSummaryFeaturesListDomainItem( { domain }: { domain: ResponseCa
 	if ( domain.is_bundled ) {
 		return (
 			<CheckoutSummaryFeaturesListItem>
-				<WPCheckoutCheckIcon id={ `feature-list-domain-item-${ domain.meta }` } />
+				<WPCheckoutCheckIcon />
 				{ bundledDomainText }
 			</CheckoutSummaryFeaturesListItem>
 		);
@@ -622,7 +687,7 @@ function CheckoutSummaryFeaturesListDomainItem( { domain }: { domain: ResponseCa
 
 	return (
 		<CheckoutSummaryFeaturesListItem>
-			<WPCheckoutCheckIcon id={ `feature-list-domain-item-${ domain.meta }` } />
+			<WPCheckoutCheckIcon />
 			<strong>{ domain.meta }</strong>
 		</CheckoutSummaryFeaturesListItem>
 	);
@@ -637,7 +702,7 @@ function CheckoutSummaryJetpackProductFeatures( { product }: { product: Response
 			{ productFeatures.map( ( feature, index ) => {
 				return (
 					<CheckoutSummaryFeaturesListItem key={ `feature${ index }` }>
-						<WPCheckoutCheckIcon id={ `icon${ index }` } />
+						<WPCheckoutCheckIcon />
 						{ feature }
 					</CheckoutSummaryFeaturesListItem>
 				);
@@ -665,15 +730,14 @@ function CheckoutSummaryAkismetProductFeatures( { product }: { product: Response
 			{ productFeatures.map( ( feature ) => {
 				return (
 					<CheckoutSummaryFeaturesListItem key={ feature }>
-						<WPCheckoutCheckIcon id={ feature.replace( /[^\w]/g, '_' ) } />
+						<WPCheckoutCheckIcon />
 						{ feature }
 					</CheckoutSummaryFeaturesListItem>
 				);
 			} ) }
-
 			{ yearlySavingsPercentage > 0 && (
 				<CheckoutSummaryFeaturesListItem>
-					<WPCheckoutCheckIcon id="yearly_savings" />
+					<WPCheckoutCheckIcon />
 					{ translate( '%(yearlySavingsPercentage)s%% price reduction for yearly term', {
 						args: {
 							yearlySavingsPercentage,
@@ -723,11 +787,7 @@ function CheckoutSummaryPlanFeatures( props: {
 
 				return (
 					<CheckoutSummaryFeaturesListItem key={ String( feature ) } isSupported={ isSupported }>
-						{ isSupported ? (
-							<WPCheckoutCheckIcon id={ feature.replace( /[^\w]/g, '_' ) } />
-						) : (
-							<WPCheckoutCrossIcon />
-						) }
+						{ isSupported ? <WPCheckoutCheckIcon /> : <WPCheckoutCrossIcon /> }
 						{ feature }
 					</CheckoutSummaryFeaturesListItem>
 				);
@@ -764,7 +824,7 @@ function CheckoutSummarySupportIfAvailable( props: {
 	if ( hasEnTranslation( 'Fast support' ) && hasEnTranslation( 'Priority support 24/7' ) ) {
 		return (
 			<CheckoutSummaryFeaturesListItem>
-				<WPCheckoutCheckIcon id="annual-live-chat" />
+				<WPCheckoutCheckIcon />
 				{ isWpComPremiumPlan( currentPlanSlug )
 					? translate( 'Fast support' )
 					: translate( 'Priority support 24/7' ) }
@@ -773,7 +833,7 @@ function CheckoutSummarySupportIfAvailable( props: {
 	}
 	return (
 		<CheckoutSummaryFeaturesListItem>
-			<WPCheckoutCheckIcon id="annual-live-chat" />
+			<WPCheckoutCheckIcon />
 			{ translate( 'Live chat support' ) }
 		</CheckoutSummaryFeaturesListItem>
 	);
@@ -812,14 +872,14 @@ function CheckoutSummaryAnnualUpsell( props: {
 			<CheckoutSummaryFeaturesListWrapper>
 				{ shouldShowFreeDomainUpsell && (
 					<CheckoutSummaryFeaturesListItem isSupported={ false }>
-						<WPCheckoutCheckIcon id="annual-domain-credit" />
+						<WPCheckoutCheckIcon />
 						{ translate( 'Free domain for one year' ) }
 					</CheckoutSummaryFeaturesListItem>
 				) }
 				{ hasEnTranslation( 'Fast support' ) && hasEnTranslation( 'Priority support 24/7' )
 					? ! isWpComPersonalPlan( productSlug ) && (
 							<CheckoutSummaryFeaturesListItem isSupported={ false }>
-								<WPCheckoutCheckIcon id="annual-live-chat" />
+								<WPCheckoutCheckIcon />
 								{ isWpComPremiumPlan( productSlug )
 									? translate( 'Fast support' )
 									: translate( 'Priority support 24/7' ) }
@@ -827,7 +887,7 @@ function CheckoutSummaryAnnualUpsell( props: {
 					  )
 					: ! isWpComPersonalPlan( productSlug ) && (
 							<CheckoutSummaryFeaturesListItem isSupported={ false }>
-								<WPCheckoutCheckIcon id="annual-live-chat" />
+								<WPCheckoutCheckIcon />
 								{ translate( 'Live chat support' ) }
 							</CheckoutSummaryFeaturesListItem>
 					  ) }
@@ -845,10 +905,21 @@ const pulse = keyframes`
 	100% { opacity: 1; }
 `;
 
-const CheckoutSummaryCard = styled.div`
+const CheckoutSummaryCard = styled.div< { isStreamlinedPrice: boolean } >`
 	border-bottom: none 0;
+	${ ( props ) =>
+		props.isStreamlinedPrice &&
+		css`
+			border: none;
+			border-radius: 4px;
+			background: #fff;
+			padding: 28px;
+			box-shadow:
+				0 3px 1px rgb( 0 0 0 / 4% ),
+				0 3px 8px rgb( 0 0 0 / 12% );
+			margin-bottom: 20px;
+		` }
 `;
-
 const CheckoutSummaryFeatures = styled.div`
 	padding: 24px 0;
 	justify-self: flex-start;
@@ -940,16 +1011,30 @@ CheckoutSummaryFeaturesListItem.defaultProps = {
 	isSupported: true,
 };
 
+const CheckoutSummaryTitle = styled.div`
+	margin-bottom: 16px;
+	color: ${ ( props ) => props.theme.colors.textColorDark };
+	font-weight: ${ ( props ) => props.theme.weights.bold };
+	line-height: 26px;
+	font-size: 20px;
+`;
+
 const CheckoutSubtotalSection = styled.div`
 	border-bottom: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
 	margin-bottom: 20px;
 	padding-bottom: 20px;
 `;
 
-const CheckoutSummaryAmountWrapper = styled.div`
+const CheckoutSummaryAmountWrapper = styled.div< { isStreamlinedPrice: boolean } >`
 	border-top: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
 	padding: 20px 0;
 	margin-top: 20px;
+
+	${ ( props ) =>
+		props.isStreamlinedPrice &&
+		css`
+			padding: 20px 0 0 0;
+		` }
 `;
 
 const CheckoutSummaryLineItem = styled.div< { isDiscount?: boolean } >`
@@ -967,17 +1052,55 @@ const CheckoutSummaryLineItem = styled.div< { isDiscount?: boolean } >`
 	}
 `;
 
-const CheckoutSummaryTotal = styled( CheckoutSummaryLineItem )`
+const CheckoutSummarySubtotal = styled( CheckoutSummaryLineItem )`
+	color: ${ ( props ) => props.theme.colors.textColorDark };
+	font-weight: ${ ( props ) => props.theme.weights.bold };
+	line-height: 26px;
+	margin-bottom: 0px;
+	font-size: 20px;
+	& .wp-checkout-order-summary__subtotal-price {
+		font-size: 14px;
+
+		display: flex;
+		flex: 0 0 auto;
+		gap: 4px;
+		margin-left: 12px;
+
+		.rtl & {
+			margin-right: 12px;
+			margin-left: 0;
+		}
+
+		& s {
+			color: ${ COLOR_GRAY_40 };
+		}
+
+		& span {
+			font-weight: 500;
+		}
+	}
+`;
+
+const CheckoutSummaryTotalDiscount = styled( CheckoutSummaryLineItem )`
+	& .wp-checkout-order-summary__subtotal-discount {
+		color: ${ COLOR_GREEN_60 };
+		font-weight: 500;
+	}
+`;
+
+const CheckoutSummaryTotal = styled( CheckoutSummaryLineItem )< { isStreamlinedPrice: boolean } >`
 	color: ${ ( props ) => props.theme.colors.textColorDark };
 	font-weight: ${ ( props ) => props.theme.weights.bold };
 	line-height: 26px;
 	margin-bottom: 0px;
 	font-size: 20px;
 
+	${ ( props ) =>
+		! props.isStreamlinedPrice &&
+		css`
 	& span {
 		font-family: 'Recoleta', sans-serif;
 	}
-
 	& .wp-checkout-order-summary__label {
 		font-size: 28px;
 		line-height: 40px;
@@ -986,6 +1109,7 @@ const CheckoutSummaryTotal = styled( CheckoutSummaryLineItem )`
 	& .wp-checkout-order-summary__total-price {
 		font-size: 40px; line-height: 44px; }
 	}
+	` }
 `;
 
 const LoadingCopy = styled.p`

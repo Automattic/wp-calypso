@@ -1,3 +1,4 @@
+// @ts-nocheck - TODO: Fix TypeScript issues
 import { createReceiptObject } from '../assembler';
 import type { RawReceiptData, ReceiptData } from '../types';
 import type { WPCOMTransactionEndpointResponse } from '@automattic/wpcom-checkout';

@@ -37,14 +37,12 @@
 	overflow: hidden;
 	text-overflow: ellipsis;
     color: rgb(11, 15, 20);
-    /* stylelint-disable-next-line declaration-property-unit-allowed-list */
     font-size: 16px;
     font-weight: 700;
     letter-spacing: 0.25px;
 }
 
 .bluesky-preview__card-site {
-	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	font-size: 14px;
 	overflow: hidden;
 	text-overflow: ellipsis;
@@ -61,7 +59,6 @@
     -webkit-line-clamp: 2;
 	color: rgb(11, 15, 20);
 	display: -webkit-box;
-    /* stylelint-disable-next-line declaration-property-unit-allowed-list */
     font-size: 15px;
     font-weight: 400;
     letter-spacing: 0.25px;

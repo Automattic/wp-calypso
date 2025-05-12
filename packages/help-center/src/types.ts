@@ -97,6 +97,7 @@ interface Eligibility {
 		| 'ecommerce'
 		| 'jetpack-paid'
 		| 'p2-plus';
+	user_field_flow_name: string;
 }
 
 export interface SupportStatus {

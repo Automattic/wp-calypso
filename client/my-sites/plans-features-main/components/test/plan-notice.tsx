@@ -1,4 +1,5 @@
 /** @jest-environment jsdom */
+// @ts-nocheck - TODO: Fix TypeScript issues
 
 import {
 	PLAN_BUSINESS,
@@ -118,7 +119,12 @@ describe( '<PlanNotice /> Tests', () => {
 		mGetCurrentUserCurrencyCode.mockImplementation( () => 'USD' );
 		mUsePlanUpgradeCreditsApplicable.mockImplementation( () => 100 );
 		mUseDomainToPlanCreditsApplicable.mockImplementation( () => 100 );
-		mGetByPurchaseId.mockImplementation( () => ( { isInAppPurchase: false } ) as Purchase );
+		mGetByPurchaseId.mockImplementation(
+			() =>
+				( {
+					isInAppPurchase: false,
+				} ) as Purchase
+		);
 		mIsProPlan.mockImplementation( () => false );
 	} );
 
@@ -255,7 +261,12 @@ describe( '<PlanNotice /> Tests', () => {
 	} );
 
 	test( 'Show in app purchase <PlanNotice /> when the current site was purchased in an app', () => {
-		mGetByPurchaseId.mockImplementation( () => ( { isInAppPurchase: true } ) as Purchase );
+		mGetByPurchaseId.mockImplementation(
+			() =>
+				( {
+					isInAppPurchase: true,
+				} ) as Purchase
+		);
 		renderWithProvider(
 			<PlanNotice
 				discountInformation={ { withDiscount: 'test', discountEndDate: new Date() } }

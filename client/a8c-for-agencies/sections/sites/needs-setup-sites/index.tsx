@@ -170,7 +170,7 @@ export default function NeedSetup( { licenseKey }: Props ) {
 			title={ title }
 		>
 			<LayoutColumn className="sites-overview" wide>
-				<LayoutTop>
+				<LayoutTop isFullWidth>
 					<PurchaseConfirmationMessage />
 
 					<LayoutHeader>

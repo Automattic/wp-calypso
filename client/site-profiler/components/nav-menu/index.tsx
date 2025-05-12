@@ -21,7 +21,7 @@ const executeScroll = ( ref: React.RefObject< HTMLObjectElement > ) => {
 
 export const NavMenu = ( { navItems, domain, showMigrationCta = false }: NavMenuProps ) => {
 	const translate = useTranslate();
-	const migrateUrl = `/setup/hosted-site-migration?ref=site-profiler&from=${ domain }`;
+	const migrateUrl = `/setup/site-migration?ref=site-profiler&from=${ domain }`;
 
 	/* eslint-disable react-hooks/rules-of-hooks */
 	// Using map() instead of findIndex() here avoids "Rendered fewer hooks than expected" errors

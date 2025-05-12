@@ -1,0 +1,10 @@
+.theme-a8c-for-agencies:has(.client-checkout-v2) {
+	.layout.has-no-masterbar .layout__content {
+		padding: 0;
+		background-color: var(--color-surface);
+	}
+}
+
+.client-checkout-v2 {
+	min-height: 100vh;
+}

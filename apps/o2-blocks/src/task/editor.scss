@@ -23,7 +23,6 @@
 	color: var(--color-text-inverted);
 	background: #7a6ff0;
 	border-radius: 2px;
-	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	font-size: 12px;
 	height: 24px;
 	line-height: 24px;
@@ -49,7 +48,6 @@
 	display: inline-block;
 	font-weight: bold;
 	color: 111;
-	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	font-size: 12px;
 	height: 20px;
 	line-height: 20px;
@@ -73,7 +71,6 @@
 }
 
 .wp-block-todo__assigned {
-	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	font-size: 13px;
 	font-weight: 600;
 	display: flex;
@@ -88,7 +85,6 @@
 	height: 24px;
 	margin-left: 10px;
 	color: rgba(255, 255, 255, 0.6);
-	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	font-size: 14px;
 	text-transform: uppercase;
 	text-align: center;

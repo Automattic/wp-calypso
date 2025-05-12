@@ -3,7 +3,13 @@ import config from '@automattic/calypso-config';
 import { UrlFriendlyTermType } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { FREE_THEME } from '@automattic/design-picker';
-import { isTailoredSignupFlow, ONBOARDING_FLOW, StepContainer } from '@automattic/onboarding';
+import {
+	isNewHostedSiteCreationFlow,
+	isTailoredSignupFlow,
+	ONBOARDING_FLOW,
+	Step,
+	StepContainer,
+} from '@automattic/onboarding';
 import { PlansIntent } from '@automattic/plans-grid-next';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { isDesktop as isDesktopViewport, subscribeIsDesktop } from '@automattic/viewport';
@@ -21,6 +27,11 @@ import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
 import { buildUpgradeFunction } from 'calypso/lib/signup/step-actions';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
+import { useFCCARestrictions } from 'calypso/my-sites/plans-features-main/hooks/use-fcca-restrictions';
+import {
+	useStreamlinedPriceExperiment,
+	isStreamlinedPricePlansTreatment,
+} from 'calypso/my-sites/plans-features-main/hooks/use-streamlined-price-experiment';
 import { getStepUrl } from 'calypso/signup/utils';
 import { getDomainFromUrl } from 'calypso/site-profiler/utils/get-valid-url';
 import { useDispatch as reduxUseDispatch, useSelector } from 'calypso/state';
@@ -217,6 +228,8 @@ function UnifiedPlansStep( {
 	const initializedSitesBackUrl = useSelector( ( state ) =>
 		getCurrentUserSiteCount( state ) ? '/sites/' : null
 	);
+	const [ isStreamlinedPriceExperimentLoading, streamlinedPriceExperimentAssignment ] =
+		useStreamlinedPriceExperiment();
 
 	useSiteGlobalStylesOnPersonal();
 
@@ -354,10 +367,20 @@ function UnifiedPlansStep( {
 			return headerText;
 		}
 
-		return translate( 'Choose your flavor of WordPress' );
+		if ( isNewHostedSiteCreationFlow( flowName ) ) {
+			return translate( 'The right plan for the right project' );
+		}
+
+		return translate( 'There’s a plan for you' );
 	};
 
 	const getSubheaderText = () => {
+		if ( isNewHostedSiteCreationFlow( flowName ) ) {
+			return translate(
+				'Get the advanced features you need without ever thinking about overages.'
+			);
+		}
+
 		const freePlanButton = (
 			<Button
 				onClick={ () =>
@@ -428,7 +451,18 @@ function UnifiedPlansStep( {
 		}
 	}
 
-	const intervalTypeValue = intervalType || getIntervalType( path );
+	const { shouldRestrict3YearPlans } = useFCCARestrictions();
+	let defaultIntervalType = 'yearly';
+	const experimentValue = streamlinedPriceExperimentAssignment as string;
+	if (
+		! isStreamlinedPriceExperimentLoading &&
+		isStreamlinedPricePlansTreatment( experimentValue ) &&
+		experimentValue.startsWith( 'plans_3y' )
+	) {
+		defaultIntervalType = shouldRestrict3YearPlans() ? '2yearly' : '3yearly';
+	}
+
+	const intervalTypeValue = intervalType || getIntervalType( path, defaultIntervalType );
 
 	let paidDomainName = domainItem?.meta;
 
@@ -484,22 +518,43 @@ function UnifiedPlansStep( {
 				showPlanTypeSelectorDropdown={ config.isEnabled( 'onboarding/interval-dropdown' ) }
 				onPlanIntervalUpdate={ onPlanIntervalUpdate }
 				selectedThemeType={ selectedThemeType }
+				renderSiblingWhenLoaded={ () => {
+					if ( ! isNewHostedSiteCreationFlow( flowName ) ) {
+						return null;
+					}
+
+					return (
+						<AsyncLoad
+							require="calypso/my-sites/plans-features-main/components/plan-faq"
+							placeholder={ null }
+						/>
+					);
+				} }
 			/>
 		</div>
 	);
 
 	if ( useStepContainerV2 && wrapperProps ) {
+		const goBack = wrapperProps.hideBack ? undefined : wrapperProps.goBack;
+
 		return (
 			<>
 				<MarketingMessage path="signup/plans" />
-				<AsyncLoad
-					require="./step-container-v2-plans"
-					headerText={ getHeaderText() }
-					subHeaderText={ fallbackSubHeaderText }
-					children={ stepContent }
-					goBack={ wrapperProps.hideBack ? undefined : wrapperProps.goBack }
-					backLabelText={ backLabelText }
-				/>
+				<Step.WideLayout
+					className="step-container-v2--plans"
+					topBar={
+						<Step.TopBar
+							leftElement={
+								goBack ? (
+									<Step.BackButton onClick={ goBack }>{ backLabelText }</Step.BackButton>
+								) : undefined
+							}
+						/>
+					}
+					heading={ <Step.Heading text={ getHeaderText() } subText={ fallbackSubHeaderText } /> }
+				>
+					{ stepContent }
+				</Step.WideLayout>
 			</>
 		);
 	}

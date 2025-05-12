@@ -4,8 +4,11 @@ import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { useFlowLocale } from 'calypso/landing/stepper/hooks/use-flow-locale';
+import { useSite } from 'calypso/landing/stepper/hooks/use-site';
+import { getStepFromURL } from 'calypso/landing/stepper/utils/get-flow-from-url';
 import { skipLaunchpad } from 'calypso/landing/stepper/utils/skip-launchpad';
 import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
+import { shouldShowLaunchpadFirst } from 'calypso/state/selectors/should-show-launchpad-first';
 import { useSiteIdParam } from '../../../hooks/use-site-id-param';
 import { useSiteSlug } from '../../../hooks/use-site-slug';
 import { USER_STORE } from '../../../stores';
@@ -30,7 +33,22 @@ const write: Flow = {
 	useSteps() {
 		return WRITE_FLOW_STEPS;
 	},
+	useTracksEventProps() {
+		const site = useSite();
+		const step = getStepFromURL();
+		if ( site && shouldShowLaunchpadFirst( site ) && step === 'launchpad' ) {
+			//prevent track events from firing until we're sure we won't redirect away from Launchpad
+			return {
+				isLoading: true,
+				eventsProperties: {},
+			};
+		}
 
+		return {
+			isLoading: false,
+			eventsProperties: {},
+		};
+	},
 	useStepNavigation( _currentStep, navigate ) {
 		const flowName = this.name;
 		const siteId = useSiteIdParam();

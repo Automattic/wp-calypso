@@ -1,5 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
-import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { NextButton } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import { FC } from 'react';
@@ -11,10 +9,8 @@ import { ApplicationPasswordsInfo } from '../types';
 import { AccessMethodPicker } from './access-method-picker';
 import { BackupFileField } from './backup-file-field';
 import { ErrorMessage } from './error-message';
-import { PasswordField } from './password-field';
 import { SiteAddressField } from './site-address-field';
 import { SpecialInstructions } from './special-instructions';
-import { UsernameField } from './username-field';
 
 interface CredentialsFormProps {
 	onSubmit: (
@@ -25,7 +21,6 @@ interface CredentialsFormProps {
 
 export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit } ) => {
 	const translate = useTranslate();
-	const hasEnTranslation = useHasEnTranslation();
 
 	const {
 		control,
@@ -39,8 +34,6 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit } ) => {
 
 	const queryError = useQuery().get( 'error' ) || null;
 
-	const applicationPasswordEnabled = isEnabled( 'automated-migration/application-password' );
-
 	let errorMessage;
 	if ( errors.root && errors.root.type !== 'manual' && errors.root.message ) {
 		errorMessage = errors.root.message;
@@ -52,11 +45,7 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit } ) => {
 
 	const getContinueButtonText = () => {
 		if ( isBusy ) {
-			const hasScanningTranslation = hasEnTranslation( 'Scanning site' );
-			if ( applicationPasswordEnabled && hasScanningTranslation ) {
-				return translate( 'Scanning site' );
-			}
-			return translate( 'Verifying credentials' );
+			return translate( 'Scanning site' );
 		}
 		if ( canBypassVerification ) {
 			return translate( 'Continue anyways' );
@@ -71,7 +60,7 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit } ) => {
 		submitHandler();
 	};
 
-	const showSpecialInstructions = ! applicationPasswordEnabled || accessMethod === 'backup';
+	const showSpecialInstructions = accessMethod === 'backup';
 
 	return (
 		<form className="site-migration-credentials__form" onSubmit={ onSubmitLocal }>
@@ -92,12 +81,6 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit } ) => {
 				{ accessMethod === 'credentials' && (
 					<div className="site-migration-credentials">
 						<SiteAddressField control={ control } errors={ errors } />
-						{ ! applicationPasswordEnabled && (
-							<>
-								<UsernameField control={ control } errors={ errors } />
-								<PasswordField control={ control } errors={ errors } />
-							</>
-						) }
 					</div>
 				) }
 

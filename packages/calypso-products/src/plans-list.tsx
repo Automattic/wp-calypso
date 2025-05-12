@@ -1,4 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { formatNumber } from '@automattic/number-formatters';
 import i18n, { translate } from 'i18n-calypso';
 import {
 	FEATURE_13GB_STORAGE,
@@ -282,6 +283,8 @@ import {
 	FEATURE_SECURITY_MALWARE,
 	FEATURE_SECURITY_DDOS,
 	FEATURE_DEV_TOOLS,
+	FEATURE_DEV_TOOLS_SSH,
+	FEATURE_DEV_TOOLS_GIT,
 	FEATURE_WP_UPDATES,
 	FEATURE_MULTI_SITE,
 	FEATURE_SELL_SHIP,
@@ -542,8 +545,7 @@ const getPlanFreeDetails = (): IncompleteWPcomPlan => ( {
 	getBlogAudience: () => i18n.translate( 'Best for students' ),
 	getPortfolioAudience: () => i18n.translate( 'Best for students' ),
 	getStoreAudience: () => i18n.translate( 'Best for students' ),
-	getPlanTagline: () =>
-		i18n.translate( 'Get a taste of the world’s most popular CMS & blogging software.' ),
+	getPlanTagline: () => i18n.translate( 'Get started with all the basics.' ),
 	getNewsletterTagLine: () =>
 		i18n.translate( 'Start fresh or make the switch, bringing your first 100 readers with you.' ),
 	getBlogOnboardingTagLine: () =>
@@ -621,13 +623,16 @@ const getPlanFreeDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_CONTACT_FORM_JP,
 			FEATURE_SITE_ACTIVITY_LOG_JP,
 			FEATURE_UNLTD_SOCIAL_MEDIA_JP,
+			FEATURE_ES_SEARCH_JP,
 		];
 	},
 	getStorageFeature: () => FEATURE_1GB_STORAGE,
 	getPlanComparisonFeatureLabels: () => {
 		const baseFeatures = {
 			[ FEATURE_SHARES_SOCIAL_MEDIA_JP ]: i18n.translate( '%d shares per month', { args: [ 30 ] } ),
-			[ FEATURE_COMMISSION_FEE_STANDARD_FEATURES ]: i18n.translate( '10%' ),
+			[ FEATURE_COMMISSION_FEE_STANDARD_FEATURES ]: formatNumber( 0.1, {
+				numberFormatOptions: { style: 'percent' },
+			} ),
 			[ FEATURE_AI_ASSISTANT ]: i18n.translate( 'Limited to 20 requests' ),
 		};
 
@@ -733,7 +738,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 	getBlogAudience: () => i18n.translate( 'Best for personal use' ),
 	getPortfolioAudience: () => i18n.translate( 'Best for personal use' ),
 	getStoreAudience: () => i18n.translate( 'Best for personal use' ),
-	getPlanTagline: () => i18n.translate( 'Create your home on the web with a custom domain name.' ),
+	getPlanTagline: () => i18n.translate( 'Make your mark with a custom domain.' ),
 	getNewsletterTagLine: () =>
 		i18n.translate( 'Monetize your writing, go ad-free, and expand your media content.' ),
 	getBlogOnboardingTagLine: () =>
@@ -840,7 +845,9 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 		const baseFeatures = {
 			[ FEATURE_PREMIUM_THEMES ]: i18n.translate( 'Dozens of premium themes' ),
 			[ FEATURE_SHARES_SOCIAL_MEDIA_JP ]: i18n.translate( '%d shares per month', { args: [ 30 ] } ),
-			[ FEATURE_COMMISSION_FEE_STANDARD_FEATURES ]: i18n.translate( '8%' ),
+			[ FEATURE_COMMISSION_FEE_STANDARD_FEATURES ]: formatNumber( 0.08, {
+				numberFormatOptions: { style: 'percent' },
+			} ),
 			[ FEATURE_SUPPORT ]: i18n.translate( 'Support from our expert\u00A0team' ),
 		};
 
@@ -908,7 +915,7 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 	getPortfolioAudience: () => i18n.translate( 'Best for online stores' ),
 	getStoreAudience: () => i18n.translate( 'Best for online stores' ),
 	getPlanTagline: () =>
-		i18n.translate( 'Build an online store with powerful, integrated premium extensions.' ),
+		i18n.translate( 'Grow your online store with commerce-optimized extensions.' ),
 	getDescription: () => {
 		return i18n.translate(
 			'{{strong}}Best for online stores:{{/strong}} Sell products or services with this powerful, ' +
@@ -1062,8 +1069,12 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 		const baseFeatures = {
 			[ FEATURE_PREMIUM_THEMES ]: i18n.translate( 'All premium themes' ),
 			[ FEATURE_SHARES_SOCIAL_MEDIA_JP ]: i18n.translate( 'Unlimited shares' ),
-			[ FEATURE_COMMISSION_FEE_STANDARD_FEATURES ]: i18n.translate( '0%' ),
-			[ FEATURE_COMMISSION_FEE_WOO_FEATURES ]: i18n.translate( '0%' ),
+			[ FEATURE_COMMISSION_FEE_STANDARD_FEATURES ]: formatNumber( 0, {
+				numberFormatOptions: { style: 'percent' },
+			} ),
+			[ FEATURE_COMMISSION_FEE_WOO_FEATURES ]: formatNumber( 0, {
+				numberFormatOptions: { style: 'percent' },
+			} ),
 			[ FEATURE_SUPPORT ]: i18n.translate( 'Priority 24/7 support from our expert\u00A0team' ),
 		};
 
@@ -1268,7 +1279,8 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 	getBlogAudience: () => i18n.translate( 'Best for freelancers' ),
 	getPortfolioAudience: () => i18n.translate( 'Best for freelancers' ),
 	getStoreAudience: () => i18n.translate( 'Best for freelancers' ),
-	getPlanTagline: () => i18n.translate( 'Build a unique website with powerful design tools.' ),
+	getPlanTagline: () =>
+		i18n.translate( 'Step up site customization with premium design features.' ),
 	getNewsletterTagLine: () =>
 		i18n.translate( 'Make it even more memorable with premium designs and style customization.' ),
 	getBlogOnboardingTagLine: () =>
@@ -1403,6 +1415,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_FAST_SUPPORT_FROM_EXPERTS,
 			WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 			FEATURE_WORDADS,
+			FEATURE_CONNECT_ANALYTICS,
 			FEATURE_STYLE_CUSTOMIZATION,
 			FEATURE_PAYMENT_TRANSACTION_FEES_4,
 			FEATURE_SUPPORT,
@@ -1428,7 +1441,9 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		const baseFeatures = {
 			[ FEATURE_PREMIUM_THEMES ]: i18n.translate( 'All premium themes' ),
 			[ FEATURE_SHARES_SOCIAL_MEDIA_JP ]: i18n.translate( 'Unlimited shares' ),
-			[ FEATURE_COMMISSION_FEE_STANDARD_FEATURES ]: i18n.translate( '4%' ),
+			[ FEATURE_COMMISSION_FEE_STANDARD_FEATURES ]: formatNumber( 0.04, {
+				numberFormatOptions: { style: 'percent' },
+			} ),
 			[ FEATURE_SUPPORT ]: i18n.translate( 'Fast support from our expert\u00A0team' ),
 		};
 
@@ -1476,9 +1491,7 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 	getPortfolioAudience: () => i18n.translate( 'Best for small businesses' ),
 	getStoreAudience: () => i18n.translate( 'The plan for small businesses' ),
 	getPlanTagline: () =>
-		i18n.translate(
-			'Unlock the power of WordPress with the managed hosting platform built by WordPress experts.'
-		),
+		i18n.translate( 'Unlock next-level WordPress with custom plugins and themes.' ),
 	getBlogOnboardingTagLine: () =>
 		i18n.translate( 'Expand your blog with plugins and powerful tools to help you scale.' ),
 	getDescription: () =>
@@ -1601,7 +1614,8 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_REAL_TIME_SECURITY_SCANS,
 			FEATURE_SPAM_JP,
 			FEATURE_SECURITY_DDOS,
-			FEATURE_DEV_TOOLS,
+			FEATURE_DEV_TOOLS_GIT,
+			FEATURE_DEV_TOOLS_SSH,
 			FEATURE_SITE_STAGING_SITES,
 			FEATURE_SEAMLESS_STAGING_PRODUCTION_SYNCING,
 			FEATURE_WP_UPDATES,
@@ -1658,8 +1672,12 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 			[ FEATURE_SHIPPING_INTEGRATIONS ]: i18n.translate( 'Available with paid plugins' ),
 			[ FEATURE_SHARES_SOCIAL_MEDIA_JP ]: i18n.translate( 'Unlimited shares' ),
 			[ FEATURE_STORE_DESIGN ]: i18n.translate( 'Available with plugins' ),
-			[ FEATURE_COMMISSION_FEE_STANDARD_FEATURES ]: i18n.translate( '2%' ),
-			[ FEATURE_COMMISSION_FEE_WOO_FEATURES ]: i18n.translate( '0%' ),
+			[ FEATURE_COMMISSION_FEE_STANDARD_FEATURES ]: formatNumber( 0.02, {
+				numberFormatOptions: { style: 'percent' },
+			} ),
+			[ FEATURE_COMMISSION_FEE_WOO_FEATURES ]: formatNumber( 0, {
+				numberFormatOptions: { style: 'percent' },
+			} ),
 			[ FEATURE_SUPPORT ]: i18n.translate( 'Priority 24/7 support from our expert team' ),
 		};
 
@@ -1858,9 +1876,7 @@ const get2023EnterprisGrideDetails = (): IncompleteWPcomPlan => ( {
 	getTitle: () => i18n.translate( 'Enterprise' ),
 	getAudience: () => i18n.translate( 'Best for enterprises' ),
 	getPlanTagline: () =>
-		i18n.translate(
-			'Deliver an unmatched performance with the highest security standards on our enterprise content platform.'
-		),
+		i18n.translate( 'Level up to bespoke Enterprise-grade performance and security.' ),
 	getDescription: () => '',
 	get2023PricingGridSignupWpcomFeatures: () => [],
 	get2023PricingGridSignupJetpackFeatures: () => [],

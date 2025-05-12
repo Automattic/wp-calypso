@@ -314,6 +314,30 @@ describe( 'JetpackAuthorize', () => {
 		} );
 	} );
 
+	describe( 'isFromJetpackOnboardingFlow', () => {
+		const isFromJetpackOnboarding = new JetpackAuthorize().isFromJetpackOnboarding;
+
+		test( 'is from jetpack onboarding', () => {
+			const props = {
+				authQuery: {
+					from: 'jetpack-onboarding',
+				},
+			};
+
+			expect( isFromJetpackOnboarding( props ) ).toBe( true );
+		} );
+
+		test( 'is not from jetpack onboarding', () => {
+			const props = {
+				authQuery: {
+					from: 'not-jetpack-onboarding',
+				},
+			};
+
+			expect( isFromJetpackOnboarding( props ) ).toBe( false );
+		} );
+	} );
+
 	describe( 'isFromJetpackBackupPlugin', () => {
 		const isFromJetpackBackupPlugin = new JetpackAuthorize().isFromJetpackBackupPlugin;
 

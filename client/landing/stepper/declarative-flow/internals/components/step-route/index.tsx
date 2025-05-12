@@ -9,16 +9,16 @@ import SignupHeader from 'calypso/signup/signup-header';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { PRIVATE_STEPS } from '../../steps';
-import SurveyManager from '../survery-manager';
+import SurveyManager from '../survey-manager';
 import { useStepRouteTracking } from './hooks/use-step-route-tracking';
-import type { Flow, Navigate, StepperStep } from '../../types';
+import type { Flow, FlowV2, Navigate, StepperStep } from '../../types';
 import type { StepperInternalSelect } from '@automattic/data-stores';
 
 type StepRouteProps = {
 	step: StepperStep;
-	flow: Flow;
+	flow: Flow | FlowV2< any >;
 	renderStep: ( step: StepperStep ) => JSX.Element | null;
-	navigate: Navigate< StepperStep[] >;
+	navigate: Navigate;
 };
 
 // TODO: Check we can move RenderStep function to here and remove the renderStep prop

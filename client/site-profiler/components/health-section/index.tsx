@@ -63,9 +63,7 @@ export const HealthSection: React.FC< HealthSectionProps > = ( props ) => {
 			name={ translate( 'Health Scores' ) }
 			title={ title }
 			subtitle={ ! isWPcom ? translate( 'Boost Site Health Now' ) : null }
-			subtitleOnClick={ () =>
-				page( `/setup/hosted-site-migration?ref=site-profiler&from=${ url }` )
-			}
+			subtitleOnClick={ () => page( `/setup/site-migration?ref=site-profiler&from=${ url }` ) }
 			ref={ healthMetricsRef }
 		>
 			{ Object.values( healthData ).map( ( metric: any ) => (

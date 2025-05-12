@@ -15,11 +15,20 @@ export const MigratedOnColumn = ( { migratedOn }: { migratedOn: number } ) => {
 	return <FormattedDate date={ date } format={ DETAILS_DATE_FORMAT_SHORT } />;
 };
 
-export const ReviewStatusColumn = ( { reviewStatus }: { reviewStatus: string } ) => {
+export const ReviewStatusColumn = ( {
+	reviewStatus,
+}: {
+	reviewStatus: 'pending' | 'confirmed' | 'rejected' | 'paid';
+} ) => {
 	const translate = useTranslate();
 
 	const getStatusProps = () => {
 		switch ( reviewStatus ) {
+			case 'paid':
+				return {
+					statusText: translate( 'Paid' ),
+					statusType: 'success',
+				};
 			case 'confirmed':
 				return {
 					statusText: translate( 'Confirmed' ),

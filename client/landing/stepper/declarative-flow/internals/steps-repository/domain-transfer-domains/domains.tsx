@@ -1,6 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { isEnabled } from '@automattic/calypso-config';
 import { DomainTransferData, DomainTransferForm } from '@automattic/data-stores';
+import { formatCurrency } from '@automattic/number-formatters';
 import { HUNDRED_YEAR_DOMAIN_TRANSFER, useDataLossWarning } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
@@ -8,9 +9,7 @@ import { sprintf } from '@wordpress/i18n';
 import { plus } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { getQueryArg } from '@wordpress/url';
-import { formatCurrency } from 'i18n-calypso';
 import { useCallback, useEffect, useState } from 'react';
-import { v4 as uuid } from 'uuid';
 import QueryProducts from 'calypso/components/data/query-products-list';
 import { domainTransfer } from 'calypso/lib/cart-values/cart-items';
 import { cartManagerClient } from 'calypso/my-sites/checkout/cart-manager-client';
@@ -26,7 +25,7 @@ export interface Props {
 
 const defaultState: DomainTransferForm = {
 	domains: {
-		[ uuid() ]: {
+		[ crypto.randomUUID() ]: {
 			domain: '',
 			auth: '',
 			valid: false,
@@ -155,7 +154,7 @@ const Domains: React.FC< Props > = ( { onSubmit, variantSlug } ) => {
 			resulting_domain_count: domainCount + 1,
 		} );
 		const newDomainsState = { ...domainsState };
-		newDomainsState[ uuid() ] = {
+		newDomainsState[ crypto.randomUUID() ] = {
 			domain: '',
 			auth: '',
 			valid: false,
@@ -226,7 +225,7 @@ const Domains: React.FC< Props > = ( { onSubmit, variantSlug } ) => {
 				}
 			} );
 
-			newDomainsState[ uuid() ] = { ...domainTransferObj };
+			newDomainsState[ crypto.randomUUID() ] = { ...domainTransferObj };
 
 			// Only keep the latest entry - 100-year domain flows are only
 			// allowed to have one domain at a time, so always keep the latest
