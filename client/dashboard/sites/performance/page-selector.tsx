@@ -1,25 +1,28 @@
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { profilerVersion } from 'calypso/performance-profiler/utils/profiler-version';
 import { SearchableDropdown } from '@automattic/components';
 import { Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { search } from '@wordpress/icons';
 import { useMemo, useState, ComponentProps } from 'react';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { profilerVersion } from 'calypso/performance-profiler/utils/profiler-version';
+import type { ProfilerPage } from '../../data/types';
 
-interface PageReport {
+interface PageOption {
+	url: string;
+	path: string;
 	label: string;
 	value: string;
-	path: string;
 	disabled: boolean;
+	wpcom_performance_report_hash: string;
 }
 
 interface PageSelectorProps {
 	siteId: string | undefined;
 	siteUrl: string | undefined;
-	pages: PageReport[];
-	currentPage: PageReport | undefined;
-	currentPageUserSelection: PageReport | undefined;
-	setCurrentPageUserSelection: ( page: PageReport | undefined ) => void;
+	pages: PageOption[];
+	currentPage: PageOption | undefined;
+	currentPageUserSelection: PageOption | undefined;
+	setCurrentPageUserSelection: ( page: PageOption | undefined ) => void;
 	disableControls: boolean;
 	statType: string;
 	statsQuery: Record< string, unknown >;
@@ -29,6 +32,26 @@ interface PageSelectorProps extends ComponentProps< typeof SearchableDropdown > 
 	disabled: boolean;
 	onBlur?: ( event: React.FocusEvent< HTMLDivElement > ) => void;
 }
+
+/**
+ * Map a ProfilerPage to a PageReport
+ * @param page - The ProfilerPage to map
+ * @param siteUrl - The URL of the site
+ * @returns The PageReport
+ */
+const mapPageToPageOption = ( page: ProfilerPage, siteUrl: string ): PageOption => {
+	let path = page.link.replace( siteUrl ?? '', '' );
+	path = path.length > 1 ? path.replace( /\/$/, '' ) : path;
+
+	return {
+		url: page.link,
+		path,
+		label: page.title.rendered || __( 'No Title' ),
+		value: page.id.toString(),
+		disabled: false,
+		wpcom_performance_report_hash: page.wpcom_performance_report_hash,
+	};
+};
 
 export const PageSelector = ( { onBlur, ...props }: PageSelectorProps ) => {
 	return (
@@ -74,51 +97,40 @@ export const PageSelector = ( { onBlur, ...props }: PageSelectorProps ) => {
 };
 
 interface PageSelectorWrapperProps {
-	siteId: string;
-	pages: PageReport[];
-	currentPage: PageReport | undefined;
+	siteUrl: string;
+	pages: ProfilerPage[];
+	currentPage: ProfilerPage | undefined;
 	disabled: boolean;
 	onChange: ( page_id: string | null | undefined ) => void;
 }
 
 export const PageSelectorWrapper: React.FC< PageSelectorWrapperProps > = ( {
+	siteUrl,
 	pages,
 	currentPage,
 	onChange,
 	disabled,
-	// statType,
-	// statsQuery,
 } ) => {
-	// const stats = useSelector( ( state ) =>
-	//     getSiteStatsNormalizedData( state, siteId, statType, statsQuery )
-	// ) as { id: number; value: number }[];
-
-	const stats: { id: number; value: number }[] = [];
-
-	// Order the page by the number of visits
-	const orderedPages = useMemo( () => {
-		return [ ...pages ].sort( ( a, b ) => {
-			const aVisits = stats.find( ( { id } ) => id === parseInt( a.value, 10 ) )?.value ?? 0;
-			const bVisits = stats.find( ( { id } ) => id === parseInt( b.value, 10 ) )?.value ?? 0;
-			return bVisits - aVisits;
-		} );
-	}, [ pages, stats ] );
-
-	// I DONT KNOW WHY THIS IS A THING
-	// const [ prevSiteId, setPrevSiteId ] = useState( siteId );
-	// if ( prevSiteId !== siteId ) {
-	// 	setPrevSiteId( siteId );
-	// 	onChange( undefined );
-	// }
+	const currentPageOption: PageOption | undefined = currentPage
+		? mapPageToPageOption( currentPage, siteUrl )
+		: undefined;
 
 	const pageOptions = useMemo( () => {
-		const options = currentPage
-			? [ currentPage, ...orderedPages.filter( ( p ) => p.value !== currentPage.value ) ]
-			: orderedPages;
+		if ( ! pages ) {
+			return [];
+		}
 
-		// Add a disabled option at the end that will show a disclaimer message.
+		const mappedPages: PageOption[] = pages.map( ( page: ProfilerPage ) =>
+			mapPageToPageOption( page, siteUrl )
+		);
+
+		// Move current page to the top of the list
+		const options: PageOption[] = currentPageOption
+			? [ currentPageOption, ...mappedPages.filter( ( p ) => p.value !== currentPageOption.value ) ]
+			: mappedPages;
+
 		return [ ...options, { label: '', value: '-1', path: '', disabled: true } ];
-	}, [ currentPage, orderedPages ] );
+	}, [ pages, siteUrl, currentPageOption ] );
 
 	// This forces a no pages found message in the dropdown
 	const [ noPagesFound, setNoPagesFound ] = useState( { query: '', found: true } );
@@ -172,7 +184,7 @@ export const PageSelectorWrapper: React.FC< PageSelectorWrapperProps > = ( {
 				window.history.replaceState( {}, '', url.toString() );
 				onChange( page_id );
 			} }
-			value={ currentPage?.value }
+			value={ currentPageOption?.value }
 		/>
 	);
 };

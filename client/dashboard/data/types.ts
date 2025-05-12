@@ -197,3 +197,10 @@ export interface UrlPerformanceInsights {
 		status: string;
 	};
 }
+
+export interface ProfilerPage {
+	id: string;
+	link: string;
+	title: { rendered: string };
+	wpcom_performance_report_hash: string;
+}

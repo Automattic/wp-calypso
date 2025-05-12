@@ -12,6 +12,7 @@ import {
 	sitesQuery,
 	siteQuery,
 	siteSettingsQuery,
+	profilerPagesQuery,
 	domainsQuery,
 	emailsQuery,
 	profileQuery,
@@ -99,7 +100,7 @@ const sitePerformanceRoute = createRoute( {
 	loader: async ( { params: { siteSlug } } ) => {
 		return await Promise.all( [
 			queryClient.ensureQueryData( siteQuery( siteSlug ) ),
-			queryClient.ensureQueryData( siteSettingsQuery( siteSlug ) ),
+			queryClient.ensureQueryData( profilerPagesQuery( siteSlug ) ),
 		] );
 	},
 } ).lazy( () =>

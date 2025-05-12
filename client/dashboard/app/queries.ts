@@ -15,6 +15,7 @@ import {
 	fetchBasicMetrics,
 	fetchPerformanceInsights,
 	updateSiteSettings,
+	fetchSitePages,
 } from '../data';
 import { queryClient } from './query-client';
 import type { Profile, SiteSettings, UrlPerformanceInsights } from '../data/types';
@@ -129,7 +130,6 @@ export function basicMetricsQuery( url: string ) {
 	return {
 		queryKey: [ 'url', 'basic-metrics', url ],
 		queryFn: () => {
-			console.log( 'basicMetricsQuery', url );
 			return fetchBasicMetrics( url );
 		},
 	};
@@ -148,5 +148,12 @@ export function performanceInsightsQuery( url: string, token: string ) {
 
 			return 5000;
 		},
+	};
+}
+
+export function profilerPagesQuery( siteId: string, searchTerm?: string ) {
+	return {
+		queryKey: [ 'profiler-pages', siteId, searchTerm ],
+		queryFn: () => fetchSitePages( siteId, searchTerm ),
 	};
 }

@@ -1,60 +1,36 @@
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useSearch } from '@tanstack/react-router';
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
-import { siteQuery, siteSettingsQuery, siteSettingsMutation } from '../../app/queries';
+import { profilerPagesQuery, siteQuery } from '../../app/queries';
 import { siteRoute, sitePerformanceRoute } from '../../app/router';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { usePerformanceData } from '../hooks/use-performance-data';
-import { useSitePages, type PageReport, type PerformanceReportUrl } from '../hooks/use-site-pages';
 import DeviceTabControls, { ToggleType } from './device-toggle';
 import { PageSelectorWrapper } from './page-selector';
 import Report from './report';
-import type { Site } from '../../data/types';
-
-const DEFAULT_HOMEPAGE_ID = '0';
+import type { Site, ProfilerPage } from '../../data/types';
 
 /**
- * Get the hash from the URL
- * @param url - The URL to get the hash from
- * @returns The hash from the URL
- */
-const getHashFromUrl = ( url: string | undefined ): string => {
-	if ( ! url ) {
-		return '';
-	}
-
-	const [ , hash ] = url.split( '&hash=' );
-	return hash;
-};
-
-/**
- * Get the initial page to display based on the page ID
+ * Get the initial page to display based on the page ID.
  * @param pages - The list of pages to choose from
  * @param pageId - The ID of the page to display
  * @returns The initial page to display
  */
-const getPageFromID = ( pages: PageReport[], pageId: string ) => {
-	return pages?.find( ( page ) => Number( page.value ) === Number( pageId ) );
+const getPageFromID = ( pages: ProfilerPage[] | undefined, pageId: string ) => {
+	return pages?.find( ( page: ProfilerPage ) => Number( page.id ) === Number( pageId ) );
 };
 
 function SitePerformanceContent( { site }: { site: Site } ) {
-	const { page_id } = useSearch( { from: sitePerformanceRoute.fullPath } );
-	const [ deviceTab, setDeviceTab ] = useState< ToggleType >( 'desktop' );
-
-	const { data: siteSettings } = useQuery( siteSettingsQuery( site.ID ) );
-	const cachedHash = getHashFromUrl( siteSettings?.wpcom_performance_report_url );
-
-	const { pages } = useSitePages( {
-		siteId: site.ID,
-		siteUrl: site.URL,
-		homepageHash: cachedHash,
-		defaultHomepageID: DEFAULT_HOMEPAGE_ID,
+	const { data: pagesData, refetch: refetchPages } = useQuery( {
+		...profilerPagesQuery( site.ID, '' ),
+		refetchOnWindowFocus: false,
 	} );
-	const initialPage = getPageFromID( pages, page_id || DEFAULT_HOMEPAGE_ID );
-	const [ currentPage, setCurrentPage ] = useState< PageReport | undefined >( initialPage );
+	const { page_id } = useSearch( { from: sitePerformanceRoute.fullPath } );
+	const initialPage = page_id ? getPageFromID( pagesData, page_id ) : pagesData?.[ 0 ];
+	const [ currentPage, setCurrentPage ] = useState< ProfilerPage | undefined >( initialPage );
 	const {
 		desktopReport,
 		mobileReport,
@@ -62,43 +38,28 @@ function SitePerformanceContent( { site }: { site: Site } ) {
 		isRunningDesktopReport,
 		isRunningMobileReport,
 		isError,
-		refetch,
-	} = usePerformanceData( currentPage?.url, currentPage?.wpcom_performance_report_url?.hash );
-	const mutation = useMutation( siteSettingsMutation( site.ID ) );
+		refetch: refetchReport,
+	} = usePerformanceData( currentPage?.link, currentPage?.wpcom_performance_report_hash );
+	const [ deviceToggle, setDeviceToggle ] = useState< ToggleType >( 'desktop' );
 
 	const handlePageChange = ( pageId: string | null | undefined ) => {
-		const page = getPageFromID( pages, pageId || '' );
+		const page = getPageFromID( pagesData, pageId || '' );
 
 		setCurrentPage( page );
 	};
 
-	/**
-	 * Save the performance report URL to the page meta.
-	 * The front end is responsible for saving the performance report URL to the page meta.
-	 * @param pageId The ID of the page to save the performance report URL to.
-	 * @param reportUrl The performance report URL to save.
-	 * @returns A promise that resolves to the saved performance report URL.
-	 */
-	// const savePerformanceReportUrl = async ( pageId: string, reportUrl: PerformanceReportUrl ) => {
-	// 	const performanceReportUrl = `${ reportUrl.url }&hash=${ reportUrl.hash }`;
-
-	// 	// if ( ! isValidURL( performanceReportUrl ) ) {
-	// 	// 	return;
-	// 	// }
-
-	// 	// Update default site settings if the page is the homepage
-	// 	if ( pageId === DEFAULT_HOMEPAGE_ID ) {
-	// 		return mutation.mutate( {
-	// 			wpcom_performance_report_url: performanceReportUrl,
-	// 		} );
-	// 	}
-
-	// 	return await savePageMeta( site.ID, parseInt( pageId, 10 ), performanceReportUrl );
-	// };
+	const handleReportRefetch = async () => {
+		await refetchReport();
+		refetchPages();
+	};
 
 	// TODO: Remove this once we have a way to handle the report for private sites
 	if ( 1 !== site.options?.blog_public ) {
 		return 'This site is not public. Please make it public to view the performance report.';
+	}
+
+	if ( ! pagesData ) {
+		return null;
 	}
 
 	return (
@@ -106,30 +67,32 @@ function SitePerformanceContent( { site }: { site: Site } ) {
 			<PageHeader
 				title={ __( 'Performance' ) }
 				description={
-					<Button isPrimary onClick={ refetch }>
+					<Button isPrimary onClick={ handleReportRefetch }>
 						Retest
 					</Button>
 				}
 				actions={
 					<>
 						<PageSelectorWrapper
-							siteId={ site.ID }
+							siteUrl={ site.URL }
 							currentPage={ currentPage }
-							pages={ pages }
+							pages={ pagesData }
 							onChange={ handlePageChange }
 							disabled={ isLoading || isRunningDesktopReport || isRunningMobileReport }
 						/>
-						<DeviceTabControls value={ deviceTab } onChange={ setDeviceTab } />
+						<DeviceTabControls value={ deviceToggle } onChange={ setDeviceToggle } />
 					</>
 				}
 			/>
 			<Report
 				currentPage={ currentPage }
-				report={ deviceTab === 'desktop' ? desktopReport : mobileReport }
-				isError={ isError }
+				report={ deviceToggle === 'desktop' ? desktopReport : mobileReport }
 				isLoading={ isLoading }
-				isRunningReport={ isRunningDesktopReport || isRunningMobileReport }
-				onRetest={ refetch }
+				isRunningReport={
+					deviceToggle === 'desktop' ? isRunningDesktopReport : isRunningMobileReport
+				}
+				isError={ isError }
+				onRetest={ handleReportRefetch }
 			/>
 		</PageLayout>
 	);

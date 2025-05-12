@@ -17,7 +17,19 @@ interface PerformanceData {
 	refetch: () => void;
 }
 
+/**
+ * Checks if the report is failed.
+ * @param report - The report to check.
+ * @returns True if the report is failed, false otherwise.
+ */
 const isReportFailed = ( report: unknown ) => report === 'failed';
+
+/**
+ * Checks if the report is running. We consider a report running if it is 'running' or 'queued'.
+ * @param report - The report to check.
+ * @returns True if the report is running, false otherwise.
+ */
+const isReportRunning = ( report: unknown ) => 'running' === report || 'queued' === report;
 
 export function usePerformanceData(
 	url: string | undefined,
@@ -85,8 +97,9 @@ export function usePerformanceData(
 		desktopLoaded,
 		mobileLoaded,
 		isLoading: isLoadingBasicMetrics || isLoadingPerformanceInsights,
-		isRunningDesktopReport: ! desktopLoaded && 'running' === performanceData?.pagespeed?.desktop,
-		isRunningMobileReport: ! mobileLoaded && 'running' === performanceData?.pagespeed?.mobile,
+		isRunningDesktopReport:
+			! desktopLoaded && isReportRunning( performanceData?.pagespeed?.desktop ),
+		isRunningMobileReport: ! mobileLoaded && isReportRunning( performanceData?.pagespeed?.mobile ),
 		isError,
 		refetch,
 	};

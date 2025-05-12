@@ -14,6 +14,7 @@ import type {
 	BasicMetricsData,
 	SiteSettings,
 	UrlPerformanceInsights,
+	ProfilerPage,
 } from './types';
 
 export const fetchProfile = async (): Promise< Profile > => {
@@ -334,5 +335,18 @@ export const fetchPerformanceInsights = async (
 			apiNamespace: 'wpcom/v2',
 		},
 		{ url, hash: token }
+	);
+};
+
+export const fetchSitePages = async (
+	siteIdOrSlug: string,
+	searchTerm: string
+): Promise< ProfilerPage[] > => {
+	return wpcom.req.get(
+		{
+			path: `/sites/${ siteIdOrSlug }/site-profiler/pages`,
+			apiNamespace: 'wpcom/v2',
+		},
+		{ search: searchTerm }
 	);
 };

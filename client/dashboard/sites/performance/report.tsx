@@ -2,11 +2,10 @@ import { useSearch } from '@tanstack/react-router';
 import { useState } from 'react';
 import { PerformanceProfilerDashboardContent } from 'calypso/performance-profiler/components/dashboard-content';
 import { sitePerformanceRoute } from '../../app/router';
-import { type PageReport } from '../hooks/use-site-pages';
 import { ReportError } from './report-error';
 import { ReportExpiredNotice } from './report-expired-notice';
 import { ReportLoading } from './report-loading';
-import type { PerformanceReport } from '../../data/types';
+import type { PerformanceReport, ProfilerPage } from '../../data/types';
 
 import './style.scss';
 
@@ -30,7 +29,7 @@ export default function Report( {
 	onRetest,
 }: {
 	report: PerformanceReport | undefined;
-	currentPage: PageReport | undefined;
+	currentPage: ProfilerPage | undefined;
 	isLoading: boolean;
 	isError: boolean;
 	isRunningReport: boolean;
@@ -50,7 +49,7 @@ export default function Report( {
 	if ( isRunningReport ) {
 		return (
 			<ReportLoading
-				pageTitle={ currentPage.label }
+				pageTitle={ currentPage?.title?.rendered }
 				isLoadingPages={ false }
 				isSavedReport={ false }
 			/>
@@ -71,8 +70,8 @@ export default function Report( {
 			<ReportExpiredNotice reportTimestamp={ report?.timestamp } onRetest={ onRetest } />
 			<PerformanceProfilerDashboardContent
 				performanceReport={ report }
-				url={ currentPage.url }
-				hash={ currentPage.wpcom_performance_report_url.hash }
+				url={ currentPage?.url }
+				hash={ currentPage?.wpcom_performance_report_hash }
 				overallScoreIsTab
 				filter={ recommendationsFilter }
 				displayNewsletterBanner={ false }
