@@ -58,8 +58,12 @@ form {
 	&.is-akismet {
 		.login,
 		.magic-login {
-			.components-button {
+			.components-button,
+			.components-input-control {
 				--color-accent: var(--color-akismet);
+			}
+
+			.components-button {
 				--color-accent-60: var(--color-akismet);
 			}
 		}
