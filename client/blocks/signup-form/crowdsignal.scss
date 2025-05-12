@@ -47,7 +47,6 @@ body.is-section-signup .layout .signup.is-crowdsignal .step-wrapper {
 .signup-form__crowdsignal {
 	.components-button {
 		width: 100%;
-		justify-content: center;
 
 		&.is-primary:not(.signup-form__crowdsignal-wpcom) {
 			--color-accent: var(--color-primary);
