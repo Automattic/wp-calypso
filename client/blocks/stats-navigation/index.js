@@ -62,7 +62,7 @@ function withNoticeHook( HookedComponent ) {
 	};
 }
 
-const TabsBeforeNavigationImprovements = ( {
+const SelectNav = ( {
 	validNavItems,
 	label,
 	interval,
@@ -72,6 +72,7 @@ const TabsBeforeNavigationImprovements = ( {
 	isLegacy,
 	showIntervals,
 	pathTemplate,
+	adminUrl,
 } ) => {
 	return (
 		<>
@@ -88,7 +89,7 @@ const TabsBeforeNavigationImprovements = ( {
 									className={ className }
 									key={ item }
 									onClick={ () =>
-										( window.location.href = `${ this.props.adminUrl }admin.php?page=wc-admin&path=%2Fanalytics%2Foverview` )
+										( window.location.href = `${ adminUrl }admin.php?page=wc-admin&path=%2Fanalytics%2Foverview` )
 									}
 									selected={ false }
 								>
@@ -119,54 +120,6 @@ const TabsBeforeNavigationImprovements = ( {
 				<Intervals selected={ interval } pathTemplate={ pathTemplate } standalone />
 			) }
 		</>
-	);
-};
-
-const SelectNav = ( {
-	label,
-	validNavItems,
-	adminUrl,
-	interval,
-	slugPath,
-	selectedItem,
-	showLock,
-} ) => {
-	return (
-		<SectionNav selectedText={ label }>
-			<NavTabs selectedText={ label }>
-				{ validNavItems.map( ( item ) => {
-					const navItem = navItems[ item ];
-					const intervalPath = navItem.showIntervals ? `/${ interval || 'day' }` : '';
-					const itemPath = `${ navItem.path }${ intervalPath }${ slugPath }`;
-					const className = 'stats-navigation__' + item;
-					if ( item === 'store' && config.isEnabled( 'is_running_in_jetpack_site' ) ) {
-						return (
-							<NavItem
-								className={ className }
-								key={ item }
-								onClick={ () =>
-									( window.location.href = `${ adminUrl }admin.php?page=wc-admin&path=%2Fanalytics%2Foverview` )
-								}
-								selected={ false }
-							>
-								{ navItem.label }
-							</NavItem>
-						);
-					}
-					return (
-						<NavItem
-							className={ className }
-							key={ item }
-							path={ itemPath }
-							selected={ selectedItem === item }
-						>
-							{ navItem.label }
-							{ navItem.paywall && showLock && ' 🔒' }
-						</NavItem>
-					);
-				} ) }
-			</NavTabs>
-		</SectionNav>
 	);
 };
 
@@ -348,26 +301,24 @@ class StatsNavigation extends Component {
 								isLegacy={ isLegacy }
 								showIntervals={ showIntervals }
 								pathTemplate={ pathTemplate }
+								adminUrl={ this.props.adminUrl }
 							/>
 						}
 						breakpointInactiveComponent={
 							<TabNav
 								validNavItems={ validNavItems }
-								label={ label }
 								interval={ interval }
 								slugPath={ slugPath }
 								selectedItem={ selectedItem }
 								showLock={ showLock }
-								isLegacy={ isLegacy }
-								showIntervals={ showIntervals }
-								pathTemplate={ pathTemplate }
+								adminUrl={ this.props.adminUrl }
 							/>
 						}
 					/>
 				) }
 				{ ! isStatsNavigationImprovementEnabled && (
-					// TODO: remove TabsBeforeNavigationImprovements after 'stats/navigation-improvement' launch.
-					<TabsBeforeNavigationImprovements
+					// TODO: remove following SelectNav after 'stats/navigation-improvement' launch.
+					<SelectNav
 						validNavItems={ validNavItems }
 						label={ label }
 						interval={ interval }
@@ -377,6 +328,7 @@ class StatsNavigation extends Component {
 						isLegacy={ isLegacy }
 						showIntervals={ showIntervals }
 						pathTemplate={ pathTemplate }
+						adminUrl={ this.props.adminUrl }
 					/>
 				) }
 
