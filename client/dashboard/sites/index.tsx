@@ -49,9 +49,9 @@ const DEFAULT_FIELDS: Field< Site >[] = [
 	},
 	{
 		id: 'icon.ico',
-		type: 'media',
 		label: __( 'Media' ),
 		render: ( { item }: { item: Site } ) => <SiteIcon site={ item } />,
+		enableSorting: false,
 	},
 	{
 		id: 'subscribers_count',
@@ -113,7 +113,6 @@ const DEFAULT_FIELDS: Field< Site >[] = [
 	},
 	{
 		id: 'preview',
-		type: 'media',
 		label: __( 'Preview' ),
 		render: function PreviewRender( { item }: { item: Site } ) {
 			const [ resizeListener, { width } ] = useResizeObserver();
@@ -143,6 +142,7 @@ const DEFAULT_FIELDS: Field< Site >[] = [
 				</>
 			);
 		},
+		enableSorting: false,
 	},
 ];
 
