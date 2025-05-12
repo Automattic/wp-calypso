@@ -391,7 +391,6 @@ export default connect(
 				config.isEnabled( 'stats/paid-wpcom-v3' ) &&
 				shouldGateStats( state, siteId, STATS_FEATURE_PAGE_TRAFFIC ),
 			isStatsNavigationImprovementEnabled: config.isEnabled( 'stats/navigation-improvement' ),
-			// isStatsNavigationImprovementEnabled: false,
 		};
 	},
 	{ requestModuleToggles, updateModuleToggles }
