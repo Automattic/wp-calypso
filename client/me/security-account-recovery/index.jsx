@@ -73,7 +73,7 @@ const SecurityAccountRecovery = ( props ) => (
 		</Card>
 
 		<div className="security-account-recovery__recovery-email">
-			<SectionHeader label={ props.translate( 'Email address' ) } />
+			<SectionHeader label={ props.translate( 'Recovery email address' ) } />
 			<Card>
 				{ props.shouldPromptEmailValidationNotice && ! props.hasSentEmailValidation && (
 					<RecoveryEmailValidationNotice
@@ -92,7 +92,7 @@ const SecurityAccountRecovery = ( props ) => (
 		</div>
 
 		<div className="security-account-recovery__recovery-sms-number">
-			<SectionHeader label={ props.translate( 'Phone number' ) } />
+			<SectionHeader label={ props.translate( 'Recovery phone number' ) } />
 			<Card>
 				<RecoveryPhone
 					phone={ props.accountRecoveryPhone }

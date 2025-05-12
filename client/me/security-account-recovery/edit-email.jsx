@@ -2,7 +2,7 @@ import { FormInputValidation, FormLabel } from '@automattic/components';
 import emailValidator from 'email-validator';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { Component, createRef } from 'react';
+import { Component } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
@@ -21,14 +21,9 @@ class SecurityAccountRecoveryRecoveryEmailEdit extends Component {
 		storedEmail: null,
 	};
 
-	emailInputRef = createRef();
 	state = {
 		email: this.props.storedEmail || null,
 	};
-
-	componentDidMount() {
-		this.focusInput();
-	}
 
 	renderValidation = () => {
 		let validation = null;
@@ -58,9 +53,7 @@ class SecurityAccountRecoveryRecoveryEmailEdit extends Component {
 		return (
 			<div className={ this.props.className }>
 				<FormFieldset>
-					<FormLabel htmlFor="email">
-						{ this.props.translate( 'Recovery email address' ) }
-					</FormLabel>
+					<FormLabel htmlFor="email">{ this.props.translate( 'Email address' ) }</FormLabel>
 					<FormTextInput
 						isError={ this.state.isInvalid }
 						onKeyUp={ this.onKeyUp }
@@ -84,10 +77,6 @@ class SecurityAccountRecoveryRecoveryEmailEdit extends Component {
 			</div>
 		);
 	}
-
-	focusInput = () => {
-		this.emailInputRef.current.focus();
-	};
 
 	isSavable = () => {
 		if ( ! this.state.email ) {

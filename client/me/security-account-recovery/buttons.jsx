@@ -11,8 +11,8 @@ class SecurityAccountRecoveryManageContactButtons extends Component {
 		isDeletable: PropTypes.bool,
 		saveText: PropTypes.string,
 		onSave: PropTypes.func.isRequired,
-		onDelete: PropTypes.func.isRequired,
 		onCancel: PropTypes.func.isRequired,
+		onDelete: PropTypes.func.isRequired,
 	};
 
 	render() {

@@ -18,7 +18,7 @@ class RecoveryPhone extends Component {
 			return (
 				<Card className="recovery-phone-edit">
 					<div className="recovery-phone-edit__information">
-						<FormLabel>{ translate( 'Recovery SMS number' ) }</FormLabel>
+						<FormLabel>{ translate( 'Phone number' ) }</FormLabel>
 						<h2>{ phone.numberFull }</h2>
 					</div>
 					<div className="recovery-phone-edit__actions">

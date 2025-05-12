@@ -1,4 +1,4 @@
-import { FormInputValidation, FormLabel } from '@automattic/components';
+import { FormInputValidation } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
@@ -23,6 +23,7 @@ class SecurityAccountRecoveryRecoveryPhoneEdit extends Component {
 		} ),
 		onSave: PropTypes.func,
 		onCancel: PropTypes.func,
+		onDelete: PropTypes.func,
 	};
 
 	state = {};
@@ -33,9 +34,6 @@ class SecurityAccountRecoveryRecoveryPhoneEdit extends Component {
 		return (
 			<div>
 				<FormFieldset>
-					<FormLabel htmlFor="phone_number">
-						{ this.props.translate( 'Recovery SMS number' ) }
-					</FormLabel>
 					<QuerySmsCountries />
 					<FormPhoneInput
 						countriesList={ this.props.countriesList }
