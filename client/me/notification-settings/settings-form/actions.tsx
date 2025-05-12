@@ -50,6 +50,9 @@ const NotificationSettingsFormActions = ( {
 
 			<Button
 				variant="primary"
+				accessibleWhenDisabled
+				showTooltip={ disabled }
+				label={ translate( 'No unsaved changes' ) }
 				disabled={ disabled || !! isFetching }
 				isBusy={ isFetching && savingTarget === 'single' }
 				onClick={ () => {
