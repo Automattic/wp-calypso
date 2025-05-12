@@ -1,6 +1,6 @@
 import crypto from 'crypto';
 import config from '@automattic/calypso-config';
-import uaParser from 'ua-parser-js';
+import { UAParser } from 'ua-parser-js';
 import isStaticRequest from 'calypso/server/lib/is-static-request';
 import { getLogger } from 'calypso/server/lib/logger';
 import { finalizePerfMarks } from 'calypso/server/lib/performance-mark';
@@ -8,7 +8,7 @@ import { finalizePerfMarks } from 'calypso/server/lib/performance-mark';
 const NS_TO_MS = 1e-6;
 
 const parseUA = ( rawUA ) => {
-	const parsedUA = uaParser( rawUA );
+	const parsedUA = new UAParser( rawUA );
 	if ( parsedUA.browser.name && parsedUA.browser.version ) {
 		const version = parsedUA.browser.version.split( '.' )[ 0 ];
 		return `${ parsedUA.browser.name } ${ version }`;

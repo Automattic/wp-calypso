@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { isbot } from 'isbot';
+import { isBot } from 'ua-parser-js/helpers';
 import { getESPluginsInfiniteQueryParams } from 'calypso/data/marketplace/use-es-query';
 import {
 	getWPCOMFeaturedPluginsQueryParams,
@@ -94,13 +94,13 @@ const prefetchPlugin = async ( queryClient, store, { locale, pluginSlug } ) => {
 
 const prefetchTimebox = ( prefetchPromises, context ) => {
 	const racingPromises = [ Promise.all( prefetchPromises ) ];
-	const isBot = isbot( context.res.req.get( 'user-agent' ) );
+	const isDetectedBot = isBot( context.res.req.get( 'user-agent' ) );
 
 	if ( config.isEnabled( 'ssr/prefetch-timebox' ) ) {
 		const timeboxPromise = new Promise( ( _, reject ) =>
 			setTimeout(
 				reject,
-				isBot ? PREFETCH_TIMEOUT_BOTS : PREFETCH_TIMEOUT,
+				isDetectedBot ? PREFETCH_TIMEOUT_BOTS : PREFETCH_TIMEOUT,
 				new Error( PREFETCH_TIMEOUT_ERROR )
 			)
 		);
@@ -109,7 +109,7 @@ const prefetchTimebox = ( prefetchPromises, context ) => {
 	}
 
 	return Promise.race( racingPromises ).catch( ( err ) => {
-		if ( isBot ) {
+		if ( isDetectedBot ) {
 			context.res.status( 504 );
 		}
 		context.serverSideRender = false;
