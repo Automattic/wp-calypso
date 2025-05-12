@@ -11,6 +11,8 @@ import { getBlueprintLabelForTracking } from './lib/blueprint';
 import type { Step as StepType } from '../../types';
 import './style.scss';
 
+const DEFAULT_PLAN_INTENT = 'plans-playground';
+
 export const PlaygroundStep: StepType = ( { navigation, flow } ) => {
 	const { submit } = navigation;
 	const isPlaygroundEligible = useIsPlaygroundEligible();
@@ -22,7 +24,7 @@ export const PlaygroundStep: StepType = ( { navigation, flow } ) => {
 	const [ isLaunching, setIsLaunching ] = useState( false );
 
 	// For calculating the intent, which would make launch wait for it as well
-	const [ pgIntent, setPgIntent ] = useState< string | null >( null );
+	const [ pgIntent, setPgIntent ] = useState< string | null >( DEFAULT_PLAN_INTENT );
 	const [ calculatingIntent, setCalculatingIntent ] = useState( false );
 	const intentPromiseRef = useRef< Promise< void > | null >( null );
 
@@ -65,9 +67,9 @@ export const PlaygroundStep: StepType = ( { navigation, flow } ) => {
 			} )
 			.then( ( res: { text: string } ) => {
 				setPgIntent( res.text );
+				window.localStorage.setItem( 'playground-plans-intent', res.text || DEFAULT_PLAN_INTENT );
 			} )
 			.finally( () => {
-				window.localStorage.setItem( 'playground-plans-intent', pgIntent || 'plans-playground' );
 				setCalculatingIntent( false );
 			} );
 	};
