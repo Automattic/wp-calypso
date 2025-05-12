@@ -2,18 +2,7 @@
  * @jest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
-import { getBlueprint } from '../lib/blueprint';
-
-const DEFAULT_BLUEPRINT = {
-	preferredVersions: {
-		php: '8.3',
-		wp: 'latest',
-	},
-	features: {
-		networking: true,
-	},
-	login: true,
-};
+import { getBlueprint, DEFAULT_BLUEPRINT, DEFAULT_BLUEPRINT_STEPS } from '../lib/blueprint';
 
 const BLUEPRINT_IN_URL_HASH = '#' + JSON.stringify( { landingPage: '/hash' } );
 const HASH_BLUEPRINT = {
@@ -27,6 +16,10 @@ const HASH_BLUEPRINT = {
 	login: true,
 	landingPage: '/hash',
 	steps: [],
+};
+const HASH_BLUEPRINT_EXPECTED = {
+	...HASH_BLUEPRINT,
+	steps: DEFAULT_BLUEPRINT_STEPS, // overwrite is fine since HASH_BLUEPRINT doesn't have steps of its own
 };
 
 const WOOCOMMERCE_PREDEFINED_BLUEPRINT = {
@@ -72,6 +65,10 @@ const REMOTE_BLUEPRINT = {
 	landingPage: '/remote-blueprint',
 	steps: [],
 };
+const REMOTE_BLUEPRINT_EXPECTED = {
+	...REMOTE_BLUEPRINT,
+	steps: DEFAULT_BLUEPRINT_STEPS, // overwrite is fine since REMOTE_BLUEPRINT doesn't have steps of its own
+};
 
 describe( 'getBlueprint', () => {
 	beforeEach( () => {
@@ -110,7 +107,7 @@ describe( 'getBlueprint', () => {
 		} ) );
 
 		const blueprint = await getBlueprint( false, '8.2' );
-		expect( blueprint ).toEqual( HASH_BLUEPRINT );
+		expect( blueprint ).toEqual( HASH_BLUEPRINT_EXPECTED );
 	} );
 
 	describe.each( [
@@ -233,7 +230,7 @@ describe( 'getBlueprint', () => {
 				expect( global.fetch ).toHaveBeenCalledWith( 'https://example.com/blueprint.json', {
 					credentials: 'omit',
 				} );
-				expect( blueprint ).toEqual( REMOTE_BLUEPRINT );
+				expect( blueprint ).toEqual( REMOTE_BLUEPRINT_EXPECTED );
 			} );
 		}
 	);

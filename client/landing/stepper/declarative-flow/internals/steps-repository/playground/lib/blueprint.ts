@@ -1,22 +1,15 @@
 import { Blueprint } from '@wp-playground/blueprints';
+import { StepDefinition } from '@wp-playground/client';
 import { resolveBlueprintFromURL } from './resolve-blueprint-from-url';
 
 const BLUEPRINT_LIB_HOST = 'blueprintlibrary.wordpress.com';
 const FALLBACK_PHP_VERSION = '8.3';
-const DEFAULT_BLUEPRINT: Blueprint = {
-	preferredVersions: {
-		php: FALLBACK_PHP_VERSION,
-		wp: 'latest',
-	},
-	features: {
-		networking: true,
-	},
-	login: true,
-	steps: [
-		{
-			step: 'writeFile',
-			path: '/wordpress/wp-content/mu-plugins/playground-intent-calculation.php',
-			data: `<?php add_action( 'wp_ajax_pg_intent', function() {
+
+export const DEFAULT_BLUEPRINT_STEPS: StepDefinition[] = [
+	{
+		step: 'writeFile',
+		path: '/wordpress/wp-content/mu-plugins/playground-intent-calculation.php',
+		data: `<?php add_action( 'wp_ajax_pg_intent', function() {
 				$active_plugins = array_diff( get_option( 'active_plugins' ), array( 'hello.php', 'akismet/akismet.php' ) );
 				if ( in_array( 'woocommerce/woocommerce.php', $active_plugins ) ) {
 					return 'woocommerce';
@@ -33,8 +26,19 @@ const DEFAULT_BLUEPRINT: Blueprint = {
 
 				return $has_user_global_styles ? 'global-styles' : 'simple';
 			} );`,
-		},
-	],
+	},
+];
+
+export const DEFAULT_BLUEPRINT: Blueprint = {
+	preferredVersions: {
+		php: FALLBACK_PHP_VERSION,
+		wp: 'latest',
+	},
+	features: {
+		networking: true,
+	},
+	login: true,
+	steps: DEFAULT_BLUEPRINT_STEPS,
 };
 
 const PREDEFINED_BLUEPRINTS: Record< string, Blueprint > = {
