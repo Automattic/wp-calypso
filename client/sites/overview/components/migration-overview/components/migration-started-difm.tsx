@@ -46,7 +46,7 @@ export const MigrationStartedDIFM = ( { site }: { site: SiteDetails } ) => {
 	return (
 		<Container>
 			<Header title={ title } subTitle={ subTitle } />
-			<div className="card hosting-card hosting-features__card migration-started-difm">
+			<div className="migration-started-difm">
 				<h2 className="migration-started-difm__title">{ translate( 'What to expect' ) }</h2>
 				<MigrationStartedList>
 					<MigrationStartedItem
