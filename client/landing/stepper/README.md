@@ -297,7 +297,7 @@ There may be a time when a step needs to be renamed. In order to preserve Tracks
 
 ### State management
 
-The `useFlowState` hook will allow you to store and retrieve any information for the duration of the session (defined [here](https://vertexp2.wordpress.com/2025/01/20/proposal-signup-state-management-and-persistence/#iii-the-proposal)). Sessions can live a long time. They're not limited by time.
+The `useFlowState` hook will allow you to store and retrieve any information for the duration of the session (defined [here](/client/landing/stepper/docs/sessions.md)). Sessions can live a long time. They're not limited by time.
 
 **Note:** You'll need to set `__experimentalUseSessions` flag to `true` to be able to use this new API.
 
