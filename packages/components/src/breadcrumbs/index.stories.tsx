@@ -7,7 +7,16 @@ const meta: Meta< typeof Breadcrumbs > = {
 	tags: [ 'autodocs' ],
 	parameters: {
 		actions: { argTypesRegex: '^on.*' },
+		// Prevent flickering + automatic menu closing in compact mode.
+		layout: 'fullscreen',
 	},
+	decorators: [
+		( Story ) => (
+			<div style={ { paddingInlineStart: '1rem', paddingBlockStart: '1rem' } }>
+				<Story />
+			</div>
+		),
+	],
 };
 
 export default meta;
