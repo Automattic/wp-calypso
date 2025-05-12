@@ -11,7 +11,7 @@ export const useUrlPerformanceInsightsQuery = ( url?: string, hash?: string ) =>
 					path: '/site-profiler/metrics/advanced/insights',
 					apiNamespace: 'wpcom/v2',
 				},
-				{ url, hash, crap: 'pl' }
+				{ url, hash }
 			),
 		meta: {
 			persist: false,
