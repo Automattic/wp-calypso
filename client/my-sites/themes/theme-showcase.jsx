@@ -24,7 +24,6 @@ import ShowcaseThemeCollection from 'calypso/my-sites/themes/collections/showcas
 import ThemeCollectionViewHeader from 'calypso/my-sites/themes/collections/theme-collection-view-header';
 import ThemeShowcaseSurvey from 'calypso/my-sites/themes/survey';
 import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import getLastNonEditorRoute from 'calypso/state/selectors/get-last-non-editor-route';
 import getSiteEditorUrl from 'calypso/state/selectors/get-site-editor-url';
 import getSiteFeaturesById from 'calypso/state/selectors/get-site-features';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
@@ -601,7 +600,6 @@ class ThemeShowcase extends Component {
 			isSiteWooExpressOrEcomFreeTrial,
 			isSiteWooExpress,
 			isCollectionView,
-			lastNonEditorRoute,
 			translate,
 		} = this.props;
 		const tier = this.props.tier || 'all';
@@ -664,7 +662,7 @@ class ThemeShowcase extends Component {
 				/>
 				{ this.renderSiteAssemblerSelectorModal() }
 				{ isLoggedIn && (
-					<ThemeShowcaseSurvey condition={ () => lastNonEditorRoute.includes( 'theme/' ) } />
+					<ThemeShowcaseSurvey condition={ () => window.location.pathname.includes( 'theme/' ) } />
 				) }
 				<div className="themes__content" ref={ this.scrollRef }>
 					<QueryThemeFilters />
@@ -794,7 +792,6 @@ const mapStateToProps = ( state, { siteId, filter } ) => {
 		isSiteWooExpress: isSiteOnWooExpress( state, siteId ),
 		isSiteWooExpressOrEcomFreeTrial:
 			isSiteOnECommerceTrial( state, siteId ) || isSiteOnWooExpress( state, siteId ),
-		lastNonEditorRoute: getLastNonEditorRoute( state ),
 		themeTiers: getThemeTiers( state ),
 	};
 };
