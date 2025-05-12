@@ -50,6 +50,6 @@ export const useGetOdieConversations = ( enabled = true ) => {
 		refetchOnMount: true,
 		refetchOnWindowFocus: false,
 		enabled,
-		staleTime: 3600, // 1 hour
+		staleTime: 1000 * 30, // 30 seconds
 	} );
 };
