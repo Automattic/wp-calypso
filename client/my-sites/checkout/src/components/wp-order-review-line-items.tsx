@@ -25,6 +25,7 @@ import { isWcMobileApp } from 'calypso/lib/mobile-app';
 import { useGetProductVariants } from 'calypso/my-sites/checkout/src/hooks/product-variants';
 import {
 	isStreamlinedPriceRadioTreatment,
+	isStreamlinedPriceDropdownTreatment,
 	useStreamlinedPriceExperiment,
 } from 'calypso/my-sites/plans-features-main/hooks/use-streamlined-price-experiment';
 import { getSignupCompleteFlowName } from 'calypso/signup/storageUtils';
@@ -401,7 +402,8 @@ function LineItemWrapper( {
 		if (
 			isWpComPlan( variant.productSlug ) &&
 			! isStreamlinedPriceExperimentLoading &&
-			isStreamlinedPriceRadioTreatment( streamlinedPriceExperimentAssignment )
+			( isStreamlinedPriceRadioTreatment( streamlinedPriceExperimentAssignment ) ||
+				isStreamlinedPriceDropdownTreatment( streamlinedPriceExperimentAssignment ) )
 		) {
 			return true;
 		}
