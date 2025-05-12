@@ -4,11 +4,9 @@ import { PerformanceReportLoadingProgress } from 'calypso/performance-profiler/p
 export const ReportLoading = ( {
 	isSavedReport,
 	pageTitle,
-	isLoadingPages,
 }: {
 	isSavedReport: boolean;
 	pageTitle: string;
-	isLoadingPages?: boolean;
 } ) => {
 	return (
 		<>
@@ -21,7 +19,7 @@ export const ReportLoading = ( {
 				} }
 				isSavedReport={ isSavedReport }
 				pageTitle={ pageTitle }
-				isLoadingPages={ isLoadingPages }
+				isLoadingPages={ false }
 			/>
 			{ ! isLoadingPages && <p>{ __( 'Testing your site may take around 30 seconds.' ) }</p> }
 		</>

@@ -47,13 +47,7 @@ export default function Report( {
 	}
 
 	if ( isRunningReport ) {
-		return (
-			<ReportLoading
-				pageTitle={ currentPage.title.rendered }
-				isLoadingPages={ false }
-				isSavedReport={ false }
-			/>
-		);
+		return <ReportLoading pageTitle={ currentPage.title.rendered } isSavedReport={ false } />;
 	}
 
 	if ( ! report ) {
