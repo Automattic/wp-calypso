@@ -35,6 +35,11 @@
 	}
 }
 
+.accessible-focus .main.promote-post-i2 .campaign-item__post-details-button:focus {
+	color: var(--color-surface);
+	background-color:var(--color-accent)
+}
+
 @mixin blazepress-campaign-item-mobile {
 	.main.promote-post-i2 {
 		.campaign-item__data-row-mobile {
