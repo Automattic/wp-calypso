@@ -64,7 +64,16 @@ const SynchronizeButtonWrapper = styled.div( {
 
 const DestructiveButtonWrapper = styled.div( {
 	'.components-button.is-secondary.is-destructive': {
+		boxShadow: 'none',
 		border: '1px solid var(--color-neutral-10)',
+		'&:hover, &:focus': {
+			border: '1px solid var(--wp-components-color-accent)',
+			background: 'transparent',
+			color: 'var(--color-error)',
+			svg: {
+				fill: 'var(--color-error)',
+			},
+		},
 	},
 } );
 
