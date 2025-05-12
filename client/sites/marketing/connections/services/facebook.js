@@ -1,4 +1,3 @@
-import { localizeUrl } from '@automattic/i18n-utils';
 import { SharingService, connectFor } from '../service';
 
 export class Facebook extends SharingService {
@@ -14,35 +13,15 @@ export class Facebook extends SharingService {
 
 	didKeyringConnectionSucceed( availableExternalAccounts ) {
 		if ( availableExternalAccounts.length === 0 ) {
-			this.props.failCreateConnection( {
-				message: [
-					this.props.translate(
-						'The Facebook connection could not be made because this account does not have access to any Pages.',
-						{
-							context: 'Sharing: Jetpack Social connection error',
-						}
-					),
-					// Append temporary message to inform of Facebook API change
-					' ',
-					this.props.translate(
-						'Facebook supports Jetpack Social connections to Facebook Pages, but not to Facebook Profiles. ' +
-							'{{a}}Learn More about Jetpack Social for Facebook{{/a}}',
-						{
-							components: {
-								a: (
-									<a
-										href={ localizeUrl(
-											'https://wordpress.com/support/publicize/#facebook-pages'
-										) }
-										target="_blank"
-										rel="noopener noreferrer"
-									/>
-								),
-							},
-						}
-					),
-				],
-			} );
+			this.props.warningNotice(
+				this.props.translate(
+					'The Facebook connection could not be made because this account does not have access to any Pages.',
+					{
+						context: 'Sharing: Jetpack Social connection error',
+					}
+				),
+				{ id: 'publicize' }
+			);
 			this.setState( { isConnecting: false } );
 			return false;
 		}
