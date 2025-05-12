@@ -164,7 +164,7 @@ class StatsNavigation extends Component {
 		const slugPath = slug ? `/${ slug }` : '';
 		const pathTemplate = `${ path }/{{ interval }}${ slugPath }`;
 
-		const wrapperClass = clsx( 'stats-navigation', 'stats-page-navigation', {
+		const wrapperClass = clsx( 'stats-navigation', {
 			'stats-navigation--modernized': ! isLegacy,
 			'stats-navigation--improved': isStatsNavigationImprovementEnabled,
 		} );

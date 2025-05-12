@@ -124,10 +124,7 @@
 		padding: 7px;
 	}
 
-	.stats-navigation.stats-navigation--improved  {
-		&.stats-page-navigation .stats-navigation__tabs {
-			margin-left: -12px;
-		}
+	.stats-navigation.stats-navigation--improved .stats-navigation__tabs {
 		.components-tab-panel__tabs-item::after {
 			background-color: var(--color-primary-50);
 		}
