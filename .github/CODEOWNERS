@@ -113,3 +113,6 @@
 
 # V2 Dashboard
 /client/dashboard @youknowriad @Automattic/io @Automattic/lego
+
+# Design System
+/packages/components @Automattic/team-calypso
