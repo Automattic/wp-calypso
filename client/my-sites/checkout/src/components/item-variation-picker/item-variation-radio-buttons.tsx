@@ -1,4 +1,4 @@
-import RadioButton from '@automattic/composite-checkout/src/components/radio-button';
+import { RadioButton } from '@automattic/composite-checkout';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { ItemVariantRadioPrice } from './variant-radio-price';
