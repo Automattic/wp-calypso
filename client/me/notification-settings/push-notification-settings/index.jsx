@@ -768,17 +768,19 @@ class PushNotificationSettings extends Component {
 								"Get notified instantly about new comments and likes — even when you're not on WordPress.com"
 						  ) }
 				</p>
-				<Button
-					className={ clsx(
-						'notification-settings-push-notification-settings__settings-button',
-						buttonClass
-					) }
-					disabled={ buttonDisabled }
-					primary={ buttonPrimary }
-					onClick={ this.clickHandler }
-				>
-					{ buttonText }
-				</Button>
+				{ this.props.status !== 'denied' && (
+					<Button
+						className={ clsx(
+							'notification-settings-push-notification-settings__settings-button',
+							buttonClass
+						) }
+						disabled={ buttonDisabled }
+						primary={ buttonPrimary }
+						onClick={ this.clickHandler }
+					>
+						{ buttonText }
+					</Button>
+				) }
 				{ deniedText }
 			</Card>
 			/* eslint-enable wpcalypso/jsx-classname-namespace */
