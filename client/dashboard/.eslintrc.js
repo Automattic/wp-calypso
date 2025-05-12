@@ -11,12 +11,31 @@ module.exports = {
 							'!calypso/lib',
 							'calypso/lib/*',
 							'!calypso/lib/wp',
+							'!calypso/lib/analytics',
+							'calypso/lib/analytics/*',
+							'!calypso/lib/analytics/tracks',
 							'!calypso/components',
 							'calypso/components/*',
 							// Allowed: calypso/assets/icons
 							'!calypso/assets',
 							'calypso/assets/*',
 							'!calypso/assets/icons',
+							// Allowed: calypso/performance-profiler/components/dashboard-content
+							// Allowed: calypso/performance-profiler/pages/loading-screen/progress
+							// Allowed: calypso/performance-profiler/utils/profiler-version
+							'!calypso/performance-profiler',
+							'calypso/performance-profiler/*',
+							'!calypso/performance-profiler/components',
+							'calypso/performance-profiler/components/*',
+							'!calypso/performance-profiler/components/dashboard-content',
+							'!calypso/performance-profiler/pages',
+							'calypso/performance-profiler/pages/*',
+							'!calypso/performance-profiler/pages/loading-screen',
+							'calypso/performance-profiler/pages/loading-screen/*',
+							'!calypso/performance-profiler/pages/loading-screen/progress',
+							'!calypso/performance-profiler/utils',
+							'calypso/performance-profiler/utils/*',
+							'!calypso/performance-profiler/utils/profiler-version',
 							// Please do not add exceptions unless agreed on
 							// with the #architecture group.
 						],
