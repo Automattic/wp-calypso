@@ -804,7 +804,6 @@ $breakpoint-mobile: 660px;
 		color: $gray-50;
 		margin-bottom: 32px;
 		font-weight: 400;
-		margin-top: -14px;
 	}
 
 	.logged-out-form__footer {
@@ -1290,8 +1289,12 @@ $breakpoint-mobile: 660px;
 			}
 		}
 
-		.components-button {
+		.components-button,
+		.components-input-control {
 			--color-accent: var(--woo-purple-40);
+		}
+
+		.components-button {
 			--color-accent-60: var(--woo-purple-60);
 
 			&.is-primary,
@@ -1325,6 +1328,38 @@ $breakpoint-mobile: 660px;
 
 				.components-spinner {
 					margin-top: 0;
+				}
+			}
+		}
+
+		.components-input-control {
+			--wp-components-color-gray-600: var(--studio-gray-30);
+
+			.components-input-control__label {
+				font-size: $woo-font-size-input;
+				font-weight: 600;
+				line-height: 24px;
+			}
+
+			.components-input-control__container,
+			.components-input-control__input,
+			.components-input-control__backdrop {
+				border-radius: $woo-radius-input;
+			}
+
+			.components-input-control__input,
+			.components-input-control__backdrop {
+				height: 48px;
+			}
+
+			.components-input-control__input {
+				padding: 8px 16px;
+				font-size: $woo-font-size-input;
+			}
+
+			&:has(.components-input-control__input:focus) {
+				.components-input-control__backdrop.components-input-control__backdrop {
+					box-shadow: 0 0 0 1px var(--wp-components-color-accent);
 				}
 			}
 		}
