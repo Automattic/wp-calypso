@@ -171,30 +171,37 @@ const SelectNav = ( {
 };
 
 const TabNav = ( { validNavItems, interval, slugPath, selectedItem, showLock, adminUrl } ) => {
+	const tabs = validNavItems.map( ( item ) => {
+		const navItem = navItems[ item ];
+		const intervalPath = navItem.showIntervals ? `/${ interval || 'day' }` : '';
+		const itemPath = `${ navItem.path }${ intervalPath }${ slugPath }`;
+		return {
+			name: item,
+			title: navItem.label + ( navItem.paywall && showLock ? ' 🔒' : '' ),
+			className: 'stats-navigation__' + item,
+			path: itemPath,
+		};
+	} );
+
 	return (
 		<TabPanel
 			className="stats-navigation__tabs"
-			tabs={ validNavItems.map( ( item ) => {
-				const navItem = navItems[ item ];
-				const intervalPath = navItem.showIntervals ? `/${ interval || 'day' }` : '';
-				const itemPath = `${ navItem.path }${ intervalPath }${ slugPath }`;
-				return {
-					name: item,
-					title: navItem.label + ( navItem.paywall && showLock ? ' 🔒' : '' ),
-					className: 'stats-navigation__' + item,
-					path: itemPath,
-				};
-			} ) }
-			initialTabName={ selectedItem }
-		>
-			{ ( tab ) => {
+			tabs={ tabs }
+			onSelect={ ( tabName ) => {
+				const tab = tabs.find( ( { name } ) => name === tabName );
+
 				if ( tab.name === 'store' && config.isEnabled( 'is_running_in_jetpack_site' ) ) {
 					window.location.href = `${ adminUrl }admin.php?page=wc-admin&path=%2Fanalytics%2Foverview`;
 				} else if ( tab.path ) {
 					page( tab.path );
 				}
-				return <div className="stats-navigation__content" />; // Placeholder div since content is rendered elsewhere
 			} }
+			initialTabName={ selectedItem }
+		>
+			{ () => (
+				// Placeholder div since content is rendered elsewhere
+				<div className="stats-navigation__content" />
+			) }
 		</TabPanel>
 	);
 };
