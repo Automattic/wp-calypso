@@ -70,7 +70,7 @@ export default function Report( {
 			<ReportExpiredNotice reportTimestamp={ report?.timestamp } onRetest={ onRetest } />
 			<PerformanceProfilerDashboardContent
 				performanceReport={ report }
-				url={ currentPage.url }
+				url={ currentPage.link }
 				hash={ currentPage.wpcom_performance_report_hash }
 				overallScoreIsTab
 				filter={ recommendationsFilter }
