@@ -67,6 +67,7 @@ export const PlaygroundStep: StepType = ( { navigation, flow } ) => {
 				setPgIntent( res.text );
 			} )
 			.finally( () => {
+				window.localStorage.setItem( 'playground-plans-intent', pgIntent || 'plans-playground' );
 				setCalculatingIntent( false );
 			} );
 	};
