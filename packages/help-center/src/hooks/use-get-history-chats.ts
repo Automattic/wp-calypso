@@ -83,10 +83,10 @@ export const useGetHistoryChats = (): UseGetHistoryChatsResult => {
 			...conversationsWithUpdatedStatuses,
 			...filteredOdieConversations,
 		].sort( ( a, b ) => {
-			const receviedA = getLastMessageReceived( a );
-			const receviedB = getLastMessageReceived( b );
+			const lastMessageReceivedAtA = getLastMessageReceived( a );
+			const lastMessageReceivedAtB = getLastMessageReceived( b );
 
-			return receviedB - receviedA;
+			return lastMessageReceivedAtB - lastMessageReceivedAtA;
 		} );
 
 		// Split into recent and archived
@@ -98,8 +98,8 @@ export const useGetHistoryChats = (): UseGetHistoryChatsResult => {
 		const archived: Conversations = [];
 
 		mergedAndSortedConversations.forEach( ( conversation ) => {
-			const received = getLastMessageReceived( conversation );
-			if ( received < oneYearAgo ) {
+			const lastmMessageReceivedAt = getLastMessageReceived( conversation );
+			if ( lastmMessageReceivedAt < oneYearAgo ) {
 				archived.push( conversation );
 			} else {
 				recent.push( conversation );
