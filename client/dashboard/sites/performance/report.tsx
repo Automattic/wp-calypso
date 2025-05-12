@@ -42,12 +42,8 @@ export default function Report( {
 		return <ReportError onRetestClick={ onRetest } />;
 	}
 
-	if ( isLoading ) {
-		return 'Loading the report...';
-	}
-
-	if ( isRunningReport ) {
-		return <ReportLoading pageTitle={ currentPage.title.rendered } isSavedReport={ false } />;
+	if ( isLoading || isRunningReport ) {
+		return <ReportLoading pageTitle={ currentPage.title.rendered } isSavedReport={ isLoading } />;
 	}
 
 	if ( ! report ) {
