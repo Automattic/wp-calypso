@@ -248,6 +248,15 @@ interface BaseProps extends Omit< React.HTMLAttributes< HTMLDivElement >, 'onSel
 	 * Event fired when the user navigates between months.
 	 */
 	onMonthChange?: ( month: Date ) => void;
+	/**
+	 * The time zone (IANA or UTC offset) to use in the calendar.
+	 *
+	 * See
+	 * [Wikipedia](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones)
+	 * for the possible values.
+	 *
+	 */
+	timeZone?: string;
 }
 
 interface SinglePropsRequired {

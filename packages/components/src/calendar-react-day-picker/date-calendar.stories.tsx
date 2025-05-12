@@ -55,6 +55,20 @@ type Story = StoryObj< typeof DateCalendar >;
 
 export const Default: Story = {};
 
+export const TimeZone: Story = {
+	args: {
+		timeZone: 'Asia/Tokyo',
+		// In 1 week, but in Tokyo timezone
+		defaultSelected: new Date( new Date().setDate( new Date().getDate() + 7 ) ),
+		disabled: [
+			{
+				// Disable any date before today, but in Tokyo timezone
+				before: new Date(),
+			},
+		],
+	},
+};
+
 export const Controlled: Story = {
 	render: function ControlledDateCalendar( args ) {
 		const [ selected, setSelected ] = useState< Date >();
