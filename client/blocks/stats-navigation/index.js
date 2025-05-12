@@ -175,6 +175,7 @@ class StatsNavigation extends Component {
 		);
 	}
 
+	// Keep using the previous navigation component until the new one is ready for mobile use.
 	renderLegacyNavigation( {
 		selectedItem,
 		interval,
@@ -274,6 +275,7 @@ class StatsNavigation extends Component {
 					<ComponentSwapper
 						className="stats-navigation__tabs-swapper"
 						breakpoint="<480px"
+						// TODO: Utilize the core TabPanel component once it's ready for mobile.
 						breakpointActiveComponent={ this.renderLegacyNavigation( {
 							selectedItem,
 							interval,
