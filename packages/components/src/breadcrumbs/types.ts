@@ -39,9 +39,16 @@ export interface BreadcrumbProps extends React.HTMLAttributes< HTMLElement > {
 	 * This render prop will not affect the last (current) item, since it is
 	 * not rendered as an interactive link.
 	 *
-	 * **Note: this render function should only be used to add behaviors to the
-	 * item link (ie. connect it to a routing solution). Do not use this render
+	 * Note: this render prop should only be used to add behaviors to the
+	 * item link (e.g. to connect it to a routing solution). **Do not use this
 	 * prop to implement custom breadcrumb item designs.**
+	 *
+	 * In order to ensure the correct behavior of the component, make sure that
+	 * the render prop is open for extension:
+	 * - Spread all props onto the underlying element.
+	 * - Forward `ref` prop and merge it with the internal ref, if any.
+	 * - Merge the `style` and `className` props with the internal styles and classes, if any.
+	 * - Chain the event props with the internal event handlers, if any.
 	 *
 	 * By default, the item link will be rendered as an `a` element.
 	 * @example
