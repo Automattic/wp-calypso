@@ -58,7 +58,7 @@ function SitePerformanceContent( { site }: { site: Site } ) {
 		return 'This site is not public. Please make it public to view the performance report.';
 	}
 
-	if ( ! pagesData ) {
+	if ( ! pagesData || ! currentPage ) {
 		return null;
 	}
 

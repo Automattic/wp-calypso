@@ -29,7 +29,7 @@ export default function Report( {
 	onRetest,
 }: {
 	report: PerformanceReport | undefined;
-	currentPage: ProfilerPage | undefined;
+	currentPage: ProfilerPage;
 	isLoading: boolean;
 	isError: boolean;
 	isRunningReport: boolean;
@@ -49,7 +49,7 @@ export default function Report( {
 	if ( isRunningReport ) {
 		return (
 			<ReportLoading
-				pageTitle={ currentPage?.title?.rendered }
+				pageTitle={ currentPage.title.rendered }
 				isLoadingPages={ false }
 				isSavedReport={ false }
 			/>
@@ -70,8 +70,8 @@ export default function Report( {
 			<ReportExpiredNotice reportTimestamp={ report?.timestamp } onRetest={ onRetest } />
 			<PerformanceProfilerDashboardContent
 				performanceReport={ report }
-				url={ currentPage?.url }
-				hash={ currentPage?.wpcom_performance_report_hash }
+				url={ currentPage.url }
+				hash={ currentPage.wpcom_performance_report_hash }
 				overallScoreIsTab
 				filter={ recommendationsFilter }
 				displayNewsletterBanner={ false }
