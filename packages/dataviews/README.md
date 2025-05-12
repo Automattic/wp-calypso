@@ -388,9 +388,37 @@ If `selection` and `onChangeSelection` are provided, the `DataViews` component b
 
 A function that determines if a media field or a primary field is clickable. It receives an item as an argument and returns a boolean value indicating whether the item can be clicked.
 
-#### `onClickItem`: `function`
+#### `LinkComponent`: `React.ComponentType`
 
-A callback function that is triggered when a user clicks on a media field or primary field. This function is currently implemented only in the `grid` and `list` views.
+A React component used to render clickable items.
+
+It can render regular links, but also allows integration with routing libraries (like TanStack Router or React Router).
+
+The component receives the following props:
+- `item`: The data item that was clicked
+- Additional standard HTML anchor props (className, style, etc.)
+
+```jsx
+// Example with TanStack Router
+
+function DataViewsLink( { item, ...props } ) {
+	return (
+		<Link 
+			to={`/sites/${item.slug}`} 
+			preload="intent" 
+			{ ...props } 
+		/>
+	);
+}
+
+// Then use it in DataViews
+<DataViews
+  // ...other props
+  LinkComponent={DataViewsLink}
+/>
+```
+
+See the "Router Integration" section below for more details.
 
 #### `header`: React component
 

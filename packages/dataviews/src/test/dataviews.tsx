@@ -258,6 +258,18 @@ describe( 'DataViews component', () => {
 
 		it( 'should trigger the onClickItem callback if isItemClickable returns true and title field is clicked', async () => {
 			const onClickItemCallback = jest.fn();
+			function LinkComponent( { item, ...props }: { item: Data } ) {
+				return (
+					<a
+						href={ '#' }
+						onClick={ ( event ) => {
+							event.preventDefault();
+							onClickItemCallback( item );
+						} }
+						{ ...props }
+					/>
+				);
+			}
 
 			render(
 				<DataViewWrapper
@@ -268,7 +280,7 @@ describe( 'DataViews component', () => {
 					} }
 					actions={ actions }
 					isItemClickable={ () => true }
-					onClickItem={ onClickItemCallback }
+					LinkComponent={ LinkComponent }
 				/>
 			);
 			const titleField = screen.getByText( data[ 0 ].title );
@@ -326,6 +338,18 @@ describe( 'DataViews component', () => {
 
 		it( 'should trigger the onClickItem callback if isItemClickable returns true and a media field is clicked', async () => {
 			const mediaClickItemCallback = jest.fn();
+			function LinkComponent( { item, ...props }: { item: Data } ) {
+				return (
+					<a
+						href={ '#' }
+						onClick={ ( event ) => {
+							event.preventDefault();
+							mediaClickItemCallback( item );
+						} }
+						{ ...props }
+					/>
+				);
+			}
 
 			render(
 				<DataViewWrapper
@@ -335,7 +359,7 @@ describe( 'DataViews component', () => {
 					} }
 					actions={ actions }
 					isItemClickable={ () => true }
-					onClickItem={ mediaClickItemCallback }
+					LinkComponent={ LinkComponent }
 				/>
 			);
 			const imageField = screen.getByTestId(

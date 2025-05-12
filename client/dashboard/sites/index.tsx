@@ -11,6 +11,7 @@ import { sitesRoute } from '../app/router';
 import DataViewsCard from '../components/dataviews-card';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
+import { createRouterDataViewsLink } from '../components/router-dataviews-link';
 import { STATUS_LABELS, getSiteStatus, getSiteStatusLabel } from '../utils/site-status';
 import AddNewSite from './add-new-site';
 import SiteIcon from './site-icon';
@@ -172,6 +173,10 @@ const DEFAULT_VIEW = {
 	search: '',
 };
 
+const SiteLink = createRouterDataViewsLink< Site >( ( site ) => ( {
+	to: `/sites/${ site.slug }`,
+} ) );
+
 export default function Sites() {
 	const navigate = useNavigate( { from: sitesRoute.fullPath } );
 	const sites = useQuery( sitesQuery() ).data;
@@ -214,10 +219,6 @@ export default function Sites() {
 	}
 
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate( sites, view, fields );
-
-	const onClickItem = ( item: Site ) => {
-		navigate( { to: `/sites/${ item.slug }` } );
-	};
 
 	return (
 		<>
@@ -264,7 +265,7 @@ export default function Sites() {
 								},
 							} );
 						} }
-						onClickItem={ onClickItem }
+						LinkComponent={ SiteLink }
 						defaultLayouts={ DEFAULT_LAYOUTS }
 						paginationInfo={ paginationInfo }
 					/>

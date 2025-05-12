@@ -2,6 +2,7 @@
  * External dependencies
  */
 import clsx from 'clsx';
+import type { ComponentProps } from 'react';
 
 /**
  * WordPress dependencies
@@ -61,6 +62,11 @@ interface TableRowProps< Item > {
 	onChangeSelection: SetSelection;
 	isItemClickable: ( item: Item ) => boolean;
 	onClickItem?: ( item: Item ) => void;
+	LinkComponent?: React.ComponentType<
+		{
+			item: Item;
+		} & ComponentProps< 'a' >
+	>;
 	isActionsColumnSticky?: boolean;
 }
 
@@ -97,6 +103,7 @@ function TableRow< Item >( {
 	getItemId,
 	isItemClickable,
 	onClickItem,
+	LinkComponent,
 	onChangeSelection,
 	isActionsColumnSticky,
 }: TableRowProps< Item > ) {
@@ -175,6 +182,7 @@ function TableRow< Item >( {
 						}
 						isItemClickable={ isItemClickable }
 						onClickItem={ onClickItem }
+						LinkComponent={ LinkComponent }
 					/>
 				</td>
 			) }
@@ -230,6 +238,7 @@ function ViewTable< Item >( {
 	setOpenedFilter,
 	onClickItem,
 	isItemClickable,
+	LinkComponent,
 	view,
 }: ViewTableProps< Item > ) {
 	const { containerRef } = useContext( DataViewsContext );
@@ -417,6 +426,7 @@ function ViewTable< Item >( {
 								getItemId={ getItemId }
 								onChangeSelection={ onChangeSelection }
 								onClickItem={ onClickItem }
+								LinkComponent={ LinkComponent }
 								isItemClickable={ isItemClickable }
 								isActionsColumnSticky={
 									! isHorizontalScrollEnd
