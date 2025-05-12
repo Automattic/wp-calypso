@@ -32,13 +32,13 @@ Stepper is a framework that allows you to make all kinds of walkthroughs. It's g
 
 ## How does it work
 
-A Stepper flow **is not a series of steps**, it's a graph of steps with a non-deterministic order. The first step of the flow is deterministic, but the following steps are decided on the fly by the flow depending on state (user input, user status, site status, etc...).
+A Stepper flow **is not a series of steps**; it's a graph of steps with a non-deterministic order. The first step of the flow is deterministic, but the following steps are decided on the fly by the flow depending on state (user input, user status, site status, etc...).
 
 An ideal Stepper flow is a [finite-state machine](https://en.wikipedia.org/wiki/Finite-state_machine): it has a pre-defined set of possible states, and it should only be in one of those states at any given moment.
 
 ### The most important principle: Steps shouldn't make decisions or communicate
 
-![StepperFlow)](https://github.com/user-attachments/assets/c8d5b07a-4172-4ba1-92d0-7821f0b6b9f0)
+![StepperFlow](https://github.com/user-attachments/assets/c8d5b07a-4172-4ba1-92d0-7821f0b6b9f0)
 
 Stepper steps should be a lot like native form inputs. They may receive some properties, they may have internal state (think checkbox), and they must submit some information. That's it.
 
@@ -121,9 +121,9 @@ export const exampleFlow: FlowV2< typeof initialize > = {
 				case 'domains': {
 					// Here we have the data submitted by the domains step.
 					// By calling this, we're updating the state of the flow to save the picked domain.
-					// This will be precisely persisted for the whole session, but not longer.
+					// This will be persisted for the duration of the session only.
 					set( 'domains', providedDependencies );
-					// Because the flow knows the steps it contains, `navigate` will only only allow `'plans' | 'domains' | 'processing'` are the first argument.
+					// Because the flow knows the steps it contains, `navigate` will only allow `'plans' | 'domains' | 'processing'` as the first argument.
 					navigate( 'plans' );
 					break;
 				}
@@ -157,7 +157,7 @@ Flows have to be registered [here](/client/landing/stepper/declarative-flow/regi
 
 #### File hierarchy convention
 
-[Please put your flow in a folder](https://dotcom.wordpress.com/2025/03/14/stepper-move-flows-into-their-own-folder/), not a loose file. And include a README file with cursory information about your flow **and testing steps**. Then simply link to them in your PRs (win-win).
+[Please put your flow in a folder](https://dotcom.wordpress.com/2025/03/14/stepper-move-flows-into-their-own-folder/), not as a standalone file. And include a README file with cursory information about your flow **and testing steps**. Then simply link to them in your PRs (win-win).
 
 #### Managing authentication
 
@@ -188,7 +188,7 @@ async function initialize() {
 
 	if ( ! hasAccessToFlow ) {
 		window.location = '/home';
-		// Return false to halt the fetching and execution of the steps. Making the redirect much faster.
+		// Return false to halt the fetching and execution of the steps. This makes the redirect much faster.
 		return false;
 	}
 
