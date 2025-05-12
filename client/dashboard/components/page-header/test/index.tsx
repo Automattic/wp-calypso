@@ -36,8 +36,8 @@ describe( 'PageHeader', () => {
 		expect( screen.getByTestId( 'decoration' ) ).toBeVisible();
 	} );
 	test( 'should render with custom heading level', () => {
-		render( <PageHeader title="Test Title" level={ 1 } /> );
-		expect( screen.getByRole( 'heading', { name: 'Test Title' } ).tagName ).toBe( 'H1' );
+		render( <PageHeader title="Test Title" level={ 3 } /> );
+		expect( screen.getByRole( 'heading', { name: 'Test Title' } ).tagName ).toBe( 'H3' );
 	} );
 	test( 'should render with breadcrumbs', () => {
 		render(
@@ -50,7 +50,7 @@ describe( 'PageHeader', () => {
 				] }
 			/>
 		);
-		expect( screen.getByRole( 'heading', { name: 'Test Title' } ).tagName ).toBe( 'H2' );
+		expect( screen.getByRole( 'heading', { name: 'Test Title' } ).tagName ).toBe( 'H1' );
 		expect( screen.getByRole( 'navigation' ) ).toHaveAccessibleName( 'Breadcrumbs' );
 		expect( screen.getAllByRole( 'listitem' ) ).toHaveLength( 3 );
 	} );

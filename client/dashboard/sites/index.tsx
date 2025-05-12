@@ -223,7 +223,6 @@ export default function Sites() {
 			<PageLayout>
 				<PageHeader
 					title={ __( 'Sites' ) }
-					level={ 1 }
 					actions={ [
 						<Button key="add-new-site" variant="primary" __next40pxDefaultSize>
 							{ __( 'Add New Site' ) }

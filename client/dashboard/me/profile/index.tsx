@@ -172,7 +172,6 @@ export default function Profile() {
 				<PageLayout size="small">
 					<PageHeader
 						title={ __( 'Profile' ) }
-						level={ 1 }
 						description={
 							<>
 								{ __( 'Set your name, bio, and other public-facing information.' ) }{ ' ' }

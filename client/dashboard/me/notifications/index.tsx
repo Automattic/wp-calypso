@@ -8,7 +8,6 @@ function Notifications() {
 			<PageHeader
 				title={ __( 'Notifications' ) }
 				description={ __( 'Manage your notification settings.' ) }
-				level={ 1 }
 			/>
 		</PageLayout>
 	);

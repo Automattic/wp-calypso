@@ -8,7 +8,6 @@ function Security() {
 			<PageHeader
 				title={ __( 'Security' ) }
 				description={ __( 'Manage your security settings.' ) }
-				level={ 1 }
 			/>
 		</PageLayout>
 	);

@@ -58,7 +58,6 @@ export default function SubscriptionGiftingSettings() {
 		<PageLayout size="small">
 			<PageHeader
 				title={ __( 'Accept a gift subscription' ) }
-				level={ 1 }
 				description={ __(
 					'Allow a site visitor to cover the full cost of your site’s WordPress.com plan.'
 				) }

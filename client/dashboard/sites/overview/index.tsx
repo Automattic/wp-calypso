@@ -46,7 +46,6 @@ function SiteOverview() {
 		<PageLayout>
 			<PageHeader
 				title={ site.name }
-				level={ 1 }
 				actions={ [
 					<ExternalLink key="visit" href={ site.URL }>
 						{ __( 'Visit' ) }

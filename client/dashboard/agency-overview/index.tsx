@@ -17,7 +17,6 @@ export default function AgencyOverview() {
 					</Button>,
 				] }
 				description={ __( 'This is a sample overview page.' ) }
-				level={ 1 }
 			/>
 		</PageLayout>
 	);

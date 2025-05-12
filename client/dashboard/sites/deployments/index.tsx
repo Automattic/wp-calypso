@@ -5,7 +5,7 @@ import PageLayout from '../../components/page-layout';
 function SiteDeployments() {
 	return (
 		<PageLayout>
-			<PageHeader title={ __( 'Deployments' ) } level={ 1 } />
+			<PageHeader title={ __( 'Deployments' ) } />
 		</PageLayout>
 	);
 }

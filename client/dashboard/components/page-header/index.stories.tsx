@@ -29,10 +29,10 @@ export const WithActions: Story = {
 				appearance, and behavior. These settings control everything from your site title to how your
 				content is displayed to visitors.`,
 		actions: [
-			<Button key="cancel" variant="secondary">
+			<Button key="cancel" variant="secondary" size="compact">
 				Cancel
 			</Button>,
-			<Button key="save" variant="primary">
+			<Button key="save" variant="primary" size="compact">
 				Save Changes
 			</Button>,
 		],
@@ -41,7 +41,6 @@ export const WithActions: Story = {
 
 export const FullExample: Story = {
 	args: {
-		level: 1,
 		title: 'Site Customization',
 		description: 'Make your site look exactly how you want it to',
 		decoration: <Icon icon={ wordpress } />,
@@ -53,17 +52,17 @@ export const FullExample: Story = {
 			{ label: 'Advanced', href: 'javascript:void(0)' },
 		],
 		actions: [
-			<Button key="help" icon={ help } variant="tertiary">
+			<Button key="help" icon={ help } variant="tertiary" size="compact">
 				Help
 			</Button>,
-			<Button key="preview" variant="secondary">
+			<Button key="preview" variant="secondary" size="compact">
 				Preview
 			</Button>,
 			<DropdownMenu
 				key="more-actions"
 				icon={ moreVertical }
 				label="More actions"
-				toggleProps={ { variant: 'tertiary' } }
+				toggleProps={ { variant: 'tertiary', size: 'compact' } }
 			>
 				{ () => (
 					<>

@@ -12,7 +12,7 @@ export interface PageHeaderProps {
 	 * Specifies the semantic heading level (e.g. h1, h2, etc.),
 	 * ensuring the correct structure and accessibility within the page hierarchy.
 	 * Also adjusts action button sizes to manage prominence.
-	 * @default 2
+	 * @default 1
 	 */
 	level?: HeadingLevel;
 	/**

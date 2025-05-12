@@ -121,7 +121,6 @@ function Emails() {
 		<PageLayout>
 			<PageHeader
 				title={ __( 'Emails' ) }
-				level={ 1 }
 				actions={ [
 					<Button key="add-forwarder" variant="secondary" __next40pxDefaultSize>
 						{ __( 'Add Email Forwarder' ) }

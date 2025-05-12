@@ -14,7 +14,7 @@ import RouterLinkSummaryButton from '../../components/router-link-summary-button
 function Billing() {
 	return (
 		<PageLayout size="small">
-			<PageHeader title={ __( 'Billing' ) } level={ 1 } />
+			<PageHeader title={ __( 'Billing' ) } />
 			<VStack spacing={ 4 }>
 				<RouterLinkSummaryButton
 					title={ __( 'Active subscriptions' ) }

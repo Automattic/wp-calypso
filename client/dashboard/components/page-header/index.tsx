@@ -24,7 +24,6 @@ import './style.scss';
  * function MyComponent() {
  * 	return (
  * 		<PageHeader
- * 			level={1}
  * 			title="Settings"
  * 			description="Configure your application settings"
  * 			decoration={<Icon icon={cog} />}
@@ -35,7 +34,7 @@ import './style.scss';
  * ```
  */
 export const PageHeader = ( {
-	level = 2,
+	level = 1,
 	title,
 	description,
 	actions,
@@ -48,7 +47,9 @@ export const PageHeader = ( {
 			<HStack spacing={ 4 } justify="space-between" alignment="center" wrap>
 				<HStack spacing={ 4 } justify="flex-start" expanded={ false }>
 					{ decoration && (
-						<span className="a8c-components-page-header-decoration">{ decoration }</span>
+						<span className="client-dashboard-components-page-header-decoration">
+							{ decoration }
+						</span>
 					) }
 					<Heading level={ level }>{ title }</Heading>
 				</HStack>

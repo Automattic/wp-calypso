@@ -5,11 +5,7 @@ import PageLayout from '../../components/page-layout';
 function Privacy() {
 	return (
 		<PageLayout size="small">
-			<PageHeader
-				title={ __( 'Privacy' ) }
-				description={ __( 'Manage your privacy settings.' ) }
-				level={ 1 }
-			/>
+			<PageHeader title={ __( 'Privacy' ) } description={ __( 'Manage your privacy settings.' ) } />
 		</PageLayout>
 	);
 }

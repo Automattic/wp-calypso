@@ -5,7 +5,7 @@ import PageLayout from '../../components/page-layout';
 function SitePerformance() {
 	return (
 		<PageLayout>
-			<PageHeader title={ __( 'Performance' ) } level={ 1 } />
+			<PageHeader title={ __( 'Performance' ) } />
 		</PageLayout>
 	);
 }

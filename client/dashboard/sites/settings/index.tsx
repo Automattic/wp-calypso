@@ -22,7 +22,7 @@ export default function SiteSettings() {
 
 	return (
 		<PageLayout size="small">
-			<PageHeader title={ __( 'Settings' ) } level={ 1 } />
+			<PageHeader title={ __( 'Settings' ) } />
 			<Heading>{ __( 'General' ) }</Heading>
 			<Card>
 				<VStack>

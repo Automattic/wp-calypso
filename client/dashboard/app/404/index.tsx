@@ -14,7 +14,6 @@ function NotFound() {
 						{ __( 'Go to Sites' ) }
 					</RouterLinkButton>,
 				] }
-				level={ 1 }
 			/>
 		</PageLayout>
 	);

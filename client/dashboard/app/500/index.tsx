@@ -9,7 +9,6 @@ function UnknownError( { error }: { error: Error } ) {
 		<PageLayout>
 			<PageHeader
 				title={ __( '500 Error' ) }
-				level={ 1 }
 				description={ __( 'Something wrong happened.' ) }
 				actions={ [
 					<RouterLinkButton key="go-to-sites" to="/sites" variant="primary" __next40pxDefaultSize>

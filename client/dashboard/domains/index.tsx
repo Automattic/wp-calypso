@@ -103,7 +103,6 @@ function Domains() {
 		<PageLayout>
 			<PageHeader
 				title={ __( 'Domains' ) }
-				level={ 1 }
 				actions={ [
 					<Button key="add-new-domain" variant="primary" __next40pxDefaultSize>
 						{ __( 'Add New Domain' ) }
