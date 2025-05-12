@@ -1,7 +1,7 @@
 import { Step } from '@automattic/onboarding';
 import { useI18n } from '@wordpress/react-i18n';
 import { PlaygroundClient } from '@wp-playground/client';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import DocumentHead from 'calypso/components/data/document-head';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -17,6 +17,15 @@ export const PlaygroundStep: StepType = ( { navigation, flow } ) => {
 	const playgroundClientRef = useRef< PlaygroundClient | null >( null );
 	const { __ } = useI18n();
 	const [ query ] = useSearchParams();
+
+	// For preventing double click on launch button
+	const [ isLaunching, setIsLaunching ] = useState( false );
+
+	// For calculating the intent, which would make launch wait for it as well
+	const [ pgIntent, setPgIntent ] = useState< string | null >( null );
+	const [ calculatingIntent, setCalculatingIntent ] = useState( false );
+	const intentPromiseRef = useRef< Promise< void > | null >( null );
+
 	if ( ! isPlaygroundEligible ) {
 		window.location.assign( '/start' );
 
@@ -27,18 +36,65 @@ export const PlaygroundStep: StepType = ( { navigation, flow } ) => {
 		playgroundClientRef.current = client;
 	};
 
-	const launchSite = () => {
-		if ( ! submit ) {
+	const fetchIntent = () => {
+		const pgc = playgroundClientRef.current;
+		if ( ! pgc || calculatingIntent ) {
 			return;
 		}
 
-		recordTracksEvent( 'calypso_playground_launch_site', {
-			flow,
-			step: 'playground',
-			blueprint: getBlueprintLabelForTracking( query ),
-		} );
+		setCalculatingIntent( true );
+		intentPromiseRef.current = pgc
+			.run( {
+				code: `<?php
+				require_once( '/wordpress/wp-load.php' );
+				$active_plugins = array_diff( get_option( 'active_plugins' ), array( 'hello.php', 'akismet/akismet.php' ) );
+				if ( in_array( 'woocommerce/woocommerce.php', $active_plugins ) ) {
+					echo 'woocommerce';
+					return;
+				}
+				if ( count( $active_plugins ) > 0 ) {
+					echo 'business';
+					return;
+				}
+				$has_user_global_styles = count( get_posts( array(
+					'post_type' => 'wp_global_styles',
+					'post_status' => 'publish',
+					'posts_per_page' => 1,
+				) ) ) > 0;
+				echo $has_user_global_styles ? 'global-styles' : 'simple';`,
+			} )
+			.then( ( res: { text: string } ) => {
+				setPgIntent( res.text );
+			} )
+			.finally( () => {
+				setCalculatingIntent( false );
+			} );
+	};
 
-		submit();
+	const launchSite = async () => {
+		if ( ! submit || isLaunching ) {
+			return;
+		}
+
+		setIsLaunching( true );
+
+		try {
+			// Wait for any existing intent fetch to complete
+			if ( calculatingIntent && intentPromiseRef.current ) {
+				await intentPromiseRef.current;
+			}
+
+			recordTracksEvent( 'calypso_playground_launch_site', {
+				flow,
+				step: 'playground',
+				blueprint: getBlueprintLabelForTracking( query ),
+				intent: pgIntent,
+			} );
+
+			submit();
+		} catch ( error ) {
+			setIsLaunching( false );
+		}
 	};
 
 	return (
@@ -49,7 +105,11 @@ export const PlaygroundStep: StepType = ( { navigation, flow } ) => {
 				topBar={
 					<Step.TopBar
 						rightElement={
-							<Step.PrimaryButton onClick={ launchSite }>
+							<Step.PrimaryButton
+								onClick={ launchSite }
+								onMouseEnter={ fetchIntent }
+								disabled={ isLaunching }
+							>
 								{ __( 'Launch on WordPress.com' ) }
 							</Step.PrimaryButton>
 						}
