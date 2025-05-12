@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { formatNumber } from '@automattic/number-formatters';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
@@ -16,6 +17,7 @@ import PageViewTracker from '../stats-page-view-tracker';
 import statsStringsFactory from '../stats-strings';
 import '../summary/style.scss';
 import '../stats-module/summary-nav.scss';
+import PageHeader from '../components/headers/page-header';
 
 const StatsStrings = statsStringsFactory();
 
@@ -43,14 +45,31 @@ const StatsEmailSummary = ( { translate, period, siteSlug } ) => {
 	}
 	const navigationItems = [ { label: backLabel, href: backLink }, { label: title } ];
 
+	const isStatsNavigationImprovementEnabled = config.isEnabled( 'stats/navigation-improvement' );
+
 	return (
 		<Main className="has-fixed-nav" wideLayout>
 			<PageViewTracker
 				path={ `/stats/${ module }/:site` }
 				title={ `Stats > ${ titlecase( module ) }` }
 			/>
-			<NavigationHeader className="stats-summary-view" navigationItems={ navigationItems } />
-			<div id="my-stats-content" className="stats-summary-view stats-summary__positioned">
+
+			<div id="my-stats-content" className="stats stats-summary-view stats-summary__positioned">
+				{ isStatsNavigationImprovementEnabled && (
+					<PageHeader
+						className="stats__section-header modernized-header"
+						titleProps={ { title, titleLogo: null } }
+						backLinkProps={ {
+							url: backLink,
+							text: backLabel,
+						} }
+					/>
+				) }
+
+				{ ! isStatsNavigationImprovementEnabled && (
+					<NavigationHeader className="stats-summary-view" navigationItems={ navigationItems } />
+				) }
+
 				<div className="stats-summary-nav">
 					<div className="stats-summary-nav__header">
 						<div>
