@@ -48,13 +48,12 @@ const StatsEmailSummary = ( { translate, period, siteSlug } ) => {
 	const isStatsNavigationImprovementEnabled = config.isEnabled( 'stats/navigation-improvement' );
 
 	return (
-		<Main className="has-fixed-nav" wideLayout>
+		<Main className="has-fixed-nav" fullWidthLayout>
 			<PageViewTracker
 				path={ `/stats/${ module }/:site` }
 				title={ `Stats > ${ titlecase( module ) }` }
 			/>
-
-			<div id="my-stats-content" className="stats stats-summary-view stats-summary__positioned">
+			<div className="stats stats-summary-view">
 				{ isStatsNavigationImprovementEnabled && (
 					<PageHeader
 						className="stats__section-header modernized-header"
@@ -67,82 +66,84 @@ const StatsEmailSummary = ( { translate, period, siteSlug } ) => {
 				) }
 
 				{ ! isStatsNavigationImprovementEnabled && (
-					<NavigationHeader className="stats-summary-view" navigationItems={ navigationItems } />
+					<NavigationHeader navigationItems={ navigationItems } />
 				) }
 
-				<div className="stats-summary-nav">
-					<div className="stats-summary-nav__header">
-						<div>
-							<div className="stats-section-title">
-								<h3>{ translate( 'Stats for Emails' ) }</h3>
+				<div id="my-stats-content" className="stats stats-summary-view stats-summary__positioned">
+					<div className="stats-summary-nav">
+						<div className="stats-summary-nav__header">
+							<div>
+								<div className="stats-section-title">
+									<h3>{ translate( 'Stats for Emails' ) }</h3>
+								</div>
 							</div>
 						</div>
 					</div>
-				</div>
 
-				<StatsModule
-					additionalColumns={ {
-						header: (
-							<>
-								<span>{ translate( 'Opens' ) }</span>
-							</>
-						),
-						body: ( item ) => {
-							const opensUnique = parseInt( item.unique_opens, 10 );
-							const opens = parseInt( item.opens, 10 );
-							const hasUniquesData = opensUnique > 0 || opens === 0;
-							return (
-								<TooltipWrapper
-									value={
-										hasUniquesData
-											? `${ formatNumber( item.opens_rate, {
-													numberFormatOptions: {
-														maximumFractionDigits: 2,
-													},
-											  } ) }%`
-											: '—'
-									}
-									item={ item }
-									TooltipContent={ OpensTooltipContent }
-								/>
-							);
-						},
-					} }
-					path="emails"
-					moduleStrings={ { ...StatsStrings.emails, title: '' } }
-					period={ period }
-					query={ query }
-					statType="statsEmailsSummary"
-					mainItemLabel={ translate( 'Latest Emails' ) }
-					hideSummaryLink
-					metricLabel={ translate( 'Clicks' ) }
-					valueField="clicks_rate"
-					formatValue={ ( value, item ) => {
-						if ( item?.clicks !== undefined ) {
-							const clicksUnique = parseInt( item.unique_clicks, 10 );
-							const clicks = parseInt( item.clicks, 10 );
-							const hasUniquesData = clicksUnique > 0 || clicks === 0;
-							return (
-								<TooltipWrapper
-									value={
-										hasUniquesData
-											? `${ formatNumber( item.clicks_rate, {
-													numberFormatOptions: {
-														maximumFractionDigits: 2,
-													},
-											  } ) }%`
-											: '—'
-									}
-									item={ item }
-									TooltipContent={ ClicksTooltipContent }
-								/>
-							);
-						}
-						return <span>{ value }</span>;
-					} }
-					listItemClassName="stats__summary--narrow-mobile"
-				/>
-				<JetpackColophon />
+					<StatsModule
+						additionalColumns={ {
+							header: (
+								<>
+									<span>{ translate( 'Opens' ) }</span>
+								</>
+							),
+							body: ( item ) => {
+								const opensUnique = parseInt( item.unique_opens, 10 );
+								const opens = parseInt( item.opens, 10 );
+								const hasUniquesData = opensUnique > 0 || opens === 0;
+								return (
+									<TooltipWrapper
+										value={
+											hasUniquesData
+												? `${ formatNumber( item.opens_rate, {
+														numberFormatOptions: {
+															maximumFractionDigits: 2,
+														},
+												  } ) }%`
+												: '—'
+										}
+										item={ item }
+										TooltipContent={ OpensTooltipContent }
+									/>
+								);
+							},
+						} }
+						path="emails"
+						moduleStrings={ { ...StatsStrings.emails, title: '' } }
+						period={ period }
+						query={ query }
+						statType="statsEmailsSummary"
+						mainItemLabel={ translate( 'Latest Emails' ) }
+						hideSummaryLink
+						metricLabel={ translate( 'Clicks' ) }
+						valueField="clicks_rate"
+						formatValue={ ( value, item ) => {
+							if ( item?.clicks !== undefined ) {
+								const clicksUnique = parseInt( item.unique_clicks, 10 );
+								const clicks = parseInt( item.clicks, 10 );
+								const hasUniquesData = clicksUnique > 0 || clicks === 0;
+								return (
+									<TooltipWrapper
+										value={
+											hasUniquesData
+												? `${ formatNumber( item.clicks_rate, {
+														numberFormatOptions: {
+															maximumFractionDigits: 2,
+														},
+												  } ) }%`
+												: '—'
+										}
+										item={ item }
+										TooltipContent={ ClicksTooltipContent }
+									/>
+								);
+							}
+							return <span>{ value }</span>;
+						} }
+						listItemClassName="stats__summary--narrow-mobile"
+					/>
+					<JetpackColophon />
+				</div>
 			</div>
 		</Main>
 	);
