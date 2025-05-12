@@ -41,6 +41,13 @@ export function isStreamlinedPriceRadioTreatment( variationName?: string | null 
 	return variationName.includes( 'checkout_radio' );
 }
 
+export function isStreamlinedPriceDropdownTreatment( variationName?: string | null ) {
+	if ( ! variationName ) {
+		return false;
+	}
+	return variationName.includes( 'checkout_dropdown' );
+}
+
 export function isStreamlinedPriceCheckoutTreatment( variationName?: string | null ) {
 	if ( ! variationName ) {
 		return false;
