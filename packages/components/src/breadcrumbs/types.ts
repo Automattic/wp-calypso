@@ -1,22 +1,22 @@
-export interface BreadcrumbItemProps extends React.AnchorHTMLAttributes< HTMLAnchorElement > {
+export interface Item {
 	/**
 	 * The URL that the breadcrumb item should link to.
 	 */
-	href: string;
+	href: NonNullable< React.AnchorHTMLAttributes< HTMLAnchorElement >[ 'href' ] >;
 	/**
 	 * The label text for the breadcrumb item.
 	 */
 	label: string;
 }
 
-export type RenderLink = ( props: BreadcrumbItemProps ) => React.ReactElement;
+export type BreadcrumbItemProps = React.AnchorHTMLAttributes< HTMLAnchorElement > & Item;
 
 export interface BreadcrumbProps extends React.HTMLAttributes< HTMLElement > {
 	/**
 	 * An array of items to display in the breadcrumb trail.
 	 * The last item is considered the current item.
 	 */
-	items: BreadcrumbItemProps[];
+	items: Item[];
 	/**
 	 * A boolean to show/hide the current item in the trail.
 	 * Note that when `false` the current item is only visually hidden.
@@ -32,18 +32,32 @@ export interface BreadcrumbProps extends React.HTMLAttributes< HTMLElement > {
 	 */
 	variant?: 'default' | 'compact';
 	/**
-	 * An optional function to render a custom link for each breadcrumb item.
-	 * This function receives the breadcrumb item as an argument and should return a React node.
-	 * @param props - The breadcrumb item props.
-	 * @returns A customized ReactElement link.
+	 * Allows each breadcrumb item link to be rendered as a different HTML
+	 * element or React component. The value is a function that takes in the
+	 * original component props and gives back a React element with the props
+	 * merged.
+	 * This render prop will not affect the last (current) item, since it is
+	 * not rendered as an interactive link.
+	 *
+	 * **Note: this render function should only be used to add behaviors to the
+	 * item link (ie. connect it to a routing solution). Do not use this render
+	 * prop to implement custom breadcrumb item designs.**
+	 *
+	 * By default, the item link will be rendered as an `a` element.
 	 * @example
 	 * ```tsx
 	 * <Breadcrumbs
 	 *   items={ items }
-	 *   renderLink={ ( props ) => (
+	 *   renderItemLink={ ( props ) => (
 	 *     <Link to={ props.href }>{ props.label }</Link>
 	 *   ) }
 	 * </Breadcrumbs>
+	 *
+	 * @default ( props ) => <a { ...props }>{ props.label }</a>
 	 */
-	renderLink?: RenderLink;
+	renderItemLink?: (
+		props: BreadcrumbItemProps & {
+			ref?: React.Ref< HTMLAnchorElement >;
+		}
+	) => React.ReactElement;
 }

@@ -7,19 +7,24 @@ import {
 import { useResizeObserver, useMergeRefs } from '@wordpress/compose';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
-import React, { useState, forwardRef, useRef } from 'react';
+import React, { useState, forwardRef, useRef, useMemo } from 'react';
 import Menu from '../menu';
-import { BreadcrumbProps, BreadcrumbItemProps, RenderLink } from './types';
+import { BreadcrumbProps, BreadcrumbItemProps, Item } from './types';
 import './style.scss';
+
+function defaultRenderItemLink( props: BreadcrumbItemProps ) {
+	return <a { ...props }>{ props.label }</a>;
+}
 
 function BreadcrumbsMenu( {
 	items,
-	renderLink,
+	renderItemLink,
 }: {
 	items: BreadcrumbItemProps[];
-	renderLink?: RenderLink;
+	renderItemLink: NonNullable< BreadcrumbProps[ 'renderItemLink' ] >;
 } ) {
 	const { __ } = useI18n();
+
 	return (
 		<li className="a8c-components-breadcrumbs__item-wrapper">
 			<Menu placement="bottom-start">
@@ -31,12 +36,8 @@ function BreadcrumbsMenu( {
 				/>
 				<Menu.Popover>
 					{ items.map( ( item, index ) => {
-						const { label, ...linkProps } = item;
 						return (
-							<Menu.Item
-								key={ `${ item.label }-${ index }` }
-								render={ renderLink?.( item ) || <a { ...linkProps } /> }
-							>
+							<Menu.Item key={ `${ item.label }-${ index }` } render={ renderItemLink( item ) }>
 								<Menu.ItemLabel>{ item.label }</Menu.ItemLabel>
 							</Menu.Item>
 						);
@@ -49,16 +50,20 @@ function BreadcrumbsMenu( {
 
 function BreadcrumbItem( {
 	item,
-	renderLink,
+	renderItemLink,
 }: {
-	item: BreadcrumbItemProps;
-	renderLink?: RenderLink;
+	item: Item;
+	renderItemLink: NonNullable< BreadcrumbProps[ 'renderItemLink' ] >;
 } ) {
-	const { label, ...linkProps } = item;
+	const itemProps = useMemo(
+		() => ( {
+			...item,
+			className: 'a8c-components-breadcrumbs__item',
+		} ),
+		[ item ]
+	);
 	return (
-		<li className="a8c-components-breadcrumbs__item-wrapper">
-			{ renderLink?.( item ) || <a { ...linkProps }>{ item.label }</a> }
-		</li>
+		<li className="a8c-components-breadcrumbs__item-wrapper">{ renderItemLink( itemProps ) }</li>
 	);
 }
 
@@ -87,7 +92,14 @@ const BreadcrumbsNav = forwardRef<
 		isOffscreen?: boolean;
 	}
 >( function BreadcrumbsNav(
-	{ isOffscreen, items, showCurrentItem = false, variant = 'default', renderLink, ...props },
+	{
+		isOffscreen,
+		items,
+		showCurrentItem = false,
+		variant = 'default',
+		renderItemLink = defaultRenderItemLink,
+		...props
+	},
 	ref
 ) {
 	// Always show the first item. The last item (current page) is rendered
@@ -121,19 +133,19 @@ const BreadcrumbsNav = forwardRef<
 				justify="flex-start"
 				expanded={ false }
 			>
-				<BreadcrumbItem item={ firstItem } renderLink={ renderLink } />
+				<BreadcrumbItem item={ firstItem } renderItemLink={ renderItemLink } />
 				{ isCompact ? (
-					<BreadcrumbsMenu items={ middleItems } renderLink={ renderLink } />
+					<BreadcrumbsMenu items={ middleItems } renderItemLink={ renderItemLink } />
 				) : (
 					middleItems.map( ( item, index ) => (
 						<BreadcrumbItem
 							key={ `${ item.label }-${ index }` }
 							item={ item }
-							renderLink={ renderLink }
+							renderItemLink={ renderItemLink }
 						/>
 					) )
 				) }
-				{ parentItem && <BreadcrumbItem item={ parentItem } renderLink={ renderLink } /> }
+				{ parentItem && <BreadcrumbItem item={ parentItem } renderItemLink={ renderItemLink } /> }
 				<BreadcrumbCurrentItem item={ items[ items.length - 1 ] } visible={ showCurrentItem } />
 			</HStack>
 		</nav>
@@ -141,7 +153,7 @@ const BreadcrumbsNav = forwardRef<
 } );
 
 function UnforwardedBreadcrumbs(
-	{ items, renderLink, 'aria-label': ariaLabel, ...props }: BreadcrumbProps,
+	{ items, renderItemLink, 'aria-label': ariaLabel, ...props }: BreadcrumbProps,
 	ref: React.ForwardedRef< HTMLElement >
 ) {
 	const { __ } = useI18n();
@@ -175,7 +187,7 @@ function UnforwardedBreadcrumbs(
 			<BreadcrumbsNav
 				ref={ offScreenRef }
 				items={ items }
-				renderLink={ renderLink }
+				renderItemLink={ renderItemLink }
 				{ ...props }
 				variant={ computedVariant }
 				isOffscreen
@@ -183,7 +195,7 @@ function UnforwardedBreadcrumbs(
 			<BreadcrumbsNav
 				ref={ mergedRefs }
 				items={ items }
-				renderLink={ renderLink }
+				renderItemLink={ renderItemLink }
 				{ ...props }
 				variant={ computedVariant }
 				aria-label={ computedAriaLabel }

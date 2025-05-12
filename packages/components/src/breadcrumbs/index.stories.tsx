@@ -1,7 +1,4 @@
 import { Meta, StoryObj } from '@storybook/react';
-import { Button, IconType } from '@wordpress/components';
-import { backup, envelope } from '@wordpress/icons';
-import { BreadcrumbItemProps } from './types';
 import { Breadcrumbs } from './';
 
 const meta: Meta< typeof Breadcrumbs > = {
@@ -14,7 +11,7 @@ const meta: Meta< typeof Breadcrumbs > = {
 };
 
 export default meta;
-type Story = StoryObj< typeof meta >;
+type Story = StoryObj< typeof Breadcrumbs >;
 
 export const Default: Story = {
 	args: {
@@ -53,20 +50,21 @@ export const WithLongPath: Story = {
 	},
 };
 
-const iconByLabel: Record< string, IconType > = { Home: backup, Products: envelope };
-
-export const WithRenderLink: Story = {
+export const WithCustomItem: Story = {
 	args: {
 		...Default.args,
-		items: [
-			{ label: 'Home', href: 'javascript:void(0)' },
-			{ label: 'Products', href: 'javascript:void(0)' },
-			{ label: 'Electronics', href: 'javascript:void(0)' },
-		],
-		renderLink: ( props: BreadcrumbItemProps ) => (
-			<Button href={ props.href } icon={ iconByLabel[ props.label ] }>
-				{ props.label }
-			</Button>
-		),
+		renderItemLink: ( { label, href, ...props } ) => {
+			const onClick = ( event: React.MouseEvent< HTMLAnchorElement > ) => {
+				props.onClick?.( event );
+				event.preventDefault();
+				alert( `Router navigation to ${ href }` );
+			};
+
+			return (
+				<a href={ href } { ...props } onClick={ onClick }>
+					{ label }
+				</a>
+			);
+		},
 	},
 };
