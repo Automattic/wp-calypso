@@ -418,8 +418,6 @@ function DataViewsLink( { item, ...props } ) {
 />
 ```
 
-See the "Router Integration" section below for more details.
-
 #### `header`: React component
 
 React component to be rendered next to the view config button.
