@@ -24,6 +24,10 @@ interface UseGetHistoryChatsResult {
 	archivedConversations: Conversations;
 }
 
+/**
+ * Retrieves the date the last message from the specified conversation was received.
+ * @returns The timestamp in milliseconds (e.g. 1745936539027), or 0 if not available
+ */
 const getLastMessageReceived = ( conversation: OdieConversation | ZendeskConversation ) => {
 	const lastMessage = getLastMessage( { conversation } );
 	return ( lastMessage?.received || 0 ) * 1000;
