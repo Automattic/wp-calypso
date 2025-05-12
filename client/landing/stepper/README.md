@@ -2,7 +2,7 @@
 
 # Stepper Walkthrough Framework
 
-Stepper is a framework that allows you to make all kinds of walkthroughs. It's geared towards signup and onboarding flows. But you can use it to make all sorts of wizards.
+Stepper is a framework that allows you to make all kinds of walkthroughs. It's geared towards signup and onboarding flows, but you can use it to make any wizard.  
 
 ## Table of Contents
 
@@ -34,7 +34,7 @@ Stepper is a framework that allows you to make all kinds of walkthroughs. It's g
 
 A Stepper flow **is not a series of steps**, it's a graph of steps with a non-deterministic order. The first step of the flow is deterministic, but the following steps are decided on the fly by the flow depending on state (user input, user status, site status, etc...).
 
-An ideal Stepper flow is a [finite-state machine](https://en.wikipedia.org/wiki/Finite-state_machine). Meaning it has a pre-defined set of possible states, and it should only be in one of those states at any given moment.
+An ideal Stepper flow is a [finite-state machine](https://en.wikipedia.org/wiki/Finite-state_machine): it has a pre-defined set of possible states, and it should only be in one of those states at any given moment.
 
 ### The most important principle: Steps shouldn't make decisions or communicate
 
@@ -43,8 +43,8 @@ An ideal Stepper flow is a [finite-state machine](https://en.wikipedia.org/wiki/
 Stepper steps should be a lot like native form inputs. They may receive some properties, they may have internal state (think checkbox), and they must submit some information. That's it.
 
 1. They should not make narrative decisions (go back, go next, exit flow, etc..)
-2. They should not communicate with other steps (eg via query params).
-3. **They should not have side effects (eg persisting stuff in local storage).**
+2. They should not communicate with other steps (e.g. via query params).
+3. **They should not have side effects (e.g. persisting stuff in local storage).**
 
 They should **only submit** to the flow, and the flow should do all the thinking, persisting, and the navigation.
 
@@ -54,8 +54,8 @@ They should **only submit** to the flow, and the flow should do all the thinking
 <p>
 	<ol>
 		<li>When steps make navigational decisions, the aforementioned finite-state machine is thrown out of the window. The dependency graph explodes and things get out of control quickly. Especially if you consider that steps are reusable across flows.</li>
-		<li>Same thing happens when steps communicate. Plus, when steps communicate, it means the flow is blind to some decisions, and the steps are less re-usable now.</li>
-		<li>When a step has side effects in Flow A, they may effect the step's behaviour of Flow B. Only the flow should persist things.</li>
+		<li>Same thing happens when steps communicate: the flow is blind to some decisions, and the steps become less re-usable.</li>
+		<li>When a step has side effects in Flow A, they might affect the step's behaviour in Flow B. Only the flow should persist things.</li>
 	</ol>
 </p>
 </details>
@@ -71,6 +71,9 @@ A flow is a collection of steps. Each of these steps submit some information to 
 #### Code example
 
 ```ts
+import { STEPS } from '../../internals/steps';  
+import { useFlowState } from '../../internals/state-manager/store';  
+
 // We define our steps collection upfront because it is a prerequisite of shaping the flow.
 async function initialize( calypsoReduxStore: Store ) {
 	const includeDomainsStep = await isTheMoonFull();
@@ -117,8 +120,6 @@ export const exampleFlow: FlowV2< typeof initialize > = {
 			switch ( slug ) {
 				case 'domains': {
 					// Here we have the data submitted by the domains step.
-					// `providedDependencies` will be fully-typed and should contain the exact types of the domain step submission.
-					const domainItem = providedDependencies.domainItem;
 					// By calling this, we're updating the state of the flow to save the picked domain.
 					// This will be precisely persisted for the whole session, but not longer.
 					set( 'domains', providedDependencies );
@@ -135,10 +136,10 @@ export const exampleFlow: FlowV2< typeof initialize > = {
 					break;
 				}
 				case 'processing': {
-					// The processing step will pick up the pending action we set above, run it, and await it.
+					// The processing step is a special step. It will pick up the pending action we set above, run it, and await it.
 					// It will show a progress bar during that time.
 					// Then it will `submit` whatever your pendingAction resolves to. In this example, that would be a site object.
-					const createdSiteId = providedDependencies.sideId;
+					const createdSiteId = providedDependencies.siteId;
 					window.location = `/checkout/${ createdSiteId }`;
 					break;
 				}
@@ -179,8 +180,7 @@ function initialize() {
 3. Bring the user back to the right step.
 
 #### Asserting conditions before running the flow
-
-Say, you want your flow to be only be accessible to a certain type of user. You can assert these condition in the `initialize` function.
+If you want your flow to only be accessible to a certain type of user, you can assert the conditions in the `initialize` function.
 
 ```ts
 async function initialize() {
@@ -205,11 +205,11 @@ async function initialize() {
 
 ### Deleting your flow
 
-After deleting your flow, please setup a redirect for it [here](/client/landing/stepper/utils/flow-redirect-handler.ts), this redirect users who land on it to a happy path.
+After deleting your flow, please setup a redirect for it [here](/client/landing/stepper/utils/flow-redirect-handler.ts). It redirects users who land on it to a happy path.
 
 ### Making a Step
 
-Note: Before making a step, please make sure there isn't already a suitable step in [`steps.tsx`](/client/landing/stepper/declarative-flow/internals/steps.tsx) file. If you do make a step you'll have to add it to that file.
+**Note**: Before making a step, please make sure there isn't already a suitable step in [`steps.tsx`](/client/landing/stepper/declarative-flow/internals/steps.tsx). If you do make a step you'll have to add it to that file.
 
 **Note**: Please make sure that your step has a unique slug.
 
@@ -228,7 +228,7 @@ Note: Before making a step, please make sure there isn't already a suitable step
 const SelectImportedSiteSource: Step< {
 	// This steps submits `platform` and `url` strings.
 	submits: {
-		platform: 'Wix' | 'Squarespace';
+		platform: 'WordPress' | 'Pressable';
 		url: string;
 	};
 	// And it accepts the following props. Adding them here will make them available in the `props` object.
@@ -284,7 +284,7 @@ It is often the case that you want to customize steps around your flow. You can 
 
 #### Reusability
 
-Stepper aims to create a big `steps-repository` that contains the steps and allows them to be recycled and reused. Every step you create is inherently reusable by any future flow. Because steps are like components, they're not parts of the flows, flows just happen to use them.
+Stepper aims to create a big `steps-repository` that contains the steps and allows them to be recycled and reused. Every step you create is inherently reusable by any future flow. Because steps are like components, they're not parts of a flow, flows just happen to use them.
 
 **This creates a couple of restrictions.**
 
@@ -293,8 +293,7 @@ Stepper aims to create a big `steps-repository` that contains the steps and allo
 
 #### Renaming steps
 
-There may be a time when a step needs to be renamed. In order to preserve Tracks data and funnels, we recommend adding a new entry to `getStepOldSlug` in the `FlowRenderer` component. This ensures that tracks events will fire with both the new step slug and the old step slug.
-
+There may be a time when a step needs to be renamed. In order to preserve Tracks data and funnels, we recommend adding a new entry to [`getStepOldSlug`](client/landing/stepper/declarative-flow/helpers/get-step-old-slug.ts) mapping. This ensures that tracks events will fire with both the new step slug and the old step slug.
 
 ### State management
 
@@ -319,12 +318,12 @@ const flow = {
 ### Creating a site
 It's quite common that you'd want to create a site by the end of your flow. To do that, Stepper offers `useCreateSite` hook. This hook collects the state you set in `useFlowState` and some arguments and makes a site for you. 
 
-Please check the [example flow](](/client/landing/stepper/declarative-flow/flows/00-example-flow/example.ts)) to see how that works.
+Please check the [example flow](/client/landing/stepper/declarative-flow/flows/00-example-flow/example.ts) to see how that works.
 
 ##### Miscellaneous fields
 
-In some cases, flows will need state that is not submitted from a step. In which case, it should be specified and typed in the [manifest](client/landing/stepper/declarative-flow/internals/state-manager/stepper-state-manifest.ts).
 
+In some cases, flows will need state that is not submitted from a step. In which case, it should be specified and typed in the [manifest](/client/landing/stepper/declarative-flow/internals/state-manager/stepper-state-manifest.ts).
 ## The API
 
 | Field Name                     | Description                                                          | Notes                                                                                                                                                     |
@@ -334,7 +333,7 @@ In some cases, flows will need state that is not submitted from a step. In which
 | `useStepNavigation`            | <kbd>Required</kbd> Hook for step navigation                         | Required hook for handling step navigation                                                                                                                |
 | `isSignupFlow`                 | <kbd>Required</kbd> Indicates if the flow is for signup              | Required boolean flag                                                                                                                                     |
 | `__experimentalUseBuiltinAuth` | Enables built-in authentication within Stepper                       | Optional boolean flag. When true, the flow will login the user without leaving Stepper                                                                    |
-| `__experimentalUseSessions`    | Enables session-based progress storage                               | Optional boolean flag. When true, the flow will use sessions to store the user's progress. \*\*This flag is required if you use `useFlowState` hook.      |
+| `__experimentalUseSessions`    | Enables session-based progress storage                               | Optional boolean flag. When true, the flow will use sessions to store the user's progress. **This flag is required if you use `useFlowState` hook.**      |
 | `getSteps`                     | Method to retrieve flow steps                                        | Optional method that returns the flow steps. **In most cases, using this function results in bad practices. Try to avoid it, unless you really have to**. |
 | `classnames`                   | CSS classes for styling                                              | Optional string or array of strings                                                                                                                       |
 | `useLoginParams`               | Hook to configure login URL                                          | Optional hook that returns login configuration object with customLoginPath and extraQueryParams                                                           |
