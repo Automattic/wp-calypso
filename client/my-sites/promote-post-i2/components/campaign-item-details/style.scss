@@ -1368,11 +1368,6 @@ $break-huge-collapsed-menu: $break-huge - 222px;
 		margin-bottom: 48px;
 		padding-top: 22px;
 
-		.active {
-			background-color: $studio-gray-0;
-			color: $studio-gray-80;
-			cursor: default;
-		}
 
 		button {
 			align-items: center;
@@ -1383,12 +1378,42 @@ $break-huge-collapsed-menu: $break-huge - 222px;
 			padding: 8px 12px 8px 8px;
 			text-decoration: none;
 
+			&.active {
+				background-color: $studio-gray-0;
+				color: $studio-gray-80;
+				cursor: default;
+
+				svg {
+					fill: var( --studio-gray-80 );
+				}
+			}
+
 			svg {
 				margin-right: 5px;
+				fill: var( --color-link )
 			}
 		}
 	}
 }
+
+.accessible-focus .ad-preview-modal {
+	.components-button:focus {
+		box-shadow: 0 0 0 2px var(--color-accent);
+		border-radius: 4px;
+	}
+	.ad-preview-modal__links button:not(.active){
+		&:focus {
+			background-color: var(--color-link);
+			color: var(--color-surface);
+
+			svg {
+				fill: var(--color-surface);
+			}
+		}
+	}
+}
+
+
 
 .components-dropdown-menu__menu-item, .components-button {
 	padding: 8px;
