@@ -86,7 +86,7 @@ const StatsEmailSummary = ( { period, query } ) => {
 					<NavigationHeader className="stats-summary-view" navigationItems={ navigationItems } />
 				) }
 
-				<div id="my-stats-content" className="stats stats-summary-view stats-summary__positioned">
+				<div id="my-stats-content" className="stats-summary-view stats-summary__positioned">
 					<div className="stats-summary-nav">
 						<div className="stats-summary-nav__header">
 							<div>
