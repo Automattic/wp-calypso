@@ -12,50 +12,54 @@ const MiniCSSWithRTLPlugin = require( './mini-css-with-rtl' );
  * @param  {Object}    _.postCssOptions               PostCSS options
  * @returns {Object}                                  webpack loader object
  */
-module.exports.loader = ( { includePaths, prelude, postCssOptions } ) => ( {
-	test: /\.(sc|sa|c)ss$/,
-	use: [
-		MiniCssExtractPlugin.loader,
-		{
-			loader: require.resolve( 'css-loader' ),
-			options: {
-				importLoaders: 2,
-				// We do not want css-loader to resolve absolute paths. We
-				// typically use `/` to indicate the start of the base URL,
-				// but starting with css-loader v4, it started trying to handle
-				// absolute paths itself.
-				url: {
-					filter: ( filePath ) => ! filePath.startsWith( '/' ),
+module.exports.loader = ( { includePaths, prelude, postCssOptions } ) => {
+	const sassOptions = {
+		quietDeps: true,
+		loadPaths: [
+			...includePaths,
+			path.resolve( process.cwd(), 'node_modules' ),
+			path.resolve( process.cwd(), 'packages' ),
+		],
+	};
+
+	return {
+		test: /\.(sc|sa|c)ss$/,
+		use: [
+			MiniCssExtractPlugin.loader,
+			{
+				loader: require.resolve( 'css-loader' ),
+				options: {
+					importLoaders: 2,
+					// We do not want css-loader to resolve absolute paths. We
+					// typically use `/` to indicate the start of the base URL,
+					// but starting with css-loader v4, it started trying to handle
+					// absolute paths itself.
+					url: {
+						filter: ( filePath ) => ! filePath.startsWith( '/' ),
+					},
 				},
 			},
-		},
-		{
-			loader: require.resolve( 'postcss-loader' ),
-			options: {
-				postcssOptions: postCssOptions || {},
-			},
-		},
-		{
-			loader: require.resolve( 'sass-loader' ),
-			options: {
-				api: 'modern',
-				implementation: cachedSass,
-				additionalData: prelude,
-				sassOptions: {
-					quietDeps: true,
-					loadPaths: [
-						...includePaths,
-						path.resolve( process.cwd(), 'node_modules' ),
-						path.resolve( process.cwd(), 'packages' ),
-					],
+			{
+				loader: require.resolve( 'postcss-loader' ),
+				options: {
+					postcssOptions: postCssOptions || {},
 				},
-				// The warnRuleAsWarning can be removed once sass-loader is updated to v14. It defaults to true in that version.
-				// @see https://github.com/webpack-contrib/sass-loader/tree/v14.0.0?tab=readme-ov-file#warnruleaswarning
-				warnRuleAsWarning: true,
 			},
-		},
-	],
-} );
+			{
+				loader: require.resolve( 'sass-loader' ),
+				options: {
+					api: 'modern',
+					implementation: cachedSass( sassOptions ),
+					additionalData: prelude,
+					sassOptions,
+					// The warnRuleAsWarning can be removed once sass-loader is updated to v14. It defaults to true in that version.
+					// @see https://github.com/webpack-contrib/sass-loader/tree/v14.0.0?tab=readme-ov-file#warnruleaswarning
+					warnRuleAsWarning: true,
+				},
+			},
+		],
+	};
+};
 
 /**
  * Return an array of styling relevant webpack plugin objects.

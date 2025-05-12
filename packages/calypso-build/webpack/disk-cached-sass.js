@@ -3,7 +3,7 @@ const fs = require( 'fs' );
 const path = require( 'path' );
 const sass = require( 'sass' );
 
-const cacheDir = path.join( process.cwd(), '.sass-cache' );
+let cacheDir;
 const cacheMap = {};
 
 /**
@@ -30,24 +30,35 @@ function cachedReadFile( fullPath ) {
 	return null;
 }
 
-if ( ! fs.existsSync( cacheDir ) ) {
-	fs.mkdirSync( cacheDir, { recursive: true } );
-} else {
-	// Preload all the files in memory upfront. This is fast (under 500ms).
-	// Reading the files in one go adds overhead, but this is still faster (probably because it gets rid of context switching).
-	const files = fs.readdirSync( cacheDir );
-	for ( const file of files ) {
-		cachedReadFile( path.join( cacheDir, file ) );
+function warmUp( sassOptionsHash ) {
+	cacheDir = path.join( process.cwd(), '.sass-cache', sassOptionsHash );
+
+	if ( ! fs.existsSync( cacheDir ) ) {
+		fs.mkdirSync( cacheDir, { recursive: true } );
+	} else {
+		// Preload all the files in memory upfront. This is fast (under 500ms).
+		// Reading the files in one go adds overhead, but this is still faster (probably because it gets rid of context switching).
+		const files = fs.readdirSync( cacheDir );
+		for ( const file of files ) {
+			cachedReadFile( path.join( cacheDir, file ) );
+		}
 	}
+}
+
+function areDependenciesOutdated( file, changeFileMTime ) {
+	return file.content.loadedUrls.some( ( url ) => {
+		const cachedFile = cachedReadFile( url );
+		return cachedFile && cachedFile.mtime < changeFileMTime;
+	} );
 }
 
 /**
  * Generate an MD5 hash from a URL
- * @param {string} url - The URL to hash
+ * @param {string} string - The URL to hash
  * @returns {string} The MD5 hash of the URL
  */
-const md5Url = ( url ) => {
-	return crypto.createHash( 'md5' ).update( url ).digest( 'hex' );
+const md5 = ( string ) => {
+	return crypto.createHash( 'md5' ).update( string ).digest( 'hex' );
 };
 
 /**
@@ -56,8 +67,8 @@ const md5Url = ( url ) => {
  * @returns {Object|null} The cached compilation result or null if not found
  */
 const get = ( url ) => {
-	const cacheKey = md5Url( url );
-	const cachePath = path.join( cacheDir, `${ cacheKey }.json` );
+	const hashedUrl = md5( url );
+	const cachePath = path.join( cacheDir, `${ hashedUrl }.json` );
 	const file = cachedReadFile( cachePath );
 
 	if ( file ) {
@@ -65,7 +76,7 @@ const get = ( url ) => {
 			const sourceStat = fs.statSync( url.replace( 'file://', '' ) );
 			const cachedStat = file.mtime;
 
-			if ( sourceStat.mtime > cachedStat ) {
+			if ( sourceStat.mtime > cachedStat || areDependenciesOutdated( file, sourceStat.mtime ) ) {
 				// Delete the stale cache file without blocking the main thread.
 				fs.promises.unlink( cachePath );
 				delete cacheMap[ cachePath ];
@@ -87,7 +98,7 @@ const get = ( url ) => {
 const set = ( url, resultPromise ) => {
 	// Cache the file without blocking the main thread.
 	resultPromise.then( ( result ) => {
-		const cacheKey = md5Url( url );
+		const cacheKey = md5( url );
 		const cachePath = path.join( cacheDir, `${ cacheKey }.json` );
 
 		fs.promises.writeFile( cachePath, JSON.stringify( result ), 'utf8' ).catch();
@@ -98,16 +109,30 @@ const set = ( url, resultPromise ) => {
 	} );
 };
 
-module.exports = {
-	...sass,
-	compileStringAsync: ( data, rest ) => {
-		const url = rest.url.href;
-		const cache = get( url );
-		if ( cache ) {
-			return cache;
-		}
-		const result = sass.compileStringAsync( data, rest );
-		set( url, result );
-		return result;
-	},
+/**
+ * Create a Sass compiler with disk cache
+ * @param {Object} sassOptions - The Sass options
+ * @returns {Object} The Sass compiler
+ */
+module.exports = ( sassOptions ) => {
+	// Include sass options in the cache key to to invalidate the cache when the options change.
+	const sassOptionsHash = md5( JSON.stringify( sassOptions ) );
+	warmUp( sassOptionsHash );
+
+	return {
+		...sass,
+		compileStringAsync: ( data, rest ) => {
+			const url = rest.url.href;
+			const cache = get( url );
+			if ( cache ) {
+				console.log( 'hit', url );
+				return cache;
+			}
+			console.log( 'miss', url );
+
+			const result = sass.compileStringAsync( data, rest );
+			set( url, result );
+			return result;
+		},
+	};
 };
