@@ -1,11 +1,22 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
-import { Button, Card, FormInputValidation, FormLabel, Gridicon } from '@automattic/components';
+import {
+	Button as A8CButton,
+	Card,
+	FormInputValidation,
+	FormLabel,
+	Gridicon,
+} from '@automattic/components';
 import { alert } from '@automattic/components/src/icons';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { suggestEmailCorrection } from '@automattic/onboarding';
-import { TextControl } from '@wordpress/components';
-import { Icon } from '@wordpress/icons';
+import {
+	Button,
+	TextControl,
+	__experimentalInputControl as InputControl,
+	__experimentalInputControlSuffixWrapper as InputControlSuffixWrapper,
+} from '@wordpress/components';
+import { Icon, seen, unseen } from '@wordpress/icons';
 import clsx from 'clsx';
 import cookie from 'cookie';
 import emailValidator from 'email-validator';
@@ -18,8 +29,6 @@ import { connect } from 'react-redux';
 import { FormDivider } from 'calypso/blocks/authentication';
 import JetpackConnectSiteOnly from 'calypso/blocks/jetpack-connect-site-only';
 import LoginSubmitButton from 'calypso/blocks/login/login-submit-button';
-import FormPasswordInput from 'calypso/components/forms/form-password-input';
-import FormTextInput from 'calypso/components/forms/form-text-input';
 import Notice from 'calypso/components/notice';
 import { LastUsedSocialButton } from 'calypso/components/social-buttons';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
@@ -114,6 +123,7 @@ export class LoginForm extends Component {
 		emailSuggestionError: false,
 		password: '',
 		lastUsedAuthenticationMethod: this.getLastUsedAuthenticationMethod(),
+		isPasswordPlainText: false,
 	};
 
 	componentDidMount() {
@@ -210,20 +220,20 @@ export class LoginForm extends Component {
 		}
 	}, 500 );
 
-	onChangeUsernameOrEmailField = ( event ) => {
+	onChangeUsernameOrEmailField = ( value ) => {
 		this.setState( {
 			emailSuggestionError: false,
 			emailSuggestion: '',
 		} );
-		this.onChangeField( event );
-		this.debouncedEmailSuggestion( event.target.value );
+		this.onChangeField( { name: 'usernameOrEmail', value } );
+		this.debouncedEmailSuggestion( value );
 	};
 
-	onChangeField = ( event ) => {
+	onChangeField = ( { name, value } ) => {
 		this.props.formUpdate();
 
 		this.setState( {
-			[ event.target.name ]: event.target.value,
+			[ name ]: value,
 		} );
 	};
 
@@ -429,7 +439,7 @@ export class LoginForm extends Component {
 
 						<FormLabel htmlFor="usernameOrEmail">
 							{ this.isPasswordView() ? (
-								<Button
+								<A8CButton
 									borderless
 									className="login__form-change-username"
 									onClick={ this.resetView }
@@ -439,7 +449,7 @@ export class LoginForm extends Component {
 									{ includes( this.state.usernameOrEmail, '@' )
 										? this.props.translate( 'Change Email Address' )
 										: this.props.translate( 'Change Username' ) }
-								</Button>
+								</A8CButton>
 							) : null }
 						</FormLabel>
 
@@ -497,14 +507,14 @@ export class LoginForm extends Component {
 					<div className="login__form-footer">
 						<p className="login__social-tos">{ socialToS }</p>
 						<div className="login__form-action">
-							<Button
+							<A8CButton
 								primary
 								disabled={ isFormDisabled }
 								onClick={ this.handleWooCommerceSubmit }
 								type="submit"
 							>
 								{ this.getLoginButtonText() }
-							</Button>
+							</A8CButton>
 						</div>
 
 						{ config.isEnabled( 'signup/social' ) && showSocialLogin && (
@@ -527,12 +537,12 @@ export class LoginForm extends Component {
 
 	renderChangeUsername() {
 		return (
-			<button type="button" className="login__form-change-username" onClick={ this.resetView }>
+			<Button className="login__form-change-username" onClick={ this.resetView } variant="link">
 				<Gridicon icon="arrow-left" size={ 18 } />
 				{ includes( this.state.usernameOrEmail, '@' )
 					? this.props.translate( 'Change Email Address' )
 					: this.props.translate( 'Change Username' ) }
-			</button>
+			</Button>
 		);
 	}
 
@@ -553,9 +563,7 @@ export class LoginForm extends Component {
 			return this.props.translate( 'Your username' );
 		}
 
-		return this.isPasswordView() ? (
-			this.renderChangeUsername()
-		) : (
+		return (
 			// Since the input receives focus on page load, screen reader users don't have any context
 			// for what credentials to use. Unlike other users, they won't have seen the informative
 			// text above the form. We therefore need to clarity the must use WordPress.com credentials.
@@ -748,7 +756,7 @@ export class LoginForm extends Component {
 	};
 
 	renderLoginCard() {
-		const { lastUsedAuthenticationMethod } = this.state;
+		const { lastUsedAuthenticationMethod, isPasswordPlainText } = this.state;
 		const isFormDisabled = this.state.isFormDisabledWhileLoading || this.props.isFormDisabled;
 		const isSubmitButtonDisabled = isFormDisabled;
 		let loginUrl;
@@ -765,10 +773,10 @@ export class LoginForm extends Component {
 			isJetpack,
 		} = this.props;
 
-		const isPasswordHidden = this.isUsernameOrEmailView();
+		const isPasswordFieldHidden = this.isUsernameOrEmailView();
 		const isOauthLogin = !! oauth2Client;
 		const signupUrl = this.getSignupUrl();
-		const shouldRenderForgotPasswordLink = ! isPasswordHidden && isWoo;
+		const shouldRenderForgotPasswordLink = ! isPasswordFieldHidden && isWoo;
 
 		if ( lastUsedAuthenticationMethod === 'qr-code' ) {
 			loginUrl = this.getQrLoginLink();
@@ -857,15 +865,24 @@ export class LoginForm extends Component {
 								</p>
 							) }
 
-							<FormLabel htmlFor="usernameOrEmail">{ this.renderUsernameorEmailLabel() }</FormLabel>
+							{ this.isPasswordView() && (
+								<>
+									{ this.renderChangeUsername() }
+									<label htmlFor="usernameOrEmail" className="screen-reader-text">
+										{ this.renderUsernameorEmailLabel() }
+									</label>
+								</>
+							) }
 
-							<FormTextInput
+							<InputControl
+								label={ ! this.isPasswordView() && this.renderUsernameorEmailLabel() }
 								autoCapitalize="off"
 								autoCorrect="off"
 								spellCheck="false"
 								autoComplete="username"
 								className={ clsx( {
 									'is-error': requestError && requestError.field === 'usernameOrEmail',
+									'is-label-hidden': this.isPasswordView(),
 								} ) }
 								onChange={ this.onChangeUsernameOrEmailField }
 								id="usernameOrEmail"
@@ -873,6 +890,8 @@ export class LoginForm extends Component {
 								ref={ this.saveUsernameOrEmailRef }
 								value={ this.state.usernameOrEmail }
 								disabled={ isFormDisabled || this.isPasswordView() }
+								__next40pxDefaultSize
+								__nextHasNoMarginBottom
 							/>
 
 							{ requestError && requestError.field === 'usernameOrEmail' && (
@@ -957,25 +976,45 @@ export class LoginForm extends Component {
 
 							<div
 								className={ clsx( 'login__form-password', {
-									'is-hidden': isPasswordHidden,
+									'is-hidden': isPasswordFieldHidden,
 								} ) }
-								aria-hidden={ isPasswordHidden }
+								aria-hidden={ isPasswordFieldHidden }
 							>
-								<FormLabel htmlFor="password">{ this.props.translate( 'Password' ) }</FormLabel>
-
-								<FormPasswordInput
+								<InputControl
+									type={ isPasswordPlainText ? 'text' : 'password' }
+									label={ this.props.translate( 'Password' ) }
 									autoCapitalize="off"
 									autoComplete="current-password"
 									className={ clsx( {
 										'is-error': requestError && requestError.field === 'password',
 									} ) }
-									onChange={ this.onChangeField }
+									onChange={ ( value ) => this.onChangeField( { name: 'password', value } ) }
 									id="password"
 									name="password"
 									ref={ this.savePasswordRef }
 									value={ this.state.password }
 									disabled={ isFormDisabled }
-									tabIndex={ isPasswordHidden ? -1 : undefined /* not tabbable when hidden */ }
+									tabIndex={ isPasswordFieldHidden ? -1 : undefined /* not tabbable when hidden */ }
+									__next40pxDefaultSize
+									__nextHasNoMarginBottom
+									suffix={
+										<InputControlSuffixWrapper variant="control">
+											<Button
+												size="small"
+												icon={ isPasswordPlainText ? unseen : seen }
+												onClick={ () => {
+													this.setState( { isPasswordPlainText: ! isPasswordPlainText } );
+												} }
+												label={
+													isPasswordPlainText
+														? this.props.translate( 'Hide password' )
+														: this.props.translate( 'Show password' )
+												}
+												aria-hidden={ isPasswordFieldHidden }
+												tabIndex={ isPasswordFieldHidden ? -1 : undefined }
+											/>
+										</InputControlSuffixWrapper>
+									}
 								/>
 
 								{ requestError && requestError.field === 'password' && (

@@ -63,6 +63,15 @@
 	}
 }
 
+/* @wordpress/components InputControl overrides */
+.components-input-control {
+	--wp-components-color-accent: var(--color-accent);
+
+	&.is-error {
+		--wp-components-color-accent: var(--color-error);
+	}
+}
+
 .components-external-link__contents {
 	text-decoration: none;
 

@@ -19,7 +19,7 @@ $image-height: 47px;
 		padding-bottom: $image-height;
 		min-height: calc(100% - #{$image-height});
 	}
-	
+
 	.layout__content {
 		position: static;
 	}
@@ -352,7 +352,7 @@ $image-height: 47px;
 	}
 
 	.login__form-action .components-button.is-primary {
-		margin: 6px auto 13px;
+		margin: 0 auto 13px;
 	}
 
 	.login form {
@@ -361,7 +361,7 @@ $image-height: 47px;
 		// an exception to opt-out from some style overrides. Ideally, all
 		// input instances would come from `@wordpress/components` and the
 		// following overrides could be safely deleted.
-		input:not(.components-text-control__input),
+		input:not(.components-text-control__input, .components-input-control__input),
 		button:not(.components-button) {
 			/* Note: Same as `button.signup-form__submit, .signup-form__input.form-text-input` */
 			height: 40px; // Matches .components-button height __next40pxDefaultSize
@@ -375,22 +375,49 @@ $image-height: 47px;
 			}
 		}
 
-		.login__form-userdata input {
-			margin: 0 0 20px;
-		}
-
-		.login__form-userdata input:last-of-type {
-			/* Note: reduces space between terms and last input box */
-			margin: 0 0 10px;
-		}
-
 		.login__form-userdata {
-			button {
+			label {
+				color: var(--studio-gray-100);
+			}
+
+			button:not(.components-button) {
 				min-width: 194px;
 				height: unset;
 				border: 0;
 				text-align: start;
 			}
+
+			input:not(.components-input-control__input) {
+				margin: 0 0 20px;
+
+				&:last-of-type {
+						/* Note: reduces space between terms and last input box */
+						margin: 0 0 10px;
+				}
+			}
+
+			.login__form-change-username {
+				margin-bottom: 8px;
+				font-size: $font-body;
+			}
+
+			.components-input-control {
+				margin-bottom: 16px;
+
+				&.is-error {
+					margin-bottom: 0;
+				}
+
+				label {
+					font-size: $font-body-small;
+					color: var(--studio-gray-100);
+					text-transform: initial;
+					font-weight: 500;
+					margin-bottom: unset;
+				}
+			}
+
+
 		}
 	}
 
@@ -528,10 +555,6 @@ $image-height: 47px;
 
 	.two-factor-authentication__verification-code-form > p {
 		text-align: left;
-	}
-
-	.login__form .login__form-userdata label {
-		color: var(--studio-gray-60);
 	}
 
 	.login__form-terms {
