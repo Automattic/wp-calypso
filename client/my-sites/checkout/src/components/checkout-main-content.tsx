@@ -1538,10 +1538,6 @@ const WPCheckoutMainContent = styled.div`
 			padding: 0 24px 0 64px;
 		}
 	}
-
-	.editor-checkout-modal & {
-		margin-top: 20px;
-	}
 `;
 
 const WPCheckoutCompletedMainContent = styled.div`
@@ -1568,14 +1564,6 @@ const WPCheckoutSidebarContent = styled.div`
 
 		.rtl & {
 			padding: 144px 64px 0 24px;
-		}
-	}
-
-	.editor-checkout-modal & {
-		padding: 68px 24px 144px 64px;
-
-		.rtl & {
-			padding: 68px 64px 0 24px;
 		}
 	}
 `;
