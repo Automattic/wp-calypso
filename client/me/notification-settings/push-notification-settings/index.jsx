@@ -605,12 +605,10 @@ class PushNotificationSettings extends Component {
 			<Modal
 				className="notification-settings-push-notification-settings__instruction-dialog"
 				onRequestClose={ this.props.toggleUnblockInstructions }
+				title={ this.props.translate( 'Enable browser notifications' ) }
 			>
 				<div className="notification-settings-push-notification-settings__instruction-content">
 					<div>
-						<div className="notification-settings-push-notification-settings__instruction-title">
-							{ this.props.translate( 'Enable browser notifications' ) }
-						</div>
 						<div className="notification-settings-push-notification-settings__instruction-step">
 							<div className="notification-settings-push-notification-settings__instruction-image">
 								<SvgAddressBar />
