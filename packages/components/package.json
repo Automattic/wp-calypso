@@ -18,7 +18,9 @@
 		"./src/*": {
 			"calypso:src": "./src/*"
 		},
-		"./styles/*": "./styles/*"
+		"./styles/*": {
+			"calypso:src": "./styles/*"
+		}
 	},
 	"sideEffects": [
 		"*.css",
