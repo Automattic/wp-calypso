@@ -9,7 +9,6 @@ import {
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { download, reusableBlock, Icon } from '@wordpress/icons';
-import clsx from 'clsx';
 import devSiteBanner from 'calypso/assets/images/a8c-for-agencies/dev-site-banner.svg';
 import { preventWidows } from 'calypso/lib/formatting';
 import Column from './column';
@@ -125,11 +124,7 @@ function AddNewSite() {
 							)
 						) }
 					</Text>
-					<div>
-						<div className={ clsx( 'sites-add-new-site-popover__cta' ) }>
-							{ __( 'Unlock offer' ) }
-						</div>
-					</div>
+					<div>{ __( 'Unlock offer' ) }</div>
 				</VStack>
 			</Button>
 		</HStack>
