@@ -145,7 +145,6 @@ export function performanceInsightsQuery( url: string, token: string ) {
 			if ( query.state.data?.pagespeed?.status === 'completed' ) {
 				return false;
 			}
-
 			return 5000;
 		},
 	};
