@@ -158,19 +158,18 @@ class StatsNavigation extends Component {
 							name: item,
 							title: navItem.label + ( navItem.paywall && showLock ? ' 🔒' : '' ),
 							className: 'stats-navigation__' + item,
-							path: itemPath,
+							onClick: () => {
+								if ( item === 'store' && config.isEnabled( 'is_running_in_jetpack_site' ) ) {
+									window.location.href = `${ this.props.adminUrl }admin.php?page=wc-admin&path=%2Fanalytics%2Foverview`;
+								} else {
+									page( itemPath );
+								}
+							},
 						};
 					} ) }
 				initialTabName={ selectedItem }
 			>
-				{ ( tab ) => {
-					if ( tab.name === 'store' && config.isEnabled( 'is_running_in_jetpack_site' ) ) {
-						window.location.href = `${ this.props.adminUrl }admin.php?page=wc-admin&path=%2Fanalytics%2Foverview`;
-					} else if ( tab.path ) {
-						page( tab.path );
-					}
-					return <div className="stats-navigation__content" />; // Placeholder div since content is rendered elsewhere
-				} }
+				{ () => <div className="stats-navigation__content" /> }
 			</TabPanel>
 		);
 	}
