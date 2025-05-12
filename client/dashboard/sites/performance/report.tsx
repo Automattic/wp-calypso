@@ -23,14 +23,14 @@ const updateUrl = ( filter: string | undefined ) => {
 export default function Report( {
 	report,
 	currentPage,
-	isLoading,
+	isFetchingReport,
 	isError,
 	isRunningReport,
 	onRetest,
 }: {
 	report: PerformanceReport | undefined;
 	currentPage: ProfilerPage;
-	isLoading: boolean;
+	isFetchingReport: boolean;
 	isError: boolean;
 	isRunningReport: boolean;
 	onRetest: () => void;
@@ -42,8 +42,10 @@ export default function Report( {
 		return <ReportError onRetestClick={ onRetest } />;
 	}
 
-	if ( isLoading || isRunningReport ) {
-		return <ReportLoading pageTitle={ currentPage.title.rendered } isSavedReport={ isLoading } />;
+	if ( isFetchingReport || isRunningReport ) {
+		return (
+			<ReportLoading pageTitle={ currentPage.title.rendered } isSavedReport={ isFetchingReport } />
+		);
 	}
 
 	if ( ! report ) {

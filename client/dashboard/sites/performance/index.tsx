@@ -34,7 +34,7 @@ function SitePerformanceContent( { site }: { site: Site } ) {
 	const {
 		desktopReport,
 		mobileReport,
-		isLoading,
+		isLoading: isFetchingReport,
 		isRunningDesktopReport,
 		isRunningMobileReport,
 		isError,
@@ -78,7 +78,7 @@ function SitePerformanceContent( { site }: { site: Site } ) {
 							currentPage={ currentPage }
 							pages={ pagesData }
 							onChange={ handlePageChange }
-							disabled={ isLoading || isRunningDesktopReport || isRunningMobileReport }
+							disabled={ isFetchingReport || isRunningDesktopReport || isRunningMobileReport }
 						/>
 						<DeviceTabControls value={ deviceToggle } onChange={ setDeviceToggle } />
 					</>
@@ -87,7 +87,7 @@ function SitePerformanceContent( { site }: { site: Site } ) {
 			<Report
 				currentPage={ currentPage }
 				report={ deviceToggle === 'desktop' ? desktopReport : mobileReport }
-				isLoading={ isLoading }
+				isFetchingReport={ isFetchingReport }
 				isRunningReport={
 					deviceToggle === 'desktop' ? isRunningDesktopReport : isRunningMobileReport
 				}
