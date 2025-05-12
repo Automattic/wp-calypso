@@ -107,6 +107,7 @@ export const WixImporter: React.FunctionComponent< Props > = ( props ) => {
 	}
 
 	function checkIsFailed() {
+		return true;
 		return (
 			( job && job.importerState === appStates.IMPORT_FAILURE ) ||
 			( error?.error && error?.errorType === 'importError' )
