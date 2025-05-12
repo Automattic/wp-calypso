@@ -134,11 +134,7 @@ class Document extends Component {
 		}
 
 		return (
-			<html
-				lang={ lang }
-				dir={ isRTL ? 'rtl' : 'ltr' }
-				className={ clsx( { 'is-iframe': sectionName === 'gutenberg-editor' } ) }
-			>
+			<html lang={ lang } dir={ isRTL ? 'rtl' : 'ltr' }>
 				<Head
 					title={ headTitle }
 					branchName={ branchName }

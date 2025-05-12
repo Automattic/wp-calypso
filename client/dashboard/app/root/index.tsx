@@ -1,7 +1,8 @@
 import { WordPressLogo } from '@automattic/components';
 import { useIsFetching } from '@tanstack/react-query';
-import { Outlet, useRouterState } from '@tanstack/react-router';
+import { CatchNotFound, Outlet, useRouterState } from '@tanstack/react-router';
 import { LoadingLine } from '../../components/loading-line';
+import NotFound from '../404';
 import CommandPalette from '../command-palette';
 import { useAppContext } from '../context';
 import Header from '../header';
@@ -23,7 +24,9 @@ function Root() {
 			{ isInitialLoad && <LoadingLogo className="wpcom-site__logo" /> }
 			<Header />
 			<main>
-				<Outlet />
+				<CatchNotFound fallback={ NotFound }>
+					<Outlet />
+				</CatchNotFound>
 			</main>
 			<CommandPalette />
 		</div>

@@ -1,5 +1,4 @@
-import { useActiveJobRecognition } from '@automattic/subscriber';
-import { useImportError } from '@automattic/subscriber/src/hooks/use-import-error';
+import { useActiveJobRecognition, useImportError } from '@automattic/subscriber';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
 import { useDispatch } from 'react-redux';

@@ -34,7 +34,6 @@ import {
 	recordTracksEventWithClientId as recordTracksEvent,
 	enhanceWithSiteType,
 } from 'calypso/state/analytics/actions';
-import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { getRedirectToOriginal } from 'calypso/state/login/selectors';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
@@ -48,14 +47,12 @@ import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
 import { withEnhancers } from 'calypso/state/utils';
 import LoginFooter from './login-footer';
 import LoginLinks from './login-links';
-import PrivateSite from './private-site';
 
 import './style.scss';
 
 export class Login extends Component {
 	static propTypes = {
 		clientId: PropTypes.string,
-		isLoggedIn: PropTypes.bool.isRequired,
 		isLoginView: PropTypes.bool,
 		isJetpack: PropTypes.bool.isRequired,
 		isFromMigrationPlugin: PropTypes.bool,
@@ -63,7 +60,6 @@ export class Login extends Component {
 		locale: PropTypes.string.isRequired,
 		oauth2Client: PropTypes.object,
 		path: PropTypes.string.isRequired,
-		privateSite: PropTypes.bool,
 		recordPageView: PropTypes.func.isRequired,
 		socialConnect: PropTypes.bool,
 		socialService: PropTypes.string,
@@ -292,7 +288,7 @@ export class Login extends Component {
 	};
 
 	getLostPasswordLink() {
-		if ( this.props.twoFactorAuthType || this.props.privateSite ) {
+		if ( this.props.twoFactorAuthType ) {
 			return null;
 		}
 
@@ -408,7 +404,6 @@ export class Login extends Component {
 			isJetpack,
 			isWhiteLogin,
 			isGravPoweredClient,
-			privateSite,
 			socialConnect,
 			twoFactorAuthType,
 			locale,
@@ -461,7 +456,6 @@ export class Login extends Component {
 				<>
 					<LoginLinks
 						locale={ locale }
-						privateSite={ privateSite }
 						twoFactorAuthType={ twoFactorAuthType }
 						isWhiteLogin={ isWhiteLogin }
 						isGravPoweredClient={ isGravPoweredClient }
@@ -482,12 +476,10 @@ export class Login extends Component {
 		const {
 			clientId,
 			domain,
-			isLoggedIn,
 			isJetpack,
 			isWhiteLogin,
 			isGravPoweredClient,
 			oauth2Client,
-			privateSite,
 			socialConnect,
 			twoFactorAuthType,
 			socialService,
@@ -498,10 +490,6 @@ export class Login extends Component {
 			action,
 			currentRoute,
 		} = this.props;
-
-		if ( privateSite && isLoggedIn ) {
-			return <PrivateSite />;
-		}
 
 		// It's used to toggle UIs for the login page of Gravatar powered clients only (excluding 2FA relevant pages).
 		const isGravPoweredLoginPage =
@@ -517,7 +505,6 @@ export class Login extends Component {
 				action={ action }
 				twoFactorAuthType={ twoFactorAuthType }
 				socialConnect={ socialConnect }
-				privateSite={ privateSite }
 				clientId={ clientId }
 				isJetpack={ isJetpack }
 				isWhiteLogin={ isWhiteLogin }
@@ -538,7 +525,12 @@ export class Login extends Component {
 	}
 
 	renderTopBar( isSocialFirst ) {
-		const { isFromAkismet, isJetpack } = this.props;
+		const { isFromAkismet, isJetpack, isWooJPC } = this.props;
+
+		if ( isWooJPC ) {
+			// The Woo flow already displays the Woo logo in the header.
+			return null;
+		}
 
 		const akismetLogo = (
 			<svg
@@ -653,7 +645,6 @@ export default connect(
 		const currentRoute = getCurrentRoute( state );
 
 		return {
-			isLoggedIn: Boolean( getCurrentUserId( state ) ),
 			locale: getCurrentLocaleSlug( state ),
 			oauth2Client,
 			isLoginView:

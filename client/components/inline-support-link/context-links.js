@@ -187,6 +187,10 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/invite-people/',
 		post_id: 1221,
 	},
+	'jabber-subscription-updates': {
+		link: 'https://wordpress.com/support/jabber',
+		post_id: 3228,
+	},
 	'manage-profile': {
 		link: 'https://wordpress.com/support/manage-my-profile/',
 		post_id: 19775,

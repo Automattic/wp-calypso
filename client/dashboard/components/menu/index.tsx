@@ -1,14 +1,23 @@
 import { __experimentalHStack as HStack } from '@wordpress/components';
 import RouterLinkButton from '../router-link-button';
-
+import type { ActiveOptions } from '@tanstack/react-router';
 import './style.scss';
 
-function MenuItem( { to, children }: { to: string; children: React.ReactNode } ) {
+function MenuItem( {
+	to,
+	children,
+	activeOptions,
+}: {
+	to: string;
+	children: React.ReactNode;
+	activeOptions?: ActiveOptions;
+} ) {
 	return (
 		<RouterLinkButton
 			className="dashboard-menu__item"
 			variant="tertiary"
 			to={ to }
+			activeOptions={ activeOptions }
 			__next40pxDefaultSize
 		>
 			{ children }

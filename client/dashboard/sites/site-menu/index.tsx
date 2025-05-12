@@ -4,7 +4,9 @@ import ResponsiveMenu from '../../components/responsive-menu';
 const SiteMenu = ( { siteSlug }: { siteSlug: string } ) => {
 	return (
 		<ResponsiveMenu label={ __( 'Site Menu' ) }>
-			<ResponsiveMenu.Item to={ `/sites/${ siteSlug }` }>{ __( 'Overview' ) }</ResponsiveMenu.Item>
+			<ResponsiveMenu.Item to={ `/sites/${ siteSlug }` } activeOptions={ { exact: true } }>
+				{ __( 'Overview' ) }
+			</ResponsiveMenu.Item>
 			<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/deployments` }>
 				{ __( 'Deployments' ) }
 			</ResponsiveMenu.Item>

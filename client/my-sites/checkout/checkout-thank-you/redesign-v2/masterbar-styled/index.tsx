@@ -15,7 +15,7 @@ const MasterbarStyled = ( {
 }: {
 	onClick?: () => void;
 	backText?: string;
-	canGoBack: boolean;
+	canGoBack?: boolean;
 	contact?: JSX.Element | null;
 	showContact?: boolean;
 } ) => (

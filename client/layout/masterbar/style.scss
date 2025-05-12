@@ -1066,14 +1066,6 @@ a.masterbar__quick-language-switcher {
 	}
 }
 
-.is-section-gutenberg-editor .main.calypsoify.is-iframe {
-	top: var(--masterbar-height);
-
-	@include break-medium {
-		top: 0;
-	}
-}
-
 .has-no-masterbar .masterbar {
 	opacity: 0;
 	pointer-events: none;

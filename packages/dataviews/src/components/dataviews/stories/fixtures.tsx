@@ -29,6 +29,7 @@ export type SpaceObject = {
 	description: string;
 	image: string;
 	type: string;
+	isPlanet: boolean;
 	categories: string[];
 	satellites: number;
 	date: string;
@@ -41,6 +42,7 @@ export const data: SpaceObject[] = [
 		description: 'Apollo description',
 		image: 'https://live.staticflickr.com/5725/21726228300_51333bd62c_b.jpg',
 		type: 'Not a planet',
+		isPlanet: false,
 		categories: [ 'Space', 'NASA' ],
 		satellites: 0,
 		date: '2021-01-01T00:00:00Z',
@@ -51,6 +53,7 @@ export const data: SpaceObject[] = [
 		description: 'Space description',
 		image: 'https://live.staticflickr.com/5678/21911065441_92e2d44708_b.jpg',
 		type: 'Not a planet',
+		isPlanet: false,
 		categories: [ 'Space' ],
 		satellites: 0,
 		date: '2019-01-02T00:00:00Z',
@@ -61,6 +64,7 @@ export const data: SpaceObject[] = [
 		description: 'NASA photo',
 		image: 'https://live.staticflickr.com/742/21712365770_8f70a2c91e_b.jpg',
 		type: 'Not a planet',
+		isPlanet: false,
 		categories: [ 'NASA' ],
 		satellites: 0,
 		date: '2025-01-03T00:00:00Z',
@@ -71,6 +75,7 @@ export const data: SpaceObject[] = [
 		description: 'Neptune description',
 		image: 'https://live.staticflickr.com/5725/21726228300_51333bd62c_b.jpg',
 		type: 'Ice giant',
+		isPlanet: true,
 		categories: [ 'Space', 'Planet', 'Solar system' ],
 		satellites: 14,
 		date: '2020-01-01T00:00:00Z',
@@ -81,6 +86,7 @@ export const data: SpaceObject[] = [
 		description: 'Mercury description',
 		image: 'https://live.staticflickr.com/5725/21726228300_51333bd62c_b.jpg',
 		type: 'Terrestrial',
+		isPlanet: true,
 		categories: [ 'Space', 'Planet', 'Solar system' ],
 		satellites: 0,
 		date: '2020-01-02T01:00:00Z',
@@ -91,6 +97,7 @@ export const data: SpaceObject[] = [
 		description: 'La planète Vénus',
 		image: 'https://live.staticflickr.com/5725/21726228300_51333bd62c_b.jpg',
 		type: 'Terrestrial',
+		isPlanet: true,
 		categories: [ 'Space', 'Planet', 'Solar system' ],
 		satellites: 0,
 		date: '2020-01-02T00:00:00Z',
@@ -101,6 +108,7 @@ export const data: SpaceObject[] = [
 		description: 'Earth description',
 		image: 'https://live.staticflickr.com/5725/21726228300_51333bd62c_b.jpg',
 		type: 'Terrestrial',
+		isPlanet: true,
 		categories: [ 'Space', 'Planet', 'Solar system' ],
 		satellites: 1,
 		date: '2023-01-03T00:00:00Z',
@@ -111,6 +119,7 @@ export const data: SpaceObject[] = [
 		description: 'Mars description',
 		image: 'https://live.staticflickr.com/5725/21726228300_51333bd62c_b.jpg',
 		type: 'Terrestrial',
+		isPlanet: true,
 		categories: [ 'Space', 'Planet', 'Solar system' ],
 		satellites: 2,
 		date: '2020-01-01T00:00:00Z',
@@ -121,6 +130,7 @@ export const data: SpaceObject[] = [
 		description: 'Jupiter description',
 		image: 'https://live.staticflickr.com/5725/21726228300_51333bd62c_b.jpg',
 		type: 'Gas giant',
+		isPlanet: true,
 		categories: [ 'Space', 'Planet', 'Solar system' ],
 		satellites: 95,
 		date: '2017-01-01T00:01:00Z',
@@ -131,6 +141,7 @@ export const data: SpaceObject[] = [
 		description: 'Saturn description',
 		image: 'https://live.staticflickr.com/5725/21726228300_51333bd62c_b.jpg',
 		type: 'Gas giant',
+		isPlanet: true,
 		categories: [ 'Space', 'Planet', 'Solar system' ],
 		satellites: 146,
 		date: '2020-02-01T00:02:00Z',
@@ -141,6 +152,7 @@ export const data: SpaceObject[] = [
 		description: 'Uranus description',
 		image: 'https://live.staticflickr.com/5725/21726228300_51333bd62c_b.jpg',
 		type: 'Ice giant',
+		isPlanet: true,
 		categories: [ 'Space', 'Ice giant', 'Solar system' ],
 		satellites: 28,
 		date: '2020-03-01T00:00:00Z',
@@ -654,6 +666,15 @@ export const fields: Field< SpaceObject >[] = [
 			{ value: 'Ice giant', label: 'Ice giant' },
 			{ value: 'Terrestrial', label: 'Terrestrial' },
 			{ value: 'Gas giant', label: 'Gas giant' },
+		],
+	},
+	{
+		id: 'isPlanet',
+		label: 'Is Planet',
+		type: 'boolean',
+		elements: [
+			{ value: true, label: 'True' },
+			{ value: false, label: 'False' },
 		],
 	},
 	{

@@ -1375,6 +1375,7 @@ class MagicLogin extends Component {
 				<GlobalNotices id="notices" />
 
 				<RequestLoginEmailForm { ...requestLoginEmailFormProps } />
+				{ this.renderLinks() }
 			</Main>
 		);
 	}

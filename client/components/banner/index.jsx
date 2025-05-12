@@ -301,6 +301,16 @@ export class Banner extends Component {
 								<PlanPrice rawPrice={ prices[ 1 ] } discounted />
 							</div>
 						) }
+						{ secondaryCallToAction && (
+							<Button
+								compact={ compactButton }
+								href={ secondaryHref }
+								onClick={ this.handleSecondaryClick }
+								primary={ false }
+							>
+								{ preventWidows( secondaryCallToAction ) }
+							</Button>
+						) }
 						{ callToAction &&
 							( forceHref ? (
 								<Button
@@ -323,17 +333,6 @@ export class Banner extends Component {
 									{ preventWidows( callToAction ) }
 								</Button>
 							) ) }
-
-						{ secondaryCallToAction && (
-							<Button
-								compact={ compactButton }
-								href={ secondaryHref }
-								onClick={ this.handleSecondaryClick }
-								primary={ false }
-							>
-								{ preventWidows( secondaryCallToAction ) }
-							</Button>
-						) }
 					</div>
 				) }
 			</div>

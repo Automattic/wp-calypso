@@ -1,5 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
 
 .main.hosting-dashboard-layout-column,
 .main.hosting-dashboard-layout {
@@ -43,6 +44,18 @@
 
 .hosting-dashboard-layout-column {
 	flex: 1;
+}
+
+.hosting-dashboard-layout-column__container {
+	border-radius: 8px; /* stylelint-disable-line scales/radii */
+	overflow: hidden;
+
+	@include break-small {
+		height: 100%;
+		padding-block-start: 1px;
+		border: 1px solid $gray-200;
+		box-sizing: border-box;
+	}
 }
 
 .hosting-dashboard-layout__body {
