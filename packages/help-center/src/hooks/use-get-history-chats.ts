@@ -2,15 +2,20 @@
 import { HelpCenterSelect } from '@automattic/data-stores';
 import { useGetOdieConversations } from '@automattic/odie-client/src/data/use-get-odie-conversations';
 import { useGetSupportInteractions } from '@automattic/odie-client/src/data/use-get-support-interactions';
-import { getConversationCreatedAt } from '@automattic/odie-client/src/utils';
 import { useSelect } from '@wordpress/data';
 import { useEffect, useState } from '@wordpress/element';
 import {
 	filterAndUpdateConversationsWithStatus,
+	getLastMessage,
 	getZendeskConversations,
 } from '../components/utils';
 import { HELP_CENTER_STORE } from '../stores';
-import type { Conversations, SupportInteraction } from '@automattic/odie-client';
+import type {
+	Conversations,
+	OdieConversation,
+	SupportInteraction,
+	ZendeskConversation,
+} from '@automattic/odie-client';
 
 interface UseGetHistoryChatsResult {
 	supportInteractions: SupportInteraction[];
@@ -18,6 +23,15 @@ interface UseGetHistoryChatsResult {
 	recentConversations: Conversations;
 	archivedConversations: Conversations;
 }
+
+/**
+ * Retrieves the date the last message from the specified conversation was received.
+ * @returns The timestamp in milliseconds (e.g. 1745936539027), or 0 if not available
+ */
+const getLastMessageReceived = ( conversation: OdieConversation | ZendeskConversation ) => {
+	const lastMessage = getLastMessage( { conversation } );
+	return ( lastMessage?.received || 0 ) * 1000;
+};
 
 export const useGetHistoryChats = (): UseGetHistoryChatsResult => {
 	const [ supportInteractions, setSupportInteractions ] = useState< SupportInteraction[] >( [] );
@@ -73,10 +87,10 @@ export const useGetHistoryChats = (): UseGetHistoryChatsResult => {
 			...conversationsWithUpdatedStatuses,
 			...filteredOdieConversations,
 		].sort( ( a, b ) => {
-			const createdAtA = getConversationCreatedAt( a ) ?? 0;
-			const createdAtB = getConversationCreatedAt( b ) ?? 0;
+			const lastMessageReceivedAtA = getLastMessageReceived( a );
+			const lastMessageReceivedAtB = getLastMessageReceived( b );
 
-			return createdAtB - createdAtA;
+			return lastMessageReceivedAtB - lastMessageReceivedAtA;
 		} );
 
 		// Split into recent and archived
@@ -88,9 +102,8 @@ export const useGetHistoryChats = (): UseGetHistoryChatsResult => {
 		const archived: Conversations = [];
 
 		mergedAndSortedConversations.forEach( ( conversation ) => {
-			const createdAt = getConversationCreatedAt( conversation );
-
-			if ( typeof createdAt === 'number' && createdAt < oneYearAgo ) {
+			const lastMessageReceivedAt = getLastMessageReceived( conversation );
+			if ( lastMessageReceivedAt < oneYearAgo ) {
 				archived.push( conversation );
 			} else {
 				recent.push( conversation );
