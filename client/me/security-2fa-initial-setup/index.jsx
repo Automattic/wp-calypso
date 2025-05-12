@@ -3,7 +3,10 @@ import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import VerticalNavItemEnhanced from 'calypso/components/vertical-nav/item/enhanced';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
-import { APP_BASED_2FA_SETUP, SMS_BASED_2FA_SETUP } from 'calypso/me/security-2fa-setup';
+import {
+	APP_BASED_2FA_VALIDATE_STEP,
+	SMS_BASED_2FA_SETUP_ENTER_PHONE_STEP,
+} from 'calypso/me/security-2fa-setup';
 
 import './style.scss';
 
@@ -33,7 +36,7 @@ const Security2faInitialSetup = ( { onSuccess } ) => {
 			<VerticalNavItemEnhanced
 				className="security-initial-setup-nav-item"
 				gridicon="phone"
-				onClick={ ( event ) => handleClick( event, APP_BASED_2FA_SETUP ) }
+				onClick={ ( event ) => handleClick( event, APP_BASED_2FA_VALIDATE_STEP ) }
 				text={ translate( 'Set up using an app' ) }
 				description={ translate(
 					'Use an application on your phone to get two-step authentication codes when you login.'
@@ -43,7 +46,7 @@ const Security2faInitialSetup = ( { onSuccess } ) => {
 			<VerticalNavItemEnhanced
 				className="security-initial-setup-nav-item"
 				gridicon="comment"
-				onClick={ ( event ) => handleClick( event, SMS_BASED_2FA_SETUP ) }
+				onClick={ ( event ) => handleClick( event, SMS_BASED_2FA_SETUP_ENTER_PHONE_STEP ) }
 				text={ translate( 'Set up using SMS' ) }
 				description={ translate(
 					'WordPress.com will send you an SMS with a two-step authentication code when you log in.'

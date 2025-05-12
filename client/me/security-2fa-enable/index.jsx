@@ -4,7 +4,7 @@ import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { QRCodeSVG } from 'qrcode.react';
-import { Component, createRef } from 'react';
+import { Component } from 'react';
 import FormButton from 'calypso/components/forms/form-button';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormVerificationCodeInput from 'calypso/components/forms/form-verification-code-input';
@@ -44,7 +44,6 @@ class Security2faEnable extends Component {
 	};
 
 	codeRequestTimer = false;
-	clipboardButtonRef = createRef();
 
 	componentDidMount() {
 		debug( this.constructor.displayName + ' React component is mounted.' );
@@ -78,11 +77,6 @@ class Security2faEnable extends Component {
 
 	allowSMSRequests = () => {
 		this.setState( { smsRequestsAllowed: true } );
-	};
-
-	onRequestSMS = ( event ) => {
-		event.preventDefault();
-		this.requestSMS();
 	};
 
 	requestSMS = () => {
@@ -121,14 +115,6 @@ class Security2faEnable extends Component {
 		}
 	};
 
-	onVerifyBySMS = ( event ) => {
-		event.preventDefault();
-		if ( this.state.smsRequestsAllowed ) {
-			this.requestSMS();
-		}
-		this.setState( { method: 'sms' } );
-	};
-
 	getFormDisabled = () => {
 		return this.state.submittingCode || 6 > this.state.verificationCode.trim().length;
 	};
@@ -165,43 +151,28 @@ class Security2faEnable extends Component {
 		}
 	};
 
-	getToggleLink = () => {
-		return (
-			<button
-				className="security-2fa-enable__toggle"
-				onClick={ ( event ) => {
-					this.toggleMethod( event );
-					gaRecordEvent(
-						'Me',
-						'Clicked On Barcode Toggle Link',
-						'current-method',
-						this.state.method
-					);
-				} }
-			/>
-		);
-	};
-
 	renderQRCode = () => {
 		const qrClasses = clsx( 'security-2fa-enable__qr-code', {
 			'is-placeholder': ! this.state.otpAuthUri,
 		} );
 
 		return (
-			<div className="security-2fa-enable__qr-code-block">
-				<ol className="security-2fa-enable__steps">
-					<li>
-						{ this.props.translate(
-							'Use your authenticator app to scan the QR code or enter this one time code:'
-						) }
-						<OneTimeCode oneTimeCode={ this.state.oneTimeCode } />
-					</li>
-					<li>{ this.renderInputBlock() }</li>
-				</ol>
-				<div className={ qrClasses }>
-					{ this.state.otpAuthUri && <QRCodeSVG value={ this.state.otpAuthUri } size={ 150 } /> }
+			<>
+				<div className="security-2fa-enable__qr-code-block">
+					<ol className="security-2fa-enable__steps">
+						<li>
+							{ this.props.translate(
+								'Use your authenticator app to scan the QR code or enter this one time code:'
+							) }
+							<OneTimeCode oneTimeCode={ this.state.oneTimeCode } />
+						</li>
+						<li>{ this.renderInputBlock() }</li>
+					</ol>
+					<div className={ qrClasses }>
+						{ this.state.otpAuthUri && <QRCodeSVG value={ this.state.otpAuthUri } size={ 150 } /> }
+					</div>
 				</div>
-			</div>
+			</>
 		);
 	};
 
@@ -223,54 +194,6 @@ class Security2faEnable extends Component {
 		}
 
 		return <p>{ this.props.translate( 'Enter the six digit code from the app.' ) }</p>;
-	};
-
-	toggleMethod = ( event ) => {
-		event.preventDefault();
-		this.setState( { method: 'scan' === this.state.method ? 'time' : 'scan' } );
-	};
-
-	renderInputOptions = () => {
-		if ( 'sms' === this.state.method ) {
-			return null;
-		}
-
-		return (
-			<div className="security-2fa-enable__app-options">
-				<p>
-					{ this.props.translate(
-						'Not sure what this screen means? You may need to download ' +
-							'{{authyLink}}Authy{{/authyLink}} or ' +
-							'{{googleAuthenticatorLink}}Google Authenticator{{/googleAuthenticatorLink}} ' +
-							'for your phone.',
-						{
-							components: {
-								authyLink: (
-									<a
-										href="https://www.authy.com/download/"
-										target="_blank"
-										rel="noopener noreferrer"
-										onClick={ function () {
-											gaRecordEvent( 'Me', 'Clicked On 2fa Download Authy App Link' );
-										} }
-									/>
-								),
-								googleAuthenticatorLink: (
-									<a
-										href="https://support.google.com/accounts/answer/1066447?hl=en"
-										target="_blank"
-										rel="noopener noreferrer"
-										onClick={ function () {
-											gaRecordEvent( 'Me', 'Clicked On 2fa Download Google Authenticator Link' );
-										} }
-									/>
-								),
-							},
-						}
-					) }
-				</p>
-			</div>
-		);
 	};
 
 	clearLastError = () => {
