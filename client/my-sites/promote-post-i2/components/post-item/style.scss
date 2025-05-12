@@ -184,6 +184,11 @@ body.is-section-promote-post-i2 {
 
 		&-content {
 			display: flex;
+			align-items: center;
+
+			.info-popover {
+				height: 18px
+			}
 		}
 	}
 
@@ -324,6 +329,37 @@ body.is-section-promote-post-i2 {
 				justify-content: center;
 			}
 		}
+	}
+}
+
+.accessible-focus .promote-post-i2 .post-item {
+	&__post-promote-button:focus {
+		color: var(--color-surface);
+		background-color:var(--color-accent)
+	}
+	&__view-link:focus {
+		box-shadow: 0 0 0 2px var(--color-primary-light);
+		color: var(--color-primary);
+	}
+	&__post-title-content .info-popover:focus{
+		position: relative;
+
+		&::before {
+			display: block;
+			position: absolute;
+			border: 2px solid var(--color-primary);
+			border-radius: 50%;
+			top: calc(50% - 12.5px);
+			left: calc(50% - 12.5px);
+			content: "";
+			width: 22px;
+			height: 22px;
+		}
+
+		.gridicon {
+			color: var(--color-primary);
+		}
+
 	}
 }
 
