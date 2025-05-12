@@ -1,3 +1,3 @@
-import i18n from 'i18n-calypso';
+import { getI18n } from './i18n';
 
-export const getLocaleSlug = () => i18n.getLocaleSlug();
+export const getLocaleSlug = () => getI18n().getLocaleSlug();

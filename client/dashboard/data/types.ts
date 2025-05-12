@@ -12,6 +12,14 @@ export interface User {
 	username: string;
 	display_name: string;
 	avatar_URL?: string;
+
+	/**
+	 * Computed attributes
+	 * See client/lib/user/shared-utils/get-computed-attributes.js
+	 */
+	primarySiteSlug: string;
+	localeSlug: string;
+	localeVariant: string;
 }
 
 export interface SiteDomain {

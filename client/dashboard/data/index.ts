@@ -1,3 +1,4 @@
+import { filterUserObject } from 'calypso/lib/user/shared-utils';
 import wpcom from 'calypso/lib/wp';
 import type {
 	Domain,
@@ -288,7 +289,8 @@ export const fetchEmail = ( id: string ): Promise< Email | undefined > => {
 };
 
 export const fetchUser = async (): Promise< User > => {
-	return wpcom.req.get( '/me' );
+	const user = await wpcom.req.get( '/me' );
+	return filterUserObject( user );
 };
 
 export const fetchTwoStep = async (): Promise< TwoStep > => {

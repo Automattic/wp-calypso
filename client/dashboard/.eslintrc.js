@@ -7,10 +7,23 @@ module.exports = {
 					{
 						group: [
 							'calypso/*',
+							// Allowed: calypso/boot/locale
+							'!calypso/boot',
+							'calypso/boot/*',
+							'!calypso/boot/locale',
 							// Allowed: calypso/lib/wp
 							'!calypso/lib',
 							'calypso/lib/*',
 							'!calypso/lib/wp',
+							// Allowed: calypso/lib/i18n-utils
+							'!calypso/lib/i18n-utils',
+							'calypso/lib/i18n-utils/*',
+							'!calypso/lib/i18n-utils/i18n',
+							'!calypso/lib/i18n-utils/switch-locale',
+							// Allowed: calypso/lib/user/shared-utils
+							'!calypso/lib/user',
+							'calypso/lib/user/*',
+							'!calypso/lib/user/shared-utils',
 							'!calypso/components',
 							'calypso/components/*',
 							// Allowed: calypso/assets/icons

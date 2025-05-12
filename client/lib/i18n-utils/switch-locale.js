@@ -3,12 +3,21 @@ import { captureException } from '@automattic/calypso-sentry';
 import { getUrlFromParts, getUrlParts } from '@automattic/calypso-url';
 import { isDefaultLocale, getLanguage } from '@automattic/i18n-utils';
 import { setLocale as setLocaleNumberFormatters } from '@automattic/number-formatters';
+import { isRTL, __ } from '@wordpress/i18n';
 import debugFactory from 'debug';
-import i18n from 'i18n-calypso';
 import { forEach, throttle } from 'lodash';
+import { getI18n } from './i18n';
 const debug = debugFactory( 'calypso:i18n' );
 
 const getPromises = {};
+
+export function getLocaleSlug() {
+	return getI18n().getLocaleSlug();
+}
+
+export function getLocaleVariant() {
+	return getI18n().getLocaleVariant();
+}
 
 /**
  * De-duplicates repeated GET fetches of the same URL while one is taking place.
@@ -69,13 +78,13 @@ export function getLanguageFileUrl( localeSlug, fileType = 'json', languageRevis
 
 function getHtmlLangAttribute() {
 	// translation of this string contains the desired HTML attribute value
-	const slug = i18n.translate( 'html_lang_attribute' );
+	const slug = __( 'html_lang_attribute' );
 
 	// Hasn't been translated? Some languages don't have the translation for this string,
 	// or maybe we are dealing with the default `en` locale. Return the general purpose locale slug
 	// -- there's no special one available for `<html lang>`.
 	if ( slug === 'html_lang_attribute' ) {
-		return i18n.getLocaleSlug();
+		return getLocaleSlug();
 	}
 
 	return slug;
@@ -83,12 +92,12 @@ function getHtmlLangAttribute() {
 
 function setLocaleInDOM() {
 	const htmlLangAttribute = getHtmlLangAttribute();
-	const isRTL = i18n.isRtl();
+	const isRtl = isRTL();
 	document.documentElement.lang = htmlLangAttribute;
-	document.documentElement.dir = isRTL ? 'rtl' : 'ltr';
-	document.body.classList[ isRTL ? 'add' : 'remove' ]( 'rtl' );
+	document.documentElement.dir = isRtl ? 'rtl' : 'ltr';
+	document.body.classList[ isRtl ? 'add' : 'remove' ]( 'rtl' );
 
-	switchWebpackCSS( isRTL );
+	switchWebpackCSS( isRtl );
 }
 
 export async function getFile( url ) {
@@ -282,7 +291,7 @@ let lastRequireChunkTranslationsHandler = null;
  * @param {Array}  options.translatedChunks Array of chunk ids that have available translation for the given locale
  * @param {Object} options.userTranslations User translations data that will override chunk translations
  */
-function addRequireChunkTranslationsHandler( localeSlug = i18n.getLocaleSlug(), options = {} ) {
+function addRequireChunkTranslationsHandler( localeSlug = getLocaleSlug(), options = {} ) {
 	const { translatedChunks = [], userTranslations = {} } = options;
 	const loadedTranslationChunks = {};
 
@@ -347,12 +356,12 @@ export default async function switchLocale( localeSlug ) {
 		getUrlParts( document.location.href ).searchParams.has( 'useTranslationChunks' );
 
 	if ( isDefaultLocale( localeSlug ) ) {
-		i18n.configure( { defaultLocaleSlug: localeSlug } );
+		getI18n().configure( { defaultLocaleSlug: localeSlug } );
 		setLocaleInDOM();
 	} else if ( useTranslationChunks ) {
 		// If requested locale is same as current locale, we don't need to
 		// re-fetch the manifest and translation chunks.
-		if ( localeSlug === i18n.getLocaleSlug() ) {
+		if ( localeSlug === getLocaleSlug() ) {
 			setLocaleInDOM();
 			return;
 		}
@@ -369,7 +378,7 @@ export default async function switchLocale( localeSlug ) {
 				return;
 			}
 
-			i18n.setLocale( locale );
+			getI18n().setLocale( locale );
 			setLocaleInDOM();
 			removeRequireChunkTranslationsHandler();
 			addRequireChunkTranslationsHandler( localeSlug, { translatedChunks } );
@@ -433,7 +442,7 @@ export default async function switchLocale( localeSlug ) {
 						return;
 					}
 
-					i18n.setLocale( body );
+					getI18n().setLocale( body );
 					setLocaleInDOM();
 					loadUserUndeployedTranslations( localeSlug );
 				}
@@ -514,11 +523,11 @@ export function loadUserUndeployedTranslations( currentLocaleSlug ) {
 
 /*
  * CSS links come in two flavors: either RTL stylesheets with `.rtl.css` suffix, or LTR ones
- * with `.css` suffix. This function sets a desired `isRTL` flag on the supplied URL, i.e., it
+ * with `.css` suffix. This function sets a desired `isRtl` flag on the supplied URL, i.e., it
  * changes the extension if necessary.
  */
-function setRTLFlagOnCSSLink( url, isRTL ) {
-	if ( isRTL ) {
+function setRTLFlagOnCSSLink( url, isRtl ) {
+	if ( isRtl ) {
 		return url.endsWith( '.rtl.css' ) ? url : url.replace( /\.css$/, '.rtl.css' );
 	}
 
@@ -527,14 +536,14 @@ function setRTLFlagOnCSSLink( url, isRTL ) {
 
 /**
  * Switch the Calypso CSS between RTL and LTR versions.
- * @param {boolean} isRTL True to use RTL css.
+ * @param {boolean} isRtl True to use RTL css.
  */
-export function switchWebpackCSS( isRTL ) {
+export function switchWebpackCSS( isRtl ) {
 	const currentLinks = document.querySelectorAll( 'link[rel="stylesheet"][data-webpack]' );
 
 	forEach( currentLinks, async ( currentLink ) => {
 		const currentHref = currentLink.getAttribute( 'href' );
-		const newHref = setRTLFlagOnCSSLink( currentHref, isRTL );
+		const newHref = setRTLFlagOnCSSLink( currentHref, isRtl );
 		const isNewHrefAdded = currentLink.parentElement?.querySelector( `[href = '${ newHref }']` );
 
 		if ( currentHref === newHref || isNewHrefAdded ) {
@@ -560,10 +569,10 @@ function loadCSS( cssUrl, currentLink ) {
 	return new Promise( ( resolve ) => {
 		// While looping the current links the RTL state might have changed
 		// This is a double-check to ensure the value of isRTL
-		const isRTL = i18n.isRtl();
-		const isRTLHref = currentLink.getAttribute( 'href' ).endsWith( '.rtl.css' );
+		const isRtl = isRTL();
+		const isRtlHref = currentLink.getAttribute( 'href' ).endsWith( '.rtl.css' );
 
-		if ( isRTL === isRTLHref ) {
+		if ( isRtl === isRtlHref ) {
 			return resolve( null );
 		}
 
@@ -602,7 +611,9 @@ const _translationsBatch = [];
  */
 const _addTranslationsBatch = throttle( function ( userTranslations ) {
 	window.performance?.mark?.( 'add_translations_start' );
-	i18n.addTranslations( Object.assign( {}, ..._translationsBatch.splice( 0 ), userTranslations ) );
+	getI18n().addTranslations(
+		Object.assign( {}, ..._translationsBatch.splice( 0 ), userTranslations )
+	);
 	window.performance?.measure?.( 'add_translations', 'add_translations_start' );
 	window.performance?.clearMarks?.( 'add_translations_start' );
 }, 50 );

@@ -3,7 +3,7 @@ import { createContext, useContext } from 'react';
 import { fetchUser } from '../../data';
 import type { User } from '../../data/types';
 
-export const AUTH_QUERY_KEY = [ 'auth', 'user' ];
+export const AUTH_QUERY_KEY = [ 'auth', 'user', 'filtered' ];
 export const TWO_STEP_QUERY_KEY = [ 'me', 'two-step' ];
 
 interface AuthContextType {

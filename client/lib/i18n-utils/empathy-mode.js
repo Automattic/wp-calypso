@@ -1,9 +1,10 @@
-import i18n, { I18N, translate } from 'i18n-calypso';
+import { I18N, translate } from 'i18n-calypso';
+import { getI18n } from './i18n';
 
 let defaultUntranslatedPlacehoder = translate( "I don't understand" );
 
 // keep `defaultUntranslatedPlacehoder` in sync with i18n changes
-i18n.on( 'change', () => {
+getI18n().on( 'change', () => {
 	defaultUntranslatedPlacehoder = translate( "I don't understand" );
 } );
 
@@ -27,7 +28,7 @@ export function toggleLanguageEmpathyMode( state ) {
 		initLanguageEmpathyMode();
 	}
 
-	i18n.reRenderTranslations();
+	getI18n().reRenderTranslations();
 }
 
 export function getLanguageEmpathyModeActive() {
@@ -40,20 +41,20 @@ export function initLanguageEmpathyMode() {
 	const i18nEmpathyRegisterHook = i18nEmpathy.registerTranslateHook.bind( i18nEmpathy );
 	const availableEmpathyTranslations = [ defaultUntranslatedPlacehoder ];
 
-	i18n.translateHooks.forEach( i18nEmpathyRegisterHook );
+	getI18n().translateHooks.forEach( i18nEmpathyRegisterHook );
 
 	// wrap translations from i18n
-	i18n.registerTranslateHook( ( translation, options ) => {
-		const locale = i18n.getLocaleSlug();
+	getI18n().registerTranslateHook( ( translation, options ) => {
+		const locale = getI18n().getLocaleSlug();
 		if (
 			! isActive ||
-			locale === i18n.defaultLocaleSlug ||
+			locale === getI18n().defaultLocaleSlug ||
 			availableEmpathyTranslations.includes( options.original )
 		) {
 			return translation;
 		}
 
-		if ( i18n.hasTranslation( options ) ) {
+		if ( getI18n().hasTranslation( options ) ) {
 			return i18nEmpathyTranslate( options );
 		}
 		return '👉 ' + encodeUntranslatedString( options.original );
