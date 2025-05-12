@@ -1,106 +1,113 @@
-import { BaseControl, useBaseControlProps } from '@wordpress/components';
+import { BaseControl, useBaseControlProps, VisuallyHidden } from '@wordpress/components';
+import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
-import { useTranslate } from 'i18n-calypso';
+import { useId } from 'react';
 import { IconBad, IconGood, IconNeutral } from './icons';
+import type {
+	ExperienceValue,
+	ExperienceOption,
+	ExperienceControlOptionProps,
+	ExperienceControlBaseProps,
+	ExperienceControlProps,
+} from './types';
 
 import './style.scss';
 
-export enum ExperienceType {
-	GOOD = 'good',
-	NEUTRAL = 'neutral',
-	BAD = 'bad',
-}
-
-type ExperienceOption = {
-	value: ExperienceType;
-	icon: JSX.Element;
-	ariaLabel: string;
-};
-
-interface ExperienceControlOptionProps {
-	className?: string;
-	checked: boolean;
-	onClick: () => void;
-	children: React.ReactNode;
-	value: string;
-	name: string;
-	ariaLabel: string;
-}
-
 const ExperienceControlOption = ( {
 	className,
-	checked,
-	onClick,
-	children,
-	value,
-	name,
+	label,
 	ariaLabel,
+	...restProps
 }: ExperienceControlOptionProps ) => (
-	<label
-		className={ clsx( 'experience-control__option', className, {
-			'is-selected': checked,
-		} ) }
-	>
+	<label className={ clsx( 'a8c-experience-control__option', className ) }>
 		<input
 			type="radio"
-			className="experience-control__radio"
-			checked={ checked }
-			onChange={ onClick }
-			value={ value }
-			name={ name }
+			className="a8c-experience-control__radio"
 			aria-label={ ariaLabel }
+			{ ...restProps }
 		/>
-		<div className="experience-control__option-content">{ children }</div>
+		<div className="a8c-experience-control__option-label">{ label }</div>
 	</label>
 );
 
-interface ExperienceControlBaseProps {
-	children: React.ReactNode;
-	label?: string;
-	help?: string;
-}
-
-const ExperienceControlBase = ( { children, ...props }: ExperienceControlBaseProps ) => {
-	const { baseControlProps } = useBaseControlProps( props );
+const ExperienceControlBase = ( {
+	children,
+	className,
+	hideLabelFromVision,
+	label,
+	...restProps
+}: ExperienceControlBaseProps ) => {
+	const { baseControlProps, controlProps } = useBaseControlProps( restProps );
 
 	return (
-		<BaseControl className="experience-control" { ...baseControlProps }>
-			<div className="experience-control__options" role="radiogroup">
+		<BaseControl
+			__nextHasNoMarginBottom
+			className={ clsx( 'a8c-experience-control', className ) }
+			{ ...baseControlProps }
+		>
+			<fieldset { ...controlProps } className="a8c-experience-control__fieldset">
+				{ hideLabelFromVision ? (
+					<VisuallyHidden as="legend">{ label }</VisuallyHidden>
+				) : (
+					<BaseControl.VisualLabel as="legend">{ label }</BaseControl.VisualLabel>
+				) }
 				{ children }
-			</div>
+			</fieldset>
 		</BaseControl>
 	);
 };
 
-interface ExperienceControlProps {
-	label: string;
-	onChange: ( experience: ExperienceType ) => void;
-	value: ExperienceType;
-	help?: string;
-}
-
-export function ExperienceControl( { label, onChange, value, help }: ExperienceControlProps ) {
-	const translate = useTranslate();
+/**
+ * A flexible component for collecting user experience feedback through a simple three-state rating system.
+ * The component provides an accessible way to gather user sentiment with visual and interactive feedback.
+ * @example
+ * Usage:
+ * ```jsx
+ * import { ExperienceControl } from '@automattic/components';
+ * function MyComponent() {
+ *   const [ experience, setExperience ] = useState( 'good' );
+ *
+ *   return (
+ *     <ExperienceControl
+ *       label="What was your experience like?"
+ *       onChange={ setExperience }
+ *       value={ experience }
+ *     />
+ *   );
+ * }
+ * ```
+ * @description
+ * - The component is fully accessible with proper ARIA labels and keyboard navigation
+ * - Each option (good, neutral, bad) is represented by an icon and can be selected via click or keyboard
+ * - The component provides visual feedback for the selected option
+ */
+export function ExperienceControl( {
+	label,
+	onChange,
+	value,
+	help,
+	name,
+}: ExperienceControlProps ) {
+	const { __ } = useI18n();
+	const nameId = useId();
 
 	const options: ExperienceOption[] = [
 		{
-			value: ExperienceType.GOOD,
+			value: 'good',
 			icon: <IconGood />,
-			ariaLabel: translate( 'Rate as good experience' ),
+			ariaLabel: __( 'Good' ),
 		},
 		{
-			value: ExperienceType.NEUTRAL,
+			value: 'neutral',
 			icon: <IconNeutral />,
-			ariaLabel: translate( 'Rate as neutral experience' ),
+			ariaLabel: __( 'Neutral' ),
 		},
 		{
-			value: ExperienceType.BAD,
+			value: 'bad',
 			icon: <IconBad />,
-			ariaLabel: translate( 'Rate as bad experience' ),
+			ariaLabel: __( 'Bad' ),
 		},
 	];
-
-	const radioGroupName = `experience-control-${ label.toLowerCase().replace( /\s+/g, '-' ) }`;
 
 	return (
 		<ExperienceControlBase label={ label } help={ help }>
@@ -109,19 +116,17 @@ export function ExperienceControl( { label, onChange, value, help }: ExperienceC
 					key={ option.value }
 					className={ `is-${ option.value }` }
 					checked={ value === option.value }
-					onClick={ () => onChange( option.value ) }
+					onChange={ ( event: React.ChangeEvent< HTMLInputElement > ) =>
+						onChange( event.target.value as ExperienceValue )
+					}
 					value={ option.value }
-					name={ radioGroupName }
+					name={ name ?? `experience-control-${ nameId }` }
 					ariaLabel={ option.ariaLabel }
-				>
-					{ option.icon }
-				</ExperienceControlOption>
+					label={ option.icon }
+				/>
 			) ) }
 		</ExperienceControlBase>
 	);
 }
-
-ExperienceControl.Base = ExperienceControlBase;
-ExperienceControl.Option = ExperienceControlOption;
 
 export default ExperienceControl;

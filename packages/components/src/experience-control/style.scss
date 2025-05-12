@@ -26,29 +26,28 @@ $experience-types: (
 	)
 );
 
-.experience-control {
-	.components-base-control__label {
-		@include heading-medium;
-		margin-block-end: 12px;
-		text-transform: uppercase;
-		color: var(--color-text);
-	}
-}
-
-.experience-control__options {
+.a8c-experience-control__fieldset {
 	display: flex;
 	gap: 8px;
+	margin: 0;
+    padding: 0;
+    border: none;
 }
 
-.experience-control__radio {
+.a8c-experience-control__radio {
 	position: absolute;
 	opacity: 0;
-	width: 0;
-	height: 0;
-	margin: 0;
+	width: 1px;
+	height: 1px;
+	margin: -1px;
+	padding: 0;
+	overflow: hidden;
+	clip: rect(0, 0, 0, 0);
+	white-space: nowrap;
+	border: 0;
 }
 
-.experience-control__option {
+.a8c-experience-control__option {
 	display: inline-flex;
 	border-radius: 50%;
 	height: 32px;
@@ -58,6 +57,7 @@ $experience-types: (
 	justify-content: center;
 	align-items: center;
 	cursor: pointer;
+	position: relative;
 
 	&:focus-within {
 		box-shadow: 0 0 0 var(--wp-admin-border-width-focus) #fff, 0 0 0 calc(2* var(--wp-admin-border-width-focus)) var(--color-primary-50);
@@ -69,23 +69,25 @@ $experience-types: (
 		&.#{$type} {
 			border-color: map-get($colors, 'border');
 
-			&.is-selected {
+			&:has(input[type="radio"]:checked) {
 				background-color: map-get($colors, 'background');
 			}
 
-			&:hover:not(.is-selected), &:focus-within:not(.is-selected) {
-				background-color: map-get($colors, 'hover');
+			&:hover, &:focus-within {
+				&:not(:has(input[type="radio"]:checked)) {
+					background-color: map-get($colors, 'hover');
+				}
 			}
 		}
 	}
 
-	&.is-selected {
+	&:has(input[type="radio"]:checked) {
 		svg path {
 			fill: var(--color-text-inverted);
 		}
 	}
 }
 
-.experience-control__option-content {
+.a8c-experience-control__option-label {
 	display: flex;
 }
