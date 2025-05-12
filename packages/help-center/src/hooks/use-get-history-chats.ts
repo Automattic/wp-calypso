@@ -17,6 +17,8 @@ import type {
 	ZendeskConversation,
 } from '@automattic/odie-client';
 
+const NO_MESSAGE_CONTENTS = [ '--', null, undefined, '' ];
+
 interface UseGetHistoryChatsResult {
 	supportInteractions: SupportInteraction[];
 	isLoadingInteractions: boolean;
@@ -49,6 +51,21 @@ const getOdieConversationsWithNoSupportInteractions = (
 	);
 
 	return odieConversations.filter( ( conversation ) => ! eventExternalIds.has( conversation.id ) );
+};
+
+/**
+ * Checks if the message content is one of the predefined "no message" contents.
+ * @param text The message content to check.
+ * @returns True if the message content is one of the predefined "no message" contents, false otherwise.
+ */
+const isNoMessageContent = ( text: unknown ) => {
+	if ( text === null || text === undefined ) {
+		return NO_MESSAGE_CONTENTS.includes( text );
+	}
+	if ( typeof text === 'string' ) {
+		return NO_MESSAGE_CONTENTS.includes( text.trim() );
+	}
+	return false;
 };
 
 /**
@@ -115,9 +132,11 @@ export const useGetHistoryChats = (): UseGetHistoryChatsResult => {
 		const mergedAndSortedConversations = [
 			...zendeskConversationsWithStatusesUpdated,
 			...odieConversationsWithNoSupportInteractions,
-		].sort( ( a, b ) => {
-			return getLastMessageReceived( b ) - getLastMessageReceived( a );
-		} );
+		]
+			.filter( ( conversation ) => ! isNoMessageContent( conversation.messages[ 0 ]?.text ) )
+			.sort( ( a, b ) => {
+				return getLastMessageReceived( b ) - getLastMessageReceived( a );
+			} );
 
 		const { recent, archived } = splitConversationsByRecency( mergedAndSortedConversations );
 
