@@ -1,6 +1,6 @@
 import { Card, Button } from '@automattic/components';
-import { Icon, bell } from '@automattic/icons';
 import { Modal } from '@wordpress/components';
+import { Icon, bell } from '@wordpress/icons';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -762,9 +762,13 @@ class PushNotificationSettings extends Component {
 					</small>
 				</h2>
 				<p className="notification-settings-push-notification-settings__settings-description">
-					{ this.props.translate(
-						"Get notified instantly about new comments and likes — even when you're not on WordPress.com"
-					) }
+					{ this.props.status === 'subscribed'
+						? this.props.translate(
+								"You're all set to get real-time alerts for new comments and likes."
+						  )
+						: this.props.translate(
+								"Get notified instantly about new comments and likes — even when you're not on WordPress.com"
+						  ) }
 				</p>
 				<Button
 					className={ clsx(
