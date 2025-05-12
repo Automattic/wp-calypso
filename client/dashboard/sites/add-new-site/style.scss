@@ -1,0 +1,13 @@
+@import '@wordpress/base-styles/variables';
+@import '@wordpress/base-styles/colors';
+
+.dashboard-add-new-site__menu-item-icon {
+	width: 24px;
+	height: auto;
+}
+
+.dashboard-add-new-site__banner {
+	background: $gray-100;
+	border-radius: $radius-medium;
+	padding: $grid-unit-20;
+}
