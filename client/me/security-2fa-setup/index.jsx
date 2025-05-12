@@ -79,7 +79,7 @@ class Security2faSetup extends Component {
 
 		switch ( step ) {
 			case SMS_BASED_2FA_SETUP_ENTER_PHONE_STEP:
-				title = translate( 'Enter Phone Number' );
+				title = translate( 'Enter phone number' );
 				content = (
 					<Security2faSMSSettings
 						onCancel={ this.onCancelSetup }
@@ -90,7 +90,7 @@ class Security2faSetup extends Component {
 				break;
 
 			case APP_BASED_2FA_VALIDATE_STEP:
-				title = translate( 'Verify Code' );
+				title = translate( 'Verify code' );
 				content = (
 					<Security2faEnable
 						isSmsFlow={ false }
@@ -101,7 +101,7 @@ class Security2faSetup extends Component {
 				break;
 
 			case SMS_BASED_2FA_SETUP_VALIDATE_CODE_STEP:
-				title = translate( 'Verify Code' );
+				title = translate( 'Verify code' );
 				content = (
 					<Security2faEnable
 						isSmsFlow
@@ -112,7 +112,7 @@ class Security2faSetup extends Component {
 				break;
 
 			case DISPLAY_BACKUP_CODES_STEP:
-				title = translate( 'Generate Backup Codes' );
+				title = translate( 'Generate backup codes' );
 				content = (
 					<Security2faSetupBackupCodes isSmsFlow={ isSmsFlow } onFinished={ this.onFinished } />
 				);
