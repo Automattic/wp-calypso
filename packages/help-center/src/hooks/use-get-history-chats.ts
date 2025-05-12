@@ -25,12 +25,55 @@ interface UseGetHistoryChatsResult {
 }
 
 /**
- * Retrieves the date the last message from the specified conversation was received.
+ * Retrieves the date when the last message from the specified conversation was received.
+ *
  * @returns The timestamp in milliseconds (e.g. 1745936539027), or 0 if not available
  */
 const getLastMessageReceived = ( conversation: OdieConversation | ZendeskConversation ) => {
 	const lastMessage = getLastMessage( { conversation } );
+
 	return ( lastMessage?.received || 0 ) * 1000;
+};
+
+/**
+ * Returns Odie conversations that do not have any corresponding Zendesk support interaction.
+ */
+const getOdieConversationsWithNoSupportInteractions = (
+	odieConversations: OdieConversation[] = [],
+	supportInteractions: SupportInteraction[]
+): OdieConversation[] => {
+	const eventExternalIds = new Set(
+		supportInteractions
+			.flatMap( ( interaction ) => interaction.events || [] )
+			.filter( ( event ) => event.event_source === 'odie' )
+			.map( ( event ) => event.event_external_id )
+	);
+
+	return odieConversations.filter( ( conversation ) => ! eventExternalIds.has( conversation.id ) );
+};
+
+/**
+ * Splits conversations into recent and archived based on whether the last message was received within the past year.
+ */
+const splitConversationsByRecency = (
+	conversations: ( OdieConversation | ZendeskConversation )[]
+): { recent: Conversations; archived: Conversations } => {
+	const oneYearAgoDate = new Date();
+	oneYearAgoDate.setFullYear( oneYearAgoDate.getFullYear() - 1 );
+	const oneYearAgo = oneYearAgoDate.getTime();
+
+	const recent: Conversations = [];
+	const archived: Conversations = [];
+
+	conversations.forEach( ( conversation ) => {
+		if ( getLastMessageReceived( conversation ) < oneYearAgo ) {
+			archived.push( conversation );
+		} else {
+			recent.push( conversation );
+		}
+	} );
+
+	return { recent, archived };
 };
 
 export const useGetHistoryChats = (): UseGetHistoryChatsResult => {
@@ -64,51 +107,24 @@ export const useGetHistoryChats = (): UseGetHistoryChatsResult => {
 			...( otherSupportInteractions || [] ),
 		];
 
-		const conversationsWithUpdatedStatuses = filterAndUpdateConversationsWithStatus(
+		const zendeskConversationsWithStatusesUpdated = filterAndUpdateConversationsWithStatus(
 			getZendeskConversations(),
 			supportInteractions
 		);
 
 		setSupportInteractions( supportInteractions );
 
-		// Filter Odie conversations not already present in Zendesk support interactions
-		const eventExternalIds = new Set(
-			supportInteractions
-				.flatMap( ( interaction ) => interaction.events || [] )
-				.filter( ( event ) => event.event_source === 'odie' )
-				.map( ( event ) => event.event_external_id )
-		);
-
-		const filteredOdieConversations = ( odieConversations || [] ).filter(
-			( conversation ) => ! eventExternalIds.has( conversation.id )
-		);
+		const odieConversationsWithNoSupportInteractions =
+			getOdieConversationsWithNoSupportInteractions( odieConversations, supportInteractions );
 
 		const mergedAndSortedConversations = [
-			...conversationsWithUpdatedStatuses,
-			...filteredOdieConversations,
+			...zendeskConversationsWithStatusesUpdated,
+			...odieConversationsWithNoSupportInteractions,
 		].sort( ( a, b ) => {
-			const lastMessageReceivedAtA = getLastMessageReceived( a );
-			const lastMessageReceivedAtB = getLastMessageReceived( b );
-
-			return lastMessageReceivedAtB - lastMessageReceivedAtA;
+			return getLastMessageReceived( b ) - getLastMessageReceived( a );
 		} );
 
-		// Split into recent and archived
-		const oneYearAgoDate = new Date();
-		oneYearAgoDate.setFullYear( oneYearAgoDate.getFullYear() - 1 );
-		const oneYearAgo = oneYearAgoDate.getTime();
-
-		const recent: Conversations = [];
-		const archived: Conversations = [];
-
-		mergedAndSortedConversations.forEach( ( conversation ) => {
-			const lastMessageReceivedAt = getLastMessageReceived( conversation );
-			if ( lastMessageReceivedAt < oneYearAgo ) {
-				archived.push( conversation );
-			} else {
-				recent.push( conversation );
-			}
-		} );
+		const { recent, archived } = splitConversationsByRecency( mergedAndSortedConversations );
 
 		setRecentConversations( recent );
 		setArchivedConversations( archived );

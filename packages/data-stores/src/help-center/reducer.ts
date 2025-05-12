@@ -43,10 +43,7 @@ const currentSupportInteraction: Reducer< SupportInteraction | undefined, HelpCe
 };
 
 const odieChatId: Reducer< number | undefined, HelpCenterAction > = ( state, action ) => {
-	if ( action.type === 'HELP_CENTER_SET_ODIE_ID' ) {
-		return action.odieChatId;
-	}
-	return state;
+	return action.type === 'HELP_CENTER_SET_ODIE_ID' ? action.odieChatId : state;
 };
 
 const isMinimized: Reducer< boolean, HelpCenterAction > = ( state = false, action ) => {
