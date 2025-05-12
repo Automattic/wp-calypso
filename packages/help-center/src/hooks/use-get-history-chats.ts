@@ -98,8 +98,8 @@ export const useGetHistoryChats = (): UseGetHistoryChatsResult => {
 		const archived: Conversations = [];
 
 		mergedAndSortedConversations.forEach( ( conversation ) => {
-			const lastmMessageReceivedAt = getLastMessageReceived( conversation );
-			if ( lastmMessageReceivedAt < oneYearAgo ) {
+			const lastMessageReceivedAt = getLastMessageReceived( conversation );
+			if ( lastMessageReceivedAt < oneYearAgo ) {
 				archived.push( conversation );
 			} else {
 				recent.push( conversation );
