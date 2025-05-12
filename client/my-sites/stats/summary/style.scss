@@ -55,3 +55,22 @@
 		}
 	}
 }
+
+.stats-navigation.stats-navigation--improved {
+	.stats-navigation__tabs {
+		margin-left: -16px;
+
+		.components-tab-panel__tabs {
+			padding-left: 0;
+		}
+
+		@media (max-width: $break-small) {
+			margin-left: 0;
+
+			.components-tab-panel__tabs {
+				padding-left: 16px;
+				padding-right: 16px;
+			}
+		}
+	}
+}

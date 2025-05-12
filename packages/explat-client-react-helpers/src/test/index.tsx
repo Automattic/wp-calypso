@@ -2,10 +2,16 @@
  * @jest-environment jsdom
  */
 
-import { validExperimentAssignment } from '@automattic/explat-client/src/internal/test-common';
 import { act, render, renderHook, waitFor } from '@testing-library/react';
 import createExPlatClientReactHelpers from '../index';
 import type { ExPlatClient, ExperimentAssignment } from '@automattic/explat-client';
+
+const validExperimentAssignment = {
+	experimentName: 'experiment_name_a',
+	variationName: 'treatment',
+	retrievedTimestamp: Date.now(),
+	ttl: 60,
+};
 
 const createMockExPlatClient = ( isDevelopmentMode = false ): ExPlatClient => ( {
 	loadExperimentAssignment: jest.fn(),

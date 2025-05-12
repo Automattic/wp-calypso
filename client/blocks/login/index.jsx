@@ -81,7 +81,6 @@ class Login extends Component {
 		isManualRenewalImmediateLoginAttempt: PropTypes.bool,
 		linkingSocialService: PropTypes.string,
 		oauth2Client: PropTypes.object,
-		privateSite: PropTypes.bool,
 		rebootAfterLogin: PropTypes.func.isRequired,
 		requestNotice: PropTypes.object,
 		sendEmailLogin: PropTypes.func.isRequired,
@@ -193,7 +192,6 @@ class Login extends Component {
 		const {
 			isJetpack,
 			oauth2Client,
-			privateSite,
 			socialConnect,
 			twoStepNonce,
 			fromSite,
@@ -207,7 +205,6 @@ class Login extends Component {
 		return (
 			! twoStepNonce &&
 			! socialConnect &&
-			! privateSite &&
 			// Show the continue as user flow WooCommerce and Blaze Pro but not for other OAuth2 clients
 			! ( oauth2Client && ! isWCCOM && ! isBlazePro ) &&
 			! isJetpack &&
@@ -358,7 +355,6 @@ class Login extends Component {
 			isWCCOM,
 			linkingSocialService,
 			oauth2Client,
-			privateSite,
 			socialConnect,
 			translate,
 			twoStepNonce,
@@ -429,8 +425,6 @@ class Login extends Component {
 					</p>
 				);
 			}
-		} else if ( privateSite ) {
-			headerText = translate( 'This is a private WordPress.com site' );
 		} else if ( oauth2Client ) {
 			headerText = translate( 'Howdy! Log in to %(clientTitle)s with your WordPress.com account.', {
 				args: {
@@ -635,8 +629,9 @@ class Login extends Component {
 					break;
 				default:
 					headerText = <h3>{ translate( 'Log in to your account' ) }</h3>;
+					// pluginName is already translated with an "in" prefix in getPluginTitle.
 					subtitle = translate(
-						'To access all of the features and functionality in %(pluginName)s, you’ll first need to connect your store to a WordPress.com account. Log in now, or {{signupLink}}create a new account{{/signupLink}}. For more information, please {{doc}}review our documentation{{/doc}}.',
+						'To access all of the features and functionality %(pluginName)s, you’ll first need to connect your store to a WordPress.com account. Log in now, or {{signupLink}}create a new account{{/signupLink}}. For more information, please {{doc}}review our documentation{{/doc}}.',
 						{
 							components: {
 								signupLink,
@@ -801,7 +796,6 @@ class Login extends Component {
 		const {
 			domain,
 			isJetpack,
-			privateSite,
 			twoFactorAuthType,
 			twoFactorEnabled,
 			twoFactorNotificationSent,
@@ -939,7 +933,6 @@ class Login extends Component {
 						<LoginForm
 							disableAutoFocus={ disableAutoFocus }
 							onSuccess={ this.handleValidLogin }
-							privateSite={ privateSite }
 							socialService={ socialService }
 							socialServiceResponse={ socialServiceResponse }
 							domain={ domain }
@@ -969,7 +962,6 @@ class Login extends Component {
 			<LoginForm
 				disableAutoFocus={ disableAutoFocus }
 				onSuccess={ this.handleValidLogin }
-				privateSite={ privateSite }
 				socialService={ socialService }
 				socialServiceResponse={ socialServiceResponse }
 				domain={ domain }

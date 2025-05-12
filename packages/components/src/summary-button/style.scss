@@ -2,7 +2,7 @@
 @import "@wordpress/base-styles/variables";
 
 .summary-button.components-button {
-	padding: 24px;
+	padding: $grid-unit-30;
 	display: block;
 	height: auto;
 	transition: none;
@@ -21,11 +21,15 @@
 		}
 
 		&.has-density-low {
-			box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9)) 12%, transparent);
+			&:not(:focus-visible) {
+				box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9)) 12%, transparent);
+			}
 		}
 
 		&.has-density-medium {
-			box-shadow: 0 2px 1px -1px color-mix(in srgb, var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9)) 12%, transparent);
+			&:not(:focus-visible) {
+				box-shadow: 0 2px 1px -1px color-mix(in srgb, var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9)) 12%, transparent);
+			}
 		}
 	}
 
@@ -66,11 +70,22 @@
 	}
 
 	&.has-density-medium {
-		padding: 12px;
+		padding: $grid-unit-15;
 		box-shadow: 0 2px 1px -1px $gray-100;
+
+		// TODO: this should be handled better in `SummaryButtonList` component.
+		// @see: https://github.com/Automattic/wp-calypso/pull/103233#issuecomment-2862541935
+		&:focus-visible, &:hover:not(:disabled, [aria-disabled="true"]) {
+			/* stylelint-disable-next-line scales/radii */
+			border-radius: 7px;
+		}
 
 		.summary-button-title {
 			@include body-medium;
 		}
+	}
+
+	&:focus-visible {
+		@include button-style__focus();
 	}
 }

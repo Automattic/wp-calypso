@@ -1,9 +1,10 @@
 {
 	"name": "@automattic/calypso-polyfills",
+	"type": "module",
 	"version": "2.0.0",
 	"description": "Polyfills required for Calypso to work across various browsers and in node.",
-	"browser": "browser.js",
-	"main": "node.js",
+	"main": "index.js",
+	"exports": "./index.js",
 	"sideEffects": true,
 	"keywords": [
 		"wordpress"
@@ -22,8 +23,7 @@
 	},
 	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"dependencies": {
-		"core-js": "^3.6.3",
-		"isomorphic-fetch": "^3.0.0"
+		"core-js": "^3.6.3"
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^"

@@ -49,7 +49,6 @@ const MarketplaceThankYou = ( {
 		pluginsSection,
 		allPluginsFetched,
 		allPluginsActivated,
-		pluginsGoBackSection,
 		pluginTitle,
 		pluginSubtitle,
 		pluginsProgressbarSteps,
@@ -61,7 +60,6 @@ const MarketplaceThankYou = ( {
 		firstTheme,
 		themesSection,
 		allThemesFetched,
-		themesGoBackSection,
 		themeTitle,
 		themeSubtitle,
 		themesProgressbarSteps,
@@ -82,7 +80,8 @@ const MarketplaceThankYou = ( {
 		}
 	}, [ dispatch, firstTheme, styleVariationSlug ] );
 
-	const [ hasThemes ] = [ themeSlugs ].map( ( slugs ) => slugs.length !== 0 );
+	const hasPlugins = pluginSlugs.length > 0;
+	const hasThemes = themeSlugs.length > 0;
 
 	const [ title, subtitle ] = usePageTexts( {
 		pluginSlugs,
@@ -102,7 +101,7 @@ const MarketplaceThankYou = ( {
 		allPluginsActivated &&
 		allThemesFetched &&
 		isAtomicTransferCheckComplete &&
-		isLoadedPlugins &&
+		( ! hasPlugins || isLoadedPlugins ) &&
 		( ! hasThemes || isLoadedThemes );
 
 	const transferStatus = useSelector( ( state ) => getAutomatedTransferStatus( state, siteId ) );
@@ -177,13 +176,7 @@ const MarketplaceThankYou = ( {
 					}
 				` }
 			/>
-			<MarketplaceGoBackSection
-				pluginSlugs={ pluginSlugs }
-				pluginsGoBackSection={ pluginsGoBackSection }
-				themeSlugs={ themeSlugs }
-				themesGoBackSection={ themesGoBackSection }
-				areAllProductsFetched={ isPageReady }
-			/>
+			<MarketplaceGoBackSection pluginSlugs={ pluginSlugs } themeSlugs={ themeSlugs } />
 			{ showProgressBar && (
 				// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 				<div className="marketplace-plugin-install__root">

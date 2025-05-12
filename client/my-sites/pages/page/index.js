@@ -29,7 +29,7 @@ import { getPreviewURL, userCan } from 'calypso/state/posts/utils';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getEditorUrl from 'calypso/state/selectors/get-editor-url';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
-import { shouldLoadGutenframe } from 'calypso/state/selectors/should-load-gutenframe/';
+import { shouldLoadGutenframe } from 'calypso/state/selectors/should-load-gutenframe';
 import { updateSiteFrontPage } from 'calypso/state/sites/actions';
 import {
 	getSite,

@@ -19,7 +19,6 @@ import { withCurrentRoute } from 'calypso/components/route';
 import SympathyDevWarning from 'calypso/components/sympathy-dev-warning';
 import { retrieveMobileRedirect } from 'calypso/jetpack-connect/persistence-utils';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
-import HtmlIsIframeClassname from 'calypso/layout/html-is-iframe-classname';
 import EmptyMasterbar from 'calypso/layout/masterbar/empty';
 import MasterbarLoggedIn from 'calypso/layout/masterbar/logged-in';
 import { isInStepContainerV2FlowContext } from 'calypso/layout/utils';
@@ -255,7 +254,6 @@ class Layout extends Component {
 					section={ this.props.sectionName }
 					{ ...optionalBodyProps() }
 				/>
-				<HtmlIsIframeClassname />
 				<DocumentHead />
 				{ this.props.shouldQueryAllSites ? (
 					<QuerySites allSites />

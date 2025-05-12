@@ -1,5 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
 @import "./woocommerce-box";
 
 .is-section-plugins .main {
@@ -46,8 +47,6 @@
 
 body.is-section-plugins {
 	.is-section-plugins.is-global-sidebar-visible {
-		background: var(--studio-gray-0);
-
 		.layout__content {
 			min-height: 100vh;
 		}
@@ -55,10 +54,15 @@ body.is-section-plugins {
 		.layout__primary > * {
 			background-color: var(--color-surface);
 			border-radius: 8px; /* stylelint-disable-line scales/radii */
-			box-shadow: 0 0 17.4px 0 rgba(0, 0, 0, 0.05);
 			height: calc(100vh - var(--masterbar-height) - var(--content-padding-top) - var(--content-padding-bottom));
 			max-width: none;
 			overflow-y: auto;
+
+			&:not(:has(.hosting-dashboard-layout-column__container)) {
+				@include break-small {
+					border: 1px solid $gray-200;
+				}
+			}
 		}
 
 		.plugins-browser,
@@ -95,6 +99,7 @@ body.is-section-plugins {
 	}
 
 	.hosting-dashboard-layout-column {
+		height: 100%;
 		overflow: auto;
 	}
 
@@ -155,12 +160,12 @@ body.is-section-plugins {
 		}
 	}
 
-	.hosting-dashboard-layout-column.scheduled-updates-edit,
-	.hosting-dashboard-layout-column.scheduled-updates-create {
+	.hosting-dashboard-layout-column.scheduled-updates-edit .hosting-dashboard-layout-column__container,
+	.hosting-dashboard-layout-column.scheduled-updates-create .hosting-dashboard-layout-column__container {
 		padding: 3rem;
 
 		@include breakpoint-deprecated( "<660px" ) {
-			padding: 0.5rem;
+			padding: 1rem;
 		}
 	}
 }

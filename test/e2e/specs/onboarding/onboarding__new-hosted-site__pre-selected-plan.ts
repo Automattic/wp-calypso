@@ -39,7 +39,13 @@ describe(
 
 		it( 'Sign up as a new user', async function () {
 			const userSignupPage = new UserSignupPage( page );
-			newUserDetails = await userSignupPage.signupSocialFirstWithEmail( testUser.email );
+
+			const promises = await Promise.all( [
+				userSignupPage.signupSocialFirstWithEmail( testUser.email ),
+				page.waitForURL( /.*\/checkout\/.*/, { timeout: 30 * 1000 } ),
+			] );
+
+			newUserDetails = promises[ 0 ];
 		} );
 
 		it( 'See plan at checkout', async function () {

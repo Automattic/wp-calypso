@@ -38,7 +38,6 @@ import media from 'calypso/assets/images/illustrations/media.svg';
 import migratingHostDiy from 'calypso/assets/images/illustrations/migrating-host-diy.svg';
 import noMemberships from 'calypso/assets/images/illustrations/no-memberships.svg';
 import payments from 'calypso/assets/images/illustrations/payments.svg';
-import privacy from 'calypso/assets/images/illustrations/private.svg';
 import removedAds from 'calypso/assets/images/illustrations/removed-ads.svg';
 import seoPageTitle from 'calypso/assets/images/illustrations/seo-page-title.svg';
 import siteActivity from 'calypso/assets/images/illustrations/site-activity.svg';
@@ -112,9 +111,6 @@ export default class Illustrations extends PureComponent {
 						</div>
 						<div className="design__illustrations-illustration">
 							<img src={ payments } alt="" />
-						</div>
-						<div className="design__illustrations-illustration">
-							<img src={ privacy } alt="" />
 						</div>
 						<div className="design__illustrations-illustration">
 							<img src={ removedAds } alt="" />

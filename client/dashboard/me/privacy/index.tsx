@@ -3,7 +3,11 @@ import PageLayout from '../../components/page-layout';
 
 function Privacy() {
 	return (
-		<PageLayout title={ __( 'Privacy' ) } description={ __( 'Manage your privacy settings.' ) } />
+		<PageLayout
+			title={ __( 'Privacy' ) }
+			description={ __( 'Manage your privacy settings.' ) }
+			size="small"
+		/>
 	);
 }
 

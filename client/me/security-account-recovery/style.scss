@@ -15,7 +15,7 @@
 	padding-right: 0;
 
 	@include breakpoint-deprecated( ">480px" ) {
-		padding-right: 20px;
+		padding-right: 10px;
 		margin-bottom: 0;
 	}
 }
@@ -110,4 +110,32 @@
 
 .security-account-recovery__recovery-phone-validation-label {
 	margin-top: 12px;
+}
+
+.recovery-phone-edit {
+	align-items: center;
+	display: flex;
+
+	&__information {
+		flex: 1;
+	}
+
+	&__actions {
+		display: flex;
+		flex-direction: row;
+		gap: 10px;
+	}
+}
+
+.security-account-recovery__recovery-sms-number {
+    .security-account-recovery-contact:not(:only-child) {
+    	&::after {
+    		background-color: var(--color-border-subtle);
+    		content: '';
+    		display: block;
+    		height: 1px;
+    		margin: 16px 0;
+    		width: 100%;
+    	}
+    }
 }

@@ -1,4 +1,4 @@
-import { WPCOM_FEATURES_SUBSCRIPTION_GIFTING } from '@automattic/calypso-products/src';
+import { WPCOM_FEATURES_SUBSCRIPTION_GIFTING } from '@automattic/calypso-products';
 import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import InlineSupportLink from 'calypso/components/inline-support-link';
