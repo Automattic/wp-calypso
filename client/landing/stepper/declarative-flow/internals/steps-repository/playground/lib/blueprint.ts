@@ -12,6 +12,29 @@ const DEFAULT_BLUEPRINT: Blueprint = {
 		networking: true,
 	},
 	login: true,
+	steps: [
+		{
+			step: 'writeFile',
+			path: '/wordpress/wp-content/mu-plugins/playground-intent-calculation.php',
+			data: `<?php add_action( 'wp_ajax_pg_intent', function() {
+				$active_plugins = array_diff( get_option( 'active_plugins' ), array( 'hello.php', 'akismet/akismet.php' ) );
+				if ( in_array( 'woocommerce/woocommerce.php', $active_plugins ) ) {
+					return 'woocommerce';
+				}
+				if ( count( $active_plugins ) > 0 ) {
+					return 'business';
+				}
+
+				$has_user_global_styles = count( get_posts( array(
+					'post_type' => 'wp_global_styles',
+					'post_status' => 'publish',
+					'posts_per_page' => 1,
+				) ) ) > 0;
+
+				return $has_user_global_styles ? 'global-styles' : 'simple';
+			} );`,
+		},
+	],
 };
 
 const PREDEFINED_BLUEPRINTS: Record< string, Blueprint > = {
