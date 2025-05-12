@@ -1,10 +1,10 @@
 import { formatNumber } from '@automattic/number-formatters';
-import { localize } from 'i18n-calypso';
-import { connect } from 'react-redux';
-import titlecase from 'to-title-case';
+import { useTranslate } from 'i18n-calypso';
+import { useMemo } from 'react';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import NavigationHeader from 'calypso/components/navigation-header';
 import Main from 'calypso/my-sites/stats/components/stats-main';
+import { useSelector } from 'calypso/state';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import {
 	TooltipWrapper,
@@ -19,36 +19,46 @@ import '../stats-module/summary-nav.scss';
 
 const StatsStrings = statsStringsFactory();
 
-const StatsEmailSummary = ( { translate, period, siteSlug } ) => {
-	// Navigation settings. One of the following, depending on the summary view.
-	// Traffic => /stats/day/
-	// Insights => /stats/insights/
-	const localizedTabNames = {
-		traffic: translate( 'Traffic' ),
-		insights: translate( 'Insights' ),
-	};
-	const backLabel = localizedTabNames.traffic;
-	let backLink = `/stats/day/`;
+// TODO: `query` was never passed from outside or defined in scope. Adding it to avoid a lint error.
+const StatsEmailSummary = ( { period, query } ) => {
+	const translate = useTranslate();
+	const siteId = useSelector( getSelectedSiteId );
+	const siteSlug = useSelector( ( state ) => getSelectedSiteSlug( state, siteId ) );
 
-	const query = {
-		period: period,
-		quantity: 30,
-	};
-	const module = 'emails';
-	const title = translate( 'Emails' );
+	// TODO: align with all summary pages.
+	const navigationItems = useMemo( () => {
+		const title = translate( 'Emails' );
+		const localizedTabNames = {
+			traffic: translate( 'Traffic' ),
+			insights: translate( 'Insights' ),
+			store: translate( 'Store' ),
+			ads: translate( 'Ads' ),
+			subscribers: translate( 'Subscribers' ),
+		};
+		const possibleBackLinks = {
+			traffic: '/stats/day/',
+			insights: '/stats/insights/',
+			store: '/stats/store/',
+			ads: '/stats/ads/',
+			subscribers: '/stats/subscribers',
+		};
+		// We track the parent tab via sessionStorage.
+		const lastClickedTab = sessionStorage.getItem( 'jp-stats-last-tab' );
+		const backLabel = localizedTabNames[ lastClickedTab ] || localizedTabNames.traffic;
+		let backLink = possibleBackLinks[ lastClickedTab ] || possibleBackLinks.traffic;
+		// Append the domain as needed.
+		const domain = siteSlug;
+		if ( domain?.length > 0 ) {
+			backLink += domain;
+		}
 
-	const domain = siteSlug;
-	if ( domain?.length > 0 ) {
-		backLink += domain;
-	}
-	const navigationItems = [ { label: backLabel, href: backLink }, { label: title } ];
+		// Wrap it up!
+		return [ { label: backLabel, href: backLink }, { label: title } ];
+	}, [ translate, siteSlug ] );
 
 	return (
 		<Main className="has-fixed-nav" wideLayout>
-			<PageViewTracker
-				path={ `/stats/${ module }/:site` }
-				title={ `Stats > ${ titlecase( module ) }` }
-			/>
+			<PageViewTracker path="/stats/emails/:site" title="Stats > Emails" />
 			<NavigationHeader className="stats-summary-view" navigationItems={ navigationItems } />
 			<div id="my-stats-content" className="stats-summary-view stats-summary__positioned">
 				<div className="stats-summary-nav">
@@ -129,10 +139,4 @@ const StatsEmailSummary = ( { translate, period, siteSlug } ) => {
 	);
 };
 
-export default connect( ( state ) => {
-	const siteId = getSelectedSiteId( state );
-	return {
-		siteId: getSelectedSiteId( state ),
-		siteSlug: getSelectedSiteSlug( state, siteId ),
-	};
-} )( localize( StatsEmailSummary ) );
+export default StatsEmailSummary;
