@@ -1,3 +1,4 @@
+import { PageHeader } from '@automattic/components/src/page-header';
 import { __experimentalVStack as VStack, Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { backup, payment, receipt, institution } from '@wordpress/icons';
@@ -12,7 +13,8 @@ import RouterLinkSummaryButton from '../../components/router-link-summary-button
 
 function Billing() {
 	return (
-		<PageLayout title={ __( 'Billing' ) } size="small">
+		<PageLayout size="small">
+			<PageHeader title={ __( 'Billing' ) } level={ 1 } />
 			<VStack spacing={ 4 }>
 				<RouterLinkSummaryButton
 					title={ __( 'Active subscriptions' ) }

@@ -1,4 +1,3 @@
-import { PageHeader } from '@automattic/components/src/page-header';
 import { useQuery } from '@tanstack/react-query';
 import {
 	__experimentalVStack as VStack,
@@ -10,9 +9,9 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { wordpress } from '@wordpress/icons';
-import { siteQuery } from '../../app/queries';
-import { siteRoute } from '../../app/router';
-import PageLayout from '../../components/page-layout';
+import { siteQuery } from '../app/queries';
+import { siteRoute } from '../app/router';
+import PageLayout from '../page-layout';
 import CommentsCard from './comments-card';
 import LikesCard from './likes-card';
 import OverviewSection from './overview-section';
@@ -43,17 +42,13 @@ function SiteOverview() {
 		engagementStats,
 	} = data;
 	return (
-		<PageLayout>
-			<PageHeader
-				title={ site.name }
-				level={ 1 }
-				actions={ [
-					<ExternalLink key="visit" href={ site.URL }>
-						{ __( 'Visit' ) }
-					</ExternalLink>,
-					site.options?.admin_url && (
+		<PageLayout
+			title={ site.name }
+			actions={
+				<>
+					<ExternalLink href={ site.URL }>{ __( 'Visit' ) }</ExternalLink>
+					{ site.options?.admin_url && (
 						<Button
-							key="wp-admin"
 							__next40pxDefaultSize
 							variant="primary"
 							href={ site.options.admin_url }
@@ -61,9 +56,10 @@ function SiteOverview() {
 						>
 							{ __( 'WP Admin' ) }
 						</Button>
-					),
-				].filter( Boolean ) }
-			/>
+					) }
+				</>
+			}
+		>
 			<HStack alignment="flex-start" spacing={ 8 }>
 				<Sidebar
 					site={ site }

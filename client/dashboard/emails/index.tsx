@@ -1,3 +1,4 @@
+import { PageHeader } from '@automattic/components/src/page-header';
 import { DataViews, filterSortAndPaginate } from '@automattic/dataviews';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
@@ -117,19 +118,19 @@ function Emails() {
 	};
 
 	return (
-		<PageLayout
-			title={ __( 'Emails' ) }
-			actions={
-				<div style={ { display: 'flex', gap: '12px' } }>
-					<Button variant="secondary" __next40pxDefaultSize>
+		<PageLayout>
+			<PageHeader
+				title={ __( 'Emails' ) }
+				level={ 1 }
+				actions={ [
+					<Button key="add-forwarder" variant="secondary" __next40pxDefaultSize>
 						{ __( 'Add Email Forwarder' ) }
-					</Button>
-					<Button variant="primary" __next40pxDefaultSize>
+					</Button>,
+					<Button key="add-mailbox" variant="primary" __next40pxDefaultSize>
 						{ __( 'Add Mailbox' ) }
-					</Button>
-				</div>
-			}
-		>
+					</Button>,
+				] }
+			/>
 			<Notice status="warning" isDismissible={ false }>
 				{ __( 'This is using fake data for the moment' ) }
 			</Notice>

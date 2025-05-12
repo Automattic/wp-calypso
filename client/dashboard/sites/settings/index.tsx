@@ -1,3 +1,4 @@
+import { PageHeader } from '@automattic/components/src/page-header';
 import { useQuery } from '@tanstack/react-query';
 import {
 	__experimentalHeading as Heading,
@@ -20,7 +21,8 @@ export default function SiteSettings() {
 	}
 
 	return (
-		<PageLayout title={ __( 'Settings' ) } size="small">
+		<PageLayout size="small">
+			<PageHeader title={ __( 'Settings' ) } level={ 1 } />
 			<Heading>{ __( 'General' ) }</Heading>
 			<Card>
 				<VStack>

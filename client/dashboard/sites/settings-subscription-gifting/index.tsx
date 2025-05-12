@@ -1,3 +1,4 @@
+import { PageHeader } from '@automattic/components/src/page-header';
 import { DataForm } from '@automattic/dataviews';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { notFound } from '@tanstack/react-router';
@@ -54,13 +55,14 @@ export default function SubscriptionGiftingSettings() {
 	};
 
 	return (
-		<PageLayout
-			size="small"
-			title={ __( 'Accept a gift subscription' ) }
-			description={ __(
-				'Allow a site visitor to cover the full cost of your site’s WordPress.com plan.'
-			) }
-		>
+		<PageLayout size="small">
+			<PageHeader
+				title={ __( 'Accept a gift subscription' ) }
+				level={ 1 }
+				description={ __(
+					'Allow a site visitor to cover the full cost of your site’s WordPress.com plan.'
+				) }
+			/>
 			<Card>
 				<CardBody>
 					<DataForm< SiteSettings >

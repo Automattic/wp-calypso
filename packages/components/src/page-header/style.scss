@@ -1,0 +1,16 @@
+@import "@wordpress/base-styles/variables";
+
+.a8c-components-page-header-decoration {
+	display: inline-flex;
+
+	svg {
+		fill: $gray-700;
+		flex-shrink: 0;
+	}
+
+	img {
+		width: 24px;
+		height: 24px;
+		flex-shrink: 0;
+	}
+}

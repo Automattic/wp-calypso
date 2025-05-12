@@ -1,3 +1,4 @@
+import { PageHeader } from '@automattic/components/src/page-header';
 import { DataViews, filterSortAndPaginate } from '@automattic/dataviews';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
@@ -219,14 +220,16 @@ export default function Sites() {
 
 	return (
 		<>
-			<PageLayout
-				title={ __( 'Sites' ) }
-				actions={
-					<Button variant="primary" __next40pxDefaultSize>
-						{ __( 'Add New Site' ) }
-					</Button>
-				}
-			>
+			<PageLayout>
+				<PageHeader
+					title={ __( 'Sites' ) }
+					level={ 1 }
+					actions={ [
+						<Button key="add-new-site" variant="primary" __next40pxDefaultSize>
+							{ __( 'Add New Site' ) }
+						</Button>,
+					] }
+				/>
 				<DataViewsCard>
 					<DataViews
 						getItemId={ ( item ) => item.ID }

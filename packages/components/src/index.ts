@@ -64,6 +64,7 @@ export { default as SummaryButton } from './summary-button';
 export { default as CoreBadge } from './core-badge';
 export { default as Menu } from './menu';
 export { Tabs } from './tabs';
+export { PageHeader } from './page-header';
 
 // Logos
 export { JetpackLogo } from './logos/jetpack-logo';

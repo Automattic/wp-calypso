@@ -1,3 +1,4 @@
+import { PageHeader } from '@automattic/components/src/page-header';
 import { DataForm } from '@automattic/dataviews';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import {
@@ -168,16 +169,17 @@ export default function Profile() {
 	return (
 		<>
 			<form onSubmit={ handleSubmit }>
-				<PageLayout
-					title={ __( 'Profile' ) }
-					description={
-						<>
-							{ __( 'Set your name, bio, and other public-facing information.' ) }{ ' ' }
-							<ExternalLink href="#learn-more">{ __( 'Learn more' ) }</ExternalLink>
-						</>
-					}
-					size="small"
-				>
+				<PageLayout size="small">
+					<PageHeader
+						title={ __( 'Profile' ) }
+						level={ 1 }
+						description={
+							<>
+								{ __( 'Set your name, bio, and other public-facing information.' ) }{ ' ' }
+								<ExternalLink href="#learn-more">{ __( 'Learn more' ) }</ExternalLink>
+							</>
+						}
+					/>
 					<Card>
 						<CardBody>
 							<HStack justify="flex-start" spacing={ 8 }>
