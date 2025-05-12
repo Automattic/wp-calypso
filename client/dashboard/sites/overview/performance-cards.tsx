@@ -1,6 +1,8 @@
 import CoreBadge from '@automattic/components/src/core-badge';
+import { useQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import { desktop, mobile } from '@wordpress/icons';
+import { profilerPagesQuery } from '../../app/queries';
 import { usePerformanceData } from '../hooks/use-performance-data';
 import OverviewCard, { OverviewCardProgressBar } from '../overview-card';
 import type { Site } from '../../data/types';
@@ -27,9 +29,13 @@ function PerformanceBadge( { value }: { value: number | undefined } ) {
 }
 
 export default function PerformanceCards( { site }: { site: Site } ) {
+	const { data: pagesData } = useQuery( {
+		...profilerPagesQuery( site.ID, '' ),
+		refetchOnWindowFocus: false,
+	} );
 	const { desktopScore, mobileScore, desktopLoaded, mobileLoaded } = usePerformanceData(
-		site.ID,
-		site.URL
+		pagesData?.[ 0 ].link,
+		pagesData?.[ 0 ].wpcom_performance_report_hash
 	);
 
 	return (
