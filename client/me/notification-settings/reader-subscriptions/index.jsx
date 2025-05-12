@@ -305,6 +305,8 @@ class NotificationSubscriptions extends Component {
 
 						<Button
 							variant="primary"
+							showTooltip={ ! this.props.hasUnsavedUserSettings }
+							label={ this.props.translate( 'No unsaved changes' ) }
 							disabled={ this.props.isUpdatingUserSettings || ! this.props.hasUnsavedUserSettings }
 							isBusy={ this.props.isUpdatingUserSettings }
 							onClick={ this.handleSubmitButtonClick }
