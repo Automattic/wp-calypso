@@ -335,6 +335,7 @@ class StatsNavigation extends Component {
 				{ siteId && <QueryJetpackModules siteId={ siteId } /> }
 				{ isStatsNavigationImprovementEnabled && (
 					<ComponentSwapper
+						className="full-width"
 						breakpoint="<480px"
 						breakpointActiveComponent={
 							<SelectNav
