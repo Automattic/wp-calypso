@@ -619,7 +619,7 @@ __metadata:
   resolution: "@automattic/calypso-polyfills@workspace:packages/calypso-polyfills"
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
-    core-js: "npm:^3.6.3"
+    core-js: "npm:^3.42.0"
   languageName: unknown
   linkType: soft
 
@@ -15881,7 +15881,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"core-js@npm:^3.31.0, core-js@npm:^3.31.1, core-js@npm:^3.6.3, core-js@npm:^3.6.4":
+"core-js@npm:^3.31.0, core-js@npm:^3.31.1, core-js@npm:^3.42.0, core-js@npm:^3.6.4":
   version: 3.42.0
   resolution: "core-js@npm:3.42.0"
   checksum: 2913d3d5452d54ad92f058d66046782d608c05e037bcc523aab79c04454fe640998f94e6011292969d66dfa472f398b085ce843dcb362056532a5799c627184e
