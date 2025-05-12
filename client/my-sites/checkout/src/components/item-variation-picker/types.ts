@@ -42,8 +42,10 @@ export type OnChangeItemVariant = (
 
 export type CurrentOptionProps = {
 	open: boolean;
+	isStreamlinedPrice: boolean;
 };
 
 export type OptionProps = {
 	selected: boolean;
+	isStreamlinedPrice: boolean;
 };
