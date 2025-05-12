@@ -49,6 +49,11 @@
 	}
 
 	&.stats-navigation--improved {
+		// To make the component swapper take the full width of the parent.
+		.stats-navigation__tabs-swapper {
+			flex: 1;
+		}
+
 		.stats-navigation__tabs {
 			margin-left: -16px;
 
