@@ -309,9 +309,7 @@ class NotificationSubscriptions extends Component {
 							isBusy={ this.props.isUpdatingUserSettings }
 							onClick={ this.handleSubmitButtonClick }
 						>
-							{ this.props.isUpdatingUserSettings
-								? this.props.translate( 'Saving…' )
-								: this.props.translate( 'Save notification settings' ) }
+							{ this.props.translate( 'Save notification settings' ) }
 						</Button>
 					</form>
 				</Card>
