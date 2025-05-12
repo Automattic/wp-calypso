@@ -1,13 +1,10 @@
-import { FormLabel, Tooltip } from '@automattic/components';
-import { Icon } from '@wordpress/components';
-import { copySmall } from '@wordpress/icons';
+import { FormLabel } from '@automattic/components';
 import clsx from 'clsx';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { QRCodeSVG } from 'qrcode.react';
 import { Component, createRef } from 'react';
-import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import FormButton from 'calypso/components/forms/form-button';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormVerificationCodeInput from 'calypso/components/forms/form-verification-code-input';
@@ -15,7 +12,7 @@ import Notice from 'calypso/components/notice';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import wp from 'calypso/lib/wp';
-import Security2faProgress from 'calypso/me/security-2fa-progress';
+import OneTimeCode from 'calypso/me/security-2fa-enable/one-time-code';
 
 import './style.scss';
 
@@ -44,7 +41,6 @@ class Security2faEnable extends Component {
 		submittingCode: false,
 		oneTimeCode: false,
 		verificationCode: '',
-		oneTimeCopied: false,
 	};
 
 	codeRequestTimer = false;
@@ -193,63 +189,17 @@ class Security2faEnable extends Component {
 
 		return (
 			<div className="security-2fa-enable__qr-code-block">
-				<p className="security-2fa-enable__qr-instruction">
-					{ this.props.translate(
-						"Scan this QR code with the authenticator app on your mobile. {{toggleMethodLink}}Can't scan the code?{{/toggleMethodLink}}",
-						{
-							components: {
-								toggleMethodLink: this.getToggleLink(),
-							},
-						}
-					) }
-				</p>
+				<ol className="security-2fa-enable__steps">
+					<li>
+						{ this.props.translate(
+							'Use your authenticator app to scan the QR code or enter this one time code:'
+						) }
+						<OneTimeCode oneTimeCode={ this.state.oneTimeCode } />
+					</li>
+					<li>{ this.renderInputBlock() }</li>
+				</ol>
 				<div className={ qrClasses }>
 					{ this.state.otpAuthUri && <QRCodeSVG value={ this.state.otpAuthUri } size={ 150 } /> }
-				</div>
-			</div>
-		);
-	};
-
-	renderOneTimeCode = () => {
-		const { oneTimeCopied } = this.state;
-
-		return (
-			<div className="security-2fa-enable__one-time-code-block">
-				<p className="security-2fa-enable__one-time-instruction">
-					{ this.props.translate(
-						'Enter this one-time code into your mobile app. {{toggleMethodLink}}Prefer to scan the code?{{/toggleMethodLink}}',
-						{
-							components: {
-								toggleMethodLink: this.getToggleLink(),
-							},
-						}
-					) }
-				</p>
-				<div className="security-2fa-enable__one-time-code-container">
-					<code className="security-2fa-enable__one-time-code">{ this.state.oneTimeCode }</code>
-
-					<ClipboardButton
-						text={ this.state.oneTimeCode }
-						className="security-2fa-enable__clipboard-button"
-						borderless
-						compact
-						ref={ this.clipboardButtonRef }
-						onCopy={ () => {
-							gaRecordEvent( 'Me', 'Copied 2FA One-Time Code' );
-							this.setState( { oneTimeCopied: true } );
-						} }
-						onMouseLeave={ () => this.setState( { oneTimeCopied: false } ) }
-					>
-						<Icon icon={ copySmall } size={ 18 } />
-					</ClipboardButton>
-
-					<Tooltip
-						context={ this.clipboardButtonRef.current }
-						isVisible={ oneTimeCopied }
-						position="top"
-					>
-						{ this.props.translate( 'Copied to clipboard!' ) }
-					</Tooltip>
 				</div>
 			</div>
 		);
@@ -260,11 +210,7 @@ class Security2faEnable extends Component {
 			return null;
 		}
 
-		return (
-			<div className="security-2fa-enable__code-block">
-				{ 'scan' === this.state.method ? this.renderQRCode() : this.renderOneTimeCode() }
-			</div>
-		);
+		return <div className="security-2fa-enable__code-block">{ this.renderQRCode() }</div>;
 	};
 
 	renderInputHelp = () => {
@@ -276,7 +222,7 @@ class Security2faEnable extends Component {
 			);
 		}
 
-		return <p>{ this.props.translate( 'Then enter the six digit code provided by the app:' ) }</p>;
+		return <p>{ this.props.translate( 'Enter the six digit code from the app.' ) }</p>;
 	};
 
 	toggleMethod = ( event ) => {
@@ -345,7 +291,18 @@ class Security2faEnable extends Component {
 		);
 	};
 
-	renderInputBlock = () => {
+	renderSmsInputBlock = () => {
+		return this.renderInputBlock(
+			<FormSettingExplanation>
+				{ this.props.translate(
+					'A code has been sent to your device via SMS. ' +
+						'You may request another code after one minute.'
+				) }
+			</FormSettingExplanation>
+		);
+	};
+
+	renderInputBlock = ( children ) => {
 		return (
 			<div className="security-2fa-enable__next">
 				{ this.renderInputHelp() }
@@ -361,18 +318,9 @@ class Security2faEnable extends Component {
 					onChange={ this.handleChange }
 				/>
 
-				{ 'sms' === this.state.method && this.state.smsRequestPerformed ? (
-					<FormSettingExplanation>
-						{ this.props.translate(
-							'A code has been sent to your device via SMS. ' +
-								'You may request another code after one minute.'
-						) }
-					</FormSettingExplanation>
-				) : null }
+				{ children }
 
 				{ this.possiblyRenderError() }
-
-				{ this.renderInputOptions() }
 			</div>
 		);
 	};
@@ -380,37 +328,6 @@ class Security2faEnable extends Component {
 	renderButtons = () => {
 		return (
 			<div className="security-2fa-enable__buttons-bar">
-				<FormButton
-					className="security-2fa-enable__verify"
-					disabled={ this.getFormDisabled() }
-					onClick={ () => {
-						gaRecordEvent( 'Me', 'Clicked On Enable 2fa Button', 'method', this.state.method );
-					} }
-				>
-					{ this.state.submittingCode
-						? this.props.translate( 'Enabling…', {
-								context: 'A button label used during Two-Step setup.',
-						  } )
-						: this.props.translate( 'Enable', {
-								context: 'A button label used during Two-Step setup.',
-						  } ) }
-				</FormButton>
-
-				{ 'sms' === this.state.method && (
-					<FormButton
-						disabled={ ! this.state.smsRequestsAllowed }
-						isPrimary={ false }
-						onClick={ ( event ) => {
-							gaRecordEvent( 'Me', 'Clicked On Resend SMS Button' );
-							this.onResendCode( event );
-						} }
-					>
-						{ this.props.translate( 'Resend Code', {
-							context: 'A button label to let a user get the SMS code sent again.',
-						} ) }
-					</FormButton>
-				) }
-
 				<FormButton
 					className="security-2fa-enable__cancel"
 					isPrimary={ false }
@@ -426,6 +343,38 @@ class Security2faEnable extends Component {
 				>
 					{ this.props.translate( 'Cancel' ) }
 				</FormButton>
+
+				{ 'sms' === this.state.method && (
+					<FormButton
+						className="security-2fa-enable__resend"
+						disabled={ ! this.state.smsRequestsAllowed }
+						isPrimary={ false }
+						onClick={ ( event ) => {
+							gaRecordEvent( 'Me', 'Clicked On Resend SMS Button' );
+							this.onResendCode( event );
+						} }
+					>
+						{ this.props.translate( 'Resend Code', {
+							context: 'A button label to let a user get the SMS code sent again.',
+						} ) }
+					</FormButton>
+				) }
+
+				<FormButton
+					className="security-2fa-enable__verify"
+					disabled={ this.getFormDisabled() }
+					onClick={ () => {
+						gaRecordEvent( 'Me', 'Clicked On Enable 2fa Button', 'method', this.state.method );
+					} }
+				>
+					{ this.state.submittingCode
+						? this.props.translate( 'Enabling…', {
+								context: 'A button label used during Two-Step setup.',
+						  } )
+						: this.props.translate( 'Enable', {
+								context: 'A button label used during Two-Step setup.',
+						  } ) }
+				</FormButton>
 			</div>
 		);
 	};
@@ -433,12 +382,12 @@ class Security2faEnable extends Component {
 	render() {
 		return (
 			<div>
-				<Security2faProgress step={ 2 } isSmsFlow={ this.props.isSmsFlow } />
 				<form className="security-2fa-enable" onSubmit={ this.onCodeSubmit }>
-					<div className="security-2fa-enable__inner">
-						{ this.renderCodeBlock() }
-						{ this.renderInputBlock() }
-					</div>
+					{ this.state.method === 'sms' ? (
+						this.renderSmsInputBlock()
+					) : (
+						<div className="security-2fa-enable__inner">{ this.renderCodeBlock() }</div>
+					) }
 					{ this.renderButtons() }
 				</form>
 			</div>
