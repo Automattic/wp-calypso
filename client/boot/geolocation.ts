@@ -18,7 +18,7 @@ async function fetchCountryCode(): Promise< string > {
 export async function setupCountryCode() {
 	const cookies = cookie.parse( document.cookie );
 	const countryCode = cookies.country_code ?? ( await fetchCountryCode() );
-	if ( countryCode ) {
+	if ( countryCode && countryCode !== 'unknown' ) {
 		setGeoLocation( countryCode );
 	}
 }
