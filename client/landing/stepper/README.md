@@ -2,7 +2,7 @@
 
 # Stepper Walkthrough Framework
 
-Stepper is a framework that allows you to make all kinds of walkthroughs. It's geared towards signup and onboarding flows, but you can use it to make any wizard.  
+Stepper is a framework that allows you to make all kinds of walkthroughs. It's geared towards signup and onboarding flows, but you can use it to make any wizard.
 
 ## Table of Contents
 
@@ -71,8 +71,8 @@ A flow is a collection of steps. Each of these steps submit some information to 
 #### Code example
 
 ```ts
-import { STEPS } from '../../internals/steps';  
-import { useFlowState } from '../../internals/state-manager/store';  
+import { useFlowState } from '../../internals/state-manager/store';
+import { STEPS } from '../../internals/steps';
 
 // We define our steps collection upfront because it is a prerequisite of shaping the flow.
 async function initialize( calypsoReduxStore: Store ) {
@@ -180,6 +180,7 @@ function initialize() {
 3. Bring the user back to the right step.
 
 #### Asserting conditions before running the flow
+
 If you want your flow to only be accessible to a certain type of user, you can assert the conditions in the `initialize` function.
 
 ```ts
@@ -316,14 +317,15 @@ const flow = {
 ```
 
 ### Creating a site
-It's quite common that you'd want to create a site by the end of your flow. To do that, Stepper offers `useCreateSite` hook. This hook collects the state you set in `useFlowState` and some arguments and makes a site for you. 
+
+It's quite common that you'd want to create a site by the end of your flow. To do that, Stepper offers `useCreateSite` hook. This hook collects the state you set in `useFlowState` and some arguments and makes a site for you.
 
 Please check the [example flow](/client/landing/stepper/declarative-flow/flows/00-example-flow/example.ts) to see how that works.
 
-##### Miscellaneous fields
-
+#### Miscellaneous fields
 
 In some cases, flows will need state that is not submitted from a step. In which case, it should be specified and typed in the [manifest](/client/landing/stepper/declarative-flow/internals/state-manager/stepper-state-manifest.ts).
+
 ## The API
 
 | Field Name                     | Description                                                          | Notes                                                                                                                                                     |
