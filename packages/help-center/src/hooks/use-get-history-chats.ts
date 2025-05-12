@@ -26,7 +26,7 @@ interface UseGetHistoryChatsResult {
 
 const getLastMessageReceived = ( conversation: OdieConversation | ZendeskConversation ) => {
 	const lastMessage = getLastMessage( { conversation } );
-	return lastMessage?.received || 0;
+	return ( lastMessage?.received || 0 ) * 1000;
 };
 
 export const useGetHistoryChats = (): UseGetHistoryChatsResult => {
