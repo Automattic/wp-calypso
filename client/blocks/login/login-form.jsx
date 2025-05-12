@@ -880,7 +880,7 @@ export class LoginForm extends Component {
 								autoCorrect="off"
 								spellCheck="false"
 								autoComplete="username"
-								className={ clsx( {
+								className={ clsx( 'login__form-userdata-input', {
 									'is-error': requestError && requestError.field === 'usernameOrEmail',
 									'is-label-hidden': this.isPasswordView(),
 								} ) }
@@ -985,7 +985,7 @@ export class LoginForm extends Component {
 									label={ this.props.translate( 'Password' ) }
 									autoCapitalize="off"
 									autoComplete="current-password"
-									className={ clsx( {
+									className={ clsx( 'login__form-userdata-input', {
 										'is-error': requestError && requestError.field === 'password',
 									} ) }
 									onChange={ ( value ) => this.onChangeField( { name: 'password', value } ) }

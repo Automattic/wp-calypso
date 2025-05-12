@@ -374,51 +374,6 @@ $image-height: 47px;
 				background-color: #fdfdfd;
 			}
 		}
-
-		.login__form-userdata {
-			label {
-				color: var(--studio-gray-100);
-			}
-
-			button:not(.components-button) {
-				min-width: 194px;
-				height: unset;
-				border: 0;
-				text-align: start;
-			}
-
-			input:not(.components-input-control__input) {
-				margin: 0 0 20px;
-
-				&:last-of-type {
-						/* Note: reduces space between terms and last input box */
-						margin: 0 0 10px;
-				}
-			}
-
-			.login__form-change-username {
-				margin-bottom: 8px;
-				font-size: $font-body;
-			}
-
-			.components-input-control {
-				margin-bottom: 16px;
-
-				&.is-error {
-					margin-bottom: 0;
-				}
-
-				label {
-					font-size: $font-body-small;
-					color: var(--studio-gray-100);
-					text-transform: initial;
-					font-weight: 500;
-					margin-bottom: unset;
-				}
-			}
-
-
-		}
 	}
 
 	.wp-login__links > .button,

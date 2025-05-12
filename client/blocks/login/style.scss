@@ -197,6 +197,27 @@ $breakpoint-mobile: 782px; //Mobile size.
 		}
 	}
 
+	.login__form-userdata-input {
+		margin-bottom: 16px;
+
+		&.is-error {
+			margin-bottom: 0;
+		}
+
+		label {
+			font-size: $font-body-small;
+			color: var(--studio-gray-100);
+			text-transform: initial;
+			font-weight: 500;
+			margin-bottom: unset;
+		}
+	}
+
+	.login__form-change-username {
+		margin-bottom: 8px;
+		font-size: $font-body;
+	}
+
 	.login__form-suggested-email {
 		color: var(--color-link);
 		cursor: pointer;
