@@ -186,7 +186,7 @@ class NotificationSubscriptions extends Component {
 						onSubmit={ this.handleSubmit }
 					>
 						<FormSectionHeading>
-							{ this.props.translate( 'Email subscriptions' ) }
+							{ this.props.translate( 'Subscription settings' ) }
 						</FormSectionHeading>
 						<p>
 							{ this.props.translate(
