@@ -20,24 +20,6 @@
 	}
 }
 
-.notification-settings-push-notification-settings__instruction-dismiss {
-	position: absolute;
-	top: 8px;
-	right: 8px;
-	padding: 0;
-	cursor: pointer;
-	color: var(--color-neutral-light);
-
-	&:hover,
-	&:focus {
-		color: var(--color-neutral-70);
-	}
-
-	.gridicon {
-		display: block;
-	}
-}
-
 .notification-settings-push-notification-settings__instruction-content {
 	max-width: 500px;
 	text-align: center;

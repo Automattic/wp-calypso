@@ -1,4 +1,6 @@
-import { Card, Button, Dialog, ScreenReaderText, Gridicon } from '@automattic/components';
+import { Card, Button } from '@automattic/components';
+import { Icon, bell } from '@automattic/icons';
+import { Modal } from '@wordpress/components';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -598,12 +600,11 @@ class PushNotificationSettings extends Component {
 			</svg>
 		);
 
-		return (
+		return this.props.showDialog ? (
 			/* eslint-disable wpcalypso/jsx-classname-namespace */
-			<Dialog
-				isVisible={ this.props.showDialog }
+			<Modal
 				className="notification-settings-push-notification-settings__instruction-dialog"
-				onClose={ this.props.toggleUnblockInstructions }
+				onRequestClose={ this.props.toggleUnblockInstructions }
 			>
 				<div className="notification-settings-push-notification-settings__instruction-content">
 					<div>
@@ -641,16 +642,9 @@ class PushNotificationSettings extends Component {
 						) }
 					/>
 				</div>
-				<button
-					className="notification-settings-push-notification-settings__instruction-dismiss"
-					onClick={ this.props.toggleUnblockInstructions }
-				>
-					<Gridicon icon="cross" size={ 24 } />
-					<ScreenReaderText>{ this.props.translate( 'Dismiss' ) }</ScreenReaderText>
-				</button>
-			</Dialog>
-			/* eslint-enable wpcalypso/jsx-classname-namespace */
-		);
+			</Modal>
+		) : /* eslint-enable wpcalypso/jsx-classname-namespace */
+		null;
 	};
 
 	render() {
@@ -752,10 +746,10 @@ class PushNotificationSettings extends Component {
 			/* eslint-disable wpcalypso/jsx-classname-namespace */
 			<Card className="notification-settings-push-notification-settings__settings">
 				<h2 className="notification-settings-push-notification-settings__settings-heading">
-					<Gridicon
+					<Icon
 						size={ 24 }
 						className="notification-settings-push-notification-settings__settings-icon"
-						icon="bell"
+						icon={ bell }
 					/>
 					{ this.props.translate( 'Browser notifications' ) }
 					<small
@@ -769,7 +763,7 @@ class PushNotificationSettings extends Component {
 				</h2>
 				<p className="notification-settings-push-notification-settings__settings-description">
 					{ this.props.translate(
-						'Get instant notifications for new comments and likes, even when you are not actively using WordPress.com.'
+						"Get notified instantly about new comments and likes — even when you're not on WordPress.com"
 					) }
 				</p>
 				<Button
