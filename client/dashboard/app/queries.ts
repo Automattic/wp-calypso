@@ -150,7 +150,7 @@ export function performanceInsightsQuery( url: string, token: string ) {
 	};
 }
 
-export function profilerPagesQuery( siteId: string, searchTerm?: string ) {
+export function profilerPagesQuery( siteId: string, searchTerm: string ) {
 	return {
 		queryKey: [ 'profiler-pages', siteId, searchTerm ],
 		queryFn: () => fetchSitePages( siteId, searchTerm ),
