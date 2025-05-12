@@ -62,6 +62,12 @@ const SynchronizeButtonWrapper = styled.div( {
 	},
 } );
 
+const DestructiveButtonWrapper = styled.div( {
+	'.components-button.is-secondary.is-destructive': {
+		border: '1px solid var(--color-neutral-10)',
+	},
+} );
+
 type ConfirmationModalButtonProps = {
 	onConfirm?: () => void;
 	onCancel?: () => void;
@@ -168,16 +174,18 @@ export function ConfirmationModal( {
 					</Button>
 				</SynchronizeButtonWrapper>
 			) : (
-				<Button
-					variant="secondary"
-					isDestructive={ isScary }
-					isBusy={ isBusy }
-					disabled={ disabled }
-					onClick={ openModal }
-					__next40pxDefaultSize
-				>
-					<ButtonContent>{ children }</ButtonContent>
-				</Button>
+				<DestructiveButtonWrapper>
+					<Button
+						variant="secondary"
+						isDestructive={ isScary }
+						isBusy={ isBusy }
+						disabled={ disabled }
+						onClick={ openModal }
+						__next40pxDefaultSize
+					>
+						<ButtonContent>{ children }</ButtonContent>
+					</Button>
+				</DestructiveButtonWrapper>
 			) }
 			{ isOpen && (
 				<Modal
