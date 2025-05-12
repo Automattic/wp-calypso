@@ -6,7 +6,7 @@ For packages that we might publish as NPM packages, see [`/packages`](../package
 
 ## Adding a new app?
 
-If you want to add a new project into this directory, then add a new directory and follow [monorepo -documentation](../docs/monorepo.md).
+If you want to add a new project into this directory, then add a new directory and follow [monorepo -documentation](../docs/guide/monorepo.md).
 
 ## Building
 

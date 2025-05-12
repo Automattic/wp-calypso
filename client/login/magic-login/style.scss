@@ -47,12 +47,12 @@
 				.button.is-primary {
 					background-color: var(--studio-jetpack-green-50);
 					border-color: var(--studio-jetpack-green-50);
-		
+
 					&:hover,
 					&:focus {
 						background-color: var(--studio-jetpack-green-60);
 					}
-		
+
 					.accessible-focus &:focus {
 						box-shadow: 0 0 0 2px var(--studio-jetpack-green-30);
 					}
@@ -95,7 +95,7 @@
 			transform: translateX(-50%);
 			width: 48px;
 		}
-	}	
+	}
 }
 .magic-login__successfully-jetpack-actions {
 	color: var(--studio-jetpack-grey-50, #646970 );
@@ -242,7 +242,6 @@
 
 .magic-login__form-action {
 	margin-top: 20px;
-	overflow: auto;
 
 	button {
 		width: 100%;
@@ -537,11 +536,6 @@
 		a {
 			color: #1d4fc4;
 			text-decoration: underline;
-		}
-
-		button:disabled {
-			opacity: 0.3;
-			cursor: not-allowed;
 		}
 	}
 

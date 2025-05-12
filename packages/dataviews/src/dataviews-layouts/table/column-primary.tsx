@@ -40,7 +40,7 @@ function ColumnPrimary< Item >( {
 		<HStack spacing={ 3 } justify="flex-start">
 			{ mediaField && (
 				<div className="dataviews-view-table__cell-content-wrapper dataviews-column-primary__media">
-					<mediaField.render item={ item } />
+					<mediaField.render item={ item } field={ mediaField } />
 				</div>
 			) }
 			<VStack spacing={ 0 }>
@@ -51,11 +51,14 @@ function ColumnPrimary< Item >( {
 								{ '—'.repeat( level ) }&nbsp;
 							</span>
 						) }
-						<titleField.render item={ item } />
+						<titleField.render item={ item } field={ titleField } />
 					</div>
 				) }
 				{ descriptionField && (
-					<descriptionField.render item={ item } />
+					<descriptionField.render
+						item={ item }
+						field={ descriptionField }
+					/>
 				) }
 			</VStack>
 		</HStack>

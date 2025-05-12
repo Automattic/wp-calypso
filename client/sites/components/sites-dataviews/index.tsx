@@ -1,6 +1,6 @@
 import { TimeSince } from '@automattic/components';
+import { DataViews, Field } from '@automattic/dataviews';
 import { SiteExcerptData } from '@automattic/sites';
-import { DataViews, Field } from '@wordpress/dataviews';
 import { useI18n } from '@wordpress/react-i18n';
 import { useCallback, useMemo } from 'react';
 import { useQueryReaderTeams } from 'calypso/components/data/query-reader-teams';

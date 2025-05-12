@@ -16,12 +16,14 @@ import integer from './integer';
 import radio from './radio';
 import select from './select';
 import text from './text';
+import boolean from './boolean';
 
 interface FormControls {
 	[ key: string ]: ComponentType< DataFormControlProps< any > >;
 }
 
 const FORM_CONTROLS: FormControls = {
+	boolean,
 	datetime,
 	integer,
 	radio,

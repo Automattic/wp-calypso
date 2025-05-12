@@ -228,7 +228,7 @@ exports[`JetpackSignup should render 1`] = `
           <p
             class="auth-form__social-text"
           >
-            Or create an account using:
+            Or create an account using:
           </p>
           <div
             class="auth-form__social-buttons"
@@ -515,7 +515,7 @@ exports[`JetpackSignup should render with locale suggestions 1`] = `
           <p
             class="auth-form__social-text"
           >
-            Or create an account using:
+            Or create an account using:
           </p>
           <div
             class="auth-form__social-buttons"

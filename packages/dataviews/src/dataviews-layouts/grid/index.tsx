@@ -78,11 +78,11 @@ function GridItem< Item >( {
 	const instanceId = useInstanceId( GridItem );
 	const isSelected = selection.includes( id );
 	const renderedMediaField = mediaField?.render ? (
-		<mediaField.render item={ item } />
+		<mediaField.render item={ item } field={ mediaField } />
 	) : null;
 	const renderedTitleField =
 		showTitle && titleField?.render ? (
-			<titleField.render item={ item } />
+			<titleField.render item={ item } field={ titleField } />
 		) : null;
 
 	const clickableMediaItemProps = getClickableItemProps( {
@@ -166,7 +166,10 @@ function GridItem< Item >( {
 			</HStack>
 			<VStack spacing={ 1 }>
 				{ showDescription && descriptionField?.render && (
-					<descriptionField.render item={ item } />
+					<descriptionField.render
+						item={ item }
+						field={ descriptionField }
+					/>
 				) }
 				{ !! badgeFields?.length && (
 					<HStack
@@ -182,7 +185,10 @@ function GridItem< Item >( {
 									key={ field.id }
 									className="dataviews-view-grid__field-value"
 								>
-									<field.render item={ item } />
+									<field.render
+										item={ item }
+										field={ field }
+									/>
 								</Badge>
 							);
 						} ) }
@@ -212,7 +218,10 @@ function GridItem< Item >( {
 											className="dataviews-view-grid__field-value"
 											style={ { maxHeight: 'none' } }
 										>
-											<field.render item={ item } />
+											<field.render
+												item={ item }
+												field={ field }
+											/>
 										</FlexItem>
 									</>
 								</Flex>

@@ -199,7 +199,6 @@
 		"themes/discovery": true,
 		"themes/premium": true,
 		"themes/subscription-purchases": true,
-		"themes/text-search-lots": true,
 		"titan/iframe-control-panel": false,
 		"two-factor/enhanced-security": true,
 		"upgrades/redirect-payments": true,

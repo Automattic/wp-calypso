@@ -4,7 +4,7 @@ import ProductIcon from '.';
 
 const supportedSlugs = Object.values( iconToProductSlugMap ).flat();
 
-export default { title: 'packages/components/ProductIcon' };
+export default { title: 'Unaudited/ProductIcon' };
 
 export const Default = () => {
 	return (

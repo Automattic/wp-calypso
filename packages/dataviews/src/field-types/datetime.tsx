@@ -1,7 +1,12 @@
 /**
  * Internal dependencies
  */
-import type { SortDirection, ValidationContext } from '../types';
+import type {
+	DataViewRenderFieldProps,
+	SortDirection,
+	ValidationContext,
+} from '../types';
+import { renderFromElements } from '../utils';
 
 function sort( a: any, b: any, direction: SortDirection ) {
 	const timeA = new Date( a ).getTime();
@@ -25,4 +30,9 @@ export default {
 	sort,
 	isValid,
 	Edit: 'datetime',
+	render: ( { item, field }: DataViewRenderFieldProps< any > ) => {
+		return field.elements
+			? renderFromElements( { item, field } )
+			: field.getValue( { item } );
+	},
 };

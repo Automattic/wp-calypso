@@ -9,7 +9,7 @@ import {
 	useIsPlaygroundEligible,
 	isPlaygroundEligible,
 } from 'calypso/landing/stepper/hooks/use-is-playground-eligible';
-import { useMvpOnboardingExperiment } from 'calypso/landing/stepper/hooks/use-mvp-onboarding-experiment';
+import { isMvpOnboardingExperiment } from 'calypso/landing/stepper/hooks/use-mvp-onboarding-experiment';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { pathToUrl } from 'calypso/lib/url';
 import {
@@ -70,7 +70,7 @@ const onboarding: FlowV2< typeof initialize > = {
 	useStepNavigation( currentStepSlug, navigate ) {
 		const flowName = this.name;
 		const isPlaygroundEligible = useIsPlaygroundEligible();
-		const [ , isMvpOnboarding ] = useMvpOnboardingExperiment();
+
 		const {
 			setDomain,
 			setDomainCartItem,
@@ -95,10 +95,10 @@ const onboarding: FlowV2< typeof initialize > = {
 		/**
 		 * Returns [destination, backDestination] for the post-checkout destination.
 		 */
-		const getPostCheckoutDestination = (
+		const getPostCheckoutDestination = async (
 			providedDependencies: ProvidedDependencies,
 			isPlaygroundEligible: boolean
-		): [ string, string | null ] => {
+		): Promise< [ string, string | null ] > => {
 			if ( ! providedDependencies.hasExternalTheme && providedDependencies.hasPluginByGoal ) {
 				return [ `/home/${ providedDependencies.siteSlug }`, null ];
 			}
@@ -132,7 +132,7 @@ const onboarding: FlowV2< typeof initialize > = {
 				];
 			}
 
-			if ( isMvpOnboarding ) {
+			if ( await isMvpOnboardingExperiment() ) {
 				return [
 					addQueryArgs( `/home/${ providedDependencies.siteSlug }`, { ref: flowName } ),
 					addQueryArgs( withLocale( `/setup/${ flowName }/plans`, locale ), {
@@ -239,7 +239,7 @@ const onboarding: FlowV2< typeof initialize > = {
 				case 'post-checkout-onboarding':
 					return navigate( 'processing' );
 				case 'processing': {
-					const [ destination, backDestination ] = getPostCheckoutDestination(
+					const [ destination, backDestination ] = await getPostCheckoutDestination(
 						providedDependencies,
 						isPlaygroundEligible
 					);

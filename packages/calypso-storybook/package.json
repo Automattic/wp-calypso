@@ -22,16 +22,16 @@
 	"devDependencies": {
 		"@automattic/calypso-eslint-overrides": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
-		"@storybook/addon-actions": "^8.6.9",
-		"@storybook/addon-controls": "^8.6.9",
-		"@storybook/addon-docs": "^8.6.9",
-		"@storybook/addon-themes": "^8.6.9",
-		"@storybook/addon-toolbars": "^8.6.9",
-		"@storybook/addon-viewport": "^8.6.9",
+		"@storybook/addon-actions": "^8.6.12",
+		"@storybook/addon-controls": "^8.6.12",
+		"@storybook/addon-docs": "^8.6.12",
+		"@storybook/addon-themes": "^8.6.12",
+		"@storybook/addon-toolbars": "^8.6.12",
+		"@storybook/addon-viewport": "^8.6.12",
 		"@storybook/addon-webpack5-compiler-babel": "^3.0.5",
-		"@storybook/react-webpack5": "^8.6.9",
-		"@storybook/test": "^8.6.9",
-		"storybook": "^8.6.9"
+		"@storybook/react-webpack5": "^8.6.12",
+		"@storybook/test": "^8.6.12",
+		"storybook": "^8.6.12"
 	},
 	"dependencies": {
 		"@automattic/calypso-babel-config": "workspace:^",

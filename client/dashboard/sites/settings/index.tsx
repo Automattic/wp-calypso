@@ -5,17 +5,17 @@ import {
 	Card,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { siteSettingsQuery } from '../../app/queries';
+import { siteQuery, siteSettingsQuery } from '../../app/queries';
 import { siteRoute } from '../../app/router';
 import PageLayout from '../../components/page-layout';
-import RouterLinkSummaryButton from '../../components/router-link-summary-button';
-import { getSubscriptionGiftingSettingBadges } from '../settings-subscription-gifting';
+import SubscriptionGiftingSettingsSummary from '../settings-subscription-gifting/summary';
 
 export default function SiteSettings() {
 	const { siteSlug } = siteRoute.useParams();
+	const { data: siteData } = useQuery( siteQuery( siteSlug ) );
 	const { data: settings } = useQuery( siteSettingsQuery( siteSlug ) );
 
-	if ( ! settings ) {
+	if ( ! siteData || ! settings ) {
 		return null;
 	}
 
@@ -24,11 +24,10 @@ export default function SiteSettings() {
 			<Heading>{ __( 'General' ) }</Heading>
 			<Card>
 				<VStack>
-					<RouterLinkSummaryButton
-						to={ `/sites/${ siteSlug }/settings/subscription-gifting` }
-						title={ __( 'Accept a gift subscription' ) }
-						density="medium"
-						badges={ getSubscriptionGiftingSettingBadges( settings ) }
+					<SubscriptionGiftingSettingsSummary
+						siteSlug={ siteSlug }
+						site={ siteData.site }
+						settings={ settings }
 					/>
 				</VStack>
 			</Card>

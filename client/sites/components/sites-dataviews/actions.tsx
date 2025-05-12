@@ -8,7 +8,7 @@ import {
 } from '@automattic/sites';
 import { useQueryClient } from '@tanstack/react-query';
 import { sprintf } from '@wordpress/i18n';
-import { drawerLeft, external, wordpress } from '@wordpress/icons';
+import { backup, drawerLeft, external, wordpress } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { useMemo } from 'react';
@@ -466,6 +466,8 @@ export function useActions( {
 
 			{
 				id: 'restore',
+				isPrimary: true,
+				icon: backup,
 				label: __( 'Restore' ),
 				callback: ( sites ) => {
 					const site = sites[ 0 ];

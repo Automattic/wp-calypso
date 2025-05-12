@@ -21,6 +21,7 @@ export async function apiCloseAccount(
 
 	if ( response.success !== true ) {
 		console.warn( `Failed to delete user ID ${ accountDetails.userID }` );
+		console.warn( response );
 	} else {
 		console.log( `Successfully deleted user ID ${ accountDetails.userID }` );
 	}

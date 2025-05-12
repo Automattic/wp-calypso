@@ -3,7 +3,7 @@
 @import "@wordpress/base-styles/mixins";
 
 body.is-section-signup {
-	background: #fdfdfd;
+	background: var( --color-main-background, #fcfcfc );
 
 	.layout:not(.dops) .wpcom-site__logo {
 		/* fill: var(--color-neutral-10); */
