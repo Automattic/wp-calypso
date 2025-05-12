@@ -14,6 +14,8 @@ import {
 	BackupPaymentMethodNotice,
 } from '../purchase-item';
 import OwnerInfo from '../purchase-item/owner-info';
+import { MembershipSubscription } from 'calypso/lib/purchases/types';
+import { Icon, MembershipType, MembershipTerms } from '../membership-item';
 
 function PurchaseItemRowProduct( props: {
 	purchase: Purchases.Purchase;
@@ -166,6 +168,83 @@ export function getPurchasesFieldDefinitions( {
 					<div className="purchase-item__payment-method">
 						<PurchaseItemPaymentMethod purchase={ item } translate={ translate } />
 						{ isBackupMethodAvailable && isRenewing( item ) && <BackupPaymentMethodNotice /> }
+					</div>
+				);
+			},
+		},
+	];
+}
+
+export function getMembershipsFieldDefinitions( {
+	translate,
+}: {
+	translate: LocalizeProps[ 'translate' ];
+} ): Fields< MembershipSubscription > {
+	return [
+		{
+			id: 'site',
+			label: translate( 'Site' ),
+			type: 'text',
+			enableGlobalSearch: true,
+			enableSorting: true,
+			enableHiding: false,
+			filterBy: {
+				operators: [ 'is' as Operator ],
+			},
+			// Filter by site ID
+			getValue: ( { item }: { item: MembershipSubscription } ) => {
+				return item.site_id;
+			},
+			// Render the site icon
+			render: ( { item }: { item: MembershipSubscription } ) => {
+				return (
+					<div className="membership-item__site purchases-layout__site">
+						<Icon subscription={ item } />
+					</div>
+				);
+			},
+		},
+		{
+			id: 'product',
+			label: translate( 'Product' ),
+			type: 'text',
+			enableGlobalSearch: true,
+			enableSorting: true,
+			enableHiding: false,
+			filterBy: {
+				operators: [ 'is' as Operator ],
+			},
+			getValue: ( { item }: { item: MembershipSubscription } ) => {
+				return item.product_id;
+			},
+			render: ( { item }: { item: MembershipSubscription } ) => {
+				return (
+					<div className="membership-item__information purchase-item__information purchases-layout__information">
+						<div className="membership-item__title purchase-item__title">{ item.title }</div>
+						<div className="membership-item__purchase-type purchase-item__purchase-type">
+							<MembershipType subscription={ item } />
+						</div>
+					</div>
+				);
+			},
+		},
+		{
+			id: 'status',
+			label: translate( 'Status' ),
+			type: 'text',
+			enableGlobalSearch: true,
+			enableSorting: true,
+			enableHiding: false,
+			filterBy: {
+				operators: [ 'is' as Operator ],
+			},
+			getValue: ( { item }: { item: MembershipSubscription } ) => {
+				return item.end_date;
+			},
+			render: ( { item }: { item: MembershipSubscription } ) => {
+				return (
+					<div className="membership-item__status purchase-item__status purchases-layout__status">
+						<MembershipTerms subscription={ item } />
 					</div>
 				);
 			},

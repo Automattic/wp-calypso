@@ -85,7 +85,7 @@ const MembershipType = ( { subscription }: { subscription: MembershipSubscriptio
 	);
 };
 
-const Icon = ( { subscription }: { subscription: MembershipSubscription } ) => {
+export const Icon = ( { subscription }: { subscription: MembershipSubscription } ) => {
 	const [ hasError, setErrors ] = useState( false );
 	const [ site, setSite ] = useState< { icon?: { ico: string } } >();
 	const siteId = subscription.site_id;
