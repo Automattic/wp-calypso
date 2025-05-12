@@ -3,7 +3,6 @@ import { useResetSupportInteraction } from '@automattic/help-center/src/hooks/us
 import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { useSelect } from '@wordpress/data';
 import { createContext, useCallback, useContext, useState } from 'react';
-import { useOdieBroadcastWithCallbacks } from '../data';
 import { useGetCombinedChat } from '../hooks';
 import { isOdieAllowedBot, getHelpCenterZendeskConversationStarted } from '../utils';
 import type {
@@ -169,8 +168,6 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 			};
 		} );
 	};
-
-	useOdieBroadcastWithCallbacks( { addMessage, clearChat }, odieBroadcastClientId );
 
 	/**
 	 * Version for Odie API.

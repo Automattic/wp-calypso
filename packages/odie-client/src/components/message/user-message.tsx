@@ -60,7 +60,6 @@ export const UserMessage = ( {
 
 	const showDirectEscalationLink =
 		! chat.conversationId && userProvidedEnoughInformation( chat?.messages );
-
 	const forwardMessage = isUserEligibleForPaidSupport
 		? ODIE_FORWARD_TO_ZENDESK_MESSAGE
 		: ODIE_FORWARD_TO_FORUMS_MESSAGE;
