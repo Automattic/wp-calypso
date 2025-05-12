@@ -9,7 +9,7 @@ interface RadioButtonWrapperProps {
 	isFocused?: boolean;
 	checked?: boolean;
 	hideRadioButton?: boolean;
-	isStreamlinedPriceStyle?: boolean;
+	isStreamlinedPrice?: boolean;
 }
 
 export const RadioButtonWrapper = styled.div<
@@ -34,14 +34,12 @@ export const RadioButtonWrapper = styled.div<
 			left: 0;
 			content: '';
 			border: ${
-				props.checked || props.isStreamlinedPriceStyle
-					? '1px solid ' + getBorderColor( props )
-					: 'none'
+				props.checked || props.isStreamlinedPrice ? '1px solid ' + getBorderColor( props ) : 'none'
 			};
 			border-bottom: 1px solid ${ getBorderColor( props ) };
 			box-sizing: border-box;
-			border-radius: ${ props.checked || props.isStreamlinedPriceStyle ? '3px' : 0 };
-			border-width: ${ props.checked && props.isStreamlinedPriceStyle ? '2px' : '1px' };
+			border-radius: ${ props.checked || props.isStreamlinedPrice ? '3px' : 0 };
+			border-width: ${ props.checked && props.isStreamlinedPrice ? '2px' : '1px' };
 			.rtl & {
 				right: 0;
 				left: auto;
@@ -50,7 +48,7 @@ export const RadioButtonWrapper = styled.div<
 
 		:hover::before {
 			border: 3px solid ${ props.theme.colors.highlight };
-			border-width: ${ ! props.checked && props.isStreamlinedPriceStyle ? '1px' : '2px' };
+			border-width: ${ ! props.checked && props.isStreamlinedPrice ? '1px' : '2px' };
 			border-radius: 3px;
 		}
 	` }
@@ -114,7 +112,7 @@ interface LabelProps {
 	disabled?: boolean;
 	checked?: boolean;
 	hideRadioButton?: boolean;
-	isStreamlinedPriceStyle?: boolean;
+	isStreamlinedPrice?: boolean;
 }
 
 /**
@@ -124,7 +122,7 @@ interface LabelProps {
 const Label = styled.label< LabelProps & React.LabelHTMLAttributes< HTMLLabelElement > >`
 	position: relative;
 	padding: ${ ( props ) => {
-		if ( props.isStreamlinedPriceStyle ) {
+		if ( props.isStreamlinedPrice ) {
 			return '12px 12px 12px 43px';
 		}
 		return props.hideRadioButton ? '16px 24px' : '16px 14px 16px 56px';
@@ -144,7 +142,7 @@ const Label = styled.label< LabelProps & React.LabelHTMLAttributes< HTMLLabelEle
 
 	.rtl & {
 		padding: ${ ( props ) => {
-			if ( props.isStreamlinedPriceStyle ) {
+			if ( props.isStreamlinedPrice ) {
 				return '12px';
 			}
 			return props.hideRadioButton ? '16px 24px' : '16px 56px 16px 14px';
@@ -163,14 +161,14 @@ const Label = styled.label< LabelProps & React.LabelHTMLAttributes< HTMLLabelEle
 		border: 1px solid ${ ( props ) => props.theme.colors.borderColor };
 		border-radius: 100%;
 		top: 40%;
-		left: ${ ( props ) => ( props.isStreamlinedPriceStyle ? '16px' : '24px' ) };
+		left: ${ ( props ) => ( props.isStreamlinedPrice ? '16px' : '24px' ) };
 		position: absolute;
 		background: ${ ( props ) => props.theme.colors.surface };
 		box-sizing: border-box;
 		z-index: 2;
 
 		.rtl & {
-			right: ${ ( props ) => ( props.isStreamlinedPriceStyle ? '8px' : '16px' ) };
+			right: ${ ( props ) => ( props.isStreamlinedPrice ? '8px' : '16px' ) };
 			left: auto;
 		}
 	}
@@ -183,14 +181,14 @@ const Label = styled.label< LabelProps & React.LabelHTMLAttributes< HTMLLabelEle
 		border-radius: 100%;
 		margin-top: 4px;
 		top: 40%;
-		left: ${ ( props ) => ( props.isStreamlinedPriceStyle ? '20px' : '28px' ) };
+		left: ${ ( props ) => ( props.isStreamlinedPrice ? '20px' : '28px' ) };
 		position: absolute;
 		background: ${ getRadioColor };
 		box-sizing: border-box;
 		z-index: 3;
 
 		.rtl & {
-			right: ${ ( props ) => ( props.isStreamlinedPriceStyle ? '12px' : '20px' ) };
+			right: ${ ( props ) => ( props.isStreamlinedPrice ? '12px' : '20px' ) };
 			left: auto;
 		}
 	}
@@ -224,7 +222,7 @@ export default function RadioButton( {
 	id,
 	ariaLabel,
 	hideRadioButton,
-	isStreamlinedPriceStyle,
+	isStreamlinedPrice,
 	...otherProps
 }: RadioButtonProps ) {
 	const [ isFocused, changeFocus ] = useState( false );
@@ -236,7 +234,7 @@ export default function RadioButton( {
 			hidden={ hidden }
 			hideRadioButton={ hideRadioButton }
 			className={ `${ checked ? 'is-checked' : '' }` }
-			isStreamlinedPriceStyle={ isStreamlinedPriceStyle }
+			isStreamlinedPrice={ isStreamlinedPrice }
 		>
 			<Radio
 				type="radio"
@@ -261,7 +259,7 @@ export default function RadioButton( {
 				htmlFor={ id }
 				disabled={ disabled }
 				hideRadioButton={ hideRadioButton }
-				isStreamlinedPriceStyle={ isStreamlinedPriceStyle }
+				isStreamlinedPrice={ isStreamlinedPrice }
 			>
 				{ label }
 			</Label>
@@ -282,7 +280,7 @@ interface RadioButtonProps {
 	ariaLabel?: string;
 	children?: React.ReactNode;
 	hideRadioButton?: boolean;
-	isStreamlinedPriceStyle?: boolean;
+	isStreamlinedPrice?: boolean;
 }
 
 RadioButton.propTypes = {
