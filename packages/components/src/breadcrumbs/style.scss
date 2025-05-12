@@ -28,7 +28,8 @@
 		}
 	}
 
-	.a8c-components-breadcrumbs__item {
+	.a8c-components-breadcrumbs__item,
+	.a8c-components-breadcrumbs__item-wrapper a {
 		color: $gray-700;
 		text-decoration: none;
 		height: auto;

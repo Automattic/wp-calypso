@@ -1,4 +1,7 @@
 import { Meta, StoryObj } from '@storybook/react';
+import { Button, IconType } from '@wordpress/components';
+import { backup, envelope } from '@wordpress/icons';
+import { BreadcrumbItemProps } from './types';
 import { Breadcrumbs } from './';
 
 const meta: Meta< typeof Breadcrumbs > = {
@@ -47,5 +50,23 @@ export const WithLongPath: Story = {
 				href: 'javascript:void(0)',
 			},
 		],
+	},
+};
+
+const iconByLabel: Record< string, IconType > = { Home: backup, Products: envelope };
+
+export const WithRenderLink: Story = {
+	args: {
+		...Default.args,
+		items: [
+			{ label: 'Home', href: 'javascript:void(0)' },
+			{ label: 'Products', href: 'javascript:void(0)' },
+			{ label: 'Electronics', href: 'javascript:void(0)' },
+		],
+		renderLink: ( props: BreadcrumbItemProps ) => (
+			<Button href={ props.href } icon={ iconByLabel[ props.label ] }>
+				{ props.label }
+			</Button>
+		),
 	},
 };

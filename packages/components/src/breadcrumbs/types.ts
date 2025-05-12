@@ -1,17 +1,15 @@
-export interface BreadcrumbItemProps {
-	/**
-	 * The label text for the breadcrumb item.
-	 */
-	label: string;
+export interface BreadcrumbItemProps extends React.AnchorHTMLAttributes< HTMLAnchorElement > {
 	/**
 	 * The URL that the breadcrumb item should link to.
 	 */
 	href: string;
 	/**
-	 * An optional callback to handle clicking on this breadcrumb item.
+	 * The label text for the breadcrumb item.
 	 */
-	onClick?: React.MouseEventHandler;
+	label: string;
 }
+
+export type RenderLink = ( props: BreadcrumbItemProps ) => React.ReactElement;
 
 export interface BreadcrumbProps extends React.HTMLAttributes< HTMLElement > {
 	/**
@@ -33,4 +31,19 @@ export interface BreadcrumbProps extends React.HTMLAttributes< HTMLElement > {
 	 * @default 'default'
 	 */
 	variant?: 'default' | 'compact';
+	/**
+	 * An optional function to render a custom link for each breadcrumb item.
+	 * This function receives the breadcrumb item as an argument and should return a React node.
+	 * @param props - The breadcrumb item props.
+	 * @returns A customized ReactElement link.
+	 * @example
+	 * ```tsx
+	 * <Breadcrumbs
+	 *   items={ items }
+	 *   renderLink={ ( props ) => (
+	 *     <Link to={ props.href }>{ props.label }</Link>
+	 *   ) }
+	 * </Breadcrumbs>
+	 */
+	renderLink?: RenderLink;
 }
