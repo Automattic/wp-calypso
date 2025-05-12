@@ -34,7 +34,6 @@ import './style.scss';
  * ```
  */
 export const PageHeader = ( {
-	level = 1,
 	title,
 	description,
 	actions,
@@ -44,20 +43,18 @@ export const PageHeader = ( {
 	return (
 		<VStack spacing={ 2 }>
 			{ !! breadcrumbs?.length && <Breadcrumbs items={ breadcrumbs } /> }
-			<HStack spacing={ 4 } justify="space-between" alignment="center" wrap>
-				<HStack spacing={ 4 } justify="flex-start" expanded={ false }>
-					{ decoration && (
-						<span className="client-dashboard-components-page-header-decoration">
-							{ decoration }
-						</span>
-					) }
-					<Heading level={ level }>{ title }</Heading>
-				</HStack>
-				{ !! actions?.length && (
-					<HStack spacing={ 4 } justify="flex-start" expanded={ false } wrap>
-						{ actions }
-					</HStack>
+			<HStack spacing={ 4 } justify="flex-start" alignment="baseline">
+				{ decoration && (
+					<span className="client-dashboard-components-page-header-decoration">{ decoration }</span>
 				) }
+				<HStack spacing={ 4 } justify="space-between" alignment="flex-start">
+					<Heading level={ 1 }>{ title }</Heading>
+					{ !! actions?.length && (
+						<HStack spacing={ 4 } justify="flex-end" expanded={ false }>
+							{ actions }
+						</HStack>
+					) }
+				</HStack>
 			</HStack>
 			{ description && <Text variant="muted">{ description }</Text> }
 		</VStack>

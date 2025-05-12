@@ -1,20 +1,11 @@
 import React from 'react';
 import type { BreadcrumbItemProps } from '@automattic/components/src/breadcrumbs/types';
 
-export type HeadingLevel = 1 | 2 | 3 | 4 | 5 | 6;
-
 export interface PageHeaderProps {
 	/**
 	 * The main heading text that identifies the page or section.
 	 */
 	title: string;
-	/**
-	 * Specifies the semantic heading level (e.g. h1, h2, etc.),
-	 * ensuring the correct structure and accessibility within the page hierarchy.
-	 * Also adjusts action button sizes to manage prominence.
-	 * @default 1
-	 */
-	level?: HeadingLevel;
 	/**
 	 * Optional supporting text that provides additional context or
 	 * guidance beneath the title.
