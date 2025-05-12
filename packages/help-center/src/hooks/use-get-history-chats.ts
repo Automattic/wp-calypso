@@ -2,7 +2,6 @@
 import { HelpCenterSelect } from '@automattic/data-stores';
 import { useGetOdieConversations } from '@automattic/odie-client/src/data/use-get-odie-conversations';
 import { useGetSupportInteractions } from '@automattic/odie-client/src/data/use-get-support-interactions';
-import { getConversationCreatedAt } from '@automattic/odie-client/src/utils';
 import { useSelect } from '@wordpress/data';
 import { useEffect, useState } from '@wordpress/element';
 import {
@@ -73,8 +72,8 @@ export const useGetHistoryChats = (): UseGetHistoryChatsResult => {
 			...conversationsWithUpdatedStatuses,
 			...filteredOdieConversations,
 		].sort( ( a, b ) => {
-			const createdAtA = getConversationCreatedAt( a ) ?? 0;
-			const createdAtB = getConversationCreatedAt( b ) ?? 0;
+			const createdAtA = Number( a.messages?.[ 0 ]?.received ) * 1000 || 0;
+			const createdAtB = Number( b.messages?.[ 0 ]?.received ) * 1000 || 0;
 
 			return createdAtB - createdAtA;
 		} );
@@ -88,8 +87,7 @@ export const useGetHistoryChats = (): UseGetHistoryChatsResult => {
 		const archived: Conversations = [];
 
 		mergedAndSortedConversations.forEach( ( conversation ) => {
-			const createdAt = getConversationCreatedAt( conversation );
-
+			const createdAt = Number( conversation.messages?.[ 0 ]?.received ) * 1000 || 0;
 			if ( typeof createdAt === 'number' && createdAt < oneYearAgo ) {
 				archived.push( conversation );
 			} else {
