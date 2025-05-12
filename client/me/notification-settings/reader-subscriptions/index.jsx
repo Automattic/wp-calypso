@@ -304,6 +304,7 @@ class NotificationSubscriptions extends Component {
 						) }
 
 						<Button
+							accessibleWhenDisabled
 							variant="primary"
 							showTooltip={ ! this.props.hasUnsavedUserSettings }
 							label={ this.props.translate( 'No unsaved changes' ) }
