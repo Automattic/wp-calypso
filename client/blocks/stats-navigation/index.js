@@ -63,16 +63,16 @@ function withNoticeHook( HookedComponent ) {
 }
 
 const SelectNav = ( {
-	validNavItems,
 	label,
+	validNavItems,
 	interval,
 	slugPath,
+	adminUrl,
 	selectedItem,
 	showLock,
 	isLegacy,
 	showIntervals,
 	pathTemplate,
-	adminUrl,
 } ) => {
 	return (
 		<>
@@ -123,7 +123,7 @@ const SelectNav = ( {
 	);
 };
 
-const TabNav = ( { validNavItems, interval, slugPath, selectedItem, showLock, adminUrl } ) => {
+const TabNav = ( { validNavItems, interval, slugPath, adminUrl, selectedItem, showLock } ) => {
 	const tabs = validNavItems.map( ( item ) => {
 		const navItem = navItems[ item ];
 		const intervalPath = navItem.showIntervals ? `/${ interval || 'day' }` : '';
@@ -256,6 +256,7 @@ class StatsNavigation extends Component {
 			siteId,
 			isStatsNavigationImprovementEnabled,
 			pageModuleToggles,
+			adminUrl,
 		} = this.props;
 		const { isPageSettingsTooltipDismissed } = this.state;
 		const { label, showIntervals, path } = navItems[ selectedItem ];
@@ -292,16 +293,16 @@ class StatsNavigation extends Component {
 						breakpoint="<480px"
 						breakpointActiveComponent={
 							<SelectNav
-								validNavItems={ validNavItems }
 								label={ label }
+								validNavItems={ validNavItems }
 								interval={ interval }
 								slugPath={ slugPath }
+								adminUrl={ adminUrl }
 								selectedItem={ selectedItem }
 								showLock={ showLock }
 								isLegacy={ isLegacy }
 								showIntervals={ showIntervals }
 								pathTemplate={ pathTemplate }
-								adminUrl={ this.props.adminUrl }
 							/>
 						}
 						breakpointInactiveComponent={
@@ -309,9 +310,9 @@ class StatsNavigation extends Component {
 								validNavItems={ validNavItems }
 								interval={ interval }
 								slugPath={ slugPath }
+								adminUrl={ adminUrl }
 								selectedItem={ selectedItem }
 								showLock={ showLock }
-								adminUrl={ this.props.adminUrl }
 							/>
 						}
 					/>
@@ -319,16 +320,16 @@ class StatsNavigation extends Component {
 				{ ! isStatsNavigationImprovementEnabled && (
 					// TODO: remove following SelectNav after 'stats/navigation-improvement' launch.
 					<SelectNav
-						validNavItems={ validNavItems }
 						label={ label }
+						validNavItems={ validNavItems }
 						interval={ interval }
 						slugPath={ slugPath }
+						adminUrl={ adminUrl }
 						selectedItem={ selectedItem }
 						showLock={ showLock }
 						isLegacy={ isLegacy }
 						showIntervals={ showIntervals }
 						pathTemplate={ pathTemplate }
-						adminUrl={ this.props.adminUrl }
 					/>
 				) }
 
