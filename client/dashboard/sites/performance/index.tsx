@@ -53,7 +53,7 @@ function SitePerformanceContent( { site }: { site: Site } ) {
 		refetchPages();
 	};
 
-	// TODO: Remove this once we have a way to handle the report for private sites
+	// TODO: We shouldn't allow public sites to load the SitePerformance page
 	if ( 1 !== site.options?.blog_public ) {
 		return 'This site is not public. Please make it public to view the performance report.';
 	}
