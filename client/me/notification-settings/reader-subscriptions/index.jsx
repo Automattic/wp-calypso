@@ -116,47 +116,31 @@ class NotificationSubscriptions extends Component {
 		const { translate, locale } = this.props;
 		const startOfWeek = getNumericFirstDayOfWeek( locale );
 
-		switch ( startOfWeek ) {
-			// Monday
-			case 1:
-				return (
-					<>
-						<option value="1">{ translate( 'Monday' ) }</option>
-						<option value="2">{ translate( 'Tuesday' ) }</option>
-						<option value="3">{ translate( 'Wednesday' ) }</option>
-						<option value="4">{ translate( 'Thursday' ) }</option>
-						<option value="5">{ translate( 'Friday' ) }</option>
-						<option value="6">{ translate( 'Saturday' ) }</option>
-						<option value="7">{ translate( 'Sunday' ) }</option>
-					</>
-				);
-			// Saturday
-			case 6:
-				return (
-					<>
-						<option value="6">{ translate( 'Saturday' ) }</option>
-						<option value="7">{ translate( 'Sunday' ) }</option>
-						<option value="1">{ translate( 'Monday' ) }</option>
-						<option value="2">{ translate( 'Tuesday' ) }</option>
-						<option value="3">{ translate( 'Wednesday' ) }</option>
-						<option value="4">{ translate( 'Thursday' ) }</option>
-						<option value="5">{ translate( 'Friday' ) }</option>
-					</>
-				);
-			// Sunday
-			case 7:
-				return (
-					<>
-						<option value="7">{ translate( 'Sunday' ) }</option>
-						<option value="1">{ translate( 'Monday' ) }</option>
-						<option value="2">{ translate( 'Tuesday' ) }</option>
-						<option value="3">{ translate( 'Wednesday' ) }</option>
-						<option value="4">{ translate( 'Thursday' ) }</option>
-						<option value="5">{ translate( 'Friday' ) }</option>
-						<option value="6">{ translate( 'Saturday' ) }</option>
-					</>
-				);
-		}
+		const weekDays = [
+			{ value: '1', label: translate( 'Monday' ) },
+			{ value: '2', label: translate( 'Tuesday' ) },
+			{ value: '3', label: translate( 'Wednesday' ) },
+			{ value: '4', label: translate( 'Thursday' ) },
+			{ value: '5', label: translate( 'Friday' ) },
+			{ value: '6', label: translate( 'Saturday' ) },
+			{ value: '7', label: translate( 'Sunday' ) },
+		];
+
+		// Rotate the array based on startOfWeek
+		const rotatedWeekdays = [
+			...weekDays.slice( startOfWeek - 1 ),
+			...weekDays.slice( 0, startOfWeek - 1 ),
+		];
+
+		return (
+			<>
+				{ rotatedWeekdays.map( ( { value, label } ) => (
+					<option key={ value } value={ value }>
+						{ label }
+					</option>
+				) ) }
+			</>
+		);
 	}
 
 	render() {
