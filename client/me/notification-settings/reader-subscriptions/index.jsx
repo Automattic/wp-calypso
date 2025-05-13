@@ -1,11 +1,10 @@
 import { Card, FormLabel, Dialog } from '@automattic/components';
-import { CheckboxControl } from '@wordpress/components';
+import { Button, CheckboxControl } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
 import { flowRight as compose } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryReaderTeams from 'calypso/components/data/query-reader-teams';
-import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLegend from 'calypso/components/forms/form-legend';
 import FormSectionHeading from 'calypso/components/forms/form-section-heading';
@@ -78,6 +77,11 @@ class NotificationSubscriptions extends Component {
 		}
 
 		this.props.submitForm( event );
+	};
+
+	handleSubmitButtonClick = ( event ) => {
+		this.props.recordGoogleEvent( 'Me', 'Clicked on Save Notification Settings Button' );
+		this.handleSubmit( event );
 	};
 
 	handleModalCancel = () => {
@@ -299,15 +303,14 @@ class NotificationSubscriptions extends Component {
 							</FormFieldset>
 						) }
 
-						<FormButton
-							isSubmitting={ this.props.isUpdatingUserSettings }
+						<Button
+							variant="primary"
 							disabled={ this.props.isUpdatingUserSettings || ! this.props.hasUnsavedUserSettings }
-							onClick={ this.handleClickEvent( 'Save Notification Settings Button' ) }
+							isBusy={ this.props.isUpdatingUserSettings }
+							onClick={ this.handleSubmitButtonClick }
 						>
-							{ this.props.isUpdatingUserSettings
-								? this.props.translate( 'Saving…' )
-								: this.props.translate( 'Save notification settings' ) }
-						</FormButton>
+							{ this.props.translate( 'Save notification settings' ) }
+						</Button>
 					</form>
 				</Card>
 

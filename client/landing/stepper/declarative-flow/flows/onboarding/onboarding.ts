@@ -5,10 +5,6 @@ import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs, getQueryArg, getQueryArgs, removeQueryArgs } from '@wordpress/url';
 import { useState, useEffect } from 'react';
-import {
-	useIsPlaygroundEligible,
-	isPlaygroundEligible,
-} from 'calypso/landing/stepper/hooks/use-is-playground-eligible';
 import { isMvpOnboardingExperiment } from 'calypso/landing/stepper/hooks/use-mvp-onboarding-experiment';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { pathToUrl } from 'calypso/lib/url';
@@ -56,7 +52,7 @@ function initialize() {
 		STEPS.SITE_CREATION_STEP,
 		STEPS.PROCESSING,
 		STEPS.POST_CHECKOUT_ONBOARDING,
-		...( isPlaygroundEligible() ? [ STEPS.PLAYGROUND ] : [] ),
+		STEPS.PLAYGROUND,
 	];
 
 	return stepsWithRequiredLogin( steps );
@@ -69,7 +65,6 @@ const onboarding: FlowV2< typeof initialize > = {
 	initialize,
 	useStepNavigation( currentStepSlug, navigate ) {
 		const flowName = this.name;
-		const isPlaygroundEligible = useIsPlaygroundEligible();
 
 		const {
 			setDomain,
@@ -96,16 +91,13 @@ const onboarding: FlowV2< typeof initialize > = {
 		 * Returns [destination, backDestination] for the post-checkout destination.
 		 */
 		const getPostCheckoutDestination = async (
-			providedDependencies: ProvidedDependencies,
-			isPlaygroundEligible: boolean
+			providedDependencies: ProvidedDependencies
 		): Promise< [ string, string | null ] > => {
 			if ( ! providedDependencies.hasExternalTheme && providedDependencies.hasPluginByGoal ) {
 				return [ `/home/${ providedDependencies.siteSlug }`, null ];
 			}
 
-			const playgroundId = isPlaygroundEligible
-				? getQueryArg( window.location.href, 'playground' )
-				: null;
+			const playgroundId = getQueryArg( window.location.href, 'playground' );
 			if ( playgroundId && providedDependencies.siteSlug ) {
 				return [
 					addQueryArgs( withLocale( '/setup/site-setup/importerPlayground', locale ), {
@@ -239,10 +231,8 @@ const onboarding: FlowV2< typeof initialize > = {
 				case 'post-checkout-onboarding':
 					return navigate( 'processing' );
 				case 'processing': {
-					const [ destination, backDestination ] = await getPostCheckoutDestination(
-						providedDependencies,
-						isPlaygroundEligible
-					);
+					const [ destination, backDestination ] =
+						await getPostCheckoutDestination( providedDependencies );
 					if ( providedDependencies.processingResult === ProcessingResult.SUCCESS ) {
 						persistSignupDestination( destination );
 						setSignupCompleteFlowName( flowName );

@@ -21,7 +21,6 @@ import pressableIcon from 'calypso/assets/images/pressable/pressable-icon.svg';
 import AddNewSiteContext from 'calypso/components/add-new-site/context';
 import AddNewSiteMenuItem from 'calypso/components/add-new-site/menu-item';
 import AddNewSitePopoverColumn from 'calypso/components/add-new-site/popover-column';
-import { preventWidows } from 'calypso/lib/formatting';
 import type { AddNewSiteMenuItemsProps } from 'calypso/components/add-new-site/types';
 
 type PendingSite = { features: { wpcom_atomic: { state: string; license_key: string } } };
@@ -64,9 +63,7 @@ const AddNewSiteA4AMenuItems = ( { setMenuVisible }: AddNewSiteMenuItemsProps ) 
 				<AddNewSiteMenuItem
 					icon={ <WordPressLogo /> }
 					heading={ translate( 'Via WordPress.com connection' ) }
-					description={ preventWidows(
-						translate( 'Import connected WordPress.com or Jetpack sites.' )
-					) }
+					description={ translate( 'Import connected WordPress.com or Jetpack sites.' ) }
 					buttonProps={ {
 						onClick: () => {
 							handleOnClick( 'import-from-wpcom' );
@@ -76,9 +73,7 @@ const AddNewSiteA4AMenuItems = ( { setMenuVisible }: AddNewSiteMenuItemsProps ) 
 				<AddNewSiteMenuItem
 					icon={ <A4ALogo /> }
 					heading={ translate( 'Via the Automattic plugin' ) }
-					description={ preventWidows(
-						translate( 'Connect with the Automattic for Agencies plugin.' )
-					) }
+					description={ translate( 'Connect with the Automattic for Agencies plugin.' ) }
 					buttonProps={ {
 						onClick: () => {
 							handleOnClick( 'a4a-connection' );
@@ -88,9 +83,7 @@ const AddNewSiteA4AMenuItems = ( { setMenuVisible }: AddNewSiteMenuItemsProps ) 
 				<AddNewSiteMenuItem
 					icon={ <JetpackLogo /> }
 					heading={ translate( 'Via the Jetpack plugin' ) }
-					description={ preventWidows(
-						translate( 'Install the Jetpack plugin on an existing site.' )
-					) }
+					description={ translate( 'Install the Jetpack plugin on an existing site.' ) }
 					buttonProps={ {
 						onClick: () => {
 							handleOnClick( 'jetpack-connection' );
@@ -114,9 +107,7 @@ const AddNewSiteA4AMenuItems = ( { setMenuVisible }: AddNewSiteMenuItemsProps ) 
 				<AddNewSiteMenuItem
 					icon={ <WordPressLogo /> }
 					heading="WordPress.com"
-					description={ preventWidows(
-						translate( 'Use a backup file to import your content into a new site.' )
-					) }
+					description={ translate( 'Use a backup file to import your content into a new site.' ) }
 					buttonProps={ {
 						href: hasPendingWPCOMSites
 							? A4A_SITES_LINK_NEEDS_SETUP
@@ -142,10 +133,8 @@ const AddNewSiteA4AMenuItems = ( { setMenuVisible }: AddNewSiteMenuItemsProps ) 
 						isBanner
 						icon={ <img src={ devSiteBanner } alt="Start building for free" /> }
 						heading={ translate( 'Start building for free' ) }
-						description={ preventWidows(
-							translate(
-								'Develop WordPress.com sites for as long as you need, with free development sites. Only pay when you launch!'
-							)
+						description={ translate(
+							'Develop WordPress.com sites for as long as you need, with free development sites. Only pay when you launch!'
 						) }
 						disabled={ ! hasAvailableDevSites }
 						buttonProps={ {

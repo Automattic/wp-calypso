@@ -138,7 +138,6 @@
 		"translate:calypso": "wp-babel-makepot './{client,packages,apps}/**/*.{js,jsx,ts,tsx}' --ignore '**/node_modules/**,**/test/**,**/*.d.ts' --base './' --dir './build/strings' --output './public/calypso-strings.pot'",
 		"tsc": "NODE_OPTIONS='--max-old-space-size=4096' tsc",
 		"typecheck": "yarn run tsc --project client",
-		"update-deps": "rm -rf yarn.lock && yarn run distclean && yarn install && perl -pi -e s,http://,https://,g yarn.lock && touch -m node_modules",
 		"vscode:link": "node bin/set-up-vs-code.js",
 		"vscode:unlink": "node bin/set-up-vs-code.js --unlink",
 		"whybundled": "NODE_ENV=production CALYPSO_ENV=production EMIT_STATS=withreasons CONCATENATE_MODULES=false yarn run build-client && whybundled client/stats.json",

@@ -10,11 +10,6 @@ import { StepProps } from '../../../types';
 import { renderStep, mockStepProps, RenderStepOptions } from '../../test/helpers';
 import { initializeWordPressPlayground } from '../lib/initialize-playground';
 
-// Be sure to mock this hook to return true so that the step is rendered.
-jest.mock( 'calypso/landing/stepper/hooks/use-is-playground-eligible', () => ( {
-	useIsPlaygroundEligible: () => true,
-} ) );
-
 // Mock the initializeWordPressPlayground function to cause an error
 jest.mock( '../lib/initialize-playground' );
 
