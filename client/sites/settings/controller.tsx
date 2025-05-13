@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { __ } from '@wordpress/i18n';
 import { useSelector } from 'react-redux';
@@ -23,6 +24,7 @@ import ServerSettings from './server';
 import SftpSshSettings from './sftp-ssh';
 import useSftpSshSettingTitle from './sftp-ssh/hooks/use-sftp-ssh-setting-title';
 import SiteSettings from './site';
+import SiteSettingsV2Layout from './v2';
 import type { Context as PageJSContext } from '@automattic/calypso-router';
 
 export function SettingsSidebar() {
@@ -200,5 +202,26 @@ export function performanceSettings( context: PageJSContext, next: () => void ) 
 			<PerformanceSettings />
 		</PanelWithSidebar>
 	);
+	next();
+}
+
+/**
+ * Backport Hosting Dashboard V2 Settings page to the current one.
+ */
+export function siteSettingsV2( context: PageJSContext, next: () => void ) {
+	const state = context.store.getState();
+	const site = getSelectedSite( state );
+
+	if ( ! isEnabled( 'dashboard/v2' ) ) {
+		return page.redirect( `/sites/settings/site/${ site?.slug }` );
+	}
+
+	context.primary = (
+		<>
+			<PageViewTracker title="Sites > Settings > General" path={ getRouteFromContext( context ) } />
+			<SiteSettingsV2Layout />
+		</>
+	);
+
 	next();
 }

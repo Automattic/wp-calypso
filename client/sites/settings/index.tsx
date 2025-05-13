@@ -22,6 +22,7 @@ import {
 } from './administration/controller';
 import {
 	siteSettings,
+	siteSettingsV2,
 	administrationToolDeleteSite,
 	administrationToolResetSite,
 	administrationToolTransferSite,
@@ -121,6 +122,20 @@ export default function () {
 		navigation,
 		performanceSettings,
 		siteDashboard( SETTINGS_PERFORMANCE ),
+		makeLayout,
+		clientRender
+	);
+
+	/**
+	 * Settings V2
+	 */
+	page( '/sites/settings/v2', siteSelection, sites, makeLayout, clientRender );
+	page(
+		'/sites/settings/v2/*',
+		siteSelection,
+		navigation,
+		siteSettingsV2,
+		siteDashboard( SETTINGS_SITE ),
 		makeLayout,
 		clientRender
 	);
