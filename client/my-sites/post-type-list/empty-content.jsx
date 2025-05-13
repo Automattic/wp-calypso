@@ -31,11 +31,7 @@ function PostTypeListEmptyContent( {
 	return (
 		<div>
 			{ siteId && <QueryPostTypes siteId={ siteId } /> }
-			<EmptyContent
-				title={ title }
-				action={ action }
-				actionURL={ editPath }
-			/>
+			<EmptyContent title={ title } action={ action } actionURL={ editPath } />
 		</div>
 	);
 }
