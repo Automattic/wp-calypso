@@ -32,7 +32,6 @@ interface Props {
 
 interface DisplayData {
 	title: string;
-	illustration: string;
 	line: string;
 	action: string;
 }
