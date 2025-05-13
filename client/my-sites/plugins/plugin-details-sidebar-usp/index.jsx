@@ -61,7 +61,6 @@ const ExternalLink = styled( ExternalLinkComponent )`
 `;
 
 const Link = styled.a`
-	display: inline-block;
 	font-size: 14px;
 `;
 
@@ -102,14 +101,14 @@ const PluginDetailsSidebarUSP = ( {
 				links.map( ( link, idx ) => {
 					return (
 						<Fragment key={ idx }>
-							{ '_blank' === link.target ? (
-								<Link href={ link.href } onClick={ link.onClick }>
-									{ link.label }
-								</Link>
-							) : (
+							{ link.openInNewTab ? (
 								<ExternalLink icon href={ link.href } onClick={ link.onClick }>
 									{ link.label }
 								</ExternalLink>
+							) : (
+								<Link href={ link.href } onClick={ link.onClick }>
+									{ link.label }
+								</Link>
 							) }
 							<br />
 						</Fragment>
