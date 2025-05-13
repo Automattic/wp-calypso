@@ -38,9 +38,16 @@ export default function MigrationsAddSitesTable( {
 		[ taggedSites ]
 	);
 
-	// Filter out sites that are already tagged
+	// Filter out sites that are already tagged or are dev / staging sites.
 	const availableSites = useMemo( () => {
-		return items.filter( ( item ) => ! taggedSitesIds.includes( item.id ) );
+		return items
+			.filter( ( item ) => ! taggedSitesIds.includes( item.id ) )
+			.filter( ( item ) => item.rawSite.a4a_is_dev_site === true )
+			.filter(
+				( item ) =>
+					! item.site.includes( 'mystagingwebsite.com' ) &&
+					! item.site.includes( 'wpcomstaging.com' )
+			);
 	}, [ items, taggedSitesIds ] );
 
 	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( {
