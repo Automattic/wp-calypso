@@ -328,7 +328,7 @@ class Login extends Component {
 		return getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, pathname );
 	};
 
-	renderLoginFromSignupNotice() {
+	renderLoginFormSignupNotice() {
 		return (
 			<Notice status="is-transparent-info" showDismiss={ false }>
 				{ this.props.translate(
@@ -659,7 +659,7 @@ class Login extends Component {
 					/>
 				) }
 
-				{ isSignupExistingAccount && this.renderLoginFromSignupNotice() }
+				{ isSignupExistingAccount && this.renderLoginFormSignupNotice() }
 
 				{ /* For Woo, we render the ErrrorNotice component in login-form.jsx */ }
 				{ ! isWCCOM && <ErrorNotice locale={ locale } /> }
