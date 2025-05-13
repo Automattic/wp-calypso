@@ -46,12 +46,16 @@ body,
 }
 
 body {
-	background: var( --color-main-background, #fcfcfc );
+	background: var(--color-surface-backdrop);
 	color: var(--color-text);
 	font-size: $font-body;
 	line-height: 1.5;
 
 	-ms-overflow-style: scrollbar;
+
+	&.theme-default {
+		background: var( --color-main-background );
+	}
 
 	// This fixes an issue with the `click-outside` package not working on mobile.
 	// Specifically, this makes clicking outside a popover work on touch devices. -shaun
