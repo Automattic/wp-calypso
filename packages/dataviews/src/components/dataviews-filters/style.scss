@@ -201,11 +201,11 @@
 		}
 
 		.dataviews-filters__search-widget-listitem-multi-selection {
-			border-color: var(--wp-components-color-accent-darker-20, var(--wp-admin-theme-color-darker-20, #183ad6));
+			border-color: var(--wp-admin-theme-color-darker-20, #183ad6);
 
 			&.is-selected {
-				border-color: var(--wp-components-color-accent-darker-20, var(--wp-admin-theme-color-darker-20, #183ad6));
-				background:	var(--wp-components-color-accent-darker-20, var(--wp-admin-theme-color-darker-20, #183ad6));
+				border-color: var(--wp-admin-theme-color-darker-20, #183ad6);
+				background: var(--wp-admin-theme-color-darker-20, #183ad6);
 			}
 		}
 	}
@@ -220,15 +220,13 @@
 	}
 
 	.dataviews-filters__search-widget-listitem-single-selection {
-		$components-color-accent: var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9));
-
 		@include radio-control;
 		margin: 0;
 		padding: 0;
 
 		&.is-selected {
-			background: var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9));
-			border-color: var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9));
+			background: var(--wp-admin-theme-color, #3858e9);
+			border-color: var(--wp-admin-theme-color, #3858e9);
 
 			&::before {
 				content: "";
@@ -275,8 +273,8 @@
 		}
 
 		&.is-selected {
-			background: var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9));
-			border-color: var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9));
+			background: var(--wp-admin-theme-color, #3858e9);
+			border-color: var(--wp-admin-theme-color, #3858e9);
 
 			svg {
 				--checkmark-size: var(--checkbox-size);
