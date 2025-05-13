@@ -241,13 +241,15 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 
 		if ( useContainerV2 ) {
 			const importerData = getImportDragConfig( importer, stepNavigator?.supportLinkModal );
-			const showHeading =
-				importJob?.importerState === appStates.MAP_AUTHORS ||
-				importJob?.importerState === appStates.READY_FOR_UPLOAD ||
-				importJob?.importerState === appStates.UPLOAD_PROCESSING ||
-				importJob?.importerState === appStates.UPLOADING;
-
+			const statesToShowHeading: string[] = [
+				appStates.MAP_AUTHORS,
+				appStates.READY_FOR_UPLOAD,
+				appStates.UPLOAD_PROCESSING,
+				appStates.UPLOADING,
+			];
+			const showHeading = statesToShowHeading.includes( importJob?.importerState ?? '' );
 			const showBackButton = importJob?.importerState !== appStates.IMPORT_SUCCESS;
+			const showSkipButton = importJob?.importerState === appStates.IMPORT_SUCCESS;
 			return (
 				<>
 					<QuerySites siteId={ siteId } />
@@ -257,7 +259,6 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 						className={ clsx(
 							'import__onboarding-page',
 							'importer-wrapper',
-							'step-container-v2--site-migration-identify',
 							'import__onboarding-page--redesign',
 							{
 								[ `importer-wrapper__${ importer }` ]: !! importer,
@@ -268,7 +269,7 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 							<Step.TopBar
 								leftElement={ showBackButton ? <Step.BackButton onClick={ onGoBack } /> : null }
 								rightElement={
-									! showBackButton ? (
+									showSkipButton ? (
 										<Step.SkipButton onClick={ skipToDashboardAction }>
 											{ __( 'Skip to dashboard' ) }
 										</Step.SkipButton>
