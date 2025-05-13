@@ -27,7 +27,6 @@ export const SquarespaceImporter: React.FunctionComponent< ImporterBaseProps > =
 		startImport,
 		resetImport,
 		stepNavigator,
-		renderHeading,
 	} = props;
 
 	/**
@@ -119,7 +118,6 @@ export const SquarespaceImporter: React.FunctionComponent< ImporterBaseProps > =
 							site={ site }
 							importerData={ getImportDragConfig( importer, stepNavigator?.supportLinkModal ) }
 							importerStatus={ job }
-							renderHeading={ renderHeading }
 						/>
 					);
 				} )() }

@@ -33,7 +33,6 @@ interface Props {
 	siteSlug: string;
 	siteAnalyzedData: UrlData | null;
 	stepNavigator?: StepNavigator;
-	renderHeading?: boolean;
 }
 
 const ImportContentOnly: React.FunctionComponent< Props > = ( props ) => {
@@ -44,8 +43,7 @@ const ImportContentOnly: React.FunctionComponent< Props > = ( props ) => {
 	 ↓ Fields
 	 */
 	const [ renderState, setRenderState ] = useState< RenderState >( 'idle' );
-	const { job, importer, siteItem, siteSlug, siteAnalyzedData, stepNavigator, renderHeading } =
-		props;
+	const { job, importer, siteItem, siteSlug, siteAnalyzedData, stepNavigator } = props;
 	const isSiteCompatible = siteItem && isTargetSitePlanCompatible( siteItem );
 	const planName = getPlan( PLAN_BUSINESS )?.getTitle() || '';
 
@@ -192,7 +190,6 @@ const ImportContentOnly: React.FunctionComponent< Props > = ( props ) => {
 					urlData={ siteAnalyzedData }
 					importerData={ getImportDragConfig( importer, stepNavigator?.supportLinkModal ) }
 					importerStatus={ job }
-					renderHeading={ renderHeading }
 				/>
 			) }
 

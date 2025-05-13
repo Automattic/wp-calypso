@@ -12,13 +12,12 @@ interface Props {
 	siteId: number;
 	siteSlug: string;
 	stepNavigator?: StepNavigator;
-	renderHeading?: boolean;
 }
 
 export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => {
 	const importer: Importer = 'wordpress';
 
-	const { job, siteSlug, siteId, stepNavigator, renderHeading } = props;
+	const { job, siteSlug, siteId, stepNavigator } = props;
 
 	const siteItem = useSelector( ( state ) => getSite( state, siteId ) );
 	const isSiteAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, siteId ) );
@@ -65,7 +64,6 @@ export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => 
 						siteSlug={ siteSlug }
 						siteAnalyzedData={ fromSiteAnalyzedData }
 						stepNavigator={ stepNavigator }
-						renderHeading={ renderHeading }
 					/>
 				);
 			} )() }
