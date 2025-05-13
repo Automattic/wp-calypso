@@ -580,8 +580,12 @@ $image-height: 47px;
 			}
 		}
 
-		.components-button {
+		.components-button,
+		.components-input-control {
 			--color-accent: var(--color-wp-job-manager);
+		}
+
+		.components-button {
 			--color-accent-60: color-mix(in srgb, var(--color-wp-job-manager), #000 10%);
 		}
 	}
