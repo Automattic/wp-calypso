@@ -86,7 +86,11 @@ const NonRefundableDomainPurchaseMessage = ( { includedDomainPurchase } ) => {
 	);
 };
 
-const DomainTransferMessage = ( { includedDomainTransfer, planCostText, purchase } ) => {
+const RefundablePurchaseWithDomainTransferMessage = ( {
+	includedDomainTransfer,
+	planCostText,
+	purchase,
+} ) => {
 	const translate = useTranslate();
 	return (
 		<div>
@@ -111,6 +115,26 @@ const DomainTransferMessage = ( { includedDomainTransfer, planCostText, purchase
 							domainCost: includedDomainTransfer.priceText,
 							planCost: planCostText,
 							refundAmount: purchase.refundText,
+						},
+					}
+				) }
+			</p>
+		</div>
+	);
+};
+
+const NonRefundablePurchaseWithDomainTransferMessage = ( { includedDomainTransfer } ) => {
+	const translate = useTranslate();
+	return (
+		<div>
+			<p>
+				{ translate(
+					'This plan includes a domain transfer, %(domain)s, normally a %(domainCost)s purchase. ' +
+						'The domain will not be removed along with the plan, to avoid any interruptions for your visitors.',
+					{
+						args: {
+							domain: includedDomainTransfer.meta,
+							domainCost: includedDomainTransfer.priceText,
 						},
 					}
 				) }
@@ -194,8 +218,18 @@ const CancelPurchaseDomainOptions = ( {
 	}
 
 	if ( includedDomainTransfer ) {
+		if ( ! isRefundable( purchase ) ) {
+			return (
+				<NonRefundablePurchaseWithDomainTransferMessage
+					includedDomainTransfer={ includedDomainTransfer }
+					purchase={ purchase }
+					planCostText={ planCostText }
+				/>
+			);
+		}
+
 		return (
-			<DomainTransferMessage
+			<RefundablePurchaseWithDomainTransferMessage
 				includedDomainTransfer={ includedDomainTransfer }
 				purchase={ purchase }
 				planCostText={ planCostText }

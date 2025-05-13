@@ -459,6 +459,42 @@ export const normalizers = {
 	},
 
 	/**
+	 * Returns a normalized data for the `stats/video-plays` API request with `complete_stats` query param set to `1`
+	 * This returns more enriched data about the video plays, including impressions, watch time, and retention rate.
+	 * @param   {Object} data    Stats data
+	 * @param   {Object} query   Stats query
+	 * @returns {Array}          Parsed data array
+	 */
+	statsVideoPlaysCompleteStats: ( data, query = {} ) => {
+		if ( ! data || ! query.period || ! query.date ) {
+			return [];
+		}
+
+		const { startOf } = rangeOfPeriod( query.period, query.date );
+		const videoPlaysData = get(
+			data,
+			query.summarize ? [ 'days', 'summary', 'data' ] : [ 'days', startOf, 'data' ],
+			[]
+		);
+
+		const normalizedData = videoPlaysData.map( ( item ) => {
+			return {
+				post_id: item.post_id,
+				label: item.title,
+				views: item.views,
+				impressions: item.impressions,
+				watch_time: item.watch_time,
+				retention_rate: item.retention_rate,
+			};
+		} );
+
+		return [
+			[ 'post_id', 'title', 'views', 'impressions', 'watch_time', 'retention_rate' ],
+			...normalizedData,
+		];
+	},
+
+	/**
 	 * Returns a normalized statsVideoPlays array, ready for use in stats-module
 	 * @param   {Object} data    Stats data
 	 * @param   {Object} query   Stats query
@@ -471,6 +507,12 @@ export const normalizers = {
 			return [];
 		}
 		const { startOf } = rangeOfPeriod( query.period, query.date );
+		const isCompleteStats = query.complete_stats;
+
+		if ( isCompleteStats ) {
+			return normalizers.statsVideoPlaysCompleteStats( data, query, siteId, site );
+		}
+
 		const videoPlaysData = get(
 			data,
 			query.summarize ? [ 'days', 'summary', 'plays' ] : [ 'days', startOf, 'plays' ],

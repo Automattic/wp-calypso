@@ -1,8 +1,15 @@
 import crypto from 'crypto';
+import { type Request } from 'express';
 import superagent from 'superagent';
 const URL = require( 'url' );
 
-function getUserFromRequest( request ) {
+interface UserParameters {
+	_ul?: string;
+	_ui: string | number;
+	_ut: string;
+}
+
+function getUserFromRequest( request: Request ): UserParameters {
 	// if user has a cookie, lets use that
 	const encodedUserCookie = request?.cookies?.wordpress_logged_in ?? null;
 
@@ -27,8 +34,8 @@ function getUserFromRequest( request ) {
 	// If we have a full identity on query params - use it
 	if ( request?.query?._ut && request?.query?._ui ) {
 		return {
-			_ui: request.query._ui,
-			_ut: request.query._ut,
+			_ui: request.query._ui as string,
+			_ut: request.query._ut as string,
 		};
 	}
 
@@ -41,7 +48,7 @@ function getUserFromRequest( request ) {
 
 const analytics = {
 	tracks: {
-		createPixel: function ( data ) {
+		createPixel: function ( data: Record< string, string | number | undefined > ) {
 			data._rt = new Date().getTime();
 			data._ = '_';
 			const pixelUrl = URL.format( {
@@ -53,7 +60,11 @@ const analytics = {
 			superagent.get( pixelUrl ).end();
 		},
 
-		recordEvent: function ( eventName, eventProperties, req ) {
+		recordEvent: function (
+			eventName: string,
+			eventProperties: Record< string, string | undefined >,
+			req: Request
+		) {
 			eventProperties = eventProperties || {};
 
 			if ( eventName.indexOf( 'calypso_' ) !== 0 ) {
@@ -73,12 +84,10 @@ const analytics = {
 			this.createPixel( {
 				_en: eventName,
 				_ts: date.getTime(),
-				_tz: date.getTimezoneOffset() / 60,
 				_dl: req.get( 'Referer' ),
 				_lg: acceptLanguageHeader.split( ',' )[ 0 ],
-				_pf: req.useragent.platform,
 				_via_ip: req.get( 'x-forwarded-for' ) || req.connection.remoteAddress,
-				_via_ua: req.useragent.source,
+				_via_ua: req.get( 'user-agent' ),
 				...getUserFromRequest( req ),
 				...eventProperties,
 			} );

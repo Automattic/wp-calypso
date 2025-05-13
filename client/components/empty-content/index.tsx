@@ -17,7 +17,6 @@ interface EmptyContentProps {
 	actionURL?: string;
 	actionCallback?: () => void;
 	actionTarget?: string;
-	actionHoverCallback?: () => void;
 	actionDisabled?: boolean;
 	actionRef?: RefObject< HTMLElement > | LegacyRef< HTMLButtonElement >;
 	secondaryAction?: React.ReactNode;
@@ -49,8 +48,6 @@ export default function EmptyContent( props: EmptyContentProps ): JSX.Element {
 					target={ props.actionTarget }
 					disabled={ props.actionDisabled }
 					ref={ props.actionRef as LegacyRef< HTMLButtonElement > }
-					onMouseEnter={ props.actionHoverCallback }
-					onTouchStart={ props.actionHoverCallback }
 				>
 					{ props.action }
 				</Button>

@@ -56,6 +56,7 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( {
 	query,
 	summaryUrl,
 	summary = false,
+	listItemClassName,
 } ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
@@ -429,6 +430,7 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( {
 						}
 						onShowMoreClick={ onShowMoreClick }
 						overlay={ moduleOverlay }
+						listItemClassName={ listItemClassName }
 					/>
 				</>
 			) }

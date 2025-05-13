@@ -23,6 +23,7 @@ import PageHeader from '../components/headers/page-header';
 import { STATS_FEATURE_DOWNLOAD_CSV } from '../constants';
 import StatsModuleLocations from '../features/modules/stats-locations';
 import LocationsNavTabs from '../features/modules/stats-locations/locations-nav-tabs';
+import { GEO_MODES } from '../features/modules/stats-locations/types';
 import StatsModuleUTM from '../features/modules/stats-utm';
 import { shouldGateStats } from '../hooks/use-should-gate-stats';
 import { StatsGlobalValuesContext } from '../pages/providers/global-provider';
@@ -239,6 +240,7 @@ class StatsSummary extends Component {
 				title = translate( 'Videos' );
 				path = 'videoplays';
 				statType = 'statsVideoPlays';
+				moduleQuery.complete_stats = 1;
 				summaryView = (
 					<Fragment key="videopress-stats-module">
 						{ /* For CSV button to work, video page needs to pass custom data to the button.
@@ -367,6 +369,11 @@ class StatsSummary extends Component {
 			backLink += domain;
 		}
 		const navigationItems = [ { label: backLabel, href: backLink }, { label: title } ];
+		const geoMode = this.props.context.query.geoMode;
+		const geoModeLabel =
+			geoMode && Object.prototype.hasOwnProperty.call( GEO_MODES, geoMode )
+				? GEO_MODES[ geoMode ]
+				: 'country';
 
 		return (
 			<Main fullWidthLayout>
@@ -391,7 +398,9 @@ class StatsSummary extends Component {
 										<DownloadCsv
 											statType={ statType }
 											query={ moduleQuery }
-											path={ path }
+											path={
+												statType === 'statsCountryViews' ? `${ path }-${ geoModeLabel }` : path
+											}
 											period={ this.props.period }
 											skipQuery
 											hideIfNoData
