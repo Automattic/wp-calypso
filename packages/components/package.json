@@ -101,6 +101,7 @@
 		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",
 		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json && copy-assets",
 		"prepack": "yarn run clean && yarn run build",
-		"storybook:start": "storybook dev -p 56833"
+		"storybook:start": "storybook dev -p 56833",
+		"storybook:build": "storybook build"
 	}
 }
