@@ -22,7 +22,7 @@ export const CurrentOption = styled.button< CurrentOptionProps >`
 
 	${ ( props ) =>
 		props.open &&
-		! props.isStreamlinedPrice &&
+		! props.detached &&
 		css`
 			border-radius: 3px 3px 0 0;
 		` }
@@ -44,7 +44,7 @@ export const Option = styled.li< OptionProps >`
 	position: relative;
 
 	${ ( props ) =>
-		props.isStreamlinedPrice &&
+		props.detached &&
 		css`
 			padding-top: 14px;
 			padding-bottom: 14px;
@@ -55,7 +55,7 @@ export const Option = styled.li< OptionProps >`
 	}
 
 	${ ( props ) =>
-		! props.isStreamlinedPrice
+		! props.detached
 			? css`
 					&.item-variant-option--selected {
 						background: var( --studio-wordpress-blue-50 );
@@ -94,14 +94,14 @@ export const Dropdown = styled.div`
 	}
 `;
 
-export const OptionList = styled.ul< { isStreamlinedPrice: boolean } >`
+export const OptionList = styled.ul< { detached: boolean } >`
 	position: absolute;
 	width: 100%;
 	z-index: 4;
 	margin: 0;
 	box-shadow: rgba( 0, 0, 0, 0.16 ) 0px 1px 4px;
 	${ ( props ) =>
-		props.isStreamlinedPrice &&
+		props.detached &&
 		css`
 			box-shadow:
 				0px 50px 43px 0px rgba( 0, 0, 0, 0.02 ),
@@ -110,7 +110,7 @@ export const OptionList = styled.ul< { isStreamlinedPrice: boolean } >`
 				0px 5px 15px 0px rgba( 0, 0, 0, 0.08 );
 			margin-top: 10px;
 
-			${ Option }:first-child {
+			${ Option }:first-of-type {
 				border-top-left-radius: 3px;
 				border-top-right-radius: 3px;
 			}

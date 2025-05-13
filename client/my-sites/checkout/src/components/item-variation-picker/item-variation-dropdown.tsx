@@ -161,7 +161,7 @@ export const ItemVariationDropDown: FunctionComponent< ItemVariationPickerProps 
 				onClick={ () => toggle( id ) }
 				open={ isOpen }
 				role="button"
-				isStreamlinedPrice={ isStreamlinedPrice }
+				detached={ isStreamlinedPrice }
 			>
 				{ selectedVariantIndex !== null ? (
 					<ItemVariantDropDownPriceWrapper variant={ variants[ selectedVariantIndex ] } />
@@ -200,7 +200,7 @@ function ItemVariantOptionList( {
 		? variants.find( ( variant ) => variant.termIntervalInMonths === 1 )
 		: variants.find( ( variant ) => variant.productId === selectedItem.product_id );
 	return (
-		<OptionList role="listbox" tabIndex={ -1 } isStreamlinedPrice={ isStreamlinedPrice }>
+		<OptionList role="listbox" tabIndex={ -1 } detached={ isStreamlinedPrice }>
 			{ variants.map( ( variant, index ) => (
 				<ItemVariantOption
 					key={ variant.productSlug + variant.variantLabel.noun }
@@ -249,9 +249,9 @@ function ItemVariantOption( {
 			aria-label={ variantLabel.noun }
 			data-product-slug={ productSlug }
 			role="option"
-			isStreamlinedPrice={ isStreamlinedPrice }
 			onClick={ onSelect }
 			selected={ isSelected }
+			detached={ isStreamlinedPrice }
 		>
 			{ isJetpack( variant ) ? (
 				<JetpackItemVariantDropDownPrice variant={ variant } allVariants={ allVariants } />

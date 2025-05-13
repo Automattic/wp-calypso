@@ -66,7 +66,7 @@ export const ItemVariantDropDownPrice: FunctionComponent< {
 	variant: WPCOMProductVariant;
 	compareTo?: WPCOMProductVariant;
 	product: ResponseCartProduct;
-	isStreamlinedPrice: boolean;
+	isStreamlinedPrice?: boolean;
 } > = ( { variant, compareTo, product, isStreamlinedPrice } ) => {
 	const isMobile = useMobileBreakpoint();
 	const compareToPriceForVariantTerm = getItemVariantCompareToPrice( variant, compareTo );
