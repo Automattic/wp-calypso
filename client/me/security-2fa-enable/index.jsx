@@ -252,6 +252,7 @@ class Security2faEnable extends Component {
 		return (
 			<div className="security-2fa-enable__buttons-bar">
 				<FormButton
+					type="button"
 					className="security-2fa-enable__cancel"
 					isPrimary={ false }
 					onClick={ ( event ) => {
@@ -269,6 +270,7 @@ class Security2faEnable extends Component {
 
 				{ 'sms' === this.state.method && (
 					<FormButton
+						type="button"
 						className="security-2fa-enable__resend"
 						disabled={ ! this.state.smsRequestsAllowed }
 						isPrimary={ false }

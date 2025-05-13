@@ -170,6 +170,7 @@ class Security2faSMSSettings extends Component {
 
 					<FormButtonsBar className="security-2fa-sms-settings__buttons">
 						<FormButton
+							type="button"
 							className="security-2fa-sms-settings__cancel-button"
 							isPrimary={ false }
 							onClick={ ( event ) => {
