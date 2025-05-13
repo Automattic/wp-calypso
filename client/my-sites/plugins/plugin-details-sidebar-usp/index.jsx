@@ -55,6 +55,7 @@ const Title = styled.div`
 const Description = styled.div`
 	color: var( --studio-gray-80 );
 	font-size: 14px;
+	${ ( props ) => props.showAsAccordion && 'margin-bottom: 12px;' };
 `;
 
 const linkStyles = css`
@@ -103,7 +104,7 @@ const PluginDetailsSidebarUSP = ( {
 			first={ first }
 		>
 			{ ! isNarrow && <Header /> }
-			<Description>{ description }</Description>
+			<Description showAsAccordion={ isNarrow }>{ description }</Description>
 			{ links &&
 				links.map( ( link, idx ) => {
 					return (
