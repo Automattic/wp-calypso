@@ -1,16 +1,13 @@
 import { Locator, Page, Frame } from 'playwright';
 import envVariables from './env-variables';
 
-const navTabParent = 'div.stats-navigation__tabs';
-const legacyNavTabParent = 'div.section-nav';
+const navTabParent = 'div.section-nav';
 
 const selectors = {
 	// clickNavTab
 	navTabItem: ( { name = '', selected = false }: { name?: string; selected?: boolean } = {} ) =>
-		envVariables.VIEWPORT_NAME === 'mobile'
-			? `${ legacyNavTabParent } a[aria-current="${ selected }"]:has(span:has-text("${ name }"))`
-			: `${ navTabParent } button[aria-selected="${ selected }"]:has-text("${ name }")`,
-	navTabMobileToggleButton: `${ legacyNavTabParent } button.section-nav__mobile-header`,
+		`${ navTabParent } a[aria-current="${ selected }"]:has(span:has-text("${ name }"))`,
+	navTabMobileToggleButton: `${ navTabParent } button.section-nav__mobile-header`,
 };
 
 /**
@@ -106,7 +103,7 @@ export async function clickNavTabBase(
 		const navTabsButtonLocator = page.locator( tabSelectorMobile );
 		await navTabsButtonLocator.click( { noWaitAfter: true } );
 
-		const navTabIsOpenLocator = page.locator( `${ legacyNavTabParent }.is-open` );
+		const navTabIsOpenLocator = page.locator( `${ navTabParent }.is-open` );
 		await navTabIsOpenLocator.waitFor();
 	}
 
