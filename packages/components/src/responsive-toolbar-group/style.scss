@@ -1,3 +1,5 @@
+@use '@automattic/typography/styles/variables';
+
 .responsive-toolbar-group__dropdown .responsive-toolbar-group__button-item,
 .responsive-toolbar-group__dropdown .responsive-toolbar-group__menu-item,
 .responsive-toolbar-group__swipe .responsive-toolbar-group__swipe-item {
@@ -33,7 +35,7 @@
 		opacity: 0;
 
 		.responsive-toolbar-group__menu-item {
-			font-size: rem(13px);
+			font-size: variables.rem(13px);
 
 			&.is-selected {
 				color: var(--color-text-inverted);
