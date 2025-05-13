@@ -28,7 +28,6 @@ const Header: React.FC< Props > = ( { title } ) => {
 			<div className={ clsx( 'header', { 'has-sale-banner': hasSaleBanner } ) }>
 				<FormattedHeader
 					className="header__main-title"
-					disablePreventWidows
 					headerText={
 						title ?? translate( 'Security, performance, and marketing tools made for WordPress' )
 					}
