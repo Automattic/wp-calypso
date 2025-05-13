@@ -7,9 +7,7 @@ import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 class PluginRatings extends Component {
 	static propTypes = {
 		rating: PropTypes.number,
-		ratings: PropTypes?.oneOfType( [ PropTypes.object, PropTypes.array ] ),
 		slug: PropTypes?.string,
-		numRatings: PropTypes?.number,
 	};
 
 	buildReviewUrl() {
