@@ -1,13 +1,16 @@
 import { Locator, Page, Frame } from 'playwright';
 import envVariables from './env-variables';
 
-const navTabParent = 'div.section-nav';
+const navTabParent = 'div.stats-navigation__tabs';
+const legacyNavTabParent = 'div.section-nav';
 
 const selectors = {
 	// clickNavTab
 	navTabItem: ( { name = '', selected = false }: { name?: string; selected?: boolean } = {} ) =>
-		`${ navTabParent } a[aria-current="${ selected }"]:has(span:has-text("${ name }"))`,
-	navTabMobileToggleButton: `${ navTabParent } button.section-nav__mobile-header`,
+		envVariables.VIEWPORT_NAME === 'mobile'
+			? `${ legacyNavTabParent } a[aria-current="${ selected }"]:has(span:has-text("${ name }"))`
+			: `${ navTabParent } button[aria-selected="${ selected }"]:has-text("${ name }")`,
+	navTabMobileToggleButton: `${ legacyNavTabParent } button.section-nav__mobile-header`,
 };
 
 /**
@@ -60,10 +63,33 @@ export async function clickNavTab(
 	name: string,
 	{ force }: { force?: boolean } = {}
 ): Promise< void > {
+	await clickNavTabBase( page, name, selectors.navTabItem, selectors.navTabMobileToggleButton, {
+		force,
+	} );
+}
+
+/**
+ * Locates and clicks on a specified tab on the NavTab.
+ *
+ * NavTabs are used throughout calypso to contain sub-pages within the parent page.
+ * For instance, on the Media gallery page a NavTab is used to filter the gallery to
+ * show a specific category of gallery items.
+ *
+ * @param {Page} page Underlying page on which interactions take place.
+ * @param {string} name Name of the tab to be clicked.
+ * @throws {Error} If the tab name is not the active tab.
+ */
+export async function clickNavTabBase(
+	page: Page,
+	name: string,
+	tabSelector: ( params: { name?: string; selected?: boolean } ) => string,
+	tabSelectorMobile: string,
+	{ force }: { force?: boolean } = {}
+): Promise< void > {
 	// Short circuit operation if the active tab and target tabs are the same.
 	// Strip numerals from the extracted tab name to account for the slightly
 	// different implementation in PostsPage.
-	const selectedTabLocator = page.locator( selectors.navTabItem( { selected: true } ) );
+	const selectedTabLocator = page.locator( tabSelector( { selected: true } ) );
 	const selectedTabName = await selectedTabLocator.innerText();
 	if ( selectedTabName.replace( /[0-9]|,/g, '' ) === name ) {
 		return;
@@ -71,29 +97,27 @@ export async function clickNavTab(
 
 	// If force option is specified, force click using a `dispatchEvent`.
 	if ( force ) {
-		return await page.dispatchEvent( selectors.navTabItem( { name: name } ), 'click' );
+		return await page.dispatchEvent( tabSelector( { name: name } ), 'click' );
 	}
 
 	// Mobile view - navtabs become a dropdown and thus it must be opened first.
 	if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
 		// Open the Navtabs which now act as a pseudo-dropdown menu.
-		const navTabsButtonLocator = page.locator( selectors.navTabMobileToggleButton );
+		const navTabsButtonLocator = page.locator( tabSelectorMobile );
 		await navTabsButtonLocator.click( { noWaitAfter: true } );
 
-		const navTabIsOpenLocator = page.locator( `${ navTabParent }.is-open` );
+		const navTabIsOpenLocator = page.locator( `${ legacyNavTabParent }.is-open` );
 		await navTabIsOpenLocator.waitFor();
 	}
 
 	// Click on the intended item and wait for navigation to finish.
-	const navTabItem = page.locator( selectors.navTabItem( { name: name, selected: false } ) );
+	const navTabItem = page.locator( tabSelector( { name: name, selected: false } ) );
 
 	const regex = new RegExp( `.*/${ name.toLowerCase() }/.*` );
 	await Promise.all( [ page.waitForURL( regex ), navTabItem.click() ] );
 
 	// Final verification, check that we are now on the expected navtab.
-	const newSelectedTabLocator = page.locator(
-		selectors.navTabItem( { name: name, selected: true } )
-	);
+	const newSelectedTabLocator = page.locator( tabSelector( { name: name, selected: true } ) );
 	const newSelectedTabName = await newSelectedTabLocator.innerText();
 
 	if ( newSelectedTabName.replace( /[0-9]|,/g, '' ) !== name ) {

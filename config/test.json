@@ -117,7 +117,7 @@
 		"ssr/prefetch-timebox": true,
 		"stats/chart-library": true,
 		"stats/empty-module-traffic": true,
-		"stats/navigation-improvement": false,
+		"stats/navigation-improvement": true,
 		"subscribers-helper-library": true,
 		"themes/premium": true,
 		"upgrades/redirect-payments": true,
