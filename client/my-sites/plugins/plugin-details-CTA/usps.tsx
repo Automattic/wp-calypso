@@ -7,8 +7,8 @@ import {
 	PLAN_ECOMMERCE_TRIAL_MONTHLY,
 	getPlan,
 } from '@automattic/calypso-products';
-import { Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
+import { Icon, check } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { IntervalLength } from 'calypso/my-sites/marketplace/components/billing-interval-switcher/constants';
 import PluginDetailsSidebarUSP from 'calypso/my-sites/plugins/plugin-details-sidebar-usp';
@@ -43,13 +43,12 @@ const StyledLi = styled.li`
 
 	svg {
 		min-width: 16px;
-		margin-right: 8px;
-		margin-top: 4px;
+		margin-right: 4px;
 	}
 `;
 
-const GreenGridicon = styled( Gridicon )`
-	color: var( --studio-green-50 );
+const GreenGridicon = styled( Icon )`
+	fill: var( --studio-green-50 );
 `;
 
 const useRequiredPlan = ( shouldUpgrade: boolean ) => {
@@ -105,7 +104,7 @@ export const USPS: React.FC< Props > = ( { isMarketplaceProduct, billingPeriod }
 				<StyledUl>
 					{ filteredUSPS.map( ( usp, i ) => (
 						<StyledLi key={ `usp-${ i }` }>
-							<GreenGridicon icon="checkmark" size={ 16 } />
+							<GreenGridicon icon={ check } size={ 24 } />
 							<span>{ usp }</span>
 						</StyledLi>
 					) ) }
@@ -202,7 +201,7 @@ export const PlanUSPS: React.FC< Props > = ( {
 				<StyledUl>
 					{ filteredUSPS.map( ( usp, i ) => (
 						<StyledLi key={ `usps__-${ i }` }>
-							<GreenGridicon icon="checkmark" size={ 16 } />
+							<GreenGridicon icon={ check } size={ 24 } />
 							<span>{ usp }</span>
 						</StyledLi>
 					) ) }
