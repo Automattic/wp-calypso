@@ -141,6 +141,7 @@ const TabNav = ( { validNavItems, interval, slugPath, adminUrl, selectedItem, sh
 			className="stats-navigation__tabs"
 			tabs={ tabs }
 			onSelect={ ( tabName ) => {
+				// Skip navigation if the clicked tab is already active to avoid redundant actions.
 				if ( tabName !== selectedItem ) {
 					const tab = tabs.find( ( { name } ) => name === tabName );
 
