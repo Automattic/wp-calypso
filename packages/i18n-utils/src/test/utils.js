@@ -1,5 +1,6 @@
 import {
 	getMappedLanguageSlug,
+	getNumericFirstDayOfWeek,
 	removeLocaleFromPathLocaleInFront,
 	addLocaleToPathLocaleInFront,
 } from '../';
@@ -19,6 +20,14 @@ describe( '#getMappedLanguageSlug', () => {
 		expect( getMappedLanguageSlug( 'en' ) ).toBe( 'en' );
 		expect( getMappedLanguageSlug( 'de' ) ).toBe( 'de' );
 		expect( getMappedLanguageSlug( 'he' ) ).toBe( 'he' );
+	} );
+} );
+
+describe( '#getNumericFirstDayOfWeek', () => {
+	test( 'should correctly return the first day of week based on locale', () => {
+		expect( getNumericFirstDayOfWeek( 'en', 7 ) ).toBe( 7 ); // Sunday
+		expect( getNumericFirstDayOfWeek( 'de', 1 ) ).toBe( 1 ); // Monday
+		expect( getNumericFirstDayOfWeek( 'wrong', 3 ) ).toBe( 1 ); // Wrong locales cause default to be used
 	} );
 } );
 

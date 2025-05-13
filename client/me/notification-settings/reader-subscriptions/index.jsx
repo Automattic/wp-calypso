@@ -1,4 +1,5 @@
 import { Card, FormLabel, Dialog } from '@automattic/components';
+import { getNumericFirstDayOfWeek, withLocale } from '@automattic/i18n-utils';
 import { Button, CheckboxControl } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
 import { flowRight as compose } from 'lodash';
@@ -112,8 +113,9 @@ class NotificationSubscriptions extends Component {
 	}
 
 	render() {
-		const { teams } = this.props;
+		const { locale, teams } = this.props;
 		const isAutomattician = isAutomatticTeamMember( teams );
+		const startOfWeek = getNumericFirstDayOfWeek( locale ); // 1 being Monday and 7 being Sunday.
 
 		return (
 			<Main wideLayout className="reader-subscriptions__notifications-settings">
@@ -210,13 +212,18 @@ class NotificationSubscriptions extends Component {
 								onFocus={ this.handleFocusEvent( 'Email delivery window day' ) }
 								value={ this.props.getSetting( 'subscription_delivery_day' ) }
 							>
+								{ startOfWeek === 7 && (
+									<option value="0">{ this.props.translate( 'Sunday' ) }</option>
+								) }
 								<option value="1">{ this.props.translate( 'Monday' ) }</option>
 								<option value="2">{ this.props.translate( 'Tuesday' ) }</option>
 								<option value="3">{ this.props.translate( 'Wednesday' ) }</option>
 								<option value="4">{ this.props.translate( 'Thursday' ) }</option>
 								<option value="5">{ this.props.translate( 'Friday' ) }</option>
 								<option value="6">{ this.props.translate( 'Saturday' ) }</option>
-								<option value="0">{ this.props.translate( 'Sunday' ) }</option>
+								{ startOfWeek === 1 && (
+									<option value="0">{ this.props.translate( 'Sunday' ) }</option>
+								) }
 							</FormSelect>
 
 							<FormSelect
@@ -366,6 +373,7 @@ export default compose(
 	connect( mapStateToProps, mapDispatchToProps ),
 	localize,
 	protectForm,
+	withLocale,
 	withLocalizedMoment,
 	withFormBase
 )( NotificationSubscriptionsWithHooks );
