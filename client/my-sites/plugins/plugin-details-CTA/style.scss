@@ -50,7 +50,10 @@
 
 .plugin-details-cta__preinstalled {
 	width: 100%;
-	margin-bottom: 20px;
+}
+
+.plugin-details-cta__preinstalled p {
+	margin-bottom: 24px;
 }
 
 .plugin-details-cta__install .plugin-details-cta__install-button {
