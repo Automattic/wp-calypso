@@ -90,9 +90,9 @@ const PluginDetailsHeader = ( {
 				{ /* We want to accept rating 0, which means no rating for Marketplace products */ }
 				{ rating !== null && (
 					<div className="plugin-details-header__info">
-						<div className="plugin-details-header__info-title">{ translate( 'Ratings' ) }</div>
+						<div className="plugin-details-header__info-title">{ translate( 'Rating' ) }</div>
 						<div className="plugin-details-header__info-value">
-							<PluginRatings rating={ rating } />
+							<PluginRatings rating={ rating } slug={ plugin.slug } />
 							{ ( numberOfReviews > 0 || isMarketplaceProduct ) && (
 								<Button
 									borderless
@@ -113,12 +113,6 @@ const PluginDetailsHeader = ( {
 					</div>
 				) }
 				<div className="plugin-details-header__info">
-					<div className="plugin-details-header__info-title">{ translate( 'Last updated' ) }</div>
-					<div className="plugin-details-header__info-value">
-						{ moment.utc( plugin.last_updated, 'YYYY-MM-DD hh:mma' ).format( 'LL' ) }
-					</div>
-				</div>
-				<div className="plugin-details-header__info">
 					<div className="plugin-details-header__info-title">{ translate( 'Version' ) }</div>
 					<div className="plugin-details-header__info-value">
 						{ /* Show the default version if plugin is not installed */ }
@@ -136,6 +130,12 @@ const PluginDetailsHeader = ( {
 						</div>
 					</div>
 				) }
+				<div className="plugin-details-header__info">
+					<div className="plugin-details-header__info-title">{ translate( 'Last updated' ) }</div>
+					<div className="plugin-details-header__info-value">
+						{ moment.utc( plugin.last_updated, 'YYYY-MM-DD hh:mma' ).format( 'LL' ) }
+					</div>
+				</div>
 			</div>
 		</div>
 	);
