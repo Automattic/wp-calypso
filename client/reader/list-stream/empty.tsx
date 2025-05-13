@@ -32,7 +32,6 @@ export default function ListEmptyContent(): JSX.Element {
 			title={ translate( 'No recent posts' ) }
 			line={ translate( 'The sites in this list have not posted anything recently.' ) }
 			action={ action }
-			illustration=""
 		/>
 	);
 }

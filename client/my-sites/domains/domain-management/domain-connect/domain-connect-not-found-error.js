@@ -21,11 +21,7 @@ function DomainConnectNotFoundError( { translate } ) {
 
 	return (
 		<Main>
-			<EmptyContentComponent
-				illustration="/calypso/images/illustrations/illustration-404.svg"
-				title={ emptyContentTitle }
-				line={ emptyContentMessage }
-			/>
+			<EmptyContentComponent title={ emptyContentTitle } line={ emptyContentMessage } />
 		</Main>
 	);
 }

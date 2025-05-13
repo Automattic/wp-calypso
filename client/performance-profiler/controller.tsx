@@ -106,7 +106,6 @@ export const notFound = ( context: Context, next: () => void ) => {
 	context.primary = (
 		<EmptyContent
 			className="content-404"
-			illustration="/calypso/images/illustrations/illustration-404.svg"
 			title={ fixMe( {
 				text: 'Page not found.',
 				newCopy: translate( 'Page not found.' ),

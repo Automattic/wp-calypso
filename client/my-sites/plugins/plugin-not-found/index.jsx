@@ -24,7 +24,6 @@ export default function PluginNotFound() {
 				line={ translate( "The plugin you are looking for doesn't exist." ) }
 				action={ translate( 'Browse all plugins' ) }
 				actionURL={ isLoggedIn ? actionUrl : addLocaleToPathLocaleInFront( actionUrl ) }
-				illustration="/calypso/images/illustrations/illustration-404.svg"
 			/>
 		</Main>
 	);

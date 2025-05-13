@@ -100,7 +100,6 @@ export class CommentsManagement extends Component {
 						line={ preventWidows(
 							translate( "If you think you should, contact this site's administrator." )
 						) }
-						illustration="/calypso/images/illustrations/error.svg"
 					/>
 				) }
 				{ showCommentList && (

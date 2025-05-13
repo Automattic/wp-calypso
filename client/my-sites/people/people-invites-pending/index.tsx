@@ -39,7 +39,6 @@ export default function PeopleInvitesPending( props: Props ) {
 						newCopy: translate( 'The invites list is empty' ),
 						oldCopy: translate( 'Oops, the invites list is empty' ),
 					} ) }
-					illustration="/calypso/images/illustrations/illustration-empty-results.svg"
 				/>
 			) }
 		</Main>

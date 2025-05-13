@@ -42,7 +42,6 @@ export const PatternsCategoryNotFound = () => {
 				line={ line }
 				action={ action }
 				actionURL={ isLoggedIn ? '/patterns' : addLocaleToPathLocaleInFront( '/patterns' ) }
-				illustration="/calypso/images/illustrations/illustration-404.svg"
 			/>
 		</>
 	);

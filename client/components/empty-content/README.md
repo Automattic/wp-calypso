@@ -38,7 +38,7 @@ function render() {
 | ----------------------- | --------------- | ---------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
 | `title`\*               | `string`        | `'You haven't created any content yet.'` | The title to be displayed.                                                                                                                    |
 | `line`                  | `string`        | `null`                                   | A secondary line, usually leads to the call to action.                                                                                        |
-| `illustration`          | `url`           |                                          | The url string of an image path. Displays the [empty results](/calypso/images/illustrations/illustration-empty-results.svg) image by default. |
+| `illustration`          | `url`           | `null`                                   | The url string of an image path. Null to omit an illustration.              |
 | `illustrationWidth`     | `number`        | `null`                                   | Will display the image at native width unless a specific width is provided.                                                                   |
 | `action`                | `string/object` | `null`                                   | Label or React element used for the primary action button.                                                                                    |
 | `actionURL`             | `string`        | `null`                                   | `href` value for the primary action button.                                                                                                   |
@@ -47,7 +47,6 @@ function render() {
 | `actionDisabled`        | `bool`          | `null`                                   | Disables the button.                                                                                                                          |
 | `actionRef`             | `function`      | `null`                                   | Adds a ref to the button.                                                                                                                     |
 | `isCompact`             | `bool`          | `false`                                  | Shows a smaller version of the component.                                                                                                     |
-
 ### Additional props
 
 The component also supports a secondary action. This should be used sparingly.
@@ -67,12 +66,14 @@ The component also supports a secondary action. This should be used sparingly.
 	line="Would you like to start one?"
 	action="Create Site"
 	actionURL={ config( 'signup_url' ) + '?ref=calypso-section' }
-/>;
+/>
 ```
 
 ## General guidelines
 
+- Use the correct tone.
 - Use simple and clear language that empowers customers to move forward.
 - Be encouraging and never make customers feel unsuccessful or guilty because they haven’t used a product or feature.
 - Explain the steps a customer needs to take to activate a product or feature.
 - Use only one **primary** call-to-action button.
+- Ensure that any illustrations are on-brand.

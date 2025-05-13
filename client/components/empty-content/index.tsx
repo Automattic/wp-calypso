@@ -3,7 +3,6 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import React, { LegacyRef, RefObject } from 'react';
-import illustrationEmptyResults from 'calypso/assets/images/illustrations/illustration-empty-results.svg';
 import './style.scss';
 
 interface EmptyContentProps {
@@ -74,7 +73,7 @@ export default function EmptyContent( props: EmptyContentProps ): JSX.Element {
 		}
 	}
 
-	const { line, illustration = illustrationEmptyResults, isCompact = false } = props;
+	const { line, illustration, isCompact = false } = props;
 	const translate = useTranslate();
 	const action = props.action && primaryAction();
 	const secondaryActionEl = props.secondaryAction && secondaryAction();

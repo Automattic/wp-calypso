@@ -19,7 +19,6 @@ const NoPermissionsError = ( { title, translate } ) => (
 			line={ preventWidows(
 				translate( "If you think you should, contact this site's administrator." )
 			) }
-			illustration="/calypso/images/illustrations/error.svg"
 		/>
 	</Main>
 );

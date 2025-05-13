@@ -35,8 +35,6 @@ function PostTypeListEmptyContent( {
 				title={ title }
 				action={ action }
 				actionURL={ editPath }
-				illustration="/calypso/images/pages/illustration-pages.svg"
-				illustrationWidth={ 150 }
 			/>
 		</div>
 	);

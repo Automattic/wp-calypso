@@ -64,7 +64,6 @@ function TeamInvite( props: Props ) {
 						newCopy: translate( 'Only administrators can invite other people' ),
 						oldCopy: translate( 'Oops, only administrators can invite other people' ),
 					} ) }
-					illustration="/calypso/images/illustrations/illustration-empty-results.svg"
 				/>
 			</Main>
 		);

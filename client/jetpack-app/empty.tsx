@@ -8,7 +8,6 @@ const JetpackAppEmptyContent: React.FC = () => {
 	return (
 		<Main>
 			<EmptyContent
-				illustration="/calypso/images/illustrations/illustration-404.svg"
 				title={ fixMe( {
 					text: 'Page not found.',
 					newCopy: translate( 'Page not found.' ),

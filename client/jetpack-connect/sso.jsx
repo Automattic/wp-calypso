@@ -369,7 +369,6 @@ class JetpackSsoForm extends Component {
 		return (
 			<Main>
 				<EmptyContent
-					illustration="/calypso/images/illustrations/error.svg"
 					title={ fixMe( {
 						text: 'This URL should not be accessed directly',
 						newCopy: translate( 'This URL should not be accessed directly' ),

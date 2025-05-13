@@ -181,7 +181,6 @@ class PlansSetup extends Component {
 						'Oops! You need to select a Jetpack site to be able to setup your plan'
 					),
 				} ) }
-				illustration="/calypso/images/jetpack/jetpack-manage.svg"
 			/>
 		);
 	};
@@ -220,7 +219,6 @@ class PlansSetup extends Component {
 					oldCopy: translate( "Oh no! We can't install plugins on this site." ),
 				} ) }
 				line={ reason }
-				illustration="/calypso/images/jetpack/jetpack-manage.svg"
 			/>
 		);
 	};
