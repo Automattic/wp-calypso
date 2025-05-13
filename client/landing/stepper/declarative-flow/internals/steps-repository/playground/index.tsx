@@ -55,7 +55,7 @@ export const PlaygroundStep: StepType = ( { navigation, flow } ) => {
 					'post_status' => 'publish',
 					'posts_per_page' => 1,
 				) ) ) > 0;
-				echo $has_user_global_styles ? 'plans-playground-premium' : 'plans-default-wpcom';`,
+				echo $has_user_global_styles ? 'plans-playground-premium' : 'plans-playground';`, // Once we support simple sites in PG Onboarding flow, we should replace the fallback to plans-default-wpcom
 			} )
 			.then( ( res: { text: string } ) => {
 				setPgIntent( res.text );
