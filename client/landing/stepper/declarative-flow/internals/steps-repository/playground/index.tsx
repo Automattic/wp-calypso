@@ -59,10 +59,9 @@ export const PlaygroundStep: StepType = ( { navigation, flow } ) => {
 			} )
 			.then( ( res: { text: string } ) => {
 				setPgIntent( res.text );
-				window.localStorage.setItem(
-					'playground-plans-intent-' + query.get( 'playground' ),
-					res.text || DEFAULT_PLAN_INTENT
-				);
+				const keyName = 'playground-plans-intent-' + query.get( 'playground' );
+				window.localStorage.setItem( keyName, res.text || DEFAULT_PLAN_INTENT );
+				window.localStorage.setItem( keyName + '-ts', String( Math.floor( Date.now() / 1000 ) ) );
 			} )
 			.finally( () => {
 				setCalculatingIntent( false );
