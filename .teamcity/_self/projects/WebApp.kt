@@ -686,6 +686,7 @@ object CheckCodeStyleBranch : BuildType({
 			scriptContent = """
 				# In the future, we may add the stylelint cache here.
 				yarn run lint:css
+				yarn run lint:mixedindent
 			"""
 		}
 	}
