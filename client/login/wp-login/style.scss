@@ -691,8 +691,11 @@ $image-height: 47px;
 		height: auto;
 	}
 
-	.form-password-input__toggle {
-		top: 14px;
+	.login__form-userdata-input input {
+		padding: 16px;
+		font-size: 16px;
+		height: auto;
+		line-height: 1.5;
 	}
 
 	.form-input-validation {
@@ -793,8 +796,12 @@ $image-height: 47px;
 		clip-path: unset;
 	}
 
-	.components-button {
+	.components-button,
+	.components-input-control {
 		--color-accent: var(--color-gravatar);
+	}
+
+	.components-button {
 		--color-accent-60: color-mix(in srgb, var(--color-gravatar), #000 13%);
 	}
 
