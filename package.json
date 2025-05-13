@@ -246,7 +246,6 @@
 		"@babel/runtime": "^7.27.0",
 		"@pmmmwh/react-refresh-webpack-plugin": "^0.5.15",
 		"@signal-noise/stylelint-scales": "^2.0.3",
-		"@storybook/cli": "^8.6.12",
 		"@storybook/react": "^8.6.12",
 		"@tanstack/eslint-plugin-query": "^5.14.6",
 		"@testing-library/jest-dom": "^6.6.3",
