@@ -132,7 +132,7 @@ export const PlanUSPS: React.FC< Props > = ( {
 	const planDisplayCost = useSelector( ( state ) => {
 		return getProductDisplayCost( state, requiredPlan || '' );
 	} );
-	const monthlyLabel = translate( 'Monthly' );
+	const monthlyLabel = translate( 'month' );
 	const annualLabel = translate( 'Annually' );
 	const periodicityLabel = isAnnualPeriod ? annualLabel : monthlyLabel;
 
