@@ -175,7 +175,9 @@ class InviteAccept extends Component {
 				newCopy: this.props.translate( 'That invite is not valid', {
 					context: 'Title that is displayed to users when attempting to accept an invalid invite.',
 				} ),
-				oldCopy: this.props.translate( 'Oops, that invite is not valid' ),
+				oldCopy: this.props.translate( 'Oops, that invite is not valid', {
+					context: 'Title that is display to users when attempting to accept an invalid invite.',
+				} ),
 				translationOptions: {
 					context: 'Title that is displayed to users when attempting to accept an invalid invite.',
 				},
