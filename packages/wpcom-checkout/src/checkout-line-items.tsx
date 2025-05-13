@@ -1192,7 +1192,7 @@ function CheckoutLineItem( {
 	setRestorableProducts,
 	isPwpoUser,
 	onRemoveProduct,
-	// onRemoveProductClick,
+	onRemoveProductClick,
 	onRemoveProductCancel,
 	isAkPro500Cart,
 }: PropsWithChildren< {
@@ -1340,28 +1340,8 @@ function CheckoutLineItem( {
 							) }
 							disabled={ isDisabled }
 							onClick={ () => {
-								setRestorableProducts?.( [ ...( restorableProducts || [] ), product ] );
-								// setIsModalVisible( true );
-								// onRemoveProductClick?.( label );
-
-								let product_uuids_to_remove = [ product.uuid ];
-
-								// Gifts need to be all or nothing, to prevent leaving
-								// the site in a state where it requires other purchases
-								// in order to actually work correctly for the period of
-								// the gift (for example, gifting a plan renewal without
-								// a domain renewal would likely lead the site's domain
-								// to expire soon afterwards).
-								if ( product.is_gift_purchase ) {
-									product_uuids_to_remove = responseCart.products
-										.filter( ( cart_product ) => cart_product.is_gift_purchase )
-										.map( ( cart_product ) => cart_product.uuid );
-								}
-
-								Promise.all( product_uuids_to_remove.map( removeProductFromCart ) ).catch( () => {
-									// Nothing needs to be done here. CartMessages will display the error to the user.
-								} );
-								onRemoveProduct?.( label );
+								setIsModalVisible( true );
+								onRemoveProductClick?.( label );
 							} }
 						>
 							{ translate( 'Remove from cart' ) }
@@ -1373,7 +1353,7 @@ function CheckoutLineItem( {
 						closeModal={ () => {
 							setIsModalVisible( false );
 						} }
-						primaryAction={ () => {
+						primaryAction={ async () => {
 							let product_uuids_to_remove = [ product.uuid ];
 
 							// Gifts need to be all or nothing, to prevent leaving
@@ -1388,9 +1368,14 @@ function CheckoutLineItem( {
 									.map( ( cart_product ) => cart_product.uuid );
 							}
 
-							Promise.all( product_uuids_to_remove.map( removeProductFromCart ) ).catch( () => {
-								// Nothing needs to be done here. CartMessages will display the error to the user.
-							} );
+							await Promise.all( product_uuids_to_remove.map( removeProductFromCart ) ).catch(
+								() => {
+									// Nothing needs to be done here. CartMessages will display the error to the user.
+								}
+							);
+
+							setRestorableProducts?.( [ ...( restorableProducts || [] ), product ] );
+
 							onRemoveProduct?.( label );
 						} }
 						cancelAction={ () => {
