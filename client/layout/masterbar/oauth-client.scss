@@ -477,6 +477,10 @@
 		font-weight: 400;
 	}
 
+	.login__form .login__form-userdata .login__form-userdata-input input {
+		font-size: $font-body;
+	}
+
 	.login__form-action button {
 		font-size: $font-body;
 		line-height: 23px;
