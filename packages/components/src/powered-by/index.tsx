@@ -9,10 +9,8 @@ import { PoweredByProps } from './types';
 import { getAccessibleLogoText } from './utils';
 import './styles.scss';
 
-// TODO:
-// - use WordPress Logo instead?
-// - remove the dependency on the logos once all logos are updated and
-//   normalized to have the same visual "weight" and alignment given the same size.
+// TODO: remove the dependency on the logos once all logos are updated and
+// normalized to have the same visual "weight" and alignment given the same size.
 function getLogoProps( logo: React.ReactElement ) {
 	if ( logo.type === WooLogo ) {
 		return {
