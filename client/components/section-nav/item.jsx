@@ -56,11 +56,7 @@ class NavItem extends PureComponent {
 				<a
 					href={ this.props.path }
 					target={ target }
-					className={ clsx(
-						'section-nav-' + itemClassPrefix + '__link',
-						this.props.className,
-						'navigation-tab'
-					) }
+					className={ 'section-nav-' + itemClassPrefix + '__link' }
 					onClick={ onClick }
 					onMouseEnter={ this.preload }
 					tabIndex={ this.props.tabIndex || 0 }

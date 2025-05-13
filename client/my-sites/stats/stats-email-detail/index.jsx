@@ -232,11 +232,7 @@ class StatsEmailDetail extends Component {
 
 		return (
 			<>
-				<Main
-					className={ clsx( 'stats', 'stats__email-detail', {
-						'has-fixed-nav': ! config.isEnabled( 'stats/navigation-improvement' ),
-					} ) }
-				>
+				<Main className="has-fixed-nav stats__email-detail stats">
 					<QueryPosts siteId={ siteId } postId={ postId } />
 					<QueryPostStats siteId={ siteId } postId={ postId } />
 					<QueryEmailStats
@@ -399,7 +395,7 @@ class StatsEmailDetail extends Component {
 							</div>
 						</>
 					) : (
-						<Spinner baseClassName="calypso-spinner" />
+						<Spinner />
 					) }
 				</Main>
 			</>

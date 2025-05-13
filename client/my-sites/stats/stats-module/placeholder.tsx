@@ -20,7 +20,7 @@ const StatsModulePlaceholder: React.FC< StatsModulePlaceholderProps > = ( {
 
 	return (
 		<div className={ classes }>
-			<Spinner baseClassName="calypso-spinner" />
+			<Spinner />
 		</div>
 	);
 };

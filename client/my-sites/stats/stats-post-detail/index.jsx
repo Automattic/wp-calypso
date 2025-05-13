@@ -203,9 +203,8 @@ class StatsPostDetail extends Component {
 		}
 
 		const isWPAdmin = config.isEnabled( 'is_odyssey' );
-		const postDetailPageClasses = clsx( 'stats', {
+		const postDetailPageClasses = clsx( 'stats has-fixed-nav', {
 			'is-odyssey-stats': isWPAdmin,
-			'has-fixed-nav': ! config.isEnabled( 'stats/navigation-improvement' ),
 		} );
 
 		// TODO: Refactor navigationItems to a single object with backLink and title attributes.
