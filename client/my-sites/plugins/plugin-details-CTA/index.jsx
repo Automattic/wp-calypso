@@ -343,7 +343,7 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 				{ ! isJetpackSelfHosted && ! isMarketplaceProduct && (
 					<div className="plugin-details-cta__t-and-c">
 						{ translate(
-							'By installing, you agree to {{a}}WordPress.com’s Terms of Service{{/a}} and the {{thirdPartyTos}}Third-Party plugin Terms{{/thirdPartyTos}}.',
+							'By installing, you agree to {{a}}WordPress.com Terms of Service{{/a}} and {{thirdPartyTos}}Third-Party plugin Terms{{/thirdPartyTos}}.',
 							{
 								components: {
 									a: (
