@@ -39,7 +39,6 @@ interface LoginHeaderProps {
 		title: string;
 		icon: string;
 	} | null;
-	privateSite: boolean;
 	socialConnect: boolean;
 	twoStepNonce: string | null;
 	wccomFrom: string;
@@ -58,7 +57,6 @@ export function getHeaderText(
 	socialConnect: boolean,
 	linkingSocialService: string,
 	action: string,
-	privateSite: boolean,
 	oauth2Client: { title: string; icon: string } | null,
 	isWooJPC: boolean,
 	isFromMigrationPlugin: boolean,
@@ -108,10 +106,6 @@ export function getHeaderText(
 
 	if ( action === 'lostpassword' ) {
 		headerText = translate( 'Forgot your password?' );
-	}
-
-	if ( privateSite ) {
-		headerText = translate( 'This is a private WordPress.com site' );
 	}
 
 	if ( oauth2Client ) {
@@ -234,7 +228,6 @@ export function LoginHeader( {
 	isBlazePro,
 	linkingSocialService,
 	oauth2Client,
-	privateSite,
 	socialConnect,
 	twoStepNonce,
 	wccomFrom,
@@ -254,7 +247,6 @@ export function LoginHeader( {
 		socialConnect,
 		linkingSocialService,
 		action,
-		privateSite,
 		oauth2Client,
 		isWooJPC,
 		isFromMigrationPlugin,

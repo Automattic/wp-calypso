@@ -606,7 +606,6 @@ class Login extends Component {
 			isWhiteLogin,
 			isBlazePro,
 			linkingSocialService,
-			privateSite,
 			socialConnect,
 			translate,
 			twoStepNonce,
@@ -646,7 +645,6 @@ class Login extends Component {
 						isBlazePro={ isBlazePro }
 						linkingSocialService={ linkingSocialService }
 						oauth2Client={ oauth2Client }
-						privateSite={ privateSite }
 						socialConnect={ socialConnect }
 						translate={ translate }
 						twoStepNonce={ twoStepNonce }
