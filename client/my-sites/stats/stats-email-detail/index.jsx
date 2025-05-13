@@ -399,7 +399,7 @@ class StatsEmailDetail extends Component {
 							</div>
 						</>
 					) : (
-						<Spinner />
+						<Spinner baseClassName="calypso-spinner" />
 					) }
 				</Main>
 			</>
