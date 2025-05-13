@@ -17,8 +17,6 @@ import type {
 	ZendeskConversation,
 } from '@automattic/odie-client';
 
-const NO_MESSAGE_CONTENTS = [ '--', null, undefined, '' ];
-
 interface UseGetHistoryChatsResult {
 	supportInteractions: SupportInteraction[];
 	isLoadingInteractions: boolean;
@@ -54,18 +52,17 @@ const getOdieConversationsWithNoSupportInteractions = (
 };
 
 /**
- * Checks if the message content is one of the predefined "no message" contents.
- * @param text The message content to check.
- * @returns True if the message content is one of the predefined "no message" contents, false otherwise.
+ * Checks whether the last message from the specified conversation is not empty nor a predefined '--' token.
  */
-const isNoMessageContent = ( text: unknown ) => {
+const isValidLastMessageContent = ( conversation: OdieConversation | ZendeskConversation ) => {
+	const { text } = getLastMessage( { conversation } ) || {};
+
 	if ( text === null || text === undefined ) {
-		return NO_MESSAGE_CONTENTS.includes( text );
+		return false;
 	}
-	if ( typeof text === 'string' ) {
-		return NO_MESSAGE_CONTENTS.includes( text.trim() );
-	}
-	return false;
+
+	// '--' is a token returned by AI models when conversations should be deflected to human agents
+	return ! [ '', '--' ].includes( text.trim() );
 };
 
 /**
@@ -121,11 +118,12 @@ export const useGetHistoryChats = (): UseGetHistoryChatsResult => {
 			return;
 		}
 
+		// Merge Zendesk and Odie conversations, remove the ones with an invalid message, then sort them by recency
 		const conversations = [
 			...filterAndUpdateConversationsWithStatus( getZendeskConversations(), supportInteractions ),
 			...getOdieConversationsWithNoSupportInteractions( odieConversations, supportInteractions ),
 		]
-			.filter( ( conversation ) => ! isNoMessageContent( conversation.messages[ 0 ]?.text ) )
+			.filter( ( conversation ) => isValidLastMessageContent( conversation ) )
 			.sort( ( a, b ) => getLastMessageReceived( b ) - getLastMessageReceived( a ) );
 
 		const { recent, archived } = splitConversationsByRecency( conversations );
