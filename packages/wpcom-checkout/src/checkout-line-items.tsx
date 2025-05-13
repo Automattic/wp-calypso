@@ -29,7 +29,7 @@ import {
 import { formatCurrency } from '@automattic/number-formatters';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
-import { useState, PropsWithChildren, useRef } from 'react';
+import { useState, PropsWithChildren, useRef, Dispatch, SetStateAction } from 'react';
 import { getLabel, DefaultLineItemSublabel } from './checkout-labels';
 import {
 	getIntroductoryOfferIntervalDisplay,
@@ -1188,9 +1188,11 @@ function CheckoutLineItem( {
 	isSummary,
 	createUserAndSiteBeforeTransaction,
 	responseCart,
+	restorableProducts,
+	setRestorableProducts,
 	isPwpoUser,
 	onRemoveProduct,
-	onRemoveProductClick,
+	// onRemoveProductClick,
 	onRemoveProductCancel,
 	isAkPro500Cart,
 }: PropsWithChildren< {
@@ -1201,6 +1203,8 @@ function CheckoutLineItem( {
 	isSummary?: boolean;
 	createUserAndSiteBeforeTransaction?: boolean;
 	responseCart: ResponseCart;
+	restorableProducts?: ResponseCartProduct[];
+	setRestorableProducts?: Dispatch< SetStateAction< ResponseCartProduct[] > >;
 	isPwpoUser?: boolean;
 	onRemoveProduct?: ( label: string ) => void;
 	onRemoveProductClick?: ( label: string ) => void;
@@ -1336,8 +1340,28 @@ function CheckoutLineItem( {
 							) }
 							disabled={ isDisabled }
 							onClick={ () => {
-								setIsModalVisible( true );
-								onRemoveProductClick?.( label );
+								setRestorableProducts?.( [ ...( restorableProducts || [] ), product ] );
+								// setIsModalVisible( true );
+								// onRemoveProductClick?.( label );
+
+								let product_uuids_to_remove = [ product.uuid ];
+
+								// Gifts need to be all or nothing, to prevent leaving
+								// the site in a state where it requires other purchases
+								// in order to actually work correctly for the period of
+								// the gift (for example, gifting a plan renewal without
+								// a domain renewal would likely lead the site's domain
+								// to expire soon afterwards).
+								if ( product.is_gift_purchase ) {
+									product_uuids_to_remove = responseCart.products
+										.filter( ( cart_product ) => cart_product.is_gift_purchase )
+										.map( ( cart_product ) => cart_product.uuid );
+								}
+
+								Promise.all( product_uuids_to_remove.map( removeProductFromCart ) ).catch( () => {
+									// Nothing needs to be done here. CartMessages will display the error to the user.
+								} );
+								onRemoveProduct?.( label );
 							} }
 						>
 							{ translate( 'Remove from cart' ) }
