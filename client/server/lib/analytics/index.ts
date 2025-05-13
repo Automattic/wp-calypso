@@ -61,16 +61,11 @@ const analytics = {
 		},
 
 		recordEvent: function (
-			eventName: string,
+			eventName: `calypso_${ string }`,
 			eventProperties: Record< string, string | undefined >,
 			req: Request
 		) {
 			eventProperties = eventProperties || {};
-
-			if ( eventName.indexOf( 'calypso_' ) !== 0 ) {
-				console.warn( '- Event name must be prefixed by "calypso_"' );
-				return;
-			}
 
 			// Remove properties that have an undefined value
 			// This allows a caller to easily remove properties from the recorded set by setting them to undefined

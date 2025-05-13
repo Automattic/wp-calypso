@@ -118,36 +118,30 @@ const mediaQueryOptions: Record< string, QueryOption > = {
 	'480px-960px': { min: 480, max: 960 },
 };
 
-export function getMediaQueryList( breakpoint: string ): undefined | QueryItem {
-	if ( ! mediaQueryOptions.hasOwnProperty( breakpoint ) ) {
-		try {
-			// eslint-disable-next-line no-console
-			console.warn( 'Undefined breakpoint used in `mobile-first-breakpoint`', breakpoint );
-		} catch ( e ) {}
-		return undefined;
-	}
+type Breakpoint = keyof typeof mediaQueryOptions;
 
+export function getMediaQueryList( breakpoint: Breakpoint ): undefined | QueryItem {
 	return createMediaQueryList( mediaQueryOptions[ breakpoint ] );
 }
 
 /**
  * Returns whether the current window width matches a breakpoint.
- * @param {string} breakpoint The breakpoint to consider.
- * @returns {boolean|undefined} Whether the provided breakpoint is matched.
+ * @param breakpoint The breakpoint to consider.
+ * @returns Whether the provided breakpoint is matched.
  */
-export function isWithinBreakpoint( breakpoint: string ): boolean | undefined {
+export function isWithinBreakpoint( breakpoint: Breakpoint ): boolean | undefined {
 	const mediaQueryList = getMediaQueryList( breakpoint );
 	return mediaQueryList ? mediaQueryList.matches : undefined;
 }
 
 /**
  * Registers a listener to be notified of changes to breakpoint matching status.
- * @param {string} breakpoint The breakpoint to consider.
- * @param {Function} listener The listener to be called on change.
- * @returns {Function} The function to be called when unsubscribing.
+ * @param breakpoint The breakpoint to consider.
+ * @param listener The listener to be called on change.
+ * @returns The function to be called when unsubscribing.
  */
 export function subscribeIsWithinBreakpoint(
-	breakpoint: string,
+	breakpoint: Breakpoint,
 	listener: ListenerCallback
 ): UnsubcribeCallback {
 	if ( ! listener ) {
