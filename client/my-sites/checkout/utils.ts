@@ -1,4 +1,6 @@
+import { isMonthly, isWpComPlan, getMonthlyPlanByYearly } from '@automattic/calypso-products';
 import { doesStringResembleDomain } from '@automattic/onboarding';
+import { ResponseCartProduct } from '@automattic/shopping-cart';
 import { translate } from 'i18n-calypso';
 import { untrailingslashit } from 'calypso/lib/route';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -134,4 +136,23 @@ export function isContextSourceMyJetpack( context: Context ): boolean {
 export function getAffiliateCouponLabel(): string {
 	// translators: The label of the coupon line item in checkout
 	return translate( 'Exclusive Offer Applied' );
+}
+
+export function getWpcomPlanTotalIfPaidMonthly(
+	product: ResponseCartProduct,
+	plans: any
+): number | undefined {
+	if ( isWpComPlan( product?.product_slug ) && ! isMonthly( product?.product_slug ) ) {
+		const monthlyPlanSlug = getMonthlyPlanByYearly( product?.product_slug );
+		if (
+			monthlyPlanSlug &&
+			plans?.[ monthlyPlanSlug ] &&
+			product.months_per_bill_period &&
+			plans[ monthlyPlanSlug ].pricing.originalPrice.monthly
+		) {
+			return (
+				product.months_per_bill_period * plans[ monthlyPlanSlug ].pricing.originalPrice.monthly
+			);
+		}
+	}
 }
