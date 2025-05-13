@@ -13,6 +13,7 @@ function HomepageHeader() {
 }
 
 export default function Home() {
+	0 - '';
 	return (
 		<Layout>
 			<HomepageHeader />
