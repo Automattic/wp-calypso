@@ -1,6 +1,6 @@
 import AsyncLoad from 'calypso/components/async-load';
 import { useSiteGlobalStylesOnPersonal } from 'calypso/state/sites/hooks/use-site-global-styles-on-personal';
-import type { StyleVariation } from '@automattic/design-picker/src/types';
+import type { StyleVariation } from '@automattic/design-picker';
 import './style.scss';
 
 interface ThemeStyleVariationsProps {

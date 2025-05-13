@@ -11,6 +11,7 @@ import {
 } from 'calypso/reader/controller-helper';
 import { recordTrack } from 'calypso/reader/stats';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import getReaderTagBySlug from 'calypso/state/reader/tags/selectors/get-reader-tag-by-slug';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import renderHeaderSection from '../lib/header-section';
@@ -23,8 +24,9 @@ export const tagListing = ( context, next ) => {
 	const tagSlug = decodeURIComponent(
 		trim( context.params.tag ).toLowerCase().replace( /\s+/g, '-' ).replace( /-{2,}/g, '-' )
 	);
-	const tagTitle = titlecase( trim( context.params.tag ) ).replace( /[-_]/g, ' ' );
 	const state = context.store.getState();
+	const tag = getReaderTagBySlug( state, tagSlug );
+	const tagTitle = tag?.title || titlecase( trim( context.params.tag ) ).replace( /[-_]/g, ' ' );
 
 	const encodedTag = encodeURIComponent( tagSlug ).toLowerCase();
 
@@ -64,6 +66,7 @@ export const tagListing = ( context, next ) => {
 				streamKey={ streamKey }
 				encodedTagSlug={ encodedTag }
 				decodedTagSlug={ tagSlug }
+				initialTitle={ tagTitle }
 				sort={ context.query.sort }
 				trackScrollPage={ trackScrollPage.bind(
 					// eslint-disable-line

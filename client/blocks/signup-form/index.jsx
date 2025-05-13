@@ -105,7 +105,6 @@ class SignupForm extends Component {
 		isSocialFirst: PropTypes.bool,
 		isSocialSignupEnabled: PropTypes.bool,
 		locale: PropTypes.string,
-		notYouText: PropTypes.oneOfType( [ PropTypes.string, PropTypes.object ] ),
 		positionInFlow: PropTypes.number,
 		redirectToAfterLoginUrl: PropTypes.string,
 		save: PropTypes.func,
@@ -1125,29 +1124,6 @@ class SignupForm extends Component {
 					redirectPath={ this.props.redirectToAfterLoginUrl }
 					isWoo={ this.props.isWoo }
 					isBlazePro={ this.props.isBlazePro }
-					notYouText={
-						this.props.notYouText ||
-						this.props.translate(
-							'Not you?{{br/}} Sign out or log in with {{link}}another account{{/link}}',
-							{
-								components: {
-									br: <br />,
-									link: (
-										<button
-											type="button"
-											id="loginAsAnotherUser"
-											className="continue-as-user__change-user-link"
-											onClick={ this.handleOnChangeAccount }
-										/>
-									),
-								},
-								args: {
-									userName: this.props.currentUser.display_name || this.props.currentUser.username,
-								},
-								comment: 'Link to continue login as different user',
-							}
-						)
-					}
 				/>
 			);
 		}

@@ -2,7 +2,7 @@ import { Icon, institution } from '@wordpress/icons';
 import CountCard from '../count-card';
 
 export default {
-	title: 'packages/components/Highlight Cards/CountCard',
+	title: 'Unaudited/Highlight Cards/CountCard',
 	component: CountCard,
 	argTypes: {
 		heading: { control: 'text' },

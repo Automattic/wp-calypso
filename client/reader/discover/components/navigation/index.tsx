@@ -1,5 +1,4 @@
-import { useLocale } from '@automattic/i18n-utils/src/locale-context';
-import { addLocaleToPathLocaleInFront } from '@automattic/i18n-utils/src/utils';
+import { addLocaleToPathLocaleInFront, useLocale } from '@automattic/i18n-utils';
 import { translate } from 'i18n-calypso';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';

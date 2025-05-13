@@ -20,9 +20,8 @@ const badgeOptions: Record< string, SummaryButtonBadgeProps[] > = {
 };
 
 const meta = {
-	title: 'packages/components/SummaryButton',
+	title: 'SummaryButton',
 	component: SummaryButton,
-	tags: [ 'autodocs' ],
 	argTypes: {
 		decoration: {
 			control: 'select',

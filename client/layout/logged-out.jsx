@@ -205,7 +205,7 @@ const LayoutLoggedOut = ( {
 		! isReaderSearchPage &&
 		! isReaderDiscoverPage
 	) {
-		const nonMonochromeSections = [ 'plugins' ];
+		const nonMonochromeSections = [ 'plugins', 'themes', 'theme' ];
 
 		const className = clsx( {
 			'is-style-monochrome':

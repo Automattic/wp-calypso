@@ -79,7 +79,6 @@ const enhanceContextWithLogin = ( context ) => {
 			socialService={ socialService }
 			socialServiceResponse={ socialServiceResponse }
 			socialConnect={ flow === 'social-connect' }
-			privateSite={ flow === 'private-site' }
 			domain={ ( query && query.domain ) || null }
 			fromSite={ ( query && query.site ) || null }
 			signupUrl={ ( query && query.signup_url ) || null }
