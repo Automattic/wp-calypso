@@ -240,7 +240,7 @@ class NotificationSubscriptions extends Component {
 								onFocus={ this.handleFocusEvent( 'Email delivery format' ) }
 								value={ this.props.getSetting( 'subscription_delivery_mail_option' ) }
 							>
-								<option value="html">{ this.props.translate( 'HTML' ) }</option>
+								<option value="html">{ this.props.translate( 'Visual (HTML)' ) }</option>
 								<option value="text">{ this.props.translate( 'Plain text' ) }</option>
 							</FormSelect>
 						</FormFieldset>
