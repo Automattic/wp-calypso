@@ -80,15 +80,15 @@ async function initialize( calypsoReduxStore: Store ) {
 	const hasAnySites = userHasAnySites( calypsoReduxStore.getState() );
 
 	if ( includeDomainsStep ) {
-		return [ STEPS.UNIFIED_DOMAINS, STEPS.UNIFIED_PLANS, STEPS.PROCESSING ] as const;
+		return [ STEPS.UNIFIED_DOMAINS, STEPS.UNIFIED_PLANS, STEPS.PROCESSING, STEPS.ERROR ] as const;
 	}
 
 	if ( hasAnySites ) {
-		return [ STEPS.PICK_SITE, STEPS.UNIFIED_DOMAINS, STEPS.UNIFIED_PLANS, STEPS.PROCESSING ] as const;
+		return [ STEPS.PICK_SITE, STEPS.UNIFIED_DOMAINS, STEPS.UNIFIED_PLANS, STEPS.PROCESSING, STEPS.ERROR ] as const;
 	}
 
 	// We need `as const` to promise TS that these steps won't change later.
-	return [ STEPS.UNIFIED_PLANS, STEPS.PROCESSING ] as const;
+	return [ STEPS.UNIFIED_PLANS, STEPS.PROCESSING, STEPS.ERROR ] as const;
 }
 
 export const exampleFlow: FlowV2< typeof initialize > = {
@@ -133,15 +133,25 @@ export const exampleFlow: FlowV2< typeof initialize > = {
 
 					// setPendingAction allows you to enqueue any promise.
 					setPendingAction( () => createSite() );
+					navigate( 'processing' );
 					break;
 				}
 				case 'processing': {
-					// The processing step is a special step. It will pick up the pending action we set above, run it, and await it.
-					// It will show a progress bar during that time.
-					// Then it will `submit` whatever your pendingAction resolves to. In this example, that would be a site object.
-					const createdSiteId = providedDependencies.siteId;
-					window.location = `/checkout/${ createdSiteId }`;
-					break;
+					// The processing step is a special step:
+					// 1. It will pick up the pending action we set above, run it, and await it. It will show a progress bar during that time. Then it will `submit` whatever your pendingAction resolves to. In this example, that would be a site object.
+					// 2. If your promise rejects (throws), it will store the error in the store. Then, you can redirect to the `error` step and it will render that error nicely.
+					if ( providedDependencies.processingResult = ProcessingResult.Success ) {
+						if ( providedDependencies.goToCheckout ) {
+							const createdSiteId = providedDependencies.siteId;
+							window.location = `/checkout/${ createdSiteId }`;
+						} else {
+							window.location = `/home/${ createdSiteId }`;							
+						}
+						break;
+					} else {
+						// an error has occurred. 
+						navigate( 'error' );
+					}
 				}
 			}
 		};
@@ -197,6 +207,9 @@ async function initialize() {
 }
 ```
 
+#### Pending actions
+
+
 ### Notes
 
 1. A successful flow is a rare event, so most flows are sadly ephemeral. Please keep as much logic, CSS, and code as possible into the flow folder itself. So that when it's deleted, clean up is easy.
@@ -210,7 +223,9 @@ After deleting your flow, please setup a redirect for it [here](/client/landing/
 
 ### Making a Step
 
-**Note**: Before making a step, please make sure there isn't already a suitable step in [`steps.tsx`](/client/landing/stepper/declarative-flow/internals/steps.tsx). If you do make a step you'll have to add it to that file.
+**Note**: Before making a step, please make sure there isn't already a suitable step in [`steps.tsx`](/client/landing/stepper/declarative-flow/internals/steps.tsx). If you do make a step you'll have to register it in that file.
+
+Steps should live in `client/landing/stepper/declarative-flow/internals/steps-repository`.
 
 **Note**: Please make sure that your step has a unique slug.
 
