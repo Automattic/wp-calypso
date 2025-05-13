@@ -213,5 +213,9 @@ function UnforwardedBreadcrumbs(
  * For accessibility, **it is important that the current page is included as the
  * final item in the breadcrumb trail**. This ensures screen reader users
  * receive the full navigational context.
+ *
+ * Note: for the Breadcrumbs component to work properly in compact mode, make
+ * sure that the implicit component's width is not affected by changes in the
+ * document's body padding.
  */
 export const Breadcrumbs = forwardRef( UnforwardedBreadcrumbs );

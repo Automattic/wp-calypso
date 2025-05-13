@@ -115,7 +115,7 @@ describe( 'Breadcrumbs', () => {
 		const consoleLog = jest.fn();
 		render(
 			<Breadcrumbs
-				items={ THREE_ITEMS }
+				items={ FIVE_ITEMS }
 				renderItemLink={ ( { label, href, ...props } ) => {
 					const onClick = ( event: React.MouseEvent< HTMLAnchorElement > ) => {
 						props.onClick?.( event );
@@ -128,11 +128,27 @@ describe( 'Breadcrumbs', () => {
 						</a>
 					);
 				} }
+				variant="compact"
+				showCurrentItem
 			/>
 		);
-		const secondItemLabel = THREE_ITEMS[ 1 ].label;
-		await user.click( screen.getByRole( 'link', { name: secondItemLabel } ) );
+		const firstItemLabel = FIVE_ITEMS[ 0 ].label;
+		await user.click( screen.getByRole( 'link', { name: firstItemLabel } ) );
 		expect( consoleLog ).toHaveBeenCalledTimes( 1 );
+		expect( consoleLog ).toHaveBeenCalledWith( `clicked ${ firstItemLabel }` );
+
+		// The renderProp should not be applied to the current item.
+		// We have two items with the same label due to the internal implementation
+		// for calculating when to render as 'compact'.
+		await user.click( screen.getAllByText( FIVE_ITEMS[ FIVE_ITEMS.length - 1 ].label )[ 1 ] );
+		expect( consoleLog ).toHaveBeenCalledTimes( 1 );
+
+		// Also test the dropdown menu items.
+		const dropdownTrigger = screen.getByRole( 'button', { name: 'More breadcrumb items' } );
+		await user.click( dropdownTrigger );
+		const secondItemLabel = FIVE_ITEMS[ 1 ].label;
+		await user.click( screen.getByRole( 'menuitem', { name: secondItemLabel } ) );
+		expect( consoleLog ).toHaveBeenCalledTimes( 2 );
 		expect( consoleLog ).toHaveBeenCalledWith( `clicked ${ secondItemLabel }` );
 	} );
 } );
