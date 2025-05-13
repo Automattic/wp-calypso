@@ -109,4 +109,30 @@ describe( 'Breadcrumbs', () => {
 			screen.queryByRole( 'button', { name: 'More breadcrumb items' } )
 		).not.toBeInTheDocument();
 	} );
+
+	it( 'renders a custom item link', async () => {
+		const user = userEvent.setup();
+		const consoleLog = jest.fn();
+		render(
+			<Breadcrumbs
+				items={ THREE_ITEMS }
+				renderItemLink={ ( { label, href, ...props } ) => {
+					const onClick = ( event: React.MouseEvent< HTMLAnchorElement > ) => {
+						props.onClick?.( event );
+						event.preventDefault();
+						consoleLog( `clicked ${ label }` );
+					};
+					return (
+						<a href={ href } { ...props } onClick={ onClick }>
+							{ label }
+						</a>
+					);
+				} }
+			/>
+		);
+		const secondItemLabel = THREE_ITEMS[ 1 ].label;
+		await user.click( screen.getByRole( 'link', { name: secondItemLabel } ) );
+		expect( consoleLog ).toHaveBeenCalledTimes( 1 );
+		expect( consoleLog ).toHaveBeenCalledWith( `clicked ${ secondItemLabel }` );
+	} );
 } );

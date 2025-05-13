@@ -66,7 +66,8 @@ export const WithCustomItem: Story = {
 			const onClick = ( event: React.MouseEvent< HTMLAnchorElement > ) => {
 				props.onClick?.( event );
 				event.preventDefault();
-				alert( `Router navigation to ${ href }` );
+				// eslint-disable-next-line no-console
+				console.log( `Router navigation to ${ label }` );
 			};
 
 			return (
