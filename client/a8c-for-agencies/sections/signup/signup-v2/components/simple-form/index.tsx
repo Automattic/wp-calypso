@@ -168,6 +168,7 @@ const SimpleForm = ( { initialValues, onSubmit, referer }: Props ) => {
 					}
 				)
 			) }
+			autocomplete="off"
 		>
 			<div className="field-mandatory-message">
 				{ translate( 'Fields marked with * are required' ) }
