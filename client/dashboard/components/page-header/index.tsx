@@ -46,11 +46,11 @@ export const PageHeader = ( {
 				{ decoration && (
 					<span className="client-dashboard-components-page-header-decoration">{ decoration }</span>
 				) }
-				<HStack spacing={ 4 } justify="space-between" alignment="flex-start">
+				<HStack spacing={ 3 } justify="space-between" alignment="flex-start">
 					<h1 className="client-dashboard-components-page-header-heading">{ title }</h1>
 					{ !! actions?.length && (
 						<HStack
-							spacing={ 4 }
+							spacing={ 2 }
 							justify="flex-end"
 							expanded={ false }
 							className="client-dashboard-components-page-header-actions"
@@ -60,7 +60,11 @@ export const PageHeader = ( {
 					) }
 				</HStack>
 			</HStack>
-			{ description && <Text variant="muted">{ description }</Text> }
+			{ description && (
+				<Text variant="muted" className="client-dashboard-components-page-header-description">
+					{ description }
+				</Text>
+			) }
 		</VStack>
 	);
 };
