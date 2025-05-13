@@ -23,7 +23,6 @@ import type { AppConfig } from './context';
 
 interface RouteContext {
 	config?: AppConfig;
-	breadcrumbItemLabel?: string;
 }
 
 const rootRoute = createRootRoute( { component: Root } );
@@ -109,11 +108,10 @@ const sitePerformanceRoute = createRoute( {
 const siteSettingsRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: 'settings',
-	loader: async ( { params: { siteSlug } } ) => {
-		await queryClient.ensureQueryData( siteSettingsQuery( siteSlug ) );
-		return {
-			breadcrumbItemLabel: __( 'Settings' ),
-		};
+	loader: ( { params: { siteSlug } } ) =>
+		queryClient.ensureQueryData( siteSettingsQuery( siteSlug ) ),
+	staticData: {
+		breadcrumbItemLabel: () => __( 'Settings' ),
 	},
 } ).lazy( () =>
 	import( '../sites/settings' ).then( ( d ) =>

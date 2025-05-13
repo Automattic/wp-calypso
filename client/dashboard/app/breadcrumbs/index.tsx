@@ -9,9 +9,10 @@ export default function Breadcrumbs() {
 
 	let hasParent = false;
 	matches.forEach( ( match ) => {
-		if ( match.loaderData?.breadcrumbItemLabel || hasParent ) {
+		const breadcrumbItemLabel = match.staticData?.breadcrumbItemLabel;
+		if ( breadcrumbItemLabel || hasParent ) {
 			items.push( {
-				label: match.loaderData?.breadcrumbItemLabel || '',
+				label: breadcrumbItemLabel?.() || '',
 				href: match.pathname,
 			} );
 			hasParent = true;
