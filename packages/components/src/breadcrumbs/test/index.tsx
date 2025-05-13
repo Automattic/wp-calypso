@@ -138,9 +138,14 @@ describe( 'Breadcrumbs', () => {
 		expect( consoleLog ).toHaveBeenCalledWith( `clicked ${ firstItemLabel }` );
 
 		// The renderProp should not be applied to the current item.
-		// We have two items with the same label due to the internal implementation
-		// for calculating when to render as 'compact'.
-		await user.click( screen.getAllByText( FIVE_ITEMS[ FIVE_ITEMS.length - 1 ].label )[ 1 ] );
+		// Since getByText would also match the offscreen copy, we are first
+		// finding the nav container via getByRole, which instead ignores the
+		// offscreen copy.
+		await user.click(
+			within( screen.getByRole( 'navigation', { name: 'Breadcrumbs' } ) ).getByText(
+				FIVE_ITEMS[ FIVE_ITEMS.length - 1 ].label
+			)
+		);
 		expect( consoleLog ).toHaveBeenCalledTimes( 1 );
 
 		// Also test the dropdown menu items.
