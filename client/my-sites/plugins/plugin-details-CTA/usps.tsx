@@ -24,6 +24,7 @@ import { PREINSTALLED_PLUGINS } from '../constants';
 
 const StyledUl = styled.ul`
 	margin-left: 0;
+	margin-bottom: 0;
 	list-style-type: none;
 `;
 

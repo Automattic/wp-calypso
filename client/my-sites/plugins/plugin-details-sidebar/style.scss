@@ -10,8 +10,7 @@
 }
 
 .plugin-details-sidebar__plugin-details-content {
-	margin-top: 32px;
-	padding-top: 32px;
+	padding-top: 24px;
 	border-style: solid none;
 	border-width: 1px;
 	border-color: #eee;
@@ -26,7 +25,6 @@
 	.value {
 		color: var(--studio-gray-90);
 		font-size: $font-body;
-		padding-bottom: 16px;
 
 		&.plugin-details-sidebar__active-installs-value {
 			font-size: $font-body;
