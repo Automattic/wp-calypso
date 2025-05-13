@@ -6,9 +6,6 @@ import ActionItem from './index';
 const meta = {
 	title: 'ActionItem',
 	component: ActionItem,
-	parameters: {
-		actions: { argTypesRegex: '^on.*' },
-	},
 } satisfies Meta< typeof ActionItem >;
 
 export default meta;
@@ -18,17 +15,33 @@ export const Default: Story = {
 	args: {
 		title: 'Action title',
 		description: 'Action description',
-		decoration: <Icon icon={ cog } />,
-		actionLabel: 'Action',
+		action: {
+			label: 'Action',
+			callback: () => {},
+		},
 	},
 };
 
 export const IsDestructive: Story = {
 	args: {
+		title: 'Destructive action title',
+		description: 'Destructive action description',
+		action: {
+			label: 'Delete',
+			isDestructive: true,
+			RenderModal: () => <div>Are you sure you want to delete</div>,
+		},
+	},
+};
+
+export const WithIcon: Story = {
+	args: {
 		title: 'Action title',
 		description: 'Action description',
 		decoration: <Icon icon={ cog } />,
-		actionLabel: 'Action',
-		isDestructive: true,
+		action: {
+			label: 'Action',
+			callback: () => {},
+		},
 	},
 };
