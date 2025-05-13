@@ -826,7 +826,7 @@ export default function CampaignItemDetails( props: Props ) {
 						<div className="campaign-items-details__reply-disclaimer">
 							&#42;&nbsp;
 							{ translate(
-								'Some replies may have been hidden, blocked, or removed due to {{tumblrGuideline}}Tumblr guidelines{{/tumblrGuideline}} violation.',
+								'Some replies may have been hidden, blocked, or removed due to {{tumblrGuideline}}Tumblr guidelines {{externalIcon/}}{{/tumblrGuideline}} violation',
 								{
 									components: {
 										tumblrGuideline: (
@@ -836,6 +836,7 @@ export default function CampaignItemDetails( props: Props ) {
 												rel="noopener noreferrer"
 											/>
 										),
+										externalIcon: <Gridicon icon="external" size={ 16 } />,
 									},
 								}
 							) }
