@@ -1,5 +1,6 @@
 import { FoldableCard, ExternalLink as ExternalLinkComponent } from '@automattic/components';
 import { useBreakpoint } from '@automattic/viewport-react';
+import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Fragment } from 'react';
 
@@ -56,12 +57,18 @@ const Description = styled.div`
 	font-size: 14px;
 `;
 
-const ExternalLink = styled( ExternalLinkComponent )`
+const linkStyles = css`
+	display: inline-block;
+	margin-top: 6px;
 	font-size: 14px;
 `;
 
+const ExternalLink = styled( ExternalLinkComponent )`
+	${ linkStyles }
+`;
+
 const Link = styled.a`
-	font-size: 14px;
+	${ linkStyles }
 `;
 
 const PluginDetailsSidebarUSP = ( {
