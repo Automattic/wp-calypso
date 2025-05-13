@@ -1,5 +1,10 @@
 @import "@wordpress/base-styles/variables";
 
+.client-dashboard-components-page-header-heading {
+	font-size: $font-size-2x-large;
+	line-height: $font-line-height-x-large;
+}
+
 .client-dashboard-components-page-header-decoration {
 	display: inline-flex;
 	width: $grid-unit-40;

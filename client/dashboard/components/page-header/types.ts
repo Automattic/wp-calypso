@@ -26,5 +26,5 @@ export interface PageHeaderProps {
 	 * in a complex navigational structure and allow quick access to parent levels.
 	 * Internally it uses the `Breadcrumbs` component.
 	 */
-	breadcrumbs?: BreadcrumbItemProps[];
+	breadcrumbItems?: BreadcrumbItemProps[];
 }

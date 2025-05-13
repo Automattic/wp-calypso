@@ -3,7 +3,6 @@ import {
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
-	__experimentalHeading as Heading,
 } from '@wordpress/components';
 import type { PageHeaderProps } from './types';
 
@@ -38,17 +37,17 @@ export const PageHeader = ( {
 	description,
 	actions,
 	decoration,
-	breadcrumbs,
+	breadcrumbItems,
 }: PageHeaderProps ) => {
 	return (
 		<VStack spacing={ 2 }>
-			{ !! breadcrumbs?.length && <Breadcrumbs items={ breadcrumbs } /> }
+			{ !! breadcrumbItems?.length && <Breadcrumbs items={ breadcrumbItems } /> }
 			<HStack spacing={ 4 } justify="flex-start" alignment="flex-start">
 				{ decoration && (
 					<span className="client-dashboard-components-page-header-decoration">{ decoration }</span>
 				) }
 				<HStack spacing={ 4 } justify="space-between" alignment="flex-start">
-					<Heading level={ 1 }>{ title }</Heading>
+					<h1 className="client-dashboard-components-page-header-heading">{ title }</h1>
 					{ !! actions?.length && (
 						<HStack
 							spacing={ 4 }

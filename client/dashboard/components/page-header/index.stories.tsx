@@ -44,7 +44,7 @@ export const FullExample: Story = {
 		title: 'Site Customization',
 		description: 'Make your site look exactly how you want it to',
 		decoration: <Icon icon={ wordpress } />,
-		breadcrumbs: [
+		breadcrumbItems: [
 			{ label: 'Dashboard', href: 'javascript:void(0)' },
 			{ label: 'Appearance', href: 'javascript:void(0)' },
 			{ label: 'Customize', href: 'javascript:void(0)' },
@@ -86,7 +86,7 @@ export const ImageDecoration: Story = {
 		title: 'Site Customization',
 		description: 'Make your site look exactly how you want it to',
 		decoration: <img src="https://placecats.com/300/200" alt="Cat" />,
-		breadcrumbs: [
+		breadcrumbItems: [
 			{ label: 'Dashboard', href: 'javascript:void(0)' },
 			{ label: 'Appearance', href: 'javascript:void(0)' },
 			{ label: 'Customize', href: 'javascript:void(0)' },
