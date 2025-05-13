@@ -262,7 +262,7 @@ export const HelpCenterContactButton: FC = () => {
 				{ __( 'Still need help?', __i18n_text_domain__ ) }
 			</HelpCenterFooterButton>
 
-			{ recentConversations.length > 0 && (
+			{ recentConversations.length > 1 && (
 				<HelpCenterFooterButton
 					icon={ backup }
 					eventName="calypso_inlinehelp_history_click"
