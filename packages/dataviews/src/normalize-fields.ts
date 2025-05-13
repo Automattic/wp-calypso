@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import type { FunctionComponent } from 'react';
+
+/**
  * Internal dependencies
  */
 import getFieldTypeDefinition from './field-types';
@@ -64,7 +69,11 @@ export function normalizeFields< Item >(
 				item,
 				field,
 			}: DataViewRenderFieldProps< Item > ) {
-				return fieldTypeDefinition.render( { item, field } );
+				return (
+					fieldTypeDefinition.render as FunctionComponent<
+						DataViewRenderFieldProps< Item >
+					>
+				 )( { item, field } );
 			};
 
 		return {
@@ -78,6 +87,7 @@ export function normalizeFields< Item >(
 			Edit,
 			enableHiding: field.enableHiding ?? true,
 			enableSorting: field.enableSorting ?? true,
+			filterBy: field.filterBy ?? fieldTypeDefinition.filterBy,
 		};
 	} );
 }

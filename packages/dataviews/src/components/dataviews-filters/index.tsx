@@ -28,7 +28,7 @@ export function useFilters( fields: NormalizedField< any >[], view: View ) {
 	return useMemo( () => {
 		const filters: NormalizedFilter[] = [];
 		fields.forEach( ( field ) => {
-			if ( ! field.elements?.length && ! field.filterBy?.userInput ) {
+			if ( ! field.elements?.length && field.type !== 'integer' ) {
 				return;
 			}
 
@@ -42,7 +42,6 @@ export function useFilters( fields: NormalizedField< any >[], view: View ) {
 				field: field.id,
 				name: field.label,
 				type: field.type,
-				userInput: field.filterBy?.userInput ?? false,
 				elements: field.elements ?? [],
 				singleSelection: operators.some( ( op ) =>
 					[ OPERATOR_IS, OPERATOR_IS_NOT ].includes( op )
@@ -201,6 +200,7 @@ function Filters( { className }: { className?: string } ) {
 					key={ filter.field }
 					filter={ filter }
 					view={ view }
+					fields={ fields }
 					onChangeView={ onChangeView }
 					addFilterRef={ addFilterRef }
 					openedFilter={ openedFilter }

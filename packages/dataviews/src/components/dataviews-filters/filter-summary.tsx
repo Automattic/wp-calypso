@@ -27,7 +27,7 @@ const SPACE = ' ';
  * Internal dependencies
  */
 import SearchWidget from './search-widget';
-import UserInputWidget from './user-input-widget';
+import InputWidget from './input-widget';
 import {
 	OPERATORS,
 	OPERATOR_IS,
@@ -43,6 +43,7 @@ import type {
 	Operator,
 	Option,
 	View,
+	NormalizedField,
 } from '../../types';
 
 interface FilterTextProps {
@@ -60,6 +61,7 @@ interface OperatorSelectorProps {
 interface FilterSummaryProps extends OperatorSelectorProps {
 	addFilterRef: RefObject< HTMLButtonElement >;
 	openedFilter: string | null;
+	fields: NormalizedField< any >[];
 }
 
 const FilterText = ( {
@@ -237,20 +239,21 @@ export default function FilterSummary( {
 		( f ) => f.field === filter.field
 	);
 
-	let activeElements = [];
-	if ( filter.userInput ) {
-		activeElements = filterInView?.value
-			? [ filterInView?.value ].flat().map( ( value ) => ( {
-					value: value,
-					label: String( value ),
-			  } ) )
-			: [];
-	} else {
-		activeElements = filter.elements.filter( ( element ) => {
-			if ( filter.singleSelection ) {
-				return element.value === filterInView?.value;
-			}
-			return filterInView?.value?.includes( element.value );
+	const activeElements = filter.elements.filter( ( element ) => {
+		if ( filter.singleSelection ) {
+			return element.value === filterInView?.value;
+		}
+		return filterInView?.value?.includes( element.value );
+	} );
+
+	if (
+		activeElements.length === 0 &&
+		filter.type === 'integer' &&
+		filterInView?.value !== undefined
+	) {
+		activeElements.push( {
+			value: filterInView.value,
+			label: filterInView.value,
 		} );
 	}
 
@@ -342,11 +345,7 @@ export default function FilterSummary( {
 				return (
 					<VStack spacing={ 0 } justify="flex-start">
 						<OperatorSelector { ...commonProps } />
-						{ filter.userInput ? (
-							<UserInputWidget { ...commonProps } />
-						) : (
-							<SearchWidget { ...commonProps } />
-						) }
+						<SearchWidget { ...commonProps } />
 					</VStack>
 				);
 			} }

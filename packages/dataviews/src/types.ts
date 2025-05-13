@@ -31,11 +31,6 @@ interface FilterByConfig {
 	operators?: Operator[];
 
 	/**
-	 * Whether the filter allows user input.
-	 */
-	userInput?: boolean;
-
-	/**
 	 * Whether it is a primary filter.
 	 *
 	 * A primary filter is always visible and is not listed in the "Add filter" component,
@@ -81,6 +76,11 @@ export type FieldTypeDefinition< Item > = {
 	 * Callback used to render the field.
 	 */
 	render: ComponentType< DataViewRenderFieldProps< Item > >;
+
+	/**
+	 * The filter config for the field.
+	 */
+	filterBy?: FilterByConfig | undefined;
 };
 
 /**
@@ -246,11 +246,6 @@ export interface NormalizedFilter {
 	 * The list of options to pick from when using the field as a filter.
 	 */
 	elements: Option[];
-
-	/**
-	 * Whether the filter allows user input instead of selecting from the list of options.
-	 */
-	userInput?: boolean;
 
 	/**
 	 * Is a single selection filter.

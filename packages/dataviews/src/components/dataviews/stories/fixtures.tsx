@@ -682,10 +682,6 @@ export const fields: Field< SpaceObject >[] = [
 		id: 'satellites',
 		type: 'integer',
 		enableSorting: true,
-		filterBy: {
-			operators: [ 'is', 'isNot' ],
-			userInput: true,
-		},
 	},
 	{
 		label: 'Description',
