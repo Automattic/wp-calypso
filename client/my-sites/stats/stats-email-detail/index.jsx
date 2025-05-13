@@ -232,7 +232,11 @@ class StatsEmailDetail extends Component {
 
 		return (
 			<>
-				<Main className="has-fixed-nav stats__email-detail stats">
+				<Main
+					className={ clsx( 'stats', 'stats__email-detail', {
+						'has-fixed-nav': ! config.isEnabled( 'stats/navigation-improvement' ),
+					} ) }
+				>
 					<QueryPosts siteId={ siteId } postId={ postId } />
 					<QueryPostStats siteId={ siteId } postId={ postId } />
 					<QueryEmailStats
