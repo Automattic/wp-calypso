@@ -12,7 +12,7 @@ interface RadioButtonWrapperProps {
 	highlighted?: boolean;
 }
 
-export const RadioButtonWrapper = styled.div<
+const RadioButtonWrapper = styled.div<
 	RadioButtonWrapperProps & React.HTMLAttributes< HTMLDivElement >
 >`
 	position: relative;
