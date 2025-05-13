@@ -61,7 +61,7 @@ const isValidLastMessageContent = ( conversation: OdieConversation | ZendeskConv
 		return false;
 	}
 
-	// '--' is a token returned by AI models when conversations should be deflected to human agents
+	// '--' is a token returned for Odie conversations that should be forwarded to human support
 	return ! [ '', '--' ].includes( text.trim() );
 };
 
