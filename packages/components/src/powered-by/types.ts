@@ -1,11 +1,9 @@
-interface PoweredByLogoProps {
-	size?: number;
-	className?: string;
-}
+import { CommonLogoProps } from './temp-logos/types';
 
 export interface PoweredByProps extends React.HTMLAttributes< HTMLElement > {
 	renderLogo: React.ReactElement<
-		PoweredByLogoProps & {
+		CommonLogoProps & {
+			className?: string;
 			ref?: React.Ref< HTMLElement >;
 		}
 	>;
