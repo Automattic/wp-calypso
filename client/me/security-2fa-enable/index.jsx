@@ -157,22 +157,20 @@ class Security2faEnable extends Component {
 		} );
 
 		return (
-			<>
-				<div className="security-2fa-enable__qr-code-block">
-					<ol className="security-2fa-enable__steps">
-						<li>
-							{ this.props.translate(
-								'Use your authenticator app to scan the QR code or enter this one time code:'
-							) }
-							<OneTimeCode oneTimeCode={ this.state.oneTimeCode } />
-						</li>
-						<li>{ this.renderInputBlock() }</li>
-					</ol>
-					<div className={ qrClasses }>
-						{ this.state.otpAuthUri && <QRCodeSVG value={ this.state.otpAuthUri } size={ 150 } /> }
-					</div>
+			<div className="security-2fa-enable__qr-code-block">
+				<ol className="security-2fa-enable__steps">
+					<li>
+						{ this.props.translate(
+							'Use your authenticator app to scan the QR code or enter this one time code:'
+						) }
+						<OneTimeCode oneTimeCode={ this.state.oneTimeCode } />
+					</li>
+					<li>{ this.renderInputBlock() }</li>
+				</ol>
+				<div className={ qrClasses }>
+					{ this.state.otpAuthUri && <QRCodeSVG value={ this.state.otpAuthUri } size={ 150 } /> }
 				</div>
-			</>
+			</div>
 		);
 	};
 
