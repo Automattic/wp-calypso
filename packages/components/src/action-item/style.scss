@@ -1,0 +1,34 @@
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
+
+.action-item {
+	padding: $grid-unit-20 0;
+	border-bottom: 1px solid $gray-100;
+
+	&:last-child {
+		border-bottom: none;
+	}
+
+	.action-item-title,
+	.action-item-description {
+		@include body-medium;
+	}
+
+	.action-item-decoration {
+		display: inline-flex;
+		padding: 10px;
+		border-radius: $radius-small;
+		border: 1px solid $gray-200;
+
+		svg {
+			width: 24px;
+			height: 24px;
+			flex-shrink: 0;
+			fill: $gray-700;
+		}
+	}
+
+	.action-item-button {
+		padding: $grid-unit-05 $grid-unit-10;
+	}
+}
