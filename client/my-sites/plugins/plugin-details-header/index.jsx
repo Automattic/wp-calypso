@@ -133,7 +133,7 @@ const PluginDetailsHeader = ( {
 				<div className="plugin-details-header__info">
 					<div className="plugin-details-header__info-title">{ translate( 'Last updated' ) }</div>
 					<div className="plugin-details-header__info-value">
-						{ moment.utc( plugin.last_updated, 'YYYY-MM-DD hh:mma' ).format( 'LL' ) }
+						{ moment.utc( plugin.last_updated, 'YYYY-MM-DD hh:mma' ).format( 'MMM D, YYYY' ) }
 					</div>
 				</div>
 			</div>
