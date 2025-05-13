@@ -4,6 +4,7 @@ import {
 	WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS,
 } from '@automattic/calypso-products';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { sprintf, __ } from '@wordpress/i18n';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
@@ -153,7 +154,13 @@ const PluginDetailsSidebar = ( {
 					<div className="plugin-details-sidebar__tested-text title">
 						{ translate( 'Tested up to' ) }
 					</div>
-					<div className="plugin-details-sidebar__tested-value value">{ tested }</div>
+					<div className="plugin-details-sidebar__tested-value value">
+						{ sprintf(
+							// translators: %s is the version of WordPress that the plugin has been tested with
+							__( 'WordPress %s' ),
+							tested
+						) }
+					</div>
 				</div>
 			) }
 		</div>
