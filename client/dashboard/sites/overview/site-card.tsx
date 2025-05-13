@@ -24,39 +24,14 @@ function PHPVersion( { siteSlug }: { siteSlug: string } ) {
  * SiteCard component to display site information in a card format
  */
 export default function SiteCard( { site, currentPlan }: { site: Site; currentPlan: Plan } ) {
-	const { URL: url, is_private, is_wpcom_atomic } = site;
+	const { URL: url, is_wpcom_atomic } = site;
 	const wpVersion = getFormattedWordPressVersion( site );
 
-	// If the site is a private A8C site, X-Frame-Options is set to same
-	// origin.
-	const iframeDisabled = site.is_a8c && is_private;
 	return (
 		<Card>
 			<VStack spacing={ 6 }>
 				<div className="dashboard-site-overview__preview-image">
-					{ iframeDisabled && (
-						<div
-							style={ {
-								width: '300px',
-								height: '200px',
-								fontSize: '24px',
-								background: 'var(--dashboard__background-color)',
-								display: 'flex',
-								alignItems: 'center',
-								justifyContent: 'center',
-							} }
-						>
-							{ __( 'A8C Private Site' ) }
-						</div>
-					) }
-					{ ! iframeDisabled && (
-						<div
-							className="dashboard-site-overview__preview-iframe"
-							style={ { width: '300px', height: '200px' } }
-						>
-							<SitePreview url={ url } scale={ 0.25 } />
-						</div>
-					) }
+					<SitePreview width={ 300 } url={ url } />
 				</div>
 				<VStack spacing={ 6 } className="site-card-contents">
 					<Field title={ __( 'Domain' ) }>

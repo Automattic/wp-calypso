@@ -101,28 +101,12 @@ const DEFAULT_FIELDS: Field< Site >[] = [
 		label: __( 'Preview' ),
 		render: function PreviewRender( { item }: { item: Site } ) {
 			const [ resizeListener, { width } ] = useResizeObserver();
-			const { is_deleted, is_private, URL: url } = item;
-			// If the site is a private A8C site, X-Frame-Options is set to same
-			// origin.
-			const iframeDisabled = is_deleted || ( item.is_a8c && is_private );
+			const { URL: url } = item;
 			return (
 				<>
 					{ resizeListener }
-					{ iframeDisabled && (
-						<div
-							style={ {
-								fontSize: '24px',
-								display: 'flex',
-								alignItems: 'center',
-								justifyContent: 'center',
-								height: '100%',
-							} }
-						>
-							<SiteIcon site={ item } />
-						</div>
-					) }
-					{ width && ! iframeDisabled && (
-						<SitePreview url={ url } scale={ width / 1200 } height={ 1200 } />
+					{ width && (
+						<SitePreview url={ url } width={ width } style={ { objectFit: 'contain' } } />
 					) }
 				</>
 			);
