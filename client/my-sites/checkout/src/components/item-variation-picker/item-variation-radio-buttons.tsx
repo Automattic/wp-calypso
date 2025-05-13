@@ -56,7 +56,8 @@ const ProductVariant: FunctionComponent< ProductVariantProps > = ( {
 					! isDisabled && onChangeItemVariant( selectedItem.uuid, productSlug, productId );
 				} }
 				label={ <ItemVariantRadioPrice variant={ productVariant } compareTo={ compareTo } /> }
-				isStreamlinedPrice
+				highlighted
+				compact
 			/>
 		</TermOptionsItem>
 	);
