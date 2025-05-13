@@ -1,0 +1,21 @@
+@import '@wordpress/base-styles/variables';
+
+// TODO: consider using a wrapper to ensure that the flexbox layout is applied
+// even in case of the display prop being overridden.
+.a8c-components-powered-by {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: $grid-unit-10;
+
+	margin: 0;
+	padding: 0;
+	width: fit-content;
+
+	.a8c-components-powered-by__text {
+		// TODO: add any typography-related styles?
+		// (font size, font weight, line-height, , etc.)
+		color: var( --color-text );
+		white-space: nowrap;
+	}
+}
