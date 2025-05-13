@@ -535,17 +535,6 @@ export class LoginForm extends Component {
 		);
 	}
 
-	renderChangeUsername() {
-		return (
-			<Button className="login__form-change-username" onClick={ this.resetView } variant="link">
-				<Gridicon icon="arrow-left" size={ 18 } />
-				{ includes( this.state.usernameOrEmail, '@' )
-					? this.props.translate( 'Change Email Address' )
-					: this.props.translate( 'Change Username' ) }
-			</Button>
-		);
-	}
-
 	renderUsernameorEmailLabel() {
 		if ( this.props.isWoo ) {
 			return this.props.translate( 'Your email or username' );
@@ -773,10 +762,11 @@ export class LoginForm extends Component {
 			isJetpack,
 		} = this.props;
 
-		const isPasswordFieldHidden = this.isUsernameOrEmailView();
+		const isUsernameOrEmailView = this.isUsernameOrEmailView();
+		const isPasswordView = this.isPasswordView();
 		const isOauthLogin = !! oauth2Client;
 		const signupUrl = this.getSignupUrl();
-		const shouldRenderForgotPasswordLink = ! isPasswordFieldHidden && isWoo;
+		const shouldRenderForgotPasswordLink = ! isUsernameOrEmailView && isWoo;
 
 		if ( lastUsedAuthenticationMethod === 'qr-code' ) {
 			loginUrl = this.getQrLoginLink();
@@ -865,9 +855,19 @@ export class LoginForm extends Component {
 								</p>
 							) }
 
-							{ this.isPasswordView() && (
+							{ isPasswordView && (
 								<>
-									{ this.renderChangeUsername() }
+									<Button
+										className="login__form-change-username"
+										onClick={ this.resetView }
+										variant="link"
+									>
+										<Gridicon icon="arrow-left" size={ 18 } />
+										{ includes( this.state.usernameOrEmail, '@' )
+											? this.props.translate( 'Change Email Address' )
+											: this.props.translate( 'Change Username' ) }
+									</Button>
+
 									<label htmlFor="usernameOrEmail" className="screen-reader-text">
 										{ this.renderUsernameorEmailLabel() }
 									</label>
@@ -875,21 +875,20 @@ export class LoginForm extends Component {
 							) }
 
 							<InputControl
-								label={ ! this.isPasswordView() && this.renderUsernameorEmailLabel() }
+								label={ isPasswordView ? null : this.renderUsernameorEmailLabel() }
 								autoCapitalize="off"
 								autoCorrect="off"
 								spellCheck="false"
 								autoComplete="username"
 								className={ clsx( 'login__form-userdata-input', {
 									'is-error': requestError && requestError.field === 'usernameOrEmail',
-									'is-label-hidden': this.isPasswordView(),
 								} ) }
 								onChange={ this.onChangeUsernameOrEmailField }
 								id="usernameOrEmail"
 								name="usernameOrEmail"
 								ref={ this.saveUsernameOrEmailRef }
 								value={ this.state.usernameOrEmail }
-								disabled={ isFormDisabled || this.isPasswordView() }
+								disabled={ isFormDisabled || isPasswordView }
 								__next40pxDefaultSize
 								__nextHasNoMarginBottom
 							/>
@@ -976,9 +975,9 @@ export class LoginForm extends Component {
 
 							<div
 								className={ clsx( 'login__form-password', {
-									'is-hidden': isPasswordFieldHidden,
+									'is-hidden': isUsernameOrEmailView,
 								} ) }
-								aria-hidden={ isPasswordFieldHidden }
+								aria-hidden={ isUsernameOrEmailView }
 							>
 								<InputControl
 									type={ isPasswordPlainText ? 'text' : 'password' }
@@ -994,7 +993,7 @@ export class LoginForm extends Component {
 									ref={ this.savePasswordRef }
 									value={ this.state.password }
 									disabled={ isFormDisabled }
-									tabIndex={ isPasswordFieldHidden ? -1 : undefined /* not tabbable when hidden */ }
+									tabIndex={ isUsernameOrEmailView ? -1 : undefined /* not tabbable when hidden */ }
 									__next40pxDefaultSize
 									__nextHasNoMarginBottom
 									suffix={
@@ -1010,8 +1009,8 @@ export class LoginForm extends Component {
 														? this.props.translate( 'Hide password' )
 														: this.props.translate( 'Show password' )
 												}
-												aria-hidden={ isPasswordFieldHidden }
-												tabIndex={ isPasswordFieldHidden ? -1 : undefined }
+												aria-hidden={ isUsernameOrEmailView }
+												tabIndex={ isUsernameOrEmailView ? -1 : undefined }
 											/>
 										</InputControlSuffixWrapper>
 									}
