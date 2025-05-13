@@ -39,7 +39,7 @@ class PluginRatings extends Component {
 	render() {
 		const { rating } = this.props;
 
-		if ( 0 === rating ) {
+		if ( rating == null || rating === 0 ) {
 			return this.renderNoReviewState();
 		}
 
