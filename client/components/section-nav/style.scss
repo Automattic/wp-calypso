@@ -1,5 +1,6 @@
 @import "calypso/assets/stylesheets/shared/mixins/breakpoints";
 @import "@automattic/typography/styles/variables";
+@import "@wordpress/base-styles/breakpoints";
 
 .section-nav {
 	position: relative;
@@ -236,6 +237,11 @@
 	.select-dropdown__container {
 		max-width: 200px;
 		position: static;
+
+		@media (max-width: $break-small) {
+			max-width: unset;
+			width: 100%;
+		}
 	}
 }
 
