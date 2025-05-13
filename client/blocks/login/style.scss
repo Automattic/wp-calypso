@@ -204,6 +204,10 @@ $breakpoint-mobile: 782px; //Mobile size.
 			margin-bottom: 0;
 		}
 
+		input {
+			font-size: $font-body-small;
+		}
+
 		label {
 			font-size: $font-body-small;
 			color: var(--studio-gray-100);
