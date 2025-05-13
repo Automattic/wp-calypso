@@ -61,14 +61,7 @@ export const PoweredBy = forwardRef< HTMLElement, PoweredByProps >( function Pow
 				setBrandName( getAccessibleLogoText( element ) );
 			},
 		} );
-	} // else if ( renderLogo ) {
-	// 	logo = renderLogo( {
-	// 		...poweredByLogoProps,
-	// 		ref: ( element ) => {
-	// 			setBrandName( getAccessibleLogoText( element ) );
-	// 		},
-	// 	} );
-	// }
+	}
 
 	if ( ! logo ) {
 		return null;
