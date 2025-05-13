@@ -102,6 +102,7 @@ export const useGetHistoryChats = (): UseGetHistoryChatsResult => {
 
 	const { isChatLoaded } = useSelect( ( select ) => {
 		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
+
 		return { isChatLoaded: store.getIsChatLoaded() };
 	}, [] );
 
@@ -114,7 +115,7 @@ export const useGetHistoryChats = (): UseGetHistoryChatsResult => {
 	);
 
 	useEffect( () => {
-		if ( ! isChatLoaded || ! getZendeskConversations || isLoadingInteractions ) {
+		if ( isLoadingInteractions ) {
 			return;
 		}
 
