@@ -326,7 +326,7 @@ function ComboboxList( { view, filter, onChangeView }: SearchWidgetProps ) {
 }
 
 export default function SearchWidget( props: SearchWidgetProps ) {
-	if ( props.filter.type === 'integer' ) {
+	if ( props.filter.type === 'integer' && ! props.filter.elements ) {
 		return <InputWidget { ...props } />;
 	}
 
