@@ -118,7 +118,7 @@ const ChatEllipsisMenu = () => {
 					<Icon icon={ comment } />
 					<div>{ __( 'New chat', __i18n_text_domain__ ) }</div>
 				</button>
-				<button onClick={ handleViewChats } disabled={ recentConversations.length === 0 }>
+				<button onClick={ handleViewChats } disabled={ recentConversations.length < 2 }>
 					<Icon icon={ scheduled } />
 					<div>
 						{ _n(
