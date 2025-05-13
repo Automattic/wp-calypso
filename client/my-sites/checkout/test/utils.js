@@ -1,5 +1,20 @@
+import {
+	PLAN_PERSONAL_MONTHLY,
+	PLAN_BUSINESS_2_YEARS,
+	PLAN_BUSINESS_MONTHLY,
+	PRODUCT_JETPACK_BACKUP_T0_YEARLY,
+} from '@automattic/calypso-products';
+import { getEmptyResponseCartProduct } from '@automattic/shopping-cart';
 import configureStore from 'redux-mock-store';
-import { getProductSlugFromContext } from '../utils';
+import { getProductSlugFromContext, getWpcomPlanTotalIfPaidMonthly } from '../utils';
+
+jest.mock( '@automattic/data-stores', () => ( {
+	...jest.requireActual( '@automattic/data-stores' ),
+	Plans: {
+		...jest.requireActual( '@automattic/data-stores' ).Plans,
+		usePlans: jest.fn(),
+	},
+} ) );
 
 const mockStore = configureStore();
 
@@ -308,4 +323,79 @@ describe( 'getProductSlugFromContext', () => {
 			expect( actual ).toEqual( expected );
 		}
 	);
+} );
+
+describe( 'getWpcomPlanTotalIfPaidMonthly', () => {
+	const business_2years = {
+		...getEmptyResponseCartProduct(),
+		product_name: 'Dotcom Business',
+		product_slug: PLAN_BUSINESS_2_YEARS,
+		currency: 'USD',
+		extra: {},
+		meta: 'test',
+		product_id: 1,
+		volume: 1,
+		is_domain_registration: false,
+		item_original_cost_integer: 100,
+		item_subtotal_integer: 100,
+		bill_period: '365',
+		months_per_bill_period: 12,
+	};
+	const personal_monthly = {
+		...getEmptyResponseCartProduct(),
+		product_name: 'Dotcom Personal',
+		product_slug: PLAN_PERSONAL_MONTHLY,
+		currency: 'USD',
+		extra: {},
+		meta: 'test',
+		product_id: 2,
+		volume: 1,
+		is_domain_registration: false,
+		item_original_cost_integer: 50,
+		item_subtotal_integer: 50,
+		bill_period: '31',
+		months_per_bill_period: 1,
+	};
+	const jetpack_yearly = {
+		...getEmptyResponseCartProduct(),
+		product_name: 'Jetpack Yearly',
+		product_slug: PRODUCT_JETPACK_BACKUP_T0_YEARLY,
+		currency: 'USD',
+		extra: {},
+		meta: 'test',
+		product_id: 3,
+		volume: 1,
+		is_domain_registration: false,
+		item_original_cost_integer: 70,
+		item_subtotal_integer: 70,
+		bill_period: '365',
+		months_per_bill_period: 12,
+	};
+
+	const plans = {
+		[ PLAN_BUSINESS_MONTHLY ]: {
+			pricing: {
+				originalPrice: { full: 40, monthly: 40 },
+			},
+		},
+	};
+
+	beforeEach( () => {
+		jest.clearAllMocks();
+	} );
+
+	it( 'returns correct total for valid yearly plan with a monthly counterpart', () => {
+		const result = getWpcomPlanTotalIfPaidMonthly( business_2years, plans );
+		expect( result ).toBe( 480 ); // 12 * 40
+	} );
+
+	it( 'returns undefined if product is not a wpcom plan', () => {
+		const result = getWpcomPlanTotalIfPaidMonthly( jetpack_yearly, plans );
+		expect( result ).toBeUndefined();
+	} );
+
+	it( 'returns undefined if product is a monthly plan', () => {
+		const result = getWpcomPlanTotalIfPaidMonthly( personal_monthly, plans );
+		expect( result ).toBeUndefined();
+	} );
 } );
