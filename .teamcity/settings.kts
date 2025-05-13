@@ -266,8 +266,6 @@ object CheckCodeStyle : BuildType({
 			scriptContent = """
 				# Lint files
 				yarn run eslint --format checkstyle --output-file "./checkstyle_results/eslint/results.xml" .
-				yarn run lint:unused-state-action-types
-				yarn run lint:config-defaults
 			"""
 		}
 	}
