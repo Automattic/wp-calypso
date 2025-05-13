@@ -11,6 +11,11 @@ export function createActions( dispatch: DispatchAndWaitForValid ): ShoppingCart
 				type: 'CART_PRODUCTS_ADD',
 				products: createRequestCartProducts( products ),
 			} ),
+		addRestorableProductToCart: ( product ) =>
+			dispatch( {
+				type: 'CART_PRODUCT_ADD_RESTORABLE',
+				product,
+			} ),
 		removeProductFromCart: ( uuidToRemove ) =>
 			dispatch( { type: 'REMOVE_CART_ITEM', uuidToRemove } ),
 		replaceProductsInCart: async ( products ) =>

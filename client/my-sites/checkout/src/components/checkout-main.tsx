@@ -230,9 +230,10 @@ export default function CheckoutMain( {
 		loadingError: cartLoadingError,
 		loadingErrorType: cartLoadingErrorType,
 		addProductsToCart,
+		addRestorableProductToCart,
 		reloadFromServer,
 	} = useShoppingCart( cartKey );
-
+	// console.debug( 'CheckoutMain - responseCart', responseCart );
 	const { shouldSetMigrationSticker, isLoading: isStickerLoading } =
 		useCheckoutMigrationIntroductoryOfferSticker( siteId, reloadFromServer );
 
@@ -814,6 +815,7 @@ export default function CheckoutMain( {
 					areThereErrors={ areThereErrors }
 					isInitialCartLoading={ isInitialCartLoading }
 					addItemToCart={ addItemAndLog }
+					addRestorableProductToCart={ addRestorableProductToCart }
 					changeSelection={ changeSelection }
 					countriesList={ countriesList }
 					createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }

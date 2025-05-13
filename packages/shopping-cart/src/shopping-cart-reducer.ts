@@ -2,6 +2,7 @@ import debugFactory from 'debug';
 import {
 	removeItemFromResponseCart,
 	addItemsToResponseCart,
+	addRestorableItemToResponseCart,
 	replaceAllItemsInResponseCart,
 	replaceItemInResponseCart,
 	addCouponToResponseCart,
@@ -170,6 +171,25 @@ function shoppingCartReducer(
 				loadingError: undefined,
 				loadingErrorType: undefined,
 			};
+
+		case 'CART_PRODUCT_ADD_RESTORABLE': {
+			debug( 'adding restorable item to cart', action.product );
+
+			const cartWithoutRestorableProduct = removeItemFromResponseCart(
+				state.responseCart,
+				action.product.uuid
+			);
+
+			const cart = addRestorableItemToResponseCart( cartWithoutRestorableProduct, action.product );
+
+			return {
+				...state,
+				responseCart: cart,
+				cacheStatus: 'invalid',
+				loadingError: undefined,
+				loadingErrorType: undefined,
+			};
+		}
 
 		case 'CART_PRODUCTS_REPLACE_ALL':
 			debug( 'replacing items in cart with', action.products );

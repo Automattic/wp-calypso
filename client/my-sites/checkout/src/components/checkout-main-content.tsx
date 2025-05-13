@@ -339,6 +339,7 @@ function CheckoutSidebarNudge( {
 
 export default function CheckoutMainContent( {
 	addItemToCart,
+	addRestorableProductToCart,
 	changeSelection,
 	countriesList,
 	createUserAndSiteBeforeTransaction,
@@ -674,6 +675,7 @@ export default function CheckoutMainContent( {
 					titleContent={ <OrderReviewTitle /> }
 					completeStepContent={
 						<WPCheckoutOrderReview
+							addRestorableProductToCart={ addRestorableProductToCart }
 							removeProductFromCart={ removeProductFromCart }
 							replaceProductInCart={ replaceProductInCart }
 							couponFieldStateProps={ couponFieldStateProps }

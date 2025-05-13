@@ -66,6 +66,7 @@ export function WPOrderReviewSection( {
 export function WPOrderReviewLineItems( {
 	className,
 	isSummary,
+	addRestorableProductToCart,
 	removeProductFromCart,
 	replaceProductInCart,
 	removeCoupon,
@@ -193,6 +194,7 @@ export function WPOrderReviewLineItems( {
 					key={ product.uuid }
 					product={ product }
 					isSummary={ isSummary }
+					addRestorableProductToCart={ addRestorableProductToCart }
 					removeProductFromCart={ removeProductFromCart }
 					onChangeSelection={ onChangeSelection }
 					createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
@@ -251,6 +253,7 @@ const DropdownWrapper = styled.span`
 function LineItemWrapper( {
 	product,
 	isSummary,
+	addRestorableProductToCart,
 	removeProductFromCart,
 	onChangeSelection,
 	createUserAndSiteBeforeTransaction,
@@ -405,6 +408,7 @@ function LineItemWrapper( {
 			<LineItem
 				product={ product }
 				hasDeleteButton={ isDeletable }
+				addRestorableProductToCart={ addRestorableProductToCart }
 				removeProductFromCart={ removeProductFromCart }
 				isSummary={ isSummary }
 				createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }

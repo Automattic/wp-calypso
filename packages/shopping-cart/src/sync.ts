@@ -63,7 +63,6 @@ export function createCartSyncManager(
 
 		fetchInitialCartFromServer( dispatch: Dispatch< ShoppingCartAction > ): void {
 			debug( 'fetching initial cart from server' );
-
 			getServerCart()
 				.then( ( response ) => {
 					debug( 'initialized cart is', response );

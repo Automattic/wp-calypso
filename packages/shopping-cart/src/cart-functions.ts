@@ -310,6 +310,16 @@ export function addItemsToResponseCart(
 	};
 }
 
+export function addRestorableItemToResponseCart(
+	responseCart: TempResponseCart,
+	product: RequestCartProduct
+): TempResponseCart {
+	return {
+		...responseCart,
+		restorable_products: [ ...responseCart.restorable_products, product ],
+	};
+}
+
 export function replaceAllItemsInResponseCart(
 	responseCart: TempResponseCart,
 	products: RequestCartProduct[]

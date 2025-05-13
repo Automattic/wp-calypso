@@ -6,6 +6,7 @@ export function getEmptyResponseCart(): ResponseCart {
 		cart_generated_at_timestamp: 0,
 		cart_key: 'no-site',
 		products: [],
+		restorable_products: [],
 		total_tax: '0',
 		total_tax_integer: 0,
 		total_tax_breakdown: [],

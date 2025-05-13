@@ -17,6 +17,7 @@ import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/s
 import { getIsOnboardingAffiliateFlow } from 'calypso/state/signup/flow/selectors';
 import getSelectedSite from 'calypso/state/ui/selectors/get-selected-site';
 import Coupon from './coupon';
+import { RemovedFromCartItems } from './removed-from-cart-items';
 import { WPOrderReviewLineItems, WPOrderReviewSection } from './wp-order-review-line-items';
 import type { OnChangeItemVariant } from './item-variation-picker';
 import type { CouponFieldStateProps } from '../hooks/use-coupon-field-state';
@@ -78,6 +79,7 @@ const CouponEnableButton = styled.button`
 
 export default function WPCheckoutOrderReview( {
 	className,
+	addRestorableProductToCart,
 	removeProductFromCart,
 	removeCouponAndClearField,
 	replaceProductInCart,
@@ -160,8 +162,11 @@ export default function WPCheckoutOrderReview( {
 					</SiteSummary>
 				) }
 
+				<RemovedFromCartItems responseCart={ responseCart } />
+
 				<WPOrderReviewSection>
 					<WPOrderReviewLineItems
+						addRestorableProductToCart={ addRestorableProductToCart }
 						removeProductFromCart={ removeProductFromCart }
 						replaceProductInCart={ replaceProductInCart }
 						removeCoupon={ removeCouponAndClearField }

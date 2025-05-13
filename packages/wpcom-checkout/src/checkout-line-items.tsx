@@ -604,6 +604,61 @@ function returnModalCopy(
 	}
 }
 
+function getHasRemoveFromCartModal( {
+	product,
+	translate,
+	hasBundledDomainsInCart,
+	hasMarketplaceProductsInCart,
+	isPwpoUser = false,
+}: {
+	product: ResponseCartProduct;
+	translate: ReturnType< typeof useTranslate >;
+	hasBundledDomainsInCart: boolean;
+	hasMarketplaceProductsInCart: boolean;
+	isPwpoUser?: boolean;
+} ) {
+	const productType = getProductTypeForModalCopy(
+		product,
+		hasBundledDomainsInCart,
+		hasMarketplaceProductsInCart,
+		isPwpoUser
+	);
+	const isRenewal = isWpComProductRenewal( product );
+
+	switch ( productType ) {
+		case 'gift purchase':
+			return true;
+
+		case 'plan with marketplace dependencies':
+			return true;
+
+		case 'plan with domain dependencies': {
+			if ( isRenewal ) {
+				return false;
+			}
+
+			return true;
+		}
+
+		case 'plan':
+			return false;
+
+		case 'domain':
+			return false;
+
+		case 'coupon':
+			return {
+				title: String( translate( 'You are about to remove your coupon from the cart' ) ),
+				description: String(
+					translate( 'When you press Continue, you will need to confirm your payment details.' )
+				),
+			};
+
+		default:
+			return false;
+	}
+}
+
 function JetpackSearchMeta( { product }: { product: ResponseCartProduct } ) {
 	return <ProductTier product={ product } />;
 }
@@ -1184,6 +1239,7 @@ function CheckoutLineItem( {
 	product,
 	className,
 	hasDeleteButton,
+	addRestorableProductToCart,
 	removeProductFromCart,
 	isSummary,
 	createUserAndSiteBeforeTransaction,
@@ -1223,6 +1279,13 @@ function CheckoutLineItem( {
 	const { formStatus } = useFormStatus();
 	const itemSpanId = `checkout-line-item-${ id }`;
 	const [ isModalVisible, setIsModalVisible ] = useState( false );
+	const hasRemoveFromCartModal = getHasRemoveFromCartModal( {
+		product,
+		translate,
+		hasBundledDomainsInCart,
+		hasMarketplaceProductsInCart,
+		isPwpoUser,
+	} );
 	const modalCopy = returnModalCopyForProduct(
 		product,
 		translate,
@@ -1336,8 +1399,17 @@ function CheckoutLineItem( {
 							) }
 							disabled={ isDisabled }
 							onClick={ () => {
-								setIsModalVisible( true );
-								onRemoveProductClick?.( label );
+								addRestorableProductToCart( product );
+								// l'acció per reafegir seria addProductsToCart
+								if ( hasRemoveFromCartModal ) {
+									setIsModalVisible( true );
+									onRemoveProductClick?.( label ); // recordTracksEvent
+								} else {
+									// removeProductFromCart( product.uuid ).catch( () => {
+									// 	// Nothing needs to be done here. CartMessages will display the error to the user.
+									// } );
+									// onRemoveProduct?.( label );
+								}
 							} }
 						>
 							{ translate( 'Remove from cart' ) }
