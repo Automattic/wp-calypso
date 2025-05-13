@@ -7,7 +7,9 @@ const legacyNavTabParent = 'div.section-nav';
 const selectors = {
 	// clickNavTab
 	navTabItem: ( { name = '', selected = false }: { name?: string; selected?: boolean } = {} ) =>
-		`${ navTabParent } button[aria-selected="${ selected }"]:has-text("${ name }")`,
+		envVariables.VIEWPORT_NAME === 'mobile'
+			? `${ legacyNavTabParent } a[aria-current="${ selected }"]:has(span:has-text("${ name }"))`
+			: `${ navTabParent } button[aria-selected="${ selected }"]:has-text("${ name }")`,
 	navTabMobileToggleButton: `${ legacyNavTabParent } button.section-nav__mobile-header`,
 };
 
@@ -81,7 +83,7 @@ export async function clickNavTab(
 		const navTabsButtonLocator = page.locator( selectors.navTabMobileToggleButton );
 		await navTabsButtonLocator.click( { noWaitAfter: true } );
 
-		const navTabIsOpenLocator = page.locator( `${ navTabParent }.is-open` );
+		const navTabIsOpenLocator = page.locator( `${ legacyNavTabParent }.is-open` );
 		await navTabIsOpenLocator.waitFor();
 	}
 
