@@ -121,24 +121,14 @@ export const useGetHistoryChats = (): UseGetHistoryChatsResult => {
 			return;
 		}
 
-		const zendeskConversationsWithStatusesUpdated = filterAndUpdateConversationsWithStatus(
-			getZendeskConversations(),
-			supportInteractions
-		);
-
-		const odieConversationsWithNoSupportInteractions =
-			getOdieConversationsWithNoSupportInteractions( odieConversations, supportInteractions );
-
-		const mergedAndSortedConversations = [
-			...zendeskConversationsWithStatusesUpdated,
-			...odieConversationsWithNoSupportInteractions,
+		const conversations = [
+			...filterAndUpdateConversationsWithStatus( getZendeskConversations(), supportInteractions ),
+			...getOdieConversationsWithNoSupportInteractions( odieConversations, supportInteractions ),
 		]
 			.filter( ( conversation ) => ! isNoMessageContent( conversation.messages[ 0 ]?.text ) )
-			.sort( ( a, b ) => {
-				return getLastMessageReceived( b ) - getLastMessageReceived( a );
-			} );
+			.sort( ( a, b ) => getLastMessageReceived( b ) - getLastMessageReceived( a ) );
 
-		const { recent, archived } = splitConversationsByRecency( mergedAndSortedConversations );
+		const { recent, archived } = splitConversationsByRecency( conversations );
 
 		setRecentConversations( recent );
 		setArchivedConversations( archived );
