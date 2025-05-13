@@ -183,7 +183,7 @@ export function receivePermissionState( permission ) {
 
 		if ( isEnabled( getState() ) ) {
 			// The user dismissed the prompt -- disable
-			dispatch( setEnabledState() );
+			dispatch( setEnabledState( false ) );
 		}
 		dispatch( mustPrompt() );
 	};
