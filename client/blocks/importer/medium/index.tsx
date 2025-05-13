@@ -27,6 +27,7 @@ export const MediumImporter: React.FunctionComponent< ImporterBaseProps > = ( pr
 		startImport,
 		resetImport,
 		stepNavigator,
+		renderHeading,
 	} = props;
 
 	/**
@@ -118,6 +119,7 @@ export const MediumImporter: React.FunctionComponent< ImporterBaseProps > = ( pr
 							site={ site }
 							importerData={ getImportDragConfig( importer, stepNavigator?.supportLinkModal ) }
 							importerStatus={ job }
+							renderHeading={ renderHeading }
 						/>
 					);
 				} )() }
