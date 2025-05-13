@@ -23,11 +23,12 @@ export const RemovedFromCartItems = () => {
 					} ) }
 					<Button
 						className="restorable-product-button"
-						onClick={ () => {
+						onClick={ async () => {
+							await addProductsToCart( [ product ] );
+
 							setRestorableProducts(
 								restorableProducts.filter( ( p ) => p.uuid !== product.uuid )
 							);
-							addProductsToCart( [ product ] );
 						} }
 					>
 						{ translate( 'Restore' ) }
