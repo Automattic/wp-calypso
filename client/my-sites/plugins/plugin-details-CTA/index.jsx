@@ -365,12 +365,8 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 						) }
 					</div>
 				) }
-				{ ! plugin.isSaasProduct && shouldUpgrade && isLoggedIn && selectedSite && (
-					<UpgradeRequiredContent translate={ translate } />
-				) }
 				{ plugin.isSaasProduct && shouldUpgrade && isLoggedIn && selectedSite && (
 					<div className="plugin-details-cta__upgrade-required-card">
-						<UpgradeRequiredContent translate={ translate } />
 						<Button
 							href={ upgradeToBusinessHref }
 							className="plugin-details-cta__install-button"
@@ -556,21 +552,6 @@ function FreePrice( { shouldUpgrade } ) {
 				</span>
 			) }
 		</>
-	);
-}
-
-function UpgradeRequiredContent( { translate } ) {
-	return (
-		<div className="plugin-details-cta__upgrade-required">
-			<span className="plugin-details-cta__upgrade-required-icon">
-				{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
-				<Gridicon icon="notice-outline" size={ 20 } />
-				{ /* eslint-enable wpcalypso/jsx-gridicon-size */ }
-			</span>
-			<span className="plugin-details-cta__upgrade-required-text">
-				{ translate( 'You need to upgrade your plan to install plugins.' ) }
-			</span>
-		</div>
 	);
 }
 
