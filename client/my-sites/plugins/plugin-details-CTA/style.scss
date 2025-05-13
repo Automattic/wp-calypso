@@ -18,8 +18,8 @@
 	font-family: $brand-serif;
 	font-size: $font-title-large;
 	color: var(--studio-gray-100);
-	margin-bottom: 16px;
-	min-height: 48px;
+	margin-bottom: 24px;
+	line-height: 1;
 	display: flex;
 	align-items: baseline;
 
@@ -53,27 +53,23 @@
 	margin-bottom: 20px;
 }
 
-.plugin-details-cta__install {
-	margin-bottom: 20px;
+.plugin-details-cta__install .plugin-details-cta__install-button {
+	width: 100%;
+	padding: 12px 16px;
 
-	.plugin-details-cta__install-button {
-		width: 100%;
-		padding: 12px 16px;
-
-		.gridicon {
-			margin: 0 0 0 5px;
-		}
+	.gridicon {
+		margin: 0 0 0 5px;
 	}
+}
 
-	.plugin-details-cta__manage-button {
-		width: 100%;
-	}
+.plugin-details-cta__install.plugin-details-cta__manage-button {
+	width: 100%;
 }
 
 .plugin-details-cta__t-and-c {
 	font-size: $font-body-extra-small;
 	color: var(--studio-gray-50);
-	margin-bottom: 16px;
+	margin: 24px 0;
 }
 
 .plugin-details-cta__not-available {
