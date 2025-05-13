@@ -4,7 +4,6 @@ import {
 	WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS,
 } from '@automattic/calypso-products';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { formatNumberCompact } from '@automattic/number-formatters';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
@@ -22,7 +21,6 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 const PluginDetailsSidebar = ( {
 	plugin: {
 		slug,
-		active_installs,
 		tested,
 		isMarketplaceProduct = false,
 		demo_url = null,
@@ -148,16 +146,6 @@ const PluginDetailsSidebar = ( {
 					links={ supportLinks }
 					first
 				/>
-			) }
-			{ Boolean( active_installs ) && (
-				<div className="plugin-details-sidebar__active-installs">
-					<div className="plugin-details-sidebar__active-installs-text title">
-						{ translate( 'Active installations' ) }
-					</div>
-					<div className="plugin-details-sidebar__active-installs-value value">
-						{ formatNumberCompact( active_installs ) }
-					</div>
-				</div>
 			) }
 			{ Boolean( tested ) && (
 				<div className="plugin-details-sidebar__tested">
