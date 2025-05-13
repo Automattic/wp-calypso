@@ -48,7 +48,7 @@ const StyledLi = styled.li`
 	}
 `;
 
-const GreenGridicon = styled( Icon )`
+const GreenIcon = styled( Icon )`
 	fill: var( --studio-green-50 );
 `;
 
@@ -105,7 +105,7 @@ export const USPS: React.FC< Props > = ( { isMarketplaceProduct, billingPeriod }
 				<StyledUl>
 					{ filteredUSPS.map( ( usp, i ) => (
 						<StyledLi key={ `usp-${ i }` }>
-							<GreenGridicon icon={ check } size={ 24 } />
+							<GreenIcon icon={ check } size={ 24 } />
 							<span>{ usp }</span>
 						</StyledLi>
 					) ) }
@@ -202,7 +202,7 @@ export const PlanUSPS: React.FC< Props > = ( {
 				<StyledUl>
 					{ filteredUSPS.map( ( usp, i ) => (
 						<StyledLi key={ `usps__-${ i }` }>
-							<GreenGridicon icon={ check } size={ 24 } />
+							<GreenIcon icon={ check } size={ 24 } />
 							<span>{ usp }</span>
 						</StyledLi>
 					) ) }
