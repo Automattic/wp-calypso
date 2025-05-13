@@ -19,7 +19,6 @@ import PopoverMenuItemClipboard from 'calypso/components/popover-menu/item-clipb
 import PopoverMenuSeparator from 'calypso/components/popover-menu/separator';
 import PostActionsEllipsisMenuPromote from 'calypso/my-sites/post-type-list/post-actions-ellipsis-menu/promote';
 import PostActionsEllipsisMenuQRCode from 'calypso/my-sites/post-type-list/post-actions-ellipsis-menu/qrcode';
-import { preloadEditor } from 'calypso/sections-preloaders';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getEditorDuplicatePostPath } from 'calypso/state/editor/selectors';
 import { infoNotice } from 'calypso/state/notices/actions';
@@ -222,11 +221,7 @@ class Page extends Component {
 		}
 
 		return (
-			<PopoverMenuItem
-				onClick={ this.editPage }
-				onMouseOver={ preloadEditor }
-				onFocus={ preloadEditor }
-			>
+			<PopoverMenuItem onClick={ this.editPage }>
 				<Gridicon icon="pencil" size={ 18 } />
 				{ this.props.translate( 'Edit' ) }
 			</PopoverMenuItem>
@@ -598,8 +593,6 @@ class Page extends Component {
 									: translate( 'View %(title)s', { textOnly: true, args: { title: page.title } } )
 							}
 							onClick={ () => this.clickPageTitle( canEdit ) }
-							onMouseOver={ preloadEditor }
-							onFocus={ preloadEditor }
 							data-tip-target={ 'page-' + page.slug }
 						>
 							{ innerPageTitle }
@@ -805,7 +798,6 @@ class Page extends Component {
 			} );
 			// record a GA event when the menu is opened
 			this.props.recordEvent( 'Clicked More Options Menu' );
-			preloadEditor();
 		}
 	};
 }
