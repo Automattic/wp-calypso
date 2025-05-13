@@ -1,4 +1,4 @@
-import { localize } from 'i18n-calypso';
+import { localize, fixMe } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';
@@ -21,7 +21,11 @@ class NoDirectAccessError extends PureComponent {
 			<Main className="jetpack-connect__main-error">
 				<EmptyContent
 					illustration="/calypso/images/illustrations/error.svg"
-					title={ translate( 'Oops, this URL should not be accessed directly' ) }
+					title={ fixMe( {
+						text: 'This URL should not be accessed directly',
+						newCopy: translate( 'This URL should not be accessed directly' ),
+						oldCopy: translate( 'Oops, this URL should not be accessed directly' ),
+					} ) }
 					action={ translate( 'Get back to Jetpack Connect screen' ) }
 					actionURL="/jetpack/connect"
 				/>

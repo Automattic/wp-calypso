@@ -1,4 +1,4 @@
-import { localize } from 'i18n-calypso';
+import { localize, fixMe } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -91,7 +91,11 @@ export class CommentsManagement extends Component {
 				{ showPermissionError && (
 					<EmptyContent
 						title={ preventWidows(
-							translate( "Oops! You don't have permission to manage comments." )
+							fixMe( {
+								text: "You don't have permission to manage comments.",
+								newCopy: translate( "You don't have permission to manage comments." ),
+								oldCopy: translate( "Oops! You don't have permission to manage comments." ),
+							} )
 						) }
 						line={ preventWidows(
 							translate( "If you think you should, contact this site's administrator." )
