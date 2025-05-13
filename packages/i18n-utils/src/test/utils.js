@@ -25,9 +25,10 @@ describe( '#getMappedLanguageSlug', () => {
 
 describe( '#getNumericFirstDayOfWeek', () => {
 	test( 'should correctly return the first day of week based on locale', () => {
-		expect( getNumericFirstDayOfWeek( 'en', 7 ) ).toBe( 7 ); // Sunday
 		expect( getNumericFirstDayOfWeek( 'de', 1 ) ).toBe( 1 ); // Monday
-		expect( getNumericFirstDayOfWeek( 'wrong', 3 ) ).toBe( 1 ); // Wrong locales cause default to be used
+		expect( getNumericFirstDayOfWeek( 'ar-dz', 6 ) ).toBe( 1 ); // Saturday
+		expect( getNumericFirstDayOfWeek( 'en', 7 ) ).toBe( 7 ); // Sunday
+		expect( getNumericFirstDayOfWeek( 'wrong', 3 ) ).toBe( 3 ); // Wrong locales cause default to be used
 	} );
 } );
 

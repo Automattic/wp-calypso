@@ -127,7 +127,7 @@ export const getNumericDateTimeString = ( timestamp: number, locale = 'en' ) => 
 };
 
 /**
- * Get localized first day of week 1–7, 1 being Monday and 7 being Sunday.
+ * Get localized first day of week 1–7, 1 being Monday, 6 being Saturday, and 7 being Sunday.
  * Uses vanilla API for retrieving value from `Locale.prototype.getWeekInfo()`,
  * or the currently more supported `Locale.prototype.weekInfo`.
  * As of 05/2025, Firefox does not support either.
@@ -136,7 +136,7 @@ export const getNumericDateTimeString = ( timestamp: number, locale = 'en' ) => 
  * https://github.com/bart-krakowski/get-week-info-polyfill
  * @param {string} locale Locale slug
  * @param {number} defaultFirstDayOfWeek Default first day of week if browser API is not available or locale is incorrect.
- * @returns {number} First day of week 1–7, 1 being Monday and 7 being Sunday.
+ * @returns {number} First day of week 1–7, 1 being Monday, 6 being Saturday, and 7 being Sunday.
  */
 export const getNumericFirstDayOfWeek = ( locale: string, defaultFirstDayOfWeek: number = 1 ) => {
 	try {
