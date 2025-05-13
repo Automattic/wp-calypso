@@ -12,11 +12,15 @@ fi
 grep "export const [A-Z_]* =" client/state/action-types.ts | \
     sed -E 's/export const ([A-Z_]+) =.*/\1/' | \
     xargs -P 8 -I{} sh -c \
-    'grep -rq --include="client/state/data-layer/*" \
-                --include="*/actions/*" \
-                --include="reducer.[jt]s" \
-                --include="actions.[jt]s" \
-                --include="index.[jt]s" \
-                --include="middleware.[jt]s" \
-                --include="reducer-utils.ts" \
-                --exclude-dir="test" "$1" client/state || (echo "Unexpected unused action type: $1"; exit 1)' _ {}
+    'find client/state \
+        \( \
+           -path "*/actions/*" \
+           -o -name "reducer.[jt]s" \
+           -o -name "actions.[jt]s" \
+           -o -name "index.[jt]s" \
+           -o -name "middleware.[jt]s" \
+           -o -name "reducer-utils.ts" \
+        \) \
+        -type f \
+        -not -path "*/test/*" \
+        -print0 | xargs -0 grep -q "$1" || (echo "Unexpected unused action type: $1"; exit 1)' _ {}
