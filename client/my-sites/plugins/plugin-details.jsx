@@ -327,7 +327,7 @@ function PluginDetails( props ) {
 	}
 
 	const downloadText = translate(
-		'This plugin is {{org_link}}available for download{{/org_link}} to be used on your {{wpcom_vs_wporg_link}}WordPress self-hosted{{/wpcom_vs_wporg_link}} installation.',
+		'This plugin is {{org_link}}available for download{{/org_link}} for your {{wpcom_vs_wporg_link}}WordPress self-hosted{{/wpcom_vs_wporg_link}} site.',
 		{
 			components: {
 				org_link: (
