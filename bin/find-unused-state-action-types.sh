@@ -11,7 +11,7 @@ fi
 
 grep "export const [A-Z_]* =" client/state/action-types.ts | \
     sed -E 's/export const ([A-Z_]+) =.*/\1/' | \
-    xargs -n 1 -P 8 -I{} sh -c \
+    xargs -P 8 -I{} sh -c \
     'grep -rq --include="client/state/data-layer/*" \
                 --include="*/actions/*" \
                 --include="reducer.[jt]s" \
