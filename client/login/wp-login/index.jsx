@@ -671,7 +671,7 @@ export class Login extends Component {
 						{ mainContent }
 					</Step.CenteredColumnLayout>
 				) }
-				{ isJetpack && ! this.props.isFromAutomatticForAgenciesPlugin && jetpackLogo }
+				{ ! isWooJPC && isJetpack && ! this.props.isFromAutomatticForAgenciesPlugin && jetpackLogo }
 				{ ! isWhiteLogin && mainContent }
 				{ this.renderFooter() }
 			</>

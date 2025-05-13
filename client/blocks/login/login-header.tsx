@@ -457,7 +457,7 @@ export function LoginHeader( {
 			default:
 				header = <h3>{ headerText }</h3>;
 				subtitle = translate(
-					'To access all of the features and functionality in %(pluginName)s, you’ll first need to connect your store to a WordPress.com account. Log in now, or {{signupLink}}create a new account{{/signupLink}}. For more information, please {{doc}}review our documentation{{/doc}}.',
+					'To access all of the features and functionality %(pluginName)s, you’ll first need to connect your store to a WordPress.com account. Log in now, or {{signupLink}}create a new account{{/signupLink}}. For more information, please {{doc}}review our documentation{{/doc}}.',
 					{
 						components: {
 							signupLink,
