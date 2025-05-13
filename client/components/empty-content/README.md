@@ -34,19 +34,20 @@ function render() {
 
 ## Props
 
-| Name                    | Type            | Default                                  | Description                                                                                                                                   |
-| ----------------------- | --------------- | ---------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
-| `title`\*               | `string`        | `'You haven't created any content yet.'` | The title to be displayed.                                                                                                                    |
-| `line`                  | `string`        | `null`                                   | A secondary line, usually leads to the call to action.                                                                                        |
-| `illustration`          | `url`           | `null`                                   | The url string of an image path. Null to omit an illustration.              |
-| `illustrationWidth`     | `number`        | `null`                                   | Will display the image at native width unless a specific width is provided.                                                                   |
-| `action`                | `string/object` | `null`                                   | Label or React element used for the primary action button.                                                                                    |
-| `actionURL`             | `string`        | `null`                                   | `href` value for the primary action button.                                                                                                   |
-| `actionCallback`        | `function`      | `null`                                   | `onClick` value for the primary action button.                                                                                                |
-| `actionTarget`          | `string`        | `null`                                   | If omitted, no target attribute is specified.                                                                                                 |
-| `actionDisabled`        | `bool`          | `null`                                   | Disables the button.                                                                                                                          |
-| `actionRef`             | `function`      | `null`                                   | Adds a ref to the button.                                                                                                                     |
-| `isCompact`             | `bool`          | `false`                                  | Shows a smaller version of the component.                                                                                                     |
+| Name                | Type            | Default                                  | Description                                                                 |
+| ------------------- | --------------- | ---------------------------------------- | --------------------------------------------------------------------------- |
+| `title`\*           | `string`        | `'You haven't created any content yet.'` | The title to be displayed.                                                  |
+| `line`              | `string`        | `null`                                   | A secondary line, usually leads to the call to action.                      |
+| `illustration`      | `url`           | `null`                                   | The url string of an image path. Null to omit an illustration.              |
+| `illustrationWidth` | `number`        | `null`                                   | Will display the image at native width unless a specific width is provided. |
+| `action`            | `string/object` | `null`                                   | Label or React element used for the primary action button.                  |
+| `actionURL`         | `string`        | `null`                                   | `href` value for the primary action button.                                 |
+| `actionCallback`    | `function`      | `null`                                   | `onClick` value for the primary action button.                              |
+| `actionTarget`      | `string`        | `null`                                   | If omitted, no target attribute is specified.                               |
+| `actionDisabled`    | `bool`          | `null`                                   | Disables the button.                                                        |
+| `actionRef`         | `function`      | `null`                                   | Adds a ref to the button.                                                   |
+| `isCompact`         | `bool`          | `false`                                  | Shows a smaller version of the component.                                   |
+
 ### Additional props
 
 The component also supports a secondary action. This should be used sparingly.
