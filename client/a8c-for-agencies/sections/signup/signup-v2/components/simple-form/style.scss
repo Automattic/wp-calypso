@@ -2,6 +2,12 @@
 @import "@wordpress/base-styles/mixins";
 @import "@wordpress/base-styles/variables";
 
+.theme-a8c-for-agencies.is-section-a8c-for-agencies-signup {
+	@media (prefers-color-scheme: dark) {
+		background-color: #021B24;
+	}
+}
+
 .signup-v2-form {
 	max-width: 600px;
 	box-sizing: border-box;
@@ -221,4 +227,10 @@
 
 .signup-v2-form__a4a-span {
 	text-wrap: nowrap;
+}
+
+.signup-v2-form__logo {
+	@include break-xlarge {
+		display: none;
+	}
 }

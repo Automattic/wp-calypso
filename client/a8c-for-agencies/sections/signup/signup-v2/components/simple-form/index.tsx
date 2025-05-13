@@ -2,10 +2,15 @@ import { SearchableDropdown } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { ChangeEvent, useCallback, useMemo, useState } from 'react';
+import A4ALogo, {
+	LOGO_COLOR_SECONDARY_ALT,
+	LOGO_COLOR_SECONDARY,
+} from 'calypso/a8c-for-agencies/components/a4a-logo';
 import Form from 'calypso/a8c-for-agencies/components/form';
 import FormField from 'calypso/a8c-for-agencies/components/form/field';
 import FormFooter from 'calypso/a8c-for-agencies/components/form/footer';
 import LayoutBanner from 'calypso/a8c-for-agencies/components/layout/banner';
+import { useIsDarkMode } from 'calypso/a8c-for-agencies/hooks/use-is-dark-mode';
 import { AgencyDetailsSignupPayload } from 'calypso/a8c-for-agencies/sections/signup/types';
 import QuerySmsCountries from 'calypso/components/data/query-countries/sms';
 import FormPhoneInput from 'calypso/components/forms/form-phone-input';
@@ -32,6 +37,8 @@ const SimpleForm = ( { initialValues, onSubmit, referer }: Props ) => {
 	const [ showTosModal, setShowTosModal ] = useState( false );
 	const { validate, validationError, updateValidationError, isValidating } =
 		useSimpleFormValidation();
+
+	const isDarkMode = useIsDarkMode();
 
 	const countriesList = useGetSupportedSMSCountries();
 	const { countryOptions, stateOptionsMap } = useCountriesAndStates();
@@ -141,6 +148,13 @@ const SimpleForm = ( { initialValues, onSubmit, referer }: Props ) => {
 	return (
 		<Form
 			className="signup-v2-form"
+			logo={
+				<A4ALogo
+					fullA4AV2
+					colors={ { secondary: isDarkMode ? LOGO_COLOR_SECONDARY_ALT : LOGO_COLOR_SECONDARY } }
+					className="signup-v2-form__logo"
+				/>
+			}
 			title={ preventWidows(
 				translate( "Sign up and unlock the blueprint to grow your agency's business" )
 			) }
