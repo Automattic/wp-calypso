@@ -21,6 +21,8 @@ const RadioButtonWrapper = styled.div<
 	box-sizing: border-box;
 	width: 100%;
 	outline: ${ getOutline };
+	opacity: ${ ( props ) => ( props.disabled && props.highlighted ? '0.7' : '1' ) };
+	pointer-events: ${ ( props ) => ( props.disabled && props.highlighted ? 'none' : 'auto' ) };
 
 	${ ( props ) =>
 		! props.hideRadioButton &&
