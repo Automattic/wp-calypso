@@ -55,13 +55,13 @@ exports[`JetpackSignup should render 1`] = `
             <h1
               class="formatted-header__title"
             >
-              Create an account to set up Jetpack
+              Create an account to set up Jetpack
                
             </h1>
             <p
               class="formatted-header__subtitle"
             >
-              You are moments away from a better WordPress.
+              You are moments away from a better WordPress.
             </p>
           </div>
         </header>
@@ -342,13 +342,13 @@ exports[`JetpackSignup should render with locale suggestions 1`] = `
             <h1
               class="formatted-header__title"
             >
-              Create an account to set up Jetpack
+              Create an account to set up Jetpack
                
             </h1>
             <p
               class="formatted-header__subtitle"
             >
-              You are moments away from a better WordPress.
+              You are moments away from a better WordPress.
             </p>
           </div>
         </header>

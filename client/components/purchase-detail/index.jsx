@@ -2,7 +2,6 @@ import { Gridicon } from '@automattic/components';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
-import { preventWidows } from 'calypso/lib/formatting';
 import PurchaseButton from './purchase-button';
 import TipInfo from './tip-info';
 
@@ -99,7 +98,7 @@ export default class PurchaseDetail extends PureComponent {
 					<div className="purchase-detail__image">{ this.renderIcon() }</div>
 					<div className="purchase-detail__text">
 						<h3 className="purchase-detail__title">{ title }</h3>
-						<div className="purchase-detail__description">{ preventWidows( description ) }</div>
+						<div className="purchase-detail__description">{ description }</div>
 						{ this.renderBody() }
 					</div>
 				</div>

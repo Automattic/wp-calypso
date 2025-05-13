@@ -44,6 +44,18 @@
 		}
 	}
 
+	@media (max-width: $break-small) {
+		.stats-summary-nav__select {
+			background-color: var(--studio-white);
+			border-top: 0;
+
+			svg {
+				position: absolute;
+				right: 16px;
+			}
+		}
+	}
+
 	.stats__summary--narrow-mobile {
 		@media (max-width: $break-medium) {
 			padding-inline: 0;
