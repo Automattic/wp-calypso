@@ -132,13 +132,14 @@ export const getNumericDateTimeString = ( timestamp: number, locale = 'en' ) => 
  * or the currently more supported `Locale.prototype.weekInfo`.
  * As of 05/2025, Firefox does not support either.
  *
+ * Defaults to Monday (1) when API is not available.
+ *
  * If you need full support across browsers, you could load a polyfill first:
  * https://github.com/bart-krakowski/get-week-info-polyfill
  * @param {string} locale Locale slug
- * @param {number} defaultFirstDayOfWeek Default first day of week if browser API is not available or locale is incorrect.
  * @returns {number} First day of week 1–7, 1 being Monday, 6 being Saturday, and 7 being Sunday.
  */
-export const getNumericFirstDayOfWeek = ( locale: string, defaultFirstDayOfWeek: number = 1 ) => {
+export const getNumericFirstDayOfWeek = ( locale: string ) => {
 	try {
 		let weekInfo;
 		// New API
@@ -151,11 +152,11 @@ export const getNumericFirstDayOfWeek = ( locale: string, defaultFirstDayOfWeek:
 			// @ts-ignore Native browser API not available in all browsers
 			weekInfo = new Intl.Locale( locale ).weekInfo;
 		} else {
-			return defaultFirstDayOfWeek;
+			return 1;
 		}
 
 		return weekInfo.firstDay;
 	} catch ( error ) {
-		return defaultFirstDayOfWeek;
+		return 1;
 	}
 };
