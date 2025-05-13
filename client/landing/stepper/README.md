@@ -140,7 +140,7 @@ export const exampleFlow: FlowV2< typeof initialize > = {
 					// The processing step is a special step:
 					// 1. It will pick up the pending action we set above, run it, and await it. It will show a progress bar during that time. Then it will `submit` whatever your pendingAction resolves to. In this example, that would be a site object.
 					// 2. If your promise rejects (throws), it will store the error in the store. Then, you can redirect to the `error` step and it will render that error nicely.
-					if ( providedDependencies.processingResult = ProcessingResult.Success ) {
+					if ( providedDependencies.processingResult === ProcessingResult.Success ) {
 						if ( providedDependencies.goToCheckout ) {
 							const createdSiteId = providedDependencies.siteId;
 							window.location = `/checkout/${ createdSiteId }`;
@@ -208,7 +208,6 @@ async function initialize() {
 ```
 
 #### Pending actions
-
 
 ### Notes
 
