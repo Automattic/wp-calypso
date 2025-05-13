@@ -112,10 +112,56 @@ class NotificationSubscriptions extends Component {
 		} );
 	}
 
+	renderLocalizedWeekdayOptions() {
+		const { translate, locale } = this.props;
+		const startOfWeek = getNumericFirstDayOfWeek( locale );
+
+		switch ( startOfWeek ) {
+			// Monday
+			case 1:
+				return (
+					<>
+						<option value="1">{ translate( 'Monday' ) }</option>
+						<option value="2">{ translate( 'Tuesday' ) }</option>
+						<option value="3">{ translate( 'Wednesday' ) }</option>
+						<option value="4">{ translate( 'Thursday' ) }</option>
+						<option value="5">{ translate( 'Friday' ) }</option>
+						<option value="6">{ translate( 'Saturday' ) }</option>
+						<option value="7">{ translate( 'Sunday' ) }</option>
+					</>
+				);
+			// Saturday
+			case 6:
+				return (
+					<>
+						<option value="6">{ translate( 'Saturday' ) }</option>
+						<option value="7">{ translate( 'Sunday' ) }</option>
+						<option value="1">{ translate( 'Monday' ) }</option>
+						<option value="2">{ translate( 'Tuesday' ) }</option>
+						<option value="3">{ translate( 'Wednesday' ) }</option>
+						<option value="4">{ translate( 'Thursday' ) }</option>
+						<option value="5">{ translate( 'Friday' ) }</option>
+					</>
+				);
+			// Sunday
+			case 7:
+				return (
+					<>
+						<option value="7">{ translate( 'Sunday' ) }</option>
+						<option value="1">{ translate( 'Monday' ) }</option>
+						<option value="2">{ translate( 'Tuesday' ) }</option>
+						<option value="3">{ translate( 'Wednesday' ) }</option>
+						<option value="4">{ translate( 'Thursday' ) }</option>
+						<option value="5">{ translate( 'Friday' ) }</option>
+						<option value="6">{ translate( 'Saturday' ) }</option>
+					</>
+				);
+		}
+	}
+
 	render() {
-		const { locale, teams } = this.props;
+		const { teams } = this.props;
 		const isAutomattician = isAutomatticTeamMember( teams );
-		const startOfWeek = getNumericFirstDayOfWeek( locale ); // 1 being Monday and 7 being Sunday.
 
 		return (
 			<Main wideLayout className="reader-subscriptions__notifications-settings">
@@ -212,18 +258,7 @@ class NotificationSubscriptions extends Component {
 								onFocus={ this.handleFocusEvent( 'Email delivery window day' ) }
 								value={ this.props.getSetting( 'subscription_delivery_day' ) }
 							>
-								{ startOfWeek === 7 && (
-									<option value="0">{ this.props.translate( 'Sunday' ) }</option>
-								) }
-								<option value="1">{ this.props.translate( 'Monday' ) }</option>
-								<option value="2">{ this.props.translate( 'Tuesday' ) }</option>
-								<option value="3">{ this.props.translate( 'Wednesday' ) }</option>
-								<option value="4">{ this.props.translate( 'Thursday' ) }</option>
-								<option value="5">{ this.props.translate( 'Friday' ) }</option>
-								<option value="6">{ this.props.translate( 'Saturday' ) }</option>
-								{ startOfWeek === 1 && (
-									<option value="0">{ this.props.translate( 'Sunday' ) }</option>
-								) }
+								{ this.renderLocalizedWeekdayOptions() }
 							</FormSelect>
 
 							<FormSelect
