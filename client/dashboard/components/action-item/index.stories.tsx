@@ -4,8 +4,9 @@ import { cog } from '@wordpress/icons';
 import ActionItem from './index';
 
 const meta = {
-	title: 'ActionItem',
+	title: 'client/dashboard/ActionItem',
 	component: ActionItem,
+	tags: [ 'autodocs' ],
 } satisfies Meta< typeof ActionItem >;
 
 export default meta;
