@@ -1,10 +1,10 @@
 import { RadioButton } from '@automattic/composite-checkout';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
+import { useEffect, useState, type FunctionComponent } from 'react';
 import { ItemVariantRadioPrice } from './variant-radio-price';
 import type { ItemVariationPickerProps, WPCOMProductVariant, OnChangeItemVariant } from './types';
 import type { ResponseCartProduct } from '@automattic/shopping-cart';
-import type { FunctionComponent } from 'react';
 
 const TermOptions = styled.ul`
 	flex-basis: 100%;
@@ -29,6 +29,7 @@ interface ProductVariantProps {
 	onChangeItemVariant: OnChangeItemVariant;
 	isDisabled: boolean;
 	compareTo?: WPCOMProductVariant;
+	selectedProductSlug: string;
 }
 
 const ProductVariant: FunctionComponent< ProductVariantProps > = ( {
@@ -38,9 +39,9 @@ const ProductVariant: FunctionComponent< ProductVariantProps > = ( {
 	onChangeItemVariant,
 	isDisabled,
 	compareTo,
+	selectedProductSlug,
 } ) => {
 	const { variantLabel, productSlug, productId } = productVariant;
-	const selectedProductSlug = selectedItem.product_slug;
 	const isChecked = productSlug === selectedProductSlug;
 
 	return (
@@ -70,11 +71,24 @@ export const ItemVariationRadioButtons: FunctionComponent< ItemVariationPickerPr
 	variants,
 } ) => {
 	const translate = useTranslate();
+	const [ optimisticSelectedItem, setOptimisticSelectedItem ] = useState(
+		selectedItem.product_slug
+	);
+
+	useEffect( () => {
+		setOptimisticSelectedItem( selectedItem.product_slug );
+	}, [ selectedItem ] );
+
 	if ( variants.length < 2 ) {
 		return null;
 	}
 
 	const compareTo = variants[ 0 ];
+
+	const onChangeItemVariantCallback = ( uuid: string, productSlug: string, productId: number ) => {
+		setOptimisticSelectedItem( productSlug );
+		onChangeItemVariant( uuid, productSlug, productId );
+	};
 
 	return (
 		<TermOptions
@@ -87,10 +101,11 @@ export const ItemVariationRadioButtons: FunctionComponent< ItemVariationPickerPr
 					radioButtonGroup={ `item-variation-picker ${ selectedItem.product_name } ${ selectedItem.uuid }` }
 					key={ productVariant.productSlug + productVariant.variantLabel }
 					selectedItem={ selectedItem }
-					onChangeItemVariant={ onChangeItemVariant }
+					onChangeItemVariant={ onChangeItemVariantCallback }
 					isDisabled={ isDisabled }
 					productVariant={ productVariant }
 					compareTo={ compareTo }
+					selectedProductSlug={ optimisticSelectedItem }
 				/>
 			) ) }
 		</TermOptions>
