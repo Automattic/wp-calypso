@@ -43,14 +43,19 @@ export const PageHeader = ( {
 	return (
 		<VStack spacing={ 2 }>
 			{ !! breadcrumbs?.length && <Breadcrumbs items={ breadcrumbs } /> }
-			<HStack spacing={ 4 } justify="flex-start" alignment="baseline">
+			<HStack spacing={ 4 } justify="flex-start" alignment="flex-start">
 				{ decoration && (
 					<span className="client-dashboard-components-page-header-decoration">{ decoration }</span>
 				) }
 				<HStack spacing={ 4 } justify="space-between" alignment="flex-start">
 					<Heading level={ 1 }>{ title }</Heading>
 					{ !! actions?.length && (
-						<HStack spacing={ 4 } justify="flex-end" expanded={ false }>
+						<HStack
+							spacing={ 4 }
+							justify="flex-end"
+							expanded={ false }
+							className="client-dashboard-components-page-header-actions"
+						>
 							{ actions }
 						</HStack>
 					) }

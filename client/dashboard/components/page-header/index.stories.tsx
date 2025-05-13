@@ -62,7 +62,49 @@ export const FullExample: Story = {
 				key="more-actions"
 				icon={ moreVertical }
 				label="More actions"
-				toggleProps={ { variant: 'tertiary', size: 'compact' } }
+				toggleProps={ { size: 'compact' } }
+			>
+				{ () => (
+					<>
+						<MenuGroup>
+							<MenuItem>Import</MenuItem>
+							<MenuItem>Export</MenuItem>
+							<MenuItem>Settings</MenuItem>
+						</MenuGroup>
+						<MenuGroup>
+							<MenuItem>Help</MenuItem>
+						</MenuGroup>
+					</>
+				) }
+			</DropdownMenu>,
+		],
+	},
+};
+
+export const ImageDecoration: Story = {
+	args: {
+		title: 'Site Customization',
+		description: 'Make your site look exactly how you want it to',
+		decoration: <img src="https://placecats.com/300/200" alt="Cat" />,
+		breadcrumbs: [
+			{ label: 'Dashboard', href: 'javascript:void(0)' },
+			{ label: 'Appearance', href: 'javascript:void(0)' },
+			{ label: 'Customize', href: 'javascript:void(0)' },
+			{ label: 'Theme', href: 'javascript:void(0)' },
+			{ label: 'Advanced', href: 'javascript:void(0)' },
+		],
+		actions: [
+			<Button key="help" icon={ help } variant="tertiary" size="compact">
+				Help
+			</Button>,
+			<Button key="preview" variant="secondary" size="compact">
+				Preview
+			</Button>,
+			<DropdownMenu
+				key="more-actions"
+				icon={ moreVertical }
+				label="More actions"
+				toggleProps={ { size: 'compact' } }
 			>
 				{ () => (
 					<>
