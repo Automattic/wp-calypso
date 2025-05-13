@@ -25,14 +25,14 @@
 	}
 
 	.checklist-item__task {
-        padding: 2px;
-        border: 1px solid var(--studio-gray-5);
-        border-bottom: none;
+		padding: 2px;
+		border: 1px solid var(--studio-gray-5);
+		border-bottom: none;
 
-        &:hover,
-        &:focus {
-            border-bottom: none;
-        }
+		&:hover,
+		&:focus {
+			border-bottom: none;
+		}
 
 		a, button {
 			padding: 20px 24px;
@@ -40,13 +40,13 @@
 			border-bottom: none;
 			border-radius: 0;
 
-            &:hover,
-            &:focus {
-                border-bottom: none;
+			&:hover,
+			&:focus {
+				border-bottom: none;
 				span {
 					color: var(--color-accent);
 				}
-            }
+			}
 		}
 
 		&.completed .gridicons-checkmark {
@@ -55,7 +55,7 @@
 
 		&.highlighted {
 			margin: 0 -12px;
-            border-bottom: 1px solid var(--studio-gray-5);
+			border-bottom: 1px solid var(--studio-gray-5);
 			border-radius: 4px;
 
 			a, button {
@@ -75,20 +75,20 @@
 		}
 
 		&:first-child {
-            border-radius: 4px 4px 0 0;
+			border-radius: 4px 4px 0 0;
 
-            a, button {
-                border-radius: 2px 2px 0 0;
-            }
-        }
+			a, button {
+				border-radius: 2px 2px 0 0;
+			}
+		}
 
 		&:last-child {
 			border-radius: 0 0 4px 4px;
-            border-bottom: 1px solid var(--studio-gray-5);
+			border-bottom: 1px solid var(--studio-gray-5);
 
-            a, button {
-                border-radius: 0 0 2px 2px;
-            }
+			a, button {
+				border-radius: 0 0 2px 2px;
+			}
 		}
 	}
 

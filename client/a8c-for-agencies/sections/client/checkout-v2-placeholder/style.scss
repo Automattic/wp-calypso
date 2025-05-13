@@ -8,7 +8,7 @@
 
 .client-checkout-v2-placeholder {
 	display: grid;
-    grid-template-rows: auto;
+	grid-template-rows: auto;
 
 	@include break-large {
 		grid-template-columns: 1fr minmax(500px, 688px) 376px 1fr;
