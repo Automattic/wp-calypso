@@ -4,15 +4,8 @@ import { clickNavTabBase } from '../../element-helper';
 const navTabParent = '.stats-navigation';
 
 const selectors = {
-	navTabItem: ( { name = '', selected = false }: { name?: string; selected?: boolean } = {} ) => {
-		let selector = `${ navTabParent } button[aria-selected="${ selected ? 'true' : 'false' }"]`;
-
-		if ( name ) {
-			selector += `:has-text("${ name }")`;
-		}
-
-		return selector;
-	},
+	navTabItem: ( { name = '', selected = false }: { name?: string; selected?: boolean } = {} ) =>
+		`${ navTabParent } .navigation-tab${ selected ? '.is-active' : '' }:has-text("${ name }")`,
 	navTabMobileToggleButton: `${ navTabParent } button.section-nav__mobile-header`,
 };
 

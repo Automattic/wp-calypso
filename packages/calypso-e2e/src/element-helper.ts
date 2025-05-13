@@ -6,7 +6,9 @@ const navTabParent = 'div.section-nav';
 const selectors = {
 	// clickNavTab
 	navTabItem: ( { name = '', selected = false }: { name?: string; selected?: boolean } = {} ) =>
-		`${ navTabParent } a[aria-current="${ selected }"]:has(span:has-text("${ name }"))`,
+		`${ navTabParent } .navigation-tab${
+			selected ? '.is-active' : ''
+		} a:has(span:has-text("${ name }"))`,
 	navTabMobileToggleButton: `${ navTabParent } button.section-nav__mobile-header`,
 };
 
