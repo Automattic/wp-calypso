@@ -51,7 +51,7 @@ function UnforwardedActionItem(
 					</HStack>
 				</HStack>
 			</VStack>
-			{ !! isActionItemModalOpen && (
+			{ 'RenderModal' in action && !! isActionItemModalOpen && (
 				<ActionItemModal action={ action } closeModal={ () => setIsActionItemModalOpen( false ) } />
 			) }
 		</>
