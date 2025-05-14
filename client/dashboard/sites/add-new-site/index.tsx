@@ -7,6 +7,7 @@ import {
 	__experimentalText as Text,
 	Button,
 } from '@wordpress/components';
+import { useViewportMatch } from '@wordpress/compose';
 import { __, sprintf } from '@wordpress/i18n';
 import { download, reusableBlock, Icon } from '@wordpress/icons';
 import devSiteBanner from 'calypso/assets/images/a8c-for-agencies/dev-site-banner.svg';
@@ -46,8 +47,11 @@ const offerClick = () => {
 };
 
 function AddNewSite() {
+	const isDesktop = useViewportMatch( 'medium' );
+	const Wrapper = isDesktop ? HStack : VStack;
+
 	return (
-		<HStack alignment="flex-start" style={ { padding: '16px' } } spacing={ 4 }>
+		<Wrapper alignment="flex-start" style={ { padding: '16px' } } spacing={ 4 }>
 			<Column title={ __( 'Add new site' ) }>
 				<MenuItem
 					icon={ <WordPressLogo /> }
@@ -118,7 +122,7 @@ function AddNewSite() {
 					<div>{ __( 'Unlock offer' ) }</div>
 				</VStack>
 			</Button>
-		</HStack>
+		</Wrapper>
 	);
 }
 
