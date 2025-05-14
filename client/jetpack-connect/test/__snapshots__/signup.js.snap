@@ -213,8 +213,7 @@ exports[`JetpackSignup should render 1`] = `
                 .
               </p>
               <button
-                class="button signup-form__submit form-button is-primary"
-                locale="en"
+                class="components-button signup-form__submit is-next-40px-default-size is-primary"
                 type="submit"
               >
                 Create your account
@@ -500,8 +499,7 @@ exports[`JetpackSignup should render with locale suggestions 1`] = `
                 .
               </p>
               <button
-                class="button signup-form__submit form-button is-primary"
-                locale="en"
+                class="components-button signup-form__submit is-next-40px-default-size is-primary"
                 type="submit"
               >
                 Create your account

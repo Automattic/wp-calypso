@@ -65,7 +65,6 @@ const enhanceContextWithLogin = ( context ) => {
 
 	const isWhiteLogin =
 		( ! isJetpackLogin && Boolean( clientId ) === false && Boolean( oauth2ClientId ) === false ) ||
-		isGravPoweredClient ||
 		isPartnerPortalClient;
 
 	context.primary = (

@@ -15,7 +15,6 @@ import withBlockEditorSettings from 'calypso/data/block-editor/with-block-editor
 import withIsFSEActive from 'calypso/data/themes/with-is-fse-active';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import NoResults from 'calypso/my-sites/no-results';
-import { preloadEditor } from 'calypso/sections-preloaders';
 import {
 	getPostsForQueryIgnoringPage,
 	isRequestingPostsForQuery,
@@ -179,7 +178,6 @@ class Pages extends Component {
 				line={ attributes.line }
 				action={ attributes.action }
 				actionURL={ attributes.actionURL }
-				actionHoverCallback={ preloadEditor }
 				illustration={ attributes.illustration }
 				illustrationWidth={ attributes.illustrationWidth }
 			/>

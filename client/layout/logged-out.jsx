@@ -351,7 +351,7 @@ export default withCurrentRoute(
 				! isJetpackLogin &&
 				Boolean( currentQuery?.client_id ) === false;
 			const isPartnerPortal = isPartnerPortalOAuth2Client( oauth2Client );
-			const isWhiteLogin = isWPComLogin || isGravatar || isGravPoweredClient || isPartnerPortal;
+			const isWhiteLogin = isWPComLogin || isPartnerPortal;
 			const noMasterbarForRoute =
 				isJetpackLogin ||
 				( isWhiteLogin && ! isBlazePro ) ||

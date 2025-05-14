@@ -10,7 +10,7 @@ const TopCardValue = ( { value, isLoading } ) => {
 	const isNumber = Number.isFinite( value );
 
 	if ( isLoading ) {
-		return <Spinner />;
+		return <Spinner baseClassName="calypso-spinner" />;
 	}
 	if ( value === null ) {
 		return <span className="highlight-card-count-value">-</span>;
