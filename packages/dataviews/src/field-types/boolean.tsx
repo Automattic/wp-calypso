@@ -57,4 +57,5 @@ export default {
 
 		return null;
 	},
+	enableSorting: true,
 };
