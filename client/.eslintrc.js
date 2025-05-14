@@ -30,11 +30,11 @@ module.exports = {
 			'error',
 			{
 				selector: [
-					'CallExpression[callee.name="useSelector"] > ArrowFunctionExpression > :matches(ObjectExpression, ArrayExpression)',
-					'CallExpression[callee.name="useSelector"] > ArrowFunctionExpression > BlockStatement > ReturnStatement > :matches(ObjectExpression, ArrayExpression)',
+					'CallExpression[callee.name="useSelector"][arguments.length=1] > ArrowFunctionExpression > :matches(ObjectExpression, ArrayExpression)',
+					'CallExpression[callee.name="useSelector"][arguments.length=1] > ArrowFunctionExpression > BlockStatement > ReturnStatement > :matches(ObjectExpression, ArrayExpression)',
 				].join(),
 				message:
-					'Object return values can cause unnecessary re-renders. Use separate useSelector calls instead.',
+					'Object return values cause unnecessary re-renders. Use separate useSelector calls instead, or pass equalityFn to useSelector.',
 			},
 		],
 	},
