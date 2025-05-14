@@ -44,10 +44,8 @@ body.is-section-signup .layout .signup.is-crowdsignal .step-wrapper {
 	}
 }
 
-.signup-form__crowdsignal {
+.signup.is-crowdsignal {
 	.components-button {
-		width: 100%;
-
 		&.is-primary:not(.signup-form__crowdsignal-wpcom) {
 			--color-accent: var(--color-primary);
 			--color-accent-60: var(--color-primary-dark);
@@ -143,6 +141,10 @@ body.is-section-signup .layout .signup.is-crowdsignal .step-wrapper {
 	margin: 0 auto;
 	max-width: 320px;
 	width: 100%;
+
+	.components-button {
+		width: 100%;
+	}
 }
 
 .signup-form__crowdsignal-card-subheader {
