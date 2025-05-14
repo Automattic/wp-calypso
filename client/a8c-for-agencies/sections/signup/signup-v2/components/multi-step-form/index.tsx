@@ -50,6 +50,10 @@ const getPersonalizationProgress = ( currentStep: number, submitAsSurvey: boolea
 		return personalizationStepProgress[ currentStep ] ?? 0;
 	}
 
+	if ( currentStep > 2 ) {
+		return 100;
+	}
+
 	return currentStep === 2 ? 50 : 0;
 };
 

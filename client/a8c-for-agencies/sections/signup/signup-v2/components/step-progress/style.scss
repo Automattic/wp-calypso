@@ -20,6 +20,15 @@
 		width: 100%;
 	}
 
+	.progress-bar__progress {
+		background-color: #0277A8;
+
+
+		@media (prefers-color-scheme: dark) {
+			background-color: #1490C7;
+		}
+	}
+
 	.step-progress__step {
 		justify-content: space-between;
 		display: flex;

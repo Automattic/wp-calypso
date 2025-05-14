@@ -196,7 +196,7 @@ const SignupContactForm = ( { onContinue, initialFormData, withEmail = false }: 
 					variant="primary"
 					onClick={ handleSubmit }
 				>
-					{ translate( 'Sign up for free' ) }
+					{ translate( 'Continue for free' ) }
 				</Button>
 			</FormFooter>
 		</Form>

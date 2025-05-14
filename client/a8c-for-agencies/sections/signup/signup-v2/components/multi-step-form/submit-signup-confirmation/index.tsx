@@ -24,6 +24,12 @@ const SubmitSignupConfirmation: React.FC< Props > = ( { onContinue } ) => {
 			title={ translate( 'Complete your setup!' ) }
 			description={ translate( 'One last step, just login!' ) }
 		>
+			<span className="submit-signup-confirmation__description">
+				{ translate(
+					"We'll link your WordPress.com account to your agency dashboard. If you don't have an account you can create one on the next screen."
+				) }
+			</span>
+
 			<Button
 				variant="primary"
 				onClick={ onHandleContinue }
@@ -32,12 +38,6 @@ const SubmitSignupConfirmation: React.FC< Props > = ( { onContinue } ) => {
 			>
 				{ translate( 'Finish and login with WordPress.com' ) }
 			</Button>
-
-			<span className="submit-signup-confirmation__description">
-				{ translate(
-					"We'll link your WordPress.com account to your agency dashboard. If you don't have an account you can create one on the next screen."
-				) }
-			</span>
 		</Form>
 	);
 };
