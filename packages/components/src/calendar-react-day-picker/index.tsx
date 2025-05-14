@@ -1,5 +1,5 @@
 import { useMemo, useState, useCallback } from 'react';
-import { DayPicker } from 'react-day-picker';
+import { DayPicker, TZDate } from 'react-day-picker';
 import { useControlledValue } from './utils';
 import type { DateCalendarProps, DateRangeCalendarProps, DateRange } from './types';
 
@@ -10,9 +10,11 @@ const BASE_CLASSNAME = 'a8c-components-calendar';
 const useCommonProps = ( {
 	numberOfMonths,
 	locale,
+	timeZone,
 }: {
 	numberOfMonths: number;
 	locale: DateCalendarProps[ 'locale' ];
+	timeZone: DateCalendarProps[ 'timeZone' ];
 } ) => {
 	const commonProps = useMemo( () => {
 		const localeCode = locale?.code ?? 'en-US';
@@ -70,6 +72,7 @@ const useCommonProps = ( {
 					// ie. M, T, W, T, F, S, S
 					return new Intl.DateTimeFormat( localeCode, {
 						weekday: 'narrow',
+						timeZone,
 					} ).format( date );
 				},
 				formatCaption: ( date: Date ) => {
@@ -77,13 +80,15 @@ const useCommonProps = ( {
 					return new Intl.DateTimeFormat( localeCode, {
 						year: 'numeric',
 						month: 'long',
+						timeZone,
 					} ).format( date );
 				},
 			},
+			timeZone,
 			// a11y
 			role: 'application',
 		} as const;
-	}, [ numberOfMonths, locale ] );
+	}, [ numberOfMonths, locale, timeZone ] );
 
 	return commonProps;
 };
@@ -95,9 +100,10 @@ export const DateCalendar = ( {
 	defaultSelected,
 	selected: selectedProp,
 	onSelect,
+	timeZone,
 	...props
 }: DateCalendarProps ) => {
-	const commonProps = useCommonProps( { numberOfMonths, locale } );
+	const commonProps = useCommonProps( { numberOfMonths, locale, timeZone } );
 
 	const [ selected, setSelected ] = useControlledValue< Date >( {
 		defaultValue: defaultSelected,
@@ -124,9 +130,10 @@ export const DateRangeCalendar = ( {
 	defaultSelected,
 	selected: selectedProp,
 	onSelect,
+	timeZone,
 	...props
 }: DateRangeCalendarProps ) => {
-	const commonProps = useCommonProps( { numberOfMonths, locale } );
+	const commonProps = useCommonProps( { numberOfMonths, locale, timeZone } );
 
 	const [ selected, setSelected ] = useControlledValue< DateRange >( {
 		defaultValue: defaultSelected,
@@ -208,3 +215,5 @@ export const DateRangeCalendar = ( {
 		/>
 	);
 };
+
+export { TZDate };
