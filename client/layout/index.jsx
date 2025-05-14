@@ -29,6 +29,7 @@ import {
 	isWooOAuth2Client,
 	isJetpackCloudOAuth2Client,
 	isA4AOAuth2Client,
+	isCrowdsignalOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
 import { getMessagePathForJITM } from 'calypso/lib/route';
@@ -198,6 +199,7 @@ class Layout extends Component {
 			[ 'is-group-' + this.props.sectionGroup ]: this.props.sectionGroup,
 			[ 'is-section-' + this.props.sectionName ]: this.props.sectionName,
 			'a8c-for-agencies': isA4AOAuth2Client( this.props.oauth2Client ),
+			crowdsignal: isCrowdsignalOAuth2Client( this.props.oauth2Client ),
 			'is-support-session': this.props.isSupportSession,
 			'has-no-sidebar': this.props.sidebarIsHidden,
 			'has-no-masterbar': this.props.masterbarIsHidden,
