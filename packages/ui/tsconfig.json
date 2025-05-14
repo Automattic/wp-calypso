@@ -5,6 +5,7 @@
 		"checkJs": false,
 		"outDir": "dist/esm",
 		"declarationDir": "dist/types",
+		"emitDeclarationOnly": true,
 		"rootDir": "src"
 	},
 	"include": [ "src" ]
