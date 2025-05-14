@@ -1,9 +1,8 @@
-const execSync = require( 'child_process' ).execSync;
-const spawnSync = require( 'child_process' ).spawnSync;
-const existsSync = require( 'fs' ).existsSync;
-const path = require( 'path' );
-const chalk = require( 'chalk' );
-const _ = require( 'lodash' );
+import { execSync, spawnSync } from 'node:child_process';
+import { existsSync } from 'node:fs';
+import path from 'node:path';
+import chalk from 'chalk';
+import _ from 'lodash';
 
 const phpcsPath = getPathForCommand( 'phpcs' );
 const phpcbfPath = getPathForCommand( 'phpcbf' );
@@ -22,7 +21,7 @@ console.log(
 );
 
 // Make quick pass over config files on every change
-require( './validate-config-keys' );
+import './validate-config-keys.mts';
 
 /**
  * Parses the output of a git diff command into file paths.
@@ -46,7 +45,7 @@ function getPathForCommand( command ) {
 	 * and dependencies locally.
 	 * @see printPhpcsDocs
 	 */
-	const path_to_command = path.join( __dirname, '..', 'vendor', 'bin', command );
+	const path_to_command = path.join( import.meta.dirname, '..', 'vendor', 'bin', command );
 	return _.trim( path_to_command );
 }
 function linterFailure() {

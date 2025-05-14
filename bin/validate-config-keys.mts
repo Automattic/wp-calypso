@@ -1,29 +1,29 @@
-const fs = require( 'fs' );
-const path = require( 'path' );
-const chalk = require( 'chalk' );
+import fs from 'node:fs';
+import path from 'node:path';
+import chalk from 'chalk';
 
-/** @type {string} path to configuration file directory */
-const configRoot = path.resolve( __dirname, '../config' );
+/** path to configuration file directory */
+const configRoot = path.resolve( import.meta.dirname, '../config' );
 
 /**
  * Reads a config file given its basename
- * @param {string} filename basename of config file to read, e.g. 'development.json'
- * @returns {string} contents of file
+ * @param filename basename of config file to read, e.g. 'development.json'
+ * @returns contents of file
  */
-const readConfigFile = ( filename ) =>
+const readConfigFile = ( filename: string ): string =>
 	fs.readFileSync( path.join( configRoot, filename ), { encoding: 'utf8' } );
 
 /**
  * Reads and parses the data from a
  * config file given its basename
  * @throws SyntaxError if contents of config file not valid JSON
- * @param {string} filename basename of config file to read, e.g. 'development.json'
- * @returns {*} parsed data from config file contents
+ * @param filename basename of config file to read, e.g. 'development.json'
+ * @returns parsed data from config file contents
  */
-const parseConfig = ( filename ) => JSON.parse( readConfigFile( filename ) );
+const parseConfig = ( filename: string ): object => JSON.parse( readConfigFile( filename ) );
 
-/** @type {Array} list of [ filename, config data keys ] configuration pairs */
-const environmentKeys = fs
+/** list of [ filename, config data keys ] configuration pairs */
+const environmentKeys: Array< [ string, string[] ] > = fs
 	.readdirSync( configRoot, { encoding: 'utf8' } )
 	.filter( ( filename ) => /\.json$/.test( path.basename( filename ) ) ) // only the JSON config files
 	.filter( ( filename ) => '_shared.json' !== filename ) // base config for all environments
@@ -31,7 +31,7 @@ const environmentKeys = fs
 	.filter( ( filename ) => ! /secrets/g.test( filename ) ) // secret tokens not part of this system
 	.map( ( filename ) => [ filename, Object.keys( parseConfig( filename ) ) ] );
 
-/** @type {Object} config data in the shared config file (defaults) */
+/** config data in the shared config file (defaults) */
 const sharedConfig = parseConfig( '_shared.json' );
 
 /**
