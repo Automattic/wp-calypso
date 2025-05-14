@@ -17,11 +17,13 @@ import ChoiceBlueprint from './choice-blueprint';
 import SignupContactForm from './contact-form';
 import FinishSignupSurvey from './finish-signup-survey';
 import PersonalizationForm from './personalization';
+import SubmitSignupConfirmation from './submit-signup-confirmation';
 
 import './style.scss';
 
 type Props = {
 	withPersonalizedBlueprint?: boolean;
+	submitAsSurvey?: boolean;
 };
 
 type PersonalizationStepProgress = {
@@ -53,7 +55,11 @@ const getFinishSurveyProgress = ( step: number ): number => {
 	return step === 6 ? 100 : 0;
 };
 
-const MultiStepForm = ( { withPersonalizedBlueprint = false }: Props ) => {
+const getSubmitSignupConfirmationProgress = ( step: number ): number => {
+	return step === 6 ? 50 : 0;
+};
+
+const MultiStepForm = ( { withPersonalizedBlueprint = false, submitAsSurvey = false }: Props ) => {
 	const notificationId = 'a4a-agency-signup-form';
 	const translate = useTranslate();
 	const [ currentStep, setCurrentStep ] = useState( 1 );
@@ -75,13 +81,15 @@ const MultiStepForm = ( { withPersonalizedBlueprint = false }: Props ) => {
 			value: getPersonalizationProgress( currentStep ),
 		},
 		{
-			label: translate( 'Finish survey' ),
+			label: submitAsSurvey ? translate( 'Finish survey' ) : translate( 'Complete setup' ),
 			isActive: currentStep > 5,
-			value: getFinishSurveyProgress( currentStep ),
+			value: submitAsSurvey
+				? getFinishSurveyProgress( currentStep )
+				: getSubmitSignupConfirmationProgress( currentStep ),
 		},
 	];
 
-	const createSignup = useCreateSignupMutation( {
+	const { mutate: submitSurvey } = useCreateSignupMutation( {
 		onSuccess: () => {
 			dispatch( successNotice( 'Signup successful', { id: notificationId } ) );
 		},
@@ -99,7 +107,7 @@ const MultiStepForm = ( { withPersonalizedBlueprint = false }: Props ) => {
 			const newFormData = { ...formData, ...data };
 			setFormData( newFormData );
 			setCurrentStep( nextStep );
-			if ( nextStep === 6 ) {
+			if ( nextStep === 6 && submitAsSurvey ) {
 				const {
 					topPartneringGoal,
 					topYearlyGoal,
@@ -109,10 +117,10 @@ const MultiStepForm = ( { withPersonalizedBlueprint = false }: Props ) => {
 					...rest
 				} = newFormData;
 				const payload = isBlueprintRequested ? newFormData : rest;
-				createSignup.mutate( payload as AgencyDetailsSignupPayload );
+				submitSurvey( payload as AgencyDetailsSignupPayload );
 			}
 		},
-		[ formData, createSignup ]
+		[ formData, submitAsSurvey, submitSurvey ]
 	);
 
 	const clearDataAndRefresh = () => {
@@ -128,6 +136,7 @@ const MultiStepForm = ( { withPersonalizedBlueprint = false }: Props ) => {
 					<SignupContactForm
 						onContinue={ ( data ) => updateDataAndContinue( data, 2 ) }
 						initialFormData={ formData }
+						withEmail={ submitAsSurvey }
 					/>
 				);
 			case 2:
@@ -168,11 +177,13 @@ const MultiStepForm = ( { withPersonalizedBlueprint = false }: Props ) => {
 					/>
 				);
 			case 6:
-				return (
+				return submitAsSurvey ? (
 					<FinishSignupSurvey
 						onContinue={ clearDataAndRefresh }
 						blueprintRequested={ blueprintRequested }
 					/>
+				) : (
+					<SubmitSignupConfirmation onContinue={ clearDataAndRefresh } />
 				);
 			default:
 				return null;
@@ -181,6 +192,7 @@ const MultiStepForm = ( { withPersonalizedBlueprint = false }: Props ) => {
 		blueprintRequested,
 		currentStep,
 		formData,
+		submitAsSurvey,
 		updateDataAndContinue,
 		withPersonalizedBlueprint,
 	] );
