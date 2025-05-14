@@ -292,7 +292,7 @@ function LineItemWrapper( {
 	toggleAkQuantityDropdown: ( key: string | null ) => void;
 	akQuantityOpenId: string | null;
 } ) {
-	const { restorableProducts, setRestorableProducts } = useRestorableProducts();
+	const [ restorableProducts, setRestorableProducts ] = useRestorableProducts();
 	const isRenewal = isWpComProductRenewal( product );
 	const isWooMobile = isWcMobileApp();
 	let isDeletable = canItemBeRemovedFromCart( product, responseCart ) && ! isWooMobile;

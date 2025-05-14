@@ -6,7 +6,7 @@ import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 
 export const RemovedFromCartItems = () => {
 	const cartKey = useCartKey();
-	const { restorableProducts, setRestorableProducts } = useRestorableProducts();
+	const [ restorableProducts, setRestorableProducts ] = useRestorableProducts();
 	const { addProductsToCart } = useShoppingCart( cartKey );
 	const translate = useTranslate();
 

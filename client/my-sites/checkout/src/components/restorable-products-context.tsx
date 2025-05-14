@@ -1,19 +1,19 @@
 import { ResponseCartProduct } from '@automattic/shopping-cart';
 import { createContext, useContext, useState, ReactNode, Dispatch, SetStateAction } from 'react';
 
-interface RestorableProductsContextType {
-	restorableProducts: ResponseCartProduct[];
-	setRestorableProducts: Dispatch< SetStateAction< ResponseCartProduct[] > >;
-}
+type RestorableProductsContextType = [
+	restorableProducts: ResponseCartProduct[],
+	setRestorableProducts: Dispatch< SetStateAction< ResponseCartProduct[] > >,
+];
 
 const RestorableProductsContext = createContext< RestorableProductsContextType | undefined >(
 	undefined
 );
 
 export const RestorableProductsProvider = ( { children }: { children: ReactNode } ) => {
-	const [ restorableProducts, setRestorableProducts ] = useState< ResponseCartProduct[] >( [] );
+	const state = useState< ResponseCartProduct[] >( [] );
 	return (
-		<RestorableProductsContext.Provider value={ { restorableProducts, setRestorableProducts } }>
+		<RestorableProductsContext.Provider value={ state }>
 			{ children }
 		</RestorableProductsContext.Provider>
 	);
