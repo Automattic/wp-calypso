@@ -21,8 +21,8 @@ export interface PageHeaderProps {
 	 */
 	decoration?: React.ReactNode;
 	/**
-	 * An optional breadcrumb component used to indicate the user's current position
+	 * An optional breadcrumbs component used to indicate the user's current position
 	 * in a complex navigational structure and allow quick access to parent levels.
 	 */
-	breadcrumb?: React.ReactNode[];
+	breadcrumbs?: React.ReactNode;
 }

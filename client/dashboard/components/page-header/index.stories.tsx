@@ -57,7 +57,7 @@ export const FullExample: Story = {
 		title: 'Site Customization',
 		description: 'Make your site look exactly how you want it to',
 		decoration: <Icon icon={ wordpress } />,
-		breadcrumb: (
+		breadcrumbs: (
 			<Breadcrumbs
 				items={ [
 					{ label: 'Dashboard', href: 'javascript:void(0)' },

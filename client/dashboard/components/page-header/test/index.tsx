@@ -44,7 +44,7 @@ describe( 'PageHeader', () => {
 		render(
 			<PageHeader
 				title="Test Title"
-				breadcrumb={
+				breadcrumbs={
 					<Breadcrumbs
 						items={ [
 							{ label: 'Home', href: '/' },
