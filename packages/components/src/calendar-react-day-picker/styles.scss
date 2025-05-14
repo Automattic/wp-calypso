@@ -13,7 +13,7 @@
   font-family: $a8c-font-family-sans;
 
 
-	// Actual variables
+  // Internal variables
   --a8c-components-calendar-outline-focus: 1.5px solid var(--color-accent);
   --a8c-components-calendar-button-height: 2rem;
   --a8c-components-calendar-button-width: 2rem;
@@ -52,10 +52,10 @@
     border: none;
     border-radius: 2px;
 
-	// Use box-shadow to render a border around today's button. Using box-shadow
-	// allows to keep the button highlighted even when the border is used for
-	// other purposes (eg. range selection preview, middle of a selected range).
-	box-shadow: none;
+    // Use box-shadow to render a border around today's button. Using box-shadow
+    // allows to keep the button highlighted even when the border is used for
+    // other purposes (eg. range selection preview, middle of a selected range).
+    box-shadow: none;
 
     // Use a pseudo-element to render border and background, which keeps the
     // button's border-radius intact, which in turns allows the focus ring to
@@ -190,16 +190,16 @@
   /* DAY MODIFIERS */
   // Today button, but not when selected (single date) or range start/end
   &__day--today:not(&__day--selected:not(#{&}__range-middle))  &__day-button {
-	box-shadow: inset 0 0 0 1px $gray-700;
+    box-shadow: inset 0 0 0 1px $gray-700;
 
-	&:disabled {
-		box-shadow: inset 0 0 0 1px $gray-600;
-	}
+    &:disabled {
+        box-shadow: inset 0 0 0 1px $gray-600;
+    }
 
-	&:not(:disabled)::before {
-		// Highlight today's button in forced-colors mode.
-		border: 1px solid transparent;
-	}
+    &:not(:disabled)::before {
+        // Highlight today's button in forced-colors mode.
+        border: 1px solid transparent;
+    }
   }
 
   // Selected button (individual date, range start, range middle, and range end)
@@ -216,7 +216,7 @@
   }
 
   &__day--selected:not(&__range-middle) &__day-button::before {
-	border: 4px solid transparent
+    border: 4px solid transparent
   }
 
   // Hidden button (ie. outside current month but still rendered)
@@ -226,8 +226,8 @@
 
   // Range start button, but not when start and end are the same day.
   &__range-start:not(&__range-end) &__day-button {
-	// Apply border-radius changes to the button itself too, because the
-	// focus-ring would look weird otherwise.
+    // Apply border-radius changes to the button itself too, because the
+    // focus-ring would look weird otherwise.
     &, &::before {
       border-start-end-radius: 0;
       border-end-end-radius: 0;
@@ -242,11 +242,11 @@
       background-color: $gray-100;
       border-radius: 0;
 
-	  // Render a top/bottom border of the same color as the background, which
-	  // is going to be visible in forced-colors mode.
-	  border-width: 1px 0;
-	  border-color: transparent;
-	  border-style: solid;
+      // Render a top/bottom border of the same color as the background, which
+      // is going to be visible in forced-colors mode.
+      border-width: 1px 0;
+      border-color: transparent;
+      border-style: solid;
     }
 
     &:hover:not(:disabled) {
@@ -256,8 +256,8 @@
 
   // Range end button, but not when start and end are the same day.
   &__range-end:not(&__range-start) &__day-button {
-	// Apply border-radius changes to the button itself too, because the
-	// focus-ring would look weird otherwise.
+    // Apply border-radius changes to the button itself too, because the
+    // focus-ring would look weird otherwise.
     &, &::before {
       border-start-start-radius: 0;
       border-end-start-radius: 0;
@@ -272,23 +272,23 @@
   &__day--preview:not(&__range-start):not(&__range-end) &__day-button::before {
     border-color: $gray-600;
     border-style: dashed;
-	// Do not render a border on left/right, because it would show in
-	// forced-colors mode.
-	border-width: 1px 0;
+    // Do not render a border on left/right, because it would show in
+    // forced-colors mode.
+    border-width: 1px 0;
   }
 
   &__day--preview-start:not(&__range-start):not(&__range-end) &__day-button::before {
     border-start-end-radius: 0;
     border-end-end-radius: 0;
     border-color: $gray-600;
-	border-width: 1px;
+    border-width: 1px;
   }
 
   &__day--preview-end:not(&__range-start):not(&__range-end) &__day-button::before {
     border-start-start-radius: 0;
     border-end-start-radius: 0;
     border-color: $gray-600;
-	border-width: 1px;
+    border-width: 1px;
   }
 }
 
