@@ -70,7 +70,7 @@ export async function clickNavTab(
 	// Short circuit operation if the active tab and target tabs are the same.
 	// Strip numerals from the extracted tab name to account for the slightly
 	// different implementation in PostsPage.
-	const selectedTabLocator = page.locator( selectors.navTabItem( { selected: true } ) );
+	const selectedTabLocator = page.locator( selectors.navTabItem( { selected: true, isCoreTabs } ) );
 	const selectedTabName = await selectedTabLocator.innerText();
 	if ( selectedTabName.replace( /[0-9]|,/g, '' ) === name ) {
 		return;
