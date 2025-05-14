@@ -148,7 +148,6 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 		if ( smoochRef.current ) {
 			Smooch.render( smoochRef.current );
 		}
-
 		return () => {
 			clearTimeout( retryTimeout );
 			destroy();
