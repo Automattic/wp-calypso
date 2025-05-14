@@ -1,7 +1,7 @@
 import { Locator, Page, Frame } from 'playwright';
 import envVariables from './env-variables';
 
-const coreNavTabParent = 'div.stats-navigation__tabs';
+const coreNavTabParent = 'div.components-tab-panel__tabs';
 const calypsoNavTabParent = 'div.section-nav';
 
 const selectors = {
