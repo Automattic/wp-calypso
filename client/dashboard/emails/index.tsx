@@ -121,14 +121,16 @@ function Emails() {
 		<PageLayout>
 			<PageHeader
 				title={ __( 'Emails' ) }
-				actions={ [
-					<Button key="add-forwarder" variant="secondary" __next40pxDefaultSize>
-						{ __( 'Add Email Forwarder' ) }
-					</Button>,
-					<Button key="add-mailbox" variant="primary" __next40pxDefaultSize>
-						{ __( 'Add Mailbox' ) }
-					</Button>,
-				] }
+				actions={
+					<>
+						<Button variant="secondary" __next40pxDefaultSize>
+							{ __( 'Add Email Forwarder' ) }
+						</Button>
+						<Button variant="primary" __next40pxDefaultSize>
+							{ __( 'Add Mailbox' ) }
+						</Button>
+					</>
+				}
 			/>
 			<Notice status="warning" isDismissible={ false }>
 				{ __( 'This is using fake data for the moment' ) }

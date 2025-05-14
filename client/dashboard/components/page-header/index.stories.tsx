@@ -28,14 +28,12 @@ export const WithActions: Story = {
 		description: `Manage how your site works and appears. Configure your site's basic functionality,
 				appearance, and behavior. These settings control everything from your site title to how your
 				content is displayed to visitors.`,
-		actions: [
-			<Button key="cancel" variant="secondary" size="compact">
-				Cancel
-			</Button>,
-			<Button key="save" variant="primary" size="compact">
-				Save Changes
-			</Button>,
-		],
+		actions: (
+			<>
+				<Button variant="secondary">Cancel</Button>
+				<Button variant="primary">Save Changes</Button>
+			</>
+		),
 	},
 };
 
@@ -51,33 +49,34 @@ export const FullExample: Story = {
 			{ label: 'Theme', href: 'javascript:void(0)' },
 			{ label: 'Advanced', href: 'javascript:void(0)' },
 		],
-		actions: [
-			<Button key="help" icon={ help } variant="tertiary" __next40pxDefaultSize>
-				Help
-			</Button>,
-			<Button key="preview" variant="secondary" __next40pxDefaultSize>
-				Preview
-			</Button>,
-			<DropdownMenu
-				key="more-actions"
-				icon={ moreVertical }
-				label="More actions"
-				toggleProps={ { __next40pxDefaultSize: true } }
-			>
-				{ () => (
-					<>
-						<MenuGroup>
-							<MenuItem>Import</MenuItem>
-							<MenuItem>Export</MenuItem>
-							<MenuItem>Settings</MenuItem>
-						</MenuGroup>
-						<MenuGroup>
-							<MenuItem>Help</MenuItem>
-						</MenuGroup>
-					</>
-				) }
-			</DropdownMenu>,
-		],
+		actions: (
+			<>
+				<Button icon={ help } variant="tertiary" __next40pxDefaultSize>
+					Help
+				</Button>
+				<Button variant="secondary" __next40pxDefaultSize>
+					Preview
+				</Button>
+				<DropdownMenu
+					icon={ moreVertical }
+					label="More actions"
+					toggleProps={ { __next40pxDefaultSize: true } }
+				>
+					{ () => (
+						<>
+							<MenuGroup>
+								<MenuItem>Import</MenuItem>
+								<MenuItem>Export</MenuItem>
+								<MenuItem>Settings</MenuItem>
+							</MenuGroup>
+							<MenuGroup>
+								<MenuItem>Help</MenuItem>
+							</MenuGroup>
+						</>
+					) }
+				</DropdownMenu>
+			</>
+		),
 	},
 };
 
@@ -93,32 +92,33 @@ export const ImageDecoration: Story = {
 			{ label: 'Theme', href: 'javascript:void(0)' },
 			{ label: 'Advanced', href: 'javascript:void(0)' },
 		],
-		actions: [
-			<Button key="help" icon={ help } variant="tertiary" __next40pxDefaultSize>
-				Help
-			</Button>,
-			<Button key="preview" variant="secondary" __next40pxDefaultSize>
-				Preview
-			</Button>,
-			<DropdownMenu
-				key="more-actions"
-				icon={ moreVertical }
-				label="More actions"
-				toggleProps={ { __next40pxDefaultSize: true } }
-			>
-				{ () => (
-					<>
-						<MenuGroup>
-							<MenuItem>Import</MenuItem>
-							<MenuItem>Export</MenuItem>
-							<MenuItem>Settings</MenuItem>
-						</MenuGroup>
-						<MenuGroup>
-							<MenuItem>Help</MenuItem>
-						</MenuGroup>
-					</>
-				) }
-			</DropdownMenu>,
-		],
+		actions: (
+			<>
+				<Button icon={ help } variant="tertiary" __next40pxDefaultSize>
+					Help
+				</Button>
+				<Button variant="secondary" __next40pxDefaultSize>
+					Preview
+				</Button>
+				<DropdownMenu
+					icon={ moreVertical }
+					label="More actions"
+					toggleProps={ { __next40pxDefaultSize: true } }
+				>
+					{ () => (
+						<>
+							<MenuGroup>
+								<MenuItem>Import</MenuItem>
+								<MenuItem>Export</MenuItem>
+								<MenuItem>Settings</MenuItem>
+							</MenuGroup>
+							<MenuGroup>
+								<MenuItem>Help</MenuItem>
+							</MenuGroup>
+						</>
+					) }
+				</DropdownMenu>
+			</>
+		),
 	},
 };

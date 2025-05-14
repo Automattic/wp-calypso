@@ -10,11 +10,11 @@ function UnknownError( { error }: { error: Error } ) {
 			<PageHeader
 				title={ __( '500 Error' ) }
 				description={ __( 'Something wrong happened.' ) }
-				actions={ [
-					<RouterLinkButton key="go-to-sites" to="/sites" variant="primary" __next40pxDefaultSize>
+				actions={
+					<RouterLinkButton to="/sites" variant="primary" __next40pxDefaultSize>
 						{ __( 'Go to Sites' ) }
-					</RouterLinkButton>,
-				] }
+					</RouterLinkButton>
+				}
 			/>
 			<Notice status="error" isDismissible={ false }>
 				{ error.message }

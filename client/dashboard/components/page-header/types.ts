@@ -15,7 +15,7 @@ export interface PageHeaderProps {
 	 * A group of contextual controls, such as buttons, dropdowns,
 	 * or a search input, relevant to the page or section.
 	 */
-	actions?: React.ReactNode[];
+	actions?: React.ReactNode;
 	/**
 	 * An optional visual element like an icon or small illustration
 	 * to enhance recognition or provide visual interest.

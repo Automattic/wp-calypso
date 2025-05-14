@@ -9,11 +9,11 @@ function NotFound() {
 			<PageHeader
 				title={ __( '404 Not Found' ) }
 				description={ __( 'The page you are looking for does not exist.' ) }
-				actions={ [
-					<RouterLinkButton key="go-to-sites" to="/sites" variant="primary" __next40pxDefaultSize>
+				actions={
+					<RouterLinkButton to="/sites" variant="primary" __next40pxDefaultSize>
 						{ __( 'Go to Sites' ) }
-					</RouterLinkButton>,
-				] }
+					</RouterLinkButton>
+				}
 			/>
 		</PageLayout>
 	);

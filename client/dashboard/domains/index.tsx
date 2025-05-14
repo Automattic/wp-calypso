@@ -103,11 +103,11 @@ function Domains() {
 		<PageLayout>
 			<PageHeader
 				title={ __( 'Domains' ) }
-				actions={ [
-					<Button key="add-new-domain" variant="primary" __next40pxDefaultSize>
+				actions={
+					<Button variant="primary" __next40pxDefaultSize>
 						{ __( 'Add New Domain' ) }
-					</Button>,
-				] }
+					</Button>
+				}
 			/>
 			<DataViewsCard>
 				<DataViews

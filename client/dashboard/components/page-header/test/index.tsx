@@ -19,7 +19,12 @@ describe( 'PageHeader', () => {
 		render(
 			<PageHeader
 				title="Test Title"
-				actions={ [ <Button key="cancel">Cancel</Button>, <Button key="save">Save</Button> ] }
+				actions={
+					<>
+						<Button>Cancel</Button>
+						<Button>Save</Button>
+					</>
+				}
 			/>
 		);
 		expect( screen.getByRole( 'button', { name: 'Cancel' } ) ).toBeVisible();

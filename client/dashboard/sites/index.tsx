@@ -223,11 +223,11 @@ export default function Sites() {
 			<PageLayout>
 				<PageHeader
 					title={ __( 'Sites' ) }
-					actions={ [
-						<Button key="add-new-site" variant="primary" __next40pxDefaultSize>
+					actions={
+						<Button variant="primary" __next40pxDefaultSize>
 							{ __( 'Add New Site' ) }
-						</Button>,
-					] }
+						</Button>
+					}
 				/>
 				<DataViewsCard>
 					<DataViews

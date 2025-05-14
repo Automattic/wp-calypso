@@ -8,14 +8,16 @@ export default function AgencyOverview() {
 		<PageLayout>
 			<PageHeader
 				title={ __( 'Agency Overview' ) }
-				actions={ [
-					<Button key="add-sites" variant="primary" __next40pxDefaultSize>
-						{ __( 'Add Sites' ) }
-					</Button>,
-					<Button key="add-products" variant="secondary" __next40pxDefaultSize>
-						{ __( 'Add Products' ) }
-					</Button>,
-				] }
+				actions={
+					<>
+						<Button variant="primary" __next40pxDefaultSize>
+							{ __( 'Add Sites' ) }
+						</Button>
+						<Button variant="secondary" __next40pxDefaultSize>
+							{ __( 'Add Products' ) }
+						</Button>
+					</>
+				}
 				description={ __( 'This is a sample overview page.' ) }
 			/>
 		</PageLayout>

@@ -46,22 +46,21 @@ function SiteOverview() {
 		<PageLayout>
 			<PageHeader
 				title={ site.name }
-				actions={ [
-					<ExternalLink key="visit" href={ site.URL }>
-						{ __( 'Visit' ) }
-					</ExternalLink>,
-					site.options?.admin_url && (
-						<Button
-							key="wp-admin"
-							__next40pxDefaultSize
-							variant="primary"
-							href={ site.options.admin_url }
-							icon={ wordpress }
-						>
-							{ __( 'WP Admin' ) }
-						</Button>
-					),
-				].filter( Boolean ) }
+				actions={
+					<>
+						<ExternalLink href={ site.URL }>{ __( 'Visit' ) }</ExternalLink>
+						{ site.options?.admin_url && (
+							<Button
+								__next40pxDefaultSize
+								variant="primary"
+								href={ site.options.admin_url }
+								icon={ wordpress }
+							>
+								{ __( 'WP Admin' ) }
+							</Button>
+						) }
+					</>
+				}
 			/>
 			<HStack alignment="flex-start" spacing={ 8 }>
 				<Sidebar
