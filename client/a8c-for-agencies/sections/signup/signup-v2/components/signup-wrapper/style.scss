@@ -46,6 +46,12 @@
 		rect {
 			fill: var(--color-neutral-0);
 		}
+
+		@media (prefers-color-scheme: dark) {
+			circle {
+				stroke: #022836;
+			}
+		}
 	}
 
 	.signup-wrapper__testimonial {
