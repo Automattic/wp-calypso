@@ -32,8 +32,11 @@ import {
 	requestModuleToggles,
 } from 'calypso/state/stats/module-toggles/actions';
 import { getModuleToggles } from 'calypso/state/stats/module-toggles/selectors';
-import { AVAILABLE_PAGE_MODULES, navItems, intervals as intervalConstants } from './constants';
-import Intervals from './intervals';
+import {
+	AVAILABLE_PAGE_MODULES,
+	navItems as allNavItems,
+	intervals as intervalConstants,
+} from './constants';
 import PageModuleToggler from './page-module-toggler';
 
 import './style.scss';
@@ -62,24 +65,15 @@ function withNoticeHook( HookedComponent ) {
 	};
 }
 
-const SelectNav = ( {
-	label,
-	validNavItems,
-	interval,
-	slugPath,
-	adminUrl,
-	selectedItem,
-	showLock,
-	isLegacy,
-	showIntervals,
-	pathTemplate,
-} ) => {
+const SelectNav = ( { navItems, interval, slugPath, adminUrl, selectedItem, showLock } ) => {
+	const { label } = allNavItems[ selectedItem ];
+
 	return (
 		<>
 			<SectionNav selectedText={ label }>
 				<NavTabs selectedText={ label }>
-					{ validNavItems.map( ( item ) => {
-						const navItem = navItems[ item ];
+					{ navItems.map( ( item ) => {
+						const navItem = allNavItems[ item ];
 						const intervalPath = navItem.showIntervals ? `/${ interval || 'day' }` : '';
 						const itemPath = `${ navItem.path }${ intervalPath }${ slugPath }`;
 						const className = 'stats-navigation__' + item;
@@ -110,22 +104,14 @@ const SelectNav = ( {
 						);
 					} ) }
 				</NavTabs>
-
-				{ isLegacy && showIntervals && (
-					<Intervals selected={ interval } pathTemplate={ pathTemplate } />
-				) }
 			</SectionNav>
-
-			{ isLegacy && showIntervals && (
-				<Intervals selected={ interval } pathTemplate={ pathTemplate } standalone />
-			) }
 		</>
 	);
 };
 
-const TabNav = ( { validNavItems, interval, slugPath, adminUrl, selectedItem, showLock } ) => {
-	const tabs = validNavItems.map( ( item ) => {
-		const navItem = navItems[ item ];
+const TabNav = ( { navItems, interval, slugPath, adminUrl, selectedItem, showLock } ) => {
+	const tabs = navItems.map( ( item ) => {
+		const navItem = allNavItems[ item ];
 		const intervalPath = navItem.showIntervals ? `/${ interval || 'day' }` : '';
 		const itemPath = `${ navItem.path }${ intervalPath }${ slugPath }`;
 		return {
@@ -172,10 +158,9 @@ class StatsNavigation extends Component {
 		isSimple: PropTypes.bool,
 		isSiteJetpackNotAtomic: PropTypes.bool,
 		hasVideoPress: PropTypes.bool,
-		selectedItem: PropTypes.oneOf( Object.keys( navItems ) ).isRequired,
+		selectedItem: PropTypes.oneOf( Object.keys( allNavItems ) ).isRequired,
 		siteId: PropTypes.number,
 		slug: PropTypes.string,
-		isLegacy: PropTypes.bool,
 		adminUrl: PropTypes.string,
 		showLock: PropTypes.bool,
 		hideModuleSettings: PropTypes.bool,
@@ -249,7 +234,6 @@ class StatsNavigation extends Component {
 			slug,
 			selectedItem,
 			interval,
-			isLegacy,
 			showSettingsTooltip,
 			statsAdminVersion,
 			showLock,
@@ -262,12 +246,9 @@ class StatsNavigation extends Component {
 			adminUrl,
 		} = this.props;
 		const { isPageSettingsTooltipDismissed } = this.state;
-		const { label, showIntervals, path } = navItems[ selectedItem ];
 		const slugPath = slug ? `/${ slug }` : '';
-		const pathTemplate = `${ path }/{{ interval }}${ slugPath }`;
 
 		const wrapperClass = clsx( 'stats-navigation', {
-			'stats-navigation--modernized': ! isLegacy,
 			'stats-navigation--improved': isStatsNavigationImprovementEnabled,
 		} );
 
@@ -277,7 +258,6 @@ class StatsNavigation extends Component {
 			!! ( statsAdminVersion && version_compare( statsAdminVersion, '0.9.0-alpha', '>=' ) );
 
 		const shouldRenderModuleToggler =
-			! isLegacy &&
 			isModuleSettingsSupported &&
 			AVAILABLE_PAGE_MODULES[ this.props.selectedItem ] &&
 			! hideModuleSettings &&
@@ -285,7 +265,7 @@ class StatsNavigation extends Component {
 
 		// @TODO: Add loading status of modules settings to avoid toggling modules before they are loaded.
 
-		const validNavItems = Object.keys( navItems ).filter( this.isValidItem );
+		const navItems = Object.keys( allNavItems ).filter( this.isValidItem );
 
 		return (
 			<div className={ wrapperClass }>
@@ -296,21 +276,17 @@ class StatsNavigation extends Component {
 						breakpoint="<480px"
 						breakpointActiveComponent={
 							<SelectNav
-								label={ label }
-								validNavItems={ validNavItems }
+								navItems={ navItems }
 								interval={ interval }
 								slugPath={ slugPath }
 								adminUrl={ adminUrl }
 								selectedItem={ selectedItem }
 								showLock={ showLock }
-								isLegacy={ isLegacy }
-								showIntervals={ showIntervals }
-								pathTemplate={ pathTemplate }
 							/>
 						}
 						breakpointInactiveComponent={
 							<TabNav
-								validNavItems={ validNavItems }
+								navItems={ navItems }
 								interval={ interval }
 								slugPath={ slugPath }
 								adminUrl={ adminUrl }
@@ -323,16 +299,12 @@ class StatsNavigation extends Component {
 				{ ! isStatsNavigationImprovementEnabled && (
 					// TODO: remove following SelectNav after 'stats/navigation-improvement' launch.
 					<SelectNav
-						label={ label }
-						validNavItems={ validNavItems }
+						navItems={ navItems }
 						interval={ interval }
 						slugPath={ slugPath }
 						adminUrl={ adminUrl }
 						selectedItem={ selectedItem }
 						showLock={ showLock }
-						isLegacy={ isLegacy }
-						showIntervals={ showIntervals }
-						pathTemplate={ pathTemplate }
 					/>
 				) }
 
