@@ -96,7 +96,6 @@ const meta: Meta< typeof DateCalendar > = {
 		},
 		endMonth: { control: 'date' },
 		startMonth: { control: 'date' },
-		footer: { control: 'text' },
 	},
 	args: {
 		onMonthChange: fn(),
@@ -279,29 +278,33 @@ export const WithTimeZone: Story = {
 		}, [ args.timeZone ] );
 
 		return (
-			<DateCalendar
-				{ ...args }
-				selected={ selected }
-				onSelect={ ( selectedDate, ...rest ) => {
-					setSelected( selectedDate ? new TZDate( selectedDate, args.timeZone ) : null );
-					// TS is strict about `onSelect` expecting a non-undefined date
-					// when the selection is required.
-					if ( ! args.required ) {
-						args.onSelect?.( selectedDate, ...rest );
-					} else if ( selectedDate ) {
-						args.onSelect?.( selectedDate, ...rest );
-					}
-				} }
-				disabled={ [
-					{
-						// Disable any date before today
-						before: new TZDate( new Date(), args.timeZone ),
-					},
-				] }
-				footer={ `Calendar set to ${
-					args.timeZone ?? 'current'
-				} timezone, disabling selection for all dates before today, and starting with a default date of 1 week from today` }
-			/>
+			<>
+				<DateCalendar
+					{ ...args }
+					selected={ selected }
+					onSelect={ ( selectedDate, ...rest ) => {
+						setSelected( selectedDate ? new TZDate( selectedDate, args.timeZone ) : null );
+						// TS is strict about `onSelect` expecting a non-undefined date
+						// when the selection is required.
+						if ( ! args.required ) {
+							args.onSelect?.( selectedDate, ...rest );
+						} else if ( selectedDate ) {
+							args.onSelect?.( selectedDate, ...rest );
+						}
+					} }
+					disabled={ [
+						{
+							// Disable any date before today
+							before: new TZDate( new Date(), args.timeZone ),
+						},
+					] }
+				/>
+
+				<p>
+					Calendar set to { args.timeZone ?? 'current' } timezone, disabling selection for all dates
+					before today, and starting with a default date of 1 week from today`
+				</p>
+			</>
 		);
 	},
 	args: {
@@ -315,47 +318,6 @@ export const WithTimeZone: Story = {
 			control: false,
 		},
 		disabled: {
-			control: false,
-		},
-	},
-};
-
-/**
- * Since the footer is a live region, it is a great place to provide feedback
- * to the user about the selected date.
- */
-export const Footer: Story = {
-	render: function ControlledDateCalendar( args ) {
-		const [ selected, setSelected ] = useState< Date | null >( null );
-		return (
-			<DateCalendar
-				{ ...args }
-				selected={ selected }
-				onSelect={ ( selectedDate, ...rest ) => {
-					setSelected( selectedDate ?? null );
-					// TS is strict about `onSelect` expecting a non-undefined date
-					// when the selection is required.
-					if ( ! args.required ) {
-						args.onSelect?.( selectedDate, ...rest );
-					} else if ( selectedDate ) {
-						args.onSelect?.( selectedDate, ...rest );
-					}
-				} }
-				footer={
-					selected ? (
-						<p>You selected { selected.toLocaleDateString() }.</p>
-					) : (
-						<p>Please pick a day.</p>
-					)
-				}
-			/>
-		);
-	},
-	argTypes: {
-		selected: {
-			control: false,
-		},
-		defaultSelected: {
 			control: false,
 		},
 	},

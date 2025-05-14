@@ -168,13 +168,6 @@ interface BaseProps extends Omit< React.HTMLAttributes< HTMLDivElement >, 'onSel
 	 */
 	endMonth?: Date;
 	/**
-	 * Add a footer to the calendar, acting as a live region.
-	 *
-	 * Use this prop to communicate the calendar's status to screen readers.
-	 * Prefer strings over complex UI elements.
-	 */
-	footer?: React.ReactNode | string;
-	/**
 	 * Focus the first selected day (if set) or today's date (if not disabled).
 	 *
 	 * Use this prop when you need to focus the calendar after a user action
