@@ -56,7 +56,6 @@
 /build-tools/webpack/require-chunk-callback-plugin.js @Automattic/i18n
 /client/boot/locale.js @Automattic/i18n
 /client/components/calypso-i18n-provider @Automattic/i18n
-/client/components/community-translator @Automattic/i18n
 /client/components/language-picker @Automattic/i18n
 /client/components/locale-suggestions @Automattic/i18n
 /client/components/localized-moment @Automattic/i18n
