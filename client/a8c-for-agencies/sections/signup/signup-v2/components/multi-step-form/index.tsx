@@ -8,6 +8,7 @@ import A4ALogo, {
 } from 'calypso/a8c-for-agencies/components/a4a-logo';
 import { useIsDarkMode } from 'calypso/a8c-for-agencies/hooks/use-is-dark-mode';
 import { AgencyDetailsSignupPayload } from 'calypso/a8c-for-agencies/sections/signup/types';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import useCreateSignupMutation from '../../../hooks/use-create-signup-mutation';
 import StepProgress from '../step-progress';
@@ -105,6 +106,26 @@ const MultiStepForm = ( { withPersonalizedBlueprint = false, submitAsSurvey = fa
 
 	const submitSignup = useSubmitSignup();
 
+	const trackView = useCallback(
+		( step: number ) => {
+			const viewMap = {
+				1: 'signup_contact_form',
+				2: 'personalization_form',
+				3: 'choice_blueprint',
+				4: 'blueprint_form',
+				5: 'blueprint_form_2',
+				6: submitAsSurvey ? 'finish_signup_survey' : 'submit_signup_confirmation',
+			};
+
+			dispatch(
+				recordTracksEvent( 'calypso_a4a_agency_signup_form_view', {
+					step: viewMap[ step as keyof typeof viewMap ],
+				} )
+			);
+		},
+		[ dispatch, submitAsSurvey ]
+	);
+
 	const updateDataAndContinue = useCallback(
 		(
 			data: Partial< AgencyDetailsSignupPayload >,
@@ -141,6 +162,7 @@ const MultiStepForm = ( { withPersonalizedBlueprint = false, submitAsSurvey = fa
 	}, [ formData, submitSignup ] );
 
 	const currentForm = useMemo( () => {
+		trackView( currentStep );
 		switch ( currentStep ) {
 			case 1:
 				return (
@@ -205,6 +227,7 @@ const MultiStepForm = ( { withPersonalizedBlueprint = false, submitAsSurvey = fa
 		formData,
 		onCreateAgency,
 		submitAsSurvey,
+		trackView,
 		updateDataAndContinue,
 		withPersonalizedBlueprint,
 	] );
