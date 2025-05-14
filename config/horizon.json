@@ -76,7 +76,6 @@
 		"livechat_solution": true,
 		"login/last-used-method": true,
 		"login/magic-login": true,
-		"login/social-first": true,
 		"mailchimp": false,
 		"marketplace-fetch-all-dynamic-products": true,
 		"marketplace-personal-premium": false,

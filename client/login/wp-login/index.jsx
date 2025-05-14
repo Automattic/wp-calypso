@@ -555,12 +555,7 @@ export class Login extends Component {
 		} = this.props;
 
 		const canonicalUrl = localizeUrl( 'https://wordpress.com/log-in', locale );
-		const isSocialFirst =
-			config.isEnabled( 'login/social-first' ) &&
-			isWhiteLogin &&
-			! isGravPoweredClient &&
-			! isWoo &&
-			! isBlazePro;
+		const isSocialFirst = isWhiteLogin && ! isGravPoweredClient && ! isWoo && ! isBlazePro;
 
 		const akismetLogo = (
 			<svg
