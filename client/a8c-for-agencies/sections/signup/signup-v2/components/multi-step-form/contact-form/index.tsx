@@ -75,7 +75,7 @@ const SignupContactForm = ( { onContinue, initialFormData }: Props ) => {
 			) }
 			description={ preventWidows(
 				translate(
-					'Join 5000+ agencies and grow your business with {{span}}Automattic for Agencies.{{/span}}',
+					'Join 6000+ agencies and grow your business with {{span}}Automattic for Agencies.{{/span}} Get access to site management, earn commission on referrals, and explore our tier program to launch your business potential.',
 					{
 						components: {
 							span: <span className="signup-contact-form__a4a-span" />,
@@ -193,7 +193,7 @@ const SignupContactForm = ( { onContinue, initialFormData }: Props ) => {
 					variant="primary"
 					onClick={ handleSubmit }
 				>
-					{ translate( 'Continue' ) }
+					{ translate( 'Sign up for free' ) }
 				</Button>
 			</FormFooter>
 		</Form>
