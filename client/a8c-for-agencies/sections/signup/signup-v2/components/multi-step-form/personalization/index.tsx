@@ -245,9 +245,7 @@ export default function PersonalizationForm( {
 								onClick={ handleSubmit }
 								isBusy={ isSubmitting }
 							>
-								{ isFinalStep
-									? translate( 'Finish and login with WordPress.com' )
-									: translate( 'Continue' ) }
+								{ isFinalStep ? translate( 'Finish and Log in' ) : translate( 'Continue' ) }
 							</Button>
 						</FormFooter>
 					</>

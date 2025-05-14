@@ -41,6 +41,7 @@
 }
 
 .signup-personalization-form__description {
+	margin-block-start: 8px;
 	@include body-medium;
 
 	@media (prefers-color-scheme: dark) {
