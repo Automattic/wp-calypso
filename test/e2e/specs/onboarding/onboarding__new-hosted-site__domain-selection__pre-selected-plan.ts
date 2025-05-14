@@ -59,6 +59,7 @@ describe(
 
 			const promises = await Promise.all( [
 				domainSearchComponent.selectDomain( '.live', false ),
+				page.click( '.domains__domain-cart-continue' ),
 				page.waitForURL( /.*\/checkout\/.*/, { timeout: 30 * 1000 } ),
 			] );
 

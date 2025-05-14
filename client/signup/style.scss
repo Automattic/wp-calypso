@@ -307,14 +307,14 @@ body.is-section-signup .layout:not(.dops):not(.is-wccom-oauth-flow) {
 
 	.signup__step.is-user,
 	.signup__step.is-user-social {
-		button.signup-form__submit[disabled],
-		button.signup-form__submit:disabled,
-		button.signup-form__submit.disabled {
+		.button.signup-form__submit[disabled],
+		.button.signup-form__submit:disabled,
+		.button.signup-form__submit.disabled {
 			background-color: var(--studio-gray-20);
 			color: var(--color-surface);
 		}
 
-		button.signup-form__submit {
+		.button.signup-form__submit {
 			border-radius: 4px;
 			max-width: 408px;
 			height: 44px;

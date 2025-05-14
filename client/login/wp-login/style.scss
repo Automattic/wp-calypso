@@ -10,10 +10,16 @@
 $image-height: 47px;
 
 .layout.is-section-login {
-	padding-bottom: $image-height;
 	position: relative;
-	min-height: calc(100% - #{$image-height});
+	min-height: 100%; // Needed for any screen not yet using a StepContainerV2 wireframe (e.g. magic login).
 
+	// This adjustment is only necessary when rendering the Jetpack colophon.
+	// isWhiteLogin screens don't need it.
+	&:where(:not(.is-white-login)) {
+		padding-bottom: $image-height;
+		min-height: calc(100% - #{$image-height});
+	}
+	
 	.layout__content {
 		position: static;
 	}
@@ -437,14 +443,7 @@ $image-height: 47px;
 	}
 
 	.wp-login__main.is-social-first {
-		max-width: 758px;
-		margin-top: 24px;
-		padding-left: 20px;
-		padding-right: 20px;
-
-		@include break-medium {
-			margin-top: 20.5vh;
-		}
+		max-width: none;
 
 		.wp-login__header-navigation {
 			align-items: center;
@@ -496,11 +495,6 @@ $image-height: 47px;
 			text-align: center;
 			text-decoration: underline;
 			text-underline-offset: 5px;
-			margin-top: 24px;
-
-			@include break-mobile {
-				margin-top: 40px;
-			}
 		}
 	}
 
@@ -617,10 +611,6 @@ $image-height: 47px;
 		}
 	}
 
-	.login__form-gutenboarding-wordpress-logo {
-		display: none;
-	}
-
 	.layout__content {
 		padding: 0;
 	}
@@ -684,6 +674,7 @@ $image-height: 47px;
 		> .card {
 			padding: 0;
 			border: 0;
+			box-shadow: none;
 		}
 	}
 
@@ -731,6 +722,8 @@ $image-height: 47px;
 	.login__form-terms {
 		color: rgba(#00101c, 0.6);
 		margin: 24px 0 0;
+		font-size: 0.875rem;
+		text-align: left;
 	}
 
 	button.form-button.is-primary,
@@ -935,26 +928,3 @@ $image-height: 47px;
 	--login-form-column-max-width: 327px;
 }
 
-@include break-mobile {
-	:root {
-		--login-form-column-max-width: 600px;
-	}
-}
-
-@include break-small {
-	:root {
-		--login-form-column-max-width: 327px;
-	}
-}
-
-@include break-medium {
-	:root {
-		--login-form-column-max-width: 350px;
-	}
-}
-
-@include break-large {
-	:root {
-		--login-form-column-max-width: 327px;
-	}
-}

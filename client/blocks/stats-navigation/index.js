@@ -141,12 +141,15 @@ const TabNav = ( { validNavItems, interval, slugPath, adminUrl, selectedItem, sh
 			className="stats-navigation__tabs"
 			tabs={ tabs }
 			onSelect={ ( tabName ) => {
-				const tab = tabs.find( ( { name } ) => name === tabName );
+				// Skip navigation if the clicked tab is already active to avoid redundant actions.
+				if ( tabName !== selectedItem ) {
+					const tab = tabs.find( ( { name } ) => name === tabName );
 
-				if ( tab.name === 'store' && config.isEnabled( 'is_running_in_jetpack_site' ) ) {
-					window.location.href = `${ adminUrl }admin.php?page=wc-admin&path=%2Fanalytics%2Foverview`;
-				} else if ( tab.path ) {
-					page( tab.path );
+					if ( tab.name === 'store' && config.isEnabled( 'is_running_in_jetpack_site' ) ) {
+						window.location.href = `${ adminUrl }admin.php?page=wc-admin&path=%2Fanalytics%2Foverview`;
+					} else if ( tab.path ) {
+						page( tab.path );
+					}
 				}
 			} }
 			initialTabName={ selectedItem }

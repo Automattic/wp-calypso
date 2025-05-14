@@ -100,7 +100,6 @@ export class LoginForm extends Component {
 		showSocialLoginFormOnly: PropTypes.bool,
 		currentQuery: PropTypes.object,
 		hideSignupLink: PropTypes.bool,
-		isSignupExistingAccount: PropTypes.bool,
 		sendMagicLoginLink: PropTypes.func,
 		isSendingEmail: PropTypes.bool,
 		cancelSocialAccountConnectLinking: PropTypes.func,
@@ -349,23 +348,6 @@ export class LoginForm extends Component {
 				},
 				'/log-in/jetpack/link'
 			)
-		);
-	}
-
-	renderLoginFromSignupNotice() {
-		return (
-			<Notice status="is-transparent-info" showDismiss={ false }>
-				{ this.props.translate(
-					'This email address is already associated with an account. Please consider {{returnToSignup}}using another one{{/returnToSignup}} or log in.',
-					{
-						components: {
-							returnToSignup: (
-								<a href={ this.getSignupUrl() } onClick={ this.recordSignUpLinkClick } />
-							),
-						},
-					}
-				) }
-			</Notice>
 		);
 	}
 
@@ -778,7 +760,6 @@ export class LoginForm extends Component {
 			isWoo,
 			isBlazePro,
 			hideSignupLink,
-			isSignupExistingAccount,
 			isSendingEmail,
 			isSocialFirst,
 			isJetpack,
@@ -875,8 +856,6 @@ export class LoginForm extends Component {
 									) }
 								</p>
 							) }
-
-							{ isSignupExistingAccount && this.renderLoginFromSignupNotice() }
 
 							<FormLabel htmlFor="usernameOrEmail">{ this.renderUsernameorEmailLabel() }</FormLabel>
 

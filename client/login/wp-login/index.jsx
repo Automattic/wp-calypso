@@ -10,11 +10,13 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import LoginBlock from 'calypso/blocks/login';
+import { getHeaderText } from 'calypso/blocks/login/login-header';
 import AutomatticLogo from 'calypso/components/automattic-logo';
 import DocumentHead from 'calypso/components/data/document-head';
 import LocaleSuggestions from 'calypso/components/locale-suggestions';
 import LoggedOutFormBackLink from 'calypso/components/logged-out-form/back-link';
 import Main from 'calypso/components/main';
+import WPCloudLogo from 'calypso/components/wp-cloud-logo';
 import isAkismetRedirect from 'calypso/lib/akismet/is-akismet-redirect';
 import { getSignupUrl, pathWithLeadingSlash } from 'calypso/lib/login';
 import {
@@ -26,6 +28,7 @@ import {
 	isGravPoweredOAuth2Client,
 	isBlazeProOAuth2Client,
 	isWooOAuth2Client,
+	isPartnerPortalOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { login, lostPassword } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/url';
@@ -34,6 +37,7 @@ import {
 	recordTracksEventWithClientId as recordTracksEvent,
 	enhanceWithSiteType,
 } from 'calypso/state/analytics/actions';
+import { wasManualRenewalImmediateLoginAttempted } from 'calypso/state/immediate-login/selectors';
 import { getRedirectToOriginal } from 'calypso/state/login/selectors';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
@@ -524,13 +528,39 @@ export class Login extends Component {
 		);
 	}
 
-	renderTopBar( isSocialFirst ) {
-		const { isFromAkismet, isJetpack, isWooJPC } = this.props;
+	render() {
+		const {
+			locale,
+			translate,
+			isFromMigrationPlugin,
+			isGenericOauth,
+			isGravPoweredClient,
+			isWoo,
+			isBlazePro,
+			isWhiteLogin,
+			isJetpack,
+			isFromAkismet,
+			twoFactorAuthType,
+			isManualRenewalImmediateLoginAttempt,
+			socialConnect,
+			linkingSocialService,
+			action,
+			oauth2Client,
+			isWooJPC,
+			isWCCOM,
+			isFromAutomatticForAgenciesPlugin,
+			currentQuery,
+			wccomFrom,
+			twoFactorEnabled,
+		} = this.props;
 
-		if ( isWooJPC ) {
-			// The Woo flow already displays the Woo logo in the header.
-			return null;
-		}
+		const canonicalUrl = localizeUrl( 'https://wordpress.com/log-in', locale );
+		const isSocialFirst =
+			config.isEnabled( 'login/social-first' ) &&
+			isWhiteLogin &&
+			! isGravPoweredClient &&
+			! isWoo &&
+			! isBlazePro;
 
 		const akismetLogo = (
 			<svg
@@ -567,71 +597,82 @@ export class Login extends Component {
 			</div>
 		);
 
-		if ( isJetpack && ! this.props.isFromAutomatticForAgenciesPlugin ) {
-			return jetpackLogo;
-		}
+		const mainContent = (
+			<Main
+				className={ clsx( 'wp-login__main', {
+					'is-wpcom-migration': isFromMigrationPlugin,
+					'is-social-first': isSocialFirst,
+					'is-generic-oauth': isGenericOauth,
+					'is-jetpack': isJetpack,
+				} ) }
+			>
+				{ this.renderI18nSuggestions() }
 
-		if ( isSocialFirst ) {
-			return (
-				<Step.TopBar
-					rightElement={ this.renderLoginHeaderNavigation() }
-					logo={ isFromAkismet && akismetLogo }
+				<DocumentHead
+					title={ translate( 'Log In' ) }
+					link={ [ { rel: 'canonical', href: canonicalUrl } ] }
+					meta={ [
+						{
+							name: 'description',
+							content: translate(
+								'Log in to your WordPress.com account to manage your website, publish content, and access all your tools securely and easily.'
+							),
+						},
+					] }
 				/>
-			);
-		}
 
-		return null;
-	}
+				<div className="wp-login__container">{ this.renderContent( isSocialFirst ) }</div>
+			</Main>
+		);
 
-	render() {
-		const {
-			locale,
-			translate,
+		const headerText = getHeaderText(
+			isSocialFirst,
+			twoFactorAuthType,
+			isManualRenewalImmediateLoginAttempt,
+			socialConnect,
+			linkingSocialService,
+			action,
+			oauth2Client,
+			isWooJPC,
 			isFromMigrationPlugin,
-			isGenericOauth,
-			isGravPoweredClient,
-			isWoo,
-			isBlazePro,
-			isWhiteLogin,
 			isJetpack,
-		} = this.props;
-		const canonicalUrl = localizeUrl( 'https://wordpress.com/log-in', locale );
-		const isSocialFirst =
-			config.isEnabled( 'login/social-first' ) &&
-			isWhiteLogin &&
-			! isGravPoweredClient &&
-			! isWoo &&
-			! isBlazePro;
+			isWCCOM,
+			isFromAkismet,
+			isFromAutomatticForAgenciesPlugin,
+			isGravPoweredClient,
+			wccomFrom,
+			twoFactorEnabled,
+			currentQuery,
+			translate
+		);
+
+		let brandLogo;
+
+		if ( isFromAkismet ) {
+			brandLogo = akismetLogo;
+		} else if (
+			isPartnerPortalOAuth2Client( oauth2Client ) &&
+			document.location.search?.includes( 'wpcloud' )
+		) {
+			brandLogo = <WPCloudLogo className="login__wpcloud-logo" size={ 120 } />;
+		}
 
 		return (
 			<>
-				{ this.renderTopBar( isSocialFirst ) }
-				<Main
-					className={ clsx( 'wp-login__main', {
-						'is-wpcom-migration': isFromMigrationPlugin,
-						'is-social-first': isSocialFirst,
-						'is-generic-oauth': isGenericOauth,
-						'is-jetpack': isJetpack,
-					} ) }
-				>
-					{ this.renderI18nSuggestions() }
-
-					<DocumentHead
-						title={ translate( 'Log In' ) }
-						link={ [ { rel: 'canonical', href: canonicalUrl } ] }
-						meta={ [
-							{
-								name: 'description',
-								content: translate(
-									'Log in to your WordPress.com account to manage your website, publish content, and access all your tools securely and easily.'
-								),
-							},
-						] }
-					/>
-
-					<div className="wp-login__container">{ this.renderContent( isSocialFirst ) }</div>
-				</Main>
-
+				{ isWhiteLogin && (
+					<Step.CenteredColumnLayout
+						columnWidth={ 6 }
+						topBar={
+							<Step.TopBar rightElement={ this.renderLoginHeaderNavigation() } logo={ brandLogo } />
+						}
+						heading={ <Step.Heading text={ headerText } /> }
+						verticalAlign="center"
+					>
+						{ mainContent }
+					</Step.CenteredColumnLayout>
+				) }
+				{ ! isWooJPC && isJetpack && ! this.props.isFromAutomatticForAgenciesPlugin && jetpackLogo }
+				{ ! isWhiteLogin && mainContent }
 				{ this.renderFooter() }
 			</>
 		);
@@ -679,6 +720,7 @@ export default connect(
 				'automattic-for-agencies-client' === get( getCurrentQueryArguments( state ), 'from' ) ||
 				'automattic-for-agencies-client' ===
 					new URLSearchParams( getRedirectToOriginal( state )?.split( '?' )[ 1 ] ).get( 'from' ),
+			isManualRenewalImmediateLoginAttempt: wasManualRenewalImmediateLoginAttempted( state ),
 		};
 	},
 	{

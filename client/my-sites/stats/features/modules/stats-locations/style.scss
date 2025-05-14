@@ -64,6 +64,10 @@ $locations-horizontal-bar-width: 380px;
 		display: flex;
 		justify-content: space-between;
 		padding: 12px 24px;
+
+		@media (max-width: $break-small) {
+			padding: 12px 16px;
+		}
 	}
 
 	.stats-card--column-header__left {

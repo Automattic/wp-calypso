@@ -15,19 +15,25 @@ form {
 }
 
 .is-white-login {
+	.login {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		gap: 3rem; // Should match stepContainer V2 styles.
+	}
+
 	form {
 		max-width: 400px;
 
 		&.is-social-first {
 			display: flex;
 			flex-direction: column;
-			margin-top: 24px;
 			justify-content: center;
 			max-width: 758px;
+			margin: 0;
 
 			@media (min-width: $breakpoint-mobile) {
 				flex-direction: row;
-				margin-top: 32px;
 			}
 
 			.card.login__form,

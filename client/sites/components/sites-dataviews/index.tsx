@@ -8,7 +8,7 @@ import JetpackLogo from 'calypso/components/jetpack-logo';
 import { navigate } from 'calypso/lib/navigate';
 import { SitePlan } from 'calypso/sites-dashboard/components/sites-site-plan';
 import { isSitePreviewPaneEligible } from 'calypso/sites-dashboard/utils';
-import { useSelector } from 'calypso/state';
+import { useSelector, useStore } from 'calypso/state';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { isA8cTeamMember } from 'calypso/state/teams/selectors';
@@ -58,7 +58,7 @@ const DotcomSitesDataViews = ( {
 	sitePreviewPane,
 }: Props ) => {
 	const { __ } = useI18n();
-	const state = useSelector( ( state ) => state );
+	const store = useStore();
 	const userId = useSelector( getCurrentUserId );
 
 	// By default, DataViews is in an "uncontrolled" mode, meaning the current selection is handled internally.
@@ -66,7 +66,7 @@ const DotcomSitesDataViews = ( {
 	// To prevent that, we want to use DataViews in "controlled" mode, so that we can pass an initial selection during initial mount.
 	//
 	// To do that, we need to pass a required `onSelectionChange` callback to signal that it is being used in controlled mode.
-	// The current selection is a derived value which is [selectedItem.ID] (see getSelection()).
+	// The current selection is a derived value which is [selectedItem.ID] (see `selection`).
 	const onSelectionChange = useCallback(
 		( selectedSiteIds: string[] ) => {
 			// In table view, when a row is clicked, the item is selected for a bulk action, so the panel should not open.
@@ -79,7 +79,7 @@ const DotcomSitesDataViews = ( {
 
 			const site = sites.find( ( s ) => s.ID === Number( selectedSiteIds[ 0 ] ) );
 			if ( site && ! site.is_deleted ) {
-				const canManageOptions = canCurrentUser( state, site.ID, 'manage_options' );
+				const canManageOptions = canCurrentUser( store.getState(), site.ID, 'manage_options' );
 				if ( isSitePreviewPaneEligible( site, canManageOptions ) ) {
 					sitePreviewPane.open( site, 'list_row_click' );
 					return;
@@ -88,13 +88,10 @@ const DotcomSitesDataViews = ( {
 				navigate( site.options?.admin_url || '' );
 			}
 		},
-		[ dataViewsState.type, sitePreviewPane, sites, state ]
+		[ dataViewsState.type, sitePreviewPane, sites, store ]
 	);
 
-	const getSelection = useCallback(
-		() => ( selectedItem ? [ selectedItem.ID.toString() ] : undefined ),
-		[ selectedItem ]
-	);
+	const selection = selectedItem ? [ selectedItem.ID.toString() ] : undefined;
 
 	const siteStatusGroups = useSiteStatusGroups();
 
@@ -228,7 +225,7 @@ const DotcomSitesDataViews = ( {
 				actions={ actions }
 				search
 				searchLabel={ __( 'Search sites…' ) }
-				selection={ getSelection() }
+				selection={ selection }
 				paginationInfo={ paginationInfo }
 				getItemId={ ( item ) => {
 					return item.ID.toString();

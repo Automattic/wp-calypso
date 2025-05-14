@@ -2,6 +2,7 @@
 @import "./styles/layout";
 @import "./styles/wp-admin";
 @import "./styles/typography";
+@import "@wordpress/base-styles/breakpoints";
 
 .wp-admin {
 	.card {
@@ -50,8 +51,10 @@
 	}
 
 	.stats-navigation.stats-navigation--modernized .section-nav-tab .section-nav-tab__link {
-		padding-left: 0;
-		padding-right: 0;
+		@media (min-width: $break-mobile) {
+			padding-left: 0;
+			padding-right: 0;
+		}
 
 		&:focus {
 			box-shadow: none;
