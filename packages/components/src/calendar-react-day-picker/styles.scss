@@ -363,29 +363,21 @@
   };
   }
 
-.a8c-components-calendar__weeks-before-enter {
-  animation-name: a8c-components-calendar-slide-in-left;
-}
-.a8c-components-calendar__weeks-before-exit {
-  animation-name: a8c-components-calendar-slide-out-left;
-}
-.a8c-components-calendar__weeks-after-enter {
-  animation-name: a8c-components-calendar-slide-in-right;
-}
-.a8c-components-calendar__weeks-after-exit {
-  animation-name: a8c-components-calendar-slide-out-right;
-}
+.a8c-components-calendar__weeks-before-enter,
 .a8c-components-calendar[dir="rtl"] .a8c-components-calendar__weeks-after-enter {
   animation-name: a8c-components-calendar-slide-in-left;
 }
-.a8c-components-calendar[dir="rtl"] .a8c-components-calendar__weeks-before-exit {
-  animation-name: a8c-components-calendar-slide-out-right;
+.a8c-components-calendar__weeks-before-exit,
+.a8c-components-calendar[dir="rtl"] .a8c-components-calendar__weeks-after-exit {
+  animation-name: a8c-components-calendar-slide-out-left;
 }
+.a8c-components-calendar__weeks-after-enter,
 .a8c-components-calendar[dir="rtl"] .a8c-components-calendar__weeks-before-enter {
   animation-name: a8c-components-calendar-slide-in-right;
 }
-.a8c-components-calendar[dir="rtl"] .a8c-components-calendar__weeks-after-exit {
-  animation-name: a8c-components-calendar-slide-out-left;
+.a8c-components-calendar__weeks-after-exit,
+.a8c-components-calendar[dir="rtl"] .a8c-components-calendar__weeks-before-exit {
+  animation-name: a8c-components-calendar-slide-out-right;
 }
 
 .a8c-components-calendar__caption-after-enter {

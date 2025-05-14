@@ -1,4 +1,4 @@
-import { useMemo, useState, useCallback } from 'react';
+import { useMemo, useState } from 'react';
 import { DayPicker, TZDate } from 'react-day-picker';
 import { useControlledValue } from './utils';
 import type { DateCalendarProps, DateRangeCalendarProps, DateRange } from './types';
@@ -191,17 +191,6 @@ export const DateRangeCalendar = ( {
 		};
 	}, [ previewRange ] );
 
-	const onDayMouseEnter = useCallback(
-		( day: Date ) => {
-			setHoveredDate( day );
-		},
-		[ setHoveredDate ]
-	);
-
-	const onDayMouseLeave = useCallback( () => {
-		setHoveredDate( undefined );
-	}, [ setHoveredDate ] );
-
 	return (
 		<DayPicker
 			aria-label={ ariaLabel }
@@ -210,8 +199,8 @@ export const DateRangeCalendar = ( {
 			excludeDisabled={ excludeDisabled }
 			selected={ selected }
 			onSelect={ setSelected }
-			onDayMouseEnter={ onDayMouseEnter }
-			onDayMouseLeave={ onDayMouseLeave }
+			onDayMouseEnter={ ( date ) => setHoveredDate( date ) }
+			onDayMouseLeave={ () => setHoveredDate( undefined ) }
 			modifiers={ modifiers }
 			modifiersClassNames={ MODIFIER_CLASSNAMES }
 			{ ...commonProps }
