@@ -1,5 +1,5 @@
 /*
-    Global styles for Stepper framework
+	Global styles for Stepper framework
 */
 @import "@automattic/calypso-color-schemes";
 @import "@automattic/typography/styles/fonts";
@@ -11,14 +11,6 @@
  * Importers styles
  */
 @import "calypso/blocks/import/style/base";
-
-/**
- * General onboarding styling
- */
-body {
-	--color-body-background: #fdfdfd;
-	background-color: var(--color-body-background);
-}
 
 body,
 button {

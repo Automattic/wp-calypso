@@ -5,8 +5,6 @@ const path = require( 'path' );
 const languages = require( '@automattic/languages' );
 const parse = require( 'gettext-parser' ).po.parse;
 const _ = require( 'lodash' );
-const mkdirp = require( 'mkdirp' );
-const fetch = require( 'node-fetch' );
 
 const LANGUAGES_BASE_URL = 'https://widgets.wp.com/languages/calypso';
 const LANGUAGES_REVISIONS_FILENAME = 'lang-revisions.json';
@@ -24,7 +22,7 @@ const THOUSANDS_SEPARATOR_TRANSLATION = 'number_format_thousands_sep';
 
 // Create languages directory
 function createLanguagesDir() {
-	return mkdirp.sync( OUTPUT_PATH );
+	return fs.mkdirSync( OUTPUT_PATH, { recursive: true } );
 }
 
 // Get module reference

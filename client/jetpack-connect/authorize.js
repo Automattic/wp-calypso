@@ -7,7 +7,7 @@ import {
 import { getUrlParts } from '@automattic/calypso-url';
 import { Button, Card, FormLabel, Gridicon, Spinner } from '@automattic/components';
 import { Spinner as WPSpinner, Modal } from '@wordpress/components';
-import { Icon, chartBar, cloudUpload, next } from '@wordpress/icons';
+import { Icon, chartBar, next, share } from '@wordpress/icons';
 import clsx from 'clsx';
 import debugModule from 'debug';
 import { localize } from 'i18n-calypso';
@@ -1119,10 +1119,10 @@ export class JetpackAuthorize extends Component {
 							</li>
 							<li>
 								<span>
-									<Icon icon={ cloudUpload } size={ 24 } />
+									<Icon icon={ share } size={ 24 } />
 								</span>
 								<span>
-									{ translate( 'Save full site backups in the cloud, so nothing gets lost.' ) }
+									{ translate( 'Automatically share your site’s posts on social media.' ) }
 								</span>
 							</li>
 						</ul>

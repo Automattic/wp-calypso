@@ -83,7 +83,7 @@ const NavigationHeader: React.FC< HeaderProps > = ( {
 			} ) }
 			{ ...rest }
 		>
-			<div className="calypso-navigation-header__head">{ headElement }</div>
+			{ headElement && <div className="calypso-navigation-header__head">{ headElement }</div> }
 			<div className="calypso-navigation-header__body">
 				<div className="calypso-navigation-header__left-section">{ finalTitleElement }</div>
 				{ rightSection && (

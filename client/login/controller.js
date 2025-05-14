@@ -65,7 +65,6 @@ const enhanceContextWithLogin = ( context ) => {
 
 	const isWhiteLogin =
 		( ! isJetpackLogin && Boolean( clientId ) === false && Boolean( oauth2ClientId ) === false ) ||
-		isGravPoweredClient ||
 		isPartnerPortalClient;
 
 	context.primary = (
@@ -79,7 +78,6 @@ const enhanceContextWithLogin = ( context ) => {
 			socialService={ socialService }
 			socialServiceResponse={ socialServiceResponse }
 			socialConnect={ flow === 'social-connect' }
-			privateSite={ flow === 'private-site' }
 			domain={ ( query && query.domain ) || null }
 			fromSite={ ( query && query.site ) || null }
 			signupUrl={ ( query && query.signup_url ) || null }
@@ -193,7 +191,17 @@ export async function magicLogin( context, next ) {
 
 export function qrCodeLogin( context, next ) {
 	const { redirect_to } = context.query;
-	context.primary = <QrCodeLoginPage locale={ context.params.lang } redirectTo={ redirect_to } />;
+
+	// Check if this is a Jetpack login flow based on the URL path
+	const isJetpack = context.path.includes( '/jetpack' );
+
+	context.primary = (
+		<QrCodeLoginPage
+			locale={ context.params.lang }
+			redirectTo={ redirect_to }
+			isJetpack={ isJetpack }
+		/>
+	);
 
 	next();
 }

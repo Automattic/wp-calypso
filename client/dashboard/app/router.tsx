@@ -5,24 +5,23 @@ import {
 	redirect,
 	createLazyRoute,
 } from '@tanstack/react-router';
-import NotFound from '../404';
-import UnknownError from '../500';
 import { fetchTwoStep } from '../data';
-import Root from '../root';
-import { sitesQuery, siteQuery, domainsQuery, emailsQuery, profileQuery } from './queries';
+import NotFound from './404';
+import UnknownError from './500';
+import {
+	sitesQuery,
+	siteQuery,
+	siteSettingsQuery,
+	domainsQuery,
+	emailsQuery,
+	profileQuery,
+} from './queries';
 import { queryClient } from './query-client';
+import Root from './root';
 import type { AppConfig } from './context';
-import type { FetchQueryOptions } from '@tanstack/react-query';
 
 interface RouteContext {
 	config?: AppConfig;
-}
-
-async function maybeAwaitFetch( options: FetchQueryOptions ) {
-	const cachedData = queryClient.getQueryData( options.queryKey );
-	if ( ! cachedData ) {
-		await queryClient.fetchQuery( options );
-	}
 }
 
 const rootRoute = createRootRoute( { component: Root } );
@@ -51,7 +50,7 @@ const overviewRoute = createRoute( {
 const sitesRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'sites',
-	loader: () => maybeAwaitFetch( sitesQuery() ),
+	loader: () => queryClient.ensureQueryData( sitesQuery() ),
 } ).lazy( () =>
 	import( '../sites' ).then( ( d ) =>
 		createLazyRoute( 'sites' )( {
@@ -63,9 +62,9 @@ const sitesRoute = createRoute( {
 const siteRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'sites/$siteSlug',
-	loader: ( { params: { siteSlug } } ) => maybeAwaitFetch( siteQuery( siteSlug ) ),
+	loader: ( { params: { siteSlug } } ) => queryClient.ensureQueryData( siteQuery( siteSlug ) ),
 } ).lazy( () =>
-	import( '../site' ).then( ( d ) =>
+	import( '../sites/site' ).then( ( d ) =>
 		createLazyRoute( 'site' )( {
 			component: d.default,
 		} )
@@ -76,7 +75,7 @@ const siteOverviewRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: '/',
 } ).lazy( () =>
-	import( '../site-overview' ).then( ( d ) =>
+	import( '../sites/overview' ).then( ( d ) =>
 		createLazyRoute( 'site-overview' )( {
 			component: d.default,
 		} )
@@ -87,7 +86,7 @@ const siteDeploymentsRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: 'deployments',
 } ).lazy( () =>
-	import( '../site-deployments' ).then( ( d ) =>
+	import( '../sites/deployments' ).then( ( d ) =>
 		createLazyRoute( 'site-deployments' )( {
 			component: d.default,
 		} )
@@ -98,8 +97,34 @@ const sitePerformanceRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: 'performance',
 } ).lazy( () =>
-	import( '../site-performance' ).then( ( d ) =>
+	import( '../sites/performance' ).then( ( d ) =>
 		createLazyRoute( 'site-performance' )( {
+			component: d.default,
+		} )
+	)
+);
+
+const siteSettingsRoute = createRoute( {
+	getParentRoute: () => siteRoute,
+	path: 'settings',
+	loader: ( { params: { siteSlug } } ) =>
+		queryClient.ensureQueryData( siteSettingsQuery( siteSlug ) ),
+} ).lazy( () =>
+	import( '../sites/settings' ).then( ( d ) =>
+		createLazyRoute( 'site-settings' )( {
+			component: d.default,
+		} )
+	)
+);
+
+const siteSettingsSubscriptionGiftingRoute = createRoute( {
+	getParentRoute: () => siteRoute,
+	path: 'settings/subscription-gifting',
+	loader: ( { params: { siteSlug } } ) =>
+		queryClient.ensureQueryData( siteSettingsQuery( siteSlug ) ),
+} ).lazy( () =>
+	import( '../sites/settings-subscription-gifting' ).then( ( d ) =>
+		createLazyRoute( 'site-settings-subscription-gifting' )( {
 			component: d.default,
 		} )
 	)
@@ -108,7 +133,7 @@ const sitePerformanceRoute = createRoute( {
 const domainsRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'domains',
-	loader: () => maybeAwaitFetch( domainsQuery() ),
+	loader: () => queryClient.ensureQueryData( domainsQuery() ),
 } ).lazy( () =>
 	import( '../domains' ).then( ( d ) =>
 		createLazyRoute( 'domains' )( {
@@ -120,7 +145,7 @@ const domainsRoute = createRoute( {
 const emailsRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'emails',
-	loader: () => maybeAwaitFetch( emailsQuery() ),
+	loader: () => queryClient.ensureQueryData( emailsQuery() ),
 } ).lazy( () =>
 	import( '../emails' ).then( ( d ) =>
 		createLazyRoute( 'emails' )( {
@@ -132,7 +157,7 @@ const emailsRoute = createRoute( {
 const meRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'me',
-	loader: () => maybeAwaitFetch( profileQuery() ),
+	loader: () => queryClient.ensureQueryData( profileQuery() ),
 	beforeLoad: async ( { cause } ) => {
 		if ( cause !== 'enter' ) {
 			return;
@@ -156,7 +181,7 @@ const profileRoute = createRoute( {
 	getParentRoute: () => meRoute,
 	path: 'profile',
 } ).lazy( () =>
-	import( '../profile' ).then( ( d ) =>
+	import( '../me/profile' ).then( ( d ) =>
 		createLazyRoute( 'profile' )( {
 			component: d.default,
 		} )
@@ -167,7 +192,7 @@ const billingRoute = createRoute( {
 	getParentRoute: () => meRoute,
 	path: 'billing',
 } ).lazy( () =>
-	import( '../billing' ).then( ( d ) =>
+	import( '../me/billing' ).then( ( d ) =>
 		createLazyRoute( 'billing' )( {
 			component: d.default,
 		} )
@@ -178,7 +203,7 @@ const billingHistoryRoute = createRoute( {
 	getParentRoute: () => meRoute,
 	path: 'billing/billing-history',
 } ).lazy( () =>
-	import( '../billing-history' ).then( ( d ) =>
+	import( '../me/billing-history' ).then( ( d ) =>
 		createLazyRoute( 'billing-history' )( {
 			component: d.default,
 		} )
@@ -189,7 +214,7 @@ const activeSubscriptionsRoute = createRoute( {
 	getParentRoute: () => meRoute,
 	path: 'billing/active-subscriptions',
 } ).lazy( () =>
-	import( '../active-subscriptions' ).then( ( d ) =>
+	import( '../me/active-subscriptions' ).then( ( d ) =>
 		createLazyRoute( 'active-subscriptions' )( {
 			component: d.default,
 		} )
@@ -200,7 +225,7 @@ const paymentMethodsRoute = createRoute( {
 	getParentRoute: () => meRoute,
 	path: 'billing/payment-methods',
 } ).lazy( () =>
-	import( '../payment-methods' ).then( ( d ) =>
+	import( '../me/payment-methods' ).then( ( d ) =>
 		createLazyRoute( 'payment-methods' )( {
 			component: d.default,
 		} )
@@ -211,7 +236,7 @@ const taxDetailsRoute = createRoute( {
 	getParentRoute: () => meRoute,
 	path: 'billing/tax-details',
 } ).lazy( () =>
-	import( '../tax-details' ).then( ( d ) =>
+	import( '../me/tax-details' ).then( ( d ) =>
 		createLazyRoute( 'tax-details' )( {
 			component: d.default,
 		} )
@@ -222,7 +247,7 @@ const securityRoute = createRoute( {
 	getParentRoute: () => meRoute,
 	path: 'security',
 } ).lazy( () =>
-	import( '../security' ).then( ( d ) =>
+	import( '../me/security' ).then( ( d ) =>
 		createLazyRoute( 'security' )( {
 			component: d.default,
 		} )
@@ -233,7 +258,7 @@ const privacyRoute = createRoute( {
 	getParentRoute: () => meRoute,
 	path: 'privacy',
 } ).lazy( () =>
-	import( '../privacy' ).then( ( d ) =>
+	import( '../me/privacy' ).then( ( d ) =>
 		createLazyRoute( 'privacy' )( {
 			component: d.default,
 		} )
@@ -244,7 +269,7 @@ const notificationsRoute = createRoute( {
 	getParentRoute: () => meRoute,
 	path: 'notifications',
 } ).lazy( () =>
-	import( '../notifications' ).then( ( d ) =>
+	import( '../me/notifications' ).then( ( d ) =>
 		createLazyRoute( 'notifications' )( {
 			component: d.default,
 		} )
@@ -263,7 +288,13 @@ const createRouteTree = ( config: AppConfig ) => {
 	if ( config.supports.sites ) {
 		children.push(
 			sitesRoute,
-			siteRoute.addChildren( [ siteOverviewRoute, siteDeploymentsRoute, sitePerformanceRoute ] )
+			siteRoute.addChildren( [
+				siteOverviewRoute,
+				siteDeploymentsRoute,
+				sitePerformanceRoute,
+				siteSettingsRoute,
+				siteSettingsSubscriptionGiftingRoute,
+			] )
 		);
 	}
 
@@ -301,6 +332,8 @@ export const getRouter = ( config: AppConfig ) => {
 		basepath: config.basePath,
 		defaultErrorComponent: UnknownError,
 		defaultNotFoundComponent: NotFound,
+		defaultPreload: 'intent',
+		defaultPreloadStaleTime: 0,
 	} );
 };
 
@@ -313,6 +346,8 @@ export {
 	siteOverviewRoute,
 	siteDeploymentsRoute,
 	sitePerformanceRoute,
+	siteSettingsRoute,
+	siteSettingsSubscriptionGiftingRoute,
 	domainsRoute,
 	emailsRoute,
 	meRoute,

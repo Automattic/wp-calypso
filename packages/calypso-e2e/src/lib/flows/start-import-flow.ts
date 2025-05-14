@@ -79,6 +79,13 @@ export class StartImportFlow {
 	}
 
 	/**
+	 * Validates that we've landed on the URL capture page.
+	 */
+	async validateURLMigrationFlow(): Promise< void > {
+		await this.page.waitForURL( /.*setup\/site-migration.*/ );
+	}
+
+	/**
 	 * Validates that we've landed on the URL capture page with 'typo' error.
 	 */
 	async validateErrorCapturePage( error: string ): Promise< void > {

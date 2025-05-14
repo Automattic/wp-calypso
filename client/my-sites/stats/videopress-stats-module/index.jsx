@@ -7,6 +7,7 @@ import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import InfoPopover from 'calypso/components/info-popover';
 import SectionHeader from 'calypso/components/section-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -118,6 +119,7 @@ class VideoPressStatsModule extends Component {
 			siteSlug,
 			translate,
 			siteAdminUrl,
+			siteId,
 		} = this.props;
 
 		let completeVideoStats = [];
@@ -127,6 +129,7 @@ class VideoPressStatsModule extends Component {
 				.flat();
 		}
 
+		const isStatsNavigationImprovementEnabled = config.isEnabled( 'stats/navigation-improvement' );
 		const noData = data && this.state.loaded && ! completeVideoStats.length;
 		// Only show loading indicators when nothing is in state tree, and request in-flight
 		const isLoading = ! this.state.loaded && ! ( data && data.length );
@@ -180,6 +183,9 @@ class VideoPressStatsModule extends Component {
 
 		return (
 			<div>
+				{ siteId && statType && query && (
+					<QuerySiteStats statType={ statType } siteId={ siteId } query={ query } />
+				) }
 				{ summary && (
 					<div className="stats-module__date-picker-header">
 						<h3>
@@ -208,13 +214,14 @@ class VideoPressStatsModule extends Component {
 						}
 						href={ ! summary ? summaryLink : null }
 					>
-						{ summary && (
+						{ summary && ! isStatsNavigationImprovementEnabled && (
 							<DownloadCsv
 								statType={ statType }
 								data={ csvData }
 								query={ query }
 								path={ path }
 								period={ period }
+								skipQuery
 							/>
 						) }
 					</SectionHeader>

@@ -11,6 +11,8 @@ const plans: Step< {
 	submits: {
 		plan: MinimalRequestCartProduct | null;
 		goToCheckout: boolean;
+		// Fake type just to make the this step types isomorphic to unified-plans.
+		cartItems?: undefined;
 	};
 } > = function Plans( { navigation, flow } ) {
 	const { goBack, submit } = navigation;

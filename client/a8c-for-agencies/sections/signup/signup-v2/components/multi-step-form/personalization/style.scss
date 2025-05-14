@@ -3,11 +3,11 @@
 @import "@wordpress/base-styles/variables";
 
 .signup-personalization-form {
-    .multi-checkbox {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 12px 24px;
-    }
+	.multi-checkbox {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 12px 24px;
+	}
 
 	.signup-personalization-form__checkbox {
 		padding-block: 8px;
@@ -21,21 +21,21 @@
 		}
 	}
 
-    .multi-checkbox label {
-        display: flex;
-        align-items: center;
-        margin: 0;
-        cursor: pointer;
-        @include body-medium;
-        color: var(--color-neutral-80);
-        flex: 0 1 100%; // Full width on mobile
+	.multi-checkbox label {
+		display: flex;
+		align-items: center;
+		margin: 0;
+		cursor: pointer;
+		@include body-medium;
+		color: var(--color-neutral-80);
+		flex: 0 1 100%; // Full width on mobile
 
 		@include break-xlarge {
-            flex: 0 1 calc(50% - 12px); // 2 columns
-        }
-    }
+			flex: 0 1 calc(50% - 12px); // 2 columns
+		}
+	}
 
-    .multi-checkbox .form-checkbox + span {
-        margin-left: 8px;
-    }
+	.multi-checkbox .form-checkbox + span {
+		margin-left: 8px;
+	}
 }

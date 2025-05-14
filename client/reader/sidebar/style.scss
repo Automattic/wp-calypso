@@ -64,8 +64,6 @@ body.is-reader-page,
 }
 
 body.is-section-reader {
-	background: var(--studio-gray-0);
-
 	&.rtl .layout__content {
 		padding: calc(var(--masterbar-height) + var(--content-padding-top)) calc(var(--sidebar-width-max)) var(--content-padding-bottom) 16px;
 	}

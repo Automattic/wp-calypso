@@ -39,13 +39,13 @@ const SITE_FIELDS = [
 	'subscribers_count',
 	'plan',
 	'active_modules',
+	'is_a8c',
 	'is_deleted',
 	'is_coming_soon',
 	'is_private',
 	'launch_status',
 	'site_migration',
 	'options',
-	'site_owner',
 	'jetpack',
 	'jetpack_modules',
 ].join( ',' );
@@ -295,11 +295,22 @@ export const fetchTwoStep = async (): Promise< TwoStep > => {
 	return wpcom.req.get( '/me/two-step' );
 };
 
-export const fetchSiteSettings = async ( id: string ): Promise< SiteSettings > => {
-	return wpcom.req.get( {
-		path: `/sites/${ id }/settings`,
+export const fetchSiteSettings = async ( siteIdOrSlug: string ): Promise< SiteSettings > => {
+	const { settings } = await wpcom.req.get( {
+		path: `/sites/${ siteIdOrSlug }/settings`,
 		apiVersion: '1.4',
 	} );
+	return settings;
+};
+
+export const updateSiteSettings = async ( siteIdOrSlug: string, data: Partial< SiteSettings > ) => {
+	return await wpcom.req.post(
+		{
+			path: `/sites/${ siteIdOrSlug }/settings`,
+			apiVersion: '1.4',
+		},
+		data
+	);
 };
 
 export const fetchBasicMetrics = async ( url: string ): Promise< BasicMetricsData > => {

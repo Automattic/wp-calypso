@@ -1,3 +1,7 @@
+@import "@automattic/typography/styles/fonts";
+@import "@automattic/typography/styles/variables";
+@import "../../assets/stylesheets/shared/mixins/breakpoints";
+
 body.is-section-signup .layout .signup.is-crowdsignal .step-wrapper {
 	@include breakpoint-deprecated( ">1040px" ) {
 		margin: 0 auto;
@@ -40,6 +44,17 @@ body.is-section-signup .layout .signup.is-crowdsignal .step-wrapper {
 	}
 }
 
+.signup-form__crowdsignal {
+	.components-button {
+		width: 100%;
+
+		&.is-primary:not(.signup-form__crowdsignal-wpcom) {
+			--color-accent: var(--color-primary);
+			--color-accent-60: var(--color-primary-dark);
+		}
+	}
+}
+
 .signup-form__crowdsignal-layout {
 	display: flex;
 	flex-direction: column;
@@ -70,10 +85,6 @@ body.is-section-signup .layout .signup.is-crowdsignal .step-wrapper {
 	@include breakpoint-deprecated( ">1040px" ) {
 		flex: 1;
 		width: initial;
-	}
-
-	.button {
-		width: 100%;
 	}
 
 	.card {
@@ -108,20 +119,6 @@ body.is-section-signup .layout .signup.is-crowdsignal .step-wrapper {
 			}
 		}
 	}
-
-	.social-buttons__button {
-		height: 44px;
-		border-radius: 2px;
-	}
-}
-
-.button.is-primary.signup-form__crowdsignal-submit {
-	background: var(--color-primary);
-	border-color: var(--color-primary-dark);
-}
-
-.signup-form__crowdsignal-wpcom .wordpress-logo {
-	margin: 0 15px 0 0;
 }
 
 .crowdsignal .auth-form__social {
@@ -160,16 +157,21 @@ body.is-section-signup .layout .signup.is-crowdsignal .step-wrapper {
 	}
 }
 
-.button.signup-form__crowdsignal-wpcom {
-	display: flex;
+// Matches .social-buttons__button layout
+.signup-form__crowdsignal-wpcom {
 	margin-bottom: 40px;
+	padding-inline: 18px;
+
+	.wordpress-logo {
+		margin: 0 auto 0 0;
+	}
+
+	> span {
+		margin-inline: -20px auto;
+	}
 }
 
-.button.signup-form__crowdsignal-show-form {
-	background-color: var(--color-primary);
-	border-color: var(--color-primary-dark);
-	color: var(--color-text-inverted);
-	text-align: center;
+.signup-form__crowdsignal-show-form {
 	margin: 20px 0 0;
 
 	@include breakpoint-deprecated( ">660px" ) {
@@ -250,9 +252,7 @@ body.is-section-signup .layout .signup.is-crowdsignal .step-wrapper {
 	}
 }
 
-.button.signup-form__crowdsignal-prev-button {
-	display: inline-block;
-
+.signup-form__crowdsignal-prev-button {
 	.signup-form__crowdsignal-back-button-wrapper.is-first-step & {
 		display: none;
 	}

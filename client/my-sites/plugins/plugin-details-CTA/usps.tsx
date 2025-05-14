@@ -12,7 +12,7 @@ import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { IntervalLength } from 'calypso/my-sites/marketplace/components/billing-interval-switcher/constants';
 import PluginDetailsSidebarUSP from 'calypso/my-sites/plugins/plugin-details-sidebar-usp';
-import usePluginsSupportText from 'calypso/my-sites/plugins/use-plugins-support-text/';
+import usePluginsSupportText from 'calypso/my-sites/plugins/use-plugins-support-text';
 import { useSelector } from 'calypso/state';
 import { getBillingInterval } from 'calypso/state/marketplace/billing-interval/selectors';
 import { getProductDisplayCost } from 'calypso/state/products-list/selectors';

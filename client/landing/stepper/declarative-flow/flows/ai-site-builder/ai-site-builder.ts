@@ -1,6 +1,7 @@
 import { Onboard } from '@automattic/data-stores';
 import { getAssemblerDesign } from '@automattic/design-picker';
 import { addPlanToCart, addProductsToCart, AI_SITE_BUILDER_FLOW } from '@automattic/onboarding';
+import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { resolveSelect, useDispatch as useWpDataDispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { useEffect } from 'react';
@@ -14,18 +15,7 @@ import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
 import { STEPS } from '../../internals/steps';
 import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
-import { Flow } from '../../internals/types';
-import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
-
-interface ProvidedDependencies {
-	siteSlug?: string;
-	siteId?: string;
-	domainItem?: MinimalRequestCartProduct;
-	cartItems?: MinimalRequestCartProduct[]; // Ensure cartItems is an array
-	siteCreated?: boolean;
-	isLaunched?: boolean;
-	processingResult?: ProcessingResult;
-}
+import { FlowV2, SubmitHandler } from '../../internals/types';
 
 const SiteIntent = Onboard.SiteIntent;
 const deletePage = async ( siteId: string | number, pageId: number ): Promise< boolean > => {
@@ -54,10 +44,10 @@ function initialize() {
 		STEPS.UNIFIED_PLANS,
 		STEPS.SITE_LAUNCH,
 		STEPS.PROCESSING,
-	] );
+	] as const );
 }
 
-const aiSiteBuilder: Flow = {
+const aiSiteBuilder: FlowV2< typeof initialize > = {
 	name: AI_SITE_BUILDER_FLOW,
 	/**
 	 * Should it fire calypso_signup_start event?
@@ -80,7 +70,7 @@ const aiSiteBuilder: Flow = {
 		}, [ prompt ] );
 	},
 	initialize,
-	useStepNavigation( currentStep, navigate ) {
+	useStepNavigation( _, navigate ) {
 		const { siteSlug: siteSlugFromSiteData, siteId: siteIdFromSiteData } = useSiteData();
 		const { setDesignOnSite, setStaticHomepageOnSite, setIntentOnSite } =
 			useWpDataDispatch( SITE_STORE );
@@ -88,8 +78,9 @@ const aiSiteBuilder: Flow = {
 		const { addBlogSticker } = useAddBlogStickerMutation();
 
 		const queryParams = useQuery();
-		async function submit( providedDependencies: ProvidedDependencies = {} ) {
-			switch ( currentStep ) {
+		const submit: SubmitHandler< typeof initialize > = async function ( submittedStep ) {
+			const { slug, providedDependencies } = submittedStep;
+			switch ( slug ) {
 				// The create-site step will start creating a site and will add the promise of that operation to pendingAction field in the store.
 				case 'create-site': {
 					// Go to the processing step and pass `true` to remove it from history. So clicking back will not go back to the create-site step.
@@ -222,7 +213,7 @@ const aiSiteBuilder: Flow = {
 				default:
 					return;
 			}
-		}
+		};
 
 		return { submit };
 	},

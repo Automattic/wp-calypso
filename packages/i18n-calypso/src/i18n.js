@@ -1,16 +1,9 @@
-import { EventEmitter } from 'events';
 import interpolateComponents from '@automattic/interpolate-components';
 import sprintf from '@tannin/sprintf';
 import debugFactory from 'debug';
 import sha1 from 'hash.js/lib/hash/sha/1';
 import LRU from 'lru';
 import Tannin from 'tannin';
-import {
-	__DO_NOT_IMPORT__numberFormat,
-	__DO_NOT_IMPORT__numberFormatCompact,
-	__DO_NOT_IMPORT__numberFormatCurrency,
-	__DO_NOT_IMPORT__getCurrencyObject,
-} from './number-formatters';
 
 const GEO_LOCATION_ENDPOINT_URL = 'https://public-api.wordpress.com/geo/';
 
@@ -139,7 +132,6 @@ function I18N() {
 		return new I18N();
 	}
 	this.defaultLocaleSlug = 'en';
-	this.geoLocation = '';
 	// Tannin always needs a plural form definition, or it fails when dealing with plurals.
 	this.defaultPluralForms = ( n ) => ( n === 1 ? 0 : 1 );
 	this.state = {
@@ -152,11 +144,7 @@ function I18N() {
 	};
 	this.componentUpdateHooks = [];
 	this.translateHooks = [];
-	this.stateObserver = new EventEmitter();
-	// Because the higher-order component can wrap a ton of React components,
-	// we need to bump the number of listeners to infinity and beyond
-	// FIXME: still valid?
-	this.stateObserver.setMaxListeners( 0 );
+	this.subscribers = new Set();
 	// default configuration
 	this.configure();
 }
@@ -195,134 +183,16 @@ I18N.prototype.geolocateCurrencySymbol = async function ( callback ) {
 			warn( 'Fetching geolocation for format-currency failed.', error );
 		} );
 
-	this.geoLocation = 'string' === typeof geoData?.country_short ? geoData.country_short : '';
-	callback?.( this.geoLocation );
+	callback?.( 'string' === typeof geoData?.country_short ? geoData.country_short : '' );
 };
 
-I18N.prototype.on = function ( ...args ) {
-	this.stateObserver.on( ...args );
+I18N.prototype.subscribe = function ( callback ) {
+	this.subscribers.add( callback );
+	return () => this.subscribers.delete( callback );
 };
 
-I18N.prototype.off = function ( ...args ) {
-	this.stateObserver.off( ...args );
-};
-
-I18N.prototype.emit = function ( ...args ) {
-	this.stateObserver.emit( ...args );
-};
-
-/**
- * Formats numbers using locale settings and/or passed options.
- * @returns {string | number}  Formatted number as string, or original number if formatting fails
- */
-I18N.prototype.numberFormat = function (
-	number,
-	{ decimals = 0, forceLatin = true, numberFormatOptions = {} } = {}
-) {
-	const browserSafeLocale = this.getBrowserSafeLocale();
-
-	/**
-	 * TS will flag this as an error, but best to check for undefined here for older usages
-	 * `Intl.NumberFormat` will return NaN for undefined values, which is not helpful. Null becomes 0, also potentially risky.
-	 */
-	if ( typeof number === 'undefined' || number === null ) {
-		warn( 'numberFormat() requires a defined and non-null value as the first argument' );
-		return number;
-	}
-
-	return __DO_NOT_IMPORT__numberFormat( {
-		number,
-		browserSafeLocale,
-		decimals,
-		forceLatin,
-		numberFormatOptions,
-	} );
-};
-
-/**
- * Formats numbers using locale settings and/or passed options, with a compact notation.
- * @returns {string | number}  Formatted number as string, or original number if formatting fails
- */
-I18N.prototype.numberFormatCompact = function (
-	number,
-	{ decimals = 0, forceLatin = true, numberFormatOptions = {} } = {}
-) {
-	const browserSafeLocale = this.getBrowserSafeLocale();
-
-	/**
-	 * TS will flag this as an error, but best to check for undefined here for older usages
-	 * `Intl.NumberFormat` will return NaN for undefined values, which is not helpful. Null becomes 0, also potentially risky.
-	 */
-	if ( typeof number === 'undefined' || number === null ) {
-		warn( 'numberFormat() requires a defined and non-null value as the first argument' );
-		return number;
-	}
-
-	return __DO_NOT_IMPORT__numberFormatCompact( {
-		number,
-		browserSafeLocale,
-		decimals,
-		forceLatin,
-		numberFormatOptions,
-	} );
-};
-
-I18N.prototype.formatCurrency = function (
-	number,
-	currency,
-	{ stripZeros = false, isSmallestUnit = false, signForPositive = false, forceLatin = true } = {}
-) {
-	const browserSafeLocale = this.getBrowserSafeLocale();
-	const geoLocation = this.geoLocation;
-
-	/**
-	 * TS will flag this as an error, but best to check for undefined here for older usages
-	 * `Intl.NumberFormat` will return NaN for undefined values, which is not helpful. Null becomes 0, also potentially risky.
-	 */
-	if ( typeof number === 'undefined' || number === null ) {
-		warn( 'numberFormatCurrency() requires a defined and non-null value as the first argument' );
-		return number;
-	}
-
-	return __DO_NOT_IMPORT__numberFormatCurrency( {
-		number,
-		currency,
-		browserSafeLocale,
-		stripZeros,
-		isSmallestUnit,
-		signForPositive,
-		geoLocation,
-		forceLatin,
-	} );
-};
-
-I18N.prototype.getCurrencyObject = function (
-	number,
-	currency,
-	{ stripZeros = false, isSmallestUnit = false, signForPositive = false, forceLatin = true } = {}
-) {
-	const browserSafeLocale = this.getBrowserSafeLocale();
-	const geoLocation = this.geoLocation;
-
-	/**
-	 * TS will flag this as an error, but best to check for undefined here for older usages
-	 * `Intl.NumberFormat` will return NaN for undefined values, which is not helpful. Null becomes 0, also potentially risky.
-	 */
-	if ( typeof number === 'undefined' || number === null ) {
-		warn( 'getCurrencyObject() requires a defined and non-null value as the first argument' );
-		return number;
-	}
-
-	return __DO_NOT_IMPORT__getCurrencyObject( {
-		number,
-		currency,
-		browserSafeLocale,
-		stripZeros,
-		isSmallestUnit,
-		signForPositive,
-		geoLocation,
-		forceLatin,
-	} );
+I18N.prototype.emitChange = function () {
+	this.subscribers.forEach( ( callback ) => callback() );
 };
 
 /**
@@ -426,7 +296,7 @@ I18N.prototype.setLocale = function ( localeData ) {
 
 	this.state.tannin = new Tannin( { [ domain_key ]: this.state.locale } );
 
-	this.stateObserver.emit( 'change' );
+	this.emitChange();
 };
 
 I18N.prototype.getLocale = function () {
@@ -469,7 +339,7 @@ I18N.prototype.addTranslations = function ( localeData ) {
 		}
 	}
 
-	this.stateObserver.emit( 'change' );
+	this.emitChange();
 };
 
 /**
@@ -493,14 +363,18 @@ I18N.prototype.hasTranslation = function () {
  * @param {string} options.text - The text to check for translation.
  * @param {string | Object} options.newCopy - The translation to return if the text is translated.
  * @param {string | Object | undefined } options.oldCopy - The fallback to return if the text is not translated.
+ * @param {Object} options.translationOptions - The options to pass to the `hasTranslation` method, e.g. translation context.
  */
-I18N.prototype.fixMe = function ( { text, newCopy, oldCopy } ) {
+I18N.prototype.fixMe = function ( { text, newCopy, oldCopy, translationOptions = {} } ) {
 	if ( typeof text !== 'string' ) {
 		warn( 'fixMe() requires an object with a proper text property (string)' );
 		return null;
 	}
 
-	if ( [ 'en', 'en-gb' ].includes( this.getLocaleSlug() ) || this.hasTranslation( text ) ) {
+	if (
+		[ 'en', 'en-gb' ].includes( this.getLocaleSlug() ) ||
+		this.hasTranslation( text, translationOptions )
+	) {
 		return newCopy;
 	}
 
@@ -570,7 +444,7 @@ I18N.prototype.translate = function () {
  */
 I18N.prototype.reRenderTranslations = function () {
 	debug( 'Re-rendering all translations due to external request' );
-	this.stateObserver.emit( 'change' );
+	this.emitChange();
 };
 
 I18N.prototype.registerComponentUpdateHook = function ( callback ) {

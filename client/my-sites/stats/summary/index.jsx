@@ -1,4 +1,4 @@
-import { isEnabled } from '@automattic/calypso-config';
+import config, { isEnabled } from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
 import { merge } from 'lodash';
 import { Component, Fragment } from 'react';
@@ -19,10 +19,16 @@ import StatsModuleTopPosts from 'calypso/my-sites/stats/features/modules/stats-t
 import getMediaItem from 'calypso/state/selectors/get-media-item';
 import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import PageHeader from '../components/headers/page-header';
+import { STATS_FEATURE_DOWNLOAD_CSV } from '../constants';
 import StatsModuleLocations from '../features/modules/stats-locations';
+import LocationsNavTabs from '../features/modules/stats-locations/locations-nav-tabs';
+import { GEO_MODES } from '../features/modules/stats-locations/types';
 import StatsModuleUTM from '../features/modules/stats-utm';
+import { shouldGateStats } from '../hooks/use-should-gate-stats';
 import { StatsGlobalValuesContext } from '../pages/providers/global-provider';
 import DownloadCsv from '../stats-download-csv';
+import DownloadCsvUpsell from '../stats-download-csv-upsell';
 import AllTimeNav from '../stats-module/all-time-nav';
 import PageViewTracker from '../stats-page-view-tracker';
 import statsStringsFactory from '../stats-strings';
@@ -43,7 +49,7 @@ class StatsSummary extends Component {
 		const period = this.props.period;
 
 		const headerCSVButton = (
-			<div className="stats-module__heaver-nav-button">
+			<div className="stats-module__header-nav-button">
 				<DownloadCsv statType={ statType } query={ query } path={ path } period={ period } />
 			</div>
 		);
@@ -61,7 +67,8 @@ class StatsSummary extends Component {
 	}
 
 	render() {
-		const { translate, statsQueryOptions, siteId, supportsUTMStats } = this.props;
+		const { translate, statsQueryOptions, siteId, supportsUTMStats, shouldGateStatsCsvDownload } =
+			this.props;
 		const summaryViews = [];
 		let title;
 		let summaryView;
@@ -101,13 +108,13 @@ class StatsSummary extends Component {
 		const moduleQuery = merge( {}, statsQueryOptions, query );
 		const urlParams = new URLSearchParams( this.props.context.querystring );
 		const listItemClassName = 'stats__summary--narrow-mobile';
+		const isStatsNavigationImprovementEnabled = config.isEnabled( 'stats/navigation-improvement' );
 
 		switch ( this.props.context.params.module ) {
 			case 'referrers':
 				title = translate( 'Referrers' );
 				path = 'referrers';
 				statType = 'statsReferrers';
-
 				summaryView = (
 					<Fragment key="referrers-summary">
 						{ this.renderSummaryHeader( path, statType, false, moduleQuery ) }
@@ -126,7 +133,6 @@ class StatsSummary extends Component {
 				title = translate( 'Clicks' );
 				path = 'clicks';
 				statType = 'statsClicks';
-
 				summaryView = (
 					<Fragment key="clicks-summary">
 						{ this.renderSummaryHeader( path, statType, false, moduleQuery ) }
@@ -145,7 +151,6 @@ class StatsSummary extends Component {
 				title = translate( 'Countries' );
 				path = 'countryviews';
 				statType = 'statsCountryViews';
-
 				summaryView = (
 					<Fragment key="countries-summary">
 						{ this.renderSummaryHeader( path, statType, false, moduleQuery ) }
@@ -156,6 +161,7 @@ class StatsSummary extends Component {
 								query={ moduleQuery }
 								summary
 								listItemClassName={ listItemClassName }
+								context={ this.props.context }
 							/>
 						) : (
 							<StatsModuleCountries
@@ -184,6 +190,7 @@ class StatsSummary extends Component {
 							summary
 							listItemClassName={ listItemClassName }
 							initialGeoMode={ urlParams.get( 'geoMode' ) }
+							context={ this.props.context }
 						/>
 					</Fragment>
 				);
@@ -193,7 +200,6 @@ class StatsSummary extends Component {
 				title = translate( 'Posts & pages' );
 				path = 'posts';
 				statType = 'statsTopPosts';
-
 				summaryView = (
 					<Fragment key="posts-summary">
 						{ this.renderSummaryHeader( path, statType, false, moduleQuery ) }
@@ -212,16 +218,15 @@ class StatsSummary extends Component {
 				title = translate( 'Authors' );
 				path = 'authors';
 				statType = 'statsTopAuthors';
-
 				// TODO: should be refactored so that className doesn't have to be passed in
 				/* eslint-disable wpcalypso/jsx-classname-namespace */
 				summaryView = (
 					<Fragment key="authors-summary">
-						{ this.renderSummaryHeader( path, statType, false, query ) }
+						{ this.renderSummaryHeader( path, statType, false, moduleQuery ) }
 						<StatsModuleAuthors
 							moduleStrings={ StatsStrings.authors }
 							period={ this.props.period }
-							query={ query }
+							query={ moduleQuery }
 							className="stats__author-views"
 							summary
 							listItemClassName={ listItemClassName }
@@ -235,7 +240,7 @@ class StatsSummary extends Component {
 				title = translate( 'Videos' );
 				path = 'videoplays';
 				statType = 'statsVideoPlays';
-
+				moduleQuery.complete_stats = 1;
 				summaryView = (
 					<Fragment key="videopress-stats-module">
 						{ /* For CSV button to work, video page needs to pass custom data to the button.
@@ -257,14 +262,13 @@ class StatsSummary extends Component {
 				title = translate( 'File Downloads' );
 				path = 'filedownloads';
 				statType = 'statsFileDownloads';
-
 				summaryView = (
 					<Fragment key="filedownloads-summary">
-						{ this.renderSummaryHeader( path, statType, false, query ) }
+						{ this.renderSummaryHeader( path, statType, false, moduleQuery ) }
 						<StatsModuleDownloads
 							moduleStrings={ StatsStrings.filedownloads }
 							period={ this.props.period }
-							query={ query }
+							query={ moduleQuery }
 							summary
 							listItemClassName={ listItemClassName }
 						/>
@@ -317,7 +321,6 @@ class StatsSummary extends Component {
 				title = translate( 'Search Terms' );
 				path = 'searchterms';
 				statType = 'statsSearchTerms';
-
 				summaryView = (
 					<Fragment key="search-terms-summary">
 						{ this.renderSummaryHeader( path, statType, false, moduleQuery ) }
@@ -366,41 +369,90 @@ class StatsSummary extends Component {
 			backLink += domain;
 		}
 		const navigationItems = [ { label: backLabel, href: backLink }, { label: title } ];
+		const geoMode = this.props.context.query.geoMode;
+		const geoModeLabel =
+			geoMode && Object.prototype.hasOwnProperty.call( GEO_MODES, geoMode )
+				? GEO_MODES[ geoMode ]
+				: 'country';
 
 		return (
-			<Main className="has-fixed-nav" wideLayout>
+			<Main fullWidthLayout>
 				<PageViewTracker
 					path={ `/stats/${ period }/${ module }/:site` }
 					title={ `Stats > ${ titlecase( period ) } > ${ titlecase( module ) }` }
 				/>
-				<NavigationHeader className="stats-summary-view" navigationItems={ navigationItems } />
-
-				<div id="my-stats-content" className="stats-summary-view stats-summary__positioned">
-					{ this.props.context.params.module === 'utm' ? (
-						<StatsGlobalValuesContext.Consumer>
-							{ ( isInternal ) => (
-								<>
-									{ supportsUTMStats || isInternal ? (
-										<>
-											{ this.renderSummaryHeader( path, statType, false, moduleQuery ) }
-											<StatsModuleUTM
-												siteId={ siteId }
-												period={ this.props.period }
-												query={ moduleQuery }
-												summary
-												context={ this.props.context }
-											/>
-										</>
+				<div className="stats stats-summary-view">
+					{ isStatsNavigationImprovementEnabled && (
+						<PageHeader
+							className="stats__section-header modernized-header"
+							titleProps={ { title, titleLogo: null } }
+							backLinkProps={ {
+								url: backLink,
+								text: backLabel,
+							} }
+							rightSection={
+								<div className="stats-module__header-nav-button">
+									{ shouldGateStatsCsvDownload ? (
+										<DownloadCsvUpsell siteId={ siteId } borderless />
 									) : (
-										<div>{ translate( 'This path is not available.' ) }</div>
+										<DownloadCsv
+											statType={ statType }
+											query={ moduleQuery }
+											path={
+												statType === 'statsCountryViews' ? `${ path }-${ geoModeLabel }` : path
+											}
+											period={ this.props.period }
+											skipQuery
+											hideIfNoData
+										/>
 									) }
-								</>
-							) }
-						</StatsGlobalValuesContext.Consumer>
-					) : (
-						summaryViews
+								</div>
+							}
+						/>
 					) }
-					<JetpackColophon />
+
+					{ ! isStatsNavigationImprovementEnabled && (
+						<NavigationHeader className="stats-summary-view" navigationItems={ navigationItems } />
+					) }
+
+					{ isStatsNavigationImprovementEnabled &&
+						this.props.context.params.module === 'locations' && (
+							<div className="stats-navigation stats-navigation--improved">
+								<LocationsNavTabs
+									period={ this.props.period }
+									query={ moduleQuery }
+									givenSiteId={ siteId }
+								/>
+							</div>
+						) }
+
+					<div id="my-stats-content" className="stats-summary-view stats-summary__positioned">
+						{ this.props.context.params.module === 'utm' ? (
+							<StatsGlobalValuesContext.Consumer>
+								{ ( isInternal ) => (
+									<>
+										{ supportsUTMStats || isInternal ? (
+											<>
+												{ this.renderSummaryHeader( path, statType, false, moduleQuery ) }
+												<StatsModuleUTM
+													siteId={ siteId }
+													period={ this.props.period }
+													query={ moduleQuery }
+													summary
+													context={ this.props.context }
+												/>
+											</>
+										) : (
+											<div>{ translate( 'This path is not available.' ) }</div>
+										) }
+									</>
+								) }
+							</StatsGlobalValuesContext.Consumer>
+						) : (
+							summaryViews
+						) }
+						<JetpackColophon />
+					</div>
 				</div>
 			</Main>
 		);
@@ -417,5 +469,6 @@ export default connect( ( state, { context, postId } ) => {
 		siteSlug: getSelectedSiteSlug( state, siteId ),
 		media: context.params.module === 'videodetails' ? getMediaItem( state, siteId, postId ) : false,
 		supportsUTMStats,
+		shouldGateStatsCsvDownload: shouldGateStats( state, siteId, STATS_FEATURE_DOWNLOAD_CSV ),
 	};
 } )( localize( StatsSummary ) );

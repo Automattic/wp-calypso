@@ -4,7 +4,6 @@
 @import "@automattic/components/src/highlight-cards/variables";
 @import "@wordpress/base-styles/breakpoints";
 
-$stats-background-color: #fdfdfd;
 $stats-sections-max-width: 1224px;
 $stats-layout-contnet-padding-top: 79px;
 $sidebar-appearance-break-point: $break-medium;
@@ -18,7 +17,7 @@ $sidebar-appearance-break-point: $break-medium;
 
 // Main layout content
 .stats {
-	background-color: $stats-background-color;
+	background-color: var( --color-main-background, #fcfcfc );
 
 	// Ensures vertical padding for certain sections.
 	> .highlight-cards,

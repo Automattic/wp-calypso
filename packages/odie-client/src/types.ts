@@ -203,12 +203,17 @@ type MessageAction = {
 	uri: string;
 };
 
-export type ZendeskMessage = {
-	avatarUrl?: string;
+export type OdieMessage = {
 	displayName: string;
-	id: string;
 	received: number;
 	role: string;
+	text: string;
+	altText?: string;
+};
+
+export type ZendeskMessage = OdieMessage & {
+	avatarUrl?: string;
+	id: string;
 	actions?: MessageAction[];
 	source?: {
 		type: 'web' | 'slack' | 'zd:surveys' | 'zd:answerBot';
@@ -216,9 +221,7 @@ export type ZendeskMessage = {
 		integrationId: string;
 	};
 	type: ZendeskContentType;
-	text: string;
 	mediaUrl?: string;
-	altText?: string;
 };
 
 export type ZendeskContentType =
@@ -240,6 +243,12 @@ type Metadata = {
 	status: InteractionStatus;
 };
 
+export type OdieConversation = {
+	id: string;
+	createdAt: number;
+	messages: OdieMessage[];
+};
+
 export type ZendeskConversation = {
 	id: string;
 	lastUpdatedAt: number;
@@ -252,6 +261,8 @@ export type ZendeskConversation = {
 	messages: ZendeskMessage[];
 	metadata: Metadata;
 };
+
+export type Conversations = Array< OdieConversation | ZendeskConversation >;
 
 export type SupportInteractionUser = {
 	user_id: string;

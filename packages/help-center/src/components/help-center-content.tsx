@@ -55,9 +55,9 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 	const { startNewInteraction } = useManageSupportInteraction();
 	const { data } = useSupportStatus();
 	const { data: openSupportInteractions, isLoading: isLoadingOpenSupportInteractions } =
-		useGetSupportInteractions( 'help-center', 1, 'open' );
+		useGetSupportInteractions( null, 1, 'open' );
 	const { data: resolvedSupportInteractions, isLoading: isLoadingResolvedSupportInteractions } =
-		useGetSupportInteractions( 'help-center', 1, 'resolved' );
+		useGetSupportInteractions( null, 1, 'resolved' );
 
 	const { currentSupportInteraction, navigateToRoute, isMinimized, allowPremiumSupport } =
 		useSelect( ( select ) => {

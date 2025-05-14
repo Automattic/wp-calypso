@@ -14,9 +14,10 @@ import {
 	fetchSiteSettings,
 	fetchBasicMetrics,
 	fetchPerformanceInsights,
+	updateSiteSettings,
 } from '../data';
 import { queryClient } from './query-client';
-import type { Profile, UrlPerformanceInsights } from '../data/types';
+import type { Profile, SiteSettings, UrlPerformanceInsights } from '../data/types';
 import type { Query } from '@tanstack/react-query';
 
 export function sitesQuery() {
@@ -108,6 +109,18 @@ export function siteSettingsQuery( siteId: string ) {
 		queryKey: [ 'site-settings', siteId ],
 		queryFn: () => {
 			return fetchSiteSettings( siteId );
+		},
+	};
+}
+
+export function siteSettingsMutation( siteId: string ) {
+	return {
+		mutationFn: ( newData: Partial< SiteSettings > ) => updateSiteSettings( siteId, newData ),
+		onSuccess: ( { updated }: { updated: Partial< SiteSettings > } ) => {
+			queryClient.setQueryData( [ 'site-settings', siteId ], ( oldData: SiteSettings ) => ( {
+				...oldData,
+				...updated,
+			} ) );
 		},
 	};
 }

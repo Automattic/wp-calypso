@@ -3,7 +3,6 @@
 // adding so much noise to the channel.
 import fs from 'fs';
 import { exit } from 'process';
-import fetch from 'node-fetch';
 import yargs from 'yargs';
 
 /* CLI Arguments */

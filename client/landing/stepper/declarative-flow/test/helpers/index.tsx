@@ -9,7 +9,7 @@ import { Primitive } from 'utility-types';
 import themeReducer from 'calypso/state/themes/reducer';
 import { addQueryArgs } from '../../../../../lib/url';
 import { renderWithProvider } from '../../../../../test-helpers/testing-library';
-import type { Flow, ProvidedDependencies, StepperStep } from '../../internals/types';
+import type { Flow, FlowV2, ProvidedDependencies, StepperStep } from '../../internals/types';
 
 export const getFlowLocation = () => {
 	return {
@@ -30,18 +30,27 @@ interface RenderFlowParams {
 	cancelDestination?: string;
 }
 /** Utility to render a flow for testing purposes */
-export const renderFlow = ( flow: Flow ) => {
+export const renderFlow = ( flow: Flow | FlowV2< any > ) => {
 	const FakeStepRender = ( { currentStep, dependencies, method } ) => {
 		const navigate = useNavigate();
 		const location = useLocation();
 		const fakeNavigate = ( pathname, state ) => navigate( pathname, { state } );
-		const { submit, goBack } = flow.useStepNavigation( currentStep, fakeNavigate );
+		const nav = flow.useStepNavigation( currentStep, fakeNavigate );
+		const { submit } = nav as any;
+		// FlowV2 doesn't have a goBack method.
+		const goBack = 'goBack' in nav ? nav.goBack : null;
+
 		const assertionConditionResult = flow.useAssertConditions?.() || {};
 
 		useEffect( () => {
 			switch ( method ) {
 				case 'submit':
-					submit?.( dependencies );
+					// FlowV2 has a different signature for the submit handler.
+					if ( 'initialize' in flow ) {
+						submit?.( { slug: currentStep, providedDependencies: dependencies } );
+					} else {
+						submit?.( dependencies );
+					}
 					break;
 				case 'goBack':
 					goBack?.();
@@ -107,7 +116,7 @@ export const renderFlow = ( flow: Flow ) => {
 };
 
 export const runFlowNavigation = (
-	flow: Flow,
+	flow: FlowV1,
 	{ from, dependencies = {}, query = {} },
 	direction = 'forward'
 ) => {

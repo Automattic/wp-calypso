@@ -13,7 +13,7 @@ import {
 import { localizeUrl } from '@automattic/i18n-utils';
 import { formatCurrency } from '@automattic/number-formatters';
 import { DOMAIN_CANCEL, REFUNDS } from '@automattic/urls';
-import { isWpComProductRenewal as isRenewal } from '@automattic/wpcom-checkout';
+import { isWpComProductRenewal as isRenewal, isValueTruthy } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { has100YearPlan, has100YearDomain } from 'calypso/lib/cart-values/cart-items';
@@ -196,10 +196,15 @@ type RefundWindow = 4 | 7 | 14 | 120;
 
 // Get the refund windows in days for the items in the cart
 export function getRefundWindows( refundPolicies: RefundPolicy[] ): RefundWindow[] {
-	const refundWindows = refundPolicies.map( ( refundPolicy ) => {
+	const refundWindows = refundPolicies.map( ( refundPolicy ): RefundWindow | undefined => {
 		switch ( refundPolicy ) {
 			case RefundPolicy.DomainNameTransfer:
-				return 0;
+				// Domain transfers can only be refunded until the transfer
+				// completes, at which point they are non-refundable. This is
+				// described in detail in the checkout footer (see
+				// `RefundPolicyItem`) but cannot be easily summarized as a
+				// number so we ignore it here.
+				return undefined;
 
 			case RefundPolicy.DomainNameRegistration:
 			case RefundPolicy.DomainNameRegistrationBundled:
@@ -228,9 +233,7 @@ export function getRefundWindows( refundPolicies: RefundPolicy[] ): RefundWindow
 		}
 	} );
 
-	return Array.from( new Set( refundWindows ) ).filter(
-		( refundWindow ): refundWindow is RefundWindow => refundWindow !== undefined
-	);
+	return Array.from( new Set( refundWindows ) ).filter( isValueTruthy );
 }
 
 function RefundPolicyItem( {

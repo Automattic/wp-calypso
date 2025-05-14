@@ -1,6 +1,3 @@
-// This is required to fix the "regeneratorRuntime is not defined" error
-import '@automattic/calypso-polyfills';
-
 import { createExPlatClient } from '../create-explat-client';
 import localStorage from '../internal/local-storage';
 import {

@@ -46,6 +46,7 @@ export function PlaygroundIframe( {
 					setPlaygroundError( 'UNKNOWN_ERROR' );
 				}
 			} );
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ playgroundError ] );
 
 	if ( playgroundError === 'PLAYGROUND_NOT_FOUND' ) {

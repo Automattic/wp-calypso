@@ -131,7 +131,7 @@ export const MarketplaceFooter = () => {
 					</Button>
 				) }
 				<ThreeColumnContainer>
-					<FeatureItem header={ __( 'Fully Managed' ) }>
+					<FeatureItem header={ __( 'Fully managed' ) }>
 						{ __(
 							'Premium plugins are fully managed by the team at WordPress.com. No security patches. No update nags. It just works.'
 						) }

@@ -104,7 +104,7 @@ function SubscriberHighlightsStandard( {
 
 function SubscriberHighlightsMobile( { highlights, isLoading }: SubscriberHighlightsRenderProps ) {
 	if ( isLoading ) {
-		return <Spinner />;
+		return <Spinner baseClassName="calypso-spinner" />;
 	}
 
 	return <MobileHighlightCardListing highlights={ highlights } />;

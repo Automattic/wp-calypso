@@ -51,7 +51,7 @@ export default ( router ) => {
 	);
 
 	router(
-		paths.purchasesRoot + '/crm-downloads/:licenseKey',
+		paths.purchasesRoot + '/crm-downloads/:subscription',
 		sidebar,
 		controller.crmDownloads,
 		makeLayout,

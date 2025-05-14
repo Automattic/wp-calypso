@@ -1,5 +1,5 @@
+import { WordPressLogo } from '@automattic/components';
 import { Global, css } from '@emotion/react';
-import WordPressLogo from 'calypso/components/wordpress-logo';
 import Item from 'calypso/layout/masterbar/item';
 import Masterbar from 'calypso/layout/masterbar/masterbar';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
@@ -15,7 +15,7 @@ const MasterbarStyled = ( {
 }: {
 	onClick?: () => void;
 	backText?: string;
-	canGoBack: boolean;
+	canGoBack?: boolean;
 	contact?: JSX.Element | null;
 	showContact?: boolean;
 } ) => (

@@ -68,8 +68,7 @@ describe( 'RestAPIClient: getInvites', function () {
 		nock( requestURL.origin ).get( requestURL.pathname ).reply( 200, testData );
 
 		const response: AllInvitesResponse = await restAPIClient.getInvites( siteID );
-		expect( response ).toBeInstanceOf( Array );
-		expect( response.length ).toBe( 1 );
+		expect( response ).toHaveLength( 1 );
 	} );
 
 	test( 'No invites are returned', async function () {
@@ -80,8 +79,7 @@ describe( 'RestAPIClient: getInvites', function () {
 		nock( requestURL.origin ).get( requestURL.pathname ).reply( 200, testData );
 
 		const response: AllInvitesResponse = await restAPIClient.getInvites( siteID );
-		expect( response ).toBeInstanceOf( Array );
-		expect( response.length ).toBe( 0 );
+		expect( response ).toHaveLength( 0 );
 	} );
 } );
 
@@ -109,8 +107,6 @@ describe( 'RestAPIClient: createInvite', function () {
 			role: role,
 			message: message,
 		} );
-		expect( response.sent ).toBeInstanceOf( Array );
-		expect( response.sent.length ).toBe( 2 );
 		expect( response.sent ).toEqual( testEmails );
 		expect( response.errors.length ).toBe( 0 );
 	} );

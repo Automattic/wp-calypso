@@ -41,11 +41,7 @@
 
 .help__section-title {
 	font-size: $font-title-small;
-	margin: 32px 16px 16px;
-
-	@include breakpoint-deprecated( ">660px" ) {
-		margin: 32px 0 16px;
-	}
+	margin: 32px 0 16px;
 }
 
 .help__support-link .gridicons-external {

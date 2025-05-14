@@ -7,7 +7,6 @@ import { default as Toolbar } from 'calypso/components/activity-card/toolbar';
 import BackupWarningRetry from 'calypso/components/jetpack/backup-warnings/backup-warning-retry';
 import NextScheduledBackup from 'calypso/components/jetpack/daily-backup-status/status-card/parts/next-scheduled-backup';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
-import { preventWidows } from 'calypso/lib/formatting';
 import { useActionableRewindId } from 'calypso/lib/jetpack/actionable-rewind-id';
 import { getBackupWarnings } from 'calypso/lib/jetpack/backup-utils';
 import { applySiteOffset } from 'calypso/lib/site/timezone';
@@ -101,20 +100,18 @@ const BackupSuccessful = ( {
 			<div className="status-card__meta">{ meta }</div>
 			{ isMultiSite && (
 				<div className="status-card__multisite-warning">
-					<div className="status-card__multisite-warning-title">
-						{ preventWidows( translate( 'This site is a WordPress Multisite installation.' ) ) }
-					</div>
+					<h2 className="status-card__multisite-warning-title">
+						{ translate( 'This site is a WordPress Multisite installation.' ) }
+					</h2>
 					<p className="status-card__multisite-warning-info">
-						{ preventWidows(
-							translate(
-								'Jetpack VaultPress Backup for Multisite installations provides downloadable backups, no one-click restores. ' +
-									'For more information {{ExternalLink}}visit our documentation page{{/ExternalLink}}.',
-								{
-									components: {
-										ExternalLink: <ExternalLink href={ multiSiteInfoLink } target="_blank" icon />,
-									},
-								}
-							)
+						{ translate(
+							'Jetpack VaultPress Backup for Multisite installations provides downloadable backups, no one-click restores. ' +
+								'For more information {{ExternalLink}}visit our documentation page{{/ExternalLink}}.',
+							{
+								components: {
+									ExternalLink: <ExternalLink href={ multiSiteInfoLink } target="_blank" icon />,
+								},
+							}
 						) }
 					</p>
 				</div>

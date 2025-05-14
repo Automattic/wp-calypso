@@ -48,7 +48,7 @@ const WooPaymentsDashboard = () => {
 
 	const isDesktop = useDesktopBreakpoint();
 
-	const title = translate( 'WooPayments Commissions' );
+	const title = translate( 'WooPayments commissions' );
 
 	const [ sitesWithPluginsStates, setSitesWithPluginsStates ] = useState<
 		SitesWithWooPaymentsState[]

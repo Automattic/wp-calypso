@@ -43,6 +43,10 @@ type DomainStepSubmittedTypes = {
 	domainCart?: ResponseCartProduct[] | object;
 	shouldSkipSubmitTracking?: boolean;
 	domainItem?: DomainSuggestion;
+	navigateToUseMyDomain?: boolean;
+	domainForm?: {
+		lastQuery?: string;
+	};
 };
 
 const RenderDomainsStepConnect = connect(

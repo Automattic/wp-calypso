@@ -32,7 +32,8 @@ import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import { clearStore } from 'calypso/lib/user/store';
 import wpcom from 'calypso/lib/wp';
 import AccountEmailField from 'calypso/me/account/account-email-field';
-import EmailVerificationBanner from 'calypso/me/email-verification-banner';
+import { withDefaultInterface } from 'calypso/me/account/with-default-interface';
+import { EmailVerificationBannerV2 } from 'calypso/me/email-verification-banner';
 import ReauthRequired from 'calypso/me/reauth-required';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
@@ -47,6 +48,7 @@ import canDisplayCommunityTranslator from 'calypso/state/selectors/can-display-c
 import getUnsavedUserSettings from 'calypso/state/selectors/get-unsaved-user-settings';
 import getUserSettings from 'calypso/state/selectors/get-user-settings';
 import isRequestingMissingSites from 'calypso/state/selectors/is-requesting-missing-sites';
+import { isA8cTeamMember } from 'calypso/state/teams/selectors';
 import {
 	clearUnsavedUserSettings,
 	removeUnsavedUserSetting,
@@ -98,6 +100,7 @@ class Account extends Component {
 		formsSubmitting: {},
 		usernameAction: 'new',
 		validationResult: false,
+		accountSubmitDisable: false,
 	};
 
 	componentDidUpdate() {
@@ -486,6 +489,22 @@ class Account extends Component {
 		);
 	}
 
+	renderUsernameDescription() {
+		const { translate, isAutomattician, isEmailVerified } = this.props;
+
+		if ( ! isEmailVerified ) {
+			return (
+				<span>{ translate( 'Username can be changed once your email address is verified.' ) }</span>
+			);
+		}
+
+		if ( isAutomattician ) {
+			return <span>{ translate( 'Automatticians cannot change their username.' ) }</span>;
+		}
+
+		return this.renderJoinDate();
+	}
+
 	renderPrimarySite() {
 		const { requestingMissingSites, translate, visibleSiteCount } = this.props;
 
@@ -515,6 +534,7 @@ class Account extends Component {
 
 	shouldDisableAccountSubmitButton() {
 		return (
+			this.state.accountSubmitDisable ||
 			! this.hasUnsavedUserSettings( ACCOUNT_FIELDS ) ||
 			this.getDisabledState( ACCOUNT_FORM_NAME ) ||
 			this.hasEmailValidationError()
@@ -659,6 +679,9 @@ class Account extends Component {
 				<FormFieldset>
 					<FormLabel htmlFor="primary_site_ID">{ translate( 'Primary site' ) }</FormLabel>
 					{ this.renderPrimarySite() }
+					<FormSettingExplanation>
+						{ translate( "Choose the default site dashboard you'll see at login." ) }
+					</FormSettingExplanation>
 				</FormFieldset>
 
 				<FormButton
@@ -790,6 +813,16 @@ class Account extends Component {
 			this.getUserSetting( 'user_login' ) === this.state.userLoginConfirm &&
 			this.state.userLoginConfirm.length > 0;
 
+		const usernameValidationFailureMessage = this.getUsernameValidationFailureMessage();
+		const isError = ! usernameMatch || usernameValidationFailureMessage;
+
+		let validationMessage = translate( 'Please re-enter your new username to confirm it.' );
+		if ( usernameMatch ) {
+			validationMessage = usernameValidationFailureMessage
+				? usernameValidationFailureMessage
+				: translate( 'Thanks for confirming your new username!' );
+		}
+
 		return (
 			<div className="account__username-form" key="usernameForm">
 				<FormFieldset>
@@ -804,13 +837,9 @@ class Account extends Component {
 						value={ this.state.userLoginConfirm ?? '' }
 						onChange={ this.updateUserLoginConfirm }
 						isValid={ usernameMatch }
-						isError={ ! usernameMatch }
+						isError={ isError }
 					/>
-					<FormInputValidation isError={ ! usernameMatch }>
-						{ usernameMatch
-							? translate( 'Thanks for confirming your new username!' )
-							: translate( 'Please re-enter your new username to confirm it.' ) }
-					</FormInputValidation>
+					<FormInputValidation isError={ isError }>{ validationMessage }</FormInputValidation>
 				</FormFieldset>
 
 				{ this.renderBlogActionFields() }
@@ -874,7 +903,11 @@ class Account extends Component {
 						}
 					) }
 				/>
-				<EmailVerificationBanner />
+				<EmailVerificationBannerV2
+					setIsBusy={ ( isBusy ) => {
+						this.state.accountSubmitDisable = isBusy;
+					} }
+				/>
 				<SectionHeader label={ translate( 'Account Information' ) } />
 				<Card className="account__settings">
 					<form onChange={ markChanged } onSubmit={ this.saveAccountSettings }>
@@ -903,15 +936,7 @@ class Account extends Component {
 								this.renderUsernameValidation()
 							) : (
 								<FormSettingExplanation>
-									{ ! this.props.isEmailVerified ? (
-										<span>
-											{ translate(
-												'Username can be changed once your email address is verified.'
-											) }
-										</span>
-									) : (
-										this.renderJoinDate()
-									) }
+									{ this.renderUsernameDescription() }
 								</FormSettingExplanation>
 							) }
 						</FormFieldset>
@@ -972,7 +997,7 @@ class Account extends Component {
 							<FormLabel id="account__default_landing_page">
 								{ translate( 'Default landing page' ) }
 							</FormLabel>
-							<ToggleLandingPageSettings />
+							<ToggleLandingPageSettings defaultInterface={ this.props.defaultInterface } />
 							<FormSettingExplanation>
 								{ fixMe( {
 									text: "Select what you'll see by default when visiting WordPress.com",
@@ -1010,6 +1035,7 @@ export default compose(
 	withLocalizedMoment,
 	withGeoLocation,
 	protectForm,
+	withDefaultInterface,
 	connect(
 		( state ) => ( {
 			canDisplayCommunityTranslator: canDisplayCommunityTranslator( state ),
@@ -1022,6 +1048,7 @@ export default compose(
 			unsavedUserSettings: getUnsavedUserSettings( state ),
 			visibleSiteCount: getCurrentUserVisibleSiteCount( state ),
 			isEmailVerified: isCurrentUserEmailVerified( state ),
+			isAutomattician: isA8cTeamMember( state ),
 		} ),
 		{
 			clearUnsavedUserSettings,

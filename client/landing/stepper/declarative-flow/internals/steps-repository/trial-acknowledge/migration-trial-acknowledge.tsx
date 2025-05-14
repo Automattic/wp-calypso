@@ -27,7 +27,7 @@ interface Props {
 	siteSlug: SiteSlug;
 	flowName: string;
 	stepName: string;
-	submit?: ( providedDependencies?: {
+	submit: ( providedDependencies: {
 		action: 'verify-email' | 'importer' | 'checkout';
 		checkoutUrl?: string;
 	} ) => void;

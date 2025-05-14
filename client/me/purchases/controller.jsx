@@ -277,6 +277,6 @@ export function changePaymentMethod( context, next ) {
 }
 
 export function crmDownloads( context, next ) {
-	context.primary = <CrmDownloads licenseKey={ context.params.licenseKey } />;
+	context.primary = <CrmDownloads subscription={ context.params.subscription } />;
 	next();
 }

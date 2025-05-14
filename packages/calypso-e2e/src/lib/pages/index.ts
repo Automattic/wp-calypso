@@ -3,6 +3,7 @@ export * from './add-people-page';
 export * from './cart-checkout-page';
 export * from './checkout-thank-you-page';
 export * from './dashboard-page';
+export * from './dashboard-site-page';
 export * from './domains-page';
 export * from './editor-page';
 export * from './full-site-editor-page';
@@ -37,6 +38,8 @@ export * from './blaze-campaign-page';
 export * from './feedback-inbox-page';
 export * from './subscribers-page';
 export * from './subscription-management-page';
+export * from './logged-out-home-page';
+export * from './logged-out-themes-page';
 
 export * from './external';
 export * from './me';

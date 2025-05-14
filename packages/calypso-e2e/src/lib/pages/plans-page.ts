@@ -21,6 +21,11 @@ const selectors = {
 	// Generic
 	placeholder: '.is-placeholder',
 	managePlanButton: 'a:has-text("Manage plan")',
+	addOnCombobox: ( name: Plans ) => {
+		return `.plans-grid-next-plan-storage[data-plan-title="${ name }"]`;
+	},
+	addOnComboboxButton: 'button[role="combobox"]',
+	addOnComboboxOption: ( addOn: string ) => `[role="option"]:has-text("${ addOn }")`,
 	selectPlanButton: ( name: Plans ) => {
 		if ( name === 'Free' ) {
 			// Free plan is a pseudo-button presented as a
@@ -91,6 +96,24 @@ export class PlansPage {
 	}
 
 	/* Plans */
+
+	/**
+	 * Selects the add-on for the target plan.
+	 *
+	 * @param {Plans} plan Plan to select.
+	 * @param {string} addOn Add-on to select.
+	 */
+	async selectAddOn( plan: Plans, addOn: string ): Promise< void > {
+		const combobox = this.page.locator( selectors.addOnCombobox( plan ) );
+
+		const comboboxSelect = combobox.locator( selectors.addOnComboboxButton );
+		await comboboxSelect.first().click();
+
+		const comboboxOption = combobox.locator(
+			selectors.addOnComboboxOption( `50 GB + ${ addOn }` )
+		);
+		await comboboxOption.first().click();
+	}
 
 	/**
 	 * Selects the target plan on the plans grid.

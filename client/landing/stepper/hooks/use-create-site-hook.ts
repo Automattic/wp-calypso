@@ -189,7 +189,7 @@ export const useCreateSite = () => {
 				username,
 				domainCartItems: mergedDomainCartItems,
 				partnerBundle: null,
-				domainItem: domains?.domainItem,
+				domainItem: domains?.domainItem as DomainSuggestion | undefined,
 				siteIntent,
 				planCartItems,
 			} );

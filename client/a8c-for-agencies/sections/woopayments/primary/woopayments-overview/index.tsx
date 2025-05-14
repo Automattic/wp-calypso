@@ -31,7 +31,7 @@ const WooPaymentsOverview = () => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const title = translate( 'WooPayments Commissions' );
+	const title = translate( 'WooPayments commissions' );
 
 	const listItems1 = useMemo(
 		() => [

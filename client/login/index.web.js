@@ -110,7 +110,7 @@ export default ( router ) => {
 	}
 
 	router(
-		[ `/log-in/qr/${ lang }` ],
+		[ `/log-in/qr/${ lang }`, `/log-in/jetpack/qr/${ lang }` ],
 		redirectLoggedIn,
 		setLocaleMiddleware(),
 		setMetaTags,
@@ -122,7 +122,7 @@ export default ( router ) => {
 	router(
 		[
 			`/log-in/:twoFactorAuthType(authenticator|backup|sms|push|webauthn)/${ lang }`,
-			`/log-in/:flow(social-connect|private-site)/${ lang }`,
+			`/log-in/:flow(social-connect)/${ lang }`,
 			`/log-in/:socialService(google|apple|github)/callback/${ lang }`,
 			`/log-in/:isJetpack(jetpack)/${ lang }`,
 			`/log-in/:isJetpack(jetpack)/:twoFactorAuthType(authenticator|backup|sms|push|webauthn)/${ lang }`,

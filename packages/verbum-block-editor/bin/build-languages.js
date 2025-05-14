@@ -7,7 +7,6 @@
 const fs = require( 'fs' );
 const resolve = require( 'path' ).resolve;
 const languages = require( '@automattic/languages' );
-const fetch = require( 'node-fetch' );
 
 const outputPath = './dist/languages';
 const bundleFile = './dist/block-editor.min.js';

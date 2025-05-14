@@ -27,34 +27,38 @@ import { ProcessingResult } from './constants';
 import { useProcessingLoadingMessages } from './hooks/use-processing-loading-messages';
 import HundredYearPlanFlowProcessingScreen from './hundred-year-plan-flow-processing-screen';
 import TailoredFlowPreCheckoutScreen from './tailored-flow-precheckout-screen';
-import type { StepProps } from '../../types';
+import type { Step as StepType } from '../../types';
 import type { OnboardSelect } from '@automattic/data-stores';
 import type { SiteIntent } from '@automattic/data-stores/src/onboard';
 import './style.scss';
 
-interface ProcessingStepProps
-	extends StepProps< {
-		submits:
-			| {
-					destination: string;
-					processingResult?: ProcessingResult;
-			  }
-			| {
-					processingResult?: ProcessingResult.FAILURE | ProcessingResult.NO_ACTION;
-			  }
-			| {
-					processingResult?: ProcessingResult.SUCCESS;
-					path?: string;
-					intent?: SiteIntent;
-					previousStep?: string;
-					nextStep?: string;
-			  };
-	} > {
-	title?: string;
-	subtitle?: string;
-}
-
-const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
+const ProcessingStep: StepType< {
+	submits:
+		| {
+				processingResult: ProcessingResult.FAILURE | ProcessingResult.NO_ACTION;
+		  }
+		| ( {
+				// The processing step is impossible to type precisely because it submits whatever the pendingAction resolves to.
+				// But the most common outcome is the site-creation return value. This is technically incorrect, but it's practical.
+				// We should find a way to type the processing step more precisely in the future.
+				processingResult: ProcessingResult.SUCCESS;
+				siteCreated?: boolean;
+				siteId?: number;
+				siteSlug?: string;
+				goToCheckout?: boolean;
+				goToHome?: boolean;
+				skipMigration?: undefined;
+				path?: string;
+				intent?: SiteIntent;
+				previousStep?: string;
+				nextStep?: string;
+				// The processing step is impossible to type precisely because it submits whatever the pendingAction resolves to.
+		  } & Record< string, unknown > );
+	accepts: {
+		title?: string;
+		subtitle?: string;
+	};
+} > = function ( props ) {
 	const { submit } = props.navigation;
 	const { flow } = props;
 

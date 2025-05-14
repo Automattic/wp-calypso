@@ -69,7 +69,6 @@ import { localize, LocalizeProps, useTranslate } from 'i18n-calypso';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { SupportedSlugs } from 'calypso/../packages/components/src/product-icon/config';
 import googleWorkspaceIcon from 'calypso/assets/images/email-providers/google-workspace/icon.svg';
 import AsyncLoad from 'calypso/components/async-load';
 import isJetpackCrmProduct from 'calypso/components/crm-downloads/is-jetpack-crm-product';
@@ -173,6 +172,7 @@ import PurchaseNotice from './notices';
 import PurchasePlanDetails from './plan-details';
 import PurchaseMeta from './purchase-meta';
 import type { FilteredPlan, PlanSlug } from '@automattic/calypso-products';
+import type { SupportedSlugs } from '@automattic/components/src/product-icon/config';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
 import type { TracksProps } from 'calypso/lib/purchases';
 import type {
@@ -669,27 +669,21 @@ class ManagePurchase extends Component<
 	}
 
 	renderCrmDownloadsNavItem() {
-		const { site, translate } = this.props;
-
-		if ( ! site?.plan ) {
-			return null;
-		}
+		const { purchase, translate } = this.props;
 
 		// Only show for Jetpack CRM Products
-		if ( ! isJetpackCrmProduct( site.plan.license_key || '' ) ) {
+		if ( ! isJetpackCrmProduct( purchase?.productSlug ) ) {
 			return null;
 		}
 
 		const handleCrmDownloadsClick = () => {
 			recordTracksEvent( 'calypso_purchases_crm_downloads_click', {
-				product_slug: site?.plan?.license_key || 'no_key',
+				product_slug: purchase?.productSlug || '',
 			} );
 		};
 
 		// We'll pass the purchase ID in the URL, and the CRM Downloads component will fetch the actual license key
-		const path = isJetpackCloud()
-			? `/purchases/crm-downloads/${ site.plan.license_key }`
-			: `/me/purchases/crm-downloads/${ site.plan.license_key }`;
+		const path = `/purchases/crm-downloads/${ purchase?.id }`;
 
 		return (
 			<CompactCard href={ path } onClick={ handleCrmDownloadsClick }>

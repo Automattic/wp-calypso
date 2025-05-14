@@ -1,4 +1,4 @@
-import { FoldableCard } from '@automattic/components';
+import { FoldableCard, WordPressLogo } from '@automattic/components';
 import {
 	formatCurrency,
 	formatNumberCompact,
@@ -14,7 +14,6 @@ import StepSection from 'calypso/a8c-for-agencies/components/step-section';
 import WooLogoColor from 'calypso/assets/images/icons/Woo_logo_color.svg';
 import pressableIcon from 'calypso/assets/images/pressable/pressable-icon.svg';
 import JetpackLogo from 'calypso/components/jetpack-logo';
-import WordPressLogo from 'calypso/components/wordpress-logo';
 import LayoutBody from 'calypso/layout/hosting-dashboard/body';
 import LayoutHeader, {
 	LayoutHeaderBreadcrumb as Breadcrumb,
