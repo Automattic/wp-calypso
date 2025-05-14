@@ -6,7 +6,7 @@ import { useState, useCallback } from 'react';
 type Props< T > = {
 	defaultValue?: T;
 	value?: T | null | undefined;
-	onChange?: ( newValue: T, ...args: any[] ) => void;
+	onChange?: ( newValue: T ) => void;
 };
 
 /**
@@ -33,9 +33,9 @@ export function useControlledValue< T >( {
 
 	let setValue: typeof onChange;
 	const uncontrolledSetValue: NonNullable< typeof onChange > = useCallback(
-		( nextValue, ...args ) => {
+		( nextValue ) => {
 			setState( nextValue );
-			onChange?.( nextValue, ...args );
+			onChange?.( nextValue );
 		},
 		[ setState, onChange ]
 	);

@@ -135,16 +135,8 @@ type DayOfWeek = {
  * @template T - The type of the selected item.
  * @callback OnSelectHandler
  * @param {T} selected - The selected item after the event.
- * @param {Date} triggerDate - The date when the event was triggered.
- * @param {Modifiers} modifiers - The modifiers associated with the event.
- * @param {React.MouseEvent | React.KeyboardEvent} e - The event object.
  */
-export type OnSelectHandler< T > = (
-	selected: T,
-	triggerDate: Date,
-	modifiers: Modifiers,
-	e: React.MouseEvent | React.KeyboardEvent
-) => void;
+export type OnSelectHandler< T > = ( selected: T ) => void;
 
 interface BaseProps extends Omit< React.HTMLAttributes< HTMLDivElement >, 'onSelect' > {
 	/**
