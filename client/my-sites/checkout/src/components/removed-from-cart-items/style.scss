@@ -1,0 +1,20 @@
+.removed-from-cart-items {
+	list-style: none;
+	margin: 24px 0 0 0;
+}
+
+.restorable-product-button {
+	font-size: inherit;
+	font-weight: bold;
+	text-decoration: underline;
+	padding-left: 6px;
+
+	&:focus {
+		box-shadow: none !important;
+		outline: none !important;
+	}
+
+	&:hover {
+		color: inherit !important;
+	}
+}

@@ -3,6 +3,7 @@ import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useRestorableProducts } from 'calypso/my-sites/checkout/src/components/restorable-products-context';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
+import './style.scss';
 
 export const RemovedFromCartItems = () => {
 	const cartKey = useCartKey();
