@@ -133,7 +133,6 @@ export interface I18N {
 	registerComponentUpdateHook( hook: ComponentUpdateHook ): void;
 
 	subscribe( callback: () => any ): () => void;
-	emitChange(): void;
 
 	/**
 	 * Returns `newCopy` if given `text` is translated or locale is English, otherwise returns the `oldCopy`.
