@@ -148,7 +148,7 @@ export function getWpcomPlanTotalIfPaidMonthly(
 			monthlyPlanSlug &&
 			plans?.[ monthlyPlanSlug ] &&
 			product.months_per_bill_period &&
-			plans[ monthlyPlanSlug ].pricing.originalPrice.monthly
+			plans[ monthlyPlanSlug ].pricing?.originalPrice?.monthly
 		) {
 			return (
 				product.months_per_bill_period * plans[ monthlyPlanSlug ].pricing.originalPrice.monthly

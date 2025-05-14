@@ -339,7 +339,7 @@ describe( 'getWpcomPlanTotalIfPaidMonthly', () => {
 		item_original_cost_integer: 100,
 		item_subtotal_integer: 100,
 		bill_period: '365',
-		months_per_bill_period: 12,
+		months_per_bill_period: 24,
 	};
 	const personal_monthly = {
 		...getEmptyResponseCartProduct(),
@@ -380,13 +380,9 @@ describe( 'getWpcomPlanTotalIfPaidMonthly', () => {
 		},
 	};
 
-	beforeEach( () => {
-		jest.clearAllMocks();
-	} );
-
 	it( 'returns correct total for valid yearly plan with a monthly counterpart', () => {
 		const result = getWpcomPlanTotalIfPaidMonthly( business_2years, plans );
-		expect( result ).toBe( 480 ); // 12 * 40
+		expect( result ).toBe( 960 ); // 24 * 40
 	} );
 
 	it( 'returns undefined if product is not a wpcom plan', () => {
@@ -396,6 +392,43 @@ describe( 'getWpcomPlanTotalIfPaidMonthly', () => {
 
 	it( 'returns undefined if product is a monthly plan', () => {
 		const result = getWpcomPlanTotalIfPaidMonthly( personal_monthly, plans );
+		expect( result ).toBeUndefined();
+	} );
+
+	it( 'returns undefined if plans are empty', () => {
+		expect( getWpcomPlanTotalIfPaidMonthly( business_2years, null ) ).toBeUndefined();
+		expect( getWpcomPlanTotalIfPaidMonthly( business_2years, [] ) ).toBeUndefined();
+		expect( getWpcomPlanTotalIfPaidMonthly( business_2years, '' ) ).toBeUndefined();
+		expect( getWpcomPlanTotalIfPaidMonthly( business_2years, {} ) ).toBeUndefined();
+	} );
+
+	it( "returns undefined if plans don't have the correct plan", () => {
+		let result = getWpcomPlanTotalIfPaidMonthly( business_2years, {
+			[ PLAN_PERSONAL_MONTHLY ]: 'test',
+		} );
+		expect( result ).toBeUndefined();
+		result = getWpcomPlanTotalIfPaidMonthly( business_2years, {
+			[ PLAN_PERSONAL_MONTHLY ]: { pricing: '' },
+		} );
+		expect( result ).toBeUndefined();
+	} );
+
+	it( 'returns undefined if the plan data is invalid', () => {
+		let result = getWpcomPlanTotalIfPaidMonthly( business_2years, {
+			[ PLAN_BUSINESS_MONTHLY ]: 'test',
+		} );
+		expect( result ).toBeUndefined();
+		result = getWpcomPlanTotalIfPaidMonthly( business_2years, {
+			[ PLAN_BUSINESS_MONTHLY ]: { pricing: '' },
+		} );
+		expect( result ).toBeUndefined();
+		result = getWpcomPlanTotalIfPaidMonthly( business_2years, {
+			[ PLAN_BUSINESS_MONTHLY ]: { pricing: { originalPrice: null } },
+		} );
+		expect( result ).toBeUndefined();
+		result = getWpcomPlanTotalIfPaidMonthly( business_2years, {
+			[ PLAN_BUSINESS_MONTHLY ]: { pricing: { originalPrice: { monthly: null } } },
+		} );
 		expect( result ).toBeUndefined();
 	} );
 } );
