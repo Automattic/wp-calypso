@@ -40,7 +40,6 @@ import {
 	FEATURE_BACKUP_STORAGE_SPACE_UNLIMITED,
 	FEATURE_BLANK,
 	FEATURE_BLOG_DOMAIN,
-	FEATURE_CLOUDFLARE_ANALYTICS,
 	FEATURE_COLLECT_PAYMENTS_V2,
 	FEATURE_COMMUNITY_SUPPORT,
 	FEATURE_CRM_INTEGRATED_WITH_WORDPRESS,
@@ -544,11 +543,6 @@ const FEATURES_LIST: FeatureList = {
 		getSlug: () => FEATURE_UPLOAD_THEMES_PLUGINS,
 		getTitle: () => i18n.translate( 'Upload themes and plugins' ),
 		getDescription: () => i18n.translate( 'Upload custom themes and plugins on your site.' ),
-	},
-
-	[ FEATURE_CLOUDFLARE_ANALYTICS ]: {
-		getSlug: () => FEATURE_CLOUDFLARE_ANALYTICS,
-		getTitle: () => i18n.translate( 'Cloudflare Web Analytics' ),
 	},
 
 	[ FEATURE_FREE_THEMES_SIGNUP ]: {
