@@ -26,24 +26,6 @@ const translationLookup = [
 
 const hashCache = {};
 
-/**
- * Efficiently removes an item from an array, with the assumption that the item appears only once.
- * @param {Array<I>} array The array to remove the item from.
- * @param {I} item The item to remove from the array.
- * @template I
- */
-function removeOne( array, item ) {
-	for ( let i = 0; i < array.length; i++ ) {
-		if ( array[ i ] === item ) {
-			for ( ; i < array.length - 1; i++ ) {
-				array[ i ] = array[ i + 1 ];
-			}
-			array.pop();
-			return;
-		}
-	}
-}
-
 // raise a console warning
 function warn() {
 	if ( ! I18N.throwErrors ) {
@@ -162,7 +144,7 @@ function I18N() {
 	};
 	this.componentUpdateHooks = [];
 	this.translateHooks = [];
-	this.subscribers = [];
+	this.subscribers = new Set();
 	// default configuration
 	this.configure();
 }
@@ -205,8 +187,8 @@ I18N.prototype.geolocateCurrencySymbol = async function ( callback ) {
 };
 
 I18N.prototype.subscribe = function ( callback ) {
-	this.subscribers.push( callback );
-	return () => removeOne( this.subscribers, callback );
+	this.subscribers.add( callback );
+	return () => this.subscribers.delete( callback );
 };
 
 I18N.prototype.emitChange = function () {
