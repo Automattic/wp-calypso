@@ -1,7 +1,12 @@
 import { useMemo, useState } from 'react';
 import { DayPicker, TZDate } from 'react-day-picker';
 import { useControlledValue } from './utils';
-import type { DateCalendarProps, DateRangeCalendarProps, DateRange } from './types';
+import type {
+	DateCalendarProps,
+	DateRangeCalendarProps,
+	DateRange,
+	OnSelectHandler,
+} from './types';
 
 import './styles.scss';
 
@@ -111,20 +116,20 @@ export const DateCalendar = ( {
 }: DateCalendarProps ) => {
 	const commonProps = useCommonProps( { numberOfMonths, locale, timeZone } );
 
-	const [ selected, setSelected ] = useControlledValue< Date >( {
+	const [ selected, setSelected ] = useControlledValue< Date | undefined >( {
 		defaultValue: defaultSelected,
 		value: selectedProp,
-		onChange: onSelect,
+		onChange: onSelect as OnSelectHandler< Date | undefined >,
 	} );
 
 	return (
 		<DayPicker
 			aria-label={ ariaLabel }
 			{ ...props }
+			{ ...commonProps }
 			mode="single"
 			selected={ selected }
 			onSelect={ setSelected }
-			{ ...commonProps }
 		/>
 	);
 };
@@ -142,10 +147,10 @@ export const DateRangeCalendar = ( {
 }: DateRangeCalendarProps ) => {
 	const commonProps = useCommonProps( { numberOfMonths, locale, timeZone } );
 
-	const [ selected, setSelected ] = useControlledValue< DateRange >( {
+	const [ selected, setSelected ] = useControlledValue< DateRange | undefined >( {
 		defaultValue: defaultSelected,
 		value: selectedProp,
-		onChange: onSelect,
+		onChange: onSelect as OnSelectHandler< DateRange | undefined >,
 	} );
 
 	const [ hoveredDate, setHoveredDate ] = useState< Date | undefined >( undefined );
@@ -195,6 +200,7 @@ export const DateRangeCalendar = ( {
 		<DayPicker
 			aria-label={ ariaLabel }
 			{ ...props }
+			{ ...commonProps }
 			mode="range"
 			excludeDisabled={ excludeDisabled }
 			selected={ selected }
@@ -203,7 +209,6 @@ export const DateRangeCalendar = ( {
 			onDayMouseLeave={ () => setHoveredDate( undefined ) }
 			modifiers={ modifiers }
 			modifiersClassNames={ MODIFIER_CLASSNAMES }
-			{ ...commonProps }
 		/>
 	);
 };

@@ -2,12 +2,11 @@
  * WordPress dependencies
  */
 import { useState, useCallback } from 'react';
-import type { OnSelectHandler } from './types';
 
 type Props< T > = {
 	defaultValue?: T;
 	value?: T | null | undefined;
-	onChange?: OnSelectHandler< T > | OnSelectHandler< T | undefined >;
+	onChange?: ( newValue: T, ...args: any[] ) => void;
 };
 
 /**
@@ -32,17 +31,14 @@ export function useControlledValue< T >( {
 	const [ state, setState ] = useState( initialValue );
 	const value = ( hasValue ? valueProp : state ) ?? undefined;
 
-	let setValue;
-	const uncontrolledSetValue: OnSelectHandler< T | undefined > = useCallback(
-		( nextValue, triggerDate, modifiers, e ) => {
+	let setValue: typeof onChange;
+	const uncontrolledSetValue: NonNullable< typeof onChange > = useCallback(
+		( nextValue, ...args ) => {
 			setState( nextValue );
-			// @ts-expect-error - onChange should be able to handle undefined,
-			// but the conditional type is tricky to get around.
-			onChange?.( nextValue, triggerDate, modifiers, e );
+			onChange?.( nextValue, ...args );
 		},
 		[ setState, onChange ]
 	);
-
 	if ( hasValue && typeof onChange === 'function' ) {
 		// Controlled mode.
 		setValue = onChange;
@@ -54,5 +50,5 @@ export function useControlledValue< T >( {
 		setValue = setState;
 	}
 
-	return [ value as T | undefined, setValue as OnSelectHandler< T | undefined > ] as const;
+	return [ value, setValue ] as const;
 }
