@@ -600,6 +600,9 @@
 }
 
 .jetpack-cloud {
+	--color-link: var(--studio-jetpack-green-40);
+	--color-link-dark: var(--studio-jetpack-green-60);
+
 	input:focus:hover[type],
 	input:focus[type] {
 		box-shadow: 0 0 0 2px var(--color-primary-10);
@@ -663,8 +666,6 @@
 		--color-accent-60: var(--studio-jetpack-green-30);
 	}
 
-	a,
-	a:visited,
 	.login__form-change-username,
 	.wp-login__links button {
 		color: var(--studio-jetpack-green-40);
