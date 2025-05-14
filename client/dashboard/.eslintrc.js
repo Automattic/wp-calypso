@@ -11,10 +11,6 @@ module.exports = {
 							'!calypso/lib',
 							'calypso/lib/*',
 							'!calypso/lib/wp',
-							// Allowed: calypso/lib/formatting/prevent-widows
-							'!calypso/lib/formatting',
-							'calypso/lib/formatting/*',
-							'!calypso/lib/formatting/prevent-widows',
 							// Allowed: calypso/assets/icons
 							// Allowed: calypso/assets/images
 							'!calypso/assets',

@@ -10,7 +10,6 @@ import {
 import { __, sprintf } from '@wordpress/i18n';
 import { download, reusableBlock, Icon } from '@wordpress/icons';
 import devSiteBanner from 'calypso/assets/images/a8c-for-agencies/dev-site-banner.svg';
-import { preventWidows } from 'calypso/lib/formatting';
 import Column from './column';
 import MenuItem from './menu-item';
 import './style.scss';
@@ -53,16 +52,14 @@ function AddNewSite() {
 				<MenuItem
 					icon={ <WordPressLogo /> }
 					title={ __( 'WordPress.com' ) }
-					description={ preventWidows(
-						__( 'Build and grow your site, all in one powerful platform.' )
-					) }
+					description={ __( 'Build and grow your site, all in one powerful platform.' ) }
 					onClick={ wordpressClick }
 					href="/start?source=sites-dashboard&ref=new-site-popover"
 				/>
 				<MenuItem
 					icon={ <JetpackLogo /> }
 					title={ __( 'Via the Jetpack plugin' ) }
-					description={ preventWidows( __( 'Install the Jetpack plugin on an existing site.' ) ) }
+					description={ __( 'Install the Jetpack plugin on an existing site.' ) }
 					onClick={ jetpackClick }
 					href={ `/jetpack/connect?cta_from=${ TRACK_SOURCE_NAME }&cta_id=add-site` }
 				/>
@@ -71,18 +68,14 @@ function AddNewSite() {
 				<MenuItem
 					icon={ reusableBlock }
 					title={ __( 'Migrate' ) }
-					description={ preventWidows(
-						__( 'Bring your entire WordPress site to WordPress.com.' )
-					) }
+					description={ __( 'Bring your entire WordPress site to WordPress.com.' ) }
 					onClick={ migrateClick }
 					href="/setup/site-migration?source=sites-dashboard&ref=new-site-popover&action=migrate"
 				/>
 				<MenuItem
 					icon={ <Icon icon={ download } size={ 18 } /> }
 					title={ __( 'Import' ) }
-					description={ preventWidows(
-						__( 'Use a backup to only import content from other platforms.' )
-					) }
+					description={ __( 'Use a backup to only import content from other platforms.' ) }
 					onClick={ importClick }
 					href="/setup/site-migration/create-site?source=sites-dashboard&ref=new-site-popover&action=import"
 				/>
@@ -111,17 +104,15 @@ function AddNewSite() {
 							} )
 						) }
 					</Text>
-					<Text variant="muted">
-						{ preventWidows(
-							sprintf(
-								// translators: %s is a percentage like 55% off
-								__(
-									'Save up to %s on annual plans and get a free custom domain for a year. Your next site is just a step away.'
-								),
-								formatNumber( 0.55, {
-									numberFormatOptions: { style: 'percent' },
-								} )
-							)
+					<Text variant="muted" as="p">
+						{ sprintf(
+							// translators: %s is a percentage like 55% off
+							__(
+								'Save up to %s on annual plans and get a free custom domain for a year. Your next site is just a step away.'
+							),
+							formatNumber( 0.55, {
+								numberFormatOptions: { style: 'percent' },
+							} )
 						) }
 					</Text>
 					<div>{ __( 'Unlock offer' ) }</div>

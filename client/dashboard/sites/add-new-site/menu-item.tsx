@@ -29,7 +29,9 @@ function MenuItem( {
 				</div>
 				<VStack>
 					<Text>{ title }</Text>
-					<Text variant="muted">{ description }</Text>
+					<Text variant="muted" as="p">
+						{ description }
+					</Text>
 					{ children }
 				</VStack>
 			</HStack>
