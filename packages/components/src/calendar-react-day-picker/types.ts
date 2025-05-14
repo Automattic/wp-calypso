@@ -150,7 +150,7 @@ interface BaseProps extends Omit< React.HTMLAttributes< HTMLDivElement >, 'onSel
 	/**
 	 * Whether the selection is required.
 	 */
-	required?: boolean | undefined;
+	required?: boolean;
 
 	/**
 	 * The initial month to show in the calendar view (uncontrolled).
