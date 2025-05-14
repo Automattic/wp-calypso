@@ -1,14 +1,14 @@
-# CoreBadge Component
+# Badge Component
 
 A wrapper component around WordPress's private [`Badge` component](https://wordpress.github.io/gutenberg/?path=/docs/components-badge--docs) from `@wordpress/components`.
 
 ## Usage
 
 ```jsx
-import { CoreBadge } from '@automattic/components';
+import { Badge } from '@automattic/ui';
 
 function MyComponent() {
-	return <CoreBadge>Badge Content</CoreBadge>;
+	return <Badge>Badge Content</Badge>;
 }
 ```
 

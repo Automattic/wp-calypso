@@ -8,7 +8,7 @@ import { useResizeObserver, useMergeRefs } from '@wordpress/compose';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import React, { useState, forwardRef, useRef, useMemo } from 'react';
-import Menu from '../menu';
+import { Menu } from '../menu';
 import { BreadcrumbProps, BreadcrumbItemProps, Item } from './types';
 import './style.scss';
 

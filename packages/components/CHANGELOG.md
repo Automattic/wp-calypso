@@ -1,3 +1,13 @@
+## Unreleased
+
+### Breaking changes
+
+- Remove `Breadcrumbs` component. Use `Breadcrumbs` from `@automattic/ui` instead ([#000](https://github.com/Automattic/wp-calypso/pull/000)).
+- Remove `CoreBadge` component. Use `Badge` from `@automattic/ui` instead ([#000](https://github.com/Automattic/wp-calypso/pull/000)).
+- Remove `Menu` component. Use `Menu` from `@automattic/ui` instead ([#000](https://github.com/Automattic/wp-calypso/pull/000)).
+- Remove `SummaryButton` component. Use `SummaryButton` from `@automattic/ui` instead ([#000](https://github.com/Automattic/wp-calypso/pull/000)).
+- Remove `Tabs` component. Use `Tabs` from `@automattic/ui` instead ([#000](https://github.com/Automattic/wp-calypso/pull/000)).
+
 ## 2.3.0
 
 ### Breaking changes

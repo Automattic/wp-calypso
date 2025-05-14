@@ -5,7 +5,7 @@ A wrapper component around WordPress's private [`Menu` component](https://wordpr
 ## Usage
 
 ```jsx
-import { Menu } from '@automattic/components';
+import { Menu } from '@automattic/ui';
 import { useState } from 'react';
 
 function MyComponent() {

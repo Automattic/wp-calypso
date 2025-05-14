@@ -1,0 +1,79 @@
+{
+	"name": "@automattic/ui",
+	"version": "1.0.0",
+	"description": "Automattic Design System UI components.",
+	"homepage": "https://github.com/Automattic/wp-calypso",
+	"license": "GPL-2.0-or-later",
+	"author": "Automattic Inc.",
+	"main": "dist/cjs/index.js",
+	"module": "dist/esm/index.js",
+	"calypso:src": "src/index.ts",
+	"exports": {
+		".": {
+			"calypso:src": "./src/index.ts",
+			"types": "./dist/types/index.d.ts",
+			"import": "./dist/esm/index.js",
+			"require": "./dist/cjs/index.js"
+		},
+		"./src/*": {
+			"calypso:src": "./src/*"
+		},
+		"./styles/*": {
+			"calypso:src": "./styles/*"
+		}
+	},
+	"sideEffects": [
+		"*.css",
+		"*.scss"
+	],
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Automattic/wp-calypso.git",
+		"directory": "packages/components"
+	},
+	"publishConfig": {
+		"access": "public"
+	},
+	"bugs": "https://github.com/Automattic/wp-calypso/issues",
+	"files": [
+		"dist",
+		"src",
+		"styles"
+	],
+	"types": "dist/types",
+	"dependencies": {
+		"@wordpress/base-styles": "^5.23.0",
+		"@wordpress/components": "^29.9.0",
+		"@wordpress/compose": "7.23.0",
+		"@wordpress/i18n": "^5.23.0",
+		"@wordpress/icons": "^10.23.0",
+		"@wordpress/private-apis": "^4.23.0",
+		"@wordpress/react-i18n": "^4.23.0",
+		"clsx": "^2.1.1"
+	},
+	"peerDependencies": {
+		"@wordpress/data": "^10.23.0",
+		"react": "^18.3.1",
+		"react-dom": "^18.3.1"
+	},
+	"devDependencies": {
+		"@automattic/calypso-build": "workspace:^",
+		"@automattic/calypso-storybook": "workspace:^",
+		"@automattic/calypso-typescript-config": "workspace:^",
+		"@storybook/addon-actions": "^8.6.12",
+		"@testing-library/dom": "^10.4.0",
+		"@testing-library/jest-dom": "^6.6.3",
+		"@testing-library/react": "^16.3.0",
+		"@testing-library/user-event": "^14.6.1",
+		"postcss": "^8.5.3",
+		"storybook": "^8.6.12",
+		"typescript": "^5.8.2",
+		"webpack": "^5.97.1"
+	},
+	"scripts": {
+		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",
+		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json && copy-assets",
+		"prepack": "yarn run clean && yarn run build",
+		"storybook:start": "storybook dev -p 56851"
+	}
+}

@@ -5,7 +5,7 @@ import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import '@testing-library/user-event';
 import * as React from 'react';
-import SummaryButton from '../index';
+import { SummaryButton } from '../index';
 
 describe( 'SummaryButton', () => {
 	test( 'should render a button element by default', () => {

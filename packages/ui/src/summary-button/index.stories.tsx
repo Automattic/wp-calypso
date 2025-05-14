@@ -2,7 +2,7 @@ import { Meta, StoryObj } from '@storybook/react';
 import { Icon } from '@wordpress/components';
 import { envelope, receipt, backup } from '@wordpress/icons';
 import { SummaryButtonBadgeProps } from './types';
-import SummaryButton from './index';
+import { SummaryButton } from './index';
 
 // Define field options for the controls.
 const badgeOptions: Record< string, SummaryButtonBadgeProps[] > = {

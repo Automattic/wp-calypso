@@ -8,7 +8,7 @@ import {
 import { chevronRight } from '@wordpress/icons';
 import clsx from 'clsx';
 import { forwardRef } from 'react';
-import CoreBadge from '../core-badge';
+import { Badge } from '../badge';
 import { SummaryButtonProps } from './types';
 import './style.scss';
 
@@ -19,9 +19,9 @@ function BadgesList( { badges }: { badges: SummaryButtonProps[ 'badges' ] } ) {
 	return (
 		<HStack spacing={ 1 } justify="flex-start" as="span" wrap expanded={ false }>
 			{ badges?.map( ( badge ) => (
-				<CoreBadge key={ badge.text } intent={ badge.intent }>
+				<Badge key={ badge.text } intent={ badge.intent }>
 					{ badge.text }
-				</CoreBadge>
+				</Badge>
 			) ) }
 		</HStack>
 	);
@@ -75,12 +75,10 @@ function UnforwardedSummaryButton(
 	);
 }
 
-export const SummaryButton = forwardRef( UnforwardedSummaryButton );
-
 /**
  * The SummaryButton component provides a quick overview of a related page
  * (often settings). It includes a title, supporting description, and may
  * optionally display key field values or status indicators (e.g. a "2FA enabled" badge)
  * to surface the current state of settings at a glance.
  */
-export default SummaryButton;
+export const SummaryButton = forwardRef( UnforwardedSummaryButton );

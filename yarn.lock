@@ -2121,6 +2121,37 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@automattic/ui@workspace:packages/ui":
+  version: 0.0.0-use.local
+  resolution: "@automattic/ui@workspace:packages/ui"
+  dependencies:
+    "@automattic/calypso-build": "workspace:^"
+    "@automattic/calypso-storybook": "workspace:^"
+    "@automattic/calypso-typescript-config": "workspace:^"
+    "@storybook/addon-actions": "npm:^8.6.12"
+    "@testing-library/dom": "npm:^10.4.0"
+    "@testing-library/jest-dom": "npm:^6.6.3"
+    "@testing-library/react": "npm:^16.3.0"
+    "@testing-library/user-event": "npm:^14.6.1"
+    "@wordpress/base-styles": "npm:^5.23.0"
+    "@wordpress/components": "npm:^29.9.0"
+    "@wordpress/compose": "npm:7.23.0"
+    "@wordpress/i18n": "npm:^5.23.0"
+    "@wordpress/icons": "npm:^10.23.0"
+    "@wordpress/private-apis": "npm:^4.23.0"
+    "@wordpress/react-i18n": "npm:^4.23.0"
+    clsx: "npm:^2.1.1"
+    postcss: "npm:^8.5.3"
+    storybook: "npm:^8.6.12"
+    typescript: "npm:^5.8.2"
+    webpack: "npm:^5.97.1"
+  peerDependencies:
+    "@wordpress/data": ^10.23.0
+    react: ^18.3.1
+    react-dom: ^18.3.1
+  languageName: unknown
+  linkType: soft
+
 "@automattic/urls@workspace:^, @automattic/urls@workspace:packages/urls":
   version: 0.0.0-use.local
   resolution: "@automattic/urls@workspace:packages/urls"

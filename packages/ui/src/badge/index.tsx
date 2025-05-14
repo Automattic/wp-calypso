@@ -9,22 +9,20 @@ const { unlock } = __dangerousOptInToUnstableAPIsOnlyForCoreModules(
 	'I acknowledge private features are not for use in themes or plugins and doing so will break in the next version of WordPress.',
 	'@wordpress/components'
 );
-const { Badge } = unlock( privateApis );
+const { Badge: CoreBadge } = unlock( privateApis );
 
 /**
  * A wrapper component around WordPress's private [`Badge` component](https://wordpress.github.io/gutenberg/?path=/docs/components-badge--docs)
  * from `@wordpress/components`.
  *
  * ```jsx
- * import { CoreBadge } from '@automattic/components';
+ * import { Badge } from '@automattic/ui';
  *
  * function MyComponent() {
- * 	return <CoreBadge>Badge Content</CoreBadge>;
+ * 	return <Badge>Badge Content</Badge>;
  * }
  * ```
  */
-const CoreBadge = ( props: BadgeProps & React.HTMLAttributes< HTMLSpanElement > ) => {
-	return <Badge { ...props } />;
+export const Badge = ( props: BadgeProps & React.HTMLAttributes< HTMLSpanElement > ) => {
+	return <CoreBadge { ...props } />;
 };
-
-export default CoreBadge;

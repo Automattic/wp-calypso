@@ -2,7 +2,6 @@ export { default as Badge } from './badge';
 export type { BadgeType } from './badge';
 export { Button } from './button';
 export type { ButtonProps } from './button';
-export { Breadcrumbs } from './breadcrumbs';
 export { default as Card } from './card';
 export { default as CompactCard } from './card/compact';
 export { default as FoldableCard } from './foldable-card';
@@ -60,10 +59,6 @@ export { default as Swipeable } from './swipeable';
 export { default as DotPager } from './dot-pager';
 export { default as EmbedContainer } from './embed-container';
 export { ExperienceControl } from './experience-control';
-export { default as SummaryButton } from './summary-button';
-export { default as CoreBadge } from './core-badge';
-export { default as Menu } from './menu';
-export { Tabs } from './tabs';
 
 // Logos
 export { JetpackLogo } from './logos/jetpack-logo';

@@ -166,5 +166,3 @@ export const Menu = Object.assign( CoreMenu as ( props: MenuProps ) => JSX.Eleme
 		ItemProps & HTMLAttributes< HTMLDivElement > & RefAttributes< HTMLDivElement >
 	>,
 } );
-
-export default Menu;
