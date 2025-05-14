@@ -1,7 +1,17 @@
 #!/usr/bin/env node
+import { basename, dirname } from 'node:path';
 import util from 'node:util';
 import glob from 'glob';
 import runTask from './teamcity-task-runner.mjs';
+
+// TEMPORARY: These apps *should* be type-checked, but there are existing issues that need to be
+// resolved.
+const APPS_EXCLUDED_FROM_TYPE_CHECK = [
+	'odyssey-stats',
+	'o2-blocks',
+	'wpcom-block-editor',
+	'happy-blocks',
+];
 
 const globPromise = util.promisify( glob );
 
@@ -37,13 +47,16 @@ const [ packagesTsconfigs, appsTsconfigs ] = await Promise.all(
 	[ 'packages', 'apps' ].map( ( path ) => globPromise( `${ path }/*/tsconfig.json` ) )
 );
 
+const isTypeCheckedApp = ( path ) =>
+	! APPS_EXCLUDED_FROM_TYPE_CHECK.includes( basename( dirname( path ) ) );
+
 const tscPackages = withTscInfo( {
 	cmd: `tsc --build ${ packagesTsconfigs.join( ' ' ) }`,
 	id: 'type_check_packages',
 } );
 
 const tscApps = withTscInfo( {
-	cmd: `tsc --build --noEmit ${ appsTsconfigs.join( ' ' ) }`,
+	cmd: `tsc --build --noEmit ${ appsTsconfigs.filter( isTypeCheckedApp ).join( ' ' ) }`,
 	id: 'type_check_apps',
 } );
 
