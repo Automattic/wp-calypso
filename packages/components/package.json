@@ -74,7 +74,7 @@
 		"i18n-calypso": "workspace:^",
 		"lodash": "^4.17.21",
 		"prop-types": "^15.8.1",
-		"react-day-picker": "^9.6.7",
+		"react-day-picker": "^9.7.0",
 		"react-modal": "^3.16.3",
 		"react-router-dom": "^6.23.1",
 		"utility-types": "^3.10.0"

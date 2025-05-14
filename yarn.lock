@@ -878,7 +878,7 @@ __metadata:
     lodash: "npm:^4.17.21"
     postcss: "npm:^8.5.3"
     prop-types: "npm:^15.8.1"
-    react-day-picker: "npm:^9.6.7"
+    react-day-picker: "npm:^9.7.0"
     react-modal: "npm:^3.16.3"
     react-router-dom: "npm:^6.23.1"
     storybook: "npm:^8.6.12"
@@ -30006,16 +30006,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-day-picker@npm:^9.6.7":
-  version: 9.6.7
-  resolution: "react-day-picker@npm:9.6.7"
+"react-day-picker@npm:^9.7.0":
+  version: 9.7.0
+  resolution: "react-day-picker@npm:9.7.0"
   dependencies:
     "@date-fns/tz": "npm:1.2.0"
     date-fns: "npm:4.1.0"
     date-fns-jalali: "npm:4.1.0-0"
   peerDependencies:
     react: ">=16.8.0"
-  checksum: c56b50766224dc7c6ebfe9db43adc0f4fa028bb40f3691d16582adcd3efddfdbe141be31b18b6641ebe6f7f23638e6926a14aa470b5cecc3a12f226556bcd407
+  checksum: c08c45a53aebceda1c938d2e4c95eb1702dcf149715e3457739f8930dce19a3be5780e5bad12dcc9d244d50b7e0efb226c336d81c1c062f616cf422e6a3804a6
   languageName: node
   linkType: hard
 
