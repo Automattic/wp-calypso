@@ -6,6 +6,14 @@
 	"module": "dist/esm/index.js",
 	"calypso:src": "src/index.ts",
 	"types": "dist/types",
+	"exports": {
+		".": {
+			"calypso:src": "./src/index.ts",
+			"types": "./dist/types/index.d.ts",
+			"import": "./dist/esm/index.js",
+			"require": "./dist/cjs/index.js"
+		}
+	},
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"version": "1.0.0",
 	"sideEffects": false,

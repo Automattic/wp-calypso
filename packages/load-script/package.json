@@ -5,6 +5,14 @@
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
 	"calypso:src": "src/index.js",
+	"exports": {
+		".": {
+			"calypso:src": "./src/index.js",
+			"types": "./src/types/index.d.ts",
+			"import": "./dist/esm/index.js",
+			"require": "./dist/cjs/index.js"
+		}
+	},
 	"keywords": [
 		"wordpress"
 	],

@@ -1,4 +1,4 @@
-import { WPCOM_FEATURES_MANAGE_PLUGINS } from '@automattic/calypso-products/src';
+import { WPCOM_FEATURES_MANAGE_PLUGINS } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector, useDispatch } from 'react-redux';

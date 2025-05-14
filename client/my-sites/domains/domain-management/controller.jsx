@@ -1,5 +1,5 @@
 import page from '@automattic/calypso-router';
-import { isFreeUrlDomainName } from '@automattic/domains-table/src/utils/is-free-url-domain-name';
+import { isFreeUrlDomainName } from '@automattic/domains-table';
 import { Global, css } from '@emotion/react';
 import DomainManagementData from 'calypso/components/data/domain-management';
 import { decodeURIComponentIfValid } from 'calypso/lib/url';

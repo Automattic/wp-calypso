@@ -76,6 +76,11 @@ export type FieldTypeDefinition< Item > = {
 	 * Callback used to render the field.
 	 */
 	render: ComponentType< DataViewRenderFieldProps< Item > >;
+
+	/**
+	 * Whether the field is sortable.
+	 */
+	enableSorting: boolean;
 };
 
 /**

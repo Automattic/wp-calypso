@@ -9,7 +9,7 @@ import {
 } from 'calypso/data/marketplace/use-marketplace-reviews';
 import { preventWidows } from 'calypso/lib/formatting';
 import PluginIcon from 'calypso/my-sites/plugins/plugin-icon/plugin-icon';
-import PluginRatings from 'calypso/my-sites/plugins/plugin-ratings/';
+import PluginRatings from 'calypso/my-sites/plugins/plugin-ratings';
 import { useLocalizedPlugins } from 'calypso/my-sites/plugins/utils';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import usePluginVersionInfo from '../plugin-management-v2/hooks/use-plugin-version-info';
@@ -79,14 +79,13 @@ const PluginDetailsHeader = ( {
 						</span>
 
 						<span className="plugin-details-header__subtitle-separator">·</span>
-
-						{ ! isJetpackCloud && <Tags plugin={ plugin } /> }
 					</div>
 				</div>
 			</div>
 			<div className="plugin-details-header__description">
 				{ preventWidows( plugin.short_description || plugin.description ) }
 			</div>
+			{ ! isJetpackCloud && <Tags plugin={ plugin } /> }
 			<div className="plugin-details-header__additional-info">
 				{ /* We want to accept rating 0, which means no rating for Marketplace products */ }
 				{ rating !== null && (
@@ -154,7 +153,7 @@ function Tags( { plugin } ) {
 	const tagKeys = Object.keys( plugin.tags || {} ).slice( 0, LIMIT_OF_TAGS );
 
 	return (
-		<span className="plugin-details-header__tag-badge-container">
+		<div className="plugin-details-header__tag-badge-container">
 			{ tagKeys.map( ( tagKey ) => (
 				<a
 					key={ `badge-${ tagKey.replace( ' ', '' ) }` }
@@ -164,7 +163,7 @@ function Tags( { plugin } ) {
 					<Badge type="info">{ plugin.tags[ tagKey ] }</Badge>
 				</a>
 			) ) }
-		</span>
+		</div>
 	);
 }
 

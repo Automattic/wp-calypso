@@ -81,6 +81,9 @@ body.is-section-me {
 	}
 
 	@media only screen and (max-width: 600px) {
+		.navigation-header:not(.developer__header) {
+			padding: 0 0 24px 0;
+		}
 		.navigation-header__main {
 			justify-content: normal;
 			align-items: center;

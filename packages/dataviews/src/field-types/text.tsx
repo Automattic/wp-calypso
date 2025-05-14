@@ -34,4 +34,5 @@ export default {
 			? renderFromElements( { item, field } )
 			: field.getValue( { item } );
 	},
+	enableSorting: true,
 };

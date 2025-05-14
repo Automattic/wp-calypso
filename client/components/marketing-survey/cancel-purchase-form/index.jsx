@@ -2,8 +2,8 @@ import {
 	isGSuiteOrGoogleWorkspace,
 	isPlan,
 	isWpComMonthlyPlan,
+	WPCOM_FEATURES_BACKUPS,
 } from '@automattic/calypso-products';
-import { WPCOM_FEATURES_BACKUPS } from '@automattic/calypso-products/src';
 import { Plans } from '@automattic/data-stores';
 import { Button as GutenbergButton } from '@wordpress/components';
 import { localize } from 'i18n-calypso';

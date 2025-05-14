@@ -51,14 +51,14 @@ The dashboard sets uses a combination of route loaders and component-level queri
 
 ### Route Loaders
 
-The primary data fetching pattern uses route loaders to prefetch data before rendering components:
+The primary data-fetching pattern uses route loaders to prefetch data before rendering components:
 
 ```typescript
 const siteRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'sites/$siteId',
 	loader: ( { params: { siteId } } ) =>
-		maybeAwaitFetch( {
+		queryClient.ensureQueryData( {
 			queryKey: [ 'site', siteId ],
 			queryFn: async () => {
 				const [
@@ -78,7 +78,7 @@ const siteRoute = createRoute( {
 } ).lazy( () => import( '../site' ).then( ( d ) => d.Route ) );
 ```
 
-The `maybeAwaitFetch` helper checks if data is already cached before fetching, improving performance by avoiding unnecessary requests.
+The `queryClient.ensureQueryData` helper checks if data is already cached before fetching, improving performance by avoiding unnecessary requests.
 
 ### Component-Level Queries
 
@@ -140,5 +140,5 @@ const { data, isLoading, error } = useQuery(newEntityQuery(entityId));
 
 // 5. Use in a route loader
 loader: ({ params: { id } }) =>
-  maybeAwaitFetch(newEntityQuery(id)),
+  queryClient.ensureQueryData(newEntityQuery(id)),
 

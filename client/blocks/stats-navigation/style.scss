@@ -49,6 +49,10 @@
 	}
 
 	&.stats-navigation--improved {
+		.full-width {
+			width: 100%;
+		}
+
 		.stats-navigation__tabs {
 			margin-left: -16px;
 
@@ -85,6 +89,10 @@
 			margin: 0;
 			box-shadow: inset 0 -1px 0 #0000000d;
 
+			.section-nav__mobile-header > svg {
+				margin-left: auto;
+			}
+
 			&.is-open {
 				@media (max-width: $break-mobile) {
 					.subscribers-count {
@@ -111,6 +119,14 @@
 						top: 11px;
 						right: 0;
 					}
+
+
+					&:has(+ .page-modules-settings) {
+						.section-nav__mobile-header > svg {
+							margin-right: 40px;
+						}
+					}
+
 				}
 			}
 		}

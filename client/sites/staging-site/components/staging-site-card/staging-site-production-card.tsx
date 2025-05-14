@@ -123,7 +123,7 @@ function StagingSiteProductionCard( { disabled, siteId, translate }: CardProps )
 			confirmLabel={ translate( 'Delete staging site' ) }
 			cancelLabel={ translate( 'Cancel' ) }
 		>
-			<Gridicon icon="trash" />
+			<Gridicon icon="trash" size={ 18 } />
 			<span>{ translate( 'Delete staging site' ) }</span>
 		</ConfirmationModal>
 	);

@@ -5,6 +5,7 @@ import { Card, CardBody, ToggleControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { siteQuery, siteSettingsMutation, siteSettingsQuery } from '../../app/queries';
 import { siteSettingsSubscriptionGiftingRoute } from '../../app/router';
+import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { hasSubscriptionGiftingFeature } from './utils';
 import type { SiteSettings } from '../../data/types';
@@ -54,13 +55,13 @@ export default function SubscriptionGiftingSettings() {
 	};
 
 	return (
-		<PageLayout
-			size="small"
-			title={ __( 'Accept a gift subscription' ) }
-			description={ __(
-				'Allow a site visitor to cover the full cost of your site’s WordPress.com plan.'
-			) }
-		>
+		<PageLayout size="small">
+			<PageHeader
+				title={ __( 'Accept a gift subscription' ) }
+				description={ __(
+					'Allow a site visitor to cover the full cost of your site’s WordPress.com plan.'
+				) }
+			/>
 			<Card>
 				<CardBody>
 					<DataForm< SiteSettings >

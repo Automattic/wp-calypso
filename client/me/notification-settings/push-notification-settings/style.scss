@@ -1,7 +1,18 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
 .notification-settings-push-notification-settings__instruction {
 	margin: 24px 0 0;
 
+	@include break-medium {
+		&-actions {
+			display: flex;
+			justify-content: space-between;
+		}
+	}
+
 	.is-link {
+
 		&:focus,
 		&:active {
 			color: var(--color-neutral-20);
@@ -42,7 +53,7 @@
 	max-width: 500px;
 	text-align: center;
 
-	@include breakpoint-deprecated( "<660px" ) {
+	@include breakpoint-deprecated("<660px") {
 		text-align: left;
 	}
 }
@@ -63,7 +74,7 @@
 		margin: 16px 0 0;
 	}
 
-	@include breakpoint-deprecated( "<660px" ) {
+	@include breakpoint-deprecated("<660px") {
 		width: 100%;
 		min-height: 80px;
 		position: relative;
@@ -80,8 +91,8 @@
 }
 
 .card.notification-settings-push-notification-settings__settings {
-	padding-left: 48px;
 	position: relative;
+	margin-top: 1em;
 }
 
 .notification-settings-push-notification-settings__settings-heading {
@@ -117,7 +128,7 @@
 .notification-settings-push-notification-settings__settings-description {
 	margin-bottom: 0;
 
-	@include breakpoint-deprecated( ">660px" ) {
+	@include breakpoint-deprecated(">660px") {
 		margin-right: 130px;
 	}
 }
@@ -125,7 +136,7 @@
 .notification-settings-push-notification-settings__settings-button {
 	margin-top: 8px;
 
-	@include breakpoint-deprecated( ">660px" ) {
+	@include breakpoint-deprecated(">660px") {
 		margin-top: 0;
 		position: absolute;
 		bottom: 24px;

@@ -128,14 +128,14 @@
 }
 
 .security-account-recovery__recovery-sms-number {
-    .security-account-recovery-contact:not(:only-child) {
-    	&::after {
-    		background-color: var(--color-border-subtle);
-    		content: '';
-    		display: block;
-    		height: 1px;
-    		margin: 16px 0;
-    		width: 100%;
-    	}
-    }
+	.security-account-recovery-contact:not(:only-child) {
+		&::after {
+			background-color: var(--color-border-subtle);
+			content: '';
+			display: block;
+			height: 1px;
+			margin: 16px 0;
+			width: 100%;
+		}
+	}
 }

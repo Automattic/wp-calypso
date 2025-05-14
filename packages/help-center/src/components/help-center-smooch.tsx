@@ -5,11 +5,9 @@ import {
 	useLoadZendeskMessaging,
 	useAuthenticateZendeskMessaging,
 	isTestModeEnvironment,
-} from '@automattic/zendesk-client';
-import {
 	SMOOCH_INTEGRATION_ID,
 	SMOOCH_INTEGRATION_ID_STAGING,
-} from '@automattic/zendesk-client/src/constants';
+} from '@automattic/zendesk-client';
 import { useSelect, useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { useCallback, useEffect, useRef } from '@wordpress/element';
 import Smooch from 'smooch';

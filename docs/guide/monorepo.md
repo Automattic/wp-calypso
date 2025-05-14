@@ -59,7 +59,7 @@ test/
 	module-b.js
 ```
 
-Your `package.json` can have any of the [normal properties](https://docs.npmjs.com/files/package.json) but at a minimum should contain `main`, `module`, `calypso:src` and `sideEffects`.
+Your `package.json` can have any of the [normal properties](https://docs.npmjs.com/files/package.json) but at a minimum should contain `main`, `module`, `calypso:src`, `exports` and `sideEffects`.
 
 ### sideEffects
 
@@ -82,9 +82,18 @@ failing to do so, will make your package work correctly in the dev build but tre
 	"name": "@automattic/your-package",
 	"version": "1.0.0",
 	"description": "My new package",
-	"calypso:src": "src/index.js",
+	"calypso:src": "src/index.ts",
+	"types": "dist/types/index.d.ts",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
+	"exports": {
+		".": {
+			"calypso:src": "./src/index.ts",
+			"types": "./dist/types/index.d.ts",
+			"import": "./dist/esm/index.js",
+			"require": "./dist/cjs/index.js"
+		}
+	},
 	"sideEffects": false,
 	"keywords": [ "wordpress" ],
 	"author": "Automattic Inc.",
