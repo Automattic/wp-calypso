@@ -3,6 +3,7 @@ import { safeImageUrl } from '@automattic/calypso-url';
 import './style.scss';
 import { Button } from '@wordpress/components';
 import { __, _n, sprintf } from '@wordpress/i18n';
+import { translate } from 'i18n-calypso';
 import InfoPopover from 'calypso/components/info-popover';
 import { BlazablePost } from 'calypso/data/promote-post/types';
 import resizeImageUrl from 'calypso/lib/resize-image-url';
@@ -137,7 +138,15 @@ export default function PostItem( {
 								target="_blank"
 								rel="noreferrer"
 							>
-								{ __( 'View' ) }
+								<span aria-hidden="true">{ __( 'View' ) }</span>
+								<span className="sr-only">
+									{ translate( 'View %(postType)s %(name)s', {
+										args: {
+											postType: getPostType( post.type ),
+											name: post?.title,
+										},
+									} ) }
+								</span>
 							</a>
 							<Button
 								isBusy={ false }
@@ -145,7 +154,15 @@ export default function PostItem( {
 								onClick={ onClickPromote }
 								className="post-item__post-promote-button-mobile"
 							>
-								{ __( 'Promote' ) }
+								<span aria-hidden="true">{ __( 'Promote' ) }</span>
+								<span className="sr-only">
+									{ translate( 'Promote %(postType)s %(name)s', {
+										args: {
+											postType: getPostType( post.type ),
+											name: post?.title,
+										},
+									} ) }
+								</span>
 							</Button>
 						</div>
 					</div>
@@ -169,7 +186,15 @@ export default function PostItem( {
 			) }
 			<td className="post-item__post-view">
 				<a href={ post.post_url } className="post-item__view-link" target="_blank" rel="noreferrer">
-					{ __( 'View' ) }
+					<span aria-hidden="true">{ __( 'View' ) }</span>
+					<span className="sr-only">
+						{ translate( 'View %(postType)s %(name)s', {
+							args: {
+								postType: getPostType( post.type ),
+								name: post?.title,
+							},
+						} ) }
+					</span>
 				</a>
 			</td>
 			<td className="post-item__post-promote">
@@ -179,7 +204,15 @@ export default function PostItem( {
 					onClick={ onClickPromote }
 					className="post-item__post-promote-button"
 				>
-					{ __( 'Promote' ) }
+					<span aria-hidden="true">{ __( 'Promote' ) }</span>
+					<span className="sr-only">
+						{ translate( 'Promote %(postType)s %(name)s', {
+							args: {
+								postType: getPostType( post.type ),
+								name: post?.title,
+							},
+						} ) }
+					</span>
 				</Button>
 			</td>
 		</tr>
