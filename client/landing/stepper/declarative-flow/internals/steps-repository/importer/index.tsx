@@ -245,11 +245,15 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 				appStates.MAP_AUTHORS,
 				appStates.READY_FOR_UPLOAD,
 				appStates.UPLOAD_PROCESSING,
+				appStates.UPLOAD_SUCCESS,
 				appStates.UPLOADING,
+				appStates.IMPORTING,
 			];
 			const showHeading = statesToShowHeading.includes( importJob?.importerState ?? '' );
 			const showBackButton = importJob?.importerState !== appStates.IMPORT_SUCCESS;
 			const showSkipButton = importJob?.importerState === appStates.IMPORT_SUCCESS;
+			const title =
+				importJob?.importerState === appStates.IMPORTING ? __( 'Importing' ) : importerData.title;
 			return (
 				<>
 					<QuerySites siteId={ siteId } />
@@ -278,9 +282,7 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 							/>
 						}
 						heading={
-							showHeading && (
-								<Step.Heading text={ importerData.title } subText={ importerData.description } />
-							)
+							showHeading && <Step.Heading text={ title } subText={ importerData.description } />
 						}
 					>
 						{ renderStepContent() }
