@@ -10,7 +10,7 @@ import { getBlueprintLabelForTracking } from './lib/blueprint';
 import calculate_plan_intent_php_script from './lib/calculate-plan-intent-php-script';
 import type { Step as StepType } from '../../types';
 import './style.scss';
-const DEFAULT_PLAN_INTENT = 'plans-playground';
+export const DEFAULT_PLAN_INTENT = 'plans-playground';
 
 export const PlaygroundStep: StepType = ( { navigation, flow } ) => {
 	const { submit } = navigation;
