@@ -245,6 +245,12 @@ interface BaseProps extends Omit< React.HTMLAttributes< HTMLDivElement >, 'onSel
 	 */
 	locale?: Locale;
 	/**
+	 * The index of the first day of the week (0 - Sunday). Overrides the locale's
+	 * one.
+	 * @default Based on the `locale` prop
+	 */
+	weekStartsOn?: 0 | 1 | 2 | 3 | 4 | 5 | 6 | undefined;
+	/**
 	 * Event fired when the user navigates between months.
 	 */
 	onMonthChange?: ( month: Date ) => void;
