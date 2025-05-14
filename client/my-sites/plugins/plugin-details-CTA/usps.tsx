@@ -134,7 +134,7 @@ export const PlanUSPS: React.FC< Props > = ( {
 		return getProductDisplayCost( state, requiredPlan || '' );
 	} );
 	const monthlyLabel = translate( 'month' );
-	const annualLabel = translate( 'Annually' );
+	const annualLabel = translate( 'year' );
 	const periodicityLabel = isAnnualPeriod ? annualLabel : monthlyLabel;
 
 	if ( ! shouldUpgrade ) {
