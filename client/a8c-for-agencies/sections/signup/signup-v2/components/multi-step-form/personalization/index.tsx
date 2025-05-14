@@ -112,7 +112,9 @@ export default function PersonalizationForm( { onContinue, goBack, initialFormDa
 			<Form
 				className="a4a-form"
 				title={ translate( 'Personalize your experience' ) }
-				description={ translate( "We'll tailor the product and onboarding for you." ) }
+				description={ translate(
+					'Give us some details about your agency, so we can shape the Automattic for Agencies program to meet your specific needs and help grow your business.'
+				) }
 			>
 				<div className="field-mandatory-message">
 					{ translate( 'Fields marked with * are required' ) }
