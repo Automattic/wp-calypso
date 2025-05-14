@@ -17,9 +17,9 @@ class PluginRatings extends Component {
 
 		return (
 			<div>
-				{ Number.isInteger( rating / 20 )
-					? rating / 20
-					: formatNumber( rating / 20, { decimals: 1 } ) }
+				{ formatNumber( rating / 20, {
+					decimals: Number.isInteger( rating / 20 ) ? 0 : 1,
+				} ) }
 				/5
 			</div>
 		);
