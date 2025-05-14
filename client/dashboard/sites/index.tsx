@@ -9,6 +9,7 @@ import { useMemo } from 'react';
 import { sitesQuery } from '../app/queries';
 import { sitesRoute } from '../app/router';
 import DataViewsCard from '../components/dataviews-card';
+import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
 import { STATUS_LABELS, getSiteStatus, getSiteStatusLabel } from '../utils/site-status';
 import SiteIcon from './site-icon';
@@ -219,14 +220,15 @@ export default function Sites() {
 
 	return (
 		<>
-			<PageLayout
-				title={ __( 'Sites' ) }
-				actions={
-					<Button variant="primary" __next40pxDefaultSize>
-						{ __( 'Add New Site' ) }
-					</Button>
-				}
-			>
+			<PageLayout>
+				<PageHeader
+					title={ __( 'Sites' ) }
+					actions={
+						<Button variant="primary" __next40pxDefaultSize>
+							{ __( 'Add New Site' ) }
+						</Button>
+					}
+				/>
 				<DataViewsCard>
 					<DataViews
 						getItemId={ ( item ) => item.ID }

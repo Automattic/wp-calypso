@@ -1,10 +1,9 @@
 import page from '@automattic/calypso-router';
 import clsx from 'clsx';
 import Debug from 'debug';
-import { localize } from 'i18n-calypso';
+import { localize, default as i18n } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import whoopsImage from 'calypso/assets/images/illustrations/whoops.svg';
 import EmptyContent from 'calypso/components/empty-content';
 import LocaleSuggestions from 'calypso/components/locale-suggestions';
 import Notice from 'calypso/components/notice';
@@ -171,13 +170,22 @@ class InviteAccept extends Component {
 		debug( 'Rendering error: %o', error );
 
 		const props = {
-			title: this.props.translate( 'Oops, that invite is not valid', {
-				context: 'Title that is display to users when attempting to accept an invalid invite.',
+			title: i18n.fixMe( {
+				text: 'That invite is not valid',
+				newCopy: this.props.translate( 'That invite is not valid', {
+					context: 'Title that is displayed to users when attempting to accept an invalid invite.',
+				} ),
+				oldCopy: this.props.translate( 'Oops, that invite is not valid', {
+					context: 'Title that is display to users when attempting to accept an invalid invite.',
+				} ),
+				translationOptions: {
+					context: 'Title that is displayed to users when attempting to accept an invalid invite.',
+				},
 			} ),
 			line: this.props.translate( "We weren't able to verify that invitation.", {
 				context: 'Message that is displayed to users when an invitation is invalid.',
 			} ),
-			illustration: whoopsImage,
+			illustration: false,
 		};
 
 		if ( error.error && error.message ) {
@@ -189,17 +197,30 @@ class InviteAccept extends Component {
 						line: this.props.translate(
 							'Would you like to accept the invite with a different account?'
 						),
-						action: this.props.translate( 'Switch Accounts' ),
+						action: i18n.fixMe( {
+							text: 'Switch accounts',
+							newCopy: this.props.translate( 'Switch accounts' ),
+							oldCopy: this.props.translate( 'Switch Accounts' ),
+						} ),
 						actionURL: login( { redirectTo: window.location.href } ),
 					} );
 					break;
 				case 'unauthorized_created_by_self':
 					Object.assign( props, {
 						line: error.message, // "You can not use an invitation that you have created for someone else."
-						action: this.props.translate( 'Switch Accounts' ),
+						action: i18n.fixMe( {
+							text: 'Switch accounts',
+							newCopy: this.props.translate( 'Switch accounts' ),
+							oldCopy: this.props.translate( 'Switch Accounts' ),
+						} ),
 						actionURL: login( { redirectTo: window.location.href } ),
 					} );
 					break;
+				case 'invalid_input_invite_used':
+					Object.assign( props, {
+						title: this.props.translate( 'This invite has already been used' ),
+						line: error.message,
+					} );
 				default:
 					Object.assign( props, {
 						line: error.message,
@@ -207,7 +228,6 @@ class InviteAccept extends Component {
 					break;
 			}
 		}
-
 		return <EmptyContent { ...props } />;
 	};
 

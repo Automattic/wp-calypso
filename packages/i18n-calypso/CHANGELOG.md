@@ -1,3 +1,9 @@
+## Trunk
+
+- Breaking: Emitter object replaced with subscriber
+  - Before: `i18n.on( 'change', callback ); i18n.off( 'change', callback );`
+  - After: `const unsubscribe = i18n.subscribe( callback ); unsubscribe();`
+
 ## 7.5.0
 
 - Add `translationOptions` to fixMe so it can work on translations with context.

@@ -59,7 +59,7 @@ function getPlansIntent( flowName: string | null ): PlansIntent | null {
 			return 'plans-ai-assembler-free-trial';
 		case ONBOARDING_FLOW:
 			if ( search.has( 'playground' ) ) {
-				return playgroundPlansIntent();
+				return playgroundPlansIntent( search.get( 'playground' )! );
 			}
 		default:
 			return null;
