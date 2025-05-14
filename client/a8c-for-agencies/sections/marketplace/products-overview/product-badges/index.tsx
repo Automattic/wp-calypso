@@ -1,4 +1,4 @@
-import { CoreBadge } from '@automattic/components';
+import { Badge } from '@automattic/ui';
 import { useProductCategories } from '../../hooks/use-product-categories';
 import type { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 
@@ -14,7 +14,7 @@ export default function ProductBadges( { product }: Props ) {
 	return (
 		<div className="product-badges">
 			{ badges.map( ( badge: string ) => (
-				<CoreBadge key={ badge }>{ badge }</CoreBadge>
+				<Badge key={ badge }>{ badge }</Badge>
 			) ) }
 		</div>
 	);

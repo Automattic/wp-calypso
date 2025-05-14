@@ -1,4 +1,4 @@
-import SummaryButton from '@automattic/components/src/summary-button';
+import { SummaryButton } from '@automattic/ui/src/summary-button';
 import { createLink } from '@tanstack/react-router';
 
 /**

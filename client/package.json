@@ -67,6 +67,7 @@
 		"@automattic/state-utils": "workspace:^",
 		"@automattic/subscriber": "workspace:^",
 		"@automattic/tree-select": "workspace:^",
+		"@automattic/ui": "workspace:^",
 		"@automattic/urls": "workspace:^",
 		"@automattic/viewport": "workspace:^",
 		"@automattic/viewport-react": "workspace:^",

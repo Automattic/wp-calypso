@@ -1,4 +1,4 @@
-import CoreBadge from '@automattic/components/src/core-badge';
+import { Badge } from '@automattic/ui/src/badge';
 import { __experimentalHStack as HStack, Icon } from '@wordpress/components';
 import { arrowDown, arrowUp } from '@wordpress/icons';
 
@@ -30,7 +30,7 @@ export default function TrendComparisonBadge( {
 	const negative = difference < 0;
 	return (
 		// @ts-expect-error - To do: allow children to be a ReactNode in core.
-		<CoreBadge
+		<Badge
 			intent={ negative ? 'error' : 'success' }
 			style={ { width: 'fit-content' } }
 			className={ `site-overview-card__badge site-overview-card__badge-${
@@ -46,6 +46,6 @@ export default function TrendComparisonBadge( {
 				/>
 				<span>{ `${ percentage }%` }</span>
 			</HStack>
-		</CoreBadge>
+		</Badge>
 	);
 }

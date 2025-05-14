@@ -26,12 +26,12 @@ module.exports = {
 						group: [
 							'@automattic/*',
 							'!@automattic/calypso-config',
-							'!@automattic/components',
-							'@automattic/components/*',
-							'!@automattic/components/src',
-							'@automattic/components/src/*',
-							'!@automattic/components/src/summary-button',
-							'!@automattic/components/src/core-badge',
+							'!@automattic/ui',
+							'@automattic/ui/*',
+							'!@automattic/ui/src',
+							'@automattic/ui/src/*',
+							'!@automattic/ui/src/summary-button',
+							'!@automattic/ui/src/badge',
 							'!@automattic/dataviews',
 							// Please do not add exceptions unless agreed on
 							// with the #architecture group.
