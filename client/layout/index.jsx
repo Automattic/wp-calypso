@@ -25,7 +25,7 @@ import { isInStepContainerV2FlowContext } from 'calypso/layout/utils';
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { isWcMobileApp, isWpMobileApp } from 'calypso/lib/mobile-app';
-import { isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
+import { isWooOAuth2Client, isJetpackCloudOAuth2Client } from 'calypso/lib/oauth2-clients';
 import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
 import { getMessagePathForJITM } from 'calypso/lib/route';
 import UserVerificationChecker from 'calypso/lib/user/verification-checker';
@@ -209,6 +209,7 @@ class Layout extends Component {
 			'is-unified-site-sidebar-visible': this.props.isUnifiedSiteSidebarVisible,
 			'is-blaze-pro': this.props.isBlazePro,
 			'is-woo-com-oauth': isWooOAuth2Client( this.props.oauth2Client ),
+			'jetpack-cloud': isJetpackCloudOAuth2Client( this.props.oauth2Client ),
 			'feature-flag-woocommerce-core-profiler-passwordless-auth': true,
 		} );
 
