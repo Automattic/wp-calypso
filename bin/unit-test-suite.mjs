@@ -55,17 +55,14 @@ const tscPackages = withTscInfo( {
 	id: 'type_check_packages',
 } );
 
-const tscApps = withTscInfo( {
-	cmd: `tsc --build --noEmit ${ appsTsconfigs.filter( isTypeCheckedApp ).join( ' ' ) }`,
-	id: 'type_check_apps',
-} );
-
 const tscCommands = [
 	{ cmd: 'tsc --noEmit --project client/tsconfig.json', id: 'type_check_client' },
 	{ cmd: 'tsc --noEmit --project test/e2e/tsconfig.json', id: 'type_check_tests' },
-]
-	.map( withTscInfo )
-	.concat( tscApps );
+	...appsTsconfigs.filter( isTypeCheckedApp ).map( ( path ) => ( {
+		cmd: `tsc --noEmit --project ${ path }`,
+		id: `type_check_apps_${ basename( dirname( path ) ) }`,
+	} ) ),
+].map( withTscInfo );
 
 // When Jest runs without --maxWorkers, each instance of Jest will try to use all
 // cores available. (Which is a lot in our CI.) This isn't a problem per se, because
