@@ -1,27 +1,28 @@
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
+@import "../styles/typography";
+
 /* Root of the component. */
 .a8c-components-calendar {
-  // TODO: move out of component and/or swap with appropriate global variables;
-  --white: #fff;
-  --gray-100: #f0f0f0;
-  --gray-600: #949494;
-  --gray-700: #757575;
-  --gray-900: #1e1e1e;
-  --theme-accent: #3858E9;
-
-  --outline-focus: 1.5px solid var(--theme-accent);
-
-  font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif;
 
 
-  // Actual variables
+  // TODO:
+  // - move`font-family` rule out of component
+  // - add `font-family` rule to Storybook's global styles
+  // - then 	Theme is ready and includes type styles, add back to component
+  font-family: $a8c-font-family-sans;
+
+
+	// Actual variables
+  --a8c-components-calendar-outline-focus: 1.5px solid var(--color-accent);
   --a8c-components-calendar-button-height: 2rem;
   --a8c-components-calendar-button-width: 2rem;
   --a8c-components-calendar-nav-height: 2rem;
 
   position: relative; /* Required to position the navigation toolbar. */
   box-sizing: border-box;
-    display: inline flow-root;
-    color: var(--gray-900);
+  display: inline flow-root;
+  color: $gray-900;
   font-size: 13px;
   font-weight: 400;
 
@@ -71,15 +72,15 @@
 
     &:disabled {
       cursor: revert;
-      color: var(--gray-600);
+      color: $gray-600;
     }
 
     &:hover:not(:disabled) {
-      color: var(--theme-accent)
+      color: var(--color-accent)
     }
 
     &:focus-visible {
-      outline: var(--outline-focus);
+      outline: var(--a8c-components-calendar-outline-focus);
       outline-offset: 1px;
     }
   }
@@ -120,11 +121,11 @@
     &[aria-disabled="true"] {
       cursor: revert;
 
-      color: var(--gray-600);
+      color: $gray-600;
     }
 
     &:focus-visible {
-    outline: var(--outline-focus);
+    outline: var(--a8c-components-calendar-outline-focus);
     }
   }
 
@@ -181,7 +182,7 @@
     height: var(--a8c-components-calendar-button-height);
     padding: 0;
 
-    color: var(--gray-700);
+    color: $gray-700;
     text-align: center;
     text-transform: uppercase;
   }
@@ -189,10 +190,10 @@
   /* DAY MODIFIERS */
   // Today button, but not when selected (single date) or range start/end
   &__day--today:not(&__day--selected:not(#{&}__range-middle))  &__day-button {
-	box-shadow: inset 0 0 0 1px var(--gray-700);
+	box-shadow: inset 0 0 0 1px $gray-700;
 
 	&:disabled {
-		box-shadow: inset 0 0 0 1px var(--gray-600);
+		box-shadow: inset 0 0 0 1px $gray-600;
 	}
 
 	&:not(:disabled)::before {
@@ -205,12 +206,12 @@
   &__day--selected &__day-button {
     &::before {
       border: none;
-      background-color: var(--gray-900);
+      background-color: $gray-900;
     }
 
     &,
     &:hover:not(:disabled) {
-      color: var(--white)
+      color: $white;
     }
   }
 
@@ -235,10 +236,10 @@
 
   // Middle of date range
   &__range-middle &__day-button {
-    color: var(--gray-900);
+    color: $gray-900;
 
     &::before {
-      background-color: var(--gray-100);
+      background-color: $gray-100;
       border-radius: 0;
 
 	  // Render a top/bottom border of the same color as the background, which
@@ -249,7 +250,7 @@
     }
 
     &:hover:not(:disabled) {
-      color: var(--theme-accent)
+      color: var(--color-accent)
     }
   }
 
@@ -269,7 +270,7 @@
   }
 
   &__day--preview:not(&__range-start):not(&__range-end) &__day-button::before {
-    border-color: var(--gray-600);
+    border-color: $gray-600;
     border-style: dashed;
 	// Do not render a border on left/right, because it would show in
 	// forced-colors mode.
@@ -279,14 +280,14 @@
   &__day--preview-start:not(&__range-start):not(&__range-end) &__day-button::before {
     border-start-end-radius: 0;
     border-end-end-radius: 0;
-    border-color: var(--gray-600);
+    border-color: $gray-600;
 	border-width: 1px;
   }
 
   &__day--preview-end:not(&__range-start):not(&__range-end) &__day-button::before {
     border-start-start-radius: 0;
     border-end-start-radius: 0;
-    border-color: var(--gray-600);
+    border-color: $gray-600;
 	border-width: 1px;
   }
 }
