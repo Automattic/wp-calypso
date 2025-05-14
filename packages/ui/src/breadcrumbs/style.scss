@@ -1,5 +1,5 @@
-@import "@wordpress/base-styles/mixins";
-@import "@wordpress/base-styles/variables";
+// @use "@wordpress/base-styles/mixins" as mixins;
+@use "@wordpress/base-styles/variables" as wp;
 
 .a8c-components-breadcrumbs {
 	overflow: visible;
@@ -16,27 +16,29 @@
 
 		&.is-current {
 			.breadcrumb__item {
-				color: $gray-900;
+				color: wp.$gray-900;
 			}
 		}
 
 		&:not(.is-current)::after {
 			content: '/';
-			color: $gray-200;
+			color: wp.$gray-200;
 			margin: 0 8px;
-			@include body-medium;
+			// TODO: Fix
+			// @include mixins.body-medium;
 		}
 	}
 
 	.a8c-components-breadcrumbs__item {
-		color: $gray-700;
+		color: wp.$gray-700;
 		text-decoration: none;
 		height: auto;
 		padding: 0;
-		@include body-medium;
+		// TODO: Fix
+		// @include mixins.body-medium;
 
 		&:hover {
-			color: $gray-900;
+			color: wp.$gray-900;
 		}
 	}
 

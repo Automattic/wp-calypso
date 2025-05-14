@@ -1,8 +1,8 @@
-@import "@wordpress/base-styles/mixins";
-@import "@wordpress/base-styles/variables";
+@use "@wordpress/base-styles/mixins" as mixins;
+@use "@wordpress/base-styles/variables" as wp;
 
 .summary-button.components-button {
-	padding: $grid-unit-30;
+	padding: wp.$grid-unit-30;
 	display: block;
 	height: auto;
 	transition: none;
@@ -39,16 +39,18 @@
 	}
 
 	.summary-button-title {
-		@include body-large;
+		// TODO: Fix
+		// @include mixins.body-large;
 	}
 
 	.summary-button-strapline {
-		@include heading-small;
+		// TODO: Fix
+		// @include mixins.heading-small;
 	}
 
 	.summary-button-navigation-icon,
 	.summary-button-decoration svg {
-		fill: $gray-700;
+		fill: wp.$gray-700;
 		flex-shrink: 0;
 	}
 
@@ -65,13 +67,13 @@
 	&.has-density-low {
 		/* stylelint-disable-next-line scales/radii */
 		border-radius: 7px;
-		box-shadow: inset 0 0 0 1px $gray-200;
+		box-shadow: inset 0 0 0 1px wp.$gray-200;
 		background-color: #fff;
 	}
 
 	&.has-density-medium {
-		padding: $grid-unit-15;
-		box-shadow: 0 2px 1px -1px $gray-100;
+		padding: wp.$grid-unit-15;
+		box-shadow: 0 2px 1px -1px wp.$gray-100;
 
 		// TODO: this should be handled better in `SummaryButtonList` component.
 		// @see: https://github.com/Automattic/wp-calypso/pull/103233#issuecomment-2862541935
@@ -81,11 +83,12 @@
 		}
 
 		.summary-button-title {
-			@include body-medium;
+			// TODO: Fix
+			// @include mixins.body-medium;
 		}
 	}
 
 	&:focus-visible {
-		@include button-style__focus();
+		@include mixins.button-style__focus();
 	}
 }
