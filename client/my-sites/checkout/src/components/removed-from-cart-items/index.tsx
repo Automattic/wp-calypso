@@ -1,15 +1,42 @@
-import { useShoppingCart } from '@automattic/shopping-cart';
+import { ResponseCartProduct, useShoppingCart } from '@automattic/shopping-cart';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
+import { useState } from 'react';
 import { useRestorableProducts } from 'calypso/my-sites/checkout/src/components/restorable-products-context';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import './style.scss';
 
-export const RemovedFromCartItems = () => {
+export const RemovedFromCartItem = ( { product }: { product: ResponseCartProduct } ) => {
 	const cartKey = useCartKey();
 	const [ restorableProducts, setRestorableProducts ] = useRestorableProducts();
 	const { addProductsToCart } = useShoppingCart( cartKey );
+	const [ disabled, setDisabled ] = useState( false );
 	const translate = useTranslate();
+
+	return (
+		<li key={ product.uuid }>
+			{ translate( '%(product)s was removed from the shopping cart.', {
+				args: { product: product.product_name },
+			} ) }
+			<Button
+				className="restorable-product-button"
+				disabled={ disabled }
+				onClick={ async () => {
+					setDisabled( true );
+
+					await addProductsToCart( [ product ] );
+
+					setRestorableProducts( restorableProducts.filter( ( p ) => p.uuid !== product.uuid ) );
+				} }
+			>
+				{ translate( 'Restore' ) }
+			</Button>
+		</li>
+	);
+};
+
+export const RemovedFromCartItems = () => {
+	const [ restorableProducts ] = useRestorableProducts();
 
 	if ( ! restorableProducts || restorableProducts.length === 0 ) {
 		return null;
@@ -18,23 +45,7 @@ export const RemovedFromCartItems = () => {
 	return (
 		<ul className="removed-from-cart-items">
 			{ restorableProducts.map( ( product ) => (
-				<li key={ product.uuid }>
-					{ translate( '%(product)s was removed from the shopping cart.', {
-						args: { product: product.product_name },
-					} ) }
-					<Button
-						className="restorable-product-button"
-						onClick={ async () => {
-							await addProductsToCart( [ product ] );
-
-							setRestorableProducts(
-								restorableProducts.filter( ( p ) => p.uuid !== product.uuid )
-							);
-						} }
-					>
-						{ translate( 'Restore' ) }
-					</Button>
-				</li>
+				<RemovedFromCartItem key={ product.uuid } product={ product } />
 			) ) }
 		</ul>
 	);
