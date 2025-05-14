@@ -153,7 +153,6 @@ export class EditorPage {
 		// it is a fairly good stand-in.
 		await Promise.all( [
 			this.page.waitForURL( /(\/post\/.+|\/page\/+|\/post-new.php|\/post.php+)/, { timeout } ),
-			this.page.waitForResponse( /.*posts.*/, { timeout } ),
 		] );
 	}
 
