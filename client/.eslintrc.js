@@ -26,6 +26,15 @@ module.exports = {
 			},
 		],
 		'jest/no-mocks-import': 'off',
+		'no-restricted-syntax': [
+			'error',
+			{
+				selector:
+					'CallExpression[callee.name="useSelector"][arguments.0.body.type="ObjectExpression"]',
+				message:
+					'Object return values can cause unnecessary re-renders. Use separate useSelector calls instead.',
+			},
+		],
 	},
 	overrides: [
 		{
