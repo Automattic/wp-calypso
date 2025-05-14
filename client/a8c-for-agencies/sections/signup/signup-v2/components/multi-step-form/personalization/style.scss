@@ -39,3 +39,11 @@
 		margin-left: 8px;
 	}
 }
+
+.signup-personalization-form__description {
+	@include body-medium;
+
+	@media (prefers-color-scheme: dark) {
+		color: var(--color-text-inverted);
+	}
+}

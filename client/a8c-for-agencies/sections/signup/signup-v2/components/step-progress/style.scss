@@ -18,6 +18,10 @@
 		grid-template-columns: repeat(6, 1fr);
 		gap: 8px;
 		width: 100%;
+
+		&.is-fifty-fifty {
+			grid-template-columns: repeat(4, 1fr);
+		}
 	}
 
 	.progress-bar__progress {
