@@ -1,7 +1,7 @@
 import { fn } from '@storybook/test';
 import { fr, ja, es, ko, pt, ar, it } from 'date-fns/locale';
-import { useState } from 'react';
-import { DateRangeCalendar } from './index';
+import { useState, useEffect } from 'react';
+import { DateRangeCalendar, TZDate } from './index';
 import type { Meta, StoryObj } from '@storybook/react';
 
 const meta: Meta< typeof DateRangeCalendar > = {
@@ -23,6 +23,16 @@ const meta: Meta< typeof DateRangeCalendar > = {
 				pt,
 				it,
 			},
+			control: 'select',
+		},
+		timeZone: {
+			options: [
+				'Pacific/Honolulu',
+				'America/New_York',
+				'Europe/London',
+				'Asia/Tokyo',
+				'Pacific/Auckland',
+			],
 			control: 'select',
 		},
 		labels: {
@@ -125,6 +135,7 @@ const fullMonthYearFormatter = ( date: Date, locale: string ) =>
 	new Intl.DateTimeFormat( locale, {
 		month: 'long',
 		year: 'numeric',
+		// Note: make sure to also include the timeZone option in the formatter.
 	} ).format( date );
 
 const fullDateFormatter = ( date: Date, locale: string ) =>
@@ -133,11 +144,13 @@ const fullDateFormatter = ( date: Date, locale: string ) =>
 		year: 'numeric',
 		day: 'numeric',
 		weekday: 'long',
+		// Note: make sure to also include the timeZone option in the formatter.
 	} ).format( date );
 
 const weekdayFormatter = ( date: Date, locale: string ) =>
 	new Intl.DateTimeFormat( locale, {
 		weekday: 'long',
+		// Note: make sure to also include the timeZone option in the formatter.
 	} ).format( date );
 
 export const Localized: Story = {
@@ -171,6 +184,61 @@ export const Localized: Story = {
 				return label;
 			},
 			labelWeekday: ( date ) => weekdayFormatter( date, it.code ),
+		},
+	},
+};
+
+export const WithTimeZone: Story = {
+	render: function DateCalendarWithTimeZone( args ) {
+		const [ range, setRange ] = useState< typeof args.selected | null >( null );
+
+		useEffect( () => {
+			setRange(
+				// Select from one week from today to two weeks from today 	every time the time zone changes.
+				{
+					from: new TZDate( new Date().setDate( new Date().getDate() + 7 ), args.timeZone ),
+					to: new TZDate( new Date().setDate( new Date().getDate() + 14 ), args.timeZone ),
+				}
+			);
+		}, [ args.timeZone ] );
+
+		return (
+			<DateRangeCalendar
+				{ ...args }
+				selected={ range }
+				onSelect={ ( selectedDate, ...rest ) => {
+					setRange(
+						// Set controlled state to null if there's no selection
+						! selectedDate || ( selectedDate.from === undefined && selectedDate.to === undefined )
+							? null
+							: selectedDate
+					);
+					// TS is strict about `onSelect` expecting a non-undefined date
+					// when the selection is required.
+					if ( ! args.required ) {
+						args.onSelect?.( selectedDate, ...rest );
+					} else if ( selectedDate ) {
+						args.onSelect?.( selectedDate, ...rest );
+					}
+				} }
+				disabled={ [
+					{
+						// Disable any date before today
+						before: new TZDate( new Date(), args.timeZone ),
+					},
+				] }
+				footer={ `Calendar set to ${
+					args.timeZone ?? 'current'
+				} timezone, disabling selection for all dates before today, and starting with a default date of 1 week from today` }
+			/>
+		);
+	},
+	args: {
+		timeZone: 'Pacific/Auckland',
+	},
+	argTypes: {
+		disabled: {
+			control: false,
 		},
 	},
 };

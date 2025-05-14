@@ -1,7 +1,7 @@
 import { fn } from '@storybook/test';
 import { fr, ja, es, ko, pt, ar, it } from 'date-fns/locale';
-import { useState } from 'react';
-import { DateCalendar } from './index';
+import { useState, useEffect } from 'react';
+import { DateCalendar, TZDate } from './index';
 import type { Meta, StoryObj } from '@storybook/react';
 
 const meta: Meta< typeof DateCalendar > = {
@@ -23,6 +23,16 @@ const meta: Meta< typeof DateCalendar > = {
 				pt,
 				it,
 			},
+			control: 'select',
+		},
+		timeZone: {
+			options: [
+				'Pacific/Honolulu',
+				'America/New_York',
+				'Europe/London',
+				'Asia/Tokyo',
+				'Pacific/Auckland',
+			],
 			control: 'select',
 		},
 		labels: {
@@ -53,20 +63,6 @@ type Story = StoryObj< typeof DateCalendar >;
 
 export const Default: Story = {};
 
-export const TimeZone: Story = {
-	args: {
-		timeZone: 'Asia/Tokyo',
-		// In 1 week, but in Tokyo timezone
-		defaultSelected: new Date( new Date().setDate( new Date().getDate() + 7 ) ),
-		disabled: [
-			{
-				// Disable any date before today, but in Tokyo timezone
-				before: new Date(),
-			},
-		],
-	},
-};
-
 export const Controlled: Story = {
 	render: function ControlledDateCalendar( args ) {
 		const [ selected, setSelected ] = useState< Date | null >( null );
@@ -86,6 +82,14 @@ export const Controlled: Story = {
 				} }
 			/>
 		);
+	},
+	argTypes: {
+		defaultSelected: {
+			control: false,
+		},
+		selected: {
+			control: false,
+		},
 	},
 };
 
@@ -183,6 +187,59 @@ export const Localized: Story = {
 	},
 };
 
+export const WithTimeZone: Story = {
+	render: function DateCalendarWithTimeZone( args ) {
+		const [ selected, setSelected ] = useState< TZDate | null >( null );
+
+		useEffect( () => {
+			setSelected(
+				// Select one week from today every time the time zone changes.
+				new TZDate( new Date().setDate( new Date().getDate() + 7 ), args.timeZone )
+			);
+		}, [ args.timeZone ] );
+
+		return (
+			<DateCalendar
+				{ ...args }
+				selected={ selected }
+				onSelect={ ( selectedDate, ...rest ) => {
+					setSelected( selectedDate ? new TZDate( selectedDate, args.timeZone ) : null );
+					// TS is strict about `onSelect` expecting a non-undefined date
+					// when the selection is required.
+					if ( ! args.required ) {
+						args.onSelect?.( selectedDate, ...rest );
+					} else if ( selectedDate ) {
+						args.onSelect?.( selectedDate, ...rest );
+					}
+				} }
+				disabled={ [
+					{
+						// Disable any date before today
+						before: new TZDate( new Date(), args.timeZone ),
+					},
+				] }
+				footer={ `Calendar set to ${
+					args.timeZone ?? 'current'
+				} timezone, disabling selection for all dates before today, and starting with a default date of 1 week from today` }
+			/>
+		);
+	},
+	args: {
+		timeZone: 'Pacific/Auckland',
+	},
+	argTypes: {
+		selected: {
+			control: false,
+		},
+		defaultSelected: {
+			control: false,
+		},
+		disabled: {
+			control: false,
+		},
+	},
+};
+
 /**
  * Since the footer is a live region, it is a great place to provide feedback
  * to the user about the selected date.
@@ -213,6 +270,14 @@ export const Footer: Story = {
 				}
 			/>
 		);
+	},
+	argTypes: {
+		selected: {
+			control: false,
+		},
+		defaultSelected: {
+			control: false,
+		},
 	},
 };
 
@@ -321,5 +386,13 @@ export const WithPresets: Story = {
 				/>
 			</>
 		);
+	},
+	argTypes: {
+		selected: {
+			control: false,
+		},
+		defaultSelected: {
+			control: false,
+		},
 	},
 };
