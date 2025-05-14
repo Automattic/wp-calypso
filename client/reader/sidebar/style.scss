@@ -12,9 +12,6 @@
 		}
 	}
 
-	li.reader-sidebar-tags__list {
-		margin-bottom: 8px;
-	}
 
 	// Apply custom style to the `Add new tag` mini form.
 	.reader-sidebar-tags__text-input:hover,
@@ -220,10 +217,14 @@ body.is-section-reader {
 	border-right-color: #fff;
 }
 
-.sidebar__menu {
-	.sidebar__menu-item-title {
-		display: flex;
+.theme-default .global-sidebar .sidebar .sidebar__menu:is(.is-togglable) .selected {
+	.sidebar__menu-link {
+		font-weight: 600;
+		box-shadow: inset 4px 0 0 0 currentColor;
 	}
+}
+
+.sidebar__menu {
 	.sidebar__heading,
 	.sidebar__menu-link {
 		/* Hover styles */
@@ -293,59 +294,6 @@ body.is-section-reader {
 			fill: var(--color-sidebar-background);
 			g {
 				stroke: var(--color-sidebar-gridicon-fill);
-			}
-		}
-	}
-	/* Selected styles */
-	.selected,
-	.sidebar__menu--selected {
-		.sidebar__menu-link {
-			.sidebar__menu-icon.sidebar_svg-add {
-				g {
-					fill: var(--color-sidebar-gridicon-selected-fill);
-				}
-			}
-			.sidebar__menu-icon.sidebar_svg-a8c-conversations {
-				fill: var(--color-sidebar-menu-hover-background);
-				g {
-					stroke: var(--color-sidebar-gridicon-selected-fill);
-				}
-			}
-			.sidebar__menu-icon.sidebar_svg-notifications {
-				fill: var(--color-sidebar-menu-hover-background);
-				path {
-					stroke: var(--color-sidebar-gridicon-selected-fill);
-				}
-			}
-			.sidebar__menu-icon.sidebar_svg-search,
-			.sidebar__menu-icon.sidebar_svg-following,
-			.sidebar__menu-icon.sidebar_svg-likes,
-			.sidebar__menu-icon.sidebar_svg-conversations,
-			.sidebar__menu-icon.sidebar_svg-discover,
-			.sidebar__menu-icon.sidebar_svg-manage-subscriptions {
-				fill: var(--color-sidebar-menu-hover-background);
-				path {
-					fill: var(--color-sidebar-gridicon-selected-fill);
-				}
-			}
-		}
-
-		&.is-togglable:not(.is-toggle-open):not(:hover) {
-			.sidebar__heading {
-				.sidebar__menu-icon.sidebar_svg-p2,
-				.sidebar__menu-icon.sidebar_svg-list,
-				.sidebar__menu-icon.sidebar_svg-tag {
-					fill: var(--color-sidebar-menu-hover-background);
-					path {
-						fill: var(--color-sidebar-gridicon-selected-fill);
-					}
-				}
-				.sidebar__menu-icon.sidebar_svg-a8c {
-					fill: var(--color-sidebar-menu-hover-background);
-					g {
-						stroke: var(--color-sidebar-gridicon-selected-fill);
-					}
-				}
 			}
 		}
 	}
