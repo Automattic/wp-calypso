@@ -44,8 +44,12 @@ const personalizationStepProgress: PersonalizationStepProgress = {
 	6: 100,
 };
 
-const getPersonalizationProgress = ( currentStep: number ): number => {
-	return personalizationStepProgress[ currentStep ] ?? 0;
+const getPersonalizationProgress = ( currentStep: number, submitAsSurvey: boolean ): number => {
+	if ( submitAsSurvey ) {
+		return personalizationStepProgress[ currentStep ] ?? 0;
+	}
+
+	return currentStep === 2 ? 50 : 0;
 };
 
 const getSignupProgress = ( step: number ): number => {
@@ -79,7 +83,7 @@ const MultiStepForm = ( { withPersonalizedBlueprint = false, submitAsSurvey = fa
 		{
 			label: translate( 'Personalize' ),
 			isActive: currentStep > 3,
-			value: getPersonalizationProgress( currentStep ),
+			value: getPersonalizationProgress( currentStep, submitAsSurvey ),
 		},
 		{
 			label: submitAsSurvey ? translate( 'Finish survey' ) : translate( 'Complete setup' ),
