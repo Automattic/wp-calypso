@@ -190,10 +190,7 @@ function DataViews< Item >( {
 				setIsShowingFilter,
 			} }
 		>
-			<div
-				className="dataviews-wrapper"
-				ref={ useMergeRefs( [ containerRef, resizeObserverRef ] ) }
-			>
+			<div className="dataviews-wrapper" ref={ useMergeRefs( [ containerRef, resizeObserverRef ] ) } >
 				{ children ?? (
 					<DefaultUI
 						header={ header }
