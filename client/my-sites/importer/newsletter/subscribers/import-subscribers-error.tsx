@@ -46,7 +46,9 @@ export default function PaidImportSubscribersError( { error }: Props ) {
 					default:
 						return typeof error.message === 'string'
 							? error.message
-							: __( 'An unexpected error occurred. Please try again later or contact support if the problem persists.' );
+							: __(
+									'An unexpected error occurred. Please try again later or contact support if the problem persists.'
+							  );
 				}
 			} )() }
 		</FormInputValidation>
