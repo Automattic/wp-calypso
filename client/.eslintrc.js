@@ -29,8 +29,10 @@ module.exports = {
 		'no-restricted-syntax': [
 			'error',
 			{
-				selector:
-					'CallExpression[callee.name="useSelector"][arguments.0.body.type="ObjectExpression"]',
+				selector: [
+					'CallExpression[callee.name="useSelector"] > ArrowFunctionExpression > :matches(ObjectExpression, ArrayExpression)',
+					'CallExpression[callee.name="useSelector"] > ArrowFunctionExpression > BlockStatement > ReturnStatement > :matches(ObjectExpression, ArrayExpression)',
+				].join(),
 				message:
 					'Object return values can cause unnecessary re-renders. Use separate useSelector calls instead.',
 			},
