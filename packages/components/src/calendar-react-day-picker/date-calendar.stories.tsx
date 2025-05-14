@@ -63,24 +63,55 @@ type Story = StoryObj< typeof DateCalendar >;
 
 export const Default: Story = {};
 
-export const Controlled: Story = {
+function dateToInputValue( date: Date ) {
+	return `${ date.getFullYear() }-${ ( date.getMonth() + 1 ).toString().padStart( 2, '0' ) }-${ date
+		.getDate()
+		.toString()
+		.padStart( 2, '0' ) }`;
+}
+
+/**
+ * The component can be used in controlled mode. This is useful, for example,
+ * when in need of keeping the component in sync with an external input field.
+ *
+ * _Note: this example doesn't handle time zones_
+ */
+export const ControlledWithInputField: Story = {
 	render: function ControlledDateCalendar( args ) {
 		const [ selected, setSelected ] = useState< Date | null >( null );
+
 		return (
-			<DateCalendar
-				{ ...args }
-				selected={ selected }
-				onSelect={ ( selectedDate, ...rest ) => {
-					setSelected( selectedDate ?? null );
-					// TS is strict about `onSelect` expecting a non-undefined date
-					// when the selection is required.
-					if ( ! args.required ) {
-						args.onSelect?.( selectedDate, ...rest );
-					} else if ( selectedDate ) {
-						args.onSelect?.( selectedDate, ...rest );
-					}
-				} }
-			/>
+			<div style={ { display: 'flex', flexDirection: 'column', gap: 16 } }>
+				<label style={ { display: 'flex', flexDirection: 'column', gap: 4 } }>
+					Selected date
+					<input
+						type="date"
+						value={
+							// Note: the following code doesn't handle time zones.
+							selected ? dateToInputValue( selected ) : ''
+						}
+						onChange={ ( e ) => {
+							// Note: the following code doesn't handle time zones.
+							setSelected( new Date( e.target.value ) );
+						} }
+						style={ { width: 160 } }
+					/>
+				</label>
+				<DateCalendar
+					{ ...args }
+					selected={ selected }
+					onSelect={ ( selectedDate, ...rest ) => {
+						setSelected( selectedDate ?? null );
+						// TS is strict about `onSelect` expecting a non-undefined date
+						// when the selection is required.
+						if ( ! args.required ) {
+							args.onSelect?.( selectedDate, ...rest );
+						} else if ( selectedDate ) {
+							args.onSelect?.( selectedDate, ...rest );
+						}
+					} }
+				/>
+			</div>
 		);
 	},
 	argTypes: {
@@ -88,6 +119,9 @@ export const Controlled: Story = {
 			control: false,
 		},
 		selected: {
+			control: false,
+		},
+		timeZone: {
 			control: false,
 		},
 	},

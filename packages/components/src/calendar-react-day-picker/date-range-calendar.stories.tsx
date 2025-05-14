@@ -63,29 +63,82 @@ type Story = StoryObj< typeof DateRangeCalendar >;
 
 export const Default: Story = {};
 
-export const Controlled: Story = {
+function dateToInputValue( date: Date ) {
+	return `${ date.getFullYear() }-${ ( date.getMonth() + 1 ).toString().padStart( 2, '0' ) }-${ date
+		.getDate()
+		.toString()
+		.padStart( 2, '0' ) }`;
+}
+
+/**
+ * The component can be used in controlled mode. This is useful, for example,
+ * when in need of keeping the component in sync with external input fields.
+ *
+ * _Note: this example doesn't handle time zones_
+ */
+export const ControlledWithInputFields: Story = {
 	render: function ControlledTemplate( args ) {
 		const [ range, setRange ] = useState< typeof args.selected | null >( null );
 		return (
-			<DateRangeCalendar
-				{ ...args }
-				selected={ range }
-				onSelect={ ( selectedDate, ...rest ) => {
-					setRange(
-						// Set controlled state to null if there's no selection
-						! selectedDate || ( selectedDate.from === undefined && selectedDate.to === undefined )
-							? null
-							: selectedDate
-					);
-					// TS is strict about `onSelect` expecting a non-undefined date
-					// when the selection is required.
-					if ( ! args.required ) {
-						args.onSelect?.( selectedDate, ...rest );
-					} else if ( selectedDate ) {
-						args.onSelect?.( selectedDate, ...rest );
-					}
-				} }
-			/>
+			<div style={ { display: 'flex', flexDirection: 'column', gap: 16 } }>
+				<label style={ { display: 'flex', flexDirection: 'column', gap: 4 } }>
+					Start date
+					<input
+						type="date"
+						value={
+							// Note: the following code doesn't handle time zones.
+							range?.from ? dateToInputValue( range.from ) : ''
+						}
+						onChange={ ( e ) => {
+							// Note: the following code doesn't handle time zones.
+							setRange( {
+								to: new Date( e.target.value ),
+								...range,
+								from: new Date( e.target.value ),
+							} );
+						} }
+						style={ { width: 160 } }
+					/>
+				</label>
+				<label style={ { display: 'flex', flexDirection: 'column', gap: 4 } }>
+					End date
+					<input
+						type="date"
+						value={
+							// Note: the following code doesn't handle time zones.
+							range?.to ? dateToInputValue( range.to ) : ''
+						}
+						onChange={ ( e ) => {
+							// Note: the following code doesn't handle time zones.
+							setRange( {
+								from: new Date( e.target.value ),
+								...range,
+								to: new Date( e.target.value ),
+							} );
+						} }
+						style={ { width: 160 } }
+					/>
+				</label>
+				<DateRangeCalendar
+					{ ...args }
+					selected={ range }
+					onSelect={ ( selectedDate, ...rest ) => {
+						setRange(
+							// Set controlled state to null if there's no selection
+							! selectedDate || ( selectedDate.from === undefined && selectedDate.to === undefined )
+								? null
+								: selectedDate
+						);
+						// TS is strict about `onSelect` expecting a non-undefined date
+						// when the selection is required.
+						if ( ! args.required ) {
+							args.onSelect?.( selectedDate, ...rest );
+						} else if ( selectedDate ) {
+							args.onSelect?.( selectedDate, ...rest );
+						}
+					} }
+				/>
+			</div>
 		);
 	},
 };
