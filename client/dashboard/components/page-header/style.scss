@@ -1,15 +1,15 @@
 @import "@wordpress/base-styles/variables";
 
-.client-dashboard-components-page-header__heading {
+.client-dashboard-components-page-header-heading {
 	font-size: $font-size-2x-large;
-	line-height: $font-line-height-x-large;
-	margin: 0;
+	line-height: $font-line-height-2x-large;
+	margin-block: 0;
 }
 
-.client-dashboard-components-page-header__decoration {
+.client-dashboard-components-page-header-decoration {
 	display: inline-flex;
-	width: $grid-unit-40;
-	height: $grid-unit-40;
+	width: $grid-unit-50;
+	height: $grid-unit-50;
 	flex-shrink: 0;
 	align-items: center;
 	justify-content: center;
@@ -30,7 +30,7 @@
 	}
 }
 
-.client-dashboard-components-page-header__actions {
+.client-dashboard-components-page-header-actions {
 	flex-shrink: 0;
 }
 

@@ -52,17 +52,17 @@ export const FullExample: Story = {
 			{ label: 'Advanced', href: 'javascript:void(0)' },
 		],
 		actions: [
-			<Button key="help" icon={ help } variant="tertiary" size="compact">
+			<Button key="help" icon={ help } variant="tertiary" __next40pxDefaultSize>
 				Help
 			</Button>,
-			<Button key="preview" variant="secondary" size="compact">
+			<Button key="preview" variant="secondary" __next40pxDefaultSize>
 				Preview
 			</Button>,
 			<DropdownMenu
 				key="more-actions"
 				icon={ moreVertical }
 				label="More actions"
-				toggleProps={ { size: 'compact' } }
+				toggleProps={ { __next40pxDefaultSize: true } }
 			>
 				{ () => (
 					<>
@@ -94,17 +94,17 @@ export const ImageDecoration: Story = {
 			{ label: 'Advanced', href: 'javascript:void(0)' },
 		],
 		actions: [
-			<Button key="help" icon={ help } variant="tertiary" size="compact">
+			<Button key="help" icon={ help } variant="tertiary" __next40pxDefaultSize>
 				Help
 			</Button>,
-			<Button key="preview" variant="secondary" size="compact">
+			<Button key="preview" variant="secondary" __next40pxDefaultSize>
 				Preview
 			</Button>,
 			<DropdownMenu
 				key="more-actions"
 				icon={ moreVertical }
 				label="More actions"
-				toggleProps={ { size: 'compact' } }
+				toggleProps={ { __next40pxDefaultSize: true } }
 			>
 				{ () => (
 					<>
