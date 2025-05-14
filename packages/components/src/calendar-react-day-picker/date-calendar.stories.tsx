@@ -69,13 +69,13 @@ export const TimeZone: Story = {
 
 export const Controlled: Story = {
 	render: function ControlledDateCalendar( args ) {
-		const [ selected, setSelected ] = useState< Date >();
+		const [ selected, setSelected ] = useState< Date | null >( null );
 		return (
 			<DateCalendar
 				{ ...args }
 				selected={ selected }
 				onSelect={ ( selectedDate, ...rest ) => {
-					setSelected( selectedDate );
+					setSelected( selectedDate ?? null );
 					// TS is strict about `onSelect` expecting a non-undefined date
 					// when the selection is required.
 					if ( ! args.required ) {
@@ -189,13 +189,13 @@ export const Localized: Story = {
  */
 export const Footer: Story = {
 	render: function ControlledDateCalendar( args ) {
-		const [ selected, setSelected ] = useState< Date >();
+		const [ selected, setSelected ] = useState< Date | null >( null );
 		return (
 			<DateCalendar
 				{ ...args }
 				selected={ selected }
 				onSelect={ ( selectedDate, ...rest ) => {
-					setSelected( selectedDate );
+					setSelected( selectedDate ?? null );
 					// TS is strict about `onSelect` expecting a non-undefined date
 					// when the selection is required.
 					if ( ! args.required ) {
@@ -237,7 +237,7 @@ const oneYearBefore = ( date: Date ) => {
 
 export const WithPresets: Story = {
 	render: function ControlledDateCalendar( args ) {
-		const [ selected, setSelected ] = useState< Date >();
+		const [ selected, setSelected ] = useState< Date | null >( null );
 		const [ month, setMonth ] = useState< Date >();
 
 		return (
@@ -307,7 +307,7 @@ export const WithPresets: Story = {
 					{ ...args }
 					selected={ selected }
 					onSelect={ ( selectedDate, ...rest ) => {
-						setSelected( selectedDate );
+						setSelected( selectedDate ?? null );
 						// TS is strict about `onSelect` expecting a non-undefined date
 						// when the selection is required.
 						if ( ! args.required ) {

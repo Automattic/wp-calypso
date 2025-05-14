@@ -113,7 +113,7 @@ type DateInterval = {
  *     to: new Date(2019, 1, 5)
  *   };
  */
-type DateRange = {
+export type DateRange = {
 	from: Date | undefined;
 	to?: Date | undefined;
 };
@@ -262,8 +262,12 @@ interface BaseProps extends Omit< React.HTMLAttributes< HTMLDivElement >, 'onSel
 interface SinglePropsRequired {
 	required: true;
 	/** The selected date. */
-	selected: Date | undefined;
-	/** Event handler when a day is selected. */
+	selected: Date | undefined | null;
+	/**
+	 * Event handler when a day is selected. When the selection is required,
+	 * user can not deselect the date, and therefore the callback always
+	 * has a defined date argument.
+	 */
 	onSelect?: OnSelectHandler< Date >;
 	/** The default selected date (for uncontrolled usage). */
 	defaultSelected?: Date;
@@ -272,7 +276,7 @@ interface SinglePropsRequired {
 interface SinglePropsOptional {
 	required?: false | undefined;
 	/** The selected date. */
-	selected?: Date | undefined;
+	selected?: Date | undefined | null;
 	/** Event handler when a day is selected. */
 	onSelect?: OnSelectHandler< Date | undefined >;
 	/** The default selected date (for uncontrolled usage). */
@@ -293,8 +297,12 @@ interface RangeProps {
 interface RangePropsRequired {
 	required: true;
 	/** The selected range. */
-	selected: DateRange | undefined;
-	/** Event handler when a range is selected. */
+	selected: DateRange | undefined | null;
+	/**
+	 * Event handler when a range is selected. When the selection is required,
+	 * user can not deselect the range, and therefore the callback always
+	 * has a defined range argument.
+	 */
 	onSelect?: OnSelectHandler< DateRange >;
 	/** The default selected range (for uncontrolled usage). */
 	defaultSelected?: DateRange;
@@ -303,7 +311,7 @@ interface RangePropsRequired {
 interface RangePropsOptional {
 	required?: false | undefined;
 	/** The selected range. */
-	selected?: DateRange | undefined;
+	selected?: DateRange | undefined | null;
 	/** Event handler when the selection changes. */
 	onSelect?: OnSelectHandler< DateRange | undefined >;
 	/** The default selected range (for uncontrolled usage). */

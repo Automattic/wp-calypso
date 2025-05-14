@@ -1,7 +1,7 @@
 import { useMemo, useState, useCallback } from 'react';
 import { DayPicker } from 'react-day-picker';
 import { useControlledValue } from './utils';
-import type { DateCalendarProps, DateRangeCalendarProps } from './types';
+import type { DateCalendarProps, DateRangeCalendarProps, DateRange } from './types';
 
 import './styles.scss';
 
@@ -99,7 +99,7 @@ export const DateCalendar = ( {
 }: DateCalendarProps ) => {
 	const commonProps = useCommonProps( { numberOfMonths, locale } );
 
-	const [ selected, setSelected ] = useControlledValue( {
+	const [ selected, setSelected ] = useControlledValue< Date >( {
 		defaultValue: defaultSelected,
 		value: selectedProp,
 		onChange: onSelect,
@@ -128,7 +128,7 @@ export const DateRangeCalendar = ( {
 }: DateRangeCalendarProps ) => {
 	const commonProps = useCommonProps( { numberOfMonths, locale } );
 
-	const [ selected, setSelected ] = useControlledValue( {
+	const [ selected, setSelected ] = useControlledValue< DateRange >( {
 		defaultValue: defaultSelected,
 		value: selectedProp,
 		onChange: onSelect,

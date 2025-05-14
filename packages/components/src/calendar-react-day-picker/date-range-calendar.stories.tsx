@@ -55,16 +55,18 @@ export const Default: Story = {};
 
 export const Controlled: Story = {
 	render: function ControlledTemplate( args ) {
-		const [ range, setRange ] = useState< typeof args.selected >( {
-			from: undefined,
-			to: undefined,
-		} );
+		const [ range, setRange ] = useState< typeof args.selected | null >( null );
 		return (
 			<DateRangeCalendar
 				{ ...args }
 				selected={ range }
 				onSelect={ ( selectedDate, ...rest ) => {
-					setRange( selectedDate );
+					setRange(
+						// Set controlled state to null if there's no selection
+						! selectedDate || ( selectedDate.from === undefined && selectedDate.to === undefined )
+							? null
+							: selectedDate
+					);
 					// TS is strict about `onSelect` expecting a non-undefined date
 					// when the selection is required.
 					if ( ! args.required ) {
@@ -179,10 +181,7 @@ export const Localized: Story = {
  */
 export const Footer: Story = {
 	render: function ControlledDateCalendar( args ) {
-		const [ range, setRange ] = useState< typeof args.selected >( {
-			from: undefined,
-			to: undefined,
-		} );
+		const [ range, setRange ] = useState< typeof args.selected | null >( null );
 
 		let footerText;
 		if ( ! range?.from ) {
@@ -198,7 +197,12 @@ export const Footer: Story = {
 				{ ...args }
 				selected={ range }
 				onSelect={ ( selectedDate, ...rest ) => {
-					setRange( selectedDate );
+					setRange(
+						// Set controlled state to null if there's no selection
+						! selectedDate || ( selectedDate.from === undefined && selectedDate.to === undefined )
+							? null
+							: selectedDate
+					);
 					// TS is strict about `onSelect` expecting a non-undefined date
 					// when the selection is required.
 					if ( ! args.required ) {
@@ -214,7 +218,7 @@ export const Footer: Story = {
 };
 
 const today = new Date();
-const lastSevedDays = ( date: Date ) => {
+const lastSevenDays = ( date: Date ) => {
 	const toReturn = new Date( date );
 	toReturn.setDate( date.getDate() - 6 );
 	return {
@@ -250,10 +254,7 @@ const lastTwelveMonths = ( date: Date ) => {
 
 export const WithPresets: Story = {
 	render: function ControlledDateCalendar( args ) {
-		const [ range, setRange ] = useState< typeof args.selected >( {
-			from: undefined,
-			to: undefined,
-		} );
+		const [ range, setRange ] = useState< typeof args.selected | null >( null );
 		const [ month, setMonth ] = useState< Date >();
 
 		return (
@@ -271,7 +272,7 @@ export const WithPresets: Story = {
 					<button
 						type="button"
 						onClick={ () => {
-							const targetRange = lastSevedDays( today );
+							const targetRange = lastSevenDays( today );
 							setRange( targetRange );
 							setMonth( targetRange.to );
 						} }
@@ -323,7 +324,12 @@ export const WithPresets: Story = {
 					{ ...args }
 					selected={ range }
 					onSelect={ ( selectedDate, ...rest ) => {
-						setRange( selectedDate );
+						setRange(
+							// Set controlled state to null if there's no selection
+							! selectedDate || ( selectedDate.from === undefined && selectedDate.to === undefined )
+								? null
+								: selectedDate
+						);
 						// TS is strict about `onSelect` expecting a non-undefined date
 						// when the selection is required.
 						if ( ! args.required ) {
