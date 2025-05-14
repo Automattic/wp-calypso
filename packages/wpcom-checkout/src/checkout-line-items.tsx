@@ -632,7 +632,15 @@ function ProductTier( { product }: { product: ResponseCartProduct } ) {
 	return null;
 }
 
-export function LineItemSublabelAndPrice( { product }: { product: ResponseCartProduct } ) {
+export function LineItemSublabelAndPrice( {
+	product,
+	isStreamlinedPrice,
+	variants,
+}: {
+	product: ResponseCartProduct;
+	isStreamlinedPrice?: boolean;
+	variants?: any[];
+} ) {
 	const translate = useTranslate();
 	const productSlug = product.product_slug;
 	const price = formatCurrency( product.item_original_subtotal_integer, product.currency, {
@@ -784,6 +792,53 @@ export function LineItemSublabelAndPrice( { product }: { product: ResponseCartPr
 			<>
 				{ premiumLabel } <DefaultLineItemSublabel product={ product } />:{ ' ' }
 				{ translate( 'billed annually' ) } { price }
+			</>
+		);
+	}
+
+	const monthlyProduct = variants?.find( ( variant ) => variant.termIntervalInMonths === 1 );
+	const monthlyPrice = formatCurrency(
+		monthlyProduct?.priceBeforeDiscounts || product.item_original_monthly_cost_integer,
+		product.currency,
+		{
+			isSmallestUnit: true,
+			stripZeros: true,
+		}
+	);
+
+	if ( isStreamlinedPrice && isMonthlyProduct( product ) ) {
+		return <>{ translate( 'Billed every month' ) } </>;
+	}
+
+	if ( isStreamlinedPrice && isYearly( product ) ) {
+		return (
+			<>
+				{ translate( 'Billed every year' ) }
+				<s>
+					{ monthlyPrice } { translate( '/month' ) }
+				</s>
+			</>
+		);
+	}
+
+	if ( isStreamlinedPrice && isBiennially( product ) ) {
+		return (
+			<>
+				{ translate( 'Billed every 2 years' ) }
+				<s>
+					{ monthlyPrice } { translate( '/month' ) }
+				</s>
+			</>
+		);
+	}
+
+	if ( isStreamlinedPrice && isTriennially( product ) ) {
+		return (
+			<>
+				{ translate( 'Billed every 3 years' ) }
+				<s>
+					{ monthlyPrice } { translate( '/month' ) }
+				</s>
 			</>
 		);
 	}
@@ -1193,6 +1248,8 @@ function CheckoutLineItem( {
 	onRemoveProductClick,
 	onRemoveProductCancel,
 	isAkPro500Cart,
+	isStreamlinedPrice,
+	variants,
 }: PropsWithChildren< {
 	product: ResponseCartProduct;
 	className?: string;
@@ -1207,6 +1264,8 @@ function CheckoutLineItem( {
 	onRemoveProductCancel?: ( label: string ) => void;
 	isAkPro500Cart?: boolean;
 	shouldShowBillingInterval?: boolean;
+	isStreamlinedPrice?: boolean;
+	variants?: any[];
 } > ) {
 	const id = product.uuid;
 	const translate = useTranslate();
@@ -1255,6 +1314,16 @@ function CheckoutLineItem( {
 		isSmallestUnit: true,
 		stripZeros: true,
 	} );
+
+	const monthlyAmountDisplay = formatCurrency(
+		product.item_original_monthly_cost_integer,
+		product.currency,
+		{
+			isSmallestUnit: true,
+			stripZeros: true,
+		}
+	);
+
 	const isDiscounted = Boolean(
 		itemSubtotalInteger < originalAmountInteger && originalAmountDisplay
 	);
@@ -1289,10 +1358,18 @@ function CheckoutLineItem( {
 			</LineItemTitle>
 
 			<span aria-labelledby={ itemSpanId } className="checkout-line-item__price">
-				<LineItemPrice
-					actualAmount={ actualAmountDisplay }
-					crossedOutAmount={ isDiscounted ? originalAmountDisplay : undefined }
-				/>
+				{ isStreamlinedPrice ? (
+					<>
+						{ monthlyAmountDisplay } { translate( '/month' ) }
+					</>
+				) : (
+					<>
+						<LineItemPrice
+							actualAmount={ actualAmountDisplay }
+							crossedOutAmount={ isDiscounted ? originalAmountDisplay : undefined }
+						/>
+					</>
+				) }
 			</span>
 
 			{ ! containsPartnerCoupon && (
@@ -1302,7 +1379,11 @@ function CheckoutLineItem( {
 							<UpgradeCreditInformation product={ product } />
 						</UpgradeCreditInformationLineItem>
 						<LineItemMeta>
-							<LineItemSublabelAndPrice product={ product } />
+							<LineItemSublabelAndPrice
+								product={ product }
+								isStreamlinedPrice={ isStreamlinedPrice }
+								variants={ variants }
+							/>
 							<DomainDiscountCallout product={ product } />
 							<IntroductoryOfferCallout product={ product } />
 							<JetpackAkismetSaleCouponCallout product={ product } />
