@@ -27,6 +27,7 @@ import {
 import colorStudio from '@automattic/color-studio';
 import { Gridicon } from '@automattic/components';
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
+import { Plans } from '@automattic/data-stores';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { formatCurrency } from '@automattic/number-formatters';
 import { isNewsletterFlow, isAnyHostingFlow } from '@automattic/onboarding';
@@ -52,6 +53,7 @@ import {
 import { getSignupCompleteFlowName } from 'calypso/signup/storageUtils';
 import { useSelector } from 'calypso/state';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
+import { getWpcomPlanTotalIfPaidMonthly } from '../../utils';
 import getAkismetProductFeatures from '../lib/get-akismet-product-features';
 import getFlowPlanFeatures from '../lib/get-flow-plan-features';
 import getJetpackProductFeatures from '../lib/get-jetpack-product-features';
@@ -196,16 +198,16 @@ function CheckoutSummaryPriceList() {
 	const totalLineItem = getTotalLineItemFromCart( responseCart );
 	const translate = useTranslate();
 	const [ , streamlinedPriceExperimentAssignment ] = useStreamlinedPriceExperiment();
+	const { data: plans } = Plans.usePlans( { coupon: undefined } );
 
 	let subtotalBeforeDiscounts = 0;
 	let totalDiscount = 0;
 	if ( isStreamlinedPriceCheckoutTreatment( streamlinedPriceExperimentAssignment ) ) {
 		for ( const product of responseCart.products ) {
+			const originalAmountInteger =
+				getWpcomPlanTotalIfPaidMonthly( product, plans ) || product.item_original_subtotal_integer;
 			// In specific cases (e.g. premium domains) the original price (renewal) is lower than the due price.
-			subtotalBeforeDiscounts += Math.max(
-				product.item_subtotal_integer,
-				product.item_original_subtotal_integer
-			);
+			subtotalBeforeDiscounts += Math.max( product.item_subtotal_integer, originalAmountInteger );
 		}
 		totalDiscount = subtotalBeforeDiscounts - responseCart.sub_total_integer;
 	}

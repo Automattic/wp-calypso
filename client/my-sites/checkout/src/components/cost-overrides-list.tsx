@@ -7,6 +7,7 @@ import {
 } from '@automattic/calypso-products';
 import colorStudio from '@automattic/color-studio';
 import { FormStatus, useFormStatus, Button } from '@automattic/composite-checkout';
+import { Plans } from '@automattic/data-stores';
 import { formatCurrency } from '@automattic/number-formatters';
 import {
 	type ResponseCart,
@@ -32,7 +33,7 @@ import {
 import { useSelector } from 'calypso/state';
 import { getIsOnboardingAffiliateFlow } from 'calypso/state/signup/flow/selectors';
 import useCartKey from '../../use-cart-key';
-import { getAffiliateCouponLabel } from '../../utils';
+import { getAffiliateCouponLabel, getWpcomPlanTotalIfPaidMonthly } from '../../utils';
 import { CheckIcon } from './check-icon';
 import type { Theme } from '@automattic/composite-checkout';
 import type { LineItemCostOverrideForDisplay } from '@automattic/wpcom-checkout';
@@ -400,11 +401,12 @@ function SingleProductAndCostOverridesList( { product }: { product: ResponseCart
 		}
 	);
 	const [ , streamlinedPriceExperimentAssignment ] = useStreamlinedPriceExperiment();
+	const { data: plans } = Plans.usePlans( { coupon: undefined } );
 	if ( isStreamlinedPriceCheckoutTreatment( streamlinedPriceExperimentAssignment ) ) {
 		let streamlinedActualAmountDisplay;
 
-		// logic taken from packages/wpcom-checkout/src/checkout-line-items.tsx
-		const originalAmountInteger = product.item_original_subtotal_integer;
+		const originalAmountInteger =
+			getWpcomPlanTotalIfPaidMonthly( product, plans ) ?? product.item_original_subtotal_integer;
 		const originalAmountDisplay = formatCurrency( originalAmountInteger, product.currency, {
 			isSmallestUnit: true,
 			stripZeros: true,
