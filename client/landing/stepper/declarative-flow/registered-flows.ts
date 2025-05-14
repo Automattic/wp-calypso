@@ -41,8 +41,6 @@ const availableFlows: Record< string, () => Promise< { default: FlowV2< any > } 
 export const deprecatedV1Flows: Record< string, () => Promise< { default: Flow } > > = {
 	'site-setup': () =>
 		import( /* webpackChunkName: "site-setup-flow" */ './flows/site-setup-flow/site-setup-flow' ),
-	'site-setup2': () =>
-		import( /* webpackChunkName: "site-setup-flow" */ './flows/site-setup-flow/site-setup-flow' ),
 
 	'copy-site': () =>
 		import( /* webpackChunkName: "copy-site-flow" */ './flows/copy-site/copy-site' ),
