@@ -1,22 +1,24 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { PLAN_BUSINESS } from '@automattic/calypso-products';
 import { CircularProgressBar } from '@automattic/components';
 import {
 	updateLaunchpadSettings,
 	useSortedLaunchpadTasks,
-	OnboardSelect,
+	useLaunchpad,
+	type OnboardSelect,
 } from '@automattic/data-stores';
 import { Launchpad, Task } from '@automattic/launchpad';
 import { Button } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import useHomeLayoutQuery from 'calypso/data/home/use-home-layout-query';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
-import { skipLaunchpad } from 'calypso/landing/stepper/utils/skip-launchpad';
 import { launchSiteApi } from 'calypso/lib/signup/step-actions';
 import { useDispatch } from 'calypso/state';
+import { successNotice } from 'calypso/state/notices/actions';
 import { requestSite } from 'calypso/state/sites/actions';
 import { getSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -37,6 +39,7 @@ export const FullScreenLaunchpad = ( {
 	const siteId = useSelector( getSelectedSiteId ) || 0;
 	const site = useSelector( ( state: AppState ) => getSite( state, siteId ) );
 	const checklistSlug = site?.options?.site_intent ?? '';
+	const { data: launchpadData } = useLaunchpad( site?.slug || '' );
 	const layout = useHomeLayoutQuery( siteId || null );
 	const goals = useSelect(
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getGoals(),
@@ -44,6 +47,22 @@ export const FullScreenLaunchpad = ( {
 	);
 
 	const launchpadContext = 'focused-customer-home';
+
+	// Show success notice only once when the component first mounts
+	useEffect( () => {
+		if (
+			site &&
+			launchpadData &&
+			site?.plan?.product_slug === PLAN_BUSINESS &&
+			! launchpadData?.purchase_notification_shown
+		) {
+			dispatch( successNotice( __( "You're in! The Business Plan is now active." ) ) );
+			// Mark notification as shown
+			updateLaunchpadSettings( siteId, {
+				purchase_notification_shown: true,
+			} );
+		}
+	}, [ site, launchpadData ] );
 
 	const {
 		siteSlug,
