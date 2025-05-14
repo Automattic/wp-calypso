@@ -233,7 +233,7 @@ interface BaseProps extends Omit< React.HTMLAttributes< HTMLDivElement >, 'onSel
 		labelDayButton?: ( date: Date, modifiers?: Modifiers ) => string;
 		/**
 		 * The label for the weekday.
-		 * @default "Monday" | "Tuesday" | "Wednesday" | "Thursday" | "Friday" | "Saturday" | "Sunday"
+		 * @default ( date: Date ) => "Monday" | "Tuesday" | "Wednesday" | "Thursday" | "Friday" | "Saturday" | "Sunday"
 		 */
 		labelWeekday?: ( date: Date ) => string;
 	};
