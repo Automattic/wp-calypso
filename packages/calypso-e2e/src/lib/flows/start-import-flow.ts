@@ -20,7 +20,7 @@ const selectors = {
 	// Headers
 	setupHeader: 'h1:text("Themes")',
 	startBuildingHeader: ( text: string ) =>
-		`step-container-v2__heading h1:text("${ text }"), h1.onboarding-title:text("${ text }")`,
+		`.step-container-v2__heading h1:text("${ text }"), h1.onboarding-title:text("${ text }")`,
 
 	importModal: 'div.import__confirm-modal',
 
