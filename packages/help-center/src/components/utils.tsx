@@ -51,8 +51,13 @@ export const getLastMessage = ( {
 };
 
 export const getZendeskConversations = () => {
-	const conversations = Smooch?.getConversations?.() ?? [];
-	return conversations as unknown as ZendeskConversation[];
+	try {
+		const conversations = Smooch?.getConversations?.() ?? [];
+		return conversations as unknown as ZendeskConversation[];
+	} catch {
+		// Smooch is not completely initialized yet
+		return [];
+	}
 };
 
 export const getClientId = ( conversations: ZendeskConversation[] ): string =>

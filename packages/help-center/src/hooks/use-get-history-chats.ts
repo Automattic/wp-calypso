@@ -119,9 +119,11 @@ export const useGetHistoryChats = (): UseGetHistoryChatsResult => {
 			return;
 		}
 
+		const zendeskConversations = isChatLoaded ? getZendeskConversations() : [];
+
 		// Merge Zendesk and Odie conversations, remove the ones with an invalid message, then sort them by recency
 		const conversations = [
-			...filterAndUpdateConversationsWithStatus( getZendeskConversations(), supportInteractions ),
+			...filterAndUpdateConversationsWithStatus( zendeskConversations, supportInteractions ),
 			...getOdieConversationsWithNoSupportInteractions( odieConversations, supportInteractions ),
 		]
 			.filter( ( conversation ) => isValidLastMessageContent( conversation ) )
