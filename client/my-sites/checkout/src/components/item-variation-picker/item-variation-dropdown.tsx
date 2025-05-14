@@ -6,7 +6,7 @@ import {
 } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { FunctionComponent, useCallback, useEffect, useState } from 'react';
+import { FunctionComponent, useCallback, useEffect, useMemo, useState } from 'react';
 import isJetpackCheckout from 'calypso/lib/jetpack/is-jetpack-checkout';
 import {
 	useStreamlinedPriceExperiment,
@@ -37,14 +37,27 @@ export const ItemVariationDropDown: FunctionComponent< ItemVariationPickerProps 
 		isStreamlinedPriceDropdownTreatment( streamlinedPriceExperimentAssignment ) &&
 		isWpComPlan( selectedItem.product_slug );
 
+	const [ optimisticSelectedItem, setOptimisticSelectedItem ] = useState< string | null >( null );
+
+	useEffect( () => {
+		if ( isStreamlinedPrice ) {
+			setOptimisticSelectedItem( selectedItem.product_slug );
+		}
+	}, [ selectedItem.product_slug, isStreamlinedPrice ] );
+
 	// Multi-year domain products must be compared by volume because they have the same product id.
-	const selectedVariantIndexRaw = variants.findIndex( ( variant ) =>
-		isMultiYearDomainProduct( selectedItem )
-			? selectedItem.volume === variant.volume
-			: selectedItem.product_id === variant.productId
-	);
-	// findIndex returns -1 if it fails and we want null.
-	const selectedVariantIndex = selectedVariantIndexRaw > -1 ? selectedVariantIndexRaw : null;
+	const selectedVariantIndex = useMemo( () => {
+		const rawIndex = variants.findIndex( ( variant ) => {
+			if ( isStreamlinedPrice && optimisticSelectedItem ) {
+				return variant.productSlug === optimisticSelectedItem;
+			}
+			// If not optimistic, or optimisticSelectedItem is not set, use the original logic
+			return isMultiYearDomainProduct( selectedItem )
+				? selectedItem.volume === variant.volume && variant.productId === selectedItem.product_id
+				: selectedItem.product_id === variant.productId;
+		} );
+		return rawIndex > -1 ? rawIndex : null;
+	}, [ variants, isStreamlinedPrice, optimisticSelectedItem, selectedItem ] );
 
 	// reset the dropdown highlight when the selected product changes
 	useEffect( () => {
@@ -54,10 +67,13 @@ export const ItemVariationDropDown: FunctionComponent< ItemVariationPickerProps 
 	// wrapper around onChangeItemVariant to close up dropdown on change
 	const handleChange = useCallback(
 		( uuid: string, productSlug: string, productId: number, volume?: number ) => {
+			if ( isStreamlinedPrice ) {
+				setOptimisticSelectedItem( productSlug );
+			}
 			onChangeItemVariant( uuid, productSlug, productId, volume );
 			toggle( null );
 		},
-		[ onChangeItemVariant, toggle ]
+		[ onChangeItemVariant, toggle, isStreamlinedPrice ]
 	);
 
 	const selectNextVariant = useCallback( () => {
