@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import { Component } from 'react';
+import { MenuList } from '../menu';
 import ListItem from './list-item';
 import ListItemCreateLink from './list-item-create-link';
 
@@ -13,9 +14,9 @@ export default class ReaderSidebarListsList extends Component {
 
 	render() {
 		const { lists, currentListOwner, currentListSlug, path } = this.props;
-		/* eslint-disable wpcalypso/jsx-classname-namespace */
+
 		return (
-			<ul className="sidebar__menu-list">
+			<MenuList>
 				{ lists.map( ( list ) => (
 					<ListItem
 						key={ list.ID }
@@ -26,8 +27,7 @@ export default class ReaderSidebarListsList extends Component {
 					/>
 				) ) }
 				<ListItemCreateLink path={ path } />
-			</ul>
+			</MenuList>
 		);
-		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 }
