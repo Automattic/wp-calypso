@@ -160,11 +160,7 @@ const PluginDetailsSidebar = ( {
 						{ translate( 'Tested up to' ) }
 					</div>
 					<div className="plugin-details-sidebar__tested-value value">
-						{ sprintf(
-							// translators: %s is the version of WordPress that the plugin has been tested with
-							translate( 'WordPress %s' ),
-							tested
-						) }
+						{ sprintf( 'WordPress %s', tested ) }
 					</div>
 				</div>
 			) }
