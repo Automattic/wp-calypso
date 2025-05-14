@@ -1,4 +1,4 @@
-import { Card, FormLabel } from '@automattic/components';
+import { FormLabel } from '@automattic/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
@@ -10,7 +10,6 @@ import FormTextInput from 'calypso/components/forms/form-text-input';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 
 export default function NewAppPasswordForm( {
-	appPasswords = [],
 	isSubmitting,
 	addingPassword,
 	onSubmit,
@@ -26,7 +25,7 @@ export default function NewAppPasswordForm( {
 	} );
 
 	return (
-		<Card className={ cardClasses }>
+		<div className={ cardClasses }>
 			<form
 				id="add-application-password"
 				className="application-passwords__add-new"
@@ -56,13 +55,11 @@ export default function NewAppPasswordForm( {
 							? translate( 'Generating Password…' )
 							: translate( 'Generate Password' ) }
 					</FormButton>
-					{ appPasswords.length ? (
-						<FormButton isPrimary={ false } type="button" onClick={ onClickCancel }>
-							{ translate( 'Cancel' ) }
-						</FormButton>
-					) : null }
+					<FormButton isPrimary={ false } type="button" onClick={ onClickCancel }>
+						{ translate( 'Cancel' ) }
+					</FormButton>
 				</FormButtonsBar>
 			</form>
-		</Card>
+		</div>
 	);
 }

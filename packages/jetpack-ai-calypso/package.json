@@ -5,6 +5,14 @@
 	"calypso:src": "src/index.ts",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
+	"exports": {
+		".": {
+			"calypso:src": "./src/index.ts",
+			"types": "./dist/types/index.d.ts",
+			"import": "./dist/esm/index.js",
+			"require": "./dist/cjs/index.js"
+		}
+	},
 	"sideEffects": [
 		"*.css",
 		"*.scss"
@@ -56,7 +64,7 @@
 	},
 	"peerDependencies": {
 		"@babel/runtime": "^7.27.0",
-		"@wordpress/data": "^10.22.0",
+		"@wordpress/data": "^10.23.0",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1"
 	},

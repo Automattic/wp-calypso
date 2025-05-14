@@ -2,7 +2,6 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { FEATURE_INSTALL_THEMES } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
-import { SelectDropdown } from '@automattic/components';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { compact, pickBy } from 'lodash';
@@ -15,18 +14,17 @@ import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QueryThemeFilters from 'calypso/components/data/query-theme-filters';
-import { SearchThemes, SearchThemesV2 } from 'calypso/components/search-themes';
+import { SearchThemes } from 'calypso/components/search-themes';
 import ThemeDesignYourOwnModal from 'calypso/components/theme-design-your-own-modal';
 import ThemeSiteSelectorModal from 'calypso/components/theme-site-selector-modal';
 import { THEME_TIERS } from 'calypso/components/theme-tier/constants';
-import { getOptionLabel } from 'calypso/landing/subscriptions/helpers';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { THEME_COLLECTIONS } from 'calypso/my-sites/themes/collections/collection-definitions';
 import ShowcaseThemeCollection from 'calypso/my-sites/themes/collections/showcase-theme-collection';
 import ThemeCollectionViewHeader from 'calypso/my-sites/themes/collections/theme-collection-view-header';
 import ThemeShowcaseSurvey from 'calypso/my-sites/themes/survey';
 import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import getLastNonEditorRoute from 'calypso/state/selectors/get-last-non-editor-route';
+import getPreviousPath from 'calypso/state/selectors/get-previous-path';
 import getSiteEditorUrl from 'calypso/state/selectors/get-site-editor-url';
 import getSiteFeaturesById from 'calypso/state/selectors/get-site-features';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
@@ -45,6 +43,7 @@ import {
 } from 'calypso/state/themes/selectors';
 import { getThemesBookmark } from 'calypso/state/themes/themes-ui/selectors';
 import EligibilityWarningModal from './atomic-transfer-dialog';
+import { CustomSelectWrapper } from './custom-select-wrapper';
 import {
 	addTracking,
 	getSubjectsFromTermTable,
@@ -222,16 +221,16 @@ class ThemeShowcase extends Component {
 			return [
 				...availableTiers,
 				{
-					value: tier,
-					label: THEME_TIERS[ tier ].label,
+					key: tier,
+					name: THEME_TIERS[ tier ].label,
 				},
 			];
 		}, [] );
 
 		return [
 			{
-				value: 'all',
-				get label() {
+				key: 'all',
+				get name() {
 					return translate( 'All' );
 				},
 			},
@@ -293,11 +292,11 @@ class ThemeShowcase extends Component {
 
 	doSearch = ( searchBoxContent ) => {
 		const filterRegex = /([\w-]*):([\w-]*)/g;
-		const { filterToTermTable, subjectStringFilter, isSearchV2 } = this.props;
+		const { filterToTermTable, subjectStringFilter, isLoggedIn } = this.props;
 		const staticFilters = this.getStaticFilters();
 
-		const filters =
-			`${ searchBoxContent } ${ isSearchV2 ? subjectStringFilter : '' }`.match( filterRegex ) || [];
+		const searchString = `${ searchBoxContent } ${ ! isLoggedIn ? subjectStringFilter : '' }`;
+		const filters = searchString.match( filterRegex ) || [];
 
 		const validFilters = filters.map( ( filter ) => filterToTermTable[ filter ] );
 		const filterString = compact( validFilters ).join( '+' );
@@ -341,7 +340,9 @@ class ThemeShowcase extends Component {
 		} );
 	};
 
-	onTierSelectFilter = ( { value: tier } ) => {
+	onTierSelectFilter = ( attrs ) => {
+		const tier = attrs.selectedItem.key;
+
 		recordTracksEvent( 'calypso_themeshowcase_filter_pricing_click', { tier } );
 		trackClick( 'search bar filter', tier );
 
@@ -589,18 +590,18 @@ class ThemeShowcase extends Component {
 			search,
 			filter,
 			isLoggedIn,
-			isSearchV2,
 			pathName,
 			featureStringFilter,
 			filterString,
 			isJetpackSite,
 			isMultisite,
+			previousPath,
+
 			premiumThemesEnabled,
 			isSiteECommerceFreeTrial,
 			isSiteWooExpressOrEcomFreeTrial,
 			isSiteWooExpress,
 			isCollectionView,
-			lastNonEditorRoute,
 			translate,
 		} = this.props;
 		const tier = this.props.tier || 'all';
@@ -663,7 +664,7 @@ class ThemeShowcase extends Component {
 				/>
 				{ this.renderSiteAssemblerSelectorModal() }
 				{ isLoggedIn && (
-					<ThemeShowcaseSurvey condition={ () => lastNonEditorRoute.includes( 'theme/' ) } />
+					<ThemeShowcaseSurvey condition={ () => previousPath.includes( 'theme/' ) } />
 				) }
 				<div className="themes__content" ref={ this.scrollRef }>
 					<QueryThemeFilters />
@@ -695,31 +696,29 @@ class ThemeShowcase extends Component {
 								<div className="theme__search-container">
 									<div className="theme__search">
 										<div className="theme__search-input">
-											{ isSearchV2 ? (
-												<SearchThemesV2
-													query={ featureStringFilter + search }
-													onSearch={ this.doSearch }
-												/>
-											) : (
-												<SearchThemes
-													query={ filterString + search }
-													onSearch={ this.doSearch }
-													recordTracksEvent={ this.recordSearchThemesTracksEvent }
-												/>
-											) }
+											<SearchThemes
+												query={ isLoggedIn ? filterString + search : featureStringFilter + search }
+												onSearch={ this.doSearch }
+												recordTracksEvent={ this.recordSearchThemesTracksEvent }
+											/>
 										</div>
 										{ tabFilters && premiumThemesEnabled && ! isMultisite && (
-											<>
-												<SelectDropdown
-													className="section-nav-tabs__dropdown"
-													onSelect={ this.onTierSelectFilter }
-													selectedText={ translate( 'View: %s', {
-														args: getOptionLabel( tiers, tier ) || '',
-													} ) }
-													options={ tiers }
-													initialSelected={ tier }
-												></SelectDropdown>
-											</>
+											<CustomSelectWrapper
+												className="theme__tier-select"
+												label={ translate( 'Filters' ) }
+												hideLabelFromVision
+												__next40pxDefaultSize
+												options={ tiers.map( ( t ) => {
+													return { ...t, className: t.key === tier ? 'is-selected' : '' };
+												} ) }
+												value={ {
+													key: tier,
+													name: translate( 'View: %s', {
+														args: this.getTiers().find( ( t ) => t.key === tier ).name,
+													} ),
+												} }
+												onChange={ this.onTierSelectFilter }
+											/>
 										) }
 									</div>
 								</div>
@@ -795,8 +794,7 @@ const mapStateToProps = ( state, { siteId, filter } ) => {
 		isSiteWooExpress: isSiteOnWooExpress( state, siteId ),
 		isSiteWooExpressOrEcomFreeTrial:
 			isSiteOnECommerceTrial( state, siteId ) || isSiteOnWooExpress( state, siteId ),
-		isSearchV2: ! isUserLoggedIn( state ) && config.isEnabled( 'themes/text-search-lots' ),
-		lastNonEditorRoute: getLastNonEditorRoute( state ),
+		previousPath: getPreviousPath( state ),
 		themeTiers: getThemeTiers( state ),
 	};
 };

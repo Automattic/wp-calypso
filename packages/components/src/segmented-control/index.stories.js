@@ -4,7 +4,7 @@ import SimplifiedSegmentedControl from './simplified';
 import SegmentedControl from './';
 
 export default {
-	title: 'packages/components/SegmentedControl',
+	title: 'Unaudited/SegmentedControl',
 	component: SegmentedControl,
 	argTypes: {
 		compact: { control: 'boolean' },

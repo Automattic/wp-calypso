@@ -131,9 +131,9 @@ export default function SocialProfiles( {
 			/>
 			<SocialProfilesFormField
 				name="twitterUrl"
-				label={ translate( 'Twitter' ) }
-				logo={ <SocialLogo size={ 22 } icon="twitter" /> }
-				placeholder="https://twitter.com/yourprofile"
+				label="X"
+				logo={ <SocialLogo size={ 22 } icon="x" /> }
+				placeholder="https://x.com/yourprofile"
 				value={ formValues.twitterUrl }
 				onChange={ onChange }
 			/>

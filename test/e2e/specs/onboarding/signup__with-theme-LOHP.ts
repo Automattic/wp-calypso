@@ -18,6 +18,10 @@ import {
 	cancelPurchaseFlow,
 	NoticeComponent,
 	PurchasesPage,
+	envVariables,
+	LoggedOutHomePage,
+	LoggedOutThemesPage,
+	ThemesDetailPage,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 import { apiCloseAccount } from '../shared';
@@ -57,38 +61,23 @@ describe( 'Lifecyle: Logged Out Home Page, signup, onboard, launch and cancel su
 			await page.goto( 'https://WordPress.com' );
 		} );
 
-		it( 'Selects a theme', async function () {
-			// Hovering over the container to stop the carousel scrolling
-			// The force is necessary as the container is not considered stable due to the scrolling
-			const themeContainer = page.locator( '.lp-content.lp-content-area--scrolling' ).first();
-			await themeContainer.hover( { force: true } );
+		it( 'Select a theme', async function () {
+			const lohp = new LoggedOutHomePage( page );
 
-			// Hovering over the theme card is necessary to make the "Start with this theme" button visible.
-			const themeCard = themeContainer.locator( '.lp-image-top-row' ).last();
-			await themeCard.hover();
-
-			const themeButton = themeCard.getByText( 'Start with this theme' );
-			const calypsoUrl = new URL( DataHelper.getCalypsoURL() );
-			const themeButtonUrl = new URL( ( await themeButton.getAttribute( 'href' ) ) || '' );
-
-			if ( calypsoUrl.hostname !== 'wordpress.com' ) {
-				// Reroute the click to the current Calypso URL.
-				await page.route( themeButtonUrl.href, async ( route ) => {
-					themeButtonUrl.host = calypsoUrl.host;
-					themeButtonUrl.protocol = calypsoUrl.protocol;
-
-					await route.abort();
-					await page.unrouteAll( { behavior: 'ignoreErrors' } );
-					await page.goto( themeButtonUrl.href, { waitUntil: 'load' } );
-				} );
+			if ( envVariables.VIEWPORT_NAME !== 'mobile' ) {
+				themeSlug = await lohp.selectFirstTheme();
+				return;
 			}
-			// Get theme slug
-			const pageMatch = new URL( themeButtonUrl.href ).search.match( 'theme=([a-z]*)?&' );
-			themeSlug = pageMatch?.[ 1 ] || null;
 
-			// Hover, otherwise the element isn't considered stable, and is out of the viewport.
-			await themeCard.hover( { force: true } );
-			await themeCard.getByText( 'Start with this theme' ).click( { force: true } );
+			await lohp.clickExploreThemes();
+
+			const themeShowcase = new LoggedOutThemesPage( page );
+
+			await themeShowcase.filterBy( 'Free' );
+			await themeShowcase.clickFirstTheme();
+
+			const themeDetails = new ThemesDetailPage( page );
+			themeSlug = await themeDetails.pickThisDesign();
 		} );
 
 		it( 'Sign up as new user', async function () {
@@ -151,6 +140,7 @@ describe( 'Lifecyle: Logged Out Home Page, signup, onboard, launch and cancel su
 			await mePage.visit();
 
 			const meSidebarComponent = new MeSidebarComponent( page );
+			await meSidebarComponent.openMobileMenu();
 			await meSidebarComponent.navigate( 'Purchases' );
 		} );
 

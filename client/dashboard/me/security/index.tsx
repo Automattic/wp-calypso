@@ -3,7 +3,11 @@ import PageLayout from '../../components/page-layout';
 
 function Security() {
 	return (
-		<PageLayout title={ __( 'Security' ) } description={ __( 'Manage your security settings.' ) } />
+		<PageLayout
+			title={ __( 'Security' ) }
+			description={ __( 'Manage your security settings.' ) }
+			size="small"
+		/>
 	);
 }
 

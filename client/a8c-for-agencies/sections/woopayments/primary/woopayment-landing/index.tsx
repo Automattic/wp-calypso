@@ -15,7 +15,7 @@ import {
 
 const WooPaymentsLanding = () => {
 	const translate = useTranslate();
-	const title = translate( 'WooPayments Commissions' );
+	const title = translate( 'WooPayments commissions' );
 
 	const { data: licensesWithWooPayments, isFetched } = useFetchAllLicenses(
 		LicenseFilter.Attached,

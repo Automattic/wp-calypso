@@ -4,7 +4,7 @@ import { Button, Card, FormInputValidation, FormLabel, Gridicon } from '@automat
 import { alert } from '@automattic/components/src/icons';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { suggestEmailCorrection } from '@automattic/onboarding';
-import { Spinner, TextControl } from '@wordpress/components';
+import { TextControl } from '@wordpress/components';
 import { Icon } from '@wordpress/icons';
 import clsx from 'clsx';
 import cookie from 'cookie';
@@ -17,7 +17,7 @@ import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import { FormDivider } from 'calypso/blocks/authentication';
 import JetpackConnectSiteOnly from 'calypso/blocks/jetpack-connect-site-only';
-import FormsButton from 'calypso/components/forms/form-button';
+import LoginSubmitButton from 'calypso/blocks/login/login-submit-button';
 import FormPasswordInput from 'calypso/components/forms/form-password-input';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import Notice from 'calypso/components/notice';
@@ -38,7 +38,6 @@ import { login } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/url';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
 import { sendEmailLogin } from 'calypso/state/auth/actions';
-import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import {
 	formUpdate,
 	getAuthAccountType,
@@ -82,14 +81,12 @@ export class LoginForm extends Component {
 		getAuthAccountType: PropTypes.func.isRequired,
 		hasAccountTypeLoaded: PropTypes.bool.isRequired,
 		isFormDisabled: PropTypes.bool,
-		isLoggedIn: PropTypes.bool.isRequired,
 		loginUser: PropTypes.func.isRequired,
 		loginSocialUser: PropTypes.func.isRequired,
 		createSocialUserFailed: PropTypes.func.isRequired,
 		handleUsernameChange: PropTypes.func,
 		oauth2Client: PropTypes.object,
 		onSuccess: PropTypes.func.isRequired,
-		privateSite: PropTypes.bool,
 		redirectTo: PropTypes.string,
 		requestError: PropTypes.object,
 		resetAuthAccountType: PropTypes.func.isRequired,
@@ -103,7 +100,6 @@ export class LoginForm extends Component {
 		showSocialLoginFormOnly: PropTypes.bool,
 		currentQuery: PropTypes.object,
 		hideSignupLink: PropTypes.bool,
-		isSignupExistingAccount: PropTypes.bool,
 		sendMagicLoginLink: PropTypes.func,
 		isSendingEmail: PropTypes.bool,
 		cancelSocialAccountConnectLinking: PropTypes.func,
@@ -355,37 +351,6 @@ export class LoginForm extends Component {
 		);
 	}
 
-	renderPrivateSiteNotice() {
-		if ( this.props.privateSite && ! this.props.isLoggedIn ) {
-			return (
-				<Notice status="is-info" showDismiss={ false } icon="lock">
-					{ this.props.translate(
-						'Log in to WordPress.com to proceed. ' +
-							"If you are not a member of this site, we'll send " +
-							'your username to the site owner for approval.'
-					) }
-				</Notice>
-			);
-		}
-	}
-
-	renderLoginFromSignupNotice() {
-		return (
-			<Notice status="is-transparent-info" showDismiss={ false }>
-				{ this.props.translate(
-					'This email address is already associated with an account. Please consider {{returnToSignup}}using another one{{/returnToSignup}} or log in.',
-					{
-						components: {
-							returnToSignup: (
-								<a href={ this.getSignupUrl() } onClick={ this.recordSignUpLinkClick } />
-							),
-						},
-					}
-				) }
-			</Notice>
-		);
-	}
-
 	onWooCommerceSocialSuccess = ( ...args ) => {
 		this.recordWooCommerceLoginTracks( 'social' );
 		this.props.onSuccess( args );
@@ -445,7 +410,6 @@ export class LoginForm extends Component {
 		return (
 			<form method="post">
 				<Card className="login__form">
-					{ this.renderPrivateSiteNotice() }
 					<div className="login__form-userdata">
 						{ linkingSocialUser && (
 							<p>
@@ -796,7 +760,6 @@ export class LoginForm extends Component {
 			isWoo,
 			isBlazePro,
 			hideSignupLink,
-			isSignupExistingAccount,
 			isSendingEmail,
 			isSocialFirst,
 			isJetpack,
@@ -893,8 +856,6 @@ export class LoginForm extends Component {
 									) }
 								</p>
 							) }
-
-							{ isSignupExistingAccount && this.renderLoginFromSignupNotice() }
 
 							<FormLabel htmlFor="usernameOrEmail">{ this.renderUsernameorEmailLabel() }</FormLabel>
 
@@ -1028,14 +989,14 @@ export class LoginForm extends Component {
 						) }
 
 						{ shouldRenderForgotPasswordLink && this.renderLostPasswordLink() }
+
 						<div className="login__form-action">
-							<FormsButton
-								primary
-								busy={ ! isWoo && isSendingEmail }
-								disabled={ isSubmitButtonDisabled }
-							>
-								{ isWoo && isSendingEmail ? <Spinner /> : this.getLoginButtonText() }
-							</FormsButton>
+							<LoginSubmitButton
+								isWoo={ isWoo }
+								isSendingEmail={ isSendingEmail }
+								isDisabled={ isSubmitButtonDisabled }
+								buttonText={ this.getLoginButtonText() }
+							/>
 						</div>
 
 						{ ! isBlazePro && isJetpack && (
@@ -1246,8 +1207,6 @@ export class LoginForm extends Component {
 					</p>
 				) }
 
-				{ this.renderPrivateSiteNotice() }
-
 				{ this.renderLoginOptions() }
 
 				{ this.showJetpackConnectSiteOnly() && (
@@ -1271,7 +1230,6 @@ export default connect(
 			currentRoute: getCurrentRoute( state ),
 			hasAccountTypeLoaded: accountType !== null,
 			isFormDisabled: isFormDisabledSelector( state ),
-			isLoggedIn: Boolean( getCurrentUserId( state ) ),
 			oauth2Client: getCurrentOAuth2Client( state ),
 			isFromAutomatticForAgenciesPlugin:
 				'automattic-for-agencies-client' === get( getCurrentQueryArguments( state ), 'from' ),

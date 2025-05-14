@@ -12,14 +12,6 @@
  */
 @import "calypso/blocks/import/style/base";
 
-/**
- * General onboarding styling
- */
-body {
-	--color-body-background: #fdfdfd;
-	background-color: var(--color-body-background);
-}
-
 body,
 button {
 	font-family: $sans;

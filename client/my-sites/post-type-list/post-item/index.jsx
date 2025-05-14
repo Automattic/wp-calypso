@@ -7,7 +7,6 @@ import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import PostShare from 'calypso/blocks/post-share';
 import PostRelativeTimeStatus from 'calypso/my-sites/post-relative-time-status';
-import { preloadEditor } from 'calypso/sections-preloaders';
 import { bumpStat } from 'calypso/state/analytics/actions';
 import { getNormalizedPost } from 'calypso/state/posts/selectors';
 import { canCurrentUserEditPost } from 'calypso/state/posts/selectors/can-current-user-edit-post';
@@ -138,11 +137,7 @@ class PostItem extends Component {
 							) }
 						</div>
 						{ /* eslint-disable jsx-a11y/mouse-events-have-key-events, jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions */ }
-						<h1
-							className="post-item__title"
-							onClick={ this.clickHandler( 'title' ) }
-							onMouseOver={ preloadEditor }
-						>
+						<h1 className="post-item__title" onClick={ this.clickHandler( 'title' ) }>
 							{ /* eslint-enable jsx-a11y/mouse-events-have-key-events, jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions */ }
 							{ ! externalPostLink && ! isTrashed && (
 								<a

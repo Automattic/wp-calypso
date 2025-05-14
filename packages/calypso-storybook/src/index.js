@@ -86,6 +86,7 @@ module.exports = function storybookDefaultConfig( {
 				},
 			];
 			config.resolve.mainFields = [ 'browser', 'calypso:src', 'module', 'main' ];
+			config.resolve.conditionNames = [ 'calypso:src', 'import', 'module', 'require' ];
 			config.plugins.push( ...plugins );
 			return config;
 		},

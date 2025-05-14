@@ -9,7 +9,6 @@ dist/
 node_modules/
 !.eslintrc.js
 /client/server/devdocs/search-index.js
-/packages/calypso-codemods/tests
 /packages/webpack-rtl-plugin/test/dist*/
 /packages/wp-babel-makepot/test/examples
 /desktop/build/

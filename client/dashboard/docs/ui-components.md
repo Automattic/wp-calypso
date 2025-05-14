@@ -23,20 +23,11 @@ Relying on CSS overrides and hacks should be avoided as much as possible.
 
 ## Additional Layout Components
 
-In addition to the core components, the dashboard includes several reusable layout components that help structure the UI:
+In addition to the core components, the dashboard includes several reusable layout components that help structure the UI. They are found in the `/client/dashboard/components` directory:
 
-- **Page Layout** (`/client/dashboard/page-layout/`): The main container for every dashboard page.
-- **Menu** (`/client/dashboard/menu/`) and **Responsive Menu** (`/client/dashboard/responsive-menu/`): Reusable components to render mobile-friendly navigation menus.
-- **DataViews Card** (`/client/dashboard/dataviews-card/`): A card component for displaying data views.
-- **Overview Card** (`/client/dashboard/overview-card/`): Standard card for data display
-- **Header Bar** (`/client/dashboard/header-bar/`): A reusable header bar component for displaying a header bar (main and secondary headers).
+- **Page Layout**: The main container for every dashboard page.
+- **Menu** and **Responsive Menu**: Reusable components to render mobile-friendly navigation menus.
+- **DataViews Card**: A card component for displaying data views.
+- **Overview Card**: Standard card for data display
+- **Header Bar**: A reusable header bar component for displaying a header bar (main and secondary headers).
 
-## Accessibility Considerations
-
-All components should follow WordPress accessibility guidelines:
-
-1. **Keyboard navigation**: Ensure all interactive elements are keyboard accessible
-2. **Screen readers**: Use appropriate ARIA attributes when needed
-3. **Color contrast**: Maintain sufficient contrast ratios
-4. **Focus states**: Ensure visible focus indicators on interactive elements
-5. **Text alternatives**: Provide alt text for images and icons

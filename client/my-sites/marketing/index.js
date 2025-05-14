@@ -1,4 +1,5 @@
 import page from '@automattic/calypso-router';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
 import {
@@ -20,7 +21,7 @@ export default function () {
 	} );
 
 	page( '/marketing/ultimate-traffic-guide*', function redirectToWPCoursesPage() {
-		window.location.replace( 'https://wordpress.com/learn/courses/intro-to-seo/' );
+		window.location.replace( localizeUrl( 'https://wordpress.com/support/courses/seo/' ) );
 	} );
 
 	const paths = [

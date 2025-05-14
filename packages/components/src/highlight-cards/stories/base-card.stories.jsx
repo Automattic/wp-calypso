@@ -1,7 +1,7 @@
 import BaseCard from '../base-card';
 
 export default {
-	title: 'packages/components/Highlight Cards/BaseCard',
+	title: 'Unaudited/Highlight Cards/BaseCard',
 	component: BaseCard,
 	argTypes: {
 		heading: { control: 'text' },

@@ -10,10 +10,16 @@
 $image-height: 47px;
 
 .layout.is-section-login {
-	padding-bottom: $image-height;
 	position: relative;
-	min-height: calc(100% - #{$image-height});
+	min-height: 100%; // Needed for any screen not yet using a StepContainerV2 wireframe (e.g. magic login).
 
+	// This adjustment is only necessary when rendering the Jetpack colophon.
+	// isWhiteLogin screens don't need it.
+	&:where(:not(.is-white-login)) {
+		padding-bottom: $image-height;
+		min-height: calc(100% - #{$image-height});
+	}
+	
 	.layout__content {
 		position: static;
 	}
@@ -72,9 +78,9 @@ $image-height: 47px;
 }
 
 .wp-login__links {
-
 	a,
-	button {
+	button,
+	.components-button {
 		border-bottom: 1px solid var(--color-neutral-10);
 		box-sizing: border-box;
 		cursor: pointer;
@@ -136,26 +142,6 @@ $image-height: 47px;
 	}
 }
 
-.card.wp-login__private-site {
-	margin-bottom: 0;
-}
-
-.wp-login__private-site-image {
-	height: 92px;
-	margin-bottom: 10px;
-	text-align: center;
-}
-
-.wp-login__private-site-header {
-	font-weight: 600;
-	margin-bottom: 10px;
-	text-align: center;
-}
-
-.wp-login__private-site-button {
-	width: 100%;
-}
-
 .wp-login__site-return-link {
 	overflow: hidden;
 	position: relative;
@@ -169,8 +155,9 @@ $image-height: 47px;
 .layout.is-jetpack-login:not(.is-wccom-oauth-flow):not(.is-woocommerce-core-profiler-flow) {
 	@include jetpack-connect-colors();
 
-	.auth-form__social-buttons {
+	.components-button {
 		--color-accent: var(--studio-jetpack-green-50);
+		--color-accent-60: var(--studio-jetpack-green-60);
 	}
 }
 
@@ -304,7 +291,7 @@ $image-height: 47px;
 }
 
 .layout.is-white-login {
-	background-color: #fdfdfd;
+	background-color: var( --color-main-background, #fcfcfc );
 
 	// Specificity bump.
 	.layout__content.layout__content {
@@ -364,6 +351,10 @@ $image-height: 47px;
 		}
 	}
 
+	.login__form-action .components-button.is-primary {
+		margin: 6px auto 13px;
+	}
+
 	.login form {
 
 		// We shouldn't regularly use .components-* classnames. The following is
@@ -371,10 +362,9 @@ $image-height: 47px;
 		// input instances would come from `@wordpress/components` and the
 		// following overrides could be safely deleted.
 		input:not(.components-text-control__input),
-		button:not(.social-buttons__button) {
+		button:not(.components-button) {
 			/* Note: Same as `button.signup-form__submit, .signup-form__input.form-text-input` */
-			height: 44px;
-			border-radius: 4px;
+			height: 40px; // Matches .components-button height __next40pxDefaultSize
 			border: 1px solid var(--studio-gray-10);
 			font-size: $font-body;
 
@@ -383,10 +373,6 @@ $image-height: 47px;
 			&.disabled {
 				background-color: #fdfdfd;
 			}
-		}
-
-		.social-buttons__button {
-			border-radius: 4px;
 		}
 
 		.login__form-userdata input {
@@ -457,14 +443,7 @@ $image-height: 47px;
 	}
 
 	.wp-login__main.is-social-first {
-		max-width: 758px;
-		margin-top: 24px;
-		padding-left: 20px;
-		padding-right: 20px;
-
-		@include break-medium {
-			margin-top: 20.5vh;
-		}
+		max-width: none;
 
 		.wp-login__header-navigation {
 			align-items: center;
@@ -516,11 +495,6 @@ $image-height: 47px;
 			text-align: center;
 			text-decoration: underline;
 			text-underline-offset: 5px;
-			margin-top: 24px;
-
-			@include break-mobile {
-				margin-top: 40px;
-			}
 		}
 	}
 
@@ -624,20 +598,17 @@ $image-height: 47px;
 			}
 		}
 
-		.social-buttons__button {
+		.components-button {
 			--color-accent: var(--color-wp-job-manager);
+			--color-accent-60: color-mix(in srgb, var(--color-wp-job-manager), #000 10%);
 		}
 	}
 
-	.wp-login__main .locale-suggestions .locale-suggestions__notice.is-light {		
+	.wp-login__main .locale-suggestions .locale-suggestions__notice.is-light {
 		&,
 		.calypso-notice__icon-wrapper {
 			background-color: var(--studio-gray-0);
 		}
-	}
-
-	.login__form-gutenboarding-wordpress-logo {
-		display: none;
 	}
 
 	.layout__content {
@@ -703,6 +674,7 @@ $image-height: 47px;
 		> .card {
 			padding: 0;
 			border: 0;
+			box-shadow: none;
 		}
 	}
 
@@ -750,10 +722,8 @@ $image-height: 47px;
 	.login__form-terms {
 		color: rgba(#00101c, 0.6);
 		margin: 24px 0 0;
-
-		a {
-			text-decoration: none;
-		}
+		font-size: 0.875rem;
+		text-align: left;
 	}
 
 	button.form-button.is-primary,
@@ -783,6 +753,13 @@ $image-height: 47px;
 		&:focus {
 			background-color: darken(#1d4fc4, 10%);
 		}
+	}
+
+	.components-button.is-primary {
+		min-height: 56px;
+		margin-top: 16px;
+		font-size: 16px;
+		font-weight: 600;
 	}
 
 	.two-factor-authentication__actions {
@@ -834,9 +811,12 @@ $image-height: 47px;
 		clip-path: unset;
 	}
 
-	.social-buttons__button {
+	.components-button {
 		--color-accent: var(--color-gravatar);
+		--color-accent-60: color-mix(in srgb, var(--color-gravatar), #000 13%);
+	}
 
+	.social-buttons__button {
 		box-shadow: none;
 		padding: unset;
 		height: auto;
@@ -948,26 +928,3 @@ $image-height: 47px;
 	--login-form-column-max-width: 327px;
 }
 
-@include break-mobile {
-	:root {
-		--login-form-column-max-width: 600px;
-	}
-}
-
-@include break-small {
-	:root {
-		--login-form-column-max-width: 327px;
-	}
-}
-
-@include break-medium {
-	:root {
-		--login-form-column-max-width: 350px;
-	}
-}
-
-@include break-large {
-	:root {
-		--login-form-column-max-width: 327px;
-	}
-}
