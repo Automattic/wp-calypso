@@ -76,7 +76,7 @@ export type PlansIntent =
 	| 'plans-guided-segment-consumer-or-business'
 	| 'plans-site-selected-legacy'
 	| 'plans-playground'
-	| 'plans-playground-premium'
+	| 'plans-playground-premium' // This plan intent is currently not utilized but will be soon
 	| 'default';
 
 export interface PlanActionOverrides {
