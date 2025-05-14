@@ -4,7 +4,7 @@ import { DataHelper } from '../..';
 const selectors = {
 	// Generic
 	button: ( text: string ) => `button:text("${ text }")`,
-	backLink: '.navigation-link:text("Back")',
+	backLink: '.navigation-link:text("Back"), .step-container-v2__back-button:text("Back")',
 	dontHaveASiteButton: 'button:text-matches("choose a content platform", "i")',
 	migrationModalCancel: 'button.action-buttons__cancel',
 	// Inputs
