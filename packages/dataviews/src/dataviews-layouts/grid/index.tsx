@@ -163,8 +163,9 @@ function GridItem< Item >( {
 					onClickItem={ onClickItem }
 					LinkComponent={ LinkComponent }
 					className="dataviews-view-grid__title-field dataviews-title-field"
+					{ ...titleA11yProps }
 				>
-					<div { ...titleA11yProps }>{ renderedTitleField }</div>
+					{ renderedTitleField }
 				</ItemClickWrapper>
 				{ !! actions?.length && (
 					<ItemActions item={ item } actions={ actions } isCompact />
