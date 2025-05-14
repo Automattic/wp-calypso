@@ -23,7 +23,6 @@ import { getSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { AppState } from 'calypso/types';
 import { useMyHomeCardLaunchpad } from '../cards/launchpad/use-my-home-card-launchpad';
-// import { usePurchasePlanNotification } from '../hooks/use-purchase-plan-notification';
 import './full-screen-launchpad.scss';
 
 export const FullScreenLaunchpad = ( {
