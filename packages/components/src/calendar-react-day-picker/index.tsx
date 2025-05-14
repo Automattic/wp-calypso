@@ -137,6 +137,7 @@ export const DateRangeCalendar = ( {
 	selected: selectedProp,
 	onSelect,
 	timeZone,
+	excludeDisabled,
 	...props
 }: DateRangeCalendarProps ) => {
 	const commonProps = useCommonProps( { numberOfMonths, locale, timeZone } );
@@ -151,7 +152,8 @@ export const DateRangeCalendar = ( {
 
 	// Compute the preview range for hover effect
 	const previewRange = useMemo( () => {
-		if ( ! hoveredDate || ! selected?.from ) {
+		// TODO: range preview temporarily disabled when excludeDisabled is true.
+		if ( excludeDisabled || ! hoveredDate || ! selected?.from ) {
 			return;
 		}
 
@@ -179,7 +181,7 @@ export const DateRangeCalendar = ( {
 				to: hoveredDate,
 			};
 		}
-	}, [ selected, hoveredDate ] );
+	}, [ selected, hoveredDate, excludeDisabled ] );
 
 	const modifiers = useMemo( () => {
 		return {
@@ -205,6 +207,7 @@ export const DateRangeCalendar = ( {
 			aria-label={ ariaLabel }
 			{ ...props }
 			mode="range"
+			excludeDisabled={ excludeDisabled }
 			selected={ selected }
 			onSelect={ setSelected }
 			onDayMouseEnter={ onDayMouseEnter }
