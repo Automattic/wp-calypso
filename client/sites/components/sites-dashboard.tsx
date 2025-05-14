@@ -163,7 +163,11 @@ const SitesDashboard = ( {
 		);
 	};
 
-	const { data: allSites = [], isLoading } = useSiteExcerptsQuery(
+	const {
+		data: allSites = [],
+		isLoading,
+		refetch,
+	} = useSiteExcerptsQuery(
 		[],
 		sitesFilterCallback,
 		'all',
@@ -376,8 +380,12 @@ const SitesDashboard = ( {
 		},
 	};
 
-	const changeSitePreviewPane = ( siteId: number ) => {
-		const targetSite = allSites.find( ( site ) => site.ID === siteId );
+	const changeSitePreviewPane = async ( siteId: number ) => {
+		let targetSite = allSites.find( ( site ) => site.ID === siteId );
+		if ( ! targetSite ) {
+			await refetch();
+			targetSite = allSites.find( ( site ) => site.ID === siteId );
+		}
 		if ( targetSite ) {
 			sitePreviewPane.open( targetSite, 'environment_switcher' );
 		}
