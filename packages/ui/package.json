@@ -15,6 +15,10 @@
 			"import": "./dist/esm/index.js",
 			"require": "./dist/cjs/index.js"
 		},
+		"./index.css": {
+			"import": "./dist/esm/index.css",
+			"require": "./dist/cjs/index.css"
+		},
 		"./src/*": {
 			"calypso:src": "./src/*"
 		}
@@ -70,7 +74,7 @@
 	},
 	"scripts": {
 		"clean": "rm -rf dist",
-		"build:bundle": "node esbuild.config.js",
+		"build:bundle": "node bin/esbuild.js",
 		"build:types": "tsc",
 		"build": "yarn clean && yarn build:bundle && yarn build:types",
 		"prepack": "yarn build",

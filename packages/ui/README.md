@@ -5,7 +5,7 @@ A library of React components that adhere to the Automattic Design System, to be
 ## Installation
 
 ```bash
-yarn add @automattic/ui
+yarn add @automattic/ui @wordpress/components
 ```
 
 ## WordPress Component Styles

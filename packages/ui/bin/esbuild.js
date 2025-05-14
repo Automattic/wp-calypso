@@ -2,12 +2,13 @@
 const { build } = require( 'esbuild' );
 // eslint-disable-next-line import/no-extraneous-dependencies
 const { sassPlugin } = require( 'esbuild-sass-plugin' );
-const pkg = require( './package.json' );
+const pkg = require( '../package.json' );
 
 const external = [
-	// TODO: Think about this. Should this mean they should be peer deps?
+	// TODO: Think about this. Should some wp deps be peer deps and externalized?
 	// Also see: `wpExternals` in `packages/dataviews/build.js`
-	...Object.keys( pkg.dependencies || {} ).filter( ( dep ) => dep.startsWith( '@wordpress/' ) ),
+	// ...Object.keys( pkg.dependencies || {} ).filter( ( dep ) => dep.startsWith( '@wordpress/' ) ),
+	...Object.keys( pkg.dependencies || {} ),
 	...Object.keys( pkg.peerDependencies || {} ),
 ];
 
@@ -18,6 +19,8 @@ const commonConfig = {
 	minify: process.env.NODE_ENV === 'production',
 	external,
 	platform: 'neutral',
+	mainFields: [ 'calypso:src', 'module', 'main' ],
+	conditions: [ 'calypso:src', 'import', 'module', 'require' ],
 	logLevel: 'info',
 	plugins: [
 		sassPlugin( {
