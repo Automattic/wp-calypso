@@ -316,13 +316,12 @@ export function block() {
 
 export function setEnabledState( state ) {
 	return ( dispatch ) => {
-		const enabling = state;
-		const doing = enabling ? 'enabling' : 'disabling';
+		const doing = state ? 'enabling' : 'disabling';
 		debug( doing );
 		dispatch( {
 			type: PUSH_NOTIFICATIONS_TOGGLE_ENABLED,
 		} );
-		if ( enabling ) {
+		if ( state ) {
 			dispatch( fetchAndLoadServiceWorker() );
 			dispatch( recordTracksEvent( 'calypso_web_push_notifications_enabled' ) );
 		} else {
