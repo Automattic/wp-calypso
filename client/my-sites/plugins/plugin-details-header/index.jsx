@@ -10,8 +10,7 @@ import {
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { preventWidows } from 'calypso/lib/formatting';
 import PluginIcon from 'calypso/my-sites/plugins/plugin-icon/plugin-icon';
-import PluginRatings from 'calypso/my-sites/plugins/plugin-ratings';
-import { useLocalizedPlugins } from 'calypso/my-sites/plugins/utils';
+import { useLocalizedPlugins, formatPluginRating } from 'calypso/my-sites/plugins/utils';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import usePluginVersionInfo from '../plugin-management-v2/hooks/use-plugin-version-info';
 
@@ -134,7 +133,7 @@ const PluginDetailsHeader = ( {
 					<div className="plugin-details-header__info">
 						<div className="plugin-details-header__info-title">{ translate( 'Rating' ) }</div>
 						<div className="plugin-details-header__info-value">
-							<PluginRatings rating={ rating } />
+							{ rating !== 0 && <div>{ `${ formatPluginRating( rating, true ) }/5` }</div> }
 							{ isMarketplaceProduct ? getMarketPlacePluginReviewsLink() : getPluginReviewsLink() }
 						</div>
 					</div>
