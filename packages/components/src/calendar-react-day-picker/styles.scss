@@ -65,7 +65,7 @@
       position: absolute;
       z-index: -1;
       inset: 0;
-      border: 1px solid transparent;
+      border: none; // No default border to avoid polluting high-contrast mode.
       border-radius: 2px;
     }
 
@@ -194,12 +194,17 @@
 	&:disabled {
 		box-shadow: inset 0 0 0 1px var(--gray-600);
 	}
+
+	&:not(:disabled)::before {
+		// Highlight today's button in forced-colors mode.
+		border: 1px solid transparent;
+	}
   }
 
   // Selected button (individual date, range start, range middle, and range end)
   &__day--selected &__day-button {
     &::before {
-      border-color: transparent;
+      border: none;
       background-color: var(--gray-900);
     }
 
@@ -209,6 +214,9 @@
     }
   }
 
+  &__day--selected:not(&__range-middle) &__day-button::before {
+	border: 4px solid transparent
+  }
 
   // Hidden button (ie. outside current month but still rendered)
   &__day--hidden {
@@ -232,6 +240,12 @@
     &::before {
       background-color: var(--gray-100);
       border-radius: 0;
+
+	  // Render a top/bottom border of the same color as the background, which
+	  // is going to be visible in forced-colors mode.
+	  border-width: 1px 0;
+	  border-color: transparent;
+	  border-style: solid;
     }
 
     &:hover:not(:disabled) {
@@ -255,21 +269,25 @@
   }
 
   &__day--preview:not(&__range-start):not(&__range-end) &__day-button::before {
-    border-block-color: var(--gray-600);
-    border-inline-color: transparent; // override today's button styles
+    border-color: var(--gray-600);
     border-style: dashed;
+	// Do not render a border on left/right, because it would show in
+	// forced-colors mode.
+	border-width: 1px 0;
   }
 
   &__day--preview-start:not(&__range-start):not(&__range-end) &__day-button::before {
     border-start-end-radius: 0;
     border-end-end-radius: 0;
     border-color: var(--gray-600);
+	border-width: 1px;
   }
 
   &__day--preview-end:not(&__range-start):not(&__range-end) &__day-button::before {
     border-start-start-radius: 0;
     border-end-start-radius: 0;
     border-color: var(--gray-600);
+	border-width: 1px;
   }
 }
 
