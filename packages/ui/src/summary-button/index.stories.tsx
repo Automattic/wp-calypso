@@ -20,7 +20,7 @@ const badgeOptions: Record< string, SummaryButtonBadgeProps[] > = {
 };
 
 const meta = {
-	title: 'SummaryButton',
+	title: 'UI/SummaryButton',
 	component: SummaryButton,
 	argTypes: {
 		decoration: {

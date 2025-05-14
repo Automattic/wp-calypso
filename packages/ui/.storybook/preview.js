@@ -12,7 +12,7 @@ const parameters = {
 	},
 	options: {
 		storySort: ( a, b ) => {
-			const sectionOrder = [ 'WordPress Core' ];
+			const sectionOrder = [ 'UI', 'WordPress Core' ];
 			const aIndex = sectionOrder.findIndex( ( prefix ) => a.title.startsWith( prefix ) );
 			const bIndex = sectionOrder.findIndex( ( prefix ) => b.title.startsWith( prefix ) );
 
