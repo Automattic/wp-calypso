@@ -49,7 +49,8 @@ function CustomLinkComponent( { item, ...props }: { item: SpaceObject } ) {
 	return (
 		<a
 			href="#"
-			onClick={ () => {
+			onClick={ ( e ) => {
+				e.stopPropagation();
 				// eslint-disable-next-line no-alert
 				alert( 'Clicked: ' + item.title );
 			} }
