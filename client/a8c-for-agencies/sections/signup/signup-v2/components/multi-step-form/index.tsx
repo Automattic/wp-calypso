@@ -20,6 +20,10 @@ import PersonalizationForm from './personalization';
 
 import './style.scss';
 
+type Props = {
+	withPersonalizedBlueprint?: boolean;
+};
+
 type PersonalizationStepProgress = {
 	[ key: number ]: number;
 };
@@ -49,7 +53,7 @@ const getFinishSurveyProgress = ( step: number ): number => {
 	return step === 6 ? 100 : 0;
 };
 
-const MultiStepForm = () => {
+const MultiStepForm = ( { withPersonalizedBlueprint = false }: Props ) => {
 	const notificationId = 'a4a-agency-signup-form';
 	const translate = useTranslate();
 	const [ currentStep, setCurrentStep ] = useState( 1 );
@@ -129,7 +133,9 @@ const MultiStepForm = () => {
 			case 2:
 				return (
 					<PersonalizationForm
-						onContinue={ ( data ) => updateDataAndContinue( data, 3 ) }
+						onContinue={ ( data ) =>
+							updateDataAndContinue( data, withPersonalizedBlueprint ? 3 : 6 )
+						}
 						initialFormData={ formData }
 						goBack={ () => setCurrentStep( 1 ) }
 					/>
@@ -171,7 +177,13 @@ const MultiStepForm = () => {
 			default:
 				return null;
 		}
-	}, [ blueprintRequested, currentStep, formData, updateDataAndContinue ] );
+	}, [
+		blueprintRequested,
+		currentStep,
+		formData,
+		updateDataAndContinue,
+		withPersonalizedBlueprint,
+	] );
 
 	return (
 		<div className="signup-multi-step-form">
