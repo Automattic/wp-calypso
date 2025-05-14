@@ -12,12 +12,16 @@
 }
 
 .plugin-details-sidebar__plugin-details-content {
-	padding-top: 24px;
+	margin-top: 30px; /* Extra 6px because of line-height and border */
 	border-style: solid none;
 	border-width: 1px;
 	border-color: #eee;
 	border-bottom: none;
 	border-top: 1px solid var(--studio-gray-5);
+
+	@media (min-width: $break-small) {
+		padding-top: 24px;
+	}
 
 	.title {
 		color: var(--studio-gray-60);
