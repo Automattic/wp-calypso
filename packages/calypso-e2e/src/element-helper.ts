@@ -1,16 +1,20 @@
 import { Locator, Page, Frame } from 'playwright';
 import envVariables from './env-variables';
 
-const navTabParent = 'div.stats-navigation__tabs';
-const legacyNavTabParent = 'div.section-nav';
+const coreNavTabParent = 'div.stats-navigation__tabs';
+const calypsoNavTabParent = 'div.section-nav';
 
 const selectors = {
 	// clickNavTab
-	navTabItem: ( { name = '', selected = false }: { name?: string; selected?: boolean } = {} ) =>
-		envVariables.VIEWPORT_NAME === 'mobile'
-			? `${ legacyNavTabParent } a[aria-current="${ selected }"]:has(span:has-text("${ name }"))`
-			: `${ navTabParent } button[aria-selected="${ selected }"]:has-text("${ name }")`,
-	navTabMobileToggleButton: `${ legacyNavTabParent } button.section-nav__mobile-header`,
+	navTabItem: ( {
+		name = '',
+		selected = false,
+		isCoreTabs = false,
+	}: { name?: string; selected?: boolean; isCoreTabs?: boolean } = {} ) =>
+		! isCoreTabs
+			? `${ calypsoNavTabParent } a[aria-current="${ selected }"]:has(span:has-text("${ name }"))`
+			: `${ coreNavTabParent } button[aria-selected="${ selected }"]:has-text("${ name }")`,
+	navTabMobileToggleButton: `${ calypsoNavTabParent } button.section-nav__mobile-header`,
 };
 
 /**
@@ -61,7 +65,7 @@ export async function waitForElementEnabled(
 export async function clickNavTab(
 	page: Page,
 	name: string,
-	{ force }: { force?: boolean } = {}
+	{ force, isCoreTabs = false }: { force?: boolean; isCoreTabs?: boolean } = {}
 ): Promise< void > {
 	// Short circuit operation if the active tab and target tabs are the same.
 	// Strip numerals from the extracted tab name to account for the slightly
@@ -74,7 +78,7 @@ export async function clickNavTab(
 
 	// If force option is specified, force click using a `dispatchEvent`.
 	if ( force ) {
-		return await page.dispatchEvent( selectors.navTabItem( { name: name } ), 'click' );
+		return await page.dispatchEvent( selectors.navTabItem( { name: name, isCoreTabs } ), 'click' );
 	}
 
 	// Mobile view - navtabs become a dropdown and thus it must be opened first.
@@ -83,19 +87,21 @@ export async function clickNavTab(
 		const navTabsButtonLocator = page.locator( selectors.navTabMobileToggleButton );
 		await navTabsButtonLocator.click( { noWaitAfter: true } );
 
-		const navTabIsOpenLocator = page.locator( `${ legacyNavTabParent }.is-open` );
+		const navTabIsOpenLocator = page.locator( `${ calypsoNavTabParent }.is-open` );
 		await navTabIsOpenLocator.waitFor();
 	}
 
 	// Click on the intended item and wait for navigation to finish.
-	const navTabItem = page.locator( selectors.navTabItem( { name: name, selected: false } ) );
+	const navTabItem = page.locator(
+		selectors.navTabItem( { name: name, selected: false, isCoreTabs } )
+	);
 
 	const regex = new RegExp( `.*/${ name.toLowerCase() }/.*` );
 	await Promise.all( [ page.waitForURL( regex ), navTabItem.click() ] );
 
 	// Final verification, check that we are now on the expected navtab.
 	const newSelectedTabLocator = page.locator(
-		selectors.navTabItem( { name: name, selected: true } )
+		selectors.navTabItem( { name: name, selected: true, isCoreTabs } )
 	);
 	const newSelectedTabName = await newSelectedTabLocator.innerText();
 
