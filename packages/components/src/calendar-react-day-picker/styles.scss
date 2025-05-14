@@ -51,6 +51,11 @@
     border: none;
     border-radius: 2px;
 
+	// Use box-shadow to render a border around today's button. Using box-shadow
+	// allows to keep the button highlighted even when the border is used for
+	// other purposes (eg. range selection preview, middle of a selected range).
+	box-shadow: none;
+
     // Use a pseudo-element to render border and background, which keeps the
     // button's border-radius intact, which in turns allows the focus ring to
     // have rounded corners even when the background needs square corners (eg.
@@ -113,9 +118,9 @@
 
     &:disabled,
     &[aria-disabled="true"] {
-    cursor: revert;
+      cursor: revert;
 
-    color: var(--gray-600);
+      color: var(--gray-600);
     }
 
     &:focus-visible {
@@ -182,16 +187,16 @@
   }
 
   /* DAY MODIFIERS */
-  &__day--today &__day-button {
-    &::before {
-      border-color: var(--gray-700);
-    }
+  // Today button, but not when selected (single date) or range start/end
+  &__day--today:not(&__day--selected:not(#{&}__range-middle))  &__day-button {
+	box-shadow: inset 0 0 0 1px var(--gray-700);
 
-    &:disabled::before {
-      border-color: var(--gray-600);
-    }
+	&:disabled {
+		box-shadow: inset 0 0 0 1px var(--gray-600);
+	}
   }
 
+  // Selected button (individual date, range start, range middle, and range end)
   &__day--selected &__day-button {
     &::before {
       border-color: transparent;
@@ -204,10 +209,13 @@
     }
   }
 
+
+  // Hidden button (ie. outside current month but still rendered)
   &__day--hidden {
     visibility: hidden;
   }
 
+  // Range start button, but not when start and end are the same day.
   &__range-start:not(&__range-end) &__day-button {
 	// Apply border-radius changes to the button itself too, because the
 	// focus-ring would look weird otherwise.
@@ -217,6 +225,7 @@
     }
   }
 
+  // Middle of date range
   &__range-middle &__day-button {
     color: var(--gray-900);
 
@@ -230,6 +239,7 @@
     }
   }
 
+  // Range end button, but not when start and end are the same day.
   &__range-end:not(&__range-start) &__day-button {
 	// Apply border-radius changes to the button itself too, because the
 	// focus-ring would look weird otherwise.
