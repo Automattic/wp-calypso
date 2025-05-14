@@ -57,6 +57,7 @@ const tscPackages = withTscInfo( {
 } );
 
 const tscCommands = [
+	{ cmd: 'tsc --noEmit --project build-tools/tsconfig.json', id: 'type_check_build_tools' },
 	{ cmd: 'tsc --noEmit --project client/tsconfig.json', id: 'type_check_client' },
 	{ cmd: 'tsc --noEmit --project test/e2e/tsconfig.json', id: 'type_check_tests' },
 	...appsTsconfigs.filter( isTypeCheckedApp ).map( ( path ) => ( {
