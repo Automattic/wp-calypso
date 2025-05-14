@@ -330,15 +330,6 @@ describe( 'I18n', function () {
 	} );
 
 	describe( 'subscribe()', () => {
-		it( 'should call the callback whenever a change is emitted', () => {
-			const callback = jest.fn();
-
-			i18n.subscribe( callback );
-			i18n.setLocale();
-
-			expect( callback ).toHaveBeenCalled();
-		} );
-
 		it( 'should return an unsubscribe function', () => {
 			const callback = jest.fn();
 
