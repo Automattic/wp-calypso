@@ -16,6 +16,7 @@ import BlueprintForm2 from './blueprint-form-2';
 import ChoiceBlueprint from './choice-blueprint';
 import SignupContactForm from './contact-form';
 import FinishSignupSurvey from './finish-signup-survey';
+import useSubmitSignup from './hooks/use-submit-signup';
 import PersonalizationForm from './personalization';
 import SubmitSignupConfirmation from './submit-signup-confirmation';
 
@@ -98,6 +99,8 @@ const MultiStepForm = ( { withPersonalizedBlueprint = false, submitAsSurvey = fa
 		},
 	} );
 
+	const submitSignup = useSubmitSignup();
+
 	const updateDataAndContinue = useCallback(
 		(
 			data: Partial< AgencyDetailsSignupPayload >,
@@ -128,6 +131,10 @@ const MultiStepForm = ( { withPersonalizedBlueprint = false, submitAsSurvey = fa
 		setBlueprintRequested( false );
 		window.location.reload();
 	};
+
+	const onCreateAgency = useCallback( () => {
+		submitSignup( formData as AgencyDetailsSignupPayload );
+	}, [ formData, submitSignup ] );
 
 	const currentForm = useMemo( () => {
 		switch ( currentStep ) {
@@ -183,7 +190,7 @@ const MultiStepForm = ( { withPersonalizedBlueprint = false, submitAsSurvey = fa
 						blueprintRequested={ blueprintRequested }
 					/>
 				) : (
-					<SubmitSignupConfirmation onContinue={ clearDataAndRefresh } />
+					<SubmitSignupConfirmation onContinue={ onCreateAgency } />
 				);
 			default:
 				return null;
@@ -192,6 +199,7 @@ const MultiStepForm = ( { withPersonalizedBlueprint = false, submitAsSurvey = fa
 		blueprintRequested,
 		currentStep,
 		formData,
+		onCreateAgency,
 		submitAsSurvey,
 		updateDataAndContinue,
 		withPersonalizedBlueprint,

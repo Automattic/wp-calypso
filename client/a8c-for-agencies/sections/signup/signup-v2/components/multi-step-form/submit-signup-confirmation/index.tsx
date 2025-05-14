@@ -1,5 +1,6 @@
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
+import { useState } from 'react';
 import Form from 'calypso/a8c-for-agencies/components/form';
 
 import './style.scss';
@@ -10,6 +11,12 @@ type Props = {
 
 const SubmitSignupConfirmation: React.FC< Props > = ( { onContinue } ) => {
 	const translate = useTranslate();
+	const [ isLoading, setIsLoading ] = useState( false );
+
+	const onHandleContinue = () => {
+		setIsLoading( true );
+		onContinue();
+	};
 
 	return (
 		<Form
@@ -17,7 +24,12 @@ const SubmitSignupConfirmation: React.FC< Props > = ( { onContinue } ) => {
 			title={ translate( 'Complete your setup!' ) }
 			description={ translate( 'One last step, just login!' ) }
 		>
-			<Button variant="primary" onClick={ onContinue } __next40pxDefaultSize>
+			<Button
+				variant="primary"
+				onClick={ onHandleContinue }
+				__next40pxDefaultSize
+				isBusy={ isLoading }
+			>
 				{ translate( 'Finish and login with WordPress.com' ) }
 			</Button>
 
