@@ -24,7 +24,7 @@ export const ImportWrapper: StepType< {
 } > = function ( props ) {
 	const { __ } = useI18n();
 	const { navigation, children, flow, stepName, text, subText } = props;
-	const useContainerV2 = shouldUseStepContainerV2ImportFlow( flow );
+	const useContainerV2 = shouldUseStepContainerV2ImportFlow( flow ) && stepName === 'importList';
 	const documentTitle = __( 'Import your site content' );
 	const showHeading = text && subText;
 
