@@ -7,10 +7,11 @@ import type { ImportJob } from '../../types';
 
 interface Props {
 	job?: ImportJob;
+	showHeading?: boolean;
 }
 const ProgressScreen: React.FunctionComponent< Props > = ( props ) => {
 	const { __ } = useI18n();
-	const { job } = props;
+	const { job, showHeading } = props;
 	const { customData } = job || {};
 	const progressValue = useProgressValue( job?.progress );
 
@@ -39,6 +40,24 @@ const ProgressScreen: React.FunctionComponent< Props > = ( props ) => {
 	const title =
 		job?.importerFileType !== 'playground' ? __( 'Importing' ) : getPlaygroundImportTitle();
 
+	if ( showHeading ) {
+		return (
+			<div className="import-layout__center">
+				<Progress>
+					<div className="import__heading import__heading-center">
+						<Title>{ title }...</Title>
+						<ProgressBar compact value={ progressValue } />
+						<SubTitle>
+							{ __(
+								'Feel free to close this window. We’ll email you when your new site is ready.'
+							) }
+						</SubTitle>
+					</div>
+				</Progress>
+			</div>
+		);
+	}
+
 	return (
 		<Progress>
 			<div className="import__heading import__heading-center">
@@ -48,19 +67,6 @@ const ProgressScreen: React.FunctionComponent< Props > = ( props ) => {
 				</SubTitle>
 			</div>
 		</Progress>
-	);
-	return (
-		<div className="import-layout__center">
-			<Progress>
-				<div className="import__heading import__heading-center">
-					<Title>{ title }...</Title>
-					<ProgressBar compact value={ progressValue } />
-					<SubTitle>
-						{ __( 'Feel free to close this window. We’ll email you when your new site is ready.' ) }
-					</SubTitle>
-				</div>
-			</Progress>
-		</div>
 	);
 };
 
