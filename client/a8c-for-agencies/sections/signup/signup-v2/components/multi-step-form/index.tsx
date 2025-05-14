@@ -19,7 +19,6 @@ import SignupContactForm from './contact-form';
 import FinishSignupSurvey from './finish-signup-survey';
 import useSubmitSignup from './hooks/use-submit-signup';
 import PersonalizationForm from './personalization';
-import SubmitSignupConfirmation from './submit-signup-confirmation';
 
 import './style.scss';
 
@@ -65,10 +64,6 @@ const getFinishSurveyProgress = ( step: number ): number => {
 	return step === 6 ? 100 : 0;
 };
 
-const getSubmitSignupConfirmationProgress = ( step: number ): number => {
-	return step === 6 ? 50 : 0;
-};
-
 const MultiStepForm = ( { withPersonalizedBlueprint = false, submitAsSurvey = false }: Props ) => {
 	const notificationId = 'a4a-agency-signup-form';
 	const translate = useTranslate();
@@ -90,13 +85,15 @@ const MultiStepForm = ( { withPersonalizedBlueprint = false, submitAsSurvey = fa
 			isActive: currentStep > 3,
 			value: getPersonalizationProgress( currentStep, submitAsSurvey ),
 		},
-		{
-			label: submitAsSurvey ? translate( 'Finish survey' ) : translate( 'Complete setup' ),
-			isActive: currentStep > 5,
-			value: submitAsSurvey
-				? getFinishSurveyProgress( currentStep )
-				: getSubmitSignupConfirmationProgress( currentStep ),
-		},
+		...( submitAsSurvey
+			? [
+					{
+						label: translate( 'Finish survey' ),
+						isActive: currentStep > 5,
+						value: getFinishSurveyProgress( currentStep ),
+					},
+			  ]
+			: [] ),
 	];
 
 	const { mutate: submitSurvey } = useCreateSignupMutation( {
@@ -182,6 +179,8 @@ const MultiStepForm = ( { withPersonalizedBlueprint = false, submitAsSurvey = fa
 						onContinue={ ( data ) =>
 							updateDataAndContinue( data, withPersonalizedBlueprint ? 3 : 6 )
 						}
+						onSubmit={ onCreateAgency }
+						isFinalStep={ ! submitAsSurvey }
 						initialFormData={ formData }
 						goBack={ () => setCurrentStep( 1 ) }
 					/>
@@ -214,13 +213,11 @@ const MultiStepForm = ( { withPersonalizedBlueprint = false, submitAsSurvey = fa
 					/>
 				);
 			case 6:
-				return submitAsSurvey ? (
+				return (
 					<FinishSignupSurvey
 						onContinue={ clearDataAndRefresh }
 						blueprintRequested={ blueprintRequested }
 					/>
-				) : (
-					<SubmitSignupConfirmation onContinue={ onCreateAgency } />
 				);
 			default:
 				return null;
@@ -229,7 +226,6 @@ const MultiStepForm = ( { withPersonalizedBlueprint = false, submitAsSurvey = fa
 		blueprintRequested,
 		currentStep,
 		formData,
-		onCreateAgency,
 		submitAsSurvey,
 		trackView,
 		updateDataAndContinue,
