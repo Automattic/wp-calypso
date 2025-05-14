@@ -99,9 +99,7 @@ const SelectNav = ( {
 						}
 						return (
 							<NavItem
-								className={ clsx( className, {
-									'is-active': selectedItem === item,
-								} ) }
+								className={ className }
 								key={ item }
 								path={ itemPath }
 								selected={ selectedItem === item }
@@ -133,7 +131,7 @@ const TabNav = ( { validNavItems, interval, slugPath, adminUrl, selectedItem, sh
 		return {
 			name: item,
 			title: navItem.label + ( navItem.paywall && showLock ? ' 🔒' : '' ),
-			className: clsx( 'stats-navigation__' + item, 'navigation-tab' ),
+			className: 'stats-navigation__' + item,
 			path: itemPath,
 		};
 	} );

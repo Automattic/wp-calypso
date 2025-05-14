@@ -1,7 +1,7 @@
 import { Locator, Page } from 'playwright';
 import { envVariables } from '../..';
 import { getCalypsoURL } from '../../data-helper';
-import { clickNavTab } from '../utils';
+import { clickNavTab } from '../../element-helper';
 
 export type StatsTabs = 'Traffic' | 'Insights' | 'Subscribers' | 'Store';
 type TrafficActivityType = 'Views' | 'Visitors' | 'Likes' | 'Comments';
