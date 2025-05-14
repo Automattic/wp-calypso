@@ -1,6 +1,10 @@
-import { Card, FormLabel, Dialog } from '@automattic/components';
+import { Card, FormLabel } from '@automattic/components';
 import { getNumericFirstDayOfWeek, withLocale } from '@automattic/i18n-utils';
-import { Button, CheckboxControl } from '@wordpress/components';
+import {
+	Button,
+	CheckboxControl,
+	__experimentalConfirmDialog as ConfirmDialog,
+} from '@wordpress/components';
 import { localize } from 'i18n-calypso';
 import { flowRight as compose } from 'lodash';
 import { Component } from 'react';
@@ -95,6 +99,15 @@ class NotificationSubscriptions extends Component {
 		};
 
 		this.props.updateSetting( syntheticEvent );
+		this.setState( { showConfirmModal: false } );
+	};
+
+	handleModalConfirm = () => {
+		// Create a synthetic event object that matches what updateSetting expects
+		const syntheticEvent = {
+			preventDefault: () => {},
+		};
+		this.props.submitForm( syntheticEvent );
 		this.setState( { showConfirmModal: false } );
 	};
 
@@ -340,36 +353,17 @@ class NotificationSubscriptions extends Component {
 					</form>
 				</Card>
 
-				<Dialog
-					isVisible={ this.state.showConfirmModal }
-					onClose={ () => this.setState( { showConfirmModal: false } ) }
-					buttons={ [
-						{
-							action: 'cancel',
-							label: this.props.translate( 'Cancel' ),
-							onClick: () => this.handleModalCancel(),
-						},
-						{
-							action: 'confirm',
-							label: this.props.translate( 'Confirm' ),
-							onClick: () => {
-								this.setState( { showConfirmModal: false } );
-								// Create a synthetic event object
-								const syntheticEvent = {
-									preventDefault: () => {},
-								};
-								this.props.submitForm( syntheticEvent );
-							},
-							isPrimary: true,
-						},
-					] }
+				<ConfirmDialog
+					isOpen={ this.state.showConfirmModal }
+					onConfirm={ () => this.handleModalConfirm() }
+					onCancel={ () => this.handleModalCancel() }
+					confirmButtonText={ this.props.translate( 'Confirm' ) }
+					style={ { maxWidth: '480px' } }
 				>
-					<p>
-						{ this.props.translate(
-							"You have active newsletter subscriptions. Pausing emails means you won't receive any newsletter updates. Are you sure you want to continue?"
-						) }
-					</p>
-				</Dialog>
+					{ this.props.translate(
+						"You have active newsletter subscriptions. Pausing emails means you won't receive any newsletter updates. Are you sure you want to continue?"
+					) }
+				</ConfirmDialog>
 			</Main>
 		);
 	}
