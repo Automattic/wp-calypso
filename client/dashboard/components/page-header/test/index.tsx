@@ -4,7 +4,6 @@
 import { render, screen } from '@testing-library/react';
 import { Button, Icon } from '@wordpress/components';
 import { cog } from '@wordpress/icons';
-import * as React from 'react';
 import { PageHeader } from '..';
 
 describe( 'PageHeader', () => {

@@ -44,16 +44,18 @@ export const PageHeader = ( {
 			{ !! breadcrumbItems?.length && <Breadcrumbs items={ breadcrumbItems } /> }
 			<HStack spacing={ 4 } justify="flex-start" alignment="flex-start">
 				{ decoration && (
-					<span className="client-dashboard-components-page-header-decoration">{ decoration }</span>
+					<span className="client-dashboard-components-page-header__decoration">
+						{ decoration }
+					</span>
 				) }
 				<HStack spacing={ 3 } justify="space-between" alignment="flex-start">
-					<h1 className="client-dashboard-components-page-header-heading">{ title }</h1>
+					<h1 className="client-dashboard-components-page-header__heading">{ title }</h1>
 					{ !! actions?.length && (
 						<HStack
 							spacing={ 2 }
 							justify="flex-end"
 							expanded={ false }
-							className="client-dashboard-components-page-header-actions"
+							className="client-dashboard-components-page-header__actions"
 						>
 							{ actions }
 						</HStack>
@@ -61,7 +63,7 @@ export const PageHeader = ( {
 				</HStack>
 			</HStack>
 			{ description && (
-				<Text variant="muted" className="client-dashboard-components-page-header-description">
+				<Text variant="muted" className="client-dashboard-components-page-header__description">
 					{ description }
 				</Text>
 			) }
