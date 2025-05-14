@@ -49,13 +49,20 @@ const offerClick = () => {
 function AddNewSite() {
 	const isDesktop = useViewportMatch( 'medium' );
 	const Wrapper = isDesktop ? HStack : VStack;
+	const offer = sprintf(
+		// translators: %s is a percentage like 55% off
+		__( 'Get a free domain and up to %s off' ),
+		formatNumber( 0.55, {
+			numberFormatOptions: { style: 'percent' },
+		} )
+	);
 
 	return (
 		<Wrapper alignment="flex-start" style={ { padding: '16px' } } spacing={ 4 }>
 			<Column title={ __( 'Add new site' ) }>
 				<MenuItem
 					icon={ <WordPressLogo /> }
-					title={ __( 'WordPress.com' ) }
+					title="WordPress.com"
 					description={ __( 'Build and grow your site, all in one powerful platform.' ) }
 					onClick={ wordpressClick }
 					href="/start?source=sites-dashboard&ref=new-site-popover"
@@ -98,16 +105,8 @@ function AddNewSite() {
 				} }
 			>
 				<VStack className="dashboard-add-new-site__banner">
-					<img src={ devSiteBanner } alt="Get a free domain and up to 55% off" />
-					<Text size="title">
-						{ sprintf(
-							// translators: %s is a percentage like 55% off
-							__( 'Get a free domain and up to %s off' ),
-							formatNumber( 0.55, {
-								numberFormatOptions: { style: 'percent' },
-							} )
-						) }
-					</Text>
+					<img src={ devSiteBanner } alt={ offer } />
+					<Text size="title">{ offer }</Text>
 					<Text variant="muted" as="p">
 						{ sprintf(
 							// translators: %s is a percentage like 55% off
