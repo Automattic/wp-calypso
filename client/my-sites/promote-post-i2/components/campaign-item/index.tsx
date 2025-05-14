@@ -176,7 +176,12 @@ export default function CampaignItem( props: Props ) {
 							variant="primary"
 							className="campaign-item__view-link"
 						>
-							{ __( 'Details' ) }
+							<span aria-hidden="true">{ __( 'Details' ) }</span>
+							<span className="sr-only">
+								{ translate( 'View details for %(name)s', {
+									args: { name },
+								} ) }
+							</span>
 						</Button>
 					</div>
 				</div>
@@ -229,7 +234,12 @@ export default function CampaignItem( props: Props ) {
 					onClick={ navigateToDetailsPage }
 					className="campaign-item__post-details-button"
 				>
-					{ __( 'Details' ) }
+					<span aria-hidden="true">{ __( 'Details' ) }</span>
+					<span className="sr-only">
+						{ translate( 'View details for %(name)s', {
+							args: { name },
+						} ) }
+					</span>
 				</Button>
 			</td>
 		</tr>
