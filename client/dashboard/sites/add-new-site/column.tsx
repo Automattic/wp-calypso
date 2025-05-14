@@ -4,7 +4,7 @@ function Column( { title, children }: { title?: string; children: React.ReactNod
 	return (
 		<VStack spacing={ 4 } style={ { width: '260px' } }>
 			{ title && (
-				<Text variant="muted" size="title">
+				<Text variant="muted" size="subheadline" upperCase weight={ 500 }>
 					{ title }
 				</Text>
 			) }
