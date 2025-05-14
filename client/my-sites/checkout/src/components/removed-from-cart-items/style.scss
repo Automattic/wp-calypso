@@ -4,17 +4,13 @@
 }
 
 .restorable-product-button {
+	color: var(--studio-gray-100);
 	font-size: inherit;
-	font-weight: bold;
 	text-decoration: underline;
+	text-underline-offset: 2px;
 	padding-left: 6px;
 
-	&:focus {
-		box-shadow: none !important;
-		outline: none !important;
-	}
-
 	&:hover {
-		color: inherit !important;
+		text-decoration: none;
 	}
 }

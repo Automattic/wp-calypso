@@ -191,9 +191,10 @@ const DeleteButtonWrapper = styled.div`
 `;
 
 const DeleteButton = styled( Button )< { theme?: Theme } >`
+	color: ${ ( props ) => props.theme.colors.textColorDark };
+	padding-top: 8px;
+	text-underline-offset: 2px;
 	width: auto;
-	font-size: 0.75rem;
-	color: ${ ( props ) => props.theme.colors.textColorLight };
 `;
 
 export function LineItemPrice( {
