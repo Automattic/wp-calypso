@@ -4,6 +4,7 @@
 
 $plugin-details-header-padding: 100px;
 $mobile-icon-height: 175px;
+$block-spacing: 24px;
 
 .plugin-details-header__container {
 	display: block;
@@ -111,12 +112,7 @@ $mobile-icon-height: 175px;
 }
 
 .plugin-details-header__tag-badge-container {
-	display: inline-block;
-
-	@include breakpoint-deprecated( "<960px" ) {
-		margin-top: 12px;
-		display: block;
-	}
+	margin-bottom: $block-spacing;
 }
 
 .plugin-details-header__tag-badge {

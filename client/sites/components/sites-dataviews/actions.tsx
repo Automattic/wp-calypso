@@ -27,7 +27,7 @@ import {
 	isStagingSite,
 	isSitePreviewPaneEligible,
 } from 'calypso/sites-dashboard/utils';
-import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, infoNotice, successNotice } from 'calypso/state/notices/actions';
 import { launchSiteOrRedirectToLaunchSignupFlow } from 'calypso/state/sites/launch/actions';
@@ -267,13 +267,10 @@ export function useActions( {
 	viewType: 'list' | 'table' | 'grid';
 } ): Action< SiteExcerptData >[] {
 	const { __ } = useI18n();
-
 	const localizeUrl = useLocalizeUrl();
-
-	const dispatch = useReduxDispatch();
-
+	const dispatch = useDispatch();
 	const queryClient = useQueryClient();
-	const reduxDispatch = useReduxDispatch();
+
 	const { mutate: restoreSite } = useRestoreSiteMutation( {
 		onSuccess() {
 			queryClient.invalidateQueries( {
@@ -294,23 +291,17 @@ export function useActions( {
 					'deleted',
 				],
 			} );
-			reduxDispatch(
-				successNotice( __( 'The site has been restored.' ), {
-					duration: 3000,
-				} )
-			);
+			dispatch( successNotice( __( 'The site has been restored.' ), { duration: 3000 } ) );
 		},
 		onError: ( error ) => {
 			if ( error.status === 403 ) {
-				reduxDispatch(
+				dispatch(
 					errorNotice( __( 'Only an administrator can restore a deleted site.' ), {
 						duration: 5000,
 					} )
 				);
 			} else {
-				reduxDispatch(
-					errorNotice( __( 'We were unable to restore the site.' ), { duration: 5000 } )
-				);
+				dispatch( errorNotice( __( 'We were unable to restore the site.' ), { duration: 5000 } ) );
 			}
 		},
 	} );

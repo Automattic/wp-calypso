@@ -4,7 +4,6 @@ import { useTranslate } from 'i18n-calypso';
 import videoThumbnail2x from 'calypso/assets/images/jetpack/getting-started-backup-video-thumbnail-2x.png';
 import videoThumbnail from 'calypso/assets/images/jetpack/getting-started-backup-video-thumbnail.png';
 import DismissibleCard from 'calypso/blocks/dismissible-card';
-import { preventWidows } from 'calypso/lib/formatting';
 import './style.scss';
 import { GETTING_STARTED_WITH_JETPACK_BACKUP_VIDEO_URL } from './consts';
 
@@ -40,14 +39,12 @@ export default function BackupGettingStarted() {
 		<DismissibleCard preferenceName="backup-getting-started" className="backup-getting-started">
 			<VideoPreview { ...videoPreviewProps } hiddenOn="mobile" />
 			<div className="backup-getting-started__content">
-				<div className="backup-getting-started__header">
-					{ preventWidows( translate( 'Getting started with Jetpack VaultPress Backup' ) ) }
-				</div>
+				<h2 className="backup-getting-started__header">
+					{ translate( 'Getting started with Jetpack VaultPress Backup' ) }
+				</h2>
 				<p className="backup-getting-started__text">
-					{ preventWidows(
-						translate(
-							'A short video guide covering the basics of backing up your website and restoring your website from a previous backup.'
-						)
+					{ translate(
+						'A short video guide covering the basics of backing up your website and restoring your website from a previous backup.'
 					) }
 				</p>
 				<VideoPreview { ...videoPreviewProps } hiddenOn="desktop" />

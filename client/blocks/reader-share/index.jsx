@@ -8,7 +8,6 @@ import { connect } from 'react-redux';
 import ReaderRepostIcon from 'calypso/reader/components/icons/repost';
 import ReaderShareIcon from 'calypso/reader/components/icons/share-icon';
 import * as stats from 'calypso/reader/stats';
-import { preloadEditor } from 'calypso/sections-preloaders';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import ReaderReblogSelection from './reblog';
@@ -134,8 +133,6 @@ class ReaderShare extends Component {
 					compact={ this.props.iconSize === 18 }
 					key="button"
 					onClick={ this.toggle }
-					onMouseEnter={ preloadEditor }
-					onTouchStart={ preloadEditor }
 					ref={ this.shareButton }
 					data-tooltip={
 						this.props.isReblogSelection ? translate( 'Repost with your thoughts' ) : undefined

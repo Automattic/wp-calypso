@@ -161,6 +161,7 @@ module.exports = {
 		! isDevelopment &&
 			new GenerateChunksMapPlugin( {
 				output: path.resolve( outBasePath, 'dist/chunks-map.json' ),
+				base_dir: '../../',
 			} ),
 		/*
 		 * ExPlat: Don't import the server logger when we are in the browser

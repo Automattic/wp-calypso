@@ -43,9 +43,9 @@ const usePurchasesMenuItems = ( path: string ) => {
 					icon: payment,
 					path: A4A_PURCHASES_LINK,
 					link: A4A_PAYMENT_METHODS_LINK,
-					title: translate( 'Payment Methods' ),
+					title: translate( 'Payment methods' ),
 					trackEventProps: {
-						menu_item: 'Automattic for Agencies / Purchases / Payment Methods',
+						menu_item: 'Automattic for Agencies / Purchases / Payment methods',
 					},
 				},
 				path

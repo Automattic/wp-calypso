@@ -4,7 +4,6 @@ import { chevronLeft, chevronRight, Icon } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { PropsWithChildren, ReactElement, useEffect, useRef, useState } from 'react';
 import { Swiper as SwiperType } from 'swiper/types';
-import { preventWidows } from 'calypso/lib/formatting';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import './style.scss';
@@ -144,7 +143,7 @@ export default function ThemeCollection( {
 			<div className="theme-collection__meta">
 				<div className="theme-collection__headings">
 					<h2 className="theme-collection__title">{ title }</h2>
-					<p className="theme-collection__description">{ preventWidows( description ) }</p>
+					<p className="theme-collection__description">{ description }</p>
 				</div>
 				<div className="theme-collection__carousel-controls">
 					<Button className="theme-collection__see-all" onClick={ onSeeAllAction }>

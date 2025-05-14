@@ -4,6 +4,7 @@
 // eslint-disable-next-line no-restricted-imports
 import * as Ariakit from '@ariakit/react';
 import removeAccents from 'remove-accents';
+import clsx from 'clsx';
 
 /**
  * WordPress dependencies
@@ -13,7 +14,6 @@ import { __, sprintf } from '@wordpress/i18n';
 import { useState, useMemo, useDeferredValue } from '@wordpress/element';
 import { VisuallyHidden, Icon, Composite } from '@wordpress/components';
 import { search, check } from '@wordpress/icons';
-import { SVG, Circle } from '@wordpress/primitives';
 
 /**
  * Internal dependencies
@@ -25,12 +25,6 @@ interface SearchWidgetProps {
 	filter: NormalizedFilter;
 	onChangeView: ( view: View ) => void;
 }
-
-const radioCheck = (
-	<SVG xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-		<Circle cx={ 12 } cy={ 12 } r={ 3 }></Circle>
-	</SVG>
-);
 
 function normalizeSearchInput( input = '' ) {
 	return removeAccents( input.trim().toLowerCase() );
@@ -80,6 +74,30 @@ function generateFilterElementCompositeItemId(
 ) {
 	return `${ prefix }-${ filterElementValue }`;
 }
+
+const MultiSelectionOption = ( { selected }: { selected: boolean } ) => {
+	return (
+		<span
+			className={ clsx(
+				'dataviews-filters__search-widget-listitem-multi-selection',
+				{ 'is-selected': selected }
+			) }
+		>
+			{ selected && <Icon icon={ check } /> }
+		</span>
+	);
+};
+
+const SingleSelectionOption = ( { selected }: { selected: boolean } ) => {
+	return (
+		<span
+			className={ clsx(
+				'dataviews-filters__search-widget-listitem-single-selection',
+				{ 'is-selected': selected }
+			) }
+		/>
+	);
+};
 
 function ListBox( { view, filter, onChangeView }: SearchWidgetProps ) {
 	const baseId = useInstanceId( ListBox, 'dataviews-filter-list-box' );
@@ -189,16 +207,16 @@ function ListBox( { view, filter, onChangeView }: SearchWidgetProps ) {
 						/>
 					}
 				>
-					<span className="dataviews-filters__search-widget-listitem-check">
-						{ filter.singleSelection &&
-							currentValue === element.value && (
-								<Icon icon={ radioCheck } />
-							) }
-						{ ! filter.singleSelection &&
-							currentValue.includes( element.value ) && (
-								<Icon icon={ check } />
-							) }
-					</span>
+					{ filter.singleSelection && (
+						<SingleSelectionOption
+							selected={ currentValue === element.value }
+						/>
+					) }
+					{ ! filter.singleSelection && (
+						<MultiSelectionOption
+							selected={ currentValue.includes( element.value ) }
+						/>
+					) }
 					<span>{ element.label }</span>
 				</Composite.Hover>
 			) ) }
@@ -288,16 +306,18 @@ function ComboboxList( { view, filter, onChangeView }: SearchWidgetProps ) {
 							setValueOnClick={ false }
 							focusOnHover
 						>
-							<span className="dataviews-filters__search-widget-listitem-check">
-								{ filter.singleSelection &&
-									currentValue === element.value && (
-										<Icon icon={ radioCheck } />
+							{ filter.singleSelection && (
+								<SingleSelectionOption
+									selected={ currentValue === element.value }
+								/>
+							) }
+							{ ! filter.singleSelection && (
+								<MultiSelectionOption
+									selected={ currentValue.includes(
+										element.value
 									) }
-								{ ! filter.singleSelection &&
-									currentValue.includes( element.value ) && (
-										<Icon icon={ check } />
-									) }
-							</span>
+								/>
+							) }
 							<span>
 								<Ariakit.ComboboxItemValue
 									className="dataviews-filters__search-widget-filter-combobox-item-value"

@@ -34,11 +34,10 @@
 }
 
 .dataviews-filters__summary-operators-container {
-	padding: $grid-unit-10 $grid-unit-10 0;
+	padding: $grid-unit-10 $grid-unit-20;
 
 	&:has(+ .dataviews-filters__search-widget-listbox) {
 		border-bottom: 1px solid $gray-200;
-		padding-bottom: $grid-unit-10;
 	}
 
 	&:empty {
@@ -47,6 +46,9 @@
 
 	.dataviews-filters__summary-operators-filter-name {
 		color: $gray-700;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
 	}
 }
 
@@ -170,9 +172,10 @@
 	gap: $grid-unit-10;
 	border-radius: $radius-small;
 	box-sizing: border-box;
-	padding: $grid-unit-10 $grid-unit-15;
+	padding: $grid-unit-05 $grid-unit-15;
 	cursor: default;
-	margin-block-end: 2px;
+	min-height: $grid-unit-40;
+	@include body-medium();
 
 	&:last-child {
 		margin-block-end: 0;
@@ -184,19 +187,27 @@
 		background-color: var(--wp-admin-theme-color);
 		color: $white;
 
-		.dataviews-filters__search-widget-listitem-check {
-			fill: $white;
-		}
-
 		.dataviews-filters__search-widget-listitem-description {
 			color: $white;
 		}
-	}
 
-	.dataviews-filters__search-widget-listitem-check {
-		width: 24px;
-		height: 24px;
-		flex-shrink: 0;
+		.dataviews-filters__search-widget-listitem-single-selection {
+			border-color: var(--wp-components-color-accent-darker-20, var(--wp-admin-theme-color-darker-20, #183ad6));
+			background: $white;
+			&.is-selected {
+				border-color: var(--wp-components-color-accent-darker-20, var(--wp-admin-theme-color-darker-20, #183ad6));
+				background:	var(--wp-components-color-accent-darker-20, var(--wp-admin-theme-color-darker-20, #183ad6));
+			}
+		}
+
+		.dataviews-filters__search-widget-listitem-multi-selection {
+			border-color: var(--wp-admin-theme-color-darker-20, #183ad6);
+
+			&.is-selected {
+				border-color: var(--wp-admin-theme-color-darker-20, #183ad6);
+				background: var(--wp-admin-theme-color-darker-20, #183ad6);
+			}
+		}
 	}
 
 	.dataviews-filters__search-widget-listitem-description {
@@ -206,6 +217,81 @@
 		font-size: $helptext-font-size;
 		line-height: 16px;
 		color: $gray-700;
+	}
+
+	.dataviews-filters__search-widget-listitem-single-selection {
+		@include radio-control;
+		margin: 0;
+		padding: 0;
+
+		&.is-selected {
+			background: var(--wp-admin-theme-color, #3858e9);
+			border-color: var(--wp-admin-theme-color, #3858e9);
+
+			&::before {
+				content: "";
+				border-radius: $radius-round;
+				box-sizing: inherit;
+				width: math.div($radio-input-size-sm, 2);
+				height: math.div($radio-input-size-sm, 2);
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				transform: translate(-50%, -50%);
+				margin: 0;
+				background-color: $white;
+
+				// This border serves as a background color in Windows High Contrast mode.
+				border: 4px solid $white;
+
+				@include break-small() {
+					width: math.div($radio-input-size, 2);
+					height: math.div($radio-input-size, 2);
+				}
+			}
+		}
+	}
+
+	.dataviews-filters__search-widget-listitem-multi-selection {
+		--checkbox-size: 24px; // Width & height for small viewports.
+
+		@include checkbox-control;
+		position: relative;
+		background: $white;
+		color: $gray-900;
+		margin: 0;
+		padding: 0;
+		width: var(--checkbox-size);
+		height: var(--checkbox-size);
+
+		@include break-small() {
+			--checkbox-size: 16px;
+		}
+
+		@media not (prefers-reduced-motion) {
+			transition: 0.1s border-color ease-in-out;
+		}
+
+		&.is-selected {
+			background: var(--wp-admin-theme-color, #3858e9);
+			border-color: var(--wp-admin-theme-color, #3858e9);
+
+			svg {
+				--checkmark-size: var(--checkbox-size);
+
+				fill: $white;
+				position: absolute;
+				left: 50%;
+				top: 50%;
+				transform: translate(-50%, -50%);
+				width: var(--checkmark-size);
+				height: var(--checkmark-size);
+
+				@include break-small() {
+					--checkmark-size: calc(var(--checkbox-size) + 4px);
+				}
+			}
+		}
 	}
 }
 

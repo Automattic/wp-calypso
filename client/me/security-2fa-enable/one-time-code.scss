@@ -1,0 +1,39 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.one-time-code {
+	margin-bottom: 16px;
+}
+
+.one-time-code__display {
+	align-items: center;
+	background: var(--color-neutral-0);
+	border: 1px solid var(--color-border-subtle);
+	display: flex;
+	justify-content: space-between;
+	letter-spacing: 2px;
+	margin: 10px auto;
+	padding: 5px;
+	text-align: center;
+	font-weight: bold;
+
+	@media (max-width: $break-mobile) {
+		font-size: 200%;
+	}
+
+	.one-time-code__content {
+		flex-grow: 1;
+		flex-shrink: 1;
+	}
+
+	.one-time-code__copy {
+		flex-grow: 0;
+		flex-shrink: 0;
+
+		&:focus:not(:disabled) {
+			box-shadow: none;
+			outline: none;
+		}
+	}
+}
+

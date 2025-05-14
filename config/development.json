@@ -137,7 +137,6 @@
 		"onboarding/import-from-wix": true,
 		"onboarding/import-from-wordpress": true,
 		"onboarding/interval-dropdown": true,
-		"onboarding/playground": true,
 		"onboarding/step-container-v2-migration-flow": true,
 		"onboarding/step-container-v2-import-flow": true,
 		"onboarding/trail-map-feature-grid": false,
