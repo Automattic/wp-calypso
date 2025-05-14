@@ -33,18 +33,26 @@ function withUnitTestInfo( cmd ) {
 	};
 }
 
-const allPackageTsconfigs = (
-	await globPromise( 'packages/*/tsconfig.json', { ignore: 'packages/dataviews/**' } )
-).join( ' ' );
+const [ packagesTsconfigs, appsTsconfigs ] = await Promise.all(
+	[ 'packages', 'apps' ].map( ( path ) => globPromise( `${ path }/*/tsconfig.json` ) )
+);
+
 const tscPackages = withTscInfo( {
-	cmd: `tsc --build ${ allPackageTsconfigs }`,
+	cmd: `tsc --build ${ packagesTsconfigs.join( ' ' ) }`,
 	id: 'type_check_packages',
+} );
+
+const tscApps = withTscInfo( {
+	cmd: `tsc --build --noEmit ${ appsTsconfigs.join( ' ' ) }`,
+	id: 'type_check_apps',
 } );
 
 const tscCommands = [
 	{ cmd: 'tsc --noEmit --project client/tsconfig.json', id: 'type_check_client' },
 	{ cmd: 'tsc --noEmit --project test/e2e/tsconfig.json', id: 'type_check_tests' },
-].map( withTscInfo );
+]
+	.map( withTscInfo )
+	.concat( tscApps );
 
 // When Jest runs without --maxWorkers, each instance of Jest will try to use all
 // cores available. (Which is a lot in our CI.) This isn't a problem per se, because
