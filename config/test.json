@@ -39,7 +39,6 @@
 		"cookie-banner": false,
 		"current-site/domain-warning": true,
 		"current-site/notice": true,
-		"current-site/stale-cart-notice": false,
 		"devdocs": true,
 		"devdocs/redirect-loggedout-homepage": true,
 		"difm/allow-extra-pages": false,

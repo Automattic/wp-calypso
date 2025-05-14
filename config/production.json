@@ -41,7 +41,6 @@
 		"cookie-banner": true,
 		"current-site/domain-warning": true,
 		"current-site/notice": true,
-		"current-site/stale-cart-notice": false,
 		"global-styles/on-personal-plan": false,
 		"google-my-business": true,
 		"help": true,

@@ -28,7 +28,6 @@
 		"cookie-banner": true,
 		"current-site/domain-warning": true,
 		"current-site/notice": true,
-		"current-site/stale-cart-notice": false,
 		"design-picker/use-assembler-styles": true,
 		"devdocs": false,
 		"global-styles/on-personal-plan": false,

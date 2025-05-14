@@ -39,7 +39,6 @@
 		"cookie-banner": false,
 		"current-site/domain-warning": true,
 		"current-site/notice": true,
-		"current-site/stale-cart-notice": false,
 		"dev/preferences-helper": true,
 		"dev/store-sandbox-helper": true,
 		"global-styles/on-personal-plan": false,
