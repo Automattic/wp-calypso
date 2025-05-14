@@ -507,6 +507,8 @@ module.exports = {
 					'__experimentalHStack',
 					'__experimentalVStack',
 					'__experimentalSpacer',
+					'__experimentalText',
+					'__experimentalHeading',
 					'__experimentalItem',
 					'__experimentalItemGroup',
 					'__experimentalNavigationBackButton',
