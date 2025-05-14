@@ -1,4 +1,3 @@
-import { Breadcrumbs } from '@automattic/components/src/breadcrumbs';
 import {
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
@@ -37,11 +36,11 @@ export const PageHeader = ( {
 	description,
 	actions,
 	decoration,
-	breadcrumbItems,
+	breadcrumb,
 }: PageHeaderProps ) => {
 	return (
 		<VStack spacing={ 2 }>
-			{ !! breadcrumbItems?.length && <Breadcrumbs items={ breadcrumbItems } /> }
+			{ breadcrumb }
 			<HStack spacing={ 4 } justify="flex-start" alignment="flex-start">
 				{ decoration && (
 					<span className="client-dashboard-components-page-header__decoration">

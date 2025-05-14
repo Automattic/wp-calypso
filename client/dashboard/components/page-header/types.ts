@@ -1,5 +1,4 @@
 import React from 'react';
-import type { BreadcrumbItemProps } from '@automattic/components/src/breadcrumbs/types';
 
 export interface PageHeaderProps {
 	/**
@@ -22,9 +21,8 @@ export interface PageHeaderProps {
 	 */
 	decoration?: React.ReactNode;
 	/**
-	 * An optional breadcrumb trail used to indicate the user's current position
+	 * An optional breadcrumb component used to indicate the user's current position
 	 * in a complex navigational structure and allow quick access to parent levels.
-	 * Internally it uses the `Breadcrumbs` component.
 	 */
-	breadcrumbItems?: BreadcrumbItemProps[];
+	breadcrumb?: React.ReactNode[];
 }

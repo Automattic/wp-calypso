@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+import { Breadcrumbs } from '@automattic/components/src/breadcrumbs';
 import { render, screen } from '@testing-library/react';
 import { Button, Icon } from '@wordpress/components';
 import { cog } from '@wordpress/icons';
@@ -43,11 +44,15 @@ describe( 'PageHeader', () => {
 		render(
 			<PageHeader
 				title="Test Title"
-				breadcrumbItems={ [
-					{ label: 'Home', href: '/' },
-					{ label: 'Products', href: '/products' },
-					{ label: 'Categories', href: '/products/categories' },
-				] }
+				breadcrumb={
+					<Breadcrumbs
+						items={ [
+							{ label: 'Home', href: '/' },
+							{ label: 'Products', href: '/products' },
+							{ label: 'Categories', href: '/products/categories' },
+						] }
+					/>
+				}
 			/>
 		);
 		expect( screen.getByRole( 'heading', { name: 'Test Title' } ).tagName ).toBe( 'H1' );
