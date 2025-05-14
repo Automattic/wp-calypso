@@ -11,7 +11,7 @@ const selectors = {
 		selected = false,
 		isCoreTabs = false,
 	}: { name?: string; selected?: boolean; isCoreTabs?: boolean } = {} ) =>
-		! isCoreTabs
+		! isCoreTabs || envVariables.VIEWPORT_NAME === 'mobile'
 			? `${ calypsoNavTabParent } a[aria-current="${ selected }"]:has(span:has-text("${ name }"))`
 			: `${ coreNavTabParent } button[aria-selected="${ selected }"]:has-text("${ name }")`,
 	navTabMobileToggleButton: `${ calypsoNavTabParent } button.section-nav__mobile-header`,
