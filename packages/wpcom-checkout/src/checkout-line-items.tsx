@@ -605,6 +605,54 @@ function returnModalCopy(
 	}
 }
 
+function getHasRemoveFromCartModal( {
+	product,
+	hasBundledDomainsInCart,
+	hasMarketplaceProductsInCart,
+	isPwpoUser = false,
+}: {
+	product: ResponseCartProduct;
+	hasBundledDomainsInCart: boolean;
+	hasMarketplaceProductsInCart: boolean;
+	isPwpoUser?: boolean;
+} ) {
+	const productType = getProductTypeForModalCopy(
+		product,
+		hasBundledDomainsInCart,
+		hasMarketplaceProductsInCart,
+		isPwpoUser
+	);
+	const isRenewal = isWpComProductRenewal( product );
+
+	switch ( productType ) {
+		case 'gift purchase':
+			return true;
+
+		case 'plan with marketplace dependencies':
+			return true;
+
+		case 'plan with domain dependencies': {
+			if ( isRenewal ) {
+				return false;
+			}
+
+			return true;
+		}
+
+		case 'plan':
+			return false;
+
+		case 'domain':
+			return false;
+
+		case 'coupon':
+			return true;
+
+		default:
+			return false;
+	}
+}
+
 function JetpackSearchMeta( { product }: { product: ResponseCartProduct } ) {
 	return <ProductTier product={ product } />;
 }
@@ -1228,6 +1276,12 @@ function CheckoutLineItem( {
 	const { formStatus } = useFormStatus();
 	const itemSpanId = `checkout-line-item-${ id }`;
 	const [ isModalVisible, setIsModalVisible ] = useState( false );
+	const hasRemoveFromCartModal = getHasRemoveFromCartModal( {
+		product,
+		hasBundledDomainsInCart,
+		hasMarketplaceProductsInCart,
+		isPwpoUser,
+	} );
 	const modalCopy = returnModalCopyForProduct(
 		product,
 		translate,
@@ -1272,6 +1326,34 @@ function CheckoutLineItem( {
 	const containsPartnerCoupon = getPartnerCoupon( {
 		coupon: responseCart.coupon,
 	} );
+
+	const removeProductFromCartAndSetAsRestorable = async () => {
+		if ( ! ( hasDeleteButton && removeProductFromCart ) ) {
+			return;
+		}
+
+		let product_uuids_to_remove = [ product.uuid ];
+
+		// Gifts need to be all or nothing, to prevent leaving
+		// the site in a state where it requires other purchases
+		// in order to actually work correctly for the period of
+		// the gift (for example, gifting a plan renewal without
+		// a domain renewal would likely lead the site's domain
+		// to expire soon afterwards).
+		if ( product.is_gift_purchase ) {
+			product_uuids_to_remove = responseCart.products
+				.filter( ( cart_product ) => cart_product.is_gift_purchase )
+				.map( ( cart_product ) => cart_product.uuid );
+		}
+
+		await Promise.all( product_uuids_to_remove.map( removeProductFromCart ) ).catch( () => {
+			// Nothing needs to be done here. CartMessages will display the error to the user.
+		} );
+
+		setRestorableProducts?.( [ ...( restorableProducts || [] ), product ] );
+
+		onRemoveProduct?.( label );
+	};
 
 	return (
 		<div
@@ -1341,8 +1423,13 @@ function CheckoutLineItem( {
 							) }
 							disabled={ isDisabled }
 							onClick={ () => {
-								setIsModalVisible( true );
 								onRemoveProductClick?.( label );
+
+								if ( hasRemoveFromCartModal ) {
+									setIsModalVisible( true );
+								} else {
+									removeProductFromCartAndSetAsRestorable();
+								}
 							} }
 						>
 							{ translate( 'Remove from cart' ) }
@@ -1354,31 +1441,7 @@ function CheckoutLineItem( {
 						closeModal={ () => {
 							setIsModalVisible( false );
 						} }
-						primaryAction={ async () => {
-							let product_uuids_to_remove = [ product.uuid ];
-
-							// Gifts need to be all or nothing, to prevent leaving
-							// the site in a state where it requires other purchases
-							// in order to actually work correctly for the period of
-							// the gift (for example, gifting a plan renewal without
-							// a domain renewal would likely lead the site's domain
-							// to expire soon afterwards).
-							if ( product.is_gift_purchase ) {
-								product_uuids_to_remove = responseCart.products
-									.filter( ( cart_product ) => cart_product.is_gift_purchase )
-									.map( ( cart_product ) => cart_product.uuid );
-							}
-
-							await Promise.all( product_uuids_to_remove.map( removeProductFromCart ) ).catch(
-								() => {
-									// Nothing needs to be done here. CartMessages will display the error to the user.
-								}
-							);
-
-							setRestorableProducts?.( [ ...( restorableProducts || [] ), product ] );
-
-							onRemoveProduct?.( label );
-						} }
+						primaryAction={ removeProductFromCartAndSetAsRestorable }
 						cancelAction={ () => {
 							onRemoveProductCancel?.( label );
 						} }
