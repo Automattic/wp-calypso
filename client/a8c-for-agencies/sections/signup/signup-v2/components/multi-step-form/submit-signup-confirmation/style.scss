@@ -1,0 +1,18 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
+
+.submit-signup-confirmation {
+
+	@include break-mobile() {
+		align-items: flex-start;
+	}
+}
+
+.submit-signup-confirmation__description {
+	@include body-medium;
+
+	@media (prefers-color-scheme: dark) {
+		color: var(--color-text-inverted);
+	}
+}

@@ -18,13 +18,14 @@ import './style.scss';
 type Props = {
 	onContinue: ( data: Partial< AgencyDetailsSignupPayload > ) => void;
 	initialFormData: Partial< AgencyDetailsSignupPayload >;
+	withEmail?: boolean;
 };
 
-const SignupContactForm = ( { onContinue, initialFormData }: Props ) => {
+const SignupContactForm = ( { onContinue, initialFormData, withEmail = false }: Props ) => {
 	const translate = useTranslate();
 	const [ showTosModal, setShowTosModal ] = useState( false );
 	const { validate, validationError, updateValidationError, isValidating } =
-		useContactFormValidation();
+		useContactFormValidation( { withEmail } );
 
 	const countriesList = useGetSupportedSMSCountries();
 	const noCountryList = countriesList.length === 0;
@@ -111,15 +112,17 @@ const SignupContactForm = ( { onContinue, initialFormData }: Props ) => {
 				</FormField>
 			</div>
 
-			<FormField error={ validationError.email } label={ translate( 'Email' ) } isRequired>
-				<FormTextInput
-					name="email"
-					type="email"
-					value={ formData.email }
-					onChange={ handleInputChange( 'email' ) }
-					placeholder={ translate( 'Your email' ) }
-				/>
-			</FormField>
+			{ withEmail && (
+				<FormField error={ validationError.email } label={ translate( 'Email' ) } isRequired>
+					<FormTextInput
+						name="email"
+						type="email"
+						value={ formData.email }
+						onChange={ handleInputChange( 'email' ) }
+						placeholder={ translate( 'Your email' ) }
+					/>
+				</FormField>
+			) }
 
 			<FormField
 				error={ validationError.agencyName }
