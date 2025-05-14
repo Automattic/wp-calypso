@@ -46,7 +46,6 @@ export interface LaunchpadResponse {
 	is_dismissed: boolean;
 	is_dismissible: boolean;
 	title?: string | null;
-	purchase_notification_shown?: boolean;
 }
 
 type LaunchpadUpdateSettings = {
@@ -57,7 +56,6 @@ type LaunchpadUpdateSettings = {
 		dismissed_until?: number | null;
 	};
 	launchpad_screen?: 'off' | 'minimized' | 'full' | 'skipped';
-	purchase_notification_shown?: boolean;
 };
 
 export type UseLaunchpadOptions = {
