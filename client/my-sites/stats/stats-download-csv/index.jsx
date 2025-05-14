@@ -12,6 +12,7 @@ import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import {
 	getSiteStatsCSVData,
+	getSiteStatsNormalizedData,
 	isRequestingSiteStatsForQuery,
 } from 'calypso/state/stats/lists/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -29,6 +30,7 @@ class StatsDownloadCsv extends Component {
 		siteId: PropTypes.number,
 		borderless: PropTypes.bool,
 		isMobile: PropTypes.bool,
+		hideIfNoData: PropTypes.bool,
 	};
 
 	processExportData = ( data ) => {
@@ -81,14 +83,28 @@ class StatsDownloadCsv extends Component {
 	};
 
 	render() {
-		const { data, siteId, statType, query, translate, isLoading, borderless, skipQuery, isMobile } =
-			this.props;
+		const {
+			data,
+			siteId,
+			statType,
+			query,
+			translate,
+			isLoading,
+			borderless,
+			skipQuery,
+			isMobile,
+			hideIfNoData = false,
+		} = this.props;
 		try {
 			new Blob(); // eslint-disable-line no-new
 		} catch ( e ) {
 			return null;
 		}
 		const disabled = isLoading || ! data.length;
+
+		if ( hideIfNoData && disabled ) {
+			return null;
+		}
 
 		return (
 			<Button
@@ -125,7 +141,10 @@ const connectComponent = connect(
 		}
 
 		const { statType, query } = ownProps;
-		const data = getSiteStatsCSVData( state, siteId, statType, query );
+		const data =
+			statType === 'statsVideoPlays'
+				? getSiteStatsNormalizedData( state, siteId, statType, query )
+				: getSiteStatsCSVData( state, siteId, statType, query );
 		const isLoading = isRequestingSiteStatsForQuery( state, siteId, statType, query );
 
 		return { data, siteSlug, siteId, isLoading };

@@ -7,7 +7,16 @@
 	"author": "Automattic Inc.",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
+	"types": "dist/types/index.d.ts",
 	"calypso:src": "src/index.tsx",
+	"exports": {
+		".": {
+			"calypso:src": "./src/index.tsx",
+			"types": "./dist/types/index.d.ts",
+			"import": "./dist/esm/index.js",
+			"require": "./dist/cjs/index.js"
+		}
+	},
 	"sideEffects": [
 		"*.css",
 		"*.scss"
@@ -21,7 +30,6 @@
 		"access": "public"
 	},
 	"bugs": "https://github.com/Automattic/wp-calypso/issues",
-	"types": "dist/types",
 	"scripts": {
 		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",
 		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json && copy-assets",

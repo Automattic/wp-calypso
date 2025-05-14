@@ -55,3 +55,12 @@
 		width: 100%;
 	}
 }
+
+.is-white-login {
+	.continue-as-user {
+		height: auto;
+	}
+	.continue-as-user__not-you {
+		position: static;
+	}
+}

@@ -19,7 +19,7 @@ Routes use loaders to prefetch data before rendering. This ensures that componen
 
 ```typescript
 loader: () =>
-  maybeAwaitFetch(profileQuery()),
+  queryClient.ensureQueryData(profileQuery()),
 ```
 
 later the component can use the `useQuery` hook to access the data:

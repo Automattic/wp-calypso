@@ -1,3 +1,7 @@
+## 7.5.0
+
+- Add `translationOptions` to fixMe so it can work on translations with context.
+
 ## 7.4.0
 
 - Add type for `fixMe` method

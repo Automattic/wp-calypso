@@ -94,9 +94,12 @@ function StatsRealtime() {
 		return () => clearInterval( intervalId );
 	}, [ dispatch, siteId, query ] );
 
-	// Track the last viewed tab.
-	// Necessary to properly configure the fixed navigation headers.
-	sessionStorage.setItem( 'jp-stats-last-tab', 'realtime' );
+	useEffect(
+		() =>
+			// Necessary to properly configure the fixed navigation headers.
+			sessionStorage.setItem( 'jp-stats-last-tab', 'realtime' ),
+		[]
+	); // Track the last viewed tab.
 
 	// TODO: should be refactored into separate components
 	/* eslint-disable wpcalypso/jsx-classname-namespace */

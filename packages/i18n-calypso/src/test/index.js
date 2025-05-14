@@ -308,6 +308,16 @@ describe( 'I18n', function () {
 	} );
 
 	describe( 'fixMe', () => {
+		let originalHasTranslation;
+
+		beforeEach( () => {
+			originalHasTranslation = i18n.hasTranslation;
+		} );
+
+		afterEach( () => {
+			i18n.hasTranslation = originalHasTranslation;
+		} );
+
 		it( 'should return null if text is missing or wrong type', () => {
 			const result = i18n.fixMe( {} );
 			expect( result ).toBe( null );
@@ -352,6 +362,29 @@ describe( 'I18n', function () {
 				oldCopy: 'hi',
 			} );
 			expect( result ).toBe( 'hi' );
+		} );
+
+		it( 'should return newCopy if text has a translation with context', function () {
+			const result = i18n.fixMe( {
+				text: 'test3',
+				newCopy: 'translation3',
+				oldCopy: 'not test 3',
+				translationOptions: {
+					context: 'thecontext',
+				},
+			} );
+			expect( result ).toBe( 'translation3' );
+		} );
+		it( 'should return oldCopy if text does not have a translation with this context', function () {
+			const result = i18n.fixMe( {
+				text: 'test3',
+				newCopy: 'translation3',
+				oldCopy: 'not test 3',
+				translationOptions: {
+					context: 'notthecontext',
+				},
+			} );
+			expect( result ).toBe( 'not test 3' );
 		} );
 	} );
 } );

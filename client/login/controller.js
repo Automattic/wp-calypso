@@ -65,7 +65,6 @@ const enhanceContextWithLogin = ( context ) => {
 
 	const isWhiteLogin =
 		( ! isJetpackLogin && Boolean( clientId ) === false && Boolean( oauth2ClientId ) === false ) ||
-		isGravPoweredClient ||
 		isPartnerPortalClient;
 
 	context.primary = (
@@ -79,7 +78,6 @@ const enhanceContextWithLogin = ( context ) => {
 			socialService={ socialService }
 			socialServiceResponse={ socialServiceResponse }
 			socialConnect={ flow === 'social-connect' }
-			privateSite={ flow === 'private-site' }
 			domain={ ( query && query.domain ) || null }
 			fromSite={ ( query && query.site ) || null }
 			signupUrl={ ( query && query.signup_url ) || null }

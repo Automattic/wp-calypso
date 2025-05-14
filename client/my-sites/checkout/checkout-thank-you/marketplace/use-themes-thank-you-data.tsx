@@ -9,7 +9,7 @@ import {
 	hasLoadedSitePurchasesFromServer,
 	isFetchingSitePurchases,
 } from 'calypso/state/purchases/selectors';
-import { isJetpackSite, getSiteAdminUrl, getSiteOption } from 'calypso/state/sites/selectors';
+import { isJetpackSite, getSiteOption } from 'calypso/state/sites/selectors';
 import { clearActivated } from 'calypso/state/themes/actions';
 import {
 	getThemes,
@@ -18,14 +18,12 @@ import {
 import { hasExternallyManagedThemes as getHasExternallyManagedThemes } from 'calypso/state/themes/selectors/is-externally-managed-theme';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { Theme } from 'calypso/types';
-import MasterbarStyled from '../redesign-v2/masterbar-styled';
 import { ThankYouThemeSection } from './marketplace-thank-you-theme-section';
 
 type ThankYouThemeData = [
 	Theme,
 	React.ReactElement[],
 	boolean,
-	JSX.Element,
 	string,
 	string,
 	string[],
@@ -73,14 +71,6 @@ export function useThemesThankYouData(
 
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
 
-	const adminInterface = useSelector( ( state ) =>
-		getSiteOption( state, siteId, 'wpcom_admin_interface' )
-	);
-
-	const siteAdminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
-	const themeUrl =
-		adminInterface === 'wp-admin' ? `${ siteAdminUrl }themes.php` : `/themes/${ siteSlug }`;
-
 	useQueryThemes( 'wpcom', themeSlugs );
 	useQueryThemes( 'wporg', themeSlugs );
 
@@ -95,15 +85,6 @@ export function useThemesThankYouData(
 				/>
 			);
 		} );
-
-	const goBackSection = (
-		<MasterbarStyled
-			onClick={ () => page( themeUrl ) }
-			backText={ translate( 'Back to dashboard' ) }
-			canGoBack={ allThemesFetched }
-			showContact={ allThemesFetched }
-		/>
-	);
 
 	const thankyouSteps = useMemo(
 		() =>
@@ -193,7 +174,6 @@ export function useThemesThankYouData(
 		firstTheme,
 		themesSection,
 		allThemesFetched,
-		goBackSection,
 		title,
 		subtitle,
 		thankyouSteps,

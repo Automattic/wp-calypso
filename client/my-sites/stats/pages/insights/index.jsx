@@ -53,9 +53,12 @@ function StatsInsights() {
 	const shouldRendeUpsell = config.isEnabled( 'stats/paid-wpcom-v3' ) && shouldGateInsights;
 	const isStatsNavigationImprovementEnabled = config.isEnabled( 'stats/navigation-improvement' );
 
-	// Track the last viewed tab.
-	// Necessary to properly configure the fixed navigation headers.
-	sessionStorage.setItem( 'jp-stats-last-tab', 'insights' );
+	useEffect(
+		() =>
+			// Necessary to properly configure the fixed navigation headers.
+			sessionStorage.setItem( 'jp-stats-last-tab', 'insights' ),
+		[]
+	); // Track the last viewed tab.
 
 	const isWPAdmin = config.isEnabled( 'is_odyssey' );
 	const insightsPageClasses = clsx( 'stats', { 'is-odyssey-stats': isWPAdmin } );

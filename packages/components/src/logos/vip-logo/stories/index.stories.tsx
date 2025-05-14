@@ -2,7 +2,7 @@ import { VIPLogo } from '..';
 import type { Meta, StoryObj } from '@storybook/react';
 
 const meta: Meta< typeof VIPLogo > = {
-	title: 'packages/components/Logos/VIPLogo',
+	title: 'Unaudited/Logos/VIPLogo',
 	component: VIPLogo,
 };
 export default meta;

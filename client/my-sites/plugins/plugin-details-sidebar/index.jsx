@@ -12,7 +12,7 @@ import './style.scss';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { PlanUSPS, USPS } from 'calypso/my-sites/plugins/plugin-details-CTA/usps';
 import PluginDetailsSidebarUSP from 'calypso/my-sites/plugins/plugin-details-sidebar-usp';
-import usePluginsSupportText from 'calypso/my-sites/plugins/use-plugins-support-text/';
+import usePluginsSupportText from 'calypso/my-sites/plugins/use-plugins-support-text';
 import { getBillingInterval } from 'calypso/state/marketplace/billing-interval/selectors';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';

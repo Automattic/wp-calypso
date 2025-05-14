@@ -59,7 +59,7 @@ describe( DataHelper.createSuiteTitle( 'Authentication: Apple' ), function () {
 					inboxId: SecretsManager.secrets.mailosaur.totpUserInboxId,
 					receivedAfter: timestamp,
 					subject: 'SMS',
-					body: 'Your Apple ID Code is',
+					body: 'Your Apple Account code is',
 				} );
 
 				const code = emailClient.get2FACodeFromMessage( message );
@@ -124,7 +124,7 @@ describe( DataHelper.createSuiteTitle( 'Authentication: Apple' ), function () {
 					inboxId: SecretsManager.secrets.mailosaur.totpUserInboxId,
 					receivedAfter: timestamp,
 					subject: 'SMS',
-					body: 'Your Apple ID Code is',
+					body: 'Your Apple Account code is',
 				} );
 
 				const code = emailClient.get2FACodeFromMessage( message );
@@ -138,8 +138,15 @@ describe( DataHelper.createSuiteTitle( 'Authentication: Apple' ), function () {
 			await appleLoginPage.clickButtonContainingText( 'Continue' );
 		} );
 
+		it( 'Authorize your WPCOM to sign into WooCommerce', async function () {
+			const approveButton = page.locator( 'button:text("Approve")' );
+			if ( ( await approveButton.count() ) > 0 ) {
+				await approveButton.click();
+			}
+		} );
+
 		it( 'Redirected to woo.com upon successful login', async function () {
-			await page.waitForURL( /.*woo\.com*/ );
+			await page.waitForURL( /.*woocommerce\.com*/ );
 		} );
 	} );
 } );
