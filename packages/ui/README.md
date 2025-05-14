@@ -8,13 +8,26 @@ A library of React components that adhere to the Automattic Design System, to be
 yarn add @automattic/ui @wordpress/components
 ```
 
-## WordPress Component Styles
+## Required stylesheets
 
-Some components require CSS styles from `@wordpress/components`, which you will need to load once in your app in order for them to appear correctly.
+You will need to load a minimum of two stylesheets for the components to appear correctly: one for `@automattic/ui` and one for `@wordpress/components`. How to load the WordPress stylesheet depends on your project.
 
-In a WordPress project, add the `wp-components` stylesheet as a dependency of your plugin's stylesheet. See [wp_enqueue_style documentation](https://developer.wordpress.org/reference/functions/wp_enqueue_style/#parameters) for how to specify dependencies.
+```js
+// Styles for `@automattic/ui` (Does not require separate RTL styles)
+import "@automattic/ui/index.css";
+```
 
-In non-WordPress projects, import the `build-style/style.css` file directly, located at `node_modules/@wordpress/components/build-style/style.css` (`style-rtl.css` for RTL layouts).
+### WordPress Component Styles
+
+In a WordPress project, the stylesheet is available globaly, so add the `wp-components` stylesheet as a dependency of your plugin's stylesheet. See [wp_enqueue_style documentation](https://developer.wordpress.org/reference/functions/wp_enqueue_style/#parameters) for how to specify dependencies.
+
+In a non-WordPress project, import the `build-style/style.css` file directly, located at `node_modules/@wordpress/components/build-style/style.css`. For RTL layouts, use the pre-built `style-rtl.css` file, or build your own with `rtlcss`.
+
+```js
+// Styles for `@wordpress/components` in a non-WordPress project
+// (Requires separate RTL styles)
+import "@wordpress/components/build-style/style.css";
+```
 
 ## Development Workflow
 
