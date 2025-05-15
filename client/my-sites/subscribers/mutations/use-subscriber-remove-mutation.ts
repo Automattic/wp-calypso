@@ -120,8 +120,8 @@ const useSubscriberRemoveMutation = (
 				// Consider removal successful if:
 				// 1. We removed the email subscription (if it existed)
 				// 2. We removed the wpcom following (if it existed)
-				const emailSuccess = ! emailSubscriptionId || emailRemoved;
-				const wpcomSuccess = ! isNaN( numericUserId ) ? wpcomRemoved : true;
+				const emailSuccess = emailSubscriptionId ? emailRemoved : true;
+				const wpcomSuccess = isNaN( numericUserId ) ? true : wpcomRemoved;
 
 				return emailSuccess && wpcomSuccess;
 			} );
