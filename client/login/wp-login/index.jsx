@@ -433,19 +433,11 @@ export class Login extends Component {
 		}
 
 		if ( ( isWoo || isBlazePro ) && isLoginView ) {
-			return (
-				<>
-					<LoginFooter lostPasswordLink={ this.getLostPasswordLink() } shouldRenderTos />
-				</>
-			);
+			return <LoginFooter lostPasswordLink={ this.getLostPasswordLink() } shouldRenderTos />;
 		}
 
 		if ( isSocialFirst ) {
-			return (
-				<>
-					<LoginFooter lostPasswordLink={ this.getLostPasswordLink() } />
-				</>
-			);
+			return <LoginFooter lostPasswordLink={ this.getLostPasswordLink() } />;
 		}
 
 		const shouldRenderFooter =
@@ -453,19 +445,17 @@ export class Login extends Component {
 
 		if ( shouldRenderFooter ) {
 			return (
-				<>
-					<LoginLinks
-						locale={ locale }
-						twoFactorAuthType={ twoFactorAuthType }
-						isWhiteLogin={ isWhiteLogin }
-						isGravPoweredClient={ isGravPoweredClient }
-						signupUrl={ signupUrl }
-						usernameOrEmail={ this.state.usernameOrEmail }
-						oauth2Client={ this.props.oauth2Client }
-						getLostPasswordLink={ this.getLostPasswordLink.bind( this ) }
-						renderSignUpLink={ this.renderSignUpLink.bind( this ) }
-					/>
-				</>
+				<LoginLinks
+					locale={ locale }
+					twoFactorAuthType={ twoFactorAuthType }
+					isWhiteLogin={ isWhiteLogin }
+					isGravPoweredClient={ isGravPoweredClient }
+					signupUrl={ signupUrl }
+					usernameOrEmail={ this.state.usernameOrEmail }
+					oauth2Client={ this.props.oauth2Client }
+					getLostPasswordLink={ this.getLostPasswordLink.bind( this ) }
+					renderSignUpLink={ this.renderSignUpLink.bind( this ) }
+				/>
 			);
 		}
 
