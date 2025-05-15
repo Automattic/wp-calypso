@@ -40,7 +40,7 @@ export const usePurchasePlanNotification = (
 			successNotice(
 				sprintf(
 					/* translators: %(planName)s is the name of the plan, e.g. "Business Plan" */
-					__( "You're in! The %(planName)s plan is now active." ),
+					__( "You're in! The %(planName)s Plan is now active." ),
 					{ planName: plan?.getTitle() || '' }
 				)
 			)
