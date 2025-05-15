@@ -35,7 +35,6 @@
 		"checkout/razorpay": false,
 		"current-site/domain-warning": false,
 		"current-site/notice": false,
-		"current-site/stale-cart-notice": false,
 		"jetpack-cloud": true,
 		"individual-subscriber-stats": true,
 		"jetpack/backup-messaging-i3": true,

@@ -1,0 +1,14 @@
+
+.add-tags-form {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding-inline-start: 10px;
+	transition: all 0.15s ease-in-out;
+
+	&__input {
+		@extend %form-field !optional;
+		transition: all 0.15s ease-in-out;
+		font-size: 14px;
+	}
+}

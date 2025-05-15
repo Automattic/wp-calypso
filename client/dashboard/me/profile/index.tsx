@@ -18,6 +18,7 @@ import { createInterpolateElement, useMemo } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useState } from 'react';
 import { profileQuery, profileMutation } from '../../app/queries';
+import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import EditGravatar from '../edit-gravatar';
 import type { Profile as ProfileType } from '../../data/types';
@@ -168,16 +169,16 @@ export default function Profile() {
 	return (
 		<>
 			<form onSubmit={ handleSubmit }>
-				<PageLayout
-					title={ __( 'Profile' ) }
-					description={
-						<>
-							{ __( 'Set your name, bio, and other public-facing information.' ) }{ ' ' }
-							<ExternalLink href="#learn-more">{ __( 'Learn more' ) }</ExternalLink>
-						</>
-					}
-					size="small"
-				>
+				<PageLayout size="small">
+					<PageHeader
+						title={ __( 'Profile' ) }
+						description={
+							<>
+								{ __( 'Set your name, bio, and other public-facing information.' ) }{ ' ' }
+								<ExternalLink href="#learn-more">{ __( 'Learn more' ) }</ExternalLink>
+							</>
+						}
+					/>
 					<Card>
 						<CardBody>
 							<HStack justify="flex-start" spacing={ 8 }>

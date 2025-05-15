@@ -6,6 +6,10 @@
 }
 
 /* @wordpress/components Button overrides */
+.components-button {
+	justify-content: center;
+}
+
 .components-button.is-primary:not(.is-destructive) {
 	// Background color, focus ring color
 	--wp-components-color-accent: var(--color-accent);

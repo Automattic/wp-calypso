@@ -20,6 +20,7 @@ import QueryPostStats from 'calypso/components/data/query-post-stats';
 import QueryPosts from 'calypso/components/data/query-posts';
 import EmptyContent from 'calypso/components/empty-content';
 import NavigationHeader from 'calypso/components/navigation-header';
+import WebPreview from 'calypso/components/web-preview';
 import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
 import memoizeLast from 'calypso/lib/memoize-last';
 import PageHeader from 'calypso/my-sites/stats/components/headers/page-header';
@@ -27,7 +28,7 @@ import Main from 'calypso/my-sites/stats/components/stats-main';
 import { STATS_PRODUCT_NAME } from 'calypso/my-sites/stats/constants';
 import StatsEmailModule from 'calypso/my-sites/stats/stats-email-module';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
-import { getSitePost } from 'calypso/state/posts/selectors';
+import { getSitePost, getPostPreviewUrl } from 'calypso/state/posts/selectors';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import { getSiteSlug, isJetpackSite, isSitePreviewable } from 'calypso/state/sites/selectors';
 import { PERIOD_ALL_TIME } from 'calypso/state/stats/emails/constants';
@@ -111,12 +112,14 @@ class StatsEmailDetail extends Component {
 			insights: this.props.translate( 'Insights' ),
 			store: this.props.translate( 'Store' ),
 			ads: this.props.translate( 'Ads' ),
+			subscribers: this.props.translate( 'Subscribers' ),
 		};
 		const possibleBackLinks = {
 			traffic: '/stats/day/',
 			insights: '/stats/insights/',
 			store: '/stats/store/',
 			ads: '/stats/ads/',
+			subscribers: '/stats/subscribers/',
 		};
 		// We track the parent tab via sessionStorage.
 		const lastClickedTab = sessionStorage.getItem( 'jp-stats-last-tab' );
@@ -160,6 +163,18 @@ class StatsEmailDetail extends Component {
 		return null;
 	};
 
+	openPreview = () => {
+		this.setState( {
+			showPreview: true,
+		} );
+	};
+
+	closePreview = () => {
+		this.setState( {
+			showPreview: false,
+		} );
+	};
+
 	onChangeLegend = ( activeLegend ) => this.setState( { activeLegend } );
 
 	onChangeMaxBars = ( maxBars ) => this.setState( { maxBars } );
@@ -191,6 +206,8 @@ class StatsEmailDetail extends Component {
 			hasValidDate,
 			showNoDataInfo,
 			showViewLink,
+			previewUrl,
+			siteSlug,
 		} = this.props;
 		const { maxBars } = this.state;
 
@@ -230,7 +247,11 @@ class StatsEmailDetail extends Component {
 
 		return (
 			<>
-				<Main className="has-fixed-nav stats__email-detail stats">
+				<Main
+					className={ clsx( 'stats', 'stats__email-detail', {
+						'has-fixed-nav': ! config.isEnabled( 'stats/navigation-improvement' ),
+					} ) }
+				>
 					<QueryPosts siteId={ siteId } postId={ postId } />
 					<QueryPostStats siteId={ siteId } postId={ postId } />
 					<QueryEmailStats
@@ -391,9 +412,21 @@ class StatsEmailDetail extends Component {
 									) }
 								</div>
 							</div>
+
+							<WebPreview
+								showPreview={ this.state.showPreview }
+								defaultViewportDevice="tablet"
+								previewUrl={ `${ previewUrl }?demo=true&iframe=true&theme_preview=true` }
+								externalUrl={ previewUrl }
+								onClose={ this.closePreview }
+							>
+								<CoreButton href={ `/post/${ siteSlug }/${ postId }` }>
+									{ translate( 'Edit' ) }
+								</CoreButton>
+							</WebPreview>
 						</>
 					) : (
-						<Spinner />
+						<Spinner baseClassName="calypso-spinner" />
 					) }
 				</Main>
 			</>
@@ -446,6 +479,7 @@ const connectComponent = connect(
 			hasValidDate,
 			showNoDataInfo,
 			showViewLink: ! isJetpack && isPreviewable,
+			previewUrl: getPostPreviewUrl( state, siteId, postId ),
 		};
 	},
 	{ recordGoogleEvent }

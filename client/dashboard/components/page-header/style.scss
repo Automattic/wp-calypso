@@ -1,0 +1,39 @@
+@import "@wordpress/base-styles/variables";
+
+.client-dashboard-components-page-header__heading {
+	font-size: $font-size-2x-large;
+	line-height: $font-line-height-2x-large;
+	margin-block: 0;
+}
+
+.client-dashboard-components-page-header__decoration {
+	display: inline-flex;
+	width: $grid-unit-50;
+	height: $grid-unit-50;
+	flex-shrink: 0;
+	align-items: center;
+	justify-content: center;
+
+	svg {
+		fill: $gray-700;
+		flex-shrink: 0;
+		width: $grid-unit-30;
+		height: $grid-unit-30;
+	}
+
+	img {
+		flex-shrink: 0;
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		border-radius: $radius-small;
+	}
+}
+
+.client-dashboard-components-page-header__actions {
+	flex-shrink: 0;
+}
+
+.client-dashboard-components-page-header__description {
+	max-width: 75ch; /* stylelint-disable-line unit-allowed-list */
+}

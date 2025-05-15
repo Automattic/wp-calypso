@@ -8,6 +8,14 @@
 	"module": "dist/esm/index.js",
 	"calypso:src": "src/index.js",
 	"types": "src/index.d.ts",
+	"exports": {
+		".": {
+			"calypso:src": "./src/index.js",
+			"types": "./src/index.d.ts",
+			"import": "./dist/esm/index.js",
+			"require": "./dist/cjs/index.js"
+		}
+	},
 	"author": "Automattic Inc.",
 	"private": true,
 	"scripts": {

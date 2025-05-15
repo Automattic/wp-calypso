@@ -2,7 +2,6 @@ import { ExternalLink } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { FC, useCallback, useMemo, useState } from 'react';
 import Notice from 'calypso/components/notice';
-import { preventWidows } from 'calypso/lib/formatting';
 import version_compare from 'calypso/lib/version-compare';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
@@ -59,28 +58,26 @@ export const JetpackPluginUpdateWarning: FC< ExternalProps > = ( {
 
 	return (
 		<Notice onDismissClick={ dismissClick } status="is-warning">
-			{ preventWidows(
-				translate(
-					'Your Jetpack plugin is out of date. ' +
-						'{{WarningRequirement/}}, {{JetpackUpdateLink}}update Jetpack{{/JetpackUpdateLink}}.',
-					{
-						components: {
-							JetpackUpdateLink: (
-								<ExternalLink
-									href={ pluginUpgradeUrl }
-									onClick={ updatePluginClick }
-									target="_blank"
-								/>
-							),
-							WarningRequirement: (
-								<>
-									{ warningRequirement ??
-										translate( 'To make sure it will work with our recommended plans' ) }
-								</>
-							),
-						},
-					}
-				)
+			{ translate(
+				'Your Jetpack plugin is out of date. ' +
+					'{{WarningRequirement/}}, {{JetpackUpdateLink}}update Jetpack{{/JetpackUpdateLink}}.',
+				{
+					components: {
+						JetpackUpdateLink: (
+							<ExternalLink
+								href={ pluginUpgradeUrl }
+								onClick={ updatePluginClick }
+								target="_blank"
+							/>
+						),
+						WarningRequirement: (
+							<>
+								{ warningRequirement ??
+									translate( 'To make sure it will work with our recommended plans' ) }
+							</>
+						),
+					},
+				}
 			) }
 		</Notice>
 	);

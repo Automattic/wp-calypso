@@ -58,7 +58,8 @@ export const UserMessage = ( {
 	const showExtraContactOptions =
 		( hasFeedback && ! isPositiveFeedback ) || isRequestingHumanSupport;
 
-	const showDirectEscalationLink = userProvidedEnoughInformation( chat?.messages );
+	const showDirectEscalationLink =
+		! chat.conversationId && userProvidedEnoughInformation( chat?.messages );
 
 	const forwardMessage = isUserEligibleForPaidSupport
 		? ODIE_FORWARD_TO_ZENDESK_MESSAGE

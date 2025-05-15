@@ -783,7 +783,7 @@ export default function CampaignItemDetails( props: Props ) {
 			</div>
 			<div className="campaign-item-details__main-stats-row ">
 				<div>
-					<span className="campaign-item-details__label">{ translate( 'Replies' ) }</span>
+					<span className="campaign-item-details__label">{ translate( 'Replies' ) } &#42;</span>
 					<span className="campaign-item-details__text">
 						<span className="wp-brand-font">
 							{ ! isLoading ? repliesFormatted : <FlexibleSkeleton /> }
@@ -822,6 +822,25 @@ export default function CampaignItemDetails( props: Props ) {
 								{ showAllReplies ? __( 'Show Less' ) : __( 'Show More' ) }
 							</button>
 						) }
+
+						<div className="campaign-items-details__reply-disclaimer">
+							&#42;&nbsp;
+							{ translate(
+								'Some replies may have been hidden, blocked, or removed due to {{tumblrGuideline}}Tumblr guidelines {{externalIcon/}}{{/tumblrGuideline}} violation',
+								{
+									components: {
+										tumblrGuideline: (
+											<a
+												href="https://www.tumblr.com/policy/en/user-guidelines"
+												target="_blank"
+												rel="noopener noreferrer"
+											/>
+										),
+										externalIcon: <Gridicon icon="external" size={ 16 } />,
+									},
+								}
+							) }
+						</div>
 					</div>
 				) }
 			</div>

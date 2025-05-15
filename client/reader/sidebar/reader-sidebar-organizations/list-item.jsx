@@ -8,11 +8,6 @@ import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import ReaderSidebarHelper from '../helper';
 
-/**
- * Styles
- */
-import '../style.scss';
-
 export class ReaderSidebarOrganizationsListItem extends Component {
 	static propTypes = {
 		site: PropTypes.object,

@@ -81,6 +81,11 @@ export type FieldTypeDefinition< Item > = {
 	 * The filter config for the field.
 	 */
 	filterBy?: FilterByConfig | undefined;
+
+	/**
+	 * Whether the field is sortable.
+	 */
+	enableSorting: boolean;
 };
 
 /**

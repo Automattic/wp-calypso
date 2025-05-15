@@ -148,13 +148,7 @@ export class EditorPage {
 	 * @param {number} timeout Timeout for waiting for the final requests.
 	 */
 	private async waitForEditorLoadedRequests( timeout: number = 60 * 1000 ): Promise< void > {
-		// In a typical loading scenario, this request is one of the last to fire.
-		// Lacking a perfect cross-site type (Simple/Atomic) way to check the loading state,
-		// it is a fairly good stand-in.
-		await Promise.all( [
-			this.page.waitForURL( /(\/post\/.+|\/page\/+|\/post-new.php|\/post.php+)/, { timeout } ),
-			this.page.waitForResponse( /.*posts.*/, { timeout } ),
-		] );
+		await this.page.waitForURL( /(\/post\/.+|\/page\/+|\/post-new.php|\/post.php+)/, { timeout } );
 	}
 
 	/**

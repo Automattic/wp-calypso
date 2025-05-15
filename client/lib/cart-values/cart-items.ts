@@ -923,19 +923,6 @@ export function getDomainPriceRule(
 	return 'PRICE';
 }
 
-/**
- * Determines whether any items in the cart were added more than X time ago (10 minutes)
- */
-export function hasStaleItem( cart: ObjectWithProducts ): boolean {
-	return getAllCartItems( cart ).some( function ( cartItem ) {
-		// time_added_to_cart is in seconds, Date.now() returns milliseconds
-		return (
-			cartItem.time_added_to_cart &&
-			cartItem.time_added_to_cart * 1000 < Date.now() - 10 * 60 * 1000
-		);
-	} );
-}
-
 export function getPlanCartItem( cartItems?: MinimalRequestCartProduct[] | null ) {
 	/**
 	 * A null planCartItem corresponds to a free plan. It seems like this is case throughout the signup/plans

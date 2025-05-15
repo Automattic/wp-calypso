@@ -110,7 +110,7 @@ export default function StoredCreditCard( {
 				<div className="stored-credit-card__card-footer">
 					<span>
 						<div className="stored-credit-card__card-footer-title">
-							{ isDefault ? translate( 'Primary Card' ) : secondaryCardCountText }
+							{ isDefault ? translate( 'Primary card' ) : secondaryCardCountText }
 						</div>
 						<div className="stored-credit-card__card-footer-subtitle">
 							{ isDefault

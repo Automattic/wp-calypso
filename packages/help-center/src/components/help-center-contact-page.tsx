@@ -7,7 +7,6 @@ import { getPlan } from '@automattic/calypso-products';
 import { Spinner } from '@automattic/components';
 import { HelpCenterSite } from '@automattic/data-stores';
 import { getLanguage, useIsEnglishLocale, useLocale } from '@automattic/i18n-utils';
-import { useGetSupportInteractions } from '@automattic/odie-client/src/data';
 import { useLoadZendeskMessaging } from '@automattic/zendesk-client';
 import { Button } from '@wordpress/components';
 import { useEffect, useMemo, useState } from '@wordpress/element';
@@ -22,7 +21,12 @@ import { Link, useNavigate } from 'react-router-dom';
  */
 import { EMAIL_SUPPORT_LOCALES } from '../constants';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
-import { useChatStatus, useShouldRenderEmailOption, useStillNeedHelpURL } from '../hooks';
+import {
+	useChatStatus,
+	useGetHistoryChats,
+	useShouldRenderEmailOption,
+	useStillNeedHelpURL,
+} from '../hooks';
 import { Mail } from '../icons';
 import { HelpCenterClosureNotice } from './help-center-closure-notice';
 import HelpCenterContactSupportOption from './help-center-contact-support-option';
@@ -244,16 +248,10 @@ const HelpCenterFooterButton = ( {
 };
 
 export const HelpCenterContactButton: FC = () => {
-	const { canConnectToZendesk } = useHelpCenterContext();
+	const { recentConversations } = useGetHistoryChats();
 	const { __ } = useI18n();
-	const { data: supportInteractionsSolvedOrClosed } = useGetSupportInteractions( 'zendesk', 1, [
-		'solved',
-		'closed',
-	] );
 
-	return canConnectToZendesk &&
-		supportInteractionsSolvedOrClosed &&
-		supportInteractionsSolvedOrClosed.length > 0 ? (
+	return (
 		<>
 			<HelpCenterFooterButton
 				icon={ comment }
@@ -263,23 +261,17 @@ export const HelpCenterContactButton: FC = () => {
 			>
 				{ __( 'Still need help?', __i18n_text_domain__ ) }
 			</HelpCenterFooterButton>
-			<HelpCenterFooterButton
-				icon={ backup }
-				eventName="calypso_inlinehelp_history_click"
-				buttonTextEventProp="History"
-				redirectTo="/chat-history"
-			>
-				{ __( 'History', __i18n_text_domain__ ) }
-			</HelpCenterFooterButton>
+
+			{ recentConversations.length > 1 && (
+				<HelpCenterFooterButton
+					icon={ backup }
+					eventName="calypso_inlinehelp_history_click"
+					buttonTextEventProp="History"
+					redirectTo="/chat-history"
+				>
+					{ __( 'History', __i18n_text_domain__ ) }
+				</HelpCenterFooterButton>
+			) }
 		</>
-	) : (
-		<HelpCenterFooterButton
-			icon={ comment }
-			eventName="calypso_inlinehelp_morehelp_click"
-			buttonTextEventProp="Still need help?"
-			redirectTo="/odie"
-		>
-			{ __( 'Still need help?', __i18n_text_domain__ ) }
-		</HelpCenterFooterButton>
 	);
 };

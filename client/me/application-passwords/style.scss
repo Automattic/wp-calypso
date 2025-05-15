@@ -1,3 +1,10 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.application-passwords {
+	margin-bottom: 16px;
+}
+
 .application-passwords__list {
 	list-style-type: none;
 	margin: 0;
@@ -16,19 +23,39 @@
 
 .application-passwords__new-password {
 	margin-bottom: 1em;
+
+	.form-buttons-bar {
+		text-align: right;
+	}
 }
 
 .application-passwords__new-password-display {
+	align-items: center;
 	background: var(--color-neutral-0);
 	border: 1px solid var(--color-border-subtle);
-	font-size: 200%;
+	display: flex;
+	font-size: 150%;
 	font-weight: 600;
-	width: 70%;
-	display: block;
-	text-align: center;
+	justify-content: space-between;
+	letter-spacing: 2px;
 	margin: 10px auto;
 	padding: 5px;
-	letter-spacing: 2px;
+	text-align: center;
+	max-width: 70%;
+
+	@include break-mobile {
+		font-size: 200%;
+	}
+
+	.application-passwords__new-password-content {
+		flex-grow: 1;
+		flex-shrink: 1;
+	}
+
+	.application-passwords__new-password-copy {
+		flex-grow: 0;
+		flex-shrink: 0;
+	}
 }
 
 .application-passwords__new-password-message {
@@ -40,6 +67,6 @@
 	text-align: center;
 }
 
-.application-passwords__nobot {
-	margin-bottom: 0;
+.application-passwords__explanation {
+	margin: 0;
 }

@@ -48,4 +48,5 @@ export default {
 	filterBy: {
 		operators,
 	},
+	enableSorting: true,
 };

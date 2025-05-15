@@ -56,6 +56,7 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( {
 	query,
 	summaryUrl,
 	summary = false,
+	listItemClassName,
 } ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
@@ -163,41 +164,33 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( {
 		return normalizedStats;
 	}, [ countriesList, query, isRequestingCountriesList ] );
 
-	// Data is fetched from three ways but only one is displayed, we use that for downloading as CSV.
-	// If supportsLocationsStatsFeature is false, we use the legacy endpoint.
-	// If geoMode is country, we use the countriesList.
-	// Otherwise, we use the locationsViewsData.
-	const dataToDispatch = useMemo( () => {
+	useEffect( () => {
 		if ( isRequestingCountriesList || isRequestingData || isRequestingCountriesList ) {
 			return;
 		}
 
-		if ( ! supportsLocationsStatsFeature ) {
-			return legacyCountriesViewsData;
-		}
-
+		let dataToDispatch;
 		if ( geoMode === 'country' ) {
-			return countriesList;
+			dataToDispatch = countriesList;
+		} else {
+			dataToDispatch = locationsViewsData;
 		}
 
-		return locationsViewsData;
-	}, [
-		countriesList,
-		geoMode,
-		supportsLocationsStatsFeature,
-		locationsViewsData,
-		legacyCountriesViewsData,
-		isRequestingCountriesList,
-		isRequestingData,
-	] );
-
-	useEffect( () => {
 		if ( dataToDispatch ) {
 			dispatch(
 				receiveSiteStats( siteId, 'statsCountryViews', query, dataToDispatch, Date.now() )
 			);
 		}
-	}, [ dataToDispatch, dispatch, query, siteId ] );
+	}, [
+		countriesList,
+		geoMode,
+		locationsViewsData,
+		isRequestingCountriesList,
+		isRequestingData,
+		dispatch,
+		query,
+		siteId,
+	] );
 
 	const onCountryChange = ( value: string ) => {
 		trackStatsAnalyticsEvent( 'stats_locations_module_country_filter_changed', {
@@ -318,7 +311,6 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( {
 			/>
 		) : (
 			<DownloadCsv
-				borderless
 				data={ locationCsvData }
 				path={ `locations-${ geoMode }` }
 				period={ period }
@@ -433,6 +425,7 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( {
 						}
 						onShowMoreClick={ onShowMoreClick }
 						overlay={ moduleOverlay }
+						listItemClassName={ listItemClassName }
 					/>
 				</>
 			) }

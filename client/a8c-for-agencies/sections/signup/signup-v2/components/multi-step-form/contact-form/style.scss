@@ -3,9 +3,9 @@
 @import "@wordpress/base-styles/variables";
 
 .contact-form__phone-input {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
 
 	@include break-xlarge {
 		flex-direction: row;
@@ -36,17 +36,17 @@
 }
 
 .signup-multi-step-form__name-fields {
-    display: flex;
-    flex-direction: column;
+	display: flex;
+	flex-direction: column;
 	gap: 16px;
 
 	@include break-small {
 		flex-direction: row;
 	}
 
-    > * {
-        flex-grow: 1;
-    }
+	> * {
+		flex-grow: 1;
+	}
 }
 
 .signup-multi-step-form__terms {

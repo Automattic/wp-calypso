@@ -1,10 +1,10 @@
 import {
+	getPlan,
 	PLAN_BUSINESS,
 	PLAN_ECOMMERCE,
 	PLAN_PERSONAL,
 	PLAN_PREMIUM,
 } from '@automattic/calypso-products';
-import { getPlan } from '@automattic/calypso-products/src';
 import { registerBlockType } from '@wordpress/blocks';
 import { sprintf, __ } from '@wordpress/i18n';
 import config from './config';
