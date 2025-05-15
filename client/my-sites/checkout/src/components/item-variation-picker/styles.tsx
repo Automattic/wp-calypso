@@ -244,4 +244,7 @@ export const IntroPricingText = styled.span`
 export const PriceTextContainer = styled.span`
 	font-size: 14px;
 	text-align: right;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-end;
 `;
