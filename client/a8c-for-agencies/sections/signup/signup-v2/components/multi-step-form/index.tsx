@@ -158,9 +158,12 @@ const MultiStepForm = ( { withPersonalizedBlueprint = false, submitAsSurvey = fa
 		window.location.reload();
 	};
 
-	const onCreateAgency = useCallback( () => {
-		submitSignup( formData as AgencyDetailsSignupPayload );
-	}, [ formData, submitSignup ] );
+	const onCreateAgency = useCallback(
+		( data: Partial< AgencyDetailsSignupPayload > ) => {
+			submitSignup( data as AgencyDetailsSignupPayload );
+		},
+		[ submitSignup ]
+	);
 
 	const currentForm = useMemo( () => {
 		trackView( currentStep );
@@ -179,7 +182,7 @@ const MultiStepForm = ( { withPersonalizedBlueprint = false, submitAsSurvey = fa
 						onContinue={ ( data ) =>
 							updateDataAndContinue( data, withPersonalizedBlueprint ? 3 : 6 )
 						}
-						onSubmit={ onCreateAgency }
+						onSubmit={ ( data ) => onCreateAgency( data ) }
 						isFinalStep={ ! submitAsSurvey }
 						initialFormData={ formData }
 						goBack={ () => setCurrentStep( 1 ) }
