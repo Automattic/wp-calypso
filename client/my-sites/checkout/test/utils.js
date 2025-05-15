@@ -1,18 +1,29 @@
+/**
+ * @jest-environment jsdom
+ */
 import {
 	PLAN_PERSONAL_MONTHLY,
 	PLAN_BUSINESS_2_YEARS,
 	PLAN_BUSINESS_MONTHLY,
 	PRODUCT_JETPACK_BACKUP_T0_YEARLY,
 } from '@automattic/calypso-products';
+import { Plans } from '@automattic/data-stores';
 import { getEmptyResponseCartProduct } from '@automattic/shopping-cart';
 import configureStore from 'redux-mock-store';
-import { getProductSlugFromContext, getWpcomPlanTotalIfPaidMonthly } from '../utils';
+import useCheckPlanAvailabilityForPurchase from 'calypso/my-sites/plans-features-main/hooks/use-check-plan-availability-for-purchase';
+import { renderHookWithProvider } from 'calypso/test-helpers/testing-library';
+import { getProductSlugFromContext, useGetWpcomPlanTotalIfPaidMonthly } from '../utils';
+
+jest.mock(
+	'calypso/my-sites/plans-features-main/hooks/use-check-plan-availability-for-purchase',
+	() => jest.fn()
+);
 
 jest.mock( '@automattic/data-stores', () => ( {
 	...jest.requireActual( '@automattic/data-stores' ),
 	Plans: {
 		...jest.requireActual( '@automattic/data-stores' ).Plans,
-		usePlans: jest.fn(),
+		usePricingMetaForGridPlans: jest.fn(),
 	},
 } ) );
 
@@ -325,7 +336,7 @@ describe( 'getProductSlugFromContext', () => {
 	);
 } );
 
-describe( 'getWpcomPlanTotalIfPaidMonthly', () => {
+describe( 'useGetWpcomPlanTotalIfPaidMonthly', () => {
 	const business_2years = {
 		...getEmptyResponseCartProduct(),
 		product_name: 'Dotcom Business',
@@ -372,63 +383,43 @@ describe( 'getWpcomPlanTotalIfPaidMonthly', () => {
 		months_per_bill_period: 12,
 	};
 
-	const plans = {
-		[ PLAN_BUSINESS_MONTHLY ]: {
-			pricing: {
-				originalPrice: { full: 40, monthly: 40 },
+	beforeEach( () => {
+		jest.resetAllMocks();
+		useCheckPlanAvailabilityForPurchase.mockImplementation( ( { planSlugs } ) =>
+			planSlugs.reduce( ( acc, planSlug ) => {
+				return {
+					...acc,
+					[ planSlug ]: true,
+				};
+			}, {} )
+		);
+	} );
+
+	it( 'returns calculated total only for non-monthly wpcom products', () => {
+		Plans.usePricingMetaForGridPlans.mockImplementation( () => ( {
+			[ PLAN_PERSONAL_MONTHLY ]: {
+				originalPrice: { monthly: 1000 },
 			},
-		},
-	};
+			[ PLAN_BUSINESS_MONTHLY ]: {
+				originalPrice: { monthly: 4000 },
+			},
+		} ) );
 
-	it( 'returns correct total for valid yearly plan with a monthly counterpart', () => {
-		const result = getWpcomPlanTotalIfPaidMonthly( business_2years, plans );
-		expect( result ).toBe( 960 ); // 24 * 40
+		const { result } = renderHookWithProvider( () =>
+			useGetWpcomPlanTotalIfPaidMonthly( [ business_2years, personal_monthly, jetpack_yearly ] )
+		);
+		expect( result.current ).toStrictEqual( { 'business-bundle-2y': 96000 } ); // 24 * 40
 	} );
 
-	it( 'returns undefined if product is not a wpcom plan', () => {
-		const result = getWpcomPlanTotalIfPaidMonthly( jetpack_yearly, plans );
-		expect( result ).toBeUndefined();
-	} );
-
-	it( 'returns undefined if product is a monthly plan', () => {
-		const result = getWpcomPlanTotalIfPaidMonthly( personal_monthly, plans );
-		expect( result ).toBeUndefined();
-	} );
-
-	it( 'returns undefined if plans are empty', () => {
-		expect( getWpcomPlanTotalIfPaidMonthly( business_2years, null ) ).toBeUndefined();
-		expect( getWpcomPlanTotalIfPaidMonthly( business_2years, [] ) ).toBeUndefined();
-		expect( getWpcomPlanTotalIfPaidMonthly( business_2years, '' ) ).toBeUndefined();
-		expect( getWpcomPlanTotalIfPaidMonthly( business_2years, {} ) ).toBeUndefined();
-	} );
-
-	it( "returns undefined if plans don't have the correct plan", () => {
-		let result = getWpcomPlanTotalIfPaidMonthly( business_2years, {
-			[ PLAN_PERSONAL_MONTHLY ]: 'test',
-		} );
-		expect( result ).toBeUndefined();
-		result = getWpcomPlanTotalIfPaidMonthly( business_2years, {
-			[ PLAN_PERSONAL_MONTHLY ]: { pricing: '' },
-		} );
-		expect( result ).toBeUndefined();
-	} );
-
-	it( 'returns undefined if the plan data is invalid', () => {
-		let result = getWpcomPlanTotalIfPaidMonthly( business_2years, {
-			[ PLAN_BUSINESS_MONTHLY ]: 'test',
-		} );
-		expect( result ).toBeUndefined();
-		result = getWpcomPlanTotalIfPaidMonthly( business_2years, {
-			[ PLAN_BUSINESS_MONTHLY ]: { pricing: '' },
-		} );
-		expect( result ).toBeUndefined();
-		result = getWpcomPlanTotalIfPaidMonthly( business_2years, {
-			[ PLAN_BUSINESS_MONTHLY ]: { pricing: { originalPrice: null } },
-		} );
-		expect( result ).toBeUndefined();
-		result = getWpcomPlanTotalIfPaidMonthly( business_2years, {
-			[ PLAN_BUSINESS_MONTHLY ]: { pricing: { originalPrice: { monthly: null } } },
-		} );
-		expect( result ).toBeUndefined();
+	it( 'correctly handles malformed plans data', () => {
+		Plans.usePricingMetaForGridPlans.mockImplementation( () => ( {
+			[ PLAN_BUSINESS_MONTHLY ]: {
+				amount: 5,
+			},
+		} ) );
+		const { result } = renderHookWithProvider( () =>
+			useGetWpcomPlanTotalIfPaidMonthly( [ business_2years, personal_monthly, jetpack_yearly ] )
+		);
+		expect( result.current ).toStrictEqual( { 'business-bundle-2y': undefined } );
 	} );
 } );

@@ -1,8 +1,10 @@
 import { isMonthly, isWpComPlan, getMonthlyPlanByYearly } from '@automattic/calypso-products';
+import { Plans } from '@automattic/data-stores';
 import { doesStringResembleDomain } from '@automattic/onboarding';
 import { ResponseCartProduct } from '@automattic/shopping-cart';
 import { translate } from 'i18n-calypso';
 import { untrailingslashit } from 'calypso/lib/route';
+import useCheckPlanAvailabilityForPurchase from 'calypso/my-sites/plans-features-main/hooks/use-check-plan-availability-for-purchase';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import type { Context } from '@automattic/calypso-router';
@@ -138,21 +140,44 @@ export function getAffiliateCouponLabel(): string {
 	return translate( 'Exclusive Offer Applied' );
 }
 
-export function getWpcomPlanTotalIfPaidMonthly(
-	product: ResponseCartProduct,
-	plans: any
-): number | undefined {
-	if ( isWpComPlan( product?.product_slug ) && ! isMonthly( product?.product_slug ) ) {
-		const monthlyPlanSlug = getMonthlyPlanByYearly( product?.product_slug );
-		if (
-			monthlyPlanSlug &&
-			plans?.[ monthlyPlanSlug ] &&
-			product.months_per_bill_period &&
-			plans[ monthlyPlanSlug ].pricing?.originalPrice?.monthly
-		) {
-			return (
-				product.months_per_bill_period * plans[ monthlyPlanSlug ].pricing.originalPrice.monthly
-			);
-		}
-	}
+export function useGetWpcomPlanTotalIfPaidMonthly(
+	products: Array< ResponseCartProduct >
+): object {
+	const plansToMonthly = products
+		.filter( ( product ) => {
+			return isWpComPlan( product?.product_slug ) && ! isMonthly( product?.product_slug );
+		} )
+		.map( ( product ) => {
+			return {
+				plan: product.product_slug,
+				monthly_plan: getMonthlyPlanByYearly( product.product_slug ),
+			};
+		} );
+	// Get unique non-empty monthly plan slugs
+	const monthlyPlanSlugs = [
+		...new Set( plansToMonthly.map( ( plan ) => plan.monthly_plan ).filter( ( plan ) => plan ) ),
+	];
+	const pricing = Plans.usePricingMetaForGridPlans( {
+		planSlugs: monthlyPlanSlugs,
+		coupon: undefined,
+		useCheckPlanAvailabilityForPurchase,
+	} );
+	const plansToMonthlyPricing = Object.fromEntries(
+		plansToMonthly.map( ( plan ) => {
+			return [ plan.plan, pricing[ plan.monthly_plan ] ?? null ];
+		} )
+	);
+	const productTotals = Object.fromEntries(
+		products
+			.filter( ( product ) => plansToMonthlyPricing[ product.product_slug ] )
+			.map( ( product ) => [
+				product.product_slug,
+				plansToMonthlyPricing[ product.product_slug ] &&
+				plansToMonthlyPricing[ product.product_slug ].originalPrice?.monthly
+					? product.months_per_bill_period *
+					  plansToMonthlyPricing[ product.product_slug ].originalPrice.monthly
+					: undefined,
+			] )
+	);
+	return productTotals;
 }
