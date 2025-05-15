@@ -7,6 +7,7 @@ import { siteQuery, siteSettingsMutation, siteSettingsQuery } from '../../app/qu
 import { siteSettingsSubscriptionGiftingRoute } from '../../app/router';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import SettingsBreadcrumbs from '../settings-breadcrumbs';
 import { hasSubscriptionGiftingFeature } from './utils';
 import type { SiteSettings } from '../../data/types';
 import type { Field } from '@automattic/dataviews';
@@ -57,6 +58,7 @@ export default function SubscriptionGiftingSettings() {
 	return (
 		<PageLayout size="small">
 			<PageHeader
+				breadcrumbs={ <SettingsBreadcrumbs /> }
 				title={ __( 'Accept a gift subscription' ) }
 				description={ __(
 					'Allow a site visitor to cover the full cost of your site’s WordPress.com plan.'
