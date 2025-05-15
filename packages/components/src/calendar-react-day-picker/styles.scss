@@ -4,14 +4,11 @@
 
 /* Root of the component. */
 .a8c-components-calendar {
-
-
   // TODO:
-  // - move`font-family` rule out of component
+  // - move`font-family` rule (and "../styles/typography" import) out of component
   // - add `font-family` rule to Storybook's global styles
   // - then 	Theme is ready and includes type styles, add back to component
   font-family: $a8c-font-family-sans;
-
 
   // Internal variables
   --a8c-components-calendar-outline-focus: 1.5px solid var(--color-accent);
@@ -57,8 +54,8 @@
     // other purposes (eg. range selection preview, middle of a selected range).
     box-shadow: none;
 
-    // Use a pseudo-element to render border and background, which keeps the
-    // button's border-radius intact, which in turns allows the focus ring to
+    // Use ::before to render border and background, which keeps the button's
+    // own border-radius intact, which in turns allows the focus ring to
     // have rounded corners even when the background needs square corners (eg.
     // in the middle of a date range).
     &::before {
@@ -68,6 +65,15 @@
       inset: 0;
       border: none; // No default border to avoid polluting high-contrast mode.
       border-radius: 2px;
+    }
+
+	// Use ::after to render the selection preview.
+	&::after {
+      content: '';
+      position: absolute;
+      z-index: 1;
+      inset: 0;
+	  pointer-events: none;
     }
 
     &:disabled {
@@ -265,33 +271,24 @@
   }
 
   /* PREVIEW RANGE (hovered range) */
-  &__day--preview:not(&__day--preview-start):not(&__day--preview-end) &__day-button::before {
-    border-radius: 0;
+  $url-encoded-gray-600: '%23#{str-slice(#{$gray-600}, 2)}';
+  &__day--preview:not(&__range-start):not(&__range-end) &__day-button::after {
+	// SVG with dashed top/bottom lines. SVG size, dash array and offset are
+	// chosen to make sure that multiple days in a row have a continuous preview
+	// border (something that is not possible with the border property).
+    background-image: url("data:image/svg+xml,%3Csvg viewbox='0 0 32 32' xmlns='http://www.w3.org/2000/svg' stroke='#{$url-encoded-gray-600}' stroke-width='1'%3E%3Cline x1='0' y1='0' x2='32' y2='0' stroke-dasharray='3.2' stroke-dashoffset='5' /%3E%3Cline x1='0' y1='32' x2='32' y2='32' stroke-dasharray='3.2' stroke-dashoffset='5'  /%3E%3C/svg%3E");
   }
 
-  &__day--preview:not(&__range-start):not(&__range-end) &__day-button::before {
-    border-color: $gray-600;
-    border-style: dashed;
-    // Do not render a border on left/right, because it would show in
-    // forced-colors mode.
-    border-width: 1px 0;
-  }
-
-  &__day--preview-start:not(&__range-start):not(&__range-end) &__day-button::before {
-    border-start-end-radius: 0;
-    border-end-end-radius: 0;
-    border-color: $gray-600;
-    border-width: 1px;
-  }
-
-  &__day--preview-end:not(&__range-start):not(&__range-end) &__day-button::before {
-    border-start-start-radius: 0;
-    border-end-start-radius: 0;
-    border-color: $gray-600;
-    border-width: 1px;
+  &__day--preview-start:not(&__range-start):not(&__range-end),
+  &__day--preview-end:not(&__range-start):not(&__range-end) {
+	// SVG with dashed rectangle. SVG size, dash array and offset are
+	// chosen to make sure that multiple days in a row have a continuous preview
+	// border (something that is not possible with the border property).
+	background-image: url("data:image/svg+xml,%3Csvg viewbox='0 0 32 32' xmlns='http://www.w3.org/2000/svg' stroke='#{$url-encoded-gray-600}' fill='none' stroke-width='1'%3E%3Crect x='0' width='32' height='32' stroke-dasharray='3.2' /%3E%3C/svg%3E");
   }
 }
 
+// Animation
 
 @keyframes a8c-components-calendar-slide-in-left {
   0% {
