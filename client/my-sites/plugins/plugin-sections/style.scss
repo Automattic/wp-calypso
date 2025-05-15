@@ -60,14 +60,14 @@
 	line-height: 21px;
 	word-wrap: break-word;
 	hyphens: auto;
+	margin-bottom: 32px;
 }
 
 .plugin-sections__header + .plugin-sections__content {
-	margin: 32px 0;
-
+	margin-top: 32px;
 }
 
-/* Remove top margin from first heading if we don't render the header. */
+/* Remove top margin for the element if we don't render the header. */
 .plugin-sections__content:not(:has(+ .plugin-sections__header)) img:first-of-type,
 .plugin-sections__content:not(:has(+ .plugin-sections__header)) h1:first-of-type,
 .plugin-sections__content:not(:has(+ .plugin-sections__header)) h2:first-of-type,
