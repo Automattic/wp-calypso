@@ -24,9 +24,8 @@ import { has100YearPlan } from 'calypso/lib/cart-values/cart-items';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
 import { useGetProductVariants } from 'calypso/my-sites/checkout/src/hooks/product-variants';
 import {
-	isStreamlinedPriceRadioTreatment,
-	isStreamlinedPriceDropdownTreatment,
 	useStreamlinedPriceExperiment,
+	isStreamlinedPriceCheckoutTreatment,
 } from 'calypso/my-sites/plans-features-main/hooks/use-streamlined-price-experiment';
 import { getSignupCompleteFlowName } from 'calypso/signup/storageUtils';
 import { useDispatch, useSelector } from 'calypso/state';
@@ -384,6 +383,12 @@ function LineItemWrapper( {
 
 	const [ isStreamlinedPriceExperimentLoading, streamlinedPriceExperimentAssignment ] =
 		useStreamlinedPriceExperiment();
+
+	const isStreamlinedPrice =
+		! isStreamlinedPriceExperimentLoading &&
+		isStreamlinedPriceCheckoutTreatment( streamlinedPriceExperimentAssignment ) &&
+		isWpComPlan( product.product_slug );
+
 	const variants = useGetProductVariants( product, ( variant ) => {
 		// Only show term variants which are equal to or longer than the variant that
 		// was in the cart when checkout finished loading (not necessarily the
@@ -399,20 +404,7 @@ function LineItemWrapper( {
 			return true;
 		}
 
-		if (
-			isWpComPlan( variant.productSlug ) &&
-			! isStreamlinedPriceExperimentLoading &&
-			( isStreamlinedPriceRadioTreatment( streamlinedPriceExperimentAssignment ) ||
-				isStreamlinedPriceDropdownTreatment( streamlinedPriceExperimentAssignment ) )
-		) {
-			return true;
-		}
-
-		if (
-			isWpComPlan( variant.productSlug ) &&
-			! isStreamlinedPriceExperimentLoading &&
-			isStreamlinedPriceRadioTreatment( streamlinedPriceExperimentAssignment )
-		) {
+		if ( isStreamlinedPrice ) {
 			return true;
 		}
 
