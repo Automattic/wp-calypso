@@ -167,6 +167,9 @@ describe( 'CheckoutMain', () => {
 		const user = userEvent.setup();
 		expect( screen.getAllByLabelText( 'WordPress.com Personal' ) ).toHaveLength( 1 );
 		await user.click( removeProductButton );
+		const confirmModal = await screen.findByRole( 'dialog' );
+		const confirmButton = await within( confirmModal ).findByText( 'Continue' );
+		await user.click( confirmButton );
 		await waitFor( async () => {
 			expect( screen.queryByLabelText( 'WordPress.com Personal' ) ).not.toBeInTheDocument();
 		} );
@@ -187,12 +190,15 @@ describe( 'CheckoutMain', () => {
 		);
 		const user = userEvent.setup();
 		await user.click( removeProductButton );
+		const confirmModal = await screen.findByRole( 'dialog' );
+		const confirmButton = await within( confirmModal ).findByText( 'Continue' );
+		await user.click( confirmButton );
 		await waitFor( () => {
 			expect( navigate ).toHaveBeenCalledWith( '/plans/foo.com' );
 		} );
 	} );
 
-	it( 'does not redirect to the plans page after removing a product when it is not the last', async () => {
+	it( 'does not redirect to the plans page if the cart is empty after removing a product when it is not the last', async () => {
 		const cartChanges = { products: [ planWithoutDomain, domainProduct ] };
 		render(
 			<MockCheckout
@@ -207,54 +213,12 @@ describe( 'CheckoutMain', () => {
 		);
 		const user = userEvent.setup();
 		await user.click( removeProductButton );
+		const confirmModal = await screen.findByRole( 'dialog' );
+		const confirmButton = await within( confirmModal ).findByText( 'Continue' );
+		await user.click( confirmButton );
 		await waitFor( async () => {
 			expect( navigate ).not.toHaveBeenCalledWith( '/plans/foo.com' );
 		} );
-	} );
-
-	it( 'does show the option to restore a removed product', async () => {
-		const cartChanges = { products: [ planWithoutDomain, domainProduct ] };
-		render(
-			<MockCheckout
-				initialCart={ initialCart }
-				setCart={ mockSetCartEndpoint }
-				cartChanges={ cartChanges }
-			/>
-		);
-		const activeSection = await screen.findByTestId( 'review-order-step--visible' );
-		const removeProductButton = await within( activeSection ).findByLabelText(
-			'Remove foo.cash from cart'
-		);
-		const user = userEvent.setup();
-		await user.click( removeProductButton );
-
-		const restoreButton = await screen.findByText( 'Restore' );
-		expect( restoreButton ).toBeInTheDocument();
-	} );
-
-	it( 'does restore a removed product when clicking on the `Restore` button', async () => {
-		const cartChanges = { products: [ planWithoutDomain, domainProduct ] };
-		render(
-			<MockCheckout
-				initialCart={ initialCart }
-				setCart={ mockSetCartEndpoint }
-				cartChanges={ cartChanges }
-			/>
-		);
-		const activeSection = await screen.findByTestId( 'review-order-step--visible' );
-		const removeProductButton = await within( activeSection ).findByLabelText(
-			'Remove foo.cash from cart'
-		);
-		const user = userEvent.setup();
-		await user.click( removeProductButton );
-
-		const restoreButton = await screen.findByText( 'Restore' );
-		expect( screen.queryByLabelText( 'foo.cash' ) ).not.toBeInTheDocument();
-
-		await user.click( restoreButton );
-
-		const restoredItem = await screen.findByLabelText( 'foo.cash' );
-		expect( restoredItem ).toBeInTheDocument();
 	} );
 
 	it( 'does not redirect to the plans page if the cart is empty when it loads', async () => {

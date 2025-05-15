@@ -9,7 +9,6 @@ import { styled, joinClasses } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useCallback } from 'react';
 import { hasP2PlusPlan } from 'calypso/lib/cart-values/cart-items';
-import { RemovedFromCartItems } from 'calypso/my-sites/checkout/src/components/removed-from-cart-items';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -160,8 +159,6 @@ export default function WPCheckoutOrderReview( {
 						} ) }
 					</SiteSummary>
 				) }
-
-				<RemovedFromCartItems />
 
 				<WPOrderReviewSection>
 					<WPOrderReviewLineItems
