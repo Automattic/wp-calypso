@@ -22,8 +22,13 @@ function MenuItem( {
 	...buttonProps
 }: Props & React.ComponentProps< typeof Button > ) {
 	return (
-		<Button { ...buttonProps } label={ title } style={ { height: 'auto', textAlign: 'left' } }>
-			<HStack alignment="start">
+		<Button
+			className="dashboard-add-new-site__menu-item"
+			{ ...buttonProps }
+			label={ title }
+			showTooltip={ false }
+		>
+			<HStack alignment="start" spacing={ 2 }>
 				<div style={ { flexShrink: 0 } }>
 					<Icon className="dashboard-add-new-site__menu-item-icon" icon={ icon } />
 				</div>

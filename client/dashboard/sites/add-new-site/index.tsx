@@ -58,7 +58,7 @@ function AddNewSite() {
 	);
 
 	return (
-		<Wrapper alignment="flex-start" style={ { padding: '16px' } } spacing={ 4 }>
+		<Wrapper alignment="flex-start" style={ { padding: '16px' } } spacing={ 6 }>
 			<Column title={ __( 'Add new site' ) }>
 				<MenuItem
 					icon={ <WordPressLogo /> }
