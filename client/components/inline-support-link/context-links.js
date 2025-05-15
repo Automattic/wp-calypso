@@ -456,9 +456,9 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/domains/transfer-domain-registration/#before-you-get-started',
 		post_id: 41298,
 	},
-	'public-vs-private-registration-and-gdpr': {
-		link: 'https://wordpress.com/support/domains/register-domain/#public-versus-private-registration-and-gdpr',
-		post_id: 2784,
+	'domain-registrations-and-privacy': {
+		link: 'https://wordpress.com/support/domains/domain-registrations-and-privacy/#privacy-protection',
+		post_id: 143935,
 	},
 	'https-ssl': {
 		link: 'https://wordpress.com/support/domains/https-ssl/',
