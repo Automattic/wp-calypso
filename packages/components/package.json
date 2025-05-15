@@ -92,7 +92,10 @@
 		"@testing-library/user-event": "^14.6.1",
 		"@types/canvas-confetti": "^1.6.0",
 		"@types/node": "^22.7.5",
+		"esbuild": "^0.25.4",
+		"lightningcss": "^1.30.1",
 		"postcss": "^8.5.3",
+		"sass-embedded": "^1.88.0",
 		"storybook": "^8.6.12",
 		"typescript": "^5.8.2",
 		"webpack": "^5.97.1"
@@ -100,6 +103,7 @@
 	"scripts": {
 		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",
 		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json && copy-assets",
+		"build:styles": "node bin/build.mjs",
 		"prepack": "yarn run clean && yarn run build",
 		"storybook:start": "storybook dev -p 56833"
 	}

@@ -9,8 +9,8 @@ import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import React, { useState, forwardRef, useRef, useMemo } from 'react';
 import Menu from '../menu';
+import styles from './style.module.scss';
 import { BreadcrumbProps, BreadcrumbItemProps, Item } from './types';
-import './style.scss';
 
 function defaultRenderItemLink( props: BreadcrumbItemProps ) {
 	return <a { ...props }>{ props.label }</a>;
@@ -26,10 +26,10 @@ function BreadcrumbsMenu( {
 	const { __ } = useI18n();
 
 	return (
-		<li className="a8c-components-breadcrumbs__item-wrapper">
+		<li className={ styles[ 'a8c-components-breadcrumbs__item-wrapper' ] }>
 			<Menu placement="bottom-start">
 				<Menu.TriggerButton
-					className="a8c-components-breadcrumbs__item"
+					className={ styles[ 'a8c-components-breadcrumbs__item' ] }
 					render={
 						<Button size="compact" text={ __( '…' ) } label={ __( 'More breadcrumb items' ) } />
 					}
@@ -58,12 +58,14 @@ function BreadcrumbItem( {
 	const itemProps = useMemo(
 		() => ( {
 			...item,
-			className: 'a8c-components-breadcrumbs__item',
+			className: styles[ 'a8c-components-breadcrumbs__item' ],
 		} ),
 		[ item ]
 	);
 	return (
-		<li className="a8c-components-breadcrumbs__item-wrapper">{ renderItemLink( itemProps ) }</li>
+		<li className={ styles[ 'a8c-components-breadcrumbs__item-wrapper' ] }>
+			{ renderItemLink( itemProps ) }
+		</li>
 	);
 }
 
@@ -75,12 +77,14 @@ function BreadcrumbCurrentItem( {
 	visible: boolean;
 } ) {
 	const content = (
-		<Text as="span" className="a8c-components-breadcrumbs__item" aria-current="page">
+		<Text as="span" className={ styles[ 'a8c-components-breadcrumbs__item' ] } aria-current="page">
 			{ label }
 		</Text>
 	);
 	return visible ? (
-		<li className="a8c-components-breadcrumbs__item-wrapper is-current">{ content }</li>
+		<li className={ styles[ 'a8c-components-breadcrumbs__item-wrapper' ] + ' is-current' }>
+			{ content }
+		</li>
 	) : (
 		<VisuallyHidden as="li">{ content }</VisuallyHidden>
 	);
@@ -121,14 +125,14 @@ const BreadcrumbsNav = forwardRef<
 	const isCompact = ! isOffscreen && hasMiddleItems && variant === 'compact';
 	return (
 		<nav
-			className={ clsx( 'a8c-components-breadcrumbs', { 'is-offscreen': isOffscreen } ) }
+			className={ clsx( styles[ 'a8c-components-breadcrumbs' ], { 'is-offscreen': isOffscreen } ) }
 			ref={ ref }
 			{ ...( isOffscreen && { 'aria-hidden': true, inert: '' } ) }
 			{ ...props }
 		>
 			<HStack
 				as="ul"
-				className="a8c-components-breadcrumbs__list"
+				className={ styles[ 'a8c-components-breadcrumbs__list' ] }
 				spacing={ 0 }
 				justify="flex-start"
 				expanded={ false }
