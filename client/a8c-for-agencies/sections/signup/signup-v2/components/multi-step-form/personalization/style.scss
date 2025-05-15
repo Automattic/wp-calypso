@@ -19,6 +19,12 @@
 				gap: 8px;
 			}
 		}
+
+		&.is-horizontal .a4a-form__content-wrapper {
+			display: flex;
+			flex-direction: row;
+			gap: 16px;
+		}
 	}
 
 	.multi-checkbox label {

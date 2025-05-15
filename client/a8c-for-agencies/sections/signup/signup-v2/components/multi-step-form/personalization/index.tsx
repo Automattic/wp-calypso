@@ -10,6 +10,7 @@ import LayoutBanner from 'calypso/a8c-for-agencies/components/layout/banner';
 import { useCountriesAndStates } from 'calypso/a8c-for-agencies/sections/signup/agency-details-form/hooks/use-countries-and-states';
 import { AgencyDetailsSignupPayload } from 'calypso/a8c-for-agencies/sections/signup/types';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormRadio from 'calypso/components/forms/form-radio';
 import FormSelect from 'calypso/components/forms/form-select';
 import MultiCheckbox from 'calypso/components/forms/multi-checkbox';
 import { preventWidows } from 'calypso/lib/formatting';
@@ -24,6 +25,32 @@ interface Props {
 	initialFormData: Partial< AgencyDetailsSignupPayload >;
 	isFinalStep?: boolean;
 }
+
+const PersonalizationFormRadio = ( {
+	label,
+	checked,
+	onChange,
+}: {
+	label: string;
+	checked?: boolean;
+	onChange: () => void;
+} ) => {
+	return (
+		<div
+			className="blue-print-form__radio"
+			onClick={ onChange }
+			role="button"
+			tabIndex={ 0 }
+			onKeyDown={ ( e ) => {
+				if ( e.key === 'Enter' ) {
+					onChange();
+				}
+			} }
+		>
+			<FormRadio label={ label } checked={ checked } onChange={ onChange } />
+		</div>
+	);
+};
 
 export default function PersonalizationForm( {
 	onContinue,
@@ -41,9 +68,46 @@ export default function PersonalizationForm( {
 		country: initialFormData.country || '',
 		userType: initialFormData.userType || 'agency_owner',
 		managedSites: initialFormData.managedSites || '1-5',
+		agencySize: initialFormData.agencySize || '1-5',
 		servicesOffered: initialFormData.servicesOffered || [],
 		productsOffered: initialFormData.productsOffered || [],
+		productsToOffer: initialFormData.productsToOffer || [],
+		plansToOfferProducts: !! initialFormData.plansToOfferProducts,
 	} );
+
+	const servicesOfferedOptions = useMemo(
+		() => [
+			{ value: 'strategy_consulting', label: translate( 'Strategy consulting' ) },
+			{ value: 'website_design_development', label: translate( 'Website design & development' ) },
+			{ value: 'performance_optimization', label: translate( 'Performance optimization' ) },
+			{ value: 'digital_strategy_marketing', label: translate( 'Digital strategy & marketing' ) },
+			{ value: 'ecommerce_development', label: translate( 'eCommerce Development' ) },
+			{ value: 'maintenance_support_plans', label: translate( 'Maintenance & support plans' ) },
+			{ value: 'other', label: translate( 'Other' ) },
+		],
+		[ translate ]
+	);
+
+	const productsOfferedOptions = useMemo(
+		() => [
+			{ value: 'WordPress.com', label: translate( 'WordPress.com' ) },
+			{ value: 'WooCommerce', label: translate( 'WooCommerce' ) },
+			{ value: 'Jetpack', label: translate( 'Jetpack' ) },
+			{ value: 'Pressable', label: translate( 'Pressable' ) },
+			{ value: 'WordPress VIP', label: translate( 'WordPress VIP' ) },
+			{ value: 'None', label: translate( 'None' ) },
+		],
+		[ translate ]
+	);
+
+	const productsToOfferOptions = useMemo(
+		() =>
+			productsOfferedOptions.filter(
+				( product ) =>
+					! formData.productsOffered?.includes( product.value ) && product.value !== 'None'
+			),
+		[ formData.productsOffered, productsOfferedOptions ]
+	);
 
 	const handleInputChange =
 		( field: keyof AgencyDetailsSignupPayload ) => ( event: ChangeEvent< HTMLSelectElement > ) => {
@@ -62,36 +126,35 @@ export default function PersonalizationForm( {
 	};
 
 	const handleSetProductsOffered = ( products: { value: string[] } ) => {
+		const hasAllProductsOffered = productsOfferedOptions
+			.filter( ( product ) => product.value !== 'None' )
+			.every( ( product ) => products.value.includes( product.value ) );
+
 		setFormData( ( prev ) => ( {
 			...prev,
 			productsOffered: products.value,
+			plansToOfferProducts: hasAllProductsOffered ? false : prev.plansToOfferProducts, // If all products are offered, then there is no more products to be offered
+			productsToOffer: prev.productsToOffer?.filter(
+				( product ) => ! products.value.includes( product )
+			),
 		} ) );
 		updateValidationError( { productsOffered: undefined } );
 	};
 
-	const servicesOfferedOptions = useMemo(
-		() => [
-			{ value: 'strategy_consulting', label: translate( 'Strategy consulting' ) },
-			{ value: 'website_design_development', label: translate( 'Website design & development' ) },
-			{ value: 'performance_optimization', label: translate( 'Performance optimization' ) },
-			{ value: 'digital_strategy_marketing', label: translate( 'Digital strategy & marketing' ) },
-			{ value: 'maintenance_support_plans', label: translate( 'Maintenance & support plans' ) },
-			{ value: 'other', label: translate( 'Other' ) },
-		],
-		[ translate ]
-	);
+	const handleSetProductsToOffer = ( productsToOffer: { value: string[] } ) => {
+		setFormData( ( prev ) => ( {
+			...prev,
+			productsToOffer: productsToOffer.value,
+		} ) );
+		updateValidationError( { productsToOffer: undefined } );
+	};
 
-	const productsOfferedOptions = useMemo(
-		() => [
-			{ value: 'WordPress.com', label: translate( 'WordPress.com' ) },
-			{ value: 'WooCommerce', label: translate( 'WooCommerce' ) },
-			{ value: 'Jetpack', label: translate( 'Jetpack' ) },
-			{ value: 'Pressable', label: translate( 'Pressable' ) },
-			{ value: 'WordPress VIP', label: translate( 'WordPress VIP' ) },
-			{ value: 'None', label: translate( 'None' ) },
-		],
-		[ translate ]
-	);
+	const handleSetPlansToOfferProducts = ( plansToOfferProducts: boolean ) => {
+		setFormData( ( prev ) => ( {
+			...prev,
+			plansToOfferProducts,
+		} ) );
+	};
 
 	const handleSetCountry = ( value?: string | null ) => {
 		if ( ! value ) {
@@ -121,6 +184,8 @@ export default function PersonalizationForm( {
 	};
 
 	const isUserSiteOwner = formData.userType === 'site_owner';
+
+	const hasProductsOffered = !! formData.productsOffered?.length;
 
 	return (
 		<div className="signup-personalization-form">
@@ -169,6 +234,27 @@ export default function PersonalizationForm( {
 
 				{ ! isUserSiteOwner ? (
 					<>
+						<FormFieldset>
+							<FormField
+								label={ translate( 'What is the size of your agency (number of employees)?' ) }
+								isRequired
+							>
+								<FormSelect
+									id="agency_size"
+									value={ formData.agencySize }
+									onChange={ handleInputChange( 'agencySize' ) }
+								>
+									<option value="1-5">{ translate( '1-5' ) }</option>
+									<option value="6-10">{ translate( '6-10' ) }</option>
+									<option value="11-25">{ translate( '11-25' ) }</option>
+									<option value="26-50">{ translate( '26-50' ) }</option>
+									<option value="51-100">{ translate( '51-100' ) }</option>
+									<option value="101-250">{ translate( '101-250' ) }</option>
+									<option value="251+">{ translate( '251+' ) }</option>
+								</FormSelect>
+							</FormField>
+						</FormFieldset>
+
 						<FormFieldset>
 							<FormField label={ translate( 'How many sites do you manage?' ) } isRequired>
 								<FormSelect
@@ -219,6 +305,44 @@ export default function PersonalizationForm( {
 								/>
 							</FormField>
 						</FormFieldset>
+
+						{ hasProductsOffered && productsToOfferOptions.length > 0 && (
+							<>
+								<FormFieldset className="signup-personalization-form__checkbox is-horizontal">
+									<FormField label={ translate( 'Do you plan to offer more products?' ) }>
+										<PersonalizationFormRadio
+											label={ translate( 'Yes' ) }
+											checked={ formData.plansToOfferProducts }
+											onChange={ () => handleSetPlansToOfferProducts( true ) }
+										/>
+
+										<PersonalizationFormRadio
+											label={ translate( 'No' ) }
+											checked={ ! formData.plansToOfferProducts }
+											onChange={ () => handleSetPlansToOfferProducts( false ) }
+										/>
+									</FormField>
+								</FormFieldset>
+
+								{ formData.plansToOfferProducts && (
+									<FormFieldset className="signup-personalization-form__checkbox">
+										<FormField
+											error={ validationError.productsToOffer }
+											label={ translate( 'Select the products you plan to offer your clients.' ) }
+											isRequired
+										>
+											<MultiCheckbox
+												id="products_to_offer"
+												name="products_to_offer"
+												checked={ formData.productsToOffer }
+												options={ productsToOfferOptions }
+												onChange={ handleSetProductsToOffer as any }
+											/>
+										</FormField>
+									</FormFieldset>
+								) }
+							</>
+						) }
 
 						{ isFinalStep && (
 							<span className="signup-personalization-form__description">
