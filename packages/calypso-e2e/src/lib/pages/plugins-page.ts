@@ -285,17 +285,11 @@ export class PluginsPage {
 	 * modal that appears prompting the user to purchase a plan upgrade.
 	 */
 	async clickInstallPlugin(): Promise< void > {
-		// check the name of the button
 		const button = await this.page.locator( '.plugin-details-cta__install-button' );
 
 		const text = await button.innerText();
 		if ( /^(Purchase|Upgrade) and activate$/.test( text ) ) {
-			await Promise.all( [
-				this.page.waitForResponse( /eligibility/ ),
-				// Depending on whethe the plugin is free or requires a monthly subscription,
-				// the text shown on the install button is slightly different.
-				button.click(),
-			] );
+			await Promise.all( [ this.page.waitForResponse( /eligibility/ ), button.click() ] );
 			// Modal will appear to re-confirm to the user that an upgrade is necessary.
 			// Accept the confirmation.
 			await this.page.getByRole( 'button', { name: 'Upgrade and activate plugin' } ).click();
