@@ -14,17 +14,17 @@ function UnforwardedActionList(
 ) {
 	return (
 		<Card className="action-list" ref={ ref }>
-			<VStack spacing={ 3 }>
+			{ ( title || description ) && (
 				<VStack className="action-list__heading" spacing={ 2 }>
-					<Text className="action-list__title">{ title }</Text>
+					{ title && <Text className="action-list__title">{ title }</Text> }
 					{ description && (
 						<Text className="action-list__description" variant="muted">
 							{ description }
 						</Text>
 					) }
 				</VStack>
-				<VStack spacing={ 0 }>{ children }</VStack>
-			</VStack>
+			) }
+			<VStack spacing={ 0 }>{ children }</VStack>
 		</Card>
 	);
 }

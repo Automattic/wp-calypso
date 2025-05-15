@@ -8,7 +8,7 @@ import ActionList from '../index';
 describe( 'ActionList', () => {
 	test( 'should render the title and action item by default', () => {
 		render(
-			<ActionList title="Action List">
+			<ActionList>
 				<ActionList.ActionItem title="Action item title" actions={ <Button>Action</Button> } />
 			</ActionList>
 		);
@@ -17,13 +17,14 @@ describe( 'ActionList', () => {
 		expect( screen.getByText( 'Action item title' ) ).toBeVisible();
 	} );
 
-	test( 'should render the description', () => {
+	test( 'should render the title and description', () => {
 		render(
 			<ActionList title="Action List" description="description">
 				<ActionList.ActionItem title="Action item title" actions={ <Button>Action</Button> } />
 			</ActionList>
 		);
 
+		expect( screen.getByText( 'Action List' ) ).toBeVisible();
 		expect( screen.getByText( 'description' ) ).toBeVisible();
 	} );
 

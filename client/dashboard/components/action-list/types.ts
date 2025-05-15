@@ -26,7 +26,7 @@ export interface ActionListProps {
 	/**
 	 * The main label that identifies the action list.
 	 */
-	title: string;
+	title?: string;
 	/**
 	 * Optional supporting text that provides additional context or
 	 * detail about the action list.
