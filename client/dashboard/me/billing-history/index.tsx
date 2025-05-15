@@ -1,11 +1,11 @@
-import { __ } from '@wordpress/i18n';
+import { billingHistoryRoute } from '../../app/router';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 
 function BillingHistory() {
 	return (
 		<PageLayout size="small">
-			<PageHeader title={ __( 'Billing History' ) } />
+			<PageHeader title={ billingHistoryRoute.options.staticData.label() } />
 			<div>Billing history content will go here</div>
 		</PageLayout>
 	);

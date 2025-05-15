@@ -5,6 +5,7 @@ import { dateI18n } from '@wordpress/date';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
 import { domainsQuery } from '../app/queries';
+import { domainsRoute } from '../app/router';
 import DataViewsCard from '../components/dataviews-card';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
@@ -102,7 +103,7 @@ function Domains() {
 	return (
 		<PageLayout>
 			<PageHeader
-				title={ __( 'Domains' ) }
+				title={ domainsRoute.options.staticData.label() }
 				actions={
 					<Button variant="primary" __next40pxDefaultSize>
 						{ __( 'Add New Domain' ) }

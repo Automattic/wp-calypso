@@ -1,11 +1,11 @@
-import { __ } from '@wordpress/i18n';
+import { sitePerformanceRoute } from '../../app/router';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 
 function SitePerformance() {
 	return (
 		<PageLayout>
-			<PageHeader title={ __( 'Performance' ) } />
+			<PageHeader title={ sitePerformanceRoute.options.staticData.label() } />
 		</PageLayout>
 	);
 }

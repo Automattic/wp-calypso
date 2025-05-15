@@ -1,14 +1,13 @@
 import { __ } from '@wordpress/i18n';
+import { siteSettingsSubscriptionGiftingRoute } from '../../app/router';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
 import { hasSubscriptionGiftingFeature } from './utils';
 import type { Site, SiteSettings } from '../../data/types';
 
 export default function SubscriptionGiftingSettingsSummary( {
-	siteSlug,
 	site,
 	settings,
 }: {
-	siteSlug: string;
 	site: Site;
 	settings: SiteSettings;
 } ) {
@@ -17,8 +16,8 @@ export default function SubscriptionGiftingSettingsSummary( {
 	}
 	return (
 		<RouterLinkSummaryButton
-			to={ `/sites/${ siteSlug }/settings/subscription-gifting` }
-			title={ __( 'Accept a gift subscription' ) }
+			to={ siteSettingsSubscriptionGiftingRoute.to }
+			title={ siteSettingsSubscriptionGiftingRoute.options.staticData.label() }
 			density="medium"
 			badges={
 				settings.wpcom_gifting_subscription

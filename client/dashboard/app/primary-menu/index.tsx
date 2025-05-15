@@ -1,16 +1,26 @@
-import { __ } from '@wordpress/i18n';
 import Menu from '../../components/menu';
 import { useAppContext } from '../context';
+import { sitesRoute, domainsRoute, emailsRoute, siteOverviewRoute } from '../router';
 
 function PrimaryMenu() {
 	const { supports } = useAppContext();
 
 	return (
 		<Menu>
-			{ supports.overview && <Menu.Item to="/overview">{ __( 'Overview' ) }</Menu.Item> }
-			{ supports.sites && <Menu.Item to="/sites">{ __( 'Sites' ) }</Menu.Item> }
-			{ supports.domains && <Menu.Item to="/domains">{ __( 'Domains' ) }</Menu.Item> }
-			{ supports.emails && <Menu.Item to="/emails">{ __( 'Emails' ) }</Menu.Item> }
+			{ supports.overview && (
+				<Menu.Item to={ siteOverviewRoute.to }>
+					{ siteOverviewRoute.options.staticData.label() }
+				</Menu.Item>
+			) }
+			{ supports.sites && (
+				<Menu.Item to={ sitesRoute.to }>{ sitesRoute.options.staticData.label() }</Menu.Item>
+			) }
+			{ supports.domains && (
+				<Menu.Item to={ domainsRoute.to }>{ domainsRoute.options.staticData.label() }</Menu.Item>
+			) }
+			{ supports.emails && (
+				<Menu.Item to={ emailsRoute.to }>{ emailsRoute.options.staticData.label() }</Menu.Item>
+			) }
 		</Menu>
 	);
 }

@@ -1,20 +1,26 @@
 import { __ } from '@wordpress/i18n';
+import {
+	siteDeploymentsRoute,
+	siteSettingsRoute,
+	sitePerformanceRoute,
+	siteOverviewRoute,
+} from '../../app/router';
 import ResponsiveMenu from '../../components/responsive-menu';
 
-const SiteMenu = ( { siteSlug }: { siteSlug: string } ) => {
+const SiteMenu = () => {
 	return (
 		<ResponsiveMenu label={ __( 'Site Menu' ) }>
-			<ResponsiveMenu.Item to={ `/sites/${ siteSlug }` } activeOptions={ { exact: true } }>
-				{ __( 'Overview' ) }
+			<ResponsiveMenu.Item to={ siteOverviewRoute.to } activeOptions={ { exact: true } }>
+				{ siteOverviewRoute.options.staticData.label() }
 			</ResponsiveMenu.Item>
-			<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/deployments` }>
-				{ __( 'Deployments' ) }
+			<ResponsiveMenu.Item to={ siteDeploymentsRoute.to }>
+				{ siteDeploymentsRoute.options.staticData.label() }
 			</ResponsiveMenu.Item>
-			<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/performance` }>
-				{ __( 'Performance' ) }
+			<ResponsiveMenu.Item to={ sitePerformanceRoute.to }>
+				{ sitePerformanceRoute.options.staticData.label() }
 			</ResponsiveMenu.Item>
-			<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/settings` }>
-				{ __( 'Settings' ) }
+			<ResponsiveMenu.Item to={ siteSettingsRoute.to }>
+				{ siteSettingsRoute.options.staticData.label() }
 			</ResponsiveMenu.Item>
 		</ResponsiveMenu>
 	);

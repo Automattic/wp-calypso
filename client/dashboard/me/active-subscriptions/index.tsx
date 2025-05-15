@@ -1,11 +1,11 @@
-import { __ } from '@wordpress/i18n';
+import { activeSubscriptionsRoute } from '../../app/router';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 
 export default function ActiveSubscriptions() {
 	return (
 		<PageLayout size="small">
-			<PageHeader title={ __( 'Active Subscriptions' ) } />
+			<PageHeader title={ activeSubscriptionsRoute.options.staticData.label() } />
 			<div>Active subscriptions content will go here</div>
 		</PageLayout>
 	);

@@ -5,6 +5,7 @@ import {
 	redirect,
 	createLazyRoute,
 } from '@tanstack/react-router';
+import { __ } from '@wordpress/i18n';
 import { fetchTwoStep } from '../data';
 import NotFound from './404';
 import UnknownError from './500';
@@ -24,11 +25,19 @@ interface RouteContext {
 	config?: AppConfig;
 }
 
-const rootRoute = createRootRoute( { component: Root } );
+const rootRoute = createRootRoute( {
+	component: Root,
+	staticData: {
+		label: () => __( 'Root' ),
+	},
+} );
 
 const indexRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: '/',
+	staticData: {
+		label: () => __( 'Home' ),
+	},
 	beforeLoad: ( { context }: { context: RouteContext } ) => {
 		if ( context.config ) {
 			throw redirect( { to: context.config.mainRoute } );
@@ -39,6 +48,9 @@ const indexRoute = createRoute( {
 const overviewRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'overview',
+	staticData: {
+		label: () => __( 'Overview' ),
+	},
 } ).lazy( () =>
 	import( '../agency-overview' ).then( ( d ) =>
 		createLazyRoute( 'agency-overview' )( {
@@ -51,6 +63,9 @@ const sitesRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'sites',
 	loader: () => queryClient.ensureQueryData( sitesQuery() ),
+	staticData: {
+		label: () => __( 'Sites' ),
+	},
 } ).lazy( () =>
 	import( '../sites' ).then( ( d ) =>
 		createLazyRoute( 'sites' )( {
@@ -63,6 +78,9 @@ const siteRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'sites/$siteSlug',
 	loader: ( { params: { siteSlug } } ) => queryClient.ensureQueryData( siteQuery( siteSlug ) ),
+	staticData: {
+		label: () => __( 'Site' ),
+	},
 } ).lazy( () =>
 	import( '../sites/site' ).then( ( d ) =>
 		createLazyRoute( 'site' )( {
@@ -74,6 +92,9 @@ const siteRoute = createRoute( {
 const siteOverviewRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: '/',
+	staticData: {
+		label: () => __( 'Overview' ),
+	},
 } ).lazy( () =>
 	import( '../sites/overview' ).then( ( d ) =>
 		createLazyRoute( 'site-overview' )( {
@@ -85,6 +106,9 @@ const siteOverviewRoute = createRoute( {
 const siteDeploymentsRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: 'deployments',
+	staticData: {
+		label: () => __( 'Deployments' ),
+	},
 } ).lazy( () =>
 	import( '../sites/deployments' ).then( ( d ) =>
 		createLazyRoute( 'site-deployments' )( {
@@ -96,6 +120,9 @@ const siteDeploymentsRoute = createRoute( {
 const sitePerformanceRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: 'performance',
+	staticData: {
+		label: () => __( 'Performance' ),
+	},
 } ).lazy( () =>
 	import( '../sites/performance' ).then( ( d ) =>
 		createLazyRoute( 'site-performance' )( {
@@ -109,6 +136,9 @@ const siteSettingsRoute = createRoute( {
 	path: 'settings',
 	loader: ( { params: { siteSlug } } ) =>
 		queryClient.ensureQueryData( siteSettingsQuery( siteSlug ) ),
+	staticData: {
+		label: () => __( 'Settings' ),
+	},
 } ).lazy( () =>
 	import( '../sites/settings' ).then( ( d ) =>
 		createLazyRoute( 'site-settings' )( {
@@ -122,6 +152,9 @@ const siteSettingsSubscriptionGiftingRoute = createRoute( {
 	path: 'settings/subscription-gifting',
 	loader: ( { params: { siteSlug } } ) =>
 		queryClient.ensureQueryData( siteSettingsQuery( siteSlug ) ),
+	staticData: {
+		label: () => __( 'Subscription gifting' ),
+	},
 } ).lazy( () =>
 	import( '../sites/settings-subscription-gifting' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-subscription-gifting' )( {
@@ -134,6 +167,9 @@ const domainsRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'domains',
 	loader: () => queryClient.ensureQueryData( domainsQuery() ),
+	staticData: {
+		label: () => __( 'Domains' ),
+	},
 } ).lazy( () =>
 	import( '../domains' ).then( ( d ) =>
 		createLazyRoute( 'domains' )( {
@@ -146,6 +182,9 @@ const emailsRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'emails',
 	loader: () => queryClient.ensureQueryData( emailsQuery() ),
+	staticData: {
+		label: () => __( 'Emails' ),
+	},
 } ).lazy( () =>
 	import( '../emails' ).then( ( d ) =>
 		createLazyRoute( 'emails' )( {
@@ -157,6 +196,9 @@ const emailsRoute = createRoute( {
 const meRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'me',
+	staticData: {
+		label: () => __( 'Account' ),
+	},
 	loader: () => queryClient.ensureQueryData( profileQuery() ),
 	beforeLoad: async ( { cause } ) => {
 		if ( cause !== 'enter' ) {
@@ -180,6 +222,9 @@ const meRoute = createRoute( {
 const profileRoute = createRoute( {
 	getParentRoute: () => meRoute,
 	path: 'profile',
+	staticData: {
+		label: () => __( 'Profile' ),
+	},
 } ).lazy( () =>
 	import( '../me/profile' ).then( ( d ) =>
 		createLazyRoute( 'profile' )( {
@@ -191,6 +236,9 @@ const profileRoute = createRoute( {
 const billingRoute = createRoute( {
 	getParentRoute: () => meRoute,
 	path: 'billing',
+	staticData: {
+		label: () => __( 'Billing' ),
+	},
 } ).lazy( () =>
 	import( '../me/billing' ).then( ( d ) =>
 		createLazyRoute( 'billing' )( {
@@ -202,6 +250,9 @@ const billingRoute = createRoute( {
 const billingHistoryRoute = createRoute( {
 	getParentRoute: () => meRoute,
 	path: 'billing/billing-history',
+	staticData: {
+		label: () => __( 'Billing history' ),
+	},
 } ).lazy( () =>
 	import( '../me/billing-history' ).then( ( d ) =>
 		createLazyRoute( 'billing-history' )( {
@@ -213,6 +264,9 @@ const billingHistoryRoute = createRoute( {
 const activeSubscriptionsRoute = createRoute( {
 	getParentRoute: () => meRoute,
 	path: 'billing/active-subscriptions',
+	staticData: {
+		label: () => __( 'Active subscriptions' ),
+	},
 } ).lazy( () =>
 	import( '../me/active-subscriptions' ).then( ( d ) =>
 		createLazyRoute( 'active-subscriptions' )( {
@@ -224,6 +278,9 @@ const activeSubscriptionsRoute = createRoute( {
 const paymentMethodsRoute = createRoute( {
 	getParentRoute: () => meRoute,
 	path: 'billing/payment-methods',
+	staticData: {
+		label: () => __( 'Payment methods' ),
+	},
 } ).lazy( () =>
 	import( '../me/payment-methods' ).then( ( d ) =>
 		createLazyRoute( 'payment-methods' )( {
@@ -235,6 +292,9 @@ const paymentMethodsRoute = createRoute( {
 const taxDetailsRoute = createRoute( {
 	getParentRoute: () => meRoute,
 	path: 'billing/tax-details',
+	staticData: {
+		label: () => __( 'Tax details' ),
+	},
 } ).lazy( () =>
 	import( '../me/tax-details' ).then( ( d ) =>
 		createLazyRoute( 'tax-details' )( {
@@ -246,6 +306,9 @@ const taxDetailsRoute = createRoute( {
 const securityRoute = createRoute( {
 	getParentRoute: () => meRoute,
 	path: 'security',
+	staticData: {
+		label: () => __( 'Security' ),
+	},
 } ).lazy( () =>
 	import( '../me/security' ).then( ( d ) =>
 		createLazyRoute( 'security' )( {
@@ -257,6 +320,9 @@ const securityRoute = createRoute( {
 const privacyRoute = createRoute( {
 	getParentRoute: () => meRoute,
 	path: 'privacy',
+	staticData: {
+		label: () => __( 'Privacy' ),
+	},
 } ).lazy( () =>
 	import( '../me/privacy' ).then( ( d ) =>
 		createLazyRoute( 'privacy' )( {
@@ -268,6 +334,9 @@ const privacyRoute = createRoute( {
 const notificationsRoute = createRoute( {
 	getParentRoute: () => meRoute,
 	path: 'notifications',
+	staticData: {
+		label: () => __( 'Notifications' ),
+	},
 } ).lazy( () =>
 	import( '../me/notifications' ).then( ( d ) =>
 		createLazyRoute( 'notifications' )( {

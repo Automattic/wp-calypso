@@ -5,6 +5,7 @@ import { Button, ExternalLink, Notice } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useState, useMemo } from 'react';
 import { emailsQuery } from '../app/queries';
+import { emailsRoute } from '../app/router';
 import DataViewsCard from '../components/dataviews-card';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
@@ -120,7 +121,7 @@ function Emails() {
 	return (
 		<PageLayout>
 			<PageHeader
-				title={ __( 'Emails' ) }
+				title={ emailsRoute.options.staticData.label() }
 				actions={
 					<>
 						<Button variant="secondary" __next40pxDefaultSize>

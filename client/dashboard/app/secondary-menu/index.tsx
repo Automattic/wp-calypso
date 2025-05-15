@@ -16,6 +16,7 @@ import RouterLinkMenuItem from '../../components/router-link-menu-item';
 import { useAuth } from '../auth';
 import { useOpenCommandPalette } from '../command-palette/utils';
 import { useAppContext } from '../context';
+import { profileRoute } from '../router';
 
 import './style.scss';
 
@@ -57,7 +58,7 @@ function UserProfile() {
 						<Text variant="muted">@{ user.username }</Text>
 					</VStack>
 					<MenuGroup>
-						<RouterLinkMenuItem to="/me/profile">{ __( 'Account' ) }</RouterLinkMenuItem>
+						<RouterLinkMenuItem to={ profileRoute.to }>{ __( 'Account' ) }</RouterLinkMenuItem>
 					</MenuGroup>
 					<MenuGroup>
 						<MenuItem

@@ -222,7 +222,7 @@ export default function Sites() {
 		<>
 			<PageLayout>
 				<PageHeader
-					title={ __( 'Sites' ) }
+					title={ sitesRoute.options.staticData.label() }
 					actions={
 						<Button variant="primary" __next40pxDefaultSize>
 							{ __( 'Add New Site' ) }

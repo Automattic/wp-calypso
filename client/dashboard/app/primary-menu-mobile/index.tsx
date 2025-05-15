@@ -3,6 +3,7 @@ import { __ } from '@wordpress/i18n';
 import { menu } from '@wordpress/icons';
 import RouterLinkMenuItem from '../../components/router-link-menu-item';
 import { useAppContext } from '../context';
+import { sitesRoute, domainsRoute, emailsRoute, siteOverviewRoute } from '../router';
 
 function PrimaryMenuMobile() {
 	const { supports } = useAppContext();
@@ -18,23 +19,23 @@ function PrimaryMenuMobile() {
 			{ ( { onClose } ) => (
 				<>
 					{ supports.overview && (
-						<RouterLinkMenuItem to="/overview" onClick={ onClose }>
-							{ __( 'Overview' ) }
+						<RouterLinkMenuItem to={ siteOverviewRoute.to } onClick={ onClose }>
+							{ siteOverviewRoute.options.staticData.label() }
 						</RouterLinkMenuItem>
 					) }
 					{ supports.sites && (
-						<RouterLinkMenuItem to="/sites" onClick={ onClose }>
-							{ __( 'Sites' ) }
+						<RouterLinkMenuItem to={ sitesRoute.to }>
+							{ sitesRoute.options.staticData.label() }
 						</RouterLinkMenuItem>
 					) }
 					{ supports.domains && (
-						<RouterLinkMenuItem to="/domains" onClick={ onClose }>
-							{ __( 'Domains' ) }
+						<RouterLinkMenuItem to={ domainsRoute.to }>
+							{ domainsRoute.options.staticData.label() }
 						</RouterLinkMenuItem>
 					) }
 					{ supports.emails && (
-						<RouterLinkMenuItem to="/emails" onClick={ onClose }>
-							{ __( 'Emails' ) }
+						<RouterLinkMenuItem to={ emailsRoute.to }>
+							{ emailsRoute.options.staticData.label() }
 						</RouterLinkMenuItem>
 					) }
 				</>

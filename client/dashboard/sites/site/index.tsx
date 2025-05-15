@@ -38,7 +38,7 @@ function Site() {
 						/>
 					</HeaderBar.Title>
 					{ isDesktop && <MenuDivider /> }
-					<SiteMenu siteSlug={ siteSlug } />
+					<SiteMenu />
 				</HStack>
 			</HeaderBar>
 			<Outlet />

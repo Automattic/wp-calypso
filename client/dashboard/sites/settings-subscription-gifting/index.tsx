@@ -57,7 +57,7 @@ export default function SubscriptionGiftingSettings() {
 	return (
 		<PageLayout size="small">
 			<SettingsPageHeader
-				title={ __( 'Accept a gift subscription' ) }
+				title={ siteSettingsSubscriptionGiftingRoute.options.staticData.label() }
 				description={ __(
 					'Allow a site visitor to cover the full cost of your site’s WordPress.com plan.'
 				) }
