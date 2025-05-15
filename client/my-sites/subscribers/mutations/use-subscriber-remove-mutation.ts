@@ -17,7 +17,7 @@ type ApiResponseError = {
 
 const useNewHelper = config.isEnabled( 'subscribers-helper-library' );
 
-const getEmailSubscriptionId = ( subscriber: Subscriber ): number => {
+const getEmailSubscriptionId: ( subscriber: Subscriber ) => number = ( subscriber ) => {
 	if ( useNewHelper ) {
 		return subscriber.email_subscription_id || 0;
 	}
@@ -86,15 +86,18 @@ const useSubscriberRemoveMutation = (
 				let emailRemoved = false;
 				let wpcomRemoved = false;
 
-				// Remove the subscriber from the followers if they have a numeric user_id
 				const numericUserId = Number( subscriber.user_id );
+				const emailSubscriptionId = getEmailSubscriptionId( subscriber );
+
+				// Remove the subscriber from the followers if they have a numeric user_id
 				if ( ! isNaN( numericUserId ) ) {
 					try {
-						await wpcom.req.post( `/sites/${ siteId }/followers/${ numericUserId }/delete` );
-						wpcomRemoved = true;
+						const response = await wpcom.req.post(
+							`/sites/${ siteId }/followers/${ numericUserId }/delete`
+						);
+						wpcomRemoved = response?.deleted === true;
 					} catch ( e ) {
 						// Only throw if they don't have an email subscription ID to try next
-						const emailSubscriptionId = getEmailSubscriptionId( subscriber );
 						if ( ( e as ApiResponseError )?.error === 'not_found' && ! emailSubscriptionId ) {
 							throw new Error( ( e as ApiResponseError )?.message );
 						}
@@ -102,13 +105,13 @@ const useSubscriberRemoveMutation = (
 				}
 
 				// Try to remove as email follower if they have an email subscription ID
-				const emailSubscriptionId = getEmailSubscriptionId( subscriber );
 				if ( emailSubscriptionId ) {
 					try {
-						await wpcom.req.post(
+						const response = await wpcom.req.post(
 							`/sites/${ siteId }/email-followers/${ emailSubscriptionId }/delete`
 						);
-						emailRemoved = true;
+						// Verify the response indicates successful deletion
+						emailRemoved = response?.deleted === true;
 					} catch ( e ) {
 						// Only throw if we haven't successfully removed them through any other method.
 						if ( ! wpcomRemoved ) {
@@ -118,12 +121,17 @@ const useSubscriberRemoveMutation = (
 				}
 
 				// Consider removal successful if:
-				// 1. We removed the email subscription (if it existed)
-				// 2. We removed the wpcom following (if it existed)
-				const emailSuccess = emailSubscriptionId ? emailRemoved : true;
-				const wpcomSuccess = isNaN( numericUserId ) ? true : wpcomRemoved;
+				// 1. Email subscription was either:
+				//    - Successfully removed (if it existed)
+				//    - Did not exist (no removal needed)
+				// 2. WPCOM following was either:
+				//    - Successfully removed (if it existed)
+				//    - Did not exist (no removal needed)
+				const isFullyRemoved =
+					( emailSubscriptionId ? emailRemoved : true ) &&
+					( ! isNaN( numericUserId ) ? wpcomRemoved : true );
 
-				return emailSuccess && wpcomSuccess;
+				return isFullyRemoved;
 			} );
 			const promiseResults = await Promise.allSettled( subscriberPromises );
 			if (
