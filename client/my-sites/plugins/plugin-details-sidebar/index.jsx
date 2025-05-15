@@ -4,7 +4,7 @@ import {
 	WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS,
 } from '@automattic/calypso-products';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { sprintf } from '@wordpress/i18n';
+import { formatNumberCompact } from '@automattic/number-formatters';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
@@ -22,6 +22,7 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 const PluginDetailsSidebar = ( {
 	plugin: {
 		slug,
+		active_installs,
 		tested,
 		isMarketplaceProduct = false,
 		demo_url = null,
@@ -55,19 +56,16 @@ const PluginDetailsSidebar = ( {
 		{
 			href: localizeUrl( 'https://wordpress.com/support/help-support-options' ),
 			label: translate( 'How to get help!' ),
-			openInNewTab: true,
 		},
 		{
 			href: localizeUrl( 'https://automattic.com/privacy/' ),
 			label: translate( 'See privacy policy' ),
-			openInNewTab: true,
 		},
 	];
 	documentation_url &&
 		supportLinks.unshift( {
 			href: documentation_url,
 			label: translate( 'View documentation' ),
-			openInNewTab: true,
 		} );
 
 	const isPremiumVersionAvailable = !! premium_slug;
@@ -94,7 +92,6 @@ const PluginDetailsSidebar = ( {
 							href: premiumVersionLink,
 							label: translate( 'Check out the premium version' ),
 							onClick: premiumVersionLinkOnClik,
-							openInNewTab: true,
 						},
 					] }
 					first
@@ -139,9 +136,7 @@ const PluginDetailsSidebar = ( {
 					description={ translate(
 						'Take a look at the posibilities of this plugin before your commit.'
 					) }
-					links={ [
-						{ href: { demo_url }, label: translate( 'View live demo' ), openInNewTab: true },
-					] }
+					links={ [ { href: { demo_url }, label: translate( 'View live demo' ) } ] }
 					first
 				/>
 			) }
@@ -154,14 +149,22 @@ const PluginDetailsSidebar = ( {
 					first
 				/>
 			) }
+			{ Boolean( active_installs ) && (
+				<div className="plugin-details-sidebar__active-installs">
+					<div className="plugin-details-sidebar__active-installs-text title">
+						{ translate( 'Active installations' ) }
+					</div>
+					<div className="plugin-details-sidebar__active-installs-value value">
+						{ formatNumberCompact( active_installs ) }
+					</div>
+				</div>
+			) }
 			{ Boolean( tested ) && (
 				<div className="plugin-details-sidebar__tested">
 					<div className="plugin-details-sidebar__tested-text title">
 						{ translate( 'Tested up to' ) }
 					</div>
-					<div className="plugin-details-sidebar__tested-value value">
-						{ sprintf( 'WordPress %s', tested ) }
-					</div>
+					<div className="plugin-details-sidebar__tested-value value">{ tested }</div>
 				</div>
 			) }
 		</div>

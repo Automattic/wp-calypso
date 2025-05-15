@@ -2,7 +2,7 @@ import { Button } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useBreakpoint } from '@automattic/viewport-react';
 import clsx from 'clsx';
-import { fixMe, useTranslate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import Banner from 'calypso/components/banner';
@@ -326,38 +326,29 @@ function PluginDetails( props ) {
 		);
 	}
 
-	const downloadTranslationArgs = {
-		components: {
-			org_link: (
-				<a
-					href={ 'https://wordpress.org/plugins/' + ( fullPlugin?.slug || '' ) }
-					target="_blank"
-					rel="noreferrer noopener"
-				/>
-			),
-			wpcom_vs_wporg_link: (
-				<a
-					href={ localizeUrl(
-						'https://wordpress.com/go/website-building/wordpress-com-vs-wordpress-org/'
-					) }
-					target="_blank"
-					rel="noreferrer noopener"
-				/>
-			),
-		},
-	};
-
-	const downloadText = fixMe( {
-		text: 'This plugin is {{org_link}}available for download{{/org_link}} for your {{wpcom_vs_wporg_link}}WordPress self-hosted{{/wpcom_vs_wporg_link}} site.',
-		newCopy: translate(
-			'This plugin is {{org_link}}available for download{{/org_link}} for your {{wpcom_vs_wporg_link}}WordPress self-hosted{{/wpcom_vs_wporg_link}} site.',
-			downloadTranslationArgs
-		),
-		oldCopy: translate(
-			'This plugin is {{org_link}}available for download{{/org_link}} to be used on your {{wpcom_vs_wporg_link}}WordPress self-hosted{{/wpcom_vs_wporg_link}} installation.',
-			downloadTranslationArgs
-		),
-	} );
+	const downloadText = translate(
+		'This plugin is {{org_link}}available for download{{/org_link}} to be used on your {{wpcom_vs_wporg_link}}WordPress self-hosted{{/wpcom_vs_wporg_link}} installation.',
+		{
+			components: {
+				org_link: (
+					<a
+						href={ 'https://wordpress.org/plugins/' + ( fullPlugin?.slug || '' ) }
+						target="_blank"
+						rel="noreferrer noopener"
+					/>
+				),
+				wpcom_vs_wporg_link: (
+					<a
+						href={ localizeUrl(
+							'https://wordpress.com/go/website-building/wordpress-com-vs-wordpress-org/'
+						) }
+						target="_blank"
+						rel="noreferrer noopener"
+					/>
+				),
+			},
+		}
+	);
 
 	const structuredData = JSON.stringify( {
 		'@context': 'https://schema.org',

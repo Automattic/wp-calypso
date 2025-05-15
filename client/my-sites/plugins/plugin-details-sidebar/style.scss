@@ -1,5 +1,3 @@
-@import "@wordpress/base-styles/breakpoints";
-
 .plugin-details-sidebar__plugin-details-title {
 	padding: 15px 0;
 	display: none;
@@ -12,16 +10,13 @@
 }
 
 .plugin-details-sidebar__plugin-details-content {
-	margin-top: 30px; /* Extra 6px because of line-height and border */
+	margin-top: 32px;
+	padding-top: 32px;
 	border-style: solid none;
 	border-width: 1px;
 	border-color: #eee;
 	border-bottom: none;
-	border-top: 1px solid var(--studio-gray-5);
-
-	@media (min-width: $break-small) {
-		padding-top: 24px;
-	}
+	border-top: 2px solid var(--studio-gray-5);
 
 	.title {
 		color: var(--studio-gray-60);
@@ -31,6 +26,7 @@
 	.value {
 		color: var(--studio-gray-90);
 		font-size: $font-body-small;
+		padding-bottom: 16px;
 
 		&.plugin-details-sidebar__active-installs-value {
 			font-size: $font-body;
@@ -45,11 +41,5 @@
 		display: flex;
 		justify-content: space-between;
 		flex-wrap: wrap; // Needed for paid plugin USPs.
-	}
-
-	@media (max-width: $break-small) {
-		.plugin-details-sidebar__tested {
-			margin-top: 12px;
-		}
 	}
 }
