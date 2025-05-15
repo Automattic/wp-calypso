@@ -241,6 +241,7 @@ const MultiStepForm = ( { withPersonalizedBlueprint = false, submitAsSurvey = fa
 		blueprintRequested,
 		currentStep,
 		formData,
+		onCreateAgency,
 		submitAsSurvey,
 		trackView,
 		updateDataAndContinue,

@@ -3,10 +3,12 @@ export interface AgencyDetailsPayload {
 	lastName: string;
 	agencyName: string;
 	agencyUrl: string;
+	agencySize?: string;
 	managedSites?: string;
 	userType: string;
 	servicesOffered: string[];
 	productsOffered: string[];
+	productsToOffer: string[];
 	city: string;
 	line1: string;
 	line2: string;
