@@ -241,12 +241,7 @@ export class ReaderSidebar extends Component {
 				{ this.props.organizations && (
 					<>
 						<SidebarSeparator />
-						<li>
-							<ReaderSidebarOrganizations
-								organizations={ this.props.organizations }
-								path={ path }
-							/>
-						</li>
+						<ReaderSidebarOrganizations organizations={ this.props.organizations } path={ path } />
 					</>
 				) }
 
