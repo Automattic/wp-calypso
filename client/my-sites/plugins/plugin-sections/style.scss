@@ -69,6 +69,7 @@
 
 /* Remove top margin for the element if we don't render the header. */
 .plugin-sections__content:not(:has(+ .plugin-sections__header)) .plugin-sections__banner > img:first-child,
+.plugin-sections__content:not(:has(+ .plugin-sections__header)) > img:first-child,
 .plugin-sections__content:not(:has(+ .plugin-sections__header)) > h1:first-child,
 .plugin-sections__content:not(:has(+ .plugin-sections__header)) > h2:first-child,
 .plugin-sections__content:not(:has(+ .plugin-sections__header)) > h3:first-child,
