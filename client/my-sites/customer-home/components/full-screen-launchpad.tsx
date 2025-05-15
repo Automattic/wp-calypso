@@ -13,7 +13,6 @@ import clsx from 'clsx';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import useHomeLayoutQuery from 'calypso/data/home/use-home-layout-query';
-import { usePurchasePlanNotification } from 'calypso/landing/stepper/declarative-flow/internals/hooks/use-purchase-plan-notification';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { skipLaunchpad } from 'calypso/landing/stepper/utils/skip-launchpad';
 import { launchSiteApi } from 'calypso/lib/signup/step-actions';
@@ -43,7 +42,6 @@ export const FullScreenLaunchpad = ( {
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getGoals(),
 		[]
 	);
-	usePurchasePlanNotification( siteId, site?.plan?.product_slug );
 
 	const launchpadContext = 'focused-customer-home';
 
