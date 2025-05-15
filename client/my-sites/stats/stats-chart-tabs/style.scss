@@ -249,6 +249,7 @@ ul.module-tabs {
 
 		/* styling for chart header with new date filtering design */
 		.stats-chart-tabs__header {
+			container-type: inline-size;
 			display: flex;
 			flex-direction: row;
 			align-items: center;
@@ -272,7 +273,7 @@ ul.module-tabs {
 		}
 
 		.stats-interval-dropdown, .stats-interval-display {
-			margin-left: auto;
+			margin-left: 48px;
 
 			& > .components-button {
 				width: auto;
@@ -283,6 +284,10 @@ ul.module-tabs {
 				& > svg {
 					margin-left: 8px;
 				}
+			}
+
+			@container (inline-size < #{$break-mobile}) {
+				margin-left: 0;
 			}
 		}
 	}
