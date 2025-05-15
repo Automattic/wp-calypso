@@ -1,7 +1,6 @@
 import { Card } from '@automattic/components';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
-import { Component } from 'react';
 import SocialToS from 'calypso/blocks/authentication/social/social-tos.jsx';
 import {
 	GoogleSocialButton,
@@ -11,33 +10,35 @@ import {
 	QrCodeLoginButton,
 	UsernameOrEmailButton,
 } from 'calypso/components/social-buttons';
+import { useExperiment } from 'calypso/lib/explat';
 
 import './social.scss';
 
-class SocialLoginForm extends Component {
-	static propTypes = {
-		handleLogin: PropTypes.func.isRequired,
-		trackLoginAndRememberRedirect: PropTypes.func.isRequired,
-		socialServiceResponse: PropTypes.object,
-		shouldRenderToS: PropTypes.bool,
-		magicLoginLink: PropTypes.string,
-		qrLoginLink: PropTypes.string,
-		isSocialFirst: PropTypes.bool,
-		lastUsedAuthenticationMethod: PropTypes.string,
-		resetLastUsedAuthenticationMethod: PropTypes.func,
-	};
+const SOCIAL_LOGIN_EXPERIMENT = 'calypso_social_login_hide_apple_jetpack';
 
-	static defaultProps = {
-		shouldRenderToS: false,
-	};
+const SocialLoginForm = ( {
+	handleLogin,
+	trackLoginAndRememberRedirect,
+	socialServiceResponse,
+	shouldRenderToS = false,
+	magicLoginLink,
+	qrLoginLink,
+	isSocialFirst,
+	isWoo,
+	lastUsedAuthenticationMethod,
+	resetLastUsedAuthenticationMethod,
+} ) => {
+	const [ isLoading, experimentAssignment ] = useExperiment( SOCIAL_LOGIN_EXPERIMENT );
+	const isTreatment = experimentAssignment?.variationName === 'treatment';
+	const shouldShowApple = ! isLoading && ! isTreatment;
 
-	socialLoginButtons = [
+	const socialLoginButtons = [
 		{
 			service: 'google',
 			button: (
 				<GoogleSocialButton
-					responseHandler={ this.props.handleLogin }
-					onClick={ this.props.trackLoginAndRememberRedirect }
+					responseHandler={ handleLogin }
+					onClick={ trackLoginAndRememberRedirect }
 					key={ 1 }
 					isLogin
 				/>
@@ -45,11 +46,11 @@ class SocialLoginForm extends Component {
 		},
 		{
 			service: 'apple',
-			button: (
+			button: shouldShowApple && (
 				<AppleLoginButton
-					responseHandler={ this.props.handleLogin }
-					onClick={ this.props.trackLoginAndRememberRedirect }
-					socialServiceResponse={ this.props.socialServiceResponse }
+					responseHandler={ handleLogin }
+					onClick={ trackLoginAndRememberRedirect }
+					socialServiceResponse={ socialServiceResponse }
 					key={ 2 }
 					isLogin
 				/>
@@ -59,9 +60,9 @@ class SocialLoginForm extends Component {
 			service: 'github',
 			button: (
 				<GithubSocialButton
-					responseHandler={ this.props.handleLogin }
-					onClick={ this.props.trackLoginAndRememberRedirect }
-					socialServiceResponse={ this.props.socialServiceResponse }
+					responseHandler={ handleLogin }
+					onClick={ trackLoginAndRememberRedirect }
+					socialServiceResponse={ socialServiceResponse }
 					key={ 3 }
 					isLogin
 				/>
@@ -69,44 +70,53 @@ class SocialLoginForm extends Component {
 		},
 		{
 			service: 'magic-login',
-			button: ( this.props.isSocialFirst || this.props.isWoo ) && this.props.magicLoginLink && (
-				<MagicLoginButton loginUrl={ this.props.magicLoginLink } key={ 4 } />
+			button: ( isSocialFirst || isWoo ) && magicLoginLink && (
+				<MagicLoginButton loginUrl={ magicLoginLink } key={ 4 } />
 			),
 		},
 		{
 			service: 'qr-code',
-			button: ( this.props.isSocialFirst || this.props.isWoo ) && this.props.qrLoginLink && (
-				<QrCodeLoginButton loginUrl={ this.props.qrLoginLink } key={ 5 } />
+			button: ( isSocialFirst || isWoo ) && qrLoginLink && (
+				<QrCodeLoginButton loginUrl={ qrLoginLink } key={ 5 } />
 			),
 		},
 	];
 
-	render() {
-		const { shouldRenderToS, isWoo, isSocialFirst, lastUsedAuthenticationMethod } = this.props;
-
-		return (
-			<Card
-				className={ clsx( 'auth-form__social', 'is-login', { 'is-social-first': isSocialFirst } ) }
-			>
-				<div className="auth-form__social-buttons">
-					<div className="auth-form__social-buttons-container">
-						{ this.socialLoginButtons.map( ( { service, button }, index ) =>
-							isSocialFirst && service === lastUsedAuthenticationMethod ? (
-								<UsernameOrEmailButton
-									key={ index + 1 }
-									onClick={ this.props.resetLastUsedAuthenticationMethod }
-								/>
-							) : (
-								button
-							)
-						) }
-					</div>
-					{ ! isWoo && shouldRenderToS && <SocialToS /> }
+	return (
+		<Card
+			className={ clsx( 'auth-form__social', 'is-login', { 'is-social-first': isSocialFirst } ) }
+		>
+			<div className="auth-form__social-buttons">
+				<div className="auth-form__social-buttons-container">
+					{ socialLoginButtons.map( ( { service, button }, index ) =>
+						isSocialFirst && service === lastUsedAuthenticationMethod ? (
+							<UsernameOrEmailButton
+								key={ index + 1 }
+								onClick={ resetLastUsedAuthenticationMethod }
+							/>
+						) : (
+							button
+						)
+					) }
 				</div>
-				{ isWoo && shouldRenderToS && <SocialToS /> }
-			</Card>
-		);
-	}
-}
+				{ ! isWoo && shouldRenderToS && <SocialToS /> }
+			</div>
+			{ isWoo && shouldRenderToS && <SocialToS /> }
+		</Card>
+	);
+};
+
+SocialLoginForm.propTypes = {
+	handleLogin: PropTypes.func.isRequired,
+	trackLoginAndRememberRedirect: PropTypes.func.isRequired,
+	socialServiceResponse: PropTypes.object,
+	shouldRenderToS: PropTypes.bool,
+	magicLoginLink: PropTypes.string,
+	qrLoginLink: PropTypes.string,
+	isSocialFirst: PropTypes.bool,
+	isWoo: PropTypes.bool,
+	lastUsedAuthenticationMethod: PropTypes.string,
+	resetLastUsedAuthenticationMethod: PropTypes.func,
+};
 
 export default SocialLoginForm;
