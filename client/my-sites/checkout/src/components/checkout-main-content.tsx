@@ -405,6 +405,9 @@ export default function CheckoutMainContent( {
 
 	const [ isStreamlinedPriceExperimentLoading, streamlinedPriceExperimentAssignment ] =
 		useStreamlinedPriceExperiment();
+	const isStreamlinedPrice =
+		! isStreamlinedPriceExperimentLoading &&
+		isStreamlinedPriceCheckoutTreatment( streamlinedPriceExperimentAssignment );
 
 	const searchParams = new URLSearchParams( window.location.search );
 	const isDIFMInCart = hasDIFMProduct( responseCart );
@@ -673,24 +676,146 @@ export default function CheckoutMainContent( {
 				<PerformanceTrackerStop />
 				{ infoMessage }
 
-				<CheckoutStepBody
-					onError={ onReviewError }
-					className="wp-checkout__review-order-step"
-					stepId="review-order-step"
-					isStepActive={ false }
-					isStepComplete
-					titleContent={ <OrderReviewTitle /> }
-					completeStepContent={
-						<WPCheckoutOrderReview
-							removeProductFromCart={ removeProductFromCart }
-							replaceProductInCart={ replaceProductInCart }
-							couponFieldStateProps={ couponFieldStateProps }
-							removeCouponAndClearField={ removeCouponAndClearField }
+					<CheckoutStepBody
+						onError={ onReviewError }
+						className="wp-checkout__review-order-step"
+						stepId="review-order-step"
+						isStepActive={ false }
+						isStepComplete
+						titleContent={ <OrderReviewTitle /> }
+						completeStepContent={
+							<WPCheckoutOrderReview
+								removeProductFromCart={ removeProductFromCart }
+								replaceProductInCart={ replaceProductInCart }
+								couponFieldStateProps={ couponFieldStateProps }
+								removeCouponAndClearField={ removeCouponAndClearField }
+								isCouponFieldVisible={ isCouponFieldVisible }
+								setCouponFieldVisible={ setCouponFieldVisible }
+								onChangeSelection={ changeSelection }
+								siteUrl={ siteUrl }
+								createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
+							/>
+						}
+						formStatus={ formStatus }
+					/>
+
+					{ isStreamlinedPrice && (
+						<CouponFieldArea
 							isCouponFieldVisible={ isCouponFieldVisible }
 							setCouponFieldVisible={ setCouponFieldVisible }
-							onChangeSelection={ changeSelection }
-							siteUrl={ siteUrl }
-							createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
+							isPurchaseFree={ isPurchaseFree }
+							couponStatus={ couponStatus }
+							couponFieldStateProps={ couponFieldStateProps }
+						/>
+					) }
+
+					{ contactDetailsType !== 'none' && (
+						<CheckoutStep
+							className="checkout-contact-form-step"
+							stepId="contact-form"
+							isCompleteCallback={ async () => {
+								// Touch the fields so they display validation errors
+								shouldShowContactDetailsValidationErrors && touchContactFields();
+								const validationResponse = await validateContactDetails(
+									contactInfo,
+									isLoggedOutCart,
+									responseCart,
+									showErrorMessageBriefly,
+									applyDomainContactValidationResults,
+									clearDomainContactErrorMessages,
+									reduxDispatch,
+									translate,
+									shouldShowContactDetailsValidationErrors
+								);
+								if ( validationResponse ) {
+									// When the contact details change, update the VAT details on the server.
+									try {
+										if (
+											! isLoggedOutCart &&
+											vatDetailsInForm.id &&
+											! areVatDetailsSame( vatDetailsInForm, vatDetailsFromServer )
+										) {
+											await setVatDetails( vatDetailsInForm );
+										}
+									} catch ( error ) {
+										reduxDispatch( removeNotice( 'vat_info_notice' ) );
+										if ( shouldShowContactDetailsValidationErrors ) {
+											reduxDispatch(
+												errorNotice( ( error as Error ).message, { id: 'vat_info_notice' } )
+											);
+										}
+										return false;
+									}
+									reduxDispatch( removeNotice( 'vat_info_notice' ) );
+
+									// When the contact details change, update the cart's tax location to match.
+									try {
+										await updateCartContactDetailsForCheckout(
+											countriesList,
+											responseCart,
+											updateLocation,
+											contactInfo,
+											vatDetailsInForm
+										);
+									} catch {
+										// If updating the cart fails, we should not continue. No need
+										// to do anything else, though, because CartMessages will
+										// display the error.
+										return false;
+									}
+
+									// When the contact details change, update the cached contact details on
+									// the server. This can fail if validation fails but we will silently
+									// ignore failures here because the validation call will handle them better
+									// than this will.
+									updateCachedContactDetails(
+										prepareDomainContactValidationRequest( contactInfo )
+									);
+
+									reduxDispatch(
+										recordTracksEvent( 'calypso_checkout_composite_step_complete', {
+											step: 1,
+											step_name: 'contact-form',
+										} )
+									);
+								}
+								return validationResponse;
+							} }
+							activeStepContent={
+								<>
+									<ConditionalContactDetailsMessage contactDetailsType={ contactDetailsType } />
+									<WPContactForm
+										countriesList={ countriesList }
+										shouldShowContactDetailsValidationErrors={
+											shouldShowContactDetailsValidationErrors
+										}
+										contactDetailsType={ contactDetailsType }
+										isLoggedOutCart={ isLoggedOutCart }
+										setShouldShowContactDetailsValidationErrors={
+											setShouldShowContactDetailsValidationErrors
+										}
+									/>
+								</>
+							}
+							completeStepContent={
+								<>
+									<ConditionalContactDetailsMessage contactDetailsType={ contactDetailsType } />
+									<WPContactFormSummary
+										areThereDomainProductsInCart={ areThereDomainProductsInCart }
+										isGSuiteInCart={ isGSuiteInCart }
+										isLoggedOutCart={ isLoggedOutCart }
+									/>
+								</>
+							}
+							titleContent={ <ContactFormTitle /> }
+							editButtonText={ String( translate( 'Edit' ) ) }
+							editButtonAriaLabel={ String( translate( 'Edit the contact details' ) ) }
+							nextStepButtonText={ nextStepButtonText }
+							nextStepButtonAriaLabel={ String(
+								translate( 'Continue with the entered contact details' )
+							) }
+							validatingButtonText={ validatingButtonText }
+							validatingButtonAriaLabel={ validatingButtonText }
 						/>
 					}
 					formStatus={ formStatus }
@@ -833,13 +958,15 @@ export default function CheckoutMainContent( {
 					} }
 				/>
 
-				<CouponFieldArea
-					isCouponFieldVisible={ isCouponFieldVisible }
-					setCouponFieldVisible={ setCouponFieldVisible }
-					isPurchaseFree={ isPurchaseFree }
-					couponStatus={ couponStatus }
-					couponFieldStateProps={ couponFieldStateProps }
-				/>
+					{ ! isStreamlinedPrice && (
+						<CouponFieldArea
+							isCouponFieldVisible={ isCouponFieldVisible }
+							setCouponFieldVisible={ setCouponFieldVisible }
+							isPurchaseFree={ isPurchaseFree }
+							couponStatus={ couponStatus }
+							couponFieldStateProps={ couponFieldStateProps }
+						/>
+					) }
 
 				<CheckoutTermsAndCheckboxes
 					is3PDAccountConsentAccepted={ is3PDAccountConsentAccepted }
@@ -966,6 +1093,30 @@ const StepContainerV2CheckoutFixer = styled.div< {
 			div:has( .checkout-sidebar-content ) {
 				position: sticky;
 				top: 32px;
+			}
+
+			.order-review-line-items .checkout-line-item {
+				font-size: 20px;
+			}
+			.order-review-line-items .checkout-line-item__remove-product {
+				font-size: 14px;
+			}
+			.form-fieldset.contact-details-form-fields .form__hidden-input a,
+			.checkout__content .wp-checkout-order-review__show-coupon-field-button {
+				font-weight: 500;
+				text-decoration: none;
+				color: ${ props.theme.colors.textColorDark };
+				font-size: 14px;
+			}
+			.form-fieldset.contact-details-form-fields .contact-details-form-fields__row,
+			.form-fieldset.contact-details-form-fields .custom-form-fieldsets__address-fields {
+				gap: 10px;
+			}
+			.form-fieldset.contact-details-form-fields .contact-details-form-fields__field {
+				margin-bottom: 10px;
+			}
+			.checkout-terms-and-checkboxes a {
+				color: ${ props.theme.colors.textColorDark };
 			}
 		` }
 
