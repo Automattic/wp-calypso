@@ -55,9 +55,11 @@ function StatsDetailsNavigationImproved( {
 			tabs={ tabPanelTabs }
 			initialTabName={ selectedTab }
 			onSelect={ ( tabName ) => {
-				const tab = tabPanelTabs.find( ( tab ) => tab.name === tabName );
-				if ( tab?.path ) {
-					page( tab.path );
+				if ( tabName !== selectedTab ) {
+					const tab = tabPanelTabs.find( ( tab ) => tab.name === tabName );
+					if ( tab?.path ) {
+						page( tab.path );
+					}
 				}
 			} }
 		>
