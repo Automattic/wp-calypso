@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { loadScript } from '@automattic/load-script';
 import { useEffect } from 'react';
 import MultiStepForm from './components/multi-step-form';
@@ -11,7 +12,7 @@ const AgencySignupV2 = () => {
 
 	return (
 		<SignupWrapper>
-			<MultiStepForm />
+			<MultiStepForm submitAsSurvey={ isEnabled( 'a4a-signup-v2-via-email' ) } />
 		</SignupWrapper>
 	);
 };
