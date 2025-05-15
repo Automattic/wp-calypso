@@ -5,7 +5,7 @@ import {
 } from '@wordpress/components';
 import { forwardRef } from 'react';
 import type { ActionItemProps } from './types';
-import './style.scss';
+import './action-item.scss';
 
 function UnforwardedActionItem(
 	{ title, description, decoration, actions }: ActionItemProps,
@@ -17,7 +17,7 @@ function UnforwardedActionItem(
 				{ !! decoration && <span className="action-item__decoration">{ decoration }</span> }
 				<HStack as="span">
 					<VStack spacing={ 1 } as="span">
-						<Text className="action-item__title">{ title } </Text>
+						<Text className="action-item__title">{ title }</Text>
 						{ description && (
 							<Text className="action-item__description" variant="muted">
 								{ description }
@@ -29,6 +29,7 @@ function UnforwardedActionItem(
 						spacing={ 2 }
 						jusfiy="flex-end"
 						expanded={ false }
+						as="span"
 					>
 						{ actions }
 					</HStack>

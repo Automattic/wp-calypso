@@ -5,11 +5,19 @@
 	padding: $grid-unit-20 0;
 	border-bottom: 1px solid $gray-100;
 
+	&:first-child {
+		padding-top: $grid-unit-10;
+	}
+
 	&:last-child {
+		padding-top: $grid-unit-10;
 		border-bottom: none;
 	}
 
-	.action-item__title,
+	.action-item__title {
+		@include heading-medium;
+	}
+
 	.action-item__description {
 		@include body-medium;
 	}

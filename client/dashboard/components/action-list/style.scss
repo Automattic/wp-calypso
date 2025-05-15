@@ -1,0 +1,18 @@
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
+
+.action-list {
+	padding: $grid-unit-20 $grid-unit-30;
+
+	.action-list__heading {
+		padding-top: $grid-unit-10;
+	}
+
+	.action-list__title {
+		@include heading-large;
+	}
+
+	.action-list__description {
+		@include body-medium;
+	}
+}
