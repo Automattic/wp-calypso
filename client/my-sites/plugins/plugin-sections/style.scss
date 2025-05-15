@@ -60,7 +60,22 @@
 	line-height: 21px;
 	word-wrap: break-word;
 	hyphens: auto;
+}
+
+.plugin-sections__header + .plugin-sections__content {
 	margin: 32px 0;
+
+}
+
+/* Remove top margin from first heading if we don't render the header. */
+.plugin-sections__content:not(:has(+ .plugin-sections__header)) img:first-of-type,
+.plugin-sections__content:not(:has(+ .plugin-sections__header)) h1:first-of-type,
+.plugin-sections__content:not(:has(+ .plugin-sections__header)) h2:first-of-type,
+.plugin-sections__content:not(:has(+ .plugin-sections__header)) h3:first-of-type,
+.plugin-sections__content:not(:has(+ .plugin-sections__header)) h4:first-of-type,
+.plugin-sections__content:not(:has(+ .plugin-sections__header)) h5:first-of-type,
+.plugin-sections__content:not(:has(+ .plugin-sections__header)) h6:first-of-type {
+	margin-top: 0;
 }
 
 .plugin-sections__support {
@@ -75,6 +90,7 @@
 	}
 }
 
+
 .plugin-sections__header > div {
 	margin-bottom: 0;
 }
@@ -82,3 +98,4 @@
 .plugin-sections__banner {
 	margin-bottom: 0;
 }
+
