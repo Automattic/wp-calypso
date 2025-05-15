@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react';
-import { Icon } from '@wordpress/components';
+import { Button, Icon } from '@wordpress/components';
 import { cog } from '@wordpress/icons';
 import ActionItem from './index';
 
@@ -7,6 +7,9 @@ const meta = {
 	title: 'client/dashboard/ActionItem',
 	component: ActionItem,
 	tags: [ 'autodocs' ],
+	parameters: {
+		actions: { argTypesRegex: '^on.*' },
+	},
 } satisfies Meta< typeof ActionItem >;
 
 export default meta;
@@ -16,33 +19,53 @@ export const Default: Story = {
 	args: {
 		title: 'Action title',
 		description: 'Action description',
-		action: {
-			label: 'Action',
-			callback: () => {},
-		},
+		actions: (
+			<Button variant="secondary" size="compact">
+				Action
+			</Button>
+		),
 	},
 };
 
-export const IsDestructive: Story = {
+export const WithMultipleActions: Story = {
 	args: {
-		title: 'Destructive action title',
-		description: 'Destructive action description',
-		action: {
-			label: 'Delete',
-			isDestructive: true,
-			RenderModal: () => <div>Are you sure you want to delete</div>,
-		},
+		title: 'With multiple actions title',
+		description: 'With multiple actions description',
+		actions: (
+			<>
+				<Button variant="secondary" size="compact">
+					Action 1
+				</Button>
+				<Button variant="secondary" size="compact" isDestructive>
+					Action 2
+				</Button>
+			</>
+		),
 	},
 };
 
 export const WithIcon: Story = {
 	args: {
-		title: 'Action title',
-		description: 'Action description',
+		title: 'With icon title',
+		description: 'With icon description',
 		decoration: <Icon icon={ cog } />,
-		action: {
-			label: 'Action',
-			callback: () => {},
-		},
+		actions: (
+			<Button variant="secondary" size="compact">
+				Action
+			</Button>
+		),
+	},
+};
+
+export const WithImage: Story = {
+	args: {
+		title: 'With image title',
+		description: 'With image description',
+		decoration: <img src="https://placecats.com/300/200" alt="Cat" />,
+		actions: (
+			<Button variant="secondary" size="compact">
+				Action
+			</Button>
+		),
 	},
 };
