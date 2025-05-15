@@ -1,6 +1,7 @@
 import { Card } from '@automattic/components';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import SocialToS from 'calypso/blocks/authentication/social/social-tos.jsx';
 import {
 	GoogleSocialButton,
@@ -11,6 +12,8 @@ import {
 	UsernameOrEmailButton,
 } from 'calypso/components/social-buttons';
 import { useExperiment } from 'calypso/lib/explat';
+import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
+import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
 
 import './social.scss';
 
@@ -27,11 +30,16 @@ const SocialLoginForm = ( {
 	isWoo,
 	lastUsedAuthenticationMethod,
 	resetLastUsedAuthenticationMethod,
+	currentQuery,
+	initialQuery,
 } ) => {
 	const [ isLoading, experimentAssignment ] = useExperiment( SOCIAL_LOGIN_EXPERIMENT );
 	const isTreatment = experimentAssignment?.variationName === 'treatment';
 	const shouldShowApple = ! isLoading && ! isTreatment;
-	const shouldShowQrCode = ! isLoading && ! isTreatment;
+	const isSignupExistingAccount = !! (
+		initialQuery?.is_signup_existing_account || currentQuery?.is_signup_existing_account
+	);
+	const shouldShowQrCode = ! isLoading && ! isTreatment && ! isSignupExistingAccount;
 
 	const socialLoginButtons = [
 		{
@@ -118,6 +126,11 @@ SocialLoginForm.propTypes = {
 	isWoo: PropTypes.bool,
 	lastUsedAuthenticationMethod: PropTypes.string,
 	resetLastUsedAuthenticationMethod: PropTypes.func,
+	currentQuery: PropTypes.object,
+	initialQuery: PropTypes.object,
 };
 
-export default SocialLoginForm;
+export default connect( ( state ) => ( {
+	currentQuery: getCurrentQueryArguments( state ),
+	initialQuery: getInitialQueryArguments( state ),
+} ) )( SocialLoginForm );
