@@ -55,6 +55,7 @@ function StatsDetailsNavigationImproved( {
 			tabs={ tabPanelTabs }
 			initialTabName={ selectedTab }
 			onSelect={ ( tabName ) => {
+				// Skip navigation if the clicked tab is already active to avoid redundant actions.
 				if ( tabName !== selectedTab ) {
 					const tab = tabPanelTabs.find( ( tab ) => tab.name === tabName );
 					if ( tab?.path ) {
