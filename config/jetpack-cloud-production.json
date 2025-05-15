@@ -37,7 +37,6 @@
 		"checkout/razorpay": false,
 		"current-site/domain-warning": false,
 		"current-site/notice": false,
-		"current-site/stale-cart-notice": false,
 		"i18n/community-translator": false,
 		"importers/newsletter": true,
 		"individual-subscriber-stats": true,

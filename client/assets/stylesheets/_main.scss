@@ -53,7 +53,10 @@ body {
 
 	-ms-overflow-style: scrollbar;
 
-	&.theme-default {
+	&.theme-default.is-global,
+	&.theme-default.is-section-stepper,
+	&.theme-default.is-section-login,
+	&.theme-default.is-section-signup {
 		background: var( --color-main-background );
 	}
 

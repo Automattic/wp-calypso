@@ -1,6 +1,5 @@
 import config, { isEnabled } from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
-import { removeLocaleFromPathLocaleInFront } from '@automattic/i18n-utils';
 import { UniversalNavbarHeader, UniversalNavbarFooter } from '@automattic/wpcom-template-parts';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
@@ -89,7 +88,6 @@ const LayoutLoggedOut = ( {
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const currentRoute = useSelector( getCurrentRoute );
 	const loggedInAction = useSelector( getLastActionRequiresLogin );
-	const pathNameWithoutLocale = currentRoute && removeLocaleFromPathLocaleInFront( currentRoute );
 
 	const isCheckout = sectionName === 'checkout';
 	const isCheckoutPending = sectionName === 'checkout-pending';
@@ -101,16 +99,7 @@ const LayoutLoggedOut = ( {
 	const isJetpackThankYou =
 		sectionName === 'checkout' && currentRoute.startsWith( '/checkout/jetpack/thank-you' );
 
-	const isReaderTagPage =
-		sectionName === 'reader' &&
-		( pathNameWithoutLocale.startsWith( '/tag/' ) || pathNameWithoutLocale.startsWith( '/tags' ) );
 	const isReaderTagEmbed = typeof window !== 'undefined' && isReaderTagEmbedPage( window.location );
-
-	const isReaderDiscoverPage =
-		sectionName === 'reader' && pathNameWithoutLocale.startsWith( '/discover' );
-
-	const isReaderSearchPage =
-		sectionName === 'reader' && pathNameWithoutLocale.startsWith( '/reader/search' );
 
 	// It's used to add a class name for the login-related pages, except for `/log-in/link/use`.
 	const hasGravPoweredClientClass =
@@ -200,10 +189,7 @@ const LayoutLoggedOut = ( {
 			'subscriptions',
 			'theme',
 			'themes',
-		].includes( sectionName ) &&
-		! isReaderTagPage &&
-		! isReaderSearchPage &&
-		! isReaderDiscoverPage
+		].includes( sectionName )
 	) {
 		const nonMonochromeSections = [ 'plugins', 'themes', 'theme' ];
 

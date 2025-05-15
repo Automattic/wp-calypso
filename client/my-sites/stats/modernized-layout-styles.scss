@@ -66,6 +66,9 @@ $sidebar-appearance-break-point: $break-medium;
 		@media (max-width: $break-small) {
 			padding-top: 16px;
 			padding-inline: 16px;
+			.stats-download-csv {
+				padding-right: 0;
+			}
 		}
 
 		@media (max-width: $break-mobile) {
