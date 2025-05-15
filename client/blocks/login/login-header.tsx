@@ -106,9 +106,7 @@ export function getHeaderText(
 
 	if ( action === 'lostpassword' ) {
 		headerText = translate( 'Forgot your password?' );
-	}
-
-	if ( oauth2Client ) {
+	} else if ( oauth2Client ) {
 		if ( isWCCOM ) {
 			if ( wccomFrom === 'cart' ) {
 				headerText = translate( 'Log in with a WordPress.com account' );
@@ -173,9 +171,7 @@ export function getHeaderText(
 		if ( isBlazeProOAuth2Client( oauth2Client ) ) {
 			headerText = translate( 'Log in to your Blaze Pro account' );
 		}
-	}
-
-	if ( isWooJPC ) {
+	} else if ( isWooJPC ) {
 		const isLostPasswordFlow = currentQuery.lostpassword_flow === 'true';
 		if ( isLostPasswordFlow ) {
 			headerText = translate( "You've got mail" );
@@ -184,13 +180,9 @@ export function getHeaderText(
 		} else {
 			headerText = translate( 'Log in to your account' );
 		}
-	}
-
-	if ( isFromMigrationPlugin ) {
+	} else if ( isFromMigrationPlugin ) {
 		headerText = translate( 'Log in to your account' );
-	}
-
-	if ( isJetpack && ! isFromAutomatticForAgenciesPlugin ) {
+	} else if ( isJetpack && ! isFromAutomatticForAgenciesPlugin ) {
 		const isJetpackMagicLinkSignUpFlow = config.isEnabled( 'jetpack/magic-link-signup' );
 		headerText = isJetpackMagicLinkSignUpFlow
 			? translate(
