@@ -26,7 +26,7 @@ export default function SiteSettings() {
 	return (
 		<PageLayout size="small">
 			<PageHeader title={ __( 'Settings' ) } />
-			<Heading level={ 2 }>{ __( 'General' ) }</Heading>
+			<Heading>{ __( 'General' ) }</Heading>
 			<Card>
 				<VStack>
 					<SiteVisibilitySettingsSummary site={ site } />
