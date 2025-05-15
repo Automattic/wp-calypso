@@ -19,6 +19,7 @@ import {
 	getPartnerCoupon,
 } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
+import clsx from 'clsx';
 import { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import { has100YearPlan } from 'calypso/lib/cart-values/cart-items';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
@@ -45,6 +46,9 @@ import type { PropsWithChildren, RefObject } from 'react';
 const WPOrderReviewList = styled.ul`
 	box-sizing: border-box;
 	margin: 24px 0 0 0;
+	.removed-from-cart-items + .order-review-section & {
+		margin-top: 16px;
+	}
 	padding: 0;
 `;
 
@@ -420,7 +424,11 @@ function LineItemWrapper( {
 				isAkPro500Cart={ isAkPro500Cart }
 				shouldShowBillingInterval={ ! finalShouldShowVariantSelector }
 			>
-				<DropdownWrapper>
+				<DropdownWrapper
+					className={ clsx( 'dropdown-wrapper', {
+						'is-empty': ! finalShouldShowVariantSelector && ! ( ! isRenewal && isAkPro500Cart ),
+					} ) }
+				>
 					{ finalShouldShowVariantSelector && (
 						<div ref={ variantDropdownRef }>
 							<ItemVariationPicker

@@ -14,7 +14,7 @@ export const RemovedFromCartItem = ( { product }: { product: ResponseCartProduct
 	const translate = useTranslate();
 
 	return (
-		<li key={ product.uuid }>
+		<li key={ product.uuid } className="removed-from-cart-item">
 			{ translate( '%(product)s was removed from the shopping cart.', {
 				args: { product: product.product_name },
 			} ) }

@@ -83,7 +83,7 @@ export const LineItem = styled( CheckoutLineItem )< {
 	display: flex;
 	flex-wrap: wrap;
 	justify-content: space-between;
-	padding: 20px 0;
+	padding: 16px 0;
 
 	font-weight: ${ ( { theme } ) => theme.weights.normal };
 	color: ${ ( { theme } ) => theme.colors.textColorDark };
@@ -188,11 +188,16 @@ const DeleteButtonWrapper = styled.div`
 	width: 100%;
 	display: inherit;
 	justify-content: inherit;
+	.dropdown-wrapper.is-empty + & {
+		margin-top: 8px;
+	}
 `;
 
 const DeleteButton = styled( Button )< { theme?: Theme } >`
 	color: ${ ( props ) => props.theme.colors.textColorDark };
-	padding-top: 8px;
+	font-size: 14px;
+	font-weight: 500;
+	line-height: 20px;
 	text-underline-offset: 2px;
 	width: auto;
 `;
