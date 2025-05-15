@@ -20,14 +20,15 @@ export type ModalType =
 	| typeof PAID_PLAN_IS_REQUIRED_DIALOG
 	| typeof MODAL_LOADER;
 
-export type DomainPlanDialogProps = {
+export interface DomainPlanDialogProps {
 	paidDomainName?: string;
 	generatedWPComSubdomain: DataResponse< { domain_name: string } >;
 	selectedThemeType?: string;
 	upsellPremiumPlan?: boolean;
 	onFreePlanSelected: ( isDomainRetained?: boolean ) => void;
 	onPlanSelected: ( planSlug: PlanSlug ) => void;
-};
+	isDomainTransfer?: boolean;
+}
 
 type ModalContainerProps = {
 	isModalOpen: boolean;

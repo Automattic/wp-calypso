@@ -1,6 +1,10 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
-import { UrlFriendlyTermType } from '@automattic/calypso-products';
+import {
+	UrlFriendlyTermType,
+	WithSnakeCaseSlug,
+	isDomainTransfer,
+} from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { FREE_THEME } from '@automattic/design-picker';
 import {
@@ -74,7 +78,7 @@ export interface UnifiedPlansStepProps {
 	submitSignupStep?: (
 		stepInfo: {
 			stepName: string;
-			domainItem?: { meta?: string };
+			domainItem?: { meta?: string; product_slug?: string };
 			isPurchasingItem?: boolean;
 			stepSectionName?: string;
 			siteUrl?: string;
@@ -93,7 +97,7 @@ export interface UnifiedPlansStepProps {
 		siteId?: number | null;
 		siteSlug?: string | null;
 		siteUrl?: string | null;
-		domainItem?: { meta?: string } | null;
+		domainItem?: { meta?: string; product_slug?: string } | null;
 		siteTitle?: string | null;
 		username?: string | null;
 		coupon?: string | null;
@@ -371,7 +375,7 @@ function UnifiedPlansStep( {
 			return translate( 'The right plan for the right project' );
 		}
 
-		return translate( 'There’s a plan for you' );
+		return translate( "There's a plan for you" );
 	};
 
 	const getSubheaderText = () => {
@@ -479,6 +483,10 @@ function UnifiedPlansStep( {
 		( ONBOARDING_FLOW === flowName && ( paidDomainName != null || isPaidTheme ) ) ||
 		deemphasizeFreePlanFromProps;
 
+	const isDomainTransferSelected = domainItem?.product_slug
+		? isDomainTransfer( { product_slug: domainItem.product_slug } as WithSnakeCaseSlug )
+		: false;
+
 	const stepContent = (
 		<div>
 			{ 'invalid' === step?.status && (
@@ -490,6 +498,7 @@ function UnifiedPlansStep( {
 			) }
 			<PlansFeaturesMain
 				paidDomainName={ paidDomainName }
+				isDomainTransfer={ isDomainTransferSelected }
 				freeSubdomain={ freeWPComSubdomain }
 				siteTitle={ siteTitle ?? undefined }
 				signupFlowUserName={ username ?? undefined }
