@@ -634,12 +634,12 @@ function ProductTier( { product }: { product: ResponseCartProduct } ) {
 
 export function LineItemSublabelAndPrice( {
 	product,
-	isStreamlinedPrice,
-	variants,
+	shouldShowMonthlyComparison,
+	monthlyProductPrice,
 }: {
 	product: ResponseCartProduct;
-	isStreamlinedPrice?: boolean;
-	variants?: any[];
+	shouldShowMonthlyComparison?: boolean;
+	monthlyProductPrice?: number;
 } ) {
 	const translate = useTranslate();
 	const productSlug = product.product_slug;
@@ -796,51 +796,51 @@ export function LineItemSublabelAndPrice( {
 		);
 	}
 
-	const monthlyProduct = variants?.find( ( variant ) => variant.termIntervalInMonths === 1 );
-	const monthlyPrice = formatCurrency(
-		monthlyProduct?.priceBeforeDiscounts || product.item_original_monthly_cost_integer,
-		product.currency,
-		{
-			isSmallestUnit: true,
-			stripZeros: true,
+	if ( shouldShowMonthlyComparison && monthlyProductPrice ) {
+		const monthlyPrice = formatCurrency(
+			monthlyProductPrice || product.item_original_monthly_cost_integer,
+			product.currency,
+			{
+				isSmallestUnit: true,
+				stripZeros: true,
+			}
+		);
+		if ( isMonthlyProduct( product ) ) {
+			return <>{ translate( 'Billed every month' ) } </>;
 		}
-	);
 
-	if ( isStreamlinedPrice && isMonthlyProduct( product ) ) {
-		return <>{ translate( 'Billed every month' ) } </>;
-	}
+		if ( isYearly( product ) ) {
+			return (
+				<>
+					{ translate( 'Billed every year' ) }
+					<s>
+						{ monthlyPrice } { translate( '/month' ) }
+					</s>
+				</>
+			);
+		}
 
-	if ( isStreamlinedPrice && isYearly( product ) ) {
-		return (
-			<>
-				{ translate( 'Billed every year' ) }
-				<s>
-					{ monthlyPrice } { translate( '/month' ) }
-				</s>
-			</>
-		);
-	}
+		if ( isBiennially( product ) ) {
+			return (
+				<>
+					{ translate( 'Billed every 2 years' ) }
+					<s>
+						{ monthlyPrice } { translate( '/month' ) }
+					</s>
+				</>
+			);
+		}
 
-	if ( isStreamlinedPrice && isBiennially( product ) ) {
-		return (
-			<>
-				{ translate( 'Billed every 2 years' ) }
-				<s>
-					{ monthlyPrice } { translate( '/month' ) }
-				</s>
-			</>
-		);
-	}
-
-	if ( isStreamlinedPrice && isTriennially( product ) ) {
-		return (
-			<>
-				{ translate( 'Billed every 3 years' ) }
-				<s>
-					{ monthlyPrice } { translate( '/month' ) }
-				</s>
-			</>
-		);
+		if ( isTriennially( product ) ) {
+			return (
+				<>
+					{ translate( 'Billed every 3 years' ) }
+					<s>
+						{ monthlyPrice } { translate( '/month' ) }
+					</s>
+				</>
+			);
+		}
 	}
 
 	const shouldRenderBasicTermSublabel =
@@ -1248,8 +1248,8 @@ function CheckoutLineItem( {
 	onRemoveProductClick,
 	onRemoveProductCancel,
 	isAkPro500Cart,
-	isStreamlinedPrice,
-	variants,
+	shouldShowMonthlyComparison,
+	monthlyProductPrice,
 }: PropsWithChildren< {
 	product: ResponseCartProduct;
 	className?: string;
@@ -1264,8 +1264,8 @@ function CheckoutLineItem( {
 	onRemoveProductCancel?: ( label: string ) => void;
 	isAkPro500Cart?: boolean;
 	shouldShowBillingInterval?: boolean;
-	isStreamlinedPrice?: boolean;
-	variants?: any[];
+	shouldShowMonthlyComparison?: boolean;
+	monthlyProductPrice?: number;
 } > ) {
 	const id = product.uuid;
 	const translate = useTranslate();
@@ -1358,7 +1358,7 @@ function CheckoutLineItem( {
 			</LineItemTitle>
 
 			<span aria-labelledby={ itemSpanId } className="checkout-line-item__price">
-				{ isStreamlinedPrice ? (
+				{ shouldShowMonthlyComparison ? (
 					<>
 						{ monthlyAmountDisplay } { translate( '/month' ) }
 					</>
@@ -1381,8 +1381,8 @@ function CheckoutLineItem( {
 						<LineItemMeta>
 							<LineItemSublabelAndPrice
 								product={ product }
-								isStreamlinedPrice={ isStreamlinedPrice }
-								variants={ variants }
+								shouldShowMonthlyComparison={ shouldShowMonthlyComparison }
+								monthlyProductPrice={ monthlyProductPrice }
 							/>
 							<DomainDiscountCallout product={ product } />
 							<IntroductoryOfferCallout product={ product } />
