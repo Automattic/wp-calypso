@@ -7,6 +7,7 @@
 - Pin the actions column on the table view when the width is insufficient.
 - Bring changes from @wordpress/dataviews 4.19.0 (no updates in this version).
 - Enhance filter component styles.
+- Adds new story that combines DataViews and DataForm.
 
 ## 0.1.1
 
