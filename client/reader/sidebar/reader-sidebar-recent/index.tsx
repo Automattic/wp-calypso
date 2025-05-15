@@ -110,10 +110,10 @@ const ReaderSidebarRecent = ( {
 			<MenuItem key="all" selected={ isRecentStream && selectedSiteFeedId === null }>
 				<MenuItemLink
 					href="/reader"
-					className="sidebar__menu-link"
+					className="sidebar__menu-link all-sites-link"
 					onClick={ () => trackMenuClick( null ) }
 				>
-					{ translate( 'All' ) }
+					<span>{ translate( 'All' ) }</span>
 				</MenuItemLink>
 			</MenuItem>
 			{ sitesToShow.map( ( site ) => (
@@ -126,7 +126,7 @@ const ReaderSidebarRecent = ( {
 						className={ clsx( 'reader-sidebar-recent__item sidebar__menu-link' ) }
 						onClick={ () => trackMenuClick( site.feed_ID ) }
 					>
-						<Favicon site={ site } className="reader-sidebar-recent__site-icon" size={ 16 } />
+						<Favicon site={ site } className="reader-sidebar-recent__site-icon" size={ 24 } />
 						<span title={ site.name } className="reader-sidebar-recent__site-name">
 							{ site.name }
 						</span>

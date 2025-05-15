@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types';
 import { Component } from 'react';
-import { MenuList } from '../menu';
 import ListItem from './list-item';
 import ListItemCreateLink from './list-item-create-link';
 
@@ -16,7 +15,7 @@ export default class ReaderSidebarListsList extends Component {
 		const { lists, currentListOwner, currentListSlug, path } = this.props;
 
 		return (
-			<MenuList>
+			<>
 				{ lists.map( ( list ) => (
 					<ListItem
 						key={ list.ID }
@@ -27,7 +26,7 @@ export default class ReaderSidebarListsList extends Component {
 					/>
 				) ) }
 				<ListItemCreateLink path={ path } />
-			</MenuList>
+			</>
 		);
 	}
 }

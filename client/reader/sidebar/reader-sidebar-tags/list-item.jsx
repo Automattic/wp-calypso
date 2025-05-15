@@ -49,7 +49,7 @@ export class ReaderSidebarTagsListItem extends Component {
 						},
 					} ) }
 				>
-					{ tagName }
+					<span className="sidebar__menu-link-text">{ tagName }</span>
 				</MenuItemLink>
 			</MenuItem>
 		);
