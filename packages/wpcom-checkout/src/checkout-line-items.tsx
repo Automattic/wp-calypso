@@ -87,7 +87,9 @@ export const LineItem = styled( CheckoutLineItem )< {
 
 	font-weight: ${ ( { theme } ) => theme.weights.normal };
 	color: ${ ( { theme } ) => theme.colors.textColorDark };
-	font-size: 1.1em;
+	font-size: ${ ( { shouldShowMonthlyComparison } ) =>
+		shouldShowMonthlyComparison ? '20px' : '1.1em' };
+
 	position: relative;
 
 	.checkout-line-item__price {

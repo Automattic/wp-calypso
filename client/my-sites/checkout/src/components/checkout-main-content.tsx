@@ -1090,14 +1090,6 @@ const StepContainerV2CheckoutFixer = styled.div< {
 	${ ( props ) =>
 		props.isStreamlinedPrice &&
 		css`
-			div:has( .checkout-sidebar-content ) {
-				position: sticky;
-				top: 32px;
-			}
-
-			.order-review-line-items .checkout-line-item {
-				font-size: 20px;
-			}
 			.order-review-line-items .checkout-line-item__remove-product {
 				font-size: 14px;
 			}
@@ -1237,6 +1229,10 @@ const StepContainerV2CheckoutFixer = styled.div< {
 		props.isLargeViewport &&
 		props.isStreamlinedPrice &&
 		css`
+			div:has( .checkout-sidebar-content ) {
+				position: sticky;
+				top: 32px;
+			}
 			.checkout__summary-area,
 			.checkout-loading-sidebar {
 				min-width: 384px;
