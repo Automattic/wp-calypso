@@ -14,14 +14,6 @@
 		border-bottom: none;
 	}
 
-	.action-item__title {
-		@include heading-medium;
-	}
-
-	.action-item__description {
-		@include body-medium;
-	}
-
 	.action-item__decoration {
 		display: inline-flex;
 		align-items: center;

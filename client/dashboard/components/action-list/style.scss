@@ -12,12 +12,4 @@
 		padding-top: $grid-unit-10;
 		padding-bottom: $grid-unit-15;
 	}
-
-	.action-list__title {
-		@include heading-large;
-	}
-
-	.action-list__description {
-		@include body-medium;
-	}
 }

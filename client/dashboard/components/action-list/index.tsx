@@ -16,9 +16,13 @@ function UnforwardedActionList(
 		<Card className="action-list" ref={ ref }>
 			{ ( title || description ) && (
 				<VStack className="action-list__heading" spacing={ 2 }>
-					{ title && <Text className="action-list__title">{ title }</Text> }
+					{ title && (
+						<Text size="15px" weight={ 500 } lineHeight="20px">
+							{ title }
+						</Text>
+					) }
 					{ description && (
-						<Text className="action-list__description" variant="muted">
+						<Text variant="muted" lineHeight="20px">
 							{ description }
 						</Text>
 					) }

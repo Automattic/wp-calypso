@@ -17,9 +17,11 @@ function UnforwardedActionItem(
 				{ !! decoration && <span className="action-item__decoration">{ decoration }</span> }
 				<HStack as="span">
 					<VStack spacing={ 1 } as="span">
-						<Text className="action-item__title">{ title }</Text>
+						<Text weight={ 500 } lineHeight="20px">
+							{ title }
+						</Text>
 						{ description && (
-							<Text className="action-item__description" variant="muted">
+							<Text variant="muted" lineHeight="20px">
 								{ description }
 							</Text>
 						) }
