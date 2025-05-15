@@ -1,3 +1,4 @@
+const { createHash } = require( 'node:crypto' );
 const WebpackRTLPlugin = require( '@automattic/webpack-rtl-plugin' );
 const MiniCssExtractPlugin = require( 'mini-css-extract-plugin' );
 const MiniCSSWithRTLPlugin = require( './mini-css-with-rtl' );
@@ -18,6 +19,15 @@ module.exports.loader = ( { includePaths, prelude, postCssOptions } ) => ( {
 			loader: require.resolve( 'css-loader' ),
 			options: {
 				importLoaders: 2,
+				modules: {
+					auto: /\.module\.scss$/,
+					getLocalIdent: ( context, localIdentName, localName ) =>
+						'_' +
+						createHash( 'md5' )
+							.update( context.resourcePath + localName )
+							.digest( 'hex' )
+							.substr( 0, 20 ),
+				},
 				// We do not want css-loader to resolve absolute paths. We
 				// typically use `/` to indicate the start of the base URL,
 				// but starting with css-loader v4, it started trying to handle
