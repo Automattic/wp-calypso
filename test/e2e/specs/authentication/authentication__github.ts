@@ -57,21 +57,8 @@ describe( DataHelper.createSuiteTitle( 'Authentication: GitHub' ), function () {
 		} );
 
 		it( 'Verify successful login to WordPress.com', async function () {
-			// Wait for navigation to WordPress.com sites page with a longer timeout
-			const response = await page.waitForNavigation( {
-				timeout: 30000, // Increase timeout to 30 seconds
-				waitUntil: 'networkidle', // Wait until network is idle
-			} );
-
-			if ( ! response ) {
-				throw new Error( 'Navigation to WordPress.com failed - no response received' );
-			}
-
-			// Log the actual URL we landed on
-			console.log( 'Landed on URL:', response.url() );
-
 			// Verify we're on WordPress.com
-			expect( response.url() ).toMatch( /.*wordpress\.com.*/ );
+			expect( page.url() ).toMatch( /.*wordpress\.com\/sites.*/ );
 		} );
 
 		afterAll( async () => {
