@@ -177,13 +177,12 @@ export function getHeaderText(
 
 	if ( isWooJPC ) {
 		const isLostPasswordFlow = currentQuery.lostpassword_flow === 'true';
-		switch ( true ) {
-			case isLostPasswordFlow:
-				headerText = translate( "You've got mail" );
-			case twoFactorEnabled:
-				headerText = translate( 'Authenticate your login' );
-			default:
-				headerText = translate( 'Log in to your account' );
+		if ( isLostPasswordFlow ) {
+			headerText = translate( "You've got mail" );
+		} else if ( twoFactorEnabled ) {
+			headerText = translate( 'Authenticate your login' );
+		} else {
+			headerText = translate( 'Log in to your account' );
 		}
 	}
 
@@ -443,36 +442,32 @@ export function LoginHeader( {
 		);
 		let subtitle = null;
 
-		switch ( true ) {
-			case isLostPasswordFlow:
-				header = <h3>{ headerText }</h3>;
-
-				subtitle = translate(
-					"Your password reset confirmation is on its way to your email address – please check your junk folder if it's not in your inbox! Once you've reset your password, head back to this page to log in to your account."
-				);
-				break;
-			case isTwoFactorAuthFlow:
-				header = <h3>{ headerText }</h3>;
-				break;
-			default:
-				header = <h3>{ headerText }</h3>;
-				subtitle = translate(
-					'To access all of the features and functionality %(pluginName)s, you’ll first need to connect your store to a WordPress.com account. Log in now, or {{signupLink}}create a new account{{/signupLink}}. For more information, please {{doc}}review our documentation{{/doc}}.',
-					{
-						components: {
-							signupLink,
-							br: <br />,
-							doc: (
-								<a
-									href="https://woocommerce.com/document/connect-your-store-to-a-wordpress-com-account/"
-									target="_blank"
-									rel="noreferrer"
-								/>
-							),
-						},
-						args: { pluginName },
-					}
-				);
+		if ( isLostPasswordFlow ) {
+			header = <h3>{ headerText }</h3>;
+			subtitle = translate(
+				"Your password reset confirmation is on its way to your email address – please check your junk folder if it's not in your inbox! Once you've reset your password, head back to this page to log in to your account."
+			);
+		} else if ( isTwoFactorAuthFlow ) {
+			header = <h3>{ headerText }</h3>;
+		} else {
+			header = <h3>{ headerText }</h3>;
+			subtitle = translate(
+				'To access all of the features and functionality %(pluginName)s, you’ll first need to connect your store to a WordPress.com account. Log in now, or {{signupLink}}create a new account{{/signupLink}}. For more information, please {{doc}}review our documentation{{/doc}}.',
+				{
+					components: {
+						signupLink,
+						br: <br />,
+						doc: (
+							<a
+								href="https://woocommerce.com/document/connect-your-store-to-a-wordpress-com-account/"
+								target="_blank"
+								rel="noreferrer"
+							/>
+						),
+					},
+					args: { pluginName },
+				}
+			);
 		}
 		preHeader = null;
 		postHeader = <p className="login__header-subtitle">{ subtitle }</p>;
