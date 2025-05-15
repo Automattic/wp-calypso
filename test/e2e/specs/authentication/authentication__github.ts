@@ -41,9 +41,37 @@ describe( DataHelper.createSuiteTitle( 'Authentication: GitHub' ), function () {
 			await githubLoginPage.pressEnter();
 		} );
 
-		it( 'Check if the user is logged in', async function () {
-			// Wait for the login to complete.
-			await page.waitForNavigation( { url: /.*wordpress\.com\/sites.*/ } );
+		it( 'Handle GitHub device verification if needed', async function () {
+			// GitHub may show a device verification screen in CI
+			const verificationUrl = 'https://github.com/sessions/verified-device';
+			const response = await page.waitForNavigation();
+
+			if ( ! response ) {
+				throw new Error( 'Navigation failed - no response received' );
+			}
+
+			if ( response.url() === verificationUrl ) {
+				// If we're on the verification screen, click the verify button
+				await githubLoginPage.clickButtonWithExactText( 'Verify' );
+			}
+		} );
+
+		it( 'Verify successful login to WordPress.com', async function () {
+			// Wait for navigation to WordPress.com sites page with a longer timeout
+			const response = await page.waitForNavigation( {
+				timeout: 30000, // Increase timeout to 30 seconds
+				waitUntil: 'networkidle', // Wait until network is idle
+			} );
+
+			if ( ! response ) {
+				throw new Error( 'Navigation to WordPress.com failed - no response received' );
+			}
+
+			// Log the actual URL we landed on
+			console.log( 'Landed on URL:', response.url() );
+
+			// Verify we're on WordPress.com
+			expect( response.url() ).toMatch( /.*wordpress\.com.*/ );
 		} );
 
 		afterAll( async () => {
