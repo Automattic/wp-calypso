@@ -305,6 +305,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/blaze-dashboard@workspace:apps/blaze-dashboard"
   dependencies:
+    "@automattic/accessible-focus": "workspace:^"
     "@automattic/babel-plugin-transform-wpcalypso-async": "workspace:^"
     "@automattic/calypso-apps-builder": "workspace:^"
     "@automattic/calypso-babel-config": "workspace:^"
