@@ -172,6 +172,9 @@ const LineItemTitle = styled.div< {
 	gap: 0.5em;
 	font-size: inherit;
 `;
+const LineItemSublabelTitle = styled.div`
+	flex: 1;
+`;
 
 const LineItemPriceWrapper = styled.span`
 	display: flex;
@@ -799,14 +802,10 @@ export function LineItemSublabelAndPrice( {
 	}
 
 	if ( shouldShowMonthlyComparison && monthlyProductPrice ) {
-		const monthlyPrice = formatCurrency(
-			monthlyProductPrice || product.item_original_monthly_cost_integer,
-			product.currency,
-			{
-				isSmallestUnit: true,
-				stripZeros: true,
-			}
-		);
+		const monthlyPrice = formatCurrency( monthlyProductPrice, product.currency, {
+			isSmallestUnit: true,
+			stripZeros: true,
+		} );
 		if ( isMonthlyProduct( product ) ) {
 			return <>{ translate( 'Billed every month' ) } </>;
 		}
@@ -814,7 +813,7 @@ export function LineItemSublabelAndPrice( {
 		if ( isYearly( product ) ) {
 			return (
 				<>
-					{ translate( 'Billed every year' ) }
+					<LineItemSublabelTitle>{ translate( 'Billed every year' ) }</LineItemSublabelTitle>
 					<s>
 						{ monthlyPrice } { translate( '/month' ) }
 					</s>
@@ -825,7 +824,7 @@ export function LineItemSublabelAndPrice( {
 		if ( isBiennially( product ) ) {
 			return (
 				<>
-					{ translate( 'Billed every 2 years' ) }
+					<LineItemSublabelTitle>{ translate( 'Billed every 2 years' ) }</LineItemSublabelTitle>
 					<s>
 						{ monthlyPrice } { translate( '/month' ) }
 					</s>
@@ -836,7 +835,7 @@ export function LineItemSublabelAndPrice( {
 		if ( isTriennially( product ) ) {
 			return (
 				<>
-					{ translate( 'Billed every 3 years' ) }
+					<LineItemSublabelTitle>{ translate( 'Billed every 3 years' ) }</LineItemSublabelTitle>
 					<s>
 						{ monthlyPrice } { translate( '/month' ) }
 					</s>
@@ -1317,14 +1316,22 @@ function CheckoutLineItem( {
 		stripZeros: true,
 	} );
 
-	const monthlyAmountDisplay = formatCurrency(
-		product.item_original_monthly_cost_integer,
-		product.currency,
-		{
-			isSmallestUnit: true,
-			stripZeros: true,
+	let pricePerMonth = 0;
+	if ( shouldShowMonthlyComparison ) {
+		const productVariant = product.product_variants.find(
+			( variant ) => variant.product_id === product.product_id
+		);
+		if ( productVariant ) {
+			pricePerMonth = Math.round(
+				productVariant.price_integer / productVariant.bill_period_in_months
+			);
 		}
-	);
+	}
+
+	const monthlyAmountDisplay = formatCurrency( pricePerMonth, product.currency, {
+		isSmallestUnit: true,
+		stripZeros: true,
+	} );
 
 	const isDiscounted = Boolean(
 		itemSubtotalInteger < originalAmountInteger && originalAmountDisplay
