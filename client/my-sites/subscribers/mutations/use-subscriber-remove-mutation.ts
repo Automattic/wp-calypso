@@ -17,7 +17,7 @@ type ApiResponseError = {
 
 const useNewHelper = config.isEnabled( 'subscribers-helper-library' );
 
-const getEmailSubscriptionId: ( subscriber: Subscriber ) => number = ( subscriber ) => {
+const getEmailSubscriptionId = ( subscriber: Subscriber ): number => {
 	if ( useNewHelper ) {
 		return subscriber.email_subscription_id || 0;
 	}
