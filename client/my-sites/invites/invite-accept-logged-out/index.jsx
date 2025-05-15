@@ -6,7 +6,7 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import store from 'store';
 import SignupForm from 'calypso/blocks/signup-form';
-import FormButton from 'calypso/components/forms/form-button';
+import SignupSubmitButton from 'calypso/blocks/signup-form/signup-submit-button';
 import LoggedOutFormLinkItem from 'calypso/components/logged-out-form/link-item';
 import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -150,9 +150,9 @@ class InviteAcceptLoggedOut extends Component {
 				<div className="logged-out-form">
 					{ this.renderFormHeader() }
 					<Card className="logged-out-form__footer">
-						<FormButton className="signup-form__submit" onClick={ this.clickSignInLink }>
+						<SignupSubmitButton onClick={ this.clickSignInLink }>
 							{ this.props.translate( 'Sign In' ) }
-						</FormButton>
+						</SignupSubmitButton>
 					</Card>
 				</div>
 			</div>

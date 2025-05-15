@@ -8,6 +8,7 @@ interface SignupSubmitButtonProps {
 	variationName?: string;
 	children: ReactNode;
 	className?: string;
+	onClick?: () => void;
 }
 
 const SignupSubmitButton = ( {
@@ -16,6 +17,7 @@ const SignupSubmitButton = ( {
 	variationName,
 	children,
 	className,
+	onClick,
 }: SignupSubmitButtonProps ) => {
 	return (
 		<Button
@@ -28,6 +30,7 @@ const SignupSubmitButton = ( {
 			) }
 			disabled={ isDisabled }
 			isBusy={ isBusy }
+			onClick={ onClick }
 			__next40pxDefaultSize
 		>
 			{ children }

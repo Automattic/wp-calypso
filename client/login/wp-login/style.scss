@@ -19,7 +19,7 @@ $image-height: 47px;
 		padding-bottom: $image-height;
 		min-height: calc(100% - #{$image-height});
 	}
-	
+
 	.layout__content {
 		position: static;
 	}
@@ -315,7 +315,6 @@ $image-height: 47px;
 	}
 
 	.login .button.is-primary {
-		// Note: Matches primary button to `button.signup-form__submit`
 		background-color: var(--studio-wordpress-blue, #3858e9);
 		color: var(--color-text-inverted);
 		box-shadow: none;
@@ -363,7 +362,7 @@ $image-height: 47px;
 		// following overrides could be safely deleted.
 		input:not(.components-text-control__input),
 		button:not(.components-button) {
-			/* Note: Same as `button.signup-form__submit, .signup-form__input.form-text-input` */
+			/* Note: Same as `.signup-form__input.form-text-input` */
 			height: 40px; // Matches .components-button height __next40pxDefaultSize
 			border: 1px solid var(--studio-gray-10);
 			font-size: $font-body;

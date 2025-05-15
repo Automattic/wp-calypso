@@ -64,27 +64,6 @@ body.is-section-accept-invite {
 		margin: 0 auto;
 		background: none;
 
-		button.is-primary {
-			border-radius: 2px;
-			border: 1px solid var(--studio-wordpress-blue, #3858e9);
-			background: var(--studio-wordpress-blue, #3858e9);
-			height: 48px;
-			font-weight: 500;
-			&:hover {
-				background: var(--studio-wordpress-blue-60);
-			}
-			&:focus {
-				background-color: var(--studio-wordpress-blue-60);
-				border-color: var(--studio-wordpress-blue-60);
-				color: var(--color-text-inverted);
-				box-shadow: none;
-			}
-			&:disabled {
-				background: var(--studio-gray-20);
-				border: 1px solid var(--studio-gray-20);
-				color: var(--color-surface);
-			}
-		}
 		label.form-label {
 			color: var(--studio-gray-60, #50575e);
 			font-size: 0.875rem;
