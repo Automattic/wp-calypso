@@ -31,6 +31,7 @@ const SocialLoginForm = ( {
 	const [ isLoading, experimentAssignment ] = useExperiment( SOCIAL_LOGIN_EXPERIMENT );
 	const isTreatment = experimentAssignment?.variationName === 'treatment';
 	const shouldShowApple = ! isLoading && ! isTreatment;
+	const shouldShowQrCode = ! isLoading && ! isTreatment;
 
 	const socialLoginButtons = [
 		{
@@ -76,7 +77,7 @@ const SocialLoginForm = ( {
 		},
 		{
 			service: 'qr-code',
-			button: ( isSocialFirst || isWoo ) && qrLoginLink && (
+			button: ( isSocialFirst || isWoo ) && qrLoginLink && shouldShowQrCode && (
 				<QrCodeLoginButton loginUrl={ qrLoginLink } key={ 5 } />
 			),
 		},

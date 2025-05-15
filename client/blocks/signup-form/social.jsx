@@ -3,7 +3,6 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { Component } from 'react';
 import { connect } from 'react-redux';
 import SocialToS from 'calypso/blocks/authentication/social/social-tos.jsx';
 import {
@@ -12,6 +11,7 @@ import {
 	GithubSocialButton,
 	UsernameOrEmailButton,
 } from 'calypso/components/social-buttons';
+import { useExperiment } from 'calypso/lib/explat';
 import { isWpccFlow } from 'calypso/signup/is-flow';
 import { recordTracksEvent as recordTracks } from 'calypso/state/analytics/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
@@ -20,25 +20,29 @@ import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getIsWoo from 'calypso/state/selectors/get-is-woo';
 
-class SocialSignupForm extends Component {
-	static propTypes = {
-		compact: PropTypes.bool,
-		handleResponse: PropTypes.func.isRequired,
-		setCurrentStep: PropTypes.func,
-		translate: PropTypes.func.isRequired,
-		socialServiceResponse: PropTypes.object,
-		disableTosText: PropTypes.bool,
-		flowName: PropTypes.string,
-		redirectToAfterLoginUrl: PropTypes.string,
-		isSocialFirst: PropTypes.bool,
-	};
+const SOCIAL_LOGIN_EXPERIMENT = 'calypso_social_login_hide_apple_jetpack';
 
-	static defaultProps = {
-		compact: false,
-	};
+const SocialSignupForm = ( {
+	compact = false,
+	handleResponse,
+	setCurrentStep,
+	translate,
+	socialServiceResponse,
+	disableTosText,
+	flowName,
+	redirectToAfterLoginUrl,
+	isSocialFirst,
+	recordTracksEvent,
+	isDevAccount,
+	oauth2Client,
+	isWoo,
+	showErrorNotice,
+} ) => {
+	const [ isLoading, experimentAssignment ] = useExperiment( SOCIAL_LOGIN_EXPERIMENT );
+	const isTreatment = experimentAssignment?.variationName === 'treatment';
+	const shouldShowApple = ! isLoading && ! isTreatment;
 
-	handleSignup = ( result ) => {
-		const { recordTracksEvent, isDevAccount, handleResponse } = this.props;
+	const handleSignup = ( result ) => {
 		recordTracksEvent( 'calypso_signup_social_button_success', {
 			social_account_type: result.service,
 		} );
@@ -51,11 +55,8 @@ class SocialSignupForm extends Component {
 		} );
 	};
 
-	trackSignupAndRememberRedirect = ( event ) => {
+	const trackSignupAndRememberRedirect = ( event ) => {
 		const service = event.currentTarget.getAttribute( 'data-social-service' );
-
-		const { recordTracksEvent, oauth2Client, redirectToAfterLoginUrl, showErrorNotice, translate } =
-			this.props;
 
 		recordTracksEvent( 'calypso_signup_social_button_click', {
 			social_account_type: service,
@@ -86,58 +87,62 @@ class SocialSignupForm extends Component {
 		}
 	};
 
-	render() {
-		const {
-			compact,
-			translate,
-			socialServiceResponse,
-			disableTosText,
-			isSocialFirst,
-			flowName,
-			isWoo,
-			setCurrentStep,
-		} = this.props;
+	return (
+		<Card
+			className={ clsx( 'auth-form__social', 'is-signup', {
+				'is-social-first': isSocialFirst,
+			} ) }
+		>
+			{ ! compact && (
+				<p className="auth-form__social-text">{ translate( 'Or create an account using:' ) }</p>
+			) }
 
-		return (
-			<Card
-				className={ clsx( 'auth-form__social', 'is-signup', {
-					'is-social-first': isSocialFirst,
-				} ) }
-			>
-				{ ! compact && (
-					<p className="auth-form__social-text">{ translate( 'Or create an account using:' ) }</p>
-				) }
+			<div className="auth-form__social-buttons">
+				<div className="auth-form__social-buttons-container">
+					<GoogleSocialButton
+						responseHandler={ handleSignup }
+						onClick={ trackSignupAndRememberRedirect }
+					/>
 
-				<div className="auth-form__social-buttons">
-					<div className="auth-form__social-buttons-container">
-						<GoogleSocialButton
-							responseHandler={ this.handleSignup }
-							onClick={ this.trackSignupAndRememberRedirect }
-						/>
-
+					{ shouldShowApple && (
 						<AppleLoginButton
-							responseHandler={ this.handleSignup }
-							onClick={ this.trackSignupAndRememberRedirect }
+							responseHandler={ handleSignup }
+							onClick={ trackSignupAndRememberRedirect }
 							socialServiceResponse={ socialServiceResponse }
 							queryString={ isWpccFlow( flowName ) ? window?.location?.search?.slice( 1 ) : '' }
 						/>
+					) }
 
-						<GithubSocialButton
-							responseHandler={ this.handleSignup }
-							onClick={ this.trackSignupAndRememberRedirect }
-							socialServiceResponse={ socialServiceResponse }
-						/>
-						{ isSocialFirst && (
-							<UsernameOrEmailButton onClick={ () => setCurrentStep( 'email' ) } />
-						) }
-					</div>
-					{ ! isWoo && ! disableTosText && <SocialToS /> }
+					<GithubSocialButton
+						responseHandler={ handleSignup }
+						onClick={ trackSignupAndRememberRedirect }
+						socialServiceResponse={ socialServiceResponse }
+					/>
+					{ isSocialFirst && <UsernameOrEmailButton onClick={ () => setCurrentStep( 'email' ) } /> }
 				</div>
-				{ isWoo && ! disableTosText && <SocialToS /> }
-			</Card>
-		);
-	}
-}
+				{ ! isWoo && ! disableTosText && <SocialToS /> }
+			</div>
+			{ isWoo && ! disableTosText && <SocialToS /> }
+		</Card>
+	);
+};
+
+SocialSignupForm.propTypes = {
+	compact: PropTypes.bool,
+	handleResponse: PropTypes.func.isRequired,
+	setCurrentStep: PropTypes.func,
+	translate: PropTypes.func.isRequired,
+	socialServiceResponse: PropTypes.object,
+	disableTosText: PropTypes.bool,
+	flowName: PropTypes.string,
+	redirectToAfterLoginUrl: PropTypes.string,
+	isSocialFirst: PropTypes.bool,
+	recordTracksEvent: PropTypes.func.isRequired,
+	isDevAccount: PropTypes.bool,
+	oauth2Client: PropTypes.object,
+	isWoo: PropTypes.bool,
+	showErrorNotice: PropTypes.func.isRequired,
+};
 
 export default connect(
 	( state ) => {
