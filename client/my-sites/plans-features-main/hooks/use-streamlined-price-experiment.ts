@@ -10,7 +10,7 @@ export function useStreamlinedPriceExperiment(): [ boolean, string | null ] {
 	const [ isLoadingExperiment, assignment ] = useExperiment( STREAMLINED_PRICE_EXPERIMENT_NAME, {
 		isEligible: isEligibleForExperiment(),
 	} );
-
+	return [ false, 'plans_3y_checkout_dropdown' ];
 	return [ isLoadingExperiment, assignment?.variationName ?? null ];
 }
 
