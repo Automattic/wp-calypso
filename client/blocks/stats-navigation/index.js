@@ -37,6 +37,7 @@ import {
 	navItems as allNavItems,
 	intervals as intervalConstants,
 } from './constants';
+import Intervals from './intervals';
 import PageModuleToggler from './page-module-toggler';
 
 import './style.scss';
@@ -49,6 +50,7 @@ import './style.scss';
  *   className: string,
  *   path: string,
  *   adminUrl: string,
+ *   showIntervals: boolean,
  * }} StatsNavItem
  */
 
@@ -76,40 +78,55 @@ function withNoticeHook( HookedComponent ) {
 	};
 }
 /**
- * @param { { navItems: StatsNavItem[], selectedItemName: keyof typeof allNavItems } } props
+ * @param { { navItems: StatsNavItem[], selectedItemName: keyof typeof allNavItems, isLegacy: boolean, interval: string, pathTemplate: string } } props
  */
-const SelectNav = ( { navItems, selectedItemName } ) => {
-	const { label } = navItems.find( ( { name } ) => name === selectedItemName );
+const SelectNav = ( { navItems, selectedItemName, isLegacy, interval, pathTemplate } ) => {
+	const selectedNavItem = navItems.find( ( { name } ) => name === selectedItemName );
+	if ( ! selectedNavItem ) {
+		return null;
+	}
+
+	const { label, showIntervals } = selectedNavItem;
 
 	return (
-		<SectionNav selectedText={ label }>
-			<NavTabs selectedText={ label }>
-				{ navItems.map( ( navItem ) => {
-					if ( navItem.name === 'store' && config.isEnabled( 'is_running_in_jetpack_site' ) ) {
+		<>
+			<SectionNav selectedText={ label }>
+				<NavTabs selectedText={ label }>
+					{ navItems.map( ( navItem ) => {
+						if ( navItem.name === 'store' && config.isEnabled( 'is_running_in_jetpack_site' ) ) {
+							return (
+								<NavItem
+									className={ navItem.className }
+									key={ navItem.name }
+									onClick={ () => ( window.location.href = navItem.adminUrl ) }
+									selected={ false }
+								>
+									{ navItem.label }
+								</NavItem>
+							);
+						}
 						return (
 							<NavItem
 								className={ navItem.className }
 								key={ navItem.name }
-								onClick={ () => ( window.location.href = navItem.adminUrl ) }
-								selected={ false }
+								path={ navItem.path }
+								selected={ selectedItemName === navItem.name }
 							>
-								{ navItem.label }
+								{ navItem.title }
 							</NavItem>
 						);
-					}
-					return (
-						<NavItem
-							className={ navItem.className }
-							key={ navItem.name }
-							path={ navItem.path }
-							selected={ selectedItemName === navItem.name }
-						>
-							{ navItem.title }
-						</NavItem>
-					);
-				} ) }
-			</NavTabs>
-		</SectionNav>
+					} ) }
+				</NavTabs>
+
+				{ isLegacy && showIntervals && (
+					<Intervals selected={ interval } pathTemplate={ pathTemplate } />
+				) }
+			</SectionNav>
+
+			{ isLegacy && showIntervals && (
+				<Intervals selected={ interval } pathTemplate={ pathTemplate } standalone />
+			) }
+		</>
 	);
 };
 
@@ -158,6 +175,7 @@ class StatsNavigation extends Component {
 		selectedItem: PropTypes.oneOf( Object.keys( allNavItems ) ).isRequired,
 		siteId: PropTypes.number,
 		slug: PropTypes.string,
+		isLegacy: PropTypes.bool,
 		adminUrl: PropTypes.string,
 		showLock: PropTypes.bool,
 		hideModuleSettings: PropTypes.bool,
@@ -231,6 +249,7 @@ class StatsNavigation extends Component {
 			slug,
 			selectedItem,
 			interval,
+			isLegacy,
 			showSettingsTooltip,
 			statsAdminVersion,
 			showLock,
@@ -243,9 +262,12 @@ class StatsNavigation extends Component {
 			adminUrl,
 		} = this.props;
 		const { isPageSettingsTooltipDismissed } = this.state;
+		const { path } = allNavItems[ selectedItem ];
 		const slugPath = slug ? `/${ slug }` : '';
+		const pathTemplate = `${ path }/{{ interval }}${ slugPath }`;
 
 		const wrapperClass = clsx( 'stats-navigation', {
+			'stats-navigation--modernized': ! isLegacy,
 			'stats-navigation--improved': isStatsNavigationImprovementEnabled,
 		} );
 
@@ -262,21 +284,27 @@ class StatsNavigation extends Component {
 
 		// @TODO: Add loading status of modules settings to avoid toggling modules before they are loaded.
 
-		const navItems = Object.keys( allNavItems )
-			.filter( this.isValidItem )
-			.map( ( key ) => {
-				const navItem = allNavItems[ key ];
-				const intervalPath = navItem.showIntervals ? `/${ interval || 'day' }` : '';
-				const itemPath = `${ navItem.path }${ intervalPath }${ slugPath }`;
-				return {
-					name: key,
-					adminUrl: `${ adminUrl }admin.php?page=wc-admin&path=%2Fanalytics%2Foverview`,
-					className: 'stats-navigation__' + key,
-					label: navItem.label,
-					path: itemPath,
-					title: navItem.label + ( navItem.paywall && showLock ? ' 🔒' : '' ),
-				};
-			} );
+		/** @type {(keyof typeof allNavItems)[]} */
+		const navKeys = Object.keys( allNavItems );
+		const navItems = navKeys.filter( this.isValidItem ).map( ( key ) => {
+			const navItem = allNavItems[ key ];
+
+			if ( ! navItem ) {
+				throw new Error( `navItem is null for key: ${ key }` );
+			}
+
+			const intervalPath = navItem.showIntervals ? `/${ interval || 'day' }` : '';
+			const itemPath = `${ navItem.path }${ intervalPath }${ slugPath }`;
+			return {
+				name: key,
+				adminUrl: `${ adminUrl }admin.php?page=wc-admin&path=%2Fanalytics%2Foverview`,
+				className: 'stats-navigation__' + key,
+				label: navItem.label,
+				path: itemPath,
+				showIntervals: navItem.showIntervals,
+				title: navItem.label + ( navItem.paywall && showLock ? ' 🔒' : '' ),
+			};
+		} );
 
 		return (
 			<div className={ wrapperClass }>
@@ -286,7 +314,13 @@ class StatsNavigation extends Component {
 						className="full-width"
 						breakpoint="<480px"
 						breakpointActiveComponent={
-							<SelectNav navItems={ navItems } selectedItemName={ selectedItem } />
+							<SelectNav
+								navItems={ navItems }
+								selectedItemName={ selectedItem }
+								isLegacy={ isLegacy }
+								interval={ interval }
+								pathTemplate={ pathTemplate }
+							/>
 						}
 						breakpointInactiveComponent={
 							<TabNav tabs={ navItems } selectedItemName={ selectedItem } />
@@ -295,7 +329,13 @@ class StatsNavigation extends Component {
 				) }
 				{ ! isStatsNavigationImprovementEnabled && (
 					// TODO: remove following SelectNav after 'stats/navigation-improvement' launch.
-					<SelectNav navItems={ navItems } selectedItemName={ selectedItem } />
+					<SelectNav
+						navItems={ navItems }
+						selectedItemName={ selectedItem }
+						isLegacy={ isLegacy }
+						interval={ interval }
+						pathTemplate={ pathTemplate }
+					/>
 				) }
 
 				{ ! isStatsNavigationImprovementEnabled && shouldRenderModuleToggler && (
