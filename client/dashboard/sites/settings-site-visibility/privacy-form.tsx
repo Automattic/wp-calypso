@@ -48,9 +48,9 @@ const fields: Field< SitePrivacy >[] = [
 						onChange( { [ id ]: newValue } );
 					} }
 				>
-					<ToggleGroupControlOption label="Coming soon" value="coming-soon" />
-					<ToggleGroupControlOption label="Public" value="public" />
-					<ToggleGroupControlOption label="Private" value="private" />
+					<ToggleGroupControlOption label={ __( 'Coming soon' ) } value="coming-soon" />
+					<ToggleGroupControlOption label={ __( 'Public' ) } value="public" />
+					<ToggleGroupControlOption label={ __( 'Private' ) } value="private" />
 				</ToggleGroupControl>
 			);
 		},
