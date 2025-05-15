@@ -221,6 +221,7 @@ export const ItemVariantDropDownPrice: FunctionComponent< {
 		variant.termIntervalInMonths === 1 && isStreamlinedPrice
 			? translate( 'Month' )
 			: variant.variantLabel.noun;
+
 	return (
 		<Variant>
 			<Label>
@@ -252,16 +253,25 @@ export const ItemVariantDropDownPrice: FunctionComponent< {
 					<DoNotPayThis>{ formattedCompareToPriceForVariantTerm }</DoNotPayThis>
 				) }
 
-				{ ! isStreamlinedPrice && (
+				{ isStreamlinedPrice ? (
+					! canDisplayDiscountPercentage && (
+						<DiscountPrice
+							price={ discount }
+							termIntervalInMonths={ variant.termIntervalInMonths }
+						/>
+					)
+				) : (
 					<Price aria-hidden={ isIntroductoryOffer }>{ formattedCurrentPrice }</Price>
 				) }
-				<IntroPricing>
-					{ ! isMultiYearDomain && (
-						<IntroPricingText>
-							{ isIntroductoryOffer && translatedIntroOfferDetails() }
-						</IntroPricingText>
-					) }
-				</IntroPricing>
+				{ ! isStreamlinedPrice && (
+					<IntroPricing>
+						{ ! isMultiYearDomain && (
+							<IntroPricingText>
+								{ isIntroductoryOffer && translatedIntroOfferDetails() }
+							</IntroPricingText>
+						) }
+					</IntroPricing>
+				) }
 			</PriceTextContainer>
 		</Variant>
 	);
