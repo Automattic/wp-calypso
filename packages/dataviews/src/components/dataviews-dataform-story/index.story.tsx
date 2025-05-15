@@ -98,8 +98,8 @@ export const Default = ( {
 		null;
 
 	return (
-		<HStack spacing={ 4 } alignment="stretch" style={ { height: '80vh' } }>
-			<div style={ { flex: 2, minWidth: 0 } }>
+		<HStack alignment="stretch">
+			<div style={ { flex: 2 } }>
 				<DataViews
 					getItemId={ ( item ) => item.id.toString() }
 					data={ shownData }
@@ -115,60 +115,42 @@ export const Default = ( {
 							newSelection.map( ( id ) => parseInt( id, 10 ) )
 						)
 					}
-					onClickItem={ ( item ) => {
-						alert( 'clicked: ' + item.title );
-					} }
+					onClickItem={ ( item ) => alert( 'clicked ' + item.title ) }
 				/>
 			</div>
-			<div
-				style={ {
-					flex: 1,
-					minWidth: 320,
-					maxWidth: 400,
-					background: '#fafbfc',
-					borderLeft: '1px solid #e0e0e0',
-					padding: 24,
-				} }
-			>
-				{ selectedItem ? (
-					<Card>
-						<CardHeader>
-							<strong>{ selectedItem.title }</strong>
-						</CardHeader>
-						<CardBody>
-							<DataForm< SpaceObject >
-								data={ selectedItem }
-								fields={ fields }
-								form={ form }
-								onChange={ ( updatedValues ) => {
-									const updatedItem = {
-										...selectedItem,
-										...updatedValues,
-									};
+			{ selectedItem ? (
+				<VStack alignment="top">
+					<DataForm
+						data={ selectedItem }
+						form={ form }
+						fields={ fields }
+						onChange={ ( updatedValues ) => {
+							const updatedItem = {
+								...selectedItem,
+								...updatedValues,
+							};
 
-									setModifiedData(
-										modifiedData.map( ( item ) =>
-											item.id === selectedItem.id
-												? updatedItem
-												: item
-										)
-									);
-								} }
-							/>
-						</CardBody>
-					</Card>
-				) : (
-					<VStack
-						alignment="center"
-						justify="center"
-						style={ { height: '100%' } }
+							setModifiedData(
+								modifiedData.map( ( item ) =>
+									item.id === selectedItem.id
+										? updatedItem
+										: item
+								)
+							);
+						} }
+					/>
+				</VStack>
+			) : (
+				<VStack alignment="center">
+					<span
+						style={ {
+							color: '#888',
+						} }
 					>
-						<span style={ { color: '#888' } }>
-							Select an item to view details
-						</span>
-					</VStack>
-				) }
-			</div>
+						Please, select a single item.
+					</span>
+				</VStack>
+			) }
 		</HStack>
 	);
 };
