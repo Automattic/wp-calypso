@@ -223,7 +223,7 @@ export default function PersonalizationForm( {
 						{ isFinalStep && (
 							<span className="signup-personalization-form__description">
 								{ translate(
-									"We'll link your WordPress.com account to your agency dashboard. If you don't have an account you can create one on the next screen."
+									"Next, we'll link your WordPress.com account to your agency dashboard. If you don't have an account you can create one on the next screen."
 								) }
 							</span>
 						) }
