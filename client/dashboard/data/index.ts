@@ -304,13 +304,14 @@ export const fetchSiteSettings = async ( siteIdOrSlug: string ): Promise< SiteSe
 };
 
 export const updateSiteSettings = async ( siteIdOrSlug: string, data: Partial< SiteSettings > ) => {
-	return await wpcom.req.post(
+	const { updated } = await wpcom.req.post(
 		{
 			path: `/sites/${ siteIdOrSlug }/settings`,
 			apiVersion: '1.4',
 		},
 		data
 	);
+	return updated;
 };
 
 export const fetchBasicMetrics = async ( url: string ): Promise< BasicMetricsData > => {

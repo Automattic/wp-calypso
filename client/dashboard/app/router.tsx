@@ -117,6 +117,19 @@ const siteSettingsRoute = createRoute( {
 	)
 );
 
+const siteSettingsSiteVisibilityRoute = createRoute( {
+	getParentRoute: () => siteRoute,
+	path: 'settings/site-visibility',
+	loader: ( { params: { siteSlug } } ) =>
+		queryClient.ensureQueryData( siteSettingsQuery( siteSlug ) ),
+} ).lazy( () =>
+	import( '../sites/settings-site-visibility' ).then( ( d ) =>
+		createLazyRoute( 'site-settings-site-visibility' )( {
+			component: d.default,
+		} )
+	)
+);
+
 const siteSettingsSubscriptionGiftingRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: 'settings/subscription-gifting',
@@ -293,6 +306,7 @@ const createRouteTree = ( config: AppConfig ) => {
 				siteDeploymentsRoute,
 				sitePerformanceRoute,
 				siteSettingsRoute,
+				siteSettingsSiteVisibilityRoute,
 				siteSettingsSubscriptionGiftingRoute,
 			] )
 		);
@@ -347,6 +361,7 @@ export {
 	siteDeploymentsRoute,
 	sitePerformanceRoute,
 	siteSettingsRoute,
+	siteSettingsSiteVisibilityRoute,
 	siteSettingsSubscriptionGiftingRoute,
 	domainsRoute,
 	emailsRoute,
