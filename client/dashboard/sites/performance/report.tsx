@@ -57,11 +57,26 @@ export default function Report( {
 		updateUrl( filter );
 	};
 
+	// The PerformanceReport types used in the dashboard are incompatible, they have different
+	// expectations for whether metric values are nullable.
+	// TODO Reconcile the two types
+	const { cls = 0, lcp = 0, fcp = 0, ttfb = 0, inp = 0, tbt = 0, overall = 0 } = report;
+	const reportForDashboardContent = {
+		...report,
+		cls,
+		lcp,
+		fcp,
+		ttfb,
+		inp,
+		tbt,
+		overall,
+	};
+
 	return (
 		<div className="site-performance-report">
 			<ReportExpiredNotice reportTimestamp={ report?.timestamp } onRetest={ onRetest } />
 			<PerformanceProfilerDashboardContent
-				performanceReport={ report }
+				performanceReport={ reportForDashboardContent }
 				url={ currentPage.link }
 				hash={ currentPage.wpcom_performance_report_hash }
 				overallScoreIsTab
