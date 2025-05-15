@@ -1,0 +1,88 @@
+import { Page } from 'playwright';
+
+const selectors = {
+	// General
+	buttonContainingText: ( text: string ) => `button:has-text("${ text }")`,
+	buttonWithExactText: ( text: string ) => `button:text-is("${ text }")`,
+
+	// Inputs
+	emailInput: 'input[id="login_field"]',
+	passwordInput: 'input[id="password"]',
+
+	// Button
+	submitFormButton: 'input[data-signin-label="Sign In"]',
+};
+
+/**
+ * Represents the login screens shown by GitHub.
+ */
+export class GitHubLoginPage {
+	/**
+	 * Construct and instance of the EmailClient.
+	 *
+	 * @param {Page} page Handler for instance of the GitHub login page.
+	 */
+	constructor( private page: Page ) {}
+
+	/**
+	 * Press enter to proceed to the next login step.
+	 */
+	async pressEnter(): Promise< void > {
+		await this.page.keyboard.press( 'Enter' );
+	}
+
+	/**
+	 * Clicks on a button containing a string of text.
+	 *
+	 * @param {string} text Text on the button.
+	 */
+	async clickButtonContainingText( text: string ): Promise< void > {
+		const locator = this.page.locator( selectors.buttonContainingText( text ) );
+		await locator.click();
+	}
+
+	/**
+	 * Clicks on a button with the **exact** text.
+	 *
+	 * @param {string} text Text on the button.
+	 */
+	async clickButtonWithExactText( text: string ): Promise< void > {
+		const locator = this.page.locator( selectors.buttonWithExactText( text ) );
+		await locator.click();
+	}
+
+	/**
+	 * Checks if a button with the exact text exists and is visible.
+	 *
+	 * @param {string} text Text on the button.
+	 * @returns {Promise<boolean>} True if the button exists and is visible.
+	 */
+	async hasButtonWithExactText( text: string ): Promise< boolean > {
+		const locator = this.page.locator( selectors.buttonWithExactText( text ) );
+		return await locator.isVisible();
+	}
+
+	/**
+	 * Fills the GitHub username/email field.
+	 *
+	 * @param {string} email Username (GitHub) of the user.
+	 */
+	async enterEmail( email: string ): Promise< void > {
+		const locator = this.page.locator( selectors.emailInput );
+		await locator.fill( email );
+
+		// Wait for the password field to be visible
+		const passwordLocator = this.page.locator( selectors.passwordInput );
+		await passwordLocator.waitFor();
+	}
+
+	/**
+	 * Fills the password field.
+	 *
+	 * @param {string} password Password of the user.
+	 */
+	async enterPassword( password: string ): Promise< void > {
+		const locator = this.page.locator( selectors.passwordInput );
+		await locator.fill( password );
+	}
+}
