@@ -10,6 +10,7 @@ export function useStreamlinedPriceExperiment(): [ boolean, string | null ] {
 	const [ isLoadingExperiment, assignment ] = useExperiment( STREAMLINED_PRICE_EXPERIMENT_NAME, {
 		isEligible: isEligibleForExperiment(),
 	} );
+
 	return [ isLoadingExperiment, assignment?.variationName ?? null ];
 }
 
