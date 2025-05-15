@@ -7,6 +7,7 @@ import {
 import { __ } from '@wordpress/i18n';
 import { siteQuery, siteSettingsQuery } from '../../app/queries';
 import { siteRoute } from '../../app/router';
+import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import SubscriptionGiftingSettingsSummary from '../settings-subscription-gifting/summary';
 
@@ -20,7 +21,8 @@ export default function SiteSettings() {
 	}
 
 	return (
-		<PageLayout title={ __( 'Settings' ) } size="small">
+		<PageLayout size="small">
+			<PageHeader title={ __( 'Settings' ) } />
 			<Heading>{ __( 'General' ) }</Heading>
 			<Card>
 				<VStack>

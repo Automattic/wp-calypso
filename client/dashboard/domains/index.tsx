@@ -6,6 +6,7 @@ import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
 import { domainsQuery } from '../app/queries';
 import DataViewsCard from '../components/dataviews-card';
+import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
 import type { Domain } from '../data/types';
 
@@ -99,14 +100,15 @@ function Domains() {
 	}
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate( domains, view, fields );
 	return (
-		<PageLayout
-			title={ __( 'Domains' ) }
-			actions={
-				<Button variant="primary" __next40pxDefaultSize>
-					{ __( 'Add New Domain' ) }
-				</Button>
-			}
-		>
+		<PageLayout>
+			<PageHeader
+				title={ __( 'Domains' ) }
+				actions={
+					<Button variant="primary" __next40pxDefaultSize>
+						{ __( 'Add New Domain' ) }
+					</Button>
+				}
+			/>
 			<DataViewsCard>
 				<DataViews
 					data={ filteredData || [] }

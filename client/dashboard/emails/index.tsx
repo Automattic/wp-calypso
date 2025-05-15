@@ -6,6 +6,7 @@ import { __ } from '@wordpress/i18n';
 import { useState, useMemo } from 'react';
 import { emailsQuery } from '../app/queries';
 import DataViewsCard from '../components/dataviews-card';
+import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
 import type { Email } from '../data/types';
 import type { View } from '@automattic/dataviews';
@@ -117,19 +118,20 @@ function Emails() {
 	};
 
 	return (
-		<PageLayout
-			title={ __( 'Emails' ) }
-			actions={
-				<div style={ { display: 'flex', gap: '12px' } }>
-					<Button variant="secondary" __next40pxDefaultSize>
-						{ __( 'Add Email Forwarder' ) }
-					</Button>
-					<Button variant="primary" __next40pxDefaultSize>
-						{ __( 'Add Mailbox' ) }
-					</Button>
-				</div>
-			}
-		>
+		<PageLayout>
+			<PageHeader
+				title={ __( 'Emails' ) }
+				actions={
+					<>
+						<Button variant="secondary" __next40pxDefaultSize>
+							{ __( 'Add Email Forwarder' ) }
+						</Button>
+						<Button variant="primary" __next40pxDefaultSize>
+							{ __( 'Add Mailbox' ) }
+						</Button>
+					</>
+				}
+			/>
 			<Notice status="warning" isDismissible={ false }>
 				{ __( 'This is using fake data for the moment' ) }
 			</Notice>

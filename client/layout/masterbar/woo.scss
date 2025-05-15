@@ -156,7 +156,7 @@ $breakpoint-mobile: 660px;
 	a:not(.social-buttons__button),
 	.wp-login__links a,
 	.wp-login__links button,
-	.button:not(.social-buttons__button),
+	.button,
 	.magic-login__footer a {
 		color: $gray-50;
 		text-decoration: underline;
@@ -171,7 +171,7 @@ $breakpoint-mobile: 660px;
 		}
 	}
 
-	.button:not(.social-buttons__button) {
+	.button {
 		border-radius: 8px; /* stylelint-disable-line scales/radii */
 		border: 2px solid var(--woo-purple-60);
 		text-decoration: none;

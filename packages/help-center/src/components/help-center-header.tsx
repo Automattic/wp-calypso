@@ -1,7 +1,7 @@
 /* eslint-disable no-restricted-imports */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { useGetHistoryChats } from '@automattic/help-center/src/hooks/use-get-history-chats';
 import { EllipsisMenu } from '@automattic/odie-client';
-import { useGetMostRecentOpenConversation } from '@automattic/odie-client/src/hooks/use-get-most-recent-open-conversation';
 import { clearHelpCenterZendeskConversationStarted } from '@automattic/odie-client/src/utils/storage-utils';
 import { CardHeader, Button, Flex, ToggleControl } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
@@ -78,16 +78,17 @@ const ChatEllipsisMenu = () => {
 	const { __ } = useI18n();
 	const resetSupportInteraction = useResetSupportInteraction();
 	const navigate = useNavigate();
-	const { totalNumberOfConversations } = useGetMostRecentOpenConversation();
+	const { recentConversations } = useGetHistoryChats();
 	const { areSoundNotificationsEnabled } = useSelect( ( select ) => {
 		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
 		return {
 			areSoundNotificationsEnabled: helpCenterSelect.getAreSoundNotificationsEnabled(),
 		};
 	}, [] );
-	const { setAreSoundNotificationsEnabled } = useDispatch( HELP_CENTER_STORE );
+	const { setAreSoundNotificationsEnabled, setOdieChatId } = useDispatch( HELP_CENTER_STORE );
 
 	const clearChat = async () => {
+		setOdieChatId( undefined );
 		await resetSupportInteraction();
 		clearHelpCenterZendeskConversationStarted();
 		recordTracksEvent( 'calypso_inlinehelp_clear_conversation' );
@@ -95,7 +96,7 @@ const ChatEllipsisMenu = () => {
 
 	const handleViewChats = () => {
 		recordTracksEvent( 'calypso_inlinehelp_view_open_chats_menu', {
-			total_number_of_conversations: totalNumberOfConversations,
+			total_number_of_conversations: recentConversations.length,
 		} );
 
 		navigate( '/chat-history' );
@@ -117,17 +118,17 @@ const ChatEllipsisMenu = () => {
 					<Icon icon={ comment } />
 					<div>{ __( 'New chat', __i18n_text_domain__ ) }</div>
 				</button>
-				<Button onClick={ handleViewChats } disabled={ totalNumberOfConversations === 0 }>
+				<button onClick={ handleViewChats } disabled={ recentConversations.length < 2 }>
 					<Icon icon={ scheduled } />
 					<div>
 						{ _n(
 							'View recent chat',
 							'View recent chats',
-							totalNumberOfConversations,
+							recentConversations.length,
 							__i18n_text_domain__
 						) }
 					</div>
-				</Button>
+				</button>
 				<button onClick={ toggleSoundNotifications }>
 					<ToggleControl
 						className="conversation-menu__notification-toggle"

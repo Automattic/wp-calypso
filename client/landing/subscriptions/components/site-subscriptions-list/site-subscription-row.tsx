@@ -1,7 +1,7 @@
 import { Gridicon, ExternalLink, TimeSince } from '@automattic/components';
 import { Reader, SubscriptionManager } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { __experimentalHStack as HStack } from '@wordpress/components';
+import { __experimentalHStack as HStack, Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useRef } from 'react';
 import { useDispatch } from 'react-redux';
@@ -163,6 +163,39 @@ const SiteSubscriptionRow = ( {
 		);
 	};
 
+	const onUnsubscribe = () => {
+		unsubscribeInProgress.current = true;
+		unsubscribeCallback();
+		unsubscribe(
+			{
+				blog_id,
+				subscriptionId: Number( subscriptionId ),
+				url,
+				doNotInvalidateSiteSubscriptions: true,
+			},
+			{
+				onSuccess: () => {
+					unsubscribeInProgress.current = false;
+
+					if ( resubscribePending.current ) {
+						resubscribePending.current = false;
+						resubscribe( {
+							blog_id,
+							url,
+							doNotInvalidateSiteSubscriptions: true,
+							resubscribed: true,
+						} );
+						recordSiteResubscribed( {
+							blog_id,
+							url,
+							source: SOURCE_SUBSCRIPTIONS_UNSUBSCRIBED_NOTICE,
+						} );
+					}
+				},
+			}
+		);
+	};
+
 	const { isReaderPortal, isSubscriptionsPortal } = useSubscriptionManagerContext();
 
 	const siteTitleUrl = useMemo( () => {
@@ -320,6 +353,11 @@ const SiteSubscriptionRow = ( {
 			<span className="email-frequency-cell" role="cell">
 				{ deliveryFrequencyLabel }
 			</span>
+			<span className="unsubscribe-action-cell" role="cell">
+				<Button variant="secondary" onClick={ onUnsubscribe }>
+					{ translate( 'Unsubscribe' ) }
+				</Button>
+			</span>
 			<span className="actions-cell" role="cell">
 				<SiteSettingsPopover
 					// NotifyMeOfNewPosts
@@ -341,38 +379,7 @@ const SiteSubscriptionRow = ( {
 					emailMeNewComments={ !! delivery_methods.email?.send_comments }
 					onEmailMeNewCommentsChange={ handleEmailMeNewCommentsChange }
 					updatingEmailMeNewComments={ updatingEmailMeNewComments }
-					onUnsubscribe={ () => {
-						unsubscribeInProgress.current = true;
-						unsubscribeCallback();
-						unsubscribe(
-							{
-								blog_id,
-								subscriptionId: Number( subscriptionId ),
-								url,
-								doNotInvalidateSiteSubscriptions: true,
-							},
-							{
-								onSuccess: () => {
-									unsubscribeInProgress.current = false;
-
-									if ( resubscribePending.current ) {
-										resubscribePending.current = false;
-										resubscribe( {
-											blog_id,
-											url,
-											doNotInvalidateSiteSubscriptions: true,
-											resubscribed: true,
-										} );
-										recordSiteResubscribed( {
-											blog_id,
-											url,
-											source: SOURCE_SUBSCRIPTIONS_UNSUBSCRIBED_NOTICE,
-										} );
-									}
-								},
-							}
-						);
-					} }
+					onUnsubscribe={ onUnsubscribe }
 					unsubscribing={ unsubscribing }
 					blogId={ sanitizedBlogId }
 					feedId={ Number( feed_id ) }

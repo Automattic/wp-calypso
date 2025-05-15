@@ -170,9 +170,7 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( {
 		}
 
 		let dataToDispatch;
-		if ( ! supportsLocationsStatsFeature ) {
-			dataToDispatch = legacyCountriesViewsData;
-		} else if ( geoMode === 'country' ) {
+		if ( geoMode === 'country' ) {
 			dataToDispatch = countriesList;
 		} else {
 			dataToDispatch = locationsViewsData;
@@ -186,9 +184,7 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( {
 	}, [
 		countriesList,
 		geoMode,
-		supportsLocationsStatsFeature,
 		locationsViewsData,
-		legacyCountriesViewsData,
 		isRequestingCountriesList,
 		isRequestingData,
 		dispatch,
@@ -315,7 +311,6 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( {
 			/>
 		) : (
 			<DownloadCsv
-				borderless
 				data={ locationCsvData }
 				path={ `locations-${ geoMode }` }
 				period={ period }

@@ -680,12 +680,19 @@ object CheckCodeStyleBranch : BuildType({
 				fi
 			"""
 		}
-
+		bashNodeScript {
+			name = "Run code quality linters"
+			scriptContent = """
+				yarn run lint:unused-state-action-types
+				yarn run lint:config-defaults
+			"""
+		}
 		bashNodeScript {
 			name = "Run stylelint"
 			scriptContent = """
 				# In the future, we may add the stylelint cache here.
 				yarn run lint:css
+				yarn run lint:mixedindent
 			"""
 		}
 	}

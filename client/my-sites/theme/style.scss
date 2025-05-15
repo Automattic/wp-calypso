@@ -365,16 +365,16 @@ $button-border: 4px;
 		}
 	}
 
-    &.is-clickable {
-      cursor: pointer;
+	&.is-clickable {
+		cursor: pointer;
 
-      &:hover,
-      &:focus {
-          .theme-preview__frame-wrapper {
-              opacity: 0.8;
-          }
-      }
-    }
+		&:hover,
+		&:focus {
+			.theme-preview__frame-wrapper {
+				opacity: 0.8;
+			}
+		}
+	}
 
 	.theme-preview__container {
 		position: relative;

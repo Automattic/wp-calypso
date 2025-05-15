@@ -6,7 +6,6 @@ import { connect } from 'react-redux';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import ReaderSidebarHelper from '../helper';
-import '../style.scss';
 
 export class ReaderSidebarTagsListItem extends Component {
 	static propTypes = {

@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import { formatNumber } from '@automattic/number-formatters';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
@@ -71,7 +72,12 @@ const StatsEmailSummary = ( { period, query } ) => {
 	};
 
 	return (
-		<Main className="has-fixed-nav" fullWidthLayout>
+		<Main
+			className={ clsx( {
+				'has-fixed-nav': ! config.isEnabled( 'stats/navigation-improvement' ),
+			} ) }
+			fullWidthLayout
+		>
 			<PageViewTracker path="/stats/emails/:site" title="Stats > Emails" />
 			<div className="stats stats-summary-view">
 				{ isStatsNavigationImprovementEnabled && (

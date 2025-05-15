@@ -7,12 +7,14 @@ import {
 	paymentMethodsRoute,
 	taxDetailsRoute,
 } from '../../app/router';
+import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
 
 function Billing() {
 	return (
-		<PageLayout title={ __( 'Billing' ) } size="small">
+		<PageLayout size="small">
+			<PageHeader title={ __( 'Billing' ) } />
 			<VStack spacing={ 4 }>
 				<RouterLinkSummaryButton
 					title={ __( 'Active subscriptions' ) }
