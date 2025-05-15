@@ -160,9 +160,10 @@ const MultiStepForm = ( { withPersonalizedBlueprint = false, submitAsSurvey = fa
 
 	const onCreateAgency = useCallback(
 		( data: Partial< AgencyDetailsSignupPayload > ) => {
-			submitSignup( data as AgencyDetailsSignupPayload );
+			const newFormData = { ...formData, ...data };
+			submitSignup( newFormData as AgencyDetailsSignupPayload );
 		},
-		[ submitSignup ]
+		[ formData, submitSignup ]
 	);
 
 	const currentForm = useMemo( () => {
