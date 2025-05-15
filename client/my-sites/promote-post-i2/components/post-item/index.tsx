@@ -46,10 +46,18 @@ export default function PostItem( {
 			<td className="post-item__post-data">
 				<div className="post-item__post-data-row">
 					{ featuredImage && (
-						<div
-							className="post-item__post-thumbnail-wrapper"
-							style={ { backgroundImage: `url(${ featuredImage })` } }
-						/>
+						<div className="post-item__post-thumbnail-wrapper">
+							<img
+								src={ featuredImage }
+								alt={ translate( 'For %(postType)s %(name)s', {
+									args: {
+										postType: getPostType( post.type ),
+										name: post?.title,
+									},
+								} ).toString() }
+							/>
+							<img src={ featuredImage } alt="For " />
+						</div>
 					) }
 					{ ! featuredImage && (
 						<div className="post-item__post-thumbnail-wrapper post-item__post-thumbnail-wrapper_no-image">
