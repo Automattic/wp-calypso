@@ -93,7 +93,6 @@ function AddNewSite() {
 			</Column>
 
 			<Button
-				// Figure out localizeUrl
 				href="https://wordpress.com/setup/onboarding"
 				onClick={ offerClick }
 				style={ {
