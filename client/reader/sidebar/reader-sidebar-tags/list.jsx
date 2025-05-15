@@ -5,7 +5,7 @@ import { Component } from 'react';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import ReaderSidebarHelper from '../helper';
-import { MenuItem, MenuItemLink, MenuList } from '../menu';
+import { MenuItem, MenuItemLink } from '../menu';
 import ReaderSidebarTagsListItem from './list-item';
 
 export class ReaderSidebarTagsList extends Component {
@@ -34,22 +34,20 @@ export class ReaderSidebarTagsList extends Component {
 	}
 	render() {
 		return (
-			<li>
-				<MenuList className="reader-sidebar-tags__list">
-					{ this.renderItems() }
-					<MenuItem
-						className={ ReaderSidebarHelper.itemLinkClass( '/tags', this.props.path, {
-							'sidebar-dynamic-menu__tag': true,
-						} ) }
-					>
-						<MenuItemLink href="/tags" onClick={ this.trackTagsPageClick }>
-							<span className="reader-sidebar-tags__all-tags-link">
-								{ this.props.translate( 'See all tags' ) }
-							</span>
-						</MenuItemLink>
-					</MenuItem>
-				</MenuList>
-			</li>
+			<>
+				{ this.renderItems() }
+				<MenuItem
+					className={ ReaderSidebarHelper.itemLinkClass( '/tags', this.props.path, {
+						'sidebar-dynamic-menu__tag': true,
+					} ) }
+				>
+					<MenuItemLink href="/tags" onClick={ this.trackTagsPageClick }>
+						<span className="reader-sidebar-tags__all-tags-link">
+							{ this.props.translate( 'See all tags' ) }
+						</span>
+					</MenuItemLink>
+				</MenuItem>
+			</>
 		);
 	}
 }

@@ -11,41 +11,6 @@
 			}
 		}
 	}
-
-
-	// Apply custom style to the `Add new tag` mini form.
-	.reader-sidebar-tags__text-input:hover,
-	.reader-sidebar-tags__text-input:focus,
-	.reader-sidebar-tags__text-input.is-focused,
-	.reader-sidebar-tags__text-input.is-focused:hover,
-	.reader-sidebar-tags__text-input {
-		background-color: transparent;
-		border: 0;
-		padding: 0 10px 8px;
-		box-shadow: none;
-
-		.form-text-input {
-			color: var(--color-sidebar-submenu-text);
-			box-shadow: 0 0 1px var(--color-sidebar-submenu-text);
-			background-color: transparent;
-			padding: 0 8px;
-			margin: 4px 4px 4px 0;
-			font-size: $font-body-small;
-
-			&:focus {
-				box-shadow: 0 0 0 1px var(--color-sidebar-submenu-hover-text);
-			}
-
-			&::placeholder {
-				color: var(--color-sidebar-submenu-text);
-				opacity: 0.3; // Same as disabled button's opacity.
-			}
-		}
-	}
-
-	.reader-sidebar-tags__all-tags-link {
-		margin-bottom: 2px;
-	}
 }
 
 body.is-section-reader {
@@ -197,6 +162,12 @@ body.is-section-reader {
 
 		&:hover {
 			color: var(--color-link-dark);
+		}
+	}
+	.sidebar-streams__tags {
+		.sidebar-menu__item.add-tag-form {
+			padding-top: 12px;
+			padding-inline-end: 12px;
 		}
 	}
 }
