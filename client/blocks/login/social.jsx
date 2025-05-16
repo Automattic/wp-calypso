@@ -11,13 +11,11 @@ import {
 	QrCodeLoginButton,
 	UsernameOrEmailButton,
 } from 'calypso/components/social-buttons';
-import { useExperiment } from 'calypso/lib/explat';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
+import { useSocialLoginExperiment } from './use-social-login-experiment.ts';
 
 import './social.scss';
-
-const SOCIAL_LOGIN_EXPERIMENT = 'calypso_social_login_hide_apple_jetpack';
 
 const SocialLoginForm = ( {
 	handleLogin,
@@ -31,17 +29,17 @@ const SocialLoginForm = ( {
 	lastUsedAuthenticationMethod,
 	resetLastUsedAuthenticationMethod,
 } ) => {
-	const [ isLoading, experimentAssignment ] = useExperiment( SOCIAL_LOGIN_EXPERIMENT );
+	const [ isLoading, experimentAssignment ] = useSocialLoginExperiment();
 	const currentQuery = useSelector( getCurrentQueryArguments );
 	const initialQuery = useSelector( getInitialQueryArguments );
-	const isTreatment =
-		! experimentAssignment || isLoading || experimentAssignment.variationName === 'treatment';
 	const isSignupExistingAccount = !! (
 		initialQuery?.is_signup_existing_account || currentQuery?.is_signup_existing_account
 	);
 
 	// Only show buttons if we have a definitive answer from the experiment
 	// This prevents flashing by ensuring we have a valid experiment assignment
+	const isTreatment =
+		! experimentAssignment || isLoading || experimentAssignment.variationName === 'treatment';
 	const shouldShowApple = experimentAssignment && ! isTreatment;
 	const shouldShowQrCode = experimentAssignment && ! isTreatment && ! isSignupExistingAccount;
 
