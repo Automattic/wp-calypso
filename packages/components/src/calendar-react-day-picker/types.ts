@@ -175,9 +175,13 @@ interface BaseProps extends Omit< React.HTMLAttributes< HTMLDivElement >, 'onSel
 	 */
 	autoFocus?: boolean;
 	/**
-	 * Specify which days are disabled.
+	 * Specify which days are disabled. Using `true` will disable all dates.
 	 */
 	disabled?: Matcher | Matcher[] | undefined;
+	/**
+	 * Disable the navigation buttons.
+	 */
+	disableNavigation?: boolean;
 	/**
 	 * Add modifiers to the matching days.
 	 */
