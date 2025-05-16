@@ -21,7 +21,7 @@ import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
 import PageHeader from 'calypso/my-sites/stats/components/headers/page-header';
 import Main from 'calypso/my-sites/stats/components/stats-main';
 import {
-	useStatsNavigation,
+	useStatsNavigationHistory,
 	recordCurrentScreen,
 } from 'calypso/my-sites/stats/hooks/use-stats-navigation';
 import StatsDetailsNavigation from 'calypso/my-sites/stats/stats-details-navigation';
@@ -340,7 +340,7 @@ class StatsPostDetail extends Component {
 }
 
 const StatsPostDetailWrapper = ( props ) => {
-	const lastScreen = useStatsNavigation();
+	const lastScreen = useStatsNavigationHistory();
 	return <StatsPostDetail { ...props } lastScreen={ lastScreen } />;
 };
 

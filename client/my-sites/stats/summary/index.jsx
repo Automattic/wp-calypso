@@ -17,7 +17,7 @@ import StatsModuleReferrers from 'calypso/my-sites/stats/features/modules/stats-
 import StatsModuleSearch from 'calypso/my-sites/stats/features/modules/stats-search';
 import StatsModuleTopPosts from 'calypso/my-sites/stats/features/modules/stats-top-posts';
 import {
-	useStatsNavigation,
+	useStatsNavigationHistory,
 	recordCurrentScreen,
 } from 'calypso/my-sites/stats/hooks/use-stats-navigation';
 import getMediaItem from 'calypso/state/selectors/get-media-item';
@@ -486,7 +486,7 @@ class StatsSummary extends Component {
 }
 
 const StatsSummaryWrapper = ( props ) => {
-	const lastScreen = useStatsNavigation();
+	const lastScreen = useStatsNavigationHistory();
 	return <StatsSummary { ...props } lastScreen={ lastScreen } />;
 };
 

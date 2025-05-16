@@ -54,7 +54,7 @@ const getFilteredQueryParams = ( queryParams: QueryArgs ): QueryArgs => {
  * Supports reading/writing from sessionStorage and initializing from query params
  * @returns { { text: string; url: string | null } }
  */
-export const useStatsNavigation = (): { text: string; url: string | null } => {
+export const useStatsNavigationHistory = (): { text: string; url: string | null } => {
 	const [ lastScreen, setLastScreen ] = useState< {
 		lastScreen: string;
 		queryParams: QueryArgs;

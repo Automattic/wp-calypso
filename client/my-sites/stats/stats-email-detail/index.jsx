@@ -36,7 +36,7 @@ import { getEmailStat, isRequestingEmailStats } from 'calypso/state/stats/emails
 import { getPeriodWithFallback, getCharts } from 'calypso/state/stats/emails/utils';
 import { getPostStat, isRequestingPostStats } from 'calypso/state/stats/posts/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import { useStatsNavigation } from '../hooks/use-stats-navigation';
+import { useStatsNavigationHistory } from '../hooks/use-stats-navigation';
 import DatePicker from '../stats-date-picker';
 import StatsDetailsNavigation from '../stats-details-navigation';
 import ChartTabs from '../stats-email-chart-tabs';
@@ -439,7 +439,7 @@ class StatsEmailDetail extends Component {
 }
 
 const StatsEmailDetailWrapper = ( props ) => {
-	const lastScreen = useStatsNavigation();
+	const lastScreen = useStatsNavigationHistory();
 	return <StatsEmailDetail { ...props } lastScreen={ lastScreen } />;
 };
 
