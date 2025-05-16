@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { useSearch } from '@tanstack/react-router';
-import { Button } from '@wordpress/components';
+import { Button, __experimentalHStack as HStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
 import { performanceProfilerPagesQuery, siteQuery } from '../../app/queries';
@@ -25,7 +25,11 @@ const getPageFromID = ( pages: PerformanceProfilerPage[] | undefined, pageId: st
 };
 
 function SitePerformanceContent( { site }: { site: Site } ) {
-	const { data: pagesData, refetch: refetchPages } = useQuery( {
+	const {
+		data: pagesData,
+		refetch: refetchPages,
+		isLoading: isLoadingPages,
+	} = useQuery( {
 		...performanceProfilerPagesQuery( site.ID, '' ),
 		refetchOnWindowFocus: false,
 	} );
@@ -63,28 +67,30 @@ function SitePerformanceContent( { site }: { site: Site } ) {
 		return null;
 	}
 
+	const isLoading =
+		isLoadingPages || isFetchingReport || isRunningDesktopReport || isRunningMobileReport;
+
 	return (
 		<PageLayout>
-			<PageHeader
-				title={ __( 'Performance' ) }
-				description={
-					<Button isPrimary onClick={ handleReportRefetch }>
-						Retest
-					</Button>
-				}
-				actions={
-					<>
-						<PageSelectorWrapper
-							siteUrl={ site.URL }
-							currentPage={ currentPage }
-							pages={ pagesData }
-							onChange={ handlePageChange }
-							disabled={ isFetchingReport || isRunningDesktopReport || isRunningMobileReport }
-						/>
-						<DeviceTabControls value={ deviceToggle } onChange={ setDeviceToggle } />
-					</>
-				}
-			/>
+			<PageHeader title={ __( 'Performance' ) } />
+			<HStack spacing={ 2 } alignment="flex-end" justify="flex-start" expanded={ false }>
+				<PageSelectorWrapper
+					isLoading={ isLoading }
+					siteUrl={ site.URL }
+					currentPage={ currentPage }
+					pages={ pagesData }
+					onChange={ handlePageChange }
+				/>
+				<DeviceTabControls value={ deviceToggle } onChange={ setDeviceToggle } />
+				<Button
+					variant="secondary"
+					onClick={ handleReportRefetch }
+					disabled={ isLoading }
+					__next40pxDefaultSize
+				>
+					{ __( 'Retest' ) }
+				</Button>
+			</HStack>
 			<Report
 				currentPage={ currentPage }
 				report={ deviceToggle === 'desktop' ? desktopReport : mobileReport }

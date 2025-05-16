@@ -67,3 +67,8 @@
 	padding-left: 0;
 	padding-right: 0;
 }
+
+.performance-page-selector li.is-selected .components-text {
+	// TODO Use the correct color variables for displaying white text on a blue background
+	filter: invert(1) brightness(1.6);
+}

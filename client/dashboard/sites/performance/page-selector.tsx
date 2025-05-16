@@ -1,8 +1,10 @@
-import { SearchableDropdown } from '@automattic/components';
-import { Icon } from '@wordpress/components';
+import {
+	ComboboxControl,
+	__experimentalVStack as VStack,
+	__experimentalText as Text,
+} from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { search } from '@wordpress/icons';
-import { useMemo, useState, ComponentProps } from 'react';
+import { useMemo } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { profilerVersion } from 'calypso/performance-profiler/utils/profiler-version';
 import type { PerformanceProfilerPage } from '../../data';
@@ -16,30 +18,13 @@ interface PageOption {
 	wpcom_performance_report_hash: string;
 }
 
-interface PageSelectorProps {
-	siteId: string | undefined;
-	siteUrl: string | undefined;
-	pages: PageOption[];
-	currentPage: PageOption | undefined;
-	currentPageUserSelection: PageOption | undefined;
-	setCurrentPageUserSelection: ( page: PageOption | undefined ) => void;
-	disableControls: boolean;
-	statType: string;
-	statsQuery: Record< string, unknown >;
-}
-
-interface PageSelectorProps extends ComponentProps< typeof SearchableDropdown > {
-	disabled: boolean;
-	onBlur?: ( event: React.FocusEvent< HTMLDivElement > ) => void;
-}
-
 /**
  * Map a PerformanceProfilerPage to a PageReport
  * @param page - The PerformanceProfilerPage to map
  * @param siteUrl - The URL of the site
  * @returns The PageReport
  */
-const mapPageToPageOption = ( page: PerformanceProfilerPage, siteUrl: string ): PageOption => {
+function mapPageToPageOption( page: PerformanceProfilerPage, siteUrl: string ): PageOption {
 	let path = page.link.replace( siteUrl ?? '', '' );
 	path = path.length > 1 ? path.replace( /\/$/, '' ) : path;
 
@@ -51,66 +36,23 @@ const mapPageToPageOption = ( page: PerformanceProfilerPage, siteUrl: string ): 
 		disabled: false,
 		wpcom_performance_report_hash: page.wpcom_performance_report_hash,
 	};
-};
-
-export const PageSelector = ( { onBlur, ...props }: PageSelectorProps ) => {
-	return (
-		<div className="site-performance__page-selector">
-			<div css={ { alignSelf: 'stretch', display: 'flex', alignItems: 'center' } }>
-				{ __( 'Page' ) }
-			</div>
-			<div className="site-performance__page-selector-container">
-				<div onBlur={ onBlur } tabIndex={ -1 }>
-					<SearchableDropdown
-						{ ...props }
-						className="site-performance__page-selector-drowdown"
-						__experimentalRenderItem={ ( { item } ) => {
-							if ( item.value === '-1' ) {
-								return (
-									<div className="message">
-										{ __( 'Performance testing is available for the 20 most popular pages.' ) }
-									</div>
-								);
-							}
-							if ( item.value === '-2' ) {
-								return <div className="message">{ __( 'No pages found' ) }</div>;
-							}
-							return (
-								<div className="site-performance__page-selector-item" aria-label={ item.label }>
-									<span>{ item.label }</span>
-									<span className="subtitle">{ item.path }</span>
-								</div>
-							);
-						} }
-					/>
-				</div>
-				<div className="site-performance__page-selector-search-icon">
-					<Icon
-						icon={ search }
-						size={ 24 }
-						style={ { fill: props.disabled ? 'var(--studio-gray-20)' : 'var(--color-neutral-50)' } }
-					/>
-				</div>
-			</div>
-		</div>
-	);
-};
+}
 
 interface PageSelectorWrapperProps {
 	siteUrl: string;
 	pages: PerformanceProfilerPage[];
 	currentPage: PerformanceProfilerPage | undefined;
-	disabled: boolean;
 	onChange: ( page_id: string | null | undefined ) => void;
+	isLoading: boolean;
 }
 
-export const PageSelectorWrapper: React.FC< PageSelectorWrapperProps > = ( {
+export function PageSelectorWrapper( {
 	siteUrl,
 	pages,
 	currentPage,
 	onChange,
-	disabled,
-} ) => {
+	isLoading,
+}: PageSelectorWrapperProps ) {
 	const currentPageOption: PageOption | undefined = currentPage
 		? mapPageToPageOption( currentPage, siteUrl )
 		: undefined;
@@ -132,42 +74,14 @@ export const PageSelectorWrapper: React.FC< PageSelectorWrapperProps > = ( {
 		return [ ...options, { label: '', value: '-1', path: '', disabled: true } ];
 	}, [ pages, siteUrl, currentPageOption ] );
 
-	// This forces a no pages found message in the dropdown
-	const [ noPagesFound, setNoPagesFound ] = useState( { query: '', found: true } );
-
-	// Replace the options array with a no pages found message if no pages are found.
-	const options = ! noPagesFound.found
-		? [
-				{
-					label: noPagesFound.query,
-					value: '-2',
-					disabled: true,
-				},
-		  ]
-		: pageOptions;
-
 	return (
-		<PageSelector
-			onFilterValueChange={ ( value ) => {
-				const filter = pageOptions.find( ( option ) =>
-					option.label.toLowerCase().startsWith( value.toLowerCase() )
-				);
-
-				if ( filter ) {
-					setNoPagesFound( { query: '', found: true } );
-					return;
-				}
-				setNoPagesFound( { query: value, found: false } );
-			} }
+		<ComboboxControl
+			className="performance-page-selector"
+			label={ __( 'Page' ) }
 			allowReset={ false }
-			onBlur={ () => {
-				// if no pages found, reset so that the previous selected page is shown
-				if ( ! noPagesFound.found ) {
-					setNoPagesFound( { query: '', found: true } );
-				}
-			} }
-			options={ options }
-			disabled={ disabled }
+			options={ pageOptions }
+			isLoading={ isLoading }
+			value={ currentPageOption?.value }
 			onChange={ ( page_id ) => {
 				recordTracksEvent( 'calypso_performance_profiler_page_selector_change', {
 					is_home: page_id === '0',
@@ -184,7 +98,24 @@ export const PageSelectorWrapper: React.FC< PageSelectorWrapperProps > = ( {
 				window.history.replaceState( {}, '', url.toString() );
 				onChange( page_id );
 			} }
-			value={ currentPageOption?.value }
+			css={ { maxWidth: 300, minWidth: 300 } }
+			__next40pxDefaultSize
+			__nextHasNoMarginBottom
+			__experimentalRenderItem={ ( { item } ) => {
+				if ( item.value === '-1' ) {
+					return (
+						<Text variant="muted">
+							{ __( 'Performance testing is available for the 20 most popular pages.' ) }
+						</Text>
+					);
+				}
+				return (
+					<VStack spacing="0">
+						<Text>{ item.label }</Text>
+						<Text variant="muted">{ item.path }</Text>
+					</VStack>
+				);
+			} }
 		/>
 	);
-};
+}

@@ -9,9 +9,10 @@ export type ToggleType = 'mobile' | 'desktop';
 type DeviceToggleProps = {
 	value: ToggleType;
 	onChange: ( value: ToggleType ) => void;
+	disabled?: boolean;
 };
 
-export default function DeviceToggle( { value, onChange }: DeviceToggleProps ) {
+export default function DeviceToggle( { value, onChange, disabled }: DeviceToggleProps ) {
 	const options: { value: ToggleType; label: string }[] = [
 		{
 			value: 'mobile',
@@ -28,7 +29,7 @@ export default function DeviceToggle( { value, onChange }: DeviceToggleProps ) {
 			label={ __( 'Device' ) }
 			value={ value }
 			isBlock
-			hideLabelFromVision
+			disabled={ disabled }
 			__next40pxDefaultSize
 			__nextHasNoMarginBottom
 			onChange={ ( value ) => onChange( value as ToggleType ) }
