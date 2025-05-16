@@ -661,7 +661,12 @@ export default function CheckoutMainContent( {
 	);
 
 	const checkoutMainContent = (
-		<WPCheckoutMainContent className="checkout-main-content">
+		<WPCheckoutMainContent
+			className="checkout-main-content"
+			isStreamlinedPrice={ isStreamlinedPriceCheckoutTreatment(
+				streamlinedPriceExperimentAssignment
+			) }
+		>
 			<CheckoutOrderBanner />
 			{ isStepContainerV2 ? (
 				<Step.Heading
@@ -974,31 +979,6 @@ const StepContainerV2CheckoutFixer = styled.div< {
 		margin-inline: 0;
 		max-width: 100%;
 	}
-
-	${ ( props ) =>
-		props.isStreamlinedPrice &&
-		css`
-			.order-review-line-items .checkout-line-item__remove-product {
-				font-size: 14px;
-			}
-			.form-fieldset.contact-details-form-fields .form__hidden-input a,
-			.checkout__content .wp-checkout-order-review__show-coupon-field-button {
-				font-weight: 500;
-				text-decoration: none;
-				color: ${ props.theme.colors.textColorDark };
-				font-size: 14px;
-			}
-			.form-fieldset.contact-details-form-fields .contact-details-form-fields__row,
-			.form-fieldset.contact-details-form-fields .custom-form-fieldsets__address-fields {
-				gap: 10px;
-			}
-			.form-fieldset.contact-details-form-fields .contact-details-form-fields__field {
-				margin-bottom: 10px;
-			}
-			.checkout-terms-and-checkboxes a {
-				color: ${ props.theme.colors.textColorDark };
-			}
-		` }
 
 	${ ( props ) =>
 		! props.isLargeViewport &&
@@ -1566,7 +1546,9 @@ const WPCheckoutCompletedWrapper = styled.div`
 	}
 `;
 
-const WPCheckoutMainContent = styled.div`
+const WPCheckoutMainContent = styled.div< {
+	isStreamlinedPrice?: boolean;
+} >`
 	grid-area: main-content;
 	margin-top: 50px;
 	min-height: 100vh;
@@ -1585,6 +1567,30 @@ const WPCheckoutMainContent = styled.div`
 			padding: 0 24px 0 64px;
 		}
 	}
+	${ ( props ) =>
+		props.isStreamlinedPrice &&
+		css`
+			.checkout-line-item .checkout-line-item__remove-product {
+				font-size: 14px;
+			}
+			.form-fieldset.contact-details-form-fields .form__hidden-input a,
+			.checkout__content .wp-checkout-order-review__show-coupon-field-button {
+				font-weight: 500;
+				text-decoration: none;
+				color: ${ props.theme.colors.textColorDark };
+				font-size: 14px;
+			}
+			.form-fieldset.contact-details-form-fields .contact-details-form-fields__row,
+			.form-fieldset.contact-details-form-fields .custom-form-fieldsets__address-fields {
+				gap: 10px;
+			}
+			.form-fieldset.contact-details-form-fields .contact-details-form-fields__field {
+				margin-bottom: 10px;
+			}
+			.checkout-terms-and-checkboxes a {
+				color: ${ props.theme.colors.textColorDark };
+			}
+		` }
 `;
 
 const WPCheckoutCompletedMainContent = styled.div`
