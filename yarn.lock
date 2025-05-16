@@ -14513,7 +14513,7 @@ __metadata:
     supertest: "npm:^7.1.0"
     textarea-caret: "npm:^3.1.0"
     to-title-case: "npm:^1.0.0"
-    tracekit: "npm:^0.4.7"
+    tracekit: "npm:^0.4.5"
     twemoji: "npm:^12.1.6"
     ua-parser-js: "npm:^0.7.22"
     uplot: "npm:^1.6.32"
@@ -34622,10 +34622,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tracekit@npm:^0.4.7":
-  version: 0.4.7
-  resolution: "tracekit@npm:0.4.7"
-  checksum: ce912e1054ac5c72b519f979ea0be57cf1bbce206165b7f6a34038cf1c172ec8a5217e5fbaa86d96cc06e191734e3ce7a1ca24a896d6dd20378bdca11e7f01f2
+"tracekit@npm:^0.4.5":
+  version: 0.4.5
+  resolution: "tracekit@npm:0.4.5"
+  checksum: 4c9bd11d34a517d1cf10c1fc5e1a2af7c350271e814a1227b86038cdc11a119f0bad10b2b134edb0c3349bc73570eff95a07caf90184028a191d070f9aad3266
   languageName: node
   linkType: hard
 
