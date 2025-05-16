@@ -46,12 +46,28 @@ const MODIFIER_CLASSNAMES = {
 	preview_end: `${ BASE_CLASSNAME }__day--preview-end`,
 };
 
+function isLocaleRTL( localeCode: string ) {
+	return [
+		'ar', // Arabic
+		'he', // Hebrew
+		'fa', // Persian (Farsi)
+		'ur', // Urdu
+		'ps', // Pashto
+		'syr', // Syriac
+		'dv', // Divehi
+		'ku', // Kurdish (Sorani)
+		'yi', // Yiddish
+	].includes( localeCode.split( '-' )[ 0 ].toLowerCase() );
+}
+
 const useCommonProps = ( {
 	numberOfMonths,
+	dir,
 	locale,
 	timeZone,
 }: {
 	numberOfMonths: number;
+	dir: DateCalendarProps[ 'dir' ];
 	locale: DateCalendarProps[ 'locale' ];
 	timeZone: DateCalendarProps[ 'timeZone' ];
 } ) => {
@@ -78,6 +94,7 @@ const useCommonProps = ( {
 			classNames: CLASSNAMES,
 			// Localization
 			locale,
+			dir: dir ?? isLocaleRTL( localeCode ) ? 'rtl' : 'ltr',
 			formatters: {
 				formatWeekdayName: ( date: Date ) => {
 					// ie. M, T, W, T, F, S, S
@@ -99,13 +116,14 @@ const useCommonProps = ( {
 			// a11y
 			role: 'application',
 		} as const;
-	}, [ numberOfMonths, locale, timeZone ] );
+	}, [ numberOfMonths, locale, timeZone, dir ] );
 
 	return commonProps;
 };
 
 export const DateCalendar = ( {
 	[ 'aria-label' ]: ariaLabel = 'Date calendar',
+	dir,
 	locale,
 	numberOfMonths = 1,
 	defaultSelected,
@@ -114,7 +132,7 @@ export const DateCalendar = ( {
 	timeZone,
 	...props
 }: DateCalendarProps ) => {
-	const commonProps = useCommonProps( { numberOfMonths, locale, timeZone } );
+	const commonProps = useCommonProps( { numberOfMonths, locale, timeZone, dir } );
 
 	const [ selected, setSelected ] = useControlledValue< Date | undefined >( {
 		defaultValue: defaultSelected,
@@ -137,6 +155,7 @@ export const DateCalendar = ( {
 export const DateRangeCalendar = ( {
 	[ 'aria-label' ]: ariaLabel = 'Date range calendar',
 	locale,
+	dir,
 	numberOfMonths = 1,
 	defaultSelected,
 	selected: selectedProp,
@@ -145,7 +164,7 @@ export const DateRangeCalendar = ( {
 	excludeDisabled,
 	...props
 }: DateRangeCalendarProps ) => {
-	const commonProps = useCommonProps( { numberOfMonths, locale, timeZone } );
+	const commonProps = useCommonProps( { numberOfMonths, locale, timeZone, dir } );
 
 	const [ selected, setSelected ] = useControlledValue< DateRange | undefined >( {
 		defaultValue: defaultSelected,

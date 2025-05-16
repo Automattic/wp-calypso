@@ -252,19 +252,8 @@ const weekdayFormatter = ( date: Date, locale: string ) =>
 	} ).format( date );
 
 export const Localized: Story = {
-	render: function LocalizedDateCalendar( args ) {
-		return (
-			<>
-				<DateRangeCalendar { ...args } />;
-				<p>
-					Make sure to set both the <code>locale</code> and the <code>dir</code> prop accordingly.
-				</p>
-			</>
-		);
-	},
 	args: {
 		locale: it,
-		dir: 'ltr',
 		labels: {
 			labelNav: () => 'Naviga tra i mesi',
 			labelGrid: ( date ) => fullMonthYearFormatter( date, it.code ),
