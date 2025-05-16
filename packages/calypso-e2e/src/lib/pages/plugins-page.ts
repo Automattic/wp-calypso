@@ -30,7 +30,7 @@ const selectors = {
 	searchResultTitle: ( text: string ) => `:text('plugins for "${ text }"')`,
 
 	// Plugin view
-	installButton: 'button:text("Install and activate")',
+	installButton: '.plugin-details-cta__install-button',
 	deactivateButton: 'button:text("Deactivate")',
 	activateButton: 'button:text("Activate")',
 	openRemoveMenuButton: '.plugin-details-cta__manage-plugin-menu button[title="Toggle menu"]',
@@ -285,7 +285,7 @@ export class PluginsPage {
 	 * modal that appears prompting the user to purchase a plan upgrade.
 	 */
 	async clickInstallPlugin(): Promise< void > {
-		const button = await this.page.locator( '.plugin-details-cta__install-button' );
+		const button = await this.page.locator( selectors.installButton );
 
 		const text = await button.innerText();
 		if ( /^(Purchase|Upgrade) and activate$/.test( text ) ) {
