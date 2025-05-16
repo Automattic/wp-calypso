@@ -1,8 +1,12 @@
 import { useMutation } from '@tanstack/react-query';
-import { Button } from '@wordpress/components';
+import {
+	__experimentalHeading as Heading,
+	Button,
+} from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { restoreSitePlanSoftwareMutation } from '../../app/queries';
+import { ActionList } from '../../components/action-list';
 import { DotcomFeatures } from '../../data/constants';
 import type { Site } from '../../data/types';
 
@@ -59,11 +63,26 @@ const useCopySite = ( { capabilities, is_wpcom_staging_site, plan, slug }: Site 
 	};
 };
 
-const useActions = ( { site }: { site: Site } ) => {
+export default function SiteActions( { site }: { site: Site } ) {
 	const restorePlanSoftware = useRestorePlanSoftware( site );
 	const copySite = useCopySite( site );
+	const actions = [
+		restorePlanSoftware,
+		copySite,
+	].filter( Boolean );
 
-	return [ restorePlanSoftware, copySite ].filter( Boolean );
-};
+	if ( ! actions.length ) {
+		return null;
+	}
 
-export default useActions;
+	return (
+		<>
+			<Heading>{ __( 'Actions' ) }</Heading>
+			<ActionList>
+				{ actions.map( ( action, i ) => (
+					<ActionList.ActionItem key={ i } { ...action } />
+				) ) }
+			</ActionList>
+		</>
+	);
+}

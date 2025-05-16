@@ -6,19 +6,15 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { siteQuery, siteSettingsQuery } from '../../app/queries';
-import { ActionList } from '../../components/action-list';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import SiteVisibilitySettingsSummary from '../settings-site-visibility/summary';
 import SubscriptionGiftingSettingsSummary from '../settings-subscription-gifting/summary';
-import useActions from './use-actions';
+import SiteActions from './site-actions';
 
 export default function SiteSettings( { siteSlug }: { siteSlug: string } ) {
 	const { data: siteData } = useQuery( siteQuery( siteSlug ) );
 	const { data: settings } = useQuery( siteSettingsQuery( siteSlug ) );
-	const actions = useActions( {
-		site: siteData.site,
-	} );
 
 	if ( ! siteData || ! settings ) {
 		return null;
@@ -39,16 +35,7 @@ export default function SiteSettings( { siteSlug }: { siteSlug: string } ) {
 					/>
 				</VStack>
 			</Card>
-			{ !! actions.length && (
-				<>
-					<Heading>{ __( 'Actions' ) }</Heading>
-					<ActionList>
-						{ actions.map( ( action, i ) => (
-							<ActionList.ActionItem key={ i } { ...action } />
-						) ) }
-					</ActionList>
-				</>
-			) }
+			<SiteActions site={ site } />
 		</PageLayout>
 	);
 }
