@@ -4,8 +4,10 @@ import { LocalizeProps } from 'i18n-calypso';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { StoredPaymentMethod } from 'calypso/lib/checkout/payment-methods';
 import { getDisplayName, isRenewing } from 'calypso/lib/purchases';
+import { MembershipSubscription } from 'calypso/lib/purchases/types';
 import { useSelector } from 'calypso/state';
 import { getSite } from 'calypso/state/sites/selectors';
+import { Icon, MembershipType, MembershipTerms } from '../membership-item';
 import {
 	PurchaseItemSiteIcon,
 	PurchaseItemProduct,
@@ -14,8 +16,6 @@ import {
 	BackupPaymentMethodNotice,
 } from '../purchase-item';
 import OwnerInfo from '../purchase-item/owner-info';
-import { MembershipSubscription } from 'calypso/lib/purchases/types';
-import { Icon, MembershipType, MembershipTerms } from '../membership-item';
 
 function PurchaseItemRowProduct( props: {
 	purchase: Purchases.Purchase;

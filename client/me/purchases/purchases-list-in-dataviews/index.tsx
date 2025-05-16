@@ -101,7 +101,6 @@ class PurchasesListDataView extends Component<
 	render() {
 		const { purchases, sites, translate, subscriptions } = this.props;
 		const commonEventProps = { context: 'me' };
-		s;
 		let content;
 
 		if (
