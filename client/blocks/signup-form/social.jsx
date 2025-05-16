@@ -32,9 +32,9 @@ const SocialSignupForm = ( {
 } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const [ isLoading, experimentAssignment ] = useSocialLoginExperiment();
-	const isTreatment = experimentAssignment?.variationName === 'treatment';
-	const shouldShowApple = ! isLoading && ! isTreatment;
+	const [ , experimentAssignment ] = useSocialLoginExperiment();
+	const isTreatment = experimentAssignment?.variationName !== 'control';
+	const shouldShowApple = ! isTreatment;
 
 	const currentQuery = useSelector( getCurrentQueryArguments );
 	const oauth2Client = useSelector( getCurrentOAuth2Client );
