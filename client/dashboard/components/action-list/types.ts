@@ -16,8 +16,7 @@ export interface ActionItemProps {
 	 */
 	decoration?: React.ReactNode;
 	/**
-	 * A group of contextual controls, such as buttons, dropdowns,
-	 * or a search input, relevant to the action.
+	 * Renders a button that invokes the related action.
 	 */
 	actions: React.ReactNode;
 }
