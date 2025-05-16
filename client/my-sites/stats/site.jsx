@@ -73,6 +73,7 @@ import StatsModuleUTM, { StatsModuleUTMOverlay } from './features/modules/stats-
 import StatsModuleVideos from './features/modules/stats-videos';
 import StatsFeedbackPresentor from './feedback';
 import { shouldGateStats } from './hooks/use-should-gate-stats';
+import { recordCurrentScreen } from './hooks/use-stats-navigation';
 import MiniCarousel from './mini-carousel';
 import { StatsGlobalValuesContext } from './pages/providers/global-provider';
 import StatsModuleListing from './pages/shared/stats-module-listing';
@@ -913,6 +914,11 @@ const StatsSite = ( props ) => {
 			sessionStorage.setItem( 'jp-stats-last-tab', 'traffic' ),
 		[]
 	); // Track the last viewed tab.
+
+	useEffect( () => {
+		const query = props.context.query;
+		recordCurrentScreen( 'traffic', query );
+	}, [ props.period, props.context.query ] );
 
 	return (
 		<Main fullWidthLayout ariaLabel={ STATS_PRODUCT_NAME }>

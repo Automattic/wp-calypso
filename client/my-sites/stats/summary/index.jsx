@@ -16,6 +16,7 @@ import StatsModuleDownloads from 'calypso/my-sites/stats/features/modules/stats-
 import StatsModuleReferrers from 'calypso/my-sites/stats/features/modules/stats-referrers';
 import StatsModuleSearch from 'calypso/my-sites/stats/features/modules/stats-search';
 import StatsModuleTopPosts from 'calypso/my-sites/stats/features/modules/stats-top-posts';
+import { recordCurrentScreen } from 'calypso/my-sites/stats/hooks/use-stats-navigation';
 import getMediaItem from 'calypso/state/selectors/get-media-item';
 import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -43,6 +44,22 @@ const StatsStrings = statsStringsFactory();
 class StatsSummary extends Component {
 	componentDidMount() {
 		window.scrollTo( 0, 0 );
+
+		const { context } = this.props;
+		const { module } = context.params;
+		const { query } = context;
+
+		recordCurrentScreen( module, query );
+	}
+
+	componentDidUpdate( prevProps ) {
+		if ( prevProps.statsQueryOptions !== this.props.statsQueryOptions ) {
+			const { context } = this.props;
+			const { module } = context.params;
+			const { query } = context;
+
+			recordCurrentScreen( module, query );
+		}
 	}
 
 	renderSummaryHeader( path, statType, hideNavigation, query ) {
