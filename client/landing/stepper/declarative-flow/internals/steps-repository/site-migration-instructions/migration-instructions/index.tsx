@@ -7,12 +7,14 @@ interface Props {
 	progress: ReactNode;
 	withPreview?: boolean;
 	children: ReactNode;
+	withTitle?: boolean;
 }
 
 export const MigrationInstructions: FC< Props > = ( {
 	progress,
 	withPreview = false,
 	children,
+	withTitle = true,
 } ) => {
 	const translate = useTranslate();
 
@@ -25,9 +27,11 @@ export const MigrationInstructions: FC< Props > = ( {
 			<div className="migration-instructions__progress">{ progress }</div>
 
 			<div className="migration-instructions__content">
-				<h1 className="migration-instructions__title">
-					{ translate( 'Let’s migrate your site' ) }
-				</h1>
+				{ withTitle && (
+					<h1 className="migration-instructions__title">
+						{ translate( 'Let’s migrate your site' ) }
+					</h1>
+				) }
 				<p className="migration-instructions__description">
 					{ translate( 'Follow these steps to get started:' ) }
 				</p>

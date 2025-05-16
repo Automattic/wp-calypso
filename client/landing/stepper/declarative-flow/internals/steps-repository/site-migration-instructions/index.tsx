@@ -1,8 +1,11 @@
 import { captureException } from '@automattic/calypso-sentry';
 import { CircularProgressBar } from '@automattic/components';
 import { LaunchpadContainer } from '@automattic/launchpad';
-import { StepContainer } from '@automattic/onboarding';
+import { Step, StepContainer } from '@automattic/onboarding';
+import { FixedColumnOnTheLeftLayout } from '@automattic/onboarding/src/step-container-v2';
+import { translate } from 'i18n-calypso';
 import { useCallback, useEffect } from 'react';
+import DocumentHead from 'calypso/components/data/document-head';
 import { MigrationStatus } from 'calypso/data/site-migration/landing/types';
 import { useUpdateMigrationStatus } from 'calypso/data/site-migration/landing/use-update-migration-status';
 import { useMigrationStickerMutation } from 'calypso/data/site-migration/use-migration-sticker';
@@ -14,6 +17,7 @@ import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useDispatch } from 'calypso/state';
 import { resetSite } from 'calypso/state/sites/actions';
+import { shouldUseStepContainerV2MigrationFlow } from '../../../helpers/should-use-step-container-v2';
 import { HostingBadge } from './hosting-badge';
 import { MigrationInstructions } from './migration-instructions';
 import { ProvisionStatus } from './provision-status';
@@ -21,8 +25,8 @@ import { SitePreview } from './site-preview';
 import { Steps } from './steps';
 import { useSteps } from './steps/use-steps';
 import { SupportNudge } from './support-nudge';
-import type { Step } from '../../types';
 import './style.scss';
+import type { Step as StepType } from '../../types';
 
 interface PreparationEventsHookOptions {
 	migrationKeyStatus: string;
@@ -79,7 +83,7 @@ const usePreparationEventsAndLogs = ( {
 	}, [ flow, preparationError, siteId ] );
 };
 
-const SiteMigrationInstructions: Step< {
+const SiteMigrationInstructions: StepType< {
 	submits: {
 		destination?: 'migration-started';
 		how?: ( typeof HOW_TO_MIGRATE_OPTIONS )[ 'DO_IT_FOR_ME' ];
@@ -90,6 +94,7 @@ const SiteMigrationInstructions: Step< {
 	const queryParams = useQuery();
 	const fromUrl = queryParams.get( 'from' ) ?? '';
 	const dispatch = useDispatch();
+	const useContainerV2 = shouldUseStepContainerV2MigrationFlow( flow );
 
 	const { mutate: updateMigrationStatus } = useUpdateMigrationStatus( siteId );
 
@@ -175,6 +180,7 @@ const SiteMigrationInstructions: Step< {
 	const migrationInstructions = (
 		<MigrationInstructions
 			withPreview={ withPreview }
+			withTitle={ ! useContainerV2 }
 			progress={
 				<CircularProgressBar
 					size={ 40 }
@@ -201,6 +207,26 @@ const SiteMigrationInstructions: Step< {
 			{ migrationInstructions }
 		</div>
 	);
+
+	if ( useContainerV2 ) {
+		const title = translate( 'Let’s migrate your site' );
+		return (
+			<>
+				<DocumentHead title={ title } />
+				<FixedColumnOnTheLeftLayout
+					fixedColumnWidth={ 3 }
+					topBar={
+						<Step.TopBar rightElement={ <SupportNudge onAskForHelp={ navigateToDoItForMe } /> } />
+					}
+					heading={ <FixedColumnOnTheLeftLayout.Heading text={ title } /> }
+					// className="site-migration-instructions-v2"
+				>
+					{ migrationInstructions }
+					<SitePreview />
+				</FixedColumnOnTheLeftLayout>
+			</>
+		);
+	}
 
 	return (
 		<StepContainer
