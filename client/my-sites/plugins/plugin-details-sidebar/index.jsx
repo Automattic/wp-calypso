@@ -92,9 +92,8 @@ const PluginDetailsSidebar = ( {
 					links={ [
 						{
 							href: premiumVersionLink,
-							label: translate( 'Check out the premium version' ),
+							label: translate( 'Learn more' ),
 							onClick: premiumVersionLinkOnClik,
-							openInNewTab: true,
 						},
 					] }
 					first
