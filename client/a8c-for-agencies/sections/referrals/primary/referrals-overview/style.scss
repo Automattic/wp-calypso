@@ -195,8 +195,8 @@ $data-view-border-color: #f1f1f1;
 .main.hosting-dashboard-layout-column.referrals-layout__column {
 	height: auto;
 
-	.hosting-dashboard-layout__body-wrapper {
-		margin-block-end: 150px;
+	.hosting-dashboard-layout-column__container {
+		overflow-y: scroll;
 	}
 }
 
