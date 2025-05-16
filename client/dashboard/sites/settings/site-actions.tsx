@@ -1,8 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
-import {
-	__experimentalHeading as Heading,
-	Button,
-} from '@wordpress/components';
+import { __experimentalHeading as Heading, Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { restoreSitePlanSoftwareMutation } from '../../app/queries';
@@ -13,7 +10,7 @@ import type { Site } from '../../data/types';
 const useRestorePlanSoftware = ( { slug, options }: Site ) => {
 	const mutation = useMutation( restoreSitePlanSoftwareMutation( slug ) );
 
-	if ( ! options.is_wpcom_atomic ) {
+	if ( ! options?.is_wpcom_atomic ) {
 		return null;
 	}
 
@@ -66,10 +63,7 @@ const useCopySite = ( { capabilities, is_wpcom_staging_site, plan, slug }: Site 
 export default function SiteActions( { site }: { site: Site } ) {
 	const restorePlanSoftware = useRestorePlanSoftware( site );
 	const copySite = useCopySite( site );
-	const actions = [
-		restorePlanSoftware,
-		copySite,
-	].filter( Boolean );
+	const actions = [ restorePlanSoftware, copySite ].filter( ( value ) => !! value );
 
 	if ( ! actions.length ) {
 		return null;
