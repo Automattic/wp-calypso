@@ -98,6 +98,8 @@ const NavigationHeader = React.forwardRef< HTMLElement, Props >( ( props, ref ) 
 	);
 } );
 
+NavigationHeader.displayName = 'NavigationHeader';
+
 NavigationHeader.defaultProps = {
 	id: '',
 	className: '',
