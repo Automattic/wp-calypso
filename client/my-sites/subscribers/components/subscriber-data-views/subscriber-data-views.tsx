@@ -12,8 +12,7 @@ import { getCouponsAndGiftsEnabledForSiteId } from 'calypso/state/memberships/se
 import { errorNotice } from 'calypso/state/notices/actions';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
-import { isSimpleSite } from 'calypso/state/sites/selectors';
-import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { isSimpleSite, getSiteSlug } from 'calypso/state/sites/selectors';
 import { SubscribersFilterBy, SubscribersSortBy, SubscribersStatus } from '../../constants';
 import { getSubscriptionIdFromSubscriber } from '../../helpers';
 import { useSubscriptionPlans, useUnsubscribeModal } from '../../hooks';
@@ -94,26 +93,26 @@ const defaultView: View = {
 	},
 };
 
-const SubscriberDataViews = ( {
+export default function SubscriberDataViews( {
 	siteId,
 	onGiftSubscription,
 	isUnverified,
 	subscriberId,
-}: SubscriberDataViewsProps ) => {
+}: SubscriberDataViewsProps ) {
 	const dispatch = useDispatch();
 	const isMobile = useBreakpoint( '<660px' );
 	const recordSubscriberClicked = useRecordSubscriberClicked();
 	const recordSubscriberSearch = useRecordSubscriberSearch();
 	const recordSubscriberFilter = useRecordSubscriberFilter();
 	const recordSubscriberSort = useRecordSubscriberSort();
-	const siteSlug = useSelector( getSelectedSiteSlug );
+	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
+	const isSimple = useSelector( ( state ) => isSimpleSite( state, siteId ) );
+	const isAtomic = useSelector( ( state ) => isAtomicSite( state, siteId ) );
+	const isStaging = useSelector( ( state ) => isSiteWpcomStaging( state, siteId ) );
 
 	const [ searchTerm, setSearchTerm ] = useState( '' );
 	const [ filters, setFilters ] = useState< SubscribersFilterBy[] >( [ SubscribersFilterBy.All ] );
 	const [ selectedSubscriber, setSelectedSubscriber ] = useState< Subscriber | null >( null );
-	const isSimple = useSelector( isSimpleSite );
-	const isAtomic = useSelector( ( state ) => isAtomicSite( state, siteId ) );
-	const isStaging = useSelector( ( state ) => isSiteWpcomStaging( state, siteId ) );
 
 	const couponsAndGiftsEnabled = useSelector( ( state ) =>
 		getCouponsAndGiftsEnabledForSiteId( state, siteId )
@@ -627,6 +626,4 @@ const SubscriberDataViews = ( {
 			/>
 		</div>
 	);
-};
-
-export default SubscriberDataViews;
+}
