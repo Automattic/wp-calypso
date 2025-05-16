@@ -9,7 +9,7 @@ type QueryArgs = Record< string, string | null >;
 
 const STORAGE_KEY = 'jp-stats-navigation';
 
-const localizedTabNames: { [ key: string ]: string } = {
+const localizedTabNames: { [ key: string ]: string | null } = {
 	traffic: translate( 'Traffic' ),
 	insights: translate( 'Insights' ),
 	store: translate( 'Store' ),
@@ -17,6 +17,7 @@ const localizedTabNames: { [ key: string ]: string } = {
 	subscribers: translate( 'Subscribers' ),
 	posts: translate( 'Posts & pages' ),
 	authors: translate( 'Authors' ),
+	postDetails: null, // Last item in the history, the text is not displayed anywhere but this is used to track the item in history stack.
 };
 
 const possibleBackLinks: { [ key: string ]: string | null } = {
@@ -27,6 +28,7 @@ const possibleBackLinks: { [ key: string ]: string | null } = {
 	subscribers: '/stats/subscribers/',
 	posts: '/stats/day/posts/',
 	authors: '/stats/day/authors/',
+	postDetails: null, // Last item in the history, the text is not displayed anywhere but this is used to track the item in history stack.
 };
 
 const SUPPORTED_QUERY_PARAMS: string[] = [
@@ -66,14 +68,16 @@ export const useStatsNavigation = (): { text: string; url: string | null } => {
 	useEffect( () => {
 		try {
 			const navState = JSON.parse( sessionStorage.getItem( STORAGE_KEY ) || '{}' );
+			const lastItem = Array.isArray( navState ) ? navState[ navState.length - 2 ] : {};
 
-			if ( ! navState.lastScreen ) {
+			// Make sure it's array and select last item
+			if ( lastItem.lastScreen ) {
+				setLastScreen( lastItem );
+			} else {
 				setLastScreen( {
 					lastScreen: defaultLastScreen,
 					queryParams: {},
 				} );
-			} else {
-				setLastScreen( navState );
 			}
 		} catch ( e ) {}
 	}, [] );
@@ -95,7 +99,7 @@ export const useStatsNavigation = (): { text: string; url: string | null } => {
 	}, [ lastScreen, siteSlug ] );
 
 	return {
-		text: localizedTabNames[ lastScreen.lastScreen ],
+		text: localizedTabNames[ lastScreen.lastScreen ] || '',
 		url: backLink,
 	};
 };
@@ -103,19 +107,55 @@ export const useStatsNavigation = (): { text: string; url: string | null } => {
 /**
  * Utility to record the current screen for back navigation
  * @param {string} screen - Current screen identifier
+ * @param {Object} queryParams - Query parameters for the screen
+ * @param {boolean} reset - Whether to reset the navigation history
  */
-export const recordCurrentScreen = ( screen: string, queryParams: QueryArgs = {} ): void => {
+export const recordCurrentScreen = (
+	screen: string,
+	queryParams: QueryArgs = {},
+	reset: boolean = false
+): void => {
 	try {
-		if ( ! ( screen in localizedTabNames ) ) {
+		if ( ! screen || ! ( screen in localizedTabNames ) ) {
 			return;
 		}
 
-		const navState = JSON.parse( sessionStorage.getItem( STORAGE_KEY ) || '{}' );
 		const filteredQueryParams = getFilteredQueryParams( queryParams );
+		const currentEntry = {
+			lastScreen: screen,
+			queryParams: filteredQueryParams,
+		};
 
-		sessionStorage.setItem(
-			STORAGE_KEY,
-			JSON.stringify( { ...navState, lastScreen: screen, queryParams: filteredQueryParams } )
-		);
+		// Get current navigation history array
+		let navigationHistory = reset
+			? []
+			: JSON.parse( sessionStorage.getItem( STORAGE_KEY ) || '[]' );
+
+		// Ensure navigationHistory is an array
+		if ( ! Array.isArray( navigationHistory ) ) {
+			navigationHistory = [];
+		}
+
+		// If the history already has the same screen, remove it
+		if (
+			navigationHistory.some(
+				( entry: { lastScreen: string } ) => entry.lastScreen === currentEntry.lastScreen
+			)
+		) {
+			navigationHistory = navigationHistory.filter(
+				( entry: { lastScreen: string } ) => entry.lastScreen !== currentEntry.lastScreen
+			);
+		}
+
+		navigationHistory.push( currentEntry );
+		sessionStorage.setItem( STORAGE_KEY, JSON.stringify( navigationHistory ) );
+	} catch ( e ) {}
+};
+
+export const popCurrentScreenFromHistory = (): void => {
+	try {
+		const navigationHistory = JSON.parse( sessionStorage.getItem( STORAGE_KEY ) || '[]' );
+		navigationHistory.pop();
+		sessionStorage.setItem( STORAGE_KEY, JSON.stringify( navigationHistory ) );
 	} catch ( e ) {}
 };

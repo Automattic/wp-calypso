@@ -917,7 +917,7 @@ const StatsSite = ( props ) => {
 
 	useEffect( () => {
 		const query = props.context.query;
-		recordCurrentScreen( 'traffic', query );
+		recordCurrentScreen( 'traffic', query, true );
 	}, [ props.period, props.context.query ] );
 
 	return (

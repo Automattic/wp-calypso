@@ -16,7 +16,10 @@ import StatsModuleDownloads from 'calypso/my-sites/stats/features/modules/stats-
 import StatsModuleReferrers from 'calypso/my-sites/stats/features/modules/stats-referrers';
 import StatsModuleSearch from 'calypso/my-sites/stats/features/modules/stats-search';
 import StatsModuleTopPosts from 'calypso/my-sites/stats/features/modules/stats-top-posts';
-import { recordCurrentScreen } from 'calypso/my-sites/stats/hooks/use-stats-navigation';
+import {
+	useStatsNavigation,
+	recordCurrentScreen,
+} from 'calypso/my-sites/stats/hooks/use-stats-navigation';
 import getMediaItem from 'calypso/state/selectors/get-media-item';
 import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -84,8 +87,14 @@ class StatsSummary extends Component {
 	}
 
 	render() {
-		const { translate, statsQueryOptions, siteId, supportsUTMStats, shouldGateStatsCsvDownload } =
-			this.props;
+		const {
+			translate,
+			statsQueryOptions,
+			siteId,
+			supportsUTMStats,
+			shouldGateStatsCsvDownload,
+			lastScreen,
+		} = this.props;
 		const summaryViews = [];
 		let title;
 		let summaryView;
@@ -404,8 +413,8 @@ class StatsSummary extends Component {
 							className="stats__section-header modernized-header"
 							titleProps={ { title, titleLogo: null } }
 							backLinkProps={ {
-								url: backLink,
-								text: backLabel,
+								url: lastScreen.url,
+								text: lastScreen.text,
 							} }
 							rightSection={
 								<div className="stats-module__header-nav-button">
@@ -476,6 +485,11 @@ class StatsSummary extends Component {
 	}
 }
 
+const StatsSummaryWrapper = ( props ) => {
+	const lastScreen = useStatsNavigation();
+	return <StatsSummary { ...props } lastScreen={ lastScreen } />;
+};
+
 export default connect( ( state, { context, postId } ) => {
 	const siteId = getSelectedSiteId( state );
 
@@ -488,4 +502,4 @@ export default connect( ( state, { context, postId } ) => {
 		supportsUTMStats,
 		shouldGateStatsCsvDownload: shouldGateStats( state, siteId, STATS_FEATURE_DOWNLOAD_CSV ),
 	};
-} )( localize( StatsSummary ) );
+} )( localize( StatsSummaryWrapper ) );

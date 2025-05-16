@@ -20,6 +20,10 @@ import WebPreview from 'calypso/components/web-preview';
 import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
 import PageHeader from 'calypso/my-sites/stats/components/headers/page-header';
 import Main from 'calypso/my-sites/stats/components/stats-main';
+import {
+	useStatsNavigation,
+	recordCurrentScreen,
+} from 'calypso/my-sites/stats/hooks/use-stats-navigation';
 import StatsDetailsNavigation from 'calypso/my-sites/stats/stats-details-navigation';
 import { getSitePost, getPostPreviewUrl } from 'calypso/state/posts/selectors';
 import { countPostLikes } from 'calypso/state/posts/selectors/count-post-likes';
@@ -33,7 +37,6 @@ import {
 import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
 import { getPostStat, isRequestingPostStats } from 'calypso/state/stats/posts/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { useStatsNavigation } from '../hooks/use-stats-navigation';
 import PostDetailHighlightsSection from '../post-detail-highlights-section';
 import PostDetailTableSection from '../post-detail-table-section';
 import StatsPlaceholder from '../stats-module/placeholder';
@@ -95,6 +98,16 @@ class StatsPostDetail extends Component {
 
 	componentDidMount() {
 		window.scrollTo( 0, 0 );
+
+		const { context } = this.props;
+		recordCurrentScreen( 'postDetails', context.query );
+	}
+
+	componentDidUpdate( prevProps ) {
+		if ( prevProps.statsQueryOptions !== this.props.statsQueryOptions ) {
+			const { context } = this.props;
+			recordCurrentScreen( 'postDetails', context.query );
+		}
 	}
 
 	openPreview = () => {
