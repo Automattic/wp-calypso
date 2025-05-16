@@ -67,7 +67,7 @@ export const useStatsNavigationHistory = (): { text: string; url: string | null 
 
 	useEffect( () => {
 		try {
-			const navState = JSON.parse( sessionStorage.getItem( STORAGE_KEY ) || '{}' );
+			const navState = JSON.parse( sessionStorage.getItem( STORAGE_KEY ) || '[]' );
 			const lastItem = Array.isArray( navState ) && navState.length >= 2 ? navState[ navState.length - 2 ] : {};
 
 			// Make sure it's array and select last item
