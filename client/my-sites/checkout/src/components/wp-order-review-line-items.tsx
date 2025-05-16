@@ -415,8 +415,9 @@ function LineItemWrapper( {
 	const finalShouldShowVariantSelector =
 		areThereVariants && shouldShowVariantSelector && onChangeSelection;
 
-	const monthlyProductPrice = variants.find( ( variant ) => variant.termIntervalInMonths === 1 )
-		?.priceBeforeDiscounts;
+	const firstVariant = variants[ 0 ];
+	const compareToPrice = firstVariant?.priceBeforeDiscounts / firstVariant?.termIntervalInMonths;
+
 	return (
 		<WPOrderReviewListItem key={ product.uuid }>
 			<LineItem
@@ -432,8 +433,8 @@ function LineItemWrapper( {
 				onRemoveProductCancel={ onRemoveProductCancel }
 				isAkPro500Cart={ isAkPro500Cart }
 				shouldShowBillingInterval={ ! finalShouldShowVariantSelector }
-				shouldShowMonthlyComparison={ isStreamlinedPrice }
-				monthlyProductPrice={ monthlyProductPrice }
+				shouldShowComparison={ isStreamlinedPrice }
+				compareToPrice={ compareToPrice }
 			>
 				<DropdownWrapper>
 					{ finalShouldShowVariantSelector && (

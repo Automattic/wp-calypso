@@ -87,8 +87,7 @@ export const LineItem = styled( CheckoutLineItem )< {
 
 	font-weight: ${ ( { theme } ) => theme.weights.normal };
 	color: ${ ( { theme } ) => theme.colors.textColorDark };
-	font-size: ${ ( { shouldShowMonthlyComparison } ) =>
-		shouldShowMonthlyComparison ? '20px' : '1.1em' };
+	font-size: ${ ( { shouldShowComparison } ) => ( shouldShowComparison ? '20px' : '1.1em' ) };
 
 	position: relative;
 
@@ -639,12 +638,12 @@ function ProductTier( { product }: { product: ResponseCartProduct } ) {
 
 export function LineItemSublabelAndPrice( {
 	product,
-	shouldShowMonthlyComparison,
-	monthlyProductPrice,
+	shouldShowComparison,
+	compareToPrice,
 }: {
 	product: ResponseCartProduct;
-	shouldShowMonthlyComparison?: boolean;
-	monthlyProductPrice?: number;
+	shouldShowComparison?: boolean;
+	compareToPrice?: number;
 } ) {
 	const translate = useTranslate();
 	const productSlug = product.product_slug;
@@ -801,22 +800,36 @@ export function LineItemSublabelAndPrice( {
 		);
 	}
 
-	if ( shouldShowMonthlyComparison && monthlyProductPrice ) {
-		const monthlyPrice = formatCurrency( monthlyProductPrice, product.currency, {
+	if ( shouldShowComparison && compareToPrice ) {
+		const monthlyPrice = formatCurrency( compareToPrice, product.currency, {
 			isSmallestUnit: true,
 			stripZeros: true,
 		} );
+		const showCrossedOutPrice =
+			product.item_original_subtotal_integer / ( product.months_per_bill_period ?? 1 ) !==
+			compareToPrice;
 		if ( isMonthlyProduct( product ) ) {
-			return <>{ translate( 'Billed every month' ) } </>;
+			return (
+				<>
+					<LineItemSublabelTitle>{ translate( 'Billed every month' ) }</LineItemSublabelTitle>
+					{ showCrossedOutPrice && (
+						<s>
+							{ monthlyPrice } { translate( '/month' ) }
+						</s>
+					) }
+				</>
+			);
 		}
 
 		if ( isYearly( product ) ) {
 			return (
 				<>
 					<LineItemSublabelTitle>{ translate( 'Billed every year' ) }</LineItemSublabelTitle>
-					<s>
-						{ monthlyPrice } { translate( '/month' ) }
-					</s>
+					{ showCrossedOutPrice && (
+						<s>
+							{ monthlyPrice } { translate( '/month' ) }
+						</s>
+					) }
 				</>
 			);
 		}
@@ -825,9 +838,11 @@ export function LineItemSublabelAndPrice( {
 			return (
 				<>
 					<LineItemSublabelTitle>{ translate( 'Billed every 2 years' ) }</LineItemSublabelTitle>
-					<s>
-						{ monthlyPrice } { translate( '/month' ) }
-					</s>
+					{ showCrossedOutPrice && (
+						<s>
+							{ monthlyPrice } { translate( '/month' ) }
+						</s>
+					) }
 				</>
 			);
 		}
@@ -836,9 +851,11 @@ export function LineItemSublabelAndPrice( {
 			return (
 				<>
 					<LineItemSublabelTitle>{ translate( 'Billed every 3 years' ) }</LineItemSublabelTitle>
-					<s>
-						{ monthlyPrice } { translate( '/month' ) }
-					</s>
+					{ showCrossedOutPrice && (
+						<s>
+							{ monthlyPrice } { translate( '/month' ) }
+						</s>
+					) }
 				</>
 			);
 		}
@@ -1249,8 +1266,8 @@ function CheckoutLineItem( {
 	onRemoveProductClick,
 	onRemoveProductCancel,
 	isAkPro500Cart,
-	shouldShowMonthlyComparison,
-	monthlyProductPrice,
+	shouldShowComparison,
+	compareToPrice,
 }: PropsWithChildren< {
 	product: ResponseCartProduct;
 	className?: string;
@@ -1265,8 +1282,8 @@ function CheckoutLineItem( {
 	onRemoveProductCancel?: ( label: string ) => void;
 	isAkPro500Cart?: boolean;
 	shouldShowBillingInterval?: boolean;
-	shouldShowMonthlyComparison?: boolean;
-	monthlyProductPrice?: number;
+	shouldShowComparison?: boolean;
+	compareToPrice?: number;
 } > ) {
 	const id = product.uuid;
 	const translate = useTranslate();
@@ -1317,7 +1334,7 @@ function CheckoutLineItem( {
 	} );
 
 	let pricePerMonth = 0;
-	if ( shouldShowMonthlyComparison ) {
+	if ( shouldShowComparison ) {
 		const productVariant = product.product_variants.find(
 			( variant ) => variant.product_id === product.product_id
 		);
@@ -1369,7 +1386,7 @@ function CheckoutLineItem( {
 			</LineItemTitle>
 
 			<span aria-labelledby={ itemSpanId } className="checkout-line-item__price">
-				{ shouldShowMonthlyComparison ? (
+				{ shouldShowComparison ? (
 					<>
 						{ monthlyAmountDisplay } { translate( '/month' ) }
 					</>
@@ -1392,8 +1409,8 @@ function CheckoutLineItem( {
 						<LineItemMeta>
 							<LineItemSublabelAndPrice
 								product={ product }
-								shouldShowMonthlyComparison={ shouldShowMonthlyComparison }
-								monthlyProductPrice={ monthlyProductPrice }
+								shouldShowComparison={ shouldShowComparison }
+								compareToPrice={ compareToPrice }
 							/>
 							<DomainDiscountCallout product={ product } />
 							<IntroductoryOfferCallout product={ product } />
