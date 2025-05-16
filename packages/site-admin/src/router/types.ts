@@ -141,4 +141,9 @@ export interface NavigationOptions {
 	 * Custom state object that persists across navigation.
 	 */
 	state?: Record< string, any >;
+
+	/**
+	 * If true, replaces the current history entry instead of pushing a new one.
+	 */
+	replace?: boolean;
 }
