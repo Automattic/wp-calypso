@@ -24,32 +24,42 @@ body.is-section-accept-invite {
 .invite-accept-logged-out-wrapper {
 	width: 100%;
 	margin: 0 auto;
-	@media (min-width: $break-small) {
-		width: 372px;
-		margin-top: 100px;
-	}
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+	box-sizing: border-box;
 	font-family: $font-sf-pro-text;
+
+	.invite-form-header {
+		flex: 0.5;
+		display: flex;
+		flex-direction: column;
+		justify-content: flex-end;
+		max-height: 340px;
+	}
 
 	.invite-form-header__title {
 		color: var(--studio-gray-100, #2c3338);
 		text-align: center;
 		font-family: $recoleta-font-family;
 		font-size: 2rem;
-		line-height: normal;
-		letter-spacing: 0.2px;
+		line-height: 1.26;
+		a {
+			text-decoration: none;
+		}
 	}
 
 	.invite-form-header__explanation {
 		color: var(--studio-gray-50, #2c3338);
 		text-align: center;
-		margin-top: 14px;
+		margin-top: 6px;
+		font-size: 14px;
 	}
 
 	.card.logged-out-form {
 		box-shadow: none;
 		padding: 0;
-		margin: 0;
-		max-width: 372px;
+		margin: 0 auto;
 		background: none;
 
 		button.is-primary {
@@ -84,18 +94,19 @@ body.is-section-accept-invite {
 			margin-bottom: 0;
 		}
 	}
+	.signup-form {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+	}
 
 	.signup-form__passwordless-form-wrapper {
 		.signup-form__terms-of-service-link {
-			margin: 16px 0;
+			margin: 30px 0 16px;
 			color: var(--studio-gray-50, #2c3338);
 			font-size: $font-body-small; // 14px
 			line-height: 20px;
-			a {
-				color: var(--studio-gray-80, #2c3338);
-				font-style: normal;
-				text-decoration-line: underline;
-			}
 		}
 	}
 
@@ -104,13 +115,7 @@ body.is-section-accept-invite {
 		padding: 0;
 	}
 	.logged-out-form__link-item {
-		color: var(--studio-gray-90, #2c3338);
-		font-weight: 500;
-		text-underline-offset: 5px;
-		margin-top: 32px;
-		padding: 0;
-		&:hover {
-			color: var(--studio-blue-50, #0675c4);
-		}
+		color: var(--color-link);
+		font-size: 12px;
 	}
 }
