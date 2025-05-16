@@ -1,9 +1,9 @@
 import { Card } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import clsx from 'clsx';
-import { localize } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import SocialToS from 'calypso/blocks/authentication/social/social-tos.jsx';
 import {
 	GoogleSocialButton,
@@ -17,7 +17,6 @@ import { recordTracksEvent as recordTracks } from 'calypso/state/analytics/actio
 import { errorNotice } from 'calypso/state/notices/actions';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
-import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getIsWoo from 'calypso/state/selectors/get-is-woo';
 
 const SOCIAL_LOGIN_EXPERIMENT = 'calypso_social_login_hide_apple_jetpack';
@@ -26,26 +25,32 @@ const SocialSignupForm = ( {
 	compact = false,
 	handleResponse,
 	setCurrentStep,
-	translate,
 	socialServiceResponse,
 	disableTosText,
 	flowName,
 	redirectToAfterLoginUrl,
 	isSocialFirst,
-	recordTracksEvent,
-	isDevAccount,
-	oauth2Client,
-	isWoo,
-	showErrorNotice,
+	isDevAccount: propIsDevAccount,
 } ) => {
+	const translate = useTranslate();
+	const dispatch = useDispatch();
 	const [ isLoading, experimentAssignment ] = useExperiment( SOCIAL_LOGIN_EXPERIMENT );
 	const isTreatment = experimentAssignment?.variationName === 'treatment';
 	const shouldShowApple = ! isLoading && ! isTreatment;
 
+	const currentQuery = useSelector( getCurrentQueryArguments );
+	const oauth2Client = useSelector( getCurrentOAuth2Client );
+	const isWoo = useSelector( getIsWoo );
+
+	const devAccountLandingPageRefs = [ 'hosting-lp', 'developer-lp' ];
+	const isDevAccount = propIsDevAccount ?? devAccountLandingPageRefs.includes( currentQuery?.ref );
+
 	const handleSignup = ( result ) => {
-		recordTracksEvent( 'calypso_signup_social_button_success', {
-			social_account_type: result.service,
-		} );
+		dispatch(
+			recordTracks( 'calypso_signup_social_button_success', {
+				social_account_type: result.service,
+			} )
+		);
 
 		window.sessionStorage?.removeItem( 'login_redirect_to' );
 
@@ -58,30 +63,34 @@ const SocialSignupForm = ( {
 	const trackSignupAndRememberRedirect = ( event ) => {
 		const service = event.currentTarget.getAttribute( 'data-social-service' );
 
-		recordTracksEvent( 'calypso_signup_social_button_click', {
-			social_account_type: service,
-			client_id: oauth2Client?.id,
-		} );
+		dispatch(
+			recordTracks( 'calypso_signup_social_button_click', {
+				social_account_type: service,
+				client_id: oauth2Client?.id,
+			} )
+		);
 
 		try {
 			if ( redirectToAfterLoginUrl && typeof window !== 'undefined' ) {
 				window.sessionStorage.setItem( 'signup_redirect_to', redirectToAfterLoginUrl );
 			}
 		} catch ( error ) {
-			showErrorNotice(
-				translate(
-					'Error accessing sessionStorage. {{a}}Please check your browser settings{{/a}}.',
-					{
-						components: {
-							a: (
-								<a
-									href={ localizeUrl( 'https://wordpress.com/support/browser-issues/' ) }
-									target="_blank"
-									rel="noreferrer"
-								/>
-							),
-						},
-					}
+			dispatch(
+				errorNotice(
+					translate(
+						'Error accessing sessionStorage. {{a}}Please check your browser settings{{/a}}.',
+						{
+							components: {
+								a: (
+									<a
+										href={ localizeUrl( 'https://wordpress.com/support/browser-issues/' ) }
+										target="_blank"
+										rel="noreferrer"
+									/>
+								),
+							},
+						}
+					)
 				)
 			);
 		}
@@ -131,32 +140,12 @@ SocialSignupForm.propTypes = {
 	compact: PropTypes.bool,
 	handleResponse: PropTypes.func.isRequired,
 	setCurrentStep: PropTypes.func,
-	translate: PropTypes.func.isRequired,
 	socialServiceResponse: PropTypes.object,
 	disableTosText: PropTypes.bool,
 	flowName: PropTypes.string,
 	redirectToAfterLoginUrl: PropTypes.string,
 	isSocialFirst: PropTypes.bool,
-	recordTracksEvent: PropTypes.func.isRequired,
 	isDevAccount: PropTypes.bool,
-	oauth2Client: PropTypes.object,
-	isWoo: PropTypes.bool,
-	showErrorNotice: PropTypes.func.isRequired,
 };
 
-export default connect(
-	( state ) => {
-		const query = getCurrentQueryArguments( state );
-		const devAccountLandingPageRefs = [ 'hosting-lp', 'developer-lp' ];
-		const isDevAccount = devAccountLandingPageRefs.includes( query?.ref );
-
-		return {
-			recordTracksEvent: recordTracks,
-			currentRoute: getCurrentRoute( state ),
-			oauth2Client: getCurrentOAuth2Client( state ),
-			isDevAccount: isDevAccount,
-			isWoo: getIsWoo( state ),
-		};
-	},
-	{ showErrorNotice: errorNotice }
-)( localize( SocialSignupForm ) );
+export default SocialSignupForm;
