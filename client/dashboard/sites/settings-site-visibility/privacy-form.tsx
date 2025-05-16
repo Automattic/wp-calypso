@@ -10,45 +10,6 @@ import type { SiteSettings } from '../../data/types';
 import type { Field, SimpleFormField } from '@automattic/dataviews';
 import type { UseMutationResult } from '@tanstack/react-query';
 
-interface SitePrivacy {
-	visibility: string;
-}
-
-function privacyToSettings( { visibility }: SitePrivacy ): Partial< SiteSettings > {
-	let blog_public;
-	let wpcom_public_coming_soon;
-
-	if ( visibility === 'public' ) {
-		blog_public = 1;
-		wpcom_public_coming_soon = 0;
-	} else if ( visibility === 'coming-soon' ) {
-		blog_public = 0;
-		wpcom_public_coming_soon = 1;
-	} else {
-		blog_public = -1;
-		wpcom_public_coming_soon = 0;
-	}
-
-	return { blog_public, wpcom_public_coming_soon };
-}
-
-function settingsToPrivacy( settings: Partial< SiteSettings > ): SitePrivacy {
-	const blog_public = Number( settings.blog_public );
-	const wpcom_public_coming_soon = Number( settings.wpcom_public_coming_soon );
-
-	let visibility;
-
-	if ( blog_public === 1 || ( blog_public === 0 && ! wpcom_public_coming_soon ) ) {
-		visibility = 'public';
-	} else if ( wpcom_public_coming_soon ) {
-		visibility = 'coming-soon';
-	} else {
-		visibility = 'private';
-	}
-
-	return { visibility };
-}
-
 export function PrivacyForm( {
 	settings,
 	mutation,
@@ -56,25 +17,24 @@ export function PrivacyForm( {
 	settings: SiteSettings;
 	mutation: UseMutationResult< Partial< SiteSettings >, Error, Partial< SiteSettings >, unknown >;
 } ) {
-	const initialData = settingsToPrivacy( settings );
-	const [ formData, setFormData ] = useState< SitePrivacy >( initialData );
+	const [ formData, setFormData ] = useState( settings );
 
-	const isDirty = Object.entries( initialData ).some(
-		( [ key, value ] ) => formData[ key as keyof SitePrivacy ] !== value
+	const isDirty = Object.entries( settings ).some(
+		( [ key, value ] ) => formData[ key as keyof SiteSettings ] !== value
 	);
 	const { isPending } = mutation;
 
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
-		mutation.mutate( privacyToSettings( formData ) );
+		mutation.mutate( formData );
 	};
 
 	let description;
-	if ( formData.visibility === 'coming-soon' ) {
+	if ( formData.wpcom_site_visibility === 'coming-soon' ) {
 		description = __(
 			'Your site is hidden from visitors behind a "Coming Soon" notice until it is ready for viewing.'
 		);
-	} else if ( formData.visibility === 'public' ) {
+	} else if ( formData.wpcom_site_visibility === 'public' ) {
 		description = __( 'Your site is visible to everyone.' );
 	} else {
 		description = __(
@@ -82,9 +42,9 @@ export function PrivacyForm( {
 		);
 	}
 
-	const fields: Field< SitePrivacy >[] = [
+	const fields: Field< SiteSettings >[] = [
 		{
-			id: 'visibility',
+			id: 'wpcom_site_visibility',
 			description,
 			Edit: 'toggleGroup',
 			elements: [
@@ -97,17 +57,17 @@ export function PrivacyForm( {
 
 	const form = {
 		type: 'regular' as const,
-		fields: [ { id: 'visibility', labelPosition: 'none' } as SimpleFormField ],
+		fields: [ { id: 'wpcom_site_visibility', labelPosition: 'none' } as SimpleFormField ],
 	};
 
 	return (
 		<form onSubmit={ handleSubmit }>
 			<VStack spacing={ 4 }>
-				<DataForm< SitePrivacy >
+				<DataForm< SiteSettings >
 					data={ formData }
 					fields={ fields }
 					form={ form }
-					onChange={ ( edits: Partial< SitePrivacy > ) => {
+					onChange={ ( edits: Partial< SiteSettings > ) => {
 						setFormData( ( data ) => ( { ...data, ...edits } ) );
 					} }
 				/>
