@@ -1,4 +1,4 @@
-import { Button, ExternalLink } from '@automattic/components';
+import { Button, ExternalLink } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -21,18 +21,23 @@ class SiteBlockListItem extends Component {
 		if ( ! site ) {
 			return null;
 		}
+		//eslint-disable-next-line
+		console.log( site );
 
 		return (
 			<div className="site-blocks__list-item">
-				<ExternalLink href={ site.URL }>{ site.name }</ExternalLink>
+				<ExternalLink target="_blank" href={ site.URL }>
+					{ site.name || site.title || site.slug || site.feed_URL }
+				</ExternalLink>
 				<Button
-					scary
-					borderless
+					__next40pxDefaultSize
+					isDestructive
+					variant="tertiary"
 					className="site-blocks__remove-button"
 					title={ translate( 'Unblock site' ) }
 					onClick={ this.unblockSite }
 				>
-					<span>{ translate( 'Unblock' ) }</span>
+					{ translate( 'Unblock' ) }
 				</Button>
 			</div>
 		);
