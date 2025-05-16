@@ -42,9 +42,10 @@ const PluginDetailsHeader = ( {
 	} );
 
 	// Rating can be a valid number, 0 or null, discard undefined for easier comparison
-	const rating = isMarketplaceProduct
-		? ( reviewsStats?.ratings_average * 100 ) / 5 ?? 0
-		: plugin.rating ?? null;
+	let rating = plugin.rating ?? null;
+	if ( isMarketplaceProduct ) {
+		rating = reviewsStats?.ratings_average ? ( reviewsStats.ratings_average * 100 ) / 5 : 0;
+	}
 
 	if ( isPlaceholder ) {
 		return <PluginDetailsHeaderPlaceholder />;
