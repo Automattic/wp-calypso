@@ -432,16 +432,14 @@ export function LoginHeader( {
 			new URLSearchParams( initialQuery?.redirect_to ).get( 'plugin_name' ),
 			translate
 		);
+		header = <h3>{ headerText }</h3>;
 		let subtitle = null;
 
 		if ( isLostPasswordFlow ) {
-			header = <h3>{ headerText }</h3>;
 			subtitle = translate(
 				"Your password reset confirmation is on its way to your email address – please check your junk folder if it's not in your inbox! Once you've reset your password, head back to this page to log in to your account."
 			);
-		} else if ( isTwoFactorAuthFlow ) {
-			header = <h3>{ headerText }</h3>;
-		} else {
+		} else if ( ! isTwoFactorAuthFlow ) {
 			header = <h3>{ headerText }</h3>;
 			subtitle = translate(
 				'To access all of the features and functionality %(pluginName)s, you’ll first need to connect your store to a WordPress.com account. Log in now, or {{signupLink}}create a new account{{/signupLink}}. For more information, please {{doc}}review our documentation{{/doc}}.',
@@ -461,7 +459,6 @@ export function LoginHeader( {
 				}
 			);
 		}
-		preHeader = null;
 		postHeader = <p className="login__header-subtitle">{ subtitle }</p>;
 	} else if ( isJetpack && ! isFromAutomatticForAgenciesPlugin ) {
 		preHeader = <p className="login__jetpack-pre-header">{ translate( 'Log in or sign up' ) }</p>;
