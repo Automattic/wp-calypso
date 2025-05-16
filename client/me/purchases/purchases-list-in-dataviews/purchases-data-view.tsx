@@ -73,7 +73,7 @@ export function MembershipsDataViews( props: {
 	};
 
 	const getItemId = ( item: MembershipSubscription ) => {
-		return item.ID.toString();
+		return item.ID;
 	};
 	const membershipsDataFields = useMembershipsFieldDefinitions();
 	return (
