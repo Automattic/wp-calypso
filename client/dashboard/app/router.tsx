@@ -112,7 +112,7 @@ const siteSettingsRoute = createRoute( {
 } ).lazy( () =>
 	import( '../sites/settings' ).then( ( d ) =>
 		createLazyRoute( 'site-settings' )( {
-			component: d.default,
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )
 	)
 );
@@ -125,7 +125,7 @@ const siteSettingsSiteVisibilityRoute = createRoute( {
 } ).lazy( () =>
 	import( '../sites/settings-site-visibility' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-site-visibility' )( {
-			component: d.default,
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )
 	)
 );
@@ -138,7 +138,7 @@ const siteSettingsSubscriptionGiftingRoute = createRoute( {
 } ).lazy( () =>
 	import( '../sites/settings-subscription-gifting' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-subscription-gifting' )( {
-			component: d.default,
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )
 	)
 );
