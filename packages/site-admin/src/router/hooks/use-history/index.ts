@@ -80,21 +80,16 @@ export default function useHistory(): UseNavigation {
 		const query = getQueryArgs( rawPath );
 		const path = getPath( 'http://domain.com/' + rawPath ) || '';
 
-		const performPush = () => {
-			const result = beforeNavigate ? beforeNavigate( { path, query } ) : { path, query };
+		const result = beforeNavigate ? beforeNavigate( { path, query } ) : { path, query };
 
-			return browserHistory.push(
-				{
-					search: buildQueryString( {
-						[ pathArg ]: result.path,
-						...result.query,
-					} ),
-				},
-				options.state
-			);
-		};
+		const search = buildQueryString( {
+			[ pathArg ]: result.path,
+			...result.query,
+		} );
 
-		performPush();
+		const method = options.replace ? browserHistory.replace : browserHistory.push;
+
+		return method( { search }, options.state );
 	} );
 
 	return useMemo(
