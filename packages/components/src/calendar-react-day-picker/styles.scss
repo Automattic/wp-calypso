@@ -322,7 +322,8 @@
     mask-image: url("data:image/svg+xml, %3Csvg viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg' fill='white' stroke='black' stroke-dasharray='3.9 4' stroke-dashoffset='2' stroke-width='1'%3E%3Cline x1='0' y1='0.5' x2='100' y2='0.5' /%3E%3Cline x1='0' y1='31.5' x2='100' y2='31.5' /%3E%3C/svg%3E");
   }
 
-  &__day--preview-start:not(&__range-start):not(&__range-end) &__day-button::after {
+  &__day--preview-start:not(&__range-start):not(&__range-end) &__day-button::after,
+  &[dir="rtl"] &__day--preview-end:not(&__range-start):not(&__range-end) &__day-button::after {
 	  // SVG with dashed square. The top-left and bottom-left corners are rounded,
 	  // and the right border is transparent. The dash pattern is chosen to make
 	  // sure that multiple days in a row show a seamless dashed border.
@@ -331,6 +332,7 @@
 	  /* stylelint-disable-next-line function-url-quotes */
 	  mask-image: url("data:image/svg+xml, %3Csvg viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M32,0.5 h-29.5 a2,2 0 0 0 -2,2 v27 a2,2 0 0 0 2,2 h30' fill='none' stroke='black' stroke-dasharray='3.84516' stroke-dashoffset='1.9226' stroke-width='1' /%3E%3C/svg%3E");
 	}
+	&[dir="rtl"] &__day--preview-start:not(&__range-start):not(&__range-end) &__day-button::after,
 	&__day--preview-end:not(&__range-start):not(&__range-end) &__day-button::after {
 	// SVG with dashed square. The top-right and bottom-right corners are rounded,
 	  // and the left border is transparent. The dash pattern is chosen to make
