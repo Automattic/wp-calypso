@@ -8,14 +8,6 @@ import { addQueryArgs } from '@wordpress/url';
 import type { Site } from '../../data/types';
 
 export function LaunchForm( { site }: { site: Site } ) {
-	const handleLaunch = () => {
-		window.location.href = addQueryArgs( '/start/launch-site', {
-			siteSlug: site.slug,
-			new: site.name,
-			hide_initial_query: 'yes',
-		} );
-	};
-
 	return (
 		<VStack spacing={ 4 } alignment="left">
 			<Text>
@@ -23,7 +15,15 @@ export function LaunchForm( { site }: { site: Site } ) {
 					'Your site hasn\'t been launched yet. It is hidden from visitors behind a "Coming Soon" notice until it is launched.'
 				) }
 			</Text>
-			<Button __next40pxDefaultSize variant="primary" onClick={ handleLaunch }>
+			<Button
+				__next40pxDefaultSize
+				variant="primary"
+				href={ addQueryArgs( '/start/launch-site', {
+					siteSlug: site.slug,
+					new: site.name,
+					hide_initial_query: 'yes',
+				} ) }
+			>
 				{ __( 'Launch site' ) }
 			</Button>
 		</VStack>
