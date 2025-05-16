@@ -19,7 +19,7 @@ const StepProgress = ( { steps }: Props ) => {
 			<div className="step-progress__steps">
 				<div
 					className={ clsx( 'step-progress__steps-container', {
-						'is-fifty-fifty': steps.length < 3,
+						'is-two-columns': steps.length < 3,
 					} ) }
 				>
 					{ steps.map( ( step ) => (
