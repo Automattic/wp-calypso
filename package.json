@@ -139,7 +139,7 @@
 		"tsc": "NODE_OPTIONS='--max-old-space-size=4096' tsc",
 		"typecheck": "run-p 'typecheck-*'",
 		"typecheck-client": "yarn run tsc --project client",
-		"typecheck-apps": "find apps -name tsconfig.json | xargs -n 1 -P 4 -I {} yarn tsc --noEmit --project {}",
+		"typecheck-apps": "find apps -depth 2 -name tsconfig.json | xargs -n 1 -P 4 -I {} yarn tsc --noEmit --project {}",
 		"typecheck-packages": "tsc --build packages/tsconfig.json",
 		"vscode:link": "node bin/set-up-vs-code.js",
 		"vscode:unlink": "node bin/set-up-vs-code.js --unlink",
