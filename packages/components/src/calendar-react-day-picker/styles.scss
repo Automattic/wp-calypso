@@ -28,7 +28,7 @@
   font-size: 13px;
   font-weight: 400;
 
-  * {
+  *, *::before, *::after {
     box-sizing: border-box;
     color: inherit;
     font: inherit;
@@ -37,6 +37,18 @@
   &__day {
     padding: 0;
   }
+  // Setting color on &__day instead of directly on &__day-button to make sure
+  // that the today's dot is of the correct color. The &__day-button inherits
+  // the color from &__day.
+  &__day:has(&__day-button:disabled) {
+	color: $gray-600;
+}
+&__day:has(&__day-button:hover:not(:disabled)) {
+	color: var(--color-accent)
+}
+&__day:has(&__day-button:focus-visible) {
+	color: var(--color-accent);
+	}
 
   &__day-button {
     background: none;
@@ -84,11 +96,7 @@
 
     &:disabled {
       cursor: revert;
-      color: $gray-600;
-    }
 
-    &:hover:not(:disabled) {
-      color: var(--color-accent)
     }
 
     &:focus-visible {
@@ -215,6 +223,9 @@
   }
 
   // Selected button (individual date, range start, and range end)
+  &__day--selected:not(&__range-middle):has(&__day-button, &__day-button:hover:not(:disabled)) {
+	color: $white;
+  }
   &__day--selected:not(&__range-middle) &__day-button {
     &::before {
 		// For high-contrast mode, since the background is not visible,
@@ -223,11 +234,6 @@
       background-color: $gray-900;
     }
 
-    &,
-    &:hover:not(:disabled) {
-      color: $white;
-    }
-  }
 	&:disabled::before {
 		background-color: $gray-600;
 	}
@@ -254,8 +260,6 @@
 
   // Middle of date range
   &__range-middle &__day-button {
-    color: $gray-900;
-
     &::before {
       background-color: var(--a8c-components-calendar-range-middle-background-color);
       border-radius: 0;
@@ -265,10 +269,6 @@
       border-width: 1px 0;
       border-color: transparent;
       border-style: solid;
-    }
-
-    &:hover:not(:disabled) {
-      color: var(--color-accent)
     }
   }
 
