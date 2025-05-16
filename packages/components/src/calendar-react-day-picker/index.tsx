@@ -162,6 +162,8 @@ export const DateRangeCalendar = ( {
 	onSelect,
 	timeZone,
 	excludeDisabled,
+	min,
+	max,
 	...props
 }: DateRangeCalendarProps ) => {
 	const commonProps = useCommonProps( { numberOfMonths, locale, timeZone, dir } );
@@ -176,8 +178,17 @@ export const DateRangeCalendar = ( {
 
 	// Compute the preview range for hover effect
 	const previewRange = useMemo( () => {
-		// TODO: range preview temporarily disabled when excludeDisabled is true.
-		if ( excludeDisabled || ! hoveredDate || ! selected?.from ) {
+		// Range preview is disabled when:
+		// - min, max, excludeDisabled props are used (as the logic to handle
+		//   these cases is complex and hasn't been implemented yet);
+		// - or when there is no hovered date or selected range.
+		if (
+			min !== undefined ||
+			max !== undefined ||
+			excludeDisabled ||
+			! hoveredDate ||
+			! selected?.from
+		) {
 			return;
 		}
 
@@ -205,7 +216,7 @@ export const DateRangeCalendar = ( {
 				to: hoveredDate,
 			};
 		}
-	}, [ selected, hoveredDate, excludeDisabled ] );
+	}, [ selected, hoveredDate, excludeDisabled, min, max ] );
 
 	const modifiers = useMemo( () => {
 		return {
@@ -222,6 +233,8 @@ export const DateRangeCalendar = ( {
 			{ ...commonProps }
 			mode="range"
 			excludeDisabled={ excludeDisabled }
+			min={ min }
+			max={ max }
 			selected={ selected }
 			onSelect={ setSelected }
 			onDayMouseEnter={ ( date ) => setHoveredDate( date ) }
