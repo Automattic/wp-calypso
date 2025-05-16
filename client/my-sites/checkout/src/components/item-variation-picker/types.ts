@@ -42,10 +42,8 @@ export type OnChangeItemVariant = (
 
 export type CurrentOptionProps = {
 	open: boolean;
-	detached?: boolean;
 };
 
 export type OptionProps = {
 	selected: boolean;
-	detached?: boolean;
 };

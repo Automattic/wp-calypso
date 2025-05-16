@@ -3,7 +3,7 @@ import { formatCurrency } from '@automattic/number-formatters';
 import { styled } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
-import { getItemVariantDiscount } from './util';
+import { getItemVariantDiscountPercentage } from './util';
 import type { WPCOMProductVariant } from './types';
 
 const Discount = styled.span`
@@ -69,7 +69,7 @@ export const ItemVariantRadioPrice: FunctionComponent< {
 	compareTo?: WPCOMProductVariant;
 } > = ( { variant, compareTo } ) => {
 	const translate = useTranslate();
-	const discountPercentage = getItemVariantDiscount( variant, compareTo );
+	const discountPercentage = getItemVariantDiscountPercentage( variant, compareTo );
 
 	const pricePerMonth = Math.round( variant.priceInteger / variant.termIntervalInMonths );
 

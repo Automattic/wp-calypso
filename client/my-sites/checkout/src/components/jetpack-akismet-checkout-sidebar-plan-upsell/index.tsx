@@ -14,7 +14,7 @@ import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { useGetProductVariants } from '../../hooks/product-variants';
-import { getItemVariantDiscount } from '../item-variation-picker/util';
+import { getItemVariantDiscountPercentage } from '../item-variation-picker/util';
 
 import './style.scss';
 
@@ -172,7 +172,7 @@ const useCalculatedDiscounts = () => {
 	];
 
 	return {
-		percentSavings: getItemVariantDiscount( biennial, current ),
+		percentSavings: getItemVariantDiscountPercentage( biennial, current ),
 		priceBreakdown,
 		finalBreakdown,
 	};

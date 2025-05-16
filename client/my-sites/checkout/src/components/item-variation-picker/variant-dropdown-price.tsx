@@ -1,5 +1,4 @@
 import { isMultiYearDomainProduct } from '@automattic/calypso-products';
-import colorStudio from '@automattic/color-studio';
 import { formatCurrency } from '@automattic/number-formatters';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
@@ -7,7 +6,6 @@ import { FunctionComponent } from 'react';
 import { preventWidows } from 'calypso/lib/formatting';
 import {
 	Discount,
-	DiscountAbsolute,
 	DoNotPayThis,
 	IntroPricing,
 	IntroPricingText,
@@ -16,7 +14,7 @@ import {
 	PriceTextContainer,
 	Variant,
 } from './styles';
-import { getItemVariantDiscount, getItemVariantCompareToPrice } from './util';
+import { getItemVariantDiscountPercentage, getItemVariantCompareToPrice } from './util';
 import type { WPCOMProductVariant } from './types';
 import type { ResponseCartProduct } from '@automattic/shopping-cart';
 
@@ -33,49 +31,14 @@ const DiscountPercentage: FunctionComponent< { percent: number } > = ( { percent
 	);
 };
 
-const DiscountPrice: FunctionComponent< {
-	price: string;
-	termIntervalInMonths: number;
-} > = ( { price, termIntervalInMonths } ) => {
-	const translate = useTranslate();
-
-	// Determine colors for DiscountAbsolute based on term
-	let discountColor = colorStudio.colors[ 'Green 80' ];
-	let discountBackgroundColor = colorStudio.colors[ 'Green 10' ];
-
-	if ( termIntervalInMonths === 12 ) {
-		discountColor = colorStudio.colors[ 'Green 50' ];
-		discountBackgroundColor = colorStudio.colors[ 'Green 0' ]; // As per original request for yearly
-	} else if ( termIntervalInMonths === 24 ) {
-		discountColor = colorStudio.colors[ 'Green 80' ];
-		discountBackgroundColor = colorStudio.colors[ 'Green 5' ]; // As per original request for 2-yearly (using Green 5 as "Green" is ambiguous)
-	}
-
-	return (
-		<DiscountAbsolute color={ discountColor } backgroundColor={ discountBackgroundColor }>
-			{ translate( 'Save %(price)s', { args: { price } } ) }
-		</DiscountAbsolute>
-	);
-};
-
 export const ItemVariantDropDownPrice: FunctionComponent< {
 	variant: WPCOMProductVariant;
 	compareTo?: WPCOMProductVariant;
 	product: ResponseCartProduct;
-	isStreamlinedPrice?: boolean;
-} > = ( { variant, compareTo, product, isStreamlinedPrice } ) => {
+} > = ( { variant, compareTo, product } ) => {
 	const isMobile = useMobileBreakpoint();
 	const compareToPriceForVariantTerm = getItemVariantCompareToPrice( variant, compareTo );
-	const discountPercentage = getItemVariantDiscount( variant, compareTo );
-	const discount = formatCurrency(
-		getItemVariantDiscount( variant, compareTo, 'absolute' ),
-		variant.currency,
-		{
-			stripZeros: true,
-			isSmallestUnit: true,
-		}
-	);
-
+	const discountPercentage = getItemVariantDiscountPercentage( variant, compareTo );
 	const formattedCurrentPrice = formatCurrency( variant.priceInteger, variant.currency, {
 		stripZeros: true,
 		isSmallestUnit: true,
@@ -217,61 +180,28 @@ export const ItemVariantDropDownPrice: FunctionComponent< {
 	// or if it's a Jetpack 2 or 3-year plan
 	const canDisplayDiscountPercentage = ! isIntroductoryOffer;
 
-	const label =
-		variant.termIntervalInMonths === 1 && isStreamlinedPrice
-			? translate( 'Month' )
-			: variant.variantLabel.noun;
-
 	return (
 		<Variant>
 			<Label>
-				{ label }
-				{ hasDiscount &&
-					isMobile &&
-					( isStreamlinedPrice ? (
-						<DiscountPrice
-							price={ discount }
-							termIntervalInMonths={ variant.termIntervalInMonths }
-						/>
-					) : (
-						<DiscountPercentage percent={ discountPercentage } />
-					) ) }
+				{ variant.variantLabel.noun }
+				{ hasDiscount && isMobile && <DiscountPercentage percent={ discountPercentage } /> }
 			</Label>
 			<PriceTextContainer>
-				{ hasDiscount &&
-					! isMobile &&
-					canDisplayDiscountPercentage &&
-					( isStreamlinedPrice ? (
-						<DiscountPrice
-							price={ discount }
-							termIntervalInMonths={ variant.termIntervalInMonths }
-						/>
-					) : (
-						<DiscountPercentage percent={ discountPercentage } />
-					) ) }
-				{ hasDiscount && ! isIntroductoryOffer && ! isStreamlinedPrice && (
+				{ hasDiscount && ! isMobile && canDisplayDiscountPercentage && (
+					<DiscountPercentage percent={ discountPercentage } />
+				) }
+				{ hasDiscount && ! isIntroductoryOffer && (
 					<DoNotPayThis>{ formattedCompareToPriceForVariantTerm }</DoNotPayThis>
 				) }
 
-				{ isStreamlinedPrice ? (
-					! canDisplayDiscountPercentage && (
-						<DiscountPrice
-							price={ discount }
-							termIntervalInMonths={ variant.termIntervalInMonths }
-						/>
-					)
-				) : (
-					<Price aria-hidden={ isIntroductoryOffer }>{ formattedCurrentPrice }</Price>
-				) }
-				{ ! isStreamlinedPrice && (
-					<IntroPricing>
-						{ ! isMultiYearDomain && (
-							<IntroPricingText>
-								{ isIntroductoryOffer && translatedIntroOfferDetails() }
-							</IntroPricingText>
-						) }
-					</IntroPricing>
-				) }
+				<Price aria-hidden={ isIntroductoryOffer }>{ formattedCurrentPrice }</Price>
+				<IntroPricing>
+					{ ! isMultiYearDomain && (
+						<IntroPricingText>
+							{ isIntroductoryOffer && translatedIntroOfferDetails() }
+						</IntroPricingText>
+					) }
+				</IntroPricing>
 			</PriceTextContainer>
 		</Variant>
 	);
