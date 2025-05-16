@@ -11,10 +11,11 @@ body.is-section-accept-invite {
 	}
 	background: #fdfdfd;
 	.invite-accept {
-		margin-top: 50px;
-		@media (min-width: $break-small) {
-			margin-top: 150px;
-		}
+		padding-top: 50px;
+		height: calc(100vh - 100px);
+	}
+	.invite-accept__form {
+		height: 100%;
 	}
 	.layout__content {
 		padding: 24px;
@@ -25,6 +26,7 @@ body.is-section-accept-invite {
 	margin: 0 auto;
 	@media (min-width: $break-small) {
 		width: 372px;
+		margin-top: 100px;
 	}
 	font-family: $font-sf-pro-text;
 
@@ -48,6 +50,8 @@ body.is-section-accept-invite {
 		padding: 0;
 		margin: 0;
 		max-width: 372px;
+		background: none;
+
 		button.is-primary {
 			border-radius: 2px;
 			border: 1px solid var(--studio-wordpress-blue, #3858e9);

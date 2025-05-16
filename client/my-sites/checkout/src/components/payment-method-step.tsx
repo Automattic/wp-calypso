@@ -13,7 +13,10 @@ import {
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
-import { useStreamlinedPriceExperiment } from 'calypso/my-sites/plans-features-main/hooks/use-streamlined-price-experiment';
+import {
+	useStreamlinedPriceExperiment,
+	isStreamlinedPriceCheckoutTreatment,
+} from 'calypso/my-sites/plans-features-main/hooks/use-streamlined-price-experiment';
 import CheckoutTerms from '../components/checkout-terms';
 import { WPOrderReviewSection } from './wp-order-review-line-items';
 
@@ -128,26 +131,27 @@ export default function BeforeSubmitCheckoutHeader() {
 			<CheckoutTermsWrapper>
 				<CheckoutTerms cart={ responseCart } />
 			</CheckoutTermsWrapper>
-			{ ! isStreamlinedPriceExperimentLoading && ! streamlinedPriceExperimentAssignment && (
-				<WPOrderReviewSection>
-					<NonTotalPrices>
-						<NonProductLineItem subtotal lineItem={ subTotalLineItemWithoutCoupon } />
-						{ totalAdjustments !== 0 && (
-							<NonProductLineItem subtotal lineItem={ adjustmentLineItem } />
-						) }
-						{ taxLineItems.map( ( taxLineItem ) => (
-							<NonProductLineItem key={ taxLineItem.id } tax lineItem={ taxLineItem } />
-						) ) }
-						{ creditsLineItem && responseCart.sub_total_integer > 0 && (
-							<NonProductLineItem subtotal lineItem={ creditsLineItem } />
-						) }
-					</NonTotalPrices>
-					<TotalPrice>
-						<NonProductLineItem total lineItem={ getTotalLineItemFromCart( responseCart ) } />
-					</TotalPrice>
-					{ isBillingInfoEmpty( responseCart ) && <TaxNotCalculatedLineItem /> }
-				</WPOrderReviewSection>
-			) }
+			{ ! isStreamlinedPriceExperimentLoading &&
+				! isStreamlinedPriceCheckoutTreatment( streamlinedPriceExperimentAssignment ) && (
+					<WPOrderReviewSection>
+						<NonTotalPrices>
+							<NonProductLineItem subtotal lineItem={ subTotalLineItemWithoutCoupon } />
+							{ totalAdjustments !== 0 && (
+								<NonProductLineItem subtotal lineItem={ adjustmentLineItem } />
+							) }
+							{ taxLineItems.map( ( taxLineItem ) => (
+								<NonProductLineItem key={ taxLineItem.id } tax lineItem={ taxLineItem } />
+							) ) }
+							{ creditsLineItem && responseCart.sub_total_integer > 0 && (
+								<NonProductLineItem subtotal lineItem={ creditsLineItem } />
+							) }
+						</NonTotalPrices>
+						<TotalPrice>
+							<NonProductLineItem total lineItem={ getTotalLineItemFromCart( responseCart ) } />
+						</TotalPrice>
+						{ isBillingInfoEmpty( responseCart ) && <TaxNotCalculatedLineItem /> }
+					</WPOrderReviewSection>
+				) }
 		</>
 	);
 }

@@ -25,7 +25,10 @@ import {
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
-import { useStreamlinedPriceExperiment } from 'calypso/my-sites/plans-features-main/hooks/use-streamlined-price-experiment';
+import {
+	useStreamlinedPriceExperiment,
+	isStreamlinedPriceCheckoutTreatment,
+} from 'calypso/my-sites/plans-features-main/hooks/use-streamlined-price-experiment';
 import { useSelector } from 'calypso/state';
 import { getIsOnboardingAffiliateFlow } from 'calypso/state/signup/flow/selectors';
 import useCartKey from '../../use-cart-key';
@@ -263,7 +266,7 @@ function LineItemCostOverride( {
 			</span>
 			<span className="cost-overrides-list-item__discount">
 				{ costOverride.discountAmount &&
-					! streamlinedPriceExperimentAssignment &&
+					! isStreamlinedPriceCheckoutTreatment( streamlinedPriceExperimentAssignment ) &&
 					formatCurrency( -costOverride.discountAmount, product.currency, {
 						isSmallestUnit: true,
 						signForPositive: true, // TODO clk numberFormatCurrency signForPositive only usage
@@ -397,7 +400,7 @@ function SingleProductAndCostOverridesList( { product }: { product: ResponseCart
 		}
 	);
 	const [ , streamlinedPriceExperimentAssignment ] = useStreamlinedPriceExperiment();
-	if ( streamlinedPriceExperimentAssignment ) {
+	if ( isStreamlinedPriceCheckoutTreatment( streamlinedPriceExperimentAssignment ) ) {
 		let streamlinedActualAmountDisplay;
 
 		// logic taken from packages/wpcom-checkout/src/checkout-line-items.tsx
@@ -469,8 +472,14 @@ export function CouponCostOverride( {
 	const label = isOnboardingAffiliateFlow ? getAffiliateCouponLabel() : couponLabel;
 
 	return (
-		<CostOverridesListStyle isStreamlinedPrice={ streamlinedPriceExperimentAssignment !== null }>
-			{ streamlinedPriceExperimentAssignment && <WPCheckoutCheckIcon /> }
+		<CostOverridesListStyle
+			isStreamlinedPrice={ isStreamlinedPriceCheckoutTreatment(
+				streamlinedPriceExperimentAssignment
+			) }
+		>
+			{ isStreamlinedPriceCheckoutTreatment( streamlinedPriceExperimentAssignment ) && (
+				<WPCheckoutCheckIcon />
+			) }
 			<div className="cost-overrides-list-item cost-overrides-list-item--coupon">
 				<span className="cost-overrides-list-item__reason cost-overrides-list-item__reason--is-discount">
 					{ label }
