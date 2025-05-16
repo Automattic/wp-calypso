@@ -144,18 +144,7 @@ class WPCOMNotifications extends Component {
 
 						<p>
 							{ this.props.translate(
-								'{{link}}Jetpack{{/link}} is a suite of tools connected to your WordPress site, like backups, security, and performance reports.',
-								{
-									components: {
-										link: (
-											<a
-												target="_blank"
-												rel="external noopener noreferrer"
-												href="https://jetpack.com/"
-											/>
-										),
-									},
-								}
+								'Jetpack is a suite of tools connected to your WordPress site, like backups, security, and performance reports.'
 							) }
 						</p>
 
