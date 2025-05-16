@@ -26,7 +26,7 @@ Initial release of the site-admin package providing a framework for building mod
 ## 0.1.0
 
 - Add `history` package dependency
-- Set `SiteNavigationItem`’s `as` prop automatically based on to or onClick.
+- Set `SiteNavigationItem`'s `as` prop automatically based on to or onClick.
 
 ### Components
 
@@ -51,3 +51,5 @@ Initial release of the site-admin package providing a framework for building mod
 - Expose `<Page />` component
 
 ## Next
+
+* Add `replace` option to navigation options for history management
