@@ -1325,6 +1325,8 @@ function CheckoutLineItem( {
 			pricePerMonth = Math.round(
 				productVariant.price_integer / productVariant.bill_period_in_months
 			);
+		} else {
+			pricePerMonth = product.item_original_monthly_cost_integer;
 		}
 	}
 
