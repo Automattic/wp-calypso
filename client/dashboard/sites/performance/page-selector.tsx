@@ -5,7 +5,7 @@ import { search } from '@wordpress/icons';
 import { useMemo, useState, ComponentProps } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { profilerVersion } from 'calypso/performance-profiler/utils/profiler-version';
-import type { ProfilerPage } from '../../data/types';
+import type { PerformanceProfilerPage } from '../../data';
 
 interface PageOption {
 	url: string;
@@ -34,12 +34,12 @@ interface PageSelectorProps extends ComponentProps< typeof SearchableDropdown > 
 }
 
 /**
- * Map a ProfilerPage to a PageReport
- * @param page - The ProfilerPage to map
+ * Map a PerformanceProfilerPage to a PageReport
+ * @param page - The PerformanceProfilerPage to map
  * @param siteUrl - The URL of the site
  * @returns The PageReport
  */
-const mapPageToPageOption = ( page: ProfilerPage, siteUrl: string ): PageOption => {
+const mapPageToPageOption = ( page: PerformanceProfilerPage, siteUrl: string ): PageOption => {
 	let path = page.link.replace( siteUrl ?? '', '' );
 	path = path.length > 1 ? path.replace( /\/$/, '' ) : path;
 
@@ -98,8 +98,8 @@ export const PageSelector = ( { onBlur, ...props }: PageSelectorProps ) => {
 
 interface PageSelectorWrapperProps {
 	siteUrl: string;
-	pages: ProfilerPage[];
-	currentPage: ProfilerPage | undefined;
+	pages: PerformanceProfilerPage[];
+	currentPage: PerformanceProfilerPage | undefined;
 	disabled: boolean;
 	onChange: ( page_id: string | null | undefined ) => void;
 }
@@ -120,7 +120,7 @@ export const PageSelectorWrapper: React.FC< PageSelectorWrapperProps > = ( {
 			return [];
 		}
 
-		const mappedPages: PageOption[] = pages.map( ( page: ProfilerPage ) =>
+		const mappedPages: PageOption[] = pages.map( ( page: PerformanceProfilerPage ) =>
 			mapPageToPageOption( page, siteUrl )
 		);
 

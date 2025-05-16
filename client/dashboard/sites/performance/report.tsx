@@ -5,7 +5,8 @@ import { sitePerformanceRoute } from '../../app/router';
 import { ReportError } from './report-error';
 import { ReportExpiredNotice } from './report-expired-notice';
 import { ReportLoading } from './report-loading';
-import type { PerformanceReport, ProfilerPage } from '../../data/types';
+import type { PerformanceProfilerPage } from '../../data';
+import type { PerformanceReport } from '../../data/types';
 
 import './style.scss';
 
@@ -29,7 +30,7 @@ export default function Report( {
 	onRetest,
 }: {
 	report: PerformanceReport | undefined;
-	currentPage: ProfilerPage;
+	currentPage: PerformanceProfilerPage;
 	isFetchingReport: boolean;
 	isError: boolean;
 	isRunningReport: boolean;

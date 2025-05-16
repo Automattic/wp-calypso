@@ -3,7 +3,7 @@ import { useSearch } from '@tanstack/react-router';
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
-import { profilerPagesQuery, siteQuery } from '../../app/queries';
+import { performanceProfilerPagesQuery, siteQuery } from '../../app/queries';
 import { siteRoute, sitePerformanceRoute } from '../../app/router';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -11,7 +11,8 @@ import { usePerformanceData } from '../hooks/use-performance-data';
 import DeviceTabControls, { ToggleType } from './device-toggle';
 import { PageSelectorWrapper } from './page-selector';
 import Report from './report';
-import type { Site, ProfilerPage } from '../../data/types';
+import type { PerformanceProfilerPage } from '../../data';
+import type { Site } from '../../data/types';
 
 /**
  * Get the initial page to display based on the page ID.
@@ -19,18 +20,18 @@ import type { Site, ProfilerPage } from '../../data/types';
  * @param pageId - The ID of the page to display
  * @returns The initial page to display
  */
-const getPageFromID = ( pages: ProfilerPage[] | undefined, pageId: string ) => {
-	return pages?.find( ( page: ProfilerPage ) => Number( page.id ) === Number( pageId ) );
+const getPageFromID = ( pages: PerformanceProfilerPage[] | undefined, pageId: string ) => {
+	return pages?.find( ( page: PerformanceProfilerPage ) => Number( page.id ) === Number( pageId ) );
 };
 
 function SitePerformanceContent( { site }: { site: Site } ) {
 	const { data: pagesData, refetch: refetchPages } = useQuery( {
-		...profilerPagesQuery( site.ID, '' ),
+		...performanceProfilerPagesQuery( site.ID, '' ),
 		refetchOnWindowFocus: false,
 	} );
 	const { page_id } = useSearch( { from: sitePerformanceRoute.fullPath } );
 	const initialPage = page_id ? getPageFromID( pagesData, page_id ) : pagesData?.[ 0 ];
-	const [ currentPage, setCurrentPage ] = useState< ProfilerPage | undefined >( initialPage );
+	const [ currentPage, setCurrentPage ] = useState( initialPage );
 	const {
 		desktopReport,
 		mobileReport,

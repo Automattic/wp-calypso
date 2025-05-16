@@ -15,7 +15,7 @@ import {
 	fetchBasicMetrics,
 	fetchPerformanceInsights,
 	updateSiteSettings,
-	fetchSitePages,
+	fetchPerformanceProfilerPages,
 } from '../data';
 import { queryClient } from './query-client';
 import type { Profile, SiteSettings, UrlPerformanceInsights } from '../data/types';
@@ -150,9 +150,9 @@ export function performanceInsightsQuery( url: string, token: string ) {
 	};
 }
 
-export function profilerPagesQuery( siteId: string, searchTerm: string ) {
+export function performanceProfilerPagesQuery( siteId: string, searchTerm: string ) {
 	return {
-		queryKey: [ 'profiler-pages', siteId, searchTerm ],
-		queryFn: () => fetchSitePages( siteId, searchTerm ),
+		queryKey: [ 'performance-profiler-pages', siteId, searchTerm ],
+		queryFn: () => fetchPerformanceProfilerPages( siteId, searchTerm ),
 	};
 }
