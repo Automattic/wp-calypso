@@ -20,3 +20,4 @@ export const getCurrentSupportInteraction = ( state: State ) => state.currentSup
 export const getAllowPremiumSupport = ( state: State ) => state.allowPremiumSupport;
 export const getHelpCenterOptions = ( state: State ) => state.helpCenterOptions;
 export const getOdieChatId = ( state: State ) => state.odieChatId;
+export const getContextTerm = ( state: State ) => state.contextTerm;
