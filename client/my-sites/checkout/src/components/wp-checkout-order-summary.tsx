@@ -45,7 +45,10 @@ import * as React from 'react';
 import { hasFreeCouponTransfersOnly } from 'calypso/lib/cart-values/cart-items';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
-import { useStreamlinedPriceExperiment } from 'calypso/my-sites/plans-features-main/hooks/use-streamlined-price-experiment';
+import {
+	useStreamlinedPriceExperiment,
+	isStreamlinedPriceCheckoutTreatment,
+} from 'calypso/my-sites/plans-features-main/hooks/use-streamlined-price-experiment';
 import { getSignupCompleteFlowName } from 'calypso/signup/storageUtils';
 import { useSelector } from 'calypso/state';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
@@ -100,7 +103,9 @@ export function WPCheckoutOrderSummary( {
 		<CheckoutSummaryCard
 			className={ isCartUpdating ? 'is-loading' : '' }
 			data-e2e-cart-is-loading={ isCartUpdating }
-			isStreamlinedPrice={ streamlinedPriceExperimentAssignment !== null }
+			isStreamlinedPrice={ isStreamlinedPriceCheckoutTreatment(
+				streamlinedPriceExperimentAssignment
+			) }
 		>
 			{ showFeaturesList && (
 				<CheckoutSummaryFeaturedList
@@ -194,7 +199,7 @@ function CheckoutSummaryPriceList() {
 
 	let subtotalBeforeDiscounts = 0;
 	let totalDiscount = 0;
-	if ( streamlinedPriceExperimentAssignment ) {
+	if ( isStreamlinedPriceCheckoutTreatment( streamlinedPriceExperimentAssignment ) ) {
 		for ( const product of responseCart.products ) {
 			// In specific cases (e.g. premium domains) the original price (renewal) is lower than the due price.
 			subtotalBeforeDiscounts += Math.max(
@@ -207,17 +212,19 @@ function CheckoutSummaryPriceList() {
 
 	return (
 		<>
-			{ streamlinedPriceExperimentAssignment && (
+			{ isStreamlinedPriceCheckoutTreatment( streamlinedPriceExperimentAssignment ) && (
 				<CheckoutSummaryTitle>
 					<span>{ translate( 'Your order' ) }</span>
 				</CheckoutSummaryTitle>
 			) }
 			<ProductsAndCostOverridesList responseCart={ responseCart } />
 			<CheckoutSummaryAmountWrapper
-				isStreamlinedPrice={ streamlinedPriceExperimentAssignment !== null }
+				isStreamlinedPrice={ isStreamlinedPriceCheckoutTreatment(
+					streamlinedPriceExperimentAssignment
+				) }
 			>
 				<CheckoutSubtotalSection>
-					{ streamlinedPriceExperimentAssignment && (
+					{ isStreamlinedPriceCheckoutTreatment( streamlinedPriceExperimentAssignment ) && (
 						<CheckoutSummarySubtotal key="checkout-summary-line-item-subtotal">
 							<span>{ translate( 'Subtotal' ) }</span>
 							<span className="wp-checkout-order-summary__subtotal-price">
@@ -238,19 +245,20 @@ function CheckoutSummaryPriceList() {
 							</span>
 						</CheckoutSummarySubtotal>
 					) }
-					{ streamlinedPriceExperimentAssignment && totalDiscount > 0 && (
-						<CheckoutSummaryTotalDiscount>
-							<span>{ translate( 'Discount' ) }</span>
-							<span className="wp-checkout-order-summary__subtotal-discount">
-								{ formatCurrency( totalDiscount, responseCart.currency, {
-									isSmallestUnit: true,
-									stripZeros: true,
-								} ) }
-							</span>
-						</CheckoutSummaryTotalDiscount>
-					) }
+					{ isStreamlinedPriceCheckoutTreatment( streamlinedPriceExperimentAssignment ) &&
+						totalDiscount > 0 && (
+							<CheckoutSummaryTotalDiscount>
+								<span>{ translate( 'Discount' ) }</span>
+								<span className="wp-checkout-order-summary__subtotal-discount">
+									{ formatCurrency( totalDiscount, responseCart.currency, {
+										isSmallestUnit: true,
+										stripZeros: true,
+									} ) }
+								</span>
+							</CheckoutSummaryTotalDiscount>
+						) }
 
-					{ ! streamlinedPriceExperimentAssignment && (
+					{ ! isStreamlinedPriceCheckoutTreatment( streamlinedPriceExperimentAssignment ) && (
 						<CheckoutSummaryLineItem key="checkout-summary-line-item-subtotal">
 							<span>{ translate( 'Subtotal' ) }</span>
 							<span>

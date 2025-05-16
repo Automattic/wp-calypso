@@ -1136,7 +1136,6 @@ export class LoginForm extends Component {
 	render() {
 		const {
 			accountType,
-			oauth2Client,
 			isJetpackWooDnaFlow,
 			currentQuery,
 			showSocialLoginFormOnly,
@@ -1201,12 +1200,6 @@ export class LoginForm extends Component {
 				onSubmit={ this.onSubmitForm }
 				method="post"
 			>
-				{ isCrowdsignalOAuth2Client( oauth2Client ) && (
-					<p className="login__form-subheader">
-						{ this.props.translate( 'Connect with your WordPress.com account:' ) }
-					</p>
-				) }
-
 				{ this.renderLoginOptions() }
 
 				{ this.showJetpackConnectSiteOnly() && (

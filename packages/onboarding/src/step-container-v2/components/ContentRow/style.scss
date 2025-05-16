@@ -15,4 +15,8 @@
 
 		max-width: calc( var( --total-gap-width ) + var( --total-column-width ) );
 	}
+
+	&.stretched {
+		align-self: stretch;
+	}
 }

@@ -11,10 +11,12 @@ export default function useGetDefaultInterface() {
 		( state ) => ! isSavingPreference( state ) && ! isFetchingPreferences( state )
 	);
 
-	const { sitesAsLandingPage, readerAsLandingPage } = useSelector( ( state ) => ( {
-		sitesAsLandingPage: getPreference( state, 'sites-landing-page' )?.useSitesAsLandingPage,
-		readerAsLandingPage: getPreference( state, 'reader-landing-page' )?.useReaderAsLandingPage,
-	} ) );
+	const sitesAsLandingPage = useSelector(
+		( state ) => getPreference( state, 'sites-landing-page' )?.useSitesAsLandingPage
+	);
+	const readerAsLandingPage = useSelector(
+		( state ) => getPreference( state, 'reader-landing-page' )?.useReaderAsLandingPage
+	);
 
 	if ( ! isReady ) {
 		return null;

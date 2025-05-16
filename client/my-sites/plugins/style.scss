@@ -257,7 +257,7 @@ $calypso-header-height: 31px;
 
 	.plugin-details__content {
 		grid-area: content;
-		padding-top: 50px;
+		padding-top: 40px;
 	}
 
 	.plugin-details__actions {
@@ -302,8 +302,8 @@ $calypso-header-height: 31px;
 	}
 
 	.plugin-details__plugin-download {
-		margin-top: 20px;
-		gap: 5px;
+		margin-top: 24px;
+		gap: 16px;
 		display: flex;
 		font-size: $font-body-extra-small;
 

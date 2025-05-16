@@ -10,7 +10,7 @@
 	.campaign-item__title-row .campaign-item__post-type {
 		font-size: 0.875rem;
 		font-weight: 400;
-		color: var(--studio-gray-40);
+		color: var(--studio-gray-50);
 		line-height: 20px;
 	}
 
@@ -33,6 +33,11 @@
 		color: var(--color-accent);
 		background-color: var(--color-surface);
 	}
+}
+
+.accessible-focus .main.promote-post-i2 .campaign-item__post-details-button:focus {
+	color: var(--color-surface);
+	background-color:var(--color-accent)
 }
 
 @mixin blazepress-campaign-item-mobile {

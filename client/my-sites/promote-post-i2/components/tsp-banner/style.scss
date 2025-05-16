@@ -16,6 +16,13 @@
 			position: absolute;
 			top: 24px;
 			right: 24px;
+
+			&:focus {
+				height: 16px;
+				width: 16px;
+				border-radius: 4px;
+				box-shadow: 0 0 0 2px var(--color-primary);
+			}
 		}
 		.tsp-banner__text-collapsed{
 			padding: 24px 64px;
@@ -50,6 +57,11 @@
 				a, a:visited {
 					color: #50575e;
 					text-decoration: underline;
+
+					&:focus {
+						box-shadow: 0 0 0 2px var(--color-primary-light);
+						color: var(--color-primary);
+					}
 				}
 
 				a:hover {
@@ -59,7 +71,7 @@
 
 			.tsp-banner__link {
 				a, a:visited {
-					color: #3858e9;
+					color: var(--color-accent);
 					font-size: rem(14px);
 					line-height: 20px;
 					font-weight: 500;

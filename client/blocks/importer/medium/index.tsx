@@ -107,7 +107,7 @@ export const MediumImporter: React.FunctionComponent< ImporterBaseProps > = ( pr
 					} else if ( checkIsFailed() ) {
 						return <ErrorMessage onPrimaryBtnClick={ onTryAgainClick } />;
 					} else if ( checkProgress() ) {
-						return <ProgressScreen job={ job } />;
+						return <ProgressScreen job={ job } showHeading={ renderHeading } />;
 					}
 
 					/**
