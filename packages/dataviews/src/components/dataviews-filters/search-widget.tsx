@@ -32,7 +32,6 @@ interface SearchWidgetProps {
 		elements: Option[];
 	};
 	onChangeView: ( view: View ) => void;
-	fields: NormalizedField< any >[];
 }
 
 function normalizeSearchInput( input = '' ) {

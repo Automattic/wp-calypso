@@ -89,7 +89,7 @@ const _HeaderMenu = forwardRef( function HeaderMenu< Item >(
 	// 4. If it's not primary. If it is, it should be already visible.
 	canAddFilter =
 		! view.filters?.some( ( _filter ) => fieldId === _filter.field ) &&
-		!! ( field.elements?.length || field.Edit ) &&
+		( !! field.elements?.length || field.Edit ) &&
 		!! operators.length &&
 		! field.filterBy?.isPrimary;
 

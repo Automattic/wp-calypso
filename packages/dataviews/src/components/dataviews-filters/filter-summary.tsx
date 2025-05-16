@@ -232,6 +232,7 @@ function OperatorSelector( {
 export default function FilterSummary( {
 	addFilterRef,
 	openedFilter,
+	fields,
 	...commonProps
 }: FilterSummaryProps ) {
 	const toggleRef = useRef< HTMLDivElement >( null );
@@ -349,14 +350,13 @@ export default function FilterSummary( {
 						{ commonProps.filter.elements ? (
 							<SearchWidget
 								{ ...commonProps }
-								// Ensure the filter prop is correctly typed by explicitly passing it with its elements
 								filter={ {
 									...commonProps.filter,
 									elements: commonProps.filter.elements,
 								} }
 							/>
 						) : (
-							<InputWidget { ...commonProps } />
+							<InputWidget { ...commonProps } fields={ fields } />
 						) }
 					</VStack>
 				);
