@@ -21,8 +21,6 @@ class SiteBlockListItem extends Component {
 		if ( ! site ) {
 			return null;
 		}
-		//eslint-disable-next-line
-		console.log( site );
 
 		return (
 			<div className="site-blocks__list-item">
