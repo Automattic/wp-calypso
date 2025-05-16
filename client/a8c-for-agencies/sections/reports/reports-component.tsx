@@ -23,6 +23,12 @@ const MOCK_TIMEFRAMES = [
 	{ label: 'Last 24 hours', value: 'last_24_hours' },
 ];
 
+const MOCK_SITES = [
+	{ label: 'totoros.blog', value: 'totoros.blog' },
+	{ label: 'kikisdeliveryservice.com', value: 'kikisdeliveryservice.com' },
+	{ label: 'laputa.castle.sky', value: 'laputa.castle.sky' },
+];
+
 // Checkbox groups for Step 2
 const STATS_OPTIONS = [
 	{ label: 'Total traffic this month', value: 'total_traffic' },
@@ -45,6 +51,7 @@ export default function ReportsComponent() {
 
 	// Step 1: Setup State
 	const [ logoFile, setLogoFile ] = useState< File | null >( null );
+	const [ selectedSite, setSelectedSite ] = useState( MOCK_SITES[ 0 ].value );
 	const [ selectedTimeframe, setSelectedTimeframe ] = useState( MOCK_TIMEFRAMES[ 0 ].value );
 	const [ clientEmail, setClientEmail ] = useState( '' );
 	const [ clientName, setClientName ] = useState( '' );
@@ -135,17 +142,24 @@ export default function ReportsComponent() {
 							onChange={ setSelectedTimeframe }
 							className="a4a-reports-modal__form-field"
 						/>
-						<TextControl
-							label={ translate( 'Client email' ) }
-							value={ clientEmail }
-							onChange={ setClientEmail }
-							type="email"
+						<SelectControl
+							label={ translate( 'Pick a site:' ) }
+							value={ selectedSite }
+							options={ MOCK_SITES }
+							onChange={ setSelectedSite }
 							className="a4a-reports-modal__form-field"
 						/>
 						<TextControl
 							label={ translate( 'Client name (optional)' ) }
 							value={ clientName }
 							onChange={ setClientName }
+							className="a4a-reports-modal__form-field"
+						/>
+						<TextControl
+							label={ translate( 'Client email' ) }
+							value={ clientEmail }
+							onChange={ setClientEmail }
+							type="email"
 							className="a4a-reports-modal__form-field"
 						/>
 						<TextareaControl
@@ -235,7 +249,7 @@ export default function ReportsComponent() {
 								onKeyDown={ handlePreviewLinkKeyDown }
 								className="a4a-reports-modal__preview-link"
 							>
-								{ translate( 'View Preview (link placeholder)' ) }
+								{ translate( 'View Preview' ) }
 							</span>
 						</p>
 						<Button
