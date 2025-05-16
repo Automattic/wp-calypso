@@ -16,6 +16,7 @@
   --a8c-components-calendar-button-width: 2rem;
   --a8c-components-calendar-nav-height: 2rem;
 
+  --a8c-components-calendar-preview-border-color: color-mix(in srgb, var(--color-accent) 16%, transparent);
   position: relative; /* Required to position the navigation toolbar. */
   box-sizing: border-box;
   display: inline flow-root;
@@ -270,21 +271,42 @@
     }
   }
 
-  /* PREVIEW RANGE (hovered range) */
-  $url-encoded-gray-600: '%23#{str-slice(#{$gray-600}, 2)}';
+  /* RANGE PREVIEW */
   &__day--preview:not(&__range-start):not(&__range-end) &__day-button::after {
+	  background-color: var(--a8c-components-calendar-preview-border-color);
+
+	  // Add a transparent border since the background is not visible
+	  // in forced-colors high-contrast mode.
+	  border: 1px solid transparent;
+  }
+  &__day--preview:is(&__range-middle):not(&__range-start):not(&__range-end) &__day-button::before {
+	// Remove the transparent border shown on the middle of the range
+	// in forced-colors (high-contrast) mode, to allow for the dashed border
+	// to be visible.
+	border: none;
+  }
+
+&__day--preview:not(&__day--preview-start):not(&__day--preview-end):not(&__range-start):not(&__range-end) &__day-button::after {
 	// SVG with dashed top/bottom lines. SVG size, dash array and offset are
 	// chosen to make sure that multiple days in a row have a continuous preview
 	// border (something that is not possible with the border property).
-    background-image: url("data:image/svg+xml,%3Csvg viewbox='0 0 32 32' xmlns='http://www.w3.org/2000/svg' stroke='#{$url-encoded-gray-600}' stroke-width='1'%3E%3Cline x1='0' y1='0' x2='32' y2='0' stroke-dasharray='3.2' stroke-dashoffset='5' /%3E%3Cline x1='0' y1='32' x2='32' y2='32' stroke-dasharray='3.2' stroke-dashoffset='5'  /%3E%3C/svg%3E");
+    /* stylelint-disable-next-line function-url-quotes */
+    mask-image: url("data:image/svg+xml, %3Csvg viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg' fill='white' stroke='black' stroke-dasharray='3.9 4' stroke-dashoffset='2' stroke-width='1'%3E%3Cline x1='0' y1='0.5' x2='100' y2='0.5' /%3E%3Cline x1='0' y1='31.5' x2='100' y2='31.5' /%3E%3C/svg%3E");
   }
 
-  &__day--preview-start:not(&__range-start):not(&__range-end),
-  &__day--preview-end:not(&__range-start):not(&__range-end) {
-	// SVG with dashed rectangle. SVG size, dash array and offset are
-	// chosen to make sure that multiple days in a row have a continuous preview
-	// border (something that is not possible with the border property).
-	background-image: url("data:image/svg+xml,%3Csvg viewbox='0 0 32 32' xmlns='http://www.w3.org/2000/svg' stroke='#{$url-encoded-gray-600}' fill='none' stroke-width='1'%3E%3Crect x='0' width='32' height='32' stroke-dasharray='3.2' /%3E%3C/svg%3E");
+  &__day--preview-start:not(&__range-start):not(&__range-end) &__day-button::after {
+	  // SVG with dashed rectangle. SVG size, dash array and offset are
+	  // chosen to make sure that multiple days in a row have a continuous preview
+	  // border (something that is not possible with the border property).
+	  /* stylelint-disable-next-line function-url-quotes */
+	  mask-image: url("data:image/svg+xml, %3Csvg viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M32,0.5 h-29.5 a2,2 0 0 0 -2,2 v27 a2,2 0 0 0 2,2 h30' fill='none' stroke='black' stroke-dasharray='3.84516' stroke-dashoffset='1.9226' stroke-width='1' /%3E%3C/svg%3E");
+	}
+	&__day--preview-end:not(&__range-start):not(&__range-end) &__day-button::after {
+		// SVG with dashed rectangle. SVG size, dash array and offset are
+		// chosen to make sure that multiple days in a row have a continuous preview
+		// border (something that is not possible with the border property).
+		/* stylelint-disable-next-line function-url-quotes */
+	mask-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0,0.5 h29.5 a2,2 0 0 1 2,2 v27 a2,2 0 0 1 -2,2 h-29.5' fill='none' stroke='black' stroke-dasharray='3.84516' stroke-dashoffset='1.9226' stroke-width='1' /%3E%3E%3C/svg%3E");
   }
 }
 
