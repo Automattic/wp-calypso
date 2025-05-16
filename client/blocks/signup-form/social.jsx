@@ -5,21 +5,19 @@ import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { useSelector, useDispatch } from 'react-redux';
 import SocialToS from 'calypso/blocks/authentication/social/social-tos.jsx';
+import { useSocialLoginExperiment } from 'calypso/blocks/login/use-social-login-experiment';
 import {
 	GoogleSocialButton,
 	AppleLoginButton,
 	GithubSocialButton,
 	UsernameOrEmailButton,
 } from 'calypso/components/social-buttons';
-import { useExperiment } from 'calypso/lib/explat';
 import { isWpccFlow } from 'calypso/signup/is-flow';
 import { recordTracksEvent as recordTracks } from 'calypso/state/analytics/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getIsWoo from 'calypso/state/selectors/get-is-woo';
-
-const SOCIAL_LOGIN_EXPERIMENT = 'calypso_social_login_hide_apple_jetpack';
 
 const SocialSignupForm = ( {
 	compact = false,
@@ -34,7 +32,7 @@ const SocialSignupForm = ( {
 } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const [ isLoading, experimentAssignment ] = useExperiment( SOCIAL_LOGIN_EXPERIMENT );
+	const [ isLoading, experimentAssignment ] = useSocialLoginExperiment();
 	const isTreatment = experimentAssignment?.variationName === 'treatment';
 	const shouldShowApple = ! isLoading && ! isTreatment;
 
