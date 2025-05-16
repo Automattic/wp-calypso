@@ -213,6 +213,13 @@ body.is-section-promote-post-i2 {
 			display: flex;
 			justify-content: center;
 		}
+
+		img {
+			height: 100%;
+			width: 100%;
+			object-fit: cover;
+			display: block;
+		}
 	}
 }
 
@@ -327,6 +334,13 @@ body.is-section-promote-post-i2 {
 				border-radius: 4px;
 				display: flex;
 				justify-content: center;
+			}
+
+			img {
+				height: 100%;
+				width: 100%;
+				object-fit: cover;
+				display: block;
 			}
 		}
 	}

@@ -132,9 +132,7 @@ export interface I18N {
 	registerTranslateHook( hook: TranslateHook ): void;
 	registerComponentUpdateHook( hook: ComponentUpdateHook ): void;
 
-	on( eventName: string, listener: EventListener ): void;
-	off( eventName: string, listener: EventListener ): void;
-	emit( eventName: string, ...payload: any ): void;
+	subscribe( callback: () => any ): () => void;
 
 	/**
 	 * Returns `newCopy` if given `text` is translated or locale is English, otherwise returns the `oldCopy`.
@@ -180,9 +178,6 @@ export declare const isRtl: typeof i18n.isRtl;
 export declare const defaultLocaleSlug: typeof i18n.defaultLocaleSlug;
 export declare const registerTranslateHook: typeof i18n.registerTranslateHook;
 export declare const registerComponentUpdateHook: typeof i18n.registerComponentUpdateHook;
-export declare const on: typeof i18n.on;
-export declare const off: typeof i18n.off;
-export declare const emit: typeof i18n.emit;
 export declare const fixMe: typeof i18n.fixMe;
 
 export interface LocalizeProps {

@@ -11,6 +11,7 @@ import { __ } from '@wordpress/i18n';
 import { wordpress } from '@wordpress/icons';
 import { siteQuery } from '../../app/queries';
 import { siteRoute } from '../../app/router';
+import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import CommentsCard from './comments-card';
 import LikesCard from './likes-card';
@@ -42,24 +43,25 @@ function SiteOverview() {
 		engagementStats,
 	} = data;
 	return (
-		<PageLayout
-			title={ site.name }
-			actions={
-				<>
-					<ExternalLink href={ site.URL }>{ __( 'Visit' ) }</ExternalLink>
-					{ site.options?.admin_url && (
-						<Button
-							__next40pxDefaultSize
-							variant="primary"
-							href={ site.options.admin_url }
-							icon={ wordpress }
-						>
-							{ __( 'WP Admin' ) }
-						</Button>
-					) }
-				</>
-			}
-		>
+		<PageLayout>
+			<PageHeader
+				title={ site.name }
+				actions={
+					<>
+						<ExternalLink href={ site.URL }>{ __( 'Visit' ) }</ExternalLink>
+						{ site.options?.admin_url && (
+							<Button
+								__next40pxDefaultSize
+								variant="primary"
+								href={ site.options.admin_url }
+								icon={ wordpress }
+							>
+								{ __( 'WP Admin' ) }
+							</Button>
+						) }
+					</>
+				}
+			/>
 			<HStack alignment="flex-start" spacing={ 8 }>
 				<Sidebar
 					site={ site }

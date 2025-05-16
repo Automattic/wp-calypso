@@ -633,6 +633,7 @@ export const fields: Field< SpaceObject >[] = [
 	{
 		label: 'Image',
 		id: 'image',
+		type: 'media',
 		header: (
 			<HStack spacing={ 1 } justify="start">
 				<Icon icon={ image } />
@@ -644,7 +645,6 @@ export const fields: Field< SpaceObject >[] = [
 				<img src={ item.image } alt="" style={ { width: '100%' } } />
 			);
 		},
-		enableSorting: false,
 	},
 	{
 		label: 'Title',
@@ -667,6 +667,9 @@ export const fields: Field< SpaceObject >[] = [
 			{ value: 'Terrestrial', label: 'Terrestrial' },
 			{ value: 'Gas giant', label: 'Gas giant' },
 		],
+		filterBy: {
+			operators: [ 'is', 'isNot' ],
+		},
 	},
 	{
 		id: 'isPlanet',

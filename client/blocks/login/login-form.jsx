@@ -38,7 +38,6 @@ import { login } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/url';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
 import { sendEmailLogin } from 'calypso/state/auth/actions';
-import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import {
 	formUpdate,
 	getAuthAccountType,
@@ -82,14 +81,12 @@ export class LoginForm extends Component {
 		getAuthAccountType: PropTypes.func.isRequired,
 		hasAccountTypeLoaded: PropTypes.bool.isRequired,
 		isFormDisabled: PropTypes.bool,
-		isLoggedIn: PropTypes.bool.isRequired,
 		loginUser: PropTypes.func.isRequired,
 		loginSocialUser: PropTypes.func.isRequired,
 		createSocialUserFailed: PropTypes.func.isRequired,
 		handleUsernameChange: PropTypes.func,
 		oauth2Client: PropTypes.object,
 		onSuccess: PropTypes.func.isRequired,
-		privateSite: PropTypes.bool,
 		redirectTo: PropTypes.string,
 		requestError: PropTypes.object,
 		resetAuthAccountType: PropTypes.func.isRequired,
@@ -103,7 +100,6 @@ export class LoginForm extends Component {
 		showSocialLoginFormOnly: PropTypes.bool,
 		currentQuery: PropTypes.object,
 		hideSignupLink: PropTypes.bool,
-		isSignupExistingAccount: PropTypes.bool,
 		sendMagicLoginLink: PropTypes.func,
 		isSendingEmail: PropTypes.bool,
 		cancelSocialAccountConnectLinking: PropTypes.func,
@@ -355,37 +351,6 @@ export class LoginForm extends Component {
 		);
 	}
 
-	renderPrivateSiteNotice() {
-		if ( this.props.privateSite && ! this.props.isLoggedIn ) {
-			return (
-				<Notice status="is-info" showDismiss={ false } icon="lock">
-					{ this.props.translate(
-						'Log in to WordPress.com to proceed. ' +
-							"If you are not a member of this site, we'll send " +
-							'your username to the site owner for approval.'
-					) }
-				</Notice>
-			);
-		}
-	}
-
-	renderLoginFromSignupNotice() {
-		return (
-			<Notice status="is-transparent-info" showDismiss={ false }>
-				{ this.props.translate(
-					'This email address is already associated with an account. Please consider {{returnToSignup}}using another one{{/returnToSignup}} or log in.',
-					{
-						components: {
-							returnToSignup: (
-								<a href={ this.getSignupUrl() } onClick={ this.recordSignUpLinkClick } />
-							),
-						},
-					}
-				) }
-			</Notice>
-		);
-	}
-
 	onWooCommerceSocialSuccess = ( ...args ) => {
 		this.recordWooCommerceLoginTracks( 'social' );
 		this.props.onSuccess( args );
@@ -445,7 +410,6 @@ export class LoginForm extends Component {
 		return (
 			<form method="post">
 				<Card className="login__form">
-					{ this.renderPrivateSiteNotice() }
 					<div className="login__form-userdata">
 						{ linkingSocialUser && (
 							<p>
@@ -796,7 +760,6 @@ export class LoginForm extends Component {
 			isWoo,
 			isBlazePro,
 			hideSignupLink,
-			isSignupExistingAccount,
 			isSendingEmail,
 			isSocialFirst,
 			isJetpack,
@@ -893,8 +856,6 @@ export class LoginForm extends Component {
 									) }
 								</p>
 							) }
-
-							{ isSignupExistingAccount && this.renderLoginFromSignupNotice() }
 
 							<FormLabel htmlFor="usernameOrEmail">{ this.renderUsernameorEmailLabel() }</FormLabel>
 
@@ -1175,7 +1136,6 @@ export class LoginForm extends Component {
 	render() {
 		const {
 			accountType,
-			oauth2Client,
 			isJetpackWooDnaFlow,
 			currentQuery,
 			showSocialLoginFormOnly,
@@ -1240,14 +1200,6 @@ export class LoginForm extends Component {
 				onSubmit={ this.onSubmitForm }
 				method="post"
 			>
-				{ isCrowdsignalOAuth2Client( oauth2Client ) && (
-					<p className="login__form-subheader">
-						{ this.props.translate( 'Connect with your WordPress.com account:' ) }
-					</p>
-				) }
-
-				{ this.renderPrivateSiteNotice() }
-
 				{ this.renderLoginOptions() }
 
 				{ this.showJetpackConnectSiteOnly() && (
@@ -1271,7 +1223,6 @@ export default connect(
 			currentRoute: getCurrentRoute( state ),
 			hasAccountTypeLoaded: accountType !== null,
 			isFormDisabled: isFormDisabledSelector( state ),
-			isLoggedIn: Boolean( getCurrentUserId( state ) ),
 			oauth2Client: getCurrentOAuth2Client( state ),
 			isFromAutomatticForAgenciesPlugin:
 				'automattic-for-agencies-client' === get( getCurrentQueryArguments( state ), 'from' ),

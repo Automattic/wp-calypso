@@ -139,7 +139,7 @@ This configuration:
 
 ## Limitations
 
-The customization options are intentionaly limitted at the moment. We need further input and explorations to ensure the following questions:
+The customization options are intentionaly limited at the moment. We need further input and explorations to ensure the following questions:
 
 - Does the content of each route aim to be different? For example, would the sites table contain different fields/interactions depending on the application / logged in user role (agency, regular user…)?
 - What kind of branding differences do we expect per dashboard? Do design tokens provide enough local variance (colors, spacing, fonts, etc.) or do we expect each property to be modified entirely (navigation, menu reordering, etc.)?

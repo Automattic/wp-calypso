@@ -19,15 +19,15 @@
 
 .bluesky-preview__card-text {
 	border-bottom-width: 1px;
-    border-left-width: 1px;
-    border-right-width: 1px;
-    flex: 1 1 0%;
-    padding: 8px 14px;
-    border-color: rgb(212, 219, 226);
-    /* stylelint-disable-next-line scales/radii */
-    border-bottom-right-radius: 8px;
-    /* stylelint-disable-next-line scales/radii */
-    border-bottom-left-radius: 8px;
+	border-left-width: 1px;
+	border-right-width: 1px;
+	flex: 1 1 0%;
+	padding: 8px 14px;
+	border-color: rgb(212, 219, 226);
+	/* stylelint-disable-next-line scales/radii */
+	border-bottom-right-radius: 8px;
+	/* stylelint-disable-next-line scales/radii */
+	border-bottom-left-radius: 8px;
 }
 
 .bluesky-preview__card-title {
@@ -36,10 +36,10 @@
 	display: -webkit-box;
 	overflow: hidden;
 	text-overflow: ellipsis;
-    color: rgb(11, 15, 20);
-    font-size: 16px;
-    font-weight: 700;
-    letter-spacing: 0.25px;
+	color: rgb(11, 15, 20);
+	font-size: 16px;
+	font-weight: 700;
+	letter-spacing: 0.25px;
 }
 
 .bluesky-preview__card-site {
@@ -47,21 +47,21 @@
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
-    color: rgb(66, 87, 108);
-    font-weight: 400;
-    letter-spacing: 0.25px;
-    margin-bottom: 2px;
-    margin-top: 2px;
+	color: rgb(66, 87, 108);
+	font-weight: 400;
+	letter-spacing: 0.25px;
+	margin-bottom: 2px;
+	margin-top: 2px;
 }
 
 .bluesky-preview__card-description {
 	-webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
+	-webkit-line-clamp: 2;
 	color: rgb(11, 15, 20);
 	display: -webkit-box;
-    font-size: 15px;
-    font-weight: 400;
-    letter-spacing: 0.25px;
+	font-size: 15px;
+	font-weight: 400;
+	letter-spacing: 0.25px;
 	margin-top: 4px;
 	overflow: hidden;
 }

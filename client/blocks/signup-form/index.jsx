@@ -27,14 +27,12 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import { FormDivider } from 'calypso/blocks/authentication';
 import ContinueAsUser from 'calypso/blocks/login/continue-as-user';
-import FormButton from 'calypso/components/forms/form-button';
 import FormPasswordInput from 'calypso/components/forms/form-password-input';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import LoggedOutForm from 'calypso/components/logged-out-form';
 import LoggedOutFormFooter from 'calypso/components/logged-out-form/footer';
 import LoggedOutFormLinkItem from 'calypso/components/logged-out-form/link-item';
-import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';
 import Notice from 'calypso/components/notice';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -61,6 +59,7 @@ import { getSectionName } from 'calypso/state/ui/selectors';
 import CrowdsignalSignupForm from './crowdsignal';
 import PasswordlessSignupForm from './passwordless';
 import SignupFormSocialFirst from './signup-form-social-first';
+import SignupSubmitButton from './signup-submit-button';
 import SocialSignupForm from './social';
 
 import './style.scss';
@@ -1015,21 +1014,18 @@ class SignupForm extends Component {
 		return (
 			<LoggedOutFormFooter isBlended={ this.props.isSocialSignupEnabled }>
 				{ ! this.props.disableTosText && this.termsOfServiceLink() }
-				<FormButton
-					className={ clsx(
-						'signup-form__submit',
-						variationName && `${ variationName }-signup-form`
-					) }
-					disabled={
+				<SignupSubmitButton
+					isDisabled={
 						this.state.submitting ||
 						this.props.disabled ||
 						this.props.disableSubmitButton ||
 						( this.props.isWoo &&
 							( ! this.hasFilledInputValues() || formState.hasErrors( this.state.form ) ) )
 					}
+					variationName={ variationName }
 				>
 					{ this.props.submitButtonText }
-				</FormButton>
+				</SignupSubmitButton>
 			</LoggedOutFormFooter>
 		);
 	}
@@ -1043,14 +1039,11 @@ class SignupForm extends Component {
 
 		if ( isBlazePro ) {
 			return (
-				<div>
-					<LoggedOutFormLinks>
-						<span>{ this.props.translate( 'Already have an account?' ) }&nbsp;</span>
-						<LoggedOutFormLinkItem href={ this.getLoginLink() }>
-							{ this.props.translate( 'Log in here' ) }
-						</LoggedOutFormLinkItem>
-					</LoggedOutFormLinks>
-				</div>
+				<p className="signup-form__login-link">
+					{ this.props.translate( 'Already have an account? {{link}}Log in here{{/link}}.', {
+						components: { link: <a href={ this.getLoginLink() } /> },
+					} ) }
+				</p>
 			);
 		}
 

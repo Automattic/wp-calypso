@@ -51,18 +51,6 @@
 	}
 }
 
-html {
-	overflow-y: auto;
-}
-
-body.is-reader-page,
-.is-reader-page .layout,
-.layout.is-section-reader,
-.layout.is-section-reader .layout__content,
-.is-section-reader {
-	background: initial;
-}
-
 body.is-section-reader {
 	&.rtl .layout__content {
 		padding: calc(var(--masterbar-height) + var(--content-padding-top)) calc(var(--sidebar-width-max)) var(--content-padding-bottom) 16px;

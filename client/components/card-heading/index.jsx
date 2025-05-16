@@ -2,7 +2,6 @@ import clsx from 'clsx';
 import { includes } from 'lodash';
 import PropTypes from 'prop-types';
 import { createElement } from 'react';
-import { preventWidows } from 'calypso/lib/formatting';
 
 import './style.scss';
 
@@ -18,7 +17,7 @@ function CardHeading( { tagName = 'h1', size = 20, isBold = false, className, id
 		className && className,
 		classNameObject
 	);
-	return createElement( tagName, { className: classes, id }, preventWidows( children, 2 ) );
+	return createElement( tagName, { className: classes, id }, children );
 }
 
 CardHeading.propTypes = {

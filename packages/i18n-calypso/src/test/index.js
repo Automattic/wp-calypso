@@ -24,6 +24,15 @@ describe( 'I18n', function () {
 	} );
 
 	describe( 'setLocale()', function () {
+		it( 'should emit a change event', () => {
+			const callback = jest.fn();
+			i18n.subscribe( callback );
+
+			i18n.setLocale();
+
+			expect( callback ).toHaveBeenCalled();
+		} );
+
 		describe( 'adding a new locale source from the same language', function () {
 			beforeEach( function () {
 				i18n.setLocale( {
@@ -191,12 +200,22 @@ describe( 'I18n', function () {
 
 				expect( translate( 'test-does-not-exist' ) ).toBe( 'translation3' );
 			} );
+
 			it( 'should return the new translation if it has been overwritten', function () {
 				i18n.addTranslations( {
 					'test-will-overwrite': [ 'not-translation1' ],
 				} );
 
 				expect( translate( 'test-will-overwrite' ) ).toBe( 'not-translation1' );
+			} );
+
+			it( 'should emit a change event', () => {
+				const callback = jest.fn();
+				i18n.subscribe( callback );
+
+				i18n.addTranslations( {} );
+
+				expect( callback ).toHaveBeenCalled();
 			} );
 		} );
 	} );
@@ -263,6 +282,63 @@ describe( 'I18n', function () {
 
 			await i18n.geolocateCurrencySymbol( callback );
 			expect( callback ).toHaveBeenCalledWith( 'en' );
+		} );
+	} );
+
+	describe( 'emitChange()', () => {
+		it( 'should call all subscribed callbacks', () => {
+			const callback1 = jest.fn();
+			const callback2 = jest.fn();
+
+			i18n.subscribe( callback1 );
+			i18n.subscribe( callback2 );
+
+			i18n.emitChange();
+
+			expect( callback1 ).toHaveBeenCalled();
+			expect( callback2 ).toHaveBeenCalled();
+		} );
+
+		it( 'should not call unsubscribed callbacks', () => {
+			const callback1 = jest.fn();
+			const callback2 = jest.fn();
+			const callback3 = jest.fn();
+
+			i18n.subscribe( callback1 );
+			const unsubscribe2 = i18n.subscribe( callback2 );
+			i18n.subscribe( callback3 );
+
+			unsubscribe2();
+			i18n.emitChange();
+
+			expect( callback1 ).toHaveBeenCalled();
+			expect( callback2 ).not.toHaveBeenCalled();
+			expect( callback3 ).toHaveBeenCalled();
+		} );
+	} );
+
+	describe( 'reRenderTranslations()', () => {
+		it( 'should call subscriber callback', () => {
+			const callback = jest.fn();
+
+			i18n.subscribe( callback );
+
+			i18n.reRenderTranslations();
+
+			expect( callback ).toHaveBeenCalled();
+		} );
+	} );
+
+	describe( 'subscribe()', () => {
+		it( 'should return an unsubscribe function', () => {
+			const callback = jest.fn();
+
+			const unsubscribe = i18n.subscribe( callback );
+			unsubscribe();
+
+			i18n.setLocale();
+
+			expect( callback ).not.toHaveBeenCalled();
 		} );
 	} );
 

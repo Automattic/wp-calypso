@@ -64,7 +64,10 @@ import { prepareDomainContactValidationRequest } from 'calypso/my-sites/checkout
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import SitePreview from 'calypso/my-sites/customer-home/cards/features/site-preview';
 import useOneDollarOfferTrack from 'calypso/my-sites/plans/hooks/use-onedollar-offer-track';
-import { useStreamlinedPriceExperiment } from 'calypso/my-sites/plans-features-main/hooks/use-streamlined-price-experiment';
+import {
+	useStreamlinedPriceExperiment,
+	isStreamlinedPriceCheckoutTreatment,
+} from 'calypso/my-sites/plans-features-main/hooks/use-streamlined-price-experiment';
 import { siteHasPaidPlan } from 'calypso/signup/steps/site-picker/site-picker-submit';
 import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -304,7 +307,9 @@ function CheckoutSidebarNudge( {
 	if ( isDIFMInCart ) {
 		return (
 			<CheckoutSidebarNudgeWrapper
-				isStreamlinedPrice={ streamlinedPriceExperimentAssignment !== null }
+				isStreamlinedPrice={ isStreamlinedPriceCheckoutTreatment(
+					streamlinedPriceExperimentAssignment
+				) }
 			>
 				<CheckoutNextSteps responseCart={ responseCart } />
 			</CheckoutSidebarNudgeWrapper>
@@ -318,7 +323,9 @@ function CheckoutSidebarNudge( {
 
 	return (
 		<CheckoutSidebarNudgeWrapper
-			isStreamlinedPrice={ streamlinedPriceExperimentAssignment !== null }
+			isStreamlinedPrice={ isStreamlinedPriceCheckoutTreatment(
+				streamlinedPriceExperimentAssignment
+			) }
 		>
 			{ ! ( productsWithVariants.length > 1 ) && (
 				<>
@@ -635,7 +642,8 @@ export default function CheckoutMainContent( {
 								siteId={ siteId }
 								onChangeSelection={ changeSelection }
 								showFeaturesList={
-									! isStreamlinedPriceExperimentLoading && ! streamlinedPriceExperimentAssignment
+									! isStreamlinedPriceExperimentLoading &&
+									! isStreamlinedPriceCheckoutTreatment( streamlinedPriceExperimentAssignment )
 								}
 							/>
 							<CheckoutSidebarNudge
@@ -860,7 +868,9 @@ export default function CheckoutMainContent( {
 			<WPCheckoutWrapper
 				className="checkout-wrapper"
 				isLargeViewport={ isLargeViewport }
-				isStreamlinedPrice={ streamlinedPriceExperimentAssignment !== null }
+				isStreamlinedPrice={ isStreamlinedPriceCheckoutTreatment(
+					streamlinedPriceExperimentAssignment
+				) }
 			>
 				{ checkoutSummary }
 				{ checkoutMainContent }
@@ -871,7 +881,9 @@ export default function CheckoutMainContent( {
 	return (
 		<StepContainerV2CheckoutFixer
 			isLargeViewport={ isLargeViewport }
-			isStreamlinedPrice={ streamlinedPriceExperimentAssignment !== null }
+			isStreamlinedPrice={ isStreamlinedPriceCheckoutTreatment(
+				streamlinedPriceExperimentAssignment
+			) }
 		>
 			<Step.TwoColumnLayout
 				firstColumnWidth={ 8 }

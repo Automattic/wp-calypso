@@ -15,7 +15,6 @@ import { AUTOMATTIC_ORG_ID } from 'calypso/state/reader/organizations/constants'
 import { toggleReaderSidebarOrganization } from 'calypso/state/reader-ui/sidebar/actions';
 import { isOrganizationOpen } from 'calypso/state/reader-ui/sidebar/selectors';
 import ReaderSidebarOrganizationsListItem from './list-item';
-import '../style.scss';
 
 export class ReaderSidebarOrganizationsList extends Component {
 	static propTypes = {

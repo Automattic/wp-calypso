@@ -9,7 +9,10 @@ import debugFactory from 'debug';
 import PromoCard from 'calypso/components/promo-section/promo-card';
 import PromoCardCTA from 'calypso/components/promo-section/promo-card/cta';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
-import { useStreamlinedPriceExperiment } from 'calypso/my-sites/plans-features-main/hooks/use-streamlined-price-experiment';
+import {
+	useStreamlinedPriceExperiment,
+	isStreamlinedPriceCheckoutTreatment,
+} from 'calypso/my-sites/plans-features-main/hooks/use-streamlined-price-experiment';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { useGetProductVariants } from '../../hooks/product-variants';
@@ -206,13 +209,15 @@ export function CheckoutSidebarPlanUpsell() {
 
 	const checkoutSidebarPlanUpsellClassName =
 		'checkout-sidebar-plan-upsell' +
-		( streamlinedPriceExperimentAssignment ? ' checkout-sidebar-plan-upsell-streamlined' : '' );
+		( isStreamlinedPriceCheckoutTreatment( streamlinedPriceExperimentAssignment )
+			? ' checkout-sidebar-plan-upsell-streamlined'
+			: '' );
 
 	return (
 		<>
 			<PromoCard title={ cardTitle } className={ checkoutSidebarPlanUpsellClassName }>
 				<div className="checkout-sidebar-plan-upsell__plan-grid">
-					{ ! streamlinedPriceExperimentAssignment && (
+					{ ! isStreamlinedPriceCheckoutTreatment( streamlinedPriceExperimentAssignment ) && (
 						<>
 							<div className="checkout-sidebar-plan-upsell__plan-grid-cell">
 								<strong>{ __( 'Plan' ) }</strong>

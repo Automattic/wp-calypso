@@ -58,6 +58,7 @@ describe(
 
 			await Promise.all( [
 				plansPage.selectPlan( planName ),
+				page.click( '.domains__domain-cart-continue' ),
 				page.waitForURL( /.*\/checkout\/.*/, { timeout: 30 * 1000 } ),
 			] );
 		} );

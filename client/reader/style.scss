@@ -2,6 +2,16 @@
 @import "@wordpress/base-styles/mixins";
 @import "@wordpress/base-styles/variables";
 
+
+body.is-reader-page,
+.is-reader-page .layout,
+.layout.is-section-reader,
+.layout.is-section-reader .layout__content,
+.is-section-reader {
+	background: initial;
+	overflow-y: hidden;
+}
+
 body.is-section-reader {
 	div.layout.is-global-sidebar-visible {
 		.main {

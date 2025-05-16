@@ -77,7 +77,10 @@ export function normalizeFields< Item >(
 			isValid,
 			Edit,
 			enableHiding: field.enableHiding ?? true,
-			enableSorting: field.enableSorting ?? true,
+			enableSorting:
+				field.enableSorting ??
+				fieldTypeDefinition.enableSorting ??
+				true,
 		};
 	} );
 }

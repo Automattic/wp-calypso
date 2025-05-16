@@ -7,8 +7,8 @@ import {
 	PLAN_ECOMMERCE_TRIAL_MONTHLY,
 	getPlan,
 } from '@automattic/calypso-products';
-import { Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
+import { Icon, check } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { IntervalLength } from 'calypso/my-sites/marketplace/components/billing-interval-switcher/constants';
 import PluginDetailsSidebarUSP from 'calypso/my-sites/plugins/plugin-details-sidebar-usp';
@@ -24,6 +24,7 @@ import { PREINSTALLED_PLUGINS } from '../constants';
 
 const StyledUl = styled.ul`
 	margin-left: 0;
+	margin-bottom: 0;
 	list-style-type: none;
 `;
 
@@ -43,13 +44,12 @@ const StyledLi = styled.li`
 
 	svg {
 		min-width: 16px;
-		margin-right: 8px;
-		margin-top: 4px;
+		margin-right: 4px;
 	}
 `;
 
-const GreenGridicon = styled( Gridicon )`
-	color: var( --studio-green-50 );
+const GreenIcon = styled( Icon )`
+	fill: var( --studio-green-50 );
 `;
 
 const useRequiredPlan = ( shouldUpgrade: boolean ) => {
@@ -105,7 +105,7 @@ export const USPS: React.FC< Props > = ( { isMarketplaceProduct, billingPeriod }
 				<StyledUl>
 					{ filteredUSPS.map( ( usp, i ) => (
 						<StyledLi key={ `usp-${ i }` }>
-							<GreenGridicon icon="checkmark" size={ 16 } />
+							<GreenIcon icon={ check } size={ 24 } />
 							<span>{ usp }</span>
 						</StyledLi>
 					) ) }
@@ -133,8 +133,8 @@ export const PlanUSPS: React.FC< Props > = ( {
 	const planDisplayCost = useSelector( ( state ) => {
 		return getProductDisplayCost( state, requiredPlan || '' );
 	} );
-	const monthlyLabel = translate( 'Monthly' );
-	const annualLabel = translate( 'Annually' );
+	const monthlyLabel = translate( 'month' );
+	const annualLabel = translate( 'year' );
 	const periodicityLabel = isAnnualPeriod ? annualLabel : monthlyLabel;
 
 	if ( ! shouldUpgrade ) {
@@ -202,7 +202,7 @@ export const PlanUSPS: React.FC< Props > = ( {
 				<StyledUl>
 					{ filteredUSPS.map( ( usp, i ) => (
 						<StyledLi key={ `usps__-${ i }` }>
-							<GreenGridicon icon="checkmark" size={ 16 } />
+							<GreenIcon icon={ check } size={ 24 } />
 							<span>{ usp }</span>
 						</StyledLi>
 					) ) }

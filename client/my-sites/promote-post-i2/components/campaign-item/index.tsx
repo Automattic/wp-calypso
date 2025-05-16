@@ -156,10 +156,14 @@ export default function CampaignItem( props: Props ) {
 				<div className="campaign-item__data-row">
 					<div className="promote-post-i2__campaign-item-wrapper">
 						{ adCreativeUrl && (
-							<div
-								className="campaign-item__header-image"
-								style={ { backgroundImage: `url(${ adCreativeUrl })` } }
-							></div>
+							<div className="campaign-item__header-image">
+								<img
+									src={ adCreativeUrl }
+									alt={ translate( 'For campaign %(name)s', {
+										args: { name },
+									} ).toString() }
+								/>
+							</div>
 						) }
 						<div className="campaign-item__title-row">
 							<div className="campaign-item__post-type">{ getPostType( type ) }</div>

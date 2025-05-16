@@ -5,7 +5,6 @@ import { useTranslate } from 'i18n-calypso';
 import { Moment } from 'moment';
 import * as React from 'react';
 import { recordLogRocketEvent } from 'calypso/lib/analytics/logrocket';
-import { preventWidows } from 'calypso/lib/formatting';
 import { INDEX_FORMAT } from 'calypso/lib/jetpack/backup-utils';
 import useDateWithOffset from 'calypso/lib/jetpack/hooks/use-date-with-offset';
 import { backupMainPath } from 'calypso/my-sites/backup/paths';
@@ -50,7 +49,7 @@ const BackupInProgress: React.FC< Props > = ( { percent, inProgressDate, lastBac
 					"We're making a backup of your site from {{strong}}%(inProgressDisplayDate)s{{/strong}}.",
 					{
 						args: {
-							inProgressDisplayDate: preventWidows( inProgressDisplayDate ),
+							inProgressDisplayDate: inProgressDisplayDate,
 						},
 						components: {
 							strong: <strong />,
@@ -63,9 +62,9 @@ const BackupInProgress: React.FC< Props > = ( { percent, inProgressDate, lastBac
 			<ProgressBar value={ percent } total={ 100 } />
 
 			{ siteLastBackupDate && (
-				<div className="status-card__no-backup-last-backup">
+				<p className="status-card__no-backup-last-backup">
 					{ translate( 'Last backup before today: {{link}}%(lastBackupDisplayDate)s{{/link}}', {
-						args: { lastBackupDisplayDate: preventWidows( lastBackupDisplayDate ) },
+						args: { lastBackupDisplayDate: lastBackupDisplayDate || '' },
 						components: {
 							link: (
 								<a
@@ -76,7 +75,7 @@ const BackupInProgress: React.FC< Props > = ( { percent, inProgressDate, lastBac
 							),
 						},
 					} ) }
-				</div>
+				</p>
 			) }
 			{ isEnabled( 'jetpack/backup-messaging-i3' ) && <BackupTips location="IN_PROGRESS" /> }
 		</>

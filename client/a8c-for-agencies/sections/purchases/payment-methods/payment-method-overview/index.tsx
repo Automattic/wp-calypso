@@ -121,10 +121,10 @@ export default function PaymentMethodOverview() {
 		: A4A_PAYMENT_METHODS_ADD_LINK;
 
 	return (
-		<Layout className="payment-method-overview" title={ translate( 'Payment Methods' ) } wide>
+		<Layout className="payment-method-overview" title={ translate( 'Payment methods' ) } wide>
 			<LayoutTop>
 				<LayoutHeader>
-					<Title>{ translate( 'Payment Methods' ) } </Title>
+					<Title>{ translate( 'Payment methods' ) } </Title>
 					<Subtitle>
 						{ translate( "Add a payment method to issue licenses. It's auto-charged monthly." ) }
 					</Subtitle>

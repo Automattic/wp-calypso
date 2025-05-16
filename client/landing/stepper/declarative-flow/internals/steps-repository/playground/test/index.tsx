@@ -10,18 +10,15 @@ import { StepProps } from '../../../types';
 import { renderStep, mockStepProps, RenderStepOptions } from '../../test/helpers';
 import { initializeWordPressPlayground } from '../lib/initialize-playground';
 
-// Be sure to mock this hook to return true so that the step is rendered.
-jest.mock( 'calypso/landing/stepper/hooks/use-is-playground-eligible', () => ( {
-	useIsPlaygroundEligible: () => true,
-} ) );
-
-// Mock the initializeWordPressPlayground function to cause an error
+// Mock the initializeWordPressPlayground function
 jest.mock( '../lib/initialize-playground' );
 
 // Mock the PlaygroundError component to simplify testing
 jest.mock( '../components/playground-error', () => ( {
 	PlaygroundError: () => <div data-testid="playground-error">Playground Error Component</div>,
 } ) );
+
+let mockPlaygroundClientInstance;
 
 const renderPlaygroundStep = (
 	props?: Partial< StepProps >,
@@ -37,12 +34,15 @@ const getLaunchButton = () => screen.getByRole( 'button', { name: 'Launch on Wor
 describe( 'Playground', () => {
 	beforeEach( () => {
 		jest.resetAllMocks();
+		mockPlaygroundClientInstance = {
+			run: jest.fn().mockImplementation( () => Promise.resolve( { text: 'plans-playground' } ) ),
+		};
+		initializeWordPressPlayground.mockResolvedValue( mockPlaygroundClientInstance );
 	} );
 
 	describe( 'step', () => {
 		it( 'should render the iframe and the launch button', async () => {
 			let container;
-			initializeWordPressPlayground.mockReturnValue( Promise.resolve( {} ) );
 
 			await act( async () => {
 				const result = renderPlaygroundStep();
@@ -55,7 +55,6 @@ describe( 'Playground', () => {
 
 		it( 'should change page when the user clicks the launch button', async () => {
 			const submit = jest.fn();
-			initializeWordPressPlayground.mockReturnValue( Promise.resolve( {} ) );
 
 			await act( async () => {
 				renderPlaygroundStep( { navigation: { submit } } );
