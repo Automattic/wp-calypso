@@ -10,6 +10,39 @@ import type { SiteSettings } from '../../data/types';
 import type { Field, SimpleFormField } from '@automattic/dataviews';
 import type { UseMutationResult } from '@tanstack/react-query';
 
+const fields: Field< SiteSettings >[] = [
+	{
+		id: 'wpcom_site_visibility',
+		Edit: 'toggleGroup',
+		elements: [
+			{
+				label: __( 'Coming soon' ),
+				value: 'coming-soon',
+				description: __(
+					'Your site is hidden from visitors behind a "Coming Soon" notice until it is ready for viewing.'
+				),
+			},
+			{
+				label: __( 'Public' ),
+				value: 'public',
+				description: __( 'Your site is visible to everyone.' ),
+			},
+			{
+				label: __( 'Private' ),
+				value: 'private',
+				description: __(
+					'Your site is only visible to you and logged-in members you approve. Everyone else will see a log in screen.'
+				),
+			},
+		],
+	},
+];
+
+const form = {
+	type: 'regular' as const,
+	fields: [ { id: 'wpcom_site_visibility', labelPosition: 'none' } as SimpleFormField ],
+};
+
 export function PrivacyForm( {
 	settings,
 	mutation,
@@ -28,37 +61,6 @@ export function PrivacyForm( {
 
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
-	};
-
-	let description;
-	if ( formData.wpcom_site_visibility === 'coming-soon' ) {
-		description = __(
-			'Your site is hidden from visitors behind a "Coming Soon" notice until it is ready for viewing.'
-		);
-	} else if ( formData.wpcom_site_visibility === 'public' ) {
-		description = __( 'Your site is visible to everyone.' );
-	} else {
-		description = __(
-			'Your site is only visible to you and logged-in members you approve. Everyone else will see a log in screen.'
-		);
-	}
-
-	const fields: Field< SiteSettings >[] = [
-		{
-			id: 'wpcom_site_visibility',
-			description,
-			Edit: 'toggleGroup',
-			elements: [
-				{ label: __( 'Coming soon' ), value: 'coming-soon' },
-				{ label: __( 'Public' ), value: 'public' },
-				{ label: __( 'Private' ), value: 'private' },
-			],
-		},
-	];
-
-	const form = {
-		type: 'regular' as const,
-		fields: [ { id: 'wpcom_site_visibility', labelPosition: 'none' } as SimpleFormField ],
 		mutation.mutate( { ...formData } );
 	};
 

@@ -30,13 +30,16 @@ export default function ToggleGroup< Item >( {
 	);
 
 	if ( field.elements ) {
+		const selectedOption = field.elements.find(
+			( el ) => el.value === value
+		);
 		return (
 			<ToggleGroupControl
 				__next40pxDefaultSize
 				__nextHasNoMarginBottom
 				isBlock
 				label={ field.label }
-				help={ field.description }
+				help={ selectedOption?.description || field.description }
 				onChange={ onChangeControl }
 				value={ value }
 				hideLabelFromVision={ hideLabelFromVision }
