@@ -17,16 +17,17 @@ export function PrivacyForm( {
 	settings: SiteSettings;
 	mutation: UseMutationResult< Partial< SiteSettings >, Error, Partial< SiteSettings >, unknown >;
 } ) {
-	const [ formData, setFormData ] = useState( settings );
+	const [ formData, setFormData ] = useState( {
+		wpcom_site_visibility: settings.wpcom_site_visibility,
+	} );
 
-	const isDirty = Object.entries( settings ).some(
-		( [ key, value ] ) => formData[ key as keyof SiteSettings ] !== value
+	const isDirty = Object.entries( formData ).some(
+		( [ key, value ] ) => settings[ key as keyof SiteSettings ] !== value
 	);
 	const { isPending } = mutation;
 
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
-		mutation.mutate( formData );
 	};
 
 	let description;
@@ -58,6 +59,7 @@ export function PrivacyForm( {
 	const form = {
 		type: 'regular' as const,
 		fields: [ { id: 'wpcom_site_visibility', labelPosition: 'none' } as SimpleFormField ],
+		mutation.mutate( { ...formData } );
 	};
 
 	return (
