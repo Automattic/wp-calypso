@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { useSearch } from '@tanstack/react-router';
-import { Button, __experimentalHStack as HStack } from '@wordpress/components';
+import { __experimentalHStack as HStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
 import { performanceProfilerPagesQuery, siteQuery } from '../../app/queries';
@@ -11,6 +11,7 @@ import { usePerformanceData } from '../hooks/use-performance-data';
 import DeviceTabControls, { ToggleType } from './device-toggle';
 import { PageSelectorWrapper } from './page-selector';
 import Report from './report';
+import { SubTitle } from './subtitle';
 import type { PerformanceProfilerPage } from '../../data';
 import type { Site } from '../../data/types';
 
@@ -70,9 +71,16 @@ function SitePerformanceContent( { site }: { site: Site } ) {
 	const isLoading =
 		isLoadingPages || isFetchingReport || isRunningDesktopReport || isRunningMobileReport;
 
+	const currentReport = deviceToggle === 'desktop' ? desktopReport : mobileReport;
+
 	return (
 		<PageLayout>
-			<PageHeader title={ __( 'Performance' ) } />
+			<PageHeader
+				title={ __( 'Performance' ) }
+				description={
+					<SubTitle performanceReport={ currentReport } onClick={ handleReportRefetch } />
+				}
+			/>
 			<HStack spacing={ 2 } alignment="flex-end" justify="flex-start" expanded={ false }>
 				<PageSelectorWrapper
 					isLoading={ isLoading }
@@ -82,18 +90,10 @@ function SitePerformanceContent( { site }: { site: Site } ) {
 					onChange={ handlePageChange }
 				/>
 				<DeviceTabControls value={ deviceToggle } onChange={ setDeviceToggle } />
-				<Button
-					variant="secondary"
-					onClick={ handleReportRefetch }
-					disabled={ isLoading }
-					__next40pxDefaultSize
-				>
-					{ __( 'Retest' ) }
-				</Button>
 			</HStack>
 			<Report
 				currentPage={ currentPage }
-				report={ deviceToggle === 'desktop' ? desktopReport : mobileReport }
+				report={ currentReport }
 				isFetchingReport={ isFetchingReport }
 				isRunningReport={
 					deviceToggle === 'desktop' ? isRunningDesktopReport : isRunningMobileReport

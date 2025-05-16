@@ -54,6 +54,7 @@ module.exports = {
 							'!@automattic/components/src/breadcrumbs',
 							'!@automattic/components/src/breadcrumbs/types',
 							'!@automattic/dataviews',
+							'!@automattic/i18n-utils',
 							// Please do not add exceptions unless agreed on
 							// with the #architecture group.
 						],
