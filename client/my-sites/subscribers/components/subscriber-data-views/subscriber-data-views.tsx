@@ -2,7 +2,7 @@ import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Gravatar, TimeSince } from '@automattic/components';
 import { useBreakpoint } from '@automattic/viewport-react';
-import { DataViews, type View, type Action, Operator } from '@wordpress/dataviews';
+import { DataViews, type View, type ViewTable, type Action, Operator } from '@wordpress/dataviews';
 import { useMemo, useState, useCallback, useEffect } from '@wordpress/element';
 import { trash } from '@wordpress/icons';
 import { translate } from 'i18n-calypso';
@@ -75,7 +75,7 @@ const getSubscriptionDate = ( subscriber: Subscriber ): string => {
 	return subscriber.date_subscribed || '';
 };
 
-const defaultView: View = {
+const defaultView: ViewTable = {
 	type: 'table',
 	titleField: 'name',
 	mediaField: 'media',
