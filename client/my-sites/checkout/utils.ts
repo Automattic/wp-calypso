@@ -1,4 +1,9 @@
-import { isMonthly, isWpComPlan, getMonthlyPlanByYearly } from '@automattic/calypso-products';
+import {
+	isMonthly,
+	isWpComPlan,
+	getMonthlyPlanByYearly,
+	type PlanSlug,
+} from '@automattic/calypso-products';
 import { Plans } from '@automattic/data-stores';
 import { doesStringResembleDomain } from '@automattic/onboarding';
 import { ResponseCartProduct } from '@automattic/shopping-cart';
@@ -140,9 +145,9 @@ export function getAffiliateCouponLabel(): string {
 	return translate( 'Exclusive Offer Applied' );
 }
 
-export function useGetWpcomPlanTotalIfPaidMonthly(
-	products: Array< ResponseCartProduct >
-): object {
+export function useGetWpcomPlanTotalIfPaidMonthly( products: Array< ResponseCartProduct > ): {
+	[ key: string ]: number | undefined;
+} {
 	const plansToMonthly = products
 		.filter( ( product ) => {
 			return isWpComPlan( product?.product_slug ) && ! isMonthly( product?.product_slug );
@@ -156,26 +161,30 @@ export function useGetWpcomPlanTotalIfPaidMonthly(
 	// Get unique non-empty monthly plan slugs
 	const monthlyPlanSlugs = [
 		...new Set( plansToMonthly.map( ( plan ) => plan.monthly_plan ).filter( ( plan ) => plan ) ),
-	];
-	const pricing = Plans.usePricingMetaForGridPlans( {
-		planSlugs: monthlyPlanSlugs,
-		coupon: undefined,
-		useCheckPlanAvailabilityForPurchase,
-	} );
-	const plansToMonthlyPricing = Object.fromEntries(
-		plansToMonthly.map( ( plan ) => {
-			return [ plan.plan, pricing[ plan.monthly_plan ] ?? null ];
-		} )
-	);
+	] as PlanSlug[];
+	const pricing =
+		Plans.usePricingMetaForGridPlans( {
+			planSlugs: monthlyPlanSlugs,
+			siteId: undefined,
+			coupon: undefined,
+			useCheckPlanAvailabilityForPurchase,
+		} ) || {};
+	const plansToMonthlyPricing =
+		Object.fromEntries(
+			plansToMonthly.map( ( plan ) => {
+				return [ plan.plan, pricing[ plan.monthly_plan ] ?? null ];
+			} )
+		) || {};
 	const productTotals = Object.fromEntries(
 		products
 			.filter( ( product ) => plansToMonthlyPricing[ product.product_slug ] )
 			.map( ( product ) => [
 				product.product_slug,
+				product.months_per_bill_period &&
 				plansToMonthlyPricing[ product.product_slug ] &&
 				plansToMonthlyPricing[ product.product_slug ].originalPrice?.monthly
 					? product.months_per_bill_period *
-					  plansToMonthlyPricing[ product.product_slug ].originalPrice.monthly
+					  ( plansToMonthlyPricing[ product.product_slug ]?.originalPrice?.monthly ?? 0 )
 					: undefined,
 			] )
 	);
