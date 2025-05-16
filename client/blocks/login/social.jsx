@@ -1,7 +1,7 @@
 import { Card } from '@automattic/components';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import { useSelector } from 'react-redux';
 import SocialToS from 'calypso/blocks/authentication/social/social-tos.jsx';
 import {
 	GoogleSocialButton,
@@ -30,10 +30,10 @@ const SocialLoginForm = ( {
 	isWoo,
 	lastUsedAuthenticationMethod,
 	resetLastUsedAuthenticationMethod,
-	currentQuery,
-	initialQuery,
 } ) => {
 	const [ isLoading, experimentAssignment ] = useExperiment( SOCIAL_LOGIN_EXPERIMENT );
+	const currentQuery = useSelector( getCurrentQueryArguments );
+	const initialQuery = useSelector( getInitialQueryArguments );
 	const isTreatment =
 		! experimentAssignment || isLoading || experimentAssignment.variationName === 'treatment';
 	const isSignupExistingAccount = !! (
@@ -130,11 +130,6 @@ SocialLoginForm.propTypes = {
 	isWoo: PropTypes.bool,
 	lastUsedAuthenticationMethod: PropTypes.string,
 	resetLastUsedAuthenticationMethod: PropTypes.func,
-	currentQuery: PropTypes.object,
-	initialQuery: PropTypes.object,
 };
 
-export default connect( ( state ) => ( {
-	currentQuery: getCurrentQueryArguments( state ),
-	initialQuery: getInitialQueryArguments( state ),
-} ) )( SocialLoginForm );
+export default SocialLoginForm;
