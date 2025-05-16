@@ -29,7 +29,7 @@ function UnforwardedActionItem(
 					<HStack
 						className="action-item__actions"
 						spacing={ 2 }
-						jusfiy="flex-end"
+						justify="flex-end"
 						expanded={ false }
 						as="span"
 					>
