@@ -6,11 +6,7 @@ setTimeout( () => import( 'calypso/my-sites/stats/pages/insights' ), 3000 );
 
 function insights( context: Context, next: () => void ) {
 	context.primary = (
-		<AsyncLoad
-			require="calypso/my-sites/stats/pages/insights"
-			placeholder={ PageLoading }
-			context={ context }
-		/>
+		<AsyncLoad require="calypso/my-sites/stats/pages/insights" placeholder={ PageLoading } />
 	);
 	next();
 }
