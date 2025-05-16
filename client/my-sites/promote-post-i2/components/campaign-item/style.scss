@@ -36,7 +36,7 @@
 }
 
 .accessible-focus .main.promote-post-i2 .campaign-item__post-details-button:focus {
-	color: var(--color-surface);
+	color: var(--color-surface) !important;// for jetpack that has important color values
 	background-color:var(--color-accent)
 }
 
