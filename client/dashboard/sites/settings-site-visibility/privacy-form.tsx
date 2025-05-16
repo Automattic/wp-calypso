@@ -2,65 +2,17 @@ import { DataForm } from '@automattic/dataviews';
 import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
-	__experimentalToggleGroupControl as ToggleGroupControl,
-	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
 	Button,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
 import type { SiteSettings } from '../../data/types';
-import type { Field } from '@automattic/dataviews';
+import type { Field, SimpleFormField } from '@automattic/dataviews';
 import type { UseMutationResult } from '@tanstack/react-query';
 
 interface SitePrivacy {
 	visibility: string;
 }
-
-const fields: Field< SitePrivacy >[] = [
-	{
-		id: 'visibility',
-		Edit: ( { field, onChange, data } ) => {
-			const { id, getValue } = field;
-			const value = getValue( { item: data } );
-
-			let help;
-			if ( value === 'coming-soon' ) {
-				help = __(
-					'Your site is hidden from visitors behind a "Coming Soon" notice until it is ready for viewing.'
-				);
-			} else if ( value === 'public' ) {
-				help = __( 'Your site is visible to everyone.' );
-			} else {
-				help = __(
-					'Your site is only visible to you and logged-in members you approve. Everyone else will see a log in screen.'
-				);
-			}
-
-			return (
-				<ToggleGroupControl
-					__next40pxDefaultSize
-					__nextHasNoMarginBottom
-					isBlock
-					label=""
-					help={ help }
-					value={ value }
-					onChange={ ( newValue ) => {
-						onChange( { [ id ]: newValue } );
-					} }
-				>
-					<ToggleGroupControlOption label={ __( 'Coming soon' ) } value="coming-soon" />
-					<ToggleGroupControlOption label={ __( 'Public' ) } value="public" />
-					<ToggleGroupControlOption label={ __( 'Private' ) } value="private" />
-				</ToggleGroupControl>
-			);
-		},
-	},
-];
-
-const form = {
-	type: 'regular' as const,
-	fields,
-};
 
 function privacyToSettings( { visibility }: SitePrivacy ): Partial< SiteSettings > {
 	let blog_public;
@@ -115,6 +67,37 @@ export function PrivacyForm( {
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
 		mutation.mutate( privacyToSettings( formData ) );
+	};
+
+	let description;
+	if ( formData.visibility === 'coming-soon' ) {
+		description = __(
+			'Your site is hidden from visitors behind a "Coming Soon" notice until it is ready for viewing.'
+		);
+	} else if ( formData.visibility === 'public' ) {
+		description = __( 'Your site is visible to everyone.' );
+	} else {
+		description = __(
+			'Your site is only visible to you and logged-in members you approve. Everyone else will see a log in screen.'
+		);
+	}
+
+	const fields: Field< SitePrivacy >[] = [
+		{
+			id: 'visibility',
+			description,
+			Edit: 'toggleGroup',
+			elements: [
+				{ label: __( 'Coming soon' ), value: 'coming-soon' },
+				{ label: __( 'Public' ), value: 'public' },
+				{ label: __( 'Private' ), value: 'private' },
+			],
+		},
+	];
+
+	const form = {
+		type: 'regular' as const,
+		fields: [ { id: 'visibility', labelPosition: 'none' } as SimpleFormField ],
 	};
 
 	return (
