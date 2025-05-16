@@ -903,7 +903,8 @@ const StatsBodyAccessCheck = ( props ) => {
 };
 
 const StatsSite = ( props ) => {
-	const { period } = props.period;
+	const { context, period: periodProp } = props;
+	const { period } = periodProp;
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 	const siteId = useSelector( getSelectedSiteId );
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
@@ -916,9 +917,9 @@ const StatsSite = ( props ) => {
 	); // Track the last viewed tab.
 
 	useEffect( () => {
-		const query = props.context.query;
+		const query = context.query;
 		recordCurrentScreen( 'traffic', query, true );
-	}, [ props.period, props.context.query ] );
+	}, [ periodProp, context.query ] );
 
 	return (
 		<Main fullWidthLayout ariaLabel={ STATS_PRODUCT_NAME }>
