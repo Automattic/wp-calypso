@@ -2,13 +2,18 @@ import {
 	isJetpackPlan,
 	isJetpackProduct,
 	isMultiYearDomainProduct,
+	isWpComPlan,
 } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { FunctionComponent, useCallback, useEffect, useState } from 'react';
+import { FunctionComponent, useCallback, useEffect, useMemo, useState } from 'react';
 import isJetpackCheckout from 'calypso/lib/jetpack/is-jetpack-checkout';
+import {
+	useStreamlinedPriceExperiment,
+	isStreamlinedPriceDropdownTreatment,
+} from 'calypso/my-sites/plans-features-main/hooks/use-streamlined-price-experiment';
 import { JetpackItemVariantDropDownPrice } from './jetpack-variant-dropdown-price';
-import { CurrentOption, Dropdown, OptionList, Option } from './styles';
+import { CurrentOption, Dropdown, OptionList, Option, WPCheckoutCheckIcon } from './styles';
 import { ItemVariantDropDownPrice } from './variant-dropdown-price';
 import type { ItemVariationPickerProps, WPCOMProductVariant } from './types';
 import type { ResponseCartProduct } from '@automattic/shopping-cart';
@@ -27,15 +32,32 @@ export const ItemVariationDropDown: FunctionComponent< ItemVariationPickerProps 
 } ) => {
 	const translate = useTranslate();
 	const [ highlightedVariantIndex, setHighlightedVariantIndex ] = useState< number | null >( null );
+	const [ , streamlinedPriceExperimentAssignment ] = useStreamlinedPriceExperiment();
+	const isStreamlinedPrice =
+		isStreamlinedPriceDropdownTreatment( streamlinedPriceExperimentAssignment ) &&
+		isWpComPlan( selectedItem.product_slug );
+
+	const [ optimisticSelectedItem, setOptimisticSelectedItem ] = useState< string | null >( null );
+
+	useEffect( () => {
+		if ( isStreamlinedPrice ) {
+			setOptimisticSelectedItem( selectedItem.product_slug );
+		}
+	}, [ selectedItem.product_slug, isStreamlinedPrice ] );
 
 	// Multi-year domain products must be compared by volume because they have the same product id.
-	const selectedVariantIndexRaw = variants.findIndex( ( variant ) =>
-		isMultiYearDomainProduct( selectedItem )
-			? selectedItem.volume === variant.volume
-			: selectedItem.product_id === variant.productId
-	);
-	// findIndex returns -1 if it fails and we want null.
-	const selectedVariantIndex = selectedVariantIndexRaw > -1 ? selectedVariantIndexRaw : null;
+	const selectedVariantIndex = useMemo( () => {
+		const rawIndex = variants.findIndex( ( variant ) => {
+			if ( isStreamlinedPrice && optimisticSelectedItem ) {
+				return variant.productSlug === optimisticSelectedItem;
+			}
+			// If not optimistic, or optimisticSelectedItem is not set, use the original logic
+			return isMultiYearDomainProduct( selectedItem )
+				? selectedItem.volume === variant.volume && variant.productId === selectedItem.product_id
+				: selectedItem.product_id === variant.productId;
+		} );
+		return rawIndex > -1 ? rawIndex : null;
+	}, [ variants, isStreamlinedPrice, optimisticSelectedItem, selectedItem ] );
 
 	// reset the dropdown highlight when the selected product changes
 	useEffect( () => {
@@ -45,10 +67,13 @@ export const ItemVariationDropDown: FunctionComponent< ItemVariationPickerProps 
 	// wrapper around onChangeItemVariant to close up dropdown on change
 	const handleChange = useCallback(
 		( uuid: string, productSlug: string, productId: number, volume?: number ) => {
+			if ( isStreamlinedPrice ) {
+				setOptimisticSelectedItem( productSlug );
+			}
 			onChangeItemVariant( uuid, productSlug, productId, volume );
 			toggle( null );
 		},
-		[ onChangeItemVariant, toggle ]
+		[ onChangeItemVariant, toggle, isStreamlinedPrice ]
 	);
 
 	const selectNextVariant = useCallback( () => {
@@ -121,13 +146,22 @@ export const ItemVariationDropDown: FunctionComponent< ItemVariationPickerProps 
 		return null;
 	}
 
+	let compareTo = undefined;
+	if ( isStreamlinedPrice ) {
+		compareTo = variants.find( ( variant ) => variant.termIntervalInMonths === 1 );
+	}
 	const ItemVariantDropDownPriceWrapper: FunctionComponent< { variant: WPCOMProductVariant } > = (
 		props
 	) =>
 		isJetpack( props.variant ) ? (
 			<JetpackItemVariantDropDownPrice { ...props } allVariants={ variants } />
 		) : (
-			<ItemVariantDropDownPrice { ...props } product={ selectedItem } />
+			<ItemVariantDropDownPrice
+				{ ...props }
+				product={ selectedItem }
+				isStreamlinedPrice={ isStreamlinedPrice }
+				compareTo={ compareTo }
+			/>
 		);
 
 	return (
@@ -143,6 +177,7 @@ export const ItemVariationDropDown: FunctionComponent< ItemVariationPickerProps 
 				onClick={ () => toggle( id ) }
 				open={ isOpen }
 				role="button"
+				detached={ isStreamlinedPrice }
 			>
 				{ selectedVariantIndex !== null ? (
 					<ItemVariantDropDownPriceWrapper variant={ variants[ selectedVariantIndex ] } />
@@ -157,6 +192,7 @@ export const ItemVariationDropDown: FunctionComponent< ItemVariationPickerProps 
 					highlightedVariantIndex={ highlightedVariantIndex }
 					selectedItem={ selectedItem }
 					handleChange={ handleChange }
+					isStreamlinedPrice={ isStreamlinedPrice }
 				/>
 			) }
 		</Dropdown>
@@ -168,15 +204,19 @@ function ItemVariantOptionList( {
 	highlightedVariantIndex,
 	selectedItem,
 	handleChange,
+	isStreamlinedPrice,
 }: {
 	variants: WPCOMProductVariant[];
 	highlightedVariantIndex: number | null;
 	selectedItem: ResponseCartProduct;
 	handleChange: ( uuid: string, productSlug: string, productId: number, volume?: number ) => void;
+	isStreamlinedPrice: boolean;
 } ) {
-	const compareTo = variants.find( ( variant ) => variant.productId === selectedItem.product_id );
+	const compareTo = isStreamlinedPrice
+		? variants.find( ( variant ) => variant.termIntervalInMonths === 1 )
+		: variants.find( ( variant ) => variant.productId === selectedItem.product_id );
 	return (
-		<OptionList role="listbox" tabIndex={ -1 }>
+		<OptionList role="listbox" tabIndex={ -1 } detached={ isStreamlinedPrice }>
 			{ variants.map( ( variant, index ) => (
 				<ItemVariantOption
 					key={ variant.productSlug + variant.variantLabel.noun }
@@ -193,6 +233,7 @@ function ItemVariantOptionList( {
 					variant={ variant }
 					allVariants={ variants }
 					selectedItem={ selectedItem }
+					isStreamlinedPrice={ isStreamlinedPrice }
 				/>
 			) ) }
 		</OptionList>
@@ -206,6 +247,7 @@ function ItemVariantOption( {
 	variant,
 	allVariants,
 	selectedItem,
+	isStreamlinedPrice,
 }: {
 	isSelected: boolean;
 	onSelect: () => void;
@@ -213,6 +255,7 @@ function ItemVariantOption( {
 	variant: WPCOMProductVariant;
 	allVariants: WPCOMProductVariant[];
 	selectedItem: ResponseCartProduct;
+	isStreamlinedPrice: boolean;
 } ) {
 	const { variantLabel, productId, productSlug } = variant;
 	return (
@@ -224,6 +267,7 @@ function ItemVariantOption( {
 			role="option"
 			onClick={ onSelect }
 			selected={ isSelected }
+			detached={ isStreamlinedPrice }
 		>
 			{ isJetpack( variant ) ? (
 				<JetpackItemVariantDropDownPrice variant={ variant } allVariants={ allVariants } />
@@ -232,8 +276,10 @@ function ItemVariantOption( {
 					variant={ variant }
 					compareTo={ compareTo }
 					product={ selectedItem }
+					isStreamlinedPrice={ isStreamlinedPrice }
 				/>
 			) }
+			{ isStreamlinedPrice && isSelected && <WPCheckoutCheckIcon /> }
 		</Option>
 	);
 }

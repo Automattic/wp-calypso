@@ -88,6 +88,7 @@ const fields = [
 		id: 'status',
 		label: 'Status',
 		type: 'text' as const,
+		Edit: 'toggleGroup' as const,
 		elements: [
 			{ value: 'draft', label: 'Draft' },
 			{ value: 'published', label: 'Published' },
@@ -136,6 +137,7 @@ export const Default = ( {
 				'order',
 				'sticky',
 				'author',
+				'status',
 				'reviewer',
 				'password',
 				'date',

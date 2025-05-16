@@ -1,4 +1,5 @@
 import { Card, FormLabel, Dialog } from '@automattic/components';
+import { getNumericFirstDayOfWeek, withLocale } from '@automattic/i18n-utils';
 import { Button, CheckboxControl } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
 import { flowRight as compose } from 'lodash';
@@ -111,6 +112,37 @@ class NotificationSubscriptions extends Component {
 		} );
 	}
 
+	renderLocalizedWeekdayOptions() {
+		const { translate, locale } = this.props;
+		const startOfWeek = getNumericFirstDayOfWeek( locale );
+
+		const weekDays = [
+			{ value: '1', label: translate( 'Monday' ) },
+			{ value: '2', label: translate( 'Tuesday' ) },
+			{ value: '3', label: translate( 'Wednesday' ) },
+			{ value: '4', label: translate( 'Thursday' ) },
+			{ value: '5', label: translate( 'Friday' ) },
+			{ value: '6', label: translate( 'Saturday' ) },
+			{ value: '7', label: translate( 'Sunday' ) },
+		];
+
+		// Rotate the array based on startOfWeek
+		const rotatedWeekdays = [
+			...weekDays.slice( startOfWeek - 1 ),
+			...weekDays.slice( 0, startOfWeek - 1 ),
+		];
+
+		return (
+			<>
+				{ rotatedWeekdays.map( ( { value, label } ) => (
+					<option key={ value } value={ value }>
+						{ label }
+					</option>
+				) ) }
+			</>
+		);
+	}
+
 	render() {
 		const { teams } = this.props;
 		const isAutomattician = isAutomatticTeamMember( teams );
@@ -192,8 +224,8 @@ class NotificationSubscriptions extends Component {
 								onFocus={ this.handleFocusEvent( 'Email delivery format' ) }
 								value={ this.props.getSetting( 'subscription_delivery_mail_option' ) }
 							>
-								<option value="html">{ this.props.translate( 'HTML' ) }</option>
-								<option value="text">{ this.props.translate( 'Plain Text' ) }</option>
+								<option value="html">{ this.props.translate( 'Visual (HTML)' ) }</option>
+								<option value="text">{ this.props.translate( 'Plain text' ) }</option>
 							</FormSelect>
 						</FormFieldset>
 
@@ -210,13 +242,7 @@ class NotificationSubscriptions extends Component {
 								onFocus={ this.handleFocusEvent( 'Email delivery window day' ) }
 								value={ this.props.getSetting( 'subscription_delivery_day' ) }
 							>
-								<option value="0">{ this.props.translate( 'Sunday' ) }</option>
-								<option value="1">{ this.props.translate( 'Monday' ) }</option>
-								<option value="2">{ this.props.translate( 'Tuesday' ) }</option>
-								<option value="3">{ this.props.translate( 'Wednesday' ) }</option>
-								<option value="4">{ this.props.translate( 'Thursday' ) }</option>
-								<option value="5">{ this.props.translate( 'Friday' ) }</option>
-								<option value="6">{ this.props.translate( 'Saturday' ) }</option>
+								{ this.renderLocalizedWeekdayOptions() }
 							</FormSelect>
 
 							<FormSelect
@@ -366,6 +392,7 @@ export default compose(
 	connect( mapStateToProps, mapDispatchToProps ),
 	localize,
 	protectForm,
+	withLocale,
 	withLocalizedMoment,
 	withFormBase
 )( NotificationSubscriptionsWithHooks );

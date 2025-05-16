@@ -18,7 +18,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { useGetProductVariants } from '../../hooks/product-variants';
 import {
 	getItemVariantCompareToPrice,
-	getItemVariantDiscountPercentage,
+	getItemVariantDiscount,
 } from '../item-variation-picker/util';
 import type { WPCOMProductVariant } from '../item-variation-picker';
 import './style.scss';
@@ -187,7 +187,7 @@ export function CheckoutSidebarPlanUpsell() {
 		upsellVariant,
 		currentVariant
 	);
-	const percentSavings = getItemVariantDiscountPercentage( upsellVariant, currentVariant );
+	const percentSavings = getItemVariantDiscount( upsellVariant, currentVariant );
 	if ( percentSavings === 0 ) {
 		debug( 'percent savings is too low', percentSavings );
 		return null;

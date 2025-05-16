@@ -649,6 +649,7 @@ export const fields: Field< SpaceObject >[] = [
 	{
 		label: 'Title',
 		id: 'title',
+		type: 'text',
 		enableHiding: false,
 		enableGlobalSearch: true,
 	},
@@ -689,6 +690,7 @@ export const fields: Field< SpaceObject >[] = [
 	{
 		label: 'Description',
 		id: 'description',
+		type: 'text',
 		enableSorting: false,
 		enableGlobalSearch: true,
 	},
