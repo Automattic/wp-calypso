@@ -629,7 +629,7 @@ export function PurchaseItemPaymentMethod( {
 		);
 	}
 
-	const goToAddPaymentMethod = ( e: React.MouseEvent< HTMLDivElement >, siteId: number ) => {
+	const goToAddPaymentMethod = ( e: React.MouseEvent< HTMLButtonElement >, siteId: number ) => {
 		e.preventDefault();
 		e.stopPropagation();
 
@@ -648,7 +648,7 @@ export function PurchaseItemPaymentMethod( {
 					<Button
 						variant="primary"
 						size="compact"
-						onClick={ ( e: React.MouseEvent< HTMLDivElement > ) =>
+						onClick={ ( e: React.MouseEvent< HTMLButtonElement > ) =>
 							goToAddPaymentMethod( e, purchase.id )
 						}
 					>
