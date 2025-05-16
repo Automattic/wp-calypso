@@ -77,7 +77,7 @@ const ECommerceTrialExpired = (): JSX.Element => {
 	);
 
 	const isWooExpressTrial = purchase?.isWooExpressTrial;
-	const isEntrepreneurTrial = purchase?.isWooExpressTrial === false;
+	const isEntrepreneurTrial = ! purchase?.isWooExpressTrial;
 
 	return (
 		<>
