@@ -615,7 +615,7 @@ export function PurchaseItemPaymentMethod( {
 }: {
 	purchase: Purchases.Purchase;
 	translate: LocalizeProps[ 'translate' ];
-	isDisconnectedSite: boolean | undefined;
+	isDisconnectedSite?: boolean;
 } ) {
 	if ( isIncludedWithPlan( purchase ) ) {
 		return translate( 'Included with Plan' );
