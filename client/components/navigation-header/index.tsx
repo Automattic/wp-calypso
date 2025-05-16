@@ -35,6 +35,13 @@ interface Props {
 	loggedIn?: boolean;
 }
 
+// This function checks if the URL contains the 'options' query parameter and if it includes 'noCrumbs'.
+// Expired eCommerce trials use this to hide the breadcrumbs since those users can't access settings and other pages exposed in the breadcrumbs.
+const showBreadcrumb = () => {
+	const queryParams = new URLSearchParams( window.location.search );
+	return ! queryParams?.get( 'options' )?.includes( 'noCrumbs' );
+};
+
 const NavigationHeader = React.forwardRef< HTMLElement, Props >( ( props, ref ) => {
 	const {
 		id,
@@ -68,12 +75,14 @@ const NavigationHeader = React.forwardRef< HTMLElement, Props >( ( props, ref ) 
 			<Container>
 				<div className="navigation-header__main">
 					{ screenOptionsTab && <ScreenOptionsTab wpAdminPath={ screenOptionsTab } /> }
-					<Breadcrumb
-						items={ navigationItems }
-						mobileItem={ mobileItem }
-						compact={ compactBreadcrumb }
-						hideWhenOnlyOneLevel
-					/>
+					{ showBreadcrumb() && (
+						<Breadcrumb
+							items={ navigationItems }
+							mobileItem={ mobileItem }
+							compact={ compactBreadcrumb }
+							hideWhenOnlyOneLevel
+						/>
+					) }
 					{ showTitle && (
 						<FormattedHeader
 							align="left"
