@@ -58,6 +58,7 @@
     // allows to keep the button highlighted even when the border is used for
     // other purposes (eg. range selection preview, middle of a selected range).
     box-shadow: none;
+	font-variant-numeric: tabular-nums;
 
     // Use ::before to render border and background, which keeps the button's
     // own border-radius intact, which in turns allows the focus ring to
