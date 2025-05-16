@@ -13,6 +13,9 @@ jest.mock( 'calypso/components/data/document-head', () => () => 'DocumentHead' )
 jest.mock( 'calypso/components/social-buttons/google', () => () => 'GoogleSocialButton' );
 jest.mock( 'calypso/components/social-buttons/apple', () => () => 'AppleLoginButton' );
 jest.mock( 'calypso/components/social-buttons/github', () => () => 'GitHubLoginButton' );
+jest.mock( 'calypso/blocks/login/use-social-login-experiment', () => ( {
+	useSocialLoginExperiment: () => [ false, { variationName: 'control' } ],
+} ) );
 
 const render = ( el, options ) =>
 	renderWithProvider( el, {
