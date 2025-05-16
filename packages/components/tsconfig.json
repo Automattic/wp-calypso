@@ -3,7 +3,7 @@
 	"compilerOptions": {
 		"allowJs": true,
 		"checkJs": false,
-		"outDir": "dist/esm",
+		"emitDeclarationOnly": true,
 		"declarationDir": "dist/types",
 		"rootDir": "src"
 	},

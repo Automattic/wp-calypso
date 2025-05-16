@@ -868,6 +868,7 @@ __metadata:
     clsx: "npm:^2.1.1"
     colord: "npm:2.9.3"
     debug: "npm:^4.4.0"
+    glob: "npm:^7.2.3"
     gridicons: "npm:^3.4.2"
     i18n-calypso: "workspace:^"
     lodash: "npm:^4.17.21"

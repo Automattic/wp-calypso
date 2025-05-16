@@ -440,7 +440,10 @@ module.exports = {
 		// - url because we use it all over the place to parse and build urls
 		// - events because we use it for some event emitters
 		// - path because we use it quite a bit
-		'import/no-nodejs-modules': [ 'error', { allow: [ 'url', 'events', 'path', 'config' ] } ],
+		'import/no-nodejs-modules': [
+			'error',
+			{ allow: [ 'url', 'events', 'path', 'node:path', 'config' ] },
+		],
 
 		/**
 		 * temporarily demote inclusive language rule to a warning until we clear the repository
@@ -473,7 +476,10 @@ module.exports = {
 		],
 
 		// Force packages to declare their dependencies
-		'import/no-extraneous-dependencies': 'error',
+		'import/no-extraneous-dependencies': [
+			'error',
+			{ devDependencies: [ '**/webpack.config.js', '**/.eslintrc.js' ] },
+		],
 		'import/named': 'error',
 		'import/namespace': 'error',
 		'import/default': 'error',
