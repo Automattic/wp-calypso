@@ -209,7 +209,7 @@ const LanguagePickerModal: React.FC< Props > = ( {
 				selectedLanguage={ selectedLanguage }
 				localizedLanguageNames={ localizedLanguageNames }
 			/>
-			<div className="confirm-modal__buttons">{ buttons }</div>
+			<div>{ buttons }</div>
 		</Modal>
 	);
 };
