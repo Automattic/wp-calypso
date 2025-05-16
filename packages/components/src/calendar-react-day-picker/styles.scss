@@ -36,20 +36,20 @@
 
   &__day {
     padding: 0;
-	position: relative;
+    position: relative;
   }
   // Setting text color on &__day instead of directly on &__day-button to ensure
   // that the color of the dot used to indicate today's date follows the same
   // color as the button's text. &__day-button inherits the color from &__day.
   &__day:has(&__day-button:disabled) {
-	color: $gray-600;
-}
-&__day:has(&__day-button:hover:not(:disabled)) {
-	color: var(--color-accent)
-}
-&__day:has(&__day-button:focus-visible) {
-	color: var(--color-accent);
-	}
+    color: $gray-600;
+  }
+  &__day:has(&__day-button:hover:not(:disabled)) {
+    color: var(--color-accent)
+  }
+  &__day:has(&__day-button:focus-visible) {
+    color: var(--color-accent);
+  }
 
   &__day-button {
     background: none;
@@ -67,12 +67,12 @@
     border: none;
     border-radius: 2px;
 
-	font-variant-numeric: tabular-nums;
+    font-variant-numeric: tabular-nums;
 
     // Use the button's ::before to render date's background, which keeps the
-	// border-radius of the button intact. This technique allows the focus ring
-	// to have rounded corners even when the background needs square corners
-	// (eg. in the middle of a date range).
+    // border-radius of the button intact. This technique allows the focus ring
+    // to have rounded corners even when the background needs square corners
+    // (eg. in the middle of a date range).
     &::before {
       content: '';
       position: absolute;
@@ -82,23 +82,23 @@
       border-radius: 2px;
     }
 
-	// Use the button's ::after to show the selection preview.
-	&::after {
+    // Use the button's ::after to show the selection preview.
+    &::after {
       content: '';
       position: absolute;
       z-index: 1;
       inset: 0;
-	  pointer-events: none;
+      pointer-events: none;
     }
 
     &:disabled {
       cursor: revert;
 
-	  @media (forced-colors: active) {
-		// As an extra visual cue, show a line-through on disabled days
-		// in forced-colors (high-contrast) mode.
-		text-decoration: line-through;
-	  }
+      @media (forced-colors: active) {
+        // As an extra visual cue, show a line-through on disabled days
+        // in forced-colors (high-contrast) mode.
+        text-decoration: line-through;
+      }
     }
 
     &:focus-visible {
@@ -211,38 +211,38 @@
 
   /* DAY MODIFIERS */
   // Today's date: show a dot in the top-right corner of the button
-	&__day--today::after {
-	content: '';
-	position: absolute;
-	z-index: 1;
-	inset-block-start: 2px;
-	inset-inline-end: 2px;
-	width: 0;
-	height: 0;
-	border-radius: 50%;
-	border: 2px solid currentColor;
+  &__day--today::after {
+    content: '';
+    position: absolute;
+    z-index: 1;
+    inset-block-start: 2px;
+    inset-inline-end: 2px;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    border: 2px solid currentColor;
   }
 
   // Selected button (individual date, range start, and range end)
   &__day--selected:not(&__range-middle):has(&__day-button, &__day-button:hover:not(:disabled)) {
-	color: $white;
+    color: $white;
   }
   &__day--selected:not(&__range-middle) &__day-button {
     &::before {
-		background-color: $gray-900;
-		// Render a transparent border to highlight the selected day in
-		// forced-colors (high-contrast) mode, since the background is not
-		// visible.
-		border: 1px solid transparent;
+      background-color: $gray-900;
+      // Render a transparent border to highlight the selected day in
+      // forced-colors (high-contrast) mode, since the background is not
+      // visible.
+      border: 1px solid transparent;
     }
 
-	&:disabled::before {
-		background-color: $gray-600;
-	}
+    &:disabled::before {
+      background-color: $gray-600;
+    }
 
-	&:hover:not(:disabled)::before {
-		background-color: $gray-800;
-	}
+    &:hover:not(:disabled)::before {
+      background-color: $gray-800;
+    }
   }
 
   // Hidden button (ie. outside current month but still rendered)
@@ -253,7 +253,7 @@
   // Range start button, but not when start and end are the same day.
   &__range-start:not(&__range-end) &__day-button {
     // Apply border-radius changes to the button itself too, so that the focus
-	// ring follows the same shape as the button's background.
+    // ring follows the same shape as the button's background.
     &, &::before {
       border-start-end-radius: 0;
       border-end-end-radius: 0;
@@ -266,9 +266,9 @@
       background-color: var(--a8c-components-calendar-range-middle-background-color);
       border-radius: 0;
 
-	  // Render a top and bottom transparent border to highlight the selected
-	  // day in forced-colors (high-contrast) mode, since the background is not
-	  // visible.
+      // Render a top and bottom transparent border to highlight the selected
+      // day in forced-colors (high-contrast) mode, since the background is not
+      // visible.
       border-width: 1px 0;
       border-color: transparent;
       border-style: solid;
@@ -278,7 +278,7 @@
   // Range end button, but not when start and end are the same day.
   &__range-end:not(&__range-start) &__day-button {
     // Apply border-radius changes to the button itself too, so that the focus
-	// ring follows the same shape as the button's background.
+    // ring follows the same shape as the button's background.
     &, &::before {
       border-start-start-radius: 0;
       border-end-start-radius: 0;
@@ -299,48 +299,48 @@
    */
 
   &__day--preview:not(&__range-start):not(&__range-end) &__day-button::after {
-	  background-color: var(--a8c-components-calendar-preview-border-color);
+    background-color: var(--a8c-components-calendar-preview-border-color);
 
-	  // Since the background is not visible in forced-colors (high-contrast)
-	  // mode, add a transparent border which is still going to be masked, and
-	  // thus visible in forced-colors mode.
-	  border: 1px solid transparent;
+    // Since the background is not visible in forced-colors (high-contrast)
+    // mode, add a transparent border which is still going to be masked, and
+    // thus visible in forced-colors mode.
+    border: 1px solid transparent;
   }
   &__day--preview:is(&__range-middle):not(&__range-start):not(&__range-end) &__day-button::before {
-	// Remove the transparent border shown on the middle of the range
-	// in forced-colors (high-contrast) mode, to allow for the dashed border
-	// to be visible.
-	border: none;
+    // Remove the transparent border shown on the middle of the range
+    // in forced-colors (high-contrast) mode, to allow for the dashed border
+    // to be visible.
+    border: none;
   }
 
 &__day--preview:not(&__day--preview-start):not(&__day--preview-end):not(&__range-start):not(&__range-end) &__day-button::after {
-	// SVG with dashed top/bottom lines. The dash pattern is chosen to make sure
-	// that multiple days in a row show a seamless dashed border.
-	// The stylelint rule is disabled because we need to wrap the SVG in quotes
-	// to disambiguate from the Sass url() function.
+    // SVG with dashed top/bottom lines. The dash pattern is chosen to make sure
+    // that multiple days in a row show a seamless dashed border.
+    // The stylelint rule is disabled because we need to wrap the SVG in quotes
+    // to disambiguate from the Sass url() function.
     /* stylelint-disable-next-line function-url-quotes */
     mask-image: url("data:image/svg+xml, %3Csvg viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg' fill='white' stroke='black' stroke-dasharray='3.9 4' stroke-dashoffset='2' stroke-width='1'%3E%3Cline x1='0' y1='0.5' x2='100' y2='0.5' /%3E%3Cline x1='0' y1='31.5' x2='100' y2='31.5' /%3E%3C/svg%3E");
   }
 
   &__day--preview-start:not(&__range-start):not(&__range-end) &__day-button::after,
   &[dir="rtl"] &__day--preview-end:not(&__range-start):not(&__range-end) &__day-button::after {
-	  // SVG with dashed square. The top-left and bottom-left corners are rounded,
-	  // and the right border is transparent. The dash pattern is chosen to make
-	  // sure that multiple days in a row show a seamless dashed border.
-	  // The stylelint rule is disabled because we need to wrap the SVG in quotes
-	  // to disambiguate from the Sass url() function.
-	  /* stylelint-disable-next-line function-url-quotes */
-	  mask-image: url("data:image/svg+xml, %3Csvg viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M32,0.5 h-29.5 a2,2 0 0 0 -2,2 v27 a2,2 0 0 0 2,2 h30' fill='none' stroke='black' stroke-dasharray='3.84516' stroke-dashoffset='1.9226' stroke-width='1' /%3E%3C/svg%3E");
-	}
-	&[dir="rtl"] &__day--preview-start:not(&__range-start):not(&__range-end) &__day-button::after,
-	&__day--preview-end:not(&__range-start):not(&__range-end) &__day-button::after {
-	// SVG with dashed square. The top-right and bottom-right corners are rounded,
-	  // and the left border is transparent. The dash pattern is chosen to make
-	  // sure that multiple days in a row show a seamless dashed border.
-	  // The stylelint rule is disabled because we need to wrap the SVG in quotes
-	  // to disambiguate from the Sass url() function.
-	  /* stylelint-disable-next-line function-url-quotes */
-	mask-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0,0.5 h29.5 a2,2 0 0 1 2,2 v27 a2,2 0 0 1 -2,2 h-29.5' fill='none' stroke='black' stroke-dasharray='3.84516' stroke-dashoffset='1.9226' stroke-width='1' /%3E%3E%3C/svg%3E");
+    // SVG with dashed square. The top-left and bottom-left corners are rounded,
+    // and the right border is transparent. The dash pattern is chosen to make
+    // sure that multiple days in a row show a seamless dashed border.
+    // The stylelint rule is disabled because we need to wrap the SVG in quotes
+    // to disambiguate from the Sass url() function.
+    /* stylelint-disable-next-line function-url-quotes */
+    mask-image: url("data:image/svg+xml, %3Csvg viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M32,0.5 h-29.5 a2,2 0 0 0 -2,2 v27 a2,2 0 0 0 2,2 h30' fill='none' stroke='black' stroke-dasharray='3.84516' stroke-dashoffset='1.9226' stroke-width='1' /%3E%3C/svg%3E");
+  }
+  &[dir="rtl"] &__day--preview-start:not(&__range-start):not(&__range-end) &__day-button::after,
+  &__day--preview-end:not(&__range-start):not(&__range-end) &__day-button::after {
+    // SVG with dashed square. The top-right and bottom-right corners are rounded,
+    // and the left border is transparent. The dash pattern is chosen to make
+    // sure that multiple days in a row show a seamless dashed border.
+    // The stylelint rule is disabled because we need to wrap the SVG in quotes
+    // to disambiguate from the Sass url() function.
+    /* stylelint-disable-next-line function-url-quotes */
+    mask-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0,0.5 h29.5 a2,2 0 0 1 2,2 v27 a2,2 0 0 1 -2,2 h-29.5' fill='none' stroke='black' stroke-dasharray='3.84516' stroke-dashoffset='1.9226' stroke-width='1' /%3E%3E%3C/svg%3E");
   }
 }
 
