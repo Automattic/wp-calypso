@@ -88,7 +88,7 @@ const fields = [
 		id: 'status',
 		label: 'Status',
 		type: 'text' as const,
-		Edit: 'toggle-group' as const,
+		Edit: 'toggleGroup' as const,
 		elements: [
 			{ value: 'draft', label: 'Draft' },
 			{ value: 'published', label: 'Published' },

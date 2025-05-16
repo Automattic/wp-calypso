@@ -30,7 +30,7 @@ const FORM_CONTROLS: FormControls = {
 	radio,
 	select,
 	text,
-	'toggle-group': toggleGroup,
+	toggleGroup,
 };
 
 export function getControl< Item >(
