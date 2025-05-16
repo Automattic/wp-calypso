@@ -37,6 +37,10 @@ type Step = {
 	value: number;
 };
 
+const STEP_NOT_STARTED = 0;
+const STEP_HALFWAY = 50;
+const STEP_COMPLETED = 100;
+
 const personalizationStepProgress: PersonalizationStepProgress = {
 	3: 50,
 	4: 75,
@@ -44,24 +48,30 @@ const personalizationStepProgress: PersonalizationStepProgress = {
 	6: 100,
 };
 
-const getPersonalizationProgress = ( currentStep: number, submitAsSurvey: boolean ): number => {
-	if ( submitAsSurvey ) {
-		return personalizationStepProgress[ currentStep ] ?? 0;
+const getPersonalizationProgress = (
+	currentStep: number,
+	withPersonalizedBlueprint: boolean
+): number => {
+	if ( withPersonalizedBlueprint ) {
+		// if this includes blueprint, it means we have more steps to go.
+		return personalizationStepProgress[ currentStep ] ?? STEP_NOT_STARTED;
 	}
 
 	if ( currentStep > 2 ) {
-		return 100;
+		// If we are past Step 2, it means we have completed the Personalization screen.
+		return STEP_COMPLETED;
 	}
 
-	return currentStep === 2 ? 50 : 0;
+	// If we are in Step 2, it means we are halfway through the process otherwise personalization is not started
+	return currentStep === 2 ? STEP_HALFWAY : STEP_NOT_STARTED;
 };
 
 const getSignupProgress = ( step: number ): number => {
-	return step === 1 ? 50 : 100;
+	return step === 1 ? STEP_HALFWAY : STEP_COMPLETED;
 };
 
 const getFinishSurveyProgress = ( step: number ): number => {
-	return step === 6 ? 100 : 0;
+	return step === 6 ? STEP_COMPLETED : STEP_NOT_STARTED;
 };
 
 const MultiStepForm = ( { withPersonalizedBlueprint = false, submitAsSurvey = false }: Props ) => {
@@ -83,7 +93,7 @@ const MultiStepForm = ( { withPersonalizedBlueprint = false, submitAsSurvey = fa
 		{
 			label: translate( 'Personalize' ),
 			isActive: currentStep > 3,
-			value: getPersonalizationProgress( currentStep, submitAsSurvey ),
+			value: getPersonalizationProgress( currentStep, withPersonalizedBlueprint ),
 		},
 		...( submitAsSurvey
 			? [
@@ -115,7 +125,7 @@ const MultiStepForm = ( { withPersonalizedBlueprint = false, submitAsSurvey = fa
 				3: 'choice_blueprint',
 				4: 'blueprint_form',
 				5: 'blueprint_form_2',
-				6: submitAsSurvey ? 'finish_signup_survey' : 'submit_signup_confirmation',
+				6: 'finish_signup_survey',
 			};
 
 			dispatch(
@@ -124,7 +134,7 @@ const MultiStepForm = ( { withPersonalizedBlueprint = false, submitAsSurvey = fa
 				} )
 			);
 		},
-		[ dispatch, submitAsSurvey ]
+		[ dispatch ]
 	);
 
 	const updateDataAndContinue = useCallback(
@@ -181,6 +191,7 @@ const MultiStepForm = ( { withPersonalizedBlueprint = false, submitAsSurvey = fa
 				return (
 					<PersonalizationForm
 						onContinue={ ( data ) =>
+							// If the multi-form does not include blueprint, we can skip to the last step (6).
 							updateDataAndContinue( data, withPersonalizedBlueprint ? 3 : 6 )
 						}
 						onSubmit={ ( data ) => onCreateAgency( data ) }

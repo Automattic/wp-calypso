@@ -1,6 +1,10 @@
 @import "@wordpress/base-styles/mixins";
 @import "@wordpress/base-styles/variables";
 
+
+$progress-bar-bg-color: #0277A8;
+$progress-bar-bg-color-dark: #1490C7;
+
 .step-progress {
 	width: 100%;
 
@@ -19,17 +23,17 @@
 		gap: 8px;
 		width: 100%;
 
-		&.is-fifty-fifty {
+		&.is-two-columns {
 			grid-template-columns: repeat(4, 1fr);
 		}
 	}
 
 	.progress-bar__progress {
-		background-color: #0277A8;
+		background-color: $progress-bar-bg-color;
 
 
 		@media (prefers-color-scheme: dark) {
-			background-color: #1490C7;
+			background-color: $progress-bar-bg-color-dark;
 		}
 	}
 
