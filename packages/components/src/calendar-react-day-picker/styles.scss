@@ -16,7 +16,11 @@
   --a8c-components-calendar-button-width: 2rem;
   --a8c-components-calendar-nav-height: 2rem;
 
+  // TODO: themify / align to DS tokens
+  --a8c-components-calendar-range-middle-background-color: color-mix(in srgb, var(--color-accent) 4%, transparent);
   --a8c-components-calendar-preview-border-color: color-mix(in srgb, var(--color-accent) 16%, transparent);
+
+
   position: relative; /* Required to position the navigation toolbar. */
   box-sizing: border-box;
   display: inline flow-root;
@@ -246,7 +250,7 @@
     color: $gray-900;
 
     &::before {
-      background-color: $gray-100;
+      background-color: var(--a8c-components-calendar-range-middle-background-color);
       border-radius: 0;
 
       // Render a top/bottom border of the same color as the background, which
