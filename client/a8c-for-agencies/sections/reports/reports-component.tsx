@@ -5,7 +5,6 @@ import {
 	TextareaControl,
 	CheckboxControl,
 	TextControl,
-	FormFileUpload,
 	DateTimePicker,
 } from '@wordpress/components';
 import { useState } from '@wordpress/element';
@@ -50,7 +49,6 @@ export default function ReportsComponent() {
 	const [ currentStep, setCurrentStep ] = useState( 1 );
 
 	// Step 1: Setup State
-	const [ logoFile, setLogoFile ] = useState< File | null >( null );
 	const [ selectedSite, setSelectedSite ] = useState( MOCK_SITES[ 0 ].value );
 	const [ selectedTimeframe, setSelectedTimeframe ] = useState( MOCK_TIMEFRAMES[ 0 ].value );
 	const [ clientEmail, setClientEmail ] = useState( '' );
@@ -81,12 +79,6 @@ export default function ReportsComponent() {
 
 	const handleNextStep = () => setCurrentStep( ( prev ) => prev + 1 );
 	const handlePrevStep = () => setCurrentStep( ( prev ) => prev - 1 );
-
-	const handleFileUpload = ( event: React.ChangeEvent< HTMLInputElement > ) => {
-		if ( event.target.files && event.target.files.length > 0 ) {
-			setLogoFile( event.target.files[ 0 ] );
-		}
-	};
 
 	const handleStep2CheckboxChange = (
 		groupKey: 'stats' | 'security' | 'performance',
@@ -125,16 +117,7 @@ export default function ReportsComponent() {
 				return (
 					<>
 						<h2 className="a4a-reports-modal__step-title">{ translate( 'Step 1: Setup' ) }</h2>
-						<FormFileUpload
-							accept="image/*"
-							onChange={ handleFileUpload }
-							render={ ( { openFileDialog } ) => (
-								<Button onClick={ openFileDialog } variant="secondary">
-									{ logoFile ? logoFile.name : translate( 'Add your logo (optional)' ) }
-								</Button>
-							) }
-							className="a4a-reports-modal__file-upload"
-						/>
+
 						<SelectControl
 							label={ translate( 'Pick a timeframe:' ) }
 							value={ selectedTimeframe }
