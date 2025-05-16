@@ -101,12 +101,14 @@ export default function PersonalizationForm( {
 	);
 
 	const productsToOfferOptions = useMemo(
-		() =>
-			productsOfferedOptions.filter(
+		() => [
+			...productsOfferedOptions.filter(
 				( product ) =>
 					! formData.productsOffered?.includes( product.value ) && product.value !== 'None'
 			),
-		[ formData.productsOffered, productsOfferedOptions ]
+			{ value: 'Unsure', label: translate( 'Unsure' ) },
+		],
+		[ formData.productsOffered, productsOfferedOptions, translate ]
 	);
 
 	const handleInputChange =
