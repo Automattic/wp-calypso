@@ -66,13 +66,12 @@ export default function AssignLicense( { initialPage, initialSearch }: Props ) {
 				dispatch(
 					errorNotice(
 						translate(
-							'You must have your {{b}}%(username)s{{/b}} WordPress.com user connected to the site as an administrator. {{a}}Learn more {{/a}}↗',
+							'Connect your WordPress.com user (%(username)s) as a site admin to continue. {{a}}How to connect {{/a}}↗',
 							{
 								args: {
 									username: user?.display_name ?? '',
 								},
 								components: {
-									b: <b />,
 									a: (
 										<a
 											href="https://agencieshelp.automattic.com/knowledge-base/invite-and-manage-team-members/#limitations-for-the-team-member-role"
