@@ -45,8 +45,8 @@ export default {
 			? renderFromElements( { item, field } )
 			: field.getValue( { item } );
 	},
+	enableSorting: true,
 	filterBy: {
 		operators,
 	},
-	enableSorting: true,
 };

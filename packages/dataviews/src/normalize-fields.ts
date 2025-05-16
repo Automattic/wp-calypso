@@ -39,7 +39,6 @@ export function normalizeFields< Item >(
 		const fieldTypeDefinition = getFieldTypeDefinition< Item >(
 			field.type
 		);
-
 		const getValue = field.getValue || getValueFromId( field.id );
 
 		const sort =
@@ -90,6 +89,7 @@ export function normalizeFields< Item >(
 				field.enableSorting ??
 				fieldTypeDefinition.enableSorting ??
 				true,
+			filterBy: field.filterBy ?? fieldTypeDefinition.filterBy,
 		};
 	} );
 }

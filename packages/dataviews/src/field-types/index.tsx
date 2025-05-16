@@ -66,7 +66,7 @@ export default function getFieldTypeDefinition< Item >(
 
 			return true;
 		},
-		Edit: () => null,
+		Edit: null,
 		render: ( { item, field }: DataViewRenderFieldProps< Item > ) => {
 			return field.elements
 				? renderFromElements( { item, field } )

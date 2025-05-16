@@ -240,22 +240,22 @@ export default function FilterSummary( {
 		( f ) => f.field === filter.field
 	);
 
-	const activeElements = filter.elements.filter( ( element ) => {
-		if ( filter.singleSelection ) {
-			return element.value === filterInView?.value;
-		}
-		return filterInView?.value?.includes( element.value );
-	} );
+	let activeElements: Option[] = [];
 
-	if (
-		activeElements.length === 0 &&
-		filter.type === 'integer' &&
-		filterInView?.value !== undefined
-	) {
-		activeElements.push( {
-			value: filterInView.value,
-			label: filterInView.value,
+	if ( filter.elements ) {
+		activeElements = filter.elements.filter( ( element ) => {
+			if ( filter.singleSelection ) {
+				return element.value === filterInView?.value;
+			}
+			return filterInView?.value?.includes( element.value );
 		} );
+	} else if ( filterInView?.value !== undefined ) {
+		activeElements = [
+			{
+				value: filterInView.value,
+				label: filterInView.value,
+			},
+		];
 	}
 
 	const isPrimary = filter.isPrimary;
@@ -346,7 +346,18 @@ export default function FilterSummary( {
 				return (
 					<VStack spacing={ 0 } justify="flex-start">
 						<OperatorSelector { ...commonProps } />
-						<SearchWidget { ...commonProps } />
+						{ commonProps.filter.elements ? (
+							<SearchWidget
+								{ ...commonProps }
+								// Ensure the filter prop is correctly typed by explicitly passing it with its elements
+								filter={ {
+									...commonProps.filter,
+									elements: commonProps.filter.elements,
+								} }
+							/>
+						) : (
+							<InputWidget { ...commonProps } />
+						) }
 					</VStack>
 				);
 			} }

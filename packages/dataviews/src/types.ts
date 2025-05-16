@@ -70,7 +70,7 @@ export type FieldTypeDefinition< Item > = {
 	/**
 	 * Callback used to render an edit control for the field or control name.
 	 */
-	Edit: ComponentType< DataFormControlProps< Item > > | string;
+	Edit: ComponentType< DataFormControlProps< Item > > | string | null;
 
 	/**
 	 * Callback used to render the field.
@@ -180,12 +180,12 @@ export type Field< Item > = {
 	getValue?: ( args: { item: Item } ) => any;
 };
 
-export type NormalizedField< Item > = Field< Item > & {
+export type NormalizedField< Item > = Omit< Field< Item >, 'Edit' > & {
 	label: string;
 	header: string | ReactElement;
 	getValue: ( args: { item: Item } ) => any;
 	render: ComponentType< DataViewRenderFieldProps< Item > >;
-	Edit: ComponentType< DataFormControlProps< Item > >;
+	Edit: ComponentType< DataFormControlProps< Item > > | null;
 	sort: ( a: Item, b: Item, direction: SortDirection ) => number;
 	isValid: ( item: Item, context?: ValidationContext ) => boolean;
 	enableHiding: boolean;
@@ -243,14 +243,9 @@ export interface NormalizedFilter {
 	name: string;
 
 	/**
-	 * The field type.
-	 */
-	type?: FieldType;
-
-	/**
 	 * The list of options to pick from when using the field as a filter.
 	 */
-	elements: Option[];
+	elements?: Option[];
 
 	/**
 	 * Is a single selection filter.

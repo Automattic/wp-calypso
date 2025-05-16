@@ -23,12 +23,14 @@ import type {
 	NormalizedFilter,
 	View,
 	NormalizedField,
+	Option,
 } from '../../types';
-import InputWidget from './input-widget';
 
 interface SearchWidgetProps {
 	view: View;
-	filter: NormalizedFilter;
+	filter: NormalizedFilter & {
+		elements: Option[];
+	};
 	onChangeView: ( view: View ) => void;
 	fields: NormalizedField< any >[];
 }
@@ -346,10 +348,6 @@ function ComboboxList( { view, filter, onChangeView }: SearchWidgetProps ) {
 }
 
 export default function SearchWidget( props: SearchWidgetProps ) {
-	if ( props.filter.type === 'integer' && ! props.filter.elements ) {
-		return <InputWidget { ...props } />;
-	}
-
 	const Widget = props.filter.elements.length > 10 ? ComboboxList : ListBox;
 	return <Widget { ...props } />;
 }

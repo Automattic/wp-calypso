@@ -7,7 +7,7 @@
 - Pin the actions column on the table view when the width is insufficient.
 - Bring changes from @wordpress/dataviews 4.19.0 (no updates in this version).
 - Enhance filter component styles.
-- Add filter support for the `integer` field type.
+- Add user input filter support based on the `Edit` property of the field type definitions.
 
 ## 0.1.1
 

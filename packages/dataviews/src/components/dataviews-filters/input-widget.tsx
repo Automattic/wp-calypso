@@ -63,6 +63,10 @@ function SingleInput( {
 		[ currentValue, field, onChangeView, view, filter, currentFilter ]
 	);
 
+	if ( ! field.Edit ) {
+		return null;
+	}
+
 	return (
 		<field.Edit
 			data={ { [ field.id ]: currentValue } }
