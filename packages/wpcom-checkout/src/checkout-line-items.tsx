@@ -806,8 +806,7 @@ export function LineItemSublabelAndPrice( {
 			stripZeros: true,
 		} );
 		const showCrossedOutPrice =
-			product.item_original_subtotal_integer / ( product.months_per_bill_period ?? 1 ) !==
-			compareToPrice;
+			product.item_subtotal_integer / ( product.months_per_bill_period ?? 1 ) !== compareToPrice;
 		if ( isMonthlyProduct( product ) ) {
 			return (
 				<>
@@ -1335,16 +1334,9 @@ function CheckoutLineItem( {
 
 	let pricePerMonth = 0;
 	if ( shouldShowComparison ) {
-		const productVariant = product.product_variants.find(
-			( variant ) => variant.product_id === product.product_id
+		pricePerMonth = Math.round(
+			product.item_subtotal_integer / ( product.months_per_bill_period ?? 1 )
 		);
-		if ( productVariant ) {
-			pricePerMonth = Math.round(
-				productVariant.price_integer / productVariant.bill_period_in_months
-			);
-		} else {
-			pricePerMonth = product.item_original_monthly_cost_integer;
-		}
 	}
 
 	const monthlyAmountDisplay = formatCurrency( pricePerMonth, product.currency, {
