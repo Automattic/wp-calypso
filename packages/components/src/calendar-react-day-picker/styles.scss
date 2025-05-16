@@ -36,6 +36,7 @@
 
   &__day {
     padding: 0;
+	position: relative;
   }
   // Setting color on &__day instead of directly on &__day-button to make sure
   // that the today's dot is of the correct color. The &__day-button inherits
@@ -66,10 +67,6 @@
     border: none;
     border-radius: 2px;
 
-    // Use box-shadow to render a border around today's button. Using box-shadow
-    // allows to keep the button highlighted even when the border is used for
-    // other purposes (eg. range selection preview, middle of a selected range).
-    box-shadow: none;
 	font-variant-numeric: tabular-nums;
 
     // Use ::before to render border and background, which keeps the button's
@@ -97,6 +94,9 @@
     &:disabled {
       cursor: revert;
 
+	  @media (forced-colors: active) {
+		text-decoration: line-through;
+	  }
     }
 
     &:focus-visible {
@@ -208,18 +208,21 @@
   }
 
   /* DAY MODIFIERS */
-  // Today button, but not when selected (single date) or range start/end
-  &__day--today:not(&__day--selected:not(#{&}__range-middle))  &__day-button {
-    box-shadow: inset 0 0 0 1px $gray-700;
-
-    &:disabled {
-        box-shadow: inset 0 0 0 1px $gray-600;
-    }
-
-    &:not(:disabled)::before {
-        // Highlight today's button in forced-colors mode.
-        border: 1px solid transparent;
-    }
+  // Show a dot on today's button
+  // (but not when selected (single date) or range start/end)
+	&__day--today::after {
+	content: '';
+	position: absolute;
+	z-index: 1;
+	inset-block-start: 2px;
+	inset-inline-end: 2px;
+	width: 0;
+	height: 0;
+	border-radius: 50%;
+	border: 2px solid currentColor;
+  }
+  &__day--today:not(&__day--selected):has(&__day-button:focus-visible)::after {
+	border-color: var(--color-accent);
   }
 
   // Selected button (individual date, range start, and range end)
