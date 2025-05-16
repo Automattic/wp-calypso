@@ -29,7 +29,7 @@ const SocialLoginForm = ( {
 	lastUsedAuthenticationMethod,
 	resetLastUsedAuthenticationMethod,
 } ) => {
-	const [ , experimentAssignment ] = useSocialLoginExperiment();
+	const [ isLoading, experimentAssignment ] = useSocialLoginExperiment();
 	const currentQuery = useSelector( getCurrentQueryArguments );
 	const initialQuery = useSelector( getInitialQueryArguments );
 	const isSignupExistingAccount = !! (
@@ -38,7 +38,7 @@ const SocialLoginForm = ( {
 
 	// Only show buttons if we have a definitive answer from the experiment
 	// This prevents flashing by ensuring we have a valid experiment assignment
-	const isTreatment = experimentAssignment?.variationName !== 'control';
+	const isTreatment = isLoading || experimentAssignment?.variationName === 'treatment';
 	const shouldShowApple = ! isTreatment;
 	const shouldShowQrCode = ! isTreatment && ! isSignupExistingAccount;
 

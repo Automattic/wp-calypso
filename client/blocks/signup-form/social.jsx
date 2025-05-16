@@ -32,8 +32,8 @@ const SocialSignupForm = ( {
 } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const [ , experimentAssignment ] = useSocialLoginExperiment();
-	const isTreatment = experimentAssignment?.variationName !== 'control';
+	const [ isLoading, experimentAssignment ] = useSocialLoginExperiment();
+	const isTreatment = isLoading || experimentAssignment?.variationName === 'treatment';
 	const shouldShowApple = ! isTreatment;
 
 	const currentQuery = useSelector( getCurrentQueryArguments );
