@@ -12,7 +12,7 @@ import NavTabs from 'calypso/components/section-nav/tabs';
 import { useGetHistoryChats } from '../hooks/use-get-history-chats';
 import { HELP_CENTER_STORE } from '../stores';
 import { HelpCenterSupportChatMessage } from './help-center-support-chat-message';
-import { getLastMessage } from './utils';
+import { getLastMessageAndUnread } from './utils';
 import type { Conversations, SupportInteraction } from '@automattic/odie-client';
 
 import './help-center-chat-history.scss';
@@ -55,7 +55,7 @@ const Conversations = ( {
 	return (
 		<>
 			{ conversations.map( ( conversation ) => {
-				const lastMessage = getLastMessage( { conversation } );
+				const { lastMessage, unreadMessages } = getLastMessageAndUnread( { conversation } );
 
 				if ( ! lastMessage ) {
 					return null;
@@ -67,6 +67,7 @@ const Conversations = ( {
 						key={ conversation.id }
 						message={ lastMessage }
 						conversation={ conversation }
+						unreadMessages={ unreadMessages }
 					/>
 				);
 			} ) }

@@ -6,7 +6,7 @@ import { useSelect } from '@wordpress/data';
 import { useEffect, useMemo, useState } from '@wordpress/element';
 import {
 	filterAndUpdateConversationsWithStatus,
-	getLastMessage,
+	getLastMessageAndUnread,
 	getZendeskConversations,
 } from '../components/utils';
 import { HELP_CENTER_STORE } from '../stores';
@@ -29,7 +29,7 @@ interface UseGetHistoryChatsResult {
  * @returns The timestamp in milliseconds (e.g. 1745936539027), or 0 if not available
  */
 const getLastMessageReceived = ( conversation: OdieConversation | ZendeskConversation ) => {
-	const lastMessage = getLastMessage( { conversation } );
+	const { lastMessage } = getLastMessageAndUnread( { conversation } );
 
 	return ( lastMessage?.received || 0 ) * 1000;
 };
@@ -55,14 +55,14 @@ const getOdieConversationsWithNoSupportInteractions = (
  * Checks whether the last message from the specified conversation is not empty nor a predefined '--' token.
  */
 const isValidLastMessageContent = ( conversation: OdieConversation | ZendeskConversation ) => {
-	const { text } = getLastMessage( { conversation } ) || {};
+	const { lastMessage } = getLastMessageAndUnread( { conversation } ) || {};
 
-	if ( text === null || text === undefined ) {
+	if ( lastMessage?.text === null || lastMessage?.text === undefined ) {
 		return false;
 	}
 
 	// '--' is a token returned for Odie conversations that should be forwarded to human support
-	return ! [ '', '--' ].includes( text.trim() );
+	return ! [ '', '--' ].includes( lastMessage.text.trim() );
 };
 
 /**

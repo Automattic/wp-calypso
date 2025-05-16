@@ -1,11 +1,14 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { calculateUnread } from '@automattic/odie-client/src/data/use-get-unread-conversations';
 import { getConversationIdFromInteraction } from '@automattic/odie-client/src/utils';
 import Smooch from 'smooch';
 import type { ContactOption } from '../types';
 import type {
 	OdieConversation,
+	OdieMessage,
 	SupportInteraction,
 	ZendeskConversation,
+	ZendeskMessage,
 } from '@automattic/odie-client';
 
 const isMatchingInteraction = (
@@ -40,14 +43,22 @@ export const generateContactOnClickEvent = (
 	}
 };
 
-export const getLastMessage = ( {
+/**
+ * Returns the last message from a conversation and the number of unread messages.
+ * @returns An object containing the last message and the number of unread messages.
+ */
+export const getLastMessageAndUnread = ( {
 	conversation,
 }: {
 	conversation: OdieConversation | ZendeskConversation;
-} ) => {
-	return Array.isArray( conversation.messages ) && conversation.messages.length > 0
-		? conversation.messages[ conversation.messages.length - 1 ]
-		: null;
+} ): { lastMessage: OdieMessage | ZendeskMessage | null; unreadMessages: number } => {
+	const lastMessage =
+		Array.isArray( conversation.messages ) && conversation.messages.length > 0
+			? conversation.messages[ conversation.messages.length - 1 ]
+			: null;
+
+	const { unreadMessages } = calculateUnread( [ conversation as ZendeskConversation ] );
+	return { lastMessage, unreadMessages };
 };
 
 export const getZendeskConversations = () => {
