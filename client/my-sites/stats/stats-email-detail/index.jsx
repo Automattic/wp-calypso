@@ -36,6 +36,7 @@ import { getEmailStat, isRequestingEmailStats } from 'calypso/state/stats/emails
 import { getPeriodWithFallback, getCharts } from 'calypso/state/stats/emails/utils';
 import { getPostStat, isRequestingPostStats } from 'calypso/state/stats/posts/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { useStatsNavigation } from '../hooks/use-stats-navigation';
 import DatePicker from '../stats-date-picker';
 import StatsDetailsNavigation from '../stats-details-navigation';
 import ChartTabs from '../stats-email-chart-tabs';
@@ -78,6 +79,7 @@ class StatsEmailDetail extends Component {
 		previewUrl: PropTypes.string,
 		post: PropTypes.object,
 		hasValidDate: PropTypes.bool,
+		lastScreen: PropTypes.object,
 	};
 
 	state = {
@@ -208,6 +210,7 @@ class StatsEmailDetail extends Component {
 			showViewLink,
 			previewUrl,
 			siteSlug,
+			lastScreen,
 		} = this.props;
 		const { maxBars } = this.state;
 
@@ -228,9 +231,10 @@ class StatsEmailDetail extends Component {
 		const navigationItems = this.getNavigationItemsWithTitle( this.getNavigationTitle() );
 
 		const backLinkProps = {
-			text: navigationItems[ 0 ].label,
-			url: navigationItems[ 0 ].href,
+			text: lastScreen.text,
+			url: lastScreen.url,
 		};
+
 		const titleProps = {
 			title: navigationItems[ 1 ].label,
 			// Remove the default logo for Odyssey stats.
@@ -434,6 +438,11 @@ class StatsEmailDetail extends Component {
 	}
 }
 
+const StatsEmailDetailWrapper = ( props ) => {
+	const lastScreen = useStatsNavigation();
+	return <StatsEmailDetail { ...props } lastScreen={ lastScreen } />;
+};
+
 const connectComponent = connect(
 	( state, ownProps ) => {
 		const { postId, statType, isValidStartDate } = ownProps;
@@ -485,4 +494,4 @@ const connectComponent = connect(
 	{ recordGoogleEvent }
 );
 
-export default flowRight( connectComponent, localize )( StatsEmailDetail );
+export default flowRight( connectComponent, localize )( StatsEmailDetailWrapper );

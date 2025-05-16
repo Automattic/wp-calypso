@@ -33,6 +33,7 @@ import {
 import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
 import { getPostStat, isRequestingPostStats } from 'calypso/state/stats/posts/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { useStatsNavigation } from '../hooks/use-stats-navigation';
 import PostDetailHighlightsSection from '../post-detail-highlights-section';
 import PostDetailTableSection from '../post-detail-table-section';
 import StatsPlaceholder from '../stats-module/placeholder';
@@ -52,6 +53,7 @@ class StatsPostDetail extends Component {
 		siteSlug: PropTypes.string,
 		showViewLink: PropTypes.bool,
 		previewUrl: PropTypes.string,
+		lastScreen: PropTypes.object,
 	};
 
 	state = {
@@ -182,6 +184,7 @@ class StatsPostDetail extends Component {
 			isSubscriptionsModuleActive,
 			supportsEmailStats,
 			isSimple,
+			lastScreen,
 		} = this.props;
 
 		const isLoading = isRequestingStats && ! countViews;
@@ -212,9 +215,10 @@ class StatsPostDetail extends Component {
 		const navigationItems = this.getNavigationItemsWithTitle( this.getTitle() );
 
 		const backLinkProps = {
-			text: navigationItems[ 0 ].label,
-			url: navigationItems[ 0 ].href,
+			text: lastScreen.text,
+			url: lastScreen.url,
 		};
+
 		const titleProps = {
 			title: navigationItems[ 1 ].label,
 			// Remove the default logo for Odyssey stats.
@@ -322,6 +326,11 @@ class StatsPostDetail extends Component {
 	}
 }
 
+const StatsPostDetailWrapper = ( props ) => {
+	const lastScreen = useStatsNavigation();
+	return <StatsPostDetail { ...props } lastScreen={ lastScreen } />;
+};
+
 const connectComponent = connect( ( state, { postId } ) => {
 	const siteId = getSelectedSiteId( state );
 	const isJetpack = isJetpackSite( state, siteId );
@@ -350,4 +359,4 @@ const connectComponent = connect( ( state, { postId } ) => {
 	};
 } );
 
-export default flowRight( connectComponent, localize )( StatsPostDetail );
+export default flowRight( connectComponent, localize )( StatsPostDetailWrapper );
