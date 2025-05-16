@@ -44,6 +44,7 @@ export interface Domain {
 export interface SitePlan {
 	product_name: string;
 	product_name_short: string;
+	product_slug: string;
 	expired: boolean;
 	is_free: boolean;
 	billing_period: 'Yearly' | 'Monthly';
@@ -78,6 +79,7 @@ export interface Site {
 	};
 	plan?: SitePlan;
 	active_modules?: string[];
+	capabilities: Record< string, Record< string, boolean > >;
 	subscribers_count: number;
 	// Can be undefined for deleted sites.
 	options?: SiteOptions;
@@ -85,6 +87,7 @@ export interface Site {
 	is_deleted: boolean;
 	is_coming_soon: boolean;
 	is_private: boolean;
+	is_wpcom_staging_site: boolean;
 	launch_status: string | boolean;
 	site_migration: {
 		migration_status: string;

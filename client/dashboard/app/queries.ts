@@ -15,21 +15,23 @@ import {
 	fetchBasicMetrics,
 	fetchPerformanceInsights,
 	updateSiteSettings,
+	restoreSitePlanSoftware,
 } from '../data';
+import { SITE_FIELDS } from '../data/constants';
 import { queryClient } from './query-client';
 import type { Profile, SiteSettings, UrlPerformanceInsights } from '../data/types';
 import type { Query } from '@tanstack/react-query';
 
 export function sitesQuery() {
 	return {
-		queryKey: [ 'sites' ],
+		queryKey: [ 'sites', SITE_FIELDS ],
 		queryFn: fetchSites,
 	};
 }
 
 export function siteQuery( siteIdOrSlug: string ) {
 	return {
-		queryKey: [ 'site', siteIdOrSlug ],
+		queryKey: [ 'site', siteIdOrSlug, SITE_FIELDS ],
 		queryFn: async () => {
 			// Site usually takes the longest, so kick it off first.
 			const sitePromise = fetchSite( siteIdOrSlug );
@@ -123,6 +125,12 @@ export function siteSettingsMutation( siteId: string ) {
 			} ) );
 			queryClient.invalidateQueries( { queryKey: [ 'site', siteId ] } );
 		},
+	};
+}
+
+export function restoreSitePlanSoftwareMutation( siteId: string ) {
+	return {
+		mutationFn: () => restoreSitePlanSoftware( siteId ),
 	};
 }
 
