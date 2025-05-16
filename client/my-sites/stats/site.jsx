@@ -39,6 +39,7 @@ import {
 import { getMomentSiteZone } from 'calypso/my-sites/stats/hooks/use-moment-site-zone';
 import useNoticeVisibilityMutation from 'calypso/my-sites/stats/hooks/use-notice-visibility-mutation';
 import { useNoticeVisibilityQuery } from 'calypso/my-sites/stats/hooks/use-notice-visibility-query';
+import { recordCurrentScreen } from 'calypso/my-sites/stats/hooks/use-stats-navigation';
 import { getChartRangeParams } from 'calypso/my-sites/stats/utils';
 import {
 	recordGoogleEvent,
@@ -73,7 +74,6 @@ import StatsModuleUTM, { StatsModuleUTMOverlay } from './features/modules/stats-
 import StatsModuleVideos from './features/modules/stats-videos';
 import StatsFeedbackPresentor from './feedback';
 import { shouldGateStats } from './hooks/use-should-gate-stats';
-import { recordCurrentScreen } from './hooks/use-stats-navigation';
 import MiniCarousel from './mini-carousel';
 import { StatsGlobalValuesContext } from './pages/providers/global-provider';
 import StatsModuleListing from './pages/shared/stats-module-listing';
