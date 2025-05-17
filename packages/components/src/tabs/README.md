@@ -1,11 +1,5 @@
 # Tabs
 
-<!-- This file is generated automatically and cannot be edited directly. Make edits via TypeScript types and TSDocs. -->
-
-🔒 This component is locked as a [private API](https://developer.wordpress.org/block-editor/reference-guides/packages/packages-private-apis/). We do not yet recommend using this outside of the Gutenberg project.
-
-<p class="callout callout-info">See the <a href="https://wordpress.github.io/gutenberg/?path=/docs/components-tabs--docs">WordPress Storybook</a> for more detailed, interactive documentation.</p>
-
 Tabs is a collection of React components that combine to render
 an [ARIA-compliant tabs pattern](https://www.w3.org/WAI/ARIA/apg/patterns/tabs/).
 
@@ -19,8 +13,8 @@ It is responsible for managing the state of the tabs, and rendering one instance
 
 ### `activeTabId`
 
- - Type: `string`
- - Required: No
+- Type: `string`
+- Required: No
 
 The current active tab `id`. The active tab is the tab element within the
 tablist widget that has DOM focus.
@@ -33,8 +27,8 @@ tablist widget that has DOM focus.
 
 ### `children`
 
- - Type: `ReactNode`
- - Required: Yes
+- Type: `ReactNode`
+- Required: Yes
 
 The children elements, which should include one instance of the
 `Tabs.Tablist` component and as many instances of the `Tabs.TabPanel`
@@ -42,8 +36,8 @@ components as there are `Tabs.Tab` components.
 
 ### `defaultTabId`
 
- - Type: `string`
- - Required: No
+- Type: `string`
+- Required: No
 
 The id of the tab whose panel is currently visible.
 
@@ -56,8 +50,8 @@ provided (meaning the component will be used in "controlled" mode).
 
 ### `defaultActiveTabId`
 
- - Type: `string`
- - Required: No
+- Type: `string`
+- Required: No
 
 The tab id that should be active by default when the composite widget is
 rendered. If `null`, the tablist element itself will have focus
@@ -69,23 +63,23 @@ provided.
 
 ### `onSelect`
 
- - Type: `(selectedId: string) => void`
- - Required: No
+- Type: `(selectedId: string) => void`
+- Required: No
 
 The function called when the `selectedTabId` changes.
 
 ### `onActiveTabIdChange`
 
- - Type: `(activeId: string) => void`
- - Required: No
+- Type: `(activeId: string) => void`
+- Required: No
 
 A callback that gets called when the `activeTabId` state changes.
 
 ### `orientation`
 
- - Type: `"horizontal" | "vertical" | "both"`
- - Required: No
- - Default: `"horizontal"`
+- Type: `"horizontal" | "vertical" | "both"`
+- Required: No
+- Default: `"horizontal"`
 
 Defines the orientation of the tablist and determines which arrow keys
 can be used to move focus:
@@ -96,9 +90,9 @@ can be used to move focus:
 
 ### `selectOnMove`
 
- - Type: `boolean`
- - Required: No
- - Default: `true`
+- Type: `boolean`
+- Required: No
+- Default: `true`
 
 Determines if the tab should be selected when it receives focus. If set to
 `false`, the tab will only be selected upon clicking, not when using arrow
@@ -107,8 +101,8 @@ for more info.
 
 ### `selectedTabId`
 
- - Type: `string`
- - Required: No
+- Type: `string`
+- Required: No
 
 The id of the tab whose panel is currently visible.
 
@@ -131,8 +125,8 @@ It is responsible for rendering the list of tabs.
 
 ##### `children`
 
- - Type: `ReactNode`
- - Required: Yes
+- Type: `ReactNode`
+- Required: Yes
 
 The children elements, which should include one or more instances of the
 `Tabs.Tab` component.
@@ -148,24 +142,24 @@ overridden with CSS targeting `[aria-selected="true"]`.
 
 ##### `children`
 
- - Type: `ReactNode`
- - Required: No
+- Type: `ReactNode`
+- Required: No
 
 The contents of the tab.
 
 ##### `disabled`
 
- - Type: `boolean`
- - Required: No
- - Default: `false`
+- Type: `boolean`
+- Required: No
+- Default: `false`
 
 Determines if the tab should be disabled. Note that disabled tabs can
 still be accessed via the keyboard when navigating through the tablist.
 
 ##### `render`
 
- - Type: `RenderProp<HTMLAttributes<any> & { ref?: Ref<any>; }> | ReactElement<any, string | JSXElementConstructor<any>>`
- - Required: No
+- Type: `RenderProp<HTMLAttributes<any> & { ref?: Ref<any>; }> | ReactElement<any, string | JSXElementConstructor<any>>`
+- Required: No
 
 Allows the component to be rendered as a different HTML element or React
 component. The value can be a React element or a function that takes in the
@@ -176,8 +170,8 @@ By default, the tab will be rendered as a `button` element.
 
 ##### `tabId`
 
- - Type: `string`
- - Required: Yes
+- Type: `string`
+- Required: Yes
 
 The unique ID of the tab. It will be used to register the tab and match
 it to a corresponding `Tabs.TabPanel` component.
@@ -190,16 +184,16 @@ Renders the content to display for a single tab once that tab is selected.
 
 ##### `children`
 
- - Type: `ReactNode`
- - Required: No
+- Type: `ReactNode`
+- Required: No
 
 The contents of the tab panel.
 
 ##### `focusable`
 
- - Type: `boolean`
- - Required: No
- - Default: `true`
+- Type: `boolean`
+- Required: No
+- Default: `true`
 
 Determines whether or not the tabpanel element should be focusable.
 If `false`, pressing the tab key will skip over the tabpanel, and instead
@@ -207,8 +201,8 @@ focus on the first focusable element in the panel (if there is one).
 
 ##### `tabId`
 
- - Type: `string`
- - Required: Yes
+- Type: `string`
+- Required: Yes
 
 The unique `id` of the `Tabs.Tab` component controlling this panel. This
 connection is used to assign the `aria-labelledby` attribute to the tab
