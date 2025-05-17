@@ -25,9 +25,7 @@
 		padding: 24px 0 0 0;
 		margin-top: 24px;
 		display:flex;
-		flex:none;
-		flex-direction: column;
-		width: 100%;
+		/* Targeting the content div, we can't alter the HTML of the modal itself */
 		>div:nth-child(2) {
 			height: 100%;
 			display: flex;
