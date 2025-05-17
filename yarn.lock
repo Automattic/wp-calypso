@@ -261,6 +261,27 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@ariakit/test@npm:0.4.7":
+  version: 0.4.7
+  resolution: "@ariakit/test@npm:0.4.7"
+  dependencies:
+    "@ariakit/core": "npm:0.4.14"
+    "@testing-library/dom": "npm:^8.0.0 || ^9.0.0 || ^10.0.0"
+  peerDependencies:
+    "@playwright/test": ^1.27.0
+    "@testing-library/react": ^12.0.0 || ^13.0.0 || ^14.0.0 || ^15.0.0 || ^16.0.0
+    react: ^17.0.0 || ^18.0.0 || ^19.0.0
+  peerDependenciesMeta:
+    "@playwright/test":
+      optional: true
+    "@testing-library/react":
+      optional: true
+    react:
+      optional: true
+  checksum: 47d29ac8285b91762b640a881d51aa2515ebf381716b27bd781bc3b78f75e404f89c1537c4b07e76ed8bc9db0b1f3d126d6bc7577a3a3c60714b6681f2e96403
+  languageName: node
+  linkType: hard
+
 "@automattic/accessible-focus@workspace:^, @automattic/accessible-focus@workspace:packages/accessible-focus":
   version: 0.0.0-use.local
   resolution: "@automattic/accessible-focus@workspace:packages/accessible-focus"
@@ -834,6 +855,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/components@workspace:packages/components"
   dependencies:
+    "@ariakit/react": "npm:^0.4.15"
+    "@ariakit/test": "npm:0.4.7"
     "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-color-schemes": "workspace:^"
     "@automattic/calypso-storybook": "workspace:^"
@@ -868,6 +891,7 @@ __metadata:
     "@wordpress/primitives": "npm:^4.23.0"
     "@wordpress/react-i18n": "npm:^4.23.0"
     "@wordpress/url": "npm:^4.23.0"
+    "@wordpress/warning": "npm:3.23.0"
     canvas-confetti: "npm:^1.6.0"
     clsx: "npm:^2.1.1"
     colord: "npm:2.9.3"
@@ -9033,7 +9057,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@testing-library/dom@npm:10.4.0, @testing-library/dom@npm:^10.4.0":
+"@testing-library/dom@npm:10.4.0, @testing-library/dom@npm:^10.4.0, @testing-library/dom@npm:^8.0.0 || ^9.0.0 || ^10.0.0":
   version: 10.4.0
   resolution: "@testing-library/dom@npm:10.4.0"
   dependencies:
