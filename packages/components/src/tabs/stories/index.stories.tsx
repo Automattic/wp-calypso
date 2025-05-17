@@ -15,7 +15,7 @@ const meta: Meta< typeof Tabs > = {
 		'Tabs.TabPanel': Tabs.TabPanel,
 		// 'Tabs.Context': Tabs.Context,
 	},
-	tags: [ 'status-private' ],
+	tags: [ 'autodocs' ],
 	parameters: {
 		actions: { argTypesRegex: '^on.*' },
 		controls: { expanded: true },
