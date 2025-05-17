@@ -1,23 +1,12 @@
-/**
- * External dependencies
- */
 import * as Ariakit from '@ariakit/react';
-
-/**
- * WordPress dependencies
- */
 import { useInstanceId } from '@wordpress/compose';
-import { useEffect, useMemo } from '@wordpress/element';
 import { isRTL } from '@wordpress/i18n';
-
-/**
- * Internal dependencies
- */
-import type { TabsProps } from './types';
+import { useEffect, useMemo } from 'react';
 import { TabsContext } from './context';
 import { Tab } from './tab';
 import { TabList } from './tablist';
 import { TabPanel } from './tabpanel';
+import type { TabsProps } from './types';
 
 function externalToInternalTabId(
 	externalId: string | undefined | null,

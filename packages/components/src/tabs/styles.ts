@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
-import styled from '@emotion/styled';
 import * as Ariakit from '@ariakit/react';
-
-/**
- * Internal dependencies
- */
+import styled from '@emotion/styled';
+import { Icon } from '@wordpress/components';
 import { COLORS, CONFIG } from '../utils';
 import { space } from '../utils/space';
-import Icon from '../icon';
 
 export const StyledTabList = styled( Ariakit.TabList )`
 	display: flex;

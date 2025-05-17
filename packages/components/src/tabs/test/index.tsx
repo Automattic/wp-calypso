@@ -1,19 +1,8 @@
-/**
- * External dependencies
- */
-import { screen, waitFor } from '@testing-library/react';
 import { press, click } from '@ariakit/test';
 import { render } from '@ariakit/test/react';
-
-/**
- * WordPress dependencies
- */
-import { useEffect, useState } from '@wordpress/element';
+import { screen, waitFor } from '@testing-library/react';
 import { isRTL } from '@wordpress/i18n';
-
-/**
- * Internal dependencies
- */
+import React, { useEffect, useState } from 'react';
 import { Tabs } from '..';
 import type { TabsProps } from '../types';
 

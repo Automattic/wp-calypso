@@ -1,37 +1,19 @@
-/**
- * External dependencies
- */
-import type { Meta, StoryFn } from '@storybook/react';
 import { fn } from '@storybook/test';
-
-/**
- * WordPress dependencies
- */
+import { Button, Icon, Tooltip, Slot, Fill, SlotFillProvider } from '@wordpress/components';
 import { wordpress, more, link } from '@wordpress/icons';
-import { useState } from '@wordpress/element';
-
-/**
- * Internal dependencies
- */
+import { useState } from 'react';
 import { Tabs } from '..';
-import { Slot, Fill, Provider as SlotFillProvider } from '../../slot-fill';
-import Button from '../../button';
-import Tooltip from '../../tooltip';
-import Icon from '../../icon';
+import type { Meta, StoryFn } from '@storybook/react';
 
 const meta: Meta< typeof Tabs > = {
 	title: 'Components/Containers/Tabs',
 	id: 'components-tabs',
 	component: Tabs,
 	subcomponents: {
-		// @ts-expect-error - See https://github.com/storybookjs/storybook/issues/23170
 		'Tabs.TabList': Tabs.TabList,
-		// @ts-expect-error - See https://github.com/storybookjs/storybook/issues/23170
 		'Tabs.Tab': Tabs.Tab,
-		// @ts-expect-error - See https://github.com/storybookjs/storybook/issues/23170
 		'Tabs.TabPanel': Tabs.TabPanel,
-		// @ts-expect-error - See https://github.com/storybookjs/storybook/issues/23170
-		'Tabs.Context': Tabs.Context,
+		// 'Tabs.Context': Tabs.Context,
 	},
 	tags: [ 'status-private' ],
 	parameters: {

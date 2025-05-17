@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import type * as Ariakit from '@ariakit/react';
 
 export type TabsContextProps =

@@ -1,11 +1,4 @@
-/**
- * WordPress dependencies
- */
-import { createContext, useContext } from '@wordpress/element';
-
-/**
- * Internal dependencies
- */
+import { createContext, useContext } from 'react';
 import type { TabsContextProps } from './types';
 
 export const TabsContext = createContext< TabsContextProps >( undefined );

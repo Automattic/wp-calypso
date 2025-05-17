@@ -1,27 +1,16 @@
-/**
- * External dependencies
- */
 import * as Ariakit from '@ariakit/react';
-import clsx from 'clsx';
-
-/**
- * WordPress dependencies
- */
-import warning from '@wordpress/warning';
-import { forwardRef, useLayoutEffect, useState } from '@wordpress/element';
 import { useMergeRefs } from '@wordpress/compose';
-
-/**
- * Internal dependencies
- */
-import type { TabListProps } from './types';
 import type { WordPressComponentProps } from '../context';
-import type { ElementOffsetRect } from '../utils/element-rect';
+import warning from '@wordpress/warning';
+import clsx from 'clsx';
+import { forwardRef, useLayoutEffect, useState } from 'react';
+import { useTrackElementOffsetRect } from '../utils/element-rect';
+import { useAnimatedOffsetRect } from '../utils/hooks/use-animated-offset-rect';
 import { useTabsContext } from './context';
 import { StyledTabList } from './styles';
-import { useTrackElementOffsetRect } from '../utils/element-rect';
 import { useTrackOverflow } from './use-track-overflow';
-import { useAnimatedOffsetRect } from '../utils/hooks/use-animated-offset-rect';
+import type { TabListProps } from './types';
+import type { ElementOffsetRect } from '../utils/element-rect';
 
 const DEFAULT_SCROLL_MARGIN = 24;
 
