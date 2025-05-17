@@ -19,7 +19,6 @@ const GRID_BASE = '4px';
  *
  * When given a unit value or one of the named CSS values like `auto`,
  * it will simply return the value back.
- *
  * @param value A number, numeric string, or a unit value.
  */
 export function space( value?: SpaceInput ): string | undefined {
@@ -36,8 +35,7 @@ export function space( value?: SpaceInput ): string | undefined {
 
 	// Test if the input has a unit, was NaN, or was one of the named CSS values (like `auto`), in which case just use that value.
 	if (
-		( typeof window !== 'undefined' &&
-			window.CSS?.supports?.( 'margin', value.toString() ) ) ||
+		( typeof window !== 'undefined' && window.CSS?.supports?.( 'margin', value.toString() ) ) ||
 		Number.isNaN( asInt )
 	) {
 		return value.toString();
