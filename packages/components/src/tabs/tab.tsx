@@ -7,12 +7,11 @@ import {
 	TabChildren as StyledTabChildren,
 	TabChevron as StyledTabChevron,
 } from './styles';
-import type { WordPressComponentProps } from '../context';
 import type { TabProps } from './types';
 
 export const Tab = forwardRef<
 	HTMLButtonElement,
-	Omit< WordPressComponentProps< TabProps, 'button', false >, 'id' >
+	Omit< React.ComponentPropsWithoutRef< 'button' >, 'id' > & TabProps
 >( function Tab( { children, tabId, disabled, render, ...otherProps }, ref ) {
 	const { store, instanceId } = useTabsContext() ?? {};
 

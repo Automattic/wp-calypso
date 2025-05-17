@@ -2,17 +2,13 @@ import { useStoreState } from '@ariakit/react';
 import warning from '@wordpress/warning';
 import { forwardRef } from 'react';
 import { useTabsContext } from './context';
-import type { WordPressComponentProps } from '../context';
 import { TabPanel as StyledTabPanel } from './styles';
 import type { TabPanelProps } from './types';
 
 export const TabPanel = forwardRef<
 	HTMLDivElement,
-	Omit< WordPressComponentProps< TabPanelProps, 'div', false >, 'id' >
->( function TabPanel(
-	{ children, tabId, focusable = true, ...otherProps },
-	ref
-) {
+	Omit< React.ComponentPropsWithoutRef< 'div' >, 'id' > & TabPanelProps
+>( function TabPanel( { children, tabId, focusable = true, ...otherProps }, ref ) {
 	const context = useTabsContext();
 	const selectedId = useStoreState( context?.store, 'selectedId' );
 	if ( ! context ) {

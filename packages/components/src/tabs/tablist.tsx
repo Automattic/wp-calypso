@@ -1,6 +1,5 @@
 import * as Ariakit from '@ariakit/react';
 import { useMergeRefs } from '@wordpress/compose';
-import type { WordPressComponentProps } from '../context';
 import warning from '@wordpress/warning';
 import clsx from 'clsx';
 import { forwardRef, useLayoutEffect, useState } from 'react';
@@ -58,7 +57,7 @@ function useScrollRectIntoView(
 
 export const TabList = forwardRef<
 	HTMLDivElement,
-	WordPressComponentProps< TabListProps, 'div', false >
+	React.ComponentPropsWithoutRef< 'div' > & TabListProps
 >( function TabList( { children, ...otherProps }, ref ) {
 	const { store } = useTabsContext() ?? {};
 
