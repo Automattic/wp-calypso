@@ -48,8 +48,7 @@ const Template: StoryFn< typeof Tabs > = ( props ) => {
 					This tabpanel has its <code>focusable</code> prop set to
 					<code> false</code>, so it won&apos;t get a tab stop.
 					<br />
-					Instead, the [Tab] key will move focus to the first
-					focusable element within the panel.
+					Instead, the [Tab] key will move focus to the first focusable element within the panel.
 				</p>
 				<Button variant="primary">I&apos;m a button!</Button>
 			</Tabs.TabPanel>
@@ -65,25 +64,21 @@ export const SizeAndOverflowPlayground: StoryFn< typeof Tabs > = ( props ) => {
 		<div>
 			<div style={ { maxWidth: '40rem', marginBottom: '1rem' } }>
 				<p>
-					This story helps understand how the TabList component
-					behaves under different conditions. The container below
-					(with the dotted red border) can be horizontally resized,
-					and it has a bit of padding to be out of the way of the
-					TabList.
+					This story helps understand how the TabList component behaves under different conditions.
+					The container below (with the dotted red border) can be horizontally resized, and it has a
+					bit of padding to be out of the way of the TabList.
 				</p>
 				<p>
-					The button will toggle between full width (adding{ ' ' }
-					<code>width: 100%</code>) and the default width.
+					The button will toggle between full width (adding <code>width: 100%</code>) and the
+					default width.
 				</p>
 				<p>Try the following:</p>
 				<ul>
 					<li>
-						<strong>Small container</strong> that causes tabs to
-						overflow with scroll.
+						<strong>Small container</strong> that causes tabs to overflow with scroll.
 					</li>
 					<li>
-						<strong>Large container</strong> that exceeds the normal
-						width of the tabs.
+						<strong>Large container</strong> that exceeds the normal width of the tabs.
 						<ul>
 							<li>
 								<strong>
@@ -95,9 +90,8 @@ export const SizeAndOverflowPlayground: StoryFn< typeof Tabs > = ( props ) => {
 								<strong>
 									Without <code>width: 100%</code>
 								</strong>{ ' ' }
-								(defaults to <code>auto</code>) set on the
-								TabList (tabs take up space proportional to
-								their content).
+								(defaults to <code>auto</code>) set on the TabList (tabs take up space proportional
+								to their content).
 							</li>
 						</ul>
 					</li>
@@ -108,9 +102,7 @@ export const SizeAndOverflowPlayground: StoryFn< typeof Tabs > = ( props ) => {
 				variant="primary"
 				onClick={ () => setFullWidth( ! fullWidth ) }
 			>
-				{ fullWidth
-					? 'Remove width: 100% from TabList'
-					: 'Set width: 100% in TabList' }
+				{ fullWidth ? 'Remove width: 100% from TabList' : 'Set width: 100% in TabList' }
 			</Button>
 			<Tabs { ...props }>
 				<div
@@ -128,13 +120,9 @@ export const SizeAndOverflowPlayground: StoryFn< typeof Tabs > = ( props ) => {
 							width: fullWidth ? '100%' : undefined,
 						} }
 					>
-						<Tabs.Tab tabId="tab1">
-							Label with multiple words
-						</Tabs.Tab>
+						<Tabs.Tab tabId="tab1">Label with multiple words</Tabs.Tab>
 						<Tabs.Tab tabId="tab2">Short</Tabs.Tab>
-						<Tabs.Tab tabId="tab3">
-							Hippopotomonstrosesquippedaliophobia
-						</Tabs.Tab>
+						<Tabs.Tab tabId="tab3">Hippopotomonstrosesquippedaliophobia</Tabs.Tab>
 						<Tabs.Tab tabId="tab4">Tab 4</Tabs.Tab>
 						<Tabs.Tab tabId="tab5">Tab 5</Tabs.Tab>
 					</Tabs.TabList>
@@ -243,9 +231,7 @@ const WithTabIconsAndTooltipsTemplate: StoryFn< typeof Tabs > = ( props ) => {
 		</Tabs>
 	);
 };
-export const WithTabIconsAndTooltips = WithTabIconsAndTooltipsTemplate.bind(
-	{}
-);
+export const WithTabIconsAndTooltips = WithTabIconsAndTooltipsTemplate.bind( {} );
 
 export const ManualActivation = Template.bind( {} );
 ManualActivation.args = {

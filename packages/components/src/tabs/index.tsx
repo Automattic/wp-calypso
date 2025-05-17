@@ -8,20 +8,12 @@ import { TabList } from './tablist';
 import { TabPanel } from './tabpanel';
 import type { TabsProps } from './types';
 
-function externalToInternalTabId(
-	externalId: string | undefined | null,
-	instanceId: string
-) {
+function externalToInternalTabId( externalId: string | undefined | null, instanceId: string ) {
 	return externalId && `${ instanceId }-${ externalId }`;
 }
 
-function internalToExternalTabId(
-	internalId: string | undefined | null,
-	instanceId: string
-) {
-	return typeof internalId === 'string'
-		? internalId.replace( `${ instanceId }-`, '' )
-		: internalId;
+function internalToExternalTabId( internalId: string | undefined | null, instanceId: string ) {
+	return typeof internalId === 'string' ? internalId.replace( `${ instanceId }-`, '' ) : internalId;
 }
 
 /**
@@ -50,24 +42,14 @@ export const Tabs = Object.assign(
 		const store = Ariakit.useTabStore( {
 			selectOnMove,
 			orientation,
-			defaultSelectedId: externalToInternalTabId(
-				defaultTabId,
-				instanceId
-			),
+			defaultSelectedId: externalToInternalTabId( defaultTabId, instanceId ),
 			setSelectedId: ( newSelectedId ) => {
-				onSelect?.(
-					internalToExternalTabId( newSelectedId, instanceId )
-				);
+				onSelect?.( internalToExternalTabId( newSelectedId, instanceId ) );
 			},
 			selectedId: externalToInternalTabId( selectedTabId, instanceId ),
-			defaultActiveId: externalToInternalTabId(
-				defaultActiveTabId,
-				instanceId
-			),
+			defaultActiveId: externalToInternalTabId( defaultActiveTabId, instanceId ),
 			setActiveId: ( newActiveId ) => {
-				onActiveTabIdChange?.(
-					internalToExternalTabId( newActiveId, instanceId )
-				);
+				onActiveTabIdChange?.( internalToExternalTabId( newActiveId, instanceId ) );
 			},
 			activeId: externalToInternalTabId( activeTabId, instanceId ),
 			rtl: isRTL(),
@@ -78,13 +60,9 @@ export const Tabs = Object.assign(
 
 		useEffect( () => {
 			requestAnimationFrame( () => {
-				const focusedElement =
-					items?.[ 0 ]?.element?.ownerDocument.activeElement;
+				const focusedElement = items?.[ 0 ]?.element?.ownerDocument.activeElement;
 
-				if (
-					! focusedElement ||
-					! items.some( ( item ) => focusedElement === item.element )
-				) {
+				if ( ! focusedElement || ! items.some( ( item ) => focusedElement === item.element ) ) {
 					return; // Return early if no tabs are focused.
 				}
 
@@ -106,11 +84,7 @@ export const Tabs = Object.assign(
 			[ store, instanceId ]
 		);
 
-		return (
-			<TabsContext.Provider value={ contextValue }>
-				{ children }
-			</TabsContext.Provider>
-		);
+		return <TabsContext.Provider value={ contextValue }>{ children }</TabsContext.Provider>;
 	},
 	{
 		/**

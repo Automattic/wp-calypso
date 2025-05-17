@@ -25,7 +25,6 @@ export type TabsProps = {
 	 * `false`, the tab will only be selected upon clicking, not when using arrow
 	 * keys to shift focus (manual tab activation). See the [official W3C docs](https://www.w3.org/WAI/ARIA/apg/patterns/tabpanel/)
 	 * for more info.
-	 *
 	 * @default true
 	 */
 	selectOnMove?: Ariakit.TabProviderProps[ 'selectOnMove' ];
@@ -87,7 +86,6 @@ export type TabsProps = {
 	 * - `both`: all arrow keys work.
 	 * - `horizontal`: only left and right arrow keys work.
 	 * - `vertical`: only up and down arrow keys work.
-	 *
 	 * @default "horizontal"
 	 */
 	orientation?: Ariakit.TabProviderProps[ 'orientation' ];
@@ -117,7 +115,6 @@ export type TabProps = {
 	/**
 	 * Determines if the tab should be disabled. Note that disabled tabs can
 	 * still be accessed via the keyboard when navigating through the tablist.
-	 *
 	 * @default false
 	 */
 	disabled?: Ariakit.TabProps[ 'disabled' ];
@@ -150,7 +147,6 @@ export type TabPanelProps = {
 	 * Determines whether or not the tabpanel element should be focusable.
 	 * If `false`, pressing the tab key will skip over the tabpanel, and instead
 	 * focus on the first focusable element in the panel (if there is one).
-	 *
 	 * @default true
 	 */
 	focusable?: Ariakit.TabPanelProps[ 'focusable' ];
