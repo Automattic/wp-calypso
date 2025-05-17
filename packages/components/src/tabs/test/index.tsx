@@ -1,3 +1,4 @@
+import '@testing-library/jest-dom';
 import { press, click } from '@ariakit/test';
 import { render } from '@ariakit/test/react';
 import { screen, waitFor } from '@testing-library/react';
