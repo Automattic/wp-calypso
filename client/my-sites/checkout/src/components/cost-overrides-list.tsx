@@ -4,6 +4,7 @@ import {
 	isMonthlyProduct,
 	isTriennially,
 	isYearly,
+	type PlanSlug,
 } from '@automattic/calypso-products';
 import colorStudio from '@automattic/color-studio';
 import { FormStatus, useFormStatus, Button } from '@automattic/composite-checkout';
@@ -405,7 +406,7 @@ function SingleProductAndCostOverridesList( { product }: { product: ResponseCart
 		let streamlinedActualAmountDisplay;
 
 		const originalAmountInteger =
-			monthlyPrices[ product.product_slug ] || product.item_original_subtotal_integer;
+			monthlyPrices[ product.product_slug as PlanSlug ] || product.item_original_subtotal_integer;
 		const originalAmountDisplay = formatCurrency( originalAmountInteger, product.currency, {
 			isSmallestUnit: true,
 			stripZeros: true,

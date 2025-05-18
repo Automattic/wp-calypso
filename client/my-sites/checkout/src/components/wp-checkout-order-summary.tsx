@@ -23,6 +23,7 @@ import {
 	isWooExpressPlan,
 	isSenseiProduct,
 	PLAN_100_YEARS,
+	type PlanSlug,
 } from '@automattic/calypso-products';
 import colorStudio from '@automattic/color-studio';
 import { Gridicon } from '@automattic/components';
@@ -204,7 +205,7 @@ function CheckoutSummaryPriceList() {
 	if ( isStreamlinedPriceCheckoutTreatment( streamlinedPriceExperimentAssignment ) ) {
 		subtotalBeforeDiscounts = responseCart.products.reduce( ( subtotal, product ) => {
 			const originalAmountInteger =
-				monthlyPrices[ product.product_slug ] || product.item_original_subtotal_integer;
+				monthlyPrices[ product.product_slug as PlanSlug ] || product.item_original_subtotal_integer;
 			// In specific cases (e.g. premium domains) the original price (renewal) is lower than the due price.
 			return subtotal + Math.max( product.item_subtotal_integer, originalAmountInteger );
 		}, 0 );

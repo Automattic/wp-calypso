@@ -157,9 +157,9 @@ export function getAffiliateCouponLabel(): string {
  * @returns An object where each key is an eligible plan slug from the cart and the value is the
  *          calculated total cost as if it was billed monthly.
  */
-export function useEquivalentMonthlyTotals( products: Array< ResponseCartProduct > ): {
-	[ key: string ]: number;
-} {
+export function useEquivalentMonthlyTotals(
+	products: Array< ResponseCartProduct >
+): Record< PlanSlug, number > {
 	const isEligibleProduct = ( product: ResponseCartProduct ) =>
 		isWpComPlan( product?.product_slug ) && ! isMonthly( product?.product_slug );
 
