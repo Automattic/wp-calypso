@@ -10,7 +10,6 @@ import { dispatch } from '@wordpress/data';
 import React from 'react';
 import { navigate } from 'calypso/lib/navigate';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
-import * as Utils from 'calypso/my-sites/checkout/utils';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
@@ -57,13 +56,6 @@ describe( 'CheckoutMain', () => {
 	beforeEach( () => {
 		dispatch( CHECKOUT_STORE ).reset();
 		jest.clearAllMocks();
-
-		// part of features related to useStreamlinedPriceExperiment
-		Utils.useEquivalentMonthlyTotals = jest.fn();
-		Utils.useEquivalentMonthlyTotals.mockImplementation( () => {
-			return {};
-		} );
-
 		( getPlansBySiteId as jest.Mock ).mockImplementation( () => ( {
 			data: getActivePersonalPlanDataForType( 'yearly' ),
 		} ) );
