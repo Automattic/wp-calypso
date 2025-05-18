@@ -420,6 +420,6 @@ describe( 'useGetWpcomPlanTotalIfPaidMonthly', () => {
 		const { result } = renderHookWithProvider( () =>
 			useGetWpcomPlanTotalIfPaidMonthly( [ business_2years, personal_monthly, jetpack_yearly ] )
 		);
-		expect( result.current ).toStrictEqual( { 'business-bundle-2y': undefined } );
+		expect( result.current ).toStrictEqual( { 'business-bundle-2y': 0 } );
 	} );
 } );
