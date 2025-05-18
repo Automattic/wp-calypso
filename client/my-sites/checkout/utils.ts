@@ -145,7 +145,18 @@ export function getAffiliateCouponLabel(): string {
 	return translate( 'Exclusive Offer Applied' );
 }
 
-export function useGetWpcomPlanTotalIfPaidMonthly( products: Array< ResponseCartProduct > ): {
+/**
+ * Calculate the equivalent monthly total prices for non-monthly WordPress.com plans from the passed
+ * cart. For each eligible product it'd determine the equivalent monthly plan and return the monthly
+ * plan price multiplied by the number of months in the yearly (or longer) plan.
+ * Used for demonstrating the benefits of purchasing longer-term plans.
+ *
+ * @param products - Array of `ResponseCartProduct` items.
+ *
+ * @returns An object where each key is an eligible plan slug from the cart and the value is the
+ *          calculated total cost as if it was billed monthly.
+ */
+export function useEquivalentMonthlyTotals( products: Array< ResponseCartProduct > ): {
 	[ key: string ]: number;
 } {
 	const isEligibleProduct = ( product: ResponseCartProduct ) =>

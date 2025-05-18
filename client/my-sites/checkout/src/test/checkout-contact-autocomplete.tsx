@@ -71,8 +71,8 @@ describe( 'Checkout contact step', () => {
 		nock.cleanAll();
 
 		// part of features related to useStreamlinedPriceExperiment
-		Utils.useGetWpcomPlanTotalIfPaidMonthly = jest.fn();
-		Utils.useGetWpcomPlanTotalIfPaidMonthly.mockImplementation( () => {
+		Utils.useEquivalentMonthlyTotals = jest.fn();
+		Utils.useEquivalentMonthlyTotals.mockImplementation( () => {
 			return {};
 		} );
 

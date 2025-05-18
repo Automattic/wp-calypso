@@ -52,7 +52,7 @@ import {
 import { getSignupCompleteFlowName } from 'calypso/signup/storageUtils';
 import { useSelector } from 'calypso/state';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
-import { useGetWpcomPlanTotalIfPaidMonthly } from '../../utils';
+import { useEquivalentMonthlyTotals } from '../../utils';
 import getAkismetProductFeatures from '../lib/get-akismet-product-features';
 import getFlowPlanFeatures from '../lib/get-flow-plan-features';
 import getJetpackProductFeatures from '../lib/get-jetpack-product-features';
@@ -197,7 +197,7 @@ function CheckoutSummaryPriceList() {
 	const totalLineItem = getTotalLineItemFromCart( responseCart );
 	const translate = useTranslate();
 	const [ , streamlinedPriceExperimentAssignment ] = useStreamlinedPriceExperiment();
-	const monthlyPrices = useGetWpcomPlanTotalIfPaidMonthly( responseCart.products );
+	const monthlyPrices = useEquivalentMonthlyTotals( responseCart.products );
 
 	let subtotalBeforeDiscounts = 0;
 	let totalDiscount = 0;

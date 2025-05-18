@@ -12,7 +12,7 @@ import { getEmptyResponseCartProduct } from '@automattic/shopping-cart';
 import configureStore from 'redux-mock-store';
 import useCheckPlanAvailabilityForPurchase from 'calypso/my-sites/plans-features-main/hooks/use-check-plan-availability-for-purchase';
 import { renderHookWithProvider } from 'calypso/test-helpers/testing-library';
-import { getProductSlugFromContext, useGetWpcomPlanTotalIfPaidMonthly } from '../utils';
+import { getProductSlugFromContext, useEquivalentMonthlyTotals } from '../utils';
 
 jest.mock(
 	'calypso/my-sites/plans-features-main/hooks/use-check-plan-availability-for-purchase',
@@ -406,7 +406,7 @@ describe( 'useGetWpcomPlanTotalIfPaidMonthly', () => {
 		} ) );
 
 		const { result } = renderHookWithProvider( () =>
-			useGetWpcomPlanTotalIfPaidMonthly( [ business_2years, personal_monthly, jetpack_yearly ] )
+			useEquivalentMonthlyTotals( [ business_2years, personal_monthly, jetpack_yearly ] )
 		);
 		expect( result.current ).toStrictEqual( { 'business-bundle-2y': 96000 } ); // 24 * 40
 	} );
@@ -418,7 +418,7 @@ describe( 'useGetWpcomPlanTotalIfPaidMonthly', () => {
 			},
 		} ) );
 		const { result } = renderHookWithProvider( () =>
-			useGetWpcomPlanTotalIfPaidMonthly( [ business_2years, personal_monthly, jetpack_yearly ] )
+			useEquivalentMonthlyTotals( [ business_2years, personal_monthly, jetpack_yearly ] )
 		);
 		expect( result.current ).toStrictEqual( { 'business-bundle-2y': 0 } );
 	} );

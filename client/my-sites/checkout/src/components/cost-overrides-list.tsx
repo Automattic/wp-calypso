@@ -32,7 +32,7 @@ import {
 import { useSelector } from 'calypso/state';
 import { getIsOnboardingAffiliateFlow } from 'calypso/state/signup/flow/selectors';
 import useCartKey from '../../use-cart-key';
-import { getAffiliateCouponLabel, useGetWpcomPlanTotalIfPaidMonthly } from '../../utils';
+import { getAffiliateCouponLabel, useEquivalentMonthlyTotals } from '../../utils';
 import { CheckIcon } from './check-icon';
 import type { Theme } from '@automattic/composite-checkout';
 import type { LineItemCostOverrideForDisplay } from '@automattic/wpcom-checkout';
@@ -400,7 +400,7 @@ function SingleProductAndCostOverridesList( { product }: { product: ResponseCart
 		}
 	);
 	const [ , streamlinedPriceExperimentAssignment ] = useStreamlinedPriceExperiment();
-	const monthlyPrices = useGetWpcomPlanTotalIfPaidMonthly( [ product ] );
+	const monthlyPrices = useEquivalentMonthlyTotals( [ product ] );
 	if ( isStreamlinedPriceCheckoutTreatment( streamlinedPriceExperimentAssignment ) ) {
 		let streamlinedActualAmountDisplay;
 

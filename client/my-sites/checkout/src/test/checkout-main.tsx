@@ -59,8 +59,8 @@ describe( 'CheckoutMain', () => {
 		jest.clearAllMocks();
 
 		// part of features related to useStreamlinedPriceExperiment
-		Utils.useGetWpcomPlanTotalIfPaidMonthly = jest.fn();
-		Utils.useGetWpcomPlanTotalIfPaidMonthly.mockImplementation( () => {
+		Utils.useEquivalentMonthlyTotals = jest.fn();
+		Utils.useEquivalentMonthlyTotals.mockImplementation( () => {
 			return {};
 		} );
 
