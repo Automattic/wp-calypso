@@ -10,9 +10,10 @@ import {
 import { Plans } from '@automattic/data-stores';
 import { getEmptyResponseCartProduct } from '@automattic/shopping-cart';
 import configureStore from 'redux-mock-store';
+import useEquivalentMonthlyTotals from 'calypso/my-sites/checkout/utils/use-equivalent-monthly-totals';
 import useCheckPlanAvailabilityForPurchase from 'calypso/my-sites/plans-features-main/hooks/use-check-plan-availability-for-purchase';
 import { renderHookWithProvider } from 'calypso/test-helpers/testing-library';
-import { getProductSlugFromContext, useEquivalentMonthlyTotals } from '../utils';
+import { getProductSlugFromContext } from '../utils';
 
 jest.mock(
 	'calypso/my-sites/plans-features-main/hooks/use-check-plan-availability-for-purchase',

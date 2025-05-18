@@ -26,6 +26,7 @@ import {
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
+import useEquivalentMonthlyTotals from 'calypso/my-sites/checkout/utils/use-equivalent-monthly-totals';
 import {
 	useStreamlinedPriceExperiment,
 	isStreamlinedPriceCheckoutTreatment,
@@ -33,7 +34,7 @@ import {
 import { useSelector } from 'calypso/state';
 import { getIsOnboardingAffiliateFlow } from 'calypso/state/signup/flow/selectors';
 import useCartKey from '../../use-cart-key';
-import { getAffiliateCouponLabel, useEquivalentMonthlyTotals } from '../../utils';
+import { getAffiliateCouponLabel } from '../../utils';
 import { CheckIcon } from './check-icon';
 import type { Theme } from '@automattic/composite-checkout';
 import type { LineItemCostOverrideForDisplay } from '@automattic/wpcom-checkout';
