@@ -24,7 +24,7 @@ import './style.scss';
 
 type Props = {
 	withPersonalizedBlueprint?: boolean;
-	submitAsSurvey?: boolean;
+	signupWithMagicLinkFlow?: boolean;
 };
 
 type PersonalizationStepProgress = {
@@ -74,7 +74,10 @@ const getFinishSurveyProgress = ( step: number ): number => {
 	return step === 6 ? STEP_COMPLETED : STEP_NOT_STARTED;
 };
 
-const MultiStepForm = ( { withPersonalizedBlueprint = false, submitAsSurvey = false }: Props ) => {
+const MultiStepForm = ( {
+	withPersonalizedBlueprint = false,
+	signupWithMagicLinkFlow = false,
+}: Props ) => {
 	const notificationId = 'a4a-agency-signup-form';
 	const translate = useTranslate();
 	const [ currentStep, setCurrentStep ] = useState( 1 );
@@ -86,7 +89,7 @@ const MultiStepForm = ( { withPersonalizedBlueprint = false, submitAsSurvey = fa
 
 	const steps: Step[] = [
 		{
-			label: translate( 'Sign up' ),
+			label: translate( 'Your agency details' ),
 			isActive: currentStep > 0,
 			value: getSignupProgress( currentStep ),
 		},
@@ -95,10 +98,10 @@ const MultiStepForm = ( { withPersonalizedBlueprint = false, submitAsSurvey = fa
 			isActive: currentStep > 3,
 			value: getPersonalizationProgress( currentStep, withPersonalizedBlueprint ),
 		},
-		...( submitAsSurvey
+		...( signupWithMagicLinkFlow
 			? [
 					{
-						label: translate( 'Finish survey' ),
+						label: translate( 'Finish sign up' ),
 						isActive: currentStep > 5,
 						value: getFinishSurveyProgress( currentStep ),
 					},
@@ -146,7 +149,7 @@ const MultiStepForm = ( { withPersonalizedBlueprint = false, submitAsSurvey = fa
 			const newFormData = { ...formData, ...data };
 			setFormData( newFormData );
 			setCurrentStep( nextStep );
-			if ( nextStep === 6 && submitAsSurvey ) {
+			if ( nextStep === 6 && signupWithMagicLinkFlow ) {
 				const {
 					topPartneringGoal,
 					topYearlyGoal,
@@ -159,7 +162,7 @@ const MultiStepForm = ( { withPersonalizedBlueprint = false, submitAsSurvey = fa
 				submitSurvey( payload as AgencyDetailsSignupPayload );
 			}
 		},
-		[ formData, submitAsSurvey, submitSurvey ]
+		[ formData, signupWithMagicLinkFlow, submitSurvey ]
 	);
 
 	const clearDataAndRefresh = () => {
@@ -184,7 +187,7 @@ const MultiStepForm = ( { withPersonalizedBlueprint = false, submitAsSurvey = fa
 					<SignupContactForm
 						onContinue={ ( data ) => updateDataAndContinue( data, 2 ) }
 						initialFormData={ formData }
-						withEmail={ submitAsSurvey }
+						withEmail={ signupWithMagicLinkFlow }
 					/>
 				);
 			case 2:
@@ -195,7 +198,7 @@ const MultiStepForm = ( { withPersonalizedBlueprint = false, submitAsSurvey = fa
 							updateDataAndContinue( data, withPersonalizedBlueprint ? 3 : 6 )
 						}
 						onSubmit={ ( data ) => onCreateAgency( data ) }
-						isFinalStep={ ! submitAsSurvey }
+						isFinalStep={ ! signupWithMagicLinkFlow }
 						initialFormData={ formData }
 						goBack={ () => setCurrentStep( 1 ) }
 					/>
@@ -242,7 +245,7 @@ const MultiStepForm = ( { withPersonalizedBlueprint = false, submitAsSurvey = fa
 		currentStep,
 		formData,
 		onCreateAgency,
-		submitAsSurvey,
+		signupWithMagicLinkFlow,
 		trackView,
 		updateDataAndContinue,
 		withPersonalizedBlueprint,

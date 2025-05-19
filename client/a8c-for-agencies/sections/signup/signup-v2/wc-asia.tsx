@@ -4,7 +4,7 @@ import SignupWrapper from './components/signup-wrapper';
 const AgencySignupWCAsia = () => {
 	return (
 		<SignupWrapper>
-			<MultiStepForm submitAsSurvey withPersonalizedBlueprint />
+			<MultiStepForm signupWithMagicLinkFlow withPersonalizedBlueprint />
 		</SignupWrapper>
 	);
 };

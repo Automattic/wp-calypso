@@ -49,6 +49,8 @@
 .hosting-dashboard-layout-column__container {
 	border-radius: 8px; /* stylelint-disable-line scales/radii */
 	overflow: hidden;
+	display: flex;
+	flex-direction: column;
 
 	@include break-small {
 		height: 100%;

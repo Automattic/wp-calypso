@@ -12,7 +12,7 @@ import {
 import { localizeUrl, useLocale } from '@automattic/i18n-utils';
 import { speak } from '@wordpress/a11y';
 import { Button } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
+import { useDispatch, useSelect } from '@wordpress/data';
 import { decodeEntities } from '@wordpress/html-entities';
 import { __ } from '@wordpress/i18n';
 import {
@@ -35,7 +35,7 @@ import { HELP_CENTER_STORE } from '../stores';
 import HelpCenterRecentConversations from './help-center-recent-conversations';
 import PlaceholderLines from './placeholder-lines';
 import type { SearchResult } from '../types';
-
+import type { HelpCenterSelect } from '@automattic/data-stores';
 import './help-center-search-results.scss';
 
 const MAX_VISIBLE_RESULTS = 5;
@@ -202,6 +202,10 @@ function HelpSearchResults( {
 }: HelpSearchResultsProps ) {
 	const { hasPurchases, sectionName, site } = useHelpCenterContext();
 	const { setNavigateToRoute } = useDispatch( HELP_CENTER_STORE );
+	const contextTerm = useSelect(
+		( select ) => ( select( HELP_CENTER_STORE ) as HelpCenterSelect ).getContextTerm(),
+		[]
+	);
 
 	const adminResults = useAdminResults( searchQuery );
 
@@ -222,7 +226,7 @@ function HelpSearchResults( {
 	const { contextSearch } = useContextBasedSearchMapping( currentRoute );
 
 	const { data: searchData, isLoading: isSearching } = useHelpSearchQuery(
-		searchQuery || contextSearch, // If there's a query, we don't context search
+		searchQuery || contextTerm || contextSearch, // If there's a query, we don't context search
 		locale,
 		currentRoute
 	);

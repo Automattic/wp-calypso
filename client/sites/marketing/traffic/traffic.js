@@ -54,10 +54,7 @@ const SiteSettingsTraffic = ( {
 		<div className="settings-traffic site-settings">
 			<PageViewTracker path="/marketing/traffic/:site" title="Marketing > Traffic" />
 			{ ! isAdmin && (
-				<EmptyContent
-					illustration="/calypso/images/illustrations/illustration-404.svg"
-					title={ translate( 'You are not authorized to view this page' ) }
-				/>
+				<EmptyContent title={ translate( 'You are not authorized to view this page' ) } />
 			) }
 			<JetpackDevModeNotice />
 			{ isAdmin && shouldShowAdvertisingOption && (

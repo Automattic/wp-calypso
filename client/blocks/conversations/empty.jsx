@@ -40,7 +40,6 @@ class ConversationsEmptyContent extends Component {
 				) }
 				action={ action }
 				secondaryAction={ secondaryAction }
-				illustration=""
 			/>
 		);
 	}
