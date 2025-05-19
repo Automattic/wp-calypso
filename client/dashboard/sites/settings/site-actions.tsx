@@ -32,7 +32,7 @@ const useRestorePlanSoftware = ( { slug, options }: Site ) => {
 	};
 };
 
-const useCopySite = ( { capabilities, is_wpcom_staging_site, plan, slug }: Site ) => {
+const useDuplicateSite = ( { capabilities, is_wpcom_staging_site, plan, slug }: Site ) => {
 	if (
 		! (
 			capabilities.manage_options &&
@@ -44,8 +44,8 @@ const useCopySite = ( { capabilities, is_wpcom_staging_site, plan, slug }: Site 
 	}
 
 	return {
-		title: __( 'Copy site' ),
-		description: __( 'Copy this site with all of its data to a new site.' ),
+		title: __( 'Duplicate site' ),
+		description: __( 'Create a duplicate of this site.' ),
 		actions: (
 			<Button
 				variant="secondary"
@@ -54,7 +54,7 @@ const useCopySite = ( { capabilities, is_wpcom_staging_site, plan, slug }: Site 
 					sourceSlug: slug,
 				} ) }
 			>
-				{ __( 'Copy' ) }
+				{ __( 'Duplicate' ) }
 			</Button>
 		),
 	};
@@ -62,8 +62,8 @@ const useCopySite = ( { capabilities, is_wpcom_staging_site, plan, slug }: Site 
 
 export default function SiteActions( { site }: { site: Site } ) {
 	const restorePlanSoftware = useRestorePlanSoftware( site );
-	const copySite = useCopySite( site );
-	const actions = [ restorePlanSoftware, copySite ].filter( ( value ) => !! value );
+	const duplicateSite = useDuplicateSite( site );
+	const actions = [ restorePlanSoftware, duplicateSite ].filter( ( value ) => !! value );
 
 	if ( ! actions.length ) {
 		return null;
