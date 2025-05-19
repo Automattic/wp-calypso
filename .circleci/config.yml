@@ -268,7 +268,7 @@ jobs:
     # version to keep this one working for now.
       - image: cimg/node:22.9.0-browsers
     <<: *desktop_defaults
-    resource_class: medium+
+    resource_class: large
     shell: /bin/bash --login
     environment:
       CONFIG_ENV: release
