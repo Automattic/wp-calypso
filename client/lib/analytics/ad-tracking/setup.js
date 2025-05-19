@@ -53,7 +53,9 @@ export function setup() {
 		// Linkedin
 		if ( mayWeInitTracker( 'linkedin' ) ) {
 			setupLinkedinInsight(
-				isJetpackCloud() || isJetpackCheckout() ? TRACKING_IDS.jetpackLinkedinId : null
+				isJetpackCloud() || isJetpackCheckout()
+					? TRACKING_IDS.jetpackLinkedinId
+					: TRACKING_IDS.wpcomLinkedinId
 			);
 		}
 
