@@ -179,7 +179,7 @@ class JetpackConnectSiteUrlInput extends Component {
 	}
 
 	render() {
-		const { candidateSites, isFetching, isSearch, translate, url, autoFocus } = this.props;
+		const { candidateSites, isSearch, translate, url, autoFocus } = this.props;
 
 		const isDisabled = this.isFormSubmitDisabled();
 		const isBusy = this.isFormSubmitBusy();
@@ -196,7 +196,7 @@ class JetpackConnectSiteUrlInput extends Component {
 							autoCapitalize="off"
 							autoFocus={ autoFocus } // eslint-disable-line jsx-a11y/no-autofocus
 							onChange={ this.handleChange }
-							disabled={ isFetching }
+							disabled={ isBusy }
 							placeholder="https://yourjetpack.blog"
 							onKeyUp={ this.handleKeyPress }
 							value={ url }
