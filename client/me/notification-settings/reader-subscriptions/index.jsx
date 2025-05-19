@@ -190,7 +190,7 @@ class NotificationSubscriptions extends Component {
 						</FormSectionHeading>
 						<p>
 							{ this.props.translate(
-								'{{readerLink}}Visit the Reader{{/readerLink}} to adjust individual site subscriptions.',
+								'To manage individual site subscriptions, {{readerLink}}go to the Reader{{/readerLink}}.',
 								{
 									components: {
 										readerLink: (
