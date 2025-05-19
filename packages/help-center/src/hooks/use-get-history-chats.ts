@@ -93,18 +93,21 @@ export const useGetHistoryChats = (): UseGetHistoryChatsResult => {
 	const [ recentConversations, setRecentConversations ] = useState< Conversations >( [] );
 	const [ archivedConversations, setArchivedConversations ] = useState< Conversations >( [] );
 
+	const { isChatLoaded, lastMessageReceivedAt } = useSelect( ( select ) => {
+		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
+
+		return {
+			isChatLoaded: store.getIsChatLoaded(),
+			lastMessageReceivedAt: store.getLastMessageReceivedAt(),
+		};
+	}, [] );
+
 	const { data: openSupportInteraction, isLoading: isLoadingOpenInteractions } =
 		useGetSupportInteractions( 'zendesk', 10, 'open' );
 	const { data: otherSupportInteractions, isLoading: isLoadingOtherSupportInteractions } =
 		useGetSupportInteractions( 'zendesk', 100, [ 'resolved', 'solved', 'closed' ] );
 	const { data: odieConversations, isLoading: isLoadingOdieConversations } =
 		useGetOdieConversations();
-
-	const { isChatLoaded } = useSelect( ( select ) => {
-		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
-
-		return { isChatLoaded: store.getIsChatLoaded() };
-	}, [] );
 
 	const isLoadingInteractions =
 		isLoadingOpenInteractions || isLoadingOtherSupportInteractions || isLoadingOdieConversations;
@@ -140,6 +143,7 @@ export const useGetHistoryChats = (): UseGetHistoryChatsResult => {
 		otherSupportInteractions,
 		odieConversations,
 		supportInteractions,
+		lastMessageReceivedAt,
 	] );
 
 	return {
