@@ -43,16 +43,9 @@ interface PageSelectorProps {
 	pages: PerformanceProfilerPage[];
 	currentPage: PerformanceProfilerPage | undefined;
 	onChange: ( page_id: string | null | undefined ) => void;
-	isLoading: boolean;
 }
 
-export function PageSelector( {
-	siteUrl,
-	pages,
-	currentPage,
-	onChange,
-	isLoading,
-}: PageSelectorProps ) {
+export function PageSelector( { siteUrl, pages, currentPage, onChange }: PageSelectorProps ) {
 	const currentPageOption: PageOption | undefined = currentPage
 		? mapPageToPageOption( currentPage, siteUrl )
 		: undefined;
@@ -80,7 +73,6 @@ export function PageSelector( {
 			label={ __( 'Page' ) }
 			allowReset={ false }
 			options={ pageOptions }
-			isLoading={ isLoading }
 			value={ currentPageOption?.value }
 			hideLabelFromVision
 			onChange={ ( page_id ) => {

@@ -25,11 +25,7 @@ const getPageFromID = ( pages: PerformanceProfilerPage[] | undefined, pageId: st
 };
 
 function SitePerformanceContent( { site }: { site: Site } ) {
-	const {
-		data: pagesData,
-		refetch: refetchPages,
-		isLoading: isLoadingPages,
-	} = useQuery( {
+	const { data: pagesData, refetch: refetchPages } = useQuery( {
 		...performanceProfilerPagesQuery( site.ID, '' ),
 		refetchOnWindowFocus: false,
 	} );
@@ -55,10 +51,11 @@ function SitePerformanceContent( { site }: { site: Site } ) {
 
 	const handleReportRefetch = async () => {
 		await refetchReport();
+		// Once we get a token back, we can refetch the pages to get the updated hash.
 		refetchPages();
 	};
 
-	// TODO: We shouldn't allow public sites to load the SitePerformance page
+	// TODO: We shouldn't allow public sites to load the SitePerformance page.
 	if ( 1 !== site.options?.blog_public ) {
 		return 'This site is not public. Please make it public to view the performance report.';
 	}
@@ -66,9 +63,6 @@ function SitePerformanceContent( { site }: { site: Site } ) {
 	if ( ! pagesData || ! currentPage ) {
 		return null;
 	}
-
-	const isLoading =
-		isLoadingPages || isFetchingReport || isRunningDesktopReport || isRunningMobileReport;
 
 	const currentReport = deviceToggle === 'desktop' ? desktopReport : mobileReport;
 
@@ -82,7 +76,6 @@ function SitePerformanceContent( { site }: { site: Site } ) {
 				actions={
 					<>
 						<PageSelector
-							isLoading={ isLoading }
 							siteUrl={ site.URL }
 							currentPage={ currentPage }
 							pages={ pagesData }
