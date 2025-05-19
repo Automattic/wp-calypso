@@ -56,10 +56,10 @@ const getFilteredQueryParams = ( queryParams: QueryArgs ): QueryArgs => {
  */
 export const useStatsNavigationHistory = (): { text: string; url: string | null } => {
 	const [ lastScreen, setLastScreen ] = useState< {
-		lastScreen: string;
+		screen: string;
 		queryParams: QueryArgs;
 	} >( {
-		lastScreen: defaultLastScreen,
+		screen: defaultLastScreen,
 		queryParams: {},
 	} );
 	const siteId = useSelector( getSelectedSiteId );
@@ -75,11 +75,11 @@ export const useStatsNavigationHistory = (): { text: string; url: string | null 
 				Array.isArray( navState ) && navState.length >= 2 ? navState[ navState.length - 2 ] : {};
 
 			// Make sure it's array and select last item
-			if ( lastItem && lastItem.lastScreen ) {
+			if ( lastItem && lastItem.screen ) {
 				setLastScreen( lastItem );
 			} else {
 				setLastScreen( {
-					lastScreen: defaultLastScreen,
+					screen: defaultLastScreen,
 					queryParams: {},
 				} );
 			}
@@ -91,7 +91,7 @@ export const useStatsNavigationHistory = (): { text: string; url: string | null 
 			return null;
 		}
 
-		const backLink = possibleBackLinks[ lastScreen.lastScreen ];
+		const backLink = possibleBackLinks[ lastScreen.screen ];
 
 		if ( ! backLink ) {
 			return null;
@@ -103,7 +103,7 @@ export const useStatsNavigationHistory = (): { text: string; url: string | null 
 	}, [ lastScreen, siteSlug ] );
 
 	return {
-		text: localizedTabNames[ lastScreen.lastScreen ] || '',
+		text: localizedTabNames[ lastScreen.screen ] || '',
 		url: backLink,
 	};
 };
@@ -126,7 +126,7 @@ export const recordCurrentScreen = (
 
 		const filteredQueryParams = getFilteredQueryParams( queryParams );
 		const currentEntry = {
-			lastScreen: screen,
+			screen,
 			queryParams: filteredQueryParams,
 		};
 
@@ -143,11 +143,11 @@ export const recordCurrentScreen = (
 		// If the history already has the same screen, remove it
 		if (
 			navigationHistory.some(
-				( entry: { lastScreen: string } ) => entry.lastScreen === currentEntry.lastScreen
+				( entry: { screen: string } ) => entry.screen === currentEntry.screen
 			)
 		) {
 			navigationHistory = navigationHistory.filter(
-				( entry: { lastScreen: string } ) => entry.lastScreen !== currentEntry.lastScreen
+				( entry: { screen: string } ) => entry.screen !== currentEntry.screen
 			);
 		}
 
