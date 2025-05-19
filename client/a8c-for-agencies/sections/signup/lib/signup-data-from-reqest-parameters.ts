@@ -68,6 +68,7 @@ export function getSignupDataFromRequestParameters(): AgencyDetailsPayload | nul
 	// Parse arrays from comma-separated strings
 	const servicesOffered = sanitizeArrayFromString( searchParams.get( 'services_offered' ) );
 	const productsOffered = sanitizeArrayFromString( searchParams.get( 'products_offered' ) );
+	const productsToOffer = sanitizeArrayFromString( searchParams.get( 'products_to_offer' ) );
 
 	// Get phone number
 	const phone = sanitizePhone( searchParams.get( 'phone_number' ) );
@@ -81,6 +82,7 @@ export function getSignupDataFromRequestParameters(): AgencyDetailsPayload | nul
 		userType: sanitizeString( searchParams.get( 'user_type' ) ),
 		servicesOffered,
 		productsOffered,
+		productsToOffer,
 		line1: sanitizeString( searchParams.get( 'address_line1' ) ),
 		line2: sanitizeString( searchParams.get( 'address_line2' ) ),
 		city: sanitizeString( searchParams.get( 'address_city' ) ),

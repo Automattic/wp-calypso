@@ -17,6 +17,7 @@ import useDomainDiagnosticsQuery from 'calypso/data/domains/diagnostics/use-doma
 import { useGetDomainsQuery } from 'calypso/data/domains/use-get-domains-query';
 import useHomeLayoutQuery, { getCacheKey } from 'calypso/data/home/use-home-layout-query';
 import useSkipCurrentViewMutation from 'calypso/data/home/use-skip-current-view-mutation';
+import { usePurchasePlanNotification } from 'calypso/landing/stepper/declarative-flow/internals/hooks/use-purchase-plan-notification';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { setDomainNotice } from 'calypso/lib/domains/set-domain-notice';
 import { preventWidows } from 'calypso/lib/formatting';
@@ -101,6 +102,8 @@ const HomeContent = ( {
 	} );
 	const emailDnsDiagnostics = domainDiagnosticData?.email_dns_records;
 	const [ dismissedEmailDnsDiagnostics, setDismissedEmailDnsDiagnostics ] = useState( false );
+
+	usePurchasePlanNotification( siteId, site?.plan?.product_slug );
 
 	useEffect( () => {
 		if ( getQueryArgs().celebrateLaunch === 'true' && isSuccess ) {
