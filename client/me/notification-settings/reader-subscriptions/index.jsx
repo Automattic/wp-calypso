@@ -186,7 +186,7 @@ class NotificationSubscriptions extends Component {
 						onSubmit={ this.handleSubmit }
 					>
 						<FormSectionHeading>
-							{ this.props.translate( 'Email subscriptions' ) }
+							{ this.props.translate( 'Subscription settings' ) }
 						</FormSectionHeading>
 						<p>
 							{ this.props.translate(
@@ -343,7 +343,10 @@ class NotificationSubscriptions extends Component {
 						) }
 
 						<Button
+							accessibleWhenDisabled
 							variant="primary"
+							showTooltip={ ! this.props.hasUnsavedUserSettings }
+							label={ this.props.translate( 'No unsaved changes' ) }
 							disabled={ this.props.isUpdatingUserSettings || ! this.props.hasUnsavedUserSettings }
 							isBusy={ this.props.isUpdatingUserSettings }
 							onClick={ this.handleSubmitButtonClick }
