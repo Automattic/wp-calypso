@@ -269,8 +269,8 @@ class InviteAccept extends Component {
 
 		return (
 			<div className={ containerClasses }>
-				{ this.localeSuggestions() }
 				<div className={ formClasses }>
+					{ this.localeSuggestions() }
 					{ this.isMatchEmailError() && user && (
 						<Notice
 							text={ this.props.translate( 'This invite is only valid for %(email)s.', {

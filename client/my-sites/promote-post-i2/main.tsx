@@ -241,7 +241,6 @@ export default function PromotedPosts( { tab }: Props ) {
 						},
 					}
 				) }
-				illustration={ null }
 			/>
 		);
 	}

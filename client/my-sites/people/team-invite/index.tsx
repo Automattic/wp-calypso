@@ -1,7 +1,7 @@
 import page from '@automattic/calypso-router';
 import { Card } from '@automattic/components';
 import { SiteDetails } from '@automattic/data-stores';
-import { useTranslate } from 'i18n-calypso';
+import { fixMe, useTranslate } from 'i18n-calypso';
 import { useState, useEffect } from 'react';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import QuerySiteInvites from 'calypso/components/data/query-site-invites';
@@ -59,8 +59,11 @@ function TeamInvite( props: Props ) {
 					} ) }
 				</HeaderCake>
 				<EmptyContent
-					title={ translate( 'Oops, only administrators can invite other people' ) }
-					illustration="/calypso/images/illustrations/illustration-empty-results.svg"
+					title={ fixMe( {
+						text: 'Only administrators can invite other people',
+						newCopy: translate( 'Only administrators can invite other people' ),
+						oldCopy: translate( 'Oops, only administrators can invite other people' ),
+					} ) }
 				/>
 			</Main>
 		);

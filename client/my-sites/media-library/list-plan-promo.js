@@ -119,7 +119,6 @@ class MediaLibraryListPlanPromo extends Component {
 				title={ this.getTitle() }
 				line={ this.getSummary() }
 				action={ this.props.children || action }
-				illustration=""
 			/>
 		);
 	}

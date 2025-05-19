@@ -9,7 +9,6 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
-import IllustrationStats from 'calypso/assets/images/stats/illustration-stats.svg';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import QueryPostStats from 'calypso/components/data/query-post-stats';
 import QueryPosts from 'calypso/components/data/query-posts';
@@ -288,8 +287,6 @@ class StatsPostDetail extends Component {
 								'https://wordpress.com/support/getting-more-views-and-traffic/'
 							) }
 							actionTarget="blank"
-							illustration={ IllustrationStats }
-							illustrationWidth={ 150 }
 						/>
 					) }
 
