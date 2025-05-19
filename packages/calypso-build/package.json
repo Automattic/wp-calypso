@@ -39,6 +39,7 @@
 		"@automattic/webpack-rtl-plugin": "workspace:^",
 		"@babel/compat-data": "^7.26.8",
 		"@babel/core": "^7.26.10",
+		"@swc/core": "^1.11.24",
 		"@types/webpack-env": "^1.18.8",
 		"@wordpress/browserslist-config": "^6.23.0",
 		"@wordpress/dependency-extraction-webpack-plugin": "^6.19.0",
