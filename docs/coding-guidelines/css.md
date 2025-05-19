@@ -146,14 +146,15 @@ Under the hood, we are using webpack and its `sass-loader`, for compiling the st
 To avoid code bloat and have a more consistent experience we use the same breakpoints in all SCSS files whenever possible. DO NOT define your own media queries. We should use the `break-*` mixins from [Gutenberg](https://github.com/WordPress/gutenberg/blob/0f1f5e75408705f0ec014f5d2ea3d9fcc8a97817/packages/base-styles/_mixins.scss). For example:
 
 ```scss
-@import "@wordpress/base-styles/breakpoints";
-@import "@wordpress/base-styles/mixins";
+@use "@wordpress/base-styles/colors";
+@use "@wordpress/base-styles/mixins";
 
 .class-name {
 	margin-bottom: 8px;
 	padding: 12px;
+	color: colors.$gray-900;
 
-	@include break-mobile {
+	@include mixins.break-mobile {
 		margin-bottom: 16px;
 		padding: 24px;
 	}
@@ -170,7 +171,9 @@ If you are adding a new Sass file (global or component-specific), you need to im
 
 ### Imports
 
-- DO declare all of your `@import` dependencies at the top of a file that needs it/them.
+`@import` will soon be completely [deprecated](https://sass-lang.com/documentation/breaking-changes/import/) in favor of `@use`.
+
+- DO declare all of your `@use` dependencies at the top of a file that needs it/them.
 - DON'T `@import` dependencies in a global file and just hope it filters down to your partial.
 
 ### Nesting
