@@ -39,6 +39,8 @@ function SitePerformanceContent( { site }: { site: Site } ) {
 		isRunningDesktopReport,
 		isRunningMobileReport,
 		isError,
+		isDesktopReportError,
+		isMobileReportError,
 		refetch: refetchReport,
 	} = usePerformanceData( currentPage?.link, currentPage?.wpcom_performance_report_hash );
 	const [ deviceToggle, setDeviceToggle ] = useState< ToggleType >( 'desktop' );
@@ -93,7 +95,9 @@ function SitePerformanceContent( { site }: { site: Site } ) {
 					isRunningReport={
 						deviceToggle === 'desktop' ? isRunningDesktopReport : isRunningMobileReport
 					}
-					isError={ isError }
+					isError={
+						( deviceToggle === 'desktop' ? isDesktopReportError : isMobileReportError ) || isError
+					}
 					onRetest={ handleReportRefetch }
 				/>
 			</div>

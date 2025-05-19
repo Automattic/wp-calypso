@@ -13,6 +13,8 @@ interface PerformanceData {
 	isLoading: boolean;
 	isRunningDesktopReport: boolean;
 	isRunningMobileReport: boolean;
+	isDesktopReportError: boolean;
+	isMobileReportError: boolean;
 	isError: boolean;
 	refetch: () => void;
 }
@@ -82,12 +84,6 @@ export function usePerformanceData(
 			? performanceData.pagespeed.mobile
 			: undefined;
 
-	const isError =
-		isBasicMetricsError ||
-		isInsightsError ||
-		isReportFailed( performanceData?.pagespeed?.mobile ) ||
-		isReportFailed( performanceData?.pagespeed?.desktop );
-
 	return {
 		hash: token,
 		mobileReport,
@@ -97,10 +93,11 @@ export function usePerformanceData(
 		desktopLoaded,
 		mobileLoaded,
 		isLoading: isLoadingBasicMetrics || isLoadingPerformanceInsights,
-		isRunningDesktopReport:
-			! desktopLoaded && isReportRunning( performanceData?.pagespeed?.desktop ),
-		isRunningMobileReport: ! mobileLoaded && isReportRunning( performanceData?.pagespeed?.mobile ),
-		isError,
+		isRunningDesktopReport: isReportRunning( performanceData?.pagespeed?.desktop ),
+		isRunningMobileReport: isReportRunning( performanceData?.pagespeed?.mobile ),
+		isDesktopReportError: isReportFailed( performanceData?.pagespeed?.desktop ),
+		isMobileReportError: isReportFailed( performanceData?.pagespeed?.mobile ),
+		isError: isBasicMetricsError || isInsightsError,
 		refetch,
 	};
 }
