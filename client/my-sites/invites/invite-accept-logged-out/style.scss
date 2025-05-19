@@ -16,6 +16,8 @@ body.is-section-accept-invite {
 	}
 	.invite-accept__form {
 		height: 100%;
+		display: flex;
+		flex-direction: column;
 	}
 	.layout__content {
 		padding: 24px;
@@ -26,7 +28,7 @@ body.is-section-accept-invite {
 	margin: 0 auto;
 	display: flex;
 	flex-direction: column;
-	height: 100%;
+	flex: 1;
 	box-sizing: border-box;
 	font-family: $font-sf-pro-text;
 
