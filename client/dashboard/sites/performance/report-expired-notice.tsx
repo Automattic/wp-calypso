@@ -1,6 +1,11 @@
-import { Notice, Button } from '@wordpress/components';
+import {
+	__experimentalHStack as HStack,
+	__experimentalVStack as VStack,
+	__experimentalText as Text,
+	Notice,
+	Button,
+} from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { useState } from 'react';
 const REFRESH_REPORT_INTERVAL = 24; // 24 hours
 
 type ReportExpiredNotice = {
@@ -29,12 +34,6 @@ function shouldRefreshReport( reportTimestamp: string, refreshInterval: number )
 }
 
 export const ReportExpiredNotice = ( { onRetest, reportTimestamp }: ReportExpiredNotice ) => {
-	const [ showExpiredReportNotice, setShowExpiredReportNotice ] = useState< boolean >( true );
-
-	if ( ! showExpiredReportNotice ) {
-		return null;
-	}
-
 	if ( ! reportTimestamp ) {
 		return null;
 	}
@@ -44,20 +43,22 @@ export const ReportExpiredNotice = ( { onRetest, reportTimestamp }: ReportExpire
 	}
 
 	return (
-		<Notice
-			status="info"
-			isDismissible
-			onRemove={ () => {
-				setShowExpiredReportNotice( false );
-			} }
-		>
-			<p>
-				<b>{ __( 'These results are more than 24 hours old' ) }</b>
-			</p>
-			<p>{ __( 'Test the page again if you have recently made updates to your site.' ) }</p>
-			<Button variant="primary" onClick={ onRetest }>
-				{ __( 'Test again' ) }
-			</Button>
-		</Notice>
+		<div style={ { marginBottom: '32px' } }>
+			<Notice status="warning" isDismissible={ false }>
+				<HStack spacing={ 2 } justify="space-between">
+					<VStack spacing={ 2 }>
+						<Text as="p">
+							<b>{ __( 'These results are more than 24 hours old' ) }</b>
+						</Text>
+						<Text as="p">
+							{ __( 'Test the page again if you have recently made updates to your site.' ) }
+						</Text>
+					</VStack>
+					<Button variant="primary" onClick={ onRetest }>
+						{ __( 'Test again' ) }
+					</Button>
+				</HStack>
+			</Notice>
+		</div>
 	);
 };
