@@ -44,7 +44,6 @@ export interface Domain {
 export interface SitePlan {
 	product_name: string;
 	product_name_short: string;
-	product_slug: string;
 	expired: boolean;
 	is_free: boolean;
 	billing_period: 'Yearly' | 'Monthly';

@@ -69,8 +69,8 @@ export default function SiteActions( { site }: { site: Site } ) {
 		<>
 			<Heading>{ __( 'Actions' ) }</Heading>
 			<ActionList>
-				{ actions.map( ( action, i ) => (
-					<ActionList.ActionItem key={ i } { ...action } />
+				{ actions.map( ( action ) => (
+					<ActionList.ActionItem key={ action.title } { ...action } />
 				) ) }
 			</ActionList>
 		</>
