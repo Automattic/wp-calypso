@@ -1,17 +1,21 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { CompactCard } from '@automattic/components';
 import { SiteDetails } from '@automattic/data-stores';
 import { isValueTruthy } from '@automattic/wpcom-checkout';
-import { LocalizeProps, localize } from 'i18n-calypso';
+import { LocalizeProps, localize, useTranslate } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import noSitesIllustration from 'calypso/assets/images/illustrations/illustration-nosites.svg';
 import QueryConciergeInitial from 'calypso/components/data/query-concierge-initial';
 import QueryMembershipsSubscriptions from 'calypso/components/data/query-memberships-subscriptions';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
+import EmptyContent from 'calypso/components/empty-content';
 import NoSitesMessage from 'calypso/components/empty-content/no-sites-message';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { getSubscriptionsBySite } from 'calypso/lib/purchases';
+import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { MembershipSubscription, Purchase } from 'calypso/lib/purchases/types';
 import { PurchaseListConciergeBanner } from 'calypso/me/purchases/purchases-list/purchase-list-concierge-banner';
 import PurchasesNavigation from 'calypso/me/purchases/purchases-navigation';
@@ -34,9 +38,8 @@ import getConciergeUserBlocked from 'calypso/state/selectors/get-concierge-user-
 import getSites from 'calypso/state/selectors/get-sites';
 import { getSiteId } from 'calypso/state/sites/selectors';
 import { AppState } from 'calypso/types';
-import MembershipSite from '../membership-site';
 import PurchasesSite from '../purchases-site';
-import { PurchasesDataViews } from './purchases-data-view';
+import { PurchasesDataViews, MembershipsDataViews } from './purchases-data-view';
 import './style.scss';
 
 export interface PurchasesListProps {
@@ -55,17 +58,35 @@ export interface PurchasesListConnectedProps {
 	siteId: number | null;
 }
 
+function MembershipSubscriptions( {
+	memberships,
+}: {
+	memberships: Array< MembershipSubscription >;
+} ) {
+	const translate = useTranslate();
+
+	if ( ! memberships.length ) {
+		return null;
+	}
+
+	return <MembershipsDataViews memberships={ memberships } translate={ translate } />;
+}
+
+function isDataLoading( {
+	isFetchingUserPurchases,
+	hasLoadedUserPurchasesFromServer,
+}: {
+	hasLoadedUserPurchasesFromServer: boolean;
+	isFetchingUserPurchases: boolean;
+} ) {
+	if ( isFetchingUserPurchases && ! hasLoadedUserPurchasesFromServer ) {
+		return true;
+	}
+}
+
 class PurchasesListDataView extends Component<
 	PurchasesListProps & PurchasesListConnectedProps & WithStoredPaymentMethodsProps & LocalizeProps
 > {
-	isDataLoading() {
-		if ( this.props.isFetchingUserPurchases && ! this.props.hasLoadedUserPurchasesFromServer ) {
-			return true;
-		}
-
-		return ! this.props.sites.length && ! this.props.subscriptions.length;
-	}
-
 	renderConciergeBanner() {
 		const { nextAppointment, availableSessions, isUserBlocked } = this.props;
 		return (
@@ -77,23 +98,17 @@ class PurchasesListDataView extends Component<
 		);
 	}
 
-	renderMembershipSubscriptions() {
-		const { subscriptions } = this.props;
-
-		if ( ! subscriptions.length || this.isDataLoading() ) {
-			return null;
-		}
-
-		return getSubscriptionsBySite( subscriptions ).map( ( site ) => (
-			<MembershipSite site={ site } key={ site.id } />
-		) );
-	}
-
 	render() {
 		const { purchases, sites, translate, subscriptions } = this.props;
+		const commonEventProps = { context: 'me' };
 		let content;
 
-		if ( this.isDataLoading() ) {
+		if (
+			isDataLoading( {
+				isFetchingUserPurchases: this.props.isFetchingUserPurchases,
+				hasLoadedUserPurchasesFromServer: this.props.hasLoadedUserPurchasesFromServer,
+			} )
+		) {
 			content = <PurchasesSite isPlaceholder />;
 		}
 
@@ -112,6 +127,33 @@ class PurchasesListDataView extends Component<
 					</Main>
 				);
 			}
+			content = (
+				<>
+					{ this.renderConciergeBanner() }
+					<CompactCard className="purchases-list__no-content">
+						<>
+							<TrackComponentView
+								eventName="calypso_no_purchases_upgrade_nudge_impression"
+								eventProperties={ commonEventProps }
+							/>
+							{ /* this.renderPurchasesByOtherAdminsNotice() to-do: render this as functional component */ }
+							<EmptyContent
+								title={ translate( 'Looking to upgrade?' ) }
+								line={ translate(
+									'Our plans give your site the power to thrive. ' +
+										'Find the plan that works for you.'
+								) }
+								action={ translate( 'Upgrade now' ) }
+								actionURL="/plans"
+								illustration={ noSitesIllustration }
+								actionCallback={ () => {
+									recordTracksEvent( 'calypso_no_purchases_upgrade_nudge_click', commonEventProps );
+								} }
+							/>
+						</>
+					</CompactCard>
+				</>
+			);
 		}
 
 		return (
@@ -134,7 +176,7 @@ class PurchasesListDataView extends Component<
 				/>
 				<PurchasesNavigation section="activeUpgrades" />
 				{ content }
-				{ this.renderMembershipSubscriptions() }
+				<MembershipSubscriptions memberships={ subscriptions } />
 				<QueryConciergeInitial />
 			</Main>
 		);
