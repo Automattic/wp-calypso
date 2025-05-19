@@ -47,10 +47,10 @@ export const ReportExpiredNotice = ( { onRetest, reportTimestamp }: ReportExpire
 			<Notice status="warning" isDismissible={ false }>
 				<HStack spacing={ 2 } justify="space-between">
 					<VStack spacing={ 2 }>
-						<Text as="p">
+						<Text>
 							<b>{ __( 'These results are more than 24 hours old' ) }</b>
 						</Text>
-						<Text as="p">
+						<Text>
 							{ __( 'Test the page again if you have recently made updates to your site.' ) }
 						</Text>
 					</VStack>
