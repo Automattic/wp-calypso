@@ -1,4 +1,4 @@
-import { Card } from '@automattic/components';
+import { Card, LoadingPlaceholder } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import { Component } from 'react';
@@ -9,18 +9,10 @@ import NavigationHeader from 'calypso/components/navigation-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import ReauthRequired from 'calypso/me/reauth-required';
-import {
-	fetchSettings,
-	toggleWPcomEmailSetting,
-	saveSettings,
-} from 'calypso/state/notification-settings/actions';
-import {
-	getNotificationSettings,
-	hasUnsavedNotificationSettingsChanges,
-} from 'calypso/state/notification-settings/selectors';
+import { fetchSettings } from 'calypso/state/notification-settings/actions';
+import { getNotificationSettings } from 'calypso/state/notification-settings/selectors';
 import hasJetpackSites from 'calypso/state/selectors/has-jetpack-sites';
 import Navigation from '../navigation';
-import ActionButtons from '../settings-form/actions';
 import SubscriptionManagementBackButton from '../subscription-management-back-button';
 import EmailCategory from './email-category';
 
@@ -54,14 +46,6 @@ class WPCOMNotifications extends Component {
 	componentDidMount() {
 		this.props.fetchSettings();
 	}
-
-	toggleSetting = ( setting ) => {
-		this.props.toggleWPcomEmailSetting( setting );
-	};
-
-	saveSettings = () => {
-		this.props.saveSettings( 'wpcom', this.props.settings );
-	};
 
 	renderWpcomPreferences = () => {
 		const { settings, translate } = this.props;
@@ -152,11 +136,17 @@ class WPCOMNotifications extends Component {
 					description={ translate( 'Complimentary reports regarding scheduled plugin updates.' ) }
 				/>
 
-				{ this.props.hasJetpackSites ? (
+				{ this.props.hasJetpackSites && (
 					<>
 						<FormSectionHeading>
 							{ this.props.translate( 'Email from Jetpack' ) }
 						</FormSectionHeading>
+
+						<p>
+							{ this.props.translate(
+								'Jetpack is a suite of tools connected to your WordPress site, like backups, security, and performance reports.'
+							) }
+						</p>
 
 						<EmailCategory
 							name={ options.jetpack_marketing }
@@ -195,17 +185,13 @@ class WPCOMNotifications extends Component {
 							description={ translate( 'Jetpack security and performance reports.' ) }
 						/>
 					</>
-				) : (
-					''
 				) }
-
-				<ActionButtons onSave={ this.saveSettings } disabled={ ! this.props.hasUnsavedChanges } />
 			</div>
 		);
 	};
 
 	renderPlaceholder = () => {
-		return <p className="wpcom-settings__notification-settings-placeholder">&nbsp;</p>;
+		return <LoadingPlaceholder />;
 	};
 
 	render() {
@@ -221,7 +207,7 @@ class WPCOMNotifications extends Component {
 
 				<NavigationHeader
 					navigationItems={ [] }
-					title={ this.props.translate( 'Notification Settings' ) }
+					label={ this.props.translate( 'Notification Settings' ) }
 				/>
 
 				<Navigation path={ this.props.path } />
@@ -237,8 +223,7 @@ class WPCOMNotifications extends Component {
 export default connect(
 	( state ) => ( {
 		settings: getNotificationSettings( state, 'wpcom' ),
-		hasUnsavedChanges: hasUnsavedNotificationSettingsChanges( state, 'wpcom' ),
 		hasJetpackSites: hasJetpackSites( state ),
 	} ),
-	{ fetchSettings, toggleWPcomEmailSetting, saveSettings }
+	{ fetchSettings }
 )( localize( WPCOMNotifications ) );

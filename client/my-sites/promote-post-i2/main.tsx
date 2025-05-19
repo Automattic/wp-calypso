@@ -58,6 +58,7 @@ export type TabOption = {
 	isCountAmount?: boolean;
 	className?: string;
 	enabled?: boolean;
+	label?: string;
 };
 
 interface Props {
@@ -189,11 +190,13 @@ export default function PromotedPosts( { tab }: Props ) {
 			id: 'posts',
 			name: translate( 'Ready to promote' ),
 			itemCount: totalPostsUnfiltered,
+			label: translate( 'Posts' ),
 		},
 		{
 			id: 'campaigns',
 			name: translate( 'Campaigns' ),
 			itemCount: totalCampaignsUnfiltered,
+			label: translate( 'Campaigns' ),
 		},
 		{
 			id: 'credits',

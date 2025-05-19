@@ -22,12 +22,20 @@ function TspBanner( props: TspBannerProps ) {
 	return (
 		<div className="tsp-banner__container">
 			<div className="tsp-banner__content">
-				<button className="tsp-banner__close" onClick={ onBannerToggle }>
+				<button
+					className="tsp-banner__close"
+					onClick={ onBannerToggle }
+					aria-label={
+						isCollapsed ? translate( 'Expand section' ) : translate( 'Collapse section' )
+					}
+					aria-expanded={ ! isCollapsed }
+					aria-controls="promotional-banner"
+				>
 					<Gridicon icon={ isCollapsed ? 'chevron-down' : 'chevron-up' } size={ 16 } />
 				</button>
 				{ ! isCollapsed && (
 					<>
-						<section className="tsp-banner__text">
+						<section className="tsp-banner__text" id="promotional-banner">
 							<div className="tsp-banner__header wp-brand-font">
 								{ translate( 'More engagement at no cost' ) }
 							</div>

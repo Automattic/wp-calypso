@@ -1,7 +1,7 @@
 import { DataViews, filterSortAndPaginate } from '@automattic/dataviews';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
-import { Button, ExternalLink } from '@wordpress/components';
+import { Button, ExternalLink, Dropdown } from '@wordpress/components';
 import { useResizeObserver } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { Icon, check } from '@wordpress/icons';
@@ -12,6 +12,7 @@ import DataViewsCard from '../components/dataviews-card';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
 import { STATUS_LABELS, getSiteStatus, getSiteStatusLabel } from '../utils/site-status';
+import AddNewSite from './add-new-site';
 import SiteIcon from './site-icon';
 import SitePreview from './site-preview';
 import type { Site } from '../data/types';
@@ -224,9 +225,21 @@ export default function Sites() {
 				<PageHeader
 					title={ __( 'Sites' ) }
 					actions={
-						<Button variant="primary" __next40pxDefaultSize>
-							{ __( 'Add New Site' ) }
-						</Button>
+						<Dropdown
+							popoverProps={ { placement: 'bottom-end', offset: 10, noArrow: false } }
+							focusOnMount
+							renderToggle={ ( { isOpen, onToggle } ) => (
+								<Button
+									variant="primary"
+									onClick={ onToggle }
+									__next40pxDefaultSize
+									aria-expanded={ isOpen }
+								>
+									{ __( 'Add New Site' ) }
+								</Button>
+							) }
+							renderContent={ () => <AddNewSite /> }
+						/>
 					}
 				/>
 				<DataViewsCard>

@@ -15,12 +15,11 @@ import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 export const useAddSubscribersCallback = ( siteId: number | null ) => {
 	const { completedJob } = useActiveJobRecognition( siteId ?? 0 );
 	const importError = useImportError();
-	const { isJetpackNonAtomic, selectedSiteSlug } = useSelector( ( state ) => {
-		return {
-			isJetpackNonAtomic: isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } ),
-			selectedSiteSlug: getSelectedSiteSlug( state ),
-		};
-	} );
+	const isJetpackNonAtomic = useSelector( ( state ) =>
+		isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } )
+	);
+	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
+
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const queryClient = useQueryClient();

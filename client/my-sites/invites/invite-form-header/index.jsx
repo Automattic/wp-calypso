@@ -110,67 +110,76 @@ class InviteFormHeader extends Component {
 
 		switch ( role ) {
 			case 'administrator':
-				title = this.props.translate( 'Would you like to start managing {{siteLink/}}?', {
+				title = this.props.translate( 'Start managing{{br/}}{{siteLink/}}', {
 					components: {
 						siteLink: this.getSiteLink(),
+						br: <br />,
 					},
 				} );
 				break;
 			case 'editor':
-				title = this.props.translate( 'Would you like to start editing {{siteLink/}}?', {
+				title = this.props.translate( 'Start editing{{br/}}{{siteLink/}}', {
 					components: {
 						siteLink: this.getSiteLink(),
+						br: <br />,
 					},
 				} );
 				break;
 			case 'author':
-				title = this.props.translate( 'Would you like to start writing for {{siteLink/}}?', {
+				title = this.props.translate( 'Start writing for{{br/}}{{siteLink/}}', {
 					components: {
 						siteLink: this.getSiteLink(),
+						br: <br />,
 					},
 				} );
 				break;
 			case 'contributor':
-				title = this.props.translate( 'Would you like to start contributing to {{siteLink/}}?', {
+				title = this.props.translate( 'Start contributing to{{br/}}{{siteLink/}}', {
 					components: {
 						siteLink: this.getSiteLink(),
+						br: <br />,
 					},
 				} );
 				break;
 			case 'subscriber':
 				title = this.props.translate(
-					'Would you like to start following {{siteLink/}} in the WordPress.com Reader?',
+					'Start following{{br/}}{{siteLink/}}{{br/}}in the WordPress.com Reader',
 					{
 						components: {
 							siteLink: this.getSiteLink(),
+							br: <br />,
 						},
 					}
 				);
 				break;
 			case 'viewer':
-				title = this.props.translate( 'Would you like to be able to view {{siteLink/}}?', {
+				title = this.props.translate( 'Begin viewing{{br/}}{{siteLink/}}', {
 					components: {
 						siteLink: this.getSiteLink(),
+						br: <br />,
 					},
 				} );
 				break;
 			case 'follower':
-				title = this.props.translate( 'Would you like to become a follower of {{siteLink/}}?', {
+				title = this.props.translate( 'Start following{{br/}}{{siteLink/}}', {
 					components: {
 						siteLink: this.getSiteLink(),
+						br: <br />,
 					},
 				} );
 				break;
 			default:
 				title = this.props.translate(
-					'Would you like to join {{siteLink/}} as: {{strong}}%(siteRole)s{{/strong}}?',
+					'Join{{br/}}{{siteLink/}}{{br/}}{{span}}as: {{strong}}%(siteRole)s{{/strong}}{{/span}}',
 					{
 						args: {
 							siteRole: role,
 						},
 						components: {
 							siteLink: this.getSiteLink(),
+							br: <br />,
 							strong: <strong />,
+							span: <span />,
 						},
 					}
 				);

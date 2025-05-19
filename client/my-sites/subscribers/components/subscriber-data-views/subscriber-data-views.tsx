@@ -111,11 +111,10 @@ const SubscriberDataViews = ( {
 	const [ searchTerm, setSearchTerm ] = useState( '' );
 	const [ filters, setFilters ] = useState< SubscribersFilterBy[] >( [ SubscribersFilterBy.All ] );
 	const [ selectedSubscriber, setSelectedSubscriber ] = useState< Subscriber | null >( null );
-	const { isSimple, isAtomic, isStaging } = useSelector( ( state ) => ( {
-		isSimple: isSimpleSite( state ),
-		isAtomic: isAtomicSite( state, siteId ),
-		isStaging: isSiteWpcomStaging( state, siteId ),
-	} ) );
+	const isSimple = useSelector( isSimpleSite );
+	const isAtomic = useSelector( ( state ) => isAtomicSite( state, siteId ) );
+	const isStaging = useSelector( ( state ) => isSiteWpcomStaging( state, siteId ) );
+
 	const couponsAndGiftsEnabled = useSelector( ( state ) =>
 		getCouponsAndGiftsEnabledForSiteId( state, siteId )
 	);

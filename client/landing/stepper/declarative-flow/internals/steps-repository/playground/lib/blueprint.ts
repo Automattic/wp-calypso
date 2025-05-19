@@ -1,4 +1,4 @@
-import { Blueprint } from '@wp-playground/blueprints';
+import { type Blueprint } from '@wp-playground/client';
 import { resolveBlueprintFromURL } from './resolve-blueprint-from-url';
 
 const BLUEPRINT_LIB_HOST = 'blueprintlibrary.wordpress.com';

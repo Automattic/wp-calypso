@@ -28,7 +28,6 @@ class StatsDownloadCsv extends Component {
 		query: PropTypes.object,
 		statType: PropTypes.string,
 		siteId: PropTypes.number,
-		borderless: PropTypes.bool,
 		isMobile: PropTypes.bool,
 		hideIfNoData: PropTypes.bool,
 	};
@@ -90,7 +89,6 @@ class StatsDownloadCsv extends Component {
 			query,
 			translate,
 			isLoading,
-			borderless,
 			skipQuery,
 			isMobile,
 			hideIfNoData = false,
@@ -111,7 +109,6 @@ class StatsDownloadCsv extends Component {
 				className="stats-download-csv"
 				onClick={ this.downloadCsv }
 				disabled={ disabled }
-				borderless={ borderless }
 				icon={ download }
 			>
 				{ ! skipQuery && siteId && statType && query && (

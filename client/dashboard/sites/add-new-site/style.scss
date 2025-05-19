@@ -1,0 +1,32 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+@import '@wordpress/base-styles/variables';
+@import '@wordpress/base-styles/colors';
+
+.dashboard-add-new-site__menu-item {
+	height: auto;
+	text-align: left;;
+	padding: 8px;
+
+	&:hover {
+		color: inherit !important; // avoid changing the color on hover
+		background: $gray-100;
+		border-radius: $radius-medium;
+	}
+}
+
+.dashboard-add-new-site__menu-item-icon {
+	width: 24px;
+	height: auto;
+	display: none;
+
+	@include break-medium {
+		display: block;
+	}
+}
+
+.dashboard-add-new-site__banner {
+	background: $gray-100;
+	border-radius: $radius-medium;
+	padding: $grid-unit-20;
+}

@@ -6,7 +6,7 @@
 
 	// Add gap for not open .section-nav on tablet and mobile.
 	@media (max-width: $break-small) {
-		padding-right: 4px;
+		padding-right: 0;
 	}
 
 	button {

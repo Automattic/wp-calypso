@@ -45,11 +45,12 @@ export class GoogleMyBusiness extends SharingService {
 		this.props
 			.connectGoogleMyBusinessLocation( this.props.siteId, keyringConnectionId, externalUserId )
 			.catch( () => {
-				this.props.failCreateConnection( {
-					message: this.props.translate( 'Error while linking your site to %(service)s.', {
+				this.props.warningNotice(
+					this.props.translate( 'Error while linking your site to %(service)s.', {
 						args: { service: this.props.service.label },
 					} ),
-				} );
+					{ id: 'publicize' }
+				);
 			} )
 			.finally( () => {
 				this.setState( { isConnecting: false } );
