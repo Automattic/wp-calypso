@@ -271,6 +271,7 @@ jobs:
     resource_class: medium+
     shell: /bin/bash --login
     environment:
+      NODE_OPTIONS: --max-old-space-size=5120
       CONFIG_ENV: release
       PLAYWRIGHT_SKIP_DOWNLOAD: 'true'
       # If, for testing purposes, you want to generate all artifacts in the CI of a PR, uncomment the following line,
