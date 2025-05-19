@@ -43,16 +43,17 @@
 }
 
 .site-performance-report button {
-	background: inherit;
+	background: unset;
 }
 
-.site-performance-report .core-web-vitals-display__details {
-	background: #fff;
+.site-performance-report .core-web-vitals-display:not(.is-desktop) button {
+	border: 0;
 }
 
+.site-performance-report .core-web-vitals-display__details,
 .site-performance-report .core-web-vitals-display + *,
 .site-performance-report .performance-profiler-insights-section,
-.site-performance-report .metric-tab-bar {
+.site-performance-report .metric-tab-bar__performance {
 	background: #fff;
 }
 
@@ -60,13 +61,13 @@
 	line-height: 48px;
 }
 
-.site-performance-report .metrics-insight-item button {
-	border: 0;
-}
-
-.site-performance-report  .performance-profiler-insights-section .metrics-insight-item.foldable-card {
+.site-performance-report .performance-profiler-insights-section .metrics-insight-item.foldable-card {
 	padding-left: 0;
 	padding-right: 0;
+}
+
+.site-performance-report .core-web-vitals-accordion .core-web-vitals-accordion__card--overall {
+	margin-bottom: 24px;
 }
 
 .performance-page-selector li.is-selected .components-text {
