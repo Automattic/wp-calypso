@@ -100,6 +100,7 @@ body.is-section-signup {
 
 		@media (max-width: $break-mobile) {
 			display: flex;
+			padding-inline: 24px;
 		}
 
 		.masterbar__login-back-link {
@@ -126,6 +127,7 @@ body.is-section-signup {
 			margin: 0;
 			list-style-type: none;
 			width: 100%;
+			gap: 12px;
 
 			.masterbar__login-back-link {
 				// margin-top: -10px;
