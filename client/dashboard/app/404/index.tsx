@@ -5,17 +5,19 @@ import RouterLinkButton from '../../components/router-link-button';
 
 function NotFound() {
 	return (
-		<PageLayout>
-			<PageHeader
-				title={ __( '404 Not Found' ) }
-				description={ __( 'The page you are looking for does not exist.' ) }
-				actions={
-					<RouterLinkButton to="/sites" variant="primary" __next40pxDefaultSize>
-						{ __( 'Go to Sites' ) }
-					</RouterLinkButton>
-				}
-			/>
-		</PageLayout>
+		<PageLayout
+			header={
+				<PageHeader
+					title={ __( '404 Not Found' ) }
+					description={ __( 'The page you are looking for does not exist.' ) }
+					actions={
+						<RouterLinkButton to="/sites" variant="primary" __next40pxDefaultSize>
+							{ __( 'Go to Sites' ) }
+						</RouterLinkButton>
+					}
+				/>
+			}
+		/>
 	);
 }
 

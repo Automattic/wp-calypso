@@ -5,8 +5,7 @@ import PageLayout from '../../components/page-layout';
 
 function SiteDeployments() {
 	return (
-		<PageLayout>
-			<PageHeader title={ __( 'Deployments' ) } />
+		<PageLayout header={ <PageHeader title={ __( 'Deployments' ) } /> }>
 			<DataViewsCard>
 				<></>
 			</DataViewsCard>

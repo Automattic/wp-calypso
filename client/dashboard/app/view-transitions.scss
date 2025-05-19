@@ -31,35 +31,28 @@ main div.dashboard-header-bar {
 }
 
 // Large and small must be separate so they don't cross-animate.
-.dashboard-page-layout.is-large > div:first-child {
-	view-transition-name: main-heading-large;
+.dashboard-page-layout.is-large .client-dashboard-components-page-header {
+	view-transition-name: page-layout-header-large;
 }
-.dashboard-page-layout.is-small > div:first-child {
-	view-transition-name: main-heading-small;
-}
-
-.dashboard-page-layout.is-large > div:first-child .client-dashboard-components-page-header__actions {
-	view-transition-name: main-actions-large;
-}
-.dashboard-page-layout.is-small > div:first-child .client-dashboard-components-page-header__actions {
-	view-transition-name: main-actions-small;
+.dashboard-page-layout.is-small .client-dashboard-components-page-header {
+	view-transition-name: page-layout-header-small;
 }
 
-.dashboard-page-layout.is-large > div:first-child .components-button.is-primary {
-	view-transition-name: main-heading-large--button;
+.dashboard-page-layout.is-large .client-dashboard-components-page-header .components-button.is-primary {
+	view-transition-name: page-layout-header-large--button;
 }
 
-::view-transition-old(main-heading-large--button),
-::view-transition-new(main-heading-large--button) {
+::view-transition-old(page-layout-header-large--button),
+::view-transition-new(page-layout-header-large--button) {
 	height: 100%;
 }
 
-main .dashboard-page-layout > div:last-child {
-	view-transition-name: main-content;
+.dashboard-page-layout__content {
+	view-transition-name: page-layout-content;
 }
 
-::view-transition-old(main-content),
-::view-transition-new(main-content) {
+::view-transition-old(page-layout-content),
+::view-transition-new(page-layout-content) {
 	// Never expand the main content horizontally, but allow it to shrink.
 	width: auto;
     // Also disable shrinking. Leaving it commented out to test.
@@ -67,7 +60,7 @@ main .dashboard-page-layout > div:last-child {
 	height: auto;
 }
 
-::view-transition-image-pair(main-content) {
+::view-transition-image-pair(page-layout-content) {
     display: flex;
     justify-content: center;
 }

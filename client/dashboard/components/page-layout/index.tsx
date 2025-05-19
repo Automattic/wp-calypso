@@ -8,9 +8,13 @@ const sizes = {
 
 function PageLayout( {
 	children,
+	header,
+	notices,
 	size = 'large',
 }: {
 	children?: React.ReactNode;
+	header?: React.ReactNode;
+	notices?: React.ReactNode;
 	size?: 'large' | 'small';
 } ) {
 	return (
@@ -19,7 +23,9 @@ function PageLayout( {
 			className={ `dashboard-page-layout is-${ size }` }
 			style={ sizes[ size ] }
 		>
-			{ children }
+			{ header }
+			{ notices }
+			<div className="dashboard-page-layout__content">{ children }</div>
 		</VStack>
 	);
 }

@@ -19,11 +19,15 @@ export default function SiteVisibilitySettings( { siteSlug }: { siteSlug: string
 	const { site } = siteData;
 
 	return (
-		<PageLayout size="small">
-			<SettingsPageHeader
-				title={ __( 'Site visibility' ) }
-				description={ __( 'Control who can view your site.' ) }
-			/>
+		<PageLayout
+			size="small"
+			header={
+				<SettingsPageHeader
+					title={ __( 'Site visibility' ) }
+					description={ __( 'Control who can view your site.' ) }
+				/>
+			}
+		>
 			<Card>
 				<CardBody>
 					{ site.launch_status === 'unlaunched' ? (

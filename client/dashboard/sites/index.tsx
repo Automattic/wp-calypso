@@ -221,27 +221,30 @@ export default function Sites() {
 
 	return (
 		<>
-			<PageLayout>
-				<PageHeader
-					title={ __( 'Sites' ) }
-					actions={
-						<Dropdown
-							popoverProps={ { placement: 'bottom-end', offset: 10, noArrow: false } }
-							focusOnMount
-							renderToggle={ ( { isOpen, onToggle } ) => (
-								<Button
-									variant="primary"
-									onClick={ onToggle }
-									__next40pxDefaultSize
-									aria-expanded={ isOpen }
-								>
-									{ __( 'Add New Site' ) }
-								</Button>
-							) }
-							renderContent={ () => <AddNewSite /> }
-						/>
-					}
-				/>
+			<PageLayout
+				header={
+					<PageHeader
+						title={ __( 'Sites' ) }
+						actions={
+							<Dropdown
+								popoverProps={ { placement: 'bottom-end', offset: 10, noArrow: false } }
+								focusOnMount
+								renderToggle={ ( { isOpen, onToggle } ) => (
+									<Button
+										variant="primary"
+										onClick={ onToggle }
+										__next40pxDefaultSize
+										aria-expanded={ isOpen }
+									>
+										{ __( 'Add New Site' ) }
+									</Button>
+								) }
+								renderContent={ () => <AddNewSite /> }
+							/>
+						}
+					/>
+				}
+			>
 				<DataViewsCard>
 					<DataViews
 						getItemId={ ( item ) => item.ID }

@@ -39,7 +39,7 @@ export const PageHeader = ( {
 	breadcrumbs,
 }: PageHeaderProps ) => {
 	return (
-		<VStack spacing={ 2 }>
+		<VStack spacing={ 2 } className="client-dashboard-components-page-header">
 			{ breadcrumbs }
 			<HStack spacing={ 4 } justify="flex-start" alignment="flex-start">
 				{ decoration && (

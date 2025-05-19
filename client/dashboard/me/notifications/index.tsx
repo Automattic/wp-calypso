@@ -6,11 +6,15 @@ import RouterLinkSummaryButton from '../../components/router-link-summary-button
 
 function Notifications() {
 	return (
-		<PageLayout size="small">
-			<PageHeader
-				title={ __( 'Notifications' ) }
-				description={ __( 'Manage your notification settings.' ) }
-			/>
+		<PageLayout
+			size="small"
+			header={
+				<PageHeader
+					title={ __( 'Notifications' ) }
+					description={ __( 'Manage your notification settings.' ) }
+				/>
+			}
+		>
 			<VStack spacing={ 4 }>
 				<RouterLinkSummaryButton title={ __( 'Details' ) } to="/me/notifications" />
 			</VStack>

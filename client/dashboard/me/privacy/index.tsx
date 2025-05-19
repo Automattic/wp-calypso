@@ -6,8 +6,15 @@ import RouterLinkSummaryButton from '../../components/router-link-summary-button
 
 function Privacy() {
 	return (
-		<PageLayout size="small">
-			<PageHeader title={ __( 'Privacy' ) } description={ __( 'Manage your privacy settings.' ) } />
+		<PageLayout
+			size="small"
+			header={
+				<PageHeader
+					title={ __( 'Privacy' ) }
+					description={ __( 'Manage your privacy settings.' ) }
+				/>
+			}
+		>
 			<VStack spacing={ 4 }>
 				<RouterLinkSummaryButton title={ __( 'Details' ) } to="/me/privacy" />
 			</VStack>

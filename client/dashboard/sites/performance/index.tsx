@@ -5,8 +5,7 @@ import PageLayout from '../../components/page-layout';
 
 function SitePerformance() {
 	return (
-		<PageLayout>
-			<PageHeader title={ __( 'Performance' ) } />
+		<PageLayout header={ <PageHeader title={ __( 'Performance' ) } /> }>
 			<Card>
 				<CardBody>
 					<></>
