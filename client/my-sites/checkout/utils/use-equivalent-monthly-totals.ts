@@ -9,6 +9,9 @@ import { ResponseCartProduct } from '@automattic/shopping-cart';
 import { useMemo } from 'react';
 import useCheckPlanAvailabilityForPurchase from 'calypso/my-sites/plans-features-main/hooks/use-check-plan-availability-for-purchase';
 
+const isEligibleProduct = ( product: ResponseCartProduct ) =>
+	isWpComPlan( product?.product_slug ) && ! isMonthly( product?.product_slug );
+
 /**
  * Calculate the equivalent monthly total prices for non-monthly WordPress.com plans from the passed
  * cart. For each eligible product it'd determine the equivalent monthly plan and return the monthly
@@ -23,19 +26,16 @@ import useCheckPlanAvailabilityForPurchase from 'calypso/my-sites/plans-features
 export default function useEquivalentMonthlyTotals(
 	products: Array< ResponseCartProduct >
 ): Record< PlanSlug, number > {
-	const isEligibleProduct = ( product: ResponseCartProduct ) =>
-		isWpComPlan( product?.product_slug ) && ! isMonthly( product?.product_slug );
+	const eligibleProducts = useMemo( () => products.filter( isEligibleProduct ), [ products ] );
 
 	const monthlyProductSlugs = useMemo( () => {
-		return products
-			.filter( isEligibleProduct )
-			.reduce( ( slugs: PlanSlug[], product: ResponseCartProduct ) => {
-				if ( ! slugs.includes( product.product_slug as PlanSlug ) ) {
-					slugs.push( getMonthlyPlanByYearly( product.product_slug ) as PlanSlug );
-				}
-				return slugs;
-			}, [] );
-	}, [ products ] );
+		const uniqueSlugs = new Set< PlanSlug >();
+		for ( const product of eligibleProducts ) {
+			uniqueSlugs.add( getMonthlyPlanByYearly( product.product_slug ) as PlanSlug );
+		}
+		return Array.from( uniqueSlugs );
+	}, [ eligibleProducts ] );
+
 	const pricing =
 		Plans.usePricingMetaForGridPlans( {
 			planSlugs: monthlyProductSlugs,
@@ -43,17 +43,18 @@ export default function useEquivalentMonthlyTotals(
 			coupon: undefined,
 			useCheckPlanAvailabilityForPurchase,
 		} ) || {};
-	const monthlyEquivalentTotals = useMemo( () => {
-		return products.filter( isEligibleProduct ).reduce(
-			( prices, product ) => {
-				const monthlyPlan = getMonthlyPlanByYearly( product.product_slug );
-				prices[ product.product_slug as PlanSlug ] =
-					( product.months_per_bill_period ?? 0 ) *
-					( pricing[ monthlyPlan ]?.originalPrice?.monthly ?? 0 );
-				return prices;
-			},
-			{} as Record< PlanSlug, number >
-		);
-	}, [ products, pricing ] );
-	return monthlyEquivalentTotals;
+
+	return useMemo(
+		() =>
+			eligibleProducts.reduce(
+				( prices, product ) => ( {
+					...prices,
+					[ product.product_slug as PlanSlug ]:
+						( product.months_per_bill_period ?? 0 ) *
+						( pricing[ getMonthlyPlanByYearly( product.product_slug ) ]?.originalPrice?.full ?? 0 ),
+				} ),
+				{} as Record< PlanSlug, number >
+			),
+		[ eligibleProducts, pricing ]
+	);
 }

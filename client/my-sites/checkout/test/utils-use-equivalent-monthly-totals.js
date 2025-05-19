@@ -88,10 +88,10 @@ describe( 'useEquivalentMonthlyTotals', () => {
 	it( 'returns calculated total only for non-monthly wpcom products', () => {
 		Plans.usePricingMetaForGridPlans.mockImplementation( () => ( {
 			[ PLAN_PERSONAL_MONTHLY ]: {
-				originalPrice: { monthly: 1000 },
+				originalPrice: { monthly: 1000, full: 4000 },
 			},
 			[ PLAN_BUSINESS_MONTHLY ]: {
-				originalPrice: { monthly: 4000 },
+				originalPrice: { monthly: 4000, full: 4000 },
 			},
 		} ) );
 
