@@ -32,13 +32,9 @@ const useRestorePlanSoftware = ( { slug, options }: Site ) => {
 	};
 };
 
-const useDuplicateSite = ( { capabilities, is_wpcom_staging_site, plan, slug }: Site ) => {
+const useDuplicateSite = ( { capabilities, plan, slug }: Site ) => {
 	if (
-		! (
-			capabilities.manage_options &&
-			! is_wpcom_staging_site &&
-			plan?.features.active.includes( DotcomFeatures.COPY_SITE )
-		)
+		! ( capabilities.manage_options && plan?.features.active.includes( DotcomFeatures.COPY_SITE ) )
 	) {
 		return null;
 	}
