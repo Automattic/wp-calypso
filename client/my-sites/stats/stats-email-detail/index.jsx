@@ -230,7 +230,6 @@ class StatsEmailDetail extends Component {
 			text: navigationItems[ 0 ].label,
 			url: navigationItems[ 0 ].href,
 		};
-
 		const titleProps = {
 			title: navigationItems[ 1 ].label,
 			// Remove the default logo for Odyssey stats.
