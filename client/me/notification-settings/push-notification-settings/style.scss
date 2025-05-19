@@ -11,81 +11,15 @@
 		}
 	}
 
-	.is-link {
-
-		&:focus,
-		&:active {
-			color: var(--color-neutral-20);
+	// Removes underline from the ↗ icon
+	a.components-external-link.components-external-link {
+		text-decoration: none;
+		.components-external-link__contents {
+			text-decoration: underline;
 		}
-	}
-}
-
-.notification-settings-push-notification-settings__instruction-dialog {
-	position: relative;
-}
-
-.notification-settings-push-notification-settings__instruction-image {
-	svg {
-		width: 180px;
-		height: 180px;
-	}
-}
-
-.notification-settings-push-notification-settings__instruction-dismiss {
-	position: absolute;
-	top: 8px;
-	right: 8px;
-	padding: 0;
-	cursor: pointer;
-	color: var(--color-neutral-light);
-
-	&:hover,
-	&:focus {
-		color: var(--color-neutral-70);
-	}
-
-	.gridicon {
-		display: block;
-	}
-}
-
-.notification-settings-push-notification-settings__instruction-content {
-	max-width: 500px;
-	text-align: center;
-
-	@include breakpoint-deprecated("<660px") {
-		text-align: left;
-	}
-}
-
-.notification-settings-push-notification-settings__instruction-title {
-	font-weight: 600;
-	display: block;
-	margin-bottom: 24px;
-}
-
-.notification-settings-push-notification-settings__instruction-step {
-	width: 50%;
-	box-sizing: border-box;
-	display: inline-block;
-	padding: 0 24px;
-
-	p {
-		margin: 16px 0 0;
-	}
-
-	@include breakpoint-deprecated("<660px") {
-		width: 100%;
-		min-height: 80px;
-		position: relative;
-		text-align: left;
-		padding: 11px 16px 0 82px;
-
-		img {
-			position: absolute;
-			top: 8px;
-			left: 8px;
-			max-width: 60px;
+		&:hover .components-external-link__contents,
+		&:active .components-external-link__contents {
+			text-decoration: none;
 		}
 	}
 }
@@ -93,53 +27,4 @@
 .card.notification-settings-push-notification-settings__settings {
 	position: relative;
 	margin-top: 1em;
-}
-
-.notification-settings-push-notification-settings__settings-heading {
-	font-weight: 600;
-	position: relative;
-	margin-bottom: 8px;
-}
-
-.notification-settings-push-notification-settings__settings-icon {
-	position: absolute;
-	top: 0;
-	left: -32px;
-}
-
-.push-notification-settings__instruction-refresh-notice {
-	text-align: left;
-	margin-top: 32px;
-	margin-bottom: 0;
-}
-
-.notification-settings-push-notification-settings__settings-state {
-	font-size: $font-body-small;
-	font-weight: 600;
-	margin-left: 8px;
-	text-transform: uppercase;
-	color: var(--color-text-subtle);
-
-	&.is-enabled {
-		color: var(--color-success);
-	}
-}
-
-.notification-settings-push-notification-settings__settings-description {
-	margin-bottom: 0;
-
-	@include breakpoint-deprecated(">660px") {
-		margin-right: 130px;
-	}
-}
-
-.notification-settings-push-notification-settings__settings-button {
-	margin-top: 8px;
-
-	@include breakpoint-deprecated(">660px") {
-		margin-top: 0;
-		position: absolute;
-		bottom: 24px;
-		right: 24px;
-	}
 }

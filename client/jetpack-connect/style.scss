@@ -51,7 +51,6 @@ $colophon-height: 50px;
 	&.layout {
 		position: relative;
 		min-height: calc(100% - #{$colophon-height});
-		padding-bottom: $colophon-height;
 	}
 
 	// Hide the masterbar for real
@@ -125,9 +124,24 @@ $colophon-height: 50px;
 }
 
 .jetpack-connect__compact-logo {
+	display: flex;
 	position: absolute;
 	top: 24px;
 	left: 24px;
+
+	align-items: center;
+	column-gap: 16px;
+
+	.jetpack-connect__back-button {
+		--wp-components-color-accent: var(--color-accent-dark);
+
+		margin-top: 0;
+
+		&:focus {
+			outline: none;
+			box-shadow: none;
+		}
+	}
 }
 
 .jetpack-connect__main.is-wide {
@@ -144,7 +158,7 @@ $colophon-height: 50px;
 
 .jetpack-connect__site-url-entry-container,
 .purchase-product__site-url-entry-container {
-	margin: 0 auto;
+	margin: 10vh auto 0; // match spacing of onboarding flow (.jetpack-connect__authorize-form-wrapper--onboarding)
 	max-width: 400px;
 
 	.formatted-header {
@@ -839,7 +853,6 @@ $colophon-height: 50px;
 	&.layout {
 		position: relative;
 		min-height: calc(100% - #{$colophon-height});
-		padding-bottom: $colophon-height;
 	}
 
 	.site__title::after,

@@ -146,7 +146,7 @@ const ImportContentOnly: React.FunctionComponent< Props > = ( props ) => {
 				'import__error-message': renderState === 'error',
 			} ) }
 		>
-			{ renderState === 'progress' && <ProgressScreen job={ job } /> }
+			{ renderState === 'progress' && <ProgressScreen job={ job } showHeading={ renderHeading } /> }
 
 			{ renderState === 'error' && (
 				<ErrorMessage

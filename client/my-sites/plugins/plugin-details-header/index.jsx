@@ -7,10 +7,10 @@ import {
 	useMarketplaceReviewsQuery,
 	useMarketplaceReviewsStatsQuery,
 } from 'calypso/data/marketplace/use-marketplace-reviews';
+import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { preventWidows } from 'calypso/lib/formatting';
 import PluginIcon from 'calypso/my-sites/plugins/plugin-icon/plugin-icon';
-import PluginRatings from 'calypso/my-sites/plugins/plugin-ratings';
-import { useLocalizedPlugins } from 'calypso/my-sites/plugins/utils';
+import { useLocalizedPlugins, formatPluginRating } from 'calypso/my-sites/plugins/utils';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import usePluginVersionInfo from '../plugin-management-v2/hooks/use-plugin-version-info';
 
@@ -40,16 +40,58 @@ const PluginDetailsHeader = ( {
 		productType: 'plugin',
 		slug: plugin.slug,
 	} );
-	const numberOfReviews = marketplaceReviews?.length || 0;
 
 	// Rating can be a valid number, 0 or null, discard undefined for easier comparison
-	const rating = isMarketplaceProduct
-		? ( reviewsStats?.ratings_average * 100 ) / 5 ?? 0
-		: plugin.rating ?? null;
+	let rating = plugin.rating ?? null;
+	if ( isMarketplaceProduct ) {
+		rating = reviewsStats?.ratings_average ? ( reviewsStats.ratings_average * 100 ) / 5 : 0;
+	}
 
 	if ( isPlaceholder ) {
 		return <PluginDetailsHeaderPlaceholder />;
 	}
+
+	const getMarketPlacePluginReviewsLink = () => {
+		const numberOfReviews = marketplaceReviews?.length || 0;
+
+		return (
+			<Button
+				borderless
+				className="plugin-details-header__number-reviews-link is-link"
+				onClick={ onReviewsClick }
+			>
+				{ numberOfReviews > 0 &&
+					translate( '%(numberOfReviews)d review', '%(numberOfReviews)d reviews', {
+						count: numberOfReviews,
+						args: {
+							numberOfReviews,
+						},
+					} ) }
+				{ numberOfReviews === 0 && translate( 'Add a review' ) }
+			</Button>
+		);
+	};
+
+	const getPluginReviewsLink = () => {
+		if ( plugin.num_ratings > 0 ) {
+			return null;
+		}
+
+		const onClickPluginRatingsLink = () => {
+			gaRecordEvent( 'Plugins', 'Clicked Add a review link', 'Plugin Name', plugin.slug );
+		};
+
+		return (
+			<a
+				href={ `https://wordpress.org/support/plugin/${ plugin.slug }/reviews` }
+				onClick={ onClickPluginRatingsLink }
+				target="_blank"
+				rel="noopener noreferrer"
+			>
+				{ translate( 'Add a review' ) }
+			</a>
+		);
+	};
 
 	return (
 		<div className="plugin-details-header__container">
@@ -90,34 +132,13 @@ const PluginDetailsHeader = ( {
 				{ /* We want to accept rating 0, which means no rating for Marketplace products */ }
 				{ rating !== null && (
 					<div className="plugin-details-header__info">
-						<div className="plugin-details-header__info-title">{ translate( 'Ratings' ) }</div>
+						<div className="plugin-details-header__info-title">{ translate( 'Rating' ) }</div>
 						<div className="plugin-details-header__info-value">
-							<PluginRatings rating={ rating } />
-							{ ( numberOfReviews > 0 || isMarketplaceProduct ) && (
-								<Button
-									borderless
-									className="plugin-details-header__number-reviews-link is-link"
-									onClick={ onReviewsClick }
-								>
-									{ numberOfReviews > 0 &&
-										translate( '%(numberOfReviews)d review', '%(numberOfReviews)d reviews', {
-											count: numberOfReviews,
-											args: {
-												numberOfReviews,
-											},
-										} ) }
-									{ isMarketplaceProduct && numberOfReviews === 0 && translate( 'Write a review' ) }
-								</Button>
-							) }
+							{ rating !== 0 && <div>{ `${ formatPluginRating( rating, true ) }/5` }</div> }
+							{ isMarketplaceProduct ? getMarketPlacePluginReviewsLink() : getPluginReviewsLink() }
 						</div>
 					</div>
 				) }
-				<div className="plugin-details-header__info">
-					<div className="plugin-details-header__info-title">{ translate( 'Last updated' ) }</div>
-					<div className="plugin-details-header__info-value">
-						{ moment.utc( plugin.last_updated, 'YYYY-MM-DD hh:mma' ).format( 'LL' ) }
-					</div>
-				</div>
 				<div className="plugin-details-header__info">
 					<div className="plugin-details-header__info-title">{ translate( 'Version' ) }</div>
 					<div className="plugin-details-header__info-value">
@@ -136,6 +157,12 @@ const PluginDetailsHeader = ( {
 						</div>
 					</div>
 				) }
+				<div className="plugin-details-header__info">
+					<div className="plugin-details-header__info-title">{ translate( 'Last updated' ) }</div>
+					<div className="plugin-details-header__info-value">
+						{ moment.utc( plugin.last_updated, 'YYYY-MM-DD hh:mma' ).format( 'MMM D, YYYY' ) }
+					</div>
+				</div>
 			</div>
 		</div>
 	);

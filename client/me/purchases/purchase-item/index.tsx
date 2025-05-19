@@ -13,7 +13,7 @@ import page from '@automattic/calypso-router';
 import { CompactCard, Gridicon } from '@automattic/components';
 import { formatCurrency } from '@automattic/number-formatters';
 import { CALYPSO_CONTACT } from '@automattic/urls';
-import { ExternalLink } from '@wordpress/components';
+import { ExternalLink, Button } from '@wordpress/components';
 import { Icon, warning as warningIcon } from '@wordpress/icons';
 import clsx from 'clsx';
 import { localize, useTranslate } from 'i18n-calypso';
@@ -45,6 +45,7 @@ import {
 	isWithinIntroductoryOfferPeriod,
 	isIntroductoryOfferFreeTrial,
 	hasPaymentMethod,
+	isPaidWithCredits,
 } from 'calypso/lib/purchases';
 import { getPurchaseListUrlFor } from 'calypso/my-sites/purchases/paths';
 import getSiteIconUrl from 'calypso/state/selectors/get-site-icon-url';
@@ -610,9 +611,11 @@ export function PurchaseItemStatus( {
 export function PurchaseItemPaymentMethod( {
 	purchase,
 	translate,
+	isDisconnectedSite,
 }: {
 	purchase: Purchases.Purchase;
 	translate: LocalizeProps[ 'translate' ];
+	isDisconnectedSite?: boolean;
 } ) {
 	if ( isIncludedWithPlan( purchase ) ) {
 		return translate( 'Included with Plan' );
@@ -626,16 +629,32 @@ export function PurchaseItemPaymentMethod( {
 		);
 	}
 
+	const goToAddPaymentMethod = ( e: React.MouseEvent< HTMLButtonElement >, siteId: number ) => {
+		e.preventDefault();
+		e.stopPropagation();
+
+		page( `/me/purchases/add-payment-method/${ siteId }/payment-method/add` );
+	};
+
 	if (
 		purchase.isAutoRenewEnabled &&
-		! hasPaymentMethod( purchase ) &&
+		( ! hasPaymentMethod( purchase ) || isPaidWithCredits( purchase ) ) &&
 		! isPartnerPurchase( purchase ) &&
 		! isAkismetFreeProduct( purchase )
 	) {
 		return (
 			<div className="purchase-item__no-payment-method">
-				<Icon icon={ warningIcon } />
-				<span>{ translate( 'You don’t have a payment method to renew this subscription' ) }</span>
+				{ ! isDisconnectedSite && (
+					<Button
+						variant="primary"
+						size="compact"
+						onClick={ ( e: React.MouseEvent< HTMLButtonElement > ) =>
+							goToAddPaymentMethod( e, purchase.id )
+						}
+					>
+						{ translate( 'Add payment method' ) }
+					</Button>
+				) }
 			</div>
 		);
 	}
@@ -643,7 +662,7 @@ export function PurchaseItemPaymentMethod( {
 	if (
 		! isAkismetFreeProduct( purchase ) &&
 		! isRechargeable( purchase ) &&
-		hasPaymentMethod( purchase ) &&
+		hasPaymentMethod( purchase ) && // why does it check for payment method type but shows missing method?
 		purchase.isAutoRenewEnabled
 	) {
 		return (
@@ -766,7 +785,11 @@ class PurchaseItem extends Component<
 				</div>
 
 				<div className="purchase-item__payment-method purchases-layout__payment-method">
-					<PurchaseItemPaymentMethod purchase={ purchase } translate={ translate } />
+					<PurchaseItemPaymentMethod
+						purchase={ purchase }
+						translate={ translate }
+						isDisconnectedSite={ isDisconnectedSite }
+					/>
 					{ isBackupMethodAvailable && isRenewing( purchase ) && <BackupPaymentMethodNotice /> }
 				</div>
 			</div>

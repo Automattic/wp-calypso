@@ -16,6 +16,7 @@ import integer from './integer';
 import radio from './radio';
 import select from './select';
 import text from './text';
+import toggleGroup from './toggle-group';
 import boolean from './boolean';
 
 interface FormControls {
@@ -29,6 +30,7 @@ const FORM_CONTROLS: FormControls = {
 	radio,
 	select,
 	text,
+	toggleGroup,
 };
 
 export function getControl< Item >(

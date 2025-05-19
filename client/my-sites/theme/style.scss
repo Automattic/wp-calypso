@@ -15,6 +15,10 @@ $button-border: 4px;
 		z-index: 100201;
 	}
 
+	&.theme-default.color-scheme {
+		--color-surface-backdrop: var(--studio-white);
+	}
+
 	.layout.is-logged-in .layout__content {
 		overflow: clip;
 		padding-top: 47px;

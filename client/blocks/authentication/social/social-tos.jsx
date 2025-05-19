@@ -1,7 +1,7 @@
 import { localizeUrl } from '@automattic/i18n-utils';
-import { localize } from 'i18n-calypso';
-import { connect } from 'react-redux';
-import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
+import { useTranslate } from 'i18n-calypso';
+import { useDispatch, useSelector } from 'react-redux';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getIsBlazePro from 'calypso/state/selectors/get-is-blaze-pro';
 import getIsWCCOM from 'calypso/state/selectors/get-is-wccom';
 import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
@@ -29,8 +29,14 @@ function getToSComponent( content ) {
 	return <p className="auth-form__social-buttons-tos">{ content }</p>;
 }
 
-function SocialAuthToS( props ) {
-	if ( props.isWooJPC ) {
+export default function SocialAuthToS() {
+	const translate = useTranslate();
+	const dispatch = useDispatch();
+	const isWCCOM = useSelector( getIsWCCOM );
+	const isWooJPC = useSelector( isWooJPCFlow );
+	const isBlazePro = useSelector( getIsBlazePro );
+
+	if ( isWooJPC ) {
 		const termsOfServiceLink = (
 			<a
 				href={ localizeUrl( 'https://wordpress.com/tos/' ) }
@@ -38,9 +44,7 @@ function SocialAuthToS( props ) {
 				rel="noopener noreferrer"
 				className="jetpack-connect__sso-actions-modal-link"
 				onClick={ () => {
-					this.props.recordTracksEvent( 'calypso_jpc_disclaimer_tos_link_click', {
-						...this.props,
-					} );
+					dispatch( recordTracksEvent( 'calypso_jpc_disclaimer_tos_link_click' ) );
 				} }
 			/>
 		);
@@ -51,15 +55,13 @@ function SocialAuthToS( props ) {
 				rel="noopener noreferrer"
 				className="jetpack-connect__sso-actions-modal-link"
 				onClick={ () => {
-					this.props.recordTracksEvent( 'calypso_jpc_disclaimer_sync_data_link_click', {
-						...this.props,
-					} );
+					dispatch( recordTracksEvent( 'calypso_jpc_disclaimer_sync_data_link_click' ) );
 				} }
 			/>
 		);
 
 		return getToSComponent(
-			props.translate(
+			translate(
 				'By clicking any of the options above, you agree to our {{termsOfServiceLink}}Terms of Service{{/termsOfServiceLink}} and to {{syncDataLink}}sync your site’s data{{/syncDataLink}} with us.',
 				{
 					components: {
@@ -71,24 +73,24 @@ function SocialAuthToS( props ) {
 		);
 	}
 
-	if ( props.isWCCOM ) {
+	if ( isWCCOM ) {
 		return getToSComponent(
-			props.translate(
+			translate(
 				'By continuing with any of the options above, you agree to our {{tosLink}}Terms of Service{{/tosLink}} and have read our {{privacyLink}}Privacy Policy{{/privacyLink}}.',
 				toSLinks
 			)
 		);
 	}
 
-	if ( props.isBlazePro ) {
+	if ( isBlazePro ) {
 		return getToSComponent(
 			<>
-				{ props.translate(
+				{ translate(
 					'By continuing with any of the options above, you agree to our {{tosLink}}Terms of Service{{/tosLink}} and acknowledge you have read our {{privacyLink}}Privacy Policy{{/privacyLink}}.',
 					toSLinks
 				) }
 				<br />
-				{ props.translate(
+				{ translate(
 					'Blaze Pro uses WordPress.com accounts under the hood. Tumblr, Blaze Pro, and WordPress.com are properties of Automattic, Inc.'
 				) }
 			</>
@@ -96,16 +98,9 @@ function SocialAuthToS( props ) {
 	}
 
 	return getToSComponent(
-		props.translate(
+		translate(
 			'If you continue with Google, Apple or GitHub, you agree to our {{tosLink}}Terms of Service{{/tosLink}}, and have read our {{privacyLink}}Privacy Policy{{/privacyLink}}.',
 			toSLinks
 		)
 	);
 }
-
-export default connect( ( state ) => ( {
-	oauth2Client: getCurrentOAuth2Client( state ),
-	isWCCOM: getIsWCCOM( state ),
-	isWooJPC: isWooJPCFlow( state ),
-	isBlazePro: getIsBlazePro( state ),
-} ) )( localize( SocialAuthToS ) );
