@@ -161,8 +161,9 @@ class Help extends PureComponent {
 				</CompactCard>
 				<CompactCard
 					className="help__support-link"
-					// eslint-disable-next-line wpcalypso/i18n-unlocalized-url
-					href="https://wordpress.com/support/courses/?ref=wpcom-help-more-resources"
+					href={ localizeUrl(
+						'https://wordpress.com/support/courses?ref=wpcom-help-more-resources'
+					) }
 					target="_blank"
 				>
 					<Gridicon icon="mail" size={ 36 } />
