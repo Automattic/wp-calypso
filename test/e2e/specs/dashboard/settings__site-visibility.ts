@@ -34,11 +34,9 @@ describe( 'Dashboard: Site Visibility Settings', function () {
 		dashboardPage = new DashboardPage( page );
 
 		// We need to extract the site slug for our test
-		// This assumes the user has at least one site
 		const url = testAccount.getSiteURL();
 		const urlParts = url.split( '/' );
-		console.log( urlParts );
-		siteSlug = urlParts[ urlParts.length - 2 ]; // Get the last part of the URL which should be the site slug
+		siteSlug = urlParts[ urlParts.length - 2 ];
 
 		// Visit the site visibility settings page
 		await dashboardPage.visitPath( `sites/${ siteSlug }/settings/site-visibility` );
@@ -85,5 +83,4 @@ async function saveChanges( page: Page ): Promise< void > {
 	await page.waitForSelector( 'button:not(.is-busy)[type="submit"][disabled]', {
 		state: 'visible',
 	} );
-	await page.waitForLoadState( 'networkidle' );
 }
