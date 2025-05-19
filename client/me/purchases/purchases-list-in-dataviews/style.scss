@@ -33,10 +33,15 @@
 
 		.purchase-item__title {
 			font-size: 16px;
+			overflow: hidden;
 		}
 
 		div {
 			max-width: 462px;
+		}
+
+		.purchase-item__purchase-type, .purchase-item__purchase-type a.purchase-item__link {
+			overflow: hidden;
 		}
 	}
 
