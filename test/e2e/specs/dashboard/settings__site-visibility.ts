@@ -43,9 +43,11 @@ describe( 'Dashboard: Site Visibility Settings', function () {
 	} );
 
 	afterAll( async function () {
-		// Restore the original visibility setting
-		await page.getByRole( 'radio', { name: 'public' } ).click();
-		await saveChanges( page );
+		const isCurrentlyPublic = await page.getByRole( 'radio', { name: 'Public' } ).isChecked();
+		if ( ! isCurrentlyPublic ) {
+			await page.getByRole( 'radio', { name: 'public' } ).click();
+			await saveChanges( page );
+		}
 	} );
 
 	it( 'Can change site visibility to Private', async function () {
@@ -69,6 +71,19 @@ describe( 'Dashboard: Site Visibility Settings', function () {
 		await incognitoPage.goto( testAccount.getSiteURL() );
 		const pageContent = await incognitoPage.content();
 		expect( pageContent ).toContain( 'coming soon' );
+		await incognitoPage.close();
+	} );
+
+	it( 'Can change site visibility to Public', async function () {
+		await page.getByRole( 'radio', { name: 'Public' } ).click();
+		await saveChanges( page );
+
+		// Open the site in a new incognito browser context to verify it's private
+		const incognitoPage = await browser.newPage();
+		await incognitoPage.goto( testAccount.getSiteURL() );
+		const pageContent = await incognitoPage.content();
+		expect( pageContent ).not.toContain( 'Private Site' );
+		expect( pageContent ).not.toContain( 'coming soon' );
 		await incognitoPage.close();
 	} );
 } );
