@@ -7,10 +7,10 @@ import { ActionList } from '../../components/action-list';
 import { DotcomFeatures } from '../../data/constants';
 import type { Site } from '../../data/types';
 
-const useRestorePlanSoftware = ( { slug, options }: Site ) => {
+const useRestorePlanSoftware = ( { slug, is_wpcom_atomic }: Site ) => {
 	const mutation = useMutation( restoreSitePlanSoftwareMutation( slug ) );
 
-	if ( ! options?.is_wpcom_atomic ) {
+	if ( ! is_wpcom_atomic ) {
 		return null;
 	}
 

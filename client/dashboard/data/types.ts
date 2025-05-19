@@ -63,7 +63,6 @@ export interface Plan {
 export interface SiteOptions {
 	software_version: string;
 	admin_url: string;
-	is_wpcom_atomic?: boolean;
 	blog_public: number;
 	is_redirect?: boolean;
 }
@@ -86,6 +85,7 @@ export interface Site {
 	is_deleted: boolean;
 	is_coming_soon: boolean;
 	is_private: boolean;
+	is_wpcom_atomic: boolean;
 	launch_status: string | boolean;
 	site_migration: {
 		migration_status: string;

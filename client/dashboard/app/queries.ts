@@ -57,7 +57,7 @@ export function siteQuery( siteIdOrSlug: string ) {
 				site.jetpack && site.jetpack_modules.includes( 'monitor' )
 					? fetchSiteMonitorUptime( site.ID )
 					: undefined,
-				site.options?.is_wpcom_atomic ? fetchPHPVersion( site.ID ) : undefined,
+				site.is_wpcom_atomic ? fetchPHPVersion( site.ID ) : undefined,
 			] );
 			return {
 				site,
