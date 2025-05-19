@@ -16,7 +16,7 @@ import { __, _x } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
-import FilterSummary from './filter-summary';
+import Filter from './filter';
 import { default as AddFilter, AddFilterMenu } from './add-filter';
 import ResetFilters from './reset-filters';
 import DataViewsContext from '../dataviews-context';
@@ -195,7 +195,7 @@ function Filters( { className }: { className?: string } ) {
 	const filterComponents = [
 		...visibleFilters.map( ( filter ) => {
 			return (
-				<FilterSummary
+				<Filter
 					key={ filter.field }
 					filter={ filter }
 					view={ view }

@@ -58,7 +58,7 @@ interface OperatorSelectorProps {
 	onChangeView: ( view: View ) => void;
 }
 
-interface FilterSummaryProps extends OperatorSelectorProps {
+interface FilterProps extends OperatorSelectorProps {
 	addFilterRef: RefObject< HTMLButtonElement >;
 	openedFilter: string | null;
 	fields: NormalizedField< any >[];
@@ -229,12 +229,12 @@ function OperatorSelector( {
 	);
 }
 
-export default function FilterSummary( {
+export default function Filter( {
 	addFilterRef,
 	openedFilter,
 	fields,
 	...commonProps
-}: FilterSummaryProps ) {
+}: FilterProps ) {
 	const toggleRef = useRef< HTMLDivElement >( null );
 	const { filter, view, onChangeView } = commonProps;
 	const filterInView = view.filters?.find(
