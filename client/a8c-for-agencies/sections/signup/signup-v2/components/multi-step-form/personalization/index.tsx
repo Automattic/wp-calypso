@@ -308,7 +308,7 @@ export default function PersonalizationForm( {
 							</FormField>
 						</FormFieldset>
 
-						{ hasProductsOffered && productsToOfferOptions.length > 0 && (
+						{ hasProductsOffered && productsToOfferOptions.length > 1 && (
 							<>
 								<FormFieldset className="signup-personalization-form__checkbox is-horizontal">
 									<FormField label={ translate( 'Do you plan to offer more products?' ) }>
