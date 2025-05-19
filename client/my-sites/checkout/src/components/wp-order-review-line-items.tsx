@@ -19,11 +19,16 @@ import {
 	getPartnerCoupon,
 } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
+import { usePrevious } from '@wordpress/compose';
 import clsx from 'clsx';
 import { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import { has100YearPlan } from 'calypso/lib/cart-values/cart-items';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
-import { useRestorableProducts } from 'calypso/my-sites/checkout/src/components/restorable-products-context';
+import { RemovedFromCartItem } from 'calypso/my-sites/checkout/src/components/removed-from-cart-item';
+import {
+	useCartProductsOrder,
+	useRestorableProducts,
+} from 'calypso/my-sites/checkout/src/components/restorable-products-context';
 import { useGetProductVariants } from 'calypso/my-sites/checkout/src/hooks/product-variants';
 import {
 	useStreamlinedPriceExperiment,
@@ -46,6 +51,10 @@ import type {
 	RemoveCouponFromCart,
 } from '@automattic/shopping-cart';
 import type { PropsWithChildren, RefObject } from 'react';
+
+interface LineItemByProductId {
+	[ id: string ]: JSX.Element;
+}
 
 const WPOrderReviewList = styled.ul`
 	box-sizing: border-box;
@@ -103,6 +112,9 @@ export function WPOrderReviewLineItems( {
 	const creditsLineItem = getCreditsLineItemFromCart( responseCart );
 	const couponLineItem = getCouponLineItemFromCart( responseCart );
 	const isOnboardingAffiliateFlow = useSelector( getIsOnboardingAffiliateFlow );
+	const [ cartProductsOrder, setCartProductsOrder ] = useCartProductsOrder();
+	const [ restorableProducts ] = useRestorableProducts();
+	const prevRestorableProducts = usePrevious( restorableProducts );
 
 	if ( couponLineItem ) {
 		couponLineItem.label = isOnboardingAffiliateFlow
@@ -131,6 +143,21 @@ export function WPOrderReviewLineItems( {
 			)
 		);
 	}, [ responseCart.products ] );
+
+	useEffect( () => {
+		const hasProductBeenRestored =
+			restorableProducts.length < ( prevRestorableProducts?.length || 0 );
+
+		if ( ! cartProductsOrder.length || hasProductBeenRestored ) {
+			setCartProductsOrder( responseCart.products.map( ( { product_id } ) => product_id ) );
+		}
+	}, [
+		cartProductsOrder,
+		prevRestorableProducts,
+		responseCart.products,
+		restorableProducts,
+		setCartProductsOrder,
+	] );
 
 	const hasWPCOMPlanInCart = responseCart.products.some( ( product ) =>
 		isWpComPlan( product.product_slug )
@@ -195,39 +222,60 @@ export function WPOrderReviewLineItems( {
 		[ replaceProductInCart, reduxDispatch ]
 	);
 
+	const cartItems = responseCart.products.reduce< LineItemByProductId >( ( acc, product ) => {
+		acc[ product.product_id ] = (
+			<LineItemWrapper
+				key={ product.uuid }
+				product={ product }
+				isSummary={ isSummary }
+				removeProductFromCart={ removeProductFromCart }
+				onChangeSelection={ onChangeSelection }
+				createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
+				responseCart={ responseCart }
+				isPwpoUser={ isPwpoUser }
+				onRemoveProduct={ onRemoveProduct }
+				onRemoveProductClick={ onRemoveProductClick }
+				onRemoveProductCancel={ onRemoveProductCancel }
+				hasPartnerCoupon={ hasPartnerCoupon }
+				isDisabled={ isDisabled }
+				initialVariantTerm={
+					initialProducts.find( ( initialProduct ) => {
+						return initialProduct.product_variants.find(
+							( variant ) => variant.product_id === product.product_id
+						);
+					} )?.months_per_bill_period
+				}
+				toggleVariantSelector={ handleVariantToggle }
+				variantOpenId={ variantOpenId }
+				isAkPro500Cart={ isAkismetProMultipleLicensesCart || forceShowAkQuantityDropdown }
+				setForceShowAkQuantityDropdown={ setForceShowAkQuantityDropdown }
+				onChangeAkProQuantity={ changeAkismetPro500CartQuantity }
+				toggleAkQuantityDropdown={ handleAkQuantityToggle }
+				akQuantityOpenId={ akQuantityOpenId }
+			/>
+		);
+
+		return acc;
+	}, {} );
+	const restorableItems = restorableProducts.reduce< LineItemByProductId >( ( acc, product ) => {
+		acc[ product.product_id ] = <RemovedFromCartItem key={ product.uuid } product={ product } />;
+
+		return acc;
+	}, {} );
+
 	return (
 		<WPOrderReviewList className={ joinClasses( [ className, 'order-review-line-items' ] ) }>
-			{ responseCart.products.map( ( product ) => (
-				<LineItemWrapper
-					key={ product.uuid }
-					product={ product }
-					isSummary={ isSummary }
-					removeProductFromCart={ removeProductFromCart }
-					onChangeSelection={ onChangeSelection }
-					createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
-					responseCart={ responseCart }
-					isPwpoUser={ isPwpoUser }
-					onRemoveProduct={ onRemoveProduct }
-					onRemoveProductClick={ onRemoveProductClick }
-					onRemoveProductCancel={ onRemoveProductCancel }
-					hasPartnerCoupon={ hasPartnerCoupon }
-					isDisabled={ isDisabled }
-					initialVariantTerm={
-						initialProducts.find( ( initialProduct ) => {
-							return initialProduct.product_variants.find(
-								( variant ) => variant.product_id === product.product_id
-							);
-						} )?.months_per_bill_period
-					}
-					toggleVariantSelector={ handleVariantToggle }
-					variantOpenId={ variantOpenId }
-					isAkPro500Cart={ isAkismetProMultipleLicensesCart || forceShowAkQuantityDropdown }
-					setForceShowAkQuantityDropdown={ setForceShowAkQuantityDropdown }
-					onChangeAkProQuantity={ changeAkismetPro500CartQuantity }
-					toggleAkQuantityDropdown={ handleAkQuantityToggle }
-					akQuantityOpenId={ akQuantityOpenId }
-				/>
-			) ) }
+			{ cartProductsOrder.map( ( product_id ) => {
+				const item = cartItems[ product_id ];
+				if ( item ) {
+					return item;
+				}
+				const restorableItem = restorableItems[ product_id ];
+				if ( restorableItem ) {
+					return restorableItem;
+				}
+				return null;
+			} ) }
 			{ couponLineItem && (
 				<WPOrderReviewListItem key={ couponLineItem.id }>
 					<CouponLineItem

@@ -10,11 +10,24 @@ const RestorableProductsContext = createContext< RestorableProductsContextType |
 	undefined
 );
 
+type CartProductsOrderContextType = [
+	cartProductsOrder: ResponseCartProduct[ 'product_id' ][],
+	setCartProductsOrder: Dispatch< SetStateAction< ResponseCartProduct[ 'product_id' ][] > >,
+];
+
+const CartProductsOrderContext = createContext< CartProductsOrderContextType | undefined >(
+	undefined
+);
+
 export const RestorableProductsProvider = ( { children }: { children: ReactNode } ) => {
 	const state = useState< ResponseCartProduct[] >( [] );
+	const productsOrderState = useState< ResponseCartProduct[ 'product_id' ][] >( [] );
+
 	return (
 		<RestorableProductsContext.Provider value={ state }>
-			{ children }
+			<CartProductsOrderContext.Provider value={ productsOrderState }>
+				{ children }
+			</CartProductsOrderContext.Provider>
 		</RestorableProductsContext.Provider>
 	);
 };
@@ -23,6 +36,14 @@ export const useRestorableProducts = () => {
 	const context = useContext( RestorableProductsContext );
 	if ( ! context ) {
 		throw new Error( 'useRestorableProducts must be used within a RestorableProductsProvider' );
+	}
+	return context;
+};
+
+export const useCartProductsOrder = () => {
+	const context = useContext( CartProductsOrderContext );
+	if ( ! context ) {
+		throw new Error( 'useCartProductsOrder must be used within a RestorableProductsProvider' );
 	}
 	return context;
 };

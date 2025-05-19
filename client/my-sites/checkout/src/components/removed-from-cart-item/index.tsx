@@ -52,7 +52,7 @@ export const RemovedFromCartItem = ( { product }: { product: ResponseCartProduct
 	const translate = useTranslate();
 
 	return (
-		<li key={ product.uuid } className="removed-from-cart-item">
+		<div key={ product.uuid } className="removed-from-cart-item">
 			{ isPlaceholder ? (
 				<LoadingCopy width="350px" />
 			) : (
@@ -76,22 +76,6 @@ export const RemovedFromCartItem = ( { product }: { product: ResponseCartProduct
 					</Button>
 				</>
 			) }
-		</li>
-	);
-};
-
-export const RemovedFromCartItems = () => {
-	const [ restorableProducts ] = useRestorableProducts();
-
-	if ( ! restorableProducts || restorableProducts.length === 0 ) {
-		return null;
-	}
-
-	return (
-		<ul className="removed-from-cart-items">
-			{ restorableProducts.map( ( product ) => (
-				<RemovedFromCartItem key={ product.uuid } product={ product } />
-			) ) }
-		</ul>
+		</div>
 	);
 };
