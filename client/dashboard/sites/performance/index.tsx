@@ -92,16 +92,18 @@ function SitePerformanceContent( { site }: { site: Site } ) {
 					</>
 				}
 			/>
-			<Report
-				currentPage={ currentPage }
-				report={ currentReport }
-				isFetchingReport={ isFetchingReport }
-				isRunningReport={
-					deviceToggle === 'desktop' ? isRunningDesktopReport : isRunningMobileReport
-				}
-				isError={ isError }
-				onRetest={ handleReportRefetch }
-			/>
+			<div className="site-performance-report">
+				<Report
+					currentPage={ currentPage }
+					report={ currentReport }
+					isFetchingReport={ isFetchingReport }
+					isRunningReport={
+						deviceToggle === 'desktop' ? isRunningDesktopReport : isRunningMobileReport
+					}
+					isError={ isError }
+					onRetest={ handleReportRefetch }
+				/>
+			</div>
 		</PageLayout>
 	);
 }

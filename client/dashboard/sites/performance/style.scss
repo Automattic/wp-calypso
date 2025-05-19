@@ -1,9 +1,12 @@
-:root {
+.site-performance-report {
 	--studio-white: #fff;
+
+	--studio-black: #000;
+
 	--studio-gray-5: #dcdcde;
 	--studio-gray-10: #c3c4c7;
 	--studio-gray-50: #646970;
-
+	--studio-gray-70: #3c434a;
 	--studio-gray-100: #101517;
 
 	--studio-green-5: #b8e6bf;
@@ -18,22 +21,20 @@
 
 	--studio-red-5: #facfd2;
 	--studio-red-50: #d63638;
-	--studio-red-60: #b32d2e
+	--studio-red-60: #b32d2e;
 
 	--color-surface: var(--studio-white);
-
-	--theme-highlight-color: #3858e9;
 	--color-accent: var(--theme-highlight-color);
 	--color-text-inverted: var(--studio-white);
 
 	--color-neutral: var(--studio-gray-50);
 	--color-neutral-10: var(--studio-gray-10);
+	--color-neutral-20: #a7aaad;
 
-	--studio-gray-70: #3c434a;
+	--color-border: var(--studio-gray-5);
+	--color-border-inverted: var(--studio-white);
 
-
-	/* Delete this later */
-	--color-primary: #000;
+	--theme-highlight-color: #3858e9;
 }
 
 .site-performance-report .l-block-wrapper {

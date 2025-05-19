@@ -59,7 +59,7 @@ export default function Report( {
 	};
 
 	return (
-		<div className="site-performance-report">
+		<>
 			<ReportExpiredNotice reportTimestamp={ report?.timestamp } onRetest={ onRetest } />
 			<PerformanceProfilerDashboardContent
 				performanceReport={ report }
@@ -71,6 +71,6 @@ export default function Report( {
 				displayMigrationBanner={ false }
 				onRecommendationsFilterChange={ handleRecommendationsFilterChange }
 			/>
-		</div>
+		</>
 	);
 }
