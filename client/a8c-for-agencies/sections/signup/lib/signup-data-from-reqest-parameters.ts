@@ -41,9 +41,9 @@ const sanitizePhone = ( phoneNumber: string | null ) => {
 };
 
 /**
- * Sanitizes comma-separated values into an array
+ * Sanitizes string array
  */
-const sanitizeArrayFromString = ( values: string[] ): string[] => {
+const sanitizeStringArray = ( values: string[] ): string[] => {
 	if ( ! values ) {
 		return [];
 	}
@@ -64,13 +64,13 @@ export function getSignupDataFromRequestParameters(): AgencyDetailsPayload | nul
 	}
 
 	// Parse arrays from comma-separated strings
-	const servicesOffered = sanitizeArrayFromString(
+	const servicesOffered = sanitizeStringArray(
 		( getQueryArg( window.location.href, 'services_offered' ) as string[] ) ?? []
 	);
-	const productsOffered = sanitizeArrayFromString(
+	const productsOffered = sanitizeStringArray(
 		( getQueryArg( window.location.href, 'products_offered' ) as string[] ) ?? []
 	);
-	const productsToOffer = sanitizeArrayFromString(
+	const productsToOffer = sanitizeStringArray(
 		( getQueryArg( window.location.href, 'products_to_offer' ) as string[] ) ?? []
 	);
 
