@@ -178,13 +178,13 @@ export interface PerformanceReport {
 	};
 	timestamp?: string;
 	share_link: string;
-	cls?: number;
-	lcp?: number;
-	fcp?: number;
-	ttfb?: number;
-	inp?: number;
-	tbt?: number;
-	overall?: number;
+	cls: number;
+	lcp: number;
+	fcp: number;
+	ttfb: number;
+	inp: number;
+	tbt: number;
+	overall: number;
 }
 
 export interface UrlPerformanceInsights {
