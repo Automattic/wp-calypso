@@ -23,15 +23,11 @@ const SectionExport = ( { isJetpack, canUserExport, site, translate } ) => {
 
 	if ( ! canUserExport ) {
 		sectionContent = (
-			<EmptyContent
-				illustration="/calypso/images/illustrations/illustration-404.svg"
-				title={ translate( 'You are not authorized to view this page' ) }
-			/>
+			<EmptyContent title={ translate( 'You are not authorized to view this page' ) } />
 		);
 	} else if ( isJetpack ) {
 		sectionContent = (
 			<EmptyContent
-				illustration="/calypso/images/illustrations/illustration-jetpack.svg"
 				title={ translate( 'Want to export your site?' ) }
 				line={ translate( "Visit your site's wp-admin for all your import and export needs." ) }
 				action={ translate( 'Export %(siteTitle)s', { args: { siteTitle: site.title } } ) }

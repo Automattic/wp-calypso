@@ -9,7 +9,6 @@ import moment from 'moment';
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import titlecase from 'to-title-case';
-import illustration404 from 'calypso/assets/images/illustrations/illustration-404.svg';
 import JetpackBackupCredsBanner from 'calypso/blocks/jetpack-backup-creds-banner';
 import StatsNavigation from 'calypso/blocks/stats-navigation';
 import { AVAILABLE_PAGE_MODULES, navItems } from 'calypso/blocks/stats-navigation/constants';
@@ -840,7 +839,6 @@ const EnableStatsModule = ( props ) => {
 
 	return (
 		<EmptyContent
-			illustration={ illustration404 }
 			title={ translate( 'Looking for stats?' ) }
 			line={
 				<p>
@@ -859,7 +857,6 @@ const EnableStatsModule = ( props ) => {
 const InsufficientPermissionsPage = () => {
 	return (
 		<EmptyContent
-			illustration={ illustration404 }
 			title={ translate( 'Looking for stats?' ) }
 			line={
 				<p>
