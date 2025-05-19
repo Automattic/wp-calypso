@@ -3,7 +3,9 @@
 @import "@automattic/onboarding/styles/mixins";
 
 .step-route.site-migration-instructions {
-	@include onboarding-block-margin;
+	&:not(:has(> .step-container-v2)) {
+		@include onboarding-block-margin;
+	}
 
 	.step-container {
 		padding: 0 0 60px;

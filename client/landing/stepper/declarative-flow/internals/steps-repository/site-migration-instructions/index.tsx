@@ -180,7 +180,7 @@ const SiteMigrationInstructions: StepType< {
 	const migrationInstructions = (
 		<MigrationInstructions
 			withPreview={ withPreview }
-			withTitle={ ! useContainerV2 }
+			isContainerV2={ useContainerV2 }
 			progress={
 				<CircularProgressBar
 					size={ 40 }
@@ -218,8 +218,17 @@ const SiteMigrationInstructions: StepType< {
 					topBar={
 						<Step.TopBar rightElement={ <SupportNudge onAskForHelp={ navigateToDoItForMe } /> } />
 					}
-					heading={ <FixedColumnOnTheLeftLayout.Heading text={ title } /> }
-					// className="site-migration-instructions-v2"
+					heading={
+						<>
+							<CircularProgressBar
+								size={ 40 }
+								enableDesktopScaling
+								numberOfSteps={ steps.length }
+								currentStep={ completedSteps }
+							/>
+							<FixedColumnOnTheLeftLayout.Heading text={ title } />
+						</>
+					}
 				>
 					{ migrationInstructions }
 					<SitePreview />
