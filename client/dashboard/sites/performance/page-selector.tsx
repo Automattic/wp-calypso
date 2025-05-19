@@ -38,7 +38,7 @@ function mapPageToPageOption( page: PerformanceProfilerPage, siteUrl: string ): 
 	};
 }
 
-interface PageSelectorWrapperProps {
+interface PageSelectorProps {
 	siteUrl: string;
 	pages: PerformanceProfilerPage[];
 	currentPage: PerformanceProfilerPage | undefined;
@@ -46,13 +46,13 @@ interface PageSelectorWrapperProps {
 	isLoading: boolean;
 }
 
-export function PageSelectorWrapper( {
+export function PageSelector( {
 	siteUrl,
 	pages,
 	currentPage,
 	onChange,
 	isLoading,
-}: PageSelectorWrapperProps ) {
+}: PageSelectorProps ) {
 	const currentPageOption: PageOption | undefined = currentPage
 		? mapPageToPageOption( currentPage, siteUrl )
 		: undefined;

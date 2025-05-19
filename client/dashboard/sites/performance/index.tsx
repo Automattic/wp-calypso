@@ -9,7 +9,7 @@ import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { usePerformanceData } from '../hooks/use-performance-data';
 import DeviceTabControls, { ToggleType } from './device-toggle';
-import { PageSelectorWrapper } from './page-selector';
+import { PageSelector } from './page-selector';
 import Report from './report';
 import { SubTitle } from './subtitle';
 import type { PerformanceProfilerPage } from '../../data';
@@ -82,7 +82,7 @@ function SitePerformanceContent( { site }: { site: Site } ) {
 				}
 			/>
 			<HStack spacing={ 2 } alignment="flex-end" justify="flex-start" expanded={ false }>
-				<PageSelectorWrapper
+				<PageSelector
 					isLoading={ isLoading }
 					siteUrl={ site.URL }
 					currentPage={ currentPage }
