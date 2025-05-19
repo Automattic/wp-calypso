@@ -30,7 +30,10 @@ export const usePhpVersions = () => {
 			disabled: true, // EOL 26th November, 2023
 		},
 		{
-			label: '8.1',
+			label: translate( '%s (deprecated)', {
+				args: '8.1',
+				comment: 'PHP Version for a version switcher',
+			} ),
 			value: '8.1',
 			disabled: false, // EOL 31st December, 2025
 		},
