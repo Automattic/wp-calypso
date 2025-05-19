@@ -148,12 +148,7 @@ const HomeContent = ( {
 
 	if ( ! canUserUseCustomerHome ) {
 		const title = translate( 'This page is not available on this site.' );
-		return (
-			<EmptyContent
-				title={ preventWidows( title ) }
-				illustration="/calypso/images/illustrations/error.svg"
-			/>
-		);
+		return <EmptyContent title={ preventWidows( title ) } />;
 	}
 
 	if ( layout?.view_name === 'VIEW_FOCUSED_LAUNCHPAD' && ! focusedLaunchpadDismissed ) {

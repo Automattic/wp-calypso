@@ -1,4 +1,4 @@
-import { localize } from 'i18n-calypso';
+import { localize, fixMe } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import DocumentHead from 'calypso/components/data/document-head';
 import EmptyContent from 'calypso/components/empty-content';
@@ -9,11 +9,16 @@ const NoPermissionsError = ( { title, translate } ) => (
 	<Main>
 		{ title && <DocumentHead title={ title } /> }
 		<EmptyContent
-			title={ preventWidows( translate( "Oops! You don't have permission to manage plugins." ) ) }
+			title={ preventWidows(
+				fixMe( {
+					text: "You don't have permission to manage plugins.",
+					newCopy: translate( "You don't have permission to manage plugins." ),
+					oldCopy: translate( "Oops! You don't have permission to manage plugins." ),
+				} )
+			) }
 			line={ preventWidows(
 				translate( "If you think you should, contact this site's administrator." )
 			) }
-			illustration="/calypso/images/illustrations/error.svg"
 		/>
 	</Main>
 );

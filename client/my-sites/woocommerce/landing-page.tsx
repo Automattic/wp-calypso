@@ -32,7 +32,6 @@ interface Props {
 
 interface DisplayData {
 	title: string;
-	illustration: string;
 	line: string;
 	action: string;
 }
@@ -155,7 +154,6 @@ const LandingPage: React.FunctionComponent< Props > = ( { siteId } ) => {
 
 		displayData = {
 			title: _x( 'Verify your email address before setting up a store', 'Header text' ),
-			illustration: '/calypso/images/illustrations/page-bag.svg',
 			line: sprintf(
 				/* translators: %s: The unverified email */
 				__(
@@ -168,7 +166,6 @@ const LandingPage: React.FunctionComponent< Props > = ( { siteId } ) => {
 	} else if ( currentIntent === 'sell' ) {
 		displayData = {
 			title: _x( 'Upgrade your store', 'Header text' ),
-			illustration: '/calypso/images/illustrations/illustration-seller.svg',
 			line: __(
 				'Need more out of your store? Unlock the tools needed to manage products, orders, shipping, and more.'
 			),
@@ -177,7 +174,6 @@ const LandingPage: React.FunctionComponent< Props > = ( { siteId } ) => {
 	} else {
 		displayData = {
 			title: _x( 'Set up a store and start selling online', 'Header text' ),
-			illustration: '/calypso/images/illustrations/illustration-shopping-bags.svg',
 			line: __(
 				'Set up a new store in minutes. Get secure payments, configurable shipping options, and more, out of the box.'
 			),
@@ -199,8 +195,6 @@ const LandingPage: React.FunctionComponent< Props > = ( { siteId } ) => {
 			{ renderWarningNotice() }
 			<EmptyContent
 				title={ displayData.title }
-				illustration={ displayData.illustration }
-				illustrationWidth={ 150 }
 				line={ displayData.line }
 				action={ displayData.action }
 				actionCallback={ finalCTAHandler }

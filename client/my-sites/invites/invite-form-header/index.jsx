@@ -34,42 +34,42 @@ class InviteFormHeader extends Component {
 
 		switch ( role ) {
 			case 'administrator':
-				title = this.props.translate( 'Sign up to start managing {{siteLink/}}.', {
+				title = this.props.translate( 'Sign up to start managing {{siteLink/}}', {
 					components: {
 						siteLink: this.getSiteLink(),
 					},
 				} );
 				break;
 			case 'editor':
-				title = this.props.translate( 'Sign up to start editing {{siteLink/}}.', {
+				title = this.props.translate( 'Sign up to start editing {{siteLink/}}', {
 					components: {
 						siteLink: this.getSiteLink(),
 					},
 				} );
 				break;
 			case 'author':
-				title = this.props.translate( 'Sign up to start writing for {{siteLink/}}.', {
+				title = this.props.translate( 'Sign up to start writing for {{siteLink/}}', {
 					components: {
 						siteLink: this.getSiteLink(),
 					},
 				} );
 				break;
 			case 'contributor':
-				title = this.props.translate( 'Sign up to start contributing to {{siteLink/}}.', {
+				title = this.props.translate( 'Sign up to start contributing to {{siteLink/}}', {
 					components: {
 						siteLink: this.getSiteLink(),
 					},
 				} );
 				break;
 			case 'subscriber':
-				title = this.props.translate( 'Sign up to start your subscription to {{siteLink/}}.', {
+				title = this.props.translate( 'Sign up to start your subscription to {{siteLink/}}', {
 					components: {
 						siteLink: this.getSiteLink(),
 					},
 				} );
 				break;
 			case 'viewer':
-				title = this.props.translate( 'Sign up to begin viewing {{siteLink/}}.', {
+				title = this.props.translate( 'Sign up to begin viewing {{siteLink/}}', {
 					components: {
 						siteLink: this.getSiteLink(),
 					},
@@ -77,7 +77,7 @@ class InviteFormHeader extends Component {
 				break;
 			case 'follower':
 				title = this.props.translate(
-					'Sign up to start following {{siteLink/}} in the WordPress.com Reader.',
+					'Sign up to start following {{siteLink/}} in the WordPress.com Reader',
 					{
 						components: {
 							siteLink: this.getSiteLink(),
@@ -87,7 +87,7 @@ class InviteFormHeader extends Component {
 				break;
 			default:
 				title = this.props.translate(
-					'Sign up to join {{siteLink/}} as: {{strong}}%(siteRole)s{{/strong}}.',
+					'Sign up to join {{siteLink/}} as: {{strong}}%(siteRole)s{{/strong}}',
 					{
 						args: {
 							siteRole: role,
