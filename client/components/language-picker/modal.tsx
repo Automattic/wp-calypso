@@ -1,7 +1,7 @@
-import { Dialog, FormLabel, MaterialIcon } from '@automattic/components';
+import { FormLabel, MaterialIcon } from '@automattic/components';
 import { isDefaultLocale, isTranslatedIncompletely } from '@automattic/i18n-utils';
 import LanguagePicker, { createLanguageGroups } from '@automattic/language-picker';
-import { Button } from '@wordpress/components';
+import { Modal, Button } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { useState } from 'react';
@@ -169,35 +169,36 @@ const LanguagePickerModal: React.FC< Props > = ( {
 		</div>
 	) : null;
 
-	const buttons = [
-		<>{ checkboxes }</>,
-		<div className="language-picker__modal-buttons">
-			<Button variant="link" onClick={ onClose }>
-				{ __( 'Cancel' ) }
-			</Button>
-			<Button
-				variant="secondary"
-				onClick={ () => {
-					onClose();
-					if ( selectedLanguage ) {
-						onSelectLanguage( selectedLanguage, {
-							empathyMode,
-							useFallbackForIncompleteLanguages,
-						} );
-					}
-				} }
-			>
-				{ __( 'Apply Changes' ) }
-			</Button>
-		</div>,
-	];
+	const buttons = (
+		<>
+			<>{ checkboxes }</>
+			<div className="language-picker__modal-buttons">
+				<Button variant="link" onClick={ onClose }>
+					{ __( 'Cancel' ) }
+				</Button>
+				<Button
+					variant="secondary"
+					onClick={ () => {
+						onClose();
+						if ( selectedLanguage ) {
+							onSelectLanguage( selectedLanguage, {
+								empathyMode,
+								useFallbackForIncompleteLanguages,
+							} );
+						}
+					} }
+				>
+					{ __( 'Apply Changes' ) }
+				</Button>
+			</div>
+		</>
+	);
 
 	return (
-		<Dialog
-			isVisible
-			onClose={ onClose }
-			buttons={ buttons }
-			additionalClassNames="language-picker__dialog"
+		<Modal
+			onRequestClose={ onClose }
+			className="language-picker__modal"
+			overlayClassName="language-picker__overlay"
 		>
 			<QueryLanguageNames />
 			<LanguagePicker
@@ -208,7 +209,8 @@ const LanguagePickerModal: React.FC< Props > = ( {
 				selectedLanguage={ selectedLanguage }
 				localizedLanguageNames={ localizedLanguageNames }
 			/>
-		</Dialog>
+			<div>{ buttons }</div>
+		</Modal>
 	);
 };
 

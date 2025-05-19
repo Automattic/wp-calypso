@@ -67,7 +67,7 @@
 		"react-dom": "^18.3.1",
 		"redux": "^5.0.1",
 		"storybook": "^8.6.12",
-		"typescript": "^5.8.2",
+		"typescript": "^5.8.3",
 		"webpack": "^5.97.1"
 	},
 	"peerDependencies": {
