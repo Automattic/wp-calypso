@@ -19,7 +19,7 @@ import StatsModuleTopPosts from 'calypso/my-sites/stats/features/modules/stats-t
 import {
 	useStatsNavigationHistory,
 	recordCurrentScreen,
-} from 'calypso/my-sites/stats/hooks/use-stats-navigation';
+} from 'calypso/my-sites/stats/hooks/use-stats-navigation-history';
 import getMediaItem from 'calypso/state/selectors/get-media-item';
 import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';

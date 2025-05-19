@@ -22,7 +22,7 @@ import Main from 'calypso/my-sites/stats/components/stats-main';
 import {
 	useStatsNavigationHistory,
 	recordCurrentScreen,
-} from 'calypso/my-sites/stats/hooks/use-stats-navigation';
+} from 'calypso/my-sites/stats/hooks/use-stats-navigation-history';
 import StatsDetailsNavigation from 'calypso/my-sites/stats/stats-details-navigation';
 import { getSitePost, getPostPreviewUrl } from 'calypso/state/posts/selectors';
 import { countPostLikes } from 'calypso/state/posts/selectors/count-post-likes';
