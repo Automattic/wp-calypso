@@ -4,7 +4,7 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { Button as CoreButton } from '@wordpress/components';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { flowRight } from 'lodash';
+import { isEqual, flowRight } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -104,8 +104,8 @@ class StatsPostDetail extends Component {
 	}
 
 	componentDidUpdate( prevProps ) {
-		if ( prevProps.statsQueryOptions !== this.props.statsQueryOptions ) {
-			const { context } = this.props;
+		const { context } = this.props;
+		if ( ! isEqual( prevProps.context, this.props.context ) ) {
 			recordCurrentScreen( 'postDetails', context.query );
 		}
 	}

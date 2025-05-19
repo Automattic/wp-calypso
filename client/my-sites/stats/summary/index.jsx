@@ -1,6 +1,6 @@
 import config, { isEnabled } from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
-import { merge } from 'lodash';
+import { isEqual, merge } from 'lodash';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
@@ -56,7 +56,7 @@ class StatsSummary extends Component {
 	}
 
 	componentDidUpdate( prevProps ) {
-		if ( prevProps.statsQueryOptions !== this.props.statsQueryOptions ) {
+		if ( ! isEqual( prevProps.statsQueryOptions, this.props.statsQueryOptions ) ) {
 			const { context } = this.props;
 			const { module } = context.params;
 			const { query } = context;
