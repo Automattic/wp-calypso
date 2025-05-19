@@ -116,11 +116,12 @@ export function siteSettingsQuery( siteId: string ) {
 export function siteSettingsMutation( siteId: string ) {
 	return {
 		mutationFn: ( newData: Partial< SiteSettings > ) => updateSiteSettings( siteId, newData ),
-		onSuccess: ( { updated }: { updated: Partial< SiteSettings > } ) => {
+		onSuccess: ( newData: Partial< SiteSettings > ) => {
 			queryClient.setQueryData( [ 'site-settings', siteId ], ( oldData: SiteSettings ) => ( {
 				...oldData,
-				...updated,
+				...newData,
 			} ) );
+			queryClient.invalidateQueries( { queryKey: [ 'site', siteId ] } );
 		},
 	};
 }

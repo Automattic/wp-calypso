@@ -340,7 +340,6 @@ class DomainSearch extends Component< DomainSearchProps > {
 
 			content = (
 				<EmptyContent
-					illustration="/calypso/images/illustrations/error.svg"
 					title={ translate( 'Domain registration is unavailable' ) }
 					line={ translate( "We're hard at work on the issue. Please check back %(timePeriod)s.", {
 						args: {

@@ -5,7 +5,7 @@ import {
 	getJetpackProductOrPlanDisplayName,
 } from '@automattic/calypso-products';
 import { getUrlParts } from '@automattic/calypso-url';
-import { Button, Card, FormLabel, Gridicon, Spinner } from '@automattic/components';
+import { Button, Card, FormLabel, Gridicon } from '@automattic/components';
 import { Spinner as WPSpinner, Modal } from '@wordpress/components';
 import { Icon, chartBar, next, share } from '@wordpress/icons';
 import clsx from 'clsx';
@@ -1265,7 +1265,7 @@ export class JetpackAuthorize extends Component {
 		if ( isLoading ) {
 			return (
 				<div className="jetpack-connect__logged-in-form-loading">
-					<span>{ this.getButtonText() }</span> <Spinner size={ 20 } duration={ 3000 } />
+					<span>{ this.getButtonText() }</span> <WPSpinner size={ 20 } duration={ 3000 } />
 				</div>
 			);
 		}

@@ -4,7 +4,6 @@ import { notFound } from '@tanstack/react-router';
 import { Card, CardBody, ToggleControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { siteQuery, siteSettingsMutation, siteSettingsQuery } from '../../app/queries';
-import { siteSettingsSubscriptionGiftingRoute } from '../../app/router';
 import PageLayout from '../../components/page-layout';
 import SettingsPageHeader from '../settings-page-header';
 import { hasSubscriptionGiftingFeature } from './utils';
@@ -36,8 +35,7 @@ const form = {
 	fields,
 };
 
-export default function SubscriptionGiftingSettings() {
-	const { siteSlug } = siteSettingsSubscriptionGiftingRoute.useParams();
+export default function SubscriptionGiftingSettings( { siteSlug }: { siteSlug: string } ) {
 	const { data: siteData } = useQuery( siteQuery( siteSlug ) );
 	const { data } = useQuery( siteSettingsQuery( siteSlug ) );
 	const mutation = useMutation( siteSettingsMutation( siteSlug ) );

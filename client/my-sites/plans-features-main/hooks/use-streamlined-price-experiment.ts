@@ -34,6 +34,13 @@ export function isStreamlinedPricePlansTreatment( variationName?: string | null 
 	return ! variationName.includes( 'plans_control' );
 }
 
+export function isStreamlinedPriceCheckoutTreatment( variationName?: string | null ) {
+	if ( ! variationName ) {
+		return false;
+	}
+	return ! variationName.includes( 'checkout_control' );
+}
+
 export function isStreamlinedPriceRadioTreatment( variationName?: string | null ) {
 	if ( ! variationName ) {
 		return false;
@@ -46,11 +53,4 @@ export function isStreamlinedPriceDropdownTreatment( variationName?: string | nu
 		return false;
 	}
 	return variationName.includes( 'checkout_dropdown' );
-}
-
-export function isStreamlinedPriceCheckoutTreatment( variationName?: string | null ) {
-	if ( ! variationName ) {
-		return false;
-	}
-	return ! variationName.includes( 'checkout_control' );
 }

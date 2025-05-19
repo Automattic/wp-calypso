@@ -11,7 +11,6 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
-import IllustrationStats from 'calypso/assets/images/stats/illustration-stats.svg';
 import { emailIntervals } from 'calypso/blocks/stats-navigation/constants';
 import Intervals from 'calypso/blocks/stats-navigation/intervals';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -299,8 +298,6 @@ class StatsEmailDetail extends Component {
 								'https://wordpress.com/support/getting-more-views-and-traffic/'
 							) }
 							actionTarget="blank"
-							illustration={ IllustrationStats }
-							illustrationWidth={ 150 }
 						/>
 					) }
 					{ post ? (

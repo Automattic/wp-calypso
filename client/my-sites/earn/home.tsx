@@ -534,12 +534,7 @@ const Home = () => {
 	};
 
 	if ( ! isUserAdmin ) {
-		return (
-			<EmptyContent
-				illustration="/calypso/images/illustrations/illustration-404.svg"
-				title={ translate( 'You are not authorized to view this page' ) }
-			/>
-		);
+		return <EmptyContent title={ translate( 'You are not authorized to view this page' ) } />;
 	}
 
 	return (

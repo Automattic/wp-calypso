@@ -1,7 +1,7 @@
 /* eslint-disable no-restricted-imports */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { NewThirdPartyCookiesNotice } from '@automattic/odie-client';
-import { useDispatch, useSelect } from '@wordpress/data';
+import { useDispatch } from '@wordpress/data';
 import { useState, useCallback, useEffect } from '@wordpress/element';
 import { decodeEntities } from '@wordpress/html-entities';
 import { __ } from '@wordpress/i18n';
@@ -14,7 +14,6 @@ import { SearchResult } from '../types';
 import { HelpCenterLaunchpad } from './help-center-launchpad';
 import { HelpCenterMoreResources } from './help-center-more-resources';
 import HelpCenterSearchResults from './help-center-search-results';
-import type { HelpCenterSelect } from '@automattic/data-stores';
 import './help-center-search.scss';
 import './help-center-launchpad.scss';
 
@@ -28,14 +27,8 @@ export const HelpCenterSearch = ( { onSearchChange, currentRoute }: HelpCenterSe
 	const { search } = useLocation();
 	const params = new URLSearchParams( search );
 	const { sectionName, site, canConnectToZendesk } = useHelpCenterContext();
-	const { searchTerm } = useSelect( ( select ) => {
-		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
-		return {
-			searchTerm: helpCenterSelect.getMessage(),
-		};
-	}, [] );
 	const query = params.get( 'query' );
-	const [ searchQuery, setSearchQuery ] = useState( query || searchTerm || '' );
+	const [ searchQuery, setSearchQuery ] = useState( query || '' );
 	const { setSubject, setMessage } = useDispatch( HELP_CENTER_STORE );
 
 	// when the user sets the search query, let's also populate the email subject and body

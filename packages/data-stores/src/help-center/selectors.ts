@@ -21,3 +21,4 @@ export const getAllowPremiumSupport = ( state: State ) => state.allowPremiumSupp
 export const getHelpCenterOptions = ( state: State ) => state.helpCenterOptions;
 export const getOdieChatId = ( state: State ) => state.odieChatId;
 export const getLastMessageReceivedAt = ( state: State ) => state.lastMessageReceivedAt;
+export const getContextTerm = ( state: State ) => state.contextTerm;
