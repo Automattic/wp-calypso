@@ -902,9 +902,8 @@ export class JetpackAuthorize extends Component {
 			);
 		}
 
-		// Accounts created through the new Magic Link-based signup flow (enabled with the
-		// 'jetpack/magic-link-signup' feature flag) are created with a username based on the user's
-		// email address. For this reason, we want to display both the username and the email address
+		// Accounts created through the Magic Link-based signup flow are created with a username based on the
+		// user's email address. For this reason, we want to display both the username and the email address
 		// so users can start making the connection between the two immediately. Otherwise, users might
 		// not recognize their username since they didn't create it.
 
