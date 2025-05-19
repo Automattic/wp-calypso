@@ -258,18 +258,6 @@ describe( 'DataViews component', () => {
 
 		it( 'should trigger the onClickItem callback if isItemClickable returns true and title field is clicked', async () => {
 			const onClickItemCallback = jest.fn();
-			function LinkComponent( { item, ...props }: { item: Data } ) {
-				return (
-					<a
-						href={ '#' }
-						onClick={ ( event ) => {
-							event.preventDefault();
-							onClickItemCallback( item );
-						} }
-						{ ...props }
-					/>
-				);
-			}
 
 			render(
 				<DataViewWrapper
@@ -280,7 +268,16 @@ describe( 'DataViews component', () => {
 					} }
 					actions={ actions }
 					isItemClickable={ () => true }
-					LinkComponent={ LinkComponent }
+					renderItemLink={ ( { item, ...props } ) => (
+						<a
+							href={ '#' }
+							onClick={ ( event ) => {
+								event.preventDefault();
+								onClickItemCallback( item );
+							} }
+							{ ...props }
+						/>
+					) }
 				/>
 			);
 			const titleField = screen.getByText( data[ 0 ].title );
@@ -338,18 +335,6 @@ describe( 'DataViews component', () => {
 
 		it( 'should trigger the onClickItem callback if isItemClickable returns true and a media field is clicked', async () => {
 			const mediaClickItemCallback = jest.fn();
-			function LinkComponent( { item, ...props }: { item: Data } ) {
-				return (
-					<a
-						href={ '#' }
-						onClick={ ( event ) => {
-							event.preventDefault();
-							mediaClickItemCallback( item );
-						} }
-						{ ...props }
-					/>
-				);
-			}
 
 			render(
 				<DataViewWrapper
@@ -359,7 +344,16 @@ describe( 'DataViews component', () => {
 					} }
 					actions={ actions }
 					isItemClickable={ () => true }
-					LinkComponent={ LinkComponent }
+					renderItemLink={ ( { item, ...props } ) => (
+						<a
+							href={ '#' }
+							onClick={ ( event ) => {
+								event.preventDefault();
+								mediaClickItemCallback( item );
+							} }
+							{ ...props }
+						/>
+					) }
 				/>
 			);
 			const imageField = screen.getByTestId(

@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import type { ComponentProps } from 'react';
+import type { ComponentProps, ReactElement } from 'react';
 
 /**
  * WordPress dependencies
@@ -24,7 +24,7 @@ function ColumnPrimary< Item >( {
 	mediaField,
 	descriptionField,
 	onClickItem,
-	LinkComponent,
+	renderItemLink,
 	isItemClickable,
 }: {
 	item: Item;
@@ -33,11 +33,11 @@ function ColumnPrimary< Item >( {
 	mediaField?: NormalizedField< Item >;
 	descriptionField?: NormalizedField< Item >;
 	onClickItem?: ( item: Item ) => void;
-	LinkComponent?: React.ComponentType<
-		{
+	renderItemLink?: (
+		props: {
 			item: Item;
 		} & ComponentProps< 'a' >
-	>;
+	) => ReactElement;
 	isItemClickable: ( item: Item ) => boolean;
 } ) {
 	return (
@@ -53,7 +53,7 @@ function ColumnPrimary< Item >( {
 						item={ item }
 						isItemClickable={ isItemClickable }
 						onClickItem={ onClickItem }
-						LinkComponent={ LinkComponent }
+						renderItemLink={ renderItemLink }
 						className="dataviews-view-table__cell-content-wrapper dataviews-title-field"
 					>
 						{ level !== undefined && (

@@ -1,6 +1,6 @@
 import { DataViews, filterSortAndPaginate } from '@automattic/dataviews';
 import { useQuery } from '@tanstack/react-query';
-import { useNavigate } from '@tanstack/react-router';
+import { useNavigate, Link } from '@tanstack/react-router';
 import { Button, ExternalLink, Dropdown } from '@wordpress/components';
 import { useResizeObserver } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
@@ -11,7 +11,6 @@ import { sitesRoute } from '../app/router';
 import DataViewsCard from '../components/dataviews-card';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
-import { createRouterDataViewsLink } from '../components/router-dataviews-link';
 import { STATUS_LABELS, getSiteStatus, getSiteStatusLabel } from '../utils/site-status';
 import AddNewSite from './add-new-site';
 import SiteIcon from './site-icon';
@@ -173,10 +172,6 @@ const DEFAULT_VIEW = {
 	search: '',
 };
 
-const SiteLink = createRouterDataViewsLink< Site >( ( site ) => ( {
-	to: `/sites/${ site.slug }`,
-} ) );
-
 export default function Sites() {
 	const navigate = useNavigate( { from: sitesRoute.fullPath } );
 	const sites = useQuery( sitesQuery() ).data;
@@ -244,7 +239,7 @@ export default function Sites() {
 					}
 				/>
 				<DataViewsCard>
-					<DataViews
+					<DataViews< Site >
 						getItemId={ ( item ) => item.ID }
 						data={ filteredData }
 						fields={ fields }
@@ -265,7 +260,9 @@ export default function Sites() {
 								},
 							} );
 						} }
-						LinkComponent={ SiteLink }
+						renderItemLink={ ( { item, ...props }: { item: Site } ) => (
+							<Link to={ `/sites/${ item.slug }` } { ...props } />
+						) }
 						defaultLayouts={ DEFAULT_LAYOUTS }
 						paginationInfo={ paginationInfo }
 					/>

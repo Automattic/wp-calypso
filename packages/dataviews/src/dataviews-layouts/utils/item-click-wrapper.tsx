@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import type { ReactNode, ComponentProps } from 'react';
+import type { ReactNode, ReactElement, ComponentProps } from 'react';
 
 function getClickableItemProps< Item >( {
 	item,
@@ -47,7 +47,7 @@ export function ItemClickWrapper< Item >( {
 	item,
 	isItemClickable,
 	onClickItem,
-	LinkComponent,
+	renderItemLink,
 	className,
 	children,
 	...extraProps
@@ -55,11 +55,11 @@ export function ItemClickWrapper< Item >( {
 	item: Item;
 	isItemClickable: ( item: Item ) => boolean;
 	onClickItem?: ( item: Item ) => void;
-	LinkComponent?: React.ComponentType<
-		{
+	renderItemLink?: (
+		props: {
 			item: Item;
 		} & ComponentProps< 'a' >
-	>;
+	) => ReactElement;
 	className?: string;
 	children: ReactNode;
 } ) {
@@ -67,21 +67,14 @@ export function ItemClickWrapper< Item >( {
 		return <>{ children }</>;
 	}
 
-	// If we have a LinkComponent, use it
-	if ( LinkComponent ) {
-		return (
-			<LinkComponent
-				item={ item }
-				className={
-					className
-						? `${ className } ${ className }--clickable`
-						: undefined
-				}
-				{ ...extraProps }
-			>
-				{ children }
-			</LinkComponent>
-		);
+	// If we have a renderItemLink, use it
+	if ( renderItemLink ) {
+		return renderItemLink( {
+			item,
+			className: `${ className } ${ className }--clickable`,
+			...extraProps,
+			children,
+		} );
 	}
 
 	// Otherwise use the classic click handler approach

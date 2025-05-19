@@ -2,7 +2,7 @@
  * External dependencies
  */
 import clsx from 'clsx';
-import type { ComponentProps } from 'react';
+import type { ComponentProps, ReactElement } from 'react';
 
 /**
  * WordPress dependencies
@@ -62,11 +62,11 @@ interface TableRowProps< Item > {
 	onChangeSelection: SetSelection;
 	isItemClickable: ( item: Item ) => boolean;
 	onClickItem?: ( item: Item ) => void;
-	LinkComponent?: React.ComponentType<
-		{
+	renderItemLink?: (
+		props: {
 			item: Item;
 		} & ComponentProps< 'a' >
-	>;
+	) => ReactElement;
 	isActionsColumnSticky?: boolean;
 }
 
@@ -103,7 +103,7 @@ function TableRow< Item >( {
 	getItemId,
 	isItemClickable,
 	onClickItem,
-	LinkComponent,
+	renderItemLink,
 	onChangeSelection,
 	isActionsColumnSticky,
 }: TableRowProps< Item > ) {
@@ -182,7 +182,7 @@ function TableRow< Item >( {
 						}
 						isItemClickable={ isItemClickable }
 						onClickItem={ onClickItem }
-						LinkComponent={ LinkComponent }
+						renderItemLink={ renderItemLink }
 					/>
 				</td>
 			) }
@@ -238,7 +238,7 @@ function ViewTable< Item >( {
 	setOpenedFilter,
 	onClickItem,
 	isItemClickable,
-	LinkComponent,
+	renderItemLink,
 	view,
 }: ViewTableProps< Item > ) {
 	const { containerRef } = useContext( DataViewsContext );
@@ -426,7 +426,7 @@ function ViewTable< Item >( {
 								getItemId={ getItemId }
 								onChangeSelection={ onChangeSelection }
 								onClickItem={ onClickItem }
-								LinkComponent={ LinkComponent }
+								renderItemLink={ renderItemLink }
 								isItemClickable={ isItemClickable }
 								isActionsColumnSticky={
 									! isHorizontalScrollEnd

@@ -2,7 +2,7 @@
  * External dependencies
  */
 import clsx from 'clsx';
-import type { ComponentProps } from 'react';
+import type { ComponentProps, ReactElement } from 'react';
 
 /**
  * WordPress dependencies
@@ -46,11 +46,11 @@ interface GridItemProps< Item > {
 	onChangeSelection: SetSelection;
 	getItemId: ( item: Item ) => string;
 	onClickItem?: ( item: Item ) => void;
-	LinkComponent?: React.ComponentType<
-		{
+	renderItemLink?: (
+		props: {
 			item: Item;
 		} & ComponentProps< 'a' >
-	>;
+	) => ReactElement;
 	isItemClickable: ( item: Item ) => boolean;
 	item: Item;
 	actions: Action< Item >[];
@@ -68,7 +68,7 @@ function GridItem< Item >( {
 	onChangeSelection,
 	onClickItem,
 	isItemClickable,
-	LinkComponent,
+	renderItemLink,
 	getItemId,
 	item,
 	actions,
@@ -136,7 +136,7 @@ function GridItem< Item >( {
 					item={ item }
 					isItemClickable={ isItemClickable }
 					onClickItem={ onClickItem }
-					LinkComponent={ LinkComponent }
+					renderItemLink={ renderItemLink }
 					className="dataviews-view-grid__media"
 					{ ...mediaA11yProps }
 				>
@@ -161,7 +161,7 @@ function GridItem< Item >( {
 					item={ item }
 					isItemClickable={ isItemClickable }
 					onClickItem={ onClickItem }
-					LinkComponent={ LinkComponent }
+					renderItemLink={ renderItemLink }
 					className="dataviews-view-grid__title-field dataviews-title-field"
 					{ ...titleA11yProps }
 				>
@@ -250,7 +250,7 @@ function ViewGrid< Item >( {
 	onChangeSelection,
 	onClickItem,
 	isItemClickable,
-	LinkComponent,
+	renderItemLink,
 	selection,
 	view,
 }: ViewGridProps< Item > ) {
@@ -312,7 +312,7 @@ function ViewGrid< Item >( {
 								onChangeSelection={ onChangeSelection }
 								onClickItem={ onClickItem }
 								isItemClickable={ isItemClickable }
-								LinkComponent={ LinkComponent }
+								renderItemLink={ renderItemLink }
 								getItemId={ getItemId }
 								item={ item }
 								actions={ actions }

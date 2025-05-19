@@ -522,11 +522,11 @@ export interface ViewBaseProps< Item > {
 	selection: string[];
 	setOpenedFilter: ( fieldId: string ) => void;
 	onClickItem?: ( item: Item ) => void;
-	LinkComponent?: React.ComponentType<
-		{
+	renderItemLink?: (
+		props: {
 			item: Item;
 		} & ComponentProps< 'a' >
-	>;
+	) => ReactElement;
 	isItemClickable: ( item: Item ) => boolean;
 	view: View;
 }

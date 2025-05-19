@@ -45,20 +45,6 @@ const defaultLayouts = {
 	[ LAYOUT_LIST ]: {},
 };
 
-function CustomLinkComponent( { item, ...props }: { item: SpaceObject } ) {
-	return (
-		<a
-			href="#"
-			onClick={ ( e ) => {
-				e.stopPropagation();
-				// eslint-disable-next-line no-alert
-				alert( 'Clicked: ' + item.title );
-			} }
-			{ ...props }
-		/>
-	);
-}
-
 export const Default = () => {
 	const [ view, setView ] = useState< View >( {
 		...DEFAULT_VIEW,
@@ -79,7 +65,17 @@ export const Default = () => {
 			fields={ fields }
 			onChangeView={ setView }
 			actions={ actions }
-			LinkComponent={ CustomLinkComponent }
+			renderItemLink={ ( { item, ...props }: { item: SpaceObject } ) => (
+				<a
+					href="#"
+					onClick={ ( e ) => {
+						e.stopPropagation();
+						// eslint-disable-next-line no-alert
+						alert( 'Clicked: ' + item.title );
+					} }
+					{ ...props }
+				/>
+			) }
 			isItemClickable={ () => true }
 			defaultLayouts={ defaultLayouts }
 		/>

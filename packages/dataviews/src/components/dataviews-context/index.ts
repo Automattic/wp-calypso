@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import type { ComponentProps } from 'react';
+import type { ComponentProps, ReactElement } from 'react';
 
 /**
  * WordPress dependencies
@@ -39,11 +39,11 @@ type DataViewsContextType< Item > = {
 	getItemId: ( item: Item ) => string;
 	getItemLevel?: ( item: Item ) => number;
 	onClickItem?: ( item: Item ) => void;
-	LinkComponent?: React.ComponentType<
-		{
+	renderItemLink?: (
+		props: {
 			item: Item;
 		} & ComponentProps< 'a' >
-	>;
+	) => ReactElement;
 	isItemClickable: ( item: Item ) => boolean;
 	containerWidth: number;
 	containerRef: React.MutableRefObject< HTMLDivElement | null >;
@@ -68,7 +68,7 @@ const DataViewsContext = createContext< DataViewsContextType< any > >( {
 	openedFilter: null,
 	getItemId: ( item ) => item.id,
 	isItemClickable: () => true,
-	LinkComponent: undefined,
+	renderItemLink: undefined,
 	containerWidth: 0,
 	containerRef: createRef(),
 	defaultLayouts: { list: {}, grid: {}, table: {} },

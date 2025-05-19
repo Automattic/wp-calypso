@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import type { ReactNode, ComponentProps } from 'react';
+import type { ReactNode, ComponentProps, ReactElement } from 'react';
 
 /**
  * WordPress dependencies
@@ -50,11 +50,11 @@ type DataViewsProps< Item > = {
 	selection?: string[];
 	onChangeSelection?: ( items: string[] ) => void;
 	onClickItem?: ( item: Item ) => void;
-	LinkComponent?: React.ComponentType<
-		{
+	renderItemLink?: (
+		props: {
 			item: Item;
 		} & ComponentProps< 'a' >
-	>;
+	) => ReactElement;
 	isItemClickable?: ( item: Item ) => boolean;
 	header?: ReactNode;
 	getItemLevel?: ( item: Item ) => number;
@@ -128,7 +128,7 @@ function DataViews< Item >( {
 	selection: selectionProperty,
 	onChangeSelection,
 	onClickItem,
-	LinkComponent,
+	renderItemLink,
 	isItemClickable = defaultIsItemClickable,
 	header,
 	children,
@@ -188,7 +188,7 @@ function DataViews< Item >( {
 				getItemLevel,
 				isItemClickable,
 				onClickItem,
-				LinkComponent,
+				renderItemLink,
 				containerWidth,
 				containerRef,
 				defaultLayouts,
