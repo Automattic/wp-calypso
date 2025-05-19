@@ -18,13 +18,14 @@ import './style.scss';
 type Props = {
 	onContinue: ( data: Partial< AgencyDetailsSignupPayload > ) => void;
 	initialFormData: Partial< AgencyDetailsSignupPayload >;
+	withEmail?: boolean;
 };
 
-const SignupContactForm = ( { onContinue, initialFormData }: Props ) => {
+const SignupContactForm = ( { onContinue, initialFormData, withEmail = false }: Props ) => {
 	const translate = useTranslate();
 	const [ showTosModal, setShowTosModal ] = useState( false );
 	const { validate, validationError, updateValidationError, isValidating } =
-		useContactFormValidation();
+		useContactFormValidation( { withEmail } );
 
 	const countriesList = useGetSupportedSMSCountries();
 	const noCountryList = countriesList.length === 0;
@@ -75,7 +76,7 @@ const SignupContactForm = ( { onContinue, initialFormData }: Props ) => {
 			) }
 			description={ preventWidows(
 				translate(
-					'Join 5000+ agencies and grow your business with {{span}}Automattic for Agencies.{{/span}}',
+					'Join 6000+ agencies and grow your business with {{span}}Automattic for Agencies.{{/span}} Get access to site management, earn commission on referrals, and explore our tier program to launch your business potential.',
 					{
 						components: {
 							span: <span className="signup-contact-form__a4a-span" />,
@@ -111,15 +112,17 @@ const SignupContactForm = ( { onContinue, initialFormData }: Props ) => {
 				</FormField>
 			</div>
 
-			<FormField error={ validationError.email } label={ translate( 'Email' ) } isRequired>
-				<FormTextInput
-					name="email"
-					type="email"
-					value={ formData.email }
-					onChange={ handleInputChange( 'email' ) }
-					placeholder={ translate( 'Your email' ) }
-				/>
-			</FormField>
+			{ withEmail && (
+				<FormField error={ validationError.email } label={ translate( 'Email' ) } isRequired>
+					<FormTextInput
+						name="email"
+						type="email"
+						value={ formData.email }
+						onChange={ handleInputChange( 'email' ) }
+						placeholder={ translate( 'Your email' ) }
+					/>
+				</FormField>
+			) }
 
 			<FormField
 				error={ validationError.agencyName }
@@ -193,7 +196,7 @@ const SignupContactForm = ( { onContinue, initialFormData }: Props ) => {
 					variant="primary"
 					onClick={ handleSubmit }
 				>
-					{ translate( 'Continue' ) }
+					{ translate( 'Continue for free' ) }
 				</Button>
 			</FormFooter>
 		</Form>

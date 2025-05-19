@@ -300,18 +300,56 @@ export const fetchSiteSettings = async ( siteIdOrSlug: string ): Promise< SiteSe
 		path: `/sites/${ siteIdOrSlug }/settings`,
 		apiVersion: '1.4',
 	} );
-	return settings;
+	return fromRawSiteSettings( settings );
 };
 
 export const updateSiteSettings = async ( siteIdOrSlug: string, data: Partial< SiteSettings > ) => {
-	return await wpcom.req.post(
+	const { updated } = await wpcom.req.post(
 		{
 			path: `/sites/${ siteIdOrSlug }/settings`,
 			apiVersion: '1.4',
 		},
-		data
+		toRawSiteSettings( data )
 	);
+	return fromRawSiteSettings( updated );
 };
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function fromRawSiteSettings( settings: any ): SiteSettings {
+	const blog_public = Number( settings.blog_public );
+	const wpcom_coming_soon = Number( settings.wpcom_public_coming_soon );
+	const wpcom_public_coming_soon = Number( settings.wpcom_public_coming_soon );
+
+	if ( wpcom_coming_soon === 1 || wpcom_public_coming_soon === 1 ) {
+		settings.wpcom_site_visibility = 'coming-soon';
+	} else if ( blog_public === -1 ) {
+		settings.wpcom_site_visibility = 'private';
+	} else {
+		settings.wpcom_site_visibility = 'public';
+	}
+	return settings;
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function toRawSiteSettings( settings: Partial< SiteSettings > ): any {
+	const rawSettings = settings as any; // eslint-disable-line @typescript-eslint/no-explicit-any
+
+	const { wpcom_site_visibility } = settings;
+
+	if ( wpcom_site_visibility !== undefined ) {
+		if ( wpcom_site_visibility === 'coming-soon' ) {
+			rawSettings.blog_public = 0;
+			rawSettings.wpcom_public_coming_soon = 1;
+		} else if ( wpcom_site_visibility === 'private' ) {
+			rawSettings.blog_public = -1;
+			rawSettings.wpcom_public_coming_soon = 0;
+		} else {
+			rawSettings.blog_public = 1;
+			rawSettings.wpcom_public_coming_soon = 0;
+		}
+	}
+	return rawSettings;
+}
 
 export const fetchBasicMetrics = async ( url: string ): Promise< BasicMetricsData > => {
 	return wpcom.req.get(

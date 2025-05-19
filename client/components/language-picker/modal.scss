@@ -1,37 +1,50 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
 .language-picker__modal-search {
 	position: relative;
 	width: 250px;
 }
 
-.language-picker__dialog {
-	&.dialog.card {
-		width: 90%;
-		height: 80%;
-		justify-content: space-between;
+.language-picker__overlay {
+	justify-content: center;
+}
+
+.language-picker__modal {
+	max-width:80%;
+	min-width: 80%;
+	@media (max-width: $break-mobile) {
+		max-width: 90%;
+		min-width: 90%;
+	}
+	.components-modal__header {
+		display:none;
 	}
 
-	.dialog__content {
-		flex: 1 1 auto;
-	}
-
-	.dialog__action-buttons {
-		display: flex;
-		flex-direction: row;
-		flex-wrap: wrap;
-		justify-content: space-between;
-		position: relative;
-		margin: 0;
-		padding: 0;
-		// prevent buttons div from covering language options
-		margin-top: 1.5rem;
-
-		.components-button {
-			margin-left: 1rem;
+	.components-modal__content {
+		padding: 24px 0 0 0;
+		margin-top: 24px;
+		display:flex;
+		/* Targeting the content div, we can't alter the HTML of the modal itself */
+		>div:nth-child(2) {
+			height: 100%;
+			display: flex;
+			flex-direction: column;
 		}
-	}
 
-	.language-picker-component .language-picker-component__heading {
-		margin: 6px 0 24px;
+		.components-flex-block {
+			flex:none;
+		}
+		.language-picker-component {
+			overflow-y: auto;
+			padding:0 24px;
+			.language-picker-component__heading {
+				margin: 6px 0 24px;
+			}
+			.components-flex {
+				flex:initial;
+			}
+		}
 	}
 }
 

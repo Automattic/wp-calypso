@@ -6,6 +6,7 @@ type ValidationState = {
 	country?: string;
 	servicesOffered?: string;
 	productsOffered?: string;
+	productsToOffer?: string;
 };
 
 const usePersonalizationFormValidation = () => {
@@ -30,6 +31,12 @@ const usePersonalizationFormValidation = () => {
 
 			if ( ! payload.productsOffered || payload.productsOffered.length < 1 ) {
 				newValidationError.productsOffered = translate( 'Please select products you offer' );
+			}
+
+			if ( payload.plansToOfferProducts && ! payload.productsToOffer?.length ) {
+				newValidationError.productsToOffer = translate(
+					'Please select products you plan to offer'
+				);
 			}
 
 			if ( Object.keys( newValidationError ).length > 0 ) {

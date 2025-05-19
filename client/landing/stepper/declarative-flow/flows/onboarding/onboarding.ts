@@ -24,6 +24,7 @@ import { useQuery } from '../../../hooks/use-query';
 import { ONBOARD_STORE } from '../../../stores';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
 import { recordStepNavigation } from '../../internals/analytics/record-step-navigation';
+import { usePurchasePlanNotification } from '../../internals/hooks/use-purchase-plan-notification';
 import { STEPS } from '../../internals/steps';
 import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
 import type { FlowV2, ProvidedDependencies, SubmitHandler } from '../../internals/types';
@@ -86,6 +87,7 @@ const onboarding: FlowV2< typeof initialize > = {
 		const coupon = useQuery().get( 'coupon' );
 
 		const [ useMyDomainTracksEventProps, setUseMyDomainTracksEventProps ] = useState( {} );
+		const { setShouldShowNotification } = usePurchasePlanNotification();
 
 		/**
 		 * Returns [destination, backDestination] for the post-checkout destination.
@@ -229,6 +231,7 @@ const onboarding: FlowV2< typeof initialize > = {
 				case 'create-site':
 					return navigate( 'processing', undefined, true );
 				case 'post-checkout-onboarding':
+					setShouldShowNotification( providedDependencies?.siteId as number );
 					return navigate( 'processing' );
 				case 'processing': {
 					const [ destination, backDestination ] =

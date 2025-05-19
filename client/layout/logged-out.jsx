@@ -332,12 +332,16 @@ export default withCurrentRoute(
 			const isWPJobManager = isWPJobManagerOAuth2Client( oauth2Client );
 			const isBlazePro = getIsBlazePro( state );
 			const isGravPoweredClient = isGravPoweredOAuth2Client( oauth2Client );
-			const isWPComLogin =
-				currentRoute.startsWith( '/log-in' ) &&
-				! isJetpackLogin &&
-				Boolean( currentQuery?.client_id ) === false;
 			const isPartnerPortal = isPartnerPortalOAuth2Client( oauth2Client );
-			const isWhiteLogin = isWPComLogin || isPartnerPortal;
+			const isWooJPC = isWooJPCFlow( state );
+
+			const isWhiteLogin =
+				( ! isJetpackLogin &&
+					Boolean( currentQuery?.client_id ) === false &&
+					Boolean( currentQuery?.oauth2_client_id ) === false &&
+					! isWooJPC ) ||
+				isPartnerPortal;
+
 			const noMasterbarForRoute =
 				isJetpackLogin ||
 				( isWhiteLogin && ! isBlazePro ) ||
@@ -348,7 +352,6 @@ export default withCurrentRoute(
 				! isWooOAuth2Client( oauth2Client ) &&
 				! isBlazeProOAuth2Client( oauth2Client ) &&
 				[ 'signup', 'jetpack-connect' ].includes( sectionName );
-			const isWooJPC = isWooJPCFlow( state );
 			const wccomFrom = getWccomFrom( state );
 			const masterbarIsHidden =
 				! ( currentSection || currentRoute ) ||

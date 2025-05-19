@@ -8,7 +8,7 @@
 		margin-block-start: 56px;
 		box-sizing: border-box;
 		width: 100%;
-		gap: 16px;
+		gap: 20px;
 
 		&.blueprint-form {
 			gap: 24px;
@@ -34,12 +34,23 @@
 		.a4a-form__heading-description {
 			@include body-large;
 			color: var(--color-neutral-60);
-			max-width: 460px;
 		}
 	}
 
 	.a4a-layout__banner .notice-banner{
 		padding-inline: 16px;
+	}
+
+	input[type="text"].form-text-input,
+	input[type="url"].form-text-input,
+	input[type="password"].form-text-input,
+	input[type="email"].form-text-input,
+	input[type="tel"].form-text-input,
+	input[type="number"].form-text-input,
+	input[type="search"].form-text-input,
+	.form-select,
+	.searchable-dropdown input.components-combobox-control__input[type="text"] {
+		@include body-medium;
 	}
 
 	.form-select,
@@ -124,6 +135,7 @@
 		input[type="number"].form-text-input,
 		input[type="search"].form-text-input,
 		.components-form-token-field__input,
+		.components-combobox-control__input[type="text"],
 		.form-select,
 		.form-checkbox,
 		.form-radio,
@@ -134,6 +146,14 @@
 			color: var(--color-text-inverted);
 			&::placeholder {
 				color: #E6F5FF99;
+			}
+		}
+
+		.searchable-dropdown .components-combobox-control__suggestions-container {
+			.components-flex {
+				background-color: #022836;
+				border-color: #E6F5FF1A;
+				color: var(--color-text-inverted);
 			}
 		}
 
