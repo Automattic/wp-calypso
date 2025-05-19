@@ -300,6 +300,13 @@ function LineItemWrapper( {
 	let isDeletable = canItemBeRemovedFromCart( product, responseCart ) && ! isWooMobile;
 	const has100YearPlanProduct = has100YearPlan( responseCart );
 	const signupFlowName = getSignupCompleteFlowName();
+	const [ isStreamlinedPriceExperimentLoading, streamlinedPriceExperimentAssignment ] =
+		useStreamlinedPriceExperiment();
+	const isStreamlinedPrice =
+		! isStreamlinedPriceExperimentLoading &&
+		isStreamlinedPriceCheckoutTreatment( streamlinedPriceExperimentAssignment ) &&
+		isWpComPlan( product.product_slug );
+
 	if ( isCopySiteFlow( signupFlowName ) && ! product.is_domain_registration ) {
 		isDeletable = false;
 	}
@@ -381,14 +388,6 @@ function LineItemWrapper( {
 		isJetpackPurchasableItem( product.product_slug )
 	);
 
-	const [ isStreamlinedPriceExperimentLoading, streamlinedPriceExperimentAssignment ] =
-		useStreamlinedPriceExperiment();
-
-	const isStreamlinedPrice =
-		! isStreamlinedPriceExperimentLoading &&
-		isStreamlinedPriceCheckoutTreatment( streamlinedPriceExperimentAssignment ) &&
-		isWpComPlan( product.product_slug );
-
 	const variants = useGetProductVariants( product, ( variant ) => {
 		// Only show term variants which are equal to or longer than the variant that
 		// was in the cart when checkout finished loading (not necessarily the
@@ -416,6 +415,9 @@ function LineItemWrapper( {
 	const finalShouldShowVariantSelector =
 		areThereVariants && shouldShowVariantSelector && onChangeSelection;
 
+	const firstVariant = variants[ 0 ];
+	const compareToPrice = firstVariant?.priceBeforeDiscounts / firstVariant?.termIntervalInMonths;
+
 	return (
 		<WPOrderReviewListItem key={ product.uuid }>
 			<LineItem
@@ -431,6 +433,8 @@ function LineItemWrapper( {
 				onRemoveProductCancel={ onRemoveProductCancel }
 				isAkPro500Cart={ isAkPro500Cart }
 				shouldShowBillingInterval={ ! finalShouldShowVariantSelector }
+				shouldShowComparison={ isStreamlinedPrice }
+				compareToPrice={ compareToPrice }
 			>
 				<DropdownWrapper>
 					{ finalShouldShowVariantSelector && (

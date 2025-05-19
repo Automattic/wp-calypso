@@ -19,6 +19,12 @@
 				gap: 8px;
 			}
 		}
+
+		&.is-horizontal .a4a-form__content-wrapper {
+			display: flex;
+			flex-direction: row;
+			gap: 16px;
+		}
 	}
 
 	.multi-checkbox label {
@@ -37,5 +43,14 @@
 
 	.multi-checkbox .form-checkbox + span {
 		margin-left: 8px;
+	}
+}
+
+.signup-personalization-form__description {
+	margin-block-start: 8px;
+	@include body-medium;
+
+	@media (prefers-color-scheme: dark) {
+		color: var(--color-text-inverted);
 	}
 }

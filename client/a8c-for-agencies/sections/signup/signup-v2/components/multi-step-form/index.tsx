@@ -8,6 +8,7 @@ import A4ALogo, {
 } from 'calypso/a8c-for-agencies/components/a4a-logo';
 import { useIsDarkMode } from 'calypso/a8c-for-agencies/hooks/use-is-dark-mode';
 import { AgencyDetailsSignupPayload } from 'calypso/a8c-for-agencies/sections/signup/types';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import useCreateSignupMutation from '../../../hooks/use-create-signup-mutation';
 import StepProgress from '../step-progress';
@@ -16,9 +17,15 @@ import BlueprintForm2 from './blueprint-form-2';
 import ChoiceBlueprint from './choice-blueprint';
 import SignupContactForm from './contact-form';
 import FinishSignupSurvey from './finish-signup-survey';
+import useSubmitSignup from './hooks/use-submit-signup';
 import PersonalizationForm from './personalization';
 
 import './style.scss';
+
+type Props = {
+	withPersonalizedBlueprint?: boolean;
+	submitAsSurvey?: boolean;
+};
 
 type PersonalizationStepProgress = {
 	[ key: number ]: number;
@@ -30,6 +37,10 @@ type Step = {
 	value: number;
 };
 
+const STEP_NOT_STARTED = 0;
+const STEP_HALFWAY = 50;
+const STEP_COMPLETED = 100;
+
 const personalizationStepProgress: PersonalizationStepProgress = {
 	3: 50,
 	4: 75,
@@ -37,19 +48,33 @@ const personalizationStepProgress: PersonalizationStepProgress = {
 	6: 100,
 };
 
-const getPersonalizationProgress = ( currentStep: number ): number => {
-	return personalizationStepProgress[ currentStep ] ?? 0;
+const getPersonalizationProgress = (
+	currentStep: number,
+	withPersonalizedBlueprint: boolean
+): number => {
+	if ( withPersonalizedBlueprint ) {
+		// if this includes blueprint, it means we have more steps to go.
+		return personalizationStepProgress[ currentStep ] ?? STEP_NOT_STARTED;
+	}
+
+	if ( currentStep > 2 ) {
+		// If we are past Step 2, it means we have completed the Personalization screen.
+		return STEP_COMPLETED;
+	}
+
+	// If we are in Step 2, it means we are halfway through the process otherwise personalization is not started
+	return currentStep === 2 ? STEP_HALFWAY : STEP_NOT_STARTED;
 };
 
 const getSignupProgress = ( step: number ): number => {
-	return step === 1 ? 50 : 100;
+	return step === 1 ? STEP_HALFWAY : STEP_COMPLETED;
 };
 
 const getFinishSurveyProgress = ( step: number ): number => {
-	return step === 6 ? 100 : 0;
+	return step === 6 ? STEP_COMPLETED : STEP_NOT_STARTED;
 };
 
-const MultiStepForm = () => {
+const MultiStepForm = ( { withPersonalizedBlueprint = false, submitAsSurvey = false }: Props ) => {
 	const notificationId = 'a4a-agency-signup-form';
 	const translate = useTranslate();
 	const [ currentStep, setCurrentStep ] = useState( 1 );
@@ -68,16 +93,20 @@ const MultiStepForm = () => {
 		{
 			label: translate( 'Personalize' ),
 			isActive: currentStep > 3,
-			value: getPersonalizationProgress( currentStep ),
+			value: getPersonalizationProgress( currentStep, withPersonalizedBlueprint ),
 		},
-		{
-			label: translate( 'Finish survey' ),
-			isActive: currentStep > 5,
-			value: getFinishSurveyProgress( currentStep ),
-		},
+		...( submitAsSurvey
+			? [
+					{
+						label: translate( 'Finish survey' ),
+						isActive: currentStep > 5,
+						value: getFinishSurveyProgress( currentStep ),
+					},
+			  ]
+			: [] ),
 	];
 
-	const createSignup = useCreateSignupMutation( {
+	const { mutate: submitSurvey } = useCreateSignupMutation( {
 		onSuccess: () => {
 			dispatch( successNotice( 'Signup successful', { id: notificationId } ) );
 		},
@@ -85,6 +114,28 @@ const MultiStepForm = () => {
 			dispatch( errorNotice( error?.message, { id: notificationId } ) );
 		},
 	} );
+
+	const submitSignup = useSubmitSignup();
+
+	const trackView = useCallback(
+		( step: number ) => {
+			const viewMap = {
+				1: 'signup_contact_form',
+				2: 'personalization_form',
+				3: 'choice_blueprint',
+				4: 'blueprint_form',
+				5: 'blueprint_form_2',
+				6: 'finish_signup_survey',
+			};
+
+			dispatch(
+				recordTracksEvent( 'calypso_a4a_agency_signup_form_view', {
+					step: viewMap[ step as keyof typeof viewMap ],
+				} )
+			);
+		},
+		[ dispatch ]
+	);
 
 	const updateDataAndContinue = useCallback(
 		(
@@ -95,7 +146,7 @@ const MultiStepForm = () => {
 			const newFormData = { ...formData, ...data };
 			setFormData( newFormData );
 			setCurrentStep( nextStep );
-			if ( nextStep === 6 ) {
+			if ( nextStep === 6 && submitAsSurvey ) {
 				const {
 					topPartneringGoal,
 					topYearlyGoal,
@@ -105,10 +156,10 @@ const MultiStepForm = () => {
 					...rest
 				} = newFormData;
 				const payload = isBlueprintRequested ? newFormData : rest;
-				createSignup.mutate( payload as AgencyDetailsSignupPayload );
+				submitSurvey( payload as AgencyDetailsSignupPayload );
 			}
 		},
-		[ formData, createSignup ]
+		[ formData, submitAsSurvey, submitSurvey ]
 	);
 
 	const clearDataAndRefresh = () => {
@@ -117,19 +168,34 @@ const MultiStepForm = () => {
 		window.location.reload();
 	};
 
+	const onCreateAgency = useCallback(
+		( data: Partial< AgencyDetailsSignupPayload > ) => {
+			const newFormData = { ...formData, ...data };
+			submitSignup( newFormData as AgencyDetailsSignupPayload );
+		},
+		[ formData, submitSignup ]
+	);
+
 	const currentForm = useMemo( () => {
+		trackView( currentStep );
 		switch ( currentStep ) {
 			case 1:
 				return (
 					<SignupContactForm
 						onContinue={ ( data ) => updateDataAndContinue( data, 2 ) }
 						initialFormData={ formData }
+						withEmail={ submitAsSurvey }
 					/>
 				);
 			case 2:
 				return (
 					<PersonalizationForm
-						onContinue={ ( data ) => updateDataAndContinue( data, 3 ) }
+						onContinue={ ( data ) =>
+							// If the multi-form does not include blueprint, we can skip to the last step (6).
+							updateDataAndContinue( data, withPersonalizedBlueprint ? 3 : 6 )
+						}
+						onSubmit={ ( data ) => onCreateAgency( data ) }
+						isFinalStep={ ! submitAsSurvey }
 						initialFormData={ formData }
 						goBack={ () => setCurrentStep( 1 ) }
 					/>
@@ -171,7 +237,16 @@ const MultiStepForm = () => {
 			default:
 				return null;
 		}
-	}, [ blueprintRequested, currentStep, formData, updateDataAndContinue ] );
+	}, [
+		blueprintRequested,
+		currentStep,
+		formData,
+		onCreateAgency,
+		submitAsSurvey,
+		trackView,
+		updateDataAndContinue,
+		withPersonalizedBlueprint,
+	] );
 
 	return (
 		<div className="signup-multi-step-form">
