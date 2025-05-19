@@ -89,7 +89,7 @@ const MultiStepForm = ( {
 
 	const steps: Step[] = [
 		{
-			label: translate( 'Sign up' ),
+			label: translate( 'Your agency details' ),
 			isActive: currentStep > 0,
 			value: getSignupProgress( currentStep ),
 		},
@@ -101,7 +101,7 @@ const MultiStepForm = ( {
 		...( signupWithMagicLinkFlow
 			? [
 					{
-						label: translate( 'Finish survey' ),
+						label: translate( 'Finish sign up' ),
 						isActive: currentStep > 5,
 						value: getFinishSurveyProgress( currentStep ),
 					},
