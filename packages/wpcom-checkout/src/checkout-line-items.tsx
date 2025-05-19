@@ -27,6 +27,7 @@ import {
 	Theme,
 } from '@automattic/composite-checkout';
 import { formatCurrency } from '@automattic/number-formatters';
+import { keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useState, PropsWithChildren, useRef, Dispatch, SetStateAction } from 'react';
@@ -47,6 +48,56 @@ import type {
 	ResponseCartProduct,
 	TitanProductUser,
 } from '@automattic/shopping-cart';
+
+const LoadingCard = styled.div`
+	padding: 24px 0;
+
+	:first-of-type {
+		border-top: 0;
+	}
+`;
+
+const LoadingRow = styled.div`
+	display: flex;
+	justify-content: space-between;
+`;
+
+interface LoadingContainerProps {
+	noMargin?: boolean;
+	width?: string;
+	height?: string;
+}
+
+const pulse = keyframes`
+  0% {
+    opacity: 1;
+  }
+
+  70% {
+  	opacity: 0.5;
+  }
+
+  100% {
+    opacity: 1;
+  }
+`;
+
+const LoadingCopy = styled.p< LoadingContainerProps >`
+	font-size: 14px;
+	height: ${ ( props ) => props.height ?? '16px' };
+	content: '';
+	background: ${ ( props ) => props.theme.colors.borderColorLight };
+	color: ${ ( props ) => props.theme.colors.borderColorLight };
+	margin: ${ ( props ) => ( props.noMargin ? '0' : '8px 0 0 0' ) };
+	padding: 0;
+	animation: ${ pulse } 2s ease-in-out infinite;
+	width: ${ ( props ) => props.width ?? 'inherit' };
+	box-sizing: border-box;
+
+	.rtl & {
+		margin: 8px 0 0 0;
+	}
+`;
 
 export const NonProductLineItem = styled( WPNonProductLineItem )< {
 	theme?: Theme;
@@ -1357,6 +1408,7 @@ function CheckoutLineItem( {
 	const { formStatus } = useFormStatus();
 	const itemSpanId = `checkout-line-item-${ id }`;
 	const [ isModalVisible, setIsModalVisible ] = useState( false );
+	const [ isPlaceholder, setIsPlaceholder ] = useState( false );
 	const hasRemoveFromCartModal = getHasRemoveFromCartModal( {
 		product,
 		hasBundledDomainsInCart,
@@ -1426,6 +1478,8 @@ function CheckoutLineItem( {
 			return;
 		}
 
+		setIsPlaceholder( true );
+
 		let product_uuids_to_remove = [ product.uuid ];
 
 		// Gifts need to be all or nothing, to prevent leaving
@@ -1448,6 +1502,19 @@ function CheckoutLineItem( {
 
 		onRemoveProduct?.( label );
 	};
+
+	if ( isPlaceholder ) {
+		return (
+			<LoadingCard>
+				<LoadingRow>
+					<LoadingCopy noMargin width="150px" />
+					<LoadingCopy noMargin width="45px" />
+				</LoadingRow>
+				<LoadingCopy height="35px" width="225px" />
+				<LoadingCopy width="100px" />
+			</LoadingCard>
+		);
+	}
 
 	return (
 		<div
