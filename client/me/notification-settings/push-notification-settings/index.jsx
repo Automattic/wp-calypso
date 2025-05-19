@@ -1,5 +1,5 @@
-import { Card, Button } from '@automattic/components';
-import { ToggleControl } from '@wordpress/components';
+import { Card } from '@automattic/components';
+import { ExternalLink, ToggleControl } from '@wordpress/components';
 import { getLocaleSlug, localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -113,16 +113,11 @@ class PushNotificationSettings extends Component {
 								<div>
 									{ blockedInstructionUrl &&
 										this.props.translate(
-											'{{instructionsButton}}View Instructions to Enable{{/instructionsButton}}',
+											'{{instructionsButton}}View instructions to enable{{/instructionsButton}}',
 											{
 												components: {
 													instructionsButton: (
-														<Button
-															className="is-link"
-															href={ blockedInstructionUrl }
-															target="_blank"
-															rel="noopener noreferrer"
-														/>
+														<ExternalLink href={ blockedInstructionUrl } target="_blank" />
 													),
 												},
 											}
