@@ -21,13 +21,13 @@ const localizedTabNames: { [ key: string ]: string | null } = {
 };
 
 const possibleBackLinks: { [ key: string ]: string | null } = {
-	traffic: '/stats/day/',
+	traffic: '/stats/{period}/',
 	insights: '/stats/insights/',
 	store: '/stats/store/',
 	ads: '/stats/ads/',
-	subscribers: '/stats/subscribers/',
-	posts: '/stats/day/posts/',
-	authors: '/stats/day/authors/',
+	subscribers: '/stats/subscribers/{period}/',
+	posts: '/stats/{period}/posts/',
+	authors: '/stats/{period}/authors/',
 	postDetails: null, // Last item in the history, the text is not displayed anywhere but this is used to track the item in history stack.
 };
 
@@ -58,9 +58,11 @@ export const useStatsNavigationHistory = (): { text: string; url: string | null 
 	const [ lastScreen, setLastScreen ] = useState< {
 		screen: string;
 		queryParams: QueryArgs;
+		period: string | null;
 	} >( {
 		screen: defaultLastScreen,
 		queryParams: {},
+		period: 'day',
 	} );
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
@@ -81,6 +83,7 @@ export const useStatsNavigationHistory = (): { text: string; url: string | null 
 				setLastScreen( {
 					screen: defaultLastScreen,
 					queryParams: {},
+					period: 'day',
 				} );
 			}
 		} catch ( e ) {}
@@ -91,10 +94,14 @@ export const useStatsNavigationHistory = (): { text: string; url: string | null 
 			return null;
 		}
 
-		const backLink = possibleBackLinks[ lastScreen.screen ];
+		let backLink = possibleBackLinks[ lastScreen.screen ];
 
 		if ( ! backLink ) {
 			return null;
+		}
+
+		if ( backLink.includes( '{period}' ) && lastScreen.period ) {
+			backLink = backLink.replace( '{period}', lastScreen.period );
 		}
 
 		const queryParams = buildQueryString( getFilteredQueryParams( lastScreen.queryParams ) );
@@ -111,12 +118,20 @@ export const useStatsNavigationHistory = (): { text: string; url: string | null 
 /**
  * Utility to record the current screen for back navigation
  * @param {string} screen - Current screen identifier
- * @param {Object} queryParams - Query parameters for the screen
+ * @param {Object} args - Arguments for the screen
+ * @param {Object} args.queryParams - Query parameters for the screen
+ * @param {string} args.period - Period for the screen
  * @param {boolean} reset - Whether to reset the navigation history
  */
 export const recordCurrentScreen = (
 	screen: string,
-	queryParams: QueryArgs = {},
+	args: {
+		queryParams: QueryArgs;
+		period: string | null;
+	} = {
+		queryParams: {},
+		period: null,
+	},
 	reset: boolean = false
 ): void => {
 	try {
@@ -124,10 +139,11 @@ export const recordCurrentScreen = (
 			return;
 		}
 
-		const filteredQueryParams = getFilteredQueryParams( queryParams );
+		const filteredQueryParams = getFilteredQueryParams( args.queryParams );
 		const currentEntry = {
 			screen,
 			queryParams: filteredQueryParams,
+			period: args.period,
 		};
 
 		// Get current navigation history array

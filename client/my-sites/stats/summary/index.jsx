@@ -48,20 +48,26 @@ class StatsSummary extends Component {
 	componentDidMount() {
 		window.scrollTo( 0, 0 );
 
-		const { context } = this.props;
+		const { context, period } = this.props;
 		const { module } = context.params;
 		const { query } = context;
 
-		recordCurrentScreen( module, query );
+		recordCurrentScreen( module, {
+			queryParams: query,
+			period: period?.period,
+		} );
 	}
 
 	componentDidUpdate( prevProps ) {
 		if ( ! isEqual( prevProps.statsQueryOptions, this.props.statsQueryOptions ) ) {
-			const { context } = this.props;
+			const { context, period } = this.props;
 			const { module } = context.params;
 			const { query } = context;
 
-			recordCurrentScreen( module, query );
+			recordCurrentScreen( module, {
+				queryParams: query,
+				period: period?.period,
+			} );
 		}
 	}
 

@@ -99,13 +99,19 @@ class StatsPostDetail extends Component {
 		window.scrollTo( 0, 0 );
 
 		const { context } = this.props;
-		recordCurrentScreen( 'postDetails', context.query );
+		recordCurrentScreen( 'postDetails', {
+			queryParams: context.query,
+			period: null,
+		} );
 	}
 
 	componentDidUpdate( prevProps ) {
 		const { context } = this.props;
 		if ( ! isEqual( prevProps.context, this.props.context ) ) {
-			recordCurrentScreen( 'postDetails', context.query );
+			recordCurrentScreen( 'postDetails', {
+				queryParams: context.query,
+				period: null,
+			} );
 		}
 	}
 

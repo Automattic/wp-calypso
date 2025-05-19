@@ -900,10 +900,8 @@ const StatsBodyAccessCheck = ( props ) => {
 };
 
 const StatsSite = ( props ) => {
-	const {
-		context,
-		period: { period },
-	} = props;
+	const { context, period: periodProps } = props;
+	const { period } = periodProps;
 
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 	const siteId = useSelector( getSelectedSiteId );
@@ -918,8 +916,15 @@ const StatsSite = ( props ) => {
 
 	useEffect( () => {
 		const query = context.query;
-		recordCurrentScreen( 'traffic', query, true );
-	}, [ context.query ] );
+		recordCurrentScreen(
+			'traffic',
+			{
+				queryParams: query,
+				period: periodProps?.period,
+			},
+			true
+		);
+	}, [ context.query, periodProps?.period ] );
 
 	return (
 		<Main fullWidthLayout ariaLabel={ STATS_PRODUCT_NAME }>
