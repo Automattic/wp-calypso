@@ -34,13 +34,22 @@
 		.purchase-item__title {
 			font-size: 16px;
 		}
+
+		div {
+			max-width: 462px;
+		}
 	}
 
 	.dataviews-view-table__cell-content-wrapper .purchase-item__status {
+		flex: 0 1 300px;
 		margin-right: 16px;
 	}
 
 	.dataviews-view-table__cell-content-wrapper .purchase-item__payment-method {
+		flex: 0 0 200px;
+		display: flex;
+		align-items: center;
+		flex-wrap: wrap;
 
 		.purchase-item__payment-method-card {
 			margin-right: 8px;
