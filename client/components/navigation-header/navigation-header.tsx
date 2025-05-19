@@ -2,7 +2,7 @@ import page from '@automattic/calypso-router';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import { ReactNode } from 'react';
-import { popCurrentScreenFromHistory } from 'calypso/my-sites/stats/hooks/use-stats-navigation';
+import { popCurrentScreenFromHistory } from 'calypso/my-sites/stats/hooks/use-stats-navigation-history';
 import './navigation-header.scss';
 
 // Type definitions for the props
