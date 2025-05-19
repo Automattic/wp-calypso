@@ -62,9 +62,13 @@ const enhanceContextWithLogin = ( context ) => {
 		getOAuth2Client( context.store.getState(), Number( clientId || oauth2ClientId ) ) || {};
 	const isGravPoweredClient = isGravPoweredOAuth2Client( oauth2Client );
 	const isPartnerPortalClient = isPartnerPortalOAuth2Client( oauth2Client );
+	const isWooJPC = isWooJPCFlow( context.store.getState() );
 
 	const isWhiteLogin =
-		( ! isJetpackLogin && Boolean( clientId ) === false && Boolean( oauth2ClientId ) === false ) ||
+		( ! isJetpackLogin &&
+			Boolean( clientId ) === false &&
+			Boolean( oauth2ClientId ) === false &&
+			! isWooJPC ) ||
 		isPartnerPortalClient;
 
 	context.primary = (

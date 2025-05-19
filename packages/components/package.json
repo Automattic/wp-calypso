@@ -94,13 +94,14 @@
 		"@types/node": "^22.7.5",
 		"postcss": "^8.5.3",
 		"storybook": "^8.6.12",
-		"typescript": "^5.8.2",
+		"typescript": "^5.8.3",
 		"webpack": "^5.97.1"
 	},
 	"scripts": {
 		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",
 		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json && copy-assets",
 		"prepack": "yarn run clean && yarn run build",
-		"storybook:start": "storybook dev -p 56833"
+		"storybook:start": "storybook dev -p 56833",
+		"storybook:build": "storybook build"
 	}
 }

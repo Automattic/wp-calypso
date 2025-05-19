@@ -37,6 +37,6 @@
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"jest": "^29.7.0",
-		"typescript": "^5.8.2"
+		"typescript": "^5.8.3"
 	}
 }

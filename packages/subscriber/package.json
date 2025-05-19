@@ -57,7 +57,7 @@
 	"devDependencies": {
 		"@automattic/calypso-color-schemes": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
-		"typescript": "^5.8.2"
+		"typescript": "^5.8.3"
 	},
 	"peerDependencies": {
 		"@wordpress/data": "^10.23.0",

@@ -106,9 +106,7 @@ export function getHeaderText(
 
 	if ( action === 'lostpassword' ) {
 		headerText = translate( 'Forgot your password?' );
-	}
-
-	if ( oauth2Client ) {
+	} else if ( oauth2Client ) {
 		if ( isWCCOM ) {
 			if ( wccomFrom === 'cart' ) {
 				headerText = translate( 'Log in with a WordPress.com account' );
@@ -173,25 +171,18 @@ export function getHeaderText(
 		if ( isBlazeProOAuth2Client( oauth2Client ) ) {
 			headerText = translate( 'Log in to your Blaze Pro account' );
 		}
-	}
-
-	if ( isWooJPC ) {
+	} else if ( isWooJPC ) {
 		const isLostPasswordFlow = currentQuery.lostpassword_flow === 'true';
-		switch ( true ) {
-			case isLostPasswordFlow:
-				headerText = translate( "You've got mail" );
-			case twoFactorEnabled:
-				headerText = translate( 'Authenticate your login' );
-			default:
-				headerText = translate( 'Log in to your account' );
+		if ( isLostPasswordFlow ) {
+			headerText = translate( "You've got mail" );
+		} else if ( twoFactorEnabled ) {
+			headerText = translate( 'Authenticate your login' );
+		} else {
+			headerText = translate( 'Log in to your account' );
 		}
-	}
-
-	if ( isFromMigrationPlugin ) {
+	} else if ( isFromMigrationPlugin ) {
 		headerText = translate( 'Log in to your account' );
-	}
-
-	if ( isJetpack && ! isFromAutomatticForAgenciesPlugin ) {
+	} else if ( isJetpack && ! isFromAutomatticForAgenciesPlugin ) {
 		const isJetpackMagicLinkSignUpFlow = config.isEnabled( 'jetpack/magic-link-signup' );
 		headerText = isJetpackMagicLinkSignUpFlow
 			? translate(
@@ -441,40 +432,33 @@ export function LoginHeader( {
 			new URLSearchParams( initialQuery?.redirect_to ).get( 'plugin_name' ),
 			translate
 		);
+		header = <h3>{ headerText }</h3>;
 		let subtitle = null;
 
-		switch ( true ) {
-			case isLostPasswordFlow:
-				header = <h3>{ headerText }</h3>;
-
-				subtitle = translate(
-					"Your password reset confirmation is on its way to your email address – please check your junk folder if it's not in your inbox! Once you've reset your password, head back to this page to log in to your account."
-				);
-				break;
-			case isTwoFactorAuthFlow:
-				header = <h3>{ headerText }</h3>;
-				break;
-			default:
-				header = <h3>{ headerText }</h3>;
-				subtitle = translate(
-					'To access all of the features and functionality %(pluginName)s, you’ll first need to connect your store to a WordPress.com account. Log in now, or {{signupLink}}create a new account{{/signupLink}}. For more information, please {{doc}}review our documentation{{/doc}}.',
-					{
-						components: {
-							signupLink,
-							br: <br />,
-							doc: (
-								<a
-									href="https://woocommerce.com/document/connect-your-store-to-a-wordpress-com-account/"
-									target="_blank"
-									rel="noreferrer"
-								/>
-							),
-						},
-						args: { pluginName },
-					}
-				);
+		if ( isLostPasswordFlow ) {
+			subtitle = translate(
+				"Your password reset confirmation is on its way to your email address – please check your junk folder if it's not in your inbox! Once you've reset your password, head back to this page to log in to your account."
+			);
+		} else if ( ! isTwoFactorAuthFlow ) {
+			header = <h3>{ headerText }</h3>;
+			subtitle = translate(
+				'To access all of the features and functionality %(pluginName)s, you’ll first need to connect your store to a WordPress.com account. Log in now, or {{signupLink}}create a new account{{/signupLink}}. For more information, please {{doc}}review our documentation{{/doc}}.',
+				{
+					components: {
+						signupLink,
+						br: <br />,
+						doc: (
+							<a
+								href="https://woocommerce.com/document/connect-your-store-to-a-wordpress-com-account/"
+								target="_blank"
+								rel="noreferrer"
+							/>
+						),
+					},
+					args: { pluginName },
+				}
+			);
 		}
-		preHeader = null;
 		postHeader = <p className="login__header-subtitle">{ subtitle }</p>;
 	} else if ( isJetpack && ! isFromAutomatticForAgenciesPlugin ) {
 		preHeader = <p className="login__jetpack-pre-header">{ translate( 'Log in or sign up' ) }</p>;
