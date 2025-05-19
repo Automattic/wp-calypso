@@ -19,16 +19,11 @@ import {
 	isAkismetProduct,
 } from '@automattic/calypso-products';
 import { Gridicon, Popover } from '@automattic/components';
-import {
-	CheckoutModal,
-	FormStatus,
-	useFormStatus,
-	Button,
-	Theme,
-} from '@automattic/composite-checkout';
+import { CheckoutModal, FormStatus, useFormStatus, Theme } from '@automattic/composite-checkout';
 import { formatCurrency } from '@automattic/number-formatters';
 import { keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
+import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState, PropsWithChildren, useRef, Dispatch, SetStateAction } from 'react';
 import { getLabel, DefaultLineItemSublabel } from './checkout-labels';
@@ -249,7 +244,6 @@ const DeleteButtonWrapper = styled.div`
 `;
 
 const DeleteButton = styled( Button )< { theme?: Theme } >`
-	color: ${ ( props ) => props.theme.colors.textColorDark };
 	font-size: 14px;
 	font-weight: 500;
 	line-height: 20px;
@@ -324,7 +318,7 @@ function WPNonProductLineItem( {
 					<DeleteButtonWrapper>
 						<DeleteButton
 							className="checkout-line-item__remove-product"
-							buttonType="text-button"
+							variant="link"
 							aria-label={ String(
 								translate( 'Remove %s from cart', {
 									args: label,
@@ -1588,7 +1582,7 @@ function CheckoutLineItem( {
 					<DeleteButtonWrapper>
 						<DeleteButton
 							className="checkout-line-item__remove-product"
-							buttonType="text-button"
+							variant="link"
 							aria-label={ String(
 								translate( 'Remove %s from cart', {
 									args: label,
