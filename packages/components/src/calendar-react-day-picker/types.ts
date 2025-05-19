@@ -252,6 +252,11 @@ interface BaseProps extends Omit< React.HTMLAttributes< HTMLDivElement >, 'onSel
 	 *
 	 */
 	timeZone?: string;
+	/**
+	 * The role attribute to add to the container element.
+	 * @default 'application'
+	 */
+	role?: 'application' | 'dialog' | undefined;
 }
 
 interface SinglePropsRequired {

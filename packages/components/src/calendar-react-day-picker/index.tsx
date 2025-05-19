@@ -46,6 +46,30 @@ const MODIFIER_CLASSNAMES = {
 	preview_end: `${ BASE_CLASSNAME }__day--preview-end`,
 };
 
+const COMMON_PROPS = {
+	animate: true,
+	// Only show days in the current month
+	showOutsideDays: false,
+	// Hide week number column
+	showWeekNumber: false,
+	// Show weekdays row
+	hideWeekdays: false,
+	// Month and year caption are not interactive
+	captionLayout: 'label',
+	// Show a variable number of weeks depending on the month
+	fixedWeeks: false,
+	// Show navigation buttons
+	hideNavigation: false,
+	// Class names
+	classNames: CLASSNAMES,
+	// Default role
+	role: 'application',
+} as const;
+
+function clampNumberOfMonths( numberOfMonths: number ) {
+	return Math.min( 3, Math.max( 1, numberOfMonths ) );
+}
+
 function isLocaleRTL( localeCode: string ) {
 	return [
 		'ar', // Arabic
@@ -60,8 +84,7 @@ function isLocaleRTL( localeCode: string ) {
 	].includes( localeCode.split( '-' )[ 0 ].toLowerCase() );
 }
 
-const useCommonProps = ( {
-	numberOfMonths,
+const useLocalizationProps = ( {
 	dir,
 	locale,
 	timeZone,
@@ -75,23 +98,6 @@ const useCommonProps = ( {
 		const localeCode = locale?.code ?? 'en-US';
 
 		return {
-			animate: true,
-			// Only show days in the current month
-			showOutsideDays: false,
-			// Hide week number column
-			showWeekNumber: false,
-			// Show weekdays row
-			hideWeekdays: false,
-			// Month and year caption are not interactive
-			captionLayout: 'label',
-			// Show a variable number of weeks depending on the month
-			fixedWeeks: false,
-			// Show navigation buttons
-			hideNavigation: false,
-			// Show multiple months (1, 2, 3)
-			numberOfMonths: Math.min( 3, Math.max( 1, numberOfMonths ) ),
-			// Classname
-			classNames: CLASSNAMES,
 			// Localization
 			locale,
 			dir: dir ?? isLocaleRTL( localeCode ) ? 'rtl' : 'ltr',
@@ -113,10 +119,8 @@ const useCommonProps = ( {
 				},
 			},
 			timeZone,
-			// a11y
-			role: 'application',
 		} as const;
-	}, [ numberOfMonths, locale, timeZone, dir ] );
+	}, [ locale, timeZone, dir ] );
 
 	return commonProps;
 };
@@ -132,7 +136,7 @@ export const DateCalendar = ( {
 	timeZone,
 	...props
 }: DateCalendarProps ) => {
-	const commonProps = useCommonProps( { numberOfMonths, locale, timeZone, dir } );
+	const localizationProps = useLocalizationProps( { numberOfMonths, locale, timeZone, dir } );
 
 	const [ selected, setSelected ] = useControlledValue< Date | undefined >( {
 		defaultValue: defaultSelected,
@@ -143,9 +147,11 @@ export const DateCalendar = ( {
 	return (
 		<DayPicker
 			aria-label={ ariaLabel }
+			{ ...COMMON_PROPS }
 			{ ...props }
-			{ ...commonProps }
+			{ ...localizationProps }
 			mode="single"
+			numberOfMonths={ clampNumberOfMonths( numberOfMonths ) }
 			selected={ selected }
 			onSelect={ setSelected }
 		/>
@@ -166,7 +172,7 @@ export const DateRangeCalendar = ( {
 	max,
 	...props
 }: DateRangeCalendarProps ) => {
-	const commonProps = useCommonProps( { numberOfMonths, locale, timeZone, dir } );
+	const localizationProps = useLocalizationProps( { numberOfMonths, locale, timeZone, dir } );
 
 	const [ selected, setSelected ] = useControlledValue< DateRange | undefined >( {
 		defaultValue: defaultSelected,
@@ -229,9 +235,11 @@ export const DateRangeCalendar = ( {
 	return (
 		<DayPicker
 			aria-label={ ariaLabel }
+			{ ...COMMON_PROPS }
 			{ ...props }
-			{ ...commonProps }
+			{ ...localizationProps }
 			mode="range"
+			numberOfMonths={ clampNumberOfMonths( numberOfMonths ) }
 			excludeDisabled={ excludeDisabled }
 			min={ min }
 			max={ max }
