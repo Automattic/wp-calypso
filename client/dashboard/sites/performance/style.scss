@@ -44,17 +44,12 @@
 
 .site-performance-report button {
 	background: unset;
+	border-radius: inherit;
 }
 
-.site-performance-report .core-web-vitals-display:not(.is-desktop) button {
+.site-performance-report .core-web-vitals-display:not(.is-desktop) button,
+.site-performance-report .foldable-card__action {
 	border: 0;
-}
-
-.site-performance-report .core-web-vitals-display__details,
-.site-performance-report .core-web-vitals-display + *,
-.site-performance-report .performance-profiler-insights-section,
-.site-performance-report .metric-tab-bar__performance {
-	background: #fff;
 }
 
 .site-performance-report .core-web-vitals-display__metric {
