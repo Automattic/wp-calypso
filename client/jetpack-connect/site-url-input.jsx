@@ -218,7 +218,7 @@ class JetpackConnectSiteUrlInput extends Component {
 					<Button
 						className="jetpack-connect__connect-button"
 						primary
-						disabled={ isDisabled }
+						disabled={ isDisabled && ! isBusy }
 						busy={ isBusy }
 						onClick={ this.handleFormSubmit }
 					>
