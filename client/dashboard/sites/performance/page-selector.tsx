@@ -82,6 +82,7 @@ export function PageSelector( {
 			options={ pageOptions }
 			isLoading={ isLoading }
 			value={ currentPageOption?.value }
+			hideLabelFromVision
 			onChange={ ( page_id ) => {
 				recordTracksEvent( 'calypso_performance_profiler_page_selector_change', {
 					is_home: page_id === '0',

@@ -30,6 +30,7 @@ export default function DeviceToggle( { value, onChange, disabled }: DeviceToggl
 			value={ value }
 			isBlock
 			disabled={ disabled }
+			hideLabelFromVision
 			__next40pxDefaultSize
 			__nextHasNoMarginBottom
 			onChange={ ( value ) => onChange( value as ToggleType ) }
