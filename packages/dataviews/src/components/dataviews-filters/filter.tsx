@@ -36,6 +36,10 @@ import {
 	OPERATOR_IS_NONE,
 	OPERATOR_IS_ALL,
 	OPERATOR_IS_NOT_ALL,
+	OPERATOR_LESS_THAN,
+	OPERATOR_GREATER_THAN,
+	OPERATOR_LESS_THAN_OR_EQUAL,
+	OPERATOR_GREATER_THAN_OR_EQUAL,
 } from '../../constants';
 import type {
 	Filter,
@@ -145,6 +149,58 @@ const FilterText = ( {
 			sprintf(
 				/* translators: 1: Filter name. 3: Filter value. e.g.: "Author is not: Admin". */
 				__( '<Name>%1$s is not: </Name><Value>%2$s</Value>' ),
+				filter.name,
+				activeElements[ 0 ].label
+			),
+			filterTextWrappers
+		);
+	}
+
+	if ( filterInView?.operator === OPERATOR_LESS_THAN ) {
+		return createInterpolateElement(
+			sprintf(
+				/* translators: 1: Filter name. 3: Filter value. e.g.: "Author is not: Admin". */
+				__( '<Name>%1$s is less than: </Name><Value>%2$s</Value>' ),
+				filter.name,
+				activeElements[ 0 ].label
+			),
+			filterTextWrappers
+		);
+	}
+
+	if ( filterInView?.operator === OPERATOR_GREATER_THAN ) {
+		return createInterpolateElement(
+			sprintf(
+				/* translators: 1: Filter name. 3: Filter value. e.g.: "Author is not: Admin". */
+				__( '<Name>%1$s is greater than: </Name><Value>%2$s</Value>' ),
+				filter.name,
+				activeElements[ 0 ].label
+			),
+			filterTextWrappers
+		);
+	}
+
+	if ( filterInView?.operator === OPERATOR_LESS_THAN_OR_EQUAL ) {
+		return createInterpolateElement(
+			sprintf(
+				/* translators: 1: Filter name. 3: Filter value. e.g.: "Author is less than or equal to: Admin". */
+				__(
+					'<Name>%1$s is less than or equal to: </Name><Value>%2$s</Value>'
+				),
+				filter.name,
+				activeElements[ 0 ].label
+			),
+			filterTextWrappers
+		);
+	}
+
+	if ( filterInView?.operator === OPERATOR_GREATER_THAN_OR_EQUAL ) {
+		return createInterpolateElement(
+			sprintf(
+				/* translators: 1: Filter name. 3: Filter value. e.g.: "Author is greater than or equal to: Admin". */
+				__(
+					'<Name>%1$s is greater than or equal to: </Name><Value>%2$s</Value>'
+				),
 				filter.name,
 				activeElements[ 0 ].label
 			),
