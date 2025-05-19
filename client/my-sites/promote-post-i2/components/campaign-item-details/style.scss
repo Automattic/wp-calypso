@@ -1127,6 +1127,12 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 		}
 	}
 
+	.cancel-campaign-button:focus {
+		background: var(--color-error);
+		color: var(--color-surface);
+	}
+
+
 	.components-dropdown-menu__toggle:focus {
 		outline: none;
 		box-shadow: 0 0 0 2px var(--color-accent);

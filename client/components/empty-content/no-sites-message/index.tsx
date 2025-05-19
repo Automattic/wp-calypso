@@ -1,7 +1,6 @@
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import { ReactNode } from 'react';
-import noSitesIllustration from 'calypso/assets/images/illustrations/illustration-nosites.svg';
 import EmptyContent from 'calypso/components/empty-content';
 import { onboardingUrl } from 'calypso/lib/paths';
 
@@ -49,9 +48,6 @@ const NoSitesMessage = ( {
 			action={ hideAction ? undefined : action ?? __( 'Create a site' ) }
 			actionURL={ hideAction ? undefined : actionURL ?? onboardingUrl() + '?ref=calypso-nosites' }
 			actionCallback={ hideAction ? undefined : actionCallback }
-			illustration={ illustration === false ? null : noSitesIllustration }
-			illustrationWidth={ 124 }
-			illustrationHeight={ 101 }
 		/>
 	);
 };

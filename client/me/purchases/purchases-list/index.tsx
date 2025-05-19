@@ -5,7 +5,6 @@ import { isValueTruthy } from '@automattic/wpcom-checkout';
 import { LocalizeProps, localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import noSitesIllustration from 'calypso/assets/images/illustrations/illustration-nosites.svg';
 import QueryConciergeInitial from 'calypso/components/data/query-concierge-initial';
 import QueryMembershipsSubscriptions from 'calypso/components/data/query-memberships-subscriptions';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
@@ -207,7 +206,6 @@ class PurchasesList extends Component<
 								) }
 								action={ translate( 'Upgrade now' ) }
 								actionURL="/plans"
-								illustration={ noSitesIllustration }
 								actionCallback={ () => {
 									recordTracksEvent( 'calypso_no_purchases_upgrade_nudge_click', commonEventProps );
 								} }

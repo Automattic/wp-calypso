@@ -148,7 +148,7 @@ export const ItemVariationDropDown: FunctionComponent< ItemVariationPickerProps 
 
 	let compareTo = undefined;
 	if ( isStreamlinedPrice ) {
-		compareTo = variants.find( ( variant ) => variant.termIntervalInMonths === 1 );
+		compareTo = variants[ 0 ];
 	}
 	const ItemVariantDropDownPriceWrapper: FunctionComponent< { variant: WPCOMProductVariant } > = (
 		props
@@ -213,7 +213,7 @@ function ItemVariantOptionList( {
 	isStreamlinedPrice: boolean;
 } ) {
 	const compareTo = isStreamlinedPrice
-		? variants.find( ( variant ) => variant.termIntervalInMonths === 1 )
+		? variants[ 0 ]
 		: variants.find( ( variant ) => variant.productId === selectedItem.product_id );
 	return (
 		<OptionList role="listbox" tabIndex={ -1 } detached={ isStreamlinedPrice }>
