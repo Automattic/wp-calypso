@@ -57,7 +57,26 @@ body.is-section-reader {
 	}
 }
 
-.is-section-reader {
+:root .theme-default .is-section-reader {
+		.sidebar__menu {
+			.sidebar__menu--selected {
+				.sidebar__heading{
+					color: var(--color-sidebar-menu-selected-text);
+					background-color: var(--color-sidebar-menu-hover-background);
+					&:hover {
+						background-color: var(--color-sidebar-menu-hover-background);
+						color: var(--color-sidebar-menu-selected-text);
+					}
+				}
+
+				.sidebar__expandable-title {
+					color: currentColor;
+				}
+				.sidebar__menu-icon {
+					fill: currentColor;
+				}
+			}
+	}
 	.sidebar__menu-icon {
 		margin-right: 12px;
 	}
@@ -88,9 +107,6 @@ body.is-section-reader {
 		}
 	}
 
-	.sidebar__menu {
-		user-select: none;
-	}
 
 	.sidebar__menu-link-reader {
 		line-height: 1.8;
