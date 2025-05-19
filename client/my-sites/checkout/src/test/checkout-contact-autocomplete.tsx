@@ -7,7 +7,6 @@ import userEvent from '@testing-library/user-event';
 import { dispatch } from '@wordpress/data';
 import nock from 'nock';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
-import * as UtilsTotals from 'calypso/my-sites/checkout/utils/use-equivalent-monthly-totals';
 import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 import { getDomainsBySiteId, hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getPlansBySiteId } from 'calypso/state/sites/plans/selectors/get-plans-by-site';
@@ -69,13 +68,6 @@ describe( 'Checkout contact step', () => {
 		dispatch( CHECKOUT_STORE ).reset();
 		( useCartKey as jest.Mock ).mockImplementation( () => mainCartKey );
 		nock.cleanAll();
-
-		// part of features related to useStreamlinedPriceExperiment
-		UtilsTotals.useEquivalentMonthlyTotals = jest.fn();
-		UtilsTotals.useEquivalentMonthlyTotals.mockImplementation( () => {
-			return {};
-		} );
-
 		mockGetVatInfoEndpoint( {} );
 		mockGetPaymentMethodsEndpoint( [] );
 		mockLogStashEndpoint();
