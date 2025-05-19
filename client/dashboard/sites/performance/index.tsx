@@ -1,6 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
 import { useSearch } from '@tanstack/react-router';
-import { __experimentalHStack as HStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
 import { performanceProfilerPagesQuery, siteQuery } from '../../app/queries';
@@ -80,17 +79,19 @@ function SitePerformanceContent( { site }: { site: Site } ) {
 				description={
 					<SubTitle performanceReport={ currentReport } onClick={ handleReportRefetch } />
 				}
+				actions={
+					<>
+						<PageSelector
+							isLoading={ isLoading }
+							siteUrl={ site.URL }
+							currentPage={ currentPage }
+							pages={ pagesData }
+							onChange={ handlePageChange }
+						/>
+						<DeviceTabControls value={ deviceToggle } onChange={ setDeviceToggle } />
+					</>
+				}
 			/>
-			<HStack spacing={ 2 } alignment="flex-end" justify="flex-start" expanded={ false }>
-				<PageSelector
-					isLoading={ isLoading }
-					siteUrl={ site.URL }
-					currentPage={ currentPage }
-					pages={ pagesData }
-					onChange={ handlePageChange }
-				/>
-				<DeviceTabControls value={ deviceToggle } onChange={ setDeviceToggle } />
-			</HStack>
 			<Report
 				currentPage={ currentPage }
 				report={ currentReport }
