@@ -1,3 +1,4 @@
+import page from '@automattic/calypso-router';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import { ReactNode } from 'react';
@@ -43,20 +44,20 @@ const NavigationHeader: React.FC< HeaderProps > = ( {
 	backLinkProps,
 	titleElement,
 	headElement = backLinkProps?.url && (
-		<a
+		<button
 			className="calypso-navigation-header__back-link"
-			href={ backLinkProps?.url }
 			onClick={ ( e ) => {
-				if ( backLinkProps?.onBackClick ) {
-					e.preventDefault();
-					backLinkProps.onBackClick( e );
-				}
-
 				popCurrentScreenFromHistory();
+
+				if ( backLinkProps?.onBackClick ) {
+					backLinkProps.onBackClick( e );
+				} else if ( backLinkProps?.url ) {
+					page( backLinkProps.url );
+				}
 			} }
 		>
 			← { backLinkProps?.text ?? translate( 'Back' ) }
-		</a>
+		</button>
 	),
 	rightSection,
 	hasScreenOptionsTab,
