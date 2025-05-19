@@ -77,8 +77,8 @@ describe( 'Checkout contact step VAT form', () => {
 		nock.cleanAll();
 
 		// part of features related to useStreamlinedPriceExperiment
-		UtilsTotals.useGetWpcomPlanTotalIfPaidMonthly = jest.fn();
-		UtilsTotals.useGetWpcomPlanTotalIfPaidMonthly.mockImplementation( () => {
+		UtilsTotals.useEquivalentMonthlyTotals = jest.fn();
+		UtilsTotals.useEquivalentMonthlyTotals.mockImplementation( () => {
 			return {};
 		} );
 
