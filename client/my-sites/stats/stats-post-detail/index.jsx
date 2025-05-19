@@ -55,7 +55,10 @@ class StatsPostDetail extends Component {
 		siteSlug: PropTypes.string,
 		showViewLink: PropTypes.bool,
 		previewUrl: PropTypes.string,
-		lastScreen: PropTypes.object,
+		lastScreen: PropTypes.shape( {
+			text: PropTypes.string,
+			url: PropTypes.string,
+		} ),
 	};
 
 	state = {
