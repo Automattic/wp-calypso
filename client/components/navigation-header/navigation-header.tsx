@@ -9,7 +9,7 @@ import './navigation-header.scss';
 interface BackLinkProps {
 	url?: string;
 	text?: string;
-	onBackClick?: ( e: React.MouseEvent< HTMLAnchorElement > ) => void;
+	onBackClick?: () => void;
 }
 
 export interface HeaderProps extends React.HTMLAttributes< HTMLElement > {
@@ -46,11 +46,11 @@ const NavigationHeader: React.FC< HeaderProps > = ( {
 	headElement = backLinkProps?.url && (
 		<button
 			className="calypso-navigation-header__back-link"
-			onClick={ ( e ) => {
+			onClick={ () => {
 				popCurrentScreenFromHistory();
 
 				if ( backLinkProps?.onBackClick ) {
-					backLinkProps.onBackClick( e );
+					backLinkProps.onBackClick();
 				} else if ( backLinkProps?.url ) {
 					page( backLinkProps.url );
 				}
