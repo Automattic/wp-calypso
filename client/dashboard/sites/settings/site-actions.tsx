@@ -9,10 +9,11 @@ import { ActionList } from '../../components/action-list';
 import { DotcomFeatures } from '../../data/constants';
 import type { Site } from '../../data/types';
 
+const canRestorePlanSoftware = ( { is_wpcom_atomic }: Site ) => is_wpcom_atomic;
+
 const RestorePlanSoftware = ( { site }: { site: Site } ) => {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
-	const { slug, is_wpcom_atomic } = site;
-	const mutation = useMutation( restoreSitePlanSoftwareMutation( slug ) );
+	const mutation = useMutation( restoreSitePlanSoftwareMutation( site.slug ) );
 
 	const handleClick = () => {
 		mutation.mutate( undefined, {
@@ -29,10 +30,6 @@ const RestorePlanSoftware = ( { site }: { site: Site } ) => {
 			},
 		} );
 	};
-
-	if ( ! is_wpcom_atomic ) {
-		return null;
-	}
 
 	return (
 		<ActionList.ActionItem
@@ -54,15 +51,10 @@ const RestorePlanSoftware = ( { site }: { site: Site } ) => {
 	);
 };
 
+const canDuplicateSite = ( { capabilities, plan }: Site ) =>
+	capabilities.manage_options && plan?.features.active.includes( DotcomFeatures.COPY_SITE );
+
 const DuplicateSite = ( { site }: { site: Site } ) => {
-	const { capabilities, plan, slug } = site;
-
-	if (
-		! ( capabilities.manage_options && plan?.features.active.includes( DotcomFeatures.COPY_SITE ) )
-	) {
-		return null;
-	}
-
 	return (
 		<ActionList.ActionItem
 			title={ __( 'Duplicate site' ) }
@@ -72,7 +64,7 @@ const DuplicateSite = ( { site }: { site: Site } ) => {
 					variant="secondary"
 					size="compact"
 					href={ addQueryArgs( '/setup/copy-site', {
-						sourceSlug: slug,
+						sourceSlug: site.slug,
 					} ) }
 				>
 					{ __( 'Duplicate' ) }
@@ -84,8 +76,10 @@ const DuplicateSite = ( { site }: { site: Site } ) => {
 
 export default function SiteActions( { site }: { site: Site } ) {
 	const actions = [
-		<RestorePlanSoftware key="restore-plan-software" site={ site } />,
-		<DuplicateSite key="duplicate-site" site={ site } />,
+		canRestorePlanSoftware( site ) && (
+			<RestorePlanSoftware key="restore-plan-software" site={ site } />
+		),
+		canDuplicateSite( site ) && <DuplicateSite key="duplicate-site" site={ site } />,
 	].filter( Boolean );
 
 	if ( ! actions.length ) {
