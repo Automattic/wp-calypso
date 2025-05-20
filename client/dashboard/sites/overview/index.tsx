@@ -44,7 +44,7 @@ function SiteOverview() {
 	} );
 	const { data: phpVersion } = useQuery( {
 		...sitePHPVersionQuery( siteSlug ),
-		enabled: site?.options?.is_wpcom_atomic,
+		enabled: site?.is_wpcom_atomic,
 	} );
 	const { data: currentPlan } = useQuery( siteCurrentPlanQuery( siteSlug ) );
 	const { data: primaryDomain } = useQuery( sitePrimaryDomainQuery( siteSlug ) );

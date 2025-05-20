@@ -99,7 +99,7 @@ const siteOverviewRoute = createRoute( {
 			site.jetpack && site.jetpack_modules.includes( 'monitor' )
 				? queryClient.ensureQueryData( siteMonitorUptimeQuery( siteSlug ) )
 				: undefined,
-			site.options?.is_wpcom_atomic
+			site.is_wpcom_atomic
 				? queryClient.ensureQueryData( sitePHPVersionQuery( siteSlug ) )
 				: undefined,
 		] );
