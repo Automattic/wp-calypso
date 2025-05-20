@@ -46,6 +46,7 @@ const NavigationHeader: React.FC< HeaderProps > = ( {
 	headElement = backLinkProps?.url && (
 		<button
 			className="calypso-navigation-header__back-link"
+			type="button"
 			onClick={ () => {
 				popCurrentScreenFromHistory();
 
