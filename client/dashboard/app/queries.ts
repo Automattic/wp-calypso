@@ -29,9 +29,11 @@ export function sitesQuery() {
 	};
 }
 
-export function siteQuery( siteIdOrSlug: string ) {
+// To do: split this into separate queries and combine them in the loader
+// instead.
+export function siteOverviewQuery( siteIdOrSlug: string ) {
 	return {
-		queryKey: [ 'site', siteIdOrSlug, SITE_FIELDS ],
+		queryKey: [ 'site', siteIdOrSlug, SITE_FIELDS, 'overview' ],
 		queryFn: async () => {
 			// Site usually takes the longest, so kick it off first.
 			const sitePromise = fetchSite( siteIdOrSlug );
@@ -69,6 +71,13 @@ export function siteQuery( siteIdOrSlug: string ) {
 				engagementStats,
 			};
 		},
+	};
+}
+
+export function siteQuery( siteIdOrSlug: string ) {
+	return {
+		queryKey: [ 'site', siteIdOrSlug ],
+		queryFn: () => fetchSite( siteIdOrSlug ),
 	};
 }
 

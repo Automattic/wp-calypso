@@ -15,6 +15,7 @@ import {
 	domainsQuery,
 	emailsQuery,
 	profileQuery,
+	siteOverviewQuery,
 } from './queries';
 import { queryClient } from './query-client';
 import Root from './root';
@@ -62,7 +63,6 @@ const sitesRoute = createRoute( {
 const siteRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'sites/$siteSlug',
-	loader: ( { params: { siteSlug } } ) => queryClient.ensureQueryData( siteQuery( siteSlug ) ),
 } ).lazy( () =>
 	import( '../sites/site' ).then( ( d ) =>
 		createLazyRoute( 'site' )( {
@@ -74,6 +74,12 @@ const siteRoute = createRoute( {
 const siteOverviewRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: '/',
+	loader: ( { params: { siteSlug } } ) =>
+		Promise.all( [
+			// Needed for header. To do: fix.
+			queryClient.ensureQueryData( siteQuery( siteSlug ) ),
+			queryClient.ensureQueryData( siteOverviewQuery( siteSlug ) ),
+		] ),
 } ).lazy( () =>
 	import( '../sites/overview' ).then( ( d ) =>
 		createLazyRoute( 'site-overview' )( {
@@ -108,7 +114,10 @@ const siteSettingsRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: 'settings',
 	loader: ( { params: { siteSlug } } ) =>
-		queryClient.ensureQueryData( siteSettingsQuery( siteSlug ) ),
+		Promise.all( [
+			queryClient.ensureQueryData( siteQuery( siteSlug ) ),
+			queryClient.ensureQueryData( siteSettingsQuery( siteSlug ) ),
+		] ),
 } ).lazy( () =>
 	import( '../sites/settings' ).then( ( d ) =>
 		createLazyRoute( 'site-settings' )( {

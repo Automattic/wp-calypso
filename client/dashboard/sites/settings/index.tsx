@@ -13,14 +13,12 @@ import SubscriptionGiftingSettingsSummary from '../settings-subscription-gifting
 import SiteActions from './site-actions';
 
 export default function SiteSettings( { siteSlug }: { siteSlug: string } ) {
-	const { data: siteData } = useQuery( siteQuery( siteSlug ) );
+	const { data: site } = useQuery( siteQuery( siteSlug ) );
 	const { data: settings } = useQuery( siteSettingsQuery( siteSlug ) );
 
-	if ( ! siteData || ! settings ) {
+	if ( ! site || ! settings ) {
 		return null;
 	}
-
-	const { site } = siteData;
 
 	return (
 		<PageLayout size="small" header={ <PageHeader title={ __( 'Settings' ) } /> }>

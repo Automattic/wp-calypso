@@ -9,7 +9,7 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { wordpress } from '@wordpress/icons';
-import { siteQuery } from '../../app/queries';
+import { siteOverviewQuery } from '../../app/queries';
 import { siteRoute } from '../../app/router';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -28,7 +28,7 @@ import './style.scss';
 
 function SiteOverview() {
 	const { siteSlug } = siteRoute.useParams();
-	const { data } = useQuery( siteQuery( siteSlug ) );
+	const { data } = useQuery( siteOverviewQuery( siteSlug ) );
 
 	if ( ! data ) {
 		return;
