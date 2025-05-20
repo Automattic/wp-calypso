@@ -150,6 +150,19 @@ const siteSettingsSubscriptionGiftingRoute = createRoute( {
 	)
 );
 
+const siteSettingsTransferSiteRoute = createRoute( {
+	getParentRoute: () => siteRoute,
+	path: 'settings/transfer-site',
+	loader: ( { params: { siteSlug } } ) =>
+		queryClient.ensureQueryData( siteSettingsQuery( siteSlug ) ),
+} ).lazy( () =>
+	import( '../sites/settings-transfer-site' ).then( ( d ) =>
+		createLazyRoute( 'site-settings-transfer-site' )( {
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+		} )
+	)
+);
+
 const domainsRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'domains',
@@ -315,6 +328,7 @@ const createRouteTree = ( config: AppConfig ) => {
 				siteSettingsRoute,
 				siteSettingsSiteVisibilityRoute,
 				siteSettingsSubscriptionGiftingRoute,
+				siteSettingsTransferSiteRoute,
 			] )
 		);
 	}

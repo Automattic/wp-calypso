@@ -1,7 +1,8 @@
-import { __experimentalHeading as Heading, Button } from '@wordpress/components';
+import { __experimentalHeading as Heading } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useAuth } from '../../app/auth';
 import { ActionList } from '../../components/action-list';
+import RouterLinkButton from '../../components/router-link-button';
 import type { Site } from '../../data/types';
 
 const TransferSite = ( { site }: { site: Site } ) => {
@@ -14,7 +15,7 @@ const TransferSite = ( { site }: { site: Site } ) => {
 	// * WP For Teams
 	// * VIP Site
 	// * Staging site
-	// See canCurrentUserStartSiteOwnerTransfer.
+	// We may need to handle this via endpoint somewhere. See canCurrentUserStartSiteOwnerTransfer.
 	if ( site_owner !== user.ID ) {
 		return null;
 	}
@@ -24,13 +25,13 @@ const TransferSite = ( { site }: { site: Site } ) => {
 			title={ __( 'Transfer site' ) }
 			description={ __( 'Transfer ownership of this site to another WordPress.com user.' ) }
 			actions={
-				<Button
+				<RouterLinkButton
 					variant="secondary"
 					size="compact"
-					href={ `/sites/${ slug }/settings/transfer-site` }
+					to={ `/sites/${ slug }/settings/transfer-site` }
 				>
 					{ __( 'Transfer' ) }
-				</Button>
+				</RouterLinkButton>
 			}
 		/>
 	);
