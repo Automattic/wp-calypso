@@ -1,6 +1,8 @@
 import { useMutation } from '@tanstack/react-query';
 import { __experimentalHeading as Heading, Button } from '@wordpress/components';
+import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
+import { store as noticesStore } from '@wordpress/notices';
 import { addQueryArgs } from '@wordpress/url';
 import { restoreSitePlanSoftwareMutation } from '../../app/queries';
 import { ActionList } from '../../components/action-list';
@@ -8,7 +10,24 @@ import { DotcomFeatures } from '../../data/constants';
 import type { Site } from '../../data/types';
 
 const useRestorePlanSoftware = ( { slug, is_wpcom_atomic }: Site ) => {
+	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const mutation = useMutation( restoreSitePlanSoftwareMutation( slug ) );
+
+	const handleClick = () => {
+		mutation.mutate( undefined, {
+			onSuccess: () => {
+				createSuccessNotice(
+					__( 'Requested restoration of plugins and themes that come with your plan.' ),
+					{ type: 'snackbar' }
+				);
+			},
+			onError: () => {
+				createErrorNotice( __( 'Failed to request restoration of plan plugin and themes.' ), {
+					type: 'snackbar',
+				} );
+			},
+		} );
+	};
 
 	if ( ! is_wpcom_atomic ) {
 		return null;
@@ -24,7 +43,7 @@ const useRestorePlanSoftware = ( { slug, is_wpcom_atomic }: Site ) => {
 				variant="secondary"
 				size="compact"
 				isBusy={ mutation.isPending }
-				onClick={ () => mutation.mutate() }
+				onClick={ handleClick }
 			>
 				{ __( 'Restore' ) }
 			</Button>
