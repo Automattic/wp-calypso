@@ -64,7 +64,7 @@ export function ItemClickWrapper< Item >( {
 	children: ReactNode;
 } ) {
 	if ( ! isItemClickable( item ) ) {
-		return <>{ children }</>;
+		return children;
 	}
 
 	// If we have a renderItemLink, use it
