@@ -260,7 +260,10 @@ const SiteMigrationInstructions: StepType< {
 					}
 				>
 					{ migrationInstructions }
-					<SitePreview />
+					<>
+						{ showHostingBadge && <HostingBadge hostingName={ hostingDetails.name } /> }
+						<SitePreview />
+					</>
 				</FixedColumnOnTheLeftLayout>
 			</>
 		);
