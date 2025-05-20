@@ -71,7 +71,7 @@
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"@types/wordpress__block-library": "^2.6.3",
-		"typescript": "^5.8.2"
+		"typescript": "^5.8.3"
 	},
 	"private": true
 }

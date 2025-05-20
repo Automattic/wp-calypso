@@ -11,7 +11,6 @@ import { stringify as stringifyQs } from 'qs';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
-import illustration404 from 'calypso/assets/images/illustrations/illustration-404.svg';
 import StatsNavigation from 'calypso/blocks/stats-navigation';
 import { navItems } from 'calypso/blocks/stats-navigation/constants';
 import Intervals from 'calypso/blocks/stats-navigation/intervals';
@@ -192,7 +191,6 @@ class WordAds extends Component {
 
 					{ ! canAccessAds && (
 						<EmptyContent
-							illustration={ illustration404 }
 							title={
 								! canUpgradeToUseWordAds
 									? translate( 'You are not authorized to view this page' )

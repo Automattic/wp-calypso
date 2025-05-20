@@ -5,13 +5,12 @@ import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { useState } from '@wordpress/element';
 import { plus } from '@wordpress/icons';
 import { translate, fixMe } from 'i18n-calypso';
-import { useEffect, ReactElement } from 'react';
+import { useEffect } from 'react';
 import { navItems } from 'calypso/blocks/stats-navigation/constants';
 import NavigationHeader from 'calypso/components/navigation-header';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { useSelector } from 'calypso/state';
-import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import isSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
 import { useAddSubscribersCallback, useMigrateSubscribersCallback } from '../../hooks';
 import { AddSubscribersModal } from '../add-subscribers-modal';
 import { MigrateSubscribersModal } from '../migrate-subscribers-modal';
@@ -24,7 +23,7 @@ enum SubscriberModalType {
 }
 
 type SubscribersHeaderProps = {
-	selectedSiteId: number | undefined;
+	siteId: number | null;
 	disableCta: boolean;
 	hideSubtitle?: boolean;
 	hideAddButtonLabel?: boolean;
@@ -33,15 +32,14 @@ type SubscribersHeaderProps = {
 const HELP_CENTER_STORE = HelpCenter.register();
 
 export const SubscribersHeader = ( {
-	selectedSiteId,
+	siteId,
 	disableCta,
 	hideSubtitle,
 	hideAddButtonLabel = false,
-}: SubscribersHeaderProps ): ReactElement => {
+}: SubscribersHeaderProps ) => {
 	const localizeUrl = useLocalizeUrl();
 	const { setShowSupportDoc } = useDataStoreDispatch( HELP_CENTER_STORE );
-	const siteId = useSelector( getSelectedSiteId ) ?? null;
-	const isWPCOMSite = useSelector( ( state ) => getIsSiteWPCOM( state, siteId ) );
+	const isWPCOMSite = useSelector( ( state ) => isSiteWPCOM( state, siteId ) );
 	const supportUrl = ! isWPCOMSite
 		? 'https://jetpack.com/support/newsletter/customize-the-newsletter-experience/#manage-subscribers'
 		: 'https://wordpress.com/support/subscribers/ ';
@@ -144,7 +142,7 @@ export const SubscribersHeader = ( {
 					{ ...{ [ hideAddButtonLabel ? 'label' : 'text' ]: translate( 'Add subscribers' ) } }
 				/>
 				<SubscribersHeaderPopover
-					siteId={ selectedSiteId }
+					siteId={ siteId }
 					openMigrateSubscribersModal={ () =>
 						setShowSubscriberModal( SubscriberModalType.MIGRATE )
 					}

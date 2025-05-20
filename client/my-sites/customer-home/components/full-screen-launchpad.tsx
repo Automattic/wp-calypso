@@ -3,7 +3,7 @@ import { CircularProgressBar } from '@automattic/components';
 import {
 	updateLaunchpadSettings,
 	useSortedLaunchpadTasks,
-	OnboardSelect,
+	type OnboardSelect,
 } from '@automattic/data-stores';
 import { Launchpad, Task } from '@automattic/launchpad';
 import { Button } from '@wordpress/components';

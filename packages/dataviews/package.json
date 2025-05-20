@@ -69,7 +69,7 @@
 		"postcss-local-keyframes": "^0.0.2",
 		"sass": "1.54.0",
 		"storybook": "^8.6.12",
-		"typescript": "5.8.2"
+		"typescript": "5.8.3"
 	},
 	"scripts": {
 		"build": "yarn run build:js && yarn run build:style && yarn run build:wp",

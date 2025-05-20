@@ -5,6 +5,8 @@
 // I'm tempted to even just replace all this with a display:none on the logo
 @import './loading-screen';
 
+@import './view-transitions';
+
 // Hacks that shouldn't be necessary.
 .environment-badge {
 	display: none;

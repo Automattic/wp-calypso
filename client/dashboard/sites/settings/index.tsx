@@ -6,13 +6,12 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { siteQuery, siteSettingsQuery } from '../../app/queries';
-import { siteRoute } from '../../app/router';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import SiteVisibilitySettingsSummary from '../settings-site-visibility/summary';
 import SubscriptionGiftingSettingsSummary from '../settings-subscription-gifting/summary';
 
-export default function SiteSettings() {
-	const { siteSlug } = siteRoute.useParams();
+export default function SiteSettings( { siteSlug }: { siteSlug: string } ) {
 	const { data: siteData } = useQuery( siteQuery( siteSlug ) );
 	const { data: settings } = useQuery( siteSettingsQuery( siteSlug ) );
 
@@ -20,15 +19,17 @@ export default function SiteSettings() {
 		return null;
 	}
 
+	const { site } = siteData;
+
 	return (
-		<PageLayout size="small">
-			<PageHeader title={ __( 'Settings' ) } />
+		<PageLayout size="small" header={ <PageHeader title={ __( 'Settings' ) } /> }>
 			<Heading>{ __( 'General' ) }</Heading>
 			<Card>
 				<VStack>
+					<SiteVisibilitySettingsSummary site={ site } />
 					<SubscriptionGiftingSettingsSummary
 						siteSlug={ siteSlug }
-						site={ siteData.site }
+						site={ site }
 						settings={ settings }
 					/>
 				</VStack>

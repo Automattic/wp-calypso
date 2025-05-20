@@ -118,23 +118,28 @@ function Emails() {
 	};
 
 	return (
-		<PageLayout>
-			<PageHeader
-				title={ __( 'Emails' ) }
-				actions={
-					<>
-						<Button variant="secondary" __next40pxDefaultSize>
-							{ __( 'Add Email Forwarder' ) }
-						</Button>
-						<Button variant="primary" __next40pxDefaultSize>
-							{ __( 'Add Mailbox' ) }
-						</Button>
-					</>
-				}
-			/>
-			<Notice status="warning" isDismissible={ false }>
-				{ __( 'This is using fake data for the moment' ) }
-			</Notice>
+		<PageLayout
+			header={
+				<PageHeader
+					title={ __( 'Emails' ) }
+					actions={
+						<>
+							<Button variant="secondary" __next40pxDefaultSize>
+								{ __( 'Add Email Forwarder' ) }
+							</Button>
+							<Button variant="primary" __next40pxDefaultSize>
+								{ __( 'Add Mailbox' ) }
+							</Button>
+						</>
+					}
+				/>
+			}
+			notices={
+				<Notice status="warning" isDismissible={ false }>
+					{ __( 'This is using fake data for the moment' ) }
+				</Notice>
+			}
+		>
 			<DataViewsCard>
 				<DataViews
 					data={ filteredData }

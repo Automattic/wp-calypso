@@ -100,15 +100,18 @@ function Domains() {
 	}
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate( domains, view, fields );
 	return (
-		<PageLayout>
-			<PageHeader
-				title={ __( 'Domains' ) }
-				actions={
-					<Button variant="primary" __next40pxDefaultSize>
-						{ __( 'Add New Domain' ) }
-					</Button>
-				}
-			/>
+		<PageLayout
+			header={
+				<PageHeader
+					title={ __( 'Domains' ) }
+					actions={
+						<Button variant="primary" __next40pxDefaultSize>
+							{ __( 'Add New Domain' ) }
+						</Button>
+					}
+				/>
+			}
+		>
 			<DataViewsCard>
 				<DataViews
 					data={ filteredData || [] }

@@ -112,7 +112,20 @@ const siteSettingsRoute = createRoute( {
 } ).lazy( () =>
 	import( '../sites/settings' ).then( ( d ) =>
 		createLazyRoute( 'site-settings' )( {
-			component: d.default,
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+		} )
+	)
+);
+
+const siteSettingsSiteVisibilityRoute = createRoute( {
+	getParentRoute: () => siteRoute,
+	path: 'settings/site-visibility',
+	loader: ( { params: { siteSlug } } ) =>
+		queryClient.ensureQueryData( siteSettingsQuery( siteSlug ) ),
+} ).lazy( () =>
+	import( '../sites/settings-site-visibility' ).then( ( d ) =>
+		createLazyRoute( 'site-settings-site-visibility' )( {
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )
 	)
 );
@@ -125,7 +138,7 @@ const siteSettingsSubscriptionGiftingRoute = createRoute( {
 } ).lazy( () =>
 	import( '../sites/settings-subscription-gifting' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-subscription-gifting' )( {
-			component: d.default,
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )
 	)
 );
@@ -293,6 +306,7 @@ const createRouteTree = ( config: AppConfig ) => {
 				siteDeploymentsRoute,
 				sitePerformanceRoute,
 				siteSettingsRoute,
+				siteSettingsSiteVisibilityRoute,
 				siteSettingsSubscriptionGiftingRoute,
 			] )
 		);
@@ -334,6 +348,11 @@ export const getRouter = ( config: AppConfig ) => {
 		defaultNotFoundComponent: NotFound,
 		defaultPreload: 'intent',
 		defaultPreloadStaleTime: 0,
+		// Calling document.startViewTransition() ourselves is really tricky,
+		// Tanstack Router knows how to do it best. Even though it says
+		// "default", we can still customize it in CSS and add more transition
+		// areas.
+		defaultViewTransition: true,
 	} );
 };
 
@@ -347,6 +366,7 @@ export {
 	siteDeploymentsRoute,
 	sitePerformanceRoute,
 	siteSettingsRoute,
+	siteSettingsSiteVisibilityRoute,
 	siteSettingsSubscriptionGiftingRoute,
 	domainsRoute,
 	emailsRoute,

@@ -1,11 +1,4 @@
-import {
-	Card,
-	Button,
-	FormLabel,
-	FormInputValidation,
-	Gridicon,
-	Spinner,
-} from '@automattic/components';
+import { Card, Button, FormLabel, FormInputValidation, Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -78,7 +71,8 @@ class JetpackConnectSiteUrlInput extends Component {
 
 	renderButtonLabel() {
 		const { isSearch, translate } = this.props;
-		if ( ! this.props.isFetching ) {
+
+		if ( ! this.props.isFetching && ! this.state.isUnloading ) {
 			if ( ! this.props.isInstall ) {
 				return translate( 'Continue' );
 			}
@@ -185,7 +179,10 @@ class JetpackConnectSiteUrlInput extends Component {
 	}
 
 	render() {
-		const { candidateSites, isFetching, isSearch, translate, url, autoFocus } = this.props;
+		const { candidateSites, isSearch, translate, url, autoFocus } = this.props;
+
+		const isDisabled = this.isFormSubmitDisabled();
+		const isBusy = this.isFormSubmitBusy();
 
 		return (
 			<div>
@@ -199,7 +196,7 @@ class JetpackConnectSiteUrlInput extends Component {
 							autoCapitalize="off"
 							autoFocus={ autoFocus } // eslint-disable-line jsx-a11y/no-autofocus
 							onChange={ this.handleChange }
-							disabled={ isFetching }
+							disabled={ isBusy }
 							placeholder="https://yourjetpack.blog"
 							onKeyUp={ this.handleKeyPress }
 							value={ url }
@@ -214,7 +211,6 @@ class JetpackConnectSiteUrlInput extends Component {
 							value={ url }
 						/>
 					) }
-					{ isFetching ? <Spinner /> : null }
 					{ this.renderError() }
 				</div>
 				<Card className="jetpack-connect__connect-button-card">
@@ -222,8 +218,8 @@ class JetpackConnectSiteUrlInput extends Component {
 					<Button
 						className="jetpack-connect__connect-button"
 						primary
-						disabled={ this.isFormSubmitDisabled() }
-						busy={ this.isFormSubmitBusy() }
+						disabled={ isDisabled && ! isBusy }
+						busy={ isBusy }
 						onClick={ this.handleFormSubmit }
 					>
 						{ this.renderButtonLabel() }

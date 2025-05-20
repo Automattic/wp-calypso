@@ -300,7 +300,7 @@ const actions = [
 		icon: <Icon icon={ view } />,
 		isEligible: ( item ) => item.status === 'published',
 		callback: ( items ) => {
-			console.log( 'Viewing item:', items[0] );
+			console.log( 'Viewing item:', items[ 0 ] );
 		},
 	},
 	{
@@ -310,7 +310,7 @@ const actions = [
 		supportsBulk: true,
 		callback: ( items ) => {
 			console.log( 'Editing items:', items );
-		}
+		},
 	},
 	{
 		id: 'delete',
@@ -322,17 +322,17 @@ const actions = [
 				<p>Are you sure you want to delete { items.length } item(s)?</p>
 				<Button
 					variant="primary"
-					onClick={() => {
+					onClick={ () => {
 						console.log( 'Deleting items:', items );
 						onActionPerformed();
 						closeModal();
-					}}
+					} }
 				>
 					Confirm Delete
 				</Button>
 			</div>
-		)
-	}
+		),
+	},
 ];
 ```
 
@@ -388,9 +388,26 @@ If `selection` and `onChangeSelection` are provided, the `DataViews` component b
 
 A function that determines if a media field or a primary field is clickable. It receives an item as an argument and returns a boolean value indicating whether the item can be clicked.
 
-#### `onClickItem`: `function`
+#### `renderItemLink`: `React.ComponentType`
 
-A callback function that is triggered when a user clicks on a media field or primary field. This function is currently implemented only in the `grid` and `list` views.
+A render function used to render clickable items.
+
+It can render regular links, but also allows integration with routing libraries (like TanStack Router or React Router).
+
+The component receives the following props:
+
+-   `item`: The data item that was clicked
+-   Additional standard HTML anchor props (className, style, etc.)
+
+```jsx
+// Then use it in DataViews
+<DataViews
+	// ...other props
+	renderItemLink={ ( { item, ...props } ) => (
+		<Link to={ `/sites/${ item.slug }` } preload="intent" { ...props } />
+	) }
+/>;
+```
 
 #### `header`: React component
 
@@ -400,9 +417,9 @@ React component to be rendered next to the view config button.
 
 The `DataViews` component supports two composition modes:
 
-* **Controlled**: This is the default usage mode. `DataViews` renders a full layout out-of-the-box — including search, filters, view switcher, layout grid or table, actions, and pagination. It’s the simplest way to get started and requires minimal setup.
+-   **Controlled**: This is the default usage mode. `DataViews` renders a full layout out-of-the-box — including search, filters, view switcher, layout grid or table, actions, and pagination. It’s the simplest way to get started and requires minimal setup.
 
-* **Free composition**: This mode gives developers full control over the layout. You can compose your own UI using internal components — placing them exactly where they’re needed in your interface. This is useful for more advanced or custom layouts, while still relying on the same shared context for user interactions.
+-   **Free composition**: This mode gives developers full control over the layout. You can compose your own UI using internal components — placing them exactly where they’re needed in your interface. This is useful for more advanced or custom layouts, while still relying on the same shared context for user interactions.
 
 The component automatically detects the mode based on the `children` prop. If no `children` are passed, `DataViews` renders its internal layout (controlled mode). If `children` are provided, the component switches to free composition mode, skipping the default layout entirely.
 
@@ -418,14 +435,14 @@ This pattern enables full layout flexibility while keeping the data logic centra
 
 The following components are available directly under `DataViews`:
 
-* `DataViews.Search`
-* `DataViews.FiltersToggle`
-* `DataViews.Filters`
-* `DataViews.Layout`
-* `DataViews.LayoutSwitcher`
-* `DataViews.Pagination`
-* `DataViews.BulkActionToolbar`
-* `DataViews.ViewConfig`
+-   `DataViews.Search`
+-   `DataViews.FiltersToggle`
+-   `DataViews.Filters`
+-   `DataViews.Layout`
+-   `DataViews.LayoutSwitcher`
+-   `DataViews.Pagination`
+-   `DataViews.BulkActionToolbar`
+-   `DataViews.ViewConfig`
 
 #### example
 
@@ -783,10 +800,10 @@ The header text to show in the modal.
 
 Specifies the size of the modal window when displaying action content using `RenderModal`.
 
--	Type: `string`
--	Optional
--	Default: `'medium'`
--	One of: `'small'`, `'medium'`, `'large'`, `'fill'`
+-   Type: `string`
+-   Optional
+-   Default: `'medium'`
+-   One of: `'small'`, `'medium'`, `'large'`, `'fill'`
 
 Example:
 
@@ -800,10 +817,10 @@ Example:
 
 Specifies the focus on mount property of the modal.
 
--	Type: `boolean` | `string`
--	Optional
--	Default: `true`
--	One of: `true` | `false` | `'firstElement'` | `'firstContentElement'`
+-   Type: `boolean` | `string`
+-   Optional
+-   Default: `true`
+-   One of: `true` | `false` | `'firstElement'` | `'firstContentElement'`
 
 Example:
 
@@ -1299,7 +1316,7 @@ This package is based on the [`@wordpress/dataviews` package](https://www.npmjs.
 
 There's two workflows: adding new features to this package and synchronizing changes from upstream. See [SYNC.md](https://github.com/Automattic/wp-calypso/blob/trunk/packages/dataviews/SYNC.md) for details about the second workflow.
 
-- When adding new features, document every change in the `CHANGELOG.automattic.md` file.
-- When synchronizing changes from upstream, document it in the `CHANGELOG.automattic.md` as well. For example, add a line such as `Bring changes from @wordpress/dataviews X.Y.Z`. Ideally, synchronizations should happen every time there's new release of `@wordpress/packages`, as this makes it easier to pinpoint changes. If it brings upstream changes that cannot be pinpointed to a package release, document the upstream git commit that's being pulled into this package.
+-   When adding new features, document every change in the `CHANGELOG.automattic.md` file.
+-   When synchronizing changes from upstream, document it in the `CHANGELOG.automattic.md` as well. For example, add a line such as `Bring changes from @wordpress/dataviews X.Y.Z`. Ideally, synchronizations should happen every time there's new release of `@wordpress/packages`, as this makes it easier to pinpoint changes. If it brings upstream changes that cannot be pinpointed to a package release, document the upstream git commit that's being pulled into this package.
 
 This is an individual package that's part of the wp-calypso project. The project is organized as a monorepo. It's made up of multiple self-contained software packages, each with a specific purpose. The packages in this monorepo are published to [npm](https://www.npmjs.com/) and used by [wp-calypso](https://github.com/automattic/wp-calypso/) as well as other software projects. To find out more about contributing to this package or wp-calypso as a whole, please read the project's main [contributor guide](https://github.com/Automattic/wp-calypso/blob/trunk/docs/CONTRIBUTING.md).

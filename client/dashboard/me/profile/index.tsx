@@ -169,16 +169,20 @@ export default function Profile() {
 	return (
 		<>
 			<form onSubmit={ handleSubmit }>
-				<PageLayout size="small">
-					<PageHeader
-						title={ __( 'Profile' ) }
-						description={
-							<>
-								{ __( 'Set your name, bio, and other public-facing information.' ) }{ ' ' }
-								<ExternalLink href="#learn-more">{ __( 'Learn more' ) }</ExternalLink>
-							</>
-						}
-					/>
+				<PageLayout
+					size="small"
+					header={
+						<PageHeader
+							title={ __( 'Profile' ) }
+							description={
+								<>
+									{ __( 'Set your name, bio, and other public-facing information.' ) }{ ' ' }
+									<ExternalLink href="#learn-more">{ __( 'Learn more' ) }</ExternalLink>
+								</>
+							}
+						/>
+					}
+				>
 					<Card>
 						<CardBody>
 							<HStack justify="flex-start" spacing={ 8 }>

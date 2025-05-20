@@ -4,240 +4,65 @@
 	padding: 8px 0 0;
 
 	.dataviews-view-table,
-	.dataviews-view-table tr,
-	.dataviews-view-table tr td {
+	.dataviews-view-table tr {
 		max-width: 1040px;
+		padding: 16px 0;
 	}
 
-	tr.dataviews-view-table__row {
-		width: 100%;
-		padding: 0;
-	}
-
-	.dataviews-view-table tr td {
-		padding: 0;
-	}
-
-	.dataviews-view-table tr td div.components-v-stack {
-		flex: 1 1 100%
-	}
-
-	.dataviews-view-table a.card.purchase-item {
-		width: 100%;
-		box-shadow: unset;
-	}
-
-	.dataviews-view-table td div.dataviews-view-table__cell-content-wrapper div.card.purchase-item {
-		margin: 0;
-		width: 100%;
-		box-shadow: none;
-		padding: 16px 5px;
-
-		@media (min-width: 961px) {
-			padding: 16px 48px 16px 24px;
-		}
-	}
-
-	.dataviews-view-table .purchases-list-header.card {
-		padding-right: 48px;
-		font-size: 0.875rem;
-
-		.purchases-layout__status {
-			display: none;
-
-			@include breakpoint-deprecated( ">960px" ) {
-				display: block;
-				margin-top: 0;
-			}
-		}
-	}
-
-	.dataviews-view-table .purchase-item--disconnected {
-		&.card.is-compact {
-			padding-right: 48px;
-		}
-
-		&:hover {
-			background: var(--color-surface);
-		}
-	}
-
-	.dataviews-view-table .purchase-item__placeholder {
-		display: block;
-		height: 40px;
-
-		@include placeholder;
-	}
-
-	.dataviews-title-field .purchase-item__wrapper {
+	.dataviews-view-table tr.dataviews-view-table__row th,
+	.dataviews-view-table tr.dataviews-view-table__row td {
 		white-space: break-spaces;
-		justify-content: flex-start;
+		padding: 16px 0;
 	}
 
-	.dataviews-view-table {
-		tr td:first-child, tr th:first-child{
-			padding-left: 48px;
+	.dataviews-view-table tr td:first-child,
+	.dataviews-view-table tr th:first-child {
+		padding-left: 24px;
+	}
+
+	.dataviews-view-table__cell-content-wrapper .purchase-item__site {
+		margin-right: 16px;
+
+		.purchase-item__static-icon {
+			width: 36px;
 		}
 	}
 
-	.dataviews-view-table .purchase-item,
-	.dataviews-view-table .membership-item {
-		&:hover {
-			background: var(--color-neutral-0);
+	.dataviews-view-table__cell-content-wrapper .purchase-item__information {
+		margin-right: 16px;
+
+		.purchase-item__title {
+			font-size: 16px;
+			overflow: hidden;
 		}
 
-		&:focus {
-			z-index: 1;
-		}
-	}
-
-	.dataviews-view-table .purchase-item__title {
-		color: var(--color-neutral-80);
-		overflow: hidden;
-		.owner-info__pop-over {
-			vertical-align: middle;
-		}
-	}
-
-	.dataviews-view-table .purchase-item__purchase-type,
-	.dataviews-view-table .purchase-item__site-title {
-		font-size: $font-body-small;
-		color: var(--color-neutral-50);
-		line-height: 1.4;
-	}
-
-	.dataviews-title-field a.purchase-item__link {
-		display: unset;
-		white-space: break-spaces;
-		word-wrap: break-word;
-	} 
-
-
-	.dataviews-title-field .purchase-item__information {
-		max-width: 250px;
-		white-space: break-spaces;
-		margin-right: unset;
-
-		@media (min-width: 961px) {
+		div {
 			max-width: 462px;
-			margin-right: 16px;
+		}
+
+		.purchase-item__purchase-type, .purchase-item__purchase-type a.purchase-item__link {
+			overflow: hidden;
 		}
 	}
 
-	.dataviews-title-field .purchase-item__status {
-		max-width: 300px;
-		white-space: break-spaces;
-		margin-right: unset;
-
-
-		@media (min-width: 961px) {
-			max-width: 300px;
-			margin-right: 16px;
-
-		}
+	.dataviews-view-table__cell-content-wrapper .purchase-item__status {
+		flex: 0 1 300px;
+		margin-right: 16px;
 	}
 
-	.dataviews-title-field .purchase-item__payment-method {
-		white-space: break-spaces;
-
-		@media (min-width: 961px) {
-			max-width: 200px;
-		}
-	}
-
-	.dataviews-view-table .purchase-item__link,
-	.dataviews-view-table a.purchase-item__link {
-		color: var(--color-link);
-
-		&.purchase-item__link--error {
-			color: var(--color-error-50);
-		}
-
-		&:hover {
-			cursor: pointer;
-		}
-
-		&:focus {
-			outline: thin dotted;
-		}
-	}
-
-	.dataviews-view-table .purchase-item__status {
-		font-size: $font-body-small;
-		color: var(--color-neutral-80);
-		line-height: 1.3;
-
-		.purchase-item__is-error,
-		.purchase-item__is-warning {
-			color: var(--color-error-50);
-			position: relative;
-			display: inline-block;
-
-			@include breakpoint-deprecated( ">960px" ) {
-				&::after {
-					content: "";
-					display: block;
-					width: 8px;
-					height: 8px;
-					position: absolute;
-					top: calc(50% - 4px);
-					left: -16px;
-					background: var(--color-error-50);
-					border-radius: 100%;
-				}
-			}
-		}
-
-		.purchase-item__is-warning {
-			color: var(--color-warning-50);
-
-			@include breakpoint-deprecated( ">960px" ) {
-				&::after {
-					background: var(--color-warning-50);
-				}
-			}
-		}
-	}
-
-	.dataviews-view-table .purchase-item__date,
-	.dataviews-view-table .purchase-item__site-name {
-		display: inline-block;
-	}
-
-	.dataviews-view-table .purchase-item__payment-method {
-		font-size: $font-body-small;
-		color: var(--color-neutral-80);
-	}
-
-	.dataviews-view-table .purchase-item__payment-method-card {
-		width: 40px;
-		margin-right: 8px;
-	}
-
-	.dataviews-view-table .purchase-item__paypal {
-		width: 65px;
-	}
-
-	.dataviews-view-table .purchase-item__backup-payment-method-notice {
-		margin: 8px;
-		display: flex;
-	}
-
-	.dataviews-view-table .purchase-item__backup-payment-method-notice button {
-		display: flex;
-	}
-
-	.dataviews-view-table .purchase-item__no-payment-method {
+	.dataviews-view-table__cell-content-wrapper .purchase-item__payment-method {
+		flex: 0 0 200px;
 		display: flex;
 		align-items: center;
-		gap: 4px;
+		flex-wrap: wrap;
 
-		svg {
-			flex-shrink: 0;
+		.purchase-item__payment-method-card {
+			margin-right: 8px;
+			width: 40px;
+		}
 
-			path {
-				fill: var(--color-warning-30);
-			}
+		.purchase-item__paypal {
+			width: 65px;
 		}
 	}
 }

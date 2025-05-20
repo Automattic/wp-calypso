@@ -196,31 +196,6 @@ $blueberry-color: #3858e9;
 			.odie-button-link, .components-external-link {
 				color: $blueberry-color;
 			}
-
-			.components-external-link {
-				text-decoration: underline;
-
-				&:hover {
-					text-decoration: none;
-				}
-
-				& > span:first-child::after { 
-					content: "\00a0";
-	
-					&:hover {
-						text-decoration: none;
-					}
-				}
-
-				.components-external-link__contents:hover {
-					text-decoration: none;
-				}
-
-				.components-external-link__icon {
-					margin-left: 0;
-				}
-			}
-			
 		}
 	}
 

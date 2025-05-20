@@ -5,8 +5,10 @@ import type {
 	DataViewRenderFieldProps,
 	SortDirection,
 	ValidationContext,
+	Operator,
 } from '../types';
 import { renderFromElements } from '../utils';
+import { OPERATOR_IS, OPERATOR_IS_NOT } from '../constants';
 
 function sort( a: any, b: any, direction: SortDirection ) {
 	const timeA = new Date( a ).getTime();
@@ -26,6 +28,8 @@ function isValid( value: any, context?: ValidationContext ) {
 	return true;
 }
 
+const operators: Operator[] = [ OPERATOR_IS, OPERATOR_IS_NOT ];
+
 export default {
 	sort,
 	isValid,
@@ -36,4 +40,7 @@ export default {
 			: field.getValue( { item } );
 	},
 	enableSorting: true,
+	filterBy: {
+		operators,
+	},
 };
