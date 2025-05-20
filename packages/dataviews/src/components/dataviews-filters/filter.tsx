@@ -240,6 +240,7 @@ function OperatorSelector( {
 				</FlexItem>
 
 				<SelectControl
+					className="dataviews-filters__summary-operators-filter-select"
 					label={ __( 'Conditions' ) }
 					value={ value }
 					options={ operatorOptions }
