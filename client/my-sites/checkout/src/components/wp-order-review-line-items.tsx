@@ -477,6 +477,7 @@ function LineItemWrapper( {
 				product={ product }
 				hasDeleteButton={ isDeletable }
 				removeProductFromCart={ removeProductFromCart }
+				isRestorable
 				isSummary={ isSummary }
 				createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
 				responseCart={ responseCart }

@@ -1307,6 +1307,7 @@ function CheckoutLineItem( {
 	className,
 	hasDeleteButton,
 	removeProductFromCart,
+	isRestorable = false,
 	isSummary,
 	createUserAndSiteBeforeTransaction,
 	responseCart,
@@ -1324,6 +1325,7 @@ function CheckoutLineItem( {
 	className?: string;
 	hasDeleteButton?: boolean;
 	removeProductFromCart?: RemoveProductFromCart;
+	isRestorable?: boolean;
 	isSummary?: boolean;
 	createUserAndSiteBeforeTransaction?: boolean;
 	responseCart: ResponseCart;
@@ -1543,7 +1545,7 @@ function CheckoutLineItem( {
 							onClick={ () => {
 								onRemoveProductClick?.( label );
 
-								if ( hasRemoveFromCartModal ) {
+								if ( hasRemoveFromCartModal || ! isRestorable ) {
 									setIsModalVisible( true );
 								} else {
 									removeProductFromCartAndSetAsRestorable();
