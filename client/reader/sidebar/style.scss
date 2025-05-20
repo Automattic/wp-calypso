@@ -99,11 +99,12 @@ body.is-section-reader {
 		display: flex;
 		justify-content: space-between;
 		margin: 0 12px 44px;
-		padding: 0 10px;
+		padding: 24px 10px;
 
 		h3 {
 			font-weight: 500;
 			font-size: $font-body-large;
+			line-height: 26px;
 		}
 
 		p {
