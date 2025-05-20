@@ -17,6 +17,13 @@ const localizedTabNames: { [ key: string ]: string | null } = {
 	subscribers: translate( 'Subscribers' ),
 	posts: translate( 'Posts & pages' ),
 	authors: translate( 'Authors' ),
+	filedownloads: translate( 'File Downloads' ),
+	referrers: translate( 'Referrers' ),
+	locations: translate( 'Locations' ),
+	utm: translate( 'UTM' ),
+	clicks: translate( 'Clicks' ),
+	searchterms: translate( 'Search Terms' ),
+	videoplays: translate( 'Videos' ),
 	postDetails: null, // Last item in the history, the text is not displayed anywhere but this is used to track the item in history stack.
 };
 
@@ -28,6 +35,13 @@ const possibleBackLinks: { [ key: string ]: string | null } = {
 	subscribers: '/stats/subscribers/{period}/',
 	posts: '/stats/{period}/posts/',
 	authors: '/stats/{period}/authors/',
+	filedownloads: '/stats/{period}/filedownloads/',
+	referrers: '/stats/{period}/referrers/',
+	locations: '/stats/{period}/locations/',
+	utm: '/stats/{period}/utm/',
+	clicks: '/stats/{period}/clicks/',
+	searchterms: '/stats/{period}/searchterms/',
+	videoplays: '/stats/{period}/videoplays/',
 	postDetails: null, // Last item in the history, the text is not displayed anywhere but this is used to track the item in history stack.
 };
 
