@@ -16,7 +16,7 @@ import type * as React from 'react';
  *   available: false // custom modifier example for matching an available day
  *   };
  */
-type Modifiers = Record< string, boolean >;
+export type Modifiers = Record< string, boolean >;
 
 /**
  * A value or a function that matches a specific day.

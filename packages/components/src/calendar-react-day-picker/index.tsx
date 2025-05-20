@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import { DayPicker, TZDate } from 'react-day-picker';
+import { Day } from './day-cell';
 import { useControlledValue } from './utils';
 import type {
 	DateCalendarProps,
@@ -7,7 +8,6 @@ import type {
 	DateRange,
 	OnSelectHandler,
 } from './types';
-
 import './styles.scss';
 
 const BASE_CLASSNAME = 'a8c-components-calendar';
@@ -64,6 +64,9 @@ const COMMON_PROPS = {
 	classNames: CLASSNAMES,
 	// Default role
 	role: 'application',
+	components: {
+		Day,
+	},
 } as const;
 
 function clampNumberOfMonths( numberOfMonths: number ) {
