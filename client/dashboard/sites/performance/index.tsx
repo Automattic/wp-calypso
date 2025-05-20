@@ -36,8 +36,8 @@ function SitePerformanceContent( { site }: { site: Site } ) {
 		desktopReport,
 		mobileReport,
 		isLoading: isFetchingReport,
-		isRunningDesktopReport,
-		isRunningMobileReport,
+		isDesktopReportRunning,
+		isMobileReportRunning,
 		isError,
 		isDesktopReportError,
 		isMobileReportError,
@@ -93,7 +93,7 @@ function SitePerformanceContent( { site }: { site: Site } ) {
 					report={ currentReport }
 					isFetchingReport={ isFetchingReport }
 					isRunningReport={
-						deviceToggle === 'desktop' ? isRunningDesktopReport : isRunningMobileReport
+						deviceToggle === 'desktop' ? isDesktopReportRunning : isMobileReportRunning
 					}
 					isError={
 						( deviceToggle === 'desktop' ? isDesktopReportError : isMobileReportError ) || isError

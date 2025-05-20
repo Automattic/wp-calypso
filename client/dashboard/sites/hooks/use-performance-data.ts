@@ -11,8 +11,8 @@ interface PerformanceData {
 	desktopLoaded: boolean;
 	mobileLoaded: boolean;
 	isLoading: boolean;
-	isRunningDesktopReport: boolean;
-	isRunningMobileReport: boolean;
+	isDesktopReportRunning: boolean;
+	isMobileReportRunning: boolean;
 	isDesktopReportError: boolean;
 	isMobileReportError: boolean;
 	isError: boolean;
@@ -93,8 +93,8 @@ export function usePerformanceData(
 		desktopLoaded,
 		mobileLoaded,
 		isLoading: isLoadingBasicMetrics || isLoadingPerformanceInsights,
-		isRunningDesktopReport: isReportRunning( performanceData?.pagespeed?.desktop ),
-		isRunningMobileReport: isReportRunning( performanceData?.pagespeed?.mobile ),
+		isDesktopReportRunning: isReportRunning( performanceData?.pagespeed?.desktop ),
+		isMobileReportRunning: isReportRunning( performanceData?.pagespeed?.mobile ),
 		isDesktopReportError: isReportFailed( performanceData?.pagespeed?.desktop ),
 		isMobileReportError: isReportFailed( performanceData?.pagespeed?.mobile ),
 		isError: isBasicMetricsError || isInsightsError,
