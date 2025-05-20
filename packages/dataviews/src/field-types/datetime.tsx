@@ -28,7 +28,7 @@ function isValid( value: any, context?: ValidationContext ) {
 	return true;
 }
 
-const OPERATORS: Operator[] = [ OPERATOR_IS, OPERATOR_IS_NOT ];
+const operators: Operator[] = [ OPERATOR_IS, OPERATOR_IS_NOT ];
 
 export default {
 	sort,
@@ -41,6 +41,6 @@ export default {
 	},
 	enableSorting: true,
 	filterBy: {
-		operators: OPERATORS,
+		operators,
 	},
 };
