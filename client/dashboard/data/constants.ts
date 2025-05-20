@@ -20,6 +20,7 @@ export const SITE_FIELDS = [
 	'is_wpcom_atomic',
 	'launch_status',
 	'site_migration',
+	'site_owner',
 	'options',
 	'jetpack',
 	'jetpack_modules',
