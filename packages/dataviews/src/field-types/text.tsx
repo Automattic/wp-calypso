@@ -8,7 +8,13 @@ import type {
 	Operator,
 } from '../types';
 import { renderFromElements } from '../utils';
-import { OPERATOR_IS_ANY, OPERATOR_IS_NONE } from '../constants';
+import {
+	OPERATOR_IS_ANY,
+	OPERATOR_IS_NONE,
+	OPERATOR_CONTAINS,
+	OPERATOR_NOT_CONTAINS,
+	OPERATOR_STARTS_WITH,
+} from '../constants';
 
 function sort( valueA: any, valueB: any, direction: SortDirection ) {
 	return direction === 'asc'
@@ -27,7 +33,11 @@ function isValid( value: any, context?: ValidationContext ) {
 	return true;
 }
 
-const operators: Operator[] = [ OPERATOR_IS_ANY, OPERATOR_IS_NONE ];
+const operators: Operator[] = [
+	OPERATOR_CONTAINS,
+	OPERATOR_NOT_CONTAINS,
+	OPERATOR_STARTS_WITH,
+];
 
 export default {
 	sort,
