@@ -78,6 +78,10 @@
 	width: 100%;
 }
 
+.performance-page-selector .components-combobox-control__suggestions-container {
+	background-color: #fff;
+}
+
 .performance-page-selector .components-base-control__field {
 	display: flex;
 	gap: 8px;
@@ -89,7 +93,6 @@
 }
 
 .performance-page-selector .components-form-token-field__suggestions-list {
-	background-color: #fff;
 	max-height: 300px;
 	z-index: 100;
 }
