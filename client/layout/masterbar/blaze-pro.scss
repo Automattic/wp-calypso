@@ -468,20 +468,10 @@ body.is-section-signup {
 		}
 	}
 
-	// "Continue with a backup code" button
-	&.layout.is-white-login .wp-login__links.two-factor-authentication__actions > .button:first-of-type {
-		color: var(--color-black);
-		font-size: rem(13px);
-		font-weight: 600;
-		line-height: 14px;
-		padding: 12px 16px;
-	}
-
 	&.layout.is-white-login,
 	.card.login__form,
 	.signup-form .logged-out-form,
-	.login__lostpassword-form,
-	.two-factor-authentication__verification-code-form-wrapper {
+	.login__lostpassword-form {
 		.login .button.is-primary,
 		.login .button.is-primary:hover,
 		.form-button {
