@@ -12,6 +12,7 @@ import {
 	sitesQuery,
 	siteQuery,
 	siteSettingsQuery,
+	performanceProfilerPagesQuery,
 	domainsQuery,
 	emailsQuery,
 	profileQuery,
@@ -126,6 +127,8 @@ const siteDeploymentsRoute = createRoute( {
 const sitePerformanceRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: 'performance',
+	loader: async ( { params: { siteSlug } } ) =>
+		queryClient.ensureQueryData( performanceProfilerPagesQuery( siteSlug, '' ) ),
 } ).lazy( () =>
 	import( '../sites/performance' ).then( ( d ) =>
 		createLazyRoute( 'site-performance' )( {

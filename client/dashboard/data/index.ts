@@ -364,6 +364,26 @@ export const fetchPerformanceInsights = async (
 			path: '/site-profiler/metrics/advanced/insights',
 			apiNamespace: 'wpcom/v2',
 		},
-		{ url, advance: '1', hash: token }
+		{ url, hash: token }
+	);
+};
+
+export interface PerformanceProfilerPage {
+	id: string;
+	link: string;
+	title: { rendered: string };
+	wpcom_performance_report_hash: string;
+}
+
+export const fetchPerformanceProfilerPages = async (
+	siteIdOrSlug: string,
+	searchTerm: string
+): Promise< PerformanceProfilerPage[] > => {
+	return wpcom.req.get(
+		{
+			path: `/sites/${ siteIdOrSlug }/site-profiler/pages`,
+			apiNamespace: 'wpcom/v2',
+		},
+		{ search: searchTerm }
 	);
 };

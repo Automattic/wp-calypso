@@ -11,12 +11,33 @@ module.exports = {
 							'!calypso/lib',
 							'calypso/lib/*',
 							'!calypso/lib/wp',
+							'!calypso/lib/analytics',
+							'calypso/lib/analytics/*',
+							'!calypso/lib/analytics/tracks',
+							'!calypso/components',
+							'calypso/components/*',
 							// Allowed: calypso/assets/icons
 							// Allowed: calypso/assets/images
 							'!calypso/assets',
 							'calypso/assets/*',
 							'!calypso/assets/icons',
 							'!calypso/assets/images',
+							// Allowed: calypso/performance-profiler/components/dashboard-content
+							// Allowed: calypso/performance-profiler/pages/loading-screen/progress
+							// Allowed: calypso/performance-profiler/utils/profiler-version
+							'!calypso/performance-profiler',
+							'calypso/performance-profiler/*',
+							'!calypso/performance-profiler/components',
+							'calypso/performance-profiler/components/*',
+							'!calypso/performance-profiler/components/dashboard-content',
+							'!calypso/performance-profiler/pages',
+							'calypso/performance-profiler/pages/*',
+							'!calypso/performance-profiler/pages/loading-screen',
+							'calypso/performance-profiler/pages/loading-screen/*',
+							'!calypso/performance-profiler/pages/loading-screen/progress',
+							'!calypso/performance-profiler/utils',
+							'calypso/performance-profiler/utils/*',
+							'!calypso/performance-profiler/utils/profiler-version',
 							// Please do not add exceptions unless agreed on
 							// with the #architecture group.
 						],
@@ -37,6 +58,7 @@ module.exports = {
 							'!@automattic/calypso-analytics',
 							'!@automattic/dataviews',
 							'!@automattic/number-formatters',
+							'!@automattic/i18n-utils',
 							// Please do not add exceptions unless agreed on
 							// with the #architecture group.
 						],

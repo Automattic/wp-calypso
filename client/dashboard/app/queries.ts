@@ -15,6 +15,7 @@ import {
 	fetchBasicMetrics,
 	fetchPerformanceInsights,
 	updateSiteSettings,
+	fetchPerformanceProfilerPages,
 	restoreSitePlanSoftware,
 } from '../data';
 import { SITE_FIELDS } from '../data/constants';
@@ -161,5 +162,12 @@ export function performanceInsightsQuery( url: string, token: string ) {
 			}
 			return 5000;
 		},
+	};
+}
+
+export function performanceProfilerPagesQuery( siteId: string, searchTerm: string ) {
+	return {
+		queryKey: [ 'performance-profiler-pages', siteId, searchTerm ],
+		queryFn: () => fetchPerformanceProfilerPages( siteId, searchTerm ),
 	};
 }
