@@ -376,14 +376,10 @@ export interface PerformanceProfilerPage {
 }
 
 export const fetchPerformanceProfilerPages = async (
-	siteIdOrSlug: string,
-	searchTerm: string
+	siteIdOrSlug: string
 ): Promise< PerformanceProfilerPage[] > => {
-	return wpcom.req.get(
-		{
-			path: `/sites/${ siteIdOrSlug }/site-profiler/pages`,
-			apiNamespace: 'wpcom/v2',
-		},
-		{ search: searchTerm }
-	);
+	return wpcom.req.get( {
+		path: `/sites/${ siteIdOrSlug }/site-profiler/pages`,
+		apiNamespace: 'wpcom/v2',
+	} );
 };

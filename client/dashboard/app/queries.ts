@@ -165,9 +165,9 @@ export function performanceInsightsQuery( url: string, token: string ) {
 	};
 }
 
-export function performanceProfilerPagesQuery( siteId: string, searchTerm: string ) {
+export function performanceProfilerPagesQuery( siteId: string ) {
 	return {
-		queryKey: [ 'performance-profiler-pages', siteId, searchTerm ],
-		queryFn: () => fetchPerformanceProfilerPages( siteId, searchTerm ),
+		queryKey: [ 'performance-profiler-pages', siteId ],
+		queryFn: () => fetchPerformanceProfilerPages( siteId ),
 	};
 }

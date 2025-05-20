@@ -128,7 +128,7 @@ const sitePerformanceRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: 'performance',
 	loader: async ( { params: { siteSlug } } ) =>
-		queryClient.ensureQueryData( performanceProfilerPagesQuery( siteSlug, '' ) ),
+		queryClient.ensureQueryData( performanceProfilerPagesQuery( siteSlug ) ),
 } ).lazy( () =>
 	import( '../sites/performance' ).then( ( d ) =>
 		createLazyRoute( 'site-performance' )( {
