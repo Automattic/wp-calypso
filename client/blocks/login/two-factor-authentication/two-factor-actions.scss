@@ -1,8 +1,12 @@
 .two-factor-authentication__actions.card {
+	display: flex;
+	flex-direction: column;
+	clip-path: initial;
+	gap: 16px;
 	margin-bottom: 0;
 	padding: 0 0 24px;
 
-	.button:not(:first-child) {
-		margin-top: 16px;
+	&::after {
+		content: unset;
 	}
 }

@@ -94,7 +94,7 @@ class TwoFactorActions extends Component {
 		return (
 			<Fragment>
 				{ this.props.isWoo && <FormDivider /> }
-				<Card className="two-factor-authentication__actions wp-login__links">
+				<Card className="two-factor-authentication__actions">
 					{ isSecurityKeyAvailable && (
 						<Button
 							variant="secondary"
