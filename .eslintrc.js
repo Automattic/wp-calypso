@@ -87,7 +87,7 @@ module.exports = {
 			require( 'eslint-config-prettier' ),
 			// Our own overrides
 			{
-				files: [ '**/*.ts', '**/*.tsx' ],
+				files: [ '**/*.ts', '**/*.mts', '**/*.tsx' ],
 				rules: {
 					// Disable vanilla eslint rules that have a Typescript implementation
 					// See https://github.com/typescript-eslint/typescript-eslint/blob/main/packages/eslint-plugin/README.md#extension-rules

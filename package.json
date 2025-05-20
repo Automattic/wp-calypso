@@ -101,7 +101,7 @@
 		"lint": "run-s -s 'lint:*'",
 		"lint:config-defaults": "node bin/validate-config-keys.js",
 		"lint:css": "stylelint \"**/*.{css,scss}\"",
-		"lint:js": "eslint --ext .js,.jsx,.ts,.tsx,.mjs,.json --cache .",
+		"lint:js": "eslint --ext .js,.jsx,.ts,.tsx,.mjs,.mts,.json --cache .",
 		"lint:mixedindent": "mixedindentlint --ignore-comments \"client/**/*.scss\" \"assets/**/*.scss\" \"!build/**\" \"!node_modules/**\" \"!public/**\"",
 		"lint:unused-state-action-types": "bin/find-unused-state-action-types.sh",
 		"postcss": "postcss -r --config packages/calypso-build/postcss.config.js",
