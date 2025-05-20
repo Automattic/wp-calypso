@@ -83,9 +83,10 @@ const DuplicateSite = ( { site }: { site: Site } ) => {
 };
 
 export default function SiteActions( { site }: { site: Site } ) {
-	const actions = [ <RestorePlanSoftware site={ site } />, <DuplicateSite site={ site } /> ].filter(
-		Boolean
-	);
+	const actions = [
+		<RestorePlanSoftware key="restore-plan-software" site={ site } />,
+		<DuplicateSite key="duplicate-site" site={ site } />,
+	].filter( Boolean );
 
 	if ( ! actions.length ) {
 		return null;
