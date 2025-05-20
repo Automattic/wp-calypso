@@ -15,7 +15,6 @@ export function notifications( context, next ) {
 	const state = context.store.getState();
 	const shouldShowGlobalSidebar = getShouldShowGlobalSidebar( {
 		state,
-		route: getCurrentRoute( state ),
 		section: { group: 'reader' },
 	} );
 	const isGlobalNotificationsOpen = getIsNotificationsOpen( state );
