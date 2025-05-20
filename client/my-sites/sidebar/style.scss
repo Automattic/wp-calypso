@@ -527,12 +527,6 @@ $font-size: rem(14px);
 				background-color: var(--color-sidebar-submenu-background);
 				border-bottom-left-radius: 0;
 				border-bottom-right-radius: 0;
-
-				&:not(:hover) {
-					.sidebar_svg-a8c g {
-						fill: var(--color-sidebar-submenu-background);
-					}
-				}
 			}
 			.sidebar__expandable-content {
 				border-top-left-radius: 0;

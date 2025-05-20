@@ -12,6 +12,7 @@ import { useRecordReaderTracksEvent } from 'calypso/state/reader/analytics/useRe
 import getReaderFollowedSites from 'calypso/state/reader/follows/selectors/get-reader-followed-sites';
 import { getSelectedRecentFeedId } from 'calypso/state/reader-ui/sidebar/selectors';
 import { AppState } from 'calypso/types';
+import { AllIcon } from '../icons/all';
 import { MenuItem, MenuItemLink } from '../menu';
 // Not complete, just useful fields for now
 type Site = {
@@ -113,15 +114,7 @@ const ReaderSidebarRecent = ( {
 					className="sidebar__menu-link all-sites-link"
 					onClick={ () => trackMenuClick( null ) }
 				>
-					<svg
-						xmlns="http://www.w3.org/2000/svg"
-						viewBox="0 0 24 24"
-						width="16"
-						height="16"
-						className="gridicon gridicons-globe reader-sidebar-recent__site-icon"
-					>
-						<path d="m10.845 14.116-6.736 6.936-1.521-1.478 6.673-6.871-9.086-.039.009-2.121 9.204.04-6.309-6.497L4.6 2.609l6.218 6.403-.046-8.84 2.121-.011.046 8.756 6.125-6.309 1.521 1.477-6.33 6.519 9.578.042-.009 2.121-9.399-.041 6.651 6.849-1.521 1.478-6.588-6.784.05 9.553-2.121.011z" />
-					</svg>
+					<AllIcon />
 
 					<span>{ translate( 'All' ) }</span>
 				</MenuItemLink>
