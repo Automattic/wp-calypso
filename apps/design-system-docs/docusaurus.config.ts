@@ -27,18 +27,7 @@ const config: Config = {
 		locales: [ 'en' ],
 	},
 
-	plugins: [
-		'docusaurus-plugin-sass',
-		() => ( {
-			name: 'dsdocs-resolver-plugin',
-			configureWebpack( config ) {
-				config.resolve ??= {};
-				config.resolve.conditionNames ??= [ '...' ];
-				config.resolve.conditionNames.unshift( 'dsdocs:src' );
-				return config;
-			},
-		} ),
-	],
+	plugins: [ 'docusaurus-plugin-sass' ],
 
 	presets: [
 		[

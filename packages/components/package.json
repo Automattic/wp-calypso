@@ -23,7 +23,7 @@
 			"calypso:src": "./styles/*"
 		},
 		"./metadata": {
-			"dsdocs:src": "./dist/metadata.js",
+			"import": "./dist/metadata.js",
 			"types": "./dist/types/metadata.d.ts"
 		}
 	},
