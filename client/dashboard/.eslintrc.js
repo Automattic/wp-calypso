@@ -14,8 +14,6 @@ module.exports = {
 							'!calypso/lib/analytics',
 							'calypso/lib/analytics/*',
 							'!calypso/lib/analytics/tracks',
-							'!calypso/components',
-							'calypso/components/*',
 							// Allowed: calypso/assets/icons
 							// Allowed: calypso/assets/images
 							'!calypso/assets',
