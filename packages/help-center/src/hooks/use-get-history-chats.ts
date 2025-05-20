@@ -6,7 +6,7 @@ import { useSelect } from '@wordpress/data';
 import { useEffect, useMemo, useState } from '@wordpress/element';
 import {
 	filterAndUpdateConversationsWithStatus,
-	getLastMessageAndUnread,
+	getLastMessage,
 	getZendeskConversations,
 } from '../components/utils';
 import { HELP_CENTER_STORE } from '../stores';
@@ -29,7 +29,7 @@ interface UseGetHistoryChatsResult {
  * @returns The timestamp in milliseconds (e.g. 1745936539027), or 0 if not available
  */
 const getLastMessageReceived = ( conversation: OdieConversation | ZendeskConversation ) => {
-	const { lastMessage } = getLastMessageAndUnread( { conversation } );
+	const lastMessage = getLastMessage( { conversation } );
 
 	return ( lastMessage?.received || 0 ) * 1000;
 };
@@ -55,9 +55,9 @@ const getOdieConversationsWithNoSupportInteractions = (
  * Checks whether the last message from the specified conversation is not empty nor a predefined '--' token.
  */
 const isValidLastMessageContent = ( conversation: OdieConversation | ZendeskConversation ) => {
-	const { lastMessage } = getLastMessageAndUnread( { conversation } ) || {};
+	const lastMessage = getLastMessage( { conversation } );
 
-	if ( lastMessage?.text === null || lastMessage?.text === undefined ) {
+	if ( ! lastMessage || lastMessage?.text === null || lastMessage?.text === undefined ) {
 		return false;
 	}
 
@@ -143,7 +143,6 @@ export const useGetHistoryChats = (): UseGetHistoryChatsResult => {
 		otherSupportInteractions,
 		odieConversations,
 		supportInteractions,
-		lastMessageReceivedAt,
 	] );
 
 	return {

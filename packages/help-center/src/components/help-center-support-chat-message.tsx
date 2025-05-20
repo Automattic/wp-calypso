@@ -32,12 +32,12 @@ export const HelpCenterSupportChatMessage = ( {
 	message,
 	sectionName,
 	conversation,
-	unreadMessages = 0,
+	numberOfUnreadMessages = 0,
 }: {
 	message: OdieMessage | ZendeskMessage;
 	sectionName?: string;
 	conversation: OdieConversation | ZendeskConversation;
-	unreadMessages?: number;
+	numberOfUnreadMessages?: number;
 } ) => {
 	const { __ } = useI18n();
 	const locale = useLocale();
@@ -88,7 +88,7 @@ export const HelpCenterSupportChatMessage = ( {
 		);
 	};
 
-	const hasUnread = unreadMessages > 0;
+	const hasUnreadMessages = numberOfUnreadMessages > 0;
 
 	return (
 		<Link
@@ -104,19 +104,21 @@ export const HelpCenterSupportChatMessage = ( {
 				}
 			} }
 			className={ clsx( 'help-center-support-chat__conversation-container', {
-				'is-unread-message': hasUnread,
+				'is-unread-message': hasUnreadMessages,
 				[ `is-${ conversationStatus }` ]: conversationStatus,
 			} ) }
 		>
 			<div
 				className={ clsx( 'help-center-support-chat__conversation-avatar', {
-					'has-unread-messages': unreadMessages > 0,
+					'has-unread-messages': hasUnreadMessages,
 				} ) }
 			>
 				{ renderAvatar() }
 
-				{ unreadMessages > 0 && (
-					<div className="help-center-support-chat__conversation-badge">+{ unreadMessages }</div>
+				{ hasUnreadMessages && (
+					<div className="help-center-support-chat__conversation-badge">
+						+{ numberOfUnreadMessages }
+					</div>
 				) }
 			</div>
 			<div className="help-center-support-chat__conversation-information">
