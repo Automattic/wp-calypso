@@ -1198,8 +1198,12 @@ Operators:
 | `isNone`   | Multiple items | `NOT OR`. The item's field is not present in a list of values.          | Author is none: Admin, Editor                      |
 | `isAll`    | Multiple items | `AND`. The item's field has all of the values in the list.              | Category is all: Book, Review, Science Fiction     |
 | `isNotAll` | Multiple items | `NOT AND`. The item's field doesn't have all of the values in the list. | Category is not all: Book, Review, Science Fiction |
+| `lessThan`           | Single item    | `LESS THAN`. The item's field is numerically less than a single value.      | Age is less than 18                                |
+| `greaterThan`        | Single item    | `GREATER THAN`. The item's field is numerically greater than a single value.| Age is greater than 65                             |
+| `lessThanOrEqual`    | Single item    | `LESS THAN OR EQUAL TO`. The item's field is numerically less than or equal to a single value. | Age is less than or equal to 18         |
+| `greaterThanOrEqual` | Single item    | `GREATER THAN OR EQUAL TO`. The item's field is numerically greater than or equal to a single value. | Age is greater than or equal to 65      |
 
-`is` and `isNot` are single-selection operators, while `isAny`, `isNone`, `isAll`, and `isNotALl` are multi-selection. A filter with no operators declared will support the `isAny` and `isNone` multi-selection operators by default. A filter cannot mix single-selection & multi-selection operators; if a single-selection operator is present in the list of valid operators, the multi-selection ones will be discarded, and the filter won't allow selecting more than one item.
+`is`, `isNot`, `lessThan`, `greaterThan`, `lessThanOrEqual`, and `greaterThanOrEqual` are single-selection operators, while `isAny`, `isNone`, `isAll`, and `isNotAll` are multi-selection. A filter with no operators declared will support the `isAny` and `isNone` multi-selection operators by default. A filter cannot mix single-selection & multi-selection operators; if a single-selection operator is present in the list of valid operators, the multi-selection ones will be discarded, and the filter won't allow selecting more than one item.
 
 Example:
 
