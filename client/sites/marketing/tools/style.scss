@@ -36,7 +36,8 @@
 }
 .marketing-tools__searchbox-container {
 	position: relative;
-	width: 250px;
+	width: 290px;
+	flex-shrink: 0;
 	height: 40px;
 	&.marketing-tools__searchbox-container--mobile {
 		width: 100%;
@@ -49,7 +50,9 @@
 }
 
 .responsive-toolbar-group.marketing-tools__search-categories-toolbar {
-	width: 280px;
+	display: flex;
+	justify-content: flex-start;
+	width: 100%;
 	padding: 0;
 	margin-right: 16px;
 }
