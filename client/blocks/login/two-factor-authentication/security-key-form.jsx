@@ -1,10 +1,10 @@
 import { Card, Spinner } from '@automattic/components';
+import { Button } from '@wordpress/components';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import FormButton from 'calypso/components/forms/form-button';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
 import { formUpdate, loginUserWithSecurityKey } from 'calypso/state/login/actions';
 import TwoFactorActions from './two-factor-actions';
@@ -87,13 +87,15 @@ class SecurityKeyForm extends Component {
 							</p>
 						</div>
 					) }
-					<FormButton
-						autoFocus // eslint-disable-line jsx-a11y/no-autofocus
-						primary
+					<Button
+						// eslint-disable-next-line jsx-a11y/no-autofocus
+						autoFocus
+						variant="primary"
 						disabled={ this.state.isAuthenticating }
+						__next40pxDefaultSize
 					>
 						{ translate( 'Continue with security key' ) }
-					</FormButton>
+					</Button>
 				</Card>
 
 				<TwoFactorActions

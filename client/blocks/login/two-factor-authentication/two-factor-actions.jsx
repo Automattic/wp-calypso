@@ -1,4 +1,5 @@
-import { Button, Card } from '@automattic/components';
+import { Card } from '@automattic/components';
+import { Button } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
@@ -95,25 +96,44 @@ class TwoFactorActions extends Component {
 				{ this.props.isWoo && <FormDivider /> }
 				<Card className="two-factor-authentication__actions wp-login__links">
 					{ isSecurityKeyAvailable && (
-						<Button data-e2e-link="2fa-security-key-link" onClick={ this.recordSecurityKey }>
+						<Button
+							variant="secondary"
+							data-e2e-link="2fa-security-key-link"
+							onClick={ this.recordSecurityKey }
+							__next40pxDefaultSize
+						>
 							{ translate( 'Continue with your security\u00A0key' ) }
 						</Button>
 					) }
 
 					{ isSmsAvailable && (
-						<Button data-e2e-link="2fa-sms-link" onClick={ this.sendSmsCode }>
+						<Button
+							variant="secondary"
+							data-e2e-link="2fa-sms-link"
+							onClick={ this.sendSmsCode }
+							__next40pxDefaultSize
+						>
 							{ translate( 'Send code via\u00A0text\u00A0message' ) }
 						</Button>
 					) }
 
 					{ isAuthenticatorAvailable && (
-						<Button data-e2e-link="2fa-otp-link" onClick={ this.recordAuthenticatorLinkClick }>
+						<Button
+							variant="secondary"
+							data-e2e-link="2fa-otp-link"
+							onClick={ this.recordAuthenticatorLinkClick }
+							__next40pxDefaultSize
+						>
 							{ translate( 'Use authenticator\u00A0app instead' ) }
 						</Button>
 					) }
 
 					{ isBackupCodeAvailable && (
-						<Button onClick={ this.recordBackupLinkClick }>
+						<Button
+							variant="secondary"
+							onClick={ this.recordBackupLinkClick }
+							__next40pxDefaultSize
+						>
 							{ translate( 'Use a backup code instead' ) }
 						</Button>
 					) }
