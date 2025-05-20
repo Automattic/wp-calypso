@@ -72,6 +72,8 @@ import { isA4AReferralClient } from './utils/is-a4a-referral-for-client';
 
 import './login-form.scss';
 
+const useMagicLoginCode = config.isEnabled( 'login/use-magic-code' );
+
 export class LoginForm extends Component {
 	static propTypes = {
 		accountType: PropTypes.string,
@@ -335,6 +337,7 @@ export class LoginForm extends Component {
 				redirectTo: this.props.redirectTo,
 				requestLoginEmailFormFlow: true,
 				createAccount: true,
+				...( useMagicLoginCode && { tokenType: 'code' } ),
 				flow: 'jetpack',
 			} );
 		}

@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { localizeUrl } from '@automattic/i18n-utils';
 import clsx from 'clsx';
@@ -740,6 +741,7 @@ export default connect(
 				redirectTo: stateProps.redirectTo,
 				loginFormFlow: true,
 				showGlobalNotices: false,
+				...( config.isEnabled( 'login/use-magic-code' ) && { tokenType: 'code' } ),
 				source: stateProps.isWooJPC ? 'woo-passwordless-jpc' + '-' + get( stateProps, 'from' ) : '',
 				flow:
 					( ownProps.isJetpack && 'jetpack' ) ||
