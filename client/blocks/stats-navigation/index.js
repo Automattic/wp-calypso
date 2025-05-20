@@ -49,7 +49,7 @@ import './style.scss';
  *   title: string,
  *   className: string,
  *   path: string,
- *   adminUrl: string,
+ *   storeAdminUrl: string,
  *   showIntervals: boolean,
  * }} StatsNavItem
  */
@@ -98,7 +98,7 @@ const SelectNav = ( { navItems, selectedItemName, isLegacy, interval, pathTempla
 								<NavItem
 									className={ navItem.className }
 									key={ navItem.name }
-									onClick={ () => ( window.location.href = navItem.adminUrl ) }
+									onClick={ () => ( window.location.href = navItem.storeAdminUrl ) }
 									selected={ false }
 								>
 									{ navItem.label }
@@ -131,28 +131,28 @@ const SelectNav = ( { navItems, selectedItemName, isLegacy, interval, pathTempla
 };
 
 /**
- * @param { { tabs: StatsNavItem[], selectedItemName: keyof typeof allNavItems } } props
+ * @param { { tabs: StatsNavItem[], selectedTabName: keyof typeof allNavItems } } props
  */
-const TabNav = ( { tabs, selectedItemName } ) => {
+const TabNav = ( { tabs, selectedTabName } ) => {
 	return (
 		<TabPanel
 			className="stats-navigation__tabs"
 			tabs={ tabs }
 			onSelect={ ( newSelectedTabName ) => {
 				// Skip navigation if the clicked tab is already active to avoid redundant actions.
-				if ( newSelectedTabName === selectedItemName ) {
+				if ( newSelectedTabName === selectedTabName ) {
 					return;
 				}
 
 				const selectedTab = tabs.find( ( { name } ) => name === newSelectedTabName );
 
 				if ( selectedTab.name === 'store' && config.isEnabled( 'is_running_in_jetpack_site' ) ) {
-					window.location.href = selectedTab.adminUrl;
+					window.location.href = selectedTab.storeAdminUrl;
 				} else if ( selectedTab.path ) {
 					page( selectedTab.path );
 				}
 			} }
-			initialTabName={ selectedItemName }
+			initialTabName={ selectedTabName }
 		>
 			{ () => (
 				// Placeholder div since content is rendered elsewhere
@@ -297,7 +297,7 @@ class StatsNavigation extends Component {
 			const itemPath = `${ navItem.path }${ intervalPath }${ slugPath }`;
 			return {
 				name: key,
-				adminUrl: `${ adminUrl }admin.php?page=wc-admin&path=%2Fanalytics%2Foverview`,
+				storeAdminUrl: `${ adminUrl }admin.php?page=wc-admin&path=%2Fanalytics%2Foverview`,
 				className: 'stats-navigation__' + key,
 				label: navItem.label,
 				path: itemPath,
@@ -323,7 +323,7 @@ class StatsNavigation extends Component {
 							/>
 						}
 						breakpointInactiveComponent={
-							<TabNav tabs={ navItems } selectedItemName={ selectedItem } />
+							<TabNav tabs={ navItems } selectedTabName={ selectedItem } />
 						}
 					/>
 				) }
