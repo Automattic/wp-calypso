@@ -15,7 +15,7 @@ import SitePreview from '../site-preview';
 import type { Site, Plan } from '../../data/types';
 
 function PHPVersion( { siteSlug }: { siteSlug: string } ) {
-	return useQuery( sitePHPVersionQuery( siteSlug ) ).data;
+	return useQuery( sitePHPVersionQuery( siteSlug ) ).data ?? '\u00A0';
 }
 
 /**
@@ -64,15 +64,13 @@ export default function SiteCard( { site, currentPlan }: { site: Site; currentPl
 						<Field title={ __( 'Status' ) }>{ getSiteStatusLabel( site ) }</Field>
 					</HStack>
 					<HStack justify="space-between">
-						<div style={ { flex: 1 } }>
-							<Field title={ __( 'WordPress' ) }>{ options?.software_version }</Field>
-						</div>
+						<Field title={ __( 'WordPress' ) }>
+							{ options?.software_version ?? __( 'Unknown' ) }
+						</Field>
 						{ is_wpcom_atomic && (
-							<div style={ { flex: 1 } }>
-								<Field title={ __( 'PHP' ) }>
-									<PHPVersion siteSlug={ site.slug } />
-								</Field>
-							</div>
+							<Field title={ __( 'PHP' ) }>
+								<PHPVersion siteSlug={ site.slug } />
+							</Field>
 						) }
 					</HStack>
 					<PlanDetails site={ site } currentPlan={ currentPlan } />
@@ -84,7 +82,7 @@ export default function SiteCard( { site, currentPlan }: { site: Site; currentPl
 
 function Field( { children, title }: { children: React.ReactNode; title: React.ReactNode } ) {
 	return (
-		<VStack className="site-overview-field">
+		<VStack className="site-overview-field" style={ { flex: 1 } }>
 			<FieldTitle>{ title }</FieldTitle>
 			<div className="site-overview-field-children">{ children }</div>
 		</VStack>
