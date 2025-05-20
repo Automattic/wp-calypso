@@ -172,6 +172,9 @@ export const recordCurrentScreen = (
 	} catch ( e ) {}
 };
 
+/**
+ * Utility to pop the current screen from the navigation history
+ */
 export const popCurrentScreenFromHistory = (): void => {
 	try {
 		const navigationHistory = JSON.parse( sessionStorage.getItem( STORAGE_KEY ) || '[]' );
