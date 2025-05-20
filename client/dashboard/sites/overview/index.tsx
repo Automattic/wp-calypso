@@ -11,7 +11,6 @@ import { __ } from '@wordpress/i18n';
 import { wordpress } from '@wordpress/icons';
 import {
 	siteQuery,
-	siteMediaStorageQuery,
 	siteMonitorUptimeQuery,
 	sitePHPVersionQuery,
 	siteCurrentPlanQuery,
@@ -37,7 +36,6 @@ import './style.scss';
 function SiteOverview() {
 	const { siteSlug } = siteRoute.useParams();
 	const { data: site } = useQuery( siteQuery( siteSlug ) );
-	const { data: mediaStorage } = useQuery( siteMediaStorageQuery( siteSlug ) );
 	const { data: siteMonitorUptime } = useQuery( {
 		...siteMonitorUptimeQuery( siteSlug ),
 		enabled: site?.jetpack && site?.jetpack_modules.includes( 'monitor' ),
@@ -50,10 +48,9 @@ function SiteOverview() {
 	const { data: primaryDomain } = useQuery( sitePrimaryDomainQuery( siteSlug ) );
 	const { data: engagementStats } = useQuery( siteEngagementStatsQuery( siteSlug ) );
 
-	if ( ! site || ! mediaStorage || ! currentPlan || ! primaryDomain || ! engagementStats ) {
+	if ( ! site || ! currentPlan || ! primaryDomain || ! engagementStats ) {
 		return;
 	}
-
 	return (
 		<PageLayout
 			header={
@@ -105,7 +102,7 @@ function SiteOverview() {
 					<OverviewSection title={ __( 'Site health' ) } actions={ [] }>
 						<PerformanceCards site={ site } />
 						<UptimeCard siteMonitorUptime={ siteMonitorUptime } />
-						<StorageCard mediaStorage={ mediaStorage } />
+						<StorageCard siteSlug={ siteSlug } />
 					</OverviewSection>
 				</VStack>
 			</HStack>
