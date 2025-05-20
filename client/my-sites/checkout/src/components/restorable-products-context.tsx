@@ -10,6 +10,8 @@ const RestorableProductsContext = createContext< RestorableProductsContextType |
 	undefined
 );
 
+// This context is used to store the order of products in the cart, so we can render the
+// restorable items in the same place as the original items in the cart.
 type CartProductsOrderContextType = [
 	cartProductsOrder: ResponseCartProduct[ 'product_id' ][],
 	setCartProductsOrder: Dispatch< SetStateAction< ResponseCartProduct[ 'product_id' ][] > >,
