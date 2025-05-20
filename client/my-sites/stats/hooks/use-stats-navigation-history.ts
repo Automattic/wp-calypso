@@ -29,7 +29,7 @@ const possibleBackLinks: { [ key: string ]: string | null } = {
 	subscribers: '/stats/subscribers/{period}/',
 	posts: '/stats/{period}/posts/',
 	authors: '/stats/{period}/authors/',
-	annualstats: '/ststats/day/annualstats/',
+	annualstats: '/stats/day/annualstats/',
 	postDetails: null, // Last item in the history, the text is not displayed anywhere but this is used to track the item in history stack.
 };
 
