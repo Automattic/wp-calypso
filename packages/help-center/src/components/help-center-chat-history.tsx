@@ -59,7 +59,9 @@ const Conversations = ( {
 	return (
 		<>
 			{ conversations.map( ( conversation ) => {
-				const { unreadMessages } = calculateUnread( [ conversation as ZendeskConversation ] );
+				const { numberOfUnreadMessages } = calculateUnread( [
+					conversation as ZendeskConversation,
+				] );
 				const lastMessage = getLastMessage( { conversation } );
 
 				if ( ! lastMessage ) {
@@ -72,7 +74,7 @@ const Conversations = ( {
 						key={ conversation.id }
 						message={ lastMessage }
 						conversation={ conversation }
-						numberOfUnreadMessages={ unreadMessages }
+						numberOfUnreadMessages={ numberOfUnreadMessages }
 					/>
 				);
 			} ) }

@@ -26,7 +26,9 @@ const HelpCenterRecentConversations: React.FC = () => {
 		return null;
 	}
 
-	const { unreadMessages } = calculateUnread( [ recentConversation as ZendeskConversation ] );
+	const { numberOfUnreadMessages } = calculateUnread( [
+		recentConversation as ZendeskConversation,
+	] );
 
 	return (
 		<div className="help-center-homepage-conversations">
@@ -35,7 +37,7 @@ const HelpCenterRecentConversations: React.FC = () => {
 			</h3>
 
 			<HelpCenterSupportChatMessage
-				numberOfUnreadMessages={ unreadMessages }
+				numberOfUnreadMessages={ numberOfUnreadMessages }
 				sectionName="recent_conversations"
 				key={ recentConversation.id }
 				message={ lastMessage }
