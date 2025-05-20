@@ -1,3 +1,4 @@
+import { useQuery } from '@tanstack/react-query';
 import {
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
@@ -8,23 +9,20 @@ import {
 } from '@wordpress/components';
 import { dateI18n } from '@wordpress/date';
 import { __, sprintf } from '@wordpress/i18n';
+import { sitePHPVersionQuery } from '../../app/queries';
 import { getSiteStatusLabel } from '../../utils/site-status';
 import SitePreview from '../site-preview';
 import type { Site, Plan } from '../../data/types';
 
+function PHPVersion( { siteSlug }: { siteSlug: string } ) {
+	return useQuery( sitePHPVersionQuery( siteSlug ) ).data;
+}
+
 /**
  * SiteCard component to display site information in a card format
  */
-export default function SiteCard( {
-	site,
-	phpVersion,
-	currentPlan,
-}: {
-	site: Site;
-	phpVersion?: string;
-	currentPlan: Plan;
-} ) {
-	const { options, URL: url, is_private } = site;
+export default function SiteCard( { site, currentPlan }: { site: Site; currentPlan: Plan } ) {
+	const { options, URL: url, is_private, is_wpcom_atomic } = site;
 	// If the site is a private A8C site, X-Frame-Options is set to same
 	// origin.
 	const iframeDisabled = site.is_a8c && is_private;
@@ -66,10 +64,16 @@ export default function SiteCard( {
 						<Field title={ __( 'Status' ) }>{ getSiteStatusLabel( site ) }</Field>
 					</HStack>
 					<HStack justify="space-between">
-						{ options?.software_version && (
-							<Field title={ __( 'WordPress' ) }>{ options.software_version }</Field>
+						<div style={ { flex: 1 } }>
+							<Field title={ __( 'WordPress' ) }>{ options?.software_version }</Field>
+						</div>
+						{ is_wpcom_atomic && (
+							<div style={ { flex: 1 } }>
+								<Field title={ __( 'PHP' ) }>
+									<PHPVersion siteSlug={ site.slug } />
+								</Field>
+							</div>
 						) }
-						{ phpVersion && <Field title={ __( 'PHP' ) }>{ phpVersion }</Field> }
 					</HStack>
 					<PlanDetails site={ site } currentPlan={ currentPlan } />
 				</VStack>

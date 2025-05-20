@@ -18,7 +18,6 @@ import {
 	siteCurrentPlanQuery,
 	siteEngagementStatsQuery,
 	siteMonitorUptimeQuery,
-	sitePHPVersionQuery,
 } from './queries';
 import { queryClient } from './query-client';
 import Root from './root';
@@ -93,9 +92,6 @@ const siteOverviewRoute = createRoute( {
 			// Kick off dependent promises in parallel.
 			site.jetpack && site.jetpack_modules.includes( 'monitor' )
 				? queryClient.ensureQueryData( siteMonitorUptimeQuery( siteSlug ) )
-				: undefined,
-			site.is_wpcom_atomic
-				? queryClient.ensureQueryData( sitePHPVersionQuery( siteSlug ) )
 				: undefined,
 		] );
 	},

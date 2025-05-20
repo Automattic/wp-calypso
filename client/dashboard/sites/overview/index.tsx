@@ -12,7 +12,6 @@ import { wordpress } from '@wordpress/icons';
 import {
 	siteQuery,
 	siteMonitorUptimeQuery,
-	sitePHPVersionQuery,
 	siteCurrentPlanQuery,
 	siteEngagementStatsQuery,
 } from '../../app/queries';
@@ -38,10 +37,6 @@ function SiteOverview() {
 	const { data: siteMonitorUptime } = useQuery( {
 		...siteMonitorUptimeQuery( siteSlug ),
 		enabled: site?.jetpack && site?.jetpack_modules.includes( 'monitor' ),
-	} );
-	const { data: phpVersion } = useQuery( {
-		...sitePHPVersionQuery( siteSlug ),
-		enabled: site?.is_wpcom_atomic,
 	} );
 	const { data: currentPlan } = useQuery( siteCurrentPlanQuery( siteSlug ) );
 	const { data: engagementStats } = useQuery( siteEngagementStatsQuery( siteSlug ) );
@@ -73,7 +68,7 @@ function SiteOverview() {
 			}
 		>
 			<HStack alignment="flex-start" spacing={ 8 }>
-				<Sidebar site={ site } phpVersion={ phpVersion } currentPlan={ currentPlan } />
+				<Sidebar site={ site } currentPlan={ currentPlan } />
 				<VStack spacing={ 8 }>
 					<Card style={ { padding: '16px' } }>
 						<VStack>
