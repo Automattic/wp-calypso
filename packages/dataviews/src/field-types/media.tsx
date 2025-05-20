@@ -24,4 +24,7 @@ export default {
 	Edit: null,
 	render: () => null,
 	enableSorting: false,
+	filterBy: {
+		operators: [],
+	},
 };
