@@ -1,6 +1,8 @@
 import { useMemo, useState } from 'react';
 import { DayPicker, TZDate } from 'react-day-picker';
+import { enUS } from 'react-day-picker/locale';
 import { Day } from './day-cell';
+import { useLocalizationProps } from './localization';
 import { useControlledValue } from './utils';
 import type {
 	DateCalendarProps,
@@ -73,71 +75,20 @@ function clampNumberOfMonths( numberOfMonths: number ) {
 	return Math.min( 3, Math.max( 1, numberOfMonths ) );
 }
 
-function isLocaleRTL( localeCode: string ) {
-	return [
-		'ar', // Arabic
-		'he', // Hebrew
-		'fa', // Persian (Farsi)
-		'ur', // Urdu
-		'ps', // Pashto
-		'syr', // Syriac
-		'dv', // Divehi
-		'ku', // Kurdish (Sorani)
-		'yi', // Yiddish
-	].includes( localeCode.split( '-' )[ 0 ].toLowerCase() );
-}
-
-const useLocalizationProps = ( {
-	dir,
-	locale,
-	timeZone,
-}: {
-	numberOfMonths: number;
-	dir: DateCalendarProps[ 'dir' ];
-	locale: DateCalendarProps[ 'locale' ];
-	timeZone: DateCalendarProps[ 'timeZone' ];
-} ) => {
-	return useMemo( () => {
-		const localeCode = locale?.code ?? 'en-US';
-
-		return {
-			// Localization
-			locale,
-			dir: dir ?? isLocaleRTL( localeCode ) ? 'rtl' : 'ltr',
-			formatters: {
-				formatWeekdayName: ( date: Date ) => {
-					// ie. M, T, W, T, F, S, S
-					return new Intl.DateTimeFormat( localeCode, {
-						weekday: 'narrow',
-						timeZone,
-					} ).format( date );
-				},
-				formatCaption: ( date: Date ) => {
-					// ie. April 2025
-					return new Intl.DateTimeFormat( localeCode, {
-						year: 'numeric',
-						month: 'long',
-						timeZone,
-					} ).format( date );
-				},
-			},
-			timeZone,
-		} as const;
-	}, [ locale, timeZone, dir ] );
-};
-
 export const DateCalendar = ( {
-	[ 'aria-label' ]: ariaLabel = 'Date calendar',
-	dir,
-	locale,
-	numberOfMonths = 1,
 	defaultSelected,
 	selected: selectedProp,
 	onSelect,
+	numberOfMonths = 1,
+	locale = enUS,
 	timeZone,
 	...props
 }: DateCalendarProps ) => {
-	const localizationProps = useLocalizationProps( { numberOfMonths, locale, timeZone, dir } );
+	const localizationProps = useLocalizationProps( {
+		locale,
+		timeZone,
+		mode: 'single',
+	} );
 
 	const [ selected, setSelected ] = useControlledValue< Date | undefined >( {
 		defaultValue: defaultSelected,
@@ -147,10 +98,9 @@ export const DateCalendar = ( {
 
 	return (
 		<DayPicker
-			aria-label={ ariaLabel }
 			{ ...COMMON_PROPS }
-			{ ...props }
 			{ ...localizationProps }
+			{ ...props }
 			mode="single"
 			numberOfMonths={ clampNumberOfMonths( numberOfMonths ) }
 			selected={ selected }
@@ -160,20 +110,18 @@ export const DateCalendar = ( {
 };
 
 export const DateRangeCalendar = ( {
-	[ 'aria-label' ]: ariaLabel = 'Date range calendar',
-	locale,
-	dir,
-	numberOfMonths = 1,
 	defaultSelected,
 	selected: selectedProp,
 	onSelect,
-	timeZone,
+	numberOfMonths = 1,
 	excludeDisabled,
 	min,
 	max,
+	locale = enUS,
+	timeZone,
 	...props
 }: DateRangeCalendarProps ) => {
-	const localizationProps = useLocalizationProps( { numberOfMonths, locale, timeZone, dir } );
+	const localizationProps = useLocalizationProps( { locale, timeZone, mode: 'range' } );
 
 	const [ selected, setSelected ] = useControlledValue< DateRange | undefined >( {
 		defaultValue: defaultSelected,
@@ -182,7 +130,6 @@ export const DateRangeCalendar = ( {
 	} );
 
 	const [ hoveredDate, setHoveredDate ] = useState< Date | undefined >( undefined );
-
 	// Compute the preview range for hover effect
 	const previewRange = useMemo( () => {
 		// Range preview is disabled when:
@@ -235,10 +182,9 @@ export const DateRangeCalendar = ( {
 
 	return (
 		<DayPicker
-			aria-label={ ariaLabel }
 			{ ...COMMON_PROPS }
-			{ ...props }
 			{ ...localizationProps }
+			{ ...props }
 			mode="range"
 			numberOfMonths={ clampNumberOfMonths( numberOfMonths ) }
 			excludeDisabled={ excludeDisabled }

@@ -138,7 +138,7 @@ type DayOfWeek = {
  */
 export type OnSelectHandler< T > = ( selected: T ) => void;
 
-interface BaseProps extends Omit< React.HTMLAttributes< HTMLDivElement >, 'onSelect' > {
+export interface BaseProps extends Omit< React.HTMLAttributes< HTMLDivElement >, 'onSelect' > {
 	/**
 	 * Whether the selection is required.
 	 */
@@ -188,6 +188,9 @@ interface BaseProps extends Omit< React.HTMLAttributes< HTMLDivElement >, 'onSel
 	modifiers?: Record< string, Matcher | Matcher[] | undefined > | undefined;
 	/**
 	 * Use custom labels, useful for translating the component.
+	 *
+	 * For a correct localized experience, consumers should make sure the locale
+	 * used for the translated labels and `locale` prop are consistent.
 	 */
 	labels?: {
 		/**
@@ -229,8 +232,12 @@ interface BaseProps extends Omit< React.HTMLAttributes< HTMLDivElement >, 'onSel
 
 	/**
 	 * The locale object used to localize dates. Pass a locale from
-	 * `date-fns/locale` to localize the calendar.
+	 * `@date-fns/locale` to localize the calendar.
+	 *
+	 * For a correct localized experience, consumers should make sure the locale
+	 * used for the translated labels and `locale` prop are consistent.
 	 * @see https://github.com/date-fns/date-fns/tree/main/src/locale for a list of the supported locales
+	 * @default The `enUS` locale from `@date-fns/locale`
 	 */
 	locale?: Locale;
 	/**
