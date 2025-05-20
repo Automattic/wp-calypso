@@ -229,10 +229,13 @@ body.is-section-reader {
 			align-items: center;
 			gap: 4px;
 			line-height: 1.5;
-			padding: 12px 18px;
+			padding: 12px 8px;
 
 			&:has(> :nth-child(1):last-child) > :first-child {
 				grid-column-start: 2;
+			}
+			*:first-child {
+				justify-self:center;
 			}
 		}
 
