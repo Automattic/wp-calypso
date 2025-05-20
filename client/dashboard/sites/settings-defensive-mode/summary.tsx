@@ -5,9 +5,16 @@ import { shield } from '@wordpress/icons';
 import { siteDefensiveModeQuery } from '../../app/queries';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
 import { canUpdateDefensiveMode } from '.';
+import type { Density } from '../../components/router-link-summary-button';
 import type { Site } from '../../data/types';
 
-export default function DefensiveModeSettingsSummary( { site }: { site: Site } ) {
+export default function DefensiveModeSettingsSummary( {
+	site,
+	density,
+}: {
+	site: Site;
+	density?: Density;
+} ) {
 	const canUpdate = canUpdateDefensiveMode( site );
 
 	const { data } = useQuery( {
@@ -39,7 +46,7 @@ export default function DefensiveModeSettingsSummary( { site }: { site: Site } )
 		<RouterLinkSummaryButton
 			to={ `/sites/${ site.slug }/settings/defensive-mode` }
 			title={ __( 'Defensive mode' ) }
-			density="medium"
+			density={ density }
 			decoration={ <Icon icon={ shield } /> }
 			badges={ [ badge ] }
 		/>

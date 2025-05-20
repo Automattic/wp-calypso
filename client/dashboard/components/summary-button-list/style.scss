@@ -1,0 +1,31 @@
+@import "@wordpress/base-styles/variables";
+
+.client-dashboard-components-summary-button-list {
+
+	.client-dashboard-components-summary-button-list__heading {
+		margin: 0;
+		font-weight: $font-weight-medium;
+	}
+
+	&.has-density-low {
+		.client-dashboard-components-summary-button-list__heading {
+			font-size: $font-size-x-large;
+			line-height: $font-line-height-x-large;
+		}
+	}
+
+	&.has-density-medium {
+		.client-dashboard-components-summary-button-list__heading {
+			font-size: $font-size-large;
+			line-height: $font-line-height-large;
+		}
+
+		.client-dashboard-components-summary-button-list__children-container {
+			> *:last-child {
+				/* stylelint-disable-next-line scales/radii */
+				border-radius: 7px;
+			}
+
+		}
+	}
+}
