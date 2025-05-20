@@ -1,14 +1,13 @@
-@import "@wordpress/base-styles/mixins";
-@import "@wordpress/base-styles/variables";
-@import "../styles/typography";
+@use "@wordpress/base-styles/colors";
+@use "../styles/typography";
 
 /* Root of the component. */
 .a8c-components-calendar {
 	// TODO:
 	// - move`font-family` rule (and "../styles/typography" import) out of component
 	// - add `font-family` rule to Storybook's global styles
-	// - then 	Theme is ready and includes type styles, add back to component
-	font-family: $a8c-font-family-sans;
+	// - when Theme is ready and includes type styles, add back to component
+	font-family: typography.$a8c-font-family-sans;
 
 	// Internal variables
 	--a8c-components-calendar-outline-focus: 1.5px solid var(--color-accent);
@@ -23,7 +22,7 @@
 	position: relative; /* Required to position the navigation toolbar. */
 	box-sizing: border-box;
 	display: inline flow-root;
-	color: $gray-900;
+	color: colors.$gray-900;
 	font-size: 13px;
 	font-weight: 400;
 
@@ -41,7 +40,7 @@
 	// date follows the same color as the button's text, since the button
 	// inherits its text color.
 	&:has(.a8c-components-calendar__day-button:disabled) {
-		color: $gray-600;
+		color: colors.$gray-600;
 	}
 	&:has(.a8c-components-calendar__day-button:hover:not(:disabled)),
 	&:has(.a8c-components-calendar__day-button:focus-visible) {
@@ -145,7 +144,7 @@
 	&[aria-disabled="true"] {
 		cursor: revert;
 
-		color: $gray-600;
+		color: colors.$gray-600;
 	}
 
 	&:focus-visible {
@@ -206,7 +205,7 @@
 	height: var(--a8c-components-calendar-button-height);
 	padding: 0;
 
-	color: $gray-700;
+	color: colors.$gray-700;
 	text-align: center;
 	text-transform: uppercase;
 }
@@ -228,12 +227,12 @@
 // Selected date button (individual date, range start, and range end)
 .a8c-components-calendar__day--selected:not(.a8c-components-calendar__range-middle) {
 	&:has(.a8c-components-calendar__day-button, .a8c-components-calendar__day-button:hover:not(:disabled)) {
-		color: $white;
+		color: colors.$white;
 	}
 
 	.a8c-components-calendar__day-button {
 		&::before {
-			background-color: $gray-900;
+			background-color: colors.$gray-900;
 			// Render a transparent border to highlight the selected day in
 			// forced-colors (high-contrast) mode, since the background is not
 			// visible.
@@ -241,11 +240,11 @@
 		}
 
 		&:disabled::before {
-			background-color: $gray-600;
+			background-color: colors.$gray-600;
 		}
 
 		&:hover:not(:disabled)::before {
-			background-color: $gray-800;
+			background-color: colors.$gray-800;
 		}
 	}
 }
