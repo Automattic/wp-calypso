@@ -1,4 +1,6 @@
 import { DataForm } from '@automattic/dataviews';
+import { useQuery } from '@tanstack/react-query';
+import { notFound } from '@tanstack/react-router';
 import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
@@ -10,7 +12,9 @@ import {
 import { createInterpolateElement } from '@wordpress/element';
 import { sprintf, __ } from '@wordpress/i18n';
 import { useState } from 'react';
+import { siteQuery } from '../../app/queries';
 import PageLayout from '../../components/page-layout';
+import { useCanTransferSite } from '../hooks/use-can-transfer-site';
 import SettingsPageHeader from '../settings-page-header';
 import type { Field, SimpleFormField } from '@automattic/dataviews';
 
@@ -32,6 +36,8 @@ const form = {
 };
 
 export default function SettingsTransferSite( { siteSlug }: { siteSlug: string } ) {
+	const { data: site } = useQuery( siteQuery( siteSlug ) );
+	const canTransferSite = useCanTransferSite( { site } );
 	const [ formData, setFormData ] = useState( {
 		email: '',
 	} );
@@ -40,6 +46,14 @@ export default function SettingsTransferSite( { siteSlug }: { siteSlug: string }
 	const handleSubmit = ( event: React.FormEvent ) => {
 		event.preventDefault();
 	};
+
+	if ( ! site ) {
+		return null;
+	}
+
+	if ( ! canTransferSite ) {
+		throw notFound();
+	}
 
 	return (
 		<PageLayout

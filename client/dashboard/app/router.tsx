@@ -153,8 +153,7 @@ const siteSettingsSubscriptionGiftingRoute = createRoute( {
 const siteSettingsTransferSiteRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: 'settings/transfer-site',
-	loader: ( { params: { siteSlug } } ) =>
-		queryClient.ensureQueryData( siteSettingsQuery( siteSlug ) ),
+	loader: ( { params: { siteSlug } } ) => queryClient.ensureQueryData( siteQuery( siteSlug ) ),
 } ).lazy( () =>
 	import( '../sites/settings-transfer-site' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-transfer-site' )( {
