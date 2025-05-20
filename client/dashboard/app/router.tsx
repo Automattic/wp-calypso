@@ -15,7 +15,6 @@ import {
 	domainsQuery,
 	emailsQuery,
 	profileQuery,
-	siteMediaStorageQuery,
 	siteCurrentPlanQuery,
 	sitePrimaryDomainQuery,
 	siteEngagementStatsQuery,
@@ -83,7 +82,6 @@ const siteOverviewRoute = createRoute( {
 		// Site usually takes the longest, so kick it off first.
 		const sitePromise = queryClient.ensureQueryData( siteQuery( siteSlug ) );
 		// Kick off all independent promises in parallel.
-		const mediaStoragePromise = queryClient.ensureQueryData( siteMediaStorageQuery( siteSlug ) );
 		const currentPlanPromise = queryClient.ensureQueryData( siteCurrentPlanQuery( siteSlug ) );
 		const primaryDomainPromise = queryClient.ensureQueryData( sitePrimaryDomainQuery( siteSlug ) );
 		const engagementStatsPromise = queryClient.ensureQueryData(
@@ -91,7 +89,6 @@ const siteOverviewRoute = createRoute( {
 		);
 		const site = await sitePromise;
 		await Promise.all( [
-			mediaStoragePromise,
 			currentPlanPromise,
 			primaryDomainPromise,
 			engagementStatsPromise,

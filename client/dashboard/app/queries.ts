@@ -78,13 +78,6 @@ export function sitePHPVersionQuery( siteIdOrSlug: string ) {
 	};
 }
 
-export function siteMediaStorageQuery( siteIdOrSlug: string ) {
-	return {
-		queryKey: [ 'site', siteIdOrSlug, 'media-storage' ],
-		queryFn: () => fetchSiteMediaStorage( siteIdOrSlug ),
-	};
-}
-
 export function domainsQuery() {
 	return {
 		queryKey: [ 'domains' ],
