@@ -19,7 +19,6 @@ import {
 	getPartnerCoupon,
 } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
-import { usePrevious } from '@wordpress/compose';
 import clsx from 'clsx';
 import { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import { has100YearPlan } from 'calypso/lib/cart-values/cart-items';
@@ -114,7 +113,6 @@ export function WPOrderReviewLineItems( {
 	const isOnboardingAffiliateFlow = useSelector( getIsOnboardingAffiliateFlow );
 	const [ cartProductsOrder, setCartProductsOrder ] = useCartProductsOrder();
 	const [ restorableProducts ] = useRestorableProducts();
-	const prevRestorableProducts = usePrevious( restorableProducts );
 
 	if ( couponLineItem ) {
 		couponLineItem.label = isOnboardingAffiliateFlow
@@ -145,19 +143,20 @@ export function WPOrderReviewLineItems( {
 	}, [ responseCart.products ] );
 
 	useEffect( () => {
-		const hasProductBeenRestored =
-			restorableProducts.length < ( prevRestorableProducts?.length || 0 );
+		const productOrderNeedsInitialization = ! cartProductsOrder.length;
 
-		if ( ! cartProductsOrder.length || hasProductBeenRestored ) {
+		// An update can be either a new product added to the cart or an existing product
+		// that has been updated (e.g. changing the duration of a plan).
+		// Removing a product from the cart will not trigger this effect, since the
+		// removed product will then be shown in the restorable products list.
+		const cartHasBeenUpdated = cartProductsOrder.length <= responseCart.products.length;
+
+		if ( productOrderNeedsInitialization || cartHasBeenUpdated ) {
 			setCartProductsOrder( responseCart.products.map( ( { product_id } ) => product_id ) );
 		}
-	}, [
-		cartProductsOrder,
-		prevRestorableProducts,
-		responseCart.products,
-		restorableProducts,
-		setCartProductsOrder,
-	] );
+
+		// eslint-disable-next-line react-hooks/exhaustive-deps -- Having cartProductsOrder as a dependency would trigger an infinite loop.
+	}, [ responseCart.products, setCartProductsOrder ] );
 
 	const hasWPCOMPlanInCart = responseCart.products.some( ( product ) =>
 		isWpComPlan( product.product_slug )
