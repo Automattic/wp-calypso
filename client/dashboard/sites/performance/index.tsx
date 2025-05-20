@@ -26,7 +26,7 @@ const getPageFromID = ( pages: PerformanceProfilerPage[] | undefined, pageId: st
 
 function SitePerformanceContent( { site }: { site: Site } ) {
 	const { data: pagesData, refetch: refetchPages } = useQuery( {
-		...performanceProfilerPagesQuery( site.ID, '' ),
+		...performanceProfilerPagesQuery( site.ID ),
 		refetchOnWindowFocus: false,
 	} );
 	const { page_id } = useSearch( { from: sitePerformanceRoute.fullPath } );
