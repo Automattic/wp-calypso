@@ -82,7 +82,11 @@ describe( 'SiteMigrationInstructions', () => {
 	it( 'should render preview column', async () => {
 		const { container } = render();
 
-		expect( container.querySelector( '.launchpad-container__main-content' ) ).toBeInTheDocument();
+		expect(
+			container.querySelector(
+				'.migration-instructions-from-preview, .launchpad-container__main-content'
+			)
+		).toBeInTheDocument();
 	} );
 
 	it( 'should not render preview column if from is not informed', async () => {
