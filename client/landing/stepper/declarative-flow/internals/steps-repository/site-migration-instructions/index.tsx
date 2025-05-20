@@ -25,8 +25,8 @@ import { SitePreview } from './site-preview';
 import { Steps } from './steps';
 import { useSteps } from './steps/use-steps';
 import { SupportNudge } from './support-nudge';
-import './style.scss';
 import type { Step as StepType } from '../../types';
+import './style.scss';
 
 interface PreparationEventsHookOptions {
 	migrationKeyStatus: string;
