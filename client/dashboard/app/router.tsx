@@ -15,7 +15,12 @@ import {
 	domainsQuery,
 	emailsQuery,
 	profileQuery,
-	siteOverviewQuery,
+	siteMediaStorageQuery,
+	siteCurrentPlanQuery,
+	sitePrimaryDomainQuery,
+	siteEngagementStatsQuery,
+	siteMonitorUptimeQuery,
+	sitePHPVersionQuery,
 } from './queries';
 import { queryClient } from './query-client';
 import Root from './root';
@@ -74,12 +79,31 @@ const siteRoute = createRoute( {
 const siteOverviewRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: '/',
-	loader: ( { params: { siteSlug } } ) =>
-		Promise.all( [
-			// Needed for header. To do: fix.
-			queryClient.ensureQueryData( siteQuery( siteSlug ) ),
-			queryClient.ensureQueryData( siteOverviewQuery( siteSlug ) ),
-		] ),
+	loader: async ( { params: { siteSlug } } ) => {
+		// Site usually takes the longest, so kick it off first.
+		const sitePromise = queryClient.ensureQueryData( siteQuery( siteSlug ) );
+		// Kick off all independent promises in parallel.
+		const mediaStoragePromise = queryClient.ensureQueryData( siteMediaStorageQuery( siteSlug ) );
+		const currentPlanPromise = queryClient.ensureQueryData( siteCurrentPlanQuery( siteSlug ) );
+		const primaryDomainPromise = queryClient.ensureQueryData( sitePrimaryDomainQuery( siteSlug ) );
+		const engagementStatsPromise = queryClient.ensureQueryData(
+			siteEngagementStatsQuery( siteSlug )
+		);
+		const site = await sitePromise;
+		await Promise.all( [
+			mediaStoragePromise,
+			currentPlanPromise,
+			primaryDomainPromise,
+			engagementStatsPromise,
+			// Kick off dependent promises in parallel.
+			site.jetpack && site.jetpack_modules.includes( 'monitor' )
+				? queryClient.ensureQueryData( siteMonitorUptimeQuery( siteSlug ) )
+				: undefined,
+			site.options?.is_wpcom_atomic
+				? queryClient.ensureQueryData( sitePHPVersionQuery( siteSlug ) )
+				: undefined,
+		] );
+	},
 } ).lazy( () =>
 	import( '../sites/overview' ).then( ( d ) =>
 		createLazyRoute( 'site-overview' )( {
