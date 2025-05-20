@@ -56,9 +56,13 @@ body.is-section-reader {
 		}
 	}
 }
-/// theme-default .global-sidebar .sidebar .sidebar__menu.is-togglable .sidebar__heading:hover .sidebar__expandable-arrow
 
 :root .theme-default .is-section-reader {
+		.sidebar-menu-container {
+			display: flex;
+			flex-direction: column;
+			gap: 20px;
+		}
 		.sidebar__menu {
 			&:not(.is-togglable){
 				gap: 4px;
@@ -98,12 +102,12 @@ body.is-section-reader {
 	.sidebar-header {
 		display: flex;
 		justify-content: space-between;
-		margin: 0 12px 44px;
+		margin: 0 12px 0;
 		padding: 24px 10px;
 
 		h3 {
 			font-weight: 500;
-			font-size: $font-body-large;
+			font-size: 20px;
 			line-height: 26px;
 		}
 
