@@ -16,7 +16,7 @@
 			font-size: 90%;
 		}
 		.empty-content__line {
-			margin-bottom: 20px;
+			margin-bottom: 2.8rem;
 		}
 	}
 }
@@ -98,6 +98,7 @@
 
 	.empty-content__action.is-primary {
 		background-color: var(--studio-jetpack-green-60);
+		border-color: var(--studio-jetpack-green-60);
 	}
 }
 .magic-login__successfully-jetpack-actions {
@@ -170,13 +171,18 @@
 
 	.empty-content__line {
 		font-size: $font-body-small;
-		margin-bottom: 20px;
+		margin-bottom: 2.8rem;
 		font-weight: 400;
 		color: var(--studio-gray-100)
 	}
 	.empty-content__action {
 		width: 100%;
-		margin: 10px 0
+		margin: 0 0 1rem;
+		border-radius: 4px;
+		font-size: 15px;
+		font-weight: 500;
+		line-height: 20px;
+		padding: 0.75rem 1.5rem;
 	}
 }
 
