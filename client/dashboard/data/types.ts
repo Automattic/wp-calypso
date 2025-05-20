@@ -60,6 +60,10 @@ export interface Plan {
 	user_facing_expiry?: string;
 }
 
+export interface SiteCapabilities {
+	manage_options: boolean;
+}
+
 export interface SiteOptions {
 	software_version: string;
 	admin_url: string;
@@ -77,7 +81,7 @@ export interface Site {
 	};
 	plan?: SitePlan;
 	active_modules?: string[];
-	capabilities: Record< string, Record< string, boolean > >;
+	capabilities: SiteCapabilities;
 	subscribers_count: number;
 	// Can be undefined for deleted sites.
 	options?: SiteOptions;
