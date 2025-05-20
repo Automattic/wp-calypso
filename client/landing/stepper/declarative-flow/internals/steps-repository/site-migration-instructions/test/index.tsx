@@ -80,9 +80,9 @@ describe( 'SiteMigrationInstructions', () => {
 	} );
 
 	it( 'should render preview column', async () => {
-		const { container } = render();
-
-		expect( container.getByLabelText( 'Preview of the site being imported' ) ).toBeInTheDocument();
+		const { queryByText } = render();
+		// Tests that the SitePreview component is rendered
+		expect( queryByText( 'SitePreview Component' ) ).toBeInTheDocument();
 	} );
 
 	it( 'should not render preview column if from is not informed', async () => {
