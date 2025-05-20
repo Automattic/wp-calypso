@@ -9,8 +9,9 @@ import { ActionList } from '../../components/action-list';
 import { DotcomFeatures } from '../../data/constants';
 import type { Site } from '../../data/types';
 
-const useRestorePlanSoftware = ( { slug, is_wpcom_atomic }: Site ) => {
+const RestorePlanSoftware = ( { site }: { site: Site } ) => {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+	const { slug, is_wpcom_atomic } = site;
 	const mutation = useMutation( restoreSitePlanSoftwareMutation( slug ) );
 
 	const handleClick = () => {
@@ -33,52 +34,58 @@ const useRestorePlanSoftware = ( { slug, is_wpcom_atomic }: Site ) => {
 		return null;
 	}
 
-	return {
-		title: __( 'Re-install plugins & themes' ),
-		description: __(
-			'If your website is missing plugins and themes that come with your plan you can re-install them here.'
-		),
-		actions: (
-			<Button
-				variant="secondary"
-				size="compact"
-				isBusy={ mutation.isPending }
-				onClick={ handleClick }
-			>
-				{ __( 'Restore' ) }
-			</Button>
-		),
-	};
+	return (
+		<ActionList.ActionItem
+			title={ __( 'Re-install plugins & themes' ) }
+			description={ __(
+				'If your website is missing plugins and themes that come with your plan you can re-install them here.'
+			) }
+			actions={
+				<Button
+					variant="secondary"
+					size="compact"
+					isBusy={ mutation.isPending }
+					onClick={ handleClick }
+				>
+					{ __( 'Restore' ) }
+				</Button>
+			}
+		/>
+	);
 };
 
-const useDuplicateSite = ( { capabilities, plan, slug }: Site ) => {
+const DuplicateSite = ( { site }: { site: Site } ) => {
+	const { capabilities, plan, slug } = site;
+
 	if (
 		! ( capabilities.manage_options && plan?.features.active.includes( DotcomFeatures.COPY_SITE ) )
 	) {
 		return null;
 	}
 
-	return {
-		title: __( 'Duplicate site' ),
-		description: __( 'Create a duplicate of this site.' ),
-		actions: (
-			<Button
-				variant="secondary"
-				size="compact"
-				href={ addQueryArgs( '/setup/copy-site', {
-					sourceSlug: slug,
-				} ) }
-			>
-				{ __( 'Duplicate' ) }
-			</Button>
-		),
-	};
+	return (
+		<ActionList.ActionItem
+			title={ __( 'Duplicate site' ) }
+			description={ __( 'Create a duplicate of this site.' ) }
+			actions={
+				<Button
+					variant="secondary"
+					size="compact"
+					href={ addQueryArgs( '/setup/copy-site', {
+						sourceSlug: slug,
+					} ) }
+				>
+					{ __( 'Duplicate' ) }
+				</Button>
+			}
+		/>
+	);
 };
 
 export default function SiteActions( { site }: { site: Site } ) {
-	const restorePlanSoftware = useRestorePlanSoftware( site );
-	const duplicateSite = useDuplicateSite( site );
-	const actions = [ restorePlanSoftware, duplicateSite ].filter( ( value ) => !! value );
+	const actions = [ <RestorePlanSoftware site={ site } />, <DuplicateSite site={ site } /> ].filter(
+		Boolean
+	);
 
 	if ( ! actions.length ) {
 		return null;
@@ -87,11 +94,7 @@ export default function SiteActions( { site }: { site: Site } ) {
 	return (
 		<>
 			<Heading>{ __( 'Actions' ) }</Heading>
-			<ActionList>
-				{ actions.map( ( action ) => (
-					<ActionList.ActionItem key={ action.title } { ...action } />
-				) ) }
-			</ActionList>
+			<ActionList>{ actions }</ActionList>
 		</>
 	);
 }
