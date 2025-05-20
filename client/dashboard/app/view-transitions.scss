@@ -1,0 +1,66 @@
+::view-transition-old(root),
+::view-transition-new(root) {
+	animation-duration: 250ms;
+}
+
+// The main and sub headers must be separate view transitions, othervise the sub
+// header won't slide in!
+header.dashboard-header-bar {
+	view-transition-name: main-header;
+}
+main div.dashboard-header-bar {
+	view-transition-name: sub-header;
+}
+
+// Headers should show on top of the rest of the page (important for sticky).
+::view-transition-group(main-header),
+::view-transition-group(sub-header) {
+	z-index: 1;
+}
+
+// Do not let the browser transform (slide in) the main hear. This is important
+// for sticy positioning (when the page is scrolled down) and gently switching
+// between the main and sub headers.
+::view-transition-group(main-header) {
+	transform: none !important;
+}
+
+::view-transition-image-pair(main-header),
+::view-transition-image-pair(sub-header) {
+	height: auto;
+}
+
+// Large and small must be separate so they don't cross-animate.
+.dashboard-page-layout.is-large .client-dashboard-components-page-header {
+	view-transition-name: page-layout-header-large;
+}
+.dashboard-page-layout.is-small .client-dashboard-components-page-header {
+	view-transition-name: page-layout-header-small;
+}
+
+.dashboard-page-layout.is-large .client-dashboard-components-page-header .components-button.is-primary {
+	view-transition-name: page-layout-header-large--button;
+}
+
+::view-transition-old(page-layout-header-large--button),
+::view-transition-new(page-layout-header-large--button) {
+	height: 100%;
+}
+
+.dashboard-page-layout__content {
+	view-transition-name: page-layout-content;
+}
+
+::view-transition-old(page-layout-content),
+::view-transition-new(page-layout-content) {
+	// Never expand the main content horizontally, but allow it to shrink.
+	width: auto;
+	// Also disable shrinking. Leaving it commented out to test.
+	// max-width: 100%;
+	height: auto;
+}
+
+::view-transition-image-pair(page-layout-content) {
+	display: flex;
+	justify-content: center;
+}

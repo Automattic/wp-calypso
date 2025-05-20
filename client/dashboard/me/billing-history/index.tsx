@@ -4,8 +4,7 @@ import PageLayout from '../../components/page-layout';
 
 function BillingHistory() {
 	return (
-		<PageLayout size="small">
-			<PageHeader title={ __( 'Billing History' ) } />
+		<PageLayout size="small" header={ <PageHeader title={ __( 'Billing History' ) } /> }>
 			<div>Billing history content will go here</div>
 		</PageLayout>
 	);

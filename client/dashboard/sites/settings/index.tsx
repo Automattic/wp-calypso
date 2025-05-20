@@ -22,8 +22,7 @@ export default function SiteSettings( { siteSlug }: { siteSlug: string } ) {
 	const { site } = siteData;
 
 	return (
-		<PageLayout size="small">
-			<PageHeader title={ __( 'Settings' ) } />
+		<PageLayout size="small" header={ <PageHeader title={ __( 'Settings' ) } /> }>
 			<Heading>{ __( 'General' ) }</Heading>
 			<Card>
 				<VStack>

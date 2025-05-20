@@ -57,7 +57,9 @@ function UserProfile() {
 						<Text variant="muted">@{ user.username }</Text>
 					</VStack>
 					<MenuGroup>
-						<RouterLinkMenuItem to="/me/profile">{ __( 'Account' ) }</RouterLinkMenuItem>
+						<RouterLinkMenuItem to="/me/profile" onClick={ onClose }>
+							{ __( 'Account' ) }
+						</RouterLinkMenuItem>
 					</MenuGroup>
 					<MenuGroup>
 						<MenuItem
