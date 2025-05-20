@@ -1,30 +1,63 @@
-import { privateApis } from '@wordpress/components';
-import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
-import React from 'react';
-import type { BadgeProps } from '@wordpress/components/src/badge/types';
-
-// TODO: When the component is publicly available, we should remove the private API usage and
-// import it directly from @wordpress/components as it will cause a build error.
-const { unlock } = __dangerousOptInToUnstableAPIsOnlyForCoreModules(
-	'I acknowledge private features are not for use in themes or plugins and doing so will break in the next version of WordPress.',
-	'@wordpress/components'
-);
-const { Badge } = unlock( privateApis );
+/**
+ * External dependencies
+ */
+import clsx from 'clsx';
 
 /**
- * A wrapper component around WordPress's private [`Badge` component](https://wordpress.github.io/gutenberg/?path=/docs/components-badge--docs)
- * from `@wordpress/components`.
- *
- * ```jsx
- * import { CoreBadge } from '@automattic/components';
- *
- * function MyComponent() {
- * 	return <CoreBadge>Badge Content</CoreBadge>;
- * }
- * ```
+ * WordPress dependencies
  */
-const CoreBadge = ( props: BadgeProps & React.HTMLAttributes< HTMLSpanElement > ) => {
-	return <Badge { ...props } />;
-};
+import { info, caution, error, published } from '@wordpress/icons';
 
-export default CoreBadge;
+/**
+ * Internal dependencies
+ */
+import type { BadgeProps } from './types';
+import type { WordPressComponentProps } from '../context';
+import Icon from '../icon';
+
+/**
+ * Returns an icon based on the badge context.
+ *
+ * @return The corresponding icon for the provided context.
+ */
+function contextBasedIcon( intent: BadgeProps[ 'intent' ] = 'default' ) {
+	switch ( intent ) {
+		case 'info':
+			return info;
+		case 'success':
+			return published;
+		case 'warning':
+			return caution;
+		case 'error':
+			return error;
+		default:
+			return null;
+	}
+}
+
+function Badge( {
+	className,
+	intent = 'default',
+	children,
+	...props
+}: WordPressComponentProps< BadgeProps, 'span', false > ) {
+	const icon = contextBasedIcon( intent );
+	const hasIcon = !! icon;
+
+	return (
+		<span
+			className={ clsx( 'components-badge', className, {
+				[ `is-${ intent }` ]: intent,
+				'has-icon': hasIcon,
+			} ) }
+			{ ...props }
+		>
+			{ hasIcon && (
+				<Icon icon={ icon } size={ 16 } fill="currentColor" className="components-badge__icon" />
+			) }
+			<span className="components-badge__content">{ children }</span>
+		</span>
+	);
+}
+
+export default Badge;
