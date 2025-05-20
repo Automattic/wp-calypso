@@ -103,7 +103,7 @@ export const useGetHistoryChats = (): UseGetHistoryChatsResult => {
 	}, [] );
 
 	const { data: openSupportInteraction, isLoading: isLoadingOpenInteractions } =
-		useGetSupportInteractions( 'zendesk', 10, 'open' );
+		useGetSupportInteractions( 'zendesk', 10, 'open', 10, true, lastMessageReceivedAt );
 	const { data: otherSupportInteractions, isLoading: isLoadingOtherSupportInteractions } =
 		useGetSupportInteractions( 'zendesk', 100, [ 'resolved', 'solved', 'closed' ] );
 	const { data: odieConversations, isLoading: isLoadingOdieConversations } =

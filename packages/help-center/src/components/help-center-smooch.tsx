@@ -91,11 +91,14 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 				playNotificationSound();
 			}
 
+			if ( setLastMessageReceivedAt ) {
+				setLastMessageReceivedAt( Date.now() );
+			}
+
 			if ( isHelpCenterShown ) {
 				return;
 			}
 
-			setLastMessageReceivedAt( Date.now() );
 			Smooch.getConversationById( data?.conversation?.id ).then( () => getUnreadNotifications() );
 		},
 		[ isHelpCenterShown, areSoundNotificationsEnabled, setLastMessageReceivedAt ]

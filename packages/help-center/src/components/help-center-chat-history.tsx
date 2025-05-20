@@ -36,7 +36,7 @@ const Conversations = ( {
 } ) => {
 	const { __ } = useI18n();
 
-	if ( isLoadingInteractions ) {
+	if ( isLoadingInteractions && ! conversations.length ) {
 		return (
 			<div className="help-center-chat-history__no-results">
 				<Spinner />

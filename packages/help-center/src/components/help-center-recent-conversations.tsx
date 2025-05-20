@@ -7,10 +7,10 @@ import { getLastMessageAndUnread } from './utils';
 import './help-center-recent-conversations.scss';
 
 const HelpCenterRecentConversations: React.FC = () => {
-	const { isLoadingInteractions, recentConversations } = useGetHistoryChats();
+	const { recentConversations } = useGetHistoryChats();
 	const { __ } = useI18n();
 
-	if ( isLoadingInteractions || ! recentConversations.length ) {
+	if ( ! recentConversations?.length ) {
 		return null;
 	}
 
