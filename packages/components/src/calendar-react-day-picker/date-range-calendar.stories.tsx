@@ -229,62 +229,6 @@ export const WithSelectedRangeAndMonth: Story = {
 	},
 };
 
-const fullMonthYearFormatter = ( date: Date, locale: string ) =>
-	new Intl.DateTimeFormat( locale, {
-		month: 'long',
-		year: 'numeric',
-		// Note: make sure to also include the timeZone option in the formatter.
-	} ).format( date );
-
-const fullDateFormatter = ( date: Date, locale: string ) =>
-	new Intl.DateTimeFormat( locale, {
-		month: 'long',
-		year: 'numeric',
-		day: 'numeric',
-		weekday: 'long',
-		// Note: make sure to also include the timeZone option in the formatter.
-	} ).format( date );
-
-const weekdayFormatter = ( date: Date, locale: string ) =>
-	new Intl.DateTimeFormat( locale, {
-		weekday: 'long',
-		// Note: make sure to also include the timeZone option in the formatter.
-	} ).format( date );
-
-export const Localized: Story = {
-	args: {
-		locale: it,
-		labels: {
-			labelNav: () => 'Naviga tra i mesi',
-			labelGrid: ( date ) => fullMonthYearFormatter( date, it.code ),
-			labelGridcell: ( date, modifiers ) => {
-				const formattedDate = fullDateFormatter( date, it.code );
-				let label = formattedDate;
-				if ( modifiers?.today ) {
-					label = `Oggi, ${ formattedDate }`;
-				}
-				return label;
-			},
-			labelNext: ( month ) =>
-				`Vai al prossimo mese, ${ month ? fullMonthYearFormatter( month, it.code ) : '' }`,
-			labelPrevious: ( month ) =>
-				`Vai al mese precedente, ${ month ? fullMonthYearFormatter( month, it.code ) : '' }`,
-			labelDayButton: ( date, modifiers ) => {
-				const formattedDate = fullDateFormatter( date, it.code );
-				let label = formattedDate;
-				if ( modifiers?.today ) {
-					label = `Oggi, ${ formattedDate }`;
-				}
-				if ( modifiers?.selected ) {
-					label = `${ formattedDate }, selezionato`;
-				}
-				return label;
-			},
-			labelWeekday: ( date ) => weekdayFormatter( date, it.code ),
-		},
-	},
-};
-
 export const WithTimeZone: Story = {
 	render: function DateCalendarWithTimeZone( args ) {
 		const [ range, setRange ] = useState< typeof args.selected | null >( null );
