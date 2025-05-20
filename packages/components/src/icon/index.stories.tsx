@@ -1,25 +1,12 @@
-/**
- * External dependencies
- */
-
-/**
- * WordPress dependencies
- */
 import { wordpress } from '@wordpress/icons';
 import { SVG, Path } from '@wordpress/primitives';
-
-/**
- * Internal dependencies
- */
-import Icon from '..';
-import { VStack } from '../../v-stack';
+import { Icon } from '.';
 import type { Meta, StoryFn } from '@storybook/react';
 
 const meta: Meta< typeof Icon > = {
-	title: 'Components/Icon',
+	title: 'Still Internal/Icon',
 	component: Icon,
 	parameters: {
-		controls: { expanded: true },
 		docs: { canvas: { sourceState: 'shown' } },
 	},
 };
@@ -119,22 +106,4 @@ WithAnSVG.args = {
 			<Path d="M5 4v3h5.5v12h3V7H19V4z" />
 		</SVG>
 	),
-};
-
-/**
- * Although it's preferred to use icons from the `@wordpress/icons` package, [Dashicons](https://developer.wordpress.org/resource/dashicons/) are still supported,
- * as long as you are in a context where the Dashicons stylesheet is loaded. To simulate that here,
- * use the Global CSS Injector in the Storybook toolbar at the top and select the "WordPress" preset.
- */
-export const WithADashicon: StoryFn< typeof Icon > = ( args ) => {
-	return (
-		<VStack>
-			<Icon { ...args } />
-			<small>This won’t show an icon if the Dashicons stylesheet isn’t loaded.</small>
-		</VStack>
-	);
-};
-WithADashicon.args = {
-	...Default.args,
-	icon: 'wordpress',
 };

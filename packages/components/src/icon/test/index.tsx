@@ -1,17 +1,9 @@
 /**
- * External dependencies
+ * @jest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
-
-/**
- * WordPress dependencies
- */
 import { Path, SVG } from '@wordpress/primitives';
-
-/**
- * Internal dependencies
- */
-import Icon from '..';
+import { Icon } from '..';
 
 describe( 'Icon', () => {
 	const testId = 'icon';
@@ -26,20 +18,6 @@ describe( 'Icon', () => {
 		render( <Icon data-testid={ testId } /> );
 
 		expect( screen.queryByTestId( testId ) ).not.toBeInTheDocument();
-	} );
-
-	it( 'renders a dashicon by slug', () => {
-		render( <Icon data-testid={ testId } icon="format-image" /> );
-
-		expect( screen.getByTestId( testId ) ).toHaveClass( 'dashicons-format-image' );
-	} );
-
-	it( 'renders a dashicon with custom size', () => {
-		render( <Icon data-testid={ testId } icon="format-image" size={ 10 } /> );
-
-		expect( screen.getByTestId( testId ) ).toHaveStyle( 'width:10px' );
-		expect( screen.getByTestId( testId ) ).toHaveStyle( 'height:10px' );
-		expect( screen.getByTestId( testId ) ).toHaveStyle( 'font-size:10px' );
 	} );
 
 	it( 'renders a function', () => {

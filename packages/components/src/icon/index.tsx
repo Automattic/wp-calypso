@@ -1,40 +1,28 @@
 /**
- * External dependencies
+ * Forked from `@wordpress/components`
+ *
+ * Only forked for CSS collision safety, in case styles or classnames are added upstream.
+ *
+ * - Removed Gridicons support (non-critical).
  */
 
-/**
- * WordPress dependencies
- */
 import { cloneElement, createElement, isValidElement } from '@wordpress/element';
 import { SVG } from '@wordpress/primitives';
+import type { ComponentType } from 'react';
 
-/**
- * Internal dependencies
- */
-import Dashicon from '../dashicon';
-import type { IconKey as DashiconIconKey } from '../dashicon/types';
-import type { ComponentType, HTMLProps, SVGProps } from 'react';
-
-export type IconType =
-	| DashiconIconKey
+type IconType =
 	| ComponentType< { size?: number } >
 	| ( ( props: { size?: number } ) => JSX.Element )
 	| JSX.Element;
 
-type AdditionalProps< T > = T extends ComponentType< infer U >
-	? U
-	: T extends DashiconIconKey
-	? SVGProps< SVGSVGElement >
-	: {};
+type AdditionalProps< T > = T extends ComponentType< infer U > ? U : Record< string, unknown >;
 
-export type Props = {
+type Props = {
 	/**
 	 * The icon to render. In most cases, you should use an icon from
 	 * [the `@wordpress/icons` package](https://wordpress.github.io/gutenberg/?path=/story/icons-icon--library).
 	 *
-	 * Other supported values are: component instances, functions,
-	 * [Dashicons](https://developer.wordpress.org/resource/dashicons/)
-	 * (specified as strings), and `null`.
+	 * Other supported values are: component instances, functions, and `null`.
 	 *
 	 * The `size` value, as well as any other additional props, will be passed through.
 	 * @default null
@@ -42,9 +30,7 @@ export type Props = {
 	icon?: IconType | null;
 	/**
 	 * The size (width and height) of the icon.
-	 *
-	 * Defaults to `20` when `icon` is a string (i.e. a Dashicon id), otherwise `24`.
-	 * @default `'string' === typeof icon ? 20 : 24`.
+	 * @default 24
 	 */
 	size?: number;
 } & AdditionalProps< IconType >;
@@ -53,32 +39,13 @@ export type Props = {
  * Renders a raw icon without any initial styling or wrappers.
  *
  * ```jsx
+ * import { Icon } from '@automattic/ui';
  * import { wordpress } from '@wordpress/icons';
  *
  * <Icon icon={ wordpress } />
  * ```
  */
-function Icon( {
-	icon = null,
-	size = 'string' === typeof icon ? 20 : 24,
-	...additionalProps
-}: Props ) {
-	if ( 'string' === typeof icon ) {
-		return (
-			<Dashicon
-				icon={ icon }
-				size={ size }
-				{ ...( additionalProps as HTMLProps< HTMLSpanElement > ) }
-			/>
-		);
-	}
-
-	if ( isValidElement( icon ) && Dashicon === icon.type ) {
-		return cloneElement( icon, {
-			...additionalProps,
-		} );
-	}
-
+export function Icon( { icon = null, size = 24, ...additionalProps }: Props ) {
 	if ( 'function' === typeof icon ) {
 		return createElement( icon, {
 			size,
@@ -107,5 +74,3 @@ function Icon( {
 
 	return icon;
 }
-
-export default Icon;
