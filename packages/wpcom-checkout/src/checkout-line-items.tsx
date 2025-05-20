@@ -19,10 +19,16 @@ import {
 	isAkismetProduct,
 } from '@automattic/calypso-products';
 import { Gridicon, Popover } from '@automattic/components';
-import { CheckoutModal, FormStatus, useFormStatus, Theme } from '@automattic/composite-checkout';
+import {
+	Button,
+	CheckoutModal,
+	FormStatus,
+	useFormStatus,
+	Theme,
+} from '@automattic/composite-checkout';
 import { formatCurrency } from '@automattic/number-formatters';
 import styled from '@emotion/styled';
-import { Button } from '@wordpress/components';
+import { Button as CoreButton } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState, PropsWithChildren, useRef, Dispatch, SetStateAction } from 'react';
 import { getLabel, DefaultLineItemSublabel } from './checkout-labels';
@@ -194,6 +200,12 @@ const DeleteButtonWrapper = styled.div`
 `;
 
 const DeleteButton = styled( Button )< { theme?: Theme } >`
+	width: auto;
+	font-size: 0.75rem;
+	color: ${ ( props ) => props.theme.colors.textColorLight };
+`;
+
+const RestorableDeleteButton = styled( CoreButton )< { theme?: Theme } >`
 	color: ${ ( { theme } ) => theme.colors.textColorDark } !important;
 	font-size: 14px;
 	font-weight: 500;
@@ -1533,27 +1545,47 @@ function CheckoutLineItem( {
 			{ hasDeleteButton && removeProductFromCart && (
 				<>
 					<DeleteButtonWrapper>
-						<DeleteButton
-							className="checkout-line-item__remove-product"
-							variant="link"
-							aria-label={ String(
-								translate( 'Remove %s from cart', {
-									args: label,
-								} )
-							) }
-							disabled={ isDisabled }
-							onClick={ () => {
-								onRemoveProductClick?.( label );
+						{ isRestorable ? (
+							<RestorableDeleteButton
+								className="checkout-line-item__remove-product"
+								variant="link"
+								aria-label={ String(
+									translate( 'Remove %s from cart', {
+										args: label,
+									} )
+								) }
+								disabled={ isDisabled }
+								onClick={ () => {
+									if ( hasRemoveFromCartModal ) {
+										setIsModalVisible( true );
+									} else {
+										removeProductFromCartAndSetAsRestorable();
+									}
 
-								if ( hasRemoveFromCartModal || ! isRestorable ) {
+									onRemoveProductClick?.( label );
+								} }
+							>
+								{ translate( 'Remove from cart' ) }
+							</RestorableDeleteButton>
+						) : (
+							<DeleteButton
+								className="checkout-line-item__remove-product"
+								buttonType="text-button"
+								aria-label={ String(
+									translate( 'Remove %s from cart', {
+										args: label,
+									} )
+								) }
+								disabled={ isDisabled }
+								onClick={ () => {
 									setIsModalVisible( true );
-								} else {
-									removeProductFromCartAndSetAsRestorable();
-								}
-							} }
-						>
-							{ translate( 'Remove from cart' ) }
-						</DeleteButton>
+
+									onRemoveProductClick?.( label );
+								} }
+							>
+								{ translate( 'Remove from cart' ) }
+							</DeleteButton>
+						) }
 					</DeleteButtonWrapper>
 
 					<CheckoutModal
