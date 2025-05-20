@@ -97,7 +97,7 @@ const useLocalizationProps = ( {
 	locale: DateCalendarProps[ 'locale' ];
 	timeZone: DateCalendarProps[ 'timeZone' ];
 } ) => {
-	const commonProps = useMemo( () => {
+	return useMemo( () => {
 		const localeCode = locale?.code ?? 'en-US';
 
 		return {
@@ -124,8 +124,6 @@ const useLocalizationProps = ( {
 			timeZone,
 		} as const;
 	}, [ locale, timeZone, dir ] );
-
-	return commonProps;
 };
 
 export const DateCalendar = ( {
