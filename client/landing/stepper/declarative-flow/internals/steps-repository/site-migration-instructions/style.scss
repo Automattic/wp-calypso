@@ -23,6 +23,15 @@
 		}
 	}
 }
+.site-migration-instructions__heading .circular__progress-bar {
+	position: relative;
+	margin-left: 0;
+	margin-bottom: 16px;
+	@include break-large {
+		position: absolute;
+		margin-left: 46px;
+	}
+}
 
 .site-migration-instructions__steps {
 	flex: 1;

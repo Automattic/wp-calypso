@@ -210,22 +210,51 @@ const SiteMigrationInstructions: StepType< {
 
 	if ( useContainerV2 ) {
 		const title = translate( 'Let’s migrate your site' );
+		const topBar = (
+			<Step.TopBar rightElement={ <SupportNudge onAskForHelp={ navigateToDoItForMe } /> } />
+		);
+		const progressCircle = (
+			<CircularProgressBar
+				size={ 40 }
+				enableDesktopScaling
+				numberOfSteps={ steps.length }
+				currentStep={ completedSteps }
+			/>
+		);
+		if ( ! withPreview ) {
+			return (
+				<>
+					<DocumentHead title={ title } />
+					<Step.CenteredColumnLayout
+						columnWidth={ 4 }
+						topBar={ topBar }
+						heading={
+							<>
+								<Step.Heading
+									text={
+										<div className="site-migration-instructions__heading">
+											{ progressCircle }
+											{ title }
+										</div>
+									}
+								/>
+							</>
+						}
+					>
+						{ migrationInstructions }
+					</Step.CenteredColumnLayout>
+				</>
+			);
+		}
 		return (
 			<>
 				<DocumentHead title={ title } />
 				<FixedColumnOnTheLeftLayout
 					fixedColumnWidth={ 3 }
-					topBar={
-						<Step.TopBar rightElement={ <SupportNudge onAskForHelp={ navigateToDoItForMe } /> } />
-					}
+					topBar={ topBar }
 					heading={
 						<>
-							<CircularProgressBar
-								size={ 40 }
-								enableDesktopScaling
-								numberOfSteps={ steps.length }
-								currentStep={ completedSteps }
-							/>
+							{ progressCircle }
 							<FixedColumnOnTheLeftLayout.Heading text={ title } />
 						</>
 					}
