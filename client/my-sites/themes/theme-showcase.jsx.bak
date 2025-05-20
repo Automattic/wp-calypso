@@ -178,6 +178,7 @@ class ThemeShowcase extends Component {
 	isStaticFilter = ( tabFilter ) => isStaticFilter( tabFilter.key );
 
 	getSubjectFilters = ( props ) => {
+console.log( 'getSubjectFilters', props );		
 		const { subjects } = props;
 		return Object.fromEntries(
 			Object.entries( subjects ).map( ( [ key, filter ] ) => [ key, { key, text: filter.name } ] )
@@ -608,7 +609,7 @@ class ThemeShowcase extends Component {
 		const canonicalUrl = 'https://wordpress.com' + pathName;
 		const staticFilters = this.getStaticFilters();
 
-		// Update the filters to accommodate updates/translations from the API.
+		//this actually works
 		this.subjectFilters = this.getSubjectFilters( this.props );
 		this.subjectTermTable = getSubjectsFromTermTable( this.props.filterToTermTable );
 
@@ -649,9 +650,8 @@ class ThemeShowcase extends Component {
 
 		const showThemeErrors =
 			siteId && this.props.category === staticFilters.MYTHEMES.key && isJetpackSite;
-
-		const getLocale = () => this.props.locale;
-
+console.log( 'ThemeShowcase', this.props.locale);
+const getLocale = () => this.props.locale;
 		return (
 			<div className={ classnames }>
 				<PageViewTracker
