@@ -900,8 +900,8 @@ const StatsBodyAccessCheck = ( props ) => {
 };
 
 const StatsSite = ( props ) => {
-	const { context, period: periodProps } = props;
-	const { period } = periodProps;
+	const { context, period: periodData } = props;
+	const { period } = periodData;
 
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 	const siteId = useSelector( getSelectedSiteId );
@@ -920,11 +920,11 @@ const StatsSite = ( props ) => {
 			'traffic',
 			{
 				queryParams: query,
-				period: periodProps?.period,
+				period: periodData?.period,
 			},
 			true
 		);
-	}, [ context.query, periodProps?.period ] );
+	}, [ context.query, periodData?.period ] );
 
 	return (
 		<Main fullWidthLayout ariaLabel={ STATS_PRODUCT_NAME }>
