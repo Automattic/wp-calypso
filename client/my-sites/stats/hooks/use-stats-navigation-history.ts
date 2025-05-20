@@ -11,6 +11,7 @@ const STORAGE_KEY = 'jp-stats-navigation';
 
 const localizedTabNames: { [ key: string ]: string | null } = {
 	traffic: translate( 'Traffic' ),
+	realtime: translate( 'Realtime' ),
 	insights: translate( 'Insights' ),
 	store: translate( 'Store' ),
 	ads: translate( 'Ads' ),
@@ -22,6 +23,7 @@ const localizedTabNames: { [ key: string ]: string | null } = {
 
 const possibleBackLinks: { [ key: string ]: string | null } = {
 	traffic: '/stats/{period}/',
+	realtime: '/stats/realtime/',
 	insights: '/stats/insights/',
 	store: '/stats/store/',
 	ads: '/stats/ads/',
