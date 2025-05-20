@@ -24,7 +24,7 @@ import ServerSettings from './server';
 import SftpSshSettings from './sftp-ssh';
 import useSftpSshSettingTitle from './sftp-ssh/hooks/use-sftp-ssh-setting-title';
 import SiteSettings from './site';
-import SiteSettingsV2Layout from './v2';
+import DashboardBackportSiteSettingsRenderer from './v2';
 import type { Context as PageJSContext } from '@automattic/calypso-router';
 
 export function SettingsSidebar() {
@@ -206,9 +206,9 @@ export function performanceSettings( context: PageJSContext, next: () => void ) 
 }
 
 /**
- * Backport Hosting Dashboard V2 Settings page to the current one.
+ * Backport Hosting Dashboard Site Settings page to the current one.
  */
-export function siteSettingsV2( context: PageJSContext, next: () => void ) {
+export function dashboardBackportSiteSettings( context: PageJSContext, next: () => void ) {
 	const state = context.store.getState();
 	const site = getSelectedSite( state );
 
@@ -219,7 +219,7 @@ export function siteSettingsV2( context: PageJSContext, next: () => void ) {
 	context.primary = (
 		<>
 			<PageViewTracker title="Sites > Settings > General" path={ getRouteFromContext( context ) } />
-			<SiteSettingsV2Layout />
+			<DashboardBackportSiteSettingsRenderer />
 		</>
 	);
 

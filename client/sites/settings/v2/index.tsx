@@ -4,19 +4,20 @@ import { useEffect, useRef } from 'react';
 import { createRoot } from 'react-dom/client';
 import { persistPromise, queryClient } from 'calypso/dashboard/app/query-client';
 import { getRouter } from './router';
+import './style.scss';
 
-export default function Layout() {
+export default function DashboardBackportSiteSettingsRenderer() {
 	const rootInstanceRef = useRef< ReturnType< typeof createRoot > | null >( null );
+	const containerRef = useRef< HTMLDivElement >( null );
 
 	useEffect( () => {
-		const rootElement = document.querySelector( '.hosting-dashboard-item-view__content' );
-		if ( ! rootElement ) {
+		if ( ! containerRef.current ) {
 			return;
 		}
 
 		const router = getRouter();
 		if ( ! rootInstanceRef.current ) {
-			rootInstanceRef.current = createRoot( rootElement );
+			rootInstanceRef.current = createRoot( containerRef.current );
 		}
 
 		persistPromise.then( () => {
@@ -38,5 +39,5 @@ export default function Layout() {
 		};
 	}, [] );
 
-	return null;
+	return <div className="dashboard-backport-site-settings-root" ref={ containerRef } />;
 }

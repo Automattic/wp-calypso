@@ -8,11 +8,10 @@ import {
 } from '@tanstack/react-router';
 import { siteSettingsQuery } from 'calypso/dashboard/app/queries';
 import { queryClient } from 'calypso/dashboard/app/query-client';
-import Root from './root';
 
-const rootRoute = createRootRoute( { component: Root } );
+const rootRoute = createRootRoute( { component: () => <Outlet /> } );
 
-const v2CompatibilityRouteRoot = createRoute( {
+const dashboardSiteSettingsCompatibilityRouteRoot = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'sites/$siteSlug/settings',
 	loader: ( { params: { siteSlug } } ) => {
@@ -20,7 +19,7 @@ const v2CompatibilityRouteRoot = createRoute( {
 	},
 } );
 
-const v2CompatibilityRouteWithFeature = createRoute( {
+const dashboardSiteSettingsCompatibilityRouteWithFeature = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'sites/$siteSlug/settings/$feature',
 	loader: ( { params: { siteSlug, feature } } ) => {
@@ -76,8 +75,8 @@ const subscriptionGiftingRoute = createRoute( {
 const createRouteTree = () =>
 	rootRoute.addChildren( [
 		siteRoute.addChildren( [ settingsRoute, siteVisibilityRoute, subscriptionGiftingRoute ] ),
-		v2CompatibilityRouteRoot,
-		v2CompatibilityRouteWithFeature,
+		dashboardSiteSettingsCompatibilityRouteRoot,
+		dashboardSiteSettingsCompatibilityRouteWithFeature,
 	] );
 
 export const getRouter = () => {

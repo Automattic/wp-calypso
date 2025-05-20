@@ -22,10 +22,10 @@ import {
 } from './administration/controller';
 import {
 	siteSettings,
-	siteSettingsV2,
 	administrationToolDeleteSite,
 	administrationToolResetSite,
 	administrationToolTransferSite,
+	dashboardBackportSiteSettings,
 	serverSettings,
 	sftpSshSettings,
 	databaseSettings,
@@ -134,7 +134,7 @@ export default function () {
 		'/sites/settings/v2/*',
 		siteSelection,
 		navigation,
-		siteSettingsV2,
+		dashboardBackportSiteSettings,
 		siteDashboard( SETTINGS_SITE ),
 		makeLayout,
 		clientRender
