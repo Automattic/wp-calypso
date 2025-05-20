@@ -243,7 +243,7 @@ export default function Filter( {
 
 	let activeElements: Option[] = [];
 
-	if ( filter.elements ) {
+	if ( filter.elements.length > 0 ) {
 		activeElements = filter.elements.filter( ( element ) => {
 			if ( filter.singleSelection ) {
 				return element.value === filterInView?.value;
@@ -347,7 +347,7 @@ export default function Filter( {
 				return (
 					<VStack spacing={ 0 } justify="flex-start">
 						<OperatorSelector { ...commonProps } />
-						{ commonProps.filter.elements ? (
+						{ commonProps.filter.elements.length > 0 ? (
 							<SearchWidget
 								{ ...commonProps }
 								filter={ {
