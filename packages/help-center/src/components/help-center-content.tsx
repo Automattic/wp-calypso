@@ -86,9 +86,11 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 	}, [ location, sectionName, isUserEligibleForPaidSupport ] );
 
 	useEffect( () => {
+		if ( isLoadingOpenSupportInteractions || isLoadingResolvedSupportInteractions ) {
+			return;
+		}
+
 		if (
-			! isLoadingOpenSupportInteractions &&
-			! isLoadingResolvedSupportInteractions &&
 			openSupportInteractions === null &&
 			resolvedSupportInteractions === null &&
 			! currentSupportInteraction
