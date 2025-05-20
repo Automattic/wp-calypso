@@ -512,7 +512,7 @@ const Example = () => {
 
 A single item to be edited.
 
-It can be thought of as a single record coming from the `data` property of `DataViews` — though it doesn't need to be. It can be totally separated or a mix of records if your app supports bulk editing.
+It can be thought of as a single record coming from the `data` property of `DataViews` — though it doesn't need to be. It can be totally separated or a mix of records if your app supports bulk editing.
 
 #### `fields`: `Object[]`
 
@@ -882,7 +882,7 @@ Example:
 
 ### `header`
 
-React component used by the layouts to display the field name — useful to add icons, etc. It's complementary to the `label` property.
+React component used by the layouts to display the field name — useful to add icons, etc. It's complementary to the `label` property.
 
 -   Type: React component.
 -   Optional.
