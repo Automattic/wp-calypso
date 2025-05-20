@@ -108,6 +108,16 @@
 		}
 	}
 
+	#content.layout__content {
+		padding-top: 10rem;
+	}
+
+	.magic-login__link-expired {
+		padding-inline: 1rem;
+		padding-top: 0;
+		margin: 0 auto;
+	}
+
 	.empty-content__action.is-primary {
 		background-color: var(--studio-jetpack-green-60);
 		border-color: var(--studio-jetpack-green-60);
