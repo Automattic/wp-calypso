@@ -2,7 +2,7 @@
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
-import { useCallback } from '@wordpress/element';
+import { useCallback, useMemo } from '@wordpress/element';
 
 /**
  * Internal dependencies
@@ -36,6 +36,16 @@ export default function InputWidget( {
 
 	const currentValue = currentFilter.value;
 
+	const data = useMemo( () => {
+		return ( view.filters ?? [] ).reduce(
+			( acc, f ) => {
+				acc[ f.field ] = f.value;
+				return acc;
+			},
+			{} as Record< string, any >
+		);
+	}, [ view.filters ] );
+
 	const handleChange = useCallback(
 		( data: Record< string, any > ) => {
 			const nextValue = data[ field.id ];
@@ -64,7 +74,7 @@ export default function InputWidget( {
 	return (
 		<div className="dataviews-filters__user-input-widget">
 			<field.Edit
-				data={ { [ field.id ]: currentValue } }
+				data={ data }
 				field={ field }
 				onChange={ handleChange }
 			/>
