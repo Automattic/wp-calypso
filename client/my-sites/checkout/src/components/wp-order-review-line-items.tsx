@@ -58,9 +58,6 @@ interface LineItemByProductId {
 const WPOrderReviewList = styled.ul`
 	box-sizing: border-box;
 	margin: 24px 0 0 0;
-	.removed-from-cart-items + .order-review-section & {
-		margin-top: 16px;
-	}
 	padding: 0;
 `;
 
