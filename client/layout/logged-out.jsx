@@ -339,6 +339,7 @@ export default withCurrentRoute(
 				( ! isJetpackLogin &&
 					Boolean( currentQuery?.client_id ) === false &&
 					Boolean( currentQuery?.oauth2_client_id ) === false &&
+					! oauth2Client &&
 					! isWooJPC ) ||
 				isPartnerPortal;
 

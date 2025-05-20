@@ -52,22 +52,24 @@ const enhanceContextWithLogin = ( context ) => {
 
 	const previousHash = context.state || {};
 	const { client_id, user_email, user_name, id_token, state } = previousHash;
+	const currentState = context.store.getState();
 	const socialServiceResponse = client_id
 		? { client_id, user_email, user_name, id_token, state }
 		: null;
 	const isJetpackLogin = isJetpack === 'jetpack';
 	const clientId = query?.client_id;
 	const oauth2ClientId = query?.oauth2_client_id;
-	const oauth2Client =
-		getOAuth2Client( context.store.getState(), Number( clientId || oauth2ClientId ) ) || {};
+	const oauth2Client = getOAuth2Client( currentState, Number( clientId || oauth2ClientId ) ) || {};
 	const isGravPoweredClient = isGravPoweredOAuth2Client( oauth2Client );
 	const isPartnerPortalClient = isPartnerPortalOAuth2Client( oauth2Client );
-	const isWooJPC = isWooJPCFlow( context.store.getState() );
+	const isWooJPC = isWooJPCFlow( currentState );
+	const isBlazePro = getIsBlazePro( currentState );
 
 	const isWhiteLogin =
 		( ! isJetpackLogin &&
 			Boolean( clientId ) === false &&
 			Boolean( oauth2ClientId ) === false &&
+			! isBlazePro &&
 			! isWooJPC ) ||
 		isPartnerPortalClient;
 
