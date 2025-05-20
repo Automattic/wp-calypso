@@ -284,7 +284,7 @@ class StatsNavigation extends Component {
 
 		// @TODO: Add loading status of modules settings to avoid toggling modules before they are loaded.
 
-		/** @type {(keyof typeof allNavItems)[]} */
+		/** @type {Array<keyof typeof allNavItems>} Array of valid navigation item keys */
 		const navKeys = Object.keys( allNavItems );
 		const navItems = navKeys.filter( this.isValidItem ).map( ( key ) => {
 			const navItem = allNavItems[ key ];
