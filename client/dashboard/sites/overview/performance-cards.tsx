@@ -30,7 +30,7 @@ function PerformanceBadge( { value }: { value: number | undefined } ) {
 
 export default function PerformanceCards( { site }: { site: Site } ) {
 	const { data: pagesData } = useQuery( {
-		...performanceProfilerPagesQuery( site.ID, '' ),
+		...performanceProfilerPagesQuery( site.ID ),
 		refetchOnWindowFocus: false,
 	} );
 	const { desktopScore, mobileScore, desktopLoaded, mobileLoaded } = usePerformanceData(
