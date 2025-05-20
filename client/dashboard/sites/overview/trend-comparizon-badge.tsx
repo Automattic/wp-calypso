@@ -42,7 +42,7 @@ export default function TrendComparisonBadge( {
 					size={ 16 }
 					fill="currentColor"
 					icon={ negative ? arrowDown : arrowUp }
-					className="components-badge__icon"
+					className="site-overview-card__badge-icon"
 				/>
 				<span>{ `${ percentage }%` }</span>
 			</HStack>
