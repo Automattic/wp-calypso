@@ -1,10 +1,14 @@
 /**
  * Forked from `@wordpress/components`
+ *
+ * - Converted styles to CSS module.
+ * - Added theme color support to `info` variant.
  */
 
 import { info, caution, error, published } from '@wordpress/icons';
 import clsx from 'clsx';
 import { Icon } from '../icon';
+import * as styles from './style.module.scss';
 import type { BadgeProps } from './types';
 
 /**
@@ -37,16 +41,21 @@ export function CoreBadge( {
 
 	return (
 		<span
-			className={ clsx( 'components-badge', className, {
-				[ `is-${ intent }` ]: intent,
-				'has-icon': hasIcon,
+			className={ clsx( styles[ 'components-badge' ], className, {
+				[ styles[ `is-${ intent }` ] ]: intent,
+				[ styles[ 'has-icon' ] ]: hasIcon,
 			} ) }
 			{ ...props }
 		>
 			{ hasIcon && (
-				<Icon icon={ icon } size={ 16 } fill="currentColor" className="components-badge__icon" />
+				<Icon
+					icon={ icon }
+					size={ 16 }
+					fill="currentColor"
+					className={ styles[ 'components-badge__icon' ] }
+				/>
 			) }
-			<span className="components-badge__content">{ children }</span>
+			<span className={ styles[ 'components-badge__content' ] }>{ children }</span>
 		</span>
 	);
 }
