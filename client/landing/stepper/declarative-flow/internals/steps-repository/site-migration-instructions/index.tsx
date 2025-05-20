@@ -177,18 +177,20 @@ const SiteMigrationInstructions: StepType< {
 		navigation.submit?.( { how: HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME } );
 	}, [ navigation ] );
 
+	const progressCircle = (
+		<CircularProgressBar
+			size={ 40 }
+			enableDesktopScaling
+			numberOfSteps={ steps.length }
+			currentStep={ completedSteps }
+		/>
+	);
+
 	const migrationInstructions = (
 		<MigrationInstructions
 			withPreview={ withPreview }
 			isContainerV2={ useContainerV2 }
-			progress={
-				<CircularProgressBar
-					size={ 40 }
-					enableDesktopScaling
-					numberOfSteps={ steps.length }
-					currentStep={ completedSteps }
-				/>
-			}
+			progress={ progressCircle }
 		>
 			<div className="site-migration-instructions__steps">
 				<Steps steps={ steps } />
@@ -213,14 +215,7 @@ const SiteMigrationInstructions: StepType< {
 		const topBar = (
 			<Step.TopBar rightElement={ <SupportNudge onAskForHelp={ navigateToDoItForMe } /> } />
 		);
-		const progressCircle = (
-			<CircularProgressBar
-				size={ 40 }
-				enableDesktopScaling
-				numberOfSteps={ steps.length }
-				currentStep={ completedSteps }
-			/>
-		);
+
 		if ( ! withPreview ) {
 			return (
 				<>
