@@ -194,6 +194,7 @@ const DeleteButtonWrapper = styled.div`
 `;
 
 const DeleteButton = styled( Button )< { theme?: Theme } >`
+	color: ${ ( { theme } ) => theme.colors.textColorDark } !important;
 	font-size: 14px;
 	font-weight: 500;
 	line-height: 20px;
