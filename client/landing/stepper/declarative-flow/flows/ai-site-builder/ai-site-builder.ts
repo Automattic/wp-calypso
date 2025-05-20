@@ -147,9 +147,13 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 								) }`;
 								window.sessionStorage.removeItem( 'stored_ai_prompt' );
 							}
-							window.location.replace(
+							console.log(
 								`${ siteURL }/wp-admin/site-editor.php?canvas=edit&referrer=${ AI_SITE_BUILDER_FLOW }${ promptParam }`
 							);
+							return;
+							// window.location.replace(
+							// 	`${ siteURL }/wp-admin/site-editor.php?canvas=edit&referrer=${ AI_SITE_BUILDER_FLOW }${ promptParam }`
+							// );
 						} else if ( providedDependencies.isLaunched ) {
 							const site = await resolveSelect( SITE_STORE ).getSite(
 								providedDependencies.siteSlug
