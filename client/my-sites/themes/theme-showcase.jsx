@@ -646,6 +646,8 @@ class ThemeShowcase extends Component {
 		const showThemeErrors =
 			siteId && this.props.category === staticFilters.MYTHEMES.key && isJetpackSite;
 
+		const getLocale = () => this.props.locale;
+
 		return (
 			<div className={ classnames }>
 				<PageViewTracker
@@ -667,7 +669,7 @@ class ThemeShowcase extends Component {
 					<ThemeShowcaseSurvey condition={ () => previousPath.includes( 'theme/' ) } />
 				) }
 				<div className="themes__content" ref={ this.scrollRef }>
-					<QueryThemeFilters />
+					<QueryThemeFilters locale={ getLocale() } />
 					{ isSiteWooExpressOrEcomFreeTrial && (
 						<div className="themes__showcase">{ this.renderBanner() }</div>
 					) }
