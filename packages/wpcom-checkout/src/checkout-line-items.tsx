@@ -199,19 +199,19 @@ const DeleteButtonWrapper = styled.div`
 	}
 `;
 
-const DeleteButton = styled( Button )< { theme?: Theme } >`
-	width: auto;
-	font-size: 0.75rem;
-	color: ${ ( props ) => props.theme.colors.textColorLight };
-`;
-
-const RestorableDeleteButton = styled( CoreButton )< { theme?: Theme } >`
+const DeleteButton = styled( CoreButton )< { theme?: Theme } >`
 	color: ${ ( { theme } ) => theme.colors.textColorDark } !important;
 	font-size: 14px;
 	font-weight: 500;
 	line-height: 20px;
 	text-underline-offset: 2px;
 	width: auto;
+`;
+
+const LegacyDeleteButton = styled( Button )< { theme?: Theme } >`
+	width: auto;
+	font-size: 0.75rem;
+	color: ${ ( props ) => props.theme.colors.textColorLight };
 `;
 
 export function LineItemPrice( {
@@ -1546,7 +1546,7 @@ function CheckoutLineItem( {
 				<>
 					<DeleteButtonWrapper>
 						{ isRestorable ? (
-							<RestorableDeleteButton
+							<DeleteButton
 								className="checkout-line-item__remove-product"
 								variant="link"
 								aria-label={ String(
@@ -1566,9 +1566,9 @@ function CheckoutLineItem( {
 								} }
 							>
 								{ translate( 'Remove from cart' ) }
-							</RestorableDeleteButton>
+							</DeleteButton>
 						) : (
-							<DeleteButton
+							<LegacyDeleteButton
 								className="checkout-line-item__remove-product"
 								buttonType="text-button"
 								aria-label={ String(
@@ -1584,7 +1584,7 @@ function CheckoutLineItem( {
 								} }
 							>
 								{ translate( 'Remove from cart' ) }
-							</DeleteButton>
+							</LegacyDeleteButton>
 						) }
 					</DeleteButtonWrapper>
 
