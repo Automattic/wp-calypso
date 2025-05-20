@@ -29,8 +29,6 @@
 
 	*, *::before, *::after {
 		box-sizing: border-box;
-		color: inherit;
-		font: inherit;
 	}
 }
 
@@ -67,7 +65,9 @@
 	border: none;
 	border-radius: 2px;
 
+	font: inherit;
 	font-variant-numeric: tabular-nums;
+	color: inherit;
 
 	// Use the button's ::before to render date's background, which keeps the
 	// border-radius of the button intact. This technique allows the focus ring
@@ -138,6 +138,8 @@
 
 	width: var(--a8c-components-calendar-button-width);
 	height: var(--a8c-components-calendar-button-height);
+
+	color: inherit;
 
 	&:disabled,
 	&[aria-disabled="true"] {
