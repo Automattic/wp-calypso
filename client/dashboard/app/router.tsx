@@ -348,6 +348,11 @@ export const getRouter = ( config: AppConfig ) => {
 		defaultNotFoundComponent: NotFound,
 		defaultPreload: 'intent',
 		defaultPreloadStaleTime: 0,
+		// Calling document.startViewTransition() ourselves is really tricky,
+		// Tanstack Router knows how to do it best. Even though it says
+		// "default", we can still customize it in CSS and add more transition
+		// areas.
+		defaultViewTransition: true,
 	} );
 };
 

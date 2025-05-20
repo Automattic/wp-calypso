@@ -39,7 +39,7 @@ export const PageHeader = ( {
 	breadcrumbs,
 }: PageHeaderProps ) => {
 	return (
-		<VStack spacing={ 2 }>
+		<VStack spacing={ 2 } className="client-dashboard-components-page-header">
 			{ breadcrumbs }
 			<HStack spacing={ 4 } justify="flex-start" alignment="flex-start">
 				{ decoration && (
@@ -49,16 +49,15 @@ export const PageHeader = ( {
 				) }
 				<HStack spacing={ 3 } justify="space-between" alignment="flex-start">
 					<h1 className="client-dashboard-components-page-header__heading">{ title }</h1>
-					{ !! actions && (
-						<HStack
-							spacing={ 2 }
-							justify="flex-end"
-							expanded={ false }
-							className="client-dashboard-components-page-header__actions"
-						>
-							{ actions }
-						</HStack>
-					) }
+					{ /* The wrapper is always needed for view transitions. */ }
+					<HStack
+						spacing={ 2 }
+						justify="flex-end"
+						expanded={ false }
+						className="client-dashboard-components-page-header__actions"
+					>
+						{ actions }
+					</HStack>
 				</HStack>
 			</HStack>
 			{ description && (

@@ -1,3 +1,4 @@
+import { getQueryArg } from '@wordpress/url';
 import { isValidUrl } from 'calypso/a8c-for-agencies/components/form/utils';
 import { AgencyDetailsPayload } from '../agency-details-form/types';
 
@@ -40,16 +41,13 @@ const sanitizePhone = ( phoneNumber: string | null ) => {
 };
 
 /**
- * Sanitizes comma-separated values into an array
+ * Sanitizes string array
  */
-const sanitizeArrayFromString = ( value: string | null ): string[] => {
-	if ( ! value ) {
+const sanitizeStringArray = ( values: string[] ): string[] => {
+	if ( ! values ) {
 		return [];
 	}
-	return value
-		.split( ',' )
-		.map( ( item ) => sanitizeString( item ) )
-		.filter( Boolean );
+	return values.map( ( item ) => sanitizeString( item ) ).filter( Boolean );
 };
 
 export function getSignupDataFromRequestParameters(): AgencyDetailsPayload | null {
@@ -66,9 +64,15 @@ export function getSignupDataFromRequestParameters(): AgencyDetailsPayload | nul
 	}
 
 	// Parse arrays from comma-separated strings
-	const servicesOffered = sanitizeArrayFromString( searchParams.get( 'services_offered' ) );
-	const productsOffered = sanitizeArrayFromString( searchParams.get( 'products_offered' ) );
-	const productsToOffer = sanitizeArrayFromString( searchParams.get( 'products_to_offer' ) );
+	const servicesOffered = sanitizeStringArray(
+		( getQueryArg( window.location.href, 'services_offered' ) as string[] ) ?? []
+	);
+	const productsOffered = sanitizeStringArray(
+		( getQueryArg( window.location.href, 'products_offered' ) as string[] ) ?? []
+	);
+	const productsToOffer = sanitizeStringArray(
+		( getQueryArg( window.location.href, 'products_to_offer' ) as string[] ) ?? []
+	);
 
 	// Get phone number
 	const phone = sanitizePhone( searchParams.get( 'phone_number' ) );

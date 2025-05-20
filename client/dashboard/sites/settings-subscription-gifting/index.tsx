@@ -53,13 +53,17 @@ export default function SubscriptionGiftingSettings( { siteSlug }: { siteSlug: s
 	};
 
 	return (
-		<PageLayout size="small">
-			<SettingsPageHeader
-				title={ __( 'Accept a gift subscription' ) }
-				description={ __(
-					'Allow a site visitor to cover the full cost of your site’s WordPress.com plan.'
-				) }
-			/>
+		<PageLayout
+			size="small"
+			header={
+				<SettingsPageHeader
+					title={ __( 'Accept a gift subscription' ) }
+					description={ __(
+						'Allow a site visitor to cover the full cost of your site’s WordPress.com plan.'
+					) }
+				/>
+			}
+		>
 			<Card>
 				<CardBody>
 					<DataForm< SiteSettings >
