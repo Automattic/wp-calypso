@@ -1,24 +1,15 @@
 /**
- * External dependencies
+ * Forked from `@wordpress/components`
  */
-import clsx from 'clsx';
 
-/**
- * WordPress dependencies
- */
 import { info, caution, error, published } from '@wordpress/icons';
-
-/**
- * Internal dependencies
- */
+import clsx from 'clsx';
+import { Icon } from '../icon';
 import type { BadgeProps } from './types';
-import type { WordPressComponentProps } from '../context';
-import Icon from '../icon';
 
 /**
  * Returns an icon based on the badge context.
- *
- * @return The corresponding icon for the provided context.
+ * @returns The corresponding icon for the provided context.
  */
 function contextBasedIcon( intent: BadgeProps[ 'intent' ] = 'default' ) {
 	switch ( intent ) {
@@ -35,12 +26,12 @@ function contextBasedIcon( intent: BadgeProps[ 'intent' ] = 'default' ) {
 	}
 }
 
-function Badge( {
+export function CoreBadge( {
 	className,
 	intent = 'default',
 	children,
 	...props
-}: WordPressComponentProps< BadgeProps, 'span', false > ) {
+}: BadgeProps & React.ComponentPropsWithoutRef< 'span' > ) {
 	const icon = contextBasedIcon( intent );
 	const hasIcon = !! icon;
 
@@ -59,5 +50,3 @@ function Badge( {
 		</span>
 	);
 }
-
-export default Badge;

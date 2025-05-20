@@ -1,4 +1,4 @@
-import CoreBadge from '@automattic/components/src/core-badge';
+import { CoreBadge } from '@automattic/components/src/core-badge';
 import { __experimentalHStack as HStack, Icon } from '@wordpress/components';
 import { arrowDown, arrowUp } from '@wordpress/icons';
 

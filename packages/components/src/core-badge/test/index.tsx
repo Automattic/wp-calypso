@@ -1,12 +1,8 @@
 /**
- * External dependencies
+ * @jest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
-
-/**
- * Internal dependencies
- */
-import _Badge from '..';
+import { CoreBadge as _Badge } from '..';
 
 const testid = 'my-badge';
 const Badge = ( props: React.ComponentProps< typeof _Badge > ) => (
