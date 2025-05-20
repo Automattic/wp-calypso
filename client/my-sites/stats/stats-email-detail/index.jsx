@@ -253,8 +253,8 @@ class StatsEmailDetail extends Component {
 		const navigationItems = this.getNavigationItemsWithTitle( this.getNavigationTitle() );
 
 		const backLinkProps = {
-			text: lastScreen.text,
-			url: lastScreen.url,
+			text: lastScreen?.text,
+			url: lastScreen?.url,
 		};
 		const titleProps = {
 			title: navigationItems[ 1 ].label,
