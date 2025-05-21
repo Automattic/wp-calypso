@@ -80,7 +80,7 @@ function SiteOverview() {
 					</OverviewSection>
 					<OverviewSection title={ __( 'Site health' ) } actions={ [] }>
 						<PerformanceCards site={ site } />
-						<UptimeCard siteSlug={ siteSlug } site={ site } />
+						<UptimeCard site={ site } />
 						<StorageCard siteSlug={ siteSlug } />
 					</OverviewSection>
 				</VStack>

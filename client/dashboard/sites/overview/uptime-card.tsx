@@ -49,8 +49,8 @@ function UptimeCardEnabled( { siteSlug }: { siteSlug: string } ) {
 	);
 }
 
-export default function UptimeCard( { siteSlug, site }: { siteSlug: string; site: Site } ) {
+export default function UptimeCard( { site }: { site: Site } ) {
 	return site.jetpack && site.jetpack_modules.includes( 'monitor' ) ? (
-		<UptimeCardEnabled siteSlug={ siteSlug } />
+		<UptimeCardEnabled siteSlug={ site.slug } />
 	) : null /* Opportunity for upsell? */;
 }
