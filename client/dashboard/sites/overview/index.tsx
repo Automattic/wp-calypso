@@ -14,7 +14,6 @@ import {
 	siteMonitorUptimeQuery,
 	sitePHPVersionQuery,
 	siteCurrentPlanQuery,
-	sitePrimaryDomainQuery,
 	siteEngagementStatsQuery,
 } from '../../app/queries';
 import { siteRoute } from '../../app/router';
@@ -45,10 +44,9 @@ function SiteOverview() {
 		enabled: site?.is_wpcom_atomic,
 	} );
 	const { data: currentPlan } = useQuery( siteCurrentPlanQuery( siteSlug ) );
-	const { data: primaryDomain } = useQuery( sitePrimaryDomainQuery( siteSlug ) );
 	const { data: engagementStats } = useQuery( siteEngagementStatsQuery( siteSlug ) );
 
-	if ( ! site || ! currentPlan || ! primaryDomain || ! engagementStats ) {
+	if ( ! site || ! currentPlan || ! engagementStats ) {
 		return;
 	}
 	return (
@@ -78,7 +76,7 @@ function SiteOverview() {
 				<Sidebar
 					site={ site }
 					phpVersion={ phpVersion }
-					primaryDomain={ primaryDomain }
+					siteSlug={ siteSlug }
 					currentPlan={ currentPlan }
 				/>
 				<VStack spacing={ 8 }>

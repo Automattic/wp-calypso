@@ -16,7 +16,6 @@ import {
 	emailsQuery,
 	profileQuery,
 	siteCurrentPlanQuery,
-	sitePrimaryDomainQuery,
 	siteEngagementStatsQuery,
 	siteMonitorUptimeQuery,
 	sitePHPVersionQuery,
@@ -83,14 +82,12 @@ const siteOverviewRoute = createRoute( {
 		const sitePromise = queryClient.ensureQueryData( siteQuery( siteSlug ) );
 		// Kick off all independent promises in parallel.
 		const currentPlanPromise = queryClient.ensureQueryData( siteCurrentPlanQuery( siteSlug ) );
-		const primaryDomainPromise = queryClient.ensureQueryData( sitePrimaryDomainQuery( siteSlug ) );
 		const engagementStatsPromise = queryClient.ensureQueryData(
 			siteEngagementStatsQuery( siteSlug )
 		);
 		const site = await sitePromise;
 		await Promise.all( [
 			currentPlanPromise,
-			primaryDomainPromise,
 			engagementStatsPromise,
 			// Kick off dependent promises in parallel.
 			site.jetpack && site.jetpack_modules.includes( 'monitor' )

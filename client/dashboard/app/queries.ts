@@ -5,7 +5,6 @@ import {
 	fetchSiteMonitorUptime,
 	fetchPHPVersion,
 	fetchCurrentPlan,
-	fetchSitePrimaryDomain,
 	fetchSiteEngagementStats,
 	fetchDomains,
 	fetchEmails,
@@ -40,13 +39,6 @@ export function siteCurrentPlanQuery( siteIdOrSlug: string ) {
 	return {
 		queryKey: [ 'site', siteIdOrSlug, 'current-plan' ],
 		queryFn: () => fetchCurrentPlan( siteIdOrSlug ),
-	};
-}
-
-export function sitePrimaryDomainQuery( siteIdOrSlug: string ) {
-	return {
-		queryKey: [ 'site', siteIdOrSlug, 'primary-domain' ],
-		queryFn: () => fetchSitePrimaryDomain( siteIdOrSlug ),
 	};
 }
 
