@@ -6,8 +6,8 @@ import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-pa
 import PageSectionColumns from 'calypso/a8c-for-agencies/components/page-section-columns';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import SimpleList from 'calypso/a8c-for-agencies/components/simple-list';
+import analyticsImage from 'calypso/assets/images/a8c-for-agencies/reports/report-mock.png';
 import documentsImage from 'calypso/assets/images/a8c-for-agencies/woopayments/cart.png';
-import analyticsImage from 'calypso/assets/images/a8c-for-agencies/woopayments/cc-image.png';
 import LayoutBody from 'calypso/layout/hosting-dashboard/body';
 import LayoutHeader, {
 	LayoutHeaderTitle as Title,
