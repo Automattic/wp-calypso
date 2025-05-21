@@ -73,6 +73,16 @@
 	}
 }
 
+/* Crowdsignal */
+.signup.is-crowdsignal {
+	.components-button {
+		&.is-primary:not(.signup-form__crowdsignal-wpcom) {
+			--color-accent: var(--color-primary);
+			--color-accent-60: var(--color-primary-dark);
+		}
+	}
+}
+
 /* @wordpress/components ButtonGroup overrides */
 .components-button-group {
 	.components-button {
