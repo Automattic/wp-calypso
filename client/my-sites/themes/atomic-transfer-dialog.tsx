@@ -5,11 +5,7 @@ import { connect } from 'react-redux';
 import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
 import Notice from 'calypso/components/notice';
 import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
-import {
-	dismissAtomicTransferDialog,
-	activate as activateTheme,
-	initiateThemeTransfer,
-} from 'calypso/state/themes/actions';
+import { activate as activateTheme, initiateThemeTransfer } from 'calypso/state/themes/actions';
 import {
 	getActiveTheme,
 	getCanonicalTheme,
@@ -33,7 +29,6 @@ interface AtomicTransferDialogProps {
 	activeTheme?: string | null;
 	uploadError?: boolean;
 	isJetpack?: boolean;
-	dispatchDismissAtomicTransferDialog: typeof dismissAtomicTransferDialog;
 	dispatchActivateTheme: typeof activateTheme;
 	dispatchInitiateThemeTransfer: typeof initiateThemeTransfer;
 }
@@ -234,7 +229,6 @@ export default connect(
 		};
 	},
 	{
-		dispatchDismissAtomicTransferDialog: dismissAtomicTransferDialog,
 		dispatchActivateTheme: activateTheme,
 		dispatchInitiateThemeTransfer: initiateThemeTransfer,
 	}

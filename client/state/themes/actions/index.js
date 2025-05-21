@@ -5,7 +5,6 @@ export { clearActivated } from 'calypso/state/themes/actions/clear-activated';
 export { clearThemeUpload } from 'calypso/state/themes/actions/clear-theme-upload';
 export { confirmDelete } from 'calypso/state/themes/actions/confirm-delete';
 export { deleteTheme } from 'calypso/state/themes/actions/delete-theme';
-export { dismissAtomicTransferDialog } from 'calypso/state/themes/actions/dismiss-atomic-transfer-dialog';
 export { hideThemePreview } from 'calypso/state/themes/actions/hide-theme-preview';
 export { installAndActivateTheme } from 'calypso/state/themes/actions/install-and-activate-theme';
 export { installAndTryAndCustomizeTheme } from 'calypso/state/themes/actions/install-and-try-and-customize-theme';
