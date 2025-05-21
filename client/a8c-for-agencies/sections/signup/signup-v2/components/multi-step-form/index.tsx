@@ -110,6 +110,9 @@ const MultiStepForm = ( {
 	];
 
 	const { mutate: submitSurvey, isPending: isSubmittingSurveyPending } = useCreateSignupMutation( {
+		onSuccess: () => {
+			dispatch( recordTracksEvent( 'calypso_a4a_agency_signup_form_via_magic_link_submitted' ) );
+		},
 		onError: ( error: APIError ) => {
 			dispatch( errorNotice( error?.message, { id: notificationId } ) );
 		},
