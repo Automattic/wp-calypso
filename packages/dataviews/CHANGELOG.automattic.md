@@ -13,6 +13,7 @@
 - Add user input filter support based on the `Edit` property of the field type definitions.
 - Add new filter operators: `lessThan`, `greaterThan`, `lessThanOrEqual`, and `greaterThanOrEqual` for numeric and comparable fields.
 - Add new filter operators: `contains`, `notContains`, `startsWith` for text fields.
+- Add `email` type to the fields of the form.
 
 ## 0.1.1
 
