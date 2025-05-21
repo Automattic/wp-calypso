@@ -48,6 +48,13 @@
 	}
 }
 
+.jetpack-cloud {
+	.components-button {
+		--color-accent: var(--studio-jetpack-green-40);
+		--color-accent-60: var(--studio-jetpack-green-30);
+	}
+}
+
 /* Gravatar & WP Job Manager */
 .layout.is-section-login.is-grav-powered-client {
 	.components-button {
