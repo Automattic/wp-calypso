@@ -1,6 +1,6 @@
 import React from 'react';
 
-type NoticeDensity = 'low' | 'medium';
+type NoticeDensity = 'low' | 'medium' | 'high';
 
 export type NoticeVariant = 'warning' | 'success' | 'error' | 'info';
 
@@ -18,13 +18,13 @@ export interface NoticeProps {
 	/**
 	 * The main label that identifies the notice.
 	 */
-	title: string;
+	title: React.ReactNode;
 
 	/**
 	 * Optional supporting text that provides additional context or
 	 * detail about the notice.
 	 */
-	description?: string;
+	description?: React.ReactNode;
 
 	/**
 	 * Renders a button that invokes the related notice.

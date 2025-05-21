@@ -28,7 +28,7 @@ const defaultArgs = {
 	title: 'Title',
 	description: (
 		<>
-			Hello, I’m a notice with an inline <ExternalLink>link</ExternalLink>.
+			Hello, I’m a notice with an inline <ExternalLink href="#">link</ExternalLink>.
 		</>
 	),
 	actions: (
