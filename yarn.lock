@@ -21561,7 +21561,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"http-proxy-middleware@npm:^3.0.3":
+"http-proxy-middleware@npm:^3.0.5":
   version: 3.0.5
   resolution: "http-proxy-middleware@npm:3.0.5"
   dependencies:
@@ -36738,7 +36738,7 @@ __metadata:
     gettext-parser: "npm:^4.0.3"
     glob: "npm:^7.2.3"
     globby: "npm:^10.0.2"
-    http-proxy-middleware: "npm:^3.0.3"
+    http-proxy-middleware: "npm:^3.0.5"
     husky: "npm:^7.0.4"
     i18n-calypso: "workspace:^"
     i18n-calypso-cli: "workspace:^"

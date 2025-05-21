@@ -216,7 +216,7 @@
 		"d3-time-format": "^4.1.0",
 		"debug": "^4.4.0",
 		"enhanced-resolve": "5.9.3",
-		"http-proxy-middleware": "^3.0.3",
+		"http-proxy-middleware": "^3.0.5",
 		"i18n-calypso": "workspace:^",
 		"i18n-calypso-cli": "workspace:^",
 		"jsdom": "^20.0.3",
