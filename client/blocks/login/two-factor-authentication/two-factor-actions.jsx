@@ -22,6 +22,7 @@ class TwoFactorActions extends Component {
 		isAuthenticatorSupported: PropTypes.bool.isRequired,
 		isSecurityKeySupported: PropTypes.bool.isRequired,
 		isSmsSupported: PropTypes.bool.isRequired,
+		isWoo: PropTypes.bool.isRequired,
 		recordTracksEvent: PropTypes.func.isRequired,
 		sendSmsCode: PropTypes.func.isRequired,
 		switchTwoFactorAuthType: PropTypes.func.isRequired,
@@ -71,6 +72,7 @@ class TwoFactorActions extends Component {
 			isBackupCodeSupported,
 			isSecurityKeySupported,
 			isSmsSupported,
+			isWoo,
 			translate,
 			twoFactorAuthType,
 		} = this.props;
@@ -93,7 +95,7 @@ class TwoFactorActions extends Component {
 
 		return (
 			<Fragment>
-				{ this.props.isWoo && <FormDivider /> }
+				{ isWoo && twoFactorAuthType !== 'push' && <FormDivider /> }
 				<Card className="two-factor-authentication__actions">
 					{ isSecurityKeyAvailable && (
 						<Button
