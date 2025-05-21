@@ -10,6 +10,7 @@
 	justify-content: center;
 }
 
+/* Default */
 .components-button.is-primary:not(.is-destructive) {
 	// Background color, focus ring color
 	--wp-components-color-accent: var(--color-accent);
@@ -38,6 +39,14 @@
 .components-button.is-link:not(.is-destructive) {
 	// Text color, focus ring color
 	--wp-components-color-accent: var(--color-accent);
+}
+
+/* A8C for Agencies */
+.a8c-for-agencies {
+	.components-button {
+		--color-accent: var(--color-primary-40);
+		--color-accent-60: var(--color-primary-60);
+	}
 }
 
 /* Jetpack */
