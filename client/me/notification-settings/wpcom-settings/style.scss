@@ -1,6 +1,12 @@
-.wpcom-settings__notification-settings-placeholder {
-	animation: loading-fade 1.6s ease-in-out infinite;
-	background-color: var(--color-neutral-0);
-	line-height: 1;
-	margin-bottom: 0.5em;
+.wpcom-settings__notification-settings-emailcategory {
+	margin-bottom: 20px;
+}
+
+.wpcom-settings__notification-settings-emailsection-toggle {
+	margin-bottom: 40px;
+
+	.components-toggle-control__label {
+		font-size: 16px;
+		font-weight: 600;
+	}
 }

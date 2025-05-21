@@ -2,7 +2,7 @@ import { Meta, StoryObj } from '@storybook/react';
 import { ExperienceControl } from './index';
 
 const meta: Meta< typeof ExperienceControl > = {
-	title: 'Components/ExperienceControl',
+	title: 'Unaudited/ExperienceControl',
 	component: ExperienceControl,
 };
 

@@ -1,14 +1,14 @@
 /**
  * External dependencies
  */
-import type { ReactNode } from 'react';
+import type { ReactNode, ComponentProps, ReactElement } from 'react';
 
 /**
  * WordPress dependencies
  */
 import { __experimentalHStack as HStack } from '@wordpress/components';
-import { useContext, useMemo, useState } from '@wordpress/element';
-import { useResizeObserver } from '@wordpress/compose';
+import { useContext, useMemo, useRef, useState } from '@wordpress/element';
+import { useMergeRefs, useResizeObserver } from '@wordpress/compose';
 
 /**
  * Internal dependencies
@@ -50,6 +50,11 @@ type DataViewsProps< Item > = {
 	selection?: string[];
 	onChangeSelection?: ( items: string[] ) => void;
 	onClickItem?: ( item: Item ) => void;
+	renderItemLink?: (
+		props: {
+			item: Item;
+		} & ComponentProps< 'a' >
+	) => ReactElement;
 	isItemClickable?: ( item: Item ) => boolean;
 	header?: ReactNode;
 	getItemLevel?: ( item: Item ) => number;
@@ -123,12 +128,14 @@ function DataViews< Item >( {
 	selection: selectionProperty,
 	onChangeSelection,
 	onClickItem,
+	renderItemLink,
 	isItemClickable = defaultIsItemClickable,
 	header,
 	children,
 }: DataViewsProps< Item > ) {
+	const containerRef = useRef< HTMLDivElement | null >( null );
 	const [ containerWidth, setContainerWidth ] = useState( 0 );
-	const containerRef = useResizeObserver(
+	const resizeObserverRef = useResizeObserver(
 		( resizeObserverEntries: any ) => {
 			setContainerWidth(
 				resizeObserverEntries[ 0 ].borderBoxSize[ 0 ].inlineSize
@@ -181,14 +188,19 @@ function DataViews< Item >( {
 				getItemLevel,
 				isItemClickable,
 				onClickItem,
+				renderItemLink,
 				containerWidth,
+				containerRef,
 				defaultLayouts,
 				filters,
 				isShowingFilter,
 				setIsShowingFilter,
 			} }
 		>
-			<div className="dataviews-wrapper" ref={ containerRef }>
+			<div
+				className="dataviews-wrapper"
+				ref={ useMergeRefs( [ containerRef, resizeObserverRef ] ) }
+			>
 				{ children ?? (
 					<DefaultUI
 						header={ header }

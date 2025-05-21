@@ -61,9 +61,10 @@ export function getItemVariantCompareToPrice(
 	return ( compareTo.priceInteger / compareTo.termIntervalInMonths ) * variant.termIntervalInMonths;
 }
 
-export function getItemVariantDiscountPercentage(
+export function getItemVariantDiscount(
 	variant: WPCOMProductVariant,
-	compareTo?: WPCOMProductVariant
+	compareTo?: WPCOMProductVariant,
+	discountType: 'percentage' | 'absolute' = 'percentage'
 ): number {
 	const compareToPriceForVariantTerm = getItemVariantCompareToPrice( variant, compareTo );
 
@@ -73,11 +74,19 @@ export function getItemVariantDiscountPercentage(
 			? variant.priceBeforeDiscounts
 			: variant.priceInteger;
 
+	if ( ! compareToPriceForVariantTerm ) {
+		return 0;
+	}
+
+	if ( discountType === 'absolute' ) {
+		return compareToPriceForVariantTerm - variantPrice;
+	}
+
 	// Extremely low "discounts" are possible if the price of the longer term has been rounded
 	// if they cannot be rounded to at least a percentage point we should not show them.
-	const discountPercentage = compareToPriceForVariantTerm
-		? Math.round( 100 - ( variantPrice / compareToPriceForVariantTerm ) * 100 )
-		: 0;
+	const discountPercentage = Math.round(
+		100 - ( variantPrice / compareToPriceForVariantTerm ) * 100
+	);
 
 	return discountPercentage;
 }

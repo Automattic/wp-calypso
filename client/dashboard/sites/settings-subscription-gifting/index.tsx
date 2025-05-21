@@ -1,10 +1,12 @@
 import { DataForm } from '@automattic/dataviews';
 import { useQuery, useMutation } from '@tanstack/react-query';
+import { notFound } from '@tanstack/react-router';
 import { Card, CardBody, ToggleControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { siteSettingsMutation, siteSettingsQuery } from '../../app/queries';
-import { siteSettingsSubscriptionGiftingRoute } from '../../app/router';
+import { siteQuery, siteSettingsMutation, siteSettingsQuery } from '../../app/queries';
 import PageLayout from '../../components/page-layout';
+import SettingsPageHeader from '../settings-page-header';
+import { hasSubscriptionGiftingFeature } from './utils';
 import type { SiteSettings } from '../../data/types';
 import type { Field } from '@automattic/dataviews';
 
@@ -33,19 +35,17 @@ const form = {
 	fields,
 };
 
-export function getSubscriptionGiftingSettingBadges( settings: SiteSettings ) {
-	return settings.wpcom_gifting_subscription
-		? [ { text: __( 'Enabled' ), intent: 'success' as const } ]
-		: [ { text: __( 'Disabled' ) } ];
-}
-
-export default function SubscriptionGiftingSettings() {
-	const { siteSlug } = siteSettingsSubscriptionGiftingRoute.useParams();
+export default function SubscriptionGiftingSettings( { siteSlug }: { siteSlug: string } ) {
+	const { data: site } = useQuery( siteQuery( siteSlug ) );
 	const { data } = useQuery( siteSettingsQuery( siteSlug ) );
 	const mutation = useMutation( siteSettingsMutation( siteSlug ) );
 
-	if ( ! data ) {
+	if ( ! data || ! site ) {
 		return null;
+	}
+
+	if ( ! hasSubscriptionGiftingFeature( site ) ) {
+		throw notFound();
 	}
 
 	const handleSubmit = ( edits: Partial< SiteSettings > ) => {
@@ -55,10 +55,14 @@ export default function SubscriptionGiftingSettings() {
 	return (
 		<PageLayout
 			size="small"
-			title={ __( 'Accept a gift subscription' ) }
-			description={ __(
-				'Allow a site visitor to cover the full cost of your site’s WordPress.com plan.'
-			) }
+			header={
+				<SettingsPageHeader
+					title={ __( 'Accept a gift subscription' ) }
+					description={ __(
+						'Allow a site visitor to cover the full cost of your site’s WordPress.com plan.'
+					) }
+				/>
+			}
 		>
 			<Card>
 				<CardBody>

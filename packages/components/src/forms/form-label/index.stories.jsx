@@ -1,6 +1,6 @@
 import FormLabel from '.';
 
-export default { component: FormLabel, title: 'packages/components/Form Label' };
+export default { component: FormLabel, title: 'Unaudited/Form Label' };
 
 const Template = ( args ) => {
 	return (

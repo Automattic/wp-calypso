@@ -1,6 +1,6 @@
 import config, { isEnabled } from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
-import { merge } from 'lodash';
+import { isEqual, merge } from 'lodash';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
@@ -16,14 +16,23 @@ import StatsModuleDownloads from 'calypso/my-sites/stats/features/modules/stats-
 import StatsModuleReferrers from 'calypso/my-sites/stats/features/modules/stats-referrers';
 import StatsModuleSearch from 'calypso/my-sites/stats/features/modules/stats-search';
 import StatsModuleTopPosts from 'calypso/my-sites/stats/features/modules/stats-top-posts';
+import {
+	useStatsNavigationHistory,
+	recordCurrentScreen,
+} from 'calypso/my-sites/stats/hooks/use-stats-navigation-history';
 import getMediaItem from 'calypso/state/selectors/get-media-item';
 import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import PageHeader from '../components/headers/page-header';
+import { STATS_FEATURE_DOWNLOAD_CSV } from '../constants';
 import StatsModuleLocations from '../features/modules/stats-locations';
+import LocationsNavTabs from '../features/modules/stats-locations/locations-nav-tabs';
+import { GEO_MODES } from '../features/modules/stats-locations/types';
 import StatsModuleUTM from '../features/modules/stats-utm';
+import { shouldGateStats } from '../hooks/use-should-gate-stats';
 import { StatsGlobalValuesContext } from '../pages/providers/global-provider';
 import DownloadCsv from '../stats-download-csv';
+import DownloadCsvUpsell from '../stats-download-csv-upsell';
 import AllTimeNav from '../stats-module/all-time-nav';
 import PageViewTracker from '../stats-page-view-tracker';
 import statsStringsFactory from '../stats-strings';
@@ -38,6 +47,28 @@ const StatsStrings = statsStringsFactory();
 class StatsSummary extends Component {
 	componentDidMount() {
 		window.scrollTo( 0, 0 );
+
+		const { context, period } = this.props;
+		const { module } = context.params;
+		const { query } = context;
+
+		recordCurrentScreen( module, {
+			queryParams: query,
+			period: period?.period,
+		} );
+	}
+
+	componentDidUpdate( prevProps ) {
+		if ( ! isEqual( prevProps.context.query, this.props.context.query ) ) {
+			const { context, period } = this.props;
+			const { module } = context.params;
+			const { query } = context;
+
+			recordCurrentScreen( module, {
+				queryParams: query,
+				period: period?.period,
+			} );
+		}
 	}
 
 	renderSummaryHeader( path, statType, hideNavigation, query ) {
@@ -62,7 +93,14 @@ class StatsSummary extends Component {
 	}
 
 	render() {
-		const { translate, statsQueryOptions, siteId, supportsUTMStats } = this.props;
+		const {
+			translate,
+			statsQueryOptions,
+			siteId,
+			supportsUTMStats,
+			shouldGateStatsCsvDownload,
+			lastScreen,
+		} = this.props;
 		const summaryViews = [];
 		let title;
 		let summaryView;
@@ -155,6 +193,7 @@ class StatsSummary extends Component {
 								query={ moduleQuery }
 								summary
 								listItemClassName={ listItemClassName }
+								context={ this.props.context }
 							/>
 						) : (
 							<StatsModuleCountries
@@ -183,6 +222,7 @@ class StatsSummary extends Component {
 							summary
 							listItemClassName={ listItemClassName }
 							initialGeoMode={ urlParams.get( 'geoMode' ) }
+							context={ this.props.context }
 						/>
 					</Fragment>
 				);
@@ -232,6 +272,7 @@ class StatsSummary extends Component {
 				title = translate( 'Videos' );
 				path = 'videoplays';
 				statType = 'statsVideoPlays';
+				moduleQuery.complete_stats = 1;
 				summaryView = (
 					<Fragment key="videopress-stats-module">
 						{ /* For CSV button to work, video page needs to pass custom data to the button.
@@ -360,6 +401,11 @@ class StatsSummary extends Component {
 			backLink += domain;
 		}
 		const navigationItems = [ { label: backLabel, href: backLink }, { label: title } ];
+		const geoMode = this.props.context.query.geoMode;
+		const geoModeLabel =
+			geoMode && Object.prototype.hasOwnProperty.call( GEO_MODES, geoMode )
+				? GEO_MODES[ geoMode ]
+				: 'country';
 
 		return (
 			<Main fullWidthLayout>
@@ -373,18 +419,25 @@ class StatsSummary extends Component {
 							className="stats__section-header modernized-header"
 							titleProps={ { title, titleLogo: null } }
 							backLinkProps={ {
-								url: backLink,
-								text: backLabel,
+								url: lastScreen.url,
+								text: lastScreen.text,
 							} }
 							rightSection={
 								<div className="stats-module__header-nav-button">
-									<DownloadCsv
-										skipQuery={ statType === 'utm' }
-										statType={ statType }
-										query={ moduleQuery }
-										path={ path }
-										period={ this.props.period }
-									/>
+									{ shouldGateStatsCsvDownload ? (
+										<DownloadCsvUpsell siteId={ siteId } borderless />
+									) : (
+										<DownloadCsv
+											statType={ statType }
+											query={ moduleQuery }
+											path={
+												statType === 'statsCountryViews' ? `${ path }-${ geoModeLabel }` : path
+											}
+											period={ this.props.period }
+											skipQuery
+											hideIfNoData
+										/>
+									) }
 								</div>
 							}
 						/>
@@ -393,6 +446,17 @@ class StatsSummary extends Component {
 					{ ! isStatsNavigationImprovementEnabled && (
 						<NavigationHeader className="stats-summary-view" navigationItems={ navigationItems } />
 					) }
+
+					{ isStatsNavigationImprovementEnabled &&
+						this.props.context.params.module === 'locations' && (
+							<div className="stats-navigation stats-navigation--improved">
+								<LocationsNavTabs
+									period={ this.props.period }
+									query={ moduleQuery }
+									givenSiteId={ siteId }
+								/>
+							</div>
+						) }
 
 					<div id="my-stats-content" className="stats-summary-view stats-summary__positioned">
 						{ this.props.context.params.module === 'utm' ? (
@@ -427,6 +491,11 @@ class StatsSummary extends Component {
 	}
 }
 
+const StatsSummaryWrapper = ( props ) => {
+	const lastScreen = useStatsNavigationHistory();
+	return <StatsSummary { ...props } lastScreen={ lastScreen } />;
+};
+
 export default connect( ( state, { context, postId } ) => {
 	const siteId = getSelectedSiteId( state );
 
@@ -437,5 +506,6 @@ export default connect( ( state, { context, postId } ) => {
 		siteSlug: getSelectedSiteSlug( state, siteId ),
 		media: context.params.module === 'videodetails' ? getMediaItem( state, siteId, postId ) : false,
 		supportsUTMStats,
+		shouldGateStatsCsvDownload: shouldGateStats( state, siteId, STATS_FEATURE_DOWNLOAD_CSV ),
 	};
-} )( localize( StatsSummary ) );
+} )( localize( StatsSummaryWrapper ) );

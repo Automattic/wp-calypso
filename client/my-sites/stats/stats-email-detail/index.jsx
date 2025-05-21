@@ -1,6 +1,9 @@
+import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Spinner } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { Button as CoreButton } from '@wordpress/components';
+import clsx from 'clsx';
 import { localize, translate } from 'i18n-calypso';
 import { find, flowRight } from 'lodash';
 import moment from 'moment';
@@ -8,7 +11,6 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
-import IllustrationStats from 'calypso/assets/images/stats/illustration-stats.svg';
 import { emailIntervals } from 'calypso/blocks/stats-navigation/constants';
 import Intervals from 'calypso/blocks/stats-navigation/intervals';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -17,15 +19,17 @@ import QueryPostStats from 'calypso/components/data/query-post-stats';
 import QueryPosts from 'calypso/components/data/query-posts';
 import EmptyContent from 'calypso/components/empty-content';
 import NavigationHeader from 'calypso/components/navigation-header';
+import WebPreview from 'calypso/components/web-preview';
 import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
 import memoizeLast from 'calypso/lib/memoize-last';
+import PageHeader from 'calypso/my-sites/stats/components/headers/page-header';
 import Main from 'calypso/my-sites/stats/components/stats-main';
 import { STATS_PRODUCT_NAME } from 'calypso/my-sites/stats/constants';
 import StatsEmailModule from 'calypso/my-sites/stats/stats-email-module';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
-import { getSitePost } from 'calypso/state/posts/selectors';
+import { getSitePost, getPostPreviewUrl } from 'calypso/state/posts/selectors';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
-import { getSiteSlug } from 'calypso/state/sites/selectors';
+import { getSiteSlug, isJetpackSite, isSitePreviewable } from 'calypso/state/sites/selectors';
 import { PERIOD_ALL_TIME } from 'calypso/state/stats/emails/constants';
 import { getEmailStat, isRequestingEmailStats } from 'calypso/state/stats/emails/selectors';
 import { getPeriodWithFallback, getCharts } from 'calypso/state/stats/emails/utils';
@@ -107,12 +111,14 @@ class StatsEmailDetail extends Component {
 			insights: this.props.translate( 'Insights' ),
 			store: this.props.translate( 'Store' ),
 			ads: this.props.translate( 'Ads' ),
+			subscribers: this.props.translate( 'Subscribers' ),
 		};
 		const possibleBackLinks = {
 			traffic: '/stats/day/',
 			insights: '/stats/insights/',
 			store: '/stats/store/',
 			ads: '/stats/ads/',
+			subscribers: '/stats/subscribers/',
 		};
 		// We track the parent tab via sessionStorage.
 		const lastClickedTab = sessionStorage.getItem( 'jp-stats-last-tab' );
@@ -156,6 +162,18 @@ class StatsEmailDetail extends Component {
 		return null;
 	};
 
+	openPreview = () => {
+		this.setState( {
+			showPreview: true,
+		} );
+	};
+
+	closePreview = () => {
+		this.setState( {
+			showPreview: false,
+		} );
+	};
+
 	onChangeLegend = ( activeLegend ) => this.setState( { activeLegend } );
 
 	onChangeMaxBars = ( maxBars ) => this.setState( { maxBars } );
@@ -186,6 +204,9 @@ class StatsEmailDetail extends Component {
 			statType,
 			hasValidDate,
 			showNoDataInfo,
+			showViewLink,
+			previewUrl,
+			siteSlug,
 		} = this.props;
 		const { maxBars } = this.state;
 
@@ -201,9 +222,35 @@ class StatsEmailDetail extends Component {
 		const query = memoizedQuery( period, endOf.format( 'YYYY-MM-DD' ) );
 		const slugPath = slug ? `/${ slug }` : '';
 		const pathTemplate = `${ traffic.path }/{{ interval }}/${ postId }${ slugPath }`;
+
+		// TODO: Refactor navigationItems to a single object with backLink and title attributes.
+		const navigationItems = this.getNavigationItemsWithTitle( this.getNavigationTitle() );
+
+		const backLinkProps = {
+			text: navigationItems[ 0 ].label,
+			url: navigationItems[ 0 ].href,
+		};
+		const titleProps = {
+			title: navigationItems[ 1 ].label,
+			// Remove the default logo for Odyssey stats.
+			titleLogo: null,
+		};
+
+		let actionLabel;
+		const postType = post && post.type !== null ? post.type : 'post';
+		if ( postType === 'page' ) {
+			actionLabel = translate( 'View Page' );
+		} else {
+			actionLabel = translate( 'View Post' );
+		}
+
 		return (
 			<>
-				<Main className="has-fixed-nav stats__email-detail stats">
+				<Main
+					className={ clsx( 'stats', 'stats__email-detail', {
+						'has-fixed-nav': ! config.isEnabled( 'stats/navigation-improvement' ),
+					} ) }
+				>
 					<QueryPosts siteId={ siteId } postId={ postId } />
 					<QueryPostStats siteId={ siteId } postId={ postId } />
 					<QueryEmailStats
@@ -223,9 +270,24 @@ class StatsEmailDetail extends Component {
 						path="/stats/email/:statType/:site/:period/:email_id"
 						title="Stats > Single Email"
 					/>
-					<NavigationHeader
-						navigationItems={ this.getNavigationItemsWithTitle( this.getNavigationTitle() ) }
-					/>
+
+					{ config.isEnabled( 'stats/navigation-improvement' ) ? (
+						<PageHeader
+							backLinkProps={ backLinkProps }
+							titleProps={ titleProps }
+							rightSection={
+								showViewLink && (
+									<CoreButton onClick={ this.openPreview } variant="primary">
+										<span>{ actionLabel }</span>
+									</CoreButton>
+								)
+							}
+						/>
+					) : (
+						<NavigationHeader
+							navigationItems={ this.getNavigationItemsWithTitle( this.getNavigationTitle() ) }
+						/>
+					) }
 
 					{ ! isRequestingStats && ! countViews && post && (
 						<EmptyContent
@@ -236,13 +298,15 @@ class StatsEmailDetail extends Component {
 								'https://wordpress.com/support/getting-more-views-and-traffic/'
 							) }
 							actionTarget="blank"
-							illustration={ IllustrationStats }
-							illustrationWidth={ 150 }
 						/>
 					) }
 					{ post ? (
 						<>
-							<div className="stats-navigation stats-navigation--modernized">
+							<div
+								className={ clsx( 'stats-navigation', 'stats-navigation--modernized', {
+									'stats-navigation--improved': config.isEnabled( 'stats/navigation-improvement' ),
+								} ) }
+							>
 								<StatsDetailsNavigation
 									postId={ postId }
 									period={ period }
@@ -345,9 +409,21 @@ class StatsEmailDetail extends Component {
 									) }
 								</div>
 							</div>
+
+							<WebPreview
+								showPreview={ this.state.showPreview }
+								defaultViewportDevice="tablet"
+								previewUrl={ `${ previewUrl }?demo=true&iframe=true&theme_preview=true` }
+								externalUrl={ previewUrl }
+								onClose={ this.closePreview }
+							>
+								<CoreButton href={ `/post/${ siteSlug }/${ postId }` }>
+									{ translate( 'Edit' ) }
+								</CoreButton>
+							</WebPreview>
 						</>
 					) : (
-						<Spinner />
+						<Spinner baseClassName="calypso-spinner" />
 					) }
 				</Main>
 			</>
@@ -359,6 +435,8 @@ const connectComponent = connect(
 	( state, ownProps ) => {
 		const { postId, statType, isValidStartDate } = ownProps;
 		const siteId = getSelectedSiteId( state );
+		const isJetpack = isJetpackSite( state, siteId );
+		const isPreviewable = isSitePreviewable( state, siteId );
 		const postFallback = getPostStat( state, siteId, postId, 'post' );
 		const post = getSitePost( state, siteId, postId ) ?? {
 			title: postFallback?.post_title,
@@ -397,6 +475,8 @@ const connectComponent = connect(
 			date,
 			hasValidDate,
 			showNoDataInfo,
+			showViewLink: ! isJetpack && isPreviewable,
+			previewUrl: getPostPreviewUrl( state, siteId, postId ),
 		};
 	},
 	{ recordGoogleEvent }

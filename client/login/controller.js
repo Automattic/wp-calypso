@@ -62,10 +62,13 @@ const enhanceContextWithLogin = ( context ) => {
 		getOAuth2Client( context.store.getState(), Number( clientId || oauth2ClientId ) ) || {};
 	const isGravPoweredClient = isGravPoweredOAuth2Client( oauth2Client );
 	const isPartnerPortalClient = isPartnerPortalOAuth2Client( oauth2Client );
+	const isWooJPC = isWooJPCFlow( context.store.getState() );
 
 	const isWhiteLogin =
-		( ! isJetpackLogin && Boolean( clientId ) === false && Boolean( oauth2ClientId ) === false ) ||
-		isGravPoweredClient ||
+		( ! isJetpackLogin &&
+			Boolean( clientId ) === false &&
+			Boolean( oauth2ClientId ) === false &&
+			! isWooJPC ) ||
 		isPartnerPortalClient;
 
 	context.primary = (
@@ -79,7 +82,6 @@ const enhanceContextWithLogin = ( context ) => {
 			socialService={ socialService }
 			socialServiceResponse={ socialServiceResponse }
 			socialConnect={ flow === 'social-connect' }
-			privateSite={ flow === 'private-site' }
 			domain={ ( query && query.domain ) || null }
 			fromSite={ ( query && query.site ) || null }
 			signupUrl={ ( query && query.signup_url ) || null }
@@ -209,7 +211,7 @@ export function qrCodeLogin( context, next ) {
 }
 
 function getHandleEmailedLinkFormComponent( flow ) {
-	if ( flow === 'jetpack' && config.isEnabled( 'jetpack/magic-link-signup' ) ) {
+	if ( flow === 'jetpack' ) {
 		return HandleEmailedLinkFormJetpackConnect;
 	}
 	return HandleEmailedLinkForm;

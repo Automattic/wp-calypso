@@ -2,6 +2,7 @@ import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
+import { useEffect } from 'react';
 import StatsNavigation from 'calypso/blocks/stats-navigation';
 import { navItems } from 'calypso/blocks/stats-navigation/constants';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -91,9 +92,12 @@ const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {
 		( subscribersTotals?.total === 1 && subscribersTotals?.is_owner_subscribed );
 	const showLaunchpad = ! isLoading && hasNoSubscriberOtherThanAdmin;
 
-	// Track the last viewed tab.
-	// Necessary to properly configure the fixed navigation headers.
-	// sessionStorage.setItem( 'jp-stats-last-tab', 'subscribers' );
+	useEffect(
+		() =>
+			// Necessary to properly configure the fixed navigation headers.
+			sessionStorage.setItem( 'jp-stats-last-tab', 'subscribers' ),
+		[]
+	); // Track the last viewed tab.
 
 	const summaryUrl = `/stats/${ period?.period }/emails/${ siteSlug }?startDate=${ period?.startOf?.format(
 		'YYYY-MM-DD'

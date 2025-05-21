@@ -1,5 +1,6 @@
-import { FoldableCard, ExternalLink } from '@automattic/components';
+import { FoldableCard, ExternalLink as ExternalLinkComponent } from '@automattic/components';
 import { useBreakpoint } from '@automattic/viewport-react';
+import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Fragment } from 'react';
 
@@ -26,7 +27,7 @@ const Container = styled( FoldableCard )`
 	&&.is-expanded .foldable-card__content {
 		${ ( props ) => props.first && 'border-top: 0' };
 		${ ( props ) => props.showAsAccordion && 'border: 0' };
-		padding: ${ ( props ) => ( props.first ? '0 0 32px' : '32px 0' ) };
+		padding: ${ ( props ) => ( props.first ? '0 0 24px' : '24px 0' ) };
 		${ ( props ) => props.showAsAccordion && 'padding: 0' };
 	}
 
@@ -49,16 +50,26 @@ const Title = styled.div`
 	color: var( --studio-gray-100 );
 	font-size: 14px;
 	${ ( props ) => ! props.showAsAccordion && 'font-weight: 600' };
-	${ ( props ) => ! props.showAsAccordion && 'margin-bottom: 8px;' };
+	${ ( props ) => ! props.showAsAccordion && 'margin-bottom: 12px;' };
 `;
 const Description = styled.div`
 	color: var( --studio-gray-80 );
-	margin-bottom: 12px;
+	font-size: 14px;
+	${ ( props ) => props.showAsAccordion && 'margin-bottom: 12px;' };
+`;
+
+const linkStyles = css`
+	display: inline-block;
+	margin-top: 6px;
 	font-size: 14px;
 `;
 
-const Link = styled( ExternalLink )`
-	font-size: 14px;
+const ExternalLink = styled( ExternalLinkComponent )`
+	${ linkStyles }
+`;
+
+const Link = styled.a`
+	${ linkStyles }
 `;
 
 const PluginDetailsSidebarUSP = ( {
@@ -93,14 +104,20 @@ const PluginDetailsSidebarUSP = ( {
 			first={ first }
 		>
 			{ ! isNarrow && <Header /> }
-			<Description>{ description }</Description>
+			<Description showAsAccordion={ isNarrow }>{ description }</Description>
 			{ links &&
 				links.map( ( link, idx ) => {
 					return (
 						<Fragment key={ idx }>
-							<Link icon href={ link.href } onClick={ link.onClick }>
-								{ link.label }
-							</Link>
+							{ link.openInNewTab ? (
+								<ExternalLink icon href={ link.href } onClick={ link.onClick }>
+									{ link.label }
+								</ExternalLink>
+							) : (
+								<Link href={ link.href } onClick={ link.onClick }>
+									{ link.label }
+								</Link>
+							) }
 							<br />
 						</Fragment>
 					);

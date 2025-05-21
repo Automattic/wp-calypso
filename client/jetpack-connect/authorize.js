@@ -5,7 +5,7 @@ import {
 	getJetpackProductOrPlanDisplayName,
 } from '@automattic/calypso-products';
 import { getUrlParts } from '@automattic/calypso-url';
-import { Button, Card, FormLabel, Gridicon, Spinner } from '@automattic/components';
+import { Button, Card, FormLabel, Gridicon } from '@automattic/components';
 import { Spinner as WPSpinner, Modal } from '@wordpress/components';
 import { Icon, chartBar, next, share } from '@wordpress/icons';
 import clsx from 'clsx';
@@ -865,7 +865,6 @@ export class JetpackAuthorize extends Component {
 		const { authorizeSuccess } = this.props.authorizationData;
 		const isWpcomMigration = this.isFromMigrationPlugin();
 		const isWooDnaFlow = this.getWooDnaConfig().isWooDnaFlow();
-		const isJetpackMagicLinkSignUpFlow = config.isEnabled( 'jetpack/magic-link-signup' );
 
 		if ( isWpcomMigration ) {
 			const { display_name, email } = this.props.user;
@@ -903,9 +902,8 @@ export class JetpackAuthorize extends Component {
 			);
 		}
 
-		// Accounts created through the new Magic Link-based signup flow (enabled with the
-		// 'jetpack/magic-link-signup' feature flag) are created with a username based on the user's
-		// email address. For this reason, we want to display both the username and the email address
+		// Accounts created through the Magic Link-based signup flow are created with a username based on the
+		// user's email address. For this reason, we want to display both the username and the email address
 		// so users can start making the connection between the two immediately. Otherwise, users might
 		// not recognize their username since they didn't create it.
 
@@ -916,7 +914,7 @@ export class JetpackAuthorize extends Component {
 		// is an intermediate step and the user will be redirected to the WooCommerce onboarding flow.
 		// Seeing this new username/email address can cause confusion because they have already set up
 		// a Woo account under their own email address.
-		if ( isWooDnaFlow && isJetpackMagicLinkSignUpFlow ) {
+		if ( isWooDnaFlow ) {
 			return connected
 				? translate( 'Account connected successfully' )
 				: translate( 'Connecting your account' );
@@ -1152,7 +1150,6 @@ export class JetpackAuthorize extends Component {
 		const { translate } = this.props;
 		const { authorizeSuccess, isAuthorizing } = this.props.authorizationData;
 		const { from } = this.props.authQuery;
-		const isJetpackMagicLinkSignUpFlow = config.isEnabled( 'jetpack/magic-link-signup' );
 
 		if (
 			this.retryingAuth ||
@@ -1173,19 +1170,12 @@ export class JetpackAuthorize extends Component {
 
 		return (
 			<LoggedOutFormLinks>
-				{ ! isJetpackMagicLinkSignUpFlow && this.renderBackToWpAdminLink() }
 				<LoggedOutFormLinkItem
 					href={ loginURL }
 					onClick={ ( e ) => this.handleSignIn( e, loginURL ) }
 				>
 					{ translate( 'Sign in as a different user' ) }
 				</LoggedOutFormLinkItem>
-				{ ! isJetpackMagicLinkSignUpFlow && (
-					<LoggedOutFormLinkItem onClick={ this.handleSignOut }>
-						{ translate( 'Create a new account' ) }
-					</LoggedOutFormLinkItem>
-				) }
-				{ ! isJetpackMagicLinkSignUpFlow && <HelpButton /> }
 			</LoggedOutFormLinks>
 		);
 	}
@@ -1265,7 +1255,7 @@ export class JetpackAuthorize extends Component {
 		if ( isLoading ) {
 			return (
 				<div className="jetpack-connect__logged-in-form-loading">
-					<span>{ this.getButtonText() }</span> <Spinner size={ 20 } duration={ 3000 } />
+					<span>{ this.getButtonText() }</span> <WPSpinner size={ 20 } duration={ 3000 } />
 				</div>
 			);
 		}

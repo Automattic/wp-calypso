@@ -1,4 +1,5 @@
 import wpcom from 'calypso/lib/wp';
+import { SITE_FIELDS } from './constants';
 import type {
 	Domain,
 	Email,
@@ -10,7 +11,6 @@ import type {
 	Profile,
 	TwoStep,
 	EngagementStatsDataPoint,
-	SiteDomain,
 	BasicMetricsData,
 	SiteSettings,
 	UrlPerformanceInsights,
@@ -30,25 +30,7 @@ export const updateProfile = async ( data: Partial< Profile > ) => {
 	return await wpcom.req.post( '/me/settings', data );
 };
 
-const SITE_FIELDS = [
-	'ID',
-	'slug',
-	'URL',
-	'name',
-	'icon',
-	'subscribers_count',
-	'plan',
-	'active_modules',
-	'is_a8c',
-	'is_deleted',
-	'is_coming_soon',
-	'is_private',
-	'launch_status',
-	'site_migration',
-	'options',
-	'jetpack',
-	'jetpack_modules',
-].join( ',' );
+const JOINED_SITE_FIELDS = SITE_FIELDS.join( ',' );
 
 export const fetchSites = async (): Promise< Site[] > => {
 	const { sites } = await wpcom.req.get(
@@ -60,14 +42,17 @@ export const fetchSites = async (): Promise< Site[] > => {
 			site_visibility: 'all',
 			include_domain_only: 'true',
 			site_activity: 'active',
-			fields: SITE_FIELDS,
+			fields: JOINED_SITE_FIELDS,
 		}
 	);
 	return sites;
 };
 
 export const fetchSite = async ( siteIdOrSlug: string ): Promise< Site > => {
-	return await wpcom.req.get( { path: `/sites/${ siteIdOrSlug }` }, { fields: SITE_FIELDS } );
+	return await wpcom.req.get(
+		{ path: `/sites/${ siteIdOrSlug }` },
+		{ fields: JOINED_SITE_FIELDS }
+	);
 };
 
 export const fetchSiteMediaStorage = async ( siteIdOrSlug: string ): Promise< MediaStorage > => {
@@ -144,23 +129,6 @@ export const fetchSiteEngagementStats = async ( siteIdOrSlug: string ) => {
 export const fetchDomains = async (): Promise< Domain[] > => {
 	return ( await wpcom.req.get( '/all-domains', { no_wpcom: true, resolve_status: true } ) )
 		.domains;
-};
-
-export const fetchSiteDomains = async ( id: string ): Promise< { domains: SiteDomain[] } > => {
-	try {
-		const domains = await wpcom.req.get( { path: `/sites/${ id }/domains`, apiVersion: '1.2' } );
-		return domains;
-	} catch ( error ) {
-		// TODO: check how to properly fetch for all sites..
-		return { domains: [] };
-	}
-};
-
-export const fetchSitePrimaryDomain = async (
-	siteIdOrSlug: string
-): Promise< SiteDomain | undefined > => {
-	const { domains } = await fetchSiteDomains( siteIdOrSlug );
-	return domains.find( ( domain: SiteDomain ) => domain.primary_domain );
 };
 
 export const EMAIL_DATA: Email[] = [
@@ -300,17 +268,62 @@ export const fetchSiteSettings = async ( siteIdOrSlug: string ): Promise< SiteSe
 		path: `/sites/${ siteIdOrSlug }/settings`,
 		apiVersion: '1.4',
 	} );
-	return settings;
+	return fromRawSiteSettings( settings );
 };
 
 export const updateSiteSettings = async ( siteIdOrSlug: string, data: Partial< SiteSettings > ) => {
-	return await wpcom.req.post(
+	const { updated } = await wpcom.req.post(
 		{
 			path: `/sites/${ siteIdOrSlug }/settings`,
 			apiVersion: '1.4',
 		},
-		data
+		toRawSiteSettings( data )
 	);
+	return fromRawSiteSettings( updated );
+};
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function fromRawSiteSettings( settings: any ): SiteSettings {
+	const blog_public = Number( settings.blog_public );
+	const wpcom_coming_soon = Number( settings.wpcom_public_coming_soon );
+	const wpcom_public_coming_soon = Number( settings.wpcom_public_coming_soon );
+
+	if ( wpcom_coming_soon === 1 || wpcom_public_coming_soon === 1 ) {
+		settings.wpcom_site_visibility = 'coming-soon';
+	} else if ( blog_public === -1 ) {
+		settings.wpcom_site_visibility = 'private';
+	} else {
+		settings.wpcom_site_visibility = 'public';
+	}
+	return settings;
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function toRawSiteSettings( settings: Partial< SiteSettings > ): any {
+	const rawSettings = settings as any; // eslint-disable-line @typescript-eslint/no-explicit-any
+
+	const { wpcom_site_visibility } = settings;
+
+	if ( wpcom_site_visibility !== undefined ) {
+		if ( wpcom_site_visibility === 'coming-soon' ) {
+			rawSettings.blog_public = 0;
+			rawSettings.wpcom_public_coming_soon = 1;
+		} else if ( wpcom_site_visibility === 'private' ) {
+			rawSettings.blog_public = -1;
+			rawSettings.wpcom_public_coming_soon = 0;
+		} else {
+			rawSettings.blog_public = 1;
+			rawSettings.wpcom_public_coming_soon = 0;
+		}
+	}
+	return rawSettings;
+}
+
+export const restoreSitePlanSoftware = async ( siteIdOrSlug: string ) => {
+	return wpcom.req.post( {
+		path: `/sites/${ siteIdOrSlug }/hosting/restore-plan-software`,
+		apiNamespace: 'wpcom/v2',
+	} );
 };
 
 export const fetchBasicMetrics = async ( url: string ): Promise< BasicMetricsData > => {

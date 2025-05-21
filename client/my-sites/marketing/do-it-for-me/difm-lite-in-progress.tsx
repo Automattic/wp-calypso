@@ -4,8 +4,6 @@ import { Button } from '@wordpress/components';
 import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import SiteBuildInProgressIllustration from 'calypso/assets/images/difm/site-build-in-progress.svg';
-import WebsiteContentRequiredIllustration from 'calypso/assets/images/difm/website-content-required.svg';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import { useQuerySitePurchases } from 'calypso/components/data/query-site-purchases';
 import EmptyContent from 'calypso/components/empty-content';
@@ -113,8 +111,6 @@ function WebsiteContentSubmissionPending( { siteId, siteSlug }: Props ) {
 			}
 			action={ translate( 'Provide website content' ) }
 			actionURL={ `/start/site-content-collection/website-content?siteSlug=${ siteSlug }` }
-			illustration={ WebsiteContentRequiredIllustration }
-			illustrationWidth={ 144 }
 			className="difm-lite-in-progress__content"
 		/>
 	);
@@ -166,8 +162,6 @@ function WebsiteContentSubmitted( { primaryDomain, siteSlug }: Props ) {
 			secondaryAction={ hasEmailWithUs ? translate( 'Manage email' ) : translate( 'Add email' ) }
 			secondaryActionURL={ getEmailManagementPath( siteSlug ) }
 			secondaryActionCallback={ recordEmailClick }
-			illustration={ SiteBuildInProgressIllustration }
-			illustrationWidth={ 144 }
 			className="difm-lite-in-progress__content"
 		/>
 	);
@@ -191,11 +185,7 @@ function DIFMLiteInProgress( { siteId }: DIFMLiteInProgressProps ) {
 		return (
 			<>
 				<QuerySiteDomains siteId={ siteId } />
-				<EmptyContent
-					className="difm-lite-in-progress__site-placeholder"
-					illustration={ SiteBuildInProgressIllustration }
-					illustrationWidth={ 144 }
-				/>
+				<EmptyContent className="difm-lite-in-progress__site-placeholder" />
 			</>
 		);
 	}

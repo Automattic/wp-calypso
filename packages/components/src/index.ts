@@ -2,6 +2,7 @@ export { default as Badge } from './badge';
 export type { BadgeType } from './badge';
 export { Button } from './button';
 export type { ButtonProps } from './button';
+export { Breadcrumbs } from './breadcrumbs';
 export { default as Card } from './card';
 export { default as CompactCard } from './card/compact';
 export { default as FoldableCard } from './foldable-card';
@@ -55,17 +56,20 @@ export { default as PlanPrice } from './plan-price';
 export { default as ExternalLink } from './external-link';
 export * from './theme-type-badge';
 export { default as FlowQuestion } from './flow-question';
-
-// Logos
-export { JetpackLogo } from './logos/jetpack-logo';
-export { CloudLogo } from './logos/cloud-logo';
-export { VIPLogo } from './logos/vip-logo';
-export { WooLogo } from './logos/woo-logo';
-export { WordPressLogo } from './logos/wordpress-logo';
-export { WooCommerceWooLogo } from './logos/woocommerce-woo-logo';
 export { default as Swipeable } from './swipeable';
 export { default as DotPager } from './dot-pager';
 export { default as EmbedContainer } from './embed-container';
 export { ExperienceControl } from './experience-control';
 export { default as SummaryButton } from './summary-button';
 export { default as CoreBadge } from './core-badge';
+export { default as Menu } from './menu';
+export { Tabs } from './tabs';
+
+// Logos
+export { JetpackLogo } from './logos/jetpack-logo';
+export { BigSkyLogo } from './logos/big-sky-logo';
+export { CloudLogo } from './logos/cloud-logo';
+export { VIPLogo } from './logos/vip-logo';
+export { WooLogo } from './logos/woo-logo';
+export { WordPressLogo } from './logos/wordpress-logo';
+export { WooCommerceWooLogo } from './logos/woocommerce-woo-logo';

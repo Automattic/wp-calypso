@@ -193,16 +193,12 @@ export class ContactDetailsFormFields extends Component {
 
 	sanitize = ( fieldValues, onComplete ) => {
 		const sanitizedFieldValues = Object.assign( {}, fieldValues );
-		const fieldsToDeburr = [ 'email', 'phone', 'postalCode', 'countryCode', 'fax' ];
 
 		CONTACT_DETAILS_FORM_FIELDS.forEach( ( fieldName ) => {
 			if ( typeof fieldValues[ fieldName ] === 'string' ) {
 				// TODO: Deep
-				if ( fieldsToDeburr.includes( fieldName ) ) {
-					sanitizedFieldValues[ fieldName ] = deburr( fieldValues[ fieldName ].trim() );
-				} else {
-					sanitizedFieldValues[ fieldName ] = fieldValues[ fieldName ].trim();
-				}
+				sanitizedFieldValues[ fieldName ] = deburr( fieldValues[ fieldName ].trim() );
+
 				// TODO: Do this on submit. Is it too annoying?
 				if ( fieldName === 'postalCode' ) {
 					sanitizedFieldValues[ fieldName ] = tryToGuessPostalCodeFormat(

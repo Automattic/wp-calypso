@@ -5,33 +5,31 @@ import {
 	Card,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { siteSettingsQuery } from '../../app/queries';
-import { siteRoute } from '../../app/router';
+import { siteQuery, siteSettingsQuery } from '../../app/queries';
+import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import RouterLinkSummaryButton from '../../components/router-link-summary-button';
-import { getSubscriptionGiftingSettingBadges } from '../settings-subscription-gifting';
+import SiteVisibilitySettingsSummary from '../settings-site-visibility/summary';
+import SubscriptionGiftingSettingsSummary from '../settings-subscription-gifting/summary';
+import SiteActions from './site-actions';
 
-export default function SiteSettings() {
-	const { siteSlug } = siteRoute.useParams();
+export default function SiteSettings( { siteSlug }: { siteSlug: string } ) {
+	const { data: site } = useQuery( siteQuery( siteSlug ) );
 	const { data: settings } = useQuery( siteSettingsQuery( siteSlug ) );
 
-	if ( ! settings ) {
+	if ( ! site || ! settings ) {
 		return null;
 	}
 
 	return (
-		<PageLayout title={ __( 'Settings' ) } size="small">
+		<PageLayout size="small" header={ <PageHeader title={ __( 'Settings' ) } /> }>
 			<Heading>{ __( 'General' ) }</Heading>
 			<Card>
 				<VStack>
-					<RouterLinkSummaryButton
-						to={ `/sites/${ siteSlug }/settings/subscription-gifting` }
-						title={ __( 'Accept a gift subscription' ) }
-						density="medium"
-						badges={ getSubscriptionGiftingSettingBadges( settings ) }
-					/>
+					<SiteVisibilitySettingsSummary site={ site } />
+					<SubscriptionGiftingSettingsSummary site={ site } settings={ settings } />
 				</VStack>
 			</Card>
+			<SiteActions site={ site } />
 		</PageLayout>
 	);
 }

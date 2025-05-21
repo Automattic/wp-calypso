@@ -1,6 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import page from '@automattic/calypso-router';
-import { WordPressLogo, JetpackLogo } from '@automattic/components';
+import { WordPressLogo, JetpackLogo, BigSkyLogo } from '@automattic/components';
 import { localizeUrl, useHasEnTranslation } from '@automattic/i18n-utils';
 import { formatNumber } from '@automattic/number-formatters';
 import { download, reusableBlock, Icon } from '@wordpress/icons';
@@ -8,7 +8,6 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 // TODO: This will need to be updated to use whatever image we decide on.
 import devSiteBanner from 'calypso/assets/images/a8c-for-agencies/dev-site-banner.svg';
-import { preventWidows } from 'calypso/lib/formatting';
 import { TRACK_SOURCE_NAME } from 'calypso/sites-dashboard/utils';
 import { Column } from './layout/column';
 import { MenuItem } from './layout/menu-item';
@@ -46,6 +45,13 @@ const importClick = () => {
 	);
 };
 
+const bigSkyClick = () => {
+	recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_item', {
+		action: 'big-sky',
+	} );
+	page( '/setup/ai-site-builder' );
+};
+
 const offerClick = () => {
 	recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_item', {
 		action: 'offer',
@@ -62,19 +68,25 @@ export const Content = () => {
 				<MenuItem
 					icon={ <WordPressLogo /> }
 					heading={ translate( 'WordPress.com' ) }
-					description={ preventWidows(
-						translate( 'Build and grow your site, all in one powerful platform.' )
-					) }
+					description={ translate( 'Build and grow your site, all in one powerful platform.' ) }
 					buttonProps={ {
 						onClick: wordpressClick,
 					} }
 				/>
 				<MenuItem
+					icon={ <BigSkyLogo.Mark /> }
+					heading={ translate( 'Build with AI' ) }
+					description={ translate(
+						'Prompt, edit, and launch WordPress websites with Artificial Intelligence.'
+					) }
+					buttonProps={ {
+						onClick: bigSkyClick,
+					} }
+				/>
+				<MenuItem
 					icon={ <JetpackLogo /> }
 					heading={ translate( 'Via the Jetpack plugin' ) }
-					description={ preventWidows(
-						translate( 'Install the Jetpack plugin on an existing site.' )
-					) }
+					description={ translate( 'Install the Jetpack plugin on an existing site.' ) }
 					buttonProps={ {
 						onClick: jetpackClick,
 					} }
@@ -84,11 +96,11 @@ export const Content = () => {
 				<MenuItem
 					icon={ <Icon icon={ reusableBlock } size={ 18 } /> }
 					heading={ translate( 'Migrate' ) }
-					description={ preventWidows(
+					description={
 						hasEnTranslation( 'Bring your entire WordPress site to WordPress.com.' )
 							? translate( 'Bring your entire WordPress site to WordPress.com.' )
 							: translate( 'Bring your theme, plugins, and content to WordPress.com.' )
-					) }
+					}
 					buttonProps={ {
 						onClick: migrateClick,
 					} }
@@ -96,11 +108,11 @@ export const Content = () => {
 				<MenuItem
 					icon={ <Icon icon={ download } size={ 18 } /> }
 					heading={ translate( 'Import' ) }
-					description={ preventWidows(
+					description={
 						hasEnTranslation( 'Use a backup to only import content from other platforms.' )
 							? translate( 'Use a backup to only import content from other platforms.' )
 							: translate( 'Use a backup file to import your content into a new site.' )
-					) }
+					}
 					buttonProps={ {
 						onClick: importClick,
 					} }
@@ -118,18 +130,16 @@ export const Content = () => {
 							comment: 'percentage like 55% off',
 						},
 					} ) }
-					description={ preventWidows(
-						translate(
-							'Save up to %(percentage)s on annual plans and get a free custom domain for a year. Your next site is just a step away.',
-							{
-								args: {
-									percentage: formatNumber( 0.55, {
-										numberFormatOptions: { style: 'percent' },
-									} ),
-									comment: 'percentage like 55% off',
-								},
-							}
-						)
+					description={ translate(
+						'Save up to %(percentage)s on annual plans and get a free custom domain for a year. Your next site is just a step away.',
+						{
+							args: {
+								percentage: formatNumber( 0.55, {
+									numberFormatOptions: { style: 'percent' },
+								} ),
+								comment: 'percentage like 55% off',
+							},
+						}
 					) }
 					buttonProps={ {
 						onClick: offerClick,

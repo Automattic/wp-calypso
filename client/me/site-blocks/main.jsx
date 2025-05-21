@@ -19,7 +19,6 @@ import {
 	getSiteBlocksLastPage,
 } from 'calypso/state/reader/site-blocks/selectors';
 import SiteBlockListItem from './list-item';
-import SiteBlockListItemPlaceholder from './list-item-placeholder';
 
 import './style.scss';
 
@@ -36,7 +35,13 @@ class SiteBlockList extends Component {
 
 	renderPlaceholders() {
 		return times( 2, ( i ) => (
-			<SiteBlockListItemPlaceholder key={ 'site-block-list-item-placeholder-' + i } />
+			<div
+				aria-hidden="true"
+				className="site-blocks__list-item is-placeholder"
+				key={ 'site-block-list-item-placeholder-' + i }
+			>
+				<span className="site-blocks__list-item-placeholder-text">Blocked site</span>
+			</div>
 		) );
 	}
 
@@ -67,7 +72,9 @@ class SiteBlockList extends Component {
 						<InlineSupportLink
 							showIcon={ false }
 							supportPostId={ 32011 }
-							supportLink={ localizeUrl( 'https://wordpress.com/support/reader/#blocking-sites' ) }
+							supportLink={ localizeUrl(
+								'https://wordpress.com/support/reader/#interact-with-posts'
+							) }
 						/>
 					</p>
 

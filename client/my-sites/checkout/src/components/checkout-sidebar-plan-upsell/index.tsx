@@ -9,13 +9,16 @@ import debugFactory from 'debug';
 import PromoCard from 'calypso/components/promo-section/promo-card';
 import PromoCardCTA from 'calypso/components/promo-section/promo-card/cta';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
-import { useStreamlinedPriceExperiment } from 'calypso/my-sites/plans-features-main/hooks/use-streamlined-price-experiment';
+import {
+	useStreamlinedPriceExperiment,
+	isStreamlinedPriceCheckoutTreatment,
+} from 'calypso/my-sites/plans-features-main/hooks/use-streamlined-price-experiment';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { useGetProductVariants } from '../../hooks/product-variants';
 import {
 	getItemVariantCompareToPrice,
-	getItemVariantDiscountPercentage,
+	getItemVariantDiscount,
 } from '../item-variation-picker/util';
 import type { WPCOMProductVariant } from '../item-variation-picker';
 import './style.scss';
@@ -184,7 +187,7 @@ export function CheckoutSidebarPlanUpsell() {
 		upsellVariant,
 		currentVariant
 	);
-	const percentSavings = getItemVariantDiscountPercentage( upsellVariant, currentVariant );
+	const percentSavings = getItemVariantDiscount( upsellVariant, currentVariant );
 	if ( percentSavings === 0 ) {
 		debug( 'percent savings is too low', percentSavings );
 		return null;
@@ -206,18 +209,24 @@ export function CheckoutSidebarPlanUpsell() {
 
 	const checkoutSidebarPlanUpsellClassName =
 		'checkout-sidebar-plan-upsell' +
-		( streamlinedPriceExperimentAssignment ? ' checkout-sidebar-plan-upsell-streamlined' : '' );
+		( isStreamlinedPriceCheckoutTreatment( streamlinedPriceExperimentAssignment )
+			? ' checkout-sidebar-plan-upsell-streamlined'
+			: '' );
 
 	return (
 		<>
 			<PromoCard title={ cardTitle } className={ checkoutSidebarPlanUpsellClassName }>
 				<div className="checkout-sidebar-plan-upsell__plan-grid">
-					<div className="checkout-sidebar-plan-upsell__plan-grid-cell">
-						<strong>{ __( 'Plan' ) }</strong>
-					</div>
-					<div className="checkout-sidebar-plan-upsell__plan-grid-cell">
-						<strong>{ isComparisonWithIntroOffer ? cellLabel : __( 'Cost' ) }</strong>
-					</div>
+					{ ! isStreamlinedPriceCheckoutTreatment( streamlinedPriceExperimentAssignment ) && (
+						<>
+							<div className="checkout-sidebar-plan-upsell__plan-grid-cell">
+								<strong>{ __( 'Plan' ) }</strong>
+							</div>
+							<div className="checkout-sidebar-plan-upsell__plan-grid-cell">
+								<strong>{ isComparisonWithIntroOffer ? cellLabel : __( 'Cost' ) }</strong>
+							</div>
+						</>
+					) }
 					<div className="checkout-sidebar-plan-upsell__plan-grid-cell">
 						{ currentVariant.variantLabel.adjective }
 					</div>

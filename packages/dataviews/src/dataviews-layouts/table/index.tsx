@@ -2,17 +2,25 @@
  * External dependencies
  */
 import clsx from 'clsx';
+import type { ComponentProps, ReactElement } from 'react';
 
 /**
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
 import { Spinner } from '@wordpress/components';
-import { useEffect, useId, useRef, useState } from '@wordpress/element';
+import {
+	useContext,
+	useEffect,
+	useId,
+	useRef,
+	useState,
+} from '@wordpress/element';
 
 /**
  * Internal dependencies
  */
+import DataViewsContext from '../../components/dataviews-context';
 import DataViewsSelectionCheckbox from '../../components/dataviews-selection-checkbox';
 import ItemActions from '../../components/dataviews-item-actions';
 import { sortValues } from '../../constants';
@@ -30,6 +38,7 @@ import type {
 import type { SetSelection } from '../../private-types';
 import ColumnHeaderMenu from './column-header-menu';
 import ColumnPrimary from './column-primary';
+import { useIsHorizontalScrollEnd } from './use-is-horizontal-scroll-end';
 
 interface TableColumnFieldProps< Item > {
 	fields: NormalizedField< Item >[];
@@ -53,6 +62,12 @@ interface TableRowProps< Item > {
 	onChangeSelection: SetSelection;
 	isItemClickable: ( item: Item ) => boolean;
 	onClickItem?: ( item: Item ) => void;
+	renderItemLink?: (
+		props: {
+			item: Item;
+		} & ComponentProps< 'a' >
+	) => ReactElement;
+	isActionsColumnSticky?: boolean;
 }
 
 function TableColumnField< Item >( {
@@ -68,7 +83,7 @@ function TableColumnField< Item >( {
 
 	return (
 		<div className="dataviews-view-table__cell-content-wrapper">
-			<field.render { ...{ item } } />
+			<field.render item={ item } field={ field } />
 		</div>
 	);
 }
@@ -88,7 +103,9 @@ function TableRow< Item >( {
 	getItemId,
 	isItemClickable,
 	onClickItem,
+	renderItemLink,
 	onChangeSelection,
+	isActionsColumnSticky,
 }: TableRowProps< Item > ) {
 	const hasPossibleBulkAction = useHasAPossibleBulkAction( actions, item );
 	const isSelected = hasPossibleBulkAction && selection.includes( id );
@@ -165,6 +182,7 @@ function TableRow< Item >( {
 						}
 						isItemClickable={ isItemClickable }
 						onClickItem={ onClickItem }
+						renderItemLink={ renderItemLink }
 					/>
 				</td>
 			) }
@@ -192,7 +210,11 @@ function TableRow< Item >( {
 
 				/* eslint-disable jsx-a11y/no-noninteractive-element-interactions, jsx-a11y/click-events-have-key-events */
 				<td
-					className="dataviews-view-table__actions-column"
+					className={ clsx( 'dataviews-view-table__actions-column', {
+						'dataviews-view-table__actions-column--sticky': true,
+						'dataviews-view-table__actions-column--stuck':
+							isActionsColumnSticky,
+					} ) }
 					onClick={ ( e ) => e.stopPropagation() }
 				>
 					<ItemActions item={ item } actions={ actions } />
@@ -216,8 +238,10 @@ function ViewTable< Item >( {
 	setOpenedFilter,
 	onClickItem,
 	isItemClickable,
+	renderItemLink,
 	view,
 }: ViewTableProps< Item > ) {
+	const { containerRef } = useContext( DataViewsContext );
 	const headerMenuRefs = useRef<
 		Map< string, { node: HTMLButtonElement; fallback: string } >
 	>( new Map() );
@@ -277,6 +301,11 @@ function ViewTable< Item >( {
 				headerMenuRefs.current.delete( column );
 			}
 		};
+
+	const isHorizontalScrollEnd = useIsHorizontalScrollEnd( {
+		scrollContainerRef: containerRef,
+		enabled: !! actions?.length,
+	} );
 
 	return (
 		<>
@@ -355,7 +384,17 @@ function ViewTable< Item >( {
 							);
 						} ) }
 						{ !! actions?.length && (
-							<th className="dataviews-view-table__actions-column">
+							<th
+								className={ clsx(
+									'dataviews-view-table__actions-column',
+									{
+										'dataviews-view-table__actions-column--sticky':
+											true,
+										'dataviews-view-table__actions-column--stuck':
+											! isHorizontalScrollEnd,
+									}
+								) }
+							>
 								<span className="dataviews-view-table-header">
 									{ __( 'Actions' ) }
 								</span>
@@ -387,7 +426,11 @@ function ViewTable< Item >( {
 								getItemId={ getItemId }
 								onChangeSelection={ onChangeSelection }
 								onClickItem={ onClickItem }
+								renderItemLink={ renderItemLink }
 								isItemClickable={ isItemClickable }
+								isActionsColumnSticky={
+									! isHorizontalScrollEnd
+								}
 							/>
 						) ) }
 				</tbody>

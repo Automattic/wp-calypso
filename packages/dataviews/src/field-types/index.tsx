@@ -1,10 +1,19 @@
 /**
  * Internal dependencies
  */
-import type { FieldType, SortDirection, ValidationContext } from '../types';
+import type {
+	DataViewRenderFieldProps,
+	FieldType,
+	FieldTypeDefinition,
+	SortDirection,
+	ValidationContext,
+} from '../types';
 import { default as integer } from './integer';
 import { default as text } from './text';
 import { default as datetime } from './datetime';
+import { default as boolean } from './boolean';
+import { default as media } from './media';
+import { renderFromElements } from '../utils';
 
 /**
  *
@@ -12,7 +21,9 @@ import { default as datetime } from './datetime';
  *
  * @return A field type definition.
  */
-export default function getFieldTypeDefinition( type?: FieldType ) {
+export default function getFieldTypeDefinition< Item >(
+	type?: FieldType
+): FieldTypeDefinition< Item > {
 	if ( 'integer' === type ) {
 		return integer;
 	}
@@ -25,6 +36,16 @@ export default function getFieldTypeDefinition( type?: FieldType ) {
 		return datetime;
 	}
 
+	if ( 'boolean' === type ) {
+		return boolean;
+	}
+
+	if ( 'media' === type ) {
+		return media;
+	}
+
+	// This is a fallback for fields that don't provide a type.
+	// It can be removed when the field.type is mandatory.
 	return {
 		sort: ( a: any, b: any, direction: SortDirection ) => {
 			if ( typeof a === 'number' && typeof b === 'number' ) {
@@ -45,6 +66,15 @@ export default function getFieldTypeDefinition( type?: FieldType ) {
 
 			return true;
 		},
-		Edit: () => null,
+		Edit: null,
+		render: ( { item, field }: DataViewRenderFieldProps< Item > ) => {
+			return field.elements
+				? renderFromElements( { item, field } )
+				: field.getValue( { item } );
+		},
+		enableSorting: true,
+		filterBy: {
+			operators: [],
+		},
 	};
 }

@@ -7,6 +7,7 @@ export interface AgencyDetailsSignupPayload {
 	userType: string;
 	servicesOffered: string[];
 	productsOffered: string[];
+	productsToOffer: string[];
 	email: string;
 	city: string;
 	line1: string;
@@ -22,4 +23,6 @@ export interface AgencyDetailsSignupPayload {
 	workWithClients?: string;
 	workWithClientsOther?: string;
 	approachAndChallenges?: string;
+	agencySize?: string;
+	plansToOfferProducts?: boolean;
 }

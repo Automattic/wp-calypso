@@ -14,6 +14,16 @@
 		width: 100%;
 		justify-content: center;
 
+		.components-search-control {
+			.components-input-base {
+				height: 55px;
+			}
+
+			.components-input-control__container {
+				background-color: var(--studio-white);
+			}
+		}
+
 		.search-box-header__searchbox {
 			max-width: 504px;
 			width: 100%;

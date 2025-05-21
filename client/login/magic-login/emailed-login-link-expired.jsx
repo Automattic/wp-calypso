@@ -172,7 +172,6 @@ class EmailedLoginLinkExpired extends Component {
 					actionCallback={ this.onClickTryAgainLink }
 					actionURL={ actionUrl }
 					className="magic-login__link-expired"
-					illustration=""
 					line={ line }
 					secondaryAction={ secondaryAction }
 					secondaryActionURL={ secondaryActionURL }

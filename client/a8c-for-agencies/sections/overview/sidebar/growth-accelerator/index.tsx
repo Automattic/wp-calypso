@@ -30,7 +30,7 @@ export default function OverviewSidebarGrowthAccelerator() {
 			window.open(
 				result.data
 					? result.data
-					: 'https://savvycal.com/automattic-for-agencies/agency-success?utm_campaign=overview',
+					: 'https://meetings.hubspot.com/automattic-for-agencies/discovery-meeting',
 				'_blank'
 			);
 		} );

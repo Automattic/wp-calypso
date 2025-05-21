@@ -60,8 +60,14 @@ module.exports = {
 			},
 		},
 		{
-			files: [ 'bin/**/*', 'test/**/*' ],
+			files: [ '**/bin/**/*', '**/test/**/*', 'webpack.config.js' ],
 			...nodeConfig,
+		},
+		{
+			files: [ '**/test/**/*' ],
+			rules: {
+				'react/display-name': 'off',
+			},
 		},
 		merge(
 			// ESLint doesn't allow the `extends` field inside `overrides`, so we need to compose

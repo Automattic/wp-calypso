@@ -5,7 +5,6 @@ import { CurrentUser } from '@automattic/calypso-analytics/dist/types/utils/curr
 import config from '@automattic/calypso-config';
 import { UserActions, User as UserStore } from '@automattic/data-stores';
 import { setGeoLocation } from '@automattic/number-formatters';
-import { SITE_MIGRATION_FLOW } from '@automattic/onboarding';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { dispatch } from '@wordpress/data';
 import defaultCalypsoI18n from 'i18n-calypso';
@@ -16,7 +15,6 @@ import { requestAllBlogsAccess } from 'wpcom-proxy-request';
 import { setupLocale } from 'calypso/boot/locale';
 import AsyncLoad from 'calypso/components/async-load';
 import CalypsoI18nProvider from 'calypso/components/calypso-i18n-provider';
-import { addHotJarScript } from 'calypso/lib/analytics/hotjar';
 import getSuperProps from 'calypso/lib/analytics/super-props';
 import { setupErrorLogger } from 'calypso/lib/error-logger/setup-error-logger';
 import { addQueryArgs } from 'calypso/lib/url';
@@ -63,14 +61,6 @@ const getSiteIdFromURL = () => {
 	return siteId ? Number( siteId ) : null;
 };
 
-const HOTJAR_ENABLED_FLOWS = [ SITE_MIGRATION_FLOW ];
-
-const initializeHotJar = ( flowName: string ) => {
-	if ( HOTJAR_ENABLED_FLOWS.includes( flowName ) ) {
-		addHotJarScript();
-	}
-};
-
 async function main() {
 	const { pathname, search } = window.location;
 
@@ -97,7 +87,6 @@ async function main() {
 	// Start tracking performance, bearing in mind this is a full page load.
 	startStepperPerformanceTracking( { fullPageLoad: true } );
 
-	initializeHotJar( flowName );
 	// put the proxy iframe in "all blog access" mode
 	// see https://github.com/Automattic/wp-calypso/pull/60773#discussion_r799208216
 	requestAllBlogsAccess();

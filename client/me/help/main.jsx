@@ -145,7 +145,7 @@ class Help extends PureComponent {
 					<Gridicon icon="video" size={ 36 } />
 					<div className="help__support-link-section">
 						<h2 className="help__support-link-title">
-							{ this.props.translate( 'Video tutorials' ) }{ ' ' }
+							{ this.props.translate( 'Video tutorials' ) }
 							<Icon
 								icon={ external }
 								size={ 16 }
@@ -161,12 +161,21 @@ class Help extends PureComponent {
 				</CompactCard>
 				<CompactCard
 					className="help__support-link"
-					href="https://wordpress.com/learn/courses?ref=wpcom-help-more-resources"
-					showLinkIcon={ false }
+					href={ localizeUrl(
+						'https://wordpress.com/support/courses?ref=wpcom-help-more-resources'
+					) }
+					target="_blank"
 				>
 					<Gridicon icon="mail" size={ 36 } />
 					<div className="help__support-link-section">
-						<h2 className="help__support-link-title">{ this.props.translate( 'Courses' ) }</h2>
+						<h2 className="help__support-link-title">
+							{ this.props.translate( 'Courses' ) }
+							<Icon
+								icon={ external }
+								size={ 16 }
+								className="help__support-link-title__external-icon"
+							/>
+						</h2>
 						<p className="help__support-link-content">
 							{ this.props.translate( 'Enroll in a course taught by WordPress experts.' ) }
 						</p>
@@ -174,16 +183,21 @@ class Help extends PureComponent {
 				</CompactCard>
 				<CompactCard
 					className="help__support-link"
-					href="https://learn.wordpress.com"
-					showLinkIcon={ false }
+					href={ localizeUrl( 'https://wordpress.com/support/' ) }
+					target="_blank"
 				>
 					<Gridicon icon="list-ordered" size={ 36 } />
 					<div className="help__support-link-section">
-						<h2 className="help__support-link-title">{ this.props.translate( 'Guides' ) }</h2>
+						<h2 className="help__support-link-title">
+							{ this.props.translate( 'Guides' ) }
+							<Icon
+								icon={ external }
+								size={ 16 }
+								className="help__support-link-title__external-icon"
+							/>
+						</h2>
 						<p className="help__support-link-content">
-							{ this.props.translate(
-								'A step-by-step guide to getting familiar with the platform.'
-							) }
+							{ this.props.translate( 'Step-by-step guides for WordPress.com.' ) }
 						</p>
 					</div>
 				</CompactCard>

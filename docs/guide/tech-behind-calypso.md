@@ -57,4 +57,4 @@ The way we use Git with Calypso is described in the [Git Workflow document](../g
 
 - [lodash](https://lodash.com) – general purpose utility library; includes a ton of useful functions for dealing with arrays, objects, and collections; deprecated because of its lack of modularity and tendency to introduce code smells by implicitly converting different value types and handling nullish (`null` or `undefined`) values.
 
-Previous: [Hello, World!](hello-world.md) Next: [Contributing to Calypso](../../docs/CONTRIBUTING.md)
+Previous: [Hello, World!](hello-world.md) Next: [Monorepo](monorepo.md)

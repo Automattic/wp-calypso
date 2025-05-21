@@ -8,3 +8,7 @@
 @import "@wordpress/components/build-style/style";
 
 @import "../src/style.scss";
+
+body {
+	font-family: $font-family-body;
+}

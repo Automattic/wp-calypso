@@ -8,21 +8,24 @@ import {
 import { fetchTwoStep } from '../data';
 import NotFound from './404';
 import UnknownError from './500';
-import { sitesQuery, siteQuery, domainsQuery, emailsQuery, profileQuery } from './queries';
+import {
+	sitesQuery,
+	siteQuery,
+	siteSettingsQuery,
+	domainsQuery,
+	emailsQuery,
+	profileQuery,
+	siteCurrentPlanQuery,
+	siteEngagementStatsQuery,
+	siteMonitorUptimeQuery,
+	sitePHPVersionQuery,
+} from './queries';
 import { queryClient } from './query-client';
 import Root from './root';
 import type { AppConfig } from './context';
-import type { FetchQueryOptions } from '@tanstack/react-query';
 
 interface RouteContext {
 	config?: AppConfig;
-}
-
-async function maybeAwaitFetch( options: FetchQueryOptions ) {
-	const cachedData = queryClient.getQueryData( options.queryKey );
-	if ( ! cachedData ) {
-		await queryClient.fetchQuery( options );
-	}
 }
 
 const rootRoute = createRootRoute( { component: Root } );
@@ -51,7 +54,7 @@ const overviewRoute = createRoute( {
 const sitesRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'sites',
-	loader: () => maybeAwaitFetch( sitesQuery() ),
+	loader: () => queryClient.ensureQueryData( sitesQuery() ),
 } ).lazy( () =>
 	import( '../sites' ).then( ( d ) =>
 		createLazyRoute( 'sites' )( {
@@ -63,7 +66,7 @@ const sitesRoute = createRoute( {
 const siteRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'sites/$siteSlug',
-	loader: ( { params: { siteSlug } } ) => maybeAwaitFetch( siteQuery( siteSlug ) ),
+	loader: ( { params: { siteSlug } } ) => queryClient.ensureQueryData( siteQuery( siteSlug ) ),
 } ).lazy( () =>
 	import( '../sites/site' ).then( ( d ) =>
 		createLazyRoute( 'site' )( {
@@ -75,6 +78,27 @@ const siteRoute = createRoute( {
 const siteOverviewRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: '/',
+	loader: async ( { params: { siteSlug } } ) => {
+		// Site usually takes the longest, so kick it off first.
+		const sitePromise = queryClient.ensureQueryData( siteQuery( siteSlug ) );
+		// Kick off all independent promises in parallel.
+		const currentPlanPromise = queryClient.ensureQueryData( siteCurrentPlanQuery( siteSlug ) );
+		const engagementStatsPromise = queryClient.ensureQueryData(
+			siteEngagementStatsQuery( siteSlug )
+		);
+		const site = await sitePromise;
+		await Promise.all( [
+			currentPlanPromise,
+			engagementStatsPromise,
+			// Kick off dependent promises in parallel.
+			site.jetpack && site.jetpack_modules.includes( 'monitor' )
+				? queryClient.ensureQueryData( siteMonitorUptimeQuery( siteSlug ) )
+				: undefined,
+			site.is_wpcom_atomic
+				? queryClient.ensureQueryData( sitePHPVersionQuery( siteSlug ) )
+				: undefined,
+		] );
+	},
 } ).lazy( () =>
 	import( '../sites/overview' ).then( ( d ) =>
 		createLazyRoute( 'site-overview' )( {
@@ -108,10 +132,25 @@ const sitePerformanceRoute = createRoute( {
 const siteSettingsRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: 'settings',
+	loader: ( { params: { siteSlug } } ) =>
+		queryClient.ensureQueryData( siteSettingsQuery( siteSlug ) ),
 } ).lazy( () =>
 	import( '../sites/settings' ).then( ( d ) =>
 		createLazyRoute( 'site-settings' )( {
-			component: d.default,
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+		} )
+	)
+);
+
+const siteSettingsSiteVisibilityRoute = createRoute( {
+	getParentRoute: () => siteRoute,
+	path: 'settings/site-visibility',
+	loader: ( { params: { siteSlug } } ) =>
+		queryClient.ensureQueryData( siteSettingsQuery( siteSlug ) ),
+} ).lazy( () =>
+	import( '../sites/settings-site-visibility' ).then( ( d ) =>
+		createLazyRoute( 'site-settings-site-visibility' )( {
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )
 	)
 );
@@ -119,10 +158,12 @@ const siteSettingsRoute = createRoute( {
 const siteSettingsSubscriptionGiftingRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: 'settings/subscription-gifting',
+	loader: ( { params: { siteSlug } } ) =>
+		queryClient.ensureQueryData( siteSettingsQuery( siteSlug ) ),
 } ).lazy( () =>
 	import( '../sites/settings-subscription-gifting' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-subscription-gifting' )( {
-			component: d.default,
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )
 	)
 );
@@ -130,7 +171,7 @@ const siteSettingsSubscriptionGiftingRoute = createRoute( {
 const domainsRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'domains',
-	loader: () => maybeAwaitFetch( domainsQuery() ),
+	loader: () => queryClient.ensureQueryData( domainsQuery() ),
 } ).lazy( () =>
 	import( '../domains' ).then( ( d ) =>
 		createLazyRoute( 'domains' )( {
@@ -142,7 +183,7 @@ const domainsRoute = createRoute( {
 const emailsRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'emails',
-	loader: () => maybeAwaitFetch( emailsQuery() ),
+	loader: () => queryClient.ensureQueryData( emailsQuery() ),
 } ).lazy( () =>
 	import( '../emails' ).then( ( d ) =>
 		createLazyRoute( 'emails' )( {
@@ -154,7 +195,7 @@ const emailsRoute = createRoute( {
 const meRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'me',
-	loader: () => maybeAwaitFetch( profileQuery() ),
+	loader: () => queryClient.ensureQueryData( profileQuery() ),
 	beforeLoad: async ( { cause } ) => {
 		if ( cause !== 'enter' ) {
 			return;
@@ -290,6 +331,7 @@ const createRouteTree = ( config: AppConfig ) => {
 				siteDeploymentsRoute,
 				sitePerformanceRoute,
 				siteSettingsRoute,
+				siteSettingsSiteVisibilityRoute,
 				siteSettingsSubscriptionGiftingRoute,
 			] )
 		);
@@ -329,6 +371,13 @@ export const getRouter = ( config: AppConfig ) => {
 		basepath: config.basePath,
 		defaultErrorComponent: UnknownError,
 		defaultNotFoundComponent: NotFound,
+		defaultPreload: 'intent',
+		defaultPreloadStaleTime: 0,
+		// Calling document.startViewTransition() ourselves is really tricky,
+		// Tanstack Router knows how to do it best. Even though it says
+		// "default", we can still customize it in CSS and add more transition
+		// areas.
+		defaultViewTransition: true,
 	} );
 };
 
@@ -342,6 +391,7 @@ export {
 	siteDeploymentsRoute,
 	sitePerformanceRoute,
 	siteSettingsRoute,
+	siteSettingsSiteVisibilityRoute,
 	siteSettingsSubscriptionGiftingRoute,
 	domainsRoute,
 	emailsRoute,

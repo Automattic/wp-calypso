@@ -6,7 +6,7 @@
 	// When the feature flag is enabled, adjust TabPanel padding
 	.stats-navigation__tabs {
 		margin: 0 -16px;  // This creates a negative margin to counteract the parent's padding
-		
+
 		.components-tab-panel__tabs {
 			padding: 0 16px;  // This sets the actual padding to 16px
 		}
@@ -49,6 +49,10 @@
 	}
 
 	&.stats-navigation--improved {
+		.full-width {
+			width: 100%;
+		}
+
 		.stats-navigation__tabs {
 			margin-left: -16px;
 
@@ -57,8 +61,6 @@
 			}
 
 			@media (max-width: $break-small) {
-				margin-left: 0;
-				
 				.components-tab-panel__tabs {
 					padding-left: 16px;
 					padding-right: 16px;
@@ -84,6 +86,10 @@
 		.section-nav {
 			margin: 0;
 			box-shadow: inset 0 -1px 0 #0000000d;
+
+			.section-nav__mobile-header > svg {
+				margin-left: auto;
+			}
 
 			&.is-open {
 				@media (max-width: $break-mobile) {
@@ -111,6 +117,14 @@
 						top: 11px;
 						right: 0;
 					}
+
+
+					&:has(+ .page-modules-settings) {
+						.section-nav__mobile-header > svg {
+							margin-right: 40px;
+						}
+					}
+
 				}
 			}
 		}

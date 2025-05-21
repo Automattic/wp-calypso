@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import Popover from '.';
 
-export default { title: 'packages/components/Popover' };
+export default { title: 'Unaudited/Popover' };
 
 const Container = ( props ) => {
 	const [ currentRef, setCurrentRef ] = useState( undefined );

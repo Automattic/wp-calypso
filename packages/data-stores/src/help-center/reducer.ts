@@ -42,6 +42,10 @@ const currentSupportInteraction: Reducer< SupportInteraction | undefined, HelpCe
 	return state;
 };
 
+const odieChatId: Reducer< number | undefined, HelpCenterAction > = ( state, action ) => {
+	return action.type === 'HELP_CENTER_SET_ODIE_ID' ? action.odieChatId : state;
+};
+
 const isMinimized: Reducer< boolean, HelpCenterAction > = ( state = false, action ) => {
 	switch ( action.type ) {
 		case 'HELP_CENTER_SET_MINIMIZED':
@@ -157,6 +161,13 @@ const allowPremiumSupport: Reducer< boolean, HelpCenterAction > = ( state = fals
 	return state;
 };
 
+const contextTerm: Reducer< string | undefined, HelpCenterAction > = ( state, action ) => {
+	if ( action.type === 'HELP_CENTER_SET_CONTEXT_TERM' ) {
+		return action.contextTerm;
+	}
+	return state;
+};
+
 const helpCenterOptions: Reducer< HelpCenterOptions, HelpCenterAction > = (
 	state = {},
 	action
@@ -182,9 +193,11 @@ const reducer = combineReducers( {
 	zendeskClientId,
 	unreadCount,
 	navigateToRoute,
+	odieChatId,
 	odieInitialPromptText,
 	odieBotNameSlug,
 	allowPremiumSupport,
+	contextTerm,
 	helpCenterOptions,
 } );
 

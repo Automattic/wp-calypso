@@ -146,7 +146,6 @@ const StatsModuleDevices: React.FC< StatsModuleDevicesProps > = ( {
 				label: entry[ 1 ].selectLabel, // optionLabels object value
 			} ) ) }
 			initialSelected={ selectedOption }
-			// @ts-expect-error TODO: missing TS type
 			onSelect={ changeViewButton }
 		/>
 	);

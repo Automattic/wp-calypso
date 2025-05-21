@@ -1,7 +1,7 @@
 import { DataViews, filterSortAndPaginate } from '@automattic/dataviews';
 import { useQuery } from '@tanstack/react-query';
-import { useNavigate } from '@tanstack/react-router';
-import { Button, ExternalLink } from '@wordpress/components';
+import { useNavigate, Link } from '@tanstack/react-router';
+import { Button, Dropdown } from '@wordpress/components';
 import { useResizeObserver } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { Icon, check } from '@wordpress/icons';
@@ -9,12 +9,14 @@ import { useMemo } from 'react';
 import { sitesQuery } from '../app/queries';
 import { sitesRoute } from '../app/router';
 import DataViewsCard from '../components/dataviews-card';
+import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
 import { STATUS_LABELS, getSiteStatus, getSiteStatusLabel } from '../utils/site-status';
+import AddNewSite from './add-new-site';
 import SiteIcon from './site-icon';
 import SitePreview from './site-preview';
 import type { Site } from '../data/types';
-import type { Operator, ViewTable, ViewGrid, SortDirection } from '@automattic/dataviews';
+import type { Field, Operator, SortDirection, ViewTable, ViewGrid } from '@automattic/dataviews';
 
 const actions = [
 	{
@@ -31,7 +33,7 @@ const actions = [
 	},
 ];
 
-const DEFAULT_FIELDS = [
+const DEFAULT_FIELDS: Field< Site >[] = [
 	{
 		id: 'name',
 		label: __( 'Site' ),
@@ -41,11 +43,7 @@ const DEFAULT_FIELDS = [
 		id: 'URL',
 		label: __( 'URL' ),
 		enableGlobalSearch: true,
-		render: ( { item }: { item: Site } ) => (
-			<ExternalLink href={ item.URL } style={ { overflowWrap: 'anywhere' } }>
-				{ new URL( item.URL ).hostname }
-			</ExternalLink>
-		),
+		render: ( { item }: { item: Site } ) => new URL( item.URL ).hostname,
 	},
 	{
 		id: 'icon.ico',
@@ -59,6 +57,7 @@ const DEFAULT_FIELDS = [
 	},
 	{
 		id: 'backups',
+		type: 'boolean',
 		label: __( 'Backups' ),
 		getValue: ( { item }: { item: Site } ) => !! item.plan?.features?.active?.includes( 'backups' ),
 		elements: [
@@ -74,10 +73,10 @@ const DEFAULT_FIELDS = [
 		filterBy: {
 			operators: [ 'is' as Operator ],
 		},
-		enableSorting: false,
 	},
 	{
 		id: 'protect',
+		type: 'boolean',
 		label: __( 'Protect' ),
 		getValue: ( { item }: { item: Site } ) => !! item.active_modules?.includes( 'protect' ),
 		render: ( { item }: { item: Site } ) =>
@@ -89,7 +88,6 @@ const DEFAULT_FIELDS = [
 		filterBy: {
 			operators: [ 'is' as Operator ],
 		},
-		enableSorting: false,
 	},
 	{
 		id: 'status',
@@ -100,6 +98,7 @@ const DEFAULT_FIELDS = [
 	},
 	{
 		id: 'is_a8c',
+		type: 'boolean',
 		label: __( 'A8C Owned' ),
 		elements: [
 			{ value: true, label: __( 'Yes' ) },
@@ -109,7 +108,6 @@ const DEFAULT_FIELDS = [
 			operators: [ 'is' as Operator ],
 		},
 		render: ( { item }: { item: Site } ) => ( item.is_a8c ? __( 'Yes' ) : __( 'No' ) ),
-		enableSorting: false,
 	},
 	{
 		id: 'preview',
@@ -213,22 +211,34 @@ export default function Sites() {
 
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate( sites, view, fields );
 
-	const onClickItem = ( item: Site ) => {
-		navigate( { to: `/sites/${ item.slug }` } );
-	};
-
 	return (
 		<>
 			<PageLayout
-				title={ __( 'Sites' ) }
-				actions={
-					<Button variant="primary" __next40pxDefaultSize>
-						{ __( 'Add New Site' ) }
-					</Button>
+				header={
+					<PageHeader
+						title={ __( 'Sites' ) }
+						actions={
+							<Dropdown
+								popoverProps={ { placement: 'bottom-end', offset: 10, noArrow: false } }
+								focusOnMount
+								renderToggle={ ( { isOpen, onToggle } ) => (
+									<Button
+										variant="primary"
+										onClick={ onToggle }
+										__next40pxDefaultSize
+										aria-expanded={ isOpen }
+									>
+										{ __( 'Add New Site' ) }
+									</Button>
+								) }
+								renderContent={ () => <AddNewSite /> }
+							/>
+						}
+					/>
 				}
 			>
 				<DataViewsCard>
-					<DataViews
+					<DataViews< Site >
 						getItemId={ ( item ) => item.ID }
 						data={ filteredData }
 						fields={ fields }
@@ -249,7 +259,9 @@ export default function Sites() {
 								},
 							} );
 						} }
-						onClickItem={ onClickItem }
+						renderItemLink={ ( { item, ...props }: { item: Site } ) => (
+							<Link to={ `/sites/${ item.slug }` } { ...props } />
+						) }
 						defaultLayouts={ DEFAULT_LAYOUTS }
 						paginationInfo={ paginationInfo }
 					/>
