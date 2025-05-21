@@ -13,9 +13,7 @@ const meta: Meta< typeof Tabs > = {
 		'Tabs.TabList': Tabs.TabList,
 		'Tabs.Tab': Tabs.Tab,
 		'Tabs.TabPanel': Tabs.TabPanel,
-		// 'Tabs.Context': Tabs.Context,
 	},
-	tags: [ 'autodocs' ],
 	parameters: {
 		actions: { argTypesRegex: '^on.*' },
 		controls: { expanded: true },
