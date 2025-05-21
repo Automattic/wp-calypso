@@ -2,6 +2,7 @@ import {
 	Outlet,
 	Router,
 	createLazyRoute,
+	createMemoryHistory,
 	createRootRoute,
 	createRoute,
 	redirect,
@@ -79,6 +80,45 @@ const createRouteTree = () =>
 		dashboardSiteSettingsCompatibilityRouteWithFeature,
 	] );
 
+const isCompatibilityRoute = ( router, url: string ) => {
+	const matches = router.matchRoutes( url );
+	if ( ! matches ) {
+		return false;
+	}
+
+	return matches.some(
+		( match: { routeId: string } ) =>
+			match.routeId === dashboardSiteSettingsCompatibilityRouteRoot.id ||
+			match.routeId === dashboardSiteSettingsCompatibilityRouteWithFeature.id
+	);
+};
+
+const syncMemoryRouterToBrowserHistory = ( router ) => {
+	let lastPath = '';
+
+	router.history.subscribe( () => {
+		const { pathname, search } = router.history.location;
+		const newUrl = `${ pathname }${ search }`;
+
+		if ( isCompatibilityRoute( router, newUrl ) ) {
+			return;
+		}
+
+		if ( window.location.pathname + window.location.search !== newUrl ) {
+			window.history.pushState( null, '', newUrl );
+			lastPath = newUrl;
+		}
+	} );
+
+	window.addEventListener( 'popstate', () => {
+		const currentPath = `${ window.location.pathname }${ window.location.search }`;
+		if ( currentPath !== lastPath ) {
+			router.navigate( { to: currentPath, replace: true } );
+			lastPath = currentPath;
+		}
+	} );
+};
+
 export const getRouter = () => {
 	const routeTree = createRouteTree();
 
@@ -88,8 +128,10 @@ export const getRouter = () => {
 		defaultPreload: 'intent',
 		defaultPreloadStaleTime: 0,
 		defaultNotFoundComponent: () => null,
+		history: createMemoryHistory( { initialEntries: [ window.location.pathname ] } ),
 	} );
 
+	syncMemoryRouterToBrowserHistory( router );
 	return router;
 };
 
