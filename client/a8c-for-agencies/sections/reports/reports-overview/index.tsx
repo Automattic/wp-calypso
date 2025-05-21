@@ -24,27 +24,28 @@ const ReportsOverview = () => {
 	const dispatch = useDispatch();
 	const [ isModalOpen, setModalOpen ] = useState( false );
 
-	const title = translate( 'Client reports' );
+	const title = translate( 'Client Reports' );
 
 	const listItems1 = useMemo(
 		() => [
 			translate(
 				"Automated professional client reports that highlight key metrics from your clients' sites."
 			),
-			translate( 'Show clients the value of your ongoing work with beautiful, branded reports.' ),
+			translate(
+				'Show clients the value of your ongoing work with beautiful, professional reports.'
+			),
 			translate(
 				'Include detailed statistics, security measures, and performance indicators that matter most.'
 			),
-			translate( 'Schedule regular report delivery to keep clients informed without extra work.' ),
+			translate(
+				'Coming soon: Schedule regular report delivery to keep clients informed without extra work.'
+			),
 		],
 		[ translate ]
 	);
 
 	const listItems2 = useMemo(
 		() => [
-			translate(
-				'Customize reports with your agency branding and personalized messages for each client.'
-			),
 			translate(
 				'Choose exactly what data to include in each report based on client needs and priorities.'
 			),
@@ -109,7 +110,7 @@ const ReportsOverview = () => {
 				<PageSectionColumns
 					background={ {
 						isDarkBackground: true,
-						color: '#2c3338',
+						color: '#153E5F',
 					} }
 				>
 					<PageSectionColumns.Column heading={ translate( 'Why create client reports' ) }>
@@ -135,7 +136,7 @@ const ReportsOverview = () => {
 						<div className="reports-overview__description">
 							<div>
 								{ translate(
-									"With our client reports, you can create professional, branded documentation that showcases your agency's value. Reports can include analytics data, security measures implemented, performance optimizations, and more."
+									"With our client reports, you can create professional documentation that showcases your agency's value. Reports can include analytics data, security measures implemented, performance optimizations, and more."
 								) }
 							</div>
 							<div>
@@ -171,7 +172,7 @@ const ReportsOverview = () => {
 						<>
 							<div className="reports-overview__description">
 								{ translate(
-									"Our report builder makes it easy to create professional client reports in minutes. Select what information to include, customize with your branding, and schedule delivery - it's that simple."
+									"Our report builder makes it easy to create professional client reports in minutes. Select what information to include, and click send! We'll handle the rest."
 								) }
 							</div>
 							<div className="reports-overview__buttons-container">
