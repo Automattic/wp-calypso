@@ -1119,7 +1119,6 @@ class ThemeSheet extends Component {
 		const section = this.validateSection( this.props.section );
 		const {
 			themeId,
-			site,
 			siteId,
 			translate,
 			isExternallyManagedTheme,
@@ -1127,6 +1126,12 @@ class ThemeSheet extends Component {
 			isThemeActivationSyncStarted,
 			successNotice: showSuccessNotice,
 		} = this.props;
+		const {
+			isWide,
+			isSiteSelectorModalVisible,
+			showEligibilityWarningsModal,
+			showUnlockStyleUpgradeModal,
+		} = this.state;
 		const analyticsPath = `/theme/${ themeId }${ section ? '/' + section : '' }${
 			siteId ? '/:site' : ''
 		}`;
@@ -1175,6 +1180,13 @@ class ThemeSheet extends Component {
 			{ label: title },
 		];
 
+		const dismissEligibilityWarnings = () => {
+			recordTracksEvent( 'calypso_automated_transfer_eligibility_modal_dismiss', {
+				theme: themeId,
+			} );
+			this.setState( { showEligibilityWarningsModal: false } );
+		};
+
 		return (
 			<Main className="theme__sheet">
 				<QueryEligibility siteId={ siteId } />
@@ -1200,7 +1212,7 @@ class ThemeSheet extends Component {
 					) /* TODO: Make QueryActiveTheme handle falsey siteId */
 				}
 				<ThemeSiteSelectorModal
-					isOpen={ this.state.isSiteSelectorModalVisible }
+					isOpen={ isSiteSelectorModalVisible }
 					onClose={ ( args ) => {
 						this.setState( { isSiteSelectorModalVisible: false } );
 
@@ -1223,10 +1235,7 @@ class ThemeSheet extends Component {
 						}
 					} }
 				/>
-				<NavigationHeader
-					navigationItems={ navigationItems }
-					compactBreadcrumb={ ! this.state.isWide }
-				/>
+				<NavigationHeader navigationItems={ navigationItems } compactBreadcrumb={ ! isWide } />
 				<div className={ columnsClassName }>
 					<div className="theme__sheet-column-header">
 						{ this.renderStagingPaidThemeNotice() }
@@ -1246,7 +1255,7 @@ class ThemeSheet extends Component {
 					checkout={ this.onPremiumGlobalStylesUpgradeModalCheckout }
 					tryStyle={ this.onPremiumGlobalStylesUpgradeModalTryStyle }
 					closeModal={ this.onPremiumGlobalStylesUpgradeModalClose }
-					isOpen={ this.state.showUnlockStyleUpgradeModal }
+					isOpen={ showUnlockStyleUpgradeModal }
 				/>
 				<PerformanceTrackerStop />
 				{ isThemeActivationSyncStarted && (
@@ -1257,48 +1266,25 @@ class ThemeSheet extends Component {
 						onFailure={ this.onAtomicThemeActiveFailure }
 					/>
 				) }
-				{ this.state.showEligibilityWarningsModal && (
+				{ showEligibilityWarningsModal && (
 					<Modal
 						className="eligibility-warnings-modal__dialog-content"
 						title={ translate( 'Before you continue' ) }
-						onRequestClose={ () => {
-							recordTracksEvent( 'calypso_automated_transfer_eligibility_modal_dismiss', {
-								// flow: 'onboarding',
-								theme: themeId,
-							} );
-							this.setState( { showEligibilityWarningsModal: false } );
-						} }
+						onRequestClose={ dismissEligibilityWarnings }
 						size="medium"
 					>
 						<EligibilityWarnings
-							siteId={ site?.ID }
+							siteId={ siteId }
 							standaloneProceed
-							// isOnboarding
 							isMarketplace={ isExternallyManagedTheme }
-							// currentContext="plugin-details"
 							onProceed={ () => {
 								this.onButtonClick();
 								this.setState( { showEligibilityWarningsModal: false } );
 							} }
-							onDismiss={ () => {
-								recordTracksEvent( 'calypso_automated_transfer_eligibility_modal_dismiss', {
-									// flow: 'onboarding',
-									theme: themeId,
-								} );
-								this.setState( { showEligibilityWarningsModal: false } );
-							} }
+							onDismiss={ dismissEligibilityWarnings }
 						/>
 					</Modal>
 				) }
-				{ /* <EligibilityWarningsModal
-					site={ site ?? undefined }
-					isMarketplace={ isExternallyManagedTheme }
-					isOpen={ this.state.showEligibilityWarningsModal }
-	@@ -1270,7 +1304,7 @@ class ThemeSheet extends Component {
-						this.onButtonClick();
-						this.setState( { showEligibilityWarningsModal: false } );
-					} }
-				/> */ }
 			</Main>
 		);
 	};
