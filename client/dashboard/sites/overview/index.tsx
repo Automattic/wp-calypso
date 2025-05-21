@@ -3,7 +3,6 @@ import {
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
-	ExternalLink,
 	Button,
 	Card,
 } from '@wordpress/components';
@@ -55,19 +54,16 @@ function SiteOverview() {
 				<PageHeader
 					title={ site.name }
 					actions={
-						<>
-							<ExternalLink href={ site.URL }>{ __( 'Visit' ) }</ExternalLink>
-							{ site.options?.admin_url && (
-								<Button
-									__next40pxDefaultSize
-									variant="primary"
-									href={ site.options.admin_url }
-									icon={ wordpress }
-								>
-									{ __( 'WP Admin' ) }
-								</Button>
-							) }
-						</>
+						site.options?.admin_url && (
+							<Button
+								__next40pxDefaultSize
+								variant="primary"
+								href={ site.options.admin_url }
+								icon={ wordpress }
+							>
+								{ __( 'WP Admin' ) }
+							</Button>
+						)
 					}
 				/>
 			}
