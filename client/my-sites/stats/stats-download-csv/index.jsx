@@ -30,6 +30,7 @@ class StatsDownloadCsv extends Component {
 		siteId: PropTypes.number,
 		isMobile: PropTypes.bool,
 		hideIfNoData: PropTypes.bool,
+		headers: PropTypes.array,
 		rowModifierFn: PropTypes.func,
 	};
 
@@ -52,7 +53,7 @@ class StatsDownloadCsv extends Component {
 
 	downloadCsv = ( event ) => {
 		event.preventDefault();
-		const { siteSlug, path, period, data } = this.props;
+		const { siteSlug, path, period, data, headers } = this.props;
 
 		const fileName =
 			[
@@ -65,7 +66,11 @@ class StatsDownloadCsv extends Component {
 
 		this.props.recordGoogleEvent( 'Stats', 'CSV Download ' + titlecase( path ) );
 
-		const csvData = this.processExportData( data )
+		const csvData = headers
+			? [ headers, ...this.processExportData( data ) ]
+			: this.processExportData( data );
+
+		const csvString = csvData
 			.map( ( row ) => {
 				if ( Array.isArray( row ) ) {
 					return row.join( ',' );
@@ -77,7 +82,7 @@ class StatsDownloadCsv extends Component {
 			} )
 			.join( '\n' );
 
-		const blob = new Blob( [ csvData ], { type: 'text/csv;charset=utf-8' } );
+		const blob = new Blob( [ csvString ], { type: 'text/csv;charset=utf-8' } );
 
 		saveAs( blob, fileName );
 	};
