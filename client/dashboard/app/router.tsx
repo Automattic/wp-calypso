@@ -15,6 +15,10 @@ import {
 	domainsQuery,
 	emailsQuery,
 	profileQuery,
+	siteCurrentPlanQuery,
+	siteEngagementStatsQuery,
+	siteMonitorUptimeQuery,
+	sitePHPVersionQuery,
 } from './queries';
 import { queryClient } from './query-client';
 import Root from './root';
@@ -74,6 +78,27 @@ const siteRoute = createRoute( {
 const siteOverviewRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: '/',
+	loader: async ( { params: { siteSlug } } ) => {
+		// Site usually takes the longest, so kick it off first.
+		const sitePromise = queryClient.ensureQueryData( siteQuery( siteSlug ) );
+		// Kick off all independent promises in parallel.
+		const currentPlanPromise = queryClient.ensureQueryData( siteCurrentPlanQuery( siteSlug ) );
+		const engagementStatsPromise = queryClient.ensureQueryData(
+			siteEngagementStatsQuery( siteSlug )
+		);
+		const site = await sitePromise;
+		await Promise.all( [
+			currentPlanPromise,
+			engagementStatsPromise,
+			// Kick off dependent promises in parallel.
+			site.jetpack && site.jetpack_modules.includes( 'monitor' )
+				? queryClient.ensureQueryData( siteMonitorUptimeQuery( siteSlug ) )
+				: undefined,
+			site.is_wpcom_atomic
+				? queryClient.ensureQueryData( sitePHPVersionQuery( siteSlug ) )
+				: undefined,
+		] );
+	},
 } ).lazy( () =>
 	import( '../sites/overview' ).then( ( d ) =>
 		createLazyRoute( 'site-overview' )( {

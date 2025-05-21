@@ -10,7 +10,7 @@ import { dateI18n } from '@wordpress/date';
 import { __, sprintf } from '@wordpress/i18n';
 import { getSiteStatusLabel } from '../../utils/site-status';
 import SitePreview from '../site-preview';
-import type { Site, SiteDomain, Plan } from '../../data/types';
+import type { Site, Plan } from '../../data/types';
 
 /**
  * SiteCard component to display site information in a card format
@@ -18,12 +18,10 @@ import type { Site, SiteDomain, Plan } from '../../data/types';
 export default function SiteCard( {
 	site,
 	phpVersion,
-	primaryDomain,
 	currentPlan,
 }: {
 	site: Site;
 	phpVersion?: string;
-	primaryDomain?: SiteDomain;
 	currentPlan: Plan;
 } ) {
 	const { options, URL: url, is_private } = site;
@@ -59,13 +57,11 @@ export default function SiteCard( {
 					) }
 				</div>
 				<VStack spacing={ 6 } className="site-card-contents">
-					{ primaryDomain && (
-						<Field title={ __( 'Domain' ) }>
-							<ExternalLink href={ url } style={ { overflowWrap: 'anywhere' } }>
-								{ primaryDomain.domain }
-							</ExternalLink>
-						</Field>
-					) }
+					<Field title={ __( 'Domain' ) }>
+						<ExternalLink href={ url } style={ { overflowWrap: 'anywhere' } }>
+							{ new URL( url ).hostname }
+						</ExternalLink>
+					</Field>
 					<HStack justify="space-between">
 						<Field title={ __( 'Status' ) }>{ getSiteStatusLabel( site ) }</Field>
 					</HStack>
@@ -75,7 +71,7 @@ export default function SiteCard( {
 						) }
 						{ phpVersion && <Field title={ __( 'PHP' ) }>{ phpVersion }</Field> }
 					</HStack>
-					<PlanDetails site={ site } currentPlan={ currentPlan } primaryDomain={ primaryDomain } />
+					<PlanDetails site={ site } currentPlan={ currentPlan } />
 				</VStack>
 			</VStack>
 		</Card>
@@ -101,15 +97,7 @@ function FieldTitle( { children }: { children: React.ReactNode } ) {
 	);
 }
 
-function PlanDetails( {
-	site,
-	currentPlan,
-	primaryDomain,
-}: {
-	site: Site;
-	currentPlan: Plan;
-	primaryDomain?: SiteDomain;
-} ) {
+function PlanDetails( { site, currentPlan }: { site: Site; currentPlan: Plan } ) {
 	if ( ! site.plan || ! currentPlan ) {
 		return null;
 	}
@@ -123,12 +111,13 @@ function PlanDetails( {
 			<FieldTitle>{ __( 'Plan' ) }</FieldTitle>
 			{ product_name_short && <Text>{ product_name_short }</Text> }
 			<Text>{ getPlanExpirationMessage( { isFree, expiry } ) }</Text>
-			{ primaryDomain && (
-				<Button
-					href={ `/purchases/subscriptions/${ primaryDomain.domain }/${ id }` }
-					variant="link"
-				>
+			{ id ? (
+				<Button href={ `/purchases/subscriptions/${ site.slug }/${ id }` } variant="link">
 					{ __( 'Manage subscription' ) }
+				</Button>
+			) : (
+				<Button href={ `/plans/${ site.slug }` } variant="link">
+					{ __( 'Upgrade' ) }
 				</Button>
 			) }
 		</VStack>

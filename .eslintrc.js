@@ -60,7 +60,7 @@ module.exports = {
 			},
 		},
 		{
-			files: [ 'bin/**/*', 'test/**/*' ],
+			files: [ '**/bin/**/*', '**/test/**/*', 'webpack.config.js' ],
 			...nodeConfig,
 		},
 		{

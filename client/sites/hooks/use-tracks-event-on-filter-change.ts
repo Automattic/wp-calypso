@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSiteStatusGroups } from '../components/sites-dataviews';
-import type { Filter } from '@wordpress/dataviews';
+import type { Filter } from '@automattic/dataviews';
 
 type TracksEventData = [ name: string, value: string ];
 

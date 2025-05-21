@@ -1,6 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button } from '@wordpress/components';
-import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import { useSelector, useDispatch } from 'calypso/state';
@@ -39,9 +38,8 @@ export default function QrCodeLoginButton( { loginUrl }: QrCodeLoginButtonProps 
 
 	return (
 		<Button
-			className={ clsx( 'a8c-components-wp-button social-buttons__button', {
-				disabled: isDisabled,
-			} ) }
+			className="a8c-components-wp-button social-buttons__button"
+			disabled={ isDisabled }
 			href={ loginUrl }
 			onClick={ handleClick }
 			data-e2e-link="magic-login-link"

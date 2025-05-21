@@ -10,16 +10,15 @@ import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import SiteVisibilitySettingsSummary from '../settings-site-visibility/summary';
 import SubscriptionGiftingSettingsSummary from '../settings-subscription-gifting/summary';
+import SiteActions from './site-actions';
 
 export default function SiteSettings( { siteSlug }: { siteSlug: string } ) {
-	const { data: siteData } = useQuery( siteQuery( siteSlug ) );
+	const { data: site } = useQuery( siteQuery( siteSlug ) );
 	const { data: settings } = useQuery( siteSettingsQuery( siteSlug ) );
 
-	if ( ! siteData || ! settings ) {
+	if ( ! site || ! settings ) {
 		return null;
 	}
-
-	const { site } = siteData;
 
 	return (
 		<PageLayout size="small" header={ <PageHeader title={ __( 'Settings' ) } /> }>
@@ -27,13 +26,10 @@ export default function SiteSettings( { siteSlug }: { siteSlug: string } ) {
 			<Card>
 				<VStack>
 					<SiteVisibilitySettingsSummary site={ site } />
-					<SubscriptionGiftingSettingsSummary
-						siteSlug={ siteSlug }
-						site={ site }
-						settings={ settings }
-					/>
+					<SubscriptionGiftingSettingsSummary site={ site } settings={ settings } />
 				</VStack>
 			</Card>
+			<SiteActions site={ site } />
 		</PageLayout>
 	);
 }

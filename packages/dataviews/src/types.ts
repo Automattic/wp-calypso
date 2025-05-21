@@ -45,7 +45,11 @@ export type Operator =
 	| 'isAny'
 	| 'isNone'
 	| 'isAll'
-	| 'isNotAll';
+	| 'isNotAll'
+	| 'lessThan'
+	| 'greaterThan'
+	| 'lessThanOrEqual'
+	| 'greaterThanOrEqual';
 
 export type FieldType = 'text' | 'integer' | 'datetime' | 'media' | 'boolean';
 

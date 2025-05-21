@@ -4,7 +4,7 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { Button as CoreButton } from '@wordpress/components';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { flowRight } from 'lodash';
+import { isEqual, flowRight } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -19,6 +19,10 @@ import WebPreview from 'calypso/components/web-preview';
 import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
 import PageHeader from 'calypso/my-sites/stats/components/headers/page-header';
 import Main from 'calypso/my-sites/stats/components/stats-main';
+import {
+	useStatsNavigationHistory,
+	recordCurrentScreen,
+} from 'calypso/my-sites/stats/hooks/use-stats-navigation-history';
 import StatsDetailsNavigation from 'calypso/my-sites/stats/stats-details-navigation';
 import { getSitePost, getPostPreviewUrl } from 'calypso/state/posts/selectors';
 import { countPostLikes } from 'calypso/state/posts/selectors/count-post-likes';
@@ -51,6 +55,10 @@ class StatsPostDetail extends Component {
 		siteSlug: PropTypes.string,
 		showViewLink: PropTypes.bool,
 		previewUrl: PropTypes.string,
+		lastScreen: PropTypes.shape( {
+			text: PropTypes.string,
+			url: PropTypes.string,
+		} ),
 	};
 
 	state = {
@@ -92,6 +100,22 @@ class StatsPostDetail extends Component {
 
 	componentDidMount() {
 		window.scrollTo( 0, 0 );
+
+		const { context } = this.props;
+		recordCurrentScreen( 'postDetails', {
+			queryParams: context.query,
+			period: null,
+		} );
+	}
+
+	componentDidUpdate( prevProps ) {
+		const { context } = this.props;
+		if ( ! isEqual( prevProps.context, this.props.context ) ) {
+			recordCurrentScreen( 'postDetails', {
+				queryParams: context.query,
+				period: null,
+			} );
+		}
 	}
 
 	openPreview = () => {
@@ -181,6 +205,7 @@ class StatsPostDetail extends Component {
 			isSubscriptionsModuleActive,
 			supportsEmailStats,
 			isSimple,
+			lastScreen,
 		} = this.props;
 
 		const isLoading = isRequestingStats && ! countViews;
@@ -211,9 +236,10 @@ class StatsPostDetail extends Component {
 		const navigationItems = this.getNavigationItemsWithTitle( this.getTitle() );
 
 		const backLinkProps = {
-			text: navigationItems[ 0 ].label,
-			url: navigationItems[ 0 ].href,
+			text: lastScreen.text,
+			url: lastScreen.url,
 		};
+
 		const titleProps = {
 			title: navigationItems[ 1 ].label,
 			// Remove the default logo for Odyssey stats.
@@ -319,6 +345,11 @@ class StatsPostDetail extends Component {
 	}
 }
 
+const StatsPostDetailWrapper = ( props ) => {
+	const lastScreen = useStatsNavigationHistory();
+	return <StatsPostDetail { ...props } lastScreen={ lastScreen } />;
+};
+
 const connectComponent = connect( ( state, { postId } ) => {
 	const siteId = getSelectedSiteId( state );
 	const isJetpack = isJetpackSite( state, siteId );
@@ -347,4 +378,4 @@ const connectComponent = connect( ( state, { postId } ) => {
 	};
 } );
 
-export default flowRight( connectComponent, localize )( StatsPostDetail );
+export default flowRight( connectComponent, localize )( StatsPostDetailWrapper );
