@@ -270,7 +270,7 @@ export default function BuildReportModal( { isOpen, onClose }: BuildReportModalP
 
 	return (
 		<Modal
-			size="large"
+			size="medium"
 			title={ translate( 'Build a report for your client' ) }
 			onRequestClose={ onClose }
 			className={ `a4a-reports-modal is-wizard-step-${ currentStep }` }
