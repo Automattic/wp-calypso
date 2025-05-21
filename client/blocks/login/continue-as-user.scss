@@ -2,7 +2,8 @@
 @import "@wordpress/base-styles/breakpoints";
 
 .continue-as-user {
-	display: block;
+	display: flex;
+	flex-direction: column;
 	animation: 1s appear 0s ease-in;
 	color: var(--color-text-subtle);
 	font-size: $font-body-small;
@@ -23,11 +24,6 @@
 		margin: 0 auto;
 		display: flex;
 		flex-direction: column;
-
-		& > a.button {
-			margin: 0 20px;
-			border-radius: 4px;
-		}
 	}
 
 	.continue-as-user__gravatar {
@@ -35,16 +31,9 @@
 		border: 1px solid #a7aaad;
 	}
 
-	.continue-as-user__change-user-link {
-		color: var(--color-link);
-		cursor: pointer;
-		margin: auto;
-
-		&:hover,
-		&:focus,
-		&:active {
-			color: var(--color-link-dark);
-		}
+	.continue-as-user__continue-button {
+		min-width: 100%;
+		margin-block: 13px;
 	}
 
 	.continue-as-user__not-you {

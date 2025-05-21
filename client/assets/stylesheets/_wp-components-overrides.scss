@@ -35,6 +35,11 @@
 	--wp-components-color-accent-darker-20: var(--color-accent-60);
 }
 
+.components-button.is-link:not(.is-destructive) {
+	// Text color, focus ring color
+	--wp-components-color-accent: var(--color-accent);
+}
+
 /* @wordpress/components ButtonGroup overrides */
 .components-button-group {
 	.components-button {
@@ -55,13 +60,5 @@
 			border-color: var(--color-accent);
 			background-color: var(--color-accent);
 		}
-	}
-}
-
-.components-external-link__contents {
-	text-decoration: none;
-
-	&:hover {
-		text-decoration: underline;
 	}
 }

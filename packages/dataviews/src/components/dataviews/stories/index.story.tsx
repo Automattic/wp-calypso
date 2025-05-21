@@ -65,10 +65,17 @@ export const Default = () => {
 			fields={ fields }
 			onChangeView={ setView }
 			actions={ actions }
-			onClickItem={ ( item ) => {
-				// eslint-disable-next-line no-alert
-				alert( 'Clicked: ' + item.title );
-			} }
+			renderItemLink={ ( { item, ...props }: { item: SpaceObject } ) => (
+				<a
+					href="#"
+					onClick={ ( e ) => {
+						e.stopPropagation();
+						// eslint-disable-next-line no-alert
+						alert( 'Clicked: ' + item.title );
+					} }
+					{ ...props }
+				/>
+			) }
 			isItemClickable={ () => true }
 			defaultLayouts={ defaultLayouts }
 		/>

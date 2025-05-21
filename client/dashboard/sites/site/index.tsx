@@ -13,13 +13,11 @@ import Switcher from './switcher';
 function Site() {
 	const isDesktop = useViewportMatch( 'medium' );
 	const { siteSlug } = siteRoute.useParams();
-	const { data } = useQuery( siteQuery( siteSlug ) );
+	const { data: site } = useQuery( siteQuery( siteSlug ) );
 
-	if ( ! data ) {
+	if ( ! site ) {
 		return;
 	}
-
-	const { site } = data;
 
 	return (
 		<>

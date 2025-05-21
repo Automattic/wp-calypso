@@ -211,7 +211,7 @@ export function qrCodeLogin( context, next ) {
 }
 
 function getHandleEmailedLinkFormComponent( flow ) {
-	if ( flow === 'jetpack' && config.isEnabled( 'jetpack/magic-link-signup' ) ) {
+	if ( flow === 'jetpack' ) {
 		return HandleEmailedLinkFormJetpackConnect;
 	}
 	return HandleEmailedLinkForm;
