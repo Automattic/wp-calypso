@@ -1,3 +1,4 @@
+const { createHash } = require( 'node:crypto' );
 const WebpackRTLPlugin = require( '@automattic/webpack-rtl-plugin' );
 const MiniCssExtractPlugin = require( 'mini-css-extract-plugin' );
 const MiniCSSWithRTLPlugin = require( './mini-css-with-rtl' );
@@ -8,16 +9,27 @@ const MiniCSSWithRTLPlugin = require( './mini-css-with-rtl' );
  * @param  {string[]}  _.includePaths                 Sass files lookup paths
  * @param  {string}    _.prelude                      String to prepend to each Sass file
  * @param  {Object}    _.postCssOptions               PostCSS options
+ * @param  {boolean}   _.extract                      Whether to extract the CSS into a separate file
  * @returns {Object}                                  webpack loader object
  */
-module.exports.loader = ( { includePaths, prelude, postCssOptions } ) => ( {
+module.exports.loader = ( { includePaths, prelude, postCssOptions, extract = true } ) => ( {
 	test: /\.(sc|sa|c)ss$/,
 	use: [
-		MiniCssExtractPlugin.loader,
+		extract ? MiniCssExtractPlugin.loader : undefined,
 		{
 			loader: require.resolve( 'css-loader' ),
 			options: {
 				importLoaders: 2,
+				modules: {
+					exportOnlyLocals: ! extract,
+					auto: /\.module\.s?css$/,
+					getLocalIdent: ( context, localIdentName, localName ) =>
+						'_' +
+						createHash( 'md5' )
+							.update( context.resourcePath + localName )
+							.digest( 'hex' )
+							.substr( 0, 10 ),
+				},
 				// We do not want css-loader to resolve absolute paths. We
 				// typically use `/` to indicate the start of the base URL,
 				// but starting with css-loader v4, it started trying to handle
@@ -46,7 +58,7 @@ module.exports.loader = ( { includePaths, prelude, postCssOptions } ) => ( {
 				warnRuleAsWarning: true,
 			},
 		},
-	],
+	].filter( Boolean ),
 } );
 
 /**

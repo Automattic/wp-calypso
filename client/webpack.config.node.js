@@ -4,6 +4,7 @@
 
 const path = require( 'path' );
 const FileConfig = require( '@automattic/calypso-build/webpack/file-loader' );
+const SassConfig = require( '@automattic/calypso-build/webpack/sass' );
 const TranspileConfig = require( '@automattic/calypso-build/webpack/transpile' );
 const { shouldTranspileDependency } = require( '@automattic/calypso-build/webpack/util' );
 const webpack = require( 'webpack' );
@@ -127,8 +128,12 @@ const webpackConfig = {
 				include: shouldTranspileDependency,
 			} ),
 			fileLoader,
+			SassConfig.loader( {
+				includePaths: [ __dirname ],
+				extract: false,
+			} ),
 			{
-				test: /\.(sc|sa|c)ss$/,
+				test: /(?<!\.module)\.s?css$/,
 				loader: 'ignore-loader',
 			},
 		],
