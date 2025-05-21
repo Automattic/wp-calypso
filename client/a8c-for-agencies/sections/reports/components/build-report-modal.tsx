@@ -15,8 +15,8 @@ import './style.scss';
 
 // Mock data - replace with actual data fetching as needed
 const MOCK_TIMEFRAMES = [
-	{ label: 'Last month', value: 'last_month' },
-	{ label: 'Last week', value: 'last_week' },
+	{ label: 'Last 30 days', value: 'last_30_days' },
+	{ label: 'Last 7 days', value: 'last_7_days' },
 	{ label: 'Last 24 hours', value: 'last_24_hours' },
 ];
 
@@ -122,47 +122,43 @@ export default function BuildReportModal( { isOpen, onClose }: BuildReportModalP
 			case 1:
 				return (
 					<>
-						<h2 className="a4a-reports-modal__step-title">{ translate( 'Step 1: Setup' ) }</h2>
+						<h2 className="a4a-reports-modal__step-title">
+							{ translate( 'Step 1 of 3: Set up' ) }
+						</h2>
 
 						<SelectControl
 							label={ translate( 'Pick a timeframe:' ) }
 							value={ selectedTimeframe }
 							options={ MOCK_TIMEFRAMES }
 							onChange={ setSelectedTimeframe }
-							className="a4a-reports-modal__form-field"
 						/>
 						<SelectControl
 							label={ translate( 'Pick a site:' ) }
 							value={ selectedSite }
 							options={ MOCK_SITES }
 							onChange={ setSelectedSite }
-							className="a4a-reports-modal__form-field"
 						/>
 						<TextControl
 							label={ translate( 'Client name (optional)' ) }
 							value={ clientName }
 							onChange={ setClientName }
-							className="a4a-reports-modal__form-field"
 						/>
 						<TextControl
 							label={ translate( 'Client email' ) }
 							value={ clientEmail }
 							onChange={ setClientEmail }
 							type="email"
-							className="a4a-reports-modal__form-field"
 						/>
 						<TextareaControl
 							label={ translate( 'Custom intro text (optional)' ) }
 							value={ customIntroText }
 							onChange={ setCustomIntroText }
-							rows={ 4 }
-							className="a4a-reports-modal__form-field"
+							rows={ 3 }
 						/>
 						<CheckboxControl
 							label={ translate( 'Email a copy to agency teammates' ) }
 							checked={ sendMeACopy }
 							onChange={ setSendMeACopy }
-							className="a4a-reports-modal__form-field"
 						/>
 						{ sendMeACopy && (
 							<div ref={ teammateEmailsRef }>
@@ -175,7 +171,6 @@ export default function BuildReportModal( { isOpen, onClose }: BuildReportModalP
 										'Enter the email addresses of your teammates separated by commas'
 									) }
 									placeholder={ translate( 'colleague1@example.com, colleague2@example.com' ) }
-									className="a4a-reports-modal__form-field"
 								/>
 							</div>
 						) }
@@ -185,7 +180,7 @@ export default function BuildReportModal( { isOpen, onClose }: BuildReportModalP
 				return (
 					<>
 						<h2 className="a4a-reports-modal__step-title">
-							{ translate( 'Step 2: Pick Content' ) }
+							{ translate( 'Step 2 of 3: Pick Content' ) }
 						</h2>
 						<h3 className="a4a-reports-modal__group-label a4a-reports-modal__group-label--first">
 							{ translate( 'Stats' ) }
@@ -224,10 +219,8 @@ export default function BuildReportModal( { isOpen, onClose }: BuildReportModalP
 			case 3:
 				return (
 					<>
-						<h2 className="a4a-reports-modal__step-title">
-							{ translate( 'Step 3: Schedule & Send' ) }
-						</h2>
-						<div className="a4a-reports-modal__form-field">
+						<h2 className="a4a-reports-modal__step-title">{ translate( 'Step 3 of 3: Send' ) }</h2>
+						<div>
 							<label>{ translate( 'When should it send?' ) }</label>
 							<DateTimePicker currentDate={ scheduleDate } onChange={ handleDateChange } is12Hour />
 						</div>
@@ -235,7 +228,6 @@ export default function BuildReportModal( { isOpen, onClose }: BuildReportModalP
 							label={ translate( 'Send monthly?' ) }
 							checked={ sendMonthly }
 							onChange={ setSendMonthly }
-							className="a4a-reports-modal__form-field"
 						/>
 						{ sendMonthly && (
 							<p className="a4a-reports-modal__form-field a4a-reports-modal__conditional-text">
@@ -244,7 +236,7 @@ export default function BuildReportModal( { isOpen, onClose }: BuildReportModalP
 								) }
 							</p>
 						) }
-						<p className="a4a-reports-modal__form-field">
+						<p>
 							{ translate( 'Preview external link: ' ) }
 							<span
 								role="link"
@@ -256,11 +248,7 @@ export default function BuildReportModal( { isOpen, onClose }: BuildReportModalP
 								{ translate( 'View Preview' ) }
 							</span>
 						</p>
-						<Button
-							variant="secondary"
-							onClick={ () => alert( 'Send test report clicked' ) }
-							className="a4a-reports-modal__form-field"
-						>
+						<Button variant="secondary" onClick={ () => alert( 'Send test report clicked' ) }>
 							{ translate( 'Send me test report' ) }
 						</Button>
 					</>

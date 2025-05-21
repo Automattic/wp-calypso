@@ -31,8 +31,8 @@
 
 	.a4a-reports-modal__group-label {
 		@include heading-medium;
-		margin-top: 12px;
-		margin-bottom: 8px;
+		// margin-top: 12px;
+		// margin-bottom: 8px;
 		border-top: 1px solid var( --color-neutral-10 );
 		padding-top: 16px;
 	}
@@ -63,7 +63,7 @@
 		inset-inline: 0;
 		z-index: 10;
 		display: flex;
-		justify-content: flex-end;
+		justify-content: flex-start;
 		gap: 8px;
 		padding: 16px 24px;
 		background-color: var( --color-surface );
