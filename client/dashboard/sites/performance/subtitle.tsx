@@ -3,16 +3,15 @@ import { Button } from '@wordpress/components';
 import { dateI18n } from '@wordpress/date';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import type { PerformanceReport } from '../../data/types';
 
 export default function SubTitle( {
-	performanceReport,
+	timestamp,
 	onClick,
 }: {
-	performanceReport: PerformanceReport | undefined;
+	timestamp: string | undefined;
 	onClick: () => void;
 } ) {
-	if ( ! performanceReport ) {
+	if ( ! timestamp ) {
 		return createInterpolateElement(
 			__( 'Optimize your site for lightning-fast performance. <link>Learn more.</link>' ),
 			{
@@ -29,7 +28,7 @@ export default function SubTitle( {
 		sprintf(
 			// translators: %s is a date, e.g. March 12, 2025
 			__( 'Tested on <span>%s</span>. <button>Test again</button>' ),
-			dateI18n( 'F jS, Y g:i:s A', performanceReport.timestamp )
+			dateI18n( 'F jS, Y g:i:s A', timestamp )
 		),
 		{
 			span: (

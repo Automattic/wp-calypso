@@ -1,3 +1,4 @@
+import { __experimentalText as Text } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { PerformanceReportLoadingProgress } from 'calypso/performance-profiler/pages/loading-screen/progress';
 
@@ -21,7 +22,11 @@ export default function ReportLoading( {
 				pageTitle={ pageTitle }
 				isLoadingPages={ false }
 			/>
-			<p>{ __( 'Testing your site may take around 30 seconds.' ) }</p>
+			{ ! isSavedReport && (
+				<Text style={ { display: 'block', marginTop: '32px' } }>
+					{ __( 'Testing your site may take around 30 seconds.' ) }
+				</Text>
+			) }
 		</>
 	);
 }

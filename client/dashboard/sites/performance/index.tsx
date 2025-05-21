@@ -10,6 +10,7 @@ import { usePerformanceData } from '../hooks/use-performance-data';
 import DeviceToggle, { ToggleType } from './device-toggle';
 import PageSelector from './page-selector';
 import Report from './report';
+import ReportLoading from './report-loading';
 import SubTitle from './subtitle';
 import type { PerformanceProfilerPage } from '../../data';
 import type { Site } from '../../data/types';
@@ -38,6 +39,8 @@ function SitePerformanceContent( { site }: { site: Site } ) {
 		isLoading: isFetchingReport,
 		isDesktopReportRunning,
 		isMobileReportRunning,
+		desktopLoaded,
+		mobileLoaded,
 		isError,
 		isDesktopReportError,
 		isMobileReportError,
@@ -66,14 +69,16 @@ function SitePerformanceContent( { site }: { site: Site } ) {
 		return null;
 	}
 
-	const currentReport = deviceToggle === 'desktop' ? desktopReport : mobileReport;
+	const isDesktopSelected = deviceToggle === 'desktop';
+	const currentReport = isDesktopSelected ? desktopReport : mobileReport;
+	const isRunningReport = isDesktopSelected ? isDesktopReportRunning : isMobileReportRunning;
 
 	return (
 		<PageLayout>
 			<PageHeader
 				title={ __( 'Performance' ) }
 				description={
-					<SubTitle performanceReport={ currentReport } onClick={ handleReportRefetch } />
+					<SubTitle timestamp={ currentReport?.timestamp } onClick={ handleReportRefetch } />
 				}
 				actions={
 					<>
@@ -88,18 +93,23 @@ function SitePerformanceContent( { site }: { site: Site } ) {
 				}
 			/>
 			<div className="site-performance-report">
-				<Report
-					currentPage={ currentPage }
-					report={ currentReport }
-					isFetchingReport={ isFetchingReport }
-					isRunningReport={
-						deviceToggle === 'desktop' ? isDesktopReportRunning : isMobileReportRunning
-					}
-					isError={
-						( deviceToggle === 'desktop' ? isDesktopReportError : isMobileReportError ) || isError
-					}
-					onRetest={ handleReportRefetch }
-				/>
+				{ isFetchingReport || isRunningReport ? (
+					<ReportLoading
+						pageTitle={ currentPage.title.rendered }
+						isSavedReport={
+							isFetchingReport || ( ! currentReport && ( desktopLoaded || mobileLoaded ) )
+						}
+					/>
+				) : (
+					<Report
+						currentPage={ currentPage }
+						report={ currentReport }
+						isError={
+							( isDesktopSelected ? isDesktopReportError : isMobileReportError ) || isError
+						}
+						onRetest={ handleReportRefetch }
+					/>
+				) }
 			</div>
 		</PageLayout>
 	);

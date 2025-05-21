@@ -4,7 +4,6 @@ import { PerformanceProfilerDashboardContent } from 'calypso/performance-profile
 import { sitePerformanceRoute } from '../../app/router';
 import ReportErrorNotice from './report-error-notice';
 import ReportExpiredNotice from './report-expired-notice';
-import ReportLoading from './report-loading';
 import type { PerformanceProfilerPage } from '../../data';
 import type { PerformanceReport } from '../../data/types';
 
@@ -24,16 +23,12 @@ const updateUrl = ( filter: string | undefined ) => {
 export default function Report( {
 	report,
 	currentPage,
-	isFetchingReport,
 	isError,
-	isRunningReport,
 	onRetest,
 }: {
 	report: PerformanceReport | undefined;
 	currentPage: PerformanceProfilerPage;
-	isFetchingReport: boolean;
 	isError: boolean;
-	isRunningReport: boolean;
 	onRetest: () => void;
 } ) {
 	const { filter } = useSearch( { from: sitePerformanceRoute.fullPath } );
@@ -41,12 +36,6 @@ export default function Report( {
 
 	if ( isError ) {
 		return <ReportErrorNotice onRetestClick={ onRetest } />;
-	}
-
-	if ( isFetchingReport || isRunningReport ) {
-		return (
-			<ReportLoading pageTitle={ currentPage.title.rendered } isSavedReport={ isFetchingReport } />
-		);
 	}
 
 	if ( ! report ) {
