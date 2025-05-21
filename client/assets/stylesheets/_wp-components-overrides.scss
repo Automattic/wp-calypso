@@ -95,6 +95,15 @@
 	}
 }
 
+/* Blaze Pro */
+.blaze-pro,
+.is-blaze-pro {
+	.components-button {
+		--color-accent: var(--color-blaze-pro);
+		--color-accent-60: var(--color-blaze-pro);
+	}
+}
+
 /* @wordpress/components ButtonGroup overrides */
 .components-button-group {
 	.components-button {
