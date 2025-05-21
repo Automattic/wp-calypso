@@ -120,26 +120,25 @@ function PlanDetails( { site }: { site: Site } ) {
 			<FieldTitle>{ __( 'Plan' ) }</FieldTitle>
 			{ product_name_short && <Text>{ product_name_short }</Text> }
 			<Text>{ getPlanExpirationMessage( { isFree, currentPlan } ) }</Text>
-			{ /* Show a blurred link while we wait for the plan ID. */ }
-			{ currentPlan === undefined && (
-				// @ts-expect-error inert is not typed
-				<Button inert="true" variant="link">
-					<TextBlur text={ isFree ? __( 'Upgrade' ) : __( 'Manage subscription' ) } />
+			{ isFree ? (
+				<Button href={ `/plans/${ site.slug }` } variant="link">
+					{ __( 'Upgrade' ) }
+				</Button>
+			) : (
+				<Button
+					// @ts-expect-error inert is not typed
+					inert={ ! currentPlan }
+					href={ currentPlan ? `/purchases/subscriptions/${ site.slug }/${ currentPlan.id }` : '' }
+					variant="link"
+				>
+					{ currentPlan ? (
+						__( 'Manage subscription' )
+					) : (
+						// Show a blurred text while we wait for the plan ID.
+						<TextBlur text={ __( 'Manage subscription' ) } />
+					) }
 				</Button>
 			) }
-			{ currentPlan !== undefined &&
-				( currentPlan.id ? (
-					<Button
-						href={ `/purchases/subscriptions/${ site.slug }/${ currentPlan.id }` }
-						variant="link"
-					>
-						{ __( 'Manage subscription' ) }
-					</Button>
-				) : (
-					<Button href={ `/plans/${ site.slug }` } variant="link">
-						{ __( 'Upgrade' ) }
-					</Button>
-				) ) }
 		</VStack>
 	);
 }
@@ -159,7 +158,7 @@ function getPlanExpirationMessage( {
 	const expiresString = __( 'Expires on <time>%s</time>.' );
 
 	// Show a blurred time while we wait for the current plan.
-	if ( currentPlan === undefined ) {
+	if ( ! currentPlan ) {
 		return createInterpolateElement( sprintf( expiresString, '' ), {
 			time: <TextBlur text={ dateI18n( 'F j, Y', new Date().toISOString() ) } />,
 		} );
