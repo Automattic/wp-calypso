@@ -152,7 +152,10 @@ export const OdieSendMessageButton = () => {
 		}
 
 		try {
-			trackEvent( 'chat_message_action_send', { message_length: messageString?.length } );
+			trackEvent( 'chat_message_action_send', {
+				message_length: messageString?.length,
+				provider: chat?.provider,
+			} );
 
 			const message = {
 				content: messageString,
@@ -168,7 +171,10 @@ export const OdieSendMessageButton = () => {
 				inputRef.current!.value = '';
 			}
 
-			trackEvent( 'chat_message_action_receive' );
+			trackEvent( 'chat_message_action_receive', {
+				message_length: messageString?.length,
+				provider: chat?.provider,
+			} );
 		} catch ( e ) {
 			const error = e as Error;
 			trackEvent( 'chat_message_error', {

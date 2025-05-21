@@ -53,6 +53,12 @@ export const useGetCombinedChat = ( canConnectToZendesk: boolean ) => {
 				provider: 'odie',
 				status: 'loaded',
 			} );
+
+			trackEvent( 'zendesk_chat_reset_to_odie', {
+				interaction: currentSupportInteraction.uuid,
+				conversation_id: conversationId,
+				chat_id: odieChat?.odieId,
+			} );
 		} else if ( isChatLoaded && canFetchConversation ) {
 			try {
 				getZendeskConversation( {

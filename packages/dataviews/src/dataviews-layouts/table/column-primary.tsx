@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import type { ComponentProps, ReactElement } from 'react';
+
+/**
  * WordPress dependencies
  */
 import {
@@ -10,7 +15,7 @@ import {
  * Internal dependencies
  */
 import type { NormalizedField } from '../../types';
-import getClickableItemProps from '../utils/get-clickable-item-props';
+import { ItemClickWrapper } from '../utils/item-click-wrapper';
 
 function ColumnPrimary< Item >( {
 	item,
@@ -19,6 +24,7 @@ function ColumnPrimary< Item >( {
 	mediaField,
 	descriptionField,
 	onClickItem,
+	renderItemLink,
 	isItemClickable,
 }: {
 	item: Item;
@@ -27,15 +33,13 @@ function ColumnPrimary< Item >( {
 	mediaField?: NormalizedField< Item >;
 	descriptionField?: NormalizedField< Item >;
 	onClickItem?: ( item: Item ) => void;
+	renderItemLink?: (
+		props: {
+			item: Item;
+		} & ComponentProps< 'a' >
+	) => ReactElement;
 	isItemClickable: ( item: Item ) => boolean;
 } ) {
-	const clickableProps = getClickableItemProps( {
-		item,
-		isItemClickable,
-		onClickItem,
-		className:
-			'dataviews-view-table__cell-content-wrapper dataviews-title-field',
-	} );
 	return (
 		<HStack spacing={ 3 } justify="flex-start">
 			{ mediaField && (
@@ -45,14 +49,20 @@ function ColumnPrimary< Item >( {
 			) }
 			<VStack spacing={ 0 }>
 				{ titleField && (
-					<div { ...clickableProps }>
+					<ItemClickWrapper
+						item={ item }
+						isItemClickable={ isItemClickable }
+						onClickItem={ onClickItem }
+						renderItemLink={ renderItemLink }
+						className="dataviews-view-table__cell-content-wrapper dataviews-title-field"
+					>
 						{ level !== undefined && (
 							<span className="dataviews-view-table__level">
 								{ '—'.repeat( level ) }&nbsp;
 							</span>
 						) }
 						<titleField.render item={ item } field={ titleField } />
-					</div>
+					</ItemClickWrapper>
 				) }
 				{ descriptionField && (
 					<descriptionField.render

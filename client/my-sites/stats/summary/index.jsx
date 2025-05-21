@@ -59,7 +59,7 @@ class StatsSummary extends Component {
 	}
 
 	componentDidUpdate( prevProps ) {
-		if ( ! isEqual( prevProps.statsQueryOptions, this.props.statsQueryOptions ) ) {
+		if ( ! isEqual( prevProps.context.query, this.props.context.query ) ) {
 			const { context, period } = this.props;
 			const { module } = context.params;
 			const { query } = context;

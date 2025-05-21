@@ -17,7 +17,7 @@ import SiteField from './dataviews-fields/site-field';
 import SiteIcon from './site-icon';
 import { SiteStats } from './sites-site-stats';
 import { SiteStatus } from './sites-site-status';
-import type { View } from '@wordpress/dataviews';
+import type { View } from '@automattic/dataviews';
 import './style.scss';
 import './dataview-style.scss';
 
