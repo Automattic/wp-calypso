@@ -130,7 +130,7 @@ export const HelpCenterSupportChatMessage = ( {
 						}
 					/>
 					<span>
-						<TimeSince date={ receivedDateISO } />
+						<TimeSince date={ receivedDateISO } dateFormat="lll" />
 					</span>
 				</div>
 			</div>

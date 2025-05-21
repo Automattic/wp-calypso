@@ -88,6 +88,13 @@ function formatDate( date: Date, format: string, locale?: string ): string {
 		// Medium date format without time
 		formatOptions.dateStyle = 'medium';
 		delete formatOptions.timeStyle;
+	} else if ( format === 'lll' ) {
+		// Always d MMM y, e.g., 12 Jun 2024
+		return new Intl.DateTimeFormat( locale, {
+			day: 'numeric',
+			month: 'short',
+			year: 'numeric',
+		} ).format( date );
 	} else if ( format === 'llll' ) {
 		// Full date and time format
 		formatOptions.dateStyle = 'full';
@@ -97,6 +104,32 @@ function formatDate( date: Date, format: string, locale?: string ): string {
 	return new Intl.DateTimeFormat( locale, formatOptions ).format( date );
 }
 
+/**
+ * TimeSince component
+ *
+ * Displays a human-readable representation of the time elapsed since a given date.
+ * - For recent dates, shows relative time (e.g., "just now", "5m ago", "2d ago").
+ * - For older dates, shows a formatted date string.
+ *
+ * Props:
+ * - date: string (required)
+ *     An ISO 8601 date string or any string parseable by `new Date()`.
+ * - dateFormat: string (optional)
+ *     Controls the formatting for older dates:
+ *     - 'll'   : Locale medium date (default, e.g., "Jun 12, 2024" or "12 Jun 2024" depending on locale)
+ *     - 'lll'  : Always "d MMM y" (e.g., "12 Jun 2024"), locale-independent
+ *     - 'llll' : Full date and time (e.g., "Wednesday, June 12, 2024 at 2:00:00 PM")
+ * - className: string (optional)
+ *     CSS class for the <time> element.
+ * - locale: string (optional)
+ *     BCP 47 locale string (e.g., "en", "es-ES"). Defaults to the user's locale.
+ *
+ * Example usage:
+ *   <TimeSince date={someISOString} />
+ *   <TimeSince date={someISOString} dateFormat="lll" />
+ *
+ * The full formatted date is also available as a tooltip (title attribute).
+ */
 function TimeSince( { className, date, dateFormat = 'll' }: TimeSinceProps ) {
 	const translate = useTranslate();
 	const humanDate = useRelativeTime( date, dateFormat );
