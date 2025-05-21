@@ -3,18 +3,6 @@
 	$recent-site-icon-size: 16px;
 	$recent-item-gap: 8px;
 
-	&__item {
-		display: grid;
-		grid-template-columns: $recent-site-icon-size 1fr auto;
-		gap: $recent-item-gap;
-		align-items: center;
-
-		&--without-icon {
-			padding-left: $recent-item-padding-x + $recent-site-icon-size + $recent-item-gap; // 15px + 16px + 8px;
-			grid-template-columns: 1fr auto;
-		}
-	}
-
 	&__site {
 		&-name {
 			overflow: hidden;
@@ -33,10 +21,4 @@
 			margin-right: 6px; // To get alignment with menu chevron icon; bleh
 		}
 	}
-
-	&__view-more {
-		color: var( --color-link );
-		text-decoration: underline;
-	}
-
 }

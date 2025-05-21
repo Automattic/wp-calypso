@@ -133,7 +133,6 @@ body.is-section-reader {
 		}
 	}
 
-
 	.sidebar__menu-link-reader {
 		line-height: 1.8;
 		padding-top: 5px;
@@ -221,7 +220,6 @@ body.is-section-reader {
 }
 
 .theme-default .global-sidebar .sidebar .sidebar__menu {
-
 	&:is(.is-togglable) {
 		.sidebar__menu-link {
 			display: grid;
@@ -230,6 +228,12 @@ body.is-section-reader {
 			gap: 4px;
 			line-height: 1.5;
 			padding: 12px 10px 18px 18px;
+
+			&.view-more-link {
+				color: var(--color-link);
+				text-decoration: underline;
+				cursor: pointer;
+			}
 
 			&:has(> :nth-child(1):last-child) > :first-child {
 				grid-column-start: 2;

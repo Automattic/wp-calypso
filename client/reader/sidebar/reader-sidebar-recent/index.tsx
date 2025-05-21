@@ -137,14 +137,11 @@ const ReaderSidebarRecent = ( {
 				</MenuItem>
 			) ) }
 			{ shouldShowViewMoreButton && (
-				<li>
-					<button
-						className="reader-sidebar-recent__item reader-sidebar-recent__item--without-icon reader-sidebar-recent__view-more"
-						onClick={ toggleShowAllSites }
-					>
-						{ showAllSites ? translate( 'View Less' ) : translate( 'View More' ) }
-					</button>
-				</li>
+				<MenuItem selected={ showAllSites }>
+					<MenuItemLink className="view-more-link" onClick={ toggleShowAllSites }>
+						<span>{ showAllSites ? translate( 'View Less' ) : translate( 'View More' ) }</span>
+					</MenuItemLink>
+				</MenuItem>
 			) }
 		</ExpandableSidebarMenu>
 	);
