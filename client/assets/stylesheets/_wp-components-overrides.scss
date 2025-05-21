@@ -40,6 +40,14 @@
 	--wp-components-color-accent: var(--color-accent);
 }
 
+/* Jetpack */
+.layout.is-jetpack-login:not(.is-wccom-oauth-flow):not(.is-woocommerce-core-profiler-flow) {
+	.components-button {
+		--color-accent: var(--studio-jetpack-green-50);
+		--color-accent-60: var(--studio-jetpack-green-60);
+	}
+}
+
 /* @wordpress/components ButtonGroup overrides */
 .components-button-group {
 	.components-button {
