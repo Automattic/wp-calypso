@@ -8,6 +8,7 @@ interface SectionProps {
 	subheader?: string | ReactElement;
 	children: ReactNode;
 	dark?: boolean;
+	className?: string;
 }
 
 interface SectionContainerProps {
@@ -76,10 +77,10 @@ export const SectionHeaderContainer = styled.div< SectionHeaderProps >`
 const SectionContent = styled.div``;
 
 const Section = ( props: SectionProps ) => {
-	const { children, header, subheader, dark } = props;
+	const { children, header, subheader, dark, className } = props;
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
-		<SectionContainer dark={ dark }>
+		<SectionContainer dark={ dark } className={ className }>
 			<SectionHeaderContainer>
 				<SectionHeader dark={ dark } className="wp-brand-font">
 					{ header }

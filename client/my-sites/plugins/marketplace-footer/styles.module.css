@@ -1,0 +1,37 @@
+.marketplace-footer {
+	--color-accent: var( --studio-blue-50 );
+	--color-accent-60: var( --studio-blue-60 );
+	margin-bottom: -32px;
+
+    & .marketplace-footer__section::before {
+        background-color: #f6f7f7;
+    }
+
+    &:not(.is-logged-in) .marketplace-footer__section {
+        padding-bottom: 32px;
+    }
+}
+
+.marketplace-footer__cta {
+	min-width: 122px;
+	margin-bottom: 26px;
+}
+
+@media ( max-width: 660px ) {
+	.marketplace-footer__cta {
+		margin-left: 16px;
+		margin-right: 16px;
+	}
+}
+
+.marketplace-footer__three-column {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+}
+
+@media ( max-width: 660px ) {
+	.marketplace-footer__three-column {
+		padding: 0 16px;
+	}
+}

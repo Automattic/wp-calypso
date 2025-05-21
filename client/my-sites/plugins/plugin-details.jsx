@@ -78,7 +78,7 @@ import {
 	isRequestingSites as checkRequestingSites,
 } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import { MarketplaceFooter } from './education-footer';
+import MarketplaceFooter from './marketplace-footer';
 import NoPermissionsError from './no-permissions-error';
 import { usePluginIsMaintained } from './use-plugin-is-maintained';
 

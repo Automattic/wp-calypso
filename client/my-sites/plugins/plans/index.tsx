@@ -14,7 +14,7 @@ import PromoSection, { Props as PromoSectionProps } from 'calypso/components/pro
 import { Gridicon } from 'calypso/devdocs/design/playground-scope';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
-import { MarketplaceFooter } from 'calypso/my-sites/plugins/education-footer';
+import MarketplaceFooter from 'calypso/my-sites/plugins/marketplace-footer';
 import { useDispatch, useSelector } from 'calypso/state';
 import { appendBreadcrumb } from 'calypso/state/breadcrumb/actions';
 import { getBreadcrumbs } from 'calypso/state/breadcrumb/selectors';

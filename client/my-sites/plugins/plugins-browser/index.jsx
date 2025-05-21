@@ -13,7 +13,7 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import useScrollAboveElement from 'calypso/lib/use-scroll-above-element';
 import Categories from 'calypso/my-sites/plugins/categories';
 import { useCategories } from 'calypso/my-sites/plugins/categories/use-categories';
-import { MarketplaceFooter } from 'calypso/my-sites/plugins/education-footer';
+import MarketplaceFooter from 'calypso/my-sites/plugins/marketplace-footer';
 import NoPermissionsError from 'calypso/my-sites/plugins/no-permissions-error';
 import useIsVisible from 'calypso/my-sites/plugins/plugins-browser/use-is-visible';
 import SearchBoxHeader from 'calypso/my-sites/plugins/search-box-header';
