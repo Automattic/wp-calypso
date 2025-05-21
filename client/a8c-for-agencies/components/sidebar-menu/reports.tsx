@@ -16,7 +16,12 @@ export default function ReportsSidebar( { path }: Props ) {
 	return (
 		<Sidebar
 			path={ A4A_REPORTS_LINK }
-			title={ translate( 'Reports' ) }
+			title={
+				<>
+					{ translate( 'Reports' ) }
+					<span className="sidebar-menu__beta-badge">{ translate( 'Beta' ) }</span>
+				</>
+			}
 			backButtonProps={ {
 				label: translate( 'Back to overview' ),
 				icon: chevronLeft,

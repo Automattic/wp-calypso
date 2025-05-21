@@ -164,7 +164,12 @@ const useMainMenuItems = ( path: string ) => {
 				icon: chartBar,
 				path: A4A_REPORTS_LINK,
 				link: A4A_REPORTS_OVERVIEW_LINK,
-				title: translate( 'Reports' ),
+				title: (
+					<>
+						{ translate( 'Reports' ) }
+						<span className="sidebar-menu__beta-badge">{ translate( 'Beta' ) }</span>
+					</>
+				),
 				trackEventProps: {
 					menu_item: 'Automattic for Agencies / Reports',
 				},
