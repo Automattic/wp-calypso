@@ -176,7 +176,7 @@ const ReportsOverview = () => {
 							</div>
 							<div className="reports-overview__buttons-container">
 								<Button __next40pxDefaultSize variant="primary" onClick={ handleBuildReport }>
-									{ translate( 'Build Your First Report' ) }
+									{ translate( 'Build a new report' ) }
 								</Button>
 							</div>
 						</>
