@@ -1,7 +1,6 @@
 import * as Ariakit from '@ariakit/react';
-import { useInstanceId } from '@wordpress/compose';
 import { isRTL } from '@wordpress/i18n';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useId } from 'react';
 import { TabsContext } from './context';
 import { Tab } from './tab';
 import { TabList } from './tablist';
@@ -40,7 +39,7 @@ export const Tabs = Object.assign(
 		defaultActiveTabId,
 		onActiveTabIdChange,
 	}: TabsProps ) {
-		const instanceId = useInstanceId( Tabs, 'tabs' );
+		const instanceId = useId();
 		const store = Ariakit.useTabStore( {
 			selectOnMove,
 			orientation,
