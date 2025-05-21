@@ -97,6 +97,15 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 				event_source: 'help-center',
 				event_external_id: crypto.randomUUID(),
 			} );
+			recordTracksEvent( 'calypso_helpcenter_new_interaction_started', {
+				pathname: location.pathname,
+				search: location.search,
+				section: sectionName,
+				location: 'help-center',
+				event_source: 'help-center',
+				is_free_user: ! isUserEligibleForPaidSupport,
+				user_field_flow_name: userFieldFlowName,
+			} );
 		} else if (
 			( openSupportInteractions || resolvedSupportInteractions ) &&
 			! currentSupportInteraction

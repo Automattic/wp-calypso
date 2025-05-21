@@ -1,6 +1,6 @@
 import { DataViews, filterSortAndPaginate } from '@automattic/dataviews';
 import { useQuery } from '@tanstack/react-query';
-import { useNavigate } from '@tanstack/react-router';
+import { useNavigate, Link } from '@tanstack/react-router';
 import { Button, ExternalLink, Dropdown } from '@wordpress/components';
 import { useResizeObserver } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
@@ -215,10 +215,6 @@ export default function Sites() {
 
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate( sites, view, fields );
 
-	const onClickItem = ( item: Site ) => {
-		navigate( { to: `/sites/${ item.slug }` } );
-	};
-
 	return (
 		<>
 			<PageLayout
@@ -246,7 +242,7 @@ export default function Sites() {
 				}
 			>
 				<DataViewsCard>
-					<DataViews
+					<DataViews< Site >
 						getItemId={ ( item ) => item.ID }
 						data={ filteredData }
 						fields={ fields }
@@ -267,7 +263,9 @@ export default function Sites() {
 								},
 							} );
 						} }
-						onClickItem={ onClickItem }
+						renderItemLink={ ( { item, ...props }: { item: Site } ) => (
+							<Link to={ `/sites/${ item.slug }` } { ...props } />
+						) }
 						defaultLayouts={ DEFAULT_LAYOUTS }
 						paginationInfo={ paginationInfo }
 					/>

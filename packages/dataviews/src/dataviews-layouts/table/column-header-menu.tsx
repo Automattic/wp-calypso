@@ -84,11 +84,12 @@ const _HeaderMenu = forwardRef( function HeaderMenu< Item >(
 	operators = sanitizeOperators( field );
 	// Filter can be added:
 	// 1. If the field is not already part of a view's filters.
-	// 2. If the field meets the type and operator requirements.
-	// 3. If it's not primary. If it is, it should be already visible.
+	// 2. If the field has elements or Edit property.
+	// 3. If the field meets the type and operator requirements.
+	// 4. If it's not primary. If it is, it should be already visible.
 	canAddFilter =
 		! view.filters?.some( ( _filter ) => fieldId === _filter.field ) &&
-		!! field.elements?.length &&
+		!! ( field.elements?.length || field.Edit ) &&
 		!! operators.length &&
 		! field.filterBy?.isPrimary;
 

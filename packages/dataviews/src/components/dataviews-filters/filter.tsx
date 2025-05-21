@@ -27,6 +27,7 @@ const SPACE = ' ';
  * Internal dependencies
  */
 import SearchWidget from './search-widget';
+import InputWidget from './input-widget';
 import {
 	OPERATORS,
 	OPERATOR_IS,
@@ -42,6 +43,7 @@ import type {
 	Operator,
 	Option,
 	View,
+	NormalizedField,
 } from '../../types';
 
 interface FilterTextProps {
@@ -56,9 +58,10 @@ interface OperatorSelectorProps {
 	onChangeView: ( view: View ) => void;
 }
 
-interface FilterSummaryProps extends OperatorSelectorProps {
+interface FilterProps extends OperatorSelectorProps {
 	addFilterRef: RefObject< HTMLButtonElement >;
 	openedFilter: string | null;
+	fields: NormalizedField< any >[];
 }
 
 const FilterText = ( {
@@ -226,22 +229,36 @@ function OperatorSelector( {
 	);
 }
 
-export default function FilterSummary( {
+export default function Filter( {
 	addFilterRef,
 	openedFilter,
+	fields,
 	...commonProps
-}: FilterSummaryProps ) {
+}: FilterProps ) {
 	const toggleRef = useRef< HTMLDivElement >( null );
 	const { filter, view, onChangeView } = commonProps;
 	const filterInView = view.filters?.find(
 		( f ) => f.field === filter.field
 	);
-	const activeElements = filter.elements.filter( ( element ) => {
-		if ( filter.singleSelection ) {
-			return element.value === filterInView?.value;
-		}
-		return filterInView?.value?.includes( element.value );
-	} );
+
+	let activeElements: Option[] = [];
+
+	if ( filter.elements.length > 0 ) {
+		activeElements = filter.elements.filter( ( element ) => {
+			if ( filter.singleSelection ) {
+				return element.value === filterInView?.value;
+			}
+			return filterInView?.value?.includes( element.value );
+		} );
+	} else if ( filterInView?.value !== undefined ) {
+		activeElements = [
+			{
+				value: filterInView.value,
+				label: filterInView.value,
+			},
+		];
+	}
+
 	const isPrimary = filter.isPrimary;
 	const hasValues = filterInView?.value !== undefined;
 	const canResetOrRemove = ! isPrimary || hasValues;
@@ -330,7 +347,17 @@ export default function FilterSummary( {
 				return (
 					<VStack spacing={ 0 } justify="flex-start">
 						<OperatorSelector { ...commonProps } />
-						<SearchWidget { ...commonProps } />
+						{ commonProps.filter.elements.length > 0 ? (
+							<SearchWidget
+								{ ...commonProps }
+								filter={ {
+									...commonProps.filter,
+									elements: commonProps.filter.elements,
+								} }
+							/>
+						) : (
+							<InputWidget { ...commonProps } fields={ fields } />
+						) }
 					</VStack>
 				);
 			} }

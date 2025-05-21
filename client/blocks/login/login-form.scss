@@ -54,29 +54,21 @@ form {
 			}
 		}
 	}
+
+	&.is-akismet {
+		.login,
+		.magic-login {
+			.components-button {
+				--color-accent: var(--color-akismet);
+				--color-accent-60: var(--color-akismet);
+			}
+		}
+	}
 }
 
 .is-jetpack .login__form-account-tip {
 	margin-block-start: -8px;
 	font-size: 0.75rem;
-}
-
-.layout.is-white-login .login.is-akismet .login__form,
-.layout.is-white-login .login.is-akismet .continue-as-user,
-.layout.is-white-login.is-akismet .magic-login__form-action {
-	.button.is-primary {
-		background-color: var(--color-akismet);
-
-		&:hover,
-		&:focus {
-			background-color: var(--color-akismet);
-		}
-	}
-
-	.components-button.is-primary {
-		--color-accent: var(--color-akismet);
-		--color-accent-60: var(--color-akismet);
-	}
 }
 
 .login__form-jetpack {
