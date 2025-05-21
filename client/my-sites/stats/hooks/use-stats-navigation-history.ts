@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from '@wordpress/element';
-import { buildQueryString } from '@wordpress/url';
+import { buildQueryString, getQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
 import { useSelector } from 'calypso/state';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
@@ -18,6 +18,7 @@ const possibleBackLinks: { [ key: string ]: string | null } = {
 	posts: '/stats/{period}/posts/',
 	authors: '/stats/{period}/authors/',
 	annualstats: '/stats/day/annualstats/',
+	postList: 'example.com/stats/posts/',
 	postDetails: null, // Last item in the history, the text is not displayed anywhere but this is used to track the item in history stack.
 };
 
@@ -29,6 +30,9 @@ const SUPPORTED_QUERY_PARAMS: string[] = [
 	'chartStart',
 	'chartEnd',
 	'shortcut',
+	'jp_post_type',
+	'jp_s',
+	'jp_page',
 ];
 
 const defaultLastScreen = 'traffic';
@@ -55,6 +59,7 @@ export const useStatsNavigationHistory = (): { text: string; url: string | null 
 			posts: translate( 'Posts & pages' ),
 			authors: translate( 'Authors' ),
 			annualstats: translate( 'Annual insights' ),
+			postList: translate( 'Post List' ),
 			postDetails: null,
 		} ),
 		[]
@@ -74,25 +79,37 @@ export const useStatsNavigationHistory = (): { text: string; url: string | null 
 
 	useEffect( () => {
 		try {
-			const navState = JSON.parse( sessionStorage.getItem( STORAGE_KEY ) || '[]' );
+			const args = getQueryArgs( window.location.search );
 
-			// Select the second last item from the history stack as the back link.
-			// The last item in the stack if the current screen.
-			const lastItem =
-				Array.isArray( navState ) && navState.length >= 2 ? navState[ navState.length - 2 ] : {};
+			if ( args.from && ( args.from as string ) in localizedTabNames ) {
+				const queryParams = getFilteredQueryParams( args as QueryArgs );
 
-			// Make sure it's array and select last item
-			if ( lastItem && lastItem.screen ) {
-				setLastScreen( lastItem );
-			} else {
 				setLastScreen( {
-					screen: defaultLastScreen,
-					queryParams: {},
-					period: 'day',
+					screen: args.from as string,
+					queryParams,
+					period: null,
 				} );
+			} else {
+				const navState = JSON.parse( sessionStorage.getItem( STORAGE_KEY ) || '[]' );
+
+				// Select the second last item from the history stack as the back link.
+				// The last item in the stack if the current screen.
+				const lastItem =
+					Array.isArray( navState ) && navState.length >= 2 ? navState[ navState.length - 2 ] : {};
+
+				// Make sure it's array and select last item
+				if ( lastItem && lastItem.screen ) {
+					setLastScreen( lastItem );
+				} else {
+					setLastScreen( {
+						screen: defaultLastScreen,
+						queryParams: {},
+						period: 'day',
+					} );
+				}
 			}
 		} catch ( e ) {}
-	}, [] );
+	}, [ localizedTabNames ] );
 
 	const backLink = useMemo( () => {
 		if ( ! siteSlug ) {
