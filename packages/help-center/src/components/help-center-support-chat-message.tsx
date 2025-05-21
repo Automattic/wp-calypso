@@ -1,7 +1,6 @@
 /* eslint-disable no-restricted-imports */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Gravatar, TimeSince } from '@automattic/components';
-import { getNumericDateTimeString, useLocale } from '@automattic/i18n-utils';
 import { HumanAvatar, WapuuAvatar } from '@automattic/odie-client/src/assets';
 import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { chevronRight, Icon } from '@wordpress/icons';
@@ -38,9 +37,9 @@ export const HelpCenterSupportChatMessage = ( {
 	conversation: OdieConversation | ZendeskConversation;
 } ) => {
 	const { __ } = useI18n();
-	const locale = useLocale();
 	const { currentUser } = useHelpCenterContext();
 	const { displayName, received, role, text, altText } = message;
+
 	const helpCenterContext = useHelpCenterContext();
 	const helpCenterContextSectionName = helpCenterContext.sectionName;
 	const { supportInteractions } = useGetHistoryChats();
@@ -86,6 +85,8 @@ export const HelpCenterSupportChatMessage = ( {
 		);
 	};
 
+	const receivedDateISO = new Date( received * 1000 ).toISOString();
+
 	return (
 		<Link
 			to="/odie"
@@ -129,7 +130,7 @@ export const HelpCenterSupportChatMessage = ( {
 						}
 					/>
 					<span>
-						<TimeSince date={ getNumericDateTimeString( received * 1000, locale ) } />
+						<TimeSince date={ receivedDateISO } />
 					</span>
 				</div>
 			</div>
