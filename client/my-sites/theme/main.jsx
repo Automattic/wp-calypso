@@ -1395,7 +1395,6 @@ const ThemeSheetWithOptions = ( props ) => {
 			isThemeAllowed={ isThemeAllowed }
 			demo_uri={ demoUrl }
 			didPurchaseDomain={ didPurchaseDomain }
-			site={ site }
 			siteId={ siteId }
 			defaultOption={ defaultOption }
 			secondaryOption={ secondaryOption }
