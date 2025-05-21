@@ -41,21 +41,16 @@ export function CoreBadge( {
 
 	return (
 		<span
-			className={ clsx( styles[ 'components-badge' ], className, {
+			className={ clsx( styles[ 'badge' ], className, {
 				[ styles[ `is-${ intent }` ] ]: intent,
 				[ styles[ 'has-icon' ] ]: hasIcon,
 			} ) }
 			{ ...props }
 		>
 			{ hasIcon && (
-				<Icon
-					icon={ icon }
-					size={ 16 }
-					fill="currentColor"
-					className={ styles[ 'components-badge__icon' ] }
-				/>
+				<Icon icon={ icon } size={ 16 } fill="currentColor" className={ styles[ 'badge__icon' ] } />
 			) }
-			<span className={ styles[ 'components-badge__content' ] }>{ children }</span>
+			<span className={ styles[ 'badge__content' ] }>{ children }</span>
 		</span>
 	);
 }

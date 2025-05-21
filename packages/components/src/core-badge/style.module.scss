@@ -10,7 +10,7 @@ $badge-colors: (
 	"success": colors.$alert-green,
 );
 
-.components-badge {
+.badge {
 	@include mixins.reset;
 
 	background-color: color-mix(in srgb, colors.$white 90%, var(--base-color));
@@ -43,11 +43,11 @@ $badge-colors: (
 	}
 }
 
-.components-badge__icon {
+.badge__icon {
 	flex-shrink: 0;
 }
 
-.components-badge__content {
+.badge__content {
 	overflow: hidden;
 	white-space: nowrap;
 	text-overflow: ellipsis;
