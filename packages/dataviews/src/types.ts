@@ -64,6 +64,7 @@ export type FieldType =
 
 export type ValidationContext = {
 	elements?: Option[];
+	required?: boolean;
 };
 
 /**

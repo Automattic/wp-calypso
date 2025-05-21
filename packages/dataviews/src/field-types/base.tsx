@@ -18,6 +18,10 @@ function sort( a: any, b: any, direction: SortDirection ) {
 }
 
 function isValid( value: any, context?: ValidationContext ) {
+	if ( context?.required && value === '' ) {
+		return false;
+	}
+
 	if ( context?.elements ) {
 		const validValues = context?.elements?.map( ( f ) => f.value );
 		if ( ! validValues.includes( value ) ) {

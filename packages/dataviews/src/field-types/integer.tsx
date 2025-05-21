@@ -21,11 +21,6 @@ function sort( a: any, b: any, direction: SortDirection ) {
 }
 
 function isValid( value: any ) {
-	// TODO: this implicitly means the value is required.
-	if ( value === '' ) {
-		return false;
-	}
-
 	if ( ! Number.isInteger( Number( value ) ) ) {
 		return false;
 	}

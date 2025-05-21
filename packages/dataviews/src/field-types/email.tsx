@@ -21,11 +21,6 @@ function sort( valueA: any, valueB: any, direction: SortDirection ) {
 }
 
 function isValid( value: any ) {
-	// TODO: this implicitly means the value is required.
-	if ( value === '' ) {
-		return false;
-	}
-
 	if ( ! isEmail( value ) ) {
 		return false;
 	}
