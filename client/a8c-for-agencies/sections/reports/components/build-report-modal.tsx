@@ -11,6 +11,8 @@ import { useState } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { Dispatch, SetStateAction } from 'react';
 
+import '../style.scss';
+
 // Mock data - replace with actual data fetching as needed
 const MOCK_TIMEFRAMES = [
 	{ label: 'Last month', value: 'last_month' },
