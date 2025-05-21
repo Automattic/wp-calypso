@@ -159,7 +159,7 @@ class StatsEmailDetail extends Component {
 	componentDidUpdate( prevProps ) {
 		const { context } = this.props;
 
-		if ( ! isEqual( prevProps.context, this.props.context ) ) {
+		if ( ! isEqual( prevProps.context.query, context.query ) ) {
 			recordCurrentScreen( 'postDetails', {
 				queryParams: context.query,
 				period: null,
