@@ -1,4 +1,4 @@
-import { DataForm } from '@automattic/dataviews';
+import { DataForm, isItemValid } from '@automattic/dataviews';
 import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
@@ -8,7 +8,7 @@ import {
 import { createInterpolateElement } from '@wordpress/element';
 import { sprintf, __ } from '@wordpress/i18n';
 import { useState } from 'react';
-import type { Field, SimpleFormField } from '@automattic/dataviews';
+import type { Field } from '@automattic/dataviews';
 
 type ConfirmNewOwnerFormData = {
 	email: string;
@@ -18,13 +18,13 @@ const fields: Field< ConfirmNewOwnerFormData >[] = [
 	{
 		id: 'email',
 		label: __( 'Email' ),
-		type: 'text' as const,
+		type: 'email' as const,
 	},
 ];
 
 const form = {
 	type: 'regular' as const,
-	fields: [ { id: 'email' } as SimpleFormField ],
+	fields: [ 'email' ],
 };
 
 export function ConfirmNewOwnerForm( {
@@ -37,6 +37,8 @@ export function ConfirmNewOwnerForm( {
 	const [ formData, setFormData ] = useState( {
 		email: '',
 	} );
+
+	const isSaveDisabled = ! isItemValid( formData, fields, form );
 
 	return (
 		<VStack spacing={ 1 }>
@@ -72,7 +74,7 @@ export function ConfirmNewOwnerForm( {
 						} }
 					/>
 					<HStack justify="flex-start">
-						<Button variant="primary" type="submit">
+						<Button variant="primary" type="submit" disabled={ isSaveDisabled }>
 							{ __( 'Continue' ) }
 						</Button>
 					</HStack>
