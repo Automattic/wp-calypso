@@ -8,7 +8,6 @@ import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar
 import SimpleList from 'calypso/a8c-for-agencies/components/simple-list';
 import documentsImage from 'calypso/assets/images/a8c-for-agencies/woopayments/cart.png';
 import analyticsImage from 'calypso/assets/images/a8c-for-agencies/woopayments/cc-image.png';
-import reportsImage from 'calypso/assets/images/a8c-for-agencies/woopayments/logo.svg';
 import LayoutBody from 'calypso/layout/hosting-dashboard/body';
 import LayoutHeader, {
 	LayoutHeaderTitle as Title,
@@ -25,7 +24,7 @@ const ReportsOverview = () => {
 	const dispatch = useDispatch();
 	const [ isModalOpen, setModalOpen ] = useState( false );
 
-	const title = translate( 'Client Reports' );
+	const title = translate( 'Client reports' );
 
 	const listItems1 = useMemo(
 		() => [
@@ -69,7 +68,7 @@ const ReportsOverview = () => {
 	const buildReportButton = useMemo( () => {
 		return (
 			<Button __next40pxDefaultSize variant="primary" onClick={ handleBuildReport }>
-				{ translate( 'Build Report' ) }
+				{ translate( 'Build a new report' ) }
 			</Button>
 		);
 	}, [ translate, handleBuildReport ] );
@@ -89,7 +88,6 @@ const ReportsOverview = () => {
 				<PageSectionColumns>
 					<PageSectionColumns.Column>
 						<div className="reports-overview__content">
-							<img src={ reportsImage } alt="Reports" />
 							<div>
 								<div className="reports-overview__heading">
 									{ translate( 'Create professional reports for your clients' ) }
