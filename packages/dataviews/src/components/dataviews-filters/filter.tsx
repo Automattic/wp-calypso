@@ -187,7 +187,9 @@ const FilterText = ( {
 		return createInterpolateElement(
 			sprintf(
 				/* translators: 1: Filter name. 2: Filter value. e.g.: "Price is less than or equal to: 10". */
-				__( '<Name>%1$s is less than or equal to: </Name><Value>%2$s</Value>' ),
+				__(
+					'<Name>%1$s is less than or equal to: </Name><Value>%2$s</Value>'
+				),
 				filter.name,
 				activeElements[ 0 ].label
 			),
@@ -199,7 +201,9 @@ const FilterText = ( {
 		return createInterpolateElement(
 			sprintf(
 				/* translators: 1: Filter name. 2: Filter value. e.g.: "Price is greater than or equal to: 10". */
-				__( '<Name>%1$s is greater than or equal to: </Name><Value>%2$s</Value>' ),
+				__(
+					'<Name>%1$s is greater than or equal to: </Name><Value>%2$s</Value>'
+				),
 				filter.name,
 				activeElements[ 0 ].label
 			),
