@@ -24,8 +24,3 @@
 		display: none;
 	}
 }
-
-.text-blur::after {
-	content: attr(data-text);
-	filter: blur(4px);
-}

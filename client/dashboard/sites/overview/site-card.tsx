@@ -10,13 +10,10 @@ import {
 import { dateI18n } from '@wordpress/date';
 import { __, sprintf } from '@wordpress/i18n';
 import { sitePHPVersionQuery } from '../../app/queries';
+import { TextBlur } from '../../components/text-blur';
 import { getSiteStatusLabel } from '../../utils/site-status';
 import SitePreview from '../site-preview';
 import type { Site, Plan } from '../../data/types';
-
-function TextBlur( { text }: { text: string } ) {
-	return <span className="text-blur" data-text={ text } />;
-}
 
 function PHPVersion( { siteSlug }: { siteSlug: string } ) {
 	return useQuery( sitePHPVersionQuery( siteSlug ) ).data ?? <TextBlur text="X.Y" />;

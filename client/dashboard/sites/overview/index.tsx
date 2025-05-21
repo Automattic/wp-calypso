@@ -9,12 +9,7 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { wordpress } from '@wordpress/icons';
-import {
-	siteQuery,
-	siteMonitorUptimeQuery,
-	siteCurrentPlanQuery,
-	siteEngagementStatsQuery,
-} from '../../app/queries';
+import { siteQuery, siteCurrentPlanQuery, siteEngagementStatsQuery } from '../../app/queries';
 import { siteRoute } from '../../app/router';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -34,10 +29,6 @@ import './style.scss';
 function SiteOverview() {
 	const { siteSlug } = siteRoute.useParams();
 	const { data: site } = useQuery( siteQuery( siteSlug ) );
-	const { data: siteMonitorUptime } = useQuery( {
-		...siteMonitorUptimeQuery( siteSlug ),
-		enabled: site?.jetpack && site?.jetpack_modules.includes( 'monitor' ),
-	} );
 	const { data: currentPlan } = useQuery( siteCurrentPlanQuery( siteSlug ) );
 	const { data: engagementStats } = useQuery( siteEngagementStatsQuery( siteSlug ) );
 
@@ -89,7 +80,7 @@ function SiteOverview() {
 					</OverviewSection>
 					<OverviewSection title={ __( 'Site health' ) } actions={ [] }>
 						<PerformanceCards site={ site } />
-						<UptimeCard siteMonitorUptime={ siteMonitorUptime } />
+						<UptimeCard siteSlug={ siteSlug } site={ site } />
 						<StorageCard siteSlug={ siteSlug } />
 					</OverviewSection>
 				</VStack>
