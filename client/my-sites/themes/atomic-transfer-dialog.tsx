@@ -6,7 +6,6 @@ import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
 import Notice from 'calypso/components/notice';
 import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import {
-	acceptAtomicTransferDialog,
 	dismissAtomicTransferDialog,
 	activate as activateTheme,
 	initiateThemeTransfer,
@@ -34,7 +33,6 @@ interface AtomicTransferDialogProps {
 	activeTheme?: string | null;
 	uploadError?: boolean;
 	isJetpack?: boolean;
-	dispatchAcceptAtomicTransferDialog: typeof acceptAtomicTransferDialog;
 	dispatchDismissAtomicTransferDialog: typeof dismissAtomicTransferDialog;
 	dispatchActivateTheme: typeof activateTheme;
 	dispatchInitiateThemeTransfer: typeof initiateThemeTransfer;
@@ -236,7 +234,6 @@ export default connect(
 		};
 	},
 	{
-		dispatchAcceptAtomicTransferDialog: acceptAtomicTransferDialog,
 		dispatchDismissAtomicTransferDialog: dismissAtomicTransferDialog,
 		dispatchActivateTheme: activateTheme,
 		dispatchInitiateThemeTransfer: initiateThemeTransfer,

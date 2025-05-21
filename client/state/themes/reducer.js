@@ -38,7 +38,6 @@ import {
 	THEME_PREVIEW_OPTIONS,
 	THEME_PREVIEW_STATE,
 	THEME_SHOW_ATOMIC_TRANSFER_DIALOG,
-	THEME_ACCEPT_ATOMIC_TRANSFER_DIALOG,
 	THEME_DISMISS_ATOMIC_TRANSFER_DIALOG,
 	UPSELL_CARD_DISPLAYED,
 	THEMES_LOADING_CART,
@@ -647,14 +646,6 @@ export const themeHasAtomicTransferDialog = ( state = null, action ) => {
 				themeId: action.themeId,
 				show: true,
 				accepted: false,
-			};
-		}
-
-		case THEME_ACCEPT_ATOMIC_TRANSFER_DIALOG: {
-			return {
-				themeId: action.themeId,
-				show: false,
-				accepted: true,
 			};
 		}
 
