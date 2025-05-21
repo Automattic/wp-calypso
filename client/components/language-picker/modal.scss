@@ -10,42 +10,38 @@
 	justify-content: center;
 }
 
-.language-picker__modal {
-	max-width:80%;
-	min-width: 80%;
-	@media (max-width: $break-mobile) {
-		max-width: 90%;
-		min-width: 90%;
+.language-picker-modal__wrapper {
+	// Limit the height to prevent modal resize on content change, when the modal is not full height.
+	@media (min-width: $break-small) {
+		max-height: 600px;
+		// Limit height on smaller screens.
+		height:80%;
 	}
-	.components-modal__header {
-		display:none;
+
+	.language-picker-modal__content {
+		display:flex;
+		flex-direction: column;
+		// Limit height to container, instead of overflowing and pushing down the footer.
+		height: 100%;
+	}
+	.language-picker-modal__body {
+		overflow-y: auto;
+		// Fix cropped box shadow.
+		padding-left:1px;
+		margin-left:-1px;
+	}
+	.language-picker-modal__footer {
+		margin-top: auto;
 	}
 
 	.components-modal__content {
-		padding: 24px 0 0 0;
-		margin-top: 24px;
-		display:flex;
-		/* Targeting the content div, we can't alter the HTML of the modal itself */
-		>div:nth-child(2) {
-			height: 100%;
-			display: flex;
-			flex-direction: column;
-		}
-
-		.components-flex-block {
-			flex:none;
-		}
-		.language-picker-component {
-			overflow-y: auto;
-			padding:0 24px;
-			.language-picker-component__heading {
-				margin: 6px 0 24px;
-			}
-			.components-flex {
-				flex:initial;
-			}
-		}
+		display: flex;
 	}
+	// Force width to 100% even if the content is not that wide.
+	.components-modal__content > div {
+		width: 100%;
+	}
+
 }
 
 .language-picker__modal-empathy-mode {
@@ -101,7 +97,7 @@
 }
 
 .language-picker__modal-buttons {
-	padding: 24px;
+	padding: 24px 24px 0;
 	width: 100%;
 	display: flex;
 	flex-direction: row;
