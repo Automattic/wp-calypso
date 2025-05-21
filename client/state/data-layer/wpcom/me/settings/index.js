@@ -153,8 +153,13 @@ export const userSettingsSaveSuccess =
 		}
 
 		// Don't show success notice if we're in reader onboarding
-		if ( getQueryArg( window.location.href, 'ref' ) === 'reader-onboarding' ) {
-			return;
+		try {
+			const currentUrl = typeof window !== 'undefined' ? window.location.href : '';
+			if ( getQueryArg( currentUrl, 'ref' ) === 'reader-onboarding' ) {
+				return;
+			}
+		} catch ( error ) {
+			// If we can't check the URL, default to showing the notice
 		}
 
 		dispatch(
