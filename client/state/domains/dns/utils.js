@@ -25,7 +25,10 @@ function validateField( { name, value, type, domain, domainName } ) {
 			return isValidData( value, type );
 		case 'protocol':
 			return [ '_tcp', '_udp', '_tls' ].includes( value );
-		case 'flags':
+		case 'flags': {
+			const intValue = parseInt( value, 10 );
+			return intValue >= 0 && intValue <= 255;
+		}
 		case 'weight':
 		case 'aux':
 		case 'port': {

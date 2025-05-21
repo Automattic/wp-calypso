@@ -30,7 +30,6 @@ class CaaRecord extends Component {
 		} );
 		const isValueValid = isValid( 'value' );
 		const isTTLValid = isValid( 'ttl' );
-		const label = translate( 'Name', { context: 'DNS record' } );
 
 		const namePlaceholder = translate( 'Enter subdomain', {
 			context: 'Placeholder shown when entering the subdomain part of a new DNS record',
@@ -39,7 +38,7 @@ class CaaRecord extends Component {
 		return (
 			<div className={ classes }>
 				<FormFieldset>
-					<FormLabel>{ label }</FormLabel>
+					<FormLabel>{ translate( 'Name (optional)', { context: 'DNS record' } ) }</FormLabel>
 					<FormTextInputWithAffixes
 						name="name"
 						placeholder={ namePlaceholder }
@@ -58,6 +57,8 @@ class CaaRecord extends Component {
 						isError={ ! isFlagsValid }
 						onChange={ onChange }
 						value={ fieldValues.flags }
+						defaultValue={ 0 }
+						placeholder={ 0 }
 					/>
 					{ ! isFlagsValid && (
 						<FormInputValidation text={ translate( 'Invalid flags' ) } isError />
@@ -78,6 +79,7 @@ class CaaRecord extends Component {
 						isError={ ! isValueValid }
 						onChange={ onChange }
 						value={ fieldValues.value }
+						placeholder={ translate( 'e.g. letsencrypt.org' ) }
 					/>
 					{ ! isValueValid && (
 						<FormInputValidation text={ translate( 'Invalid value' ) } isError />
