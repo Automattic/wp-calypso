@@ -27,8 +27,8 @@
 	.language-picker-modal__body {
 		overflow-y: auto;
 		// Fix cropped box shadow.
-		padding-left:1px;
-		margin-left:-1px;
+		padding:1px;
+		margin:-1px;
 	}
 	.language-picker-modal__footer {
 		margin-top: auto;
