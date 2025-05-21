@@ -59,6 +59,7 @@ import { deserialize } from 'calypso/state/utils';
 import { pathToRegExp } from 'calypso/utils';
 import middlewareAssets from '../middleware/assets.js';
 import middlewareCache from '../middleware/cache.js';
+import middlewareGeoipHeader from '../middleware/geoip-header.ts';
 import middlewareUnsupportedBrowser from '../middleware/unsupported-browser.js';
 import { logSectionResponse } from './analytics';
 const debug = debugFactory( 'calypso:pages' );
@@ -928,6 +929,9 @@ export default function pages() {
 	app.use( cookieParser() );
 	app.use( middlewareAssets() );
 	app.use( middlewareCache() );
+	if ( config.isEnabled( 'simulated-geoip-header' ) ) {
+		app.use( middlewareGeoipHeader() );
+	}
 	app.use( setupLoggedInContext );
 	app.use( middlewareUnsupportedBrowser() );
 
