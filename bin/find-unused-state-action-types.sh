@@ -14,10 +14,8 @@ grep "export const [A-Z_]* =" client/state/action-types.ts | \
     xargs -P 8 -I{} sh -c \
     'find client/state \
         \( \
-           -path "*/actions/*" \
-           -o -name "reducer.[jt]s" \
+           -name "reducer.[jt]s" \
            -o -name "reducers.[jt]s" \
-           -o -name "actions.[jt]s" \
            -o -name "index.[jt]s" \
            -o -name "middleware.[jt]s" \
            -o -name "reducer-utils.ts" \
