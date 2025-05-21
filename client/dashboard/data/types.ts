@@ -54,7 +54,7 @@ export interface SitePlan {
 }
 
 export interface Plan {
-	id: string;
+	id: string | null;
 	current_plan?: boolean;
 	expiry?: string;
 	subscribed_date?: string;

@@ -18,7 +18,6 @@ import {
 	domainsQuery,
 	emailsQuery,
 	profileQuery,
-	siteCurrentPlanQuery,
 	siteEngagementStatsQuery,
 	siteStaticFile404Query,
 	siteWordPressVersionQuery,
@@ -83,10 +82,7 @@ const siteOverviewRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: '/',
 	loader: ( { params: { siteSlug } } ) =>
-		Promise.all( [
-			queryClient.ensureQueryData( siteCurrentPlanQuery( siteSlug ) ),
-			queryClient.ensureQueryData( siteEngagementStatsQuery( siteSlug ) ),
-		] ),
+		queryClient.ensureQueryData( siteEngagementStatsQuery( siteSlug ) ),
 } ).lazy( () =>
 	import( '../sites/overview' ).then( ( d ) =>
 		createLazyRoute( 'site-overview' )( {
