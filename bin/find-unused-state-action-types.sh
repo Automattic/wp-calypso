@@ -3,6 +3,11 @@
 # This script checks to ensure that all defined Redux action types are being used in files where
 # they are expected to be used. It does so by grepping for all action types in the action-types.ts
 # file and then checking if any relevant files in the client/state directory use that action type.
+#
+# This makes a few assumptions:
+# 1. An action type is effectively unused if it is not referenced by a reducer or middleware.
+# 2. An action type should be referenced in an import statement followed by a comma or space,
+#    which avoids false negatives where an action type is only referenced when suffixed.
 
 if [ ! -f "client/state/action-types.ts" ]; then
     echo "Action types file not found"
