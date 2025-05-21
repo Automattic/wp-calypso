@@ -42,7 +42,6 @@ import {
 	getThemeTiers,
 } from 'calypso/state/themes/selectors';
 import { getThemesBookmark } from 'calypso/state/themes/themes-ui/selectors';
-import EligibilityWarningModal from './atomic-transfer-dialog';
 import { CustomSelectWrapper } from './custom-select-wrapper';
 import {
 	addTracking,
@@ -764,7 +763,6 @@ class ThemeShowcase extends Component {
 					{ siteId && <QuerySitePlans siteId={ siteId } /> }
 					{ siteId && <QuerySitePurchases siteId={ siteId } /> }
 					<QueryProductsList />
-					<EligibilityWarningModal />
 					<ThemePreview />
 				</div>
 			</div>
