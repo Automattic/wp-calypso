@@ -278,6 +278,9 @@ export default function PersonalizationForm( {
 							<FormField
 								error={ validationError.servicesOffered }
 								label={ translate( 'What services do you offer?' ) }
+								sub={ translate(
+									'Understanding your strategy helps us tailor the program to your needs'
+								) }
 								isRequired
 							>
 								<MultiCheckbox
@@ -295,6 +298,9 @@ export default function PersonalizationForm( {
 								error={ validationError.productsOffered }
 								label={ translate(
 									'What Automattic products do you currently offer your clients?'
+								) }
+								sub={ translate(
+									"We'll help you deliver more value to your clients with our products"
 								) }
 								isRequired
 							>

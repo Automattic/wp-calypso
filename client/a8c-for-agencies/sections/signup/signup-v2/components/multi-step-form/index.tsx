@@ -86,7 +86,6 @@ const MultiStepForm = ( {
 	const isDarkMode = useIsDarkMode();
 
 	const [ formData, setFormData ] = useState< Partial< AgencyDetailsSignupPayload > >( {} );
-	const [ blueprintRequested, setBlueprintRequested ] = useState( false );
 
 	const steps: Step[] = [
 		{
@@ -168,7 +167,6 @@ const MultiStepForm = ( {
 
 	const closeSurvey = () => {
 		setFormData( {} );
-		setBlueprintRequested( false );
 		page( 'https://automattic.com/for-agencies/' );
 	};
 
@@ -224,7 +222,6 @@ const MultiStepForm = ( {
 				return (
 					<BlueprintForm2
 						onContinue={ ( data ) => {
-							setBlueprintRequested( true );
 							updateDataAndContinue( data, 6, true );
 						} }
 						initialFormData={ formData }
@@ -232,17 +229,11 @@ const MultiStepForm = ( {
 					/>
 				);
 			case 6:
-				return (
-					<FinishSignupSurvey
-						onContinue={ closeSurvey }
-						blueprintRequested={ blueprintRequested }
-					/>
-				);
+				return <FinishSignupSurvey onContinue={ closeSurvey } />;
 			default:
 				return null;
 		}
 	}, [
-		blueprintRequested,
 		currentStep,
 		formData,
 		onCreateAgency,
