@@ -73,12 +73,7 @@ function SiteOverview() {
 			}
 		>
 			<HStack alignment="flex-start" spacing={ 8 }>
-				<Sidebar
-					site={ site }
-					phpVersion={ phpVersion }
-					siteSlug={ siteSlug }
-					currentPlan={ currentPlan }
-				/>
+				<Sidebar site={ site } phpVersion={ phpVersion } currentPlan={ currentPlan } />
 				<VStack spacing={ 8 }>
 					<Card style={ { padding: '16px' } }>
 						<VStack>

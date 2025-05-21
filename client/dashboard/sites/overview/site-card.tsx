@@ -16,12 +16,10 @@ import type { Site, Plan } from '../../data/types';
  * SiteCard component to display site information in a card format
  */
 export default function SiteCard( {
-	siteSlug,
 	site,
 	phpVersion,
 	currentPlan,
 }: {
-	siteSlug: string;
 	site: Site;
 	phpVersion?: string;
 	currentPlan: Plan;
@@ -73,7 +71,7 @@ export default function SiteCard( {
 						) }
 						{ phpVersion && <Field title={ __( 'PHP' ) }>{ phpVersion }</Field> }
 					</HStack>
-					<PlanDetails site={ site } currentPlan={ currentPlan } siteSlug={ siteSlug } />
+					<PlanDetails site={ site } currentPlan={ currentPlan } />
 				</VStack>
 			</VStack>
 		</Card>
@@ -99,15 +97,7 @@ function FieldTitle( { children }: { children: React.ReactNode } ) {
 	);
 }
 
-function PlanDetails( {
-	site,
-	currentPlan,
-	siteSlug,
-}: {
-	site: Site;
-	currentPlan: Plan;
-	siteSlug: string;
-} ) {
+function PlanDetails( { site, currentPlan }: { site: Site; currentPlan: Plan } ) {
 	if ( ! site.plan || ! currentPlan ) {
 		return null;
 	}
@@ -122,11 +112,11 @@ function PlanDetails( {
 			{ product_name_short && <Text>{ product_name_short }</Text> }
 			<Text>{ getPlanExpirationMessage( { isFree, expiry } ) }</Text>
 			{ id ? (
-				<Button href={ `/purchases/subscriptions/${ siteSlug }/${ id }` } variant="link">
+				<Button href={ `/purchases/subscriptions/${ site.slug }/${ id }` } variant="link">
 					{ __( 'Manage subscription' ) }
 				</Button>
 			) : (
-				<Button href={ `/plans/${ siteSlug }` } variant="link">
+				<Button href={ `/plans/${ site.slug }` } variant="link">
 					{ __( 'Upgrade' ) }
 				</Button>
 			) }
