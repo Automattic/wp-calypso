@@ -1,3 +1,13 @@
+/**
+ * Forked from `@wordpress/components`
+ *
+ * - Refactored `useInstanceId` to `useId`.
+ * - Refactored types from `WordpressComponentProps` to `ComponentPropsWithoutRef`.
+ * - Refactored mentions of `@wordpress/components` to `@automattic/components`
+ * - Added `js-dom` environment and `@testing-library/jest-dom` types to tests
+ * - Removed Tabs.Context from Storybook sub-components.
+ */
+
 import * as Ariakit from '@ariakit/react';
 import { isRTL } from '@wordpress/i18n';
 import { useEffect, useMemo, useId } from 'react';
