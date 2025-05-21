@@ -23,4 +23,4 @@ grep "export const [A-Z_]* =" client/state/action-types.ts | \
         \) \
         -type f \
         -not -path "*/test/*" \
-        -print0 | xargs -0 grep -q "$1" || (echo "Unexpected unused action type: $1"; exit 1)' _ {}
+        -print0 | xargs -0 grep -q "$1[, ]" || (echo "Unexpected unused action type: $1"; exit 1)' _ {}
