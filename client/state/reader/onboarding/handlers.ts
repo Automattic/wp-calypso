@@ -13,7 +13,7 @@ import { isProfileComplete } from './utils';
 
 function dispatchNotice( dispatch: Store[ 'dispatch' ] ) {
 	dispatch(
-		successNotice( translate( 'Profile complete!' ), {
+		successNotice( translate( 'Settings saved!' ), {
 			id: 'reader-profile-complete',
 			button: translate( 'Return to Reader' ),
 			onClick: () => {
@@ -40,11 +40,7 @@ export const dispatchProfileCompleteNotice = ( store: Store, action: UnknownActi
 			...state.userSettings.settings,
 			...( typeof action.settingValues === 'object' ? action.settingValues : {} ),
 		};
-		const gravatarDetails = {
-			...state.gravatarStatus,
-			gravatarDetails: { has_gravatar: !! state.gravatarStatus.tempImage },
-		};
-		if ( isProfileComplete( updatedSettings, gravatarDetails ) ) {
+		if ( isProfileComplete( updatedSettings, state.gravatarStatus ) ) {
 			dispatchNotice( dispatch );
 		}
 	}
