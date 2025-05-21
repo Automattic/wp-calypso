@@ -17,6 +17,7 @@ const possibleBackLinks: { [ key: string ]: string | null } = {
 	subscribers: '/stats/subscribers/{period}/',
 	posts: '/stats/{period}/posts/',
 	authors: '/stats/{period}/authors/',
+	annualstats: '/stats/day/annualstats/',
 	postDetails: null, // Last item in the history, the text is not displayed anywhere but this is used to track the item in history stack.
 };
 
@@ -53,6 +54,7 @@ export const useStatsNavigationHistory = (): { text: string; url: string | null 
 			subscribers: translate( 'Subscribers' ),
 			posts: translate( 'Posts & pages' ),
 			authors: translate( 'Authors' ),
+			annualstats: translate( 'Annual insights' ),
 			postDetails: null,
 		} ),
 		[]
