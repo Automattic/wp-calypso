@@ -141,7 +141,7 @@ const ReportsOverview = () => {
 							</div>
 							<div>
 								{ translate(
-									'You can customize each report based on client needs, schedule regular deliveries, and save yourself hours of manual reporting work each month.'
+									'You can customize each report based on client needs and save yourself hours of manual reporting work each month.'
 								) }
 							</div>
 						</div>
