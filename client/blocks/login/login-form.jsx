@@ -69,6 +69,7 @@ import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
 import ErrorNotice from './error-notice';
 import SocialLoginForm from './social';
 import { isA4AReferralClient } from './utils/is-a4a-referral-for-client';
+import { shouldUseMagicCode } from './utils/should-use-magic-code';
 
 import './login-form.scss';
 
@@ -335,6 +336,7 @@ export class LoginForm extends Component {
 				redirectTo: this.props.redirectTo,
 				requestLoginEmailFormFlow: true,
 				createAccount: true,
+				...( shouldUseMagicCode( { isJetpack: this.props.isJetpack } ) && { tokenType: 'code' } ),
 				flow: 'jetpack',
 			} );
 		}
