@@ -7,7 +7,7 @@ import { siteRoute, sitePerformanceRoute } from '../../app/router';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { usePerformanceData } from '../hooks/use-performance-data';
-import DeviceTabControls, { ToggleType } from './device-toggle';
+import DeviceToggle, { ToggleType } from './device-toggle';
 import PageSelector from './page-selector';
 import Report from './report';
 import SubTitle from './subtitle';
@@ -83,7 +83,7 @@ function SitePerformanceContent( { site }: { site: Site } ) {
 							pages={ pagesData }
 							onChange={ handlePageChange }
 						/>
-						<DeviceTabControls value={ deviceToggle } onChange={ setDeviceToggle } />
+						<DeviceToggle value={ deviceToggle } onChange={ setDeviceToggle } />
 					</>
 				}
 			/>
