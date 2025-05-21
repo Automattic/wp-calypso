@@ -1,13 +1,12 @@
 import { Button } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, createRef } from 'react';
 import { connect } from 'react-redux';
 import FormButton from 'calypso/components/forms/form-button';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import LoggedOutForm from 'calypso/components/logged-out-form';
 import Notice from 'calypso/components/notice';
-import { preventWidows } from 'calypso/lib/formatting';
 // import { navigate } from 'calypso/lib/navigate';
 import { fetchMagicLoginAuthenticate } from 'calypso/state/login/magic-login/actions';
 import { getRedirectToOriginal } from 'calypso/state/login/selectors';
@@ -15,6 +14,8 @@ import getMagicLoginAuthSuccessData from 'calypso/state/selectors/get-magic-logi
 import getMagicLoginRequestAuthError from 'calypso/state/selectors/get-magic-login-request-auth-error';
 import getMagicLoginRequestedAuthSuccessfully from 'calypso/state/selectors/get-magic-login-requested-auth-successfully';
 import isFetchingMagicLoginAuth from 'calypso/state/selectors/is-fetching-magic-login-auth';
+
+const CODE_LENGTH = 6;
 
 const VerifyLoginCode = ( {
 	isValidating,
@@ -28,8 +29,16 @@ const VerifyLoginCode = ( {
 	translate,
 	onResendEmail,
 } ) => {
-	const [ verificationCode, setVerificationCode ] = useState( '' );
+	// Create an array of 6 empty strings for our verification code
+	const [ codeCharacters, setCodeCharacters ] = useState( Array( CODE_LENGTH ).fill( '' ) );
 	const [ isRedirecting, setIsRedirecting ] = useState( false );
+
+	// Create refs for each input field to manage focus
+	const inputRefs = useRef(
+		Array( CODE_LENGTH )
+			.fill( null )
+			.map( () => createRef() )
+	);
 
 	useEffect( () => {
 		if ( isAuthenticated && authSuccessData ) {
@@ -38,14 +47,73 @@ const VerifyLoginCode = ( {
 		}
 	}, [ isAuthenticated, authSuccessData ] );
 
-	const onCodeChange = ( event ) => {
-		setVerificationCode( event.target.value );
+	// Get the combined verification code from all inputs
+	const getVerificationCode = () => codeCharacters.join( '' );
+
+	// Handle changes to any individual input
+	const onCodeCharacterChange = ( index, value ) => {
+		// Only allow a single character per input
+		if ( value.length > 1 ) {
+			value = value.charAt( 0 );
+		}
+
+		// Update the code array
+		const newCodeCharacters = [ ...codeCharacters ];
+		newCodeCharacters[ index ] = value;
+		setCodeCharacters( newCodeCharacters );
+
+		// Auto-focus next input if the current one has a value
+		if ( value && index < CODE_LENGTH - 1 ) {
+			inputRefs.current[ index + 1 ].current.focus();
+		}
+	};
+
+	// Handle keyboard navigation between inputs
+	const onKeyDown = ( index, event ) => {
+		const { key } = event;
+
+		// Handle Backspace - move to previous input when current is empty
+		if ( key === 'Backspace' && ! codeCharacters[ index ] && index > 0 ) {
+			inputRefs.current[ index - 1 ].current.focus();
+		}
+
+		// Handle Left/Right arrows for navigation between inputs
+		if ( key === 'ArrowLeft' && index > 0 ) {
+			inputRefs.current[ index - 1 ].current.focus();
+		}
+		if ( key === 'ArrowRight' && index < CODE_LENGTH - 1 ) {
+			inputRefs.current[ index + 1 ].current.focus();
+		}
+	};
+
+	// Handle paste event to fill multiple inputs
+	const onPaste = ( index, event ) => {
+		event.preventDefault();
+
+		const pastedText = event.clipboardData.getData( 'text' ).trim();
+		if ( ! pastedText ) {
+			return;
+		}
+
+		// Fill as many inputs as possible with the pasted text
+		const newCodeCharacters = [ ...codeCharacters ];
+
+		for ( let i = 0; i < Math.min( CODE_LENGTH - index, pastedText.length ); i++ ) {
+			newCodeCharacters[ index + i ] = pastedText.charAt( i );
+		}
+
+		setCodeCharacters( newCodeCharacters );
+
+		// Focus the next unfilled input or the last input if all are filled
+		const nextIndex = Math.min( index + pastedText.length, CODE_LENGTH - 1 );
+		inputRefs.current[ nextIndex ].current.focus();
 	};
 
 	const onSubmit = ( event ) => {
 		event.preventDefault();
 
-		if ( ! verificationCode || ! publicToken ) {
+		const verificationCode = getVerificationCode();
+		if ( ! verificationCode || verificationCode.length !== CODE_LENGTH || ! publicToken ) {
 			return;
 		}
 
@@ -56,25 +124,22 @@ const VerifyLoginCode = ( {
 	};
 
 	const isDisabled = isValidating || isRedirecting;
-	const submitEnabled = verificationCode.length > 0 && ! isDisabled;
+	const submitEnabled = getVerificationCode().length === CODE_LENGTH && ! isDisabled;
 
 	return (
 		<div className="magic-login__successfully-jetpack">
-			<h1 className="magic-login__form-header">{ translate( 'Check your inbox' ) }</h1>
+			<h1 className="magic-login__form-header">{ translate( 'Check your email for a code' ) }</h1>
 			<p>
-				{ translate(
-					'We sent a message to ({{strong}}%(email)s{{/strong}}) with a code to log in to WordPress.com.',
-					{
-						args: {
-							email: usernameOrEmail,
-						},
-						components: {
-							strong: <strong />,
-						},
-					}
-				) }
+				{ translate( 'Enter the code sent to your email {{strong}}%(email)s{{/strong}}', {
+					args: {
+						email: usernameOrEmail,
+					},
+					components: {
+						strong: <strong />,
+					},
+				} ) }
 			</p>
-			<LoggedOutForm onSubmit={ onSubmit }>
+			<LoggedOutForm className="magic-login__verify-code-form" onSubmit={ onSubmit }>
 				{ authError && (
 					<Notice
 						showDismiss={ false }
@@ -83,24 +148,36 @@ const VerifyLoginCode = ( {
 					/>
 				) }
 
-				<FormTextInput
-					autoCapitalize="off"
-					className="magic-login__verify-code-field"
-					disabled={ isDisabled }
-					name="verificationCode"
-					value={ verificationCode }
-					onChange={ onCodeChange }
-					placeholder={ translate( 'Enter your verification code' ) }
-				/>
+				<div className="magic-login__verify-code-field-container">
+					{ Array.from( { length: CODE_LENGTH } ).map( ( _, index ) => (
+						<FormTextInput
+							key={ index }
+							ref={ inputRefs.current[ index ] }
+							autoCapitalize="off"
+							className="magic-login__verify-code-character-field"
+							disabled={ isDisabled }
+							maxLength={ 1 }
+							value={ codeCharacters[ index ] }
+							onChange={ ( event ) => onCodeCharacterChange( index, event.target.value ) }
+							onKeyDown={ ( event ) => onKeyDown( index, event ) }
+							onPaste={ ( event ) => onPaste( index, event ) }
+							aria-label={ translate( 'Verification code character %(position)s of %(total)s', {
+								args: {
+									position: index + 1,
+									total: CODE_LENGTH,
+								},
+							} ) }
+						/>
+					) ) }
+				</div>
 
 				<div className="magic-login__form-action">
 					<FormButton primary disabled={ ! submitEnabled } busy={ isDisabled } type="submit">
-						{ translate( 'Verify' ) }
+						{ translate( 'Verify code' ) }
 					</FormButton>
 				</div>
 			</LoggedOutForm>
 
-			<p>{ preventWidows( translate( "Only one step left—we'll connect your site next." ) ) }</p>
 			<div className="magic-login__successfully-jetpack-actions">
 				<p>
 					{ translate(

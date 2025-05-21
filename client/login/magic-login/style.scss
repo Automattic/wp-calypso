@@ -830,3 +830,39 @@
 	margin: 0 auto;
 }
 /* stylelint-enable scales/font-weights */
+
+.card.magic-login__verify-code-form {
+	padding: 0;
+	box-shadow: none;
+	border: none;
+}
+
+.magic-login__verify-code-field-container {
+	display: flex;
+	gap: 16px;
+	justify-content: space-between;
+	margin-bottom: 32px;
+
+	.magic-login__verify-code-character-field {
+		width: 61px;
+		height: 64px;
+		margin: 0 4px;
+		text-align: center;
+		padding: 0;
+		border-radius: 4px;
+		@include heading-2x-large;
+
+		&:first-child {
+			margin-left: 0;
+		}
+
+		&:last-child {
+			margin-right: 0;
+		}
+
+		&:focus {
+			border-color: var(--studio-jetpack-green-50);
+			box-shadow: 0 0 0 2px var(--studio-jetpack-green-30);
+		}
+	}
+}
