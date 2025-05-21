@@ -14,12 +14,12 @@ import { getSiteStatusLabel } from '../../utils/site-status';
 import SitePreview from '../site-preview';
 import type { Site, Plan } from '../../data/types';
 
+function TextBlur( { text }: { text: string } ) {
+	return <span className="text-blur" data-text={ text } />;
+}
+
 function PHPVersion( { siteSlug }: { siteSlug: string } ) {
-	return (
-		useQuery( sitePHPVersionQuery( siteSlug ) ).data ?? (
-			<span className="text-blur" data-text="X.Y" />
-		)
-	);
+	return useQuery( sitePHPVersionQuery( siteSlug ) ).data ?? <TextBlur text="X.Y" />;
 }
 
 /**
