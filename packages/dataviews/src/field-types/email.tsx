@@ -22,7 +22,8 @@ function sort( valueA: any, valueB: any, direction: SortDirection ) {
 }
 
 function isValid( value: any, context?: ValidationContext ) {
-	if ( context?.required && value === '' ) {
+	// TODO: this implicitly means the value is required.
+	if ( value === '' ) {
 		return false;
 	}
 

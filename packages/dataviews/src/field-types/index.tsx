@@ -62,10 +62,6 @@ export default function getFieldTypeDefinition< Item >(
 				: b.localeCompare( a );
 		},
 		isValid: ( value: any, context?: ValidationContext ) => {
-			if ( context?.required && value === '' ) {
-				return false;
-			}
-
 			if ( context?.elements ) {
 				const validValues = context?.elements?.map( ( f ) => f.value );
 				if ( ! validValues.includes( value ) ) {
