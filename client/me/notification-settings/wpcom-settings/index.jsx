@@ -1,4 +1,5 @@
 import { Card, LoadingPlaceholder } from '@automattic/components';
+import { ToggleControl } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import { Component } from 'react';
@@ -9,8 +10,15 @@ import NavigationHeader from 'calypso/components/navigation-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import ReauthRequired from 'calypso/me/reauth-required';
-import { fetchSettings } from 'calypso/state/notification-settings/actions';
-import { getNotificationSettings } from 'calypso/state/notification-settings/selectors';
+import {
+	fetchSettings,
+	toggleWPcomEmailSetting,
+	saveSettings,
+} from 'calypso/state/notification-settings/actions';
+import {
+	getNotificationSettings,
+	isFetchingNotificationsSettings,
+} from 'calypso/state/notification-settings/selectors';
 import hasJetpackSites from 'calypso/state/selectors/has-jetpack-sites';
 import Navigation from '../navigation';
 import SubscriptionManagementBackButton from '../subscription-management-back-button';
@@ -19,7 +27,7 @@ import EmailCategory from './email-category';
 import './style.scss';
 
 /**
- * Module variables
+ * Module variables for wpcom
  */
 const options = {
 	marketing: 'marketing',
@@ -31,6 +39,12 @@ const options = {
 	reports: 'reports',
 	news_developer: 'news_developer',
 	scheduled_updates: 'scheduled_updates',
+};
+
+/**
+ * Module variables for jetpack
+ */
+const jetpackOptions = {
 	jetpack_marketing: 'jetpack_marketing',
 	jetpack_research: 'jetpack_research',
 	jetpack_promotion: 'jetpack_promotion',
@@ -47,6 +61,24 @@ class WPCOMNotifications extends Component {
 		this.props.fetchSettings();
 	}
 
+	unsubscribeFromAll = ( productOptions ) => ( toggleValue ) => {
+		const toggledSettings = {};
+		Object.keys( productOptions ).forEach( ( option ) => {
+			if ( this.props.settings[ option ] !== toggleValue ) {
+				toggledSettings[ option ] = toggleValue;
+				this.props.toggleWPcomEmailSetting( option );
+			}
+		} );
+
+		this.props.saveSettings( 'wpcom', toggledSettings );
+	};
+
+	toggleShouldBeOff = ( productOptions ) => {
+		return Object.keys( productOptions ).some(
+			( key ) => key in this.props.settings && this.props.settings[ key ] === true
+		);
+	};
+
 	renderWpcomPreferences = () => {
 		const { settings, translate } = this.props;
 
@@ -62,6 +94,19 @@ class WPCOMNotifications extends Component {
 				<FormSectionHeading>
 					{ this.props.translate( 'Email from WordPress.com' ) }
 				</FormSectionHeading>
+
+				<ToggleControl
+					__nextHasNoMarginBottom
+					checked={ this.toggleShouldBeOff( options ) }
+					className="wpcom-settings__notification-settings-emailsection-toggle"
+					label={
+						this.toggleShouldBeOff( options )
+							? this.props.translate( 'Unsubscribe from all' )
+							: this.props.translate( 'Subscribe to all' )
+					}
+					onChange={ this.unsubscribeFromAll( options ) }
+					disabled={ this.props.isFetching }
+				/>
 
 				<EmailCategory
 					name={ options.marketing }
@@ -148,16 +193,29 @@ class WPCOMNotifications extends Component {
 							) }
 						</p>
 
+						<ToggleControl
+							__nextHasNoMarginBottom
+							checked={ this.toggleShouldBeOff( jetpackOptions ) }
+							className="wpcom-settings__notification-settings-emailsection-toggle"
+							label={
+								this.toggleShouldBeOff( jetpackOptions )
+									? this.props.translate( 'Unsubscribe from all' )
+									: this.props.translate( 'Subscribe to all' )
+							}
+							onChange={ this.unsubscribeFromAll( jetpackOptions ) }
+							disabled={ this.props.isFetching }
+						/>
+
 						<EmailCategory
-							name={ options.jetpack_marketing }
-							isEnabled={ get( settings, options.jetpack_marketing ) }
+							name={ jetpackOptions.jetpack_marketing }
+							isEnabled={ get( settings, jetpackOptions.jetpack_marketing ) }
 							title={ translate( 'Suggestions' ) }
 							description={ translate( 'Tips for getting the most out of Jetpack.' ) }
 						/>
 
 						<EmailCategory
-							name={ options.jetpack_research }
-							isEnabled={ get( settings, options.jetpack_research ) }
+							name={ jetpackOptions.jetpack_research }
+							isEnabled={ get( settings, jetpackOptions.jetpack_research ) }
 							title={ translate( 'Research' ) }
 							description={ translate(
 								'Opportunities to participate in Jetpack research and surveys.'
@@ -165,22 +223,22 @@ class WPCOMNotifications extends Component {
 						/>
 
 						<EmailCategory
-							name={ options.jetpack_promotion }
-							isEnabled={ get( settings, options.jetpack_promotion ) }
+							name={ jetpackOptions.jetpack_promotion }
+							isEnabled={ get( settings, jetpackOptions.jetpack_promotion ) }
 							title={ translate( 'Promotions' ) }
 							description={ translate( 'Sales and promotions for Jetpack products and services.' ) }
 						/>
 
 						<EmailCategory
-							name={ options.jetpack_news }
-							isEnabled={ get( settings, options.jetpack_news ) }
+							name={ jetpackOptions.jetpack_news }
+							isEnabled={ get( settings, jetpackOptions.jetpack_news ) }
 							title={ translate( 'Newsletter' ) }
 							description={ translate( 'Jetpack news, announcements, and product spotlights.' ) }
 						/>
 
 						<EmailCategory
-							name={ options.jetpack_reports }
-							isEnabled={ get( settings, options.jetpack_reports ) }
+							name={ jetpackOptions.jetpack_reports }
+							isEnabled={ get( settings, jetpackOptions.jetpack_reports ) }
 							title={ translate( 'Reports' ) }
 							description={ translate( 'Jetpack security and performance reports.' ) }
 						/>
@@ -224,6 +282,7 @@ export default connect(
 	( state ) => ( {
 		settings: getNotificationSettings( state, 'wpcom' ),
 		hasJetpackSites: hasJetpackSites( state ),
+		isFetching: isFetchingNotificationsSettings( state ),
 	} ),
-	{ fetchSettings }
+	{ fetchSettings, toggleWPcomEmailSetting, saveSettings }
 )( localize( WPCOMNotifications ) );

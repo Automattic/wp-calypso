@@ -47,12 +47,19 @@ main div.dashboard-header-bar {
 	height: 100%;
 }
 
-.dashboard-page-layout__content {
-	view-transition-name: page-layout-content;
+// Large and small must be separate so they don't cross-animate.
+.dashboard-page-layout.is-large .dashboard-page-layout__content {
+	view-transition-name: page-layout-content-large;
 }
 
-::view-transition-old(page-layout-content),
-::view-transition-new(page-layout-content) {
+.dashboard-page-layout.is-small .dashboard-page-layout__content {
+	view-transition-name: page-layout-content-small;
+}
+
+::view-transition-old(page-layout-content-large),
+::view-transition-new(page-layout-content-large),
+::view-transition-old(page-layout-content-small),
+::view-transition-new(page-layout-content-small) {
 	// Never expand the main content horizontally, but allow it to shrink.
 	width: auto;
 	// Also disable shrinking. Leaving it commented out to test.

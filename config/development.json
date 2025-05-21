@@ -91,7 +91,6 @@
 		"jetpack/features-section/jetpack": true,
 		"jetpack/features-section/simple": true,
 		"jetpack/golden-token": true,
-		"jetpack/magic-link-signup": true,
 		"jetpack/manage-simple-sites": true,
 		"jetpack/onboarding-user-connection-redesign": true,
 		"jetpack/pricing-add-boost-social": true,

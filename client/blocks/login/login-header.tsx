@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
 import { capitalize } from 'lodash';
 import A4APlusWpComLogo from 'calypso/a8c-for-agencies/components/a4a-plus-wpcom-logo';
@@ -183,12 +182,9 @@ export function getHeaderText(
 	} else if ( isFromMigrationPlugin ) {
 		headerText = translate( 'Log in to your account' );
 	} else if ( isJetpack && ! isFromAutomatticForAgenciesPlugin ) {
-		const isJetpackMagicLinkSignUpFlow = config.isEnabled( 'jetpack/magic-link-signup' );
-		headerText = isJetpackMagicLinkSignUpFlow
-			? translate(
-					'Log in or create a WordPress.com account to supercharge your site with powerful growth, performance, and security tools.'
-			  )
-			: translate( 'Log in or create a WordPress.com account to set up Jetpack' );
+		headerText = translate(
+			'Log in or create a WordPress.com account to supercharge your site with powerful growth, performance, and security tools.'
+		);
 	}
 
 	if ( isFromAkismet ) {
