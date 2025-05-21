@@ -9,7 +9,6 @@ import { activate as activateTheme, initiateThemeTransfer } from 'calypso/state/
 import {
 	getActiveTheme,
 	getCanonicalTheme,
-	getThemeForAtomicTransferDialog,
 	isExternallyManagedTheme,
 	shouldShowAtomicTransferDialog,
 } from 'calypso/state/themes/selectors';

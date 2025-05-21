@@ -29,7 +29,6 @@ export { getThemeFilterTermFromString } from 'calypso/state/themes/selectors/get
 export { getThemeFilterTerms } from 'calypso/state/themes/selectors/get-theme-filter-terms';
 export { getThemeFilterTermsTable } from 'calypso/state/themes/selectors/get-theme-filter-terms-table';
 export { getThemeFilterToTermTable } from 'calypso/state/themes/selectors/get-theme-filter-to-term-table';
-export { getThemeForAtomicTransferDialog } from 'calypso/state/themes/selectors/get-theme-for-atomic-transfer-dialog';
 export { getThemeForumUrl } from 'calypso/state/themes/selectors/get-theme-forum-url';
 export { getThemeHelpUrl } from 'calypso/state/themes/selectors/get-theme-help-url';
 export { getThemePreviewThemeOptions } from 'calypso/state/themes/selectors/get-theme-preview-theme-options';
