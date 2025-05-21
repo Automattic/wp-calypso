@@ -78,9 +78,8 @@ export type FieldTypeDefinition< Item > = {
 
 	/**
 	 * Callback used to validate the field.
-	 * Defaults to the isValid function from the base field type definition.
 	 */
-	isValid?: ( item: Item, context?: ValidationContext ) => boolean;
+	isValid: ( item: Item, context?: ValidationContext ) => boolean;
 
 	/**
 	 * Callback used to render an edit control for the field or control name.

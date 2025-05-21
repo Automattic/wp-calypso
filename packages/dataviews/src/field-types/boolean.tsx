@@ -10,6 +10,7 @@ import type {
 	DataViewRenderFieldProps,
 	SortDirection,
 	Operator,
+	ValidationContext,
 } from '../types';
 import { renderFromElements } from '../utils';
 import { OPERATOR_IS, OPERATOR_IS_NOT } from '../constants';
@@ -31,7 +32,7 @@ function sort( a: any, b: any, direction: SortDirection ) {
 	return boolA ? -1 : 1;
 }
 
-function isValid( value: any ) {
+function isValid( value: any, context?: ValidationContext ) {
 	if ( ! [ true, false, undefined ].includes( value ) ) {
 		return false;
 	}

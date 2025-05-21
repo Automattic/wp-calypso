@@ -7,12 +7,7 @@ import type { FunctionComponent } from 'react';
  * Internal dependencies
  */
 import getFieldTypeDefinition from './field-types';
-import type {
-	DataViewRenderFieldProps,
-	Field,
-	NormalizedField,
-	FieldTypeDefinition,
-} from './types';
+import type { DataViewRenderFieldProps, Field, NormalizedField } from './types';
 import { getControl } from './dataform-controls';
 
 const getValueFromId =
@@ -41,7 +36,6 @@ export function normalizeFields< Item >(
 	fields: Field< Item >[]
 ): NormalizedField< Item >[] {
 	return fields.map( ( field ) => {
-		const baseFieldTypeDefinition = getFieldTypeDefinition< Item >();
 		const fieldTypeDefinition = getFieldTypeDefinition< Item >(
 			field.type
 		);
@@ -60,23 +54,10 @@ export function normalizeFields< Item >(
 		const isValid =
 			field.isValid ??
 			function isValid( item, context ) {
-				// A value is considered valid if it passes the validation of the base field type definition,
-				// as well as the specific field type definition, if one is provided.
-				return [ baseFieldTypeDefinition, fieldTypeDefinition ]
-					.filter(
-						(
-							currentFieldTypeDefinition: FieldTypeDefinition< Item >
-						) => !! currentFieldTypeDefinition.isValid
-					)
-					.every(
-						(
-							currentFieldTypeDefinition: FieldTypeDefinition< Item >
-						) =>
-							currentFieldTypeDefinition.isValid?.(
-								getValue( { item } ),
-								context
-							)
-					);
+				return fieldTypeDefinition.isValid(
+					getValue( { item } ),
+					context
+				);
 			};
 
 		const Edit = getControl( field, fieldTypeDefinition );
