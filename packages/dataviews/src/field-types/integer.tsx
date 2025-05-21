@@ -5,7 +5,6 @@ import type {
 	DataViewRenderFieldProps,
 	Operator,
 	SortDirection,
-	ValidationContext,
 } from '../types';
 import { renderFromElements } from '../utils';
 import {
@@ -21,7 +20,7 @@ function sort( a: any, b: any, direction: SortDirection ) {
 	return direction === 'asc' ? a - b : b - a;
 }
 
-function isValid( value: any, context?: ValidationContext ) {
+function isValid( value: any ) {
 	// TODO: this implicitly means the value is required.
 	if ( value === '' ) {
 		return false;
@@ -29,13 +28,6 @@ function isValid( value: any, context?: ValidationContext ) {
 
 	if ( ! Number.isInteger( Number( value ) ) ) {
 		return false;
-	}
-
-	if ( context?.elements ) {
-		const validValues = context?.elements.map( ( f ) => f.value );
-		if ( ! validValues.includes( Number( value ) ) ) {
-			return false;
-		}
 	}
 
 	return true;

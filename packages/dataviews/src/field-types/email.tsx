@@ -9,7 +9,6 @@ import { isEmail } from '@wordpress/url';
 import type {
 	DataViewRenderFieldProps,
 	SortDirection,
-	ValidationContext,
 	Operator,
 } from '../types';
 import { renderFromElements } from '../utils';
@@ -21,7 +20,7 @@ function sort( valueA: any, valueB: any, direction: SortDirection ) {
 		: valueB.localeCompare( valueA );
 }
 
-function isValid( value: any, context?: ValidationContext ) {
+function isValid( value: any ) {
 	// TODO: this implicitly means the value is required.
 	if ( value === '' ) {
 		return false;
@@ -29,13 +28,6 @@ function isValid( value: any, context?: ValidationContext ) {
 
 	if ( ! isEmail( value ) ) {
 		return false;
-	}
-
-	if ( context?.elements ) {
-		const validValues = context?.elements?.map( ( f ) => f.value );
-		if ( ! validValues.includes( value ) ) {
-			return false;
-		}
 	}
 
 	return true;
