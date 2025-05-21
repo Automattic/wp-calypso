@@ -8,9 +8,9 @@ import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { usePerformanceData } from '../hooks/use-performance-data';
 import DeviceTabControls, { ToggleType } from './device-toggle';
-import { PageSelector } from './page-selector';
+import PageSelector from './page-selector';
 import Report from './report';
-import { SubTitle } from './subtitle';
+import SubTitle from './subtitle';
 import type { PerformanceProfilerPage } from '../../data';
 import type { Site } from '../../data/types';
 

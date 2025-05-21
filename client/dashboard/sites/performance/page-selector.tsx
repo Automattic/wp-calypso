@@ -45,7 +45,12 @@ interface PageSelectorProps {
 	onChange: ( page_id: string | null | undefined ) => void;
 }
 
-export function PageSelector( { siteUrl, pages, currentPage, onChange }: PageSelectorProps ) {
+export default function PageSelector( {
+	siteUrl,
+	pages,
+	currentPage,
+	onChange,
+}: PageSelectorProps ) {
 	const currentPageOption: PageOption | undefined = currentPage
 		? mapPageToPageOption( currentPage, siteUrl )
 		: undefined;

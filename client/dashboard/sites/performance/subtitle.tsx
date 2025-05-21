@@ -5,7 +5,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import type { PerformanceReport } from '../../data/types';
 
-export function SubTitle( {
+export default function SubTitle( {
 	performanceReport,
 	onClick,
 }: {

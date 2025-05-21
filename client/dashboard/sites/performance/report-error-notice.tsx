@@ -7,7 +7,7 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
-export const ReportError = ( { onRetestClick }: { onRetestClick(): void } ) => {
+export default function ReportErrorNotice( { onRetestClick }: { onRetestClick(): void } ) {
 	return (
 		<Notice status="error" isDismissible={ false }>
 			<HStack spacing={ 2 } justify="space-between">
@@ -25,4 +25,4 @@ export const ReportError = ( { onRetestClick }: { onRetestClick(): void } ) => {
 			</HStack>
 		</Notice>
 	);
-};
+}

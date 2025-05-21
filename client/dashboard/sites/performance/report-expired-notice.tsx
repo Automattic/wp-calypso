@@ -33,7 +33,7 @@ function shouldRefreshReport( reportTimestamp: string, refreshInterval: number )
 	return diffInHours > refreshInterval;
 }
 
-export const ReportExpiredNotice = ( { onRetest, reportTimestamp }: ReportExpiredNotice ) => {
+export default function ReportExpiredNotice( { onRetest, reportTimestamp }: ReportExpiredNotice ) {
 	if ( ! reportTimestamp ) {
 		return null;
 	}
@@ -61,4 +61,4 @@ export const ReportExpiredNotice = ( { onRetest, reportTimestamp }: ReportExpire
 			</Notice>
 		</div>
 	);
-};
+}

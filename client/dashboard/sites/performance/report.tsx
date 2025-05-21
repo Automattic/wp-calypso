@@ -2,9 +2,9 @@ import { useSearch } from '@tanstack/react-router';
 import { useState } from 'react';
 import { PerformanceProfilerDashboardContent } from 'calypso/performance-profiler/components/dashboard-content';
 import { sitePerformanceRoute } from '../../app/router';
-import { ReportError } from './report-error';
-import { ReportExpiredNotice } from './report-expired-notice';
-import { ReportLoading } from './report-loading';
+import ReportErrorNotice from './report-error-notice';
+import ReportExpiredNotice from './report-expired-notice';
+import ReportLoading from './report-loading';
 import type { PerformanceProfilerPage } from '../../data';
 import type { PerformanceReport } from '../../data/types';
 
@@ -40,7 +40,7 @@ export default function Report( {
 	const [ recommendationsFilter, setRecommendationsFilter ] = useState( filter );
 
 	if ( isError ) {
-		return <ReportError onRetestClick={ onRetest } />;
+		return <ReportErrorNotice onRetestClick={ onRetest } />;
 	}
 
 	if ( isFetchingReport || isRunningReport ) {

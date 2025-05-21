@@ -6,11 +6,11 @@ type CircularPerformanceScoreProps = {
 	steps?: number;
 };
 
-export const CircularPerformanceScore = ( {
+export default function CircularPerformanceScore( {
 	score,
 	size,
 	steps = 100,
-}: CircularPerformanceScoreProps ) => {
+}: CircularPerformanceScoreProps ) {
 	const getStatus = ( value: number ) => {
 		if ( value <= 49 ) {
 			return 'poor';
@@ -37,4 +37,4 @@ export const CircularPerformanceScore = ( {
 			</div>
 		</div>
 	);
-};
+}

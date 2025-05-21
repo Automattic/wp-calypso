@@ -1,13 +1,13 @@
 import { __ } from '@wordpress/i18n';
 import { PerformanceReportLoadingProgress } from 'calypso/performance-profiler/pages/loading-screen/progress';
 
-export const ReportLoading = ( {
+export default function ReportLoading( {
 	isSavedReport,
 	pageTitle,
 }: {
 	isSavedReport: boolean;
 	pageTitle: string;
-} ) => {
+} ) {
 	return (
 		<>
 			<PerformanceReportLoadingProgress
@@ -24,4 +24,4 @@ export const ReportLoading = ( {
 			<p>{ __( 'Testing your site may take around 30 seconds.' ) }</p>
 		</>
 	);
-};
+}
