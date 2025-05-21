@@ -107,6 +107,7 @@
 		"@wordpress/i18n": "^5.23.0",
 		"@wordpress/icons": "^10.23.0",
 		"@wordpress/is-shallow-equal": "^5.23.0",
+		"@wordpress/notices": "5.23.0",
 		"@wordpress/private-apis": "^1.23.0",
 		"@wordpress/react-i18n": "^4.23.0",
 		"@wordpress/viewport": "^6.23.0",

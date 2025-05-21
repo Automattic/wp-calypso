@@ -9,18 +9,6 @@ type QueryArgs = Record< string, string | null >;
 
 const STORAGE_KEY = 'jp-stats-navigation';
 
-const localizedTabNames: { [ key: string ]: string | null } = {
-	traffic: translate( 'Traffic' ),
-	insights: translate( 'Insights' ),
-	store: translate( 'Store' ),
-	ads: translate( 'Ads' ),
-	subscribers: translate( 'Subscribers' ),
-	posts: translate( 'Posts & pages' ),
-	authors: translate( 'Authors' ),
-	annualstats: translate( 'Annual insights' ),
-	postDetails: null, // Last item in the history, the text is not displayed anywhere but this is used to track the item in history stack.
-};
-
 const possibleBackLinks: { [ key: string ]: string | null } = {
 	traffic: '/stats/{period}/',
 	insights: '/stats/insights/',
@@ -57,6 +45,21 @@ const getFilteredQueryParams = ( queryParams: QueryArgs ): QueryArgs => {
  * @returns { { text: string; url: string | null } }
  */
 export const useStatsNavigationHistory = (): { text: string; url: string | null } => {
+	const localizedTabNames: { [ key: string ]: string | null } = useMemo(
+		() => ( {
+			traffic: translate( 'Traffic' ),
+			insights: translate( 'Insights' ),
+			store: translate( 'Store' ),
+			ads: translate( 'Ads' ),
+			subscribers: translate( 'Subscribers' ),
+			posts: translate( 'Posts & pages' ),
+			authors: translate( 'Authors' ),
+			annualstats: translate( 'Annual insights' ),
+			postDetails: null,
+		} ),
+		[]
+	);
+
 	const [ lastScreen, setLastScreen ] = useState< {
 		screen: string;
 		queryParams: QueryArgs;
@@ -137,7 +140,7 @@ export const recordCurrentScreen = (
 	reset: boolean = false
 ): void => {
 	try {
-		if ( ! screen || ! ( screen in localizedTabNames ) ) {
+		if ( ! screen || ! ( screen in possibleBackLinks ) ) {
 			return;
 		}
 

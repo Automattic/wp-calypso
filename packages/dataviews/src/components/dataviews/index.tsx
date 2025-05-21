@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import type { ReactNode } from 'react';
+import type { ReactNode, ComponentProps, ReactElement } from 'react';
 
 /**
  * WordPress dependencies
@@ -50,6 +50,11 @@ type DataViewsProps< Item > = {
 	selection?: string[];
 	onChangeSelection?: ( items: string[] ) => void;
 	onClickItem?: ( item: Item ) => void;
+	renderItemLink?: (
+		props: {
+			item: Item;
+		} & ComponentProps< 'a' >
+	) => ReactElement;
 	isItemClickable?: ( item: Item ) => boolean;
 	header?: ReactNode;
 	getItemLevel?: ( item: Item ) => number;
@@ -123,6 +128,7 @@ function DataViews< Item >( {
 	selection: selectionProperty,
 	onChangeSelection,
 	onClickItem,
+	renderItemLink,
 	isItemClickable = defaultIsItemClickable,
 	header,
 	children,
@@ -182,6 +188,7 @@ function DataViews< Item >( {
 				getItemLevel,
 				isItemClickable,
 				onClickItem,
+				renderItemLink,
 				containerWidth,
 				containerRef,
 				defaultLayouts,
@@ -190,7 +197,10 @@ function DataViews< Item >( {
 				setIsShowingFilter,
 			} }
 		>
-			<div className="dataviews-wrapper" ref={ useMergeRefs( [ containerRef, resizeObserverRef ] ) }>
+			<div
+				className="dataviews-wrapper"
+				ref={ useMergeRefs( [ containerRef, resizeObserverRef ] ) }
+			>
 				{ children ?? (
 					<DefaultUI
 						header={ header }

@@ -30,6 +30,7 @@ export default function DataViewsLayout() {
 		setOpenedFilter,
 		onClickItem,
 		isItemClickable,
+		renderItemLink,
 	} = useContext( DataViewsContext );
 
 	const ViewComponent = VIEW_LAYOUTS.find( ( v ) => v.type === view.type )
@@ -48,6 +49,7 @@ export default function DataViewsLayout() {
 			selection={ selection }
 			setOpenedFilter={ setOpenedFilter }
 			onClickItem={ onClickItem }
+			renderItemLink={ renderItemLink }
 			isItemClickable={ isItemClickable }
 			view={ view }
 		/>

@@ -1360,8 +1360,7 @@ class MagicLogin extends Component {
 			! this.props.isFromAutomatticForAgenciesPlugin &&
 			! this.props.isJetpackLogin;
 
-		// If this is part of the Jetpack login flow and the `jetpack/magic-link-signup` feature
-		// flag is enabled, some steps will display a different UI
+		// If this is part of the Jetpack login flow, some steps will display a different UI
 		const requestLoginEmailFormProps = {
 			...( this.props.isJetpackLogin ? { flow: 'jetpack' } : {} ),
 			createAccountForNewUser: true,
