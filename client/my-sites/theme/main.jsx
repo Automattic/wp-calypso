@@ -1255,15 +1255,14 @@ class ThemeSheet extends Component {
 	}
 }
 
-const withSiteGlobalStylesStatus = createHigherOrderComponent(
-	( Wrapped ) => ( props ) => {
+const withSiteGlobalStylesStatus = createHigherOrderComponent( ( Wrapped ) => {
+	return function WithSiteGlobalStylesStatus( props ) {
 		const { siteId } = props;
 		const { shouldLimitGlobalStyles } = useSiteGlobalStylesStatus( siteId );
 
 		return <Wrapped { ...props } shouldLimitGlobalStyles={ shouldLimitGlobalStyles } />;
-	},
-	'withSiteGlobalStylesStatus'
-);
+	};
+}, 'WithSiteGlobalStylesStatus' );
 
 const ConnectedThemeSheet = connectOptions( ThemeSheet );
 
