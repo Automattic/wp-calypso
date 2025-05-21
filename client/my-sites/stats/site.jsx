@@ -915,11 +915,10 @@ const StatsSite = ( props ) => {
 	); // Track the last viewed tab.
 
 	useEffect( () => {
-		const query = context.query;
 		recordCurrentScreen(
 			'traffic',
 			{
-				queryParams: query,
+				queryParams: context.query,
 				period: periodData?.period,
 			},
 			true
