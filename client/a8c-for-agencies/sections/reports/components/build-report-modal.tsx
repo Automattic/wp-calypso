@@ -7,11 +7,11 @@ import {
 	TextControl,
 	DateTimePicker,
 } from '@wordpress/components';
-import { useState } from '@wordpress/element';
+import { useState, useEffect, useRef } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { Dispatch, SetStateAction } from 'react';
 
-import '../style.scss';
+import './style.scss';
 
 // Mock data - replace with actual data fetching as needed
 const MOCK_TIMEFRAMES = [
@@ -48,6 +48,7 @@ type BuildReportModalProps = {
 export default function BuildReportModal( { isOpen, onClose }: BuildReportModalProps ) {
 	const translate = useTranslate();
 	const [ currentStep, setCurrentStep ] = useState( 1 );
+	const teammateEmailsRef = useRef< HTMLDivElement >( null );
 
 	// Step 1: Setup State
 	const [ selectedSite, setSelectedSite ] = useState( MOCK_SITES[ 0 ].value );
@@ -56,6 +57,7 @@ export default function BuildReportModal( { isOpen, onClose }: BuildReportModalP
 	const [ clientName, setClientName ] = useState( '' );
 	const [ customIntroText, setCustomIntroText ] = useState( '' );
 	const [ sendMeACopy, setSendMeACopy ] = useState( false );
+	const [ teammateEmails, setTeammateEmails ] = useState( '' );
 
 	// Step 2: Pick Content State
 	const [ statsCheckedItems, setStatsCheckedItems ] = useState< CheckedItemsState >(
@@ -106,6 +108,15 @@ export default function BuildReportModal( { isOpen, onClose }: BuildReportModalP
 		}
 	};
 
+	// Auto-scroll to teammate emails field when checkbox is checked
+	useEffect( () => {
+		if ( sendMeACopy && teammateEmailsRef.current ) {
+			setTimeout( () => {
+				teammateEmailsRef.current?.scrollIntoView( { behavior: 'smooth', block: 'center' } );
+			}, 100 ); // Small delay to ensure field is rendered
+		}
+	}, [ sendMeACopy ] );
+
 	const renderStepContent = () => {
 		switch ( currentStep ) {
 			case 1:
@@ -148,11 +159,26 @@ export default function BuildReportModal( { isOpen, onClose }: BuildReportModalP
 							className="a4a-reports-modal__form-field"
 						/>
 						<CheckboxControl
-							label={ translate( 'Send me a copy' ) }
+							label={ translate( 'Email a copy to agency teammates' ) }
 							checked={ sendMeACopy }
 							onChange={ setSendMeACopy }
 							className="a4a-reports-modal__form-field"
 						/>
+						{ sendMeACopy && (
+							<div ref={ teammateEmailsRef }>
+								<TextControl
+									label={ translate( 'Teammate emails' ) }
+									value={ teammateEmails }
+									onChange={ setTeammateEmails }
+									type="text"
+									help={ translate(
+										'Enter the email addresses of your teammates separated by commas'
+									) }
+									placeholder={ translate( 'colleague1@example.com, colleague2@example.com' ) }
+									className="a4a-reports-modal__form-field"
+								/>
+							</div>
+						) }
 					</>
 				);
 			case 2:
