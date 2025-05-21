@@ -3,17 +3,14 @@ import page from '@automattic/calypso-router';
 import { translate } from 'i18n-calypso';
 import { Store, UnknownAction } from 'redux';
 import { READER_ONBOARDING_TRACKS_EVENT_PREFIX } from 'calypso/reader/onboarding/constants';
-import {
-	USER_SETTINGS_SAVE_SUCCESS,
-	GRAVATAR_UPLOAD_REQUEST_SUCCESS,
-} from 'calypso/state/action-types';
+import { USER_SETTINGS_SAVE_SUCCESS, GRAVATAR_DETAILS_RECEIVE } from 'calypso/state/action-types';
 import { successNotice } from 'calypso/state/notices/actions';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import { isProfileComplete } from './utils';
 
 function dispatchNotice( dispatch: Store[ 'dispatch' ] ) {
 	dispatch(
-		successNotice( translate( 'Settings saved!' ), {
+		successNotice( translate( 'Profile updated!' ), {
 			id: 'reader-profile-complete',
 			button: translate( 'Return to Reader' ),
 			onClick: () => {
@@ -45,10 +42,9 @@ export const dispatchProfileCompleteNotice = ( store: Store, action: UnknownActi
 		}
 	}
 
-	if ( action.type === GRAVATAR_UPLOAD_REQUEST_SUCCESS ) {
+	if ( action.type === GRAVATAR_DETAILS_RECEIVE ) {
 		const updatedSettings = { ...state.userSettings.settings };
-		const gravatarDetails = { ...state.gravatarStatus, gravatarDetails: { has_gravatar: true } };
-		if ( isProfileComplete( updatedSettings, gravatarDetails ) ) {
+		if ( isProfileComplete( updatedSettings, state.gravatarStatus ) ) {
 			dispatchNotice( dispatch );
 		}
 	}
