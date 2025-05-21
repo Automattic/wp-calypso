@@ -20,6 +20,7 @@ import {
 	OPERATOR_IS_NONE,
 	OPERATOR_IS_ALL,
 	OPERATOR_IS_NOT_ALL,
+	OPERATOR_BETWEEN,
 } from '../constants';
 
 function sort( a: any, b: any, direction: SortDirection ) {
@@ -64,6 +65,7 @@ export default {
 			OPERATOR_GREATER_THAN,
 			OPERATOR_LESS_THAN_OR_EQUAL,
 			OPERATOR_GREATER_THAN_OR_EQUAL,
+			OPERATOR_BETWEEN,
 		],
 		validOperators: [
 			// Single-selection
@@ -73,6 +75,7 @@ export default {
 			OPERATOR_GREATER_THAN,
 			OPERATOR_LESS_THAN_OR_EQUAL,
 			OPERATOR_GREATER_THAN_OR_EQUAL,
+			OPERATOR_BETWEEN,
 			// Multiple-selection
 			OPERATOR_IS_ANY,
 			OPERATOR_IS_NONE,

@@ -39,7 +39,8 @@ function normalizeSearchInput( input = '' ) {
 }
 
 const EMPTY_ARRAY: [] = [];
-const getCurrentValue = (
+
+export const getCurrentValue = (
 	filterDefinition: NormalizedFilter,
 	currentFilter?: Filter
 ) => {

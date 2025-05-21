@@ -17,6 +17,7 @@ import type {
 import { getControl } from './dataform-controls';
 import {
 	ALL_OPERATORS,
+	OPERATOR_BETWEEN,
 	OPERATOR_IS_ANY,
 	OPERATOR_IS_NONE,
 	SINGLE_SELECTION_OPERATORS,
@@ -65,12 +66,15 @@ function getFilterBy< Item >(
 
 		// Do not allow mixing single & multiselection operators.
 		// Remove multiselection operators if any of the single selection ones is present.
+		// The 'Between' operator is unique as it can be combined with single selection operators.
 		const hasSingleSelectionOperator = operators.some( ( operator ) =>
 			SINGLE_SELECTION_OPERATORS.includes( operator )
 		);
-		if ( hasSingleSelectionOperator ) {
+		if ( hasSingleSelectionOperator || operators.includes( OPERATOR_BETWEEN ) ) {
 			operators = operators.filter( ( operator ) =>
-				SINGLE_SELECTION_OPERATORS.includes( operator )
+				[ ...SINGLE_SELECTION_OPERATORS, OPERATOR_BETWEEN ].includes(
+					operator
+				)
 			);
 		}
 

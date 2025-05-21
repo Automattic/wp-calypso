@@ -83,7 +83,8 @@ export type Operator =
 	| 'afterInc'
 	| 'contains'
 	| 'notContains'
-	| 'startsWith';
+	| 'startsWith'
+	| 'between';
 
 export type FieldType =
 	| 'text'

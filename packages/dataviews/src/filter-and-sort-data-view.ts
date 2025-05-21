@@ -24,6 +24,7 @@ import {
 	OPERATOR_CONTAINS,
 	OPERATOR_NOT_CONTAINS,
 	OPERATOR_STARTS_WITH,
+	OPERATOR_BETWEEN,
 } from './constants';
 import { normalizeFields } from './normalize-fields';
 import type { Field, View } from './types';
@@ -264,6 +265,27 @@ export function filterSortAndPaginate< Item >(
 							field.getValue( { item } )
 						);
 						return fieldValue >= filterValue;
+					} );
+				} else if (
+					filter.operator === OPERATOR_BETWEEN &&
+					Array.isArray( filter.value ) &&
+					filter.value.length === 2 &&
+					filter.value[ 0 ] !== undefined &&
+					filter.value[ 1 ] !== undefined
+				) {
+					filteredData = filteredData.filter( ( item ) => {
+						const fieldValue = field.getValue( { item } );
+						if (
+							typeof fieldValue === 'number' ||
+							fieldValue instanceof Date ||
+							typeof fieldValue === 'string'
+						) {
+							return (
+								fieldValue >= filter.value[ 0 ] &&
+								fieldValue <= filter.value[ 1 ]
+							);
+						}
+						return false;
 					} );
 				}
 			}
