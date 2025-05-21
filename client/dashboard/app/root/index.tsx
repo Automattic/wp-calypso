@@ -6,6 +6,7 @@ import NotFound from '../404';
 import CommandPalette from '../command-palette';
 import { useAppContext } from '../context';
 import Header from '../header';
+import Snackbars from '../snackbars';
 import './style.scss';
 
 function Root() {
@@ -29,6 +30,7 @@ function Root() {
 				</CatchNotFound>
 			</main>
 			<CommandPalette />
+			<Snackbars />
 		</div>
 	);
 }

@@ -68,7 +68,6 @@
 		"jetpack/features-section/atomic": true,
 		"jetpack/features-section/jetpack": true,
 		"jetpack/features-section/simple": true,
-		"jetpack/magic-link-signup": true,
 		"jetpack/manage-simple-sites": false,
 		"jetpack/onboarding-user-connection-redesign": true,
 		"jetpack/pricing-add-boost-social": true,

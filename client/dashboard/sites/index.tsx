@@ -1,7 +1,7 @@
 import { DataViews, filterSortAndPaginate } from '@automattic/dataviews';
 import { useQuery } from '@tanstack/react-query';
-import { useNavigate } from '@tanstack/react-router';
-import { Button, ExternalLink, Dropdown } from '@wordpress/components';
+import { useNavigate, Link } from '@tanstack/react-router';
+import { Button, Dropdown } from '@wordpress/components';
 import { useResizeObserver } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { Icon, check } from '@wordpress/icons';
@@ -43,11 +43,7 @@ const DEFAULT_FIELDS: Field< Site >[] = [
 		id: 'URL',
 		label: __( 'URL' ),
 		enableGlobalSearch: true,
-		render: ( { item }: { item: Site } ) => (
-			<ExternalLink href={ item.URL } style={ { overflowWrap: 'anywhere' } }>
-				{ new URL( item.URL ).hostname }
-			</ExternalLink>
-		),
+		render: ( { item }: { item: Site } ) => new URL( item.URL ).hostname,
 	},
 	{
 		id: 'icon.ico',
@@ -215,10 +211,6 @@ export default function Sites() {
 
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate( sites, view, fields );
 
-	const onClickItem = ( item: Site ) => {
-		navigate( { to: `/sites/${ item.slug }` } );
-	};
-
 	return (
 		<>
 			<PageLayout
@@ -246,7 +238,7 @@ export default function Sites() {
 				}
 			>
 				<DataViewsCard>
-					<DataViews
+					<DataViews< Site >
 						getItemId={ ( item ) => item.ID }
 						data={ filteredData }
 						fields={ fields }
@@ -267,7 +259,9 @@ export default function Sites() {
 								},
 							} );
 						} }
-						onClickItem={ onClickItem }
+						renderItemLink={ ( { item, ...props }: { item: Site } ) => (
+							<Link to={ `/sites/${ item.slug }` } { ...props } />
+						) }
 						defaultLayouts={ DEFAULT_LAYOUTS }
 						paginationInfo={ paginationInfo }
 					/>

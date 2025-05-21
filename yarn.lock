@@ -14401,6 +14401,7 @@ __metadata:
     "@wordpress/i18n": "npm:^5.23.0"
     "@wordpress/icons": "npm:^10.23.0"
     "@wordpress/is-shallow-equal": "npm:^5.23.0"
+    "@wordpress/notices": "npm:5.23.0"
     "@wordpress/private-apis": "npm:^1.23.0"
     "@wordpress/react-i18n": "npm:^4.23.0"
     "@wordpress/viewport": "npm:^6.23.0"
