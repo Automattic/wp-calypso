@@ -30,6 +30,7 @@ class StatsDownloadCsv extends Component {
 		siteId: PropTypes.number,
 		isMobile: PropTypes.bool,
 		hideIfNoData: PropTypes.bool,
+		rowModifierFn: PropTypes.func,
 	};
 
 	processExportData = ( data ) => {
@@ -137,11 +138,11 @@ const connectComponent = connect(
 			return { data: ownProps.data, siteSlug, siteId, isLoading: false };
 		}
 
-		const { statType, query } = ownProps;
+		const { statType, query, rowModifierFn } = ownProps;
 		const data =
 			statType === 'statsVideoPlays'
 				? getSiteStatsNormalizedData( state, siteId, statType, query )
-				: getSiteStatsCSVData( state, siteId, statType, query );
+				: getSiteStatsCSVData( state, siteId, statType, query, rowModifierFn );
 		const isLoading = isRequestingSiteStatsForQuery( state, siteId, statType, query );
 
 		return { data, siteSlug, siteId, isLoading };
