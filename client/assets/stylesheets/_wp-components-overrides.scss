@@ -83,6 +83,18 @@
 	}
 }
 
+/* Woo */
+.woo.is-woo-passwordless {
+	.components-button {
+		--color-accent: var(--woo-purple-40);
+		--color-accent-60: var(--woo-purple-60);
+
+		&:focus:not(:disabled) {
+			--color-accent: var(--woo-purple-60);
+		}
+	}
+}
+
 /* @wordpress/components ButtonGroup overrides */
 .components-button-group {
 	.components-button {

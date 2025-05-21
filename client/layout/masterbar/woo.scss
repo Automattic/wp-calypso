@@ -1292,19 +1292,12 @@ $breakpoint-mobile: 660px;
 		}
 
 		.components-button {
-			--color-accent: var(--woo-purple-40);
-			--color-accent-60: var(--woo-purple-60);
-
 			&.is-primary,
 			&.social-buttons__button {
 				border-radius: 8px; /* stylelint-disable-line scales/radii */
 				font-size: 1rem;
 				font-weight: 500;
 				height: 48px;
-
-				&:focus:not(:disabled) {
-					--color-accent: var(--woo-purple-60);
-				}
 			}
 
 			&.social-buttons__button {
