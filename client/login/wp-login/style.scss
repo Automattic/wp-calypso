@@ -19,7 +19,7 @@ $image-height: 47px;
 		padding-bottom: $image-height;
 		min-height: calc(100% - #{$image-height});
 	}
-	
+
 	.layout__content {
 		position: static;
 	}
@@ -592,11 +592,6 @@ $image-height: 47px;
 				background-color: darken(#2404eb, 10%);
 			}
 		}
-
-		.components-button {
-			--color-accent: var(--color-wp-job-manager);
-			--color-accent-60: color-mix(in srgb, var(--color-wp-job-manager), #000 10%);
-		}
 	}
 
 	.wp-login__main .locale-suggestions .locale-suggestions__notice.is-light {
@@ -804,11 +799,6 @@ $image-height: 47px;
 		padding: 0;
 		width: fit-content;
 		clip-path: unset;
-	}
-
-	.components-button {
-		--color-accent: var(--color-gravatar);
-		--color-accent-60: color-mix(in srgb, var(--color-gravatar), #000 13%);
 	}
 
 	.social-buttons__button {

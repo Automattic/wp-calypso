@@ -48,6 +48,21 @@
 	}
 }
 
+/* Gravatar & WP Job Manager */
+.layout.is-section-login.is-grav-powered-client {
+	.components-button {
+		--color-accent: var(--color-gravatar);
+		--color-accent-60: color-mix(in srgb, var(--color-gravatar), #000 13%);
+	}
+
+	&.is-wp-job-manager {
+		.components-button {
+			--color-accent: var(--color-wp-job-manager);
+			--color-accent-60: color-mix(in srgb, var(--color-wp-job-manager), #000 10%);
+		}
+	}
+}
+
 /* @wordpress/components ButtonGroup overrides */
 .components-button-group {
 	.components-button {
