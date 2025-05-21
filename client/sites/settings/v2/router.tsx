@@ -116,6 +116,13 @@ const syncMemoryRouterToBrowserHistory = ( router: Router< typeof routeTree > ) 
 
 	window.addEventListener( 'popstate', () => {
 		const currentPath = `${ window.location.pathname }${ window.location.search }`;
+		const basepath = router.options.basepath;
+
+		// Avoid handling routes outside of the basepath.
+		if ( basepath && ! currentPath.startsWith( basepath ) ) {
+			return;
+		}
+
 		if ( currentPath !== lastPath ) {
 			router.navigate( { to: currentPath, replace: true } );
 			lastPath = currentPath;
