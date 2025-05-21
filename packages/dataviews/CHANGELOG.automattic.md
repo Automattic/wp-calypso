@@ -6,7 +6,7 @@
 - Add a story for each FieldTypeDefinition.
 - Add new filter operators: `before`, `after`, `beforeInc`, and `afterInc` for date fields.
 - Adjust the spacing of the `DataForm` based on the type.
-
+- Add new filter operator: `between`.
 
 ## 0.2.1
 
