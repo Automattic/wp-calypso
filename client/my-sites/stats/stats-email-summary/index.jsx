@@ -92,6 +92,7 @@ const StatsEmailSummary = ( { period, query, context } ) => {
 			path="emails"
 			query={ query }
 			period={ period }
+			headers={ [ 'title', 'opens_rate', 'unique_clicks', 'link' ] }
 			rowModifierFn={ ( row, data ) => {
 				if ( ! row?.length ) {
 					return row;
