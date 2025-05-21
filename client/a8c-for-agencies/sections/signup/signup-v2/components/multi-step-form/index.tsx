@@ -1,3 +1,4 @@
+import page from '@automattic/calypso-router';
 import { APIError } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useState, useCallback } from 'react';
@@ -165,10 +166,10 @@ const MultiStepForm = ( {
 		[ formData, signupWithMagicLinkFlow, submitSurvey ]
 	);
 
-	const clearDataAndRefresh = () => {
+	const closeSurvey = () => {
 		setFormData( {} );
 		setBlueprintRequested( false );
-		window.location.reload();
+		page( 'https://automattic.com/for-agencies/' );
 	};
 
 	const onCreateAgency = useCallback(
@@ -233,7 +234,7 @@ const MultiStepForm = ( {
 			case 6:
 				return (
 					<FinishSignupSurvey
-						onContinue={ clearDataAndRefresh }
+						onContinue={ closeSurvey }
 						blueprintRequested={ blueprintRequested }
 					/>
 				);
