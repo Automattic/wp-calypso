@@ -245,6 +245,8 @@ export function magicLoginUse( context, next ) {
 
 	const PrimaryComponent = getHandleEmailedLinkFormComponent( flow );
 
+	const isJetpack = context.path.includes( '/jetpack' );
+
 	context.primary = (
 		<PrimaryComponent
 			clientId={ client_id }
@@ -253,6 +255,7 @@ export function magicLoginUse( context, next ) {
 			redirectTo={ redirect_to }
 			transition={ transition }
 			activate={ activate }
+			isJetpack={ isJetpack }
 		/>
 	);
 
