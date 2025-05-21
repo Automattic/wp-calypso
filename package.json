@@ -210,7 +210,7 @@
 		"@wordpress/viewport": "^6.23.0",
 		"@wp-playground/client": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.37/@wp-playground-client-1.0.37.tar.gz",
 		"animate.css": "^4.1.1",
-		"browserslist": "^4.24.4",
+		"browserslist": "^4.24.5",
 		"calypso": "workspace:^",
 		"cmdk": "^0.2.1",
 		"d3-time-format": "^4.1.0",
