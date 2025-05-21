@@ -74,7 +74,7 @@ export default function PersonalizationForm( {
 		servicesOffered: initialFormData.servicesOffered || [],
 		productsOffered: initialFormData.productsOffered || [],
 		productsToOffer: initialFormData.productsToOffer || [],
-		plansToOfferProducts: !! initialFormData.plansToOfferProducts,
+		plansToOfferProducts: initialFormData.plansToOfferProducts,
 	} );
 
 	const servicesOfferedOptions = useMemo(
@@ -152,7 +152,10 @@ export default function PersonalizationForm( {
 				! prev.productsOffered?.includes( 'None' ) && products.value.includes( 'None' ) // If 'None' is selected, we need to clear other value.
 					? [ 'None' ]
 					: products.value.filter( ( product ) => product !== 'None' ),
-			plansToOfferProducts: hasAllProductsOffered ? false : prev.plansToOfferProducts, // If all products are offered, then there is no more products to be offered
+			plansToOfferProducts:
+				hasAllProductsOffered || productsOfferedOptions.length === 0
+					? undefined
+					: prev.plansToOfferProducts, // If all products are offered, then there is no more products to be offered
 			productsToOffer: prev.productsToOffer?.filter(
 				( product ) => ! products.value.includes( product )
 			),
@@ -168,10 +171,11 @@ export default function PersonalizationForm( {
 		updateValidationError( { productsToOffer: undefined } );
 	};
 
-	const handleSetPlansToOfferProducts = ( plansToOfferProducts: boolean ) => {
+	const handleSetPlansToOfferProducts = ( plansToOfferProducts?: 'Yes' | 'No' ) => {
 		setFormData( ( prev ) => ( {
 			...prev,
 			plansToOfferProducts,
+			productsToOffer: plansToOfferProducts === 'Yes' ? prev.productsToOffer : [],
 		} ) );
 	};
 
@@ -337,19 +341,19 @@ export default function PersonalizationForm( {
 									<FormField label={ translate( 'Do you plan to offer more products?' ) }>
 										<PersonalizationFormRadio
 											label={ translate( 'Yes' ) }
-											checked={ formData.plansToOfferProducts }
-											onChange={ () => handleSetPlansToOfferProducts( true ) }
+											checked={ formData.plansToOfferProducts === 'Yes' }
+											onChange={ () => handleSetPlansToOfferProducts( 'Yes' ) }
 										/>
 
 										<PersonalizationFormRadio
 											label={ translate( 'No' ) }
-											checked={ ! formData.plansToOfferProducts }
-											onChange={ () => handleSetPlansToOfferProducts( false ) }
+											checked={ formData.plansToOfferProducts === 'No' }
+											onChange={ () => handleSetPlansToOfferProducts( 'No' ) }
 										/>
 									</FormField>
 								</FormFieldset>
 
-								{ formData.plansToOfferProducts && (
+								{ formData.plansToOfferProducts === 'Yes' && (
 									<FormFieldset className="signup-personalization-form__checkbox">
 										<FormField
 											error={ validationError.productsToOffer }
