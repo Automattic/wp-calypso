@@ -9,7 +9,7 @@ import { useCallback } from '@wordpress/element';
  */
 import type { DataFormControlProps } from '../types';
 
-export default function Text< Item >( {
+export default function Email< Item >( {
 	data,
 	field,
 	onChange,
