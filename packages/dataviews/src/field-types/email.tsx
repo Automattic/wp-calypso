@@ -46,7 +46,7 @@ const operators: Operator[] = [ OPERATOR_IS_ANY, OPERATOR_IS_NONE ];
 export default {
 	sort,
 	isValid,
-	Edit: 'text',
+	Edit: 'email',
 	render: ( { item, field }: DataViewRenderFieldProps< any > ) => {
 		return field.elements
 			? renderFromElements( { item, field } )
