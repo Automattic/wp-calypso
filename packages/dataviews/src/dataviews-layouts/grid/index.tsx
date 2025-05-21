@@ -2,6 +2,7 @@
  * External dependencies
  */
 import clsx from 'clsx';
+import type { ComponentProps, ReactElement } from 'react';
 
 /**
  * WordPress dependencies
@@ -35,7 +36,7 @@ import type {
 	ViewGridProps,
 } from '../../types';
 import type { SetSelection } from '../../private-types';
-import getClickableItemProps from '../utils/get-clickable-item-props';
+import { ItemClickWrapper } from '../utils/item-click-wrapper';
 import { useUpdatedPreviewSizeOnViewportChange } from './preview-size-picker';
 const { Badge } = unlock( componentsPrivateApis );
 
@@ -45,6 +46,11 @@ interface GridItemProps< Item > {
 	onChangeSelection: SetSelection;
 	getItemId: ( item: Item ) => string;
 	onClickItem?: ( item: Item ) => void;
+	renderItemLink?: (
+		props: {
+			item: Item;
+		} & ComponentProps< 'a' >
+	) => ReactElement;
 	isItemClickable: ( item: Item ) => boolean;
 	item: Item;
 	actions: Action< Item >[];
@@ -62,6 +68,7 @@ function GridItem< Item >( {
 	onChangeSelection,
 	onClickItem,
 	isItemClickable,
+	renderItemLink,
 	getItemId,
 	item,
 	actions,
@@ -84,20 +91,6 @@ function GridItem< Item >( {
 		showTitle && titleField?.render ? (
 			<titleField.render item={ item } field={ titleField } />
 		) : null;
-
-	const clickableMediaItemProps = getClickableItemProps( {
-		item,
-		isItemClickable,
-		onClickItem,
-		className: 'dataviews-view-grid__media',
-	} );
-
-	const clickableTitleItemProps = getClickableItemProps( {
-		item,
-		isItemClickable,
-		onClickItem,
-		className: 'dataviews-view-grid__title-field dataviews-title-field',
-	} );
 
 	let mediaA11yProps;
 	let titleA11yProps;
@@ -139,9 +132,16 @@ function GridItem< Item >( {
 			} }
 		>
 			{ showMedia && renderedMediaField && (
-				<div { ...clickableMediaItemProps } { ...mediaA11yProps }>
+				<ItemClickWrapper
+					item={ item }
+					isItemClickable={ isItemClickable }
+					onClickItem={ onClickItem }
+					renderItemLink={ renderItemLink }
+					className="dataviews-view-grid__media"
+					{ ...mediaA11yProps }
+				>
 					{ renderedMediaField }
-				</div>
+				</ItemClickWrapper>
 			) }
 			{ hasBulkActions && showMedia && renderedMediaField && (
 				<DataViewsSelectionCheckbox
@@ -157,9 +157,16 @@ function GridItem< Item >( {
 				justify="space-between"
 				className="dataviews-view-grid__title-actions"
 			>
-				<div { ...clickableTitleItemProps } { ...titleA11yProps }>
+				<ItemClickWrapper
+					item={ item }
+					isItemClickable={ isItemClickable }
+					onClickItem={ onClickItem }
+					renderItemLink={ renderItemLink }
+					className="dataviews-view-grid__title-field dataviews-title-field"
+					{ ...titleA11yProps }
+				>
 					{ renderedTitleField }
-				</div>
+				</ItemClickWrapper>
 				{ !! actions?.length && (
 					<ItemActions item={ item } actions={ actions } isCompact />
 				) }
@@ -234,7 +241,7 @@ function GridItem< Item >( {
 	);
 }
 
-export default function ViewGrid< Item >( {
+function ViewGrid< Item >( {
 	actions,
 	data,
 	fields,
@@ -243,6 +250,7 @@ export default function ViewGrid< Item >( {
 	onChangeSelection,
 	onClickItem,
 	isItemClickable,
+	renderItemLink,
 	selection,
 	view,
 }: ViewGridProps< Item > ) {
@@ -304,6 +312,7 @@ export default function ViewGrid< Item >( {
 								onChangeSelection={ onChangeSelection }
 								onClickItem={ onClickItem }
 								isItemClickable={ isItemClickable }
+								renderItemLink={ renderItemLink }
 								getItemId={ getItemId }
 								item={ item }
 								actions={ actions }
@@ -331,3 +340,5 @@ export default function ViewGrid< Item >( {
 		</>
 	);
 }
+
+export default ViewGrid;

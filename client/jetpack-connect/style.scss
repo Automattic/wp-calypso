@@ -937,21 +937,6 @@ $colophon-height: 50px;
 			}
 		}
 
-		.social-buttons__button {
-			border: 1px solid var(--color-accent-dark);
-			color: var(--color-accent-dark);
-			box-shadow: none;
-			max-width: 310px;
-			height: 48px;
-			margin-left: auto;
-			margin-right: auto;
-
-			&.disabled {
-				border-color: var(--studio-gray-30);
-				color: var(--studio-gray-30);
-			}
-		}
-
 		.card {
 			padding: 0;
 			box-shadow: none;
@@ -1094,19 +1079,6 @@ $colophon-height: 50px;
 			text-decoration: underline;
 			color: var(--color-neutral-60);
 			font-size: $font-body-small;
-		}
-
-		.auth-form__social,
-		.login__form-social {
-			.social-buttons__button {
-				border-color: var(--studio-woocommerce-purple);
-				color: var(--studio-woocommerce-purple);
-
-				&.disabled {
-					border-color: var(--studio-gray-30);
-					color: var(--studio-gray-30);
-				}
-			}
 		}
 
 		.logged-out-form__footer,

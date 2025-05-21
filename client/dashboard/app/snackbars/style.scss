@@ -1,0 +1,11 @@
+@import "@wordpress/base-styles/variables";
+
+.dashboard-snackbars {
+	position: fixed;
+	left: 0;
+	bottom: 0;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	margin: $grid-unit-20;
+}

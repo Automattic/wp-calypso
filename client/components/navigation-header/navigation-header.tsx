@@ -47,6 +47,7 @@ const NavigationHeader: React.FC< HeaderProps > = ( {
 		<button
 			className="calypso-navigation-header__back-link"
 			type="button"
+			aria-label={ backLinkProps?.text || translate( 'Back' ) }
 			onClick={ () => {
 				popCurrentScreenFromHistory();
 

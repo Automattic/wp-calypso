@@ -1,4 +1,5 @@
 import wpcom from 'calypso/lib/wp';
+import { SITE_FIELDS } from './constants';
 import type {
 	Domain,
 	Email,
@@ -30,25 +31,7 @@ export const updateProfile = async ( data: Partial< Profile > ) => {
 	return await wpcom.req.post( '/me/settings', data );
 };
 
-const SITE_FIELDS = [
-	'ID',
-	'slug',
-	'URL',
-	'name',
-	'icon',
-	'subscribers_count',
-	'plan',
-	'active_modules',
-	'is_a8c',
-	'is_deleted',
-	'is_coming_soon',
-	'is_private',
-	'launch_status',
-	'site_migration',
-	'options',
-	'jetpack',
-	'jetpack_modules',
-].join( ',' );
+const JOINED_SITE_FIELDS = SITE_FIELDS.join( ',' );
 
 export const fetchSites = async (): Promise< Site[] > => {
 	const { sites } = await wpcom.req.get(
@@ -60,14 +43,17 @@ export const fetchSites = async (): Promise< Site[] > => {
 			site_visibility: 'all',
 			include_domain_only: 'true',
 			site_activity: 'active',
-			fields: SITE_FIELDS,
+			fields: JOINED_SITE_FIELDS,
 		}
 	);
 	return sites;
 };
 
 export const fetchSite = async ( siteIdOrSlug: string ): Promise< Site > => {
-	return await wpcom.req.get( { path: `/sites/${ siteIdOrSlug }` }, { fields: SITE_FIELDS } );
+	return await wpcom.req.get(
+		{ path: `/sites/${ siteIdOrSlug }` },
+		{ fields: JOINED_SITE_FIELDS }
+	);
 };
 
 export const fetchSiteMediaStorage = async ( siteIdOrSlug: string ): Promise< MediaStorage > => {
@@ -350,6 +336,13 @@ function toRawSiteSettings( settings: Partial< SiteSettings > ): any {
 	}
 	return rawSettings;
 }
+
+export const restoreSitePlanSoftware = async ( siteIdOrSlug: string ) => {
+	return wpcom.req.post( {
+		path: `/sites/${ siteIdOrSlug }/hosting/restore-plan-software`,
+		apiNamespace: 'wpcom/v2',
+	} );
+};
 
 export const fetchBasicMetrics = async ( url: string ): Promise< BasicMetricsData > => {
 	return wpcom.req.get(

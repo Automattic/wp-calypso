@@ -153,7 +153,7 @@ $breakpoint-mobile: 660px;
 		letter-spacing: 0;
 	}
 
-	a:not(.social-buttons__button),
+	a:not(.components-button),
 	.wp-login__links a,
 	.wp-login__links button,
 	.button,
@@ -328,6 +328,7 @@ $breakpoint-mobile: 660px;
 
 		@media (max-width: $break-mobile) {
 			display: flex;
+			padding-inline: 24px;
 		}
 
 		.masterbar__login-back-link {
@@ -652,12 +653,6 @@ $breakpoint-mobile: 660px;
 		.continue-as-user__not-you {
 			margin-bottom: 32px;
 			position: initial;
-		}
-
-		.continue-as-user__change-user-link {
-			color: $gray-60;
-			font-weight: 400;
-			text-decoration: underline;
 		}
 	}
 
@@ -1675,7 +1670,7 @@ $breakpoint-mobile: 660px;
 				align-self: stretch;
 				border-radius: 8px; // stylelint-disable-line scales/radii
 				border: 1px solid #dcdcde;
-				height: 221px;
+				width: 100%;
 				box-sizing: border-box;
 				padding: 32px 24px 16px 24px;
 			}
@@ -1728,16 +1723,8 @@ $breakpoint-mobile: 660px;
 			}
 
 			.continue-as-user__change-user-link {
-				text-decoration: none;
-				color: var(--woo-purple-50);
 				font-size: 0.875rem;
-				font-style: normal;
 				font-weight: 500;
-				line-height: 21px;
-
-				&:hover {
-					color: var(--woo-purple-70);
-				}
 			}
 
 			.continue-as-user__continue-button {
@@ -2311,11 +2298,6 @@ $breakpoint-mobile: 660px;
 	.login__header-subtitle a {
 		@include link-woo;
 		font-weight: 500;
-	}
-
-	.continue-as-user__change-user-link {
-		@include button-tertiary;
-		@include button-size-small;
 	}
 
 	.magic-login__footer a {

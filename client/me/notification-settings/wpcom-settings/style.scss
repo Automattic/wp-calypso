@@ -1,3 +1,12 @@
 .wpcom-settings__notification-settings-emailcategory {
 	margin-bottom: 20px;
 }
+
+.wpcom-settings__notification-settings-emailsection-toggle {
+	margin-bottom: 40px;
+
+	.components-toggle-control__label {
+		font-size: 16px;
+		font-weight: 600;
+	}
+}
