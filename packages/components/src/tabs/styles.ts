@@ -1,6 +1,6 @@
 import * as Ariakit from '@ariakit/react';
 import styled from '@emotion/styled';
-import { Icon } from '@wordpress/components';
+import { Icon } from '../icon';
 import { COLORS, CONFIG } from '../utils';
 import { space } from '../utils/space';
 
