@@ -32,6 +32,7 @@ import AsyncLoad from 'calypso/components/async-load';
 import Banner from 'calypso/components/banner';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryActiveTheme from 'calypso/components/data/query-active-theme';
+import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
 import QueryCanonicalTheme from 'calypso/components/data/query-canonical-theme';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
@@ -1176,6 +1177,7 @@ class ThemeSheet extends Component {
 
 		return (
 			<Main className="theme__sheet">
+				<QueryEligibility siteId={ siteId } />
 				<QueryCanonicalTheme themeId={ this.props.themeId } siteId={ siteId } />
 				<QueryProductsList />
 				<QueryUserPurchases />
