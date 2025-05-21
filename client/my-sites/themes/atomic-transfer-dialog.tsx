@@ -10,7 +10,6 @@ import {
 	getActiveTheme,
 	getCanonicalTheme,
 	isExternallyManagedTheme,
-	shouldShowAtomicTransferDialog,
 } from 'calypso/state/themes/selectors';
 import { isUploadInProgress, getUploadError } from 'calypso/state/themes/upload-theme/selectors';
 import { IAppState } from 'calypso/state/types';
@@ -209,7 +208,6 @@ class AtomicTransferDialog extends Component< AtomicTransferDialogProps > {
 export default connect(
 	( state: IAppState ) => {
 		const siteId = getSelectedSiteId( state );
-		const themeId = getThemeForAtomicTransferDialog( state );
 
 		if ( ! siteId ) {
 			return {};
@@ -218,7 +216,6 @@ export default connect(
 		return {
 			siteId,
 			theme: themeId && getCanonicalTheme( state, siteId, themeId ),
-			showEligibility: shouldShowAtomicTransferDialog( state, themeId ),
 			isMarketplaceProduct: isExternallyManagedTheme( state, themeId ),
 			inProgress: isUploadInProgress( state, siteId ),
 			siteSlug: getSiteSlug( state, siteId ),
