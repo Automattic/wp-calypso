@@ -67,6 +67,7 @@ const sitesRoute = createRoute( {
 const siteRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'sites/$siteSlug',
+	loader: ( { params: { siteSlug } } ) => queryClient.ensureQueryData( siteQuery( siteSlug ) ),
 } ).lazy( () =>
 	import( '../sites/site' ).then( ( d ) =>
 		createLazyRoute( 'site' )( {
@@ -135,10 +136,7 @@ const siteSettingsRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: 'settings',
 	loader: ( { params: { siteSlug } } ) =>
-		Promise.all( [
-			queryClient.ensureQueryData( siteQuery( siteSlug ) ),
-			queryClient.ensureQueryData( siteSettingsQuery( siteSlug ) ),
-		] ),
+		queryClient.ensureQueryData( siteSettingsQuery( siteSlug ) ),
 } ).lazy( () =>
 	import( '../sites/settings' ).then( ( d ) =>
 		createLazyRoute( 'site-settings' )( {
