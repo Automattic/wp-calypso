@@ -2,15 +2,21 @@ import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import Form from 'calypso/a8c-for-agencies/components/form';
 import FormFooter from 'calypso/a8c-for-agencies/components/form/footer';
+import FinishSignupSurveyPlaceHolder from './placeholder';
 
 import './style.scss';
 
 type Props = {
 	onContinue: () => void;
+	isPending?: boolean;
 };
 
-const FinishSignupSurvey: React.FC< Props > = ( { onContinue } ) => {
+const FinishSignupSurvey: React.FC< Props > = ( { onContinue, isPending } ) => {
 	const translate = useTranslate();
+
+	if ( isPending ) {
+		return <FinishSignupSurveyPlaceHolder />;
+	}
 
 	return (
 		<Form

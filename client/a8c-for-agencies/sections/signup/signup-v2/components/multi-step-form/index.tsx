@@ -10,7 +10,7 @@ import A4ALogo, {
 import { useIsDarkMode } from 'calypso/a8c-for-agencies/hooks/use-is-dark-mode';
 import { AgencyDetailsSignupPayload } from 'calypso/a8c-for-agencies/sections/signup/types';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { errorNotice } from 'calypso/state/notices/actions';
 import useCreateSignupMutation from '../../../hooks/use-create-signup-mutation';
 import StepProgress from '../step-progress';
 import BlueprintForm from './blueprint-form';
@@ -109,10 +109,7 @@ const MultiStepForm = ( {
 			: [] ),
 	];
 
-	const { mutate: submitSurvey } = useCreateSignupMutation( {
-		onSuccess: () => {
-			dispatch( successNotice( 'Signup successful', { id: notificationId } ) );
-		},
+	const { mutate: submitSurvey, isPending: isSubmittingSurveyPending } = useCreateSignupMutation( {
 		onError: ( error: APIError ) => {
 			dispatch( errorNotice( error?.message, { id: notificationId } ) );
 		},
@@ -229,13 +226,16 @@ const MultiStepForm = ( {
 					/>
 				);
 			case 6:
-				return <FinishSignupSurvey onContinue={ closeSurvey } />;
+				return (
+					<FinishSignupSurvey onContinue={ closeSurvey } isPending={ isSubmittingSurveyPending } />
+				);
 			default:
 				return null;
 		}
 	}, [
 		currentStep,
 		formData,
+		isSubmittingSurveyPending,
 		onCreateAgency,
 		signupWithMagicLinkFlow,
 		trackView,
