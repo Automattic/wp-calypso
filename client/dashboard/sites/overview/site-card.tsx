@@ -63,16 +63,18 @@ export default function SiteCard( { site, currentPlan }: { site: Site; currentPl
 					<HStack justify="space-between">
 						<Field title={ __( 'Status' ) }>{ getSiteStatusLabel( site ) }</Field>
 					</HStack>
-					<HStack justify="space-between">
-						<Field title={ __( 'WordPress' ) }>
-							{ options?.software_version ?? __( 'Unknown' ) }
-						</Field>
-						{ is_wpcom_atomic && (
-							<Field title={ __( 'PHP' ) }>
-								<PHPVersion siteSlug={ site.slug } />
-							</Field>
-						) }
-					</HStack>
+					{ ( options?.software_version || is_wpcom_atomic ) && (
+						<HStack justify="space-between">
+							{ options?.software_version && (
+								<Field title={ __( 'WordPress' ) }>{ options.software_version }</Field>
+							) }
+							{ is_wpcom_atomic && (
+								<Field title={ __( 'PHP' ) }>
+									<PHPVersion siteSlug={ site.slug } />
+								</Field>
+							) }
+						</HStack>
+					) }
 					<PlanDetails site={ site } currentPlan={ currentPlan } />
 				</VStack>
 			</VStack>
