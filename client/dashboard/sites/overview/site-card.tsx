@@ -15,7 +15,11 @@ import SitePreview from '../site-preview';
 import type { Site, Plan } from '../../data/types';
 
 function PHPVersion( { siteSlug }: { siteSlug: string } ) {
-	return useQuery( sitePHPVersionQuery( siteSlug ) ).data ?? '\u00A0';
+	return (
+		useQuery( sitePHPVersionQuery( siteSlug ) ).data ?? (
+			<span className="text-blur" data-text="X.Y" />
+		)
+	);
 }
 
 /**
