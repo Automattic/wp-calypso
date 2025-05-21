@@ -301,6 +301,8 @@ const FilterText = ( {
 	}
 
 	if ( filterInView?.operator === OPERATOR_BETWEEN ) {
+		const { label } = activeElements[ 0 ];
+
 		return createInterpolateElement(
 			sprintf(
 				/* translators: 1: Filter name. 2: Min value. 3: Max value. e.g.: "Item count between (inc): 10-180". */
@@ -308,8 +310,8 @@ const FilterText = ( {
 					'<Name>%1$s between (inc): </Name><Value>%2$s-%3$s</Value>'
 				),
 				filter.name,
-				filterInView?.value[ 0 ],
-				filterInView?.value[ 1 ]
+				label[ 0 ],
+				label[ 1 ]
 			),
 			filterTextWrappers
 		);
