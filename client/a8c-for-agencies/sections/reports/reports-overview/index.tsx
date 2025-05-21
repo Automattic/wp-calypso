@@ -6,8 +6,8 @@ import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-pa
 import PageSectionColumns from 'calypso/a8c-for-agencies/components/page-section-columns';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import SimpleList from 'calypso/a8c-for-agencies/components/simple-list';
+import documentsImage from 'calypso/assets/images/a8c-for-agencies/reports/report-mock-2.png';
 import analyticsImage from 'calypso/assets/images/a8c-for-agencies/reports/report-mock.png';
-import documentsImage from 'calypso/assets/images/a8c-for-agencies/woopayments/cart.png';
 import LayoutBody from 'calypso/layout/hosting-dashboard/body';
 import LayoutHeader, {
 	LayoutHeaderTitle as Title,
@@ -114,34 +114,15 @@ const ReportsOverview = () => {
 					} }
 				>
 					<PageSectionColumns.Column heading={ translate( 'Why create client reports' ) }>
-						<>
-							<div className="reports-overview__description">
-								<div>
-									{ translate(
-										'Client reports help demonstrate the ongoing value of your services. They provide transparent insight into the work you do and the results you achieve, which helps build trust and justify your fees.'
-									) }
-								</div>
-								<div>
-									{ translate(
-										'Regular reporting also creates touchpoints with your clients, opening the door for meaningful conversations about their goals and providing opportunities for upselling additional services.'
-									) }
-								</div>
-							</div>
-						</>
-					</PageSectionColumns.Column>
-				</PageSectionColumns>
-
-				<PageSectionColumns>
-					<PageSectionColumns.Column heading={ translate( 'About Client Reports' ) }>
 						<div className="reports-overview__description">
 							<div>
 								{ translate(
-									"With our client reports, you can create professional documentation that showcases your agency's value. Reports can include analytics data, security measures implemented, performance optimizations, and more."
+									'Client reports help demonstrate the ongoing value of your services. They provide transparent insight into the work you do and the results you achieve, which helps build trust and justify your fees.'
 								) }
 							</div>
 							<div>
 								{ translate(
-									'You can customize each report based on client needs and save yourself hours of manual reporting work each month.'
+									'Regular reporting also creates touchpoints with your clients, opening the door for meaningful conversations about their goals and providing opportunities for upselling additional services.'
 								) }
 							</div>
 						</div>
