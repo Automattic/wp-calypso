@@ -364,8 +364,11 @@ function OperatorSelector( {
 												return {
 													..._filter,
 													value:
+														// Reset the value when the operator switches from between to single selection or vice versa to ensure value is not mixed.
 														currentOperator ===
-														OPERATOR_BETWEEN
+															OPERATOR_BETWEEN ||
+														_filter.operator ===
+															OPERATOR_BETWEEN
 															? undefined
 															: _filter.value,
 													operator,
