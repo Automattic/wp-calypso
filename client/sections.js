@@ -913,7 +913,7 @@ const sections = [
 	},
 	{
 		name: 'a8c-for-agencies-reports',
-		paths: [ '/reports' ],
+		paths: [ '/reports', '/reports/overview' ],
 		module: 'calypso/a8c-for-agencies/sections/reports',
 		group: 'a8c-for-agencies',
 	},

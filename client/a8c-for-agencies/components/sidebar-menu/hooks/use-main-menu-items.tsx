@@ -38,8 +38,11 @@ import {
 	A4A_MIGRATIONS_OVERVIEW_LINK,
 	A4A_WOOPAYMENTS_LINK,
 	A4A_REPORTS_LINK,
+	A4A_REPORTS_OVERVIEW_LINK,
+	A4A_REPORTS_DASHBOARD_LINK,
 } from '../lib/constants';
 import { createItem } from '../lib/utils';
+import type { SidebarMenuItem } from '../lib/types';
 
 const useMainMenuItems = ( path: string ) => {
 	const translate = useTranslate();
@@ -47,7 +50,7 @@ const useMainMenuItems = ( path: string ) => {
 	const agency = useSelector( getActiveAgency );
 
 	const menuItems = useMemo( () => {
-		let referralItems = [] as any[];
+		let referralItems = [] as SidebarMenuItem[];
 
 		if ( isSectionNameEnabled( 'a8c-for-agencies-referrals' ) ) {
 			referralItems = [
@@ -75,7 +78,22 @@ const useMainMenuItems = ( path: string ) => {
 					},
 					withChevron: true,
 			  }
-			: {};
+			: ( {} as SidebarMenuItem );
+
+		const reportsSubMenuItems: SidebarMenuItem[] = [
+			{
+				icon: home,
+				link: A4A_REPORTS_OVERVIEW_LINK,
+				title: translate( 'Overview' ),
+				trackEventProps: { menu_item: 'Automattic for Agencies / Reports / Overview' },
+			},
+			{
+				icon: category,
+				link: A4A_REPORTS_DASHBOARD_LINK,
+				title: translate( 'Dashboard' ),
+				trackEventProps: { menu_item: 'Automattic for Agencies / Reports / Dashboard' },
+			},
+		];
 
 		return [
 			{
@@ -121,12 +139,13 @@ const useMainMenuItems = ( path: string ) => {
 			migrationMenuItem,
 			{
 				icon: <img src={ wooPaymentsIcon } alt="WooPayments" />,
-				path: '/',
+				path: A4A_WOOPAYMENTS_LINK,
 				link: A4A_WOOPAYMENTS_LINK,
 				title: translate( 'WooPayments' ),
 				trackEventProps: {
 					menu_item: 'Automattic for Agencies / WooPayments',
 				},
+				withChevron: true,
 			},
 			...( isSectionNameEnabled( 'a8c-for-agencies-plugins' )
 				? [
@@ -143,12 +162,14 @@ const useMainMenuItems = ( path: string ) => {
 				: [] ),
 			{
 				icon: chartBar,
-				path: '/',
-				link: A4A_REPORTS_LINK,
+				path: A4A_REPORTS_LINK,
+				link: A4A_REPORTS_OVERVIEW_LINK,
 				title: translate( 'Reports' ),
 				trackEventProps: {
 					menu_item: 'Automattic for Agencies / Reports',
 				},
+				withChevron: true,
+				subMenuItems: reportsSubMenuItems.map( ( item ) => createItem( item, path ) ),
 			},
 			...( config.isEnabled( 'a4a-partner-directory' ) ||
 			config.isEnabled( 'a8c-for-agencies-agency-tier' )
@@ -205,7 +226,8 @@ const useMainMenuItems = ( path: string ) => {
 				: [] ),
 		]
 			.map( ( item ) => createItem( item, path ) )
-			.filter( ( item ) => isPathAllowed( item.link, agency ) );
+			.filter( ( item ) => isPathAllowed( item.link, agency ) )
+			.filter( Boolean ) as SidebarMenuItem[];
 	}, [ agency, path, translate ] );
 	return menuItems;
 };
