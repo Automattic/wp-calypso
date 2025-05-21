@@ -146,15 +146,15 @@ body.is-section-reader {
 		top: 0;
 		font-size: 0.67rem; /* stylelint-disable-line scales/font-sizes */
 		font-weight: normal;
-		margin-left: auto;
 		box-sizing: border-box;
 		padding: 4px 6px;
 		line-height: 1;
 		min-width: 22px;
-		background-color: var(--color-sidebar-menu-hover-background);
-		border-color: var(--color-sidebar-menu-hover-background);
-		outline-color: var(--color-sidebar-menu-hover-background);
-		color: var(--color-sidebar-text-alternative);
+		background-color: transparent;
+		border-color: currentColor;
+		outline-color: currentColor;
+		color: currentColor;
+		margin: 0 auto;
 	}
 
 	.sidebar__menu-link:hover .count {
@@ -225,11 +225,11 @@ body.is-section-reader {
 	&:is(.is-togglable) {
 		.sidebar__menu-link {
 			display: grid;
-			grid-template-columns: 24px 1fr;
+			grid-template-columns: 24px 1fr 36px;
 			align-items: center;
 			gap: 4px;
 			line-height: 1.5;
-			padding: 12px 18px;
+			padding: 12px 12px 18px 18px;
 
 			&:has(> :nth-child(1):last-child) > :first-child {
 				grid-column-start: 2;
