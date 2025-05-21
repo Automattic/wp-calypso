@@ -63,6 +63,16 @@
 	}
 }
 
+/* Akismet */
+.is-white-login.is-akismet .login,
+.is-white-login.is-akismet .magic-login,
+.is-akismet .signup-form {
+	.components-button {
+		--color-accent: var(--color-akismet);
+		--color-accent-60: var(--color-akismet);
+	}
+}
+
 /* @wordpress/components ButtonGroup overrides */
 .components-button-group {
 	.components-button {
