@@ -80,7 +80,9 @@ const createRouteTree = () =>
 		dashboardSiteSettingsCompatibilityRouteWithFeature,
 	] );
 
-const isCompatibilityRoute = ( router, url: string ) => {
+const routeTree = createRouteTree();
+
+const isCompatibilityRoute = ( router: Router< typeof routeTree >, url: string ) => {
 	const matches = router.matchRoutes( url );
 	if ( ! matches ) {
 		return false;
@@ -93,13 +95,15 @@ const isCompatibilityRoute = ( router, url: string ) => {
 	);
 };
 
-const syncMemoryRouterToBrowserHistory = ( router ) => {
+const syncMemoryRouterToBrowserHistory = ( router: Router< typeof routeTree > ) => {
 	let lastPath = '';
 
+	// Sync TanStack Router's history to the browser history.
 	router.history.subscribe( () => {
 		const { pathname, search } = router.history.location;
 		const newUrl = `${ pathname }${ search }`;
 
+		// Avoid pushing redirect routes to the browser history.
 		if ( isCompatibilityRoute( router, newUrl ) ) {
 			return;
 		}
@@ -120,14 +124,15 @@ const syncMemoryRouterToBrowserHistory = ( router ) => {
 };
 
 export const getRouter = () => {
-	const routeTree = createRouteTree();
-
 	const router = new Router( {
 		routeTree,
 		basepath: '/sites/settings/v2',
 		defaultPreload: 'intent',
 		defaultPreloadStaleTime: 0,
 		defaultNotFoundComponent: () => null,
+
+		// Use memory history to compartmentize TanStack Router's history management.
+		// This is necessary in order to not pollute the browser history which is used by page.js
 		history: createMemoryHistory( { initialEntries: [ window.location.pathname ] } ),
 	} );
 
