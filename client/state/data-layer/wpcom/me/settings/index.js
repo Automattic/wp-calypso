@@ -1,3 +1,4 @@
+import { getQueryArg } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
 import { isEmpty, mapValues } from 'lodash';
 import { decodeEntities } from 'calypso/lib/formatting';
@@ -148,6 +149,11 @@ export const userSettingsSaveSuccess =
 				PROPERTIES_TO_SUPRESS_NOTIFICATIONS.has( key )
 			)
 		) {
+			return;
+		}
+
+		// Don't show success notice if we're in reader onboarding
+		if ( getQueryArg( window.location.href, 'ref' ) === 'reader-onboarding' ) {
 			return;
 		}
 
