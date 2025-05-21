@@ -117,13 +117,13 @@ function SitePerformanceContent( { site }: { site: Site } ) {
 
 function SitePerformance() {
 	const { siteSlug } = siteRoute.useParams();
-	const { data } = useQuery( siteQuery( siteSlug ) );
+	const { data: site } = useQuery( siteQuery( siteSlug ) );
 
-	if ( ! data || ! data.site ) {
+	if ( ! site ) {
 		return null;
 	}
 
-	return <SitePerformanceContent site={ data.site } />;
+	return <SitePerformanceContent site={ site } />;
 }
 
 export default SitePerformance;
