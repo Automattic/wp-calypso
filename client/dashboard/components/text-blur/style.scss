@@ -1,0 +1,6 @@
+.text-blur::after {
+	content: attr(data-text);
+    // The larger the font-size, the more blurring is needed.
+	filter: blur(0.3em);
+	opacity: 0.5;
+}

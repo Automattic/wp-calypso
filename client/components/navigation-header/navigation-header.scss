@@ -49,6 +49,7 @@
 		text-decoration: none;
 		font-size: $default-font-size;
 		transition: color 0.2s ease;
+		cursor: pointer;
 
 		&:hover {
 			color: var(--wp-components-color-gray-900, $gray-900);

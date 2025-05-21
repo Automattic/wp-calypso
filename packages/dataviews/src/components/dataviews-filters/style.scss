@@ -50,6 +50,14 @@
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
+		flex-shrink: 0; /* Prevents this element from shrinking */
+		max-width: calc(100% - 55px);
+	}
+
+	.dataviews-filters__summary-operators-filter-select {
+		width: 100%;
+		white-space: nowrap;
+		overflow: hidden;
 	}
 }
 

@@ -21,7 +21,7 @@ import { default as AddFilter, AddFilterMenu } from './add-filter';
 import ResetFilters from './reset-filters';
 import DataViewsContext from '../dataviews-context';
 import { sanitizeOperators } from '../../utils';
-import { ALL_OPERATORS, OPERATOR_IS, OPERATOR_IS_NOT } from '../../constants';
+import { ALL_OPERATORS, SINGLE_SELECTION_OPERATORS } from '../../constants';
 import type { NormalizedFilter, NormalizedField, View } from '../../types';
 
 export function useFilters( fields: NormalizedField< any >[], view: View ) {
@@ -43,7 +43,7 @@ export function useFilters( fields: NormalizedField< any >[], view: View ) {
 				name: field.label,
 				elements: field.elements ?? [],
 				singleSelection: operators.some( ( op ) =>
-					[ OPERATOR_IS, OPERATOR_IS_NOT ].includes( op )
+					SINGLE_SELECTION_OPERATORS.includes( op )
 				),
 				operators,
 				isVisible:

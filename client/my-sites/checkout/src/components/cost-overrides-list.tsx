@@ -4,6 +4,7 @@ import {
 	isMonthlyProduct,
 	isTriennially,
 	isYearly,
+	type PlanSlug,
 } from '@automattic/calypso-products';
 import colorStudio from '@automattic/color-studio';
 import { FormStatus, useFormStatus, Button } from '@automattic/composite-checkout';
@@ -25,6 +26,7 @@ import {
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
+import useEquivalentMonthlyTotals from 'calypso/my-sites/checkout/utils/use-equivalent-monthly-totals';
 import {
 	useStreamlinedPriceExperiment,
 	isStreamlinedPriceCheckoutTreatment,
@@ -400,11 +402,12 @@ function SingleProductAndCostOverridesList( { product }: { product: ResponseCart
 		}
 	);
 	const [ , streamlinedPriceExperimentAssignment ] = useStreamlinedPriceExperiment();
+	const monthlyPrices = useEquivalentMonthlyTotals( [ product ] );
 	if ( isStreamlinedPriceCheckoutTreatment( streamlinedPriceExperimentAssignment ) ) {
 		let streamlinedActualAmountDisplay;
 
-		// logic taken from packages/wpcom-checkout/src/checkout-line-items.tsx
-		const originalAmountInteger = product.item_original_subtotal_integer;
+		const originalAmountInteger =
+			monthlyPrices[ product.product_slug as PlanSlug ] || product.item_original_subtotal_integer;
 		const originalAmountDisplay = formatCurrency( originalAmountInteger, product.currency, {
 			isSmallestUnit: true,
 			stripZeros: true,
