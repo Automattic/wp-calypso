@@ -86,7 +86,8 @@
 .is-white-login.is-akismet .login,
 .is-white-login.is-akismet .magic-login,
 .is-akismet .signup-form,
-.is-akismet .auth-form__social {
+.is-akismet .auth-form__social,
+.is-akismet .step-container-v2 {
 	.components-button:not(.is-destructive) {
 		--wp-components-color-accent: var(--color-akismet);
 		--wp-components-color-accent-darker-10: var(--color-akismet);
