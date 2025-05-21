@@ -108,7 +108,7 @@ const StatsSubscribersPage = ( { period, context }: StatsSubscribersPageProps ) 
 			'subscribers',
 			{
 				queryParams: query,
-				period: period?.period || null,
+				period: period.period,
 			},
 			true
 		);
