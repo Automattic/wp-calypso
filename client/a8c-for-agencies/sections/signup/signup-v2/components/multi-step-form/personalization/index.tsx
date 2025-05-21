@@ -134,7 +134,10 @@ export default function PersonalizationForm( {
 
 		setFormData( ( prev ) => ( {
 			...prev,
-			productsOffered: products.value,
+			productsOffered:
+				! prev.productsOffered?.includes( 'None' ) && products.value.includes( 'None' ) // If 'None' is selected, we need to clear other value.
+					? [ 'None' ]
+					: products.value.filter( ( product ) => product !== 'None' ),
 			plansToOfferProducts: hasAllProductsOffered ? false : prev.plansToOfferProducts, // If all products are offered, then there is no more products to be offered
 			productsToOffer: prev.productsToOffer?.filter(
 				( product ) => ! products.value.includes( product )
