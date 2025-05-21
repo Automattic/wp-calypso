@@ -159,7 +159,7 @@ const FilterText = ( {
 	if ( filterInView?.operator === OPERATOR_LESS_THAN ) {
 		return createInterpolateElement(
 			sprintf(
-				/* translators: 1: Filter name. 3: Filter value. e.g.: "Author is not: Admin". */
+				/* translators: 1: Filter name. 2: Filter value. e.g.: "Price is less than: 10". */
 				__( '<Name>%1$s is less than: </Name><Value>%2$s</Value>' ),
 				filter.name,
 				activeElements[ 0 ].label
@@ -171,7 +171,7 @@ const FilterText = ( {
 	if ( filterInView?.operator === OPERATOR_GREATER_THAN ) {
 		return createInterpolateElement(
 			sprintf(
-				/* translators: 1: Filter name. 3: Filter value. e.g.: "Author is not: Admin". */
+				/* translators: 1: Filter name. 2: Filter value. e.g.: "Price is greater than: 10". */
 				__( '<Name>%1$s is greater than: </Name><Value>%2$s</Value>' ),
 				filter.name,
 				activeElements[ 0 ].label
@@ -183,7 +183,7 @@ const FilterText = ( {
 	if ( filterInView?.operator === OPERATOR_LESS_THAN_OR_EQUAL ) {
 		return createInterpolateElement(
 			sprintf(
-				/* translators: 1: Filter name. 3: Filter value. e.g.: "Author is less than or equal to: Admin". */
+				/* translators: 1: Filter name. 2: Filter value. e.g.: "Price is less than or equal to: 10". */
 				__(
 					'<Name>%1$s is less than or equal to: </Name><Value>%2$s</Value>'
 				),
@@ -197,7 +197,7 @@ const FilterText = ( {
 	if ( filterInView?.operator === OPERATOR_GREATER_THAN_OR_EQUAL ) {
 		return createInterpolateElement(
 			sprintf(
-				/* translators: 1: Filter name. 3: Filter value. e.g.: "Author is greater than or equal to: Admin". */
+				/* translators: 1: Filter name. 2: Filter value. e.g.: "Price is greater than or equal to: 10". */
 				__(
 					'<Name>%1$s is greater than or equal to: </Name><Value>%2$s</Value>'
 				),
