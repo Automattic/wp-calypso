@@ -74,7 +74,7 @@ export const Content = () => {
 					} }
 				/>
 				<MenuItem
-					icon={ <BigSkyLogo /> }
+					icon={ <BigSkyLogo.Mark /> }
 					heading={ translate( 'Build with AI' ) }
 					description={ translate(
 						'Prompt, edit, and launch WordPress websites with Artificial Intelligence.'
