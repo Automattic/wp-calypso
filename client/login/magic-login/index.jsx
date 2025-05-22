@@ -10,6 +10,7 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import A4ALogo from 'calypso/a8c-for-agencies/components/a4a-logo';
 import AppPromo from 'calypso/blocks/app-promo';
+import { shouldUseMagicCode } from 'calypso/blocks/login/utils/should-use-magic-code';
 import FormButton from 'calypso/components/forms/form-button';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import GlobalNotices from 'calypso/components/global-notices';
@@ -79,8 +80,6 @@ import './style.scss';
 const RESEND_EMAIL_COUNTDOWN_TIME = 90; // In seconds
 const GRAVATAR_FROM_3RD_PARTY = '3rd-party';
 const GRAVATAR_FROM_QUICK_EDITOR = 'quick-editor';
-
-const useMagicLoginCode = config.isEnabled( 'login/use-magic-code' );
 
 class MagicLogin extends Component {
 	static propTypes = {
@@ -1295,6 +1294,7 @@ class MagicLogin extends Component {
 			translate,
 			showCheckYourEmail: showEmailLinkVerification,
 			isWooJPC,
+			isJetpackLogin,
 			isFromJetpackOnboarding,
 		} = this.props;
 		const { showSecondaryEmailOptions, showEmailCodeVerification, usernameOrEmail } = this.state;
@@ -1390,7 +1390,7 @@ class MagicLogin extends Component {
 
 				<GlobalNotices id="notices" />
 
-				{ useMagicLoginCode ? (
+				{ shouldUseMagicCode( { isJetpack: isJetpackLogin } ) ? (
 					<RequestLoginCode
 						{ ...requestLoginEmailFormProps }
 						emailRequested={ this.props.emailRequested }
