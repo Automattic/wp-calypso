@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 import FormButton from 'calypso/components/forms/form-button';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import LoggedOutForm from 'calypso/components/logged-out-form';
-// import { navigate } from 'calypso/lib/navigate';
+import { navigate } from 'calypso/lib/navigate';
 import { fetchMagicLoginAuthenticate } from 'calypso/state/login/magic-login/actions';
 import { getRedirectToOriginal } from 'calypso/state/login/selectors';
 import getMagicLoginAuthSuccessData from 'calypso/state/selectors/get-magic-login-auth-success-data';
@@ -44,7 +44,7 @@ const VerifyLoginCode = ( {
 	useEffect( () => {
 		if ( isAuthenticated && authSuccessData ) {
 			setIsRedirecting( true );
-			// navigate( authSuccessData.redirect_to );
+			navigate( authSuccessData.redirect_to );
 		}
 	}, [ isAuthenticated, authSuccessData ] );
 
