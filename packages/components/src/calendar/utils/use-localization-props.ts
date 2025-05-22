@@ -1,7 +1,7 @@
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { useMemo } from 'react';
-import type { Modifiers, BaseProps } from './types';
+import type { Modifiers, BaseProps } from '../types';
 
 function isLocaleRTL( localeCode: string ) {
 	const localeObj = new Intl.Locale( localeCode );
