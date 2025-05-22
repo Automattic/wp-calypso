@@ -200,6 +200,7 @@ const MultiStepForm = ( {
 						isFinalStep={ ! signupWithMagicLinkFlow }
 						initialFormData={ formData }
 						goBack={ () => setCurrentStep( 1 ) }
+						withPersonalizedBlueprint={ withPersonalizedBlueprint }
 					/>
 				);
 			case 3:

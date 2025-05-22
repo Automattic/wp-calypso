@@ -24,6 +24,7 @@ interface Props {
 	goBack: () => void;
 	initialFormData: Partial< AgencyDetailsSignupPayload >;
 	isFinalStep?: boolean;
+	withPersonalizedBlueprint?: boolean;
 }
 
 const PersonalizationFormRadio = ( {
@@ -58,6 +59,7 @@ export default function PersonalizationForm( {
 	goBack,
 	initialFormData,
 	isFinalStep = false,
+	withPersonalizedBlueprint = false,
 }: Props ) {
 	const translate = useTranslate();
 	const { countryOptions } = useCountriesAndStates();
@@ -110,6 +112,18 @@ export default function PersonalizationForm( {
 		],
 		[ formData.productsOffered, productsOfferedOptions, translate ]
 	);
+
+	const ctaButtonLabel = useMemo( () => {
+		if ( isFinalStep ) {
+			return translate( 'Finish and Log in' );
+		}
+
+		if ( withPersonalizedBlueprint ) {
+			return translate( 'Continue' );
+		}
+
+		return translate( 'Finish sign up' );
+	}, [ isFinalStep, translate, withPersonalizedBlueprint ] );
 
 	const handleInputChange =
 		( field: keyof AgencyDetailsSignupPayload ) => ( event: ChangeEvent< HTMLSelectElement > ) => {
@@ -380,7 +394,7 @@ export default function PersonalizationForm( {
 								onClick={ handleSubmit }
 								isBusy={ isSubmitting }
 							>
-								{ isFinalStep ? translate( 'Finish and Log in' ) : translate( 'Continue' ) }
+								{ ctaButtonLabel }
 							</Button>
 						</FormFooter>
 					</>
