@@ -43,6 +43,7 @@ $recoleta-font-family: 'Recoleta', serif;
 			display: flex;
 			flex-direction: column;
 			align-items: flex-start;
+			text-decoration: none;
 
 			@media ( max-width: $breakpoint-mobile ) {
 				padding: 24px;
