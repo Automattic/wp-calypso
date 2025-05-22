@@ -18,7 +18,7 @@ import {
 } from '../data';
 import { SITE_FIELDS } from '../data/constants';
 import { queryClient } from './query-client';
-import type { Profile, SiteSettings, UrlPerformanceInsights } from '../data/types';
+import type { Profile, SiteSettings, UrlPerformanceInsights, Site } from '../data/types';
 import type { Query } from '@tanstack/react-query';
 
 export function sitesQuery() {
@@ -27,7 +27,13 @@ export function sitesQuery() {
 		queryFn: async () => {
 			const sites = await fetchSites();
 			for ( const site of sites ) {
-				queryClient.setQueryData( [ 'site', site.slug, SITE_FIELDS ], site );
+				queryClient.setQueryData(
+					[ 'site', site.slug, SITE_FIELDS ],
+					// Only set if the cache is empty. There's a possibility
+					// data from the /sites endpoint is slightly stale, so
+					// individual queries should take priority.
+					( current: Site | undefined ) => current ?? site
+				);
 			}
 			return sites;
 		},
