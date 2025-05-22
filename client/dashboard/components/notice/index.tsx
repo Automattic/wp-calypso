@@ -6,9 +6,10 @@ import {
 	CardBody,
 	Icon,
 } from '@wordpress/components';
-import { info, caution, published, error, closeSmall } from '@wordpress/icons';
+import { info, published, error, closeSmall } from '@wordpress/icons';
 import clsx from 'clsx';
 import { forwardRef } from 'react';
+import { caution } from './icons';
 import type { NoticeVariant, NoticeProps } from './types';
 import './style.scss';
 
