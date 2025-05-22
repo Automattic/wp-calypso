@@ -45,7 +45,7 @@
 		"@wordpress/dependency-extraction-webpack-plugin": "^6.19.0",
 		"autoprefixer": "^10.2.5",
 		"babel-loader": "^8.2.3",
-		"browserslist": "^4.24.4",
+		"browserslist": "^4.24.5",
 		"css-loader": "^6.11.0",
 		"css-minimizer-webpack-plugin": "^3.4.1",
 		"duplicate-package-checker-webpack-plugin": "^3.0.0",

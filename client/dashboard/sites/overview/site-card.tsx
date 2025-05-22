@@ -1,3 +1,4 @@
+import { useQuery } from '@tanstack/react-query';
 import {
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
@@ -8,25 +9,21 @@ import {
 } from '@wordpress/components';
 import { dateI18n } from '@wordpress/date';
 import { __, sprintf } from '@wordpress/i18n';
+import { sitePHPVersionQuery } from '../../app/queries';
+import { TextBlur } from '../../components/text-blur';
 import { getSiteStatusLabel } from '../../utils/site-status';
 import SitePreview from '../site-preview';
-import type { Site, SiteDomain, Plan } from '../../data/types';
+import type { Site, Plan } from '../../data/types';
+
+function PHPVersion( { siteSlug }: { siteSlug: string } ) {
+	return useQuery( sitePHPVersionQuery( siteSlug ) ).data ?? <TextBlur text="X.Y" />;
+}
 
 /**
  * SiteCard component to display site information in a card format
  */
-export default function SiteCard( {
-	site,
-	phpVersion,
-	primaryDomain,
-	currentPlan,
-}: {
-	site: Site;
-	phpVersion?: string;
-	primaryDomain?: SiteDomain;
-	currentPlan: Plan;
-} ) {
-	const { options, URL: url, is_private } = site;
+export default function SiteCard( { site, currentPlan }: { site: Site; currentPlan: Plan } ) {
+	const { options, URL: url, is_private, is_wpcom_atomic } = site;
 	// If the site is a private A8C site, X-Frame-Options is set to same
 	// origin.
 	const iframeDisabled = site.is_a8c && is_private;
@@ -59,23 +56,27 @@ export default function SiteCard( {
 					) }
 				</div>
 				<VStack spacing={ 6 } className="site-card-contents">
-					{ primaryDomain && (
-						<Field title={ __( 'Domain' ) }>
-							<ExternalLink href={ url } style={ { overflowWrap: 'anywhere' } }>
-								{ primaryDomain.domain }
-							</ExternalLink>
-						</Field>
-					) }
+					<Field title={ __( 'Domain' ) }>
+						<ExternalLink href={ url } style={ { overflowWrap: 'anywhere' } }>
+							{ new URL( url ).hostname }
+						</ExternalLink>
+					</Field>
 					<HStack justify="space-between">
 						<Field title={ __( 'Status' ) }>{ getSiteStatusLabel( site ) }</Field>
 					</HStack>
-					<HStack justify="space-between">
-						{ options?.software_version && (
-							<Field title={ __( 'WordPress' ) }>{ options.software_version }</Field>
-						) }
-						{ phpVersion && <Field title={ __( 'PHP' ) }>{ phpVersion }</Field> }
-					</HStack>
-					<PlanDetails site={ site } currentPlan={ currentPlan } primaryDomain={ primaryDomain } />
+					{ ( options?.software_version || is_wpcom_atomic ) && (
+						<HStack justify="space-between">
+							{ options?.software_version && (
+								<Field title={ __( 'WordPress' ) }>{ options.software_version }</Field>
+							) }
+							{ is_wpcom_atomic && (
+								<Field title={ __( 'PHP' ) }>
+									<PHPVersion siteSlug={ site.slug } />
+								</Field>
+							) }
+						</HStack>
+					) }
+					<PlanDetails site={ site } currentPlan={ currentPlan } />
 				</VStack>
 			</VStack>
 		</Card>
@@ -84,7 +85,7 @@ export default function SiteCard( {
 
 function Field( { children, title }: { children: React.ReactNode; title: React.ReactNode } ) {
 	return (
-		<VStack className="site-overview-field">
+		<VStack className="site-overview-field" style={ { flex: 1 } }>
 			<FieldTitle>{ title }</FieldTitle>
 			<div className="site-overview-field-children">{ children }</div>
 		</VStack>
@@ -101,15 +102,7 @@ function FieldTitle( { children }: { children: React.ReactNode } ) {
 	);
 }
 
-function PlanDetails( {
-	site,
-	currentPlan,
-	primaryDomain,
-}: {
-	site: Site;
-	currentPlan: Plan;
-	primaryDomain?: SiteDomain;
-} ) {
+function PlanDetails( { site, currentPlan }: { site: Site; currentPlan: Plan } ) {
 	if ( ! site.plan || ! currentPlan ) {
 		return null;
 	}
@@ -123,12 +116,13 @@ function PlanDetails( {
 			<FieldTitle>{ __( 'Plan' ) }</FieldTitle>
 			{ product_name_short && <Text>{ product_name_short }</Text> }
 			<Text>{ getPlanExpirationMessage( { isFree, expiry } ) }</Text>
-			{ primaryDomain && (
-				<Button
-					href={ `/purchases/subscriptions/${ primaryDomain.domain }/${ id }` }
-					variant="link"
-				>
+			{ id ? (
+				<Button href={ `/purchases/subscriptions/${ site.slug }/${ id }` } variant="link">
 					{ __( 'Manage subscription' ) }
+				</Button>
+			) : (
+				<Button href={ `/plans/${ site.slug }` } variant="link">
+					{ __( 'Upgrade' ) }
 				</Button>
 			) }
 		</VStack>
