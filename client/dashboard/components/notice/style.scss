@@ -2,36 +2,6 @@
 @import "@wordpress/base-styles/variables";
 
 .dashboard-notice {
-	.dashboard-notice__icon {
-		width: 24px;
-		height: 24px;
-		flex-shrink: 0;
-	}
-
-	.dashboard-notice__content {
-		flex-grow: 1;
-	}
-
-	.dashboard-notice__heading {
-		padding: 2px 0;
-	}
-
-	.dashboard-notice__title {
-		@include heading-medium;
-	}
-
-	.dashboard-notice__description {
-		@include body-medium;
-	}
-
-	.dashboard-notice__actions {
-		padding-bottom: $grid-unit-05;
-	}
-
-	.dashboard-notice__close-button {
-		margin: -6px;
-	}
-
 	/**
 	 * Density
 	 */
@@ -87,4 +57,34 @@
 			fill: #8c0b0b;
 		}
 	}
+}
+
+.dashboard-notice__icon {
+	width: 24px;
+	height: 24px;
+	flex-shrink: 0;
+}
+
+.dashboard-notice__content {
+	flex-grow: 1;
+}
+
+.dashboard-notice__heading {
+	padding: 2px 0;
+}
+
+.dashboard-notice__title {
+	@include heading-medium;
+}
+
+.dashboard-notice__description {
+	@include body-medium;
+}
+
+.dashboard-notice__actions {
+	padding-bottom: $grid-unit-05;
+}
+
+.dashboard-notice__close-button {
+	margin: -6px;
 }
