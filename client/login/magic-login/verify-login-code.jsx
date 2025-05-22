@@ -1,4 +1,5 @@
 import { Button } from '@wordpress/components';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { useState, useEffect, useRef, createRef } from 'react';
@@ -6,7 +7,6 @@ import { connect } from 'react-redux';
 import FormButton from 'calypso/components/forms/form-button';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import LoggedOutForm from 'calypso/components/logged-out-form';
-import Notice from 'calypso/components/notice';
 // import { navigate } from 'calypso/lib/navigate';
 import { fetchMagicLoginAuthenticate } from 'calypso/state/login/magic-login/actions';
 import { getRedirectToOriginal } from 'calypso/state/login/selectors';
@@ -46,6 +46,11 @@ const VerifyLoginCode = ( {
 			// navigate( authSuccessData.redirect_to );
 		}
 	}, [ isAuthenticated, authSuccessData ] );
+
+	// Focus first input on page load for an easy input
+	useEffect( () => {
+		inputRefs?.current[ 0 ]?.current?.focus();
+	}, [] );
 
 	// Get the combined verification code from all inputs
 	const getVerificationCode = () => codeCharacters.join( '' );
@@ -139,15 +144,12 @@ const VerifyLoginCode = ( {
 					},
 				} ) }
 			</p>
-			<LoggedOutForm className="magic-login__verify-code-form" onSubmit={ onSubmit }>
-				{ authError && (
-					<Notice
-						showDismiss={ false }
-						status="is-error"
-						text={ translate( 'Invalid code. Please try again.' ) }
-					/>
-				) }
-
+			<LoggedOutForm
+				className={ clsx( 'magic-login__verify-code-form', {
+					'magic-login__verify-code-form--error': authError,
+				} ) }
+				onSubmit={ onSubmit }
+			>
 				<div className="magic-login__verify-code-field-container">
 					{ Array.from( { length: CODE_LENGTH } ).map( ( _, index ) => (
 						<FormTextInput
@@ -170,6 +172,12 @@ const VerifyLoginCode = ( {
 						/>
 					) ) }
 				</div>
+
+				{ authError && (
+					<div className="magic-login__verify-code-error-message">
+						{ translate( 'Oops, that’s the wrong code. Please verify it.' ) }
+					</div>
+				) }
 
 				<div className="magic-login__form-action">
 					<FormButton primary disabled={ ! submitEnabled } busy={ isDisabled } type="submit">
