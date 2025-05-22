@@ -108,7 +108,7 @@ const RequestLoginCode = ( {
 	return (
 		<div className="magic-login__form">
 			<h1 className="magic-login__form-header">{ translate( 'Email me a login code' ) }</h1>
-			<LoggedOutForm onSubmit={ onSubmit }>
+			<LoggedOutForm className="magic-login__form-form" onSubmit={ onSubmit }>
 				{ currentUser && currentUser.username && (
 					<Notice
 						showDismiss={ false }
@@ -154,8 +154,13 @@ const RequestLoginCode = ( {
 					) }
 
 					<div className="magic-login__form-action">
-						<FormButton primary disabled={ ! submitEnabled } busy={ isFetching } type="submit">
-							{ translate( 'Send Code' ) }
+						<FormButton
+							primary
+							disabled={ ! submitEnabled && ! isFetching }
+							busy={ isFetching }
+							type="submit"
+						>
+							{ isFetching ? translate( 'Sending code…' ) : translate( 'Send Code' ) }
 						</FormButton>
 					</div>
 				</FormFieldset>

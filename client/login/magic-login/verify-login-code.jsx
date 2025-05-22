@@ -211,8 +211,13 @@ const VerifyLoginCode = ( {
 				) }
 
 				<div className="magic-login__form-action">
-					<FormButton primary disabled={ ! submitEnabled } busy={ isDisabled } type="submit">
-						{ translate( 'Verify code' ) }
+					<FormButton
+						primary
+						disabled={ ! submitEnabled && ! isDisabled }
+						busy={ isDisabled }
+						type="submit"
+					>
+						{ isDisabled ? translate( 'Verifying code…' ) : translate( 'Verify code' ) }
 					</FormButton>
 				</div>
 			</LoggedOutForm>
@@ -238,7 +243,7 @@ const VerifyLoginCode = ( {
 				<p>
 					{ translate( 'Wrong email or account? {{link}}Use a different account{{/link}}', {
 						components: {
-							link: <a className="magic-login__log-in-link" href="/log-in" />,
+							link: <a className="magic-login__log-in-link" href="/log-in/jetpack" />,
 						},
 					} ) }
 				</p>
