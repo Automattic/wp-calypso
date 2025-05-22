@@ -1,5 +1,5 @@
 import { CalendarDay } from 'react-day-picker';
-import type { Modifiers } from './types';
+import type { Modifiers } from '../types';
 
 /**
  * Dashed top, left, and bottom sides, with rounded corners. The dash array and

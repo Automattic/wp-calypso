@@ -1,49 +1,70 @@
-interface BigSkyLogoProps extends Omit< React.SVGProps< SVGSVGElement >, 'height' | 'width' > {
-	height?: number;
-	monochrome?: boolean;
-	title?: string;
-	normalized?: boolean;
-}
+import { forwardRef, useId } from 'react';
+import { CommonLogoProps } from '../types';
 
-const Mark = ( {
-	height = 24,
-	monochrome = false,
-	title = 'Big Sky logo',
-	normalized = false,
-	...props
-}: BigSkyLogoProps ) => {
-	const scale = normalized ? 0.8 : 1;
-	const width = height;
-	const color = monochrome ? 'currentColor' : '#030FB0';
+type BigSkyLogoProps = CommonLogoProps & Omit< React.SVGProps< SVGSVGElement >, 'width' >;
 
+const CentralLogo = ( { fill }: Pick< BigSkyLogoProps, 'fill' > ) => {
 	return (
-		<svg
-			xmlns="http://www.w3.org/2000/svg"
-			width={ width }
-			height={ height }
-			viewBox="0 0 24 24"
-			fill="none"
-			{ ...props }
-		>
-			{ title && <title>{ title }</title> }
-			<g
-				transform={ `scale(${ scale }) translate(${ ( 1 - scale ) * 12 }, ${
-					( 1 - scale ) * 12
-				})` }
-			>
-				<circle cx="12" cy="12" r="12" fill={ color } />
-				<path
-					d="M19.2232 11.5496L16.1279 10.4819C14.9038 10.0613 13.9385 9.09599 13.5179 7.87188L12.4502 4.77654C12.3046 4.35053 11.6952 4.35053 11.5496 4.77654L10.4819 7.87188C10.0613 9.09599 9.09599 10.0613 7.87188 10.4819L4.77654 11.5496C4.35053 11.6952 4.35053 12.3046 4.77654 12.4502L7.87188 13.5179C9.09599 13.9385 10.0613 14.9038 10.4819 16.1279L11.5496 19.2232C11.6952 19.6493 12.3046 19.6493 12.4502 19.2232L13.5179 16.1279C13.9385 14.9038 14.9038 13.9385 16.1279 13.5179L19.2232 12.4502C19.6492 12.3046 19.6492 11.6952 19.2232 11.5496ZM15.6102 12.2291L14.0625 12.7629C13.4478 12.9732 12.9679 13.4586 12.7575 14.0679L12.2237 15.6156C12.1482 15.8313 11.8462 15.8313 11.7707 15.6156L11.2368 14.0679C11.0265 13.4532 10.5412 12.9732 9.93184 12.7629L8.38417 12.2291C8.16847 12.1536 8.16847 11.8516 8.38417 11.7761L9.93184 11.2422C10.5466 11.0319 11.0265 10.5466 11.2368 9.93723L11.7707 8.38956C11.8462 8.17386 12.1482 8.17386 12.2237 8.38956L12.7575 9.93723C12.9679 10.552 13.4532 11.0319 14.0625 11.2422L15.6102 11.7761C15.8259 11.8516 15.8259 12.1536 15.6102 12.2291Z"
-					fill="white"
-				/>
-				<path
-					d="M13.2468 12.0785L12.7116 12.2613C12.5028 12.3331 12.3331 12.5028 12.2613 12.7116L12.0785 13.2468C12.0524 13.3186 11.948 13.3186 11.9219 13.2468L11.7391 12.7116C11.6673 12.5028 11.4976 12.3331 11.2888 12.2613L10.7536 12.0785C10.6818 12.0524 10.6818 11.948 10.7536 11.9219L11.2888 11.7391C11.4976 11.6673 11.6673 11.4976 11.7391 11.2888L11.9219 10.7536C11.948 10.6818 12.0524 10.6818 12.0785 10.7536L12.2613 11.2888C12.3331 11.4976 12.5028 11.6673 12.7116 11.7391L13.2468 11.9219C13.3186 11.948 13.3186 12.0524 13.2468 12.0785Z"
-					fill="white"
-				/>
-			</g>
-		</svg>
+		<>
+			<path
+				fill={ fill }
+				d="m19.223 11.55-3.095-1.068a4.21 4.21 0 0 1-2.61-2.61L12.45 4.777c-.145-.426-.755-.426-.9 0l-1.068 3.095a4.21 4.21 0 0 1-2.61 2.61L4.777 11.55c-.426.145-.426.755 0 .9l3.095 1.068a4.21 4.21 0 0 1 2.61 2.61l1.068 3.095c.145.426.755.426.9 0l1.068-3.095a4.21 4.21 0 0 1 2.61-2.61l3.095-1.068c.426-.145.426-.755 0-.9Zm-3.613.68-1.547.533a2.105 2.105 0 0 0-1.306 1.305l-.533 1.548a.24.24 0 0 1-.453 0l-.534-1.548a2.105 2.105 0 0 0-1.305-1.305l-1.548-.534a.24.24 0 0 1 0-.453l1.548-.534a2.105 2.105 0 0 0 1.305-1.305l.534-1.547a.24.24 0 0 1 .453 0l.534 1.547c.21.615.695 1.095 1.305 1.305l1.547.534a.24.24 0 0 1 0 .453Z"
+			/>
+			<path
+				fill={ fill }
+				d="m13.247 12.079-.535.182a.734.734 0 0 0-.45.45l-.184.536c-.026.072-.13.072-.156 0l-.183-.535a.734.734 0 0 0-.45-.45l-.535-.184c-.072-.026-.072-.13 0-.156l.535-.183a.734.734 0 0 0 .45-.45l.183-.535c.026-.072.13-.072.156 0l.183.535a.734.734 0 0 0 .45.45l.536.183c.072.026.072.13 0 .156Z"
+			/>
+		</>
 	);
 };
 
-// For now, we only have the Mark version. Full version can be added later if needed.
-export const BigSkyLogo = { Mark };
+export const Mark = forwardRef< SVGSVGElement, BigSkyLogoProps >( function Mark(
+	{ height = 24, monochrome = false, title = 'Big Sky', ...props },
+	ref
+) {
+	const titleId = useId();
+	const maskId = useId();
+
+	const brandFill = monochrome ? 'currentColor' : '#030FB0';
+	const isMasked = monochrome;
+
+	return (
+		<svg
+			ref={ ref }
+			xmlns="http://www.w3.org/2000/svg"
+			height={ height }
+			viewBox="0 0 24 24"
+			fill="none"
+			aria-labelledby={ title ? titleId : undefined }
+			{ ...props }
+		>
+			{ title && <title id={ titleId }>{ title }</title> }
+
+			<circle
+				cx="12"
+				cy="12"
+				r="12"
+				fill={ brandFill }
+				mask={ isMasked ? `url(#${ maskId })` : undefined }
+			/>
+			{ isMasked ? (
+				<defs>
+					<mask id={ maskId }>
+						{ /* Full white rectangle to start with full visibility */ }
+						<rect width="24" height="24" fill="#fff" />
+						{ /* The shape we want to "cut out" is black in the mask */ }
+						<CentralLogo fill="#000" />
+					</mask>
+				</defs>
+			) : (
+				<CentralLogo fill="#fff" />
+			) }
+		</svg>
+	);
+} );
+
+export const BigSkyLogo = {
+	Mark: Object.assign( Mark, {
+		displayName: 'BigSkyLogo.Mark',
+	} ),
+};
