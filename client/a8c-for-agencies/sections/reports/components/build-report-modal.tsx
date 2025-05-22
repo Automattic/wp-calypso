@@ -60,13 +60,13 @@ export default function BuildReportModal( { isOpen, onClose }: BuildReportModalP
 
 	// Step 2: Pick Content State
 	const [ statsCheckedItems, setStatsCheckedItems ] = useState< CheckedItemsState >(
-		STATS_OPTIONS.reduce( ( acc, item ) => ( { ...acc, [ item.value ]: false } ), {} )
+		STATS_OPTIONS.reduce( ( acc, item ) => ( { ...acc, [ item.value ]: true } ), {} )
 	);
 	const [ securityCheckedItems, setSecurityCheckedItems ] = useState< CheckedItemsState >(
-		SECURITY_OPTIONS.reduce( ( acc, item ) => ( { ...acc, [ item.value ]: false } ), {} )
+		SECURITY_OPTIONS.reduce( ( acc, item ) => ( { ...acc, [ item.value ]: true } ), {} )
 	);
 	const [ performanceCheckedItems, setPerformanceCheckedItems ] = useState< CheckedItemsState >(
-		PERFORMANCE_OPTIONS.reduce( ( acc, item ) => ( { ...acc, [ item.value ]: false } ), {} )
+		PERFORMANCE_OPTIONS.reduce( ( acc, item ) => ( { ...acc, [ item.value ]: true } ), {} )
 	);
 
 	// Step 3: Schedule and Send State

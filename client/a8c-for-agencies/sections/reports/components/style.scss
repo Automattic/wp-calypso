@@ -57,9 +57,9 @@
 		inset-inline: 0;
 		z-index: 10;
 		display: flex;
-		justify-content: flex-start;
+		justify-content: flex-end;
 		gap: 8px;
-		padding: 16px 24px;
+		padding: 16px 32px;
 		background-color: var( --color-surface );
 	}
 }
