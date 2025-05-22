@@ -320,7 +320,7 @@
 }
 
 /* ANIMATIONS */
-@keyframes a8c-components-calendar-slide-in-left {
+@keyframes slide-in-left {
 	0% {
 		transform: translateX(-100%);
 	}
@@ -329,7 +329,7 @@
 	}
 }
 
-@keyframes a8c-components-calendar-slide-in-right {
+@keyframes slide-in-right {
 	0% {
 		transform: translateX(100%);
 	}
@@ -338,7 +338,7 @@
 	}
 }
 
-@keyframes a8c-components-calendar-slide-out-left {
+@keyframes slide-out-left {
 	0% {
 		transform: translateX(0);
 	}
@@ -347,7 +347,7 @@
 	}
 }
 
-@keyframes a8c-components-calendar-slide-out-right {
+@keyframes slide-out-right {
 	0% {
 		transform: translateX(0);
 	}
@@ -356,7 +356,7 @@
 	}
 }
 
-@keyframes a8c-components-calendar-fade-in {
+@keyframes fade-in {
 	from {
 		opacity: 0;
 	}
@@ -365,7 +365,7 @@
 	}
 }
 
-@keyframes a8c-components-calendar-fade-out {
+@keyframes fade-out {
 	from {
 		opacity: 1;
 	}
@@ -393,30 +393,30 @@
 
 .calendar__weeks-before-enter,
 .calendar[dir="rtl"] .calendar__weeks-after-enter {
-  	animation-name: a8c-components-calendar-slide-in-left;
+  	animation-name: slide-in-left;
 }
 .calendar__weeks-before-exit,
 .calendar[dir="rtl"] .calendar__weeks-after-exit {
-  	animation-name: a8c-components-calendar-slide-out-left;
+  	animation-name: slide-out-left;
 }
 .calendar__weeks-after-enter,
 .calendar[dir="rtl"] .calendar__weeks-before-enter {
-  	animation-name: a8c-components-calendar-slide-in-right;
+  	animation-name: slide-in-right;
 }
 .calendar__weeks-after-exit,
 .calendar[dir="rtl"] .calendar__weeks-before-exit {
-  	animation-name: a8c-components-calendar-slide-out-right;
+  	animation-name: slide-out-right;
 }
 
 .calendar__caption-after-enter {
-  	animation-name: a8c-components-calendar-fade-in;
+  	animation-name: fade-in;
 }
 .calendar__caption-after-exit {
-  	animation-name: a8c-components-calendar-fade-out;
+  	animation-name: fade-out;
 }
 .calendar__caption-before-enter {
-  	animation-name: a8c-components-calendar-fade-in;
+  	animation-name: fade-in;
 }
 .calendar__caption-before-exit {
-  	animation-name: a8c-components-calendar-fade-out;
+  	animation-name: fade-out;
 }
