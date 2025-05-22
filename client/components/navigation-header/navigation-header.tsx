@@ -55,7 +55,7 @@ const NavigationHeader: React.FC< HeaderProps > = ( {
 				if ( backLinkProps?.onBackClick ) {
 					backLinkProps.onBackClick();
 				} else if ( backLinkProps?.url ) {
-					// Resolve the relative links with the page function.
+					// Resolve the relative links with the calypso-router.
 					if (
 						! backLinkProps?.url.startsWith( 'http://' ) &&
 						! backLinkProps?.url.startsWith( 'https://' )
