@@ -31,10 +31,9 @@
 
 	.a4a-reports-modal__group-label {
 		@include heading-medium;
-		// margin-top: 12px;
-		// margin-bottom: 8px;
 		border-top: 1px solid var( --color-neutral-10 );
 		padding-top: 16px;
+		margin-top: 8px;
 	}
 
 	.a4a-reports-modal__group-label--first {
@@ -43,18 +42,13 @@
 		margin-top: 0;
 	}
 
-	.a4a-reports-modal__checkbox-control {
-		margin-bottom: 4px;
+	.a4a-reports-modal__checkbox-control:last-child {
+		margin-bottom: 16px;
 	}
 
-	.a4a-reports-modal__preview-link {
-		color: var( --color-primary );
-		text-decoration: underline;
-		cursor: pointer;
-		&:hover,
-		&:focus {
-			color: var( --color-primary-dark );
-		}
+	.a4a-reports-modal__step-description {
+		@include body-medium;
+		margin-bottom: 0;
 	}
 
 	.a4a-reports-modal__actions {

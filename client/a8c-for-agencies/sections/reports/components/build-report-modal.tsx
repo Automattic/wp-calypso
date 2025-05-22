@@ -5,7 +5,6 @@ import {
 	TextareaControl,
 	CheckboxControl,
 	TextControl,
-	DateTimePicker,
 } from '@wordpress/components';
 import { useState, useEffect, useRef } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
@@ -28,13 +27,13 @@ const MOCK_SITES = [
 
 // Checkbox groups for Step 2
 const STATS_OPTIONS = [
-	{ label: 'Total traffic this month', value: 'total_traffic' },
+	{ label: 'Total traffic in this timeframe', value: 'total_traffic' },
 	{ label: 'Top 5 pages', value: 'top_pages' },
 	{ label: 'Top devices', value: 'top_devices' },
 	{ label: 'Top locations', value: 'top_locations' },
 ];
 
-const SECURITY_OPTIONS = [ { label: 'Backups made', value: 'backups_made' } ];
+const SECURITY_OPTIONS = [ { label: 'Backups made in this timeframe', value: 'backups_made' } ];
 
 const PERFORMANCE_OPTIONS = [ { label: 'Uptime information', value: 'uptime_info' } ];
 
@@ -71,9 +70,6 @@ export default function BuildReportModal( { isOpen, onClose }: BuildReportModalP
 	);
 
 	// Step 3: Schedule and Send State
-	const [ scheduleDate, setScheduleDate ] = useState( new Date() );
-	const [ sendMonthly, setSendMonthly ] = useState( false );
-
 	const handleNextStep = () => setCurrentStep( ( prev ) => prev + 1 );
 	const handlePrevStep = () => setCurrentStep( ( prev ) => prev - 1 );
 
@@ -90,22 +86,6 @@ export default function BuildReportModal( { isOpen, onClose }: BuildReportModalP
 			...prev,
 			[ itemName ]: ! prev[ itemName ],
 		} ) );
-	};
-
-	const handlePreviewLinkClick = () => {
-		window.open( '#', '_blank' ); // Placeholder action
-	};
-
-	const handlePreviewLinkKeyDown = ( event: React.KeyboardEvent< HTMLSpanElement > ) => {
-		if ( event.key === 'Enter' || event.key === ' ' ) {
-			handlePreviewLinkClick();
-		}
-	};
-
-	const handleDateChange = ( newDate: string | null ) => {
-		if ( newDate ) {
-			setScheduleDate( new Date( newDate ) );
-		}
 	};
 
 	// Auto-scroll to teammate emails field when checkbox is checked
@@ -180,7 +160,7 @@ export default function BuildReportModal( { isOpen, onClose }: BuildReportModalP
 				return (
 					<>
 						<h2 className="a4a-reports-modal__step-title">
-							{ translate( 'Step 2 of 3: Pick Content' ) }
+							{ translate( 'Step 2 of 3: Pick the report content' ) }
 						</h2>
 						<h3 className="a4a-reports-modal__group-label a4a-reports-modal__group-label--first">
 							{ translate( 'Stats' ) }
@@ -220,36 +200,12 @@ export default function BuildReportModal( { isOpen, onClose }: BuildReportModalP
 				return (
 					<>
 						<h2 className="a4a-reports-modal__step-title">{ translate( 'Step 3 of 3: Send' ) }</h2>
-						<div>
-							<label>{ translate( 'When should it send?' ) }</label>
-							<DateTimePicker currentDate={ scheduleDate } onChange={ handleDateChange } is12Hour />
-						</div>
-						<CheckboxControl
-							label={ translate( 'Send monthly?' ) }
-							checked={ sendMonthly }
-							onChange={ setSendMonthly }
-						/>
-						{ sendMonthly && (
-							<p className="a4a-reports-modal__form-field a4a-reports-modal__conditional-text">
-								{ translate(
-									'Your custom text from step one, will be included in each sent report'
-								) }
-							</p>
-						) }
-						<p>
-							{ translate( 'Preview external link: ' ) }
-							<span
-								role="link"
-								tabIndex={ 0 }
-								onClick={ handlePreviewLinkClick }
-								onKeyDown={ handlePreviewLinkKeyDown }
-								className="a4a-reports-modal__preview-link"
-							>
-								{ translate( 'View Preview' ) }
-							</span>
+
+						<p className="a4a-reports-modal__step-description">
+							{ translate( 'The report is ready to be sent to your client. ' ) }
 						</p>
 						<Button variant="secondary" onClick={ () => alert( 'Send test report clicked' ) }>
-							{ translate( 'Send me test report' ) }
+							{ translate( 'Send me a preview' ) }
 						</Button>
 					</>
 				);
@@ -272,7 +228,7 @@ export default function BuildReportModal( { isOpen, onClose }: BuildReportModalP
 			) }
 			{ currentStep === 3 && (
 				<Button variant="primary" onClick={ () => alert( 'Schedule and Send clicked' ) }>
-					{ translate( 'Schedule and Send' ) }
+					{ translate( 'Send the report now' ) }
 				</Button>
 			) }
 		</div>
