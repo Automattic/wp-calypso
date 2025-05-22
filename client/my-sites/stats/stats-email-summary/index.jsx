@@ -118,7 +118,9 @@ const StatsEmailSummary = ( { period, query, context } ) => {
 						className="stats__section-header modernized-header"
 						titleProps={ titleProps }
 						backLinkProps={ backLinkProps }
-						rightSection={ downloadCsvElement }
+						rightSection={
+							<div className="stats-module__header-nav-button">{ downloadCsvElement }</div>
+						}
 					/>
 				) }
 
