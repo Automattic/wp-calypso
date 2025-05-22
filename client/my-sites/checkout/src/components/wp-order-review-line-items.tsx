@@ -140,19 +140,21 @@ export function WPOrderReviewLineItems( {
 	}, [ responseCart.products ] );
 
 	useEffect( () => {
-		const productOrderNeedsInitialization = ! cartProductsOrder.length;
+		setCartProductsOrder( ( prevCartProductsOrder ) => {
+			const productOrderNeedsInitialization = ! prevCartProductsOrder.length;
 
-		// An update can be either a new product added to the cart or an existing product
-		// that has been updated (e.g. changing the duration of a plan).
-		// Removing a product from the cart will not trigger this effect, since the
-		// removed product will then be shown in the restorable products list.
-		const cartHasBeenUpdated = cartProductsOrder.length <= responseCart.products.length;
+			// An update can be either a new product added to the cart or an existing product
+			// that has been updated (e.g. changing the duration of a plan).
+			// Removing a product from the cart will not trigger this effect, since the
+			// removed product will then be shown in the restorable products list.
+			const cartHasBeenUpdated = prevCartProductsOrder.length <= responseCart.products.length;
 
-		if ( productOrderNeedsInitialization || cartHasBeenUpdated ) {
-			setCartProductsOrder( responseCart.products.map( ( { product_id } ) => product_id ) );
-		}
+			if ( productOrderNeedsInitialization || cartHasBeenUpdated ) {
+				return responseCart.products.map( ( { product_id } ) => product_id );
+			}
 
-		// eslint-disable-next-line react-hooks/exhaustive-deps -- Having cartProductsOrder as a dependency would trigger an infinite loop.
+			return prevCartProductsOrder;
+		} );
 	}, [ responseCart.products, setCartProductsOrder ] );
 
 	const hasWPCOMPlanInCart = responseCart.products.some( ( product ) =>
