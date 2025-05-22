@@ -104,7 +104,6 @@
 		"settings/newsletter-settings-page": true,
 		"settings/security/monitor": true,
 		"sign-in-with-apple": true,
-		"signup/professional-email-step": false,
 		"signup/social": true,
 		"signup/social-first": true,
 		"site-indicator": true,

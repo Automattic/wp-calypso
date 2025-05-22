@@ -135,7 +135,6 @@
 		"settings/security/monitor": true,
 		"sign-in-with-apple": true,
 		"sign-in-with-apple/redirect": true,
-		"signup/professional-email-step": false,
 		"signup/social": true,
 		"signup/social-first": true,
 		"site-indicator": true,
