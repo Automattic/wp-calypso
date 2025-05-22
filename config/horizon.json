@@ -84,7 +84,6 @@
 		"plans/hosting-trial": true,
 		"plans/migration-trial": true,
 		"plans/personal-plan": true,
-		"plans/starter-plan": false,
 		"plans/updated-storage-labels": true,
 		"plans/upgradeable-storage": true,
 		"post-editor/checkout-overlay": true,
