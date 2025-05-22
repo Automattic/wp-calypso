@@ -26,6 +26,7 @@ const possibleBackLinks: { [ key: string ]: string | null } = {
 	searchterms: '/stats/{period}/searchterms/',
 	videoplays: '/stats/{period}/videoplays/',
 	annualstats: '/stats/day/annualstats/',
+	emailsummary: '/stats/{period}/emails/',
 	postDetails: null, // Last item in the history, the text is not displayed anywhere but this is used to track the item in history stack.
 };
 
@@ -72,6 +73,7 @@ export const useStatsNavigationHistory = (): { text: string; url: string | null 
 			videoplays: translate( 'Videos' ),
 			annualstats: translate( 'Annual insights' ),
 			postDetails: null, // Last item in the history, the text is not displayed anywhere but this is used to track the item in history stack.
+			emailsummary: translate( 'Emails' ),
 		} ),
 		[]
 	);

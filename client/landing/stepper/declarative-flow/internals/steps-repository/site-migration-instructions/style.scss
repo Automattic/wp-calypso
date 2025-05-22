@@ -3,7 +3,9 @@
 @import "@automattic/onboarding/styles/mixins";
 
 .step-route.site-migration-instructions {
-	@include onboarding-block-margin;
+	&:not(:has(> .step-container-v2)) {
+		@include onboarding-block-margin;
+	}
 
 	.step-container {
 		padding: 0 0 60px;
@@ -19,6 +21,15 @@
 			padding-left: 0;
 			padding-right: 0;
 		}
+	}
+}
+.site-migration-instructions__heading .circular__progress-bar {
+	position: relative;
+	margin-left: 0;
+	margin-bottom: 16px;
+	@include break-large {
+		position: absolute;
+		margin-left: 46px;
 	}
 }
 
