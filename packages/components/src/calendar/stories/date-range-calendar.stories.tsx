@@ -25,7 +25,6 @@ import type { Meta, StoryObj } from '@storybook/react';
 const meta: Meta< typeof DateRangeCalendar > = {
 	title: 'Components/DateRangeCalendar',
 	component: DateRangeCalendar,
-	tags: [ 'autodocs' ],
 	parameters: {
 		controls: { expanded: true },
 	},
