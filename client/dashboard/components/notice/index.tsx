@@ -36,23 +36,14 @@ const icons: { [ key in NoticeVariant ]: any } = {
  * 		<Notice
  * 			title="Title"
  * 			content={ <>Hello, I’m a notice with an inline <ExternalLink href="#">link</ExternalLink></> }
- * 			decoration={<Icon icon={cog} />}
- * 			actions={<Button variant="primary">Label</Button>}
+ * 			actions={ <Button variant="primary">Label</Button> }
  * 		/>
  * 	);
  * }
  * ```
  */
 function UnforwardedNotice(
-	{
-		variant = 'info',
-		title,
-		content,
-		actions,
-		density = 'low',
-		isDismissible = false,
-		onRemove,
-	}: NoticeProps,
+	{ variant = 'info', title, content, actions, density = 'low', onClose }: NoticeProps,
 	ref: React.ForwardedRef< HTMLDivElement >
 ) {
 	const hasLowDensity = density === 'low';
@@ -76,11 +67,11 @@ function UnforwardedNotice(
 							</HStack>
 						) }
 					</VStack>
-					{ isDismissible && (
+					{ !! onClose && (
 						<Button
 							className="dashboard-notice__close-button"
 							icon={ closeSmall }
-							onClick={ onRemove }
+							onClick={ onClose }
 						/>
 					) }
 				</HStack>

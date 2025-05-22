@@ -36,16 +36,7 @@ export interface NoticeProps {
 	density?: NoticeDensity;
 
 	/**
-	 * Whether the notice should be dismissible or not
-	 *
-	 * @default false
-	 */
-	isDismissible?: boolean;
-
-	/**
 	 * An optional action to close the component.
-	 *
-	 * @default noop
 	 */
-	onRemove?: () => void;
+	onClose?: () => void;
 }

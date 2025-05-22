@@ -96,6 +96,6 @@ export const WithoutActions: Story = {
 export const Dismissible: Story = {
 	args: {
 		...defaultArgs,
-		isDismissible: true,
+		onClose: () => {},
 	},
 };

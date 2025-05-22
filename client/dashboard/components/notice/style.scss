@@ -6,23 +6,26 @@
 	 * Density
 	 */
 	&.has-density-low {
+		border-radius: $radius-large;
+
 		.dashboard-notice__body {
 			padding: $grid-unit-20;
-			border-radius: $radius-large;
 		}
 	}
 
 	&.has-density-medium {
+		border-radius: $radius-small;
+
 		.dashboard-notice__body {
 			padding: $grid-unit-15;
-			border-radius: $radius-small;
 		}
 	}
 
 	&.has-density-high {
+		border-radius: $radius-small;
+
 		.dashboard-notice__body {
 			padding: $grid-unit-05;
-			border-radius: $radius-small;
 		}
 	}
 
