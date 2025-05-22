@@ -48,6 +48,7 @@ const SUPPORTED_QUERY_PARAMS: string[] = [
 	'jp_paged',
 	'jp_author',
 	'jp_cat',
+	'jp_category_name',
 	'jp_m',
 ];
 
