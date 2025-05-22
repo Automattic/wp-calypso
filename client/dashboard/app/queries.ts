@@ -5,7 +5,6 @@ import {
 	fetchSiteMonitorUptime,
 	fetchPHPVersion,
 	fetchCurrentPlan,
-	fetchSitePrimaryDomain,
 	fetchSiteEngagementStats,
 	fetchDomains,
 	fetchEmails,
@@ -16,22 +15,24 @@ import {
 	fetchPerformanceInsights,
 	updateSiteSettings,
 	restoreSitePlanSoftware,
+	fetchWordPressVersion,
+	updateWordPressVersion,
 } from '../data';
-import { SITE_FIELDS } from '../data/constants';
+import { SITE_FIELDS, SITE_OPTIONS } from '../data/constants';
 import { queryClient } from './query-client';
 import type { Profile, SiteSettings, UrlPerformanceInsights } from '../data/types';
 import type { Query } from '@tanstack/react-query';
 
 export function sitesQuery() {
 	return {
-		queryKey: [ 'sites', SITE_FIELDS ],
+		queryKey: [ 'sites', SITE_FIELDS, SITE_OPTIONS ],
 		queryFn: fetchSites,
 	};
 }
 
 export function siteQuery( siteIdOrSlug: string ) {
 	return {
-		queryKey: [ 'site', siteIdOrSlug, SITE_FIELDS ],
+		queryKey: [ 'site', siteIdOrSlug, SITE_FIELDS, SITE_OPTIONS ],
 		queryFn: () => fetchSite( siteIdOrSlug ),
 	};
 }
@@ -40,13 +41,6 @@ export function siteCurrentPlanQuery( siteIdOrSlug: string ) {
 	return {
 		queryKey: [ 'site', siteIdOrSlug, 'current-plan' ],
 		queryFn: () => fetchCurrentPlan( siteIdOrSlug ),
-	};
-}
-
-export function sitePrimaryDomainQuery( siteIdOrSlug: string ) {
-	return {
-		queryKey: [ 'site', siteIdOrSlug, 'primary-domain' ],
-		queryFn: () => fetchSitePrimaryDomain( siteIdOrSlug ),
 	};
 }
 
@@ -75,6 +69,24 @@ export function sitePHPVersionQuery( siteIdOrSlug: string ) {
 	return {
 		queryKey: [ 'site', siteIdOrSlug, 'php-version' ],
 		queryFn: () => fetchPHPVersion( siteIdOrSlug ),
+	};
+}
+
+export function siteWordPressVersionQuery( siteSlug: string ) {
+	return {
+		queryKey: [ 'site', siteSlug, 'wp-version' ],
+		queryFn: () => {
+			return fetchWordPressVersion( siteSlug );
+		},
+	};
+}
+
+export function siteWordPressVersionMutation( siteSlug: string ) {
+	return {
+		mutationFn: ( version: string ) => updateWordPressVersion( siteSlug, version ),
+		onSuccess: () => {
+			queryClient.invalidateQueries( { queryKey: [ 'site', siteSlug, 'wp-version' ] } );
+		},
 	};
 }
 

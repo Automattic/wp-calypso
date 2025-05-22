@@ -9,6 +9,7 @@ export interface AgencyDetailsPayload {
 	servicesOffered: string[];
 	productsOffered: string[];
 	productsToOffer: string[];
+	plansToOfferProducts?: 'Yes' | 'No';
 	city: string;
 	line1: string;
 	line2: string;

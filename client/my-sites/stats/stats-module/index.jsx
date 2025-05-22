@@ -344,7 +344,7 @@ class StatsModule extends Component {
 					showMore={
 						displaySummaryLink && ! summary
 							? {
-									url: this.getSummaryLink(),
+									url: summaryLink,
 									label:
 										data.length >= 10
 											? translate( 'View all', {

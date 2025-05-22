@@ -38,6 +38,7 @@ import {
 import { getMomentSiteZone } from 'calypso/my-sites/stats/hooks/use-moment-site-zone';
 import useNoticeVisibilityMutation from 'calypso/my-sites/stats/hooks/use-notice-visibility-mutation';
 import { useNoticeVisibilityQuery } from 'calypso/my-sites/stats/hooks/use-notice-visibility-query';
+import { recordCurrentScreen } from 'calypso/my-sites/stats/hooks/use-stats-navigation-history';
 import { getChartRangeParams } from 'calypso/my-sites/stats/utils';
 import {
 	recordGoogleEvent,
@@ -899,7 +900,11 @@ const StatsBodyAccessCheck = ( props ) => {
 };
 
 const StatsSite = ( props ) => {
-	const { period } = props.period;
+	const {
+		context,
+		period: { period },
+	} = props;
+
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 	const siteId = useSelector( getSelectedSiteId );
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
@@ -910,6 +915,17 @@ const StatsSite = ( props ) => {
 			sessionStorage.setItem( 'jp-stats-last-tab', 'traffic' ),
 		[]
 	); // Track the last viewed tab.
+
+	useEffect( () => {
+		recordCurrentScreen(
+			'traffic',
+			{
+				queryParams: context.query,
+				period: period,
+			},
+			true
+		);
+	}, [ context.query, period ] );
 
 	return (
 		<Main fullWidthLayout ariaLabel={ STATS_PRODUCT_NAME }>

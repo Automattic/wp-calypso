@@ -59,7 +59,7 @@ export class ReaderSidebarTags extends Component {
 		const { tags, isOpen, translate, onClick, path } = this.props;
 
 		return (
-			<li>
+			<li className="sidebar-streams__tags">
 				{ ! tags && <QueryReaderFollowedTags /> }
 				<ExpandableSidebarMenu
 					expanded={ isOpen }
@@ -71,7 +71,9 @@ export class ReaderSidebarTags extends Component {
 					expandableIconClick={ onClick }
 				>
 					<ReaderSidebarTagsList { ...this.props } />
-					<AddTagForm onAction={ this.followTag } />
+					<li className="sidebar-menu__item add-tag-form">
+						<AddTagForm onAction={ this.followTag } />
+					</li>
 				</ExpandableSidebarMenu>
 			</li>
 		);

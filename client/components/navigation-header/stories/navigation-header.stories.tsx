@@ -90,8 +90,7 @@ export const WithScreenOptions: Story = {
 		backLinkProps: {
 			url: '/dashboard',
 			text: 'Back to Dashboard',
-			onBackClick: ( e ) => {
-				e.preventDefault();
+			onBackClick: () => {
 				alert( 'Back button clicked!' );
 			},
 		},

@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
 import { pick } from 'lodash';
 import { useEffect } from 'react';
@@ -9,7 +8,6 @@ import AsyncLoad from 'calypso/components/async-load';
 import EmptyContent from 'calypso/components/empty-content';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import useAdvertisingUrl from 'calypso/my-sites/advertising/useAdvertisingUrl';
-import CloudflareAnalyticsSettings from 'calypso/my-sites/site-settings/analytics/form-cloudflare-analytics';
 import AnalyticsSettings from 'calypso/my-sites/site-settings/analytics/form-google-analytics';
 import JetpackDevModeNotice from 'calypso/my-sites/site-settings/jetpack-dev-mode-notice';
 import JetpackSiteStats from 'calypso/my-sites/site-settings/jetpack-site-stats';
@@ -31,7 +29,6 @@ const SiteSettingsTraffic = ( {
 	handleAutosavingToggle,
 	handleSubmitForm,
 	isAdmin,
-	isJetpack,
 	isJetpackAdmin,
 	isRequestingSettings,
 	isSavingSettings,
@@ -78,9 +75,6 @@ const SiteSettingsTraffic = ( {
 					require="calypso/my-sites/site-settings/seo-settings/form"
 					placeholder={ null }
 				/>
-			) }
-			{ ! isJetpack && isAdmin && config.isEnabled( 'cloudflare' ) && (
-				<CloudflareAnalyticsSettings />
 			) }
 			{ isJetpackAdmin && (
 				<JetpackSiteStats

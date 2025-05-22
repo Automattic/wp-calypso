@@ -12,7 +12,10 @@ const AgencySignupV2 = () => {
 
 	return (
 		<SignupWrapper>
-			<MultiStepForm signupWithMagicLinkFlow={ isEnabled( 'a4a-signup-v2-via-email' ) } />
+			<MultiStepForm
+				signupWithMagicLinkFlow={ isEnabled( 'a4a-signup-v2-via-email' ) }
+				sourceName="Signup V2 Flow"
+			/>
 		</SignupWrapper>
 	);
 };

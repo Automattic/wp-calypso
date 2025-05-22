@@ -1,5 +1,5 @@
 import wpcom from 'calypso/lib/wp';
-import { SITE_FIELDS } from './constants';
+import { SITE_FIELDS, SITE_OPTIONS } from './constants';
 import type {
 	Domain,
 	Email,
@@ -11,7 +11,6 @@ import type {
 	Profile,
 	TwoStep,
 	EngagementStatsDataPoint,
-	SiteDomain,
 	BasicMetricsData,
 	SiteSettings,
 	UrlPerformanceInsights,
@@ -32,6 +31,7 @@ export const updateProfile = async ( data: Partial< Profile > ) => {
 };
 
 const JOINED_SITE_FIELDS = SITE_FIELDS.join( ',' );
+const JOINED_SITE_OPTIONS = SITE_OPTIONS.join( ',' );
 
 export const fetchSites = async (): Promise< Site[] > => {
 	const { sites } = await wpcom.req.get(
@@ -44,6 +44,7 @@ export const fetchSites = async (): Promise< Site[] > => {
 			include_domain_only: 'true',
 			site_activity: 'active',
 			fields: JOINED_SITE_FIELDS,
+			options: JOINED_SITE_OPTIONS,
 		}
 	);
 	return sites;
@@ -52,7 +53,7 @@ export const fetchSites = async (): Promise< Site[] > => {
 export const fetchSite = async ( siteIdOrSlug: string ): Promise< Site > => {
 	return await wpcom.req.get(
 		{ path: `/sites/${ siteIdOrSlug }` },
-		{ fields: JOINED_SITE_FIELDS }
+		{ fields: JOINED_SITE_FIELDS, options: JOINED_SITE_OPTIONS }
 	);
 };
 
@@ -84,6 +85,26 @@ export const fetchPHPVersion = async ( id: string ): Promise< string | undefined
 		path: `/sites/${ id }/hosting/php-version`,
 		apiNamespace: 'wpcom/v2',
 	} );
+};
+
+export const fetchWordPressVersion = async ( siteIdOrSlug: string ): Promise< string > => {
+	return wpcom.req.get( {
+		path: `/sites/${ siteIdOrSlug }/hosting/wp-version`,
+		apiNamespace: 'wpcom/v2',
+	} );
+};
+
+export const updateWordPressVersion = async (
+	siteIdOrSlug: string,
+	version: string
+): Promise< void > => {
+	return wpcom.req.post(
+		{
+			path: `/sites/${ siteIdOrSlug }/hosting/wp-version`,
+			apiNamespace: 'wpcom/v2',
+		},
+		{ version }
+	);
 };
 
 export const fetchCurrentPlan = async ( siteIdOrSlug: string ): Promise< Plan > => {
@@ -130,23 +151,6 @@ export const fetchSiteEngagementStats = async ( siteIdOrSlug: string ) => {
 export const fetchDomains = async (): Promise< Domain[] > => {
 	return ( await wpcom.req.get( '/all-domains', { no_wpcom: true, resolve_status: true } ) )
 		.domains;
-};
-
-export const fetchSiteDomains = async ( id: string ): Promise< { domains: SiteDomain[] } > => {
-	try {
-		const domains = await wpcom.req.get( { path: `/sites/${ id }/domains`, apiVersion: '1.2' } );
-		return domains;
-	} catch ( error ) {
-		// TODO: check how to properly fetch for all sites..
-		return { domains: [] };
-	}
-};
-
-export const fetchSitePrimaryDomain = async (
-	siteIdOrSlug: string
-): Promise< SiteDomain | undefined > => {
-	const { domains } = await fetchSiteDomains( siteIdOrSlug );
-	return domains.find( ( domain: SiteDomain ) => domain.primary_domain );
 };
 
 export const EMAIL_DATA: Email[] = [

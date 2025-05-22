@@ -508,7 +508,9 @@ export function emailSummary( context, next ) {
 
 	const date = moment().locale( 'en' );
 
-	context.primary = <StatsEmailSummary period={ rangeOfPeriod( activeFilter.period, date ) } />;
+	context.primary = (
+		<StatsEmailSummary period={ rangeOfPeriod( activeFilter.period, date ) } context={ context } />
+	);
 
 	next();
 }

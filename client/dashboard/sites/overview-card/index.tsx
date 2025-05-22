@@ -13,7 +13,7 @@ import './style.scss';
 
 interface OverviewCardProps {
 	title: string;
-	heading?: string;
+	heading?: ReactNode;
 	customHeading?: ReactNode;
 	icon?: ReactElement;
 	metaText?: string;

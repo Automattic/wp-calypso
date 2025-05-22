@@ -41,12 +41,6 @@ describe( 'CancelDifmMigrationForm', () => {
 		useBlogStickersQuery.mockReturnValue( { data: [] } );
 	} );
 
-	it( 'renders nothing if feature flag is disabled', () => {
-		isEnabled.mockReturnValue( false );
-		renderWithProvider( <CancelDifmMigrationForm siteId={ siteId } /> );
-		expect( screen.queryByRole( 'button', { name: /cancel migration/i } ) ).toBeNull();
-	} );
-
 	describe( 'when migration is not in progress', () => {
 		beforeEach( () => {
 			useBlogStickersQuery.mockReturnValue( { data: [] } );

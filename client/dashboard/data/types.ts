@@ -9,6 +9,7 @@ export interface Profile {
 }
 
 export interface User {
+	ID: number;
 	username: string;
 	display_name: string;
 	avatar_URL?: string;
@@ -67,7 +68,6 @@ export interface SiteCapabilities {
 export interface SiteOptions {
 	software_version: string;
 	admin_url: string;
-	blog_public: number;
 	is_redirect?: boolean;
 }
 
@@ -80,7 +80,6 @@ export interface Site {
 		ico: string;
 	};
 	plan?: SitePlan;
-	active_modules?: string[];
 	capabilities: SiteCapabilities;
 	subscribers_count: number;
 	// Can be undefined for deleted sites.
@@ -90,12 +89,14 @@ export interface Site {
 	is_coming_soon: boolean;
 	is_private: boolean;
 	is_wpcom_atomic: boolean;
+	is_wpcom_staging_site: boolean;
 	launch_status: string | boolean;
 	site_migration: {
 		migration_status: string;
 	} | null;
+	site_owner: number;
 	jetpack: boolean;
-	jetpack_modules: string[];
+	jetpack_modules: string[] | null;
 }
 
 export type EmailProvider = 'titan' | 'google-workspace' | 'forwarding';

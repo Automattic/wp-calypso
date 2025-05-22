@@ -15,7 +15,11 @@ import DataViewsContext from '../dataviews-context';
 import { VIEW_LAYOUTS } from '../../dataviews-layouts';
 import type { ViewBaseProps } from '../../types';
 
-export default function DataViewsLayout() {
+type DataViewsLayoutProps = {
+	className?: string;
+};
+
+export default function DataViewsLayout( { className }: DataViewsLayoutProps ) {
 	const {
 		actions = [],
 		data,
@@ -38,6 +42,7 @@ export default function DataViewsLayout() {
 
 	return (
 		<ViewComponent
+			className={ className }
 			actions={ actions }
 			data={ data }
 			fields={ fields }

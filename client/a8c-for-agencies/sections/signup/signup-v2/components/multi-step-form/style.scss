@@ -108,10 +108,17 @@
 		@include heading-medium;
 	}
 
+	.a4a-form__section-field-sub {
+		@include body-medium;
+		font-style: italic;
+		margin-block-end: 4px;
+	}
+
 	@media (prefers-color-scheme: dark) {
 		.a4a-form__heading .a4a-form__heading-title,
 		.a4a-form__heading .a4a-form__heading-description,
 		.a4a-form__section-field-label,
+		.a4a-form__section-field-sub,
 		.a4a-form__section-field-required,
 		.signup-personalization-form .multi-checkbox label,
 		.choice-blueprint__content li,

@@ -16,14 +16,25 @@
 			font-size: 90%;
 		}
 		.empty-content__line {
-			font-size: 60%;
-			margin-bottom: 20px;
+			margin-bottom: 2.8rem;
 		}
 	}
 }
 
 .layout.is-jetpack-login {
 	background-color: #fff;
+
+	&, .empty-content__title {
+		font-family: "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+	}
+
+	.empty-content__title {
+		color: var(--studio-black);
+		font-size: 2rem;
+		font-weight: 500;
+		line-height: 40px;
+		margin-bottom: 1rem;
+	}
 
 	.magic-login {
 		max-width: calc(450px + 48px);
@@ -96,6 +107,21 @@
 			width: 48px;
 		}
 	}
+
+	#content.layout__content {
+		padding-top: 10rem;
+	}
+
+	.magic-login__link-expired {
+		padding-inline: 1rem;
+		padding-top: 0;
+		margin: 0 auto;
+	}
+
+	.empty-content__action.is-primary {
+		background-color: var(--studio-jetpack-green-60);
+		border-color: var(--studio-jetpack-green-60);
+	}
 }
 .magic-login__successfully-jetpack-actions {
 	color: var(--studio-jetpack-grey-50, #646970 );
@@ -161,6 +187,27 @@
 	}
 }
 
+.magic-login__link-expired {
+	max-width: 450px;
+	text-align: start;
+
+	.empty-content__line {
+		font-size: $font-body;
+		margin-bottom: 2.8rem;
+		font-weight: 400;
+		color: var(--studio-gray-100)
+	}
+	.empty-content__action {
+		width: 100%;
+		margin: 0 0 1rem;
+		border-radius: 4px;
+		font-size: 15px;
+		font-weight: 500;
+		line-height: 20px;
+		padding: 0.75rem 1.5rem;
+	}
+}
+
 .is-white-login .magic-login__handle-link,
 .is-white-login .magic-login__link-expired {
 	.empty-content__title {
@@ -170,18 +217,9 @@
 		margin-bottom: 15px;
 	}
 
-	.empty-content__line {
-		font-weight: normal;
-		font-size: $font-body;
-	}
-
 	.button.is-primary:not([disabled]) {
 		background-color: #007cba;
 		border-color: #007cba;
-	}
-
-	.empty-content__action {
-		margin: 0 10px;
 	}
 }
 

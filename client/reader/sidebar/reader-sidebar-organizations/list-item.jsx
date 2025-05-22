@@ -7,6 +7,7 @@ import Favicon from 'calypso/reader/components/favicon';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import ReaderSidebarHelper from '../helper';
+import { MenuItem, MenuItemLink } from '../menu';
 
 export class ReaderSidebarOrganizationsListItem extends Component {
 	static propTypes = {
@@ -24,17 +25,17 @@ export class ReaderSidebarOrganizationsListItem extends Component {
 
 	render() {
 		const { site, path, moment } = this.props;
+		const computedClassName = ReaderSidebarHelper.itemLinkClass(
+			'/reader/feeds/' + site.feed_ID,
+			path
+		);
 
-		/* eslint-disable wpcalypso/jsx-classname-namespace */
+		const selected = computedClassName.includes( 'selected' );
+
 		return (
-			<li
-				key={ this.props.title }
-				className={ ReaderSidebarHelper.itemLinkClass( '/reader/feeds/' + site.feed_ID, path, {
-					'sidebar-dynamic-menu__blog': true,
-				} ) }
-			>
-				<a
-					className="sidebar__menu-link sidebar__menu-link-reader"
+			<MenuItem selected={ selected } key={ this.props.title }>
+				<MenuItemLink
+					className="sidebar__menu-link-reader"
 					href={ `/reader/feeds/${ site.feed_ID }` }
 					onClick={ this.handleSidebarClick }
 				>
@@ -47,8 +48,8 @@ export class ReaderSidebarOrganizationsListItem extends Component {
 						</span>
 					</span>
 					{ site.unseen_count > 0 && <Count count={ site.unseen_count } compact /> }
-				</a>
-			</li>
+				</MenuItemLink>
+			</MenuItem>
 		);
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}

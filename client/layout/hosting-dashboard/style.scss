@@ -21,6 +21,19 @@
 	}
 }
 
+.main.hosting-dashboard-layout-column {
+	border-radius: 8px; /* stylelint-disable-line scales/radii */
+	display: flex;
+	flex-direction: column;
+
+	@include break-small {
+		height: 100%;
+		padding-block-start: 1px;
+		border: 1px solid $gray-200;
+		box-sizing: border-box;
+	}
+}
+
 .hosting-dashboard-layout-with-columns__container,
 .hosting-dashboard-layout__container {
 	max-width: 100%;
@@ -44,20 +57,6 @@
 
 .hosting-dashboard-layout-column {
 	flex: 1;
-}
-
-.hosting-dashboard-layout-column__container {
-	border-radius: 8px; /* stylelint-disable-line scales/radii */
-	overflow: hidden;
-	display: flex;
-	flex-direction: column;
-
-	@include break-small {
-		height: 100%;
-		padding-block-start: 1px;
-		border: 1px solid $gray-200;
-		box-sizing: border-box;
-	}
 }
 
 .hosting-dashboard-layout__body {

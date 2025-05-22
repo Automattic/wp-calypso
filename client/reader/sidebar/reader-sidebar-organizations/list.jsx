@@ -14,8 +14,8 @@ import getOrganizationSites from 'calypso/state/reader/follows/selectors/get-rea
 import { AUTOMATTIC_ORG_ID } from 'calypso/state/reader/organizations/constants';
 import { toggleReaderSidebarOrganization } from 'calypso/state/reader-ui/sidebar/actions';
 import { isOrganizationOpen } from 'calypso/state/reader-ui/sidebar/selectors';
+import { AllIcon } from '../icons/all';
 import ReaderSidebarOrganizationsListItem from './list-item';
-
 export class ReaderSidebarOrganizationsList extends Component {
 	static propTypes = {
 		path: PropTypes.string.isRequired,
@@ -63,6 +63,7 @@ export class ReaderSidebarOrganizationsList extends Component {
 					className={ ReaderSidebarHelper.itemLinkClass( '/reader/' + organization.slug, path, {
 						'sidebar-streams__all': true,
 					} ) }
+					icon={ <AllIcon /> }
 				>
 					{ sum > 0 && <Count count={ sum } compact /> }
 				</SidebarItem>

@@ -10,6 +10,20 @@ import {
 	TRACKING_IDS,
 } from './constants';
 
+/**
+ * Checks if the current page is a signup or checkout page
+ * @returns {boolean} True if the current page is a signup or checkout page
+ */
+const isSignupOrCheckoutPage = () => {
+	if ( typeof window === 'undefined' ) {
+		return false;
+	}
+	const path = window.location.pathname;
+	return (
+		path.startsWith( '/checkout' ) || path.startsWith( '/start' ) || path.startsWith( '/setup' )
+	);
+};
+
 export function setup() {
 	if ( typeof window !== 'undefined' ) {
 		if ( mayWeInitTracker( 'ga' ) ) {
@@ -51,9 +65,11 @@ export function setup() {
 		}
 
 		// Linkedin
-		if ( mayWeInitTracker( 'linkedin' ) ) {
+		if ( mayWeInitTracker( 'linkedin' ) && isSignupOrCheckoutPage() ) {
 			setupLinkedinInsight(
-				isJetpackCloud() || isJetpackCheckout() ? TRACKING_IDS.jetpackLinkedinId : null
+				isJetpackCloud() || isJetpackCheckout()
+					? TRACKING_IDS.jetpackLinkedinId
+					: TRACKING_IDS.wpcomLinkedinId
 			);
 		}
 
