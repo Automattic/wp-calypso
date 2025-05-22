@@ -98,7 +98,6 @@ export function profileMutation() {
 			queryClient.setQueryData( [ 'profile' ], ( oldData: Profile | undefined ) =>
 				oldData ? { ...oldData, ...newData } : newData
 			);
-			queryClient.invalidateQueries( { queryKey: [ 'profile' ] } );
 		},
 	};
 }
@@ -120,7 +119,6 @@ export function siteSettingsMutation( siteId: string ) {
 				...oldData,
 				...newData,
 			} ) );
-			queryClient.invalidateQueries( { queryKey: [ 'site-settings', siteId ] } );
 			queryClient.invalidateQueries( { queryKey: [ 'site', siteId ] } );
 		},
 	};
