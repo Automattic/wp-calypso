@@ -93,6 +93,7 @@
 		}
 
 		.signup-wrapper__testimonial-info {
+			@include body-large;
 			display: flex;
 			flex-direction: column;
 			gap: 4px;
