@@ -240,6 +240,7 @@ function ViewTable< Item >( {
 	isItemClickable,
 	renderItemLink,
 	view,
+	className,
 }: ViewTableProps< Item > ) {
 	const { containerRef } = useContext( DataViewsContext );
 	const headerMenuRefs = useRef<
@@ -310,7 +311,7 @@ function ViewTable< Item >( {
 	return (
 		<>
 			<table
-				className={ clsx( 'dataviews-view-table', {
+				className={ clsx( 'dataviews-view-table', className, {
 					[ `has-${ view.layout?.density }-density` ]:
 						view.layout?.density &&
 						[ 'compact', 'comfortable' ].includes(

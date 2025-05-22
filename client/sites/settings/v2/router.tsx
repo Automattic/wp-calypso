@@ -10,8 +10,9 @@ import {
 } from '@tanstack/react-router';
 import { siteSettingsQuery } from 'calypso/dashboard/app/queries';
 import { queryClient } from 'calypso/dashboard/app/query-client';
+import Root from './root';
 
-const rootRoute = createRootRoute( { component: () => <Outlet /> } );
+const rootRoute = createRootRoute( { component: Root } );
 
 const dashboardSiteSettingsCompatibilityRouteRoot = createRoute( {
 	getParentRoute: () => rootRoute,
@@ -137,6 +138,7 @@ export const getRouter = () => {
 		defaultPreload: 'intent',
 		defaultPreloadStaleTime: 0,
 		defaultNotFoundComponent: () => null,
+		defaultViewTransition: true,
 
 		// Use memory history to compartmentalize TanStack Router's history management.
 		// This way, we separate TanStack Router's history implementation from the browser history used by page.js.

@@ -4,7 +4,6 @@ import { useEffect, useRef } from 'react';
 import { createRoot } from 'react-dom/client';
 import { persistPromise, queryClient } from 'calypso/dashboard/app/query-client';
 import { getRouter } from './router';
-import './style.scss';
 
 export default function DashboardBackportSiteSettingsRenderer() {
 	const rootInstanceRef = useRef< ReturnType< typeof createRoot > | null >( null );
