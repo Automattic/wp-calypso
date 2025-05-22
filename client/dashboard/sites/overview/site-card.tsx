@@ -172,7 +172,7 @@ function getPlanExpirationMessage( {
 	// Some plans don't have an expiry date, and we don't want to show it at
 	// all.
 	if ( ! currentPlan.expiry ) {
-		return __( 'No expiration date.' );
+		return null;
 	}
 
 	return createInterpolateElement(
