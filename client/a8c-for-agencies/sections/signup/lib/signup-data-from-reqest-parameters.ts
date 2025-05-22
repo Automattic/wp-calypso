@@ -96,7 +96,7 @@ export function getSignupDataFromRequestParameters(): AgencyDetailsPayload | nul
 		servicesOffered,
 		productsOffered,
 		productsToOffer,
-		plansToOfferProducts: sanitizePlansToOfferProducts( searchParams.get( 'plans_to_offer' ) ),
+		plansToOfferProducts: sanitizePlansToOfferProducts( searchParams.get( 'expansion_planned' ) ),
 		line1: sanitizeString( searchParams.get( 'address_line1' ) ),
 		line2: sanitizeString( searchParams.get( 'address_line2' ) ),
 		city: sanitizeString( searchParams.get( 'address_city' ) ),
