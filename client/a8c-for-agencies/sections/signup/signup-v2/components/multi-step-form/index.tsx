@@ -24,6 +24,7 @@ import PersonalizationForm from './personalization';
 import './style.scss';
 
 type Props = {
+	sourceName?: string;
 	withPersonalizedBlueprint?: boolean;
 	signupWithMagicLinkFlow?: boolean;
 };
@@ -78,6 +79,7 @@ const getFinishSurveyProgress = ( step: number ): number => {
 const MultiStepForm = ( {
 	withPersonalizedBlueprint = false,
 	signupWithMagicLinkFlow = false,
+	sourceName,
 }: Props ) => {
 	const notificationId = 'a4a-agency-signup-form';
 	const translate = useTranslate();
@@ -159,10 +161,10 @@ const MultiStepForm = ( {
 					...rest
 				} = newFormData;
 				const payload = isBlueprintRequested ? newFormData : rest;
-				submitSurvey( payload as AgencyDetailsSignupPayload );
+				submitSurvey( { ...payload, initialSource: sourceName } as AgencyDetailsSignupPayload );
 			}
 		},
-		[ formData, signupWithMagicLinkFlow, submitSurvey ]
+		[ sourceName, formData, signupWithMagicLinkFlow, submitSurvey ]
 	);
 
 	const closeSurvey = () => {

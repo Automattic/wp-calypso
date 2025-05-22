@@ -13,6 +13,7 @@ function createSignup( details: AgencyDetailsSignupPayload ): Promise< Agency > 
 			email: details.email,
 			agency_name: details.agencyName,
 			agency_url: details.agencyUrl,
+			initial_source: details.initialSource,
 			agency_size: details.agencySize,
 			number_sites: details.managedSites,
 			user_type: details.userType,

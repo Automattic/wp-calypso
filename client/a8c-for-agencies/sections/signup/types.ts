@@ -25,4 +25,5 @@ export interface AgencyDetailsSignupPayload {
 	approachAndChallenges?: string;
 	agencySize?: string;
 	plansToOfferProducts?: 'Yes' | 'No';
+	initialSource?: string;
 }
