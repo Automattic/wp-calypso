@@ -18,7 +18,7 @@ import SitePreview from '../site-preview';
 import type { Site, Plan } from '../../data/types';
 
 function PHPVersion( { siteSlug }: { siteSlug: string } ) {
-	return useQuery( sitePHPVersionQuery( siteSlug ) ).data ?? <TextBlur text="X.Y" />;
+	return useQuery( sitePHPVersionQuery( siteSlug ) ).data ?? <TextBlur>X.Y</TextBlur>;
 }
 
 /**
@@ -135,7 +135,7 @@ function PlanDetails( { site }: { site: Site } ) {
 						__( 'Manage subscription' )
 					) : (
 						// Show a blurred text while we wait for the plan ID.
-						<TextBlur text={ __( 'Manage subscription' ) } />
+						<TextBlur>{ __( 'Manage subscription' ) }</TextBlur>
 					) }
 				</Button>
 			) }
@@ -159,15 +159,20 @@ function getPlanExpirationMessage( {
 
 	// Show a blurred time while we wait for the current plan.
 	if ( ! currentPlan ) {
-		return createInterpolateElement( sprintf( expiresString, '' ), {
-			time: <TextBlur text={ dateI18n( 'F j, Y', new Date().toISOString() ) } />,
-		} );
+		const iso = new Date().toISOString();
+		return (
+			<TextBlur>
+				{ createInterpolateElement( sprintf( expiresString, dateI18n( 'F j, Y', iso ) ), {
+					time: <time dateTime={ iso } />,
+				} ) }
+			</TextBlur>
+		);
 	}
 
 	// Some plans don't have an expiry date, and we don't want to show it at
 	// all.
 	if ( ! currentPlan.expiry ) {
-		return null;
+		return __( 'No expiration date.' );
 	}
 
 	return createInterpolateElement(
