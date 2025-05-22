@@ -1,4 +1,26 @@
+@import "node_modules/@wordpress/base-styles/breakpoints.scss";
+@import "node_modules/@wordpress/base-styles/variables.scss";
+@import "node_modules/@wordpress/base-styles/mixins.scss";
+
 // SASS placeholder selectors for form styles
+
+%form-field-disabled {
+	&:disabled {
+		background: var(--color-neutral-0);
+		border-color: var(--color-neutral-0);
+		color: var(--color-neutral-20);
+		opacity: 1;
+		-webkit-text-fill-color: var(--color-neutral-20);
+
+		&:hover {
+			cursor: default;
+		}
+
+		&::placeholder {
+			color: var(--color-neutral-20);
+		}
+	}
+}
 
 %form-field {
 	margin: 0;
@@ -50,21 +72,7 @@
 		}
 	}
 
-	&:disabled {
-		background: var(--color-neutral-0);
-		border-color: var(--color-neutral-0);
-		color: var(--color-neutral-20);
-		opacity: 1;
-		-webkit-text-fill-color: var(--color-neutral-20);
-
-		&:hover {
-			cursor: default;
-		}
-
-		&::placeholder {
-			color: var(--color-neutral-20);
-		}
-	}
+	@extend %form-field-disabled;
 
 	&.is-valid {
 		border-color: var(--color-success);
@@ -80,5 +88,30 @@
 
 	&.is-error:hover {
 		border-color: var(--color-error-dark);
+	}
+}
+
+%form-field-core-styles {
+	@include input-control;
+
+	box-sizing: border-box;
+	width: 100%;
+	height: $grid-unit-50;
+	border-color: var(--color-neutral-10);
+	font-size: $font-body-small;
+	color: var(--color-neutral-60);
+
+	@include break-small {
+		font-size: $font-body-small;
+	}
+
+	@extend %form-field-disabled;
+
+	&.is-error {
+		border-color: var(--color-error);
+
+		&:focus {
+			--wp-admin-theme-color: var(--color-error);
+		}
 	}
 }

@@ -14,6 +14,7 @@ export default class FormTextInput extends PureComponent {
 		value: PropTypes.any,
 		placeholder: PropTypes.any,
 		onChange: PropTypes.func,
+		hasCoreStyles: PropTypes.bool,
 	};
 
 	state = {
@@ -72,6 +73,7 @@ export default class FormTextInput extends PureComponent {
 		const classes = clsx( 'form-text-input', this.props.className, {
 			'is-error': this.props.isError,
 			'is-valid': this.props.isValid,
+			'form-text-input-core-styles': this.props.hasCoreStyles,
 		} );
 
 		return (

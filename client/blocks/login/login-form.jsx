@@ -852,6 +852,7 @@ export class LoginForm extends Component {
 								ref={ this.saveUsernameOrEmailRef }
 								value={ this.state.usernameOrEmail }
 								disabled={ isFormDisabled || this.isPasswordView() }
+								hasCoreStyles
 							/>
 
 							{ requestError && requestError.field === 'usernameOrEmail' && (
@@ -955,6 +956,7 @@ export class LoginForm extends Component {
 									value={ this.state.password }
 									disabled={ isFormDisabled }
 									tabIndex={ isPasswordHidden ? -1 : undefined /* not tabbable when hidden */ }
+									hasCoreStyles
 								/>
 
 								{ requestError && requestError.field === 'password' && (
