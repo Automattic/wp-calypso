@@ -6,16 +6,6 @@ const meta: Meta< typeof Notice > = {
 	title: 'client/dashboard/Notice',
 	component: Notice,
 	tags: [ 'autodocs' ],
-	argTypes: {
-		density: {
-			control: { type: 'radio' },
-			options: [ 'low', 'medium', 'high' ],
-		},
-		variant: {
-			control: { type: 'radio' },
-			options: [ 'info', 'warning', 'success', 'error' ],
-		},
-	},
 	parameters: {
 		actions: { argTypesRegex: '^on.*' },
 	},
@@ -47,49 +37,49 @@ export const Default: Story = {
 	},
 };
 
-export const IsInfo: Story = {
+export const Info: Story = {
 	args: {
 		...defaultArgs,
 		variant: 'info',
 	},
 };
 
-export const IsWarning: Story = {
+export const Warning: Story = {
 	args: {
 		...defaultArgs,
 		variant: 'warning',
 	},
 };
 
-export const IsSuccess: Story = {
+export const Success: Story = {
 	args: {
 		...defaultArgs,
 		variant: 'success',
 	},
 };
 
-export const IsError: Story = {
+export const Error: Story = {
 	args: {
 		...defaultArgs,
 		variant: 'error',
 	},
 };
 
-export const hasLowDensity: Story = {
+export const LowDensity: Story = {
 	args: {
 		...defaultArgs,
 		density: 'low',
 	},
 };
 
-export const hasMediumDensity: Story = {
+export const MediumDensity: Story = {
 	args: {
 		...defaultArgs,
 		density: 'medium',
 	},
 };
 
-export const hasHighDensity: Story = {
+export const HighDensity: Story = {
 	args: {
 		...defaultArgs,
 		density: 'high',
