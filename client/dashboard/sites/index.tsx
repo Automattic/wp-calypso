@@ -13,8 +13,9 @@ import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
 import { STATUS_LABELS, getSiteStatus, getSiteStatusLabel } from '../utils/site-status';
 import AddNewSite from './add-new-site';
+import IframeSitePreview from './iframe-site-preview';
+import { MShotsSitePreview } from './mshots-site-preview';
 import SiteIcon from './site-icon';
-import SitePreview from './site-preview';
 import type { Site } from '../data/types';
 import type { Field, Operator, SortDirection, ViewTable, ViewGrid } from '@automattic/dataviews';
 
@@ -114,14 +115,16 @@ const DEFAULT_FIELDS: Field< Site >[] = [
 		label: __( 'Preview' ),
 		render: function PreviewRender( { item }: { item: Site } ) {
 			const [ resizeListener, { width } ] = useResizeObserver();
-			const { is_deleted, is_private, URL: url } = item;
+			const { is_deleted, is_private, is_coming_soon, URL: url } = item;
 			// If the site is a private A8C site, X-Frame-Options is set to same
 			// origin.
 			const iframeDisabled = is_deleted || ( item.is_a8c && is_private );
+			// mShots can only screenshot public sites.
+			const mShotsDisabled = is_deleted || is_private || is_coming_soon;
 			return (
 				<>
 					{ resizeListener }
-					{ iframeDisabled && (
+					{ iframeDisabled && mShotsDisabled && (
 						<div
 							style={ {
 								fontSize: '24px',
@@ -134,8 +137,17 @@ const DEFAULT_FIELDS: Field< Site >[] = [
 							<SiteIcon site={ item } />
 						</div>
 					) }
-					{ width && ! iframeDisabled && (
-						<SitePreview url={ url } scale={ width / 1200 } height={ 1200 } />
+					{ ! mShotsDisabled && (
+						<MShotsSitePreview
+							url={ url }
+							width={ Math.round( 256 * window.devicePixelRatio ) }
+							height={ Math.round( 256 * window.devicePixelRatio ) }
+							virtual_width={ 1200 }
+							virtual_height={ 1200 }
+						/>
+					) }
+					{ width && ! iframeDisabled && mShotsDisabled && (
+						<IframeSitePreview url={ url } scale={ width / 1200 } height={ 1200 } />
 					) }
 				</>
 			);
