@@ -3,7 +3,6 @@ import { VisuallyHidden } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { connection } from '@wordpress/icons';
 import { siteMonitorUptimeQuery } from '../../app/queries';
-import { TextBlur } from '../../components/text-blur';
 import OverviewCard, { OverviewCardProgressBar } from '../overview-card';
 import type { Site } from '../../data/types';
 
@@ -35,7 +34,7 @@ function UptimeCardEnabled( { siteSlug }: { siteSlug: string } ) {
 			heading={
 				uptimePercentage === undefined ? (
 					<>
-						<TextBlur>{ sprintf( percentageString, '100' ) }</TextBlur>
+						<span className="is-blurred">{ sprintf( percentageString, '100' ) }</span>
 						<VisuallyHidden>{ __( 'Loading…' ) }</VisuallyHidden>
 					</>
 				) : (

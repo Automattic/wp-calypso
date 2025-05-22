@@ -11,14 +11,15 @@ import { dateI18n } from '@wordpress/date';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { sitePHPVersionQuery, siteCurrentPlanQuery } from '../../app/queries';
-import { TextBlur } from '../../components/text-blur';
 import { getSiteStatusLabel } from '../../utils/site-status';
 import { getFormattedWordPressVersion } from '../../utils/wp-version';
 import SitePreview from '../site-preview';
-import type { Site, Plan } from '../../data/types';
+import type { Site } from '../../data/types';
 
 function PHPVersion( { siteSlug }: { siteSlug: string } ) {
-	return useQuery( sitePHPVersionQuery( siteSlug ) ).data ?? <TextBlur>X.Y</TextBlur>;
+	return (
+		useQuery( sitePHPVersionQuery( siteSlug ) ).data ?? <span className="is-blurred">X.Y</span>
+	);
 }
 
 /**
@@ -119,52 +120,41 @@ function PlanDetails( { site }: { site: Site } ) {
 		<VStack>
 			<FieldTitle>{ __( 'Plan' ) }</FieldTitle>
 			{ product_name_short && <Text>{ product_name_short }</Text> }
-			<Text>
-				<PlanExpirationMessage isFree={ isFree } currentPlan={ currentPlan } />
-			</Text>
+			{ isFree ? (
+				<Text>{ __( 'No expiration date.' ) }</Text>
+			) : (
+				// Show a blurred time while we wait for the current plan.
+				<Text className={ currentPlan ? undefined : 'is-blurred' }>
+					{ getPlanExpirationMessage(
+						currentPlan ? currentPlan.expiry : new Date().toISOString()
+					) }
+				</Text>
+			) }
 			{ isFree ? (
 				<Button href={ `/plans/${ site.slug }` } variant="link">
 					{ __( 'Upgrade' ) }
 				</Button>
 			) : (
 				<Button
+					// Show a blurred button while we wait for the plan ID.
 					// @ts-expect-error inert is not typed
 					inert={ currentPlan ? undefined : 'true' }
+					className={ currentPlan ? undefined : 'is-blurred' }
 					href={ currentPlan ? `/purchases/subscriptions/${ site.slug }/${ currentPlan.id }` : '' }
 					variant="link"
 				>
-					{ currentPlan ? (
-						__( 'Manage subscription' )
-					) : (
-						// Show a blurred text while we wait for the plan ID.
-						<TextBlur>{ __( 'Manage subscription' ) }</TextBlur>
-					) }
+					{ __( 'Manage subscription' ) }
 				</Button>
 			) }
 		</VStack>
 	);
 }
 
-function PlanExpirationMessage( { isFree, currentPlan }: { isFree: boolean; currentPlan?: Plan } ) {
-	if ( isFree ) {
-		return __( 'No expiration date.' );
-	}
-
-	// Show a blurred time while we wait for the current plan.
-	if ( ! currentPlan ) {
-		return <TextBlur>{ getPlanExpirationMessage( new Date().toISOString() ) }</TextBlur>;
-	}
-
-	// Some plans don't have an expiry date, and we don't want to show it at
-	// all.
-	if ( ! currentPlan.expiry ) {
+function getPlanExpirationMessage( isoDate?: string ) {
+	if ( ! isoDate ) {
 		return null;
 	}
 
-	return getPlanExpirationMessage( currentPlan.expiry );
-}
-
-function getPlanExpirationMessage( isoDate: string ) {
 	return createInterpolateElement(
 		/* translators: %s: date of plan's expiration date. Eg.  August 20, 2025 */
 		sprintf( __( 'Expires on <time>%s</time>.' ), dateI18n( 'F j, Y', isoDate ) ),
