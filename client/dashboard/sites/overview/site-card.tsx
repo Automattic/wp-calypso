@@ -1,3 +1,4 @@
+import { useQuery } from '@tanstack/react-query';
 import {
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
@@ -8,23 +9,21 @@ import {
 } from '@wordpress/components';
 import { dateI18n } from '@wordpress/date';
 import { __, sprintf } from '@wordpress/i18n';
+import { sitePHPVersionQuery } from '../../app/queries';
+import { TextBlur } from '../../components/text-blur';
 import { getSiteStatusLabel } from '../../utils/site-status';
 import SitePreview from '../site-preview';
 import type { Site, Plan } from '../../data/types';
 
+function PHPVersion( { siteSlug }: { siteSlug: string } ) {
+	return useQuery( sitePHPVersionQuery( siteSlug ) ).data ?? <TextBlur text="X.Y" />;
+}
+
 /**
  * SiteCard component to display site information in a card format
  */
-export default function SiteCard( {
-	site,
-	phpVersion,
-	currentPlan,
-}: {
-	site: Site;
-	phpVersion?: string;
-	currentPlan: Plan;
-} ) {
-	const { options, URL: url, is_private } = site;
+export default function SiteCard( { site, currentPlan }: { site: Site; currentPlan: Plan } ) {
+	const { options, URL: url, is_private, is_wpcom_atomic } = site;
 	// If the site is a private A8C site, X-Frame-Options is set to same
 	// origin.
 	const iframeDisabled = site.is_a8c && is_private;
@@ -65,12 +64,18 @@ export default function SiteCard( {
 					<HStack justify="space-between">
 						<Field title={ __( 'Status' ) }>{ getSiteStatusLabel( site ) }</Field>
 					</HStack>
-					<HStack justify="space-between">
-						{ options?.software_version && (
-							<Field title={ __( 'WordPress' ) }>{ options.software_version }</Field>
-						) }
-						{ phpVersion && <Field title={ __( 'PHP' ) }>{ phpVersion }</Field> }
-					</HStack>
+					{ ( options?.software_version || is_wpcom_atomic ) && (
+						<HStack justify="space-between">
+							{ options?.software_version && (
+								<Field title={ __( 'WordPress' ) }>{ options.software_version }</Field>
+							) }
+							{ is_wpcom_atomic && (
+								<Field title={ __( 'PHP' ) }>
+									<PHPVersion siteSlug={ site.slug } />
+								</Field>
+							) }
+						</HStack>
+					) }
 					<PlanDetails site={ site } currentPlan={ currentPlan } />
 				</VStack>
 			</VStack>
@@ -80,7 +85,7 @@ export default function SiteCard( {
 
 function Field( { children, title }: { children: React.ReactNode; title: React.ReactNode } ) {
 	return (
-		<VStack className="site-overview-field">
+		<VStack className="site-overview-field" style={ { flex: 1 } }>
 			<FieldTitle>{ title }</FieldTitle>
 			<div className="site-overview-field-children">{ children }</div>
 		</VStack>
