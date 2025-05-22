@@ -94,7 +94,7 @@ const StatsEmailSummary = ( { period, query, context } ) => {
 			period={ period }
 			headers={ [ 'title', 'opens_rate', 'unique_clicks', 'link' ] }
 			rowModifierFn={ ( row, data ) => {
-				if ( ! row?.length ) {
+				if ( ! Array.isArray( row ) || row.length === 0 ) {
 					return row;
 				}
 
