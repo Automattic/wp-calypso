@@ -24,6 +24,7 @@ interface Props {
 	goBack: () => void;
 	initialFormData: Partial< AgencyDetailsSignupPayload >;
 	isFinalStep?: boolean;
+	withPersonalizedBlueprint?: boolean;
 }
 
 const PersonalizationFormRadio = ( {
@@ -58,6 +59,7 @@ export default function PersonalizationForm( {
 	goBack,
 	initialFormData,
 	isFinalStep = false,
+	withPersonalizedBlueprint = false,
 }: Props ) {
 	const translate = useTranslate();
 	const { countryOptions } = useCountriesAndStates();
@@ -111,6 +113,18 @@ export default function PersonalizationForm( {
 		[ formData.productsOffered, productsOfferedOptions, translate ]
 	);
 
+	const ctaButtonLabel = useMemo( () => {
+		if ( isFinalStep ) {
+			return translate( 'Finish and Log in' );
+		}
+
+		if ( withPersonalizedBlueprint ) {
+			return translate( 'Continue' );
+		}
+
+		return translate( 'Finish sign up' );
+	}, [ isFinalStep, translate, withPersonalizedBlueprint ] );
+
 	const handleInputChange =
 		( field: keyof AgencyDetailsSignupPayload ) => ( event: ChangeEvent< HTMLSelectElement > ) => {
 			setFormData( ( prev ) => ( {
@@ -134,7 +148,10 @@ export default function PersonalizationForm( {
 
 		setFormData( ( prev ) => ( {
 			...prev,
-			productsOffered: products.value,
+			productsOffered:
+				! prev.productsOffered?.includes( 'None' ) && products.value.includes( 'None' ) // If 'None' is selected, we need to clear other value.
+					? [ 'None' ]
+					: products.value.filter( ( product ) => product !== 'None' ),
 			plansToOfferProducts: hasAllProductsOffered ? false : prev.plansToOfferProducts, // If all products are offered, then there is no more products to be offered
 			productsToOffer: prev.productsToOffer?.filter(
 				( product ) => ! products.value.includes( product )
@@ -278,6 +295,9 @@ export default function PersonalizationForm( {
 							<FormField
 								error={ validationError.servicesOffered }
 								label={ translate( 'What services do you offer?' ) }
+								sub={ translate(
+									'Understanding your strategy helps us tailor the program to your needs'
+								) }
 								isRequired
 							>
 								<MultiCheckbox
@@ -295,6 +315,9 @@ export default function PersonalizationForm( {
 								error={ validationError.productsOffered }
 								label={ translate(
 									'What Automattic products do you currently offer your clients?'
+								) }
+								sub={ translate(
+									"We'll help you deliver more value to your clients with our products"
 								) }
 								isRequired
 							>
@@ -371,7 +394,7 @@ export default function PersonalizationForm( {
 								onClick={ handleSubmit }
 								isBusy={ isSubmitting }
 							>
-								{ isFinalStep ? translate( 'Finish and Log in' ) : translate( 'Continue' ) }
+								{ ctaButtonLabel }
 							</Button>
 						</FormFooter>
 					</>

@@ -55,14 +55,14 @@ const getOdieConversationsWithNoSupportInteractions = (
  * Checks whether the last message from the specified conversation is not empty nor a predefined '--' token.
  */
 const isValidLastMessageContent = ( conversation: OdieConversation | ZendeskConversation ) => {
-	const { text } = getLastMessage( { conversation } ) || {};
+	const lastMessage = getLastMessage( { conversation } );
 
-	if ( text === null || text === undefined ) {
+	if ( ! lastMessage || lastMessage?.text === null || lastMessage?.text === undefined ) {
 		return false;
 	}
 
 	// '--' is a token returned for Odie conversations that should be forwarded to human support
-	return ! [ '', '--' ].includes( text.trim() );
+	return ! [ '', '--' ].includes( lastMessage.text.trim() );
 };
 
 /**
@@ -93,18 +93,21 @@ export const useGetHistoryChats = (): UseGetHistoryChatsResult => {
 	const [ recentConversations, setRecentConversations ] = useState< Conversations >( [] );
 	const [ archivedConversations, setArchivedConversations ] = useState< Conversations >( [] );
 
+	const { isChatLoaded, lastMessageReceivedAt } = useSelect( ( select ) => {
+		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
+
+		return {
+			isChatLoaded: store.getIsChatLoaded(),
+			lastMessageReceivedAt: store.getLastMessageReceivedAt(),
+		};
+	}, [] );
+
 	const { data: openSupportInteraction, isLoading: isLoadingOpenInteractions } =
-		useGetSupportInteractions( 'zendesk', 10, 'open' );
+		useGetSupportInteractions( 'zendesk', 10, 'open', 10, true, lastMessageReceivedAt );
 	const { data: otherSupportInteractions, isLoading: isLoadingOtherSupportInteractions } =
 		useGetSupportInteractions( 'zendesk', 100, [ 'resolved', 'solved', 'closed' ] );
 	const { data: odieConversations, isLoading: isLoadingOdieConversations } =
 		useGetOdieConversations();
-
-	const { isChatLoaded } = useSelect( ( select ) => {
-		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
-
-		return { isChatLoaded: store.getIsChatLoaded() };
-	}, [] );
 
 	const isLoadingInteractions =
 		isLoadingOpenInteractions || isLoadingOtherSupportInteractions || isLoadingOdieConversations;

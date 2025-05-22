@@ -100,7 +100,7 @@ export default function AgencySignupFinish() {
 				size={ 48 }
 			/>
 			<h1 className="agency-signup-finish__text">
-				{ translate( 'Please hold, great things are coming.' ) }
+				{ translate( 'Please give us a minute to customize your experience…' ) }
 			</h1>
 		</div>
 	);
