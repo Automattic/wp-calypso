@@ -34,10 +34,10 @@ export default function SettingsTransferSite( { siteSlug }: { siteSlug: string }
 					title={ __( 'Transfer site' ) }
 					description={ createInterpolateElement(
 						__(
-							'Transfer this site to a new or existing site member with just a few clicks. <a>Learn more.</a>'
+							'Transfer this site to a new or existing site member with just a few clicks. <learnMoreLink />.'
 						),
 						{
-							a: <ExternalLink href="#learn-more" />,
+							learnMoreLink: <ExternalLink href="#learn-more">{ __( 'Learn more' ) }</ExternalLink>,
 						}
 					) }
 				/>
