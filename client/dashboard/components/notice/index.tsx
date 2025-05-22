@@ -20,14 +20,37 @@ const icons: { [ key in NoticeVariant ]: any } = {
 	error,
 };
 
+/**
+ * The Notice component is a visually non-obtrusive element that communicates the system status
+ * and provides options and actions related to the message tone.
+ *
+ * This component is designed to sit inline with the page area and capture the user’s attention
+ * to inform them about relevant information.
+ *
+ * ```jsx
+ * import { Notice } from '@automattic/components';
+ * import { ExternalLink } from '@wordpress/components';
+ *
+ * function MyComponent() {
+ * 	return (
+ * 		<Notice
+ * 			title="Title"
+ * 			content={ <>Hello, I’m a notice with an inline <ExternalLink href="#">link</ExternalLink></> }
+ * 			decoration={<Icon icon={cog} />}
+ * 			actions={<Button variant="primary">Label</Button>}
+ * 		/>
+ * 	);
+ * }
+ * ```
+ */
 function UnforwardedNotice(
 	{
 		variant = 'info',
 		title,
-		description,
+		content,
 		actions,
 		density = 'low',
-		isDismissible = true,
+		isDismissible = false,
 		onRemove,
 	}: NoticeProps,
 	ref: React.ForwardedRef< HTMLDivElement >
@@ -44,10 +67,8 @@ function UnforwardedNotice(
 					<Icon className="dashboard-notice__icon" icon={ icons[ variant ] } />
 					<VStack className="dashboard-notice__content" spacing={ 3 }>
 						<VStack className="dashboard-notice__heading" spacing={ 1 }>
-							<span className="dashboard-notice__title">{ title }</span>
-							{ description && (
-								<span className="dashboard-notice__description">{ description }</span>
-							) }
+							{ title && <span className="dashboard-notice__title">{ title }</span> }
+							<span className="dashboard-notice__description">{ content }</span>
 						</VStack>
 						{ actions && (
 							<HStack className="dashboard-notice__actions" spacing={ 3 } justify="flex-start">

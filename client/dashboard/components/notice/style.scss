@@ -8,18 +8,21 @@
 	&.has-density-low {
 		.dashboard-notice__body {
 			padding: $grid-unit-20;
+			border-radius: $radius-large;
 		}
 	}
 
 	&.has-density-medium {
 		.dashboard-notice__body {
 			padding: $grid-unit-15;
+			border-radius: $radius-small;
 		}
 	}
 
 	&.has-density-high {
 		.dashboard-notice__body {
 			padding: $grid-unit-05;
+			border-radius: $radius-small;
 		}
 	}
 

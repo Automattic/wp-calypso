@@ -6,34 +6,30 @@ export type NoticeVariant = 'warning' | 'success' | 'error' | 'info';
 
 export interface NoticeProps {
 	/**
-	 * Determines the color of the notice: `warning` (yellow),
-	 * `success` (green), `error` (red), or `'info'`.
-	 * By default `'info'` will be blue, but if there is a parent Theme component
-	 * with an accent color prop, the notice will take on that color instead.
+	 * Indicates visually the message tone. These can be four: Info, Warning, Success, and Error.
 	 *
 	 * @default 'info'
 	 */
 	variant?: NoticeVariant;
 
 	/**
-	 * The main label that identifies the notice.
+	 * A concise headline that clearly communicates the main message.
 	 */
-	title: React.ReactNode;
+	title?: React.ReactNode;
 
 	/**
-	 * Optional supporting text that provides additional context or
-	 * detail about the notice.
+	 * The main body content informing and guiding users about the system status change.
 	 */
-	description?: React.ReactNode;
+	content: React.ReactNode;
 
 	/**
-	 * Renders a button that invokes the related notice.
+	 * Optional actions that serve as a call to action.
 	 */
 	actions: React.ReactNode;
 
 	/**
-	 * Adjusts spacing and layout. Higher density reduces padding to
-	 * create a more compact appearance.
+	 * Adjusts internal spacings according to the section where the component is placed.
+	 * High density reduces padding.
 	 *
 	 * @default 'low'
 	 */
@@ -42,12 +38,12 @@ export interface NoticeProps {
 	/**
 	 * Whether the notice should be dismissible or not
 	 *
-	 * @default true
+	 * @default false
 	 */
 	isDismissible?: boolean;
 
 	/**
-	 * Function called when dismissing the notice
+	 * An optional action to close the component.
 	 *
 	 * @default noop
 	 */

@@ -93,9 +93,9 @@ export const WithoutActions: Story = {
 	},
 };
 
-export const NotDismissible: Story = {
+export const Dismissible: Story = {
 	args: {
 		...defaultArgs,
-		isDismissible: false,
+		isDismissible: true,
 	},
 };
