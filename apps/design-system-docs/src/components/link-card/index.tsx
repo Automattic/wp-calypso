@@ -53,7 +53,7 @@ export const LinkCard = ( {
 				<img src={ image } alt="" />
 			</CardMedia>
 			<CardBody>
-				<span id={ labelId } className={ styles[ 'link-card__label' ] }>
+				<span id={ labelId } className={ styles[ 'link-card__label' ] } aria-hidden="true">
 					{ label }
 				</span>
 				<span id={ descriptionId } className={ styles[ 'link-card__description' ] }>
