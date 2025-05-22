@@ -32,6 +32,7 @@ const VerifyLoginCode = ( {
 	// Create an array of 6 empty strings for our verification code
 	const [ codeCharacters, setCodeCharacters ] = useState( Array( CODE_LENGTH ).fill( '' ) );
 	const [ isRedirecting, setIsRedirecting ] = useState( false );
+	const [ showError, setShowError ] = useState( false );
 
 	// Create refs for each input field to manage focus
 	const inputRefs = useRef(
@@ -52,6 +53,11 @@ const VerifyLoginCode = ( {
 		inputRefs?.current[ 0 ]?.current?.focus();
 	}, [] );
 
+	// Update local error state when authError changes
+	useEffect( () => {
+		setShowError( !! authError );
+	}, [ authError ] );
+
 	// Focus the last input when an auth error is detected
 	useEffect( () => {
 		if ( authError && inputRefs?.current[ CODE_LENGTH - 1 ]?.current ) {
@@ -65,6 +71,9 @@ const VerifyLoginCode = ( {
 
 	// Handle changes to any individual input
 	const onCodeCharacterChange = ( index, value ) => {
+		// Clear error display when user starts editing
+		setShowError( false );
+
 		// Only allow a single character per input and no spaces
 		if ( value.length > 1 ) {
 			value = value.charAt( 0 );
@@ -107,6 +116,9 @@ const VerifyLoginCode = ( {
 	// Handle paste event to fill multiple inputs
 	const onPaste = ( index, event ) => {
 		event.preventDefault();
+
+		// Clear error display when user pastes new code
+		setShowError( false );
 
 		const pastedText = event.clipboardData.getData( 'text' ).trim();
 		if ( ! pastedText ) {
@@ -165,7 +177,7 @@ const VerifyLoginCode = ( {
 			</p>
 			<LoggedOutForm
 				className={ clsx( 'magic-login__verify-code-form', {
-					'magic-login__verify-code-form--error': authError,
+					'magic-login__verify-code-form--error': showError,
 				} ) }
 				onSubmit={ onSubmit }
 			>
@@ -192,7 +204,7 @@ const VerifyLoginCode = ( {
 					) ) }
 				</div>
 
-				{ authError && (
+				{ showError && (
 					<div className="magic-login__verify-code-error-message">
 						{ translate( "Oops, that's the wrong code. Please verify it." ) }
 					</div>
