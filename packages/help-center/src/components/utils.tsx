@@ -51,12 +51,9 @@ export const getLastMessage = ( {
 }: {
 	conversation: OdieConversation | ZendeskConversation;
 } ): OdieMessage | ZendeskMessage | null => {
-	const lastMessage =
-		Array.isArray( conversation.messages ) && conversation.messages.length > 0
-			? conversation.messages[ conversation.messages.length - 1 ]
-			: null;
-
-	return lastMessage;
+	return Array.isArray( conversation.messages ) && conversation.messages.length > 0
+		? conversation.messages[ conversation.messages.length - 1 ]
+		: null;
 };
 
 export const getZendeskConversations = () => {
