@@ -28,8 +28,6 @@ export const Mark = forwardRef< SVGSVGElement, BigSkyLogoProps >( function Mark(
 	const brandFill = monochrome ? 'currentColor' : '#030FB0';
 	const isMasked = monochrome;
 
-	const trimmedTitle = title.trim();
-
 	return (
 		<svg
 			ref={ ref }
@@ -37,10 +35,10 @@ export const Mark = forwardRef< SVGSVGElement, BigSkyLogoProps >( function Mark(
 			height={ height }
 			viewBox="0 0 24 24"
 			fill="none"
-			aria-labelledby={ trimmedTitle ? titleId : undefined }
+			aria-labelledby={ title ? titleId : undefined }
 			{ ...props }
 		>
-			{ !! trimmedTitle && <title id={ titleId }>{ trimmedTitle }</title> }
+			{ title && <title id={ titleId }>{ title }</title> }
 
 			<circle
 				cx="12"
