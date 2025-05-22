@@ -85,11 +85,11 @@ export function parseAvatar( avatarUrl ) {
 /**
  * Builds data into escaped array for CSV export
  * @param   {Object} data                                               Normalized stats data object
- * @param   {(value: unknown[], data?: Object) => unknown[]} modifierFn Modifies the export row.
  * @param   {string} parent                                             Label of parent
+ * @param   {(value: unknown[], data?: Object) => unknown[]} modifierFn Modifies the export row.
  * @returns {Array}                                                     CSV Row
  */
-export function buildExportArray( data, modifierFn = null, parent = null ) {
+export function buildExportArray( data, parent = null, modifierFn = null ) {
 	if ( ! data || ! data.label || ! data.value ) {
 		return [];
 	}
@@ -109,7 +109,7 @@ export function buildExportArray( data, modifierFn = null, parent = null ) {
 
 	if ( data.children ) {
 		const childData = map( data.children, ( child ) => {
-			return buildExportArray( child, modifierFn, label );
+			return buildExportArray( child, label, modifierFn );
 		} );
 
 		exportData = exportData.concat( flatten( childData ) );

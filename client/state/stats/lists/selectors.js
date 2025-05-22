@@ -176,7 +176,7 @@ export function getSiteStatsCSVData( state, siteId, statType, query, modifierFn 
 
 	return flatten(
 		map( data, ( item ) => {
-			return buildExportArray( item, modifierFn );
+			return buildExportArray( item, null, modifierFn );
 		} )
 	);
 }
