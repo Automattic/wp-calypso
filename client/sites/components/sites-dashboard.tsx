@@ -376,7 +376,7 @@ const SitesDashboard = ( {
 		},
 	};
 
-	const changeSitePreviewPane = async ( siteId: number ) => {
+	const changeSitePreviewPane = ( siteId: number ) => {
 		const targetSite = allSites.find( ( site ) => site.ID === siteId );
 		if ( targetSite ) {
 			sitePreviewPane.open( targetSite, 'environment_switcher' );
