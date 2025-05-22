@@ -164,6 +164,12 @@ function getPlanExpirationMessage( {
 		} );
 	}
 
+	// Some plans don't have an expiry date, and we don't want to show it at
+	// all.
+	if ( ! currentPlan.expiry ) {
+		return null;
+	}
+
 	return createInterpolateElement(
 		sprintf( expiresString, dateI18n( 'F j, Y', currentPlan.expiry ) ),
 		{
