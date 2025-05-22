@@ -29,7 +29,7 @@ function UnforwardedNotice(
 		isDismissible = true,
 		onRemove,
 	}: NoticeProps,
-	ref: React.ForwardedRef< HTMLAnchorElement | HTMLButtonElement >
+	ref: React.ForwardedRef< HTMLDivElement >
 ) {
 	const hasLowDensity = density === 'low';
 
