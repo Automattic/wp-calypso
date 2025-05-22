@@ -6,7 +6,6 @@ import { clampNumberOfMonths } from '../utils/misc';
 import { useControlledValue } from '../utils/use-controlled-value';
 import { useLocalizationProps } from '../utils/use-localization-props';
 import type { DateRangeCalendarProps, DateRange } from '../types';
-import '../styles.scss';
 
 /**
  * `DateRangeCalendar` is a React component that provides a customizable calendar
