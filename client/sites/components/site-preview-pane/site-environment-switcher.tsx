@@ -1,9 +1,8 @@
 import { SiteExcerptData } from '@automattic/sites';
-import { DropdownMenu, Button, Spinner } from '@wordpress/components';
+import { DropdownMenu, Button } from '@wordpress/components';
 import { chevronDownSmall } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
-import { useState } from 'react';
 import SitesProductionBadge from 'calypso/sites-dashboard/components/sites-production-badge';
 import SitesStagingBadge from 'calypso/sites-dashboard/components/sites-staging-badge';
 
@@ -19,7 +18,6 @@ export default function SiteEnvironmentSwitcher( {
 	site,
 }: SiteEnvironmentSwitcherProps ) {
 	const { __ } = useI18n();
-	const [ isBusy, setIsBusy ] = useState( false );
 
 	if (
 		! site.is_wpcom_staging_site &&
@@ -40,17 +38,12 @@ export default function SiteEnvironmentSwitcher( {
 		? site.options?.wpcom_staging_blog_ids?.[ 0 ]
 		: undefined;
 
-	const setEnvironment = async ( siteIdToChange: number | undefined ) => {
+	const setEnvironment = ( siteIdToChange: number | undefined ) => {
 		if ( siteIdToChange === site.ID ) {
 			return;
 		}
-		setIsBusy( true );
 
-		try {
-			await onChange( siteIdToChange as number );
-		} finally {
-			setIsBusy( false );
-		}
+		onChange( siteIdToChange as number );
 	};
 
 	return (
@@ -59,11 +52,7 @@ export default function SiteEnvironmentSwitcher( {
 			label={ __( 'Select environment' ) }
 			toggleProps={ {
 				as: ( props ) => (
-					<ToggleComponent
-						isStaging={ !! site.is_wpcom_staging_site }
-						isBusy={ isBusy }
-						{ ...props }
-					/>
+					<ToggleComponent isStaging={ !! site.is_wpcom_staging_site } { ...props } />
 				),
 			} }
 			popoverProps={ {
@@ -89,12 +78,10 @@ export default function SiteEnvironmentSwitcher( {
 function ToggleComponent( {
 	isStaging,
 	className,
-	isBusy,
 	...props
 }: {
 	isStaging: boolean;
 	className: never;
-	isBusy: boolean;
 } ) {
 	const { __ } = useI18n();
 
@@ -107,13 +94,9 @@ function ToggleComponent( {
 			iconPosition="right"
 			style={ { padding: 0, height: 'auto' } }
 		>
-			{ isStaging && (
-				<SitesStagingBadge>{ isBusy ? <Spinner /> : __( 'Staging' ) }</SitesStagingBadge>
-			) }
+			{ isStaging && <SitesStagingBadge>{ __( 'Staging' ) }</SitesStagingBadge> }
 
-			{ ! isStaging && (
-				<SitesProductionBadge>{ isBusy ? <Spinner /> : __( 'Production' ) }</SitesProductionBadge>
-			) }
+			{ ! isStaging && <SitesProductionBadge>{ __( 'Production' ) }</SitesProductionBadge> }
 		</Button>
 	);
 }
