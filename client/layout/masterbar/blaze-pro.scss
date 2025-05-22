@@ -574,7 +574,7 @@ body.is-section-signup {
 		}
 	}
 
-	.wp-login__main.main {
+	.wp-login__main.main:has(.login form.is-blaze-pro) {
 		max-width: unset;
 	}
 

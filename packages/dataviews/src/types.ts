@@ -54,7 +54,13 @@ export type Operator =
 	| 'notContains'
 	| 'startsWith';
 
-export type FieldType = 'text' | 'integer' | 'datetime' | 'media' | 'boolean';
+export type FieldType =
+	| 'text'
+	| 'integer'
+	| 'datetime'
+	| 'media'
+	| 'boolean'
+	| 'email';
 
 export type ValidationContext = {
 	elements?: Option[];
