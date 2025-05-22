@@ -121,6 +121,7 @@ export function siteSettingsMutation( siteId: string ) {
 				...oldData,
 				...newData,
 			} ) );
+			queryClient.invalidateQueries( { queryKey: [ 'site-settings', siteId ] } );
 			queryClient.invalidateQueries( { queryKey: [ 'site', siteId ] } );
 		},
 	};
