@@ -330,6 +330,26 @@ describe( 'account-recovery actions', () => {
 				type: ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION,
 				target: 'email',
 			} ),
+		postConditionSuccess: () =>
+			expect( spy ).toHaveBeenCalledWith(
+				expect.objectContaining( {
+					type: 'NOTICE_CREATE',
+					notice: expect.objectContaining( {
+						status: 'is-success',
+						text: 'The validation email has been resent successfully. Please check your mailbox.',
+					} ),
+				} )
+			),
+		postConditionFailed: () =>
+			expect( spy ).toHaveBeenCalledWith(
+				expect.objectContaining( {
+					type: 'NOTICE_CREATE',
+					notice: expect.objectContaining( {
+						status: 'is-error',
+						text: "We've encountered a problem sending you the validation email. Please try again later.",
+					} ),
+				} )
+			),
 	} );
 
 	generateSuccessAndFailedTestsForThunk( {
@@ -346,6 +366,26 @@ describe( 'account-recovery actions', () => {
 				type: ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION,
 				target: 'phone',
 			} ),
+		postConditionSuccess: () =>
+			expect( spy ).toHaveBeenCalledWith(
+				expect.objectContaining( {
+					type: 'NOTICE_CREATE',
+					notice: expect.objectContaining( {
+						status: 'is-success',
+						text: 'The validation code has been resent successfully. Please check your phone.',
+					} ),
+				} )
+			),
+		postConditionFailed: () =>
+			expect( spy ).toHaveBeenCalledWith(
+				expect.objectContaining( {
+					type: 'NOTICE_CREATE',
+					notice: expect.objectContaining( {
+						status: 'is-error',
+						text: "We've encountered a problem sending you the validation code. Please try again later.",
+					} ),
+				} )
+			),
 	} );
 
 	describe( '#validateAccountRecoveryPhoneSuccess', () => {
