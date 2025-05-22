@@ -24,7 +24,13 @@ import type { Query } from '@tanstack/react-query';
 export function sitesQuery() {
 	return {
 		queryKey: [ 'sites', SITE_FIELDS ],
-		queryFn: fetchSites,
+		queryFn: async () => {
+			const sites = await fetchSites();
+			for ( const site of sites ) {
+				queryClient.setQueryData( [ 'site', site.slug, SITE_FIELDS ], site );
+			}
+			return sites;
+		},
 	};
 }
 
