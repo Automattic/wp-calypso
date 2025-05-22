@@ -1,5 +1,5 @@
 import wpcom from 'calypso/lib/wp';
-import { SITE_FIELDS } from './constants';
+import { SITE_FIELDS, SITE_OPTIONS } from './constants';
 import type {
 	Domain,
 	Email,
@@ -31,6 +31,7 @@ export const updateProfile = async ( data: Partial< Profile > ) => {
 };
 
 const JOINED_SITE_FIELDS = SITE_FIELDS.join( ',' );
+const JOINED_SITE_OPTIONS = SITE_OPTIONS.join( ',' );
 
 export const fetchSites = async (): Promise< Site[] > => {
 	const { sites } = await wpcom.req.get(
@@ -43,6 +44,7 @@ export const fetchSites = async (): Promise< Site[] > => {
 			include_domain_only: 'true',
 			site_activity: 'active',
 			fields: JOINED_SITE_FIELDS,
+			options: JOINED_SITE_OPTIONS,
 		}
 	);
 	return sites;
@@ -51,7 +53,7 @@ export const fetchSites = async (): Promise< Site[] > => {
 export const fetchSite = async ( siteIdOrSlug: string ): Promise< Site > => {
 	return await wpcom.req.get(
 		{ path: `/sites/${ siteIdOrSlug }` },
-		{ fields: JOINED_SITE_FIELDS }
+		{ fields: JOINED_SITE_FIELDS, options: JOINED_SITE_OPTIONS }
 	);
 };
 

@@ -52,17 +52,17 @@ export const useCreateZendeskConversation = (): ( ( {
 		createdFrom?: string;
 	} ) => {
 		const currentInteractionID = interactionId || currentSupportInteraction!.uuid;
-		if ( isSubmittingZendeskUserFields || chat.conversationId ) {
+		if ( isSubmittingZendeskUserFields || chat.conversationId || chat.status === 'transfer' ) {
 			return;
 		}
 
-		if ( ! avoidTransfer ) {
-			setChat( ( prevChat ) => ( {
-				...prevChat,
-				messages: [ ...prevChat.messages, ...ODIE_TRANSFER_MESSAGE ],
-				status: 'transfer',
-			} ) );
-		}
+		setChat( ( prevChat ) => ( {
+			...prevChat,
+			messages: avoidTransfer
+				? prevChat.messages
+				: [ ...prevChat.messages, ...ODIE_TRANSFER_MESSAGE ],
+			status: 'transfer',
+		} ) );
 
 		await submitUserFields( {
 			messaging_initial_message: userFieldMessage || undefined,

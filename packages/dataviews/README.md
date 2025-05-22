@@ -512,7 +512,7 @@ const Example = () => {
 
 A single item to be edited.
 
-It can be thought of as a single record coming from the `data` property of `DataViews` — though it doesn't need to be. It can be totally separated or a mix of records if your app supports bulk editing.
+It can be thought of as a single record coming from the `data` property of `DataViews` — though it doesn't need to be. It can be totally separated or a mix of records if your app supports bulk editing.
 
 #### `fields`: `Object[]`
 
@@ -882,7 +882,7 @@ Example:
 
 ### `header`
 
-React component used by the layouts to display the field name — useful to add icons, etc. It's complementary to the `label` property.
+React component used by the layouts to display the field name — useful to add icons, etc. It's complementary to the `label` property.
 
 -   Type: React component.
 -   Optional.
@@ -1202,8 +1202,11 @@ Operators:
 | `greaterThan`        | Single item    | `GREATER THAN`. The item's field is numerically greater than a single value.| Age is greater than 65                             |
 | `lessThanOrEqual`    | Single item    | `LESS THAN OR EQUAL TO`. The item's field is numerically less than or equal to a single value. | Age is less than or equal to 18         |
 | `greaterThanOrEqual` | Single item    | `GREATER THAN OR EQUAL TO`. The item's field is numerically greater than or equal to a single value. | Age is greater than or equal to 65      |
+| `contains` | Text           | `CONTAINS`. The item's field contains the given substring.               | Title contains: Mars                              |
+| `notContains` | Text        | `NOT CONTAINS`. The item's field does not contain the given substring.  | Description doesn't contain: photo                |
+| `startsWith` | Text         | `STARTS WITH`. The item's field starts with the given substring.        | Title starts with: Mar                            |
 
-`is`, `isNot`, `lessThan`, `greaterThan`, `lessThanOrEqual`, and `greaterThanOrEqual` are single-selection operators, while `isAny`, `isNone`, `isAll`, and `isNotAll` are multi-selection. A filter with no operators declared will support the `isAny` and `isNone` multi-selection operators by default. A filter cannot mix single-selection & multi-selection operators; if a single-selection operator is present in the list of valid operators, the multi-selection ones will be discarded, and the filter won't allow selecting more than one item.
+`is`, `isNot`, `lessThan`, `greaterThan`, `lessThanOrEqual`, `greaterThanOrEqual`, `contains`, `notContains`, and `startsWith` are single-selection operators, while `isAny`, `isNone`, `isAll`, and `isNotAll` are multi-selection. A filter with no operators declared will support the `isAny` and `isNone` multi-selection operators by default. A filter cannot mix single-selection & multi-selection operators; if a single-selection operator is present in the list of valid operators, the multi-selection ones will be discarded, and the filter won't allow selecting more than one item.
 
 Example:
 

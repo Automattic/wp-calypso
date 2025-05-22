@@ -2,10 +2,11 @@ import config from '@automattic/calypso-config';
 import { formatNumber } from '@automattic/number-formatters';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo } from 'react';
+import { useMemo, useEffect } from 'react';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import NavigationHeader from 'calypso/components/navigation-header';
 import Main from 'calypso/my-sites/stats/components/stats-main';
+import { recordCurrentScreen } from 'calypso/my-sites/stats/hooks/use-stats-navigation-history';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import PageHeader from '../components/headers/page-header';
@@ -23,7 +24,7 @@ import '../stats-module/summary-nav.scss';
 const StatsStrings = statsStringsFactory();
 
 // TODO: `query` was never passed from outside or defined in scope. Adding it to avoid a lint error.
-const StatsEmailSummary = ( { period, query } ) => {
+const StatsEmailSummary = ( { period, query, context } ) => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( ( state ) => getSelectedSiteSlug( state, siteId ) );
@@ -58,6 +59,13 @@ const StatsEmailSummary = ( { period, query } ) => {
 		// Wrap it up!
 		return [ { label: backLabel, href: backLink }, { label: title } ];
 	}, [ translate, siteSlug ] );
+
+	useEffect( () => {
+		recordCurrentScreen( 'emailsummary', {
+			queryParams: context.query,
+			period: period.period,
+		} );
+	}, [ context.query, period.period ] );
 
 	const isStatsNavigationImprovementEnabled = config.isEnabled( 'stats/navigation-improvement' );
 

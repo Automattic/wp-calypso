@@ -353,6 +353,7 @@ export default function ViewList< Item >( props: ViewListProps< Item > ) {
 		onChangeSelection,
 		selection,
 		view,
+		className,
 	} = props;
 	const baseId = useInstanceId( ViewList, 'view-list' );
 
@@ -497,7 +498,7 @@ export default function ViewList< Item >( props: ViewListProps< Item > ) {
 		<Composite
 			id={ baseId }
 			render={ <div /> }
-			className="dataviews-view-list"
+			className={ clsx( 'dataviews-view-list', className ) }
 			role="grid"
 			activeId={ activeCompositeId }
 			setActiveId={ setActiveCompositeId }

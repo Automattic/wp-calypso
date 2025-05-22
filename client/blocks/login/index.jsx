@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { localizeUrl } from '@automattic/i18n-utils';
 import clsx from 'clsx';
@@ -58,6 +57,7 @@ import ContinueAsUser from './continue-as-user';
 import ErrorNotice from './error-notice';
 import LoginForm from './login-form';
 import { LoginHeader } from './login-header';
+import { shouldUseMagicCode } from './utils/should-use-magic-code';
 
 import './style.scss';
 
@@ -741,7 +741,7 @@ export default connect(
 				redirectTo: stateProps.redirectTo,
 				loginFormFlow: true,
 				showGlobalNotices: false,
-				...( config.isEnabled( 'login/use-magic-code' ) && { tokenType: 'code' } ),
+				...( shouldUseMagicCode( { isJetpack: ownProps.isJetpack } ) && { tokenType: 'code' } ),
 				source: stateProps.isWooJPC ? 'woo-passwordless-jpc' + '-' + get( stateProps, 'from' ) : '',
 				flow:
 					( ownProps.isJetpack && 'jetpack' ) ||
