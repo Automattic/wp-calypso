@@ -1,9 +1,9 @@
 import useIsBrowser from '@docusaurus/useIsBrowser';
 import { Card, CardBody, CardMedia } from '@wordpress/components';
+import clsx from 'clsx';
 import { useId } from 'react';
 import defaultImage from './default.png';
 import styles from './style.module.scss';
-
 /**
  * A card that links to a page.
  */
@@ -42,7 +42,7 @@ export const LinkCard = ( {
 	}
 
 	return (
-		<Card className={ className }>
+		<Card className={ clsx( styles[ 'link-card' ], className ) }>
 			<a
 				href={ href }
 				aria-describedby={ descriptionId }

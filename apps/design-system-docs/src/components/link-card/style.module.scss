@@ -3,6 +3,11 @@
 
 .link-card {
 	position: relative;
+	transition: box-shadow 0.2s ease;
+	
+	&:hover {
+		box-shadow: 0 0 0 1px colors.$gray-900;
+	}
 }
 
 .link-card__click-target {
