@@ -6,6 +6,7 @@ import {
 	createLazyRoute,
 } from '@tanstack/react-router';
 import { fetchTwoStep } from '../data';
+import { canUpdateWordPressVersion } from '../sites/settings-wordpress/utils';
 import NotFound from './404';
 import UnknownError from './500';
 import {
@@ -17,6 +18,7 @@ import {
 	profileQuery,
 	siteCurrentPlanQuery,
 	siteEngagementStatsQuery,
+	siteWordPressVersionQuery,
 } from './queries';
 import { queryClient } from './query-client';
 import Root from './root';
@@ -145,6 +147,23 @@ const siteSettingsSubscriptionGiftingRoute = createRoute( {
 } ).lazy( () =>
 	import( '../sites/settings-subscription-gifting' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-subscription-gifting' )( {
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+		} )
+	)
+);
+
+const siteSettingsWordPressRoute = createRoute( {
+	getParentRoute: () => siteRoute,
+	path: 'settings/wordpress',
+	loader: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteQuery( siteSlug ) );
+		if ( canUpdateWordPressVersion( site ) ) {
+			return await queryClient.ensureQueryData( siteWordPressVersionQuery( siteSlug ) );
+		}
+	},
+} ).lazy( () =>
+	import( '../sites/settings-wordpress' ).then( ( d ) =>
+		createLazyRoute( 'site-settings-wordpress' )( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )
 	)
@@ -326,6 +345,7 @@ const createRouteTree = ( config: AppConfig ) => {
 				siteSettingsRoute,
 				siteSettingsSiteVisibilityRoute,
 				siteSettingsSubscriptionGiftingRoute,
+				siteSettingsWordPressRoute,
 				siteSettingsTransferSiteRoute,
 			] )
 		);
