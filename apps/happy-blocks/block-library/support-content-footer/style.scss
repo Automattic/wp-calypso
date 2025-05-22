@@ -26,10 +26,12 @@ $recoleta-font-family: 'Recoleta', serif;
 	}
 
 	.support-content-resources {
-		display: flex;
+		display: grid;
+		grid-template-columns: repeat(2, 1fr);
 		gap: 18px;
 
 		@media ( max-width: $breakpoint-mobile ) {
+			display: flex;
 			flex-direction: column;
 		}
 
