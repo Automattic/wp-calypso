@@ -1,6 +1,5 @@
 import { DataForm } from '@automattic/dataviews';
 import { useQuery, useMutation } from '@tanstack/react-query';
-import { notFound } from '@tanstack/react-router';
 import {
 	Card,
 	CardBody,
@@ -43,10 +42,6 @@ export default function WordPressVersionSettings( { siteSlug }: { siteSlug: stri
 
 	if ( ! site ) {
 		return null;
-	}
-
-	if ( ! canUpdate && ! site.is_wpcom_atomic ) {
-		throw notFound();
 	}
 
 	const fields: Field< { version: string } >[] = [
@@ -118,20 +113,26 @@ export default function WordPressVersionSettings( { siteSlug }: { siteSlug: stri
 		return (
 			<Notice isDismissible={ false }>
 				<Text>
-					{ createInterpolateElement(
-						sprintf(
-							// translators: %s: WordPress version, e.g. 6.8
-							__(
-								'Every WordPress.com site runs the latest WordPress version (%s). For testing purposes, you can switch to the beta version of the next WordPress release on <a>your staging site</a>.'
-							),
-							getFormattedWordPressVersion( site )
-						),
-						{
-							// TODO: use correct staging site URL when it's available.
-							// eslint-disable-next-line jsx-a11y/anchor-is-valid
-							a: <a href="#" />,
-						}
-					) }
+					{ site.is_wpcom_atomic
+						? createInterpolateElement(
+								sprintf(
+									// translators: %s: WordPress version, e.g. 6.8
+									__(
+										'Every WordPress.com site runs the latest WordPress version (%s). For testing purposes, you can switch to the beta version of the next WordPress release on <a>your staging site</a>.'
+									),
+									getFormattedWordPressVersion( site )
+								),
+								{
+									// TODO: use correct staging site URL when it's available.
+									// eslint-disable-next-line jsx-a11y/anchor-is-valid
+									a: <a href="#" />,
+								}
+						  )
+						: sprintf(
+								// translators: %s: WordPress version, e.g. 6.8
+								__( 'Every WordPress.com site runs the latest WordPress version (%s).' ),
+								getFormattedWordPressVersion( site )
+						  ) }
 				</Text>
 			</Notice>
 		);

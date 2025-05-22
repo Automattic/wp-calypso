@@ -27,7 +27,6 @@ export default function WordPressSettingsSummary( { site }: { site: Site } ) {
 
 	return (
 		<RouterLinkSummaryButton
-			disabled={ ! site.is_wpcom_atomic }
 			to={ `/sites/${ site.slug }/settings/wordpress` }
 			title="WordPress"
 			density="medium"
