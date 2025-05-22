@@ -3,7 +3,7 @@ import { __ } from '@wordpress/i18n';
 
 export default function Disclaimer() {
 	return (
-		<div>
+		<>
 			<Text as="p" variant="muted" style={ { margin: '16px 0' } }>
 				{ __(
 					'The historical performance data and metrics presented in this site are sourced from the Google Chrome User Experience Report (CrUX) dataset, which reflects real-world user experiences and interactions with your site. Realtime data is provided by PageSpeed Insights. This data helps us provide actionable recommendations to improve your site‘s performance.'
@@ -17,6 +17,6 @@ export default function Disclaimer() {
 			<a href="https://developer.chrome.com/docs/crux" target="_blank" rel="noreferrer">
 				{ __( 'Learn more about the Chrome UX Report ↗' ) }
 			</a>
-		</div>
+		</>
 	);
 }
