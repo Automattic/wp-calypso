@@ -94,8 +94,7 @@ describe( 'Dashboard: Site Visibility Settings', function () {
  * @param page The Playwright page object
  */
 async function saveChanges( page: Page ): Promise< void > {
+	await page.waitForSelector( 'button[type="submit"]:not([disabled])' );
 	await page.getByRole( 'button', { name: 'Save' } ).click();
-	await page.waitForSelector( 'button:not(.is-busy)[type="submit"][disabled]', {
-		state: 'visible',
-	} );
+	await page.waitForSelector( 'button:not(.is-busy)[type="submit"][disabled]' );
 }
