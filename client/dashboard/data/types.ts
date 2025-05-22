@@ -80,7 +80,6 @@ export interface Site {
 		ico: string;
 	};
 	plan?: SitePlan;
-	active_modules?: string[];
 	capabilities: SiteCapabilities;
 	subscribers_count: number;
 	// Can be undefined for deleted sites.
@@ -95,7 +94,7 @@ export interface Site {
 		migration_status: string;
 	} | null;
 	jetpack: boolean;
-	jetpack_modules: string[];
+	jetpack_modules: string[] | null;
 }
 
 export type EmailProvider = 'titan' | 'google-workspace' | 'forwarding';

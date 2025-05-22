@@ -11,7 +11,6 @@ export const SITE_FIELDS = [
 	'icon',
 	'subscribers_count',
 	'plan',
-	'active_modules',
 	'capabilities',
 	'is_a8c',
 	'is_deleted',
