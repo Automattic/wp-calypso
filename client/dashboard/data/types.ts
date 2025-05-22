@@ -67,7 +67,6 @@ export interface SiteCapabilities {
 export interface SiteOptions {
 	software_version: string;
 	admin_url: string;
-	blog_public: number;
 	is_redirect?: boolean;
 }
 
