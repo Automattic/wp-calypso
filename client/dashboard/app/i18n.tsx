@@ -1,20 +1,26 @@
 import { defaultI18n } from '@wordpress/i18n';
 import { I18nProvider as WPI18nProvider } from '@wordpress/react-i18n';
-import { useEffect, useRef, useState, type PropsWithChildren } from 'react';
+import { useEffect, useState, type PropsWithChildren } from 'react';
 import { useAuth } from './auth';
 
-async function fetchLocaleData( language: string ) {
+async function fetchLocaleData( language: string, signal: AbortSignal ) {
 	if ( language === 'en' ) {
 		return [ language, undefined ];
 	}
 
 	try {
 		const response = await fetch(
-			`https://widgets.wp.com/languages/calypso/${ language }-v1.1.json`
+			`https://widgets.wp.com/languages/calypso/${ language }-v1.1.json`,
+			{ signal }
 		);
 
 		return [ language, await response.json() ];
-	} catch {
+	} catch ( error ) {
+		// Only fall back to `en` when the error is not an abort
+		if ( error instanceof Error && error.name === 'AbortError' ) {
+			throw error;
+		}
+
 		// Fall back to `en` when fetching the language data fails. Without this
 		// the i18n provider would be stuck forever in a non-loaded state.
 		return [ 'en', undefined ];
@@ -23,26 +29,28 @@ async function fetchLocaleData( language: string ) {
 
 export function I18nProvider( { children }: PropsWithChildren ) {
 	const [ loadedLocale, setLoadedLocale ] = useState< string | null >( null );
-	const loadingLocaleRef = useRef< string | null >( null );
 	const { user } = useAuth();
 
 	const i18n = defaultI18n;
 	const language = user.locale_variant || user.language || 'en';
 
 	useEffect( () => {
-		loadingLocaleRef.current = language;
+		const abortController = new AbortController();
 
-		fetchLocaleData( language ).then( ( [ realLanguage, data ] ) => {
-			// Activate the data only if no other language switch has run in the meantime
-			if ( loadingLocaleRef.current !== language ) {
-				return;
-			}
+		fetchLocaleData( language, abortController.signal )
+			.then( ( [ realLanguage, data ] ) => {
+				i18n.resetLocaleData( data );
+				// `realLanguage` can be different from `language` when loading language data fails
+				// and it falls back to `en`.
+				setLoadedLocale( realLanguage );
+			} )
+			.catch( () => {
+				// Ignore abort errors as they are expected during cleanup
+			} );
 
-			i18n.resetLocaleData( data );
-			// `realLanguage` can be different from `language` when loading language data fails
-			// and it falls back to `en`.
-			setLoadedLocale( realLanguage );
-		} );
+		return () => {
+			abortController.abort();
+		};
 	}, [ i18n, language ] );
 
 	// Render the sub-tree only after the initial locale data are loaded. We don't want a
