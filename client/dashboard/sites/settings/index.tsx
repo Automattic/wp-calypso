@@ -10,6 +10,7 @@ import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import SiteVisibilitySettingsSummary from '../settings-site-visibility/summary';
 import SubscriptionGiftingSettingsSummary from '../settings-subscription-gifting/summary';
+import DangerZone from './danger-zone';
 import SiteActions from './site-actions';
 
 export default function SiteSettings( { siteSlug }: { siteSlug: string } ) {
@@ -26,14 +27,11 @@ export default function SiteSettings( { siteSlug }: { siteSlug: string } ) {
 			<Card>
 				<VStack>
 					<SiteVisibilitySettingsSummary site={ site } />
-					<SubscriptionGiftingSettingsSummary
-						siteSlug={ siteSlug }
-						site={ site }
-						settings={ settings }
-					/>
+					<SubscriptionGiftingSettingsSummary site={ site } settings={ settings } />
 				</VStack>
 			</Card>
 			<SiteActions site={ site } />
+			<DangerZone site={ site } />
 		</PageLayout>
 	);
 }

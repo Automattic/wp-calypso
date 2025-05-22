@@ -4,8 +4,10 @@ import Smooch from 'smooch';
 import type { ContactOption } from '../types';
 import type {
 	OdieConversation,
+	OdieMessage,
 	SupportInteraction,
 	ZendeskConversation,
+	ZendeskMessage,
 } from '@automattic/odie-client';
 
 const isMatchingInteraction = (
@@ -40,11 +42,15 @@ export const generateContactOnClickEvent = (
 	}
 };
 
+/**
+ * Returns the last message from a conversation.
+ * @returns The last message or null if there are no messages.
+ */
 export const getLastMessage = ( {
 	conversation,
 }: {
 	conversation: OdieConversation | ZendeskConversation;
-} ) => {
+} ): OdieMessage | ZendeskMessage | null => {
 	return Array.isArray( conversation.messages ) && conversation.messages.length > 0
 		? conversation.messages[ conversation.messages.length - 1 ]
 		: null;

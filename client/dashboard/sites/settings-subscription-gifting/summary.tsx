@@ -6,11 +6,9 @@ import { hasSubscriptionGiftingFeature } from './utils';
 import type { Site, SiteSettings } from '../../data/types';
 
 export default function SubscriptionGiftingSettingsSummary( {
-	siteSlug,
 	site,
 	settings,
 }: {
-	siteSlug: string;
 	site: Site;
 	settings: SiteSettings;
 } ) {
@@ -19,7 +17,7 @@ export default function SubscriptionGiftingSettingsSummary( {
 	}
 	return (
 		<RouterLinkSummaryButton
-			to={ `/sites/${ siteSlug }/settings/subscription-gifting` }
+			to={ `/sites/${ site.slug }/settings/subscription-gifting` }
 			title={ __( 'Accept a gift subscription' ) }
 			density="medium"
 			decoration={ <Icon icon={ heading } /> }

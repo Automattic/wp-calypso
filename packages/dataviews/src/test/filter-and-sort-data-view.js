@@ -329,6 +329,62 @@ describe( 'filters', () => {
 		);
 	} );
 
+	it( 'should filter using CONTAINS operator for text fields', () => {
+		const { data: result } = filterSortAndPaginate(
+			data,
+			{
+				filters: [
+					{
+						field: 'title',
+						operator: 'contains',
+						value: 'nep',
+					},
+				],
+			},
+			fields
+		);
+		expect( result ).toHaveLength( 1 );
+		expect( result[ 0 ].title ).toBe( 'Neptune' );
+	} );
+
+	it( 'should filter using NOT_CONTAINS operator for text fields', () => {
+		const { data: result } = filterSortAndPaginate(
+			data,
+			{
+				filters: [
+					{
+						field: 'description',
+						operator: 'notContains',
+						value: 'description',
+					},
+				],
+			},
+			fields
+		);
+		// Only 'NASA photo' and 'La planète Vénus' do not contain 'description'
+		expect( result.map( ( r ) => r.description ) ).toEqual( [
+			'NASA photo',
+			'La planète Vénus',
+		] );
+	} );
+
+	it( 'should filter using STARTS_WITH operator for text fields', () => {
+		const { data: result } = filterSortAndPaginate(
+			data,
+			{
+				filters: [
+					{
+						field: 'title',
+						operator: 'startsWith',
+						value: 'Mar',
+					},
+				],
+			},
+			fields
+		);
+		expect( result.map( ( r ) => r.title ) ).toContain( 'Mars' );
+	} );
+
 	it( 'should filter using LESS THAN operator for datetime', () => {
 		const { data: result } = filterSortAndPaginate(
 			data,

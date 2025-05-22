@@ -9,6 +9,11 @@ body.is-reader-page,
 .layout.is-section-reader .layout__content,
 .is-section-reader {
 	background: initial;
+}
+
+// Ensure this is only applied in logged in 'global' interface.
+// Applying this more broadly breaks scrolling in logged out reader.
+.is-section-reader.is-global {
 	overflow-y: hidden;
 }
 

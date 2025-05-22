@@ -12,6 +12,7 @@ import type {
 	FieldTypeDefinition,
 } from '../types';
 import datetime from './datetime';
+import email from './email';
 import integer from './integer';
 import radio from './radio';
 import select from './select';
@@ -26,6 +27,7 @@ interface FormControls {
 const FORM_CONTROLS: FormControls = {
 	boolean,
 	datetime,
+	email,
 	integer,
 	radio,
 	select,

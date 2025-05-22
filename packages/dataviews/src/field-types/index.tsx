@@ -8,6 +8,7 @@ import type {
 	SortDirection,
 	ValidationContext,
 } from '../types';
+import { default as email } from './email';
 import { default as integer } from './integer';
 import { default as text } from './text';
 import { default as datetime } from './datetime';
@@ -24,6 +25,10 @@ import { renderFromElements } from '../utils';
 export default function getFieldTypeDefinition< Item >(
 	type?: FieldType
 ): FieldTypeDefinition< Item > {
+	if ( 'email' === type ) {
+		return email;
+	}
+
 	if ( 'integer' === type ) {
 		return integer;
 	}
