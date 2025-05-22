@@ -2,7 +2,7 @@ import { Meta, StoryObj } from '@storybook/react';
 import { Button, ExternalLink } from '@wordpress/components';
 import Notice from './index';
 
-const meta = {
+const meta: Meta< typeof Notice > = {
 	title: 'client/dashboard/Notice',
 	component: Notice,
 	tags: [ 'autodocs' ],
@@ -19,10 +19,11 @@ const meta = {
 	parameters: {
 		actions: { argTypesRegex: '^on.*' },
 	},
-} satisfies Meta< typeof Notice >;
+};
 
 export default meta;
-type Story = StoryObj< typeof meta >;
+
+type Story = StoryObj< typeof Notice >;
 
 const defaultArgs = {
 	title: 'Title',
