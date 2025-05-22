@@ -101,7 +101,7 @@ const config: Config = {
 						},
 						{
 							label: 'Components',
-							to: '/components/',
+							to: '/components/ds/',
 						},
 					],
 				},
