@@ -7,6 +7,11 @@ interface Config {
 	features?: Record< string, boolean >;
 }
 
+/**
+ * Features that are manually enabled in the codebase using `config.enable`.
+ */
+const PROGRAMMATICALLY_ENABLED_FEATURES = new Set< string >( [ 'a4a-partner-directory' ] );
+
 /** path to configuration file directory */
 const configRoot = path.resolve( import.meta.dirname, '../config' );
 
@@ -83,7 +88,7 @@ environmentKeys.forEach( ( [ filename, config ] ) => {
  * enabled again.
  */
 Array.from( featuresEnabled.entries() )
-	.filter( ( [ , isEnabled ] ) => ! isEnabled )
+	.filter( ( [ key, isEnabled ] ) => ! isEnabled && ! PROGRAMMATICALLY_ENABLED_FEATURES.has( key ) )
 	.forEach( ( [ key ] ) => {
 		console.error(
 			`${ chalk.red( 'Configuration Error' ) }\n` +
