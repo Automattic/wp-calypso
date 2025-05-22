@@ -25,6 +25,7 @@ function subscribers( context: Context, next: () => void ) {
 			require="calypso/my-sites/stats/pages/subscribers"
 			placeholder={ PageLoading }
 			period={ rangeOfPeriod( activeFilter?.period || 'day', date ) }
+			context={ context }
 		/>
 	);
 	next();

@@ -33,7 +33,7 @@ const usePersonalizationFormValidation = () => {
 				newValidationError.productsOffered = translate( 'Please select products you offer' );
 			}
 
-			if ( payload.plansToOfferProducts && ! payload.productsToOffer?.length ) {
+			if ( payload.plansToOfferProducts === 'Yes' && ! payload.productsToOffer?.length ) {
 				newValidationError.productsToOffer = translate(
 					'Please select products you plan to offer'
 				);

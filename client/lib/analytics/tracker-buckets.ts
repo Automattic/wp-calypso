@@ -8,8 +8,6 @@ import {
 	getExceptions,
 } from 'calypso/lib/analytics/utils';
 import { isE2ETest } from 'calypso/lib/e2e';
-import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
-import isJetpackCheckout from '../jetpack/is-jetpack-checkout';
 
 const allAdTrackers = [
 	'bing',
@@ -64,9 +62,7 @@ export const AdTrackersBuckets: { [ key in AdTracker ]: Bucket | null } = {
 	twitter: Bucket.ADVERTISING,
 	facebook: Bucket.ADVERTISING,
 	reddit: Bucket.ADVERTISING,
-
-	// Advertising trackers (only Jetpack Cloud or on Jetpack Checkout):
-	linkedin: isJetpackCloud() || isJetpackCheckout() ? Bucket.ADVERTISING : null,
+	linkedin: Bucket.ADVERTISING,
 
 	// Disabled trackers:
 	quantcast: null,

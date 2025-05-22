@@ -6,6 +6,7 @@ import {
 	createLazyRoute,
 } from '@tanstack/react-router';
 import { fetchTwoStep } from '../data';
+import { canUpdateWordPressVersion } from '../sites/settings-wordpress/utils';
 import NotFound from './404';
 import UnknownError from './500';
 import {
@@ -17,8 +18,7 @@ import {
 	profileQuery,
 	siteCurrentPlanQuery,
 	siteEngagementStatsQuery,
-	siteMonitorUptimeQuery,
-	sitePHPVersionQuery,
+	siteWordPressVersionQuery,
 } from './queries';
 import { queryClient } from './query-client';
 import Root from './root';
@@ -78,27 +78,11 @@ const siteRoute = createRoute( {
 const siteOverviewRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: '/',
-	loader: async ( { params: { siteSlug } } ) => {
-		// Site usually takes the longest, so kick it off first.
-		const sitePromise = queryClient.ensureQueryData( siteQuery( siteSlug ) );
-		// Kick off all independent promises in parallel.
-		const currentPlanPromise = queryClient.ensureQueryData( siteCurrentPlanQuery( siteSlug ) );
-		const engagementStatsPromise = queryClient.ensureQueryData(
-			siteEngagementStatsQuery( siteSlug )
-		);
-		const site = await sitePromise;
-		await Promise.all( [
-			currentPlanPromise,
-			engagementStatsPromise,
-			// Kick off dependent promises in parallel.
-			site.jetpack && site.jetpack_modules.includes( 'monitor' )
-				? queryClient.ensureQueryData( siteMonitorUptimeQuery( siteSlug ) )
-				: undefined,
-			site.is_wpcom_atomic
-				? queryClient.ensureQueryData( sitePHPVersionQuery( siteSlug ) )
-				: undefined,
-		] );
-	},
+	loader: ( { params: { siteSlug } } ) =>
+		Promise.all( [
+			queryClient.ensureQueryData( siteCurrentPlanQuery( siteSlug ) ),
+			queryClient.ensureQueryData( siteEngagementStatsQuery( siteSlug ) ),
+		] ),
 } ).lazy( () =>
 	import( '../sites/overview' ).then( ( d ) =>
 		createLazyRoute( 'site-overview' )( {
@@ -163,6 +147,34 @@ const siteSettingsSubscriptionGiftingRoute = createRoute( {
 } ).lazy( () =>
 	import( '../sites/settings-subscription-gifting' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-subscription-gifting' )( {
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+		} )
+	)
+);
+
+const siteSettingsWordPressRoute = createRoute( {
+	getParentRoute: () => siteRoute,
+	path: 'settings/wordpress',
+	loader: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteQuery( siteSlug ) );
+		if ( canUpdateWordPressVersion( site ) ) {
+			return await queryClient.ensureQueryData( siteWordPressVersionQuery( siteSlug ) );
+		}
+	},
+} ).lazy( () =>
+	import( '../sites/settings-wordpress' ).then( ( d ) =>
+		createLazyRoute( 'site-settings-wordpress' )( {
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+		} )
+	)
+);
+
+const siteSettingsTransferSiteRoute = createRoute( {
+	getParentRoute: () => siteRoute,
+	path: 'settings/transfer-site',
+} ).lazy( () =>
+	import( '../sites/settings-transfer-site' ).then( ( d ) =>
+		createLazyRoute( 'site-settings-transfer-site' )( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )
 	)
@@ -333,6 +345,8 @@ const createRouteTree = ( config: AppConfig ) => {
 				siteSettingsRoute,
 				siteSettingsSiteVisibilityRoute,
 				siteSettingsSubscriptionGiftingRoute,
+				siteSettingsWordPressRoute,
+				siteSettingsTransferSiteRoute,
 			] )
 		);
 	}

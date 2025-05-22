@@ -1,5 +1,6 @@
 /* eslint-disable no-restricted-imports */
 import { HelpCenterSelect } from '@automattic/data-stores';
+import { calculateUnread } from '@automattic/odie-client/src/data/use-get-unread-conversations';
 import { Card, CardHeader, CardBody, Spinner } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { useState } from '@wordpress/element';
@@ -13,9 +14,12 @@ import { useGetHistoryChats } from '../hooks/use-get-history-chats';
 import { HELP_CENTER_STORE } from '../stores';
 import { HelpCenterSupportChatMessage } from './help-center-support-chat-message';
 import { getLastMessage } from './utils';
-import type { Conversations, SupportInteraction } from '@automattic/odie-client';
-
 import './help-center-chat-history.scss';
+import type {
+	Conversations,
+	SupportInteraction,
+	ZendeskConversation,
+} from '@automattic/odie-client';
 
 // temporarily we want to show a simplified version of the chat history
 // this bool controls it.
@@ -36,7 +40,7 @@ const Conversations = ( {
 } ) => {
 	const { __ } = useI18n();
 
-	if ( isLoadingInteractions ) {
+	if ( isLoadingInteractions && ! conversations.length ) {
 		return (
 			<div className="help-center-chat-history__no-results">
 				<Spinner />
@@ -55,6 +59,9 @@ const Conversations = ( {
 	return (
 		<>
 			{ conversations.map( ( conversation ) => {
+				const { numberOfUnreadMessages } = calculateUnread( [
+					conversation as ZendeskConversation,
+				] );
 				const lastMessage = getLastMessage( { conversation } );
 
 				if ( ! lastMessage ) {
@@ -67,6 +74,7 @@ const Conversations = ( {
 						key={ conversation.id }
 						message={ lastMessage }
 						conversation={ conversation }
+						numberOfUnreadMessages={ numberOfUnreadMessages }
 					/>
 				);
 			} ) }

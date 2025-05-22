@@ -9,10 +9,11 @@ export const useGetMostRecentOpenConversation = () => {
 	let mostRecentSupportInteractionId = null;
 	let totalNumberOfConversations = 0;
 
-	const { isChatLoaded } = useSelect( ( select ) => {
+	const { isChatLoaded, lastMessageReceivedAt } = useSelect( ( select ) => {
 		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
 		return {
 			isChatLoaded: store.getIsChatLoaded(),
+			lastMessageReceivedAt: store.getLastMessageReceivedAt(),
 		};
 	}, [] );
 
@@ -20,7 +21,7 @@ export const useGetMostRecentOpenConversation = () => {
 		useGetSupportInteractions( 'zendesk', 100, 'resolved' );
 
 	const { data: supportInteractionsOpen, isLoading: isLoadingOpenInteractions } =
-		useGetSupportInteractions( 'zendesk', 10, 'open' );
+		useGetSupportInteractions( 'zendesk', 10, 'open', 10, true, lastMessageReceivedAt );
 
 	const isLoadingInteractions = isLoadingResolvedInteractions || isLoadingOpenInteractions;
 

@@ -105,28 +105,6 @@ export const getNumericDateString = ( timestamp: number, locale = 'en' ) => {
 };
 
 /**
- * Get localized full date and time format for timestamp including hours and minutes.
- * @param {number} timestamp Web timestamp (milliseconds since Epoch)
- * @param {string} locale Locale slug
- * @returns {string} Formatted localized date and time, e.g. '12/20/2021, 3:30 PM' for US English
- *   Falls back to ISO date string if anything goes wrong.
- */
-export const getNumericDateTimeString = ( timestamp: number, locale = 'en' ) => {
-	try {
-		const formatter = new Intl.DateTimeFormat( locale, {
-			year: 'numeric',
-			month: 'numeric',
-			day: 'numeric',
-			hour: 'numeric',
-			minute: 'numeric',
-		} );
-		return formatter.format( new Date( timestamp ) );
-	} catch ( error ) {
-		return getISODateString( timestamp );
-	}
-};
-
-/**
  * Get localized first day of week 1–7, 1 being Monday, 6 being Saturday, and 7 being Sunday.
  * Uses vanilla API for retrieving value from `Locale.prototype.getWeekInfo()`,
  * or the currently more supported `Locale.prototype.weekInfo`.

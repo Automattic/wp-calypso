@@ -62,7 +62,7 @@
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"@types/autosize": "^4.0.3",
-		"@types/react": "^18.3.20",
+		"@types/react": "^18.3.21",
 		"@types/smooch": "^5.3.7",
 		"typescript": "^5.8.3"
 	}

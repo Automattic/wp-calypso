@@ -75,21 +75,6 @@ const DEFAULT_FIELDS: Field< Site >[] = [
 		},
 	},
 	{
-		id: 'protect',
-		type: 'boolean',
-		label: __( 'Protect' ),
-		getValue: ( { item }: { item: Site } ) => !! item.active_modules?.includes( 'protect' ),
-		render: ( { item }: { item: Site } ) =>
-			item.active_modules?.includes( 'protect' ) ? <Icon icon={ check } /> : __( 'Disabled' ),
-		elements: [
-			{ value: true, label: __( 'Enabled' ) },
-			{ value: false, label: __( 'Disabled' ) },
-		],
-		filterBy: {
-			operators: [ 'is' as Operator ],
-		},
-	},
-	{
 		id: 'status',
 		label: __( 'Status' ),
 		getValue: ( { item }: { item: Site } ) => getSiteStatus( item ),

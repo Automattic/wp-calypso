@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Modal, Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
@@ -107,11 +106,10 @@ const CancelDifmMigrationForm = ( { siteId }: { siteId: number } ) => {
 		'pending' | 'error' | 'success' | null
 	>( null );
 
-	if ( ! isEnabled( 'migration-flow/cancel-difm' ) ) {
-		return null;
-	}
-
 	const isMigrationInProgress = stickers.includes( 'migration-in-progress' );
+	const isMigationCompleted =
+		stickers.includes( 'site-migration-complete' ) ||
+		stickers.includes( 'migration-completed-difm' );
 
 	const handleSendCancellationRequest = async ( siteId: number ) => {
 		try {
@@ -159,7 +157,7 @@ const CancelDifmMigrationForm = ( { siteId }: { siteId: number } ) => {
 			{ cancellationStatus === 'pending' && (
 				<LoadingBar className="migration-started-difm__cancel-loading-bar" progress={ 0.5 } />
 			) }
-			{ cancellationStatus === null && (
+			{ ! isMigationCompleted && cancellationStatus === null && (
 				<CancelMigrationButton
 					isMigrationInProgress={ isMigrationInProgress }
 					onClick={ openModal }
