@@ -652,6 +652,9 @@ export const fields: Field< SpaceObject >[] = [
 		type: 'text',
 		enableHiding: false,
 		enableGlobalSearch: true,
+		filterBy: {
+			operators: [ 'contains', 'notContains', 'startsWith' ],
+		},
 	},
 	{
 		id: 'date',

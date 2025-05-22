@@ -16,6 +16,7 @@ import StatsModuleCountries from 'calypso/my-sites/stats/features/modules/stats-
 import StatsModuleReferrers from 'calypso/my-sites/stats/features/modules/stats-referrers';
 import StatsModuleTopPosts from 'calypso/my-sites/stats/features/modules/stats-top-posts';
 import { getMomentSiteZone } from 'calypso/my-sites/stats/hooks/use-moment-site-zone';
+import { recordCurrentScreen } from 'calypso/my-sites/stats/hooks/use-stats-navigation-history';
 import { requestSiteStats } from 'calypso/state/stats/lists/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import PageViewTracker from '../../stats-page-view-tracker';
@@ -40,7 +41,7 @@ function StatsRealtimeHeader() {
 	);
 }
 
-function StatsRealtime() {
+function StatsRealtime( { context } ) {
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const siteSlug = useSelector( ( state ) => getSelectedSiteSlug( state, siteId ) );
 	const momentSiteZone = useSelector( ( state ) => getMomentSiteZone( state, siteId ) );
@@ -100,6 +101,17 @@ function StatsRealtime() {
 			sessionStorage.setItem( 'jp-stats-last-tab', 'realtime' ),
 		[]
 	); // Track the last viewed tab.
+
+	useEffect( () => {
+		recordCurrentScreen(
+			'realtime',
+			{
+				queryParams: context.query,
+				period: period?.period || null,
+			},
+			true
+		);
+	}, [ context.query, period?.period ] );
 
 	// TODO: should be refactored into separate components
 	/* eslint-disable wpcalypso/jsx-classname-namespace */

@@ -25,6 +25,7 @@ import {
 	administrationToolDeleteSite,
 	administrationToolResetSite,
 	administrationToolTransferSite,
+	dashboardBackportSiteSettings,
 	serverSettings,
 	sftpSshSettings,
 	databaseSettings,
@@ -121,6 +122,20 @@ export default function () {
 		navigation,
 		performanceSettings,
 		siteDashboard( SETTINGS_PERFORMANCE ),
+		makeLayout,
+		clientRender
+	);
+
+	/**
+	 * Settings V2
+	 */
+	page( '/sites/settings/v2', siteSelection, sites, makeLayout, clientRender );
+	page(
+		'/sites/settings/v2/*',
+		siteSelection,
+		navigation,
+		dashboardBackportSiteSettings,
+		siteDashboard( SETTINGS_SITE ),
 		makeLayout,
 		clientRender
 	);

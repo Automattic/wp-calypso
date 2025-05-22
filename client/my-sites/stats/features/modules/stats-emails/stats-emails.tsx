@@ -52,6 +52,11 @@ const StatsEmails: React.FC< StatsDefaultModuleProps > = ( {
 		getSiteStatsNormalizedData( state, siteId, statType, query )
 	) as [ id: number, label: string ];
 
+	// The period unit is not used in the Email Stats Summary because it always fetches the all-time period.
+	// To make the Email Stats module work with the Stats module component and route for Email Stats Summary,
+	// we need to force the period to be `day`.
+	const forcedDailyPeriodForStatsModule = Object.assign( {}, period, { period: 'day' } );
+
 	return (
 		<>
 			{ ! shouldGateStatsModule && siteId && statType && (
@@ -103,7 +108,7 @@ const StatsEmails: React.FC< StatsDefaultModuleProps > = ( {
 						},
 					} }
 					moduleStrings={ moduleStrings }
-					period={ period }
+					period={ forcedDailyPeriodForStatsModule }
 					query={ query }
 					statType={ statType }
 					mainItemLabel={ translate( 'Latest emails' ) }

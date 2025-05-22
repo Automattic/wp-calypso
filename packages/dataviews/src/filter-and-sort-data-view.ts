@@ -17,6 +17,9 @@ import {
 	OPERATOR_GREATER_THAN,
 	OPERATOR_LESS_THAN_OR_EQUAL,
 	OPERATOR_GREATER_THAN_OR_EQUAL,
+	OPERATOR_CONTAINS,
+	OPERATOR_NOT_CONTAINS,
+	OPERATOR_STARTS_WITH,
 } from './constants';
 import { normalizeFields } from './normalize-fields';
 import type { Field, View } from './types';
@@ -165,6 +168,54 @@ export function filterSortAndPaginate< Item >(
 					filteredData = filteredData.filter( ( item ) => {
 						const fieldValue = field.getValue( { item } );
 						return fieldValue >= filter.value;
+					} );
+				} else if (
+					filter.operator === OPERATOR_CONTAINS &&
+					filter?.value !== undefined
+				) {
+					filteredData = filteredData.filter( ( item ) => {
+						const fieldValue = field.getValue( { item } );
+						return (
+							typeof fieldValue === 'string' &&
+							filter.value &&
+							fieldValue
+								.toLowerCase()
+								.includes(
+									String( filter.value ).toLowerCase()
+								)
+						);
+					} );
+				} else if (
+					filter.operator === OPERATOR_NOT_CONTAINS &&
+					filter?.value !== undefined
+				) {
+					filteredData = filteredData.filter( ( item ) => {
+						const fieldValue = field.getValue( { item } );
+						return (
+							typeof fieldValue === 'string' &&
+							filter.value &&
+							! fieldValue
+								.toLowerCase()
+								.includes(
+									String( filter.value ).toLowerCase()
+								)
+						);
+					} );
+				} else if (
+					filter.operator === OPERATOR_STARTS_WITH &&
+					filter?.value !== undefined
+				) {
+					filteredData = filteredData.filter( ( item ) => {
+						const fieldValue = field.getValue( { item } );
+						return (
+							typeof fieldValue === 'string' &&
+							filter.value &&
+							fieldValue
+								.toLowerCase()
+								.startsWith(
+									String( filter.value ).toLowerCase()
+								)
+						);
 					} );
 				}
 			}

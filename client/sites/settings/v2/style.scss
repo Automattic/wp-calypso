@@ -1,0 +1,19 @@
+@import 'calypso/dashboard/app-dotcom/style.scss';
+
+.dashboard-backport-site-settings-root .dashboard-page-layout {
+	align-self: center;
+	margin: 0;
+	padding: 0;
+
+	h1 {
+		font-family: var( --dashboard-h1__font-family );
+		font-weight: var( --dashboard-h1__font-weight ) !important;
+	}
+
+	h2 {
+		font-size: 1.25rem;
+		font-weight: 500;
+		line-height: 1.5;
+		margin-bottom: 0;
+	}
+}

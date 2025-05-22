@@ -23,6 +23,7 @@ import {
 	isWooExpressPlan,
 	isSenseiProduct,
 	PLAN_100_YEARS,
+	type PlanSlug,
 } from '@automattic/calypso-products';
 import colorStudio from '@automattic/color-studio';
 import { Gridicon } from '@automattic/components';
@@ -45,6 +46,7 @@ import * as React from 'react';
 import { hasFreeCouponTransfersOnly } from 'calypso/lib/cart-values/cart-items';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
+import useEquivalentMonthlyTotals from 'calypso/my-sites/checkout/utils/use-equivalent-monthly-totals';
 import {
 	useStreamlinedPriceExperiment,
 	isStreamlinedPriceCheckoutTreatment,
@@ -196,17 +198,17 @@ function CheckoutSummaryPriceList() {
 	const totalLineItem = getTotalLineItemFromCart( responseCart );
 	const translate = useTranslate();
 	const [ , streamlinedPriceExperimentAssignment ] = useStreamlinedPriceExperiment();
+	const monthlyPrices = useEquivalentMonthlyTotals( responseCart.products );
 
 	let subtotalBeforeDiscounts = 0;
 	let totalDiscount = 0;
 	if ( isStreamlinedPriceCheckoutTreatment( streamlinedPriceExperimentAssignment ) ) {
-		for ( const product of responseCart.products ) {
+		subtotalBeforeDiscounts = responseCart.products.reduce( ( subtotal, product ) => {
+			const originalAmountInteger =
+				monthlyPrices[ product.product_slug as PlanSlug ] || product.item_original_subtotal_integer;
 			// In specific cases (e.g. premium domains) the original price (renewal) is lower than the due price.
-			subtotalBeforeDiscounts += Math.max(
-				product.item_subtotal_integer,
-				product.item_original_subtotal_integer
-			);
-		}
+			return subtotal + Math.max( product.item_subtotal_integer, originalAmountInteger );
+		}, 0 );
 		totalDiscount = subtotalBeforeDiscounts - responseCart.sub_total_integer;
 	}
 
