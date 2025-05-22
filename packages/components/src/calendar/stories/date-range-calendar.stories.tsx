@@ -19,7 +19,7 @@ import {
 	sv,
 } from 'date-fns/locale';
 import { useState, useEffect } from 'react';
-import { DateRangeCalendar, TZDate } from './index';
+import { DateRangeCalendar, TZDate } from '../index';
 import type { Meta, StoryObj } from '@storybook/react';
 
 const meta: Meta< typeof DateRangeCalendar > = {
