@@ -52,7 +52,12 @@ export const useCreateZendeskConversation = (): ( ( {
 		createdFrom?: string;
 	} ) => {
 		const currentInteractionID = interactionId || currentSupportInteraction!.uuid;
-		if ( isSubmittingZendeskUserFields || chat.conversationId || chat.status === 'transfer' ) {
+		if (
+			isSubmittingZendeskUserFields ||
+			chat.conversationId ||
+			chat.status === 'transfer' ||
+			chat.provider === 'zendesk'
+		) {
 			return;
 		}
 
@@ -72,7 +77,7 @@ export const useCreateZendeskConversation = (): ( ( {
 			messaging_flow: userFieldFlowName || null,
 			messaging_source: section,
 		} );
-
+		setHelpCenterZendeskConversationStarted();
 		const conversation = await Smooch.createConversation( {
 			metadata: {
 				createdAt: Date.now(),
@@ -80,7 +85,6 @@ export const useCreateZendeskConversation = (): ( ( {
 				...( chatId ? { odieChatId: chatId } : {} ),
 			},
 		} );
-		setHelpCenterZendeskConversationStarted();
 
 		trackEvent( 'new_zendesk_conversation', {
 			support_interaction: currentInteractionID,
