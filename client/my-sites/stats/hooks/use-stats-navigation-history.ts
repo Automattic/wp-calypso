@@ -175,7 +175,7 @@ export const useStatsNavigationHistory = (): { text: string; url: string | null 
 			return addQueryArgs( backLink, prepareAdminQueryParams( lastScreen.queryParams ) );
 		}
 
-		return addQueryArgs( backLink, getFilteredQueryParams( lastScreen.queryParams ) );
+		return addQueryArgs( backLink + siteSlug, getFilteredQueryParams( lastScreen.queryParams ) );
 	}, [ lastScreen, siteSlug, adminBaseUrl ] );
 
 	return {
