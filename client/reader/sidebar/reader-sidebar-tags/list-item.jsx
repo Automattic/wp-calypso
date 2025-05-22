@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import ReaderSidebarHelper from '../helper';
+import { MenuItem, MenuItemLink } from '../menu';
 
 export class ReaderSidebarTagsListItem extends Component {
 	static propTypes = {
@@ -34,17 +35,12 @@ export class ReaderSidebarTagsListItem extends Component {
 	render() {
 		const { tag, path, translate } = this.props;
 		const tagName = tag.displayName || tag.slug;
+		const computedClassName = ReaderSidebarHelper.itemLinkClass( '/tag/' + tag.slug, path );
+		const selected = computedClassName.includes( 'selected' );
 
-		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
-			<li
-				key={ tag.id }
-				className={ ReaderSidebarHelper.itemLinkClass( '/tag/' + tag.slug, path, {
-					'sidebar-dynamic-menu__tag': true,
-				} ) }
-			>
-				<a
-					className="sidebar__menu-link"
+			<MenuItem key={ tag.id } selected={ selected }>
+				<MenuItemLink
 					href={ tag.url }
 					onClick={ this.handleTagSidebarClick }
 					title={ translate( "View tag '%(currentTagName)s'", {
@@ -53,11 +49,10 @@ export class ReaderSidebarTagsListItem extends Component {
 						},
 					} ) }
 				>
-					<div className="sidebar__menu-item-tagname">{ tagName }</div>
-				</a>
-			</li>
+					<span className="sidebar__menu-link-text">{ tagName }</span>
+				</MenuItemLink>
+			</MenuItem>
 		);
-		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 }
 

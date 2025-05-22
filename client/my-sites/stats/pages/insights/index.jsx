@@ -16,6 +16,7 @@ import StatShares from 'calypso/my-sites/stats/features/modules/stats-shares';
 import StatsModuleTags from 'calypso/my-sites/stats/features/modules/stats-tags';
 import usePlanUsageQuery from 'calypso/my-sites/stats/hooks/use-plan-usage-query';
 import { useShouldGateStats } from 'calypso/my-sites/stats/hooks/use-should-gate-stats';
+import { recordCurrentScreen } from 'calypso/my-sites/stats/hooks/use-stats-navigation-history';
 import { useSelector } from 'calypso/state';
 import { STATS_PLAN_USAGE_RECEIVE } from 'calypso/state/action-types';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
@@ -29,7 +30,7 @@ import statsStrings from '../../stats-strings';
 import StatsUpsell from '../../stats-upsell/insights-upsell';
 import StatsModuleListing from '../shared/stats-module-listing';
 
-function StatsInsights() {
+function StatsInsights( { context } ) {
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const siteSlug = useSelector( ( state ) => getSelectedSiteSlug( state, siteId ) );
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
@@ -59,6 +60,18 @@ function StatsInsights() {
 			sessionStorage.setItem( 'jp-stats-last-tab', 'insights' ),
 		[]
 	); // Track the last viewed tab.
+
+	useEffect( () => {
+		const query = context.query;
+		recordCurrentScreen(
+			'insights',
+			{
+				queryParams: query,
+				period: null,
+			},
+			true
+		);
+	}, [ context.query ] );
 
 	const isWPAdmin = config.isEnabled( 'is_odyssey' );
 	const insightsPageClasses = clsx( 'stats', { 'is-odyssey-stats': isWPAdmin } );

@@ -197,19 +197,24 @@ const LanguagePickerModal: React.FC< Props > = ( {
 	return (
 		<Modal
 			onRequestClose={ onClose }
-			className="language-picker__modal"
-			overlayClassName="language-picker__overlay"
+			className="language-picker-modal__wrapper"
+			size="large"
+			title={ __( 'Select a language' ) }
 		>
-			<QueryLanguageNames />
-			<LanguagePicker
-				headingTitle={ __( 'Select a language' ) }
-				languages={ languages }
-				languageGroups={ createLanguageGroups( __ ) }
-				onSelectLanguage={ setSelectedLanguage }
-				selectedLanguage={ selectedLanguage }
-				localizedLanguageNames={ localizedLanguageNames }
-			/>
-			<div>{ buttons }</div>
+			<div className="language-picker-modal__content">
+				<div className="language-picker-modal__body">
+					<QueryLanguageNames />
+					<LanguagePicker
+						headingTitle
+						languages={ languages }
+						languageGroups={ createLanguageGroups( __ ) }
+						onSelectLanguage={ setSelectedLanguage }
+						selectedLanguage={ selectedLanguage }
+						localizedLanguageNames={ localizedLanguageNames }
+					/>
+				</div>
+				<div className="language-picker-modal__footer">{ buttons }</div>
+			</div>
 		</Modal>
 	);
 };

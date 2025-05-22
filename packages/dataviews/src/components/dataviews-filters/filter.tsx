@@ -27,6 +27,7 @@ const SPACE = ' ';
  * Internal dependencies
  */
 import SearchWidget from './search-widget';
+import InputWidget from './input-widget';
 import {
 	OPERATORS,
 	OPERATOR_IS,
@@ -35,6 +36,10 @@ import {
 	OPERATOR_IS_NONE,
 	OPERATOR_IS_ALL,
 	OPERATOR_IS_NOT_ALL,
+	OPERATOR_LESS_THAN,
+	OPERATOR_GREATER_THAN,
+	OPERATOR_LESS_THAN_OR_EQUAL,
+	OPERATOR_GREATER_THAN_OR_EQUAL,
 } from '../../constants';
 import type {
 	Filter,
@@ -42,6 +47,7 @@ import type {
 	Operator,
 	Option,
 	View,
+	NormalizedField,
 } from '../../types';
 
 interface FilterTextProps {
@@ -56,9 +62,10 @@ interface OperatorSelectorProps {
 	onChangeView: ( view: View ) => void;
 }
 
-interface FilterSummaryProps extends OperatorSelectorProps {
+interface FilterProps extends OperatorSelectorProps {
 	addFilterRef: RefObject< HTMLButtonElement >;
 	openedFilter: string | null;
+	fields: NormalizedField< any >[];
 }
 
 const FilterText = ( {
@@ -149,6 +156,58 @@ const FilterText = ( {
 		);
 	}
 
+	if ( filterInView?.operator === OPERATOR_LESS_THAN ) {
+		return createInterpolateElement(
+			sprintf(
+				/* translators: 1: Filter name. 2: Filter value. e.g.: "Price is less than: 10". */
+				__( '<Name>%1$s is less than: </Name><Value>%2$s</Value>' ),
+				filter.name,
+				activeElements[ 0 ].label
+			),
+			filterTextWrappers
+		);
+	}
+
+	if ( filterInView?.operator === OPERATOR_GREATER_THAN ) {
+		return createInterpolateElement(
+			sprintf(
+				/* translators: 1: Filter name. 2: Filter value. e.g.: "Price is greater than: 10". */
+				__( '<Name>%1$s is greater than: </Name><Value>%2$s</Value>' ),
+				filter.name,
+				activeElements[ 0 ].label
+			),
+			filterTextWrappers
+		);
+	}
+
+	if ( filterInView?.operator === OPERATOR_LESS_THAN_OR_EQUAL ) {
+		return createInterpolateElement(
+			sprintf(
+				/* translators: 1: Filter name. 2: Filter value. e.g.: "Price is less than or equal to: 10". */
+				__(
+					'<Name>%1$s is less than or equal to: </Name><Value>%2$s</Value>'
+				),
+				filter.name,
+				activeElements[ 0 ].label
+			),
+			filterTextWrappers
+		);
+	}
+
+	if ( filterInView?.operator === OPERATOR_GREATER_THAN_OR_EQUAL ) {
+		return createInterpolateElement(
+			sprintf(
+				/* translators: 1: Filter name. 2: Filter value. e.g.: "Price is greater than or equal to: 10". */
+				__(
+					'<Name>%1$s is greater than or equal to: </Name><Value>%2$s</Value>'
+				),
+				filter.name,
+				activeElements[ 0 ].label
+			),
+			filterTextWrappers
+		);
+	}
+
 	return sprintf(
 		/* translators: 1: Filter name e.g.: "Unknown status for Author". */
 		__( 'Unknown status for %1$s' ),
@@ -181,6 +240,7 @@ function OperatorSelector( {
 				</FlexItem>
 
 				<SelectControl
+					className="dataviews-filters__summary-operators-filter-select"
 					label={ __( 'Conditions' ) }
 					value={ value }
 					options={ operatorOptions }
@@ -226,22 +286,36 @@ function OperatorSelector( {
 	);
 }
 
-export default function FilterSummary( {
+export default function Filter( {
 	addFilterRef,
 	openedFilter,
+	fields,
 	...commonProps
-}: FilterSummaryProps ) {
+}: FilterProps ) {
 	const toggleRef = useRef< HTMLDivElement >( null );
 	const { filter, view, onChangeView } = commonProps;
 	const filterInView = view.filters?.find(
 		( f ) => f.field === filter.field
 	);
-	const activeElements = filter.elements.filter( ( element ) => {
-		if ( filter.singleSelection ) {
-			return element.value === filterInView?.value;
-		}
-		return filterInView?.value?.includes( element.value );
-	} );
+
+	let activeElements: Option[] = [];
+
+	if ( filter.elements.length > 0 ) {
+		activeElements = filter.elements.filter( ( element ) => {
+			if ( filter.singleSelection ) {
+				return element.value === filterInView?.value;
+			}
+			return filterInView?.value?.includes( element.value );
+		} );
+	} else if ( filterInView?.value !== undefined ) {
+		activeElements = [
+			{
+				value: filterInView.value,
+				label: filterInView.value,
+			},
+		];
+	}
+
 	const isPrimary = filter.isPrimary;
 	const hasValues = filterInView?.value !== undefined;
 	const canResetOrRemove = ! isPrimary || hasValues;
@@ -330,7 +404,17 @@ export default function FilterSummary( {
 				return (
 					<VStack spacing={ 0 } justify="flex-start">
 						<OperatorSelector { ...commonProps } />
-						<SearchWidget { ...commonProps } />
+						{ commonProps.filter.elements.length > 0 ? (
+							<SearchWidget
+								{ ...commonProps }
+								filter={ {
+									...commonProps.filter,
+									elements: commonProps.filter.elements,
+								} }
+							/>
+						) : (
+							<InputWidget { ...commonProps } fields={ fields } />
+						) }
 					</VStack>
 				);
 			} }

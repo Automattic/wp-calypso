@@ -36,15 +36,15 @@ const form = {
 };
 
 export default function SubscriptionGiftingSettings( { siteSlug }: { siteSlug: string } ) {
-	const { data: siteData } = useQuery( siteQuery( siteSlug ) );
+	const { data: site } = useQuery( siteQuery( siteSlug ) );
 	const { data } = useQuery( siteSettingsQuery( siteSlug ) );
 	const mutation = useMutation( siteSettingsMutation( siteSlug ) );
 
-	if ( ! data || ! siteData ) {
+	if ( ! data || ! site ) {
 		return null;
 	}
 
-	if ( ! hasSubscriptionGiftingFeature( siteData.site ) ) {
+	if ( ! hasSubscriptionGiftingFeature( site ) ) {
 		throw notFound();
 	}
 

@@ -45,7 +45,11 @@ export type Operator =
 	| 'isAny'
 	| 'isNone'
 	| 'isAll'
-	| 'isNotAll';
+	| 'isNotAll'
+	| 'lessThan'
+	| 'greaterThan'
+	| 'lessThanOrEqual'
+	| 'greaterThanOrEqual';
 
 export type FieldType = 'text' | 'integer' | 'datetime' | 'media' | 'boolean';
 
@@ -70,12 +74,17 @@ export type FieldTypeDefinition< Item > = {
 	/**
 	 * Callback used to render an edit control for the field or control name.
 	 */
-	Edit: ComponentType< DataFormControlProps< Item > > | string;
+	Edit: ComponentType< DataFormControlProps< Item > > | string | null;
 
 	/**
 	 * Callback used to render the field.
 	 */
 	render: ComponentType< DataViewRenderFieldProps< Item > >;
+
+	/**
+	 * The filter config for the field.
+	 */
+	filterBy: FilterByConfig;
 
 	/**
 	 * Whether the field is sortable.
@@ -175,12 +184,12 @@ export type Field< Item > = {
 	getValue?: ( args: { item: Item } ) => any;
 };
 
-export type NormalizedField< Item > = Field< Item > & {
+export type NormalizedField< Item > = Omit< Field< Item >, 'Edit' > & {
 	label: string;
 	header: string | ReactElement;
 	getValue: ( args: { item: Item } ) => any;
 	render: ComponentType< DataViewRenderFieldProps< Item > >;
-	Edit: ComponentType< DataFormControlProps< Item > >;
+	Edit: ComponentType< DataFormControlProps< Item > > | null;
 	sort: ( a: Item, b: Item, direction: SortDirection ) => number;
 	isValid: ( item: Item, context?: ValidationContext ) => boolean;
 	enableHiding: boolean;

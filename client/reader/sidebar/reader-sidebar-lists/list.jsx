@@ -13,9 +13,9 @@ export default class ReaderSidebarListsList extends Component {
 
 	render() {
 		const { lists, currentListOwner, currentListSlug, path } = this.props;
-		/* eslint-disable wpcalypso/jsx-classname-namespace */
+
 		return (
-			<ul className="sidebar__menu-list">
+			<>
 				{ lists.map( ( list ) => (
 					<ListItem
 						key={ list.ID }
@@ -26,8 +26,7 @@ export default class ReaderSidebarListsList extends Component {
 					/>
 				) ) }
 				<ListItemCreateLink path={ path } />
-			</ul>
+			</>
 		);
-		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 }

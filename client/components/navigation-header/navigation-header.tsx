@@ -1,13 +1,15 @@
+import page from '@automattic/calypso-router';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import { ReactNode } from 'react';
+import { popCurrentScreenFromHistory } from 'calypso/my-sites/stats/hooks/use-stats-navigation-history';
 import './navigation-header.scss';
 
 // Type definitions for the props
 interface BackLinkProps {
 	url?: string;
 	text?: string;
-	onBackClick?: ( e: React.MouseEvent< HTMLAnchorElement > ) => void;
+	onBackClick?: () => void;
 }
 
 export interface HeaderProps extends React.HTMLAttributes< HTMLElement > {
@@ -42,18 +44,22 @@ const NavigationHeader: React.FC< HeaderProps > = ( {
 	backLinkProps,
 	titleElement,
 	headElement = backLinkProps?.url && (
-		<a
+		<button
 			className="calypso-navigation-header__back-link"
-			href={ backLinkProps?.url }
-			onClick={ ( e ) => {
+			type="button"
+			aria-label={ backLinkProps?.text || translate( 'Back' ) }
+			onClick={ () => {
+				popCurrentScreenFromHistory();
+
 				if ( backLinkProps?.onBackClick ) {
-					e.preventDefault();
-					backLinkProps.onBackClick( e );
+					backLinkProps.onBackClick();
+				} else if ( backLinkProps?.url ) {
+					page( backLinkProps.url );
 				}
 			} }
 		>
 			← { backLinkProps?.text ?? translate( 'Back' ) }
-		</a>
+		</button>
 	),
 	rightSection,
 	hasScreenOptionsTab,
