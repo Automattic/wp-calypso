@@ -529,6 +529,7 @@ export interface ActionButton< Item > extends ActionBase< Item > {
 export type Action< Item > = ActionModal< Item > | ActionButton< Item >;
 
 export interface ViewBaseProps< Item > {
+	className?: string;
 	actions: Action< Item >[];
 	data: Item[];
 	fields: NormalizedField< Item >[];
