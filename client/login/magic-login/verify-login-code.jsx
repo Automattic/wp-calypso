@@ -52,14 +52,27 @@ const VerifyLoginCode = ( {
 		inputRefs?.current[ 0 ]?.current?.focus();
 	}, [] );
 
+	// Focus the last input when an auth error is detected
+	useEffect( () => {
+		if ( authError && inputRefs?.current[ CODE_LENGTH - 1 ]?.current ) {
+			// Focus the last input when error occurs
+			inputRefs.current[ CODE_LENGTH - 1 ]?.current.focus();
+		}
+	}, [ authError ] );
+
 	// Get the combined verification code from all inputs
 	const getVerificationCode = () => codeCharacters.join( '' );
 
 	// Handle changes to any individual input
 	const onCodeCharacterChange = ( index, value ) => {
-		// Only allow a single character per input
+		// Only allow a single character per input and no spaces
 		if ( value.length > 1 ) {
 			value = value.charAt( 0 );
+		}
+
+		// Skip spaces
+		if ( value === ' ' ) {
+			return;
 		}
 
 		// Update the code array
@@ -100,17 +113,23 @@ const VerifyLoginCode = ( {
 			return;
 		}
 
+		// Remove spaces from pasted text
+		const filteredText = pastedText.replace( /\s/g, '' );
+		if ( ! filteredText ) {
+			return;
+		}
+
 		// Fill as many inputs as possible with the pasted text
 		const newCodeCharacters = [ ...codeCharacters ];
 
-		for ( let i = 0; i < Math.min( CODE_LENGTH - index, pastedText.length ); i++ ) {
-			newCodeCharacters[ index + i ] = pastedText.charAt( i );
+		for ( let i = 0; i < Math.min( CODE_LENGTH - index, filteredText.length ); i++ ) {
+			newCodeCharacters[ index + i ] = filteredText.charAt( i );
 		}
 
 		setCodeCharacters( newCodeCharacters );
 
 		// Focus the next unfilled input or the last input if all are filled
-		const nextIndex = Math.min( index + pastedText.length, CODE_LENGTH - 1 );
+		const nextIndex = Math.min( index + filteredText.length, CODE_LENGTH - 1 );
 		inputRefs.current[ nextIndex ].current.focus();
 	};
 
@@ -175,7 +194,7 @@ const VerifyLoginCode = ( {
 
 				{ authError && (
 					<div className="magic-login__verify-code-error-message">
-						{ translate( 'Oops, that’s the wrong code. Please verify it.' ) }
+						{ translate( "Oops, that's the wrong code. Please verify it." ) }
 					</div>
 				) }
 
