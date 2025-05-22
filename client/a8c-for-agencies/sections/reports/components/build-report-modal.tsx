@@ -102,9 +102,7 @@ export default function BuildReportModal( { isOpen, onClose }: BuildReportModalP
 			case 1:
 				return (
 					<>
-						<h2 className="a4a-reports-modal__step-title">
-							{ translate( 'Step 1 of 3: Set up' ) }
-						</h2>
+						<h2 className="a4a-reports-modal__step-title">{ translate( 'Step 1 of 3: Setup' ) }</h2>
 
 						<SelectControl
 							label={ translate( 'Pick a timeframe:' ) }
