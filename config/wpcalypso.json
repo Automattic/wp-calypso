@@ -34,7 +34,6 @@
 		"checkout/vat-form": true,
 		"checkout/checkout-version": true,
 		"checkout/razorpay": false,
-		"cloudflare": false,
 		"current-site/domain-warning": true,
 		"current-site/notice": true,
 		"design-picker/use-assembler-styles": true,

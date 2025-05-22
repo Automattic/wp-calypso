@@ -17,6 +17,7 @@ export const SITE_FIELDS = [
 	'is_coming_soon',
 	'is_private',
 	'is_wpcom_atomic',
+	'is_wpcom_staging_site',
 	'launch_status',
 	'site_migration',
 	'site_owner',

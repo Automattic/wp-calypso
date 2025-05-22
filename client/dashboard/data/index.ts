@@ -87,6 +87,26 @@ export const fetchPHPVersion = async ( id: string ): Promise< string | undefined
 	} );
 };
 
+export const fetchWordPressVersion = async ( siteIdOrSlug: string ): Promise< string > => {
+	return wpcom.req.get( {
+		path: `/sites/${ siteIdOrSlug }/hosting/wp-version`,
+		apiNamespace: 'wpcom/v2',
+	} );
+};
+
+export const updateWordPressVersion = async (
+	siteIdOrSlug: string,
+	version: string
+): Promise< void > => {
+	return wpcom.req.post(
+		{
+			path: `/sites/${ siteIdOrSlug }/hosting/wp-version`,
+			apiNamespace: 'wpcom/v2',
+		},
+		{ version }
+	);
+};
+
 export const fetchCurrentPlan = async ( siteIdOrSlug: string ): Promise< Plan > => {
 	const plans: Record< string, Plan > = await wpcom.req.get( {
 		path: `/sites/${ siteIdOrSlug }/plans`,

@@ -89,6 +89,7 @@ export interface Site {
 	is_coming_soon: boolean;
 	is_private: boolean;
 	is_wpcom_atomic: boolean;
+	is_wpcom_staging_site: boolean;
 	launch_status: string | boolean;
 	site_migration: {
 		migration_status: string;

@@ -12,6 +12,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { sitePHPVersionQuery } from '../../app/queries';
 import { TextBlur } from '../../components/text-blur';
 import { getSiteStatusLabel } from '../../utils/site-status';
+import { getFormattedWordPressVersion } from '../../utils/wp-version';
 import SitePreview from '../site-preview';
 import type { Site, Plan } from '../../data/types';
 
@@ -23,7 +24,9 @@ function PHPVersion( { siteSlug }: { siteSlug: string } ) {
  * SiteCard component to display site information in a card format
  */
 export default function SiteCard( { site, currentPlan }: { site: Site; currentPlan: Plan } ) {
-	const { options, URL: url, is_private, is_wpcom_atomic } = site;
+	const { URL: url, is_private, is_wpcom_atomic } = site;
+	const wpVersion = getFormattedWordPressVersion( site );
+
 	// If the site is a private A8C site, X-Frame-Options is set to same
 	// origin.
 	const iframeDisabled = site.is_a8c && is_private;
@@ -64,11 +67,9 @@ export default function SiteCard( { site, currentPlan }: { site: Site; currentPl
 					<HStack justify="space-between">
 						<Field title={ __( 'Status' ) }>{ getSiteStatusLabel( site ) }</Field>
 					</HStack>
-					{ ( options?.software_version || is_wpcom_atomic ) && (
+					{ ( wpVersion || is_wpcom_atomic ) && (
 						<HStack justify="space-between">
-							{ options?.software_version && (
-								<Field title={ __( 'WordPress' ) }>{ options.software_version }</Field>
-							) }
+							{ wpVersion && <Field title={ __( 'WordPress' ) }>{ wpVersion }</Field> }
 							{ is_wpcom_atomic && (
 								<Field title={ __( 'PHP' ) }>
 									<PHPVersion siteSlug={ site.slug } />
