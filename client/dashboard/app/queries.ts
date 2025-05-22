@@ -16,21 +16,21 @@ import {
 	updateSiteSettings,
 	restoreSitePlanSoftware,
 } from '../data';
-import { SITE_FIELDS } from '../data/constants';
+import { SITE_FIELDS, SITE_OPTIONS } from '../data/constants';
 import { queryClient } from './query-client';
 import type { Profile, SiteSettings, UrlPerformanceInsights } from '../data/types';
 import type { Query } from '@tanstack/react-query';
 
 export function sitesQuery() {
 	return {
-		queryKey: [ 'sites', SITE_FIELDS ],
+		queryKey: [ 'sites', SITE_FIELDS, SITE_OPTIONS ],
 		queryFn: fetchSites,
 	};
 }
 
 export function siteQuery( siteIdOrSlug: string ) {
 	return {
-		queryKey: [ 'site', siteIdOrSlug, SITE_FIELDS ],
+		queryKey: [ 'site', siteIdOrSlug, SITE_FIELDS, SITE_OPTIONS ],
 		queryFn: () => fetchSite( siteIdOrSlug ),
 	};
 }
