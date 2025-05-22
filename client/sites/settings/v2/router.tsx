@@ -6,6 +6,7 @@ import {
 	createRootRoute,
 	createRoute,
 	redirect,
+	type AnyRouter,
 } from '@tanstack/react-router';
 import { siteSettingsQuery } from 'calypso/dashboard/app/queries';
 import { queryClient } from 'calypso/dashboard/app/query-client';
@@ -80,9 +81,7 @@ const createRouteTree = () =>
 		dashboardSiteSettingsCompatibilityRouteWithFeature,
 	] );
 
-const routeTree = createRouteTree();
-
-const isCompatibilityRoute = ( router: Router< typeof routeTree >, url: string ) => {
+const isCompatibilityRoute = ( router: AnyRouter, url: string ) => {
 	const matches = router.matchRoutes( url );
 	if ( ! matches ) {
 		return false;
@@ -95,7 +94,7 @@ const isCompatibilityRoute = ( router: Router< typeof routeTree >, url: string )
 	);
 };
 
-const syncMemoryRouterToBrowserHistory = ( router: Router< typeof routeTree > ) => {
+const syncMemoryRouterToBrowserHistory = ( router: AnyRouter ) => {
 	let lastPath = '';
 
 	// Sync TanStack Router's history to the browser history.
@@ -131,6 +130,7 @@ const syncMemoryRouterToBrowserHistory = ( router: Router< typeof routeTree > ) 
 };
 
 export const getRouter = () => {
+	const routeTree = createRouteTree();
 	const router = new Router( {
 		routeTree,
 		basepath: '/sites/settings/v2',
@@ -138,8 +138,8 @@ export const getRouter = () => {
 		defaultPreloadStaleTime: 0,
 		defaultNotFoundComponent: () => null,
 
-		// Use memory history to compartmentize TanStack Router's history management.
-		// This is necessary in order to not pollute the browser history which is used by page.js
+		// Use memory history to compartmentalize TanStack Router's history management.
+		// This way, we separate TanStack Router's history implementation from the browser history used by page.js.
 		history: createMemoryHistory( { initialEntries: [ window.location.pathname ] } ),
 	} );
 
