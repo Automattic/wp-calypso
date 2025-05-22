@@ -97,7 +97,7 @@ class PostLikes extends PureComponent {
 		}
 
 		// Prevent loading for postId `0`
-		const isLoading = !! postId && ! sortedLikes;
+		const isLoading = !! postId && ! likes;
 
 		const classes = clsx( 'post-likes', {
 			'has-display-names': showDisplayNames,
