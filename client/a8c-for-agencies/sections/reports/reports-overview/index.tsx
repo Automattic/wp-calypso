@@ -6,8 +6,8 @@ import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-pa
 import PageSectionColumns from 'calypso/a8c-for-agencies/components/page-section-columns';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import SimpleList from 'calypso/a8c-for-agencies/components/simple-list';
-import documentsImage from 'calypso/assets/images/a8c-for-agencies/reports/report-mock-2.png';
-import analyticsImage from 'calypso/assets/images/a8c-for-agencies/reports/report-mock.png';
+import whyImage from 'calypso/assets/images/a8c-for-agencies/reports/report-mock-2.png';
+import heroImage from 'calypso/assets/images/a8c-for-agencies/reports/report-mock.png';
 import LayoutBody from 'calypso/layout/hosting-dashboard/body';
 import LayoutHeader, {
 	LayoutHeaderTitle as Title,
@@ -103,7 +103,7 @@ const ReportsOverview = () => {
 						</div>
 					</PageSectionColumns.Column>
 					<PageSectionColumns.Column alignCenter>
-						<img src={ analyticsImage } alt="Reports & Analytics" />
+						<img src={ heroImage } alt="Reports & Analytics" />
 					</PageSectionColumns.Column>
 				</PageSectionColumns>
 
@@ -128,7 +128,7 @@ const ReportsOverview = () => {
 						</div>
 					</PageSectionColumns.Column>
 					<PageSectionColumns.Column alignCenter>
-						<img src={ documentsImage } alt="Client Reports" />
+						<img src={ whyImage } alt="Client Reports" />
 					</PageSectionColumns.Column>
 				</PageSectionColumns>
 
