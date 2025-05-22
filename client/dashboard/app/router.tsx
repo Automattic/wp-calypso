@@ -18,6 +18,7 @@ import {
 	domainsQuery,
 	emailsQuery,
 	profileQuery,
+	siteCurrentPlanQuery,
 	siteEngagementStatsQuery,
 	siteStaticFile404Query,
 	siteWordPressVersionQuery,
@@ -81,8 +82,13 @@ const siteRoute = createRoute( {
 const siteOverviewRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: '/',
-	loader: ( { params: { siteSlug } } ) =>
-		queryClient.ensureQueryData( siteEngagementStatsQuery( siteSlug ) ),
+	loader: ( { params: { siteSlug }, preload } ) =>
+		Promise.all( [
+			// The current plan is nice to have preloaded, but not blocking for
+			// navigation.
+			preload ? queryClient.ensureQueryData( siteCurrentPlanQuery( siteSlug ) ) : undefined,
+			queryClient.ensureQueryData( siteEngagementStatsQuery( siteSlug ) ),
+		] ),
 } ).lazy( () =>
 	import( '../sites/overview' ).then( ( d ) =>
 		createLazyRoute( 'site-overview' )( {

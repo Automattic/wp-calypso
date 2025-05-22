@@ -127,7 +127,7 @@ function PlanDetails( { site }: { site: Site } ) {
 			) : (
 				<Button
 					// @ts-expect-error inert is not typed
-					inert={ ! currentPlan }
+					inert={ ( ! currentPlan ).toString() }
 					href={ currentPlan ? `/purchases/subscriptions/${ site.slug }/${ currentPlan.id }` : '' }
 					variant="link"
 				>
