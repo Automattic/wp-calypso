@@ -1165,6 +1165,13 @@ fun e2ePreReleaseBuildType( targetDevice: String, buildUuid: String ): E2EBuildT
 				buildProbablyHanging = true
 			}
 		},
+		buildTriggers = {
+			vcs {
+				branchFilter = """
+					+:trunk
+				""".trimIndent()
+			}
+		},
 		enableCommitStatusPublisher = true,
 	)
 }
