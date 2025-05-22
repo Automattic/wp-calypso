@@ -76,7 +76,6 @@
 		"marketplace-reviews-notification": false,
 		"marketplace-test": false,
 		"me/account/color-scheme-picker": true,
-		"migration-flow/experiment": false,
 		"migration-flow/introductory-offer": true,
 		"onboarding/create-course": false,
 		"onboarding/step-container-v2-import-flow": true,
