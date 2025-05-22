@@ -1,3 +1,4 @@
+import useIsBrowser from '@docusaurus/useIsBrowser';
 import { Card, CardBody, CardMedia } from '@wordpress/components';
 import { useId } from 'react';
 import defaultImage from './default.png';
@@ -25,6 +26,20 @@ export const LinkCard = ( {
 } ) => {
 	const descriptionId = useId();
 	const labelId = useId();
+
+	const isBrowser = useIsBrowser();
+
+	// Just for SSG (SEO). Can be removed when `Card` is forked and converted away from Emotion.
+	if ( ! isBrowser ) {
+		return (
+			<>
+				<a href={ href } aria-describedby={ descriptionId }>
+					{ label }
+				</a>
+				<p id={ descriptionId }>{ description }</p>
+			</>
+		);
+	}
 
 	return (
 		<Card className={ className }>
