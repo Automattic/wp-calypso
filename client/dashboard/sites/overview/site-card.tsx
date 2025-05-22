@@ -119,7 +119,9 @@ function PlanDetails( { site }: { site: Site } ) {
 		<VStack>
 			<FieldTitle>{ __( 'Plan' ) }</FieldTitle>
 			{ product_name_short && <Text>{ product_name_short }</Text> }
-			<Text>{ getPlanExpirationMessage( { isFree, currentPlan } ) }</Text>
+			<Text>
+				<PlanExpirationMessage isFree={ isFree } currentPlan={ currentPlan } />
+			</Text>
 			{ isFree ? (
 				<Button href={ `/plans/${ site.slug }` } variant="link">
 					{ __( 'Upgrade' ) }
@@ -127,7 +129,7 @@ function PlanDetails( { site }: { site: Site } ) {
 			) : (
 				<Button
 					// @ts-expect-error inert is not typed
-					inert={ ( ! currentPlan ).toString() }
+					inert={ currentPlan ? undefined : 'true' }
 					href={ currentPlan ? `/purchases/subscriptions/${ site.slug }/${ currentPlan.id }` : '' }
 					variant="link"
 				>
@@ -143,30 +145,14 @@ function PlanDetails( { site }: { site: Site } ) {
 	);
 }
 
-function getPlanExpirationMessage( {
-	isFree,
-	currentPlan,
-}: {
-	isFree: boolean;
-	currentPlan?: Plan;
-} ) {
+function PlanExpirationMessage( { isFree, currentPlan }: { isFree: boolean; currentPlan?: Plan } ) {
 	if ( isFree ) {
 		return __( 'No expiration date.' );
 	}
 
-	/* translators: %s: date of plan's expiration date. Eg.  August 20, 2025 */
-	const expiresString = __( 'Expires on <time>%s</time>.' );
-
 	// Show a blurred time while we wait for the current plan.
 	if ( ! currentPlan ) {
-		const iso = new Date().toISOString();
-		return (
-			<TextBlur>
-				{ createInterpolateElement( sprintf( expiresString, dateI18n( 'F j, Y', iso ) ), {
-					time: <time dateTime={ iso } />,
-				} ) }
-			</TextBlur>
-		);
+		return <TextBlur>{ getPlanExpirationMessage( new Date().toISOString() ) }</TextBlur>;
 	}
 
 	// Some plans don't have an expiry date, and we don't want to show it at
@@ -175,10 +161,15 @@ function getPlanExpirationMessage( {
 		return null;
 	}
 
+	return getPlanExpirationMessage( currentPlan.expiry );
+}
+
+function getPlanExpirationMessage( isoDate: string ) {
 	return createInterpolateElement(
-		sprintf( expiresString, dateI18n( 'F j, Y', currentPlan.expiry ) ),
+		/* translators: %s: date of plan's expiration date. Eg.  August 20, 2025 */
+		sprintf( __( 'Expires on <time>%s</time>.' ), dateI18n( 'F j, Y', isoDate ) ),
 		{
-			time: <time dateTime={ currentPlan.expiry } />,
+			time: <time dateTime={ isoDate } />,
 		}
 	);
 }
