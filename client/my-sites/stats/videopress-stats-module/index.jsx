@@ -298,7 +298,11 @@ class VideoPressStatsModule extends Component {
 							</div>
 						) ) }
 					</div>
-					{ noData && <EmptyModuleCardVideo /> }
+					{ noData && (
+						<div className="videopress-stats-module__empty-module">
+							<EmptyModuleCardVideo />
+						</div>
+					) }
 					{ hasError && <ErrorPanel /> }
 					<StatsModulePlaceholder isLoading={ isLoading } />
 				</Card>

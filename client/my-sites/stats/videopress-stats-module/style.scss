@@ -139,6 +139,14 @@
 	}
 }
 
+.videopress-stats-module__empty-module {
+	padding: 0 24px 24px;
+	font-size: 14px;
+	font-weight: 400;
+	padding-top: 4px;
+	color: var( --studio-gray-60 );
+}
+
 .card.is-compact {
 	padding: 0;
 	border-radius: 4px;
