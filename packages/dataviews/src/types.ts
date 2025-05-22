@@ -49,9 +49,18 @@ export type Operator =
 	| 'lessThan'
 	| 'greaterThan'
 	| 'lessThanOrEqual'
-	| 'greaterThanOrEqual';
+	| 'greaterThanOrEqual'
+	| 'contains'
+	| 'notContains'
+	| 'startsWith';
 
-export type FieldType = 'text' | 'integer' | 'datetime' | 'media' | 'boolean';
+export type FieldType =
+	| 'text'
+	| 'integer'
+	| 'datetime'
+	| 'media'
+	| 'boolean'
+	| 'email';
 
 export type ValidationContext = {
 	elements?: Option[];
