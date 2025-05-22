@@ -6,14 +6,14 @@
 	// TODO: add font family rule when Theme is ready
 
 	// Internal variables
-	--a8c-components-calendar-outline-focus: 1.5px solid var(--color-accent);
-	--a8c-components-calendar-button-height: 2rem;
-	--a8c-components-calendar-button-width: 2rem;
-	--a8c-components-calendar-nav-height: 2rem;
+	--calendar-outline-focus: 1.5px solid var(--color-accent);
+	--calendar-button-height: 2rem;
+	--calendar-button-width: 2rem;
+	--calendar-nav-height: 2rem;
 
 	// TODO: themify / align to DS tokens
-	--a8c-components-calendar-range-middle-background-color: color-mix(in srgb, var(--color-accent) 4%, transparent);
-	--a8c-components-calendar-preview-border-color: color-mix(in srgb, var(--color-accent) 16%, transparent);
+	--calendar-range-middle-background-color: color-mix(in srgb, var(--color-accent) 4%, transparent);
+	--calendar-preview-border-color: color-mix(in srgb, var(--color-accent) 16%, transparent);
 
 	position: relative; /* Required to position the navigation toolbar. */
 	box-sizing: border-box;
@@ -54,8 +54,8 @@
 	display: flex;
 	position: relative;
 
-	width: var(--a8c-components-calendar-button-width);
-	height: var(--a8c-components-calendar-button-height);
+	width: var(--calendar-button-width);
+	height: var(--calendar-button-height);
 
 	border: none;
 	border-radius: 2px;
@@ -97,7 +97,7 @@
 	}
 
 	&:focus-visible {
-		outline: var(--a8c-components-calendar-outline-focus);
+		outline: var(--calendar-outline-focus);
 		outline-offset: 1px;
 	}
 }
@@ -131,8 +131,8 @@
 	position: relative;
 	appearance: none;
 
-	width: var(--a8c-components-calendar-button-width);
-	height: var(--a8c-components-calendar-button-height);
+	width: var(--calendar-button-width);
+	height: var(--calendar-button-height);
 
 	color: inherit;
 
@@ -144,7 +144,7 @@
 	}
 
 	&:focus-visible {
-	outline: var(--a8c-components-calendar-outline-focus);
+	outline: var(--calendar-outline-focus);
 	}
 }
 
@@ -165,7 +165,7 @@
 	justify-content: center;
 	align-content: center;
 
-	height: var(--a8c-components-calendar-nav-height);
+	height: var(--calendar-nav-height);
 	margin-bottom: 12px;
 }
 
@@ -193,12 +193,12 @@
 	align-items: center;
 	justify-content: space-between;
 
-	height: var(--a8c-components-calendar-nav-height);
+	height: var(--calendar-nav-height);
 }
 
 .calendar__weekday {
-	width: var(--a8c-components-calendar-button-width);
-	height: var(--a8c-components-calendar-button-height);
+	width: var(--calendar-button-width);
+	height: var(--calendar-button-height);
 	padding: 0;
 
 	color: colors.$gray-700;
@@ -263,7 +263,7 @@
 // Middle of date range
 .calendar__range-middle .calendar__day-button {
 	&::before {
-		background-color: var(--a8c-components-calendar-range-middle-background-color);
+		background-color: var(--calendar-range-middle-background-color);
 		border-radius: 0;
 
 		// Render a top and bottom transparent border to highlight the selected
@@ -301,7 +301,7 @@
 	position: absolute;
 	inset: 0;
 	pointer-events: none;
-	color: var(--a8c-components-calendar-preview-border-color);
+	color: var(--calendar-preview-border-color);
 
 	@media (forced-colors: active) {
 		color: inherit;
