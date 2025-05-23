@@ -7,12 +7,14 @@ import FormTextInput from 'calypso/components/forms/form-text-input';
 import { login } from 'calypso/lib/paths';
 import { useDispatch } from 'calypso/state';
 import { sendEmailLogin } from 'calypso/state/auth/actions';
+
 const LostPasswordForm = ( {
 	redirectToAfterLoginUrl,
 	oauth2ClientId,
 	locale,
 	from,
 	isWooJPC,
+	isWoo,
 } ) => {
 	const translate = useTranslate();
 	const [ email, setEmail ] = useState( '' );
@@ -145,9 +147,10 @@ const LostPasswordForm = ( {
 					variant="primary"
 					type="submit"
 					disabled={ email.length === 0 || showError || isBusy }
+					isBusy={ isBusy }
 					__next40pxDefaultSize
 				>
-					{ isBusy ? <Spinner /> : translate( 'Reset my password' ) }
+					{ isBusy && isWoo ? <Spinner /> : translate( 'Reset my password' ) }
 				</Button>
 			</div>
 		</form>
