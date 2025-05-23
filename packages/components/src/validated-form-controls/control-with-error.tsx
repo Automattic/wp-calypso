@@ -69,6 +69,9 @@ function UnforwardedControlWithError< C extends React.ReactElement >(
 		 * A function that returns the actual element on which the validity data should be applied.
 		 */
 		getValidityTarget: () => ValidityTarget | null | undefined;
+		/**
+		 * The control component to apply validation to.
+		 */
 		children: C;
 	},
 	forwardedRef: React.ForwardedRef< HTMLDivElement >
