@@ -1,14 +1,24 @@
 /**
+ * External dependencies
+ */
+import { __ } from '@wordpress/i18n';
+
+/**
  * Internal dependencies
  */
 import type {
 	DataViewRenderFieldProps,
 	SortDirection,
 	ValidationContext,
-	Operator,
+	FilterByConfig,
 } from '../types';
 import { renderFromElements } from '../utils';
-import { OPERATOR_IS, OPERATOR_IS_NOT } from '../constants';
+import {
+	OPERATOR_IS,
+	OPERATOR_IS_NOT,
+	OPERATOR_LESS_THAN_OR_EQUAL,
+	OPERATOR_GREATER_THAN_OR_EQUAL,
+} from '../constants';
 
 function sort( a: any, b: any, direction: SortDirection ) {
 	const timeA = new Date( a ).getTime();
@@ -28,7 +38,18 @@ function isValid( value: any, context?: ValidationContext ) {
 	return true;
 }
 
-const operators: Operator[] = [ OPERATOR_IS, OPERATOR_IS_NOT ];
+const operators: FilterByConfig[ 'operators' ] = [
+	OPERATOR_IS,
+	OPERATOR_IS_NOT,
+	{
+		name: OPERATOR_LESS_THAN_OR_EQUAL,
+		label: __( 'Before (inc)' ),
+	},
+	{
+		name: OPERATOR_GREATER_THAN_OR_EQUAL,
+		label: __( 'After (inc)' ),
+	},
+];
 
 export default {
 	sort,

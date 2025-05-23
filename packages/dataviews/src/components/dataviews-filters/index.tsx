@@ -43,7 +43,7 @@ export function useFilters( fields: NormalizedField< any >[], view: View ) {
 				name: field.label,
 				elements: field.elements ?? [],
 				singleSelection: operators.some( ( op ) =>
-					SINGLE_SELECTION_OPERATORS.includes( op )
+					SINGLE_SELECTION_OPERATORS.includes( op.name )
 				),
 				operators,
 				isVisible:

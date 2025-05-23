@@ -24,11 +24,17 @@ export interface Option< Value extends any = any > {
 	description?: string;
 }
 
-interface FilterByConfig {
+export interface OperatorConfig {
+	name: Operator;
+	label: string;
+}
+
+export interface FilterByConfig {
 	/**
 	 * The list of operators supported by the field.
+	 * Can be an array of operator keys, or an array of objects mapping operator keys to their config (e.g. label).
 	 */
-	operators?: Operator[];
+	operators?: ( OperatorConfig | Operator )[];
 
 	/**
 	 * Whether it is a primary filter.
@@ -268,7 +274,7 @@ export interface NormalizedFilter {
 	/**
 	 * The list of operators supported by the field.
 	 */
-	operators: Operator[];
+	operators: OperatorConfig[];
 
 	/**
 	 * Whether the filter is visible.

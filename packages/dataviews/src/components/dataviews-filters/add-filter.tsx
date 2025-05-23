@@ -56,7 +56,8 @@ export function AddFilterMenu( {
 										{
 											field: filter.field,
 											value: undefined,
-											operator: filter.operators[ 0 ],
+											operator:
+												filter.operators[ 0 ].name,
 										},
 									],
 								} );

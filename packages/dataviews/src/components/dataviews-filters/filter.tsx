@@ -29,7 +29,7 @@ const SPACE = ' ';
 import SearchWidget from './search-widget';
 import InputWidget from './input-widget';
 import {
-	OPERATORS,
+	ALL_OPERATORS,
 	OPERATOR_IS,
 	OPERATOR_IS_NOT,
 	OPERATOR_IS_ANY,
@@ -87,170 +87,32 @@ const FilterText = ( {
 		),
 	};
 
-	if ( filterInView?.operator === OPERATOR_IS_ANY ) {
-		return createInterpolateElement(
-			sprintf(
-				/* translators: 1: Filter name. 3: Filter value. e.g.: "Author is any: Admin, Editor". */
-				__( '<Name>%1$s is any: </Name><Value>%2$s</Value>' ),
-				filter.name,
-				activeElements.map( ( element ) => element.label ).join( ', ' )
-			),
-			filterTextWrappers
+	if (
+		! filterInView?.operator ||
+		! ALL_OPERATORS.includes( filterInView.operator )
+	) {
+		return sprintf(
+			/* translators: 1: Filter name e.g.: "Unknown status for Author". */
+			__( 'Unknown status for %1$s' ),
+			filter.name
 		);
 	}
 
-	if ( filterInView?.operator === OPERATOR_IS_NONE ) {
-		return createInterpolateElement(
-			sprintf(
-				/* translators: 1: Filter name. 3: Filter value. e.g.: "Author is none: Admin, Editor". */
-				__( '<Name>%1$s is none: </Name><Value>%2$s</Value>' ),
-				filter.name,
-				activeElements.map( ( element ) => element.label ).join( ', ' )
-			),
-			filterTextWrappers
-		);
-	}
+	const operatorLabel =
+		filter.operators.find(
+			( operator ) => operator.name === filterInView?.operator
+		)?.label || filterInView.operator;
 
-	if ( filterInView?.operator === OPERATOR_IS_ALL ) {
-		return createInterpolateElement(
-			sprintf(
-				/* translators: 1: Filter name. 3: Filter value. e.g.: "Author is all: Admin, Editor". */
-				__( '<Name>%1$s is all: </Name><Value>%2$s</Value>' ),
-				filter.name,
-				activeElements.map( ( element ) => element.label ).join( ', ' )
-			),
-			filterTextWrappers
-		);
-	}
-
-	if ( filterInView?.operator === OPERATOR_IS_NOT_ALL ) {
-		return createInterpolateElement(
-			sprintf(
-				/* translators: 1: Filter name. 3: Filter value. e.g.: "Author is not all: Admin, Editor". */
-				__( '<Name>%1$s is not all: </Name><Value>%2$s</Value>' ),
-				filter.name,
-				activeElements.map( ( element ) => element.label ).join( ', ' )
-			),
-			filterTextWrappers
-		);
-	}
-
-	if ( filterInView?.operator === OPERATOR_IS ) {
-		return createInterpolateElement(
-			sprintf(
-				/* translators: 1: Filter name. 3: Filter value. e.g.: "Author is: Admin". */
-				__( '<Name>%1$s is: </Name><Value>%2$s</Value>' ),
-				filter.name,
-				activeElements[ 0 ].label
-			),
-			filterTextWrappers
-		);
-	}
-
-	if ( filterInView?.operator === OPERATOR_IS_NOT ) {
-		return createInterpolateElement(
-			sprintf(
-				/* translators: 1: Filter name. 3: Filter value. e.g.: "Author is not: Admin". */
-				__( '<Name>%1$s is not: </Name><Value>%2$s</Value>' ),
-				filter.name,
-				activeElements[ 0 ].label
-			),
-			filterTextWrappers
-		);
-	}
-
-	if ( filterInView?.operator === OPERATOR_LESS_THAN ) {
-		return createInterpolateElement(
-			sprintf(
-				/* translators: 1: Filter name. 2: Filter value. e.g.: "Price is less than: 10". */
-				__( '<Name>%1$s is less than: </Name><Value>%2$s</Value>' ),
-				filter.name,
-				activeElements[ 0 ].label
-			),
-			filterTextWrappers
-		);
-	}
-
-	if ( filterInView?.operator === OPERATOR_GREATER_THAN ) {
-		return createInterpolateElement(
-			sprintf(
-				/* translators: 1: Filter name. 2: Filter value. e.g.: "Price is greater than: 10". */
-				__( '<Name>%1$s is greater than: </Name><Value>%2$s</Value>' ),
-				filter.name,
-				activeElements[ 0 ].label
-			),
-			filterTextWrappers
-		);
-	}
-
-	if ( filterInView?.operator === OPERATOR_LESS_THAN_OR_EQUAL ) {
-		return createInterpolateElement(
-			sprintf(
-				/* translators: 1: Filter name. 2: Filter value. e.g.: "Price is less than or equal to: 10". */
-				__(
-					'<Name>%1$s is less than or equal to: </Name><Value>%2$s</Value>'
-				),
-				filter.name,
-				activeElements[ 0 ].label
-			),
-			filterTextWrappers
-		);
-	}
-
-	if ( filterInView?.operator === OPERATOR_GREATER_THAN_OR_EQUAL ) {
-		return createInterpolateElement(
-			sprintf(
-				/* translators: 1: Filter name. 2: Filter value. e.g.: "Price is greater than or equal to: 10". */
-				__(
-					'<Name>%1$s is greater than or equal to: </Name><Value>%2$s</Value>'
-				),
-				filter.name,
-				activeElements[ 0 ].label
-			),
-			filterTextWrappers
-		);
-	}
-
-	if ( filterInView?.operator === OPERATOR_CONTAINS ) {
-		return createInterpolateElement(
-			sprintf(
-				/* translators: 1: Filter name. 2: Filter value. e.g.: "Title contains: Mars". */
-				__( '<Name>%1$s contains: </Name><Value>%2$s</Value>' ),
-				filter.name,
-				activeElements[ 0 ].label
-			),
-			filterTextWrappers
-		);
-	}
-
-	if ( filterInView?.operator === OPERATOR_NOT_CONTAINS ) {
-		return createInterpolateElement(
-			sprintf(
-				/* translators: 1: Filter name. 2: Filter value. e.g.: "Description doesn't contain: photo". */
-				__( "<Name>%1$s doesn't contain: </Name><Value>%2$s</Value>" ),
-				filter.name,
-				activeElements[ 0 ].label
-			),
-			filterTextWrappers
-		);
-	}
-
-	if ( filterInView?.operator === OPERATOR_STARTS_WITH ) {
-		return createInterpolateElement(
-			sprintf(
-				/* translators: 1: Filter name. 2: Filter value. e.g.: "Title starts with: Mar". */
-				__( '<Name>%1$s starts with: </Name><Value>%2$s</Value>' ),
-				filter.name,
-				activeElements[ 0 ].label
-			),
-			filterTextWrappers
-		);
-	}
-
-	return sprintf(
-		/* translators: 1: Filter name e.g.: "Unknown status for Author". */
-		__( 'Unknown status for %1$s' ),
-		filter.name
+	return createInterpolateElement(
+		sprintf(
+			// 'Name' is the field name, 'Operator' is the operator label, and 'Value' is the filter value.
+			// e.g.: "Author is any: Admin, Editor".
+			'<Name>%1$s %2$s: </Name><Value>%3$s</Value>',
+			filter.name,
+			operatorLabel?.toLowerCase(),
+			activeElements.map( ( element ) => element.label ).join( ', ' )
+		),
+		filterTextWrappers
 	);
 };
 
@@ -260,13 +122,13 @@ function OperatorSelector( {
 	onChangeView,
 }: OperatorSelectorProps ) {
 	const operatorOptions = filter.operators?.map( ( operator ) => ( {
-		value: operator,
-		label: OPERATORS[ operator ]?.label,
+		value: operator.name,
+		label: operator.label,
 	} ) );
 	const currentFilter = view.filters?.find(
 		( _filter ) => _filter.field === filter.field
 	);
-	const value = currentFilter?.operator || filter.operators[ 0 ];
+	const value = currentFilter?.operator || filter.operators[ 0 ].name;
 	return (
 		operatorOptions.length > 1 && (
 			<HStack
