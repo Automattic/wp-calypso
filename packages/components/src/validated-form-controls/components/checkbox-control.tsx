@@ -6,10 +6,16 @@ import type { CheckboxControlProps, ValidatedControlProps } from './types';
 
 type Value = CheckboxControlProps[ 'checked' ];
 
-export const ValidatedCheckboxControl = forwardRef<
-	HTMLInputElement,
-	Omit< CheckboxControlProps, '__nextHasNoMarginBottom' > & ValidatedControlProps< Value >
->( ( { required, customValidator, onChange, markWhenOptional, ...restProps }, forwardedRef ) => {
+const UnforwardedValidatedCheckboxControl = (
+	{
+		required,
+		customValidator,
+		onChange,
+		markWhenOptional,
+		...restProps
+	}: Omit< CheckboxControlProps, '__nextHasNoMarginBottom' > & ValidatedControlProps< Value >,
+	forwardedRef: React.ForwardedRef< HTMLInputElement >
+) => {
 	const validityTargetRef = useRef< HTMLDivElement >( null );
 	const mergedRefs = useMergeRefs( [ forwardedRef, validityTargetRef ] );
 	const valueRef = useRef< Value >( restProps.checked );
@@ -38,4 +44,6 @@ export const ValidatedCheckboxControl = forwardRef<
 			}
 		/>
 	);
-} );
+};
+
+export const ValidatedCheckboxControl = forwardRef( UnforwardedValidatedCheckboxControl );

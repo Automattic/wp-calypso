@@ -6,11 +6,17 @@ import type { TextControlProps, ValidatedControlProps } from './types';
 
 type Value = TextControlProps[ 'value' ];
 
-export const ValidatedTextControl = forwardRef<
-	HTMLInputElement,
-	Omit< TextControlProps, '__next40pxDefaultSize' | '__nextHasNoMarginBottom' > &
-		ValidatedControlProps< Value >
->( ( { required, customValidator, onChange, markWhenOptional, ...restProps }, forwardedRef ) => {
+const UnforwardedValidatedTextControl = (
+	{
+		required,
+		customValidator,
+		onChange,
+		markWhenOptional,
+		...restProps
+	}: Omit< TextControlProps, '__next40pxDefaultSize' | '__nextHasNoMarginBottom' > &
+		ValidatedControlProps< Value >,
+	forwardedRef: React.ForwardedRef< HTMLInputElement >
+) => {
 	const validityTargetRef = useRef< HTMLInputElement >( null );
 	const mergedRefs = useMergeRefs( [ forwardedRef, validityTargetRef ] );
 	const valueRef = useRef< Value >( restProps.value );
@@ -37,4 +43,6 @@ export const ValidatedTextControl = forwardRef<
 			getValidityTarget={ () => validityTargetRef.current }
 		/>
 	);
-} );
+};
+
+export const ValidatedTextControl = forwardRef( UnforwardedValidatedTextControl );

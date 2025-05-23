@@ -6,10 +6,16 @@ import type { TextareaControlProps, ValidatedControlProps } from './types';
 
 type Value = TextareaControlProps[ 'value' ];
 
-export const ValidatedTextareaControl = forwardRef<
-	HTMLTextAreaElement,
-	Omit< TextareaControlProps, '__nextHasNoMarginBottom' > & ValidatedControlProps< Value >
->( ( { required, customValidator, onChange, markWhenOptional, ...restProps }, forwardedRef ) => {
+const UnforwardedValidatedTextareaControl = (
+	{
+		required,
+		customValidator,
+		onChange,
+		markWhenOptional,
+		...restProps
+	}: Omit< TextareaControlProps, '__nextHasNoMarginBottom' > & ValidatedControlProps< Value >,
+	forwardedRef: React.ForwardedRef< HTMLTextAreaElement >
+) => {
 	const validityTargetRef = useRef< HTMLTextAreaElement >( null );
 	const mergedRefs = useMergeRefs( [ forwardedRef, validityTargetRef ] );
 	const valueRef = useRef< Value >( restProps.value );
@@ -35,4 +41,6 @@ export const ValidatedTextareaControl = forwardRef<
 			getValidityTarget={ () => validityTargetRef.current }
 		/>
 	);
-} );
+};
+
+export const ValidatedTextareaControl = forwardRef( UnforwardedValidatedTextareaControl );

@@ -6,10 +6,16 @@ import type { RadioControlProps, ValidatedControlProps } from './types';
 
 type Value = RadioControlProps[ 'selected' ];
 
-export const ValidatedRadioControl = forwardRef<
-	HTMLDivElement,
-	RadioControlProps & ValidatedControlProps< Value >
->( ( { required, customValidator, onChange, markWhenOptional, ...restProps }, forwardedRef ) => {
+const UnforwardedValidatedRadioControl = (
+	{
+		required,
+		customValidator,
+		onChange,
+		markWhenOptional,
+		...restProps
+	}: RadioControlProps & ValidatedControlProps< Value >,
+	forwardedRef: React.ForwardedRef< HTMLDivElement >
+) => {
 	const validityTargetRef = useRef< HTMLDivElement >( null );
 	const mergedRefs = useMergeRefs( [ forwardedRef, validityTargetRef ] );
 	const valueRef = useRef< Value >( restProps.selected );
@@ -37,4 +43,6 @@ export const ValidatedRadioControl = forwardRef<
 			}
 		/>
 	);
-} );
+};
+
+export const ValidatedRadioControl = forwardRef( UnforwardedValidatedRadioControl );

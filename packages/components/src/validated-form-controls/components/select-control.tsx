@@ -12,13 +12,17 @@ type SelectControlProps = Omit< _SelectControlProps, 'multiple' | 'onChange' | '
 
 type Value = SelectControlProps[ 'value' ];
 
-export const ValidatedSelectControl = forwardRef<
-	HTMLSelectElement,
-	Omit< SelectControlProps, '__next40pxDefaultSize' | '__nextHasNoMarginBottom' > &
-		ValidatedControlProps< Value > & {
-			markWhenOptional?: boolean;
-		}
->( ( { required, customValidator, onChange, markWhenOptional, ...restProps }, forwardedRef ) => {
+const UnforwardedValidatedSelectControl = (
+	{
+		required,
+		customValidator,
+		onChange,
+		markWhenOptional,
+		...restProps
+	}: Omit< SelectControlProps, '__next40pxDefaultSize' | '__nextHasNoMarginBottom' > &
+		ValidatedControlProps< Value >,
+	forwardedRef: React.ForwardedRef< HTMLSelectElement >
+) => {
 	const validityTargetRef = useRef< HTMLSelectElement >( null );
 	const mergedRefs = useMergeRefs( [ forwardedRef, validityTargetRef ] );
 	const valueRef = useRef< Value >( restProps.value );
@@ -45,4 +49,6 @@ export const ValidatedSelectControl = forwardRef<
 			getValidityTarget={ () => validityTargetRef.current }
 		/>
 	);
-} );
+};
+
+export const ValidatedSelectControl = forwardRef( UnforwardedValidatedSelectControl );

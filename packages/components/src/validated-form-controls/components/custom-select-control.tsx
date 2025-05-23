@@ -5,10 +5,16 @@ import type { CustomSelectControlProps, ValidatedControlProps } from './types';
 
 type Value = CustomSelectControlProps[ 'value' ];
 
-export const ValidatedCustomSelectControl = forwardRef<
-	HTMLDivElement,
-	Omit< CustomSelectControlProps, '__next40pxDefaultSize' > & ValidatedControlProps< Value >
->( ( { required, customValidator, onChange, markWhenOptional, ...restProps }, forwardedRef ) => {
+const UnforwardedValidatedCustomSelectControl = (
+	{
+		required,
+		customValidator,
+		onChange,
+		markWhenOptional,
+		...restProps
+	}: Omit< CustomSelectControlProps, '__next40pxDefaultSize' > & ValidatedControlProps< Value >,
+	forwardedRef: React.ForwardedRef< HTMLDivElement >
+) => {
 	const validityTargetRef = useRef< HTMLSelectElement >( null );
 	const valueRef = useRef< Value >( restProps.value );
 
@@ -52,4 +58,6 @@ export const ValidatedCustomSelectControl = forwardRef<
 			</select>
 		</div>
 	);
-} );
+};
+
+export const ValidatedCustomSelectControl = forwardRef( UnforwardedValidatedCustomSelectControl );

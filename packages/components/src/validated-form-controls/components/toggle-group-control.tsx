@@ -6,11 +6,17 @@ import type { ToggleGroupControlProps, ValidatedControlProps } from './types';
 
 type Value = ToggleGroupControlProps[ 'value' ];
 
-export const ValidatedToggleGroupControl = forwardRef<
-	HTMLInputElement,
-	Omit< ToggleGroupControlProps, '__next40pxDefaultSize' | '__nextHasNoMarginBottom' > &
-		ValidatedControlProps< Value >
->( ( { required, customValidator, onChange, markWhenOptional, ...restProps }, forwardedRef ) => {
+const UnforwardedValidatedToggleGroupControl = (
+	{
+		required,
+		customValidator,
+		onChange,
+		markWhenOptional,
+		...restProps
+	}: Omit< ToggleGroupControlProps, '__next40pxDefaultSize' | '__nextHasNoMarginBottom' > &
+		ValidatedControlProps< Value >,
+	forwardedRef: React.ForwardedRef< HTMLInputElement >
+) => {
 	const validityTargetRef = useRef< HTMLInputElement >( null );
 	const valueRef = useRef< Value >( restProps.value );
 
@@ -58,4 +64,6 @@ export const ValidatedToggleGroupControl = forwardRef<
 			/>
 		</div>
 	);
-} );
+};
+
+export const ValidatedToggleGroupControl = forwardRef( UnforwardedValidatedToggleGroupControl );

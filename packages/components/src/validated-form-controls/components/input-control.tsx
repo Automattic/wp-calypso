@@ -7,10 +7,16 @@ import type { InputControlProps, ValidatedControlProps } from './types';
 
 type Value = InputControlProps[ 'value' ];
 
-export const ValidatedInputControl = forwardRef<
-	HTMLInputElement,
-	Omit< InputControlProps, '__next40pxDefaultSize' > & ValidatedControlProps< Value >
->( ( { required, customValidator, onChange, markWhenOptional, ...restProps }, forwardedRef ) => {
+const UnforwardedValidatedInputControl = (
+	{
+		required,
+		customValidator,
+		onChange,
+		markWhenOptional,
+		...restProps
+	}: Omit< InputControlProps, '__next40pxDefaultSize' > & ValidatedControlProps< Value >,
+	forwardedRef: React.ForwardedRef< HTMLInputElement >
+) => {
 	const validityTargetRef = useRef< HTMLInputElement >( null );
 	const mergedRefs = useMergeRefs( [ forwardedRef, validityTargetRef ] );
 	const valueRef = useRef< Value >( restProps.value );
@@ -36,4 +42,6 @@ export const ValidatedInputControl = forwardRef<
 			getValidityTarget={ () => validityTargetRef.current }
 		/>
 	);
-} );
+};
+
+export const ValidatedInputControl = forwardRef( UnforwardedValidatedInputControl );

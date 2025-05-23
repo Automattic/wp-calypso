@@ -6,11 +6,17 @@ import type { ComboboxControlProps, ValidatedControlProps } from './types';
 
 type Value = ComboboxControlProps[ 'value' ];
 
-export const ValidatedComboboxControl = forwardRef<
-	HTMLInputElement,
-	Omit< ComboboxControlProps, '__next40pxDefaultSize' | '__nextHasNoMarginBottom' > &
-		ValidatedControlProps< Value >
->( ( { required, customValidator, onChange, markWhenOptional, ...restProps }, forwardedRef ) => {
+const UnforwardedValidatedComboboxControl = (
+	{
+		required,
+		customValidator,
+		onChange,
+		markWhenOptional,
+		...restProps
+	}: Omit< ComboboxControlProps, '__next40pxDefaultSize' | '__nextHasNoMarginBottom' > &
+		ValidatedControlProps< Value >,
+	forwardedRef: React.ForwardedRef< HTMLInputElement >
+) => {
 	const validityTargetRef = useRef< HTMLInputElement >( null );
 	const mergedRefs = useMergeRefs( [ forwardedRef, validityTargetRef ] );
 	const valueRef = useRef< Value >( restProps.value );
@@ -50,4 +56,6 @@ export const ValidatedComboboxControl = forwardRef<
 			}
 		/>
 	);
-} );
+};
+
+export const ValidatedComboboxControl = forwardRef( UnforwardedValidatedComboboxControl );

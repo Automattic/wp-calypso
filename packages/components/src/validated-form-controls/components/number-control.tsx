@@ -6,10 +6,16 @@ import type { NumberControlProps, ValidatedControlProps } from './types';
 
 type Value = NumberControlProps[ 'value' ];
 
-export const ValidatedNumberControl = forwardRef<
-	HTMLInputElement,
-	Omit< NumberControlProps, '__next40pxDefaultSize' > & ValidatedControlProps< Value >
->( ( { required, customValidator, onChange, markWhenOptional, ...restProps }, forwardedRef ) => {
+const UnforwardedValidatedNumberControl = (
+	{
+		required,
+		customValidator,
+		onChange,
+		markWhenOptional,
+		...restProps
+	}: Omit< NumberControlProps, '__next40pxDefaultSize' > & ValidatedControlProps< Value >,
+	forwardedRef: React.ForwardedRef< HTMLInputElement >
+) => {
 	const validityTargetRef = useRef< HTMLInputElement >( null );
 	const mergedRefs = useMergeRefs( [ forwardedRef, validityTargetRef ] );
 	const valueRef = useRef< Value >( restProps.value );
@@ -37,4 +43,6 @@ export const ValidatedNumberControl = forwardRef<
 			getValidityTarget={ () => validityTargetRef.current }
 		/>
 	);
-} );
+};
+
+export const ValidatedNumberControl = forwardRef( UnforwardedValidatedNumberControl );

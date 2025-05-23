@@ -8,10 +8,16 @@ type Value = ToggleControlProps[ 'checked' ];
 
 // TODO: Should we customize the default `missingValue` message? It says to "check this box".
 
-export const ValidatedToggleControl = forwardRef<
-	HTMLInputElement,
-	Omit< ToggleControlProps, '__nextHasNoMarginBottom' > & ValidatedControlProps< Value >
->( ( { required, customValidator, onChange, markWhenOptional, ...restProps }, forwardedRef ) => {
+const UnforwardedValidatedToggleControl = (
+	{
+		required,
+		customValidator,
+		onChange,
+		markWhenOptional,
+		...restProps
+	}: Omit< ToggleControlProps, '__nextHasNoMarginBottom' > & ValidatedControlProps< Value >,
+	forwardedRef: React.ForwardedRef< HTMLInputElement >
+) => {
 	const validityTargetRef = useRef< HTMLInputElement >( null );
 	const mergedRefs = useMergeRefs( [ forwardedRef, validityTargetRef ] );
 	const valueRef = useRef< Value >( restProps.checked );
@@ -45,4 +51,6 @@ export const ValidatedToggleControl = forwardRef<
 			getValidityTarget={ () => validityTargetRef.current }
 		/>
 	);
-} );
+};
+
+export const ValidatedToggleControl = forwardRef( UnforwardedValidatedToggleControl );
