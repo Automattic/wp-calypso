@@ -28,7 +28,7 @@ class DomainSuggestion extends Component {
 	};
 
 	getAccessibleButtonLabel() {
-		const { buttonContent, domain, translate } = this.props;
+		const { buttonContent, domain, translate, price, salePrice, priceRule } = this.props;
 		let actionText;
 
 		if ( typeof buttonContent === 'string' ) {
@@ -42,7 +42,7 @@ class DomainSuggestion extends Component {
 			}
 		}
 
-		return translate( '%(action)s domain %(domain)s', {
+		const baseLabel = translate( '%(action)s domain %(domain)s', {
 			args: {
 				action: actionText,
 				domain,
@@ -50,6 +50,41 @@ class DomainSuggestion extends Component {
 			comment:
 				'Accessible label for domain selection button. %(action)s is the button action (Select, Selected, Upgrade, etc), %(domain)s is the domain name',
 		} );
+
+		if ( ( priceRule === 'FREE_DOMAIN' || priceRule === 'FREE_WITH_PLAN' ) && price ) {
+			return translate(
+				'%(baseLabel)s. Free for the first year with annual paid plans, then %(price)s per year',
+				{
+					args: {
+						baseLabel,
+						price,
+					},
+					comment: 'Accessible label for free domain with normal price',
+				}
+			);
+		} else if ( salePrice && price ) {
+			return translate(
+				'%(baseLabel)s. %(salePrice)s for the first year, then %(price)s per year',
+				{
+					args: {
+						baseLabel,
+						salePrice,
+						price,
+					},
+					comment: 'Accessible label for domain with sale price',
+				}
+			);
+		} else if ( price ) {
+			return translate( '%(baseLabel)s. %(price)s per year', {
+				args: {
+					baseLabel,
+					price,
+				},
+				comment: 'Accessible label for regularly priced domain',
+			} );
+		}
+
+		return baseLabel;
 	}
 
 	renderPrice() {
@@ -125,7 +160,6 @@ class DomainSuggestion extends Component {
 							} }
 							data-tracks-button-click-source={ this.props.tracksButtonClickSource }
 							aria-label={ this.getAccessibleButtonLabel() }
-							aria-describedby={ domainCardId }
 							{ ...this.props.buttonStyles }
 						>
 							{ this.props.buttonContent }
