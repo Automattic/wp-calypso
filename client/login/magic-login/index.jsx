@@ -1397,7 +1397,7 @@ const mapState = ( state ) => ( {
 	isSendingEmail: isFetchingMagicLoginEmail( state ),
 	emailRequested: isMagicLoginEmailRequested( state ),
 	emailRequestError: getMagicLoginRequestEmailError( state ),
-	isJetpackLogin: getCurrentRoute( state ) === '/log-in/jetpack/link',
+	isJetpackLogin: getCurrentRoute( state )?.startsWith( '/log-in/jetpack/link' ),
 	oauth2Client: getCurrentOAuth2Client( state ),
 	userEmail:
 		getLastCheckedUsernameOrEmail( state ) ||
