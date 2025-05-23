@@ -43,7 +43,9 @@ const DEFAULT_FIELDS: Field< Site >[] = [
 		id: 'URL',
 		label: __( 'URL' ),
 		enableGlobalSearch: true,
-		render: ( { item }: { item: Site } ) => new URL( item.URL ).hostname,
+		render: ( { item }: { item: Site } ) => (
+			<span style={ { overflowWrap: 'anywhere' } }>{ new URL( item.URL ).hostname }</span>
+		),
 	},
 	{
 		id: 'icon.ico',

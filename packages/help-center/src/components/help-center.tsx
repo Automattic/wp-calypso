@@ -59,6 +59,7 @@ const HelpCenter: React.FC< Container > = ( {
 		const classes = [ 'help-center' ];
 		portalParent.classList.add( ...classes );
 
+		portalParent.setAttribute( 'role', 'dialog' );
 		portalParent.setAttribute( 'aria-modal', 'true' );
 		portalParent.setAttribute( 'aria-labelledby', 'header-text' );
 

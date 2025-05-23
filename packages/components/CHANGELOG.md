@@ -1,3 +1,9 @@
+## Unreleased
+
+### Breaking changes
+
+- `CoreBadge`: Fork from `@wordpress/components` and convert styles to CSS module. Static class names are no longer available ([#103568](https://github.com/Automattic/wp-calypso/pull/103568)).
+
 ### Enhancements
 
 - Add `BigSkyLogo.Mark` component ([#103612](https://github.com/Automattic/wp-calypso/pull/103612)).

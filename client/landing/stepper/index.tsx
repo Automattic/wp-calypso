@@ -4,7 +4,6 @@ import { initializeAnalytics } from '@automattic/calypso-analytics';
 import { CurrentUser } from '@automattic/calypso-analytics/dist/types/utils/current-user';
 import config from '@automattic/calypso-config';
 import { UserActions, User as UserStore } from '@automattic/data-stores';
-import { setGeoLocation } from '@automattic/number-formatters';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { dispatch } from '@wordpress/data';
 import defaultCalypsoI18n from 'i18n-calypso';
@@ -12,6 +11,7 @@ import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 import { requestAllBlogsAccess } from 'wpcom-proxy-request';
+import { setupCountryCode } from 'calypso/boot/geolocation';
 import { setupLocale } from 'calypso/boot/locale';
 import AsyncLoad from 'calypso/components/async-load';
 import CalypsoI18nProvider from 'calypso/components/calypso-i18n-provider';
@@ -96,7 +96,7 @@ async function main() {
 	// Add accessible-focus listener.
 	accessibleFocus();
 
-	const user = ( await initializeCurrentUser() ) as unknown;
+	const user = await initializeCurrentUser();
 	const userId = ( user as CurrentUser ).ID;
 	let queryClient;
 
@@ -107,6 +107,7 @@ async function main() {
 	setStore( reduxStore, getStateFromCache( userId ) );
 	onDisablePersistence( persistOnChange( reduxStore, userId ) );
 	setupLocale( user, reduxStore );
+	setupCountryCode();
 	const { receiveCurrentUser } = dispatch( USER_STORE ) as UserActions;
 
 	if ( user ) {
@@ -152,9 +153,6 @@ async function main() {
 		// V1 flows have to be enhanced by changing their `useSteps` hook.
 		flow = enhanceFlowWithAuth( flow );
 	}
-
-	// No need to await this, it's not critical to the boot process and will slow booting down.
-	defaultCalypsoI18n.geolocateCurrencySymbol( setGeoLocation );
 
 	const root = createRoot( document.getElementById( 'wpcom' ) as HTMLElement );
 

@@ -5,10 +5,11 @@ import {
 	supportUserBoot,
 	supportNextBoot,
 } from 'calypso/lib/user/support-user-interop';
+import { type UserData } from '../user';
 import { filterUserObject } from './filter-user-object';
 import { rawCurrentUserFetch } from './raw-current-user-fetch';
 
-export async function initializeCurrentUser() {
+export async function initializeCurrentUser(): Promise< UserData | false > {
 	let skipBootstrap = false;
 
 	if ( isSupportUserSession() ) {
@@ -26,8 +27,8 @@ export async function initializeCurrentUser() {
 	}
 
 	if ( ! skipBootstrap && config.isEnabled( 'wpcom-user-bootstrap' ) ) {
-		if ( window.currentUser ) {
-			return window.currentUser;
+		if ( ( window as any ).currentUser ) {
+			return ( window as any ).currentUser;
 		}
 		return false;
 	}
@@ -35,7 +36,7 @@ export async function initializeCurrentUser() {
 	let userData;
 	try {
 		userData = await rawCurrentUserFetch();
-	} catch ( error ) {
+	} catch ( error: any ) {
 		if ( error.error !== 'authorization_required' ) {
 			// eslint-disable-next-line no-console
 			console.error( 'Failed to fetch the user from /me endpoint:', error );

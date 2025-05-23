@@ -1,7 +1,8 @@
 import { decodeEntities } from 'calypso/lib/formatting/decode-entities';
+import { type UserData } from '../user';
 import { getComputedAttributes } from './get-computed-attributes';
 
-const allowedKeys = [
+const allowedKeys: Array< keyof UserData > = [
 	'ID',
 	'display_name',
 	'username',
@@ -40,7 +41,7 @@ const allowedKeys = [
 const requiredKeys = [ 'ID' ];
 const decodedKeys = [ 'display_name', 'description', 'user_URL' ];
 
-export function filterUserObject( obj ) {
+export function filterUserObject( obj: UserData ): UserData {
 	if ( typeof obj !== 'object' ) {
 		throw new Error( 'the /me response is not an object' );
 	}
@@ -51,11 +52,11 @@ export function filterUserObject( obj ) {
 		}
 	}
 
-	const user = {};
+	const user: Partial< UserData > = {};
 	for ( const key of allowedKeys ) {
 		const value = obj[ key ];
-		user[ key ] = value && decodedKeys.includes( key ) ? decodeEntities( value ) : value;
+		user[ key ] = value && decodedKeys.includes( key ) ? decodeEntities( value as string ) : value;
 	}
 
-	return Object.assign( user, getComputedAttributes( obj ) );
+	return Object.assign( user, getComputedAttributes( obj ) ) as UserData;
 }

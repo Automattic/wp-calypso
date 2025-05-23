@@ -104,11 +104,9 @@ export function emailsQuery() {
 	};
 }
 
-const profileQueryKey = [ 'profile' ];
-
 export function profileQuery() {
 	return {
-		queryKey: profileQueryKey,
+		queryKey: [ 'profile' ],
 		queryFn: fetchProfile,
 	};
 }
@@ -117,7 +115,7 @@ export function profileMutation() {
 	return {
 		mutationFn: updateProfile,
 		onSuccess: ( newData: Partial< Profile > ) => {
-			queryClient.setQueryData( profileQueryKey, ( oldData: Profile | undefined ) =>
+			queryClient.setQueryData( [ 'profile' ], ( oldData: Profile | undefined ) =>
 				oldData ? { ...oldData, ...newData } : newData
 			);
 		},
