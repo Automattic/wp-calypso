@@ -16,6 +16,7 @@
 - Add `email` type to the fields of the form.
 - Add `className` prop to the `DataViews.Layout` component to allow customizing the layout styles.
 - Clean up --wp-components-color-* variables.
+- Add `checkbox` type to the fields of the form.
 
 ## 0.1.1
 
