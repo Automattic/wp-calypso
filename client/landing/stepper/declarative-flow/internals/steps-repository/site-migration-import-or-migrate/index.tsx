@@ -1,9 +1,10 @@
 import { getPlan, PLAN_BUSINESS } from '@automattic/calypso-products';
 import { BadgeType } from '@automattic/components';
+import { formatNumber } from '@automattic/number-formatters';
 import { Step, StepContainer } from '@automattic/onboarding';
 import { canInstallPlugins } from '@automattic/sites';
 import { getQueryArg } from '@wordpress/url';
-import { useTranslate, numberFormat } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -35,7 +36,7 @@ const SiteMigrationImportOrMigrate: StepType< {
 		const upgradeRequiredLabel = translate( '%(discountPercentage)s off %(planName)s', {
 			args: {
 				planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '',
-				discountPercentage: numberFormat( 0.5, { numberFormatOptions: { style: 'percent' } } ),
+				discountPercentage: formatNumber( 0.5, { numberFormatOptions: { style: 'percent' } } ),
 			},
 			comment: 'discountPercentage is a number between 0 and 100 followed or preceded by a % sign',
 		} );

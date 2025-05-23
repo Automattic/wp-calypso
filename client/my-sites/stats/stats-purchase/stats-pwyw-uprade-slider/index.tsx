@@ -1,4 +1,5 @@
-import { formatCurrency, useTranslate } from 'i18n-calypso';
+import { formatCurrency } from '@automattic/number-formatters';
+import { useTranslate } from 'i18n-calypso';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import TierUpgradeSlider from 'calypso/my-sites/stats/stats-purchase/tier-upgrade-slider';
 import { StatsPWYWSliderSettings } from 'calypso/my-sites/stats/stats-purchase/types';

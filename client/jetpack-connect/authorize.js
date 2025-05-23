@@ -5,8 +5,9 @@ import {
 	getJetpackProductOrPlanDisplayName,
 } from '@automattic/calypso-products';
 import { getUrlParts } from '@automattic/calypso-url';
-import { Button, Card, FormLabel, Gridicon, Spinner } from '@automattic/components';
+import { Button, Card, FormLabel, Gridicon } from '@automattic/components';
 import { Spinner as WPSpinner, Modal } from '@wordpress/components';
+import { Icon, chartBar, next, share } from '@wordpress/icons';
 import clsx from 'clsx';
 import debugModule from 'debug';
 import { localize } from 'i18n-calypso';
@@ -805,6 +806,13 @@ export class JetpackAuthorize extends Component {
 			return translate( 'Connect to WordPress.com' );
 		}
 
+		if (
+			config.isEnabled( 'jetpack/onboarding-user-connection-redesign' ) &&
+			this.isFromJetpackOnboarding()
+		) {
+			return translate( 'Connect my site' );
+		}
+
 		if ( ! this.retryingAuth ) {
 			return translate( 'Approve' );
 		}
@@ -857,7 +865,6 @@ export class JetpackAuthorize extends Component {
 		const { authorizeSuccess } = this.props.authorizationData;
 		const isWpcomMigration = this.isFromMigrationPlugin();
 		const isWooDnaFlow = this.getWooDnaConfig().isWooDnaFlow();
-		const isJetpackMagicLinkSignUpFlow = config.isEnabled( 'jetpack/magic-link-signup' );
 
 		if ( isWpcomMigration ) {
 			const { display_name, email } = this.props.user;
@@ -879,9 +886,24 @@ export class JetpackAuthorize extends Component {
 			);
 		}
 
-		// Accounts created through the new Magic Link-based signup flow (enabled with the
-		// 'jetpack/magic-link-signup' feature flag) are created with a username based on the user's
-		// email address. For this reason, we want to display both the username and the email address
+		if (
+			config.isEnabled( 'jetpack/onboarding-user-connection-redesign' ) &&
+			this.isFromJetpackOnboarding()
+		) {
+			return (
+				<>
+					<div className="jetpack-connect__logged-in-user-text-name">
+						{ this.props.user.display_name }
+					</div>
+					<div className="jetpack-connect__logged-in-user-text-email">
+						{ this.props.user.email }
+					</div>
+				</>
+			);
+		}
+
+		// Accounts created through the Magic Link-based signup flow are created with a username based on the
+		// user's email address. For this reason, we want to display both the username and the email address
 		// so users can start making the connection between the two immediately. Otherwise, users might
 		// not recognize their username since they didn't create it.
 
@@ -892,7 +914,7 @@ export class JetpackAuthorize extends Component {
 		// is an intermediate step and the user will be redirected to the WooCommerce onboarding flow.
 		// Seeing this new username/email address can cause confusion because they have already set up
 		// a Woo account under their own email address.
-		if ( isWooDnaFlow && isJetpackMagicLinkSignUpFlow ) {
+		if ( isWooDnaFlow ) {
 			return connected
 				? translate( 'Account connected successfully' )
 				: translate( 'Connecting your account' );
@@ -1042,6 +1064,72 @@ export class JetpackAuthorize extends Component {
 		}
 
 		const gravatarSize = this.isFromMigrationPlugin() ? 94 : 64;
+		const { from } = authQuery;
+		const loginURL = login( { isJetpack: true, redirectTo: window.location.href, from } );
+
+		if (
+			config.isEnabled( 'jetpack/onboarding-user-connection-redesign' ) &&
+			this.isFromJetpackOnboarding()
+		) {
+			return (
+				<>
+					<div className="jetpack-connect__logged-in-user-card">
+						<Gravatar
+							className="jetpack-connect__user-card-gravatar"
+							user={ user }
+							size={ gravatarSize }
+						/>
+						<div className="jetpack-connect__user-card-text">{ this.getUserText() }</div>
+					</div>
+					<LoggedOutFormLinkItem
+						className="jetpack-connect__switch-account-link"
+						href={ loginURL }
+						onClick={ ( e ) => this.handleSignIn( e, loginURL ) }
+					>
+						{ translate( 'Use a different account' ) }
+					</LoggedOutFormLinkItem>
+					<div className="jetpack-connect__benefits">
+						<div className="jetpack-connect__benefits-title">
+							{ translate( 'This connection on %(siteURL)s allows Jetpack to:', {
+								args: {
+									siteURL: decodeEntities( authQuery.siteUrl.replace( /^https?:\/\//, '' ) ),
+								},
+							} ) }
+						</div>
+						<ul>
+							<li>
+								<span>
+									<Icon icon={ chartBar } size={ 24 } />
+								</span>
+								<span>
+									{ translate(
+										'Process detailed visitor stats in the cloud, so your site stays fast.'
+									) }
+								</span>
+							</li>
+							<li>
+								<span>
+									<Icon icon={ next } size={ 24 } />
+								</span>
+								<span>
+									{ translate( 'Improve your site’s performance and SEO automatically.' ) }
+								</span>
+							</li>
+							<li>
+								<span>
+									<Icon icon={ share } size={ 24 } />
+								</span>
+								<span>
+									{ translate( 'Automatically share your site’s posts on social media.' ) }
+								</span>
+							</li>
+						</ul>
+					</div>
+					{ this.renderNotices() }
+					{ this.renderStateAction() }
+				</>
+			);
+		}
 
 		return (
 			<Card className="jetpack-connect__logged-in-card">
@@ -1062,7 +1150,6 @@ export class JetpackAuthorize extends Component {
 		const { translate } = this.props;
 		const { authorizeSuccess, isAuthorizing } = this.props.authorizationData;
 		const { from } = this.props.authQuery;
-		const isJetpackMagicLinkSignUpFlow = config.isEnabled( 'jetpack/magic-link-signup' );
 
 		if (
 			this.retryingAuth ||
@@ -1083,19 +1170,12 @@ export class JetpackAuthorize extends Component {
 
 		return (
 			<LoggedOutFormLinks>
-				{ ! isJetpackMagicLinkSignUpFlow && this.renderBackToWpAdminLink() }
 				<LoggedOutFormLinkItem
 					href={ loginURL }
 					onClick={ ( e ) => this.handleSignIn( e, loginURL ) }
 				>
 					{ translate( 'Sign in as a different user' ) }
 				</LoggedOutFormLinkItem>
-				{ ! isJetpackMagicLinkSignUpFlow && (
-					<LoggedOutFormLinkItem onClick={ this.handleSignOut }>
-						{ translate( 'Create a new account' ) }
-					</LoggedOutFormLinkItem>
-				) }
-				{ ! isJetpackMagicLinkSignUpFlow && <HelpButton /> }
 			</LoggedOutFormLinks>
 		);
 	}
@@ -1175,26 +1255,46 @@ export class JetpackAuthorize extends Component {
 		if ( isLoading ) {
 			return (
 				<div className="jetpack-connect__logged-in-form-loading">
-					<span>{ this.getButtonText() }</span> <Spinner size={ 20 } duration={ 3000 } />
+					<span>{ this.getButtonText() }</span> <WPSpinner size={ 20 } duration={ 3000 } />
 				</div>
 			);
 		}
 
 		const { blogname, from } = this.props.authQuery;
+
+		const actionButton = (
+			<Button
+				primary
+				disabled={ this.isAuthorizing() || this.props.hasXmlrpcError }
+				onClick={ this.handleSubmit }
+			>
+				{ this.getButtonText() }
+			</Button>
+		);
+
+		const disclaimer = (
+			<Disclaimer
+				siteName={ decodeEntities( blogname ) }
+				companyName={ this.getCompanyName() }
+				from={ from }
+			/>
+		);
+
+		if (
+			config.isEnabled( 'jetpack/onboarding-user-connection-redesign' ) &&
+			this.isFromJetpackOnboarding()
+		) {
+			return (
+				<LoggedOutFormFooter className="jetpack-connect__action--onboarding">
+					{ actionButton }
+				</LoggedOutFormFooter>
+			);
+		}
+
 		return (
 			<LoggedOutFormFooter className="jetpack-connect__action-disclaimer">
-				<Disclaimer
-					siteName={ decodeEntities( blogname ) }
-					companyName={ this.getCompanyName() }
-					from={ from }
-				/>
-				<Button
-					primary
-					disabled={ this.isAuthorizing() || this.props.hasXmlrpcError }
-					onClick={ this.handleSubmit }
-				>
-					{ this.getButtonText() }
-				</Button>
+				{ disclaimer }
+				{ actionButton }
 			</LoggedOutFormFooter>
 		);
 	}
@@ -1204,6 +1304,9 @@ export class JetpackAuthorize extends Component {
 		const wooDna = this.getWooDnaConfig();
 		const authSiteId = this.props.authQuery.clientId;
 		const { authorizeSuccess, isAuthorizing } = this.props.authorizationData;
+		const isFromJetpackOnboarding =
+			config.isEnabled( 'jetpack/onboarding-user-connection-redesign' ) &&
+			this.isFromJetpackOnboarding();
 
 		if ( this.isWooJPC() && ( isAuthorizing || authorizeSuccess ) ) {
 			return (
@@ -1224,10 +1327,14 @@ export class JetpackAuthorize extends Component {
 
 		return (
 			<MainWrapper
+				className={ clsx( {
+					'jetpack-connect__authorize-form-wrapper--onboarding': isFromJetpackOnboarding,
+				} ) }
 				isWooJPC={ this.isWooJPC() }
 				isWpcomMigration={ this.isFromMigrationPlugin() }
 				isFromAutomatticForAgenciesPlugin={ this.isFromAutomatticForAgenciesPlugin() }
 				wooDnaConfig={ wooDna }
+				useCompactLogo={ isFromJetpackOnboarding }
 				pageTitle={
 					wooDna.isWooDnaFlow() ? wooDna.getServiceName() + ' — ' + translate( 'Connect' ) : ''
 				}
@@ -1244,15 +1351,27 @@ export class JetpackAuthorize extends Component {
 							siteId={ authSiteId }
 							siteIsOnSitesList={ this.props.isAlreadyOnSitesList }
 						/>
-						<AuthFormHeader
-							authQuery={ this.props.authQuery }
-							isWooJPC={ this.isWooJPC() }
-							isWpcomMigration={ this.isFromMigrationPlugin() }
-							isFromAutomatticForAgenciesPlugin={ this.isFromAutomatticForAgenciesPlugin() }
-							wooDnaConfig={ wooDna }
-						/>
+						{ isFromJetpackOnboarding && (
+							<div className="jetpack-connect__authorize-form-header--left-aligned">
+								<h1>{ translate( "Now let's connect your site" ) }</h1>
+								<p>
+									{ translate(
+										'Your site connects to Jetpack’s cloud to offload the heavy work, helping it run faster and deliver powerful features.'
+									) }
+								</p>
+							</div>
+						) }
+						{ ! isFromJetpackOnboarding && (
+							<AuthFormHeader
+								authQuery={ this.props.authQuery }
+								isWooJPC={ this.isWooJPC() }
+								isWpcomMigration={ this.isFromMigrationPlugin() }
+								isFromAutomatticForAgenciesPlugin={ this.isFromAutomatticForAgenciesPlugin() }
+								wooDnaConfig={ wooDna }
+							/>
+						) }
 						{ this.renderContent() }
-						{ this.renderFooterLinks() }
+						{ ! isFromJetpackOnboarding && this.renderFooterLinks() }
 					</div>
 				</div>
 				<AuthorizationScreenReaderIndicator message={ this.getScreenReaderAuthMessage() } />

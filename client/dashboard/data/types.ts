@@ -9,6 +9,7 @@ export interface Profile {
 }
 
 export interface User {
+	ID: number;
 	username: string;
 	display_name: string;
 	avatar_URL?: string;
@@ -60,36 +61,42 @@ export interface Plan {
 	user_facing_expiry?: string;
 }
 
+export interface SiteCapabilities {
+	manage_options: boolean;
+}
+
 export interface SiteOptions {
 	software_version: string;
 	admin_url: string;
-	is_wpcom_atomic?: boolean;
-	blog_public: number;
 	is_redirect?: boolean;
 }
 
 export interface Site {
 	ID: string;
+	slug: string;
 	name: string;
 	URL: string;
 	icon?: {
 		ico: string;
 	};
-	plan: SitePlan;
-	active_modules?: string[];
+	plan?: SitePlan;
+	capabilities: SiteCapabilities;
 	subscribers_count: number;
 	// Can be undefined for deleted sites.
 	options?: SiteOptions;
+	is_a8c: boolean;
 	is_deleted: boolean;
 	is_coming_soon: boolean;
 	is_private: boolean;
+	is_wpcom_atomic: boolean;
+	is_wpcom_staging_site: boolean;
 	launch_status: string | boolean;
 	site_migration: {
 		migration_status: string;
 	} | null;
 	site_owner: number;
 	jetpack: boolean;
-	jetpack_modules: string[];
+	jetpack_modules: string[] | null;
 }
 
 export type EmailProvider = 'titan' | 'google-workspace' | 'forwarding';
@@ -138,9 +145,20 @@ export interface EngagementStats {
 	previousData: EngagementStatsDataPoint;
 }
 
-export type PerformanceReport = {
+export interface SiteSettings {
+	wpcom_site_visibility?: 'coming-soon' | 'public' | 'private';
+	wpcom_gifting_subscription?: boolean;
+	wpcom_performance_report_url?: string;
+}
+
+export interface BasicMetricsData {
+	token?: string;
+}
+
+export interface PerformanceReport {
 	overall_score: number;
-};
+}
+
 export interface UrlPerformanceInsights {
 	pagespeed: {
 		status: string;

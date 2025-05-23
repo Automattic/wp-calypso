@@ -1,6 +1,7 @@
+import { formatNumber } from '@automattic/number-formatters';
 import { useState } from '@wordpress/element';
 import { Icon } from '@wordpress/icons';
-import { useTranslate, numberFormat } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { UpgradePlanHostingTestimonials } from './constants';
 import cwvtechReportJson from './cwvtech-report.json';
 import { UpgradePlanHostingDetailsTooltip } from './upgrade-plan-hosting-details-tooltip';
@@ -62,7 +63,7 @@ export const UpgradePlanHostingDetails: React.FC< Props > = ( {
 					<p>
 						{ translate( '%(percentage)s loved by our best customers', {
 							args: {
-								percentage: numberFormat( 1, {
+								percentage: formatNumber( 1, {
 									numberFormatOptions: { style: 'percent' },
 								} ),
 								comment: 'percentage like 100% loved',

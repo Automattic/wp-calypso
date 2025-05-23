@@ -1,7 +1,8 @@
 import { ExternalLink } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { formatNumber } from '@automattic/number-formatters';
 import { __experimentalHStack as HStack } from '@wordpress/components';
-import { numberFormat, useTranslate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import { useRecordViewFeedButtonClicked } from 'calypso/landing/subscriptions/tracks';
 import { getFeedUrl } from 'calypso/reader/route';
@@ -47,7 +48,7 @@ const SiteSubscriptionSubheader = ( {
 			<div key={ `subscriber-count-${ subscriberCount }` }>
 				{ translate( '%s subscriber', '%s subscribers', {
 					count: subscriberCount,
-					args: [ numberFormat( subscriberCount ) ],
+					args: [ formatNumber( subscriberCount ) ],
 					comment: '%s is the number of subscribers. For example: "12,000,000"',
 				} ) }
 			</div>

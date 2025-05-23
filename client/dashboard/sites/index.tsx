@@ -1,20 +1,22 @@
+import { DataViews, filterSortAndPaginate } from '@automattic/dataviews';
 import { useQuery } from '@tanstack/react-query';
-import { useNavigate } from '@tanstack/react-router';
-import { Button, ExternalLink } from '@wordpress/components';
+import { useNavigate, Link } from '@tanstack/react-router';
+import { Button, Dropdown } from '@wordpress/components';
 import { useResizeObserver } from '@wordpress/compose';
-import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { Icon, check } from '@wordpress/icons';
-import { useState, useMemo } from 'react';
+import { useMemo } from 'react';
 import { sitesQuery } from '../app/queries';
-import DataViewsCard from '../dataviews-card';
-import PageLayout from '../page-layout';
-import SiteIcon from '../site-icon';
-import SitePreview from '../site-preview';
-import { isA8CSite } from '../utils/site-owner';
+import { sitesRoute } from '../app/router';
+import DataViewsCard from '../components/dataviews-card';
+import { PageHeader } from '../components/page-header';
+import PageLayout from '../components/page-layout';
 import { STATUS_LABELS, getSiteStatus, getSiteStatusLabel } from '../utils/site-status';
+import AddNewSite from './add-new-site';
+import SiteIcon from './site-icon';
+import SitePreview from './site-preview';
 import type { Site } from '../data/types';
-import type { View, Operator } from '@wordpress/dataviews';
+import type { Field, Operator, SortDirection, ViewTable, ViewGrid } from '@automattic/dataviews';
 
 const actions = [
 	{
@@ -31,7 +33,7 @@ const actions = [
 	},
 ];
 
-const DEFAULT_FIELDS = [
+const DEFAULT_FIELDS: Field< Site >[] = [
 	{
 		id: 'name',
 		label: __( 'Site' ),
@@ -42,13 +44,14 @@ const DEFAULT_FIELDS = [
 		label: __( 'URL' ),
 		enableGlobalSearch: true,
 		render: ( { item }: { item: Site } ) => (
-			<ExternalLink href={ item.URL }>{ new URL( item.URL ).hostname }</ExternalLink>
+			<span style={ { overflowWrap: 'anywhere' } }>{ new URL( item.URL ).hostname }</span>
 		),
 	},
 	{
 		id: 'icon.ico',
 		label: __( 'Media' ),
 		render: ( { item }: { item: Site } ) => <SiteIcon site={ item } />,
+		enableSorting: false,
 	},
 	{
 		id: 'subscribers_count',
@@ -56,30 +59,19 @@ const DEFAULT_FIELDS = [
 	},
 	{
 		id: 'backups',
+		type: 'boolean',
 		label: __( 'Backups' ),
-		getValue: ( { item }: { item: Site } ) =>
-			item.plan.features.active.includes( 'backups' ) || undefined,
+		getValue: ( { item }: { item: Site } ) => !! item.plan?.features?.active?.includes( 'backups' ),
 		elements: [
 			{ value: true, label: __( 'Enabled' ) },
-			{ value: undefined, label: __( 'Disabled' ) },
+			{ value: false, label: __( 'Disabled' ) },
 		],
 		render: ( { item }: { item: Site } ) =>
-			item.plan.features.active.includes( 'backups' ) ? <Icon icon={ check } /> : __( 'Disabled' ),
-		filterBy: {
-			operators: [ 'is' as Operator ],
-		},
-	},
-	{
-		id: 'protect',
-		label: __( 'Protect' ),
-		getValue: ( { item }: { item: Site } ) =>
-			item.active_modules?.includes( 'protect' ) || undefined,
-		render: ( { item }: { item: Site } ) =>
-			item.active_modules?.includes( 'protect' ) ? <Icon icon={ check } /> : __( 'Disabled' ),
-		elements: [
-			{ value: true, label: __( 'Enabled' ) },
-			{ value: undefined, label: __( 'Disabled' ) },
-		],
+			item.plan?.features?.active?.includes( 'backups' ) ? (
+				<Icon icon={ check } />
+			) : (
+				__( 'Disabled' )
+			),
 		filterBy: {
 			operators: [ 'is' as Operator ],
 		},
@@ -92,17 +84,17 @@ const DEFAULT_FIELDS = [
 		render: ( { item }: { item: Site } ) => getSiteStatusLabel( item ),
 	},
 	{
-		id: 'a8c_owned',
+		id: 'is_a8c',
+		type: 'boolean',
 		label: __( 'A8C Owned' ),
-		getValue: ( { item }: { item: Site } ) => isA8CSite( item ) || undefined,
 		elements: [
 			{ value: true, label: __( 'Yes' ) },
-			{ value: undefined, label: __( 'No' ) },
+			{ value: false, label: __( 'No' ) },
 		],
 		filterBy: {
 			operators: [ 'is' as Operator ],
 		},
-		render: ( { item }: { item: Site } ) => ( isA8CSite( item ) ? __( 'Yes' ) : __( 'No' ) ),
+		render: ( { item }: { item: Site } ) => ( item.is_a8c ? __( 'Yes' ) : __( 'No' ) ),
 	},
 	{
 		id: 'preview',
@@ -112,7 +104,7 @@ const DEFAULT_FIELDS = [
 			const { is_deleted, is_private, URL: url } = item;
 			// If the site is a private A8C site, X-Frame-Options is set to same
 			// origin.
-			const iframeDisabled = is_deleted || ( isA8CSite( item ) && is_private );
+			const iframeDisabled = is_deleted || ( item.is_a8c && is_private );
 			return (
 				<>
 					{ resizeListener }
@@ -135,6 +127,7 @@ const DEFAULT_FIELDS = [
 				</>
 			);
 		},
+		enableSorting: false,
 	},
 ];
 
@@ -153,35 +146,49 @@ const DEFAULT_LAYOUTS = {
 	},
 };
 
-const DEFAULT_VIEW: View = {
+const DEFAULT_VIEW = {
 	...DEFAULT_LAYOUTS.grid,
-	type: 'grid',
+	type: 'grid' as const,
 	page: 1,
 	perPage: 10,
-	sort: { field: 'name', direction: 'asc' },
+	sort: { field: 'name', direction: 'asc' as SortDirection },
+	search: '',
 };
 
 export default function Sites() {
-	const navigate = useNavigate();
+	const navigate = useNavigate( { from: sitesRoute.fullPath } );
 	const sites = useQuery( sitesQuery() ).data;
-	const hasA8CSites = sites?.some( isA8CSite );
-	const [ view, setView ] = useState< View >(
-		hasA8CSites
-			? {
-					...DEFAULT_VIEW,
-					filters: [
-						{
-							field: 'a8c_owned',
-							operator: 'is',
-							value: undefined,
-						},
-					],
-			  }
-			: DEFAULT_VIEW
+	const hasA8CSites = sites?.some( ( site ) => site.is_a8c );
+	const defaultView = useMemo(
+		() =>
+			hasA8CSites
+				? {
+						...DEFAULT_VIEW,
+						filters: [
+							{
+								field: 'is_a8c',
+								operator: 'is' as Operator,
+								value: false,
+							},
+						],
+				  }
+				: DEFAULT_VIEW,
+		[ hasA8CSites ]
+	);
+	const search: Partial< ViewTable | ViewGrid > | undefined = sitesRoute.useSearch().view;
+	const view = useMemo(
+		() => ( {
+			...defaultView,
+			...DEFAULT_LAYOUTS[ search?.type ?? DEFAULT_VIEW.type ],
+			...( search
+				? Object.fromEntries( Object.entries( search ).filter( ( [ , v ] ) => v !== undefined ) )
+				: {} ),
+		} ),
+		[ defaultView, search ]
 	);
 	const fields = useMemo(
 		() =>
-			hasA8CSites ? DEFAULT_FIELDS : DEFAULT_FIELDS.filter( ( field ) => field.id !== 'a8c_owned' ),
+			hasA8CSites ? DEFAULT_FIELDS : DEFAULT_FIELDS.filter( ( field ) => field.id !== 'is_a8c' ),
 		[ hasA8CSites ]
 	);
 
@@ -191,29 +198,57 @@ export default function Sites() {
 
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate( sites, view, fields );
 
-	const onClickItem = ( item: Site ) => {
-		navigate( { to: `/sites/${ item.ID }` } );
-	};
-
 	return (
 		<>
 			<PageLayout
-				title={ __( 'Sites' ) }
-				actions={
-					<Button variant="primary" __next40pxDefaultSize>
-						{ __( 'Add New Site' ) }
-					</Button>
+				header={
+					<PageHeader
+						title={ __( 'Sites' ) }
+						actions={
+							<Dropdown
+								popoverProps={ { placement: 'bottom-end', offset: 10, noArrow: false } }
+								focusOnMount
+								renderToggle={ ( { isOpen, onToggle } ) => (
+									<Button
+										variant="primary"
+										onClick={ onToggle }
+										__next40pxDefaultSize
+										aria-expanded={ isOpen }
+									>
+										{ __( 'Add New Site' ) }
+									</Button>
+								) }
+								renderContent={ () => <AddNewSite /> }
+							/>
+						}
+					/>
 				}
 			>
 				<DataViewsCard>
-					<DataViews
+					<DataViews< Site >
 						getItemId={ ( item ) => item.ID }
 						data={ filteredData }
 						fields={ fields }
 						actions={ actions }
 						view={ view }
-						onChangeView={ setView }
-						onClickItem={ onClickItem }
+						onChangeView={ ( view ) => {
+							if ( view.type === 'list' ) {
+								return;
+							}
+							const _defaultView = { ...defaultView, ...DEFAULT_LAYOUTS[ view.type ] };
+							navigate( {
+								search: {
+									view: Object.fromEntries(
+										Object.entries( view ).filter( ( [ key, value ] ) => {
+											return value !== _defaultView[ key as keyof typeof _defaultView ];
+										} )
+									),
+								},
+							} );
+						} }
+						renderItemLink={ ( { item, ...props }: { item: Site } ) => (
+							<Link to={ `/sites/${ item.slug }` } { ...props } />
+						) }
 						defaultLayouts={ DEFAULT_LAYOUTS }
 						paginationInfo={ paginationInfo }
 					/>

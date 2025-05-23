@@ -47,7 +47,7 @@ The main component exported by this package.
 - `columns` (required): Total number of columns in the grid
 - `className` (optional): Additional CSS class to apply to the grid container
 - `spacing` (optional): Grid gap multiplier size, defaults to 2 (e.g. A spacing of 2 results in a gap of 8px, it's multiplied by 4)
-- `rowHeight` (optional): Height of each row (e.g., "50px", "auto")
+- `rowHeight` (optional): Height of each row in pixels or auto (e.g., 50, "auto")
 - `minColumnWidth` (optional): Minimum width in pixels for each column; when provided, enables responsive mode that automatically adjusts columns based on container width
 
 ## Standard vs. Responsive Mode

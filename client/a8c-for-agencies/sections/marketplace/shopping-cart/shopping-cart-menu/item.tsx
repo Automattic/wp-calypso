@@ -1,6 +1,7 @@
+import { formatCurrency } from '@automattic/number-formatters';
 import { Button } from '@wordpress/components';
 import { Icon, check } from '@wordpress/icons';
-import { useTranslate, formatCurrency } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'calypso/state';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import { useGetProductPricingInfo } from '../../hooks/use-total-invoice-value';

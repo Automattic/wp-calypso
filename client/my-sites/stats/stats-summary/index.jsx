@@ -1,5 +1,6 @@
 import { Card } from '@automattic/components';
 import { eye } from '@automattic/components/src/icons';
+import { formatNumber } from '@automattic/number-formatters';
 import { Icon, video } from '@wordpress/icons';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
@@ -54,7 +55,7 @@ class StatsSummaryChart extends Component {
 	}
 
 	buildChartData() {
-		const { data, chartType, numberFormat, sectionClass, selected, tabLabel } = this.props;
+		const { data, chartType, sectionClass, selected, tabLabel } = this.props;
 
 		return data.map( ( record ) => {
 			const className = clsx( {
@@ -70,7 +71,7 @@ class StatsSummaryChart extends Component {
 				{
 					label: tabLabel,
 					className: sectionClass,
-					value: numberFormat( record.value ),
+					value: formatNumber( record.value ),
 					icon: this.iconByChartType( chartType ),
 				},
 			];
@@ -87,12 +88,11 @@ class StatsSummaryChart extends Component {
 	}
 
 	render() {
-		const { dataKey, isLoading, chartType, labelKey, numberFormat, selected, tabLabel, type } =
-			this.props;
+		const { dataKey, isLoading, chartType, labelKey, selected, tabLabel, type } = this.props;
 		const label = selected ? ': ' + selected[ labelKey ] : '';
 		const tabOptions = {
 			attr: labelKey,
-			value: selected ? numberFormat( selected[ dataKey ] ) : null,
+			value: selected ? formatNumber( selected[ dataKey ] ) : null,
 			selected: true,
 			icon: this.iconByChartType( chartType ),
 			label: tabLabel + label,

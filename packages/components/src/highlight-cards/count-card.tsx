@@ -1,6 +1,6 @@
+import { formatNumber as formatNumberI18n } from '@automattic/number-formatters';
 import { arrowDown, arrowUp, Icon } from '@wordpress/icons';
 import clsx from 'clsx';
-import { numberFormat } from 'i18n-calypso';
 import { useRef, useState } from 'react';
 import { Card } from '../';
 import Popover from '../popover';
@@ -30,7 +30,7 @@ export function TooltipContent( { value, label, note, previousValue }: CountCard
 	 * TODO clk - We are currently in the process of unifying numberFormat from i18n-calypso with the one from number-formatters.
 	 * Once settled, we should consider where to place the "-" default for null values.
 	 */
-	const tooltipCount = value !== null ? numberFormat( value ) : '—';
+	const tooltipCount = value !== null ? formatNumberI18n( value ) : '—';
 
 	return (
 		<div className="highlight-card-tooltip-content">
@@ -41,7 +41,7 @@ export function TooltipContent( { value, label, note, previousValue }: CountCard
 			{ difference !== null && difference !== 0 && (
 				<span className={ trendClass }>
 					<Icon size={ 18 } icon={ trendIcon } />
-					{ numberFormat( Math.abs( difference ) ) }
+					{ formatNumberI18n( Math.abs( difference ) ) }
 				</span>
 			) }
 			{ note && <div className="highlight-card-tooltip-note">{ note }</div> }

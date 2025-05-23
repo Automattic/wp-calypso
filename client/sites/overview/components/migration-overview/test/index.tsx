@@ -22,10 +22,13 @@ const buildMigrationSite = ( {
 	( {
 		ID: 123,
 		slug: 'example.com',
+
 		site_migration: {
 			migration_status: [ 'migration', status, how ].filter( Boolean ).join( '-' ),
 		},
+
 		name: 'Bold Apps',
+
 		plan: {
 			features: {
 				active: canInstallPlugins ? [ 'install-plugins' ] : [],

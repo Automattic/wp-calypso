@@ -10,7 +10,7 @@ export const requestFetchAdminMenu = ( action ) =>
 	http(
 		{
 			method: 'GET',
-			path: `/sites/${ action.siteId }/admin-menu/`,
+			path: `/sites/${ action.siteId }/admin-menu/?_locale=user`,
 			apiNamespace: 'wpcom/v2',
 		},
 		action

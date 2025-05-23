@@ -1,4 +1,5 @@
-import { useTranslate, numberFormat } from 'i18n-calypso';
+import { formatNumber } from '@automattic/number-formatters';
+import { useTranslate } from 'i18n-calypso';
 import { SectionBackground } from 'calypso/a8c-for-agencies/components/page-section/backgrounds';
 import HostingBenefitsSection from '../../../common/hosting-benefits-section';
 
@@ -22,7 +23,7 @@ export default function ClientRelationships( { background }: Props ) {
 					benefits: [
 						translate( '%(uptimePercent)s Uptime', {
 							args: {
-								uptimePercent: numberFormat( 0.99999, {
+								uptimePercent: formatNumber( 0.99999, {
 									numberFormatOptions: { style: 'percent', maximumFractionDigits: 3 },
 								} ),
 							},

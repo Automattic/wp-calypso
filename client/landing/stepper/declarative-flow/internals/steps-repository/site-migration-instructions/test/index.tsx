@@ -80,9 +80,9 @@ describe( 'SiteMigrationInstructions', () => {
 	} );
 
 	it( 'should render preview column', async () => {
-		const { container } = render();
-
-		expect( container.querySelector( '.launchpad-container__main-content' ) ).toBeInTheDocument();
+		const { queryByText } = render();
+		// Tests that the SitePreview component is rendered
+		expect( queryByText( 'SitePreview Component' ) ).toBeInTheDocument();
 	} );
 
 	it( 'should not render preview column if from is not informed', async () => {
@@ -184,8 +184,8 @@ describe( 'SiteMigrationInstructions', () => {
 
 	it( 'should display a fallback in the last step when preparation completes and there is an error with the migration key', async () => {
 		( usePrepareSiteForMigration as jest.Mock ).mockReturnValue( {
-			detailedStatus: { migrationKey: 'error' },
-			completed: true,
+			detailedStatus: { migrationKeyStatus: 'error' },
+			softwareTransferCompleted: true,
 			migrationKey: '',
 			error: null,
 		} );

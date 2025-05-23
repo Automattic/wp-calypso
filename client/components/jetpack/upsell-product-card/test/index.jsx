@@ -1,8 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { PRODUCT_JETPACK_SCAN } from '@automattic/calypso-products';
-import { FEATURE_TYPE_JETPACK_SCAN } from '@automattic/calypso-products/src/constants/features';
+import { PRODUCT_JETPACK_SCAN, FEATURE_TYPE_JETPACK_SCAN } from '@automattic/calypso-products';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, fireEvent, within } from '@testing-library/react';
 import { Provider } from 'react-redux';

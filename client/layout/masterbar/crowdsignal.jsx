@@ -1,6 +1,6 @@
+import { WordPressLogo } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { Component } from 'react';
-import WordPressLogo from 'calypso/components/wordpress-logo';
 import './crowdsignal.scss';
 
 class CrowdsignalOauthMasterbar extends Component {

@@ -2,7 +2,7 @@ import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Gravatar, TimeSince } from '@automattic/components';
 import { useBreakpoint } from '@automattic/viewport-react';
-import { DataViews, type View, type Action, Operator } from '@wordpress/dataviews';
+import { DataViews, type View, type ViewTable, type Action, Operator } from '@wordpress/dataviews';
 import { useMemo, useState, useCallback, useEffect } from '@wordpress/element';
 import { trash } from '@wordpress/icons';
 import { translate } from 'i18n-calypso';
@@ -12,8 +12,7 @@ import { getCouponsAndGiftsEnabledForSiteId } from 'calypso/state/memberships/se
 import { errorNotice } from 'calypso/state/notices/actions';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
-import { isSimpleSite } from 'calypso/state/sites/selectors';
-import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { isSimpleSite, getSiteSlug } from 'calypso/state/sites/selectors';
 import { SubscribersFilterBy, SubscribersSortBy, SubscribersStatus } from '../../constants';
 import { getSubscriptionIdFromSubscriber } from '../../helpers';
 import { useSubscriptionPlans, useUnsubscribeModal } from '../../hooks';
@@ -31,6 +30,7 @@ import {
 import { Subscriber } from '../../types';
 import { JetpackEmptyListView } from '../jetpack-empty-list-view';
 import { SubscriberDetails } from '../subscriber-details';
+import { SubscriberDetailsSkeleton } from '../subscriber-details/skeleton';
 import { SubscriberLaunchpad } from '../subscriber-launchpad';
 import SubscriberTotals from '../subscriber-totals';
 import { SubscribersHeader } from '../subscribers-header';
@@ -75,7 +75,7 @@ const getSubscriptionDate = ( subscriber: Subscriber ): string => {
 	return subscriber.date_subscribed || '';
 };
 
-const defaultView: View = {
+const defaultView: ViewTable = {
 	type: 'table',
 	titleField: 'name',
 	mediaField: 'media',
@@ -93,28 +93,27 @@ const defaultView: View = {
 	},
 };
 
-const SubscriberDataViews = ( {
+export default function SubscriberDataViews( {
 	siteId,
 	onGiftSubscription,
 	isUnverified,
 	subscriberId,
-}: SubscriberDataViewsProps ) => {
+}: SubscriberDataViewsProps ) {
 	const dispatch = useDispatch();
 	const isMobile = useBreakpoint( '<660px' );
 	const recordSubscriberClicked = useRecordSubscriberClicked();
 	const recordSubscriberSearch = useRecordSubscriberSearch();
 	const recordSubscriberFilter = useRecordSubscriberFilter();
 	const recordSubscriberSort = useRecordSubscriberSort();
-	const siteSlug = useSelector( getSelectedSiteSlug );
+	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
+	const isSimple = useSelector( ( state ) => isSimpleSite( state, siteId ) );
+	const isAtomic = useSelector( ( state ) => isAtomicSite( state, siteId ) );
+	const isStaging = useSelector( ( state ) => isSiteWpcomStaging( state, siteId ) );
 
 	const [ searchTerm, setSearchTerm ] = useState( '' );
 	const [ filters, setFilters ] = useState< SubscribersFilterBy[] >( [ SubscribersFilterBy.All ] );
 	const [ selectedSubscriber, setSelectedSubscriber ] = useState< Subscriber | null >( null );
-	const { isSimple, isAtomic, isStaging } = useSelector( ( state ) => ( {
-		isSimple: isSimpleSite( state ),
-		isAtomic: isAtomicSite( state, siteId ),
-		isStaging: isSiteWpcomStaging( state, siteId ),
-	} ) );
+
 	const couponsAndGiftsEnabled = useSelector( ( state ) =>
 		getCouponsAndGiftsEnabledForSiteId( state, siteId )
 	);
@@ -167,35 +166,8 @@ const SubscriberDataViews = ( {
 		subscriberId && ! isNaN( parseInt( subscriberId, 10 ) )
 			? parseInt( subscriberId, 10 )
 			: undefined,
-		// Only pass user_id if it's a valid number (WordPress.com user)
-		typeof selectedSubscriber?.user_id === 'number' && ! isNaN( selectedSubscriber.user_id )
-			? selectedSubscriber.user_id
-			: undefined
+		undefined // We only need the subscriberId to fetch details
 	);
-
-	// Single effect to handle all subscriber selection scenarios
-	useEffect( () => {
-		// If URL changes or we get new subscriber details, update the selection
-		if ( subscriberId ) {
-			// If we have details and they match the current URL
-			if ( subscriberDetails && subscriberId === getSubscriptionIdString( subscriberDetails ) ) {
-				setSelectedSubscriber( subscriberDetails );
-			}
-			// If we don't have matching details yet, try to find in current list
-			else {
-				const subscriberFromList = subscribersQueryResult?.subscribers.find(
-					( s ) => subscriberId === getSubscriptionIdString( s )
-				);
-				if ( subscriberFromList ) {
-					setSelectedSubscriber( subscriberFromList );
-				}
-			}
-		} else if ( ! subscriberId && selectedSubscriber ) {
-			setSelectedSubscriber( null );
-		}
-		// We don't need to re-run this effect when selectedSubscriber changes.
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ subscriberId, subscriberDetails, subscribersQueryResult?.subscribers ] );
 
 	const { data: subscribedNewsletterCategoriesData, isLoading: isLoadingNewsletterCategories } =
 		useSubscribedNewsletterCategories( {
@@ -207,6 +179,22 @@ const SubscriberDataViews = ( {
 			userId: subscriberDetails?.user_id,
 			enabled: !! subscriberId && !! siteId,
 		} );
+
+	// Single effect to handle all subscriber selection scenarios
+	useEffect( () => {
+		// If no subscriberId in URL, immediately clear selection
+		if ( ! subscriberId ) {
+			setSelectedSubscriber( null );
+			return;
+		}
+
+		// If we have details and they match the current URL, use them
+		if ( subscriberDetails && subscriberId === getSubscriptionIdString( subscriberDetails ) ) {
+			setSelectedSubscriber( subscriberDetails );
+		}
+		// Don't clear selectedSubscriber - let it keep showing the previous subscriber while loading
+		// The SubscriberDetailsSkeleton will show because subscriberDetails won't match subscriberId
+	}, [ subscriberId, subscriberDetails ] );
 
 	const { data: subscribersTotals } = useSubscriberCountQuery( siteId ?? null );
 	const grandTotal = subscribersTotals?.email_subscribers ?? 0;
@@ -289,8 +277,9 @@ const SubscriberDataViews = ( {
 		]
 	);
 
-	// Modify the onClose handler in SubscriberDetails to preserve the page when going back to the list
+	// Modify the onClose handler to clear selection before navigation
 	const handleClose = useCallback( () => {
+		setSelectedSubscriber( null );
 		const urlParams = new URLSearchParams( window.location.search );
 		const pageParam = urlParams.get( 'page' );
 		if ( pageParam ) {
@@ -570,7 +559,7 @@ const SubscriberDataViews = ( {
 		>
 			<section className="subscriber-data-views__list">
 				<SubscribersHeader
-					selectedSiteId={ siteId || undefined }
+					siteId={ siteId }
 					disableCta={ isUnverified || isStaging }
 					hideSubtitle={ !! selectedSubscriber }
 					hideAddButtonLabel={ isMobile || !! selectedSubscriber }
@@ -610,23 +599,26 @@ const SubscriberDataViews = ( {
 					</>
 				) }
 			</section>
-			{ selectedSubscriber &&
-				siteId &&
-				! isLoadingNewsletterCategories &&
-				! isLoadingDetails &&
-				subscriberDetails && (
-					<section className="subscriber-data-views__details">
+			{ subscriberId && siteId && (
+				<section className="subscriber-data-views__details">
+					{ isLoadingNewsletterCategories ||
+					isLoadingDetails ||
+					! subscriberDetails ||
+					getSubscriptionIdString( subscriberDetails ) !== subscriberId ? (
+						<SubscriberDetailsSkeleton />
+					) : (
 						<SubscriberDetails
 							subscriber={ subscriberDetails }
 							siteId={ siteId }
-							subscriptionId={ getSubscriptionId( selectedSubscriber ) }
+							subscriptionId={ getSubscriptionId( subscriberDetails ) }
 							onClose={ handleClose }
 							onUnsubscribe={ ( subscriber ) => handleUnsubscribe( [ subscriber ] ) }
 							newsletterCategoriesEnabled={ subscribedNewsletterCategoriesData?.enabled }
 							newsletterCategories={ subscribedNewsletterCategoriesData?.newsletterCategories }
 						/>
-					</section>
-				) }
+					) }
+				</section>
+			) }
 			<UnsubscribeModal
 				subscribers={ currentSubscribers }
 				onCancel={ resetSubscribers }
@@ -634,6 +626,4 @@ const SubscriberDataViews = ( {
 			/>
 		</div>
 	);
-};
-
-export default SubscriberDataViews;
+}

@@ -1,6 +1,7 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
 import { Gridicon } from '@automattic/components';
+import { formatNumber } from '@automattic/number-formatters';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
@@ -14,7 +15,7 @@ import StatsModulePlaceholder from '../stats-module/placeholder';
 import toggleInfo from '../toggle-info';
 
 const StatsPostDetailWeeks = ( props ) => {
-	const { isRequesting, post, postId, moment, numberFormat, siteId, stats, translate } = props;
+	const { isRequesting, post, postId, moment, siteId, stats, translate } = props;
 	const noData = ! stats;
 	const isLoading = isRequesting && noData;
 	let tableHeader;
@@ -78,7 +79,7 @@ const StatsPostDetailWeeks = ( props ) => {
 				return (
 					<td key={ dayIndex } className={ cellClass }>
 						<span className="stats-detail-weeks__date">{ day.format( 'MMM D' ) }</span>
-						<span className="stats-detail-weeks__value">{ numberFormat( event.count ) }</span>
+						<span className="stats-detail-weeks__value">{ formatNumber( event.count ) }</span>
 					</td>
 				);
 			} );
@@ -92,7 +93,7 @@ const StatsPostDetailWeeks = ( props ) => {
 				}
 			}
 
-			cells.push( <td key={ 'total' + index }>{ numberFormat( week.total ) }</td> );
+			cells.push( <td key={ 'total' + index }>{ formatNumber( week.total ) }</td> );
 
 			if ( 'number' === typeof week.change ) {
 				const changeClass = clsx( {
@@ -100,7 +101,7 @@ const StatsPostDetailWeeks = ( props ) => {
 					'is-falling': week.change < 0,
 					'is-same': week.change === 0,
 				} );
-				let displayValue = numberFormat( week.change, { decimals: 2 } ) + '%';
+				let displayValue = formatNumber( week.change, { decimals: 2 } ) + '%';
 
 				if ( week.change > 0 ) {
 					iconType = 'arrow-up';
@@ -118,7 +119,7 @@ const StatsPostDetailWeeks = ( props ) => {
 
 				cells.push(
 					<td key={ 'average' + index }>
-						{ numberFormat( week.average ) }
+						{ formatNumber( week.average ) }
 						<span className={ 'stats-detail-weeks__value ' + changeClass } key={ 'change' + index }>
 							{ iconType ? <Gridicon icon={ iconType } size={ 18 } /> : null }
 							{ displayValue }

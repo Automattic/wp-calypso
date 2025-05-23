@@ -21,62 +21,38 @@ const AdPreviewModal: React.FC< Props > = ( { templateFormat, htmlCode, isLoadin
 	const [ previewSelected, setPreviewSelected ] = useState< Device >( 'mobile' );
 
 	const MobileIcon = () => {
-		const color = previewSelected === 'mobile' ? 'var( --studio-gray-80 )' : 'var( --color-link )';
 		return (
-			<svg
-				width="18px"
-				height="18px"
-				viewBox="0 0 18 18"
-				fill="none"
-				xmlns="http://www.w3.org/2000/svg"
-			>
-				<path d="M9.8,12.3H8.2v1.2h1.7V12.3z" fill={ color } />
+			<svg width="18px" height="18px" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg">
+				<path d="M9.8,12.3H8.2v1.2h1.7V12.3z" />
 				<path
 					fillRule="evenodd"
 					clipRule="evenodd"
 					d="M4.8,4c0-0.9,0.7-1.7,1.7-1.7h5c0.9,0,1.7,0.7,1.7,1.7v10c0,0.9-0.7,1.7-1.7,1.7h-5c-0.9,0-1.7-0.7-1.7-1.7V4z M6.5,3.6h5c0.2,0,0.4,0.2,0.4,0.4v10c0,0.2-0.2,0.4-0.4,0.4h-5c-0.2,0-0.4-0.2-0.4-0.4V4C6.1,3.8,6.3,3.6,6.5,3.6z"
-					fill={ color }
 				/>
 			</svg>
 		);
 	};
 
 	const TabletIcon = () => {
-		const color = previewSelected === 'tablet' ? 'var( --studio-gray-80 )' : 'var( --color-link )';
 		return (
-			<svg
-				width="18px"
-				height="18px"
-				viewBox="0 0 18 18"
-				fill="none"
-				xmlns="http://www.w3.org/2000/svg"
-			>
-				<path d="M10.7,12.3H7.3v1.2h3.3V12.3z" fill={ color } />
+			<svg width="18px" height="18px" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg">
+				<path d="M10.7,12.3H7.3v1.2h3.3V12.3z" />
 				<path
 					fillRule="evenodd"
 					clipRule="evenodd"
 					d="M3.2,4c0-0.9,0.7-1.7,1.7-1.7h8.3c0.9,0,1.7,0.7,1.7,1.7v10c0,0.9-0.7,1.7-1.7,1.7H4.8c-0.9,0-1.7-0.7-1.7-1.7 V4z M4.8,3.6h8.3c0.2,0,0.4,0.2,0.4,0.4v10c0,0.2-0.2,0.4-0.4,0.4H4.8c-0.2,0-0.4-0.2-0.4-0.4V4C4.4,3.8,4.6,3.6,4.8,3.6z"
-					fill={ color }
 				/>
 			</svg>
 		);
 	};
 
 	const DesktopIcon = () => {
-		const color = previewSelected === 'desktop' ? 'var( --studio-gray-80 )' : 'var( --color-link )';
 		return (
-			<svg
-				width="18px"
-				height="18px"
-				viewBox="0 0 18 18"
-				fill="none"
-				xmlns="http://www.w3.org/2000/svg"
-			>
+			<svg width="18px" height="18px" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg">
 				<path
 					fillRule="evenodd"
 					clipRule="evenodd"
 					d="M2.5,5.9c0-0.9,0.7-1.7,1.7-1.7h9.6c0.9,0,1.7,0.7,1.7,1.7v6.7h0.6c0.7,0,1.2,0.6,1.2,1.2H0.7	c0-0.7,0.6-1.2,1.2-1.2h0.6V5.9z M4.2,5.5h9.6c0.2,0,0.4,0.2,0.4,0.4v6.3H3.8V5.9C3.8,5.6,4,5.5,4.2,5.5z"
-					fill={ color }
 				/>
 			</svg>
 		);

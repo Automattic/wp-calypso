@@ -28,7 +28,7 @@ The data layer defines clear TypeScript interfaces for all data structures in `/
 - Media storage details
 - ...
 
-The Data Layer might be slightly different that the raw data returned from the REST API endpoints. In this case, we rely on an adapter layer that transforms the temporary REST API types defined in `/client/dashboard/data/rest-api-types.ts` to the final data types used in the dashboard. This is done to ensure that the data layer is decoupled from the API and can evolve independently. It can potentially adapt to various API layers if needed later.
+The Data Layer might be slightly different that the raw data returned from the REST API endpoints. In this case, we rely on an adapter layer that transforms the temporary REST API types to the final data types used in the dashboard. This is done to ensure that the data layer is decoupled from the API and can evolve independently. It can potentially adapt to various API layers if needed later.
 
 ### API Integration
 
@@ -40,8 +40,7 @@ export const fetchSite = async ( id: string ): Promise< Site > => {
 		return Promise.reject( new Error( 'Site ID is undefined' ) );
 	}
 	return await wpcom.req.get( {
-		path: `/sites/${ id }?http_envelope=1&fields=ID,URL,name,icon,subscribers_count,plan,active_modules,options`,
-		apiNamespace: 'rest/v1.1',
+		path: `/sites/${ id }?fields=ID,URL,name,icon,subscribers_count,plan,options`,
 	} );
 };
 ```
@@ -52,14 +51,14 @@ The dashboard sets uses a combination of route loaders and component-level queri
 
 ### Route Loaders
 
-The primary data fetching pattern uses route loaders to prefetch data before rendering components:
+The primary data-fetching pattern uses route loaders to prefetch data before rendering components:
 
 ```typescript
 const siteRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'sites/$siteId',
 	loader: ( { params: { siteId } } ) =>
-		maybeAwaitFetch( {
+		queryClient.ensureQueryData( {
 			queryKey: [ 'site', siteId ],
 			queryFn: async () => {
 				const [
@@ -79,7 +78,7 @@ const siteRoute = createRoute( {
 } ).lazy( () => import( '../site' ).then( ( d ) => d.Route ) );
 ```
 
-The `maybeAwaitFetch` helper checks if data is already cached before fetching, improving performance by avoiding unnecessary requests.
+The `queryClient.ensureQueryData` helper checks if data is already cached before fetching, improving performance by avoiding unnecessary requests.
 
 ### Component-Level Queries
 
@@ -93,13 +92,18 @@ const { data, isLoading, error } = useQuery( {
 } );
 ```
 
+### Queries centralization
+
+Queries are reused between loaders and components, to encourage cache reusability between different parts of the app, it is possible to centralize the queries definitions in `client/dashboard/app/queries.ts` and use them in both loaders and components.
+
 ## Adding New Data Sources
 
 To add a new data source to the dashboard:
 
 1. Define the TypeScript interfaces in `/client/dashboard/data/types.ts`
 2. Create fetch functions in `/client/dashboard/data/index.ts`
-3. Add query keys to appropriate route loaders or component queries
+3. Define a query in `/client/dashboard/app/queries.ts` if needed
+4. Use the query in a router loader or component
 
 ### Example: Adding a New Data Entity
 
@@ -122,10 +126,19 @@ export const fetchNewEntity = async (id: string): Promise<NewEntity> => {
   });
 };
 
-// 3. Use in a route loader
+// 3. Define the query in queries.ts
+export const newEntityQuery = (id: string) => {
+  return {
+	queryKey: ['newEntity', id],
+	queryFn: () => fetchNewEntity(id),
+	staleTime: 5 * 60 * 1000, // 5 minutes
+  };
+};
+
+// 4. Use in a component
+const { data, isLoading, error } = useQuery(newEntityQuery(entityId));
+
+// 5. Use in a route loader
 loader: ({ params: { id } }) =>
-  maybeAwaitFetch({
-    queryKey: ['newEntity', id],
-    queryFn: () => fetchNewEntity(id),
-  }),
-```
+  queryClient.ensureQueryData(newEntityQuery(id)),
+

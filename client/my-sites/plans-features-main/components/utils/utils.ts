@@ -21,6 +21,10 @@ export const shouldForceDefaultPlansBasedOnIntent = ( intent: PlansIntent | unde
 	);
 };
 
+export const hideEscapeHatchForIntent = ( intent: PlansIntent ) => {
+	return intent === 'plans-ai-assembler-free-trial';
+};
+
 /**
  * Determine which plans should be displayed based on the type of the selected theme.
  */

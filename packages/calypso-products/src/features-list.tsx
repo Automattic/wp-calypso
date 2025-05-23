@@ -40,7 +40,6 @@ import {
 	FEATURE_BACKUP_STORAGE_SPACE_UNLIMITED,
 	FEATURE_BLANK,
 	FEATURE_BLOG_DOMAIN,
-	FEATURE_CLOUDFLARE_ANALYTICS,
 	FEATURE_COLLECT_PAYMENTS_V2,
 	FEATURE_COMMUNITY_SUPPORT,
 	FEATURE_CRM_INTEGRATED_WITH_WORDPRESS,
@@ -192,6 +191,8 @@ import {
 	FEATURE_SECURITY_MALWARE,
 	FEATURE_SECURITY_DDOS,
 	FEATURE_DEV_TOOLS,
+	FEATURE_DEV_TOOLS_SSH,
+	FEATURE_DEV_TOOLS_GIT,
 	FEATURE_WP_UPDATES,
 	FEATURE_MULTI_SITE,
 	FEATURE_SELL_SHIP,
@@ -542,11 +543,6 @@ const FEATURES_LIST: FeatureList = {
 		getSlug: () => FEATURE_UPLOAD_THEMES_PLUGINS,
 		getTitle: () => i18n.translate( 'Upload themes and plugins' ),
 		getDescription: () => i18n.translate( 'Upload custom themes and plugins on your site.' ),
-	},
-
-	[ FEATURE_CLOUDFLARE_ANALYTICS ]: {
-		getSlug: () => FEATURE_CLOUDFLARE_ANALYTICS,
-		getTitle: () => i18n.translate( 'Cloudflare Web Analytics' ),
 	},
 
 	[ FEATURE_FREE_THEMES_SIGNUP ]: {
@@ -1941,6 +1937,19 @@ const FEATURES_LIST: FeatureList = {
 		getTitle: () => i18n.translate( 'SFTP/SSH, WP-CLI, Git commands, and GitHub Deployments' ),
 		getDescription: () =>
 			i18n.translate( 'Use familiar developer tools to manage and deploy your site.' ),
+	},
+	[ FEATURE_DEV_TOOLS_SSH ]: {
+		getSlug: () => FEATURE_DEV_TOOLS_SSH,
+		getTitle: () => i18n.translate( 'SFTP/SSH, WP-CLI' ),
+		getDescription: () => i18n.translate( 'Access your site via SSH and manage it with WP-CLI.' ),
+	},
+	[ FEATURE_DEV_TOOLS_GIT ]: {
+		getSlug: () => FEATURE_DEV_TOOLS_GIT,
+		getTitle: () => i18n.translate( 'Git commands and GitHub Deployments' ),
+		getDescription: () =>
+			i18n.translate(
+				'Deploy from GitHub with a few clicks. Simple and advanced deployment modes supported.'
+			),
 	},
 	[ FEATURE_SITE_STAGING_SITES ]: {
 		getSlug: () => FEATURE_SITE_STAGING_SITES,

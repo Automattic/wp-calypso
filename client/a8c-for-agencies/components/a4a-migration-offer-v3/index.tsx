@@ -1,7 +1,8 @@
+import { formatCurrency } from '@automattic/number-formatters';
 import { Button } from '@wordpress/components';
 import { Icon, chevronDown } from '@wordpress/icons';
 import clsx from 'clsx';
-import { useTranslate, formatCurrency } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -150,7 +151,6 @@ const MigrationOfferV3 = ( { isExpanded, onToggleView }: Props ) => {
 					</div>
 				) }
 			</div>
-
 			<Button className="a4a-migration-offer-v3__view-toggle">
 				<Icon icon={ chevronDown } size={ 24 } />
 			</Button>

@@ -121,23 +121,23 @@ export const ResponsiveGrid: StoryObj< typeof Grid > = {
 export const EditableGrid: StoryObj< typeof Grid > = {
 	render: function EditableGrid() {
 		const [ layout, setLayout ] = useState< GridLayoutItem[] >( [
-			{ key: 'a', width: 1 },
-			{ key: 'b', width: 2 },
-			{ key: 'c', width: 1 },
-			{ key: 'd', width: 2 },
-			{ key: 'e', width: 1 },
-			{ key: 'f', width: 1 },
-			{ key: 'g', width: 2 },
-			{ key: 'h', width: 1 },
-			{ key: 'i', width: 1 },
-			{ key: 'j', width: 1 },
+			{ key: 'a', width: 1, height: 1 },
+			{ key: 'b', width: 2, height: 1 },
+			{ key: 'c', width: 1, height: 1 },
+			{ key: 'd', width: 2, height: 1 },
+			{ key: 'e', width: 1, height: 1 },
+			{ key: 'f', width: 1, height: 1 },
+			{ key: 'g', width: 2, height: 1 },
+			{ key: 'h', width: 1, height: 1 },
+			{ key: 'i', width: 1, height: 1 },
+			{ key: 'j', width: 1, height: 1 },
 		] );
 
 		return (
 			<Grid
 				layout={ layout }
 				minColumnWidth={ 160 }
-				rowHeight="auto"
+				rowHeight={ 100 }
 				spacing={ 2 }
 				editMode
 				onChangeLayout={ ( newLayout ) => setLayout( newLayout ) }
@@ -179,7 +179,7 @@ export const EditableGrid: StoryObj< typeof Grid > = {
 		docs: {
 			description: {
 				story:
-					'This example demonstrates the Grid component in edit mode with drag and drop functionality. Use the edit mode to reorder the cards. The layout and edit mode are managed with local state.',
+					'This example demonstrates the Grid component in edit mode with drag, drop, and resize functionality. Use the edit mode to reorder and resize the cards. Grab and drag the handle in the bottom-right corner of each card to resize it. The layout and edit mode are managed with local state.',
 			},
 		},
 		layout: '',

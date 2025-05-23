@@ -2,7 +2,6 @@
 import {
 	localizeUrl as pureLocalizeUrl,
 	removeLocaleFromPathLocaleInFront,
-	useIsEnglishLocale,
 	useLocale,
 	useLocalizeUrl,
 } from '@automattic/i18n-utils';
@@ -64,8 +63,6 @@ export const PureUniversalNavbarFooter = ( {
 	locale,
 	languageOptions = allLanguageOptions,
 }: PureFooterProps ) => {
-	const isEnglishLocale = locale === 'en';
-
 	const languageEntries = Object.entries( languageOptions );
 
 	return (
@@ -234,13 +231,6 @@ export const PureUniversalNavbarFooter = ( {
 									<a href={ localizeUrl( 'https://wordpress.com/reader/search/' ) } target="_self">
 										{ __( 'Blog Search', __i18n_text_domain__ ) }
 									</a>
-								</li>
-								<li>
-									{ isEnglishLocale && (
-										<a href={ localizeUrl( 'https://wordpress.com/learn/' ) } target="_self">
-											{ __( 'Learn WordPress', __i18n_text_domain__ ) }
-										</a>
-									) }
 								</li>
 								<li>
 									<a
@@ -465,7 +455,6 @@ const UniversalNavbarFooter = ( {
 	const localizeUrl = useLocalizeUrl();
 	const locale = useLocale();
 	const translate = useTranslate();
-	const isEnglishLocale = useIsEnglishLocale();
 	const pathNameWithoutLocale =
 		currentRoute && removeLocaleFromPathLocaleInFront( currentRoute ).slice( 1 );
 	const [ automatticBranding, setAutomatticBranding ] = useState<
@@ -485,13 +474,12 @@ const UniversalNavbarFooter = ( {
 	return (
 		<PureUniversalNavbarFooter
 			locale={ locale }
-			isEnglishLocale={ isEnglishLocale }
-			automatticBranding={ automatticBranding }
 			isLoggedIn={ isLoggedIn }
 			currentRoute={ pathNameWithoutLocale }
 			additionalCompanyLinks={ additionalCompanyLinks }
 			onLanguageChange={ onLanguageChange }
 			localizeUrl={ localizeUrl }
+			automatticBranding={ automatticBranding }
 		/>
 	);
 };

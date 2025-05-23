@@ -16,6 +16,13 @@ export const OPERATOR_IS_ANY = 'isAny';
 export const OPERATOR_IS_NONE = 'isNone';
 export const OPERATOR_IS_ALL = 'isAll';
 export const OPERATOR_IS_NOT_ALL = 'isNotAll';
+export const OPERATOR_LESS_THAN = 'lessThan';
+export const OPERATOR_GREATER_THAN = 'greaterThan';
+export const OPERATOR_LESS_THAN_OR_EQUAL = 'lessThanOrEqual';
+export const OPERATOR_GREATER_THAN_OR_EQUAL = 'greaterThanOrEqual';
+export const OPERATOR_CONTAINS = 'contains';
+export const OPERATOR_NOT_CONTAINS = 'notContains';
+export const OPERATOR_STARTS_WITH = 'startsWith';
 
 export const ALL_OPERATORS = [
 	OPERATOR_IS,
@@ -24,7 +31,27 @@ export const ALL_OPERATORS = [
 	OPERATOR_IS_NONE,
 	OPERATOR_IS_ALL,
 	OPERATOR_IS_NOT_ALL,
+	OPERATOR_LESS_THAN,
+	OPERATOR_GREATER_THAN,
+	OPERATOR_LESS_THAN_OR_EQUAL,
+	OPERATOR_GREATER_THAN_OR_EQUAL,
+	OPERATOR_CONTAINS,
+	OPERATOR_NOT_CONTAINS,
+	OPERATOR_STARTS_WITH,
 ];
+
+export const SINGLE_SELECTION_OPERATORS = [
+	OPERATOR_IS,
+	OPERATOR_IS_NOT,
+	OPERATOR_LESS_THAN,
+	OPERATOR_GREATER_THAN,
+	OPERATOR_LESS_THAN_OR_EQUAL,
+	OPERATOR_GREATER_THAN_OR_EQUAL,
+	OPERATOR_CONTAINS,
+	OPERATOR_NOT_CONTAINS,
+	OPERATOR_STARTS_WITH,
+];
+
 export const OPERATORS: Record< Operator, { key: string; label: string } > = {
 	[ OPERATOR_IS ]: {
 		key: 'is-filter',
@@ -49,6 +76,34 @@ export const OPERATORS: Record< Operator, { key: string; label: string } > = {
 	[ OPERATOR_IS_NOT_ALL ]: {
 		key: 'is-not-all-filter',
 		label: __( 'Is not all' ),
+	},
+	[ OPERATOR_LESS_THAN ]: {
+		key: 'less-than-filter',
+		label: __( 'Less than' ),
+	},
+	[ OPERATOR_GREATER_THAN ]: {
+		key: 'greater-than-filter',
+		label: __( 'Greater than' ),
+	},
+	[ OPERATOR_LESS_THAN_OR_EQUAL ]: {
+		key: 'less-than-or-equal-filter',
+		label: __( 'Less than or equal' ),
+	},
+	[ OPERATOR_GREATER_THAN_OR_EQUAL ]: {
+		key: 'greater-than-or-equal-filter',
+		label: __( 'Greater than or equal' ),
+	},
+	[ OPERATOR_CONTAINS ]: {
+		key: 'contains-filter',
+		label: __( 'Contains' ),
+	},
+	[ OPERATOR_NOT_CONTAINS ]: {
+		key: 'not-contains-filter',
+		label: __( "Doesn't contain" ),
+	},
+	[ OPERATOR_STARTS_WITH ]: {
+		key: 'starts-with-filter',
+		label: __( 'Starts with' ),
 	},
 };
 

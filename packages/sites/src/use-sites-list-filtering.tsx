@@ -9,9 +9,7 @@ export interface SitesFilterOptions {
 	includeA8CSites?: boolean;
 }
 
-type SiteForFiltering = Pick< MinimumSite, 'URL' | 'name' | 'slug' | 'title' | 'site_owner' >;
-
-const isA8CSite = ( site: SiteForFiltering ) => site.site_owner === 26957695;
+type SiteForFiltering = Pick< MinimumSite, 'URL' | 'name' | 'slug' | 'title' | 'is_a8c' >;
 
 export function useSitesListFiltering< T extends SiteForFiltering >(
 	sites: T[],
@@ -25,7 +23,7 @@ export function useSitesListFiltering< T extends SiteForFiltering >(
 
 	return useMemo( () => {
 		if ( ! includeA8CSites ) {
-			return filteredSites.filter( ( site ) => ! isA8CSite( site ) );
+			return filteredSites.filter( ( site ) => ! site.is_a8c );
 		}
 
 		return filteredSites;

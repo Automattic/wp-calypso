@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { StatsCard } from '@automattic/components';
 import { share } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
@@ -90,12 +89,11 @@ const StatShares: React.FC< StatSharesProps > = ( { siteId, className } ) => {
 	}
 
 	const title = translate( 'Number of Shares' );
-	const isEmptyStateV2 = config.isEnabled( 'stats/empty-module-v2' );
 
 	return (
 		<>
 			{ siteId && <QuerySiteStats siteId={ siteId } statType="stats" /> }
-			{ isEmptyStateV2 && isLoading && (
+			{ isLoading && (
 				<StatsCardSkeleton
 					isLoading={ isLoading }
 					className={ className }
@@ -105,7 +103,7 @@ const StatShares: React.FC< StatSharesProps > = ( { siteId, className } ) => {
 			) }
 			{
 				// old module
-				( ( ! isLoading && !! data?.length ) || ! isEmptyStateV2 ) && (
+				! isLoading && !! data?.length && (
 					// @ts-expect-error TODO: Refactor StatsListCard with TypeScript.
 					<StatsListCard
 						className={ className }
@@ -125,16 +123,14 @@ const StatShares: React.FC< StatSharesProps > = ( { siteId, className } ) => {
 						}
 						loader={ isLoading && <StatsModulePlaceholder isLoading={ isLoading } /> }
 						titleNodes={
-							isEmptyStateV2 && (
-								<StatsInfoArea>
-									{ translate( 'Learn where your content has been shared the most.' ) }
-								</StatsInfoArea>
-							)
+							<StatsInfoArea>
+								{ translate( 'Learn where your content has been shared the most.' ) }
+							</StatsInfoArea>
 						}
 					/>
 				)
 			}
-			{ isEmptyStateV2 && ! isLoading && ! data?.length && (
+			{ ! isLoading && ! data?.length && (
 				// show empty state
 				<StatsCard
 					className={ className }

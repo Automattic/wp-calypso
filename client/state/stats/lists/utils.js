@@ -84,11 +84,12 @@ export function parseAvatar( avatarUrl ) {
 
 /**
  * Builds data into escaped array for CSV export
- * @param   {Object} data   Normalized stats data object
- * @param   {string} parent Label of parent
- * @returns {Array}         CSV Row
+ * @param   {Object} data                                               Normalized stats data object
+ * @param   {string} parent                                             Label of parent
+ * @param   {(value: unknown[], data?: Object) => unknown[]} modifierFn Modifies the export row.
+ * @returns {Array}                                                     CSV Row
  */
-export function buildExportArray( data, parent = null ) {
+export function buildExportArray( data, parent = null, modifierFn = null ) {
 	if ( ! data || ! data.label || ! data.value ) {
 		return [];
 	}
@@ -102,9 +103,13 @@ export function buildExportArray( data, parent = null ) {
 		exportData = [ [ '"' + escapedLabel + '"', data.value, data.actions[ 0 ].data ] ];
 	}
 
+	if ( modifierFn ) {
+		exportData = [ modifierFn( exportData[ 0 ], data ) ];
+	}
+
 	if ( data.children ) {
 		const childData = map( data.children, ( child ) => {
-			return buildExportArray( child, label );
+			return buildExportArray( child, label, modifierFn );
 		} );
 
 		exportData = exportData.concat( flatten( childData ) );
@@ -459,6 +464,42 @@ export const normalizers = {
 	},
 
 	/**
+	 * Returns a normalized data for the `stats/video-plays` API request with `complete_stats` query param set to `1`
+	 * This returns more enriched data about the video plays, including impressions, watch time, and retention rate.
+	 * @param   {Object} data    Stats data
+	 * @param   {Object} query   Stats query
+	 * @returns {Array}          Parsed data array
+	 */
+	statsVideoPlaysCompleteStats: ( data, query = {} ) => {
+		if ( ! data || ! query.period || ! query.date ) {
+			return [];
+		}
+
+		const { startOf } = rangeOfPeriod( query.period, query.date );
+		const videoPlaysData = get(
+			data,
+			query.summarize ? [ 'days', 'summary', 'data' ] : [ 'days', startOf, 'data' ],
+			[]
+		);
+
+		const normalizedData = videoPlaysData.map( ( item ) => {
+			return {
+				post_id: item.post_id,
+				label: item.title,
+				views: item.views,
+				impressions: item.impressions,
+				watch_time: item.watch_time,
+				retention_rate: item.retention_rate,
+			};
+		} );
+
+		return [
+			[ 'post_id', 'title', 'views', 'impressions', 'watch_time', 'retention_rate' ],
+			...normalizedData,
+		];
+	},
+
+	/**
 	 * Returns a normalized statsVideoPlays array, ready for use in stats-module
 	 * @param   {Object} data    Stats data
 	 * @param   {Object} query   Stats query
@@ -471,6 +512,12 @@ export const normalizers = {
 			return [];
 		}
 		const { startOf } = rangeOfPeriod( query.period, query.date );
+		const isCompleteStats = query.complete_stats;
+
+		if ( isCompleteStats ) {
+			return normalizers.statsVideoPlaysCompleteStats( data, query, siteId, site );
+		}
+
 		const videoPlaysData = get(
 			data,
 			query.summarize ? [ 'days', 'summary', 'plays' ] : [ 'days', startOf, 'plays' ],
@@ -527,6 +574,38 @@ export const normalizers = {
 		} );
 
 		return { total_wpcom, total_email, total, subscribers };
+	},
+
+	statsUTM( originalData ) {
+		if ( ! Array.isArray( originalData ) ) {
+			return [];
+		}
+
+		const newData = [];
+
+		// Flatten the data into a shallow array.
+		originalData.forEach( ( row ) => {
+			newData.push( row );
+			const children = row?.children;
+			if ( children ) {
+				const newChildren = children.map( ( child ) => {
+					return { ...child, context: row.label };
+				} );
+				newData.push( ...newChildren );
+			}
+		} );
+
+		return newData.map( ( row ) => {
+			// Label should include parent context if present.
+			// ie: "parent label > child label" -- including surrounding quotes.
+			let label = row?.context ? `${ row.context } > ${ row.label }` : row.label;
+			label = label.replace( /"/g, '""' ); // Escape double quotes
+
+			return {
+				label,
+				value: row.value,
+			};
+		} );
 	},
 
 	statsCommentFollowers( data ) {

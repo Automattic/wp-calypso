@@ -1,5 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { Card } from '@automattic/components';
+import page from '@automattic/calypso-router';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -18,6 +18,7 @@ import Security2faDisable from 'calypso/me/security-2fa-disable';
 import Security2faKey from 'calypso/me/security-2fa-key';
 import Security2faSetup from 'calypso/me/security-2fa-setup';
 import SecuritySectionNav from 'calypso/me/security-section-nav';
+import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import getUserSettings from 'calypso/state/selectors/get-user-settings';
 import isTwoStepEnabled from 'calypso/state/selectors/is-two-step-enabled';
 import { fetchUserSettings } from 'calypso/state/user-settings/actions';
@@ -38,6 +39,18 @@ class TwoStep extends Component {
 	onDisableFinished = () => {
 		this.props.fetchUserSettings();
 	};
+
+	componentDidMount() {
+		if ( ! this.props.isFetchingUserSettings && ! this.props.isEmailVerified ) {
+			page.redirect( '/me/security' );
+		}
+	}
+
+	componentDidUpdate() {
+		if ( ! this.props.isFetchingUserSettings && ! this.props.isEmailVerified ) {
+			page.redirect( '/me/security' );
+		}
+	}
 
 	renderPlaceholders = () => {
 		const placeholders = [];
@@ -123,8 +136,7 @@ class TwoStep extends Component {
 					</HeaderCake>
 				) }
 
-				<Card>{ this.renderTwoStepSection() }</Card>
-
+				{ this.renderTwoStepSection() }
 				{ this.renderEnhancedSecuritySetting() }
 				{ this.render2faKey() }
 				{ this.renderBackupCodes() }
@@ -139,6 +151,7 @@ export default connect(
 		isFetchingUserSettings: isFetchingUserSettings( state ),
 		userSettings: getUserSettings( state ),
 		isTwoStepEnabled: isTwoStepEnabled( state ),
+		isEmailVerified: isCurrentUserEmailVerified( state ),
 	} ),
 	{
 		fetchUserSettings,

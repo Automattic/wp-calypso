@@ -25,14 +25,14 @@ const normalizedFollowedTagsResponse = deepFreeze( [
 		id: '307',
 		slug: 'chickens',
 		title: 'Chickens',
-		displayName: 'chickens',
+		displayName: 'Chickens',
 		url: '/tag/chickens',
 	},
 	{
 		id: '148',
 		slug: 'design',
 		title: 'Design',
-		displayName: 'design',
+		displayName: 'Design',
 		url: '/tag/design',
 	},
 ] );
@@ -52,8 +52,28 @@ const normalizedSuccessfulSingleTagResponse = deepFreeze( [
 		id: '307',
 		slug: 'chickens',
 		title: 'Chickens',
-		displayName: 'chickens',
+		displayName: 'Chickens',
 		url: '/tag/chickens',
+	},
+] );
+
+const wordPressTagResponse = deepFreeze( {
+	tag: {
+		ID: '33',
+		slug: 'wordpress',
+		title: 'WordPress',
+		display_name: 'wordpress',
+		URL: 'https://public-api.wordpress.com/rest/v1.2/read/tags/wordpress/posts',
+	},
+} );
+
+const normalizedWordPressTagResponse = deepFreeze( [
+	{
+		id: '33',
+		slug: 'wordpress',
+		title: 'WordPress',
+		displayName: 'WordPress',
+		url: '/tag/wordpress',
 	},
 ] );
 
@@ -67,6 +87,11 @@ describe( 'wpcom-api: read/tags utils', () => {
 		test( 'should properly normalize a single tag', () => {
 			const transformedResponse = fromApi( successfulSingleTagResponse );
 			expect( transformedResponse ).toEqual( normalizedSuccessfulSingleTagResponse );
+		} );
+
+		test( 'should properly handle WordPress tag capitalization', () => {
+			const transformedResponse = fromApi( wordPressTagResponse );
+			expect( transformedResponse ).toEqual( normalizedWordPressTagResponse );
 		} );
 
 		test( 'should blow up when given wrong keys', () => {

@@ -175,18 +175,17 @@
 	padding: 13px;
 	font-size: $font-body-extra-small;
 	flex-grow: 1;
+	text-wrap: pretty;
 
 	.calypso-notice__text {
 		a,
 		a:visited,
 		button.is-link {
-			text-decoration: underline;
 			color: var(--color-text-inverted);
 			line-height: inherit;
 
 			&:hover {
 				color: var(--color-text-inverted);
-				text-decoration: none;
 			}
 
 			.is-transparent-info & {

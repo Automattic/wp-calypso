@@ -160,13 +160,15 @@ export const getSiteStatsNormalizedData = treeSelect(
 
 /**
  * Returns an array of stats data ready for csv export
- * @param   {Object}  state    Global state tree
- * @param   {number}  siteId   Site ID
- * @param   {string}  statType Type of stat
- * @param   {Object}  query    Stats query object
- * @returns {Array}            Array of stats data ready for CSV export
+ * @template T
+ * @param   {Object}  state                                             Global state tree
+ * @param   {number}  siteId                                            Site ID
+ * @param   {string}  statType                                          Type of stat
+ * @param   {Object}  query                                             Stats query object
+ * @param   {(value: unknown[], data?: Object) => unknown[]} modifierFn Modifies the export row.
+ * @returns {Array}                                                     Array of stats data ready for CSV export
  */
-export function getSiteStatsCSVData( state, siteId, statType, query ) {
+export function getSiteStatsCSVData( state, siteId, statType, query, modifierFn = null ) {
 	const data = getSiteStatsNormalizedData( state, siteId, statType, query );
 	if ( ! data || ! Array.isArray( data ) ) {
 		return [];
@@ -174,7 +176,7 @@ export function getSiteStatsCSVData( state, siteId, statType, query ) {
 
 	return flatten(
 		map( data, ( item ) => {
-			return buildExportArray( item );
+			return buildExportArray( item, null, modifierFn );
 		} )
 	);
 }

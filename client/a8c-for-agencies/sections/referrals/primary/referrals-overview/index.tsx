@@ -95,15 +95,16 @@ export default function ReferralsOverview( {
 			withBorder
 		>
 			<LayoutColumn wide className="referrals-layout__column">
-				<LayoutTop>
+				<LayoutTop isFullWidth={ hasReferrals }>
 					{ !! referralEmail && (
 						<NewReferralOrderNotification
 							email={ referralEmail }
 							onClose={ () => setReferralEmail( '' ) }
+							isFullWidth={ hasReferrals }
 						/>
 					) }
 
-					<MissingPaymentSettingsNotice />
+					<MissingPaymentSettingsNotice isFullWidth />
 
 					<LayoutHeader>
 						<Title>{ title } </Title>

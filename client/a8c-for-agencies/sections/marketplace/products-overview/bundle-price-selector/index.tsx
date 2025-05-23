@@ -1,5 +1,6 @@
+import { formatNumber } from '@automattic/number-formatters';
 import { SelectControl } from '@wordpress/components';
-import { numberFormat, useTranslate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 
 import './style.scss';
@@ -18,19 +19,19 @@ export function BundlePriceSelector( { options, value, onChange }: Props ) {
 		return (
 			{
 				1: '',
-				5: numberFormat( 0.1, {
+				5: formatNumber( 0.1, {
 					numberFormatOptions: { style: 'percent' },
 				} ),
-				10: numberFormat( 0.2, {
+				10: formatNumber( 0.2, {
 					numberFormatOptions: { style: 'percent' },
 				} ),
-				20: numberFormat( 0.4, {
+				20: formatNumber( 0.4, {
 					numberFormatOptions: { style: 'percent' },
 				} ),
-				50: numberFormat( 0.7, {
+				50: formatNumber( 0.7, {
 					numberFormatOptions: { style: 'percent' },
 				} ),
-				100: numberFormat( 0.8, {
+				100: formatNumber( 0.8, {
 					numberFormatOptions: { style: 'percent' },
 				} ),
 			}[ bundleSize ] ?? ''
@@ -75,7 +76,7 @@ export function BundlePriceSelector( { options, value, onChange }: Props ) {
 				},
 				...options.map( ( option ) => ( {
 					label: getLabel( option ) as string,
-					value: `${ numberFormat( option ) }`,
+					value: `${ formatNumber( option ) }`,
 				} ) ),
 			] }
 		/>

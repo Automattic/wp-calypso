@@ -12,19 +12,26 @@ const parameters = {
 	},
 	options: {
 		storySort: ( a, b ) => {
-			// Sort MDX files first
-			const isMdxA = a.title.endsWith( '.mdx' );
-			const isMdxB = b.title.endsWith( '.mdx' );
+			const sectionOrder = [ 'WP Overrides', 'Deprecated', 'Unaudited' ];
+			const aIndex = sectionOrder.findIndex( ( prefix ) => a.title.startsWith( prefix ) );
+			const bIndex = sectionOrder.findIndex( ( prefix ) => b.title.startsWith( prefix ) );
 
-			if ( isMdxA && ! isMdxB ) {
-				return -1;
-			}
-			if ( ! isMdxA && isMdxB ) {
-				return 1;
+			// If they're in different sections, sort by section order
+			if ( aIndex !== bIndex ) {
+				if ( aIndex === -1 ) return 1;
+				if ( bIndex === -1 ) return -1;
+				return aIndex - bIndex;
 			}
 
-			// Fall back to alphabetical order
-			return a.title.localeCompare( b.title, { numeric: true } );
+			// If they're in the same section, put MDX files first
+			const aIsMdx = a.importPath.endsWith( '.mdx' );
+			const bIsMdx = b.importPath.endsWith( '.mdx' );
+
+			if ( aIsMdx && ! bIsMdx ) return -1;
+			if ( ! aIsMdx && bIsMdx ) return 1;
+
+			// If both are MDX or both are not MDX, maintain original order
+			return 0;
 		},
 	},
 };

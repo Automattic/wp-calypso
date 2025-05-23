@@ -192,12 +192,6 @@
 				padding: 35px 55px 20px;
 				width: 550px;
 			}
-
-			input[type="text"],
-			input[type="email"],
-			input[type="password"] {
-				padding: 10px 20px;
-			}
 		}
 
 		.login__form {
@@ -273,25 +267,9 @@
 		}
 
 		.magic-login form {
-
-			input[type="text"],
-			input[type="email"],
-			input[type="password"] {
-				padding: 10px 20px;
-			}
-
 			label {
 				color: var(--color-text);
 				font-weight: 400;
-			}
-		}
-
-		.magic-login .button {
-			margin: 0;
-
-			&:disabled {
-				background-color: var(--color-neutral-5);
-				color: var(--color-text-inverted);
 			}
 		}
 
@@ -622,12 +600,15 @@
 }
 
 .jetpack-cloud {
+	--color-link: var(--studio-jetpack-green-40);
+	--color-link-dark: var(--studio-jetpack-green-60);
+
 	input:focus:hover[type],
 	input:focus[type] {
 		box-shadow: 0 0 0 2px var(--color-primary-10);
 	}
 
-	.button:not(.social-buttons__button) {
+	.button {
 		color: var(--studio-jetpack-green-60);
 		background: var(--studio-white);
 		border: 1px solid var(--studio-jetpack-green-40);
@@ -680,8 +661,11 @@
 		}
 	}
 
-	a,
-	a:visited,
+	.components-button {
+		--color-accent: var(--studio-jetpack-green-40);
+		--color-accent-60: var(--studio-jetpack-green-30);
+	}
+
 	.login__form-change-username,
 	.wp-login__links button {
 		color: var(--studio-jetpack-green-40);
@@ -691,19 +675,18 @@
 			color: var(--studio-jetpack-green-60);
 		}
 	}
-
-	.social-buttons__button {
-		--color-accent: var(--studio-jetpack-green-40);
-	}
 }
 
 .a8c-for-agencies {
+	--color-link: var(--color-primary-40);
+	--color-link-dark: var(--color-primary-60);
+
 	input:focus:hover[type],
 	input:focus[type] {
 		box-shadow: 0 0 0 2px var(--color-primary-10);
 	}
 
-	.button:not(.social-buttons__button) {
+	.button {
 		color: var(--color-primary-60);
 		background: var(--studio-white);
 		border: 1px solid var(--color-primary-40);
@@ -756,8 +739,11 @@
 		}
 	}
 
-	a,
-	a:visited,
+	.components-button {
+		--color-accent: var(--color-primary-40);
+		--color-accent-60: var(--color-primary-60);
+	}
+
 	.login__form-change-username,
 	.wp-login__links button {
 		color: var(--color-primary-40);
@@ -766,10 +752,6 @@
 		&:focus {
 			color: var(--color-primary-60);
 		}
-	}
-
-	.social-buttons__button {
-		--color-accent: var(--color-primary-40);
 	}
 }
 

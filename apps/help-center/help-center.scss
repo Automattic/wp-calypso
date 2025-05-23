@@ -34,6 +34,21 @@
 }
 
 .help-center__container {
+	h1,
+	h2,
+	h3,
+	h4,
+	h5,
+	h6,
+	caption,
+	figcaption,
+	p,
+	ul,
+	ol,
+	blockquote {
+		text-wrap: pretty;
+	}
+
 	&.is-mobile {
 		&.is-minimized {
 			margin-top: 0;

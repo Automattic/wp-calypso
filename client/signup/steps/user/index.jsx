@@ -279,6 +279,8 @@ export class UserStep extends Component {
 							components: { a: <a href={ loginUrl } rel="noopener noreferrer" /> },
 						}
 					);
+				} else if ( isBlazeProOAuth2Client( oauth2Client ) ) {
+					subHeaderText = translate( 'First, create your WordPress.com account.' );
 				} else {
 					subHeaderText = translate(
 						'First, create your WordPress.com account. Have an account? {{a}}Log in{{/a}}',

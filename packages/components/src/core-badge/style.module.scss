@@ -1,0 +1,54 @@
+@use '@wordpress/base-styles/colors';
+@use '@wordpress/base-styles/mixins';
+@use '@wordpress/base-styles/variables';
+@use '../utils/_theme-variables' as theme;
+
+$badge-colors: (
+	"info": theme.$components-color-accent,
+	"warning": colors.$alert-yellow,
+	"error": colors.$alert-red,
+	"success": colors.$alert-green,
+);
+
+.badge {
+	@include mixins.reset;
+
+	background-color: color-mix(in srgb, colors.$white 90%, var(--base-color));
+	color: color-mix(in srgb, colors.$black 50%, var(--base-color));
+	padding: 0 variables.$grid-unit-10;
+	min-height: variables.$grid-unit-30;
+	max-width: 100%;
+	border-radius: variables.$radius-small;
+	font-size: variables.$font-size-small;
+	font-weight: 400;
+	line-height: variables.$font-line-height-small;
+	display: inline-flex;
+	align-items: center;
+	gap: 2px;
+
+	&:where(.is-default) {
+		background-color: theme.$components-color-gray-100;
+		color: theme.$components-color-gray-800;
+	}
+
+	&.has-icon {
+		padding-inline-start: variables.$grid-unit-05;
+	}
+
+	// Generate color variants
+	@each $type, $color in $badge-colors {
+		&.is-#{$type} {
+			--base-color: #{$color};
+		}
+	}
+}
+
+.badge__icon {
+	flex-shrink: 0;
+}
+
+.badge__content {
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}

@@ -456,6 +456,35 @@ object RunAllUnitTests : BuildType({
 			""".trimIndent()
 		}
 		bashNodeScript {
+			name = "Check DataViews changelog"
+			scriptContent = """
+				#!/usr/bin/env bash
+				set -e
+
+				# List files affected by the branch's commits
+				CHANGES=${'$'}(git diff --name-only refs/remotes/origin/trunk...HEAD)
+
+				# If there are changes within the DataViews package (excluding package.json),
+				# ensure CHANGELOG.automattic.md has been updated too.
+				if grep ^packages/dataviews/ <<< "${'$'}CHANGES" | grep -vq ^packages/dataviews/package.json; then
+					if ! grep -q ^packages/dataviews/CHANGELOG.automattic.md <<< "${'$'}CHANGES"; then
+						echo "ERROR: Changes to 'packages/dataviews' detected with no accompanying changelog entry."
+						echo "Please document your changes in 'packages/dataviews/CHANGELOG.automattic.md'."
+						exit 1
+					fi
+				fi
+
+				# If there are changes on the CHANGELOG.md prevent the PR from merging.
+				# In this case, we want to merge via specific instructions on the CLI.
+				if grep -q ^packages/dataviews/CHANGELOG.md <<< "${'$'}CHANGES"; then
+					echo "ERROR: changes to 'packages/dataviews/CHANGELOG.md detected'."
+					echo "PRs that sync changes from upstream cannot be merged via GitHub UI."
+					echo "Please, check packages/dataviews/SYNC.md to merge via the CLI commands."
+					exit 1
+				fi
+			""".trimIndent()
+		}
+		bashNodeScript {
 			name = "Run parallelized tests"
 			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 			scriptContent = "./bin/unit-test-suite.mjs"
@@ -583,15 +612,12 @@ object CheckCodeStyleBranch : BuildType({
 						|| true
 				}
 
-				# Use with `grep -c .` to prevent miscounts due to newlines
-				FILE_COUNT=${'$'}(_find_files_to_lint | grep -c . || true)
-
 				# Create temporary output directory. Export the variable so that it is
 				# available in the batch runs.
 				export RESULTS_DIR=checkstyle_results/eslint
 				mkdir -p "${'$'}RESULTS_DIR"
 
-				if [ "%run_full_eslint%" = true ] || [ "${'$'}FILE_COUNT" -eq 0 ]; then
+				if [ "%run_full_eslint%" = true ]; then
 					echo "Linting all files"
 					yarn run eslint --format checkstyle --output-file "${'$'}RESULTS_DIR/results.xml" .
 				else
@@ -654,12 +680,19 @@ object CheckCodeStyleBranch : BuildType({
 				fi
 			"""
 		}
-
+		bashNodeScript {
+			name = "Run code quality linters"
+			scriptContent = """
+				yarn run lint:unused-state-action-types
+				yarn run lint:config-defaults
+			"""
+		}
 		bashNodeScript {
 			name = "Run stylelint"
 			scriptContent = """
 				# In the future, we may add the stylelint cache here.
 				yarn run lint:css
+				yarn run lint:mixedindent
 			"""
 		}
 	}

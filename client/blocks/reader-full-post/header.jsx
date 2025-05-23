@@ -1,6 +1,7 @@
 import { Gridicon, ExternalLink, TimeSince } from '@automattic/components';
+import { formatNumberCompact } from '@automattic/number-formatters';
 import clsx from 'clsx';
-import { translate, numberFormatCompact } from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import TagsList from 'calypso/blocks/reader-post-card/tags-list';
 import ReaderSiteStreamLink from 'calypso/blocks/reader-site-stream-link';
@@ -94,7 +95,7 @@ const ReaderFullPostHeader = ( { post, authorProfile, layout = 'default' } ) => 
 								{ translate( '%(followCount)s subscriber', '%(followCount)s subscribers', {
 									count: followCount,
 									args: {
-										followCount: numberFormatCompact( followCount ),
+										followCount: formatNumberCompact( followCount ),
 									},
 								} ) }
 							</span>

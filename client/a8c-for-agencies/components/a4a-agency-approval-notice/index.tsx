@@ -14,7 +14,7 @@ import './style.scss';
 
 const AGENCY_APPROVAL_DISMISS_PREFERENCE = 'a4a-agency-approval-notice-dismissed';
 
-const A4AAgencyApprovalNotice = () => {
+const A4AAgencyApprovalNotice = ( { isFullWidth }: { isFullWidth?: boolean } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const agency = useSelector( getActiveAgency );
@@ -81,9 +81,9 @@ const A4AAgencyApprovalNotice = () => {
 
 	return (
 		<LayoutBanner
+			isFullWidth={ isFullWidth }
 			level={ bannerDetails.level as 'warning' | 'success' | 'error' }
 			onClose={ dismissNotice }
-			className="a4a-agency-approval-notice"
 			hideCloseButton={ bannerDetails.hideCloseButton }
 		>
 			<div className="a4a-agency-approval-notice__text">{ bannerDetails.text }</div>

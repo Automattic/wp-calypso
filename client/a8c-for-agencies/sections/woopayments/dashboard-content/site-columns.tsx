@@ -1,6 +1,7 @@
 import { BadgeType, Gridicon } from '@automattic/components';
+import { formatCurrency } from '@automattic/number-formatters';
 import { Button } from '@wordpress/components';
-import { useTranslate, formatCurrency } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { memo } from 'react';
 import { A4A_WOOPAYMENTS_SITE_SETUP_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import StatusBadge from 'calypso/a8c-for-agencies/components/step-section-item/status-badge';

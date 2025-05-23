@@ -1,6 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { isEnabled } from '@automattic/calypso-config';
 import { DomainTransferData, DomainTransferForm } from '@automattic/data-stores';
+import { formatCurrency } from '@automattic/number-formatters';
 import { HUNDRED_YEAR_DOMAIN_TRANSFER, useDataLossWarning } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
@@ -8,7 +9,6 @@ import { sprintf } from '@wordpress/i18n';
 import { plus } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { getQueryArg } from '@wordpress/url';
-import { formatCurrency } from 'i18n-calypso';
 import { useCallback, useEffect, useState } from 'react';
 import QueryProducts from 'calypso/components/data/query-products-list';
 import { domainTransfer } from 'calypso/lib/cart-values/cart-items';

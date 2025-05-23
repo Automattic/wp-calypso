@@ -25,6 +25,7 @@
 }
 
 .empty-content__title {
+	@extend .wp-brand-font;
 	color: var(--color-neutral-70);
 	font-size: 34px;
 

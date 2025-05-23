@@ -51,10 +51,20 @@ body.is-section-signup {
 	--color-gray: #50575e;
 	--color-orange: #ff6433;
 
+	--color-link: var(--color-orange);
+	--color-link-dark: var(--color-orange);
+
 	background: var(--color-white);
 	min-height: 100%;
 
 	$login-form-max-width: 327px;
+
+	.components-button {
+		--color-accent: var(--color-orange);
+		--color-accent-60: var(--color-orange);
+
+		font-weight: 600;
+	}
 
 	.masterbar__blaze-pro-nav {
 		display: flex;
@@ -90,6 +100,7 @@ body.is-section-signup {
 
 		@media (max-width: $break-mobile) {
 			display: flex;
+			padding-inline: 24px;
 		}
 
 		.masterbar__login-back-link {
@@ -116,6 +127,7 @@ body.is-section-signup {
 			margin: 0;
 			list-style-type: none;
 			width: 100%;
+			gap: 12px;
 
 			.masterbar__login-back-link {
 				// margin-top: -10px;
@@ -213,9 +225,8 @@ body.is-section-signup {
 			justify-content: center;
 			align-items: center;
 			align-self: stretch;
-			border-radius: 4px;
 			border: 1px solid #ccc;
-			height: 221px;
+			width: 100%;
 			box-sizing: border-box;
 			padding: 32px 24px 16px 24px;
 			position: relative;
@@ -273,29 +284,14 @@ body.is-section-signup {
 		}
 
 		.continue-as-user__change-user-link {
-			color: var(--color-orange);
-			font-family: $inter;
 			font-size: 0.875rem;
-			font-style: normal;
 			font-weight: 500;
-			line-height: 20px;
-			text-decoration: none;
-
-			&:hover {
-				color: var(--color-orange);
-			}
 		}
 
 		.continue-as-user__continue-button {
-			background: var(--color-orange);
-			border-color: var(--color-orange);
-			border-radius: 4px;
-			font-family: $inter;
 			font-size: rem(13px);
 			font-weight: 600;
-			line-height: 14px;
 			margin-top: 24px;
-			padding: 12px 16px;
 			width: 326px;
 		}
 	}
@@ -326,12 +322,9 @@ body.is-section-signup {
 		margin-bottom: 24px;
 
 		.social-buttons__button {
-			--color-accent: var(--color-orange);
-
 			> span {
 				font-family: $inter;
 				font-size: rem(13px);
-				font-weight: 600;
 			}
 
 		}
@@ -425,9 +418,8 @@ body.is-section-signup {
 
 		a.logged-out-form__link-item,
 		a {
-			color: var(--color-orange);
 			padding: 0;
-			text-decoration: none;
+			text-decoration: underline;
 		}
 
 		a.logged-out-form__link-item,
@@ -437,6 +429,14 @@ body.is-section-signup {
 			font-weight: 500;
 			line-height: 25px;
 		}
+	}
+
+	.signup-form__login-link {
+		color: var(--studio-gray-60);
+		font-size: rem(18px);
+		font-weight: 500;
+		line-height: 25px;
+		text-align: center;
 	}
 
 	.login__lost-password-footer {
@@ -461,7 +461,6 @@ body.is-section-signup {
 
 		.form-text-input {
 			border: 1px solid #dddddf;
-			border-radius: 4px;
 
 			&:focus,
 			&:focus-visible,
@@ -493,7 +492,6 @@ body.is-section-signup {
 		.form-button {
 			background: var(--color-orange);
 			border-color: var(--color-orange);
-			border-radius: 4px;
 			color: var(--color-white);
 			font-size: rem(13px);
 			font-weight: 600;
@@ -512,11 +510,6 @@ body.is-section-signup {
 		font-size: rem(18px);
 		font-weight: 500;
 		line-height: 25px;
-
-		a,
-		a:visited {
-			color: var(--color-orange);
-		}
 	}
 
 	.login__lostpassword-subtitle {
@@ -581,7 +574,7 @@ body.is-section-signup {
 		}
 	}
 
-	.wp-login__main.main {
+	.wp-login__main.main:has(.login form.is-blaze-pro) {
 		max-width: unset;
 	}
 
@@ -592,7 +585,6 @@ body.is-section-signup {
 		}
 
 		.login__lost-password-link {
-			color: var(--color-orange);
 			font-family: $sfProText;
 			font-size: rem(18px);
 			font-weight: 500;

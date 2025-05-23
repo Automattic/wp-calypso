@@ -7,15 +7,15 @@ import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
-import type { Field } from '../../types';
 import type { SetSelection } from '../../private-types';
+import type { NormalizedField } from '../../types';
 
 interface DataViewsSelectionCheckboxProps< Item > {
 	selection: string[];
 	onChangeSelection: SetSelection;
 	item: Item;
 	getItemId: ( item: Item ) => string;
-	titleField?: Field< Item >;
+	titleField?: NormalizedField< Item >;
 	disabled: boolean;
 }
 

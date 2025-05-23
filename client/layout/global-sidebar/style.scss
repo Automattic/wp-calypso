@@ -109,7 +109,7 @@ $brand-text: "SF Pro Text", $sans;
 		@include custom-scrollbars-on-hover(transparent, $gray-600);
 		flex: 1;
 		overflow-y: auto;
-		padding-top: 40px;
+		padding-top: 16px;
 
 		.sidebar,
 		.sidebar__menu:not(.is-togglable) {

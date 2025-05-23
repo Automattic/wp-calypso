@@ -1,17 +1,11 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { DomainSuggestion, OnboardActions, OnboardSelect } from '@automattic/data-stores';
 import { ONBOARDING_FLOW, clearStepPersistedState } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs, getQueryArg, getQueryArgs, removeQueryArgs } from '@wordpress/url';
 import { useState, useEffect } from 'react';
-import {
-	useIsPlaygroundEligible,
-	isPlaygroundEligible,
-} from 'calypso/landing/stepper/hooks/use-is-playground-eligible';
-import {
-	isMvpOnboardingExperiment,
-	useMvpOnboardingExperiment,
-} from 'calypso/landing/stepper/hooks/use-mvp-onboarding-experiment';
+import { isMvpOnboardingExperiment } from 'calypso/landing/stepper/hooks/use-mvp-onboarding-experiment';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { pathToUrl } from 'calypso/lib/url';
 import {
@@ -26,13 +20,14 @@ import { useDispatch as useReduxDispatch } from 'calypso/state';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT } from '../../../constants';
 import { useFlowLocale } from '../../../hooks/use-flow-locale';
-import { useMarketplaceThemeProducts } from '../../../hooks/use-marketplace-theme-products';
 import { useQuery } from '../../../hooks/use-query';
 import { ONBOARD_STORE } from '../../../stores';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
 import { recordStepNavigation } from '../../internals/analytics/record-step-navigation';
+import { usePurchasePlanNotification } from '../../internals/hooks/use-purchase-plan-notification';
 import { STEPS } from '../../internals/steps';
-import type { FlowV2, ProvidedDependencies } from '../../internals/types';
+import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
+import type { FlowV2, ProvidedDependencies, SubmitHandler } from '../../internals/types';
 
 const clearUseMyDomainsQueryParams = ( currentStepSlug: string | undefined ) => {
 	const isDomainsStep = currentStepSlug === 'domains';
@@ -50,40 +45,28 @@ const withLocale = ( url: string, locale: string ) => {
 	return locale && locale !== 'en' ? `${ url }/${ locale }` : url;
 };
 
-const onboarding: FlowV2 = {
+function initialize() {
+	const steps = [
+		STEPS.UNIFIED_DOMAINS,
+		STEPS.USE_MY_DOMAIN,
+		STEPS.UNIFIED_PLANS,
+		STEPS.SITE_CREATION_STEP,
+		STEPS.PROCESSING,
+		STEPS.POST_CHECKOUT_ONBOARDING,
+		STEPS.PLAYGROUND,
+	];
+
+	return stepsWithRequiredLogin( steps );
+}
+
+const onboarding: FlowV2< typeof initialize > = {
 	name: ONBOARDING_FLOW,
 	isSignupFlow: true,
 	__experimentalUseBuiltinAuth: true,
-	async initialize() {
-		if ( await isMvpOnboardingExperiment() ) {
-			return stepsWithRequiredLogin( [
-				STEPS.UNIFIED_PLANS,
-				STEPS.SITE_CREATION_STEP,
-				STEPS.PROCESSING,
-				STEPS.POST_CHECKOUT_ONBOARDING,
-			] );
-		}
-
-		const steps = stepsWithRequiredLogin( [
-			STEPS.UNIFIED_DOMAINS,
-			STEPS.USE_MY_DOMAIN,
-			STEPS.UNIFIED_PLANS,
-			STEPS.SITE_CREATION_STEP,
-			STEPS.PROCESSING,
-			STEPS.POST_CHECKOUT_ONBOARDING,
-		] );
-
-		if ( isPlaygroundEligible() ) {
-			steps.push( STEPS.PLAYGROUND );
-		}
-
-		return steps;
-	},
-
+	initialize,
 	useStepNavigation( currentStepSlug, navigate ) {
 		const flowName = this.name;
-		const isPlaygroundEligible = useIsPlaygroundEligible();
-		const [ , isMvpOnboarding ] = useMvpOnboardingExperiment();
+
 		const {
 			setDomain,
 			setDomainCartItem,
@@ -95,9 +78,8 @@ const onboarding: FlowV2 = {
 		} = useDispatch( ONBOARD_STORE ) as OnboardActions;
 		const locale = useFlowLocale();
 
-		const { planCartItem, signupDomainOrigin } = useSelect(
+		const { signupDomainOrigin } = useSelect(
 			( select ) => ( {
-				planCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem(),
 				signupDomainOrigin: ( select( ONBOARD_STORE ) as OnboardSelect ).getSignupDomainOrigin(),
 			} ),
 			[]
@@ -105,23 +87,19 @@ const onboarding: FlowV2 = {
 		const coupon = useQuery().get( 'coupon' );
 
 		const [ useMyDomainTracksEventProps, setUseMyDomainTracksEventProps ] = useState( {} );
-
-		const { selectedMarketplaceProduct } = useMarketplaceThemeProducts();
+		const { setShouldShowNotification } = usePurchasePlanNotification();
 
 		/**
 		 * Returns [destination, backDestination] for the post-checkout destination.
 		 */
-		const getPostCheckoutDestination = (
-			providedDependencies: ProvidedDependencies,
-			isPlaygroundEligible: boolean
-		): [ string, string | null ] => {
+		const getPostCheckoutDestination = async (
+			providedDependencies: ProvidedDependencies
+		): Promise< [ string, string | null ] > => {
 			if ( ! providedDependencies.hasExternalTheme && providedDependencies.hasPluginByGoal ) {
 				return [ `/home/${ providedDependencies.siteSlug }`, null ];
 			}
 
-			const playgroundId = isPlaygroundEligible
-				? getQueryArg( window.location.href, 'playground' )
-				: null;
+			const playgroundId = getQueryArg( window.location.href, 'playground' );
 			if ( playgroundId && providedDependencies.siteSlug ) {
 				return [
 					addQueryArgs( withLocale( '/setup/site-setup/importerPlayground', locale ), {
@@ -133,9 +111,24 @@ const onboarding: FlowV2 = {
 				];
 			}
 
-			if ( isMvpOnboarding ) {
+			/**
+			 * If the dashboard/v2/onboarding feature flag is enabled, we'll redirect the user to the new hosting Dashboard.
+			 * We aren't using the dashboard/v2 FF because it's enabled by default on wpcalypso.json which would break e2e tests.
+			 * Since we're aiming to remove steps after the isMvpOnboarding experiment ends,
+			 * we'll redirect the user to the new Dashboard here.
+			 */
+			if ( isEnabled( 'dashboard/v2/onboarding' ) ) {
 				return [
-					addQueryArgs( `/overview/${ providedDependencies.siteSlug }`, { ref: flowName } ),
+					addQueryArgs( `/v2/sites/${ providedDependencies.siteSlug }`, { ref: flowName } ),
+					addQueryArgs( withLocale( `/setup/${ flowName }/plans`, locale ), {
+						siteSlug: providedDependencies.siteSlug,
+					} ),
+				];
+			}
+
+			if ( await isMvpOnboardingExperiment() ) {
+				return [
+					addQueryArgs( `/home/${ providedDependencies.siteSlug }`, { ref: flowName } ),
 					addQueryArgs( withLocale( `/setup/${ flowName }/plans`, locale ), {
 						siteSlug: providedDependencies.siteSlug,
 					} ),
@@ -151,8 +144,9 @@ const onboarding: FlowV2 = {
 
 		clearUseMyDomainsQueryParams( currentStepSlug );
 
-		const submit = async ( providedDependencies: ProvidedDependencies = {} ) => {
-			switch ( currentStepSlug ) {
+		const submit: SubmitHandler< typeof initialize > = async ( submittedStep ) => {
+			const { slug, providedDependencies } = submittedStep;
+			switch ( slug ) {
 				case 'domains':
 					setSiteUrl( providedDependencies.siteUrl as string );
 					setDomain( providedDependencies.suggestion as DomainSuggestion );
@@ -179,7 +173,7 @@ const onboarding: FlowV2 = {
 							signup_domain_origin: signupDomainOrigin,
 							domain_item: providedDependencies.domainItem,
 						} );
-						return navigate( useMyDomainURL );
+						return navigate( useMyDomainURL as typeof currentStepSlug );
 					}
 
 					return navigate( 'plans' );
@@ -196,7 +190,7 @@ const onboarding: FlowV2 = {
 							step: providedDependencies.mode,
 							initialQuery: providedDependencies.domain,
 						} );
-						return navigate( destination );
+						return navigate( destination as typeof currentStepSlug );
 					}
 
 					// We trigger the event here, because we skip it in the domains step if
@@ -211,7 +205,7 @@ const onboarding: FlowV2 = {
 
 					return navigate( 'plans' );
 				case 'plans': {
-					const cartItems = providedDependencies.cartItems as Array< typeof planCartItem > | null;
+					const cartItems = providedDependencies.cartItems;
 					const [ pickedPlan, ...products ] = cartItems ?? [];
 
 					setPlanCartItem( pickedPlan );
@@ -229,10 +223,7 @@ const onboarding: FlowV2 = {
 					}
 
 					// Make sure to put the rest of products into the cart, e.g. the storage add-ons.
-					setProductCartItems( [
-						...( selectedMarketplaceProduct ? [ selectedMarketplaceProduct ] : [] ),
-						...products.filter( ( product ) => product !== null ),
-					] );
+					setProductCartItems( products.filter( ( product ) => product !== null ) );
 
 					setSignupCompleteFlowName( flowName );
 					return navigate( 'create-site', undefined, false );
@@ -240,47 +231,53 @@ const onboarding: FlowV2 = {
 				case 'create-site':
 					return navigate( 'processing', undefined, true );
 				case 'post-checkout-onboarding':
+					setShouldShowNotification( providedDependencies?.siteId as number );
 					return navigate( 'processing' );
 				case 'processing': {
-					const [ destination, backDestination ] = getPostCheckoutDestination(
-						providedDependencies,
-						isPlaygroundEligible
-					);
+					const [ destination, backDestination ] =
+						await getPostCheckoutDestination( providedDependencies );
+					if ( providedDependencies.processingResult === ProcessingResult.SUCCESS ) {
+						persistSignupDestination( destination );
+						setSignupCompleteFlowName( flowName );
+						setSignupCompleteSlug( providedDependencies.siteSlug );
 
-					persistSignupDestination( destination );
-					setSignupCompleteFlowName( flowName );
-					setSignupCompleteSlug( providedDependencies.siteSlug );
+						if ( providedDependencies.goToCheckout ) {
+							const siteSlug = providedDependencies.siteSlug as string;
 
-					if ( providedDependencies.goToCheckout ) {
-						const siteSlug = providedDependencies.siteSlug as string;
+							/**
+							 * If the user comes from the Playground onboarding flow,
+							 * redirect the user back to Playground to start the import.
+							 */
+							const playgroundId = getQueryArg( window.location.href, 'playground' );
+							const redirectTo: string = playgroundId
+								? addQueryArgs( withLocale( '/setup/site-setup/importerPlayground', locale ), {
+										siteSlug,
+										siteId: providedDependencies.siteId,
+										playground: playgroundId,
+								  } )
+								: addQueryArgs(
+										withLocale( '/setup/onboarding/post-checkout-onboarding', locale ),
+										{
+											siteSlug,
+										}
+								  );
 
-						/**
-						 * If the user comes from the Playground onboarding flow,
-						 * redirect the user back to Playground to start the import.
-						 */
-						const playgroundId = getQueryArg( window.location.href, 'playground' );
-						const redirectTo: string = playgroundId
-							? addQueryArgs( withLocale( '/setup/site-setup/importerPlayground', locale ), {
-									siteSlug,
-									siteId: providedDependencies.siteId,
-									playground: playgroundId,
-							  } )
-							: addQueryArgs( withLocale( '/setup/onboarding/post-checkout-onboarding', locale ), {
-									siteSlug,
-							  } );
-
-						// replace the location to delete processing step from history.
-						window.location.replace(
-							addQueryArgs( `/checkout/${ encodeURIComponent( siteSlug ) }`, {
-								redirect_to: redirectTo,
-								signup: 1,
-								checkoutBackUrl: pathToUrl( backDestination ?? '' ),
-								coupon,
-							} )
-						);
+							// replace the location to delete processing step from history.
+							window.location.replace(
+								addQueryArgs( `/checkout/${ encodeURIComponent( siteSlug ) }`, {
+									redirect_to: redirectTo,
+									signup: 1,
+									checkoutBackUrl: pathToUrl( backDestination ?? '' ),
+									coupon,
+								} )
+							);
+						} else {
+							// replace the location to delete processing step from history.
+							window.location.replace( destination );
+						}
 					} else {
-						// replace the location to delete processing step from history.
-						window.location.replace( destination );
+						// TODO: Handle errors
+						// navigate( 'error' );
 					}
 					return;
 				}

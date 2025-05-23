@@ -32,6 +32,12 @@
 			gap: 4px;
 			color: var( --studio-gray-70 );
 
+			&:disabled {
+				pointer-events: none;
+				color: var( --studio-gray-30 );
+				border-color: var( --studio-gray-30 );
+			}
+
 			&:hover {
 				border: 1px solid var( --studio-gray-20 );
 				cursor: pointer;

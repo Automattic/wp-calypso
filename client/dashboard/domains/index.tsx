@@ -1,12 +1,13 @@
+import { DataViews, filterSortAndPaginate, View } from '@automattic/dataviews';
 import { useQuery } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
-import { DataViews, filterSortAndPaginate, View } from '@wordpress/dataviews';
 import { dateI18n } from '@wordpress/date';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
 import { domainsQuery } from '../app/queries';
-import DataViewsCard from '../dataviews-card';
-import PageLayout from '../page-layout';
+import DataViewsCard from '../components/dataviews-card';
+import { PageHeader } from '../components/page-header';
+import PageLayout from '../components/page-layout';
 import type { Domain } from '../data/types';
 
 const fields = [
@@ -100,11 +101,15 @@ function Domains() {
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate( domains, view, fields );
 	return (
 		<PageLayout
-			title={ __( 'Domains' ) }
-			actions={
-				<Button variant="primary" __next40pxDefaultSize>
-					{ __( 'Add New Domain' ) }
-				</Button>
+			header={
+				<PageHeader
+					title={ __( 'Domains' ) }
+					actions={
+						<Button variant="primary" __next40pxDefaultSize>
+							{ __( 'Add New Domain' ) }
+						</Button>
+					}
+				/>
 			}
 		>
 			<DataViewsCard>

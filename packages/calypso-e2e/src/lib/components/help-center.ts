@@ -1,4 +1,3 @@
-import { ZENDESK_STAGING_SUPPORT_CHAT_KEY } from '@automattic/zendesk-client/src/constants';
 import { Locator, Page } from 'playwright';
 
 export type ResultsCategory = 'Docs' | 'Links';
@@ -229,7 +228,8 @@ export class HelpCenterComponent {
 				}
 			},
 			{
-				ZENDESK_STAGING_SUPPORT_CHAT_KEY,
+				// This should be imported from `@automattic/zendesk-client` but the import has problems with the `@automattic/calypso-config` dependency.
+				ZENDESK_STAGING_SUPPORT_CHAT_KEY: '715f17a8-4a28-4a7f-8447-0ef8f06c70d7',
 			}
 		);
 	}

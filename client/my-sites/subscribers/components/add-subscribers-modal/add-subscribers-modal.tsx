@@ -3,9 +3,12 @@ import { isEnabled } from '@automattic/calypso-config';
 import { FEATURE_UNLIMITED_SUBSCRIBERS } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Gridicon, FlowQuestion } from '@automattic/components';
-import { AddSubscriberForm, UploadSubscribersForm } from '@automattic/subscriber';
-import { useHasStaleImportJobs } from '@automattic/subscriber/src/hooks/use-has-stale-import-jobs';
-import { useInProgressState } from '@automattic/subscriber/src/hooks/use-in-progress-state';
+import {
+	AddSubscriberForm,
+	UploadSubscribersForm,
+	useHasStaleImportJobs,
+	useInProgressState,
+} from '@automattic/subscriber';
 import { Modal, __experimentalVStack as VStack } from '@wordpress/components';
 import { useEffect, useState } from '@wordpress/element';
 import { copy, upload, reusableBlock } from '@wordpress/icons';
@@ -13,6 +16,7 @@ import { useTranslate } from 'i18n-calypso';
 import { LoadingBar } from 'calypso/components/loading-bar';
 import Notice from 'calypso/components/notice';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import { useCompleteImportSubscribersTask } from 'calypso/my-sites/subscribers/hooks/use-complete-import-subscribers-task';
 import { isBusinessTrialSite } from 'calypso/sites-dashboard/utils';
 import { useSelector } from 'calypso/state';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
@@ -41,6 +45,7 @@ const AddSubscribersModal = ( {
 		siteHasFeature( state, site?.ID, FEATURE_UNLIMITED_SUBSCRIBERS )
 	);
 	const isJetpack = useSelector( ( state: AppState ) => isJetpackSite( state, site?.ID ) );
+	const completeImportSubscribersTask = useCompleteImportSubscribersTask();
 	// There is also a separate `importers/substack` flag but that refers to a separate Substack content importer.
 	// This flag refers to Substack free/paid subscriber + content importer.
 	const isSubstackSubscriberImporterEnabled = isEnabled( 'importers/newsletter' );
@@ -56,7 +61,12 @@ const AddSubscribersModal = ( {
 	} );
 
 	const [ isUploading, setIsUploading ] = useState( false );
-	const onImportStarted = ( hasFile: boolean ) => setIsUploading( hasFile );
+	const onImportStarted = ( hasFile: boolean ) => {
+		// Mark this task complete on starting the import, as relying on completion is unreliable
+		// since we prompt users to navigate elsewhere while it completes.
+		completeImportSubscribersTask();
+		setIsUploading( hasFile );
+	};
 
 	const isImportInProgress = useInProgressState();
 	const hasStaleImportJobs = useHasStaleImportJobs();

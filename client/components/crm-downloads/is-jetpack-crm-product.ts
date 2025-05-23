@@ -3,7 +3,11 @@
  * @param keyOrSlug string
  * @returns boolean Returns true if keyOrSlug looks like a Jetpack CRM product license key or slug, false if not
  */
-export default function isJetpackCrmProduct( keyOrSlug: string ) {
+export default function isJetpackCrmProduct( keyOrSlug?: string ) {
+	if ( ! keyOrSlug ) {
+		return false;
+	}
+
 	return (
 		keyOrSlug.startsWith( 'jetpack-complete' ) ||
 		keyOrSlug.startsWith( 'jetpack_complete' ) ||

@@ -4,7 +4,7 @@ import 'calypso/state/data-layer/wpcom/sites/launch';
 import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import isSiteBigSkyTrial from 'calypso/state/sites/plans/selectors/is-site-big-sky-trial';
-import { getSiteSlug, isCurrentPlanPaid, getSiteOption } from 'calypso/state/sites/selectors';
+import { getSiteSlug, isCurrentPlanPaid } from 'calypso/state/sites/selectors';
 import { isSiteOnHostingTrial } from '../plans/selectors';
 
 export const launchSite = ( siteId ) => ( {
@@ -39,12 +39,11 @@ export const launchSiteOrRedirectToLaunchSignupFlow =
 			return;
 		}
 
-		const isAnchorPodcast = getSiteOption( getState(), siteId, 'anchor_podcast' );
 		const isPaidWithDomain =
 			isCurrentPlanPaid( getState(), siteId ) &&
 			getDomainsBySiteId( getState(), siteId ).length > 1;
 
-		if ( isPaidWithDomain || isAnchorPodcast || isSiteOnHostingTrial( getState(), siteId ) ) {
+		if ( isPaidWithDomain || isSiteOnHostingTrial( getState(), siteId ) ) {
 			dispatch( launchSite( siteId ) );
 			return;
 		}

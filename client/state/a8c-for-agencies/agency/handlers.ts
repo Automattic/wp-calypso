@@ -2,7 +2,7 @@ import { AnyAction } from 'redux';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { noRetry } from 'calypso/state/data-layer/wpcom-http/pipeline/retry-on-failure/policies';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
-import { APIError, Agency } from '../types';
+import { APIError, Agency, UserBillingType } from '../types';
 import { JETPACK_GET_AGENCIES_REQUEST } from './action-types';
 import { receiveAgencies, receiveAgenciesError, setAgencyClientUser } from './actions';
 
@@ -27,10 +27,15 @@ function fetchAgenciesHandler( action: AnyAction ): AnyAction {
 
 function receiveAgenciesHandler(
 	_action: AnyAction,
-	data: Agency[] | { is_client_user: boolean }
+	data: Agency[] | { is_client_user: boolean; billing_type: UserBillingType }
 ) {
 	if ( 'is_client_user' in data ) {
-		return setAgencyClientUser( data.is_client_user );
+		return setAgencyClientUser( {
+			isClientUser: data.is_client_user,
+			billingType: [ 'legacy', 'billingdragon' ].includes( data.billing_type )
+				? data.billing_type
+				: 'legacy',
+		} );
 	}
 	return receiveAgencies( data );
 }

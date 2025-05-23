@@ -23,9 +23,7 @@
       });
 
       // get information about the currently logged in user (via cookie)
-      wpcom
-      .me()
-      .get(function(err, me){
+      wpcom.req.get('/me', function(err, me){
         if (err) throw err;
         console.log(me);
 

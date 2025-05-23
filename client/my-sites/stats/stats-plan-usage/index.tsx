@@ -1,5 +1,6 @@
+import { formatNumber } from '@automattic/number-formatters';
 import clsx from 'clsx';
-import { useTranslate, numberFormat } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import usePlanUsageQuery from 'calypso/my-sites/stats/hooks/use-plan-usage-query';
 
@@ -91,8 +92,8 @@ const PlanUsage: React.FC< PlanUsageProps > = ( {
 				<div key="usage">
 					{ translate( '%(numberOfUsage)s / %(numberOfLimit)s views', {
 						args: {
-							numberOfUsage: numberFormat( usage ),
-							numberOfLimit: typeof limit === 'number' ? numberFormat( limit ) : '-',
+							numberOfUsage: formatNumber( usage ),
+							numberOfLimit: typeof limit === 'number' ? formatNumber( limit ) : '-',
 						},
 					} ) }
 				</div>

@@ -16,6 +16,7 @@ type Props = {
 	title?: string;
 	preferenceName?: string;
 	hideCloseButton?: boolean;
+	isFullWidth?: boolean;
 };
 
 export default function LayoutBanner( {
@@ -27,6 +28,7 @@ export default function LayoutBanner( {
 	level = 'success',
 	preferenceName,
 	hideCloseButton = false,
+	isFullWidth = false,
 }: Props ) {
 	const dispatch = useDispatch();
 
@@ -34,7 +36,9 @@ export default function LayoutBanner( {
 		preferenceName ? getPreference( state, preferenceName ) : false
 	);
 
-	const wrapperClass = clsx( className, 'a4a-layout__banner' );
+	const wrapperClass = clsx( className, 'a4a-layout__banner', {
+		'a4a-layout__banner--full-width': isFullWidth,
+	} );
 
 	const handleClose = () => {
 		if ( preferenceName ) {

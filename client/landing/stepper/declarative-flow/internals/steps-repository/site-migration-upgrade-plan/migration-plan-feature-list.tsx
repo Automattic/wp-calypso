@@ -4,7 +4,8 @@ import {
 	PLAN_BUSINESS_2_YEARS,
 } from '@automattic/calypso-products';
 import { JetpackLogo } from '@automattic/components';
-import { numberFormat, useTranslate } from 'i18n-calypso';
+import { formatNumber } from '@automattic/number-formatters';
+import { useTranslate } from 'i18n-calypso';
 import type { PlanSlug } from '@automattic/calypso-products';
 import type { PricingMetaForGridPlan } from '@automattic/data-stores';
 import type { ReactNode } from 'react';
@@ -47,7 +48,7 @@ export const MigrationPlanFeatureList = ( {
 		// translators: %(percentage)s is the percentage of annual savings formatted like '50%'
 		translate( '{{strong}}%(percentage)s{{/strong}} annual savings', {
 			args: {
-				percentage: numberFormat( savingsDecimal, {
+				percentage: formatNumber( savingsDecimal, {
 					numberFormatOptions: { style: 'percent' },
 				} ),
 			},
@@ -72,7 +73,7 @@ export const MigrationPlanFeatureList = ( {
 			[ PLAN_BUSINESS ]: [
 				translate( '{{strong}}%(percentage)s off{{/strong}} your first year', {
 					args: {
-						percentage: numberFormat( 0.5, {
+						percentage: formatNumber( 0.5, {
 							numberFormatOptions: { style: 'percent' },
 						} ),
 						comment: 'percentage like 50% off',
@@ -97,7 +98,7 @@ export const MigrationPlanFeatureList = ( {
 			[ PLAN_BUSINESS_2_YEARS ]: [
 				translate( '{{strong}}%(percentage)s off{{/strong}} your first two years', {
 					args: {
-						percentage: numberFormat( 0.5, {
+						percentage: formatNumber( 0.5, {
 							numberFormatOptions: { style: 'percent' },
 						} ),
 						comment: 'percentage like 50% off',

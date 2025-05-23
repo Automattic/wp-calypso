@@ -600,6 +600,10 @@ html {
 		padding-inline: 0;
 	}
 
+	.hosting-dashboard-layout__top-wrapper > * {
+		max-width: none;
+	}
+
 	.redesigned-a8c-table .dataviews-view-table tr {
 
 		td:first-child,

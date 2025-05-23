@@ -1,9 +1,10 @@
 import { Badge, Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { formatCurrency } from '@automattic/number-formatters';
 import { HUNDRED_YEAR_DOMAIN_FLOW } from '@automattic/onboarding';
 import { HTTPS_SSL } from '@automattic/urls';
 import clsx from 'clsx';
-import { localize, formatCurrency } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import { get, includes } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';

@@ -10,7 +10,7 @@ import {
 	isPro,
 	getFeatureByKey,
 } from '@automattic/calypso-products';
-import { formatCurrency } from 'i18n-calypso';
+import { formatCurrency } from '@automattic/number-formatters';
 import { useQueryProductsList } from 'calypso/components/data/query-products-list';
 import { useSelector } from 'calypso/state';
 import {

@@ -5,7 +5,7 @@ import HorizontalBarListItem from '../horizontal-bar-grid-item';
 import StatsCard from '../stats-card';
 import './stories.scss';
 
-export default { title: 'packages/components/Horizontal bar list' };
+export default { title: 'Unaudited/Horizontal bar list' };
 
 const handleClick = action( 'click' );
 

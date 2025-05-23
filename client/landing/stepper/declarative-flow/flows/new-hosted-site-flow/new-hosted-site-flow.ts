@@ -21,62 +21,66 @@ import { ONBOARD_STORE } from '../../../stores';
 import { getCurrentQueryParams } from '../../../utils/get-current-query-params';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
 import { STEPS } from '../../internals/steps';
-import type { FlowV2, ProvidedDependencies, StepperStep } from '../../internals/types';
+import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
+import type { FlowV2, SubmitHandler } from '../../internals/types';
 import type { DomainSuggestion, OnboardActions, OnboardSelect } from '@automattic/data-stores';
+import type { Store } from 'redux';
 
-const hosting: FlowV2 = {
+async function initialize( reduxStore: Store ) {
+	const { resetOnboardStore, setPlanCartItem } = dispatch( ONBOARD_STORE ) as OnboardActions;
+
+	await resetOnboardStore();
+
+	const queryParams = getCurrentQueryParams();
+	const showDomainStep = queryParams.has( 'showDomainStep' );
+	const productSlug = queryParams.get( 'plan' );
+
+	const eligibleForFreeHostingTrial = isUserEligibleForFreeHostingTrial( reduxStore.getState() );
+
+	const steps = [];
+
+	if ( showDomainStep ) {
+		steps.push( STEPS.UNIFIED_DOMAINS );
+	}
+
+	const utmSource = queryParams.get( 'utm_source' );
+
+	if ( ! productSlug || ! isDotComPlan( { product_slug: productSlug } ) ) {
+		steps.push( STEPS.UNIFIED_PLANS, STEPS.TRIAL_ACKNOWLEDGE );
+	} else if ( ! isFreeHostingTrial( productSlug ) ) {
+		await setPlanCartItem( {
+			product_slug: productSlug,
+			extra: {
+				...( utmSource && {
+					hideProductVariants: utmSource === 'wordcamp',
+				} ),
+			},
+		} );
+	} else if ( eligibleForFreeHostingTrial ) {
+		await setPlanCartItem( {
+			product_slug: productSlug,
+			extra: {
+				...( utmSource && {
+					hideProductVariants: utmSource === 'wordcamp',
+				} ),
+			},
+		} );
+
+		steps.push( STEPS.TRIAL_ACKNOWLEDGE, STEPS.UNIFIED_PLANS );
+	} else {
+		steps.push( STEPS.UNIFIED_PLANS );
+	}
+
+	steps.push( STEPS.SITE_CREATION_STEP, STEPS.PROCESSING );
+
+	return stepsWithRequiredLogin( steps );
+}
+
+const hosting: FlowV2< typeof initialize > = {
 	name: NEW_HOSTED_SITE_FLOW,
 	__experimentalUseBuiltinAuth: true,
 	isSignupFlow: true,
-	async initialize( reduxStore ) {
-		const { resetOnboardStore, setPlanCartItem } = dispatch( ONBOARD_STORE ) as OnboardActions;
-
-		await resetOnboardStore();
-
-		const queryParams = getCurrentQueryParams();
-		const showDomainStep = queryParams.has( 'showDomainStep' );
-		const productSlug = queryParams.get( 'plan' );
-
-		const eligibleForFreeHostingTrial = isUserEligibleForFreeHostingTrial( reduxStore.getState() );
-
-		const steps: StepperStep[] = [];
-
-		if ( showDomainStep ) {
-			steps.push( STEPS.UNIFIED_DOMAINS );
-		}
-
-		const utmSource = queryParams.get( 'utm_source' );
-
-		if ( ! productSlug || ! isDotComPlan( { product_slug: productSlug } ) ) {
-			steps.push( STEPS.UNIFIED_PLANS, STEPS.TRIAL_ACKNOWLEDGE );
-		} else if ( ! isFreeHostingTrial( productSlug ) ) {
-			await setPlanCartItem( {
-				product_slug: productSlug,
-				extra: {
-					...( utmSource && {
-						hideProductVariants: utmSource === 'wordcamp',
-					} ),
-				},
-			} );
-		} else if ( eligibleForFreeHostingTrial ) {
-			await setPlanCartItem( {
-				product_slug: productSlug,
-				extra: {
-					...( utmSource && {
-						hideProductVariants: utmSource === 'wordcamp',
-					} ),
-				},
-			} );
-
-			steps.push( STEPS.TRIAL_ACKNOWLEDGE, STEPS.UNIFIED_PLANS );
-		} else {
-			steps.push( STEPS.UNIFIED_PLANS );
-		}
-
-		steps.push( STEPS.SITE_CREATION_STEP, STEPS.PROCESSING );
-
-		return stepsWithRequiredLogin( steps );
-	},
+	initialize,
 	useStepNavigation( _currentStepSlug, navigate ) {
 		const {
 			setDomain,
@@ -116,12 +120,10 @@ const hosting: FlowV2 = {
 			}
 		};
 
-		const submit = ( providedDependencies: ProvidedDependencies = {} ) => {
-			if ( providedDependencies.siteId ) {
-				setSignupCompleteSiteID( providedDependencies.siteId );
-			}
+		const submit: SubmitHandler< typeof initialize > = ( submittedStep ) => {
+			const { slug, providedDependencies } = submittedStep;
 
-			switch ( _currentStepSlug ) {
+			switch ( slug ) {
 				case STEPS.UNIFIED_DOMAINS.slug: {
 					setSiteUrl( providedDependencies.siteUrl as string );
 					setDomain( providedDependencies.suggestion as DomainSuggestion );
@@ -136,7 +138,7 @@ const hosting: FlowV2 = {
 					return navigate( STEPS.UNIFIED_PLANS.slug );
 				}
 				case STEPS.UNIFIED_PLANS.slug: {
-					const cartItems = providedDependencies.cartItems as Array< typeof planCartItem > | null;
+					const cartItems = providedDependencies.cartItems;
 					const [ pickedPlan, ...extraProducts ] = cartItems ?? [];
 
 					if ( ! pickedPlan ) {
@@ -171,46 +173,52 @@ const hosting: FlowV2 = {
 					return navigate( STEPS.PROCESSING.slug );
 
 				case STEPS.PROCESSING.slug: {
-					const siteId = providedDependencies.siteId || getSignupCompleteSiteID();
-					const siteSlug = providedDependencies.siteSlug || getSignupCompleteSlug();
-					const destinationParams: Record< string, string > = {
-						siteId,
-					};
-					if ( studioSiteId ) {
-						destinationParams[ 'redirect_to' ] = addQueryArgs( `/home/${ siteId }`, {
-							studioSiteId,
-						} );
-					} else if ( isWooPartner ) {
-						// For partners, we'll redirect to the WooCommerce admin page
-						destinationParams[
-							'redirect_to'
-						] = `https://${ siteSlug }/wp-admin/admin.php?page=wc-admin`;
-					}
-					// Purchasing Business or Commerce plans will trigger an atomic transfer, so go to stepper flow where we wait for it to complete.
-					const destination = addQueryArgs( '/setup/transferring-hosted-site', destinationParams );
-
-					// If the product is a free trial, record the trial start event for ad tracking.
-					if ( planCartItem && isFreeHostingTrial( planCartItem?.product_slug ) ) {
-						recordFreeHostingTrialStarted( flowName );
-					}
-
-					if ( providedDependencies.goToCheckout ) {
-						persistSignupDestination( destination );
-						setSignupCompleteSlug( providedDependencies?.siteSlug );
-						setSignupCompleteFlowName( flowName );
-
-						couponCode && resetCouponCode();
-						return window.location.assign(
-							addQueryArgs(
-								`/checkout/${ encodeURIComponent(
-									( providedDependencies?.siteSlug as string ) ?? ''
-								) }`,
-								{ redirect_to: destination, coupon: couponCode }
-							)
+					if ( providedDependencies.processingResult === ProcessingResult.SUCCESS ) {
+						const siteId = providedDependencies.siteId || getSignupCompleteSiteID();
+						setSignupCompleteSiteID( providedDependencies.siteId );
+						const siteSlug = providedDependencies.siteSlug || getSignupCompleteSlug();
+						const destinationParams: Record< string, string > = {
+							siteId,
+						};
+						if ( studioSiteId ) {
+							destinationParams[ 'redirect_to' ] = addQueryArgs( `/home/${ siteId }`, {
+								studioSiteId,
+							} );
+						} else if ( isWooPartner ) {
+							// For partners, we'll redirect to the WooCommerce admin page
+							destinationParams[
+								'redirect_to'
+							] = `https://${ siteSlug }/wp-admin/admin.php?page=wc-admin`;
+						}
+						// Purchasing Business or Commerce plans will trigger an atomic transfer, so go to stepper flow where we wait for it to complete.
+						const destination = addQueryArgs(
+							'/setup/transferring-hosted-site',
+							destinationParams
 						);
-					}
 
-					return navigate( STEPS.UNIFIED_PLANS.slug );
+						// If the product is a free trial, record the trial start event for ad tracking.
+						if ( planCartItem && isFreeHostingTrial( planCartItem?.product_slug ) ) {
+							recordFreeHostingTrialStarted( flowName );
+						}
+
+						if ( providedDependencies.goToCheckout ) {
+							persistSignupDestination( destination );
+							setSignupCompleteSlug( providedDependencies?.siteSlug );
+							setSignupCompleteFlowName( flowName );
+
+							couponCode && resetCouponCode();
+							return window.location.assign(
+								addQueryArgs(
+									`/checkout/${ encodeURIComponent(
+										( providedDependencies?.siteSlug as string ) ?? ''
+									) }`,
+									{ redirect_to: destination, coupon: couponCode }
+								)
+							);
+						}
+
+						return navigate( STEPS.UNIFIED_PLANS.slug );
+					}
 				}
 			}
 		};

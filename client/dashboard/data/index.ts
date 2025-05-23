@@ -1,4 +1,5 @@
 import wpcom from 'calypso/lib/wp';
+import { SITE_FIELDS, SITE_OPTIONS } from './constants';
 import type {
 	Domain,
 	Email,
@@ -10,14 +11,13 @@ import type {
 	Profile,
 	TwoStep,
 	EngagementStatsDataPoint,
-	SiteDomain,
+	BasicMetricsData,
+	SiteSettings,
+	UrlPerformanceInsights,
 } from './types';
 
 export const fetchProfile = async (): Promise< Profile > => {
-	return await wpcom.req.get( {
-		path: '/me/settings?http_envelope=1',
-		apiNamespace: 'rest/v1.1',
-	} );
+	return await wpcom.req.get( '/me/settings' );
 };
 
 export const updateProfile = async ( data: Partial< Profile > ) => {
@@ -27,64 +27,38 @@ export const updateProfile = async ( data: Partial< Profile > ) => {
 			delete data[ key as keyof Profile ];
 		}
 	}
-	return await wpcom.req.post( {
-		path: '/me/settings?http_envelope=1',
-		apiNamespace: 'rest/v1.1',
-		body: data,
-	} );
+	return await wpcom.req.post( '/me/settings', data );
 };
 
-const SITE_FIELDS = [
-	'ID',
-	'URL',
-	'name',
-	'icon',
-	'subscribers_count',
-	'plan',
-	'active_modules',
-	'is_deleted',
-	'is_coming_soon',
-	'is_private',
-	'launch_status',
-	'site_migration',
-	'options',
-	'site_owner',
-	'jetpack',
-	'jetpack_modules',
-].join( ',' );
+const JOINED_SITE_FIELDS = SITE_FIELDS.join( ',' );
+const JOINED_SITE_OPTIONS = SITE_OPTIONS.join( ',' );
 
 export const fetchSites = async (): Promise< Site[] > => {
-	return (
-		await wpcom.req.get(
-			{
-				path: '/me/sites?http_envelope=1',
-				apiNamespace: 'rest/v1.2',
-			},
-			{
-				site_visibility: 'all',
-				include_domain_only: 'true',
-				site_activity: 'active',
-				fields: SITE_FIELDS,
-			}
-		)
-	).sites;
+	const { sites } = await wpcom.req.get(
+		{
+			path: '/me/sites',
+			apiVersion: '1.2',
+		},
+		{
+			site_visibility: 'all',
+			include_domain_only: 'true',
+			site_activity: 'active',
+			fields: JOINED_SITE_FIELDS,
+			options: JOINED_SITE_OPTIONS,
+		}
+	);
+	return sites;
 };
 
-export const fetchSite = async ( id: string ): Promise< Site > => {
+export const fetchSite = async ( siteIdOrSlug: string ): Promise< Site > => {
 	return await wpcom.req.get(
-		{
-			path: `/sites/${ id }?http_envelope=1`,
-			apiNamespace: 'rest/v1.1',
-		},
-		{ fields: SITE_FIELDS }
+		{ path: `/sites/${ siteIdOrSlug }` },
+		{ fields: JOINED_SITE_FIELDS, options: JOINED_SITE_OPTIONS }
 	);
 };
 
-export const fetchSiteMediaStorage = async ( id: string ): Promise< MediaStorage > => {
-	const mediaStorage = await wpcom.req.get( {
-		path: `/sites/${ id }/media-storage`,
-		apiVersion: '1.1',
-	} );
+export const fetchSiteMediaStorage = async ( siteIdOrSlug: string ): Promise< MediaStorage > => {
+	const mediaStorage = await wpcom.req.get( `/sites/${ siteIdOrSlug }/media-storage` );
 	return {
 		maxStorageBytesFromAddOns: Number( mediaStorage.max_storage_bytes_from_add_ons ),
 		maxStorageBytes: Number( mediaStorage.max_storage_bytes ),
@@ -113,9 +87,29 @@ export const fetchPHPVersion = async ( id: string ): Promise< string | undefined
 	} );
 };
 
-export const fetchCurrentPlan = async ( id: string ): Promise< Plan > => {
+export const fetchWordPressVersion = async ( siteIdOrSlug: string ): Promise< string > => {
+	return wpcom.req.get( {
+		path: `/sites/${ siteIdOrSlug }/hosting/wp-version`,
+		apiNamespace: 'wpcom/v2',
+	} );
+};
+
+export const updateWordPressVersion = async (
+	siteIdOrSlug: string,
+	version: string
+): Promise< void > => {
+	return wpcom.req.post(
+		{
+			path: `/sites/${ siteIdOrSlug }/hosting/wp-version`,
+			apiNamespace: 'wpcom/v2',
+		},
+		{ version }
+	);
+};
+
+export const fetchCurrentPlan = async ( siteIdOrSlug: string ): Promise< Plan > => {
 	const plans: Record< string, Plan > = await wpcom.req.get( {
-		path: `/sites/${ id }/plans`,
+		path: `/sites/${ siteIdOrSlug }/plans`,
 		apiVersion: '1.3',
 	} );
 	const plan = Object.values( plans ).find( ( plan ) => plan.current_plan );
@@ -125,15 +119,12 @@ export const fetchCurrentPlan = async ( id: string ): Promise< Plan > => {
 	return plan;
 };
 
-export const fetchSiteEngagementStats = async ( id: string ) => {
-	const response = await wpcom.req.get(
-		{ path: `/sites/${ id }/stats/visits` },
-		{
-			unit: 'day',
-			quantity: 14,
-			stat_fields: [ 'visitors', 'views', 'likes', 'comments' ].join( ',' ),
-		}
-	);
+export const fetchSiteEngagementStats = async ( siteIdOrSlug: string ) => {
+	const response = await wpcom.req.get( `/sites/${ siteIdOrSlug }/stats/visits`, {
+		unit: 'day',
+		quantity: 14,
+		stat_fields: [ 'visitors', 'views', 'likes', 'comments' ].join( ',' ),
+	} );
 	// We need to normalize the returned data. We ask for 14 days of data (quantity:14)
 	// and we get a response with an array of data like: `[ '2025-04-13', 1, 3, 0, 0 ]`.
 	// Each number in the response is referring to the order of the field provided in `stat_fields`.
@@ -158,30 +149,8 @@ export const fetchSiteEngagementStats = async ( id: string ) => {
 };
 
 export const fetchDomains = async (): Promise< Domain[] > => {
-	return (
-		await wpcom.req.get(
-			{ path: '/all-domains?http_envelope=1' },
-			{ no_wpcom: true, resolve_status: true }
-		)
-	).domains;
-};
-
-export const fetchSiteDomains = async ( id: string ): Promise< { domains: SiteDomain[] } > => {
-	try {
-		const domains = await wpcom.req.get(
-			{ path: `/sites/${ id }/domains` },
-			{ apiVersion: '1.2' }
-		);
-		return domains;
-	} catch ( error ) {
-		// TODO: check how to properly fetch for all sites..
-		return { domains: [] };
-	}
-};
-
-export const fetchSitePrimaryDomain = async ( id: string ): Promise< SiteDomain | undefined > => {
-	const { domains } = await fetchSiteDomains( id );
-	return domains.find( ( domain: SiteDomain ) => domain.primary_domain );
+	return ( await wpcom.req.get( '/all-domains', { no_wpcom: true, resolve_status: true } ) )
+		.domains;
 };
 
 export const EMAIL_DATA: Email[] = [
@@ -309,12 +278,96 @@ export const fetchEmail = ( id: string ): Promise< Email | undefined > => {
 };
 
 export const fetchUser = async (): Promise< User > => {
-	return await wpcom.me().get();
+	return wpcom.req.get( '/me' );
 };
 
 export const fetchTwoStep = async (): Promise< TwoStep > => {
-	return wpcom.req.get( {
-		path: '/me/two-step?http_envelope=1',
-		apiNamespace: 'rest/v1.1',
+	return wpcom.req.get( '/me/two-step' );
+};
+
+export const fetchSiteSettings = async ( siteIdOrSlug: string ): Promise< SiteSettings > => {
+	const { settings } = await wpcom.req.get( {
+		path: `/sites/${ siteIdOrSlug }/settings`,
+		apiVersion: '1.4',
 	} );
+	return fromRawSiteSettings( settings );
+};
+
+export const updateSiteSettings = async ( siteIdOrSlug: string, data: Partial< SiteSettings > ) => {
+	const { updated } = await wpcom.req.post(
+		{
+			path: `/sites/${ siteIdOrSlug }/settings`,
+			apiVersion: '1.4',
+		},
+		toRawSiteSettings( data )
+	);
+	return fromRawSiteSettings( updated );
+};
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function fromRawSiteSettings( settings: any ): SiteSettings {
+	const blog_public = Number( settings.blog_public );
+	const wpcom_coming_soon = Number( settings.wpcom_public_coming_soon );
+	const wpcom_public_coming_soon = Number( settings.wpcom_public_coming_soon );
+
+	if ( wpcom_coming_soon === 1 || wpcom_public_coming_soon === 1 ) {
+		settings.wpcom_site_visibility = 'coming-soon';
+	} else if ( blog_public === -1 ) {
+		settings.wpcom_site_visibility = 'private';
+	} else {
+		settings.wpcom_site_visibility = 'public';
+	}
+	return settings;
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function toRawSiteSettings( settings: Partial< SiteSettings > ): any {
+	const rawSettings = settings as any; // eslint-disable-line @typescript-eslint/no-explicit-any
+
+	const { wpcom_site_visibility } = settings;
+
+	if ( wpcom_site_visibility !== undefined ) {
+		if ( wpcom_site_visibility === 'coming-soon' ) {
+			rawSettings.blog_public = 0;
+			rawSettings.wpcom_public_coming_soon = 1;
+		} else if ( wpcom_site_visibility === 'private' ) {
+			rawSettings.blog_public = -1;
+			rawSettings.wpcom_public_coming_soon = 0;
+		} else {
+			rawSettings.blog_public = 1;
+			rawSettings.wpcom_public_coming_soon = 0;
+		}
+	}
+	return rawSettings;
+}
+
+export const restoreSitePlanSoftware = async ( siteIdOrSlug: string ) => {
+	return wpcom.req.post( {
+		path: `/sites/${ siteIdOrSlug }/hosting/restore-plan-software`,
+		apiNamespace: 'wpcom/v2',
+	} );
+};
+
+export const fetchBasicMetrics = async ( url: string ): Promise< BasicMetricsData > => {
+	return wpcom.req.get(
+		{
+			path: '/site-profiler/metrics/basic',
+			apiNamespace: 'wpcom/v2',
+		},
+		// Important: advance=1 is needed to get the `token` and request advanced metrics.
+		{ url, advance: '1' }
+	);
+};
+
+export const fetchPerformanceInsights = async (
+	url: string,
+	token: string
+): Promise< UrlPerformanceInsights > => {
+	return wpcom.req.get(
+		{
+			path: '/site-profiler/metrics/advanced/insights',
+			apiNamespace: 'wpcom/v2',
+		},
+		{ url, advance: '1', hash: token }
+	);
 };

@@ -7,9 +7,9 @@
 
 		"noEmit": true,
 
-		"lib": [ "ES2022", "DOM", "DOM.Iterable" ],
+		"lib": [ "ES2024", "DOM", "DOM.Iterable" ],
 		"module": "ES2022",
-		"target": "ES2022",
+		"target": "ES2024",
 		"esModuleInterop": true,
 		"jsx": "react-jsx",
 		"allowJs": true,

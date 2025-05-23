@@ -1,6 +1,7 @@
 import { Button } from '@automattic/components';
+import { formatCurrency } from '@automattic/number-formatters';
 import clsx from 'clsx';
-import { formatCurrency, useTranslate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { handleRenewNowClick, getRenewalPrice } from 'calypso/lib/purchases';
 import { useDispatch } from 'calypso/state';
 import type { SiteDetails } from '@automattic/data-stores';

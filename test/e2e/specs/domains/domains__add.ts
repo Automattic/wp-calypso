@@ -45,12 +45,15 @@ describe.skip( DataHelper.createSuiteTitle( 'Domains: Add to current site' ), fu
 			await sidebarComponent.navigate( 'Upgrades', 'Domains' );
 		} );
 
-		// TODO: Just use the rest API to clear the cart!
 		it( 'If required, clear the cart', async function () {
 			domainsPage = new DomainsPage( page );
 			navbarCartComponent = new NavbarCartComponent( page );
-			await navbarCartComponent.openCart();
-			await navbarCartComponent.emptyCart();
+
+			// Only attempt to clear the cart if the cart has items
+			if ( await navbarCartComponent.isCartButtonVisible() ) {
+				await navbarCartComponent.openCart();
+				await navbarCartComponent.emptyCart();
+			}
 		} );
 
 		it( 'Add domain to site', async function () {
@@ -63,7 +66,7 @@ describe.skip( DataHelper.createSuiteTitle( 'Domains: Add to current site' ), fu
 		} );
 
 		it( 'Choose the .live TLD', async function () {
-			selectedDomain = await domainSearchComponent.selectDomain( '.live' );
+			selectedDomain = await domainSearchComponent.selectDomain( '.live', false );
 		} );
 
 		it( 'Decline Titan Email upsell', async function () {

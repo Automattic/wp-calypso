@@ -24,8 +24,9 @@ import {
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Card, Gridicon } from '@automattic/components';
+import { formatCurrency } from '@automattic/number-formatters';
 import { Button } from '@wordpress/components';
-import { useTranslate, formatCurrency } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import React, { useState, useMemo } from 'react';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import HeaderCake from 'calypso/components/header-cake';

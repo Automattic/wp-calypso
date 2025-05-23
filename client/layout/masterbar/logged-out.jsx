@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { WordPressWordmark } from '@automattic/components';
+import { WordPressWordmark, WordPressLogo } from '@automattic/components';
 import {
 	isDefaultLocale,
 	addLocaleToPath,
@@ -10,7 +10,6 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import AsyncLoad from 'calypso/components/async-load';
 import { withCurrentRoute } from 'calypso/components/route';
-import WordPressLogo from 'calypso/components/wordpress-logo';
 import { isDomainConnectAuthorizePath } from 'calypso/lib/domains/utils';
 import { login } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/route';

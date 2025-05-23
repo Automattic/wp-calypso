@@ -60,9 +60,9 @@ interface BaseGridProps {
 	spacing?: number;
 
 	/**
-	 * Height of each row (e.g., "50px", "auto")
+	 * Height of each row in pixes or auto (e.g., 20, "auto")
 	 */
-	rowHeight?: string;
+	rowHeight?: number | 'auto';
 
 	/**
 	 * Whether the grid is in edit mode (allows dragging and repositioning items)

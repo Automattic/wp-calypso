@@ -47,7 +47,6 @@ jest.mock( 'i18n-calypso', () => ( {
 		/>
 	),
 	translate: ( x ) => x,
-	numberFormat: ( x ) => x,
 } ) );
 
 describe( 'mapStateToProps should return correct value for isBusinessOrEcomPlanUser', () => {

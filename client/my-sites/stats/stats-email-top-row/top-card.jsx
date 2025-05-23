@@ -1,5 +1,6 @@
 import { Card, Spinner } from '@automattic/components';
-import { useTranslate, numberFormatCompact } from 'i18n-calypso';
+import { formatNumberCompact } from '@automattic/number-formatters';
+import { useTranslate } from 'i18n-calypso';
 
 /* This is a very stripped down version of HighlightCard
  * HighlightCard doesn't support non-numeric values
@@ -9,7 +10,7 @@ const TopCardValue = ( { value, isLoading } ) => {
 	const isNumber = Number.isFinite( value );
 
 	if ( isLoading ) {
-		return <Spinner />;
+		return <Spinner baseClassName="calypso-spinner" />;
 	}
 	if ( value === null ) {
 		return <span className="highlight-card-count-value">-</span>;
@@ -25,7 +26,7 @@ const TopCardValue = ( { value, isLoading } ) => {
 
 	return (
 		<span className="highlight-card-count-value" title={ String( value ) }>
-			{ numberFormatCompact( value ) }
+			{ formatNumberCompact( value ) }
 		</span>
 	);
 };

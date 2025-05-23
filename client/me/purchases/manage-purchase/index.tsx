@@ -69,7 +69,6 @@ import { localize, LocalizeProps, useTranslate } from 'i18n-calypso';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { SupportedSlugs } from 'calypso/../packages/components/src/product-icon/config';
 import googleWorkspaceIcon from 'calypso/assets/images/email-providers/google-workspace/icon.svg';
 import AsyncLoad from 'calypso/components/async-load';
 import isJetpackCrmProduct from 'calypso/components/crm-downloads/is-jetpack-crm-product';
@@ -173,6 +172,7 @@ import PurchaseNotice from './notices';
 import PurchasePlanDetails from './plan-details';
 import PurchaseMeta from './purchase-meta';
 import type { FilteredPlan, PlanSlug } from '@automattic/calypso-products';
+import type { SupportedSlugs } from '@automattic/components/src/product-icon/config';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
 import type { TracksProps } from 'calypso/lib/purchases';
 import type {
@@ -669,26 +669,21 @@ class ManagePurchase extends Component<
 	}
 
 	renderCrmDownloadsNavItem() {
-		const { purchase, translate, siteSlug } = this.props;
-
-		if ( ! purchase ) {
-			return null;
-		}
+		const { purchase, translate } = this.props;
 
 		// Only show for Jetpack CRM Products
-		const productSlug = purchase.productSlug || '';
-		if ( ! isJetpackCrmProduct( productSlug ) ) {
+		if ( ! isJetpackCrmProduct( purchase?.productSlug ) ) {
 			return null;
 		}
 
 		const handleCrmDownloadsClick = () => {
 			recordTracksEvent( 'calypso_purchases_crm_downloads_click', {
-				product_slug: productSlug,
+				product_slug: purchase?.productSlug || '',
 			} );
 		};
 
 		// We'll pass the purchase ID in the URL, and the CRM Downloads component will fetch the actual license key
-		const path = `/purchases/crm-downloads/${ siteSlug }/${ purchase.id }`;
+		const path = `/purchases/crm-downloads/${ purchase?.id }`;
 
 		return (
 			<CompactCard href={ path } onClick={ handleCrmDownloadsClick }>

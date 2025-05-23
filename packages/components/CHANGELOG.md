@@ -1,4 +1,14 @@
-## Next
+## Unreleased
+
+### Breaking changes
+
+- `CoreBadge`: Fork from `@wordpress/components` and convert styles to CSS module. Static class names are no longer available ([#103568](https://github.com/Automattic/wp-calypso/pull/103568)).
+
+### Enhancements
+
+- Add `BigSkyLogo.Mark` component ([#103612](https://github.com/Automattic/wp-calypso/pull/103612)).
+
+## 2.3.0
 
 ### Breaking changes
 
@@ -12,7 +22,11 @@
 
 ### Enhancements
 
-- Add FlowQuestion component
+- Add `FlowQuestion` component
+- Add `Breadcrumbs` and `Menu` components ([#102998](https://github.com/Automattic/wp-calypso/pull/102998)).
+- Add `SummaryButton` component ([#102827](https://github.com/Automattic/wp-calypso/pull/102827)).
+- Add `CoreBadge` component ([#103069](https://github.com/Automattic/wp-calypso/pull/103069)).
+- Add `Tabs` component ([#103231](https://github.com/Automattic/wp-calypso/pull/103231)).
 
 ## 2.1.1
 

@@ -5,62 +5,87 @@ import {
 	fetchSiteMonitorUptime,
 	fetchPHPVersion,
 	fetchCurrentPlan,
-	fetchSitePrimaryDomain,
 	fetchSiteEngagementStats,
 	fetchDomains,
 	fetchEmails,
 	fetchProfile,
 	updateProfile,
+	fetchSiteSettings,
+	fetchBasicMetrics,
+	fetchPerformanceInsights,
+	updateSiteSettings,
+	restoreSitePlanSoftware,
+	fetchWordPressVersion,
+	updateWordPressVersion,
 } from '../data';
+import { SITE_FIELDS, SITE_OPTIONS } from '../data/constants';
 import { queryClient } from './query-client';
-import type { Profile } from '../data/types';
+import type { Profile, SiteSettings, UrlPerformanceInsights } from '../data/types';
+import type { Query } from '@tanstack/react-query';
 
 export function sitesQuery() {
 	return {
-		queryKey: [ 'sites' ],
+		queryKey: [ 'sites', SITE_FIELDS, SITE_OPTIONS ],
 		queryFn: fetchSites,
 	};
 }
 
-export function siteQuery( siteId: string ) {
+export function siteQuery( siteIdOrSlug: string ) {
 	return {
-		queryKey: [ 'site', siteId ],
-		queryFn: async () => {
-			// Site usually takes the longest, so kick it off first.
-			const sitePromise = fetchSite( siteId );
-			// Kick off all independent promises in parallel.
-			const mediaStoragePromise = fetchSiteMediaStorage( siteId );
-			const currentPlanPromise = fetchCurrentPlan( siteId );
-			const primaryDomainPromise = fetchSitePrimaryDomain( siteId );
-			const engagementStatsPromise = fetchSiteEngagementStats( siteId );
-			const site = await sitePromise;
-			const [
-				mediaStorage,
-				currentPlan,
-				primaryDomain,
-				engagementStats,
-				siteMonitorUptime,
-				phpVersion,
-			] = await Promise.all( [
-				mediaStoragePromise,
-				currentPlanPromise,
-				primaryDomainPromise,
-				engagementStatsPromise,
-				// Kick off dependent promises in parallel.
-				site.jetpack && site.jetpack_modules.includes( 'monitor' )
-					? fetchSiteMonitorUptime( siteId )
-					: undefined,
-				site.options?.is_wpcom_atomic ? fetchPHPVersion( siteId ) : undefined,
-			] );
-			return {
-				site,
-				mediaStorage,
-				siteMonitorUptime,
-				phpVersion,
-				currentPlan,
-				primaryDomain,
-				engagementStats,
-			};
+		queryKey: [ 'site', siteIdOrSlug, SITE_FIELDS, SITE_OPTIONS ],
+		queryFn: () => fetchSite( siteIdOrSlug ),
+	};
+}
+
+export function siteCurrentPlanQuery( siteIdOrSlug: string ) {
+	return {
+		queryKey: [ 'site', siteIdOrSlug, 'current-plan' ],
+		queryFn: () => fetchCurrentPlan( siteIdOrSlug ),
+	};
+}
+
+export function siteEngagementStatsQuery( siteIdOrSlug: string ) {
+	return {
+		queryKey: [ 'site', siteIdOrSlug, 'engagement-stats' ],
+		queryFn: () => fetchSiteEngagementStats( siteIdOrSlug ),
+	};
+}
+
+export function siteMediaStorageQuery( siteIdOrSlug: string ) {
+	return {
+		queryKey: [ 'site', siteIdOrSlug, 'media-storage' ],
+		queryFn: () => fetchSiteMediaStorage( siteIdOrSlug ),
+	};
+}
+
+export function siteMonitorUptimeQuery( siteIdOrSlug: string ) {
+	return {
+		queryKey: [ 'site', siteIdOrSlug, 'monitor-uptime' ],
+		queryFn: () => fetchSiteMonitorUptime( siteIdOrSlug ),
+	};
+}
+
+export function sitePHPVersionQuery( siteIdOrSlug: string ) {
+	return {
+		queryKey: [ 'site', siteIdOrSlug, 'php-version' ],
+		queryFn: () => fetchPHPVersion( siteIdOrSlug ),
+	};
+}
+
+export function siteWordPressVersionQuery( siteSlug: string ) {
+	return {
+		queryKey: [ 'site', siteSlug, 'wp-version' ],
+		queryFn: () => {
+			return fetchWordPressVersion( siteSlug );
+		},
+	};
+}
+
+export function siteWordPressVersionMutation( siteSlug: string ) {
+	return {
+		mutationFn: ( version: string ) => updateWordPressVersion( siteSlug, version ),
+		onSuccess: () => {
+			queryClient.invalidateQueries( { queryKey: [ 'site', siteSlug, 'wp-version' ] } );
 		},
 	};
 }
@@ -79,11 +104,9 @@ export function emailsQuery() {
 	};
 }
 
-const profileQueryKey = [ 'profile' ];
-
 export function profileQuery() {
 	return {
-		queryKey: profileQueryKey,
+		queryKey: [ 'profile' ],
 		queryFn: fetchProfile,
 	};
 }
@@ -92,9 +115,61 @@ export function profileMutation() {
 	return {
 		mutationFn: updateProfile,
 		onSuccess: ( newData: Partial< Profile > ) => {
-			queryClient.setQueryData( profileQueryKey, ( oldData: Profile | undefined ) =>
+			queryClient.setQueryData( [ 'profile' ], ( oldData: Profile | undefined ) =>
 				oldData ? { ...oldData, ...newData } : newData
 			);
+		},
+	};
+}
+
+export function siteSettingsQuery( siteId: string ) {
+	return {
+		queryKey: [ 'site-settings', siteId ],
+		queryFn: () => {
+			return fetchSiteSettings( siteId );
+		},
+	};
+}
+
+export function siteSettingsMutation( siteId: string ) {
+	return {
+		mutationFn: ( newData: Partial< SiteSettings > ) => updateSiteSettings( siteId, newData ),
+		onSuccess: ( newData: Partial< SiteSettings > ) => {
+			queryClient.setQueryData( [ 'site-settings', siteId ], ( oldData: SiteSettings ) => ( {
+				...oldData,
+				...newData,
+			} ) );
+			queryClient.invalidateQueries( { queryKey: [ 'site', siteId ] } );
+		},
+	};
+}
+
+export function restoreSitePlanSoftwareMutation( siteId: string ) {
+	return {
+		mutationFn: () => restoreSitePlanSoftware( siteId ),
+	};
+}
+
+export function basicMetricsQuery( url: string ) {
+	return {
+		queryKey: [ 'url', 'basic-metrics', url ],
+		queryFn: () => {
+			return fetchBasicMetrics( url );
+		},
+	};
+}
+
+export function performanceInsightsQuery( url: string, token: string ) {
+	return {
+		queryKey: [ 'url', 'performance', url, token ],
+		queryFn: () => {
+			return fetchPerformanceInsights( url, token );
+		},
+		refetchInterval: ( query: Query< UrlPerformanceInsights > ) => {
+			if ( query.state.data?.pagespeed?.status === 'completed' ) {
+				return false;
+			}
+			return 5000;
 		},
 	};
 }

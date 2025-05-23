@@ -5,11 +5,9 @@ import {
 	useLoadZendeskMessaging,
 	useAuthenticateZendeskMessaging,
 	isTestModeEnvironment,
-} from '@automattic/zendesk-client';
-import {
 	SMOOCH_INTEGRATION_ID,
 	SMOOCH_INTEGRATION_ID_STAGING,
-} from '@automattic/zendesk-client/src/constants';
+} from '@automattic/zendesk-client';
 import { useSelect, useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { useCallback, useEffect, useRef } from '@wordpress/element';
 import Smooch from 'smooch';
@@ -83,7 +81,8 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 	const { data: authData } = useAuthenticateZendeskMessaging( allowChat, 'messenger' );
 
 	const { isMessagingScriptLoaded } = useLoadZendeskMessaging( allowChat, allowChat );
-	const { setIsChatLoaded, setZendeskClientId } = useDataStoreDispatch( HELP_CENTER_STORE );
+	const { setIsChatLoaded, setZendeskClientId, setLastMessageReceivedAt } =
+		useDataStoreDispatch( HELP_CENTER_STORE );
 	const getUnreadNotifications = useGetUnreadConversations();
 
 	const getUnreadListener = useCallback(
@@ -92,13 +91,17 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 				playNotificationSound();
 			}
 
+			if ( setLastMessageReceivedAt ) {
+				setLastMessageReceivedAt( Date.now() );
+			}
+
 			if ( isHelpCenterShown ) {
 				return;
 			}
 
 			Smooch.getConversationById( data?.conversation?.id ).then( () => getUnreadNotifications() );
 		},
-		[ isHelpCenterShown, areSoundNotificationsEnabled ]
+		[ isHelpCenterShown, areSoundNotificationsEnabled, setLastMessageReceivedAt ]
 	);
 
 	const clientIdListener = useCallback(

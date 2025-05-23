@@ -2,8 +2,9 @@ import { LoadingPlaceholder } from '@automattic/components';
 import { TooltipContent } from '@automattic/components/src/highlight-cards/count-card';
 import { TrendComparison } from '@automattic/components/src/highlight-cards/count-comparison-card';
 import Popover from '@automattic/components/src/popover';
+import { formatNumberCompact, formatNumber } from '@automattic/number-formatters';
 import clsx from 'clsx';
-import { localize, numberFormatCompact } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component, createRef } from 'react';
 
@@ -38,10 +39,10 @@ class StatsTabsTab extends Component {
 	};
 
 	ensureValue = ( value ) => {
-		const { loading, format, numberFormat } = this.props;
+		const { loading, format } = this.props;
 
 		if ( ! loading && ( value || value === 0 ) ) {
-			return format ? format( value ) : numberFormat( value );
+			return format ? format( value ) : formatNumber( value );
 		}
 
 		return String.fromCharCode( 8211 );
@@ -116,7 +117,7 @@ class StatsTabsTab extends Component {
 									'stats-tabs__highlight-loading': loading,
 								} ) }
 							>
-								{ loading ? <LoadingPlaceholder height="30px" /> : numberFormatCompact( value ) }
+								{ loading ? <LoadingPlaceholder height="30px" /> : formatNumberCompact( value ) }
 							</span>
 							<TrendComparison count={ value } previousCount={ previousValue } />
 							<Popover

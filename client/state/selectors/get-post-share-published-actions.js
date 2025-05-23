@@ -1,6 +1,6 @@
 import { createSelector } from '@automattic/state-utils';
 import { get, orderBy } from 'lodash';
-import { enrichPublicizeActionsWithConnections } from 'calypso/state/selectors/utils/';
+import { enrichPublicizeActionsWithConnections } from 'calypso/state/selectors/utils';
 
 import 'calypso/state/sharing/init';
 

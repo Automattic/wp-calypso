@@ -14,7 +14,7 @@
 	max-height: 100%;
 	margin-block: 24px;
 
-	> * {
+	&:not( .a4a-layout__banner--full-width ) > * {
 
 		@include breakpoint-deprecated( ">660px" ) {
 			max-width: 1500px;

@@ -4,6 +4,7 @@ import {
 	EXAMPLE_FLOW,
 	NEW_HOSTED_SITE_FLOW,
 	NEWSLETTER_FLOW,
+	ONBOARDING_FLOW,
 	START_WRITING_FLOW,
 	Step,
 	useStepPersistedState,
@@ -22,17 +23,23 @@ import { useSelector } from 'calypso/state';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 import { getTheme, getThemeType } from 'calypso/state/themes/selectors';
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
+import { playgroundPlansIntent } from '../playground/lib/plans';
 import UnifiedPlansStep from './unified-plans-step';
 import { getIntervalType } from './util';
-import type { ProvidedDependencies, Step as StepType } from '../../types';
+import type { Step as StepType } from '../../types';
 import type { PlansIntent } from '@automattic/plans-grid-next';
-
+import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import './style.scss';
 
 /**
  * Copied from steps-repository/plans (which should be removed)
  */
-function getPlansIntent( flowName: string | null, isWordCampPromo?: boolean ): PlansIntent | null {
+/**
+ * Copied from steps-repository/plans (which should be removed)
+ */
+function getPlansIntent( flowName: string | null ): PlansIntent | null {
+	const search = new URLSearchParams( location.search );
+
 	switch ( flowName ) {
 		case START_WRITING_FLOW:
 			return 'plans-blog-onboarding';
@@ -40,18 +47,32 @@ function getPlansIntent( flowName: string | null, isWordCampPromo?: boolean ): P
 		case EXAMPLE_FLOW:
 			return 'plans-newsletter';
 		case NEW_HOSTED_SITE_FLOW:
-			if ( isWordCampPromo ) {
+			/**
+			 * isWordCampPromo is temporary
+			 */
+			if ( search.has( 'utm_source', 'wordcamp' ) ) {
 				return 'plans-new-hosted-site-business-only';
 			}
+
 			return 'plans-new-hosted-site';
+		case AI_SITE_BUILDER_FLOW:
+			return 'plans-ai-assembler-free-trial';
+		case ONBOARDING_FLOW:
+			if ( search.has( 'playground' ) ) {
+				return playgroundPlansIntent( search.get( 'playground' )! );
+			}
 		default:
 			return null;
 	}
 }
 
+type ProvidedDependencies = {
+	stepName: 'plans';
+	cartItems: MinimalRequestCartProduct[] | null;
+};
+
 const PlansStepAdaptor: StepType< {
-	// TODO: work on more specific types
-	submits: Record< string, unknown >;
+	submits: ProvidedDependencies;
 } > = ( props ) => {
 	const [ stepState, setStepState ] = useStepPersistedState< ProvidedDependencies >( 'plans-step' );
 	const siteSlug = useSiteSlug();
@@ -107,23 +128,7 @@ const PlansStepAdaptor: StepType< {
 
 	useQueryTheme( 'wpcom', selectedDesign?.slug );
 
-	/**
-	 * isWordCampPromo is temporary
-	 */
-	const isWordCampPromo = new URLSearchParams( location.search ).has( 'utm_source', 'wordcamp' );
-	const plansIntent = getPlansIntent( props.flow, isWordCampPromo );
-
-	let hidePlanProps;
-	if ( props.flow === AI_SITE_BUILDER_FLOW ) {
-		hidePlanProps = {
-			hideFreePlan: true,
-			hidePersonalPlan: true,
-			hideEcommercePlan: true,
-			hideEnterprisePlan: true,
-		};
-	} else {
-		hidePlanProps = getHidePlanPropsBasedOnThemeType( selectedThemeType || '' );
-	}
+	const plansIntent = getPlansIntent( props.flow );
 
 	/**
 	 * The plans step has a quirk where it calls `submitSignupStep` then synchronously calls `goToNextStep` after it.
@@ -144,22 +149,29 @@ const PlansStepAdaptor: StepType< {
 
 	return (
 		<UnifiedPlansStep
-			{ ...hidePlanProps }
+			{ ...getHidePlanPropsBasedOnThemeType( selectedThemeType || '' ) }
 			selectedSite={ site ?? undefined }
 			saveSignupStep={ ( step ) => {
-				setStepState( ( mostRecentState = { ...stepState, ...step } ) );
+				setStepState( ( mostRecentState = { ...stepState, ...step } as ProvidedDependencies ) );
 			} }
 			submitSignupStep={ ( stepInfo ) => {
 				if ( stepInfo.stepName === 'domains' && stepInfo.siteUrl ) {
 					setSiteUrl( stepInfo.siteUrl );
 				} else {
-					setStepState( ( mostRecentState = { ...stepState, ...stepInfo } ) );
+					setStepState(
+						( mostRecentState = { ...stepState, ...( stepInfo as ProvidedDependencies ) } )
+					);
 				}
 			} }
 			goToNextStep={ () => {
 				props.navigation.submit?.( { ...stepState, ...mostRecentState } );
 			} }
-			step={ stepState }
+			step={
+				stepState as {
+					status?: string | undefined;
+					errors?: { message: string } | undefined;
+				}
+			}
 			customerType={ customerType }
 			signupDependencies={ signupDependencies }
 			stepName="plans"

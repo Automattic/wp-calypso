@@ -307,9 +307,9 @@ export const HoldList = ( { context, holds, isMarketplace, isPlaceholder, transl
 									<div className="eligibility-warnings__message-title">
 										{ holdMessages[ hold ].title }
 									</div>
-									<div className="eligibility-warnings__message-description">
+									<p className="eligibility-warnings__message-description">
 										{ holdMessages[ hold ].description }
-									</div>
+									</p>
 								</div>
 								{ holdMessages[ hold ].supportUrl && (
 									<div className="eligibility-warnings__hold-action">

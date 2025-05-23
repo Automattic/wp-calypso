@@ -1,4 +1,3 @@
-/* eslint-disable no-console, import/no-nodejs-modules */
 const { createWriteStream } = require( 'fs' );
 const { mkdir } = require( 'fs/promises' );
 const path = require( 'path' );

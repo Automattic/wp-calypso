@@ -23,6 +23,7 @@ import {
 	useTransactionStatus,
 	TransactionStatus,
 } from '@automattic/composite-checkout';
+import { formatCurrency } from '@automattic/number-formatters';
 import { Step } from '@automattic/onboarding';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import {
@@ -35,7 +36,7 @@ import { css, keyframes } from '@emotion/react';
 import { useViewportMatch } from '@wordpress/compose';
 import { useSelect, useDispatch } from '@wordpress/data';
 import debugFactory from 'debug';
-import { formatCurrency, useTranslate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { useState, useCallback } from 'react';
 import Loading from 'calypso/components/loading';
 import { useInitialIsInStepContainerV2FlowContext } from 'calypso/layout/utils';
@@ -63,6 +64,10 @@ import { prepareDomainContactValidationRequest } from 'calypso/my-sites/checkout
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import SitePreview from 'calypso/my-sites/customer-home/cards/features/site-preview';
 import useOneDollarOfferTrack from 'calypso/my-sites/plans/hooks/use-onedollar-offer-track';
+import {
+	useStreamlinedPriceExperiment,
+	isStreamlinedPriceCheckoutTreatment,
+} from 'calypso/my-sites/plans-features-main/hooks/use-streamlined-price-experiment';
 import { siteHasPaidPlan } from 'calypso/signup/steps/site-picker/site-picker-submit';
 import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -286,6 +291,7 @@ function CheckoutSidebarNudge( {
 	const hasMonthlyProduct = responseCart?.products?.some( isMonthlyProduct );
 	const isPurchaseRenewal = responseCart?.products?.some?.( ( product ) => product.is_renewal );
 	const selectedSite = useSelector( ( state ) => getSelectedSite( state ) );
+	const [ , streamlinedPriceExperimentAssignment ] = useStreamlinedPriceExperiment();
 
 	const domainWithoutPlanInCartOrSite =
 		areThereDomainProductsInCart && ! hasPlan( responseCart ) && ! siteHasPaidPlan( selectedSite );
@@ -300,7 +306,11 @@ function CheckoutSidebarNudge( {
 
 	if ( isDIFMInCart ) {
 		return (
-			<CheckoutSidebarNudgeWrapper>
+			<CheckoutSidebarNudgeWrapper
+				isStreamlinedPrice={ isStreamlinedPriceCheckoutTreatment(
+					streamlinedPriceExperimentAssignment
+				) }
+			>
 				<CheckoutNextSteps responseCart={ responseCart } />
 			</CheckoutSidebarNudgeWrapper>
 		);
@@ -312,7 +322,11 @@ function CheckoutSidebarNudge( {
 	 */
 
 	return (
-		<CheckoutSidebarNudgeWrapper>
+		<CheckoutSidebarNudgeWrapper
+			isStreamlinedPrice={ isStreamlinedPriceCheckoutTreatment(
+				streamlinedPriceExperimentAssignment
+			) }
+		>
 			{ ! ( productsWithVariants.length > 1 ) && (
 				<>
 					<CheckoutSidebarPlanUpsell />
@@ -388,6 +402,12 @@ export default function CheckoutMainContent( {
 	} = useShoppingCart( cartKey );
 
 	const leaveModalProps = useCheckoutLeaveModal( { siteUrl: siteUrl ?? '' } );
+
+	const [ isStreamlinedPriceExperimentLoading, streamlinedPriceExperimentAssignment ] =
+		useStreamlinedPriceExperiment();
+	const isStreamlinedPrice =
+		! isStreamlinedPriceExperimentLoading &&
+		isStreamlinedPriceCheckoutTreatment( streamlinedPriceExperimentAssignment );
 
 	const searchParams = new URLSearchParams( window.location.search );
 	const isDIFMInCart = hasDIFMProduct( responseCart );
@@ -624,7 +644,10 @@ export default function CheckoutMainContent( {
 							<WPCheckoutOrderSummary
 								siteId={ siteId }
 								onChangeSelection={ changeSelection }
-								showFeaturesList
+								showFeaturesList={
+									! isStreamlinedPriceExperimentLoading &&
+									! isStreamlinedPriceCheckoutTreatment( streamlinedPriceExperimentAssignment )
+								}
 							/>
 							<CheckoutSidebarNudge
 								addItemToCart={ addItemToCart }
@@ -638,7 +661,12 @@ export default function CheckoutMainContent( {
 	);
 
 	const checkoutMainContent = (
-		<WPCheckoutMainContent className="checkout-main-content">
+		<WPCheckoutMainContent
+			className="checkout-main-content"
+			isStreamlinedPrice={ isStreamlinedPriceCheckoutTreatment(
+				streamlinedPriceExperimentAssignment
+			) }
+		>
 			<CheckoutOrderBanner />
 			{ isStepContainerV2 ? (
 				<Step.Heading
@@ -675,6 +703,16 @@ export default function CheckoutMainContent( {
 					}
 					formStatus={ formStatus }
 				/>
+
+				{ isStreamlinedPrice && (
+					<CouponFieldArea
+						isCouponFieldVisible={ isCouponFieldVisible }
+						setCouponFieldVisible={ setCouponFieldVisible }
+						isPurchaseFree={ isPurchaseFree }
+						couponStatus={ couponStatus }
+						couponFieldStateProps={ couponFieldStateProps }
+					/>
+				) }
 
 				{ contactDetailsType !== 'none' && (
 					<CheckoutStep
@@ -813,13 +851,15 @@ export default function CheckoutMainContent( {
 					} }
 				/>
 
-				<CouponFieldArea
-					isCouponFieldVisible={ isCouponFieldVisible }
-					setCouponFieldVisible={ setCouponFieldVisible }
-					isPurchaseFree={ isPurchaseFree }
-					couponStatus={ couponStatus }
-					couponFieldStateProps={ couponFieldStateProps }
-				/>
+				{ ! isStreamlinedPrice && (
+					<CouponFieldArea
+						isCouponFieldVisible={ isCouponFieldVisible }
+						setCouponFieldVisible={ setCouponFieldVisible }
+						isPurchaseFree={ isPurchaseFree }
+						couponStatus={ couponStatus }
+						couponFieldStateProps={ couponFieldStateProps }
+					/>
+				) }
 
 				<CheckoutTermsAndCheckboxes
 					is3PDAccountConsentAccepted={ is3PDAccountConsentAccepted }
@@ -845,7 +885,13 @@ export default function CheckoutMainContent( {
 
 	if ( ! isStepContainerV2 ) {
 		return (
-			<WPCheckoutWrapper className="checkout-wrapper">
+			<WPCheckoutWrapper
+				className="checkout-wrapper"
+				isLargeViewport={ isLargeViewport }
+				isStreamlinedPrice={ isStreamlinedPriceCheckoutTreatment(
+					streamlinedPriceExperimentAssignment
+				) }
+			>
 				{ checkoutSummary }
 				{ checkoutMainContent }
 			</WPCheckoutWrapper>
@@ -853,7 +899,12 @@ export default function CheckoutMainContent( {
 	}
 
 	return (
-		<StepContainerV2CheckoutFixer isLargeViewport={ isLargeViewport }>
+		<StepContainerV2CheckoutFixer
+			isLargeViewport={ isLargeViewport }
+			isStreamlinedPrice={ isStreamlinedPriceCheckoutTreatment(
+				streamlinedPriceExperimentAssignment
+			) }
+		>
 			<Step.TwoColumnLayout
 				firstColumnWidth={ 8 }
 				secondColumnWidth={ 4 }
@@ -902,7 +953,10 @@ export default function CheckoutMainContent( {
 	);
 }
 
-const StepContainerV2CheckoutFixer = styled.div< { isLargeViewport: boolean } >`
+const StepContainerV2CheckoutFixer = styled.div< {
+	isLargeViewport: boolean;
+	isStreamlinedPrice: boolean;
+} >`
 	background: ${ colorStudio.colors[ 'White' ] };
 
 	// This shouldn't exist. It's a hack to make the top bar appear on top of the checkout sidebar, which extends from the top of the page.
@@ -1037,6 +1091,19 @@ const StepContainerV2CheckoutFixer = styled.div< { isLargeViewport: boolean } >`
 
 			.checkout__summary-features {
 				padding-top: 32px;
+			}
+		` }
+	${ ( props ) =>
+		props.isLargeViewport &&
+		props.isStreamlinedPrice &&
+		css`
+			div:has( .checkout-sidebar-content ) {
+				position: sticky;
+				top: 32px;
+			}
+			.checkout__summary-area,
+			.checkout-loading-sidebar {
+				min-width: 384px;
 			}
 		` }
 `;
@@ -1182,7 +1249,9 @@ const CheckoutSummaryBody = styled.div`
 	}
 `;
 
-const CheckoutSidebarNudgeWrapper = styled.div`
+const CheckoutSidebarNudgeWrapper = styled.div< {
+	isStreamlinedPrice: boolean;
+} >`
 	display: flex;
 	flex-direction: column;
 	grid-area: nudge;
@@ -1190,6 +1259,11 @@ const CheckoutSidebarNudgeWrapper = styled.div`
 
 	& > * {
 		max-width: 288px;
+		${ ( props ) =>
+			props.isStreamlinedPrice &&
+			css`
+				max-width: 384px;
+			` }
 	}
 
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
@@ -1243,7 +1317,7 @@ function CheckoutTermsAndCheckboxes( {
 					onChange={ setIs3PDAccountConsentAccepted }
 					isSubmitted={ isSubmitted }
 					message={ translate(
-						'You agree that an account may be created on a third party developer’s site related to the products you have purchased.'
+						"You agree that an account may be created on a third party developer's site related to the products you have purchased."
 					) }
 				/>
 			) }
@@ -1397,7 +1471,10 @@ const SubmitButtonHeaderWrapper = styled.div`
 	}
 `;
 
-const WPCheckoutWrapper = styled.div`
+const WPCheckoutWrapper = styled.div< {
+	isLargeViewport?: boolean;
+	isStreamlinedPrice?: boolean;
+} >`
 	background: ${ colorStudio.colors[ 'White' ] };
 	display: grid;
 	grid-template-rows: auto;
@@ -1411,6 +1488,11 @@ const WPCheckoutWrapper = styled.div`
 		grid-template-columns: 1fr minmax( 500px, 688px ) 376px 1fr;
 		grid-template-areas: 'main-content main-content sidebar-content sidebar-content';
 		justify-items: end;
+		${ ( props ) =>
+			props.isStreamlinedPrice &&
+			css`
+				grid-template-columns: 1fr minmax( 500px, 688px ) 475px 1fr;
+			` }
 	}
 
 	& > * {
@@ -1425,6 +1507,25 @@ const WPCheckoutWrapper = styled.div`
 	& *:focus {
 		outline: ${ ( props ) => props.theme.colors.outline } solid 2px;
 	}
+
+	${ ( props ) =>
+		props.isStreamlinedPrice &&
+		css`
+			.checkout__summary-area {
+				position: sticky;
+				top: 32px;
+			}
+		` }
+	${ ( props ) =>
+		props.isStreamlinedPrice &&
+		props.isLargeViewport &&
+		css`
+			.checkout__summary-body,
+			.checkout-loading-sidebar,
+			.checkout-sidebar-plan-upsell {
+				min-width: 384px;
+			}
+		` }
 `;
 
 const WPCheckoutCompletedWrapper = styled.div`
@@ -1445,7 +1546,9 @@ const WPCheckoutCompletedWrapper = styled.div`
 	}
 `;
 
-const WPCheckoutMainContent = styled.div`
+const WPCheckoutMainContent = styled.div< {
+	isStreamlinedPrice?: boolean;
+} >`
 	grid-area: main-content;
 	margin-top: 50px;
 	min-height: 100vh;
@@ -1464,10 +1567,30 @@ const WPCheckoutMainContent = styled.div`
 			padding: 0 24px 0 64px;
 		}
 	}
-
-	.editor-checkout-modal & {
-		margin-top: 20px;
-	}
+	${ ( props ) =>
+		props.isStreamlinedPrice &&
+		css`
+			.checkout-line-item .checkout-line-item__remove-product {
+				font-size: 14px;
+			}
+			.form-fieldset.contact-details-form-fields .form__hidden-input a,
+			.checkout__content .wp-checkout-order-review__show-coupon-field-button {
+				font-weight: 500;
+				text-decoration: none;
+				color: ${ props.theme.colors.textColorDark };
+				font-size: 14px;
+			}
+			.form-fieldset.contact-details-form-fields .contact-details-form-fields__row,
+			.form-fieldset.contact-details-form-fields .custom-form-fieldsets__address-fields {
+				gap: 10px;
+			}
+			.form-fieldset.contact-details-form-fields .contact-details-form-fields__field {
+				margin-bottom: 10px;
+			}
+			.checkout-terms-and-checkboxes a {
+				color: ${ props.theme.colors.textColorDark };
+			}
+		` }
 `;
 
 const WPCheckoutCompletedMainContent = styled.div`
@@ -1494,14 +1617,6 @@ const WPCheckoutSidebarContent = styled.div`
 
 		.rtl & {
 			padding: 144px 64px 0 24px;
-		}
-	}
-
-	.editor-checkout-modal & {
-		padding: 68px 24px 144px 64px;
-
-		.rtl & {
-			padding: 68px 64px 0 24px;
 		}
 	}
 `;

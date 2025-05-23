@@ -37,7 +37,7 @@
 			var siteId;
 			var input = document.getElementById('file');
 
-			wpcom.me().get(function (err, data) {
+			wpcom.req.get( '/me', function (err, data) {
 				if (err) throw err;
 
 				siteId = data.primary_blog;

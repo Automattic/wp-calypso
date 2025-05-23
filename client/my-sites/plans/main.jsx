@@ -526,10 +526,7 @@ class PlansComponent extends Component {
 					</div>
 				) }
 				{ ! canAccessPlans && (
-					<EmptyContent
-						illustration="/calypso/images/illustrations/illustration-404.svg"
-						title={ translate( 'You are not authorized to view this page' ) }
-					/>
+					<EmptyContent title={ translate( 'You are not authorized to view this page' ) } />
 				) }
 			</div>
 		);

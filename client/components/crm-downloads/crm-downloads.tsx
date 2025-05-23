@@ -23,7 +23,7 @@ const LoadingSkeleton = () => (
 );
 
 interface CrmDownloadsProps {
-	licenseKey: string;
+	licenseKey?: string;
 	isLoading?: boolean;
 }
 
@@ -160,7 +160,7 @@ export function CrmDownloadsContent( { licenseKey, isLoading }: CrmDownloadsProp
 									<div className="manage-purchase__license-clipboard">
 										<code className="manage-purchase__license-clipboard-code">{ licenseKey }</code>
 										<ClipboardButton
-											text={ licenseKey }
+											text={ licenseKey || null }
 											className="manage-purchase__license-clipboard-icon"
 											borderless
 											compact

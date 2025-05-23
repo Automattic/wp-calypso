@@ -1,4 +1,5 @@
 import { Button, FormStatus, useFormStatus } from '@automattic/composite-checkout';
+import { formatCurrency } from '@automattic/number-formatters';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { Field } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
@@ -6,7 +7,6 @@ import { useSelect, useDispatch, registerStore } from '@wordpress/data';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
-import { formatCurrency } from 'i18n-calypso';
 import { Fragment } from 'react';
 import { PaymentMethodLogos } from 'calypso/my-sites/checkout/src/components/payment-method-logos';
 import {

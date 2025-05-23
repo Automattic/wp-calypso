@@ -196,32 +196,12 @@ $blueberry-color: #3858e9;
 			.odie-button-link, .components-external-link {
 				color: $blueberry-color;
 			}
-
-			.components-external-link {
-				text-decoration: underline;
-
-				&:hover {
-					text-decoration: none;
-				}
-
-				& > span:first-child::after { 
-					content: "\00a0";
-	
-					&:hover {
-						text-decoration: none;
-					}
-				}
-
-				.components-external-link__contents:hover {
-					text-decoration: none;
-				}
-
-				.components-external-link__icon {
-					margin-left: 0;
-				}
-			}
-			
 		}
+	}
+
+	.chat-feedback-wrapper-third-party-cookies {
+		margin-left: 0;
+		width: 80%;
 	}
 
 	.odie-feedback-component-container {
@@ -799,5 +779,5 @@ $custom-border-corner-size: 16px;
 .odie__transfer-chat {
 	width: calc(100% - 80px)!important;
 	margin-top: 16px;
-    margin-left: 46px;
+	margin-left: 46px;
 }

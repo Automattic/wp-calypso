@@ -55,6 +55,7 @@ export type GridSize = 'small' | 'smedium' | 'medium' | 'large' | 'xlarge';
 
 export type PlansIntent =
 	| 'plans-affiliate'
+	| 'plans-ai-assembler-free-trial'
 	| 'plans-blog-onboarding'
 	| 'plans-newsletter'
 	| 'plans-new-hosted-site'
@@ -74,6 +75,8 @@ export type PlansIntent =
 	| 'plans-guided-segment-nonprofit'
 	| 'plans-guided-segment-consumer-or-business'
 	| 'plans-site-selected-legacy'
+	| 'plans-playground'
+	| 'plans-playground-premium' // This plan intent is currently not utilized but will be soon
 	| 'default';
 
 export interface PlanActionOverrides {
@@ -239,6 +242,11 @@ export type GridContextProps = {
 	 * calculating prices.
 	 */
 	reflectStorageSelectionInPlanPrices?: boolean;
+
+	/**
+	 * Enable streamlined billing description
+	 */
+	showStreamlinedBillingDescription?: boolean;
 };
 
 export type ComparisonGridExternalProps = Omit<

@@ -416,7 +416,6 @@ export default function LicensePreview( {
 					) }
 				</div>
 			</LicenseListItem>
-
 			{ isOpen &&
 				( isParentLicense ? (
 					<BundleDetails parentLicenseId={ parentLicenseId } />

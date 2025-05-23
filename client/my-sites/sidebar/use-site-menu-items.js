@@ -30,9 +30,14 @@ const useSiteMenuItems = () => {
 	const isStagingSite = useSelector( ( state ) => isSiteWpcomStaging( state, selectedSiteId ) );
 	const isPlanExpired = useSelector( ( state ) => !! getSelectedSite( state )?.plan?.expired );
 	const isAllDomainsView = '/domains/manage' === currentRoute;
-	const { currentSection } = useCurrentRoute();
+	const { currentSection, currentRoute: route } = useCurrentRoute();
 	const shouldShowGlobalSidebar = useSelector( ( state ) => {
-		return getShouldShowGlobalSidebar( state, selectedSiteId, currentSection?.group );
+		return getShouldShowGlobalSidebar( {
+			state,
+			siteId: selectedSiteId,
+			section: currentSection,
+			route,
+		} );
 	} );
 
 	/**
