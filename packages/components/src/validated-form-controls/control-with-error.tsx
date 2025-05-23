@@ -7,15 +7,23 @@ import { withIgnoreIMEEvents } from '../utils/with-ignore-ime-events';
 import './style.scss';
 
 function appendRequiredIndicator(
-	label: string,
+	label: React.ReactNode,
 	required: boolean | undefined,
 	markWhenOptional: boolean | undefined
 ) {
 	if ( required && ! markWhenOptional ) {
-		return `${ label } (${ __( 'Required' ) })`;
+		return (
+			<>
+				{ label } { `(${ __( 'Required' ) })` }
+			</>
+		);
 	}
 	if ( ! required && markWhenOptional ) {
-		return `${ label } (${ __( 'Optional' ) })`;
+		return (
+			<>
+				{ label } { `(${ __( 'Optional' ) })` }
+			</>
+		);
 	}
 	return label;
 }
