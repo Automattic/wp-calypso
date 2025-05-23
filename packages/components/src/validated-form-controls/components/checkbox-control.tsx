@@ -31,18 +31,17 @@ const UnforwardedValidatedCheckboxControl = (
 			getValidityTarget={ () =>
 				validityTargetRef.current?.querySelector< HTMLInputElement >( 'input[type="checkbox"]' )
 			}
-			children={
-				<CheckboxControl
-					__nextHasNoMarginBottom
-					onChange={ ( value ) => {
-						valueRef.current = value;
-						onChange?.( value );
-					} }
-					// TODO: Upstream limitation - CheckboxControl doesn't support uncontrolled mode, visually.
-					{ ...restProps }
-				/>
-			}
-		/>
+		>
+			<CheckboxControl
+				__nextHasNoMarginBottom
+				onChange={ ( value ) => {
+					valueRef.current = value;
+					onChange?.( value );
+				} }
+				// TODO: Upstream limitation - CheckboxControl doesn't support uncontrolled mode, visually.
+				{ ...restProps }
+			/>
+		</ControlWithError>
 	);
 };
 

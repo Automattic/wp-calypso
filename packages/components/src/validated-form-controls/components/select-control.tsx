@@ -35,19 +35,18 @@ const UnforwardedValidatedSelectControl = (
 				return customValidator?.( valueRef.current );
 			} }
 			getValidityTarget={ () => validityTargetRef.current }
-			children={
-				<SelectControl
-					__nextHasNoMarginBottom
-					__next40pxDefaultSize
-					ref={ mergedRefs }
-					onChange={ ( value ) => {
-						valueRef.current = value;
-						onChange?.( value );
-					} }
-					{ ...restProps }
-				/>
-			}
-		/>
+		>
+			<SelectControl
+				__nextHasNoMarginBottom
+				__next40pxDefaultSize
+				ref={ mergedRefs }
+				onChange={ ( value ) => {
+					valueRef.current = value;
+					onChange?.( value );
+				} }
+				{ ...restProps }
+			/>
+		</ControlWithError>
 	);
 };
 

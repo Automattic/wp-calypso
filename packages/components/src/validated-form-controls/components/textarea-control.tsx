@@ -28,18 +28,17 @@ const UnforwardedValidatedTextareaControl = (
 				return customValidator?.( valueRef.current );
 			} }
 			getValidityTarget={ () => validityTargetRef.current }
-			children={
-				<TextareaControl
-					__nextHasNoMarginBottom
-					ref={ mergedRefs }
-					onChange={ ( value ) => {
-						valueRef.current = value;
-						onChange?.( value );
-					} }
-					{ ...restProps }
-				/>
-			}
-		/>
+		>
+			<TextareaControl
+				__nextHasNoMarginBottom
+				ref={ mergedRefs }
+				onChange={ ( value ) => {
+					valueRef.current = value;
+					onChange?.( value );
+				} }
+				{ ...restProps }
+			/>
+		</ControlWithError>
 	);
 };
 

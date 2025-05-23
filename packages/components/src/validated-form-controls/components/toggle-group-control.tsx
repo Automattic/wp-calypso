@@ -31,21 +31,20 @@ const UnforwardedValidatedToggleGroupControl = (
 					return customValidator?.( valueRef.current );
 				} }
 				getValidityTarget={ () => validityTargetRef.current }
-				children={
-					<ToggleGroupControl
-						__nextHasNoMarginBottom
-						__next40pxDefaultSize
-						ref={ forwardedRef }
-						// TODO: Upstream limitation - In uncontrolled mode, starting from an undefined value then
-						// setting a value has a visual bug.
-						onChange={ ( value ) => {
-							valueRef.current = value;
-							onChange?.( value );
-						} }
-						{ ...restProps }
-					/>
-				}
-			/>
+			>
+				<ToggleGroupControl
+					__nextHasNoMarginBottom
+					__next40pxDefaultSize
+					ref={ forwardedRef }
+					// TODO: Upstream limitation - In uncontrolled mode, starting from an undefined value then
+					// setting a value has a visual bug.
+					onChange={ ( value ) => {
+						valueRef.current = value;
+						onChange?.( value );
+					} }
+					{ ...restProps }
+				/>
+			</ControlWithError>
 			<input
 				className="a8c-validated-control__error-delegate"
 				type="radio"

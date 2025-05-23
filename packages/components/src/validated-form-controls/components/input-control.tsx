@@ -29,18 +29,17 @@ const UnforwardedValidatedInputControl = (
 				return customValidator?.( valueRef.current );
 			} }
 			getValidityTarget={ () => validityTargetRef.current }
-			children={
-				<InputControl
-					__next40pxDefaultSize
-					ref={ mergedRefs }
-					onChange={ ( value, ...args ) => {
-						valueRef.current = value;
-						onChange?.( value, ...args );
-					} }
-					{ ...restProps }
-				/>
-			}
-		/>
+		>
+			<InputControl
+				__next40pxDefaultSize
+				ref={ mergedRefs }
+				onChange={ ( value, ...args ) => {
+					valueRef.current = value;
+					onChange?.( value, ...args );
+				} }
+				{ ...restProps }
+			/>
+		</ControlWithError>
 	);
 };
 

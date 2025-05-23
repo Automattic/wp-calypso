@@ -29,19 +29,18 @@ const UnforwardedValidatedRangeControl = (
 				return customValidator?.( valueRef.current );
 			} }
 			getValidityTarget={ () => validityTargetRef.current }
-			children={
-				<RangeControl
-					__next40pxDefaultSize
-					__nextHasNoMarginBottom
-					ref={ mergedRefs }
-					onChange={ ( value ) => {
-						valueRef.current = value;
-						onChange?.( value );
-					} }
-					{ ...restProps }
-				/>
-			}
-		/>
+		>
+			<RangeControl
+				__next40pxDefaultSize
+				__nextHasNoMarginBottom
+				ref={ mergedRefs }
+				onChange={ ( value ) => {
+					valueRef.current = value;
+					onChange?.( value );
+				} }
+				{ ...restProps }
+			/>
+		</ControlWithError>
 	);
 };
 

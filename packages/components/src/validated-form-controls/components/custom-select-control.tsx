@@ -27,19 +27,18 @@ const UnforwardedValidatedCustomSelectControl = (
 					return customValidator?.( valueRef.current );
 				} }
 				getValidityTarget={ () => validityTargetRef.current }
-				children={
-					<CustomSelectControl
-						// TODO: Upstream limitation - Required isn't passed down correctly,
-						// so it needs to be set on a delegate element.
-						__next40pxDefaultSize
-						onChange={ ( value ) => {
-							valueRef.current = value.selectedItem;
-							onChange?.( value );
-						} }
-						{ ...restProps }
-					/>
-				}
-			/>
+			>
+				<CustomSelectControl
+					// TODO: Upstream limitation - Required isn't passed down correctly,
+					// so it needs to be set on a delegate element.
+					__next40pxDefaultSize
+					onChange={ ( value ) => {
+						valueRef.current = value.selectedItem;
+						onChange?.( value );
+					} }
+					{ ...restProps }
+				/>
+			</ControlWithError>
 			<select
 				className="a8c-validated-control__error-delegate"
 				ref={ validityTargetRef }

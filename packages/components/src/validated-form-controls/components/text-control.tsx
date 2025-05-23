@@ -29,19 +29,18 @@ const UnforwardedValidatedTextControl = (
 				return customValidator?.( valueRef.current );
 			} }
 			getValidityTarget={ () => validityTargetRef.current }
-			children={
-				<TextControl
-					__next40pxDefaultSize
-					__nextHasNoMarginBottom
-					ref={ mergedRefs }
-					onChange={ ( value ) => {
-						valueRef.current = value;
-						onChange?.( value );
-					} }
-					{ ...restProps }
-				/>
-			}
-		/>
+		>
+			<TextControl
+				__next40pxDefaultSize
+				__nextHasNoMarginBottom
+				ref={ mergedRefs }
+				onChange={ ( value ) => {
+					valueRef.current = value;
+					onChange?.( value );
+				} }
+				{ ...restProps }
+			/>
+		</ControlWithError>
 	);
 };
 

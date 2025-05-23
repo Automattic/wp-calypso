@@ -43,18 +43,17 @@ const UnforwardedValidatedComboboxControl = (
 			getValidityTarget={ () =>
 				validityTargetRef.current?.querySelector< HTMLInputElement >( 'input[role="combobox"]' )
 			}
-			children={
-				<ComboboxControl
-					__nextHasNoMarginBottom
-					__next40pxDefaultSize
-					{ ...restProps }
-					onChange={ ( value ) => {
-						valueRef.current = value;
-						onChange?.( value );
-					} }
-				/>
-			}
-		/>
+		>
+			<ComboboxControl
+				__nextHasNoMarginBottom
+				__next40pxDefaultSize
+				{ ...restProps }
+				onChange={ ( value ) => {
+					valueRef.current = value;
+					onChange?.( value );
+				} }
+			/>
+		</ControlWithError>
 	);
 };
 

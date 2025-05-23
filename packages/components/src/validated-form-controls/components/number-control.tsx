@@ -28,20 +28,19 @@ const UnforwardedValidatedNumberControl = (
 				return customValidator?.( valueRef.current );
 			} }
 			getValidityTarget={ () => validityTargetRef.current }
-			children={
-				<NumberControl
-					__next40pxDefaultSize
-					ref={ mergedRefs }
-					// TODO: Upstream limitation - When form is submitted when value is undefined, it will
-					// automatically set a clamped value (as defined by `min` attribute, so 0 by default).
-					onChange={ ( value, ...args ) => {
-						valueRef.current = value;
-						onChange?.( value, ...args );
-					} }
-					{ ...restProps }
-				/>
-			}
-		/>
+		>
+			<NumberControl
+				__next40pxDefaultSize
+				ref={ mergedRefs }
+				// TODO: Upstream limitation - When form is submitted when value is undefined, it will
+				// automatically set a clamped value (as defined by `min` attribute, so 0 by default).
+				onChange={ ( value, ...args ) => {
+					valueRef.current = value;
+					onChange?.( value, ...args );
+				} }
+				{ ...restProps }
+			/>
+		</ControlWithError>
 	);
 };
 

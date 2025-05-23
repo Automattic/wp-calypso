@@ -32,16 +32,15 @@ const UnforwardedValidatedRadioControl = (
 			getValidityTarget={ () =>
 				validityTargetRef.current?.querySelector< HTMLInputElement >( 'input[type="radio"]' )
 			}
-			children={
-				<RadioControl
-					onChange={ ( value ) => {
-						valueRef.current = value;
-						onChange?.( value );
-					} }
-					{ ...restProps }
-				/>
-			}
-		/>
+		>
+			<RadioControl
+				onChange={ ( value ) => {
+					valueRef.current = value;
+					onChange?.( value );
+				} }
+				{ ...restProps }
+			/>
+		</ControlWithError>
 	);
 };
 
