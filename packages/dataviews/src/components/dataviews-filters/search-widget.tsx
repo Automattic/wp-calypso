@@ -198,7 +198,8 @@ function ListBox( { view, filter, onChangeView }: SearchWidgetProps ) {
 											...( view.filters ?? [] ),
 											{
 												field: filter.field,
-												operator: filter.operators[ 0 ],
+												operator:
+													filter.operators[ 0 ].name,
 												value: getNewValue(
 													filter,
 													currentFilter,
@@ -257,7 +258,7 @@ function ComboboxList( { view, filter, onChangeView }: SearchWidgetProps ) {
 										..._filter,
 										operator:
 											currentFilter.operator ||
-											filter.operators[ 0 ],
+											filter.operators[ 0 ].name,
 										value,
 									};
 								}
@@ -268,7 +269,7 @@ function ComboboxList( { view, filter, onChangeView }: SearchWidgetProps ) {
 							...( view.filters ?? [] ),
 							{
 								field: filter.field,
-								operator: filter.operators[ 0 ],
+								operator: filter.operators[ 0 ].name,
 								value,
 							},
 					  ];

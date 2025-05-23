@@ -61,7 +61,7 @@ export default function InputWidget( {
 								..._filter,
 								operator:
 									currentFilter.operator ||
-									filter.operators[ 0 ],
+									filter.operators[ 0 ].name,
 								value: nextValue,
 						  }
 						: _filter
