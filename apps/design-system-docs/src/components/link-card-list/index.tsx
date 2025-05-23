@@ -22,7 +22,12 @@ export const LinkCardListFromMdx = ( {
 	mdxFiles: Record<
 		string,
 		{
-			metadata: { permalink: string; title: string; description?: string };
+			metadata: {
+				permalink: string;
+				title: string;
+				description?: string;
+				frontMatter: { image?: string };
+			};
 			assets: { image?: string };
 		}
 	>;
@@ -32,7 +37,7 @@ export const LinkCardListFromMdx = ( {
 			href: metadata.permalink,
 			label: metadata.title,
 			description: metadata.description,
-			image: assets.image,
+			image: assets.image ?? metadata.frontMatter.image,
 		};
 	} );
 	return <LinkCardList items={ items } />;
