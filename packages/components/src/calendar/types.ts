@@ -136,11 +136,13 @@ type DayOfWeek = {
  * @callback OnSelectHandler
  * @param {T} selected - The selected item after the event.
  */
-export type OnSelectHandler< T > = ( selected: T ) => void;
+type OnSelectHandler< T > = ( selected: T ) => void;
 
 export interface BaseProps extends Omit< React.HTMLAttributes< HTMLDivElement >, 'onSelect' > {
 	/**
 	 * Whether the selection is required.
+	 * When `true`, there always needs to be a date selected.
+	 * @default false
 	 */
 	required?: boolean;
 
@@ -266,22 +268,7 @@ export interface BaseProps extends Omit< React.HTMLAttributes< HTMLDivElement >,
 	role?: 'application' | 'dialog' | undefined;
 }
 
-interface SinglePropsRequired {
-	required: true;
-	/** The selected date. */
-	selected: Date | undefined | null;
-	/**
-	 * Event handler when a day is selected. When the selection is required,
-	 * user can not deselect the date, and therefore the callback always
-	 * has a defined date argument.
-	 */
-	onSelect?: OnSelectHandler< Date >;
-	/** The default selected date (for uncontrolled usage). */
-	defaultSelected?: Date;
-}
-
-interface SinglePropsOptional {
-	required?: false | undefined;
+interface SingleProps {
 	/** The selected date. */
 	selected?: Date | undefined | null;
 	/** Event handler when a day is selected. */
@@ -299,24 +286,6 @@ interface RangeProps {
 	min?: number;
 	/** The maximum number of days to include in the range. */
 	max?: number;
-}
-
-interface RangePropsRequired {
-	required: true;
-	/** The selected range. */
-	selected: DateRange | undefined | null;
-	/**
-	 * Event handler when a range is selected. When the selection is required,
-	 * user can not deselect the range, and therefore the callback always
-	 * has a defined range argument.
-	 */
-	onSelect?: OnSelectHandler< DateRange >;
-	/** The default selected range (for uncontrolled usage). */
-	defaultSelected?: DateRange;
-}
-
-interface RangePropsOptional {
-	required?: false | undefined;
 	/** The selected range. */
 	selected?: DateRange | undefined | null;
 	/** Event handler when the selection changes. */
@@ -325,7 +294,5 @@ interface RangePropsOptional {
 	defaultSelected?: DateRange;
 }
 
-export type DateCalendarProps = BaseProps & ( SinglePropsRequired | SinglePropsOptional );
-export type DateRangeCalendarProps = BaseProps &
-	RangeProps &
-	( RangePropsRequired | RangePropsOptional );
+export type DateCalendarProps = BaseProps & SingleProps;
+export type DateRangeCalendarProps = BaseProps & RangeProps;
