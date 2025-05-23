@@ -21,7 +21,7 @@ import { fromZonedTime } from 'date-fns-tz';
 import { useState, default as React } from 'react';
 import '@testing-library/jest-dom';
 import { DateCalendar, TZDate } from '..';
-import { getDateButton, getDateCell, queryDateCell, monthNameFormatter } from './utils';
+import { getDateButton, getDateCell, queryDateCell, monthNameFormatter } from '../utils/test-utils';
 import type { DateCalendarProps } from '../types';
 
 const UncontrolledDateCalendar = (
