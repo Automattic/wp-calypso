@@ -31,7 +31,7 @@ export default function SiteVisibilitySettings( { siteSlug }: { siteSlug: string
 					{ site.launch_status === 'unlaunched' ? (
 						<LaunchForm site={ site } />
 					) : (
-						<PrivacyForm settings={ settings } mutation={ mutation } />
+						<PrivacyForm site={ site } settings={ settings } mutation={ mutation } />
 					) }
 				</CardBody>
 			</Card>
