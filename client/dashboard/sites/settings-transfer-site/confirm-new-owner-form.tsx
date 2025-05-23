@@ -28,14 +28,17 @@ const form = {
 };
 
 export function ConfirmNewOwnerForm( {
+	initialData = {},
 	siteSlug,
 	handleSubmit,
 }: {
+	initialData?: Partial< ConfirmNewOwnerFormData >;
 	siteSlug: string;
 	handleSubmit: ( event: React.FormEvent ) => void;
 } ) {
 	const [ formData, setFormData ] = useState( {
 		email: '',
+		...initialData,
 	} );
 
 	const isSaveDisabled = ! isItemValid( formData, fields, form );
