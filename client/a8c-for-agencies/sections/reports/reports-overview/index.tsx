@@ -7,6 +7,7 @@ import PageSectionColumns from 'calypso/a8c-for-agencies/components/page-section
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import SimpleList from 'calypso/a8c-for-agencies/components/simple-list';
 import whyImage from 'calypso/assets/images/a8c-for-agencies/reports/report-mock-2.png';
+import readyImage from 'calypso/assets/images/a8c-for-agencies/reports/report-mock-3.png';
 import heroImage from 'calypso/assets/images/a8c-for-agencies/reports/report-mock.png';
 import LayoutBody from 'calypso/layout/hosting-dashboard/body';
 import LayoutHeader, {
@@ -153,7 +154,7 @@ const ReportsOverview = () => {
 						<>
 							<div className="reports-overview__description">
 								{ translate(
-									"Our report builder makes it easy to create professional client reports in minutes. Select what information to include, and click send! We'll handle the rest."
+									"Our streamlined report builder makes it easy to create professional client reports in minutes. Simply select what information to include, and click send! We'll handle the rest."
 								) }
 							</div>
 							<div className="reports-overview__buttons-container">
@@ -162,6 +163,9 @@ const ReportsOverview = () => {
 								</Button>
 							</div>
 						</>
+					</PageSectionColumns.Column>
+					<PageSectionColumns.Column alignCenter>
+						<img src={ readyImage } alt="Reports & Analytics" />
 					</PageSectionColumns.Column>
 				</PageSectionColumns>
 
