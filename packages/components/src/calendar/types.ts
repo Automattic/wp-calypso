@@ -150,7 +150,7 @@ type DayOfWeek = {
  * @param {Modifiers} modifiers - The modifiers associated with the event.
  * @param {React.MouseEvent | React.KeyboardEvent} e - The event object.
  */
-export type OnSelectHandler< T > = (
+type OnSelectHandler< T > = (
 	selected: T,
 	triggerDate: Date,
 	modifiers: Modifiers,
