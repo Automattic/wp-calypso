@@ -2,8 +2,12 @@ import useIsBrowser from '@docusaurus/useIsBrowser';
 import { Card, CardBody, CardMedia } from '@wordpress/components';
 import clsx from 'clsx';
 import { useId } from 'react';
-import defaultImage from './default.png';
 import styles from './style.module.scss';
+
+// TODO: Replace with actual image URL.
+const DEFAULT_IMAGE =
+	'https://raw.githubusercontent.com/Automattic/wp-calypso/2e973a7d95304c88ecd795e903ba28f47a6e714e/apps/design-system-docs/docs/components/ds/form-controls/button/button.png';
+
 /**
  * A card that links to a page.
  */
@@ -12,7 +16,7 @@ export const LinkCard = ( {
 	href,
 	label,
 	description,
-	image = defaultImage,
+	image = DEFAULT_IMAGE,
 }: {
 	className?: string;
 	href: string;
