@@ -25,7 +25,7 @@ const UnforwardedValidatedRangeControl = (
 		<ControlWithError
 			required={ required }
 			markWhenOptional={ markWhenOptional }
-			render={
+			children={
 				<RangeControl
 					__next40pxDefaultSize
 					__nextHasNoMarginBottom

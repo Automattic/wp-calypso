@@ -24,7 +24,7 @@ const UnforwardedValidatedNumberControl = (
 		<ControlWithError
 			required={ required }
 			markWhenOptional={ markWhenOptional }
-			render={
+			children={
 				<NumberControl
 					__next40pxDefaultSize
 					ref={ mergedRefs }

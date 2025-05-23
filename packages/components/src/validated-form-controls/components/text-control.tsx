@@ -25,7 +25,7 @@ const UnforwardedValidatedTextControl = (
 		<ControlWithError
 			required={ required }
 			markWhenOptional={ markWhenOptional }
-			render={
+			children={
 				<TextControl
 					__next40pxDefaultSize
 					__nextHasNoMarginBottom

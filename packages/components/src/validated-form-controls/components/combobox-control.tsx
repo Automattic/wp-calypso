@@ -37,7 +37,7 @@ const UnforwardedValidatedComboboxControl = (
 			required={ required }
 			markWhenOptional={ markWhenOptional }
 			ref={ mergedRefs }
-			render={
+			children={
 				<ComboboxControl
 					__nextHasNoMarginBottom
 					__next40pxDefaultSize

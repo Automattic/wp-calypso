@@ -24,7 +24,7 @@ const UnforwardedValidatedTextareaControl = (
 		<ControlWithError
 			required={ required }
 			markWhenOptional={ markWhenOptional }
-			render={
+			children={
 				<TextareaControl
 					__nextHasNoMarginBottom
 					ref={ mergedRefs }

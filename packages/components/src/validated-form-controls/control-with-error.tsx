@@ -48,7 +48,7 @@ function UnforwardedControlWithError< C extends React.ReactElement >(
 		markWhenOptional,
 		customValidator,
 		getValidityTarget,
-		render,
+		children,
 	}: {
 		/**
 		 * Whether the control is required.
@@ -69,7 +69,7 @@ function UnforwardedControlWithError< C extends React.ReactElement >(
 		 * A function that returns the actual element on which the validity data should be applied.
 		 */
 		getValidityTarget: () => ValidityTarget | null | undefined;
-		render: C;
+		children: C;
 	},
 	forwardedRef: React.ForwardedRef< HTMLDivElement >
 ) {
@@ -118,7 +118,7 @@ function UnforwardedControlWithError< C extends React.ReactElement >(
 	};
 
 	const onChange = ( ...args: unknown[] ) => {
-		render.props.onChange?.( ...args );
+		children.props.onChange?.( ...args );
 
 		// Only validate incrementally if the field has blurred at least once,
 		// or currently has an error message.
@@ -144,8 +144,8 @@ function UnforwardedControlWithError< C extends React.ReactElement >(
 			onBlur={ onBlur }
 			onKeyDown={ withIgnoreIMEEvents( onKeyDown ) }
 		>
-			{ cloneElement( render, {
-				label: appendRequiredIndicator( render.props.label, required, markWhenOptional ),
+			{ cloneElement( children, {
+				label: appendRequiredIndicator( children.props.label, required, markWhenOptional ),
 				onChange,
 				required,
 			} ) }

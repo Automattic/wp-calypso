@@ -27,7 +27,7 @@ const UnforwardedValidatedToggleGroupControl = (
 			<ControlWithError
 				required={ required }
 				markWhenOptional={ markWhenOptional }
-				render={
+				children={
 					<ToggleGroupControl
 						__nextHasNoMarginBottom
 						__next40pxDefaultSize

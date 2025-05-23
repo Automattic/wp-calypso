@@ -25,7 +25,7 @@ const UnforwardedValidatedCheckboxControl = (
 			required={ required }
 			markWhenOptional={ markWhenOptional }
 			ref={ mergedRefs }
-			render={
+			children={
 				<CheckboxControl
 					__nextHasNoMarginBottom
 					onChange={ ( value ) => {

@@ -31,7 +31,7 @@ const UnforwardedValidatedSelectControl = (
 		<ControlWithError
 			required={ required }
 			markWhenOptional={ markWhenOptional }
-			render={
+			children={
 				<SelectControl
 					__nextHasNoMarginBottom
 					__next40pxDefaultSize

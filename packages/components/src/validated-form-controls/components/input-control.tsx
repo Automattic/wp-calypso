@@ -25,7 +25,7 @@ const UnforwardedValidatedInputControl = (
 		<ControlWithError
 			required={ required }
 			markWhenOptional={ markWhenOptional }
-			render={
+			children={
 				<InputControl
 					__next40pxDefaultSize
 					ref={ mergedRefs }

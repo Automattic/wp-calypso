@@ -23,7 +23,7 @@ const UnforwardedValidatedCustomSelectControl = (
 			<ControlWithError
 				required={ required }
 				markWhenOptional={ markWhenOptional }
-				render={
+				children={
 					<CustomSelectControl
 						// TODO: Upstream limitation - Required isn't passed down correctly,
 						// so it needs to be set on a delegate element.

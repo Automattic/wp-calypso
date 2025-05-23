@@ -34,7 +34,7 @@ const UnforwardedValidatedToggleControl = (
 		<ControlWithError
 			required={ required }
 			markWhenOptional={ markWhenOptional }
-			render={
+			children={
 				<ToggleControl
 					__nextHasNoMarginBottom
 					ref={ mergedRefs }
