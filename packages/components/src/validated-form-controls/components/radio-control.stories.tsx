@@ -5,7 +5,7 @@ import { formDecorator } from './story-utils';
 import type { Meta, StoryObj } from '@storybook/react';
 
 const meta: Meta< typeof ValidatedRadioControl > = {
-	title: 'Packages/Components/Validated Form Controls/ValidatedRadioControl',
+	title: 'Validated Form Controls/ValidatedRadioControl',
 	component: ValidatedRadioControl,
 	decorators: formDecorator,
 	args: { onChange: fn() },

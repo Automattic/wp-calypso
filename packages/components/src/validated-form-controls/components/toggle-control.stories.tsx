@@ -5,7 +5,7 @@ import { ValidatedToggleControl } from './toggle-control';
 import type { Meta, StoryObj } from '@storybook/react';
 
 const meta: Meta< typeof ValidatedToggleControl > = {
-	title: 'Packages/Components/Validated Form Controls/ValidatedToggleControl',
+	title: 'Validated Form Controls/ValidatedToggleControl',
 	component: ValidatedToggleControl,
 	decorators: formDecorator,
 	args: { onChange: fn() },

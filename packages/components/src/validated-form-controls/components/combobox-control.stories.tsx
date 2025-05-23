@@ -5,7 +5,7 @@ import { formDecorator } from './story-utils';
 import type { Meta, StoryObj } from '@storybook/react';
 
 const meta: Meta< typeof ValidatedComboboxControl > = {
-	title: 'Packages/Components/Validated Form Controls/ValidatedComboboxControl',
+	title: 'Validated Form Controls/ValidatedComboboxControl',
 	component: ValidatedComboboxControl,
 	decorators: formDecorator,
 	args: { onChange: fn() },

@@ -5,7 +5,7 @@ import { ValidatedTextareaControl } from './textarea-control';
 import type { Meta, StoryObj } from '@storybook/react';
 
 const meta: Meta< typeof ValidatedTextareaControl > = {
-	title: 'Packages/Components/Validated Form Controls/ValidatedTextareaControl',
+	title: 'Validated Form Controls/ValidatedTextareaControl',
 	component: ValidatedTextareaControl,
 	decorators: formDecorator,
 	args: { onChange: fn() },

@@ -5,7 +5,7 @@ import { formDecorator } from './story-utils';
 import type { StoryObj, Meta } from '@storybook/react';
 
 const meta: Meta< typeof ValidatedCheckboxControl > = {
-	title: 'Packages/Components/Validated Form Controls/ValidatedCheckboxControl',
+	title: 'Validated Form Controls/ValidatedCheckboxControl',
 	component: ValidatedCheckboxControl,
 	decorators: formDecorator,
 	args: { onChange: fn() },

@@ -10,7 +10,7 @@ import { ValidatedToggleGroupControl } from './toggle-group-control';
 import type { Meta, StoryObj } from '@storybook/react';
 
 const meta: Meta< typeof ValidatedToggleGroupControl > = {
-	title: 'Packages/Components/Validated Form Controls/ValidatedToggleGroupControl',
+	title: 'Validated Form Controls/ValidatedToggleGroupControl',
 	component: ValidatedToggleGroupControl,
 	decorators: formDecorator,
 	args: { onChange: fn() },

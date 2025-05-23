@@ -5,7 +5,7 @@ import { formDecorator } from './story-utils';
 import type { Meta, StoryObj } from '@storybook/react';
 
 const meta: Meta< typeof ValidatedRangeControl > = {
-	title: 'Packages/Components/Validated Form Controls/ValidatedRangeControl',
+	title: 'Validated Form Controls/ValidatedRangeControl',
 	component: ValidatedRangeControl,
 	decorators: formDecorator,
 	args: { onChange: fn() },

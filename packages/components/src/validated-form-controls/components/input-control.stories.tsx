@@ -11,7 +11,7 @@ import { formDecorator } from './story-utils';
 import type { Meta, StoryObj } from '@storybook/react';
 
 const meta: Meta< typeof ValidatedInputControl > = {
-	title: 'Packages/Components/Validated Form Controls/ValidatedInputControl',
+	title: 'Validated Form Controls/ValidatedInputControl',
 	component: ValidatedInputControl,
 	decorators: formDecorator,
 	args: { onChange: fn() },

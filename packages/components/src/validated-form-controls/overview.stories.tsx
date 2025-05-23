@@ -5,7 +5,7 @@ import { formDecorator } from './components/story-utils';
 import { ControlWithError } from './control-with-error';
 
 const meta: Meta< typeof ControlWithError > = {
-	title: 'Packages/Components/Validated Form Controls/Overview',
+	title: 'Validated Form Controls/Overview',
 	decorators: formDecorator,
 	tags: [ '!dev' ],
 };
