@@ -10,11 +10,18 @@ const RestorableProductsContext = createContext< RestorableProductsContextType |
 	undefined
 );
 
+interface ProductOrderInfo {
+	position: number;
+	removed: boolean;
+}
+
 // This context is used to store the order of products in the cart, so we can render the
 // restorable items in the same place as the original items in the cart.
 type CartProductsOrderContextType = [
-	cartProductsOrder: ResponseCartProduct[ 'product_id' ][],
-	setCartProductsOrder: Dispatch< SetStateAction< ResponseCartProduct[ 'product_id' ][] > >,
+	cartProductsOrder: Map< ResponseCartProduct[ 'uuid' ], ProductOrderInfo >,
+	setCartProductsOrder: Dispatch<
+		SetStateAction< Map< ResponseCartProduct[ 'uuid' ], ProductOrderInfo > >
+	>,
 ];
 
 const CartProductsOrderContext = createContext< CartProductsOrderContextType | undefined >(
@@ -23,7 +30,9 @@ const CartProductsOrderContext = createContext< CartProductsOrderContextType | u
 
 export const RestorableProductsProvider = ( { children }: { children: ReactNode } ) => {
 	const state = useState< ResponseCartProduct[] >( [] );
-	const productsOrderState = useState< ResponseCartProduct[ 'product_id' ][] >( [] );
+	const productsOrderState = useState< Map< ResponseCartProduct[ 'uuid' ], ProductOrderInfo > >(
+		new Map()
+	);
 
 	return (
 		<RestorableProductsContext.Provider value={ state }>
