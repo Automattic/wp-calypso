@@ -54,6 +54,10 @@
 				padding: 0 24px 0 24px;
 			}
 
+			.magic-login__form-form {
+				box-shadow: none;
+			}
+
 			.magic-login__form-action {
 				.button.is-primary {
 					background-color: var(--studio-jetpack-green-50);
@@ -92,10 +96,6 @@
 
 		.magic-login__successfully-jetpack {
 			padding: 0 24px 0 24px;
-		}
-
-		.magic-login__footer {
-			max-width: 450px;
 		}
 
 		&__loading-spinner--jetpack {

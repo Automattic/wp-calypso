@@ -324,7 +324,7 @@ __metadata:
     "@tanstack/react-query": "npm:^5.15.5"
     "@wordpress/data": "npm:^10.23.0"
     "@wordpress/dependency-extraction-webpack-plugin": "npm:^6.19.0"
-    autoprefixer: "npm:^10.2.5"
+    autoprefixer: "npm:^10.4.21"
     calypso: "workspace:^"
     clsx: "npm:^2.1.1"
     debug: "npm:^4.4.0"
@@ -455,7 +455,7 @@ __metadata:
     "@types/webpack-env": "npm:^1.18.8"
     "@wordpress/browserslist-config": "npm:^6.23.0"
     "@wordpress/dependency-extraction-webpack-plugin": "npm:^6.19.0"
-    autoprefixer: "npm:^10.2.5"
+    autoprefixer: "npm:^10.4.21"
     babel-loader: "npm:^8.2.3"
     browserslist: "npm:^4.24.5"
     css-loader: "npm:^6.11.0"
@@ -1095,7 +1095,7 @@ __metadata:
     "@docusaurus/preset-classic": "npm:^3.7.0"
     "@docusaurus/tsconfig": "npm:^3.7.0"
     "@docusaurus/types": "npm:^3.7.0"
-    "@mdx-js/react": "npm:^3.0.0"
+    "@mdx-js/react": "npm:^3.1.0"
     "@types/react": "npm:^18.3.21"
     "@wordpress/browserslist-config": "npm:^6.23.0"
     prism-react-renderer: "npm:^2.3.0"
@@ -1632,7 +1632,7 @@ __metadata:
     "@wordpress/components": "npm:^29.9.0"
     "@wordpress/data": "npm:^10.23.0"
     "@wordpress/i18n": "npm:^5.23.0"
-    autoprefixer: "npm:^10.2.5"
+    autoprefixer: "npm:^10.4.21"
     calypso: "workspace:^"
     clsx: "npm:^2.1.1"
     debug: "npm:^4.4.0"
@@ -1762,7 +1762,7 @@ __metadata:
     "@wordpress/data": "npm:^10.23.0"
     "@wordpress/dependency-extraction-webpack-plugin": "npm:^6.19.0"
     "@wordpress/icons": "npm:^10.23.0"
-    autoprefixer: "npm:^10.2.5"
+    autoprefixer: "npm:^10.4.21"
     babel-jest: "npm:^29.7.0"
     calypso: "workspace:^"
     clsx: "npm:^2.1.1"
@@ -6336,7 +6336,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@mdx-js/react@npm:^3.0.0":
+"@mdx-js/react@npm:^3.0.0, @mdx-js/react@npm:^3.1.0":
   version: 3.1.0
   resolution: "@mdx-js/react@npm:3.1.0"
   dependencies:
@@ -13440,7 +13440,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"autoprefixer@npm:^10.2.5, autoprefixer@npm:^10.4.19, autoprefixer@npm:^10.4.20, autoprefixer@npm:^10.4.21":
+"autoprefixer@npm:^10.4.19, autoprefixer@npm:^10.4.20, autoprefixer@npm:^10.4.21":
   version: 10.4.21
   resolution: "autoprefixer@npm:10.4.21"
   dependencies:
@@ -14418,7 +14418,7 @@ __metadata:
     "@wordpress/react-i18n": "npm:^4.23.0"
     "@wordpress/viewport": "npm:^6.23.0"
     "@wordpress/warning": "npm:^3.23.0"
-    autoprefixer: "npm:^10.2.5"
+    autoprefixer: "npm:^10.4.21"
     autosize: "npm:^4.0.4"
     body-parser: "npm:^1.20.3"
     browser-filesaver: "npm:^1.1.1"
@@ -14484,7 +14484,7 @@ __metadata:
     mock-fs: "npm:^5.5.0"
     mockdate: "npm:^2.0.5"
     moment: "npm:^2.30.1"
-    moment-timezone: "npm:^0.5.47"
+    moment-timezone: "npm:^0.5.48"
     moment-timezone-data-webpack-plugin: "npm:^1.5.1"
     nock: "npm:^13.5.6"
     path-browserify: "npm:^1.0.1"
@@ -26453,7 +26453,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"moment-timezone@npm:^0.5.40, moment-timezone@npm:^0.5.47":
+"moment-timezone@npm:^0.5.40, moment-timezone@npm:^0.5.48":
   version: 0.5.48
   resolution: "moment-timezone@npm:0.5.48"
   dependencies:
