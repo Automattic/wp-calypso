@@ -78,13 +78,7 @@ export default function InputWidget( {
 				data={ data }
 				field={ field }
 				operator={ currentFilter.operator }
-				onChange={ ( data ) => {
-					const nextValue = data[ field.id ];
-					if ( nextValue === currentValue ) {
-						return;
-					}
-					handleChange( data );
-				} }
+				onChange={ handleChange }
 			/>
 		</Flex>
 	);
