@@ -35,7 +35,7 @@ export function SummaryButtonList( {
 	} );
 	const header = (
 		<VStack spacing={ 4 }>
-			<h2 className="client-dashboard-components-summary-button-list__heading">{ title }</h2>
+			<h3 className="client-dashboard-components-summary-button-list__heading">{ title }</h3>
 			{ description && <Text variant="muted">{ description }</Text> }
 		</VStack>
 	);
