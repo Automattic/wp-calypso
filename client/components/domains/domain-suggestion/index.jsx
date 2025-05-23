@@ -1,5 +1,6 @@
 import { Button, Gridicon } from '@automattic/components';
 import clsx from 'clsx';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import DomainProductPrice from 'calypso/components/domains/domain-product-price';
@@ -25,6 +26,31 @@ class DomainSuggestion extends Component {
 	static defaultProps = {
 		showChevron: false,
 	};
+
+	getAccessibleButtonLabel() {
+		const { buttonContent, domain, translate } = this.props;
+		let actionText;
+
+		if ( typeof buttonContent === 'string' ) {
+			actionText = buttonContent;
+		} else {
+			const textContent = buttonContent?.props?.children?.[ 1 ];
+			if ( typeof textContent === 'string' ) {
+				actionText = textContent;
+			} else {
+				actionText = translate( 'Select', { context: 'Domain selection button' } );
+			}
+		}
+
+		return translate( '%(action)s domain %(domain)s', {
+			args: {
+				action: actionText,
+				domain,
+			},
+			comment:
+				'Accessible label for domain selection button. %(action)s is the button action (Select, Selected, Upgrade, etc), %(domain)s is the domain name',
+		} );
+	}
 
 	renderPrice() {
 		const {
@@ -79,8 +105,10 @@ class DomainSuggestion extends Component {
 			? children
 			: [];
 
+		const domainCardId = `domain-card-${ this.props.domain.replace( /\./g, '-' ) }`;
+
 		return (
-			<div className={ classes } data-e2e-domain={ this.props.domain }>
+			<div className={ classes } data-e2e-domain={ this.props.domain } id={ domainCardId }>
 				{ badges }
 				<div className={ contentClassName }>
 					{ domainContent }
@@ -96,6 +124,8 @@ class DomainSuggestion extends Component {
 								this.props.onButtonClick( isAdded );
 							} }
 							data-tracks-button-click-source={ this.props.tracksButtonClickSource }
+							aria-label={ this.getAccessibleButtonLabel() }
+							aria-describedby={ domainCardId }
 							{ ...this.props.buttonStyles }
 						>
 							{ this.props.buttonContent }
@@ -111,7 +141,7 @@ class DomainSuggestion extends Component {
 	}
 }
 
-DomainSuggestion.Placeholder = function () {
+function DomainSuggestionPlaceholder() {
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<div className="domain-suggestion card is-compact is-placeholder is-clickable">
@@ -123,6 +153,12 @@ DomainSuggestion.Placeholder = function () {
 		</div>
 	);
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
-};
+}
 
-export default DomainSuggestion;
+DomainSuggestionPlaceholder.displayName = 'DomainSuggestionPlaceholder';
+DomainSuggestion.Placeholder = DomainSuggestionPlaceholder;
+
+const LocalizedDomainSuggestion = localize( DomainSuggestion );
+LocalizedDomainSuggestion.Placeholder = DomainSuggestionPlaceholder;
+
+export default LocalizedDomainSuggestion;
