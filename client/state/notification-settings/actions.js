@@ -28,7 +28,7 @@ export const fetchSettings = () => ( dispatch ) => {
 	dispatch( { type: NOTIFICATION_SETTINGS_FETCH } );
 
 	wpcom.req
-		.get( '/me/notifications/settings/' )
+		.get( '/me/notifications/settings' )
 		.then( ( data ) =>
 			dispatch( {
 				type: NOTIFICATION_SETTINGS_FETCH_COMPLETE,
@@ -78,7 +78,7 @@ export const saveSettings =
 		const query = applyToAll ? { applyToAll: true } : {};
 
 		wpcom.req
-			.post( '/me/notifications/settings/', query, buildSavePayload( source, settings ) )
+			.post( '/me/notifications/settings', query, buildSavePayload( source, settings ) )
 			.then( ( data ) => {
 				dispatch( showSaveSuccessNotice() );
 				dispatch( {
