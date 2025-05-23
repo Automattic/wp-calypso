@@ -139,23 +139,25 @@ export function WPOrderReviewLineItems( {
 		);
 	}, [ responseCart.products ] );
 
+	// Initialize the order of products in the cart
+	useEffect( () => {
+		if ( ! cartProductsOrder.size ) {
+			const newOrder = new Map();
+
+			responseCart.products.forEach( ( product, position ) => {
+				newOrder.set( product.uuid, { position, removed: false } );
+			} );
+
+			setCartProductsOrder( newOrder );
+		}
+	}, [ cartProductsOrder.size, responseCart.products, setCartProductsOrder ] );
+
 	// Keep track of modified products
 	useEffect( () => {
 		setCartProductsOrder( ( prevCartProductsOrder ) => {
 			// console.debug( 'responseCart.products', responseCart.products );
 			// console.debug( 'prevCartProductsOrder', prevCartProductsOrder );
 			const newOrder = new Map( prevCartProductsOrder );
-
-			const productOrderNeedsInitialization = ! prevCartProductsOrder.size;
-
-			if ( productOrderNeedsInitialization ) {
-				// console.debug( 'initialization' );
-				responseCart.products.forEach( ( product, position ) => {
-					newOrder.set( product.uuid, { position, removed: false } );
-				} );
-				// console.debug( 'newOrder', newOrder );
-				return newOrder;
-			}
 
 			const uuids = responseCart.products.map( ( product ) => product.uuid );
 			const prevCartProductsOrderUuids = Array.from( prevCartProductsOrder.keys() );
