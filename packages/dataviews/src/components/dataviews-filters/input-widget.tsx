@@ -3,12 +3,11 @@
  */
 import { __ } from '@wordpress/i18n';
 import { useCallback, useMemo } from '@wordpress/element';
-import { Notice, Flex, FlexItem } from '@wordpress/components';
+import { Flex } from '@wordpress/components';
 /**
  * Internal dependencies
  */
 import type { View, NormalizedFilter, NormalizedField } from '../../types';
-import { OPERATOR_BETWEEN } from '../../constants';
 import { getCurrentValue } from './search-widget';
 
 interface UserInputWidgetProps {
@@ -69,63 +68,16 @@ export default function InputWidget( {
 		[ field, onChangeView, view, filter, currentFilter ]
 	);
 
-	const isBetween = currentFilter.operator === OPERATOR_BETWEEN;
-
-	if ( isBetween ) {
-		const [ minValue = '', maxValue = '' ] = Array.isArray( currentValue )
-			? currentValue
-			: [];
-		const isInvalid =
-			minValue !== '' && maxValue !== '' && minValue > maxValue;
-
-		return (
-			<Flex
-				className="dataviews-filters__user-input-widget dataviews-filters__user-input-widget--between"
-				gap={ 2.5 }
-				direction="column"
-			>
-				<FlexItem>
-					<field.Edit
-						hideLabelFromVision
-						data={ { ...data, [ field.id ]: minValue } }
-						field={ field }
-						onChange={ ( minData ) => {
-							const newMin = minData[ field.id ];
-							handleChange( {
-								[ field.id ]: [ newMin, maxValue ],
-							} );
-						} }
-					/>
-				</FlexItem>
-				<FlexItem>
-					<field.Edit
-						hideLabelFromVision
-						data={ { ...data, [ field.id ]: maxValue } }
-						field={ field }
-						onChange={ ( maxData ) => {
-							const newMax = maxData[ field.id ];
-							handleChange( {
-								[ field.id ]: [ minValue, newMax ],
-							} );
-						} }
-					/>
-				</FlexItem>
-				{ isInvalid && (
-					<FlexItem>
-						<Notice status="warning" isDismissible={ false }>
-							{ __( 'Min value must be less than max value.' ) }
-						</Notice>
-					</FlexItem>
-				) }
-			</Flex>
-		);
-	}
-
 	return (
-		<div className="dataviews-filters__user-input-widget">
+		<Flex
+			className="dataviews-filters__user-input-widget"
+			gap={ 2.5 }
+			direction="column"
+		>
 			<field.Edit
 				data={ data }
 				field={ field }
+				operator={ currentFilter.operator }
 				onChange={ ( data ) => {
 					const nextValue = data[ field.id ];
 					if ( nextValue === currentValue ) {
@@ -134,6 +86,6 @@ export default function InputWidget( {
 					handleChange( data );
 				} }
 			/>
-		</div>
+		</Flex>
 	);
 }
