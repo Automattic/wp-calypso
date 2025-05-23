@@ -157,7 +157,8 @@ export type OnSelectHandler< T > = (
 	e: React.MouseEvent | React.KeyboardEvent
 ) => void;
 
-export interface BaseProps extends Omit< React.HTMLAttributes< HTMLDivElement >, 'onSelect' > {
+export interface BaseProps
+	extends Omit< React.HTMLAttributes< HTMLDivElement >, 'onSelect' | 'defaultValue' > {
 	/**
 	 * Whether the selection is required.
 	 * When `true`, there always needs to be a date selected.
