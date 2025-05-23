@@ -1,0 +1,66 @@
+import {
+	__experimentalVStack as VStack,
+	__experimentalHStack as HStack,
+	__experimentalText as Text,
+} from '@wordpress/components';
+import type { SectionHeaderProps } from './types';
+
+import './style.scss';
+
+/**
+ * The SectionHeader component provides a consistently structured introduction
+ * to a section of content, combining a title, optional description/decoration,
+ * and contextual actions. It is used to add hierarchy and clarity within page
+ * content or nested in composite components such as SummaryButtonList, or DataFormFields.
+ */
+export const SectionHeader = ( {
+	title,
+	description,
+	actions,
+	decoration,
+	level = 2,
+	prefix,
+}: SectionHeaderProps ) => {
+	const HeadingTag = `h${ level }` as keyof JSX.IntrinsicElements;
+	return (
+		<VStack
+			spacing={ 2 }
+			className={ `client-dashboard-components-section-header is-level-${ level }` }
+		>
+			{ prefix && (
+				<div className="client-dashboard-components-section-header__prefix">{ prefix }</div>
+			) }
+			<HStack
+				spacing={ 4 }
+				justify="flex-start"
+				alignment="flex-start"
+				className="client-dashboard-components-section-header__heading-row"
+			>
+				{ decoration && (
+					<span className="client-dashboard-components-section-header__decoration">
+						{ decoration }
+					</span>
+				) }
+				<HStack spacing={ 3 } justify="space-between" alignment="flex-start">
+					<HeadingTag className="client-dashboard-components-section-header__heading">
+						{ title }
+					</HeadingTag>
+					{ /* The wrapper is always needed for view transitions. */ }
+					<HStack
+						spacing={ 2 }
+						justify="flex-end"
+						expanded={ false }
+						className="client-dashboard-components-section-header__actions"
+					>
+						{ actions }
+					</HStack>
+				</HStack>
+			</HStack>
+			{ description && (
+				<Text variant="muted" className="client-dashboard-components-section-header__description">
+					{ description }
+				</Text>
+			) }
+		</VStack>
+	);
+};

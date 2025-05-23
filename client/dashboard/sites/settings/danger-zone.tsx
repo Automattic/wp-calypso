@@ -1,8 +1,9 @@
-import { __experimentalHeading as Heading, Button } from '@wordpress/components';
+import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
 import { ActionList } from '../../components/action-list';
 import RouterLinkButton from '../../components/router-link-button';
+import { SectionHeader } from '../../components/section-header';
 import { useCanTransferSite } from '../hooks/use-can-transfer-site';
 import SiteLeaveModal from '../site-leave-modal';
 import type { Site } from '../../data/types';
@@ -60,7 +61,7 @@ export default function DangerZone( { site }: { site: Site } ) {
 
 	return (
 		<>
-			<Heading>{ __( 'Danger zone' ) }</Heading>
+			<SectionHeader title={ __( 'Danger zone' ) } />
 			<ActionList>{ actions }</ActionList>
 		</>
 	);

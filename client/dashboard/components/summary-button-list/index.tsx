@@ -1,11 +1,7 @@
-import {
-	Card,
-	CardHeader,
-	__experimentalVStack as VStack,
-	__experimentalText as Text,
-} from '@wordpress/components';
+import { Card, CardHeader, __experimentalVStack as VStack } from '@wordpress/components';
 import clsx from 'clsx';
 import { isValidElement, cloneElement, Children, ReactElement } from 'react';
+import { SectionHeader } from '../section-header';
 import { SummaryButtonListProps } from './types';
 import './style.scss';
 
@@ -34,10 +30,7 @@ export function SummaryButtonList( {
 		return child;
 	} );
 	const header = (
-		<VStack spacing={ 4 }>
-			<h3 className="client-dashboard-components-summary-button-list__heading">{ title }</h3>
-			{ description && <Text variant="muted">{ description }</Text> }
-		</VStack>
+		<SectionHeader level={ isMediumDensity ? 3 : 2 } title={ title } description={ description } />
 	);
 	const className = clsx(
 		'client-dashboard-components-summary-button-list',
