@@ -9,7 +9,7 @@ $system-font-family: -apple-system, BlinkMacSystemFont, 'Noto Sans', 'Segoe UI',
 $recoleta-font-family: 'Recoleta', serif;
 
 .happy-blocks-new-support-content-footer {
-	padding: 64px 96px;
+	padding: 32px 0 64px 0;
 
 	@media ( max-width: $breakpoint-mobile ) {
 		padding: 32px 16px;
@@ -28,11 +28,12 @@ $recoleta-font-family: 'Recoleta', serif;
 	.support-content-resources {
 		display: grid;
 		grid-template-columns: repeat(2, 1fr);
-		gap: 18px;
+		gap: 24px;
 
 		@media ( max-width: $breakpoint-mobile ) {
 			display: flex;
 			flex-direction: column;
+			gap: 16px;
 		}
 
 		.support-content-resource {
@@ -59,6 +60,7 @@ $recoleta-font-family: 'Recoleta', serif;
 		}
 
 		.support-footer__card-title {
+			color: var( --studio-black, #000 );
 			font-size: 1.25rem;
 			margin-top: 0;
 			margin-bottom: 8px;
@@ -73,6 +75,7 @@ $recoleta-font-family: 'Recoleta', serif;
 			color: var( --studio-gray-50, #646970 );
 			line-height: 24px;
 			margin: 0;
+			max-width: 365px;
 
 			@media ( max-width: $breakpoint-mobile ) {
 				font-size: 0.875rem;
