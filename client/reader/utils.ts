@@ -3,7 +3,6 @@ import { safeImageUrl, getUrlParts } from '@automattic/calypso-url';
 import { addQueryArgs, getQueryArgs, removeQueryArgs } from '@wordpress/url';
 import { Dispatch } from 'redux';
 import XPostHelper, { isXPost } from 'calypso/reader/xpost-helper';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getPostByKey } from 'calypso/state/reader/posts/selectors';
 import { AppState } from 'calypso/types';
 
@@ -29,12 +28,6 @@ export function showSelectedPost( { postKey, comments }: ShowSelectedPostArgs ) 
 		}
 
 		const post = getPostByKey( getState(), postKey );
-
-		const isLoggedIn = isUserLoggedIn( getState() );
-
-		if ( ! isLoggedIn ) {
-			return window.open( post.URL + ( comments ? '#comments' : '' ), '_blank' );
-		}
 
 		if ( isXPost( post ) ) {
 			return showFullXPost( XPostHelper.getXPostMetadata( post ) as ShowFullXPostArgs );
