@@ -25,7 +25,7 @@ import type {
 	NormalizedField,
 	SortDirection,
 	ViewTable as ViewTableType,
-	Operator,
+	OperatorConfig,
 } from '../../types';
 
 const { Menu } = unlock( componentsPrivateApis );
@@ -69,7 +69,7 @@ const _HeaderMenu = forwardRef( function HeaderMenu< Item >(
 	let isHidable = false;
 	let isSortable = false;
 	let canAddFilter = false;
-	let operators: Operator[] = [];
+	let operators: OperatorConfig[] = [];
 	const field = fields.find( ( f ) => f.id === fieldId );
 
 	if ( ! field ) {
@@ -170,7 +170,7 @@ const _HeaderMenu = forwardRef( function HeaderMenu< Item >(
 											{
 												field: fieldId,
 												value: undefined,
-												operator: operators[ 0 ],
+												operator: operators[ 0 ].name,
 											},
 										],
 									} );
