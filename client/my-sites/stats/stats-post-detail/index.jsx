@@ -28,12 +28,13 @@ import { getSitePost, getPostPreviewUrl } from 'calypso/state/posts/selectors';
 import { countPostLikes } from 'calypso/state/posts/selectors/count-post-likes';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import {
+	getSite,
 	getSiteSlug,
-	isJetpackSite,
 	isSitePreviewable,
 	isSimpleSite,
 } from 'calypso/state/sites/selectors';
 import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
+import getSiteAdminUrlFromState from 'calypso/state/sites/selectors/get-site-admin-url';
 import { getPostStat, isRequestingPostStats } from 'calypso/state/stats/posts/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import PostDetailHighlightsSection from '../post-detail-highlights-section';
@@ -59,6 +60,7 @@ class StatsPostDetail extends Component {
 			text: PropTypes.string,
 			url: PropTypes.string,
 		} ),
+		editUrl: PropTypes.string,
 	};
 
 	state = {
@@ -198,7 +200,7 @@ class StatsPostDetail extends Component {
 			postId,
 			siteId,
 			translate,
-			siteSlug,
+			editUrl,
 			showViewLink,
 			previewUrl,
 			supportsUTMStats,
@@ -338,7 +340,7 @@ class StatsPostDetail extends Component {
 					externalUrl={ previewUrl }
 					onClose={ this.closePreview }
 				>
-					<Button href={ `/post/${ siteSlug }/${ postId }` }>{ translate( 'Edit' ) }</Button>
+					<Button href={ editUrl }>{ translate( 'Edit' ) }</Button>
 				</WebPreview>
 			</Main>
 		);
@@ -352,12 +354,29 @@ const StatsPostDetailWrapper = ( props ) => {
 
 const connectComponent = connect( ( state, { postId } ) => {
 	const siteId = getSelectedSiteId( state );
-	const isJetpack = isJetpackSite( state, siteId );
 	const isPreviewable = isSitePreviewable( state, siteId );
 	const isPostHomepage = postId === 0;
 	const countLikes = countPostLikes( state, siteId, postId ) || 0;
 	const { supportsUTMStats, supportsEmailStats } = getEnvStatsFeatureSupportChecks( state, siteId );
 	const isSimple = isSimpleSite( state, siteId );
+	const previewUrl = getPostPreviewUrl( state, siteId, postId );
+	const isOdyssey = config.isEnabled( 'is_odyssey' );
+	const adminBaseUrl = getSiteAdminUrlFromState( state, siteId );
+	const editUrl = isOdyssey
+		? `${ adminBaseUrl }post.php?post=${ postId }&action=edit`
+		: `/post/${ siteId }/${ postId }`;
+
+	const site = getSite( state, siteId );
+	let finalPreviewUrl = previewUrl;
+
+	if ( site && site.options && finalPreviewUrl ) {
+		const { is_mapped_domain, unmapped_url } = site.options;
+		if ( is_mapped_domain && unmapped_url ) {
+			const previewUrlObj = new URL( finalPreviewUrl );
+			const unmappedUrlObj = new URL( unmapped_url );
+			finalPreviewUrl = `${ unmappedUrlObj.protocol }//${ unmappedUrlObj.host }${ previewUrlObj.pathname }${ previewUrlObj.search }${ previewUrlObj.hash }`;
+		}
+	}
 
 	return {
 		post: getSitePost( state, siteId, postId ),
@@ -368,8 +387,9 @@ const connectComponent = connect( ( state, { postId } ) => {
 		countViews: getPostStat( state, siteId, postId, 'views' ),
 		isRequestingStats: isRequestingPostStats( state, siteId, postId ),
 		siteSlug: getSiteSlug( state, siteId ),
-		showViewLink: ! isJetpack && ! isPostHomepage && isPreviewable,
-		previewUrl: getPostPreviewUrl( state, siteId, postId ),
+		showViewLink: isOdyssey || isPreviewable,
+		editUrl,
+		previewUrl: finalPreviewUrl,
 		siteId,
 		supportsUTMStats,
 		isSubscriptionsModuleActive: isJetpackModuleActive( state, siteId, 'subscriptions', true ),
