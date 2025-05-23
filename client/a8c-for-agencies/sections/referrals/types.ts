@@ -24,12 +24,12 @@ export interface Referral {
 	purchases: ReferralPurchase[];
 	purchaseStatuses: string[];
 	referralStatuses: string[];
-	referralId: number;
+	referrals: ReferralAPIResponse[];
 }
 
 export interface ReferralAPIResponse {
 	id: number;
 	client: ReferralClient;
-	products: ReferralPurchaseAPIResponse[];
+	products: ReferralPurchase[];
 	status: string;
 }
