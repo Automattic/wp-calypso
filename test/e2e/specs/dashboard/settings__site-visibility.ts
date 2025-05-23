@@ -10,6 +10,9 @@ import {
 	envToFeatureKey,
 	envVariables,
 	DashboardPage,
+	RestAPIClient,
+	DataHelper,
+	NewSiteResponse,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 
@@ -26,28 +29,31 @@ describe( 'Dashboard: Site Visibility Settings', function () {
 	let dashboardPage: DashboardPage;
 	const accountName = getTestAccountByFeature( envToFeatureKey( envVariables ) );
 	const testAccount = new TestAccount( accountName );
-	let siteSlug: string;
+	const siteName = DataHelper.getBlogName();
+	const restAPIClient = new RestAPIClient( testAccount.credentials );
+	let site: NewSiteResponse;
 
 	beforeAll( async function () {
+		// Using a separate site avoid conflicts with other tests.$
+		site = await restAPIClient.createSite( {
+			name: siteName,
+			title: siteName,
+		} );
 		page = await browser.newPage();
 		await testAccount.authenticate( page );
 		dashboardPage = new DashboardPage( page );
 
-		// We need to extract the site slug for our test
-		const url = testAccount.getSiteURL();
-		const urlParts = url.split( '/' );
-		siteSlug = urlParts[ urlParts.length - 2 ];
-
 		// Visit the site visibility settings page
-		await dashboardPage.visitPath( `sites/${ siteSlug }/settings/site-visibility` );
+		await dashboardPage.visitPath(
+			`sites/${ site.blog_details.site_slug }/settings/site-visibility`
+		);
 	} );
 
 	afterAll( async function () {
-		const isCurrentlyPublic = await page.getByRole( 'radio', { name: 'Public' } ).isChecked();
-		if ( ! isCurrentlyPublic ) {
-			await page.getByRole( 'radio', { name: 'public' } ).click();
-			await saveChanges( page );
-		}
+		await restAPIClient.deleteSite( {
+			id: site.blog_details.blogid,
+			domain: site.blog_details.url,
+		} );
 	} );
 
 	it( 'Can change site visibility to Private', async function () {
@@ -56,7 +62,7 @@ describe( 'Dashboard: Site Visibility Settings', function () {
 
 		// Open the site in a new incognito browser context to verify it's private
 		const incognitoPage = await browser.newPage();
-		await incognitoPage.goto( testAccount.getSiteURL() );
+		await incognitoPage.goto( site.blog_details.url );
 		const pageContent = await incognitoPage.content();
 		expect( pageContent ).toContain( 'Private Site' );
 		await incognitoPage.close();
@@ -68,7 +74,7 @@ describe( 'Dashboard: Site Visibility Settings', function () {
 
 		// Open the site in a new incognito browser context to verify it's private
 		const incognitoPage = await browser.newPage();
-		await incognitoPage.goto( testAccount.getSiteURL() );
+		await incognitoPage.goto( site.blog_details.url );
 		const pageContent = await incognitoPage.content();
 		expect( pageContent ).toContain( 'coming soon' );
 		await incognitoPage.close();
@@ -80,7 +86,7 @@ describe( 'Dashboard: Site Visibility Settings', function () {
 
 		// Open the site in a new incognito browser context to verify it's private
 		const incognitoPage = await browser.newPage();
-		await incognitoPage.goto( testAccount.getSiteURL() );
+		await incognitoPage.goto( site.blog_details.url );
 		const pageContent = await incognitoPage.content();
 		expect( pageContent ).not.toContain( 'Private Site' );
 		expect( pageContent ).not.toContain( 'coming soon' );
@@ -94,8 +100,7 @@ describe( 'Dashboard: Site Visibility Settings', function () {
  * @param page The Playwright page object
  */
 async function saveChanges( page: Page ): Promise< void > {
+	await page.waitForSelector( 'button[type="submit"]:not([disabled])' );
 	await page.getByRole( 'button', { name: 'Save' } ).click();
-	await page.waitForSelector( 'button:not(.is-busy)[type="submit"][disabled]', {
-		state: 'visible',
-	} );
+	await page.waitForSelector( 'button:not(.is-busy)[type="submit"][disabled]' );
 }

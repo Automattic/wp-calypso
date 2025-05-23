@@ -18,6 +18,7 @@ function createAgency( details: AgencyDetailsPayload ): Promise< Agency > {
 			services_offered: details.servicesOffered,
 			products_offered: details.productsOffered,
 			products_to_offer: details.productsToOffer,
+			expansion_planned: details.plansToOfferProducts,
 			address_line1: details.line1 || '',
 			address_line2: details.line2 || '',
 			address_city: details.city || '',

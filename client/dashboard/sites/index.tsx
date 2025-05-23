@@ -43,7 +43,9 @@ const DEFAULT_FIELDS: Field< Site >[] = [
 		id: 'URL',
 		label: __( 'URL' ),
 		enableGlobalSearch: true,
-		render: ( { item }: { item: Site } ) => new URL( item.URL ).hostname,
+		render: ( { item }: { item: Site } ) => (
+			<span style={ { overflowWrap: 'anywhere' } }>{ new URL( item.URL ).hostname }</span>
+		),
 	},
 	{
 		id: 'icon.ico',
@@ -70,21 +72,6 @@ const DEFAULT_FIELDS: Field< Site >[] = [
 			) : (
 				__( 'Disabled' )
 			),
-		filterBy: {
-			operators: [ 'is' as Operator ],
-		},
-	},
-	{
-		id: 'protect',
-		type: 'boolean',
-		label: __( 'Protect' ),
-		getValue: ( { item }: { item: Site } ) => !! item.active_modules?.includes( 'protect' ),
-		render: ( { item }: { item: Site } ) =>
-			item.active_modules?.includes( 'protect' ) ? <Icon icon={ check } /> : __( 'Disabled' ),
-		elements: [
-			{ value: true, label: __( 'Enabled' ) },
-			{ value: false, label: __( 'Disabled' ) },
-		],
 		filterBy: {
 			operators: [ 'is' as Operator ],
 		},

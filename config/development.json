@@ -46,7 +46,6 @@
 		"checkout/google-pay": true,
 		"checkout/razorpay": true,
 		"checkout/vat-form": true,
-		"cloudflare": false,
 		"comments/filters-in-posts": true,
 		"cookie-banner": false,
 		"current-site/domain-warning": true,

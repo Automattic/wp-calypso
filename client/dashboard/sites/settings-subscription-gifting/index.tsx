@@ -1,14 +1,24 @@
 import { DataForm } from '@automattic/dataviews';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { notFound } from '@tanstack/react-router';
-import { Card, CardBody, ToggleControl } from '@wordpress/components';
+import {
+	__experimentalHStack as HStack,
+	__experimentalVStack as VStack,
+	Button,
+	Card,
+	CardBody,
+	CheckboxControl,
+} from '@wordpress/components';
+import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
+import { store as noticesStore } from '@wordpress/notices';
+import { useState } from 'react';
 import { siteQuery, siteSettingsMutation, siteSettingsQuery } from '../../app/queries';
 import PageLayout from '../../components/page-layout';
 import SettingsPageHeader from '../settings-page-header';
 import { hasSubscriptionGiftingFeature } from './utils';
 import type { SiteSettings } from '../../data/types';
-import type { Field } from '@automattic/dataviews';
+import type { Field, SimpleFormField } from '@automattic/dataviews';
 
 const fields: Field< SiteSettings >[] = [
 	{
@@ -17,7 +27,7 @@ const fields: Field< SiteSettings >[] = [
 		Edit: ( { field, onChange, data, hideLabelFromVision } ) => {
 			const { id, getValue } = field;
 			return (
-				<ToggleControl
+				<CheckboxControl
 					__nextHasNoMarginBottom
 					label={ hideLabelFromVision ? '' : field.label }
 					checked={ getValue( { item: data } ) }
@@ -32,13 +42,18 @@ const fields: Field< SiteSettings >[] = [
 
 const form = {
 	type: 'regular' as const,
-	fields,
+	fields: [ { id: 'wpcom_gifting_subscription' } as SimpleFormField ],
 };
 
 export default function SubscriptionGiftingSettings( { siteSlug }: { siteSlug: string } ) {
+	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { data: site } = useQuery( siteQuery( siteSlug ) );
 	const { data } = useQuery( siteSettingsQuery( siteSlug ) );
 	const mutation = useMutation( siteSettingsMutation( siteSlug ) );
+
+	const [ formData, setFormData ] = useState( {
+		wpcom_gifting_subscription: data?.wpcom_gifting_subscription,
+	} );
 
 	if ( ! data || ! site ) {
 		return null;
@@ -48,8 +63,25 @@ export default function SubscriptionGiftingSettings( { siteSlug }: { siteSlug: s
 		throw notFound();
 	}
 
-	const handleSubmit = ( edits: Partial< SiteSettings > ) => {
-		return mutation.mutate( edits );
+	const isDirty = Object.entries( formData ).some(
+		( [ key, value ] ) => data[ key as keyof SiteSettings ] !== value
+	);
+
+	const { isPending } = mutation;
+
+	const handleSubmit = ( e: React.FormEvent ) => {
+		e.preventDefault();
+		mutation.mutate(
+			{ ...formData },
+			{
+				onSuccess: () => {
+					createSuccessNotice( __( 'Settings saved.' ), { type: 'snackbar' } );
+				},
+				onError: () => {
+					createErrorNotice( __( 'Failed to save settings.' ), { type: 'snackbar' } );
+				},
+			}
+		);
 	};
 
 	return (
@@ -66,12 +98,28 @@ export default function SubscriptionGiftingSettings( { siteSlug }: { siteSlug: s
 		>
 			<Card>
 				<CardBody>
-					<DataForm< SiteSettings >
-						data={ data }
-						fields={ fields }
-						form={ form }
-						onChange={ handleSubmit }
-					/>
+					<form onSubmit={ handleSubmit }>
+						<VStack spacing={ 4 } style={ { padding: '8px 0' } }>
+							<DataForm< SiteSettings >
+								data={ formData }
+								fields={ fields }
+								form={ form }
+								onChange={ ( edits: Partial< SiteSettings > ) => {
+									setFormData( ( data ) => ( { ...data, ...edits } ) );
+								} }
+							/>
+							<HStack justify="flex-start">
+								<Button
+									variant="primary"
+									type="submit"
+									isBusy={ isPending }
+									disabled={ isPending || ! isDirty }
+								>
+									{ __( 'Save' ) }
+								</Button>
+							</HStack>
+						</VStack>
+					</form>
 				</CardBody>
 			</Card>
 		</PageLayout>

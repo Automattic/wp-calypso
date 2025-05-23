@@ -199,6 +199,26 @@ describe( 'utils', () => {
 			).toEqual( [ [ '"Chicken and ""Ribs""', 10, 'https://example.com/chicken' ] ] );
 		} );
 
+		test( 'should modify each row in csv by a modifier function', () => {
+			expect(
+				buildExportArray(
+					{
+						actions: [
+							{
+								type: 'link',
+								data: 'https://example.com/chicken',
+							},
+						],
+						label: 'Chicken',
+						value: 10,
+						others: [ 1, 2, 3 ],
+					},
+					null,
+					( row, data ) => [ ...row, data.others[ 2 ] ]
+				)
+			).toEqual( [ [ '"Chicken"', 10, 'https://example.com/chicken', 3 ] ] );
+		} );
+
 		test( 'should recurse child data', () => {
 			expect(
 				buildExportArray( {
