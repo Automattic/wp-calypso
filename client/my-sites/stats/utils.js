@@ -148,18 +148,28 @@ export const getMappedPreviewUrl = ( state, siteId, postId ) => {
 	}
 
 	const site = getSite( state, siteId );
-	const shouldUseUnmappedDomain = site?.options?.is_mapped_domain && site?.options?.unmapped_url;
-
-	if ( ! shouldUseUnmappedDomain ) {
+	if ( ! site ) {
 		return basePreviewUrl;
 	}
 
 	try {
 		const previewUrl = new URL( basePreviewUrl );
-		const unmappedUrl = new URL( site.options.unmapped_url );
 
-		previewUrl.protocol = unmappedUrl.protocol;
-		previewUrl.host = unmappedUrl.host;
+		// Ensure HTTPS if the site uses HTTPS
+		if ( site.URL ) {
+			const siteUrl = new URL( site.URL );
+			if ( siteUrl.protocol === 'https:' ) {
+				previewUrl.protocol = 'https:';
+			}
+		}
+
+		// Use unmapped domain if this is a mapped domain site
+		const shouldUseUnmappedDomain = site.options?.is_mapped_domain && site.options?.unmapped_url;
+		if ( shouldUseUnmappedDomain ) {
+			const unmappedUrl = new URL( site.options.unmapped_url );
+			previewUrl.protocol = unmappedUrl.protocol;
+			previewUrl.host = unmappedUrl.host;
+		}
 
 		return previewUrl.toString();
 	} catch ( error ) {
