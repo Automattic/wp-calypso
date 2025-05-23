@@ -1,3 +1,4 @@
+import { useQuery } from '@tanstack/react-query';
 import {
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
@@ -11,13 +12,24 @@ import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
+import { siteQuery } from '../../app/queries';
 import PageLayout from '../../components/page-layout';
 import { fetchPhpMyAdminToken } from '../../data';
 import SettingsPageHeader from '../settings-page-header';
+import type { Site } from '../../data/types';
+
+export function canOpenPhpMyAdmin( site: Site ) {
+	return site.is_wpcom_atomic;
+}
 
 export default function SiteDatabaseSettings( { siteSlug }: { siteSlug: string } ) {
+	const { data: site } = useQuery( siteQuery( siteSlug ) );
 	const { createErrorNotice } = useDispatch( noticesStore );
 	const [ isFetchingToken, setIsFetchingToken ] = useState( false );
+
+	if ( ! site || ! canOpenPhpMyAdmin( site ) ) {
+		return null;
+	}
 
 	const handleOpenPhpMyAdmin = async () => {
 		setIsFetchingToken( true );
