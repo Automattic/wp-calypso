@@ -24,15 +24,11 @@ import {
 	recordCurrentScreen,
 } from 'calypso/my-sites/stats/hooks/use-stats-navigation-history';
 import StatsDetailsNavigation from 'calypso/my-sites/stats/stats-details-navigation';
-import { getSitePost, getPostPreviewUrl } from 'calypso/state/posts/selectors';
+import { getMappedPreviewUrl } from 'calypso/my-sites/stats/utils';
+import { getSitePost } from 'calypso/state/posts/selectors';
 import { countPostLikes } from 'calypso/state/posts/selectors/count-post-likes';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
-import {
-	getSite,
-	getSiteSlug,
-	isSitePreviewable,
-	isSimpleSite,
-} from 'calypso/state/sites/selectors';
+import { getSiteSlug, isSitePreviewable, isSimpleSite } from 'calypso/state/sites/selectors';
 import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
 import getSiteAdminUrlFromState from 'calypso/state/sites/selectors/get-site-admin-url';
 import { getPostStat, isRequestingPostStats } from 'calypso/state/stats/posts/selectors';
@@ -359,24 +355,12 @@ const connectComponent = connect( ( state, { postId } ) => {
 	const countLikes = countPostLikes( state, siteId, postId ) || 0;
 	const { supportsUTMStats, supportsEmailStats } = getEnvStatsFeatureSupportChecks( state, siteId );
 	const isSimple = isSimpleSite( state, siteId );
-	const previewUrl = getPostPreviewUrl( state, siteId, postId );
+	const previewUrl = getMappedPreviewUrl( state, siteId, postId );
 	const isOdyssey = config.isEnabled( 'is_odyssey' );
 	const adminBaseUrl = getSiteAdminUrlFromState( state, siteId );
 	const editUrl = isOdyssey
 		? `${ adminBaseUrl }post.php?post=${ postId }&action=edit`
 		: `/post/${ siteId }/${ postId }`;
-
-	const site = getSite( state, siteId );
-	let finalPreviewUrl = previewUrl;
-
-	if ( site && site.options && finalPreviewUrl ) {
-		const { is_mapped_domain, unmapped_url } = site.options;
-		if ( is_mapped_domain && unmapped_url ) {
-			const previewUrlObj = new URL( finalPreviewUrl );
-			const unmappedUrlObj = new URL( unmapped_url );
-			finalPreviewUrl = `${ unmappedUrlObj.protocol }//${ unmappedUrlObj.host }${ previewUrlObj.pathname }${ previewUrlObj.search }${ previewUrlObj.hash }`;
-		}
-	}
 
 	return {
 		post: getSitePost( state, siteId, postId ),
@@ -389,7 +373,7 @@ const connectComponent = connect( ( state, { postId } ) => {
 		siteSlug: getSiteSlug( state, siteId ),
 		showViewLink: isOdyssey || isPreviewable,
 		editUrl,
-		previewUrl: finalPreviewUrl,
+		previewUrl: previewUrl,
 		siteId,
 		supportsUTMStats,
 		isSubscriptionsModuleActive: isJetpackModuleActive( state, siteId, 'subscriptions', true ),

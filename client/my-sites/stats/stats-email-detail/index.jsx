@@ -30,10 +30,11 @@ import {
 	recordCurrentScreen,
 } from 'calypso/my-sites/stats/hooks/use-stats-navigation-history';
 import StatsEmailModule from 'calypso/my-sites/stats/stats-email-module';
+import { getMappedPreviewUrl } from 'calypso/my-sites/stats/utils';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
-import { getSitePost, getPostPreviewUrl } from 'calypso/state/posts/selectors';
+import { getSitePost } from 'calypso/state/posts/selectors';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
-import { getSiteSlug, isSitePreviewable, getSite } from 'calypso/state/sites/selectors';
+import { getSiteSlug, isSitePreviewable } from 'calypso/state/sites/selectors';
 import getSiteAdminUrlFromState from 'calypso/state/sites/selectors/get-site-admin-url';
 import { PERIOD_ALL_TIME } from 'calypso/state/stats/emails/constants';
 import { getEmailStat, isRequestingEmailStats } from 'calypso/state/stats/emails/selectors';
@@ -484,24 +485,12 @@ const connectComponent = connect(
 		} = getPeriodWithFallback( ownProps.period, ownProps.date, isValidStartDate, post?.date );
 
 		const showNoDataInfo = moment( date ).isBefore( moment( '2022-11-24' ) );
-		const previewUrl = getPostPreviewUrl( state, siteId, postId );
+		const previewUrl = getMappedPreviewUrl( state, siteId, postId );
 		const isOdyssey = config.isEnabled( 'is_odyssey' );
 		const adminBaseUrl = getSiteAdminUrlFromState( state, siteId );
 		const editUrl = isOdyssey
 			? `${ adminBaseUrl }post.php?post=${ postId }&action=edit`
 			: `/post/${ siteId }/${ postId }`;
-
-		const site = getSite( state, siteId );
-		let finalPreviewUrl = previewUrl;
-
-		if ( site && site.options && finalPreviewUrl ) {
-			const { is_mapped_domain, unmapped_url } = site.options;
-			if ( is_mapped_domain && unmapped_url ) {
-				const previewUrlObj = new URL( finalPreviewUrl );
-				const unmappedUrlObj = new URL( unmapped_url );
-				finalPreviewUrl = `${ unmappedUrlObj.protocol }//${ unmappedUrlObj.host }${ previewUrlObj.pathname }${ previewUrlObj.search }${ previewUrlObj.hash }`;
-			}
-		}
 
 		return {
 			countViews: getEmailStat( state, siteId, postId, period, statType ),
@@ -525,7 +514,7 @@ const connectComponent = connect(
 			hasValidDate,
 			showNoDataInfo,
 			showViewLink: isOdyssey || isPreviewable,
-			previewUrl: finalPreviewUrl,
+			previewUrl: previewUrl,
 			editUrl,
 		};
 	},
