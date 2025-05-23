@@ -7,11 +7,35 @@ import {
 	CardBody,
 	Notice,
 } from '@wordpress/components';
+import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
+import { store as noticesStore } from '@wordpress/notices';
+import { useState } from 'react';
 import PageLayout from '../../components/page-layout';
+import { fetchPhpMyAdminToken } from '../../data';
 import SettingsPageHeader from '../settings-page-header';
 
-export default function SiteDatabaseSettings() {
+export default function SiteDatabaseSettings( { siteSlug }: { siteSlug: string } ) {
+	const { createErrorNotice } = useDispatch( noticesStore );
+	const [ isFetchingToken, setIsFetchingToken ] = useState( false );
+
+	const handleOpenPhpMyAdmin = async () => {
+		setIsFetchingToken( true );
+
+		try {
+			const { token } = await fetchPhpMyAdminToken( siteSlug );
+			if ( ! token ) {
+				throw new Error( 'No token found' );
+			}
+
+			window.open( `https://wordpress.com/pma-login?token=${ token }` );
+		} catch {
+			createErrorNotice( __( 'Failed to fetch phpMyAdmin token.' ), { type: 'snackbar' } );
+		}
+
+		setIsFetchingToken( false );
+	};
+
 	return (
 		<PageLayout
 			size="small"
@@ -45,7 +69,9 @@ export default function SiteDatabaseSettings() {
 							</Notice>
 						</VStack>
 						<HStack justify="flex-start" expanded={ false } as="span">
-							<Button variant="primary">{ __( 'Open phpMyAdmin' ) }</Button>
+							<Button variant="primary" isBusy={ isFetchingToken } onClick={ handleOpenPhpMyAdmin }>
+								{ __( 'Open phpMyAdmin ↗' ) }
+							</Button>
 						</HStack>
 					</VStack>
 				</CardBody>
