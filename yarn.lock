@@ -1095,7 +1095,7 @@ __metadata:
     "@docusaurus/preset-classic": "npm:^3.7.0"
     "@docusaurus/tsconfig": "npm:^3.7.0"
     "@docusaurus/types": "npm:^3.7.0"
-    "@mdx-js/react": "npm:^3.0.0"
+    "@mdx-js/react": "npm:^3.1.0"
     "@types/react": "npm:^18.3.21"
     "@wordpress/browserslist-config": "npm:^6.23.0"
     prism-react-renderer: "npm:^2.3.0"
@@ -6336,7 +6336,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@mdx-js/react@npm:^3.0.0":
+"@mdx-js/react@npm:^3.0.0, @mdx-js/react@npm:^3.1.0":
   version: 3.1.0
   resolution: "@mdx-js/react@npm:3.1.0"
   dependencies:
