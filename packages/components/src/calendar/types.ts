@@ -132,11 +132,30 @@ type DayOfWeek = {
 
 /**
  * Shared handler type for `onSelect` callback when a selection mode is set.
+ * @example
+ *   const handleSelect: OnSelectHandler<Date> = (
+ *     selected,
+ *     triggerDate,
+ *     modifiers,
+ *     e
+ *   ) => {
+ *     console.log("Selected:", selected);
+ *     console.log("Triggered by:", triggerDate);
+ *   };
  * @template T - The type of the selected item.
  * @callback OnSelectHandler
  * @param {T} selected - The selected item after the event.
+ * @param {Date} triggerDate - The date when the event was triggered. This is
+ *   typically the day clicked or interacted with.
+ * @param {Modifiers} modifiers - The modifiers associated with the event.
+ * @param {React.MouseEvent | React.KeyboardEvent} e - The event object.
  */
-type OnSelectHandler< T > = ( selected: T ) => void;
+export type OnSelectHandler< T > = (
+	selected: T,
+	triggerDate: Date,
+	modifiers: Modifiers,
+	e: React.MouseEvent | React.KeyboardEvent
+) => void;
 
 export interface BaseProps extends Omit< React.HTMLAttributes< HTMLDivElement >, 'onSelect' > {
 	/**
