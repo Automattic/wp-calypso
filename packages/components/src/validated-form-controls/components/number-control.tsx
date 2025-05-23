@@ -24,6 +24,10 @@ const UnforwardedValidatedNumberControl = (
 		<ControlWithError
 			required={ required }
 			markWhenOptional={ markWhenOptional }
+			customValidator={ () => {
+				return customValidator?.( valueRef.current );
+			} }
+			getValidityTarget={ () => validityTargetRef.current }
 			children={
 				<NumberControl
 					__next40pxDefaultSize
@@ -37,10 +41,6 @@ const UnforwardedValidatedNumberControl = (
 					{ ...restProps }
 				/>
 			}
-			customValidator={ () => {
-				return customValidator?.( valueRef.current );
-			} }
-			getValidityTarget={ () => validityTargetRef.current }
 		/>
 	);
 };

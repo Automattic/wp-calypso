@@ -25,6 +25,12 @@ const UnforwardedValidatedCheckboxControl = (
 			required={ required }
 			markWhenOptional={ markWhenOptional }
 			ref={ mergedRefs }
+			customValidator={ () => {
+				return customValidator?.( valueRef.current );
+			} }
+			getValidityTarget={ () =>
+				validityTargetRef.current?.querySelector< HTMLInputElement >( 'input[type="checkbox"]' )
+			}
 			children={
 				<CheckboxControl
 					__nextHasNoMarginBottom
@@ -35,12 +41,6 @@ const UnforwardedValidatedCheckboxControl = (
 					// TODO: Upstream limitation - CheckboxControl doesn't support uncontrolled mode, visually.
 					{ ...restProps }
 				/>
-			}
-			customValidator={ () => {
-				return customValidator?.( valueRef.current );
-			} }
-			getValidityTarget={ () =>
-				validityTargetRef.current?.querySelector< HTMLInputElement >( 'input[type="checkbox"]' )
 			}
 		/>
 	);

@@ -34,6 +34,10 @@ const UnforwardedValidatedToggleControl = (
 		<ControlWithError
 			required={ required }
 			markWhenOptional={ markWhenOptional }
+			customValidator={ () => {
+				return customValidator?.( valueRef.current );
+			} }
+			getValidityTarget={ () => validityTargetRef.current }
 			children={
 				<ToggleControl
 					__nextHasNoMarginBottom
@@ -45,10 +49,6 @@ const UnforwardedValidatedToggleControl = (
 					{ ...restProps }
 				/>
 			}
-			customValidator={ () => {
-				return customValidator?.( valueRef.current );
-			} }
-			getValidityTarget={ () => validityTargetRef.current }
 		/>
 	);
 };

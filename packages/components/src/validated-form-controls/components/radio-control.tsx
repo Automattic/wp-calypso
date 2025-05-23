@@ -26,6 +26,12 @@ const UnforwardedValidatedRadioControl = (
 			markWhenOptional={ markWhenOptional }
 			// TODO: Upstream limitation - RadioControl does not accept a ref.
 			ref={ mergedRefs }
+			customValidator={ () => {
+				return customValidator?.( valueRef.current );
+			} }
+			getValidityTarget={ () =>
+				validityTargetRef.current?.querySelector< HTMLInputElement >( 'input[type="radio"]' )
+			}
 			children={
 				<RadioControl
 					onChange={ ( value ) => {
@@ -34,12 +40,6 @@ const UnforwardedValidatedRadioControl = (
 					} }
 					{ ...restProps }
 				/>
-			}
-			customValidator={ () => {
-				return customValidator?.( valueRef.current );
-			} }
-			getValidityTarget={ () =>
-				validityTargetRef.current?.querySelector< HTMLInputElement >( 'input[type="radio"]' )
 			}
 		/>
 	);

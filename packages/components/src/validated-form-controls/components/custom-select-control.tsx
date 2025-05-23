@@ -23,6 +23,10 @@ const UnforwardedValidatedCustomSelectControl = (
 			<ControlWithError
 				required={ required }
 				markWhenOptional={ markWhenOptional }
+				customValidator={ () => {
+					return customValidator?.( valueRef.current );
+				} }
+				getValidityTarget={ () => validityTargetRef.current }
 				children={
 					<CustomSelectControl
 						// TODO: Upstream limitation - Required isn't passed down correctly,
@@ -35,10 +39,6 @@ const UnforwardedValidatedCustomSelectControl = (
 						{ ...restProps }
 					/>
 				}
-				customValidator={ () => {
-					return customValidator?.( valueRef.current );
-				} }
-				getValidityTarget={ () => validityTargetRef.current }
 			/>
 			<select
 				className="a8c-validated-control__error-delegate"

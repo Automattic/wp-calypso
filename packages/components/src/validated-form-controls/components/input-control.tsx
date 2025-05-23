@@ -25,6 +25,10 @@ const UnforwardedValidatedInputControl = (
 		<ControlWithError
 			required={ required }
 			markWhenOptional={ markWhenOptional }
+			customValidator={ () => {
+				return customValidator?.( valueRef.current );
+			} }
+			getValidityTarget={ () => validityTargetRef.current }
 			children={
 				<InputControl
 					__next40pxDefaultSize
@@ -36,10 +40,6 @@ const UnforwardedValidatedInputControl = (
 					{ ...restProps }
 				/>
 			}
-			customValidator={ () => {
-				return customValidator?.( valueRef.current );
-			} }
-			getValidityTarget={ () => validityTargetRef.current }
 		/>
 	);
 };

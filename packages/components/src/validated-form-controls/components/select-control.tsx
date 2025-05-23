@@ -31,6 +31,10 @@ const UnforwardedValidatedSelectControl = (
 		<ControlWithError
 			required={ required }
 			markWhenOptional={ markWhenOptional }
+			customValidator={ () => {
+				return customValidator?.( valueRef.current );
+			} }
+			getValidityTarget={ () => validityTargetRef.current }
 			children={
 				<SelectControl
 					__nextHasNoMarginBottom
@@ -43,10 +47,6 @@ const UnforwardedValidatedSelectControl = (
 					{ ...restProps }
 				/>
 			}
-			customValidator={ () => {
-				return customValidator?.( valueRef.current );
-			} }
-			getValidityTarget={ () => validityTargetRef.current }
 		/>
 	);
 };

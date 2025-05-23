@@ -27,6 +27,10 @@ const UnforwardedValidatedToggleGroupControl = (
 			<ControlWithError
 				required={ required }
 				markWhenOptional={ markWhenOptional }
+				customValidator={ () => {
+					return customValidator?.( valueRef.current );
+				} }
+				getValidityTarget={ () => validityTargetRef.current }
 				children={
 					<ToggleGroupControl
 						__nextHasNoMarginBottom
@@ -41,10 +45,6 @@ const UnforwardedValidatedToggleGroupControl = (
 						{ ...restProps }
 					/>
 				}
-				customValidator={ () => {
-					return customValidator?.( valueRef.current );
-				} }
-				getValidityTarget={ () => validityTargetRef.current }
 			/>
 			<input
 				className="a8c-validated-control__error-delegate"

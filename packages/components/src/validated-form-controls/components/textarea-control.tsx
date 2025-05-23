@@ -24,6 +24,10 @@ const UnforwardedValidatedTextareaControl = (
 		<ControlWithError
 			required={ required }
 			markWhenOptional={ markWhenOptional }
+			customValidator={ () => {
+				return customValidator?.( valueRef.current );
+			} }
+			getValidityTarget={ () => validityTargetRef.current }
 			children={
 				<TextareaControl
 					__nextHasNoMarginBottom
@@ -35,10 +39,6 @@ const UnforwardedValidatedTextareaControl = (
 					{ ...restProps }
 				/>
 			}
-			customValidator={ () => {
-				return customValidator?.( valueRef.current );
-			} }
-			getValidityTarget={ () => validityTargetRef.current }
 		/>
 	);
 };

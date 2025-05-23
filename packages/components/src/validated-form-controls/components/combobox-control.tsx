@@ -37,6 +37,12 @@ const UnforwardedValidatedComboboxControl = (
 			required={ required }
 			markWhenOptional={ markWhenOptional }
 			ref={ mergedRefs }
+			customValidator={ () => {
+				return customValidator?.( valueRef.current );
+			} }
+			getValidityTarget={ () =>
+				validityTargetRef.current?.querySelector< HTMLInputElement >( 'input[role="combobox"]' )
+			}
 			children={
 				<ComboboxControl
 					__nextHasNoMarginBottom
@@ -47,12 +53,6 @@ const UnforwardedValidatedComboboxControl = (
 						onChange?.( value );
 					} }
 				/>
-			}
-			customValidator={ () => {
-				return customValidator?.( valueRef.current );
-			} }
-			getValidityTarget={ () =>
-				validityTargetRef.current?.querySelector< HTMLInputElement >( 'input[role="combobox"]' )
 			}
 		/>
 	);
