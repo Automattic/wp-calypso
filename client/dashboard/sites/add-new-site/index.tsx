@@ -79,7 +79,7 @@ function AddNewSite() {
 						'Prompt, edit, and launch WordPress websites with Artificial Intelligence.'
 					) }
 					onClick={ bigSkyClick }
-					href="/setup/ai-site-builder"
+					href="/setup/ai-site-builder?source=add-new-site-popover"
 				/>
 				<MenuItem
 					icon={ <JetpackLogo /> }
