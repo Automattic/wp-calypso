@@ -34200,7 +34200,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"swiper@npm:^10.1.0":
+"swiper@npm:^10.3.1":
   version: 10.3.1
   resolution: "swiper@npm:10.3.1"
   checksum: 1e9ad5480cbf451d99fab280553d5105eb314f381d98610771f0808cac03962d87967a190696686d62bce8e4ebcbf34962c369f9d502b34fef1582ced17f6f98
@@ -36818,7 +36818,7 @@ __metadata:
     storybook: "npm:^8.6.12"
     stylelint: "npm:^16.15.0"
     stylelint-scss: "npm:^6.4.0"
-    swiper: "npm:^10.1.0"
+    swiper: "npm:^10.3.1"
     tslib: "npm:^2.3.0"
     typescript: "npm:5.8.3"
     webpack: "npm:^5.97.1"
