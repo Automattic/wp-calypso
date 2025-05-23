@@ -363,16 +363,18 @@ function OperatorSelector( {
 											if (
 												_filter.field === filter.field
 											) {
+												// Reset the value only when switching between "between" and any other operator to avoid invalid values.
+												const isSwitchingBetween =
+													currentOperator ===
+														OPERATOR_BETWEEN ||
+													operator ===
+														OPERATOR_BETWEEN;
+
 												return {
 													..._filter,
-													value:
-														// Reset the value when the operator switches from between to single selection or vice versa to ensure value is not mixed.
-														currentOperator ===
-															OPERATOR_BETWEEN ||
-														_filter.operator ===
-															OPERATOR_BETWEEN
-															? undefined
-															: _filter.value,
+													value: isSwitchingBetween
+														? undefined
+														: _filter.value,
 													operator,
 												};
 											}
