@@ -27,12 +27,19 @@ async function fetchLocaleData( language: string, signal: AbortSignal ) {
 	}
 }
 
-export function I18nProvider( { children }: PropsWithChildren ) {
-	const [ loadedLocale, setLoadedLocale ] = useState< string | null >( null );
+// Determine the locale to use. The current implementation reads the logged-in user's
+// locale, but it can be made more flexible and support multiple sources. E.g., a locale
+// slug in the route path.
+function useLocaleSlug() {
 	const { user } = useAuth();
+	return user.locale_variant || user.language || 'en';
+}
+
+export function I18nProvider( { children }: PropsWithChildren ) {
+	const language = useLocaleSlug();
+	const [ loadedLocale, setLoadedLocale ] = useState< string | null >( null );
 
 	const i18n = defaultI18n;
-	const language = user.locale_variant || user.language || 'en';
 
 	useEffect( () => {
 		const abortController = new AbortController();
