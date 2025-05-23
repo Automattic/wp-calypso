@@ -9,6 +9,7 @@ import { siteQuery, siteSettingsQuery } from '../../app/queries';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import DatabaseSettingsSummary from '../settings-database/summary';
+import PHPSettingsSummary from '../settings-php/summary';
 import SiteVisibilitySettingsSummary from '../settings-site-visibility/summary';
 import SubscriptionGiftingSettingsSummary from '../settings-subscription-gifting/summary';
 import WordPressSettingsSummary from '../settings-wordpress/summary';
@@ -37,6 +38,7 @@ export default function SiteSettings( { siteSlug }: { siteSlug: string } ) {
 				<VStack>
 					<DatabaseSettingsSummary site={ site } />
 					<WordPressSettingsSummary site={ site } />
+					<PHPSettingsSummary site={ site } />
 				</VStack>
 			</Card>
 			<SiteActions site={ site } />
