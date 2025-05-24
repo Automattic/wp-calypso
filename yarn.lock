@@ -327,7 +327,7 @@ __metadata:
     autoprefixer: "npm:^10.4.21"
     calypso: "workspace:^"
     clsx: "npm:^2.1.1"
-    debug: "npm:^4.4.0"
+    debug: "npm:^4.4.1"
     gettext-parser: "npm:^6.0.0"
     html-webpack-plugin: "npm:^5.6.3"
     i18n-calypso: "workspace:^"
@@ -368,7 +368,7 @@ __metadata:
     "@wordpress/data": ^10.23.0
     "@wordpress/element": ^6.23.0
     "@wordpress/i18n": ^5.23.0
-    debug: ^4.4.0
+    debug: ^4.4.1
     redux: ^5.0.1
   languageName: unknown
   linkType: soft
@@ -391,7 +391,7 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/load-script": "workspace:^"
     cookie: "npm:^0.7.2"
-    debug: "npm:^4.4.0"
+    debug: "npm:^4.4.1"
     hash.js: "npm:^1.1.7"
     tslib: "npm:^2.3.0"
     typescript: "npm:^5.8.3"
@@ -650,7 +650,7 @@ __metadata:
   resolution: "@automattic/calypso-razorpay@workspace:packages/calypso-razorpay"
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
-    debug: "npm:^4.4.0"
+    debug: "npm:^4.4.1"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
     typescript: "npm:^5.8.3"
@@ -710,7 +710,7 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@stripe/react-stripe-js": "npm:^2.1.0"
     "@stripe/stripe-js": "npm:^1.54.2"
-    debug: "npm:^4.4.0"
+    debug: "npm:^4.4.1"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
     typescript: "npm:^5.8.3"
@@ -872,7 +872,7 @@ __metadata:
     clsx: "npm:^2.1.1"
     colord: "npm:2.9.3"
     date-fns: "npm:^4.1.0"
-    debug: "npm:^4.4.0"
+    debug: "npm:^4.4.1"
     gridicons: "npm:^3.4.2"
     i18n-calypso: "workspace:^"
     lodash: "npm:^4.17.21"
@@ -907,7 +907,7 @@ __metadata:
     "@testing-library/user-event": "npm:^14.6.1"
     "@wordpress/i18n": "npm:^5.23.0"
     "@wordpress/react-i18n": "npm:^4.23.0"
-    debug: "npm:^4.4.0"
+    debug: "npm:^4.4.1"
     prop-types: "npm:^15.8.1"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
@@ -955,7 +955,7 @@ __metadata:
     "@wordpress/i18n": "npm:^5.23.0"
     "@wordpress/primitives": "npm:^4.23.0"
     "@wordpress/url": "npm:^4.23.0"
-    debug: "npm:^4.4.0"
+    debug: "npm:^4.4.1"
     fast-json-stable-stringify: "npm:^2.1.0"
     i18n-calypso: "workspace:^"
     jest-fetch-mock: "npm:^3.0.3"
@@ -1046,7 +1046,7 @@ __metadata:
     "@wordpress/data": ^10.23.0
     "@wordpress/element": ^6.23.0
     "@wordpress/i18n": ^5.23.0
-    debug: ^4.4.0
+    debug: ^4.4.1
     react: ^18.3.1
     react-dom: ^18.3.1
     redux: ^5.0.1
@@ -1079,7 +1079,7 @@ __metadata:
     "@wordpress/data": ^10.23.0
     "@wordpress/element": ^6.23.0
     "@wordpress/i18n": ^5.23.0
-    debug: ^4.4.0
+    debug: ^4.4.1
     react: ^18.3.1
     react-dom: ^18.3.1
     redux: ^5.0.1
@@ -1184,7 +1184,7 @@ __metadata:
   dependencies:
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
-    debug: "npm:^4.4.0"
+    debug: "npm:^4.4.1"
     object-treeify: "npm:^1.1.33"
     yargs: "npm:^17.0.1"
   bin:
@@ -1285,7 +1285,7 @@ __metadata:
     "@wordpress/data": ^10.23.0
     "@wordpress/element": ^6.23.0
     "@wordpress/i18n": ^5.23.0
-    debug: ^4.4.0
+    debug: ^4.4.1
   languageName: unknown
   linkType: soft
 
@@ -1450,7 +1450,7 @@ __metadata:
     "@testing-library/jest-dom": "npm:^6.6.3"
     "@testing-library/react": "npm:^16.3.0"
     clsx: "npm:^2.1.1"
-    debug: "npm:^4.4.0"
+    debug: "npm:^4.4.1"
     postcss: "npm:^8.5.3"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
@@ -1562,7 +1562,7 @@ __metadata:
     "@wordpress/data": ^10.23.0
     "@wordpress/element": ^6.23.0
     "@wordpress/i18n": ^5.23.0
-    debug: ^4.4.0
+    debug: ^4.4.1
     react: ^18.3.1
     react-dom: ^18.3.1
     redux: ^5.0.1
@@ -1575,7 +1575,7 @@ __metadata:
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@babel/runtime": "npm:^7.27.1"
-    debug: "npm:^4.4.0"
+    debug: "npm:^4.4.1"
   languageName: unknown
   linkType: soft
 
@@ -1603,7 +1603,7 @@ __metadata:
     "@testing-library/react": "npm:^16.3.0"
     "@wordpress/i18n": "npm:^5.23.0"
     "@wordpress/react-i18n": "npm:^4.23.0"
-    debug: "npm:^4.4.0"
+    debug: "npm:^4.4.1"
     i18n-calypso: "workspace:^"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
@@ -1635,7 +1635,7 @@ __metadata:
     autoprefixer: "npm:^10.4.21"
     calypso: "workspace:^"
     clsx: "npm:^2.1.1"
-    debug: "npm:^4.4.0"
+    debug: "npm:^4.4.1"
     html-webpack-plugin: "npm:^5.6.3"
     i18n-calypso: "workspace:^"
     postcss: "npm:^8.5.3"
@@ -1766,7 +1766,7 @@ __metadata:
     babel-jest: "npm:^29.7.0"
     calypso: "workspace:^"
     clsx: "npm:^2.1.1"
-    debug: "npm:^4.4.0"
+    debug: "npm:^4.4.1"
     gettext-parser: "npm:^6.0.0"
     html-webpack-plugin: "npm:^5.6.3"
     jest: "npm:^29.7.0"
@@ -1924,7 +1924,7 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/popup-monitor": "workspace:^"
     "@babel/runtime": "npm:^7.27.1"
-    debug: "npm:^4.4.0"
+    debug: "npm:^4.4.1"
   languageName: unknown
   linkType: soft
 
@@ -1973,7 +1973,7 @@ __metadata:
     "@testing-library/dom": "npm:^10.4.0"
     "@testing-library/jest-dom": "npm:^6.6.3"
     "@testing-library/react": "npm:^16.3.0"
-    debug: "npm:^4.4.0"
+    debug: "npm:^4.4.1"
     typescript: "npm:^5.8.3"
   peerDependencies:
     react: ^18.3.1
@@ -2098,7 +2098,7 @@ __metadata:
     "@wordpress/primitives": "npm:^4.23.0"
     "@wordpress/react-i18n": "npm:^4.23.0"
     clsx: "npm:^2.1.1"
-    debug: "npm:^4.4.0"
+    debug: "npm:^4.4.1"
     react-popper: "npm:^2.3.0"
     typescript: "npm:^5.8.3"
   peerDependencies:
@@ -2175,7 +2175,7 @@ __metadata:
     "@wordpress/data": ^10.23.0
     "@wordpress/element": ^6.23.0
     "@wordpress/i18n": ^5.23.0
-    debug: ^4.4.0
+    debug: ^4.4.1
     eslint: "*"
     postcss: "*"
     react: ^18.3.1
@@ -2316,7 +2316,7 @@ __metadata:
     "@wordpress/rich-text": "npm:^7.23.0"
     "@wordpress/router": "npm:^1.23.0"
     "@wordpress/url": "npm:^4.23.0"
-    debug: "npm:^4.4.0"
+    debug: "npm:^4.4.1"
     lodash: "npm:^4.17.21"
     npm-run-all: "npm:^4.1.5"
     postcss: "npm:^8.5.3"
@@ -2350,7 +2350,7 @@ __metadata:
     "@wordpress/data": "npm:^10.23.0"
     "@wordpress/i18n": "npm:^5.23.0"
     "@wordpress/react-i18n": "npm:^4.23.0"
-    debug: "npm:^4.4.0"
+    debug: "npm:^4.4.1"
     i18n-calypso: "workspace:^"
     prop-types: "npm:^15.8.1"
     react: "npm:^18.3.1"
@@ -14444,7 +14444,7 @@ __metadata:
     d3-scale: "npm:^3.2.1"
     d3-selection: "npm:^1.4.2"
     d3-shape: "npm:^1.3.7"
-    debug: "npm:^4.4.0"
+    debug: "npm:^4.4.1"
     deep-freeze: "npm:^0.0.1"
     deepmerge: "npm:^4.3.1"
     diff: "npm:^4.0.2"
@@ -16997,15 +16997,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"debug@npm:4, debug@npm:^4.0.0, debug@npm:^4.0.1, debug@npm:^4.1.0, debug@npm:^4.1.1, debug@npm:^4.3.1, debug@npm:^4.3.2, debug@npm:^4.3.4, debug@npm:^4.3.6, debug@npm:^4.3.7, debug@npm:^4.4.0":
-  version: 4.4.0
-  resolution: "debug@npm:4.4.0"
+"debug@npm:4, debug@npm:^4.0.0, debug@npm:^4.0.1, debug@npm:^4.1.0, debug@npm:^4.1.1, debug@npm:^4.3.1, debug@npm:^4.3.2, debug@npm:^4.3.4, debug@npm:^4.3.6, debug@npm:^4.3.7, debug@npm:^4.4.0, debug@npm:^4.4.1":
+  version: 4.4.1
+  resolution: "debug@npm:4.4.1"
   dependencies:
     ms: "npm:^2.1.3"
   peerDependenciesMeta:
     supports-color:
       optional: true
-  checksum: db94f1a182bf886f57b4755f85b3a74c39b5114b9377b7ab375dc2cfa3454f09490cc6c30f829df3fc8042bc8b8995f6567ce5cd96f3bc3688bd24027197d9de
+  checksum: d2b44bc1afd912b49bb7ebb0d50a860dc93a4dd7d946e8de94abc957bb63726b7dd5aa48c18c2386c379ec024c46692e15ed3ed97d481729f929201e671fcd55
   languageName: node
   linkType: hard
 
@@ -21692,7 +21692,7 @@ __metadata:
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     commander: "npm:^5.1.0"
-    debug: "npm:^4.4.0"
+    debug: "npm:^4.4.1"
     globby: "npm:^10.0.2"
     xgettext-js: "npm:^3.0.0"
   bin:
@@ -21712,7 +21712,7 @@ __metadata:
     "@types/jest": "npm:^29.5.14"
     "@types/react": "npm:^18.3.21"
     "@wordpress/compose": "npm:^7.23.0"
-    debug: "npm:^4.4.0"
+    debug: "npm:^4.4.1"
     hash.js: "npm:^1.1.7"
     lru: "npm:^3.1.0"
     react: "npm:^18.3.1"
@@ -27968,7 +27968,7 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@types/seed-random": "npm:^2.2.4"
     crc32: "npm:^0.2.2"
-    debug: "npm:^4.4.0"
+    debug: "npm:^4.4.1"
     seed-random: "npm:^2.2.0"
     tslib: "npm:^2.3.0"
     typescript: "npm:^5.8.3"
@@ -36756,7 +36756,7 @@ __metadata:
     cmdk: "npm:^0.2.1"
     css-loader: "npm:^6.11.0"
     d3-time-format: "npm:^4.1.0"
-    debug: "npm:^4.4.0"
+    debug: "npm:^4.4.1"
     doctrine: "npm:^3.0.0"
     dotenv-webpack: "npm:^8.1.0"
     enhanced-resolve: "npm:5.9.3"
@@ -36898,7 +36898,7 @@ __metadata:
     "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
-    debug: "npm:^4.4.0"
+    debug: "npm:^4.4.1"
     postcss: "npm:^8.5.3"
     webpack: "npm:^5.97.1"
     wp-error: "npm:^1.3.0"
@@ -36911,7 +36911,7 @@ __metadata:
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@babel/runtime": "npm:^7.27.1"
-    debug: "npm:^4.4.0"
+    debug: "npm:^4.4.1"
     superagent: "npm:^3.8.3"
     wp-error: "npm:^1.3.0"
   languageName: unknown
@@ -36925,7 +36925,7 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@babel/core": "npm:^7.27.1"
     babel-loader: "npm:^8.2.3"
-    debug: "npm:^4.4.0"
+    debug: "npm:^4.4.1"
     npm-run-all: "npm:^4.1.5"
     qs: "npm:^6.5.2"
     tus-js-client: "npm:2.3.2"

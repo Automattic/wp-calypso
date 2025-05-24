@@ -36,7 +36,7 @@
 		"@babel/runtime": "^7.27.1",
 		"@tannin/sprintf": "^1.1.0",
 		"@wordpress/compose": "^7.23.0",
-		"debug": "^4.4.0",
+		"debug": "^4.4.1",
 		"hash.js": "^1.1.7",
 		"lru": "^3.1.0",
 		"tannin": "^1.2.0",
