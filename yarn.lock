@@ -12577,7 +12577,7 @@ __metadata:
     webpack-cli: "npm:^4.10.0"
     winston: "npm:^3.3.3"
     wpcom-xhr-request: "workspace:^"
-    ws: "npm:^7.3.1"
+    ws: "npm:^7.5.10"
   languageName: unknown
   linkType: soft
 
@@ -37053,7 +37053,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ws@npm:^7.2.0, ws@npm:^7.3.1":
+"ws@npm:^7.2.0, ws@npm:^7.3.1, ws@npm:^7.5.10":
   version: 7.5.10
   resolution: "ws@npm:7.5.10"
   peerDependencies:
