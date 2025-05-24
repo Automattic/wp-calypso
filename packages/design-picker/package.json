@@ -51,7 +51,7 @@
 		"clsx": "^2.1.1",
 		"react-intersection-observer": "^9.4.3",
 		"react-router-dom": "^6.23.1",
-		"tslib": "^2.3.0",
+		"tslib": "^2.8.1",
 		"utility-types": "^3.10.0"
 	},
 	"devDependencies": {
