@@ -391,6 +391,13 @@ export const fetchPhpMyAdminToken = async ( siteIdOrSlug: string ): Promise< Php
 	} );
 };
 
+export const resetPhpMyAdminPassword = async ( siteIdOrSlug: string ): Promise< void > => {
+	return wpcom.req.post( {
+		path: `/sites/${ siteIdOrSlug }/hosting/restore-database-password`,
+		apiNamespace: 'wpcom/v2',
+	} );
+};
+
 export const fetchStaticFile404 = async ( siteIdOrSlug: string ): Promise< string > => {
 	return wpcom.req.get( {
 		path: `/sites/${ siteIdOrSlug }/hosting/static-file-404`,
@@ -410,3 +417,4 @@ export const updateStaticFile404 = async (
 		{ setting }
 	);
 };
+

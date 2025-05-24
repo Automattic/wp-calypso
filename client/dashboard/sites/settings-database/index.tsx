@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useQuery } from '@tanstack/react-query';
 import {
 	__experimentalHStack as HStack,
@@ -9,6 +10,7 @@ import {
 	Notice,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
+import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
@@ -16,6 +18,7 @@ import { siteQuery } from '../../app/queries';
 import PageLayout from '../../components/page-layout';
 import { fetchPhpMyAdminToken } from '../../data';
 import SettingsPageHeader from '../settings-page-header';
+import ResetPasswordModal from './reset-password-modal';
 import type { Site } from '../../data/types';
 
 export function canOpenPhpMyAdmin( site: Site ) {
@@ -24,8 +27,9 @@ export function canOpenPhpMyAdmin( site: Site ) {
 
 export default function SiteDatabaseSettings( { siteSlug }: { siteSlug: string } ) {
 	const { data: site } = useQuery( siteQuery( siteSlug ) );
-	const { createErrorNotice } = useDispatch( noticesStore );
+	const { createErrorNotice, createSuccessNotice } = useDispatch( noticesStore );
 	const [ isFetchingToken, setIsFetchingToken ] = useState( false );
+	const [ isResetPasswordModalOpen, setIsResetPasswordModalOpen ] = useState( false );
 
 	if ( ! site || ! canOpenPhpMyAdmin( site ) ) {
 		return null;
@@ -46,6 +50,28 @@ export default function SiteDatabaseSettings( { siteSlug }: { siteSlug: string }
 		}
 
 		setIsFetchingToken( false );
+	};
+
+	const handleResetPasswordClick = () => {
+		setIsResetPasswordModalOpen( true );
+		recordTracksEvent( 'calypso_sites_dashboard_database_reset_password_click' );
+	};
+
+	const handleResetPasswordSuccess = () => {
+		setIsResetPasswordModalOpen( false );
+		createSuccessNotice( __( 'Your database password has been restored.' ), {
+			type: 'snackbar',
+		} );
+	};
+
+	const handleResetPasswordError = () => {
+		setIsResetPasswordModalOpen( false );
+		createErrorNotice(
+			__( 'Sorry, we had a problem restoring your database password. Please try again.' ),
+			{
+				type: 'snackbar',
+			}
+		);
 	};
 
 	return (
@@ -85,9 +111,26 @@ export default function SiteDatabaseSettings( { siteSlug }: { siteSlug: string }
 								{ __( 'Open phpMyAdmin ↗' ) }
 							</Button>
 						</HStack>
+						<Text variant="muted" lineHeight="20px">
+							{ createInterpolateElement(
+								__( 'Having problems with access? Try <link>resetting the password</link>.' ),
+								{
+									link: <Button variant="link" onClick={ handleResetPasswordClick } />,
+								}
+							) }
+						</Text>
 					</VStack>
 				</CardBody>
 			</Card>
+
+			{ isResetPasswordModalOpen && (
+				<ResetPasswordModal
+					siteSlug={ siteSlug }
+					onClose={ () => setIsResetPasswordModalOpen( false ) }
+					onSuccess={ handleResetPasswordSuccess }
+					onError={ handleResetPasswordError }
+				/>
+			) }
 		</PageLayout>
 	);
 }
