@@ -183,7 +183,7 @@ export const getCategories: () => Record< string, Category > = () => ( {
 		preview: [],
 	},
 	social: {
-		menu: __( 'Social' ),
+		menu: _x( 'Social', 'category name' ),
 		title: __( 'Social' ),
 		description: __( 'Connect to your audience and amplify your content on social.' ),
 		icon: 'grid',
@@ -493,7 +493,7 @@ export const getCategories: () => Record< string, Category > = () => ( {
 		preview: [],
 	},
 	comments: {
-		menu: __( 'Comment' ),
+		menu: _x( 'Comment', 'category name' ),
 		title: __( 'Comments & commenting' ),
 		slug: 'comments',
 		tags: [ 'comment', 'comments', 'comment fields', 'delete comments' ],
@@ -558,7 +558,7 @@ export const getCategories: () => Record< string, Category > = () => ( {
 		preview: [],
 	},
 	search: {
-		menu: __( 'Search' ),
+		menu: _x( 'Search', 'category name' ),
 		title: __( 'Search' ),
 		slug: 'search',
 		tags: [ 'ajax search', 'image search', 'search and replace', 'search', 'google' ],
