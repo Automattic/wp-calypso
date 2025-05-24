@@ -469,7 +469,7 @@ __metadata:
     recursive-copy: "npm:^2.0.14"
     sass: "npm:1.54.0"
     sass-loader: "npm:^13.3.3"
-    semver: "npm:^7.7.1"
+    semver: "npm:^7.7.2"
     stream-browserify: "npm:^3.0.0"
     terser-webpack-plugin: "npm:^5.3.11"
     thread-loader: "npm:^3.0.4"
@@ -2225,7 +2225,7 @@ __metadata:
   resolution: "@automattic/webpack-extensive-lodash-replacement-plugin@workspace:packages/webpack-extensive-lodash-replacement-plugin"
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
-    semver: "npm:^7.7.1"
+    semver: "npm:^7.7.2"
   peerDependencies:
     webpack: ^5.97.1
   languageName: unknown
@@ -12571,7 +12571,7 @@ __metadata:
     postcss: "npm:^8.5.3"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
-    semver: "npm:^7.7.1"
+    semver: "npm:^7.7.2"
     superagent: "npm:^3.8.3"
     webpack: "npm:^5.97.1"
     webpack-cli: "npm:^4.10.0"
@@ -32643,12 +32643,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"semver@npm:^7.3.2, semver@npm:^7.3.4, semver@npm:^7.3.5, semver@npm:^7.3.7, semver@npm:^7.5.3, semver@npm:^7.5.4, semver@npm:^7.6.2, semver@npm:^7.7.1":
-  version: 7.7.1
-  resolution: "semver@npm:7.7.1"
+"semver@npm:^7.3.2, semver@npm:^7.3.4, semver@npm:^7.3.5, semver@npm:^7.3.7, semver@npm:^7.5.3, semver@npm:^7.5.4, semver@npm:^7.6.2, semver@npm:^7.7.2":
+  version: 7.7.2
+  resolution: "semver@npm:7.7.2"
   bin:
     semver: bin/semver.js
-  checksum: fd603a6fb9c399c6054015433051bdbe7b99a940a8fb44b85c2b524c4004b023d7928d47cb22154f8d054ea7ee8597f586605e05b52047f048278e4ac56ae958
+  checksum: aca305edfbf2383c22571cb7714f48cadc7ac95371b4b52362fb8eeffdfbc0de0669368b82b2b15978f8848f01d7114da65697e56cd8c37b0dab8c58e543f9ea
   languageName: node
   linkType: hard
 
