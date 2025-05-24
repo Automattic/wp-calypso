@@ -178,7 +178,7 @@
 		"nock": "^13.5.6",
 		"path-browserify": "^1.0.1",
 		"percentage-regex": "^3.0.0",
-		"phone": "^3.1.58",
+		"phone": "^3.1.59",
 		"photon": "workspace:^",
 		"phpunserialize": "^1.1.0",
 		"postcss": "^8.5.3",
