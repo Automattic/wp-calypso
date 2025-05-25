@@ -390,3 +390,23 @@ export const fetchPhpMyAdminToken = async ( siteIdOrSlug: string ): Promise< Php
 		apiNamespace: 'wpcom/v2',
 	} );
 };
+
+export const fetchStaticFile404 = async ( siteIdOrSlug: string ): Promise< string > => {
+	return wpcom.req.get( {
+		path: `/sites/${ siteIdOrSlug }/hosting/static-file-404`,
+		apiNamespace: 'wpcom/v2',
+	} );
+};
+
+export const updateStaticFile404 = async (
+	siteIdOrSlug: string,
+	setting: string
+): Promise< void > => {
+	return wpcom.req.post(
+		{
+			path: `/sites/${ siteIdOrSlug }/hosting/static-file-404`,
+			apiNamespace: 'wpcom/v2',
+		},
+		{ setting }
+	);
+};
