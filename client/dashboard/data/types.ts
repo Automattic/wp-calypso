@@ -93,7 +93,9 @@ export interface Site {
 	launch_status: string | boolean;
 	site_migration: {
 		migration_status?: string;
-	} | null;
+		in_progress: boolean;
+		is_complete: boolean;
+	};
 	site_owner: number;
 	jetpack: boolean;
 	jetpack_modules: string[] | null;
