@@ -92,7 +92,7 @@ export interface Site {
 	is_wpcom_staging_site: boolean;
 	launch_status: string | boolean;
 	site_migration: {
-		migration_status: string;
+		migration_status?: string;
 	} | null;
 	site_owner: number;
 	jetpack: boolean;
