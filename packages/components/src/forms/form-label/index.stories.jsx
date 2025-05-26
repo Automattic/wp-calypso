@@ -17,3 +17,9 @@ Default.args = {
 	optional: false,
 	required: false,
 };
+
+export const WithCoreStyles = Template.bind( {} );
+WithCoreStyles.args = {
+	className: 'button-label',
+	hasCoreStyles: true,
+};
