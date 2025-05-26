@@ -164,7 +164,7 @@ export function StartSiteTransferForm( {
 								sprintf(
 									/* translators: %(siteSlug)s - the current site slug, %(newOwnerEmail)s - the new owner's email */
 									__(
-										'Your paid upgrades on <strong>%(siteSlug)s</strong> will be transferred to <strong>%(siteOwner)s</strong> and will remain with the site.'
+										'Your paid upgrades on <strong>%(siteSlug)s</strong> will be transferred to <strong>%(newOwnerEmail)s</strong> and will remain with the site.'
 									),
 									{ siteSlug, newOwnerEmail }
 								),
