@@ -6,7 +6,9 @@ client-dashboard-components-page-header {
 }
 
 .client-dashboard-components-page-header__heading {
+	font-family: var( --dashboard-h1__font-family );
 	font-size: $font-size-2x-large;
+	font-weight: var( --dashboard-h1__font-weight ) !important;
 	line-height: $font-line-height-2x-large;
 	margin-block: 0;
 }

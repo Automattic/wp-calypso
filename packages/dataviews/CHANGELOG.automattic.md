@@ -2,6 +2,7 @@
 
 ## Next
 
+- Add `help` prop support for `SelectControl` used in the `select` DataForm control, via the DataForm field `description` prop.
 - Add a new DataForm Edit control: `toggleGroup`, which renders a `<ToggleGroupControl />`. If the field elements (options) have a `description`, then the selected option's description will be also rendered.
 - Implement the `media` field type definition and allow type definitions to provide a new default: `enableSorting`.
 - Add new `boolean` field type definition and edit control. Field type definitions are able to define a default render function that will be used if the field doesn't define one.
@@ -16,6 +17,7 @@
 - Add `email` type to the fields of the form.
 - Add `className` prop to the `DataViews.Layout` component to allow customizing the layout styles.
 - Clean up --wp-components-color-* variables.
+- Add `checkbox` type to the fields of the form.
 
 ## 0.1.1
 

@@ -113,6 +113,12 @@ const fields = [
 		label: 'Sticky',
 		type: 'boolean',
 	},
+	{
+		id: 'can_comment',
+		label: 'Allow people to leave a comment',
+		type: 'boolean' as const,
+		Edit: 'checkbox',
+	},
 ] as Field< SamplePost >[];
 
 export const Default = ( {
@@ -132,6 +138,7 @@ export const Default = ( {
 		date: '2021-01-01T12:00:00',
 		birthdate: '1950-02-23T12:00:00',
 		sticky: false,
+		can_comment: false,
 	} );
 
 	const form = useMemo(
@@ -149,6 +156,7 @@ export const Default = ( {
 				'password',
 				'date',
 				'birthdate',
+				'can_comment',
 			],
 		} ),
 		[ type, labelPosition ]
