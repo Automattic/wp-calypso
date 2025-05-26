@@ -314,11 +314,7 @@ class Login extends Component {
 		} = this.props;
 
 		if ( signupUrl ) {
-			const cleanUrl = String( signupUrl )
-				.replace( /<\/?[^>]+(>|$)/g, '' )
-				.replace( /^[a-zA-Z][a-zA-Z\d+\-.]*:/, '' )
-				.replace( /\s/g, '' );
-			return window.location.origin + pathWithLeadingSlash( cleanUrl );
+			return window.location.origin + pathWithLeadingSlash( signupUrl );
 		}
 
 		if ( isWCCOM && isEmpty( currentQuery ) ) {
