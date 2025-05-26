@@ -63,7 +63,7 @@
 		"@babel/core": "^7.27.1",
 		"@size-limit/file": "^8.2.6",
 		"@wordpress/dependency-extraction-webpack-plugin": "^6.19.0",
-		"autoprefixer": "^10.2.5",
+		"autoprefixer": "^10.4.21",
 		"babel-jest": "^29.7.0",
 		"gettext-parser": "^6.0.0",
 		"html-webpack-plugin": "^5.6.3",

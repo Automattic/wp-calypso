@@ -8,8 +8,13 @@ import {
 	redirect,
 	type AnyRouter,
 } from '@tanstack/react-router';
-import { siteSettingsQuery } from 'calypso/dashboard/app/queries';
+import {
+	siteQuery,
+	siteSettingsQuery,
+	siteWordPressVersionQuery,
+} from 'calypso/dashboard/app/queries';
 import { queryClient } from 'calypso/dashboard/app/query-client';
+import { canUpdateWordPressVersion } from 'calypso/dashboard/sites/settings-wordpress/utils';
 import Root from './root';
 
 const rootRoute = createRootRoute( { component: Root } );
@@ -75,9 +80,55 @@ const subscriptionGiftingRoute = createRoute( {
 	)
 );
 
+const databaseRoute = createRoute( {
+	getParentRoute: () => siteRoute,
+	path: 'database',
+} ).lazy( () =>
+	import( 'calypso/dashboard/sites/settings-database' ).then( ( d ) =>
+		createLazyRoute( 'database' )( {
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+		} )
+	)
+);
+
+const wordpressRoute = createRoute( {
+	getParentRoute: () => siteRoute,
+	path: 'wordpress',
+	loader: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteQuery( siteSlug ) );
+		if ( canUpdateWordPressVersion( site ) ) {
+			return await queryClient.ensureQueryData( siteWordPressVersionQuery( siteSlug ) );
+		}
+	},
+} ).lazy( () =>
+	import( 'calypso/dashboard/sites/settings-wordpress' ).then( ( d ) =>
+		createLazyRoute( 'wordpress' )( {
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+		} )
+	)
+);
+
+const transferSiteRoute = createRoute( {
+	getParentRoute: () => siteRoute,
+	path: 'transfer-site',
+} ).lazy( () =>
+	import( 'calypso/dashboard/sites/settings-transfer-site' ).then( ( d ) =>
+		createLazyRoute( 'transfer-site' )( {
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+		} )
+	)
+);
+
 const createRouteTree = () =>
 	rootRoute.addChildren( [
-		siteRoute.addChildren( [ settingsRoute, siteVisibilityRoute, subscriptionGiftingRoute ] ),
+		siteRoute.addChildren( [
+			settingsRoute,
+			siteVisibilityRoute,
+			subscriptionGiftingRoute,
+			databaseRoute,
+			wordpressRoute,
+			transferSiteRoute,
+		] ),
 		dashboardSiteSettingsCompatibilityRouteRoot,
 		dashboardSiteSettingsCompatibilityRouteWithFeature,
 	] );
@@ -148,5 +199,3 @@ export const getRouter = () => {
 	syncMemoryRouterToBrowserHistory( router );
 	return router;
 };
-
-export { settingsRoute, subscriptionGiftingRoute };

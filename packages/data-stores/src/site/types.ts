@@ -631,6 +631,8 @@ export interface SourceSiteMigrationBase {
 	recent_migration?: boolean;
 	failed_backup_source?: boolean;
 	migration_status?: string;
+	is_complete?: boolean;
+	in_progress?: boolean;
 }
 
 export interface Page {

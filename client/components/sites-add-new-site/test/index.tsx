@@ -18,7 +18,7 @@ jest.mock( 'i18n-calypso', () => ( {
 } ) );
 
 // Mock the AsyncContent component to avoid loading issues in tests
-jest.mock( '../content/async', () => ( {
+jest.mock( '../async', () => ( {
 	AsyncContent: () => <div data-testid="async-content">Async Content</div>,
 } ) );
 
