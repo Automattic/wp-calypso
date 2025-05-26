@@ -12,7 +12,7 @@ import Notice from 'calypso/components/notice';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import isAkismetRedirect from 'calypso/lib/akismet/is-akismet-redirect';
 import getGravatarOAuth2Flow from 'calypso/lib/get-gravatar-oauth2-flow';
-import { getSignupUrl } from 'calypso/lib/login';
+import { getSignupUrl, pathWithLeadingSlash } from 'calypso/lib/login';
 import {
 	isJetpackCloudOAuth2Client,
 	isA4AOAuth2Client,
@@ -314,7 +314,11 @@ class Login extends Component {
 		} = this.props;
 
 		if ( signupUrl ) {
-			return signupUrl;
+			const cleanUrl = String( signupUrl )
+				.replace( /<\/?[^>]+(>|$)/g, '' )
+				.replace( /^[a-zA-Z][a-zA-Z\d+\-.]*:/, '' )
+				.replace( /\s/g, '' );
+			return window.location.origin + pathWithLeadingSlash( cleanUrl );
 		}
 
 		if ( isWCCOM && isEmpty( currentQuery ) ) {
