@@ -65,6 +65,16 @@
 			&:not(.is-error) {
 				--wp-admin-theme-color: var(--color-gravatar);
 			}
+
+		}
+	}
+
+	&.is-wp-job-manager {
+		input[type='text'],
+		input[type='password'] {
+			&.form-text-input-core-styles:not(.is-error) {
+				--wp-admin-theme-color: var(--color-wp-job-manager);
+			}
 		}
 	}
 }
