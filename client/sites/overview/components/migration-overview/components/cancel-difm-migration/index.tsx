@@ -1,11 +1,12 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Modal, Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { useBlogStickersQuery } from 'calypso/blocks/blog-stickers/use-blog-stickers-query';
 import { LoadingBar } from 'calypso/components/loading-bar';
 import wp from 'calypso/lib/wp';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
+import { useSiteMigrationStatus } from './use-site-migration-status';
 
 type CancelMigrationButtonProps = {
 	isMigrationInProgress: boolean;
@@ -98,7 +99,6 @@ const CancelMigrationModal = ( {
 const CancelDifmMigrationForm = ( { siteId }: { siteId: number } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const { data: stickers = [] } = useBlogStickersQuery( siteId );
 	const [ isOpen, setOpen ] = useState( false );
 	const openModal = () => setOpen( true );
 	const closeModal = () => setOpen( false );
@@ -106,10 +106,15 @@ const CancelDifmMigrationForm = ( { siteId }: { siteId: number } ) => {
 		'pending' | 'error' | 'success' | null
 	>( null );
 
-	const isMigrationInProgress = stickers.includes( 'migration-in-progress' );
-	const isMigationCompleted =
-		stickers.includes( 'site-migration-complete' ) ||
-		stickers.includes( 'migration-completed-difm' );
+	const { site, isMigrationCompleted, isMigrationInProgress } = useSiteMigrationStatus( siteId );
+
+	if ( ! isEnabled( 'migration-flow/cancel-difm' ) ) {
+		return null;
+	}
+
+	if ( ! site ) {
+		return null;
+	}
 
 	const handleSendCancellationRequest = async ( siteId: number ) => {
 		try {
@@ -157,7 +162,7 @@ const CancelDifmMigrationForm = ( { siteId }: { siteId: number } ) => {
 			{ cancellationStatus === 'pending' && (
 				<LoadingBar className="migration-started-difm__cancel-loading-bar" progress={ 0.5 } />
 			) }
-			{ ! isMigationCompleted && cancellationStatus === null && (
+			{ ! isMigrationCompleted && cancellationStatus === null && (
 				<CancelMigrationButton
 					isMigrationInProgress={ isMigrationInProgress }
 					onClick={ openModal }

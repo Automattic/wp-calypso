@@ -70,7 +70,7 @@
 	}
 
 	&.has-density-medium {
-		padding: $grid-unit-15;
+		padding: $grid-unit-20 $grid-unit-30;
 		box-shadow: 0 2px 1px -1px $gray-100;
 
 		// TODO: this should be handled better in `SummaryButtonList` component.

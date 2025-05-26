@@ -1,9 +1,4 @@
-import { isEnabled } from '@automattic/calypso-config';
-import {
-	isJetpackPlanSlug,
-	isJetpackSocialSlug,
-	isJetpackStatsPaidProductSlug,
-} from '@automattic/calypso-products';
+import { isJetpackPlanSlug, isJetpackStatsPaidProductSlug } from '@automattic/calypso-products';
 import clsx from 'clsx';
 import { useStoreItemInfoContext } from '../context/store-item-info-context';
 import { ItemPrice } from '../item-price';
@@ -101,10 +96,7 @@ export const AllItems: React.FC< AllItemsProps > = ( {
 						isSuperseded
 					);
 
-					const isMultiPlanSelectProduct =
-						( isJetpackSocialSlug( item.productSlug ) &&
-							! isEnabled( 'jetpack/social-plans-v1' ) ) ||
-						isJetpackStatsPaidProductSlug( item.productSlug );
+					const isMultiPlanSelectProduct = isJetpackStatsPaidProductSlug( item.productSlug );
 
 					let ctaHref = getCheckoutURL( item );
 					if ( isMultiPlanSelectProduct && ! isIncludedInPlanOrSuperseded ) {
