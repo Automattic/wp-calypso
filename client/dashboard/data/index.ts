@@ -14,6 +14,7 @@ import type {
 	BasicMetricsData,
 	SiteSettings,
 	UrlPerformanceInsights,
+	PhpMyAdminToken,
 } from './types';
 
 export const fetchProfile = async (): Promise< Profile > => {
@@ -370,4 +371,11 @@ export const fetchPerformanceInsights = async (
 		},
 		{ url, advance: '1', hash: token }
 	);
+};
+
+export const fetchPhpMyAdminToken = async ( siteIdOrSlug: string ): Promise< PhpMyAdminToken > => {
+	return wpcom.req.post( {
+		path: `/sites/${ siteIdOrSlug }/hosting/pma/token`,
+		apiNamespace: 'wpcom/v2',
+	} );
 };

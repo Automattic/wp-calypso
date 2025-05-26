@@ -43,7 +43,7 @@
 		"@types/webpack-env": "^1.18.8",
 		"@wordpress/browserslist-config": "^6.23.0",
 		"@wordpress/dependency-extraction-webpack-plugin": "^6.19.0",
-		"autoprefixer": "^10.2.5",
+		"autoprefixer": "^10.4.21",
 		"babel-loader": "^8.2.3",
 		"browserslist": "^4.24.5",
 		"css-loader": "^6.11.0",

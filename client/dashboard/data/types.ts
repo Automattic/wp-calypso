@@ -169,3 +169,7 @@ export interface UrlPerformanceInsights {
 		status: string;
 	};
 }
+
+export interface PhpMyAdminToken {
+	token: string;
+}
