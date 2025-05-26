@@ -56,7 +56,7 @@
 		"@typescript-eslint/eslint-plugin": "^6.0.0",
 		"@typescript-eslint/parser": "^6.0.0",
 		"@wordpress/eslint-plugin": "^17.0.0",
-		"@wordpress/prettier-config": "^3.0.0",
+		"@wordpress/prettier-config": "^4.2.0",
 		"@wordpress/scripts": "^27.9.0",
 		"eslint": "^8.0.0",
 		"eslint-import-resolver-typescript": "^3.6.0",
