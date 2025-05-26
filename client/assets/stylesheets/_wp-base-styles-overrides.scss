@@ -39,3 +39,9 @@
 		--wp-admin-theme-color: var(--color-primary-40);
 	}
 }
+
+.jetpack-cloud {
+	.form-text-input-core-styles {
+		--wp-admin-theme-color: var(--studio-jetpack-green-40);
+	}
+}
