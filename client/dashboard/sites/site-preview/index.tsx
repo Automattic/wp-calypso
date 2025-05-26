@@ -18,6 +18,10 @@ export default function SitePreview( {
 	const secureUrl = url.replace( /^http:\/\//, 'https://' );
 	return (
 		<iframe
+			sandbox="allow-scripts allow-same-origin"
+			// Officially deprecated, but still widely supported. Hides
+			// scrollbars in case they are set to always visible.
+			scrolling="no"
 			loading="lazy"
 			// @ts-expect-error For some reason there's no inert type.
 			inert="true"
