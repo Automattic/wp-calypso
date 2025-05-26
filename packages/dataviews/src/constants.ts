@@ -23,7 +23,6 @@ export const OPERATOR_GREATER_THAN_OR_EQUAL = 'greaterThanOrEqual';
 export const OPERATOR_CONTAINS = 'contains';
 export const OPERATOR_NOT_CONTAINS = 'notContains';
 export const OPERATOR_STARTS_WITH = 'startsWith';
-export const OPERATOR_BETWEEN = 'between';
 
 export const ALL_OPERATORS = [
 	OPERATOR_IS,
@@ -39,7 +38,6 @@ export const ALL_OPERATORS = [
 	OPERATOR_CONTAINS,
 	OPERATOR_NOT_CONTAINS,
 	OPERATOR_STARTS_WITH,
-	OPERATOR_BETWEEN,
 ];
 
 export const SINGLE_SELECTION_OPERATORS = [
