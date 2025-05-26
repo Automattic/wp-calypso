@@ -17,7 +17,7 @@ type Story = StoryObj< typeof Notice >;
 
 const defaultArgs = {
 	title: 'Title',
-	description: (
+	children: (
 		<>
 			Hello, I’m a notice with an inline <ExternalLink href="#">link</ExternalLink>.
 		</>
