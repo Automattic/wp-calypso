@@ -4,7 +4,7 @@ import type {
 	SendTaskRequest,
 	TextPart,
 	TaskSendParams,
-} from '../types/index.js';
+} from '../types/index';
 
 /**
  * Generate a random string for IDs
@@ -83,3 +83,6 @@ export function extractTextFromMessage(message?: Message): string {
 		.map((part) => (part as TextPart).text)
 		.join('\n');
 }
+
+// Re-export logger utilities for convenience
+export { logger, isDebugEnabled, enableDebug, formatObject } from './logger';

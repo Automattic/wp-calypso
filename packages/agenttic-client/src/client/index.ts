@@ -10,6 +10,7 @@ import type {
 } from '../types/index';
 import { createRequestId, createSendTaskRequest } from '../utils/index';
 import { parseSSEStream, streamToTask } from '../streaming/index';
+import { logger, formatObject } from '../utils/logger';
 import { SocksProxyAgent } from 'socks-proxy-agent';
 import fetch from 'node-fetch';
 
@@ -33,34 +34,13 @@ function logRequest(
 	body?: any,
 	proxy?: string
 ) {
-	// Check if we're in verbose mode by looking for a global verbose flag
-	// This is a bit of a hack, but allows us to show debug info from the client
-	if (
-		process.env.AGENTTIC_VERBOSE === 'true' ||
-		(globalThis as any).__AGENTTIC_VERBOSE__
-	) {
-		console.log('\n🔍 Request Details:');
-		console.log(`   Method: ${method}`);
-		console.log(`   URL: ${url}`);
-		if (proxy) {
-			console.log(`   Proxy: ${proxy}`);
-		}
-		console.log('   Headers:');
-		Object.entries(headers).forEach(([key, value]) => {
-			// Mask sensitive headers for security
-			const maskedValue = key.toLowerCase().includes('authorization')
-				? value.substring(0, 10) + '...'
-				: value;
-			console.log(`     ${key}: ${maskedValue}`);
-		});
-		if (body) {
-			console.log('   Body:');
-			console.log(
-				'    ',
-				JSON.stringify(body, null, 2).split('\n').join('\n     ')
-			);
-		}
-		console.log('');
+	logger('Request: %s %s', method, url);
+	if (proxy) {
+		logger('Proxy: %s', proxy);
+	}
+	logger('Headers: %o', headers);
+	if (body) {
+		logger('Body: %s', formatObject(body));
 	}
 }
 

@@ -7,6 +7,7 @@ config();
 import { createA2AClient } from '../client/index';
 import { createTextMessage, extractTextFromMessage } from '../utils/index';
 import { createEnvAuthProvider } from './auth';
+import { logger, enableDebug, cliLog } from '../utils/logger';
 import type { CLIOptions, InteractiveSession } from './types';
 import { createRequire } from 'module';
 
@@ -107,7 +108,7 @@ function parseArgs(): CLIOptions {
 				break;
 			default:
 				if (arg.startsWith('-')) {
-					console.error(`Unknown option: ${arg}`);
+					cliLog.error(`Unknown option: ${arg}`);
 					process.exit(1);
 				}
 				// Treat as message if no message was provided yet
@@ -125,7 +126,7 @@ function parseArgs(): CLIOptions {
  * Print help message
  */
 function printHelp(): void {
-	console.log(`
+	cliLog.info(`
 agenttic-client - A2A Protocol Client CLI
 
 USAGE:
@@ -235,7 +236,7 @@ function createReadlineInterface() {
  */
 async function runSingleMessage(options: CLIOptions): Promise<void> {
 	if (!options.message) {
-		console.error(
+		cliLog.error(
 			'❌ No message provided. Provide message as the last argument.'
 		);
 		process.exit(1);
@@ -260,32 +261,32 @@ async function runSingleMessage(options: CLIOptions): Promise<void> {
 	});
 
 	if (options.verbose) {
-		console.log(`🔗 Connecting to: ${options.url}`);
+		cliLog.system(`🔗 Connecting to: ${options.url}`);
 		if (options.session) {
-			console.log(`📋 Session: ${options.session}`);
+			cliLog.system(`📋 Session: ${options.session}`);
 		}
 		if (options.proxy) {
-			console.log(`🌐 Proxy: ${options.proxy}`);
+			cliLog.system(`🌐 Proxy: ${options.proxy}`);
 		}
 		if (options.token) {
-			console.log(`🔐 Authentication: Token provided`);
+			cliLog.system(`🔐 Authentication: Token provided`);
 		} else if (options.auth) {
 			// Check if environment auth provider will return headers
 			const envHeaders = await authProvider();
 			if (Object.keys(envHeaders).length > 0) {
-				console.log(`🔐 Authentication: Environment variables`);
+				cliLog.system(`🔐 Authentication: Environment variables`);
 			} else {
-				console.log(`🔓 Authentication: No env vars found`);
+				cliLog.system(`🔓 Authentication: No env vars found`);
 			}
 		} else {
-			console.log(`🔓 Authentication: Disabled (default)`);
+			cliLog.system(`🔓 Authentication: Disabled (default)`);
 		}
-		console.log(`📤 Sending: "${options.message}"`);
+		cliLog.system(`📤 Sending: "${options.message}"`);
 	}
 
 	try {
 		if (options.stream) {
-			console.log('🔄 Streaming response...\n');
+			cliLog.info('🔄 Streaming response...\n');
 
 			let hasContent = false;
 			for await (const update of client.sendMessageStream({
@@ -301,31 +302,31 @@ async function runSingleMessage(options: CLIOptions): Promise<void> {
 
 				if (update.final) {
 					if (hasContent) {
-						console.log('\n');
+						process.stdout.write('\n');
 					}
 					if (options.verbose) {
-						console.log(`✅ Task completed (${update.id})`);
+						cliLog.success(`✅ Task completed (${update.id})`);
 					}
 					break;
 				}
 			}
 		} else {
-			console.log('📤 Sending message...');
+			cliLog.info('📤 Sending message...');
 			const task = await client.sendMessage({
 				message: createTextMessage(options.message),
 			});
 
 			const responseText = extractTextFromMessage(task.status.message);
-			console.log('📥 Response:');
-			console.log(responseText || '(No text response)');
+			cliLog.info('📥 Response:');
+			cliLog.agent(responseText || '(No text response)');
 
 			if (options.verbose) {
-				console.log(`\n✅ Task completed (${task.id})`);
-				console.log(`📊 Status: ${task.status.state}`);
+				cliLog.success(`\n✅ Task completed (${task.id})`);
+				cliLog.system(`📊 Status: ${task.status.state}`);
 			}
 		}
 	} catch (error) {
-		console.error(
+		cliLog.error(
 			'❌ Error:',
 			error instanceof Error ? error.message : String(error)
 		);
@@ -378,7 +379,7 @@ async function runInteractive(options: CLIOptions): Promise<void> {
 		authStatus = '🔓 No Auth (default)';
 	}
 
-	console.log(`
+	cliLog.info(`
 🤖 A2A Agent Test CLI - Interactive Mode
 Connected to: ${options.url}
 Session: ${session.sessionId}
@@ -389,12 +390,12 @@ Type 'help' for commands.
 
 	// If an initial message was provided, send it first
 	if (options.message) {
-		console.log(`📤 Initial message: "${options.message}"`);
+		cliLog.info(`📤 Initial message: "${options.message}"`);
 		session.messageCount++;
 
 		try {
 			if (options.stream) {
-				console.log('🔄 Streaming response...\n');
+				cliLog.info('🔄 Streaming response...\n');
 
 				let hasContent = false;
 				for await (const update of client.sendMessageStream({
@@ -413,13 +414,13 @@ Type 'help' for commands.
 
 					if (update.final) {
 						if (hasContent) {
-							console.log('\n');
+							process.stdout.write('\n');
 						}
 						break;
 					}
 				}
 			} else {
-				console.log('📤 Sending...');
+				cliLog.info('📤 Sending...');
 				const task = await client.sendMessage({
 					message: createTextMessage(options.message),
 					sessionId: session.sessionId,
@@ -428,16 +429,16 @@ Type 'help' for commands.
 				const responseText = extractTextFromMessage(
 					task.status.message
 				);
-				console.log('🤖', responseText || '(No text response)');
+				cliLog.agent(responseText || '(No text response)');
 			}
 		} catch (error) {
-			console.error(
+			cliLog.error(
 				'❌ Error:',
 				error instanceof Error ? error.message : String(error)
 			);
 		}
 
-		console.log(); // Add spacing before interactive prompt
+		// Add spacing before interactive prompt
 	}
 
 	const askQuestion = (): Promise<string> => {
@@ -452,12 +453,12 @@ Type 'help' for commands.
 			const trimmedInput = input.trim();
 
 			if (trimmedInput === 'exit' || trimmedInput === 'quit') {
-				console.log('👋 Goodbye!');
+				cliLog.info('👋 Goodbye!');
 				break;
 			}
 
 			if (trimmedInput === 'help') {
-				console.log(`
+				cliLog.info(`
 Available commands:
   help     - Show this help
   exit     - Exit the interactive session
@@ -476,7 +477,7 @@ Just type your message to send it to the agent.
 
 			try {
 				if (options.stream) {
-					console.log('🔄 Streaming response...\n');
+					cliLog.info('🔄 Streaming response...\n');
 
 					let hasContent = false;
 					for await (const update of client.sendMessageStream({
@@ -495,13 +496,13 @@ Just type your message to send it to the agent.
 
 						if (update.final) {
 							if (hasContent) {
-								console.log('\n');
+								process.stdout.write('\n');
 							}
 							break;
 						}
 					}
 				} else {
-					console.log('📤 Sending...');
+					cliLog.info('📤 Sending...');
 					const task = await client.sendMessage({
 						message: createTextMessage(trimmedInput),
 						sessionId: session.sessionId,
@@ -510,16 +511,16 @@ Just type your message to send it to the agent.
 					const responseText = extractTextFromMessage(
 						task.status.message
 					);
-					console.log('🤖', responseText || '(No text response)');
+					cliLog.agent(responseText || '(No text response)');
 				}
 			} catch (error) {
-				console.error(
+				cliLog.error(
 					'❌ Error:',
 					error instanceof Error ? error.message : String(error)
 				);
 			}
 
-			console.log(); // Add spacing between exchanges
+			// Add spacing between exchanges
 		}
 	} finally {
 		rl.close();
@@ -533,21 +534,27 @@ async function main(): Promise<void> {
 	try {
 		const options = parseArgs();
 
-		// Set verbose logging for the client if --verbose is used
+		// Enable debug logging if --verbose is used
 		if (options.verbose) {
-			process.env.AGENTTIC_VERBOSE = 'true';
+			enableDebug();
+			logger('Verbose mode enabled');
 		}
+
+		logger('CLI options: %o', options);
 
 		// Determine mode based on options
 		if (options.interactive) {
 			// Interactive mode (default unless --single is used)
+			logger('Starting interactive mode');
 			await runInteractive(options);
 		} else {
 			// Single message mode (only when --single is explicitly used)
+			logger('Starting single message mode');
 			await runSingleMessage(options);
 		}
 	} catch (error) {
-		console.error(
+		logger('Fatal error: %o', error);
+		cliLog.error(
 			'❌ Fatal error:',
 			error instanceof Error ? error.message : String(error)
 		);

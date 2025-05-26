@@ -1,4 +1,5 @@
-import type { TaskUpdate, JsonRpcResponse, Task } from '../types/index.js';
+import type { TaskUpdate, JsonRpcResponse, Task } from '../types/index';
+import { logger } from '../utils/logger';
 
 /**
  * Parse a stream chunk from a server-sent events stream.
@@ -49,12 +50,8 @@ export function parseStreamChunk(
 							: newlineIndex + 1;
 				} catch (e) {
 					// Log the error and the problematic eventPayload
-					console.error(
-						'Failed to parse accumulated SSE event data:',
-						e,
-						'Accumulated event payload:',
-						eventPayload
-					);
+					logger('Failed to parse SSE event: %o', e);
+					logger('Problematic payload: %s', eventPayload);
 				}
 				eventPayload = ''; // Reset for the next event
 			}
