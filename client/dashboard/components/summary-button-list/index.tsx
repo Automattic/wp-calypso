@@ -32,18 +32,12 @@ export function SummaryButtonList( {
 	const header = (
 		<SectionHeader level={ isMediumDensity ? 3 : 2 } title={ title } description={ description } />
 	);
-	const className = clsx(
-		'client-dashboard-components-summary-button-list',
-		`has-density-${ density }`
-	);
+	const className = clsx( 'dashboard-summary-button-list', `has-density-${ density }` );
 	if ( isMediumDensity ) {
 		return (
 			<Card className={ className }>
 				<CardHeader>{ header }</CardHeader>
-				<VStack
-					spacing="1px"
-					className="client-dashboard-components-summary-button-list__children-container"
-				>
+				<VStack spacing="1px" className="dashboard-summary-button-list__children-container">
 					{ clonedChildren }
 				</VStack>
 			</Card>

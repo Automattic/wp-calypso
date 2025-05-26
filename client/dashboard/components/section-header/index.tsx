@@ -23,41 +23,32 @@ export const SectionHeader = ( {
 }: SectionHeaderProps ) => {
 	const HeadingTag = `h${ level }` as keyof JSX.IntrinsicElements;
 	return (
-		<VStack
-			spacing={ 2 }
-			className={ `client-dashboard-components-section-header is-level-${ level }` }
-		>
-			{ prefix && (
-				<div className="client-dashboard-components-section-header__prefix">{ prefix }</div>
-			) }
+		<VStack spacing={ 2 } className={ `dashboard-components-section-header is-level-${ level }` }>
+			{ prefix && <div className="dashboard-components-section-header__prefix">{ prefix }</div> }
 			<HStack
 				spacing={ 4 }
 				justify="flex-start"
 				alignment="flex-start"
-				className="client-dashboard-components-section-header__heading-row"
+				className="dashboard-components-section-header__heading-row"
 			>
 				{ decoration && (
-					<span className="client-dashboard-components-section-header__decoration">
-						{ decoration }
-					</span>
+					<span className="dashboard-section-header__decoration">{ decoration }</span>
 				) }
 				<HStack spacing={ 3 } justify="space-between" alignment="flex-start">
-					<HeadingTag className="client-dashboard-components-section-header__heading">
-						{ title }
-					</HeadingTag>
+					<HeadingTag className="dashboard-section-header__heading">{ title }</HeadingTag>
 					{ /* The wrapper is always needed for view transitions. */ }
 					<HStack
 						spacing={ 2 }
 						justify="flex-end"
 						expanded={ false }
-						className="client-dashboard-components-section-header__actions"
+						className="dashboard-section-header__actions"
 					>
 						{ actions }
 					</HStack>
 				</HStack>
 			</HStack>
 			{ description && (
-				<Text variant="muted" className="client-dashboard-components-section-header__description">
+				<Text variant="muted" className="dashboard-section-header__description">
 					{ description }
 				</Text>
 			) }
