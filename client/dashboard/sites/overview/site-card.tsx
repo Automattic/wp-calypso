@@ -11,7 +11,7 @@ import { dateI18n } from '@wordpress/date';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { sitePHPVersionQuery, siteCurrentPlanQuery } from '../../app/queries';
-import { getBlurredStyles } from '../../utils/blurred-styles';
+import { getIsBlurredProps } from '../../utils/is-blurred';
 import { getSiteStatusLabel } from '../../utils/site-status';
 import { getFormattedWordPressVersion } from '../../utils/wp-version';
 import SitePreview from '../site-preview';
@@ -19,9 +19,7 @@ import type { Site } from '../../data/types';
 
 function PHPVersion( { siteSlug }: { siteSlug: string } ) {
 	return (
-		useQuery( sitePHPVersionQuery( siteSlug ) ).data ?? (
-			<span style={ getBlurredStyles() }>X.Y</span>
-		)
+		useQuery( sitePHPVersionQuery( siteSlug ) ).data ?? <span { ...getIsBlurredProps() }>X.Y</span>
 	);
 }
 
@@ -124,30 +122,29 @@ function PlanDetails( { site }: { site: Site } ) {
 			<FieldTitle>{ __( 'Plan' ) }</FieldTitle>
 			{ product_name_short && <Text>{ product_name_short }</Text> }
 			{ isFree ? (
-				<Text>{ __( 'No expiration date.' ) }</Text>
+				<>
+					<Text>{ __( 'No expiration date.' ) }</Text>
+					<Button href={ `/plans/${ site.slug }` } variant="link">
+						{ __( 'Upgrade' ) }
+					</Button>
+				</>
 			) : (
-				// Show a blurred time while we wait for the current plan.
-				<Text style={ currentPlan ? undefined : getBlurredStyles() }>
-					{ getPlanExpirationMessage(
-						currentPlan ? currentPlan.expiry : new Date().toISOString()
-					) }
-				</Text>
-			) }
-			{ isFree ? (
-				<Button href={ `/plans/${ site.slug }` } variant="link">
-					{ __( 'Upgrade' ) }
-				</Button>
-			) : (
-				<Button
-					// Show a blurred button while we wait for the plan ID.
-					// @ts-expect-error inert is not typed
-					inert={ currentPlan ? undefined : 'true' }
-					style={ currentPlan ? undefined : getBlurredStyles() }
-					href={ currentPlan ? `/purchases/subscriptions/${ site.slug }/${ currentPlan.id }` : '' }
-					variant="link"
-				>
-					{ __( 'Manage subscription' ) }
-				</Button>
+				<>
+					<Text { ...getIsBlurredProps( { enabled: ! currentPlan } ) }>
+						{ getPlanExpirationMessage(
+							currentPlan ? currentPlan.expiry : new Date().toISOString()
+						) }
+					</Text>
+					<Button
+						{ ...getIsBlurredProps( { enabled: ! currentPlan } ) }
+						href={
+							currentPlan ? `/purchases/subscriptions/${ site.slug }/${ currentPlan.id }` : ''
+						}
+						variant="link"
+					>
+						{ __( 'Manage subscription' ) }
+					</Button>
+				</>
 			) }
 		</VStack>
 	);
