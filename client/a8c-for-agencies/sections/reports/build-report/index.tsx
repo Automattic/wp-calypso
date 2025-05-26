@@ -259,8 +259,10 @@ const BuildReport = () => {
 				</LayoutHeader>
 			</LayoutTop>
 			<LayoutBody>
-				<div className="build-report__content">{ renderStepContent() }</div>
-				{ renderActions() }
+				<div className="build-report__content">
+					{ renderStepContent() }
+					{ renderActions() }
+				</div>
 			</LayoutBody>
 		</Layout>
 	);

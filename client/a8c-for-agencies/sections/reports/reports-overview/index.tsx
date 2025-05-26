@@ -106,8 +106,7 @@ const ReportsOverview = () => {
 
 				<PageSectionColumns
 					background={ {
-						isDarkBackground: true,
-						color: '#153E5F',
+						color: '#B9E4FE',
 					} }
 				>
 					<PageSectionColumns.Column heading={ translate( 'Why create client reports' ) }>

@@ -4,11 +4,16 @@
 .build-report {
 	.build-report__content {
 		flex-grow: 1;
+		max-width: 660px;
 		min-height: 0;
-		padding: 32px;
 		display: flex;
 		flex-direction: column;
 		gap: 16px;
+		padding: 16px 24px;
+		border: 1px solid var( --color-neutral-10 );
+		border-radius: 4px;
+		margin-inline: auto;
+		margin-block-start: 24px;
 	}
 
 	.build-report__step-title {
@@ -39,11 +44,9 @@
 
 	.build-report__actions {
 		display: flex;
-		justify-content: flex-end;
+		justify-content: flex-start;
 		gap: 8px;
-		padding: 16px 32px;
 		background-color: var( --color-surface );
-		border-top: 1px solid var( --color-neutral-10 );
 		margin-top: auto;
 	}
 }
