@@ -1,6 +1,6 @@
 .blaze-pro,
 .is-blaze-pro {
-	.form-text-input-core-styles:focus {
+	.form-text-input-core-styles {
 		--wp-admin-theme-color: var(--color-gray);
 	}
 }
@@ -9,6 +9,7 @@
 	input[type='text'],
 	input[type='password'] {
 		&.form-text-input-core-styles {
+			--wp-admin-theme-color: var(--woo-purple-50);
 			/* stylelint-disable-next-line scales/radii */
 			border-radius: 8px;
 			font-size: 1rem;
@@ -20,7 +21,6 @@
 			}
 
 			&:focus {
-				--wp-admin-theme-color: var(--woo-purple-50);
 
 				border-width: 1.5px;
 			}
@@ -29,7 +29,7 @@
 }
 
 .is-akismet {
-	.form-text-input-core-styles:focus {
+	.form-text-input-core-styles {
 		--wp-admin-theme-color: var(--color-akismet);
 	}
 }
