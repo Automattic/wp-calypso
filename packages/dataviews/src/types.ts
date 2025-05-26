@@ -32,9 +32,8 @@ export interface OperatorConfig {
 export interface FilterByConfig {
 	/**
 	 * The list of operators supported by the field.
-	 * Can be an array of operator keys, or an array of objects mapping operator keys to their config (e.g. label).
 	 */
-	operators?: ( OperatorConfig | Operator )[];
+	operators?: Operator[];
 
 	/**
 	 * Whether it is a primary filter.
@@ -99,7 +98,12 @@ export type FieldTypeDefinition< Item > = {
 	/**
 	 * The filter config for the field.
 	 */
-	filterBy: FilterByConfig;
+	filterBy: FilterByConfig & {
+		/**
+		 * Override the labels for the operators for the field.
+		 */
+		overrideOperatorLabels?: Partial< Record< Operator, string > >;
+	};
 
 	/**
 	 * Whether the field is sortable.
@@ -199,7 +203,10 @@ export type Field< Item > = {
 	getValue?: ( args: { item: Item } ) => any;
 };
 
-export type NormalizedField< Item > = Omit< Field< Item >, 'Edit' > & {
+export type NormalizedField< Item > = Omit<
+	Field< Item >,
+	'Edit' | 'filterBy'
+> & {
 	label: string;
 	header: string | ReactElement;
 	getValue: ( args: { item: Item } ) => any;
@@ -209,6 +216,9 @@ export type NormalizedField< Item > = Omit< Field< Item >, 'Edit' > & {
 	isValid: ( item: Item, context?: ValidationContext ) => boolean;
 	enableHiding: boolean;
 	enableSorting: boolean;
+	filterBy: Omit< FilterByConfig, 'operators' > & {
+		operators?: ( Operator | OperatorConfig )[];
+	};
 };
 
 /**

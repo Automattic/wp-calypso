@@ -10,7 +10,8 @@ import type {
 	DataViewRenderFieldProps,
 	SortDirection,
 	ValidationContext,
-	FilterByConfig,
+	OperatorConfig,
+	Operator,
 } from '../types';
 import { renderFromElements } from '../utils';
 import {
@@ -38,17 +39,11 @@ function isValid( value: any, context?: ValidationContext ) {
 	return true;
 }
 
-const operators: FilterByConfig[ 'operators' ] = [
+const operators: Operator[] = [
 	OPERATOR_IS,
 	OPERATOR_IS_NOT,
-	{
-		name: OPERATOR_LESS_THAN_OR_EQUAL,
-		label: __( 'Before (inc)' ),
-	},
-	{
-		name: OPERATOR_GREATER_THAN_OR_EQUAL,
-		label: __( 'After (inc)' ),
-	},
+	OPERATOR_LESS_THAN_OR_EQUAL,
+	OPERATOR_GREATER_THAN_OR_EQUAL,
 ];
 
 export default {
@@ -63,5 +58,9 @@ export default {
 	enableSorting: true,
 	filterBy: {
 		operators,
+		overrideOperatorLabels: {
+			[ OPERATOR_LESS_THAN_OR_EQUAL ]: __( 'Before (inc)' ),
+			[ OPERATOR_GREATER_THAN_OR_EQUAL ]: __( 'After (inc)' ),
+		},
 	},
 };

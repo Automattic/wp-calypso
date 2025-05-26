@@ -7,7 +7,13 @@ import type { FunctionComponent } from 'react';
  * Internal dependencies
  */
 import getFieldTypeDefinition from './field-types';
-import type { DataViewRenderFieldProps, Field, NormalizedField } from './types';
+import type {
+	DataViewRenderFieldProps,
+	Field,
+	NormalizedField,
+	OperatorConfig,
+	Operator,
+} from './types';
 import { getControl } from './dataform-controls';
 
 const getValueFromId =
@@ -75,6 +81,18 @@ export function normalizeFields< Item >(
 				 )( { item, field } );
 			};
 
+		// If the field has custom labels for the operators, convert them to the OperatorConfig type.
+		const baseOperators =
+			field.filterBy?.operators ?? fieldTypeDefinition.filterBy.operators;
+		const operators = baseOperators
+			? baseOperators.map( ( operator ) => {
+					const overrideLabels =
+						fieldTypeDefinition.filterBy.overrideOperatorLabels;
+					const label = overrideLabels?.[ operator ];
+					return label ? { name: operator, label } : operator;
+			  } )
+			: undefined;
+
 		return {
 			...field,
 			label: field.label || field.id,
@@ -89,7 +107,10 @@ export function normalizeFields< Item >(
 				field.enableSorting ??
 				fieldTypeDefinition.enableSorting ??
 				true,
-			filterBy: field.filterBy ?? fieldTypeDefinition.filterBy,
+			filterBy: {
+				...( field.filterBy ?? fieldTypeDefinition.filterBy ),
+				operators,
+			},
 		};
 	} );
 }
