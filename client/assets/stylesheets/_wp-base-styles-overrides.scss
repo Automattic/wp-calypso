@@ -45,3 +45,9 @@
 		--wp-admin-theme-color: var(--studio-jetpack-green-40);
 	}
 }
+
+.layout.is-jetpack-login:not(.is-woocommerce-core-profiler-flow) {
+	.form-text-input-core-styles {
+		--wp-admin-theme-color: var(--studio-jetpack-green-50);
+	}
+}

@@ -186,10 +186,14 @@ $image-height: 47px;
 
 .layout.is-jetpack-login:not(.is-woocommerce-core-profiler-flow) {
 
-	.login__form input:focus,
-	.logged-out-form input:focus {
-		border-color: var(--color-accent);
-		box-shadow: 0 0 0 2px var(--color-accent-light);
+	.login__form input,
+	.logged-out-form input {
+		&:not(.form-text-input-core-styles) {
+			&:focus {
+				border-color: var(--color-accent);
+				box-shadow: 0 0 0 2px var(--color-accent-light);
+			}
+		}
 	}
 
 	.login__form-terms a,
