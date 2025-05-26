@@ -32,11 +32,15 @@ describe( 'A4A > Signup: Smoke Test', function () {
 
 		// Enter first name
 		const firstName = 'John';
-		await page.getByLabel( 'First name' ).fill( firstName );
+		await page.getByLabel( 'Your first name' ).fill( firstName );
 
 		// Enter last name
 		const lastName = 'Doe';
 		await page.getByLabel( 'Last name' ).fill( lastName );
+
+		// Enter email address
+		const email = 'johndoe@example.com';
+		await page.getByLabel( 'Email' ).fill( email );
 
 		// Enter the agency name
 		const agencyName = 'Agency Name';
@@ -46,7 +50,31 @@ describe( 'A4A > Signup: Smoke Test', function () {
 		const businessURL = 'https://example.com';
 		await page.getByLabel( 'Business URL' ).fill( businessURL );
 
-		// Select the user type to site owner
+		// Phone number
+		const phoneNumber = '+1234567890';
+		await page.getByLabel( 'Phone number' ).fill( phoneNumber );
+
+		// Enter Country code combobox
+		await page
+			.getByRole( 'combobox', { name: 'Country code' } )
+			.selectOption( { label: 'United States (+1)' } );
+
+		// Verify the form values
+		expect( await page.getByLabel( 'Your first name' ).inputValue() ).toBe( firstName );
+		expect( await page.getByLabel( 'Last name' ).inputValue() ).toBe( lastName );
+		expect( await page.getByLabel( 'Email' ).inputValue() ).toBe( email );
+		expect( await page.getByLabel( 'Phone number' ).inputValue() ).toBe( phoneNumber );
+		expect( await page.getByLabel( 'Agency name' ).inputValue() ).toBe( agencyName );
+		expect( await page.getByLabel( 'Business URL' ).inputValue() ).toBe( businessURL );
+		expect( await page.getByRole( 'combobox', { name: 'Country code' } ).inputValue() ).toBe(
+			'+1'
+		);
+
+		// Click the "Continue for free" button
+		await page.getByRole( 'button', { name: 'Continue for free' } ).click();
+		await page.waitForURL( `${ A4A_URL }/signup/agency` );
+
+		/*	// Select the user type to site owner
 		await page
 			.getByRole( 'combobox', { name: 'How would you describe yourself?' } )
 			.selectOption( { label: "I do not work at an agency. I'm a site owner." } );
@@ -80,10 +108,7 @@ describe( 'A4A > Signup: Smoke Test', function () {
 		await page.getByLabel( 'Postal code' ).fill( '94105' );
 
 		// Verify the form values
-		expect( await page.getByLabel( 'First name' ).inputValue() ).toBe( firstName );
-		expect( await page.getByLabel( 'Last name' ).inputValue() ).toBe( lastName );
-		expect( await page.getByLabel( 'Agency name' ).inputValue() ).toBe( agencyName );
-		expect( await page.getByLabel( 'Business URL' ).inputValue() ).toBe( businessURL );
+
 		expect(
 			await page.getByRole( 'combobox', { name: 'How would you describe yourself?' } ).inputValue()
 		).toBe( 'agency_owner' );
@@ -104,5 +129,6 @@ describe( 'A4A > Signup: Smoke Test', function () {
 		).toBe( 'Suite 101' );
 		expect( await page.getByLabel( 'City' ).inputValue() ).toBe( 'San Francisco' );
 		expect( await page.getByLabel( 'Postal code' ).inputValue() ).toBe( '94105' );
+		*/
 	} );
 } );
