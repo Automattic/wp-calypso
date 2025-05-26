@@ -836,7 +836,9 @@ export class LoginForm extends Component {
 								</p>
 							) }
 
-							<FormLabel htmlFor="usernameOrEmail">{ this.renderUsernameorEmailLabel() }</FormLabel>
+							<FormLabel htmlFor="usernameOrEmail" hasCoreStyles>
+								{ this.renderUsernameorEmailLabel() }
+							</FormLabel>
 
 							<FormTextInput
 								autoCapitalize="off"

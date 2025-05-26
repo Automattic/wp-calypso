@@ -7,15 +7,22 @@ import './style.scss';
 type FormLabelProps = {
 	optional?: boolean;
 	required?: boolean;
+	hasCoreStyles?: boolean;
 } & JSX.IntrinsicElements[ 'label' ];
 
 const FormLabel = forwardRef< HTMLLabelElement, FormLabelProps >(
-	( { children, required, optional, className, ...labelProps }, ref ) => {
+	( { children, required, optional, className, hasCoreStyles, ...labelProps }, ref ) => {
 		const translate = useTranslate();
 		const hasChildren: boolean = Children.count( children ) > 0;
 
 		return (
-			<label { ...labelProps } className={ clsx( className, 'form-label' ) } ref={ ref }>
+			<label
+				{ ...labelProps }
+				className={ clsx( className, 'form-label', {
+					'form-label-core-styles': hasCoreStyles,
+				} ) }
+				ref={ ref }
+			>
 				{ children }
 				{ hasChildren && required && (
 					<small className="form-label__required">{ translate( 'Required' ) }</small>
@@ -27,5 +34,7 @@ const FormLabel = forwardRef< HTMLLabelElement, FormLabelProps >(
 		);
 	}
 );
+
+FormLabel.displayName = 'FormLabel';
 
 export default FormLabel;
