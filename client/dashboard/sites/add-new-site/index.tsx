@@ -13,6 +13,7 @@ import { download, reusableBlock, Icon } from '@wordpress/icons';
 import devSiteBanner from 'calypso/assets/images/a8c-for-agencies/dev-site-banner.svg';
 import Column from './column';
 import MenuItem from './menu-item';
+import type { AddNewSiteProps } from '../../../components/sites-add-new-site/types';
 import './style.scss';
 
 const wordpressClick = () => {
@@ -48,10 +49,6 @@ const bigSkyClick = () => {
 		action: 'big-sky',
 	} );
 };
-
-interface AddNewSiteProps {
-	context: 'sites-dashboard' | string;
-}
 
 function AddNewSite( { context }: AddNewSiteProps ) {
 	const isDesktop = useViewportMatch( 'medium' );
