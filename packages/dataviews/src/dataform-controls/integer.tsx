@@ -1,7 +1,11 @@
 /**
  * WordPress dependencies
  */
-import { __experimentalNumberControl as NumberControl } from '@wordpress/components';
+import {
+	Flex,
+	BaseControl,
+	__experimentalNumberControl as NumberControl,
+} from '@wordpress/components';
 import { useCallback } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 
@@ -41,25 +45,29 @@ function BetweenControls< Item >( {
 	);
 
 	return (
-		<>
-			<NumberControl
-				label={ __( 'Min' ) }
-				value={ min }
-				max={ max ? Number( max ) - 1 : undefined }
-				onChange={ onChangeMin }
-				__next40pxDefaultSize
-				hideLabelFromVision={ hideLabelFromVision }
-			/>
-			<NumberControl
-				label={ __( 'Max' ) }
-				value={ max }
-				help={ __( 'Max value must be greater than min value' ) }
-				min={ min ? Number( min ) + 1 : undefined }
-				onChange={ onChangeMax }
-				__next40pxDefaultSize
-				hideLabelFromVision={ hideLabelFromVision }
-			/>
-		</>
+		<BaseControl
+			__nextHasNoMarginBottom
+			help={ __( 'The max. value must be greater than the min. value.' ) }
+		>
+			<Flex direction="row">
+				<NumberControl
+					label={ __( 'Min.' ) }
+					value={ min }
+					max={ max ? Number( max ) - 1 : undefined }
+					onChange={ onChangeMin }
+					__next40pxDefaultSize
+					hideLabelFromVision={ hideLabelFromVision }
+				/>
+				<NumberControl
+					label={ __( 'Max.' ) }
+					value={ max }
+					min={ min ? Number( min ) + 1 : undefined }
+					onChange={ onChangeMax }
+					__next40pxDefaultSize
+					hideLabelFromVision={ hideLabelFromVision }
+				/>
+			</Flex>
+		</BaseControl>
 	);
 }
 
