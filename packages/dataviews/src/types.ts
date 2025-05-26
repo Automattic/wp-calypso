@@ -60,8 +60,7 @@ export type FieldType =
 	| 'datetime'
 	| 'media'
 	| 'boolean'
-	| 'email'
-	| 'checkbox';
+	| 'email';
 
 export type ValidationContext = {
 	elements?: Option[];
