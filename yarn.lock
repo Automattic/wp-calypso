@@ -485,7 +485,7 @@ __metadata:
     gettext-parser: "npm:^6.0.0"
     lodash: "npm:^4.17.21"
     mini-css-extract-plugin: "npm:^1.6.2"
-    postcss-custom-properties: "npm:^11.0.0"
+    postcss-custom-properties: "npm:^12.0.0"
     postcss-loader: "npm:^6.2.1"
     recursive-copy: "npm:^2.0.14"
     sass: "npm:1.54.0"
@@ -517,7 +517,7 @@ __metadata:
     "@automattic/color-studio": "npm:^4.1.0"
     "@types/node": "npm:^22.10.10"
     postcss: "npm:^8.5.3"
-    postcss-custom-properties: "npm:^11.0.0"
+    postcss-custom-properties: "npm:^12.0.0"
     sass: "npm:1.54.0"
   languageName: unknown
   linkType: soft
@@ -1671,7 +1671,7 @@ __metadata:
     html-webpack-plugin: "npm:^5.6.3"
     i18n-calypso: "workspace:^"
     postcss: "npm:^8.5.3"
-    postcss-custom-properties: "npm:^11.0.0"
+    postcss-custom-properties: "npm:^12.0.0"
     prop-types: "npm:^15.8.1"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
@@ -28604,14 +28604,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"postcss-custom-properties@npm:^11.0.0":
-  version: 11.0.0
-  resolution: "postcss-custom-properties@npm:11.0.0"
+"postcss-custom-properties@npm:^12.0.0":
+  version: 12.1.11
+  resolution: "postcss-custom-properties@npm:12.1.11"
   dependencies:
-    postcss-values-parser: "npm:^4.0.0"
+    postcss-value-parser: "npm:^4.2.0"
   peerDependencies:
-    postcss: ^8.1.0
-  checksum: de2be79d11269b1868515f54a3a2efc852b000edd17c19c877c9fc46afb5b8b1d80badc0f20ffcc39c407bce8de9c953ce9b1ce25845f15224354ad592f3e162
+    postcss: ^8.2
+  checksum: 99ad5a9f9a69590141157e447f48d9d6da74f0e83bf552cd5a4e74db7a03222f1e9e37df7ee442a7b97f5c6c824c1018667ee27ac64e0bc6ee7e67e89bc552c5
   languageName: node
   linkType: hard
 
@@ -29713,17 +29713,6 @@ __metadata:
   version: 4.2.0
   resolution: "postcss-value-parser@npm:4.2.0"
   checksum: f4142a4f56565f77c1831168e04e3effd9ffcc5aebaf0f538eee4b2d465adfd4b85a44257bb48418202a63806a7da7fe9f56c330aebb3cac898e46b4cbf49161
-  languageName: node
-  linkType: hard
-
-"postcss-values-parser@npm:^4.0.0":
-  version: 4.0.0
-  resolution: "postcss-values-parser@npm:4.0.0"
-  dependencies:
-    color-name: "npm:^1.1.4"
-    is-url-superb: "npm:^4.0.0"
-    postcss: "npm:^7.0.5"
-  checksum: b06313eb1b90666cb695a6cda4837f6f690ce242e0f2c04de4e5114fe54456d5f73b924f67ac6018366c9f0c2decbd677f6dab4936335363c305b6a5076fe612
   languageName: node
   linkType: hard
 
@@ -37333,7 +37322,7 @@ __metadata:
     photon: "workspace:^"
     postcss: "npm:^8.5.3"
     postcss-cli: "npm:^9.0.1"
-    postcss-custom-properties: "npm:^11.0.0"
+    postcss-custom-properties: "npm:^12.0.0"
     prettier: "npm:wp-prettier@3.0.3"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
