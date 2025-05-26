@@ -1,6 +1,7 @@
 /**
  * Forked from `@wordpress/components`
  * - Removed Tabs.Context from Storybook sub-components.
+ * - Converted styles from Emotion to (S)CSS modules.
  */
 
 import * as Ariakit from '@ariakit/react';
