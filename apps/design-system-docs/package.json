@@ -31,7 +31,7 @@
 		"prism-react-renderer": "^2.3.0",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
-		"sass": "^1.54.0"
+		"sass-embedded": "^1.89.0"
 	},
 	"devDependencies": {
 		"@docusaurus/module-type-aliases": "^3.7.0",
