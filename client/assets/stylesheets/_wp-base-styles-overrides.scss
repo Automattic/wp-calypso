@@ -27,3 +27,9 @@
 		}
 	}
 }
+
+.is-akismet {
+	.form-text-input-core-styles:focus {
+		--wp-admin-theme-color: var(--color-akismet);
+	}
+}
