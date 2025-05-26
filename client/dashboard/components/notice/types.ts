@@ -25,7 +25,7 @@ export interface NoticeProps {
 	/**
 	 * Optional actions that serve as a call to action.
 	 */
-	actions: React.ReactNode;
+	actions?: React.ReactNode;
 
 	/**
 	 * Adjusts internal spacings according to the section where the component is placed.
