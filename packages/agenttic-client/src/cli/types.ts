@@ -1,5 +1,6 @@
 export interface CLIOptions {
 	url: string;
+	message?: string;
 	token?: string;
 	session?: string;
 	stream?: boolean;

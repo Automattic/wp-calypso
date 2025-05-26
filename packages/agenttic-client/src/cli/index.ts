@@ -11,7 +11,7 @@ import type { CLIOptions, InteractiveSession } from './types.js';
 import { createRequire } from 'module';
 
 // Create require for CommonJS modules in ESM
-const require = createRequire( import.meta.url );
+const require = createRequire(import.meta.url);
 
 // Default agent base URL
 const DEFAULT_AGENT_BASE_URL =
@@ -27,55 +27,55 @@ const DEFAULT_PROXY = 'socks://127.0.0.1:8080';
  * Parse command line arguments
  */
 function parseArgs(): CLIOptions {
-	const args = process.argv.slice( 2 );
+	const args = process.argv.slice(2);
 	const options: CLIOptions = {
 		url: DEFAULT_AGENT_BASE_URL + DEFAULT_AGENT,
 		proxy: DEFAULT_PROXY, // Set default proxy
 		interactive: true, // Set interactive as default
 	};
 
-	for ( let i = 0; i < args.length; i++ ) {
-		const arg = args[ i ];
-		const nextArg = args[ i + 1 ];
+	for (let i = 0; i < args.length; i++) {
+		const arg = args[i];
+		const nextArg = args[i + 1];
 
-		switch ( arg ) {
+		switch (arg) {
 			case '--url':
 			case '-u':
-				if ( nextArg ) {
+				if (nextArg) {
 					options.url = nextArg;
 					i++;
 				}
 				break;
 			case '--agent':
 			case '-a':
-				if ( nextArg ) {
+				if (nextArg) {
 					options.url = DEFAULT_AGENT_BASE_URL + nextArg;
 					i++;
 				}
 				break;
 			case '--token':
 			case '-t':
-				if ( nextArg ) {
+				if (nextArg) {
 					options.token = nextArg;
 					i++;
 				}
 				break;
 			case '--session':
 			case '-s':
-				if ( nextArg ) {
+				if (nextArg) {
 					options.session = nextArg;
 					i++;
 				}
 				break;
 			case '--timeout':
-				if ( nextArg ) {
-					options.timeout = parseInt( nextArg, 10 );
+				if (nextArg) {
+					options.timeout = parseInt(nextArg, 10);
 					i++;
 				}
 				break;
 			case '--proxy':
 			case '-p':
-				if ( nextArg ) {
+				if (nextArg) {
 					options.proxy = nextArg;
 					i++;
 				}
@@ -103,15 +103,15 @@ function parseArgs(): CLIOptions {
 			case '--help':
 			case '-h':
 				printHelp();
-				process.exit( 0 );
+				process.exit(0);
 				break;
 			default:
-				if ( arg.startsWith( '-' ) ) {
-					console.error( `Unknown option: ${ arg }` );
-					process.exit( 1 );
+				if (arg.startsWith('-')) {
+					console.error(`Unknown option: ${arg}`);
+					process.exit(1);
 				}
 				// Treat as message if no message was provided yet
-				if ( ! options.message ) {
+				if (!options.message) {
 					options.message = arg;
 				}
 				break;
@@ -125,7 +125,7 @@ function parseArgs(): CLIOptions {
  * Print help message
  */
 function printHelp(): void {
-	console.log( `
+	console.log(`
 agenttic-client - A2A Protocol Client CLI
 
 USAGE:
@@ -214,7 +214,7 @@ EXAMPLES:
 
   # Verbose output for debugging
   pnpm cli --verbose "Debug this request"
-` );
+`);
 }
 
 /**
@@ -222,154 +222,154 @@ EXAMPLES:
  */
 function createReadlineInterface() {
 	// Use dynamic import to avoid issues in environments without readline
-	const readline = require( 'readline' );
-	return readline.createInterface( {
+	const readline = require('readline');
+	return readline.createInterface({
 		input: process.stdin,
 		output: process.stdout,
-	} );
+	});
 }
 
 /**
  * Run a single message test
+ * @param options
  */
-async function runSingleMessage( options: CLIOptions ): Promise< void > {
-	if ( ! options.message ) {
+async function runSingleMessage(options: CLIOptions): Promise<void> {
+	if (!options.message) {
 		console.error(
 			'❌ No message provided. Provide message as the last argument.'
 		);
-		process.exit( 1 );
+		process.exit(1);
 	}
 
 	// Determine auth provider based on options
 	let authProvider;
-	if ( options.auth || options.token ) {
+	if (options.auth || options.token) {
 		// Authentication enabled - use env auth provider with optional CLI token
-		authProvider = createEnvAuthProvider( options.token );
+		authProvider = createEnvAuthProvider(options.token);
 	} else {
 		// No authentication - return empty auth provider
-		authProvider = async () => ( {} );
+		authProvider = async () => ({});
 	}
 
-	const client = createA2AClient( {
+	const client = createA2AClient({
 		agentUrl: options.url,
 		authProvider,
 		defaultSessionId: options.session,
 		timeout: options.timeout,
 		proxy: options.proxy,
-	} );
+	});
 
-	if ( options.verbose ) {
-		console.log( `🔗 Connecting to: ${ options.url }` );
-		if ( options.session ) {
-			console.log( `📋 Session: ${ options.session }` );
+	if (options.verbose) {
+		console.log(`🔗 Connecting to: ${options.url}`);
+		if (options.session) {
+			console.log(`📋 Session: ${options.session}`);
 		}
-		if ( options.proxy ) {
-			console.log( `🌐 Proxy: ${ options.proxy }` );
+		if (options.proxy) {
+			console.log(`🌐 Proxy: ${options.proxy}`);
 		}
-		if ( options.token ) {
-			console.log( `🔐 Authentication: Token provided` );
-		} else if ( options.auth ) {
+		if (options.token) {
+			console.log(`🔐 Authentication: Token provided`);
+		} else if (options.auth) {
 			// Check if environment auth provider will return headers
 			const envHeaders = await authProvider();
-			if ( Object.keys( envHeaders ).length > 0 ) {
-				console.log( `🔐 Authentication: Environment variables` );
+			if (Object.keys(envHeaders).length > 0) {
+				console.log(`🔐 Authentication: Environment variables`);
 			} else {
-				console.log( `🔓 Authentication: No env vars found` );
+				console.log(`🔓 Authentication: No env vars found`);
 			}
 		} else {
-			console.log( `🔓 Authentication: Disabled (default)` );
+			console.log(`🔓 Authentication: Disabled (default)`);
 		}
-		console.log( `📤 Sending: "${ options.message }"` );
+		console.log(`📤 Sending: "${options.message}"`);
 	}
 
 	try {
-		if ( options.stream ) {
-			console.log( '🔄 Streaming response...\n' );
+		if (options.stream) {
+			console.log('🔄 Streaming response...\n');
 
 			let hasContent = false;
-			for await ( const update of client.sendMessageStream( {
-				message: createTextMessage( options.message ),
-			} ) ) {
-				if ( update.status.message ) {
-					const text = extractTextFromMessage(
-						update.status.message
-					);
-					if ( text ) {
-						process.stdout.write( text );
+			for await (const update of client.sendMessageStream({
+				message: createTextMessage(options.message),
+			})) {
+				if (update.status.message) {
+					const text = extractTextFromMessage(update.status.message);
+					if (text) {
+						process.stdout.write(text);
 						hasContent = true;
 					}
 				}
 
-				if ( update.final ) {
-					if ( hasContent ) {
-						console.log( '\n' );
+				if (update.final) {
+					if (hasContent) {
+						console.log('\n');
 					}
-					if ( options.verbose ) {
-						console.log( `✅ Task completed (${ update.id })` );
+					if (options.verbose) {
+						console.log(`✅ Task completed (${update.id})`);
 					}
 					break;
 				}
 			}
 		} else {
-			console.log( '📤 Sending message...' );
-			const task = await client.sendMessage( {
-				message: createTextMessage( options.message ),
-			} );
+			console.log('📤 Sending message...');
+			const task = await client.sendMessage({
+				message: createTextMessage(options.message),
+			});
 
-			const responseText = extractTextFromMessage( task.status.message );
-			console.log( '📥 Response:' );
-			console.log( responseText || '(No text response)' );
+			const responseText = extractTextFromMessage(task.status.message);
+			console.log('📥 Response:');
+			console.log(responseText || '(No text response)');
 
-			if ( options.verbose ) {
-				console.log( `\n✅ Task completed (${ task.id })` );
-				console.log( `📊 Status: ${ task.status.state }` );
+			if (options.verbose) {
+				console.log(`\n✅ Task completed (${task.id})`);
+				console.log(`📊 Status: ${task.status.state}`);
 			}
 		}
-	} catch ( error ) {
+	} catch (error) {
 		console.error(
 			'❌ Error:',
-			error instanceof Error ? error.message : String( error )
+			error instanceof Error ? error.message : String(error)
 		);
-		process.exit( 1 );
+		process.exit(1);
 	}
 }
 
 /**
  * Run interactive mode
+ * @param options
  */
-async function runInteractive( options: CLIOptions ): Promise< void > {
+async function runInteractive(options: CLIOptions): Promise<void> {
 	// Determine auth provider based on options
 	let authProvider;
-	if ( options.auth || options.token ) {
+	if (options.auth || options.token) {
 		// Authentication enabled - use env auth provider with optional CLI token
-		authProvider = createEnvAuthProvider( options.token );
+		authProvider = createEnvAuthProvider(options.token);
 	} else {
 		// No authentication - return empty auth provider
-		authProvider = async () => ( {} );
+		authProvider = async () => ({});
 	}
 
-	const client = createA2AClient( {
+	const client = createA2AClient({
 		agentUrl: options.url,
 		authProvider,
 		defaultSessionId: options.session,
 		timeout: options.timeout,
 		proxy: options.proxy,
-	} );
+	});
 
 	const rl = createReadlineInterface();
 
 	const session: InteractiveSession = {
-		sessionId: options.session || `cli-${ Date.now() }`,
+		sessionId: options.session || `cli-${Date.now()}`,
 		messageCount: 0,
 	};
 
 	let authStatus;
-	if ( options.token ) {
+	if (options.token) {
 		authStatus = '🔐 Token Auth';
-	} else if ( options.auth ) {
+	} else if (options.auth) {
 		// Check if environment auth provider will return headers
 		const envHeaders = await authProvider();
-		if ( Object.keys( envHeaders ).length > 0 ) {
+		if (Object.keys(envHeaders).length > 0) {
 			authStatus = '🔐 Env Auth';
 		} else {
 			authStatus = '🔓 No Env Vars';
@@ -378,144 +378,144 @@ async function runInteractive( options: CLIOptions ): Promise< void > {
 		authStatus = '🔓 No Auth (default)';
 	}
 
-	console.log( `
+	console.log(`
 🤖 A2A Agent Test CLI - Interactive Mode
-Connected to: ${ options.url }
-Session: ${ session.sessionId }
-Auth: ${ authStatus }
+Connected to: ${options.url}
+Session: ${session.sessionId}
+Auth: ${authStatus}
 Type 'exit' or 'quit' to end the session.
 Type 'help' for commands.
-` );
+`);
 
 	// If an initial message was provided, send it first
-	if ( options.message ) {
-		console.log( `📤 Initial message: "${ options.message }"` );
+	if (options.message) {
+		console.log(`📤 Initial message: "${options.message}"`);
 		session.messageCount++;
 
 		try {
-			if ( options.stream ) {
-				console.log( '🔄 Streaming response...\n' );
+			if (options.stream) {
+				console.log('🔄 Streaming response...\n');
 
 				let hasContent = false;
-				for await ( const update of client.sendMessageStream( {
-					message: createTextMessage( options.message ),
+				for await (const update of client.sendMessageStream({
+					message: createTextMessage(options.message),
 					sessionId: session.sessionId,
-				} ) ) {
-					if ( update.status.message ) {
+				})) {
+					if (update.status.message) {
 						const text = extractTextFromMessage(
 							update.status.message
 						);
-						if ( text ) {
-							process.stdout.write( text );
+						if (text) {
+							process.stdout.write(text);
 							hasContent = true;
 						}
 					}
 
-					if ( update.final ) {
-						if ( hasContent ) {
-							console.log( '\n' );
+					if (update.final) {
+						if (hasContent) {
+							console.log('\n');
 						}
 						break;
 					}
 				}
 			} else {
-				console.log( '📤 Sending...' );
-				const task = await client.sendMessage( {
-					message: createTextMessage( options.message ),
+				console.log('📤 Sending...');
+				const task = await client.sendMessage({
+					message: createTextMessage(options.message),
 					sessionId: session.sessionId,
-				} );
+				});
 
 				const responseText = extractTextFromMessage(
 					task.status.message
 				);
-				console.log( '🤖', responseText || '(No text response)' );
+				console.log('🤖', responseText || '(No text response)');
 			}
-		} catch ( error ) {
+		} catch (error) {
 			console.error(
 				'❌ Error:',
-				error instanceof Error ? error.message : String( error )
+				error instanceof Error ? error.message : String(error)
 			);
 		}
 
 		console.log(); // Add spacing before interactive prompt
 	}
 
-	const askQuestion = (): Promise< string > => {
-		return new Promise( ( resolve ) => {
-			rl.question( '> ', resolve );
-		} );
+	const askQuestion = (): Promise<string> => {
+		return new Promise((resolve) => {
+			rl.question('> ', resolve);
+		});
 	};
 
 	try {
-		while ( true ) {
+		while (true) {
 			const input = await askQuestion();
 			const trimmedInput = input.trim();
 
-			if ( trimmedInput === 'exit' || trimmedInput === 'quit' ) {
-				console.log( '👋 Goodbye!' );
+			if (trimmedInput === 'exit' || trimmedInput === 'quit') {
+				console.log('👋 Goodbye!');
 				break;
 			}
 
-			if ( trimmedInput === 'help' ) {
-				console.log( `
+			if (trimmedInput === 'help') {
+				console.log(`
 Available commands:
   help     - Show this help
   exit     - Exit the interactive session
   quit     - Exit the interactive session
   
 Just type your message to send it to the agent.
-` );
+`);
 				continue;
 			}
 
-			if ( trimmedInput === '' ) {
+			if (trimmedInput === '') {
 				continue;
 			}
 
 			session.messageCount++;
 
 			try {
-				if ( options.stream ) {
-					console.log( '🔄 Streaming response...\n' );
+				if (options.stream) {
+					console.log('🔄 Streaming response...\n');
 
 					let hasContent = false;
-					for await ( const update of client.sendMessageStream( {
-						message: createTextMessage( trimmedInput ),
+					for await (const update of client.sendMessageStream({
+						message: createTextMessage(trimmedInput),
 						sessionId: session.sessionId,
-					} ) ) {
-						if ( update.status.message ) {
+					})) {
+						if (update.status.message) {
 							const text = extractTextFromMessage(
 								update.status.message
 							);
-							if ( text ) {
-								process.stdout.write( text );
+							if (text) {
+								process.stdout.write(text);
 								hasContent = true;
 							}
 						}
 
-						if ( update.final ) {
-							if ( hasContent ) {
-								console.log( '\n' );
+						if (update.final) {
+							if (hasContent) {
+								console.log('\n');
 							}
 							break;
 						}
 					}
 				} else {
-					console.log( '📤 Sending...' );
-					const task = await client.sendMessage( {
-						message: createTextMessage( trimmedInput ),
+					console.log('📤 Sending...');
+					const task = await client.sendMessage({
+						message: createTextMessage(trimmedInput),
 						sessionId: session.sessionId,
-					} );
+					});
 
 					const responseText = extractTextFromMessage(
 						task.status.message
 					);
-					console.log( '🤖', responseText || '(No text response)' );
+					console.log('🤖', responseText || '(No text response)');
 				}
-			} catch ( error ) {
+			} catch (error) {
 				console.error(
 					'❌ Error:',
-					error instanceof Error ? error.message : String( error )
+					error instanceof Error ? error.message : String(error)
 				);
 			}
 
@@ -529,34 +529,34 @@ Just type your message to send it to the agent.
 /**
  * Main CLI entry point
  */
-async function main(): Promise< void > {
+async function main(): Promise<void> {
 	try {
 		const options = parseArgs();
 
 		// Set verbose logging for the client if --verbose is used
-		if ( options.verbose ) {
+		if (options.verbose) {
 			process.env.AGENTTIC_VERBOSE = 'true';
 		}
 
 		// Determine mode based on options
-		if ( options.interactive ) {
+		if (options.interactive) {
 			// Interactive mode (default unless --single is used)
-			await runInteractive( options );
+			await runInteractive(options);
 		} else {
 			// Single message mode (only when --single is explicitly used)
-			await runSingleMessage( options );
+			await runSingleMessage(options);
 		}
-	} catch ( error ) {
+	} catch (error) {
 		console.error(
 			'❌ Fatal error:',
-			error instanceof Error ? error.message : String( error )
+			error instanceof Error ? error.message : String(error)
 		);
-		process.exit( 1 );
+		process.exit(1);
 	}
 }
 
 // Run the CLI if this file is executed directly
-if ( import.meta.url === `file://${ process.argv[ 1 ] }` ) {
+if (import.meta.url === `file://${process.argv[1]}`) {
 	main();
 }
 
