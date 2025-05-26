@@ -19,7 +19,7 @@ const CentralLogo = ( { fill }: Pick< BigSkyLogoProps, 'fill' > ) => {
 };
 
 export const Mark = forwardRef< SVGSVGElement, BigSkyLogoProps >( function Mark(
-	{ height = 24, monochrome = false, title = 'Big Sky', ...props },
+	{ height = 32, monochrome = false, title = 'Big Sky', ...props },
 	ref
 ) {
 	const titleId = useId();

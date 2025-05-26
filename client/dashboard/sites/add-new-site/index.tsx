@@ -73,7 +73,7 @@ function AddNewSite() {
 					href="/start?source=sites-dashboard&ref=new-site-popover"
 				/>
 				<MenuItem
-					icon={ <BigSkyLogo.Mark /> }
+					icon={ <BigSkyLogo.Mark size={ 24 } /> }
 					title={ __( 'Build with AI' ) }
 					description={ __(
 						'Prompt, edit, and launch WordPress websites with Artificial Intelligence.'
