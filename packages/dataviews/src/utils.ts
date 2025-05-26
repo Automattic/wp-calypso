@@ -15,32 +15,35 @@ export function sanitizeOperators< Item >( field: NormalizedField< Item > ) {
 
 	// Assign default values.
 	if ( ! operators || ! Array.isArray( operators ) ) {
-		operators = [ OPERATOR_IS_ANY, OPERATOR_IS_NONE ];
+		operators = [
+			{
+				name: OPERATOR_IS_ANY,
+				label: OPERATORS[ OPERATOR_IS_ANY ].label,
+			},
+			{
+				name: OPERATOR_IS_NONE,
+				label: OPERATORS[ OPERATOR_IS_NONE ].label,
+			},
+		];
 	}
 
-	let normalizedOperators = operators.map( ( operator ) =>
-		typeof operator === 'string'
-			? { name: operator, label: OPERATORS[ operator ].label }
-			: operator
-	);
-
 	// Make sure only valid operators are used.
-	normalizedOperators = normalizedOperators.filter( ( operator ) =>
+	operators = operators.filter( ( operator ) =>
 		ALL_OPERATORS.includes( operator.name )
 	);
 
 	// Do not allow mixing single & multiselection operators.
 	// Remove multiselection operators if any of the single selection ones is present.
-	const hasSingleSelectionOperator = normalizedOperators.some( ( operator ) =>
+	const hasSingleSelectionOperator = operators.some( ( operator ) =>
 		SINGLE_SELECTION_OPERATORS.includes( operator.name )
 	);
 	if ( hasSingleSelectionOperator ) {
-		normalizedOperators = normalizedOperators.filter( ( operator ) =>
+		operators = operators.filter( ( operator ) =>
 			SINGLE_SELECTION_OPERATORS.includes( operator.name )
 		);
 	}
 
-	return normalizedOperators;
+	return operators;
 }
 
 export function renderFromElements< Item >( {

@@ -217,7 +217,7 @@ export type NormalizedField< Item > = Omit<
 	enableHiding: boolean;
 	enableSorting: boolean;
 	filterBy: Omit< FilterByConfig, 'operators' > & {
-		operators?: ( Operator | OperatorConfig )[];
+		operators: OperatorConfig[];
 	};
 };
 
