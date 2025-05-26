@@ -943,7 +943,9 @@ export class LoginForm extends Component {
 								} ) }
 								aria-hidden={ isPasswordHidden }
 							>
-								<FormLabel htmlFor="password">{ this.props.translate( 'Password' ) }</FormLabel>
+								<FormLabel htmlFor="password" hasCoreStyles>
+									{ this.props.translate( 'Password' ) }
+								</FormLabel>
 
 								<FormPasswordInput
 									autoCapitalize="off"
