@@ -62,8 +62,10 @@ export default function SiteStaticFile404Settings( { siteSlug }: { siteSlug: str
 
 	if ( ! canSetStaticFile404Handling( site ) ) {
 		return (
-			<PageLayout size="small">
-				<SettingsPageHeader title={ __( 'Handling requests for nonexistent assets' ) } />
+			<PageLayout
+				size="small"
+				header={ <SettingsPageHeader title={ __( 'Handling requests for nonexistent assets' ) } /> }
+			>
 				<SettingsCallout siteSlug={ siteSlug } />
 			</PageLayout>
 		);
@@ -87,8 +89,10 @@ export default function SiteStaticFile404Settings( { siteSlug }: { siteSlug: str
 	};
 
 	return (
-		<PageLayout size="small">
-			<SettingsPageHeader title={ __( 'Handling requests for nonexistent assets' ) } />
+		<PageLayout
+			size="small"
+			header={ <SettingsPageHeader title={ __( 'Handling requests for nonexistent assets' ) } /> }
+		>
 			<Card>
 				<CardBody>
 					<form onSubmit={ handleSubmit }>

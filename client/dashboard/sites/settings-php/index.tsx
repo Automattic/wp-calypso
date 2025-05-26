@@ -40,8 +40,7 @@ export default function PHPVersionSettings( { siteSlug }: { siteSlug: string } )
 
 	if ( ! canUpdate ) {
 		return (
-			<PageLayout size="small">
-				<SettingsPageHeader title="PHP" />
+			<PageLayout size="small" header={ <SettingsPageHeader title="PHP" /> }>
 				<SettingsCallout siteSlug={ siteSlug } />
 			</PageLayout>
 		);
@@ -87,8 +86,7 @@ export default function PHPVersionSettings( { siteSlug }: { siteSlug: string } )
 	};
 
 	return (
-		<PageLayout size="small">
-			<SettingsPageHeader title="PHP" />
+		<PageLayout size="small" header={ <SettingsPageHeader title="PHP" /> }>
 			<Card>
 				<CardBody>
 					<form onSubmit={ handleSubmit }>

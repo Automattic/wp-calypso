@@ -40,8 +40,17 @@ export default function SiteDatabaseSettings( { siteSlug }: { siteSlug: string }
 
 	if ( ! canOpenPhpMyAdmin( site ) ) {
 		return (
-			<PageLayout size="small">
-				<SettingsPageHeader title={ __( 'Database' ) } />
+			<PageLayout
+				size="small"
+				header={
+					<SettingsPageHeader
+						title={ __( 'Database' ) }
+						description={ __(
+							'For the tech-savvy, manage your database with phpMyAdmin and run a wide range of operations with MySQL.'
+						) }
+					/>
+				}
+			>
 				<SettingsCallout
 					siteSlug={ siteSlug }
 					icon={ blockTable }
@@ -95,13 +104,17 @@ export default function SiteDatabaseSettings( { siteSlug }: { siteSlug: string }
 	};
 
 	return (
-		<PageLayout size="small">
-			<SettingsPageHeader
-				title={ __( 'Database' ) }
-				description={ __(
-					'For the tech-savvy, manage your database with phpMyAdmin and run a wide range of operations with MySQL.'
-				) }
-			/>
+		<PageLayout
+			size="small"
+			header={
+				<SettingsPageHeader
+					title={ __( 'Database' ) }
+					description={ __(
+						'For the tech-savvy, manage your database with phpMyAdmin and run a wide range of operations with MySQL.'
+					) }
+				/>
+			}
+		>
 			<Card>
 				<CardBody>
 					<VStack spacing={ 4 }>

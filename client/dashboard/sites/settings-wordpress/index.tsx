@@ -139,8 +139,7 @@ export default function WordPressVersionSettings( { siteSlug }: { siteSlug: stri
 	};
 
 	return (
-		<PageLayout size="small">
-			<SettingsPageHeader title="WordPress" />
+		<PageLayout size="small" header={ <SettingsPageHeader title="WordPress" /> }>
 			{ canUpdate ? renderForm() : renderNotice() }
 		</PageLayout>
 	);
