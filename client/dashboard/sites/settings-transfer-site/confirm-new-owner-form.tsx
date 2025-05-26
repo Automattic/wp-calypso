@@ -28,17 +28,16 @@ const form = {
 };
 
 export function ConfirmNewOwnerForm( {
-	initialData = {},
 	siteSlug,
+	newOwnerEmail,
 	handleSubmit,
 }: {
-	initialData?: Partial< ConfirmNewOwnerFormData >;
 	siteSlug: string;
+	newOwnerEmail: string;
 	handleSubmit: ( data: ConfirmNewOwnerFormData ) => void;
 } ) {
 	const [ formData, setFormData ] = useState( {
-		email: '',
-		...initialData,
+		email: newOwnerEmail,
 	} );
 
 	const isSaveDisabled = ! isItemValid( formData, fields, form );
@@ -73,6 +72,7 @@ export function ConfirmNewOwnerForm( {
 			</VStack>
 			<form onSubmit={ onSubmit }>
 				<VStack spacing={ 4 } style={ { padding: '8px 0' } }>
+					{ /* TODO: Update the gap between each field */ }
 					<DataForm< ConfirmNewOwnerFormData >
 						data={ formData }
 						fields={ fields }

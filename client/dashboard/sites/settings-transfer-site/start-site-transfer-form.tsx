@@ -54,7 +54,6 @@ const List = ( { title, children }: { title: string; children: React.ReactNode }
 };
 
 export function StartSiteTransferForm( {
-	initialData = {},
 	siteSlug,
 	site,
 	newOwnerEmail,
@@ -62,26 +61,24 @@ export function StartSiteTransferForm( {
 	handleSubmit,
 	handleBack,
 }: {
-	initialData?: Partial< StartSiteTransferFormData >;
 	siteSlug: string;
 	site: Site;
 	newOwnerEmail: string;
 	isTransferring: boolean;
-	handleSubmit: ( data: StartSiteTransferFormData ) => void;
+	handleSubmit: () => void;
 	handleBack: () => void;
 } ) {
 	const [ formData, setFormData ] = useState( {
 		accept_authorization: false,
 		accept_transfer: false,
 		accept_undone: false,
-		...initialData,
 	} );
 
 	const isSaveDisabled = Object.values( formData ).some( ( value ) => ! value );
 
 	const onSubmit = ( event: React.FormEvent ) => {
 		event.preventDefault();
-		handleSubmit( formData );
+		handleSubmit();
 	};
 
 	return (
