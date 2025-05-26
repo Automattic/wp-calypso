@@ -35,11 +35,7 @@ const VerifyLoginCode = ( {
 	const [ showError, setShowError ] = useState( false );
 
 	// Create refs for each input field to manage focus
-	const inputRefs = useRef(
-		Array( CODE_LENGTH )
-			.fill( null )
-			.map( () => createRef() )
-	);
+	const inputRefs = useRef( Array.from( { length: CODE_LENGTH }, () => createRef() ) );
 
 	useEffect( () => {
 		if ( isAuthenticated && authSuccessData ) {
