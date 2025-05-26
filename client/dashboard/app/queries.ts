@@ -4,6 +4,7 @@ import {
 	fetchSiteMediaStorage,
 	fetchSiteMonitorUptime,
 	fetchPHPVersion,
+	updatePHPVersion,
 	fetchCurrentPlan,
 	fetchSiteEngagementStats,
 	fetchDomains,
@@ -15,22 +16,26 @@ import {
 	fetchPerformanceInsights,
 	updateSiteSettings,
 	restoreSitePlanSoftware,
+	fetchWordPressVersion,
+	updateWordPressVersion,
+	fetchStaticFile404,
+	updateStaticFile404,
 } from '../data';
-import { SITE_FIELDS } from '../data/constants';
+import { SITE_FIELDS, SITE_OPTIONS } from '../data/constants';
 import { queryClient } from './query-client';
 import type { Profile, SiteSettings, UrlPerformanceInsights } from '../data/types';
 import type { Query } from '@tanstack/react-query';
 
 export function sitesQuery() {
 	return {
-		queryKey: [ 'sites', SITE_FIELDS ],
+		queryKey: [ 'sites', SITE_FIELDS, SITE_OPTIONS ],
 		queryFn: fetchSites,
 	};
 }
 
 export function siteQuery( siteIdOrSlug: string ) {
 	return {
-		queryKey: [ 'site', siteIdOrSlug, SITE_FIELDS ],
+		queryKey: [ 'site', siteIdOrSlug, SITE_FIELDS, SITE_OPTIONS ],
 		queryFn: () => fetchSite( siteIdOrSlug ),
 	};
 }
@@ -70,6 +75,33 @@ export function sitePHPVersionQuery( siteIdOrSlug: string ) {
 	};
 }
 
+export function sitePHPVersionMutation( siteSlug: string ) {
+	return {
+		mutationFn: ( version: string ) => updatePHPVersion( siteSlug, version ),
+		onSuccess: () => {
+			queryClient.invalidateQueries( { queryKey: [ 'site', siteSlug, 'php-version' ] } );
+		},
+	};
+}
+
+export function siteWordPressVersionQuery( siteSlug: string ) {
+	return {
+		queryKey: [ 'site', siteSlug, 'wp-version' ],
+		queryFn: () => {
+			return fetchWordPressVersion( siteSlug );
+		},
+	};
+}
+
+export function siteWordPressVersionMutation( siteSlug: string ) {
+	return {
+		mutationFn: ( version: string ) => updateWordPressVersion( siteSlug, version ),
+		onSuccess: () => {
+			queryClient.invalidateQueries( { queryKey: [ 'site', siteSlug, 'wp-version' ] } );
+		},
+	};
+}
+
 export function domainsQuery() {
 	return {
 		queryKey: [ 'domains' ],
@@ -84,11 +116,9 @@ export function emailsQuery() {
 	};
 }
 
-const profileQueryKey = [ 'profile' ];
-
 export function profileQuery() {
 	return {
-		queryKey: profileQueryKey,
+		queryKey: [ 'profile' ],
 		queryFn: fetchProfile,
 	};
 }
@@ -97,7 +127,7 @@ export function profileMutation() {
 	return {
 		mutationFn: updateProfile,
 		onSuccess: ( newData: Partial< Profile > ) => {
-			queryClient.setQueryData( profileQueryKey, ( oldData: Profile | undefined ) =>
+			queryClient.setQueryData( [ 'profile' ], ( oldData: Profile | undefined ) =>
 				oldData ? { ...oldData, ...newData } : newData
 			);
 		},
@@ -152,6 +182,24 @@ export function performanceInsightsQuery( url: string, token: string ) {
 				return false;
 			}
 			return 5000;
+		},
+	};
+}
+
+export function siteStaticFile404Query( siteId: string ) {
+	return {
+		queryKey: [ 'site', siteId, 'static-file-404' ],
+		queryFn: () => {
+			return fetchStaticFile404( siteId );
+		},
+	};
+}
+
+export function siteStaticFile404Mutation( siteId: string ) {
+	return {
+		mutationFn: ( setting: string ) => updateStaticFile404( siteId, setting ),
+		onSuccess: () => {
+			queryClient.invalidateQueries( { queryKey: [ 'site', siteId, 'static-file-404' ] } );
 		},
 	};
 }

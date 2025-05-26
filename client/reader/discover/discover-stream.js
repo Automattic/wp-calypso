@@ -57,7 +57,6 @@ const DiscoverStream = ( props ) => {
 		<Stream
 			{ ...props }
 			streamKey={ buildDiscoverStreamKey( effectiveTabSelection, recommendedStreamTags ) }
-			showBack={ false } // We will instead add this through the header section, since not all discover tabs have a stream to render the back button
 			sidebarTabTitle={
 				selectedTab === DEFAULT_TAB ? translate( 'Sites' ) : translate( 'Related' )
 			}

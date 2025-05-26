@@ -78,6 +78,7 @@ export default function AgencySignupFinish() {
 					services_offered: ( signupData.servicesOffered || [] ).join( ',' ),
 					products_offered: ( signupData.productsOffered || [] ).join( ',' ),
 					products_to_offer: ( signupData.productsToOffer || [] ).join( ',' ),
+					expansion_planned: signupData.plansToOfferProducts,
 					city: signupData.city,
 					line1: signupData.line1,
 					line2: signupData.line2,

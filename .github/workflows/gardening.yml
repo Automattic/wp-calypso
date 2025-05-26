@@ -18,7 +18,7 @@ jobs:
     name: 'Assign issues, Clean up labels, and notify Design and Editorial when necessary'
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request_target' || github.event.pull_request.head.repo.full_name == github.event.pull_request.base.repo.full_name
-    timeout-minutes: 20 # 2024-07-02 -- Bumping from 10 to 20 minutes to allow for more time to process issues and PRs. The update softprops/turnstyle@v2 seems to have slowed things down.
+    timeout-minutes: 30 # 2025-05-23 -- Bumping from 20 to 30 minutes to allow for more time to process issues and PRs
 
     steps:
      - name: Checkout

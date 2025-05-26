@@ -23,27 +23,41 @@ jest.mock( 'calypso/lib/wp', () => ( {
 	},
 } ) );
 
-jest.mock( 'calypso/blocks/blog-stickers/use-blog-stickers-query', () => ( {
-	useBlogStickersQuery: jest.fn(),
+jest.mock( '../use-site-migration-status', () => ( {
+	useSiteMigrationStatus: jest.fn(),
 } ) );
 
 describe( 'CancelDifmMigrationForm', () => {
 	const siteId = 123;
 	const isEnabled = jest.requireMock( '@automattic/calypso-config' ).isEnabled;
-	const useBlogStickersQuery = jest.requireMock(
-		'calypso/blocks/blog-stickers/use-blog-stickers-query'
-	).useBlogStickersQuery;
+	const useSiteMigrationStatus = jest.requireMock(
+		'../use-site-migration-status'
+	).useSiteMigrationStatus;
 
 	beforeEach( () => {
 		nock.cleanAll();
 		jest.clearAllMocks();
 		isEnabled.mockReturnValue( true );
-		useBlogStickersQuery.mockReturnValue( { data: [] } );
+		useSiteMigrationStatus.mockReturnValue( {
+			site: { ID: siteId },
+			isMigrationCompleted: false,
+			isMigrationInProgress: false,
+		} );
+	} );
+
+	it( 'renders nothing if feature flag is disabled', () => {
+		isEnabled.mockReturnValue( false );
+		renderWithProvider( <CancelDifmMigrationForm siteId={ siteId } /> );
+		expect( screen.queryByRole( 'button', { name: /cancel migration/i } ) ).toBeNull();
 	} );
 
 	describe( 'when migration is not in progress', () => {
 		beforeEach( () => {
-			useBlogStickersQuery.mockReturnValue( { data: [] } );
+			useSiteMigrationStatus.mockReturnValue( {
+				site: { ID: siteId },
+				isMigrationCompleted: false,
+				isMigrationInProgress: false,
+			} );
 		} );
 
 		it( 'shows cancel migration button', () => {
@@ -62,7 +76,11 @@ describe( 'CancelDifmMigrationForm', () => {
 
 	describe( 'when migration is in progress', () => {
 		beforeEach( () => {
-			useBlogStickersQuery.mockReturnValue( { data: [ 'migration-in-progress' ] } );
+			useSiteMigrationStatus.mockReturnValue( {
+				site: { ID: siteId },
+				isMigrationCompleted: false,
+				isMigrationInProgress: true,
+			} );
 		} );
 
 		it( 'shows request cancellation button', () => {

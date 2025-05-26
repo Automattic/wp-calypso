@@ -4,6 +4,7 @@ import {
 	GRAVATAR_UPLOAD_REQUEST,
 	GRAVATAR_UPLOAD_REQUEST_SUCCESS,
 	GRAVATAR_UPLOAD_REQUEST_FAILURE,
+	GRAVATAR_DETAILS_RECEIVE,
 } from 'calypso/state/action-types';
 import {
 	bumpStat,
@@ -87,4 +88,5 @@ registerHandlers( 'state/data-layer/wpcom/gravatar-upload/index.js', {
 		} ),
 	],
 	[ GRAVATAR_UPLOAD_REQUEST_SUCCESS ]: [ dispatchProfileCompleteNotice ],
+	[ GRAVATAR_DETAILS_RECEIVE ]: [ dispatchProfileCompleteNotice ],
 } );
