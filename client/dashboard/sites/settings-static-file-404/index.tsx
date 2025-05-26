@@ -114,10 +114,6 @@ export default function SiteStaticFile404Settings( { siteSlug }: { siteSlug: str
 
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
-		if ( ! canSetStaticFile404Handling( site ) ) {
-			return;
-		}
-
 		mutation.mutate( formData.setting, {
 			onSuccess: () => {
 				createSuccessNotice( __( 'Settings saved.' ), { type: 'snackbar' } );
