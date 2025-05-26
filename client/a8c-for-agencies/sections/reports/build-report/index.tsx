@@ -108,7 +108,14 @@ const BuildReport = () => {
 			case 1:
 				return (
 					<>
-						<h2 className="build-report__step-title">{ translate( 'Step 1 of 3: Setup' ) }</h2>
+						<div className="build-report__step-header">
+							<h2 className="build-report__step-title">{ translate( 'Step 1 of 3: Setup' ) }</h2>
+							<p className="build-report__step-description">
+								{ translate(
+									'Start by choosing the timeframe and site you want to create a report for.'
+								) }
+							</p>
+						</div>
 
 						<SelectControl
 							label={ translate( 'Pick a timeframe:' ) }
@@ -132,6 +139,7 @@ const BuildReport = () => {
 							value={ clientEmail }
 							onChange={ setClientEmail }
 							type="email"
+							help={ translate( 'Enter the email addresses of your client separated by commas' ) }
 						/>
 						<TextareaControl
 							label={ translate( 'Custom intro text (optional)' ) }
@@ -163,9 +171,13 @@ const BuildReport = () => {
 			case 2:
 				return (
 					<>
-						<h2 className="build-report__step-title">
-							{ translate( 'Step 2 of 3: Pick the report content' ) }
-						</h2>
+						<div className="build-report__step-header">
+							<h2 className="build-report__step-title">{ translate( 'Step 2 of 3: Content' ) }</h2>
+							<p className="build-report__step-description">
+								{ translate( 'Now pick the content you want to include in the report.' ) }
+							</p>
+						</div>
+
 						<h3 className="build-report__group-label build-report__group-label--first">
 							{ translate( 'Stats' ) }
 						</h3>
@@ -239,10 +251,16 @@ const BuildReport = () => {
 	);
 
 	return (
-		<Layout className="build-report" title={ title } wide>
+		<Layout
+			className="build-report"
+			title={ title }
+			wide
+			sidebarNavigation={ <MobileSidebarNavigation /> }
+		>
 			<LayoutTop>
 				<LayoutHeader>
 					<Breadcrumb
+						hideOnMobile
 						items={ [
 							{
 								label: translate( 'Client Reports' ),

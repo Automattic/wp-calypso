@@ -13,11 +13,25 @@
 		border: 1px solid var( --color-neutral-10 );
 		border-radius: 4px;
 		margin-inline: auto;
-		margin-block-start: 24px;
+		margin-block-start: 16px;
+	}
+
+	.build-report__step-header {
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+		padding-block: 8px 4px;
 	}
 
 	.build-report__step-title {
 		@include heading-large;
+		margin-bottom: 0;
+	}
+
+	.build-report__step-description {
+		@include body-medium;
+		color: var( --studio-gray-70 );
+		margin-bottom: 0;
 	}
 
 	.build-report__group-label {
@@ -37,16 +51,12 @@
 		margin-bottom: 16px;
 	}
 
-	.build-report__step-description {
-		@include body-medium;
-		margin-bottom: 0;
-	}
-
 	.build-report__actions {
 		display: flex;
 		justify-content: flex-start;
 		gap: 8px;
 		background-color: var( --color-surface );
 		margin-top: auto;
+		padding-block: 8px;
 	}
 }
