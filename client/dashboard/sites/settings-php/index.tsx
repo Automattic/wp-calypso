@@ -22,7 +22,7 @@ export default function PHPVersionSettings( { siteSlug }: { siteSlug: string } )
 	const { data: site } = useQuery( siteQuery( siteSlug ) );
 	const canUpdate = site && canUpdatePHPVersion( site );
 
-	const { data: version } = useQuery( {
+	const { data: currentVersion } = useQuery( {
 		...sitePHPVersionQuery( siteSlug ),
 		enabled: canUpdate,
 	} );
@@ -30,7 +30,7 @@ export default function PHPVersionSettings( { siteSlug }: { siteSlug: string } )
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
 	const [ formData, setFormData ] = useState< { version: string } >( {
-		version: version ?? '',
+		version: currentVersion ?? '',
 	} );
 
 	if ( ! site ) {
@@ -46,7 +46,7 @@ export default function PHPVersionSettings( { siteSlug }: { siteSlug: string } )
 			Edit: 'select',
 			elements: phpVersions.filter( ( option ) => {
 				// Show disabled PHP version only if the site is still using it.
-				if ( option.disabled && option.value !== version ) {
+				if ( option.disabled && option.value !== currentVersion ) {
 					return false;
 				}
 				return true;
@@ -59,7 +59,7 @@ export default function PHPVersionSettings( { siteSlug }: { siteSlug: string } )
 		fields: [ 'version' ],
 	};
 
-	const isDirty = formData.version !== version;
+	const isDirty = formData.version !== currentVersion;
 	const { isPending } = mutation;
 
 	const handleSubmit = ( e: React.FormEvent ) => {
