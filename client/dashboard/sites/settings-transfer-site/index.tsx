@@ -6,15 +6,18 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
+import { useAuth } from '../../app/auth';
 import { siteQuery, siteOwnerTransferMutation } from '../../app/queries';
 import PageLayout from '../../components/page-layout';
 import { useCanTransferSite } from '../hooks/use-can-transfer-site';
 import SettingsPageHeader from '../settings-page-header';
 import { ConfirmNewOwnerForm } from './confirm-new-owner-form';
+import { EmailConfirmation } from './email-confirmation';
 import { StartSiteTransferForm } from './start-site-transfer-form';
 
 export default function SettingsTransferSite( { siteSlug }: { siteSlug: string } ) {
 	const { createErrorNotice } = useDispatch( noticesStore );
+	const { user } = useAuth();
 	const { data: site } = useQuery( siteQuery( siteSlug ) );
 	const canTransferSite = useCanTransferSite( { site } );
 	const [ currentStep, setCurrentStep ] = useState( 0 );
@@ -98,6 +101,7 @@ export default function SettingsTransferSite( { siteSlug }: { siteSlug: string }
 							handleBack={ handleBack }
 						/>
 					) }
+					{ currentStep === 2 && <EmailConfirmation userEmail={ user.email } /> }
 				</CardBody>
 			</Card>
 		</PageLayout>

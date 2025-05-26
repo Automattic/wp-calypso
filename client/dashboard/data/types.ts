@@ -15,6 +15,7 @@ export interface User {
 	avatar_URL?: string;
 	language: string;
 	locale_variant: string;
+	email: string;
 }
 
 export interface SiteDomain {
