@@ -35,6 +35,8 @@
 		.components-button {
 			height: 32px;
 			padding: 4px 8px;
+
+			--color-accent: var(--theme-highlight-color);
 		}
 	}
 
