@@ -17,7 +17,7 @@ import type {
 	PhpMyAdminToken,
 	DefensiveModeSettings,
 	DefensiveModeSettingsUpdate,
-	SiteTransferResponse,
+	SiteTransferConfirmation,
 } from './types';
 import type { DataCenterOption } from 'calypso/data/data-center/types';
 
@@ -380,7 +380,7 @@ export const siteOwnerTransfer = async (
 export const siteOwnerTransferConfirm = async (
 	siteIdOrSlug: string,
 	data: { hash: string }
-): Promise< SiteTransferResponse > => {
+): Promise< SiteTransferConfirmation > => {
 	return wpcom.req.post(
 		{
 			path: `/sites/${ siteIdOrSlug }/site-owner-transfer/confirm`,

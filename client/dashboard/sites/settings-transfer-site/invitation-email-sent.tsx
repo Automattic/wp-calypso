@@ -5,7 +5,7 @@ import { sprintf, __ } from '@wordpress/i18n';
 import { useEffect, useState } from 'react';
 import { siteOwnerTransferConfirmMutation } from '../../app/queries';
 import Notice from '../../components/notice';
-import type { SiteTransferResponse } from '../../data/types';
+import type { SiteTransferConfirmation } from '../../data/types';
 
 export function InvitationEmailSent( {
 	siteSlug,
@@ -22,7 +22,7 @@ export function InvitationEmailSent( {
 		mutation.mutate(
 			{ hash: confirmationHash },
 			{
-				onSuccess: ( { email_sent_to }: SiteTransferResponse ) => {
+				onSuccess: ( { email_sent_to }: SiteTransferConfirmation ) => {
 					setNewOwnerEmail( email_sent_to );
 				},
 				onError: () => {

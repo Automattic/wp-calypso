@@ -189,7 +189,7 @@ export interface DefensiveModeSettingsUpdate {
 	ttl?: number;
 }
 
-export interface SiteTransferResponse {
+export interface SiteTransferConfirmation {
 	transfer: boolean;
 	email_sent_to: string;
 }
