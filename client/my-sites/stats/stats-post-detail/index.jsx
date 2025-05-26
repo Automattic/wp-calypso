@@ -371,7 +371,7 @@ const connectComponent = connect( ( state, { postId } ) => {
 		countViews: getPostStat( state, siteId, postId, 'views' ),
 		isRequestingStats: isRequestingPostStats( state, siteId, postId ),
 		siteSlug: getSiteSlug( state, siteId ),
-		showViewLink: ( isOdyssey || isPreviewable ) && previewUrl,
+		showViewLink: isOdyssey || isPreviewable,
 		editUrl,
 		previewUrl: previewUrl,
 		siteId,

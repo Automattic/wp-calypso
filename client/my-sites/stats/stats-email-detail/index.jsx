@@ -513,7 +513,7 @@ const connectComponent = connect(
 			date,
 			hasValidDate,
 			showNoDataInfo,
-			showViewLink: ( isOdyssey || isPreviewable ) && previewUrl,
+			showViewLink: isOdyssey || isPreviewable,
 			previewUrl: previewUrl,
 			editUrl,
 		};
