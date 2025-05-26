@@ -2,6 +2,10 @@
 @import '@wordpress/base-styles/variables';
 
 .build-report {
+	.hosting-dashboard-layout__header-breadcrumb {
+		margin-bottom: 16px;
+	}
+
 	.build-report__content {
 		flex-grow: 1;
 		max-width: 660px;
@@ -49,6 +53,12 @@
 
 	.build-report__checkbox-control:last-child {
 		margin-bottom: 16px;
+	}
+
+	// Fixing margins from StyledHelp-deprecatedMarginHelp which is bieng inserted by the component
+	.components-base-control__help {
+		margin-top: 0;
+		margin-bottom: 0;
 	}
 
 	.build-report__actions {
