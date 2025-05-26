@@ -8,7 +8,6 @@ import type {
 	SortDirection,
 	ValidationContext,
 } from '../types';
-import { default as checkbox } from './checkbox';
 import { default as email } from './email';
 import { default as integer } from './integer';
 import { default as text } from './text';
@@ -26,10 +25,6 @@ import { renderFromElements } from '../utils';
 export default function getFieldTypeDefinition< Item >(
 	type?: FieldType
 ): FieldTypeDefinition< Item > {
-	if ( 'checkbox' === type ) {
-		return checkbox;
-	}
-
 	if ( 'email' === type ) {
 		return email;
 	}

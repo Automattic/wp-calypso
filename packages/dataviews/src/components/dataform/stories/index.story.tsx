@@ -116,7 +116,8 @@ const fields = [
 	{
 		id: 'can_comment',
 		label: 'Allow people to leave a comment',
-		type: 'checkbox' as const,
+		type: 'boolean' as const,
+		Edit: 'checkbox',
 	},
 ] as Field< SamplePost >[];
 
