@@ -617,7 +617,7 @@ class Login extends Component {
 			partnerSlug,
 		} = this.props;
 
-		return (
+		const content = (
 			<div
 				className={ clsx( 'login', {
 					'is-akismet': isFromAkismet,
@@ -625,6 +625,8 @@ class Login extends Component {
 					'is-jetpack-cloud': isJetpackCloudOAuth2Client( oauth2Client ),
 					'is-automattic-for-agencies-flow': isFromAutomatticForAgenciesPlugin,
 					'is-a4a': isA4AOAuth2Client( oauth2Client ),
+					'is-white-login': isWhiteLogin,
+					'is-social-first': isSocialFirst,
 				} ) }
 			>
 				{ ! isWhiteLogin && (
@@ -675,6 +677,8 @@ class Login extends Component {
 				{ isWhiteLogin && this.renderToS() }
 			</div>
 		);
+
+		return content;
 	}
 }
 

@@ -640,7 +640,7 @@ export class Login extends Component {
 
 		return (
 			<>
-				{ isWhiteLogin && (
+				{ isWhiteLogin ? (
 					<Step.CenteredColumnLayout
 						columnWidth={ 6 }
 						topBar={
@@ -651,10 +651,16 @@ export class Login extends Component {
 					>
 						{ mainContent }
 					</Step.CenteredColumnLayout>
+				) : (
+					<>
+						{ ! isWooJPC &&
+							isJetpack &&
+							! this.props.isFromAutomatticForAgenciesPlugin &&
+							jetpackLogo }
+						{ mainContent }
+						{ this.renderFooter() }
+					</>
 				) }
-				{ ! isWooJPC && isJetpack && ! this.props.isFromAutomatticForAgenciesPlugin && jetpackLogo }
-				{ ! isWhiteLogin && mainContent }
-				{ this.renderFooter() }
 			</>
 		);
 	}
