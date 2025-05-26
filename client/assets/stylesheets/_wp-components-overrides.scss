@@ -1,3 +1,4 @@
+/* @wordpress/components FormToggle overrides ----------------------------------------- */
 .components-form-toggle {
 	input[type="checkbox"] {
 		cursor: pointer;
@@ -5,7 +6,7 @@
 	}
 }
 
-/* @wordpress/components Button overrides */
+/* @wordpress/components Button overrides --------------------------------------------- */
 .components-button {
 	justify-content: center;
 }
@@ -164,7 +165,7 @@
 	}
 }
 
-/* @wordpress/components ButtonGroup overrides */
+/* @wordpress/components ButtonGroup overrides ---------------------------------------- */
 .components-button-group {
 	.components-button {
 		&,
@@ -174,7 +175,7 @@
 	}
 }
 
-/* @wordpress/components RadioControl overrides */
+/* @wordpress/components RadioControl overrides --------------------------------------- */
 .components-radio-control {
 	&__input[type="radio"] {
 		padding: 6px;
