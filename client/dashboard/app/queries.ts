@@ -16,6 +16,7 @@ import {
 	fetchPerformanceInsights,
 	updateSiteSettings,
 	restoreSitePlanSoftware,
+	siteOwnerTransfer,
 	fetchWordPressVersion,
 	updateWordPressVersion,
 	fetchPrimaryDataCenter,
@@ -168,6 +169,15 @@ export function siteSettingsMutation( siteId: string ) {
 export function restoreSitePlanSoftwareMutation( siteId: string ) {
 	return {
 		mutationFn: () => restoreSitePlanSoftware( siteId ),
+	};
+}
+
+export function siteOwnerTransferMutation( siteId: string ) {
+	return {
+		mutationFn: ( newData: { new_site_owner: string } ) => siteOwnerTransfer( siteId, newData ),
+		onSuccess: () => {
+			queryClient.invalidateQueries( { queryKey: [ 'site', siteId ] } );
+		},
 	};
 }
 

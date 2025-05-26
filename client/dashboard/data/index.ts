@@ -363,6 +363,19 @@ export const restoreSitePlanSoftware = async ( siteIdOrSlug: string ) => {
 	} );
 };
 
+export const siteOwnerTransfer = async (
+	siteIdOrSlug: string,
+	data: { new_site_owner: string }
+) => {
+	return wpcom.req.post(
+		{
+			path: `/sites/${ siteIdOrSlug }/site-owner-transfer?v2`,
+			apiNamespace: 'wpcom/v2',
+		},
+		data
+	);
+};
+
 export const fetchBasicMetrics = async ( url: string ): Promise< BasicMetricsData > => {
 	return wpcom.req.get(
 		{
