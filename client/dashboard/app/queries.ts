@@ -17,6 +17,7 @@ import {
 	updateSiteSettings,
 	restoreSitePlanSoftware,
 	siteOwnerTransfer,
+	siteOwnerTransferConfirm,
 	fetchWordPressVersion,
 	updateWordPressVersion,
 	fetchPrimaryDataCenter,
@@ -175,9 +176,12 @@ export function restoreSitePlanSoftwareMutation( siteId: string ) {
 export function siteOwnerTransferMutation( siteId: string ) {
 	return {
 		mutationFn: ( newData: { new_site_owner: string } ) => siteOwnerTransfer( siteId, newData ),
-		onSuccess: () => {
-			queryClient.invalidateQueries( { queryKey: [ 'site', siteId ] } );
-		},
+	};
+}
+
+export function siteOwnerTransferConfirmMutation( siteId: string ) {
+	return {
+		mutationFn: ( newData: { hash: string } ) => siteOwnerTransferConfirm( siteId, newData ),
 	};
 }
 

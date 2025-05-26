@@ -12,7 +12,7 @@ import Notice from '../../components/notice';
 import type { Site } from '../../data/types';
 import type { Field } from '@automattic/dataviews';
 
-type StartSiteTransferFormData = {
+export type StartSiteTransferFormData = {
 	accept_authorization: boolean;
 	accept_transfer: boolean;
 	accept_undone: boolean;
@@ -67,7 +67,7 @@ export function StartSiteTransferForm( {
 	site: Site;
 	newOwnerEmail: string;
 	isTransferring: boolean;
-	handleSubmit: ( event: React.FormEvent ) => void;
+	handleSubmit: ( data: StartSiteTransferFormData ) => void;
 	handleBack: () => void;
 } ) {
 	const [ formData, setFormData ] = useState( {
@@ -78,6 +78,11 @@ export function StartSiteTransferForm( {
 	} );
 
 	const isSaveDisabled = Object.values( formData ).some( ( value ) => ! value );
+
+	const onSubmit = ( event: React.FormEvent ) => {
+		event.preventDefault();
+		handleSubmit( formData );
+	};
 
 	return (
 		<VStack spacing={ 0 }>
@@ -187,7 +192,7 @@ export function StartSiteTransferForm( {
 						</li>
 					</List>
 				</VStack>
-				<form onSubmit={ handleSubmit }>
+				<form onSubmit={ onSubmit }>
 					<VStack>
 						<span style={ { textTransform: 'uppercase' } }>
 							{ __( 'To transfer your site, review and accept the following statements:' ) }

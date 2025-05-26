@@ -5,15 +5,46 @@ import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import { useState } from 'react';
+import { getQueryArg } from '@wordpress/url';
+import React, { useState } from 'react';
 import { useAuth } from '../../app/auth';
 import { siteQuery, siteOwnerTransferMutation } from '../../app/queries';
 import PageLayout from '../../components/page-layout';
 import { useCanTransferSite } from '../hooks/use-can-transfer-site';
 import SettingsPageHeader from '../settings-page-header';
-import { ConfirmNewOwnerForm } from './confirm-new-owner-form';
+import { ConfirmNewOwnerForm, ConfirmNewOwnerFormData } from './confirm-new-owner-form';
 import { EmailConfirmation } from './email-confirmation';
-import { StartSiteTransferForm } from './start-site-transfer-form';
+import { InvitationEmailSent } from './invitation-email-sent';
+import { StartSiteTransferForm, StartSiteTransferFormData } from './start-site-transfer-form';
+
+type StepsData = [ ConfirmNewOwnerFormData?, StartSiteTransferFormData? ];
+
+const MIN_STEP = 0;
+
+const MAX_STEP = 2;
+
+const SettingsTransferSitePageLayout = ( { children }: { children: React.ReactNode } ) => {
+	return (
+		<PageLayout
+			size="small"
+			header={
+				<SettingsPageHeader
+					title={ __( 'Transfer site' ) }
+					description={ createInterpolateElement(
+						__(
+							'Transfer this site to a new or existing site member with just a few clicks. <learnMoreLink />.'
+						),
+						{
+							learnMoreLink: <ExternalLink href="#learn-more">{ __( 'Learn more' ) }</ExternalLink>,
+						}
+					) }
+				/>
+			}
+		>
+			{ children }
+		</PageLayout>
+	);
+};
 
 export default function SettingsTransferSite( { siteSlug }: { siteSlug: string } ) {
 	const { createErrorNotice } = useDispatch( noticesStore );
@@ -21,25 +52,23 @@ export default function SettingsTransferSite( { siteSlug }: { siteSlug: string }
 	const { data: site } = useQuery( siteQuery( siteSlug ) );
 	const canTransferSite = useCanTransferSite( { site } );
 	const [ currentStep, setCurrentStep ] = useState( 0 );
-	const [ stepsData, setStepsData ] = useState( [] );
-	const [ newOwnerEmail, setNewOwnerEmail ] = useState( '' );
+	const [ stepsData, setStepsData ] = useState< StepsData >( [] );
 	const mutation = useMutation( siteOwnerTransferMutation( siteSlug ) );
+	const confirmationHash = getQueryArg( window.location.search, 'site-transfer-confirm' );
 
-	const handleBack = () => setCurrentStep( ( step ) => Math.max( step - 1, 0 ) );
+	const newOwnerEmail = stepsData[ 0 ]?.email ?? '';
 
-	const handleForward = () => setCurrentStep( ( step ) => step + 1 );
+	const handleBack = () => setCurrentStep( ( step ) => Math.max( step - 1, MIN_STEP ) );
 
-	// TODO: Integrate with the API.
-	const handleConfirmNewOwner = ( event: React.FormEvent ) => {
-		event.preventDefault();
-		setNewOwnerEmail( '' );
-		setStepsData( [] );
+	const handleForward = () => setCurrentStep( ( step ) => Math.min( step + 1, MAX_STEP ) );
+
+	const handleConfirmNewOwner = ( data: ConfirmNewOwnerFormData ) => {
+		setStepsData( ( currentStepData: StepsData ) => [ data, currentStepData.slice( 1, 1 ) ] );
 		handleForward();
 	};
 
-	const handleStartSiteTransfer = ( event: React.FormEvent ) => {
-		event.preventDefault();
-		setStepsData( [] );
+	const handleStartSiteTransfer = ( data: StartSiteTransferFormData ) => {
+		setStepsData( ( currentStepData: StepsData ) => [ currentStepData.slice( 0, 1 ), data ] );
 
 		mutation.mutate(
 			{ new_site_owner: newOwnerEmail },
@@ -64,23 +93,16 @@ export default function SettingsTransferSite( { siteSlug }: { siteSlug: string }
 		throw notFound();
 	}
 
+	if ( confirmationHash ) {
+		return (
+			<SettingsTransferSitePageLayout>
+				<InvitationEmailSent siteSlug={ siteSlug } confirmationHash={ confirmationHash } />
+			</SettingsTransferSitePageLayout>
+		);
+	}
+
 	return (
-		<PageLayout
-			size="small"
-			header={
-				<SettingsPageHeader
-					title={ __( 'Transfer site' ) }
-					description={ createInterpolateElement(
-						__(
-							'Transfer this site to a new or existing site member with just a few clicks. <learnMoreLink />.'
-						),
-						{
-							learnMoreLink: <ExternalLink href="#learn-more">{ __( 'Learn more' ) }</ExternalLink>,
-						}
-					) }
-				/>
-			}
-		>
+		<SettingsTransferSitePageLayout>
 			<Card>
 				<CardBody>
 					{ currentStep === 0 && (
@@ -104,6 +126,6 @@ export default function SettingsTransferSite( { siteSlug }: { siteSlug: string }
 					{ currentStep === 2 && <EmailConfirmation userEmail={ user.email } /> }
 				</CardBody>
 			</Card>
-		</PageLayout>
+		</SettingsTransferSitePageLayout>
 	);
 }

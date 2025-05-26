@@ -10,7 +10,7 @@ import { sprintf, __ } from '@wordpress/i18n';
 import { useState } from 'react';
 import type { Field } from '@automattic/dataviews';
 
-type ConfirmNewOwnerFormData = {
+export type ConfirmNewOwnerFormData = {
 	email: string;
 };
 
@@ -34,7 +34,7 @@ export function ConfirmNewOwnerForm( {
 }: {
 	initialData?: Partial< ConfirmNewOwnerFormData >;
 	siteSlug: string;
-	handleSubmit: ( event: React.FormEvent ) => void;
+	handleSubmit: ( data: ConfirmNewOwnerFormData ) => void;
 } ) {
 	const [ formData, setFormData ] = useState( {
 		email: '',
@@ -42,6 +42,11 @@ export function ConfirmNewOwnerForm( {
 	} );
 
 	const isSaveDisabled = ! isItemValid( formData, fields, form );
+
+	const onSubmit = ( event: React.FormEvent ) => {
+		event.preventDefault();
+		handleSubmit( formData );
+	};
 
 	return (
 		<VStack spacing={ 1 }>
@@ -66,7 +71,7 @@ export function ConfirmNewOwnerForm( {
 					) }
 				</Text>
 			</VStack>
-			<form onSubmit={ handleSubmit }>
+			<form onSubmit={ onSubmit }>
 				<VStack spacing={ 4 } style={ { padding: '8px 0' } }>
 					<DataForm< ConfirmNewOwnerFormData >
 						data={ formData }

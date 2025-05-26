@@ -17,6 +17,7 @@ import type {
 	PhpMyAdminToken,
 	DefensiveModeSettings,
 	DefensiveModeSettingsUpdate,
+	SiteTransferResponse,
 } from './types';
 import type { DataCenterOption } from 'calypso/data/data-center/types';
 
@@ -370,6 +371,19 @@ export const siteOwnerTransfer = async (
 	return wpcom.req.post(
 		{
 			path: `/sites/${ siteIdOrSlug }/site-owner-transfer?v2`,
+			apiNamespace: 'wpcom/v2',
+		},
+		data
+	);
+};
+
+export const siteOwnerTransferConfirm = async (
+	siteIdOrSlug: string,
+	data: { hash: string }
+): Promise< SiteTransferResponse > => {
+	return wpcom.req.post(
+		{
+			path: `/sites/${ siteIdOrSlug }/site-owner-transfer/confirm`,
 			apiNamespace: 'wpcom/v2',
 		},
 		data

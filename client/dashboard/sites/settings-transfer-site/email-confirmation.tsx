@@ -10,7 +10,7 @@ import { Icon, inbox } from '@wordpress/icons';
 export function EmailConfirmation( { userEmail }: { userEmail: string } ) {
 	return (
 		<VStack style={ { padding: '8px 0 12px' } }>
-			<HStack>
+			<HStack justify="flex-start">
 				<Icon icon={ inbox } />
 				<Text size="15px" weight={ 500 } lineHeight="32px">
 					{ __( 'Check your inbox' ) }
