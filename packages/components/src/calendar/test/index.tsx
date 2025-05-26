@@ -738,13 +738,14 @@ describe( 'DateCalendar', () => {
 		} );
 
 		it( 'should handle timezoned dates and convert them to the calendar timezone', async () => {
+			// Still the same time from UTC's POV, just expressed in Tokyo time.
 			const tomorrowAtMidnightInTokyo = new TZDate( tomorrow, 'Asia/Tokyo' );
 
-			render( <DateCalendar defaultSelected={ tomorrowAtMidnightInTokyo } /> );
+			render( <DateCalendar defaultSelected={ tomorrowAtMidnightInTokyo } timeZone="-02:00" /> );
 
-			// Tomorrow at midnight in Tokyo is today
-			// for the calendar (set to UTC by default);
-			expect( getDateButton( today ) ).toHaveAccessibleName( /today/i );
+			// Changing the calendar timezone to UTC-2 makes the dates become
+			// earlier by 1 day (from midnight to 10pm the previous day).
+			expect( getDateCell( today, { selected: true } ) ).toBeVisible();
 		} );
 	} );
 } );
