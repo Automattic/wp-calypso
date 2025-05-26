@@ -1,37 +1,38 @@
+import { v4 as uuidv4 } from 'uuid';
 import type {
 	JsonRpcId,
 	Message,
 	SendTaskRequest,
-	TextPart,
 	TaskSendParams,
+	TextPart,
 } from '../types/index';
 
 /**
- * Generate a random string for IDs
+ * Generate a random string for IDs using UUID
  */
 function generateRandomId(): string {
-	return Math.random().toString(36).substring(2, 10);
+	return uuidv4();
 }
 
 /**
  * Creates a unique request ID for A2A requests
  */
 export function createRequestId(): JsonRpcId {
-	return `req-${generateRandomId()}`;
+	return `req-${ generateRandomId() }`;
 }
 
 /**
  * Creates a unique task ID for A2A tasks
  */
 export function createTaskId(): string {
-	return `task-${generateRandomId()}`;
+	return `task-${ generateRandomId() }`;
 }
 
 /**
  * Create a simple text part for a message
  * @param text
  */
-export function createTextPart(text: string): TextPart {
+export function createTextPart( text: string ): TextPart {
 	return {
 		type: 'text',
 		text,
@@ -42,10 +43,10 @@ export function createTextPart(text: string): TextPart {
  * Create a simple user message with a text part
  * @param text
  */
-export function createTextMessage(text: string): Message {
+export function createTextMessage( text: string ): Message {
 	return {
 		role: 'user',
-		parts: [createTextPart(text)],
+		parts: [ createTextPart( text ) ],
 	};
 }
 
@@ -73,15 +74,15 @@ export function createSendTaskRequest(
  * Extract text content from a message
  * @param message
  */
-export function extractTextFromMessage(message?: Message): string {
-	if (!message) {
+export function extractTextFromMessage( message?: Message ): string {
+	if ( ! message ) {
 		return '';
 	}
 
 	return message.parts
-		.filter((part) => part.type === 'text')
-		.map((part) => (part as TextPart).text)
-		.join('\n');
+		.filter( ( part ) => part.type === 'text' )
+		.map( ( part ) => ( part as TextPart ).text )
+		.join( '\n' );
 }
 
 // Re-export logger utilities for convenience

@@ -53,23 +53,18 @@
 	},
 	"devDependencies": {
 		"@types/node": "^20.0.0",
-		"@typescript-eslint/eslint-plugin": "^6.0.0",
-		"@typescript-eslint/parser": "^6.0.0",
-		"@wordpress/eslint-plugin": "^17.0.0",
-		"@wordpress/prettier-config": "^4.2.0",
-		"@wordpress/scripts": "^27.9.0",
-		"eslint": "^8.0.0",
-		"eslint-import-resolver-typescript": "^3.6.0",
 		"tsup": "^8.0.0",
 		"typescript": "^5.0.0",
 		"vitest": "^1.0.0"
 	},
 	"dependencies": {
+		"@types/uuid": "^10.0.0",
 		"chalk": "^5.4.1",
 		"debug": "^4.3.4",
 		"dotenv": "^16.5.0",
 		"node-fetch": "^3.3.2",
-		"socks-proxy-agent": "^8.0.5"
+		"socks-proxy-agent": "^8.0.5",
+		"uuid": "^11.1.0"
 	},
 	"publishConfig": {
 		"access": "public"

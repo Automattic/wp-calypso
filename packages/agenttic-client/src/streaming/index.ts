@@ -1,4 +1,4 @@
-import type { TaskUpdate, JsonRpcResponse, Task } from '../types/index';
+import type { JsonRpcResponse, Task, TaskUpdate } from '../types/index';
 import { logger } from '../utils/logger';
 
 /**
@@ -11,8 +11,8 @@ import { logger } from '../utils/logger';
 export function parseStreamChunk(
 	chunk: string,
 	buffer: string = ''
-): { events: Record<string, any>[]; nextBuffer: string } {
-	const events: Record<string, any>[] = [];
+): { events: Record< string, any >[]; nextBuffer: string } {
+	const events: Record< string, any >[] = [];
 	// Combine the existing buffer with the new chunk
 	const currentStreamData = buffer + chunk;
 	let eventPayload = ''; // Accumulates data for the current event
@@ -22,36 +22,41 @@ export function parseStreamChunk(
 	// An SSE event can span multiple lines starting with "data:"
 	// and is typically terminated by a blank line.
 	let searchStartIndex = 0;
-	while (searchStartIndex < currentStreamData.length) {
-		const newlineIndex = currentStreamData.indexOf('\n', searchStartIndex);
+	while ( searchStartIndex < currentStreamData.length ) {
+		const newlineIndex = currentStreamData.indexOf(
+			'\n',
+			searchStartIndex
+		);
 		// If newlineIndex is -1, it means the rest of currentStreamData is a single line (or empty)
 		const line =
 			newlineIndex === -1
-				? currentStreamData.substring(searchStartIndex)
-				: currentStreamData.substring(searchStartIndex, newlineIndex);
+				? currentStreamData.substring( searchStartIndex )
+				: currentStreamData.substring( searchStartIndex, newlineIndex );
 
-		if (line.startsWith('data:')) {
+		if ( line.startsWith( 'data:' ) ) {
 			// If eventPayload is not empty, it means this data line is a continuation
 			// of a multi-line data field for the current event. SSE spec says to join with a newline character.
-			if (eventPayload !== '') {
+			if ( eventPayload !== '' ) {
 				eventPayload += '\n';
 			}
 			// Add the data part of the line (stripping "data: " or "data:")
-			eventPayload += line.substring(line.startsWith('data: ') ? 6 : 5);
-		} else if (line.trim() === '') {
+			eventPayload += line.substring(
+				line.startsWith( 'data: ' ) ? 6 : 5
+			);
+		} else if ( line.trim() === '' ) {
 			// Blank line: indicates the end of an event
-			if (eventPayload) {
+			if ( eventPayload ) {
 				try {
-					events.push(JSON.parse(eventPayload));
+					events.push( JSON.parse( eventPayload ) );
 					// Mark where this complete event ended
 					lastCompleteEventEnd =
 						newlineIndex === -1
 							? currentStreamData.length
 							: newlineIndex + 1;
-				} catch (e) {
+				} catch ( e ) {
 					// Log the error and the problematic eventPayload
-					logger('Failed to parse SSE event: %o', e);
-					logger('Problematic payload: %s', eventPayload);
+					logger( 'Failed to parse SSE event: %o', e );
+					logger( 'Problematic payload: %s', eventPayload );
 				}
 				eventPayload = ''; // Reset for the next event
 			}
@@ -59,7 +64,7 @@ export function parseStreamChunk(
 		// Lines not starting with "data:" and not blank (e.g., "event:", "id:", "retry:", comments) are ignored
 		// for data extraction in this simplified parser.
 
-		if (newlineIndex === -1) {
+		if ( newlineIndex === -1 ) {
 			// Reached the end of currentStreamData
 			searchStartIndex = currentStreamData.length;
 		} else {
@@ -70,7 +75,7 @@ export function parseStreamChunk(
 
 	// Return the original SSE format data for any incomplete event
 	// This preserves "data: " prefixes for the next call
-	const nextBuffer = currentStreamData.substring(lastCompleteEventEnd);
+	const nextBuffer = currentStreamData.substring( lastCompleteEventEnd );
 
 	return { events, nextBuffer };
 }
@@ -80,24 +85,24 @@ export function parseStreamChunk(
  * @param stream
  */
 export async function* parseSSEStream(
-	stream: ReadableStream<Uint8Array>
-): AsyncIterable<TaskUpdate> {
+	stream: ReadableStream< Uint8Array >
+): AsyncIterable< TaskUpdate > {
 	const reader = stream.getReader();
 	const decoder = new TextDecoder();
 	let buffer = '';
 
 	try {
-		while (true) {
+		while ( true ) {
 			const { done, value } = await reader.read();
-			if (done) {
+			if ( done ) {
 				break;
 			}
 
-			const chunk = decoder.decode(value, { stream: true });
-			const { events, nextBuffer } = parseStreamChunk(chunk, buffer);
+			const chunk = decoder.decode( value, { stream: true } );
+			const { events, nextBuffer } = parseStreamChunk( chunk, buffer );
 
-			for (const event of events) {
-				if (event.result && event.result.status) {
+			for ( const event of events ) {
+				if ( event.result && event.result.status ) {
 					const update: TaskUpdate = {
 						id: event.result.id,
 						status: event.result.status,
@@ -123,12 +128,12 @@ export async function* parseSSEStream(
  * @param stream
  */
 export async function streamToTask(
-	stream: AsyncIterable<TaskUpdate>
-): Promise<Task> {
+	stream: AsyncIterable< TaskUpdate >
+): Promise< Task > {
 	let finalTask: Task | null = null;
 
-	for await (const update of stream) {
-		if (update.final && update.status) {
+	for await ( const update of stream ) {
+		if ( update.final && update.status ) {
 			finalTask = {
 				id: update.id,
 				status: update.status,
@@ -136,8 +141,8 @@ export async function streamToTask(
 		}
 	}
 
-	if (!finalTask) {
-		throw new Error('Stream ended without a final task result');
+	if ( ! finalTask ) {
+		throw new Error( 'Stream ended without a final task result' );
 	}
 
 	return finalTask;
