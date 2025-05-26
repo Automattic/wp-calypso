@@ -35,6 +35,9 @@ const meta = {
 			description: 'Chooses the label position of the layout.',
 			options: [ 'default', 'top', 'side', 'none' ],
 		},
+		spacing: {
+			control: { type: 'number' },
+		},
 	},
 };
 export default meta;
@@ -124,9 +127,11 @@ const fields = [
 export const Default = ( {
 	type,
 	labelPosition,
+	spacing,
 }: {
 	type: 'default' | 'regular' | 'panel';
 	labelPosition: 'default' | 'top' | 'side' | 'none';
+	spacing: number;
 } ) => {
 	const [ post, setPost ] = useState( {
 		title: 'Hello, World!',
@@ -145,6 +150,7 @@ export const Default = ( {
 		() => ( {
 			type,
 			labelPosition,
+			spacing,
 			fields: [
 				'title',
 				'order',
@@ -159,7 +165,7 @@ export const Default = ( {
 				'can_comment',
 			],
 		} ),
-		[ type, labelPosition ]
+		[ type, labelPosition, spacing ]
 	) as Form;
 
 	return (
@@ -180,9 +186,11 @@ export const Default = ( {
 const CombinedFieldsComponent = ( {
 	type,
 	labelPosition,
+	spacing,
 }: {
 	type: 'default' | 'regular' | 'panel';
 	labelPosition: 'default' | 'top' | 'side' | 'none';
+	spacing: number;
 } ) => {
 	const [ post, setPost ] = useState< SamplePost >( {
 		title: 'Hello, World!',
@@ -198,6 +206,7 @@ const CombinedFieldsComponent = ( {
 		() => ( {
 			type,
 			labelPosition,
+			spacing,
 			fields: [
 				'title',
 				{
@@ -209,7 +218,7 @@ const CombinedFieldsComponent = ( {
 				'author',
 			],
 		} ),
-		[ type, labelPosition ]
+		[ type, labelPosition, spacing ]
 	) as Form;
 
 	return (
