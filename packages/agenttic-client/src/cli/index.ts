@@ -10,6 +10,11 @@ import { createEnvAuthProvider } from './auth';
 import { cliLog, enableDebug, logger } from '../utils/logger';
 import type { CLIOptions, InteractiveSession } from './types';
 import { createRequire } from 'module';
+import chalk from 'chalk';
+
+// Force color support for chalk (same as in logger)
+process.env.FORCE_COLOR = '1';
+chalk.level = 3;
 
 // Create require for CommonJS modules in ESM
 const require = createRequire( import.meta.url );
@@ -297,7 +302,7 @@ async function runSingleMessage( options: CLIOptions ): Promise< void > {
 						update.status.message
 					);
 					if ( text ) {
-						process.stdout.write( text );
+						process.stdout.write( chalk.blue( text ) );
 						hasContent = true;
 					}
 				}
@@ -409,7 +414,7 @@ Type 'help' for commands.
 							update.status.message
 						);
 						if ( text ) {
-							process.stdout.write( text );
+							process.stdout.write( chalk.blue( text ) );
 							hasContent = true;
 						}
 					}
@@ -491,7 +496,7 @@ Just type your message to send it to the agent.
 								update.status.message
 							);
 							if ( text ) {
-								process.stdout.write( text );
+								process.stdout.write( chalk.blue( text ) );
 								hasContent = true;
 							}
 						}
