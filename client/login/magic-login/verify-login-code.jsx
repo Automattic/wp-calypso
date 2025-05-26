@@ -99,14 +99,6 @@ const VerifyLoginCode = ( {
 		if ( key === 'Backspace' && ! codeCharacters[ index ] && index > 0 ) {
 			inputRefs.current[ index - 1 ].current.focus();
 		}
-
-		// Handle Left/Right arrows for navigation between inputs
-		if ( key === 'ArrowLeft' && index > 0 ) {
-			inputRefs.current[ index - 1 ].current.focus();
-		}
-		if ( key === 'ArrowRight' && index < CODE_LENGTH - 1 ) {
-			inputRefs.current[ index + 1 ].current.focus();
-		}
 	};
 
 	// Handle paste event to fill multiple inputs
