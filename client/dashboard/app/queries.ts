@@ -4,6 +4,7 @@ import {
 	fetchSiteMediaStorage,
 	fetchSiteMonitorUptime,
 	fetchPHPVersion,
+	updatePHPVersion,
 	fetchCurrentPlan,
 	fetchSiteEngagementStats,
 	fetchDomains,
@@ -69,6 +70,15 @@ export function sitePHPVersionQuery( siteIdOrSlug: string ) {
 	return {
 		queryKey: [ 'site', siteIdOrSlug, 'php-version' ],
 		queryFn: () => fetchPHPVersion( siteIdOrSlug ),
+	};
+}
+
+export function sitePHPVersionMutation( siteSlug: string ) {
+	return {
+		mutationFn: ( version: string ) => updatePHPVersion( siteSlug, version ),
+		onSuccess: () => {
+			queryClient.invalidateQueries( { queryKey: [ 'site', siteSlug, 'php-version' ] } );
+		},
 	};
 }
 

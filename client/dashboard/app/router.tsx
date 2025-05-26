@@ -6,6 +6,7 @@ import {
 	createLazyRoute,
 } from '@tanstack/react-router';
 import { fetchTwoStep } from '../data';
+import { canUpdatePHPVersion } from '../sites/settings-php/utils';
 import { canUpdateWordPressVersion } from '../sites/settings-wordpress/utils';
 import NotFound from './404';
 import UnknownError from './500';
@@ -19,6 +20,7 @@ import {
 	siteCurrentPlanQuery,
 	siteEngagementStatsQuery,
 	siteWordPressVersionQuery,
+	sitePHPVersionQuery,
 } from './queries';
 import { queryClient } from './query-client';
 import Root from './root';
@@ -152,6 +154,17 @@ const siteSettingsSubscriptionGiftingRoute = createRoute( {
 	)
 );
 
+const siteSettingsDatabaseRoute = createRoute( {
+	getParentRoute: () => siteRoute,
+	path: 'settings/database',
+} ).lazy( () =>
+	import( '../sites/settings-database' ).then( ( d ) =>
+		createLazyRoute( 'site-settings-database' )( {
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+		} )
+	)
+);
+
 const siteSettingsWordPressRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: 'settings/wordpress',
@@ -164,6 +177,23 @@ const siteSettingsWordPressRoute = createRoute( {
 } ).lazy( () =>
 	import( '../sites/settings-wordpress' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-wordpress' )( {
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+		} )
+	)
+);
+
+const siteSettingsPHPRoute = createRoute( {
+	getParentRoute: () => siteRoute,
+	path: 'settings/php',
+	loader: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteQuery( siteSlug ) );
+		if ( canUpdatePHPVersion( site ) ) {
+			return await queryClient.ensureQueryData( sitePHPVersionQuery( siteSlug ) );
+		}
+	},
+} ).lazy( () =>
+	import( '../sites/settings-php' ).then( ( d ) =>
+		createLazyRoute( 'site-settings-php' )( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )
 	)
@@ -345,7 +375,9 @@ const createRouteTree = ( config: AppConfig ) => {
 				siteSettingsRoute,
 				siteSettingsSiteVisibilityRoute,
 				siteSettingsSubscriptionGiftingRoute,
+				siteSettingsDatabaseRoute,
 				siteSettingsWordPressRoute,
+				siteSettingsPHPRoute,
 				siteSettingsTransferSiteRoute,
 			] )
 		);

@@ -33,7 +33,7 @@
 		"@wordpress/components": "^29.9.0",
 		"@wordpress/data": "^10.23.0",
 		"@wordpress/i18n": "^5.23.0",
-		"autoprefixer": "^10.2.5",
+		"autoprefixer": "^10.4.21",
 		"calypso": "workspace:^",
 		"clsx": "^2.1.1",
 		"debug": "^4.4.0",
