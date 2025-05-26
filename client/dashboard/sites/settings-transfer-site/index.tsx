@@ -91,7 +91,10 @@ export default function SettingsTransferSite( { siteSlug }: { siteSlug: string }
 	if ( confirmationHash ) {
 		return (
 			<SettingsTransferSitePageLayout>
-				<InvitationEmailSent siteSlug={ siteSlug } confirmationHash={ confirmationHash } />
+				<InvitationEmailSent
+					siteSlug={ siteSlug }
+					confirmationHash={ confirmationHash as string }
+				/>
 			</SettingsTransferSitePageLayout>
 		);
 	}
