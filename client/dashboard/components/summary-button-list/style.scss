@@ -1,31 +1,15 @@
-@import "@wordpress/base-styles/variables";
-
 .dashboard-summary-button-list {
-
-	.dashboard-summary-button-list__heading {
-		margin: 0;
-		font-weight: $font-weight-medium;
-	}
-
-	&.has-density-low {
-		.dashboard-summary-button-list__heading {
-			font-size: $font-size-x-large;
-			line-height: $font-line-height-x-large;
-		}
-	}
-
 	&.has-density-medium {
-		.dashboard-summary-button-list__heading {
-			font-size: $font-size-large;
-			line-height: $font-line-height-large;
-		}
-
 		.dashboard-summary-button-list__children-container {
-			> *:last-child {
+			> *:first-child {
 				/* stylelint-disable-next-line scales/radii */
-				border-radius: 7px;
+				border-radius: 7px 7px 0 0;
 			}
 
+			> *:last-child {
+				/* stylelint-disable-next-line scales/radii */
+				border-radius: 0 0 7px 7px;
+			}
 		}
 	}
 }

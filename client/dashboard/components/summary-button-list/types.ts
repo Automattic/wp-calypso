@@ -5,7 +5,7 @@ export interface SummaryButtonListProps {
 	/**
 	 * The main label that identifies the section.
 	 */
-	title: string;
+	title?: string;
 	/**
 	 * Optional supporting text that provides additional context or detail about the section.
 	 */

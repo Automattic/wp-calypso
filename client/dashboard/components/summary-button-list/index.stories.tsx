@@ -92,11 +92,3 @@ export const WithDescriptionsInButtons: Story = {
 		],
 	},
 };
-
-export const Empty: Story = {
-	args: {
-		title: 'Empty Section',
-		description: 'This section has no buttons',
-		children: [],
-	},
-};

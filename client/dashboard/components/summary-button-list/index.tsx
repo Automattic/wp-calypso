@@ -29,22 +29,22 @@ export function SummaryButtonList( {
 		}
 		return child;
 	} );
-	const header = (
+	const header = title && (
 		<SectionHeader level={ isMediumDensity ? 3 : 2 } title={ title } description={ description } />
 	);
 	const className = clsx( 'dashboard-summary-button-list', `has-density-${ density }` );
 	if ( isMediumDensity ) {
 		return (
 			<Card className={ className }>
-				<CardHeader>{ header }</CardHeader>
-				<VStack spacing="1px" className="dashboard-summary-button-list__children-container">
+				{ header && <CardHeader>{ header }</CardHeader> }
+				<VStack spacing={ 0 } className="dashboard-summary-button-list__children-container">
 					{ clonedChildren }
 				</VStack>
 			</Card>
 		);
 	}
 	return (
-		<VStack className={ className } spacing={ 4 }>
+		<VStack className={ className } spacing={ 6 }>
 			{ header }
 			{ clonedChildren }
 		</VStack>
