@@ -1,0 +1,49 @@
+@import '@wordpress/base-styles/mixins';
+@import '@wordpress/base-styles/variables';
+
+.build-report {
+	.build-report__content {
+		flex-grow: 1;
+		min-height: 0;
+		padding: 32px;
+		display: flex;
+		flex-direction: column;
+		gap: 16px;
+	}
+
+	.build-report__step-title {
+		@include heading-large;
+	}
+
+	.build-report__group-label {
+		@include heading-medium;
+		border-top: 1px solid var( --color-neutral-10 );
+		padding-top: 16px;
+		margin-top: 8px;
+	}
+
+	.build-report__group-label--first {
+		border-top: none;
+		padding-top: 0;
+		margin-top: 0;
+	}
+
+	.build-report__checkbox-control:last-child {
+		margin-bottom: 16px;
+	}
+
+	.build-report__step-description {
+		@include body-medium;
+		margin-bottom: 0;
+	}
+
+	.build-report__actions {
+		display: flex;
+		justify-content: flex-end;
+		gap: 8px;
+		padding: 16px 32px;
+		background-color: var( --color-surface );
+		border-top: 1px solid var( --color-neutral-10 );
+		margin-top: auto;
+	}
+}

@@ -1,6 +1,5 @@
 import {
 	Button,
-	Modal,
 	SelectControl,
 	TextareaControl,
 	CheckboxControl,
@@ -8,7 +7,15 @@ import {
 } from '@wordpress/components';
 import { useState, useEffect, useRef } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
-import { Dispatch, SetStateAction } from 'react';
+import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
+import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
+import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
+import { A4A_REPORTS_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import Breadcrumb from 'calypso/components/breadcrumb';
+import LayoutBody from 'calypso/layout/hosting-dashboard/body';
+import LayoutHeader, {
+	LayoutHeaderActions as Actions,
+} from 'calypso/layout/hosting-dashboard/header';
 
 import './style.scss';
 
@@ -39,14 +46,9 @@ const PERFORMANCE_OPTIONS = [ { label: 'Uptime information', value: 'uptime_info
 
 type CheckedItemsState = Record< string, boolean >;
 
-type BuildReportModalProps = {
-	isOpen: boolean;
-	onClose: () => void;
-};
-
-export default function BuildReportModal( { isOpen, onClose }: BuildReportModalProps ) {
+const BuildReport = () => {
 	const translate = useTranslate();
-	const [ currentStep, setCurrentStep ] = useState( 1 );
+	const title = translate( 'Build Report' );
 	const teammateEmailsRef = useRef< HTMLDivElement >( null );
 
 	// Step 1: Setup State
@@ -70,6 +72,7 @@ export default function BuildReportModal( { isOpen, onClose }: BuildReportModalP
 	);
 
 	// Step 3: Schedule and Send State
+	const [ currentStep, setCurrentStep ] = useState( 1 );
 	const handleNextStep = () => setCurrentStep( ( prev ) => prev + 1 );
 	const handlePrevStep = () => setCurrentStep( ( prev ) => prev - 1 );
 
@@ -77,7 +80,10 @@ export default function BuildReportModal( { isOpen, onClose }: BuildReportModalP
 		groupKey: 'stats' | 'security' | 'performance',
 		itemName: string
 	) => {
-		const setterMap: Record< string, Dispatch< SetStateAction< CheckedItemsState > > > = {
+		const setterMap: Record<
+			string,
+			React.Dispatch< React.SetStateAction< CheckedItemsState > >
+		> = {
 			stats: setStatsCheckedItems,
 			security: setSecurityCheckedItems,
 			performance: setPerformanceCheckedItems,
@@ -102,7 +108,7 @@ export default function BuildReportModal( { isOpen, onClose }: BuildReportModalP
 			case 1:
 				return (
 					<>
-						<h2 className="a4a-reports-modal__step-title">{ translate( 'Step 1 of 3: Setup' ) }</h2>
+						<h2 className="build-report__step-title">{ translate( 'Step 1 of 3: Setup' ) }</h2>
 
 						<SelectControl
 							label={ translate( 'Pick a timeframe:' ) }
@@ -157,10 +163,10 @@ export default function BuildReportModal( { isOpen, onClose }: BuildReportModalP
 			case 2:
 				return (
 					<>
-						<h2 className="a4a-reports-modal__step-title">
+						<h2 className="build-report__step-title">
 							{ translate( 'Step 2 of 3: Pick the report content' ) }
 						</h2>
-						<h3 className="a4a-reports-modal__group-label a4a-reports-modal__group-label--first">
+						<h3 className="build-report__group-label build-report__group-label--first">
 							{ translate( 'Stats' ) }
 						</h3>
 						{ STATS_OPTIONS.map( ( item ) => (
@@ -169,27 +175,27 @@ export default function BuildReportModal( { isOpen, onClose }: BuildReportModalP
 								label={ item.label }
 								checked={ statsCheckedItems[ item.value ] }
 								onChange={ () => handleStep2CheckboxChange( 'stats', item.value ) }
-								className="a4a-reports-modal__checkbox-control"
+								className="build-report__checkbox-control"
 							/>
 						) ) }
-						<h3 className="a4a-reports-modal__group-label">{ translate( 'Security' ) }</h3>
+						<h3 className="build-report__group-label">{ translate( 'Security' ) }</h3>
 						{ SECURITY_OPTIONS.map( ( item ) => (
 							<CheckboxControl
 								key={ item.value }
 								label={ item.label }
 								checked={ securityCheckedItems[ item.value ] }
 								onChange={ () => handleStep2CheckboxChange( 'security', item.value ) }
-								className="a4a-reports-modal__checkbox-control"
+								className="build-report__checkbox-control"
 							/>
 						) ) }
-						<h3 className="a4a-reports-modal__group-label">{ translate( 'Performance' ) }</h3>
+						<h3 className="build-report__group-label">{ translate( 'Performance' ) }</h3>
 						{ PERFORMANCE_OPTIONS.map( ( item ) => (
 							<CheckboxControl
 								key={ item.value }
 								label={ item.label }
 								checked={ performanceCheckedItems[ item.value ] }
 								onChange={ () => handleStep2CheckboxChange( 'performance', item.value ) }
-								className="a4a-reports-modal__checkbox-control"
+								className="build-report__checkbox-control"
 							/>
 						) ) }
 					</>
@@ -197,9 +203,9 @@ export default function BuildReportModal( { isOpen, onClose }: BuildReportModalP
 			case 3:
 				return (
 					<>
-						<h2 className="a4a-reports-modal__step-title">{ translate( 'Step 3 of 3: Send' ) }</h2>
+						<h2 className="build-report__step-title">{ translate( 'Step 3 of 3: Send' ) }</h2>
 
-						<p className="a4a-reports-modal__step-description">
+						<p className="build-report__step-description">
 							{ translate( 'The report is ready to be sent to your client. ' ) }
 						</p>
 						<Button variant="secondary" onClick={ () => alert( 'Send test report clicked' ) }>
@@ -212,8 +218,8 @@ export default function BuildReportModal( { isOpen, onClose }: BuildReportModalP
 		}
 	};
 
-	const renderModalActions = () => (
-		<div className="a4a-reports-modal__actions">
+	const renderActions = () => (
+		<div className="build-report__actions">
 			{ currentStep > 1 && (
 				<Button variant="secondary" onClick={ handlePrevStep }>
 					{ translate( 'Prev' ) }
@@ -232,19 +238,32 @@ export default function BuildReportModal( { isOpen, onClose }: BuildReportModalP
 		</div>
 	);
 
-	if ( ! isOpen ) {
-		return null;
-	}
-
 	return (
-		<Modal
-			size="medium"
-			title={ translate( 'Build a report for your client' ) }
-			onRequestClose={ onClose }
-			className={ `a4a-reports-modal is-wizard-step-${ currentStep }` }
-		>
-			<div className="a4a-reports-modal__step-content">{ renderStepContent() }</div>
-			{ renderModalActions() }
-		</Modal>
+		<Layout className="build-report" title={ title } wide>
+			<LayoutTop>
+				<LayoutHeader>
+					<Breadcrumb
+						items={ [
+							{
+								label: translate( 'Client Reports' ),
+								href: A4A_REPORTS_LINK,
+							},
+							{
+								label: translate( 'Build Report' ),
+							},
+						] }
+					/>
+					<Actions>
+						<MobileSidebarNavigation />
+					</Actions>
+				</LayoutHeader>
+			</LayoutTop>
+			<LayoutBody>
+				<div className="build-report__content">{ renderStepContent() }</div>
+				{ renderActions() }
+			</LayoutBody>
+		</Layout>
 	);
-}
+};
+
+export default BuildReport;

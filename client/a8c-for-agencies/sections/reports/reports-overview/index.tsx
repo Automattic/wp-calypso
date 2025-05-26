@@ -1,10 +1,12 @@
+import page from '@automattic/calypso-router';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo, useCallback, useState } from 'react';
+import { useMemo, useCallback } from 'react';
 import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
 import PageSectionColumns from 'calypso/a8c-for-agencies/components/page-section-columns';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
+import { A4A_REPORTS_BUILD_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import SimpleList from 'calypso/a8c-for-agencies/components/simple-list';
 import whyImage from 'calypso/assets/images/a8c-for-agencies/reports/report-mock-2.png';
 import readyImage from 'calypso/assets/images/a8c-for-agencies/reports/report-mock-3.png';
@@ -16,14 +18,12 @@ import LayoutHeader, {
 } from 'calypso/layout/hosting-dashboard/header';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import BuildReportModal from '../components/build-report-modal';
 
 import './style.scss';
 
 const ReportsOverview = () => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const [ isModalOpen, setModalOpen ] = useState( false );
 
 	const title = translate( 'Client Reports' );
 
@@ -60,12 +60,8 @@ const ReportsOverview = () => {
 
 	const handleBuildReport = useCallback( () => {
 		dispatch( recordTracksEvent( 'calypso_a4a_reports_build_report_button_click' ) );
-		setModalOpen( true );
+		page( A4A_REPORTS_BUILD_LINK );
 	}, [ dispatch ] );
-
-	const closeModal = useCallback( () => {
-		setModalOpen( false );
-	}, [] );
 
 	const buildReportButton = useMemo( () => {
 		return (
@@ -168,8 +164,6 @@ const ReportsOverview = () => {
 						<img src={ readyImage } alt="Reports & Analytics" />
 					</PageSectionColumns.Column>
 				</PageSectionColumns>
-
-				<BuildReportModal isOpen={ isModalOpen } onClose={ closeModal } />
 			</LayoutBody>
 		</Layout>
 	);
