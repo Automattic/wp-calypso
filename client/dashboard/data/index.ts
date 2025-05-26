@@ -417,4 +417,3 @@ export const updateStaticFile404 = async (
 		{ setting }
 	);
 };
-
