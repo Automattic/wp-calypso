@@ -75,7 +75,7 @@ export function createSendTaskRequest(
  * @param message
  */
 export function extractTextFromMessage( message?: Message ): string {
-	if ( ! message ) {
+	if ( ! message || ! message.parts || ! Array.isArray( message.parts ) ) {
 		return '';
 	}
 

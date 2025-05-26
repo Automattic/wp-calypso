@@ -11,8 +11,7 @@ import type {
 import { createRequestId, createSendTaskRequest } from '../utils/index';
 import { parseSSEStream, streamToTask } from '../streaming/index';
 import { formatObject, logger } from '../utils/logger';
-import { SocksProxyAgent } from 'socks-proxy-agent';
-import fetch from 'node-fetch';
+import { socksDispatcher } from 'fetch-socks';
 
 /**
  * Default timeout for requests (30 seconds)
@@ -83,8 +82,8 @@ export function createA2AClient( config: A2AClientConfig ): A2AClient {
 		headers: Record< string, string >,
 		body: string,
 		signal: AbortSignal
-	): any {
-		const options: any = {
+	): RequestInit & { dispatcher?: any } {
+		const options: RequestInit & { dispatcher?: any } = {
 			method: 'POST',
 			headers,
 			body,
@@ -92,10 +91,21 @@ export function createA2AClient( config: A2AClientConfig ): A2AClient {
 		};
 
 		// Add proxy agent if proxy is configured
-		// For node-fetch, we use the agent property
+		// For SOCKS proxy, we use fetch-socks dispatcher
 		if ( proxy ) {
-			const proxyAgent = new SocksProxyAgent( proxy );
-			options.agent = proxyAgent;
+			try {
+				// Parse the SOCKS proxy URL (e.g., "socks://127.0.0.1:8080")
+				const url = new URL( proxy );
+				const dispatcher = socksDispatcher( {
+					type: 5, // SOCKS5
+					host: url.hostname,
+					port: parseInt( url.port, 10 ),
+				} );
+				options.dispatcher = dispatcher;
+			} catch ( error ) {
+				// If proxy setup fails, log warning but continue without proxy
+				logger( 'Warning: Failed to setup proxy %s: %s', proxy, error );
+			}
 		}
 
 		return options;
@@ -122,30 +132,56 @@ export function createA2AClient( config: A2AClientConfig ): A2AClient {
 			const timeoutId = setTimeout( () => controller.abort(), timeout );
 
 			try {
-				const fetchOptions = createFetchOptions(
+				const options = createFetchOptions(
 					headers,
 					JSON.stringify( request ),
 					controller.signal
 				);
-				const response = await fetch( agentUrl, fetchOptions );
+
+				logger( 'Making request to %s with options: %O', agentUrl, {
+					method: options.method,
+					headers: options.headers,
+					hasDispatcher: !! options.dispatcher,
+					proxy,
+				} );
+
+				const response = await fetch( agentUrl, options as any );
 
 				clearTimeout( timeoutId );
 
 				if ( ! response.ok ) {
 					throw new Error(
-						`Agent request failed: ${ response.status } ${ response.statusText }`
+						`HTTP error! status: ${ response.status }`
 					);
 				}
 
-				const result: any = await response.json();
+				const data =
+					( await response.json() ) as JsonRpcResponse< Task >;
 
-				if ( result.error ) {
-					throw new Error( `Agent error: ${ result.error.message }` );
+				// Log the response
+				logger(
+					'Response from %s: %d %O',
+					agentUrl,
+					response.status,
+					formatObject( data )
+				);
+
+				if ( data.error ) {
+					throw new Error( `A2A error: ${ data.error.message }` );
 				}
 
-				return result.result;
+				if ( ! data.result ) {
+					throw new Error( 'No result in response' );
+				}
+
+				return data.result;
 			} catch ( error ) {
 				clearTimeout( timeoutId );
+				logger( 'Request failed with error: %O', error );
+				if ( error instanceof Error ) {
+					logger( 'Error message: %s', error.message );
+					logger( 'Error stack: %s', error.stack );
+				}
 				throw error;
 			}
 		},
@@ -177,31 +213,32 @@ export function createA2AClient( config: A2AClientConfig ): A2AClient {
 			logRequest( 'POST', agentUrl, streamHeaders, request, proxy );
 
 			const controller = new AbortController();
-			const timeoutId = setTimeout( () => controller.abort(), timeout );
+			const timeoutId = setTimeout( () => controller.abort(), 60000 );
 
 			try {
-				const fetchOptions = createFetchOptions(
+				const options = createFetchOptions(
 					streamHeaders,
 					JSON.stringify( request ),
 					controller.signal
 				);
-				const response = await fetch( agentUrl, fetchOptions );
+				const response = await fetch( agentUrl, options as any );
 
 				clearTimeout( timeoutId );
 
 				if ( ! response.ok ) {
 					throw new Error(
-						`Agent streaming request failed: ${ response.status } ${ response.statusText }`
+						`HTTP error! status: ${ response.status }`
 					);
 				}
 
 				if ( ! response.body ) {
-					throw new Error( 'No response body for streaming request' );
+					throw new Error( 'No response body for streaming' );
 				}
 
-				// Parse the SSE stream - convert node-fetch ReadableStream to web ReadableStream
-				const webStream = response.body as any;
-				yield* parseSSEStream( webStream );
+				// Parse the SSE stream and yield task updates
+				yield* parseSSEStream(
+					response.body as ReadableStream< Uint8Array >
+				);
 			} catch ( error ) {
 				clearTimeout( timeoutId );
 				throw error;

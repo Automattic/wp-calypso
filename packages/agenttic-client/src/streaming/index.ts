@@ -101,18 +101,20 @@ export async function* parseSSEStream(
 			const chunk = decoder.decode( value, { stream: true } );
 			const { events, nextBuffer } = parseStreamChunk( chunk, buffer );
 
-			for ( const event of events ) {
-				if ( event.result && event.result.status ) {
-					const update: TaskUpdate = {
-						id: event.result.id,
-						status: event.result.status,
-						final:
-							event.result.status.state === 'completed' ||
-							event.result.status.state === 'failed' ||
-							event.result.status.state === 'canceled',
-					};
+			if ( events && Array.isArray( events ) ) {
+				for ( const event of events ) {
+					if ( event.result && event.result.status ) {
+						const update: TaskUpdate = {
+							id: event.result.id,
+							status: event.result.status,
+							final:
+								event.result.status.state === 'completed' ||
+								event.result.status.state === 'failed' ||
+								event.result.status.state === 'canceled',
+						};
 
-					yield update;
+						yield update;
+					}
 				}
 			}
 
