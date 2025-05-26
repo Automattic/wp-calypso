@@ -13,7 +13,7 @@ import { download, reusableBlock, Icon } from '@wordpress/icons';
 import devSiteBanner from 'calypso/assets/images/a8c-for-agencies/dev-site-banner.svg';
 import Column from './column';
 import MenuItem from './menu-item';
-import type { AddNewSiteProps } from '../../../components/sites-add-new-site/types';
+import type { AddNewSiteProps } from './types';
 import './style.scss';
 
 const wordpressClick = () => {
