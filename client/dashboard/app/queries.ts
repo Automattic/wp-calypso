@@ -4,6 +4,7 @@ import {
 	fetchSiteMediaStorage,
 	fetchSiteMonitorUptime,
 	fetchPHPVersion,
+	updatePHPVersion,
 	fetchCurrentPlan,
 	fetchSiteEngagementStats,
 	fetchDomains,
@@ -17,6 +18,8 @@ import {
 	restoreSitePlanSoftware,
 	fetchWordPressVersion,
 	updateWordPressVersion,
+	fetchStaticFile404,
+	updateStaticFile404,
 } from '../data';
 import { SITE_FIELDS, SITE_OPTIONS } from '../data/constants';
 import { queryClient } from './query-client';
@@ -69,6 +72,15 @@ export function sitePHPVersionQuery( siteIdOrSlug: string ) {
 	return {
 		queryKey: [ 'site', siteIdOrSlug, 'php-version' ],
 		queryFn: () => fetchPHPVersion( siteIdOrSlug ),
+	};
+}
+
+export function sitePHPVersionMutation( siteSlug: string ) {
+	return {
+		mutationFn: ( version: string ) => updatePHPVersion( siteSlug, version ),
+		onSuccess: () => {
+			queryClient.invalidateQueries( { queryKey: [ 'site', siteSlug, 'php-version' ] } );
+		},
 	};
 }
 
@@ -170,6 +182,24 @@ export function performanceInsightsQuery( url: string, token: string ) {
 				return false;
 			}
 			return 5000;
+		},
+	};
+}
+
+export function siteStaticFile404Query( siteId: string ) {
+	return {
+		queryKey: [ 'site', siteId, 'static-file-404' ],
+		queryFn: () => {
+			return fetchStaticFile404( siteId );
+		},
+	};
+}
+
+export function siteStaticFile404Mutation( siteId: string ) {
+	return {
+		mutationFn: ( setting: string ) => updateStaticFile404( siteId, setting ),
+		onSuccess: () => {
+			queryClient.invalidateQueries( { queryKey: [ 'site', siteId, 'static-file-404' ] } );
 		},
 	};
 }

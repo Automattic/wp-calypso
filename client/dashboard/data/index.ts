@@ -80,12 +80,23 @@ export const fetchSiteMonitorUptime = async (
 };
 
 export const fetchPHPVersion = async ( id: string ): Promise< string | undefined > => {
-	// TODO: check request in different contexts.. Also do we show this only for atomic sites?
-	// TODO: find out what check is needed before this request to avoid 403 errors.
 	return wpcom.req.get( {
 		path: `/sites/${ id }/hosting/php-version`,
 		apiNamespace: 'wpcom/v2',
 	} );
+};
+
+export const updatePHPVersion = async (
+	siteIdOrSlug: string,
+	version: string
+): Promise< void > => {
+	return wpcom.req.post(
+		{
+			path: `/sites/${ siteIdOrSlug }/hosting/php-version`,
+			apiNamespace: 'wpcom/v2',
+		},
+		{ version }
+	);
 };
 
 export const fetchWordPressVersion = async ( siteIdOrSlug: string ): Promise< string > => {
@@ -378,4 +389,31 @@ export const fetchPhpMyAdminToken = async ( siteIdOrSlug: string ): Promise< Php
 		path: `/sites/${ siteIdOrSlug }/hosting/pma/token`,
 		apiNamespace: 'wpcom/v2',
 	} );
+};
+
+export const resetPhpMyAdminPassword = async ( siteIdOrSlug: string ): Promise< void > => {
+	return wpcom.req.post( {
+		path: `/sites/${ siteIdOrSlug }/hosting/restore-database-password`,
+		apiNamespace: 'wpcom/v2',
+	} );
+};
+
+export const fetchStaticFile404 = async ( siteIdOrSlug: string ): Promise< string > => {
+	return wpcom.req.get( {
+		path: `/sites/${ siteIdOrSlug }/hosting/static-file-404`,
+		apiNamespace: 'wpcom/v2',
+	} );
+};
+
+export const updateStaticFile404 = async (
+	siteIdOrSlug: string,
+	setting: string
+): Promise< void > => {
+	return wpcom.req.post(
+		{
+			path: `/sites/${ siteIdOrSlug }/hosting/static-file-404`,
+			apiNamespace: 'wpcom/v2',
+		},
+		{ setting }
+	);
 };

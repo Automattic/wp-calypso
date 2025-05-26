@@ -26,6 +26,7 @@
 		"@docusaurus/core": "^3.7.0",
 		"@docusaurus/preset-classic": "^3.7.0",
 		"@mdx-js/react": "^3.1.0",
+		"@wordpress/components": "^29.9.0",
 		"prism-react-renderer": "^2.3.0",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1"
@@ -35,8 +36,14 @@
 		"@docusaurus/tsconfig": "^3.7.0",
 		"@docusaurus/types": "^3.7.0",
 		"@types/react": "^18.3.21",
+		"@wordpress/base-styles": "^5.23.0",
 		"@wordpress/browserslist-config": "^6.23.0",
+		"docusaurus-plugin-sass": "^0.2.6",
+		"sass": "^1.54.0",
 		"typescript": "^5.8.3"
+	},
+	"optionalDependencies": {
+		"sass-embedded": "^1.89.0"
 	},
 	"browserslist": [
 		"extends @wordpress/browserslist-config"

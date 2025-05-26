@@ -146,13 +146,7 @@ export const ControlledWithInputField: Story = {
 					selected={ selected }
 					onSelect={ ( selectedDate, ...rest ) => {
 						setSelected( selectedDate ?? null );
-						// TS is strict about `onSelect` expecting a non-undefined date
-						// when the selection is required.
-						if ( ! args.required ) {
-							args.onSelect?.( selectedDate, ...rest );
-						} else if ( selectedDate ) {
-							args.onSelect?.( selectedDate, ...rest );
-						}
+						args.onSelect?.( selectedDate, ...rest );
 					} }
 				/>
 			</div>
@@ -229,13 +223,7 @@ export const WithTimeZone: Story = {
 					selected={ selected }
 					onSelect={ ( selectedDate, ...rest ) => {
 						setSelected( selectedDate ? new TZDate( selectedDate, args.timeZone ) : null );
-						// TS is strict about `onSelect` expecting a non-undefined date
-						// when the selection is required.
-						if ( ! args.required ) {
-							args.onSelect?.( selectedDate, ...rest );
-						} else if ( selectedDate ) {
-							args.onSelect?.( selectedDate, ...rest );
-						}
+						args.onSelect?.( selectedDate, ...rest );
 					} }
 					disabled={ [
 						{
@@ -360,13 +348,7 @@ export const WithPresets: Story = {
 					selected={ selected }
 					onSelect={ ( selectedDate, ...rest ) => {
 						setSelected( selectedDate ?? null );
-						// TS is strict about `onSelect` expecting a non-undefined date
-						// when the selection is required.
-						if ( ! args.required ) {
-							args.onSelect?.( selectedDate, ...rest );
-						} else if ( selectedDate ) {
-							args.onSelect?.( selectedDate, ...rest );
-						}
+						args.onSelect?.( selectedDate, ...rest );
 					} }
 					month={ month }
 					onMonthChange={ setMonth }

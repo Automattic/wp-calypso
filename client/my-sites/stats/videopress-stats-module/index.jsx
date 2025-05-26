@@ -18,11 +18,11 @@ import {
 	getVideoPressPlaysComplete,
 } from 'calypso/state/stats/lists/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import EmptyModuleCardVideo from '../features/modules/shared/stats-empty-module-video';
 import DatePicker from '../stats-date-picker';
 import DownloadCsv from '../stats-download-csv';
 import ErrorPanel from '../stats-error';
 import StatsModulePlaceholder from '../stats-module/placeholder';
-
 import '../stats-module/style.scss';
 import './style.scss';
 
@@ -298,7 +298,11 @@ class VideoPressStatsModule extends Component {
 							</div>
 						) ) }
 					</div>
-					{ noData && <ErrorPanel message={ moduleStrings.empty } /> }
+					{ noData && (
+						<div className="videopress-stats-module__empty-module">
+							<EmptyModuleCardVideo />
+						</div>
+					) }
 					{ hasError && <ErrorPanel /> }
 					<StatsModulePlaceholder isLoading={ isLoading } />
 				</Card>

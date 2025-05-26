@@ -4,7 +4,7 @@ import { COMMON_PROPS } from './utils/constants';
 import { clampNumberOfMonths } from './utils/misc';
 import { useControlledValue } from './utils/use-controlled-value';
 import { useLocalizationProps } from './utils/use-localization-props';
-import type { DateCalendarProps, OnSelectHandler } from './types';
+import type { DateCalendarProps } from './types';
 import './styles.scss';
 
 export const DateCalendar = ( {
@@ -25,7 +25,7 @@ export const DateCalendar = ( {
 	const [ selected, setSelected ] = useControlledValue< Date | undefined >( {
 		defaultValue: defaultSelected,
 		value: selectedProp,
-		onChange: onSelect as OnSelectHandler< Date | undefined >,
+		onChange: onSelect,
 	} );
 
 	return (
