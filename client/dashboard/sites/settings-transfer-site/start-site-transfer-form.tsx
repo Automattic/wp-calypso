@@ -89,13 +89,9 @@ export function StartSiteTransferForm( {
 				</Text>
 			</VStack>
 			<VStack spacing={ 5 } style={ { padding: '8px 0' } }>
-				<Notice
-					variant="warning"
-					density="medium"
-					content={ __(
-						'Please read the following carefully. Transferring a site cannot be undone.'
-					) }
-				/>
+				<Notice variant="warning" density="medium">
+					{ __( 'Please read the following carefully. Transferring a site cannot be undone.' ) }
+				</Notice>
 				<VStack spacing={ 6 } style={ { padding: '8px 0' } }>
 					<List title={ __( 'Content and ownership' ) }>
 						<li>

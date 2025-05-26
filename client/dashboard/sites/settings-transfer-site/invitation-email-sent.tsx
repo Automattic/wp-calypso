@@ -38,9 +38,8 @@ export function InvitationEmailSent( {
 
 	if ( hasError ) {
 		return (
-			<Notice
-				variant="error"
-				content={ createInterpolateElement(
+			<Notice variant="error">
+				{ createInterpolateElement(
 					__( 'There was an error confirming the site transfer. Please <supportLink /> for help.' ),
 					{
 						supportLink: (
@@ -48,7 +47,7 @@ export function InvitationEmailSent( {
 						),
 					}
 				) }
-			/>
+			</Notice>
 		);
 	}
 
@@ -67,9 +66,10 @@ export function InvitationEmailSent( {
 					strong: <strong />,
 				}
 			) }
-			content={ __(
+		>
+			{ __(
 				'They will need to visit the link included in the email invitation for the site transfer to complete. The invitation will expire in 7 days.'
 			) }
-		/>
+		</Notice>
 	);
 }
