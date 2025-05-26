@@ -3,9 +3,7 @@
 .client-dashboard-components-section-header {
 	position: relative;
 	z-index: 1;
-}
 
-.client-dashboard-components-section-header {
 	&.is-level-1 {
 		.client-dashboard-components-section-header__heading {
 			font-size: $font-size-2x-large;
