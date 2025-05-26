@@ -4,3 +4,26 @@
 		--wp-admin-theme-color: var(--color-gray);
 	}
 }
+
+.woo.is-woo-passwordless {
+	input[type='text'],
+	input[type='password'] {
+		&.form-text-input-core-styles {
+			/* stylelint-disable-next-line scales/radii */
+			border-radius: 8px;
+			font-size: 1rem;
+			height: 48px;
+			padding: 8px 16px;
+
+			&:not(:focus, :disabled) {
+				border-color: var(--studio-gray-30);
+			}
+
+			&:focus {
+				--wp-admin-theme-color: var(--woo-purple-50);
+
+				border-width: 1.5px;
+			}
+		}
+	}
+}
