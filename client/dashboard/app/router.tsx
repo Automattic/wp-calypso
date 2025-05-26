@@ -396,11 +396,8 @@ const createRouteTree = ( config: AppConfig ) => {
 				siteSettingsSubscriptionGiftingRoute,
 				siteSettingsDatabaseRoute,
 				siteSettingsWordPressRoute,
-<<<<<<< HEAD
 				siteSettingsPHPRoute,
-=======
 				siteSettingsStaticFile404Route,
->>>>>>> 313bc547e75 (Implement Handling requests for nonexistent assets screen)
 				siteSettingsTransferSiteRoute,
 			] )
 		);
