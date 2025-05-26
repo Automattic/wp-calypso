@@ -4,10 +4,10 @@
 import { config } from 'dotenv';
 config();
 
-import { createA2AClient } from '../client/index.js';
-import { createTextMessage, extractTextFromMessage } from '../utils/index.js';
-import { createEnvAuthProvider } from './auth.js';
-import type { CLIOptions, InteractiveSession } from './types.js';
+import { createA2AClient } from '../client/index';
+import { createTextMessage, extractTextFromMessage } from '../utils/index';
+import { createEnvAuthProvider } from './auth';
+import type { CLIOptions, InteractiveSession } from './types';
 import { createRequire } from 'module';
 
 // Create require for CommonJS modules in ESM

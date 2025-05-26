@@ -1,11 +1,11 @@
 /**
- * @automattic/agenttic-client
+ * @file agenttic-client
  *
  * A TypeScript client library for A2A (Agent2Agent) protocol communication
  */
 
 // Core client exports
-export { createA2AClient, sendMessageAndWait } from './client/index.js';
+export { createA2AClient, sendMessageAndWait } from './client/index';
 
 // Type exports
 export type {
@@ -38,7 +38,7 @@ export type {
 	A2AClientConfig,
 	SendMessageParams,
 	TaskUpdate,
-} from './types/index.js';
+} from './types/index';
 
 // Utility exports
 export {
@@ -48,24 +48,24 @@ export {
 	createTextMessage,
 	createSendTaskRequest,
 	extractTextFromMessage,
-} from './utils/index.js';
+} from './utils/index';
 
 // Streaming exports
 export {
 	parseStreamChunk,
 	parseSSEStream,
 	streamToTask,
-} from './streaming/index.js';
+} from './streaming/index';
 
 // Auth provider exports
-export { createEnvAuthProvider } from './cli/auth.js';
+export { createEnvAuthProvider } from './cli/auth';
 
 // Constants
-export { A2AErrorCodes } from './types/index.js';
+export { A2AErrorCodes } from './types/index';
 
 // CLI types (for programmatic usage)
 export type {
 	CLIOptions,
 	CLIAuthOptions,
 	InteractiveSession,
-} from './cli/types.js';
+} from './cli/types';

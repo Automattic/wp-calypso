@@ -6,7 +6,7 @@ import {
 	createTaskId,
 	extractTextFromMessage,
 	A2AErrorCodes,
-} from './index.js';
+} from './index';
 
 describe('@automattic/agenttic-client', () => {
 	describe('Utility functions', () => {

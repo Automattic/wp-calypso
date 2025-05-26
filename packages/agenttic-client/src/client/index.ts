@@ -7,9 +7,9 @@ import type {
 	TaskUpdate,
 	SendTaskRequest,
 	JsonRpcResponse,
-} from '../types/index.js';
-import { createRequestId, createSendTaskRequest } from '../utils/index.js';
-import { parseSSEStream, streamToTask } from '../streaming/index.js';
+} from '../types/index';
+import { createRequestId, createSendTaskRequest } from '../utils/index';
+import { parseSSEStream, streamToTask } from '../streaming/index';
 import { SocksProxyAgent } from 'socks-proxy-agent';
 import fetch from 'node-fetch';
 

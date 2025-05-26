@@ -58,6 +58,7 @@
 		"@wordpress/eslint-plugin": "^17.0.0",
 		"@wordpress/scripts": "^27.9.0",
 		"eslint": "^8.0.0",
+		"eslint-import-resolver-typescript": "^3.6.0",
 		"tsup": "^8.0.0",
 		"typescript": "^5.0.0",
 		"vitest": "^1.0.0"
