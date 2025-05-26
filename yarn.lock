@@ -14533,7 +14533,7 @@ __metadata:
     uplot: "npm:^1.6.32"
     uplot-react: "npm:^1.1.4"
     use-debounce: "npm:^3.1.0"
-    util: "npm:^0.12.3"
+    util: "npm:^0.12.5"
     utility-types: "npm:^3.10.0"
     valid-url: "npm:^1.0.9"
     webpack: "npm:^5.97.1"
@@ -35799,7 +35799,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"util@npm:^0.12.3, util@npm:^0.12.4, util@npm:^0.12.5":
+"util@npm:^0.12.4, util@npm:^0.12.5":
   version: 0.12.5
   resolution: "util@npm:0.12.5"
   dependencies:

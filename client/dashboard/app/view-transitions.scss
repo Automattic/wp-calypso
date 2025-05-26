@@ -71,3 +71,12 @@ main div.dashboard-header-bar {
 	display: flex;
 	justify-content: center;
 }
+
+@media (prefers-reduced-motion: reduce) {
+	::view-transition-group(*),
+	::view-transition-old(*),
+	::view-transition-new(*) {
+		animation: none;
+		transition: none;
+	}
+}
