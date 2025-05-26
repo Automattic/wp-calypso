@@ -43,11 +43,14 @@ export default function MigrationsAddSitesTable( {
 		return items
 			.filter( ( item ) => ! taggedSitesIds.includes( item.id ) )
 			.filter( ( item ) => item.rawSite.a4a_is_dev_site === true )
-			.filter(
-				( item ) =>
-					! item.site.includes( 'mystagingwebsite.com' ) &&
-					! item.site.includes( 'wpcomstaging.com' )
-			);
+			.filter( ( item ) => {
+				try {
+					const url = new URL( item.site );
+					return ! [ 'mystagingwebsite.com', 'wpcomstaging.com' ].includes( url.host );
+				} catch {
+					return false;
+				}
+			} );
 	}, [ items, taggedSitesIds ] );
 
 	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( {
