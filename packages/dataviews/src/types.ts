@@ -596,6 +596,7 @@ export type Form = {
 	type?: 'regular' | 'panel';
 	fields?: Array< FormField | string >;
 	labelPosition?: 'side' | 'top' | 'none';
+	spacing?: number;
 };
 
 export interface DataFormProps< Item > {

@@ -18,6 +18,7 @@
 - Add `className` prop to the `DataViews.Layout` component to allow customizing the layout styles.
 - Clean up --wp-components-color-* variables.
 - Add `checkbox` type to the fields of the form.
+- Add `spacing` to allow user to control the spacing of each field.
 
 ## 0.1.1
 
