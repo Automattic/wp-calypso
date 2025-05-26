@@ -6,10 +6,6 @@
 
 	.banner__action {
 		display: flex;
-
-		& .is-primary {
-			margin-left: 8px;
-		}
 	}
 
 	@media (max-width: $break-xlarge) {
