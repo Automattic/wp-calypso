@@ -1,14 +1,17 @@
 .dashboard-summary-button-list {
 	&.has-density-medium {
 		.dashboard-summary-button-list__children-container {
-			> *:first-child {
-				/* stylelint-disable-next-line scales/radii */
-				border-radius: 7px 7px 0 0;
-			}
-
 			> *:last-child {
 				/* stylelint-disable-next-line scales/radii */
 				border-radius: 0 0 7px 7px;
+			}
+
+			// Apply top border radius only if there's no header before children container.
+			&:first-child {
+				> *:first-child {
+					/* stylelint-disable-next-line scales/radii */
+					border-radius: 7px 7px 0 0;
+				}
 			}
 		}
 	}
