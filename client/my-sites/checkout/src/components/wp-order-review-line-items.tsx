@@ -152,11 +152,9 @@ export function WPOrderReviewLineItems( {
 		}
 	}, [ cartProductsOrder.size, responseCart.products, setCartProductsOrder ] );
 
-	// Keep track of modified products
+	// Keep track of modified products (e.g. changing the duration of a plan)
 	useEffect( () => {
 		setCartProductsOrder( ( prevCartProductsOrder ) => {
-			// console.debug( 'responseCart.products', responseCart.products );
-			// console.debug( 'prevCartProductsOrder', prevCartProductsOrder );
 			const newOrder = new Map( prevCartProductsOrder );
 
 			const uuids = responseCart.products.map( ( product ) => product.uuid );
@@ -164,7 +162,6 @@ export function WPOrderReviewLineItems( {
 			const hasNewUuid = uuids.some( ( uuid ) => ! prevCartProductsOrderUuids.includes( uuid ) );
 
 			if ( hasNewUuid ) {
-				// // console.debug( 'product modified' );
 				const obsoleteUuid = prevCartProductsOrderUuids.find(
 					( uuid ) => ! uuids.includes( uuid )
 				);
@@ -180,8 +177,6 @@ export function WPOrderReviewLineItems( {
 				}
 			}
 
-			// console.debug( 'newOrder', newOrder );
-
 			return newOrder;
 		} );
 	}, [ responseCart.products, setCartProductsOrder ] );
@@ -189,8 +184,6 @@ export function WPOrderReviewLineItems( {
 	// Keep track of removed/restored products
 	useEffect( () => {
 		setCartProductsOrder( ( prevCartProductsOrder ) => {
-			// console.debug( 'restorableProducts', restorableProducts );
-			// console.debug( 'prevCartProductsOrder', prevCartProductsOrder );
 			const newOrder = new Map( prevCartProductsOrder );
 
 			newOrder.forEach( ( info, uuid ) => {
@@ -199,126 +192,9 @@ export function WPOrderReviewLineItems( {
 				newOrder.set( uuid, { ...info, removed: isRemoved } );
 			} );
 
-			// console.debug( 'newOrder after restorable update', newOrder );
-
 			return newOrder;
 		} );
 	}, [ restorableProducts, setCartProductsOrder ] );
-
-	// useEffect( () => {
-	// 	setCartProductsOrder( ( prevCartProductsOrder ) => {
-	// // 		console.debug( 'responseCart.products', responseCart.products );
-	// // 		console.debug( 'prevCartProductsOrder', prevCartProductsOrder );
-	// 		const newOrder = new Map( prevCartProductsOrder );
-
-	// 		const productOrderNeedsInitialization = ! prevCartProductsOrder.size;
-
-	// 		if ( productOrderNeedsInitialization ) {
-	// // 			console.debug( 'initialization' );
-	// 			responseCart.products.forEach( ( product, position ) => {
-	// 				newOrder.set( product.uuid, { position, removed: false } );
-	// 			} );
-	// // 			console.debug( 'newOrder', newOrder );
-	// 			return newOrder;
-	// 		}
-
-	// 		const prevOrderActiveProducts = Array.from( prevCartProductsOrder.entries() ).filter(
-	// 			( [ , { removed } ] ) => removed === false
-	// 		);
-	// 		const prevOrderActiveCount = prevOrderActiveProducts.length;
-	// 		const prevActiveOrderUuids = prevOrderActiveProducts.map( ( [ uuid ] ) => uuid );
-
-	// 		// Products have been removed from the cart, we need to keep track of them
-	// 		if ( responseCart.products.length < prevOrderActiveCount ) {
-	// // 			console.debug( 'less products than order' );
-	// 			const newRemovedProducts = Array.from( prevCartProductsOrder.entries() )
-	// 				.filter( ( [ , { removed } ] ) => removed === false )
-	// 				.filter(
-	// 					( [ productUuid ] ) =>
-	// 						! responseCart.products.some( ( { uuid } ) => uuid === productUuid )
-	// 				);
-
-	// 			newRemovedProducts.forEach( ( [ removedUuid ] ) => {
-	// 				const info = newOrder.get( removedUuid );
-	// 				if ( info ) {
-	// 					newOrder.set( removedUuid, { ...info, removed: true } );
-	// 				}
-	// 			} );
-	// 		}
-
-	// 		// No products have been added or removed from the cart, reset `removed` status
-	// 		if ( responseCart.products.length === prevCartProductsOrder.size ) {
-	// // 			console.debug( 'same products tan order' );
-	// 			const oldRemovedProducts = Array.from( prevCartProductsOrder.entries() ).filter(
-	// 				( [ , { removed } ] ) => removed === true
-	// 			);
-
-	// 			oldRemovedProducts.forEach( ( [ uuid ] ) => {
-	// 				const info = newOrder.get( uuid );
-	// 				if ( info ) {
-	// 					newOrder.set( uuid, { ...info, removed: false } );
-	// 				}
-	// 			} );
-	// 		}
-
-	// 		const uuids = responseCart.products.map( ( product ) => product.uuid );
-	// 		// Check if any uuid in the uuids array is not contained in the prevCartProductsOrder keys
-	// 		const hasNewUuid = uuids.some( ( uuid ) => ! prevActiveOrderUuids.includes( uuid ) );
-
-	// 		// const prevOrderActiveCount = Array.from( prevCartProductsOrder.values() ).filter(
-	// 		// 	( v ) =>  v.removed === false
-	// 		// ).length;
-	// 		// const hasProductBeenModified = hasNewUuid;
-	// 		// &&				responseCart.products.length === ( prevCartProductsOrder.size || prevOrderActiveCount );
-	// // 		// console.debug( 'responseCart.products', responseCart.products );
-	// // 		// console.debug( 'prevCartProductsOrder', prevCartProductsOrder );
-	// // 		// console.debug( 'prevOrderActiveCount', prevOrderActiveCount );
-	// // 		// console.debug( 'hasProductBeenModified', hasProductBeenModified );
-	// 		if ( hasNewUuid ) {
-	// // 			console.debug( 'product modified' );
-	// 			const obsoleteUuid = prevActiveOrderUuids.find( ( uuid ) => ! uuids.includes( uuid ) );
-	// 			const freshUuid = uuids.find( ( uuid ) => ! prevActiveOrderUuids.includes( uuid ) );
-	// // 			console.debug( 'obsoleteUuid', obsoleteUuid );
-	// // 			console.debug( 'freshUuid', freshUuid );
-	// 			if ( obsoleteUuid && freshUuid ) {
-	// 				const info = newOrder.get( obsoleteUuid );
-	// // 				console.debug( 'info', info );
-	// 				newOrder.delete( obsoleteUuid );
-	// 				newOrder.set( freshUuid, info );
-	// 			}
-	// 		}
-	// // 		console.debug( 'newOrder', newOrder );
-	// 		return newOrder;
-
-	// 		// // puc mirar restorableProducts per veure quins estan fora?
-	// 		// // no, s'actualitza més tard q products :/
-	// // 		// // console.debug( 'restorableProducts', restorableProducts );
-
-	// 		// /**
-	// 		//  * la lògica és la següent:
-	// 		//  * 1. si el cart no té productes, inicialitzo l'ordre amb els productes que hi ha a responseCart.products
-	// 		//  * 2. si la longitud de responseCart.products és igual que la de prevCartProductsOrder, tot bé
-	// 		//  * 3. si la longitud de responseCart.products és menor que la de prevCartProductsOrder, vol dir que he eliminat un producte;
-	// 		//  * per tant, en el map d'ordre he d'identificar el producte eliminat (serà el que no estigui a responseCart.products), i marcar-lo com a tal
-	// 		//  * en el map d'ordre, respectant la posició dels productes restants
-	// 		//  * 3. considerar la possibilitat que s'afegeixin des d'una altra pestanya :o
-	// 		//  */
-
-	// 		// // An update can be either a new product added to the cart or an existing product
-	// 		// // that has been updated (e.g. changing the duration of a plan).
-	// 		// // Removing a product from the cart will not trigger this effect, since the
-	// 		// // removed product will then be shown in the restorable products list.
-	// 		// const cartHasBeenUpdated = prevCartProductsOrder.length <= responseCart.products.length;
-	// // 		// console.debug( 'cartHasBeenUpdated', cartHasBeenUpdated );
-	// 		// if ( productOrderNeedsInitialization || cartHasBeenUpdated ) {
-	// 		// 	const newOrder = responseCart.products.map( ( { uuid } ) => uuid );
-	// // 		// 	console.debug( 'newOrder', newOrder );
-	// 		// 	return newOrder;
-	// 		// }
-	// // 		// console.debug( 'prevCartProductsOrder', prevCartProductsOrder );
-	// 		// return prevCartProductsOrder;
-	// 	} );
-	// }, [ responseCart.products, setCartProductsOrder ] );
 
 	const hasWPCOMPlanInCart = responseCart.products.some( ( product ) =>
 		isWpComPlan( product.product_slug )
