@@ -1,5 +1,8 @@
 import './style.scss';
 
-export function getIsBlurredProps( { enabled = true }: { enabled?: boolean } = {} ) {
-	return enabled ? { className: 'is-blurred', inert: 'true' } : {};
-}
+export const IS_BLURRED_PROPS = {
+	className: 'is-blurred',
+	// Even for non-interactive elements we want this because it's equivalent to
+	// `aria-hidden="true"`.
+	inert: true,
+};
