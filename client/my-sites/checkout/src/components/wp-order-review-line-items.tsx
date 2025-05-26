@@ -158,14 +158,20 @@ export function WPOrderReviewLineItems( {
 			const newOrder = new Map( prevCartProductsOrder );
 
 			const uuids = responseCart.products.map( ( product ) => product.uuid );
-			const prevCartProductsOrderUuids = Array.from( prevCartProductsOrder.keys() );
-			const hasNewUuid = uuids.some( ( uuid ) => ! prevCartProductsOrderUuids.includes( uuid ) );
+			const prevCartProductsOrderActiveUuids = Array.from( prevCartProductsOrder.entries() )
+				.filter( ( [ , { removed } ] ) => ! removed )
+				.map( ( [ uuid ] ) => uuid );
+			const hasNewUuid = uuids.some(
+				( uuid ) => ! prevCartProductsOrderActiveUuids.includes( uuid )
+			);
 
 			if ( hasNewUuid ) {
-				const obsoleteUuid = prevCartProductsOrderUuids.find(
+				const obsoleteUuid = prevCartProductsOrderActiveUuids.find(
 					( uuid ) => ! uuids.includes( uuid )
 				);
-				const freshUuid = uuids.find( ( uuid ) => ! prevCartProductsOrderUuids.includes( uuid ) );
+				const freshUuid = uuids.find(
+					( uuid ) => ! prevCartProductsOrderActiveUuids.includes( uuid )
+				);
 
 				if ( obsoleteUuid && freshUuid ) {
 					const info = newOrder.get( obsoleteUuid );
@@ -191,7 +197,6 @@ export function WPOrderReviewLineItems( {
 
 				newOrder.set( uuid, { ...info, removed: isRemoved } );
 			} );
-
 			return newOrder;
 		} );
 	}, [ restorableProducts, setCartProductsOrder ] );
