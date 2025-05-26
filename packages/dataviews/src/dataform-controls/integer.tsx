@@ -49,7 +49,7 @@ function BetweenControls< Item >( {
 			__nextHasNoMarginBottom
 			help={ __( 'The max. value must be greater than the min. value.' ) }
 		>
-			<Flex direction="row">
+			<Flex direction="row" gap={ 4 }>
 				<NumberControl
 					label={ __( 'Min.' ) }
 					value={ min }
