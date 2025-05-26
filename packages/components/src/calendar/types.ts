@@ -139,8 +139,8 @@ type DayOfWeek = {
  *     modifiers,
  *     e
  *   ) => {
- *     console.log("Selected:", selected);
- *     console.log("Triggered by:", triggerDate);
+ *     console.log( "Selected:", selected );
+ *     console.log( "Triggered by:", triggerDate );
  *   };
  * @template T - The type of the selected item.
  * @callback OnSelectHandler
