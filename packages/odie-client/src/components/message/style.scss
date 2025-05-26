@@ -294,6 +294,13 @@ $blueberry-color: #3858e9;
 			height: auto;
 		}
 	}
+
+	blockquote {
+		background-color: transparent;
+		border-left: 2px solid var(--color-neutral-0);
+		margin: 8px 0 16px;
+		padding: 8px 16px;
+	}
 }
 
 .odie-chatbox-message.odie-chatbox-message-business {
