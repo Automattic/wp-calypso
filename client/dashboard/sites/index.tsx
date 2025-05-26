@@ -218,7 +218,7 @@ export default function Sites() {
 										{ __( 'Add New Site' ) }
 									</Button>
 								) }
-								renderContent={ () => <AddNewSite /> }
+								renderContent={ () => <AddNewSite context="sites-dashboard" /> }
 							/>
 						}
 					/>
