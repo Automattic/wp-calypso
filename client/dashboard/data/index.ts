@@ -1,4 +1,5 @@
 import wpcom from 'calypso/lib/wp';
+import { SITE_FIELDS, SITE_OPTIONS } from './constants';
 import type {
 	Domain,
 	Email,
@@ -10,10 +11,10 @@ import type {
 	Profile,
 	TwoStep,
 	EngagementStatsDataPoint,
-	SiteDomain,
 	BasicMetricsData,
 	SiteSettings,
 	UrlPerformanceInsights,
+	PhpMyAdminToken,
 } from './types';
 
 export const fetchProfile = async (): Promise< Profile > => {
@@ -30,25 +31,8 @@ export const updateProfile = async ( data: Partial< Profile > ) => {
 	return await wpcom.req.post( '/me/settings', data );
 };
 
-const SITE_FIELDS = [
-	'ID',
-	'slug',
-	'URL',
-	'name',
-	'icon',
-	'subscribers_count',
-	'plan',
-	'active_modules',
-	'is_a8c',
-	'is_deleted',
-	'is_coming_soon',
-	'is_private',
-	'launch_status',
-	'site_migration',
-	'options',
-	'jetpack',
-	'jetpack_modules',
-].join( ',' );
+const JOINED_SITE_FIELDS = SITE_FIELDS.join( ',' );
+const JOINED_SITE_OPTIONS = SITE_OPTIONS.join( ',' );
 
 export const fetchSites = async (): Promise< Site[] > => {
 	const { sites } = await wpcom.req.get(
@@ -60,14 +44,18 @@ export const fetchSites = async (): Promise< Site[] > => {
 			site_visibility: 'all',
 			include_domain_only: 'true',
 			site_activity: 'active',
-			fields: SITE_FIELDS,
+			fields: JOINED_SITE_FIELDS,
+			options: JOINED_SITE_OPTIONS,
 		}
 	);
 	return sites;
 };
 
 export const fetchSite = async ( siteIdOrSlug: string ): Promise< Site > => {
-	return await wpcom.req.get( { path: `/sites/${ siteIdOrSlug }` }, { fields: SITE_FIELDS } );
+	return await wpcom.req.get(
+		{ path: `/sites/${ siteIdOrSlug }` },
+		{ fields: JOINED_SITE_FIELDS, options: JOINED_SITE_OPTIONS }
+	);
 };
 
 export const fetchSiteMediaStorage = async ( siteIdOrSlug: string ): Promise< MediaStorage > => {
@@ -92,12 +80,43 @@ export const fetchSiteMonitorUptime = async (
 };
 
 export const fetchPHPVersion = async ( id: string ): Promise< string | undefined > => {
-	// TODO: check request in different contexts.. Also do we show this only for atomic sites?
-	// TODO: find out what check is needed before this request to avoid 403 errors.
 	return wpcom.req.get( {
 		path: `/sites/${ id }/hosting/php-version`,
 		apiNamespace: 'wpcom/v2',
 	} );
+};
+
+export const updatePHPVersion = async (
+	siteIdOrSlug: string,
+	version: string
+): Promise< void > => {
+	return wpcom.req.post(
+		{
+			path: `/sites/${ siteIdOrSlug }/hosting/php-version`,
+			apiNamespace: 'wpcom/v2',
+		},
+		{ version }
+	);
+};
+
+export const fetchWordPressVersion = async ( siteIdOrSlug: string ): Promise< string > => {
+	return wpcom.req.get( {
+		path: `/sites/${ siteIdOrSlug }/hosting/wp-version`,
+		apiNamespace: 'wpcom/v2',
+	} );
+};
+
+export const updateWordPressVersion = async (
+	siteIdOrSlug: string,
+	version: string
+): Promise< void > => {
+	return wpcom.req.post(
+		{
+			path: `/sites/${ siteIdOrSlug }/hosting/wp-version`,
+			apiNamespace: 'wpcom/v2',
+		},
+		{ version }
+	);
 };
 
 export const fetchCurrentPlan = async ( siteIdOrSlug: string ): Promise< Plan > => {
@@ -144,23 +163,6 @@ export const fetchSiteEngagementStats = async ( siteIdOrSlug: string ) => {
 export const fetchDomains = async (): Promise< Domain[] > => {
 	return ( await wpcom.req.get( '/all-domains', { no_wpcom: true, resolve_status: true } ) )
 		.domains;
-};
-
-export const fetchSiteDomains = async ( id: string ): Promise< { domains: SiteDomain[] } > => {
-	try {
-		const domains = await wpcom.req.get( { path: `/sites/${ id }/domains`, apiVersion: '1.2' } );
-		return domains;
-	} catch ( error ) {
-		// TODO: check how to properly fetch for all sites..
-		return { domains: [] };
-	}
-};
-
-export const fetchSitePrimaryDomain = async (
-	siteIdOrSlug: string
-): Promise< SiteDomain | undefined > => {
-	const { domains } = await fetchSiteDomains( siteIdOrSlug );
-	return domains.find( ( domain: SiteDomain ) => domain.primary_domain );
 };
 
 export const EMAIL_DATA: Email[] = [
@@ -351,6 +353,13 @@ function toRawSiteSettings( settings: Partial< SiteSettings > ): any {
 	return rawSettings;
 }
 
+export const restoreSitePlanSoftware = async ( siteIdOrSlug: string ) => {
+	return wpcom.req.post( {
+		path: `/sites/${ siteIdOrSlug }/hosting/restore-plan-software`,
+		apiNamespace: 'wpcom/v2',
+	} );
+};
+
 export const fetchBasicMetrics = async ( url: string ): Promise< BasicMetricsData > => {
 	return wpcom.req.get(
 		{
@@ -372,5 +381,39 @@ export const fetchPerformanceInsights = async (
 			apiNamespace: 'wpcom/v2',
 		},
 		{ url, advance: '1', hash: token }
+	);
+};
+
+export const fetchPhpMyAdminToken = async ( siteIdOrSlug: string ): Promise< PhpMyAdminToken > => {
+	return wpcom.req.post( {
+		path: `/sites/${ siteIdOrSlug }/hosting/pma/token`,
+		apiNamespace: 'wpcom/v2',
+	} );
+};
+
+export const resetPhpMyAdminPassword = async ( siteIdOrSlug: string ): Promise< void > => {
+	return wpcom.req.post( {
+		path: `/sites/${ siteIdOrSlug }/hosting/restore-database-password`,
+		apiNamespace: 'wpcom/v2',
+	} );
+};
+
+export const fetchStaticFile404 = async ( siteIdOrSlug: string ): Promise< string > => {
+	return wpcom.req.get( {
+		path: `/sites/${ siteIdOrSlug }/hosting/static-file-404`,
+		apiNamespace: 'wpcom/v2',
+	} );
+};
+
+export const updateStaticFile404 = async (
+	siteIdOrSlug: string,
+	setting: string
+): Promise< void > => {
+	return wpcom.req.post(
+		{
+			path: `/sites/${ siteIdOrSlug }/hosting/static-file-404`,
+			apiNamespace: 'wpcom/v2',
+		},
+		{ setting }
 	);
 };

@@ -61,12 +61,13 @@ export { default as DotPager } from './dot-pager';
 export { default as EmbedContainer } from './embed-container';
 export { ExperienceControl } from './experience-control';
 export { default as SummaryButton } from './summary-button';
-export { default as CoreBadge } from './core-badge';
+export { CoreBadge } from './core-badge';
 export { default as Menu } from './menu';
 export { Tabs } from './tabs';
 
 // Logos
 export { JetpackLogo } from './logos/jetpack-logo';
+export { BigSkyLogo } from './logos/big-sky-logo';
 export { CloudLogo } from './logos/cloud-logo';
 export { VIPLogo } from './logos/vip-logo';
 export { WooLogo } from './logos/woo-logo';

@@ -8,7 +8,7 @@ import {
 import { chevronRight } from '@wordpress/icons';
 import clsx from 'clsx';
 import { forwardRef } from 'react';
-import CoreBadge from '../core-badge';
+import { CoreBadge } from '../core-badge';
 import { SummaryButtonProps } from './types';
 import './style.scss';
 

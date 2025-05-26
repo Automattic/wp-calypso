@@ -1088,6 +1088,18 @@ class SignupForm extends Component {
 			return null;
 		}
 
+		if ( this.props.currentUser && ! this.props.disableContinueAsUser ) {
+			return (
+				<ContinueAsUser
+					currentUser={ this.props.currentUser }
+					onChangeAccount={ this.handleOnChangeAccount }
+					redirectPath={ this.props.redirectToAfterLoginUrl }
+					isWoo={ this.props.isWoo }
+					isBlazePro={ this.props.isBlazePro }
+				/>
+			);
+		}
+
 		if ( isCrowdsignalOAuth2Client( this.props.oauth2Client ) ) {
 			const socialProps = pick( this.props, [
 				'isSocialSignupEnabled',
@@ -1105,18 +1117,6 @@ class SignupForm extends Component {
 					recordBackLinkClick={ this.recordBackLinkClick }
 					submitting={ this.props.submitting }
 					{ ...socialProps }
-				/>
-			);
-		}
-
-		if ( this.props.currentUser && ! this.props.disableContinueAsUser ) {
-			return (
-				<ContinueAsUser
-					currentUser={ this.props.currentUser }
-					onChangeAccount={ this.handleOnChangeAccount }
-					redirectPath={ this.props.redirectToAfterLoginUrl }
-					isWoo={ this.props.isWoo }
-					isBlazePro={ this.props.isBlazePro }
 				/>
 			);
 		}

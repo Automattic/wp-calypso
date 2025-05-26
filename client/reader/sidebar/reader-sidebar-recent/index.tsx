@@ -12,7 +12,8 @@ import { useRecordReaderTracksEvent } from 'calypso/state/reader/analytics/useRe
 import getReaderFollowedSites from 'calypso/state/reader/follows/selectors/get-reader-followed-sites';
 import { getSelectedRecentFeedId } from 'calypso/state/reader-ui/sidebar/selectors';
 import { AppState } from 'calypso/types';
-
+import { AllIcon } from '../icons/all';
+import { MenuItem, MenuItemLink } from '../menu';
 // Not complete, just useful fields for now
 type Site = {
 	ID: number;
@@ -70,13 +71,7 @@ const ReaderSidebarRecent = ( {
 		setShowAllSites( ! showAllSites );
 	};
 
-	const selectSite = ( feedId: number | null ) => {
-		if ( feedId ) {
-			page( `/reader/recent/${ feedId }` );
-		} else {
-			page( '/reader' );
-		}
-
+	const trackMenuClick = ( feedId: number | null ) => {
 		// Analytics.
 		if ( feedId ) {
 			recordAction( 'clicked_reader_sidebar_followed_single_site' );
@@ -93,14 +88,15 @@ const ReaderSidebarRecent = ( {
 		if ( ! isOpen ) {
 			onClick();
 		}
-		selectSite( null );
+		trackMenuClick( null );
+		page( '/reader' );
 	};
 
 	return (
 		<ExpandableSidebarMenu
+			onClick={ selectMenu }
 			expanded={ isOpen }
 			title={ translate( 'Recent' ) }
-			onClick={ selectMenu }
 			customIcon={ <ReaderIcon className="sidebar__menu-icon" viewBox="0 0 24 11" /> }
 			disableFlyout
 			className={ clsx( 'reader-sidebar-recent', className, {
@@ -112,47 +108,40 @@ const ReaderSidebarRecent = ( {
 			materialIconStyle={ null }
 			expandableIconClick={ onClick }
 		>
-			<li>
-				<button
-					className={ clsx(
-						'reader-sidebar-recent__item reader-sidebar-recent__item--without-icon',
-						{
-							'reader-sidebar-recent__item--selected':
-								isRecentStream && selectedSiteFeedId === null,
-						}
-					) }
-					onClick={ () => selectSite( null ) }
+			<MenuItem key="all" selected={ isRecentStream && selectedSiteFeedId === null }>
+				<MenuItemLink
+					href="/reader"
+					className="sidebar__menu-link all-sites-link"
+					onClick={ () => trackMenuClick( null ) }
 				>
-					<span className="reader-sidebar-recent__site-name">{ translate( 'All' ) }</span>
-					{ /* <span className="reader-sidebar-recent__site-count">{ totalUnseenCount }</span> */ }
-				</button>
-			</li>
+					<AllIcon />
+
+					<span>{ translate( 'All' ) }</span>
+				</MenuItemLink>
+			</MenuItem>
 			{ sitesToShow.map( ( site ) => (
-				<li key={ site.ID }>
-					<button
-						className={ clsx( 'reader-sidebar-recent__item', {
-							'reader-sidebar-recent__item--selected':
-								isRecentStream && site.feed_ID === selectedSiteFeedId,
-						} ) }
-						onClick={ () => selectSite( site.feed_ID ) }
+				<MenuItem
+					key={ site.ID }
+					selected={ isRecentStream && site.feed_ID === selectedSiteFeedId }
+				>
+					<MenuItemLink
+						href={ `/reader/recent/${ site.feed_ID }` }
+						className={ clsx( 'reader-sidebar-recent__item sidebar__menu-link' ) }
+						onClick={ () => trackMenuClick( site.feed_ID ) }
 					>
-						<Favicon site={ site } className="reader-sidebar-recent__site-icon" size={ 16 } />
+						<Favicon site={ site } className="reader-sidebar-recent__site-icon" size={ 24 } />
 						<span title={ site.name } className="reader-sidebar-recent__site-name">
 							{ site.name }
 						</span>
-						{ /* <span className="reader-sidebar-recent__site-count">{ site.unseen_count }</span> */ }
-					</button>
-				</li>
+					</MenuItemLink>
+				</MenuItem>
 			) ) }
 			{ shouldShowViewMoreButton && (
-				<li>
-					<button
-						className="reader-sidebar-recent__item reader-sidebar-recent__item--without-icon reader-sidebar-recent__view-more"
-						onClick={ toggleShowAllSites }
-					>
-						{ showAllSites ? translate( 'View Less' ) : translate( 'View More' ) }
-					</button>
-				</li>
+				<MenuItem selected={ showAllSites }>
+					<MenuItemLink className="view-more-link" onClick={ toggleShowAllSites }>
+						<span>{ showAllSites ? translate( 'View Less' ) : translate( 'View More' ) }</span>
+					</MenuItemLink>
+				</MenuItem>
 			) }
 		</ExpandableSidebarMenu>
 	);

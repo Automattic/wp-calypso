@@ -60,7 +60,7 @@ module.exports = {
 			},
 		},
 		{
-			files: [ 'bin/**/*', 'test/**/*' ],
+			files: [ '**/bin/**/*', '**/test/**/*', 'webpack.config.js' ],
 			...nodeConfig,
 		},
 		{
@@ -507,6 +507,8 @@ module.exports = {
 					'__experimentalHStack',
 					'__experimentalVStack',
 					'__experimentalSpacer',
+					'__experimentalText',
+					'__experimentalHeading',
 					'__experimentalItem',
 					'__experimentalItemGroup',
 					'__experimentalNavigationBackButton',

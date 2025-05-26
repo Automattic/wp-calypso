@@ -4,9 +4,11 @@
 import type {
 	DataViewRenderFieldProps,
 	FieldType,
+	FieldTypeDefinition,
 	SortDirection,
 	ValidationContext,
 } from '../types';
+import { default as email } from './email';
 import { default as integer } from './integer';
 import { default as text } from './text';
 import { default as datetime } from './datetime';
@@ -20,7 +22,13 @@ import { renderFromElements } from '../utils';
  *
  * @return A field type definition.
  */
-export default function getFieldTypeDefinition< Item >( type?: FieldType ) {
+export default function getFieldTypeDefinition< Item >(
+	type?: FieldType
+): FieldTypeDefinition< Item > {
+	if ( 'email' === type ) {
+		return email;
+	}
+
 	if ( 'integer' === type ) {
 		return integer;
 	}
@@ -63,12 +71,15 @@ export default function getFieldTypeDefinition< Item >( type?: FieldType ) {
 
 			return true;
 		},
-		Edit: () => null,
+		Edit: null,
 		render: ( { item, field }: DataViewRenderFieldProps< Item > ) => {
 			return field.elements
 				? renderFromElements( { item, field } )
 				: field.getValue( { item } );
 		},
 		enableSorting: true,
+		filterBy: {
+			operators: [],
+		},
 	};
 }

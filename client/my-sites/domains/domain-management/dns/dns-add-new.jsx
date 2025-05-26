@@ -18,6 +18,7 @@ import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import ARecord from './a-record';
 import AliasRecord from './alias-record';
+import CaaRecord from './caa-record';
 import CnameRecord from './cname-record';
 import MxRecord from './mx-record';
 import NsRecord from './ns-record';
@@ -65,6 +66,17 @@ class DnsAddNew extends React.Component {
 					name: '@',
 					ttl: 3600,
 					data: '',
+				},
+			},
+			{
+				component: CaaRecord,
+				types: [ 'CAA' ],
+				initialFields: {
+					name: '',
+					flags: '0',
+					tag: 'issue',
+					value: '',
+					ttl: 3600,
 				},
 			},
 			{

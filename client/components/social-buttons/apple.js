@@ -151,9 +151,8 @@ export class AppleLoginButton extends Component {
 					customButton
 				) : (
 					<Button
-						className={ clsx( 'a8c-components-wp-button social-buttons__button apple', {
-							disabled: isDisabled,
-						} ) }
+						className="a8c-components-wp-button social-buttons__button apple"
+						disabled={ isDisabled }
 						data-social-service="apple"
 						onClick={ this.handleClick }
 						variant="secondary"

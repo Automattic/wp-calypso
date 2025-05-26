@@ -336,9 +336,11 @@ export default withCurrentRoute(
 			const isWooJPC = isWooJPCFlow( state );
 
 			const isWhiteLogin =
-				( ! isJetpackLogin &&
+				( currentRoute.startsWith( '/log-in' ) &&
+					! isJetpackLogin &&
 					Boolean( currentQuery?.client_id ) === false &&
 					Boolean( currentQuery?.oauth2_client_id ) === false &&
+					! isBlazePro &&
 					! isWooJPC ) ||
 				isPartnerPortal;
 

@@ -36,7 +36,8 @@
 .dataviews-filters__summary-operators-container {
 	padding: $grid-unit-10 $grid-unit-20;
 
-	&:has(+ .dataviews-filters__search-widget-listbox) {
+	&:has(+ .dataviews-filters__search-widget-listbox),
+	&:has(+ .dataviews-filters__user-input-widget) {
 		border-bottom: 1px solid $gray-200;
 	}
 
@@ -49,6 +50,14 @@
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
+		flex-shrink: 0; /* Prevents this element from shrinking */
+		max-width: calc(100% - 55px);
+	}
+
+	.dataviews-filters__summary-operators-filter-select {
+		width: 100%;
+		white-space: nowrap;
+		overflow: hidden;
 	}
 }
 
@@ -192,11 +201,11 @@
 		}
 
 		.dataviews-filters__search-widget-listitem-single-selection {
-			border-color: var(--wp-components-color-accent-darker-20, var(--wp-admin-theme-color-darker-20, #183ad6));
+			border-color: var(--wp-admin-theme-color-darker-20, #183ad6);
 			background: $white;
 			&.is-selected {
-				border-color: var(--wp-components-color-accent-darker-20, var(--wp-admin-theme-color-darker-20, #183ad6));
-				background:	var(--wp-components-color-accent-darker-20, var(--wp-admin-theme-color-darker-20, #183ad6));
+				border-color: var(--wp-admin-theme-color-darker-20, #183ad6);
+				background: var(--wp-admin-theme-color-darker-20, #183ad6);
 			}
 		}
 
@@ -374,4 +383,12 @@
 
 .dataviews-search {
 	width: fit-content;
+}
+
+.dataviews-filters__user-input-widget {
+	padding: $grid-unit-20;
+
+	.components-input-control__prefix {
+		padding-left: $grid-unit-10;
+	}
 }

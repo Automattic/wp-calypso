@@ -10,18 +10,6 @@
 			justify-content: space-between;
 		}
 	}
-
-	// Removes underline from the ↗ icon
-	a.components-external-link.components-external-link {
-		text-decoration: none;
-		.components-external-link__contents {
-			text-decoration: underline;
-		}
-		&:hover .components-external-link__contents,
-		&:active .components-external-link__contents {
-			text-decoration: none;
-		}
-	}
 }
 
 .card.notification-settings-push-notification-settings__settings {

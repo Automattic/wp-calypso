@@ -1,7 +1,6 @@
 /* eslint-disable no-restricted-imports */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Gravatar, TimeSince } from '@automattic/components';
-import { getNumericDateTimeString, useLocale } from '@automattic/i18n-utils';
 import { HumanAvatar, WapuuAvatar } from '@automattic/odie-client/src/assets';
 import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { chevronRight, Icon } from '@wordpress/icons';
@@ -32,15 +31,17 @@ export const HelpCenterSupportChatMessage = ( {
 	message,
 	sectionName,
 	conversation,
+	numberOfUnreadMessages = 0,
 }: {
 	message: OdieMessage | ZendeskMessage;
 	sectionName?: string;
 	conversation: OdieConversation | ZendeskConversation;
+	numberOfUnreadMessages?: number;
 } ) => {
 	const { __ } = useI18n();
-	const locale = useLocale();
 	const { currentUser } = useHelpCenterContext();
 	const { displayName, received, role, text, altText } = message;
+
 	const helpCenterContext = useHelpCenterContext();
 	const helpCenterContextSectionName = helpCenterContext.sectionName;
 	const { supportInteractions } = useGetHistoryChats();
@@ -86,6 +87,10 @@ export const HelpCenterSupportChatMessage = ( {
 		);
 	};
 
+	const hasUnreadMessages = numberOfUnreadMessages > 0;
+
+	const receivedDateISO = new Date( received * 1000 ).toISOString();
+
 	return (
 		<Link
 			to="/odie"
@@ -100,11 +105,22 @@ export const HelpCenterSupportChatMessage = ( {
 				}
 			} }
 			className={ clsx( 'help-center-support-chat__conversation-container', {
+				'is-unread-message': hasUnreadMessages,
 				[ `is-${ conversationStatus }` ]: conversationStatus,
 			} ) }
 		>
-			<div className={ clsx( 'help-center-support-chat__conversation-avatar' ) }>
+			<div
+				className={ clsx( 'help-center-support-chat__conversation-avatar', {
+					'has-unread-messages': hasUnreadMessages,
+				} ) }
+			>
 				{ renderAvatar() }
+
+				{ hasUnreadMessages && (
+					<div className="help-center-support-chat__conversation-badge">
+						+{ numberOfUnreadMessages }
+					</div>
+				) }
 			</div>
 			<div className="help-center-support-chat__conversation-information">
 				<div className="help-center-support-chat__conversation-information-message">
@@ -129,7 +145,7 @@ export const HelpCenterSupportChatMessage = ( {
 						}
 					/>
 					<span>
-						<TimeSince date={ getNumericDateTimeString( received * 1000, locale ) } />
+						<TimeSince date={ receivedDateISO } dateFormat="lll" />
 					</span>
 				</div>
 			</div>

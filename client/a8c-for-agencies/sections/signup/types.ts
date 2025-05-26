@@ -24,5 +24,6 @@ export interface AgencyDetailsSignupPayload {
 	workWithClientsOther?: string;
 	approachAndChallenges?: string;
 	agencySize?: string;
-	plansToOfferProducts?: boolean;
+	plansToOfferProducts?: 'Yes' | 'No';
+	initialSource?: string;
 }

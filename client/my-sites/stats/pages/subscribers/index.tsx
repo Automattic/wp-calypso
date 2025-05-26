@@ -12,6 +12,7 @@ import PageHeader from 'calypso/my-sites/stats/components/headers/page-header';
 import Main from 'calypso/my-sites/stats/components/stats-main';
 import { STATS_PRODUCT_NAME } from 'calypso/my-sites/stats/constants';
 import StatsModuleEmails from 'calypso/my-sites/stats/features/modules/stats-emails';
+import { recordCurrentScreen } from 'calypso/my-sites/stats/hooks/use-stats-navigation-history';
 import statsStrings from 'calypso/my-sites/stats/stats-strings';
 import { EmptyListView } from 'calypso/my-sites/subscribers/components/empty-list-view';
 import { SubscriberLaunchpad } from 'calypso/my-sites/subscribers/components/subscriber-launchpad';
@@ -27,6 +28,7 @@ import PageViewTracker from '../../stats-page-view-tracker';
 import SubscribersChartSection, { PeriodType } from '../../stats-subscribers-chart-section';
 import SubscribersHighlightSection from '../../stats-subscribers-highlight-section';
 import StatsModuleListing from '../shared/stats-module-listing';
+import type { Context } from '@automattic/calypso-router';
 import type { Moment } from 'moment';
 
 function StatsSubscribersPageError() {
@@ -59,6 +61,7 @@ interface StatsSubscribersPageProps {
 		startOf: Moment;
 		endOf: Moment;
 	};
+	context: Context;
 }
 
 type TranslationStringType = {
@@ -68,7 +71,7 @@ type TranslationStringType = {
 	empty: string;
 };
 
-const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {
+const StatsSubscribersPage = ( { period, context }: StatsSubscribersPageProps ) => {
 	const translate = useTranslate();
 	// Use hooks for Redux pulls.
 	const siteId = useSelector( getSelectedSiteId );
@@ -98,6 +101,18 @@ const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {
 			sessionStorage.setItem( 'jp-stats-last-tab', 'subscribers' ),
 		[]
 	); // Track the last viewed tab.
+
+	useEffect( () => {
+		const query = context.query;
+		recordCurrentScreen(
+			'subscribers',
+			{
+				queryParams: query,
+				period: period.period,
+			},
+			true
+		);
+	}, [ context.query, period?.period ] );
 
 	const summaryUrl = `/stats/${ period?.period }/emails/${ siteSlug }?startDate=${ period?.startOf?.format(
 		'YYYY-MM-DD'

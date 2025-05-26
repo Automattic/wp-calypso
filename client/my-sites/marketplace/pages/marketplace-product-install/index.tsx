@@ -350,7 +350,6 @@ const MarketplaceProductInstall = ( {
 		if ( nonInstallablePlanError ) {
 			return (
 				<EmptyContent
-					illustration="/calypso/images/illustrations/error.svg"
 					title={ null }
 					line={ translate(
 						"Your current plan doesn't allow plugin installation. Please upgrade to %(businessPlanName)s plan first.",
@@ -368,7 +367,6 @@ const MarketplaceProductInstall = ( {
 		if ( isPluginUploadFlow && noDirectAccessError && ! directInstallationAllowed ) {
 			return (
 				<EmptyContent
-					illustration="/calypso/images/illustrations/error.svg"
 					title={ null }
 					line={ translate(
 						'This URL should not be accessed directly. Please try to upload the plugin again.'
@@ -391,7 +389,7 @@ const MarketplaceProductInstall = ( {
 					<QueryProductsList />
 					<EmptyContent
 						className="marketplace-plugin-install__direct-install-container"
-						illustration={ wpOrgTheme?.screenshot || '/calypso/images/illustrations/error.svg' }
+						illustration={ wpOrgTheme?.screenshot || null }
 						illustrationWidth={ wpOrgTheme?.screenshot && 720 }
 						title={ productName }
 						line={ translate( 'Do you want to activate the theme %(theme)s?', {
@@ -427,7 +425,6 @@ const MarketplaceProductInstall = ( {
 		if ( pluginExists ) {
 			return (
 				<EmptyContent
-					illustration="/calypso/images/illustrations/error.svg"
 					title={ null }
 					line={ translate(
 						'This plugin already exists on your site. If you want to upgrade or downgrade the plugin, please continue by uploading the plugin again from WP Admin.'
@@ -442,7 +439,6 @@ const MarketplaceProductInstall = ( {
 		if ( pluginMalicious || pluginTooBig ) {
 			return (
 				<EmptyContent
-					illustration="/calypso/images/illustrations/error.svg"
 					title={ null }
 					line={
 						pluginMalicious
@@ -468,7 +464,6 @@ const MarketplaceProductInstall = ( {
 		) {
 			return (
 				<EmptyContent
-					illustration="/calypso/images/illustrations/error.svg"
 					title={ null }
 					line={ translate( 'An error occurred while installing the plugin.' ) }
 					action={ translate( 'Back' ) }

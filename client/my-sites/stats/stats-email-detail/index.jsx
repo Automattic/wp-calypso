@@ -5,13 +5,12 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { Button as CoreButton } from '@wordpress/components';
 import clsx from 'clsx';
 import { localize, translate } from 'i18n-calypso';
-import { find, flowRight } from 'lodash';
+import { find, flowRight, isEqual } from 'lodash';
 import moment from 'moment';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
-import IllustrationStats from 'calypso/assets/images/stats/illustration-stats.svg';
 import { emailIntervals } from 'calypso/blocks/stats-navigation/constants';
 import Intervals from 'calypso/blocks/stats-navigation/intervals';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -26,6 +25,10 @@ import memoizeLast from 'calypso/lib/memoize-last';
 import PageHeader from 'calypso/my-sites/stats/components/headers/page-header';
 import Main from 'calypso/my-sites/stats/components/stats-main';
 import { STATS_PRODUCT_NAME } from 'calypso/my-sites/stats/constants';
+import {
+	useStatsNavigationHistory,
+	recordCurrentScreen,
+} from 'calypso/my-sites/stats/hooks/use-stats-navigation-history';
 import StatsEmailModule from 'calypso/my-sites/stats/stats-email-module';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { getSitePost, getPostPreviewUrl } from 'calypso/state/posts/selectors';
@@ -78,6 +81,10 @@ class StatsEmailDetail extends Component {
 		previewUrl: PropTypes.string,
 		post: PropTypes.object,
 		hasValidDate: PropTypes.bool,
+		lastScreen: PropTypes.shape( {
+			text: PropTypes.string,
+			url: PropTypes.string,
+		} ),
 	};
 
 	state = {
@@ -141,6 +148,23 @@ class StatsEmailDetail extends Component {
 
 	componentDidMount() {
 		window.scrollTo( 0, 0 );
+
+		const { context } = this.props;
+		recordCurrentScreen( 'postDetails', {
+			queryParams: context.query,
+			period: null,
+		} );
+	}
+
+	componentDidUpdate( prevProps ) {
+		const { context } = this.props;
+
+		if ( ! isEqual( prevProps.context.query, context.query ) ) {
+			recordCurrentScreen( 'postDetails', {
+				queryParams: context.query,
+				period: null,
+			} );
+		}
 	}
 
 	getTitle = ( statType ) => pageTitles[ statType ];
@@ -208,6 +232,7 @@ class StatsEmailDetail extends Component {
 			showViewLink,
 			previewUrl,
 			siteSlug,
+			lastScreen,
 		} = this.props;
 		const { maxBars } = this.state;
 
@@ -228,8 +253,8 @@ class StatsEmailDetail extends Component {
 		const navigationItems = this.getNavigationItemsWithTitle( this.getNavigationTitle() );
 
 		const backLinkProps = {
-			text: navigationItems[ 0 ].label,
-			url: navigationItems[ 0 ].href,
+			text: lastScreen?.text,
+			url: lastScreen?.url,
 		};
 		const titleProps = {
 			title: navigationItems[ 1 ].label,
@@ -299,8 +324,6 @@ class StatsEmailDetail extends Component {
 								'https://wordpress.com/support/getting-more-views-and-traffic/'
 							) }
 							actionTarget="blank"
-							illustration={ IllustrationStats }
-							illustrationWidth={ 150 }
 						/>
 					) }
 					{ post ? (
@@ -434,6 +457,11 @@ class StatsEmailDetail extends Component {
 	}
 }
 
+const StatsEmailDetailWrapper = ( props ) => {
+	const lastScreen = useStatsNavigationHistory();
+	return <StatsEmailDetail { ...props } lastScreen={ lastScreen } />;
+};
+
 const connectComponent = connect(
 	( state, ownProps ) => {
 		const { postId, statType, isValidStartDate } = ownProps;
@@ -485,4 +513,4 @@ const connectComponent = connect(
 	{ recordGoogleEvent }
 );
 
-export default flowRight( connectComponent, localize )( StatsEmailDetail );
+export default flowRight( connectComponent, localize )( StatsEmailDetailWrapper );

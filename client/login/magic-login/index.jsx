@@ -1360,10 +1360,10 @@ class MagicLogin extends Component {
 			! this.props.isFromAutomatticForAgenciesPlugin &&
 			! this.props.isJetpackLogin;
 
-		// If this is part of the Jetpack login flow and the `jetpack/magic-link-signup` feature
-		// flag is enabled, some steps will display a different UI
+		// If this is part of the Jetpack login flow, some steps will display a different UI
 		const requestLoginEmailFormProps = {
 			...( this.props.isJetpackLogin ? { flow: 'jetpack' } : {} ),
+			isJetpackMagicLinkSignUpEnabled: this.props.isJetpackLogin,
 			createAccountForNewUser: true,
 			isFromJetpackOnboarding,
 		};
@@ -1397,7 +1397,7 @@ const mapState = ( state ) => ( {
 	isSendingEmail: isFetchingMagicLoginEmail( state ),
 	emailRequested: isMagicLoginEmailRequested( state ),
 	emailRequestError: getMagicLoginRequestEmailError( state ),
-	isJetpackLogin: getCurrentRoute( state ) === '/log-in/jetpack/link',
+	isJetpackLogin: getCurrentRoute( state )?.startsWith( '/log-in/jetpack/link' ),
 	oauth2Client: getCurrentOAuth2Client( state ),
 	userEmail:
 		getLastCheckedUsernameOrEmail( state ) ||

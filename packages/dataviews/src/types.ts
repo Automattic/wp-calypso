@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import type { ReactElement, ComponentType } from 'react';
+import type { ReactElement, ComponentType, ComponentProps } from 'react';
 
 /**
  * Internal dependencies
@@ -45,9 +45,22 @@ export type Operator =
 	| 'isAny'
 	| 'isNone'
 	| 'isAll'
-	| 'isNotAll';
+	| 'isNotAll'
+	| 'lessThan'
+	| 'greaterThan'
+	| 'lessThanOrEqual'
+	| 'greaterThanOrEqual'
+	| 'contains'
+	| 'notContains'
+	| 'startsWith';
 
-export type FieldType = 'text' | 'integer' | 'datetime' | 'media' | 'boolean';
+export type FieldType =
+	| 'text'
+	| 'integer'
+	| 'datetime'
+	| 'media'
+	| 'boolean'
+	| 'email';
 
 export type ValidationContext = {
 	elements?: Option[];
@@ -70,12 +83,17 @@ export type FieldTypeDefinition< Item > = {
 	/**
 	 * Callback used to render an edit control for the field or control name.
 	 */
-	Edit: ComponentType< DataFormControlProps< Item > > | string;
+	Edit: ComponentType< DataFormControlProps< Item > > | string | null;
 
 	/**
 	 * Callback used to render the field.
 	 */
 	render: ComponentType< DataViewRenderFieldProps< Item > >;
+
+	/**
+	 * The filter config for the field.
+	 */
+	filterBy: FilterByConfig;
 
 	/**
 	 * Whether the field is sortable.
@@ -175,12 +193,12 @@ export type Field< Item > = {
 	getValue?: ( args: { item: Item } ) => any;
 };
 
-export type NormalizedField< Item > = Field< Item > & {
+export type NormalizedField< Item > = Omit< Field< Item >, 'Edit' > & {
 	label: string;
 	header: string | ReactElement;
 	getValue: ( args: { item: Item } ) => any;
 	render: ComponentType< DataViewRenderFieldProps< Item > >;
-	Edit: ComponentType< DataFormControlProps< Item > >;
+	Edit: ComponentType< DataFormControlProps< Item > > | null;
 	sort: ( a: Item, b: Item, direction: SortDirection ) => number;
 	isValid: ( item: Item, context?: ValidationContext ) => boolean;
 	enableHiding: boolean;
@@ -511,6 +529,7 @@ export interface ActionButton< Item > extends ActionBase< Item > {
 export type Action< Item > = ActionModal< Item > | ActionButton< Item >;
 
 export interface ViewBaseProps< Item > {
+	className?: string;
 	actions: Action< Item >[];
 	data: Item[];
 	fields: NormalizedField< Item >[];
@@ -522,6 +541,11 @@ export interface ViewBaseProps< Item > {
 	selection: string[];
 	setOpenedFilter: ( fieldId: string ) => void;
 	onClickItem?: ( item: Item ) => void;
+	renderItemLink?: (
+		props: {
+			item: Item;
+		} & ComponentProps< 'a' >
+	) => ReactElement;
 	isItemClickable: ( item: Item ) => boolean;
 	view: View;
 }

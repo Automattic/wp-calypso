@@ -1,5 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { WordPressLogo, JetpackLogo } from '@automattic/components';
+import { WordPressLogo, JetpackLogo, BigSkyLogo } from '@automattic/components';
 import { formatNumber } from '@automattic/number-formatters';
 import {
 	__experimentalHStack as HStack,
@@ -45,6 +45,11 @@ const offerClick = () => {
 		action: 'offer',
 	} );
 };
+const bigSkyClick = () => {
+	recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_item', {
+		action: 'big-sky',
+	} );
+};
 
 function AddNewSite() {
 	const isDesktop = useViewportMatch( 'medium' );
@@ -66,6 +71,15 @@ function AddNewSite() {
 					description={ __( 'Build and grow your site, all in one powerful platform.' ) }
 					onClick={ wordpressClick }
 					href="/start?source=sites-dashboard&ref=new-site-popover"
+				/>
+				<MenuItem
+					icon={ <BigSkyLogo.Mark /> }
+					title={ __( 'Build with AI' ) }
+					description={ __(
+						'Prompt, edit, and launch WordPress websites with Artificial Intelligence.'
+					) }
+					onClick={ bigSkyClick }
+					href="/setup/ai-site-builder"
 				/>
 				<MenuItem
 					icon={ <JetpackLogo /> }

@@ -20,7 +20,7 @@ export function useMigrationPendingSitesBanner( { sitesStatuses }: { sitesStatus
 	const { setShowHelpCenter } = useDataStoreDispatch( HELP_CENTER_STORE );
 
 	const openHelpCenter = useCallback( () => {
-		setShowHelpCenter( true );
+		setShowHelpCenter( true, false, { contextTerm: 'migration' } );
 	}, [ setShowHelpCenter ] );
 
 	return {

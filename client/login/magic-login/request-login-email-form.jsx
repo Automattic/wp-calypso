@@ -230,7 +230,7 @@ class RequestLoginEmailForm extends Component {
 				<h1 className="magic-login__form-header">
 					{ headerText || translate( 'Email me a login link' ) }
 				</h1>
-				<LoggedOutForm onSubmit={ onSubmit }>
+				<LoggedOutForm className="magic-login__form-form" onSubmit={ onSubmit }>
 					{ currentUser && currentUser.username && (
 						<Notice
 							showDismiss={ false }

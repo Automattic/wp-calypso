@@ -54,6 +54,15 @@ const isMinimized: Reducer< boolean, HelpCenterAction > = ( state = false, actio
 	return state;
 };
 
+const lastMessageReceivedAt: Reducer< number | undefined, HelpCenterAction > = (
+	state,
+	action
+) => {
+	return action.type === 'HELP_CENTER_SET_LAST_MESSAGE_RECEIVED_AT'
+		? action.lastMessageReceivedAt
+		: state;
+};
+
 const isChatLoaded: Reducer< boolean, HelpCenterAction > = ( state = false, action ) => {
 	switch ( action.type ) {
 		case 'HELP_CENTER_SET_IS_CHAT_LOADED':
@@ -161,6 +170,13 @@ const allowPremiumSupport: Reducer< boolean, HelpCenterAction > = ( state = fals
 	return state;
 };
 
+const contextTerm: Reducer< string | undefined, HelpCenterAction > = ( state, action ) => {
+	if ( action.type === 'HELP_CENTER_SET_CONTEXT_TERM' ) {
+		return action.contextTerm;
+	}
+	return state;
+};
+
 const helpCenterOptions: Reducer< HelpCenterOptions, HelpCenterAction > = (
 	state = {},
 	action
@@ -187,9 +203,11 @@ const reducer = combineReducers( {
 	unreadCount,
 	navigateToRoute,
 	odieChatId,
+	lastMessageReceivedAt,
 	odieInitialPromptText,
 	odieBotNameSlug,
 	allowPremiumSupport,
+	contextTerm,
 	helpCenterOptions,
 } );
 

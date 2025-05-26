@@ -8,33 +8,43 @@ import { __ } from '@wordpress/i18n';
 import { siteQuery, siteSettingsQuery } from '../../app/queries';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import DatabaseSettingsSummary from '../settings-database/summary';
+import PHPSettingsSummary from '../settings-php/summary';
 import SiteVisibilitySettingsSummary from '../settings-site-visibility/summary';
+import StaticFile404SettingsSummary from '../settings-static-file-404/summary';
 import SubscriptionGiftingSettingsSummary from '../settings-subscription-gifting/summary';
+import WordPressSettingsSummary from '../settings-wordpress/summary';
+import DangerZone from './danger-zone';
+import SiteActions from './site-actions';
 
 export default function SiteSettings( { siteSlug }: { siteSlug: string } ) {
-	const { data: siteData } = useQuery( siteQuery( siteSlug ) );
+	const { data: site } = useQuery( siteQuery( siteSlug ) );
 	const { data: settings } = useQuery( siteSettingsQuery( siteSlug ) );
 
-	if ( ! siteData || ! settings ) {
+	if ( ! site || ! settings ) {
 		return null;
 	}
 
-	const { site } = siteData;
-
 	return (
-		<PageLayout size="small">
-			<PageHeader title={ __( 'Settings' ) } />
+		<PageLayout size="small" header={ <PageHeader title={ __( 'Settings' ) } /> }>
 			<Heading>{ __( 'General' ) }</Heading>
 			<Card>
 				<VStack>
 					<SiteVisibilitySettingsSummary site={ site } />
-					<SubscriptionGiftingSettingsSummary
-						siteSlug={ siteSlug }
-						site={ site }
-						settings={ settings }
-					/>
+					<SubscriptionGiftingSettingsSummary site={ site } settings={ settings } />
 				</VStack>
 			</Card>
+			<Heading>{ __( 'Server' ) }</Heading>
+			<Card>
+				<VStack>
+					<DatabaseSettingsSummary site={ site } />
+					<WordPressSettingsSummary site={ site } />
+					<PHPSettingsSummary site={ site } />
+					<StaticFile404SettingsSummary site={ site } />
+				</VStack>
+			</Card>
+			<SiteActions site={ site } />
+			<DangerZone site={ site } />
 		</PageLayout>
 	);
 }
