@@ -8,6 +8,7 @@ import {
 import { createInterpolateElement } from '@wordpress/element';
 import { sprintf, __ } from '@wordpress/i18n';
 import React, { useState } from 'react';
+import Notice from '../../components/notice';
 import type { Site } from '../../data/types';
 import type { Field } from '@automattic/dataviews';
 
@@ -86,7 +87,13 @@ export function StartSiteTransferForm( {
 				</Text>
 			</VStack>
 			<VStack spacing={ 5 } style={ { padding: '8px 0' } }>
-				{ /* TODO: Add notice when the component is ready */ }
+				<Notice
+					variant="warning"
+					density="medium"
+					content={ __(
+						'Please read the following carefully. Transferring a site cannot be undone.'
+					) }
+				/>
 				<VStack spacing={ 6 } style={ { padding: '8px 0' } }>
 					<List title={ __( 'Content and ownership' ) }>
 						<li>
