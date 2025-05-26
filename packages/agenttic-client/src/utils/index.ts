@@ -1,0 +1,78 @@
+import type {
+	JsonRpcId,
+	Message,
+	SendTaskRequest,
+	TextPart,
+	TaskSendParams,
+} from '../types/index.js';
+
+/**
+ * Generate a random string for IDs
+ */
+function generateRandomId(): string {
+	return Math.random().toString( 36 ).substring( 2, 10 );
+}
+
+/**
+ * Creates a unique request ID for A2A requests
+ */
+export function createRequestId(): JsonRpcId {
+	return `req-${ generateRandomId() }`;
+}
+
+/**
+ * Creates a unique task ID for A2A tasks
+ */
+export function createTaskId(): string {
+	return `task-${ generateRandomId() }`;
+}
+
+/**
+ * Create a simple text part for a message
+ */
+export function createTextPart( text: string ): TextPart {
+	return {
+		type: 'text',
+		text,
+	};
+}
+
+/**
+ * Create a simple user message with a text part
+ */
+export function createTextMessage( text: string ): Message {
+	return {
+		role: 'user',
+		parts: [ createTextPart( text ) ],
+	};
+}
+
+/**
+ * Create a tasks/send request payload
+ */
+export function createSendTaskRequest(
+	params: TaskSendParams,
+	method: string = 'tasks/send'
+): SendTaskRequest {
+	return {
+		jsonrpc: '2.0',
+		id: createRequestId(),
+		method,
+		params: {
+			id: params.id || createTaskId(),
+			...params,
+		},
+	};
+}
+
+/**
+ * Extract text content from a message
+ */
+export function extractTextFromMessage( message?: Message ): string {
+	if ( ! message ) return '';
+
+	return message.parts
+		.filter( ( part ) => part.type === 'text' )
+		.map( ( part ) => ( part as TextPart ).text )
+		.join( '\n' );
+}

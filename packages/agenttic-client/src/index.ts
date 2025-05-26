@@ -1,38 +1,71 @@
 /**
  * @automattic/agenttic-client
  *
- * A TypeScript client library for Agenttic
+ * A TypeScript client library for A2A (Agent2Agent) protocol communication
  */
 
-export interface AgentticClientConfig {
-  apiKey?: string;
-  baseUrl?: string;
-}
+// Core client exports
+export { createA2AClient, sendMessageAndWait } from './client/index.js';
 
-export class AgentticClient {
-  private config: AgentticClientConfig;
+// Type exports
+export type {
+	// Core A2A types
+	JsonRpcId,
+	JsonRpcRequest,
+	JsonRpcResponse,
+	JsonRpcError,
+	TaskState,
+	TextPart,
+	FilePart,
+	DataPart,
+	ToolDataPart,
+	ToolCallDataPart,
+	ContextDataPart,
+	Part,
+	Message,
+	TaskStatus,
+	Artifact,
+	Task,
+	TaskSendParams,
+	SendTaskRequest,
+	SendTaskResponse,
+	TaskStatusUpdateEvent,
+	TaskArtifactUpdateEvent,
 
-  constructor(config: AgentticClientConfig = {}) {
-    this.config = {
-      baseUrl: "https://api.agenttic.com",
-      ...config,
-    };
-  }
+	// Client types
+	A2AClient,
+	AuthProvider,
+	A2AClientConfig,
+	SendMessageParams,
+	TaskUpdate,
+} from './types/index.js';
 
-  /**
-   * Get the current configuration
-   */
-  getConfig(): AgentticClientConfig {
-    return { ...this.config };
-  }
+// Utility exports
+export {
+	createRequestId,
+	createTaskId,
+	createTextPart,
+	createTextMessage,
+	createSendTaskRequest,
+	extractTextFromMessage,
+} from './utils/index.js';
 
-  /**
-   * Update the configuration
-   */
-  updateConfig(newConfig: Partial<AgentticClientConfig>): void {
-    this.config = { ...this.config, ...newConfig };
-  }
-}
+// Streaming exports
+export {
+	parseStreamChunk,
+	parseSSEStream,
+	streamToTask,
+} from './streaming/index.js';
 
-// Export default instance
-export default AgentticClient;
+// Auth provider exports
+export { createEnvAuthProvider } from './cli/auth.js';
+
+// Constants
+export { A2AErrorCodes } from './types/index.js';
+
+// CLI types (for programmatic usage)
+export type {
+	CLIOptions,
+	CLIAuthOptions,
+	InteractiveSession,
+} from './cli/types.js';

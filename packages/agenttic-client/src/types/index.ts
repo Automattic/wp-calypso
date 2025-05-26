@@ -1,0 +1,183 @@
+// A2A Protocol Type Definitions
+// Based on https://google.github.io/A2A/specification/
+
+export type JsonRpcId = string | number;
+
+export interface JsonRpcRequest< TParams = unknown > {
+	jsonrpc: '2.0';
+	id: JsonRpcId;
+	method: string;
+	params?: TParams;
+}
+
+export interface JsonRpcResponse< TResult = unknown > {
+	jsonrpc: '2.0';
+	id: JsonRpcId | null;
+	result?: TResult;
+	error?: JsonRpcError;
+}
+
+export interface JsonRpcError {
+	code: number;
+	message: string;
+	data?: unknown;
+}
+
+export type TaskState =
+	| 'submitted'
+	| 'working'
+	| 'input-required'
+	| 'completed'
+	| 'canceled'
+	| 'failed';
+
+export interface TextPart {
+	type: 'text';
+	text: string;
+	metadata?: Record< string, unknown >;
+}
+
+export interface FilePart {
+	type: 'file';
+	file: {
+		name: string;
+		mimeType: string;
+		bytes?: string; // Base64 encoded
+		uri?: string;
+	};
+	metadata?: Record< string, unknown >;
+}
+
+export interface DataPart {
+	type: 'data';
+	data: Record< string, unknown >;
+	metadata?: Record< string, unknown >;
+}
+
+export interface ToolDataPart extends DataPart {
+	data: {
+		toolId: string;
+		toolName: string;
+		description: string;
+		inputSchema: {
+			type: 'object';
+			properties: Record< string, unknown >;
+		};
+	};
+}
+
+export interface ToolCallDataPart extends DataPart {
+	data: {
+		toolCallId: string;
+		toolId: string;
+		arguments: Record< string, unknown >;
+	};
+}
+
+export interface ContextDataPart extends DataPart {
+	data: {
+		clientContext: Record< string, unknown >;
+	};
+}
+
+export type Part =
+	| TextPart
+	| FilePart
+	| DataPart
+	| ToolDataPart
+	| ToolCallDataPart
+	| ContextDataPart;
+
+export interface Message {
+	role: 'user' | 'agent';
+	parts: Part[];
+	metadata?: Record< string, unknown >;
+}
+
+export interface TaskStatus {
+	state: TaskState;
+	message?: Message;
+	timestamp?: string;
+	error?: JsonRpcError;
+}
+
+export interface Artifact {
+	name: string;
+	description?: string;
+	index: number;
+	parts: Part[];
+	metadata?: Record< string, unknown >;
+}
+
+export interface Task {
+	id: string;
+	sessionId?: string;
+	status: TaskStatus;
+	artifacts?: Artifact[];
+}
+
+// Request/Response for tasks/send method
+export interface TaskSendParams {
+	id?: string; // Optional - will be generated if not provided
+	sessionId?: string;
+	message: Message;
+	metadata?: Record< string, unknown >;
+}
+
+export type SendTaskRequest = JsonRpcRequest< TaskSendParams >;
+export type SendTaskResponse = JsonRpcResponse< Task >;
+
+// Events for streaming responses
+export interface TaskStatusUpdateEvent {
+	id: string;
+	status: TaskStatus;
+	final?: boolean;
+}
+
+export interface TaskArtifactUpdateEvent {
+	id: string;
+	artifact: Artifact;
+}
+
+export enum A2AErrorCodes {
+	PARSE_ERROR = -32700,
+	INVALID_REQUEST = -32600,
+	METHOD_NOT_FOUND = -32601,
+	INVALID_PARAMS = -32602,
+	INTERNAL_ERROR = -32603,
+	SERVER_ERROR = -32000,
+}
+
+// Client-specific types
+export interface AuthProvider {
+	(): Promise< Record< string, string > >;
+}
+
+export interface A2AClientConfig {
+	agentUrl: string;
+	authProvider?: AuthProvider;
+	defaultSessionId?: string;
+	timeout?: number;
+	proxy?: string;
+}
+
+export interface SendMessageParams {
+	message: Message;
+	taskId?: string;
+	sessionId?: string;
+	metadata?: Record< string, unknown >;
+}
+
+export interface TaskUpdate {
+	id: string;
+	status: TaskStatus;
+	final?: boolean;
+	artifact?: Artifact;
+}
+
+export interface A2AClient {
+	sendMessage( params: SendMessageParams ): Promise< Task >;
+	sendMessageStream( params: SendMessageParams ): AsyncIterable< TaskUpdate >;
+	getTask( taskId: string ): Promise< Task >;
+	cancelTask( taskId: string ): Promise< void >;
+}

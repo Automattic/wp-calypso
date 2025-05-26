@@ -1,46 +1,70 @@
 {
-  "name": "@automattic/agenttic-client",
-  "version": "1.0.0",
-  "description": "Agenttic client library",
-  "main": "dist/index.js",
-  "module": "dist/index.mjs",
-  "types": "dist/index.d.ts",
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.js"
-    }
-  },
-  "files": [
-    "dist"
-  ],
-  "scripts": {
-    "build": "tsup src/index.ts --format cjs,esm --dts",
-    "dev": "tsup src/index.ts --format cjs,esm --dts --watch",
-    "clean": "rm -rf dist",
-    "type-check": "tsc --noEmit",
-    "lint": "eslint src --ext .ts,.tsx",
-    "test": "vitest"
-  },
-  "keywords": [
-    "agenttic",
-    "client",
-    "typescript"
-  ],
-  "author": "Automattic",
-  "license": "MIT",
-  "devDependencies": {
-    "@types/node": "^20.0.0",
-    "eslint": "^8.0.0",
-    "@typescript-eslint/eslint-plugin": "^6.0.0",
-    "@typescript-eslint/parser": "^6.0.0",
-    "tsup": "^8.0.0",
-    "typescript": "^5.0.0",
-    "vitest": "^1.0.0"
-  },
-  "dependencies": {},
-  "publishConfig": {
-    "access": "public"
-  }
+	"name": "@automattic/agenttic-client",
+	"version": "1.0.0",
+	"type": "module",
+	"description": "A TypeScript client library for A2A (Agent2Agent) protocol communication",
+	"main": "dist/index.js",
+	"module": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"bin": {
+		"agenttic-test": "./dist/cli/index.js"
+	},
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"import": "./dist/index.js"
+		},
+		"./cli": {
+			"types": "./dist/cli/index.d.ts",
+			"import": "./dist/cli/index.js"
+		}
+	},
+	"files": [
+		"dist",
+		"README.md"
+	],
+	"scripts": {
+		"build": "pnpm run clean && tsup src/index.ts src/cli/index.ts --format esm --target node18 && tsc --emitDeclarationOnly",
+		"build:cli": "tsup src/cli/index.ts --format esm --target node18",
+		"dev": "tsup src/index.ts src/cli/index.ts --format esm --watch",
+		"clean": "rm -rf dist",
+		"type-check": "tsc --noEmit",
+		"lint": "eslint src --ext .ts,.tsx",
+		"test": "vitest",
+		"cli": "node dist/cli/index.js",
+		"test:cli": "node dist/cli/index.js --help",
+		"prepublishOnly": "pnpm run build"
+	},
+	"keywords": [
+		"a2a",
+		"agent2agent",
+		"agenttic",
+		"client",
+		"typescript",
+		"ai",
+		"agent",
+		"protocol"
+	],
+	"author": "Automattic",
+	"license": "MIT",
+	"engines": {
+		"node": ">=18.0.0"
+	},
+	"devDependencies": {
+		"@types/node": "^20.0.0",
+		"@typescript-eslint/eslint-plugin": "^6.0.0",
+		"@typescript-eslint/parser": "^6.0.0",
+		"eslint": "^8.0.0",
+		"tsup": "^8.0.0",
+		"typescript": "^5.0.0",
+		"vitest": "^1.0.0"
+	},
+	"dependencies": {
+		"dotenv": "^16.5.0",
+		"node-fetch": "^3.3.2",
+		"socks-proxy-agent": "^8.0.5"
+	},
+	"publishConfig": {
+		"access": "public"
+	}
 }

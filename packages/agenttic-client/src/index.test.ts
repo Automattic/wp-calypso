@@ -1,35 +1,95 @@
-import { describe, it, expect } from "vitest";
-import { AgentticClient } from "./index.js";
+import { describe, it, expect } from 'vitest';
+import {
+	createA2AClient,
+	createTextMessage,
+	createRequestId,
+	createTaskId,
+	extractTextFromMessage,
+	A2AErrorCodes,
+} from './index.js';
 
-describe("AgentticClient", () => {
-  it("should create a client with default config", () => {
-    const client = new AgentticClient();
-    const config = client.getConfig();
+describe( '@automattic/agenttic-client', () => {
+	describe( 'Utility functions', () => {
+		it( 'should create unique request IDs', () => {
+			const id1 = createRequestId();
+			const id2 = createRequestId();
 
-    expect(config.baseUrl).toBe("https://api.agenttic.com");
-    expect(config.apiKey).toBeUndefined();
-  });
+			expect( id1 ).toMatch( /^req-[a-z0-9]{8}$/ );
+			expect( id2 ).toMatch( /^req-[a-z0-9]{8}$/ );
+			expect( id1 ).not.toBe( id2 );
+		} );
 
-  it("should create a client with custom config", () => {
-    const customConfig = {
-      apiKey: "test-key",
-      baseUrl: "https://custom.api.com",
-    };
+		it( 'should create unique task IDs', () => {
+			const id1 = createTaskId();
+			const id2 = createTaskId();
 
-    const client = new AgentticClient(customConfig);
-    const config = client.getConfig();
+			expect( id1 ).toMatch( /^task-[a-z0-9]{8}$/ );
+			expect( id2 ).toMatch( /^task-[a-z0-9]{8}$/ );
+			expect( id1 ).not.toBe( id2 );
+		} );
 
-    expect(config.apiKey).toBe("test-key");
-    expect(config.baseUrl).toBe("https://custom.api.com");
-  });
+		it( 'should create text messages', () => {
+			const message = createTextMessage( 'Hello world' );
 
-  it("should update config", () => {
-    const client = new AgentticClient();
+			expect( message ).toEqual( {
+				role: 'user',
+				parts: [
+					{
+						type: 'text',
+						text: 'Hello world',
+					},
+				],
+			} );
+		} );
 
-    client.updateConfig({ apiKey: "new-key" });
-    const config = client.getConfig();
+		it( 'should extract text from messages', () => {
+			const message = createTextMessage( 'Hello world' );
+			const text = extractTextFromMessage( message );
 
-    expect(config.apiKey).toBe("new-key");
-    expect(config.baseUrl).toBe("https://api.agenttic.com");
-  });
-});
+			expect( text ).toBe( 'Hello world' );
+		} );
+
+		it( 'should handle empty messages', () => {
+			const text = extractTextFromMessage( undefined );
+			expect( text ).toBe( '' );
+		} );
+	} );
+
+	describe( 'Client creation', () => {
+		it( 'should create a client with minimal config', () => {
+			const client = createA2AClient( {
+				agentUrl: 'https://example.com/agent',
+			} );
+
+			expect( client ).toBeDefined();
+			expect( typeof client.sendMessage ).toBe( 'function' );
+			expect( typeof client.sendMessageStream ).toBe( 'function' );
+		} );
+
+		it( 'should create a client with full config', () => {
+			const authProvider = async () => ( {
+				Authorization: 'Bearer test',
+			} );
+
+			const client = createA2AClient( {
+				agentUrl: 'https://example.com/agent',
+				authProvider,
+				defaultSessionId: 'test-session',
+				timeout: 5000,
+			} );
+
+			expect( client ).toBeDefined();
+		} );
+	} );
+
+	describe( 'Error codes', () => {
+		it( 'should export A2A error codes', () => {
+			expect( A2AErrorCodes.PARSE_ERROR ).toBe( -32700 );
+			expect( A2AErrorCodes.INVALID_REQUEST ).toBe( -32600 );
+			expect( A2AErrorCodes.METHOD_NOT_FOUND ).toBe( -32601 );
+			expect( A2AErrorCodes.INVALID_PARAMS ).toBe( -32602 );
+			expect( A2AErrorCodes.INTERNAL_ERROR ).toBe( -32603 );
+			expect( A2AErrorCodes.SERVER_ERROR ).toBe( -32000 );
+		} );
+	} );
+} );
