@@ -6,6 +6,8 @@ import {
 	createLazyRoute,
 } from '@tanstack/react-router';
 import { fetchTwoStep } from '../data';
+import { canUpdatePHPVersion } from '../sites/settings-php/utils';
+import { canSetStaticFile404Handling } from '../sites/settings-static-file-404';
 import { canUpdateWordPressVersion } from '../sites/settings-wordpress/utils';
 import NotFound from './404';
 import UnknownError from './500';
@@ -18,7 +20,9 @@ import {
 	profileQuery,
 	siteCurrentPlanQuery,
 	siteEngagementStatsQuery,
+	siteStaticFile404Query,
 	siteWordPressVersionQuery,
+	sitePHPVersionQuery,
 } from './queries';
 import { queryClient } from './query-client';
 import Root from './root';
@@ -152,6 +156,17 @@ const siteSettingsSubscriptionGiftingRoute = createRoute( {
 	)
 );
 
+const siteSettingsDatabaseRoute = createRoute( {
+	getParentRoute: () => siteRoute,
+	path: 'settings/database',
+} ).lazy( () =>
+	import( '../sites/settings-database' ).then( ( d ) =>
+		createLazyRoute( 'site-settings-database' )( {
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+		} )
+	)
+);
+
 const siteSettingsWordPressRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: 'settings/wordpress',
@@ -164,6 +179,40 @@ const siteSettingsWordPressRoute = createRoute( {
 } ).lazy( () =>
 	import( '../sites/settings-wordpress' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-wordpress' )( {
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+		} )
+	)
+);
+
+const siteSettingsPHPRoute = createRoute( {
+	getParentRoute: () => siteRoute,
+	path: 'settings/php',
+	loader: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteQuery( siteSlug ) );
+		if ( canUpdatePHPVersion( site ) ) {
+			return await queryClient.ensureQueryData( sitePHPVersionQuery( siteSlug ) );
+		}
+	},
+} ).lazy( () =>
+	import( '../sites/settings-php' ).then( ( d ) =>
+		createLazyRoute( 'site-settings-php' )( {
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+		} )
+	)
+);
+
+const siteSettingsStaticFile404Route = createRoute( {
+	getParentRoute: () => siteRoute,
+	path: 'settings/static-file-404',
+	loader: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteQuery( siteSlug ) );
+		if ( canSetStaticFile404Handling( site ) ) {
+			return await queryClient.ensureQueryData( siteStaticFile404Query( siteSlug ) );
+		}
+	},
+} ).lazy( () =>
+	import( '../sites/settings-static-file-404' ).then( ( d ) =>
+		createLazyRoute( 'site-settings-static-file-404' )( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )
 	)
@@ -345,7 +394,10 @@ const createRouteTree = ( config: AppConfig ) => {
 				siteSettingsRoute,
 				siteSettingsSiteVisibilityRoute,
 				siteSettingsSubscriptionGiftingRoute,
+				siteSettingsDatabaseRoute,
 				siteSettingsWordPressRoute,
+				siteSettingsPHPRoute,
+				siteSettingsStaticFile404Route,
 				siteSettingsTransferSiteRoute,
 			] )
 		);

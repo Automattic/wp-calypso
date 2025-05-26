@@ -11,6 +11,7 @@ import type {
 	Field,
 	FieldTypeDefinition,
 } from '../types';
+import checkbox from './checkbox';
 import datetime from './datetime';
 import email from './email';
 import integer from './integer';
@@ -26,6 +27,7 @@ interface FormControls {
 
 const FORM_CONTROLS: FormControls = {
 	boolean,
+	checkbox,
 	datetime,
 	email,
 	integer,

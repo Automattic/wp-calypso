@@ -1,14 +1,10 @@
-import { useTranslate } from 'i18n-calypso';
+import { __, sprintf } from '@wordpress/i18n';
 
-export const usePhpVersions = () => {
-	const translate = useTranslate();
-
+export const getPHPVersions = () => {
 	// PHP 8.3 is now the default recommended version
 	const recommendedValue = '8.3';
-	const recommendedLabel = translate( '%s (recommended)', {
-		args: recommendedValue,
-		comment: 'PHP Version for a version switcher',
-	} );
+	// translators: PHP Version for a version switcher
+	const recommendedLabel = sprintf( __( '%s (recommended)' ), recommendedValue );
 
 	const phpVersions = [
 		{
@@ -17,10 +13,8 @@ export const usePhpVersions = () => {
 			disabled: true, // EOL 6th December, 2021
 		},
 		{
-			label: translate( '%s (deprecated)', {
-				args: '7.4',
-				comment: 'PHP Version for a version switcher',
-			} ),
+			// translators: PHP Version for a version switcher
+			label: sprintf( __( '%s (deprecated)' ), '7.4' ),
 			value: '7.4',
 			disabled: true, // EOL 1st July, 2024
 		},
@@ -30,10 +24,8 @@ export const usePhpVersions = () => {
 			disabled: true, // EOL 26th November, 2023
 		},
 		{
-			label: translate( '%s (deprecated)', {
-				args: '8.1',
-				comment: 'PHP Version for a version switcher',
-			} ),
+			// translators: PHP Version for a version switcher
+			label: sprintf( __( '%s (deprecated)' ), '8.1' ),
 			value: '8.1',
 			disabled: false, // EOL 31st December, 2025
 		},

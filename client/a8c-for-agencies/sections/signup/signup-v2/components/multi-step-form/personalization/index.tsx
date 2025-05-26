@@ -82,7 +82,7 @@ export default function PersonalizationForm( {
 			{ value: 'strategy_consulting', label: translate( 'Strategy consulting' ) },
 			{ value: 'website_design_development', label: translate( 'Website design & development' ) },
 			{ value: 'performance_optimization', label: translate( 'Performance optimization' ) },
-			{ value: 'digital_strategy_marketing', label: translate( 'Digital strategy & marketing' ) },
+			{ value: 'digital_strategy_marketing', label: translate( 'Digital marketing' ) },
 			{ value: 'ecommerce_development', label: translate( 'eCommerce Development' ) },
 			{ value: 'maintenance_support_plans', label: translate( 'Maintenance & support plans' ) },
 			{ value: 'other', label: translate( 'Other' ) },

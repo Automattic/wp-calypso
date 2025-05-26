@@ -1,0 +1,73 @@
+@use '@wordpress/base-styles/colors';
+@use '@automattic/typography';
+
+.a8c-validated-control {
+	// For components based on InputBase
+	&:has(:is(input, select):user-invalid) .components-input-control__backdrop {
+		--wp-components-color-accent: #{colors.$alert-red};
+		border-color: #{colors.$alert-red};
+	}
+
+	// For TextControl, TextareaControl
+	:is(textarea, input[type="text"]):user-invalid {
+		--wp-admin-theme-color: #{colors.$alert-red};
+		--wp-components-color-accent: #{colors.$alert-red};
+		border-color: #{colors.$alert-red};
+	}
+
+	// For ComboboxControl
+	.components-combobox-control__suggestions-container:has(input:user-invalid):not(:has([aria-expanded="true"])) {
+		border-color: #{colors.$alert-red};
+	}
+}
+
+.a8c-validated-control__wrapper-with-error-delegate {
+	position: relative;
+
+	// For CustomSelectControl
+	&:has(select:user-invalid) .components-input-control__backdrop {
+		--wp-components-color-accent: #{colors.$alert-red};
+		border-color: #{colors.$alert-red};
+	}
+
+	// For ToggleGroupControl
+	&:has(input[type="radio"]:invalid) {
+		--wp-components-color-accent: #{colors.$alert-red};
+	}
+}
+
+.a8c-validated-control__error-delegate {
+	position: absolute;
+	top: 0;
+	height: 100%;
+	width: 100%;
+	opacity: 0;
+	pointer-events: none;
+}
+
+.a8c-validated-control__error {
+	display: flex;
+	align-items: flex-start;
+	gap: 4px;
+	margin: 8px 0 0;
+	font-family: typography.$sans;
+	font-size: 0.75rem;
+	line-height: 16px; // matches the icon size
+	color: #{colors.$alert-red};
+	animation: a8c-validated-control__error-jump 0.2s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+}
+
+.a8c-validated-control__error-icon {
+	flex-shrink: 0;
+}
+
+@keyframes a8c-validated-control__error-jump {
+	0% {
+		transform: translateY(-4px);
+		opacity: 0;
+	}
+	100% {
+		transform: translateY(0);
+		opacity: 1;
+	}
+}

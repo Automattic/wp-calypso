@@ -56,7 +56,7 @@
 		"@wordpress/data": "^10.23.0",
 		"@wordpress/element": "^6.23.0",
 		"@wordpress/i18n": "^5.23.0",
-		"debug": "^4.4.0",
+		"debug": "^4.4.1",
 		"redux": "^5.0.1"
 	},
 	"private": true
