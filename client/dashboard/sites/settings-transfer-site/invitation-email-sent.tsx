@@ -1,7 +1,10 @@
 import { useMutation } from '@tanstack/react-query';
+import { useRouter } from '@tanstack/react-router';
 import { ExternalLink, Spinner } from '@wordpress/components';
+import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { sprintf, __ } from '@wordpress/i18n';
+import { store as noticesStore } from '@wordpress/notices';
 import { useEffect, useState } from 'react';
 import { siteOwnerTransferConfirmMutation } from '../../app/queries';
 import Notice from '../../components/notice';
@@ -17,6 +20,8 @@ export function InvitationEmailSent( {
 	const [ newOwnerEmail, setNewOwnerEmail ] = useState( '' );
 	const [ hasError, setHasError ] = useState( false );
 	const mutation = useMutation( siteOwnerTransferConfirmMutation( siteSlug ) );
+	const { createSuccessNotice } = useDispatch( noticesStore );
+	const router = useRouter();
 
 	// The page is accessed via the confirmation email, so this is the only place where the request can be triggered.
 	// It would be better if
@@ -26,7 +31,22 @@ export function InvitationEmailSent( {
 		mutation.mutate(
 			{ hash: confirmationHash },
 			{
-				onSuccess: ( { new_owner_email }: SiteTransferConfirmation ) => {
+				onSuccess: ( { transfer, new_owner_email }: SiteTransferConfirmation ) => {
+					if ( transfer ) {
+						createSuccessNotice(
+							sprintf(
+								/* translators: %(newOwnerEmail)s - the new owner's email */
+								__( 'The site has been successfully transferred to %(newOwnerEmail)s.' ),
+								{
+									newOwnerEmail: new_owner_email,
+								}
+							),
+							{ type: 'snackbar' }
+						);
+						router.navigate( { to: '/sites' } );
+						return;
+					}
+
 					setNewOwnerEmail( new_owner_email );
 				},
 				onError: () => {
@@ -63,7 +83,7 @@ export function InvitationEmailSent( {
 			variant="success"
 			title={ createInterpolateElement(
 				sprintf(
-					/* translators: %(newOwnerEmail)s - the current user's email */
+					/* translators: %(newOwnerEmail)s - the new owner's email */
 					__( 'Invitation sent to <strong>%(newOwnerEmail)s</strong>' ),
 					{
 						newOwnerEmail,
