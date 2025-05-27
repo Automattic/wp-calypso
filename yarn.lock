@@ -1124,6 +1124,7 @@ __metadata:
     "@wordpress/base-styles": "npm:^5.23.0"
     "@wordpress/browserslist-config": "npm:^6.23.0"
     "@wordpress/components": "npm:^29.9.0"
+    "@wordpress/dataviews": "npm:^4.19.0"
     docusaurus-plugin-sass: "npm:^0.2.6"
     prism-react-renderer: "npm:^2.3.0"
     react: "npm:^18.3.1"
