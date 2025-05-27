@@ -8,6 +8,14 @@ import { useLocalizationProps } from '../utils/use-localization-props';
 import type { DateRangeCalendarProps, DateRange } from '../types';
 import '../styles.scss';
 
+/**
+ * `DateRangeCalendar` is a React component that provides a customizable calendar
+ * interface for **date range** selection.
+ *
+ * The component is built with accessibility in mind and follows ARIA best
+ * practices for calendar widgets. It provides keyboard navigation, screen reader
+ * support, and customizable labels for internationalization.
+ */
 export const DateRangeCalendar = ( {
 	defaultSelected,
 	selected: selectedProp,
