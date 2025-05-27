@@ -1,0 +1,187 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+@import '@wordpress/base-styles/variables';
+
+.example-report {
+	background-color: var( --color-neutral-0 );
+	padding-bottom: 48px;
+
+	.layout__body {
+		padding-left: 0;
+		padding-right: 0;
+	}
+}
+
+.example-report__body {
+	padding: 24px;
+	background: #12304a;
+	width: unset;
+}
+
+.example-report__inner-body {
+	padding: 24px;
+	background: var( --color-surface );
+}
+
+.example-report__content {
+	background: var( --color-surface );
+	max-width: 800px;
+	margin: 0 auto;
+	/* stylelint-disable-next-line scales/radii */
+	border-radius: 12px;
+	overflow: hidden;
+}
+
+.example-report__header {
+	background-color: #b9e4fe;
+	padding: 40px 24px;
+	position: relative;
+	overflow: hidden;
+
+	// This will be used for the decorative background image
+	&::after {
+		content: '';
+		position: absolute;
+		top: -120px;
+		right: 0;
+		width: 50%;
+		height: 100%;
+		background-image: url( ../../../../assets/images/a8c-for-agencies/reports/doodle.png );
+		background-repeat: no-repeat;
+		background-position: right center;
+		background-size: contain;
+		pointer-events: none;
+	}
+
+	.example-report__header-content {
+		max-width: 1200px;
+		margin: 0 auto;
+		position: relative;
+		z-index: 1;
+	}
+
+	.example-report__date {
+		@include body-small;
+		text-transform: uppercase;
+		margin-bottom: 0;
+		color: var( --color-neutral-70 );
+	}
+
+	h1 {
+		@include heading-2x-large;
+		margin-bottom: 8px;
+		margin-top: 16px;
+		color: var( --color-neutral-90 );
+	}
+
+	.example-report__url {
+		@include body-small;
+		color: var( --color-neutral-70 );
+		margin-bottom: 24px;
+	}
+
+	.example-report__message {
+		@include body-large;
+		line-height: 1.6;
+		color: var( --color-neutral-90 );
+		max-width: 600px;
+		margin-bottom: 0;
+	}
+}
+
+.example-report__section-title-container {
+	margin-bottom: 24px;
+
+	.example-report__section-title {
+		@include heading-x-large;
+		margin-bottom: 16px;
+	}
+
+	.example-report__section-title--flush {
+		margin-bottom: 0;
+	}
+
+	.example-report__date-range {
+		@include body-small;
+		color: var( --color-neutral-70 );
+		text-transform: uppercase;
+	}
+}
+
+.example-report__grid {
+	display: grid;
+	grid-template-columns: repeat( 1, 1fr );
+	gap: 24px;
+	margin-bottom: 48px;
+
+	@include break-medium {
+		grid-template-columns: repeat( 2, 1fr );
+	}
+}
+
+.example-report__card {
+	background-color: var( --color-surface );
+	border: 1px solid var( --color-neutral-10 );
+	border-radius: 4px;
+	padding: 24px;
+
+	.example-report__card-title {
+		@include heading;
+		font-weight: 600;
+		color: var( --color-neutral-70 );
+		display: flex;
+		align-items: center;
+		margin-block-start: 0;
+		margin-block-end: 16px;
+	}
+
+	.example-report__card-value {
+		@include heading-2x-large;
+		margin: 0;
+		color: var( --color-neutral-90 );
+	}
+}
+
+.example-report__card--list {
+	.example-report__card-title {
+		margin-bottom: 24px;
+	}
+
+	.example-report__table-header,
+	.example-report__table-row {
+		display: flex;
+		justify-content: space-between;
+		padding: 4px 0;
+		@include body-small;
+
+		span:last-child {
+			text-align: end;
+			font-weight: 600;
+		}
+	}
+
+	.example-report__table-header {
+		font-weight: normal;
+		margin-bottom: 8px;
+
+		.example-report__table-header-text {
+			font-weight: 600;
+		}
+	}
+
+	.example-report__table-row {
+		span:first-child {
+			color: var( --color-neutral-90 );
+		}
+
+		span:last-child {
+			color: var( --color-neutral-90 );
+		}
+	}
+}
+
+.example-report__blurb {
+	@include body-medium;
+	margin-bottom: 0;
+	margin-top: 8px;
+}

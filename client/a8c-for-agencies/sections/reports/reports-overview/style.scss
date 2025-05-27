@@ -15,6 +15,10 @@
 		padding-inline: 0;
 		margin: 0;
 	}
+
+	.reports-overview__body {
+		padding-block-end: 0;
+	}
 }
 
 .reports-overview__content {
@@ -30,6 +34,7 @@
 .reports-overview__heading {
 	@include heading-2x-large;
 	margin-block-end: 8px;
+	text-wrap: pretty;
 }
 
 .reports-overview__description {
@@ -41,6 +46,20 @@
 
 	a {
 		text-decoration: underline;
+	}
+}
+
+a.components-button.reports-overview__button--secondary {
+	&,
+	&:hover,
+	&:focus,
+	&:focus-visible {
+		color: var( --studio-automattic-blue-60 );
+		background-color: var( --color-surface );
+		border: none;
+		outline: none;
+		box-shadow: none;
+		text-decoration: none;
 	}
 }
 
@@ -58,7 +77,7 @@
 .reports-overview__buttons-container {
 	display: flex;
 	flex-direction: column;
-	gap: 16px;
+	gap: 8px;
 
 	a.components-button {
 		width: 100%;

@@ -1,6 +1,5 @@
 import {
 	Button,
-	Modal,
 	SelectControl,
 	TextareaControl,
 	CheckboxControl,
@@ -8,7 +7,16 @@ import {
 } from '@wordpress/components';
 import { useState, useEffect, useRef } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
-import { Dispatch, SetStateAction } from 'react';
+import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
+import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
+import SelectSiteButton from 'calypso/a8c-for-agencies/components/select-site-button';
+import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
+import { A4A_REPORTS_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import LayoutBody from 'calypso/layout/hosting-dashboard/body';
+import LayoutHeader, {
+	LayoutHeaderBreadcrumb as Breadcrumb,
+	LayoutHeaderActions as Actions,
+} from 'calypso/layout/hosting-dashboard/header';
 
 import './style.scss';
 
@@ -19,18 +27,16 @@ const MOCK_TIMEFRAMES = [
 	{ label: 'Last 24 hours', value: 'last_24_hours' },
 ];
 
-const MOCK_SITES = [
-	{ label: 'totoros.blog', value: 'totoros.blog' },
-	{ label: 'kikisdeliveryservice.com', value: 'kikisdeliveryservice.com' },
-	{ label: 'laputa.castle.sky', value: 'laputa.castle.sky' },
-];
-
 // Checkbox groups for Step 2
 const STATS_OPTIONS = [
-	{ label: 'Total traffic in this timeframe', value: 'total_traffic' },
-	{ label: 'Top 5 pages', value: 'top_pages' },
-	{ label: 'Top devices', value: 'top_devices' },
-	{ label: 'Top locations', value: 'top_locations' },
+	{ label: 'Visitors and Views in this timeframe', value: 'total_traffic' },
+	{ label: 'Top 5 posts', value: 'top_pages' },
+	{ label: 'Top 5 referrers', value: 'top_devices' },
+	{ label: 'Top 5 cities', value: 'top_locations' },
+	{ label: 'Device breakdown', value: 'top_locations' },
+	{ label: 'Total Visitors and Views since the site was created', value: 'total_traffic-all-time' },
+	{ label: 'Most popular time of day', value: 'most_popular_time_of_day' },
+	{ label: 'Most popular day of week', value: 'most_popular_day_of_week' },
 ];
 
 const SECURITY_OPTIONS = [ { label: 'Backups made in this timeframe', value: 'backups_made' } ];
@@ -39,21 +45,16 @@ const PERFORMANCE_OPTIONS = [ { label: 'Uptime information', value: 'uptime_info
 
 type CheckedItemsState = Record< string, boolean >;
 
-type BuildReportModalProps = {
-	isOpen: boolean;
-	onClose: () => void;
-};
-
-export default function BuildReportModal( { isOpen, onClose }: BuildReportModalProps ) {
+const BuildReport = () => {
 	const translate = useTranslate();
-	const [ currentStep, setCurrentStep ] = useState( 1 );
+	const title = translate( 'Build Report' );
 	const teammateEmailsRef = useRef< HTMLDivElement >( null );
 
 	// Step 1: Setup State
-	const [ selectedSite, setSelectedSite ] = useState( MOCK_SITES[ 0 ].value );
 	const [ selectedTimeframe, setSelectedTimeframe ] = useState( MOCK_TIMEFRAMES[ 0 ].value );
+	const [ selectedSite, setSelectedSite ] = useState( '' );
 	const [ clientEmail, setClientEmail ] = useState( '' );
-	const [ clientName, setClientName ] = useState( '' );
+	// const [ clientName, setClientName ] = useState( '' );
 	const [ customIntroText, setCustomIntroText ] = useState( '' );
 	const [ sendMeACopy, setSendMeACopy ] = useState( false );
 	const [ teammateEmails, setTeammateEmails ] = useState( '' );
@@ -70,6 +71,7 @@ export default function BuildReportModal( { isOpen, onClose }: BuildReportModalP
 	);
 
 	// Step 3: Schedule and Send State
+	const [ currentStep, setCurrentStep ] = useState( 1 );
 	const handleNextStep = () => setCurrentStep( ( prev ) => prev + 1 );
 	const handlePrevStep = () => setCurrentStep( ( prev ) => prev - 1 );
 
@@ -77,7 +79,10 @@ export default function BuildReportModal( { isOpen, onClose }: BuildReportModalP
 		groupKey: 'stats' | 'security' | 'performance',
 		itemName: string
 	) => {
-		const setterMap: Record< string, Dispatch< SetStateAction< CheckedItemsState > > > = {
+		const setterMap: Record<
+			string,
+			React.Dispatch< React.SetStateAction< CheckedItemsState > >
+		> = {
 			stats: setStatsCheckedItems,
 			security: setSecurityCheckedItems,
 			performance: setPerformanceCheckedItems,
@@ -102,39 +107,39 @@ export default function BuildReportModal( { isOpen, onClose }: BuildReportModalP
 			case 1:
 				return (
 					<>
-						<h2 className="a4a-reports-modal__step-title">{ translate( 'Step 1 of 3: Setup' ) }</h2>
+						<div className="build-report__step-header">
+							<h2 className="build-report__step-title">
+								{ translate( 'Step 1 of 3: Enter report details' ) }
+							</h2>
+						</div>
 
+						<div className="build-report__field">
+							<SelectSiteButton
+								onSiteSelect={ ( _siteId, siteDomain ) => setSelectedSite( siteDomain ) }
+								buttonLabel={ selectedSite || translate( 'Choose a site to report on' ) }
+								trackingEvent="calypso_a4a_reports_select_site_button_click"
+							/>
+						</div>
 						<SelectControl
-							label={ translate( 'Pick a timeframe:' ) }
+							label={ translate( 'Date range' ) }
 							value={ selectedTimeframe }
 							options={ MOCK_TIMEFRAMES }
 							onChange={ setSelectedTimeframe }
 						/>
-						<SelectControl
-							label={ translate( 'Pick a site:' ) }
-							value={ selectedSite }
-							options={ MOCK_SITES }
-							onChange={ setSelectedSite }
-						/>
-						<TextControl
+						{ /* <TextControl
 							label={ translate( 'Client name (optional)' ) }
 							value={ clientName }
 							onChange={ setClientName }
-						/>
+						/> */ }
 						<TextControl
 							label={ translate( 'Client email' ) }
 							value={ clientEmail }
 							onChange={ setClientEmail }
 							type="email"
-						/>
-						<TextareaControl
-							label={ translate( 'Custom intro text (optional)' ) }
-							value={ customIntroText }
-							onChange={ setCustomIntroText }
-							rows={ 3 }
+							help={ translate( 'We’ll email the report here. Use commas to separate addresses.' ) }
 						/>
 						<CheckboxControl
-							label={ translate( 'Email a copy to agency teammates' ) }
+							label={ translate( 'Also send to your team' ) }
 							checked={ sendMeACopy }
 							onChange={ setSendMeACopy }
 						/>
@@ -145,9 +150,7 @@ export default function BuildReportModal( { isOpen, onClose }: BuildReportModalP
 									value={ teammateEmails }
 									onChange={ setTeammateEmails }
 									type="text"
-									help={ translate(
-										'Enter the email addresses of your teammates separated by commas'
-									) }
+									help={ translate( 'Use commas to separate addresses.' ) }
 									placeholder={ translate( 'colleague1@example.com, colleague2@example.com' ) }
 								/>
 							</div>
@@ -157,10 +160,21 @@ export default function BuildReportModal( { isOpen, onClose }: BuildReportModalP
 			case 2:
 				return (
 					<>
-						<h2 className="a4a-reports-modal__step-title">
-							{ translate( 'Step 2 of 3: Pick the report content' ) }
-						</h2>
-						<h3 className="a4a-reports-modal__group-label a4a-reports-modal__group-label--first">
+						<div className="build-report__step-header">
+							<h2 className="build-report__step-title">
+								{ translate( 'Step 2 of 3: Choose report content' ) }
+							</h2>
+						</div>
+
+						<TextareaControl
+							label={ translate( 'Intro message (optional)' ) }
+							value={ customIntroText }
+							onChange={ setCustomIntroText }
+							rows={ 3 }
+							help={ translate( 'Add a short note or update for your client.' ) }
+						/>
+
+						<h3 className="build-report__group-label build-report__group-label--first">
 							{ translate( 'Stats' ) }
 						</h3>
 						{ STATS_OPTIONS.map( ( item ) => (
@@ -169,27 +183,27 @@ export default function BuildReportModal( { isOpen, onClose }: BuildReportModalP
 								label={ item.label }
 								checked={ statsCheckedItems[ item.value ] }
 								onChange={ () => handleStep2CheckboxChange( 'stats', item.value ) }
-								className="a4a-reports-modal__checkbox-control"
+								className="build-report__checkbox-control"
 							/>
 						) ) }
-						<h3 className="a4a-reports-modal__group-label">{ translate( 'Security' ) }</h3>
+						<h3 className="build-report__group-label">{ translate( 'Security' ) }</h3>
 						{ SECURITY_OPTIONS.map( ( item ) => (
 							<CheckboxControl
 								key={ item.value }
 								label={ item.label }
 								checked={ securityCheckedItems[ item.value ] }
 								onChange={ () => handleStep2CheckboxChange( 'security', item.value ) }
-								className="a4a-reports-modal__checkbox-control"
+								className="build-report__checkbox-control"
 							/>
 						) ) }
-						<h3 className="a4a-reports-modal__group-label">{ translate( 'Performance' ) }</h3>
+						<h3 className="build-report__group-label">{ translate( 'Performance' ) }</h3>
 						{ PERFORMANCE_OPTIONS.map( ( item ) => (
 							<CheckboxControl
 								key={ item.value }
 								label={ item.label }
 								checked={ performanceCheckedItems[ item.value ] }
 								onChange={ () => handleStep2CheckboxChange( 'performance', item.value ) }
-								className="a4a-reports-modal__checkbox-control"
+								className="build-report__checkbox-control"
 							/>
 						) ) }
 					</>
@@ -197,11 +211,17 @@ export default function BuildReportModal( { isOpen, onClose }: BuildReportModalP
 			case 3:
 				return (
 					<>
-						<h2 className="a4a-reports-modal__step-title">{ translate( 'Step 3 of 3: Send' ) }</h2>
-
-						<p className="a4a-reports-modal__step-description">
-							{ translate( 'The report is ready to be sent to your client. ' ) }
+						<h2 className="build-report__step-title">
+							{ translate( 'Step 3 of 3: Send your report' ) }
+						</h2>
+						<p className="build-report__step-description">
+							{ translate(
+								'Your report is ready for sending. Checkout the preview, then click "Send to client now".'
+							) }
+							<br />
+							{ translate( "We'll take it from there!" ) }
 						</p>
+
 						<Button variant="secondary" onClick={ () => alert( 'Send test report clicked' ) }>
 							{ translate( 'Send me a preview' ) }
 						</Button>
@@ -212,11 +232,11 @@ export default function BuildReportModal( { isOpen, onClose }: BuildReportModalP
 		}
 	};
 
-	const renderModalActions = () => (
-		<div className="a4a-reports-modal__actions">
+	const renderActions = () => (
+		<div className="build-report__actions">
 			{ currentStep > 1 && (
 				<Button variant="secondary" onClick={ handlePrevStep }>
-					{ translate( 'Prev' ) }
+					{ translate( 'Back' ) }
 				</Button>
 			) }
 			{ currentStep < 3 && (
@@ -226,25 +246,41 @@ export default function BuildReportModal( { isOpen, onClose }: BuildReportModalP
 			) }
 			{ currentStep === 3 && (
 				<Button variant="primary" onClick={ () => alert( 'Schedule and Send clicked' ) }>
-					{ translate( 'Send the report now' ) }
+					{ translate( 'Send to client now' ) }
 				</Button>
 			) }
 		</div>
 	);
 
-	if ( ! isOpen ) {
-		return null;
-	}
-
 	return (
-		<Modal
-			size="medium"
-			title={ translate( 'Build a report for your client' ) }
-			onRequestClose={ onClose }
-			className={ `a4a-reports-modal is-wizard-step-${ currentStep }` }
-		>
-			<div className="a4a-reports-modal__step-content">{ renderStepContent() }</div>
-			{ renderModalActions() }
-		</Modal>
+		<Layout className="build-report" title={ title } wide>
+			<LayoutTop>
+				<LayoutHeader>
+					<Breadcrumb
+						hideOnMobile
+						items={ [
+							{
+								label: translate( 'Client Reports' ),
+								href: A4A_REPORTS_LINK,
+							},
+							{
+								label: translate( 'Build Report' ),
+							},
+						] }
+					/>
+					<Actions useColumnAlignment>
+						<MobileSidebarNavigation />
+					</Actions>
+				</LayoutHeader>
+			</LayoutTop>
+			<LayoutBody>
+				<div className="build-report__content">
+					{ renderStepContent() }
+					{ renderActions() }
+				</div>
+			</LayoutBody>
+		</Layout>
 	);
-}
+};
+
+export default BuildReport;

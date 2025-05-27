@@ -1,10 +1,15 @@
+import page from '@automattic/calypso-router';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo, useCallback, useState } from 'react';
+import { useMemo, useCallback } from 'react';
 import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
 import PageSectionColumns from 'calypso/a8c-for-agencies/components/page-section-columns';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
+import {
+	A4A_REPORTS_BUILD_LINK,
+	A4A_REPORTS_EXAMPLE_LINK,
+} from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import SimpleList from 'calypso/a8c-for-agencies/components/simple-list';
 import whyImage from 'calypso/assets/images/a8c-for-agencies/reports/report-mock-2.png';
 import readyImage from 'calypso/assets/images/a8c-for-agencies/reports/report-mock-3.png';
@@ -16,14 +21,12 @@ import LayoutHeader, {
 } from 'calypso/layout/hosting-dashboard/header';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import BuildReportModal from '../components/build-report-modal';
 
 import './style.scss';
 
 const ReportsOverview = () => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const [ isModalOpen, setModalOpen ] = useState( false );
 
 	const title = translate( 'Client Reports' );
 
@@ -60,18 +63,21 @@ const ReportsOverview = () => {
 
 	const handleBuildReport = useCallback( () => {
 		dispatch( recordTracksEvent( 'calypso_a4a_reports_build_report_button_click' ) );
-		setModalOpen( true );
+		page( A4A_REPORTS_BUILD_LINK );
 	}, [ dispatch ] );
 
-	const closeModal = useCallback( () => {
-		setModalOpen( false );
-	}, [] );
+	const handleExampleReport = useCallback( () => {
+		dispatch( recordTracksEvent( 'calypso_a4a_reports_example_report_button_click' ) );
+		page( A4A_REPORTS_EXAMPLE_LINK );
+	}, [ dispatch ] );
 
 	const buildReportButton = useMemo( () => {
 		return (
-			<Button __next40pxDefaultSize variant="primary" onClick={ handleBuildReport }>
-				{ translate( 'Build a new report' ) }
-			</Button>
+			<div className="reports-overview__buttons-container">
+				<Button variant="primary" onClick={ handleBuildReport }>
+					{ translate( 'Build a new report' ) }
+				</Button>
+			</div>
 		);
 	}, [ translate, handleBuildReport ] );
 
@@ -82,11 +88,13 @@ const ReportsOverview = () => {
 					<Title>{ title }</Title>
 					<Actions>
 						<MobileSidebarNavigation />
-						{ buildReportButton }
+						<Button variant="primary" onClick={ handleBuildReport }>
+							{ translate( 'Build a new report' ) }
+						</Button>
 					</Actions>
 				</LayoutHeader>
 			</LayoutTop>
-			<LayoutBody>
+			<LayoutBody className="reports-overview__body">
 				<PageSectionColumns>
 					<PageSectionColumns.Column>
 						<div className="reports-overview__content">
@@ -96,7 +104,7 @@ const ReportsOverview = () => {
 								</div>
 								<div className="reports-overview__description">
 									{ translate(
-										"Show your clients the value you provide with beautiful, comprehensive reports. Include statistics, security measures, and performance data from their sites to demonstrate your agency's ongoing work."
+										"Prove your agency's impact with polished, easy-to-read reports. Pull in traffic stats, security checks, and performance metrics automatically, then send a snapshot that keeps clients informed, impressed, and confident in the work you do each month."
 									) }
 								</div>
 							</div>
@@ -111,21 +119,24 @@ const ReportsOverview = () => {
 				<PageSectionColumns
 					background={ {
 						isDarkBackground: true,
-						color: '#153E5F',
+						color: '#185683',
 					} }
 				>
-					<PageSectionColumns.Column heading={ translate( 'Why create client reports' ) }>
+					<PageSectionColumns.Column heading={ translate( 'Why share reports?' ) }>
 						<div className="reports-overview__description">
 							<div>
 								{ translate(
-									'Client reports help demonstrate the ongoing value of your services. They provide transparent insight into the work you do and the results you achieve, which helps build trust and justify your fees.'
+									'Reports turn raw data into clear stories. They highlight progress, justify fees, and create regular touchpoints that spark new goals. Each delivery invites a conversation, making upsells or scope expansion a natural, value-based next step for both sides.'
 								) }
 							</div>
-							<div>
-								{ translate(
-									'Regular reporting also creates touchpoints with your clients, opening the door for meaningful conversations about their goals and providing opportunities for upselling additional services.'
-								) }
-							</div>
+							<Button
+								__next40pxDefaultSize
+								href="#"
+								onClick={ handleExampleReport }
+								className="reports-overview__button--secondary"
+							>
+								{ translate( 'View an example report' ) }
+							</Button>
 						</div>
 					</PageSectionColumns.Column>
 					<PageSectionColumns.Column alignCenter>
@@ -133,12 +144,7 @@ const ReportsOverview = () => {
 					</PageSectionColumns.Column>
 				</PageSectionColumns>
 
-				<PageSectionColumns
-					heading={ translate( 'Benefits of client reporting' ) }
-					background={ {
-						color: '#f6f7f7',
-					} }
-				>
+				<PageSectionColumns heading={ translate( 'Benefits of client reporting' ) }>
 					<PageSectionColumns.Column>
 						<SimpleList className="reports-overview__list" items={ listItems1 } />
 					</PageSectionColumns.Column>
@@ -147,7 +153,11 @@ const ReportsOverview = () => {
 					</PageSectionColumns.Column>
 				</PageSectionColumns>
 
-				<PageSectionColumns>
+				<PageSectionColumns
+					background={ {
+						color: '#EBF7FF',
+					} }
+				>
 					<PageSectionColumns.Column
 						heading={ translate( 'Ready to create your first client report?' ) }
 					>
@@ -168,8 +178,6 @@ const ReportsOverview = () => {
 						<img src={ readyImage } alt="Reports & Analytics" />
 					</PageSectionColumns.Column>
 				</PageSectionColumns>
-
-				<BuildReportModal isOpen={ isModalOpen } onClose={ closeModal } />
 			</LayoutBody>
 		</Layout>
 	);

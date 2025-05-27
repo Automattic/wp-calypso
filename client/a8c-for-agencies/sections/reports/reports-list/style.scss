@@ -1,0 +1,20 @@
+@import '@wordpress/base-styles/mixins';
+@import '@wordpress/base-styles/variables';
+
+.redesigned-a8c-table {
+	// Fix search component spacing issues
+	.dataviews-search {
+		margin-block-end: 16px;
+	}
+
+	// Ensure consistent spacing for the dataview container
+	.dataviews-wrapper {
+		margin-block-start: 0;
+	}
+
+	// Remove extra padding from search container
+	.dataviews-filters__container {
+		padding-block: 0;
+		margin-block-end: 16px;
+	}
+}

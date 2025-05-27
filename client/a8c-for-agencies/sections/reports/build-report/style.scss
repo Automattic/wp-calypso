@@ -1,0 +1,68 @@
+@import '@wordpress/base-styles/mixins';
+@import '@wordpress/base-styles/variables';
+
+.build-report {
+	.build-report__content {
+		flex-grow: 1;
+		max-width: 660px;
+		min-height: 0;
+		display: flex;
+		flex-direction: column;
+		gap: 16px;
+		padding: 16px 24px;
+		border: 1px solid var( --color-neutral-10 );
+		border-radius: 4px;
+		margin-inline: auto;
+		margin-block-start: 16px;
+	}
+
+	.build-report__step-header {
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+		padding-block: 8px 4px;
+	}
+
+	.build-report__step-title {
+		@include heading-large;
+		margin-bottom: 0;
+	}
+
+	.build-report__step-description {
+		@include body-medium;
+		color: var( --studio-gray-70 );
+		margin-bottom: 0;
+	}
+
+	.build-report__group-label {
+		@include heading-medium;
+		// border-top: 1px solid var( --color-neutral-10 );
+		// padding-top: 16px;
+		margin-top: 8px;
+	}
+
+	.build-report__group-label--first {
+		border-top: none;
+		padding-top: 0;
+		margin-top: 0;
+	}
+
+	.build-report__checkbox-control:last-child {
+		margin-bottom: 16px;
+	}
+
+	// Fixing margins from StyledHelp-deprecatedMarginHelp which is bieng inserted by the component
+	.components-base-control__help {
+		margin-top: 0;
+		margin-bottom: 0;
+	}
+
+	.build-report__actions {
+		display: flex;
+		justify-content: flex-start;
+		gap: 8px;
+		background-color: var( --color-surface );
+		margin-top: auto;
+		padding-block: 8px;
+	}
+}
