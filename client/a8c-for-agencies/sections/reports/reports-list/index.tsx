@@ -116,16 +116,41 @@ export default function ReportsList( { reports, dataViewsState, setDataViewsStat
 		() => ( {
 			id: 'placeholder-1',
 			siteNameOrUrl: translate( 'example.com' ),
-			dateSent: translate( 'October 26, 2023' ),
+			dateSent: translate( 'October 26, 2025' ),
 			status: translate( 'Sent' ),
 		} ),
 		[ translate ]
 	);
 
+	const additionalPlaceholderReports: Report[] = useMemo(
+		() => [
+			{
+				id: 'placeholder-2',
+				siteNameOrUrl: translate( 'mybusiness.com' ),
+				dateSent: translate( 'November 15, 2025' ),
+				status: translate( 'Sent' ),
+			},
+			{
+				id: 'placeholder-3',
+				siteNameOrUrl: translate( 'clientsite.org' ),
+				dateSent: translate( 'December 3, 2025' ),
+				status: translate( 'Sent' ),
+			},
+			{
+				id: 'placeholder-4',
+				siteNameOrUrl: translate( 'portfolio.net' ),
+				dateSent: translate( 'December 18, 2025' ),
+				status: translate( 'Sent' ),
+			},
+		],
+		[ translate ]
+	);
+
 	const { data: items, paginationInfo: pagination } = useMemo( () => {
-		const reportsToDisplay = reports.length > 0 ? reports : [ placeholderReport ];
+		const reportsToDisplay =
+			reports.length > 0 ? reports : [ placeholderReport, ...additionalPlaceholderReports ];
 		return filterSortAndPaginate( reportsToDisplay, dataViewsState, fields );
-	}, [ reports, placeholderReport, dataViewsState, fields ] );
+	}, [ reports, placeholderReport, additionalPlaceholderReports, dataViewsState, fields ] );
 
 	return (
 		<div className="redesigned-a8c-table full-width">
@@ -134,7 +159,8 @@ export default function ReportsList( { reports, dataViewsState, setDataViewsStat
 					items,
 					getItemId: ( item: Report ) => `${ item.id }`,
 					onSelectionChange: ( data ) => {
-						const allReports = reports.length > 0 ? reports : [ placeholderReport ];
+						const allReports =
+							reports.length > 0 ? reports : [ placeholderReport, ...additionalPlaceholderReports ];
 						const report = allReports.find( ( r ) => r.id === data[ 0 ] );
 						if ( report ) {
 							openReportPreviewPane( report );

@@ -214,6 +214,13 @@ const BuildReport = () => {
 						<h2 className="build-report__step-title">
 							{ translate( 'Step 3 of 3: Send your report' ) }
 						</h2>
+						<p className="build-report__step-description">
+							{ translate(
+								'Your report is ready for sending. Checkout the preview, then click "Send to client now".'
+							) }
+							<br />
+							{ translate( "We'll take it from there!" ) }
+						</p>
 
 						<Button variant="secondary" onClick={ () => alert( 'Send test report clicked' ) }>
 							{ translate( 'Send me a preview' ) }
