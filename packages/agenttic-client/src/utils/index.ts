@@ -1,11 +1,14 @@
 import { v4 as uuidv4 } from 'uuid';
 import type {
+	ConversationHistoryPart,
 	JsonRpcId,
 	Message,
 	SendTaskRequest,
 	TaskSendParams,
 	TextPart,
 } from '../types/index';
+
+import type { ConversationHistoryItem } from '../cli/types';
 
 /**
  * Generate a random string for IDs using UUID
@@ -42,11 +45,26 @@ export function createTextPart( text: string ): TextPart {
 /**
  * Create a simple user message with a text part
  * @param text
+ * @param conversationHistory
  */
-export function createTextMessage( text: string ): Message {
+export function createTextMessage(
+	text: string,
+	conversationHistory: ConversationHistoryItem[] = []
+): Message {
 	return {
 		role: 'user',
-		parts: [ createTextPart( text ) ],
+		parts: [
+			...conversationHistory.map( ( item ) => {
+				return < ConversationHistoryPart >{
+					type: 'data',
+					data: {
+						role: item.role,
+						text: item.text,
+					},
+				};
+			} ),
+			createTextPart( text ),
+		],
 	};
 }
 

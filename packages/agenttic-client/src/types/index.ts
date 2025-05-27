@@ -80,6 +80,13 @@ export interface ContextDataPart extends DataPart {
 	};
 }
 
+export interface ConversationHistoryPart extends DataPart {
+	data: {
+		role: 'user' | 'model';
+		text: string;
+	};
+}
+
 export type Part =
 	| TextPart
 	| FilePart

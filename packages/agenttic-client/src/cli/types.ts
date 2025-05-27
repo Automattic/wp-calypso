@@ -16,7 +16,13 @@ export interface CLIAuthOptions {
 	// Future: support for other auth methods like API keys, OAuth, etc.
 }
 
+export interface ConversationHistoryItem {
+	role: 'user' | 'model';
+	text: string;
+}
+
 export interface InteractiveSession {
 	sessionId: string;
 	messageCount: number;
+	conversationHistory: ConversationHistoryItem[];
 }

@@ -368,6 +368,7 @@ async function runInteractive( options: CLIOptions ): Promise< void > {
 
 	const session: InteractiveSession = {
 		sessionId: options.session || `cli-${ Date.now() }`,
+		conversationHistory: [],
 		messageCount: 0,
 	};
 
@@ -399,6 +400,10 @@ Type 'help' for commands.
 	if ( options.message ) {
 		cliLog.info( `📤 Initial message: "${ options.message }"` );
 		session.messageCount++;
+		session.conversationHistory.push( {
+			role: 'user',
+			text: options.message,
+		} );
 
 		try {
 			if ( options.stream ) {
@@ -406,7 +411,10 @@ Type 'help' for commands.
 
 				let hasContent = false;
 				for await ( const update of client.sendMessageStream( {
-					message: createTextMessage( options.message ),
+					message: createTextMessage(
+						options.message,
+						session.conversationHistory
+					),
 					sessionId: session.sessionId,
 				} ) ) {
 					if ( update.status.message ) {
@@ -429,7 +437,10 @@ Type 'help' for commands.
 			} else {
 				cliLog.info( '📤 Sending...' );
 				const task = await client.sendMessage( {
-					message: createTextMessage( options.message ),
+					message: createTextMessage(
+						options.message,
+						session.conversationHistory
+					),
 					sessionId: session.sessionId,
 				} );
 
@@ -437,6 +448,10 @@ Type 'help' for commands.
 					task.status.message
 				);
 				cliLog.agent( responseText || '(No text response)' );
+				session.conversationHistory.push( {
+					role: 'model',
+					text: responseText,
+				} );
 			}
 		} catch ( error ) {
 			cliLog.error(
@@ -482,13 +497,20 @@ Just type your message to send it to the agent.
 
 			session.messageCount++;
 
+			session.conversationHistory.push( {
+				role: 'user',
+				text: trimmedInput,
+			} );
+
 			try {
 				if ( options.stream ) {
 					cliLog.info( '🔄 Streaming response...\n' );
-
 					let hasContent = false;
 					for await ( const update of client.sendMessageStream( {
-						message: createTextMessage( trimmedInput ),
+						message: createTextMessage(
+							trimmedInput,
+							session.conversationHistory
+						),
 						sessionId: session.sessionId,
 					} ) ) {
 						if ( update.status.message ) {
