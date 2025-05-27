@@ -13,3 +13,6 @@ export type {
 	AgentState,
 	UseAgentReturn,
 } from './react/useAgent';
+
+export { useClientContext } from './react/useClientContext';
+export type { GetClientContextCallback } from './react/useClientContext';

@@ -10,6 +10,7 @@ A TypeScript client library for A2A (Agent2Agent) protocol communication with su
 -   🔄 **Streaming**: Support for both regular and streaming message responses
 -   🛠️ **Tools**: Extensible tool system for agent capabilities
 -   🔐 **Authentication**: Flexible authentication provider system
+-   📄 **Dynamic Context**: Real-time context injection with `useClientContext`
 
 ## Installation
 
@@ -24,19 +25,29 @@ npm install @automattic/agenttic-client
 For browser environments and React applications, use the browser-specific entry point:
 
 ```typescript
-import { useAgent } from '@automattic/agenttic-client/browser';
+import { useAgent, useClientContext } from '@automattic/agenttic-client/browser';
 
 // React component example
 function ChatComponent() {
+  // Set up dynamic context that gets fresh data each time a message is sent
+  const contextProvider = useClientContext(() => ({
+    currentPage: getCurrentPageData(), // Fresh data each time
+    selectedElements: getSelectedElements(), // Fresh data each time
+    userRole: getCurrentUserRole(), // Fresh data each time
+    timestamp: Date.now(), // Always fresh
+  }));
+
   const { state, sendMessage, sendMessageStream } = useAgent({
     agentUrl: 'https://your-agent-url.com/api',
     authProvider: async () => ({ Authorization: 'Bearer your-token' }),
+    contextProvider, // Pass the dynamic context provider
     timeout: 30000,
   });
 
   const handleSendMessage = async () => {
     try {
-      const task = await sendMessage('Hello, agent!');
+      // Context is automatically fetched fresh and included in the message
+      const task = await sendMessage('Help me with the current page');
       console.log('Response:', task);
     } catch (error) {
       console.error('Error:', error);
@@ -45,7 +56,7 @@ function ChatComponent() {
 
   const handleStreamingMessage = async () => {
     try {
-      for await (const update of sendMessageStream('Hello, agent!')) {
+      for await (const update of sendMessageStream('Analyze the selected elements')) {
         console.log('Update:', update);
         if (update.final) {
           console.log('Final response received');
@@ -68,6 +79,40 @@ function ChatComponent() {
       </button>
     </div>
   );
+}
+```
+
+### WordPress Integration Example
+
+Perfect for WordPress environments where context changes frequently:
+
+```typescript
+import { useAgent, useClientContext } from '@automattic/agenttic-client/browser';
+import { useSelect } from '@wordpress/data';
+import { store as blockEditorStore } from '@wordpress/block-editor';
+
+function WordPressAgentChat() {
+  // Get fresh WordPress data each time
+  const { getSelectedBlocks, getCurrentPost } = useSelect(blockEditorStore);
+
+  const contextProvider = useClientContext(() => ({
+    currentPost: getCurrentPost(),
+    selectedBlocks: getSelectedBlocks(),
+    editorMode: getEditorMode(),
+    // Any other dynamic WordPress data
+  }));
+
+  const { sendMessage } = useAgent({
+    agentUrl: 'https://your-wordpress-agent.com/api',
+    contextProvider,
+  });
+
+  const handleHelp = () => {
+    // Fresh WordPress context is automatically included
+    sendMessage('Help me improve this post');
+  };
+
+  return <button onClick={handleHelp}>Get AI Help</button>;
 }
 ```
 
@@ -159,6 +204,29 @@ interface AgentState {
 }
 ```
 
+### useClientContext Hook
+
+The `useClientContext` hook creates a context provider from a callback function that gets called fresh each time a message is sent.
+
+#### Parameters
+
+-   `getClientContextCallback?: () => ClientContext` - Function that returns fresh context data
+
+#### Returns
+
+-   `ContextProvider | undefined` - Context provider instance or undefined if no callback provided
+
+#### Example
+
+```typescript
+const contextProvider = useClientContext( () => ( {
+	// This function is called fresh each time a message is sent
+	currentData: getCurrentData(),
+	timestamp: Date.now(),
+	dynamicValue: computeDynamicValue(),
+} ) );
+```
+
 ### Client Configuration
 
 ```typescript
@@ -220,20 +288,19 @@ const toolProvider: ToolProvider = {
 };
 ```
 
-### Context
+### Dynamic Context
 
-Provide context information to the agent:
+The context system is designed to provide fresh, real-time data with each message:
 
 ```typescript
-const contextProvider: ContextProvider = {
-	getClientContext() {
-		return {
-			userAgent: navigator.userAgent,
-			timestamp: new Date().toISOString(),
-			// Add any relevant context
-		};
-	},
-};
+// ❌ Don't store context in state (stale data)
+const [ context, setContext ] = useState( { data: 'static' } );
+
+// ✅ Use callback for fresh data each time
+const contextProvider = useClientContext( () => ( {
+	data: getFreshData(), // Called fresh each time
+	timestamp: Date.now(), // Always current
+} ) );
 ```
 
 ## Build Targets

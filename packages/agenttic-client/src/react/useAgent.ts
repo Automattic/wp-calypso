@@ -95,7 +95,9 @@ export function useAgent( config: UseAgentConfig ): UseAgentReturn {
 		config.authProvider,
 		config.timeout,
 		config.proxy,
-		config,
+		config.toolProvider,
+		config.contextProvider,
+		config.defaultSessionId,
 	] );
 
 	const sendMessage = useCallback(
