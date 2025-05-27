@@ -3,6 +3,7 @@ import { RouterProvider } from '@tanstack/react-router';
 import { useMemo } from 'react';
 import { AuthProvider, useAuth } from './auth';
 import { AppProvider, type AppConfig } from './context';
+import { I18nProvider } from './i18n';
 import { queryClient } from './query-client';
 import { getRouter } from './router';
 
@@ -17,7 +18,9 @@ function Layout( { config }: { config: AppConfig } ) {
 		<AppProvider config={ config }>
 			<QueryClientProvider client={ queryClient }>
 				<AuthProvider>
-					<RouterProviderWithAuth config={ config } />
+					<I18nProvider>
+						<RouterProviderWithAuth config={ config } />
+					</I18nProvider>
 				</AuthProvider>
 			</QueryClientProvider>
 		</AppProvider>

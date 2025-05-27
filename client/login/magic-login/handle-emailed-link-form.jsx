@@ -179,6 +179,7 @@ class HandleEmailedLinkForm extends Component {
 			wccomFrom,
 			isWCCOM,
 			isA4A,
+			isJetpack,
 		} = this.props;
 		const isWooDna = wooDnaConfig( initialQuery ).isWooDnaFlow();
 		const isGravPoweredClient = isGravPoweredOAuth2Client( oauth2Client );
@@ -194,6 +195,7 @@ class HandleEmailedLinkForm extends Component {
 					emailAddress={ emailAddress }
 					postId={ postId }
 					activate={ activate }
+					isJetpack={ isJetpack }
 				/>
 			);
 		}

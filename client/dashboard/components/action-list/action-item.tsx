@@ -9,7 +9,7 @@ import './action-item.scss';
 
 function UnforwardedActionItem(
 	{ title, description, decoration, actions }: ActionItemProps,
-	ref: React.ForwardedRef< HTMLAnchorElement | HTMLButtonElement >
+	ref: React.ForwardedRef< HTMLSpanElement >
 ) {
 	return (
 		<VStack className="action-item" ref={ ref } as="span">

@@ -661,11 +661,6 @@
 		}
 	}
 
-	.components-button {
-		--color-accent: var(--studio-jetpack-green-40);
-		--color-accent-60: var(--studio-jetpack-green-30);
-	}
-
 	.login__form-change-username,
 	.wp-login__links button {
 		color: var(--studio-jetpack-green-40);
@@ -737,11 +732,6 @@
 			background: var(--studio-gray-10);
 			border-color: var(--studio-gray-10);
 		}
-	}
-
-	.components-button {
-		--color-accent: var(--color-primary-40);
-		--color-accent-60: var(--color-primary-60);
 	}
 
 	.login__form-change-username,

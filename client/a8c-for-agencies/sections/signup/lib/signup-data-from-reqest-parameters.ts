@@ -9,7 +9,15 @@ const sanitizeString = ( value: string | null ): string => {
 	if ( ! value ) {
 		return '';
 	}
-	return value.trim().replace( /[^\p{L}\p{N}\s._-]/gu, '' );
+	return value.trim().replace( /[^\p{L}\p{N}\s._+-]/gu, '' );
+};
+
+const sanitizePlansToOfferProducts = ( value: string | null ): 'Yes' | 'No' | undefined => {
+	if ( value && [ 'Yes', 'No' ].includes( value ) ) {
+		return value as 'Yes' | 'No';
+	}
+
+	return undefined;
 };
 
 /**
@@ -88,6 +96,7 @@ export function getSignupDataFromRequestParameters(): AgencyDetailsPayload | nul
 		servicesOffered,
 		productsOffered,
 		productsToOffer,
+		plansToOfferProducts: sanitizePlansToOfferProducts( searchParams.get( 'expansion_planned' ) ),
 		line1: sanitizeString( searchParams.get( 'address_line1' ) ),
 		line2: sanitizeString( searchParams.get( 'address_line2' ) ),
 		city: sanitizeString( searchParams.get( 'address_city' ) ),

@@ -1,11 +1,11 @@
 import { DataViews, filterSortAndPaginate } from '@automattic/dataviews';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate, Link } from '@tanstack/react-router';
-import { Button, Dropdown } from '@wordpress/components';
+import { Button, Modal } from '@wordpress/components';
 import { useResizeObserver } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { Icon, check } from '@wordpress/icons';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { sitesQuery } from '../app/queries';
 import { sitesRoute } from '../app/router';
 import DataViewsCard from '../components/dataviews-card';
@@ -43,7 +43,9 @@ const DEFAULT_FIELDS: Field< Site >[] = [
 		id: 'URL',
 		label: __( 'URL' ),
 		enableGlobalSearch: true,
-		render: ( { item }: { item: Site } ) => new URL( item.URL ).hostname,
+		render: ( { item }: { item: Site } ) => (
+			<span style={ { overflowWrap: 'anywhere' } }>{ new URL( item.URL ).hostname }</span>
+		),
 	},
 	{
 		id: 'icon.ico',
@@ -70,21 +72,6 @@ const DEFAULT_FIELDS: Field< Site >[] = [
 			) : (
 				__( 'Disabled' )
 			),
-		filterBy: {
-			operators: [ 'is' as Operator ],
-		},
-	},
-	{
-		id: 'protect',
-		type: 'boolean',
-		label: __( 'Protect' ),
-		getValue: ( { item }: { item: Site } ) => !! item.active_modules?.includes( 'protect' ),
-		render: ( { item }: { item: Site } ) =>
-			item.active_modules?.includes( 'protect' ) ? <Icon icon={ check } /> : __( 'Disabled' ),
-		elements: [
-			{ value: true, label: __( 'Enabled' ) },
-			{ value: false, label: __( 'Disabled' ) },
-		],
 		filterBy: {
 			operators: [ 'is' as Operator ],
 		},
@@ -204,6 +191,7 @@ export default function Sites() {
 			hasA8CSites ? DEFAULT_FIELDS : DEFAULT_FIELDS.filter( ( field ) => field.id !== 'is_a8c' ),
 		[ hasA8CSites ]
 	);
+	const [ isModalOpen, setIsModalOpen ] = useState( false );
 
 	if ( ! sites ) {
 		return;
@@ -213,26 +201,23 @@ export default function Sites() {
 
 	return (
 		<>
+			{ isModalOpen && (
+				<Modal title={ __( 'Add New Site' ) } onRequestClose={ () => setIsModalOpen( false ) }>
+					<AddNewSite context="sites-dashboard" />
+				</Modal>
+			) }
 			<PageLayout
 				header={
 					<PageHeader
 						title={ __( 'Sites' ) }
 						actions={
-							<Dropdown
-								popoverProps={ { placement: 'bottom-end', offset: 10, noArrow: false } }
-								focusOnMount
-								renderToggle={ ( { isOpen, onToggle } ) => (
-									<Button
-										variant="primary"
-										onClick={ onToggle }
-										__next40pxDefaultSize
-										aria-expanded={ isOpen }
-									>
-										{ __( 'Add New Site' ) }
-									</Button>
-								) }
-								renderContent={ () => <AddNewSite /> }
-							/>
+							<Button
+								variant="primary"
+								onClick={ () => setIsModalOpen( true ) }
+								__next40pxDefaultSize
+							>
+								{ __( 'Add New Site' ) }
+							</Button>
 						}
 					/>
 				}

@@ -4,6 +4,8 @@
  * work well for content-centric websites.
  */
 
+@import '@wordpress/components/build-style/style.css';
+
 /* You can override the default Infima variables here. */
 :root {
   /* Generated from WP Blueberry using the palette generator at https://docusaurus.io/docs/styling-layout#styling-your-site-with-infima */

@@ -11,7 +11,7 @@ import './style.scss';
 
 function UnforwardedActionList(
 	{ title, description, children }: ActionListProps,
-	ref: React.ForwardedRef< HTMLAnchorElement | HTMLButtonElement >
+	ref: React.ForwardedRef< HTMLDivElement >
 ) {
 	return (
 		<Card className="action-list" ref={ ref }>

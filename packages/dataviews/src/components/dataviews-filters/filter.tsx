@@ -40,6 +40,9 @@ import {
 	OPERATOR_GREATER_THAN,
 	OPERATOR_LESS_THAN_OR_EQUAL,
 	OPERATOR_GREATER_THAN_OR_EQUAL,
+	OPERATOR_CONTAINS,
+	OPERATOR_NOT_CONTAINS,
+	OPERATOR_STARTS_WITH,
 } from '../../constants';
 import type {
 	Filter,
@@ -201,6 +204,42 @@ const FilterText = ( {
 				__(
 					'<Name>%1$s is greater than or equal to: </Name><Value>%2$s</Value>'
 				),
+				filter.name,
+				activeElements[ 0 ].label
+			),
+			filterTextWrappers
+		);
+	}
+
+	if ( filterInView?.operator === OPERATOR_CONTAINS ) {
+		return createInterpolateElement(
+			sprintf(
+				/* translators: 1: Filter name. 2: Filter value. e.g.: "Title contains: Mars". */
+				__( '<Name>%1$s contains: </Name><Value>%2$s</Value>' ),
+				filter.name,
+				activeElements[ 0 ].label
+			),
+			filterTextWrappers
+		);
+	}
+
+	if ( filterInView?.operator === OPERATOR_NOT_CONTAINS ) {
+		return createInterpolateElement(
+			sprintf(
+				/* translators: 1: Filter name. 2: Filter value. e.g.: "Description doesn't contain: photo". */
+				__( "<Name>%1$s doesn't contain: </Name><Value>%2$s</Value>" ),
+				filter.name,
+				activeElements[ 0 ].label
+			),
+			filterTextWrappers
+		);
+	}
+
+	if ( filterInView?.operator === OPERATOR_STARTS_WITH ) {
+		return createInterpolateElement(
+			sprintf(
+				/* translators: 1: Filter name. 2: Filter value. e.g.: "Title starts with: Mar". */
+				__( '<Name>%1$s starts with: </Name><Value>%2$s</Value>' ),
 				filter.name,
 				activeElements[ 0 ].label
 			),

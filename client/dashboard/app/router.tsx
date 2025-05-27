@@ -6,6 +6,10 @@ import {
 	createLazyRoute,
 } from '@tanstack/react-router';
 import { fetchTwoStep } from '../data';
+import { canUpdatePHPVersion } from '../sites/settings-php/utils';
+import { canGetPrimaryDataCenter } from '../sites/settings-primary-data-center';
+import { canSetStaticFile404Handling } from '../sites/settings-static-file-404';
+import { canUpdateWordPressVersion } from '../sites/settings-wordpress/utils';
 import NotFound from './404';
 import UnknownError from './500';
 import {
@@ -17,8 +21,10 @@ import {
 	profileQuery,
 	siteCurrentPlanQuery,
 	siteEngagementStatsQuery,
-	siteMonitorUptimeQuery,
+	siteStaticFile404Query,
+	siteWordPressVersionQuery,
 	sitePHPVersionQuery,
+	sitePrimaryDataCenterQuery,
 } from './queries';
 import { queryClient } from './query-client';
 import Root from './root';
@@ -78,27 +84,13 @@ const siteRoute = createRoute( {
 const siteOverviewRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: '/',
-	loader: async ( { params: { siteSlug } } ) => {
-		// Site usually takes the longest, so kick it off first.
-		const sitePromise = queryClient.ensureQueryData( siteQuery( siteSlug ) );
-		// Kick off all independent promises in parallel.
-		const currentPlanPromise = queryClient.ensureQueryData( siteCurrentPlanQuery( siteSlug ) );
-		const engagementStatsPromise = queryClient.ensureQueryData(
-			siteEngagementStatsQuery( siteSlug )
-		);
-		const site = await sitePromise;
-		await Promise.all( [
-			currentPlanPromise,
-			engagementStatsPromise,
-			// Kick off dependent promises in parallel.
-			site.jetpack && site.jetpack_modules.includes( 'monitor' )
-				? queryClient.ensureQueryData( siteMonitorUptimeQuery( siteSlug ) )
-				: undefined,
-			site.is_wpcom_atomic
-				? queryClient.ensureQueryData( sitePHPVersionQuery( siteSlug ) )
-				: undefined,
-		] );
-	},
+	loader: ( { params: { siteSlug }, preload } ) =>
+		Promise.all( [
+			// The current plan is nice to have preloaded, but not blocking for
+			// navigation.
+			preload ? queryClient.ensureQueryData( siteCurrentPlanQuery( siteSlug ) ) : undefined,
+			queryClient.ensureQueryData( siteEngagementStatsQuery( siteSlug ) ),
+		] ),
 } ).lazy( () =>
 	import( '../sites/overview' ).then( ( d ) =>
 		createLazyRoute( 'site-overview' )( {
@@ -163,6 +155,96 @@ const siteSettingsSubscriptionGiftingRoute = createRoute( {
 } ).lazy( () =>
 	import( '../sites/settings-subscription-gifting' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-subscription-gifting' )( {
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+		} )
+	)
+);
+
+const siteSettingsDatabaseRoute = createRoute( {
+	getParentRoute: () => siteRoute,
+	path: 'settings/database',
+} ).lazy( () =>
+	import( '../sites/settings-database' ).then( ( d ) =>
+		createLazyRoute( 'site-settings-database' )( {
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+		} )
+	)
+);
+
+const siteSettingsWordPressRoute = createRoute( {
+	getParentRoute: () => siteRoute,
+	path: 'settings/wordpress',
+	loader: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteQuery( siteSlug ) );
+		if ( canUpdateWordPressVersion( site ) ) {
+			await queryClient.ensureQueryData( siteWordPressVersionQuery( siteSlug ) );
+		}
+	},
+} ).lazy( () =>
+	import( '../sites/settings-wordpress' ).then( ( d ) =>
+		createLazyRoute( 'site-settings-wordpress' )( {
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+		} )
+	)
+);
+
+const siteSettingsPHPRoute = createRoute( {
+	getParentRoute: () => siteRoute,
+	path: 'settings/php',
+	loader: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteQuery( siteSlug ) );
+		if ( canUpdatePHPVersion( site ) ) {
+			await queryClient.ensureQueryData( sitePHPVersionQuery( siteSlug ) );
+		}
+	},
+} ).lazy( () =>
+	import( '../sites/settings-php' ).then( ( d ) =>
+		createLazyRoute( 'site-settings-php' )( {
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+		} )
+	)
+);
+
+const siteSettingsPrimaryDataCenterRoute = createRoute( {
+	getParentRoute: () => siteRoute,
+	path: 'settings/primary-data-center',
+	loader: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteQuery( siteSlug ) );
+		if ( canGetPrimaryDataCenter( site ) ) {
+			await queryClient.ensureQueryData( sitePrimaryDataCenterQuery( siteSlug ) );
+		}
+	},
+} ).lazy( () =>
+	import( '../sites/settings-primary-data-center' ).then( ( d ) =>
+		createLazyRoute( 'site-settings-primary-data-center' )( {
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+		} )
+	)
+);
+
+const siteSettingsStaticFile404Route = createRoute( {
+	getParentRoute: () => siteRoute,
+	path: 'settings/static-file-404',
+	loader: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteQuery( siteSlug ) );
+		if ( canSetStaticFile404Handling( site ) ) {
+			await queryClient.ensureQueryData( siteStaticFile404Query( siteSlug ) );
+		}
+	},
+} ).lazy( () =>
+	import( '../sites/settings-static-file-404' ).then( ( d ) =>
+		createLazyRoute( 'site-settings-static-file-404' )( {
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+		} )
+	)
+);
+
+const siteSettingsTransferSiteRoute = createRoute( {
+	getParentRoute: () => siteRoute,
+	path: 'settings/transfer-site',
+} ).lazy( () =>
+	import( '../sites/settings-transfer-site' ).then( ( d ) =>
+		createLazyRoute( 'site-settings-transfer-site' )( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )
 	)
@@ -333,6 +415,12 @@ const createRouteTree = ( config: AppConfig ) => {
 				siteSettingsRoute,
 				siteSettingsSiteVisibilityRoute,
 				siteSettingsSubscriptionGiftingRoute,
+				siteSettingsDatabaseRoute,
+				siteSettingsWordPressRoute,
+				siteSettingsPHPRoute,
+				siteSettingsPrimaryDataCenterRoute,
+				siteSettingsStaticFile404Route,
+				siteSettingsTransferSiteRoute,
 			] )
 		);
 	}

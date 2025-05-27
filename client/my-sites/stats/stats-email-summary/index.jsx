@@ -2,13 +2,18 @@ import config from '@automattic/calypso-config';
 import { formatNumber } from '@automattic/number-formatters';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo } from 'react';
+import { useMemo, useEffect } from 'react';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import NavigationHeader from 'calypso/components/navigation-header';
 import Main from 'calypso/my-sites/stats/components/stats-main';
+import { useShouldGateStats } from 'calypso/my-sites/stats/hooks/use-should-gate-stats';
+import { recordCurrentScreen } from 'calypso/my-sites/stats/hooks/use-stats-navigation-history';
+import DownloadCsv from 'calypso/my-sites/stats/stats-download-csv';
+import DownloadCsvUpsell from 'calypso/my-sites/stats/stats-download-csv-upsell';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import PageHeader from '../components/headers/page-header';
+import { STATS_FEATURE_DOWNLOAD_CSV } from '../constants';
 import {
 	TooltipWrapper,
 	OpensTooltipContent,
@@ -23,10 +28,11 @@ import '../stats-module/summary-nav.scss';
 const StatsStrings = statsStringsFactory();
 
 // TODO: `query` was never passed from outside or defined in scope. Adding it to avoid a lint error.
-const StatsEmailSummary = ( { period, query } ) => {
+const StatsEmailSummary = ( { period, query, context } ) => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( ( state ) => getSelectedSiteSlug( state, siteId ) );
+	const shouldGateCsvDownloads = useShouldGateStats( STATS_FEATURE_DOWNLOAD_CSV );
 
 	// TODO: align with all summary pages.
 	const navigationItems = useMemo( () => {
@@ -59,6 +65,13 @@ const StatsEmailSummary = ( { period, query } ) => {
 		return [ { label: backLabel, href: backLink }, { label: title } ];
 	}, [ translate, siteSlug ] );
 
+	useEffect( () => {
+		recordCurrentScreen( 'emailsummary', {
+			queryParams: context.query,
+			period: period.period,
+		} );
+	}, [ context.query, period.period ] );
+
 	const isStatsNavigationImprovementEnabled = config.isEnabled( 'stats/navigation-improvement' );
 
 	const backLinkProps = {
@@ -70,6 +83,26 @@ const StatsEmailSummary = ( { period, query } ) => {
 		// Remove the default logo for Odyssey stats.
 		titleLogo: null,
 	};
+
+	const downloadCsvElement = shouldGateCsvDownloads ? (
+		<DownloadCsvUpsell siteId={ siteId } borderless />
+	) : (
+		<DownloadCsv
+			statType="statsEmailsSummary"
+			path="emails"
+			query={ query }
+			period={ period }
+			headers={ [ 'title', 'opens_rate', 'unique_clicks', 'link' ] }
+			rowModifierFn={ ( row, data ) => {
+				if ( ! Array.isArray( row ) || row.length === 0 ) {
+					return row;
+				}
+
+				const [ label, ...rest ] = row;
+				return [ label, data.opens_rate, ...rest ];
+			} }
+		/>
+	);
 
 	return (
 		<Main
@@ -85,6 +118,9 @@ const StatsEmailSummary = ( { period, query } ) => {
 						className="stats__section-header modernized-header"
 						titleProps={ titleProps }
 						backLinkProps={ backLinkProps }
+						rightSection={
+							<div className="stats-module__header-nav-button">{ downloadCsvElement }</div>
+						}
 					/>
 				) }
 

@@ -59,7 +59,6 @@
 		"jetpack/manage-sites-v2-menu": false,
 		"jetpack/server-credentials-advanced-flow": true,
 		"jetpack/simplify-pricing-structure": false,
-		"jetpack/social-plans-v1": true,
 		"jetpack/standalone-plugin-onboarding-update-v1": true,
 		"jetpack/streamline-license-purchases": false,
 		"jetpack/crm-downloads": true,

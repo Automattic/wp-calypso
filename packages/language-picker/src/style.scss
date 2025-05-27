@@ -109,6 +109,7 @@
 	}
 
 	.language-picker-component__language-group {
+		justify-content: flex-start;
 		width: 230px;
 	}
 
@@ -173,7 +174,9 @@
 	}
 
 	.language-picker-component__language-button {
+		justify-content: flex-start;
 		width: 100%;
+
 		@include break-small() {
 			width: $language_button_width;
 		}

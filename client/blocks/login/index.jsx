@@ -12,7 +12,7 @@ import Notice from 'calypso/components/notice';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import isAkismetRedirect from 'calypso/lib/akismet/is-akismet-redirect';
 import getGravatarOAuth2Flow from 'calypso/lib/get-gravatar-oauth2-flow';
-import { getSignupUrl } from 'calypso/lib/login';
+import { getSignupUrl, pathWithLeadingSlash } from 'calypso/lib/login';
 import {
 	isJetpackCloudOAuth2Client,
 	isA4AOAuth2Client,
@@ -57,6 +57,7 @@ import ContinueAsUser from './continue-as-user';
 import ErrorNotice from './error-notice';
 import LoginForm from './login-form';
 import { LoginHeader } from './login-header';
+import { shouldUseMagicCode } from './utils/should-use-magic-code';
 
 import './style.scss';
 
@@ -313,7 +314,7 @@ class Login extends Component {
 		} = this.props;
 
 		if ( signupUrl ) {
-			return signupUrl;
+			return window.location.origin + pathWithLeadingSlash( signupUrl );
 		}
 
 		if ( isWCCOM && isEmpty( currentQuery ) ) {
@@ -439,6 +440,7 @@ class Login extends Component {
 							redirectToAfterLoginUrl={ this.props.redirectTo }
 							oauth2ClientId={ this.props.oauth2Client && this.props.oauth2Client.id }
 							locale={ locale }
+							isWoo={ isWoo }
 							isWooJPC={ isWooJPC }
 							from={ get( currentQuery, 'from' ) }
 						/>
@@ -740,6 +742,7 @@ export default connect(
 				redirectTo: stateProps.redirectTo,
 				loginFormFlow: true,
 				showGlobalNotices: false,
+				...( shouldUseMagicCode( { isJetpack: ownProps.isJetpack } ) && { tokenType: 'code' } ),
 				source: stateProps.isWooJPC ? 'woo-passwordless-jpc' + '-' + get( stateProps, 'from' ) : '',
 				flow:
 					( ownProps.isJetpack && 'jetpack' ) ||

@@ -33,6 +33,7 @@ export const sendLoginEmail = ( action ) => {
 		flow,
 		createAccount,
 		source,
+		tokenType,
 	} = action;
 	const noticeAction = showGlobalNotices
 		? infoNotice( translate( 'Sending email' ), { duration: 4000 } )
@@ -73,6 +74,7 @@ export const sendLoginEmail = ( action ) => {
 					...( flow && { flow } ),
 					create_account: createAccount,
 					tos: getToSAcceptancePayload(),
+					...( tokenType && { token_type: tokenType } ),
 					source,
 					calypso_env:
 						window?.location?.host === 'wordpress.com' ? 'production' : config( 'env_id' ),
@@ -83,16 +85,13 @@ export const sendLoginEmail = ( action ) => {
 	];
 };
 
-export const onSuccess = ( {
-	email,
-	showGlobalNotices,
-	infoNoticeId = null,
-	loginFormFlow,
-	requestLoginEmailFormFlow,
-} ) => [
+export const onSuccess = (
+	{ email, showGlobalNotices, infoNoticeId = null, loginFormFlow, requestLoginEmailFormFlow },
+	response
+) => [
 	...( loginFormFlow || requestLoginEmailFormFlow
 		? [
-				{ type: MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_SUCCESS },
+				{ type: MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_SUCCESS, response },
 				{ type: MAGIC_LOGIN_SHOW_CHECK_YOUR_EMAIL_PAGE, email },
 		  ]
 		: [] ),

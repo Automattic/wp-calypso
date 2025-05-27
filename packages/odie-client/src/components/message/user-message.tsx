@@ -1,5 +1,8 @@
+import { HelpCenterSelect } from '@automattic/data-stores';
+import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { ExternalLink } from '@wordpress/components';
-import { createInterpolateElement } from '@wordpress/element';
+import { useSelect } from '@wordpress/data';
+import { createInterpolateElement, useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
 import Markdown from 'react-markdown';
@@ -9,7 +12,7 @@ import {
 	ODIE_THIRD_PARTY_MESSAGE,
 } from '../../constants';
 import { useOdieAssistantContext } from '../../context';
-import { userProvidedEnoughInformation } from '../../utils';
+import { interactionHasZendeskEvent, userProvidedEnoughInformation } from '../../utils';
 import CustomALink from './custom-a-link';
 import { DirectEscalationLink } from './direct-escalation-link';
 import { GetSupport } from './get-support';
@@ -47,6 +50,12 @@ export const UserMessage = ( {
 	const { isUserEligibleForPaidSupport, trackEvent, chat, canConnectToZendesk } =
 		useOdieAssistantContext();
 
+	const currentSupportInteraction = useSelect(
+		( select ) =>
+			( select( HELP_CENTER_STORE ) as HelpCenterSelect ).getCurrentSupportInteraction(),
+		[]
+	);
+
 	const hasCannedResponse = message.context?.flags?.canned_response;
 	const isRequestingHumanSupport = message.context?.flags?.forward_to_human_support ?? false;
 	const hasFeedback = !! message?.rating_value;
@@ -58,8 +67,13 @@ export const UserMessage = ( {
 	const showExtraContactOptions =
 		( hasFeedback && ! isPositiveFeedback ) || isRequestingHumanSupport;
 
-	const showDirectEscalationLink =
-		! chat.conversationId && userProvidedEnoughInformation( chat?.messages );
+	const showDirectEscalationLink = useMemo( () => {
+		return (
+			! chat.conversationId &&
+			userProvidedEnoughInformation( chat?.messages ) &&
+			! interactionHasZendeskEvent( currentSupportInteraction )
+		);
+	}, [ chat.conversationId, currentSupportInteraction, chat?.messages ] );
 
 	const forwardMessage = isUserEligibleForPaidSupport
 		? ODIE_FORWARD_TO_ZENDESK_MESSAGE
@@ -118,9 +132,11 @@ export const UserMessage = ( {
 					}
 				) }
 			</div>
-			{ showDirectEscalationLink && <DirectEscalationLink messageId={ message.message_id } /> }
 			{ ! isConnectedToZendesk && (
-				<WasThisHelpfulButtons message={ message } isDisliked={ isDisliked } />
+				<>
+					{ showDirectEscalationLink && <DirectEscalationLink messageId={ message.message_id } /> }
+					<WasThisHelpfulButtons message={ message } isDisliked={ isDisliked } />
+				</>
 			) }
 		</>
 	);

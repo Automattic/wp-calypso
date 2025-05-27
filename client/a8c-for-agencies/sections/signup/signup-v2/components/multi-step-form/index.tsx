@@ -1,3 +1,4 @@
+import page from '@automattic/calypso-router';
 import { APIError } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useState, useCallback } from 'react';
@@ -9,7 +10,7 @@ import A4ALogo, {
 import { useIsDarkMode } from 'calypso/a8c-for-agencies/hooks/use-is-dark-mode';
 import { AgencyDetailsSignupPayload } from 'calypso/a8c-for-agencies/sections/signup/types';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { errorNotice } from 'calypso/state/notices/actions';
 import useCreateSignupMutation from '../../../hooks/use-create-signup-mutation';
 import StepProgress from '../step-progress';
 import BlueprintForm from './blueprint-form';
@@ -23,6 +24,7 @@ import PersonalizationForm from './personalization';
 import './style.scss';
 
 type Props = {
+	sourceName?: string;
 	withPersonalizedBlueprint?: boolean;
 	signupWithMagicLinkFlow?: boolean;
 };
@@ -77,6 +79,7 @@ const getFinishSurveyProgress = ( step: number ): number => {
 const MultiStepForm = ( {
 	withPersonalizedBlueprint = false,
 	signupWithMagicLinkFlow = false,
+	sourceName,
 }: Props ) => {
 	const notificationId = 'a4a-agency-signup-form';
 	const translate = useTranslate();
@@ -85,7 +88,6 @@ const MultiStepForm = ( {
 	const isDarkMode = useIsDarkMode();
 
 	const [ formData, setFormData ] = useState< Partial< AgencyDetailsSignupPayload > >( {} );
-	const [ blueprintRequested, setBlueprintRequested ] = useState( false );
 
 	const steps: Step[] = [
 		{
@@ -109,9 +111,9 @@ const MultiStepForm = ( {
 			: [] ),
 	];
 
-	const { mutate: submitSurvey } = useCreateSignupMutation( {
+	const { mutate: submitSurvey, isPending: isSubmittingSurveyPending } = useCreateSignupMutation( {
 		onSuccess: () => {
-			dispatch( successNotice( 'Signup successful', { id: notificationId } ) );
+			dispatch( recordTracksEvent( 'calypso_a4a_agency_signup_form_via_magic_link_submitted' ) );
 		},
 		onError: ( error: APIError ) => {
 			dispatch( errorNotice( error?.message, { id: notificationId } ) );
@@ -159,16 +161,15 @@ const MultiStepForm = ( {
 					...rest
 				} = newFormData;
 				const payload = isBlueprintRequested ? newFormData : rest;
-				submitSurvey( payload as AgencyDetailsSignupPayload );
+				submitSurvey( { ...payload, initialSource: sourceName } as AgencyDetailsSignupPayload );
 			}
 		},
-		[ formData, signupWithMagicLinkFlow, submitSurvey ]
+		[ sourceName, formData, signupWithMagicLinkFlow, submitSurvey ]
 	);
 
-	const clearDataAndRefresh = () => {
+	const closeSurvey = () => {
 		setFormData( {} );
-		setBlueprintRequested( false );
-		window.location.reload();
+		page( 'https://automattic.com/for-agencies/' );
 	};
 
 	const onCreateAgency = useCallback(
@@ -201,6 +202,7 @@ const MultiStepForm = ( {
 						isFinalStep={ ! signupWithMagicLinkFlow }
 						initialFormData={ formData }
 						goBack={ () => setCurrentStep( 1 ) }
+						withPersonalizedBlueprint={ withPersonalizedBlueprint }
 					/>
 				);
 			case 3:
@@ -223,7 +225,6 @@ const MultiStepForm = ( {
 				return (
 					<BlueprintForm2
 						onContinue={ ( data ) => {
-							setBlueprintRequested( true );
 							updateDataAndContinue( data, 6, true );
 						} }
 						initialFormData={ formData }
@@ -232,18 +233,15 @@ const MultiStepForm = ( {
 				);
 			case 6:
 				return (
-					<FinishSignupSurvey
-						onContinue={ clearDataAndRefresh }
-						blueprintRequested={ blueprintRequested }
-					/>
+					<FinishSignupSurvey onContinue={ closeSurvey } isPending={ isSubmittingSurveyPending } />
 				);
 			default:
 				return null;
 		}
 	}, [
-		blueprintRequested,
 		currentStep,
 		formData,
+		isSubmittingSurveyPending,
 		onCreateAgency,
 		signupWithMagicLinkFlow,
 		trackView,

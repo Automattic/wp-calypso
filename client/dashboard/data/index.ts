@@ -1,5 +1,5 @@
 import wpcom from 'calypso/lib/wp';
-import { SITE_FIELDS } from './constants';
+import { SITE_FIELDS, SITE_OPTIONS } from './constants';
 import type {
 	Domain,
 	Email,
@@ -14,7 +14,9 @@ import type {
 	BasicMetricsData,
 	SiteSettings,
 	UrlPerformanceInsights,
+	PhpMyAdminToken,
 } from './types';
+import type { DataCenterOption } from 'calypso/data/data-center/types';
 
 export const fetchProfile = async (): Promise< Profile > => {
 	return await wpcom.req.get( '/me/settings' );
@@ -31,6 +33,7 @@ export const updateProfile = async ( data: Partial< Profile > ) => {
 };
 
 const JOINED_SITE_FIELDS = SITE_FIELDS.join( ',' );
+const JOINED_SITE_OPTIONS = SITE_OPTIONS.join( ',' );
 
 export const fetchSites = async (): Promise< Site[] > => {
 	const { sites } = await wpcom.req.get(
@@ -43,6 +46,7 @@ export const fetchSites = async (): Promise< Site[] > => {
 			include_domain_only: 'true',
 			site_activity: 'active',
 			fields: JOINED_SITE_FIELDS,
+			options: JOINED_SITE_OPTIONS,
 		}
 	);
 	return sites;
@@ -51,7 +55,7 @@ export const fetchSites = async (): Promise< Site[] > => {
 export const fetchSite = async ( siteIdOrSlug: string ): Promise< Site > => {
 	return await wpcom.req.get(
 		{ path: `/sites/${ siteIdOrSlug }` },
-		{ fields: JOINED_SITE_FIELDS }
+		{ fields: JOINED_SITE_FIELDS, options: JOINED_SITE_OPTIONS }
 	);
 };
 
@@ -77,12 +81,43 @@ export const fetchSiteMonitorUptime = async (
 };
 
 export const fetchPHPVersion = async ( id: string ): Promise< string | undefined > => {
-	// TODO: check request in different contexts.. Also do we show this only for atomic sites?
-	// TODO: find out what check is needed before this request to avoid 403 errors.
 	return wpcom.req.get( {
 		path: `/sites/${ id }/hosting/php-version`,
 		apiNamespace: 'wpcom/v2',
 	} );
+};
+
+export const updatePHPVersion = async (
+	siteIdOrSlug: string,
+	version: string
+): Promise< void > => {
+	return wpcom.req.post(
+		{
+			path: `/sites/${ siteIdOrSlug }/hosting/php-version`,
+			apiNamespace: 'wpcom/v2',
+		},
+		{ version }
+	);
+};
+
+export const fetchWordPressVersion = async ( siteIdOrSlug: string ): Promise< string > => {
+	return wpcom.req.get( {
+		path: `/sites/${ siteIdOrSlug }/hosting/wp-version`,
+		apiNamespace: 'wpcom/v2',
+	} );
+};
+
+export const updateWordPressVersion = async (
+	siteIdOrSlug: string,
+	version: string
+): Promise< void > => {
+	return wpcom.req.post(
+		{
+			path: `/sites/${ siteIdOrSlug }/hosting/wp-version`,
+			apiNamespace: 'wpcom/v2',
+		},
+		{ version }
+	);
 };
 
 export const fetchCurrentPlan = async ( siteIdOrSlug: string ): Promise< Plan > => {
@@ -347,5 +382,48 @@ export const fetchPerformanceInsights = async (
 			apiNamespace: 'wpcom/v2',
 		},
 		{ url, advance: '1', hash: token }
+	);
+};
+
+export const fetchPhpMyAdminToken = async ( siteIdOrSlug: string ): Promise< PhpMyAdminToken > => {
+	return wpcom.req.post( {
+		path: `/sites/${ siteIdOrSlug }/hosting/pma/token`,
+		apiNamespace: 'wpcom/v2',
+	} );
+};
+
+export const resetPhpMyAdminPassword = async ( siteIdOrSlug: string ): Promise< void > => {
+	return wpcom.req.post( {
+		path: `/sites/${ siteIdOrSlug }/hosting/restore-database-password`,
+		apiNamespace: 'wpcom/v2',
+	} );
+};
+
+export const fetchPrimaryDataCenter = async (
+	siteIdOrSlug: string
+): Promise< DataCenterOption | null > => {
+	return wpcom.req.get( {
+		path: `/sites/${ siteIdOrSlug }/hosting/geo-affinity`,
+		apiNamespace: 'wpcom/v2',
+	} );
+};
+
+export const fetchStaticFile404 = async ( siteIdOrSlug: string ): Promise< string > => {
+	return wpcom.req.get( {
+		path: `/sites/${ siteIdOrSlug }/hosting/static-file-404`,
+		apiNamespace: 'wpcom/v2',
+	} );
+};
+
+export const updateStaticFile404 = async (
+	siteIdOrSlug: string,
+	setting: string
+): Promise< void > => {
+	return wpcom.req.post(
+		{
+			path: `/sites/${ siteIdOrSlug }/hosting/static-file-404`,
+			apiNamespace: 'wpcom/v2',
+		},
+		{ setting }
 	);
 };

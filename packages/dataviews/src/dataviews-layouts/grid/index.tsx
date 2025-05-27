@@ -253,6 +253,7 @@ function ViewGrid< Item >( {
 	renderItemLink,
 	selection,
 	view,
+	className,
 }: ViewGridProps< Item > ) {
 	const titleField = fields.find(
 		( field ) => field.id === view?.titleField
@@ -299,7 +300,7 @@ function ViewGrid< Item >( {
 					gap={ 8 }
 					columns={ 2 }
 					alignment="top"
-					className="dataviews-view-grid"
+					className={ clsx( 'dataviews-view-grid', className ) }
 					style={ gridStyle }
 					aria-busy={ isLoading }
 				>

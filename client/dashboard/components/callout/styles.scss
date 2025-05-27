@@ -1,0 +1,39 @@
+@import "@wordpress/base-styles/colors";
+@import "@wordpress/base-styles/variables";
+@import "@wordpress/base-styles/mixins";
+
+.dashboard-callout {
+	max-width: 600px;
+
+	&.is-highlight {
+		background: rgba(56, 88, 233, 0.04);
+	}
+}
+
+.dashboard-callout__h-container {
+	padding: $grid-unit-40;
+	@include body-medium;
+	color: $gray-700;
+
+	> * {
+		flex: 1 0;
+	}
+}
+
+.dashboard-callout__title {
+	@include heading-large;
+	color: $gray-900;
+}
+
+.dashboard-callout__image {
+	position: relative;
+
+	img {
+		object-fit: cover;
+		height: 100%;
+		width: 100%;
+		position: absolute;
+		border-radius: $radius-medium;
+	}
+}
+
