@@ -66,12 +66,12 @@ function getFilterBy< Item >(
 
 		// Do not allow mixing single & multiselection operators.
 		// Remove multiselection operators if any of the single selection ones is present.
-		// The 'Between' operator is unique as it can be combined with single selection operators.
 		const hasSingleSelectionOperator = operators.some( ( operator ) =>
 			SINGLE_SELECTION_OPERATORS.includes( operator )
 		);
-		if ( hasSingleSelectionOperator || operators.includes( OPERATOR_BETWEEN ) ) {
+		if ( hasSingleSelectionOperator ) {
 			operators = operators.filter( ( operator ) =>
+				// The 'Between' operator is unique as it can be combined with single selection operators.
 				[ ...SINGLE_SELECTION_OPERATORS, OPERATOR_BETWEEN ].includes(
 					operator
 				)
