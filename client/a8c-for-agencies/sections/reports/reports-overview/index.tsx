@@ -6,7 +6,10 @@ import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/compone
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
 import PageSectionColumns from 'calypso/a8c-for-agencies/components/page-section-columns';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
-import { A4A_REPORTS_BUILD_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import {
+	A4A_REPORTS_BUILD_LINK,
+	A4A_REPORTS_EXAMPLE_LINK,
+} from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import SimpleList from 'calypso/a8c-for-agencies/components/simple-list';
 import whyImage from 'calypso/assets/images/a8c-for-agencies/reports/report-mock-2.png';
 import readyImage from 'calypso/assets/images/a8c-for-agencies/reports/report-mock-3.png';
@@ -61,6 +64,11 @@ const ReportsOverview = () => {
 	const handleBuildReport = useCallback( () => {
 		dispatch( recordTracksEvent( 'calypso_a4a_reports_build_report_button_click' ) );
 		page( A4A_REPORTS_BUILD_LINK );
+	}, [ dispatch ] );
+
+	const handleExampleReport = useCallback( () => {
+		dispatch( recordTracksEvent( 'calypso_a4a_reports_example_report_button_click' ) );
+		page( A4A_REPORTS_EXAMPLE_LINK );
 	}, [ dispatch ] );
 
 	const buildReportButton = useMemo( () => {
@@ -124,10 +132,10 @@ const ReportsOverview = () => {
 							<Button
 								__next40pxDefaultSize
 								href="#"
+								onClick={ handleExampleReport }
 								className="reports-overview__button--secondary"
-								onClick={ handleBuildReport }
 							>
-								{ translate( 'View an example report ↗' ) }
+								{ translate( 'View an example report' ) }
 							</Button>
 						</div>
 					</PageSectionColumns.Column>

@@ -58,6 +58,7 @@ export const A4A_REPORTS_LINK = '/reports';
 export const A4A_REPORTS_OVERVIEW_LINK = `${ A4A_REPORTS_LINK }/overview`;
 export const A4A_REPORTS_DASHBOARD_LINK = `${ A4A_REPORTS_LINK }/dashboard`;
 export const A4A_REPORTS_BUILD_LINK = `${ A4A_REPORTS_LINK }/build`;
+export const A4A_REPORTS_EXAMPLE_LINK = `${ A4A_REPORTS_LINK }/example`;
 
 // Client
 export const A4A_CLIENT_LANDING_LINK = '/client/landing';
