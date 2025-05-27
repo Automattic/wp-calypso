@@ -212,6 +212,12 @@ class StatsDatePicker extends Component {
 		const dateHistory = JSON.parse(
 			sessionStorage.getItem( 'jetpack_stats_date_range_is_drilling_down_date_history' ) || '[]'
 		);
+		const isArrowNavigation = this.props?.queryParams?.navigation === 'arrow';
+
+		// For the arrow navigation, we want to replace the last element with the new date.
+		if ( isArrowNavigation ) {
+			dateHistory.pop();
+		}
 
 		// Only update history if the date is new
 		if ( ! dateHistory.includes( displayDate ) ) {

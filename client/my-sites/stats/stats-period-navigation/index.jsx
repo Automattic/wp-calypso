@@ -246,7 +246,7 @@ class StatsPeriodNavigation extends PureComponent {
 			path
 		);
 
-		page( url );
+		page.redirect( url );
 	};
 
 	queryParamsForPreviousDate = ( previousDay ) => {
