@@ -192,3 +192,12 @@ export {
 	enhanceMessageWithTools,
 	enhanceMessageWithContext,
 } from './messages';
+
+// Re-export request utilities
+export {
+	executeRequest,
+	executeStreamingRequest,
+	prepareRequest,
+	type RequestConfig,
+	type RequestOptions,
+} from './requests';

@@ -18,39 +18,20 @@ import {
 	extractToolCallsFromMessage,
 } from '../utils/index';
 import { enhanceMessage } from '../utils/messages';
+import {
+	executeRequest,
+	executeStreamingRequest,
+	prepareRequest,
+	type RequestConfig,
+	type RequestOptions,
+} from '../utils/requests';
 import { parseSSEStream, streamToTask } from '../streaming/index';
 import { formatObject, logger } from '../utils/logger';
-import { socksDispatcher } from 'fetch-socks';
 
 /**
  * Default timeout for requests (30 seconds)
  */
 const DEFAULT_TIMEOUT = 30000;
-
-/**
- * Log request details if verbose logging is enabled
- * @param method
- * @param url
- * @param headers
- * @param body
- * @param proxy
- */
-function logRequest(
-	method: string,
-	url: string,
-	headers: Record< string, string >,
-	body?: any,
-	proxy?: string
-) {
-	logger( 'Request: %s %s', method, url );
-	if ( proxy ) {
-		logger( 'Proxy: %s', proxy );
-	}
-	logger( 'Headers: %o', headers );
-	if ( body ) {
-		logger( 'Body: %s', formatObject( body ) );
-	}
-}
 
 /**
  * Create an A2A client instance
@@ -67,60 +48,13 @@ export function createA2AClient( config: A2AClientConfig ): A2AClient {
 		contextProvider,
 	} = config;
 
-	/**
-	 * Get headers for requests
-	 */
-	async function getHeaders(): Promise< Record< string, string > > {
-		const baseHeaders: Record< string, string > = {
-			'Content-Type': 'application/json',
-		};
-
-		if ( authProvider ) {
-			const authHeaders = await authProvider();
-			return { ...baseHeaders, ...authHeaders };
-		}
-
-		return baseHeaders;
-	}
-
-	/**
-	 * Create fetch options with optional proxy
-	 * @param headers
-	 * @param body
-	 * @param signal
-	 */
-	function createFetchOptions(
-		headers: Record< string, string >,
-		body: string,
-		signal: AbortSignal
-	): RequestInit & { dispatcher?: any } {
-		const options: RequestInit & { dispatcher?: any } = {
-			method: 'POST',
-			headers,
-			body,
-			signal,
-		};
-
-		// Add proxy agent if proxy is configured
-		// For SOCKS proxy, we use fetch-socks dispatcher
-		if ( proxy ) {
-			try {
-				// Parse the SOCKS proxy URL (e.g., "socks://127.0.0.1:8080")
-				const url = new URL( proxy );
-				const dispatcher = socksDispatcher( {
-					type: 5, // SOCKS5
-					host: url.hostname,
-					port: parseInt( url.port, 10 ),
-				} );
-				options.dispatcher = dispatcher;
-			} catch ( error ) {
-				// If proxy setup fails, log warning but continue without proxy
-				logger( 'Warning: Failed to setup proxy %s: %s', proxy, error );
-			}
-		}
-
-		return options;
-	}
+	// Create request configuration
+	const requestConfig: RequestConfig = {
+		agentUrl,
+		authProvider,
+		timeout,
+		proxy,
+	};
 
 	/**
 	 * Process tool calls in a message and execute them
@@ -178,181 +112,65 @@ export function createA2AClient( config: A2AClientConfig ): A2AClient {
 
 	return {
 		async sendMessage( params: SendMessageParams ): Promise< Task > {
-			const { message, sessionId, taskId, metadata } = params;
-			const effectiveSessionId = sessionId || defaultSessionId;
-
-			// Enhance message with tools and context
-			const enhancedMessage = await enhanceMessage(
-				message,
+			// Prepare the request
+			const preparedRequest = await prepareRequest(
+				params,
+				requestConfig,
+				{ isStreaming: false },
 				toolProvider,
-				contextProvider
+				contextProvider,
+				defaultSessionId
 			);
 
-			const request = createSendTaskRequest( {
-				id: taskId,
-				sessionId: effectiveSessionId,
-				message: enhancedMessage,
-				metadata,
-			} );
+			// Execute the request
+			const task = await executeRequest( preparedRequest, requestConfig );
 
-			const headers = await getHeaders();
-
-			// Log the request details
-			logRequest( 'POST', agentUrl, headers, request, proxy );
-
-			const controller = new AbortController();
-			const timeoutId = setTimeout( () => controller.abort(), timeout );
-
-			try {
-				const options = createFetchOptions(
-					headers,
-					JSON.stringify( request ),
-					controller.signal
+			// Check if the agent's response contains tool calls and execute them (non-blocking)
+			if ( toolProvider && task.status.message ) {
+				const toolCalls = extractToolCallsFromMessage(
+					task.status.message
 				);
 
-				logger( 'Making request to %s with options: %O', agentUrl, {
-					method: options.method,
-					headers: options.headers,
-					hasDispatcher: !! options.dispatcher,
-					proxy,
-				} );
+				for ( const toolCall of toolCalls ) {
+					const {
+						toolCallId,
+						toolId,
+						arguments: args,
+					} = toolCall.data;
 
-				const response = await fetch( agentUrl, options as any );
-
-				clearTimeout( timeoutId );
-
-				if ( ! response.ok ) {
-					throw new Error(
-						`HTTP error! status: ${ response.status }`
-					);
+					// Execute tool without blocking response
+					toolProvider
+						.executeTool( toolId as string, args )
+						.then( ( result ) => {
+							logger( 'Tool %s completed: %O', toolId, result );
+						} )
+						.catch( ( error ) => {
+							logger( 'Tool %s failed: %s', toolId, error );
+						} );
 				}
-
-				const data =
-					( await response.json() ) as JsonRpcResponse< Task >;
-
-				// Log the response
-				logger(
-					'Response from %s: %d %O',
-					agentUrl,
-					response.status,
-					formatObject( data )
-				);
-
-				if ( data.error ) {
-					throw new Error( `A2A error: ${ data.error.message }` );
-				}
-
-				if ( ! data.result ) {
-					throw new Error( 'No result in response' );
-				}
-
-				const task = data.result;
-
-				// Check if the agent's response contains tool calls and execute them (non-blocking)
-				if ( toolProvider && task.status.message ) {
-					const toolCalls = extractToolCallsFromMessage(
-						task.status.message
-					);
-
-					for ( const toolCall of toolCalls ) {
-						const {
-							toolCallId,
-							toolId,
-							arguments: args,
-						} = toolCall.data;
-
-						// Execute tool without blocking response
-						toolProvider
-							.executeTool( toolId as string, args )
-							.then( ( result ) => {
-								logger(
-									'Tool %s completed: %O',
-									toolId,
-									result
-								);
-							} )
-							.catch( ( error ) => {
-								logger( 'Tool %s failed: %s', toolId, error );
-							} );
-					}
-				}
-
-				return task;
-			} catch ( error ) {
-				clearTimeout( timeoutId );
-				logger( 'Request failed with error: %O', error );
-				if ( error instanceof Error ) {
-					logger( 'Error message: %s', error.message );
-					logger( 'Error stack: %s', error.stack );
-				}
-				throw error;
 			}
+
+			return task;
 		},
 
 		async *sendMessageStream(
 			params: SendMessageParams
 		): AsyncIterable< TaskUpdate > {
-			const { message, sessionId, taskId, metadata } = params;
-			const effectiveSessionId = sessionId || defaultSessionId;
-
-			// Enhance message with tools and context
-			const enhancedMessage = await enhanceMessage(
-				message,
+			// Prepare the request
+			const preparedRequest = await prepareRequest(
+				params,
+				requestConfig,
+				{ isStreaming: true, streamingTimeout: 60000 },
 				toolProvider,
-				contextProvider
+				contextProvider,
+				defaultSessionId
 			);
 
-			const request = createSendTaskRequest(
-				{
-					id: taskId,
-					sessionId: effectiveSessionId,
-					message: enhancedMessage,
-					metadata,
-				},
-				'tasks/sendSubscribe'
-			);
-
-			const headers = await getHeaders();
-			// Add streaming headers
-			const streamHeaders = {
-				...headers,
-				Accept: 'text/event-stream',
-			};
-
-			// Log the request details
-			logRequest( 'POST', agentUrl, streamHeaders, request, proxy );
-
-			const controller = new AbortController();
-			const timeoutId = setTimeout( () => controller.abort(), 60000 );
-
-			try {
-				const options = createFetchOptions(
-					streamHeaders,
-					JSON.stringify( request ),
-					controller.signal
-				);
-				const response = await fetch( agentUrl, options as any );
-
-				clearTimeout( timeoutId );
-
-				if ( ! response.ok ) {
-					throw new Error(
-						`HTTP error! status: ${ response.status }`
-					);
-				}
-
-				if ( ! response.body ) {
-					throw new Error( 'No response body for streaming' );
-				}
-
-				// Parse the SSE stream and yield task updates
-				yield* parseSSEStream(
-					response.body as ReadableStream< Uint8Array >
-				);
-			} catch ( error ) {
-				clearTimeout( timeoutId );
-				throw error;
-			}
+			// Execute the streaming request
+			yield* executeStreamingRequest( preparedRequest, requestConfig, {
+				isStreaming: true,
+				streamingTimeout: 60000,
+			} );
 		},
 
 		async getTask( taskId: string ): Promise< Task > {
