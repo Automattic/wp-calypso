@@ -229,7 +229,7 @@ const BuildReport = () => {
 		<div className="build-report__actions">
 			{ currentStep > 1 && (
 				<Button variant="secondary" onClick={ handlePrevStep }>
-					{ translate( 'Prev' ) }
+					{ translate( 'Back' ) }
 				</Button>
 			) }
 			{ currentStep < 3 && (
