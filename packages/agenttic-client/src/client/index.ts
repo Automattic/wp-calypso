@@ -270,21 +270,32 @@ export function createA2AClient( config: A2AClientConfig ): A2AClient {
 
 				const task = data.result;
 
-				// Check if the agent's response contains tool calls
-				if ( task.status.message ) {
-					const toolResultMessage = await processToolCalls(
+				// Check if the agent's response contains tool calls and execute them (non-blocking)
+				if ( toolProvider && task.status.message ) {
+					const toolCalls = extractToolCallsFromMessage(
 						task.status.message
 					);
 
-					if ( toolResultMessage ) {
-						// Send tool results back to agent and get final response
-						logger( 'Sending tool results back to agent' );
-						return await this.sendMessage( {
-							message: toolResultMessage,
-							sessionId: effectiveSessionId,
-							taskId: task.id,
-							metadata: { ...metadata, toolResults: true },
-						} );
+					for ( const toolCall of toolCalls ) {
+						const {
+							toolCallId,
+							toolId,
+							arguments: args,
+						} = toolCall.data;
+
+						// Execute tool without blocking response
+						toolProvider
+							.executeTool( toolId as string, args )
+							.then( ( result ) => {
+								logger(
+									'Tool %s completed: %O',
+									toolId,
+									result
+								);
+							} )
+							.catch( ( error ) => {
+								logger( 'Tool %s failed: %s', toolId, error );
+							} );
 					}
 				}
 

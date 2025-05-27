@@ -443,6 +443,44 @@ Type 'help' for commands.
 					sessionId: session.sessionId,
 				} ) ) {
 					if ( update.status.message ) {
+						// Check for tool calls and execute them asynchronously (non-blocking)
+						if ( toolProvider && update.status.message.parts ) {
+							for ( const part of update.status.message.parts ) {
+								if (
+									part.type === 'data' &&
+									'toolCallId' in part.data &&
+									'toolId' in part.data &&
+									'arguments' in part.data
+								) {
+									const {
+										toolCallId,
+										toolId,
+										arguments: args,
+									} = part.data;
+
+									// Execute tool without blocking stream processing
+									toolProvider
+										.executeTool( toolId as string, args )
+										.then( ( result ) => {
+											if ( options.verbose ) {
+												cliLog.system(
+													`🔧 Tool ${ toolId } completed: ${ JSON.stringify(
+														result
+													) }`
+												);
+											}
+										} )
+										.catch( ( toolError ) => {
+											if ( options.verbose ) {
+												cliLog.system(
+													`🔧 Tool ${ toolId } failed: ${ toolError.message }`
+												);
+											}
+										} );
+								}
+							}
+						}
+
 						const text = extractTextFromMessage(
 							update.status.message
 						);
@@ -564,6 +602,48 @@ Just type your message to send it to the agent.
 						sessionId: session.sessionId,
 					} ) ) {
 						if ( update.status.message ) {
+							// Check for tool calls and execute them asynchronously (non-blocking)
+							if ( toolProvider && update.status.message.parts ) {
+								for ( const part of update.status.message
+									.parts ) {
+									if (
+										part.type === 'data' &&
+										'toolCallId' in part.data &&
+										'toolId' in part.data &&
+										'arguments' in part.data
+									) {
+										const {
+											toolCallId,
+											toolId,
+											arguments: args,
+										} = part.data;
+
+										// Execute tool without blocking stream processing
+										toolProvider
+											.executeTool(
+												toolId as string,
+												args
+											)
+											.then( ( result ) => {
+												if ( options.verbose ) {
+													cliLog.system(
+														`🔧 Tool ${ toolId } completed: ${ JSON.stringify(
+															result
+														) }`
+													);
+												}
+											} )
+											.catch( ( toolError ) => {
+												if ( options.verbose ) {
+													cliLog.system(
+														`🔧 Tool ${ toolId } failed: ${ toolError.message }`
+													);
+												}
+											} );
+									}
+								}
+							}
+
 							const text = extractTextFromMessage(
 								update.status.message
 							);

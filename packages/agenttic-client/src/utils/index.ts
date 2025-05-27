@@ -97,6 +97,10 @@ export function createSendTaskRequest(
  * @param message
  */
 export function extractTextFromMessage( message: Message ): string {
+	if ( ! message || ! message.parts || ! Array.isArray( message.parts ) ) {
+		return '';
+	}
+
 	return message.parts
 		.filter( ( part ): part is TextPart => part.type === 'text' )
 		.map( ( part ) => part.text )
