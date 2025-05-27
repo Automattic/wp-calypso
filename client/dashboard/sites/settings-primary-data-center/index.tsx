@@ -1,6 +1,6 @@
 import SummaryButton from '@automattic/components/src/summary-button';
 import { useQuery } from '@tanstack/react-query';
-import { __experimentalVStack as VStack, Icon, Notice } from '@wordpress/components';
+import { __experimentalVStack as VStack, Card, Icon, Notice } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { cloud } from '@wordpress/icons';
 import { getDataCenterOptions } from 'calypso/data/data-center';
@@ -46,14 +46,16 @@ export default function PrimaryDataCenterSettings( { siteSlug }: { siteSlug: str
 						'Your site has already been placed in the optimal data center. It’s not currently possible to change your primary data center.'
 					) }
 				</Notice>
-				<SummaryButton
-					title={ __( 'Primary data center' ) }
-					density="medium"
-					decoration={ <Icon icon={ cloud } /> }
-					showArrow={ false }
-					disabled
-					badges={ [ badge ] }
-				/>
+				<Card>
+					<SummaryButton
+						title={ __( 'Primary data center' ) }
+						density="medium"
+						decoration={ <Icon icon={ cloud } /> }
+						showArrow={ false }
+						disabled
+						badges={ [ badge ] }
+					/>
+				</Card>
 			</VStack>
 		</PageLayout>
 	);
