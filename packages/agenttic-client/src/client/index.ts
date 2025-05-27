@@ -89,11 +89,28 @@ export function createA2AClient( config: A2AClientConfig ): A2AClient {
 				defaultSessionId
 			);
 
-			// Execute the streaming request
-			yield* executeStreamingRequest( preparedRequest, requestConfig, {
-				isStreaming: true,
-				streamingTimeout: 60000,
-			} );
+			// Execute the streaming request and process tool calls for each update
+			for await ( const update of executeStreamingRequest(
+				preparedRequest,
+				requestConfig,
+				{
+					isStreaming: true,
+					streamingTimeout: 60000,
+				}
+			) ) {
+				// Process any tool calls in the update asynchronously
+				if ( update.status?.message ) {
+					await processTaskToolCalls(
+						{
+							id: update.id,
+							status: update.status,
+						},
+						toolProvider
+					);
+				}
+
+				yield update;
+			}
 		},
 
 		async getTask( taskId: string ): Promise< Task > {

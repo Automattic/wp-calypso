@@ -95,54 +95,6 @@ export async function getStatusStrings(
 }
 
 /**
- * Process tool calls in a message asynchronously
- *
- * @param message      - Message containing potential tool calls
- * @param toolProvider - Tool provider for executing tools
- * @param options      - CLI options for verbose logging
- */
-export function processToolCalls(
-	message: any,
-	toolProvider: any,
-	options: CLIOptions
-) {
-	if ( ! toolProvider || ! message?.parts ) {
-		return;
-	}
-
-	for ( const part of message.parts ) {
-		if (
-			part.type === 'data' &&
-			'toolCallId' in part.data &&
-			'toolId' in part.data &&
-			'arguments' in part.data
-		) {
-			const { toolCallId, toolId, arguments: args } = part.data;
-
-			// Execute tool without blocking stream processing
-			toolProvider
-				.executeTool( toolId as string, args )
-				.then( ( result: any ) => {
-					if ( options.verbose ) {
-						cliLog.system(
-							`🔧 Tool ${ toolId } completed: ${ JSON.stringify(
-								result
-							) }`
-						);
-					}
-				} )
-				.catch( ( toolError: any ) => {
-					if ( options.verbose ) {
-						cliLog.system(
-							`🔧 Tool ${ toolId } failed: ${ toolError.message }`
-						);
-					}
-				} );
-		}
-	}
-}
-
-/**
  * Handle streaming message response
  *
  * @param client              - A2A client instance
@@ -168,9 +120,6 @@ export async function handleStreamingMessage(
 		sessionId,
 	} ) ) {
 		if ( update.status.message ) {
-			// Process tool calls asynchronously
-			processToolCalls( update.status.message, toolProvider, options );
-
 			const text = extractTextFromMessage( update.status.message );
 			if ( text ) {
 				process.stdout.write( chalk.blue( text ) );
