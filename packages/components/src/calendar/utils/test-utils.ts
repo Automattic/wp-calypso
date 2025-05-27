@@ -7,7 +7,7 @@ export const monthNameFormatter = ( localeCode: string, timeZone?: string ) =>
 		timeZone,
 	} );
 
-export const fullDateFormatter = ( localeCode: string, timeZone?: string ) =>
+const fullDateFormatter = ( localeCode: string, timeZone?: string ) =>
 	new Intl.DateTimeFormat( localeCode, {
 		weekday: 'long',
 		year: 'numeric',
