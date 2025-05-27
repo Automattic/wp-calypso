@@ -97,7 +97,7 @@ const HandleEmailedLinkFormJetpackConnect: FC< Props > = ( { emailAddress, token
 	}, [ authError, dispatch, handleValidToken, hasSubmitted, isAuthenticated, isFetching ] );
 
 	if ( isExpired ) {
-		return <EmailedLoginLinkExpired emailAddress={ emailAddress } />;
+		return <EmailedLoginLinkExpired emailAddress={ emailAddress } isJetpack />;
 	}
 
 	dispatch( recordTracksEvent( 'calypso_login_email_link_handle_click_view' ) );
