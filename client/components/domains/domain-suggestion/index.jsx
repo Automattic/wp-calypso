@@ -29,17 +29,20 @@ class DomainSuggestion extends Component {
 
 	getAccessibleButtonLabel() {
 		const { buttonContent, domain, translate, price, salePrice, priceRule } = this.props;
-		let actionText;
+		let actionText = '';
 
 		if ( typeof buttonContent === 'string' ) {
 			actionText = buttonContent;
-		} else {
-			const textContent = buttonContent?.props?.children?.[ 1 ];
-			if ( typeof textContent === 'string' ) {
-				actionText = textContent;
-			} else {
-				actionText = translate( 'Select', { context: 'Domain selection button' } );
-			}
+		} else if ( typeof buttonContent?.props?.children === 'string' ) {
+			actionText = buttonContent.props.children;
+		} else if ( Array.isArray( buttonContent?.props?.children ) ) {
+			actionText = buttonContent.props.children.reduce( ( acc, item ) => {
+				return typeof item === 'string' ? acc + item : acc;
+			}, '' );
+		}
+
+		if ( ! actionText ) {
+			actionText = translate( 'Select', { context: 'Domain selection button' } );
 		}
 
 		const baseLabel = translate( '%(action)s domain %(domain)s', {
