@@ -83,6 +83,11 @@ $blueberry-color: #3858e9;
 		list-style: initial;
 	}
 
+	img {
+		max-width: 100%;
+		height: auto;
+	}
+
 	&.odie-chatbox-message-no-avatar {
 		.odie-chatbox-message__content {
 			margin-left: 46px;
@@ -288,10 +293,6 @@ $blueberry-color: #3858e9;
 					color: var( --studio-blue-40 );
 				}
 			}
-		}
-		img {
-			max-width: 100%;
-			height: auto;
 		}
 	}
 }
