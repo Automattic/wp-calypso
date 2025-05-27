@@ -33,6 +33,7 @@ export default class InfoPopover extends Component {
 		] ),
 		showOnHover: PropTypes.bool,
 		children: PropTypes.node,
+		'aria-label': PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -125,7 +126,7 @@ export default class InfoPopover extends Component {
 					type="button"
 					aria-haspopup
 					aria-expanded={ this.state.showPopover }
-					aria-label={ translate( 'More information' ) }
+					aria-label={ this.props[ 'aria-label' ] || translate( 'More information' ) }
 					onClick={ this.handleClick }
 					onMouseEnter={ this.handleOnMouseEnterButton }
 					onMouseLeave={ this.handleOnMouseLeave }
