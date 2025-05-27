@@ -586,7 +586,7 @@ export const DEFAULT_VIEW = {
 	layout: {
 		styles: {
 			satellites: {
-				align: 'end',
+				align: 'end' as const,
 			},
 		},
 	},
