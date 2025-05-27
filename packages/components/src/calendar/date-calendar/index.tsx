@@ -1,11 +1,11 @@
 import { DayPicker } from 'react-day-picker';
 import { enUS } from 'react-day-picker/locale';
-import { COMMON_PROPS } from './utils/constants';
-import { clampNumberOfMonths } from './utils/misc';
-import { useControlledValue } from './utils/use-controlled-value';
-import { useLocalizationProps } from './utils/use-localization-props';
-import type { DateCalendarProps } from './types';
-import './styles.scss';
+import { COMMON_PROPS } from '../utils/constants';
+import { clampNumberOfMonths } from '../utils/misc';
+import { useControlledValue } from '../utils/use-controlled-value';
+import { useLocalizationProps } from '../utils/use-localization-props';
+import type { DateCalendarProps } from '../types';
+import '../styles.scss';
 
 export const DateCalendar = ( {
 	defaultSelected,
