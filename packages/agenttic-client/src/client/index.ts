@@ -3,12 +3,20 @@ import type {
 	A2AClientConfig,
 	AuthProvider,
 	JsonRpcResponse,
+	Message,
 	SendMessageParams,
 	SendTaskRequest,
 	Task,
 	TaskUpdate,
+	ToolProvider,
 } from '../types/index';
-import { createRequestId, createSendTaskRequest } from '../utils/index';
+import {
+	createRequestId,
+	createSendTaskRequest,
+	createToolDataPart,
+	createToolResultDataPart,
+	extractToolCallsFromMessage,
+} from '../utils/index';
 import { parseSSEStream, streamToTask } from '../streaming/index';
 import { formatObject, logger } from '../utils/logger';
 import { socksDispatcher } from 'fetch-socks';
@@ -54,6 +62,7 @@ export function createA2AClient( config: A2AClientConfig ): A2AClient {
 		defaultSessionId,
 		timeout = DEFAULT_TIMEOUT,
 		proxy,
+		toolProvider,
 	} = config;
 
 	/**
@@ -111,15 +120,100 @@ export function createA2AClient( config: A2AClientConfig ): A2AClient {
 		return options;
 	}
 
+	/**
+	 * Enhance a message with available tools
+	 * @param message
+	 */
+	async function enhanceMessageWithTools(
+		message: Message
+	): Promise< Message > {
+		if ( ! toolProvider ) {
+			return message;
+		}
+
+		try {
+			const tools = await toolProvider.getAvailableTools();
+			if ( tools.length === 0 ) {
+				return message;
+			}
+
+			const toolParts = tools.map( createToolDataPart );
+			return {
+				...message,
+				parts: [ ...message.parts, ...toolParts ],
+			};
+		} catch ( error ) {
+			logger( 'Warning: Failed to get tools: %s', error );
+			return message;
+		}
+	}
+
+	/**
+	 * Process tool calls in a message and execute them
+	 * @param message
+	 */
+	async function processToolCalls(
+		message: Message
+	): Promise< Message | null > {
+		if ( ! toolProvider ) {
+			return null;
+		}
+
+		const toolCalls = extractToolCallsFromMessage( message );
+		if ( toolCalls.length === 0 ) {
+			return null;
+		}
+
+		logger( 'Processing %d tool calls', toolCalls.length );
+
+		const resultParts = await Promise.all(
+			toolCalls.map( async ( toolCall ) => {
+				const { toolCallId, toolId, arguments: args } = toolCall.data;
+
+				try {
+					logger( 'Executing tool %s with args: %O', toolId, args );
+					const result = await toolProvider.executeTool(
+						toolId,
+						args
+					);
+					logger( 'Tool %s result: %O', toolId, result );
+
+					return createToolResultDataPart(
+						toolCallId as string,
+						toolId as string,
+						result
+					);
+				} catch ( error ) {
+					logger( 'Tool %s execution failed: %s', toolId, error );
+					return createToolResultDataPart(
+						toolCallId as string,
+						toolId as string,
+						null,
+						error instanceof Error ? error.message : String( error )
+					);
+				}
+			} )
+		);
+
+		return {
+			role: 'user' as const,
+			parts: resultParts,
+			metadata: { toolResults: true },
+		};
+	}
+
 	return {
 		async sendMessage( params: SendMessageParams ): Promise< Task > {
 			const { message, sessionId, taskId, metadata } = params;
 			const effectiveSessionId = sessionId || defaultSessionId;
 
+			// Enhance message with tools if available
+			const enhancedMessage = await enhanceMessageWithTools( message );
+
 			const request = createSendTaskRequest( {
 				id: taskId,
 				sessionId: effectiveSessionId,
-				message,
+				message: enhancedMessage,
 				metadata,
 			} );
 
@@ -174,7 +268,27 @@ export function createA2AClient( config: A2AClientConfig ): A2AClient {
 					throw new Error( 'No result in response' );
 				}
 
-				return data.result;
+				const task = data.result;
+
+				// Check if the agent's response contains tool calls
+				if ( task.status.message ) {
+					const toolResultMessage = await processToolCalls(
+						task.status.message
+					);
+
+					if ( toolResultMessage ) {
+						// Send tool results back to agent and get final response
+						logger( 'Sending tool results back to agent' );
+						return await this.sendMessage( {
+							message: toolResultMessage,
+							sessionId: effectiveSessionId,
+							taskId: task.id,
+							metadata: { ...metadata, toolResults: true },
+						} );
+					}
+				}
+
+				return task;
 			} catch ( error ) {
 				clearTimeout( timeoutId );
 				logger( 'Request failed with error: %O', error );
@@ -192,11 +306,14 @@ export function createA2AClient( config: A2AClientConfig ): A2AClient {
 			const { message, sessionId, taskId, metadata } = params;
 			const effectiveSessionId = sessionId || defaultSessionId;
 
+			// Enhance message with tools if available
+			const enhancedMessage = await enhanceMessageWithTools( message );
+
 			const request = createSendTaskRequest(
 				{
 					id: taskId,
 					sessionId: effectiveSessionId,
-					message,
+					message: enhancedMessage,
 					metadata,
 				},
 				'tasks/sendSubscribe'

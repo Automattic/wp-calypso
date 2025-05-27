@@ -166,6 +166,7 @@ export interface A2AClientConfig {
 	defaultSessionId?: string;
 	timeout?: number;
 	proxy?: string;
+	toolProvider?: ToolProvider;
 }
 
 export interface SendMessageParams {
@@ -187,4 +188,28 @@ export interface A2AClient {
 	sendMessageStream( params: SendMessageParams ): AsyncIterable< TaskUpdate >;
 	getTask( taskId: string ): Promise< Task >;
 	cancelTask( taskId: string ): Promise< void >;
+}
+
+// Tool system types
+export interface Tool {
+	id: string;
+	name: string;
+	description: string;
+	input_schema: {
+		type: 'object';
+		properties: Record< string, unknown >;
+		required?: string[];
+	};
+}
+
+export interface ToolProvider {
+	getAvailableTools(): Promise< Tool[] >;
+	executeTool( toolId: string, args: any ): Promise< any >;
+}
+
+export interface ToolCallResult {
+	toolCallId: string;
+	toolId: string;
+	result: any;
+	error?: string;
 }

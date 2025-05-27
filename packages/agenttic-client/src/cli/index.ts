@@ -7,6 +7,7 @@ config();
 import { createA2AClient } from '../client/index';
 import { createTextMessage, extractTextFromMessage } from '../utils/index';
 import { createEnvAuthProvider } from './auth';
+import { CLIToolProvider, createExampleTools } from './tools';
 import { cliLog, enableDebug, logger } from '../utils/logger';
 import type { CLIOptions, InteractiveSession } from './types';
 import { createRequire } from 'module';
@@ -106,6 +107,9 @@ function parseArgs(): CLIOptions {
 			case '--auth':
 				options.auth = true; // Enable authentication
 				break;
+			case '--tools':
+				options.tools = true; // Enable example tools
+				break;
 			case '--help':
 			case '-h':
 				printHelp();
@@ -154,6 +158,7 @@ OPTIONS:
   -i, --interactive      Force interactive mode (default)
   -v, --verbose          Enable verbose output
   --auth                 Enable authentication (check env vars)
+  --tools                Enable example tools (echo, calculator, current_time)
   -h, --help             Show this help message
 
 MODES:
@@ -257,12 +262,16 @@ async function runSingleMessage( options: CLIOptions ): Promise< void > {
 		authProvider = async () => ( {} );
 	}
 
+	// Create tool provider if tools are enabled
+	const toolProvider = options.tools ? createExampleTools() : undefined;
+
 	const client = createA2AClient( {
 		agentUrl: options.url,
 		authProvider,
 		defaultSessionId: options.session,
 		timeout: options.timeout,
 		proxy: options.proxy,
+		toolProvider,
 	} );
 
 	if ( options.verbose ) {
@@ -285,6 +294,13 @@ async function runSingleMessage( options: CLIOptions ): Promise< void > {
 			}
 		} else {
 			cliLog.system( `🔓 Authentication: Disabled (default)` );
+		}
+		if ( options.tools ) {
+			cliLog.system(
+				`🔧 Tools: Enabled (echo, calculator, current_time)`
+			);
+		} else {
+			cliLog.system( `🔧 Tools: Disabled` );
 		}
 		cliLog.system( `📤 Sending: "${ options.message }"` );
 	}
@@ -323,7 +339,9 @@ async function runSingleMessage( options: CLIOptions ): Promise< void > {
 				message: createTextMessage( options.message ),
 			} );
 
-			const responseText = extractTextFromMessage( task.status.message );
+			const responseText = task.status.message
+				? extractTextFromMessage( task.status.message )
+				: '';
 			cliLog.info( '📥 Response:' );
 			cliLog.agent( responseText || '(No text response)' );
 
@@ -356,12 +374,16 @@ async function runInteractive( options: CLIOptions ): Promise< void > {
 		authProvider = async () => ( {} );
 	}
 
+	// Create tool provider if tools are enabled
+	const toolProvider = options.tools ? createExampleTools() : undefined;
+
 	const client = createA2AClient( {
 		agentUrl: options.url,
 		authProvider,
 		defaultSessionId: options.session,
 		timeout: options.timeout,
 		proxy: options.proxy,
+		toolProvider,
 	} );
 
 	const rl = createReadlineInterface();
@@ -387,11 +409,14 @@ async function runInteractive( options: CLIOptions ): Promise< void > {
 		authStatus = '🔓 No Auth (default)';
 	}
 
+	const toolStatus = options.tools ? '🔧 Example Tools' : '🔧 No Tools';
+
 	cliLog.info( `
 🤖 A2A Agent Test CLI - Interactive Mode
 Connected to: ${ options.url }
 Session: ${ session.sessionId }
 Auth: ${ authStatus }
+Tools: ${ toolStatus }
 Type 'exit' or 'quit' to end the session.
 Type 'help' for commands.
 ` );
@@ -444,9 +469,34 @@ Type 'help' for commands.
 					sessionId: session.sessionId,
 				} );
 
-				const responseText = extractTextFromMessage(
-					task.status.message
-				);
+				// Debug: log the full task response
+				if ( options.verbose ) {
+					cliLog.system(
+						`🔍 Full task response: ${ JSON.stringify(
+							task,
+							null,
+							2
+						) }`
+					);
+				}
+
+				const responseText = task.status.message
+					? extractTextFromMessage( task.status.message )
+					: '';
+
+				if ( options.verbose ) {
+					cliLog.system( `🔍 Extracted text: "${ responseText }"` );
+					if ( task.status.message ) {
+						cliLog.system(
+							`🔍 Message parts: ${ JSON.stringify(
+								task.status.message.parts,
+								null,
+								2
+							) }`
+						);
+					}
+				}
+
 				cliLog.agent( responseText || '(No text response)' );
 				session.conversationHistory.push( {
 					role: 'model',
@@ -537,9 +587,9 @@ Just type your message to send it to the agent.
 						sessionId: session.sessionId,
 					} );
 
-					const responseText = extractTextFromMessage(
-						task.status.message
-					);
+					const responseText = task.status.message
+						? extractTextFromMessage( task.status.message )
+						: '';
 					cliLog.agent( responseText || '(No text response)' );
 				}
 			} catch ( error ) {

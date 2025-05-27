@@ -9,6 +9,7 @@ export interface CLIOptions {
 	verbose?: boolean;
 	auth?: boolean;
 	proxy?: string;
+	tools?: boolean;
 }
 
 export interface CLIAuthOptions {

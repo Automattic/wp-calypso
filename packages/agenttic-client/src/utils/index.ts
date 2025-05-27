@@ -1,11 +1,15 @@
 import { v4 as uuidv4 } from 'uuid';
 import type {
 	ConversationHistoryPart,
+	DataPart,
 	JsonRpcId,
 	Message,
 	SendTaskRequest,
 	TaskSendParams,
 	TextPart,
+	Tool,
+	ToolCallDataPart,
+	ToolDataPart,
 } from '../types/index';
 
 import type { ConversationHistoryItem } from '../cli/types';
@@ -92,15 +96,69 @@ export function createSendTaskRequest(
  * Extract text content from a message
  * @param message
  */
-export function extractTextFromMessage( message?: Message ): string {
-	if ( ! message || ! message.parts || ! Array.isArray( message.parts ) ) {
-		return '';
-	}
-
+export function extractTextFromMessage( message: Message ): string {
 	return message.parts
-		.filter( ( part ) => part.type === 'text' )
-		.map( ( part ) => ( part as TextPart ).text )
-		.join( '\n' );
+		.filter( ( part ): part is TextPart => part.type === 'text' )
+		.map( ( part ) => part.text )
+		.join( ' ' );
+}
+
+/**
+ * Create a ToolDataPart from a Tool
+ * @param tool
+ */
+export function createToolDataPart( tool: Tool ): ToolDataPart {
+	return {
+		type: 'data',
+		data: {
+			toolId: tool.id,
+			toolName: tool.name,
+			description: tool.description,
+			inputSchema: tool.input_schema,
+		},
+		metadata: {},
+	};
+}
+
+/**
+ * Extract tool calls from a message
+ * @param message
+ */
+export function extractToolCallsFromMessage(
+	message: Message
+): ToolCallDataPart[] {
+	return message.parts.filter(
+		( part ): part is ToolCallDataPart =>
+			part.type === 'data' &&
+			'toolCallId' in part.data &&
+			'toolId' in part.data &&
+			'arguments' in part.data
+	);
+}
+
+/**
+ * Create a tool result data part
+ * @param toolCallId
+ * @param toolId
+ * @param result
+ * @param error
+ */
+export function createToolResultDataPart(
+	toolCallId: string,
+	toolId: string,
+	result: any,
+	error?: string
+): DataPart {
+	return {
+		type: 'data',
+		data: {
+			toolCallId,
+			toolId,
+			result: error ? undefined : result,
+			error,
+		},
+		metadata: {},
+	};
 }
 
 // Re-export logger utilities for convenience

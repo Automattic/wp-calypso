@@ -38,6 +38,11 @@ export type {
 	A2AClientConfig,
 	SendMessageParams,
 	TaskUpdate,
+
+	// Tool types
+	Tool,
+	ToolProvider,
+	ToolCallResult,
 } from './types/index';
 
 // Utility exports
@@ -48,6 +53,9 @@ export {
 	createTextMessage,
 	createSendTaskRequest,
 	extractTextFromMessage,
+	createToolDataPart,
+	extractToolCallsFromMessage,
+	createToolResultDataPart,
 } from './utils/index';
 
 // Streaming exports
@@ -59,6 +67,9 @@ export {
 
 // Auth provider exports
 export { createEnvAuthProvider } from './cli/auth';
+
+// CLI tool provider exports
+export { CLIToolProvider, createExampleTools } from './cli/tools';
 
 // Constants
 export { A2AErrorCodes } from './types/index';
