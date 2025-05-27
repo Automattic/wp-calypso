@@ -40,9 +40,9 @@ if ( ! function_exists( 'get_support_search_link_for_query' ) ) {
 			<h2><?php echo esc_html( __( 'How can we help you?', 'happy-blocks' ) ); ?></h2>
 			<form class="" role="search" method="get" action="">
 				<div class="input-wrapper" dir="auto">
-					<input id="support-search-input" type="search" name="s" placeholder="<?php echo esc_html( __( 'Search questions, guides, courses', 'happy-blocks' ) ); ?>" />
+					<input id="support-search-input" type="search" name="s" placeholder="<?php echo esc_html( __( 'Search questions, guides, courses', 'happy-blocks' ) ); ?>"/>
 
-					<button type="submit" class="search-submit-button" aria-label="<?php echo esc_attr( __( 'Search', 'happy-blocks' ) ); ?>" >
+					<button type="submit" class="search-submit-button" aria-label="<?php echo esc_attr( __( 'Search', 'happy-blocks' ) ); ?>">
 						<svg xmlns="http://www.w3.org/2000/svg" class="search-icon" width="24" height="24" viewBox="0 0 24 24" fill="none">
 							<path d="M13 5C9.7 5 7 7.7 7 11C7 12.4 7.5 13.7 8.3 14.7L4.5 18.5L5.6 19.6L9.4 15.8C10.4 16.6 11.7 17.1 13.1 17.1C16.4 17.1 19.1 14.4 19.1 11.1C19.1 7.8 16.3 5 13 5ZM13 15.5C10.5 15.5 8.5 13.5 8.5 11C8.5 8.5 10.5 6.5 13 6.5C15.5 6.5 17.5 8.5 17.5 11C17.5 13.5 15.5 15.5 13 15.5Z"/>
 						</svg>
@@ -51,10 +51,10 @@ if ( ! function_exists( 'get_support_search_link_for_query' ) ) {
 			</form>
 
 			<ul class="search-terms">
-				<li><a href="<?php echo esc_url( get_support_search_link_for_query( 'connect a domain' ) ); ?>"><?php echo esc_html( __( 'Connect a domain', 'happy-blocks' ) ); ?> </a></li>
-				<li><a href="<?php echo esc_url( get_support_search_link_for_query( 'upgrade my plan' ) ); ?>"><?php echo esc_html( __( 'Upgrade my plan', 'happy-blocks' ) ); ?> </a></li>
-				<li><a href="<?php echo esc_url( get_support_search_link_for_query( 'grow an audience' ) ); ?>"><?php echo esc_html( __( 'Grow an audience', 'happy-blocks' ) ); ?> </a></li>
-				<li><a href="<?php echo esc_url( get_support_search_link_for_query( 'reset my password' ) ); ?>"><?php echo esc_html( __( 'Reset my password', 'happy-blocks' ) ); ?> </a></li>
+				<li><a href="<?php echo esc_url( get_support_search_link_for_query( 'connect a domain' ) ); ?>"><?php echo esc_html( __( 'Connect a domain', 'happy-blocks' ) ); ?></a></li>
+				<li><a href="<?php echo esc_url( get_support_search_link_for_query( 'upgrade my plan' ) ); ?>"><?php echo esc_html( __( 'Upgrade my plan', 'happy-blocks' ) ); ?></a></li>
+				<li><a href="<?php echo esc_url( get_support_search_link_for_query( 'grow an audience' ) ); ?>"><?php echo esc_html( __( 'Grow an audience', 'happy-blocks' ) ); ?></a></li>
+				<li><a href="<?php echo esc_url( get_support_search_link_for_query( 'reset my password' ) ); ?>"><?php echo esc_html( __( 'Reset my password', 'happy-blocks' ) ); ?></a></li>
 			</ul>
 	</div>
 </div>
