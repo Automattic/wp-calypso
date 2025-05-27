@@ -1,15 +1,17 @@
 import { __ } from '@wordpress/i18n';
 import { useEffect, useState } from 'react';
+import type { Site } from '../../data/types';
 
 export default function SitePreview( {
-	url,
+	site,
 	width,
 	style,
 }: {
-	url: string;
+	site: Site;
 	width: number;
 	style?: React.CSSProperties;
 } ) {
+	const { URL: url } = site;
 	// The /sites endpoint may return non-secure URLs. Often these _can_ be
 	// loaded securely, so it's worth trying to load over https. If it fails,
 	// there would have been an error either way because the dasboard is loaded
@@ -17,7 +19,15 @@ export default function SitePreview( {
 	// To do: check why the endpoint returns non-secure URLs when it will
 	// redirect to a secure URL.
 	const secureUrl = url.replace( /^http:\/\//, 'https://' );
-	const baseUrl = `https://s0.wp.com/mshots/v1/${ encodeURIComponent( secureUrl ) }`;
+	let updatedAtUrl = secureUrl;
+	// See https://github.com/Automattic/wp-calypso/pull/66534.
+	if ( site.options?.updated_at ) {
+		const updatedAt = new Date( site.options.updated_at );
+		updatedAt.setMinutes( 0 );
+		updatedAt.setSeconds( 0 );
+		updatedAtUrl = `${ secureUrl }?v=${ updatedAt.getTime() / 1000 }`;
+	}
+	const baseUrl = `https://s0.wp.com/mshots/v1/${ encodeURIComponent( updatedAtUrl ) }`;
 	const mshotWidth = 1280;
 	const mshotHeight = 900;
 	const aspectRatio = mshotWidth / mshotHeight;
@@ -46,6 +56,8 @@ export default function SitePreview( {
 
 	if ( ! isLoaded ) {
 		const scale = width / mshotWidth;
+		const xFrameOptionsSameOrigin = site.is_a8c && site.is_private;
+		const loadIframe = isLoaded === false && ! xFrameOptionsSameOrigin;
 		return (
 			<div
 				style={ {
@@ -55,7 +67,7 @@ export default function SitePreview( {
 				} }
 			>
 				<div style={ { width, height: width / aspectRatio } }>
-					{ isLoaded === false && (
+					{ loadIframe && (
 						// Do not load the iframe if isLoaded is null. We want
 						// to wait until we know that an mshot is being
 						// generated. Otherwise we will briefly load an iframe

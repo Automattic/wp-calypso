@@ -101,12 +101,11 @@ const DEFAULT_FIELDS: Field< Site >[] = [
 		label: __( 'Preview' ),
 		render: function PreviewRender( { item }: { item: Site } ) {
 			const [ resizeListener, { width } ] = useResizeObserver();
-			const { URL: url } = item;
 			return (
 				<>
 					{ resizeListener }
 					{ width && (
-						<SitePreview url={ url } width={ width } style={ { objectFit: 'contain' } } />
+						<SitePreview site={ item } width={ width } style={ { objectFit: 'contain' } } />
 					) }
 				</>
 			);

@@ -31,7 +31,7 @@ export default function SiteCard( { site, currentPlan }: { site: Site; currentPl
 		<Card>
 			<VStack spacing={ 6 }>
 				<div className="dashboard-site-overview__preview-image">
-					<SitePreview width={ 300 } url={ url } />
+					<SitePreview width={ 300 } site={ site } />
 				</div>
 				<VStack spacing={ 6 } className="site-card-contents">
 					<Field title={ __( 'Domain' ) }>

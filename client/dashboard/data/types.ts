@@ -69,6 +69,7 @@ export interface SiteOptions {
 	software_version: string;
 	admin_url: string;
 	is_redirect?: boolean;
+	updated_at: string;
 }
 
 export interface Site {
