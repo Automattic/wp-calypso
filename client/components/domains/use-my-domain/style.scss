@@ -11,6 +11,7 @@
 	background-color: inherit;
 	& .card {
 		box-shadow: none;
+		display: flex; // NOTE: To increase specificity
 	}
 
 	& &__page-heading {
