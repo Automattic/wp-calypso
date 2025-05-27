@@ -317,7 +317,7 @@ class RegisterDomainStep extends Component {
 	// created a site by skipping the domain step. In these cases, fire the initial search
 	// with the subdomain name.
 	getInitialQueryInLaunchFlow() {
-		if ( ! this.props.isInLaunchFlow ) {
+		if ( ! this.props.isInLaunchFlow || this.props.selectedSite === null ) {
 			return;
 		}
 
