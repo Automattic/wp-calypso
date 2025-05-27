@@ -140,10 +140,8 @@ class DomainSuggestion extends Component {
 			? children
 			: [];
 
-		const domainCardId = `domain-card-${ this.props.domain.replace( /\./g, '-' ) }`;
-
 		return (
-			<div className={ classes } data-e2e-domain={ this.props.domain } id={ domainCardId }>
+			<div className={ classes } data-e2e-domain={ this.props.domain }>
 				{ badges }
 				<div className={ contentClassName }>
 					{ domainContent }
