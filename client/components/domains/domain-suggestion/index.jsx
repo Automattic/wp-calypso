@@ -41,10 +41,6 @@ class DomainSuggestion extends Component {
 			}, '' );
 		}
 
-		if ( ! actionText ) {
-			actionText = translate( 'Select', { context: 'Domain selection button' } );
-		}
-
 		const baseLabel = translate( '%(action)s domain %(domain)s', {
 			args: {
 				action: actionText,
