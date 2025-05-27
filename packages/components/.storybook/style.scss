@@ -1,2 +1,7 @@
-@import '@wordpress/components/build-style/style';
-@import '@automattic/calypso-color-schemes';
+@use '@wordpress/components/build-style/style';
+@use '@automattic/calypso-color-schemes';
+@use "@wordpress/base-styles/_variables";
+
+body {
+	font-family: variables.$default-font;
+}
