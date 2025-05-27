@@ -1,5 +1,6 @@
 export const getClientContext = () => {
 	return {
+		selectedBlockClientId: 'qwu2',
 		currentPageContent: [
 			{
 				name: 'core/post-content',
