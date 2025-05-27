@@ -16,3 +16,6 @@ export type {
 
 export { useClientContext } from './react/useClientContext';
 export type { GetClientContextCallback } from './react/useClientContext';
+
+export { useClientTools } from './react/useClientTools';
+export type { GetClientToolsCallback } from './react/useClientTools';
