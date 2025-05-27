@@ -247,7 +247,9 @@ class StatsPeriodNavigation extends PureComponent {
 			path
 		);
 
-		// Redirect to the page, but don't add to the page history.
+		// Redirect to the page by replacing the current history entry, 
+		// rather than pushing a new one. This ensures the navigation 
+		// does not create an additional entry in the browser's history stack.
 		page.redirect( url );
 	};
 
