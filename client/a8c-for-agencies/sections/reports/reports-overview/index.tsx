@@ -65,9 +65,11 @@ const ReportsOverview = () => {
 
 	const buildReportButton = useMemo( () => {
 		return (
-			<Button __next40pxDefaultSize variant="primary" onClick={ handleBuildReport }>
-				{ translate( 'Build a new report' ) }
-			</Button>
+			<div className="reports-overview__buttons-container">
+				<Button variant="primary" onClick={ handleBuildReport }>
+					{ translate( 'Build a new report' ) }
+				</Button>
+			</div>
 		);
 	}, [ translate, handleBuildReport ] );
 
@@ -78,11 +80,13 @@ const ReportsOverview = () => {
 					<Title>{ title }</Title>
 					<Actions>
 						<MobileSidebarNavigation />
-						{ buildReportButton }
+						<Button variant="primary" onClick={ handleBuildReport }>
+							{ translate( 'Build a new report' ) }
+						</Button>
 					</Actions>
 				</LayoutHeader>
 			</LayoutTop>
-			<LayoutBody>
+			<LayoutBody className="reports-overview__body">
 				<PageSectionColumns>
 					<PageSectionColumns.Column>
 						<div className="reports-overview__content">
@@ -92,7 +96,7 @@ const ReportsOverview = () => {
 								</div>
 								<div className="reports-overview__description">
 									{ translate(
-										"Show your clients the value you provide with beautiful, comprehensive reports. Include statistics, security measures, and performance data from their sites to demonstrate your agency's ongoing work."
+										"Prove your agency's impact with polished, easy-to-read reports. Pull in traffic stats, security checks, and performance metrics automatically, then send a snapshot that keeps clients informed, impressed, and confident in the work you do each month."
 									) }
 								</div>
 							</div>
@@ -106,21 +110,25 @@ const ReportsOverview = () => {
 
 				<PageSectionColumns
 					background={ {
-						color: '#B9E4FE',
+						isDarkBackground: true,
+						color: '#185683',
 					} }
 				>
-					<PageSectionColumns.Column heading={ translate( 'Why create client reports' ) }>
+					<PageSectionColumns.Column heading={ translate( 'Why share reports?' ) }>
 						<div className="reports-overview__description">
 							<div>
 								{ translate(
-									'Client reports help demonstrate the ongoing value of your services. They provide transparent insight into the work you do and the results you achieve, which helps build trust and justify your fees.'
+									'Reports turn raw data into clear stories. They highlight progress, justify fees, and create regular touchpoints that spark new goals. Each delivery invites a conversation, making upsells or scope expansion a natural, value-based next step for both sides.'
 								) }
 							</div>
-							<div>
-								{ translate(
-									'Regular reporting also creates touchpoints with your clients, opening the door for meaningful conversations about their goals and providing opportunities for upselling additional services.'
-								) }
-							</div>
+							<Button
+								__next40pxDefaultSize
+								href="#"
+								className="reports-overview__button--secondary"
+								onClick={ handleBuildReport }
+							>
+								{ translate( 'View an example report ↗' ) }
+							</Button>
 						</div>
 					</PageSectionColumns.Column>
 					<PageSectionColumns.Column alignCenter>
@@ -128,12 +136,7 @@ const ReportsOverview = () => {
 					</PageSectionColumns.Column>
 				</PageSectionColumns>
 
-				<PageSectionColumns
-					heading={ translate( 'Benefits of client reporting' ) }
-					background={ {
-						color: '#f6f7f7',
-					} }
-				>
+				<PageSectionColumns heading={ translate( 'Benefits of client reporting' ) }>
 					<PageSectionColumns.Column>
 						<SimpleList className="reports-overview__list" items={ listItems1 } />
 					</PageSectionColumns.Column>
@@ -142,7 +145,11 @@ const ReportsOverview = () => {
 					</PageSectionColumns.Column>
 				</PageSectionColumns>
 
-				<PageSectionColumns>
+				<PageSectionColumns
+					background={ {
+						color: '#EBF7FF',
+					} }
+				>
 					<PageSectionColumns.Column
 						heading={ translate( 'Ready to create your first client report?' ) }
 					>
