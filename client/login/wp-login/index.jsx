@@ -8,10 +8,13 @@ import { get, startsWith } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import A4APlusWpComLogo from 'calypso/a8c-for-agencies/components/a4a-plus-wpcom-logo';
 import LoginBlock from 'calypso/blocks/login';
 import { getHeaderText } from 'calypso/blocks/login/login-header';
 import AutomatticLogo from 'calypso/components/automattic-logo';
 import DocumentHead from 'calypso/components/data/document-head';
+import GravatarLoginLogo from 'calypso/components/gravatar-login-logo';
+import JetpackPlusWpComLogo from 'calypso/components/jetpack-plus-wpcom-logo';
 import LocaleSuggestions from 'calypso/components/locale-suggestions';
 import LoggedOutFormBackLink from 'calypso/components/logged-out-form/back-link';
 import Main from 'calypso/components/main';
@@ -635,33 +638,59 @@ export class Login extends Component {
 			isPartnerPortalOAuth2Client( oauth2Client ) &&
 			document.location.search?.includes( 'wpcloud' )
 		) {
-			brandLogo = <WPCloudLogo className="login__wpcloud-logo" size={ 120 } />;
+			brandLogo = <WPCloudLogo size={ 120 } />;
+		}
+
+		let logo = null;
+		if ( isJetpackCloudOAuth2Client( oauth2Client ) ) {
+			logo = <JetpackPlusWpComLogo size={ 24 } />;
+		} else if ( isA4AOAuth2Client( oauth2Client ) ) {
+			logo = <A4APlusWpComLogo size={ 32 } />;
+		} else if ( isPartnerPortalOAuth2Client( oauth2Client ) ) {
+			if ( document.location.search?.includes( 'wpcloud' ) ) {
+				logo = <WPCloudLogo size={ 256 } />;
+			} else if ( document.location.search?.includes( 'jetpack' ) ) {
+				logo = <JetpackPlusWpComLogo size={ 24 } />;
+			}
+		} else if ( isGravPoweredClient ) {
+			logo = (
+				<GravatarLoginLogo
+					iconUrl={ oauth2Client?.icon }
+					alt={ oauth2Client?.title || '' }
+					isCoBrand={ isGravatarFlowOAuth2Client( oauth2Client ) }
+				/>
+			);
 		}
 
 		return (
-			<>
-				{ isWhiteLogin ? (
-					<Step.CenteredColumnLayout
-						columnWidth={ 6 }
-						topBar={
-							<Step.TopBar rightElement={ this.renderLoginHeaderNavigation() } logo={ brandLogo } />
+			<Step.CenteredColumnLayout
+				columnWidth={ 6 }
+				topBar={
+					<Step.TopBar
+						rightElement={ this.renderLoginHeaderNavigation() }
+						logo={
+							brandLogo ||
+							( ! isWooJPC && isJetpack && ! this.props.isFromAutomatticForAgenciesPlugin
+								? jetpackLogo
+								: null )
 						}
-						heading={ <Step.Heading text={ headerText } /> }
-						verticalAlign="center"
-					>
-						{ mainContent }
-					</Step.CenteredColumnLayout>
-				) : (
-					<>
-						{ ! isWooJPC &&
-							isJetpack &&
-							! this.props.isFromAutomatticForAgenciesPlugin &&
-							jetpackLogo }
-						{ mainContent }
-						{ this.renderFooter() }
-					</>
-				) }
-			</>
+					/>
+				}
+				heading={
+					<Step.Heading
+						text={
+							<>
+								<div>{ logo }</div>
+								{ headerText }
+							</>
+						}
+					/>
+				}
+				verticalAlign="center"
+			>
+				{ mainContent }
+				{ ! isWhiteLogin && this.renderFooter() }
+			</Step.CenteredColumnLayout>
 		);
 	}
 }

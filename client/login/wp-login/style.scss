@@ -19,7 +19,7 @@ $image-height: 47px;
 		padding-bottom: $image-height;
 		min-height: calc(100% - #{$image-height});
 	}
-	
+
 	.layout__content {
 		position: static;
 	}
@@ -35,6 +35,14 @@ $image-height: 47px;
 		.masterbar {
 			display: none;
 		}
+	}
+
+	.gravatar-login-logo {
+		display: block;
+	}
+
+	.step-container-v2__heading {
+		text-align: center;
 	}
 }
 
@@ -927,4 +935,3 @@ $image-height: 47px;
 :root {
 	--login-form-column-max-width: 327px;
 }
-

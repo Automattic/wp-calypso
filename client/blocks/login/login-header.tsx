@@ -197,7 +197,6 @@ export function getHeaderText(
 
 	return headerText;
 }
-
 export function LoginHeader( {
 	action,
 	currentQuery,

@@ -56,7 +56,6 @@ import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
 import ContinueAsUser from './continue-as-user';
 import ErrorNotice from './error-notice';
 import LoginForm from './login-form';
-import { LoginHeader } from './login-header';
 
 import './style.scss';
 
@@ -446,7 +445,7 @@ class Login extends Component {
 					{ ! isWooJPC && ! isBlazePro && (
 						<div className="login__lost-password-footer">
 							<p className="login__lost-password-no-account">
-								{ translate( 'Don’t have an account? {{signupLink}}Sign up{{/signupLink}}', {
+								{ translate( "Don't have an account? {{signupLink}}Sign up{{/signupLink}}", {
 									components: {
 										signupLink,
 									},
@@ -457,7 +456,7 @@ class Login extends Component {
 					{ isBlazePro && (
 						<div className="login__lost-password-footer">
 							<p className="login__lost-password-no-account">
-								<span>{ translate( 'Don’t have an account?' ) }&nbsp;</span>
+								<span>{ translate( "Don't have an account?" ) }&nbsp;</span>
 								{ translate( '{{signupLink}}Sign up{{/signupLink}}', {
 									components: {
 										signupLink,
@@ -488,7 +487,7 @@ class Login extends Component {
 					{ isWoo && (
 						<div className="login__two-factor-footer">
 							<p className="login__two-factor-no-account">
-								{ translate( 'Don’t have an account? {{signupLink}}Sign up{{/signupLink}}', {
+								{ translate( "Don't have an account? {{signupLink}}Sign up{{/signupLink}}", {
 									components: {
 										signupLink,
 									},
@@ -496,7 +495,7 @@ class Login extends Component {
 							</p>
 							<p className="login__two-factor-cannot-access-phone">
 								{ translate(
-									'Can’t access your phone? {{contactUsLink}}Contact us{{/contactUsLink}}',
+									"Can't access your phone? {{contactUsLink}}Contact us{{/contactUsLink}}",
 									{
 										components: {
 											contactUsLink: (
@@ -594,27 +593,9 @@ class Login extends Component {
 			locale,
 			isWCCOM,
 			isFromAutomatticForAgenciesPlugin,
-			action,
-			currentQuery,
-			fromSite,
-			isFromMigrationPlugin,
-			isGravPoweredClient,
-			isGravPoweredLoginPage,
-			isManualRenewalImmediateLoginAttempt,
 			isSignupExistingAccount,
 			isSocialFirst,
 			isWhiteLogin,
-			isBlazePro,
-			linkingSocialService,
-			socialConnect,
-			translate,
-			twoStepNonce,
-			wccomFrom,
-			isWooJPC,
-			twoFactorAuthType,
-			twoFactorEnabled,
-			initialQuery,
-			partnerSlug,
 		} = this.props;
 
 		const content = (
@@ -629,38 +610,6 @@ class Login extends Component {
 					'is-social-first': isSocialFirst,
 				} ) }
 			>
-				{ ! isWhiteLogin && (
-					<LoginHeader
-						action={ action }
-						currentQuery={ currentQuery }
-						fromSite={ fromSite }
-						isFromAkismet={ isFromAkismet }
-						isFromMigrationPlugin={ isFromMigrationPlugin }
-						isFromAutomatticForAgenciesPlugin={ isFromAutomatticForAgenciesPlugin }
-						isGravPoweredClient={ isGravPoweredClient }
-						isGravPoweredLoginPage={ isGravPoweredLoginPage }
-						isJetpack={ isJetpack }
-						isManualRenewalImmediateLoginAttempt={ isManualRenewalImmediateLoginAttempt }
-						isSocialFirst={ isSocialFirst }
-						isWhiteLogin={ isWhiteLogin }
-						isWCCOM={ isWCCOM }
-						isBlazePro={ isBlazePro }
-						linkingSocialService={ linkingSocialService }
-						oauth2Client={ oauth2Client }
-						socialConnect={ socialConnect }
-						translate={ translate }
-						twoStepNonce={ twoStepNonce }
-						wccomFrom={ wccomFrom }
-						isWooJPC={ isWooJPC }
-						twoFactorAuthType={ twoFactorAuthType }
-						twoFactorEnabled={ twoFactorEnabled }
-						initialQuery={ initialQuery }
-						partnerSlug={ partnerSlug }
-						getSignupLinkComponent={ this.getSignupLinkComponent }
-						showContinueAsUser={ this.showContinueAsUser() }
-					/>
-				) }
-
 				{ isSignupExistingAccount && this.renderLoginFormSignupNotice() }
 
 				{ /* For Woo, we render the ErrrorNotice component in login-form.jsx */ }
