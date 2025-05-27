@@ -1,4 +1,5 @@
 import { useMemo } from '@wordpress/element';
+import { logger } from '../utils/logger';
 import type { ClientContext, ContextProvider } from '../types/index';
 
 /**
@@ -35,7 +36,7 @@ export function useClientContext(
 					return context || {};
 				} catch ( error ) {
 					// Log error but don't break the message sending
-					console.warn( 'Error getting client context:', error );
+					logger( 'Error getting client context: %O', error );
 					return {};
 				}
 			},

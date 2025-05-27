@@ -1,4 +1,5 @@
 import { useCallback, useMemo } from '@wordpress/element';
+import { logger } from '../utils/logger';
 import type { Tool, ToolProvider } from '../types/index';
 
 /**
@@ -10,14 +11,14 @@ export type GetClientToolsCallback = () => {
 };
 
 /**
- * React hook that creates a ToolProvider from a WordPress tools callback
+ * React hook that creates a ToolProvider
  *
- * This hook takes a callback function that returns WordPress tools data
- * and wraps it in the ToolProvider interface expected by the agenttic client.
+ * This hook takes a callback function that returns a getTools and executeTool method.
+ * It wraps it in the ToolProvider interface expected by the agenttic client.
  * The callback is called fresh each time tools are needed, ensuring dynamic
  * tool availability and execution.
  *
- * @param getClientToolsCallback - Function that returns WordPress tools data
+ * @param getClientToolsCallback - Function that returns getTools and executeTool methods
  * @return ToolProvider instance or undefined if no callback provided
  */
 export function useClientTools(
@@ -33,7 +34,7 @@ export function useClientTools(
 			const { getTools } = getClientToolsCallback();
 			return await getTools();
 		} catch ( error ) {
-			console.error( 'Error getting available tools:', error );
+			logger( 'Error getting available tools: %O', error );
 			return [];
 		}
 	}, [ getClientToolsCallback ] );
@@ -48,7 +49,7 @@ export function useClientTools(
 				const { executeTool: executeToolFn } = getClientToolsCallback();
 				return await executeToolFn( toolId, args );
 			} catch ( error ) {
-				console.error( `Error executing tool ${ toolId }:`, error );
+				logger( 'Error executing tool %s: %O', toolId, error );
 				throw error;
 			}
 		},
