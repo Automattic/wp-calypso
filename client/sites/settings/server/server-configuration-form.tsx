@@ -222,7 +222,7 @@ export default function ServerConfigurationForm( { disabled }: ServerConfigurati
 		}
 
 		const displayValue = dataCenterOptions.hasOwnProperty( geoAffinity )
-			? dataCenterOptions[ geoAffinity ]
+			? dataCenterOptions[ geoAffinity as keyof typeof dataCenterOptions ]
 			: geoAffinity;
 
 		return (
