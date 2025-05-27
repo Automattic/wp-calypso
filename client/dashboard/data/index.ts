@@ -398,6 +398,13 @@ export const resetPhpMyAdminPassword = async ( siteIdOrSlug: string ): Promise< 
 	} );
 };
 
+export const fetchPrimaryDataCenter = async ( siteIdOrSlug: string ): Promise< string > => {
+	return wpcom.req.get( {
+		path: `/sites/${ siteIdOrSlug }/hosting/geo-affinity`,
+		apiNamespace: 'wpcom/v2',
+	} );
+};
+
 export const fetchStaticFile404 = async ( siteIdOrSlug: string ): Promise< string > => {
 	return wpcom.req.get( {
 		path: `/sites/${ siteIdOrSlug }/hosting/static-file-404`,
