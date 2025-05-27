@@ -1,5 +1,4 @@
-import { LoadingPlaceholder } from '@automattic/components';
-import { TooltipContent } from '@automattic/components/src/highlight-cards/count-card';
+import { LoadingPlaceholder, TooltipContent } from '@automattic/components';
 import { TrendComparison } from '@automattic/components/src/highlight-cards/count-comparison-card';
 import Popover from '@automattic/components/src/popover';
 import { formatNumberCompact, formatNumber } from '@automattic/number-formatters';

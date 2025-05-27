@@ -45,6 +45,7 @@ export { default as CountCard } from './highlight-cards/count-card';
 export { default as AnnualHighlightCards } from './highlight-cards/annual-highlight-cards';
 export { default as NoticeBanner } from './notice-banner';
 export { default as MobileHighlightCardListing } from './highlight-cards/mobile-highlight-cards';
+export { default as TooltipContent } from './highlight-cards/tooltip-content';
 export { default as ConfettiAnimation } from './confetti';
 export { default as ComponentSwapper } from './component-swapper';
 export { default as SubmenuPopover, useSubmenuPopoverProps } from './submenu-popover';
