@@ -42,6 +42,7 @@ export function createA2AClient( config: A2AClientConfig ): A2AClient {
 		proxy,
 		toolProvider,
 		contextProvider,
+		dispatcher,
 	} = config;
 
 	// Create request configuration
@@ -50,6 +51,7 @@ export function createA2AClient( config: A2AClientConfig ): A2AClient {
 		authProvider,
 		timeout,
 		proxy,
+		dispatcher,
 	};
 
 	return {

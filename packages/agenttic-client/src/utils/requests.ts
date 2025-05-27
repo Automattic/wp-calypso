@@ -11,7 +11,8 @@ import { createSendTaskRequest } from './index';
 import { enhanceMessage } from './messages';
 import { formatObject, logger } from './logger';
 import { parseSSEStream } from '../streaming/index';
-import { socksDispatcher } from 'fetch-socks';
+import type { RequestDispatcher } from './dispatcher';
+import { defaultDispatcher } from './dispatcher';
 import {
 	createTimeoutHandler,
 	handleRequestError,
@@ -28,6 +29,7 @@ export interface RequestConfig {
 	authProvider?: AuthProvider;
 	timeout: number;
 	proxy?: string;
+	dispatcher?: RequestDispatcher;
 }
 
 /**
@@ -92,46 +94,23 @@ async function getHeaders(
 }
 
 /**
- * Create fetch options with optional proxy
+ * Create fetch options with optional proxy using the provided dispatcher
  *
- * @param headers - Request headers
- * @param body    - Request body
- * @param signal  - Abort signal
- * @param proxy   - Optional proxy configuration
+ * @param headers    - Request headers
+ * @param body       - Request body
+ * @param signal     - Abort signal
+ * @param proxy      - Optional proxy configuration
+ * @param dispatcher - Request dispatcher to use
  * @return Fetch options with optional dispatcher
  */
 function createFetchOptions(
 	headers: Record< string, string >,
 	body: string,
 	signal: AbortSignal,
-	proxy?: string
+	proxy?: string,
+	dispatcher: RequestDispatcher = defaultDispatcher
 ): RequestInit & { dispatcher?: any } {
-	const options: RequestInit & { dispatcher?: any } = {
-		method: 'POST',
-		headers,
-		body,
-		signal,
-	};
-
-	// Add proxy agent if proxy is configured
-	// For SOCKS proxy, we use fetch-socks dispatcher
-	if ( proxy ) {
-		try {
-			// Parse the SOCKS proxy URL (e.g., "socks://127.0.0.1:8080")
-			const url = new URL( proxy );
-			const dispatcher = socksDispatcher( {
-				type: 5, // SOCKS5
-				host: url.hostname,
-				port: parseInt( url.port, 10 ),
-			} );
-			options.dispatcher = dispatcher;
-		} catch ( error ) {
-			// If proxy setup fails, log warning but continue without proxy
-			logger( 'Warning: Failed to setup proxy %s: %s', proxy, error );
-		}
-	}
-
-	return options;
+	return dispatcher.createFetchOptions( headers, body, signal, proxy );
 }
 
 /**
@@ -203,7 +182,7 @@ export async function executeRequest(
 	config: RequestConfig
 ): Promise< Task > {
 	const { request, headers } = preparedRequest;
-	const { agentUrl, timeout, proxy } = config;
+	const { agentUrl, timeout, proxy, dispatcher } = config;
 
 	const { timeoutId, controller } = createTimeoutHandler(
 		timeout,
@@ -215,7 +194,8 @@ export async function executeRequest(
 			headers,
 			JSON.stringify( request ),
 			controller.signal,
-			proxy
+			proxy,
+			dispatcher
 		);
 
 		logger( 'Making request to %s with options: %O', agentUrl, {
@@ -263,7 +243,7 @@ export async function* executeStreamingRequest(
 	options: RequestOptions
 ): AsyncIterable< TaskUpdate > {
 	const { request, headers } = preparedRequest;
-	const { agentUrl, proxy } = config;
+	const { agentUrl, proxy, dispatcher } = config;
 	const { streamingTimeout = 60000 } = options;
 
 	const { timeoutId, controller } = createTimeoutHandler(
@@ -276,7 +256,8 @@ export async function* executeStreamingRequest(
 			headers,
 			JSON.stringify( request ),
 			controller.signal,
-			proxy
+			proxy,
+			dispatcher
 		);
 
 		const response = await fetch( agentUrl, fetchOptions as any );

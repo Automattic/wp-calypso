@@ -168,6 +168,7 @@ export interface A2AClientConfig {
 	proxy?: string;
 	toolProvider?: ToolProvider;
 	contextProvider?: ContextProvider;
+	dispatcher?: import('../utils/dispatcher').RequestDispatcher;
 }
 
 export interface SendMessageParams {

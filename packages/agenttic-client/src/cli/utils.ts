@@ -3,6 +3,7 @@ import { createTextMessage, extractTextFromMessage } from '../utils/index';
 import { createEnvAuthProvider } from './auth';
 import { createExampleTools } from './tools';
 import { createCLIContextProvider } from './context';
+import { nodeDispatcher } from './dispatcher';
 import { cliLog } from '../utils/logger';
 import type { CLIOptions, ConversationHistoryItem } from './types';
 import chalk from 'chalk';
@@ -53,6 +54,7 @@ export function createClientWithProviders( options: CLIOptions ) {
 		proxy: options.proxy,
 		toolProvider,
 		contextProvider,
+		dispatcher: nodeDispatcher,
 	} );
 
 	return { client, authProvider, toolProvider, contextProvider };

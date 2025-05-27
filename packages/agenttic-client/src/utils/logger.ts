@@ -2,7 +2,7 @@ import debug from 'debug';
 import chalk from 'chalk';
 
 // Force color support for chalk
-process.env.FORCE_COLOR = '1'; // Force color output
+//process.env.FORCE_COLOR = '1'; // Force color output
 chalk.level = 3; // Truecolor support (16 million colors)
 
 // Single debug instance for the entire agenttic-client package
@@ -16,7 +16,7 @@ export function isDebugEnabled(): boolean {
 // Helper to enable debugging
 export function enableDebug(): void {
 	debug.enabled = () => true;
-	process.env.DEBUG = 'agenttic-client';
+	//process.env.DEBUG = 'agenttic-client';
 }
 
 // Helper to format objects for logging
