@@ -83,7 +83,7 @@ export class DomainSearchComponent {
 		const target = targetRow.getByRole( 'button' );
 		await target.waitFor();
 
-		const selectedDomain = await targetRow.getByLabel( keyword ).getAttribute( 'aria-label' );
+		const selectedDomain = await targetRow.getByRole( 'heading' ).textContent();
 
 		if ( ! selectedDomain ) {
 			throw new Error( `No domain found for keyword: ${ keyword }` );
