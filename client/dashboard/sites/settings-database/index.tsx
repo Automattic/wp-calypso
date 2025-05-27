@@ -54,7 +54,7 @@ export default function SiteDatabaseSettings( { siteSlug }: { siteSlug: string }
 				<SettingsCallout
 					siteSlug={ siteSlug }
 					icon={ blockTable }
-					imageSrc={ calloutIllustrationUrl }
+					image={ calloutIllustrationUrl }
 					title={ __( 'Fast, familiar database access' ) }
 					description={ __(
 						'Access your site’s database with phpMyAdmin—perfect for inspecting data, running queries, and quick debugging.'
