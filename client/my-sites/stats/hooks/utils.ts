@@ -54,24 +54,3 @@ export const processQueryParams = ( query: QueryStatsParams ) => {
 		days,
 	};
 };
-
-/**
- * Check if the URL is on the same site
- * @param url - The URL to check
- * @returns True if the URL is on the same site, false otherwise
- */
-export const isSameSiteUrl = ( url: string ): boolean => {
-	try {
-		// Relative URLs are from the same site.
-		if ( ! url.startsWith( 'http://' ) && ! url.startsWith( 'https://' ) ) {
-			return true;
-		}
-
-		const targetUrl = new URL( url );
-		const currentSite = new URL( window.location.href );
-
-		return targetUrl.hostname === currentSite.hostname;
-	} catch {
-		return false;
-	}
-};

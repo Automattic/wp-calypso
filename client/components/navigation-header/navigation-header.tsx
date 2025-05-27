@@ -2,8 +2,8 @@ import page from '@automattic/calypso-router';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import { ReactNode } from 'react';
+import { isSameOrigin } from 'calypso/lib/navigate';
 import { popCurrentScreenFromHistory } from 'calypso/my-sites/stats/hooks/use-stats-navigation-history';
-import { isSameSiteUrl } from 'calypso/my-sites/stats/hooks/utils';
 import './navigation-header.scss';
 
 // Type definitions for the props
@@ -61,7 +61,7 @@ const NavigationHeader: React.FC< HeaderProps > = ( {
 						! backLinkProps?.url.startsWith( 'https://' )
 					) {
 						page( backLinkProps.url );
-					} else if ( isSameSiteUrl( backLinkProps.url ) ) {
+					} else if ( isSameOrigin( backLinkProps.url ) ) {
 						// If the URL is on the same site, navigate to it.
 						window.location.href = backLinkProps.url;
 					}
