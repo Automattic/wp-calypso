@@ -30,7 +30,7 @@ interface TestSiteOptions {
 }
 
 // Only mocks site and settings fields that are necessary for the tests.
-// Feel free to add more feilds as they are needed.
+// Feel free to add more fields as they are needed.
 function mockTestSite( options: TestSiteOptions ) {
 	const site = {
 		slug: options.slug,
