@@ -141,6 +141,7 @@ describe( 'DateCalendar', () => {
 		} );
 
 		it( 'should select an initial date in controlled mode via the `selected` prop', () => {
+			// Note: the `defaultSelected` prop is ignored when the `selected` prop is set.
 			render( <DateCalendar defaultSelected={ tomorrow } selected={ today } /> );
 
 			expect( getDateCell( today, { selected: true } ) ).toBeVisible();
@@ -150,18 +151,41 @@ describe( 'DateCalendar', () => {
 			expect( todayButton ).toHaveAccessibleName( /selected/i );
 		} );
 
-		it( 'should have no date selected in uncontrolled mode when the `selected` prop is set to `undefined`', () => {
-			render( <DateCalendar selected={ undefined } /> );
+		it( 'should have no date selected in uncontrolled mode when the `selected` and `defaultSelected` props are set to `undefined`', () => {
+			render( <DateCalendar /> );
 
 			expect( screen.queryByRole( 'gridcell', { selected: true } ) ).not.toBeInTheDocument();
 			expect( screen.queryByRole( 'button', { name: /selected/i } ) ).not.toBeInTheDocument();
 		} );
 
 		it( 'should have no date selected in controlled mode when the `selected` prop is set to `null`', () => {
+			// Note: the `defaultSelected` prop is ignored when the `selected` prop is set.
 			render( <DateCalendar defaultSelected={ tomorrow } selected={ null } /> );
 
 			expect( screen.queryByRole( 'gridcell', { selected: true } ) ).not.toBeInTheDocument();
 			expect( screen.queryByRole( 'button', { name: /selected/i } ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'should select a date in uncontrolled mode via the `defaultSelected` prop even if the date is disabled`', () => {
+			render( <DateCalendar defaultSelected={ tomorrow } disabled={ tomorrow } /> );
+
+			expect( getDateCell( tomorrow, { selected: true } ) ).toBeVisible();
+
+			const tomorrowButton = getDateButton( tomorrow );
+			expect( tomorrowButton ).toBeVisible();
+			expect( tomorrowButton ).toHaveAccessibleName( /selected/i );
+			expect( tomorrowButton ).toBeDisabled();
+		} );
+
+		it( 'should select a date in controlled mode via the `selected` prop even if the date is disabled`', () => {
+			render( <DateCalendar selected={ tomorrow } disabled={ tomorrow } /> );
+
+			expect( getDateCell( tomorrow, { selected: true } ) ).toBeVisible();
+
+			const tomorrowButton = getDateButton( tomorrow );
+			expect( tomorrowButton ).toBeVisible();
+			expect( tomorrowButton ).toHaveAccessibleName( /selected/i );
+			expect( tomorrowButton ).toBeDisabled();
 		} );
 
 		describe.each( [
