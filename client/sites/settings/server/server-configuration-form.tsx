@@ -29,6 +29,7 @@ import { isFetchingAtomicHostingGeoAffinity } from 'calypso/state/selectors/is-f
 import { isFetchingAtomicHostingWpVersion } from 'calypso/state/selectors/is-fetching-atomic-hosting-wp-version';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import type { DataCenterOption } from 'calypso/data/data-center/types';
 
 import './server-configuration-form.scss';
 
@@ -222,7 +223,7 @@ export default function ServerConfigurationForm( { disabled }: ServerConfigurati
 		}
 
 		const displayValue = dataCenterOptions.hasOwnProperty( geoAffinity )
-			? dataCenterOptions[ geoAffinity as keyof typeof dataCenterOptions ]
+			? dataCenterOptions[ geoAffinity as DataCenterOption ]
 			: geoAffinity;
 
 		return (
