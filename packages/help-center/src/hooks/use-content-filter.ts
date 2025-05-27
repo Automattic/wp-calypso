@@ -95,6 +95,33 @@ export const useContentFilter = ( node: HTMLDivElement | null ) => {
 					}
 				},
 			},
+			/**
+			 * Add external link icons to links that open in new tabs.
+			 */
+			{
+				pattern: 'a[target="_blank"]',
+				action: ( element: HTMLAnchorElement ) => {
+					// Skip if already has an external icon
+					if ( element.querySelector( '.help-center-external-link-icon' ) ) {
+						return;
+					}
+
+					// Create external link icon
+					const icon = document.createElement( 'span' );
+					icon.className = 'help-center-external-link-icon';
+					icon.setAttribute( 'aria-hidden', 'true' );
+					icon.innerHTML = '↗';
+
+					// Add screen reader text for accessibility
+					const srText = document.createElement( 'span' );
+					srText.className = 'screen-reader-text';
+					srText.textContent = ' (opens in a new tab)';
+
+					// Append icon and screen reader text to the link
+					element.appendChild( icon );
+					element.appendChild( srText );
+				},
+			},
 		],
 		[ navigate, link, node ]
 	);

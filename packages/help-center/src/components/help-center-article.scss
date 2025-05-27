@@ -557,6 +557,26 @@
 						}
 					}
 				}
+
+				// External link icon styles
+				.help-center-external-link-icon {
+					display: inline-block;
+					color: var(--color-neutral-60);
+					font-size: 0.75em;
+					margin-left: 3px;
+					vertical-align: top;
+					line-height: 1;
+					text-decoration: none;
+				}
+
+				// Screen reader text for accessibility
+				.screen-reader-text {
+					clip: rect(1px, 1px, 1px, 1px);
+					position: absolute !important;
+					height: 1px;
+					width: 1px;
+					overflow: hidden;
+				}
 			}
 		}
 	}
