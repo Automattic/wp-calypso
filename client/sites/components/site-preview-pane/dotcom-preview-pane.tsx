@@ -193,7 +193,7 @@ const DotcomPreviewPane = ( {
 		( stagingSite ) => stagingSite.user_has_permission
 	);
 
-	const hasProductionSitePermission = useSelector( ( state ) => {
+	const hasManageOptionsPermission = useSelector( ( state ) => {
 		if ( site.is_wpcom_staging_site ) {
 			return canCurrentUser( state, site.options?.wpcom_production_blog_id, 'manage_options' );
 		}
@@ -226,7 +226,7 @@ const DotcomPreviewPane = ( {
 
 					if (
 						( hasStagingSitePermission && site.is_wpcom_staging_site ) ||
-						( hasProductionSitePermission && isStagingStatusFinished )
+						( hasManageOptionsPermission && isStagingStatusFinished )
 					) {
 						return <SiteEnvironmentSwitcher onChange={ changeSitePreviewPane } site={ site } />;
 					}
