@@ -410,10 +410,6 @@ body.is-section-signup {
 		.domain-product-price__price {
 			font-size: $font-body-small;
 			font-weight: initial;
-
-			&:not(.domain-product-price__free-price) {
-				color: var(--color-neutral-40);
-			}
 		}
 
 		&.is-clickable:hover {

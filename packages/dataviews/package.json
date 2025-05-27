@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/dataviews",
-	"version": "0.1.1",
+	"version": "0.2.0",
 	"description": "DataViews is a component that provides an API to render datasets using different types of layouts (table, grid, list, etc.).",
 	"author": "Automattic Inc.",
 	"license": "GPL-2.0-or-later",

@@ -31,11 +31,23 @@ main div.dashboard-header-bar {
 }
 
 // Large and small must be separate so they don't cross-animate.
-.dashboard-page-layout.is-large .client-dashboard-components-page-header {
-	view-transition-name: page-layout-header-large;
+.dashboard-page-layout.is-large .client-dashboard-components-page-header .client-dashboard-components-page-header__breadcrumbs {
+	view-transition-name: page-layout-header-breadcrumbs-large;
 }
-.dashboard-page-layout.is-small .client-dashboard-components-page-header {
-	view-transition-name: page-layout-header-small;
+.dashboard-page-layout.is-small .client-dashboard-components-page-header .client-dashboard-components-page-header__breadcrumbs {
+	view-transition-name: page-layout-header-breadcrumbs-small;
+}
+.dashboard-page-layout.is-large .client-dashboard-components-page-header .client-dashboard-components-page-header__heading-row {
+	view-transition-name: page-layout-header-heading-row-large;
+}
+.dashboard-page-layout.is-small .client-dashboard-components-page-header .client-dashboard-components-page-header__heading-row {
+	view-transition-name: page-layout-header-heading-row-small;
+}
+.dashboard-page-layout.is-large .client-dashboard-components-page-header .client-dashboard-components-page-header__description {
+	view-transition-name: page-layout-header-description-large;
+}
+.dashboard-page-layout.is-small .client-dashboard-components-page-header .client-dashboard-components-page-header__description {
+	view-transition-name: page-layout-header-description-small;
 }
 
 .dashboard-page-layout.is-large .client-dashboard-components-page-header .components-button.is-primary {

@@ -30,12 +30,8 @@ export const A4AWrapper = ( Story: StoryFn ) => (
 );
 
 export const AkismetWrapper = ( Story: StoryFn ) => (
-	<div className="layout is-white-login">
-		<div className="login is-akismet" style={ { maxWidth: '360px', padding: '30px' } }>
-			<div className="login__form">
-				<Story />
-			</div>
-		</div>
+	<div className="is-white-login is-akismet">
+		<Story />
 	</div>
 );
 

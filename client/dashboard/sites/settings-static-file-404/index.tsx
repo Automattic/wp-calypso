@@ -2,7 +2,6 @@ import { DataForm } from '@automattic/dataviews';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import {
 	__experimentalHStack as HStack,
-	__experimentalText as Text,
 	__experimentalVStack as VStack,
 	Card,
 	CardBody,
@@ -10,15 +9,12 @@ import {
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
-import { settings } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
-import { addQueryArgs } from '@wordpress/url';
 import { useState } from 'react';
 import { siteQuery, siteStaticFile404Query, siteStaticFile404Mutation } from '../../app/queries';
-import { Callout } from '../../components/callout';
 import PageLayout from '../../components/page-layout';
+import SettingsCallout from '../settings-callout';
 import SettingsPageHeader from '../settings-page-header';
-import calloutIllustrationUrl from './callout-illustration.svg';
 import type { Site } from '../../data/types';
 import type { Field } from '@automattic/dataviews';
 
@@ -65,46 +61,12 @@ export default function SiteStaticFile404Settings( { siteSlug }: { siteSlug: str
 	}
 
 	if ( ! canSetStaticFile404Handling( site ) ) {
-		const handleUpgradePlan = () => {
-			const backUrl = window.location.href.replace( window.location.origin, '' );
-
-			window.location.href = addQueryArgs(
-				`/checkout/${ encodeURIComponent( siteSlug ) }/business`,
-				{
-					cancel_to: backUrl,
-					redirect_to: backUrl,
-				}
-			);
-		};
-
 		return (
 			<PageLayout
 				size="small"
 				header={ <SettingsPageHeader title={ __( 'Handling requests for nonexistent assets' ) } /> }
 			>
-				<Callout
-					icon={ settings }
-					headingLevel={ 4 }
-					imageSrc={ calloutIllustrationUrl }
-					title={ __( 'Fine-tune your WordPress site' ) }
-					description={
-						<>
-							<Text variant="muted">
-								{ __(
-									'Get under the hood—control caching, choose your PHP version, and test out upcoming WordPress releases.'
-								) }
-							</Text>
-							<Text variant="muted">
-								{ __( 'Available on the WordPress.com Business and Commerce plans.' ) }
-							</Text>
-						</>
-					}
-					actions={
-						<Button variant="primary" size="compact" onClick={ handleUpgradePlan }>
-							{ __( 'Upgrade plan' ) }
-						</Button>
-					}
-				/>
+				<SettingsCallout siteSlug={ siteSlug } />
 			</PageLayout>
 		);
 	}

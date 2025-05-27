@@ -16,6 +16,7 @@ import type {
 	UrlPerformanceInsights,
 	PhpMyAdminToken,
 } from './types';
+import type { DataCenterOption } from 'calypso/data/data-center/types';
 
 export const fetchProfile = async (): Promise< Profile > => {
 	return await wpcom.req.get( '/me/settings' );
@@ -394,6 +395,15 @@ export const fetchPhpMyAdminToken = async ( siteIdOrSlug: string ): Promise< Php
 export const resetPhpMyAdminPassword = async ( siteIdOrSlug: string ): Promise< void > => {
 	return wpcom.req.post( {
 		path: `/sites/${ siteIdOrSlug }/hosting/restore-database-password`,
+		apiNamespace: 'wpcom/v2',
+	} );
+};
+
+export const fetchPrimaryDataCenter = async (
+	siteIdOrSlug: string
+): Promise< DataCenterOption | null > => {
+	return wpcom.req.get( {
+		path: `/sites/${ siteIdOrSlug }/hosting/geo-affinity`,
 		apiNamespace: 'wpcom/v2',
 	} );
 };

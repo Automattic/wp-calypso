@@ -18,6 +18,7 @@ import {
 	restoreSitePlanSoftware,
 	fetchWordPressVersion,
 	updateWordPressVersion,
+	fetchPrimaryDataCenter,
 	fetchStaticFile404,
 	updateStaticFile404,
 } from '../data';
@@ -182,6 +183,15 @@ export function performanceInsightsQuery( url: string, token: string ) {
 				return false;
 			}
 			return 5000;
+		},
+	};
+}
+
+export function sitePrimaryDataCenterQuery( siteId: string ) {
+	return {
+		queryKey: [ 'site', siteId, 'primary-data-center' ],
+		queryFn: () => {
+			return fetchPrimaryDataCenter( siteId );
 		},
 	};
 }
