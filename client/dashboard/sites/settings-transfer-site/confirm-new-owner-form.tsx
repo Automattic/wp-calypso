@@ -7,7 +7,7 @@ import {
 	Button,
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
-import { sprintf, __ } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
 import { siteOwnerTransferEligibilityCheckMutation } from '../../app/queries';
 import type { Field } from '@automattic/dataviews';
@@ -70,17 +70,11 @@ export function ConfirmNewOwnerForm( {
 				</Text>
 				<Text lineHeight="20px">
 					{ createInterpolateElement(
-						sprintf(
-							/* translators: %(siteSlug)s - the current site slug */
-							__(
-								"Ready to transfer <strong>%(siteSlug)s</strong> and its associated purchases? Simply enter the new owner's email below, or choose an existing user to start the transfer process."
-							),
-							{
-								siteSlug,
-							}
+						__(
+							"Ready to transfer <siteSlug /> and its associated purchases? Simply enter the new owner's email below, or choose an existing user to start the transfer process."
 						),
 						{
-							strong: <strong />,
+							siteSlug: <strong>{ siteSlug }</strong>,
 						}
 					) }
 				</Text>

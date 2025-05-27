@@ -7,7 +7,7 @@ import {
 	Button,
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
-import { sprintf, __ } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 import React, { useState } from 'react';
 import { siteOwnerTransferMutation } from '../../app/queries';
 import Notice from '../../components/notice';
@@ -78,6 +78,10 @@ export function StartSiteTransferForm( {
 
 	const isSaveDisabled = Object.values( formData ).some( ( value ) => ! value );
 
+	const renderSiteSlug = () => <strong>{ siteSlug }</strong>;
+
+	const renderNewOwnerEmail = () => <strong>{ newOwnerEmail }</strong>;
+
 	const onSubmit = ( event: React.FormEvent ) => {
 		event.preventDefault();
 
@@ -109,58 +113,40 @@ export function StartSiteTransferForm( {
 					<List title={ __( 'Content and ownership' ) }>
 						<li>
 							{ createInterpolateElement(
-								sprintf(
-									/* translators: %(siteSlug)s - the current site slug, %(newOwnerEmail)s - the new owner's email */
-									__(
-										'You’ll be removed as owner of <strong>%(siteSlug)s</strong> and <strong>%(newOwnerEmail)s</strong> will the new owner from now on.'
-									),
-									{ siteSlug, newOwnerEmail }
+								__(
+									'You’ll be removed as owner of <siteSlug /> and <newOwnerEmail /> will the new owner from now on.'
 								),
 								{
-									strong: <strong />,
+									siteSlug: renderSiteSlug(),
+									newOwnerEmail: renderNewOwnerEmail(),
 								}
 							) }
 						</li>
 						<li>
 							{ createInterpolateElement(
-								sprintf(
-									/* translators: %(newOwnerEmail)s - the new owner's email */
-									__(
-										'You will keep your admin access unless <strong>%(newOwnerEmail)s</strong> removes you.'
-									),
-									{ newOwnerEmail }
-								),
+								__( 'You will keep your admin access unless <newOwnerEmail /> removes you.' ),
 								{
-									strong: <strong />,
+									newOwnerEmail: renderNewOwnerEmail(),
 								}
 							) }
 						</li>
 						<li>
 							{ createInterpolateElement(
-								sprintf(
-									/* translators: %(siteSlug)s - the current site slug */
-									__(
-										'Your posts on <strong>%(siteSlug)s</strong> will remain authored by your account.'
-									),
-									{ siteSlug }
-								),
+								__( 'Your posts on <siteSlug /> will remain authored by your account.' ),
 								{
-									strong: <strong />,
+									siteSlug: renderSiteSlug(),
 								}
 							) }
 						</li>
 						{ site.is_wpcom_atomic && ! site.is_wpcom_staging_site && (
 							<li>
 								{ createInterpolateElement(
-									sprintf(
-										/* translators: %(siteSlug)s - the current site slug, %(newOwnerEmail)s - the new owner's email */
-										__(
-											'If your site <strong>%(siteSlug)s</strong> has a staging site, it will be transferred to <strong>%(newOwnerEmail)s</strong>.'
-										),
-										{ siteSlug, newOwnerEmail }
+									__(
+										'If your site <siteSlug /> has a staging site, it will be transferred to <newOwnerEmail />.'
 									),
 									{
-										strong: <strong />,
+										siteSlug: renderSiteSlug(),
+										newOwnerEmail: renderNewOwnerEmail(),
 									}
 								) }
 							</li>
@@ -170,29 +156,25 @@ export function StartSiteTransferForm( {
 					<List title={ __( 'Upgrades' ) }>
 						<li>
 							{ createInterpolateElement(
-								sprintf(
-									/* translators: %(siteSlug)s - the current site slug, %(newOwnerEmail)s - the new owner's email */
-									__(
-										'Your paid upgrades on <strong>%(siteSlug)s</strong> will be transferred to <strong>%(newOwnerEmail)s</strong> and will remain with the site.'
-									),
-									{ siteSlug, newOwnerEmail }
+								__(
+									'Your paid upgrades on <siteSlug /> will be transferred to <newOwnerEmail /> and will remain with the site.'
 								),
-								{ strong: <strong /> }
+								{
+									siteSlug: renderSiteSlug(),
+									newOwnerEmail: renderNewOwnerEmail(),
+								}
 							) }
 						</li>
 					</List>
 					<List title={ __( 'Domains' ) }>
 						<li>
 							{ createInterpolateElement(
-								sprintf(
-									/* translators: %(siteSlug)s - the current site slug, %(newOwnerEmail)s - the new owner's email */
-									__(
-										'The domain name <strong>%(siteSlug)s</strong> will be transferred to <strong>%(newOwnerEmail)s</strong> and will remain working on the site.'
-									),
-									{ siteSlug, newOwnerEmail }
+								__(
+									'The domain name <siteSlug /> will be transferred to <newOwnerEmail /> and will remain working on the site.'
 								),
 								{
-									strong: <strong />,
+									siteSlug: renderSiteSlug(),
+									newOwnerEmail: renderNewOwnerEmail(),
 								}
 							) }
 						</li>

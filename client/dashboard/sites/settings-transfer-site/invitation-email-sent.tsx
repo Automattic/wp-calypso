@@ -81,18 +81,9 @@ export function InvitationEmailSent( {
 	return (
 		<Notice
 			variant="success"
-			title={ createInterpolateElement(
-				sprintf(
-					/* translators: %(newOwnerEmail)s - the new owner's email */
-					__( 'Invitation sent to <strong>%(newOwnerEmail)s</strong>' ),
-					{
-						newOwnerEmail,
-					}
-				),
-				{
-					strong: <strong />,
-				}
-			) }
+			title={ createInterpolateElement( __( 'Invitation sent to <newOwnerEmail />' ), {
+				newOwnerEmail: <strong>{ newOwnerEmail }</strong>,
+			} ) }
 		>
 			{ __(
 				'They will need to visit the link included in the email invitation for the site transfer to complete. The invitation will expire in 7 days.'
