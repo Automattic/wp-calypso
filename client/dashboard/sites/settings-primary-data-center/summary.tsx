@@ -15,13 +15,11 @@ export default function SettingsPrimaryDataCenterSummary( { site }: { site: Site
 	} );
 
 	const dataCenterOptions = getDataCenterOptions();
-	const primaryDataCenterName =
-		dataCenterOptions[ primaryDataCenter as keyof typeof dataCenterOptions ];
+	const primaryDataCenterName = primaryDataCenter ? dataCenterOptions[ primaryDataCenter ] : null;
 
-	const badge = {
-		text: primaryDataCenterName ?? __( 'Managed' ),
-		intent: 'success' as const,
-	};
+	if ( ! primaryDataCenterName ) {
+		return null;
+	}
 
 	return (
 		<RouterLinkSummaryButton
@@ -29,7 +27,7 @@ export default function SettingsPrimaryDataCenterSummary( { site }: { site: Site
 			title={ __( 'Primary data center' ) }
 			density="medium"
 			decoration={ <Icon icon={ cloud } /> }
-			badges={ [ badge ] }
+			badges={ [ { text: primaryDataCenterName } ] }
 		/>
 	);
 }

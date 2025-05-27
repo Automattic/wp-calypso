@@ -1,5 +1,6 @@
 import SummaryButton from '@automattic/components/src/summary-button';
 import { useQuery } from '@tanstack/react-query';
+import { useRouter } from '@tanstack/react-router';
 import { __experimentalVStack as VStack, Card, Icon, Notice } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { cloud } from '@wordpress/icons';
@@ -14,6 +15,7 @@ export function canGetPrimaryDataCenter( site: Site ) {
 }
 
 export default function PrimaryDataCenterSettings( { siteSlug }: { siteSlug: string } ) {
+	const router = useRouter();
 	const { data: site } = useQuery( siteQuery( siteSlug ) );
 	const { data: primaryDataCenter } = useQuery( {
 		...sitePrimaryDataCenterQuery( siteSlug ),
@@ -21,12 +23,12 @@ export default function PrimaryDataCenterSettings( { siteSlug }: { siteSlug: str
 	} );
 
 	const dataCenterOptions = getDataCenterOptions();
-	const primaryDataCenterName =
-		dataCenterOptions[ primaryDataCenter as keyof typeof dataCenterOptions ];
+	const primaryDataCenterName = primaryDataCenter ? dataCenterOptions[ primaryDataCenter ] : null;
 
-	const badge = {
-		text: primaryDataCenterName ?? __( 'Managed' ),
-	};
+	if ( ! primaryDataCenterName ) {
+		router.navigate( { to: `/sites/${ siteSlug }/settings` } );
+		return null;
+	}
 
 	return (
 		<PageLayout
@@ -54,7 +56,7 @@ export default function PrimaryDataCenterSettings( { siteSlug }: { siteSlug: str
 							decoration={ <Icon icon={ cloud } /> }
 							showArrow={ false }
 							disabled
-							badges={ [ badge ] }
+							badges={ [ { text: primaryDataCenterName } ] }
 						/>
 					</VStack>
 				</Card>
