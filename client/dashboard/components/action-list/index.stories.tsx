@@ -3,17 +3,18 @@ import { Button, Icon } from '@wordpress/components';
 import { cog } from '@wordpress/icons';
 import ActionList from './index';
 
-const meta = {
+const meta: Meta< typeof ActionList > = {
 	title: 'client/dashboard/ActionList',
 	component: ActionList,
 	tags: [ 'autodocs' ],
 	parameters: {
 		actions: { argTypesRegex: '^on.*' },
 	},
-} satisfies Meta< typeof ActionList >;
+};
 
 export default meta;
-type Story = StoryObj< typeof meta >;
+
+type Story = StoryObj< typeof ActionList >;
 
 export const Default: Story = {
 	args: {

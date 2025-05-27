@@ -42,6 +42,7 @@
 	],
 	"types": "dist/types",
 	"dependencies": {
+		"@ariakit/react": "^0.4.15",
 		"@automattic/calypso-color-schemes": "workspace:^",
 		"@automattic/calypso-url": "workspace:^",
 		"@automattic/color-studio": "^4.1.0",
@@ -65,6 +66,7 @@
 		"@wordpress/primitives": "^4.23.0",
 		"@wordpress/react-i18n": "^4.23.0",
 		"@wordpress/url": "^4.23.0",
+		"@wordpress/warning": "3.23.0",
 		"canvas-confetti": "^1.6.0",
 		"clsx": "^2.1.1",
 		"colord": "2.9.3",
@@ -85,6 +87,7 @@
 		"react-dom": "^18.3.1"
 	},
 	"devDependencies": {
+		"@ariakit/test": "0.4.7",
 		"@automattic/calypso-build": "workspace:^",
 		"@automattic/calypso-storybook": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",

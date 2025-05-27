@@ -13,6 +13,8 @@ export interface User {
 	username: string;
 	display_name: string;
 	avatar_URL?: string;
+	language: string;
+	locale_variant: string;
 }
 
 export interface SiteDomain {
