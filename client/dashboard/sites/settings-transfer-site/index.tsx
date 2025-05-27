@@ -28,10 +28,11 @@ const SettingsTransferSitePageLayout = ( { children }: { children: React.ReactNo
 					title={ __( 'Transfer site' ) }
 					description={ createInterpolateElement(
 						__(
-							'Transfer this site to a new or existing site member with just a few clicks. <learnMoreLink />.'
+							'Transfer this site to a new or existing site member with just a few clicks. <link>Learn more</link>.'
 						),
 						{
-							learnMoreLink: <ExternalLink href="#learn-more">{ __( 'Learn more' ) }</ExternalLink>,
+							// @ts-expect-error children prop is injected by createInterpolateElement
+							link: <ExternalLink href="#learn-more" />,
 						}
 					) }
 				/>

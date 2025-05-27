@@ -44,10 +44,13 @@ export function InvitationEmailSent( {
 		return (
 			<Notice variant="error">
 				{ createInterpolateElement(
-					__( 'There was an error confirming the site transfer. Please <supportLink /> for help.' ),
+					__(
+						'There was an error confirming the site transfer. Please <link>contact our support team</link> for help.'
+					),
 					{
-						supportLink: (
-							<ExternalLink href="/help">{ __( 'contact our support team' ) }</ExternalLink>
+						link: (
+							// @ts-expect-error children prop is injected by createInterpolateElement
+							<ExternalLink href="/help" />
 						),
 					}
 				) }
