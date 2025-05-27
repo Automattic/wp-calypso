@@ -11,6 +11,9 @@
 	background-color: inherit;
 	& .card {
 		box-shadow: none;
+	}
+
+	&.card {
 		display: flex; // NOTE: To increase specificity
 	}
 
