@@ -104,9 +104,11 @@ function useUpgradeHandler( {
 }
 
 function useDowngradeHandler( {
+	siteSlug,
 	siteUrl,
 	currentPlan,
 }: {
+	siteSlug?: string | null;
 	siteUrl?: string | null;
 	currentPlan: Plans.SitePlan | undefined;
 } ) {
@@ -116,7 +118,7 @@ function useDowngradeHandler( {
 		( planSlug: PlanSlug ) => {
 			// A downgrade to the free plan is essentially cancelling the current plan.
 			if ( isFreePlan( planSlug ) ) {
-				page( cancelPurchase( siteUrl, currentPlan?.purchaseId ) );
+				page( cancelPurchase( siteSlug, currentPlan?.purchaseId ) );
 				return;
 			}
 
@@ -125,7 +127,7 @@ function useDowngradeHandler( {
 				siteUrl,
 			} );
 		},
-		[ currentPlan?.purchaseId, setNewMessagingChat, siteUrl ]
+		[ currentPlan?.purchaseId, setNewMessagingChat, siteUrl, siteSlug ]
 	);
 }
 
@@ -164,6 +166,7 @@ function useGenerateActionCallback( {
 	);
 	const handleUpgradeClick = useUpgradeHandler( { siteSlug, coupon, cartHandler } );
 	const handleDowngradeClick = useDowngradeHandler( {
+		siteSlug,
 		siteUrl: siteUrl || '',
 		currentPlan,
 	} );
