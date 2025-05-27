@@ -1,0 +1,11 @@
+.redesigned-a8c-table {
+	&.show-overflow-overlay {
+		overflow: visible;
+	}
+
+	&.search-enabled {
+		.dataviews-module__table-header {
+			padding-top: 16px;
+		}
+	}
+}

@@ -2,10 +2,6 @@
 @import '@wordpress/base-styles/variables';
 
 .build-report {
-	.hosting-dashboard-layout__header-breadcrumb {
-		margin-bottom: 16px;
-	}
-
 	.build-report__content {
 		flex-grow: 1;
 		max-width: 660px;
