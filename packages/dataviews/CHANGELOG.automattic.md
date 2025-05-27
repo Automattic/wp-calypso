@@ -2,7 +2,7 @@
 
 ## Next
 
-## 0.1.2
+## 0.2.0
 
 - Bring changes from `@wordpress/dataviews 4.19.0` (no updates in this version).
 - `select` Edit control: add `help` support from the field `description` prop.
