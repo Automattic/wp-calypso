@@ -12,6 +12,7 @@
 	"references": [
 		{ "path": "../calypso-analytics" },
 		{ "path": "../calypso-url" },
+		{ "path": "../dataviews" },
 		{ "path": "../i18n-utils" }
 	]
 }

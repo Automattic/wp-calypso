@@ -88,6 +88,7 @@
 		"@automattic/calypso-build": "workspace:^",
 		"@automattic/calypso-storybook": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
+		"@automattic/dataviews": "workspace:^",
 		"@storybook/react": "^8.6.12",
 		"@storybook/test": "^8.6.12",
 		"@testing-library/dom": "^10.4.0",
