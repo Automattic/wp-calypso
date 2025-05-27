@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from '@wordpress/element';
 import { createA2AClient } from '../client/index';
 import { createTextMessage } from '../utils/index';
 import { defaultDispatcher } from '../utils/dispatcher';
@@ -90,7 +90,13 @@ export function useAgent( config: UseAgentConfig ): UseAgentReturn {
 						: 'Failed to initialize client',
 			} ) );
 		}
-	}, [ config.agentUrl, config.authProvider, config.timeout, config.proxy ] );
+	}, [
+		config.agentUrl,
+		config.authProvider,
+		config.timeout,
+		config.proxy,
+		config,
+	] );
 
 	const sendMessage = useCallback(
 		async (

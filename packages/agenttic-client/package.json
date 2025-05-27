@@ -68,6 +68,7 @@
 	"dependencies": {
 		"@types/react": "^18.0.0",
 		"@types/uuid": "^10.0.0",
+		"@wordpress/element": "^6.2.0",
 		"chalk": "^5.4.1",
 		"debug": "^4.3.4",
 		"dotenv": "^16.5.0",
