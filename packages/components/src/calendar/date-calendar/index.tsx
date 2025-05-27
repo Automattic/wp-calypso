@@ -7,6 +7,14 @@ import { useLocalizationProps } from '../utils/use-localization-props';
 import type { DateCalendarProps } from '../types';
 import '../styles.scss';
 
+/**
+ * `DateCalendar` is a React component that provides a customizable calendar
+ * interface for **single date** selection.
+ *
+ * The component is built with accessibility in mind and follows ARIA best
+ * practices for calendar widgets. It provides keyboard navigation, screen reader
+ * support, and customizable labels for internationalization.
+ */
 export const DateCalendar = ( {
 	defaultSelected,
 	selected: selectedProp,
