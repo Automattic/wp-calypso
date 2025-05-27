@@ -2,6 +2,7 @@ import type {
 	A2AClient,
 	A2AClientConfig,
 	AuthProvider,
+	ContextProvider,
 	JsonRpcResponse,
 	Message,
 	SendMessageParams,
@@ -11,6 +12,7 @@ import type {
 	ToolProvider,
 } from '../types/index';
 import {
+	createContextDataPart,
 	createRequestId,
 	createSendTaskRequest,
 	createToolDataPart,
@@ -63,6 +65,7 @@ export function createA2AClient( config: A2AClientConfig ): A2AClient {
 		timeout = DEFAULT_TIMEOUT,
 		proxy,
 		toolProvider,
+		contextProvider,
 	} = config;
 
 	/**
@@ -149,6 +152,35 @@ export function createA2AClient( config: A2AClientConfig ): A2AClient {
 	}
 
 	/**
+	 * Enhance a message with client context
+	 * @param message
+	 */
+	function enhanceMessageWithContext( message: Message ): Message {
+		if ( ! contextProvider ) {
+			return message;
+		}
+
+		try {
+			const clientContext = contextProvider.getClientContext();
+			if (
+				! clientContext ||
+				Object.keys( clientContext ).length === 0
+			) {
+				return message;
+			}
+
+			const contextPart = createContextDataPart( clientContext );
+			return {
+				...message,
+				parts: [ ...message.parts, contextPart ],
+			};
+		} catch ( error ) {
+			logger( 'Warning: Failed to get context: %s', error );
+			return message;
+		}
+	}
+
+	/**
 	 * Process tool calls in a message and execute them
 	 * @param message
 	 */
@@ -207,8 +239,9 @@ export function createA2AClient( config: A2AClientConfig ): A2AClient {
 			const { message, sessionId, taskId, metadata } = params;
 			const effectiveSessionId = sessionId || defaultSessionId;
 
-			// Enhance message with tools if available
-			const enhancedMessage = await enhanceMessageWithTools( message );
+			// Enhance message with tools and context
+			let enhancedMessage = await enhanceMessageWithTools( message );
+			enhancedMessage = enhanceMessageWithContext( enhancedMessage );
 
 			const request = createSendTaskRequest( {
 				id: taskId,
@@ -317,8 +350,9 @@ export function createA2AClient( config: A2AClientConfig ): A2AClient {
 			const { message, sessionId, taskId, metadata } = params;
 			const effectiveSessionId = sessionId || defaultSessionId;
 
-			// Enhance message with tools if available
-			const enhancedMessage = await enhanceMessageWithTools( message );
+			// Enhance message with tools and context
+			let enhancedMessage = await enhanceMessageWithTools( message );
+			enhancedMessage = enhanceMessageWithContext( enhancedMessage );
 
 			const request = createSendTaskRequest(
 				{

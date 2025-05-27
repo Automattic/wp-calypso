@@ -167,6 +167,7 @@ export interface A2AClientConfig {
 	timeout?: number;
 	proxy?: string;
 	toolProvider?: ToolProvider;
+	contextProvider?: ContextProvider;
 }
 
 export interface SendMessageParams {
@@ -212,4 +213,11 @@ export interface ToolCallResult {
 	toolId: string;
 	result: any;
 	error?: string;
+}
+
+// Context system types
+export type ClientContext = Record< string, unknown >;
+
+export interface ContextProvider {
+	getClientContext(): ClientContext;
 }

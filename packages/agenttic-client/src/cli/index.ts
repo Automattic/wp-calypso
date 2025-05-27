@@ -8,6 +8,7 @@ import { createA2AClient } from '../client/index';
 import { createTextMessage, extractTextFromMessage } from '../utils/index';
 import { createEnvAuthProvider } from './auth';
 import { CLIToolProvider, createExampleTools } from './tools';
+import { CLIContextProvider, createCLIContextProvider } from './context';
 import { cliLog, enableDebug, logger } from '../utils/logger';
 import type { CLIOptions, InteractiveSession } from './types';
 import { createRequire } from 'module';
@@ -110,6 +111,9 @@ function parseArgs(): CLIOptions {
 			case '--tools':
 				options.tools = true; // Enable example tools
 				break;
+			case '--context':
+				options.context = true; // Enable mock client context
+				break;
 			case '--help':
 			case '-h':
 				printHelp();
@@ -159,6 +163,7 @@ OPTIONS:
   -v, --verbose          Enable verbose output
   --auth                 Enable authentication (check env vars)
   --tools                Enable example tools (echo, calculator, current_time)
+  --context              Enable mock client context (WordPress page content)
   -h, --help             Show this help message
 
 MODES:
@@ -265,6 +270,11 @@ async function runSingleMessage( options: CLIOptions ): Promise< void > {
 	// Create tool provider if tools are enabled
 	const toolProvider = options.tools ? createExampleTools() : undefined;
 
+	// Create context provider if context is enabled
+	const contextProvider = options.context
+		? createCLIContextProvider()
+		: undefined;
+
 	const client = createA2AClient( {
 		agentUrl: options.url,
 		authProvider,
@@ -272,6 +282,7 @@ async function runSingleMessage( options: CLIOptions ): Promise< void > {
 		timeout: options.timeout,
 		proxy: options.proxy,
 		toolProvider,
+		contextProvider,
 	} );
 
 	if ( options.verbose ) {
@@ -301,6 +312,11 @@ async function runSingleMessage( options: CLIOptions ): Promise< void > {
 			);
 		} else {
 			cliLog.system( `🔧 Tools: Disabled` );
+		}
+		if ( options.context ) {
+			cliLog.system( `📄 Context: Enabled (WordPress page content)` );
+		} else {
+			cliLog.system( `📄 Context: Disabled` );
 		}
 		cliLog.system( `📤 Sending: "${ options.message }"` );
 	}
@@ -377,6 +393,11 @@ async function runInteractive( options: CLIOptions ): Promise< void > {
 	// Create tool provider if tools are enabled
 	const toolProvider = options.tools ? createExampleTools() : undefined;
 
+	// Create context provider if context is enabled
+	const contextProvider = options.context
+		? createCLIContextProvider()
+		: undefined;
+
 	const client = createA2AClient( {
 		agentUrl: options.url,
 		authProvider,
@@ -384,6 +405,7 @@ async function runInteractive( options: CLIOptions ): Promise< void > {
 		timeout: options.timeout,
 		proxy: options.proxy,
 		toolProvider,
+		contextProvider,
 	} );
 
 	const rl = createReadlineInterface();
@@ -410,6 +432,9 @@ async function runInteractive( options: CLIOptions ): Promise< void > {
 	}
 
 	const toolStatus = options.tools ? '🔧 Example Tools' : '🔧 No Tools';
+	const contextStatus = options.context
+		? '📄 WordPress Context'
+		: '📄 No Context';
 
 	cliLog.info( `
 🤖 A2A Agent Test CLI - Interactive Mode
@@ -417,6 +442,7 @@ Connected to: ${ options.url }
 Session: ${ session.sessionId }
 Auth: ${ authStatus }
 Tools: ${ toolStatus }
+Context: ${ contextStatus }
 Type 'exit' or 'quit' to end the session.
 Type 'help' for commands.
 ` );

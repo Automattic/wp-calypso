@@ -1,5 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 import type {
+	ClientContext,
+	ContextDataPart,
 	ConversationHistoryPart,
 	DataPart,
 	JsonRpcId,
@@ -160,6 +162,22 @@ export function createToolResultDataPart(
 			toolId,
 			result: error ? undefined : result,
 			error,
+		},
+		metadata: {},
+	};
+}
+
+/**
+ * Create a context data part from client context
+ * @param clientContext
+ */
+export function createContextDataPart(
+	clientContext: ClientContext
+): ContextDataPart {
+	return {
+		type: 'data',
+		data: {
+			clientContext,
 		},
 		metadata: {},
 	};

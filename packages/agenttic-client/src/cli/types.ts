@@ -10,6 +10,7 @@ export interface CLIOptions {
 	auth?: boolean;
 	proxy?: string;
 	tools?: boolean;
+	context?: boolean;
 }
 
 export interface CLIAuthOptions {

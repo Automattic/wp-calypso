@@ -43,6 +43,10 @@ export type {
 	Tool,
 	ToolProvider,
 	ToolCallResult,
+
+	// Context types
+	ClientContext,
+	ContextProvider,
 } from './types/index';
 
 // Utility exports
@@ -56,6 +60,7 @@ export {
 	createToolDataPart,
 	extractToolCallsFromMessage,
 	createToolResultDataPart,
+	createContextDataPart,
 } from './utils/index';
 
 // Streaming exports
@@ -70,6 +75,9 @@ export { createEnvAuthProvider } from './cli/auth';
 
 // CLI tool provider exports
 export { CLIToolProvider, createExampleTools } from './cli/tools';
+
+// CLI context provider exports
+export { CLIContextProvider, createCLIContextProvider } from './cli/context';
 
 // Constants
 export { A2AErrorCodes } from './types/index';
