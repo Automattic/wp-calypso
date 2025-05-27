@@ -1,14 +1,12 @@
-import { useQuery, useMutation } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { notFound } from '@tanstack/react-router';
 import { Card, CardBody, ExternalLink } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
 import { getQueryArg } from '@wordpress/url';
 import React, { useState } from 'react';
 import { useAuth } from '../../app/auth';
-import { siteQuery, siteOwnerTransferMutation } from '../../app/queries';
+import { siteQuery } from '../../app/queries';
 import PageLayout from '../../components/page-layout';
 import { useCanTransferSite } from '../hooks/use-can-transfer-site';
 import SettingsPageHeader from '../settings-page-header';
@@ -46,13 +44,11 @@ const SettingsTransferSitePageLayout = ( { children }: { children: React.ReactNo
 
 // TODO: Use Stepper component when the design is ready.
 export default function SettingsTransferSite( { siteSlug }: { siteSlug: string } ) {
-	const { createErrorNotice } = useDispatch( noticesStore );
 	const { user } = useAuth();
 	const { data: site } = useQuery( siteQuery( siteSlug ) );
 	const canTransferSite = useCanTransferSite( { site } );
 	const [ newOwnerEmail, setNewOwnerEmail ] = useState( '' );
 	const [ currentStep, setCurrentStep ] = useState( 0 );
-	const mutation = useMutation( siteOwnerTransferMutation( siteSlug ) );
 	const confirmationHash = getQueryArg( window.location.search, 'site-transfer-confirm' );
 
 	const handleBack = () => setCurrentStep( ( step ) => Math.max( step - 1, MIN_STEP ) );
@@ -65,19 +61,7 @@ export default function SettingsTransferSite( { siteSlug }: { siteSlug: string }
 	};
 
 	const handleStartSiteTransfer = () => {
-		mutation.mutate(
-			{ new_site_owner: newOwnerEmail },
-			{
-				onSuccess: () => {
-					handleForward();
-				},
-				onError: ( error: Error ) => {
-					createErrorNotice( error.message ?? __( 'Failed to transfer site.' ), {
-						type: 'snackbar',
-					} );
-				},
-			}
-		);
+		handleForward();
 	};
 
 	if ( ! site ) {
@@ -115,7 +99,6 @@ export default function SettingsTransferSite( { siteSlug }: { siteSlug: string }
 							siteSlug={ siteSlug }
 							newOwnerEmail={ newOwnerEmail }
 							site={ site }
-							isTransferring={ mutation.isPending }
 							handleSubmit={ handleStartSiteTransfer }
 							handleBack={ handleBack }
 						/>

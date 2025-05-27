@@ -380,6 +380,19 @@ export const siteOwnerTransfer = async (
 	);
 };
 
+export const siteOwnerTransferEligibilityCheck = async (
+	siteIdOrSlug: string,
+	data: { new_site_owner: string }
+) => {
+	return wpcom.req.post(
+		{
+			path: `/sites/${ siteIdOrSlug }/site-owner-transfer/eligibility`,
+			apiNamespace: 'wpcom/v2',
+		},
+		data
+	);
+};
+
 export const siteOwnerTransferConfirm = async (
 	siteIdOrSlug: string,
 	data: { hash: string }

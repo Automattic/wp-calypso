@@ -1,4 +1,5 @@
 import { DataForm, isItemValid } from '@automattic/dataviews';
+import { useMutation } from '@tanstack/react-query';
 import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
@@ -8,6 +9,7 @@ import {
 import { createInterpolateElement } from '@wordpress/element';
 import { sprintf, __ } from '@wordpress/i18n';
 import { useState } from 'react';
+import { siteOwnerTransferEligibilityCheckMutation } from '../../app/queries';
 import type { Field } from '@automattic/dataviews';
 
 export type ConfirmNewOwnerFormData = {
@@ -40,11 +42,24 @@ export function ConfirmNewOwnerForm( {
 		email: newOwnerEmail,
 	} );
 
+	const mutation = useMutation( siteOwnerTransferEligibilityCheckMutation( siteSlug ) );
+
 	const isSaveDisabled = ! isItemValid( formData, fields, form );
 
 	const onSubmit = ( event: React.FormEvent ) => {
 		event.preventDefault();
-		handleSubmit( formData );
+
+		mutation.mutate(
+			{ new_site_owner: newOwnerEmail },
+			{
+				onSuccess: () => {
+					handleSubmit( formData );
+				},
+				onError: () => {
+					// TODO: Display error message below the field.
+				},
+			}
+		);
 	};
 
 	return (
@@ -82,7 +97,12 @@ export function ConfirmNewOwnerForm( {
 						} }
 					/>
 					<HStack justify="flex-start">
-						<Button variant="primary" type="submit" disabled={ isSaveDisabled }>
+						<Button
+							variant="primary"
+							type="submit"
+							isBusy={ mutation.isPending }
+							disabled={ isSaveDisabled }
+						>
 							{ __( 'Continue' ) }
 						</Button>
 					</HStack>

@@ -17,6 +17,7 @@ import {
 	updateSiteSettings,
 	restoreSitePlanSoftware,
 	siteOwnerTransfer,
+	siteOwnerTransferEligibilityCheck,
 	siteOwnerTransferConfirm,
 	fetchWordPressVersion,
 	updateWordPressVersion,
@@ -177,6 +178,13 @@ export function restoreSitePlanSoftwareMutation( siteId: string ) {
 export function siteOwnerTransferMutation( siteId: string ) {
 	return {
 		mutationFn: ( newData: { new_site_owner: string } ) => siteOwnerTransfer( siteId, newData ),
+	};
+}
+
+export function siteOwnerTransferEligibilityCheckMutation( siteId: string ) {
+	return {
+		mutationFn: ( newData: { new_site_owner: string } ) =>
+			siteOwnerTransferEligibilityCheck( siteId, newData ),
 	};
 }
 

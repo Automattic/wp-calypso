@@ -1,4 +1,5 @@
 import { DataForm } from '@automattic/dataviews';
+import { useMutation } from '@tanstack/react-query';
 import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
@@ -8,6 +9,7 @@ import {
 import { createInterpolateElement } from '@wordpress/element';
 import { sprintf, __ } from '@wordpress/i18n';
 import React, { useState } from 'react';
+import { siteOwnerTransferMutation } from '../../app/queries';
 import Notice from '../../components/notice';
 import type { Site } from '../../data/types';
 import type { Field } from '@automattic/dataviews';
@@ -57,14 +59,12 @@ export function StartSiteTransferForm( {
 	siteSlug,
 	site,
 	newOwnerEmail,
-	isTransferring,
 	handleSubmit,
 	handleBack,
 }: {
 	siteSlug: string;
 	site: Site;
 	newOwnerEmail: string;
-	isTransferring: boolean;
 	handleSubmit: () => void;
 	handleBack: () => void;
 } ) {
@@ -74,11 +74,24 @@ export function StartSiteTransferForm( {
 		accept_undone: false,
 	} );
 
+	const mutation = useMutation( siteOwnerTransferMutation( siteSlug ) );
+
 	const isSaveDisabled = Object.values( formData ).some( ( value ) => ! value );
 
 	const onSubmit = ( event: React.FormEvent ) => {
 		event.preventDefault();
-		handleSubmit();
+
+		mutation.mutate(
+			{ new_site_owner: newOwnerEmail },
+			{
+				onSuccess: () => {
+					handleSubmit();
+				},
+				onError: () => {
+					// TODO: Display error message
+				},
+			}
+		);
 	};
 
 	return (
@@ -202,12 +215,12 @@ export function StartSiteTransferForm( {
 							<Button
 								variant="primary"
 								type="submit"
-								isBusy={ isTransferring }
+								isBusy={ mutation.isPending }
 								disabled={ isSaveDisabled }
 							>
 								{ __( 'Start transfer' ) }
 							</Button>
-							<Button variant="tertiary" onClick={ handleBack } disabled={ isTransferring }>
+							<Button variant="tertiary" onClick={ handleBack } disabled={ mutation.isPending }>
 								{ __( 'Back' ) }
 							</Button>
 						</HStack>
