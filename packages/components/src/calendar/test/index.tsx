@@ -703,7 +703,7 @@ describe( 'DateCalendar', () => {
 			const grid = screen.getByRole( 'grid', {
 				name: monthNameFormatter( 'ar' ).format( today ),
 			} );
-			expect( grid ).toBeInTheDocument();
+			expect( grid ).toBeVisible();
 
 			// Check today button
 			expect( getDateButton( today, {}, 'ar' ) ).toHaveAccessibleName( /today/i );
