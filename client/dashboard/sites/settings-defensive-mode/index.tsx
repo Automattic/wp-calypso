@@ -15,7 +15,6 @@ import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import moment from 'moment';
 import { useState } from 'react';
 import { siteQuery, siteDefensiveModeQuery, siteDefensiveModeMutation } from '../../app/queries';
 import PageLayout from '../../components/page-layout';
@@ -105,7 +104,14 @@ export default function DefensiveModeSettings( { siteSlug }: { siteSlug: string 
 	const { enabled, enabled_by_a11n, enabled_until } = data;
 
 	const renderEnabled = () => {
-		const enabledUntil = moment.unix( enabled_until ?? 0 ).local();
+		const date = new Date( enabled_until * 1000 );
+		const enabledUntil = date.toLocaleString( undefined, {
+			year: 'numeric',
+			month: 'long',
+			day: 'numeric',
+			hour: 'numeric',
+			minute: '2-digit',
+		} );
 
 		const handleDisable = () => {
 			handleSubmit( {
@@ -135,7 +141,7 @@ export default function DefensiveModeSettings( { siteSlug }: { siteSlug: string 
 					{ sprintf(
 						// translators: %s: timestamp, e.g. May 27, 2025 11:02 AM
 						__( 'This will be automatically disabled on %s.' ),
-						enabledUntil.format( 'LLL' )
+						enabledUntil
 					) }
 				</Text>
 
