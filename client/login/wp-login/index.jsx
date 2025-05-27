@@ -28,6 +28,7 @@ import {
 	isBlazeProOAuth2Client,
 	isWooOAuth2Client,
 	isPartnerPortalOAuth2Client,
+	isStudioAppOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { login, lostPassword } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/url';
@@ -48,6 +49,7 @@ import getIsWCCOM from 'calypso/state/selectors/get-is-wccom';
 import getIsWoo from 'calypso/state/selectors/get-is-woo';
 import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
 import { withEnhancers } from 'calypso/state/utils';
+import HeadingLogo from './components/login-heading-logo';
 import LoginFooter from './login-footer';
 import LoginLinks from './login-links';
 
@@ -651,10 +653,20 @@ export class Login extends Component {
 				{ isWhiteLogin && (
 					<Step.CenteredColumnLayout
 						columnWidth={ 6 }
+						{ ...( isStudioAppOAuth2Client( oauth2Client ) && { columnWidthHeading: 8 } ) }
 						topBar={
 							<Step.TopBar rightElement={ this.renderLoginHeaderNavigation() } logo={ brandLogo } />
 						}
-						heading={ <Step.Heading text={ headerText } /> }
+						heading={
+							<Step.Heading
+								text={
+									<>
+										<HeadingLogo />
+										<div className="wp-login__heading-text">{ headerText }</div>
+									</>
+								}
+							/>
+						}
 						verticalAlign="center"
 					>
 						{ mainContent }
