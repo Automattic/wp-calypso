@@ -62,16 +62,18 @@ export function getPurchasesFieldDefinitions( {
 	translate,
 	moment,
 	paymentMethods,
+	fieldIds,
 }: {
 	translate: LocalizeProps[ 'translate' ];
 	moment: ReturnType< typeof useLocalizedMoment >;
 	paymentMethods: Array< StoredPaymentMethod >;
+	fieldIds?: string[];
 } ): Fields< Purchases.Purchase > {
 	const backupPaymentMethods = paymentMethods.filter(
 		( paymentMethod ) => paymentMethod.is_backup === true
 	);
 
-	return [
+	const fields: Fields< Purchases.Purchase > = [
 		{
 			id: 'site',
 			label: 'Site',
@@ -150,7 +152,7 @@ export function getPurchasesFieldDefinitions( {
 				operators: [ 'is' as Operator ],
 			},
 			getValue: ( { item }: { item: Purchases.Purchase } ) => {
-				return item.payment.storedDetailsId;
+				return item.payment.storedDetailsId ?? '';
 			},
 			render: ( { item }: { item: Purchases.Purchase } ) => {
 				let isBackupMethodAvailable = false;
@@ -173,6 +175,7 @@ export function getPurchasesFieldDefinitions( {
 			},
 		},
 	];
+	return fields.filter( ( field ) => fieldIds?.includes( field.id ) ?? true );
 }
 
 export function getMembershipsFieldDefinitions( {
@@ -239,7 +242,7 @@ export function getMembershipsFieldDefinitions( {
 				operators: [ 'is' as Operator ],
 			},
 			getValue: ( { item }: { item: MembershipSubscription } ) => {
-				return item.end_date;
+				return item.end_date ?? '';
 			},
 			render: ( { item }: { item: MembershipSubscription } ) => {
 				return (

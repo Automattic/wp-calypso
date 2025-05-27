@@ -7,7 +7,7 @@ import {
 	getMembershipsFieldDefinitions,
 } from '../purchases-data-field';
 
-export function usePurchasesFieldDefinitions() {
+export function usePurchasesFieldDefinitions( fieldIds?: string[] ) {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
 	const paymentMethods = useStoredPaymentMethods().paymentMethods;
@@ -17,9 +17,10 @@ export function usePurchasesFieldDefinitions() {
 			translate,
 			moment,
 			paymentMethods,
+			fieldIds,
 		} );
 		return fieldDefinitions;
-	}, [ translate, moment, paymentMethods ] );
+	}, [ translate, moment, paymentMethods, fieldIds ] );
 }
 
 export function useMembershipsFieldDefinitions() {
