@@ -57,48 +57,32 @@ export interface UseAgentReturn {
  * @return Object containing state and actions for agent interaction
  */
 export function useAgent( config: UseAgentConfig ): UseAgentReturn {
-	const [ state, setState ] = useState< AgentState >( {
-		isConnected: false,
-		isLoading: false,
-		error: null,
-		lastResponse: null,
-	} );
-
-	// Use ref to store client to avoid recreating on every render
+	// Initialize client once on mount
 	const clientRef = useRef< A2AClient | null >( null );
+	const [ initError, setInitError ] = useState< string | null >( null );
 
-	// Initialize client when config changes
-	useEffect( () => {
+	// Initialize client only once
+	if ( ! clientRef.current && ! initError ) {
 		try {
 			clientRef.current = createA2AClient( {
 				...config,
 				dispatcher: defaultDispatcher, // Always use browser dispatcher
 			} );
-
-			setState( ( prev ) => ( {
-				...prev,
-				isConnected: true,
-				error: null,
-			} ) );
 		} catch ( error ) {
-			setState( ( prev ) => ( {
-				...prev,
-				isConnected: false,
-				error:
-					error instanceof Error
-						? error.message
-						: 'Failed to initialize client',
-			} ) );
+			setInitError(
+				error instanceof Error
+					? error.message
+					: 'Failed to initialize client'
+			);
 		}
-	}, [
-		config.agentUrl,
-		config.authProvider,
-		config.timeout,
-		config.proxy,
-		config.toolProvider,
-		config.contextProvider,
-		config.defaultSessionId,
-	] );
+	}
+
+	const [ state, setState ] = useState< AgentState >( {
+		isConnected: !! clientRef.current,
+		isLoading: false,
+		error: initError,
+		lastResponse: null,
+	} );
 
 	const sendMessage = useCallback(
 		async (
