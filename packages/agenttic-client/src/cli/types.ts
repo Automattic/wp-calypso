@@ -4,7 +4,6 @@ export interface CLIOptions {
 	token?: string;
 	session?: string;
 	stream?: boolean;
-	interactive?: boolean;
 	timeout?: number;
 	verbose?: boolean;
 	auth?: boolean;
