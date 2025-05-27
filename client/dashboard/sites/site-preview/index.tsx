@@ -66,13 +66,7 @@ export default function SitePreview( {
 		const scale = width / mshotWidth;
 		const loadIframe = isLoaded === false && ! site.is_private;
 		return (
-			<div
-				style={ {
-					display: 'flex',
-					alignItems: 'center',
-					height: '100%',
-				} }
-			>
+			<div style={ { display: 'flex', alignItems: 'center', height: '100%' } }>
 				<div style={ { width, height: width / aspectRatio, overflow: 'hidden' } }>
 					{ loadIframe && (
 						// Do not load the iframe if isLoaded is null. We want
@@ -107,7 +101,7 @@ export default function SitePreview( {
 			loading="lazy"
 			alt={ title }
 			src={ imageUrl }
-			style={ style }
+			style={ { display: 'block', ...style } }
 			width={ width }
 			height={ width / aspectRatio }
 		/>
