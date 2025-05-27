@@ -1,5 +1,5 @@
 import page from '@automattic/calypso-router';
-import { Gridicon } from '@automattic/components';
+import { Gridicon, WordPressLogo } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Step } from '@automattic/onboarding';
 import clsx from 'clsx';
@@ -636,6 +636,14 @@ export class Login extends Component {
 			document.location.search?.includes( 'wpcloud' )
 		) {
 			brandLogo = <WPCloudLogo className="login__wpcloud-logo" size={ 120 } />;
+		} else {
+			brandLogo = (
+				<WordPressLogo
+					size={ 21 }
+					className="step-container-v2__top-bar-wordpress-logo"
+					color="currentColor"
+				/>
+			);
 		}
 
 		return (
