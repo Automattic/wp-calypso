@@ -209,3 +209,12 @@ export {
 	processTaskToolCalls,
 	processToolCallsAsync,
 } from './tools';
+
+// Re-export error utilities
+export {
+	createTimeoutHandler,
+	handleRequestError,
+	validateHttpResponse,
+	validateJsonRpcResponse,
+	validateStreamingResponse,
+} from './errors';

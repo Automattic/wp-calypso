@@ -12,6 +12,13 @@ import { enhanceMessage } from './messages';
 import { formatObject, logger } from './logger';
 import { parseSSEStream } from '../streaming/index';
 import { socksDispatcher } from 'fetch-socks';
+import {
+	createTimeoutHandler,
+	handleRequestError,
+	validateHttpResponse,
+	validateJsonRpcResponse,
+	validateStreamingResponse,
+} from './errors';
 
 /**
  * Configuration for making requests
@@ -198,8 +205,10 @@ export async function executeRequest(
 	const { request, headers } = preparedRequest;
 	const { agentUrl, timeout, proxy } = config;
 
-	const controller = new AbortController();
-	const timeoutId = setTimeout( () => controller.abort(), timeout );
+	const { timeoutId, controller } = createTimeoutHandler(
+		timeout,
+		'request'
+	);
 
 	try {
 		const options = createFetchOptions(
@@ -220,9 +229,8 @@ export async function executeRequest(
 
 		clearTimeout( timeoutId );
 
-		if ( ! response.ok ) {
-			throw new Error( `HTTP error! status: ${ response.status }` );
-		}
+		// Validate HTTP response
+		validateHttpResponse( response, 'request' );
 
 		const data = ( await response.json() ) as JsonRpcResponse< Task >;
 
@@ -234,23 +242,10 @@ export async function executeRequest(
 			formatObject( data )
 		);
 
-		if ( data.error ) {
-			throw new Error( `A2A error: ${ data.error.message }` );
-		}
-
-		if ( ! data.result ) {
-			throw new Error( 'No result in response' );
-		}
-
-		return data.result;
+		// Validate JSON-RPC response and return result
+		return validateJsonRpcResponse( data, 'request' );
 	} catch ( error ) {
-		clearTimeout( timeoutId );
-		logger( 'Request failed with error: %O', error );
-		if ( error instanceof Error ) {
-			logger( 'Error message: %s', error.message );
-			logger( 'Error stack: %s', error.stack );
-		}
-		throw error;
+		handleRequestError( error, timeoutId, 'request' );
 	}
 }
 
@@ -271,8 +266,10 @@ export async function* executeStreamingRequest(
 	const { agentUrl, proxy } = config;
 	const { streamingTimeout = 60000 } = options;
 
-	const controller = new AbortController();
-	const timeoutId = setTimeout( () => controller.abort(), streamingTimeout );
+	const { timeoutId, controller } = createTimeoutHandler(
+		streamingTimeout,
+		'streaming request'
+	);
 
 	try {
 		const fetchOptions = createFetchOptions(
@@ -286,18 +283,12 @@ export async function* executeStreamingRequest(
 
 		clearTimeout( timeoutId );
 
-		if ( ! response.ok ) {
-			throw new Error( `HTTP error! status: ${ response.status }` );
-		}
-
-		if ( ! response.body ) {
-			throw new Error( 'No response body for streaming' );
-		}
+		// Validate streaming response
+		validateStreamingResponse( response, 'streaming request' );
 
 		// Parse the SSE stream and yield task updates
 		yield* parseSSEStream( response.body as ReadableStream< Uint8Array > );
 	} catch ( error ) {
-		clearTimeout( timeoutId );
-		throw error;
+		handleRequestError( error, timeoutId, 'streaming request' );
 	}
 }
