@@ -112,8 +112,8 @@ export const useContentFilter = ( node: HTMLDivElement | null ) => {
 					// Create external link icon SVG
 					const icon = document.createElementNS( 'http://www.w3.org/2000/svg', 'svg' );
 					icon.setAttribute( 'class', 'help-center-external-link-icon' );
-					icon.setAttribute( 'width', '18' );
-					icon.setAttribute( 'height', '18' );
+					icon.setAttribute( 'width', '16' );
+					icon.setAttribute( 'height', '16' );
 					icon.setAttribute( 'viewBox', '0 0 24 24' );
 					icon.setAttribute( 'aria-hidden', 'true' );
 
