@@ -1,6 +1,6 @@
 @use '@wordpress/components/build-style/style';
 @use '@automattic/calypso-color-schemes';
-@use "@wordpress/base-styles/_variables";
+@use "@wordpress/base-styles/variables";
 
 body {
 	font-family: variables.$default-font;
