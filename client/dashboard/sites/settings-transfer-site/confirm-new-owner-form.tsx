@@ -50,7 +50,7 @@ export function ConfirmNewOwnerForm( {
 		event.preventDefault();
 
 		mutation.mutate(
-			{ new_site_owner: newOwnerEmail },
+			{ new_site_owner: formData.email },
 			{
 				onSuccess: () => {
 					handleSubmit( formData );

@@ -18,6 +18,10 @@ export function InvitationEmailSent( {
 	const [ hasError, setHasError ] = useState( false );
 	const mutation = useMutation( siteOwnerTransferConfirmMutation( siteSlug ) );
 
+	// The page is accessed via the confirmation email, so this is the only place where the request can be triggered.
+	// It would be better if
+	// * we have the server trigger the mutation before rendering the page
+	// * we first show a page, clarifying what is going to happen with an "accept" button or something.
 	useEffect( () => {
 		mutation.mutate(
 			{ hash: confirmationHash },
