@@ -407,7 +407,7 @@ $image-height: 47px;
 		}
 
 		.login__form-userdata {
-			button {
+			button:not(.login__form-change-username) {
 				min-width: 194px;
 				height: unset;
 				border: 0;
