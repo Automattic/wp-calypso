@@ -12,12 +12,15 @@ import {
 import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { blockTable } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { siteQuery } from '../../app/queries';
 import PageLayout from '../../components/page-layout';
 import { fetchPhpMyAdminToken } from '../../data';
+import SettingsCallout from '../settings-callout';
 import SettingsPageHeader from '../settings-page-header';
+import calloutIllustrationUrl from './callout-illustration.svg';
 import ResetPasswordModal from './reset-password-modal';
 import type { Site } from '../../data/types';
 
@@ -31,8 +34,34 @@ export default function SiteDatabaseSettings( { siteSlug }: { siteSlug: string }
 	const [ isFetchingToken, setIsFetchingToken ] = useState( false );
 	const [ isResetPasswordModalOpen, setIsResetPasswordModalOpen ] = useState( false );
 
-	if ( ! site || ! canOpenPhpMyAdmin( site ) ) {
+	if ( ! site ) {
 		return null;
+	}
+
+	if ( ! canOpenPhpMyAdmin( site ) ) {
+		return (
+			<PageLayout
+				size="small"
+				header={
+					<SettingsPageHeader
+						title={ __( 'Database' ) }
+						description={ __(
+							'For the tech-savvy, manage your database with phpMyAdmin and run a wide range of operations with MySQL.'
+						) }
+					/>
+				}
+			>
+				<SettingsCallout
+					siteSlug={ siteSlug }
+					icon={ blockTable }
+					imageSrc={ calloutIllustrationUrl }
+					title={ __( 'Fast, familiar database access' ) }
+					description={ __(
+						'Access your site’s database with phpMyAdmin—perfect for inspecting data, running queries, and quick debugging.'
+					) }
+				/>
+			</PageLayout>
+		);
 	}
 
 	const handleOpenPhpMyAdmin = async () => {

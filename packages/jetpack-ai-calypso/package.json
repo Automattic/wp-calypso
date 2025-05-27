@@ -79,6 +79,6 @@
 		"@automattic/i18n-utils": "workspace:^",
 		"@automattic/languages": "workspace:^",
 		"clsx": "^2.1.1",
-		"debug": "^4.4.0"
+		"debug": "^4.4.1"
 	}
 }

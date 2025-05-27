@@ -14,6 +14,7 @@ import { useState } from 'react';
 import { getPHPVersions } from 'calypso/data/php-versions';
 import { siteQuery, sitePHPVersionQuery, sitePHPVersionMutation } from '../../app/queries';
 import PageLayout from '../../components/page-layout';
+import SettingsCallout from '../settings-callout';
 import SettingsPageHeader from '../settings-page-header';
 import { canUpdatePHPVersion } from './utils';
 import type { Field } from '@automattic/dataviews';
@@ -35,6 +36,14 @@ export default function PHPVersionSettings( { siteSlug }: { siteSlug: string } )
 
 	if ( ! site ) {
 		return null;
+	}
+
+	if ( ! canUpdate ) {
+		return (
+			<PageLayout size="small" header={ <SettingsPageHeader title="PHP" /> }>
+				<SettingsCallout siteSlug={ siteSlug } />
+			</PageLayout>
+		);
 	}
 
 	const { phpVersions } = getPHPVersions();
@@ -76,8 +85,8 @@ export default function PHPVersionSettings( { siteSlug }: { siteSlug: string } )
 		} );
 	};
 
-	const renderForm = () => {
-		return (
+	return (
+		<PageLayout size="small" header={ <SettingsPageHeader title="PHP" /> }>
 			<Card>
 				<CardBody>
 					<form onSubmit={ handleSubmit }>
@@ -104,17 +113,6 @@ export default function PHPVersionSettings( { siteSlug }: { siteSlug: string } )
 					</form>
 				</CardBody>
 			</Card>
-		);
-	};
-
-	const renderCallout = () => {
-		return <p>TODO: callout</p>;
-	};
-
-	return (
-		<PageLayout size="small">
-			<SettingsPageHeader title="PHP" />
-			{ canUpdate ? renderForm() : renderCallout() }
 		</PageLayout>
 	);
 }

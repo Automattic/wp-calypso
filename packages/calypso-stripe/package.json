@@ -45,7 +45,7 @@
 	"dependencies": {
 		"@stripe/react-stripe-js": "^2.1.0",
 		"@stripe/stripe-js": "^1.54.2",
-		"debug": "^4.4.0",
+		"debug": "^4.4.1",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1"
 	},

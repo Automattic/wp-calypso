@@ -12,7 +12,7 @@ import Notice from 'calypso/components/notice';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import isAkismetRedirect from 'calypso/lib/akismet/is-akismet-redirect';
 import getGravatarOAuth2Flow from 'calypso/lib/get-gravatar-oauth2-flow';
-import { getSignupUrl } from 'calypso/lib/login';
+import { getSignupUrl, pathWithLeadingSlash } from 'calypso/lib/login';
 import {
 	isJetpackCloudOAuth2Client,
 	isA4AOAuth2Client,
@@ -314,7 +314,7 @@ class Login extends Component {
 		} = this.props;
 
 		if ( signupUrl ) {
-			return signupUrl;
+			return window.location.origin + pathWithLeadingSlash( signupUrl );
 		}
 
 		if ( isWCCOM && isEmpty( currentQuery ) ) {
@@ -440,6 +440,7 @@ class Login extends Component {
 							redirectToAfterLoginUrl={ this.props.redirectTo }
 							oauth2ClientId={ this.props.oauth2Client && this.props.oauth2Client.id }
 							locale={ locale }
+							isWoo={ isWoo }
 							isWooJPC={ isWooJPC }
 							from={ get( currentQuery, 'from' ) }
 						/>

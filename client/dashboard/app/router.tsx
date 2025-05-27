@@ -173,7 +173,7 @@ const siteSettingsWordPressRoute = createRoute( {
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteQuery( siteSlug ) );
 		if ( canUpdateWordPressVersion( site ) ) {
-			return await queryClient.ensureQueryData( siteWordPressVersionQuery( siteSlug ) );
+			await queryClient.ensureQueryData( siteWordPressVersionQuery( siteSlug ) );
 		}
 	},
 } ).lazy( () =>
@@ -190,7 +190,7 @@ const siteSettingsPHPRoute = createRoute( {
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteQuery( siteSlug ) );
 		if ( canUpdatePHPVersion( site ) ) {
-			return await queryClient.ensureQueryData( sitePHPVersionQuery( siteSlug ) );
+			await queryClient.ensureQueryData( sitePHPVersionQuery( siteSlug ) );
 		}
 	},
 } ).lazy( () =>
@@ -207,7 +207,7 @@ const siteSettingsStaticFile404Route = createRoute( {
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteQuery( siteSlug ) );
 		if ( canSetStaticFile404Handling( site ) ) {
-			return await queryClient.ensureQueryData( siteStaticFile404Query( siteSlug ) );
+			await queryClient.ensureQueryData( siteStaticFile404Query( siteSlug ) );
 		}
 	},
 } ).lazy( () =>
