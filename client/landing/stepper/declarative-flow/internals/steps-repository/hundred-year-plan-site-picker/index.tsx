@@ -124,12 +124,14 @@ const ConfirmationModal = ( {
 	isFetching,
 	siteTitle,
 	siteUrl,
+	siteDomain,
 	siteId,
 	onConfirm,
 	closeModal,
 }: {
 	isFetching: boolean;
 	siteTitle?: string;
+	siteDomain?: string;
 	siteUrl?: string;
 	siteId?: number;
 	onConfirm: () => void;
@@ -171,7 +173,7 @@ const ConfirmationModal = ( {
 							{
 								args: {
 									siteTitle: siteTitle || '',
-									siteDomain: siteUrl || '',
+									siteDomain: siteDomain || '',
 									planTitle: getPlan( PLAN_100_YEARS )?.getTitle() || '',
 								},
 								components: {
@@ -245,13 +247,22 @@ const HundredYearPlanSitePicker: Step< { submits: { siteSlug: string; siteId: nu
 				'',
 			[ selectedSiteId ]
 		);
+
+		const siteDomain = useSelect(
+			( select ) =>
+				( selectedSiteId &&
+					( select( SITE_STORE ) as SiteSelect ).getPrimarySiteDomain( selectedSiteId ) ) ||
+				undefined,
+			[ selectedSiteId ]
+		);
+
 		const site = useSelect(
 			( select ) =>
 				( selectedSiteId && ( select( SITE_STORE ) as SiteSelect ).getSite( selectedSiteId ) ) ||
 				null,
 			[ selectedSiteId ]
 		);
-		const isFetching = ! site || ! siteTitle;
+		const isFetching = ! site || ! siteDomain || ! siteTitle;
 
 		const selectSite = () => {
 			const siteSlug = new URL( site?.URL || '' ).host;
@@ -309,6 +320,7 @@ const HundredYearPlanSitePicker: Step< { submits: { siteSlug: string; siteId: nu
 						closeModal={ closeModal }
 						siteTitle={ siteTitle }
 						siteUrl={ site?.URL }
+						siteDomain={ siteDomain?.domain }
 						siteId={ site?.ID }
 					/>
 				) }

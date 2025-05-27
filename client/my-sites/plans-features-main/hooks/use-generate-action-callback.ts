@@ -219,7 +219,6 @@ function useGenerateActionCallback( {
 				await handleNonOwnerClick( { availableForPurchase } );
 				return;
 			}
-
 			/* 3. In the logged-in plans dashboard, handle plan downgrades and plan downgrade tracks events */
 			if (
 				sitePlanSlug &&
