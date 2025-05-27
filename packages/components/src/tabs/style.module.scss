@@ -100,59 +100,57 @@
 }
 
 .tab {
-	/* stylelint-disable-next-line no-duplicate-selectors */
-	& {
-		/* Resets */
-		border-radius: 0;
-		background: transparent;
-		border: none;
+
+	/* Resets */
+	border-radius: 0;
+	background: transparent;
+	border: none;
+	box-shadow: none;
+
+	flex: 1 0 auto;
+	white-space: nowrap;
+	display: flex;
+	align-items: center;
+	cursor: pointer;
+	line-height: 1.2; // Characters in some languages (e.g. Japanese) may have a native higher line-height.
+	font-weight: 400;
+	color: theme.$components-color-foreground;
+
+	&[aria-disabled='true'] {
+		cursor: default;
+		color: theme.$components-color-gray-600;
+	}
+
+	&:not( [aria-disabled='true'] ):is( :hover, [data-focus-visible] ) {
+		color: theme.$components-color-accent;
+	}
+
+	&:focus:not( :disabled ) {
 		box-shadow: none;
+		outline: none;
+	}
 
-		flex: 1 0 auto;
-		white-space: nowrap;
-		display: flex;
-		align-items: center;
-		cursor: pointer;
-		line-height: 1.2; // Characters in some languages (e.g. Japanese) may have a native higher line-height.
-		font-weight: 400;
-		color: theme.$components-color-foreground;
+	// Focus indicator.
+	position: relative;
+	&::after {
+		position: absolute;
+		pointer-events: none;
 
-		&[aria-disabled='true'] {
-			cursor: default;
-			color: theme.$components-color-gray-600;
+		// Draw the indicator.
+		// Outline works for Windows high contrast mode as well.
+		outline: var( --wp-admin-border-width-focus ) solid theme.$components-color-accent;
+		border-radius: variables.$radius-small;
+
+		// Animation
+		opacity: 0;
+
+		@media not ( prefers-reduced-motion ) {
+			transition: opacity 0.1s linear;
 		}
+	}
 
-		&:not( [aria-disabled='true'] ):is( :hover, [data-focus-visible] ) {
-			color: theme.$components-color-accent;
-		}
-
-		&:focus:not( :disabled ) {
-			box-shadow: none;
-			outline: none;
-		}
-
-		// Focus indicator.
-		position: relative;
-		&::after {
-			position: absolute;
-			pointer-events: none;
-
-			// Draw the indicator.
-			// Outline works for Windows high contrast mode as well.
-			outline: var( --wp-admin-border-width-focus ) solid theme.$components-color-accent;
-			border-radius: variables.$radius-small;
-
-			// Animation
-			opacity: 0;
-
-			@media not ( prefers-reduced-motion ) {
-				transition: opacity 0.1s linear;
-			}
-		}
-
-		&[data-focus-visible]::after {
-			opacity: 1;
-		}
+	&[data-focus-visible]::after {
+		opacity: 1;
 	}
 
 	[aria-orientation='horizontal'] & {
