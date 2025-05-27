@@ -240,19 +240,19 @@ const HundredYearPlanSitePicker: Step< { submits: { siteSlug: string; siteId: nu
 		const [ selectedSiteId, setSelectedSiteId ] = useState< SiteId | null >( null );
 		const [ showConfirmModal, setShowConfirmModal ] = useState( false );
 
-		const siteTitle = useSelect(
-			( select ) =>
-				( selectedSiteId &&
-					( select( SITE_STORE ) as SiteSelect ).getSiteTitle( selectedSiteId ) ) ||
-				'',
-			[ selectedSiteId ]
-		);
-
 		const siteDomain = useSelect(
 			( select ) =>
 				( selectedSiteId &&
 					( select( SITE_STORE ) as SiteSelect ).getPrimarySiteDomain( selectedSiteId ) ) ||
 				undefined,
+			[ selectedSiteId ]
+		);
+
+		const siteTitle = useSelect(
+			( select ) =>
+				( selectedSiteId &&
+					( select( SITE_STORE ) as SiteSelect ).getSiteTitle( selectedSiteId ) ) ||
+				'',
 			[ selectedSiteId ]
 		);
 
