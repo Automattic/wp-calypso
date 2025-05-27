@@ -90,7 +90,7 @@ function getSignupDestination( { domainItem, siteId, siteSlug, refParameter } ) 
 }
 
 function getLaunchDestination( dependencies ) {
-	return `/home/${ dependencies.siteSlug }`;
+	return addQueryArgs( { celebrateLaunch: 'true' }, `/home/${ dependencies.siteSlug }` );
 }
 
 function getDomainSignupFlowDestination( { domainItem, cartItem, siteId, designType, siteSlug } ) {

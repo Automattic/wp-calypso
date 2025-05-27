@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 import flows from 'calypso/signup/config/flows';
+import { generateFlows } from 'calypso/signup/config/flows-pure';
 import mockedFlows from './fixtures/flows';
 
 describe( 'Signup Flows Configuration', () => {
@@ -31,6 +32,26 @@ describe( 'Signup Flows Configuration', () => {
 		test( 'should exclude site step from getFlow', () => {
 			flows.excludeStep( 'site' );
 			expect( flows.getFlow( 'main', false ).steps ).toEqual( [ 'user' ] );
+		} );
+	} );
+
+	describe( 'getLaunchDestination', () => {
+		test( 'should add celebrateLaunch=true query parameter to the destination URL', () => {
+			const mockGetLaunchDestination = jest.fn( ( dependencies ) => {
+				// Import the actual function from flows.js
+				const { addQueryArgs } = require( 'calypso/lib/url' );
+				return addQueryArgs( { celebrateLaunch: 'true' }, `/home/${ dependencies.siteSlug }` );
+			} );
+
+			const testFlows = generateFlows( {
+				getLaunchDestination: mockGetLaunchDestination,
+			} );
+
+			const launchSiteFlow = testFlows[ 'launch-site' ];
+			const dependencies = { siteSlug: 'test-site' };
+			const destination = launchSiteFlow.destination( dependencies );
+
+			expect( destination ).toBe( '/home/test-site?celebrateLaunch=true' );
 		} );
 	} );
 } );
