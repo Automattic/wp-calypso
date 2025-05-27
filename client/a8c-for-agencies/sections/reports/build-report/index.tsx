@@ -138,13 +138,6 @@ const BuildReport = () => {
 							type="email"
 							help={ translate( 'We’ll email the report here. Use commas to separate addresses.' ) }
 						/>
-						<TextareaControl
-							label={ translate( 'Intro message (optional)' ) }
-							value={ customIntroText }
-							onChange={ setCustomIntroText }
-							rows={ 3 }
-							help={ translate( 'Add a short note for your client.' ) }
-						/>
 						<CheckboxControl
 							label={ translate( 'Also send to your team' ) }
 							checked={ sendMeACopy }
@@ -172,6 +165,14 @@ const BuildReport = () => {
 								{ translate( 'Step 2 of 3: Choose report content' ) }
 							</h2>
 						</div>
+
+						<TextareaControl
+							label={ translate( 'Intro message (optional)' ) }
+							value={ customIntroText }
+							onChange={ setCustomIntroText }
+							rows={ 3 }
+							help={ translate( 'Add a short note or update for your client.' ) }
+						/>
 
 						<h3 className="build-report__group-label build-report__group-label--first">
 							{ translate( 'Stats' ) }
