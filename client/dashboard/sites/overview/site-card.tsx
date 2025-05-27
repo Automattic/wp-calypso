@@ -11,16 +11,14 @@ import { dateI18n } from '@wordpress/date';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { sitePHPVersionQuery, siteCurrentPlanQuery } from '../../app/queries';
-import { IS_BLURRED_PROPS } from '../../utils/is-blurred';
+import { TextBlur } from '../../components/text-blur';
 import { getSiteStatusLabel } from '../../utils/site-status';
 import { getFormattedWordPressVersion } from '../../utils/wp-version';
 import SitePreview from '../site-preview';
 import type { Site } from '../../data/types';
 
 function PHPVersion( { siteSlug }: { siteSlug: string } ) {
-	return (
-		useQuery( sitePHPVersionQuery( siteSlug ) ).data ?? <span { ...IS_BLURRED_PROPS }>X.Y</span>
-	);
+	return useQuery( sitePHPVersionQuery( siteSlug ) ).data ?? <TextBlur>X.Y</TextBlur>;
 }
 
 /**
@@ -142,11 +140,12 @@ function PlanDetails( { site }: { site: Site } ) {
 						</>
 					) : (
 						<>
-							<Text { ...IS_BLURRED_PROPS }>
-								{ getPlanExpirationMessage( new Date().toISOString() ) }
+							<Text>
+								<TextBlur>{ getPlanExpirationMessage( new Date().toISOString() ) }</TextBlur>
 							</Text>
-							<Button { ...IS_BLURRED_PROPS } href="" variant="link">
-								{ __( 'Manage subscription' ) }
+							{ /* @ts-expect-error inert is not typed */ }
+							<Button inert href="" variant="link">
+								<TextBlur>{ __( 'Manage subscription' ) }</TextBlur>
 							</Button>
 						</>
 					) }
