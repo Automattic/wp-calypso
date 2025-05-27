@@ -124,5 +124,6 @@ DomainSuggestion.Placeholder = function () {
 	);
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
 };
+DomainSuggestion.Placeholder.displayName = 'DomainSuggestion.Placeholder';
 
 export default DomainSuggestion;
