@@ -47,14 +47,16 @@ export default function PrimaryDataCenterSettings( { siteSlug }: { siteSlug: str
 					) }
 				</Notice>
 				<Card>
-					<SummaryButton
-						title={ __( 'Primary data center' ) }
-						density="medium"
-						decoration={ <Icon icon={ cloud } /> }
-						showArrow={ false }
-						disabled
-						badges={ [ badge ] }
-					/>
+					<VStack>
+						<SummaryButton
+							title={ __( 'Primary data center' ) }
+							density="medium"
+							decoration={ <Icon icon={ cloud } /> }
+							showArrow={ false }
+							disabled
+							badges={ [ badge ] }
+						/>
+					</VStack>
 				</Card>
 			</VStack>
 		</PageLayout>
