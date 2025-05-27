@@ -12,13 +12,12 @@ import type {
 	ToolProvider,
 } from '../types/index';
 import {
-	createContextDataPart,
 	createRequestId,
 	createSendTaskRequest,
-	createToolDataPart,
 	createToolResultDataPart,
 	extractToolCallsFromMessage,
 } from '../utils/index';
+import { enhanceMessage } from '../utils/messages';
 import { parseSSEStream, streamToTask } from '../streaming/index';
 import { formatObject, logger } from '../utils/logger';
 import { socksDispatcher } from 'fetch-socks';
@@ -124,63 +123,6 @@ export function createA2AClient( config: A2AClientConfig ): A2AClient {
 	}
 
 	/**
-	 * Enhance a message with available tools
-	 * @param message
-	 */
-	async function enhanceMessageWithTools(
-		message: Message
-	): Promise< Message > {
-		if ( ! toolProvider ) {
-			return message;
-		}
-
-		try {
-			const tools = await toolProvider.getAvailableTools();
-			if ( tools.length === 0 ) {
-				return message;
-			}
-
-			const toolParts = tools.map( createToolDataPart );
-			return {
-				...message,
-				parts: [ ...message.parts, ...toolParts ],
-			};
-		} catch ( error ) {
-			logger( 'Warning: Failed to get tools: %s', error );
-			return message;
-		}
-	}
-
-	/**
-	 * Enhance a message with client context
-	 * @param message
-	 */
-	function enhanceMessageWithContext( message: Message ): Message {
-		if ( ! contextProvider ) {
-			return message;
-		}
-
-		try {
-			const clientContext = contextProvider.getClientContext();
-			if (
-				! clientContext ||
-				Object.keys( clientContext ).length === 0
-			) {
-				return message;
-			}
-
-			const contextPart = createContextDataPart( clientContext );
-			return {
-				...message,
-				parts: [ ...message.parts, contextPart ],
-			};
-		} catch ( error ) {
-			logger( 'Warning: Failed to get context: %s', error );
-			return message;
-		}
-	}
-
-	/**
 	 * Process tool calls in a message and execute them
 	 * @param message
 	 */
@@ -240,8 +182,11 @@ export function createA2AClient( config: A2AClientConfig ): A2AClient {
 			const effectiveSessionId = sessionId || defaultSessionId;
 
 			// Enhance message with tools and context
-			let enhancedMessage = await enhanceMessageWithTools( message );
-			enhancedMessage = enhanceMessageWithContext( enhancedMessage );
+			const enhancedMessage = await enhanceMessage(
+				message,
+				toolProvider,
+				contextProvider
+			);
 
 			const request = createSendTaskRequest( {
 				id: taskId,
@@ -351,8 +296,11 @@ export function createA2AClient( config: A2AClientConfig ): A2AClient {
 			const effectiveSessionId = sessionId || defaultSessionId;
 
 			// Enhance message with tools and context
-			let enhancedMessage = await enhanceMessageWithTools( message );
-			enhancedMessage = enhanceMessageWithContext( enhancedMessage );
+			const enhancedMessage = await enhanceMessage(
+				message,
+				toolProvider,
+				contextProvider
+			);
 
 			const request = createSendTaskRequest(
 				{

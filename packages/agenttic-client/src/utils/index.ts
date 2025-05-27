@@ -185,3 +185,10 @@ export function createContextDataPart(
 
 // Re-export logger utilities for convenience
 export { logger, isDebugEnabled, enableDebug, formatObject } from './logger';
+
+// Re-export message enhancement utilities
+export {
+	enhanceMessage,
+	enhanceMessageWithTools,
+	enhanceMessageWithContext,
+} from './messages';
