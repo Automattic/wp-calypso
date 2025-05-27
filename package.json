@@ -214,7 +214,7 @@
 		"calypso": "workspace:^",
 		"cmdk": "^0.2.1",
 		"d3-time-format": "^4.1.0",
-		"debug": "^4.4.0",
+		"debug": "^4.4.1",
 		"enhanced-resolve": "5.9.3",
 		"http-proxy-middleware": "^3.0.5",
 		"i18n-calypso": "workspace:^",

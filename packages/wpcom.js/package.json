@@ -50,7 +50,7 @@
 		"./src/lib/util/fs.js": "./src/lib/util/fs-browser.js"
 	},
 	"dependencies": {
-		"debug": "^4.4.0",
+		"debug": "^4.4.1",
 		"qs": "^6.5.2",
 		"tus-js-client": "2.3.2"
 	},

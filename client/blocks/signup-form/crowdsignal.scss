@@ -44,15 +44,6 @@ body.is-section-signup .layout .signup.is-crowdsignal .step-wrapper {
 	}
 }
 
-.signup.is-crowdsignal {
-	.components-button {
-		&.is-primary:not(.signup-form__crowdsignal-wpcom) {
-			--color-accent: var(--color-primary);
-			--color-accent-60: var(--color-primary-dark);
-		}
-	}
-}
-
 .signup-form__crowdsignal-layout {
 	display: flex;
 	flex-direction: column;

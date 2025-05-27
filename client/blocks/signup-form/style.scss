@@ -370,16 +370,6 @@ body.is-section-accept-invite {
 
 }
 
-/**
-* Akismet Signup
-*/
-.is-akismet .signup-form {
-	.components-button {
-		--color-accent: var(--color-akismet);
-		--color-accent-60: var(--color-akismet);
-	}
-}
-
 .is-woo-passwordless .signup-form .auth-form__separator {
 	margin: 32px 0;
 }

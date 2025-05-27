@@ -132,15 +132,37 @@ type DayOfWeek = {
 
 /**
  * Shared handler type for `onSelect` callback when a selection mode is set.
+ * @example
+ *   const handleSelect: OnSelectHandler<Date> = (
+ *     selected,
+ *     triggerDate,
+ *     modifiers,
+ *     e
+ *   ) => {
+ *     console.log( "Selected:", selected );
+ *     console.log( "Triggered by:", triggerDate );
+ *   };
  * @template T - The type of the selected item.
  * @callback OnSelectHandler
  * @param {T} selected - The selected item after the event.
+ * @param {Date} triggerDate - The date when the event was triggered. This is
+ *   typically the day clicked or interacted with.
+ * @param {Modifiers} modifiers - The modifiers associated with the event.
+ * @param {React.MouseEvent | React.KeyboardEvent} e - The event object.
  */
-export type OnSelectHandler< T > = ( selected: T ) => void;
+export type OnSelectHandler< T > = (
+	selected: T,
+	triggerDate: Date,
+	modifiers: Modifiers,
+	e: React.MouseEvent | React.KeyboardEvent
+) => void;
 
-export interface BaseProps extends Omit< React.HTMLAttributes< HTMLDivElement >, 'onSelect' > {
+export interface BaseProps
+	extends Omit< React.HTMLAttributes< HTMLDivElement >, 'onSelect' | 'defaultValue' > {
 	/**
 	 * Whether the selection is required.
+	 * When `true`, there always needs to be a date selected.
+	 * @default false
 	 */
 	required?: boolean;
 
@@ -266,22 +288,7 @@ export interface BaseProps extends Omit< React.HTMLAttributes< HTMLDivElement >,
 	role?: 'application' | 'dialog' | undefined;
 }
 
-interface SinglePropsRequired {
-	required: true;
-	/** The selected date. */
-	selected: Date | undefined | null;
-	/**
-	 * Event handler when a day is selected. When the selection is required,
-	 * user can not deselect the date, and therefore the callback always
-	 * has a defined date argument.
-	 */
-	onSelect?: OnSelectHandler< Date >;
-	/** The default selected date (for uncontrolled usage). */
-	defaultSelected?: Date;
-}
-
-interface SinglePropsOptional {
-	required?: false | undefined;
+interface SingleProps {
 	/** The selected date. */
 	selected?: Date | undefined | null;
 	/** Event handler when a day is selected. */
@@ -299,24 +306,6 @@ interface RangeProps {
 	min?: number;
 	/** The maximum number of days to include in the range. */
 	max?: number;
-}
-
-interface RangePropsRequired {
-	required: true;
-	/** The selected range. */
-	selected: DateRange | undefined | null;
-	/**
-	 * Event handler when a range is selected. When the selection is required,
-	 * user can not deselect the range, and therefore the callback always
-	 * has a defined range argument.
-	 */
-	onSelect?: OnSelectHandler< DateRange >;
-	/** The default selected range (for uncontrolled usage). */
-	defaultSelected?: DateRange;
-}
-
-interface RangePropsOptional {
-	required?: false | undefined;
 	/** The selected range. */
 	selected?: DateRange | undefined | null;
 	/** Event handler when the selection changes. */
@@ -325,7 +314,5 @@ interface RangePropsOptional {
 	defaultSelected?: DateRange;
 }
 
-export type DateCalendarProps = BaseProps & ( SinglePropsRequired | SinglePropsOptional );
-export type DateRangeCalendarProps = BaseProps &
-	RangeProps &
-	( RangePropsRequired | RangePropsOptional );
+export type DateCalendarProps = BaseProps & SingleProps;
+export type DateRangeCalendarProps = BaseProps & RangeProps;

@@ -173,13 +173,7 @@ export const ControlledWithInputFields: Story = {
 								? null
 								: selectedDate
 						);
-						// TS is strict about `onSelect` expecting a non-undefined date
-						// when the selection is required.
-						if ( ! args.required ) {
-							args.onSelect?.( selectedDate, ...rest );
-						} else if ( selectedDate ) {
-							args.onSelect?.( selectedDate, ...rest );
-						}
+						args.onSelect?.( selectedDate, ...rest );
 					} }
 				/>
 			</div>
@@ -254,13 +248,7 @@ export const WithTimeZone: Story = {
 								? null
 								: selectedDate
 						);
-						// TS is strict about `onSelect` expecting a non-undefined date
-						// when the selection is required.
-						if ( ! args.required ) {
-							args.onSelect?.( selectedDate, ...rest );
-						} else if ( selectedDate ) {
-							args.onSelect?.( selectedDate, ...rest );
-						}
+						args.onSelect?.( selectedDate, ...rest );
 					} }
 					disabled={ [
 						{
@@ -399,13 +387,7 @@ export const WithPresets: Story = {
 								? null
 								: selectedDate
 						);
-						// TS is strict about `onSelect` expecting a non-undefined date
-						// when the selection is required.
-						if ( ! args.required ) {
-							args.onSelect?.( selectedDate, ...rest );
-						} else if ( selectedDate ) {
-							args.onSelect?.( selectedDate, ...rest );
-						}
+						args.onSelect?.( selectedDate, ...rest );
 					} }
 					month={ month }
 					onMonthChange={ setMonth }
