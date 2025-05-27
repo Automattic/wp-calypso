@@ -42,7 +42,7 @@
 	],
 	"types": "dist/types",
 	"dependencies": {
-		"@ariakit/react": "^0.4.15",
+		"@ariakit/react": "^0.4.17",
 		"@automattic/calypso-color-schemes": "workspace:^",
 		"@automattic/calypso-url": "workspace:^",
 		"@automattic/color-studio": "^4.1.0",
