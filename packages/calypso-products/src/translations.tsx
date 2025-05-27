@@ -166,6 +166,16 @@ import {
 	PRODUCT_WOOCOMMERCE_SMART_COUPONS,
 	PRODUCT_WOOCOMMERCE_DYNAMIC_PRICING,
 	PRODUCT_WOOCOMMERCE_VARIATION_SWATCHES_AND_PHOTOS,
+	PRODUCT_WOOCOMMERCE_AFTERPAY,
+	PRODUCT_WOOCOMMERCE_SQUARE,
+	PRODUCT_WOOCOMMERCE_AFFIRM,
+	PRODUCT_WOOCOMMERCE_AUTHORIZENET,
+	PRODUCT_WOOCOMMERCE_MOLLIE,
+	PRODUCT_WOOCOMMERCE_STRIPE,
+	PRODUCT_WOOCOMMERCE_KLARNA,
+	PRODUCT_WOOCOMMERCE_MASTERCARD,
+	PRODUCT_WOOCOMMERCE_PAYPAL,
+	PRODUCT_WOOCOMMERCE_KLAVIYO,
 } from './constants';
 import type { FAQ, SelectorProductFeaturesItem } from './types';
 import type { TranslateResult } from 'i18n-calypso';
@@ -1139,6 +1149,36 @@ export const getJetpackProductsLightboxDescription = (): Record< string, Transla
 	const woocommerceVariationSwatchesAndPhotosLightboxDescription = translate(
 		'Show color and image swatches instead of dropdowns for variable products.'
 	);
+	const woocommerceAfterpayLightboxDescription = translate(
+		'Afterpay allows customers to purchase products and choose to pay in four installments over six weeks or pay monthly (US only).'
+	);
+	const woocommerceSquareLightboxDescription = translate(
+		'Accepting payments is easy with Square. Clear rates, fast deposits (1-2 business days). Sell online and in person, and sync all payments, items and inventory.'
+	);
+	const woocommerceAffirmLightboxDescription = translate(
+		'Buy now, pay later for your business—but smarter. Increase conversions and AOV by offering shoppers flexible payment plans from Affirm.'
+	);
+	const woocommerceAuthorizenetLightboxDescription = translate(
+		'Online payments leader Authorize.net, a Visa Solution, helps thousands of businesses simplify payments by offering more solutions, more support, and more strength to stand on.'
+	);
+	const woocommerceMollieLightboxDescription = translate(
+		'Offer global and local payment methods and get onboarded in minutes, with support in your language.'
+	);
+	const woocommerceStripeLightboxDescription = translate(
+		'Maximize revenue with the new checkout from Stripe.'
+	);
+	const woocommerceKlarnaLightboxDescription = translate(
+		'Grow your business with increased sales and an enhanced shopping experience — at no extra cost.'
+	);
+	const woocommerceMastercardLightboxDescription = translate(
+		'???' // Note: This was the description in the partner portal hooks file
+	);
+	const woocommercePaypalLightboxDescription = translate(
+		"PayPal's brand recognition helps give customers the confidence to buy. PayPal's all-in-one checkout solution allows you to offer PayPal, Venmo (US), Pay Later, credit and debit cards, country-specific payment options and more."
+	);
+	const woocommerceKlaviyoLightboxDescription = translate(
+		"As Woo's preferred marketing automation platform, Klaviyo unifies email and SMS marketing, customer analytics, and product reviews to help your brand achieve better marketing ROI."
+	);
 
 	return {
 		[ PRODUCT_JETPACK_AI_MONTHLY ]: aiAssistantLightboxDescription,
@@ -1262,6 +1302,16 @@ export const getJetpackProductsLightboxDescription = (): Record< string, Transla
 		[ PRODUCT_WOOCOMMERCE_DYNAMIC_PRICING ]: woocommerceDynamicPricingLightboxDescription,
 		[ PRODUCT_WOOCOMMERCE_VARIATION_SWATCHES_AND_PHOTOS ]:
 			woocommerceVariationSwatchesAndPhotosLightboxDescription,
+		[ PRODUCT_WOOCOMMERCE_AFTERPAY ]: woocommerceAfterpayLightboxDescription,
+		[ PRODUCT_WOOCOMMERCE_SQUARE ]: woocommerceSquareLightboxDescription,
+		[ PRODUCT_WOOCOMMERCE_AFFIRM ]: woocommerceAffirmLightboxDescription,
+		[ PRODUCT_WOOCOMMERCE_AUTHORIZENET ]: woocommerceAuthorizenetLightboxDescription,
+		[ PRODUCT_WOOCOMMERCE_MOLLIE ]: woocommerceMollieLightboxDescription,
+		[ PRODUCT_WOOCOMMERCE_STRIPE ]: woocommerceStripeLightboxDescription,
+		[ PRODUCT_WOOCOMMERCE_KLARNA ]: woocommerceKlarnaLightboxDescription,
+		[ PRODUCT_WOOCOMMERCE_MASTERCARD ]: woocommerceMastercardLightboxDescription,
+		[ PRODUCT_WOOCOMMERCE_PAYPAL ]: woocommercePaypalLightboxDescription,
+		[ PRODUCT_WOOCOMMERCE_KLAVIYO ]: woocommerceKlaviyoLightboxDescription,
 	};
 };
 
@@ -2453,6 +2503,38 @@ export const getJetpackProductsBenefits = (): Record< string, Array< TranslateRe
 		translate( 'Reduce potential revenue losses because your site went down.' ),
 	];
 
+	// Benefits for the 10 new WooCommerce products
+	const woocommerceAfterpayBenefits = [
+		translate( 'Increase conversion rates with flexible payment options' ),
+	];
+	const woocommerceSquareBenefits = [
+		translate( 'Accept payments easily with clear rates and fast deposits' ),
+	];
+	const woocommerceAffirmBenefits = [
+		translate( 'Boost sales with buy now, pay later options for customers' ),
+	];
+	const woocommerceAuthorizenetBenefits = [
+		translate( 'Process payments securely with a trusted payment gateway' ),
+	];
+	const woocommerceMollieBenefits = [
+		translate( 'Accept payments from customers across Europe with ease' ),
+	];
+	const woocommerceStripeBenefits = [
+		translate( 'Streamline online payments with powerful developer tools' ),
+	];
+	const woocommerceKlarnaBenefits = [
+		translate( 'Offer flexible payment solutions to increase customer satisfaction' ),
+	];
+	const woocommerceMastercardBenefits = [
+		translate( 'Enable secure credit card payments for your customers' ),
+	];
+	const woocommercePaypalBenefits = [
+		translate( 'Build customer confidence with trusted PayPal payment options' ),
+	];
+	const woocommerceKlaviyoBenefits = [
+		translate( 'Enhance marketing ROI with unified email and SMS automation' ),
+	];
+
 	return {
 		[ PRODUCT_JETPACK_AI_MONTHLY ]: aiAssistantBenefits,
 		[ PRODUCT_JETPACK_AI_YEARLY ]: aiAssistantBenefits,
@@ -2560,6 +2642,16 @@ export const getJetpackProductsBenefits = (): Record< string, Array< TranslateRe
 		[ PRODUCT_WOOCOMMERCE_DYNAMIC_PRICING ]: woocommerceDynamicPricingBenefits,
 		[ PRODUCT_WOOCOMMERCE_VARIATION_SWATCHES_AND_PHOTOS ]:
 			woocommerceVariationSwatchesAndPhotosBenefits,
+		[ PRODUCT_WOOCOMMERCE_AFTERPAY ]: woocommerceAfterpayBenefits,
+		[ PRODUCT_WOOCOMMERCE_SQUARE ]: woocommerceSquareBenefits,
+		[ PRODUCT_WOOCOMMERCE_AFFIRM ]: woocommerceAffirmBenefits,
+		[ PRODUCT_WOOCOMMERCE_AUTHORIZENET ]: woocommerceAuthorizenetBenefits,
+		[ PRODUCT_WOOCOMMERCE_MOLLIE ]: woocommerceMollieBenefits,
+		[ PRODUCT_WOOCOMMERCE_STRIPE ]: woocommerceStripeBenefits,
+		[ PRODUCT_WOOCOMMERCE_KLARNA ]: woocommerceKlarnaBenefits,
+		[ PRODUCT_WOOCOMMERCE_MASTERCARD ]: woocommerceMastercardBenefits,
+		[ PRODUCT_WOOCOMMERCE_PAYPAL ]: woocommercePaypalBenefits,
+		[ PRODUCT_WOOCOMMERCE_KLAVIYO ]: woocommerceKlaviyoBenefits,
 	};
 };
 
