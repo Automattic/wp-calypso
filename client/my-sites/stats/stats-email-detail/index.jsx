@@ -22,6 +22,7 @@ import NavigationHeader from 'calypso/components/navigation-header';
 import WebPreview from 'calypso/components/web-preview';
 import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
 import memoizeLast from 'calypso/lib/memoize-last';
+import { isHttps } from 'calypso/lib/url';
 import PageHeader from 'calypso/my-sites/stats/components/headers/page-header';
 import Main from 'calypso/my-sites/stats/components/stats-main';
 import { STATS_PRODUCT_NAME } from 'calypso/my-sites/stats/constants';
@@ -491,6 +492,8 @@ const connectComponent = connect(
 		const editUrl = isOdyssey
 			? `${ adminBaseUrl }post.php?post=${ postId }&action=edit`
 			: `/post/${ siteId }/${ postId }`;
+		const showViewLink =
+			( isOdyssey || isPreviewable ) && previewUrl !== null && isHttps( previewUrl );
 
 		return {
 			countViews: getEmailStat( state, siteId, postId, period, statType ),
@@ -513,7 +516,7 @@ const connectComponent = connect(
 			date,
 			hasValidDate,
 			showNoDataInfo,
-			showViewLink: ( isOdyssey || isPreviewable ) && previewUrl !== null,
+			showViewLink,
 			previewUrl: previewUrl,
 			editUrl,
 		};

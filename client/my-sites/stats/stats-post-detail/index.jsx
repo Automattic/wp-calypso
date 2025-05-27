@@ -17,6 +17,7 @@ import JetpackColophon from 'calypso/components/jetpack-colophon';
 import NavigationHeader from 'calypso/components/navigation-header';
 import WebPreview from 'calypso/components/web-preview';
 import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
+import { isHttps } from 'calypso/lib/url';
 import PageHeader from 'calypso/my-sites/stats/components/headers/page-header';
 import Main from 'calypso/my-sites/stats/components/stats-main';
 import {
@@ -361,6 +362,8 @@ const connectComponent = connect( ( state, { postId } ) => {
 	const editUrl = isOdyssey
 		? `${ adminBaseUrl }post.php?post=${ postId }&action=edit`
 		: `/post/${ siteId }/${ postId }`;
+	const showViewLink =
+		( isOdyssey || isPreviewable ) && previewUrl !== null && isHttps( previewUrl );
 
 	return {
 		post: getSitePost( state, siteId, postId ),
@@ -371,7 +374,7 @@ const connectComponent = connect( ( state, { postId } ) => {
 		countViews: getPostStat( state, siteId, postId, 'views' ),
 		isRequestingStats: isRequestingPostStats( state, siteId, postId ),
 		siteSlug: getSiteSlug( state, siteId ),
-		showViewLink: ( isOdyssey || isPreviewable ) && previewUrl !== null,
+		showViewLink,
 		editUrl,
 		previewUrl: previewUrl,
 		siteId,
