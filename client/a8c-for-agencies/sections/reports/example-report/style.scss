@@ -14,7 +14,8 @@
 
 .example-report__body {
 	padding: 24px;
-	background: var( --color-neutral-5 );
+	background: #12304a;
+	width: unset;
 }
 
 .example-report__inner-body {
@@ -33,7 +34,7 @@
 
 .example-report__header {
 	background-color: #e5f5ff;
-	padding: 64px 24px;
+	padding: 40px 24px;
 	position: relative;
 	overflow: hidden;
 
@@ -41,10 +42,11 @@
 	&::after {
 		content: '';
 		position: absolute;
-		top: 0;
+		top: -120px;
 		right: 0;
 		width: 50%;
 		height: 100%;
+		background-image: url( ../../../../assets/images/a8c-for-agencies/reports/doodle.png );
 		background-repeat: no-repeat;
 		background-position: right center;
 		background-size: contain;
@@ -61,13 +63,14 @@
 	.example-report__date {
 		@include body-small;
 		text-transform: uppercase;
-		margin-bottom: 16px;
+		margin-bottom: 0;
 		color: var( --color-neutral-70 );
 	}
 
 	h1 {
 		@include heading-2x-large;
 		margin-bottom: 8px;
+		margin-top: 16px;
 		color: var( --color-neutral-90 );
 	}
 
@@ -82,6 +85,7 @@
 		line-height: 1.6;
 		color: var( --color-neutral-90 );
 		max-width: 600px;
+		margin-bottom: 0;
 	}
 }
 
@@ -93,6 +97,10 @@
 		margin-bottom: 16px;
 	}
 
+	.example-report__section-title--flush {
+		margin-bottom: 0;
+	}
+
 	.example-report__date-range {
 		@include body-small;
 		color: var( --color-neutral-70 );
@@ -102,11 +110,11 @@
 
 .example-report__grid {
 	display: grid;
-	grid-template-columns: repeat( 2, 1fr );
+	grid-template-columns: repeat( 1, 1fr );
 	gap: 24px;
 	margin-bottom: 48px;
 
-	@include break-small {
+	@include break-medium {
 		grid-template-columns: repeat( 2, 1fr );
 	}
 }
@@ -120,11 +128,11 @@
 	.example-report__card-title {
 		@include heading;
 		font-weight: 600;
-		margin-bottom: 16px;
 		color: var( --color-neutral-70 );
 		display: flex;
 		align-items: center;
-		gap: 8px;
+		margin-block-start: 0;
+		margin-block-end: 16px;
 	}
 
 	.example-report__card-value {
@@ -143,7 +151,7 @@
 	.example-report__table-row {
 		display: flex;
 		justify-content: space-between;
-		padding: 8px 0;
+		padding: 4px 0;
 		@include body-small;
 
 		span:last-child {
@@ -170,4 +178,10 @@
 			color: var( --color-neutral-90 );
 		}
 	}
+}
+
+.example-report__blurb {
+	@include body-medium;
+	margin-bottom: 0;
+	margin-top: 8px;
 }

@@ -245,12 +245,7 @@ const BuildReport = () => {
 	);
 
 	return (
-		<Layout
-			className="build-report"
-			title={ title }
-			wide
-			sidebarNavigation={ <MobileSidebarNavigation /> }
-		>
+		<Layout className="build-report" title={ title } wide>
 			<LayoutTop>
 				<LayoutHeader>
 					<Breadcrumb
@@ -265,7 +260,7 @@ const BuildReport = () => {
 							},
 						] }
 					/>
-					<Actions>
+					<Actions useColumnAlignment>
 						<MobileSidebarNavigation />
 					</Actions>
 				</LayoutHeader>
