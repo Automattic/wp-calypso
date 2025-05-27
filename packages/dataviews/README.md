@@ -219,6 +219,9 @@ Properties:
 | `badgeFields`: a list of field's `id` to render without label and styled as badges.         |       | ✓    |      |
 | `styles`: additional `width`, `maxWidth`, `minWidth`, `align` styles for each field column. | ✓     |      |      |
 
+**For column alignment (`align` property), follow these guidelines:**
+Right-align whenever the cell value is fundamentally quantitative—numbers, decimals, currency, percentages—so that digits and decimal points line up, aiding comparison and calculation. Otherwise, default to left-alignment for all other types (text, codes, labels, dates).
+
 #### `onChangeView`: `function`
 
 Callback executed when the view has changed. It receives the new view object as a parameter.
