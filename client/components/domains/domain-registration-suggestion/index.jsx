@@ -405,7 +405,11 @@ class DomainRegistrationSuggestion extends Component {
 
 		if ( isPremium ) {
 			badges.push(
-				<PremiumBadge key="premium" restrictedPremium={ premiumDomain?.is_price_limit_exceeded } />
+				<PremiumBadge
+					key="premium"
+					restrictedPremium={ premiumDomain?.is_price_limit_exceeded }
+					domainName={ this.props.suggestion.domain_name }
+				/>
 			);
 		}
 
