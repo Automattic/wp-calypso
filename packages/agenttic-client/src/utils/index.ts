@@ -201,3 +201,11 @@ export {
 	type RequestConfig,
 	type RequestOptions,
 } from './requests';
+
+// Re-export tool utilities
+export {
+	getToolCallCount,
+	hasToolCalls,
+	processTaskToolCalls,
+	processToolCallsAsync,
+} from './tools';

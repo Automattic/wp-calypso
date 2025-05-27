@@ -11,13 +11,9 @@ import type {
 	TaskUpdate,
 	ToolProvider,
 } from '../types/index';
-import {
-	createRequestId,
-	createSendTaskRequest,
-	createToolResultDataPart,
-	extractToolCallsFromMessage,
-} from '../utils/index';
+import { createRequestId, createSendTaskRequest } from '../utils/index';
 import { enhanceMessage } from '../utils/messages';
+import { processTaskToolCalls } from '../utils/tools';
 import {
 	executeRequest,
 	executeStreamingRequest,
@@ -56,60 +52,6 @@ export function createA2AClient( config: A2AClientConfig ): A2AClient {
 		proxy,
 	};
 
-	/**
-	 * Process tool calls in a message and execute them
-	 * @param message
-	 */
-	async function processToolCalls(
-		message: Message
-	): Promise< Message | null > {
-		if ( ! toolProvider ) {
-			return null;
-		}
-
-		const toolCalls = extractToolCallsFromMessage( message );
-		if ( toolCalls.length === 0 ) {
-			return null;
-		}
-
-		logger( 'Processing %d tool calls', toolCalls.length );
-
-		const resultParts = await Promise.all(
-			toolCalls.map( async ( toolCall ) => {
-				const { toolCallId, toolId, arguments: args } = toolCall.data;
-
-				try {
-					logger( 'Executing tool %s with args: %O', toolId, args );
-					const result = await toolProvider.executeTool(
-						toolId,
-						args
-					);
-					logger( 'Tool %s result: %O', toolId, result );
-
-					return createToolResultDataPart(
-						toolCallId as string,
-						toolId as string,
-						result
-					);
-				} catch ( error ) {
-					logger( 'Tool %s execution failed: %s', toolId, error );
-					return createToolResultDataPart(
-						toolCallId as string,
-						toolId as string,
-						null,
-						error instanceof Error ? error.message : String( error )
-					);
-				}
-			} )
-		);
-
-		return {
-			role: 'user' as const,
-			parts: resultParts,
-			metadata: { toolResults: true },
-		};
-	}
-
 	return {
 		async sendMessage( params: SendMessageParams ): Promise< Task > {
 			// Prepare the request
@@ -125,30 +67,8 @@ export function createA2AClient( config: A2AClientConfig ): A2AClient {
 			// Execute the request
 			const task = await executeRequest( preparedRequest, requestConfig );
 
-			// Check if the agent's response contains tool calls and execute them (non-blocking)
-			if ( toolProvider && task.status.message ) {
-				const toolCalls = extractToolCallsFromMessage(
-					task.status.message
-				);
-
-				for ( const toolCall of toolCalls ) {
-					const {
-						toolCallId,
-						toolId,
-						arguments: args,
-					} = toolCall.data;
-
-					// Execute tool without blocking response
-					toolProvider
-						.executeTool( toolId as string, args )
-						.then( ( result ) => {
-							logger( 'Tool %s completed: %O', toolId, result );
-						} )
-						.catch( ( error ) => {
-							logger( 'Tool %s failed: %s', toolId, error );
-						} );
-				}
-			}
+			// Process any tool calls in the response asynchronously
+			await processTaskToolCalls( task, toolProvider );
 
 			return task;
 		},
