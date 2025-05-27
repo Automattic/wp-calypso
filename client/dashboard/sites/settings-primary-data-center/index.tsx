@@ -1,7 +1,10 @@
 import SummaryButton from '@automattic/components/src/summary-button';
+import { useQuery } from '@tanstack/react-query';
 import { __experimentalVStack as VStack, Icon, Notice } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { cloud } from '@wordpress/icons';
+import { getDataCenterOptions } from 'calypso/data/data-center';
+import { siteQuery, sitePrimaryDataCenterQuery } from '../../app/queries';
 import PageLayout from '../../components/page-layout';
 import SettingsPageHeader from '../settings-page-header';
 import type { Site } from '../../data/types';
@@ -10,7 +13,21 @@ export function canGetPrimaryDataCenter( site: Site ) {
 	return site.is_wpcom_atomic;
 }
 
-export default function PrimaryDataCenterSettings() {
+export default function PrimaryDataCenterSettings( { siteSlug }: { siteSlug: string } ) {
+	const { data: site } = useQuery( siteQuery( siteSlug ) );
+	const { data: primaryDataCenter } = useQuery( {
+		...sitePrimaryDataCenterQuery( siteSlug ),
+		enabled: site && canGetPrimaryDataCenter( site ),
+	} );
+
+	const dataCenterOptions = getDataCenterOptions();
+	const primaryDataCenterName =
+		dataCenterOptions[ primaryDataCenter as keyof typeof dataCenterOptions ];
+
+	const badge = {
+		text: primaryDataCenterName ?? __( 'Managed' ),
+	};
+
 	return (
 		<PageLayout
 			size="small"
@@ -31,9 +48,11 @@ export default function PrimaryDataCenterSettings() {
 				</Notice>
 				<SummaryButton
 					title={ __( 'Primary data center' ) }
+					density="medium"
 					decoration={ <Icon icon={ cloud } /> }
 					showArrow={ false }
 					disabled
+					badges={ [ badge ] }
 				/>
 			</VStack>
 		</PageLayout>

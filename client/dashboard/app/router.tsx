@@ -215,7 +215,7 @@ const siteSettingsPrimaryDataCenterRoute = createRoute( {
 } ).lazy( () =>
 	import( '../sites/settings-primary-data-center' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-primary-data-center' )( {
-			component: d.default,
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )
 	)
 );

@@ -12,7 +12,7 @@ import FormSelect from 'calypso/components/forms/form-select';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import { PanelCard, PanelCardHeading } from 'calypso/components/panel';
-import { useDataCenterOptions } from 'calypso/data/data-center/use-data-center-options';
+import { getDataCenterOptions } from 'calypso/data/data-center';
 import { getPHPVersions } from 'calypso/data/php-versions';
 import { useSelector } from 'calypso/state';
 import {
@@ -94,7 +94,7 @@ export default function ServerConfigurationForm( { disabled }: ServerConfigurati
 	const isStaticFile404Changed = selectedStaticFile404 && selectedStaticFile404 !== staticFile404;
 
 	const { recommendedValue, phpVersions } = getPHPVersions();
-	const dataCenterOptions = useDataCenterOptions();
+	const dataCenterOptions = getDataCenterOptions();
 
 	const wpVersionRef = useRef< HTMLLabelElement >( null );
 	const wpVersionDropdownRef = useRef< HTMLSelectElement >( null );
