@@ -22,8 +22,8 @@ export function InvitationEmailSent( {
 		mutation.mutate(
 			{ hash: confirmationHash },
 			{
-				onSuccess: ( { email_sent_to }: SiteTransferConfirmation ) => {
-					setNewOwnerEmail( email_sent_to );
+				onSuccess: ( { new_owner_email }: SiteTransferConfirmation ) => {
+					setNewOwnerEmail( new_owner_email );
 				},
 				onError: () => {
 					setHasError( true );

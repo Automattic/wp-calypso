@@ -191,5 +191,6 @@ export interface DefensiveModeSettingsUpdate {
 
 export interface SiteTransferConfirmation {
 	transfer: boolean;
-	email_sent_to: string;
+	email_sent: boolean;
+	new_owner_email: string;
 }

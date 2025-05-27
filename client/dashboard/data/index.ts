@@ -370,10 +370,13 @@ export const siteOwnerTransfer = async (
 ) => {
 	return wpcom.req.post(
 		{
-			path: `/sites/${ siteIdOrSlug }/site-owner-transfer?v2`,
+			path: `/sites/${ siteIdOrSlug }/site-owner-transfer?calypso_origin=${ window.location.origin }`,
 			apiNamespace: 'wpcom/v2',
 		},
-		data
+		{
+			context: 'dashboard_v2',
+			...data,
+		}
 	);
 };
 
