@@ -972,6 +972,7 @@ export class LoginForm extends Component {
 									disabled={ isFormDisabled }
 									tabIndex={ isPasswordHidden ? -1 : undefined /* not tabbable when hidden */ }
 									hasCoreStyles
+									isHidden={ isPasswordHidden }
 								/>
 
 								{ requestError && requestError.field === 'password' && (

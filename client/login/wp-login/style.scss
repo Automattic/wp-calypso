@@ -407,7 +407,7 @@ $image-height: 47px;
 		}
 
 		.login__form-userdata {
-			button:not(.login__form-change-username) {
+			button:not(.login__form-change-username, .form-password-input__toggle) {
 				min-width: 194px;
 				height: unset;
 				border: 0;
@@ -544,11 +544,6 @@ $image-height: 47px;
 		}
 
 		/* END - Note */
-	}
-
-	.form-password-input .form-password-input__toggle-visibility {
-		top: calc((44px - 24px) / 2);
-		/* height of input - height of toggle */
 	}
 
 	.two-factor-authentication__verification-code-form > p,
