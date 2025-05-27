@@ -1332,6 +1332,17 @@ $breakpoint-mobile: 660px;
 			transition: background-color 5000s ease-in-out 0s;
 		}
 
+		.form-password-input {
+			.form-text-input[type] {
+				padding-right: 40px;
+			}
+
+			.form-password-input__toggle-visibility {
+				top: 12px;
+				right: 16px;
+			}
+		}
+
 		.button.is-primary,
 		.login .button.is-primary,
 		.magic-login.is-white-login .magic-login__form-action .button.is-primary:not([disabled]) {
@@ -1436,6 +1447,10 @@ $breakpoint-mobile: 660px;
 				width: 100%;
 				text-align: left;
 			}
+		}
+
+		.login__form-forgot-password {
+			margin-top: unset;
 		}
 
 		.signup-form,
