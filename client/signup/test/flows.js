@@ -54,4 +54,60 @@ describe( 'Signup Flows Configuration', () => {
 			expect( destination ).toBe( '/home/test-site?celebrateLaunch=true' );
 		} );
 	} );
+
+	describe( 'filterDestination with checkout URLs', () => {
+		// Mock the required modules
+		beforeAll( () => {
+			// Mock getQueryArgs to return empty object
+			jest.doMock( 'calypso/lib/query-args', () => ( {
+				getQueryArgs: () => ( {} ),
+			} ) );
+
+			// Mock pathToUrl to return the path as-is
+			jest.doMock( 'calypso/lib/url', () => ( {
+				addQueryArgs: jest.requireActual( 'calypso/lib/url' ).addQueryArgs,
+				pathToUrl: ( path ) => `https://wordpress.com${ path }`,
+			} ) );
+		} );
+
+		test( 'should add celebrateLaunch=true to checkout back URL when flow is launch-site', () => {
+			// Import the actual filterDestination function
+			const flowsModule = require( 'calypso/signup/config/flows' );
+			const { filterDestination } = flowsModule.default;
+
+			const dependencies = {
+				siteSlug: 'test-site',
+				cartItem: 'premium_plan', // This will trigger checkout redirect
+			};
+			const destination = '/home/test-site';
+			const flowName = 'launch-site';
+			const localeSlug = 'en';
+
+			const result = filterDestination( destination, dependencies, flowName, localeSlug );
+
+			// The result should be a checkout URL with celebrateLaunch in the checkoutBackUrl
+			expect( result ).toContain( '/checkout/test-site' );
+			expect( result ).toContain( 'checkoutBackUrl=' );
+			expect( result ).toContain( 'celebrateLaunch%3Dtrue' ); // URL encoded celebrateLaunch=true
+		} );
+
+		test( 'should not add celebrateLaunch=true to non-launch-site flows', () => {
+			const flowsModule = require( 'calypso/signup/config/flows' );
+			const { filterDestination } = flowsModule.default;
+
+			const dependencies = {
+				siteSlug: 'test-site',
+				cartItem: 'premium_plan',
+			};
+			const destination = '/home/test-site';
+			const flowName = 'onboarding';
+			const localeSlug = 'en';
+
+			const result = filterDestination( destination, dependencies, flowName, localeSlug );
+
+			expect( result ).toContain( '/checkout/test-site' );
+			expect( result ).toContain( 'checkoutBackUrl=' );
+			expect( result ).not.toContain( 'celebrateLaunch%3Dtrue' );
+		} );
+	} );
 } );
