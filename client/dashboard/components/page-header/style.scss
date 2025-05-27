@@ -1,5 +1,10 @@
 @import "@wordpress/base-styles/variables";
 
+client-dashboard-components-page-header {
+	position: relative;
+	z-index: 1;
+}
+
 .client-dashboard-components-page-header__heading {
 	font-size: $font-size-2x-large;
 	line-height: $font-line-height-2x-large;

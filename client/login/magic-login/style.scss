@@ -868,3 +868,59 @@
 	margin: 0 auto;
 }
 /* stylelint-enable scales/font-weights */
+
+.card.magic-login__verify-code-form {
+	--magic-login-error-color: #cc1818;
+	padding: 0;
+	box-shadow: none;
+	border: none;
+}
+
+.magic-login__verify-code-field-container {
+	display: flex;
+	gap: 16px;
+	justify-content: space-between;
+	margin-top: 45px;
+	margin-bottom: 32px;
+
+	.form-text-input.magic-login__verify-code-character-field {
+		width: 61px;
+		height: 64px;
+		text-align: center;
+		padding: 0;
+		border: 1px solid var(--color-neutral-5, #dcdcdc);
+		border-radius: 4px;
+		@include heading-2x-large;
+
+		&:first-child {
+			margin-inline-start: 0;
+		}
+
+		&:last-child {
+			margin-inline-end: 0;
+		}
+
+		&:focus {
+			border: 2px solid var(--studio-jetpack-green-50, #008710);
+			box-shadow: none;
+		}
+	}
+
+}
+
+.magic-login__verify-code-form--error {
+	.magic-login__verify-code-field-container {
+		margin-bottom: 12px;
+
+		.form-text-input.magic-login__verify-code-character-field {
+			border-color: var(--magic-login-error-color);
+			background-color: color-mix(in srgb, var(--magic-login-error-color) 5%, var(--studio-white, #fff) 95%);
+		}
+	}
+
+	.magic-login__verify-code-error-message {
+		@include body-large;
+		color: var(--magic-login-error-color);
+		margin-bottom: 32px;
+	}
+}

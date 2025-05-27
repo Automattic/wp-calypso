@@ -7,6 +7,12 @@ module.exports = {
 					{
 						group: [
 							'calypso/*',
+							// Allowed: calypso/data/php-versions
+							'!calypso/data',
+							'calypso/data/*',
+							'!calypso/data/php-versions',
+							// Allowed: calypso/data/data-center
+							'!calypso/data/data-center',
 							// Allowed: calypso/lib/wp
 							'!calypso/lib',
 							'calypso/lib/*',

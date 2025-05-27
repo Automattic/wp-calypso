@@ -29,7 +29,7 @@ export default function WordPressVersionSettings( { siteSlug }: { siteSlug: stri
 	const { data: site } = useQuery( siteQuery( siteSlug ) );
 	const canUpdate = site && canUpdateWordPressVersion( site );
 
-	const { data: version } = useQuery( {
+	const { data: currentVersion } = useQuery( {
 		...siteWordPressVersionQuery( siteSlug ),
 		enabled: canUpdate,
 	} );
@@ -37,7 +37,7 @@ export default function WordPressVersionSettings( { siteSlug }: { siteSlug: stri
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
 	const [ formData, setFormData ] = useState< { version: string } >( {
-		version: version ?? '',
+		version: currentVersion ?? '',
 	} );
 
 	if ( ! site ) {
@@ -61,7 +61,7 @@ export default function WordPressVersionSettings( { siteSlug }: { siteSlug: stri
 		fields: [ 'version' ],
 	};
 
-	const isDirty = formData.version !== version;
+	const isDirty = formData.version !== currentVersion;
 	const { isPending } = mutation;
 
 	const handleSubmit = ( e: React.FormEvent ) => {
@@ -139,8 +139,7 @@ export default function WordPressVersionSettings( { siteSlug }: { siteSlug: stri
 	};
 
 	return (
-		<PageLayout size="small">
-			<SettingsPageHeader title="WordPress" />
+		<PageLayout size="small" header={ <SettingsPageHeader title="WordPress" /> }>
 			{ canUpdate ? renderForm() : renderNotice() }
 		</PageLayout>
 	);

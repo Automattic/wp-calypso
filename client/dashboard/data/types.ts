@@ -13,6 +13,8 @@ export interface User {
 	username: string;
 	display_name: string;
 	avatar_URL?: string;
+	language: string;
+	locale_variant: string;
 }
 
 export interface SiteDomain {
@@ -54,7 +56,7 @@ export interface SitePlan {
 }
 
 export interface Plan {
-	id: string;
+	id: string | null;
 	current_plan?: boolean;
 	expiry?: string;
 	subscribed_date?: string;
@@ -92,8 +94,10 @@ export interface Site {
 	is_wpcom_staging_site: boolean;
 	launch_status: string | boolean;
 	site_migration: {
-		migration_status: string;
-	} | null;
+		migration_status?: string;
+		in_progress: boolean;
+		is_complete: boolean;
+	};
 	site_owner: number;
 	jetpack: boolean;
 	jetpack_modules: string[] | null;
@@ -168,4 +172,8 @@ export interface UrlPerformanceInsights {
 	wpscan: {
 		status: string;
 	};
+}
+
+export interface PhpMyAdminToken {
+	token: string;
 }

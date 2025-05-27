@@ -1,9 +1,7 @@
-import { QueryClientProvider } from '@tanstack/react-query';
-import { RouterProvider } from '@tanstack/react-router';
 import { useEffect, useRef } from 'react';
 import { createRoot } from 'react-dom/client';
-import { persistPromise, queryClient } from 'calypso/dashboard/app/query-client';
-import { getRouter } from './router';
+import { persistPromise } from 'calypso/dashboard/app/query-client';
+import Layout from './layout';
 
 export default function DashboardBackportSiteSettingsRenderer() {
 	const rootInstanceRef = useRef< ReturnType< typeof createRoot > | null >( null );
@@ -14,17 +12,12 @@ export default function DashboardBackportSiteSettingsRenderer() {
 			return;
 		}
 
-		const router = getRouter();
 		if ( ! rootInstanceRef.current ) {
 			rootInstanceRef.current = createRoot( containerRef.current );
 		}
 
 		persistPromise.then( () => {
-			rootInstanceRef.current?.render(
-				<QueryClientProvider client={ queryClient }>
-					<RouterProvider router={ router } />
-				</QueryClientProvider>
-			);
+			rootInstanceRef.current?.render( <Layout /> );
 		} );
 
 		return () => {

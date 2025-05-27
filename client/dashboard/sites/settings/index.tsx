@@ -8,7 +8,11 @@ import { __ } from '@wordpress/i18n';
 import { siteQuery, siteSettingsQuery } from '../../app/queries';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import DatabaseSettingsSummary from '../settings-database/summary';
+import PHPSettingsSummary from '../settings-php/summary';
+import PrimaryDataCenterSettingsSummary from '../settings-primary-data-center/summary';
 import SiteVisibilitySettingsSummary from '../settings-site-visibility/summary';
+import StaticFile404SettingsSummary from '../settings-static-file-404/summary';
 import SubscriptionGiftingSettingsSummary from '../settings-subscription-gifting/summary';
 import WordPressSettingsSummary from '../settings-wordpress/summary';
 import DangerZone from './danger-zone';
@@ -34,7 +38,11 @@ export default function SiteSettings( { siteSlug }: { siteSlug: string } ) {
 			<Heading>{ __( 'Server' ) }</Heading>
 			<Card>
 				<VStack>
+					<DatabaseSettingsSummary site={ site } />
 					<WordPressSettingsSummary site={ site } />
+					<PHPSettingsSummary site={ site } />
+					<PrimaryDataCenterSettingsSummary site={ site } />
+					<StaticFile404SettingsSummary site={ site } />
 				</VStack>
 			</Card>
 			<SiteActions site={ site } />
