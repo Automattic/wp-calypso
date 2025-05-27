@@ -74,6 +74,8 @@ export default function SitePreview( {
 						// generated. Otherwise we will briefly load an iframe
 						// and trigger needless requests.
 						<iframe
+							sandbox="allow-scripts"
+							scrolling="no"
 							loading="lazy"
 							// @ts-expect-error For some reason there's no inert type.
 							inert="true"
