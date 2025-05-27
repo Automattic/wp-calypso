@@ -61,17 +61,7 @@ export function PrivacyForm( {
 			},
 			{
 				id: 'wpcom_discourage_search_engines',
-				Edit: ( { field, onChange, data, hideLabelFromVision } ) => (
-					<CheckboxControl
-						__nextHasNoMarginBottom
-						label={ hideLabelFromVision ? '' : field.label }
-						checked={ field.getValue( { item: data } ) }
-						onChange={ () => {
-							onChange( { [ field.id ]: ! field.getValue( { item: data } ) } );
-						} }
-						help={ field.description }
-					/>
-				),
+				Edit: 'checkbox',
 				label: __( 'Discourage search engines from indexing this site' ),
 				description: __(
 					'This does not block access to your site — it is up to search engines to honor your request.'
