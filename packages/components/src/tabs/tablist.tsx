@@ -6,7 +6,7 @@ import { forwardRef, useLayoutEffect, useState } from 'react';
 import { useTrackElementOffsetRect } from '../utils/element-rect';
 import { useAnimatedOffsetRect } from '../utils/hooks/use-animated-offset-rect';
 import { useTabsContext } from './context';
-import styles from './styles.module.scss';
+import styles from './style.module.scss';
 import { useTrackOverflow } from './use-track-overflow';
 import type { TabListProps } from './types';
 import type { ElementOffsetRect } from '../utils/element-rect';

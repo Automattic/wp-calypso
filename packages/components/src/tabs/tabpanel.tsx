@@ -3,7 +3,7 @@ import warning from '@wordpress/warning';
 import clsx from 'clsx';
 import { forwardRef } from 'react';
 import { useTabsContext } from './context';
-import styles from './styles.module.scss';
+import styles from './style.module.scss';
 import type { TabPanelProps } from './types';
 
 export const TabPanel = forwardRef<

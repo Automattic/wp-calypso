@@ -5,7 +5,7 @@ import clsx from 'clsx';
 import { forwardRef } from 'react';
 import { Icon } from '../icon';
 import { useTabsContext } from './context';
-import styles from './styles.module.scss';
+import styles from './style.module.scss';
 import type { TabProps } from './types';
 
 export const Tab = forwardRef<
