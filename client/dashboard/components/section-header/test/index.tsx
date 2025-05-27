@@ -39,15 +39,11 @@ describe( 'SectionHeader', () => {
 		);
 		expect( screen.getByTestId( 'decoration' ) ).toBeVisible();
 	} );
-	test( 'should render with default level 3 heading', () => {
+	test( 'should render with default level 2 heading', () => {
 		render( <SectionHeader title="Test Title" /> );
-		expect( screen.getByRole( 'heading', { name: 'Test Title' } ).tagName ).toBe( 'H3' );
-	} );
-	test( 'should render with level 2 heading', () => {
-		render( <SectionHeader title="Test Title" level={ 2 } /> );
 		expect( screen.getByRole( 'heading', { name: 'Test Title' } ).tagName ).toBe( 'H2' );
 	} );
-	test( 'should render with level 3 heading when explicitly set', () => {
+	test( 'should render with different heading level when explicitly set', () => {
 		render( <SectionHeader title="Test Title" level={ 3 } /> );
 		expect( screen.getByRole( 'heading', { name: 'Test Title' } ).tagName ).toBe( 'H3' );
 	} );
