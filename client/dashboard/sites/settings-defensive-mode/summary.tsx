@@ -15,9 +15,16 @@ export default function DefensiveModeSettingsSummary( { site }: { site: Site } )
 
 	let badge;
 	if ( data ) {
-		badge = {
-			text: data.enabled ? __( 'Enabled' ) : __( 'Disabled' ),
-		};
+		if ( data.enabled ) {
+			badge = {
+				text: __( 'Enabled' ),
+				intent: 'info' as const,
+			};
+		} else {
+			badge = {
+				text: __( 'Disabled' ),
+			};
+		}
 	} else {
 		badge = { text: __( 'Managed' ) };
 	}
