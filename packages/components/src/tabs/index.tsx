@@ -1,20 +1,24 @@
-import { privateApis } from '@wordpress/components';
-import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
-import type {
-	TabsProps,
-	TabsContextProps,
-	TabListProps,
-	TabProps,
-	TabPanelProps,
-} from '@wordpress/components/src/tabs/types';
+/**
+ * Forked from `@wordpress/components`
+ * - Removed Tabs.Context from Storybook sub-components.
+ */
 
-// TODO: When the component is publicly available, we should remove the private API usage and
-// import it directly from @wordpress/components as it will cause a build error.
-const { unlock } = __dangerousOptInToUnstableAPIsOnlyForCoreModules(
-	'I acknowledge private features are not for use in themes or plugins and doing so will break in the next version of WordPress.',
-	'@wordpress/components'
-);
-const { Tabs: CoreTabs } = unlock( privateApis );
+import * as Ariakit from '@ariakit/react';
+import { isRTL } from '@wordpress/i18n';
+import { useEffect, useMemo, useId } from 'react';
+import { TabsContext } from './context';
+import { Tab } from './tab';
+import { TabList } from './tablist';
+import { TabPanel } from './tabpanel';
+import type { TabsProps } from './types';
+
+function externalToInternalTabId( externalId: string | undefined | null, instanceId: string ) {
+	return externalId && `${ instanceId }-${ externalId }`;
+}
+
+function internalToExternalTabId( internalId: string | undefined | null, instanceId: string ) {
+	return typeof internalId === 'string' ? internalId.replace( `${ instanceId }-`, '' ) : internalId;
+}
 
 /**
  * Tabs is a collection of React components that combine to render
@@ -24,41 +28,96 @@ const { Tabs: CoreTabs } = unlock( privateApis );
  * It has two sections: a list of tabs, and the view to show when a tab is chosen.
  *
  * `Tabs` itself is a wrapper component and context provider.
- * It is responsible for managing the state of the tabs, and rendering one instance of the `Tabs.TabList` component and one or more instances of the `Tab.TabPanel` component.
+ * It is responsible for managing the state of the tabs, and rendering one instance
+ * of the `Tabs.TabList` component and one or more instances of the `Tab.TabPanel`
+ * component.
  */
-export const Tabs = Object.assign( CoreTabs as ( props: TabsProps ) => React.JSX.Element, {
-	/**
-	 * Renders a single tab.
-	 *
-	 * The currently active tab receives default styling that can be
-	 * overridden with CSS targeting `[aria-selected="true"]`.
-	 */
-	Tab: Object.assign( CoreTabs.Tab, {
-		displayName: 'Tabs.Tab',
-	} ) as React.ForwardRefExoticComponent<
-		TabProps &
-			Omit< React.HTMLAttributes< HTMLButtonElement >, 'id' > &
-			React.RefAttributes< HTMLButtonElement >
-	>,
-	/**
-	 * A wrapper component for the `Tab` components.
-	 *
-	 * It is responsible for rendering the list of tabs.
-	 */
-	TabList: Object.assign( CoreTabs.TabList, {
-		displayName: 'Tabs.TabList',
-	} ) as React.ForwardRefExoticComponent<
-		TabListProps & React.HTMLAttributes< HTMLDivElement > & React.RefAttributes< HTMLDivElement >
-	>,
-	/**
-	 * Renders the content to display for a single tab once that tab is selected.
-	 */
-	TabPanel: Object.assign( CoreTabs.TabPanel, {
-		displayName: 'Tabs.TabPanel',
-	} ) as React.ForwardRefExoticComponent<
-		TabPanelProps & React.HTMLAttributes< HTMLDivElement > & React.RefAttributes< HTMLDivElement >
-	>,
-	Context: Object.assign( CoreTabs.Context, {
-		displayName: 'Tabs.Context',
-	} ) as React.Context< TabsContextProps >,
-} );
+export const Tabs = Object.assign(
+	function Tabs( {
+		selectOnMove = true,
+		defaultTabId,
+		orientation = 'horizontal',
+		onSelect,
+		children,
+		selectedTabId,
+		activeTabId,
+		defaultActiveTabId,
+		onActiveTabIdChange,
+	}: TabsProps ) {
+		const instanceId = useId();
+		const store = Ariakit.useTabStore( {
+			selectOnMove,
+			orientation,
+			defaultSelectedId: externalToInternalTabId( defaultTabId, instanceId ),
+			setSelectedId: ( newSelectedId ) => {
+				onSelect?.( internalToExternalTabId( newSelectedId, instanceId ) );
+			},
+			selectedId: externalToInternalTabId( selectedTabId, instanceId ),
+			defaultActiveId: externalToInternalTabId( defaultActiveTabId, instanceId ),
+			setActiveId: ( newActiveId ) => {
+				onActiveTabIdChange?.( internalToExternalTabId( newActiveId, instanceId ) );
+			},
+			activeId: externalToInternalTabId( activeTabId, instanceId ),
+			rtl: isRTL(),
+		} );
+
+		const { items, activeId } = Ariakit.useStoreState( store );
+		const { setActiveId } = store;
+
+		useEffect( () => {
+			requestAnimationFrame( () => {
+				const focusedElement = items?.[ 0 ]?.element?.ownerDocument.activeElement;
+
+				if ( ! focusedElement || ! items.some( ( item ) => focusedElement === item.element ) ) {
+					return; // Return early if no tabs are focused.
+				}
+
+				// If, after ariakit re-computes the active tab, that tab doesn't match
+				// the currently focused tab, then we force an update to ariakit to avoid
+				// any mismatches, especially when navigating to previous/next tab with
+				// arrow keys.
+				if ( activeId !== focusedElement.id ) {
+					setActiveId( focusedElement.id );
+				}
+			} );
+		}, [ activeId, items, setActiveId ] );
+
+		const contextValue = useMemo(
+			() => ( {
+				store,
+				instanceId,
+			} ),
+			[ store, instanceId ]
+		);
+
+		return <TabsContext.Provider value={ contextValue }>{ children }</TabsContext.Provider>;
+	},
+	{
+		/**
+		 * Renders a single tab.
+		 *
+		 * The currently active tab receives default styling that can be
+		 * overridden with CSS targeting `[aria-selected="true"]`.
+		 */
+		Tab: Object.assign( Tab, {
+			displayName: 'Tabs.Tab',
+		} ),
+		/**
+		 * A wrapper component for the `Tab` components.
+		 *
+		 * It is responsible for rendering the list of tabs.
+		 */
+		TabList: Object.assign( TabList, {
+			displayName: 'Tabs.TabList',
+		} ),
+		/**
+		 * Renders the content to display for a single tab once that tab is selected.
+		 */
+		TabPanel: Object.assign( TabPanel, {
+			displayName: 'Tabs.TabPanel',
+		} ),
+		Context: Object.assign( TabsContext, {
+			displayName: 'Tabs.Context',
+		} ),
+	}
+);
