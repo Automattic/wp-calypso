@@ -1,7 +1,6 @@
-import { useCallback, useEffect, useRef, useState } from '@wordpress/element';
+import { useCallback, useRef, useState } from '@wordpress/element';
 import { createA2AClient } from '../client/index';
 import { createTextMessage } from '../utils/index';
-import { defaultDispatcher } from '../utils/dispatcher';
 import type {
 	A2AClient,
 	A2AClientConfig,
@@ -66,7 +65,6 @@ export function useAgent( config: UseAgentConfig ): UseAgentReturn {
 		try {
 			clientRef.current = createA2AClient( {
 				...config,
-				dispatcher: defaultDispatcher, // Always use browser dispatcher
 			} );
 		} catch ( error ) {
 			setInitError(

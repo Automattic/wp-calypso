@@ -23,6 +23,7 @@ import {
 } from '../utils/requests';
 import { parseSSEStream, streamToTask } from '../streaming/index';
 import { formatObject, logger } from '../utils/logger';
+import { defaultDispatcher } from '../utils/dispatcher';
 
 /**
  * Default timeout for requests (30 seconds)
@@ -42,7 +43,7 @@ export function createA2AClient( config: A2AClientConfig ): A2AClient {
 		proxy,
 		toolProvider,
 		contextProvider,
-		dispatcher,
+		dispatcher = defaultDispatcher,
 	} = config;
 
 	// Create request configuration

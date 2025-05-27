@@ -80,6 +80,17 @@ describe( '@automattic/agenttic-client', () => {
 
 			expect( client ).toBeDefined();
 		} );
+
+		it( 'should create a client without dispatcher (defaults to browser dispatcher)', () => {
+			const client = createA2AClient( {
+				agentUrl: 'https://example.com/agent',
+				authProvider: async () => ( { Authorization: 'Bearer test' } ),
+			} );
+
+			expect( client ).toBeDefined();
+			expect( typeof client.sendMessage ).toBe( 'function' );
+			expect( typeof client.sendMessageStream ).toBe( 'function' );
+		} );
 	} );
 
 	describe( 'Error codes', () => {
