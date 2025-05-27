@@ -99,7 +99,6 @@
 		"@testing-library/user-event": "^14.6.1",
 		"@types/canvas-confetti": "^1.6.0",
 		"@types/node": "^22.7.5",
-		"date-fns-tz": "^3.2.0",
 		"postcss": "^8.5.3",
 		"storybook": "^8.6.12",
 		"typescript": "^5.8.3",

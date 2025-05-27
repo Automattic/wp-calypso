@@ -15,9 +15,9 @@ import {
 	addMonths,
 	subMonths,
 	subYears,
+	addHours,
 } from 'date-fns';
 import { ar } from 'date-fns/locale';
-import { fromZonedTime } from 'date-fns-tz';
 import { useState, default as React } from 'react';
 import '@testing-library/jest-dom';
 import { DateCalendar, TZDate } from '..';
@@ -723,15 +723,22 @@ describe( 'DateCalendar', () => {
 
 			render( <DateCalendar timeZone="Asia/Tokyo" onSelect={ onSelect } /> );
 
-			// For someone in Tokyo, 20:00 UTC is the next day.
+			// For someone in Tokyo, the current time simulated in the test
+			// (ie. 20:00 UTC) is the next day.
 			expect( getDateButton( tomorrow ) ).toHaveAccessibleName( /today/i );
 
 			// Select tomorrow's button (which is today in Tokyo)
 			const tomorrowButton = getDateButton( tomorrow );
 			await user.click( tomorrowButton );
+
+			const tomorrowFromTokyoTimezone = addHours(
+				tomorrow,
+				new TZDate( tomorrow, 'Asia/Tokyo' ).getTimezoneOffset() / 60
+			);
+
 			expect( onSelect ).toHaveBeenCalledWith(
-				fromZonedTime( tomorrow, 'Asia/Tokyo' ),
-				fromZonedTime( tomorrow, 'Asia/Tokyo' ),
+				tomorrowFromTokyoTimezone,
+				tomorrowFromTokyoTimezone,
 				expect.objectContaining( { today: true } ),
 				expect.objectContaining( { type: 'click', target: tomorrowButton } )
 			);

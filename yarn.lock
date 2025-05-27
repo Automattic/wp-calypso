@@ -896,7 +896,6 @@ __metadata:
     clsx: "npm:^2.1.1"
     colord: "npm:2.9.3"
     date-fns: "npm:^4.1.0"
-    date-fns-tz: "npm:^3.2.0"
     debug: "npm:^4.4.1"
     gridicons: "npm:^3.4.2"
     i18n-calypso: "workspace:^"
@@ -17162,15 +17161,6 @@ __metadata:
   version: 4.1.0-0
   resolution: "date-fns-jalali@npm:4.1.0-0"
   checksum: f9ad98d9f7e8e5abe0d070dc806b0c8baded2b1208626c42e92cbd2605b5171f5714d6b79b20cc2666267d821699244c9d0b5e93274106cf57d6232da77596ed
-  languageName: node
-  linkType: hard
-
-"date-fns-tz@npm:^3.2.0":
-  version: 3.2.0
-  resolution: "date-fns-tz@npm:3.2.0"
-  peerDependencies:
-    date-fns: ^3.0.0 || ^4.0.0
-  checksum: 3f43300a4335d59f3515dc5196c66b4b56ef2af129eb82e4445ce0983e8ef31a5d038bc0406d669946bbbcf52ed953527527aa28b4a810995d6631a54655abcc
   languageName: node
   linkType: hard
 
