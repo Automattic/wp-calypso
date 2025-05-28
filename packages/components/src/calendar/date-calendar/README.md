@@ -107,13 +107,6 @@ Specify which days are disabled. Using `true` will disable all dates. See the [M
 
 Disable the navigation buttons.
 
-### `modifiers`
-
-- Type: `Record<string, Matcher | Matcher[] | undefined> | undefined`
-- Required: No
-
-Add modifiers to the matching days. See the [Matcher Types](#matcher-types) section for more details.
-
 ### `labels`
 
 - Type: `object`
