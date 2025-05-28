@@ -50,7 +50,7 @@ jobs:
           URL=$(echo "$OUT" | grep -oE 'https://[a-z0-9-]+-preview\.a8cds\.workers\.dev/?')
 
           # Expose it to later steps
-          echo 'url=$URL' >> "$GITHUB_OUTPUT"
+          echo "url=$URL" >> "$GITHUB_OUTPUT"
 
       # 7. Try to find an existing comment with our marker
       - name: Find preview comment
