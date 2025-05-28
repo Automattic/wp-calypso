@@ -1,5 +1,6 @@
 import type { Task, TaskUpdate } from '../types/index';
 import { logger } from './logger';
+import { extractTextFromMessage } from './index';
 
 /**
  * Parse a stream chunk from a server-sent events stream.
@@ -111,6 +112,12 @@ export async function* parseSSEStream(
 								event.result.status.state === 'completed' ||
 								event.result.status.state === 'failed' ||
 								event.result.status.state === 'canceled',
+							text: extractTextFromMessage(
+								event.result.status?.message || {
+									role: 'agent',
+									parts: [],
+								}
+							),
 						};
 
 						yield update;

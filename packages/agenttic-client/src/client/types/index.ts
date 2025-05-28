@@ -193,10 +193,11 @@ export interface TaskUpdate {
 	status: TaskStatus;
 	final?: boolean;
 	artifact?: Artifact;
+	text: string; // Extracted text from status.message
 }
 
 export interface Client {
-	sendMessage( params: SendMessageParams ): Promise< Task >;
+	sendMessage( params: SendMessageParams ): Promise< TaskUpdate >;
 	sendMessageStream( params: SendMessageParams ): AsyncIterable< TaskUpdate >;
 	getTask( taskId: string ): Promise< Task >;
 	cancelTask( taskId: string ): Promise< void >;

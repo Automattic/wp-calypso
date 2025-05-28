@@ -96,12 +96,29 @@ function ChatComponent() {
 				'Analyze the selected elements and suggest improvements'
 			) ) {
 				console.log( 'Update:', update );
+				// Text is automatically extracted and available
+				console.log( 'Agent response:', update.text );
 				if ( update.final ) {
 					console.log( 'Final response received' );
 				}
 			}
 		} catch ( error ) {
 			console.error( 'Streaming error:', error );
+		}
+	};
+
+	const handleRegularMessage = async () => {
+		try {
+			const response = await sendMessage(
+				'Analyze the selected elements and suggest improvements'
+			);
+			console.log( 'Complete response:', response );
+			// Text is automatically extracted and available
+			console.log( 'Agent response:', response.text );
+			// response contains the full agent response including any tool results
+			// You can update your UI with the complete response here
+		} catch ( error ) {
+			console.error( 'Message error:', error );
 		}
 	};
 }

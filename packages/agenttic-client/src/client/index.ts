@@ -12,6 +12,7 @@ import {
 	prepareRequest,
 	type RequestConfig,
 } from './utils/requests';
+import { extractTextFromMessage } from './utils/index';
 import { defaultDispatcher } from './utils/dispatcher';
 
 /**
@@ -73,7 +74,7 @@ export function createClient( config: ClientConfig ): Client {
 	};
 
 	return {
-		async sendMessage( params: SendMessageParams ): Promise< Task > {
+		async sendMessage( params: SendMessageParams ): Promise< TaskUpdate > {
 			// Prepare the request
 			const preparedRequest = await prepareRequest(
 				params,
@@ -90,7 +91,18 @@ export function createClient( config: ClientConfig ): Client {
 			// Process any tool calls in the response asynchronously
 			await processTaskToolCalls( task, toolProvider );
 
-			return task;
+			return {
+				id: task.id,
+				status: task.status,
+				final:
+					task.status?.state === 'completed' ||
+					task.status?.state === 'failed' ||
+					task.status?.state === 'canceled',
+				artifact: task.artifacts?.[ 0 ],
+				text: extractTextFromMessage(
+					task.status?.message || { role: 'agent', parts: [] }
+				),
+			};
 		},
 
 		async *sendMessageStream(
@@ -126,7 +138,15 @@ export function createClient( config: ClientConfig ): Client {
 					);
 				}
 
-				yield update;
+				yield {
+					id: update.id,
+					status: update.status,
+					final: update.final,
+					artifact: update.artifact,
+					text: extractTextFromMessage(
+						update.status?.message || { role: 'agent', parts: [] }
+					),
+				};
 			}
 		},
 
@@ -150,12 +170,15 @@ export function createClient( config: ClientConfig ): Client {
 export async function sendMessageAndWait(
 	client: Client,
 	params: SendMessageParams
-): Promise< Task > {
+): Promise< TaskUpdate > {
 	for await ( const update of client.sendMessageStream( params ) ) {
 		if ( update.final ) {
 			return {
 				id: update.id,
 				status: update.status,
+				final: update.final,
+				artifact: update.artifact,
+				text: update.text,
 			};
 		}
 	}

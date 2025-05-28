@@ -1,8 +1,5 @@
 import { createClient } from '../client/index';
-import {
-	createTextMessage,
-	extractTextFromMessage,
-} from '../client/utils/index';
+import { createTextMessage } from '../client/utils/index';
 import { createEnvAuthProvider } from './auth';
 import { createExampleTools } from './tools';
 import { createCLIContextProvider } from './context';
@@ -95,32 +92,25 @@ export function createProviders(
 				}
 
 				// Extract and display the agent's response to the tool result
-				if ( agentResponse.status.message ) {
-					const responseText = extractTextFromMessage(
-						agentResponse.status.message
-					);
-					if ( responseText ) {
-						cliLog.info( `🤖 Agent response to tool result:` );
-						cliLog.agent( responseText );
-					} else {
-						cliLog.system(
-							`🔍 Agent responded but no text extracted from message parts`
-						);
-						if (
-							options.verbose &&
-							agentResponse.status.message.parts
-						) {
-							cliLog.system(
-								`🔍 Message parts: ${ JSON.stringify(
-									agentResponse.status.message.parts,
-									null,
-									2
-								) }`
-							);
-						}
-					}
+				if ( agentResponse.text ) {
+					cliLog.info( `🤖 Agent response to tool result:` );
+					cliLog.agent( agentResponse.text );
 				} else {
-					cliLog.system( `🔍 Agent response has no message` );
+					cliLog.system(
+						`🔍 Agent responded but no text extracted from message parts`
+					);
+					if (
+						options.verbose &&
+						agentResponse.status.message?.parts
+					) {
+						cliLog.system(
+							`🔍 Message parts: ${ JSON.stringify(
+								agentResponse.status.message.parts,
+								null,
+								2
+							) }`
+						);
+					}
 				}
 			} catch ( error ) {
 				cliLog.error(
@@ -248,12 +238,9 @@ export async function handleStreamingMessage(
 		message: createTextMessage( message, conversationHistory ),
 		sessionId,
 	} ) ) {
-		if ( update.status.message ) {
-			const text = extractTextFromMessage( update.status.message );
-			if ( text ) {
-				process.stdout.write( chalk.blue( text ) );
-				hasContent = true;
-			}
+		if ( update.text ) {
+			process.stdout.write( chalk.blue( update.text ) );
+			hasContent = true;
 		}
 
 		if ( update.final ) {
@@ -295,9 +282,7 @@ export async function handleNonStreamingMessage(
 		);
 	}
 
-	const responseText = task.status.message
-		? extractTextFromMessage( task.status.message )
-		: '';
+	const responseText = task.text;
 
 	if ( options.verbose ) {
 		cliLog.system( `🔍 Extracted text: "${ responseText }"` );
