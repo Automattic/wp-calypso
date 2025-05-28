@@ -92,13 +92,7 @@ export function createClient( config: ClientConfig ): Client {
 			await processTaskToolCalls( task, toolProvider );
 
 			return {
-				id: task.id,
-				status: task.status,
-				final:
-					task.status?.state === 'completed' ||
-					task.status?.state === 'failed' ||
-					task.status?.state === 'canceled',
-				artifact: task.artifacts?.[ 0 ],
+				...task,
 				text: extractTextFromMessage(
 					task.status?.message || { role: 'agent', parts: [] }
 				),
@@ -138,13 +132,7 @@ export function createClient( config: ClientConfig ): Client {
 					);
 				}
 
-				yield {
-					id: update.id,
-					status: update.status,
-					final: update.final,
-					artifact: update.artifact,
-					text: update.text,
-				};
+				yield update;
 			}
 		},
 
