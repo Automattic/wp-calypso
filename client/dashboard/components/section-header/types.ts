@@ -24,7 +24,14 @@ export interface SectionHeaderProps {
 	 * Defines heading level and affects the appearance of the heading text.
 	 * @default 2
 	 */
-	level?: 1 | 2 | 3;
+	level?: 2 | 3;
+	/**
+	 * Defines whether the section header is used as a page header.
+	 * If true, it will use level 1 for the heading, so there is no
+	 * need to set the level prop.
+	 * @default false
+	 */
+	isPageHeader?: boolean;
 	/**
 	 * Optional content to be placed above the other elements of the component.
 	 */

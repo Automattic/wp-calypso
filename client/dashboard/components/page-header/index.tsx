@@ -11,5 +11,5 @@ import type { PageHeaderProps } from './types';
  * semantic clarity.
  */
 export const PageHeader = ( { breadcrumbs, ...rest }: PageHeaderProps ) => {
-	return <SectionHeader level={ 1 } prefix={ breadcrumbs } { ...rest } />;
+	return <SectionHeader prefix={ breadcrumbs } { ...rest } isPageHeader />;
 };

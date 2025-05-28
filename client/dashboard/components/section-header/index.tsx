@@ -3,6 +3,7 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
 } from '@wordpress/components';
+import clsx from 'clsx';
 import type { SectionHeaderProps } from './types';
 
 import './style.scss';
@@ -19,11 +20,18 @@ export const SectionHeader = ( {
 	actions,
 	decoration,
 	level = 2,
+	isPageHeader = false,
 	prefix,
 }: SectionHeaderProps ) => {
-	const HeadingTag = `h${ level }` as keyof JSX.IntrinsicElements;
+	const _level = isPageHeader ? 1 : level;
+	const HeadingTag = `h${ _level }` as keyof JSX.IntrinsicElements;
 	return (
-		<VStack spacing={ 2 } className={ `dashboard-section-header is-level-${ level }` }>
+		<VStack
+			spacing={ 2 }
+			className={ clsx( 'dashboard-section-header', {
+				'is-page-header': isPageHeader,
+			} ) }
+		>
 			{ prefix && <div className="dashboard-section-header__prefix">{ prefix }</div> }
 			<HStack
 				spacing={ 4 }
@@ -35,7 +43,9 @@ export const SectionHeader = ( {
 					<span className="dashboard-section-header__decoration">{ decoration }</span>
 				) }
 				<HStack spacing={ 3 } justify="space-between" alignment="flex-start">
-					<HeadingTag className="dashboard-section-header__heading">{ title }</HeadingTag>
+					<HeadingTag className={ `dashboard-section-header__heading is-level-${ _level }` }>
+						{ title }
+					</HeadingTag>
 					{ /* The wrapper is always needed for view transitions. */ }
 					<HStack
 						spacing={ 2 }
