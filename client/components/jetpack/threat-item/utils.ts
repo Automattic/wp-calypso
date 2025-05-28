@@ -140,6 +140,13 @@ export const getThreatVulnerability = ( threat: Threat ): string | TranslateResu
 			return translate( 'Vulnerability found in a theme' );
 
 		case 'database':
+			if ( threat.signature !== undefined ) {
+				return translate( 'Thread found: %(signature)s', {
+					args: {
+						signature: threat.signature,
+					},
+				} );
+			}
 			if ( threat.table !== undefined ) {
 				return translate( 'The database table %(table)s contains malicious code', {
 					args: {
