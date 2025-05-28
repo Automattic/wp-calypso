@@ -56,7 +56,7 @@ export interface SitePlan {
 }
 
 export interface Plan {
-	id: string;
+	id: string | null;
 	current_plan?: boolean;
 	expiry?: string;
 	subscribed_date?: string;
@@ -176,4 +176,14 @@ export interface UrlPerformanceInsights {
 
 export interface PhpMyAdminToken {
 	token: string;
+}
+
+export interface DefensiveModeSettings {
+	enabled: boolean;
+	enabled_by_a11n: boolean;
+	enabled_until: number;
+}
+export interface DefensiveModeSettingsUpdate {
+	active: boolean;
+	ttl?: number;
 }

@@ -6,6 +6,7 @@ import {
 	createLazyRoute,
 } from '@tanstack/react-router';
 import { fetchTwoStep } from '../data';
+import { canUpdateDefensiveMode } from '../sites/settings-defensive-mode';
 import { canUpdatePHPVersion } from '../sites/settings-php/utils';
 import { canGetPrimaryDataCenter } from '../sites/settings-primary-data-center';
 import { canSetStaticFile404Handling } from '../sites/settings-static-file-404';
@@ -25,6 +26,7 @@ import {
 	siteWordPressVersionQuery,
 	sitePHPVersionQuery,
 	sitePrimaryDataCenterQuery,
+	siteDefensiveModeQuery,
 } from './queries';
 import { queryClient } from './query-client';
 import Root from './root';
@@ -84,9 +86,11 @@ const siteRoute = createRoute( {
 const siteOverviewRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: '/',
-	loader: ( { params: { siteSlug } } ) =>
+	loader: ( { params: { siteSlug }, preload } ) =>
 		Promise.all( [
-			queryClient.ensureQueryData( siteCurrentPlanQuery( siteSlug ) ),
+			// The current plan is nice to have preloaded, but not blocking for
+			// navigation.
+			preload ? queryClient.ensureQueryData( siteCurrentPlanQuery( siteSlug ) ) : undefined,
 			queryClient.ensureQueryData( siteEngagementStatsQuery( siteSlug ) ),
 		] ),
 } ).lazy( () =>
@@ -232,6 +236,23 @@ const siteSettingsStaticFile404Route = createRoute( {
 } ).lazy( () =>
 	import( '../sites/settings-static-file-404' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-static-file-404' )( {
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+		} )
+	)
+);
+
+const siteSettingsDefensiveModeRoute = createRoute( {
+	getParentRoute: () => siteRoute,
+	path: 'settings/defensive-mode',
+	loader: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteQuery( siteSlug ) );
+		if ( canUpdateDefensiveMode( site ) ) {
+			await queryClient.ensureQueryData( siteDefensiveModeQuery( siteSlug ) );
+		}
+	},
+} ).lazy( () =>
+	import( '../sites/settings-defensive-mode' ).then( ( d ) =>
+		createLazyRoute( 'site-settings-defensive-mode' )( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )
 	)
@@ -418,6 +439,7 @@ const createRouteTree = ( config: AppConfig ) => {
 				siteSettingsPHPRoute,
 				siteSettingsPrimaryDataCenterRoute,
 				siteSettingsStaticFile404Route,
+				siteSettingsDefensiveModeRoute,
 				siteSettingsTransferSiteRoute,
 			] )
 		);
