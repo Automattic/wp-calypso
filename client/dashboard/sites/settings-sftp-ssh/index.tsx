@@ -34,7 +34,9 @@ export default function SftpSshSettings( { siteSlug }: { siteSlug: string } ) {
 				) : (
 					<EnableSftpCard siteSlug={ site.slug } canUseSsh={ canUseSsh( site ) } />
 				) }
-				{ canUseSsh( site ) && <SshCard sshEnabled={ sshAccessStatus?.settings === 'ssh' } /> }
+				{ canUseSsh( site ) && (
+					<SshCard siteSlug={ site.slug } sshEnabled={ sshAccessStatus?.settings === 'ssh' } />
+				) }
 			</VStack>
 		</PageLayout>
 	);

@@ -46,7 +46,10 @@ import {
 	fetchSshAccessStatus,
 	enableSshAccess,
 	disableSshAccess,
-	fetchSshKeys,
+	fetchSiteSshKeys,
+	fetchProfileSshKeys,
+	attachSiteSshKey,
+	detachSiteSshKey,
 } from '../data';
 import { SITE_FIELDS, SITE_OPTIONS } from '../data/constants';
 import { queryClient } from './query-client';
@@ -186,6 +189,18 @@ export function profileMutation() {
 			queryClient.setQueryData( [ 'profile' ], ( oldData: Profile | undefined ) =>
 				oldData ? { ...oldData, ...newData } : newData
 			);
+		},
+	};
+}
+
+export function profileSshKeysQuery() {
+	return {
+		queryKey: [ 'profile', 'ssh-keys' ],
+		queryFn: () => {
+			return fetchProfileSshKeys();
+		},
+		meta: {
+			persist: false,
 		},
 	};
 }
@@ -476,7 +491,25 @@ export function siteSshKeysQuery( siteId: string ) {
 	return {
 		queryKey: [ 'site', siteId, 'ssh-keys' ],
 		queryFn: () => {
-			return fetchSshKeys( siteId );
+			return fetchSiteSshKeys( siteId );
+		},
+	};
+}
+
+export function siteSshKeysAttachMutation( siteId: string ) {
+	return {
+		mutationFn: ( name: string ) => attachSiteSshKey( siteId, name ),
+		onSuccess: () => {
+			queryClient.invalidateQueries( { queryKey: [ 'site', siteId, 'ssh-keys' ] } );
+		},
+	};
+}
+
+export function siteSshKeysDetachMutation( siteId: string ) {
+	return {
+		mutationFn: ( userLogin: string, name: string ) => detachSiteSshKey( siteId, userLogin, name ),
+		onSuccess: () => {
+			queryClient.invalidateQueries( { queryKey: [ 'site', siteId, 'ssh-keys' ] } );
 		},
 	};
 }

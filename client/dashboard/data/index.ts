@@ -25,7 +25,8 @@ import type {
 	SiteTransferConfirmation,
 	SftpUser,
 	SshAccessStatus,
-	SshKey,
+	SiteSshKey,
+	ProfileSshKey,
 } from './types';
 import type { DataCenterOption } from 'calypso/data/data-center/types';
 
@@ -41,6 +42,13 @@ export const updateProfile = async ( data: Partial< Profile > ) => {
 		}
 	}
 	return await wpcom.req.post( '/me/settings', data );
+};
+
+export const fetchProfileSshKeys = async (): Promise< ProfileSshKey[] > => {
+	return wpcom.req.get( {
+		path: '/me/ssh-keys',
+		apiNamespace: 'wpcom/v2',
+	} );
 };
 
 const JOINED_SITE_FIELDS = SITE_FIELDS.join( ',' );
@@ -640,6 +648,13 @@ export const fetchSiteResetStatus = async ( siteIdOrSlug: string ): Promise< Sit
 	} );
 };
 
+export const launchSite = async ( siteId: string ): Promise< void > => {
+	return wpcom.req.post( {
+		path: `/sites/${ siteId }/launch`,
+		apiNamespace: 'wpcom/v2',
+	} );
+};
+
 export const fetchSftpUsers = async ( siteIdOrSlug: string ): Promise< string[] > => {
 	return wpcom.req.get( {
 		path: `/sites/${ siteIdOrSlug }/hosting/ssh-users`,
@@ -695,16 +710,27 @@ export const disableSshAccess = async ( siteIdOrSlug: string ) => {
 	);
 };
 
-export const fetchSshKeys = async ( siteIdOrSlug: string ): Promise< SshKey[] > => {
+export const fetchSiteSshKeys = async ( siteIdOrSlug: string ): Promise< SiteSshKey[] > => {
 	return wpcom.req.get( {
 		path: `/sites/${ siteIdOrSlug }/hosting/ssh-keys`,
 		apiNamespace: 'wpcom/v2',
 	} );
 };
 
-export const launchSite = async ( siteId: string ): Promise< void > => {
-	return wpcom.req.post( {
-		path: `/sites/${ siteId }/launch`,
+export const attachSiteSshKey = async ( siteIdOrSlug: string, name: string ) => {
+	return wpcom.req.post(
+		{
+			path: `/sites/${ siteIdOrSlug }/hosting/ssh-keys`,
+			apiNamespace: 'wpcom/v2',
+		},
+		{ name }
+	);
+};
+
+export const detachSiteSshKey = async ( siteIdOrSlug: string, userLogin: string, name: string ) => {
+	return wpcom.req.get( {
+		path: `/sites/${ siteIdOrSlug }/hosting/ssh-keys/${ userLogin }/${ name }`,
 		apiNamespace: 'wpcom/v2',
+		method: 'DELETE',
 	} );
 };
