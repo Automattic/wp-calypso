@@ -45,6 +45,8 @@ Stepper steps should be a lot like native form inputs. They may receive some pro
 1. They should not make narrative decisions (go back, go next, exit flow, etc..)
 2. They should not communicate with other steps (e.g. via query params).
 3. **They should not have side effects (e.g. persisting stuff in local storage).**
+4. They should not know in which flow they are being rendered, nor refer directly to any other steps.
+
 
 They should **only submit** to the flow, and the flow should do all the thinking, persisting, and the navigation.
 
@@ -66,7 +68,12 @@ In general, the smarter the step, the more problematic and tailored it is. Pleas
 
 A flow is a collection of steps. Each of these steps submit some information to the flow, which means the state of the flow is largely the sum of these submitted data. For that reason, the `FlowV2` interface requires the steps collection to be defined before the flow itself. This way, the flow can shape its state around the submissions and properties of these steps.
 
-**Note:** We have an example flow you can use as a reference [here](/client/landing/stepper/declarative-flow/flows/00-example-flow/example.ts).
+#### Notes
+1. We have an example flow you can use as a reference [here](/client/landing/stepper/declarative-flow/flows/00-example-flow/example.ts).
+2. Please make sure that your flow has a unique slug.
+3. Avoid inheriting flows by doing `const flow = { ...oldFlow, someChanges: ... }`, unless you own both flows and able to ensure changing the old flow won't break the new flow.
+
+
 
 #### Code example
 
@@ -212,9 +219,10 @@ async function initialize() {
 ### Notes
 
 1. A successful flow is a rare event, so most flows are sadly ephemeral. Please keep as much logic, CSS, and code as possible into the flow folder itself. So that when it's deleted, clean up is easy.
-2. Adding testing steps in your flow's README goes a long way. It would be really appreciated.
-3. Feel free to ask for help any time. You can post in `#dotcom-stepper` or ping `@alshakero`.
-4. Please try to avoid modifying the framework's code around your flow. It should be the very last resort.
+2. Adding testing steps in your flow's README goes a long way. It's essential to add basic ones to smoke test your flow.
+3. Adding tests for flow is immensely helpful in keeping Stepper solid. Because it makes improving the framework safer and thus more likely to happen.
+4. Feel free to ask for help any time. You can post in `#dotcom-stepper` or ping `@alshakero`.
+5. Please try to avoid modifying the framework's code around your flow. It should be the very last resort.
 
 ### Deleting your flow
 
