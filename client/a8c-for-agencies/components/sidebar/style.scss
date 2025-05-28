@@ -1,17 +1,17 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 // This file is meant to house style rules that all implementations of the base
 // sidebar will implement by default.
 .a4a-sidebar {
-	--color-sidebar-background: var( --color-primary-100 );
-	--color-sidebar-menu-hover-background: var( --color-primary-80 );
-	--color-sidebar-menu-hover-text: var( --color-text-inverted );
-	--color-sidebar-menu-selected-background: var( --color-primary-80 );
-	--color-sidebar-menu-selected-text: var( --color-text-inverted );
-	--color-sidebar-text: var( --color-text-inverted );
-	--color-sidebar-text-alternative: var( --color-primary-5 );
-	--color-sidebar-gridicon-fill: var( --color-primary-5 );
+	--color-sidebar-background: var(--color-primary-100);
+	--color-sidebar-menu-hover-background: var(--color-primary-80);
+	--color-sidebar-menu-hover-text: var(--color-text-inverted);
+	--color-sidebar-menu-selected-background: var(--color-primary-80);
+	--color-sidebar-menu-selected-text: var(--color-text-inverted);
+	--color-sidebar-text: var(--color-text-inverted);
+	--color-sidebar-text-alternative: var(--color-primary-5);
+	--color-sidebar-gridicon-fill: var(--color-primary-5);
 
 	.sidebar__menu-icon {
 		margin: 0;
@@ -21,8 +21,8 @@
 		background: none;
 
 		&:hover {
-			background: var( --color-primary-80 );
-			color: var( --color-text-inverted );
+			background: var(--color-primary-80);
+			color: var(--color-text-inverted);
 		}
 	}
 }
@@ -76,8 +76,8 @@
 	margin-left: 8px;
 	box-sizing: border-box;
 	font-size: 11px;
-	background-color: var( --color-primary-50 );
-	color: var( --color-text-inverted );
+	background-color: var(--color-primary-50);
+	color: var(--color-text-inverted);
 	font-weight: 500;
 	text-transform: uppercase;
 }
