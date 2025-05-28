@@ -16,6 +16,7 @@ export interface User {
 	language: string;
 	locale_variant: string;
 	email: string;
+	site_count: number;
 }
 
 export interface SiteUser {
