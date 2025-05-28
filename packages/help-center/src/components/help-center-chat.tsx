@@ -3,17 +3,20 @@
  * External Dependencies
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import config from '@automattic/calypso-config';
 import OdieAssistantProvider, { OdieAssistant } from '@automattic/odie-client';
 import { useEffect } from '@wordpress/element';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
+import { useSupportStatus } from '../data/use-support-status';
 import { useShouldUseWapuu } from '../hooks';
 import { ExtraContactOptions } from './help-center-extra-contact-option';
-
-/**
- * Internal Dependencies
- */
 import './help-center-chat.scss';
+
+const isTestModeEnvironment = () => {
+	const currentEnvironment = config( 'env_id' ) as string;
+	return ! [ 'production', 'desktop' ].includes( currentEnvironment );
+};
 
 export function HelpCenterChat( {
 	isUserEligibleForPaidSupport,
@@ -32,6 +35,11 @@ export function HelpCenterChat( {
 	const userFieldMessage = params.get( 'userFieldMessage' );
 	const siteUrl = params.get( 'siteUrl' );
 	const siteId = params.get( 'siteId' );
+	const { data: supportStatus } = useSupportStatus();
+	const forceEmailSupport = isTestModeEnvironment()
+		? supportStatus?.availability?.force_email_support ||
+		  supportStatus?.availability?.force_email_support_test
+		: supportStatus?.availability?.force_email_support;
 
 	useEffect( () => {
 		if ( preventOdieAccess ) {
@@ -53,6 +61,7 @@ export function HelpCenterChat( {
 			userFieldMessage={ userFieldMessage }
 			userFieldFlowName={ userFieldFlowName ?? params.get( 'userFieldFlowName' ) }
 			isUserEligibleForPaidSupport={ isUserEligibleForPaidSupport }
+			forceEmailSupport={ Boolean( forceEmailSupport ) }
 			extraContactOptions={
 				<ExtraContactOptions isUserEligible={ isUserEligibleForPaidSupport } />
 			}

@@ -10,6 +10,7 @@ import {
 	ODIE_FORWARD_TO_FORUMS_MESSAGE,
 	ODIE_FORWARD_TO_ZENDESK_MESSAGE,
 	ODIE_THIRD_PARTY_MESSAGE,
+	ODIE_FORCE_EMAIL_FALLBACK_MESSAGE,
 } from '../../constants';
 import { useOdieAssistantContext } from '../../context';
 import { interactionHasZendeskEvent, userProvidedEnoughInformation } from '../../utils';
@@ -26,8 +27,8 @@ const getDisplayMessage = (
 	canConnectToZendesk: boolean,
 	isRequestingHumanSupport: boolean,
 	messageContent: string,
-	forwardMessage: string,
-	hasCannedResponse?: boolean
+	hasCannedResponse?: boolean,
+	forceEmailSupport?: boolean
 ) => {
 	if ( isUserEligibleForPaidSupport && ! canConnectToZendesk && isRequestingHumanSupport ) {
 		return ODIE_THIRD_PARTY_MESSAGE;
@@ -35,6 +36,15 @@ const getDisplayMessage = (
 	if ( isUserEligibleForPaidSupport && hasCannedResponse ) {
 		return messageContent;
 	}
+
+	if ( isUserEligibleForPaidSupport && forceEmailSupport && isRequestingHumanSupport ) {
+		return ODIE_FORCE_EMAIL_FALLBACK_MESSAGE;
+	}
+
+	const forwardMessage = isUserEligibleForPaidSupport
+		? ODIE_FORWARD_TO_ZENDESK_MESSAGE
+		: ODIE_FORWARD_TO_FORUMS_MESSAGE;
+
 	return forwardMessage;
 };
 
@@ -47,7 +57,7 @@ export const UserMessage = ( {
 	message: Message;
 	isMessageWithoutEscalationOption?: boolean;
 } ) => {
-	const { isUserEligibleForPaidSupport, trackEvent, chat, canConnectToZendesk } =
+	const { isUserEligibleForPaidSupport, trackEvent, chat, canConnectToZendesk, forceEmailSupport } =
 		useOdieAssistantContext();
 
 	const currentSupportInteraction = useSelect(
@@ -69,17 +79,13 @@ export const UserMessage = ( {
 		);
 	}, [ chat.conversationId, currentSupportInteraction, chat?.messages, canConnectToZendesk ] );
 
-	const forwardMessage = isUserEligibleForPaidSupport
-		? ODIE_FORWARD_TO_ZENDESK_MESSAGE
-		: ODIE_FORWARD_TO_FORUMS_MESSAGE;
-
 	const displayMessage = getDisplayMessage(
 		isUserEligibleForPaidSupport,
 		canConnectToZendesk,
 		isRequestingHumanSupport,
 		message.content,
-		forwardMessage,
-		hasCannedResponse
+		hasCannedResponse,
+		forceEmailSupport
 	);
 
 	const displayingThirdPartyMessage =

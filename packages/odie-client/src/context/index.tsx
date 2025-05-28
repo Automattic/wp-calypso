@@ -74,6 +74,7 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 	userFieldFlowName,
 	version = null,
 	currentUser,
+	forceEmailSupport = false,
 	children,
 } ) => {
 	const { botNameSlug, isMinimized, isChatLoaded } = useSelect( ( select ) => {
@@ -213,6 +214,7 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 				trackEvent,
 				version: overriddenVersion,
 				waitAnswerToFirstMessageFromHumanSupport,
+				forceEmailSupport,
 			} }
 		>
 			{ children }

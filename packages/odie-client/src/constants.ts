@@ -67,6 +67,8 @@ export const ODIE_WRONG_FILE_TYPE_MESSAGE: Message = {
 	},
 };
 
+export const ODIE_FORCE_EMAIL_FALLBACK_MESSAGE = __( 'Force Email Fallback', __i18n_text_domain__ );
+
 export const ODIE_THUMBS_DOWN_RATING_VALUE = 0;
 export const ODIE_THUMBS_UP_RATING_VALUE = 1;
 export const ODIE_ALLOWED_BOTS = [ 'wpcom-support-chat', 'wpcom-plan-support' ];

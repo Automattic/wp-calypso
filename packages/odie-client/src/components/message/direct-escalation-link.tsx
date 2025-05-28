@@ -4,14 +4,16 @@ import { useSelect } from '@wordpress/data';
 import { useCallback, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useNavigate } from 'react-router-dom';
+import { ODIE_FORCE_EMAIL_FALLBACK_MESSAGE } from '../../constants';
 import { useOdieAssistantContext } from '../../context';
 import { useCreateZendeskConversation } from '../../hooks';
 import { getHelpCenterZendeskConversationStarted, interactionHasZendeskEvent } from '../../utils';
+import type { Message } from '../../types';
 
 export const DirectEscalationLink = ( { messageId }: { messageId: number | undefined } ) => {
 	const conversationStarted = Boolean( getHelpCenterZendeskConversationStarted() );
 	const newConversation = useCreateZendeskConversation();
-	const { trackEvent, isUserEligibleForPaidSupport, chat, canConnectToZendesk } =
+	const { trackEvent, isUserEligibleForPaidSupport, chat, canConnectToZendesk, forceEmailSupport } =
 		useOdieAssistantContext();
 	const navigate = useNavigate();
 
@@ -47,7 +49,24 @@ export const DirectEscalationLink = ( { messageId }: { messageId: number | undef
 			if ( conversationStarted ) {
 				return;
 			}
-			newConversation( { createdFrom: 'direct_escalation' } );
+			if ( forceEmailSupport ) {
+				// Display the force email fallback message
+				const forceEmailMessage: Message = {
+					content: ODIE_FORCE_EMAIL_FALLBACK_MESSAGE,
+					role: 'bot',
+					type: 'message',
+					context: {
+						flags: {
+							hide_disclaimer_content: true,
+							show_contact_support_msg: false,
+						},
+						site_id: null,
+					},
+				};
+				chat?.messages.push( forceEmailMessage );
+				return;
+			}
+			// newConversation( { createdFrom: 'direct_escalation' } );
 		} else {
 			navigate( '/contact-form?mode=FORUM' );
 		}
@@ -61,6 +80,8 @@ export const DirectEscalationLink = ( { messageId }: { messageId: number | undef
 		chat?.provider,
 		currentSupportInteraction,
 		chat?.conversationId,
+		forceEmailSupport,
+		chat,
 	] );
 
 	if ( hideNewConversationButton ) {
