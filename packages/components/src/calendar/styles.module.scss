@@ -1,19 +1,19 @@
 @use "@wordpress/base-styles/colors";
-@use "../styles/typography";
+@use '../utils/theme-variables' as theme;
 
 /* Root of the component. */
 .calendar {
 	// TODO: add font family rule when Theme is ready
 
 	// Internal variables
-	--a8c-calendar-outline-focus: 1.5px solid var(--color-accent);
+	--a8c-calendar-outline-focus: 1.5px solid #{theme.$components-color-accent};
 	--a8c-calendar-button-height: 2rem;
 	--a8c-calendar-button-width: 2rem;
 	--a8c-calendar-nav-height: 2rem;
 
 	// TODO: themify / align to DS tokens
-	--a8c-calendar-range-middle-background-color: color-mix(in srgb, var(--color-accent) 4%, transparent);
-	--a8c-calendar-preview-border-color: color-mix(in srgb, var(--color-accent) 16%, transparent);
+	--a8c-calendar-range-middle-background-color: color-mix(in srgb, #{theme.$components-color-accent} 4%, transparent);
+	--a8c-calendar-preview-border-color: color-mix(in srgb, #{theme.$components-color-accent} 16%, transparent);
 
 	position: relative; /* Required to position the navigation toolbar. */
 	box-sizing: border-box;
@@ -40,7 +40,7 @@
 	}
 	&:has(.calendar__day-button:hover:not(:disabled)),
 	&:has(.calendar__day-button:focus-visible) {
-		color: var(--color-accent);
+		color: theme.$components-color-accent;
 	}
 }
 
