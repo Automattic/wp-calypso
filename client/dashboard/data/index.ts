@@ -9,6 +9,7 @@ import type {
 	Site,
 	Purchase,
 	User,
+	SiteUser,
 	Profile,
 	TwoStep,
 	EngagementStatsDataPoint,
@@ -459,7 +460,7 @@ export const fetchPurchases = async ( siteIdOrSlug: string ): Promise< Purchase[
 	} );
 };
 
-export const fetchSiteUserMe = async ( siteIdOrSlug: string ): Promise< Me > => {
+export const fetchSiteUserMe = async ( siteIdOrSlug: string ): Promise< SiteUser > => {
 	return wpcom.req.get( {
 		path: `/sites/${ siteIdOrSlug }/users/me`,
 		apiNamespace: 'wp/v2',

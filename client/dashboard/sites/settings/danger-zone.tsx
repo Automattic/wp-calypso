@@ -7,10 +7,6 @@ import { useCanTransferSite } from '../hooks/use-can-transfer-site';
 import SiteLeaveModal from '../site-leave-modal';
 import type { Site } from '../../data/types';
 
-function canLeaveSite( site: Site ) {
-	return ! site.options?.is_wpforteams_site;
-}
-
 const SiteTransferAction = ( { site }: { site: Site } ) => {
 	const { slug } = site;
 
@@ -57,7 +53,7 @@ export default function DangerZone( { site }: { site: Site } ) {
 
 	const actions = [
 		canTransferSite && <SiteTransferAction key="transfer-site" site={ site } />,
-		canLeaveSite( site ) && <SiteLeaveAction key="leave-site" site={ site } />,
+		<SiteLeaveAction key="leave-site" site={ site } />,
 	].filter( Boolean );
 
 	if ( ! actions.length ) {

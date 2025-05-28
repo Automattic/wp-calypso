@@ -26,9 +26,4 @@ export const SITE_FIELDS = [
 	'jetpack_modules',
 ];
 
-export const SITE_OPTIONS = [
-	'admin_url',
-	'software_version',
-	'is_redirect',
-	'is_wpforteams_site',
-];
+export const SITE_OPTIONS = [ 'admin_url', 'software_version', 'is_redirect' ];

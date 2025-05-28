@@ -81,8 +81,6 @@ export interface SiteOptions {
 	software_version: string;
 	admin_url: string;
 	is_redirect?: boolean;
-	// True for P2 sites.
-	is_wpforteams_site?: boolean;
 }
 
 export interface Site {

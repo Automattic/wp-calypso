@@ -31,6 +31,7 @@ import { SITE_FIELDS, SITE_OPTIONS } from '../data/constants';
 import { queryClient } from './query-client';
 import type {
 	Profile,
+	Purchase,
 	SiteSettings,
 	UrlPerformanceInsights,
 	DefensiveModeSettings,
