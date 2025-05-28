@@ -33,10 +33,7 @@ export const MarketplaceFooter = () => {
 				className={ styles[ 'marketplace-footer__section' ] }
 			>
 				{ ( ! isLoggedIn || currentUserSiteCount === 0 ) && (
-					<Button
-						className={ `is-primary ${ styles[ 'marketplace-footer__cta' ] }` }
-						href={ startUrl }
-					>
+					<Button primary className={ styles[ 'marketplace-footer__cta' ] } href={ startUrl }>
 						{ __( 'Get Started' ) }
 					</Button>
 				) }
