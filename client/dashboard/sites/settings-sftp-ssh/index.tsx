@@ -30,7 +30,7 @@ export default function SftpSshSettings( { siteSlug }: { siteSlug: string } ) {
 		<PageLayout size="small" header={ <SettingsPageHeader title={ __( 'SFTP/SSH' ) } /> }>
 			<VStack spacing={ 8 }>
 				{ sftpEnabled ? (
-					<SftpCard />
+					<SftpCard siteSlug={ site.slug } sftpUsers={ sftpUsers } />
 				) : (
 					<EnableSftpCard siteSlug={ site.slug } canUseSsh={ canUseSsh( site ) } />
 				) }
