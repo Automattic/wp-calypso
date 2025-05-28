@@ -1,6 +1,7 @@
-import { ReactNode } from 'react';
+import { ReactElement } from 'react';
 import type { Density } from '@automattic/components/src/summary-button/types';
 
+type ChildType = ReactElement< { density?: string } >;
 export interface SummaryButtonListProps {
 	/**
 	 * The main label that identifies the section.
@@ -22,5 +23,5 @@ export interface SummaryButtonListProps {
 	 * wrap SummaryButton internally and pass the `density` prop to them. This is because
 	 * the component will override the 'density' prop of these children to match the parent's density.
 	 */
-	children: ReactNode;
+	children: ChildType | ChildType[];
 }

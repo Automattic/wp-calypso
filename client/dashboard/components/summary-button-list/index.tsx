@@ -1,7 +1,7 @@
 import { Card, CardHeader, __experimentalVStack as VStack } from '@wordpress/components';
 import { useInstanceId } from '@wordpress/compose';
 import clsx from 'clsx';
-import { isValidElement, cloneElement, Children, ReactElement } from 'react';
+import { isValidElement, cloneElement, Children } from 'react';
 import { SectionHeader } from '../section-header';
 import { SummaryButtonListProps } from './types';
 import './style.scss';
@@ -28,7 +28,9 @@ export function SummaryButtonList( {
 	const clonedChildren = Children.map( children, ( child ) => {
 		if ( isValidElement( child ) ) {
 			return (
-				<li>{ cloneElement( child as ReactElement< { density?: string } >, { density } ) }</li>
+				<li className="dashboard-summary-button-list__children-list-item">
+					{ cloneElement( child, { density } ) }
+				</li>
 			);
 		}
 		return child;

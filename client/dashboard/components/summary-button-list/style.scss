@@ -23,7 +23,6 @@
 
 		.dashboard-summary-button-list__children-list {
 			li:last-child .summary-button {
-				border-bottom: none;
 				/* stylelint-disable-next-line scales/radii */
 				border-radius: 0 0 7px 7px;
 			}
@@ -35,6 +34,11 @@
 					border-radius: 7px 7px 0 0;
 				}
 			}
+		.dashboard-summary-button-list__children-list-item:last-child > * {
+			// TODO: once the component uses React context, we should use that
+			// to let the correct summary button component know that it's
+			// the last child, and should not have a bottom border.
+			border-bottom: none;
 		}
 	}
 }
