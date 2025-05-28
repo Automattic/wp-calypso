@@ -3,7 +3,7 @@ import { Fields, Operator } from '@wordpress/dataviews';
 import { LocalizeProps } from 'i18n-calypso';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { StoredPaymentMethod } from 'calypso/lib/checkout/payment-methods';
-import { getDisplayName, isRenewing } from 'calypso/lib/purchases';
+import { getDisplayName, isRenewing, purchaseType } from 'calypso/lib/purchases';
 import { MembershipSubscription } from 'calypso/lib/purchases/types';
 import { useSelector } from 'calypso/state';
 import { getSite } from 'calypso/state/sites/selectors';
@@ -84,9 +84,8 @@ export function getPurchasesFieldDefinitions( {
 			filterBy: {
 				operators: [ 'is' as Operator ],
 			},
-			// Filter by site ID
 			getValue: ( { item }: { item: Purchases.Purchase } ) => {
-				return item.siteId;
+				return item.siteName;
 			},
 			// Render the site icon
 			render: ( { item }: { item: Purchases.Purchase } ) => {
@@ -105,7 +104,7 @@ export function getPurchasesFieldDefinitions( {
 				operators: [ 'is' as Operator ],
 			},
 			getValue: ( { item }: { item: Purchases.Purchase } ) => {
-				return item.productId;
+				return getDisplayName( item ) + ' ' + purchaseType( item ) + ' ' + item.siteName;
 			},
 			render: ( { item }: { item: Purchases.Purchase } ) => {
 				return (
@@ -218,7 +217,7 @@ export function getMembershipsFieldDefinitions( {
 				operators: [ 'is' as Operator ],
 			},
 			getValue: ( { item }: { item: MembershipSubscription } ) => {
-				return item.product_id;
+				return item.title;
 			},
 			render: ( { item }: { item: MembershipSubscription } ) => {
 				return (
