@@ -23,6 +23,9 @@ import {
 	updateStaticFile404,
 	fetchEdgeCacheDefensiveMode,
 	updateEdgeCacheDefensiveMode,
+	fetchPurchases,
+	fetchSiteUserMe,
+	leaveSite,
 } from '../data';
 import { SITE_FIELDS, SITE_OPTIONS } from '../data/constants';
 import { queryClient } from './query-client';
@@ -238,5 +241,43 @@ export function siteDefensiveModeMutation( siteSlug: string ) {
 		onSuccess: ( data: DefensiveModeSettings ) => {
 			queryClient.setQueryData( [ 'site', siteSlug, 'defensive-mode' ], data );
 		},
+	};
+}
+
+export function siteHasPurchasesCancelableQuery( siteId: string, userId: number ) {
+	return {
+		queryKey: [ 'site', siteId, 'purchases-cancelable' ],
+		queryFn: () => {
+			return fetchPurchases( siteId );
+		},
+		select: ( purchases: Purchase[] ) => {
+			const cancelables = purchases
+				.filter( ( purchase ) => {
+					// Exclude inactive purchases and legacy premium theme purchases.
+					if ( ! purchase.active || purchase.productSlug === 'premium_theme' ) {
+						return false;
+					}
+
+					return purchase.is_cancelable;
+				} )
+				.filter( ( purchase ) => Number( purchase.user_id ) === userId );
+
+			return cancelables.length > 0;
+		},
+	};
+}
+
+export function siteUserMeQuery( siteId: string ) {
+	return {
+		queryKey: [ 'site', siteId, 'user-me' ],
+		queryFn: () => {
+			return fetchSiteUserMe( siteId );
+		},
+	};
+}
+
+export function leaveSiteMutation( siteId: string, userId: number ) {
+	return {
+		mutationFn: () => leaveSite( siteId, userId ),
 	};
 }

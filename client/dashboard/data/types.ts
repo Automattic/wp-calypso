@@ -17,6 +17,16 @@ export interface User {
 	locale_variant: string;
 }
 
+export interface SiteUser {
+	id: number;
+	id_wpcom: number;
+	description: string;
+	name: string;
+	slug: string;
+	url: string;
+	link: string;
+}
+
 export interface SiteDomain {
 	id: number;
 	domain: string;
@@ -71,6 +81,8 @@ export interface SiteOptions {
 	software_version: string;
 	admin_url: string;
 	is_redirect?: boolean;
+	// True for P2 sites.
+	is_wpforteams_site?: boolean;
 }
 
 export interface Site {
@@ -101,6 +113,14 @@ export interface Site {
 	site_owner: number;
 	jetpack: boolean;
 	jetpack_modules: string[] | null;
+}
+
+export interface Purchase {
+	ID: number | string;
+	active: boolean;
+	is_cancelable: boolean;
+	product_slug: string;
+	user_id: number | string;
 }
 
 export type EmailProvider = 'titan' | 'google-workspace' | 'forwarding';
