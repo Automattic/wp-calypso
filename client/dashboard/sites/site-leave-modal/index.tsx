@@ -96,9 +96,8 @@ function ContentLeaveSite( { site, onClose }: ContentProps ) {
 
 	// Fetch "me" as a site user entity.
 	const { data: me } = useQuery( siteUserMeQuery( site.slug ) );
-	const mutation = useMutation( leaveSiteMutation( site.slug, me?.id ) );
+	const mutation = useMutation( leaveSiteMutation( site.slug ) );
 
-	const [ isSubmitting, setIsSubmitting ] = useState( false );
 	const [ formData, setFormData ] = useState< { confirmed: boolean } >( {
 		confirmed: false,
 	} );
@@ -107,14 +106,13 @@ function ContentLeaveSite( { site, onClose }: ContentProps ) {
 
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
-		if ( ! isConfirmed ) {
+		if ( ! me || ! isConfirmed ) {
 			return;
 		}
 
-		setIsSubmitting( true );
 		recordTracksEvent( 'calypso_sites_dashboard_site_leave_modal_leave_site_click' );
 
-		mutation.mutate( undefined, {
+		mutation.mutate( me.id, {
 			onSuccess: () => {
 				recordTracksEvent( 'calypso_sites_dashboard_site_leave_modal_leave_site_success' );
 				createSuccessNotice(
@@ -182,7 +180,7 @@ function ContentLeaveSite( { site, onClose }: ContentProps ) {
 						variant="primary"
 						type="submit"
 						disabled={ ! isConfirmed }
-						isBusy={ isSubmitting }
+						isBusy={ mutation.isPending }
 					>
 						{ __( 'Leave site' ) }
 					</Button>
