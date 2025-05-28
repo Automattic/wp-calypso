@@ -72,6 +72,7 @@
 	&.has-density-medium {
 		padding: $grid-unit-20 $grid-unit-30;
 		border-bottom: 1px solid $gray-100;
+		border-radius: 0;
 
 		.summary-button-title {
 			@include body-medium;
