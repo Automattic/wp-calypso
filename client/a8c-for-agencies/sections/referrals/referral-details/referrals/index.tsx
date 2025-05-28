@@ -19,7 +19,7 @@ const ReferralDetailsReferrals = ( { referrals }: { referrals: ReferralAPIRespon
 		null
 	);
 
-	const handleArchiveReferral = useHandleReferralArchive();
+	const { handleArchiveReferral, isPending: isArchivingReferral } = useHandleReferralArchive();
 
 	const { data: productsData, isFetching: isFetchingProducts } = useProductsQuery(
 		false,
@@ -71,6 +71,7 @@ const ReferralDetailsReferrals = ( { referrals }: { referrals: ReferralAPIRespon
 					closeLabel={ translate( 'Keep referral' ) }
 					ctaLabel={ translate( 'Archive' ) }
 					isDestructive
+					isLoading={ isArchivingReferral }
 				>
 					{ translate(
 						"Your client won't be able to complete the purchases. If removed, you must create a new referral for any future purchases."

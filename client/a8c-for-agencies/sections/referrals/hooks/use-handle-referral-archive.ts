@@ -17,7 +17,7 @@ export default function useHandleReferralArchive() {
 	const agencyId = useSelector( getActiveAgencyId );
 	const referralsQueryKey = getReferralsQueryKey( agencyId );
 
-	const { mutate: archiveReferral } = useArchiveReferralMutation( {
+	const { mutate: archiveReferral, isPending } = useArchiveReferralMutation( {
 		// Optimistically update the referrals list
 		onMutate: async ( { id }: { id: number } ) => {
 			// Cancel any current refetches, so they don't overwrite our optimistic update
@@ -48,7 +48,7 @@ export default function useHandleReferralArchive() {
 		},
 	} );
 
-	return useCallback(
+	const handleArchiveReferral = useCallback(
 		( referral: ReferralAPIResponse, callback?: ( isSuccess: boolean ) => void ) => {
 			archiveReferral(
 				{ id: referral.id },
@@ -77,4 +77,9 @@ export default function useHandleReferralArchive() {
 		},
 		[ archiveReferral, dispatch, translate ]
 	);
+
+	return {
+		handleArchiveReferral,
+		isPending,
+	};
 }
