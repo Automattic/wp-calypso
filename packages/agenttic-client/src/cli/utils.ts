@@ -155,6 +155,7 @@ export function createClientWithProviders( options: CLIOptions ) {
 	const { authProvider, contextProvider } = createProviders( options );
 
 	const client = createClient( {
+		agentId: options.agentId,
 		agentUrl: options.url,
 		authProvider,
 		defaultSessionId: options.session,
@@ -170,6 +171,7 @@ export function createClientWithProviders( options: CLIOptions ) {
 
 	// Update the client with the tool provider
 	const clientWithTools = createClient( {
+		agentId: options.agentId,
 		agentUrl: options.url,
 		authProvider,
 		defaultSessionId: options.session,

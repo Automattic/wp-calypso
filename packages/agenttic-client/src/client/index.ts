@@ -1,7 +1,7 @@
 import type {
+	AuthProvider,
 	Client,
 	ClientConfig,
-	AuthProvider,
 	ContextProvider,
 	JsonRpcResponse,
 	Message,
@@ -53,7 +53,7 @@ const DEFAULT_TIMEOUT = 30000;
  * };
  *
  * const client = createClient({
- *   agentUrl: 'https://api.example.com',
+ *   agentId: 'big-sky',
  *   toolProvider
  * });
  * ```
@@ -62,6 +62,7 @@ const DEFAULT_TIMEOUT = 30000;
  */
 export function createClient( config: ClientConfig ): Client {
 	const {
+		agentId,
 		agentUrl,
 		authProvider,
 		defaultSessionId,
@@ -74,6 +75,7 @@ export function createClient( config: ClientConfig ): Client {
 
 	// Create request configuration
 	const requestConfig: RequestConfig = {
+		agentId,
 		agentUrl,
 		authProvider,
 		timeout,

@@ -1,6 +1,6 @@
 import type {
-	ClientConfig,
 	AuthProvider,
+	ClientConfig,
 	JsonRpcResponse,
 	Message,
 	SendMessageParams,
@@ -25,11 +25,32 @@ import {
  * Configuration for making requests
  */
 export interface RequestConfig {
-	agentUrl: string;
+	agentId: string;
+	agentUrl?: string;
 	authProvider?: AuthProvider;
 	timeout: number;
 	proxy?: string;
 	dispatcher?: RequestDispatcher;
+}
+
+/**
+ * Default base agent URL
+ */
+const DEFAULT_AGENT_URL = 'https://public-api.wordpress.com/wpcom/v2/ai/agent';
+
+/**
+ * Construct the full agent URL from base URL and agent ID
+ *
+ * @param agentUrl - Base agent URL (optional, uses default if not provided)
+ * @param agentId  - Agent ID to append to the URL
+ * @return Full agent URL
+ */
+function constructAgentUrl(
+	agentUrl: string | undefined,
+	agentId: string
+): string {
+	const baseUrl = agentUrl || DEFAULT_AGENT_URL;
+	return `${ baseUrl }/${ agentId }`;
 }
 
 /**
@@ -133,10 +154,11 @@ export async function prepareRequest(
 	defaultSessionId?: string
 ) {
 	const { message, sessionId, taskId, metadata } = params;
-	const { agentUrl, authProvider, proxy } = config;
+	const { agentId, agentUrl, authProvider, proxy } = config;
 	const { isStreaming = false } = options;
 
 	const effectiveSessionId = sessionId || defaultSessionId;
+	const fullAgentUrl = constructAgentUrl( agentUrl, agentId );
 
 	// Enhance message with tools and context
 	const enhancedMessage = await enhanceMessage(
@@ -160,13 +182,14 @@ export async function prepareRequest(
 	const headers = await getHeaders( authProvider, isStreaming );
 
 	// Log the request details
-	logRequest( 'POST', agentUrl, headers, request, proxy );
+	logRequest( 'POST', fullAgentUrl, headers, request, proxy );
 
 	return {
 		request,
 		headers,
 		enhancedMessage,
 		effectiveSessionId,
+		fullAgentUrl,
 	};
 }
 
@@ -181,8 +204,8 @@ export async function executeRequest(
 	preparedRequest: Awaited< ReturnType< typeof prepareRequest > >,
 	config: RequestConfig
 ): Promise< Task > {
-	const { request, headers } = preparedRequest;
-	const { agentUrl, timeout, proxy, dispatcher } = config;
+	const { request, headers, fullAgentUrl } = preparedRequest;
+	const { timeout, proxy, dispatcher } = config;
 
 	const { timeoutId, controller } = createTimeoutHandler(
 		timeout,
@@ -198,14 +221,14 @@ export async function executeRequest(
 			dispatcher
 		);
 
-		logger( 'Making request to %s with options: %O', agentUrl, {
+		logger( 'Making request to %s with options: %O', fullAgentUrl, {
 			method: options.method,
 			headers: options.headers,
 			hasDispatcher: !! options.dispatcher,
 			proxy,
 		} );
 
-		const response = await fetch( agentUrl, options as any );
+		const response = await fetch( fullAgentUrl, options as any );
 
 		clearTimeout( timeoutId );
 
@@ -217,7 +240,7 @@ export async function executeRequest(
 		// Log the response
 		logger(
 			'Response from %s: %d %O',
-			agentUrl,
+			fullAgentUrl,
 			response.status,
 			formatObject( data )
 		);
@@ -242,8 +265,8 @@ export async function* executeStreamingRequest(
 	config: RequestConfig,
 	options: RequestOptions
 ): AsyncIterable< TaskUpdate > {
-	const { request, headers } = preparedRequest;
-	const { agentUrl, proxy, dispatcher } = config;
+	const { request, headers, fullAgentUrl } = preparedRequest;
+	const { proxy, dispatcher } = config;
 	const { streamingTimeout = 60000 } = options;
 
 	const { timeoutId, controller } = createTimeoutHandler(
@@ -260,7 +283,7 @@ export async function* executeStreamingRequest(
 			dispatcher
 		);
 
-		const response = await fetch( agentUrl, fetchOptions as any );
+		const response = await fetch( fullAgentUrl, fetchOptions as any );
 
 		clearTimeout( timeoutId );
 

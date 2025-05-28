@@ -21,7 +21,7 @@ const require = createRequire( import.meta.url );
 
 // Default agent base URL
 const DEFAULT_AGENT_BASE_URL =
-	'https://public-api.wordpress.com/wpcom/v2/ai/agent/';
+	'https://public-api.wordpress.com/wpcom/v2/ai/agent';
 
 // Default agent name
 const DEFAULT_AGENT = 'big-sky';
@@ -35,7 +35,8 @@ const DEFAULT_PROXY = 'socks://127.0.0.1:8080';
 function parseArgs(): CLIOptions {
 	const args = process.argv.slice( 2 );
 	const options: CLIOptions = {
-		url: DEFAULT_AGENT_BASE_URL + DEFAULT_AGENT,
+		url: DEFAULT_AGENT_BASE_URL,
+		agentId: DEFAULT_AGENT,
 		proxy: DEFAULT_PROXY, // Set default proxy
 	};
 

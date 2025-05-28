@@ -170,7 +170,8 @@ export interface AuthProvider {
 }
 
 export interface ClientConfig {
-	agentUrl: string;
+	agentId: string;
+	agentUrl?: string;
 	authProvider?: AuthProvider;
 	defaultSessionId?: string;
 	timeout?: number;

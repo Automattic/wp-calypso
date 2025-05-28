@@ -58,7 +58,7 @@ describe( '@automattic/agenttic-client', () => {
 	describe( 'Client creation', () => {
 		it( 'should create a client with minimal config', () => {
 			const client = createClient( {
-				agentUrl: 'https://example.com/agent',
+				agentId: 'test-agent',
 			} );
 
 			expect( client ).toBeDefined();
@@ -72,6 +72,7 @@ describe( '@automattic/agenttic-client', () => {
 			} );
 
 			const client = createClient( {
+				agentId: 'test-agent',
 				agentUrl: 'https://example.com/agent',
 				authProvider,
 				defaultSessionId: 'test-session',
@@ -83,7 +84,7 @@ describe( '@automattic/agenttic-client', () => {
 
 		it( 'should create a client without dispatcher (defaults to browser dispatcher)', () => {
 			const client = createClient( {
-				agentUrl: 'https://example.com/agent',
+				agentId: 'test-agent',
 				authProvider: async () => ( { Authorization: 'Bearer test' } ),
 			} );
 

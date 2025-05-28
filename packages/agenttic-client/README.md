@@ -11,6 +11,7 @@ A TypeScript client library for communicating with WPcom Agent API with support 
 -   🛠️ **Tools**: Extensible tool system for agent capabilities
 -   🔐 **Authentication**: Flexible authentication provider system
 -   📄 **Dynamic Context**: Real-time context injection with `useClientContext`
+-   🎯 **Smart Defaults**: Default agent URL with configurable agent ID
 
 ## Installation
 
@@ -38,7 +39,8 @@ function ChatComponent() {
   }));
 
   const { state, sendMessage, sendMessageStream } = useAgent({
-    agentUrl: 'https://your-agent-url.com/api',
+    agentId: 'big-sky', // Required: Agent ID to use
+    // agentUrl: 'https://custom-agent-url.com/api', // Optional: defaults to WordPress.com
     authProvider: async () => ({ Authorization: 'Bearer your-token' }),
     contextProvider, // Pass the dynamic context provider
     timeout: 30000,
@@ -103,7 +105,7 @@ function WordPressAgentChat() {
   }));
 
   const { sendMessage } = useAgent({
-    agentUrl: 'https://your-wordpress-agent.com/api',
+    agentId: 'big-sky', // Uses default WordPress.com agent URL
     contextProvider,
   });
 
@@ -124,7 +126,8 @@ For Node.js environments with SOCKS proxy support:
 import { createClient, nodeDispatcher } from '@automattic/agenttic-client/node';
 
 const client = createClient( {
-	agentUrl: 'https://your-agent-url.com/api',
+	agentId: 'big-sky', // Required: Agent ID
+	// agentUrl: 'https://custom-agent-url.com/api', // Optional: defaults to WordPress.com
 	authProvider: async () => ( { Authorization: 'Bearer your-token' } ),
 	proxy: 'socks://127.0.0.1:8080', // SOCKS proxy support
 	dispatcher: nodeDispatcher, // Use Node.js dispatcher for proxy support
@@ -156,7 +159,8 @@ for await ( const update of client.sendMessageStream( {
 import { createClient } from '@automattic/agenttic-client';
 
 const client = createClient( {
-	agentUrl: 'https://your-agent-url.com/api',
+	agentId: 'big-sky', // Required: Agent ID
+	// agentUrl: 'https://custom-agent-url.com/api', // Optional: defaults to WordPress.com
 	authProvider: async () => ( { Authorization: 'Bearer your-token' } ),
 	timeout: 30000,
 } );
@@ -228,7 +232,8 @@ const contextProvider = useClientContext( () => ( {
 
 ```typescript
 interface ClientConfig {
-	agentUrl: string;
+	agentId: string;
+	agentUrl?: string;
 	authProvider?: AuthProvider;
 	defaultSessionId?: string;
 	timeout?: number;
@@ -238,6 +243,25 @@ interface ClientConfig {
 	dispatcher?: RequestDispatcher;
 }
 ```
+
+#### Configuration Options
+
+-   **`agentId`** (required): The ID of the agent to communicate with (e.g., 'big-sky')
+-   **`agentUrl`** (optional): Base agent URL. Defaults to `https://public-api.wordpress.com/wpcom/v2/ai/agent`
+-   **`authProvider`** (optional): Function that returns authentication headers
+-   **`defaultSessionId`** (optional): Default session ID for requests
+-   **`timeout`** (optional): Request timeout in milliseconds (default: 30000)
+-   **`proxy`** (optional): SOCKS proxy URL (Node.js only)
+-   **`toolProvider`** (optional): Provider for agent tools
+-   **`contextProvider`** (optional): Provider for dynamic context
+-   **`dispatcher`** (optional): Custom request dispatcher
+
+The full agent URL is constructed as: `{agentUrl}/{agentId}`
+
+For example:
+
+-   Default: `https://public-api.wordpress.com/wpcom/v2/ai/agent/big-sky`
+-   Custom: `https://custom-api.com/agents/big-sky`
 
 ### Authentication
 
