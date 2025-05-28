@@ -16,12 +16,12 @@ describe( 'Callout', () => {
 		expect( screen.getByRole( 'paragraph' ) ).toHaveTextContent( 'Helpful content' );
 	} );
 
-	test( 'renders img element using imageSrc', () => {
+	test( 'renders img element using image', () => {
 		render(
 			<Callout
 				title="Test Title"
 				description={ <p>Helpful content</p> }
-				imageSrc="https://example.com/illustration.png"
+				image="https://example.com/illustration.png"
 				imageAlt="Illustration"
 			/>
 		);

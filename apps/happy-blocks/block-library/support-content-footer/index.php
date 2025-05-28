@@ -94,7 +94,7 @@ if ( 'support_lp_2025' === $current_page_slug ) {
 			</a>
 		</div>
 	</div>
-<?php
+	<?php
 } else {
 	//phpcs:ignore WPCOM.I18nRules.LocalizedUrl.LocalizedUrlAssignedToVariable
 	$subscribe_block = '[wpcom_guides_learn_button is_unsubscribed_caption="' . __( 'Subscribe now!', 'happy-blocks' ) . '" is_subscribed_caption="' . __( 'Unsubscribe', 'happy-blocks' ) . '" busy_caption="' . __( 'Just a moment...', 'happy-blocks' ) . '"]';

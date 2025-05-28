@@ -61,6 +61,9 @@ function getIcon( status: NoticeStatus | undefined ): string {
 	}
 }
 
+/**
+ * @deprecated Use `Notice` from `client/dashboard/components/notice` instead.
+ */
 export default function Notice( {
 	children,
 	className,

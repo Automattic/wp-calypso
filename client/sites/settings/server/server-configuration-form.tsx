@@ -12,7 +12,7 @@ import FormSelect from 'calypso/components/forms/form-select';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import { PanelCard, PanelCardHeading } from 'calypso/components/panel';
-import { useDataCenterOptions } from 'calypso/data/data-center/use-data-center-options';
+import { getDataCenterOptions } from 'calypso/data/data-center';
 import { getPHPVersions } from 'calypso/data/php-versions';
 import { useSelector } from 'calypso/state';
 import {
@@ -29,6 +29,7 @@ import { isFetchingAtomicHostingGeoAffinity } from 'calypso/state/selectors/is-f
 import { isFetchingAtomicHostingWpVersion } from 'calypso/state/selectors/is-fetching-atomic-hosting-wp-version';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import type { DataCenterOption } from 'calypso/data/data-center/types';
 
 import './server-configuration-form.scss';
 
@@ -94,7 +95,7 @@ export default function ServerConfigurationForm( { disabled }: ServerConfigurati
 	const isStaticFile404Changed = selectedStaticFile404 && selectedStaticFile404 !== staticFile404;
 
 	const { recommendedValue, phpVersions } = getPHPVersions();
-	const dataCenterOptions = useDataCenterOptions();
+	const dataCenterOptions = getDataCenterOptions();
 
 	const wpVersionRef = useRef< HTMLLabelElement >( null );
 	const wpVersionDropdownRef = useRef< HTMLSelectElement >( null );
@@ -222,7 +223,7 @@ export default function ServerConfigurationForm( { disabled }: ServerConfigurati
 		}
 
 		const displayValue = dataCenterOptions.hasOwnProperty( geoAffinity )
-			? dataCenterOptions[ geoAffinity ]
+			? dataCenterOptions[ geoAffinity as DataCenterOption ]
 			: geoAffinity;
 
 		return (

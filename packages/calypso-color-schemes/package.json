@@ -31,7 +31,7 @@
 		"@automattic/color-studio": "^4.1.0",
 		"@types/node": "^22.10.10",
 		"postcss": "^8.5.3",
-		"postcss-custom-properties": "^11.0.0",
+		"postcss-custom-properties": "^12.0.0",
 		"sass": "1.54.0"
 	}
 }

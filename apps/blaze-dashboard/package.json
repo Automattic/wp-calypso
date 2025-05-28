@@ -37,7 +37,7 @@
 		"@wordpress/data": "^10.23.0",
 		"calypso": "workspace:^",
 		"clsx": "^2.1.1",
-		"debug": "^4.4.0",
+		"debug": "^4.4.1",
 		"i18n-calypso": "workspace:^",
 		"moment": "^2.30.1",
 		"prop-types": "^15.8.1",

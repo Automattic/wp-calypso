@@ -46,7 +46,11 @@ export function pathWithLeadingSlash( path ) {
 		return '';
 	}
 
-	return path ? `/${ path.replace( /^\/+/, '' ) }` : '';
+	const cleanPath = path
+		.replace( /<\/?[^>]+(>|$)/g, '' )
+		.replace( /^[a-zA-Z][a-zA-Z\d+\-.]*:/, '' )
+		.replace( /\s/g, '' );
+	return cleanPath ? `/${ cleanPath.replace( /^\/+/, '' ) }` : '';
 }
 
 export function getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, pathname ) {

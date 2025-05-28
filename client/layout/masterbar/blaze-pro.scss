@@ -49,10 +49,9 @@ body.is-section-signup {
 	--color-white: #fff;
 	--color-black: $colorBlack;
 	--color-gray: #50575e;
-	--color-orange: #ff6433;
 
-	--color-link: var(--color-orange);
-	--color-link-dark: var(--color-orange);
+	--color-link: var(--color-blaze-pro);
+	--color-link-dark: var(--color-blaze-pro);
 
 	background: var(--color-white);
 	min-height: 100%;
@@ -60,9 +59,6 @@ body.is-section-signup {
 	$login-form-max-width: 327px;
 
 	.components-button {
-		--color-accent: var(--color-orange);
-		--color-accent-60: var(--color-orange);
-
 		font-weight: 600;
 	}
 
@@ -490,8 +486,8 @@ body.is-section-signup {
 		.login .button.is-primary,
 		.login .button.is-primary:hover,
 		.form-button {
-			background: var(--color-orange);
-			border-color: var(--color-orange);
+			background: var(--color-blaze-pro);
+			border-color: var(--color-blaze-pro);
 			color: var(--color-white);
 			font-size: rem(13px);
 			font-weight: 600;

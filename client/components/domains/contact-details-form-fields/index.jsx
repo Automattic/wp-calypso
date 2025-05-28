@@ -6,7 +6,7 @@ import {
 } from '@automattic/wpcom-checkout';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { get, deburr, kebabCase, pick, includes, isEqual, isEmpty, camelCase } from 'lodash';
+import { get, kebabCase, pick, includes, isEqual, isEmpty, camelCase } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, createElement } from 'react';
 import { connect } from 'react-redux';
@@ -196,8 +196,7 @@ export class ContactDetailsFormFields extends Component {
 
 		CONTACT_DETAILS_FORM_FIELDS.forEach( ( fieldName ) => {
 			if ( typeof fieldValues[ fieldName ] === 'string' ) {
-				// TODO: Deep
-				sanitizedFieldValues[ fieldName ] = deburr( fieldValues[ fieldName ].trim() );
+				sanitizedFieldValues[ fieldName ] = fieldValues[ fieldName ].trim();
 
 				// TODO: Do this on submit. Is it too annoying?
 				if ( fieldName === 'postalCode' ) {

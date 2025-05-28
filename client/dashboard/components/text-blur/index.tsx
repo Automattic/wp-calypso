@@ -1,5 +1,9 @@
 import './style.scss';
 
-export function TextBlur( { text }: { text: string } ) {
-	return <span className="text-blur" data-text={ text } />;
+export function TextBlur( { children }: { children: React.ReactNode } ) {
+	return (
+		<span className="dashboard-text-blur" aria-hidden="true">
+			{ children }
+		</span>
+	);
 }

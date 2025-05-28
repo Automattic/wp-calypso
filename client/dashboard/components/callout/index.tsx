@@ -13,7 +13,7 @@ function UnforwardedCallout(
 	{
 		title,
 		icon,
-		imageSrc,
+		image,
 		imageAlt,
 		description,
 		actions,
@@ -39,9 +39,9 @@ function UnforwardedCallout(
 					{ description }
 					{ actions }
 				</VStack>
-				{ imageSrc && (
+				{ image && (
 					<VStack justify="stretch" alignment="stretch" className="dashboard-callout__image">
-						<img src={ imageSrc } alt={ imageAlt } />
+						<img src={ image } alt={ imageAlt } />
 					</VStack>
 				) }
 			</HStack>
