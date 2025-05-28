@@ -62,6 +62,8 @@ import type {
 	DefensiveModeSettingsUpdate,
 	SiteTransferConfirmation,
 	SshAccessStatus,
+	SftpUser,
+	SiteSshKey,
 } from '../data/types';
 import type { Query } from '@tanstack/react-query';
 
@@ -439,14 +441,32 @@ export function siteSftpUsersQuery( siteId: string ) {
 		queryFn: () => {
 			return fetchSftpUsers( siteId );
 		},
+		meta: {
+			persist: false,
+		},
 	};
 }
+
+const updateCurrentSftpUsers = ( currentSftpUsers: SftpUser[], sftpUser: SftpUser ) => {
+	const index = currentSftpUsers.findIndex(
+		( currentSftpUser ) => currentSftpUser.username === sftpUser.username
+	);
+	if ( index >= 0 ) {
+		return [ ...currentSftpUsers.slice( 0, index ), sftpUser, ...currentSftpUsers.slice( 0 + 1 ) ];
+	}
+
+	return [ ...currentSftpUsers, sftpUser ];
+};
 
 export function siteSftpUsersCreateMutation( siteId: string ) {
 	return {
 		mutationFn: () => createSftpUser( siteId ),
-		onSuccess: () => {
-			queryClient.invalidateQueries( { queryKey: [ 'site', siteId, 'sftp-users' ] } );
+		onSuccess: ( createdSftpUser: SftpUser ) => {
+			queryClient.setQueryData(
+				[ 'site', siteId, 'sftp-users' ],
+				( currentSftpUsers: SftpUser[] ) =>
+					updateCurrentSftpUsers( currentSftpUsers, createdSftpUser )
+			);
 		},
 	};
 }
@@ -454,8 +474,12 @@ export function siteSftpUsersCreateMutation( siteId: string ) {
 export function siteSftpUsersResetPasswordMutation( siteId: string ) {
 	return {
 		mutationFn: ( sshUsername: string ) => resetSftpPassword( siteId, sshUsername ),
-		onSuccess: () => {
-			queryClient.invalidateQueries( { queryKey: [ 'site', siteId, 'sftp-users' ] } );
+		onSuccess: ( updatedSftpUser: SftpUser ) => {
+			queryClient.setQueryData(
+				[ 'site', siteId, 'sftp-users' ],
+				( currentSftpUsers: SftpUser[] ) =>
+					updateCurrentSftpUsers( currentSftpUsers, updatedSftpUser )
+			);
 		},
 	};
 }
@@ -507,7 +531,8 @@ export function siteSshKeysAttachMutation( siteId: string ) {
 
 export function siteSshKeysDetachMutation( siteId: string ) {
 	return {
-		mutationFn: ( userLogin: string, name: string ) => detachSiteSshKey( siteId, userLogin, name ),
+		mutationFn: ( siteSshKey: SiteSshKey ) =>
+			detachSiteSshKey( siteId, siteSshKey.user_login, siteSshKey.name ),
 		onSuccess: () => {
 			queryClient.invalidateQueries( { queryKey: [ 'site', siteId, 'ssh-keys' ] } );
 		},

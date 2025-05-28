@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { __experimentalVStack as VStack } from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
 import { file } from '@wordpress/icons';
 import { siteQuery, siteSftpUsersQuery, siteSshAccessStatusQuery } from '../../app/queries';
 import PageLayout from '../../components/page-layout';
@@ -53,8 +54,12 @@ export default function SftpSshSettings( { siteSlug }: { siteSlug: string } ) {
 				) : (
 					<EnableSftpCard siteSlug={ site.slug } canUseSsh={ canUseSsh( site ) } />
 				) }
-				{ canUseSsh( site ) && (
-					<SshCard siteSlug={ site.slug } sshEnabled={ sshAccessStatus?.settings === 'ssh' } />
+				{ sftpEnabled && canUseSsh( site ) && (
+					<SshCard
+						siteSlug={ site.slug }
+						sftpUsers={ sftpUsers }
+						sshEnabled={ sshAccessStatus?.setting === 'ssh' }
+					/>
 				) }
 			</VStack>
 		</PageLayout>

@@ -1,14 +1,14 @@
 import { useMutation } from '@tanstack/react-query';
 import {
+	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
+	__experimentalText as Text,
 	Button,
 	Card,
 	CardBody,
 	ExternalLink,
 	Panel,
 	PanelBody,
-	PanelRow,
-	Text,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
@@ -51,7 +51,7 @@ export default function EnableSftpCard( {
 	return (
 		<Card>
 			<CardBody>
-				<VStack>
+				<VStack spacing={ 6 }>
 					<Text as="p">
 						{ canUseSsh
 							? __(
@@ -62,33 +62,29 @@ export default function EnableSftpCard( {
 							  ) }
 					</Text>
 					<Panel>
-						<PanelBody title={ __( 'What is SFTP?' ) }>
-							<PanelRow>
-								{ createInterpolateElement(
-									__(
-										'SFTP stands for Secure File Transfer Protocol (or SSH File Transfer Protocol). It’s a secure way for you to access your website files on your local computer via a client program such as <filezillaLink>Filezilla</filezillaLink>. ' +
-											'For more information see <supportLink>SFTP on WordPress.com</supportLink>.'
-									),
-									{
-										// @ts-expect-error children prop is injected by createInterpolateElement
-										filezillaLink: <ExternalLink icon target="_blank" href={ FILEZILLA_URL } />,
-										supportLink: <ExternalLink href="#hosting-sftp" />,
-									}
-								) }
-							</PanelRow>
+						<PanelBody title={ __( 'What is SFTP?' ) } initialOpen={ false }>
+							{ createInterpolateElement(
+								__(
+									'SFTP stands for Secure File Transfer Protocol (or SSH File Transfer Protocol). It’s a secure way for you to access your website files on your local computer via a client program such as <filezillaLink>Filezilla</filezillaLink>. ' +
+										'For more information see <supportLink>SFTP on WordPress.com</supportLink>.'
+								),
+								{
+									// @ts-expect-error children prop is injected by createInterpolateElement
+									filezillaLink: <ExternalLink icon target="_blank" href={ FILEZILLA_URL } />,
+									supportLink: <ExternalLink href="#hosting-sftp" />,
+								}
+							) }
 						</PanelBody>
 						{ canUseSsh && (
-							<PanelBody title={ __( 'What is SSH?' ) }>
-								<PanelRow>
-									{ createInterpolateElement(
-										__(
-											'SSH stands for Secure Shell. It’s a way to perform advanced operations on your site using the command line. For more information see <supportLink>Connect to SSH on WordPress.com</supportLink>.'
-										),
-										{
-											supportLink: <ExternalLink href="#hosting-connect-to-ssh" />,
-										}
-									) }
-								</PanelRow>
+							<PanelBody title={ __( 'What is SSH?' ) } initialOpen={ false }>
+								{ createInterpolateElement(
+									__(
+										'SSH stands for Secure Shell. It’s a way to perform advanced operations on your site using the command line. For more information see <supportLink>Connect to SSH on WordPress.com</supportLink>.'
+									),
+									{
+										supportLink: <ExternalLink href="#hosting-connect-to-ssh" />,
+									}
+								) }
 							</PanelBody>
 						) }
 					</Panel>
@@ -102,13 +98,15 @@ export default function EnableSftpCard( {
 							}
 						) }
 					</Text>
-					<Button
-						variant="primary"
-						isBusy={ mutation.isPending }
-						onClick={ handleCreateCredentials }
-					>
-						{ __( 'Create credentials' ) }
-					</Button>
+					<HStack justify="flex-start">
+						<Button
+							variant="primary"
+							isBusy={ mutation.isPending }
+							onClick={ handleCreateCredentials }
+						>
+							{ __( 'Create credentials' ) }
+						</Button>
+					</HStack>
 				</VStack>
 			</CardBody>
 		</Card>

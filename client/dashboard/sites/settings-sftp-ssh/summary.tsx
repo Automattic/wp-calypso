@@ -20,7 +20,7 @@ export default function SftpSshSettingsSummary( { site }: { site: Site } ) {
 
 	const sftpEnabled = sftpUsers?.length > 0;
 
-	const sshEnabled = sshAccessStatus?.settings === 'ssh';
+	const sshEnabled = sshAccessStatus?.setting === 'ssh';
 
 	const badges = [
 		{
@@ -32,10 +32,6 @@ export default function SftpSshSettingsSummary( { site }: { site: Site } ) {
 			intent: sshEnabled ? ( 'success' as const ) : undefined,
 		},
 	].filter( Boolean );
-
-	if ( ! canUseSftp( site ) ) {
-		return null;
-	}
 
 	return (
 		<RouterLinkSummaryButton

@@ -655,11 +655,15 @@ export const launchSite = async ( siteId: string ): Promise< void > => {
 	} );
 };
 
-export const fetchSftpUsers = async ( siteIdOrSlug: string ): Promise< string[] > => {
-	return wpcom.req.get( {
+export const fetchSftpUsers = async ( siteIdOrSlug: string ): Promise< SftpUser[] > => {
+	const { users } = await wpcom.req.get( {
 		path: `/sites/${ siteIdOrSlug }/hosting/ssh-users`,
 		apiNamespace: 'wpcom/v2',
 	} );
+
+	return users.map( ( username: string ) => ( {
+		username,
+	} ) );
 };
 
 export const createSftpUser = async ( siteIdOrSlug: string ): Promise< SftpUser > => {
@@ -711,10 +715,12 @@ export const disableSshAccess = async ( siteIdOrSlug: string ) => {
 };
 
 export const fetchSiteSshKeys = async ( siteIdOrSlug: string ): Promise< SiteSshKey[] > => {
-	return wpcom.req.get( {
+	const { ssh_keys } = await wpcom.req.get( {
 		path: `/sites/${ siteIdOrSlug }/hosting/ssh-keys`,
 		apiNamespace: 'wpcom/v2',
 	} );
+
+	return ssh_keys;
 };
 
 export const attachSiteSshKey = async ( siteIdOrSlug: string, name: string ) => {

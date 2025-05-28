@@ -1,11 +1,13 @@
 import { useMutation } from '@tanstack/react-query';
 import {
+	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
+	__experimentalText as Text,
+	BaseControl,
 	Button,
 	Card,
 	CardBody,
 	ExternalLink,
-	Text,
 	TextControl,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
@@ -49,7 +51,9 @@ export default function SftpCard( {
 			<CardBody>
 				<VStack spacing={ 5 }>
 					<VStack>
-						<Text>{ __( 'SFTP' ) }</Text>
+						<Text size="15px" weight={ 500 } lineHeight="32px">
+							{ __( 'SFTP' ) }
+						</Text>
 						<Text as="p">
 							{ createInterpolateElement(
 								__(
@@ -67,40 +71,52 @@ export default function SftpCard( {
 						<TextControl
 							label={ __( 'URL' ) }
 							value={ SFTP_URL }
-							readonly
+							readOnly
 							__next40pxDefaultSize
 							__nextHasNoMarginBottom
 						/>
 						<TextControl
 							label={ __( 'Port' ) }
 							value={ SFTP_PORT }
-							readonly
+							readOnly
 							__next40pxDefaultSize
 							__nextHasNoMarginBottom
 						/>
 						<TextControl
 							label={ __( 'Username' ) }
 							value={ username }
-							readonly
+							readOnly
 							__next40pxDefaultSize
 							__nextHasNoMarginBottom
 						/>
-						<TextControl
-							label={ __( 'Password' ) }
-							value={ password }
-							help={ __( 'To maintain security, you must reset your password to view it.' ) }
-							readonly
-							__next40pxDefaultSize
-							__nextHasNoMarginBottom
-						/>
+						{ password ? (
+							<TextControl
+								label={ __( 'Password' ) }
+								value={ password }
+								help={ __(
+									'Save your password somewhere safe. You will need to reset it to view it again.'
+								) }
+								readOnly
+								__next40pxDefaultSize
+								__nextHasNoMarginBottom
+							/>
+						) : (
+							<BaseControl
+								label={ __( 'Password' ) }
+								help={ __( 'To maintain security, you must reset your password to view it.' ) }
+								__nextHasNoMarginBottom
+							/>
+						) }
 						{ ! password && (
-							<Button
-								variant="primary"
-								isBusy={ mutation.isPending }
-								onClick={ handleCreatePassword }
-							>
-								{ __( 'Reset password' ) }
-							</Button>
+							<HStack>
+								<Button
+									variant="secondary"
+									isBusy={ mutation.isPending }
+									onClick={ handleCreatePassword }
+								>
+									{ __( 'Reset password' ) }
+								</Button>
+							</HStack>
 						) }
 					</VStack>
 				</VStack>

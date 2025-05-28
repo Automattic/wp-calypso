@@ -3,12 +3,12 @@ import { useQuery, useMutation } from '@tanstack/react-query';
 import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
+	__experimentalText as Text,
 	Button,
 	Card,
 	CardBody,
 	ExternalLink,
 	SelectControl,
-	Text,
 	TextControl,
 	ToggleControl,
 } from '@wordpress/components';
@@ -29,6 +29,7 @@ import type { SftpUser, SiteSshKey, ProfileSshKey } from '../../data/types';
 
 export default function SshCard( {
 	siteSlug,
+	sftpUsers,
 	sshEnabled,
 }: {
 	siteSlug: string;
@@ -53,8 +54,8 @@ export default function SshCard( {
 		if ( ! siteSshKeys ) {
 			return false;
 		}
-		return !! siteSshKeys.find( ( { user_login }: SiteSshKey ) => user_login === username );
-	}, [ siteSshKeys, username ] );
+		return !! siteSshKeys.find( ( { user_login }: SiteSshKey ) => user_login === user.username );
+	}, [ siteSshKeys, user.username ] );
 
 	const showSshKeysSelect = ! userKeyIsAttached && profileSshKeys && profileSshKeys.length > 0;
 
@@ -67,7 +68,7 @@ export default function SshCard( {
 	};
 
 	const handleDetachSshKey = ( siteSshKey: SiteSshKey ) => {
-		detachSshKeyMutation.mutate( siteSshKey.user_login, siteSshKey.name );
+		detachSshKeyMutation.mutate( siteSshKey );
 	};
 
 	const handleSelectedSshKeyChange = ( currentSelectedKey: string ) => {
@@ -79,7 +80,9 @@ export default function SshCard( {
 			<CardBody>
 				<VStack spacing={ 5 }>
 					<VStack>
-						<Text>{ __( 'SSH' ) }</Text>
+						<Text size="15px" weight={ 500 } lineHeight="32px">
+							{ __( 'SSH' ) }
+						</Text>
 						<Text as="p">
 							{ createInterpolateElement(
 								__(
@@ -97,71 +100,90 @@ export default function SshCard( {
 						<ToggleControl
 							label={ __( 'Enable SSH access for this site' ) }
 							checked={ sshEnabled }
-							disabled={ mutation.isPending }
+							disabled={ toggleSshAccessMutation.isPending }
 							onChange={ handleToggleSshAccess }
 							__nextHasNoMarginBottom
 						/>
-						<TextControl
-							label={ __( 'Connection command' ) }
-							value={ `ssh ${ username }@ssh.wp.com` }
-							readonly
-							__next40pxDefaultSize
-							__nextHasNoMarginBottom
-						/>
-
-						{ siteSshKeys &&
-							siteSshKeys.map( ( siteSshKey: SiteSshKey ) => (
-								<>
-									<Text>{ __( 'SSH Key' ) }</Text>
-									<Card key={ siteSshKey.sha256 }>
-										<CardBody>
-											<HStack spacing={ 4 } justify="space-between" alignment="flex-start">
-												<VStack spacing={ 3 }>
-													<VStack spacing={ 1 }>
-														<Text>{ `${ siteSshKey.user_login }-${ siteSshKey.name }` }</Text>
-														<Text variant="muted">{ siteSshKey.sha256 }</Text>
-													</VStack>
-													<CoreBadge
-														intent="info"
-														text={ sprintf(
-															/* translators: %s is when the SSH key was attached. */
-															__( 'Attached on %s' ),
-															new Intl.DateTimeFormat( userLocale, {
-																dateStyle: 'long',
-																timeStyle: 'medium',
-															} ).format( new Date( siteSshKey.attached_at ) )
-														) }
-													/>
-												</VStack>
-												<Button icon={ trash } onClick={ () => handleDetachSshKey( siteSshKey ) } />
-											</HStack>
-										</CardBody>
-									</Card>
-								</>
-							) ) }
-						{ /* TODO: Use DataForm and add ReauthRequired */ }
-						{ showSshKeysSelect && (
+						{ sshEnabled && (
 							<>
-								<SelectControl
-									label={ __( 'SSH key' ) }
-									value={ selectedSshKey }
-									options={ profileSshKeys.map( ( profileSshKey: ProfileSshKey ) => ( {
-										label: profileSshKey.name,
-										value: profileSshKey.name,
-									} ) ) }
-									onChange={ handleSelectedSshKeyChange }
+								<TextControl
+									label={ __( 'Connection command' ) }
+									value={ `ssh ${ username }@ssh.wp.com` }
+									readOnly
 									__next40pxDefaultSize
 									__nextHasNoMarginBottom
 								/>
 
-								<HStack justify="flex-start">
-									<Button variant="primary" onClick={ handleAttachSshKey }>
-										{ __( 'Attach SSH key to site' ) }
-									</Button>
-									<Button variant="secondary" href="/me/security/ssh-key">
-										{ __( 'Add new SSH key ↗️' ) }
-									</Button>
-								</HStack>
+								{ siteSshKeys && siteSshKeys.length > 0 && (
+									<>
+										<Text>{ __( 'SSH Key' ) }</Text>
+										<VStack>
+											{ siteSshKeys.map( ( siteSshKey: SiteSshKey ) => (
+												<Card key={ siteSshKey.sha256 }>
+													<CardBody>
+														<HStack spacing={ 4 } justify="space-between" alignment="flex-start">
+															<VStack spacing={ 3 } alignment="flex-start">
+																<VStack spacing={ 1 }>
+																	<Text>{ `${ siteSshKey.user_login }-${ siteSshKey.name }` }</Text>
+																	<Text variant="muted">{ siteSshKey.sha256 }</Text>
+																</VStack>
+																<CoreBadge intent="info" style={ { height: '24px' } }>
+																	{ sprintf(
+																		/* translators: %s is when the SSH key was attached. */
+																		__( 'Attached on %s' ),
+																		new Intl.DateTimeFormat( userLocale, {
+																			dateStyle: 'long',
+																			timeStyle: 'medium',
+																		} ).format( new Date( siteSshKey.attached_at ) )
+																	) }
+																</CoreBadge>
+															</VStack>
+															<Button
+																icon={ trash }
+																disabled={ detachSshKeyMutation.isPending }
+																onClick={ () => handleDetachSshKey( siteSshKey ) }
+															/>
+														</HStack>
+													</CardBody>
+												</Card>
+											) ) }
+										</VStack>
+									</>
+								) }
+								{ /* TODO: Use DataForm and add ReauthRequired */ }
+								{ showSshKeysSelect && (
+									<>
+										<SelectControl
+											label={ __( 'SSH key' ) }
+											value={ selectedSshKey }
+											options={ profileSshKeys.map( ( profileSshKey: ProfileSshKey ) => ( {
+												label: `${ user.username }-${ profileSshKey.name }`,
+												value: profileSshKey.name,
+											} ) ) }
+											onChange={ handleSelectedSshKeyChange }
+											__next40pxDefaultSize
+											__nextHasNoMarginBottom
+										/>
+
+										<HStack justify="flex-start">
+											<Button
+												variant="primary"
+												disabled={ attachSshKeyMutation.isPending }
+												onClick={ handleAttachSshKey }
+											>
+												{ __( 'Attach SSH key to site' ) }
+											</Button>
+											<Button
+												variant="secondary"
+												target="_blank"
+												href="/me/security/ssh-key"
+												rel="noreferrer"
+											>
+												{ __( 'Add new SSH key ↗' ) }
+											</Button>
+										</HStack>
+									</>
+								) }
 							</>
 						) }
 					</VStack>
