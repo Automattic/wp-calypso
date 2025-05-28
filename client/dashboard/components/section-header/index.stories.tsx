@@ -30,8 +30,12 @@ export const WithActions: Story = {
 				content is displayed to visitors.`,
 		actions: (
 			<>
-				<Button variant="secondary">Cancel</Button>
-				<Button variant="primary">Save Changes</Button>
+				<Button variant="secondary" size="compact">
+					Cancel
+				</Button>
+				<Button variant="primary" size="compact">
+					Save Changes
+				</Button>
 			</>
 		),
 	},
@@ -44,8 +48,12 @@ export const ImageDecoration: Story = {
 		decoration: <img src="https://placecats.com/300/200" alt="Cat" />,
 		actions: (
 			<>
-				<Button variant="secondary">Cancel</Button>
-				<Button variant="primary">Save Changes</Button>
+				<Button variant="secondary" size="compact">
+					Cancel
+				</Button>
+				<Button variant="primary" size="compact">
+					Save Changes
+				</Button>
 			</>
 		),
 	},
@@ -58,16 +66,16 @@ export const FullExample: Story = {
 		decoration: <Icon icon={ wordpress } />,
 		actions: (
 			<>
-				<Button icon={ help } variant="tertiary" __next40pxDefaultSize>
+				<Button icon={ help } variant="tertiary" size="compact">
 					Help
 				</Button>
-				<Button variant="secondary" __next40pxDefaultSize>
+				<Button variant="secondary" size="compact">
 					Preview
 				</Button>
 				<DropdownMenu
 					icon={ moreVertical }
 					label="More actions"
-					toggleProps={ { __next40pxDefaultSize: true } }
+					toggleProps={ { size: 'compact' } }
 				>
 					{ () => (
 						<>

@@ -41,6 +41,7 @@ export const SectionHeader = ( {
 						spacing={ 2 }
 						justify="flex-end"
 						expanded={ false }
+						alignment="flex-start"
 						className="dashboard-section-header__actions"
 					>
 						{ actions }

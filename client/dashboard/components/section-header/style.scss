@@ -1,4 +1,5 @@
 @import "@wordpress/base-styles/variables";
+@import "@wordpress/base-styles/mixins";
 
 .dashboard-section-header {
 	position: relative;
@@ -13,15 +14,15 @@
 
 	&.is-level-2 {
 		.dashboard-section-header__heading {
-			font-size: $font-size-x-large;
-			line-height: $font-line-height-x-large;
+			@include heading-x-large();
+			margin-top: $grid-unit-05;
 		}
 	}
 
 	&.is-level-3 {
 		.dashboard-section-header__heading {
-			font-size: $font-size-large;
-			line-height: $font-line-height-large;
+			@include heading-large();
+			margin-top: calc($grid-unit-05 * 1.5);
 		}
 	}
 }
@@ -33,8 +34,8 @@
 
 .dashboard-section-header__decoration {
 	display: inline-flex;
-	width: $grid-unit-50;
-	height: $grid-unit-50;
+	width: $grid-unit-40;
+	height: $grid-unit-40;
 	flex-shrink: 0;
 	align-items: center;
 	justify-content: center;
