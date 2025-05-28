@@ -1,7 +1,8 @@
-import { Card } from '@automattic/components';
+import page from '@automattic/calypso-router';
+import { Gridicon, Card } from '@automattic/components';
 import { Purchases } from '@automattic/data-stores';
 import { DataViews, View, filterSortAndPaginate } from '@wordpress/dataviews';
-import { LocalizeProps } from 'i18n-calypso';
+import { LocalizeProps, useTranslate } from 'i18n-calypso';
 import { useMemo, useState } from 'react';
 import { MembershipSubscription } from 'calypso/lib/purchases/types';
 import {
@@ -28,12 +29,30 @@ export function PurchasesDataViews( props: {
 	translate: LocalizeProps[ 'translate' ];
 } ) {
 	const { purchases } = props;
+	const translate = useTranslate();
 	const [ currentView, setView ] = useState( purchasesDataView );
 	const purchasesDataFields = usePurchasesFieldDefinitions( purchasesDataView.fields );
 
 	const { data: adjustedPurchases, paginationInfo } = useMemo( () => {
 		return filterSortAndPaginate( purchases, currentView, purchasesDataFields );
 	}, [ purchases, currentView, purchasesDataFields ] );
+
+	const actions = useMemo(
+		() => [
+			{
+				id: 'manage-purchase',
+				label: translate( 'Manage this purchase', { textOnly: true } ),
+				isPrimary: true,
+				icon: <Gridicon icon="chevron-right" />,
+				callback: ( items: Purchases.Purchase[] ) => {
+					const siteUrl = items[ 0 ].domain;
+					const subscriptionId = items[ 0 ].id;
+					page( `/me/purchases/${ siteUrl }/${ subscriptionId }` );
+				},
+			},
+		],
+		[ translate ]
+	);
 
 	const getItemId = ( item: Purchases.Purchase ) => {
 		return item.id.toString();
@@ -46,7 +65,7 @@ export function PurchasesDataViews( props: {
 				view={ currentView }
 				onChangeView={ setView }
 				defaultLayouts={ { table: {} } }
-				actions={ undefined }
+				actions={ actions }
 				getItemId={ getItemId }
 				paginationInfo={ paginationInfo }
 			/>
