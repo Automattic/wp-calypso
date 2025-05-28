@@ -76,6 +76,7 @@ export interface SiteOptions {
 	software_version: string;
 	admin_url: string;
 	is_redirect?: boolean;
+	p2_hub_blog_id?: number;
 }
 
 export interface Site {
@@ -97,6 +98,7 @@ export interface Site {
 	is_private: boolean;
 	is_wpcom_atomic: boolean;
 	is_wpcom_staging_site: boolean;
+	is_vip: boolean;
 	launch_status: string | boolean;
 	site_migration: {
 		migration_status?: string;

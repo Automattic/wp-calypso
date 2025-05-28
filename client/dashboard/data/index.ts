@@ -411,6 +411,13 @@ export const siteOwnerTransferConfirm = async (
 	);
 };
 
+export const deleteSite = async ( siteIdOrSlug: string ) => {
+	return wpcom.req.post( {
+		path: `/sites/${ siteIdOrSlug }/delete`,
+		apiNamespace: 'wpcom/v2',
+	} );
+};
+
 export const fetchBasicMetrics = async ( url: string ): Promise< BasicMetricsData > => {
 	return wpcom.req.get(
 		{

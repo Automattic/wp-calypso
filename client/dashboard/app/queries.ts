@@ -19,6 +19,7 @@ import {
 	siteOwnerTransfer,
 	siteOwnerTransferEligibilityCheck,
 	siteOwnerTransferConfirm,
+	deleteSite,
 	fetchWordPressVersion,
 	updateWordPressVersion,
 	fetchPrimaryDataCenter,
@@ -200,6 +201,15 @@ export function siteOwnerTransferConfirmMutation( siteId: string ) {
 				// Invalidate queries as the site has been transferred to new owner.
 				queryClient.invalidateQueries( { queryKey: [ 'site', siteId ] } );
 			}
+		}
+	};
+}
+
+export function deleteSiteMutation( siteId: string ) {
+	return {
+		mutationFn: () => deleteSite( siteId ),
+		onSuccess: () => {
+			queryClient.invalidateQueries( { queryKey: [ 'site', siteId ] } );
 		},
 	};
 }

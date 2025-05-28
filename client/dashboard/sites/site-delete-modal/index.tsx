@@ -1,0 +1,133 @@
+import { DataForm } from '@automattic/dataviews';
+import { useMutation } from '@tanstack/react-query';
+import { useRouter } from '@tanstack/react-router';
+import {
+	__experimentalHStack as HStack,
+	__experimentalText as Text,
+	__experimentalVStack as VStack,
+	Button,
+	ExternalLink,
+	Modal,
+} from '@wordpress/components';
+import { useDispatch } from '@wordpress/data';
+import { createInterpolateElement } from '@wordpress/element';
+import { __, sprintf } from '@wordpress/i18n';
+import { store as noticesStore } from '@wordpress/notices';
+import { useState } from 'react';
+import { deleteSiteMutation } from '../../app/queries';
+import Notice from '../../components/notice';
+import type { Site } from '../../data/types';
+import type { Field } from '@automattic/dataviews';
+
+type SiteDeleteFormData = {
+	domain: string;
+};
+
+// TODO: Unable to delete site
+export default function SiteDeleteModal( { site, onClose }: { site: Site; onClose: () => void } ) {
+	const router = useRouter();
+	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+	const [ formData, setFormData ] = useState< SiteDeleteFormData >( { domain: '' } );
+	const mutation = useMutation( deleteSiteMutation( site.slug ) );
+
+	const fields: Field< SiteDeleteFormData >[] = [
+		{
+			id: 'domain',
+			label: __( 'Type the site domain to confirm' ),
+			type: 'text' as const,
+			description: sprintf(
+				/* translators: %s: site domain */
+				__( 'The site domain is: %s' ),
+				site.slug
+			),
+		},
+	];
+
+	const form = {
+		type: 'regular' as const,
+		fields: [ 'domain' ],
+	};
+
+	const handleSubmit = ( e: React.FormEvent ) => {
+		e.preventDefault();
+
+		mutation.mutate( undefined, {
+			onSuccess: () => {
+				router.navigate( { to: '/sites' } );
+				createSuccessNotice(
+					sprintf(
+						/* translators: %s: site name */
+						__( '%s has been deleted.' ),
+						site.name
+					),
+					{ type: 'snackbar' }
+				);
+			},
+			onError: ( error: { error: string } ) => {
+				let message = 'Failed to delete site';
+				if ( error.error === 'active-subscriptions' ) {
+					message = 'You must cancel any active subscriptions prior to deleting your site.';
+				}
+
+				if ( error.error === 'p2-hub-has-spaces' ) {
+					message =
+						'Your P2 Workspace has P2s. You must delete all P2s in this workspace before you can delete it.';
+				}
+
+				createErrorNotice( message, {
+					type: 'snackbar',
+				} );
+			},
+		} );
+	};
+
+	return (
+		<Modal title={ __( 'Delete site' ) } size="medium" onRequestClose={ onClose }>
+			<VStack spacing={ 4 }>
+				<Notice variant="warning" density="medium">
+					<Text>
+						{ createInterpolateElement(
+							'Before deleting your site, consider <link>exporting your content as a backup</link>.',
+							{
+								// @ts-expect-error children prop is injected by createInterpolateElement
+								link: <ExternalLink href="#" />,
+							}
+						) }
+					</Text>
+				</Notice>
+				<Text as="p">
+					{ __(
+						'Deletion is irreversible and will permanently remove all site content — posts, pages, media, users, authors, domains, purchased upgrades, and premium themes.'
+					) }
+				</Text>
+				<Text as="p">
+					{ sprintf(
+						/* translators: %s: site domain */
+						__( 'Once deleted, your domain %s will also become unavailable.' ),
+						site.slug
+					) }
+				</Text>
+				<form onSubmit={ handleSubmit }>
+					<VStack spacing={ 4 } style={ { padding: '8px 0' } }>
+						<DataForm< SiteDeleteFormData >
+							data={ formData }
+							fields={ fields }
+							form={ form }
+							onChange={ ( edits: Partial< SiteDeleteFormData > ) => {
+								setFormData( ( data ) => ( { ...data, ...edits } ) );
+							} }
+						/>
+						<HStack justify="flex-end">
+							<Button variant="tertiary" disabled={ mutation.isPending } onClick={ onClose }>
+								{ __( 'Cancel' ) }
+							</Button>
+							<Button variant="primary" type="submit" isDestructive isBusy={ mutation.isPending }>
+								{ __( 'Delete site' ) }
+							</Button>
+						</HStack>
+					</VStack>
+				</form>
+			</VStack>
+		</Modal>
+	);
+}
