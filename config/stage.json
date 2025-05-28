@@ -65,7 +65,6 @@
 		"jetpack/features-section/jetpack": true,
 		"jetpack/features-section/simple": true,
 		"jetpack/manage-simple-sites": true,
-		"jetpack/onboarding-user-connection-redesign": true,
 		"jetpack/pricing-add-boost-social": true,
 		"jetpack/pricing-page-annual-only": true,
 		"jetpack/sharing-buttons-block-enabled": false,

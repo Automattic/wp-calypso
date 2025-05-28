@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import {
 	PRODUCT_JETPACK_BACKUP_T1_YEARLY,
 	WPCOM_FEATURES_BACKUPS,
@@ -806,10 +805,7 @@ export class JetpackAuthorize extends Component {
 			return translate( 'Connect to WordPress.com' );
 		}
 
-		if (
-			config.isEnabled( 'jetpack/onboarding-user-connection-redesign' ) &&
-			this.isFromJetpackOnboarding()
-		) {
+		if ( this.isFromJetpackOnboarding() ) {
 			return translate( 'Connect my site' );
 		}
 
@@ -886,10 +882,7 @@ export class JetpackAuthorize extends Component {
 			);
 		}
 
-		if (
-			config.isEnabled( 'jetpack/onboarding-user-connection-redesign' ) &&
-			this.isFromJetpackOnboarding()
-		) {
+		if ( this.isFromJetpackOnboarding() ) {
 			return (
 				<>
 					<div className="jetpack-connect__logged-in-user-text-name">
@@ -1067,10 +1060,7 @@ export class JetpackAuthorize extends Component {
 		const { from } = authQuery;
 		const loginURL = login( { isJetpack: true, redirectTo: window.location.href, from } );
 
-		if (
-			config.isEnabled( 'jetpack/onboarding-user-connection-redesign' ) &&
-			this.isFromJetpackOnboarding()
-		) {
+		if ( this.isFromJetpackOnboarding() ) {
 			return (
 				<>
 					<div className="jetpack-connect__logged-in-user-card">
@@ -1280,10 +1270,7 @@ export class JetpackAuthorize extends Component {
 			/>
 		);
 
-		if (
-			config.isEnabled( 'jetpack/onboarding-user-connection-redesign' ) &&
-			this.isFromJetpackOnboarding()
-		) {
+		if ( this.isFromJetpackOnboarding() ) {
 			return (
 				<LoggedOutFormFooter className="jetpack-connect__action--onboarding">
 					{ actionButton }
@@ -1304,9 +1291,7 @@ export class JetpackAuthorize extends Component {
 		const wooDna = this.getWooDnaConfig();
 		const authSiteId = this.props.authQuery.clientId;
 		const { authorizeSuccess, isAuthorizing } = this.props.authorizationData;
-		const isFromJetpackOnboarding =
-			config.isEnabled( 'jetpack/onboarding-user-connection-redesign' ) &&
-			this.isFromJetpackOnboarding();
+		const isFromJetpackOnboarding = this.isFromJetpackOnboarding();
 
 		if ( this.isWooJPC() && ( isAuthorizing || authorizeSuccess ) ) {
 			return (
