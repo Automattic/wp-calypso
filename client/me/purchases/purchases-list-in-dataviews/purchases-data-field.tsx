@@ -1,4 +1,4 @@
-import { Purchases } from '@automattic/data-stores';
+import { Purchases, SiteDetails } from '@automattic/data-stores';
 import { Fields, Operator } from '@wordpress/dataviews';
 import { LocalizeProps } from 'i18n-calypso';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
@@ -62,11 +62,13 @@ export function getPurchasesFieldDefinitions( {
 	translate,
 	moment,
 	paymentMethods,
+	sites,
 	fieldIds,
 }: {
 	translate: LocalizeProps[ 'translate' ];
 	moment: ReturnType< typeof useLocalizedMoment >;
 	paymentMethods: Array< StoredPaymentMethod >;
+	sites?: Record< number | string, SiteDetails >;
 	fieldIds?: string[];
 } ): Fields< Purchases.Purchase > {
 	const backupPaymentMethods = paymentMethods.filter(
@@ -104,7 +106,19 @@ export function getPurchasesFieldDefinitions( {
 				operators: [ 'is' as Operator ],
 			},
 			getValue: ( { item }: { item: Purchases.Purchase } ) => {
-				return getDisplayName( item ) + ' ' + purchaseType( item ) + ' ' + item.siteName;
+				// Render a bunch of things to make this easily searchable.
+				const site = sites?.[ item.siteId ];
+				return (
+					getDisplayName( item ) +
+					' ' +
+					purchaseType( item ) +
+					' ' +
+					item.siteName +
+					' ' +
+					item.domain +
+					' ' +
+					site?.URL
+				);
 			},
 			render: ( { item }: { item: Purchases.Purchase } ) => {
 				return (
@@ -193,9 +207,8 @@ export function getMembershipsFieldDefinitions( {
 			filterBy: {
 				operators: [ 'is' as Operator ],
 			},
-			// Filter by site ID
 			getValue: ( { item }: { item: MembershipSubscription } ) => {
-				return item.site_id;
+				return item.site_id + ' ' + item.site_title + ' ' + item.site_url;
 			},
 			// Render the site icon
 			render: ( { item }: { item: MembershipSubscription } ) => {
