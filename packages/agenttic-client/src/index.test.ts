@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
 	A2AErrorCodes,
-	createA2AClient,
+	createClient,
 	createRequestId,
 	createTaskId,
 	createTextMessage,
@@ -57,7 +57,7 @@ describe( '@automattic/agenttic-client', () => {
 
 	describe( 'Client creation', () => {
 		it( 'should create a client with minimal config', () => {
-			const client = createA2AClient( {
+			const client = createClient( {
 				agentUrl: 'https://example.com/agent',
 			} );
 
@@ -71,7 +71,7 @@ describe( '@automattic/agenttic-client', () => {
 				Authorization: 'Bearer test',
 			} );
 
-			const client = createA2AClient( {
+			const client = createClient( {
 				agentUrl: 'https://example.com/agent',
 				authProvider,
 				defaultSessionId: 'test-session',
@@ -82,7 +82,7 @@ describe( '@automattic/agenttic-client', () => {
 		} );
 
 		it( 'should create a client without dispatcher (defaults to browser dispatcher)', () => {
-			const client = createA2AClient( {
+			const client = createClient( {
 				agentUrl: 'https://example.com/agent',
 				authProvider: async () => ( { Authorization: 'Bearer test' } ),
 			} );

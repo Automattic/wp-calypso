@@ -1,6 +1,6 @@
 # Agenttic Client
 
-A TypeScript client library for A2A (Agent2Agent) protocol communication with support for both Node.js and browser environments.
+A TypeScript client library for communicating with WPcom Agent API with support for both Node.js and browser environments.
 
 ## Features
 
@@ -121,12 +121,9 @@ function WordPressAgentChat() {
 For Node.js environments with SOCKS proxy support:
 
 ```typescript
-import {
-	createA2AClient,
-	nodeDispatcher,
-} from '@automattic/agenttic-client/node';
+import { createClient, nodeDispatcher } from '@automattic/agenttic-client/node';
 
-const client = createA2AClient( {
+const client = createClient( {
 	agentUrl: 'https://your-agent-url.com/api',
 	authProvider: async () => ( { Authorization: 'Bearer your-token' } ),
 	proxy: 'socks://127.0.0.1:8080', // SOCKS proxy support
@@ -156,9 +153,9 @@ for await ( const update of client.sendMessageStream( {
 ### Generic Usage (Auto-detects Environment)
 
 ```typescript
-import { createA2AClient } from '@automattic/agenttic-client';
+import { createClient } from '@automattic/agenttic-client';
 
-const client = createA2AClient( {
+const client = createClient( {
 	agentUrl: 'https://your-agent-url.com/api',
 	authProvider: async () => ( { Authorization: 'Bearer your-token' } ),
 	timeout: 30000,
@@ -230,7 +227,7 @@ const contextProvider = useClientContext( () => ( {
 ### Client Configuration
 
 ```typescript
-interface A2AClientConfig {
+interface ClientConfig {
 	agentUrl: string;
 	authProvider?: AuthProvider;
 	defaultSessionId?: string;

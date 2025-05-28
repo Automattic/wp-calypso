@@ -169,7 +169,7 @@ export interface AuthProvider {
 	(): Promise< Record< string, string > >;
 }
 
-export interface A2AClientConfig {
+export interface ClientConfig {
 	agentUrl: string;
 	authProvider?: AuthProvider;
 	defaultSessionId?: string;
@@ -194,7 +194,7 @@ export interface TaskUpdate {
 	artifact?: Artifact;
 }
 
-export interface A2AClient {
+export interface Client {
 	sendMessage( params: SendMessageParams ): Promise< Task >;
 	sendMessageStream( params: SendMessageParams ): AsyncIterable< TaskUpdate >;
 	getTask( taskId: string ): Promise< Task >;

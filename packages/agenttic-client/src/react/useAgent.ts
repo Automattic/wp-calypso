@@ -1,9 +1,9 @@
 import { useCallback, useRef, useState } from '@wordpress/element';
-import { createA2AClient } from '../client/index';
+import { createClient } from '../client/index';
 import { createTextMessage } from '../utils/index';
 import type {
-	A2AClient,
-	A2AClientConfig,
+	Client,
+	ClientConfig,
 	Message,
 	SendMessageParams,
 	Task,
@@ -13,7 +13,7 @@ import type {
 /**
  * Configuration for the useAgent hook
  */
-export interface UseAgentConfig extends Omit< A2AClientConfig, 'dispatcher' > {
+export interface UseAgentConfig extends Omit< ClientConfig, 'dispatcher' > {
 	// Browser-specific config options can be added here
 }
 
@@ -50,20 +50,20 @@ export interface UseAgentReturn {
 }
 
 /**
- * React hook for managing A2A client connections and message sending
+ * React hook for managing agent client connections and message sending
  *
- * @param config - Configuration for the A2A client
+ * @param config - Configuration for the agent client
  * @return Object containing state and actions for agent interaction
  */
 export function useAgent( config: UseAgentConfig ): UseAgentReturn {
 	// Initialize client once on mount
-	const clientRef = useRef< A2AClient | null >( null );
+	const clientRef = useRef< Client | null >( null );
 	const [ initError, setInitError ] = useState< string | null >( null );
 
 	// Initialize client only once
 	if ( ! clientRef.current && ! initError ) {
 		try {
-			clientRef.current = createA2AClient( {
+			clientRef.current = createClient( {
 				...config,
 			} );
 		} catch ( error ) {

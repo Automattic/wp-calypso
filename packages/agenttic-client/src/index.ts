@@ -1,11 +1,11 @@
 /**
  * @file agenttic-client
  *
- * A TypeScript client library for A2A (Agent2Agent) protocol communication
+ * A TypeScript client library for communication with WPcom Agent API
  */
 
 // Core client exports
-export { createA2AClient, sendMessageAndWait } from './client/index';
+export { createClient, sendMessageAndWait } from './client/index';
 
 // Type exports
 export type {
@@ -33,9 +33,9 @@ export type {
 	TaskArtifactUpdateEvent,
 
 	// Client types
-	A2AClient,
+	Client,
 	AuthProvider,
-	A2AClientConfig,
+	ClientConfig,
 	SendMessageParams,
 	TaskUpdate,
 

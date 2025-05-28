@@ -1,4 +1,4 @@
-import { createA2AClient } from '../client/index';
+import { createClient } from '../client/index';
 import {
 	createTextMessage,
 	createToolResultDataPart,
@@ -10,20 +10,20 @@ import { createCLIContextProvider } from './context';
 import { nodeDispatcher } from './dispatcher';
 import { cliLog } from '../utils/logger';
 import type { CLIOptions, ConversationHistoryItem } from './types';
-import type { A2AClient } from '../types/index';
+import type { Client } from '../types/index';
 import chalk from 'chalk';
 
 /**
  * Create providers based on CLI options
  *
  * @param options   - CLI options
- * @param client    - A2A client instance for sending tool results back to agent
+ * @param client    - Agent client instance for sending tool results back to agent
  * @param sessionId - Session ID for tool result messages
  * @return Object containing auth, tool, and context providers
  */
 export function createProviders(
 	options: CLIOptions,
-	client?: A2AClient,
+	client?: Client,
 	sessionId?: string
 ) {
 	// Determine auth provider based on options
@@ -145,7 +145,7 @@ export function createProviders(
 }
 
 /**
- * Create A2A client with providers
+ * Create agent client with providers
  *
  * @param options - CLI options
  * @return Object containing client and providers
@@ -154,7 +154,7 @@ export function createClientWithProviders( options: CLIOptions ) {
 	// First create client without tool provider
 	const { authProvider, contextProvider } = createProviders( options );
 
-	const client = createA2AClient( {
+	const client = createClient( {
 		agentUrl: options.url,
 		authProvider,
 		defaultSessionId: options.session,
@@ -169,7 +169,7 @@ export function createClientWithProviders( options: CLIOptions ) {
 	const { toolProvider } = createProviders( options, client, sessionId );
 
 	// Update the client with the tool provider
-	const clientWithTools = createA2AClient( {
+	const clientWithTools = createClient( {
 		agentUrl: options.url,
 		authProvider,
 		defaultSessionId: options.session,
@@ -225,7 +225,7 @@ export async function getStatusStrings(
 /**
  * Handle streaming message response
  *
- * @param client              - A2A client instance
+ * @param client              - Agent client instance
  * @param message             - Message text to send
  * @param sessionId           - Session identifier
  * @param conversationHistory - Conversation history
@@ -267,7 +267,7 @@ export async function handleStreamingMessage(
 /**
  * Handle non-streaming message response
  *
- * @param client              - A2A client instance
+ * @param client              - Agent client instance
  * @param message             - Message text to send
  * @param sessionId           - Session identifier
  * @param conversationHistory - Conversation history
@@ -318,7 +318,7 @@ export async function handleNonStreamingMessage(
 /**
  * Send a message using either streaming or non-streaming mode
  *
- * @param client              - A2A client instance
+ * @param client              - Agent client instance
  * @param message             - Message text to send
  * @param sessionId           - Session identifier
  * @param conversationHistory - Conversation history

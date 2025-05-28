@@ -1,5 +1,5 @@
 import type {
-	A2AClientConfig,
+	ClientConfig,
 	AuthProvider,
 	JsonRpcResponse,
 	Message,

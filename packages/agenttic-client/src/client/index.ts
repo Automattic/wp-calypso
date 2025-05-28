@@ -1,6 +1,6 @@
 import type {
-	A2AClient,
-	A2AClientConfig,
+	Client,
+	ClientConfig,
 	AuthProvider,
 	ContextProvider,
 	JsonRpcResponse,
@@ -31,7 +31,7 @@ import { defaultDispatcher } from '../utils/dispatcher';
 const DEFAULT_TIMEOUT = 30000;
 
 /**
- * Create an A2A client instance
+ * Create an agent client instance
  *
  * @example
  * ```typescript
@@ -52,7 +52,7 @@ const DEFAULT_TIMEOUT = 30000;
  *   }
  * };
  *
- * const client = createA2AClient({
+ * const client = createClient({
  *   agentUrl: 'https://api.example.com',
  *   toolProvider
  * });
@@ -60,7 +60,7 @@ const DEFAULT_TIMEOUT = 30000;
  *
  * @param config
  */
-export function createA2AClient( config: A2AClientConfig ): A2AClient {
+export function createClient( config: ClientConfig ): Client {
 	const {
 		agentUrl,
 		authProvider,
@@ -157,7 +157,7 @@ export function createA2AClient( config: A2AClientConfig ): A2AClient {
  * @param params
  */
 export async function sendMessageAndWait(
-	client: A2AClient,
+	client: Client,
 	params: SendMessageParams
 ): Promise< Task > {
 	for await ( const update of client.sendMessageStream( params ) ) {

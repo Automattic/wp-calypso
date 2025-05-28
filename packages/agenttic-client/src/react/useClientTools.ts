@@ -40,8 +40,9 @@ export function useClientTools(
 	executeTool?: ExecuteToolCallback,
 	onToolCompletion?: OnToolCompletionCallback
 ): ToolProvider | undefined {
-	// Create stable callback references
-	const getAvailableTools = useCallback( async (): Promise< Tool[] > => {
+	const stableGetAvailableTools = useCallback( async (): Promise<
+		Tool[]
+	> => {
 		if ( ! getClientTools ) {
 			return [];
 		}
@@ -54,7 +55,7 @@ export function useClientTools(
 		}
 	}, [ getClientTools ] );
 
-	const executeToolStable = useCallback(
+	const stableExecuteTool = useCallback(
 		async ( toolId: string, args: any ): Promise< any > => {
 			if ( ! executeTool ) {
 				throw new Error( 'No executeTool callback provided' );
@@ -100,15 +101,15 @@ export function useClientTools(
 		}
 
 		return {
-			getAvailableTools,
-			executeTool: executeToolStable,
+			getAvailableTools: stableGetAvailableTools,
+			executeTool: stableExecuteTool,
 			onToolCompletion: onToolCompletion
 				? stableOnToolCompletion
 				: undefined,
 		};
 	}, [
-		getAvailableTools,
-		executeToolStable,
+		stableGetAvailableTools,
+		stableExecuteTool,
 		stableOnToolCompletion,
 		getClientTools,
 		onToolCompletion,

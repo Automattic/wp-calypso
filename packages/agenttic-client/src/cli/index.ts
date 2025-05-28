@@ -131,7 +131,7 @@ function parseArgs(): CLIOptions {
  */
 function printHelp(): void {
 	cliLog.info( `
-agenttic-client - A2A Protocol Client CLI
+agenttic-client - Agent Client CLI
 
 USAGE:
  pnpm cli [OPTIONS] [MESSAGE]
@@ -250,7 +250,7 @@ async function runInteractive( options: CLIOptions ): Promise< void > {
 	};
 
 	cliLog.info( `
-🤖 A2A Agent Test CLI - Interactive Mode
+🤖 Agent Test CLI - Interactive Mode
 Connected to: ${ options.url }
 Session: ${ session.sessionId }
 Auth: ${ authStatus }
