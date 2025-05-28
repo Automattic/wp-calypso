@@ -4,7 +4,7 @@
 	margin-bottom: -32px;
 
     & .marketplace-footer__section::before {
-        background-color: #f6f7f7;
+        background-color: var( --studio-gray-0 );
     }
 
     &:not(.is-logged-in) .marketplace-footer__section {
