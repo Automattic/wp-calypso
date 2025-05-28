@@ -1,4 +1,3 @@
-import { SiteDetails } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
@@ -13,9 +12,7 @@ export function usePurchasesFieldDefinitions( fieldIds?: string[] ) {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
 	const paymentMethods = useStoredPaymentMethods().paymentMethods;
-	const sites: Record< number | string, SiteDetails > = useSelector(
-		( state: any ) => state.sites?.items
-	);
+	const sites = useSelector( ( state ) => state.sites?.items );
 
 	return useMemo( () => {
 		const fieldDefinitions = getPurchasesFieldDefinitions( {
