@@ -29,9 +29,7 @@ export function SummaryButtonList( {
 		}
 		return child;
 	} );
-	const header = title && (
-		<SectionHeader level={ isMediumDensity ? 3 : 2 } title={ title } description={ description } />
-	);
+	const header = title && <SectionHeader level={ 3 } title={ title } description={ description } />;
 	const className = clsx( 'dashboard-summary-button-list', `has-density-${ density }` );
 	if ( isMediumDensity ) {
 		return (
