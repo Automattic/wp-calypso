@@ -1,5 +1,10 @@
-import type { Message, Task, ToolProvider } from '../types/index';
-import { extractToolCallsFromMessage } from './index';
+import type {
+	Message,
+	Task,
+	ToolProvider,
+	ToolResultDataPart,
+} from '../types/index';
+import { createToolResultDataPart, extractToolCallsFromMessage } from './index';
 import { logger } from './logger';
 
 /**
@@ -9,6 +14,9 @@ import { logger } from './logger';
  * fire-and-forget manner, logging results and errors without blocking the
  * calling code. This matches the pattern used in the @agentic WordPress
  * implementation where tools are side effects.
+ *
+ * When tools complete, if the toolProvider has an onToolCompletion callback,
+ * it will be called with the tool result in ToolResultDataPart format.
  *
  * @param message      - The message to process for tool calls
  * @param toolProvider - Optional tool provider to execute tools
@@ -39,9 +47,64 @@ export async function processToolCallsAsync(
 				.executeTool( toolId as string, args )
 				.then( ( result ) => {
 					logger( 'Tool %s completed: %O', toolId, result );
+
+					// Call onToolCompletion callback if provided
+					if ( toolProvider.onToolCompletion ) {
+						const toolResult = createToolResultDataPart(
+							toolCallId as string,
+							toolId as string,
+							result
+						);
+
+						// Handle both sync and async callbacks
+						const callbackResult =
+							toolProvider.onToolCompletion( toolResult );
+						if (
+							callbackResult &&
+							typeof callbackResult.then === 'function'
+						) {
+							callbackResult.catch( ( error ) => {
+								logger(
+									'Tool completion callback failed for %s: %s',
+									toolId,
+									error
+								);
+							} );
+						}
+					}
 				} )
 				.catch( ( error ) => {
 					logger( 'Tool %s failed: %s', toolId, error );
+
+					// Call onToolCompletion callback with error if provided
+					if ( toolProvider.onToolCompletion ) {
+						const errorMessage =
+							error instanceof Error
+								? error.message
+								: String( error );
+						const toolResult = createToolResultDataPart(
+							toolCallId as string,
+							toolId as string,
+							undefined,
+							errorMessage
+						);
+
+						// Handle both sync and async callbacks
+						const callbackResult =
+							toolProvider.onToolCompletion( toolResult );
+						if (
+							callbackResult &&
+							typeof callbackResult.then === 'function'
+						) {
+							callbackResult.catch( ( callbackError ) => {
+								logger(
+									'Tool completion callback failed for %s: %s',
+									toolId,
+									callbackError
+								);
+							} );
+						}
+					}
 				} );
 		}
 	} catch ( error ) {

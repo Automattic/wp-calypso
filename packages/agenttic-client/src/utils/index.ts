@@ -12,6 +12,7 @@ import type {
 	Tool,
 	ToolCallDataPart,
 	ToolDataPart,
+	ToolResultDataPart,
 } from '../types/index';
 
 import type { ConversationHistoryItem } from '../cli/types';
@@ -152,18 +153,17 @@ export function extractToolCallsFromMessage(
 export function createToolResultDataPart(
 	toolCallId: string,
 	toolId: string,
-	result: any,
+	result?: unknown,
 	error?: string
-): DataPart {
+): ToolResultDataPart {
 	return {
 		type: 'data',
 		data: {
 			toolCallId,
 			toolId,
-			result: error ? undefined : result,
-			error,
+			result,
 		},
-		metadata: {},
+		metadata: error ? { error } : undefined,
 	};
 }
 

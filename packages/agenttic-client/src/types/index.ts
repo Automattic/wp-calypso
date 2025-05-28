@@ -74,6 +74,14 @@ export interface ToolCallDataPart extends DataPart {
 	};
 }
 
+export interface ToolResultDataPart extends DataPart {
+	data: {
+		toolCallId: string;
+		toolId: string;
+		result?: unknown;
+	};
+}
+
 export interface ContextDataPart extends DataPart {
 	data: {
 		clientContext: Record< string, unknown >;
@@ -93,6 +101,7 @@ export type Part =
 	| DataPart
 	| ToolDataPart
 	| ToolCallDataPart
+	| ToolResultDataPart
 	| ContextDataPart;
 
 export interface Message {
@@ -207,6 +216,9 @@ export interface Tool {
 export interface ToolProvider {
 	getAvailableTools(): Promise< Tool[] >;
 	executeTool( toolId: string, args: any ): Promise< any >;
+	onToolCompletion?: (
+		toolResult: ToolResultDataPart
+	) => void | Promise< void >;
 }
 
 export interface ToolCallResult {

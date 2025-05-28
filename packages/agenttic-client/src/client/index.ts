@@ -32,6 +32,32 @@ const DEFAULT_TIMEOUT = 30000;
 
 /**
  * Create an A2A client instance
+ *
+ * @example
+ * ```typescript
+ * const toolProvider: ToolProvider = {
+ *   async getAvailableTools() {
+ *     return [{ id: 'calculator', name: 'Calculator', description: 'Perform calculations', input_schema: { type: 'object', properties: {} } }];
+ *   },
+ *   async executeTool(toolId: string, args: any) {
+ *     if (toolId === 'calculator') {
+ *       return { result: eval(args.expression) };
+ *     }
+ *     throw new Error(`Unknown tool: ${toolId}`);
+ *   },
+ *   onToolCompletion: (toolResult) => {
+ *     console.log('Tool completed:', toolResult);
+ *     // Send the tool result back to the agent or handle it as needed
+ *     // toolResult.data contains: { toolCallId, toolId, result }
+ *   }
+ * };
+ *
+ * const client = createA2AClient({
+ *   agentUrl: 'https://api.example.com',
+ *   toolProvider
+ * });
+ * ```
+ *
  * @param config
  */
 export function createA2AClient( config: A2AClientConfig ): A2AClient {

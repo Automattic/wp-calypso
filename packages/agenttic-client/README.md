@@ -285,7 +285,58 @@ const toolProvider: ToolProvider = {
 		}
 		throw new Error( `Unknown tool: ${ toolId }` );
 	},
+
+	// Optional: Handle tool completion results
+	onToolCompletion: ( toolResult ) => {
+		console.log( 'Tool completed:', toolResult );
+		// toolResult.data contains: { toolCallId, toolId, result }
+		// Send result back to agent, store in database, etc.
+	},
 };
+```
+
+#### useClientTools Hook
+
+For React applications, use the `useClientTools` hook to create a tool provider:
+
+```typescript
+import { useClientTools } from '@automattic/agenttic-client/browser';
+
+function MyComponent() {
+	const toolProvider = useClientTools(
+		// Tool provider callback
+		() => ( {
+			getTools: async () => [
+				{
+					id: 'calculator',
+					name: 'Calculator',
+					description: 'Perform calculations',
+					input_schema: {
+						type: 'object',
+						properties: {
+							expression: { type: 'string' },
+						},
+						required: [ 'expression' ],
+					},
+				},
+			],
+			executeTool: async ( toolId: string, args: any ) => {
+				if ( toolId === 'calculator' ) {
+					return { result: eval( args.expression ) };
+				}
+				throw new Error( `Unknown tool: ${ toolId }` );
+			},
+		} ),
+		// Optional: Tool completion callback
+		( toolResult ) => {
+			console.log( 'Tool completed:', toolResult );
+			// Handle the tool result - send back to agent, store, etc.
+			// toolResult.data contains: { toolCallId, toolId, result }
+		}
+	);
+
+	// Use toolProvider with useAgent hook...
+}
 ```
 
 ### Dynamic Context
