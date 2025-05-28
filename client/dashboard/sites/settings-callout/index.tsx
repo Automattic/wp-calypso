@@ -16,7 +16,7 @@ interface SettingsCalloutProps extends Omit< CalloutProps, 'title' | 'descriptio
 export default function SettingsCallout( {
 	siteSlug,
 	icon,
-	imageSrc,
+	image,
 	title,
 	description,
 }: SettingsCalloutProps ) {
@@ -31,7 +31,7 @@ export default function SettingsCallout( {
 
 	const defaultProps = {
 		icon: settings,
-		imageSrc: calloutIllustrationUrl,
+		image: calloutIllustrationUrl,
 		title: __( 'Fine-tune your WordPress site' ),
 		description: __(
 			'Get under the hood—control caching, choose your PHP version, and test out upcoming WordPress releases.'
@@ -41,7 +41,7 @@ export default function SettingsCallout( {
 	return (
 		<Callout
 			icon={ icon ?? defaultProps.icon }
-			imageSrc={ imageSrc ?? defaultProps.imageSrc }
+			image={ image ?? defaultProps.image }
 			title={ title ?? defaultProps.title }
 			description={
 				<>

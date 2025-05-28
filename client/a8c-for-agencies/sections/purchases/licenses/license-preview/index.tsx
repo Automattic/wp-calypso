@@ -56,6 +56,40 @@ interface Props {
 	productId: number;
 }
 
+export const ManageInPressable = ( { attachedAt }: { attachedAt: string | null } ) => {
+	const translate = useTranslate();
+
+	const { isFeedbackShown } = useShowFeedback( FeedbackType.PurchaseCompleted, attachedAt );
+	const isOwner = useSelector( isAgencyOwner );
+
+	return isOwner ? (
+		<a
+			className="license-preview__product-pressable-link"
+			target="_blank"
+			rel="norefferer noopener noreferrer"
+			href="https://my.pressable.com/agency/auth"
+			onClick={ () => {
+				if ( ! isFeedbackShown ) {
+					page.redirect(
+						addQueryArgs(
+							{
+								type: FeedbackType.PurchaseCompleted,
+								redirectUrl: A4A_LICENSES_LINK,
+							},
+							A4A_FEEDBACK_LINK
+						)
+					);
+				}
+			} }
+		>
+			{ translate( 'Manage in Pressable' ) }
+			<Icon className="gridicon" icon={ external } size={ 18 } />
+		</a>
+	) : (
+		translate( 'Managed by agency owner' )
+	);
+};
+
 export default function LicensePreview( {
 	license,
 	licenseType,
@@ -77,12 +111,9 @@ export default function LicensePreview( {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const { isFeedbackShown } = useShowFeedback( FeedbackType.PurchaseCompleted );
-
 	const site = useSelector( ( state ) => getSite( state, blogId as number ) );
 	const isPressableLicense = isPressableHostingProduct( licenseKey );
 	const isWPCOMLicense = isWPCOMHostingProduct( licenseKey );
-	const pressableManageUrl = 'https://my.pressable.com/agency/auth';
 
 	const isOwner = useSelector( isAgencyOwner );
 
@@ -284,34 +315,9 @@ export default function LicensePreview( {
 						<>
 							<div className="license-preview__product-small">{ productName }</div>
 							{ domain }
-							{ isPressableLicense &&
-								! revokedAt &&
-								( isOwner ? (
-									<a
-										className="license-preview__product-pressable-link"
-										target="_blank"
-										rel="norefferer noopener noreferrer"
-										href={ pressableManageUrl }
-										onClick={ () => {
-											if ( ! isFeedbackShown ) {
-												page.redirect(
-													addQueryArgs(
-														{
-															type: FeedbackType.PurchaseCompleted,
-															redirectUrl: A4A_LICENSES_LINK,
-														},
-														A4A_FEEDBACK_LINK
-													)
-												);
-											}
-										} }
-									>
-										{ translate( 'Manage in Pressable' ) }
-										<Icon className="gridicon" icon={ external } size={ 18 } />
-									</a>
-								) : (
-									translate( 'Managed by agency owner' )
-								) ) }
+							{ isPressableLicense && ! revokedAt && (
+								<ManageInPressable attachedAt={ attachedAt } />
+							) }
 							{ ! domain && licenseState === LicenseState.Detached && (
 								<span className="license-preview__unassigned">
 									<Badge type="warning">{ translate( 'Unassigned' ) }</Badge>

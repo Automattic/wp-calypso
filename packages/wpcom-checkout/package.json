@@ -49,7 +49,7 @@
 		"@automattic/calypso-stripe": "workspace:^",
 		"@automattic/components": "workspace:^",
 		"@automattic/composite-checkout": "workspace:^",
-		"@automattic/number-formatters": "^1.0.0",
+		"@automattic/number-formatters": "^1.0.1",
 		"@automattic/shopping-cart": "workspace:^",
 		"@emotion/styled": "^11.11.0",
 		"@stripe/stripe-js": "^1.54.2",

@@ -9,6 +9,11 @@
 - Add `BigSkyLogo.Mark` component ([#103612](https://github.com/Automattic/wp-calypso/pull/103612)).
 - Add `ValidatedFormControls` components, still in beta ([#100771](https://github.com/Automattic/wp-calypso/pull/100771)).
 
+### Internal
+
+- `Tabs`: make local copy of private wp components version ([#103515](https://github.com/Automattic/wp-calypso/pull/103515)).
+- `Tabs`: convert to (S)CSS modules ([#103710](https://github.com/Automattic/wp-calypso/pull/103710)).
+
 ## 2.3.0
 
 ### Breaking changes

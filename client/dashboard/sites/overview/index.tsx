@@ -8,7 +8,7 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { wordpress } from '@wordpress/icons';
-import { siteQuery, siteCurrentPlanQuery, siteEngagementStatsQuery } from '../../app/queries';
+import { siteQuery, siteEngagementStatsQuery } from '../../app/queries';
 import { siteRoute } from '../../app/router';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -28,10 +28,9 @@ import './style.scss';
 function SiteOverview() {
 	const { siteSlug } = siteRoute.useParams();
 	const { data: site } = useQuery( siteQuery( siteSlug ) );
-	const { data: currentPlan } = useQuery( siteCurrentPlanQuery( siteSlug ) );
 	const { data: engagementStats } = useQuery( siteEngagementStatsQuery( siteSlug ) );
 
-	if ( ! site || ! currentPlan || ! engagementStats ) {
+	if ( ! site || ! engagementStats ) {
 		return;
 	}
 	return (
@@ -55,7 +54,7 @@ function SiteOverview() {
 			}
 		>
 			<HStack alignment="flex-start" spacing={ 8 }>
-				<Sidebar site={ site } currentPlan={ currentPlan } />
+				<Sidebar site={ site } />
 				<VStack spacing={ 8 }>
 					<Card style={ { padding: '16px' } }>
 						<VStack>
