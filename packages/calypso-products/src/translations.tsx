@@ -2494,28 +2494,147 @@ export const getJetpackProductsBenefits = (): Record< string, Array< TranslateRe
 	];
 
 	const woocommerceAfterpayBenefits = [
-		translate( 'Increase conversion rates with flexible payment options' ),
+		translate(
+			'Attract millions of millennial and Gen Z shoppers by adding Afterpay as a payment method, allowing them to pay in 4 installments over 6 weeks, interest-free.'
+		),
+		translate(
+			'Get paid upfront, with payments processed quickly so you can focus on growing your business.'
+		),
+		translate(
+			'Afterpay takes on all customer fraud risk, minimizing your financial exposure while you fulfill orders.'
+		),
+		translate(
+			'Express Checkout reduces checkout steps, streamlining the buying process for higher conversions and improved customer experience.'
+		),
+		translate(
+			"Access the Afterpay Business Hub for deep performance insights, daily settlement reports, and marketing best practices to optimize your store's growth."
+		),
 	];
+
 	const woocommerceSquareBenefits = [
-		translate( 'Accept payments easily with clear rates and fast deposits' ),
+		translate(
+			'Accept payments online and in-person, allowing flexibility for your customers to pay anytime, anywhere.'
+		),
+		translate(
+			'Automatic product and inventory synchronization between WooCommerce and Square to prevent overselling and streamline operations.'
+		),
+		translate(
+			'Supports a variety of payment methods including credit/debit cards, digital wallets (Apple Pay/Google Pay), Square Gift Cards, and Cash App for diverse customer preferences.'
+		),
+		translate(
+			'Ensures secure payment processing with end-to-end encryption, PCI compliance, and fraud detection measures.'
+		),
+		translate(
+			'Offers fast deposits, with options for instant funding or customizable close-of-day schedules, improving cash flow for your business.'
+		),
 	];
+
 	const woocommerceAffirmBenefits = [
-		translate( 'Boost sales with buy now, pay later options for customers' ),
+		translate(
+			'Flexible payment options allowing customers to choose interest-free payment plans such as 30 days, 4 payments every 2 weeks, or longer terms up to 36 months.'
+		),
+		translate(
+			'Immediate payment to merchants upon purchase completion, enhancing cash flow and reducing payment collection anxiety.'
+		),
+		translate(
+			'Access to a broad network of high-value shoppers who can afford to transact, accelerating customer acquisition.'
+		),
+		translate(
+			'Transparent financing with no hidden fees, late charges, or surprises, fostering customer trust and satisfaction.'
+		),
+		translate(
+			'Customizable promotional messaging settings to align Affirm as a preferred payment method on various pages, enhancing visibility during checkout.'
+		),
 	];
+
 	const woocommerceMollieBenefits = [
-		translate( 'Accept payments from customers across Europe with ease' ),
+		translate(
+			'Customizable checkout options to optimize conversions and create a seamless customer journey.'
+		),
+		translate(
+			'Supports a wide range of local and global payment methods including credit cards, iDEAL, Apple Pay, and more.'
+		),
+		translate(
+			'Simplified management of subscriptions with integration for recurring payments through various payment methods.'
+		),
+		translate(
+			'Easy refund process for both full and partial refunds, enhancing customer satisfaction.'
+		),
+		translate(
+			'Transparent pricing model, charging only for successful transactions, ensuring cost-effectiveness for your business.'
+		),
 	];
+
 	const woocommerceStripeBenefits = [
-		translate( 'Streamline online payments with powerful developer tools' ),
+		translate(
+			'Optimized checkout experience across mobile, tablet, and desktop to boost conversion rates.'
+		),
+		translate(
+			'Supports a wide range of payment methods, including credit/debit cards, buy now pay later options, and local payment methods to expand the customer base.'
+		),
+		translate(
+			'Integrated fraud detection with Stripe Radar to identify and flag potentially fraudulent transactions.'
+		),
+		translate(
+			'Ability to accept in-person payments using Stripe Terminal or Tap to Pay technology on mobile devices.'
+		),
+		translate(
+			'Quick access to funds with Stripe Instant Payouts feature, allowing eligible businesses to get paid within minutes.'
+		),
 	];
+
 	const woocommerceKlarnaBenefits = [
-		translate( 'Offer flexible payment solutions to increase customer satisfaction' ),
+		translate(
+			'Flexible payment options such as Pay in Full, Buy Now Pay Later, and Pay in N allow customers to choose their preferred method of payment.'
+		),
+		translate(
+			'Offers long-term financing options with monthly payments for larger purchases, available in various terms (6, 12, 18, and 24 months).'
+		),
+		translate(
+			'Express checkout feature provides a 5x faster checkout process, reducing friction for customers during purchase.'
+		),
+		translate(
+			'On-site messaging enhances the shopping experience with personalized communication, potentially increasing conversion rates.'
+		),
+		translate(
+			'Klarna payments ensure merchants receive their funds immediately, while offering customers the flexibility to pay later.'
+		),
 	];
+
 	const woocommercePaypalBenefits = [
-		translate( 'Build customer confidence with trusted PayPal payment options' ),
+		translate(
+			'All-in-one checkout solution that integrates PayPal, Venmo (US only), and Pay Later options to maximize conversion rates.'
+		),
+		translate(
+			'Automatically offers PayPal buttons on product pages and at checkout, significantly increasing the likelihood of completing a purchase.'
+		),
+		translate(
+			'Enables customers to pay in installments with Pay Later options, boosting cart size by 35% compared to standard transactions.'
+		),
+		translate(
+			'Fast and simple guest checkout feature allows for autofill of details for millions of guest shoppers, increasing conversion rates up to 80%.'
+		),
+		translate(
+			'Provides various card processing capabilities including Standard and Advanced options to meet different business needs while ensuring compliance and fraud protection.'
+		),
 	];
+
 	const woocommerceKlaviyoBenefits = [
-		translate( 'Enhance marketing ROI with unified email and SMS automation' ),
+		translate(
+			'Compatible with the new Cart and Checkout blocks for a customizable, conversion-optimized checkout experience.'
+		),
+		translate(
+			'Comprehensive marketing automation tools to engage customers and drive revenue through real-time data and AI.'
+		),
+		translate(
+			'Advanced email and SMS marketing features for immediate sales and lasting customer loyalty.'
+		),
+		translate(
+			'Robust data-driven insights from 350+ integrations to empower store and customer data management.'
+		),
+		translate(
+			'Flexible segmentation and automated flows for personalized marketing experiences that enhance conversion rates.'
+		),
 	];
 
 	return {
