@@ -234,7 +234,6 @@ export default function PersonalizationForm( {
 					<FormField
 						error={ validationError.country }
 						label={ translate( 'Where is your agency located?' ) }
-						labelFor="country"
 						isRequired
 					>
 						<SearchableDropdown
