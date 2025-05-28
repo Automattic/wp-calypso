@@ -8,10 +8,16 @@ import { canUpdateDefensiveMode } from '.';
 import type { Site } from '../../data/types';
 
 export default function DefensiveModeSettingsSummary( { site }: { site: Site } ) {
+	const canUpdate = canUpdateDefensiveMode( site );
+
 	const { data } = useQuery( {
 		...siteDefensiveModeQuery( site.slug ),
-		enabled: canUpdateDefensiveMode( site ),
+		enabled: canUpdate,
 	} );
+
+	if ( ! canUpdate ) {
+		return null;
+	}
 
 	let badge;
 	if ( data ) {
