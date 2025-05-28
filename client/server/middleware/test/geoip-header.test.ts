@@ -7,8 +7,6 @@ jest.mock( 'calypso/server/lib/logger', () => ( {
 	getLogger: jest.fn().mockImplementation( () => ( { info: mockInfo } ) ),
 } ) );
 
-jest.useFakeTimers();
-
 describe( 'geoip-header middleware', () => {
 	let request: Request;
 	let response: Response;
@@ -21,13 +19,18 @@ describe( 'geoip-header middleware', () => {
 	} );
 
 	it( 'should fetch country code on initialization', async () => {
-		( global.fetch as jest.Mock ).mockResolvedValueOnce( {
-			json: () => Promise.resolve( { country_short: 'US' } ),
+		const { promise, resolve } = Promise.withResolvers< void >();
+		( global.fetch as jest.Mock ).mockImplementation( () => {
+			resolve();
+			return Promise.resolve( {
+				json: () => Promise.resolve( { country_short: 'US' } ),
+			} );
 		} );
 
 		middlewareGeoipHeader();
 
-		await jest.runAllTimersAsync();
+		await promise;
+		expect( global.fetch ).toHaveBeenCalledTimes( 1 );
 		expect( global.fetch ).toHaveBeenCalledWith( 'https://public-api.wordpress.com/geo/' );
 	} );
 
@@ -80,7 +83,6 @@ describe( 'geoip-header middleware', () => {
 		const middleware = middlewareGeoipHeader();
 
 		const req1 = { headers: {} } as Request;
-		await jest.runAllTimersAsync();
 		await middleware( req1, response, next );
 
 		expect( req1.headers[ 'x-geoip-country-code' ] ).toBeUndefined();
