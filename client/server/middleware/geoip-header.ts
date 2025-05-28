@@ -16,7 +16,7 @@ export default function (): RequestHandler {
 		if ( ! countryCode ) {
 			if ( ! countryCodePromise ) {
 				countryCodePromise = fetch( 'https://public-api.wordpress.com/geo/' )
-					.then( async ( response ) => response.json() )
+					.then( ( response ) => response.json() )
 					.then( ( { country_short } ) => country_short )
 					// Support offline development and set an expectation that the header is not
 					// always available by quietly skipping if the request fails.
