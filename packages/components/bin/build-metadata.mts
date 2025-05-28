@@ -7,7 +7,7 @@ type ComponentMetadata = {
 		string,
 		{
 			description: string;
-			defaultValue?: { value: any };
+			defaultValue: { value: any } | null;
 			required: boolean;
 			type: { name: string };
 		}
@@ -63,7 +63,7 @@ await Promise.all( [
 		`declare const metadata: Record< string, {
 	props: Record< string, {
 		description: string;
-		defaultValue?: { value: any };
+		defaultValue: { value: any } | null;
 		required: boolean;
 		type: { name: string; };
 	} >;
