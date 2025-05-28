@@ -15,10 +15,8 @@
 .marketplace-footer__cta {
 	min-width: 122px;
 	margin-bottom: 26px;
-}
 
-@media ( max-width: 660px ) {
-	.marketplace-footer__cta {
+	@media ( max-width: 660px ) {
 		margin-left: 16px;
 		margin-right: 16px;
 	}
@@ -28,10 +26,8 @@
 	display: flex;
 	flex-wrap: wrap;
 	justify-content: space-between;
-}
 
-@media ( max-width: 660px ) {
-	.marketplace-footer__three-column {
+	@media ( max-width: 660px ) {
 		padding: 0 16px;
 	}
 }
