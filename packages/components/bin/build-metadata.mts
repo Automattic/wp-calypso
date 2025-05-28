@@ -18,6 +18,12 @@ const DOCUMENTED_COMPONENTS = [ 'core-badge' ];
 
 const files = DOCUMENTED_COMPONENTS.map( ( component ) => `${ component }/index.tsx` );
 
+/**
+ * Given an object and an array of keys, return a new object with only the keys that are in the array.
+ * @param obj The object to pick keys from.
+ * @param keys The keys to pick from the object.
+ * @returns A new object with only the keys that are in the array.
+ */
 const pick = < O extends Record< string, any >, K extends Array< keyof O > >(
 	obj: O,
 	keys: K
@@ -27,6 +33,12 @@ const pick = < O extends Record< string, any >, K extends Array< keyof O > >(
 		K[ number ]
 	>;
 
+/**
+ * Given an object and a function, return a new object with the values of the object mapped by the function.
+ * @param obj The object to map values from.
+ * @param fn The function to map the values of the object.
+ * @returns A new object with the values of the object mapped by the function.
+ */
 const mapValues = < V, MV >(
 	obj: Record< string, V >,
 	fn: ( value: V ) => MV
