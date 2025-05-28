@@ -10,7 +10,7 @@
 
 	// Search Bar
 	.card.search-card {
-		border: 1px solid var(--studio-gray-10);
+		border: 1px solid var(--studio-gray-10, #c3c4c7);
 		border-radius: 2px;
 		box-shadow: none;
 		margin-bottom: 30px;

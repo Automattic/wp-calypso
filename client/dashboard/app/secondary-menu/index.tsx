@@ -9,12 +9,13 @@ import {
 	MenuItem,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { help, bellUnread, bell, commentAuthorAvatar } from '@wordpress/icons';
+import { bellUnread, bell, commentAuthorAvatar } from '@wordpress/icons';
 import ReaderIcon from 'calypso/assets/icons/reader/reader-icon';
 import RouterLinkMenuItem from '../../components/router-link-menu-item';
 import { useAuth } from '../auth';
 import { useOpenCommandPalette } from '../command-palette/utils';
 import { useAppContext } from '../context';
+import HelpCenter from './help-center';
 
 import './style.scss';
 
@@ -92,10 +93,6 @@ function SecondaryMenu() {
 	const hasUnreadNotifications = false;
 	const notificationsPath = '/me/notifications';
 
-	const openHelpCenter = () => {
-		// Open help center action would go here
-	};
-
 	return (
 		<HStack spacing={ 2 } justify="flex-end">
 			{ supports.reader && (
@@ -107,15 +104,7 @@ function SecondaryMenu() {
 					href="/reader"
 				/>
 			) }
-			{ supports.help && (
-				<Button
-					className="dashboard-secondary-menu__item"
-					label={ __( 'Help' ) }
-					onClick={ openHelpCenter }
-					icon={ help }
-					variant="tertiary"
-				/>
-			) }
+			{ supports.help && <HelpCenter /> }
 			{ supports.notifications && (
 				<Button
 					className="dashboard-secondary-menu__item"
