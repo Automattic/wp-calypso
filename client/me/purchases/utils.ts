@@ -27,7 +27,7 @@ export function canEditPaymentDetails( purchase: Purchase ): boolean {
 }
 
 export function getChangePaymentMethodPath( siteSlug: string, purchase: Purchase ): string {
-	if ( isPaidWithCreditCard( purchase ) && purchase.payment.creditCard ) {
+	if ( isPaidWithCreditCard( purchase ) && purchase.payment?.creditCard ) {
 		return changePaymentMethod( siteSlug, purchase.id, purchase.payment.creditCard.id );
 	}
 

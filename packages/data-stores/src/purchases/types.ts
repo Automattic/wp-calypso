@@ -44,7 +44,7 @@ export interface Purchase {
 	partnerName: string | undefined;
 	partnerSlug: string | undefined;
 	partnerType: string | undefined;
-	payment: PurchasePayment | PurchasePaymentWithCreditCard | PurchasePaymentWithPayPal;
+	payment: PurchasePayment | PurchasePaymentWithCreditCard | PurchasePaymentWithPayPal | undefined;
 	pendingTransfer: boolean;
 	priceText: string;
 	priceTierList?: Array< PurchasePriceTier >;

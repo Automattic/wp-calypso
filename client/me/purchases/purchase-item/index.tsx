@@ -638,6 +638,7 @@ export function PurchaseItemPaymentMethod( {
 
 	if (
 		purchase.isAutoRenewEnabled &&
+		! isExpired( purchase ) &&
 		( ! hasPaymentMethod( purchase ) || isPaidWithCredits( purchase ) ) &&
 		! isPartnerPurchase( purchase ) &&
 		! isAkismetFreeProduct( purchase )
@@ -674,7 +675,7 @@ export function PurchaseItemPaymentMethod( {
 	}
 
 	if ( isRenewing( purchase ) ) {
-		if ( purchase.payment.type === 'credit_card' && purchase.payment.creditCard ) {
+		if ( purchase.payment?.type === 'credit_card' && purchase.payment.creditCard ) {
 			const paymentMethodType = purchase.payment.creditCard.displayBrand
 				? purchase.payment.creditCard.displayBrand
 				: purchase.payment.creditCard.type || purchase.payment.paymentPartner || '';
@@ -691,13 +692,13 @@ export function PurchaseItemPaymentMethod( {
 			);
 		}
 
-		if ( purchase.payment.type === 'paypal' ) {
+		if ( purchase.payment?.type === 'paypal' ) {
 			return (
 				<img src={ payPalImage } alt={ purchase.payment.type } className="purchase-item__paypal" />
 			);
 		}
 
-		if ( purchase.payment.type === 'upi' ) {
+		if ( purchase.payment?.type === 'upi' ) {
 			return <img src={ upiImage } alt={ purchase.payment.type } />;
 		}
 
