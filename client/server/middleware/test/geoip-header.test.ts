@@ -1,6 +1,12 @@
 import { type Request, type Response } from 'express';
 import middlewareGeoipHeader from '../geoip-header';
 
+const mockInfo = jest.fn();
+
+jest.mock( 'calypso/server/lib/logger', () => ( {
+	getLogger: jest.fn().mockImplementation( () => ( { info: mockInfo } ) ),
+} ) );
+
 jest.useFakeTimers();
 
 describe( 'geoip-header middleware', () => {
@@ -49,6 +55,7 @@ describe( 'geoip-header middleware', () => {
 
 		expect( request.headers[ 'x-geoip-country-code' ] ).toBeUndefined();
 		expect( next ).toHaveBeenCalled();
+		expect( mockInfo ).toHaveBeenCalledWith( 'Failed to fetch geolocation' );
 	} );
 
 	it( 'should avoid duplicate requests when country code is available', async () => {
@@ -66,7 +73,7 @@ describe( 'geoip-header middleware', () => {
 		expect( global.fetch ).toHaveBeenCalledTimes( 1 );
 	} );
 
-	it( 'should re-fetch on next request if previous fetch failed', async () => {
+	it( 'should not re-fetch on next request if previous fetch failed', async () => {
 		( global.fetch as jest.Mock ).mockRejectedValue( new Error( 'Network error' ) );
 		const next = jest.fn();
 
@@ -77,16 +84,13 @@ describe( 'geoip-header middleware', () => {
 		await middleware( req1, response, next );
 
 		expect( req1.headers[ 'x-geoip-country-code' ] ).toBeUndefined();
-
-		// Second request succeeds
-		( global.fetch as jest.Mock ).mockResolvedValueOnce( {
-			json: () => Promise.resolve( { country_short: 'US' } ),
-		} );
+		expect( mockInfo ).toHaveBeenCalledWith( 'Failed to fetch geolocation' );
 
 		const req2 = { headers: {} } as Request;
 		await middleware( req2, response, next );
 
-		expect( global.fetch ).toHaveBeenCalledTimes( 3 );
-		expect( req2.headers[ 'x-geoip-country-code' ] ).toBe( 'US' );
+		expect( global.fetch ).toHaveBeenCalledTimes( 1 );
+		expect( mockInfo ).toHaveBeenCalledTimes( 1 );
+		expect( req2.headers[ 'x-geoip-country-code' ] ).toBeUndefined();
 	} );
 } );

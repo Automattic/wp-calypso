@@ -1,4 +1,5 @@
 import { type RequestHandler } from 'express';
+import { getLogger } from 'calypso/server/lib/logger';
 
 /**
  * Adds the `x-geoip-country-code` header to the request. This is used to simulate the header added
@@ -21,9 +22,7 @@ export default function (): RequestHandler {
 					// Support offline development and set an expectation that the header is not
 					// always available by quietly skipping if the request fails.
 					.catch( () => {
-						// Reset the promise so we can try again on the next request
-						countryCodePromise = undefined;
-						return undefined;
+						getLogger().info( 'Failed to fetch geolocation' );
 					} );
 			}
 
