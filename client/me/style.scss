@@ -1,6 +1,5 @@
-@import "@wordpress/base-styles/breakpoints";
-@import "@wordpress/base-styles/mixins";
-@import "@wordpress/base-styles/variables";
+@use "@wordpress/base-styles/colors";
+@use "@wordpress/base-styles/mixins";
 
 body.is-group-me.is-section-help,
 body.is-section-me {
@@ -29,7 +28,7 @@ body.is-section-me {
 			height: calc(100vh - var(--masterbar-height) - var(--content-padding-top));
 		}
 
-		@include break-small {
+		@include mixins.break-small {
 			.layout__primary > .main {
 				height: calc(100vh - var(--masterbar-height) - var(--content-padding-bottom) - var(--content-padding-top));
 			}
@@ -59,8 +58,8 @@ body.is-section-me {
 					margin-right: auto;
 				}
 
-				@include break-small {
-					border: 1px solid $gray-200;
+				@include mixins.break-small {
+					border: 1px solid colors.$gray-200;
 				}
 			}
 		}

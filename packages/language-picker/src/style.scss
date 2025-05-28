@@ -1,6 +1,6 @@
-@import "@wordpress/base-styles/breakpoints";
-@import "@wordpress/base-styles/mixins";
-@import "@wordpress/base-styles/variables";
+@use "@wordpress/base-styles/colors";
+@use "@wordpress/base-styles/mixins";
+@use "@wordpress/base-styles/variables";
 
 .language-picker-component {
 	flex-direction: column;
@@ -8,7 +8,7 @@
 	.language-picker-component__heading {
 		margin: 0;
 
-		@include break-small() {
+		@include mixins.break-small() {
 			margin: 6px 12px 24px;
 			flex-direction: row;
 			align-items: center;
@@ -38,7 +38,7 @@
 			}
 		}
 
-		@include break-small() {
+		@include mixins.break-small() {
 			display: none;
 		}
 	}
@@ -58,7 +58,7 @@
 			font-size: 0.875rem;
 			max-width: 100%;
 
-			@include break-small() {
+			@include mixins.break-small() {
 				padding-left: 12px;
 			}
 		}
@@ -75,14 +75,14 @@
 		&-desktop {
 			display: none;
 
-			@include break-small() {
+			@include mixins.break-small() {
 				display: block;
 				width: 240px;
 			}
 		}
 
 		&-mobile {
-			@include break-small() {
+			@include mixins.break-small() {
 				display: none;
 			}
 
@@ -125,15 +125,15 @@
 	.language-picker-component__labels {
 		display: none;
 
-		@include break-small() {
+		@include mixins.break-small() {
 			display: flex;
 		}
 
 		flex-direction: row;
 		flex-wrap: nowrap;
-		font-family: $default-font;
+		font-family: variables.$default-font;
 		margin: 6px 12px;
-		color: $gray-600;
+		color: colors.$gray-600;
 		font-size: 0.875rem;
 		text-transform: uppercase;
 	}
@@ -144,7 +144,7 @@
 
 	.language-picker-component__labels > div,
 	.language-picker-component__category-filters {
-		@include break-small() {
+		@include mixins.break-small() {
 			width: 230px;
 		}
 	}
@@ -152,7 +152,7 @@
 	.language-picker-component__category-filters {
 		display: none;
 
-		@include break-small() {
+		@include mixins.break-small() {
 			display: initial;
 		}
 	}
@@ -168,7 +168,7 @@
 		// Allow up to five columns of buttons.
 		max-width: $language_button_width * 5;
 
-		@include break-small() {
+		@include mixins.break-small() {
 			width: initial;
 		}
 	}
@@ -177,7 +177,7 @@
 		justify-content: flex-start;
 		width: 100%;
 
-		@include break-small() {
+		@include mixins.break-small() {
 			width: $language_button_width;
 		}
 	}

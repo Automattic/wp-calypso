@@ -4,12 +4,9 @@ $masterbar-mobile-font-size: 14px;
 $masterbar-color-primary: #23282d;
 $masterbar-color-secondary: #101517;
 
-@import "@wordpress/base-styles/variables";
-@import "@wordpress/base-styles/breakpoints";
-@import "@wordpress/base-styles/mixins";
-@import "calypso/assets/stylesheets/shared/animation";
+@use "@wordpress/base-styles/colors";
+@use "@wordpress/base-styles/mixins";
 @import url( //s0.wp.com/wp-includes/css/dashicons.min.css?v=20250127 );
-@import "@automattic/typography/styles/variables";
 
 // Hide the masterbar on WP Mobile App views.
 body.is-mobile-app-view {
@@ -119,7 +116,7 @@ body.is-mobile-app-view {
 			padding-inline-start: 1.5em;
 		}
 
-		@include break-mobile {
+		@include mixins.break-mobile {
 			height: var(--masterbar-checkout-height);
 		}
 
@@ -313,7 +310,7 @@ body.is-mobile-app-view {
 		height: var(--masterbar-height);
 		line-height: var(--masterbar-height);
 		padding: 0;
-		@include break-mobile {
+		@include mixins.break-mobile {
 			height: var(--masterbar-checkout-height);
 			line-height: var(--masterbar-checkout-height);
 		}
@@ -947,7 +944,7 @@ body.is-mobile-app-view {
 	min-width: 260px;
 	margin: 6px -6px -6px;
 	padding: 12px;
-	background-color: var(--color-global-masterbar-site-info-background, color-mix(in srgb, var(--color-masterbar-item-hover-background), $white 15% ));
+	background-color: var(--color-global-masterbar-site-info-background, color-mix(in srgb, var(--color-masterbar-item-hover-background), colors.$white 15% ));
 	color: var(--color-masterbar-submenu-text);
 	display: flex;
 	flex-direction: column;
@@ -959,11 +956,11 @@ body.is-mobile-app-view {
 	flex-direction: row;
 	justify-content: space-between;
 	align-items: center;
-	
+
 	.masterbar__site-info-label {
 		margin-bottom: 4px;
 	}
-	
+
 	.masterbar__info-badges {
 		display: flex;
 		flex-wrap: wrap;
@@ -1057,7 +1054,7 @@ a.masterbar__quick-language-switcher {
 }
 
 .is-section-gutenberg-editor .masterbar {
-	@include break-medium {
+	@include mixins.break-medium {
 		opacity: 0;
 		pointer-events: none;
 

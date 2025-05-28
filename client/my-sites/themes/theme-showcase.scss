@@ -1,7 +1,6 @@
-@import "@automattic/typography/styles/variables";
-@import "@wordpress/base-styles/breakpoints";
-@import "@wordpress/base-styles/mixins";
-@import "@wordpress/base-styles/variables";
+@use "@wordpress/base-styles/breakpoints";
+@use "@wordpress/base-styles/colors";
+@use "@wordpress/base-styles/mixins";
 
 .is-section-themes {
 	&.theme-default.color-scheme {
@@ -23,11 +22,11 @@
 			max-width: none;
 			padding-bottom: 0;
 
-			@include break-small {
-				border: 1px solid $gray-200;
+			@include mixins.break-small {
+				border: 1px solid colors.$gray-200;
 			}
 
-			@media (max-width: $break-mobile), (max-height: $break-mobile) {
+			@media (max-width: breakpoints.$break-mobile), (max-height: breakpoints.$break-mobile) {
 				overflow-y: auto;
 				overflow-x: hidden;
 			}
@@ -39,7 +38,7 @@
 			height: 100%;
 		}
 		.themes__header-navigation-container {
-			@media (min-width: $break-small) {
+			@media (min-width: breakpoints.$break-small) {
 				border-block-end: 1px solid var(--color-neutral-5);
 			}
 		}
@@ -73,7 +72,7 @@
 			flex-grow: 1;
 			margin-top: 16px;
 			min-height: 0;
-			@media (max-width: $break-small) {
+			@media (max-width: breakpoints.$break-small) {
 				margin-top: 10px;
 			}
 			.themes__showcase {
@@ -82,13 +81,13 @@
 			}
 			.themes__controls,
 			.themes__showcase {
-				@media (max-width: $break-small) {
+				@media (max-width: breakpoints.$break-small) {
 					padding: 0;
 				}
 			}
 
 			.theme-showcase__all-themes {
-				@media (min-width: $break-mobile) and (min-height: $break-mobile) {
+				@media (min-width: breakpoints.$break-mobile) and (min-height: breakpoints.$break-mobile) {
 					overflow-y: auto;
 				}
 				height: 100%;
@@ -227,7 +226,7 @@
 		.responsive-toolbar-group__full-list,
 		.responsive-toolbar-group__swipe-list,
 		.responsive-toolbar-group__grouped-list {
-			@include break-large {
+			@include mixins.break-large {
 				justify-content: flex-start;
 			}
 		}
@@ -262,23 +261,23 @@
 	}
 
 	.theme__search {
-		@include break-mobile {
+		@include mixins.break-mobile {
 			width: 100%;
 		}
 
-		@include break-small {
+		@include mixins.break-small {
 			width: 75%;
 		}
 
-		@include break-medium {
+		@include mixins.break-medium {
 			width: 70%;
 		}
 
-		@include break-large {
+		@include mixins.break-large {
 			width: 60%;
 		}
 
-		@include break-xlarge {
+		@include mixins.break-xlarge {
 			width: 50%;
 		}
 
@@ -336,7 +335,7 @@
 
 .is-logged-in {
 	.theme-showcase .theme__search {
-		@include break-xlarge {
+		@include mixins.break-xlarge {
 			width: 680px;
 		}
 	}
@@ -351,7 +350,7 @@
 
 .theme-showcase {
 	.navigation-header {
-		@media (max-width: $break-small) {
+		@media (max-width: breakpoints.$break-small) {
 			padding-bottom: 16px;
 		}
 	}
@@ -363,7 +362,7 @@
 		align-items: center;
 		padding-bottom: 10px;
 
-		@include break-mobile {
+		@include mixins.break-mobile {
 			flex-direction: row;
 		}
 
@@ -375,7 +374,7 @@
 			position: absolute;
 			width: 100%;
 
-			@include break-mobile {
+			@include mixins.break-mobile {
 				position: inherit;
 			}
 		}
@@ -388,7 +387,7 @@
 			width: 100%;
 			padding: 0 0 10px 0;
 
-			@include break-mobile {
+			@include mixins.break-mobile {
 				padding: 0 10px 0 0;
 			}
 		}
@@ -397,7 +396,7 @@
 			width: 100%;
 			flex-shrink: 0;
 
-			@include break-mobile {
+			@include mixins.break-mobile {
 				width: auto;
 			}
 
@@ -440,7 +439,7 @@
 		min-width: 220px;
 		width: 220px;
 
-		@media ( max-width: $break-small ) {
+		@media ( max-width: breakpoints.$break-small ) {
 			width: 100%;
 			min-width: auto;
 		}
@@ -508,13 +507,13 @@
 
 	.themes__controls,
 	.themes__showcase {
-		@media (max-width: $break-small) {
+		@media (max-width: breakpoints.$break-small) {
 			padding: 0 16px;
 		}
 	}
 
 	.themes__controls.is-sticky:not(.is-global-sidebar-visible) {
-		@include break-medium {
+		@include mixins.break-medium {
 			position: fixed;
 			left: var(--sidebar-width-max);
 			top: var(--masterbar-height);
@@ -539,7 +538,7 @@
 			display: none;
 		}
 
-		@include break-medium {
+		@include mixins.break-medium {
 			padding-top: 24px;
 			margin-top: -24px;
 			box-sizing: content-box;

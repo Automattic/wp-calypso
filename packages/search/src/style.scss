@@ -2,10 +2,9 @@
 * @component Search
 */
 
-@import "@automattic/typography/styles/variables";
-@import "@wordpress/base-styles/variables";
-@import "@wordpress/base-styles/mixins";
-@import "@wordpress/base-styles/breakpoints";
+@use "@automattic/typography/styles/variables";
+@use "@wordpress/base-styles/colors";
+@use "@wordpress/base-styles/mixins";
 
 $input-z-index: 20;
 
@@ -102,7 +101,7 @@ $input-z-index: 20;
 		color: var(--color-primary);
 		cursor: pointer;
 
-		@include break-mobile {
+		@include mixins.break-mobile {
 			width: 50px;
 		}
 	}
@@ -159,7 +158,7 @@ $input-z-index: 20;
 			display: flex;
 			align-items: center;
 			height: 36px;
-			font-size: $font-body-extra-small;
+			font-size: variables.$font-body-extra-small;
 		}
 
 		.search-component__open-icon {
@@ -181,7 +180,7 @@ $input-z-index: 20;
 	.components-button {
 		padding: 8px;
 
-		@include break-mobile {
+		@include mixins.break-mobile {
 			padding: 0;
 		}
 
@@ -191,7 +190,7 @@ $input-z-index: 20;
 	}
 
 	&.is-open {
-		background-color: var(--color-surface, $white);
+		background-color: var(--color-surface, colors.$white);
 		width: 100%;
 
 		.search-component__open-icon {
@@ -219,7 +218,7 @@ $input-z-index: 20;
 			flex: 1 1 auto;
 			height: 100%;
 			position: relative;
-			font-size: $font-body;
+			font-size: variables.$font-body;
 
 			&::before {
 				@include long-content-fade( $direction: right, $size: 32px, $z-index: $input-z-index + 2, $color: var( --color-surface ) );

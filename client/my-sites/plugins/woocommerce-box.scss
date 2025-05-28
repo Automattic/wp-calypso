@@ -1,3 +1,5 @@
+@use "sass:color";
+
 // partially copied from https://github.com/Automattic/woocommerce.com/blob/trunk/themes/woo/css/global/misc.scss
 
 // Color palette support
@@ -126,16 +128,16 @@ $c-gray-100: #101517 !default;
 	}
 
 	&.download {
-		background: lighten($c-gray-70, 60%);
-		border-color: lighten($c-gray-70, 50%);
+		background: color.adjust($c-gray-70, $lightness: 60%);
+		border-color: color.adjust($c-gray-70, $lightness: 50%);
 	}
 
 	&.note {
-		background: lighten(#f1d413, 40%);
-		border-color: lighten(#f1d413, 13%);
+		background: color.adjust(#f1d413, $lightness: 40%);
+		border-color: color.adjust(#f1d413, $lightness: 13%);
 
 		a {
-			color: darken(#f1d413, 20%);
+			color: color.adjust(#f1d413, $lightness: -20%);
 		}
 	}
 

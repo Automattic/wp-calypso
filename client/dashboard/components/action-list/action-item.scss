@@ -1,9 +1,9 @@
-@import "@wordpress/base-styles/mixins";
-@import "@wordpress/base-styles/variables";
+@use "@wordpress/base-styles/colors";
+@use "@wordpress/base-styles/variables";
 
 .action-item {
-	padding: $grid-unit-20 0;
-	border-bottom: 1px solid $gray-100;
+	padding: variables.$grid-unit-20 0;
+	border-bottom: 1px solid colors.$gray-100;
 
 	&:last-child {
 		border-bottom: none;
@@ -13,21 +13,21 @@
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
-		width: $grid-unit-50;
-		height: $grid-unit-50;
+		width: variables.$grid-unit-50;
+		height: variables.$grid-unit-50;
 		flex-shrink: 0;
-		border-radius: $radius-small;
+		border-radius: variables.$radius-small;
 		overflow: hidden;
 
 		&:has(svg) {
-			border: 1px solid $gray-200;
+			border: 1px solid colors.$gray-200;
 		}
 
 		svg {
-			width: $grid-unit-30;
-			height: $grid-unit-30;
+			width: variables.$grid-unit-30;
+			height: variables.$grid-unit-30;
 			flex-shrink: 0;
-			fill: $gray-700;
+			fill: colors.$gray-700;
 		}
 
 		img {

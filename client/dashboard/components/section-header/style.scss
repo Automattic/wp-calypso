@@ -1,5 +1,6 @@
-@import "@wordpress/base-styles/variables";
-@import "@wordpress/base-styles/mixins";
+@use "@wordpress/base-styles/colors";
+@use "@wordpress/base-styles/mixins";
+@use "@wordpress/base-styles/variables";
 
 .dashboard-section-header {
 	position: relative;
@@ -12,42 +13,42 @@
 
 .dashboard-section-header__heading {
 	margin-block: 0;
-	font-weight: $font-weight-medium;
+	font-weight: variables.$font-weight-medium;
 
 	.dashboard-section-header.is-level-1 & {
 	    font-family: var( --dashboard-h1__font-family );
-		font-size: $font-size-2x-large;
+		font-size: variables.$font-size-2x-large;
 	    font-weight: var( --dashboard-h1__font-weight ) !important;
-		line-height: $font-line-height-2x-large;
+		line-height: variables.$font-line-height-2x-large;
 	}
 
 	.dashboard-section-header.is-level-2 & {
-		@include heading-x-large();
+		@include mixins.heading-x-large();
 	}
 
 	.dashboard-section-header.is-level-3 & {
-		@include heading-large();
+		@include mixins.heading-large();
 	}
 }
 
 .dashboard-section-header__decoration {
 	display: inline-flex;
-	width: $grid-unit-40;
-	height: $grid-unit-40;
+	width: variables.$grid-unit-40;
+	height: variables.$grid-unit-40;
 	flex-shrink: 0;
 	align-items: center;
 	justify-content: center;
 
 	.dashboard-section-header.is-level-1 & {
-		width: $grid-unit-50;
-		height: $grid-unit-50;
+		width: variables.$grid-unit-50;
+		height: variables.$grid-unit-50;
 	}
 
 	svg {
-		fill: $gray-700;
+		fill: colors.$gray-700;
 		flex-shrink: 0;
-		width: $grid-unit-30;
-		height: $grid-unit-30;
+		width: variables.$grid-unit-30;
+		height: variables.$grid-unit-30;
 	}
 
 	img {
@@ -55,7 +56,7 @@
 		width: 100%;
 		height: 100%;
 		object-fit: cover;
-		border-radius: $radius-small;
+		border-radius: variables.$radius-small;
 	}
 }
 

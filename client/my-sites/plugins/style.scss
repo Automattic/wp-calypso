@@ -1,7 +1,8 @@
-@import "@wordpress/base-styles/breakpoints";
-@import "@wordpress/base-styles/mixins";
-@import "@wordpress/base-styles/variables";
-@import "./woocommerce-box";
+@use "@wordpress/base-styles/breakpoints";
+@use "@wordpress/base-styles/colors";
+@use "@wordpress/base-styles/mixins";
+@use "@automattic/typography/styles/variables";
+@use "woocommerce-box";
 
 .is-section-plugins .main {
 
@@ -19,7 +20,7 @@
 	}
 
 	.navigation-header {
-		@media (max-width: $break-small) {
+		@media (max-width: breakpoints.$break-small) {
 			padding-bottom: 16px;
 			margin-bottom: 0;
 		}
@@ -59,8 +60,8 @@ body.is-section-plugins {
 			overflow-y: auto;
 
 			&:not(:has(.hosting-dashboard-layout-column__container)) {
-				@include break-small {
-					border: 1px solid $gray-200;
+				@include mixins.break-small {
+					border: 1px solid colors.$gray-200;
 				}
 			}
 		}
@@ -76,11 +77,11 @@ body.is-section-plugins {
 		&.plugins-browser .plugins-browser__content-wrapper {
 			padding-inline: 48px;
 
-			@media (max-width: $break-medium) {
+			@media (max-width: breakpoints.$break-medium) {
 				padding-inline: 2rem;
 			}
 
-			@media (max-width: $break-small) {
+			@media (max-width: breakpoints.$break-small) {
 				padding-inline: 16px;
 			}
 		}
@@ -216,7 +217,7 @@ body.is-section-plugins.theme-default.color-scheme {
 
 
 .plugins__more-header {
-	font-size: $font-body-small;
+	font-size: variables.$font-body-small;
 	line-height: 2;
 	margin: 40px 0 20px;
 	padding: 0 15px;
@@ -305,7 +306,7 @@ $calypso-header-height: 31px;
 		margin-top: 24px;
 		gap: 16px;
 		display: flex;
-		font-size: $font-body-extra-small;
+		font-size: variables.$font-body-extra-small;
 
 		@include breakpoint-deprecated( "<1280px" ) {
 			flex-direction: column;
@@ -314,7 +315,7 @@ $calypso-header-height: 31px;
 
 		.plugin-details__plugin-download-cta {
 			a {
-				font-size: $font-body-extra-small;
+				font-size: variables.$font-body-extra-small;
 				padding: 6px 14px;
 			}
 		}
@@ -357,7 +358,7 @@ $calypso-header-height: 31px;
 		}
 
 		.section-nav-tab__link {
-			font-size: $font-body;
+			font-size: variables.$font-body;
 			color: var(--studio-gray-60);
 			padding: 8px 8px 12px;
 
@@ -387,16 +388,16 @@ $calypso-header-height: 31px;
 
 		.title {
 			color: var(--studio-gray-60);
-			font-size: $font-body-extra-small;
+			font-size: variables.$font-body-extra-small;
 		}
 
 		.value {
 			color: var(--studio-gray-90);
-			font-size: $font-body-small;
+			font-size: variables.$font-body-small;
 			padding-bottom: 16px;
 
 			&.plugin-details__active-installs-value {
-				font-size: $font-body;
+				font-size: variables.$font-body;
 			}
 		}
 	}
@@ -523,7 +524,7 @@ body.is-section-plugins #primary {
 			display: block;
 			width: 100%;
 		}
-		@include break-xlarge {
+		@include mixins.break-xlarge {
 			width: 45%;
 		}
 	}
@@ -549,7 +550,7 @@ body.is-section-plugins #primary {
 				}
 			}
 		}
-		@include break-xlarge {
+		@include mixins.break-xlarge {
 			width: 55%;
 			text-align: right;
 		}
@@ -573,7 +574,7 @@ body.is-section-plugins #primary {
 .plugins__top-container {
 	padding: 0 16px;
 
-	@media (min-width: $break-small) {
+	@media (min-width: breakpoints.$break-small) {
 		padding: 0;
 	}
 }
@@ -582,7 +583,7 @@ body.is-section-plugins #primary {
 	margin: 0 -32px;
 	padding: 4px 48px 0;
 
-	@include break-large() {
+	@include mixins.break-large() {
 		padding: 6px 48px 0;
 	}
 }
@@ -591,7 +592,7 @@ body.is-section-plugins #primary {
 	.plugins__top-container-jc {
 		padding: 4px 0 0;
 
-		@include break-large() {
+		@include mixins.break-large() {
 		  padding: 6px 0 0;
 		}
 	}
@@ -600,7 +601,7 @@ body.is-section-plugins #primary {
 .plugins__content-wrapper {
 	max-width: 1500px;
 	margin: auto;
-	@include break-large() {
+	@include mixins.break-large() {
 		padding: 0;
 	}
 }
@@ -609,7 +610,7 @@ body.is-section-plugins #primary {
 	margin: 0;
 	padding: 0;
 	flex: 1 1 100%;
-	@media (min-width: $break-small) {
+	@media (min-width: breakpoints.$break-small) {
 		padding: 16px 0;
 		background: rgba(255, 255, 255, 0.5);
 		margin-bottom: -32px;
@@ -649,11 +650,11 @@ body.is-section-plugins #primary {
 		inset-inline-start: calc(var(--sidebar-width-min) + 10px) !important;
 	}
 
-	@include break-large {
+	@include mixins.break-large {
 		inset-inline-start: calc(var(--sidebar-width-min) + 20px) !important;
 	}
 
-	@include break-xlarge {
+	@include mixins.break-xlarge {
 		> div {
 			max-width: 1530px;
 			margin: auto;

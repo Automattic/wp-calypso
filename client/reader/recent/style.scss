@@ -1,8 +1,8 @@
-@import '@wordpress/base-styles/variables';
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@use '@wordpress/base-styles/breakpoints';
+@use '@wordpress/base-styles/mixins';
+@use '@wordpress/base-styles/colors';
+@use 'calypso/assets/stylesheets/shared/mixins/hide-content-accessibly';
 @import '@wordpress/dataviews/build-style/style.css';
-@import 'calypso/assets/stylesheets/shared/mixins/hide-content-accessibly';
 
 body.is-reader-full-post {
 	overflow: hidden;
@@ -20,7 +20,7 @@ body.is-reader-full-post {
 	height: $feed-content-height !important; // Using !important here to avoid having a lengthy selector.
 	overflow-y: hidden !important; // Keeps the scrolling container consistent between one and two column layouts.
 
-	@media ( min-width: $break-wide ) {
+	@media ( min-width: breakpoints.$break-wide ) {
 		display: flex;
 		background: var( --studio-gray-0 );
 		gap: 12px;
@@ -49,12 +49,12 @@ body.is-reader-full-post {
 		&.has-overlay {
 			display: none;
 
-			@media ( min-width: $break-wide ) {
+			@media ( min-width: breakpoints.$break-wide ) {
 				display: block;
 			}
 		}
 
-		@media ( min-width: $break-wide ) {
+		@media ( min-width: breakpoints.$break-wide ) {
 			max-width: 320px;
 		}
 
@@ -97,7 +97,7 @@ body.is-reader-full-post {
 		.dataviews-view-list {
 			height: $feed-list-height;
 			overflow-y: auto;
-			@include custom-scrollbars-on-hover( transparent, $gray-600 );
+			@include mixins.custom-scrollbars-on-hover( transparent, colors.$gray-600 );
 			scrollbar-gutter: auto;
 			list-style: none;
 			margin: 0;
@@ -208,15 +208,15 @@ body.is-reader-full-post {
 			transition: opacity 0.2s ease-in-out;
 			opacity: 1;
 
-			@media ( max-width: $break-medium ) {
+			@media ( max-width: breakpoints.$break-medium ) {
 				bottom: 0;
 			}
 
-			@media ( min-width: $break-small ) and ( max-width: $break-medium ) {
+			@media ( min-width: breakpoints.$break-small ) and ( max-width: breakpoints.$break-medium ) {
 				margin-right: 24px;
 			}
 
-			@media ( min-width: $break-medium ) {
+			@media ( min-width: breakpoints.$break-medium ) {
 				margin-right: 16px;
 			}
 
@@ -229,7 +229,7 @@ body.is-reader-full-post {
 				margin: 0;
 				justify-content: space-evenly;
 
-				@media ( min-width: $break-medium ) {
+				@media ( min-width: breakpoints.$break-medium ) {
 					justify-content: center;
 				}
 				span,
@@ -241,12 +241,12 @@ body.is-reader-full-post {
 		}
 
 		.back-button {
-			@media ( min-width: $break-wide ) {
-				@include hide-content-accessibly();
+			@media ( min-width: breakpoints.$break-wide ) {
+				@include hide-content-accessibly.hide-content-accessibly();
 			}
 		}
 
-		@media ( min-width: $break-wide ) {
+		@media ( min-width: breakpoints.$break-wide ) {
 			display: block;
 			position: relative;
 			flex: 3;

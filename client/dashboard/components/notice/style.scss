@@ -1,31 +1,32 @@
-@import "@wordpress/base-styles/mixins";
-@import "@wordpress/base-styles/variables";
+@use "@wordpress/base-styles/colors";
+@use "@wordpress/base-styles/mixins";
+@use "@wordpress/base-styles/variables";
 
 .dashboard-notice {
 	/**
 	 * Density
 	 */
 	&.has-density-low {
-		border-radius: $radius-large;
+		border-radius: variables.$radius-large;
 
 		.dashboard-notice__body {
-			padding: $grid-unit-20;
+			padding: variables.$grid-unit-20;
 		}
 	}
 
 	&.has-density-medium {
-		border-radius: $radius-small;
+		border-radius: variables.$radius-small;
 
 		.dashboard-notice__body {
-			padding: $grid-unit-15;
+			padding: variables.$grid-unit-15;
 		}
 	}
 
 	&.has-density-high {
-		border-radius: $radius-small;
+		border-radius: variables.$radius-small;
 
 		.dashboard-notice__body {
-			padding: $grid-unit-05;
+			padding: variables.$grid-unit-05;
 		}
 	}
 
@@ -41,7 +42,7 @@
 	}
 
 	&.is-warning {
-		background-color: color-mix(in srgb, $alert-yellow 4%, transparent);
+		background-color: color-mix(in srgb, colors.$alert-yellow 4%, transparent);
 
 		.dashboard-notice__icon {
 			fill: #a77f30;
@@ -49,7 +50,7 @@
 	}
 
 	&.is-success {
-		background-color: color-mix(in srgb, $alert-green 4%, transparent);
+		background-color: color-mix(in srgb, colors.$alert-green 4%, transparent);
 
 		.dashboard-notice__icon {
 			fill: #2c723e;
@@ -57,7 +58,7 @@
 	}
 
 	&.is-error {
-		background-color: color-mix(in srgb, $alert-red 4%, transparent);
+		background-color: color-mix(in srgb, colors.$alert-red 4%, transparent);
 
 		.dashboard-notice__icon {
 			fill: #8c0b0b;
@@ -80,16 +81,16 @@
 }
 
 .dashboard-notice__title {
-	@include heading-medium;
+	@include mixins.heading-medium;
 }
 
 .dashboard-notice__description {
-	@include body-medium;
+	@include mixins.body-medium;
 	text-wrap: pretty;
 }
 
 .dashboard-notice__actions {
-	padding-bottom: $grid-unit-05;
+	padding-bottom: variables.$grid-unit-05;
 }
 
 .dashboard-notice__close-button {

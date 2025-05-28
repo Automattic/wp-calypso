@@ -1,7 +1,8 @@
-@import "@wordpress/base-styles/breakpoints";
-@import "@wordpress/base-styles/mixins";
-@import "@wordpress/base-styles/variables";
-@import "@automattic/typography/styles/variables";
+@use "@wordpress/base-styles/breakpoints";
+@use "@wordpress/base-styles/colors";
+@use "@wordpress/base-styles/mixins";
+@use "@wordpress/base-styles/variables" as base-variables;
+@use "@automattic/typography/styles/variables" as typography-variables;
 
 .calypso-navigation-header {
 	background-color: var(--wp-components-color-background, #fff);
@@ -47,31 +48,31 @@
 		display: flex;
 		align-items: center;
 		text-decoration: none;
-		font-size: $default-font-size;
+		font-size: base-variables.$default-font-size;
 		transition: color 0.2s ease;
 		cursor: pointer;
 
 		&:hover {
-			color: var(--wp-components-color-gray-900, $gray-900);
+			color: var(--wp-components-color-gray-900, colors.$gray-900);
 		}
 
 		svg {
-			margin-right: $grid-unit-10;
+			margin-right: base-variables.$grid-unit-10;
 		}
 	}
 
 	&__title {
 		font-size: 20px;
 		font-weight: 500;
-		font-family: "SF Pro Display", $sans;
-		color: var(--wp-components-color-gray-900, $gray-900);
+		font-family: "SF Pro Display", typography-variables.$sans;
+		color: var(--wp-components-color-gray-900, colors.$gray-900);
 		display: flex;
 		align-items: center;
 		gap: 12px;
 		line-height: 1.2;
 		min-height: 32px;
 
-		@media (max-width: $break-small) {
+		@media (max-width: breakpoints.$break-small) {
 			font-size: 20px;
 		}
 	}
@@ -94,10 +95,10 @@
 		padding-top: 38px; // 30 for screen options tab + 8 gap
 	}
 
-	@include break-small {
+	@include mixins.break-small {
 		&.calypso-navigation-header__screen-options-tab {
 			// There are existing workarounds for desktop layouts, revert back to 16 here
-			padding-top: $grid-unit-20;
+			padding-top: base-variables.$grid-unit-20;
 		}
 	}
 }

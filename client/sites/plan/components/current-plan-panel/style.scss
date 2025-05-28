@@ -1,7 +1,6 @@
-@import "@automattic/components/src/styles/typography";
-@import "@wordpress/base-styles/breakpoints";
-@import "@wordpress/base-styles/mixins";
-@import "@wordpress/base-styles/variables";
+@use "@wordpress/base-styles/colors";
+@use "@wordpress/base-styles/mixins";
+@use "@automattic/typography/styles/variables";
 
 .current-plan-panel {
 	.current-plan-heading {
@@ -9,7 +8,7 @@
 		flex-direction: column;
 		gap: 12px;
 
-		@include break-medium {
+		@include mixins.break-medium {
 			display: flex;
 			flex-direction: row;
 			align-items: flex-start;
@@ -31,15 +30,15 @@
 		display: flex;
 		gap: 4px;
 
-		@include break-medium {
+		@include mixins.break-medium {
 			flex-direction: row-reverse;
 		}
 	}
 
 	h3 {
-		color: $gray-900;
-		font-family: "SF Pro", $sans;
-		font-size: rem(20px); //typography-exception
+		color: colors.$gray-900;
+		font-family: "SF Pro", variables.$sans;
+		font-size: variables.rem(20px); //typography-exception
 		font-weight: 500;
 		line-height: 24px;
 	}
@@ -47,19 +46,19 @@
 	hr {
 		margin-top: 32px;
 		margin-bottom: 8px;
-		background-color: $gray-100;
+		background-color: colors.$gray-100;
 	}
 
 	.plan-price-info {
-		font-size: rem(13px);  //typography-exception
-		color: $gray-700;
+		font-size: variables.rem(13px);  //typography-exception
+		color: colors.$gray-700;
 	}
 
 	.plan-price--inline {
-		font-size: rem(13px);  //typography-exception
+		font-size: variables.rem(13px);  //typography-exception
 
 		&, .plan-price__currency-symbol {
-			color: $gray-900;
+			color: colors.$gray-900;
 		}
 	}
 

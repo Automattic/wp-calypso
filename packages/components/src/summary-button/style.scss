@@ -1,8 +1,9 @@
-@import "@wordpress/base-styles/mixins";
-@import "@wordpress/base-styles/variables";
+@use "@wordpress/base-styles/colors";
+@use "@wordpress/base-styles/mixins";
+@use "@wordpress/base-styles/variables";
 
 .summary-button.components-button {
-	padding: $grid-unit-30;
+	padding: variables.$grid-unit-30;
 	display: block;
 	height: auto;
 	transition: none;
@@ -40,16 +41,16 @@
 	}
 
 	.summary-button-title {
-		@include body-large;
+		@include mixins.body-large;
 	}
 
 	.summary-button-strapline {
-		@include heading-small;
+		@include mixins.heading-small;
 	}
 
 	.summary-button-navigation-icon,
 	.summary-button-decoration svg {
-		fill: $gray-700;
+		fill: colors.$gray-700;
 		flex-shrink: 0;
 	}
 
@@ -66,21 +67,21 @@
 	&.has-density-low {
 		/* stylelint-disable-next-line scales/radii */
 		border-radius: 7px;
-		border: 1px solid $gray-200;
+		border: 1px solid colors.$gray-200;
 		background-color: #fff;
 	}
 
 	&.has-density-medium {
-		padding: $grid-unit-20 $grid-unit-30;
-		border-bottom: 1px solid $gray-100;
+		padding: variables.$grid-unit-20 variables.$grid-unit-30;
+		border-bottom: 1px solid colors.$gray-100;
 		border-radius: 0;
 
 		.summary-button-title {
-			@include body-medium;
+			@include mixins.body-medium;
 		}
 	}
 
 	&:focus-visible {
-		@include button-style__focus();
+		@include mixins.button-style__focus();
 	}
 }
