@@ -22,16 +22,10 @@ export interface SectionHeaderProps {
 	decoration?: React.ReactNode;
 	/**
 	 * Defines heading level and affects the appearance of the heading text.
+	 * _Note: use `1` only for page headers._
 	 * @default 2
 	 */
-	level?: 2 | 3;
-	/**
-	 * Defines whether the section header is used as a page header.
-	 * If true, it will use level 1 for the heading, so there is no
-	 * need to set the level prop.
-	 * @default false
-	 */
-	isPageHeader?: boolean;
+	level?: 1 | 2 | 3;
 	/**
 	 * Unique identifier for the rendered heading element, useful for linking
 	 * or accessibility purposes.
@@ -41,4 +35,8 @@ export interface SectionHeaderProps {
 	 * Optional content to be placed above the other elements of the component.
 	 */
 	prefix?: React.ReactNode;
+	/**
+	 * Optional class name to be applied to the component.
+	 */
+	className?: string;
 }

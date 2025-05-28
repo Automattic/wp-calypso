@@ -4,30 +4,23 @@
 .dashboard-section-header {
 	position: relative;
 	z-index: 1;
-
-	&.is-page-header {
-		.dashboard-section-header__decoration {
-			width: $grid-unit-50;
-			height: $grid-unit-50;
-		}
-	}
 }
 
 .dashboard-section-header__heading {
 	margin-block: 0;
 	font-weight: $font-weight-medium;
 
-	&.is-level-1 {
+	.dashboard-section-header.is-level-1 & {
 		font-size: $font-size-2x-large;
 		line-height: $font-line-height-2x-large;
 	}
 
-	&.is-level-2 {
+	.dashboard-section-header.is-level-2 & {
 		@include heading-x-large();
 		margin-top: $grid-unit-05;
 	}
 
-	&.is-level-3 {
+	.dashboard-section-header.is-level-3 & {
 		@include heading-large();
 		margin-top: calc($grid-unit-05 * 1.5);
 	}
@@ -40,6 +33,11 @@
 	flex-shrink: 0;
 	align-items: center;
 	justify-content: center;
+
+	.dashboard-section-header.is-level-1 & {
+		width: $grid-unit-50;
+		height: $grid-unit-50;
+	}
 
 	svg {
 		fill: $gray-700;

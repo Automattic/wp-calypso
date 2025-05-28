@@ -11,5 +11,12 @@ import type { PageHeaderProps } from './types';
  * semantic clarity.
  */
 export const PageHeader = ( { breadcrumbs, ...rest }: PageHeaderProps ) => {
-	return <SectionHeader prefix={ breadcrumbs } { ...rest } isPageHeader />;
+	return (
+		<SectionHeader
+			prefix={ breadcrumbs }
+			{ ...rest }
+			level={ 1 }
+			className="dashboard-page-header"
+		/>
+	);
 };
