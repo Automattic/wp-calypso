@@ -11,7 +11,7 @@ import {
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
-import { __, sprintf } from '@wordpress/i18n';
+import { __, _n, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { deleteSiteMutation } from '../../app/queries';
@@ -23,8 +23,60 @@ type SiteDeleteFormData = {
 	domain: string;
 };
 
-// TODO: Unable to delete site
-export default function SiteDeleteModal( { site, onClose }: { site: Site; onClose: () => void } ) {
+const canDeleteSite = ( site: Site ) =>
+	( site.is_wpcom_atomic || ! site.jetpack ) && ! site.is_vip && ! site.options?.p2_hub_blog_id;
+
+export function SiteDeleteWarningModal( { onClose }: { site: Site; onClose: () => void } ) {
+	const isAtomicRemovalInProgress = false;
+	const p2HubP2Count = 0;
+	const isTrialSite = false;
+
+	const renderWarningContent = () => {
+		if ( isAtomicRemovalInProgress ) {
+			return __(
+				"We are still in the process of removing your previous plan. Please check back in a few minutes and you'll be able to delete your site."
+			);
+		} else if ( p2HubP2Count ) {
+			return sprintf(
+				/* translators: %d is the number of P2 in your workspace */
+				_n(
+					'There is %d P2 in your workspace. Please delete it prior to deleting your workspace.',
+					'There are %d P2s in your workspace. Please delete them prior to deleting your workspace.',
+					p2HubP2Count
+				),
+				p2HubP2Count
+			);
+		} else if ( isTrialSite ) {
+			return __(
+				'You have an active or expired free trial on your site. Please cancel this plan prior to deleting your site.'
+			);
+		}
+
+		return __(
+			'You have active paid upgrades on your site. Please cancel your upgrades prior to deleting your site.'
+		);
+	};
+
+	const renderPrimaryButton = () => {
+		<Button variant="primary">{ __( 'Delete site' ) }</Button>;
+	};
+
+	return (
+		<Modal title={ __( 'Unable to delete site' ) } size="medium" onRequestClose={ onClose }>
+			<VStack spacing={ 4 }>
+				<Text as="p">{ renderWarningContent() }</Text>
+				<HStack justify="flex-end">
+					<Button variant="tertiary" onClick={ onClose }>
+						{ __( 'Cancel' ) }
+					</Button>
+					{ renderPrimaryButton() }
+				</HStack>
+			</VStack>
+		</Modal>
+	);
+}
+
+export function SiteDeleteConfirmModal( { site, onClose }: { site: Site; onClose: () => void } ) {
 	const router = useRouter();
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const [ formData, setFormData ] = useState< SiteDeleteFormData >( { domain: '' } );
@@ -129,5 +181,13 @@ export default function SiteDeleteModal( { site, onClose }: { site: Site; onClos
 				</form>
 			</VStack>
 		</Modal>
+	);
+}
+
+export default function SiteDeleteModal( { site, onClose }: { site: Site; onClose: () => void } ) {
+	return canDeleteSite( site ) ? (
+		<SiteDeleteConfirmModal site={ site } onClose={ onClose } />
+	) : (
+		<SiteDeleteWarningModal site={ site } onClose={ onClose } />
 	);
 }

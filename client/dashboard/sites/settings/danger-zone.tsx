@@ -47,9 +47,6 @@ const SiteLeaveAction = ( { site }: { site: Site } ) => {
 	);
 }
 
-const canDeleteSite = ( site: Site ) =>
-	( site.is_wpcom_atomic || ! site.jetpack ) && ! site.is_vip && ! site.options?.p2_hub_blog_id;
-
 const SiteDeleteAction = ( { site }: { site: Site } ) => {
 	const [ isOpen, setIsOpen ] = useState( false );
 
@@ -82,7 +79,7 @@ export default function DangerZone( { site }: { site: Site } ) {
 	const actions = [
 		canTransferSite && <SiteTransferAction key="transfer-site" site={ site } />,
 		<SiteLeaveAction key="leave-site" site={ site } />,
-		canDeleteSite( site ) && <SiteDeleteAction key="delete-site" site={ site } />,
+		<SiteDeleteAction key="delete-site" site={ site } />,
 	].filter( Boolean );
 
 	if ( ! actions.length ) {
