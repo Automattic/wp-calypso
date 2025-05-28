@@ -1,18 +1,20 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
-import { Gravatar, TimeSince } from '@automattic/components';
+import { Gravatar } from '@automattic/components';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { DataViews, type View, type ViewTable, type Action, Operator } from '@wordpress/dataviews';
 import { useMemo, useState, useCallback, useEffect } from '@wordpress/element';
 import { trash } from '@wordpress/icons';
 import { translate } from 'i18n-calypso';
 import { useSubscribedNewsletterCategories } from 'calypso/data/newsletter-categories';
+import { applySiteOffset } from 'calypso/lib/site/timezone';
 import { useSelector, useDispatch } from 'calypso/state';
 import { getCouponsAndGiftsEnabledForSiteId } from 'calypso/state/memberships/settings/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import { isSimpleSite, getSiteSlug } from 'calypso/state/sites/selectors';
+import getSiteOption from 'calypso/state/sites/selectors/get-site-option';
 import { SubscribersFilterBy, SubscribersSortBy, SubscribersStatus } from '../../constants';
 import { getSubscriptionIdFromSubscriber } from '../../helpers';
 import { useSubscriptionPlans, useUnsubscribeModal } from '../../hooks';
@@ -109,6 +111,12 @@ export default function SubscriberDataViews( {
 	const isSimple = useSelector( ( state ) => isSimpleSite( state, siteId ) );
 	const isAtomic = useSelector( ( state ) => isAtomicSite( state, siteId ) );
 	const isStaging = useSelector( ( state ) => isSiteWpcomStaging( state, siteId ) );
+	const gmtOffset = useSelector( ( state ) =>
+		getSiteOption( state, siteId, 'gmt_offset' )
+	) as number;
+	const timezone = useSelector( ( state ) => getSiteOption( state, siteId, 'timezone' ) ) as string;
+	const adjustDate = ( date: string ) =>
+		date ? applySiteOffset( date, { timezone, gmtOffset, keepLocalTime: false } ) : undefined;
 
 	const [ searchTerm, setSearchTerm ] = useState( '' );
 	const [ filters, setFilters ] = useState< SubscribersFilterBy[] >( [ SubscribersFilterBy.All ] );
@@ -370,9 +378,12 @@ export default function SubscriberDataViews( {
 				id: 'date_subscribed',
 				label: translate( 'Since' ),
 				getValue: ( { item }: { item: Subscriber } ) => getSubscriptionDate( item ),
-				render: ( { item }: { item: Subscriber } ) => (
-					<TimeSince date={ getSubscriptionDate( item ) } />
-				),
+				render: ( { item }: { item: Subscriber } ) => {
+					const subscribedDate = getSubscriptionDate( item );
+					const subscribedDateWithTimezoneApplied = adjustDate( subscribedDate );
+
+					return <div>{ subscribedDateWithTimezoneApplied?.fromNow( true ) }</div>;
+				},
 				enableHiding: false,
 				enableSorting: true,
 			},
