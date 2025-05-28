@@ -673,8 +673,6 @@ class Login extends Component {
 				{ this.renderContent() }
 
 				{ this.renderFooter() }
-
-				{ isWhiteLogin && this.renderToS() }
 			</div>
 		);
 	}

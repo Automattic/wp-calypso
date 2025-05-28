@@ -49,7 +49,8 @@ import getIsWCCOM from 'calypso/state/selectors/get-is-wccom';
 import getIsWoo from 'calypso/state/selectors/get-is-woo';
 import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
 import { withEnhancers } from 'calypso/state/utils';
-import HeadingLogo from './components/login-heading-logo';
+import HeadingLogo from './components/heading-logo';
+import HeadingSubText from './components/heading-subtext';
 import LoginFooter from './login-footer';
 import LoginLinks from './login-links';
 
@@ -664,6 +665,12 @@ export class Login extends Component {
 										<HeadingLogo />
 										<div className="wp-login__heading-text">{ headerText }</div>
 									</>
+								}
+								subText={
+									<HeadingSubText
+										isSocialFirst={ isSocialFirst }
+										twoFactorAuthType={ twoFactorAuthType }
+									/>
 								}
 							/>
 						}

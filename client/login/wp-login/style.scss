@@ -52,6 +52,15 @@ $image-height: 47px;
 	}
 }
 
+.wp-login__heading-subtext {
+	color: var(--studio-gray-50, #646970);
+
+	a {
+		color: var(--studio-gray-50, #646970);
+		text-decoration: underline;
+	}
+}
+
 .wp-login__main.main {
 	max-width: 400px;
 
