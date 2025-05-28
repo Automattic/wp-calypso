@@ -282,7 +282,7 @@ class Signup extends Component {
 
 		// Re-check fulfilled steps when siteDomains data changes
 		// This ensures that isDomainFulfilled is called again when domain data loads
-		if ( siteDomains !== prevProps.siteDomains ) {
+		if ( flowName === 'launch-site' && siteDomains !== prevProps.siteDomains ) {
 			this.removeFulfilledSteps( this.props );
 		}
 	}

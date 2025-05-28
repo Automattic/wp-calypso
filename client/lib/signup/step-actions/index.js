@@ -1070,7 +1070,7 @@ function excludeDomainStep( stepName, tracksEventValue, submitSignupStep ) {
 	submitSignupStep( { stepName, domainItem }, { domainItem, domainCart } );
 	recordExcludeStepEvent( stepName, tracksEventValue );
 
-	fulfilledDependencies = [ 'domainItem', 'domainCart' ];
+	fulfilledDependencies = [ 'domainItem', 'domainCart', 'siteId', 'siteSlug', 'themeItem' ];
 
 	if ( shouldExcludeStep( stepName, fulfilledDependencies ) ) {
 		flows.excludeStep( stepName );
