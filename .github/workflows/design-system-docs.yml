@@ -3,6 +3,9 @@ name: Publish Design System Docs PR Preview
 on:
   pull_request:
     types: [opened, synchronize, reopened]
+    paths:
+      - 'apps/design-system-docs/**'
+      - .github/workflows/design-system-docs.yml
 
 # Ensure only one preview build runs per-PR at a time
 concurrency:
