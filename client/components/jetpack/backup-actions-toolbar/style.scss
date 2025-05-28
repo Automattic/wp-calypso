@@ -5,6 +5,7 @@
 	display: flex;
 	gap: 10px;
 	flex-direction: column-reverse;
+	float: right;
 
 	@include break-small {
 		flex-direction: row;
