@@ -43,7 +43,7 @@ export function InvitationEmailSent( {
 							),
 							{ type: 'snackbar' }
 						);
-						router.navigate( { to: '/sites' } );
+						router.navigate( { to: '/sites', replace: true } );
 						return;
 					}
 
