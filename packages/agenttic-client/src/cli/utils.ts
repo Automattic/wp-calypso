@@ -1,20 +1,31 @@
 import { createA2AClient } from '../client/index';
-import { createTextMessage, extractTextFromMessage } from '../utils/index';
+import {
+	createTextMessage,
+	createToolResultDataPart,
+	extractTextFromMessage,
+} from '../utils/index';
 import { createEnvAuthProvider } from './auth';
 import { createExampleTools } from './tools';
 import { createCLIContextProvider } from './context';
 import { nodeDispatcher } from './dispatcher';
 import { cliLog } from '../utils/logger';
 import type { CLIOptions, ConversationHistoryItem } from './types';
+import type { A2AClient } from '../types/index';
 import chalk from 'chalk';
 
 /**
  * Create providers based on CLI options
  *
- * @param options - CLI options
+ * @param options   - CLI options
+ * @param client    - A2A client instance for sending tool results back to agent
+ * @param sessionId - Session ID for tool result messages
  * @return Object containing auth, tool, and context providers
  */
-export function createProviders( options: CLIOptions ) {
+export function createProviders(
+	options: CLIOptions,
+	client?: A2AClient,
+	sessionId?: string
+) {
 	// Determine auth provider based on options
 	let authProvider;
 	if ( options.auth || options.token ) {
@@ -25,8 +36,105 @@ export function createProviders( options: CLIOptions ) {
 		authProvider = async () => ( {} );
 	}
 
+	// Create tool completion callback that sends results back to agent
+	const createToolCompletionCallback = () => {
+		if ( ! client || ! sessionId ) {
+			return undefined;
+		}
+
+		return async ( toolResult: any ) => {
+			try {
+				cliLog.info( `🔄 Sending tool result back to agent...` );
+
+				// Debug: log what we received as toolResult
+				if ( options.verbose ) {
+					cliLog.system(
+						`🔍 Tool result received: ${ JSON.stringify(
+							toolResult,
+							null,
+							2
+						) }`
+					);
+				}
+
+				// Create a message that includes both the tool result and a prompt to continue
+				const toolResultMessage = {
+					role: 'user' as const,
+					parts: [
+						toolResult, // Include the tool result data part
+					],
+				};
+
+				// Debug: log what we're sending to the agent
+				if ( options.verbose ) {
+					cliLog.system(
+						`🔍 Sending to agent: ${ JSON.stringify(
+							toolResultMessage,
+							null,
+							2
+						) }`
+					);
+				}
+
+				// Send the tool result back to the agent and get the response
+				const agentResponse = await client.sendMessage( {
+					message: toolResultMessage,
+					sessionId,
+				} );
+
+				cliLog.info( `✅ Tool result sent to agent` );
+
+				// Debug: log the full agent response
+				if ( options.verbose ) {
+					cliLog.system(
+						`🔍 Agent response to tool result: ${ JSON.stringify(
+							agentResponse,
+							null,
+							2
+						) }`
+					);
+				}
+
+				// Extract and display the agent's response to the tool result
+				if ( agentResponse.status.message ) {
+					const responseText = extractTextFromMessage(
+						agentResponse.status.message
+					);
+					if ( responseText ) {
+						cliLog.info( `🤖 Agent response to tool result:` );
+						cliLog.agent( responseText );
+					} else {
+						cliLog.system(
+							`🔍 Agent responded but no text extracted from message parts`
+						);
+						if (
+							options.verbose &&
+							agentResponse.status.message.parts
+						) {
+							cliLog.system(
+								`🔍 Message parts: ${ JSON.stringify(
+									agentResponse.status.message.parts,
+									null,
+									2
+								) }`
+							);
+						}
+					}
+				} else {
+					cliLog.system( `🔍 Agent response has no message` );
+				}
+			} catch ( error ) {
+				cliLog.error(
+					`❌ Failed to send tool result to agent: ${ error }`
+				);
+			}
+		};
+	};
+
 	// Create tool provider if tools are enabled
-	const toolProvider = options.tools ? createExampleTools() : undefined;
+	const toolProvider = options.tools
+		? createExampleTools( createToolCompletionCallback() )
+		: undefined;
 
 	// Create context provider if context is enabled
 	const contextProvider = options.context
@@ -43,10 +151,25 @@ export function createProviders( options: CLIOptions ) {
  * @return Object containing client and providers
  */
 export function createClientWithProviders( options: CLIOptions ) {
-	const { authProvider, toolProvider, contextProvider } =
-		createProviders( options );
+	// First create client without tool provider
+	const { authProvider, contextProvider } = createProviders( options );
 
 	const client = createA2AClient( {
+		agentUrl: options.url,
+		authProvider,
+		defaultSessionId: options.session,
+		timeout: options.timeout,
+		proxy: options.proxy,
+		contextProvider,
+		dispatcher: nodeDispatcher,
+	} );
+
+	// Now create tool provider with client reference for tool completion callback
+	const sessionId = options.session || `cli-${ Date.now() }`;
+	const { toolProvider } = createProviders( options, client, sessionId );
+
+	// Update the client with the tool provider
+	const clientWithTools = createA2AClient( {
 		agentUrl: options.url,
 		authProvider,
 		defaultSessionId: options.session,
@@ -57,7 +180,12 @@ export function createClientWithProviders( options: CLIOptions ) {
 		dispatcher: nodeDispatcher,
 	} );
 
-	return { client, authProvider, toolProvider, contextProvider };
+	return {
+		client: clientWithTools,
+		authProvider,
+		toolProvider,
+		contextProvider,
+	};
 }
 
 /**

@@ -74,7 +74,8 @@ export {
 export { createEnvAuthProvider } from './cli/auth';
 
 // CLI tool provider exports
-export { CLIToolProvider, createExampleTools } from './cli/tools';
+export { createCLIToolProvider, createExampleTools } from './cli/tools';
+export type { SendToolResultCallback } from './cli/tools';
 
 // CLI context provider exports
 export { CLIContextProvider, createCLIContextProvider } from './cli/context';

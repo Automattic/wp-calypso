@@ -1,93 +1,103 @@
-import type { Tool, ToolProvider } from '../types/index';
+import type { Tool, ToolProvider, ToolResultDataPart } from '../types/index';
 import { cliLog, logger } from '../utils/logger';
 
 /**
- * Simple in-memory tool registry for CLI usage
+ * Callback type for sending tool results back to the agent
  */
-export class CLIToolProvider implements ToolProvider {
-	private tools: Map<
-		string,
-		Tool & { callback: ( args: any ) => Promise< any > }
-	> = new Map();
+export type SendToolResultCallback = (
+	toolResult: ToolResultDataPart
+) => Promise< void >;
 
-	/**
-	 * Register a tool with the provider
-	 * @param tool
-	 * @param callback
-	 */
-	registerTool(
+/**
+ * Tool registry interface for CLI usage
+ */
+interface ToolRegistry {
+	tools: Map< string, Tool & { callback: ( args: any ) => Promise< any > } >;
+}
+
+/**
+ * Create a CLI tool provider with optional tool completion callback
+ * @param onToolCompletion - Optional callback for handling tool completion
+ */
+export function createCLIToolProvider(
+	onToolCompletion?: (
+		toolResult: ToolResultDataPart
+	) => void | Promise< void >
+): ToolProvider & {
+	registerTool: (
 		tool: Tool,
 		callback: ( args: any ) => Promise< any >
-	): void {
-		this.tools.set( tool.id, { ...tool, callback } );
-		logger( 'Registered tool: %s', tool.id );
-	}
+	) => void;
+	unregisterTool: ( toolId: string ) => boolean;
+	getToolCount: () => number;
+	clearTools: () => void;
+} {
+	const registry: ToolRegistry = {
+		tools: new Map(),
+	};
 
-	/**
-	 * Get all available tools
-	 */
-	async getAvailableTools(): Promise< Tool[] > {
-		return Array.from( this.tools.values() ).map(
-			( { callback, ...tool } ) => tool
-		);
-	}
+	return {
+		async getAvailableTools(): Promise< Tool[] > {
+			return Array.from( registry.tools.values() ).map(
+				( { callback, ...tool } ) => tool
+			);
+		},
 
-	/**
-	 * Execute a tool by ID
-	 * @param toolId
-	 * @param args
-	 */
-	async executeTool( toolId: string, args: any ): Promise< any > {
-		const tool = this.tools.get( toolId );
-		if ( ! tool ) {
-			throw new Error( `Tool not found: ${ toolId }` );
-		}
+		async executeTool( toolId: string, args: any ): Promise< any > {
+			const tool = registry.tools.get( toolId );
+			if ( ! tool ) {
+				throw new Error( `Tool not found: ${ toolId }` );
+			}
 
-		logger( 'Executing tool %s with args: %O', toolId, args );
+			logger( 'Executing tool %s with args: %O', toolId, args );
 
-		try {
-			const result = await tool.callback( args );
-			logger( 'Tool %s completed successfully', toolId );
-			return result;
-		} catch ( error ) {
-			logger( 'Tool %s failed: %s', toolId, error );
-			throw error;
-		}
-	}
+			try {
+				const result = await tool.callback( args );
+				logger( 'Tool %s completed successfully', toolId );
+				return result;
+			} catch ( error ) {
+				logger( 'Tool %s failed: %s', toolId, error );
+				throw error;
+			}
+		},
 
-	/**
-	 * Remove a tool from the registry
-	 * @param toolId
-	 */
-	unregisterTool( toolId: string ): boolean {
-		const removed = this.tools.delete( toolId );
-		if ( removed ) {
-			logger( 'Unregistered tool: %s', toolId );
-		}
-		return removed;
-	}
+		onToolCompletion,
 
-	/**
-	 * Get the number of registered tools
-	 */
-	getToolCount(): number {
-		return this.tools.size;
-	}
+		registerTool(
+			tool: Tool,
+			callback: ( args: any ) => Promise< any >
+		): void {
+			registry.tools.set( tool.id, { ...tool, callback } );
+			logger( 'Registered tool: %s', tool.id );
+		},
 
-	/**
-	 * Clear all registered tools
-	 */
-	clearTools(): void {
-		this.tools.clear();
-		logger( 'Cleared all tools' );
-	}
+		unregisterTool( toolId: string ): boolean {
+			const removed = registry.tools.delete( toolId );
+			if ( removed ) {
+				logger( 'Unregistered tool: %s', toolId );
+			}
+			return removed;
+		},
+
+		getToolCount(): number {
+			return registry.tools.size;
+		},
+
+		clearTools(): void {
+			registry.tools.clear();
+			logger( 'Cleared all tools' );
+		},
+	};
 }
 
 /**
  * Create some example tools for CLI testing
+ * @param sendToolResult - Callback to send tool results back to the agent
  */
-export function createExampleTools(): CLIToolProvider {
-	const provider = new CLIToolProvider();
+export function createExampleTools(
+	sendToolResult?: SendToolResultCallback
+): ReturnType< typeof createCLIToolProvider > {
+	const provider = createCLIToolProvider( sendToolResult );
 
 	provider.registerTool(
 		{
@@ -116,9 +126,8 @@ export function createExampleTools(): CLIToolProvider {
 		},
 		async ( args ) => {
 			const { operation, a, b } = args;
-			cliLog.agent( `Executing Calculator` );
+			cliLog.agent( `🧮 Executing Calculator` );
 			switch ( operation ) {
-				// TODO: we need to return the result of the operation to the agent.
 				case 'add':
 					cliLog.agent( `Adding ${ a } and ${ b } = ${ a + b }` );
 					return { result: a + b };
