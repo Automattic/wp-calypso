@@ -59,14 +59,14 @@ export function StartSiteTransferForm( {
 	siteSlug,
 	site,
 	newOwnerEmail,
-	handleSubmit,
-	handleBack,
+	onSubmit,
+	onBack,
 }: {
 	siteSlug: string;
 	site: Site;
 	newOwnerEmail: string;
-	handleSubmit: () => void;
-	handleBack: () => void;
+	onSubmit: () => void;
+	onBack: () => void;
 } ) {
 	const [ formData, setFormData ] = useState( {
 		accept_authorization: false,
@@ -82,14 +82,14 @@ export function StartSiteTransferForm( {
 
 	const renderNewOwnerEmail = () => <strong>{ newOwnerEmail }</strong>;
 
-	const onSubmit = ( event: React.FormEvent ) => {
+	const handleSubmit = ( event: React.FormEvent ) => {
 		event.preventDefault();
 
 		mutation.mutate(
 			{ new_site_owner: newOwnerEmail },
 			{
 				onSuccess: () => {
-					handleSubmit();
+					onSubmit();
 				},
 				onError: () => {
 					// TODO: Display error message
@@ -180,9 +180,9 @@ export function StartSiteTransferForm( {
 						</li>
 					</List>
 				</VStack>
-				<form onSubmit={ onSubmit }>
+				<form onSubmit={ handleSubmit }>
 					<VStack>
-						<span style={ { textTransform: 'uppercase' } }>
+						<span style={ { textTransform: 'uppercase', fontSize: '11px', fontWeight: 500 } }>
 							{ __( 'To transfer your site, review and accept the following statements:' ) }
 						</span>
 						<DataForm< StartSiteTransferFormData >
@@ -202,7 +202,7 @@ export function StartSiteTransferForm( {
 							>
 								{ __( 'Start transfer' ) }
 							</Button>
-							<Button variant="tertiary" onClick={ handleBack } disabled={ mutation.isPending }>
+							<Button variant="tertiary" onClick={ onBack } disabled={ mutation.isPending }>
 								{ __( 'Back' ) }
 							</Button>
 						</HStack>

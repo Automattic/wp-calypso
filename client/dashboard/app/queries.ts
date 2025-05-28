@@ -177,20 +177,20 @@ export function restoreSitePlanSoftwareMutation( siteId: string ) {
 
 export function siteOwnerTransferMutation( siteId: string ) {
 	return {
-		mutationFn: ( newData: { new_site_owner: string } ) => siteOwnerTransfer( siteId, newData ),
+		mutationFn: ( data: { new_site_owner: string } ) => siteOwnerTransfer( siteId, data ),
 	};
 }
 
 export function siteOwnerTransferEligibilityCheckMutation( siteId: string ) {
 	return {
-		mutationFn: ( newData: { new_site_owner: string } ) =>
-			siteOwnerTransferEligibilityCheck( siteId, newData ),
+		mutationFn: ( data: { new_site_owner: string } ) =>
+			siteOwnerTransferEligibilityCheck( siteId, data ),
 	};
 }
 
 export function siteOwnerTransferConfirmMutation( siteId: string ) {
 	return {
-		mutationFn: ( newData: { hash: string } ) => siteOwnerTransferConfirm( siteId, newData ),
+		mutationFn: ( data: { hash: string } ) => siteOwnerTransferConfirm( siteId, data ),
 		onSuccess: ( { transfer }: SiteTransferConfirmation ) => {
 			if ( transfer ) {
 				// Invalidate queries as the site has been transferred to new owner.

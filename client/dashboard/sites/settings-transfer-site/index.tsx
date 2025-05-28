@@ -92,7 +92,7 @@ export default function SettingsTransferSite( { siteSlug }: { siteSlug: string }
 						<ConfirmNewOwnerForm
 							siteSlug={ siteSlug }
 							newOwnerEmail={ newOwnerEmail }
-							handleSubmit={ handleConfirmNewOwner }
+							onSubmit={ handleConfirmNewOwner }
 						/>
 					) }
 					{ currentStep === 1 && (
@@ -100,8 +100,8 @@ export default function SettingsTransferSite( { siteSlug }: { siteSlug: string }
 							siteSlug={ siteSlug }
 							newOwnerEmail={ newOwnerEmail }
 							site={ site }
-							handleSubmit={ handleStartSiteTransfer }
-							handleBack={ handleBack }
+							onSubmit={ handleStartSiteTransfer }
+							onBack={ handleBack }
 						/>
 					) }
 					{ currentStep === 2 && <EmailConfirmation userEmail={ user.email } /> }

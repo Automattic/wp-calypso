@@ -32,11 +32,11 @@ const form = {
 export function ConfirmNewOwnerForm( {
 	siteSlug,
 	newOwnerEmail,
-	handleSubmit,
+	onSubmit,
 }: {
 	siteSlug: string;
 	newOwnerEmail: string;
-	handleSubmit: ( data: ConfirmNewOwnerFormData ) => void;
+	onSubmit: ( data: ConfirmNewOwnerFormData ) => void;
 } ) {
 	const [ formData, setFormData ] = useState( {
 		email: newOwnerEmail,
@@ -46,14 +46,14 @@ export function ConfirmNewOwnerForm( {
 
 	const isSaveDisabled = ! isItemValid( formData, fields, form );
 
-	const onSubmit = ( event: React.FormEvent ) => {
+	const handleSubmit = ( event: React.FormEvent ) => {
 		event.preventDefault();
 
 		mutation.mutate(
 			{ new_site_owner: formData.email },
 			{
 				onSuccess: () => {
-					handleSubmit( formData );
+					onSubmit( formData );
 				},
 				onError: () => {
 					// TODO: Display error message below the field.
@@ -79,7 +79,7 @@ export function ConfirmNewOwnerForm( {
 					) }
 				</Text>
 			</VStack>
-			<form onSubmit={ onSubmit }>
+			<form onSubmit={ handleSubmit }>
 				<VStack spacing={ 4 } style={ { padding: '8px 0' } }>
 					{ /* TODO: Update the gap between each field */ }
 					<DataForm< ConfirmNewOwnerFormData >
