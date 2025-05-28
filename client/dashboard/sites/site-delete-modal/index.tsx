@@ -1,5 +1,5 @@
 import { DataForm } from '@automattic/dataviews';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import {
 	__experimentalHStack as HStack,
@@ -14,7 +14,12 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
-import { deleteSiteMutation } from '../../app/queries';
+import { useAuth } from '../../app/auth';
+import {
+	deleteSiteMutation,
+	p2HubP2sQuery,
+	siteHasPurchasesCancelableQuery,
+} from '../../app/queries';
 import Notice from '../../components/notice';
 import type { Site } from '../../data/types';
 import type { Field } from '@automattic/dataviews';
@@ -26,17 +31,30 @@ type SiteDeleteFormData = {
 const canDeleteSite = ( site: Site ) =>
 	( site.is_wpcom_atomic || ! site.jetpack ) && ! site.is_vip && ! site.options?.p2_hub_blog_id;
 
-export function SiteDeleteWarningModal( { onClose }: { site: Site; onClose: () => void } ) {
-	const isAtomicRemovalInProgress = false;
-	const p2HubP2Count = 0;
-	const isTrialSite = false;
+const TRIAL_PRODUCT_SLUGS = [
+	'wp_bundle_migration_trial_monthly',
+	'wp_bundle_hosting_trial_monthly',
+	'ecommerce-trial-bundle-monthly',
+];
+
+export function SiteDeleteWarningModal( { site, onClose }: { site: Site; onClose: () => void } ) {
+	const { data: p2HubP2s } = useQuery( {
+		...p2HubP2sQuery( site.slug, { limit: 1 } ),
+		enabled: site.options?.p2_hub_blog_id && site.options?.is_wpforteams_site,
+	} );
+
+	const isAtomicRemovalInProgress = site.plan?.is_free && site.is_wpcom_atomic;
+	const p2HubP2Count = p2HubP2s?.totalItems ?? 0;
+	const isTrialSite = TRIAL_PRODUCT_SLUGS.includes( site.plan?.product_name );
 
 	const renderWarningContent = () => {
 		if ( isAtomicRemovalInProgress ) {
 			return __(
 				"We are still in the process of removing your previous plan. Please check back in a few minutes and you'll be able to delete your site."
 			);
-		} else if ( p2HubP2Count ) {
+		}
+
+		if ( p2HubP2Count ) {
 			return sprintf(
 				/* translators: %d is the number of P2 in your workspace */
 				_n(
@@ -46,7 +64,9 @@ export function SiteDeleteWarningModal( { onClose }: { site: Site; onClose: () =
 				),
 				p2HubP2Count
 			);
-		} else if ( isTrialSite ) {
+		}
+
+		if ( isTrialSite ) {
 			return __(
 				'You have an active or expired free trial on your site. Please cancel this plan prior to deleting your site.'
 			);
@@ -58,7 +78,29 @@ export function SiteDeleteWarningModal( { onClose }: { site: Site; onClose: () =
 	};
 
 	const renderPrimaryButton = () => {
-		<Button variant="primary">{ __( 'Delete site' ) }</Button>;
+		if ( isAtomicRemovalInProgress ) {
+			return null;
+		}
+
+		if ( p2HubP2Count ) {
+			return (
+				<Button variant="primary" href="/sites">
+					{ __( 'Manage sites' ) }
+				</Button>
+			);
+		}
+
+		if ( isTrialSite ) {
+			<Button variant="primary" href={ `/purchases/subscriptions/${ site.slug }` }>
+				{ __( 'Cancel trial' ) }
+			</Button>;
+		}
+
+		return (
+			<Button variant="primary" href={ `/purchases/subscriptions/${ site.slug }` }>
+				{ __( 'Manage purchases' ) }
+			</Button>
+		);
 	};
 
 	return (
@@ -185,7 +227,16 @@ export function SiteDeleteConfirmModal( { site, onClose }: { site: Site; onClose
 }
 
 export default function SiteDeleteModal( { site, onClose }: { site: Site; onClose: () => void } ) {
-	return canDeleteSite( site ) ? (
+	const { user } = useAuth();
+	const { isLoading, data: hasPurchasesCancelable } = useQuery(
+		siteHasPurchasesCancelableQuery( site.slug, user.ID )
+	);
+
+	if ( isLoading ) {
+		return null;
+	}
+
+	return canDeleteSite( site ) && ! hasPurchasesCancelable ? (
 		<SiteDeleteConfirmModal site={ site } onClose={ onClose } />
 	) : (
 		<SiteDeleteWarningModal site={ site } onClose={ onClose } />

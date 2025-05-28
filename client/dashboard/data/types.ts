@@ -50,6 +50,7 @@ export interface Domain {
 }
 
 export interface SitePlan {
+	product_slug: string;
 	product_name: string;
 	product_name_short: string;
 	expired: boolean;
@@ -77,6 +78,7 @@ export interface SiteOptions {
 	admin_url: string;
 	is_redirect?: boolean;
 	p2_hub_blog_id?: number;
+	is_wpforteams_site?: boolean;
 }
 
 export interface Site {

@@ -525,3 +525,19 @@ export const leaveSite = async ( siteIdOrSlug: string, userId: number ) => {
 		path: `/sites/${ siteIdOrSlug }/users/${ userId }/delete`,
 	} );
 };
+
+export const fetchP2HubP2s = async (
+	siteIdOrSlug: string,
+	options: { limit?: number } = {}
+): Promise< { totalItems: number } > => {
+	return wpcom.req.get(
+		{
+			path: '/p2/workspace/sites/all',
+			apiNamespace: 'wpcom/v2',
+		},
+		{
+			hub_id: siteIdOrSlug,
+			...options,
+		}
+	);
+};

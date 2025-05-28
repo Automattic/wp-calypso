@@ -4,8 +4,8 @@ import { useState } from 'react';
 import { ActionList } from '../../components/action-list';
 import RouterLinkButton from '../../components/router-link-button';
 import { useCanTransferSite } from '../hooks/use-can-transfer-site';
-import SiteLeaveModal from '../site-leave-modal';
 import SiteDeleteModal from '../site-delete-modal';
+import SiteLeaveModal from '../site-leave-modal';
 import type { Site } from '../../data/types';
 
 const SiteTransferAction = ( { site }: { site: Site } ) => {
@@ -45,7 +45,9 @@ const SiteLeaveAction = ( { site }: { site: Site } ) => {
 			{ isModalOpen && <SiteLeaveModal site={ site } onClose={ () => setIsModalOpen( false ) } /> }
 		</>
 	);
-}
+};
+
+const showSiteDeleteAction = ( site: Site ) => ! site.is_wpcom_staging_site;
 
 const SiteDeleteAction = ( { site }: { site: Site } ) => {
 	const [ isOpen, setIsOpen ] = useState( false );
@@ -79,7 +81,7 @@ export default function DangerZone( { site }: { site: Site } ) {
 	const actions = [
 		canTransferSite && <SiteTransferAction key="transfer-site" site={ site } />,
 		<SiteLeaveAction key="leave-site" site={ site } />,
-		<SiteDeleteAction key="delete-site" site={ site } />,
+		showSiteDeleteAction( site ) && <SiteDeleteAction key="delete-site" site={ site } />,
 	].filter( Boolean );
 
 	if ( ! actions.length ) {
