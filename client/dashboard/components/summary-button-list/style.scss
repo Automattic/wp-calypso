@@ -8,11 +8,9 @@
 	}
 
 	&.has-density-low {
-		li {
-			margin-bottom: $grid-unit-30;
-
-			&:last-child {
-				margin-bottom: 0;
+		.dashboard-summary-button-list__children-list-item {
+			& + & {
+				margin-top: $grid-unit-30;
 			}
 		}
 	}
