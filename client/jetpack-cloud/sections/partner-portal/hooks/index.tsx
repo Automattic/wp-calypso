@@ -460,11 +460,6 @@ export function useProductDescription( productSlug: string ): {
 					'Buy now, pay later for your business—but smarter. Increase conversions and AOV by offering shoppers flexible payment plans from Affirm.'
 				);
 				break;
-			case 'woocommerce-authorizenet':
-				description = translate(
-					'Online payments leader Authorize.net, a Visa Solution, helps thousands of businesses simplify payments by offering more solutions, more support, and more strength to stand on.'
-				);
-				break;
 			case 'woocommerce-mollie':
 				description = translate(
 					'Offer global and local payment methods and get onboarded in minutes, with support in your language.'
@@ -477,9 +472,6 @@ export function useProductDescription( productSlug: string ): {
 				description = translate(
 					'Grow your business with increased sales and an enhanced shopping experience — at no extra cost.'
 				);
-				break;
-			case 'woocommerce-mastercard':
-				description = translate( '???' );
 				break;
 			case 'woocommerce-paypal':
 				description = translate(
