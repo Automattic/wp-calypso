@@ -1,28 +1,17 @@
 import type {
-	AuthProvider,
 	Client,
 	ClientConfig,
-	ContextProvider,
-	JsonRpcResponse,
-	Message,
 	SendMessageParams,
-	SendTaskRequest,
 	Task,
 	TaskUpdate,
-	ToolProvider,
 } from '../types/index';
-import { createRequestId, createSendTaskRequest } from '../utils/index';
-import { enhanceMessage } from '../utils/messages';
 import { processTaskToolCalls } from '../utils/tools';
 import {
 	executeRequest,
 	executeStreamingRequest,
 	prepareRequest,
 	type RequestConfig,
-	type RequestOptions,
 } from '../utils/requests';
-import { parseSSEStream, streamToTask } from '../streaming/index';
-import { formatObject, logger } from '../utils/logger';
 import { defaultDispatcher } from '../utils/dispatcher';
 
 /**

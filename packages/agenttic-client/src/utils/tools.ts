@@ -1,9 +1,4 @@
-import type {
-	Message,
-	Task,
-	ToolProvider,
-	ToolResultDataPart,
-} from '../types/index';
+import type { Message, Task, ToolProvider } from '../types/index';
 import { createToolResultDataPart, extractToolCallsFromMessage } from './index';
 import { logger } from './logger';
 

@@ -1,4 +1,4 @@
-import type { JsonRpcResponse, Task, TaskUpdate } from '../types/index';
+import type { Task, TaskUpdate } from '../types/index';
 import { logger } from '../utils/logger';
 
 /**

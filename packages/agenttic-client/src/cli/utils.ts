@@ -1,9 +1,5 @@
 import { createClient } from '../client/index';
-import {
-	createTextMessage,
-	createToolResultDataPart,
-	extractTextFromMessage,
-} from '../utils/index';
+import { createTextMessage, extractTextFromMessage } from '../utils/index';
 import { createEnvAuthProvider } from './auth';
 import { createExampleTools } from './tools';
 import { createCLIContextProvider } from './context';

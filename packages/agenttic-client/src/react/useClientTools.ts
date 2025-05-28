@@ -30,8 +30,8 @@ export type OnToolCompletionCallback = (
  * expected by the agenttic client. The callbacks are called fresh each time,
  * ensuring dynamic tool availability and execution.
  *
- * @param getClientTools   - Function that returns available tools
- * @param executeTool      - Function that executes a tool with given arguments
+ * @param getClientTools   - Function that returns available tools as an array of Tool objects
+ * @param executeTool      - Function that executes a tool with the arguments returned by the agent
  * @param onToolCompletion - Optional callback for handling tool completion results
  * @return ToolProvider instance or undefined if no getClientTools callback provided
  */

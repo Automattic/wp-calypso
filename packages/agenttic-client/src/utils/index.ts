@@ -3,7 +3,6 @@ import type {
 	ClientContext,
 	ContextDataPart,
 	ConversationHistoryPart,
-	DataPart,
 	JsonRpcId,
 	Message,
 	SendTaskRequest,

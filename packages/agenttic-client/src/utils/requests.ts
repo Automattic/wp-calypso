@@ -1,8 +1,6 @@
 import type {
 	AuthProvider,
-	ClientConfig,
 	JsonRpcResponse,
-	Message,
 	SendMessageParams,
 	Task,
 	TaskUpdate,
