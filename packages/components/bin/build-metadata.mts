@@ -18,9 +18,13 @@ type ComponentMetadata = {
  * Allowlist of components to document. Eventually this should include every component in the
  * package, but for now we're only documenting the ones that are used in the design system docs.
  */
-const DOCUMENTED_COMPONENTS = [ 'core-badge' ];
-
-const files = DOCUMENTED_COMPONENTS.map( ( component ) => `${ component }/index.tsx` );
+const DOCUMENTED_COMPONENTS: Record< string, string > = {
+	Badge: 'core-badge/index.tsx',
+	Tabs: 'tabs/index.tsx',
+	'Tabs.TabList': 'tabs/tablist.tsx',
+	'Tabs.Tab': 'tabs/tab.tsx',
+	'Tabs.TabPanel': 'tabs/tabpanel.tsx',
+};
 
 /**
  * Given an object and an array of keys, return a new object with only the keys that are in the array.
@@ -55,7 +59,7 @@ const mapValues = < V, MV >(
  * @param file The file path to parse.
  * @returns The component metadata.
  */
-async function getMetadataEntry( file: string ): Promise< [ string, ComponentMetadata ] > {
+async function getMetadataEntry( file: string ): Promise< ComponentMetadata > {
 	const parsed = await parse( join( process.cwd(), 'src', file ), {
 		shouldExtractLiteralValuesFromEnum: true,
 		shouldRemoveUndefinedFromOptional: true,
@@ -63,18 +67,22 @@ async function getMetadataEntry( file: string ): Promise< [ string, ComponentMet
 		savePropValueAsString: true,
 	} );
 
-	const [ { displayName, props } ] = parsed;
-	return [
-		displayName,
-		{
-			props: mapValues( props, ( value ) =>
-				pick( value, [ 'description', 'defaultValue', 'required', 'type' ] )
-			),
-		},
-	];
+	const [ { props } ] = parsed;
+	return {
+		props: mapValues( props, ( value ) =>
+			pick( value, [ 'description', 'defaultValue', 'required', 'type' ] )
+		),
+	};
 }
 
-const metadata = Object.fromEntries( await Promise.all( files.map( getMetadataEntry ) ) );
+const metadata = Object.fromEntries(
+	await Promise.all(
+		Object.entries( DOCUMENTED_COMPONENTS ).map( async ( [ displayName, file ] ) => [
+			displayName,
+			await getMetadataEntry( file ),
+		] )
+	)
+);
 
 await mkdir( 'dist/types', { recursive: true } );
 
