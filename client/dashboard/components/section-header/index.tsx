@@ -23,13 +23,13 @@ export const SectionHeader = ( {
 }: SectionHeaderProps ) => {
 	const HeadingTag = `h${ level }` as keyof JSX.IntrinsicElements;
 	return (
-		<VStack spacing={ 2 } className={ `dashboard-components-section-header is-level-${ level }` }>
-			{ prefix && <div className="dashboard-components-section-header__prefix">{ prefix }</div> }
+		<VStack spacing={ 2 } className={ `dashboard-section-header is-level-${ level }` }>
+			{ prefix && <div className="dashboard-section-header__prefix">{ prefix }</div> }
 			<HStack
 				spacing={ 4 }
 				justify="flex-start"
 				alignment="flex-start"
-				className="dashboard-components-section-header__heading-row"
+				className="dashboard-section-header__heading-row"
 			>
 				{ decoration && (
 					<span className="dashboard-section-header__decoration">{ decoration }</span>

@@ -5,8 +5,8 @@ import { shield } from '@wordpress/icons';
 import { siteDefensiveModeQuery } from '../../app/queries';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
 import { canUpdateDefensiveMode } from '.';
-import type { Density } from '../../components/router-link-summary-button';
 import type { Site } from '../../data/types';
+import type { Density } from '@automattic/components/src/summary-button/types';
 
 export default function DefensiveModeSettingsSummary( {
 	site,
