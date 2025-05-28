@@ -79,7 +79,11 @@ export function SiteDeleteWarningModal( { site, onClose }: { site: Site; onClose
 
 	const renderPrimaryButton = () => {
 		if ( isAtomicRemovalInProgress ) {
-			return null;
+			return (
+				<Button variant="primary" onClick={ onClose }>
+					{ __( 'OK' ) }
+				</Button>
+			);
 		}
 
 		if ( p2HubP2Count ) {
@@ -108,9 +112,11 @@ export function SiteDeleteWarningModal( { site, onClose }: { site: Site; onClose
 			<VStack spacing={ 4 }>
 				<Text as="p">{ renderWarningContent() }</Text>
 				<HStack justify="flex-end">
-					<Button variant="tertiary" onClick={ onClose }>
-						{ __( 'Cancel' ) }
-					</Button>
+					{ ! isAtomicRemovalInProgress && (
+						<Button variant="tertiary" onClick={ onClose }>
+							{ __( 'Cancel' ) }
+						</Button>
+					) }
 					{ renderPrimaryButton() }
 				</HStack>
 			</VStack>
