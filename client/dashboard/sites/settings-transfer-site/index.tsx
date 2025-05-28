@@ -69,7 +69,7 @@ export default function SettingsTransferSite( { siteSlug }: { siteSlug: string }
 		return null;
 	}
 
-	if ( ! canTransferSite ) {
+	if ( ! canTransferSite && ! confirmationHash ) {
 		throw notFound();
 	}
 
