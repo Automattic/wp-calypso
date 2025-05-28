@@ -14,6 +14,10 @@ type ComponentMetadata = {
 	>;
 };
 
+/**
+ * Allowlist of components to document. Eventually this should include every component in the
+ * package, but for now we're only documenting the ones that are used in the design system docs.
+ */
 const DOCUMENTED_COMPONENTS = [ 'core-badge' ];
 
 const files = DOCUMENTED_COMPONENTS.map( ( component ) => `${ component }/index.tsx` );
@@ -45,6 +49,12 @@ const mapValues = < V, MV >(
 ): Record< string, MV > =>
 	Object.fromEntries( Object.entries( obj ).map( ( [ key, value ] ) => [ key, fn( value ) ] ) );
 
+/**
+ * Given a file path, parse the component and return the metadata used for compiling props reference
+ * of the component.
+ * @param file The file path to parse.
+ * @returns The component metadata.
+ */
 async function getMetadataEntry( file: string ): Promise< [ string, ComponentMetadata ] > {
 	const parsed = await parse( join( process.cwd(), 'src', file ), {
 		shouldExtractLiteralValuesFromEnum: true,
