@@ -8,22 +8,23 @@ import {
 	ExternalLink,
 } from '@wordpress/components';
 import { dateI18n } from '@wordpress/date';
+import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { sitePHPVersionQuery } from '../../app/queries';
+import { sitePHPVersionQuery, siteCurrentPlanQuery } from '../../app/queries';
 import { TextBlur } from '../../components/text-blur';
 import { getSiteStatusLabel } from '../../utils/site-status';
 import { getFormattedWordPressVersion } from '../../utils/wp-version';
 import SitePreview from '../site-preview';
-import type { Site, Plan } from '../../data/types';
+import type { Site } from '../../data/types';
 
 function PHPVersion( { siteSlug }: { siteSlug: string } ) {
-	return useQuery( sitePHPVersionQuery( siteSlug ) ).data ?? <TextBlur text="X.Y" />;
+	return useQuery( sitePHPVersionQuery( siteSlug ) ).data ?? <TextBlur>X.Y</TextBlur>;
 }
 
 /**
  * SiteCard component to display site information in a card format
  */
-export default function SiteCard( { site, currentPlan }: { site: Site; currentPlan: Plan } ) {
+export default function SiteCard( { site }: { site: Site } ) {
 	const { URL: url, is_private, is_wpcom_atomic } = site;
 	const wpVersion = getFormattedWordPressVersion( site );
 
@@ -77,7 +78,7 @@ export default function SiteCard( { site, currentPlan }: { site: Site; currentPl
 							) }
 						</HStack>
 					) }
-					<PlanDetails site={ site } currentPlan={ currentPlan } />
+					<PlanDetails site={ site } />
 				</VStack>
 			</VStack>
 		</Card>
@@ -103,40 +104,67 @@ function FieldTitle( { children }: { children: React.ReactNode } ) {
 	);
 }
 
-function PlanDetails( { site, currentPlan }: { site: Site; currentPlan: Plan } ) {
-	if ( ! site.plan || ! currentPlan ) {
+function PlanDetails( { site }: { site: Site } ) {
+	const { data: currentPlan } = useQuery( siteCurrentPlanQuery( site.slug ) );
+
+	if ( ! site.plan ) {
 		return null;
 	}
 
 	const {
 		plan: { product_name_short, is_free: isFree },
 	} = site;
-	const { expiry, id } = currentPlan;
+
 	return (
 		<VStack>
 			<FieldTitle>{ __( 'Plan' ) }</FieldTitle>
 			{ product_name_short && <Text>{ product_name_short }</Text> }
-			<Text>{ getPlanExpirationMessage( { isFree, expiry } ) }</Text>
-			{ id ? (
-				<Button href={ `/purchases/subscriptions/${ site.slug }/${ id }` } variant="link">
-					{ __( 'Manage subscription' ) }
-				</Button>
+			{ isFree ? (
+				<>
+					<Text>{ __( 'No expiration date.' ) }</Text>
+					<Button href={ `/plans/${ site.slug }` } variant="link">
+						{ __( 'Upgrade' ) }
+					</Button>
+				</>
 			) : (
-				<Button href={ `/plans/${ site.slug }` } variant="link">
-					{ __( 'Upgrade' ) }
-				</Button>
+				<>
+					{ currentPlan ? (
+						<>
+							<Text>{ getPlanExpirationMessage( currentPlan.expiry ) }</Text>
+							<Button
+								href={ `/purchases/subscriptions/${ site.slug }/${ currentPlan.id }` }
+								variant="link"
+							>
+								{ __( 'Manage subscription' ) }
+							</Button>
+						</>
+					) : (
+						<>
+							<Text>
+								<TextBlur>{ getPlanExpirationMessage( new Date().toISOString() ) }</TextBlur>
+							</Text>
+							{ /* @ts-expect-error inert is not typed */ }
+							<Button inert href="" variant="link">
+								<TextBlur>{ __( 'Manage subscription' ) }</TextBlur>
+							</Button>
+						</>
+					) }
+				</>
 			) }
 		</VStack>
 	);
 }
 
-function getPlanExpirationMessage( { isFree, expiry }: { isFree: boolean; expiry?: string } ) {
-	if ( isFree ) {
-		return __( 'No expiration date.' );
+function getPlanExpirationMessage( isoDate?: string ) {
+	if ( ! isoDate ) {
+		return null;
 	}
-	return (
-		expiry &&
+
+	return createInterpolateElement(
 		/* translators: %s: date of plan's expiration date. Eg.  August 20, 2025 */
-		sprintf( __( 'Expires on %s.' ), dateI18n( 'F j, Y', expiry ) )
+		sprintf( __( 'Expires on <time>%s</time>.' ), dateI18n( 'F j, Y', isoDate ) ),
+		{
+			time: <time dateTime={ isoDate } />,
+		}
 	);
 }

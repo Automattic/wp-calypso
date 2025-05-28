@@ -6,7 +6,7 @@ import { forwardRef, useLayoutEffect, useState } from 'react';
 import { useTrackElementOffsetRect } from '../utils/element-rect';
 import { useAnimatedOffsetRect } from '../utils/hooks/use-animated-offset-rect';
 import { useTabsContext } from './context';
-import { StyledTabList } from './styles';
+import styles from './style.module.scss';
 import { useTrackOverflow } from './use-track-overflow';
 import type { TabListProps } from './types';
 import type { ElementOffsetRect } from '../utils/element-rect';
@@ -114,7 +114,7 @@ export const TabList = forwardRef<
 	}
 
 	return (
-		<StyledTabList
+		<Ariakit.TabList
 			ref={ refs }
 			store={ store }
 			render={ ( props ) => (
@@ -129,12 +129,13 @@ export const TabList = forwardRef<
 			data-select-on-move={ selectOnMove ? 'true' : 'false' }
 			{ ...otherProps }
 			className={ clsx(
-				overflow.first && 'is-overflowing-first',
-				overflow.last && 'is-overflowing-last',
+				styles.tablist,
+				overflow.first && styles[ 'is-overflowing-first' ],
+				overflow.last && styles[ 'is-overflowing-last' ],
 				otherProps.className
 			) }
 		>
 			{ children }
-		</StyledTabList>
+		</Ariakit.TabList>
 	);
 } );

@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState } from '@wordpress/element';
-import { buildQueryString } from '@wordpress/url';
+import { addQueryArgs, getQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
 import { useSelector } from 'calypso/state';
-import { getSiteSlug } from 'calypso/state/sites/selectors';
+import { getSiteSlug, getSiteAdminUrl } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 type QueryArgs = Record< string, string | null >;
@@ -27,6 +27,7 @@ const possibleBackLinks: { [ key: string ]: string | null } = {
 	searchterms: '/stats/{period}/searchterms/',
 	videoplays: '/stats/{period}/videoplays/',
 	annualstats: '/stats/day/annualstats/',
+	postList: '{adminUrl}edit.php',
 	emailsummary: '/stats/{period}/emails/',
 	postDetails: null, // Last item in the history, the text is not displayed anywhere but this is used to track the item in history stack.
 };
@@ -39,6 +40,16 @@ const SUPPORTED_QUERY_PARAMS: string[] = [
 	'chartStart',
 	'chartEnd',
 	'shortcut',
+	'jp_s',
+	'jp_post_type',
+	'jp_status',
+	'jp_orderby',
+	'jp_order',
+	'jp_paged',
+	'jp_author',
+	'jp_cat',
+	'jp_category_name',
+	'jp_m',
 ];
 
 const defaultLastScreen = 'traffic';
@@ -46,6 +57,16 @@ const defaultLastScreen = 'traffic';
 const getFilteredQueryParams = ( queryParams: QueryArgs ): QueryArgs => {
 	return Object.fromEntries(
 		Object.entries( queryParams ).filter( ( [ key ] ) => SUPPORTED_QUERY_PARAMS.includes( key ) )
+	);
+};
+
+const prepareAdminQueryParams = ( queryParams: QueryArgs ) => {
+	const JP_PREFIX = 'jp_';
+	return Object.fromEntries(
+		Object.entries( queryParams ).map( ( [ key, value ] ) => [
+			key.startsWith( JP_PREFIX ) ? key.slice( JP_PREFIX.length ) : key,
+			value,
+		] )
 	);
 };
 
@@ -74,11 +95,16 @@ export const useStatsNavigationHistory = (): { text: string; url: string | null 
 			searchterms: translate( 'Search Terms' ),
 			videoplays: translate( 'Videos' ),
 			annualstats: translate( 'Annual insights' ),
+			postList: translate( 'Post List' ),
 			emailsummary: translate( 'Emails' ),
 			postDetails: null, // Last item in the history, the text is not displayed anywhere but this is used to track the item in history stack.
 		} ),
 		[]
 	);
+
+	const siteId = useSelector( getSelectedSiteId );
+	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
+	const adminBaseUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
 
 	const [ lastScreen, setLastScreen ] = useState< {
 		screen: string;
@@ -89,30 +115,41 @@ export const useStatsNavigationHistory = (): { text: string; url: string | null 
 		queryParams: {},
 		period: 'day',
 	} );
-	const siteId = useSelector( getSelectedSiteId );
-	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 
 	useEffect( () => {
 		try {
-			const navState = JSON.parse( sessionStorage.getItem( STORAGE_KEY ) || '[]' );
+			const args = getQueryArgs( window.location.search );
+			const fromParam = args.from;
 
-			// Select the second last item from the history stack as the back link.
-			// The last item in the stack if the current screen.
-			const lastItem =
-				Array.isArray( navState ) && navState.length >= 2 ? navState[ navState.length - 2 ] : {};
+			if ( typeof fromParam === 'string' && fromParam in localizedTabNames ) {
+				const queryParams = getFilteredQueryParams( args as QueryArgs );
 
-			// Make sure it's array and select last item
-			if ( lastItem && lastItem.screen ) {
-				setLastScreen( lastItem );
-			} else {
 				setLastScreen( {
-					screen: defaultLastScreen,
-					queryParams: {},
-					period: 'day',
+					screen: args.from as string,
+					queryParams,
+					period: null,
 				} );
+			} else {
+				const navState = JSON.parse( sessionStorage.getItem( STORAGE_KEY ) || '[]' );
+
+				// Select the second last item from the history stack as the back link.
+				// The last item in the stack if the current screen.
+				const lastItem =
+					Array.isArray( navState ) && navState.length >= 2 ? navState[ navState.length - 2 ] : {};
+
+				// Make sure it's array and select last item
+				if ( lastItem && lastItem.screen ) {
+					setLastScreen( lastItem );
+				} else {
+					setLastScreen( {
+						screen: defaultLastScreen,
+						queryParams: {},
+						period: 'day',
+					} );
+				}
 			}
 		} catch ( e ) {}
-	}, [] );
+	}, [ localizedTabNames ] );
 
 	const backLink = useMemo( () => {
 		if ( ! siteSlug ) {
@@ -129,10 +166,18 @@ export const useStatsNavigationHistory = (): { text: string; url: string | null 
 			backLink = backLink.replace( '{period}', lastScreen.period );
 		}
 
-		const queryParams = buildQueryString( getFilteredQueryParams( lastScreen.queryParams ) );
+		// Handle back link with admin URL.
+		if ( backLink.includes( '{adminUrl}' ) ) {
+			if ( ! adminBaseUrl ) {
+				return null;
+			}
 
-		return backLink + siteSlug + ( queryParams ? '?' + queryParams : '' );
-	}, [ lastScreen, siteSlug ] );
+			backLink = backLink.replace( '{adminUrl}', adminBaseUrl );
+			return addQueryArgs( backLink, prepareAdminQueryParams( lastScreen.queryParams ) );
+		}
+
+		return addQueryArgs( backLink + siteSlug, getFilteredQueryParams( lastScreen.queryParams ) );
+	}, [ lastScreen, siteSlug, adminBaseUrl ] );
 
 	return {
 		text: localizedTabNames[ lastScreen.screen ] || '',

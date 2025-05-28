@@ -49,7 +49,7 @@
 		"@automattic/calypso-products": "workspace:^",
 		"@automattic/components": "workspace:^",
 		"@automattic/data-stores": "workspace:^",
-		"@automattic/number-formatters": "^1.0.0",
+		"@automattic/number-formatters": "^1.0.1",
 		"@automattic/onboarding": "workspace:^",
 		"@automattic/typography": "workspace:^",
 		"@emotion/react": "11.11.1",

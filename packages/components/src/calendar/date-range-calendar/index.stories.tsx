@@ -19,12 +19,12 @@ import {
 	sv,
 } from 'date-fns/locale';
 import { useState, useEffect } from 'react';
-import { DateCalendar, TZDate } from '../index';
+import { DateRangeCalendar, TZDate } from '../';
 import type { Meta, StoryObj } from '@storybook/react';
 
-const meta: Meta< typeof DateCalendar > = {
-	title: 'Components/DateCalendar',
-	component: DateCalendar,
+const meta: Meta< typeof DateRangeCalendar > = {
+	title: 'Components/DateRangeCalendar',
+	component: DateRangeCalendar,
 	parameters: {
 		controls: { expanded: true },
 	},
@@ -83,8 +83,8 @@ const meta: Meta< typeof DateCalendar > = {
 		labels: {
 			control: false,
 		},
-		defaultSelected: { control: 'date' },
-		selected: { control: 'date' },
+		defaultSelected: { control: false },
+		selected: { control: false },
 		onSelect: {
 			control: false,
 		},
@@ -103,7 +103,7 @@ const meta: Meta< typeof DateCalendar > = {
 };
 export default meta;
 
-type Story = StoryObj< typeof DateCalendar >;
+type Story = StoryObj< typeof DateRangeCalendar >;
 
 export const Default: Story = {};
 
@@ -116,52 +116,68 @@ function dateToInputValue( date: Date ) {
 
 /**
  * The component can be used in controlled mode. This is useful, for example,
- * when in need of keeping the component in sync with an external input field.
+ * when in need of keeping the component in sync with external input fields.
  *
  * _Note: this example doesn't handle time zones_
  */
-export const ControlledWithInputField: Story = {
-	render: function ControlledDateCalendar( args ) {
-		const [ selected, setSelected ] = useState< Date | null >( null );
-
+export const ControlledWithInputFields: Story = {
+	render: function ControlledTemplate( args ) {
+		const [ range, setRange ] = useState< typeof args.selected | null >( null );
 		return (
 			<div style={ { display: 'flex', flexDirection: 'column', gap: 16 } }>
 				<label style={ { display: 'flex', flexDirection: 'column', gap: 4 } }>
-					Selected date
+					Start date
 					<input
 						type="date"
 						value={
 							// Note: the following code doesn't handle time zones.
-							selected ? dateToInputValue( selected ) : ''
+							range?.from ? dateToInputValue( range.from ) : ''
 						}
 						onChange={ ( e ) => {
 							// Note: the following code doesn't handle time zones.
-							setSelected( new Date( e.target.value ) );
+							setRange( {
+								to: new Date( e.target.value ),
+								...range,
+								from: new Date( e.target.value ),
+							} );
 						} }
 						style={ { width: 160 } }
 					/>
 				</label>
-				<DateCalendar
+				<label style={ { display: 'flex', flexDirection: 'column', gap: 4 } }>
+					End date
+					<input
+						type="date"
+						value={
+							// Note: the following code doesn't handle time zones.
+							range?.to ? dateToInputValue( range.to ) : ''
+						}
+						onChange={ ( e ) => {
+							// Note: the following code doesn't handle time zones.
+							setRange( {
+								from: new Date( e.target.value ),
+								...range,
+								to: new Date( e.target.value ),
+							} );
+						} }
+						style={ { width: 160 } }
+					/>
+				</label>
+				<DateRangeCalendar
 					{ ...args }
-					selected={ selected }
+					selected={ range }
 					onSelect={ ( selectedDate, ...rest ) => {
-						setSelected( selectedDate ?? null );
+						setRange(
+							// Set controlled state to null if there's no selection
+							! selectedDate || ( selectedDate.from === undefined && selectedDate.to === undefined )
+								? null
+								: selectedDate
+						);
 						args.onSelect?.( selectedDate, ...rest );
 					} }
 				/>
 			</div>
 		);
-	},
-	argTypes: {
-		defaultSelected: {
-			control: false,
-		},
-		selected: {
-			control: false,
-		},
-		timeZone: {
-			control: false,
-		},
 	},
 };
 
@@ -198,31 +214,40 @@ const nextMonth = new Date().getMonth() === 11 ? 0 : new Date().getMonth() + 1;
 const nextMonthYear =
 	new Date().getMonth() === 11 ? new Date().getFullYear() + 1 : new Date().getFullYear();
 const firstDayOfNextMonth = new Date( nextMonthYear, nextMonth, 1 );
-export const WithSelectedDateAndMonth: Story = {
+const fourthDayOfNextMonth = new Date( nextMonthYear, nextMonth, 4 );
+export const WithSelectedRangeAndMonth: Story = {
 	args: {
-		defaultSelected: firstDayOfNextMonth,
+		defaultSelected: { from: firstDayOfNextMonth, to: fourthDayOfNextMonth },
 		defaultMonth: firstDayOfNextMonth,
 	},
 };
 
 export const WithTimeZone: Story = {
 	render: function DateCalendarWithTimeZone( args ) {
-		const [ selected, setSelected ] = useState< TZDate | null >( null );
+		const [ range, setRange ] = useState< typeof args.selected | null >( null );
 
 		useEffect( () => {
-			setSelected(
-				// Select one week from today every time the time zone changes.
-				new TZDate( new Date().setDate( new Date().getDate() + 7 ), args.timeZone )
+			setRange(
+				// Select from one week from today to two weeks from today 	every time the time zone changes.
+				{
+					from: new TZDate( new Date().setDate( new Date().getDate() + 7 ), args.timeZone ),
+					to: new TZDate( new Date().setDate( new Date().getDate() + 14 ), args.timeZone ),
+				}
 			);
 		}, [ args.timeZone ] );
 
 		return (
 			<>
-				<DateCalendar
+				<DateRangeCalendar
 					{ ...args }
-					selected={ selected }
+					selected={ range }
 					onSelect={ ( selectedDate, ...rest ) => {
-						setSelected( selectedDate ? new TZDate( selectedDate, args.timeZone ) : null );
+						setRange(
+							// Set controlled state to null if there's no selection
+							! selectedDate || ( selectedDate.from === undefined && selectedDate.to === undefined )
+								? null
+								: selectedDate
+						);
 						args.onSelect?.( selectedDate, ...rest );
 					} }
 					disabled={ [
@@ -232,7 +257,6 @@ export const WithTimeZone: Story = {
 						},
 					] }
 				/>
-
 				<p>
 					Calendar set to { args.timeZone ?? 'current' } timezone, disabling selection for all dates
 					before today, and starting with a default date of 1 week from today`
@@ -244,12 +268,6 @@ export const WithTimeZone: Story = {
 		timeZone: 'Pacific/Auckland',
 	},
 	argTypes: {
-		selected: {
-			control: false,
-		},
-		defaultSelected: {
-			control: false,
-		},
 		disabled: {
 			control: false,
 		},
@@ -257,27 +275,43 @@ export const WithTimeZone: Story = {
 };
 
 const today = new Date();
-const oneWeekBefore = ( date: Date ) => {
+const lastSevenDays = ( date: Date ) => {
 	const toReturn = new Date( date );
-	toReturn.setDate( date.getDate() - 7 );
-	return toReturn;
+	toReturn.setDate( date.getDate() - 6 );
+	return {
+		from: toReturn,
+		to: date,
+	};
 };
-const startOfMonth = ( date: Date ) => new Date( date.getFullYear(), date.getMonth(), 1 );
-const oneMonthBefore = ( date: Date ) => {
+const monthToDate = ( date: Date ) => ( {
+	from: new Date( date.getFullYear(), date.getMonth(), 1 ),
+	to: date,
+} );
+const lastThirtyDays = ( date: Date ) => {
 	const toReturn = new Date( date );
-	toReturn.setMonth( date.getMonth() - 1 );
-	return toReturn;
+	toReturn.setDate( date.getDate() - 29 );
+	return {
+		from: toReturn,
+		to: date,
+	};
 };
-const startOfYear = ( date: Date ) => new Date( date.getFullYear(), 0, 1 );
-const oneYearBefore = ( date: Date ) => {
+const yearToDate = ( date: Date ) => ( {
+	from: new Date( date.getFullYear(), 0, 1 ),
+	to: date,
+} );
+const lastTwelveMonths = ( date: Date ) => {
 	const toReturn = new Date( date );
 	toReturn.setFullYear( date.getFullYear() - 1 );
-	return toReturn;
+	toReturn.setDate( date.getDate() + 1 );
+	return {
+		from: toReturn,
+		to: date,
+	};
 };
 
 export const WithPresets: Story = {
 	render: function ControlledDateCalendar( args ) {
-		const [ selected, setSelected ] = useState< Date | null >( null );
+		const [ range, setRange ] = useState< typeof args.selected | null >( null );
 		const [ month, setMonth ] = useState< Date >();
 
 		return (
@@ -286,7 +320,7 @@ export const WithPresets: Story = {
 					<button
 						type="button"
 						onClick={ () => {
-							setSelected( today );
+							setRange( { from: today, to: today } );
 							setMonth( today );
 						} }
 					>
@@ -295,59 +329,64 @@ export const WithPresets: Story = {
 					<button
 						type="button"
 						onClick={ () => {
-							const targetDate = oneWeekBefore( today );
-							setSelected( targetDate );
-							setMonth( targetDate );
+							const targetRange = lastSevenDays( today );
+							setRange( targetRange );
+							setMonth( targetRange.to );
 						} }
 					>
-						One week ago
+						Last 7 days
 					</button>
 					<button
 						type="button"
 						onClick={ () => {
-							const targetDate = startOfMonth( today );
-							setSelected( targetDate );
-							setMonth( targetDate );
+							const targetRange = lastThirtyDays( today );
+							setRange( targetRange );
+							setMonth( targetRange.to );
 						} }
 					>
-						Start of this month
+						Last 30 days
 					</button>
 					<button
 						type="button"
 						onClick={ () => {
-							const targetDate = oneMonthBefore( today );
-							setSelected( targetDate );
-							setMonth( targetDate );
+							const targetRange = monthToDate( today );
+							setRange( targetRange );
+							setMonth( targetRange.to );
 						} }
 					>
-						One month ago
+						Month to date
 					</button>
 					<button
 						type="button"
 						onClick={ () => {
-							const targetDate = startOfYear( today );
-							setSelected( targetDate );
-							setMonth( targetDate );
+							const targetRange = lastTwelveMonths( today );
+							setRange( targetRange );
+							setMonth( targetRange.to );
 						} }
 					>
-						Start of the year
+						Last 12 months
 					</button>
 					<button
 						type="button"
 						onClick={ () => {
-							const targetDate = oneYearBefore( today );
-							setSelected( targetDate );
-							setMonth( targetDate );
+							const targetRange = yearToDate( today );
+							setRange( targetRange );
+							setMonth( targetRange.to );
 						} }
 					>
-						One year ago
+						Year to date
 					</button>
 				</div>
-				<DateCalendar
+				<DateRangeCalendar
 					{ ...args }
-					selected={ selected }
+					selected={ range }
 					onSelect={ ( selectedDate, ...rest ) => {
-						setSelected( selectedDate ?? null );
+						setRange(
+							// Set controlled state to null if there's no selection
+							! selectedDate || ( selectedDate.from === undefined && selectedDate.to === undefined )
+								? null
+								: selectedDate
+						);
 						args.onSelect?.( selectedDate, ...rest );
 					} }
 					month={ month }
@@ -355,13 +394,5 @@ export const WithPresets: Story = {
 				/>
 			</>
 		);
-	},
-	argTypes: {
-		selected: {
-			control: false,
-		},
-		defaultSelected: {
-			control: false,
-		},
 	},
 };

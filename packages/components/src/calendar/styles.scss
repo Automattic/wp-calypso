@@ -3,11 +3,7 @@
 
 /* Root of the component. */
 .a8c-components-calendar {
-	// TODO:
-	// - move`font-family` rule (and "../styles/typography" import) out of component
-	// - add `font-family` rule to Storybook's global styles
-	// - when Theme is ready and includes type styles, add back to component
-	font-family: typography.$a8c-font-family-sans;
+	// TODO: add font family rule when Theme is ready
 
 	// Internal variables
 	--a8c-components-calendar-outline-focus: 1.5px solid var(--color-accent);

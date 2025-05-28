@@ -9,7 +9,7 @@
 	margin: 0 auto;
 	overflow: hidden;
 	opacity: 0;
-	z-index: z-index("root", ".web-preview"); // Above TinyMCE dialogs
+	z-index: 999999999 !important; /* To override the z-index added by admin-bar on simple sites - opengrok - fbhepr%2Skers%2Sjcpbz%2Sjc%2Qpbagrag%2Szh%2Qcyhtvaf%2Sn8p%2Qgbbyone%2Sfhcre%2Qnqzva%2Qone.pff%3Se%3Q4o71s805%2387-og */
 	transition: opacity 0.3s ease-in-out;
 
 	&.is-visible {

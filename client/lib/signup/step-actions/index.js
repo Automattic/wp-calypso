@@ -1065,11 +1065,12 @@ function shouldExcludeStep( stepName, fulfilledDependencies ) {
 function excludeDomainStep( stepName, tracksEventValue, submitSignupStep ) {
 	let fulfilledDependencies = [];
 	const domainItem = undefined;
+	const domainCart = undefined;
 
-	submitSignupStep( { stepName, domainItem }, { domainItem } );
+	submitSignupStep( { stepName, domainItem }, { domainItem, domainCart } );
 	recordExcludeStepEvent( stepName, tracksEventValue );
 
-	fulfilledDependencies = [ 'domainItem', 'siteId', 'siteSlug', 'themeItem' ];
+	fulfilledDependencies = [ 'domainItem', 'domainCart', 'siteId', 'siteSlug', 'themeItem' ];
 
 	if ( shouldExcludeStep( stepName, fulfilledDependencies ) ) {
 		flows.excludeStep( stepName );

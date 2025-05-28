@@ -42,11 +42,13 @@ export default function MigrationsAddSitesTable( {
 	const availableSites = useMemo( () => {
 		return items
 			.filter( ( item ) => ! taggedSitesIds.includes( item.id ) )
-			.filter( ( item ) => item.rawSite.a4a_is_dev_site === true )
+			.filter( ( item ) => item.rawSite.a4a_is_dev_site !== true )
 			.filter( ( item ) => {
 				try {
-					const url = new URL( item.site );
-					return ! [ 'mystagingwebsite.com', 'wpcomstaging.com' ].includes( url.host );
+					const url = new URL( item.rawSite.url_with_scheme );
+					return ! [ 'mystagingwebsite.com', 'wpcomstaging.com' ].some( ( domain ) =>
+						url.host.endsWith( domain )
+					);
 				} catch {
 					return false;
 				}
