@@ -23,6 +23,9 @@ import type {
 	DefensiveModeSettings,
 	DefensiveModeSettingsUpdate,
 	SiteTransferConfirmation,
+	SftpUser,
+	SshAccessStatus,
+	SshKey,
 } from './types';
 import type { DataCenterOption } from 'calypso/data/data-center/types';
 
@@ -622,20 +625,79 @@ export const fetchSiteResetContentSummary = async (
 ): Promise< SiteResetContentSummary > => {
 	return wpcom.req.get( {
 		path: `/sites/${ siteIdOrSlug }/reset-site/content-summary`,
-		apiNamespace: 'wpcom/v2',
 	} );
 };
 
 export const resetSite = async ( siteIdOrSlug: string ): Promise< void > => {
 	return wpcom.req.post( {
 		path: `/sites/${ siteIdOrSlug }/reset-site`,
-		apiNamespace: 'wpcom/v2',
 	} );
 };
 
 export const fetchSiteResetStatus = async ( siteIdOrSlug: string ): Promise< SiteResetStatus > => {
 	return wpcom.req.get( {
 		path: `/sites/${ siteIdOrSlug }/reset-site/status`,
+	} );
+};
+
+export const fetchSftpUsers = async ( siteIdOrSlug: string ): Promise< string[] > => {
+	return wpcom.req.get( {
+		path: `/sites/${ siteIdOrSlug }/hosting/ssh-users`,
+		apiNamespace: 'wpcom/v2',
+	} );
+};
+
+export const createSftpUser = async ( siteIdOrSlug: string ): Promise< SftpUser > => {
+	return wpcom.req.post( {
+		path: `/sites/${ siteIdOrSlug }/hosting/ssh-user`,
+		apiNamespace: 'wpcom/v2',
+	} );
+};
+
+export const resetSftpPassword = async (
+	siteIdOrSlug: string,
+	sshUsername: string
+): Promise< SftpUser > => {
+	return wpcom.req.post( {
+		path: `/sites/${ siteIdOrSlug }/hosting/ssh-user/${ sshUsername }/reset-password`,
+		apiNamespace: 'wpcom/v2',
+	} );
+};
+
+export const fetchSshAccessStatus = async ( siteIdOrSlug: string ): Promise< SshAccessStatus > => {
+	return wpcom.req.get( {
+		path: `/sites/${ siteIdOrSlug }/hosting/ssh-access`,
+		apiNamespace: 'wpcom/v2',
+	} );
+};
+
+export const enableSshAccess = async ( siteIdOrSlug: string ) => {
+	return wpcom.req.post(
+		{
+			path: `/sites/${ siteIdOrSlug }/hosting/ssh-access`,
+			apiNamespace: 'wpcom/v2',
+		},
+		{
+			setting: 'ssh',
+		}
+	);
+};
+
+export const disableSshAccess = async ( siteIdOrSlug: string ) => {
+	return wpcom.req.post(
+		{
+			path: `/sites/${ siteIdOrSlug }/hosting/ssh-access`,
+			apiNamespace: 'wpcom/v2',
+		},
+		{
+			setting: 'sftp',
+		}
+	);
+};
+
+export const fetchSshKeys = async ( siteIdOrSlug: string ): Promise< SshKey[] > => {
+	return wpcom.req.get( {
+		path: `/sites/${ siteIdOrSlug }/hosting/ssh-keys`,
 		apiNamespace: 'wpcom/v2',
 	} );
 };

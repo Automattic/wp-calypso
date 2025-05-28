@@ -225,6 +225,22 @@ export interface SiteTransferConfirmation {
 	transfer: boolean;
 	email_sent: boolean;
 	new_owner_email: string;
+};
+
+export interface SftpUser {
+	username: string;
+	password: string;
+}
+
+export interface SshAccessStatus {
+	setting: 'sftp' | 'ssh';
+}
+
+export interface SshKey {
+	sha256: string;
+	user_login: string;
+	name: string;
+	attached_at: string;
 }
 
 export type SiteResetContentSummary = {

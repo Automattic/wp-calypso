@@ -3,6 +3,8 @@ export enum DotcomFeatures {
 	COPY_SITE = 'copy-site',
 	LEGACY_CONTACT = 'legacy-contact',
 	LOCKED_MODE = 'locked-mode',
+	SFTP = 'sftp',
+	SSH = 'ssh',
 }
 
 export const SITE_FIELDS = [

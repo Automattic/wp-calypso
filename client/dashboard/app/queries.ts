@@ -40,6 +40,13 @@ import {
 	resetSite,
 	fetchSiteResetStatus,
 	launchSite,
+	fetchSftpUsers,
+	createSftpUser,
+	resetSftpPassword,
+	fetchSshAccessStatus,
+	enableSshAccess,
+	disableSshAccess,
+	fetchSshKeys,
 } from '../data';
 import { SITE_FIELDS, SITE_OPTIONS } from '../data/constants';
 import { queryClient } from './query-client';
@@ -51,6 +58,7 @@ import type {
 	DefensiveModeSettings,
 	DefensiveModeSettingsUpdate,
 	SiteTransferConfirmation,
+	SshAccessStatus,
 } from '../data/types';
 import type { Query } from '@tanstack/react-query';
 
@@ -406,6 +414,69 @@ export function launchSiteMutation( siteIdOrSlug: string ) {
 		onSuccess: () => {
 			queryClient.invalidateQueries( { queryKey: [ 'site', siteIdOrSlug ] } );
 			queryClient.invalidateQueries( { queryKey: [ 'site-settings', siteIdOrSlug ] } );
+		}
+	};
+}
+
+export function siteSftpUsersQuery( siteId: string ) {
+	return {
+		queryKey: [ 'site', siteId, 'sftp-users' ],
+		queryFn: () => {
+			return fetchSftpUsers( siteId );
+		},
+	};
+}
+
+export function siteSftpUsersCreateMutation( siteId: string ) {
+	return {
+		mutationFn: () => createSftpUser( siteId ),
+		onSuccess: () => {
+			queryClient.invalidateQueries( { queryKey: [ 'site', siteId, 'sftp-users' ] } );
+		},
+	};
+}
+
+export function siteSftpUsersResetPasswordMutation( siteId: string ) {
+	return {
+		mutationFn: ( sshUsername: string ) => resetSftpPassword( siteId, sshUsername ),
+		onSuccess: () => {
+			queryClient.invalidateQueries( { queryKey: [ 'site', siteId, 'sftp-users' ] } );
+		},
+	};
+}
+
+export function siteSshAccessStatusQuery( siteId: string ) {
+	return {
+		queryKey: [ 'site', siteId, 'ssh-access' ],
+		queryFn: () => {
+			return fetchSshAccessStatus( siteId );
+		},
+	};
+}
+
+export function siteSshAccessEnableMutation( siteId: string ) {
+	return {
+		mutationFn: () => enableSshAccess( siteId ),
+		onSuccess: ( data: SshAccessStatus ) => {
+			queryClient.setQueryData( [ 'site', siteId, 'ssh-access' ], data );
+		},
+	};
+}
+
+export function siteSshAccessDisableMutation( siteId: string ) {
+	return {
+		mutationFn: () => disableSshAccess( siteId ),
+		onSuccess: ( data: SshAccessStatus ) => {
+			queryClient.setQueryData( [ 'site', siteId, 'ssh-access' ], data );
+		},
+	};
+}
+
+export function siteSshKeysQuery( siteId: string ) {
+	return {
+		queryKey: [ 'site', siteId, 'ssh-keys' ],
+		queryFn: () => {
+			return fetchSshKeys( siteId );
 		},
 	};
 }
