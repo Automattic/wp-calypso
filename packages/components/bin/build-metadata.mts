@@ -27,14 +27,6 @@ const pick = < O extends Record< string, any >, K extends Array< keyof O > >(
 		K[ number ]
 	>;
 
-const omit = < O extends Record< string, any >, K extends Array< keyof O > >(
-	obj: O,
-	keys: K
-): Omit< O, K[ number ] > =>
-	Object.fromEntries(
-		Object.entries( obj ).filter( ( [ key ] ) => ! keys.includes( key ) )
-	) as Omit< O, K[ number ] >;
-
 const mapValues = < V, MV >(
 	obj: Record< string, V >,
 	fn: ( value: V ) => MV
@@ -42,12 +34,18 @@ const mapValues = < V, MV >(
 	Object.fromEntries( Object.entries( obj ).map( ( [ key, value ] ) => [ key, fn( value ) ] ) );
 
 async function getMetadataEntry( file: string ): Promise< [ string, ComponentMetadata ] > {
-	const parsed = await parse( join( process.cwd(), 'src', file ) );
+	const parsed = await parse( join( process.cwd(), 'src', file ), {
+		shouldExtractLiteralValuesFromEnum: true,
+		shouldRemoveUndefinedFromOptional: true,
+		propFilter: ( prop ) => ! prop.parent || ! /node_modules/.test( prop.parent.fileName ),
+		savePropValueAsString: true,
+	} );
+
 	const [ { displayName, props } ] = parsed;
 	return [
 		displayName,
 		{
-			props: mapValues( omit( props, [ 'ref', 'key' ] ), ( value ) =>
+			props: mapValues( props, ( value ) =>
 				pick( value, [ 'description', 'defaultValue', 'required', 'type' ] )
 			),
 		},
