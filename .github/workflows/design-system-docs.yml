@@ -14,6 +14,9 @@ concurrency:
 
 jobs:
   preview:
+    # Avoid running this workflow for pull requests from forks, which would fail due to missing secrets
+    if: github.event.pull_request.head.repo.full_name == github.event.pull_request.base.repo.full_name
+
     runs-on: ubuntu-latest
 
     steps:
