@@ -8,7 +8,7 @@ import { addQueryArgs } from 'calypso/lib/route';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn, getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
 import { getSectionName } from 'calypso/state/ui/selectors';
-import styles from './styles.module.css';
+import styles from './style.module.css';
 
 export const MarketplaceFooter = () => {
 	const { __ } = useI18n();
