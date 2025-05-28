@@ -10,7 +10,14 @@ interface Config {
 /**
  * Features that are manually enabled in the codebase using `config.enable`.
  */
-const PROGRAMMATICALLY_ENABLED_FEATURES = new Set< string >( [ 'a4a-partner-directory' ] );
+const PROGRAMMATICALLY_ENABLED_FEATURES = new Set< string >( [
+	'a4a-partner-directory',
+	'blaze_setup_mode',
+	'is_running_in_jetpack_site',
+	'is_running_in_woo_site',
+	'is_running_in_blaze_plugin',
+	'use-translation-chunks',
+] );
 
 /** path to configuration file directory */
 const configRoot = path.resolve( import.meta.dirname, '../config' );
