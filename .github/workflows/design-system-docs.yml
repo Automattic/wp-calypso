@@ -49,6 +49,9 @@ jobs:
           # Extract the preview URL from the output
           URL=$(echo "$OUT" | grep -oE 'https://[a-z0-9-]+-preview\.a8cds\.workers\.dev/?')
 
+          # Output the URL to the GitHub Actions log for debugging
+          echo "URL: $URL"
+
           # Expose it to later steps
           echo "url=$URL" >> "$GITHUB_OUTPUT"
 
