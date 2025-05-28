@@ -4,10 +4,7 @@
 	"compilerOptions": {
 		"module": "ESNext",
 		"moduleResolution": "bundler",
-		"baseUrl": ".",
-		"paths": {
-			"#components/*": [ "./src/components/*" ]
-		}
+		"baseUrl": "."
 	},
 	"exclude": [ ".docusaurus", "dist" ]
 }
