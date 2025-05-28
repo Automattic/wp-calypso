@@ -15,9 +15,6 @@ export const MarketplaceFooter = () => {
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const currentUserSiteCount = useSelector( getCurrentUserSiteCount );
 	const sectionName = useSelector( getSectionName );
-	const classes = clsx( styles[ 'marketplace-footer' ], {
-		[ styles[ 'is-logged-in' ] ]: isLoggedIn,
-	} );
 
 	const startUrl = addQueryArgs(
 		{
@@ -27,10 +24,12 @@ export const MarketplaceFooter = () => {
 	);
 
 	return (
-		<div className={ classes }>
+		<div className={ styles[ 'marketplace-footer' ] }>
 			<Section
 				header={ preventWidows( __( 'You pick the plugin. We’ll take care of the rest.' ) ) }
-				className={ styles[ 'marketplace-footer__section' ] }
+				className={ clsx( styles[ 'marketplace-footer__section' ], {
+					[ styles[ 'is-logged-in' ] ]: isLoggedIn,
+				} ) }
 			>
 				{ ( ! isLoggedIn || currentUserSiteCount === 0 ) && (
 					<Button primary className={ styles[ 'marketplace-footer__cta' ] } href={ startUrl }>

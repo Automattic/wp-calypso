@@ -6,10 +6,10 @@
     & .marketplace-footer__section::before {
         background-color: var( --studio-gray-0 );
     }
+}
 
-    &:not(.is-logged-in) .marketplace-footer__section {
-        padding-bottom: 32px;
-    }
+.marketplace-footer__section.is-logged-in {
+	padding-bottom: 32px;
 }
 
 .marketplace-footer__cta {
