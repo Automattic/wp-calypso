@@ -215,7 +215,13 @@ export function SiteDeleteConfirmModal( { site, onClose }: { site: Site; onClose
 							<Button variant="tertiary" disabled={ mutation.isPending } onClick={ onClose }>
 								{ __( 'Cancel' ) }
 							</Button>
-							<Button variant="primary" type="submit" isDestructive isBusy={ mutation.isPending }>
+							<Button
+								variant="primary"
+								type="submit"
+								isDestructive
+								isBusy={ mutation.isPending }
+								disabled={ formData.domain !== site.slug }
+							>
 								{ __( 'Delete site' ) }
 							</Button>
 						</HStack>
