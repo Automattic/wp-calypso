@@ -2,6 +2,8 @@
 
 ## Next
 
+- Add `align` to the `layout.styles` properties, for use in the DataViews table layout. Options are: `start`, `center`, and `end`.
+
 ## 0.2.0
 
 - Bring changes from `@wordpress/dataviews 4.19.0` (no updates in this version).
