@@ -71,25 +71,27 @@ export function MembershipsDataViews( props: {
 	translate: LocalizeProps[ 'translate' ];
 } ) {
 	const { memberships } = props;
-	const onChangeView = () => {
-		return;
-	};
+	const membershipsDataFields = useMembershipsFieldDefinitions();
+	const [ currentView, setView ] = useState( purchasesDataView );
+
+	const { data: adjustedMemberships, paginationInfo } = useMemo( () => {
+		return filterSortAndPaginate( memberships, currentView, membershipsDataFields );
+	}, [ memberships, currentView, membershipsDataFields ] );
 
 	const getItemId = ( item: MembershipSubscription ) => {
 		return item.ID;
 	};
-	const membershipsDataFields = useMembershipsFieldDefinitions();
 	return (
 		<Card id="purchases-list" className="section-content" tagName="section">
 			<DataViews
-				data={ memberships }
+				data={ adjustedMemberships }
 				fields={ membershipsDataFields }
-				view={ membershipDataView }
-				onChangeView={ onChangeView }
+				view={ currentView }
+				onChangeView={ setView }
 				defaultLayouts={ { table: {} } }
 				actions={ undefined }
 				getItemId={ getItemId }
-				paginationInfo={ { totalItems: 100, totalPages: 10 } }
+				paginationInfo={ paginationInfo }
 			/>
 		</Card>
 	);
