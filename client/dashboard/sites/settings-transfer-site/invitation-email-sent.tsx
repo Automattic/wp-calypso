@@ -56,10 +56,6 @@ export function InvitationEmailSent( {
 		);
 	}, [ confirmationHash ] );
 
-	if ( ! newOwnerEmail || mutation.isPending ) {
-		return <Spinner />;
-	}
-
 	if ( hasError ) {
 		return (
 			<Notice variant="error">
@@ -76,6 +72,10 @@ export function InvitationEmailSent( {
 				) }
 			</Notice>
 		);
+	}
+
+	if ( ! newOwnerEmail || mutation.isPending ) {
+		return <Spinner />;
 	}
 
 	return (
