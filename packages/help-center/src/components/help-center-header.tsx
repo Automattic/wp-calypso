@@ -85,10 +85,9 @@ const ChatEllipsisMenu = () => {
 			areSoundNotificationsEnabled: helpCenterSelect.getAreSoundNotificationsEnabled(),
 		};
 	}, [] );
-	const { setAreSoundNotificationsEnabled, setOdieChatId } = useDispatch( HELP_CENTER_STORE );
+	const { setAreSoundNotificationsEnabled } = useDispatch( HELP_CENTER_STORE );
 
 	const clearChat = async () => {
-		setOdieChatId( undefined );
 		await resetSupportInteraction();
 		clearHelpCenterZendeskConversationStarted();
 		recordTracksEvent( 'calypso_inlinehelp_clear_conversation' );

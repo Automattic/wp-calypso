@@ -17,7 +17,6 @@ export const useGetCombinedChat = ( canConnectToZendesk: boolean ) => {
 		( select ) => {
 			const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
 			const currentSupportInteraction = store.getCurrentSupportInteraction();
-			const odieChatIdFromConversationHistory = store.getOdieChatId();
 
 			const odieId = getOdieIdFromInteraction( currentSupportInteraction );
 			const conversationId = getConversationIdFromInteraction( currentSupportInteraction );
@@ -25,7 +24,7 @@ export const useGetCombinedChat = ( canConnectToZendesk: boolean ) => {
 			return {
 				currentSupportInteraction,
 				conversationId,
-				odieId: odieChatIdFromConversationHistory ?? odieId,
+				odieId,
 				isChatLoaded: store.getIsChatLoaded(),
 			};
 		},
