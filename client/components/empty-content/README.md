@@ -66,7 +66,7 @@ The component also supports a secondary action. This should be used sparingly.
 	title="You don't have any WordPress sites yet."
 	line="Would you like to start one?"
 	action="Create Site"
-	actionURL={ config( 'signup_url' ) + '?ref=calypso-section' }
+	actionURL="/start?ref=calypso-section"
 />
 ```
 

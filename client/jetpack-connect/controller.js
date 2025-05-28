@@ -389,12 +389,11 @@ export function signupForm( context, next ) {
 	const { query } = context;
 	const from = query.from;
 	if ( from && startsWith( from, 'wpcom-migration' ) ) {
-		const signupUrl = config( 'signup_url' );
 		const urlQueryArgs = {
 			redirect_to: context.path,
 			from,
 		};
-		return page( addQueryArgs( urlQueryArgs, `${ signupUrl }/account` ) );
+		return page( addQueryArgs( urlQueryArgs, '/start/account' ) );
 	}
 
 	if ( retrieveMobileRedirect() && ! isLoggedIn ) {

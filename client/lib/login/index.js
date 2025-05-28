@@ -54,8 +54,6 @@ export function pathWithLeadingSlash( path ) {
 }
 
 export function getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, pathname ) {
-	const signupUrl = config( 'signup_url' );
-
 	const redirectTo = get( currentQuery, 'redirect_to', '' );
 	const signupFlow = get( currentQuery, 'signup_flow' );
 	const wccomFrom = get( currentQuery, 'wccom-from' );
@@ -108,7 +106,7 @@ export function getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, 
 			oauth2_client_id: oauth2Client.id,
 			oauth2_redirect: redirectTo,
 		} );
-		return `${ signupUrl }/${ oauth2Flow }?${ oauth2Params.toString() }`;
+		return `/start/${ oauth2Flow }?${ oauth2Params.toString() }`;
 	}
 
 	if ( isGravPoweredOAuth2Client( oauth2Client ) ) {
@@ -136,12 +134,11 @@ export function getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, 
 	}
 
 	if ( isCrowdsignalOAuth2Client( oauth2Client ) ) {
-		const oauth2Flow = 'crowdsignal';
 		const oauth2Params = new URLSearchParams( {
 			oauth2_client_id: oauth2Client.id,
 			oauth2_redirect: redirectTo,
 		} );
-		return `${ signupUrl }/${ oauth2Flow }?${ oauth2Params.toString() }`;
+		return `/start/crowdsignal?${ oauth2Params.toString() }`;
 	}
 
 	if ( oauth2Client && isWooOAuth2Client( oauth2Client ) ) {
@@ -152,7 +149,7 @@ export function getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, 
 		if ( wccomFrom ) {
 			oauth2Params.set( 'wccom-from', wccomFrom );
 		}
-		return `${ signupUrl }/wpcc?${ oauth2Params.toString() }`;
+		return `/start/wpcc?${ oauth2Params.toString() }`;
 	}
 
 	if ( oauth2Client ) {
@@ -160,7 +157,7 @@ export function getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, 
 			oauth2_client_id: oauth2Client.id,
 			oauth2_redirect: redirectTo,
 		} );
-		return `${ signupUrl }/wpcc?${ oauth2Params.toString() }`;
+		return `/start/wpcc?${ oauth2Params.toString() }`;
 	}
 
 	if ( signupFlow ) {
@@ -168,9 +165,9 @@ export function getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, 
 			const params = new URLSearchParams( {
 				redirect_to: redirectTo,
 			} );
-			return `${ signupUrl }/${ signupFlow }?${ params.toString() }`;
+			return `/start/${ signupFlow }?${ params.toString() }`;
 		}
-		return `${ signupUrl }/${ signupFlow }`;
+		return `/start/${ signupFlow }`;
 	}
 
 	if (
@@ -182,14 +179,14 @@ export function getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, 
 		const params = new URLSearchParams( {
 			redirect_to: redirectTo,
 		} );
-		return `${ signupUrl }/account?${ params.toString() }`;
+		return `/start/account?${ params.toString() }`;
 	}
 
 	if ( ! isDefaultLocale( locale ) ) {
-		return addLocaleToPath( signupUrl, locale );
+		return addLocaleToPath( '/start', locale );
 	}
 
-	return signupUrl;
+	return '/start';
 }
 
 export const canDoMagicLogin = ( twoFactorAuthType, oauth2Client ) => {
@@ -224,7 +221,7 @@ export const getLoginLinkPageUrl = ( {
 	const loginParameters = {
 		locale: locale,
 		twoFactorAuthType: 'link',
-		signupUrl: signupUrl,
+		signupUrl,
 		oauth2ClientId,
 		...additionalParams,
 	};
