@@ -35,7 +35,7 @@ function UptimeCardEnabled( { siteSlug }: { siteSlug: string } ) {
 			heading={
 				uptimePercentage === undefined ? (
 					<>
-						<TextBlur text={ sprintf( percentageString, '100' ) } />
+						<TextBlur>{ sprintf( percentageString, '100' ) }</TextBlur>
 						<VisuallyHidden>{ __( 'Loading…' ) }</VisuallyHidden>
 					</>
 				) : (

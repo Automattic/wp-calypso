@@ -21,10 +21,18 @@ import {
 	fetchPrimaryDataCenter,
 	fetchStaticFile404,
 	updateStaticFile404,
+	fetchEdgeCacheDefensiveMode,
+	updateEdgeCacheDefensiveMode,
 } from '../data';
 import { SITE_FIELDS, SITE_OPTIONS } from '../data/constants';
 import { queryClient } from './query-client';
-import type { Profile, SiteSettings, UrlPerformanceInsights } from '../data/types';
+import type {
+	Profile,
+	SiteSettings,
+	UrlPerformanceInsights,
+	DefensiveModeSettings,
+	DefensiveModeSettingsUpdate,
+} from '../data/types';
 import type { Query } from '@tanstack/react-query';
 
 export function sitesQuery() {
@@ -210,6 +218,25 @@ export function siteStaticFile404Mutation( siteId: string ) {
 		mutationFn: ( setting: string ) => updateStaticFile404( siteId, setting ),
 		onSuccess: () => {
 			queryClient.invalidateQueries( { queryKey: [ 'site', siteId, 'static-file-404' ] } );
+		},
+	};
+}
+
+export function siteDefensiveModeQuery( siteSlug: string ) {
+	return {
+		queryKey: [ 'site', siteSlug, 'defensive-mode' ],
+		queryFn: () => {
+			return fetchEdgeCacheDefensiveMode( siteSlug );
+		},
+	};
+}
+
+export function siteDefensiveModeMutation( siteSlug: string ) {
+	return {
+		mutationFn: ( data: DefensiveModeSettingsUpdate ) =>
+			updateEdgeCacheDefensiveMode( siteSlug, data ),
+		onSuccess: ( data: DefensiveModeSettings ) => {
+			queryClient.setQueryData( [ 'site', siteSlug, 'defensive-mode' ], data );
 		},
 	};
 }

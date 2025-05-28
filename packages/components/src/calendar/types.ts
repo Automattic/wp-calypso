@@ -150,7 +150,7 @@ type DayOfWeek = {
  * @param {Modifiers} modifiers - The modifiers associated with the event.
  * @param {React.MouseEvent | React.KeyboardEvent} e - The event object.
  */
-export type OnSelectHandler< T > = (
+type OnSelectHandler< T > = (
 	selected: T,
 	triggerDate: Date,
 	modifiers: Modifiers,
@@ -204,10 +204,6 @@ export interface BaseProps
 	 * Disable the navigation buttons.
 	 */
 	disableNavigation?: boolean;
-	/**
-	 * Add modifiers to the matching days.
-	 */
-	modifiers?: Record< string, Matcher | Matcher[] | undefined > | undefined;
 	/**
 	 * Use custom labels, useful for translating the component.
 	 *

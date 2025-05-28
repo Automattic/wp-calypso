@@ -1,19 +1,14 @@
-import * as Ariakit from '@ariakit/react';
-import styled from '@emotion/styled';
-import { Icon } from '../icon';
-import { COLORS, CONFIG } from '../utils';
-import { space } from '../utils/space';
+@use '@wordpress/base-styles/colors';
+@use '@wordpress/base-styles/mixins';
+@use '@wordpress/base-styles/variables';
+@use '../utils/_theme-variables' as theme;
 
-export const StyledTabList = styled( Ariakit.TabList )`
+.tablist {
 	display: flex;
 	align-items: stretch;
 	overflow-x: auto;
 
-	&[aria-orientation='vertical'] {
-		flex-direction: column;
-	}
-
-	:where( [aria-orientation='horizontal'] ) {
+	&:where( [aria-orientation='horizontal'] ) {
 		width: fit-content;
 	}
 
@@ -52,8 +47,8 @@ export const StyledTabList = styled( Ariakit.TabList )`
 	--antialiasing-factor: 100;
 	&[aria-orientation='horizontal'] {
 		--fade-width: 4rem;
-		--fade-gradient-base: transparent 0%, black var( --fade-width );
-		--fade-gradient-composed: var( --fade-gradient-base ), black 60%, transparent 50%;
+		--fade-gradient-base: transparent 0%, #{colors.$black} var( --fade-width );
+		--fade-gradient-composed: var( --fade-gradient-base ), #{colors.$black} 60%, transparent 50%;
 		&.is-overflowing-first {
 			mask-image: linear-gradient( to var( --direction-end ), var( --fade-gradient-base ) );
 		}
@@ -71,15 +66,18 @@ export const StyledTabList = styled( Ariakit.TabList )`
 			width: calc( var( --antialiasing-factor ) * 1px );
 			transform: translateX( calc( var( --selected-start ) * var( --direction-factor ) * 1px ) )
 				scaleX( calc( var( --selected-width, 0 ) / var( --antialiasing-factor ) ) );
-			border-bottom: var( --wp-admin-border-width-focus ) solid ${ COLORS.theme.accent };
+			border-bottom: var( --wp-admin-border-width-focus ) solid theme.$components-color-accent;
 		}
 	}
+
 	&[aria-orientation='vertical'] {
+		flex-direction: column;
+
 		&::before {
 			/* Adjusting the border radius to match the scaling in the y axis. */
-			border-radius: ${ CONFIG.radiusSmall } /
+			border-radius: variables.$radius-small /
 				calc(
-					${ CONFIG.radiusSmall } / ( var( --selected-height, 0 ) / var( --antialiasing-factor ) )
+					variables.$radius-small / ( var( --selected-height, 0 ) / var( --antialiasing-factor ) )
 				);
 			top: 0;
 			left: 0;
@@ -87,11 +85,11 @@ export const StyledTabList = styled( Ariakit.TabList )`
 			height: calc( var( --antialiasing-factor ) * 1px );
 			transform: translateY( calc( var( --selected-top, 0 ) * 1px ) )
 				scaleY( calc( var( --selected-height, 0 ) / var( --antialiasing-factor ) ) );
-			background-color: color-mix( in srgb, ${ COLORS.theme.accent }, transparent 96% );
+			background-color: color-mix( in srgb, theme.$components-color-accent, transparent 96% );
 		}
 		&[data-select-on-move='true']:has( :is( :focus-visible, [data-focus-visible] ) )::before {
 			box-sizing: border-box;
-			border: var( --wp-admin-border-width-focus ) solid ${ COLORS.theme.accent };
+			border: var( --wp-admin-border-width-focus ) solid theme.$components-color-accent;
 			/* Adjusting the border width to match the scaling in the y axis. */
 			border-block-width: calc(
 				var( --wp-admin-border-width-focus, 1px ) /
@@ -99,80 +97,79 @@ export const StyledTabList = styled( Ariakit.TabList )`
 			);
 		}
 	}
-`;
+}
 
-export const Tab = styled( Ariakit.Tab )`
-	& {
-		/* Resets */
-		border-radius: 0;
-		background: transparent;
-		border: none;
+.tab {
+
+	/* Resets */
+	border-radius: 0;
+	background: transparent;
+	border: none;
+	box-shadow: none;
+
+	flex: 1 0 auto;
+	white-space: nowrap;
+	display: flex;
+	align-items: center;
+	cursor: pointer;
+	line-height: 1.2; // Characters in some languages (e.g. Japanese) may have a native higher line-height.
+	font-weight: 400;
+	color: theme.$components-color-foreground;
+
+	&[aria-disabled='true'] {
+		cursor: default;
+		color: theme.$components-color-gray-600;
+	}
+
+	&:not( [aria-disabled='true'] ):is( :hover, [data-focus-visible] ) {
+		color: theme.$components-color-accent;
+	}
+
+	&:focus:not( :disabled ) {
 		box-shadow: none;
+		outline: none;
+	}
 
-		flex: 1 0 auto;
-		white-space: nowrap;
-		display: flex;
-		align-items: center;
-		cursor: pointer;
-		line-height: 1.2; // Characters in some languages (e.g. Japanese) may have a native higher line-height.
-		font-weight: 400;
-		color: ${ COLORS.theme.foreground };
+	// Focus indicator.
+	position: relative;
+	&::after {
+		position: absolute;
+		pointer-events: none;
 
-		&[aria-disabled='true'] {
-			cursor: default;
-			color: ${ COLORS.ui.textDisabled };
-		}
+		// Draw the indicator.
+		// Outline works for Windows high contrast mode as well.
+		outline: var( --wp-admin-border-width-focus ) solid theme.$components-color-accent;
+		border-radius: variables.$radius-small;
 
-		&:not( [aria-disabled='true'] ):is( :hover, [data-focus-visible] ) {
-			color: ${ COLORS.theme.accent };
-		}
+		// Animation
+		opacity: 0;
 
-		&:focus:not( :disabled ) {
-			box-shadow: none;
-			outline: none;
-		}
-
-		// Focus indicator.
-		position: relative;
-		&::after {
-			position: absolute;
-			pointer-events: none;
-
-			// Draw the indicator.
-			// Outline works for Windows high contrast mode as well.
-			outline: var( --wp-admin-border-width-focus ) solid ${ COLORS.theme.accent };
-			border-radius: ${ CONFIG.radiusSmall };
-
-			// Animation
-			opacity: 0;
-
-			@media not ( prefers-reduced-motion ) {
-				transition: opacity 0.1s linear;
-			}
-		}
-
-		&[data-focus-visible]::after {
-			opacity: 1;
+		@media not ( prefers-reduced-motion ) {
+			transition: opacity 0.1s linear;
 		}
 	}
 
+	&[data-focus-visible]::after {
+		opacity: 1;
+	}
+
 	[aria-orientation='horizontal'] & {
-		padding-inline: ${ space( 4 ) };
-		height: ${ space( 12 ) };
+		padding-inline: variables.$grid-unit-05 * 4;
+		height: variables.$grid-unit-05 * 12;
 		scroll-margin: 24px;
 
 		&::after {
 			content: '';
-			inset: ${ space( 3 ) };
+			inset: variables.$grid-unit-05 * 3;
 		}
 	}
 
 	[aria-orientation='vertical'] & {
-		padding: ${ space( 2 ) } ${ space( 3 ) };
-		min-height: ${ space( 10 ) };
+		padding: variables.$grid-unit-05 * 2 variables.$grid-unit-05 * 3;
+		min-height: variables.$grid-unit-05 * 10;
 
 		&[aria-selected='true'] {
-			color: ${ COLORS.theme.accent };
+			color: theme.$components-color-accent;
 			fill: currentColor;
 		}
 	}
@@ -180,9 +177,9 @@ export const Tab = styled( Ariakit.Tab )`
 		content: '';
 		inset: var( --wp-admin-border-width-focus );
 	}
-`;
+}
 
-export const TabChildren = styled.span`
+.tab__children {
 	flex-grow: 1;
 
 	display: flex;
@@ -194,11 +191,11 @@ export const TabChildren = styled.span`
 	[aria-orientation='vertical'] & {
 		justify-content: start;
 	}
-`;
+}
 
-export const TabChevron = styled( Icon )`
+.tab__chevron {
 	flex-shrink: 0;
-	margin-inline-end: ${ space( -1 ) };
+	margin-inline-end: variables.$grid-unit-05 * -1;
 	[aria-orientation='horizontal'] & {
 		display: none;
 	}
@@ -210,25 +207,25 @@ export const TabChevron = styled( Icon )`
 	// because otherwise it looks jarring, as it shows up outside of the focus
 	// indicator that's being animated at the same time.
 	@media not ( prefers-reduced-motion ) {
-		[data-select-on-move='true'] [role='tab']:is( [aria-selected='true'],  ) & {
+		[data-select-on-move='true'] [role='tab']:is( [aria-selected='true']  ) & {
 			transition: opacity 0.15s 0.15s linear;
 		}
 	}
 	&:dir( rtl ) {
 		rotate: 180deg;
 	}
-`;
+}
 
-export const TabPanel = styled( Ariakit.TabPanel )`
+.tabpanel {
 	&:focus {
 		box-shadow: none;
 		outline: none;
 	}
 
 	&[data-focus-visible] {
-		box-shadow: 0 0 0 var( --wp-admin-border-width-focus ) ${ COLORS.theme.accent };
+		box-shadow: 0 0 0 var( --wp-admin-border-width-focus ) theme.$components-color-accent;
 		// Windows high contrast mode.
 		outline: 2px solid transparent;
 		outline-offset: 0;
 	}
-`;
+}

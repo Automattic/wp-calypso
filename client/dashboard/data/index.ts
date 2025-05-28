@@ -15,6 +15,8 @@ import type {
 	SiteSettings,
 	UrlPerformanceInsights,
 	PhpMyAdminToken,
+	DefensiveModeSettings,
+	DefensiveModeSettingsUpdate,
 } from './types';
 import type { DataCenterOption } from 'calypso/data/data-center/types';
 
@@ -425,5 +427,27 @@ export const updateStaticFile404 = async (
 			apiNamespace: 'wpcom/v2',
 		},
 		{ setting }
+	);
+};
+
+export const fetchEdgeCacheDefensiveMode = async (
+	siteIdOrSlug: string
+): Promise< DefensiveModeSettings > => {
+	return wpcom.req.get( {
+		path: `/sites/${ siteIdOrSlug }/hosting/edge-cache/defensive-mode`,
+		apiNamespace: 'wpcom/v2',
+	} );
+};
+
+export const updateEdgeCacheDefensiveMode = async (
+	siteIdOrSlug: string,
+	data: DefensiveModeSettingsUpdate
+): Promise< DefensiveModeSettings > => {
+	return wpcom.req.post(
+		{
+			path: `/sites/${ siteIdOrSlug }/hosting/edge-cache/defensive-mode`,
+			apiNamespace: 'wpcom/v2',
+		},
+		data
 	);
 };

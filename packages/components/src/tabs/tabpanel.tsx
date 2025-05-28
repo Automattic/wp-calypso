@@ -1,8 +1,9 @@
-import { useStoreState } from '@ariakit/react';
+import * as Ariakit from '@ariakit/react';
 import warning from '@wordpress/warning';
+import clsx from 'clsx';
 import { forwardRef } from 'react';
 import { useTabsContext } from './context';
-import { TabPanel as StyledTabPanel } from './styles';
+import styles from './style.module.scss';
 import type { TabPanelProps } from './types';
 
 export const TabPanel = forwardRef<
@@ -10,7 +11,7 @@ export const TabPanel = forwardRef<
 	Omit< React.ComponentPropsWithoutRef< 'div' >, 'id' > & TabPanelProps
 >( function TabPanel( { children, tabId, focusable = true, ...otherProps }, ref ) {
 	const context = useTabsContext();
-	const selectedId = useStoreState( context?.store, 'selectedId' );
+	const selectedId = Ariakit.useStoreState( context?.store, 'selectedId' );
 	if ( ! context ) {
 		warning( '`Tabs.TabPanel` must be wrapped in a `Tabs` component.' );
 		return null;
@@ -19,7 +20,7 @@ export const TabPanel = forwardRef<
 	const instancedTabId = `${ instanceId }-${ tabId }`;
 
 	return (
-		<StyledTabPanel
+		<Ariakit.TabPanel
 			ref={ ref }
 			store={ store }
 			// For TabPanel, the id passed here is the id attribute of the DOM
@@ -29,8 +30,9 @@ export const TabPanel = forwardRef<
 			tabId={ instancedTabId }
 			focusable={ focusable }
 			{ ...otherProps }
+			className={ clsx( styles.tabpanel, otherProps.className ) }
 		>
 			{ selectedId === instancedTabId && children }
-		</StyledTabPanel>
+		</Ariakit.TabPanel>
 	);
 } );

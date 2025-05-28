@@ -3,6 +3,8 @@
 ## Unreleased
 
 - Clean up all definitions and usages of CSS variables ending with -rgb.
+- Updated dependencies:
+  - postcss-custom-properties to ^12.0.0
 
 ## 3.1.3
 
