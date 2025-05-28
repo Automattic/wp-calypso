@@ -16,24 +16,11 @@
 	}
 
 	&.has-density-medium {
-		.components-card__header {
-			/* stylelint-disable-next-line scales/radii */
-			border-radius: 7px 7px 0 0;
+		.dashboard-summary-button-list__children-list-wrapper {
+			// TODO: remove once the `CardBody` natively supports having no padding.
+			padding: 0;
 		}
 
-		.dashboard-summary-button-list__children-list {
-			li:last-child .summary-button {
-				/* stylelint-disable-next-line scales/radii */
-				border-radius: 0 0 7px 7px;
-			}
-
-			// Apply top border radius only if there's no header before children container.
-			&:first-child {
-				li:first-child .summary-button {
-					/* stylelint-disable-next-line scales/radii */
-					border-radius: 7px 7px 0 0;
-				}
-			}
 		.dashboard-summary-button-list__children-list-item:last-child > * {
 			// TODO: once the component uses React context, we should use that
 			// to let the correct summary button component know that it's

@@ -1,4 +1,4 @@
-import { Card, CardHeader, __experimentalVStack as VStack } from '@wordpress/components';
+import { Card, CardHeader, CardBody, __experimentalVStack as VStack } from '@wordpress/components';
 import { useInstanceId } from '@wordpress/compose';
 import clsx from 'clsx';
 import { isValidElement, cloneElement, Children } from 'react';
@@ -51,7 +51,9 @@ export function SummaryButtonList( {
 		return (
 			<Card className={ className }>
 				{ header && <CardHeader>{ header }</CardHeader> }
-				{ childrenList }
+				<CardBody className="dashboard-summary-button-list__children-list-wrapper">
+					{ childrenList }
+				</CardBody>
 			</Card>
 		);
 	}
