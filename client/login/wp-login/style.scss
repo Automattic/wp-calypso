@@ -36,20 +36,6 @@ $image-height: 47px;
 			display: none;
 		}
 	}
-
-	.step-container-v2__heading {
-		text-align: center;
-	}
-}
-
-.wp-login__heading-logo {
-	text-align: center;
-	margin-bottom: 16px;
-
-	.wp-login__heading-logo-studio {
-		width: 64px;
-		height: 64px;
-	}
 }
 
 .wp-login__main.main {
@@ -926,3 +912,4 @@ $image-height: 47px;
 :root {
 	--login-form-column-max-width: 327px;
 }
+
