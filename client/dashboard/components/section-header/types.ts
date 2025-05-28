@@ -33,6 +33,11 @@ export interface SectionHeaderProps {
 	 */
 	isPageHeader?: boolean;
 	/**
+	 * Unique identifier for the rendered heading element, useful for linking
+	 * or accessibility purposes.
+	 */
+	headingId?: string;
+	/**
 	 * Optional content to be placed above the other elements of the component.
 	 */
 	prefix?: React.ReactNode;

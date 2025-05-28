@@ -1,4 +1,5 @@
 import { Card, CardHeader, __experimentalVStack as VStack } from '@wordpress/components';
+import { useInstanceId } from '@wordpress/compose';
 import clsx from 'clsx';
 import { isValidElement, cloneElement, Children, ReactElement } from 'react';
 import { SectionHeader } from '../section-header';
@@ -21,30 +22,41 @@ export function SummaryButtonList( {
 	density = 'medium',
 	children,
 }: SummaryButtonListProps ) {
+	const titleId = useInstanceId( SummaryButtonList, 'dashboard-summary-button-list__title' );
 	const isMediumDensity = density === 'medium';
 	// Clone children and override their density prop.
 	const clonedChildren = Children.map( children, ( child ) => {
 		if ( isValidElement( child ) ) {
-			return cloneElement( child as ReactElement< { density?: string } >, { density } );
+			return (
+				<li>{ cloneElement( child as ReactElement< { density?: string } >, { density } ) }</li>
+			);
 		}
 		return child;
 	} );
-	const header = title && <SectionHeader level={ 3 } title={ title } description={ description } />;
+	const header = title && (
+		<SectionHeader headingId={ titleId } level={ 3 } title={ title } description={ description } />
+	);
 	const className = clsx( 'dashboard-summary-button-list', `has-density-${ density }` );
+	const childrenList = (
+		<ul
+			className="dashboard-summary-button-list__children-list"
+			aria-labelledby={ title ? titleId : undefined }
+		>
+			{ clonedChildren }
+		</ul>
+	);
 	if ( isMediumDensity ) {
 		return (
 			<Card className={ className }>
 				{ header && <CardHeader>{ header }</CardHeader> }
-				<VStack spacing={ 0 } className="dashboard-summary-button-list__children-container">
-					{ clonedChildren }
-				</VStack>
+				{ childrenList }
 			</Card>
 		);
 	}
 	return (
 		<VStack className={ className } spacing={ 6 }>
 			{ header }
-			{ clonedChildren }
+			{ childrenList }
 		</VStack>
 	);
 }

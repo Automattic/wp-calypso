@@ -6,6 +6,7 @@
 	display: block;
 	height: auto;
 	transition: none;
+	width: 100%;
 
 	&:hover:not(:disabled, [aria-disabled="true"]) {
 		background: color-mix(in srgb, #fff 98%, var(--wp-admin-theme-color, #3858e9));
@@ -76,10 +77,6 @@
 
 		.summary-button-title {
 			@include body-medium;
-		}
-
-		&:last-child {
-			border-bottom: none;
 		}
 	}
 

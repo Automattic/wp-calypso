@@ -1,14 +1,38 @@
+@import "@wordpress/base-styles/variables";
+
 .dashboard-summary-button-list {
+	.dashboard-summary-button-list__children-list {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+	}
+
+	&.has-density-low {
+		li {
+			margin-bottom: $grid-unit-30;
+
+			&:last-child {
+				margin-bottom: 0;
+			}
+		}
+	}
+
 	&.has-density-medium {
-		.dashboard-summary-button-list__children-container {
-			> *:last-child {
+		.components-card__header {
+			/* stylelint-disable-next-line scales/radii */
+			border-radius: 7px 7px 0 0;
+		}
+
+		.dashboard-summary-button-list__children-list {
+			li:last-child .summary-button {
+				border-bottom: none;
 				/* stylelint-disable-next-line scales/radii */
 				border-radius: 0 0 7px 7px;
 			}
 
 			// Apply top border radius only if there's no header before children container.
 			&:first-child {
-				> *:first-child {
+				li:first-child .summary-button {
 					/* stylelint-disable-next-line scales/radii */
 					border-radius: 7px 7px 0 0;
 				}

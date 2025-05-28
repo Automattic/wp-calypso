@@ -19,9 +19,10 @@ export const SectionHeader = ( {
 	description,
 	actions,
 	decoration,
+	headingId,
+	prefix,
 	level = 2,
 	isPageHeader = false,
-	prefix,
 }: SectionHeaderProps ) => {
 	const _level = isPageHeader ? 1 : level;
 	const HeadingTag = `h${ _level }` as keyof JSX.IntrinsicElements;
@@ -43,7 +44,10 @@ export const SectionHeader = ( {
 					<span className="dashboard-section-header__decoration">{ decoration }</span>
 				) }
 				<HStack spacing={ 3 } justify="space-between" alignment="flex-start">
-					<HeadingTag className={ `dashboard-section-header__heading is-level-${ _level }` }>
+					<HeadingTag
+						className={ `dashboard-section-header__heading is-level-${ _level }` }
+						id={ headingId }
+					>
 						{ title }
 					</HeadingTag>
 					{ /* The wrapper is always needed for view transitions. */ }
