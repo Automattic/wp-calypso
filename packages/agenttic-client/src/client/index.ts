@@ -15,9 +15,9 @@ import {
 import { defaultDispatcher } from './utils/dispatcher';
 
 /**
- * Default timeout for requests (30 seconds)
+ * Default timeout for requests (2 minutes)
  */
-const DEFAULT_TIMEOUT = 30000;
+const DEFAULT_TIMEOUT = 120000;
 
 /**
  * Create an agent client instance
@@ -100,7 +100,7 @@ export function createClient( config: ClientConfig ): Client {
 			const preparedRequest = await prepareRequest(
 				params,
 				requestConfig,
-				{ isStreaming: true, streamingTimeout: 60000 },
+				{ isStreaming: true, streamingTimeout: timeout },
 				toolProvider,
 				contextProvider,
 				defaultSessionId
@@ -112,7 +112,7 @@ export function createClient( config: ClientConfig ): Client {
 				requestConfig,
 				{
 					isStreaming: true,
-					streamingTimeout: 60000,
+					streamingTimeout: timeout,
 				}
 			) ) {
 				// Process any tool calls in the update asynchronously
