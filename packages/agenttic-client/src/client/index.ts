@@ -143,9 +143,7 @@ export function createClient( config: ClientConfig ): Client {
 					status: update.status,
 					final: update.final,
 					artifact: update.artifact,
-					text: extractTextFromMessage(
-						update.status?.message || { role: 'agent', parts: [] }
-					),
+					text: update.text,
 				};
 			}
 		},
