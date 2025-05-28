@@ -6,7 +6,7 @@
 
 ## 0.2.0
 
-- `text`, `email` Edit control: add `help` support from the field `description` prop.
+- `text` Edit control: add `help` support from the field `description` prop.
 - Bring changes from `@wordpress/dataviews 4.19.0` (no updates in this version).
 - `select` Edit control: add `help` support from the field `description` prop.
 - Add new Edit controls: `checkbox`, `toggleGroup`. In the `toggleGroup`, if the field elements (options) have a `description`, then the selected option's description will be also rendered.
