@@ -3,7 +3,7 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import clsx from 'clsx';
 import emailValidator from 'email-validator';
 import { localize } from 'i18n-calypso';
-import { get, isEmpty, startsWith } from 'lodash';
+import { get, isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
@@ -68,7 +68,6 @@ class Login extends Component {
 		isJetpack: PropTypes.bool.isRequired,
 		isWhiteLogin: PropTypes.bool.isRequired,
 		isFromAkismet: PropTypes.bool,
-		isFromMigrationPlugin: PropTypes.bool,
 		isFromAutomatticForAgenciesPlugin: PropTypes.bool,
 		isManualRenewalImmediateLoginAttempt: PropTypes.bool,
 		linkingSocialService: PropTypes.string,
@@ -599,7 +598,6 @@ class Login extends Component {
 			action,
 			currentQuery,
 			fromSite,
-			isFromMigrationPlugin,
 			isGravPoweredClient,
 			isGravPoweredLoginPage,
 			isManualRenewalImmediateLoginAttempt,
@@ -635,7 +633,6 @@ class Login extends Component {
 						currentQuery={ currentQuery }
 						fromSite={ fromSite }
 						isFromAkismet={ isFromAkismet }
-						isFromMigrationPlugin={ isFromMigrationPlugin }
 						isFromAutomatticForAgenciesPlugin={ isFromAutomatticForAgenciesPlugin }
 						isGravPoweredClient={ isGravPoweredClient }
 						isGravPoweredLoginPage={ isGravPoweredLoginPage }
@@ -705,10 +702,6 @@ export default connect(
 		isWCCOM: getIsWCCOM( state ),
 		isWoo: getIsWoo( state ),
 		wccomFrom: getWccomFrom( state ),
-		isFromMigrationPlugin: startsWith(
-			get( getCurrentQueryArguments( state ), 'from' ),
-			'wpcom-migration'
-		),
 		currentQuery: getCurrentQueryArguments( state ),
 		initialQuery: getInitialQueryArguments( state ),
 		currentRoute: getCurrentRoute( state ),
