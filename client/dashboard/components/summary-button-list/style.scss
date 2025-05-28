@@ -8,14 +8,14 @@
 	}
 
 	&.has-density-low {
-		.dashboard-summary-button-list__children-list-item {
-			& + & {
-				margin-top: $grid-unit-30;
-			}
+		.dashboard-summary-button-list__children-list-item:not(:last-child) {
+			margin-bottom: $grid-unit-30;
 		}
 	}
 
 	&.has-density-medium {
+		overflow: hidden;
+
 		.dashboard-summary-button-list__children-list-wrapper {
 			// TODO: remove once the `CardBody` natively supports having no padding.
 			padding: 0;
