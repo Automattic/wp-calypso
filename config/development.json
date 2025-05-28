@@ -178,7 +178,6 @@
 		"signup/professional-email-step": false,
 		"signup/social": true,
 		"signup/social-first": true,
-		"simulated-geoip-header": true,
 		"site-indicator": true,
 		"site-profiler/metrics": true,
 		"sites/drive-migrations": true,
