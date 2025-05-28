@@ -9,11 +9,19 @@ import {
 	type AnyRouter,
 } from '@tanstack/react-router';
 import {
+	siteDefensiveModeQuery,
+	sitePHPVersionQuery,
+	sitePrimaryDataCenterQuery,
 	siteQuery,
 	siteSettingsQuery,
+	siteStaticFile404Query,
 	siteWordPressVersionQuery,
 } from 'calypso/dashboard/app/queries';
 import { queryClient } from 'calypso/dashboard/app/query-client';
+import { canUpdateDefensiveMode } from 'calypso/dashboard/sites/settings-defensive-mode';
+import { canUpdatePHPVersion } from 'calypso/dashboard/sites/settings-php/utils';
+import { canGetPrimaryDataCenter } from 'calypso/dashboard/sites/settings-primary-data-center';
+import { canSetStaticFile404Handling } from 'calypso/dashboard/sites/settings-static-file-404';
 import { canUpdateWordPressVersion } from 'calypso/dashboard/sites/settings-wordpress/utils';
 import Root from './root';
 
@@ -108,6 +116,74 @@ const wordpressRoute = createRoute( {
 	)
 );
 
+const phpRoute = createRoute( {
+	getParentRoute: () => siteRoute,
+	path: 'php',
+	loader: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteQuery( siteSlug ) );
+		if ( canUpdatePHPVersion( site ) ) {
+			await queryClient.ensureQueryData( sitePHPVersionQuery( siteSlug ) );
+		}
+	},
+} ).lazy( () =>
+	import( 'calypso/dashboard/sites/settings-php' ).then( ( d ) =>
+		createLazyRoute( 'php' )( {
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+		} )
+	)
+);
+
+const primaryDataCenterRoute = createRoute( {
+	getParentRoute: () => siteRoute,
+	path: 'primary-data-center',
+	loader: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteQuery( siteSlug ) );
+		if ( canGetPrimaryDataCenter( site ) ) {
+			await queryClient.ensureQueryData( sitePrimaryDataCenterQuery( siteSlug ) );
+		}
+	},
+} ).lazy( () =>
+	import( 'calypso/dashboard/sites/settings-primary-data-center' ).then( ( d ) =>
+		createLazyRoute( 'primary-data-center' )( {
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+		} )
+	)
+);
+
+const staticFile404Route = createRoute( {
+	getParentRoute: () => siteRoute,
+	path: 'static-file-404',
+	loader: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteQuery( siteSlug ) );
+		if ( canSetStaticFile404Handling( site ) ) {
+			await queryClient.ensureQueryData( siteStaticFile404Query( siteSlug ) );
+		}
+	},
+} ).lazy( () =>
+	import( 'calypso/dashboard/sites/settings-static-file-404' ).then( ( d ) =>
+		createLazyRoute( 'static-file-404' )( {
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+		} )
+	)
+);
+
+const defensiveModeRoute = createRoute( {
+	getParentRoute: () => siteRoute,
+	path: 'defensive-mode',
+	loader: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteQuery( siteSlug ) );
+		if ( canUpdateDefensiveMode( site ) ) {
+			await queryClient.ensureQueryData( siteDefensiveModeQuery( siteSlug ) );
+		}
+	},
+} ).lazy( () =>
+	import( 'calypso/dashboard/sites/settings-defensive-mode' ).then( ( d ) =>
+		createLazyRoute( 'defensive-mode' )( {
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+		} )
+	)
+);
+
 const transferSiteRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: 'transfer-site',
@@ -127,6 +203,10 @@ const createRouteTree = () =>
 			subscriptionGiftingRoute,
 			databaseRoute,
 			wordpressRoute,
+			phpRoute,
+			primaryDataCenterRoute,
+			staticFile404Route,
+			defensiveModeRoute,
 			transferSiteRoute,
 		] ),
 		dashboardSiteSettingsCompatibilityRouteRoot,
