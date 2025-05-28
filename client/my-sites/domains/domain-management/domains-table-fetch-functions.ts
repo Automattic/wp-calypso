@@ -71,3 +71,12 @@ export async function deleteBulkActionStatus(): Promise< void > {
 		method: 'DELETE',
 	} );
 }
+
+export async function fetchUserDomains(
+	queryArgs: AllDomainsQueryArgs = {}
+): Promise< AllDomainsQueryFnData > {
+	return wp.req.get( {
+		path: addQueryArgs( '/domains/list/mine', queryArgs ),
+		apiNamespace: 'wpcom/v2',
+	} );
+}

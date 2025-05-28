@@ -3,7 +3,7 @@ import { PartialDomainData } from '@automattic/data-stores';
 import {
 	DomainStatusPurchaseActions,
 	DomainsTable,
-	useUserDomainQuery,
+	useDomainsTable,
 } from '@automattic/domains-table';
 import { Global, css } from '@emotion/react';
 import { useTranslate } from 'i18n-calypso';
@@ -22,6 +22,7 @@ import {
 	createBulkAction,
 	deleteBulkActionStatus,
 	fetchAllDomains,
+	fetchUserDomains,
 	fetchBulkActionStatus,
 	fetchSite,
 	fetchSiteDomains,
@@ -527,7 +528,11 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 	};
 
 	const purchaseActions = usePurchaseActions();
-	const { domains, isFetched, isLoading } = useUserDomainQuery();
+	const domainsFetchFunction =
+		isDomainsDataViewsEnabled && config.isEnabled( 'domains/user-domains' )
+			? fetchUserDomains
+			: fetchAllDomains;
+	const { domains = [], isFetched, isLoading } = useDomainsTable( domainsFetchFunction );
 
 	const isDomainsEmpty = isFetched && domains.length === 0;
 	const buttons = ! isDomainsEmpty

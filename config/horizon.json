@@ -28,6 +28,7 @@
 		"current-site/notice": true,
 		"design-picker/use-assembler-styles": true,
 		"devdocs": false,
+		"domains/user-domains": false,
 		"global-styles/on-personal-plan": false,
 		"google-my-business": false,
 		"help": true,

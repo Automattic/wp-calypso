@@ -42,6 +42,7 @@
 		"dev/store-sandbox-helper": true,
 		"devdocs": true,
 		"devdocs/redirect-loggedout-homepage": true,
+		"domains/user-domains": false,
 		"email-accounts/enabled": true,
 		"cookie-banner": true,
 		"google-my-business": true,
