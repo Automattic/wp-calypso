@@ -55,7 +55,7 @@ function parseArgs(): CLIOptions {
 			case '--agent':
 			case '-a':
 				if ( nextArg ) {
-					options.url = DEFAULT_AGENT_BASE_URL + nextArg;
+					options.agentId = nextArg;
 					i++;
 				}
 				break;
