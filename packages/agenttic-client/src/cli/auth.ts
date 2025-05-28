@@ -1,4 +1,4 @@
-import type { AuthProvider } from '../types/index.js';
+import type { AuthProvider } from '../client/types/index';
 
 /**
  * Create an auth provider from environment variables or CLI token

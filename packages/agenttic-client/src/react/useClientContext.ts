@@ -1,6 +1,6 @@
 import { useMemo } from '@wordpress/element';
-import { logger } from '../utils/logger';
-import type { ClientContext, ContextProvider } from '../types/index';
+import { logger } from '../client/utils/logger';
+import type { ClientContext, ContextProvider } from '../client/types/index';
 
 /**
  * Callback function type for getting client context

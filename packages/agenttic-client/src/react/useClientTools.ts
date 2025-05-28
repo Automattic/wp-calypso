@@ -1,6 +1,10 @@
 import { useCallback, useMemo } from '@wordpress/element';
-import { logger } from '../utils/logger';
-import type { Tool, ToolProvider, ToolResultDataPart } from '../types/index';
+import { logger } from '../client/utils/logger';
+import type {
+	Tool,
+	ToolProvider,
+	ToolResultDataPart,
+} from '../client/types/index';
 
 /**
  * Callback function type for getting tools

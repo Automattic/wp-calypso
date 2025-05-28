@@ -1,6 +1,6 @@
 import { useCallback, useRef, useState } from '@wordpress/element';
 import { createClient } from '../client/index';
-import { createTextMessage } from '../utils/index';
+import { createTextMessage } from '../client/utils/index';
 import type {
 	Client,
 	ClientConfig,
@@ -8,7 +8,7 @@ import type {
 	SendMessageParams,
 	Task,
 	TaskUpdate,
-} from '../types/index';
+} from '../client/types/index';
 
 /**
  * Configuration for the useAgent hook

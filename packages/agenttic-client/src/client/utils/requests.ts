@@ -8,7 +8,7 @@ import type {
 import { createSendTaskRequest } from './index';
 import { enhanceMessage } from './messages';
 import { formatObject, logger } from './logger';
-import { parseSSEStream } from '../streaming/index';
+import { parseSSEStream } from './streaming';
 import type { RequestDispatcher } from './dispatcher';
 import { defaultDispatcher } from './dispatcher';
 import {

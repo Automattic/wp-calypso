@@ -1,5 +1,9 @@
-import type { Tool, ToolProvider, ToolResultDataPart } from '../types/index';
-import { cliLog, logger } from '../utils/logger';
+import type {
+	Tool,
+	ToolProvider,
+	ToolResultDataPart,
+} from '../client/types/index';
+import { cliLog, logger } from '../client/utils/logger';
 
 /**
  * Callback type for sending tool results back to the agent

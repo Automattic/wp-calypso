@@ -4,15 +4,15 @@ import type {
 	SendMessageParams,
 	Task,
 	TaskUpdate,
-} from '../types/index';
-import { processTaskToolCalls } from '../utils/tools';
+} from './types/index';
+import { processTaskToolCalls } from './utils/tools';
 import {
 	executeRequest,
 	executeStreamingRequest,
 	prepareRequest,
 	type RequestConfig,
-} from '../utils/requests';
-import { defaultDispatcher } from '../utils/dispatcher';
+} from './utils/requests';
+import { defaultDispatcher } from './utils/dispatcher';
 
 /**
  * Default timeout for requests (30 seconds)

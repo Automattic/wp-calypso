@@ -1,12 +1,15 @@
 import { createClient } from '../client/index';
-import { createTextMessage, extractTextFromMessage } from '../utils/index';
+import {
+	createTextMessage,
+	extractTextFromMessage,
+} from '../client/utils/index';
 import { createEnvAuthProvider } from './auth';
 import { createExampleTools } from './tools';
 import { createCLIContextProvider } from './context';
 import { nodeDispatcher } from './dispatcher';
-import { cliLog } from '../utils/logger';
+import { cliLog } from '../client/utils/logger';
 import type { CLIOptions, ConversationHistoryItem } from './types';
-import type { Client } from '../types/index';
+import type { Client } from '../client/types/index';
 import chalk from 'chalk';
 
 /**

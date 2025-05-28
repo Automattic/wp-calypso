@@ -4,7 +4,7 @@
 import { config } from 'dotenv';
 config();
 
-import { cliLog, enableDebug, logger } from '../utils/logger';
+import { cliLog, enableDebug, logger } from '../client/utils/logger';
 import type { CLIOptions, InteractiveSession } from './types';
 import { createRequire } from 'module';
 import {

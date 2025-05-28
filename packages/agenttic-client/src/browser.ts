@@ -4,7 +4,10 @@
 export * from './index';
 
 // Re-export browser-specific dispatcher
-export { BrowserDispatcher, defaultDispatcher } from './utils/dispatcher';
+export {
+	BrowserDispatcher,
+	defaultDispatcher,
+} from './client/utils/dispatcher';
 
 // Re-export React hook for browser usage
 export { useAgent } from './react/useAgent';

@@ -14,7 +14,7 @@ import type {
 	ToolResultDataPart,
 } from '../types/index';
 
-import type { ConversationHistoryItem } from '../cli/types';
+import type { ConversationHistoryItem } from '../../cli/types';
 
 /**
  * Generate a random string for IDs using UUID

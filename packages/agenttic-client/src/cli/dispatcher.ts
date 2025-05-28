@@ -1,6 +1,6 @@
 import { socksDispatcher } from 'fetch-socks';
-import type { RequestDispatcher } from '../utils/dispatcher';
-import { logger } from '../utils/logger';
+import type { RequestDispatcher } from '../client/utils/dispatcher';
+import { logger } from '../client/utils/logger';
 
 /**
  * Node.js-specific dispatcher that supports SOCKS proxies

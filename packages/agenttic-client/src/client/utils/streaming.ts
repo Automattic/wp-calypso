@@ -1,5 +1,5 @@
 import type { Task, TaskUpdate } from '../types/index';
-import { logger } from '../utils/logger';
+import { logger } from './logger';
 
 /**
  * Parse a stream chunk from a server-sent events stream.

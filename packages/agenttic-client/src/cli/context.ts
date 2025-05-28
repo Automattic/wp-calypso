@@ -1,4 +1,4 @@
-import type { ClientContext, ContextProvider } from '../types/index';
+import type { ClientContext, ContextProvider } from '../client/types/index';
 import { getClientContext } from './mocks/clientContext';
 
 /**

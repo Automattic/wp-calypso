@@ -47,7 +47,7 @@ export type {
 	// Context types
 	ClientContext,
 	ContextProvider,
-} from './types/index';
+} from './client/types/index';
 
 // Utility exports
 export {
@@ -61,14 +61,14 @@ export {
 	extractToolCallsFromMessage,
 	createToolResultDataPart,
 	createContextDataPart,
-} from './utils/index';
+} from './client/utils/index';
 
 // Streaming exports
 export {
 	parseStreamChunk,
 	parseSSEStream,
 	streamToTask,
-} from './streaming/index';
+} from './client/utils/streaming';
 
 // Auth provider exports
 export { createEnvAuthProvider } from './cli/auth';
@@ -81,7 +81,7 @@ export type { SendToolResultCallback } from './cli/tools';
 export { CLIContextProvider, createCLIContextProvider } from './cli/context';
 
 // Constants
-export { A2AErrorCodes } from './types/index';
+export { A2AErrorCodes } from './client/types/index';
 
 // CLI types (for programmatic usage)
 export type {
