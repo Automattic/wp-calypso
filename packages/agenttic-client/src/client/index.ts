@@ -244,10 +244,7 @@ export function createClient( config: ClientConfig ): Client {
 			);
 
 			//Loop while there are tool calls to process, regardless of state
-			console.log(
-				'🔧 Tool calls detected:',
-				JSON.stringify( currentTask, null, 2 )
-			);
+			console.log( '🔧 Tool calls detected:' );
 			while ( currentTask.status.message && toolProvider ) {
 				const toolCalls = extractToolCallsFromMessage(
 					currentTask.status.message
@@ -359,11 +356,12 @@ export function createClient( config: ClientConfig ): Client {
 					streamingTimeout: timeout,
 				}
 			) ) {
-				// Yield the update
 				yield update;
-
-				// If this update has tool calls, handle them regardless of state
-				if ( update.status.message && toolProvider ) {
+				if (
+					update.status.state === 'input-required' &&
+					update.status.message &&
+					toolProvider
+				) {
 					const toolCalls = extractToolCallsFromMessage(
 						update.status.message
 					);
@@ -420,9 +418,6 @@ export function createClient( config: ClientConfig ): Client {
 						console.log(
 							'📤 Streaming: Sending tool result message to agent:'
 						);
-						console.log(
-							JSON.stringify( toolResultMessage, null, 2 )
-						);
 
 						// Continue the task with tool results and stream the continuation
 						const continuedTaskUpdate = await continueTask(
@@ -435,9 +430,6 @@ export function createClient( config: ClientConfig ): Client {
 
 						console.log(
 							'📥 Streaming: Agent response after tool execution:'
-						);
-						console.log(
-							JSON.stringify( continuedTaskUpdate, null, 2 )
 						);
 
 						// Yield the continued task result

@@ -104,6 +104,10 @@ export function createToolDataPart( tool: Tool ): ToolDataPart {
 export function extractToolCallsFromMessage(
 	message: Message
 ): ToolCallDataPart[] {
+	if ( ! message || ! message.parts || ! Array.isArray( message.parts ) ) {
+		return [];
+	}
+
 	return message.parts.filter(
 		( part ): part is ToolCallDataPart =>
 			part.type === 'data' &&

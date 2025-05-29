@@ -217,6 +217,60 @@ EXAMPLES:
 }
 
 /**
+ * Send a message to the agent, handling both streaming and non-streaming modes
+ * @param client      - The agent client
+ * @param message     - The message to send
+ * @param sessionId   - The session ID
+ * @param isStreaming - Whether to use streaming mode
+ * @param options     - CLI options for verbose output
+ */
+async function sendMessageToAgent(
+	client: any,
+	message: Message,
+	sessionId: string,
+	isStreaming: boolean,
+	options: CLIOptions
+): Promise< TaskUpdate & { responseShown?: boolean } > {
+	if ( isStreaming ) {
+		cliLog.info(
+			'🔄 Sending to agent (streaming mode, tools handled automatically)...'
+		);
+		let lastUpdate: TaskUpdate | null = null;
+		let hasShownResponse = false;
+
+		for await ( const update of client.sendMessageStream( {
+			message,
+			sessionId,
+		} ) ) {
+			lastUpdate = update;
+
+			// Show streaming updates in real-time
+			if ( update.text && ! hasShownResponse ) {
+				cliLog.agent( update.text );
+				hasShownResponse = true;
+			} else if ( update.text && options.verbose ) {
+				// Show subsequent updates only in verbose mode
+				cliLog.agent( `[Update] ${ update.text }` );
+			}
+		}
+
+		if ( ! lastUpdate ) {
+			throw new Error( 'No response received from streaming' );
+		}
+
+		return { ...lastUpdate, responseShown: hasShownResponse };
+	}
+
+	cliLog.info( '🔄 Sending to agent (tools handled automatically)...' );
+	const response = await client.sendMessage( {
+		message,
+		sessionId,
+	} );
+
+	return { ...response, responseShown: false };
+}
+
+/**
  * Create readline interface for interactive mode
  */
 function createReadlineInterface() {
@@ -275,24 +329,26 @@ Type 'help' for commands.
 		};
 		session.conversationMessages.push( userMessage );
 
-		cliLog.info( '🔄 Sending to agent (tools handled automatically)...' );
-		const agentResponse = await client.sendMessage( {
-			message: createTextMessageWithHistory(
+		const agentResponse = await sendMessageToAgent(
+			client,
+			createTextMessageWithHistory(
 				options.message,
 				session.conversationMessages.slice( 0, -1 )
 			),
-			sessionId: session.sessionId,
-		} );
+			session.sessionId,
+			options.stream || false,
+			options
+		);
 
 		// Add agent response to conversation
 		if ( agentResponse.status.message ) {
 			session.conversationMessages.push( agentResponse.status.message );
 		}
 
-		// Display the response text
-		if ( agentResponse.text ) {
+		// Display the response text (only if not already shown during streaming)
+		if ( agentResponse.text && ! agentResponse.responseShown ) {
 			cliLog.agent( agentResponse.text );
-		} else {
+		} else if ( ! agentResponse.text ) {
 			cliLog.info( '(No text response from agent)' );
 		}
 
@@ -345,16 +401,16 @@ Just type your message to send it to the agent.
 			};
 			session.conversationMessages.push( userMessage );
 
-			cliLog.info(
-				'🔄 Sending to agent (tools handled automatically)...'
-			);
-			const agentResponse = await client.sendMessage( {
-				message: createTextMessageWithHistory(
+			const agentResponse = await sendMessageToAgent(
+				client,
+				createTextMessageWithHistory(
 					trimmedInput,
 					session.conversationMessages.slice( 0, -1 )
 				),
-				sessionId: session.sessionId,
-			} );
+				session.sessionId,
+				options.stream || false,
+				options
+			);
 
 			// Add agent response to conversation
 			if ( agentResponse.status.message ) {
@@ -363,10 +419,10 @@ Just type your message to send it to the agent.
 				);
 			}
 
-			// Display the response text
-			if ( agentResponse.text ) {
+			// Display the response text (only if not already shown during streaming)
+			if ( agentResponse.text && ! agentResponse.responseShown ) {
 				cliLog.agent( agentResponse.text );
-			} else {
+			} else if ( ! agentResponse.text ) {
 				cliLog.info( '(No text response from agent)' );
 			}
 
