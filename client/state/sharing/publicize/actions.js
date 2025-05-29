@@ -3,14 +3,11 @@ import wpcom from 'calypso/lib/wp';
 import {
 	PUBLICIZE_CONNECTION_CREATE,
 	PUBLICIZE_CONNECTION_DELETE,
-	PUBLICIZE_CONNECTION_DELETE_FAILURE,
 	PUBLICIZE_CONNECTION_RECEIVE,
 	PUBLICIZE_CONNECTION_UPDATE,
-	PUBLICIZE_CONNECTION_UPDATE_FAILURE,
 	PUBLICIZE_CONNECTIONS_RECEIVE,
 	PUBLICIZE_CONNECTIONS_REQUEST,
 	PUBLICIZE_CONNECTIONS_REQUEST_FAILURE,
-	PUBLICIZE_CONNECTIONS_REQUEST_SUCCESS,
 	PUBLICIZE_SHARE,
 	PUBLICIZE_SHARE_SUCCESS,
 	PUBLICIZE_SHARE_FAILURE,
@@ -81,10 +78,6 @@ export function fetchConnections( siteId ) {
 			.get( `/sites/${ siteId }/publicize-connections` )
 			.then( ( connections ) => {
 				dispatch( receiveConnections( siteId, connections ) );
-				dispatch( {
-					type: PUBLICIZE_CONNECTIONS_REQUEST_SUCCESS,
-					siteId,
-				} );
 			} )
 			.catch( ( error ) =>
 				dispatch( {
@@ -197,11 +190,6 @@ export function updateSiteConnection( connection, attributes ) {
 				);
 			} )
 			.catch( ( error ) => {
-				dispatch( {
-					type: PUBLICIZE_CONNECTION_UPDATE_FAILURE,
-					error: { ...error, label: connection.label },
-				} );
-
 				dispatch(
 					errorNotice(
 						translate( 'The %(service)s account was unable to be updated.', {
@@ -237,11 +225,6 @@ export function deleteSiteConnection( connection ) {
 					dispatch( deleteConnection( connection ) );
 					dispatch( deleteConnectionSuccess( connection ) );
 				}
-
-				dispatch( {
-					type: PUBLICIZE_CONNECTION_DELETE_FAILURE,
-					error: { ...error, label: connection.label },
-				} );
 
 				dispatch(
 					errorNotice(

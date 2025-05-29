@@ -2,14 +2,11 @@ import {
 	NOTICE_CREATE,
 	PUBLICIZE_CONNECTION_CREATE,
 	PUBLICIZE_CONNECTION_DELETE,
-	PUBLICIZE_CONNECTION_DELETE_FAILURE,
 	PUBLICIZE_CONNECTION_RECEIVE,
 	PUBLICIZE_CONNECTION_UPDATE,
-	PUBLICIZE_CONNECTION_UPDATE_FAILURE,
 	PUBLICIZE_CONNECTIONS_REQUEST,
 	PUBLICIZE_CONNECTIONS_RECEIVE,
 	PUBLICIZE_CONNECTIONS_REQUEST_FAILURE,
-	PUBLICIZE_CONNECTIONS_REQUEST_SUCCESS,
 } from 'calypso/state/action-types';
 import useNock from 'calypso/test-helpers/use-nock';
 import {
@@ -55,16 +52,12 @@ describe( 'actions', () => {
 
 		test( 'should dispatch receive action when request completes', () => {
 			return fetchConnections( 2916284 )( spy ).then( () => {
-				expect( spy ).toHaveBeenCalledTimes( 3 );
+				expect( spy ).toHaveBeenCalledTimes( 2 );
 
 				const action1 = spy.mock.calls[ 1 ][ 0 ];
 				expect( action1.type ).toEqual( PUBLICIZE_CONNECTIONS_RECEIVE );
 				expect( action1.siteId ).toEqual( 2916284 );
 				expect( action1.data.connections ).toEqual( [ { ID: 2, site_ID: 2916284 } ] );
-
-				const action2 = spy.mock.calls[ 2 ][ 0 ];
-				expect( action2.type ).toEqual( PUBLICIZE_CONNECTIONS_REQUEST_SUCCESS );
-				expect( action2.siteId ).toEqual( 2916284 );
 			} );
 		} );
 
@@ -176,6 +169,7 @@ describe( 'actions', () => {
 				.reply( 403, {
 					error: 'authorization_required',
 					message: 'An active access token must be used to access publicize connections.',
+					label: 'Facebook',
 				} );
 		} );
 
@@ -191,16 +185,19 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		test( 'should dispatch fail action when request fails', () => {
+		test( 'should dispatch error notice action when request fails', () => {
 			return updateSiteConnection(
 				{ ID: 2, site_ID: 77203074, label: 'Facebook' },
 				attributes
 			)( spy ).then( () => {
 				expect( spy ).toHaveBeenCalledWith( {
-					type: PUBLICIZE_CONNECTION_UPDATE_FAILURE,
-					error: expect.objectContaining( {
-						message: 'An active access token must be used to access publicize connections.',
-					} ),
+					type: NOTICE_CREATE,
+					notice: {
+						text: 'The Facebook account was unable to be updated.',
+						noticeId: 'publicize',
+						showDismiss: true,
+						status: 'is-error',
+					},
 				} );
 			} );
 		} );
@@ -218,6 +215,7 @@ describe( 'actions', () => {
 				.reply( 403, {
 					error: 'authorization_required',
 					message: 'An active access token must be used to access publicize connections.',
+					label: 'Facebook',
 				} );
 		} );
 
@@ -233,13 +231,16 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		test( 'should dispatch fail action when request fails', () => {
+		test( 'should dispatch error notice action when request fails', () => {
 			return deleteSiteConnection( { ID: 2, site_ID: 77203074 } )( spy ).then( () => {
 				expect( spy ).toHaveBeenCalledWith( {
-					type: PUBLICIZE_CONNECTION_DELETE_FAILURE,
-					error: expect.objectContaining( {
-						message: 'An active access token must be used to access publicize connections.',
-					} ),
+					type: NOTICE_CREATE,
+					notice: {
+						text: 'The Facebook account was unable to be disconnected.',
+						noticeId: 'publicize',
+						showDismiss: true,
+						status: 'is-error',
+					},
 				} );
 			} );
 		} );
