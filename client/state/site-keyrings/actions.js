@@ -4,7 +4,6 @@ import {
 	SITE_KEYRINGS_REQUEST_FAILURE,
 	SITE_KEYRINGS_REQUEST_SUCCESS,
 	SITE_KEYRINGS_SAVE_SUCCESS,
-	SITE_KEYRINGS_DELETE,
 	SITE_KEYRINGS_DELETE_SUCCESS,
 	SITE_KEYRINGS_UPDATE,
 	SITE_KEYRINGS_UPDATE_SUCCESS,
@@ -96,13 +95,6 @@ export function updateSiteKeyring( siteId, keyringId, externalUserId ) {
 
 export function deleteSiteKeyring( siteId, keyringId, externalUserId = null ) {
 	return ( dispatch ) => {
-		dispatch( {
-			type: SITE_KEYRINGS_DELETE,
-			siteId,
-			keyringId,
-			externalUserId,
-		} );
-
 		return wpcom.req
 			.post(
 				`/sites/${ siteId }/keyrings/${ keyringId }/delete`,
