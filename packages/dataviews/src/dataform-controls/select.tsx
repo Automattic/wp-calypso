@@ -34,7 +34,7 @@ export default function Select< Item >( {
 		 * - in bulk editing
 		 *
 		 */
-		{ label: __( 'Select item' ), value: '' },
+		{ label: __( 'Select item' ), value: '', disabled: true },
 		...( field?.elements ?? [] ),
 	];
 
