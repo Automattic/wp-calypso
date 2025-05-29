@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Gravatar } from '@automattic/components';
 import { useBreakpoint } from '@automattic/viewport-react';
@@ -60,7 +59,41 @@ const SubscriberName = ( { displayName, email }: { displayName: string; email: s
 	</div>
 );
 
-const useNewHelper = config.isEnabled( 'subscribers-helper-library' );
+const getSubscriptionDate = ( subscriber: Subscriber ): string => {
+	const subscribedDate = subscriber.wpcom_date_subscribed || subscriber.email_date_subscribed;
+
+	// Adding the UTC timezone to the subscribed date for proper formatting.
+	return String( subscribedDate + '+00:00' );
+};
+
+const SubscriberSince = ( {
+	subscriber,
+	siteId,
+}: {
+	subscriber: Subscriber;
+	siteId: number | null;
+} ) => {
+	const gmtOffset = useSelector( ( state ) =>
+		getSiteOption( state, siteId, 'gmt_offset' )
+	) as number;
+	const timezone = useSelector( ( state ) => getSiteOption( state, siteId, 'timezone' ) ) as string;
+
+	const subscribedDate = getSubscriptionDate( subscriber );
+	if ( ! subscribedDate ) {
+		return '';
+	}
+
+	const subscribedDateWithSiteTimezoneApplied = applySiteOffset( subscribedDate, {
+		timezone,
+		gmtOffset,
+		keepLocalTime: false,
+	} );
+	if ( ! subscribedDateWithSiteTimezoneApplied ) {
+		return '';
+	}
+
+	return <div>{ subscribedDateWithSiteTimezoneApplied.fromNow( true ) }</div>;
+};
 
 const getSubscriptionId = ( subscriber: Subscriber ): number => {
 	return Number( getSubscriptionIdFromSubscriber( subscriber ) );
@@ -68,13 +101,6 @@ const getSubscriptionId = ( subscriber: Subscriber ): number => {
 
 const getSubscriptionIdString = ( subscriber: Subscriber ): string => {
 	return String( getSubscriptionIdFromSubscriber( subscriber ) );
-};
-
-const getSubscriptionDate = ( subscriber: Subscriber ): string => {
-	if ( useNewHelper ) {
-		return subscriber.wpcom_date_subscribed || subscriber.email_date_subscribed || '';
-	}
-	return subscriber.date_subscribed || '';
 };
 
 const defaultView: ViewTable = {
@@ -111,12 +137,6 @@ export default function SubscriberDataViews( {
 	const isSimple = useSelector( ( state ) => isSimpleSite( state, siteId ) );
 	const isAtomic = useSelector( ( state ) => isAtomicSite( state, siteId ) );
 	const isStaging = useSelector( ( state ) => isSiteWpcomStaging( state, siteId ) );
-	const gmtOffset = useSelector( ( state ) =>
-		getSiteOption( state, siteId, 'gmt_offset' )
-	) as number;
-	const timezone = useSelector( ( state ) => getSiteOption( state, siteId, 'timezone' ) ) as string;
-	const adjustDate = ( date: string ) =>
-		date ? applySiteOffset( date, { timezone, gmtOffset, keepLocalTime: false } ) : undefined;
 
 	const [ searchTerm, setSearchTerm ] = useState( '' );
 	const [ filters, setFilters ] = useState< SubscribersFilterBy[] >( [ SubscribersFilterBy.All ] );
@@ -378,12 +398,9 @@ export default function SubscriberDataViews( {
 				id: 'date_subscribed',
 				label: translate( 'Since' ),
 				getValue: ( { item }: { item: Subscriber } ) => getSubscriptionDate( item ),
-				render: ( { item }: { item: Subscriber } ) => {
-					const subscribedDate = getSubscriptionDate( item );
-					const subscribedDateWithTimezoneApplied = adjustDate( subscribedDate );
-
-					return <div>{ subscribedDateWithTimezoneApplied?.fromNow( true ) }</div>;
-				},
+				render: ( { item }: { item: Subscriber } ) => (
+					<SubscriberSince subscriber={ item } siteId={ siteId } />
+				),
 				enableHiding: false,
 				enableSorting: true,
 			},
