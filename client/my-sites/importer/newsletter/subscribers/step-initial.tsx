@@ -64,7 +64,7 @@ export default function StepInitial( {
 										noWrap={ false }
 										showIcon={ false }
 										supportLink={ localizeUrl(
-											'https://wordpress.com/support/import-subscribers-to-a-newsletter/#troubleshooting-subscriber-imports'
+											'https://wordpress.com/support/import-subscribers-to-a-newsletter/#import-limits'
 										) }
 										supportPostId={ 220199 }
 									/>
