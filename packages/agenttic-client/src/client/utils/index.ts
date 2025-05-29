@@ -173,12 +173,7 @@ export {
 } from './requests';
 
 // Re-export tool utilities
-export {
-	getToolCallCount,
-	hasToolCalls,
-	processTaskToolCalls,
-	processToolCallsAsync,
-} from './tools';
+export { getToolCallCount, hasToolCalls } from './tools';
 
 // Re-export error utilities
 export {

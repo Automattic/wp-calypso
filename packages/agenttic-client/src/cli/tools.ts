@@ -20,14 +20,9 @@ interface ToolRegistry {
 }
 
 /**
- * Create a CLI tool provider with optional tool completion callback
- * @param onToolCompletion - Optional callback for handling tool completion
+ * Create a CLI tool provider with the simplified interface
  */
-export function createCLIToolProvider(
-	onToolCompletion?: (
-		toolResult: ToolResultDataPart
-	) => void | Promise< void >
-): ToolProvider & {
+export function createCLIToolProvider(): ToolProvider & {
 	registerTool: (
 		tool: Tool,
 		callback: ( args: any ) => Promise< any >
@@ -65,8 +60,6 @@ export function createCLIToolProvider(
 			}
 		},
 
-		onToolCompletion,
-
 		registerTool(
 			tool: Tool,
 			callback: ( args: any ) => Promise< any >
@@ -101,7 +94,7 @@ export function createCLIToolProvider(
 export function createExampleTools(
 	sendToolResult?: SendToolResultCallback
 ): ReturnType< typeof createCLIToolProvider > {
-	const provider = createCLIToolProvider( sendToolResult );
+	const provider = createCLIToolProvider();
 
 	provider.registerTool(
 		{

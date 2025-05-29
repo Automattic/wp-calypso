@@ -1,24 +1,156 @@
 import type {
 	Client,
 	ClientConfig,
+	DataPart,
+	Message,
 	SendMessageParams,
 	Task,
 	TaskUpdate,
+	TextPart,
+	ToolCallDataPart,
+	ToolResultDataPart,
 } from './types/index';
-import { processTaskToolCalls } from './utils/tools';
 import {
 	executeRequest,
 	executeStreamingRequest,
 	prepareRequest,
 	type RequestConfig,
 } from './utils/requests';
-import { extractTextFromMessage } from './utils/index';
+import {
+	createToolResultDataPart,
+	extractTextFromMessage,
+	extractToolCallsFromMessage,
+} from './utils/index';
 import { defaultDispatcher } from './utils/dispatcher';
 
 /**
  * Default timeout for requests (2 minutes)
  */
 const DEFAULT_TIMEOUT = 120000;
+
+/**
+ * Extract conversation history from a message's data parts
+ *
+ * @param message - The A2A message to extract conversation history from
+ * @return Array of conversation messages reconstructed from data parts
+ */
+function extractConversationHistory( message: Message ): Message[] {
+	const conversationMessages: Message[] = [];
+	let currentMessage: Partial< Message > | null = null;
+
+	for ( const part of message.parts ) {
+		if ( part.type === 'data' && part.data ) {
+			// History message parts
+			if ( 'role' in part.data && 'text' in part.data ) {
+				if (
+					currentMessage &&
+					currentMessage.role !== part.data.role
+				) {
+					// Role changed, finalize current message
+					if ( currentMessage.role && currentMessage.parts ) {
+						conversationMessages.push( currentMessage as Message );
+					}
+					currentMessage = {
+						role: part.data.role as 'user' | 'agent',
+						parts: [],
+					};
+				} else if ( ! currentMessage ) {
+					currentMessage = {
+						role: part.data.role as 'user' | 'agent',
+						parts: [],
+					};
+				}
+
+				if ( currentMessage.parts ) {
+					currentMessage.parts.push( {
+						type: 'text',
+						text: part.data.text,
+					} as TextPart );
+				}
+			}
+			// Tool call and result parts - add to current message
+			else if (
+				currentMessage &&
+				currentMessage.parts &&
+				( 'toolCallId' in part.data || 'toolId' in part.data )
+			) {
+				currentMessage.parts.push( part );
+			}
+		}
+	}
+
+	// Finalize last message
+	if ( currentMessage && currentMessage.role && currentMessage.parts ) {
+		conversationMessages.push( currentMessage as Message );
+	}
+
+	return conversationMessages;
+}
+
+/**
+ * Convert conversation history back to data parts
+ *
+ * @param conversationHistory - Array of conversation messages to convert
+ * @return Array of data parts representing the conversation history
+ */
+function conversationHistoryToDataParts(
+	conversationHistory: Message[]
+): DataPart[] {
+	const historyParts: DataPart[] = [];
+
+	for ( const message of conversationHistory ) {
+		for ( const part of message.parts ) {
+			if ( part.type === 'text' ) {
+				historyParts.push( {
+					type: 'data',
+					data: {
+						role: message.role,
+						text: ( part as TextPart ).text,
+					},
+				} );
+			} else if ( part.type === 'data' ) {
+				historyParts.push( part as DataPart );
+			}
+		}
+	}
+
+	return historyParts;
+}
+
+/**
+ * Continue an existing task with additional input
+ *
+ * @param taskId          - The task ID to continue
+ * @param message         - The message to send to continue the task
+ * @param requestConfig   - Request configuration
+ * @param toolProvider    - Tool provider for message enhancement
+ * @param contextProvider - Context provider for message enhancement
+ * @return Promise resolving to updated task
+ */
+async function continueTask(
+	taskId: string,
+	message: Message,
+	requestConfig: RequestConfig,
+	toolProvider?: any,
+	contextProvider?: any
+): Promise< Task > {
+	const continueParams = {
+		message,
+		taskId,
+		sessionId: undefined, // Use task's session
+	};
+
+	const preparedRequest = await prepareRequest(
+		continueParams,
+		requestConfig,
+		{ isStreaming: false },
+		toolProvider,
+		contextProvider,
+		undefined
+	);
+
+	return await executeRequest( preparedRequest, requestConfig );
+}
 
 /**
  * Create an agent client instance
@@ -34,18 +166,23 @@ const DEFAULT_TIMEOUT = 120000;
  *       return { result: eval(args.expression) };
  *     }
  *     throw new Error(`Unknown tool: ${toolId}`);
- *   },
- *   onToolCompletion: (toolResult) => {
- *     console.log('Tool completed:', toolResult);
- *     // Send the tool result back to the agent or handle it as needed
- *     // toolResult.data contains: { toolCallId, toolId, result }
  *   }
+ *   // Tool results are automatically sent back to agent with conversation history
  * };
  *
  * const client = createClient({
  *   agentId: 'big-sky',
  *   toolProvider
  * });
+ *
+ * // Send a message - tools are handled automatically
+ * const response = await client.sendMessage({ message, sessionId });
+ *
+ * // Handle human input requests (no tool calls in input-required state)
+ * if (response.status.state === 'input-required') {
+ *   const userInput = await promptUser(response.status.message);
+ *   const finalResponse = await client.continueTask(response.id, userInput, sessionId);
+ * }
  * ```
  *
  * @param config
@@ -75,6 +212,21 @@ export function createClient( config: ClientConfig ): Client {
 
 	return {
 		async sendMessage( params: SendMessageParams ): Promise< TaskUpdate > {
+			// Extract conversation history from the incoming message
+			const conversationHistory = extractConversationHistory(
+				params.message
+			);
+
+			// Add the initial user message to conversation history if it's not already there
+			// This ensures the original user request is preserved for tool result context
+			if (
+				conversationHistory.length === 0 ||
+				conversationHistory[ conversationHistory.length - 1 ] !==
+					params.message
+			) {
+				conversationHistory.push( params.message );
+			}
+
 			// Prepare the request
 			const preparedRequest = await prepareRequest(
 				params,
@@ -85,16 +237,83 @@ export function createClient( config: ClientConfig ): Client {
 				defaultSessionId
 			);
 
-			// Execute the request
-			const task = await executeRequest( preparedRequest, requestConfig );
+			// Execute the initial request
+			let currentTask = await executeRequest(
+				preparedRequest,
+				requestConfig
+			);
 
-			// Process any tool calls in the response asynchronously
-			await processTaskToolCalls( task, toolProvider );
+			// Loop while there are tool calls to process, regardless of state
+			while ( currentTask.status.message && toolProvider ) {
+				const toolCalls = extractToolCallsFromMessage(
+					currentTask.status.message
+				);
+				if ( toolCalls.length === 0 ) {
+					break; // No tool calls to process
+				}
+
+				// Execute all tool calls
+				const toolResults: ToolResultDataPart[] = [];
+				for ( const toolCall of toolCalls ) {
+					const {
+						toolCallId,
+						toolId,
+						arguments: args,
+					} = toolCall.data;
+
+					try {
+						const result = await toolProvider.executeTool(
+							toolId as string,
+							args
+						);
+
+						toolResults.push(
+							createToolResultDataPart(
+								toolCallId as string,
+								toolId as string,
+								result
+							)
+						);
+					} catch ( error ) {
+						toolResults.push(
+							createToolResultDataPart(
+								toolCallId as string,
+								toolId as string,
+								undefined,
+								error instanceof Error
+									? error.message
+									: String( error )
+							)
+						);
+					}
+				}
+
+				// Add current agent message to conversation history
+				conversationHistory.push( currentTask.status.message );
+
+				// Create tool result message with full conversation history
+				const historyDataParts =
+					conversationHistoryToDataParts( conversationHistory );
+
+				const toolResultMessage: Message = {
+					role: 'user',
+					parts: [ ...historyDataParts, ...toolResults ],
+				};
+
+				// Continue the same task with tool results
+				currentTask = await continueTask(
+					currentTask.id,
+					toolResultMessage,
+					requestConfig,
+					toolProvider,
+					contextProvider
+				);
+			}
 
 			return {
-				...task,
+				...currentTask,
 				text: extractTextFromMessage(
-					task.status?.message || { role: 'agent', parts: [] }
+					currentTask.status?.message || { role: 'agent', parts: [] }
 				),
 			};
 		},
@@ -102,6 +321,21 @@ export function createClient( config: ClientConfig ): Client {
 		async *sendMessageStream(
 			params: SendMessageParams
 		): AsyncIterable< TaskUpdate > {
+			// Extract conversation history from the incoming message
+			const conversationHistory = extractConversationHistory(
+				params.message
+			);
+
+			// Add the initial user message to conversation history if it's not already there
+			// This ensures the original user request is preserved for tool result context
+			if (
+				conversationHistory.length === 0 ||
+				conversationHistory[ conversationHistory.length - 1 ] !==
+					params.message
+			) {
+				conversationHistory.push( params.message );
+			}
+
 			// Prepare the request
 			const preparedRequest = await prepareRequest(
 				params,
@@ -112,7 +346,7 @@ export function createClient( config: ClientConfig ): Client {
 				defaultSessionId
 			);
 
-			// Execute the streaming request and process tool calls for each update
+			// Execute the streaming request
 			for await ( const update of executeStreamingRequest(
 				preparedRequest,
 				requestConfig,
@@ -121,19 +355,191 @@ export function createClient( config: ClientConfig ): Client {
 					streamingTimeout: timeout,
 				}
 			) ) {
-				// Process any tool calls in the update asynchronously
-				if ( update.status?.message ) {
-					await processTaskToolCalls(
-						{
-							id: update.id,
-							status: update.status,
-						},
-						toolProvider
+				// Yield the update
+				yield update;
+
+				// If this update has tool calls, handle them regardless of state
+				if ( update.status.message && toolProvider ) {
+					const toolCalls = extractToolCallsFromMessage(
+						update.status.message
 					);
+					if ( toolCalls.length > 0 ) {
+						// Execute all tool calls
+						const toolResults: ToolResultDataPart[] = [];
+						for ( const toolCall of toolCalls ) {
+							const {
+								toolCallId,
+								toolId,
+								arguments: args,
+							} = toolCall.data;
+							try {
+								const result = await toolProvider.executeTool(
+									toolId as string,
+									args
+								);
+
+								toolResults.push(
+									createToolResultDataPart(
+										toolCallId as string,
+										toolId as string,
+										result
+									)
+								);
+							} catch ( error ) {
+								toolResults.push(
+									createToolResultDataPart(
+										toolCallId as string,
+										toolId as string,
+										undefined,
+										error instanceof Error
+											? error.message
+											: String( error )
+									)
+								);
+							}
+						}
+
+						// Add current agent message to conversation history
+						conversationHistory.push( update.status.message );
+
+						// Create tool result message with full conversation history
+						const toolResultMessage: Message = {
+							role: 'user',
+							parts: [
+								...conversationHistoryToDataParts(
+									conversationHistory
+								),
+								...toolResults,
+							],
+						};
+
+						console.log(
+							'📤 Streaming: Sending tool result message to agent:'
+						);
+						console.log(
+							JSON.stringify( toolResultMessage, null, 2 )
+						);
+
+						// Continue the task with tool results and stream the continuation
+						const continuedTaskUpdate = await continueTask(
+							update.id,
+							toolResultMessage,
+							requestConfig,
+							toolProvider,
+							contextProvider
+						);
+
+						console.log(
+							'📥 Streaming: Agent response after tool execution:'
+						);
+						console.log(
+							JSON.stringify( continuedTaskUpdate, null, 2 )
+						);
+
+						// Yield the continued task result
+						yield {
+							...continuedTaskUpdate,
+							text: extractTextFromMessage(
+								continuedTaskUpdate.status?.message || {
+									role: 'agent',
+									parts: [],
+								}
+							),
+						};
+					}
+				}
+			}
+		},
+
+		async continueTask(
+			taskId: string,
+			userInput: string,
+			sessionId?: string
+		): Promise< TaskUpdate > {
+			// Create a simple text message for user input
+			const userMessage: Message = {
+				role: 'user',
+				parts: [ { type: 'text', text: userInput } ],
+			};
+
+			// Continue the task with user input
+			const continuedTask = await continueTask(
+				taskId,
+				userMessage,
+				requestConfig,
+				toolProvider,
+				contextProvider
+			);
+
+			// Process any tool calls in the continued response
+			let currentTask = continuedTask;
+			while (
+				currentTask.status.state === 'input-required' &&
+				currentTask.status.message &&
+				toolProvider
+			) {
+				const toolCalls = extractToolCallsFromMessage(
+					currentTask.status.message
+				);
+				if ( toolCalls.length === 0 ) {
+					break; // No tool calls, likely human input required again
 				}
 
-				yield update;
+				// Execute tool calls (same logic as sendMessage)
+				const toolResults: ToolResultDataPart[] = [];
+				for ( const toolCall of toolCalls ) {
+					const {
+						toolCallId,
+						toolId,
+						arguments: args,
+					} = toolCall.data;
+					try {
+						const result = await toolProvider.executeTool(
+							toolId as string,
+							args
+						);
+						toolResults.push(
+							createToolResultDataPart(
+								toolCallId as string,
+								toolId as string,
+								result
+							)
+						);
+					} catch ( error ) {
+						toolResults.push(
+							createToolResultDataPart(
+								toolCallId as string,
+								toolId as string,
+								undefined,
+								error instanceof Error
+									? error.message
+									: String( error )
+							)
+						);
+					}
+				}
+
+				// Continue with tool results
+				const toolResultMessage: Message = {
+					role: 'user',
+					parts: toolResults,
+				};
+
+				currentTask = await continueTask(
+					currentTask.id,
+					toolResultMessage,
+					requestConfig,
+					toolProvider,
+					contextProvider
+				);
 			}
+
+			return {
+				...currentTask,
+				text: extractTextFromMessage(
+					currentTask.status?.message || { role: 'agent', parts: [] }
+				),
+			};
 		},
 
 		async getTask( taskId: string ): Promise< Task > {

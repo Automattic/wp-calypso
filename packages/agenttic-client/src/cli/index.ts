@@ -274,6 +274,8 @@ Type 'help' for commands.
 			parts: [ { type: 'text', text: options.message } ],
 		};
 		session.conversationMessages.push( userMessage );
+
+		cliLog.info( '🔄 Sending to agent (tools handled automatically)...' );
 		const agentResponse = await client.sendMessage( {
 			message: createTextMessageWithHistory(
 				options.message,
@@ -290,9 +292,16 @@ Type 'help' for commands.
 		// Display the response text
 		if ( agentResponse.text ) {
 			cliLog.agent( agentResponse.text );
+		} else {
+			cliLog.info( '(No text response from agent)' );
 		}
 
-		// Add spacing before interactive prompt
+		// Debug: show task state if verbose
+		if ( options.verbose ) {
+			cliLog.system(
+				`📊 Task completed with state: ${ agentResponse.status.state }`
+			);
+		}
 	}
 
 	const askQuestion = (): Promise< string > => {
@@ -335,15 +344,9 @@ Just type your message to send it to the agent.
 				parts: [ { type: 'text', text: trimmedInput } ],
 			};
 			session.conversationMessages.push( userMessage );
+
 			cliLog.info(
-				JSON.stringify(
-					createTextMessageWithHistory(
-						trimmedInput,
-						session.conversationMessages.slice( 0, -1 )
-					),
-					null,
-					2
-				)
+				'🔄 Sending to agent (tools handled automatically)...'
 			);
 			const agentResponse = await client.sendMessage( {
 				message: createTextMessageWithHistory(
@@ -363,9 +366,16 @@ Just type your message to send it to the agent.
 			// Display the response text
 			if ( agentResponse.text ) {
 				cliLog.agent( agentResponse.text );
+			} else {
+				cliLog.info( '(No text response from agent)' );
 			}
 
-			// Add spacing between exchanges
+			// Debug: show task state if verbose
+			if ( options.verbose ) {
+				cliLog.system(
+					`📊 Task completed with state: ${ agentResponse.status.state }`
+				);
+			}
 		}
 	} finally {
 		rl.close();

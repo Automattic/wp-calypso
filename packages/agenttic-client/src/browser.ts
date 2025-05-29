@@ -23,5 +23,5 @@ export type { GetClientContextCallback } from './react/useClientContext';
 export { useClientTools } from './react/useClientTools';
 export type {
 	GetClientToolsCallback,
-	OnToolCompletionCallback,
+	ExecuteToolCallback,
 } from './react/useClientTools';

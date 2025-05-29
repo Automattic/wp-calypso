@@ -1,10 +1,6 @@
 import { useCallback, useMemo } from '@wordpress/element';
 import { logger } from '../client/utils/logger';
-import type {
-	Tool,
-	ToolProvider,
-	ToolResultDataPart,
-} from '../client/types/index';
+import type { Tool, ToolProvider } from '../client/types/index';
 
 /**
  * Callback function type for getting tools
@@ -20,29 +16,20 @@ export type ExecuteToolCallback = (
 ) => Promise< any >;
 
 /**
- * Callback function type for handling tool completion
- */
-export type OnToolCompletionCallback = (
-	toolResult: ToolResultDataPart
-) => void | Promise< void >;
-
-/**
  * React hook that creates a ToolProvider
  *
- * This hook takes separate callback functions for getting tools, executing tools,
- * and handling tool completion. It wraps them in the ToolProvider interface
- * expected by the agenttic client. The callbacks are called fresh each time,
- * ensuring dynamic tool availability and execution.
+ * This hook takes separate callback functions for getting tools and executing tools.
+ * It wraps them in the ToolProvider interface expected by the agenttic client.
+ * The callbacks are called fresh each time, ensuring dynamic tool availability and execution.
+ * Tool results are automatically handled by the A2A client.
  *
- * @param getClientTools   - Function that returns available tools as an array of Tool objects
- * @param executeTool      - Function that executes a tool with the arguments returned by the agent
- * @param onToolCompletion - Optional callback for handling tool completion results
+ * @param getClientTools - Function that returns available tools as an array of Tool objects
+ * @param executeTool    - Function that executes a tool with the arguments returned by the agent
  * @return ToolProvider instance or undefined if no getClientTools callback provided
  */
 export function useClientTools(
 	getClientTools?: GetClientToolsCallback,
-	executeTool?: ExecuteToolCallback,
-	onToolCompletion?: OnToolCompletionCallback
+	executeTool?: ExecuteToolCallback
 ): ToolProvider | undefined {
 	const stableGetAvailableTools = useCallback( async (): Promise<
 		Tool[]
@@ -75,29 +62,6 @@ export function useClientTools(
 		[ executeTool ]
 	);
 
-	// Create stable onToolCompletion callback
-	const stableOnToolCompletion = useCallback(
-		( toolResult: ToolResultDataPart ) => {
-			if ( onToolCompletion ) {
-				try {
-					const result = onToolCompletion( toolResult );
-					// Handle async callbacks
-					if ( result && typeof result.then === 'function' ) {
-						result.catch( ( error ) => {
-							logger(
-								'Error in onToolCompletion callback: %O',
-								error
-							);
-						} );
-					}
-				} catch ( error ) {
-					logger( 'Error in onToolCompletion callback: %O', error );
-				}
-			}
-		},
-		[ onToolCompletion ]
-	);
-
 	// Create the ToolProvider instance
 	const toolProvider = useMemo( (): ToolProvider | undefined => {
 		if ( ! getClientTools ) {
@@ -107,17 +71,8 @@ export function useClientTools(
 		return {
 			getAvailableTools: stableGetAvailableTools,
 			executeTool: stableExecuteTool,
-			onToolCompletion: onToolCompletion
-				? stableOnToolCompletion
-				: undefined,
 		};
-	}, [
-		stableGetAvailableTools,
-		stableExecuteTool,
-		stableOnToolCompletion,
-		getClientTools,
-		onToolCompletion,
-	] );
+	}, [ stableGetAvailableTools, stableExecuteTool, getClientTools ] );
 
 	return toolProvider;
 }

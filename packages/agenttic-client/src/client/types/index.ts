@@ -199,6 +199,14 @@ export interface TaskUpdate {
 export interface Client {
 	sendMessage( params: SendMessageParams ): Promise< TaskUpdate >;
 	sendMessageStream( params: SendMessageParams ): AsyncIterable< TaskUpdate >;
+
+	// Continue an existing task (useful for human input after input-required state)
+	continueTask(
+		taskId: string,
+		userInput: string,
+		sessionId?: string
+	): Promise< TaskUpdate >;
+
 	getTask( taskId: string ): Promise< Task >;
 	cancelTask( taskId: string ): Promise< void >;
 }
@@ -218,9 +226,6 @@ export interface Tool {
 export interface ToolProvider {
 	getAvailableTools(): Promise< Tool[] >;
 	executeTool( toolId: string, args: any ): Promise< any >;
-	onToolCompletion?: (
-		toolResult: ToolResultDataPart
-	) => void | Promise< void >;
 }
 
 export interface ToolCallResult {
