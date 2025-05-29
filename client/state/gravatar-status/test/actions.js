@@ -1,7 +1,4 @@
-import {
-	GRAVATAR_RECEIVE_IMAGE_FAILURE,
-	GRAVATAR_UPLOAD_REQUEST,
-} from 'calypso/state/action-types';
+import { GRAVATAR_UPLOAD_REQUEST } from 'calypso/state/action-types';
 import { receiveGravatarImageFailed, uploadGravatar } from '../actions';
 
 const dispatch = jest.fn();
@@ -24,11 +21,51 @@ describe( 'actions', () => {
 				errorMessage,
 				statName,
 			} )( dispatch );
-			expect( dispatch ).toHaveBeenCalledWith( {
-				type: GRAVATAR_RECEIVE_IMAGE_FAILURE,
-				errorMessage,
-				meta: expect.any( Object ),
-			} );
+			expect( dispatch ).toHaveBeenCalledWith(
+				expect.objectContaining( {
+					type: 'ANALYTICS_EVENT_RECORD',
+					meta: {
+						analytics: [
+							{
+								type: 'ANALYTICS_EVENT_RECORD',
+								payload: {
+									name: 'calypso_edit_gravatar_file_receive_failure',
+									service: 'tracks',
+								},
+							},
+						],
+					},
+				} )
+			);
+
+			expect( dispatch ).toHaveBeenCalledWith(
+				expect.objectContaining( {
+					type: 'ANALYTICS_STAT_BUMP',
+					meta: {
+						analytics: [
+							{
+								type: 'ANALYTICS_STAT_BUMP',
+								payload: {
+									group: 'calypso_gravatar_update_error',
+									name: 'statName',
+								},
+							},
+						],
+					},
+				} )
+			);
+
+			expect( dispatch ).toHaveBeenCalledWith(
+				expect.objectContaining( {
+					type: 'NOTICE_CREATE',
+					notice: {
+						text: errorMessage,
+						status: 'is-error',
+						noticeId: 'gravatar-upload',
+						showDismiss: true,
+					},
+				} )
+			);
 		} );
 	} );
 } );

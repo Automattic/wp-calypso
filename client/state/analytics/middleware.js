@@ -15,7 +15,6 @@ import {
 	ANALYTICS_TRACKING_ON,
 	ANALYTICS_TRACKS_OPT_OUT,
 	ANALYTICS_MULTI_TRACK,
-	GRAVATAR_RECEIVE_IMAGE_FAILURE,
 } from 'calypso/state/action-types';
 
 const eventServices = {
@@ -74,7 +73,6 @@ export const analyticsMiddleware = () => ( next ) => ( action ) => {
 			dispatcher( action );
 			break;
 
-		case GRAVATAR_RECEIVE_IMAGE_FAILURE:
 		default:
 			if ( action.meta?.analytics ) {
 				dispatcher( action );
