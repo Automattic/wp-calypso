@@ -27,6 +27,7 @@ import {
 	sitePHPVersionQuery,
 	sitePrimaryDataCenterQuery,
 	siteDefensiveModeQuery,
+	agencyBlogQuery,
 } from './queries';
 import { queryClient } from './query-client';
 import Root from './root';
@@ -211,7 +212,10 @@ const siteSettingsAgencyFullyManagedRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: 'settings/agency-fully-managed',
 	loader: async ( { params: { siteSlug } } ) => {
-		queryClient.ensureQueryData( siteSettingsQuery( siteSlug ) );
+		const site = await queryClient.ensureQueryData( siteQuery( siteSlug ) );
+		if ( site.is_wpcom_atomic ) {
+			await queryClient.ensureQueryData( agencyBlogQuery( site.ID ) );
+		}
 	},
 } ).lazy( () =>
 	import( '../sites/settings-agency-fully-managed' ).then( ( d ) =>
