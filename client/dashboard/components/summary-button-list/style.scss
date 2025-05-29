@@ -19,24 +19,27 @@
 			padding: 0;
 		}
 
+		// Inherit the card border radius all the way to the each child button.
+		// TODO: once the component uses React context, we should use that
+		// to let the summary button component know the appropriate border
+		// radius inheritance behavior.
+		.dashboard-summary-button-list__children-list,
+		.dashboard-summary-button-list__children-list-item {
+			border-radius: inherit;
+		}
+
+		.dashboard-summary-button-list__children-list-item:first-child > * {
+			border-top-left-radius: inherit;
+			border-top-right-radius: inherit;
+		}
+
 		.dashboard-summary-button-list__children-list-item:last-child > * {
 			// TODO: once the component uses React context, we should use that
 			// to let the correct summary button component know that it's
 			// the last child, and should not have a bottom border.
 			border-bottom: none;
-
-			&:hover:not(:focus-visible) {
-				/* stylelint-disable-next-line scales/radii */
-				border-radius: 0 0 7px 7px;
-			}
-		}
-
-		// Only apply top border-radius when there's no header on hover and when focus is not visible.
-		&:not(:has(.components-card__header)) {
-			.dashboard-summary-button-list__children-list-item:first-child > *:hover:not(:focus-visible) {
-				/* stylelint-disable-next-line scales/radii */
-				border-radius: 7px 7px 0 0;
-			}
+			border-bottom-left-radius: inherit;
+			border-bottom-right-radius: inherit;
 		}
 	}
 }
