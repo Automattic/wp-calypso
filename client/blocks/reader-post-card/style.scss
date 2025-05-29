@@ -8,7 +8,9 @@
 }
 
 .reader-post-options-menu__popover .popover__menu .popover__menu-item {
+	align-items: center;
 	display: flex;
+	gap: 8px;
 
 	&.follow-button:hover,
 	&.follow-button:focus {
