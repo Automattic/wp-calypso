@@ -22,10 +22,15 @@ const [ , persistPromise ] = persistQueryClient( {
 	buster: '2', // Bump when query data shape changes.
 	maxAge,
 	dehydrateOptions: {
-		shouldDehydrateQuery: ( { queryKey } ) => {
+		shouldDehydrateQuery: ( { queryKey, meta } ) => {
 			if ( TWO_STEP_QUERY_KEY === queryKey ) {
 				return false;
 			}
+
+			if ( meta?.persist === false ) {
+				return false;
+			}
+
 			return true;
 		},
 	},
