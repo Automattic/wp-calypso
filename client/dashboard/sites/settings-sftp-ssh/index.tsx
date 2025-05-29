@@ -15,16 +15,16 @@ import { canUseSftp, canUseSsh } from './utils';
 export default function SftpSshSettings( { siteSlug }: { siteSlug: string } ) {
 	const { data: site } = useQuery( siteQuery( siteSlug ) );
 	const { data: sftpUsers } = useQuery( {
-		...siteSftpUsersQuery( site.slug ),
-		enabled: canUseSftp( site ),
+		...siteSftpUsersQuery( siteSlug ),
+		enabled: site && canUseSftp( site ),
 	} );
 
 	const { data: sshAccessStatus } = useQuery( {
-		...siteSshAccessStatusQuery( site.slug ),
-		enabled: canUseSsh( site ),
+		...siteSshAccessStatusQuery( siteSlug ),
+		enabled: site && canUseSsh( site ),
 	} );
 
-	const sftpEnabled = sftpUsers?.length > 0;
+	const sftpEnabled = sftpUsers && sftpUsers.length > 0;
 
 	if ( ! site ) {
 		return null;

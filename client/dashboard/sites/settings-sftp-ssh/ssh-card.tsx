@@ -89,9 +89,8 @@ export default function SshCard( {
 									"SSH lets you access your site's backend via a terminal, so you can manage files and use <wpCliLink>WP-CLI</wpCliLink> for quick changes and troubleshooting. <learnMoreLink>Learn more</learnMoreLink>."
 								),
 								{
-									// @ts-expect-error children prop is injected by createInterpolateElement
-									wpCliLink: <ExternalLink href="#" />,
-									learnMoreLink: <ExternalLink href="#hosting-connect-to-ssh" />,
+									wpCliLink: <ExternalLink href="#" children={ null } />,
+									learnMoreLink: <ExternalLink href="#hosting-connect-to-ssh" children={ null } />,
 								}
 							) }
 						</Text>
@@ -111,7 +110,6 @@ export default function SshCard( {
 									value={ `ssh ${ username }@ssh.wp.com` }
 									readOnly
 									__next40pxDefaultSize
-									__nextHasNoMarginBottom
 								/>
 
 								{ siteSshKeys && siteSshKeys.length > 0 && (

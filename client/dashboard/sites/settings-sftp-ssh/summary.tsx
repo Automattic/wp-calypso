@@ -18,7 +18,7 @@ export default function SftpSshSettingsSummary( { site }: { site: Site } ) {
 		enabled: canUseSsh( site ),
 	} );
 
-	const sftpEnabled = sftpUsers?.length > 0;
+	const sftpEnabled = sftpUsers && sftpUsers.length > 0;
 
 	const sshEnabled = sshAccessStatus?.setting === 'ssh';
 
@@ -31,7 +31,7 @@ export default function SftpSshSettingsSummary( { site }: { site: Site } ) {
 			text: sshEnabled ? __( 'SSH enabled' ) : __( 'SSH disabled' ),
 			intent: sshEnabled ? ( 'success' as const ) : undefined,
 		},
-	].filter( Boolean );
+	].filter( ( badge ) => !! badge );
 
 	return (
 		<RouterLinkSummaryButton

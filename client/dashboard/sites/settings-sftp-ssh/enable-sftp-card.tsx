@@ -69,9 +69,8 @@ export default function EnableSftpCard( {
 										'For more information see <supportLink>SFTP on WordPress.com</supportLink>.'
 								),
 								{
-									// @ts-expect-error children prop is injected by createInterpolateElement
-									filezillaLink: <ExternalLink icon target="_blank" href={ FILEZILLA_URL } />,
-									supportLink: <ExternalLink href="#hosting-sftp" />,
+									filezillaLink: <ExternalLink href={ FILEZILLA_URL } children={ null } />,
+									supportLink: <ExternalLink href="#hosting-sftp" children={ null } />,
 								}
 							) }
 						</PanelBody>
@@ -82,7 +81,7 @@ export default function EnableSftpCard( {
 										'SSH stands for Secure Shell. It’s a way to perform advanced operations on your site using the command line. For more information see <supportLink>Connect to SSH on WordPress.com</supportLink>.'
 									),
 									{
-										supportLink: <ExternalLink href="#hosting-connect-to-ssh" />,
+										supportLink: <ExternalLink href="#hosting-connect-to-ssh" children={ null } />,
 									}
 								) }
 							</PanelBody>

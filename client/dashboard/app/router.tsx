@@ -322,7 +322,7 @@ const siteSettingsSftpSshRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: 'settings/sftp-ssh',
 	loader: async ( { params: { siteSlug } } ) => {
-		const site = await queryClient.ensureQueryData( siteSettingsQuery( siteSlug ) );
+		const site = await queryClient.ensureQueryData( siteQuery( siteSlug ) );
 		if ( canUseSftp( site ) ) {
 			await queryClient.ensureQueryData( siteSftpUsersQuery( siteSlug ) );
 		}

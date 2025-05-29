@@ -226,7 +226,7 @@ export interface SiteTransferConfirmation {
 	transfer: boolean;
 	email_sent: boolean;
 	new_owner_email: string;
-};
+}
 
 export type SiteResetContentSummary = {
 	post_count: number;

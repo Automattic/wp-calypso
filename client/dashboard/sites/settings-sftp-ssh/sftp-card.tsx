@@ -22,12 +22,12 @@ const SFTP_PORT = '22';
 
 export default function SftpCard( {
 	siteSlug,
-	sftpUsers,
+	sftpUsers = [],
 }: {
 	siteSlug: string;
 	sftpUsers: SftpUser[];
 } ) {
-	const { username, password } = sftpUsers[ 0 ];
+	const { username, password } = sftpUsers[ 0 ] ?? {};
 	const mutation = useMutation( siteSftpUsersResetPasswordMutation( siteSlug ) );
 	const { createErrorNotice } = useDispatch( noticesStore );
 
@@ -60,8 +60,7 @@ export default function SftpCard( {
 									'Use the credentials below to access and edit your website files using an SFTP client. <link>Learn more</link>.'
 								),
 								{
-									// @ts-expect-error children prop is injected by createInterpolateElement
-									link: <ExternalLink href="#" />,
+									link: <ExternalLink href="#" children={ null } />,
 								}
 							) }
 						</Text>
@@ -72,21 +71,18 @@ export default function SftpCard( {
 							value={ SFTP_URL }
 							readOnly
 							__next40pxDefaultSize
-							__nextHasNoMarginBottom
 						/>
 						<ClipboardInputControl
 							label={ __( 'Port' ) }
 							value={ SFTP_PORT }
 							readOnly
 							__next40pxDefaultSize
-							__nextHasNoMarginBottom
 						/>
 						<ClipboardInputControl
 							label={ __( 'Username' ) }
 							value={ username }
 							readOnly
 							__next40pxDefaultSize
-							__nextHasNoMarginBottom
 						/>
 						{ password ? (
 							<ClipboardInputControl
@@ -97,13 +93,13 @@ export default function SftpCard( {
 								) }
 								readOnly
 								__next40pxDefaultSize
-								__nextHasNoMarginBottom
 							/>
 						) : (
 							<BaseControl
 								label={ __( 'Password' ) }
 								help={ __( 'To maintain security, you must reset your password to view it.' ) }
 								__nextHasNoMarginBottom
+								children={ null }
 							/>
 						) }
 						{ ! password && (
