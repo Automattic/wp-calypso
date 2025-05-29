@@ -243,7 +243,11 @@ export function createClient( config: ClientConfig ): Client {
 				requestConfig
 			);
 
-			// Loop while there are tool calls to process, regardless of state
+			//Loop while there are tool calls to process, regardless of state
+			console.log(
+				'🔧 Tool calls detected:',
+				JSON.stringify( currentTask, null, 2 )
+			);
 			while ( currentTask.status.message && toolProvider ) {
 				const toolCalls = extractToolCallsFromMessage(
 					currentTask.status.message
