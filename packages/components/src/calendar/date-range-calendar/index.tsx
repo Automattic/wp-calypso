@@ -8,41 +8,17 @@ import { useControlledValue } from '../utils/use-controlled-value';
 import { useLocalizationProps } from '../utils/use-localization-props';
 import type { DateRangeCalendarProps, DateRange } from '../types';
 
-/**
- * `DateRangeCalendar` is a React component that provides a customizable calendar
- * interface for **date range** selection.
- *
- * The component is built with accessibility in mind and follows ARIA best
- * practices for calendar widgets. It provides keyboard navigation, screen reader
- * support, and customizable labels for internationalization.
- */
-export const DateRangeCalendar = ( {
-	defaultSelected,
-	selected: selectedProp,
-	onSelect,
-	numberOfMonths = 1,
+export function usePreviewRange( {
+	selected,
+	hoveredDate,
 	excludeDisabled,
 	min,
 	max,
-	locale = enUS,
-	timeZone,
-	...props
-}: DateRangeCalendarProps ) => {
-	const localizationProps = useLocalizationProps( { locale, timeZone, mode: 'range' } );
-
-	const [ selected, setSelected ] = useControlledValue< DateRange | undefined >( {
-		defaultValue: defaultSelected,
-		value: selectedProp,
-		onChange: onSelect,
-	} );
-
-	const [ hoveredDate, setHoveredDate ] = useState< Date | undefined >( undefined );
-	// Compute the preview range for hover effect
-	const previewRange = useMemo( () => {
-		// Range preview is disabled when:
-		// - min, max, excludeDisabled props are used (as the logic to handle
-		//   these cases is complex and hasn't been implemented yet);
-		// - or when there is no hovered date or selected range.
+	disabled,
+}: Pick< DateRangeCalendarProps, 'selected' | 'excludeDisabled' | 'min' | 'max' | 'disabled' > & {
+	hoveredDate: Date | undefined;
+} ) {
+	return useMemo( () => {
 		if ( ! hoveredDate || ! selected?.from ) {
 			return;
 		}
@@ -88,6 +64,7 @@ export const DateRangeCalendar = ( {
 
 		if (
 			min !== undefined &&
+			min > 0 &&
 			potentialNewRange &&
 			differenceInCalendarDays( potentialNewRange.to, potentialNewRange.from ) < min
 		) {
@@ -99,6 +76,7 @@ export const DateRangeCalendar = ( {
 
 		if (
 			max !== undefined &&
+			max > 0 &&
 			potentialNewRange &&
 			differenceInCalendarDays( potentialNewRange.to, potentialNewRange.from ) > max
 		) {
@@ -110,9 +88,9 @@ export const DateRangeCalendar = ( {
 
 		if (
 			excludeDisabled &&
-			props.disabled &&
+			disabled &&
 			potentialNewRange &&
-			rangeContainsModifiers( potentialNewRange, props.disabled )
+			rangeContainsModifiers( potentialNewRange, disabled )
 		) {
 			previewHighlight = {
 				from: hoveredDate,
@@ -121,7 +99,49 @@ export const DateRangeCalendar = ( {
 		}
 
 		return previewHighlight;
-	}, [ selected, hoveredDate, excludeDisabled, min, max, props.disabled ] );
+	}, [ selected, hoveredDate, excludeDisabled, min, max, disabled ] );
+}
+
+/**
+ * `DateRangeCalendar` is a React component that provides a customizable calendar
+ * interface for **date range** selection.
+ *
+ * The component is built with accessibility in mind and follows ARIA best
+ * practices for calendar widgets. It provides keyboard navigation, screen reader
+ * support, and customizable labels for internationalization.
+ */
+export const DateRangeCalendar = ( {
+	defaultSelected,
+	selected: selectedProp,
+	onSelect,
+	numberOfMonths = 1,
+	excludeDisabled,
+	min,
+	max,
+	disabled,
+	locale = enUS,
+	timeZone,
+	...props
+}: DateRangeCalendarProps ) => {
+	const localizationProps = useLocalizationProps( { locale, timeZone, mode: 'range' } );
+
+	const [ selected, setSelected ] = useControlledValue< DateRange | undefined >( {
+		defaultValue: defaultSelected,
+		value: selectedProp,
+		onChange: onSelect,
+	} );
+
+	const [ hoveredDate, setHoveredDate ] = useState< Date | undefined >( undefined );
+
+	// Compute the preview range for hover effect
+	const previewRange = usePreviewRange( {
+		selected,
+		hoveredDate,
+		excludeDisabled,
+		min,
+		max,
+		disabled,
+	} );
 
 	const modifiers = useMemo( () => {
 		return {
@@ -138,6 +158,7 @@ export const DateRangeCalendar = ( {
 			{ ...props }
 			mode="range"
 			numberOfMonths={ clampNumberOfMonths( numberOfMonths ) }
+			disabled={ disabled }
 			excludeDisabled={ excludeDisabled }
 			min={ min }
 			max={ max }
