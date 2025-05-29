@@ -474,6 +474,7 @@ class DomainRegistrationSuggestion extends Component {
 				isFeatured={ isFeatured }
 				showStrikedOutPrice={ showStrikedOutPrice }
 				hideMatchReasons={ hideMatchReasons }
+				translate={ this.props.translate }
 			>
 				{ badges }
 				{ this.renderDomain( !! badges ) }

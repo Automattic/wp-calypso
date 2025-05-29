@@ -20,6 +20,7 @@ class DomainSuggestion extends Component {
 		hidePrice: PropTypes.bool,
 		showChevron: PropTypes.bool,
 		isAdded: PropTypes.bool,
+		translate: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -79,6 +80,8 @@ class DomainSuggestion extends Component {
 			? children
 			: [];
 
+		const { translate } = this.props;
+
 		return (
 			<div className={ classes } data-e2e-domain={ this.props.domain }>
 				{ badges }
@@ -97,6 +100,11 @@ class DomainSuggestion extends Component {
 							} }
 							data-tracks-button-click-source={ this.props.tracksButtonClickSource }
 							{ ...this.props.buttonStyles }
+							aria-label={ translate( 'Select %(domainName)s', {
+								args: { domainName: this.props.domain },
+								context:
+									'Accessibility label for domain suggestion button, %(domainName)s is the domain name',
+							} ) }
 						>
 							{ this.props.buttonContent }
 						</Button>
