@@ -112,4 +112,12 @@
 			--wp-admin-theme-color: var(--color-error);
 		}
 	}
+
+	&.is-valid {
+		border-color: var(--color-success);
+
+		&:focus {
+			--wp-admin-theme-color: var(--color-success);
+		}
+	}
 }
