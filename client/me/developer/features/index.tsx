@@ -25,7 +25,6 @@ export const DeveloperFeatures = () => {
 			'code',
 			'https-ssl',
 			'help-support-options',
-			'malware-scanning-removal',
 		];
 
 		if (
