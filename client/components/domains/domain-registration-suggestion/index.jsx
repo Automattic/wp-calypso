@@ -132,6 +132,54 @@ class DomainRegistrationSuggestion extends Component {
 		return includes( this.props.unavailableDomains, domain );
 	};
 
+	getSelectDomainAriaLabel() {
+		const { suggestion, translate, productCost, productSaleCost } = this.props;
+		const priceRule = this.getPriceRule();
+
+		const baseLabel = translate( 'Select domain %(domainName)s', {
+			args: { domainName: suggestion.domain_name },
+			context: 'Accessible label for domain selection button. %(domainName)s is the domain name.',
+		} );
+
+		if ( ( priceRule === 'FREE_DOMAIN' || priceRule === 'FREE_WITH_PLAN' ) && productCost ) {
+			return translate(
+				'%(baseLabel)s. Free for the first year with annual paid plans, then %(price)s per year',
+				{
+					args: {
+						baseLabel,
+						price: productCost,
+					},
+					comment:
+						'Accessible label for free domain with normal price. %(baseLabel)s is the base label (e.g. "Select domain testing.com"). %(price)s is the price.',
+				}
+			);
+		} else if ( productSaleCost && productCost ) {
+			return translate(
+				'%(baseLabel)s. %(salePrice)s for the first year, then %(price)s per year',
+				{
+					args: {
+						baseLabel,
+						salePrice: productSaleCost,
+						price: productCost,
+					},
+					comment:
+						'Accessible label for domain with sale price. %(baseLabel)s is the base label (e.g. "Select domain testing.com"). %(salePrice)s is the sale price. %(price)s is the price.',
+				}
+			);
+		} else if ( productCost ) {
+			return translate( '%(baseLabel)s. %(price)s per year', {
+				args: {
+					baseLabel,
+					price: productCost,
+				},
+				comment:
+					'Accessible label for regularly priced domain. %(baseLabel)s is the base label (e.g. "Select domain testing.com"). %(price)s is the price.',
+			} );
+		}
+
+		return baseLabel;
+	}
+
 	getButtonProps() {
 		const {
 			cart,
@@ -165,12 +213,18 @@ class DomainRegistrationSuggestion extends Component {
 		}
 
 		let buttonContent;
+		let ariaLabel;
 		let buttonStyles = this.props.buttonStyles;
 
 		if ( isAdded ) {
 			buttonContent = translate( '{{checkmark/}} In Cart', {
 				context: 'Domain is already added to shopping cart',
 				components: { checkmark: <Gridicon icon="checkmark" /> },
+			} );
+			ariaLabel = translate( 'Domain %(domainName)s is already in the shopping cart', {
+				args: { domainName: suggestion.domain_name },
+				context:
+					'Accessible label for domain that is already in the shopping cart. %(domainName)s is the domain name.',
 			} );
 
 			buttonStyles = { ...buttonStyles, primary: false };
@@ -182,15 +236,32 @@ class DomainRegistrationSuggestion extends Component {
 					context: 'Domain is already added to shopping cart',
 					components: { checkmark: <Gridicon style={ { height: 21 } } icon="checkmark" /> },
 				} );
+				ariaLabel = translate( 'Selected domain %(domainName)s', {
+					args: { domainName: suggestion.domain_name },
+					context:
+						'Accessible label for domain that is selected. %(domainName)s is the domain name.',
+				} );
 			}
 		} else {
-			buttonContent =
+			const shouldUpgrade =
 				! isSignupStep &&
-				shouldBundleDomainWithPlan( domainsWithPlansOnly, selectedSite, cart, suggestion )
-					? translate( 'Upgrade', {
-							context: 'Domain mapping suggestion button with plan upgrade',
-					  } )
-					: translate( 'Select', { context: 'Domain mapping suggestion button' } );
+				shouldBundleDomainWithPlan( domainsWithPlansOnly, selectedSite, cart, suggestion );
+
+			if ( shouldUpgrade ) {
+				buttonContent = translate( 'Upgrade', {
+					context: 'Domain mapping suggestion button with plan upgrade',
+				} );
+				ariaLabel = translate( 'Upgrade domain %(domainName)s', {
+					args: { domainName: suggestion.domain_name },
+					context:
+						'Accessible label for domain mapping suggestion button with plan upgrade. %(domainName)s is the domain name.',
+				} );
+			} else {
+				buttonContent = translate( 'Select', {
+					context: 'Domain mapping suggestion button',
+				} );
+				ariaLabel = this.getSelectDomainAriaLabel();
+			}
 		}
 
 		if ( premiumDomain?.pending ) {
@@ -200,10 +271,18 @@ class DomainRegistrationSuggestion extends Component {
 			buttonContent = translate( 'Restricted', {
 				context: 'Premium domain is not available for registration',
 			} );
+			ariaLabel = translate( 'Premium domain %(domainName)s is not available for registration', {
+				args: { domainName: suggestion.domain_name },
+				context: 'Accessible label for restricted premium domain',
+			} );
 		} else if ( this.isUnavailableDomain( suggestion.domain_name ) ) {
 			buttonStyles = { ...buttonStyles, disabled: true };
 			buttonContent = translate( 'Unavailable', {
 				context: 'Domain suggestion is not available for registration',
+			} );
+			ariaLabel = translate( 'Domain %(domainName)s is unavailable for registration', {
+				args: { domainName: suggestion.domain_name },
+				context: 'Accessible label for unavailable domain',
 			} );
 		} else if (
 			pendingCheckSuggestion?.domain_name === domain ||
@@ -225,6 +304,7 @@ class DomainRegistrationSuggestion extends Component {
 			buttonContent,
 			buttonStyles,
 			isAdded,
+			ariaLabel,
 		};
 	}
 
