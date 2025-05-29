@@ -116,7 +116,6 @@ export const useFeaturesList = () => {
 						backupsLink: (
 							<InlineSupportLink
 								supportPostId={ 99415 }
-								supportLink="https://developer.wordpress.com/docs/platform-features/real-time-backup-restore/"
 								showIcon={ false }
 								onClick={ handleClickLink }
 							/>
@@ -124,7 +123,6 @@ export const useFeaturesList = () => {
 						malwareScanningLink: (
 							<InlineSupportLink
 								supportPostId={ 99380 }
-								supportLink="https://developer.wordpress.com/docs/platform-features/jetpack-scan/"
 								showIcon={ false }
 								onClick={ handleClickLink }
 							/>
@@ -132,7 +130,6 @@ export const useFeaturesList = () => {
 						siteMonitoringLink: (
 							<InlineSupportLink
 								supportPostId={ 99421 }
-								supportLink="https://developer.wordpress.com/docs/troubleshooting/site-monitoring/"
 								showIcon={ false }
 								onClick={ handleClickLink }
 							/>
