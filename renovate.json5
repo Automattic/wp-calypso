@@ -84,6 +84,11 @@
 		// of nullish unhandled rejected promise values.
 		// See: https://github.com/csnover/TraceKit/issues/86
 		'tracekit',
+
+		// The current latest version of `@pmmmwh/react-refresh-webpack-plugin` is incompatible with
+		// one of our other dependencies, causing the application to fail to boot.
+		// See: https://github.com/pmmmwh/react-refresh-webpack-plugin/issues/916
+		'@pmmmwh/react-refresh-webpack-plugin',
 	],
 	regexManagers: [
 		// Update the renovate-version in the action itself.
