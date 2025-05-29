@@ -62,9 +62,7 @@ describe( 'SiteMigrationIdentify', () => {
 	} );
 
 	it( 'continues the flow when the platform is wordpress', async () => {
-		( useSiteSlug as jest.MockedFunction< typeof useSiteSlug > ).mockReturnValue(
-			MOCK_WORDPRESS_SITE_SLUG
-		);
+		jest.mocked( useSiteSlug ).mockReturnValue( MOCK_WORDPRESS_SITE_SLUG );
 
 		const submit = jest.fn();
 		render( { navigation: { submit } } );
