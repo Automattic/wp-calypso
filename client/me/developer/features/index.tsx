@@ -19,7 +19,6 @@ export const DeveloperFeatures = () => {
 		const featureArticleLink = event?.currentTarget?.href;
 		const featureItemId = event?.currentTarget?.id;
 		// Opens the following feature articles in Help Center:
-		// "Custom code" and "Free SSL certificate"
 		const featureArticlesToOpenInHelpCenter = [
 			'connect-to-ssh-on-wordpress-com',
 			'how-to-create-a-staging-site',
