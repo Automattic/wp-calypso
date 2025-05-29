@@ -4,8 +4,9 @@ on:
   pull_request:
     types: [opened, synchronize, reopened]
     paths:
-      - 'apps/design-system-docs/**'
+      - apps/design-system-docs/**
       - .github/workflows/design-system-docs.yml
+      - packages/components/**
 
 # Ensure only one preview build runs per-PR at a time
 concurrency:
@@ -75,8 +76,9 @@ jobs:
           edit-mode: replace
           body: |
             <!-- cf-preview-comment -->
-            **Design System Reference Site Preview:**
+            **Live Preview:**
 
-            ${{ steps.upload.outputs.url }}
-
-            (Latest commit: `${{ github.sha }}`)
+            - [Calypso](https://calypso.live?image=registry.a8c.com/calypso/app:commit-${{ github.event.pull_request.head.sha }})
+            - [Jetpack Cloud](https://calypso.live?image=registry.a8c.com/calypso/app:commit-${{ github.event.pull_request.head.sha }}&env=jetpack)
+            - [Automattic for Agencies](https://calypso.live?image=registry.a8c.com/calypso/app:commit-${{ github.event.pull_request.head.sha }}&env=a8c-for-agencies)
+            - [Design System Reference Site](${{ steps.upload.outputs.url }}) (Commit ${{ github.event.pull_request.head.sha }})
