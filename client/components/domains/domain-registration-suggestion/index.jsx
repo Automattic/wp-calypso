@@ -181,7 +181,7 @@ class DomainRegistrationSuggestion extends Component {
 					}
 				);
 			case 'UPGRADE_TO_HIGHER_PLAN_TO_BUY':
-				return translate( '%(baseLabel)s. Plan upgrade required', {
+				return translate( '%(baseLabel)s. Plan upgrade required to register this domain.', {
 					args: {
 						baseLabel,
 					},
@@ -335,7 +335,7 @@ class DomainRegistrationSuggestion extends Component {
 			buttonContent = translate( 'Unavailable', {
 				context: 'Domain suggestion is not available for registration',
 			} );
-			ariaLabel = translate( 'Domain %(domainName)s is unavailable for registration', {
+			ariaLabel = translate( 'Domain %(domainName)s is not available for registration', {
 				args: { domainName: suggestion.domain_name },
 				context: 'Accessible label for unavailable domain',
 			} );
