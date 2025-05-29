@@ -19,9 +19,9 @@ import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-t
 import { canAccessWordAds, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import AdsWrapper from './ads/wrapper';
-import CustomersSection from './customers';
 import Home from './home';
 import MembershipsSection from './memberships/section';
+import PaidSubscriptions from './paid-subscriptions';
 import { Query } from './types';
 
 type EarningsMainProps = {
@@ -53,7 +53,7 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 		'ads-settings': translate( '%(wordads)s Settings', { args: { wordads: adsProgramName } } ),
 		'ads-payments': translate( '%(wordads)s Payments', { args: { wordads: adsProgramName } } ),
 		payments: translate( 'Payment Settings' ),
-		supporters: translate( 'Supporters' ),
+		'paid-subscriptions': translate( 'Active Paid Subscriptions' ),
 		'refer-a-friend': translate( 'Refer-a-Friend Program' ),
 	};
 
@@ -66,9 +66,9 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 				id: 'earn',
 			},
 			{
-				title: translate( 'Supporters' ),
-				path: earnPath + '/supporters' + pathSuffix,
-				id: 'supporters',
+				title: translate( 'Active Paid Subscriptions' ),
+				path: earnPath + '/paid-subscriptions' + pathSuffix,
+				id: 'paid-subscriptions',
 			},
 			{
 				title: translate( 'Payment Settings' ),
@@ -130,7 +130,7 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 		currentSection && currentSection.startsWith( 'ads' );
 
 	const isSingleSupporterSection = ( currentSection: string | undefined ) =>
-		currentSection && currentSection.startsWith( 'supporters' ) && subscriberId;
+		currentSection && currentSection.startsWith( 'paid-subscriptions' ) && subscriberId;
 
 	const getComponent = ( currentSection: string | undefined ) => {
 		switch ( currentSection ) {
@@ -156,8 +156,8 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 			case 'payments':
 				return <MembershipsSection query={ query } />;
 
-			case 'supporters':
-				return <CustomersSection query={ query } />;
+			case 'paid-subscriptions':
+				return <PaidSubscriptions query={ query } />;
 
 			default:
 				return <Home />;

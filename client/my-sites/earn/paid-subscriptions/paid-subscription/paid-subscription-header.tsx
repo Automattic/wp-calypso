@@ -6,16 +6,16 @@ import { decodeEntities } from 'calypso/lib/formatting';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import { Subscriber } from '../../types';
+import { PaidSubscription } from '../../types';
 
 import './style.scss';
 
-type CustomerHeaderProps = {
-	customer: Subscriber;
+type PaidSubscriptionProps = {
+	paidSubscription: PaidSubscription;
 };
 const earnPath = ! isJetpackCloud() ? '/earn' : '/monetize';
 
-const CustomerHeader = ( { customer }: CustomerHeaderProps ) => {
+const PaidSubscriptionHeader = ({ paidSubscription }: PaidSubscriptionProps ) => {
 	const translate = useTranslate();
 	const siteSlug = useSelector( getSelectedSiteSlug );
 
@@ -25,7 +25,7 @@ const CustomerHeader = ( { customer }: CustomerHeaderProps ) => {
 			href: `${ earnPath }/${ siteSlug }`,
 		},
 		{
-			label: translate( 'Supporters' ),
+			label: translate( 'Active Paid Subscriptions' ),
 			href: `${ earnPath }/supporters/${ siteSlug }`,
 		},
 		{
@@ -37,15 +37,23 @@ const CustomerHeader = ( { customer }: CustomerHeaderProps ) => {
 	return (
 		<>
 			<NavigationHeader navigationItems={ breadcrumbs } />
-			<div className="customer__header">
-				<Gravatar user={ customer.user } size={ 40 } className="customer__header-image" />
-				<div className="customer__header-details">
-					<span className="customer__header-name">{ decodeEntities( customer.user.name ) }</span>
-					<span className="customer__header-email">{ customer.user.user_email }</span>
+			<div className="paid-subscription__header">
+				<Gravatar
+					user={ paidSubscription.user }
+					size={ 40 }
+					className="paid-subscription__header-image"
+				/>
+				<div className="paid-subscription__header-details">
+					<span className="paid-subscription__header-name">
+						{ decodeEntities( paidSubscription.user.name ) }
+					</span>
+					<span className="paid-subscription__header-email">
+						{ paidSubscription.user.user_email }
+					</span>
 				</div>
 			</div>
 		</>
 	);
 };
 
-export default CustomerHeader;
+export default PaidSubscriptionHeader;
