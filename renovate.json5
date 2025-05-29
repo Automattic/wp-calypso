@@ -77,7 +77,14 @@
 			enabled: false,
 		},
 	],
-	ignoreDeps: [ 'electron-builder' ],
+	ignoreDeps: [
+		'electron-builder',
+
+		// The current latest version of TraceKit (0.4.7) creates a lot of noise due to mishandling
+		// of nullish unhandled rejected promise values.
+		// See: https://github.com/csnover/TraceKit/issues/86
+		'tracekit',
+	],
 	regexManagers: [
 		// Update the renovate-version in the action itself.
 		// See also https://github.com/renovatebot/github-action/issues/756
