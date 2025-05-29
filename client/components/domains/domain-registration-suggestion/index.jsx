@@ -276,10 +276,10 @@ class DomainRegistrationSuggestion extends Component {
 				context: 'Domain is already added to shopping cart',
 				components: { checkmark: <Gridicon icon="checkmark" /> },
 			} );
-			ariaLabel = translate( 'Domain %(domainName)s is already in the shopping cart', {
+			ariaLabel = translate( 'Domain %(domainName)s is already added to shopping cart', {
 				args: { domainName: suggestion.domain_name },
 				context:
-					'Accessible label for domain that is already in the shopping cart. %(domainName)s is the domain name.',
+					'Accessible label for domain that is already added to shopping cart. %(domainName)s is the domain name.',
 			} );
 
 			buttonStyles = { ...buttonStyles, primary: false };
@@ -306,7 +306,7 @@ class DomainRegistrationSuggestion extends Component {
 				buttonContent = translate( 'Upgrade', {
 					context: 'Domain mapping suggestion button with plan upgrade',
 				} );
-				ariaLabel = translate( 'Upgrade domain %(domainName)s', {
+				ariaLabel = translate( 'Upgrade plan to add domain %(domainName)s', {
 					args: { domainName: suggestion.domain_name },
 					context:
 						'Accessible label for domain mapping suggestion button with plan upgrade. %(domainName)s is the domain name.',
