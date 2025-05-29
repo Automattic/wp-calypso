@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import {
 	FEATURE_STATS_FREE,
 	FEATURE_STATS_PAID,
@@ -271,25 +270,12 @@ export const shouldGateStats = ( state: object, siteId: number | null, statType:
 
 	// Paid stats given to personal and higher plans
 	if ( siteHasPaidStats ) {
-		if ( ! isEnabled( 'stats/paid-wpcom-v3' ) ) {
-			// if v3 is not enabled, treat paid stats as commercial stats
-			return false;
-		}
 		return paidStats.includes( statType );
 	}
 
 	// Basic stats given to free sites before 2024-12-06.
 	if ( siteHasBasicStats ) {
 		return basicStats.includes( statType );
-	}
-
-	// If v3 is not enabled do not directly gate top posts, file downloads, and country views.
-	// We could remove this check once v3 is enabled.
-	if (
-		! isEnabled( 'stats/paid-wpcom-v3' ) &&
-		[ STAT_TYPE_TOP_POSTS, STAT_TYPE_FILE_DOWNLOADS, STAT_TYPE_COUNTRY_VIEWS ].includes( statType )
-	) {
-		return false;
 	}
 
 	// All other sites get gated to 7 days + paywall upsell

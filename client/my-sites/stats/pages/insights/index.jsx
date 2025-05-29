@@ -47,7 +47,6 @@ function StatsInsights( { context } ) {
 	}, [ reduxDispatch, isPending, siteId, usageInfo ] );
 
 	const shouldGateInsights = useShouldGateStats( STATS_FEATURE_PAGE_INSIGHTS );
-	const shouldRendeUpsell = config.isEnabled( 'stats/paid-wpcom-v3' ) && shouldGateInsights;
 
 	useEffect(
 		() =>
@@ -80,7 +79,7 @@ function StatsInsights( { context } ) {
 			<div className={ insightsPageClasses }>
 				<PageHeader />
 				<StatsNavigation selectedItem="insights" siteId={ siteId } slug={ siteSlug } />
-				{ shouldRendeUpsell ? (
+				{ shouldGateInsights ? (
 					<div id="my-stats-content" className="stats-content">
 						<StatsUpsell siteId={ siteId } />
 					</div>

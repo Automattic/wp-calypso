@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { FEATURE_STATS_PAID } from '@automattic/calypso-products';
 import { useState, useEffect } from 'react';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
@@ -110,10 +109,8 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 	);
 
 	// Determine if the site has the Dotcom upsell visible.
-	const hasWpcomUpsell = useSelector(
-		( state ) =>
-			config.isEnabled( 'stats/paid-wpcom-v3' ) &&
-			shouldGateStats( state, siteId, STATS_FEATURE_PAGE_TRAFFIC )
+	const hasWpcomUpsell = useSelector( ( state ) =>
+		shouldGateStats( state, siteId, STATS_FEATURE_PAGE_TRAFFIC )
 	);
 
 	// Show the paywall notice if the site has reached the monthly views limit

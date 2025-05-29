@@ -74,7 +74,6 @@ import { shouldGateStats } from './hooks/use-should-gate-stats';
 import MiniCarousel from './mini-carousel';
 import { StatsGlobalValuesContext } from './pages/providers/global-provider';
 import StatsModuleListing from './pages/shared/stats-module-listing';
-import PromoCards from './promo-cards';
 import StatsCardUpdateJetpackVersion from './stats-card-upsell/stats-card-update-jetpack-version';
 import ChartTabs from './stats-chart-tabs';
 import DatePicker from './stats-date-picker';
@@ -237,10 +236,8 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 		storedShortcut = null;
 	}
 
-	const wpcomShowUpsell = useSelector(
-		( state ) =>
-			config.isEnabled( 'stats/paid-wpcom-v3' ) &&
-			shouldGateStats( state, siteId, STATS_FEATURE_PAGE_TRAFFIC )
+	const wpcomShowUpsell = useSelector( ( state ) =>
+		shouldGateStats( state, siteId, STATS_FEATURE_PAGE_TRAFFIC )
 	);
 
 	const shouldShowUpsells = isOdysseyStats && ! isAtomic;
@@ -791,9 +788,6 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 			) }
 			{ ! shouldShowUpsells ? null : (
 				<AsyncLoad require="calypso/my-sites/stats/jetpack-upsell-section" />
-			) }
-			{ ! config.isEnabled( 'stats/paid-wpcom-v3' ) && (
-				<PromoCards isOdysseyStats={ isOdysseyStats } pageSlug="traffic" slug={ slug } />
 			) }
 			{ supportUserFeedback && <StatsFeedbackPresentor siteId={ siteId } /> }
 			<JetpackColophon />

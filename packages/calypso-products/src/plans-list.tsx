@@ -890,9 +890,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_PAID_SUBSCRIBERS_JP,
 		];
 
-		return isEnabled( 'stats/paid-wpcom-v3' )
-			? [ ...baseFeatures, FEATURE_STATS_PAID ]
-			: baseFeatures;
+		return [ ...baseFeatures, FEATURE_STATS_PAID ];
 	},
 	// Features not displayed but used for checking plan abilities
 	getIncludedFeatures: () => [ FEATURE_AUDIO_UPLOADS ],
@@ -1342,7 +1340,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 		FEATURE_UNLTD_SOCIAL_MEDIA_JP,
 		FEATURE_UPLOAD_VIDEO,
-		isEnabled( 'stats/paid-wpcom-v3' ) ? FEATURE_STATS_COMMERCIAL : FEATURE_STATS_PAID,
+		FEATURE_STATS_COMMERCIAL,
 		FEATURE_PAYMENT_TRANSACTION_FEES_4,
 	],
 	getNewsletterHighlightedFeatures: () => [
@@ -1367,7 +1365,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_VIDEOPRESS_JP,
 		FEATURE_UNLTD_SOCIAL_MEDIA_JP,
 		FEATURE_SITE_ACTIVITY_LOG_JP,
-		isEnabled( 'stats/paid-wpcom-v3' ) ? FEATURE_STATS_COMMERCIAL : FEATURE_STATS_PAID,
+		FEATURE_STATS_COMMERCIAL,
 	],
 	getBlogSignupFeatures: () =>
 		[
@@ -1426,7 +1424,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 		FEATURE_WORDADS,
 		FEATURE_STYLE_CUSTOMIZATION,
-		isEnabled( 'stats/paid-wpcom-v3' ) ? FEATURE_STATS_COMMERCIAL : FEATURE_STATS_PAID,
+		FEATURE_STATS_COMMERCIAL,
 		FEATURE_UPLOAD_VIDEO,
 		FEATURE_UNLTD_SOCIAL_MEDIA_JP,
 		FEATURE_SITE_ACTIVITY_LOG_JP,
@@ -1455,11 +1453,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 			: baseFeatures;
 	},
 	get2023PlanComparisonJetpackFeatureOverride: () => {
-		return [
-			FEATURE_PAYPAL_JP,
-			FEATURE_UPLOAD_VIDEO,
-			isEnabled( 'stats/paid-wpcom-v3' ) ? FEATURE_STATS_COMMERCIAL : FEATURE_STATS_PAID,
-		];
+		return [ FEATURE_PAYPAL_JP, FEATURE_UPLOAD_VIDEO, FEATURE_STATS_COMMERCIAL ];
 	},
 	// Features not displayed but used for checking plan abilities
 	getIncludedFeatures: () => [
@@ -2042,7 +2036,7 @@ const getJetpackBusinessDetails = (): IncompleteJetpackPlan => ( {
 			WPCOM_FEATURES_SCAN,
 			WPCOM_FEATURES_ANTISPAM,
 			WPCOM_FEATURES_BACKUPS,
-			isEnabled( 'stats/paid-wpcom-v3' ) ? FEATURE_STATS_COMMERCIAL : FEATURE_STATS_PAID,
+			FEATURE_STATS_COMMERCIAL,
 		] ),
 	getInferiorFeatures: () => [ FEATURE_JETPACK_BACKUP_DAILY, FEATURE_JETPACK_BACKUP_DAILY_MONTHLY ],
 } );
@@ -2318,7 +2312,7 @@ const getPlanJetpackCompleteDetails = (): IncompleteJetpackPlan => ( {
 			WPCOM_FEATURES_SCAN,
 			WPCOM_FEATURES_ANTISPAM,
 			WPCOM_FEATURES_BACKUPS,
-			isEnabled( 'stats/paid-wpcom-v3' ) ? FEATURE_STATS_COMMERCIAL : FEATURE_STATS_PAID,
+			FEATURE_STATS_COMMERCIAL,
 		] ),
 	getInferiorFeatures: () => [
 		FEATURE_JETPACK_BACKUP_DAILY,
@@ -2431,10 +2425,7 @@ const getPlanJetpackGrowthDetails = (): IncompleteJetpackPlan => ( {
 		translate(
 			'Essential tools to help you grow your audience, track visitor engagement, and turn leads into loyal customers and advocates.'
 		),
-	getPlanCardFeatures: () => [
-		FEATURE_JETPACK_SOCIAL_V1_MONTHLY,
-		isEnabled( 'stats/paid-wpcom-v3' ) ? FEATURE_STATS_COMMERCIAL : FEATURE_STATS_PAID,
-	],
+	getPlanCardFeatures: () => [ FEATURE_JETPACK_SOCIAL_V1_MONTHLY, FEATURE_STATS_COMMERCIAL ],
 	getIncludedFeatures: () => [
 		FEATURE_EARN_AD,
 		FEATURE_UNLIMITED_SUBSCRIBERS,
