@@ -6,6 +6,7 @@ import PageLayout from '../../components/page-layout';
 import SettingsPageHeader from '../settings-page-header';
 import { LaunchForm } from './launch-form';
 import { PrivacyForm } from './privacy-form';
+import './style.scss';
 
 export default function SiteVisibilitySettings( { siteSlug }: { siteSlug: string } ) {
 	const { data: site } = useQuery( siteQuery( siteSlug ) );
@@ -31,7 +32,7 @@ export default function SiteVisibilitySettings( { siteSlug }: { siteSlug: string
 					{ site.launch_status === 'unlaunched' ? (
 						<LaunchForm site={ site } />
 					) : (
-						<PrivacyForm site={ site } settings={ settings } mutation={ mutation } />
+						<PrivacyForm settings={ settings } mutation={ mutation } />
 					) }
 				</CardBody>
 			</Card>
