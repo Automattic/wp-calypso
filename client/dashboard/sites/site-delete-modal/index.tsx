@@ -37,16 +37,17 @@ const TRIAL_PRODUCT_SLUGS = [
 	'ecommerce-trial-bundle-monthly',
 ];
 
+const isTrialSite = ( site: Site ) =>
+	site.plan?.product_slug && TRIAL_PRODUCT_SLUGS.includes( site.plan?.product_slug );
+
 export function SiteDeleteWarningModal( { site, onClose }: { site: Site; onClose: () => void } ) {
 	const { data: p2HubP2s } = useQuery( {
-		...p2HubP2sQuery( site.slug, { limit: 1 } ),
+		...p2HubP2sQuery( site.ID, { limit: 1 } ),
 		enabled: !! site.options?.p2_hub_blog_id && site.options?.is_wpforteams_site,
 	} );
 
 	const isAtomicRemovalInProgress = site.plan?.is_free && site.is_wpcom_atomic;
 	const p2HubP2Count = p2HubP2s?.totalItems ?? 0;
-	const isTrialSite =
-		site.plan?.product_slug && TRIAL_PRODUCT_SLUGS.includes( site.plan?.product_slug );
 
 	const renderWarningContent = () => {
 		if ( isAtomicRemovalInProgress ) {
@@ -67,7 +68,7 @@ export function SiteDeleteWarningModal( { site, onClose }: { site: Site; onClose
 			);
 		}
 
-		if ( isTrialSite ) {
+		if ( isTrialSite( site ) ) {
 			return __(
 				'You have an active or expired free trial on your site. Please cancel this plan prior to deleting your site.'
 			);
@@ -95,7 +96,7 @@ export function SiteDeleteWarningModal( { site, onClose }: { site: Site; onClose
 			);
 		}
 
-		if ( isTrialSite ) {
+		if ( isTrialSite( site ) ) {
 			<Button variant="primary" href={ `/purchases/subscriptions/${ site.slug }` }>
 				{ __( 'Cancel trial' ) }
 			</Button>;
@@ -159,7 +160,7 @@ export function SiteDeleteConfirmModal( { site, onClose }: { site: Site; onClose
 					sprintf(
 						/* translators: %s: site name */
 						__( '%s has been deleted.' ),
-						site.name
+						site.slug
 					),
 					{ type: 'snackbar' }
 				);

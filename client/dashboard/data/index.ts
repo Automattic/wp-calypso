@@ -526,7 +526,7 @@ export const leaveSite = async ( siteIdOrSlug: string, userId: number ) => {
 };
 
 export const fetchP2HubP2s = async (
-	siteIdOrSlug: string,
+	siteId: string,
 	options: { limit?: number } = {}
 ): Promise< { totalItems: number } > => {
 	return wpcom.req.get(
@@ -535,7 +535,7 @@ export const fetchP2HubP2s = async (
 			apiNamespace: 'wpcom/v2',
 		},
 		{
-			hub_id: siteIdOrSlug,
+			hub_id: siteId,
 			...options,
 		}
 	);
