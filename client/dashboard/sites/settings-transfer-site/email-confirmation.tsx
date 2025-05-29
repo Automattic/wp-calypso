@@ -12,7 +12,7 @@ export function EmailConfirmation( { userEmail }: { userEmail: string } ) {
 		<VStack style={ { padding: '8px 0 12px' } }>
 			<HStack justify="flex-start">
 				<Icon icon={ inbox } />
-				<Text size="15px" weight={ 500 } lineHeight="32px">
+				<Text size="15px" weight={ 500 } lineHeight="32px" as="h2">
 					{ __( 'Check your inbox' ) }
 				</Text>
 			</HStack>

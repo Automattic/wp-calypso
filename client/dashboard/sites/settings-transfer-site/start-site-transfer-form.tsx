@@ -49,7 +49,9 @@ const form = {
 const List = ( { title, children }: { title: string; children: React.ReactNode } ) => {
 	return (
 		<VStack>
-			<Text weight={ 500 }>{ title }</Text>
+			<Text weight={ 500 } as="h3">
+				{ title }
+			</Text>
 			<ul style={ { paddingInlineStart: '20px', margin: 0 } }>{ children }</ul>
 		</VStack>
 	);
@@ -101,7 +103,7 @@ export function StartSiteTransferForm( {
 	return (
 		<VStack spacing={ 0 }>
 			<VStack style={ { padding: '8px 0 12px' } }>
-				<Text size="15px" weight={ 500 } lineHeight="32px">
+				<Text size="15px" weight={ 500 } lineHeight="32px" as="h2">
 					{ __( 'Start site transfer' ) }
 				</Text>
 			</VStack>

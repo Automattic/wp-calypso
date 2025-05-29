@@ -65,7 +65,8 @@ export function ConfirmNewOwnerForm( {
 	return (
 		<VStack spacing={ 1 }>
 			<VStack style={ { padding: '8px 0' } }>
-				<Text size="15px" weight={ 500 } lineHeight="32px">
+				{ /* TODO: Think about the better way of using <Heading /> as the font size doesn't match now */ }
+				<Text size="15px" weight={ 500 } lineHeight="32px" as="h2">
 					{ __( 'Confirm new owner' ) }
 				</Text>
 				<Text lineHeight="20px">
