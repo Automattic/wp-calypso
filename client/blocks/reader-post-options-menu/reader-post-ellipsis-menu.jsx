@@ -1,4 +1,5 @@
 import page from '@automattic/calypso-router';
+import { seen, unseen } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
 import { size, map } from 'lodash';
 import PropTypes from 'prop-types';
@@ -310,7 +311,12 @@ class ReaderPostEllipsisMenu extends Component {
 				{ isEligibleForUnseen( { isWPForTeamsItem, currentRoute, hasOrganization } ) &&
 					canBeMarkedAsSeen( { post, posts } ) &&
 					post.is_seen && (
-						<PopoverMenuItem onClick={ this.markAsUnSeen } icon="not-visible">
+						<PopoverMenuItem
+							onClick={ this.markAsUnSeen }
+							icon={ unseen }
+							useWordPressIcon
+							iconSize={ 24 }
+						>
 							{ size( posts ) > 0 && translate( 'Mark all as unseen' ) }
 							{ size( posts ) === 0 && translate( 'Mark as unseen' ) }
 						</PopoverMenuItem>
@@ -319,7 +325,12 @@ class ReaderPostEllipsisMenu extends Component {
 				{ isEligibleForUnseen( { isWPForTeamsItem, currentRoute, hasOrganization } ) &&
 					canBeMarkedAsSeen( { post, posts } ) &&
 					! post.is_seen && (
-						<PopoverMenuItem onClick={ this.markAsSeen } icon="visible">
+						<PopoverMenuItem
+							onClick={ this.markAsSeen }
+							icon={ seen }
+							useWordPressIcon
+							iconSize={ 24 }
+						>
 							{ size( posts ) > 0 && translate( 'Mark all as seen' ) }
 							{ size( posts ) === 0 && translate( 'Mark as seen' ) }
 						</PopoverMenuItem>

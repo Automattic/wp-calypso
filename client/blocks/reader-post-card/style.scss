@@ -25,6 +25,20 @@
 			}
 		}
 	}
+
+	&:hover,
+	&:focus {
+		svg {
+			path {
+				fill: var(--color-text-inverted);
+			}
+		}
+	}
+
+	svg {
+		height: 24px;
+		width: 24px;
+	}
 }
 
 .reader-post-card.card {
