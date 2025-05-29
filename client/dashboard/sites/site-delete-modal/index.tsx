@@ -90,8 +90,8 @@ function SiteDeleteWarningContent( { site, onClose }: { site: Site; onClose: () 
 
 		if ( p2HubP2Count ) {
 			return (
-				<Button variant="primary" href="/sites">
-					{ __( 'Manage sites' ) }
+				<Button variant="primary" href={ site.URL }>
+					{ __( 'Manage P2s' ) }
 				</Button>
 			);
 		}
