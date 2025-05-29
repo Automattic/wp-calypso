@@ -1,8 +1,6 @@
 /* Purchase listing
 ================================================== */
 #purchases-list {
-	padding: 8px 0 0;
-
 	.dataviews-view-table,
 	.dataviews-view-table tr {
 		max-width: 1040px;
@@ -40,7 +38,8 @@
 			max-width: 462px;
 		}
 
-		.purchase-item__purchase-type, .purchase-item__purchase-type a.purchase-item__link {
+		.purchase-item__purchase-type,
+		.purchase-item__purchase-type a.purchase-item__link {
 			overflow: hidden;
 		}
 	}
