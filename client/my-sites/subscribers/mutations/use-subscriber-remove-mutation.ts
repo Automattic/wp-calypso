@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 import { DEFAULT_PER_PAGE } from '../constants';
@@ -15,21 +14,14 @@ type ApiResponseError = {
 	message: string;
 };
 
-const useNewHelper = config.isEnabled( 'subscribers-helper-library' );
-
 const getEmailSubscriptionId = ( subscriber: Subscriber ): number => {
-	if ( useNewHelper ) {
-		// For new helper library, use email_subscription_id if it exists, otherwise use subscription_id
-		return subscriber.email_subscription_id || subscriber.subscription_id || 0;
-	}
-	return subscriber.subscription_id || 0;
+	// `subscription_id` is from the old API endpoint response.
+	return subscriber.email_subscription_id || subscriber.subscription_id || 0;
 };
 
 const getWpcomSubscriptionId = ( subscriber: Subscriber ): number => {
-	if ( useNewHelper ) {
-		return subscriber.wpcom_subscription_id || 0;
-	}
-	return 0;
+	// `subscription_id` is from the old API endpoint response.
+	return subscriber.wpcom_subscription_id || subscriber.subscription_id || 0;
 };
 
 const useSubscriberRemoveMutation = (
