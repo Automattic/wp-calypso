@@ -2,29 +2,29 @@
 @import "@automattic/typography/styles/variables";
 @import "@wordpress/base-styles/breakpoints";
 
-.customer {
-	.customer__header {
+.paid-subscription {
+	.paid-subscription__header {
 		display: flex;
 		margin: 16px 0 48px;
 
-		.customer__header-image {
+		.paid-subscription__header-image {
 			height: 56px;
 			width: 56px;
 			margin-right: 16px;
 		}
 
-		.customer__header-details {
+		.paid-subscription__header-details {
 			display: flex;
 			flex-direction: column;
 			justify-content: center;
 
-			.customer__header-name {
+			.paid-subscription__header-name {
 				font-weight: 500;
 				font-size: $font-title-small;
 				line-height: rem(26px);
 			}
 
-			.customer__header-email {
+			.paid-subscription__header-email {
 				font-weight: 400;
 				font-size: $font-body;
 				line-height: rem(24px);
@@ -33,16 +33,16 @@
 		}
 	}
 
-	.customer__stats {
-		.customer__stats-card-heading {
+	.paid-subscription__stats {
+		.paid-subscription__stats-card-heading {
 			display: flex;
 			align-items: center;
 		}
-		.customer__stats-card-icon {
+		.paid-subscription__stats-card-icon {
 			max-width: 30px;
 			margin-bottom: 20px;
 		}
-		.customer__stats-list {
+		.paid-subscription__stats-list {
 			@media (max-width: $break-large) {
 				flex-flow: column;
 				gap: 24px;
@@ -53,7 +53,7 @@
 		}
 	}
 
-	.customer-details__content {
+	.paid-subscription-details__content {
 		display: flex;
 		flex-direction: column;
 		padding: 24px;
@@ -63,17 +63,17 @@
 		gap: 16px;
 	}
 
-	.customer-details__content-title {
+	.paid-subscription-details__content-title {
 		color: #000;
 		font-size: $font-body-large;
 		line-height: rem(26px);
 	}
 
-	.customer-details__content-body {
+	.paid-subscription-details__content-body {
 		display: flex;
 		gap: 32px;
 
-		.customer-details__content-column {
+		.paid-subscription-details__content-column {
 			flex: 1 1 0;
 			overflow: hidden;
 			word-wrap: break-word;
@@ -82,7 +82,7 @@
 			}
 		}
 
-		.customer-details__content-label {
+		.paid-subscription-details__content-label {
 			border-bottom: 1px solid #eee;
 			font-size: $font-body-small;
 			font-weight: 500;
@@ -92,7 +92,7 @@
 			padding-bottom: 5px;
 		}
 
-		.customer-details__content-value {
+		.paid-subscription-details__content-value {
 			display: block;
 			color: $studio-gray-60;
 			font-size: $font-body-small;
@@ -105,7 +105,7 @@
 		}
 	}
 
-	.customer__action-buttons {
+	.paid-subscription__action-buttons {
 		display: flex;
 		flex-direction: row;
 		gap: 12px;
