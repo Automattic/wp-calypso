@@ -19,7 +19,8 @@ grep "export const [A-Z_]* =" client/state/action-types.ts | \
     xargs -P 8 -I{} sh -c \
     'find client/state \
         \( \
-           -name "reducer.[jt]s" \
+           -path "*/data-layer/*" \
+           -o -name "reducer.[jt]s" \
            -o -name "reducers.[jt]s" \
            -o -name "index.[jt]s" \
            -o -name "middleware.[jt]s" \
