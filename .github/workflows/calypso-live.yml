@@ -3,11 +3,6 @@ name: Calypso Live
 on:
   pull_request:
     types: ['opened']
-    # Ignore paths that trigger the design-system-docs workflow, which manages preview link comment
-    paths-ignore:
-      - apps/design-system-docs/**
-      - .github/workflows/design-system-docs.yml
-      - packages/components/**
 
 jobs:
   calypso-live:
