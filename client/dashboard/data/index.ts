@@ -341,7 +341,7 @@ function fromRawSiteSettings( settings: any ): SiteSettings {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function toRawSiteSettings( settings: Partial< SiteSettings > ): any {
-	const rawSettings = settings as any; // eslint-disable-line @typescript-eslint/no-explicit-any
+	const rawSettings = {} as any; // eslint-disable-line @typescript-eslint/no-explicit-any
 
 	const {
 		wpcom_site_visibility,
