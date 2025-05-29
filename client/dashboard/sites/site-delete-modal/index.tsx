@@ -40,7 +40,7 @@ const TRIAL_PRODUCT_SLUGS = [
 const isTrialSite = ( site: Site ) =>
 	site.plan?.product_slug && TRIAL_PRODUCT_SLUGS.includes( site.plan?.product_slug );
 
-export function SiteDeleteWarningModal( { site, onClose }: { site: Site; onClose: () => void } ) {
+function SiteDeleteWarningContent( { site, onClose }: { site: Site; onClose: () => void } ) {
 	const { data: p2HubP2s } = useQuery( {
 		...p2HubP2sQuery( site.ID, { limit: 1 } ),
 		enabled: !! site.options?.p2_hub_blog_id && site.options?.is_wpforteams_site,
@@ -110,23 +110,21 @@ export function SiteDeleteWarningModal( { site, onClose }: { site: Site; onClose
 	};
 
 	return (
-		<Modal title={ __( 'Unable to delete site' ) } size="medium" onRequestClose={ onClose }>
-			<VStack spacing={ 4 }>
-				<Text as="p">{ renderWarningContent() }</Text>
-				<HStack justify="flex-end">
-					{ ! isAtomicRemovalInProgress && (
-						<Button variant="tertiary" onClick={ onClose }>
-							{ __( 'Cancel' ) }
-						</Button>
-					) }
-					{ renderPrimaryButton() }
-				</HStack>
-			</VStack>
-		</Modal>
+		<>
+			<Text as="p">{ renderWarningContent() }</Text>
+			<HStack justify="flex-end">
+				{ ! isAtomicRemovalInProgress && (
+					<Button variant="tertiary" onClick={ onClose }>
+						{ __( 'Cancel' ) }
+					</Button>
+				) }
+				{ renderPrimaryButton() }
+			</HStack>
+		</>
 	);
 }
 
-export function SiteDeleteConfirmModal( { site, onClose }: { site: Site; onClose: () => void } ) {
+function SiteDeleteConfirmContent( { site, onClose }: { site: Site; onClose: () => void } ) {
 	const router = useRouter();
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const [ formData, setFormData ] = useState< SiteDeleteFormData >( { domain: '' } );
@@ -174,59 +172,57 @@ export function SiteDeleteConfirmModal( { site, onClose }: { site: Site; onClose
 	};
 
 	return (
-		<Modal title={ __( 'Delete site' ) } size="medium" onRequestClose={ onClose }>
-			<VStack spacing={ 4 }>
-				<Notice variant="warning" density="medium">
-					<Text>
-						{ createInterpolateElement(
-							'Before deleting your site, consider <link>exporting your content as a backup</link>.',
-							{
-								// @ts-expect-error children prop is injected by createInterpolateElement
-								link: <ExternalLink href="#" />,
-							}
-						) }
-					</Text>
-				</Notice>
-				<Text as="p">
-					{ __(
-						'Deletion is irreversible and will permanently remove all site content — posts, pages, media, users, authors, domains, purchased upgrades, and premium themes.'
+		<>
+			<Notice variant="warning" density="medium">
+				<Text>
+					{ createInterpolateElement(
+						'Before deleting your site, consider <link>exporting your content as a backup</link>.',
+						{
+							// @ts-expect-error children prop is injected by createInterpolateElement
+							link: <ExternalLink href="#" />,
+						}
 					) }
 				</Text>
-				<Text as="p">
-					{ sprintf(
-						/* translators: %s: site domain */
-						__( 'Once deleted, your domain %s will also become unavailable.' ),
-						site.slug
-					) }
-				</Text>
-				<form onSubmit={ handleSubmit }>
-					<VStack spacing={ 4 } style={ { padding: '8px 0' } }>
-						<DataForm< SiteDeleteFormData >
-							data={ formData }
-							fields={ fields }
-							form={ form }
-							onChange={ ( edits: Partial< SiteDeleteFormData > ) => {
-								setFormData( ( data ) => ( { ...data, ...edits } ) );
-							} }
-						/>
-						<HStack justify="flex-end">
-							<Button variant="tertiary" disabled={ mutation.isPending } onClick={ onClose }>
-								{ __( 'Cancel' ) }
-							</Button>
-							<Button
-								variant="primary"
-								type="submit"
-								isDestructive
-								isBusy={ mutation.isPending }
-								disabled={ formData.domain !== site.slug }
-							>
-								{ __( 'Delete site' ) }
-							</Button>
-						</HStack>
-					</VStack>
-				</form>
-			</VStack>
-		</Modal>
+			</Notice>
+			<Text as="p">
+				{ __(
+					'Deletion is irreversible and will permanently remove all site content — posts, pages, media, users, authors, domains, purchased upgrades, and premium themes.'
+				) }
+			</Text>
+			<Text as="p">
+				{ sprintf(
+					/* translators: %s: site domain */
+					__( 'Once deleted, your domain %s will also become unavailable.' ),
+					site.slug
+				) }
+			</Text>
+			<form onSubmit={ handleSubmit }>
+				<VStack spacing={ 4 } style={ { padding: '8px 0' } }>
+					<DataForm< SiteDeleteFormData >
+						data={ formData }
+						fields={ fields }
+						form={ form }
+						onChange={ ( edits: Partial< SiteDeleteFormData > ) => {
+							setFormData( ( data ) => ( { ...data, ...edits } ) );
+						} }
+					/>
+					<HStack justify="flex-end">
+						<Button variant="tertiary" disabled={ mutation.isPending } onClick={ onClose }>
+							{ __( 'Cancel' ) }
+						</Button>
+						<Button
+							variant="primary"
+							type="submit"
+							isDestructive
+							isBusy={ mutation.isPending }
+							disabled={ formData.domain !== site.slug }
+						>
+							{ __( 'Delete site' ) }
+						</Button>
+					</HStack>
+				</VStack>
+			</form>
+		</>
 	);
 }
 
@@ -236,13 +232,22 @@ export default function SiteDeleteModal( { site, onClose }: { site: Site; onClos
 		siteHasPurchasesCancelableQuery( site.slug, user.ID )
 	);
 
+	const canBeDeleted = canDeleteSite( site ) && ! hasPurchasesCancelable;
+	const title = canBeDeleted ? __( 'Delete site' ) : __( 'Unable to delete site' );
+
 	if ( isLoading ) {
 		return null;
 	}
 
-	return canDeleteSite( site ) && ! hasPurchasesCancelable ? (
-		<SiteDeleteConfirmModal site={ site } onClose={ onClose } />
-	) : (
-		<SiteDeleteWarningModal site={ site } onClose={ onClose } />
+	return (
+		<Modal title={ title } size="medium" onRequestClose={ onClose }>
+			<VStack spacing={ 4 }>
+				{ canBeDeleted ? (
+					<SiteDeleteConfirmContent site={ site } onClose={ onClose } />
+				) : (
+					<SiteDeleteWarningContent site={ site } onClose={ onClose } />
+				) }
+			</VStack>
+		</Modal>
 	);
 }
