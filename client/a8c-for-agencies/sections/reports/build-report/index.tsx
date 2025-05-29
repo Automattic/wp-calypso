@@ -126,11 +126,6 @@ const BuildReport = () => {
 							options={ MOCK_TIMEFRAMES }
 							onChange={ setSelectedTimeframe }
 						/>
-						{ /* <TextControl
-							label={ translate( 'Client name (optional)' ) }
-							value={ clientName }
-							onChange={ setClientName }
-						/> */ }
 						<TextControl
 							label={ translate( 'Client email' ) }
 							value={ clientEmail }
