@@ -62,7 +62,7 @@ export function conversationMessagesToDataParts(
 /**
  * Create A2A message with conversation history from Message array
  *
- * @param text - The user text message to send
+ * @param text                 - The user text message to send
  * @param conversationMessages - Array of previous conversation messages
  * @return A2A Message with history and current text
  */

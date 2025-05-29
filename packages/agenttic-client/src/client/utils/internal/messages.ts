@@ -1,12 +1,4 @@
-import type {
-	ClientContext,
-	ContextDataPart,
-	ContextProvider,
-	Message,
-	Tool,
-	ToolDataPart,
-	ToolProvider,
-} from '../../types/index';
+import type { ContextProvider, Message, ToolProvider } from '../../types/index';
 import { logger } from '../logger';
 import { createContextDataPart, createToolDataPart } from '../core';
 

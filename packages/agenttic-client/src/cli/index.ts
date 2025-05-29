@@ -11,14 +11,8 @@ import { createRequire } from 'module';
 import {
 	createClientWithProviders,
 	createTextMessageWithHistory,
-	extractTextFromMessage,
 	getStatusStrings,
 } from './utils';
-import { createClient } from '../client/index';
-import { createEnvAuthProvider } from './auth';
-import { createExampleTools } from './tools';
-import { createCLIContextProvider } from './context';
-import { nodeDispatcher } from './dispatcher';
 
 // Force color support for chalk (same as in logger)
 process.env.FORCE_COLOR = '1';

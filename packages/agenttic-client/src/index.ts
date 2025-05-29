@@ -63,7 +63,3 @@ export type {
 
 // Constants
 export { A2AErrorCodes } from './client/types/index';
-
-// NOTE: CLI exports removed from main index (internal only)
-// NOTE: Most client utilities removed from main index (internal only)
-// NOTE: Direct client exports removed - use React hooks instead
