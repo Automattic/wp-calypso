@@ -1,6 +1,6 @@
 import { useCallback, useRef, useState } from '@wordpress/element';
 import { createClient } from '../client/index';
-import { createTextMessage } from '../client/utils/index';
+import { createTextPart } from '../client/utils/index';
 import type {
 	Client,
 	ClientConfig,
@@ -9,6 +9,19 @@ import type {
 	Task,
 	TaskUpdate,
 } from '../client/types/index';
+
+/**
+ * Create a simple text message for React usage (no conversation history)
+ *
+ * @param text - The text content for the message
+ * @return A Message object with a single text part
+ */
+function createTextMessage( text: string ): Message {
+	return {
+		role: 'user',
+		parts: [ createTextPart( text ) ],
+	};
+}
 
 /**
  * Configuration for the useAgent hook

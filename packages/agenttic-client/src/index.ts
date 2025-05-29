@@ -54,7 +54,6 @@ export {
 	createRequestId,
 	createTaskId,
 	createTextPart,
-	createTextMessage,
 	createSendTaskRequest,
 	extractTextFromMessage,
 	createToolDataPart,
