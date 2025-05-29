@@ -300,7 +300,7 @@ class ReaderPostEllipsisMenu extends Component {
 						tagName={ PopoverMenuItem }
 						siteUrl={ post.feed_URL || post.site_URL }
 						followSource={ followSource }
-						iconSize={ 20 }
+						iconSize={ 24 }
 						followingLabel={ translate( 'Subscribed' ) }
 						onFollowToggle={ this.openSuggestedFollowsModal }
 					/>
