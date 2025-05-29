@@ -10,6 +10,7 @@ import type { Message, TaskUpdate } from '../client/types/index';
 import { createRequire } from 'module';
 import {
 	createClientWithProviders,
+	createTextMessageWithHistory,
 	extractTextFromMessage,
 	getStatusStrings,
 } from './utils';
@@ -306,6 +307,7 @@ async function runInteractive( options: CLIOptions ): Promise< void > {
 
 	const session: InteractiveSession = {
 		sessionId: options.session || `cli-${ Date.now() }`,
+		conversationMessages: [],
 		messageCount: 0,
 	};
 
@@ -325,13 +327,28 @@ Type 'help' for commands.
 		cliLog.info( `📤 Initial message: "${ options.message }"` );
 		session.messageCount++;
 
+		// Add user message to conversation
+		const userMessage: Message = {
+			role: 'user',
+			parts: [ { type: 'text', text: options.message } ],
+		};
+		session.conversationMessages.push( userMessage );
+
 		const agentResponse = await sendMessageToAgent(
 			client,
-			createTextMessage( options.message ), // Client handles history automatically
+			createTextMessageWithHistory(
+				options.message,
+				session.conversationMessages.slice( 0, -1 )
+			),
 			session.sessionId,
 			options.stream || false,
 			options
 		);
+
+		// Add agent response to conversation
+		if ( agentResponse.status.message ) {
+			session.conversationMessages.push( agentResponse.status.message );
+		}
 
 		// Display the response text (only if not already shown during streaming)
 		if ( agentResponse.text && ! agentResponse.responseShown ) {
@@ -382,13 +399,30 @@ Just type your message to send it to the agent.
 
 			session.messageCount++;
 
+			// Add user message to conversation
+			const userMessage: Message = {
+				role: 'user',
+				parts: [ { type: 'text', text: trimmedInput } ],
+			};
+			session.conversationMessages.push( userMessage );
+
 			const agentResponse = await sendMessageToAgent(
 				client,
-				createTextMessage( trimmedInput ), // Client handles history automatically
+				createTextMessageWithHistory(
+					trimmedInput,
+					session.conversationMessages.slice( 0, -1 )
+				),
 				session.sessionId,
 				options.stream || false,
 				options
 			);
+
+			// Add agent response to conversation
+			if ( agentResponse.status.message ) {
+				session.conversationMessages.push(
+					agentResponse.status.message
+				);
+			}
 
 			// Display the response text (only if not already shown during streaming)
 			if ( agentResponse.text && ! agentResponse.responseShown ) {

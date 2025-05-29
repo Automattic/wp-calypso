@@ -7,6 +7,7 @@ import { cliLog } from '../client/utils/logger';
 import type { CLIOptions } from './types';
 import type {
 	Client,
+	DataPart,
 	Message,
 	TaskUpdate,
 	TextPart,
@@ -24,6 +25,64 @@ export function extractTextFromMessage( message: Message ): string {
 		.filter( ( part ): part is TextPart => part.type === 'text' )
 		.map( ( part ) => part.text )
 		.join( ' ' );
+}
+
+/**
+ * Convert ConversationMessage array to A2A message parts for history
+ *
+ * @param conversationMessages - Array of previous conversation messages
+ * @return Array of data parts representing conversation history
+ */
+export function conversationMessagesToDataParts(
+	conversationMessages: Message[]
+): DataPart[] {
+	const historyParts: DataPart[] = [];
+
+	for ( const message of conversationMessages ) {
+		for ( const part of message.parts ) {
+			if ( part.type === 'text' ) {
+				// Convert text parts to history data parts
+				historyParts.push( {
+					type: 'data',
+					data: {
+						role: message.role,
+						text: ( part as TextPart ).text,
+					},
+				} );
+			} else if ( part.type === 'data' ) {
+				// Pass through data parts (tool calls, tool results, etc.)
+				historyParts.push( part as DataPart );
+			}
+		}
+	}
+
+	return historyParts;
+}
+
+/**
+ * Create A2A message with conversation history from Message array
+ *
+ * @param text - The user text message to send
+ * @param conversationMessages - Array of previous conversation messages
+ * @return A2A Message with history and current text
+ */
+export function createTextMessageWithHistory(
+	text: string,
+	conversationMessages: Message[] = []
+): Message {
+	const historyParts =
+		conversationMessagesToDataParts( conversationMessages );
+
+	return {
+		role: 'user',
+		parts: [
+			...historyParts,
+			{
+				type: 'text',
+				text,
+			} as TextPart,
+		],
+	};
 }
 
 /**
