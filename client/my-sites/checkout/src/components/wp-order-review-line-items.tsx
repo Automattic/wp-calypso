@@ -109,7 +109,7 @@ export function WPOrderReviewLineItems( {
 	const couponLineItem = getCouponLineItemFromCart( responseCart );
 	const isOnboardingAffiliateFlow = useSelector( getIsOnboardingAffiliateFlow );
 	const [ cartProductsOrder, setCartProductsOrder ] = useCartProductsOrder();
-	const [ restorableProducts ] = useRestorableProducts();
+	const [ restorableProducts, setRestorableProducts ] = useRestorableProducts();
 
 	if ( couponLineItem ) {
 		couponLineItem.label = isOnboardingAffiliateFlow
@@ -173,7 +173,9 @@ export function WPOrderReviewLineItems( {
 					( uuid ) => ! prevCartProductsOrderActiveUuids.includes( uuid )
 				);
 
-				if ( obsoleteUuid && freshUuid ) {
+				const isProductModified = obsoleteUuid && freshUuid;
+
+				if ( isProductModified ) {
 					const info = newOrder.get( obsoleteUuid );
 
 					if ( info ) {
@@ -186,6 +188,40 @@ export function WPOrderReviewLineItems( {
 			return newOrder;
 		} );
 	}, [ responseCart.products, setCartProductsOrder ] );
+
+	// Keep track of added products using a different tab
+	useEffect( () => {
+		setCartProductsOrder( ( prevCartProductsOrder ) => {
+			const newOrder = new Map( prevCartProductsOrder );
+
+			const uuids = responseCart.products.map( ( product ) => product.uuid );
+			const prevCartProductsOrderActiveUuids = Array.from( prevCartProductsOrder.entries() )
+				.filter( ( [ , { removed } ] ) => ! removed )
+				.map( ( [ uuid ] ) => uuid );
+			const newUuids = uuids.filter(
+				( uuid ) => ! prevCartProductsOrderActiveUuids.includes( uuid )
+			);
+
+			for ( const uuid of newUuids ) {
+				const info = newOrder.get( uuid );
+
+				// product was already in our data, but removed
+				if ( info ) {
+					newOrder.set( uuid, { ...info, removed: false } );
+					setRestorableProducts( ( prevRestorableProducts ) =>
+						prevRestorableProducts.filter( ( product ) => product.uuid !== uuid )
+					);
+				} else {
+					newOrder.set( uuid, {
+						position: newOrder.size,
+						removed: false,
+					} );
+				}
+			}
+
+			return newOrder;
+		} );
+	}, [ responseCart.products, restorableProducts, setCartProductsOrder, setRestorableProducts ] );
 
 	// Keep track of removed/restored products
 	useEffect( () => {
