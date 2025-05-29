@@ -1,8 +1,5 @@
 import wpcom from 'calypso/lib/wp';
-import {
-	MAILCHIMP_SETTINGS_LIST,
-	MAILCHIMP_SETTINGS_UPDATE_SUCCESS,
-} from 'calypso/state/action-types';
+import { MAILCHIMP_SETTINGS_LIST, MAILCHIMP_SETTINGS_RECEIVE } from 'calypso/state/action-types';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 
 import 'calypso/state/data-layer/wpcom/sites/mailchimp';
@@ -19,7 +16,7 @@ export const requestSettingsUpdate = ( siteId, settings, noticeText ) => {
 			.post( `/sites/${ siteId }/mailchimp/settings`, settings )
 			.then( ( data ) => {
 				dispatch( {
-					type: MAILCHIMP_SETTINGS_UPDATE_SUCCESS,
+					type: MAILCHIMP_SETTINGS_RECEIVE,
 					siteId,
 					settings: data,
 				} );
