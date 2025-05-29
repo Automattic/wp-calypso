@@ -4,6 +4,12 @@
 
 Stepper is a framework that allows you to make all kinds of walkthroughs. It's geared towards signup and onboarding flows, but you can use it to make any wizard.
 
+# Intro video
+
+In this video, I try to explain the general principle of Stepper and hoping to make understanding Stepper easier.
+
+https://github.com/user-attachments/assets/662eebd4-0d22-4f31-b11b-3a8b6beb7da7
+
 ## Table of Contents
 
 - [How does it work](#how-does-it-work)
