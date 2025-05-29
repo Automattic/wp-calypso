@@ -153,6 +153,14 @@ class DomainRegistrationSuggestion extends Component {
 						'Accessible label for free domain with normal price. %(baseLabel)s is the base label (e.g. "Select domain testing.com"). %(price)s is the price.',
 				}
 			);
+		} else if ( priceRule === 'FREE_DOMAIN' && ! productCost ) {
+			return translate( '%(baseLabel)s. Free', {
+				args: {
+					baseLabel,
+				},
+				comment:
+					'Accessible label for free domain. %(baseLabel)s is the base label (e.g. "Select domain testing.com").',
+			} );
 		} else if ( productSaleCost && productCost ) {
 			return translate(
 				'%(baseLabel)s. %(salePrice)s for the first year, then %(price)s per year',
