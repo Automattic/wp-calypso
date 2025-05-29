@@ -104,9 +104,6 @@ function getEventHandlers( props, dispatch ) {
 		if ( tracks.click ) {
 			dispatch( recordTracksEvent( tracks.click.name, { ...tracks.click.props, ...eventProps } ) );
 		}
-		if ( jitm.action ) {
-			dispatch( jitm.action );
-		}
 
 		// Invoke the provided onClick function defined in props
 		if ( onClick ) {
