@@ -8,13 +8,13 @@ import {
 	Card,
 	CardBody,
 	ExternalLink,
-	TextControl,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { siteSftpUsersResetPasswordMutation } from '../../app/queries';
+import ClipboardInputControl from './clipboard-input-control';
 import type { SftpUser } from '../../data/types';
 
 const SFTP_URL = 'sftp.wp.com';
@@ -67,22 +67,21 @@ export default function SftpCard( {
 						</Text>
 					</VStack>
 					<VStack spacing={ 4 }>
-						{ /* TODO: Handle copy and hide the input of the password if empty */ }
-						<TextControl
+						<ClipboardInputControl
 							label={ __( 'URL' ) }
 							value={ SFTP_URL }
 							readOnly
 							__next40pxDefaultSize
 							__nextHasNoMarginBottom
 						/>
-						<TextControl
+						<ClipboardInputControl
 							label={ __( 'Port' ) }
 							value={ SFTP_PORT }
 							readOnly
 							__next40pxDefaultSize
 							__nextHasNoMarginBottom
 						/>
-						<TextControl
+						<ClipboardInputControl
 							label={ __( 'Username' ) }
 							value={ username }
 							readOnly
@@ -90,7 +89,7 @@ export default function SftpCard( {
 							__nextHasNoMarginBottom
 						/>
 						{ password ? (
-							<TextControl
+							<ClipboardInputControl
 								label={ __( 'Password' ) }
 								value={ password }
 								help={ __(

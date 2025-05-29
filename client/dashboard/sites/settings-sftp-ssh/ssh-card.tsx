@@ -9,7 +9,6 @@ import {
 	CardBody,
 	ExternalLink,
 	SelectControl,
-	TextControl,
 	ToggleControl,
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
@@ -25,6 +24,7 @@ import {
 	siteSshKeysDetachMutation,
 	profileSshKeysQuery,
 } from '../../app/queries';
+import ClipboardInputControl from './clipboard-input-control';
 import type { SftpUser, SiteSshKey, ProfileSshKey } from '../../data/types';
 
 export default function SshCard( {
@@ -106,7 +106,7 @@ export default function SshCard( {
 						/>
 						{ sshEnabled && (
 							<>
-								<TextControl
+								<ClipboardInputControl
 									label={ __( 'Connection command' ) }
 									value={ `ssh ${ username }@ssh.wp.com` }
 									readOnly
