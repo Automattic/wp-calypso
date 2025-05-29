@@ -4,10 +4,12 @@ import { createTextPart } from '../client/utils/index';
 import type {
 	Client,
 	ClientConfig,
+	DataPart,
 	Message,
 	SendMessageParams,
 	Task,
 	TaskUpdate,
+	TextPart,
 } from '../client/types/index';
 
 /**
@@ -21,6 +23,84 @@ function createTextMessage( text: string ): Message {
 		role: 'user',
 		parts: [ createTextPart( text ) ],
 	};
+}
+
+/**
+ * Convert conversation messages to data parts for history
+ *
+ * @param conversationMessages - Array of previous conversation messages
+ * @return Array of data parts representing conversation history
+ */
+function conversationMessagesToDataParts(
+	conversationMessages: Message[]
+): DataPart[] {
+	const historyParts: DataPart[] = [];
+
+	for ( const message of conversationMessages ) {
+		for ( const part of message.parts ) {
+			if ( part.type === 'text' ) {
+				// Convert text parts to history data parts
+				historyParts.push( {
+					type: 'data',
+					data: {
+						role: message.role,
+						text: ( part as TextPart ).text,
+					},
+				} );
+			} else if ( part.type === 'data' ) {
+				// Pass through data parts (tool calls, tool results, etc.)
+				historyParts.push( part as DataPart );
+			}
+		}
+	}
+
+	return historyParts;
+}
+
+/**
+ * Create A2A message with conversation history from Message array
+ *
+ * @param text                  - The user text message to send
+ * @param conversationMessages - Array of previous conversation messages
+ * @return A2A Message with history and current text
+ */
+function createTextMessageWithHistory(
+	text: string,
+	conversationMessages: Message[] = []
+): Message {
+	const historyParts =
+		conversationMessagesToDataParts( conversationMessages );
+
+	return {
+		role: 'user',
+		parts: [
+			...historyParts,
+			{
+				type: 'text',
+				text,
+			} as TextPart,
+		],
+	};
+}
+
+/**
+ * Extract tool calls from a message
+ *
+ * @param message - The message to check for tool calls
+ * @return Array of tool call parts
+ */
+function extractToolCallsFromMessage( message?: Message ): DataPart[] {
+	if ( ! message?.parts ) {
+		return [];
+	}
+
+	return message.parts.filter(
+		( part: any ) =>
+			part.type === 'data' &&
+			'toolCallId' in part.data &&
+			'toolId' in part.data &&
+			'arguments' in part.data
+	) as DataPart[];
 }
 
 /**
@@ -38,6 +118,7 @@ export interface AgentState {
 	isLoading: boolean;
 	error: string | null;
 	lastResponse: Task | null;
+	conversationHistory: Message[];
 }
 
 /**
@@ -60,6 +141,7 @@ export interface UseAgentReturn {
 	// Utilities
 	clearError: () => void;
 	reset: () => void;
+	resetConversation: () => void;
 }
 
 /**
@@ -93,6 +175,7 @@ export function useAgent( config: UseAgentConfig ): UseAgentReturn {
 		isLoading: false,
 		error: initError,
 		lastResponse: null,
+		conversationHistory: [],
 	} );
 
 	const sendMessage = useCallback(
@@ -104,6 +187,8 @@ export function useAgent( config: UseAgentConfig ): UseAgentReturn {
 				throw new Error( 'Client not initialized' );
 			}
 
+			const { withHistory = true, ...otherOptions } = options;
+
 			setState( ( prev ) => ( {
 				...prev,
 				isLoading: true,
@@ -112,17 +197,35 @@ export function useAgent( config: UseAgentConfig ): UseAgentReturn {
 
 			try {
 				const message: Message =
-					options.message || createTextMessage( messageText );
+					options.message ||
+					( withHistory
+						? createTextMessageWithHistory(
+								messageText,
+								state.conversationHistory
+						  )
+						: createTextMessage( messageText ) );
 
 				const task = await clientRef.current.sendMessage( {
 					message,
-					...options,
+					withHistory,
+					...otherOptions,
 				} );
 
 				setState( ( prev ) => ( {
 					...prev,
 					isLoading: false,
 					lastResponse: task,
+					// Update conversation history only if withHistory is true
+					conversationHistory: withHistory
+						? [
+								...prev.conversationHistory,
+								message,
+								// Add agent response if present
+								...( task.status?.message
+									? [ task.status.message ]
+									: [] ),
+						  ]
+						: prev.conversationHistory,
 				} ) );
 
 				return task;
@@ -139,54 +242,94 @@ export function useAgent( config: UseAgentConfig ): UseAgentReturn {
 				throw error;
 			}
 		},
-		[]
+		[ state.conversationHistory ]
 	);
 
-	const sendMessageStream = useCallback( async function* (
-		messageText: string,
-		options: Partial< SendMessageParams > = {}
-	): AsyncIterable< TaskUpdate > {
-		if ( ! clientRef.current ) {
-			throw new Error( 'Client not initialized' );
-		}
-
-		setState( ( prev ) => ( { ...prev, isLoading: true, error: null } ) );
-
-		try {
-			const message: Message =
-				options.message || createTextMessage( messageText );
-
-			for await ( const update of clientRef.current.sendMessageStream( {
-				message,
-				...options,
-			} ) ) {
-				yield update;
-
-				// Update state with final result
-				if ( update.final ) {
-					setState( ( prev ) => ( {
-						...prev,
-						isLoading: false,
-						lastResponse: {
-							id: update.id,
-							status: update.status,
-						},
-					} ) );
-				}
+	const sendMessageStream = useCallback(
+		async function* (
+			messageText: string,
+			options: Partial< SendMessageParams > = {}
+		): AsyncIterable< TaskUpdate > {
+			if ( ! clientRef.current ) {
+				throw new Error( 'Client not initialized' );
 			}
-		} catch ( error ) {
-			const errorMessage =
-				error instanceof Error
-					? error.message
-					: 'Failed to send streaming message';
+
+			const { withHistory = true, ...otherOptions } = options;
+
 			setState( ( prev ) => ( {
 				...prev,
-				isLoading: false,
-				error: errorMessage,
+				isLoading: true,
+				error: null,
 			} ) );
-			throw error;
-		}
-	}, [] );
+
+			try {
+				const message: Message =
+					options.message ||
+					( withHistory
+						? createTextMessageWithHistory(
+								messageText,
+								state.conversationHistory
+						  )
+						: createTextMessage( messageText ) );
+
+				// Add user message to conversation history before streaming (only if withHistory is true)
+				if ( withHistory ) {
+					setState( ( prev ) => ( {
+						...prev,
+						conversationHistory: [
+							...prev.conversationHistory,
+							message,
+						],
+					} ) );
+				}
+
+				let finalUpdate: TaskUpdate | null = null;
+
+				for await ( const update of clientRef.current.sendMessageStream(
+					{
+						message,
+						withHistory,
+						...otherOptions,
+					}
+				) ) {
+					finalUpdate = update;
+					yield update;
+
+					// Update state with final result
+					if ( update.final ) {
+						setState( ( prev ) => ( {
+							...prev,
+							isLoading: false,
+							lastResponse: {
+								id: update.id,
+								status: update.status,
+							},
+							// Add agent response to conversation history (only if withHistory is true)
+							conversationHistory:
+								withHistory && update.status?.message
+									? [
+											...prev.conversationHistory,
+											update.status.message,
+									  ]
+									: prev.conversationHistory,
+						} ) );
+					}
+				}
+			} catch ( error ) {
+				const errorMessage =
+					error instanceof Error
+						? error.message
+						: 'Failed to send streaming message';
+				setState( ( prev ) => ( {
+					...prev,
+					isLoading: false,
+					error: errorMessage,
+				} ) );
+				throw error;
+			}
+		},
+		[ state.conversationHistory ]
+	);
 
 	const clearError = useCallback( () => {
 		setState( ( prev ) => ( { ...prev, error: null } ) );
@@ -198,7 +341,15 @@ export function useAgent( config: UseAgentConfig ): UseAgentReturn {
 			isLoading: false,
 			error: null,
 			lastResponse: null,
+			conversationHistory: [],
 		} );
+	}, [] );
+
+	const resetConversation = useCallback( () => {
+		setState( ( prev ) => ( {
+			...prev,
+			conversationHistory: [],
+		} ) );
 	}, [] );
 
 	return {
@@ -207,5 +358,6 @@ export function useAgent( config: UseAgentConfig ): UseAgentReturn {
 		sendMessageStream,
 		clearError,
 		reset,
+		resetConversation,
 	};
 }

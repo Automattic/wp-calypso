@@ -79,6 +79,16 @@ export type { SendToolResultCallback } from './cli/tools';
 // CLI context provider exports
 export { CLIContextProvider, createCLIContextProvider } from './cli/context';
 
+// React hook exports
+export { useAgent } from './react/useAgent';
+export { useClientContext } from './react/useClientContext';
+export { useClientTools } from './react/useClientTools';
+export type {
+	UseAgentConfig,
+	AgentState,
+	UseAgentReturn,
+} from './react/useAgent';
+
 // Constants
 export { A2AErrorCodes } from './client/types/index';
 

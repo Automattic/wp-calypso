@@ -46,5 +46,4 @@ export interface ConversationMessage {
 export interface InteractiveSession {
 	sessionId: string;
 	messageCount: number;
-	conversationMessages: Message[];
 }

@@ -212,17 +212,20 @@ export function createClient( config: ClientConfig ): Client {
 
 	return {
 		async sendMessage( params: SendMessageParams ): Promise< TaskUpdate > {
-			// Extract conversation history from the incoming message
-			const conversationHistory = extractConversationHistory(
-				params.message
-			);
+			const { withHistory = true } = params;
+
+			// Extract conversation history from the incoming message only if withHistory is true
+			const conversationHistory = withHistory
+				? extractConversationHistory( params.message )
+				: [];
 
 			// Add the initial user message to conversation history if it's not already there
 			// This ensures the original user request is preserved for tool result context
 			if (
-				conversationHistory.length === 0 ||
-				conversationHistory[ conversationHistory.length - 1 ] !==
-					params.message
+				withHistory &&
+				( conversationHistory.length === 0 ||
+					conversationHistory[ conversationHistory.length - 1 ] !==
+						params.message )
 			) {
 				conversationHistory.push( params.message );
 			}
@@ -289,12 +292,15 @@ export function createClient( config: ClientConfig ): Client {
 					}
 				}
 
-				// Add current agent message to conversation history
-				conversationHistory.push( currentTask.status.message );
+				// Add current agent message to conversation history (only if withHistory is true)
+				if ( withHistory ) {
+					conversationHistory.push( currentTask.status.message );
+				}
 
-				// Create tool result message with full conversation history
-				const historyDataParts =
-					conversationHistoryToDataParts( conversationHistory );
+				// Create tool result message with conversation history (if enabled)
+				const historyDataParts = withHistory
+					? conversationHistoryToDataParts( conversationHistory )
+					: [];
 
 				const toolResultMessage: Message = {
 					role: 'user',
@@ -322,17 +328,20 @@ export function createClient( config: ClientConfig ): Client {
 		async *sendMessageStream(
 			params: SendMessageParams
 		): AsyncIterable< TaskUpdate > {
-			// Extract conversation history from the incoming message
-			const conversationHistory = extractConversationHistory(
-				params.message
-			);
+			const { withHistory = true } = params;
+
+			// Extract conversation history from the incoming message only if withHistory is true
+			const conversationHistory = withHistory
+				? extractConversationHistory( params.message )
+				: [];
 
 			// Add the initial user message to conversation history if it's not already there
 			// This ensures the original user request is preserved for tool result context
 			if (
-				conversationHistory.length === 0 ||
-				conversationHistory[ conversationHistory.length - 1 ] !==
-					params.message
+				withHistory &&
+				( conversationHistory.length === 0 ||
+					conversationHistory[ conversationHistory.length - 1 ] !==
+						params.message )
 			) {
 				conversationHistory.push( params.message );
 			}
@@ -401,18 +410,21 @@ export function createClient( config: ClientConfig ): Client {
 							}
 						}
 
-						// Add current agent message to conversation history
-						conversationHistory.push( update.status.message );
+						// Add current agent message to conversation history (only if withHistory is true)
+						if ( withHistory ) {
+							conversationHistory.push( update.status.message );
+						}
 
-						// Create tool result message with full conversation history
+						// Create tool result message with conversation history (if enabled)
+						const historyDataParts = withHistory
+							? conversationHistoryToDataParts(
+									conversationHistory
+							  )
+							: [];
+
 						const toolResultMessage: Message = {
 							role: 'user',
-							parts: [
-								...conversationHistoryToDataParts(
-									conversationHistory
-								),
-								...toolResults,
-							],
+							parts: [ ...historyDataParts, ...toolResults ],
 						};
 
 						console.log(
