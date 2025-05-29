@@ -372,7 +372,6 @@ class StatsGeochart extends Component {
 		}
 
 		const chartData = this.prepareChartData( data );
-
 		const statsRoot = document.querySelector( 'main.stats-main' ) || document.body;
 		// Note that using raw hex values here is an exception due to
 		// IE11 and other older browser not supporting CSS custom props.
