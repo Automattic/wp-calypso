@@ -83,6 +83,15 @@ const fields: Field< SiteSettings >[] = [
 	},
 ];
 
+const form = {
+	type: 'regular',
+	fields: [
+		{ id: 'wpcom_site_visibility', labelPosition: 'none' },
+		'wpcom_discourage_search_engines',
+		'wpcom_prevent_third_party_sharing',
+	],
+} satisfies Form;
+
 export function PrivacyForm( {
 	settings,
 	mutation,
@@ -117,15 +126,6 @@ export function PrivacyForm( {
 			}
 		);
 	};
-
-	const form = {
-		type: 'regular',
-		fields: [
-			{ id: 'wpcom_site_visibility', labelPosition: 'none' },
-			'wpcom_discourage_search_engines',
-			'wpcom_prevent_third_party_sharing',
-		],
-	} satisfies Form;
 
 	return (
 		<form onSubmit={ handleSubmit } className="dashboard-site-settings-privacy-form">
