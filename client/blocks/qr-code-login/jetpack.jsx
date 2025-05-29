@@ -1,32 +1,36 @@
 import { ExternalLink } from '@automattic/components';
-import { translate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { TokenQRCode } from './index';
 
-const steps = [
-	// translation: Link to the Jetpack App.
-	translate( 'Open the {{link}}%(name)s App{{/link}} on your phone.', {
-		args: {
-			name: 'Jetpack',
-		},
-		components: {
-			link: <ExternalLink target="_blank" href="https://jetpack.com/app?campaign=login-qr-code" />,
-		},
-	} ),
-	translate( 'Tap the Me tab.' ),
-	translate( 'Tap the Scan Login Code option.' ),
-	translate( 'Point your phone to the following QR code to scan it.' ),
-];
-
-const notice = translate(
-	"Logging in via the Jetpack app is {{strong}}not available{{/strong}} if you've enabled two-step authentication on your WordPress.com account.",
-	{
-		components: {
-			strong: <strong />,
-		},
-	}
-);
-
 export const JetpackQRCodeLogin = ( { tokenState } ) => {
+	const translate = useTranslate();
+
+	const steps = [
+		// translation: Link to the Jetpack App.
+		translate( 'Open the {{link}}%(name)s App{{/link}} on your phone.', {
+			args: {
+				name: 'Jetpack',
+			},
+			components: {
+				link: (
+					<ExternalLink target="_blank" href="https://jetpack.com/app?campaign=login-qr-code" />
+				),
+			},
+		} ),
+		translate( 'Tap the Me tab.' ),
+		translate( 'Tap the Scan Login Code option.' ),
+		translate( 'Point your phone to the following QR code to scan it.' ),
+	];
+
+	const notice = translate(
+		"Logging in via the Jetpack app is {{strong}}not available{{/strong}} if you've enabled two-step authentication on your WordPress.com account.",
+		{
+			components: {
+				strong: <strong />,
+			},
+		}
+	);
+
 	return (
 		<div className="qr-code-login-jetpack">
 			<div className="qr-code-login-jetpack__instructions">
