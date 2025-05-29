@@ -16,6 +16,9 @@ import {
 	fetchPerformanceInsights,
 	updateSiteSettings,
 	restoreSitePlanSoftware,
+	siteOwnerTransfer,
+	siteOwnerTransferEligibilityCheck,
+	siteOwnerTransferConfirm,
 	fetchWordPressVersion,
 	updateWordPressVersion,
 	fetchPrimaryDataCenter,
@@ -23,15 +26,20 @@ import {
 	updateStaticFile404,
 	fetchEdgeCacheDefensiveMode,
 	updateEdgeCacheDefensiveMode,
+	fetchPurchases,
+	fetchSiteUserMe,
+	leaveSite,
 } from '../data';
 import { SITE_FIELDS, SITE_OPTIONS } from '../data/constants';
 import { queryClient } from './query-client';
 import type {
 	Profile,
+	Purchase,
 	SiteSettings,
 	UrlPerformanceInsights,
 	DefensiveModeSettings,
 	DefensiveModeSettingsUpdate,
+	SiteTransferConfirmation,
 } from '../data/types';
 import type { Query } from '@tanstack/react-query';
 
@@ -171,6 +179,31 @@ export function restoreSitePlanSoftwareMutation( siteId: string ) {
 	};
 }
 
+export function siteOwnerTransferMutation( siteId: string ) {
+	return {
+		mutationFn: ( data: { new_site_owner: string } ) => siteOwnerTransfer( siteId, data ),
+	};
+}
+
+export function siteOwnerTransferEligibilityCheckMutation( siteId: string ) {
+	return {
+		mutationFn: ( data: { new_site_owner: string } ) =>
+			siteOwnerTransferEligibilityCheck( siteId, data ),
+	};
+}
+
+export function siteOwnerTransferConfirmMutation( siteId: string ) {
+	return {
+		mutationFn: ( data: { hash: string } ) => siteOwnerTransferConfirm( siteId, data ),
+		onSuccess: ( { transfer }: SiteTransferConfirmation ) => {
+			if ( transfer ) {
+				// Invalidate queries as the site has been transferred to new owner.
+				queryClient.invalidateQueries( { queryKey: [ 'site', siteId ] } );
+			}
+		},
+	};
+}
+
 export function basicMetricsQuery( url: string ) {
 	return {
 		queryKey: [ 'url', 'basic-metrics', url ],
@@ -238,5 +271,43 @@ export function siteDefensiveModeMutation( siteSlug: string ) {
 		onSuccess: ( data: DefensiveModeSettings ) => {
 			queryClient.setQueryData( [ 'site', siteSlug, 'defensive-mode' ], data );
 		},
+	};
+}
+
+export function siteHasPurchasesCancelableQuery( siteId: string, userId: number ) {
+	return {
+		queryKey: [ 'site', siteId, 'purchases-cancelable' ],
+		queryFn: () => {
+			return fetchPurchases( siteId );
+		},
+		select: ( purchases: Purchase[] ) => {
+			const cancelables = purchases
+				.filter( ( purchase ) => {
+					// Exclude inactive purchases and legacy premium theme purchases.
+					if ( ! purchase.active || purchase.product_slug === 'premium_theme' ) {
+						return false;
+					}
+
+					return purchase.is_cancelable;
+				} )
+				.filter( ( purchase ) => Number( purchase.user_id ) === userId );
+
+			return cancelables.length > 0;
+		},
+	};
+}
+
+export function siteUserMeQuery( siteId: string ) {
+	return {
+		queryKey: [ 'site', siteId, 'user-me' ],
+		queryFn: () => {
+			return fetchSiteUserMe( siteId );
+		},
+	};
+}
+
+export function leaveSiteMutation( siteId: string ) {
+	return {
+		mutationFn: ( userId: number ) => leaveSite( siteId, userId ),
 	};
 }

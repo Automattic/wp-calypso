@@ -1,17 +1,16 @@
-import { Breadcrumbs } from '@automattic/components/src/breadcrumbs';
 import { Meta, StoryObj } from '@storybook/react';
 import { Button, Icon, DropdownMenu, MenuGroup, MenuItem } from '@wordpress/components';
 import { help, wordpress, moreVertical } from '@wordpress/icons';
-import { PageHeader } from './index';
+import { SectionHeader } from './index';
 
 const meta = {
-	title: 'client/dashboard/PageHeader',
-	component: PageHeader,
+	title: 'client/dashboard/SectionHeader',
+	component: SectionHeader,
 	tags: [ 'autodocs' ],
 	parameters: {
 		actions: { argTypesRegex: '^on.*' },
 	},
-} satisfies Meta< typeof PageHeader >;
+} satisfies Meta< typeof SectionHeader >;
 
 export default meta;
 type Story = StoryObj< typeof meta >;
@@ -31,10 +30,10 @@ export const WithActions: Story = {
 				content is displayed to visitors.`,
 		actions: (
 			<>
-				<Button variant="secondary" __next40pxDefaultSize>
+				<Button variant="secondary" size="compact">
 					Cancel
 				</Button>
-				<Button variant="primary" __next40pxDefaultSize>
+				<Button variant="primary" size="compact">
 					Save Changes
 				</Button>
 			</>
@@ -49,10 +48,10 @@ export const ImageDecoration: Story = {
 		decoration: <img src="https://placecats.com/300/200" alt="Cat" />,
 		actions: (
 			<>
-				<Button variant="secondary" __next40pxDefaultSize>
+				<Button variant="secondary" size="compact">
 					Cancel
 				</Button>
-				<Button variant="primary" __next40pxDefaultSize>
+				<Button variant="primary" size="compact">
 					Save Changes
 				</Button>
 			</>
@@ -65,29 +64,18 @@ export const FullExample: Story = {
 		title: 'Site Customization',
 		description: 'Make your site look exactly how you want it to',
 		decoration: <Icon icon={ wordpress } />,
-		breadcrumbs: (
-			<Breadcrumbs
-				items={ [
-					{ label: 'Dashboard', href: 'javascript:void(0)' },
-					{ label: 'Appearance', href: 'javascript:void(0)' },
-					{ label: 'Customize', href: 'javascript:void(0)' },
-					{ label: 'Theme', href: 'javascript:void(0)' },
-					{ label: 'Advanced', href: 'javascript:void(0)' },
-				] }
-			/>
-		),
 		actions: (
 			<>
-				<Button icon={ help } variant="tertiary" __next40pxDefaultSize>
+				<Button icon={ help } variant="tertiary" size="compact">
 					Help
 				</Button>
-				<Button variant="secondary" __next40pxDefaultSize>
+				<Button variant="secondary" size="compact">
 					Preview
 				</Button>
 				<DropdownMenu
 					icon={ moreVertical }
 					label="More actions"
-					toggleProps={ { __next40pxDefaultSize: true } }
+					toggleProps={ { size: 'compact' } }
 				>
 					{ () => (
 						<>

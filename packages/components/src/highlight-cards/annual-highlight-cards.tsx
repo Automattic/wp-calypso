@@ -3,7 +3,6 @@ import clsx from 'clsx';
 import { translate, useTranslate } from 'i18n-calypso';
 import ComponentSwapper from '../component-swapper';
 import CountCard from './count-card';
-import HighlightCardsHeading from './highlight-cards-heading';
 import MobileHighlightCardListing from './mobile-highlight-cards';
 
 import './style.scss';
@@ -54,6 +53,18 @@ function AnnualHighlightsStandard( { counts }: AnnualHighlightsProps ) {
 					showValueTooltip
 				/>
 			) ) }
+		</div>
+	);
+}
+
+function HighlightCardsHeading( { children }: { children: React.ReactNode } ) {
+	const translate = useTranslate();
+	return (
+		<div className="highlight-cards-heading__wrapper">
+			<h3 className="highlight-cards-heading">{ children }</h3>
+			<div className="highlight-cards-heading__update-frequency">
+				<span>{ translate( 'Updates every 30 minutes' ) }</span>
+			</div>
 		</div>
 	);
 }

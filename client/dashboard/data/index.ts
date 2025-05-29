@@ -7,7 +7,9 @@ import type {
 	MonitorUptime,
 	Plan,
 	Site,
+	Purchase,
 	User,
+	SiteUser,
 	Profile,
 	TwoStep,
 	EngagementStatsDataPoint,
@@ -17,6 +19,7 @@ import type {
 	PhpMyAdminToken,
 	DefensiveModeSettings,
 	DefensiveModeSettingsUpdate,
+	SiteTransferConfirmation,
 } from './types';
 import type { DataCenterOption } from 'calypso/data/data-center/types';
 
@@ -363,6 +366,51 @@ export const restoreSitePlanSoftware = async ( siteIdOrSlug: string ) => {
 	} );
 };
 
+export const siteOwnerTransfer = async (
+	siteIdOrSlug: string,
+	data: { new_site_owner: string }
+) => {
+	return wpcom.req.post(
+		{
+			path: `/sites/${ siteIdOrSlug }/site-owner-transfer`,
+			apiNamespace: 'wpcom/v2',
+		},
+		{
+			calypso_origin: window.location.origin,
+		},
+		{
+			context: 'dashboard_v2',
+			...data,
+		}
+	);
+};
+
+export const siteOwnerTransferEligibilityCheck = async (
+	siteIdOrSlug: string,
+	data: { new_site_owner: string }
+) => {
+	return wpcom.req.post(
+		{
+			path: `/sites/${ siteIdOrSlug }/site-owner-transfer/eligibility`,
+			apiNamespace: 'wpcom/v2',
+		},
+		data
+	);
+};
+
+export const siteOwnerTransferConfirm = async (
+	siteIdOrSlug: string,
+	data: { hash: string }
+): Promise< SiteTransferConfirmation > => {
+	return wpcom.req.post(
+		{
+			path: `/sites/${ siteIdOrSlug }/site-owner-transfer/confirm`,
+			apiNamespace: 'wpcom/v2',
+		},
+		data
+	);
+};
+
 export const fetchBasicMetrics = async ( url: string ): Promise< BasicMetricsData > => {
 	return wpcom.req.get(
 		{
@@ -450,4 +498,23 @@ export const updateEdgeCacheDefensiveMode = async (
 		},
 		data
 	);
+};
+
+export const fetchPurchases = async ( siteIdOrSlug: string ): Promise< Purchase[] > => {
+	return wpcom.req.get( {
+		path: `/sites/${ siteIdOrSlug }/purchases`,
+	} );
+};
+
+export const fetchSiteUserMe = async ( siteIdOrSlug: string ): Promise< SiteUser > => {
+	return wpcom.req.get( {
+		path: `/sites/${ siteIdOrSlug }/users/me`,
+		apiNamespace: 'wp/v2',
+	} );
+};
+
+export const leaveSite = async ( siteIdOrSlug: string, userId: number ) => {
+	return wpcom.req.post( {
+		path: `/sites/${ siteIdOrSlug }/users/${ userId }/delete`,
+	} );
 };

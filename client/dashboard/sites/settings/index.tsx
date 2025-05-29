@@ -1,13 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
-import {
-	__experimentalHeading as Heading,
-	__experimentalVStack as VStack,
-	Card,
-} from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { siteQuery, siteSettingsQuery } from '../../app/queries';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import { SectionHeader } from '../../components/section-header';
+import { SummaryButtonList } from '../../components/summary-button-list';
 import DatabaseSettingsSummary from '../settings-database/summary';
 import DefensiveModeSettingsSummary from '../settings-defensive-mode/summary';
 import PHPSettingsSummary from '../settings-php/summary';
@@ -29,24 +26,20 @@ export default function SiteSettings( { siteSlug }: { siteSlug: string } ) {
 
 	return (
 		<PageLayout size="small" header={ <PageHeader title={ __( 'Settings' ) } /> }>
-			<Heading>{ __( 'General' ) }</Heading>
-			<Card>
-				<VStack>
-					<SiteVisibilitySettingsSummary site={ site } />
-					<SubscriptionGiftingSettingsSummary site={ site } settings={ settings } />
-				</VStack>
-			</Card>
-			<Heading>{ __( 'Server' ) }</Heading>
-			<Card>
-				<VStack>
-					<DatabaseSettingsSummary site={ site } />
-					<WordPressSettingsSummary site={ site } />
-					<PHPSettingsSummary site={ site } />
-					<PrimaryDataCenterSettingsSummary site={ site } />
-					<StaticFile404SettingsSummary site={ site } />
-					<DefensiveModeSettingsSummary site={ site } />
-				</VStack>
-			</Card>
+			<SectionHeader title={ __( 'General' ) } />
+			<SummaryButtonList>
+				<SiteVisibilitySettingsSummary site={ site } />
+				<SubscriptionGiftingSettingsSummary site={ site } settings={ settings } />
+			</SummaryButtonList>
+			<SectionHeader title={ __( 'Server' ) } />
+			<SummaryButtonList>
+				<DatabaseSettingsSummary site={ site } />
+				<WordPressSettingsSummary site={ site } />
+				<PHPSettingsSummary site={ site } />
+				<PrimaryDataCenterSettingsSummary site={ site } />
+				<StaticFile404SettingsSummary site={ site } />
+				<DefensiveModeSettingsSummary site={ site } />
+			</SummaryButtonList>
 			<SiteActions site={ site } />
 			<DangerZone site={ site } />
 		</PageLayout>

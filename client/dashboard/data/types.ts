@@ -15,6 +15,11 @@ export interface User {
 	avatar_URL?: string;
 	language: string;
 	locale_variant: string;
+	email: string;
+}
+
+export interface SiteUser {
+	id: number;
 }
 
 export interface SiteDomain {
@@ -103,6 +108,14 @@ export interface Site {
 	jetpack_modules: string[] | null;
 }
 
+export interface Purchase {
+	ID: number | string;
+	active: boolean;
+	is_cancelable: boolean;
+	product_slug: string;
+	user_id: number | string;
+}
+
 export type EmailProvider = 'titan' | 'google-workspace' | 'forwarding';
 export interface EmailProviderDisplay {
 	id: EmailProvider;
@@ -186,4 +199,10 @@ export interface DefensiveModeSettings {
 export interface DefensiveModeSettingsUpdate {
 	active: boolean;
 	ttl?: number;
+}
+
+export interface SiteTransferConfirmation {
+	transfer: boolean;
+	email_sent: boolean;
+	new_owner_email: string;
 }
