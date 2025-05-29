@@ -7,6 +7,8 @@ type PlanHeadersProps = {
 	renderedGridPlans: GridPlan[];
 	options?: {
 		isTableCell?: boolean;
+		isHeader?: boolean;
+		scope?: string;
 	};
 };
 
@@ -19,8 +21,10 @@ const PlanHeaders = ( { options, renderedGridPlans }: PlanHeadersProps ) => {
 				key={ planSlug }
 				className="plan-features-2023-grid__table-item"
 				isTableCell={ options?.isTableCell }
+				scope={ options?.scope }
+				isHeader={ options?.isHeader }
 			>
-				<header className={ headerClasses }>
+				<header aria-label={ planTitle as string } className={ headerClasses }>
 					<h4 className="plan-features-2023-grid__header-title">{ planTitle }</h4>
 				</header>
 			</PlanDivOrTdContainer>

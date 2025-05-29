@@ -91,8 +91,8 @@ const Table = ( {
 			<caption className="plan-features-2023-grid__screen-reader-text screen-reader-text">
 				{ translate( 'Available plans to choose from' ) }
 			</caption>
-			<tbody>
-				<tr>
+			<thead>
+				<tr aria-hidden="true">
 					<PlanLogos
 						renderedGridPlans={ gridPlansWithoutSpotlight }
 						isInSignup={ isInSignup }
@@ -102,9 +102,11 @@ const Table = ( {
 				<tr>
 					<PlanHeaders
 						renderedGridPlans={ gridPlansWithoutSpotlight }
-						options={ { isTableCell: true } }
+						options={ { isHeader: true, scope: 'col' } }
 					/>
 				</tr>
+			</thead>
+			<tbody>
 				<tr>
 					<PlanTagline
 						renderedGridPlans={ gridPlansWithoutSpotlight }
