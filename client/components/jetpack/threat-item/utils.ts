@@ -105,6 +105,10 @@ export function getThreatType( threat: Threat ): ThreatType {
 		return 'database';
 	}
 
+	if ( threat.table !== undefined ) {
+		return 'database';
+	}
+
 	if ( 'Suspicious.Links' === threat.signature ) {
 		return 'database';
 	}
@@ -136,6 +140,20 @@ export const getThreatVulnerability = ( threat: Threat ): string | TranslateResu
 			return translate( 'Vulnerability found in a theme' );
 
 		case 'database':
+			if ( threat.signature !== undefined ) {
+				return translate( 'Thread found: %(signature)s', {
+					args: {
+						signature: threat.signature,
+					},
+				} );
+			}
+			if ( threat.table !== undefined ) {
+				return translate( 'The database table %(table)s contains malicious code', {
+					args: {
+						table: threat.table,
+					},
+				} );
+			}
 			return 'Vulnerability found in a database table';
 
 		case 'none':

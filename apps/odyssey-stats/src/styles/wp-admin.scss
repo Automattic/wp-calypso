@@ -90,3 +90,13 @@
 		margin-left: 0;
 	}
 }
+
+// Set correct colors for the nav header buttons.
+.calypso-navigation-header {
+	&__right-section {
+		.components-button {
+			--color-accent: var(--theme-highlight-color);
+			--color-accent-60: var(--color-primary-60);
+		}
+	}
+}

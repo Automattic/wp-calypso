@@ -5,7 +5,6 @@ import { clampNumberOfMonths } from '../utils/misc';
 import { useControlledValue } from '../utils/use-controlled-value';
 import { useLocalizationProps } from '../utils/use-localization-props';
 import type { DateCalendarProps } from '../types';
-import '../styles.scss';
 
 /**
  * `DateCalendar` is a React component that provides a customizable calendar

@@ -31,7 +31,6 @@ const cachePath = path.resolve( '.cache', extraPath );
 
 const excludedPackages = [
 	/^calypso\/components\/inline-support-link$/,
-	/^calypso\/components\/web-preview.*$/,
 	/^calypso\/my-sites\/stats\/mini-carousel.*$/,
 	/^calypso\/blocks\/jetpack-backup-creds-banner.*$/,
 	/^calypso\/components\/data\/query-keyring-connections$/,

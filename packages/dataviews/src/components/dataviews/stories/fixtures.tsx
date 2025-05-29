@@ -583,7 +583,13 @@ export const DEFAULT_VIEW = {
 	search: '',
 	page: 1,
 	perPage: 10,
-	layout: {},
+	layout: {
+		styles: {
+			satellites: {
+				align: 'end' as const,
+			},
+		},
+	},
 	filters: [],
 };
 

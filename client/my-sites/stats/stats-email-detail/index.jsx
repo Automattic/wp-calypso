@@ -22,6 +22,7 @@ import NavigationHeader from 'calypso/components/navigation-header';
 import WebPreview from 'calypso/components/web-preview';
 import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
 import memoizeLast from 'calypso/lib/memoize-last';
+import { isHttps } from 'calypso/lib/url';
 import PageHeader from 'calypso/my-sites/stats/components/headers/page-header';
 import Main from 'calypso/my-sites/stats/components/stats-main';
 import { STATS_PRODUCT_NAME } from 'calypso/my-sites/stats/constants';
@@ -30,10 +31,12 @@ import {
 	recordCurrentScreen,
 } from 'calypso/my-sites/stats/hooks/use-stats-navigation-history';
 import StatsEmailModule from 'calypso/my-sites/stats/stats-email-module';
+import { getMappedPreviewUrl } from 'calypso/my-sites/stats/utils';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
-import { getSitePost, getPostPreviewUrl } from 'calypso/state/posts/selectors';
+import { getSitePost } from 'calypso/state/posts/selectors';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
-import { getSiteSlug, isJetpackSite, isSitePreviewable } from 'calypso/state/sites/selectors';
+import { getSiteSlug, isSitePreviewable } from 'calypso/state/sites/selectors';
+import getSiteAdminUrlFromState from 'calypso/state/sites/selectors/get-site-admin-url';
 import { PERIOD_ALL_TIME } from 'calypso/state/stats/emails/constants';
 import { getEmailStat, isRequestingEmailStats } from 'calypso/state/stats/emails/selectors';
 import { getPeriodWithFallback, getCharts } from 'calypso/state/stats/emails/utils';
@@ -466,7 +469,6 @@ const connectComponent = connect(
 	( state, ownProps ) => {
 		const { postId, statType, isValidStartDate } = ownProps;
 		const siteId = getSelectedSiteId( state );
-		const isJetpack = isJetpackSite( state, siteId );
 		const isPreviewable = isSitePreviewable( state, siteId );
 		const postFallback = getPostStat( state, siteId, postId, 'post' );
 		const post = getSitePost( state, siteId, postId ) ?? {
@@ -484,6 +486,14 @@ const connectComponent = connect(
 		} = getPeriodWithFallback( ownProps.period, ownProps.date, isValidStartDate, post?.date );
 
 		const showNoDataInfo = moment( date ).isBefore( moment( '2022-11-24' ) );
+		const previewUrl = getMappedPreviewUrl( state, siteId, postId );
+		const isOdyssey = config.isEnabled( 'is_odyssey' );
+		const adminBaseUrl = getSiteAdminUrlFromState( state, siteId );
+		const editUrl = isOdyssey
+			? `${ adminBaseUrl }post.php?post=${ postId }&action=edit`
+			: `/post/${ siteId }/${ postId }`;
+		const showViewLink =
+			( isOdyssey || isPreviewable ) && previewUrl !== null && isHttps( previewUrl );
 
 		return {
 			countViews: getEmailStat( state, siteId, postId, period, statType ),
@@ -506,8 +516,9 @@ const connectComponent = connect(
 			date,
 			hasValidDate,
 			showNoDataInfo,
-			showViewLink: ! isJetpack && isPreviewable,
-			previewUrl: getPostPreviewUrl( state, siteId, postId ),
+			showViewLink,
+			previewUrl: previewUrl,
+			editUrl,
 		};
 	},
 	{ recordGoogleEvent }

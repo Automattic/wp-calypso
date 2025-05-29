@@ -1,19 +1,19 @@
 @use "@wordpress/base-styles/colors";
-@use "../styles/typography";
+@use '../utils/theme-variables' as theme;
 
 /* Root of the component. */
-.a8c-components-calendar {
+.calendar {
 	// TODO: add font family rule when Theme is ready
 
 	// Internal variables
-	--a8c-components-calendar-outline-focus: 1.5px solid var(--color-accent);
-	--a8c-components-calendar-button-height: 2rem;
-	--a8c-components-calendar-button-width: 2rem;
-	--a8c-components-calendar-nav-height: 2rem;
+	--a8c-calendar-outline-focus: 1.5px solid #{theme.$components-color-accent};
+	--a8c-calendar-button-height: 2rem;
+	--a8c-calendar-button-width: 2rem;
+	--a8c-calendar-nav-height: 2rem;
 
 	// TODO: themify / align to DS tokens
-	--a8c-components-calendar-range-middle-background-color: color-mix(in srgb, var(--color-accent) 4%, transparent);
-	--a8c-components-calendar-preview-border-color: color-mix(in srgb, var(--color-accent) 16%, transparent);
+	--a8c-calendar-range-middle-background-color: color-mix(in srgb, #{theme.$components-color-accent} 4%, transparent);
+	--a8c-calendar-preview-border-color: color-mix(in srgb, #{theme.$components-color-accent} 16%, transparent);
 
 	position: relative; /* Required to position the navigation toolbar. */
 	box-sizing: border-box;
@@ -27,7 +27,7 @@
 	}
 }
 
-.a8c-components-calendar__day {
+.calendar__day {
 	padding: 0;
 	position: relative;
 
@@ -35,16 +35,16 @@
 	// day button to ensure that the color of the dot used to indicate today's
 	// date follows the same color as the button's text, since the button
 	// inherits its text color.
-	&:has(.a8c-components-calendar__day-button:disabled) {
+	&:has(.calendar__day-button:disabled) {
 		color: colors.$gray-600;
 	}
-	&:has(.a8c-components-calendar__day-button:hover:not(:disabled)),
-	&:has(.a8c-components-calendar__day-button:focus-visible) {
-		color: var(--color-accent);
+	&:has(.calendar__day-button:hover:not(:disabled)),
+	&:has(.calendar__day-button:focus-visible) {
+		color: theme.$components-color-accent;
 	}
 }
 
-.a8c-components-calendar__day-button {
+.calendar__day-button {
 	background: none;
 	padding: 0;
 	margin: 0;
@@ -54,8 +54,8 @@
 	display: flex;
 	position: relative;
 
-	width: var(--a8c-components-calendar-button-width);
-	height: var(--a8c-components-calendar-button-height);
+	width: var(--a8c-calendar-button-width);
+	height: var(--a8c-calendar-button-height);
 
 	border: none;
 	border-radius: 2px;
@@ -97,12 +97,12 @@
 	}
 
 	&:focus-visible {
-		outline: var(--a8c-components-calendar-outline-focus);
+		outline: var(--a8c-calendar-outline-focus);
 		outline-offset: 1px;
 	}
 }
 
-.a8c-components-calendar__caption-label {
+.calendar__caption-label {
 	z-index: 1;
 
 	position: relative;
@@ -115,8 +115,8 @@
 	text-transform: capitalize;
 }
 
-.a8c-components-calendar__button-next,
-.a8c-components-calendar__button-previous {
+.calendar__button-next,
+.calendar__button-previous {
 	border: none;
 	border-radius: 2px;
 	background: none;
@@ -131,8 +131,8 @@
 	position: relative;
 	appearance: none;
 
-	width: var(--a8c-components-calendar-button-width);
-	height: var(--a8c-components-calendar-button-height);
+	width: var(--a8c-calendar-button-width);
+	height: var(--a8c-calendar-button-height);
 
 	color: inherit;
 
@@ -144,32 +144,32 @@
 	}
 
 	&:focus-visible {
-	outline: var(--a8c-components-calendar-outline-focus);
+		outline: var(--a8c-calendar-outline-focus);
 	}
 }
 
-.a8c-components-calendar__chevron {
+.calendar__chevron {
 	display: inline-block;
 	fill: currentColor;
 	width: 16px;
 	height: 16px;
 }
 
-.a8c-components-calendar[dir="rtl"] .a8c-components-calendar__nav .a8c-components-calendar__chevron {
+.calendar[dir="rtl"] .calendar__nav .calendar__chevron {
 	transform: rotate(180deg);
 	transform-origin: 50%;
 }
 
-.a8c-components-calendar__month-caption {
+.calendar__month-caption {
 	display: flex;
 	justify-content: center;
 	align-content: center;
 
-	height: var(--a8c-components-calendar-nav-height);
+	height: var(--a8c-calendar-nav-height);
 	margin-bottom: 12px;
 }
 
-.a8c-components-calendar__months {
+.calendar__months {
 	position: relative;
 	display: flex;
 	justify-content: center;
@@ -178,12 +178,12 @@
 	max-width: fit-content;
 }
 
-.a8c-components-calendar__month-grid {
+.calendar__month-grid {
 	border-collapse: separate;
 	border-spacing: 0 4px;
 }
 
-.a8c-components-calendar__nav {
+.calendar__nav {
 	position: absolute;
 	inset-block-start: 0;
 	inset-inline-start: 0;
@@ -193,12 +193,12 @@
 	align-items: center;
 	justify-content: space-between;
 
-	height: var(--a8c-components-calendar-nav-height);
+	height: var(--a8c-calendar-nav-height);
 }
 
-.a8c-components-calendar__weekday {
-	width: var(--a8c-components-calendar-button-width);
-	height: var(--a8c-components-calendar-button-height);
+.calendar__weekday {
+	width: var(--a8c-calendar-button-width);
+	height: var(--a8c-calendar-button-height);
 	padding: 0;
 
 	color: colors.$gray-700;
@@ -208,7 +208,7 @@
 
 /* DAY MODIFIERS */
 // Today's date: show a dot in the top-right corner of the button
-.a8c-components-calendar__day--today::after {
+.calendar__day--today::after {
 	content: '';
 	position: absolute;
 	z-index: 1;
@@ -221,12 +221,12 @@
 }
 
 // Selected date button (individual date, range start, and range end)
-.a8c-components-calendar__day--selected:not(.a8c-components-calendar__range-middle) {
-	&:has(.a8c-components-calendar__day-button, .a8c-components-calendar__day-button:hover:not(:disabled)) {
+.calendar__day--selected:not(.calendar__range-middle) {
+	&:has(.calendar__day-button, .calendar__day-button:hover:not(:disabled)) {
 		color: colors.$white;
 	}
 
-	.a8c-components-calendar__day-button {
+	.calendar__day-button {
 		&::before {
 			background-color: colors.$gray-900;
 			// Render a transparent border to highlight the selected day in
@@ -246,12 +246,12 @@
 }
 
 // Hidden button (ie. outside current month but still rendered)
-.a8c-components-calendar__day--hidden {
+.calendar__day--hidden {
 	visibility: hidden;
 }
 
 // Range start button, but not when start and end are the same day.
-.a8c-components-calendar__range-start:not(.a8c-components-calendar__range-end) .a8c-components-calendar__day-button {
+.calendar__range-start:not(.calendar__range-end) .calendar__day-button {
 	// Apply border-radius changes to the button itself too, so that the focus
 	// ring follows the same shape as the button's background.
 	&, &::before {
@@ -261,9 +261,9 @@
 }
 
 // Middle of date range
-.a8c-components-calendar__range-middle .a8c-components-calendar__day-button {
+.calendar__range-middle .calendar__day-button {
 	&::before {
-		background-color: var(--a8c-components-calendar-range-middle-background-color);
+		background-color: var(--a8c-calendar-range-middle-background-color);
 		border-radius: 0;
 
 		// Render a top and bottom transparent border to highlight the selected
@@ -276,7 +276,7 @@
 }
 
 // Range end button, but not when start and end are the same day.
-.a8c-components-calendar__range-end:not(.a8c-components-calendar__range-start) .a8c-components-calendar__day-button {
+.calendar__range-end:not(.calendar__range-start) .calendar__day-button {
 	// Apply border-radius changes to the button itself too, so that the focus
 	// ring follows the same shape as the button's background.
 	&, &::before {
@@ -297,22 +297,22 @@
  * CSS variables, we're using the SVGs as masks, and using `background-color`
  * to consume the accent color variable.
  */
-.a8c-components-calendar__day--preview svg {
+.calendar__day--preview svg {
 	position: absolute;
 	inset: 0;
 	pointer-events: none;
-	color: var(--a8c-components-calendar-preview-border-color);
+	color: var(--a8c-calendar-preview-border-color);
 
 	@media (forced-colors: active) {
 		color: inherit;
 	}
 
-	.a8c-components-calendar[dir="rtl"] & {
+	.calendar[dir="rtl"] & {
 		transform: scaleX(-1);
 	}
 }
 
-.a8c-components-calendar__day--preview.a8c-components-calendar__range-middle .a8c-components-calendar__day-button::before {
+.calendar__day--preview.calendar__range-middle .calendar__day-button::before {
 	// Remove the transparent border shown on the middle of the range
 	// in forced-colors (high-contrast) mode, to allow for the dashed border
 	// to be visible.
@@ -320,7 +320,7 @@
 }
 
 /* ANIMATIONS */
-@keyframes a8c-components-calendar-slide-in-left {
+@keyframes slide-in-left {
 	0% {
 		transform: translateX(-100%);
 	}
@@ -329,7 +329,7 @@
 	}
 }
 
-@keyframes a8c-components-calendar-slide-in-right {
+@keyframes slide-in-right {
 	0% {
 		transform: translateX(100%);
 	}
@@ -338,7 +338,7 @@
 	}
 }
 
-@keyframes a8c-components-calendar-slide-out-left {
+@keyframes slide-out-left {
 	0% {
 		transform: translateX(0);
 	}
@@ -347,7 +347,7 @@
 	}
 }
 
-@keyframes a8c-components-calendar-slide-out-right {
+@keyframes slide-out-right {
 	0% {
 		transform: translateX(0);
 	}
@@ -356,7 +356,7 @@
 	}
 }
 
-@keyframes a8c-components-calendar-fade-in {
+@keyframes fade-in {
 	from {
 		opacity: 0;
 	}
@@ -365,7 +365,7 @@
 	}
 }
 
-@keyframes a8c-components-calendar-fade-out {
+@keyframes fade-out {
 	from {
 		opacity: 1;
 	}
@@ -374,14 +374,14 @@
 	}
 }
 
-.a8c-components-calendar__weeks-before-enter,
-.a8c-components-calendar__weeks-before-exit,
-.a8c-components-calendar__weeks-after-enter,
-.a8c-components-calendar__weeks-after-exit,
-.a8c-components-calendar__caption-after-enter,
-.a8c-components-calendar__caption-after-exit,
-.a8c-components-calendar__caption-before-enter,
-.a8c-components-calendar__caption-before-exit {
+.calendar__weeks-before-enter,
+.calendar__weeks-before-exit,
+.calendar__weeks-after-enter,
+.calendar__weeks-after-exit,
+.calendar__caption-after-enter,
+.calendar__caption-after-exit,
+.calendar__caption-before-enter,
+.calendar__caption-before-exit {
 	animation-duration: 0s;
 	animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 	animation-fill-mode: forwards;
@@ -391,32 +391,32 @@
 	};
 }
 
-.a8c-components-calendar__weeks-before-enter,
-.a8c-components-calendar[dir="rtl"] .a8c-components-calendar__weeks-after-enter {
-  	animation-name: a8c-components-calendar-slide-in-left;
+.calendar__weeks-before-enter,
+.calendar[dir="rtl"] .calendar__weeks-after-enter {
+  	animation-name: slide-in-left;
 }
-.a8c-components-calendar__weeks-before-exit,
-.a8c-components-calendar[dir="rtl"] .a8c-components-calendar__weeks-after-exit {
-  	animation-name: a8c-components-calendar-slide-out-left;
+.calendar__weeks-before-exit,
+.calendar[dir="rtl"] .calendar__weeks-after-exit {
+  	animation-name: slide-out-left;
 }
-.a8c-components-calendar__weeks-after-enter,
-.a8c-components-calendar[dir="rtl"] .a8c-components-calendar__weeks-before-enter {
-  	animation-name: a8c-components-calendar-slide-in-right;
+.calendar__weeks-after-enter,
+.calendar[dir="rtl"] .calendar__weeks-before-enter {
+  	animation-name: slide-in-right;
 }
-.a8c-components-calendar__weeks-after-exit,
-.a8c-components-calendar[dir="rtl"] .a8c-components-calendar__weeks-before-exit {
-  	animation-name: a8c-components-calendar-slide-out-right;
+.calendar__weeks-after-exit,
+.calendar[dir="rtl"] .calendar__weeks-before-exit {
+  	animation-name: slide-out-right;
 }
 
-.a8c-components-calendar__caption-after-enter {
-  	animation-name: a8c-components-calendar-fade-in;
+.calendar__caption-after-enter {
+  	animation-name: fade-in;
 }
-.a8c-components-calendar__caption-after-exit {
-  	animation-name: a8c-components-calendar-fade-out;
+.calendar__caption-after-exit {
+  	animation-name: fade-out;
 }
-.a8c-components-calendar__caption-before-enter {
-  	animation-name: a8c-components-calendar-fade-in;
+.calendar__caption-before-enter {
+  	animation-name: fade-in;
 }
-.a8c-components-calendar__caption-before-exit {
-  	animation-name: a8c-components-calendar-fade-out;
+.calendar__caption-before-exit {
+  	animation-name: fade-out;
 }
