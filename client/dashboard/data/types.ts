@@ -19,12 +19,6 @@ export interface User {
 
 export interface SiteUser {
 	id: number;
-	id_wpcom: number;
-	description: string;
-	name: string;
-	slug: string;
-	url: string;
-	link: string;
 }
 
 export interface SiteDomain {

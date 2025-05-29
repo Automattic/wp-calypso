@@ -94,7 +94,7 @@ function ContentLeaveSite( { site, onClose }: ContentProps ) {
 	const router = useRouter();
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
-	// Fetch "me" as a site user entity.
+	// It gets external user ID (ID of user entity from site connected via Jetpack) from provided WPCOM user ID.
 	const { data: me } = useQuery( siteUserMeQuery( site.slug ) );
 	const mutation = useMutation( leaveSiteMutation( site.slug ) );
 
@@ -196,19 +196,21 @@ export default function SiteLeaveModal( { site, onClose }: SiteLeaveModalProps )
 		siteHasPurchasesCancelableQuery( site.slug, user.ID )
 	);
 
-	const showContentHasPurchasesCancelable = hasPurchasesCancelable;
-	const showContentSiteOwner = ! showContentHasPurchasesCancelable && isSiteOwner( user, site );
-	const showContentLeaveSite = ! showContentHasPurchasesCancelable && ! showContentSiteOwner;
+	const renderContent = () => {
+		if ( hasPurchasesCancelable ) {
+			return <ContentHasPurchasesCancelable site={ site } onClose={ onClose } />;
+		}
+
+		if ( isSiteOwner( user, site ) ) {
+			return <ContentSiteOwner site={ site } onClose={ onClose } />;
+		}
+
+		return <ContentLeaveSite site={ site } onClose={ onClose } />;
+	};
 
 	return (
 		<Modal title={ __( 'Leave site' ) } size="medium" onRequestClose={ onClose }>
-			<VStack spacing={ 6 }>
-				{ showContentHasPurchasesCancelable && (
-					<ContentHasPurchasesCancelable site={ site } onClose={ onClose } />
-				) }
-				{ showContentSiteOwner && <ContentSiteOwner site={ site } onClose={ onClose } /> }
-				{ showContentLeaveSite && <ContentLeaveSite site={ site } onClose={ onClose } /> }
-			</VStack>
+			<VStack spacing={ 6 }>{ renderContent() }</VStack>
 		</Modal>
 	);
 }

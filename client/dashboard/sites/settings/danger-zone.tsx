@@ -31,20 +31,18 @@ const SiteLeaveAction = ( { site }: { site: Site } ) => {
 	const [ isModalOpen, setIsModalOpen ] = useState( false );
 
 	return (
-		<ActionList.ActionItem
-			title={ __( 'Leave site' ) }
-			description={ __( 'Leave this site and remove your access.' ) }
-			actions={
-				<>
+		<>
+			<ActionList.ActionItem
+				title={ __( 'Leave site' ) }
+				description={ __( 'Leave this site and remove your access.' ) }
+				actions={
 					<Button variant="secondary" size="compact" onClick={ () => setIsModalOpen( true ) }>
 						{ __( 'Leave' ) }
 					</Button>
-					{ isModalOpen && (
-						<SiteLeaveModal site={ site } onClose={ () => setIsModalOpen( false ) } />
-					) }
-				</>
-			}
-		/>
+				}
+			/>
+			{ isModalOpen && <SiteLeaveModal site={ site } onClose={ () => setIsModalOpen( false ) } /> }
+		</>
 	);
 };
 
