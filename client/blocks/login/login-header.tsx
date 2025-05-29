@@ -1,4 +1,4 @@
-import { useTranslate, TranslateResult } from 'i18n-calypso';
+import { useTranslate, TranslateResult, fixMe } from 'i18n-calypso';
 import { capitalize } from 'lodash';
 import A4APlusWpComLogo from 'calypso/a8c-for-agencies/components/a4a-plus-wpcom-logo';
 import VisitSite from 'calypso/blocks/visit-site';
@@ -79,10 +79,14 @@ export function getHeaderText(
 	if ( isSocialFirst ) {
 		headerText =
 			oauth2Client && isStudioAppOAuth2Client( oauth2Client )
-				? translate( 'Log in to {{span}}%(client)s{{/span}} with WordPress.com', {
-						args: { client: oauth2Client.name },
-						components: { span: <span className="login-header-text__client-name" /> },
-				  } )
+				? ( fixMe( {
+						text: 'Log in to {{span}}%(client)s{{/span}} with WordPress.com',
+						newCopy: translate( 'Log in to {{span}}%(client)s{{/span}} with WordPress.com', {
+							args: { client: oauth2Client.name },
+							components: { span: <span className="login-header-text__client-name" /> },
+						} ),
+						oldCopy: translate( 'Log in to WordPress.com' ),
+				  } ) as TranslateResult )
 				: translate( 'Log in to WordPress.com' );
 	}
 
