@@ -455,6 +455,14 @@ export const resetPhpMyAdminPassword = async ( siteIdOrSlug: string ): Promise< 
 	} );
 };
 
+// This endpoint only accepts site ID, not slug.
+export const fetchAgencyBlogBySiteId = async ( siteId: string ): Promise< void > => {
+	return wpcom.req.get( {
+		path: `/agency/blog/${ siteId }`,
+		apiNamespace: 'wpcom/v2',
+	} );
+};
+
 export const fetchPrimaryDataCenter = async (
 	siteIdOrSlug: string
 ): Promise< DataCenterOption | null > => {

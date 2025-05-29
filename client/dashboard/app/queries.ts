@@ -22,6 +22,7 @@ import {
 	deleteSite,
 	fetchWordPressVersion,
 	updateWordPressVersion,
+	fetchAgencyBlogBySiteId,
 	fetchPrimaryDataCenter,
 	fetchStaticFile404,
 	updateStaticFile404,
@@ -262,6 +263,15 @@ export function siteStaticFile404Mutation( siteId: string ) {
 		mutationFn: ( setting: string ) => updateStaticFile404( siteId, setting ),
 		onSuccess: () => {
 			queryClient.invalidateQueries( { queryKey: [ 'site', siteId, 'static-file-404' ] } );
+		},
+	};
+}
+
+export function agencyBlogQuery( siteId: string ) {
+	return {
+		queryKey: [ 'site', siteId, 'agency-blog' ],
+		queryFn: () => {
+			return fetchAgencyBlogBySiteId( siteId );
 		},
 	};
 }

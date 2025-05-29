@@ -94,6 +94,7 @@ export interface Site {
 	subscribers_count: number;
 	// Can be undefined for deleted sites.
 	options?: SiteOptions;
+	is_a4a_dev_site: boolean;
 	is_a8c: boolean;
 	is_deleted: boolean;
 	is_coming_soon: boolean;
@@ -167,6 +168,7 @@ export interface EngagementStats {
 }
 
 export interface SiteSettings {
+	is_fully_managed_agency_site?: boolean;
 	wpcom_site_visibility?: 'coming-soon' | 'public' | 'private';
 	wpcom_gifting_subscription?: boolean;
 	wpcom_performance_report_url?: string;
