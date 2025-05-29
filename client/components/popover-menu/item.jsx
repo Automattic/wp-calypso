@@ -1,4 +1,5 @@
 import { Gridicon, ExternalLink } from '@automattic/components';
+import { Icon } from '@wordpress/components';
 import clsx from 'clsx';
 import { omit } from 'lodash';
 import PropTypes from 'prop-types';
@@ -12,7 +13,8 @@ export default class PopoverMenuItem extends Component {
 		disabled: PropTypes.bool,
 		className: PropTypes.string,
 		isSelected: PropTypes.bool,
-		icon: PropTypes.oneOfType( [ PropTypes.object, PropTypes.string ] ),
+		icon: PropTypes.oneOfType( [ PropTypes.object, PropTypes.string, PropTypes.element ] ),
+		useWordPressIcon: PropTypes.bool,
 		focusOnHover: PropTypes.bool,
 		onClick: PropTypes.func,
 		onMouseOver: PropTypes.func,
@@ -25,6 +27,7 @@ export default class PopoverMenuItem extends Component {
 		focusOnHover: true,
 		onMouseOver: noop,
 		itemComponent: 'button',
+		useWordPressIcon: false,
 	};
 
 	handleMouseOver = ( event ) => {
@@ -38,10 +41,20 @@ export default class PopoverMenuItem extends Component {
 	};
 
 	render() {
-		const { children, className, disabled, href, icon, isExternalLink, isSelected } = this.props;
+		const {
+			children,
+			className,
+			disabled,
+			href,
+			icon,
+			useWordPressIcon,
+			isExternalLink,
+			isSelected,
+		} = this.props;
 		const itemProps = omit(
 			this.props,
 			'icon',
+			'useWordPressIcon',
 			'focusOnHover',
 			'isSelected',
 			'isExternalLink',
@@ -62,7 +75,11 @@ export default class PopoverMenuItem extends Component {
 
 		let itemIcon = icon;
 		if ( typeof icon === 'string' ) {
-			itemIcon = <Gridicon icon={ icon } size={ 18 } />;
+			if ( useWordPressIcon ) {
+				itemIcon = <Icon icon={ icon } size={ 18 } />;
+			} else {
+				itemIcon = <Gridicon icon={ icon } size={ 18 } />;
+			}
 		}
 
 		return (
