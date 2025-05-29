@@ -202,7 +202,7 @@ export function siteOwnerTransferConfirmMutation( siteId: string ) {
 				// Invalidate queries as the site has been transferred to new owner.
 				queryClient.invalidateQueries( { queryKey: [ 'site', siteId ] } );
 			}
-		}
+		},
 	};
 }
 
