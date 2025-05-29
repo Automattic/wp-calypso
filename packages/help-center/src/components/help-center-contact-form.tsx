@@ -5,13 +5,9 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { getPlan, getPlanTermLabel } from '@automattic/calypso-products';
-import { FormInputValidation, Popover, Spinner } from '@automattic/components';
+import { FormInputValidation, Popover } from '@automattic/components';
 import { useLocale } from '@automattic/i18n-utils';
 import { getOdieIdFromInteraction } from '@automattic/odie-client/src/utils';
-import {
-	useCanConnectToZendeskMessaging,
-	useOpenZendeskMessaging,
-} from '@automattic/zendesk-client';
 import { Button, TextControl, CheckboxControl, Tip } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { decodeEntities } from '@wordpress/html-entities';
@@ -33,7 +29,7 @@ import { useSiteAnalysis } from '../data/use-site-analysis';
 import { useSubmitForumsMutation } from '../data/use-submit-forums-topic';
 import { useSubmitTicketMutation } from '../data/use-submit-support-ticket';
 import { useUserSites } from '../data/use-user-sites';
-import { useChatStatus, useContactFormTitle } from '../hooks';
+import { useContactFormTitle } from '../hooks';
 import { queryClient } from '../query-client';
 import { HELP_CENTER_STORE } from '../stores';
 import { getSupportVariationFromMode } from '../support-variations';
@@ -41,7 +37,6 @@ import { SearchResult } from '../types';
 import { HelpCenterGPT } from './help-center-gpt';
 import HelpCenterSearchResults from './help-center-search-results';
 import { HelpCenterSitePicker } from './help-center-site-picker';
-import ThirdPartyCookiesNotice from './help-center-third-party-cookies-notice';
 import type { JetpackSearchAIResult } from '../data/use-jetpack-search-ai';
 import type { AnalysisReport } from '../types';
 import type { HelpCenterSelect, SiteDetails, HelpCenterSite } from '@automattic/data-stores';
@@ -66,7 +61,7 @@ const isLocaleNotSupportedInEmailSupport = ( locale: string ) => {
 	return ! EMAIL_SUPPORT_LOCALES.includes( locale );
 };
 
-type Mode = 'CHAT' | 'EMAIL' | 'FORUM';
+type Mode = 'EMAIL' | 'FORUM';
 
 export const HelpCenterContactForm = () => {
 	const { search } = useLocation();
@@ -100,15 +95,8 @@ export const HelpCenterContactForm = () => {
 
 	const odieId = getOdieIdFromInteraction( currentSupportInteraction );
 
-	const { resetStore, setShowHelpCenter, setUserDeclaredSite, setSubject, setMessage } =
+	const { resetStore, setUserDeclaredSite, setSubject, setMessage } =
 		useDispatch( HELP_CENTER_STORE );
-
-	const { data: canConnectToZendesk } = useCanConnectToZendeskMessaging();
-	const { hasActiveChats, isEligibleForChat, isLoading: isLoadingChatStatus } = useChatStatus();
-	const { isOpeningZendeskWidget, openZendeskWidget } = useOpenZendeskMessaging(
-		sectionName,
-		isEligibleForChat || hasActiveChats
-	);
 
 	useEffect( () => {
 		const supportVariation = getSupportVariationFromMode( mode );
@@ -136,7 +124,7 @@ export const HelpCenterContactForm = () => {
 	);
 
 	const ownershipStatusLoading = ownershipResult?.result === 'LOADING';
-	const isSubmitting = submittingTicket || submittingTopic || isOpeningZendeskWidget;
+	const isSubmitting = submittingTicket || submittingTopic;
 
 	// if the user picked a site from the picker, we don't need to analyze the ownership
 	if ( site && ! isSelfDeclaredSite ) {
@@ -281,53 +269,6 @@ export const HelpCenterContactForm = () => {
 		const aiChatId = wapuuFlow ? odieId?.toString() ?? '' : gptResponse?.answer_id;
 
 		switch ( mode ) {
-			case 'CHAT':
-				if ( supportSite ) {
-					recordTracksEvent( 'calypso_inlinehelp_contact_submit', {
-						support_variation: 'messaging',
-						force_site_id: true,
-						location: 'help-center',
-						section: sectionName,
-					} );
-
-					recordTracksEvent( 'calypso_help_live_chat_begin', {
-						site_plan_product_id: productId,
-						is_automated_transfer: supportSite?.is_wpcom_atomic,
-						force_site_id: true,
-						location: 'help-center',
-						section: sectionName,
-					} );
-
-					let initialChatMessage = message;
-					if ( gptResponse ) {
-						initialChatMessage += '<br /><br />';
-						initialChatMessage += `<strong>Automated AI response from ${ gptResponse.source } that was presented to user before they started chat</strong>:<br />`;
-						initialChatMessage += gptResponse.response;
-					}
-
-					if ( wapuuFlow ) {
-						initialChatMessage += '<br /><br />';
-						initialChatMessage += odieId
-							? `<strong>Wapuu chat reference: ${ odieId }</strong>:<br />`
-							: '<strong>Wapuu chat reference is not available</strong>:<br />';
-						initialChatMessage += 'User was chatting with Wapuu before they started chat<br />';
-					}
-
-					openZendeskWidget( {
-						aiChatId: aiChatId,
-						message: initialChatMessage,
-						siteUrl: supportSite.URL,
-						siteId: supportSite.ID,
-						onError: () => setHasSubmittingError( true ),
-						onSuccess: () => {
-							resetStore();
-							setShowHelpCenter( false );
-						},
-					} );
-					break;
-				}
-				break;
-
 			case 'EMAIL':
 				if ( supportSite ) {
 					const ticketMeta = [
@@ -488,8 +429,6 @@ export const HelpCenterContactForm = () => {
 		}
 
 		switch ( mode ) {
-			case 'CHAT':
-				return ! supportSite;
 			case 'EMAIL':
 				return ! supportSite || ! subject;
 			case 'FORUM':
@@ -512,10 +451,6 @@ export const HelpCenterContactForm = () => {
 			return __( 'Gathering quick response.', __i18n_text_domain__ );
 		}
 
-		if ( mode === 'CHAT' && showingHelpOrGPTResults ) {
-			return __( 'Still contact us', __i18n_text_domain__ );
-		}
-
 		if ( mode === 'EMAIL' && showingHelpOrGPTResults ) {
 			return __( 'Still email us', __i18n_text_domain__ );
 		}
@@ -526,18 +461,6 @@ export const HelpCenterContactForm = () => {
 
 		return isSubmitting ? formTitles.buttonSubmittingLabel : formTitles.buttonLabel;
 	};
-
-	if ( isLoadingChatStatus ) {
-		return (
-			<div className="help-center__loading">
-				<Spinner baseClassName="" />
-			</div>
-		);
-	}
-
-	if ( mode === 'CHAT' && ! canConnectToZendesk ) {
-		return <ThirdPartyCookiesNotice />;
-	}
 
 	if ( enableGPTResponse && showingGPTResponse ) {
 		return (
@@ -580,7 +503,7 @@ export const HelpCenterContactForm = () => {
 						</section>
 						{ ! isFetchingGPTResponse &&
 							showingGPTResponse &&
-							[ 'CHAT', 'EMAIL' ].includes( mode ) &&
+							mode === 'EMAIL' &&
 							getHEsTraySection() }
 					</div>
 				</div>
@@ -620,7 +543,7 @@ export const HelpCenterContactForm = () => {
 								/>
 							) }
 						</section>
-						{ [ 'CHAT', 'EMAIL' ].includes( mode ) && getHEsTraySection() }
+						{ mode === 'EMAIL' && getHEsTraySection() }
 					</div>
 				) : (
 					<div className="help-center-contact-form">
@@ -704,7 +627,7 @@ export const HelpCenterContactForm = () => {
 								/>
 							) }
 						</div>
-						{ [ 'CHAT', 'EMAIL' ].includes( mode ) && getHEsTraySection() }
+						{ mode === 'EMAIL' && getHEsTraySection() }
 						{ ! [ 'FORUM' ].includes( mode ) && (
 							<HelpCenterSearchResults
 								onSelect={ redirectToArticle }
