@@ -5,7 +5,6 @@ import {
 	SITE_KEYRINGS_REQUEST_SUCCESS,
 	SITE_KEYRINGS_SAVE_SUCCESS,
 	SITE_KEYRINGS_DELETE_SUCCESS,
-	SITE_KEYRINGS_UPDATE,
 	SITE_KEYRINGS_UPDATE_SUCCESS,
 } from 'calypso/state/action-types';
 
@@ -62,13 +61,6 @@ export function createSiteKeyring( siteId, keyring ) {
 
 export function updateSiteKeyring( siteId, keyringId, externalUserId ) {
 	return ( dispatch ) => {
-		dispatch( {
-			type: SITE_KEYRINGS_UPDATE,
-			siteId,
-			keyringId,
-			externalUserId,
-		} );
-
 		return wpcom.req
 			.post(
 				`/sites/${ siteId }/keyrings/${ keyringId }`,
