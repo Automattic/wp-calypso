@@ -1,5 +1,5 @@
 import { Purchases, SiteDetails } from '@automattic/data-stores';
-import { Fields, Operator } from '@wordpress/dataviews';
+import { Fields, Operator } from '@automattic/dataviews';
 import { LocalizeProps } from 'i18n-calypso';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { StoredPaymentMethod } from 'calypso/lib/checkout/payment-methods';
