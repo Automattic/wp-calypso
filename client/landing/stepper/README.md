@@ -6,7 +6,7 @@ Stepper is a framework that allows you to make all kinds of walkthroughs. It's g
 
 # Intro video
 
-In this video, I try to explain the general principle of Stepper and hoping to make understanding Stepper easier.
+Please watch this video before making your first flow:
 
 https://github.com/user-attachments/assets/662eebd4-0d22-4f31-b11b-3a8b6beb7da7
 
