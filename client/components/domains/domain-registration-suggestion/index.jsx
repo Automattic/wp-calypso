@@ -141,60 +141,80 @@ class DomainRegistrationSuggestion extends Component {
 			context: 'Accessible label for domain selection button. %(domainName)s is the domain name.',
 		} );
 
-		if ( priceRule === 'ONE_TIME_PRICE' ) {
-			return translate( '%(baseLabel)s. %(price)s one-time', {
-				args: {
-					baseLabel,
-					price: productCost,
-				},
-				comment:
-					'Accessible label for one-time priced domain (e.g. domain with 100-year plan). %(baseLabel)s is the base label (e.g. "Select domain testing.com"). %(price)s is the price.',
-			} );
-		} else if ( priceRule === 'FREE_WITH_PLAN' && productCost ) {
-			return translate(
-				'%(baseLabel)s. Free for the first year with annual paid plans, then %(price)s per year',
-				{
+		switch ( priceRule ) {
+			case 'ONE_TIME_PRICE':
+				return translate( '%(baseLabel)s. %(price)s one-time', {
 					args: {
 						baseLabel,
 						price: productCost,
 					},
 					comment:
-						'Accessible label for free domain with normal price. %(baseLabel)s is the base label (e.g. "Select domain testing.com"). %(price)s is the price.',
-				}
-			);
-		} else if ( priceRule === 'FREE_DOMAIN' ) {
-			return translate( '%(baseLabel)s. Free', {
-				args: {
-					baseLabel,
-				},
-				comment:
-					'Accessible label for free domain. %(baseLabel)s is the base label (e.g. "Select domain testing.com").',
-			} );
-		} else if ( productSaleCost && productCost ) {
-			return translate(
-				'%(baseLabel)s. %(salePrice)s for the first year, then %(price)s per year',
-				{
+						'Accessible label for one-time priced domain (e.g. domain with 100-year plan). %(baseLabel)s is the base label (e.g. "Select domain testing.com"). %(price)s is the price.',
+				} );
+			case 'FREE_DOMAIN':
+				return translate( '%(baseLabel)s. Free', {
 					args: {
 						baseLabel,
-						salePrice: productSaleCost,
-						price: productCost,
 					},
 					comment:
-						'Accessible label for domain with sale price. %(baseLabel)s is the base label (e.g. "Select domain testing.com"). %(salePrice)s is the sale price. %(price)s is the price.',
+						'Accessible label for free domain. %(baseLabel)s is the base label (e.g. "Select domain testing.com").',
+				} );
+			case 'FREE_WITH_PLAN':
+				return translate(
+					'%(baseLabel)s. Free for the first year with annual paid plans, then %(price)s per year',
+					{
+						args: {
+							baseLabel,
+							price: productCost,
+						},
+						comment:
+							'Accessible label for free domain with normal price. %(baseLabel)s is the base label (e.g. "Select domain testing.com"). %(price)s is the price.',
+					}
+				);
+			case 'UPGRADE_TO_HIGHER_PLAN_TO_BUY':
+				return translate( '%(baseLabel)s. Plan upgrade required', {
+					args: {
+						baseLabel,
+					},
+					comment:
+						'Accessible label for domain that requires a plan upgrade. %(baseLabel)s is the base label (e.g. "Select domain testing.com").',
+				} );
+			case 'INCLUDED_IN_HIGHER_PLAN':
+				return translate( '%(baseLabel)s. Included in paid plans', {
+					args: {
+						baseLabel,
+					},
+					comment:
+						'Accessible label for domain included in higher plans. %(baseLabel)s is the base label (e.g. "Select domain testing.com").',
+				} );
+			case 'PRICE':
+				if ( productSaleCost && productCost ) {
+					return translate(
+						'%(baseLabel)s. %(salePrice)s for the first year, then %(price)s per year',
+						{
+							args: {
+								baseLabel,
+								salePrice: productSaleCost,
+								price: productCost,
+							},
+							comment:
+								'Accessible label for domain with sale price. %(baseLabel)s is the base label (e.g. "Select domain testing.com"). %(salePrice)s is the sale price. %(price)s is the price.',
+						}
+					);
+				} else if ( productCost ) {
+					return translate( '%(baseLabel)s. %(price)s per year', {
+						args: {
+							baseLabel,
+							price: productCost,
+						},
+						comment:
+							'Accessible label for regularly priced domain. %(baseLabel)s is the base label (e.g. "Select domain testing.com"). %(price)s is the price.',
+					} );
 				}
-			);
-		} else if ( productCost ) {
-			return translate( '%(baseLabel)s. %(price)s per year', {
-				args: {
-					baseLabel,
-					price: productCost,
-				},
-				comment:
-					'Accessible label for regularly priced domain. %(baseLabel)s is the base label (e.g. "Select domain testing.com"). %(price)s is the price.',
-			} );
+				break;
+			default:
+				return baseLabel;
 		}
-
-		return baseLabel;
 	}
 
 	getButtonProps() {
