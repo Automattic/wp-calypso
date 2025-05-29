@@ -1,14 +1,19 @@
-.blaze-pro,
-.is-blaze-pro {
-	.form-text-input-core-styles:not(.is-error) {
+/* @wordpress/base-styles overrides
+ * See _wp-components-overrides.scss for overrides specific to components.
+*/
+
+/* .form-text-input-core-styles includes @wordpress/base-styles/mixins/input-control */
+.form-text-input-core-styles {
+	/* Blaze Pro */
+	.blaze-pro &:not(.is-error),
+	.is-blaze-pro &:not(.is-error) {
 		--wp-admin-theme-color: var(--color-gray);
 	}
-}
 
-.woo.is-woo-passwordless {
-	input[type='text'],
-	input[type='password'] {
-		&.form-text-input-core-styles {
+	/* Woo */
+	.woo.is-woo-passwordless & {
+		&[type='text'],
+		&[type='password'] {
 			/* stylelint-disable-next-line scales/radii */
 			border-radius: 8px;
 			font-size: 1rem;
@@ -28,46 +33,42 @@
 			}
 		}
 	}
-}
 
-.is-akismet {
-	.form-text-input-core-styles:not(.is-error) {
+	/* Akismet */
+	.is-akismet &:not(.is-error) {
 		--wp-admin-theme-color: var(--color-akismet);
 	}
-}
 
-.a8c-for-agencies {
-	.form-text-input-core-styles:not(.is-error) {
+	/* A8C for Agencies */
+	.a8c-for-agencies &:not(.is-error) {
 		--wp-admin-theme-color: var(--color-primary-40);
 	}
-}
 
-.jetpack-cloud {
-	.form-text-input-core-styles:not(.is-error) {
+	/* Jetpack Cloud */
+	.jetpack-cloud &:not(.is-error) {
 		--wp-admin-theme-color: var(--studio-jetpack-green-40);
 	}
-}
 
-.layout.is-jetpack-login:not(.is-woocommerce-core-profiler-flow) {
-	.form-text-input-core-styles:not(.is-error) {
+	/* Jetpack login */
+	.layout.is-jetpack-login:not(.is-woocommerce-core-profiler-flow) &:not(.is-error) {
 		--wp-admin-theme-color: var(--studio-jetpack-green-50);
 	}
-}
 
-.layout.is-section-login.is-grav-powered-client {
-	input[type='text'],
-	input[type='password'] {
-		&.form-text-input-core-styles {
+	/* Gravatar powered client */
+	.layout.is-section-login.is-grav-powered-client & {
+		&[type='text'],
+		&[type='password'] {
 			&:not(.is-error) {
 				--wp-admin-theme-color: var(--color-gravatar);
 			}
 		}
 	}
 
-	&.is-wp-job-manager {
-		input[type='text'],
-		input[type='password'] {
-			&.form-text-input-core-styles:not(.is-error) {
+	/* WP Job Manager */
+	.layout.is-section-login.is-grav-powered-client.is-wp-job-manager & {
+		&[type='text'],
+		&[type='password'] {
+			&:not(.is-error) {
 				--wp-admin-theme-color: var(--color-wp-job-manager);
 			}
 		}
