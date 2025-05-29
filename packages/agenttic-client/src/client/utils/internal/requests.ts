@@ -4,13 +4,13 @@ import type {
 	SendMessageParams,
 	Task,
 	TaskUpdate,
-} from '../types/index';
-import { createSendTaskRequest } from './index';
+} from '../../types/index';
+import { createSendTaskRequest } from '../core';
 import { enhanceMessage } from './messages';
-import { formatObject, logger } from './logger';
+import { formatObject, logger } from '../logger';
 import { parseSSEStream } from './streaming';
-import type { RequestDispatcher } from './dispatcher';
-import { defaultDispatcher } from './dispatcher';
+import type { RequestDispatcher } from '../dispatcher';
+import { defaultDispatcher } from '../dispatcher';
 import {
 	createTimeoutHandler,
 	handleRequestError,

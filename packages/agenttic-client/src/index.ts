@@ -4,10 +4,15 @@
  * A TypeScript client library for communication with WPcom Agent API
  */
 
-// Core client exports
-export { createClient, sendMessageAndWait } from './client/index';
+// PRIMARY PUBLIC API - React hooks for external consumers
+export { useAgent } from './react/useAgent';
+export { useClientContext } from './react/useClientContext';
+export { useClientTools } from './react/useClientTools';
 
-// Type exports
+// Essential utility for external consumers
+export { extractToolCallsFromMessage } from './client/utils/core';
+
+// All type exports (safe to expose)
 export type {
 	// Core A2A types
 	JsonRpcId,
@@ -49,40 +54,7 @@ export type {
 	ContextProvider,
 } from './client/types/index';
 
-// Utility exports
-export {
-	createRequestId,
-	createTaskId,
-	createTextPart,
-	createSendTaskRequest,
-	extractTextFromMessage,
-	createToolDataPart,
-	extractToolCallsFromMessage,
-	createToolResultDataPart,
-	createContextDataPart,
-} from './client/utils/index';
-
-// Streaming exports
-export {
-	parseStreamChunk,
-	parseSSEStream,
-	streamToTask,
-} from './client/utils/streaming';
-
-// Auth provider exports
-export { createEnvAuthProvider } from './cli/auth';
-
-// CLI tool provider exports
-export { createCLIToolProvider, createExampleTools } from './cli/tools';
-export type { SendToolResultCallback } from './cli/tools';
-
-// CLI context provider exports
-export { CLIContextProvider, createCLIContextProvider } from './cli/context';
-
-// React hook exports
-export { useAgent } from './react/useAgent';
-export { useClientContext } from './react/useClientContext';
-export { useClientTools } from './react/useClientTools';
+// React hook types
 export type {
 	UseAgentConfig,
 	AgentState,
@@ -92,9 +64,6 @@ export type {
 // Constants
 export { A2AErrorCodes } from './client/types/index';
 
-// CLI types (for programmatic usage)
-export type {
-	CLIOptions,
-	CLIAuthOptions,
-	InteractiveSession,
-} from './cli/types';
+// NOTE: CLI exports removed from main index (internal only)
+// NOTE: Most client utilities removed from main index (internal only)
+// NOTE: Direct client exports removed - use React hooks instead

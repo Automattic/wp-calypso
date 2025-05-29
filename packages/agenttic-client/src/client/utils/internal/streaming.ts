@@ -1,6 +1,6 @@
-import type { Task, TaskUpdate } from '../types/index';
-import { logger } from './logger';
-import { extractTextFromMessage } from './index';
+import type { Task, TaskUpdate } from '../../types/index';
+import { logger } from '../logger';
+import { extractTextFromMessage } from '../core';
 
 /**
  * Parse a stream chunk from a server-sent events stream.

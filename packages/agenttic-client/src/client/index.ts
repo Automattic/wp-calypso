@@ -15,7 +15,7 @@ import {
 	executeStreamingRequest,
 	prepareRequest,
 	type RequestConfig,
-} from './utils/requests';
+} from './utils/index';
 import {
 	createToolResultDataPart,
 	extractTextFromMessage,

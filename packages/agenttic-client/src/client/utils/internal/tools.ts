@@ -1,5 +1,5 @@
-import type { Message } from '../types/index';
-import { extractToolCallsFromMessage } from './index';
+import type { Message } from '../../types/index';
+import { extractToolCallsFromMessage } from '../core';
 
 /**
  * Check if a message contains tool calls

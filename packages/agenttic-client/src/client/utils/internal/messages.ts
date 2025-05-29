@@ -6,42 +6,9 @@ import type {
 	Tool,
 	ToolDataPart,
 	ToolProvider,
-} from '../types/index';
-import { logger } from './logger';
-import { createContextDataPart, createToolDataPart } from './index';
-
-/**
- * Create a ToolDataPart from a Tool (local implementation to avoid circular dependency)
- * @param tool - The tool to create a data part for
- */
-function createToolDataPartLocal( tool: Tool ): ToolDataPart {
-	return {
-		type: 'data' as const,
-		data: {
-			toolId: tool.id,
-			toolName: tool.name,
-			description: tool.description,
-			inputSchema: tool.input_schema,
-		},
-		metadata: {},
-	};
-}
-
-/**
- * Create a context data part from client context (local implementation to avoid circular dependency)
- * @param clientContext - The client context to create a data part for
- */
-function createContextDataPartLocal(
-	clientContext: ClientContext
-): ContextDataPart {
-	return {
-		type: 'data' as const,
-		data: {
-			clientContext,
-		},
-		metadata: {},
-	};
-}
+} from '../../types/index';
+import { logger } from '../logger';
+import { createContextDataPart, createToolDataPart } from '../core';
 
 /**
  * Enhance a message with available tools from the tool provider
@@ -64,7 +31,7 @@ export async function enhanceMessageWithTools(
 			return message;
 		}
 
-		const toolParts = tools.map( createToolDataPartLocal );
+		const toolParts = tools.map( createToolDataPart );
 		return {
 			...message,
 			parts: [ ...message.parts, ...toolParts ],
@@ -96,7 +63,7 @@ export function enhanceMessageWithContext(
 			return message;
 		}
 
-		const contextPart = createContextDataPartLocal( clientContext );
+		const contextPart = createContextDataPart( clientContext );
 		return {
 			...message,
 			parts: [ ...message.parts, contextPart ],
