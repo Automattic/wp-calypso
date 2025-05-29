@@ -1,7 +1,17 @@
 import i18n from 'i18n-calypso';
 import { wpcomJetpackLicensing as wpcomJpl } from 'calypso/lib/wp';
 import 'calypso/state/partner-portal/stored-cards/init';
-import { STORED_CARDS_UPDATE_IS_PRIMARY_COMPLETED } from 'calypso/state/action-types';
+import {
+	STORED_CARDS_DELETE,
+	STORED_CARDS_DELETE_COMPLETED,
+	STORED_CARDS_DELETE_FAILED,
+	STORED_CARDS_FETCH,
+	STORED_CARDS_FETCH_COMPLETED,
+	STORED_CARDS_FETCH_FAILED,
+	STORED_CARDS_HAS_MORE_ITEMS,
+	STORED_CARDS_ITEMS_PER_PAGE,
+	STORED_CARDS_UPDATE_IS_PRIMARY_COMPLETED,
+} from 'calypso/state/action-types';
 import { errorNotice } from 'calypso/state/notices/actions';
 import type { PaymentMethod } from 'calypso/jetpack-cloud/sections/partner-portal/payment-methods';
 import type { AnyAction, Dispatch } from 'redux';
@@ -10,7 +20,7 @@ export const fetchStoredCards =
 	( paging: { startingAfter: string; endingBefore: string } ) =>
 	( dispatch: Dispatch< AnyAction > ) => {
 		dispatch( {
-			type: 'STORED_CARDS_FETCH',
+			type: STORED_CARDS_FETCH,
 		} );
 
 		return wpcomJpl.req
@@ -23,22 +33,22 @@ export const fetchStoredCards =
 			)
 			.then( ( data: { items: PaymentMethod[]; has_more: boolean; per_page: number } ) => {
 				dispatch( {
-					type: 'STORED_CARDS_HAS_MORE_ITEMS',
+					type: STORED_CARDS_HAS_MORE_ITEMS,
 					hasMore: data.has_more,
 				} );
 
 				dispatch( {
-					type: 'STORED_CARDS_ITEMS_PER_PAGE',
+					type: STORED_CARDS_ITEMS_PER_PAGE,
 					perPage: data.per_page,
 				} );
 
 				dispatch( {
-					type: 'STORED_CARDS_FETCH_COMPLETED',
+					type: STORED_CARDS_FETCH_COMPLETED,
 					list: data.items,
 				} );
 
 				dispatch( {
-					type: 'STORED_CARDS_UPDATE_IS_PRIMARY_COMPLETED',
+					type: STORED_CARDS_UPDATE_IS_PRIMARY_COMPLETED,
 					payment_method_id: data.items.find( ( currCard ) => currCard.is_default ),
 				} );
 			} )
@@ -47,7 +57,7 @@ export const fetchStoredCards =
 					error.message || i18n.translate( 'There was a problem retrieving stored cards.' );
 
 				dispatch( {
-					type: 'STORED_CARDS_FETCH_FAILED',
+					type: STORED_CARDS_FETCH_FAILED,
 					error: errorMessage,
 				} );
 
@@ -63,7 +73,7 @@ export const deleteStoredCard =
 	( card: PaymentMethod, primaryPaymentMethodId?: string ) =>
 	( dispatch: Dispatch< AnyAction > ) => {
 		dispatch( {
-			type: 'STORED_CARDS_DELETE',
+			type: STORED_CARDS_DELETE,
 			card,
 		} );
 
@@ -76,7 +86,7 @@ export const deleteStoredCard =
 			} )
 			.then( ( response: { success: boolean; primary_payment_method_id: string } ) => {
 				dispatch( {
-					type: 'STORED_CARDS_DELETE_COMPLETED',
+					type: STORED_CARDS_DELETE_COMPLETED,
 					card,
 				} );
 
@@ -87,7 +97,7 @@ export const deleteStoredCard =
 			} )
 			.catch( ( error: Error ) => {
 				dispatch( {
-					type: 'STORED_CARDS_DELETE_FAILED',
+					type: STORED_CARDS_DELETE_FAILED,
 					card,
 					error: error.message || i18n.translate( 'There was a problem deleting the stored card.' ),
 				} );

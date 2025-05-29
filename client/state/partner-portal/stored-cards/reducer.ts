@@ -1,33 +1,44 @@
 import { withStorageKey } from '@automattic/state-utils';
+import {
+	STORED_CARDS_DELETE,
+	STORED_CARDS_DELETE_COMPLETED,
+	STORED_CARDS_DELETE_FAILED,
+	STORED_CARDS_FETCH,
+	STORED_CARDS_FETCH_COMPLETED,
+	STORED_CARDS_FETCH_FAILED,
+	STORED_CARDS_HAS_MORE_ITEMS,
+	STORED_CARDS_ITEMS_PER_PAGE,
+	STORED_CARDS_UPDATE_IS_PRIMARY_COMPLETED,
+} from 'calypso/state/action-types';
 import { combineReducers } from 'calypso/state/utils';
 import type { PaymentMethod } from 'calypso/jetpack-cloud/sections/partner-portal/payment-methods';
 import type { Reducer, Action, UnknownAction } from 'redux';
 
 type ItemsAction =
 	| {
-			type: 'STORED_CARDS_DELETE_COMPLETED';
+			type: typeof STORED_CARDS_DELETE_COMPLETED;
 			card: PaymentMethod;
 	  }
 	| {
-			type: 'STORED_CARDS_UPDATE_IS_PRIMARY_COMPLETED';
+			type: typeof STORED_CARDS_UPDATE_IS_PRIMARY_COMPLETED;
 			payment_method_id: string;
 	  }
 	| {
-			type: 'STORED_CARDS_FETCH_COMPLETED';
+			type: typeof STORED_CARDS_FETCH_COMPLETED;
 			list: PaymentMethod[];
 	  };
 
 export const items: Reducer< PaymentMethod[], ItemsAction > = ( state = [], action ) => {
 	switch ( action.type ) {
-		case 'STORED_CARDS_FETCH_COMPLETED': {
+		case STORED_CARDS_FETCH_COMPLETED: {
 			const { list } = action;
 			return list;
 		}
-		case 'STORED_CARDS_DELETE_COMPLETED': {
+		case STORED_CARDS_DELETE_COMPLETED: {
 			const { card } = action;
 			return state.filter( ( item ) => item.id !== card.id );
 		}
-		case 'STORED_CARDS_UPDATE_IS_PRIMARY_COMPLETED': {
+		case STORED_CARDS_UPDATE_IS_PRIMARY_COMPLETED: {
 			const { payment_method_id } = action;
 			return state.map( ( item ) => {
 				if ( item.id === payment_method_id ) {
@@ -36,44 +47,47 @@ export const items: Reducer< PaymentMethod[], ItemsAction > = ( state = [], acti
 				return item;
 			} );
 		}
+		default:
+			return state;
 	}
-
-	return state;
 };
 
 type ItemsPerPageAction = {
-	type: 'STORED_CARDS_ITEMS_PER_PAGE';
+	type: typeof STORED_CARDS_ITEMS_PER_PAGE;
 	perPage: number;
 };
 
 export const itemsPerPage: Reducer< number, ItemsPerPageAction > = ( state = 30, action ) => {
 	switch ( action?.type ) {
-		case 'STORED_CARDS_ITEMS_PER_PAGE': {
+		case STORED_CARDS_ITEMS_PER_PAGE: {
 			const { perPage } = action;
 			return perPage;
 		}
+
+		default:
+			return state;
 	}
-	return state;
 };
 
 type MoreItemsAction = {
-	type: 'STORED_CARDS_HAS_MORE_ITEMS';
+	type: typeof STORED_CARDS_HAS_MORE_ITEMS;
 	hasMore: boolean;
 };
 
 export const hasMoreItems: Reducer< boolean, MoreItemsAction > = ( state = false, action ) => {
 	switch ( action.type ) {
-		case 'STORED_CARDS_HAS_MORE_ITEMS': {
+		case STORED_CARDS_HAS_MORE_ITEMS: {
 			const { hasMore } = action;
 			return Boolean( hasMore );
 		}
-	}
 
-	return state;
+		default:
+			return state;
+	}
 };
 
 type FetchingActionStatus = Action<
-	'STORED_CARDS_FETCH' | 'STORED_CARDS_FETCH_COMPLETED' | 'STORED_CARDS_FETCH_FAILED'
+	typeof STORED_CARDS_FETCH | typeof STORED_CARDS_FETCH_COMPLETED | typeof STORED_CARDS_FETCH_FAILED
 >;
 
 export const isFetching: Reducer< boolean, FetchingActionStatus | UnknownAction > = (
@@ -81,28 +95,29 @@ export const isFetching: Reducer< boolean, FetchingActionStatus | UnknownAction 
 	action
 ) => {
 	switch ( action.type ) {
-		case 'STORED_CARDS_FETCH':
+		case STORED_CARDS_FETCH:
 			return true;
 
-		case 'STORED_CARDS_FETCH_COMPLETED':
-		case 'STORED_CARDS_FETCH_FAILED':
+		case STORED_CARDS_FETCH_COMPLETED:
+		case STORED_CARDS_FETCH_FAILED:
 			return false;
-	}
 
-	return state;
+		default:
+			return state;
+	}
 };
 
 type DeletingActionStatus =
 	| {
-			type: 'STORED_CARDS_DELETE';
+			type: typeof STORED_CARDS_DELETE;
 			card: PaymentMethod;
 	  }
 	| {
-			type: 'STORED_CARDS_DELETE_FAILED';
+			type: typeof STORED_CARDS_DELETE_FAILED;
 			card: PaymentMethod;
 	  }
 	| {
-			type: 'STORED_CARDS_DELETE_COMPLETED';
+			type: typeof STORED_CARDS_DELETE_COMPLETED;
 			card: PaymentMethod;
 	  };
 
@@ -111,21 +126,22 @@ export const isDeleting: Reducer< { [ key: string ]: boolean }, DeletingActionSt
 	action
 ) => {
 	switch ( action.type ) {
-		case 'STORED_CARDS_DELETE':
+		case STORED_CARDS_DELETE:
 			return {
 				...state,
 				[ action.card.id ]: true,
 			};
 
-		case 'STORED_CARDS_DELETE_FAILED':
-		case 'STORED_CARDS_DELETE_COMPLETED': {
+		case STORED_CARDS_DELETE_FAILED:
+		case STORED_CARDS_DELETE_COMPLETED: {
 			const nextState = { ...state };
 			delete nextState[ action.card.id ];
 			return nextState;
 		}
-	}
 
-	return state;
+		default:
+			return state;
+	}
 };
 
 const combinedReducer = combineReducers( {
