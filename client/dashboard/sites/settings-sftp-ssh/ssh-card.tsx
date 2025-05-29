@@ -140,7 +140,8 @@ export default function SshCard( {
 															</VStack>
 															<Button
 																icon={ trash }
-																disabled={ detachSshKeyMutation.isPending }
+																label={ __( 'Detach' ) }
+																isBusy={ detachSshKeyMutation.isPending }
 																onClick={ () => handleDetachSshKey( siteSshKey ) }
 															/>
 														</HStack>
@@ -168,7 +169,7 @@ export default function SshCard( {
 										<HStack justify="flex-start">
 											<Button
 												variant="primary"
-												disabled={ attachSshKeyMutation.isPending }
+												isBusy={ attachSshKeyMutation.isPending }
 												onClick={ handleAttachSshKey }
 											>
 												{ __( 'Attach SSH key to site' ) }
