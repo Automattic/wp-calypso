@@ -23,6 +23,10 @@ const parameters = {
 				return aIndex - bIndex;
 			}
 
+			// If either name is "Docs", it should come first
+			if ( a.name === 'Docs' ) return -1;
+			if ( b.name === 'Docs' ) return 1;
+
 			// If they're in the same section, put MDX files first
 			const aIsMdx = a.importPath.endsWith( '.mdx' );
 			const bIsMdx = b.importPath.endsWith( '.mdx' );

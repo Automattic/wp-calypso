@@ -406,9 +406,6 @@ export default function CheckoutMainContent( {
 
 	const [ isStreamlinedPriceExperimentLoading, streamlinedPriceExperimentAssignment ] =
 		useStreamlinedPriceExperiment();
-	const isStreamlinedPrice =
-		! isStreamlinedPriceExperimentLoading &&
-		isStreamlinedPriceCheckoutTreatment( streamlinedPriceExperimentAssignment );
 
 	const searchParams = new URLSearchParams( window.location.search );
 	const isDIFMInCart = hasDIFMProduct( responseCart );
@@ -706,16 +703,6 @@ export default function CheckoutMainContent( {
 						formStatus={ formStatus }
 					/>
 
-					{ isStreamlinedPrice && (
-						<CouponFieldArea
-							isCouponFieldVisible={ isCouponFieldVisible }
-							setCouponFieldVisible={ setCouponFieldVisible }
-							isPurchaseFree={ isPurchaseFree }
-							couponStatus={ couponStatus }
-							couponFieldStateProps={ couponFieldStateProps }
-						/>
-					) }
-
 					{ contactDetailsType !== 'none' && (
 						<CheckoutStep
 							className="checkout-contact-form-step"
@@ -855,15 +842,13 @@ export default function CheckoutMainContent( {
 						} }
 					/>
 
-					{ ! isStreamlinedPrice && (
-						<CouponFieldArea
-							isCouponFieldVisible={ isCouponFieldVisible }
-							setCouponFieldVisible={ setCouponFieldVisible }
-							isPurchaseFree={ isPurchaseFree }
-							couponStatus={ couponStatus }
-							couponFieldStateProps={ couponFieldStateProps }
-						/>
-					) }
+					<CouponFieldArea
+						isCouponFieldVisible={ isCouponFieldVisible }
+						setCouponFieldVisible={ setCouponFieldVisible }
+						isPurchaseFree={ isPurchaseFree }
+						couponStatus={ couponStatus }
+						couponFieldStateProps={ couponFieldStateProps }
+					/>
 
 					<CheckoutTermsAndCheckboxes
 						is3PDAccountConsentAccepted={ is3PDAccountConsentAccepted }
@@ -1578,8 +1563,7 @@ const WPCheckoutMainContent = styled.div< {
 			.checkout-line-item .checkout-line-item__remove-product {
 				font-size: 14px;
 			}
-			.form-fieldset.contact-details-form-fields .form__hidden-input a,
-			.checkout__content .wp-checkout-order-review__show-coupon-field-button {
+			.form-fieldset.contact-details-form-fields .form__hidden-input a {
 				font-weight: 500;
 				text-decoration: none;
 				color: ${ props.theme.colors.textColorDark };

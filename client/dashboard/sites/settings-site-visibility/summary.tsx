@@ -3,8 +3,15 @@ import { __ } from '@wordpress/i18n';
 import { seen } from '@wordpress/icons';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
 import type { Site } from '../../data/types';
+import type { Density } from '@automattic/components/src/summary-button/types';
 
-export default function SiteVisibilitySettingsSummary( { site }: { site: Site } ) {
+export default function SiteVisibilitySettingsSummary( {
+	site,
+	density,
+}: {
+	site: Site;
+	density?: Density;
+} ) {
 	let badges = [];
 	if ( site.launch_status === 'unlaunched' || site.is_coming_soon ) {
 		badges = [ { text: __( 'Coming soon' ), intent: 'warning' as const } ];
@@ -18,7 +25,7 @@ export default function SiteVisibilitySettingsSummary( { site }: { site: Site } 
 		<RouterLinkSummaryButton
 			to={ `/sites/${ site.slug }/settings/site-visibility` }
 			title={ __( 'Site visibility' ) }
-			density="medium"
+			density={ density }
 			decoration={ <Icon icon={ seen } /> }
 			badges={ badges }
 		/>

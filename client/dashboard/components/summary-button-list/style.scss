@@ -1,0 +1,45 @@
+@import "@wordpress/base-styles/variables";
+
+.dashboard-summary-button-list {
+	.dashboard-summary-button-list__children-list {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+	}
+
+	&.has-density-low {
+		.dashboard-summary-button-list__children-list-item:not(:last-child) {
+			margin-bottom: $grid-unit-30;
+		}
+	}
+
+	&.has-density-medium {
+		.dashboard-summary-button-list__children-list-wrapper {
+			// TODO: remove once the `CardBody` natively supports having no padding.
+			padding: 0;
+		}
+
+		// Inherit the card border radius all the way to the each child button.
+		// TODO: once the component uses React context, we should use that
+		// to let the summary button component know the appropriate border
+		// radius inheritance behavior.
+		.dashboard-summary-button-list__children-list,
+		.dashboard-summary-button-list__children-list-item {
+			border-radius: inherit;
+		}
+
+		.dashboard-summary-button-list__children-list-item:first-child > * {
+			border-top-left-radius: inherit;
+			border-top-right-radius: inherit;
+		}
+
+		.dashboard-summary-button-list__children-list-item:last-child > * {
+			// TODO: once the component uses React context, we should use that
+			// to let the correct summary button component know that it's
+			// the last child, and should not have a bottom border.
+			border-bottom: none;
+			border-bottom-left-radius: inherit;
+			border-bottom-right-radius: inherit;
+		}
+	}
+}

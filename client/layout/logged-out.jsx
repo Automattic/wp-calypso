@@ -29,6 +29,7 @@ import {
 	isGravPoweredOAuth2Client,
 	isBlazeProOAuth2Client,
 	isPartnerPortalOAuth2Client,
+	isStudioAppOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { createAccountUrl } from 'calypso/lib/paths';
 import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
@@ -162,7 +163,7 @@ const LayoutLoggedOut = ( {
 
 	if ( useOAuth2Layout && ( isGravatar || isGravPoweredClient ) ) {
 		masterbar = null;
-	} else if ( useOAuth2Layout && oauth2Client && oauth2Client.name ) {
+	} else if ( useOAuth2Layout && oauth2Client && oauth2Client.name && ! masterbarIsHidden ) {
 		classes.dops = true;
 		classes[ oauth2Client.name ] = true;
 
@@ -335,7 +336,9 @@ export default withCurrentRoute(
 			const isPartnerPortal = isPartnerPortalOAuth2Client( oauth2Client );
 			const isWooJPC = isWooJPCFlow( state );
 
+			const isStudioClient = isStudioAppOAuth2Client( oauth2Client );
 			const isWhiteLogin =
+				isStudioClient ||
 				( currentRoute.startsWith( '/log-in' ) &&
 					! isJetpackLogin &&
 					Boolean( currentQuery?.client_id ) === false &&
@@ -356,6 +359,7 @@ export default withCurrentRoute(
 				[ 'signup', 'jetpack-connect' ].includes( sectionName );
 			const wccomFrom = getWccomFrom( state );
 			const masterbarIsHidden =
+				isStudioClient ||
 				! ( currentSection || currentRoute ) ||
 				! masterbarIsVisible( state ) ||
 				noMasterbarForSection ||

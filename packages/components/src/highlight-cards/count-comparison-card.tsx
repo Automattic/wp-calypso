@@ -1,19 +1,6 @@
 import { arrowDown, arrowUp, Icon } from '@wordpress/icons';
 import clsx from 'clsx';
-import { useRef, useState } from 'react';
-import { Card } from '../';
-import Popover from '../popover';
-import { formatNumber, formatPercentage, subtract, percentCalculator } from './lib/numbers';
-
-type CountComparisonCardProps = {
-	count: number | null;
-	heading?: React.ReactNode;
-	icon?: React.ReactNode;
-	onClick?: ( event: MouseEvent ) => void;
-	previousCount: number | null;
-	showValueTooltip?: boolean | null;
-	compact?: boolean;
-};
+import { formatPercentage, subtract, percentCalculator } from './lib/numbers';
 
 type TrendComparisonProps = {
 	count: number | null;
@@ -49,67 +36,5 @@ export function TrendComparison( { count, previousCount }: TrendComparisonProps 
 				</span>
 			) }
 		</span>
-	);
-}
-
-export function TooltipContent( { count, previousCount }: CountComparisonCardProps ) {
-	const difference = subtract( count, previousCount ) as number;
-	return (
-		<div className="highlight-card-tooltip-content">
-			<div className="highlight-card-tooltip-counts">
-				{ formatNumber( count, false ) }
-				{ '  ' }
-				{ difference !== 0 && difference !== null && (
-					<span className="highlight-card-tooltip-count-difference">
-						({ formatNumber( difference, false, true ) })
-					</span>
-				) }
-			</div>
-		</div>
-	);
-}
-
-export default function CountComparisonCard( {
-	count,
-	previousCount,
-	icon,
-	heading,
-	showValueTooltip,
-	compact = false,
-}: CountComparisonCardProps ) {
-	const textRef = useRef( null );
-	const [ isTooltipVisible, setTooltipVisible ] = useState( false );
-	return (
-		<Card className="highlight-card" compact={ compact }>
-			{ icon && <div className="highlight-card-icon">{ icon }</div> }
-			{ heading && <div className="highlight-card-heading">{ heading }</div> }
-			<div
-				className={ clsx( 'highlight-card-count', {
-					'is-pointer': showValueTooltip,
-				} ) }
-				onMouseEnter={ () => setTooltipVisible( true ) }
-				onMouseLeave={ () => setTooltipVisible( false ) }
-			>
-				<span className="highlight-card-count-value" ref={ textRef }>
-					{ formatNumber( count ) }
-				</span>{ ' ' }
-				<TrendComparison count={ count } previousCount={ previousCount } />
-				{ showValueTooltip && (
-					<Popover
-						className="tooltip tooltip--darker highlight-card-tooltip"
-						isVisible={ isTooltipVisible }
-						position="bottom right"
-						context={ textRef.current }
-					>
-						<TooltipContent
-							count={ count }
-							previousCount={ previousCount }
-							icon={ icon }
-							heading={ heading }
-						/>
-					</Popover>
-				) }
-			</div>
-		</Card>
 	);
 }

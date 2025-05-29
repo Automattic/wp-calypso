@@ -13,9 +13,8 @@ import { download, reusableBlock, Icon } from '@wordpress/icons';
 import devSiteBanner from 'calypso/assets/images/a8c-for-agencies/dev-site-banner.svg';
 import Column from './column';
 import MenuItem from './menu-item';
+import type { AddNewSiteProps } from './types';
 import './style.scss';
-
-const TRACK_SOURCE_NAME = 'sites-dashboard';
 
 const wordpressClick = () => {
 	recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_add' );
@@ -51,7 +50,7 @@ const bigSkyClick = () => {
 	} );
 };
 
-function AddNewSite() {
+function AddNewSite( { context }: AddNewSiteProps ) {
 	const isDesktop = useViewportMatch( 'medium' );
 	const Wrapper = isDesktop ? HStack : VStack;
 	const offer = sprintf(
@@ -70,7 +69,7 @@ function AddNewSite() {
 					title="WordPress.com"
 					description={ __( 'Build and grow your site, all in one powerful platform.' ) }
 					onClick={ wordpressClick }
-					href="/start?source=sites-dashboard&ref=new-site-popover"
+					href={ `/start?source=${ context }&ref=new-site-popover` }
 				/>
 				<MenuItem
 					icon={ <BigSkyLogo.Mark /> }
@@ -79,14 +78,14 @@ function AddNewSite() {
 						'Prompt, edit, and launch WordPress websites with Artificial Intelligence.'
 					) }
 					onClick={ bigSkyClick }
-					href="/setup/ai-site-builder"
+					href={ `/setup/ai-site-builder?source=${ context }&ref=new-site-popover` }
 				/>
 				<MenuItem
 					icon={ <JetpackLogo /> }
 					title={ __( 'Via the Jetpack plugin' ) }
 					description={ __( 'Install the Jetpack plugin on an existing site.' ) }
 					onClick={ jetpackClick }
-					href={ `/jetpack/connect?cta_from=${ TRACK_SOURCE_NAME }&cta_id=add-site` }
+					href={ `/jetpack/connect?cta_from=${ context }&cta_id=add-site` }
 				/>
 			</Column>
 			<Column title={ __( 'Migrate and import' ) }>
@@ -95,14 +94,14 @@ function AddNewSite() {
 					title={ __( 'Migrate' ) }
 					description={ __( 'Bring your entire WordPress site to WordPress.com.' ) }
 					onClick={ migrateClick }
-					href="/setup/site-migration?source=sites-dashboard&ref=new-site-popover&action=migrate"
+					href={ `/setup/site-migration?source=${ context }&ref=new-site-popover&action=migrate` }
 				/>
 				<MenuItem
 					icon={ <Icon icon={ download } size={ 18 } /> }
 					title={ __( 'Import' ) }
 					description={ __( 'Use a backup to only import content from other platforms.' ) }
 					onClick={ importClick }
-					href="/setup/site-migration/create-site?source=sites-dashboard&ref=new-site-popover&action=import"
+					href={ `/setup/site-migration/create-site?source=${ context }&ref=new-site-popover&action=import` }
 				/>
 			</Column>
 

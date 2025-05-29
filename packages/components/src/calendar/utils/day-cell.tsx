@@ -13,9 +13,9 @@ const PreviewDashStart = () => {
 			xmlns="http://www.w3.org/2000/svg"
 			fill="none"
 			stroke="currentColor"
-			stroke-dasharray="3.84516"
-			stroke-dashoffset="1.9226"
-			stroke-width="1"
+			strokeDasharray="3.84516"
+			strokeDashoffset="1.9226"
+			strokeWidth="1"
 		>
 			<path d="M32,0.5 h-29.5 a2,2 0 0 0 -2,2 v27 a2,2 0 0 0 2,2 h30" />
 		</svg>
@@ -32,9 +32,9 @@ const PreviewDashMiddle = () => {
 			xmlns="http://www.w3.org/2000/svg"
 			fill="none"
 			stroke="currentColor"
-			stroke-dasharray="3.9 4"
-			stroke-dashoffset="2"
-			stroke-width="1"
+			strokeDasharray="3.9 4"
+			strokeDashoffset="2"
+			strokeWidth="1"
 		>
 			<line x1="0" y1="0.5" x2="100" y2="0.5" />
 			<line x1="0" y1="31.5" x2="100" y2="31.5" />
@@ -53,9 +53,9 @@ const PreviewDashEnd = () => {
 			xmlns="http://www.w3.org/2000/svg"
 			fill="none"
 			stroke="currentColor"
-			stroke-dasharray="3.84516"
-			stroke-dashoffset="1.9226"
-			stroke-width="1"
+			strokeDasharray="3.84516"
+			strokeDashoffset="1.9226"
+			strokeWidth="1"
 		>
 			<path d="M0,0.5 h29.5 a2,2 0 0 1 2,2 v27 a2,2 0 0 1 -2,2 h-29.5" />
 		</svg>

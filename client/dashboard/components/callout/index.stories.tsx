@@ -25,7 +25,7 @@ export const Default: Story = {
 				Get started
 			</Button>
 		),
-		imageSrc: 'https://live.staticflickr.com/3277/2938134470_c807dc3e47_b.jpg',
+		image: 'https://live.staticflickr.com/3277/2938134470_c807dc3e47_b.jpg',
 		imageAlt: 'Sweet eyed kitty',
 	},
 };

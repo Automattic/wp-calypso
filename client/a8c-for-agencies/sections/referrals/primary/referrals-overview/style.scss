@@ -76,6 +76,10 @@ $data-view-border-color: #f1f1f1;
 		.dataviews-view-table tr td:first-child {
 			padding-inline-start: 64px;
 		}
+
+		.dataviews-view-table__row .a4a-text-placeholder {
+			width: 50px;
+		}
 	}
 
 	&:not(.full-width-layout-with-table) .hosting-dashboard-layout__body-wrapper {

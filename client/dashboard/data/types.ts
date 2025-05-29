@@ -13,6 +13,13 @@ export interface User {
 	username: string;
 	display_name: string;
 	avatar_URL?: string;
+	language: string;
+	locale_variant: string;
+	email: string;
+}
+
+export interface SiteUser {
+	id: number;
 }
 
 export interface SiteDomain {
@@ -43,6 +50,7 @@ export interface Domain {
 }
 
 export interface SitePlan {
+	product_slug: string;
 	product_name: string;
 	product_name_short: string;
 	expired: boolean;
@@ -54,7 +62,7 @@ export interface SitePlan {
 }
 
 export interface Plan {
-	id: string;
+	id: string | null;
 	current_plan?: boolean;
 	expiry?: string;
 	subscribed_date?: string;
@@ -69,6 +77,8 @@ export interface SiteOptions {
 	software_version: string;
 	admin_url: string;
 	is_redirect?: boolean;
+	p2_hub_blog_id?: number;
+	is_wpforteams_site?: boolean;
 }
 
 export interface Site {
@@ -90,6 +100,7 @@ export interface Site {
 	is_private: boolean;
 	is_wpcom_atomic: boolean;
 	is_wpcom_staging_site: boolean;
+	is_vip: boolean;
 	launch_status: string | boolean;
 	site_migration: {
 		migration_status?: string;
@@ -99,6 +110,14 @@ export interface Site {
 	site_owner: number;
 	jetpack: boolean;
 	jetpack_modules: string[] | null;
+}
+
+export interface Purchase {
+	ID: number | string;
+	active: boolean;
+	is_cancelable: boolean;
+	product_slug: string;
+	user_id: number | string;
 }
 
 export type EmailProvider = 'titan' | 'google-workspace' | 'forwarding';
@@ -174,4 +193,20 @@ export interface UrlPerformanceInsights {
 
 export interface PhpMyAdminToken {
 	token: string;
+}
+
+export interface DefensiveModeSettings {
+	enabled: boolean;
+	enabled_by_a11n: boolean;
+	enabled_until: number;
+}
+export interface DefensiveModeSettingsUpdate {
+	active: boolean;
+	ttl?: number;
+}
+
+export interface SiteTransferConfirmation {
+	transfer: boolean;
+	email_sent: boolean;
+	new_owner_email: string;
 }

@@ -117,7 +117,9 @@ const SitesDashboardHeader: React.FC< SitesDashboardHeaderProps > = ( { isPrevie
 	return (
 		<PageHeader className="sites-dashboard-header">
 			<HeaderControls>
-				{ isDriveMigrationEnabled && <SitesAddNewSitePopover showCompact={ isPreviewPaneOpen } /> }
+				{ isDriveMigrationEnabled && (
+					<SitesAddNewSitePopover showCompact={ isPreviewPaneOpen } context="sites-dashboard" />
+				) }
 				{ ! isDriveMigrationEnabled && (
 					<AddNewSiteSplitButton
 						primary={ ! isPreviewPaneOpen }

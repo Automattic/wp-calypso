@@ -166,34 +166,30 @@ const SiteSubscriptionRow = ( {
 	const onUnsubscribe = () => {
 		unsubscribeInProgress.current = true;
 		unsubscribeCallback();
-		unsubscribe(
-			{
-				blog_id,
-				subscriptionId: Number( subscriptionId ),
-				url,
-				doNotInvalidateSiteSubscriptions: true,
-			},
-			{
-				onSuccess: () => {
-					unsubscribeInProgress.current = false;
+		unsubscribe( {
+			blog_id,
+			subscriptionId: Number( subscriptionId ),
+			url,
+			doNotInvalidateSiteSubscriptions: true,
+			onSuccess: () => {
+				unsubscribeInProgress.current = false;
 
-					if ( resubscribePending.current ) {
-						resubscribePending.current = false;
-						resubscribe( {
-							blog_id,
-							url,
-							doNotInvalidateSiteSubscriptions: true,
-							resubscribed: true,
-						} );
-						recordSiteResubscribed( {
-							blog_id,
-							url,
-							source: SOURCE_SUBSCRIPTIONS_UNSUBSCRIBED_NOTICE,
-						} );
-					}
-				},
-			}
-		);
+				if ( resubscribePending.current ) {
+					resubscribePending.current = false;
+					resubscribe( {
+						blog_id,
+						url,
+						doNotInvalidateSiteSubscriptions: true,
+						resubscribed: true,
+					} );
+					recordSiteResubscribed( {
+						blog_id,
+						url,
+						source: SOURCE_SUBSCRIPTIONS_UNSUBSCRIBED_NOTICE,
+					} );
+				}
+			},
+		} );
 	};
 
 	const { isReaderPortal, isSubscriptionsPortal } = useSubscriptionManagerContext();

@@ -2,6 +2,7 @@ import page from '@automattic/calypso-router';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import { ReactNode } from 'react';
+import { isSameOrigin } from 'calypso/lib/navigate';
 import { popCurrentScreenFromHistory } from 'calypso/my-sites/stats/hooks/use-stats-navigation-history';
 import './navigation-header.scss';
 
@@ -54,7 +55,16 @@ const NavigationHeader: React.FC< HeaderProps > = ( {
 				if ( backLinkProps?.onBackClick ) {
 					backLinkProps.onBackClick();
 				} else if ( backLinkProps?.url ) {
-					page( backLinkProps.url );
+					// Resolve the relative links with the calypso-router.
+					if (
+						! backLinkProps?.url.startsWith( 'http://' ) &&
+						! backLinkProps?.url.startsWith( 'https://' )
+					) {
+						page( backLinkProps.url );
+					} else if ( isSameOrigin( backLinkProps.url ) ) {
+						// If the URL is on the same site, navigate to it.
+						window.location.href = backLinkProps.url;
+					}
 				}
 			} }
 		>

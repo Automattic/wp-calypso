@@ -1,6 +1,4 @@
-import config from '@automattic/calypso-config';
 import { Button, Gridicon } from '@automattic/components';
-import { localizeUrl } from '@automattic/i18n-utils';
 import { CALYPSO_CONTACT } from '@automattic/urls';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
@@ -8,13 +6,11 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import StatsNavigation from 'calypso/blocks/stats-navigation';
-import { navItems } from 'calypso/blocks/stats-navigation/constants';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryKeyringConnections from 'calypso/components/data/query-keyring-connections';
 import QueryKeyringServices from 'calypso/components/data/query-keyring-services';
 import QuerySiteKeyrings from 'calypso/components/data/query-site-keyrings';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
-import NavigationHeader from 'calypso/components/navigation-header';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -196,7 +192,6 @@ class GoogleMyBusinessStats extends Component {
 
 	render() {
 		const { isLocationVerified, locationData, siteId, siteSlug, translate } = this.props;
-		const isStatsNavigationImprovementEnabled = config.isEnabled( 'stats/navigation-improvement' );
 
 		return (
 			<Main fullWidthLayout>
@@ -212,32 +207,7 @@ class GoogleMyBusinessStats extends Component {
 				<QueryKeyringServices />
 
 				<div className="stats">
-					{ ! isStatsNavigationImprovementEnabled ? (
-						<NavigationHeader
-							className="stats__section-header modernized-header"
-							title={ translate( 'Jetpack Stats' ) }
-							subtitle={ translate(
-								'Integrate your business with Google and get stats on your locations. {{learnMoreLink}}Learn more{{/learnMoreLink}}',
-								{
-									components: {
-										learnMoreLink: (
-											<a
-												href={ localizeUrl(
-													'https://wordpress.com/support/google-my-business-integration/#checking-the-impact-of-your-google-my-business-connection'
-												) }
-												target="_blank"
-												rel="noreferrer noopener"
-											/>
-										),
-									},
-								}
-							) }
-							screenReader={ navItems.googleMyBusiness?.label }
-						></NavigationHeader>
-					) : (
-						<PageHeader />
-					) }
-
+					<PageHeader />
 					<StatsNavigation selectedItem="googleMyBusiness" siteId={ siteId } slug={ siteSlug } />
 
 					{ ! locationData && (

@@ -7,7 +7,9 @@ import type {
 	MonitorUptime,
 	Plan,
 	Site,
+	Purchase,
 	User,
+	SiteUser,
 	Profile,
 	TwoStep,
 	EngagementStatsDataPoint,
@@ -15,7 +17,11 @@ import type {
 	SiteSettings,
 	UrlPerformanceInsights,
 	PhpMyAdminToken,
+	DefensiveModeSettings,
+	DefensiveModeSettingsUpdate,
+	SiteTransferConfirmation,
 } from './types';
+import type { DataCenterOption } from 'calypso/data/data-center/types';
 
 export const fetchProfile = async (): Promise< Profile > => {
 	return await wpcom.req.get( '/me/settings' );
@@ -360,6 +366,57 @@ export const restoreSitePlanSoftware = async ( siteIdOrSlug: string ) => {
 	} );
 };
 
+export const siteOwnerTransfer = async (
+	siteIdOrSlug: string,
+	data: { new_site_owner: string }
+) => {
+	return wpcom.req.post(
+		{
+			path: `/sites/${ siteIdOrSlug }/site-owner-transfer`,
+			apiNamespace: 'wpcom/v2',
+		},
+		{
+			calypso_origin: window.location.origin,
+		},
+		{
+			context: 'dashboard_v2',
+			...data,
+		}
+	);
+};
+
+export const siteOwnerTransferEligibilityCheck = async (
+	siteIdOrSlug: string,
+	data: { new_site_owner: string }
+) => {
+	return wpcom.req.post(
+		{
+			path: `/sites/${ siteIdOrSlug }/site-owner-transfer/eligibility`,
+			apiNamespace: 'wpcom/v2',
+		},
+		data
+	);
+};
+
+export const siteOwnerTransferConfirm = async (
+	siteIdOrSlug: string,
+	data: { hash: string }
+): Promise< SiteTransferConfirmation > => {
+	return wpcom.req.post(
+		{
+			path: `/sites/${ siteIdOrSlug }/site-owner-transfer/confirm`,
+			apiNamespace: 'wpcom/v2',
+		},
+		data
+	);
+};
+
+export const deleteSite = async ( siteIdOrSlug: string ) => {
+	return wpcom.req.post( {
+		path: `/sites/${ siteIdOrSlug }/delete`,
+	} );
+};
+
 export const fetchBasicMetrics = async ( url: string ): Promise< BasicMetricsData > => {
 	return wpcom.req.get(
 		{
@@ -398,6 +455,15 @@ export const resetPhpMyAdminPassword = async ( siteIdOrSlug: string ): Promise< 
 	} );
 };
 
+export const fetchPrimaryDataCenter = async (
+	siteIdOrSlug: string
+): Promise< DataCenterOption | null > => {
+	return wpcom.req.get( {
+		path: `/sites/${ siteIdOrSlug }/hosting/geo-affinity`,
+		apiNamespace: 'wpcom/v2',
+	} );
+};
+
 export const fetchStaticFile404 = async ( siteIdOrSlug: string ): Promise< string > => {
 	return wpcom.req.get( {
 		path: `/sites/${ siteIdOrSlug }/hosting/static-file-404`,
@@ -415,5 +481,62 @@ export const updateStaticFile404 = async (
 			apiNamespace: 'wpcom/v2',
 		},
 		{ setting }
+	);
+};
+
+export const fetchEdgeCacheDefensiveMode = async (
+	siteIdOrSlug: string
+): Promise< DefensiveModeSettings > => {
+	return wpcom.req.get( {
+		path: `/sites/${ siteIdOrSlug }/hosting/edge-cache/defensive-mode`,
+		apiNamespace: 'wpcom/v2',
+	} );
+};
+
+export const updateEdgeCacheDefensiveMode = async (
+	siteIdOrSlug: string,
+	data: DefensiveModeSettingsUpdate
+): Promise< DefensiveModeSettings > => {
+	return wpcom.req.post(
+		{
+			path: `/sites/${ siteIdOrSlug }/hosting/edge-cache/defensive-mode`,
+			apiNamespace: 'wpcom/v2',
+		},
+		data
+	);
+};
+
+export const fetchPurchases = async ( siteIdOrSlug: string ): Promise< Purchase[] > => {
+	return wpcom.req.get( {
+		path: `/sites/${ siteIdOrSlug }/purchases`,
+	} );
+};
+
+export const fetchSiteUserMe = async ( siteIdOrSlug: string ): Promise< SiteUser > => {
+	return wpcom.req.get( {
+		path: `/sites/${ siteIdOrSlug }/users/me`,
+		apiNamespace: 'wp/v2',
+	} );
+};
+
+export const leaveSite = async ( siteIdOrSlug: string, userId: number ) => {
+	return wpcom.req.post( {
+		path: `/sites/${ siteIdOrSlug }/users/${ userId }/delete`,
+	} );
+};
+
+export const fetchP2HubP2s = async (
+	siteId: string,
+	options: { limit?: number } = {}
+): Promise< { totalItems: number } > => {
+	return wpcom.req.get(
+		{
+			path: '/p2/workspace/sites/all',
+			apiNamespace: 'wpcom/v2',
+		},
+		{
+			hub_id: siteId,
+			...options,
+		}
 	);
 };

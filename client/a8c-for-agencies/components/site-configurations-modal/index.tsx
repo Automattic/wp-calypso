@@ -12,7 +12,7 @@ import useCreateWPCOMDevSiteMutation, {
 import useCreateWPCOMSiteMutation from 'calypso/a8c-for-agencies/data/sites/use-create-wpcom-site';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
-import { useDataCenterOptions } from 'calypso/data/data-center/use-data-center-options';
+import { getDataCenterOptions } from 'calypso/data/data-center';
 import { getPHPVersions } from 'calypso/data/php-versions';
 import { useDispatch } from 'calypso/state';
 import { errorNotice } from 'calypso/state/notices/actions';
@@ -41,7 +41,7 @@ export default function SiteConfigurationsModal( {
 	);
 	const [ isSubmitting, setIsSubmitting ] = useState( false );
 	const translate = useTranslate();
-	const dataCenterOptions = useDataCenterOptions();
+	const dataCenterOptions = getDataCenterOptions();
 	const { phpVersions } = getPHPVersions();
 	const siteName = useSiteName( randomSiteName, isRandomSiteNameLoading );
 	const { mutate: createWPCOMSite } = useCreateWPCOMSiteMutation();

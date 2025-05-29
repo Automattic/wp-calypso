@@ -209,14 +209,14 @@ export default function Summary( {
 						<ImporterActionButton
 							href={ `https://cloud.jetpack.com/subscribers/${ selectedSite.slug }` }
 						>
-							{ __( 'Check subscribers' ) }
+							{ __( 'Manage subscribers' ) }
 						</ImporterActionButton>
 					) : (
 						<ImporterActionButton
 							href={ `/subscribers/${ selectedSite.slug }` }
 							onClick={ resetImporter }
 						>
-							{ __( 'Check subscribers' ) }
+							{ __( 'Manage subscribers' ) }
 						</ImporterActionButton>
 					) }
 				</ImporterActionButtonContainer>
