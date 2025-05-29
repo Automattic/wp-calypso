@@ -1,5 +1,5 @@
 import page from '@automattic/calypso-router';
-import { seen, unseen } from '@wordpress/icons';
+import { seen, unseen, external } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
 import { size, map } from 'lodash';
 import PropTypes from 'prop-types';
@@ -9,7 +9,6 @@ import ConversationFollowButton from 'calypso/blocks/conversation-follow-button'
 import { shouldShowConversationFollowButton } from 'calypso/blocks/conversation-follow-button/helper';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
-import ReaderExternalIcon from 'calypso/reader/components/icons/external-icon';
 import ReaderFollowConversationIcon from 'calypso/reader/components/icons/follow-conversation-icon';
 import ReaderFollowingConversationIcon from 'calypso/reader/components/icons/following-conversation-icon';
 import ReaderFollowButton from 'calypso/reader/follow-button';
@@ -339,7 +338,9 @@ class ReaderPostEllipsisMenu extends Component {
 				{ this.props.showVisitPost && post.URL && (
 					<PopoverMenuItem
 						onClick={ this.visitPost }
-						icon={ ReaderExternalIcon( { iconSize: 20 } ) }
+						icon={ external }
+						useWordPressIcon
+						iconSize={ 24 }
 					>
 						{ translate( 'Visit post' ) }
 					</PopoverMenuItem>
