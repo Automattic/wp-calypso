@@ -27,7 +27,7 @@
 
 		&:hover,
 		&:focus {
-			background-color: var(--color-primary-50);
+			background-color: var(--theme-highlight-color);
 			color: var(--studio-white);
 
 			@media (min-width: 481px) {
