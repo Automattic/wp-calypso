@@ -42,7 +42,7 @@ const PaidSubscriptionsSection = ( { query }: PaidSubscriptionsSectionProps ) =>
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const moment = useLocalizedMoment();
-	const subscriptionId = query?.subscriber;
+	const subscriptionId = query?.paid_susbcription;
 	const [ subscriberToCancel, setSubscriberToCancel ] = useState< PaidSubscription | null >( null );
 	const site = useSelector( getSelectedSite );
 
@@ -140,8 +140,8 @@ const PaidSubscriptionsSection = ( { query }: PaidSubscriptionsSectionProps ) =>
 		);
 	}
 
-	function getCancelButtonText( subscriber: PaidSubscription | null ) {
-		return subscriber?.plan?.renew_interval === 'one-time'
+	function getCancelButtonText( paidSubscription: PaidSubscription | null ) {
+		return paidSubscription?.plan?.renew_interval === 'one-time'
 			? translate( 'Remove payment' )
 			: translate( 'Cancel payment' );
 	}
@@ -178,18 +178,18 @@ const PaidSubscriptionsSection = ( { query }: PaidSubscriptionsSectionProps ) =>
 	}
 	const earnPath = ! isJetpackCloud() ? '/earn' : '/monetize';
 
-	function renderSubscriberActions( subscriber: PaidSubscription ) {
+	function renderSubscriberActions( paidSubscription: PaidSubscription ) {
 		return (
 			<EllipsisMenu position="bottom left" className="memberships__subscriber-actions">
 				<PopoverMenuItem
-					href={ `${ earnPath }/supporters/${ site?.slug }?subscriber=${ subscriber.id }` }
+					href={ `${ earnPath }/paid-subscriptions/${ site?.slug }?paid_susbcription=${ paidSubscription.id }` }
 				>
 					<Gridicon size={ 18 } icon="visible" />
 					{ translate( 'View' ) }
 				</PopoverMenuItem>
-				<PopoverMenuItem onClick={ () => setSubscriberToCancel( subscriber ) }>
+				<PopoverMenuItem onClick={ () => setSubscriberToCancel( paidSubscription ) }>
 					<Gridicon size={ 18 } icon="cross" />
-					{ getCancelButtonText( subscriber ) }
+					{ getCancelButtonText( paidSubscription ) }
 				</PopoverMenuItem>
 			</EllipsisMenu>
 		);
