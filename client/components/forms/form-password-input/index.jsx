@@ -34,7 +34,7 @@ class FormPasswordInput extends Component {
 	};
 
 	render() {
-		const { hideToggle, submitting, isHidden, translate, ...rest } = this.props;
+		const { hideToggle, submitting, isHidden, locale, translate, ...rest } = this.props;
 		const isValueHidden = this.getIsValueHidden();
 
 		return (
