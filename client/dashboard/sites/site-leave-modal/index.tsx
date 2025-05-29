@@ -30,6 +30,10 @@ interface SiteLeaveModalProps {
 
 type ContentProps = SiteLeaveModalProps;
 
+type SiteLeaveFormData = {
+	confirmed: boolean;
+};
+
 function isSiteOwner( user: User, site: Site ) {
 	return user.ID === site.site_owner;
 }
@@ -98,7 +102,7 @@ function ContentLeaveSite( { site, onClose }: ContentProps ) {
 	const { data: me } = useQuery( siteUserMeQuery( site.slug ) );
 	const mutation = useMutation( leaveSiteMutation( site.slug ) );
 
-	const [ formData, setFormData ] = useState< { confirmed: boolean } >( {
+	const [ formData, setFormData ] = useState< SiteLeaveFormData >( {
 		confirmed: false,
 	} );
 
@@ -158,7 +162,7 @@ function ContentLeaveSite( { site, onClose }: ContentProps ) {
 						'To regain access, a current administrator must re-invite you. Please confirm this is your intent before proceeding.'
 					) }
 				</Text>
-				<DataForm< { confirmed: boolean } >
+				<DataForm< SiteLeaveFormData >
 					data={ formData }
 					fields={ [
 						{
@@ -168,7 +172,7 @@ function ContentLeaveSite( { site, onClose }: ContentProps ) {
 						},
 					] }
 					form={ { type: 'regular' as const, fields: [ 'confirmed' ] } }
-					onChange={ ( edits: { confirmed?: boolean } ) => {
+					onChange={ ( edits: Partial< SiteLeaveFormData > ) => {
 						setFormData( ( data ) => ( { ...data, ...edits } ) );
 					} }
 				/>
