@@ -97,11 +97,10 @@ const Title = styled.div< { isHiddenInMobile?: boolean } >`
 	` ) }
 `;
 
-const Grid = styled.div< { visiblePlans: number } >`
+const StickyGrid = styled( StickyContainer )< { visiblePlans: number } >`
 	display: grid;
 	margin: 0 auto;
 	background: #fff;
-	border: solid 1px #e0e0e0;
 	${ ( props ) =>
 		props.visiblePlans &&
 		css`
@@ -111,11 +110,21 @@ const Grid = styled.div< { visiblePlans: number } >`
 	${ plansGridMediumLarge( css`
 		border-radius: 5px;
 	` ) }
+`;
 
-	> .is-sticky-header-row {
-		border-bottom: solid 1px #e0e0e0;
-		background: #fff;
-	}
+const Grid = styled.div< { visiblePlans: number; as?: string } >`
+	display: ${ ( props ) => ( props.as === 'tbody' ? 'table-row-group' : 'grid' ) };
+	margin: 0 auto;
+	background: #fff;
+	${ ( props ) =>
+		props.visiblePlans &&
+		css`
+			max-width: ${ rowCellMaxWidth * props.visiblePlans + featureGroupRowTitleCellMaxWidth }px;
+		` }
+
+	${ plansGridMediumLarge( css`
+		border-radius: 5px;
+	` ) }
 `;
 
 const Row = styled.div< {
@@ -389,7 +398,13 @@ const ComparisonGridHeaderCell = ( {
 	const showPlanSelect = ! allVisible && ! gridPlan.current;
 
 	return (
-		<Cell className={ headerClasses } textAlign="start">
+		<Cell
+			as="th"
+			className={ headerClasses }
+			textAlign="start"
+			{ ...{ scope: 'col' } }
+			aria-label={ gridPlan.planTitle as string }
+		>
 			<PopularBadge
 				isInSignup={ isInSignup }
 				planSlug={ planSlug }
@@ -484,8 +499,9 @@ const ComparisonGridHeader = forwardRef< HTMLDivElement, ComparisonGridHeaderPro
 		const { coupon } = usePlansGridContext();
 
 		return (
-			<PlanRow isHiddenInMobile={ isHiddenInMobile } ref={ ref }>
+			<PlanRow as="tr" isHiddenInMobile={ isHiddenInMobile } ref={ ref }>
 				<RowTitleCell
+					as="td"
 					key="feature-name"
 					className="plan-comparison-grid__header-cell is-placeholder-header-cell"
 					isPlaceholderHeaderCell
@@ -596,7 +612,7 @@ const ComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 	);
 
 	return (
-		<Cell className={ cellClasses } textAlign="center">
+		<Cell as="td" className={ cellClasses } textAlign="center">
 			{ isStorageFeature ? (
 				<>
 					<span className="plan-comparison-grid__plan-title">{ translate( 'Storage' ) }</span>
@@ -664,9 +680,19 @@ const ComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 								</span>
 							) }
 							{ hasFeature && ! featureLabel && (
-								<Gridicon icon="checkmark" color="var(--studio-wordpress-blue-50)" />
+								<Gridicon
+									icon="checkmark"
+									color="var(--studio-wordpress-blue-50)"
+									aria-label={ translate( 'Feature available' ) }
+								/>
 							) }
-							{ ! hasFeature && ! featureLabel && <Gridicon icon="minus-small" color="#C3C4C7" /> }
+							{ ! hasFeature && ! featureLabel && (
+								<Gridicon
+									icon="minus-small"
+									color="#C3C4C7"
+									aria-label={ translate( 'Feature not available' ) }
+								/>
+							) }
 						</>
 					) }
 				</>
@@ -714,14 +740,18 @@ const ComparisonGridFeatureGroupRow: React.FunctionComponent< {
 
 	return (
 		<Row
+			as="tr"
 			isHiddenInMobile={ isHiddenInMobile }
 			className={ rowClasses }
 			isHighlighted={ isHighlighted }
 		>
 			<RowTitleCell
+				as="th"
 				key="feature-name"
 				className="is-feature-group-row-title-cell"
 				isFeatureGroupRowTitleCell
+				{ ...{ scope: 'row' } }
+				aria-label={ ( feature?.getTitle?.() as string ) || '' }
 			>
 				{ isStorageFeature ? (
 					<Plans2023Tooltip
@@ -802,6 +832,7 @@ const FeatureGroup = ( {
 	featureGroupMap,
 	visibleGridPlans,
 	planFeatureFootnotes,
+	plansLength,
 }: {
 	featureGroup: FeatureGroup;
 	selectedFeature?: string;
@@ -816,6 +847,7 @@ const FeatureGroup = ( {
 		footnoteList: string[];
 		footnotesByFeature: Record< string, number >;
 	};
+	plansLength: number;
 } ) => {
 	const { allFeaturesList } = usePlansGridContext();
 	const [ firstSetOfFeatures ] = Object.keys( featureGroupMap );
@@ -872,8 +904,14 @@ const FeatureGroup = ( {
 	}
 
 	return (
-		<div key={ featureGroup.slug } className="plan-comparison-grid__feature-group">
+		<Grid
+			as="tbody"
+			visiblePlans={ plansLength }
+			key={ featureGroup.slug }
+			className="plan-comparison-grid__feature-group"
+		>
 			<TitleRow
+				as="tr"
 				className="plan-comparison-grid__feature-group-title-row"
 				onClick={ handleFeatureGroupToggle }
 			>
@@ -915,7 +953,7 @@ const FeatureGroup = ( {
 					onStorageAddOnClick={ onStorageAddOnClick }
 				/>
 			) : null }
-		</div>
+		</Grid>
 	);
 };
 
@@ -1063,62 +1101,63 @@ const ComparisonGrid = ( {
 	} );
 
 	return (
-		<div className={ classes }>
-			<Grid visiblePlans={ visiblePlans.length }>
-				<StickyContainer
-					disabled={ isBottomHeaderInView }
-					stickyClass="is-sticky-header-row"
-					stickyOffset={ stickyRowOffset }
-					zIndex={ 1 }
-				>
-					{ ( isStuck: boolean ) => (
-						<ComparisonGridHeader
-							displayedGridPlans={ gridPlans }
-							visibleGridPlans={ visibleGridPlans }
-							isInSignup={ isInSignup }
-							onPlanChange={ onPlanChange }
-							currentSitePlanSlug={ currentSitePlanSlug }
-							planActionOverrides={ planActionOverrides }
-							selectedPlan={ selectedPlan }
-							showRefundPeriod={ showRefundPeriod }
-							isStuck={ isStuck }
-							planTypeSelectorProps={ planTypeSelectorProps }
-						/>
-					) }
-				</StickyContainer>
-				{ Object.values( featureGroupMap ).map( ( featureGroup: FeatureGroup ) => (
-					<FeatureGroup
-						key={ featureGroup.slug }
-						featureGroup={ featureGroup }
+		<table className={ classes }>
+			<StickyGrid
+				visiblePlans={ visiblePlans.length }
+				element="thead"
+				disabled={ isBottomHeaderInView }
+				stickyClass="is-sticky-header-row"
+				stickyOffset={ stickyRowOffset }
+				zIndex={ 1 }
+			>
+				{ ( isStuck: boolean ) => (
+					<ComparisonGridHeader
+						displayedGridPlans={ gridPlans }
 						visibleGridPlans={ visibleGridPlans }
-						featureGroupMap={ featureGroupMap }
-						selectedFeature={ selectedFeature }
-						intervalType={ intervalType }
-						activeTooltipId={ activeTooltipId }
-						setActiveTooltipId={ setActiveTooltipId }
-						showUpgradeableStorage={ showUpgradeableStorage }
-						onStorageAddOnClick={ onStorageAddOnClick }
-						planFeatureFootnotes={ planFeatureFootnotes }
+						isInSignup={ isInSignup }
+						onPlanChange={ onPlanChange }
+						currentSitePlanSlug={ currentSitePlanSlug }
+						planActionOverrides={ planActionOverrides }
+						selectedPlan={ selectedPlan }
+						showRefundPeriod={ showRefundPeriod }
+						isStuck={ isStuck }
+						planTypeSelectorProps={ planTypeSelectorProps }
 					/>
-				) ) }
-				<ComparisonGridHeader
-					displayedGridPlans={ gridPlans }
+				) }
+			</StickyGrid>
+			{ Object.values( featureGroupMap ).map( ( featureGroup: FeatureGroup ) => (
+				<FeatureGroup
+					key={ featureGroup.slug }
+					featureGroup={ featureGroup }
 					visibleGridPlans={ visibleGridPlans }
-					isInSignup={ isInSignup }
-					isFooter
-					onPlanChange={ onPlanChange }
-					currentSitePlanSlug={ currentSitePlanSlug }
-					planActionOverrides={ planActionOverrides }
-					selectedPlan={ selectedPlan }
-					showRefundPeriod={ showRefundPeriod }
-					isStuck={ false }
-					isHiddenInMobile
-					ref={ bottomHeaderRef }
-					planTypeSelectorProps={ planTypeSelectorProps }
+					featureGroupMap={ featureGroupMap }
+					selectedFeature={ selectedFeature }
+					intervalType={ intervalType }
+					activeTooltipId={ activeTooltipId }
+					setActiveTooltipId={ setActiveTooltipId }
+					showUpgradeableStorage={ showUpgradeableStorage }
+					onStorageAddOnClick={ onStorageAddOnClick }
+					planFeatureFootnotes={ planFeatureFootnotes }
+					plansLength={ visiblePlans.length }
 				/>
-			</Grid>
+			) ) }
+			<ComparisonGridHeader
+				displayedGridPlans={ gridPlans }
+				visibleGridPlans={ visibleGridPlans }
+				isInSignup={ isInSignup }
+				isFooter
+				onPlanChange={ onPlanChange }
+				currentSitePlanSlug={ currentSitePlanSlug }
+				planActionOverrides={ planActionOverrides }
+				selectedPlan={ selectedPlan }
+				showRefundPeriod={ showRefundPeriod }
+				isStuck={ false }
+				isHiddenInMobile
+				ref={ bottomHeaderRef }
+				planTypeSelectorProps={ planTypeSelectorProps }
+			/>
 
-			<div className="plan-comparison-grid__footer">
+			<tfoot className="plan-comparison-grid__footer">
 				{ planFeatureFootnotes?.footnoteList && (
 					<FeatureFootnotes>
 						<ol>
@@ -1128,8 +1167,8 @@ const ComparisonGrid = ( {
 						</ol>
 					</FeatureFootnotes>
 				) }
-			</div>
-		</div>
+			</tfoot>
+		</table>
 	);
 };
 
