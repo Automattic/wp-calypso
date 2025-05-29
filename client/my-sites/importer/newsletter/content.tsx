@@ -96,7 +96,7 @@ export default function Content( {
 					<p>
 						{ createInterpolateElement(
 							__(
-								'Generate a ZIP file of all your Substack posts. On Substack, go to Settings > Imports/Exports, click <strong>New export</strong>, and upload the downloaded ZIP file in the next step.'
+								'Generate a ZIP file of all your Substack posts. On Substack, go to Settings > Import/Export, click <strong>New export</strong>, and upload the downloaded ZIP file in the next step.'
 							),
 							{
 								strong: <strong />,
