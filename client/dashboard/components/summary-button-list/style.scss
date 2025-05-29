@@ -43,7 +43,7 @@
 		}
 
 		// Ensure focused elements appear above adjacent hovered elements.
-		.dashboard-summary-button-list__children-list-item > *:focus {
+		.dashboard-summary-button-list__children-list-item:has( *:focus, *:focus-visible ) {
 			position: relative;
 			z-index: 1;
 		}
