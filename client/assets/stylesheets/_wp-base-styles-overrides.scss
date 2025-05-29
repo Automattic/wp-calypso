@@ -58,14 +58,9 @@
 	input[type='text'],
 	input[type='password'] {
 		&.form-text-input-core-styles {
-			&:not(:focus, :disabled) {
-				border-color: #9ea4a8;
-			}
-
 			&:not(.is-error) {
 				--wp-admin-theme-color: var(--color-gravatar);
 			}
-
 		}
 	}
 
