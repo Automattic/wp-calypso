@@ -2,21 +2,25 @@ import page from '@automattic/calypso-router';
 import { Gridicon, Card } from '@automattic/components';
 import { Purchases } from '@automattic/data-stores';
 import { DataViews, View, filterSortAndPaginate } from '@automattic/dataviews';
+import { DESKTOP_BREAKPOINT } from '@automattic/viewport';
+import { useBreakpoint } from '@automattic/viewport-react';
 import { LocalizeProps, useTranslate } from 'i18n-calypso';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { MembershipSubscription } from 'calypso/lib/purchases/types';
 import {
 	usePurchasesFieldDefinitions,
 	useMembershipsFieldDefinitions,
 } from './hooks/use-field-definitions';
 
+const desktopFields = [ 'purchase-id', 'product', 'status', 'payment-method' ];
+const mobileFields = [ 'purchase-id', 'product' ];
 export const purchasesDataView: View = {
 	type: 'table',
 	page: 1,
 	perPage: 5,
 	titleField: 'purchase-id',
 	showTitle: false,
-	fields: [ 'site', 'product', 'status', 'payment-method' ],
+	fields: desktopFields,
 	sort: {
 		field: 'site',
 		direction: 'desc',
@@ -24,13 +28,20 @@ export const purchasesDataView: View = {
 	layout: {},
 };
 
-export function PurchasesDataViews( props: {
-	purchases: Purchases.Purchase[];
-	translate: LocalizeProps[ 'translate' ];
-} ) {
-	const { purchases } = props;
+export function PurchasesDataViews( { purchases }: { purchases: Purchases.Purchase[] } ) {
+	const isDesktop = useBreakpoint( DESKTOP_BREAKPOINT );
 	const translate = useTranslate();
 	const [ currentView, setView ] = useState( purchasesDataView );
+	useEffect( () => {
+		if ( isDesktop && currentView.fields === mobileFields ) {
+			setView( { ...currentView, fields: desktopFields } );
+			return;
+		}
+		if ( ! isDesktop && currentView.fields === desktopFields ) {
+			setView( { ...currentView, fields: mobileFields } );
+			return;
+		}
+	}, [ isDesktop, currentView, setView ] );
 	const purchasesDataFields = usePurchasesFieldDefinitions( purchasesDataView.fields );
 
 	const { data: adjustedPurchases, paginationInfo } = useMemo( () => {
