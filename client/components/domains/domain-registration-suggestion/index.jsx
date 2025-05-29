@@ -159,6 +159,15 @@ class DomainRegistrationSuggestion extends Component {
 					comment:
 						'Accessible label for free domain. %(baseLabel)s is the base label (e.g. "Select domain testing.com").',
 				} );
+			case 'FREE_FOR_FIRST_YEAR':
+				return translate( '%(baseLabel)s. Free for the first year, then %(price)s per year', {
+					args: {
+						baseLabel,
+						price: productCost,
+					},
+					comment:
+						'Accessible label for domain free for the first year. %(baseLabel)s is the base label (e.g. "Select domain testing.com"). %(price)s is the price.',
+				} );
 			case 'FREE_WITH_PLAN':
 				return translate(
 					'%(baseLabel)s. Free for the first year with annual paid plans, then %(price)s per year',
@@ -187,6 +196,15 @@ class DomainRegistrationSuggestion extends Component {
 					comment:
 						'Accessible label for domain included in higher plans. %(baseLabel)s is the base label (e.g. "Select domain testing.com").',
 				} );
+			case 'DOMAIN_MOVE_PRICE':
+				return translate( '%(baseLabel)s. %(price)s one-time', {
+					args: {
+						baseLabel,
+						price: productCost,
+					},
+					comment:
+						'Accessible label for domain move price. %(baseLabel)s is the base label (e.g. "Select domain testing.com"). %(price)s is the price.',
+				} );
 			case 'PRICE':
 				if ( productSaleCost && productCost ) {
 					return translate(
@@ -211,7 +229,7 @@ class DomainRegistrationSuggestion extends Component {
 							'Accessible label for regularly priced domain. %(baseLabel)s is the base label (e.g. "Select domain testing.com"). %(price)s is the price.',
 					} );
 				}
-				break;
+				return baseLabel;
 			default:
 				return baseLabel;
 		}
