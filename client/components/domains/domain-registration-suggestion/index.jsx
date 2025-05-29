@@ -141,7 +141,16 @@ class DomainRegistrationSuggestion extends Component {
 			context: 'Accessible label for domain selection button. %(domainName)s is the domain name.',
 		} );
 
-		if ( ( priceRule === 'FREE_DOMAIN' || priceRule === 'FREE_WITH_PLAN' ) && productCost ) {
+		if ( priceRule === 'ONE_TIME_PRICE' ) {
+			return translate( '%(baseLabel)s. %(price)s one-time', {
+				args: {
+					baseLabel,
+					price: productCost,
+				},
+				comment:
+					'Accessible label for one-time priced domain (e.g. domain with 100-year plan). %(baseLabel)s is the base label (e.g. "Select domain testing.com"). %(price)s is the price.',
+			} );
+		} else if ( priceRule === 'FREE_WITH_PLAN' && productCost ) {
 			return translate(
 				'%(baseLabel)s. Free for the first year with annual paid plans, then %(price)s per year',
 				{
@@ -153,7 +162,7 @@ class DomainRegistrationSuggestion extends Component {
 						'Accessible label for free domain with normal price. %(baseLabel)s is the base label (e.g. "Select domain testing.com"). %(price)s is the price.',
 				}
 			);
-		} else if ( priceRule === 'FREE_DOMAIN' && ! productCost ) {
+		} else if ( priceRule === 'FREE_DOMAIN' ) {
 			return translate( '%(baseLabel)s. Free', {
 				args: {
 					baseLabel,
