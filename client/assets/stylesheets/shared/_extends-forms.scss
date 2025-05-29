@@ -4,24 +4,6 @@
 
 // SASS placeholder selectors for form styles
 
-%form-field-disabled {
-	&:disabled {
-		background: var(--color-neutral-0);
-		border-color: var(--color-neutral-0);
-		color: var(--color-neutral-20);
-		opacity: 1;
-		-webkit-text-fill-color: var(--color-neutral-20);
-
-		&:hover {
-			cursor: default;
-		}
-
-		&::placeholder {
-			color: var(--color-neutral-20);
-		}
-	}
-}
-
 %form-field {
 	margin: 0;
 	padding: 7px 14px;
@@ -72,7 +54,21 @@
 		}
 	}
 
-	@extend %form-field-disabled;
+	&:disabled {
+		background: var(--color-neutral-0);
+		border-color: var(--color-neutral-0);
+		color: var(--color-neutral-20);
+		opacity: 1;
+		-webkit-text-fill-color: var(--color-neutral-20);
+
+		&:hover {
+			cursor: default;
+		}
+
+		&::placeholder {
+			color: var(--color-neutral-20);
+		}
+	}
 
 	&.is-valid {
 		border-color: var(--color-success);
@@ -105,7 +101,9 @@
 		font-size: $font-body-small;
 	}
 
-	@extend %form-field-disabled;
+	&:disabled {
+		background-color: var(--wp-components-color-gray-100, #f0f0f0);
+	}
 
 	&.is-error {
 		border-color: var(--color-error);
