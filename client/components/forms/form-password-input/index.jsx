@@ -41,9 +41,9 @@ class FormPasswordInput extends Component {
 			<div className="form-password-input">
 				<FormTextInput
 					autoComplete="off"
+					{ ...rest }
 					ref={ this.textFieldRef }
 					type={ isValueHidden ? 'password' : 'text' }
-					{ ...rest }
 				/>
 
 				<Button
