@@ -55,7 +55,37 @@ const Template: StoryFn< typeof Tabs > = ( props ) => {
 	);
 };
 
+const CompactTemplate: StoryFn< typeof Tabs > = ( props ) => {
+	return (
+		<Tabs { ...props }>
+			<Tabs.TabList density="compact">
+				<Tabs.Tab tabId="tab1">Tab 1</Tabs.Tab>
+				<Tabs.Tab tabId="tab2">Tab 2</Tabs.Tab>
+				<Tabs.Tab tabId="tab3">Tab 3</Tabs.Tab>
+			</Tabs.TabList>
+			<Tabs.TabPanel tabId="tab1">
+				<p>Selected tab: Tab 1</p>
+			</Tabs.TabPanel>
+			<Tabs.TabPanel tabId="tab2">
+				<p>Selected tab: Tab 2</p>
+			</Tabs.TabPanel>
+			<Tabs.TabPanel tabId="tab3" focusable={ false }>
+				<p>Selected tab: Tab 3</p>
+				<p>
+					This tabpanel has its <code>focusable</code> prop set to
+					<code> false</code>, so it won&apos;t get a tab stop.
+					<br />
+					Instead, the [Tab] key will move focus to the first focusable element within the panel.
+				</p>
+				<Button variant="primary">I&apos;m a button!</Button>
+			</Tabs.TabPanel>
+		</Tabs>
+	);
+};
+
 export const Default = Template.bind( {} );
+
+export const Compact = CompactTemplate.bind( {} );
 
 export const SizeAndOverflowPlayground: StoryFn< typeof Tabs > = ( props ) => {
 	const [ fullWidth, setFullWidth ] = useState( false );
