@@ -15,7 +15,7 @@ type PaidSubscriptionProps = {
 };
 const earnPath = ! isJetpackCloud() ? '/earn' : '/monetize';
 
-const PaidSubscriptionHeader = ({ paidSubscription }: PaidSubscriptionProps ) => {
+const PaidSubscriptionHeader = ( { paidSubscription }: PaidSubscriptionProps ) => {
 	const translate = useTranslate();
 	const siteSlug = useSelector( getSelectedSiteSlug );
 
