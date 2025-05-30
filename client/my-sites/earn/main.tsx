@@ -44,7 +44,7 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 	const canAccessAds = useSelector( ( state ) => canAccessWordAds( state, site?.ID ) );
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, site?.ID ) );
 	const adsProgramName = isJetpack ? 'Ads' : 'WordAds';
-	const subscriberId = query?.subscriber;
+	const paidSubscriptionId = query?.paid_susbcription;
 	const isAtomicSite = useSelector( ( state ) => isSiteAutomatedTransfer( state, site?.ID ) );
 	const isJetpackNotAtomic = isJetpack && ! isAtomicSite;
 
@@ -129,8 +129,8 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 	const isAdSection = ( currentSection: string | undefined ) =>
 		currentSection && currentSection.startsWith( 'ads' );
 
-	const isSingleSupporterSection = ( currentSection: string | undefined ) =>
-		currentSection && currentSection.startsWith( 'paid-subscriptions' ) && subscriberId;
+	const isSinglePaidSubscriptionSection = ( currentSection: string | undefined ) =>
+		currentSection && currentSection.startsWith( 'paid-subscriptions' ) && paidSubscriptionId;
 
 	const getComponent = ( currentSection: string | undefined ) => {
 		switch ( currentSection ) {
@@ -240,7 +240,6 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 
 	const atomicLearnMoreLink = localizeUrl( 'https://wordpress.com/support/monetize-your-site/' );
 	const jetpackLearnMoreLink = localizeUrl( 'https://jetpack.com/support/monetize-your-site/' );
-
 	return (
 		<Main wideLayout className="earn">
 			<PageViewTracker
@@ -250,7 +249,7 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 			<DocumentHead
 				title={ layoutTitles[ section as keyof typeof layoutTitles ] ?? translate( 'Monetize' ) }
 			/>
-			{ ! isSingleSupporterSection( section ) && (
+			{ ! isSinglePaidSubscriptionSection( section ) && (
 				<>
 					<NavigationHeader
 						navigationItems={ [] }
