@@ -63,7 +63,7 @@ const fields: Field< SiteSettings >[] = [
 				} }
 				help={ createInterpolateElement(
 					__(
-						'This will present this site’s content from being shared with our licensed network of content and research partners, including those that train AI models. <a>Learn more</a>'
+						'This will prevent this site’s content from being shared with our licensed network of content and research partners, including those that train AI models. <a>Learn more</a>'
 					),
 					{
 						a: (
