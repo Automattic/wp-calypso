@@ -26,7 +26,7 @@ const PaidSubscriptionHeader = ( { paidSubscription }: PaidSubscriptionProps ) =
 		},
 		{
 			label: translate( 'Active Paid Subscriptions' ),
-			href: `${ earnPath }/supporters/${ siteSlug }`,
+			href: `${ earnPath }/paid-subscriptions/${ siteSlug }`,
 		},
 		{
 			label: translate( 'Details' ),

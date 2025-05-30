@@ -18,7 +18,7 @@ import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import { decodeEntities } from 'calypso/lib/formatting';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { addQueryArgs } from 'calypso/lib/url';
-import PaidSubscriptionDetails from 'calypso/my-sites/earn/paid-subscriptions/paid-subscription/index';
+import PaidSubscriptionPage from 'calypso/my-sites/earn/paid-subscriptions/paid-subscription/index';
 import { useDispatch, useSelector } from 'calypso/state';
 import { requestSubscribers } from 'calypso/state/memberships/subscribers/actions';
 import {
@@ -252,7 +252,7 @@ const PaidSubscriptionsSection = ( { query }: PaidSubscriptionsSectionProps ) =>
 	if ( subscriptionId ) {
 		const paidSubscription = getSinglePaidSubscription( subscriptionId );
 		if ( paidSubscription ) {
-			return <PaidSubscriptionDetails paidSubscription={ paidSubscription } />;
+			return <PaidSubscriptionPage paidSubscription={ paidSubscription } />;
 		}
 	}
 

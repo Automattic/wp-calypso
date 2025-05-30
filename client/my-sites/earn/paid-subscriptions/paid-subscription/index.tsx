@@ -3,16 +3,17 @@ import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { PaidSubscription } from '../../types';
 import CancelDialog from '../cancel-dialog';
+import PaidSubscriptionDetails from './paid-subscription-details';
 import PaidSubscriptionHeader from './paid-subscription-header';
 import PaidSubscriptionStats from './paid-subscription-stats';
 
 import './style.scss';
 
-type PaidSubscriptionDetailsProps = {
+type PaidSubscriptionPageProps = {
 	paidSubscription: PaidSubscription;
 };
 
-const PaidSubscriptionDetails = ( { paidSubscription }: PaidSubscriptionDetailsProps ) => {
+const PaidSubscriptionPage = ( { paidSubscription }: PaidSubscriptionPageProps ) => {
 	const translate = useTranslate();
 	const [ subscriberToCancel, setSubscriberToCancel ] = useState< PaidSubscription | null >( null );
 
@@ -22,17 +23,17 @@ const PaidSubscriptionDetails = ( { paidSubscription }: PaidSubscriptionDetailsP
 	}
 
 	return (
-		<div className="customer">
+		<div className="paid-subscription">
 			<PaidSubscriptionHeader paidSubscription={ paidSubscription } />
 			<PaidSubscriptionStats paidSubscription={ paidSubscription } />
 			<PaidSubscriptionDetails paidSubscription={ paidSubscription } />
-			<div className="customer__action-buttons">
-				<Button className="customer__stripe-button" onClick={ redirectToStripe }>
+			<div className="paid-subscription__action-buttons">
+				<Button className="paid-subscription__stripe-button" onClick={ redirectToStripe }>
 					{ translate( 'Visit Stripe Dashboard' ) }
 				</Button>
 				<Button
 					variant="primary"
-					className="customer__cancel-button"
+					className="paid-subscription__cancel-button"
 					onClick={ () => setSubscriberToCancel( paidSubscription ) }
 				>
 					{ translate( 'Cancel Payment' ) }
@@ -46,4 +47,4 @@ const PaidSubscriptionDetails = ( { paidSubscription }: PaidSubscriptionDetailsP
 	);
 };
 
-export default PaidSubscriptionDetails;
+export default PaidSubscriptionPage;
