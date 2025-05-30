@@ -77,6 +77,17 @@ export function getPurchasesFieldDefinitions( {
 
 	const fields: Fields< Purchases.Purchase > = [
 		{
+			id: 'purchase-id',
+			label: 'Purchase ID',
+			type: 'text',
+			enableGlobalSearch: false,
+			enableSorting: false,
+			enableHiding: false,
+			getValue: ( { item }: { item: Purchases.Purchase } ) => {
+				return item.id;
+			},
+		},
+		{
 			id: 'site',
 			label: 'Site',
 			type: 'text',
