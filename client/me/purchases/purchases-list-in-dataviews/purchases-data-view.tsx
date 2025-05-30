@@ -13,8 +13,9 @@ export const purchasesDataView: View = {
 	type: 'table',
 	page: 1,
 	perPage: 5,
-	titleField: 'site',
-	fields: [ 'product', 'status', 'payment-method' ],
+	titleField: 'purchase-id',
+	showTitle: false,
+	fields: [ 'site', 'product', 'status', 'payment-method' ],
 	sort: {
 		field: 'site',
 		direction: 'desc',
