@@ -97,23 +97,6 @@ object BuildDockerImage : BuildType({
 			"""
 		}
 
-		script {
-			name = "Post PR comment"
-			conditions {
-				doesNotEqual("teamcity.build.branch.is_default", "true")
-			}
-			scriptContent = """
-				#!/usr/bin/env bash
-
-				export GH_TOKEN="%matticbot_oauth_token%"
-				chmod +x ./bin/add-pr-comment.sh
-				./bin/add-pr-comment.sh "%teamcity.build.branch%" "calypso-live" <<- EOF || true
-				Link to live branch is being generated...
-				Please wait a few minutes and refresh this page.
-				EOF
-			"""
-		}
-
 		// We want calypso.live and Calypso e2e tests to run even if there's a merge conflict,
 		// just to keep things going. However, if we can merge, the webpack cache
 		// can be better utilized, since it's kept up-to-date for trunk commits.
@@ -197,60 +180,6 @@ object BuildDockerImage : BuildType({
 				signature=`echo -n "%teamcity.build.id%" | openssl sha256 -hmac "%mc_auth_secret%" | sed 's/^.* //'`
 
 				curl -s -X POST -d "${'$'}payload" -H "TEAMCITY-SIGNATURE: ${'$'}signature" "%mc_teamcity_webhook%calypso/?build_id=%teamcity.build.id%"
-			"""
-		}
-
-		script {
-			name = "Post PR comment with link"
-			conditions {
-				doesNotEqual("teamcity.build.branch.is_default", "true")
-			}
-			scriptContent = """
-				#!/usr/bin/env bash
-
-				export GH_TOKEN="%matticbot_oauth_token%"
-				chmod +x ./bin/add-pr-comment.sh
-				./bin/add-pr-comment.sh "%teamcity.build.branch%" "calypso-live" <<- EOF || true
-				<details>
-					<summary>Calypso Live <a href="https://calypso.live?image=registry.a8c.com/calypso/app:build-%build.number%">(direct link)</a></summary>
-					<table>
-						<tr>
-							<td>
-								<img src="https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl=https%3A%2F%2Fcalypso.live%3Fimage%3Dregistry.a8c.com%2Fcalypso%2Fapp%3Abuild-%build.number%%26flags%3Doauth&choe=UTF-8" />
-							</td>
-							<td>
-								<a href="https://calypso.live?image=registry.a8c.com/calypso/app:build-%build.number%">https://calypso.live?image=registry.a8c.com/calypso/app:build-%build.number%</a>
-							</td>
-						</tr>
-					</table>
-				</details>
-				<details>
-					<summary>Jetpack Cloud live <a href="https://calypso.live?image=registry.a8c.com/calypso/app:build-%build.number%&env=jetpack">(direct link)</a></summary>
-					<table>
-						<tr>
-							<td>
-								<img src="https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl=https%3A%2F%2Fcalypso.live%3Fimage%3Dregistry.a8c.com%2Fcalypso%2Fapp%3Abuild-%build.number%%26env%3Djetpack%26flags%3Doauth&choe=UTF-8" />
-							</td>
-							<td>
-								<a href="https://calypso.live?image=registry.a8c.com/calypso/app:build-%build.number%&env=jetpack">https://calypso.live?image=registry.a8c.com/calypso/app:build-%build.number%&env=jetpack</a>
-							</td>
-						</tr>
-					</table>
-				</details>
-				<details>
-					<summary>Automattic for Agencies live <a href="https://calypso.live?image=registry.a8c.com/calypso/app:build-%build.number%&env=a8c-for-agencies">(direct link)</a></summary>
-					<table>
-						<tr>
-							<td>
-								<img src="https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl=https%3A%2F%2Fcalypso.live%3Fimage%3Dregistry.a8c.com%2Fcalypso%2Fapp%3Abuild-%build.number%%26env%3Da8c-for-agencies%26flags%3Doauth&choe=UTF-8" />
-							</td>
-							<td>
-								<a href="https://calypso.live?image=registry.a8c.com/calypso/app:build-%build.number%&env=a8c-for-agencies">https://calypso.live?image=registry.a8c.com/calypso/app:build-%build.number%&env=a8c-for-agencies</a>
-							</td>
-						</tr>
-					</table>
-				</details>
-				EOF
 			"""
 		}
 
