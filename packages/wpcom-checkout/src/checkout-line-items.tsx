@@ -1360,6 +1360,7 @@ function CheckoutLineItem( {
 	const isDiscounted = Boolean(
 		itemSubtotalInteger < originalAmountInteger && originalAmountDisplay
 	);
+	const hasIntroOffer = Boolean( product.introductory_offer_terms?.enabled );
 
 	const isEmail =
 		isGoogleWorkspaceProductSlug( productSlug ) ||
@@ -1395,7 +1396,7 @@ function CheckoutLineItem( {
 					<>
 						<LineItemPrice
 							actualAmount={ monthlyAmountDisplay }
-							crossedOutAmount={ isDiscounted ? originalMonthlyAmountDisplay : undefined }
+							crossedOutAmount={ hasIntroOffer ? originalMonthlyAmountDisplay : undefined }
 						/>{ ' ' }
 						{ translate( '/month' ) }
 					</>
