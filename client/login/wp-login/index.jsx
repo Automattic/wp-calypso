@@ -1,5 +1,5 @@
 import page from '@automattic/calypso-router';
-import { Gridicon, WordPressLogo } from '@automattic/components';
+import { WordPressLogo } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Step } from '@automattic/onboarding';
 import clsx from 'clsx';
@@ -10,10 +10,8 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import LoginBlock from 'calypso/blocks/login';
 import { getHeaderText } from 'calypso/blocks/login/login-header';
-import AutomatticLogo from 'calypso/components/automattic-logo';
 import DocumentHead from 'calypso/components/data/document-head';
 import LocaleSuggestions from 'calypso/components/locale-suggestions';
-import LoggedOutFormBackLink from 'calypso/components/logged-out-form/back-link';
 import Main from 'calypso/components/main';
 import WPCloudLogo from 'calypso/components/wp-cloud-logo';
 import isAkismetRedirect from 'calypso/lib/akismet/is-akismet-redirect';
@@ -21,7 +19,6 @@ import { getSignupUrl, pathWithLeadingSlash } from 'calypso/lib/login';
 import {
 	isJetpackCloudOAuth2Client,
 	isA4AOAuth2Client,
-	isCrowdsignalOAuth2Client,
 	isGravatarFlowOAuth2Client,
 	isGravatarOAuth2Client,
 	isGravPoweredOAuth2Client,
@@ -29,6 +26,7 @@ import {
 	isWooOAuth2Client,
 	isPartnerPortalOAuth2Client,
 	isStudioAppOAuth2Client,
+	isCrowdsignalOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { login, lostPassword } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/url';
@@ -155,14 +153,6 @@ export class Login extends Component {
 					'wp-login__footer--jetpack': ! isOauthLogin,
 				} ) }
 			>
-				{ isCrowdsignalOAuth2Client( this.props.oauth2Client ) && (
-					<LoggedOutFormBackLink
-						classes={ { 'logged-out-form__link-item': false } }
-						oauth2Client={ this.props.oauth2Client }
-						recordClick={ this.recordBackToWpcomLinkClick }
-					/>
-				) }
-
 				{ isOauthLogin ? (
 					<div className="wp-login__footer-links">
 						<a
@@ -195,21 +185,6 @@ export class Login extends Component {
 						src="/calypso/images/jetpack/powered-by-jetpack.svg?v=20180619"
 						alt="Powered by Jetpack"
 					/>
-				) }
-
-				{ isCrowdsignalOAuth2Client( this.props.oauth2Client ) && (
-					<div className="wp-login__crowdsignal-footer">
-						<p className="wp-login__crowdsignal-footer-text">
-							Powered by
-							<Gridicon icon="my-sites" size={ 18 } />
-							WordPress.com
-						</p>
-						<p className="wp-login__crowdsignal-footer-text">
-							An
-							<AutomatticLogo size={ 18 } />
-							Company
-						</p>
-					</div>
 				) }
 			</div>
 		);
@@ -630,7 +605,9 @@ export class Login extends Component {
 				{ isWhiteLogin && (
 					<Step.CenteredColumnLayout
 						columnWidth={ 6 }
-						{ ...( ( isStudioAppOAuth2Client( oauth2Client ) || isFromAkismet ) && {
+						{ ...( ( isStudioAppOAuth2Client( oauth2Client ) ||
+							isFromAkismet ||
+							isCrowdsignalOAuth2Client( oauth2Client ) ) && {
 							columnWidthHeading: 8,
 						} ) }
 						topBar={
@@ -697,7 +674,9 @@ export default connect(
 				! isA4AOAuth2Client( oauth2Client ) &&
 				! isBlazeProOAuth2Client( oauth2Client ) &&
 				! isJetpackCloudOAuth2Client( oauth2Client ) &&
-				! isWooOAuth2Client( oauth2Client ),
+				! isWooOAuth2Client( oauth2Client ) &&
+				! isCrowdsignalOAuth2Client( oauth2Client ) &&
+				! isStudioAppOAuth2Client( oauth2Client ),
 			currentRoute,
 			currentQuery,
 			redirectTo: getRedirectToOriginal( state ),

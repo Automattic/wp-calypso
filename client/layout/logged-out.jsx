@@ -337,8 +337,10 @@ export default withCurrentRoute(
 			const isWooJPC = isWooJPCFlow( state );
 
 			const isStudioClient = isStudioAppOAuth2Client( oauth2Client );
+			const isCrowdsignalClient = isCrowdsignalOAuth2Client( oauth2Client );
 			const isWhiteLogin =
 				isStudioClient ||
+				isCrowdsignalClient ||
 				( currentRoute.startsWith( '/log-in' ) &&
 					! isJetpackLogin &&
 					Boolean( currentQuery?.client_id ) === false &&

@@ -8,7 +8,6 @@ import WooCommerceConnectCartHeader from 'calypso/components/woocommerce-connect
 import WPCloudLogo from 'calypso/components/wp-cloud-logo';
 import { getPluginTitle } from 'calypso/lib/login';
 import {
-	isCrowdsignalOAuth2Client,
 	isJetpackCloudOAuth2Client,
 	isA4AOAuth2Client,
 	isBlazeProOAuth2Client,
@@ -162,14 +161,6 @@ export function getHeaderText(
 					'Howdy! Log into the Automattic Partner Portal with your WordPress.com account.'
 				);
 			}
-		}
-
-		if ( isCrowdsignalOAuth2Client( oauth2Client ) ) {
-			headerText = translate( 'Sign in to %(clientTitle)s', {
-				args: {
-					clientTitle: oauth2Client.title,
-				},
-			} );
 		}
 
 		if ( isGravPoweredClient ) {
