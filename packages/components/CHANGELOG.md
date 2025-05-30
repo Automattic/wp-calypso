@@ -8,6 +8,7 @@
 
 - Add `BigSkyLogo.Mark` component ([#103612](https://github.com/Automattic/wp-calypso/pull/103612)).
 - Add `ValidatedFormControls` components, still in beta ([#100771](https://github.com/Automattic/wp-calypso/pull/100771)).
+- `Tabs.Tablist`: added `density` prop with new `compact` variant ([#103843](https://github.com/Automattic/wp-calypso/pull/103843)).
 
 ### Internal
 
