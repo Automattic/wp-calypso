@@ -167,11 +167,6 @@ const LayoutLoggedOut = ( {
 		classes.dops = true;
 		classes[ oauth2Client.name ] = true;
 
-		// Force masterbar for all Crowdsignal OAuth pages
-		if ( isCrowdsignalOAuth2Client( oauth2Client ) ) {
-			classes[ 'has-no-masterbar' ] = false;
-		}
-
 		masterbar = <OauthClientMasterbar oauth2Client={ oauth2Client } />;
 	} else if (
 		config.isEnabled( 'jetpack-cloud' ) ||
