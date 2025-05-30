@@ -168,6 +168,8 @@ export interface EngagementStats {
 
 export interface SiteSettings {
 	wpcom_site_visibility?: 'coming-soon' | 'public' | 'private';
+	wpcom_discourage_search_engines?: boolean;
+	wpcom_prevent_third_party_sharing?: boolean;
 	wpcom_gifting_subscription?: boolean;
 	wpcom_performance_report_url?: string;
 }
