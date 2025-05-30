@@ -16,6 +16,7 @@
 	.dataviews-view-table tr td:first-child,
 	.dataviews-view-table tr th:first-child {
 		padding-left: 24px;
+		max-width: 250px;
 	}
 
 	.dataviews-view-table__cell-content-wrapper .purchase-item__site {
