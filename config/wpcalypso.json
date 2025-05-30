@@ -155,6 +155,7 @@
 		"stats/paid-wpcom-v2": true,
 		"stats/paid-wpcom-v3": true,
 		"stats/real-time-tab": false,
+		"stats/navigation-improvement": true,
 		"subscriber-importer": true,
 		"subscribers-helper-library": true,
 		"themes/block-theme-previews-premium-and-woo": true,

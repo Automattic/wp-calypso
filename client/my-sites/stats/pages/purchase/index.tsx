@@ -180,6 +180,7 @@ const StatsPurchasePage = ( {
 							siteId={ siteId }
 							slug={ siteSlug }
 							showLock
+							hideModuleSettings
 						/>
 					</>
 				) }

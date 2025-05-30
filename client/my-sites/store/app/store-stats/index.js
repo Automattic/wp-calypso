@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import moment from 'moment';
@@ -6,10 +7,12 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
 import StatsNavigation from 'calypso/blocks/stats-navigation';
+import { navItems } from 'calypso/blocks/stats-navigation/constants';
 import Intervals from 'calypso/blocks/stats-navigation/intervals';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import SectionHeader from 'calypso/components/section-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import PageHeader from 'calypso/my-sites/stats/components/headers/page-header';
@@ -41,6 +44,7 @@ class StoreStats extends Component {
 		const { topListQuery } = getQueries( unit, selectedDate );
 		const topWidgets = [ topProducts, topCategories, topCoupons ];
 		const widgetPath = getWidgetPath( unit, slug, queryParams );
+		const isStatsNavigationImprovementEnabled = config.isEnabled( 'stats/navigation-improvement' );
 
 		// For period option links
 		const store = {
@@ -66,7 +70,19 @@ class StoreStats extends Component {
 				) }
 
 				<div className="stats">
-					<PageHeader />
+					{ ! isStatsNavigationImprovementEnabled ? (
+						<NavigationHeader
+							className="stats__section-header modernized-header"
+							title={ translate( 'Jetpack Stats' ) }
+							subtitle={ translate(
+								'Learn valuable insights about the purchases made on your store.'
+							) }
+							screenReader={ navItems.store?.label }
+						></NavigationHeader>
+					) : (
+						<PageHeader />
+					) }
+
 					<StatsNavigation selectedItem="store" siteId={ siteId } slug={ slug } interval={ unit } />
 
 					<div id="my-stats-content" className={ statsWrapperClass }>

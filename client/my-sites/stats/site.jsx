@@ -11,7 +11,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import titlecase from 'to-title-case';
 import JetpackBackupCredsBanner from 'calypso/blocks/jetpack-backup-creds-banner';
 import StatsNavigation from 'calypso/blocks/stats-navigation';
-import { AVAILABLE_PAGE_MODULES } from 'calypso/blocks/stats-navigation/constants';
+import { AVAILABLE_PAGE_MODULES, navItems } from 'calypso/blocks/stats-navigation/constants';
 import PageModuleToggler, {
 	getAvailablePageModules,
 } from 'calypso/blocks/stats-navigation/page-module-toggler';
@@ -22,7 +22,9 @@ import QueryKeyringConnections from 'calypso/components/data/query-keyring-conne
 import QuerySiteKeyrings from 'calypso/components/data/query-site-keyrings';
 import { useShortcuts } from 'calypso/components/date-range/use-shortcuts';
 import EmptyContent from 'calypso/components/empty-content';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
+import NavigationHeader from 'calypso/components/navigation-header';
 import StickyPanel from 'calypso/components/sticky-panel';
 import version_compare from 'calypso/lib/version-compare';
 import Main from 'calypso/my-sites/stats/components/stats-main';
@@ -178,6 +180,7 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 	const isWPAdmin = config.isEnabled( 'is_odyssey' );
 	const isAtomic = useSelector( ( state ) => isAtomicSite( state, siteId ) );
 	const isSitePrivate = useSelector( ( state ) => isPrivateSite( state, siteId ) );
+	const isStatsNavigationImprovementEnabled = config.isEnabled( 'stats/navigation-improvement' );
 	const slug = useSelector( getSelectedSiteSlug );
 	const moduleToggles = useSelector( ( state ) => getModuleToggles( state, siteId, 'traffic' ) );
 	const momentSiteZone = useSelector( ( state ) => getMomentSiteZone( state, siteId ) );
@@ -566,20 +569,37 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 					<JetpackBackupCredsBanner event="stats-backup-credentials" />
 				</div>
 			) }
-			<PageHeader
-				rightSection={
-					shouldRenderModuleToggler && (
-						<PageModuleToggler
-							selectedItem="traffic"
-							moduleToggles={ moduleToggles }
-							siteId={ siteId }
-							isTooltipShown={ showSettingsTooltip && ! isPageSettingsTooltipDismissed }
-							onTooltipDismiss={ onTooltipDismiss }
-							customToggleIcon={ <Icon className="gridicon" icon={ settings } /> }
-						/>
-					)
-				}
-			/>
+			{ isStatsNavigationImprovementEnabled ? (
+				<PageHeader
+					rightSection={
+						shouldRenderModuleToggler && (
+							<PageModuleToggler
+								selectedItem="traffic"
+								moduleToggles={ moduleToggles }
+								siteId={ siteId }
+								isTooltipShown={ showSettingsTooltip && ! isPageSettingsTooltipDismissed }
+								onTooltipDismiss={ onTooltipDismiss }
+								customToggleIcon={ <Icon className="gridicon" icon={ settings } /> }
+							/>
+						)
+					}
+				/>
+			) : (
+				<NavigationHeader
+					className="stats__section-header modernized-header"
+					title={ STATS_PRODUCT_NAME }
+					subtitle={ translate(
+						"Gain insights into the activity and behavior of your site's visitors. {{learnMoreLink}}Learn more{{/learnMoreLink}}",
+						{
+							components: {
+								learnMoreLink: <InlineSupportLink supportContext="stats" showIcon={ false } />,
+							},
+						}
+					) }
+					screenReader={ navItems.traffic?.label }
+					navigationItems={ [] }
+				/>
+			) }
 			<StatsNavigation selectedItem="traffic" interval={ period } siteId={ siteId } slug={ slug } />
 			<StatsNotices
 				siteId={ siteId }

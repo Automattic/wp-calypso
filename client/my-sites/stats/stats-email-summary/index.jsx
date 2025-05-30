@@ -1,7 +1,10 @@
+import config from '@automattic/calypso-config';
 import { formatNumber } from '@automattic/number-formatters';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useEffect } from 'react';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
+import NavigationHeader from 'calypso/components/navigation-header';
 import Main from 'calypso/my-sites/stats/components/stats-main';
 import { useShouldGateStats } from 'calypso/my-sites/stats/hooks/use-should-gate-stats';
 import { recordCurrentScreen } from 'calypso/my-sites/stats/hooks/use-stats-navigation-history';
@@ -69,6 +72,8 @@ const StatsEmailSummary = ( { period, query, context } ) => {
 		} );
 	}, [ context.query, period.period ] );
 
+	const isStatsNavigationImprovementEnabled = config.isEnabled( 'stats/navigation-improvement' );
+
 	const backLinkProps = {
 		text: navigationItems[ 0 ].label,
 		url: navigationItems[ 0 ].href,
@@ -100,17 +105,28 @@ const StatsEmailSummary = ( { period, query, context } ) => {
 	);
 
 	return (
-		<Main fullWidthLayout>
+		<Main
+			className={ clsx( {
+				'has-fixed-nav': ! config.isEnabled( 'stats/navigation-improvement' ),
+			} ) }
+			fullWidthLayout
+		>
 			<PageViewTracker path="/stats/emails/:site" title="Stats > Emails" />
 			<div className="stats stats-summary-view">
-				<PageHeader
-					className="stats__section-header modernized-header"
-					titleProps={ titleProps }
-					backLinkProps={ backLinkProps }
-					rightSection={
-						<div className="stats-module__header-nav-button">{ downloadCsvElement }</div>
-					}
-				/>
+				{ isStatsNavigationImprovementEnabled && (
+					<PageHeader
+						className="stats__section-header modernized-header"
+						titleProps={ titleProps }
+						backLinkProps={ backLinkProps }
+						rightSection={
+							<div className="stats-module__header-nav-button">{ downloadCsvElement }</div>
+						}
+					/>
+				) }
+
+				{ ! isStatsNavigationImprovementEnabled && (
+					<NavigationHeader className="stats-summary-view" navigationItems={ navigationItems } />
+				) }
 
 				<div id="my-stats-content" className="stats-summary-view stats-summary__positioned">
 					<div className="stats-summary-nav">

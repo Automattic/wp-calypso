@@ -20,6 +20,7 @@ import {
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import EmptyModuleCardVideo from '../features/modules/shared/stats-empty-module-video';
 import DatePicker from '../stats-date-picker';
+import DownloadCsv from '../stats-download-csv';
 import ErrorPanel from '../stats-error';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 import '../stats-module/style.scss';
@@ -128,6 +129,7 @@ class VideoPressStatsModule extends Component {
 				.flat();
 		}
 
+		const isStatsNavigationImprovementEnabled = config.isEnabled( 'stats/navigation-improvement' );
 		const noData = data && this.state.loaded && ! completeVideoStats.length;
 		// Only show loading indicators when nothing is in state tree, and request in-flight
 		const isLoading = ! this.state.loaded && ! ( data && data.length );
@@ -171,6 +173,11 @@ class VideoPressStatsModule extends Component {
 			page( url );
 		};
 
+		const csvData = [
+			[ 'post_id', 'title', 'views', 'impressions', 'watch_time', 'retention_rate' ],
+			...completeVideoStats,
+		];
+
 		// Calculate max views only
 		const maxViews = this.getMaxValue( completeVideoStats, 'views' );
 
@@ -206,7 +213,18 @@ class VideoPressStatsModule extends Component {
 							</div>
 						}
 						href={ ! summary ? summaryLink : null }
-					/>
+					>
+						{ summary && ! isStatsNavigationImprovementEnabled && (
+							<DownloadCsv
+								statType={ statType }
+								data={ csvData }
+								query={ query }
+								path={ path }
+								period={ period }
+								skipQuery
+							/>
+						) }
+					</SectionHeader>
 					<div className="videopress-stats-module__grid">
 						<div className="videopress-stats-module__header-row-wrapper">
 							<div className="videopress-stats-module__grid-header">{ translate( 'Title' ) }</div>
