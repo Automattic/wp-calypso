@@ -205,10 +205,6 @@ export interface BaseProps
 	 */
 	disableNavigation?: boolean;
 	/**
-	 * Add modifiers to the matching days.
-	 */
-	modifiers?: Record< string, Matcher | Matcher[] | undefined > | undefined;
-	/**
 	 * Use custom labels, useful for translating the component.
 	 *
 	 * For a correct localized experience, consumers should make sure the locale

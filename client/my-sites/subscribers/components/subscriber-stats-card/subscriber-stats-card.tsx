@@ -2,7 +2,7 @@ import { Card, Spinner } from '@automattic/components';
 import { formatNumberCompact } from '@automattic/number-formatters';
 import { ReactNode } from 'react';
 import InfoPopover from 'calypso/components/info-popover';
-import '@automattic/components/src/highlight-cards/style.scss';
+import 'calypso/my-sites/stats/components/highlight-cards/style.scss';
 import './style.scss';
 
 type SubscriberStatsCardProps = {

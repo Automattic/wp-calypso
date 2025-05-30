@@ -604,6 +604,10 @@ class ThemeShowcase extends Component {
 		const canonicalUrl = 'https://wordpress.com' + pathName;
 		const staticFilters = this.getStaticFilters();
 
+		// Update the filters to accommodate updates/translations from the API.
+		this.subjectFilters = this.getSubjectFilters( this.props );
+		this.subjectTermTable = getSubjectsFromTermTable( this.props.filterToTermTable );
+
 		const themeProps = {
 			forceWpOrgSearch: true,
 			filter: filter,
@@ -660,7 +664,7 @@ class ThemeShowcase extends Component {
 				/>
 				{ this.renderSiteAssemblerSelectorModal() }
 				<div className="themes__content" ref={ this.scrollRef }>
-					<QueryThemeFilters />
+					<QueryThemeFilters locale={ this.props.locale } />
 					{ isSiteWooExpressOrEcomFreeTrial && (
 						<div className="themes__showcase">{ this.renderBanner() }</div>
 					) }

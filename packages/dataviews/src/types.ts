@@ -378,6 +378,11 @@ export interface ColumnStyle {
 	 * The maximum width of the field column.
 	 */
 	minWidth?: string | number;
+
+	/**
+	 * The alignment of the field column, defaults to left.
+	 */
+	align?: 'start' | 'center' | 'end';
 }
 
 export type Density = 'compact' | 'balanced' | 'comfortable';

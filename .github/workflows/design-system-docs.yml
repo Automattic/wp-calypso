@@ -1,0 +1,82 @@
+name: Publish Design System Docs PR Preview
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - 'apps/design-system-docs/**'
+      - .github/workflows/design-system-docs.yml
+
+# Ensure only one preview build runs per-PR at a time
+concurrency:
+  group: pr-${{ github.event.pull_request.number }}-preview
+  cancel-in-progress: true
+
+jobs:
+  preview:
+    # Avoid running this workflow for pull requests from forks, which would fail due to missing secrets
+    if: github.event.pull_request.head.repo.full_name == github.event.pull_request.base.repo.full_name
+
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Checkout the PR code
+      - uses: actions/checkout@v4
+
+      # 2. Set up Node
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: yarn
+
+      # 3. Install dependencies for just the design-system-docs package
+      - run: yarn workspaces focus --production @automattic/design-system-docs
+
+      # 4. Build the design-system-docs workspace
+      - name: Build design system docs
+        run: yarn workspace @automattic/design-system-docs build
+
+      # 5. Install Wrangler
+      - run: npm install -g wrangler
+
+      # 6. Upload a new Worker version and capture the preview URL
+      - name: Upload Worker version
+        id: upload
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.DESIGN_SYSTEM_PREVIEW_CLOUDFLARE_ACCOUNT }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.DESIGN_SYSTEM_PREVIEW_CLOUDFLARE_TOKEN }}
+        run: |
+          # Run the upload and tee output so it's visible in the GitHub Actions log
+          OUT=$(wrangler versions upload --cwd apps/design-system-docs 2>&1 | tee /dev/stderr)
+
+          # Extract the preview URL from the output
+          URL=$(echo "$OUT" | grep -oE 'https://[a-z0-9-]+-preview\.a8cds\.workers\.dev/?')
+
+          # Output the URL to the GitHub Actions log for debugging
+          echo "URL: $URL"
+
+          # Expose it to later steps
+          echo "url=$URL" >> "$GITHUB_OUTPUT"
+
+      # 7. Try to find an existing comment with our marker
+      - name: Find preview comment
+        id: find_comment
+        uses: peter-evans/find-comment@v3
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          body-includes: '<!-- cf-preview-comment -->'
+
+      # 8. Create or update a comment that shows the preview URL
+      - name: Comment (create or update)
+        uses: peter-evans/create-or-update-comment@v4
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-id: ${{ steps.find_comment.outputs.comment-id }}
+          edit-mode: replace
+          body: |
+            <!-- cf-preview-comment -->
+            **Design System Reference Site Preview:**
+
+            ${{ steps.upload.outputs.url }}
+
+            (Latest commit: ${{ github.event.pull_request.head.sha }})

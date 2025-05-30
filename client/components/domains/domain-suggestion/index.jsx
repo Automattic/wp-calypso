@@ -1,5 +1,6 @@
 import { Button, Gridicon } from '@automattic/components';
 import clsx from 'clsx';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import DomainProductPrice from 'calypso/components/domains/domain-product-price';
@@ -25,6 +26,69 @@ class DomainSuggestion extends Component {
 	static defaultProps = {
 		showChevron: false,
 	};
+
+	getAccessibleButtonLabel() {
+		const { buttonContent, domain, translate, price, salePrice, priceRule } = this.props;
+		let actionText = '';
+
+		if ( typeof buttonContent === 'string' ) {
+			actionText = buttonContent;
+		} else if ( typeof buttonContent?.props?.children === 'string' ) {
+			actionText = buttonContent.props.children;
+		} else if ( Array.isArray( buttonContent?.props?.children ) ) {
+			actionText = buttonContent.props.children.reduce( ( acc, item ) => {
+				return typeof item === 'string' ? acc + item : acc;
+			}, '' );
+		}
+
+		if ( ! domain ) {
+			return actionText;
+		}
+
+		const baseLabel = translate( '%(action)s domain %(domain)s', {
+			args: {
+				action: actionText,
+				domain,
+			},
+			comment:
+				'Accessible label for domain selection button. %(action)s is the button action (Select, Selected, Upgrade, etc), %(domain)s is the domain name',
+		} );
+
+		if ( ( priceRule === 'FREE_DOMAIN' || priceRule === 'FREE_WITH_PLAN' ) && price ) {
+			return translate(
+				'%(baseLabel)s. Free for the first year with annual paid plans, then %(price)s per year',
+				{
+					args: {
+						baseLabel,
+						price,
+					},
+					comment: 'Accessible label for free domain with normal price',
+				}
+			);
+		} else if ( salePrice && price ) {
+			return translate(
+				'%(baseLabel)s. %(salePrice)s for the first year, then %(price)s per year',
+				{
+					args: {
+						baseLabel,
+						salePrice,
+						price,
+					},
+					comment: 'Accessible label for domain with sale price',
+				}
+			);
+		} else if ( price ) {
+			return translate( '%(baseLabel)s. %(price)s per year', {
+				args: {
+					baseLabel,
+					price,
+				},
+				comment: 'Accessible label for regularly priced domain',
+			} );
+		}
+
+		return baseLabel;
+	}
 
 	renderPrice() {
 		const {
@@ -96,6 +160,7 @@ class DomainSuggestion extends Component {
 								this.props.onButtonClick( isAdded );
 							} }
 							data-tracks-button-click-source={ this.props.tracksButtonClickSource }
+							aria-label={ this.getAccessibleButtonLabel() }
 							{ ...this.props.buttonStyles }
 						>
 							{ this.props.buttonContent }
@@ -111,7 +176,7 @@ class DomainSuggestion extends Component {
 	}
 }
 
-DomainSuggestion.Placeholder = function () {
+function DomainSuggestionPlaceholder() {
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<div className="domain-suggestion card is-compact is-placeholder is-clickable">
@@ -123,7 +188,12 @@ DomainSuggestion.Placeholder = function () {
 		</div>
 	);
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
-};
-DomainSuggestion.Placeholder.displayName = 'DomainSuggestion.Placeholder';
+}
 
-export default DomainSuggestion;
+DomainSuggestionPlaceholder.displayName = 'DomainSuggestionPlaceholder';
+DomainSuggestion.Placeholder = DomainSuggestionPlaceholder;
+
+const LocalizedDomainSuggestion = localize( DomainSuggestion );
+LocalizedDomainSuggestion.Placeholder = DomainSuggestionPlaceholder;
+
+export default LocalizedDomainSuggestion;

@@ -6,8 +6,15 @@ import RouterLinkSummaryButton from '../../components/router-link-summary-button
 import { getFormattedWordPressVersion } from '../../utils/wp-version';
 import { canUpdateWordPressVersion } from './utils';
 import type { Site } from '../../data/types';
+import type { Density } from '@automattic/components/src/summary-button/types';
 
-export default function WordPressSettingsSummary( { site }: { site: Site } ) {
+export default function WordPressSettingsSummary( {
+	site,
+	density,
+}: {
+	site: Site;
+	density?: Density;
+} ) {
 	const { data: versionTag } = useQuery( {
 		...siteWordPressVersionQuery( site.slug ),
 		enabled: canUpdateWordPressVersion( site ),
@@ -29,7 +36,7 @@ export default function WordPressSettingsSummary( { site }: { site: Site } ) {
 		<RouterLinkSummaryButton
 			to={ `/sites/${ site.slug }/settings/wordpress` }
 			title="WordPress"
-			density="medium"
+			density={ density }
 			decoration={ <Icon icon={ wordpress } /> }
 			badges={ badges }
 		/>

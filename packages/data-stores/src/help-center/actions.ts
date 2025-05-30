@@ -21,12 +21,6 @@ export function setCurrentSupportInteraction( supportInteraction: SupportInterac
 	} as const;
 }
 
-export const setOdieChatId = ( odieChatId: number | undefined ) =>
-	( {
-		type: 'HELP_CENTER_SET_ODIE_ID',
-		odieChatId,
-	} ) as const;
-
 export const setLastMessageReceivedAt = ( lastMessageReceivedAt: number ) =>
 	( {
 		type: 'HELP_CENTER_SET_LAST_MESSAGE_RECEIVED_AT',
@@ -255,7 +249,6 @@ export type HelpCenterAction =
 			| typeof setCurrentSupportInteraction
 			| typeof setAllowPremiumSupport
 			| typeof setHelpCenterOptions
-			| typeof setOdieChatId
 			| typeof setLastMessageReceivedAt
 	  >
 	| GeneratorReturnType< typeof setShowHelpCenter >;

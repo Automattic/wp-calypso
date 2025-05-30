@@ -1,11 +1,15 @@
-import { __experimentalHeading as Heading } from '@wordpress/components';
+import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { useState } from 'react';
 import { ActionList } from '../../components/action-list';
 import RouterLinkButton from '../../components/router-link-button';
+import { SectionHeader } from '../../components/section-header';
 import { useCanTransferSite } from '../hooks/use-can-transfer-site';
+import SiteDeleteModal from '../site-delete-modal';
+import SiteLeaveModal from '../site-leave-modal';
 import type { Site } from '../../data/types';
 
-const TransferSite = ( { site }: { site: Site } ) => {
+const SiteTransferAction = ( { site }: { site: Site } ) => {
 	const { slug } = site;
 
 	return (
@@ -25,11 +29,61 @@ const TransferSite = ( { site }: { site: Site } ) => {
 	);
 };
 
+const SiteLeaveAction = ( { site }: { site: Site } ) => {
+	const [ isModalOpen, setIsModalOpen ] = useState( false );
+
+	return (
+		<>
+			<ActionList.ActionItem
+				title={ __( 'Leave site' ) }
+				description={ __( 'Leave this site and remove your access.' ) }
+				actions={
+					<Button variant="secondary" size="compact" onClick={ () => setIsModalOpen( true ) }>
+						{ __( 'Leave' ) }
+					</Button>
+				}
+			/>
+			{ isModalOpen && <SiteLeaveModal site={ site } onClose={ () => setIsModalOpen( false ) } /> }
+		</>
+	);
+};
+
+const showSiteDeleteAction = ( site: Site ) => ! site.is_wpcom_staging_site;
+
+const SiteDeleteAction = ( { site }: { site: Site } ) => {
+	const [ isOpen, setIsOpen ] = useState( false );
+
+	return (
+		<>
+			<ActionList.ActionItem
+				title={ __( 'Delete site' ) }
+				description={ __(
+					"Delete all your posts, pages, media, and data, and give up your site's address."
+				) }
+				actions={
+					<Button
+						variant="secondary"
+						size="compact"
+						isDestructive
+						onClick={ () => setIsOpen( true ) }
+					>
+						{ __( 'Delete' ) }
+					</Button>
+				}
+			/>
+			{ isOpen && <SiteDeleteModal site={ site } onClose={ () => setIsOpen( false ) } /> }
+		</>
+	);
+};
+
 export default function DangerZone( { site }: { site: Site } ) {
 	const canTransferSite = useCanTransferSite( { site } );
-	const actions = [ canTransferSite && <TransferSite key="transfer-site" site={ site } /> ].filter(
-		Boolean
-	);
+
+	const actions = [
+		canTransferSite && <SiteTransferAction key="transfer-site" site={ site } />,
+		<SiteLeaveAction key="leave-site" site={ site } />,
+		showSiteDeleteAction( site ) && <SiteDeleteAction key="delete-site" site={ site } />,
+	].filter( Boolean );
 
 	if ( ! actions.length ) {
 		return null;
@@ -37,7 +91,7 @@ export default function DangerZone( { site }: { site: Site } ) {
 
 	return (
 		<>
-			<Heading>{ __( 'Danger zone' ) }</Heading>
+			<SectionHeader title={ __( 'Danger zone' ) } />
 			<ActionList>{ actions }</ActionList>
 		</>
 	);

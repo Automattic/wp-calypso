@@ -1,9 +1,9 @@
-import { Purchases } from '@automattic/data-stores';
+import { Purchases, SiteDetails } from '@automattic/data-stores';
 import { Fields, Operator } from '@wordpress/dataviews';
 import { LocalizeProps } from 'i18n-calypso';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { StoredPaymentMethod } from 'calypso/lib/checkout/payment-methods';
-import { getDisplayName, isRenewing } from 'calypso/lib/purchases';
+import { getDisplayName, isRenewing, purchaseType } from 'calypso/lib/purchases';
 import { MembershipSubscription } from 'calypso/lib/purchases/types';
 import { useSelector } from 'calypso/state';
 import { getSite } from 'calypso/state/sites/selectors';
@@ -62,19 +62,34 @@ export function getPurchasesFieldDefinitions( {
 	translate,
 	moment,
 	paymentMethods,
+	sites,
+	fieldIds,
 }: {
 	translate: LocalizeProps[ 'translate' ];
 	moment: ReturnType< typeof useLocalizedMoment >;
 	paymentMethods: Array< StoredPaymentMethod >;
+	sites?: Record< number | string, SiteDetails >;
+	fieldIds?: string[];
 } ): Fields< Purchases.Purchase > {
 	const backupPaymentMethods = paymentMethods.filter(
 		( paymentMethod ) => paymentMethod.is_backup === true
 	);
 
-	return [
+	const fields: Fields< Purchases.Purchase > = [
+		{
+			id: 'purchase-id',
+			label: 'Purchase ID',
+			type: 'text',
+			enableGlobalSearch: false,
+			enableSorting: false,
+			enableHiding: false,
+			getValue: ( { item }: { item: Purchases.Purchase } ) => {
+				return item.id;
+			},
+		},
 		{
 			id: 'site',
-			label: 'Site',
+			label: translate( 'Site' ),
 			type: 'text',
 			enableGlobalSearch: true,
 			enableSorting: true,
@@ -82,9 +97,8 @@ export function getPurchasesFieldDefinitions( {
 			filterBy: {
 				operators: [ 'is' as Operator ],
 			},
-			// Filter by site ID
 			getValue: ( { item }: { item: Purchases.Purchase } ) => {
-				return item.siteId;
+				return item.siteName;
 			},
 			// Render the site icon
 			render: ( { item }: { item: Purchases.Purchase } ) => {
@@ -94,7 +108,7 @@ export function getPurchasesFieldDefinitions( {
 		},
 		{
 			id: 'product',
-			label: 'Product',
+			label: translate( 'Product' ),
 			type: 'text',
 			enableGlobalSearch: true,
 			enableSorting: true,
@@ -103,7 +117,19 @@ export function getPurchasesFieldDefinitions( {
 				operators: [ 'is' as Operator ],
 			},
 			getValue: ( { item }: { item: Purchases.Purchase } ) => {
-				return item.productId;
+				// Render a bunch of things to make this easily searchable.
+				const site = sites?.[ item.siteId ];
+				return (
+					getDisplayName( item ) +
+					' ' +
+					purchaseType( item ) +
+					' ' +
+					item.siteName +
+					' ' +
+					item.domain +
+					' ' +
+					site?.URL
+				);
 			},
 			render: ( { item }: { item: Purchases.Purchase } ) => {
 				return (
@@ -122,7 +148,7 @@ export function getPurchasesFieldDefinitions( {
 		},
 		{
 			id: 'status',
-			label: 'status',
+			label: translate( 'Status' ),
 			type: 'text',
 			enableGlobalSearch: true,
 			enableSorting: true,
@@ -141,7 +167,7 @@ export function getPurchasesFieldDefinitions( {
 		},
 		{
 			id: 'payment-method',
-			label: 'Payment method',
+			label: translate( 'Payment method' ),
 			type: 'text',
 			enableGlobalSearch: true,
 			enableSorting: true,
@@ -150,7 +176,7 @@ export function getPurchasesFieldDefinitions( {
 				operators: [ 'is' as Operator ],
 			},
 			getValue: ( { item }: { item: Purchases.Purchase } ) => {
-				return item.payment.storedDetailsId;
+				return item.payment.storedDetailsId ?? '';
 			},
 			render: ( { item }: { item: Purchases.Purchase } ) => {
 				let isBackupMethodAvailable = false;
@@ -173,6 +199,7 @@ export function getPurchasesFieldDefinitions( {
 			},
 		},
 	];
+	return fields.filter( ( field ) => fieldIds?.includes( field.id ) ?? true );
 }
 
 export function getMembershipsFieldDefinitions( {
@@ -191,9 +218,8 @@ export function getMembershipsFieldDefinitions( {
 			filterBy: {
 				operators: [ 'is' as Operator ],
 			},
-			// Filter by site ID
 			getValue: ( { item }: { item: MembershipSubscription } ) => {
-				return item.site_id;
+				return item.site_id + ' ' + item.site_title + ' ' + item.site_url;
 			},
 			// Render the site icon
 			render: ( { item }: { item: MembershipSubscription } ) => {
@@ -215,7 +241,7 @@ export function getMembershipsFieldDefinitions( {
 				operators: [ 'is' as Operator ],
 			},
 			getValue: ( { item }: { item: MembershipSubscription } ) => {
-				return item.product_id;
+				return item.title;
 			},
 			render: ( { item }: { item: MembershipSubscription } ) => {
 				return (
@@ -239,7 +265,7 @@ export function getMembershipsFieldDefinitions( {
 				operators: [ 'is' as Operator ],
 			},
 			getValue: ( { item }: { item: MembershipSubscription } ) => {
-				return item.end_date;
+				return item.end_date ?? '';
 			},
 			render: ( { item }: { item: MembershipSubscription } ) => {
 				return (

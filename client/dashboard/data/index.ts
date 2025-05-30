@@ -7,7 +7,9 @@ import type {
 	MonitorUptime,
 	Plan,
 	Site,
+	Purchase,
 	User,
+	SiteUser,
 	Profile,
 	TwoStep,
 	EngagementStatsDataPoint,
@@ -15,6 +17,9 @@ import type {
 	SiteSettings,
 	UrlPerformanceInsights,
 	PhpMyAdminToken,
+	DefensiveModeSettings,
+	DefensiveModeSettingsUpdate,
+	SiteTransferConfirmation,
 } from './types';
 import type { DataCenterOption } from 'calypso/data/data-center/types';
 
@@ -318,39 +323,67 @@ export const updateSiteSettings = async ( siteIdOrSlug: string, data: Partial< S
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-function fromRawSiteSettings( settings: any ): SiteSettings {
-	const blog_public = Number( settings.blog_public );
-	const wpcom_coming_soon = Number( settings.wpcom_public_coming_soon );
-	const wpcom_public_coming_soon = Number( settings.wpcom_public_coming_soon );
+function fromRawSiteSettings( rawSettings: any ): SiteSettings {
+	// Pluck out raw settings which don't map directly to a field in SiteSettings.
+	const {
+		blog_public: blogPublicRaw,
+		wpcom_coming_soon: wpcomComingSoonRaw,
+		wpcom_public_coming_soon: wpcomPublicComingSoonRaw,
+		wpcom_data_sharing_opt_out: wpcomDataSharingOptOutRaw,
+		...settings
+	} = rawSettings;
+
+	const blog_public = Number( blogPublicRaw );
+	const wpcom_coming_soon = Number( wpcomComingSoonRaw );
+	const wpcom_public_coming_soon = Number( wpcomPublicComingSoonRaw );
+	const wpcom_data_sharing_opt_out = Boolean( wpcomDataSharingOptOutRaw );
 
 	if ( wpcom_coming_soon === 1 || wpcom_public_coming_soon === 1 ) {
 		settings.wpcom_site_visibility = 'coming-soon';
+		settings.wpcom_discourage_search_engines = false;
 	} else if ( blog_public === -1 ) {
 		settings.wpcom_site_visibility = 'private';
+		settings.wpcom_discourage_search_engines = false;
 	} else {
 		settings.wpcom_site_visibility = 'public';
+		settings.wpcom_discourage_search_engines = blog_public === 0;
 	}
+
+	settings.wpcom_prevent_third_party_sharing = wpcom_data_sharing_opt_out;
+
 	return settings;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function toRawSiteSettings( settings: Partial< SiteSettings > ): any {
-	const rawSettings = settings as any; // eslint-disable-line @typescript-eslint/no-explicit-any
-
-	const { wpcom_site_visibility } = settings;
+	// Pluck out settings which don't map directly to a field in the raw settings.
+	const {
+		wpcom_site_visibility,
+		wpcom_discourage_search_engines,
+		wpcom_prevent_third_party_sharing,
+		...rest
+	} = settings;
+	const rawSettings = rest as any; // eslint-disable-line @typescript-eslint/no-explicit-any
 
 	if ( wpcom_site_visibility !== undefined ) {
 		if ( wpcom_site_visibility === 'coming-soon' ) {
 			rawSettings.blog_public = 0;
 			rawSettings.wpcom_public_coming_soon = 1;
+			rawSettings.wpcom_data_sharing_opt_out = false;
 		} else if ( wpcom_site_visibility === 'private' ) {
 			rawSettings.blog_public = -1;
 			rawSettings.wpcom_public_coming_soon = 0;
+			rawSettings.wpcom_data_sharing_opt_out = false;
 		} else {
-			rawSettings.blog_public = 1;
+			rawSettings.blog_public = wpcom_discourage_search_engines ? 0 : 1;
 			rawSettings.wpcom_public_coming_soon = 0;
+			rawSettings.wpcom_data_sharing_opt_out = wpcom_prevent_third_party_sharing;
 		}
+
+		// Take opportunity, while the user is switching visibility settings, to disable the legacy coming soon setting.
+		rawSettings.wpcom_coming_soon = 0;
 	}
+
 	return rawSettings;
 }
 
@@ -358,6 +391,57 @@ export const restoreSitePlanSoftware = async ( siteIdOrSlug: string ) => {
 	return wpcom.req.post( {
 		path: `/sites/${ siteIdOrSlug }/hosting/restore-plan-software`,
 		apiNamespace: 'wpcom/v2',
+	} );
+};
+
+export const siteOwnerTransfer = async (
+	siteIdOrSlug: string,
+	data: { new_site_owner: string }
+) => {
+	return wpcom.req.post(
+		{
+			path: `/sites/${ siteIdOrSlug }/site-owner-transfer`,
+			apiNamespace: 'wpcom/v2',
+		},
+		{
+			calypso_origin: window.location.origin,
+		},
+		{
+			context: 'dashboard_v2',
+			...data,
+		}
+	);
+};
+
+export const siteOwnerTransferEligibilityCheck = async (
+	siteIdOrSlug: string,
+	data: { new_site_owner: string }
+) => {
+	return wpcom.req.post(
+		{
+			path: `/sites/${ siteIdOrSlug }/site-owner-transfer/eligibility`,
+			apiNamespace: 'wpcom/v2',
+		},
+		data
+	);
+};
+
+export const siteOwnerTransferConfirm = async (
+	siteIdOrSlug: string,
+	data: { hash: string }
+): Promise< SiteTransferConfirmation > => {
+	return wpcom.req.post(
+		{
+			path: `/sites/${ siteIdOrSlug }/site-owner-transfer/confirm`,
+			apiNamespace: 'wpcom/v2',
+		},
+		data
+	);
+};
+
+export const deleteSite = async ( siteIdOrSlug: string ) => {
+	return wpcom.req.post( {
+		path: `/sites/${ siteIdOrSlug }/delete`,
 	} );
 };
 
@@ -425,5 +509,62 @@ export const updateStaticFile404 = async (
 			apiNamespace: 'wpcom/v2',
 		},
 		{ setting }
+	);
+};
+
+export const fetchEdgeCacheDefensiveMode = async (
+	siteIdOrSlug: string
+): Promise< DefensiveModeSettings > => {
+	return wpcom.req.get( {
+		path: `/sites/${ siteIdOrSlug }/hosting/edge-cache/defensive-mode`,
+		apiNamespace: 'wpcom/v2',
+	} );
+};
+
+export const updateEdgeCacheDefensiveMode = async (
+	siteIdOrSlug: string,
+	data: DefensiveModeSettingsUpdate
+): Promise< DefensiveModeSettings > => {
+	return wpcom.req.post(
+		{
+			path: `/sites/${ siteIdOrSlug }/hosting/edge-cache/defensive-mode`,
+			apiNamespace: 'wpcom/v2',
+		},
+		data
+	);
+};
+
+export const fetchPurchases = async ( siteIdOrSlug: string ): Promise< Purchase[] > => {
+	return wpcom.req.get( {
+		path: `/sites/${ siteIdOrSlug }/purchases`,
+	} );
+};
+
+export const fetchSiteUserMe = async ( siteIdOrSlug: string ): Promise< SiteUser > => {
+	return wpcom.req.get( {
+		path: `/sites/${ siteIdOrSlug }/users/me`,
+		apiNamespace: 'wp/v2',
+	} );
+};
+
+export const leaveSite = async ( siteIdOrSlug: string, userId: number ) => {
+	return wpcom.req.post( {
+		path: `/sites/${ siteIdOrSlug }/users/${ userId }/delete`,
+	} );
+};
+
+export const fetchP2HubP2s = async (
+	siteId: string,
+	options: { limit?: number } = {}
+): Promise< { totalItems: number } > => {
+	return wpcom.req.get(
+		{
+			path: '/p2/workspace/sites/all',
+			apiNamespace: 'wpcom/v2',
+		},
+		{
+			hub_id: siteId,
+			...options,
+		}
 	);
 };

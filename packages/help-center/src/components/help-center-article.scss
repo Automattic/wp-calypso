@@ -558,6 +558,23 @@
 					}
 				}
 			}
+
+			// External link icon styles
+			.help-center-external-link-icon {
+				color: currentColor;
+				fill: currentColor;
+				position: relative;
+				vertical-align: sub;
+			}
+
+			// Screen reader text for accessibility
+			.screen-reader-text {
+				clip: rect(1px, 1px, 1px, 1px);
+				position: absolute !important;
+				height: 1px;
+				width: 1px;
+				overflow: hidden;
+			}
 		}
 	}
 

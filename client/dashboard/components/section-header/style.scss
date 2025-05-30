@@ -1,0 +1,65 @@
+@import "@wordpress/base-styles/variables";
+@import "@wordpress/base-styles/mixins";
+
+.dashboard-section-header {
+	position: relative;
+	z-index: 1;
+}
+
+.dashboard-section-header__heading {
+	margin-block: 0;
+	font-weight: $font-weight-medium;
+
+	.dashboard-section-header.is-level-1 & {
+		font-size: $font-size-2x-large;
+		line-height: $font-line-height-2x-large;
+	}
+
+	.dashboard-section-header.is-level-2 & {
+		@include heading-x-large();
+		margin-top: $grid-unit-05;
+	}
+
+	.dashboard-section-header.is-level-3 & {
+		@include heading-large();
+		margin-top: calc($grid-unit-05 * 1.5);
+	}
+}
+
+.dashboard-section-header__decoration {
+	display: inline-flex;
+	width: $grid-unit-40;
+	height: $grid-unit-40;
+	flex-shrink: 0;
+	align-items: center;
+	justify-content: center;
+
+	.dashboard-section-header.is-level-1 & {
+		width: $grid-unit-50;
+		height: $grid-unit-50;
+	}
+
+	svg {
+		fill: $gray-700;
+		flex-shrink: 0;
+		width: $grid-unit-30;
+		height: $grid-unit-30;
+	}
+
+	img {
+		flex-shrink: 0;
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		border-radius: $radius-small;
+	}
+}
+
+.dashboard-section-header__actions {
+	flex-shrink: 0;
+	align-self: stretch;
+}
+
+.dashboard-section-header__description {
+	max-width: 75ch; /* stylelint-disable-line unit-allowed-list */
+}

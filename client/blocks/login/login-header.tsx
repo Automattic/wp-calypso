@@ -1,4 +1,4 @@
-import { useTranslate, TranslateResult } from 'i18n-calypso';
+import { useTranslate, TranslateResult, fixMe } from 'i18n-calypso';
 import { capitalize } from 'lodash';
 import A4APlusWpComLogo from 'calypso/a8c-for-agencies/components/a4a-plus-wpcom-logo';
 import VisitSite from 'calypso/blocks/visit-site';
@@ -8,6 +8,7 @@ import WooCommerceConnectCartHeader from 'calypso/components/woocommerce-connect
 import WPCloudLogo from 'calypso/components/wp-cloud-logo';
 import { getPluginTitle } from 'calypso/lib/login';
 import {
+	isStudioAppOAuth2Client,
 	isCrowdsignalOAuth2Client,
 	isJetpackCloudOAuth2Client,
 	isA4AOAuth2Client,
@@ -16,13 +17,13 @@ import {
 	isGravatarOAuth2Client,
 	isPartnerPortalOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
+import './login-header.scss';
 
 interface LoginHeaderProps {
 	action: string;
 	currentQuery: Record< string, string >;
 	fromSite: string | null;
 	isFromAkismet: boolean;
-	isFromMigrationPlugin: boolean;
 	isFromAutomatticForAgenciesPlugin: boolean;
 	isGravPoweredClient: boolean;
 	isGravPoweredLoginPage: boolean;
@@ -37,6 +38,7 @@ interface LoginHeaderProps {
 	oauth2Client: {
 		title: string;
 		icon: string;
+		name: string;
 	} | null;
 	socialConnect: boolean;
 	twoStepNonce: string | null;
@@ -56,9 +58,8 @@ export function getHeaderText(
 	socialConnect: boolean,
 	linkingSocialService: string,
 	action: string,
-	oauth2Client: { title: string; icon: string } | null,
+	oauth2Client: { title: string; icon: string; name: string } | null,
 	isWooJPC: boolean,
-	isFromMigrationPlugin: boolean,
 	isJetpack: boolean,
 	isWCCOM: boolean,
 	isFromAkismet: boolean,
@@ -74,7 +75,17 @@ export function getHeaderText(
 	let headerText = translate( 'Log in to your account' );
 
 	if ( isSocialFirst ) {
-		headerText = translate( 'Log in to WordPress.com' );
+		headerText =
+			oauth2Client && isStudioAppOAuth2Client( oauth2Client )
+				? ( fixMe( {
+						text: 'Log in to {{span}}%(client)s{{/span}} with WordPress.com',
+						newCopy: translate( 'Log in to {{span}}%(client)s{{/span}} with WordPress.com', {
+							args: { client: oauth2Client.name },
+							components: { span: <span className="login-header-text__client-name" /> },
+						} ),
+						oldCopy: translate( 'Log in to WordPress.com' ),
+				  } ) as TranslateResult )
+				: translate( 'Log in to WordPress.com' );
 	}
 
 	if ( twoFactorAuthType === 'authenticator' ) {
@@ -179,8 +190,6 @@ export function getHeaderText(
 		} else {
 			headerText = translate( 'Log in to your account' );
 		}
-	} else if ( isFromMigrationPlugin ) {
-		headerText = translate( 'Log in to your account' );
 	} else if ( isJetpack && ! isFromAutomatticForAgenciesPlugin ) {
 		headerText = translate(
 			'Log in or create a WordPress.com account to supercharge your site with powerful growth, performance, and security tools.'
@@ -203,7 +212,6 @@ export function LoginHeader( {
 	currentQuery,
 	fromSite,
 	isFromAkismet,
-	isFromMigrationPlugin,
 	isFromAutomatticForAgenciesPlugin,
 	isGravPoweredClient,
 	isGravPoweredLoginPage,
@@ -236,7 +244,6 @@ export function LoginHeader( {
 		action,
 		oauth2Client,
 		isWooJPC,
-		isFromMigrationPlugin,
 		isJetpack,
 		isWCCOM,
 		isFromAkismet,
@@ -260,12 +267,12 @@ export function LoginHeader( {
 		postHeader = (
 			<p className="login__header-subtitle login__lostpassword-subtitle">
 				{ translate(
-					'It happens to the best of us. Enter the email address associated with your WordPress.com account and we’ll send you a link to reset your password.'
+					"It happens to the best of us. Enter the email address associated with your WordPress.com account and we'll send you a link to reset your password."
 				) }
 				{ isWooJPC && (
 					<span>
 						<br />
-						{ translate( 'Don’t have an account? {{signupLink}}Sign up{{/signupLink}}', {
+						{ translate( "Don't have an account? {{signupLink}}Sign up{{/signupLink}}", {
 							components: {
 								signupLink,
 							},
@@ -278,7 +285,7 @@ export function LoginHeader( {
 			postHeader = (
 				<p className="login__header-subtitle login__lostpassword-subtitle">
 					{ translate(
-						'It happens to the best of us. Enter the email address associated with your Blaze Pro account and we’ll send you a link to reset your password.'
+						"It happens to the best of us. Enter the email address associated with your Blaze Pro account and we'll send you a link to reset your password."
 					) }
 				</p>
 			);
@@ -310,8 +317,8 @@ export function LoginHeader( {
 				postHeader = (
 					<p className="login__header-subtitle">
 						{ wccomFrom === 'nux'
-							? translate( 'First, select the account you’d like to use.' )
-							: translate( 'Select the account you’d like to use.' ) }
+							? translate( "First, select the account you'd like to use." )
+							: translate( "Select the account you'd like to use." ) }
 					</p>
 				);
 			} else {
@@ -416,7 +423,7 @@ export function LoginHeader( {
 			if ( showContinueAsUser ) {
 				postHeader = (
 					<p className="login__header-subtitle">
-						{ translate( 'Select the account you’d like to use' ) }
+						{ translate( "Select the account you'd like to use" ) }
 					</p>
 				);
 			}
@@ -438,7 +445,7 @@ export function LoginHeader( {
 		} else if ( ! isTwoFactorAuthFlow ) {
 			header = <h3>{ headerText }</h3>;
 			subtitle = translate(
-				'To access all of the features and functionality %(pluginName)s, you’ll first need to connect your store to a WordPress.com account. Log in now, or {{signupLink}}create a new account{{/signupLink}}. For more information, please {{doc}}review our documentation{{/doc}}.',
+				"To access all of the features and functionality %(pluginName)s, you'll first need to connect your store to a WordPress.com account. Log in now, or {{signupLink}}create a new account{{/signupLink}}. For more information, please {{doc}}review our documentation{{/doc}}.",
 				{
 					components: {
 						signupLink,
