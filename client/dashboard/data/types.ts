@@ -167,11 +167,21 @@ export interface EngagementStats {
 }
 
 export interface SiteSettings {
-	wpcom_site_visibility?: 'coming-soon' | 'public' | 'private';
-	wpcom_discourage_search_engines?: boolean;
-	wpcom_prevent_third_party_sharing?: boolean;
+	blog_public?: 0 | 1 | -1;
+	/**
+	 * @deprecated This setting is for sites still using the old Coming Soon, you probably want `wpcom_public_coming_soon` instead.
+	 */
+	wpcom_coming_soon?: 0 | 1;
+	wpcom_public_coming_soon?: 0 | 1;
+	wpcom_data_sharing_opt_out?: boolean;
 	wpcom_gifting_subscription?: boolean;
 	wpcom_performance_report_url?: string;
+}
+
+export interface SiteVisibility {
+	visibility: 'coming-soon' | 'public' | 'private';
+	discourage_search_engines: boolean;
+	data_sharing_opt_out: boolean;
 }
 
 export interface BasicMetricsData {

@@ -12,9 +12,11 @@ import {
 	fetchProfile,
 	updateProfile,
 	fetchSiteSettings,
+	fetchSiteVisibility,
 	fetchBasicMetrics,
 	fetchPerformanceInsights,
 	updateSiteSettings,
+	updateSiteVisibility,
 	restoreSitePlanSoftware,
 	siteOwnerTransfer,
 	siteOwnerTransferEligibilityCheck,
@@ -38,6 +40,7 @@ import type {
 	Profile,
 	Purchase,
 	SiteSettings,
+	SiteVisibility,
 	UrlPerformanceInsights,
 	DefensiveModeSettings,
 	DefensiveModeSettingsUpdate,
@@ -171,6 +174,26 @@ export function siteSettingsMutation( siteId: string ) {
 				...newData,
 			} ) );
 			queryClient.invalidateQueries( { queryKey: [ 'site', siteId ] } );
+		},
+	};
+}
+
+export function siteVisibilityQuery( siteId: string ) {
+	return {
+		queryKey: [ 'site-visibility', siteId ],
+		queryFn: () => {
+			return fetchSiteVisibility( siteId );
+		},
+	};
+}
+
+export function siteVisibilityMutation( siteId: string ) {
+	return {
+		mutationFn: ( newData: SiteVisibility ) => updateSiteVisibility( siteId, newData ),
+		onSuccess: ( newData: SiteVisibility ) => {
+			queryClient.setQueryData( [ 'site-visibility', siteId ], newData );
+			queryClient.invalidateQueries( { queryKey: [ 'site', siteId ] } );
+			queryClient.invalidateQueries( { queryKey: [ 'site-settings', siteId ] } );
 		},
 	};
 }

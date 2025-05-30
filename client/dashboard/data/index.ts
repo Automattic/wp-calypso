@@ -15,6 +15,7 @@ import type {
 	EngagementStatsDataPoint,
 	BasicMetricsData,
 	SiteSettings,
+	SiteVisibility,
 	UrlPerformanceInsights,
 	PhpMyAdminToken,
 	DefensiveModeSettings,
@@ -308,7 +309,7 @@ export const fetchSiteSettings = async ( siteIdOrSlug: string ): Promise< SiteSe
 		path: `/sites/${ siteIdOrSlug }/settings`,
 		apiVersion: '1.4',
 	} );
-	return fromRawSiteSettings( settings );
+	return settings;
 };
 
 export const updateSiteSettings = async ( siteIdOrSlug: string, data: Partial< SiteSettings > ) => {
@@ -317,75 +318,30 @@ export const updateSiteSettings = async ( siteIdOrSlug: string, data: Partial< S
 			path: `/sites/${ siteIdOrSlug }/settings`,
 			apiVersion: '1.4',
 		},
-		toRawSiteSettings( data )
+		data
 	);
-	return fromRawSiteSettings( updated );
+	return updated;
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function fromRawSiteSettings( rawSettings: any ): SiteSettings {
-	// Pluck out raw settings which don't map directly to a field in SiteSettings.
-	const {
-		blog_public: blogPublicRaw,
-		wpcom_coming_soon: wpcomComingSoonRaw,
-		wpcom_public_coming_soon: wpcomPublicComingSoonRaw,
-		wpcom_data_sharing_opt_out: wpcomDataSharingOptOutRaw,
-		...settings
-	} = rawSettings;
+export const fetchSiteVisibility = async ( siteIdOrSlug: string ): Promise< SiteVisibility > => {
+	return wpcom.req.get( {
+		path: `/sites/${ siteIdOrSlug }/site-visibility`,
+		apiNamespace: 'wpcom/v3',
+	} );
+};
 
-	const blog_public = Number( blogPublicRaw );
-	const wpcom_coming_soon = Number( wpcomComingSoonRaw );
-	const wpcom_public_coming_soon = Number( wpcomPublicComingSoonRaw );
-	const wpcom_data_sharing_opt_out = Boolean( wpcomDataSharingOptOutRaw );
-
-	if ( wpcom_coming_soon === 1 || wpcom_public_coming_soon === 1 ) {
-		settings.wpcom_site_visibility = 'coming-soon';
-		settings.wpcom_discourage_search_engines = false;
-	} else if ( blog_public === -1 ) {
-		settings.wpcom_site_visibility = 'private';
-		settings.wpcom_discourage_search_engines = false;
-	} else {
-		settings.wpcom_site_visibility = 'public';
-		settings.wpcom_discourage_search_engines = blog_public === 0;
-	}
-
-	settings.wpcom_prevent_third_party_sharing = wpcom_data_sharing_opt_out;
-
-	return settings;
-}
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function toRawSiteSettings( settings: Partial< SiteSettings > ): any {
-	// Pluck out settings which don't map directly to a field in the raw settings.
-	const {
-		wpcom_site_visibility,
-		wpcom_discourage_search_engines,
-		wpcom_prevent_third_party_sharing,
-		...rest
-	} = settings;
-	const rawSettings = rest as any; // eslint-disable-line @typescript-eslint/no-explicit-any
-
-	if ( wpcom_site_visibility !== undefined ) {
-		if ( wpcom_site_visibility === 'coming-soon' ) {
-			rawSettings.blog_public = 0;
-			rawSettings.wpcom_public_coming_soon = 1;
-			rawSettings.wpcom_data_sharing_opt_out = false;
-		} else if ( wpcom_site_visibility === 'private' ) {
-			rawSettings.blog_public = -1;
-			rawSettings.wpcom_public_coming_soon = 0;
-			rawSettings.wpcom_data_sharing_opt_out = false;
-		} else {
-			rawSettings.blog_public = wpcom_discourage_search_engines ? 0 : 1;
-			rawSettings.wpcom_public_coming_soon = 0;
-			rawSettings.wpcom_data_sharing_opt_out = wpcom_prevent_third_party_sharing;
-		}
-
-		// Take opportunity, while the user is switching visibility settings, to disable the legacy coming soon setting.
-		rawSettings.wpcom_coming_soon = 0;
-	}
-
-	return rawSettings;
-}
+export const updateSiteVisibility = async (
+	siteIdOrSlug: string,
+	data: SiteVisibility
+): Promise< SiteVisibility > => {
+	return wpcom.req.post(
+		{
+			path: `/sites/${ siteIdOrSlug }/site-visibility`,
+			apiNamespace: 'wpcom/v3',
+		},
+		data
+	);
+};
 
 export const restoreSitePlanSoftware = async ( siteIdOrSlug: string ) => {
 	return wpcom.req.post( {

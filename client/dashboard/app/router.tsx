@@ -27,6 +27,7 @@ import {
 	sitePHPVersionQuery,
 	sitePrimaryDataCenterQuery,
 	siteDefensiveModeQuery,
+	siteVisibilityQuery,
 } from './queries';
 import { queryClient } from './query-client';
 import Root from './root';
@@ -140,7 +141,7 @@ const siteSettingsSiteVisibilityRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: 'settings/site-visibility',
 	loader: ( { params: { siteSlug } } ) =>
-		queryClient.ensureQueryData( siteSettingsQuery( siteSlug ) ),
+		queryClient.ensureQueryData( siteVisibilityQuery( siteSlug ) ),
 } ).lazy( () =>
 	import( '../sites/settings-site-visibility' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-site-visibility' )( {

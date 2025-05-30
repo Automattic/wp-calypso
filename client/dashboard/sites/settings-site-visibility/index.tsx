@@ -1,7 +1,7 @@
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { Card, CardBody } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { siteQuery, siteSettingsMutation, siteSettingsQuery } from '../../app/queries';
+import { siteQuery, siteVisibilityMutation, siteVisibilityQuery } from '../../app/queries';
 import PageLayout from '../../components/page-layout';
 import SettingsPageHeader from '../settings-page-header';
 import { LaunchForm } from './launch-form';
@@ -10,10 +10,10 @@ import './style.scss';
 
 export default function SiteVisibilitySettings( { siteSlug }: { siteSlug: string } ) {
 	const { data: site } = useQuery( siteQuery( siteSlug ) );
-	const { data: settings } = useQuery( siteSettingsQuery( siteSlug ) );
-	const mutation = useMutation( siteSettingsMutation( siteSlug ) );
+	const { data: siteVisibility } = useQuery( siteVisibilityQuery( siteSlug ) );
+	const mutation = useMutation( siteVisibilityMutation( siteSlug ) );
 
-	if ( ! settings || ! site ) {
+	if ( ! siteVisibility || ! site ) {
 		return null;
 	}
 
@@ -32,7 +32,7 @@ export default function SiteVisibilitySettings( { siteSlug }: { siteSlug: string
 					{ site.launch_status === 'unlaunched' ? (
 						<LaunchForm site={ site } />
 					) : (
-						<PrivacyForm settings={ settings } mutation={ mutation } />
+						<PrivacyForm siteVisibility={ siteVisibility } mutation={ mutation } />
 					) }
 				</CardBody>
 			</Card>
