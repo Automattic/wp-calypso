@@ -77,7 +77,7 @@ $break-large-stats-countries: 1280px;
 		grid-area: country;
 
 		.stats-card__content {
-			grid-area: country;
+			width: 100%;
 			display: grid;
 			gap: 0 24px;
 			grid-template-columns: 7fr 5fr;
