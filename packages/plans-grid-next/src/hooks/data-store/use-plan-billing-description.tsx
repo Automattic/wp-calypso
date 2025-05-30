@@ -287,21 +287,15 @@ export default function usePlanBillingDescription( {
 	} else if ( showStreamlinedBillingDescription ) {
 		// When streamlined price experiment is active, use simplified billing description
 		if ( PLAN_ANNUAL_PERIOD === billingPeriod ) {
-			return translate( 'per month, billed every %(months)s months', {
-				args: { months: 12 },
-			} );
+			return translate( 'per month, billed annually' );
 		}
 
 		if ( PLAN_BIENNIAL_PERIOD === billingPeriod ) {
-			return translate( 'per month, billed every %(months)s months', {
-				args: { months: 24 },
-			} );
+			return translate( 'per month, billed every 2 years' );
 		}
 
 		if ( PLAN_TRIENNIAL_PERIOD === billingPeriod ) {
-			return translate( 'per month, billed every %(months)s months', {
-				args: { months: 36 },
-			} );
+			return translate( 'per month, billed every 3 years' );
 		}
 	} else if ( originalPriceFullTermText ) {
 		if ( PLAN_ANNUAL_PERIOD === billingPeriod ) {
