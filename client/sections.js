@@ -789,6 +789,12 @@ const sections = [
 		group: 'a8c-for-agencies',
 	},
 	{
+		name: 'a8c-for-agencies-reports',
+		paths: [ '/reports', '/reports/overview', '/reports/dashboard' ],
+		module: 'calypso/a8c-for-agencies/sections/reports',
+		group: 'a8c-for-agencies',
+	},
+	{
 		name: 'a8c-for-agencies-sites',
 		paths: [ '/sites', 'sites/need-setup' ],
 		module: 'calypso/a8c-for-agencies/sections/sites',
