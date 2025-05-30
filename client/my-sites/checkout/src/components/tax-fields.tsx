@@ -142,7 +142,7 @@ export default function TaxFields( {
 						)
 					);
 				} }
-				autoComplete={ section + ' postal-code' }
+				autoComplete={ `section-${ section } postal-code` }
 				isError={ postalCode?.isTouched && ! isValid( postalCode ) }
 				errorMessage={
 					postalCode?.errors?.[ 0 ] ?? String( translate( 'This field is required.' ) )
