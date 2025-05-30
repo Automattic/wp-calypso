@@ -75,6 +75,7 @@
 		"me/account-close": true,
 		"migration-flow/experiment": false,
 		"migration-flow/introductory-offer": true,
+		"migration-flow/cancel-difm": false,
 		"onboarding/create-course": false,
 		"onboarding/import": true,
 		"onboarding/import-from-blogger": true,

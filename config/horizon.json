@@ -78,6 +78,7 @@
 		"me/account/color-scheme-picker": true,
 		"migration-flow/experiment": false,
 		"migration-flow/introductory-offer": true,
+		"migration-flow/cancel-difm": true,
 		"onboarding/create-course": false,
 		"onboarding/step-container-v2-import-flow": true,
 		"onboarding/step-container-v2-migration-flow": true,
