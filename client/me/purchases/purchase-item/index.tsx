@@ -638,6 +638,7 @@ export function PurchaseItemPaymentMethod( {
 
 	if (
 		purchase.isAutoRenewEnabled &&
+		! isExpired( purchase ) &&
 		( ! hasPaymentMethod( purchase ) || isPaidWithCredits( purchase ) ) &&
 		! isPartnerPurchase( purchase ) &&
 		! isAkismetFreeProduct( purchase )
