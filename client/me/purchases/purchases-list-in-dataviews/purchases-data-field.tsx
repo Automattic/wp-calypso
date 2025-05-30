@@ -1,9 +1,9 @@
 import { Purchases, SiteDetails } from '@automattic/data-stores';
-import { Fields, Operator } from '@automattic/dataviews';
+import { Fields, Operator } from '@wordpress/dataviews';
 import { LocalizeProps } from 'i18n-calypso';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { StoredPaymentMethod } from 'calypso/lib/checkout/payment-methods';
-import { getDisplayName, isRenewing, purchaseType } from 'calypso/lib/purchases';
+import { getDisplayName, isExpired, isRenewing, purchaseType } from 'calypso/lib/purchases';
 import { MembershipSubscription } from 'calypso/lib/purchases/types';
 import { useSelector } from 'calypso/state';
 import { getSite } from 'calypso/state/sites/selectors';
@@ -94,9 +94,6 @@ export function getPurchasesFieldDefinitions( {
 			enableGlobalSearch: true,
 			enableSorting: true,
 			enableHiding: false,
-			filterBy: {
-				operators: [ 'is' as Operator ],
-			},
 			getValue: ( { item }: { item: Purchases.Purchase } ) => {
 				return item.siteName;
 			},
@@ -113,9 +110,6 @@ export function getPurchasesFieldDefinitions( {
 			enableGlobalSearch: true,
 			enableSorting: true,
 			enableHiding: false,
-			filterBy: {
-				operators: [ 'is' as Operator ],
-			},
 			getValue: ( { item }: { item: Purchases.Purchase } ) => {
 				// Render a bunch of things to make this easily searchable.
 				const site = sites?.[ item.siteId ];
@@ -153,9 +147,6 @@ export function getPurchasesFieldDefinitions( {
 			enableGlobalSearch: true,
 			enableSorting: true,
 			enableHiding: false,
-			filterBy: {
-				operators: [ 'is' as Operator ],
-			},
 			getValue: ( { item }: { item: Purchases.Purchase } ) => {
 				return item.expiryStatus;
 			},
@@ -172,11 +163,15 @@ export function getPurchasesFieldDefinitions( {
 			enableGlobalSearch: true,
 			enableSorting: true,
 			enableHiding: false,
+			elements: [
+				{ value: 'exists', label: 'Has payment method' },
+				{ value: 'not-exists', label: 'Has no payment method' },
+			],
 			filterBy: {
 				operators: [ 'is' as Operator ],
 			},
 			getValue: ( { item }: { item: Purchases.Purchase } ) => {
-				return item.payment.storedDetailsId ?? '';
+				return ! isExpired( item ) && item.payment.type ? 'exists' : 'not-exists';
 			},
 			render: ( { item }: { item: Purchases.Purchase } ) => {
 				let isBackupMethodAvailable = false;
@@ -215,9 +210,6 @@ export function getMembershipsFieldDefinitions( {
 			enableGlobalSearch: true,
 			enableSorting: true,
 			enableHiding: false,
-			filterBy: {
-				operators: [ 'is' as Operator ],
-			},
 			getValue: ( { item }: { item: MembershipSubscription } ) => {
 				return item.site_id + ' ' + item.site_title + ' ' + item.site_url;
 			},
@@ -237,9 +229,6 @@ export function getMembershipsFieldDefinitions( {
 			enableGlobalSearch: true,
 			enableSorting: true,
 			enableHiding: false,
-			filterBy: {
-				operators: [ 'is' as Operator ],
-			},
 			getValue: ( { item }: { item: MembershipSubscription } ) => {
 				return item.title;
 			},
@@ -261,9 +250,6 @@ export function getMembershipsFieldDefinitions( {
 			enableGlobalSearch: true,
 			enableSorting: true,
 			enableHiding: false,
-			filterBy: {
-				operators: [ 'is' as Operator ],
-			},
 			getValue: ( { item }: { item: MembershipSubscription } ) => {
 				return item.end_date ?? '';
 			},
