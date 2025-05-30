@@ -225,8 +225,10 @@ const DotcomPreviewPane = ( {
 					}
 
 					if (
-						( hasStagingSitePermission && site.is_wpcom_staging_site ) ||
-						( hasManageOptionsPermission && isStagingStatusFinished )
+						( hasStagingSitePermission &&
+							! site.is_wpcom_staging_site &&
+							isStagingStatusFinished ) ||
+						( hasManageOptionsPermission && site.is_wpcom_staging_site )
 					) {
 						return <SiteEnvironmentSwitcher onChange={ changeSitePreviewPane } site={ site } />;
 					}
