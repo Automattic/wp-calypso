@@ -176,7 +176,7 @@ export function getPurchasesFieldDefinitions( {
 				operators: [ 'is' as Operator ],
 			},
 			getValue: ( { item }: { item: Purchases.Purchase } ) => {
-				return item.payment.storedDetailsId ?? '';
+				return item.payment?.storedDetailsId ?? '';
 			},
 			render: ( { item }: { item: Purchases.Purchase } ) => {
 				let isBackupMethodAvailable = false;
@@ -184,7 +184,7 @@ export function getPurchasesFieldDefinitions( {
 				if ( backupPaymentMethods ) {
 					const backupPaymentMethodsWithoutCurrentPurchase = backupPaymentMethods.filter(
 						// A payment method is only a back up if it isn't already assigned to the current purchase
-						( paymentMethod ) => item.payment.storedDetailsId !== paymentMethod.stored_details_id
+						( paymentMethod ) => item.payment?.storedDetailsId !== paymentMethod.stored_details_id
 					);
 
 					isBackupMethodAvailable = backupPaymentMethodsWithoutCurrentPurchase.length >= 1;

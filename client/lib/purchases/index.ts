@@ -512,7 +512,7 @@ export function isOneTimePurchase( purchase: Purchase ) {
 }
 
 export function isPaidWithPaypal( purchase: Purchase ) {
-	return 'paypal' === purchase.payment.type;
+	return 'paypal' === purchase.payment?.type;
 }
 
 export function isPaidWithCredits( purchase: Purchase ) {
@@ -764,15 +764,15 @@ export function isSubscription( purchase: Purchase ): boolean {
 }
 
 export function isPaidWithCreditCard( purchase: Purchase ) {
-	return 'credit_card' === purchase.payment.type && hasCreditCardData( purchase );
+	return 'credit_card' === purchase.payment?.type && hasCreditCardData( purchase );
 }
 
 export function isPaidWithPayPalDirect( purchase: Purchase ) {
-	return 'paypal_direct' === purchase.payment.type && purchase.payment.expiryDate;
+	return 'paypal_direct' === purchase.payment?.type && purchase.payment.expiryDate;
 }
 
 function hasCreditCardData( purchase: Purchase ) {
-	return Boolean( purchase.payment.creditCard?.expiryDate );
+	return Boolean( purchase.payment?.creditCard?.expiryDate );
 }
 
 export function shouldAddPaymentSourceInsteadOfRenewingNow( purchase: Purchase ) {
@@ -836,7 +836,7 @@ export function shouldRenderExpiringCreditCard( purchase: Purchase ) {
 }
 
 export function monthsUntilCardExpires( purchase: Purchase ) {
-	const creditCard = purchase.payment.creditCard;
+	const creditCard = purchase.payment?.creditCard;
 	const expiry = moment( creditCard?.expiryDate, 'MM/YY' );
 	return expiry.diff( moment(), 'months' );
 }
@@ -857,16 +857,16 @@ export function subscribedWithinPastWeek( purchase: Purchase ) {
  */
 export function paymentLogoType( purchase: Purchase ): string | null | undefined {
 	if ( isPaidWithCreditCard( purchase ) ) {
-		return purchase.payment.creditCard?.displayBrand
+		return purchase.payment?.creditCard?.displayBrand
 			? purchase.payment.creditCard?.displayBrand
-			: purchase.payment.creditCard?.type;
+			: purchase.payment?.creditCard?.type;
 	}
 
 	if ( isPaidWithPayPalDirect( purchase ) ) {
 		return 'placeholder';
 	}
 
-	return purchase.payment.type || null;
+	return purchase.payment?.type || null;
 }
 
 export function isAgencyPartnerType( partnerType: string ) {
