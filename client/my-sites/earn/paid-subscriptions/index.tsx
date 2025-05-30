@@ -81,7 +81,7 @@ const PaidSubscriptionsSection = ( { query }: PaidSubscriptionsSectionProps ) =>
 				{ Object.values( paid_subscriptions ).length === 0 && (
 					<Card>
 						{ translate(
-							"You haven't added any customers. {{learnMoreLink}}Learn more{{/learnMoreLink}} about payments.",
+							"You don't have any active subscriptions yet. {{learnMoreLink}}Learn more{{/learnMoreLink}} about payments.",
 							{
 								components: {
 									learnMoreLink: isJetpackCloud() ? (
