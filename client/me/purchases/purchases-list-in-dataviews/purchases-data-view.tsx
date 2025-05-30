@@ -4,7 +4,7 @@ import { Purchases } from '@automattic/data-stores';
 import { DataViews, View, filterSortAndPaginate } from '@automattic/dataviews';
 import { DESKTOP_BREAKPOINT } from '@automattic/viewport';
 import { useBreakpoint } from '@automattic/viewport-react';
-import { LocalizeProps, useTranslate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo, useState } from 'react';
 import { MembershipSubscription } from 'calypso/lib/purchases/types';
 import {
@@ -12,15 +12,15 @@ import {
 	useMembershipsFieldDefinitions,
 } from './hooks/use-field-definitions';
 
-const desktopFields = [ 'site', 'product', 'status', 'payment-method' ];
-const mobileFields = [ 'product' ];
+const purchasesDesktopFields = [ 'site', 'product', 'status', 'payment-method' ];
+const purchasesMobileFields = [ 'product' ];
 export const purchasesDataView: View = {
 	type: 'table',
 	page: 1,
 	perPage: 5,
 	titleField: 'purchase-id',
 	showTitle: false,
-	fields: desktopFields,
+	fields: purchasesDesktopFields,
 	sort: {
 		field: 'product',
 		direction: 'desc',
@@ -32,13 +32,14 @@ export function PurchasesDataViews( { purchases }: { purchases: Purchases.Purcha
 	const isDesktop = useBreakpoint( DESKTOP_BREAKPOINT );
 	const translate = useTranslate();
 	const [ currentView, setView ] = useState( purchasesDataView );
+	// Hide fields at mobile width
 	useEffect( () => {
-		if ( isDesktop && currentView.fields === mobileFields ) {
-			setView( { ...currentView, fields: desktopFields } );
+		if ( isDesktop && currentView.fields === purchasesMobileFields ) {
+			setView( { ...currentView, fields: purchasesDesktopFields } );
 			return;
 		}
-		if ( ! isDesktop && currentView.fields === desktopFields ) {
-			setView( { ...currentView, fields: mobileFields } );
+		if ( ! isDesktop && currentView.fields === purchasesDesktopFields ) {
+			setView( { ...currentView, fields: purchasesMobileFields } );
 			return;
 		}
 	}, [ isDesktop, currentView, setView ] );
@@ -95,26 +96,38 @@ export function PurchasesDataViews( { purchases }: { purchases: Purchases.Purcha
 	);
 }
 
+const membershipsDesktopFields = [ 'site', 'product', 'status' ];
+const membershipsMobileFields = [ 'product' ];
 export const membershipDataView: View = {
 	type: 'table',
 	page: 1,
 	perPage: 5,
-	titleField: 'site',
-	fields: [ 'product', 'status' ],
+	titleField: 'purchase-id',
+	showTitle: false,
+	fields: membershipsDesktopFields,
 	sort: {
-		field: 'site',
+		field: 'product',
 		direction: 'desc',
 	},
 	layout: {},
 };
 
-export function MembershipsDataViews( props: {
-	memberships: MembershipSubscription[];
-	translate: LocalizeProps[ 'translate' ];
-} ) {
-	const { memberships } = props;
+export function MembershipsDataViews( { memberships }: { memberships: MembershipSubscription[] } ) {
 	const membershipsDataFields = useMembershipsFieldDefinitions();
-	const [ currentView, setView ] = useState( purchasesDataView );
+	const [ currentView, setView ] = useState( membershipDataView );
+	const isDesktop = useBreakpoint( DESKTOP_BREAKPOINT );
+
+	// Hide fields at mobile width
+	useEffect( () => {
+		if ( isDesktop && currentView.fields === membershipsMobileFields ) {
+			setView( { ...currentView, fields: membershipsDesktopFields } );
+			return;
+		}
+		if ( ! isDesktop && currentView.fields === membershipsDesktopFields ) {
+			setView( { ...currentView, fields: membershipsMobileFields } );
+			return;
+		}
+	}, [ isDesktop, currentView, setView ] );
 
 	const { data: adjustedMemberships, paginationInfo } = useMemo( () => {
 		return filterSortAndPaginate( memberships, currentView, membershipsDataFields );
