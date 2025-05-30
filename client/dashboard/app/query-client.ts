@@ -25,7 +25,6 @@ const [ , persistPromise ] = persistQueryClient( {
 			if ( meta?.persist === false ) {
 				return false;
 			}
-
 			return true;
 		},
 	},
