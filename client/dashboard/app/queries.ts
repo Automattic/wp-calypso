@@ -26,6 +26,10 @@ import {
 	fetchPrimaryDataCenter,
 	fetchStaticFile404,
 	updateStaticFile404,
+	clearObjectCache,
+	clearEdgeCache,
+	fetchEdgeCacheStatus,
+	updateEdgeCacheStatus,
 	fetchEdgeCacheDefensiveMode,
 	updateEdgeCacheDefensiveMode,
 	fetchPurchases,
@@ -295,6 +299,36 @@ export function agencyBlogQuery( siteId: string ) {
 		queryKey: [ 'site', siteId, 'agency-blog' ],
 		queryFn: () => {
 			return fetchAgencyBlogBySiteId( siteId );
+		},
+	};
+}
+
+export function siteObjectCacheClearMutation( siteSlug: string ) {
+	return {
+		mutationFn: ( reason: string ) => clearObjectCache( siteSlug, reason ),
+	};
+}
+
+export function siteEdgeCacheClearMutation( siteSlug: string ) {
+	return {
+		mutationFn: () => clearEdgeCache( siteSlug ),
+	};
+}
+
+export function siteEdgeCacheStatusQuery( siteSlug: string ) {
+	return {
+		queryKey: [ 'site', siteSlug, 'edge-cache-status' ],
+		queryFn: () => {
+			return fetchEdgeCacheStatus( siteSlug );
+		},
+	};
+}
+
+export function siteEdgeCacheStatusMutation( siteSlug: string ) {
+	return {
+		mutationFn: ( active: boolean ) => updateEdgeCacheStatus( siteSlug, active ),
+		onSuccess: ( active: boolean ) => {
+			queryClient.setQueryData( [ 'site', siteSlug, 'edge-cache-status' ], active );
 		},
 	};
 }
