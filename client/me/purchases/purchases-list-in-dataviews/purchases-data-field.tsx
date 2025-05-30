@@ -1,5 +1,5 @@
 import { Purchases, SiteDetails } from '@automattic/data-stores';
-import { Fields, Operator } from '@wordpress/dataviews';
+import { Fields } from '@wordpress/dataviews';
 import { LocalizeProps } from 'i18n-calypso';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { StoredPaymentMethod } from 'calypso/lib/checkout/payment-methods';
@@ -163,15 +163,14 @@ export function getPurchasesFieldDefinitions( {
 			enableGlobalSearch: true,
 			enableSorting: true,
 			enableHiding: false,
-			elements: [
-				{ value: 'exists', label: 'Has payment method' },
-				{ value: 'not-exists', label: 'Has no payment method' },
-			],
-			filterBy: {
-				operators: [ 'is' as Operator ],
-			},
 			getValue: ( { item }: { item: Purchases.Purchase } ) => {
-				return ! isExpired( item ) && item.payment?.type ? 'exists' : 'not-exists';
+				// Allows sorting by card number or payment partner (eg: `type === 'paypal'`).
+				return isExpired( item )
+					? // Do not return card number for expired purchases because it
+					  // will not be displayed so it will look wierd if we sort
+					  // expired purchases with active ones that have the same card.
+					  'expired'
+					: item.payment?.creditCard?.number ?? item.payment?.type ?? 'no-payment-method';
 			},
 			render: ( { item }: { item: Purchases.Purchase } ) => {
 				let isBackupMethodAvailable = false;
