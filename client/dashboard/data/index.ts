@@ -317,11 +317,20 @@ export const updateSiteSettings = async ( siteIdOrSlug: string, data: Partial< S
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-function fromRawSiteSettings( settings: any ): SiteSettings {
-	const blog_public = Number( settings.blog_public );
-	const wpcom_coming_soon = Number( settings.wpcom_coming_soon );
-	const wpcom_public_coming_soon = Number( settings.wpcom_public_coming_soon );
-	const wpcom_data_sharing_opt_out = Boolean( settings.wpcom_data_sharing_opt_out );
+function fromRawSiteSettings( rawSettings: any ): SiteSettings {
+	// Pluck out raw settings which don't map directly to a field in SiteSettings.
+	const {
+		blog_public: blogPublicRaw,
+		wpcom_coming_soon: wpcomComingSoonRaw,
+		wpcom_public_coming_soon: wpcomPublicComingSoonRaw,
+		wpcom_data_sharing_opt_out: wpcomDataSharingOptOutRaw,
+		...settings
+	} = rawSettings;
+
+	const blog_public = Number( blogPublicRaw );
+	const wpcom_coming_soon = Number( wpcomComingSoonRaw );
+	const wpcom_public_coming_soon = Number( wpcomPublicComingSoonRaw );
+	const wpcom_data_sharing_opt_out = Boolean( wpcomDataSharingOptOutRaw );
 
 	if ( wpcom_coming_soon === 1 || wpcom_public_coming_soon === 1 ) {
 		settings.wpcom_site_visibility = 'coming-soon';
@@ -341,13 +350,14 @@ function fromRawSiteSettings( settings: any ): SiteSettings {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function toRawSiteSettings( settings: Partial< SiteSettings > ): any {
-	const rawSettings = {} as any; // eslint-disable-line @typescript-eslint/no-explicit-any
-
+	// Pluck out settings which don't map directly to a field in the raw settings.
 	const {
 		wpcom_site_visibility,
 		wpcom_discourage_search_engines,
 		wpcom_prevent_third_party_sharing,
+		...rest
 	} = settings;
+	const rawSettings = rest as any; // eslint-disable-line @typescript-eslint/no-explicit-any
 
 	if ( wpcom_site_visibility !== undefined ) {
 		// The high-level visibility of the site has changed.
@@ -364,14 +374,19 @@ function toRawSiteSettings( settings: Partial< SiteSettings > ): any {
 			rawSettings.wpcom_public_coming_soon = 0;
 			rawSettings.wpcom_data_sharing_opt_out = wpcom_prevent_third_party_sharing;
 		}
+
+		// Take opportunity, while the user is switching visibility settings, to disable the legacy coming soon setting.
+		rawSettings.wpcom_coming_soon = 0;
 	} else {
 		// High-level visibility of the site has not changed, but the sub settings may have.
 		// If they have then we must be a "public" site.
 		if ( wpcom_discourage_search_engines !== undefined ) {
 			rawSettings.blog_public = wpcom_discourage_search_engines ? 0 : 1;
+			rawSettings.wpcom_coming_soon = 0;
 		}
 		if ( wpcom_prevent_third_party_sharing !== undefined ) {
 			rawSettings.wpcom_data_sharing_opt_out = wpcom_prevent_third_party_sharing;
+			rawSettings.wpcom_coming_soon = 0;
 		}
 	}
 
