@@ -28,11 +28,14 @@ const PaidSubscriptionPage = ( { paidSubscription }: PaidSubscriptionPageProps )
 			<PaidSubscriptionStats paidSubscription={ paidSubscription } />
 			<PaidSubscriptionDetails paidSubscription={ paidSubscription } />
 			<div className="paid-subscription__action-buttons">
-				<Button className="paid-subscription__stripe-button" onClick={ redirectToStripe }>
+				<Button
+					className="paid-subscription__stripe-button"
+					variant="primary"
+					onClick={ redirectToStripe }
+				>
 					{ translate( 'Visit Stripe Dashboard' ) }
 				</Button>
 				<Button
-					variant="primary"
 					className="paid-subscription__cancel-button"
 					onClick={ () => setSubscriberToCancel( paidSubscription ) }
 				>
