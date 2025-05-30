@@ -79,4 +79,4 @@ jobs:
 
             ${{ steps.upload.outputs.url }}
 
-            (Latest commit: `${{ github.sha }}`)
+            (Latest commit: ${{ github.event.pull_request.head.sha }})
