@@ -1,7 +1,14 @@
+const { execSync } = require( 'node:child_process' );
 const { createHash } = require( 'node:crypto' );
 const WebpackRTLPlugin = require( '@automattic/webpack-rtl-plugin' );
 const MiniCssExtractPlugin = require( 'mini-css-extract-plugin' );
 const MiniCSSWithRTLPlugin = require( './mini-css-with-rtl' );
+
+/** @type {string | undefined} */
+let gitHeadSha;
+try {
+	gitHeadSha = execSync( 'git rev-parse HEAD' ).toString();
+} catch {}
 
 /**
  * Return a webpack loader object containing our styling (Sass -> CSS) stack.
@@ -23,12 +30,13 @@ module.exports.loader = ( { includePaths, prelude, postCssOptions, extract = tru
 				modules: {
 					exportOnlyLocals: ! extract,
 					auto: /\.module\.s?css$/,
-					getLocalIdent: ( context, localIdentName, localName ) =>
+					getLocalIdent: ( _context, _localIdentName, localName ) =>
+						localName +
 						'_' +
 						createHash( 'md5' )
-							.update( context.resourcePath + localName )
+							.update( localName + gitHeadSha )
 							.digest( 'hex' )
-							.substr( 0, 10 ),
+							.slice( 0, 5 ),
 				},
 				// We do not want css-loader to resolve absolute paths. We
 				// typically use `/` to indicate the start of the base URL,
