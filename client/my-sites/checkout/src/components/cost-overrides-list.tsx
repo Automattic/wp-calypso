@@ -3,6 +3,7 @@ import {
 	isDIFMProduct,
 	isMonthlyProduct,
 	isTriennially,
+	isWpComPlan,
 	isYearly,
 	type PlanSlug,
 } from '@automattic/calypso-products';
@@ -253,6 +254,7 @@ function LineItemCostOverride( {
 	product: ResponseCartProduct;
 } ) {
 	const isPriceIncrease = doesIntroductoryOfferHavePriceIncrease( product );
+	const [ , streamlinedPriceExperimentAssignment ] = useStreamlinedPriceExperiment();
 	if ( isPriceIncrease ) {
 		return (
 			<div className="cost-overrides-list-item" key={ costOverride.humanReadableReason }>
@@ -260,6 +262,11 @@ function LineItemCostOverride( {
 			</div>
 		);
 	}
+
+	const shouldShowDiscount =
+		! isStreamlinedPriceCheckoutTreatment( streamlinedPriceExperimentAssignment ) ||
+		isWpComPlan( product.product_slug );
+
 	return (
 		<div className="cost-overrides-list-item" key={ costOverride.humanReadableReason }>
 			<span className="cost-overrides-list-item__reason cost-overrides-list-item__reason--is-discount">
@@ -267,6 +274,7 @@ function LineItemCostOverride( {
 			</span>
 			<span className="cost-overrides-list-item__discount">
 				{ costOverride.discountAmount &&
+					shouldShowDiscount &&
 					formatCurrency( -costOverride.discountAmount, product.currency, {
 						isSmallestUnit: true,
 						signForPositive: true, // TODO clk numberFormatCurrency signForPositive only usage
@@ -402,17 +410,26 @@ function SingleProductAndCostOverridesList( { product }: { product: ResponseCart
 	const [ , streamlinedPriceExperimentAssignment ] = useStreamlinedPriceExperiment();
 	const monthlyPrices = useEquivalentMonthlyTotals( [ product ] );
 	if ( isStreamlinedPriceCheckoutTreatment( streamlinedPriceExperimentAssignment ) ) {
+		let streamlinedActualAmountDisplay;
+
 		const originalAmountInteger =
 			monthlyPrices[ product.product_slug as PlanSlug ] || product.item_original_subtotal_integer;
 		const originalAmountDisplay = formatCurrency( originalAmountInteger, product.currency, {
 			isSmallestUnit: true,
 			stripZeros: true,
 		} );
-		const itemSubtotalInteger = product.item_original_subtotal_integer;
-
+		const itemSubtotalInteger = product.item_subtotal_integer;
+		streamlinedActualAmountDisplay = formatCurrency( itemSubtotalInteger, product.currency, {
+			isSmallestUnit: true,
+			stripZeros: true,
+		} );
 		const isDiscounted = Boolean(
 			itemSubtotalInteger < originalAmountInteger && originalAmountDisplay
 		);
+
+		if ( ! isDiscounted || isWpComPlan( product.product_slug ) ) {
+			streamlinedActualAmountDisplay = actualAmountDisplay;
+		}
 
 		return (
 			<StreamlinedSingleProductAndCostOverridesListWrapper>
@@ -420,7 +437,7 @@ function SingleProductAndCostOverridesList( { product }: { product: ResponseCart
 				<ProductTitleAreaForCostOverridesList>
 					<span className="cost-overrides-list-product__title">{ label }</span>
 					<StreamlinedLineItemPrice
-						actualAmount={ actualAmountDisplay }
+						actualAmount={ streamlinedActualAmountDisplay }
 						crossedOutAmount={ isDiscounted ? originalAmountDisplay : undefined }
 					/>
 				</ProductTitleAreaForCostOverridesList>
