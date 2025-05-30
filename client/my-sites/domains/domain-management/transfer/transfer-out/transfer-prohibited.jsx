@@ -1,8 +1,8 @@
 import { Card } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { TRANSFER_DOMAIN_REGISTRATION } from '@automattic/urls';
-import InlineSupportLink from 'client/components/inline-support-link';
 import { localize } from 'i18n-calypso';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 
 const TransferProhibited = ( { translate } ) => (
 	<div>
