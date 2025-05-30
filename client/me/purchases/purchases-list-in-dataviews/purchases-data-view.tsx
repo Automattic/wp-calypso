@@ -55,9 +55,20 @@ export function PurchasesDataViews( { purchases }: { purchases: Purchases.Purcha
 				label: translate( 'Manage this purchase', { textOnly: true } ),
 				isPrimary: true,
 				icon: <Gridicon icon="chevron-right" />,
+				isEligible: ( item: Purchases.Purchase ) => Boolean( item.domain && item.id ),
 				callback: ( items: Purchases.Purchase[] ) => {
 					const siteUrl = items[ 0 ].domain;
 					const subscriptionId = items[ 0 ].id;
+					if ( ! siteUrl ) {
+						// eslint-disable-next-line no-console
+						console.error( 'Cannot display manage purchase page for subscription without site' );
+						return;
+					}
+					if ( ! subscriptionId ) {
+						// eslint-disable-next-line no-console
+						console.error( 'Cannot display manage purchase page for subscription without ID' );
+						return;
+					}
 					page( `/me/purchases/${ siteUrl }/${ subscriptionId }` );
 				},
 			},
