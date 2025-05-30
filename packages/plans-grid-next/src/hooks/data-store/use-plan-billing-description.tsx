@@ -287,7 +287,7 @@ export default function usePlanBillingDescription( {
 	} else if ( showStreamlinedBillingDescription ) {
 		// When streamlined price experiment is active, use simplified billing description
 		if ( PLAN_ANNUAL_PERIOD === billingPeriod ) {
-			return translate( 'per month, billed annually', {
+			return translate( 'per month, billed every %(months)s months', {
 				args: { months: 12 },
 			} );
 		}
