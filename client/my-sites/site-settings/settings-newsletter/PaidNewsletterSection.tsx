@@ -1,6 +1,6 @@
 import { Card } from '@automattic/components';
 import { Button } from '@wordpress/components';
-import { useTranslate } from 'i18n-calypso';
+import { fixMe, useTranslate } from 'i18n-calypso';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSelectedSiteSelector } from 'calypso/state/sites/hooks';
@@ -26,7 +26,13 @@ export const PaidNewsletterSection = ( props: PaidNewsletterSectionProps ): JSX.
 				href={ `/earn/payments/${ siteSlug }` }
 				onClick={ onSetUpButtonClick }
 			>
-				{ newsletterHasActivePlan ? translate( 'Manage Plans' ) : translate( 'Add Plans' ) }
+				{ newsletterHasActivePlan
+					? translate( 'Manage Plans' )
+					: fixMe( {
+							text: 'Add Plans',
+							newCopy: translate( 'Add Plans' ),
+							oldCopy: translate( 'Set up' ),
+					  } ) }
 			</Button>
 			<FormSettingExplanation>
 				{ translate(
