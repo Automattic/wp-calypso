@@ -247,7 +247,6 @@ export function createClient( config: ClientConfig ): Client {
 			);
 
 			//Loop while there are tool calls to process, regardless of state
-			console.log( '🔧 Tool calls detected:' );
 			while ( currentTask.status.message && toolProvider ) {
 				const toolCalls = extractToolCallsFromMessage(
 					currentTask.status.message
@@ -427,10 +426,6 @@ export function createClient( config: ClientConfig ): Client {
 							parts: [ ...historyDataParts, ...toolResults ],
 						};
 
-						console.log(
-							'📤 Streaming: Sending tool result message to agent:'
-						);
-
 						// Continue the task with tool results and stream the continuation
 						const continuedTaskUpdate = await continueTask(
 							update.id,
@@ -438,10 +433,6 @@ export function createClient( config: ClientConfig ): Client {
 							requestConfig,
 							toolProvider,
 							contextProvider
-						);
-
-						console.log(
-							'📥 Streaming: Agent response after tool execution:'
 						);
 
 						// Yield the continued task result
