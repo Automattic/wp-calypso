@@ -36,6 +36,6 @@ jobs:
             <!-- calypso-live-watermark -->
             **🌐 Live Previews:**
 
-            - [Calypso](https://calypso.live?image=registry.a8c.com/calypso/app:commit-${{ github.event.pull_request.head.sha }})
-            - [Jetpack Cloud](https://calypso.live?image=registry.a8c.com/calypso/app:commit-${{ github.event.pull_request.head.sha }}&env=jetpack)
-            - [Automattic for Agencies](https://calypso.live?image=registry.a8c.com/calypso/app:commit-${{ github.event.pull_request.head.sha }}&env=a8c-for-agencies)
+            - [<img src="https://github.com/user-attachments/assets/b6aa37d0-b09b-402b-a06e-3ffafc438f64" height="14" valign="middle"> Calypso](https://calypso.live?image=registry.a8c.com/calypso/app:commit-${{ github.event.pull_request.head.sha }})
+            - [<img src="https://github.com/user-attachments/assets/5df2cf0c-e4d6-4599-b57f-60b5857249c9" height="14" valign="middle"> Jetpack Cloud](https://calypso.live?image=registry.a8c.com/calypso/app:commit-${{ github.event.pull_request.head.sha }}&env=jetpack)
+            - [<img src="https://github.com/user-attachments/assets/1eb842ba-5433-4f63-9076-700df5dcb121" height="14" valign="middle"> Automattic for Agencies](https://calypso.live?image=registry.a8c.com/calypso/app:commit-${{ github.event.pull_request.head.sha }}&env=a8c-for-agencies)
