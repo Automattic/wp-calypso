@@ -247,7 +247,7 @@ export type OdieConversation = {
 	id: string;
 	createdAt: number;
 	messages: OdieMessage[];
-	metadata: Metadata;
+	metadata?: Metadata;
 };
 
 export type ZendeskConversation = {
