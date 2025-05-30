@@ -59,6 +59,7 @@ export type {
 	UseAgentConfig,
 	AgentState,
 	UseAgentReturn,
+	ChatMessage,
 } from './react/useAgent';
 
 // Constants

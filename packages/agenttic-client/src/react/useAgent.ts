@@ -13,6 +13,15 @@ import type {
 } from '../client/types/index';
 
 /**
+ * UI ChatMessage interface for consumer components
+ */
+export interface ChatMessage {
+	role: 'user' | 'agent';
+	content: string | any; // Allow string or JSX.Element for flexible content
+	timestamp: number;
+}
+
+/**
  * Create a simple text message for React usage (no conversation history)
  *
  * @param text - The text content for the message
@@ -142,6 +151,7 @@ export interface UseAgentReturn {
 	clearError: () => void;
 	reset: () => void;
 	resetConversation: () => void;
+	getTextMessage: ( message: Message ) => ChatMessage;
 }
 
 /**
@@ -352,6 +362,19 @@ export function useAgent( config: UseAgentConfig ): UseAgentReturn {
 		} ) );
 	}, [] );
 
+	const getTextMessage = useCallback( ( message: Message ): ChatMessage => {
+		const textParts = message.parts
+			.filter( ( part: any ): part is TextPart => part.type === 'text' )
+			.map( ( part: TextPart ) => part.text )
+			.join( '\n' );
+
+		return {
+			role: message.role === 'user' ? 'user' : 'agent',
+			content: textParts || '(No text response)',
+			timestamp: Date.now(),
+		};
+	}, [] );
+
 	return {
 		state,
 		sendMessage,
@@ -359,5 +382,6 @@ export function useAgent( config: UseAgentConfig ): UseAgentReturn {
 		clearError,
 		reset,
 		resetConversation,
+		getTextMessage,
 	};
 }
