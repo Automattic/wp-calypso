@@ -146,17 +146,14 @@ const HandleEmailedLinkFormJetpackConnect: FC< Props > = ( { emailAddress, token
 			<div className="magic-login__successfully-jetpack">
 				<h1 className="magic-login__form-header">{ translate( 'Email confirmed!' ) }</h1>
 				<p>
-					{ [
-						translate( 'Logging in as {{strong}}%(emailAddress)s{{/strong}}', {
-							args: {
-								emailAddress,
-							},
-							components: {
-								strong: <strong></strong>,
-							},
-						} ),
-						'...',
-					] }
+					{ translate( 'Logging in as {{strong}}%(emailAddress)s{{/strong}}…', {
+						args: {
+							emailAddress,
+						},
+						components: {
+							strong: <strong></strong>,
+						},
+					} ) }
 				</p>
 				<Spinner className="magic-login__loading-spinner--jetpack" />
 			</div>
