@@ -116,6 +116,7 @@ export function MembershipsDataViews( { memberships }: { memberships: Membership
 	const membershipsDataFields = useMembershipsFieldDefinitions();
 	const [ currentView, setView ] = useState( membershipDataView );
 	const isDesktop = useBreakpoint( DESKTOP_BREAKPOINT );
+	const translate = useTranslate();
 
 	// Hide fields at mobile width
 	useEffect( () => {
@@ -128,6 +129,28 @@ export function MembershipsDataViews( { memberships }: { memberships: Membership
 			return;
 		}
 	}, [ isDesktop, currentView, setView ] );
+
+	const actions = useMemo(
+		() => [
+			{
+				id: 'manage-purchase',
+				label: translate( 'Manage this purchase', { textOnly: true } ),
+				isPrimary: true,
+				icon: <Gridicon icon="chevron-right" />,
+				isEligible: ( item: MembershipSubscription ) => Boolean( item.ID ),
+				callback: ( items: MembershipSubscription[] ) => {
+					const subscriptionId = items[ 0 ].ID;
+					if ( ! subscriptionId ) {
+						// eslint-disable-next-line no-console
+						console.error( 'Cannot display manage purchase page for subscription without ID' );
+						return;
+					}
+					page( `/me/purchases/other/${ subscriptionId }` );
+				},
+			},
+		],
+		[ translate ]
+	);
 
 	const { data: adjustedMemberships, paginationInfo } = useMemo( () => {
 		return filterSortAndPaginate( memberships, currentView, membershipsDataFields );
@@ -144,7 +167,7 @@ export function MembershipsDataViews( { memberships }: { memberships: Membership
 				view={ currentView }
 				onChangeView={ setView }
 				defaultLayouts={ { table: {} } }
-				actions={ undefined }
+				actions={ actions }
 				getItemId={ getItemId }
 				paginationInfo={ paginationInfo }
 			/>
