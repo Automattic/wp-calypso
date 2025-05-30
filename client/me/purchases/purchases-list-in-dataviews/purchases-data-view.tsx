@@ -12,8 +12,8 @@ import {
 	useMembershipsFieldDefinitions,
 } from './hooks/use-field-definitions';
 
-const desktopFields = [ 'purchase-id', 'product', 'status', 'payment-method' ];
-const mobileFields = [ 'purchase-id', 'product' ];
+const desktopFields = [ 'site', 'product', 'status', 'payment-method' ];
+const mobileFields = [ 'product' ];
 export const purchasesDataView: View = {
 	type: 'table',
 	page: 1,
@@ -22,7 +22,7 @@ export const purchasesDataView: View = {
 	showTitle: false,
 	fields: desktopFields,
 	sort: {
-		field: 'site',
+		field: 'product',
 		direction: 'desc',
 	},
 	layout: {},
