@@ -36,10 +36,9 @@ export function HelpCenterChat( {
 	const siteUrl = params.get( 'siteUrl' );
 	const siteId = params.get( 'siteId' );
 	const { data: supportStatus } = useSupportStatus();
-	const forceEmailSupport = isTestModeEnvironment()
-		? supportStatus?.availability?.force_email_support ||
-		  supportStatus?.availability?.force_email_support_test
-		: supportStatus?.availability?.force_email_support;
+	const forceEmailSupport =
+		supportStatus?.availability?.force_email_support ||
+		( isTestModeEnvironment() && supportStatus?.availability?.force_email_support_test );
 
 	useEffect( () => {
 		if ( preventOdieAccess ) {
