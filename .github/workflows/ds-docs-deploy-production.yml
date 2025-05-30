@@ -41,8 +41,11 @@ jobs:
           mkdir -p ~/.ssh
           echo "sftp.wp.com ssh-ed25519 $SSH_HOST_PUBLIC_KEY" > ~/.ssh/known_hosts
 
-          rsync -avz -e "ssh -i key.pem -o UserKnownHostsFile=~/.ssh/known_hosts -o StrictHostKeyChecking=yes" \
-            apps/design-system-docs/dist/ \
-            "$SSH_USER@sftp.wp.com:~/htdocs/"
+          # Copy the built site to the production server
+          scp -r -i key.pem \
+            -o UserKnownHostsFile=~/.ssh/known_hosts \
+            -o StrictHostKeyChecking=yes \
+            apps/design-system-docs/dist/* \
+            "$SSH_USER@sftp.wp.com:/srv/htdocs/"
 
           rm key.pem
