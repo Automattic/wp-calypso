@@ -94,3 +94,11 @@ In [tailored-post-ids-mapping.json](https://github.com/Automattic/wp-calypso/blo
 ```
 
 Tailored articles have priority in the results, meaning they appear on top. If any search query is provided by the user, tailored articles are not considered.
+
+# Helpful video
+
+If you want to understand the whole Help Center architecture, this video may be helpful
+
+<a href="https://www.youtube.com/watch?v=AUJY9rVsxkg">
+  <img src="https://github.com/user-attachments/assets/08208089-fe2c-48fe-93f2-92a89327ad98"/>
+</a>
