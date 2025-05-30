@@ -500,7 +500,8 @@ const StatsGeochartWrapper = ( props ) => {
 	const userCountryCode = useSelector( getCurrentUserCountryCode );
 
 	// Use geo location fallback if user country code is not available
-	const finalCountryCode = userCountryCode ?? (isGeoLocationLoading ? null : geoCountryCode);
+	const geoLocationReady = ! isGeoLocationLoading && geoCountryCode;
+	const finalCountryCode = userCountryCode || geoLocationReady || null;
 
 	return <ConnectedStatsGeochart { ...props } currentUserCountryCode={ finalCountryCode } />;
 };
