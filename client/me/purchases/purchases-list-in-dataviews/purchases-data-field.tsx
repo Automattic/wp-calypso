@@ -78,7 +78,7 @@ export function getPurchasesFieldDefinitions( {
 	const fields: Fields< Purchases.Purchase > = [
 		{
 			id: 'site',
-			label: 'Site',
+			label: translate( 'Site' ),
 			type: 'text',
 			enableGlobalSearch: true,
 			enableSorting: true,
@@ -97,7 +97,7 @@ export function getPurchasesFieldDefinitions( {
 		},
 		{
 			id: 'product',
-			label: 'Product',
+			label: translate( 'Product' ),
 			type: 'text',
 			enableGlobalSearch: true,
 			enableSorting: true,
@@ -137,7 +137,7 @@ export function getPurchasesFieldDefinitions( {
 		},
 		{
 			id: 'status',
-			label: 'status',
+			label: translate( 'Status' ),
 			type: 'text',
 			enableGlobalSearch: true,
 			enableSorting: true,
@@ -156,7 +156,7 @@ export function getPurchasesFieldDefinitions( {
 		},
 		{
 			id: 'payment-method',
-			label: 'Payment method',
+			label: translate( 'Payment method' ),
 			type: 'text',
 			enableGlobalSearch: true,
 			enableSorting: true,
