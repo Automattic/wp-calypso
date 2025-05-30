@@ -1,9 +1,9 @@
 import page from '@automattic/calypso-router';
 import { Gridicon, Card } from '@automattic/components';
 import { Purchases } from '@automattic/data-stores';
-import { DataViews, View, filterSortAndPaginate } from '@automattic/dataviews';
 import { DESKTOP_BREAKPOINT } from '@automattic/viewport';
 import { useBreakpoint } from '@automattic/viewport-react';
+import { DataViews, View, filterSortAndPaginate } from '@wordpress/dataviews';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo, useState } from 'react';
 import { MembershipSubscription } from 'calypso/lib/purchases/types';
