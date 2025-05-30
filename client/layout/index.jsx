@@ -217,7 +217,6 @@ class Layout extends Component {
 			'is-blaze-pro': this.props.isBlazePro,
 			'is-woo-com-oauth': isWooOAuth2Client( this.props.oauth2Client ),
 			'jetpack-cloud': isJetpackCloudOAuth2Client( this.props.oauth2Client ),
-			'feature-flag-woocommerce-core-profiler-passwordless-auth': true,
 		} );
 
 		const optionalBodyProps = () => {

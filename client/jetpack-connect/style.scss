@@ -1210,18 +1210,7 @@ $colophon-height: 50px;
 		max-width: 615px;
 	}
 
-	&.feature-flag-woocommerce-core-profiler-passwordless-auth {
-		.jetpack-connect__tos-link {
-			a.jetpack-connect__sso-actions-modal-link {
-				color: var(--wp-admin-theme-color);
-				text-decoration: underline;
-				text-underline-offset: 2px;
-			}
-		}
-	}
-
-	.is-woo-passwordless,
-	.feature-flag-woocommerce-core-profiler-passwordless-auth {
+	.woo-is-passwordless {
 		.signup-form {
 			max-width: 327px;
 			padding-top: 48px;
@@ -1445,10 +1434,10 @@ $colophon-height: 50px;
 			margin: 12px auto 20px;
 		}
 
-		a {
-			color: $gray-700;
-			text-decoration: none;
-			font-size: 0.75rem;
+		a.jetpack-connect__sso-actions-modal-link {
+			color: var(--wp-admin-theme-color);
+			text-decoration: underline;
+			text-underline-offset: 2px;
 		}
 	}
 

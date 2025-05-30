@@ -980,8 +980,8 @@ $breakpoint-mobile: 660px;
 
 		.login form,
 		.signup-form {
-			max-width: 405px;
-			margin: 0 auto;
+			max-width: 515px;
+			margin: 48px auto;
 
 			input.form-text-input {
 				border-color: #bbb;
@@ -989,14 +989,6 @@ $breakpoint-mobile: 660px;
 				&.is-valid {
 					border-color: #bbb;
 				}
-			}
-		}
-
-		&.feature-flag-woocommerce-core-profiler-passwordless-auth {
-			.login form,
-			.signup-form {
-				max-width: 515px;
-				margin: 48px auto;
 			}
 		}
 

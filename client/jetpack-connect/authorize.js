@@ -1288,11 +1288,7 @@ export class JetpackAuthorize extends Component {
 					wooDna.isWooDnaFlow() ? wooDna.getServiceName() + ' — ' + translate( 'Connect' ) : ''
 				}
 			>
-				<div
-					className={ clsx( 'jetpack-connect__authorize-form', {
-						'feature-flag-woocommerce-core-profiler-passwordless-auth': true,
-					} ) }
-				>
+				<div className="jetpack-connect__authorize-form">
 					<div className="jetpack-connect__logged-in-form">
 						<QuerySiteFeatures siteIds={ [ authSiteId ] } />
 						<QuerySitePurchases siteId={ authSiteId } />
