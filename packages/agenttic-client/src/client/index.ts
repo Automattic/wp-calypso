@@ -447,6 +447,7 @@ export function createClient( config: ClientConfig ): Client {
 						// Yield the continued task result
 						yield {
 							...continuedTaskUpdate,
+							final: true,
 							text: extractTextFromMessage(
 								continuedTaskUpdate.status?.message || {
 									role: 'agent',
