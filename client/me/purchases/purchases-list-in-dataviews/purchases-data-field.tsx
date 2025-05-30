@@ -148,7 +148,12 @@ export function getPurchasesFieldDefinitions( {
 			enableSorting: true,
 			enableHiding: false,
 			getValue: ( { item }: { item: Purchases.Purchase } ) => {
-				return item.expiryStatus;
+				if ( isExpired( item ) ) {
+					// Prefix expired items with a z so they sort to the end of the list.
+					return 'zzz ' + item.expiryStatus + ' ' + item.expiryDate;
+				}
+				// Include date in value to sort similar expiries together.
+				return item.expiryDate + ' ' + item.expiryStatus;
 			},
 			render: ( { item }: { item: Purchases.Purchase } ) => {
 				return (
@@ -207,7 +212,7 @@ export function getMembershipsFieldDefinitions( {
 			label: translate( 'Site' ),
 			type: 'text',
 			enableGlobalSearch: true,
-			enableSorting: true,
+			enableSorting: false,
 			enableHiding: false,
 			getValue: ( { item }: { item: MembershipSubscription } ) => {
 				return item.site_id + ' ' + item.site_title + ' ' + item.site_url;
@@ -229,7 +234,7 @@ export function getMembershipsFieldDefinitions( {
 			enableSorting: true,
 			enableHiding: false,
 			getValue: ( { item }: { item: MembershipSubscription } ) => {
-				return item.title;
+				return item.title + ' ' + item.site_title + ' ' + item.site_url;
 			},
 			render: ( { item }: { item: MembershipSubscription } ) => {
 				return (
@@ -247,7 +252,7 @@ export function getMembershipsFieldDefinitions( {
 			label: translate( 'Status' ),
 			type: 'text',
 			enableGlobalSearch: true,
-			enableSorting: true,
+			enableSorting: false,
 			enableHiding: false,
 			getValue: ( { item }: { item: MembershipSubscription } ) => {
 				return item.end_date ?? '';
