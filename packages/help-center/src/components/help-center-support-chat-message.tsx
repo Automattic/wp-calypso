@@ -48,7 +48,7 @@ export const HelpCenterSupportChatMessage = ( {
 	const { setCurrentSupportInteraction } = useDataStoreDispatch( HELP_CENTER_STORE );
 
 	const supportInteraction = supportInteractions.find(
-		( interaction ) => interaction.uuid === conversation.metadata.supportInteractionId
+		( interaction ) => interaction.uuid === conversation.metadata?.supportInteractionId
 	);
 
 	const messageDisplayName =
