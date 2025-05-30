@@ -7,7 +7,7 @@ on:
     paths:
       - apps/design-system-docs/**
       - .github/actions/build-design-system-docs/action.yml
-      - .github/workflows/design-system-docs/deploy-production.yml
+      - .github/workflows/ds-docs-deploy-production.yml
 
 concurrency:
   group: deploy-production-design-system-docs

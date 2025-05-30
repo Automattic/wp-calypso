@@ -6,7 +6,7 @@ on:
     paths:
       - apps/design-system-docs/**
       - .github/actions/build-design-system-docs/action.yml
-      - .github/workflows/design-system-docs/pr-preview.yml
+      - .github/workflows/ds-docs-pr-preview.yml
 
 # Ensure only one preview build runs per-PR at a time
 concurrency:
