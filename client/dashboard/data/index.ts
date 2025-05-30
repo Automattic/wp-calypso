@@ -360,7 +360,6 @@ function toRawSiteSettings( settings: Partial< SiteSettings > ): any {
 	const rawSettings = rest as any; // eslint-disable-line @typescript-eslint/no-explicit-any
 
 	if ( wpcom_site_visibility !== undefined ) {
-		// The high-level visibility of the site has changed.
 		if ( wpcom_site_visibility === 'coming-soon' ) {
 			rawSettings.blog_public = 0;
 			rawSettings.wpcom_public_coming_soon = 1;
@@ -377,17 +376,6 @@ function toRawSiteSettings( settings: Partial< SiteSettings > ): any {
 
 		// Take opportunity, while the user is switching visibility settings, to disable the legacy coming soon setting.
 		rawSettings.wpcom_coming_soon = 0;
-	} else {
-		// High-level visibility of the site has not changed, but the sub settings may have.
-		// If they have then we must be a "public" site.
-		if ( wpcom_discourage_search_engines !== undefined ) {
-			rawSettings.blog_public = wpcom_discourage_search_engines ? 0 : 1;
-			rawSettings.wpcom_coming_soon = 0;
-		}
-		if ( wpcom_prevent_third_party_sharing !== undefined ) {
-			rawSettings.wpcom_data_sharing_opt_out = wpcom_prevent_third_party_sharing;
-			rawSettings.wpcom_coming_soon = 0;
-		}
 	}
 
 	return rawSettings;
