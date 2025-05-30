@@ -58,7 +58,7 @@ function mockTestSite( slug: string, options: TestSiteOptions ) {
 function mockSettingsSaved( siteSlug: string, settings: nock.DataMatcherMap ) {
 	return nock( 'https://public-api.wordpress.com' )
 		.post( `/rest/v1.4/sites/${ siteSlug }/settings`, ( body ) => {
-			expect( body ).toMatchObject( settings );
+			expect( body ).toEqual( settings );
 			return true;
 		} )
 		.reply( 200 );
@@ -180,6 +180,8 @@ describe( '<SiteVisibilitySettings>', () => {
 			const scope = mockSettingsSaved( 'test-site', {
 				blog_public: -1,
 				wpcom_data_sharing_opt_out: false,
+				wpcom_public_coming_soon: 0,
+				wpcom_coming_soon: 0,
 			} );
 
 			render( <SiteVisibilitySettings siteSlug="test-site" /> );
@@ -211,7 +213,9 @@ describe( '<SiteVisibilitySettings>', () => {
 			} );
 			const scope = mockSettingsSaved( 'test-site', {
 				blog_public: 0,
+				wpcom_data_sharing_opt_out: false,
 				wpcom_public_coming_soon: 1,
+				wpcom_coming_soon: 0, // Legacy coming soon should always be set to 0
 			} );
 
 			render( <SiteVisibilitySettings siteSlug="test-site" /> );
@@ -244,8 +248,9 @@ describe( '<SiteVisibilitySettings>', () => {
 			} );
 			const scope = mockSettingsSaved( 'test-site', {
 				blog_public: 1,
-				wpcom_public_coming_soon: 0,
 				wpcom_data_sharing_opt_out: false,
+				wpcom_public_coming_soon: 0,
+				wpcom_coming_soon: 0,
 			} );
 
 			render( <SiteVisibilitySettings siteSlug="test-site" /> );
@@ -288,6 +293,8 @@ describe( '<SiteVisibilitySettings>', () => {
 			const scope = mockSettingsSaved( 'test-site', {
 				blog_public: 0,
 				wpcom_data_sharing_opt_out: true,
+				wpcom_public_coming_soon: 0,
+				wpcom_coming_soon: 0,
 			} );
 
 			render( <SiteVisibilitySettings siteSlug="test-site" /> );
@@ -331,6 +338,8 @@ describe( '<SiteVisibilitySettings>', () => {
 			const scope = mockSettingsSaved( 'test-site', {
 				blog_public: 1,
 				wpcom_data_sharing_opt_out: true,
+				wpcom_public_coming_soon: 0,
+				wpcom_coming_soon: 0,
 			} );
 
 			render( <SiteVisibilitySettings siteSlug="test-site" /> );
