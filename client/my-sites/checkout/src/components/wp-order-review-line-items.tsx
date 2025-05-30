@@ -24,10 +24,7 @@ import { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import { has100YearPlan } from 'calypso/lib/cart-values/cart-items';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
 import { RemovedFromCartItem } from 'calypso/my-sites/checkout/src/components/removed-from-cart-item';
-import {
-	useCartProductsOrder,
-	useRestorableProducts,
-} from 'calypso/my-sites/checkout/src/components/restorable-products-context';
+import { useRestorableProducts } from 'calypso/my-sites/checkout/src/components/restorable-products-context';
 import { useGetProductVariants } from 'calypso/my-sites/checkout/src/hooks/product-variants';
 import {
 	useStreamlinedPriceExperiment,
@@ -50,10 +47,6 @@ import type {
 	RemoveCouponFromCart,
 } from '@automattic/shopping-cart';
 import type { PropsWithChildren, RefObject } from 'react';
-
-interface LineItemByProductUuid {
-	[ id: string ]: JSX.Element;
-}
 
 const WPOrderReviewList = styled.ul`
 	box-sizing: border-box;
@@ -108,8 +101,7 @@ export function WPOrderReviewLineItems( {
 	const creditsLineItem = getCreditsLineItemFromCart( responseCart );
 	const couponLineItem = getCouponLineItemFromCart( responseCart );
 	const isOnboardingAffiliateFlow = useSelector( getIsOnboardingAffiliateFlow );
-	const [ cartProductsOrder, setCartProductsOrder ] = useCartProductsOrder();
-	const [ restorableProducts, setRestorableProducts ] = useRestorableProducts();
+	const [ restorableProducts ] = useRestorableProducts();
 
 	if ( couponLineItem ) {
 		couponLineItem.label = isOnboardingAffiliateFlow
@@ -138,104 +130,6 @@ export function WPOrderReviewLineItems( {
 			)
 		);
 	}, [ responseCart.products ] );
-
-	// Initialize the order of products in the cart
-	useEffect( () => {
-		if ( ! cartProductsOrder.size ) {
-			const newOrder = new Map();
-
-			responseCart.products.forEach( ( product, position ) => {
-				newOrder.set( product.uuid, { position, removed: false } );
-			} );
-
-			setCartProductsOrder( newOrder );
-		}
-	}, [ cartProductsOrder.size, responseCart.products, setCartProductsOrder ] );
-
-	// Keep track of modified products (e.g. changing the duration of a plan)
-	useEffect( () => {
-		setCartProductsOrder( ( prevCartProductsOrder ) => {
-			const newOrder = new Map( prevCartProductsOrder );
-
-			const uuids = responseCart.products.map( ( product ) => product.uuid );
-			const prevCartProductsOrderActiveUuids = Array.from( prevCartProductsOrder.entries() )
-				.filter( ( [ , { removed } ] ) => ! removed )
-				.map( ( [ uuid ] ) => uuid );
-			const hasNewUuid = uuids.some(
-				( uuid ) => ! prevCartProductsOrderActiveUuids.includes( uuid )
-			);
-
-			if ( hasNewUuid ) {
-				const obsoleteUuid = prevCartProductsOrderActiveUuids.find(
-					( uuid ) => ! uuids.includes( uuid )
-				);
-				const freshUuid = uuids.find(
-					( uuid ) => ! prevCartProductsOrderActiveUuids.includes( uuid )
-				);
-
-				const isProductModified = obsoleteUuid && freshUuid;
-
-				if ( isProductModified ) {
-					const info = newOrder.get( obsoleteUuid );
-
-					if ( info ) {
-						newOrder.delete( obsoleteUuid );
-						newOrder.set( freshUuid, info );
-					}
-				}
-			}
-
-			return newOrder;
-		} );
-	}, [ responseCart.products, setCartProductsOrder ] );
-
-	// Keep track of added products using a different tab
-	useEffect( () => {
-		setCartProductsOrder( ( prevCartProductsOrder ) => {
-			const newOrder = new Map( prevCartProductsOrder );
-
-			const uuids = responseCart.products.map( ( product ) => product.uuid );
-			const prevCartProductsOrderActiveUuids = Array.from( prevCartProductsOrder.entries() )
-				.filter( ( [ , { removed } ] ) => ! removed )
-				.map( ( [ uuid ] ) => uuid );
-			const newUuids = uuids.filter(
-				( uuid ) => ! prevCartProductsOrderActiveUuids.includes( uuid )
-			);
-
-			for ( const uuid of newUuids ) {
-				const info = newOrder.get( uuid );
-
-				// product was already in our data, but removed
-				if ( info ) {
-					newOrder.set( uuid, { ...info, removed: false } );
-					setRestorableProducts( ( prevRestorableProducts ) =>
-						prevRestorableProducts.filter( ( product ) => product.uuid !== uuid )
-					);
-				} else {
-					newOrder.set( uuid, {
-						position: newOrder.size,
-						removed: false,
-					} );
-				}
-			}
-
-			return newOrder;
-		} );
-	}, [ responseCart.products, restorableProducts, setCartProductsOrder, setRestorableProducts ] );
-
-	// Keep track of removed/restored products
-	useEffect( () => {
-		setCartProductsOrder( ( prevCartProductsOrder ) => {
-			const newOrder = new Map( prevCartProductsOrder );
-
-			newOrder.forEach( ( info, uuid ) => {
-				const isRemoved = restorableProducts.some( ( product ) => product.uuid === uuid );
-
-				newOrder.set( uuid, { ...info, removed: isRemoved } );
-			} );
-			return newOrder;
-		} );
-	}, [ restorableProducts, setCartProductsOrder ] );
 
 	const hasWPCOMPlanInCart = responseCart.products.some( ( product ) =>
 		isWpComPlan( product.product_slug )
@@ -300,64 +194,42 @@ export function WPOrderReviewLineItems( {
 		[ replaceProductInCart, reduxDispatch ]
 	);
 
-	const cartItems = responseCart.products.reduce< LineItemByProductUuid >( ( acc, product ) => {
-		acc[ product.uuid ] = (
-			<LineItemWrapper
-				key={ product.uuid }
-				product={ product }
-				isSummary={ isSummary }
-				removeProductFromCart={ removeProductFromCart }
-				onChangeSelection={ onChangeSelection }
-				createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
-				responseCart={ responseCart }
-				isPwpoUser={ isPwpoUser }
-				onRemoveProduct={ onRemoveProduct }
-				onRemoveProductClick={ onRemoveProductClick }
-				onRemoveProductCancel={ onRemoveProductCancel }
-				hasPartnerCoupon={ hasPartnerCoupon }
-				isDisabled={ isDisabled }
-				initialVariantTerm={
-					initialProducts.find( ( initialProduct ) => {
-						return initialProduct.product_variants.find(
-							( variant ) => variant.product_id === product.product_id
-						);
-					} )?.months_per_bill_period
-				}
-				toggleVariantSelector={ handleVariantToggle }
-				variantOpenId={ variantOpenId }
-				isAkPro500Cart={ isAkismetProMultipleLicensesCart || forceShowAkQuantityDropdown }
-				setForceShowAkQuantityDropdown={ setForceShowAkQuantityDropdown }
-				onChangeAkProQuantity={ changeAkismetPro500CartQuantity }
-				toggleAkQuantityDropdown={ handleAkQuantityToggle }
-				akQuantityOpenId={ akQuantityOpenId }
-			/>
-		);
-
-		return acc;
-	}, {} );
-	const restorableItems = restorableProducts.reduce< LineItemByProductUuid >( ( acc, product ) => {
-		acc[ product.uuid ] = <RemovedFromCartItem key={ product.uuid } product={ product } />;
-
-		return acc;
-	}, {} );
-
-	const orderedUuids = Array.from( cartProductsOrder.entries() ).sort(
-		( [ , { position: posA } ], [ , { position: posB } ] ) => posA - posB
-	);
-
 	return (
 		<WPOrderReviewList className={ joinClasses( [ className, 'order-review-line-items' ] ) }>
-			{ orderedUuids.map( ( [ uuid ] ) => {
-				const item = cartItems[ uuid ];
-				if ( item ) {
-					return item;
-				}
-				const restorableItem = restorableItems[ uuid ];
-				if ( restorableItem ) {
-					return restorableItem;
-				}
-				return null;
-			} ) }
+			{ responseCart.products.map( ( product ) => (
+				<LineItemWrapper
+					key={ product.uuid }
+					product={ product }
+					isSummary={ isSummary }
+					removeProductFromCart={ removeProductFromCart }
+					onChangeSelection={ onChangeSelection }
+					createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
+					responseCart={ responseCart }
+					isPwpoUser={ isPwpoUser }
+					onRemoveProduct={ onRemoveProduct }
+					onRemoveProductClick={ onRemoveProductClick }
+					onRemoveProductCancel={ onRemoveProductCancel }
+					hasPartnerCoupon={ hasPartnerCoupon }
+					isDisabled={ isDisabled }
+					initialVariantTerm={
+						initialProducts.find( ( initialProduct ) => {
+							return initialProduct.product_variants.find(
+								( variant ) => variant.product_id === product.product_id
+							);
+						} )?.months_per_bill_period
+					}
+					toggleVariantSelector={ handleVariantToggle }
+					variantOpenId={ variantOpenId }
+					isAkPro500Cart={ isAkismetProMultipleLicensesCart || forceShowAkQuantityDropdown }
+					setForceShowAkQuantityDropdown={ setForceShowAkQuantityDropdown }
+					onChangeAkProQuantity={ changeAkismetPro500CartQuantity }
+					toggleAkQuantityDropdown={ handleAkQuantityToggle }
+					akQuantityOpenId={ akQuantityOpenId }
+				/>
+			) ) }
+			{ restorableProducts.map( ( product ) => (
+				<RemovedFromCartItem key={ product.uuid } product={ product } />
+			) ) }
 			{ couponLineItem && (
 				<WPOrderReviewListItem key={ couponLineItem.id }>
 					<CouponLineItem
