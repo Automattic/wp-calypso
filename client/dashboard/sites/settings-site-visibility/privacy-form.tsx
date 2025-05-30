@@ -3,13 +3,16 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	Button,
+	CheckboxControl,
+	ExternalLink,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
+import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import type { SiteSettings } from '../../data/types';
-import type { Field, SimpleFormField } from '@automattic/dataviews';
+import type { Field, Form } from '@automattic/dataviews';
 import type { UseMutationResult } from '@tanstack/react-query';
 
 const fields: Field< SiteSettings >[] = [
@@ -38,12 +41,56 @@ const fields: Field< SiteSettings >[] = [
 			},
 		],
 	},
+	{
+		id: 'wpcom_discourage_search_engines',
+		Edit: 'checkbox',
+		label: __( 'Discourage search engines from indexing this site' ),
+		description: __(
+			'This does not block access to your site — it is up to search engines to honor your request.'
+		),
+		isVisible: ( { wpcom_site_visibility }: SiteSettings ) => wpcom_site_visibility === 'public',
+	},
+	{
+		id: 'wpcom_prevent_third_party_sharing',
+		Edit: ( { field, onChange, data, hideLabelFromVision } ) => (
+			<CheckboxControl
+				__nextHasNoMarginBottom
+				label={ hideLabelFromVision ? '' : field.label }
+				checked={ field.getValue( { item: data } ) }
+				disabled={ data.wpcom_discourage_search_engines }
+				onChange={ () => {
+					onChange( { [ field.id ]: ! field.getValue( { item: data } ) } );
+				} }
+				help={ createInterpolateElement(
+					__(
+						'This will present this site’s content from being shared with our licensed network of content and research partners, including those that train AI models. <a>Learn more</a>'
+					),
+					{
+						a: (
+							// TODO investigate whether localizeUrl() is safe to import into dashboard
+							<ExternalLink
+								/* eslint-disable-next-line wpcalypso/i18n-unlocalized-url */
+								href="https://wordpress.com/support/privacy-settings/make-your-website-public/#prevent-third-party-sharing"
+								children={ null } // ExternalLink's children prop is marked as required
+							/>
+						),
+					}
+				) }
+			/>
+		),
+		label: __( 'Prevent third-party sharing for this site' ),
+		isVisible: ( { wpcom_site_visibility }: SiteSettings ) => wpcom_site_visibility === 'public',
+	},
 ];
 
 const form = {
-	type: 'regular' as const,
-	fields: [ { id: 'wpcom_site_visibility', labelPosition: 'none' } as SimpleFormField ],
-};
+	type: 'regular',
+	fields: [
+		{ id: 'wpcom_site_visibility', labelPosition: 'none' },
+		'wpcom_discourage_search_engines',
+		'wpcom_prevent_third_party_sharing',
+	],
+} satisfies Form;
 
 export function PrivacyForm( {
 	settings,
@@ -55,6 +102,9 @@ export function PrivacyForm( {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const [ formData, setFormData ] = useState( {
 		wpcom_site_visibility: settings.wpcom_site_visibility,
+		wpcom_discourage_search_engines: settings.wpcom_discourage_search_engines,
+		wpcom_prevent_third_party_sharing:
+			settings.wpcom_discourage_search_engines || settings.wpcom_prevent_third_party_sharing,
 	} );
 
 	const isDirty = Object.entries( formData ).some(
@@ -78,19 +128,38 @@ export function PrivacyForm( {
 	};
 
 	return (
-		<form onSubmit={ handleSubmit }>
+		<form onSubmit={ handleSubmit } className="dashboard-site-settings-privacy-form">
 			<VStack spacing={ 4 }>
 				<DataForm< SiteSettings >
 					data={ formData }
 					fields={ fields }
 					form={ form }
 					onChange={ ( edits: Partial< SiteSettings > ) => {
-						setFormData( ( data ) => ( { ...data, ...edits } ) );
+						setFormData( ( data ) => {
+							const newFormData = { ...data, ...edits };
+
+							if ( edits.wpcom_site_visibility !== undefined ) {
+								// Forget any previous edits to the discoverability controls when the visibility changes.
+								newFormData.wpcom_discourage_search_engines =
+									settings.wpcom_discourage_search_engines;
+								newFormData.wpcom_prevent_third_party_sharing =
+									settings.wpcom_discourage_search_engines ||
+									settings.wpcom_prevent_third_party_sharing;
+							}
+
+							if ( edits.wpcom_discourage_search_engines === true ) {
+								// Checking the search engine box forces the third party checkbox too.
+								newFormData.wpcom_prevent_third_party_sharing = true;
+							}
+
+							return newFormData;
+						} );
 					} }
 				/>
 				<HStack justify="flex-start">
 					<Button
 						variant="primary"
+						__next40pxDefaultSize
 						type="submit"
 						isBusy={ isPending }
 						disabled={ isPending || ! isDirty }

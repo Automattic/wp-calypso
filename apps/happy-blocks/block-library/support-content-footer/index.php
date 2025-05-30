@@ -88,8 +88,8 @@ if ( 'support_lp_2025' === $current_page_slug ) {
 							<path fill-rule="evenodd" clip-rule="evenodd" d="M16.83 6.342L17.432 6.642L18.057 6.392L18.5 6.216V18.785L18.057 18.607L17.432 18.357L16.829 18.658L15.385 19.381L12.975 18.577L12.5 18.419L12.026 18.577L9.616 19.38L8.171 18.658L7.568 18.358L6.943 18.608L6.5 18.785V6.215L6.943 6.393L7.568 6.643L8.171 6.342L9.615 5.62L12.025 6.423L12.5 6.581L12.974 6.423L15.384 5.62L16.83 6.342ZM20 4L18.5 4.6L17.5 5L15.5 4L12.5 5L9.5 4L7.5 5L6.5 4.6L5 4V21L6.5 20.4L7.5 20L9.5 21L12.5 20L15.5 21L17.5 20L18.5 20.4L20 21V4ZM16.5 10.25V8.75H8.5V10.25H16.5ZM16.5 13.25V11.75H8.5V13.25H16.5ZM8.5 16.25V14.75H16.5V16.25H8.5Z" fill="white"/>
 						</svg>
 					</div>
-					<h3 class="support-footer__card-title"><?php esc_html_e( 'Lookup a recent charge', 'happy-blocks' ); ?></h3>
-				<p class="support-footer__card-description"><?php esc_html_e( 'Do you have questions about a recent charge? Lookup the details here.', 'happy-blocks' ); ?></p>
+					<h3 class="support-footer__card-title"><?php esc_html_e( 'Look up a recent charge', 'happy-blocks' ); ?></h3>
+				<p class="support-footer__card-description"><?php esc_html_e( 'Do you have questions about a recent charge? Look up the details here.', 'happy-blocks' ); ?></p>
 				</div>
 			</a>
 		</div>

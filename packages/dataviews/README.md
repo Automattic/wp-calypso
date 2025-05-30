@@ -214,10 +214,13 @@ Properties:
 
 ##### Properties of `layout`
 
-| Properties of `layout`                                                              | Table | Grid | List |
-| ----------------------------------------------------------------------------------- | ----- | ---- | ---- |
-| `badgeFields`: a list of field's `id` to render without label and styled as badges. |       | ✓    |      |
-| `styles`: additional `width`, `maxWidth`, `minWidth` styles for each field column.  | ✓     |      |      |
+| Properties of `layout`                                                                      | Table | Grid | List |
+| ------------------------------------------------------------------------------------------- | ----- | ---- | ---- |
+| `badgeFields`: a list of field's `id` to render without label and styled as badges.         |       | ✓    |      |
+| `styles`: additional `width`, `maxWidth`, `minWidth`, `align` styles for each field column. | ✓     |      |      |
+
+**For column alignment (`align` property), follow these guidelines:**
+Right-align whenever the cell value is fundamentally quantitative—numbers, decimals, currency, percentages—so that digits and decimal points line up, aiding comparison and calculation. Otherwise, default to left-alignment for all other types (text, codes, labels, dates).
 
 #### `onChangeView`: `function`
 
@@ -406,7 +409,7 @@ The component receives the following props:
 	renderItemLink={ ( { item, ...props } ) => (
 		<Link to={ `/sites/${ item.slug }` } preload="intent" { ...props } />
 	) }
-/>;
+/>
 ```
 
 #### `header`: React component
@@ -1190,21 +1193,21 @@ Configuration of the filters.
 
 Operators:
 
-| Operator   | Selection      | Description                                                             | Example                                            |
-| ---------- | -------------- | ----------------------------------------------------------------------- | -------------------------------------------------- |
-| `is`       | Single item    | `EQUAL TO`. The item's field is equal to a single value.                | Author is Admin                                    |
-| `isNot`    | Single item    | `NOT EQUAL TO`. The item's field is not equal to a single value.        | Author is not Admin                                |
-| `isAny`    | Multiple items | `OR`. The item's field is present in a list of values.                  | Author is any: Admin, Editor                       |
-| `isNone`   | Multiple items | `NOT OR`. The item's field is not present in a list of values.          | Author is none: Admin, Editor                      |
-| `isAll`    | Multiple items | `AND`. The item's field has all of the values in the list.              | Category is all: Book, Review, Science Fiction     |
-| `isNotAll` | Multiple items | `NOT AND`. The item's field doesn't have all of the values in the list. | Category is not all: Book, Review, Science Fiction |
-| `lessThan`           | Single item    | `LESS THAN`. The item's field is numerically less than a single value.      | Age is less than 18                                |
-| `greaterThan`        | Single item    | `GREATER THAN`. The item's field is numerically greater than a single value.| Age is greater than 65                             |
-| `lessThanOrEqual`    | Single item    | `LESS THAN OR EQUAL TO`. The item's field is numerically less than or equal to a single value. | Age is less than or equal to 18         |
-| `greaterThanOrEqual` | Single item    | `GREATER THAN OR EQUAL TO`. The item's field is numerically greater than or equal to a single value. | Age is greater than or equal to 65      |
-| `contains` | Text           | `CONTAINS`. The item's field contains the given substring.               | Title contains: Mars                              |
-| `notContains` | Text        | `NOT CONTAINS`. The item's field does not contain the given substring.  | Description doesn't contain: photo                |
-| `startsWith` | Text         | `STARTS WITH`. The item's field starts with the given substring.        | Title starts with: Mar                            |
+| Operator             | Selection      | Description                                                                                          | Example                                            |
+| -------------------- | -------------- | ---------------------------------------------------------------------------------------------------- | -------------------------------------------------- |
+| `is`                 | Single item    | `EQUAL TO`. The item's field is equal to a single value.                                             | Author is Admin                                    |
+| `isNot`              | Single item    | `NOT EQUAL TO`. The item's field is not equal to a single value.                                     | Author is not Admin                                |
+| `isAny`              | Multiple items | `OR`. The item's field is present in a list of values.                                               | Author is any: Admin, Editor                       |
+| `isNone`             | Multiple items | `NOT OR`. The item's field is not present in a list of values.                                       | Author is none: Admin, Editor                      |
+| `isAll`              | Multiple items | `AND`. The item's field has all of the values in the list.                                           | Category is all: Book, Review, Science Fiction     |
+| `isNotAll`           | Multiple items | `NOT AND`. The item's field doesn't have all of the values in the list.                              | Category is not all: Book, Review, Science Fiction |
+| `lessThan`           | Single item    | `LESS THAN`. The item's field is numerically less than a single value.                               | Age is less than 18                                |
+| `greaterThan`        | Single item    | `GREATER THAN`. The item's field is numerically greater than a single value.                         | Age is greater than 65                             |
+| `lessThanOrEqual`    | Single item    | `LESS THAN OR EQUAL TO`. The item's field is numerically less than or equal to a single value.       | Age is less than or equal to 18                    |
+| `greaterThanOrEqual` | Single item    | `GREATER THAN OR EQUAL TO`. The item's field is numerically greater than or equal to a single value. | Age is greater than or equal to 65                 |
+| `contains`           | Text           | `CONTAINS`. The item's field contains the given substring.                                           | Title contains: Mars                               |
+| `notContains`        | Text           | `NOT CONTAINS`. The item's field does not contain the given substring.                               | Description doesn't contain: photo                 |
+| `startsWith`         | Text           | `STARTS WITH`. The item's field starts with the given substring.                                     | Title starts with: Mar                             |
 
 `is`, `isNot`, `lessThan`, `greaterThan`, `lessThanOrEqual`, `greaterThanOrEqual`, `contains`, `notContains`, and `startsWith` are single-selection operators, while `isAny`, `isNone`, `isAll`, and `isNotAll` are multi-selection. A filter with no operators declared will support the `isAny` and `isNone` multi-selection operators by default. A filter cannot mix single-selection & multi-selection operators; if a single-selection operator is present in the list of valid operators, the multi-selection ones will be discarded, and the filter won't allow selecting more than one item.
 

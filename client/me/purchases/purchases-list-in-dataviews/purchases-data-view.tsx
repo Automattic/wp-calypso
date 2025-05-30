@@ -1,14 +1,15 @@
 import { Card } from '@automattic/components';
 import { Purchases } from '@automattic/data-stores';
-import { DataViews, View } from '@wordpress/dataviews';
+import { DataViews, View, filterSortAndPaginate } from '@wordpress/dataviews';
 import { LocalizeProps } from 'i18n-calypso';
+import { useMemo, useState } from 'react';
 import { MembershipSubscription } from 'calypso/lib/purchases/types';
 import {
 	usePurchasesFieldDefinitions,
 	useMembershipsFieldDefinitions,
 } from './hooks/use-field-definitions';
 
-export const purchasesDataView = {
+export const purchasesDataView: View = {
 	type: 'table',
 	page: 1,
 	perPage: 5,
@@ -19,38 +20,40 @@ export const purchasesDataView = {
 		direction: 'desc',
 	},
 	layout: {},
-} as View;
+};
 
 export function PurchasesDataViews( props: {
 	purchases: Purchases.Purchase[];
 	translate: LocalizeProps[ 'translate' ];
 } ) {
 	const { purchases } = props;
-	const onChangeView = () => {
-		return;
-	};
+	const [ currentView, setView ] = useState( purchasesDataView );
+	const purchasesDataFields = usePurchasesFieldDefinitions( purchasesDataView.fields );
+
+	const { data: adjustedPurchases, paginationInfo } = useMemo( () => {
+		return filterSortAndPaginate( purchases, currentView, purchasesDataFields );
+	}, [ purchases, currentView, purchasesDataFields ] );
 
 	const getItemId = ( item: Purchases.Purchase ) => {
 		return item.id.toString();
 	};
-	const purchasesDataFields = usePurchasesFieldDefinitions();
 	return (
 		<Card id="purchases-list" className="section-content" tagName="section">
 			<DataViews
-				data={ purchases }
+				data={ adjustedPurchases }
 				fields={ purchasesDataFields }
-				view={ purchasesDataView }
-				onChangeView={ onChangeView }
+				view={ currentView }
+				onChangeView={ setView }
 				defaultLayouts={ { table: {} } }
 				actions={ undefined }
 				getItemId={ getItemId }
-				paginationInfo={ { totalItems: 100, totalPages: 10 } }
+				paginationInfo={ paginationInfo }
 			/>
 		</Card>
 	);
 }
 
-export const membershipDataView = {
+export const membershipDataView: View = {
 	type: 'table',
 	page: 1,
 	perPage: 5,
@@ -61,32 +64,34 @@ export const membershipDataView = {
 		direction: 'desc',
 	},
 	layout: {},
-} as View;
+};
 
 export function MembershipsDataViews( props: {
 	memberships: MembershipSubscription[];
 	translate: LocalizeProps[ 'translate' ];
 } ) {
 	const { memberships } = props;
-	const onChangeView = () => {
-		return;
-	};
+	const membershipsDataFields = useMembershipsFieldDefinitions();
+	const [ currentView, setView ] = useState( purchasesDataView );
+
+	const { data: adjustedMemberships, paginationInfo } = useMemo( () => {
+		return filterSortAndPaginate( memberships, currentView, membershipsDataFields );
+	}, [ memberships, currentView, membershipsDataFields ] );
 
 	const getItemId = ( item: MembershipSubscription ) => {
 		return item.ID;
 	};
-	const membershipsDataFields = useMembershipsFieldDefinitions();
 	return (
 		<Card id="purchases-list" className="section-content" tagName="section">
 			<DataViews
-				data={ memberships }
+				data={ adjustedMemberships }
 				fields={ membershipsDataFields }
-				view={ membershipDataView }
-				onChangeView={ onChangeView }
+				view={ currentView }
+				onChangeView={ setView }
 				defaultLayouts={ { table: {} } }
 				actions={ undefined }
 				getItemId={ getItemId }
-				paginationInfo={ { totalItems: 100, totalPages: 10 } }
+				paginationInfo={ paginationInfo }
 			/>
 		</Card>
 	);

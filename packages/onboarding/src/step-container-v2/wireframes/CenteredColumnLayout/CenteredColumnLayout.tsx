@@ -13,11 +13,13 @@ interface CenteredColumnLayoutProps {
 	children?: ContentProp;
 	stickyBottomBar?: ContentProp;
 	columnWidth: 4 | 5 | 6 | 8 | 10;
+	columnWidthHeading?: 4 | 5 | 6 | 8 | 10;
 	verticalAlign?: 'center';
 }
 
 export const CenteredColumnLayout = ( {
 	columnWidth,
+	columnWidthHeading,
 	topBar,
 	heading,
 	className,
@@ -34,7 +36,9 @@ export const CenteredColumnLayout = ( {
 					<>
 						<TopBarRenderer topBar={ topBar } />
 						<ContentWrapper centerAligned={ context.isSmallViewport && verticalAlign === 'center' }>
-							{ heading && <ContentRow columns={ 6 }>{ heading }</ContentRow> }
+							{ heading && (
+								<ContentRow columns={ columnWidthHeading ?? 6 }>{ heading }</ContentRow>
+							) }
 							<ContentRow columns={ columnWidth } className={ className }>
 								{ content }
 							</ContentRow>

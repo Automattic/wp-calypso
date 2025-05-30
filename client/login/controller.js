@@ -5,6 +5,7 @@ import {
 	isGravPoweredOAuth2Client,
 	isWooOAuth2Client,
 	isPartnerPortalOAuth2Client,
+	isStudioAppOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { DesktopLoginStart, DesktopLoginFinalize } from 'calypso/login/desktop-login';
 import { SOCIAL_HANDOFF_CONNECT_ACCOUNT } from 'calypso/state/action-types';
@@ -64,6 +65,7 @@ const enhanceContextWithLogin = ( context ) => {
 	const isPartnerPortalClient = isPartnerPortalOAuth2Client( oauth2Client );
 	const isWooJPC = isWooJPCFlow( currentState );
 	const isBlazePro = getIsBlazePro( currentState );
+	const isStudioLogin = isStudioAppOAuth2Client( oauth2Client );
 
 	const isWhiteLogin =
 		( ! isJetpackLogin &&
@@ -71,7 +73,8 @@ const enhanceContextWithLogin = ( context ) => {
 			Boolean( oauth2ClientId ) === false &&
 			! isBlazePro &&
 			! isWooJPC ) ||
-		isPartnerPortalClient;
+		isPartnerPortalClient ||
+		isStudioLogin; // Force two-column layout for Studio
 
 	context.primary = (
 		<WPLogin

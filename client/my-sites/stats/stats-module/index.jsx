@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { includes, isEqual } from 'lodash';
@@ -18,8 +17,6 @@ import Geochart from '../geochart';
 import { shouldGateStats } from '../hooks/use-should-gate-stats';
 import StatsCardUpsell from '../stats-card-upsell';
 import DatePicker from '../stats-date-picker';
-import DownloadCsv from '../stats-download-csv';
-import DownloadCsvUpsell from '../stats-download-csv-upsell';
 import ErrorPanel from '../stats-error';
 import StatsListCard from '../stats-list/stats-list-card';
 import StatsModulePlaceholder from './placeholder';
@@ -265,7 +262,6 @@ class StatsModule extends Component {
 			moduleStrings,
 			statType,
 			query,
-			period,
 			translate,
 			useShortLabel,
 			metricLabel,
@@ -273,7 +269,6 @@ class StatsModule extends Component {
 			mainItemLabel,
 			listItemClassName,
 			gateStats,
-			gateDownloads,
 			hasNoBackground,
 			skipQuery,
 			titleNodes,
@@ -292,35 +287,6 @@ class StatsModule extends Component {
 		const summaryLink = ! this.props.hideSummaryLink && this.getSummaryLink();
 		const displaySummaryLink = data && summaryLink;
 		const isAllTime = this.isAllTimeList();
-		const isStatsNavigationImprovementEnabled = config.isEnabled( 'stats/navigation-improvement' );
-
-		const renderDownloadCsv = () => {
-			// Disable the Download button for the new navigation.
-			if ( isStatsNavigationImprovementEnabled ) {
-				return null;
-			}
-
-			// Disable for the email module as it doesn't work correctly.
-			if ( statType === 'statsEmailsSummary' ) {
-				return null;
-			}
-
-			if ( gateDownloads ) {
-				return <DownloadCsvUpsell siteId={ siteId } borderless />;
-			}
-
-			return (
-				<DownloadCsv
-					statType={ statType }
-					query={ query }
-					path={ path }
-					period={ period }
-					skipQuery={ skipQuery }
-				/>
-			);
-		};
-
-		const downloadCsv = renderDownloadCsv();
 
 		const emptyMessage = isRealTime ? 'gathering info…' : moduleStrings.empty;
 		// TODO: Translate empty message
@@ -338,7 +304,6 @@ class StatsModule extends Component {
 					useShortLabel={ useShortLabel }
 					title={ this.props.moduleStrings?.title }
 					titleNodes={ titleNodes }
-					downloadCsv={ downloadCsv }
 					emptyMessage={ emptyMessage }
 					metricLabel={ metricLabel }
 					showMore={

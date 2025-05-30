@@ -7,8 +7,15 @@ import { sitePrimaryDataCenterQuery } from '../../app/queries';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
 import { canGetPrimaryDataCenter } from './index';
 import type { Site } from '../../data/types';
+import type { Density } from '@automattic/components/src/summary-button/types';
 
-export default function SettingsPrimaryDataCenterSummary( { site }: { site: Site } ) {
+export default function SettingsPrimaryDataCenterSummary( {
+	site,
+	density,
+}: {
+	site: Site;
+	density?: Density;
+} ) {
 	const { data: primaryDataCenter } = useQuery( {
 		...sitePrimaryDataCenterQuery( site.slug ),
 		enabled: canGetPrimaryDataCenter( site ),
@@ -25,7 +32,7 @@ export default function SettingsPrimaryDataCenterSummary( { site }: { site: Site
 		<RouterLinkSummaryButton
 			to={ `/sites/${ site.slug }/settings/primary-data-center` }
 			title={ __( 'Primary data center' ) }
-			density="medium"
+			density={ density }
 			decoration={ <Icon icon={ cloud } /> }
 			badges={ [ { text: primaryDataCenterName } ] }
 		/>

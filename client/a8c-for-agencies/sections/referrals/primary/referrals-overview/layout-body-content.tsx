@@ -36,8 +36,6 @@ interface Props {
 	isLoading: boolean;
 	dataViewsState: DataViewsState;
 	setDataViewsState: ( callback: ( prevState: DataViewsState ) => DataViewsState ) => void;
-	isArchiveView?: boolean;
-	onReferralRefetch?: () => void;
 }
 
 export default function LayoutBodyContent( {
@@ -46,8 +44,6 @@ export default function LayoutBodyContent( {
 	isLoading,
 	dataViewsState,
 	setDataViewsState,
-	isArchiveView,
-	onReferralRefetch,
 }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -105,7 +101,7 @@ export default function LayoutBodyContent( {
 	if ( referrals?.length ) {
 		return (
 			<>
-				{ ! dataViewsState.selectedItem && ! isArchiveView && (
+				{ ! dataViewsState.selectedItem && (
 					<ConsolidatedViews
 						referrals={ referrals }
 						totalPayouts={ tipaltiData?.PaymentsStatus?.submittedTotal }
@@ -115,8 +111,6 @@ export default function LayoutBodyContent( {
 					referrals={ referrals }
 					dataViewsState={ dataViewsState }
 					setDataViewsState={ setDataViewsState }
-					isArchiveView={ isArchiveView }
-					onArchiveReferral={ () => onReferralRefetch?.() }
 				/>
 			</>
 		);

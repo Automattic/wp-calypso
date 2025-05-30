@@ -299,17 +299,17 @@ class DomainRegistrationSuggestion extends Component {
 		return (
 			<div className={ wrapperClassName }>
 				<div className={ titleWrapperClassName }>
-					<h3 className="domain-registration-suggestion__title">
+					<div className="domain-registration-suggestion__title">
 						<div className="domain-registration-suggestion__domain-title">
-							<span aria-label={ domain }>
+							<h3 aria-label={ domain }>
 								<span className="domain-registration-suggestion__domain-title-name">
 									{ this.getFormattedDomainName( name ) }
 								</span>
 								<span className="domain-registration-suggestion__domain-title-tld">{ tld }</span>
-							</span>
+							</h3>
 							{ ( showHstsNotice || showDotGayNotice ) && this.renderInfoBubble() }
 						</div>
-					</h3>
+					</div>
 				</div>
 			</div>
 		);
@@ -405,7 +405,11 @@ class DomainRegistrationSuggestion extends Component {
 
 		if ( isPremium ) {
 			badges.push(
-				<PremiumBadge key="premium" restrictedPremium={ premiumDomain?.is_price_limit_exceeded } />
+				<PremiumBadge
+					key="premium"
+					restrictedPremium={ premiumDomain?.is_price_limit_exceeded }
+					domainName={ this.props.suggestion.domain_name }
+				/>
 			);
 		}
 

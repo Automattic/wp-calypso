@@ -6,6 +6,7 @@
 	display: block;
 	height: auto;
 	transition: none;
+	width: 100%;
 
 	&:hover:not(:disabled, [aria-disabled="true"]) {
 		background: color-mix(in srgb, #fff 98%, var(--wp-admin-theme-color, #3858e9));
@@ -22,13 +23,13 @@
 
 		&.has-density-low {
 			&:not(:focus-visible) {
-				box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9)) 12%, transparent);
+				border: 1px solid color-mix(in srgb, var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9)) 12%, transparent);
 			}
 		}
 
 		&.has-density-medium {
-			&:not(:focus-visible) {
-				box-shadow: 0 2px 1px -1px color-mix(in srgb, var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9)) 12%, transparent);
+			&:not(:focus-visible, :last-child) {
+				border-bottom: 1px solid color-mix(in srgb, var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9)) 12%, transparent);
 			}
 		}
 	}
@@ -65,20 +66,14 @@
 	&.has-density-low {
 		/* stylelint-disable-next-line scales/radii */
 		border-radius: 7px;
-		box-shadow: inset 0 0 0 1px $gray-200;
+		border: 1px solid $gray-200;
 		background-color: #fff;
 	}
 
 	&.has-density-medium {
 		padding: $grid-unit-20 $grid-unit-30;
-		box-shadow: 0 2px 1px -1px $gray-100;
-
-		// TODO: this should be handled better in `SummaryButtonList` component.
-		// @see: https://github.com/Automattic/wp-calypso/pull/103233#issuecomment-2862541935
-		&:focus-visible, &:hover:not(:disabled, [aria-disabled="true"]) {
-			/* stylelint-disable-next-line scales/radii */
-			border-radius: 7px;
-		}
+		border-bottom: 1px solid $gray-100;
+		border-radius: 0;
 
 		.summary-button-title {
 			@include body-medium;

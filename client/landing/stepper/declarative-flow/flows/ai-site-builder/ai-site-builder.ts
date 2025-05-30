@@ -146,6 +146,10 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 									window.sessionStorage.getItem( 'stored_ai_prompt' ) || ''
 								) }`;
 								window.sessionStorage.removeItem( 'stored_ai_prompt' );
+							} else if ( queryParams.get( 'source' ) ) {
+								promptParam = `&source=${ encodeURIComponent(
+									queryParams.get( 'source' )?.toString() || ''
+								) }`;
 							}
 							window.location.replace(
 								`${ siteURL }/wp-admin/site-editor.php?canvas=edit&referrer=${ AI_SITE_BUILDER_FLOW }${ promptParam }`

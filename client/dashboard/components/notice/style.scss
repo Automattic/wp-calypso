@@ -85,6 +85,7 @@
 
 .dashboard-notice__description {
 	@include body-medium;
+	text-wrap: pretty;
 }
 
 .dashboard-notice__actions {

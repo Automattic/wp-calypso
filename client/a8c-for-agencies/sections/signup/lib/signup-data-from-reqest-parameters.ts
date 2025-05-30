@@ -9,7 +9,7 @@ const sanitizeString = ( value: string | null ): string => {
 	if ( ! value ) {
 		return '';
 	}
-	return value.trim().replace( /[^\p{L}\p{N}\s._-]/gu, '' );
+	return value.trim().replace( /[^\p{L}\p{N}\s._+-]/gu, '' );
 };
 
 const sanitizePlansToOfferProducts = ( value: string | null ): 'Yes' | 'No' | undefined => {

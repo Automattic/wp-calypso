@@ -18,7 +18,7 @@ const ThemeFeaturesCard = ( { isWpcomTheme, siteSlug, features, translate, onCli
 
 	return (
 		<div>
-			<QueryThemeFilters />
+			<QueryThemeFilters locale={ locale } />
 			<SectionHeader label={ translate( 'Features' ) } />
 			<Card>
 				<ul className="theme__sheet-features-list">
