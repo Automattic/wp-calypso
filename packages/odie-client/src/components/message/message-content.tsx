@@ -72,7 +72,7 @@ export const MessageContent = ( {
 						<UserMessage
 							message={ markdownMessageContent }
 							isDisliked={ isDisliked }
-							isMessageWithoutEscalationOption={ isMessageWithOnlyText }
+							isMessageWithEscalationOption={ ! isMessageWithOnlyText }
 						/>
 					) }
 					{ message.type === 'introduction' && <IntroductionMessage content={ message.content } /> }

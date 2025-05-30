@@ -51,11 +51,11 @@ const getDisplayMessage = (
 export const UserMessage = ( {
 	message,
 	isDisliked = false,
-	isMessageWithoutEscalationOption = false,
+	isMessageWithEscalationOption = false,
 }: {
 	isDisliked?: boolean;
 	message: Message;
-	isMessageWithoutEscalationOption?: boolean;
+	isMessageWithEscalationOption?: boolean;
 } ) => {
 	const { isUserEligibleForPaidSupport, trackEvent, chat, canConnectToZendesk, forceEmailSupport } =
 		useOdieAssistantContext();
@@ -156,7 +156,7 @@ export const UserMessage = ( {
 					{ isRequestingHumanSupport ? displayMessage : message.content }
 				</Markdown>
 			</div>
-			{ ! isMessageWithoutEscalationOption && isBot && (
+			{ isMessageWithEscalationOption && isBot && (
 				<div
 					className={ clsx( 'chat-feedback-wrapper', {
 						'chat-feedback-wrapper-no-extra-contact': ! isRequestingHumanSupport,

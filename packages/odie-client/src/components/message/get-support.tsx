@@ -56,7 +56,7 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 	canConnectToZendesk = false,
 } ) => {
 	const navigate = useNavigate();
-	const newConversation = useCreateZendeskConversation();
+	const createZendeskConversation = useCreateZendeskConversation();
 	const resetSupportInteraction = useResetSupportInteraction();
 	const location = useLocation();
 	const {
@@ -65,6 +65,7 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 		canConnectToZendesk: contextCanConnectToZendesk,
 		trackEvent,
 		isChatLoaded,
+		forceEmailSupport,
 	} = useOdieAssistantContext();
 
 	const { mostRecentSupportInteractionId } = useGetMostRecentOpenConversation();
@@ -85,9 +86,11 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 		( isUserEligibleForPaidSupport || contextIsUserEligibleForPaidSupport );
 
 	const getButtonConfig = (): ButtonConfig[] => {
+		const buttons: ButtonConfig[] = [];
+
 		if ( isUserEligibleForPaidSupport || contextIsUserEligibleForPaidSupport ) {
-			return [
-				{
+			if ( supportInteraction && ! forceEmailSupport ) {
+				buttons.push( {
 					text: __( 'Continue your open conversation', __i18n_text_domain__ ),
 					action: async () => {
 						if ( supportInteraction ) {
@@ -98,9 +101,19 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 							}
 						}
 					},
-					hideButton: !! supportInteraction,
-				},
-				{
+				} );
+			}
+
+			if ( forceEmailSupport ) {
+				buttons.push( {
+					text: __( 'Email support', __i18n_text_domain__ ),
+					action: async () => {
+						onClickAdditionalEvent?.( 'email' );
+						navigate( '/contact-form?mode=EMAIL&wapuuFlow=true' );
+					},
+				} );
+			} else {
+				buttons.push( {
 					disabled: disabledButton,
 					className: clsx( 'odie__transfer-chat--button', {
 						'odie__transfer-chat--button--disabled': disabledButton,
@@ -111,7 +124,7 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 						onClickAdditionalEvent?.( 'chat' );
 						resetSupportInteraction().then( ( interaction ) => {
 							if ( isChatLoaded ) {
-								newConversation( {
+								createZendeskConversation( {
 									avoidTransfer: true,
 									interactionId: interaction?.uuid,
 									createdFrom: 'chat_support_button',
@@ -119,8 +132,10 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 							}
 						} );
 					},
-				},
-			];
+				} );
+			}
+
+			return buttons;
 		}
 
 		return [
@@ -146,19 +161,16 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 
 	return (
 		<div className="odie__transfer-chat">
-			{ buttonConfig.map(
-				( button, index ) =>
-					button.hideButton !== false && (
-						<div className="odie__transfer-chat--button-container" key={ index }>
-							<button onClick={ ( e ) => handleClick( e, button ) } disabled={ button.disabled }>
-								{ button.text }
-							</button>
-							{ button.waitTimeText && (
-								<span className="odie__transfer-chat--wait-time">{ button.waitTimeText }</span>
-							) }
-						</div>
-					)
-			) }
+			{ buttonConfig.map( ( button, index ) => (
+				<div className="odie__transfer-chat--button-container" key={ index }>
+					<button onClick={ ( e ) => handleClick( e, button ) } disabled={ button.disabled }>
+						{ button.text }
+					</button>
+					{ button.waitTimeText && (
+						<span className="odie__transfer-chat--wait-time">{ button.waitTimeText }</span>
+					) }
+				</div>
+			) ) }
 		</div>
 	);
 };

@@ -10,7 +10,7 @@ import { getHelpCenterZendeskConversationStarted, interactionHasZendeskEvent } f
 
 export const DirectEscalationLink = ( { messageId }: { messageId: number | undefined } ) => {
 	const conversationStarted = Boolean( getHelpCenterZendeskConversationStarted() );
-	const newConversation = useCreateZendeskConversation();
+	const createZendeskConversation = useCreateZendeskConversation();
 	const { trackEvent, isUserEligibleForPaidSupport, chat, canConnectToZendesk, forceEmailSupport } =
 		useOdieAssistantContext();
 	const navigate = useNavigate();
@@ -51,7 +51,7 @@ export const DirectEscalationLink = ( { messageId }: { messageId: number | undef
 				navigate( '/contact-form?mode=EMAIL&wapuuFlow=true' );
 				return;
 			}
-			newConversation( { createdFrom: 'direct_escalation' } );
+			createZendeskConversation( { createdFrom: 'direct_escalation' } );
 		} else {
 			navigate( '/contact-form?mode=FORUM' );
 		}
@@ -60,7 +60,7 @@ export const DirectEscalationLink = ( { messageId }: { messageId: number | undef
 		messageId,
 		isUserEligibleForPaidSupport,
 		conversationStarted,
-		newConversation,
+		createZendeskConversation,
 		navigate,
 		chat?.provider,
 		currentSupportInteraction,
