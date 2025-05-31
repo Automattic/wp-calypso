@@ -179,7 +179,7 @@
 		"@types/debug": "^4.1.12",
 		"@types/fast-json-stable-stringify": "^2.0.0",
 		"@types/jest": "^29.5.14",
-		"@types/lodash": "^4.17.16",
+		"@types/lodash": "^4.17.17",
 		"@types/node": "^22.15.3",
 		"@types/page": "^1.11.9",
 		"@types/qs": "^6.9.7",
