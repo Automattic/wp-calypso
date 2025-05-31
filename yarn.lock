@@ -235,6 +235,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@ariakit/core@npm:0.4.15":
+  version: 0.4.15
+  resolution: "@ariakit/core@npm:0.4.15"
+  checksum: 2d437d65e1ccadfdedb6b181447abf5a0af49a6b5380188163c80db18da7673172e2c8aa54bf2877fef534716b1755c5098ee11efa3372ee525d7ecdff611efb
+  languageName: node
+  linkType: hard
+
 "@ariakit/react-core@npm:0.4.15":
   version: 0.4.15
   resolution: "@ariakit/react-core@npm:0.4.15"
@@ -261,11 +268,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ariakit/test@npm:0.4.7":
-  version: 0.4.7
-  resolution: "@ariakit/test@npm:0.4.7"
+"@ariakit/test@npm:0.4.10":
+  version: 0.4.10
+  resolution: "@ariakit/test@npm:0.4.10"
   dependencies:
-    "@ariakit/core": "npm:0.4.14"
+    "@ariakit/core": "npm:0.4.15"
     "@testing-library/dom": "npm:^8.0.0 || ^9.0.0 || ^10.0.0"
   peerDependencies:
     "@playwright/test": ^1.27.0
@@ -278,7 +285,7 @@ __metadata:
       optional: true
     react:
       optional: true
-  checksum: 47d29ac8285b91762b640a881d51aa2515ebf381716b27bd781bc3b78f75e404f89c1537c4b07e76ed8bc9db0b1f3d126d6bc7577a3a3c60714b6681f2e96403
+  checksum: c851403dac8d984cfbe2a21838d53cc07e85d2196584984fccfd9e363b533c3b6525d5b1dc812c430dcaa3190d743cb440bb3ac422c148590c162d5302ecfd62
   languageName: node
   linkType: hard
 
@@ -856,7 +863,7 @@ __metadata:
   resolution: "@automattic/components@workspace:packages/components"
   dependencies:
     "@ariakit/react": "npm:^0.4.15"
-    "@ariakit/test": "npm:0.4.7"
+    "@ariakit/test": "npm:0.4.10"
     "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-color-schemes": "workspace:^"
     "@automattic/calypso-storybook": "workspace:^"
