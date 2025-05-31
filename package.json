@@ -316,7 +316,7 @@
 		"stylelint-scss": "^6.4.0",
 		"tslib": "^2.8.1",
 		"typescript": "5.8.3",
-		"webpack": "^5.99.8",
+		"webpack": "^5.99.9",
 		"webpack-bundle-analyzer": "^4.10.2",
 		"webpack-cli": "^4.10.0",
 		"webpack-dev-middleware": "^5.3.4",
