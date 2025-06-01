@@ -56,7 +56,7 @@ const form = {
 	fields: [ { id: 'is_fully_managed_agency_site' } as SimpleFormField ],
 };
 
-export default function SettingsAgencyFullyManaged( { siteSlug }: { siteSlug: string } ) {
+export default function SettingsAgency( { siteSlug }: { siteSlug: string } ) {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { data: site } = useQuery( siteQuery( siteSlug ) );
 	const { data: siteSettings } = useQuery( siteSettingsQuery( siteSlug ) );

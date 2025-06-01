@@ -5,7 +5,7 @@ import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { SectionHeader } from '../../components/section-header';
 import { SummaryButtonList } from '../../components/summary-button-list';
-import AgencyFullyManagedSummary from '../settings-agency-fully-managed/summary';
+import AgencySummary from '../settings-agency/summary';
 import DatabaseSettingsSummary from '../settings-database/summary';
 import DefensiveModeSettingsSummary from '../settings-defensive-mode/summary';
 import PHPSettingsSummary from '../settings-php/summary';
@@ -37,7 +37,7 @@ export default function SiteSettings( { siteSlug }: { siteSlug: string } ) {
 				<DatabaseSettingsSummary site={ site } />
 				<WordPressSettingsSummary site={ site } />
 				<PHPSettingsSummary site={ site } />
-				<AgencyFullyManagedSummary site={ site } />
+				<AgencySummary site={ site } />
 				<PrimaryDataCenterSettingsSummary site={ site } />
 				<StaticFile404SettingsSummary site={ site } />
 				<DefensiveModeSettingsSummary site={ site } />

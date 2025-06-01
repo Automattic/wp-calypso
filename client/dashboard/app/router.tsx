@@ -208,9 +208,9 @@ const siteSettingsPHPRoute = createRoute( {
 	)
 );
 
-const siteSettingsAgencyFullyManagedRoute = createRoute( {
+const siteSettingsAgencyRoute = createRoute( {
 	getParentRoute: () => siteRoute,
-	path: 'settings/agency-fully-managed',
+	path: 'settings/agency',
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteQuery( siteSlug ) );
 		if ( site.is_wpcom_atomic ) {
@@ -218,8 +218,8 @@ const siteSettingsAgencyFullyManagedRoute = createRoute( {
 		}
 	},
 } ).lazy( () =>
-	import( '../sites/settings-agency-fully-managed' ).then( ( d ) =>
-		createLazyRoute( 'site-settings-agency-fully-managed' )( {
+	import( '../sites/settings-agency' ).then( ( d ) =>
+		createLazyRoute( 'site-settings-agency' )( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )
 	)
@@ -455,7 +455,7 @@ const createRouteTree = ( config: AppConfig ) => {
 				siteSettingsDatabaseRoute,
 				siteSettingsWordPressRoute,
 				siteSettingsPHPRoute,
-				siteSettingsAgencyFullyManagedRoute,
+				siteSettingsAgencyRoute,
 				siteSettingsPrimaryDataCenterRoute,
 				siteSettingsStaticFile404Route,
 				siteSettingsDefensiveModeRoute,
