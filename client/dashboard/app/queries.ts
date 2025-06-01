@@ -31,6 +31,9 @@ import {
 	fetchSiteUserMe,
 	leaveSite,
 	fetchP2HubP2s,
+	fetchSiteResetContentSummary,
+	resetSite,
+	fetchSiteResetStatus,
 } from '../data';
 import { SITE_FIELDS, SITE_OPTIONS } from '../data/constants';
 import { queryClient } from './query-client';
@@ -118,6 +121,26 @@ export function siteWordPressVersionMutation( siteSlug: string ) {
 		onSuccess: () => {
 			queryClient.invalidateQueries( { queryKey: [ 'site', siteSlug, 'wp-version' ] } );
 		},
+	};
+}
+
+export function siteResetContentSummaryQuery( siteIdOrSlug: string ) {
+	return {
+		queryKey: [ 'site-reset-content', siteIdOrSlug ],
+		queryFn: () => fetchSiteResetContentSummary( siteIdOrSlug ),
+	};
+}
+
+export function resetSiteMutation( siteIdOrSlug: string ) {
+	return {
+		mutationFn: () => resetSite( siteIdOrSlug ),
+	};
+}
+
+export function siteResetStatusQuery( siteIdOrSlug: string ) {
+	return {
+		queryKey: [ 'site-reset-status', siteIdOrSlug ],
+		queryFn: () => fetchSiteResetStatus( siteIdOrSlug ),
 	};
 }
 

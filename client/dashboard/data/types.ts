@@ -212,3 +212,15 @@ export interface SiteTransferConfirmation {
 	email_sent: boolean;
 	new_owner_email: string;
 }
+
+export type SiteContent = {
+	post_count: number;
+	page_count: number;
+	media_count: number;
+	plugin_count: number;
+};
+
+export type SiteResetStatus = {
+	status: 'in-progress' | 'ready' | 'completed';
+	progress: number;
+};

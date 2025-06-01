@@ -16,6 +16,8 @@ import type {
 	BasicMetricsData,
 	SiteSettings,
 	UrlPerformanceInsights,
+	SiteContent,
+	SiteResetStatus,
 	PhpMyAdminToken,
 	DefensiveModeSettings,
 	DefensiveModeSettingsUpdate,
@@ -567,4 +569,27 @@ export const fetchP2HubP2s = async (
 			...options,
 		}
 	);
+};
+
+export const fetchSiteResetContentSummary = async (
+	siteIdOrSlug: string
+): Promise< SiteContent > => {
+	return wpcom.req.get( {
+		path: `/sites/${ siteIdOrSlug }/reset-site/content-summary`,
+		apiNamespace: 'wpcom/v2',
+	} );
+};
+
+export const resetSite = async ( siteIdOrSlug: string ): Promise< void > => {
+	return wpcom.req.post( {
+		path: `/sites/${ siteIdOrSlug }/reset-site`,
+		apiNamespace: 'wpcom/v2',
+	} );
+};
+
+export const fetchSiteResetStatus = async ( siteIdOrSlug: string ): Promise< SiteResetStatus > => {
+	return wpcom.req.get( {
+		path: `/sites/${ siteIdOrSlug }/reset-site/status`,
+		apiNamespace: 'wpcom/v2',
+	} );
 };
