@@ -5,7 +5,7 @@ import { createElement, createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import React, { useEffect, useState } from 'react';
-import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
+import { ONBOARD_STORE } from 'calypso/stepper/stores';
 import { UrlData, GoToStep, RecordTracksEvent } from '../types';
 import { convertPlatformName, convertToFriendlyWebsiteName } from '../util';
 import ImportPlatformDetails, { coveredPlatforms } from './platform-details';

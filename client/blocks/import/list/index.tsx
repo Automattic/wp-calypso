@@ -2,12 +2,12 @@ import { Button, Gridicon, FormLabel, SelectDropdown } from '@automattic/compone
 import { Title, SubTitle } from '@automattic/onboarding';
 import { chevronRight, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import {
 	getImportersAsImporterOption,
 	type ImporterConfigPriority,
 } from 'calypso/lib/importer/importer-config';
 import ImporterLogo from 'calypso/my-sites/importer/importer-logo';
+import { useQuery } from 'calypso/stepper/hooks/use-query';
 import type { ImporterPlatform } from 'calypso/lib/importer/types';
 import './style.scss';
 

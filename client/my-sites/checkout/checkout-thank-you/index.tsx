@@ -213,7 +213,7 @@ export class CheckoutThankYou extends Component<
 		if ( isOnlyDomainTransfers( getPurchases( this.props ) ) ) {
 			// We need to reset the store upon checkout completion, on the bulk domain transfer flow
 			// We do it dinamically to avoid loading unnecessary javascript if not necessary.
-			import( 'calypso/landing/stepper/stores' ).then( ( imports ) =>
+			import( 'calypso/stepper/stores' ).then( ( imports ) =>
 				( dispatch( imports.ONBOARD_STORE ) as OnboardActions ).resetOnboardStore()
 			);
 

@@ -31,12 +31,6 @@ import SideExplainer from 'calypso/components/domains/side-explainer';
 import UseMyDomain from 'calypso/components/domains/use-my-domain';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Notice from 'calypso/components/notice';
-import { shouldUseStepContainerV2 } from 'calypso/landing/stepper/declarative-flow/helpers/should-use-step-container-v2';
-import {
-	LOCAL_STORAGE_KEY_FOR_PG_ID as PG_ID,
-	LOCAL_STORAGE_KEY_FOR_PG_ID_TS as PG_TS,
-	LOCAL_STORAGE_KEY_FOR_PG_VALIDITY as PG_ID_VALIDITY,
-} from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/playground/lib/initialize-playground';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import {
 	domainRegistration,
@@ -92,6 +86,12 @@ import { isPlanStepExistsAndSkipped } from 'calypso/state/signup/progress/select
 import { setDesignType } from 'calypso/state/signup/steps/design-type/actions';
 import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { shouldUseStepContainerV2 } from 'calypso/stepper/declarative-flow/helpers/should-use-step-container-v2';
+import {
+	LOCAL_STORAGE_KEY_FOR_PG_ID as PG_ID,
+	LOCAL_STORAGE_KEY_FOR_PG_ID_TS as PG_TS,
+	LOCAL_STORAGE_KEY_FOR_PG_VALIDITY as PG_ID_VALIDITY,
+} from 'calypso/stepper/declarative-flow/internals/steps-repository/playground/lib/initialize-playground';
 import DomainsMiniCart from './domains-mini-cart';
 import {
 	getExternalBackUrl,

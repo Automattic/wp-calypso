@@ -7,7 +7,7 @@ import { useSelect } from '@wordpress/data';
 import { useSiteMigrationStatus } from '../use-site-migration-status';
 
 // Mock the SITE_STORE
-jest.mock( 'calypso/landing/stepper/stores', () => ( {
+jest.mock( 'calypso/stepper/stores', () => ( {
 	SITE_STORE: 'site-store',
 } ) );
 

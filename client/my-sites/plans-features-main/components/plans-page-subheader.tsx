@@ -4,7 +4,7 @@ import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { ReactNode } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
-import { shouldUseStepContainerV2 } from 'calypso/landing/stepper/declarative-flow/helpers/should-use-step-container-v2';
+import { shouldUseStepContainerV2 } from 'calypso/stepper/declarative-flow/helpers/should-use-step-container-v2';
 import { SelectedFeatureData } from '../hooks/use-selected-feature';
 
 const Subheader = styled.p< { isUsingStepContainerV2?: boolean } >`

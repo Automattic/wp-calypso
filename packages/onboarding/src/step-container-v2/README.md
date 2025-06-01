@@ -50,7 +50,7 @@ Read the [how to extend it](#how-to-extend-it) section to learn how to reproduce
 
 **You shouldn't use `StepContainerV2` directly. Instead, use the wireframes that are exported from this package.**
 
-Aside from the stories (run `yarn storybook:start`), you can follow the examples from `~/client/landing/stepper/declarative-flow/internals/steps-repository`.
+Aside from the stories (run `yarn storybook:start`), you can follow the examples from `~/client/stepper/declarative-flow/internals/steps-repository`.
 
 Please do NOT override the `Step.*` components with CSS as this creates inconsistencies between steps and becomes a maintenance nightmare. Ideally, you should not need to do this as the steps are designed to be composed, and the wireframes are approved by the designers.
 

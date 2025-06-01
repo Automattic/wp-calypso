@@ -24,7 +24,6 @@ import {
 	DASHBOARD_A4A_SECTION_DEFINITION,
 } from 'calypso/dashboard/section';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
-import { STEPPER_SECTION_DEFINITION } from 'calypso/landing/stepper/section';
 import { SUBSCRIPTIONS_SECTION_DEFINITION } from 'calypso/landing/subscriptions/section';
 import { isInStepContainerV2FlowContext } from 'calypso/layout/utils';
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
@@ -56,6 +55,7 @@ import { getDocumentHeadMeta } from 'calypso/state/document-head/selectors';
 import initialReducer from 'calypso/state/reducer';
 import { setStore } from 'calypso/state/redux-store';
 import { deserialize } from 'calypso/state/utils';
+import { STEPPER_SECTION_DEFINITION } from 'calypso/stepper/section.js';
 import { pathToRegExp } from 'calypso/utils';
 import middlewareAssets from '../middleware/assets.js';
 import middlewareCache from '../middleware/cache.js';

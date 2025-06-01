@@ -6,10 +6,6 @@ import { chevronLeft } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { getQueryArg } from '@wordpress/url';
 import clsx from 'clsx';
-import {
-	LOCAL_STORAGE_KEY_FOR_PG_ID,
-	LOCAL_STORAGE_KEY_FOR_PG_ID_TS,
-} from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/playground/lib/initialize-playground';
 import { isGravatarOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { AccountCreateReturn } from 'calypso/lib/signup/api/type';
 import { isExistingAccountError } from 'calypso/lib/signup/is-existing-account-error';
@@ -17,6 +13,10 @@ import { addQueryArgs } from 'calypso/lib/url';
 import { useSelector } from 'calypso/state';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getIsWoo from 'calypso/state/selectors/get-is-woo';
+import {
+	LOCAL_STORAGE_KEY_FOR_PG_ID,
+	LOCAL_STORAGE_KEY_FOR_PG_ID_TS,
+} from 'calypso/stepper/declarative-flow/internals/steps-repository/playground/lib/initialize-playground';
 import PasswordlessSignupForm from './passwordless';
 import SocialSignupForm from './social';
 import './style.scss';

@@ -3,7 +3,7 @@ import { Page } from 'playwright';
 /**
  * Step name in site setup flow.
  *
- * @see client/landing/stepper/declarative-flow/site-setup-flow.ts for all step names
+ * @see client/stepper/declarative-flow/site-setup-flow.ts for all step names
  */
 export type StepName =
 	| 'goals'

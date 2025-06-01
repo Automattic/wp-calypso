@@ -14,7 +14,7 @@ jest.mock( '../components/home-content', () => () => (
 	<div data-testid="home-content">Home Content</div>
 ) );
 
-jest.mock( 'calypso/landing/stepper/utils/skip-launchpad', () => ( {
+jest.mock( 'calypso/stepper/utils/skip-launchpad', () => ( {
 	skipLaunchpad: jest.fn(),
 } ) );
 

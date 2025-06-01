@@ -1,7 +1,7 @@
 import { useRef } from 'react';
-import { shouldUseStepContainerV2 } from 'calypso/landing/stepper/declarative-flow/helpers/should-use-step-container-v2';
-import { DEFAULT_FLOW, getFlowFromURL } from 'calypso/landing/stepper/utils/get-flow-from-url';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
+import { shouldUseStepContainerV2 } from 'calypso/stepper/declarative-flow/helpers/should-use-step-container-v2';
+import { DEFAULT_FLOW, getFlowFromURL } from 'calypso/stepper/utils/get-flow-from-url';
 
 let lastScrollPosition = 0; // Used for calculating scroll direction.
 let sidebarTop = 0; // Current sidebar top position.

@@ -12,7 +12,7 @@ convertFlow();
  */
 function convertFlow() {
 	const passedFlowName = process.argv[ 2 ];
-	const flowsDir = resolve( __dirname, '../client/landing/stepper/declarative-flow' );
+	const flowsDir = resolve( __dirname, '../client/stepper/declarative-flow' );
 	const availableFlows = readdirSync( flowsDir ).filter( ( filename ) => {
 		return (
 			filename.endsWith( '.ts' ) &&

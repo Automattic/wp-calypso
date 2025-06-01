@@ -6,7 +6,7 @@ import { errorNotice } from 'calypso/state/notices/actions';
 import { follow, unfollow } from 'calypso/state/reader/follows/actions';
 import { isFollowing } from 'calypso/state/reader/follows/selectors';
 import { registerLastActionRequiresLogin } from 'calypso/state/reader-ui/actions';
-import { useResendEmailVerification } from '../../landing/stepper/hooks/use-resend-email-verification';
+import { useResendEmailVerification } from '../../stepper/hooks/use-resend-email-verification';
 import FollowButton from './button';
 
 function FollowButtonContainer( props ) {

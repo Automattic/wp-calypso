@@ -1,5 +1,5 @@
 import { useSelect } from '@wordpress/data';
-import { SITE_STORE } from 'calypso/landing/stepper/stores';
+import { SITE_STORE } from 'calypso/stepper/stores';
 import type { SiteSelect } from '@automattic/data-stores';
 
 /**

@@ -3,10 +3,10 @@ import { UniversalNavbarFooter, UniversalNavbarHeader } from '@automattic/wpcom-
 import { translate, fixMe } from 'i18n-calypso';
 import EmptyContent from 'calypso/components/empty-content';
 import Main from 'calypso/components/main';
-import { getLoginUrl } from 'calypso/landing/stepper/utils/path';
 import { WeeklyReportUnsubscribe } from 'calypso/performance-profiler/pages/weekly-report/unsubscribe';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
+import { getLoginUrl } from 'calypso/stepper/utils/path';
 import { TabTypes } from './components/header';
 import { PerformanceProfilerDashboardWrapper } from './pages/dashboard';
 import { WeeklyReport } from './pages/weekly-report';

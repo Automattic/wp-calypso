@@ -11,12 +11,12 @@ import InlineSupportLink from 'calypso/components/inline-support-link';
 import NavigationHeader from 'calypso/components/navigation-header';
 import PromoSection, { Props as PromoSectionProps } from 'calypso/components/promo-section';
 import WarningCard from 'calypso/components/warning-card';
-import { useSendEmailVerification } from 'calypso/landing/stepper/hooks/use-send-email-verification';
 import useScrollAboveElement from 'calypso/lib/use-scroll-above-element';
 import useWooCommerceOnPlansEligibility from 'calypso/signup/steps/woocommerce-install/hooks/use-woop-handling';
 import { useDispatch, useSelector } from 'calypso/state';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import getSiteOption from 'calypso/state/sites/selectors/get-site-option';
+import { useSendEmailVerification } from 'calypso/stepper/hooks/use-send-email-verification';
 import WooCommerceColophon from './woocommerce-colophon';
 
 import './style.scss';

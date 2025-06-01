@@ -6,8 +6,8 @@ import { render } from '@testing-library/react';
 import React from 'react';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
-import { buildDomainResponse } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/launchpad/test/lib/fixtures';
 import { whoisType } from 'calypso/lib/domains/whois/constants';
+import { buildDomainResponse } from 'calypso/stepper/declarative-flow/internals/steps-repository/launchpad/test/lib/fixtures';
 import EditContactInfoPageContent from '../edit-contact-info-page-content';
 
 describe( 'EditContactInfoPageContent', () => {

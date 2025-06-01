@@ -17,7 +17,6 @@ import useDomainDiagnosticsQuery from 'calypso/data/domains/diagnostics/use-doma
 import { useGetDomainsQuery } from 'calypso/data/domains/use-get-domains-query';
 import useHomeLayoutQuery, { getCacheKey } from 'calypso/data/home/use-home-layout-query';
 import useSkipCurrentViewMutation from 'calypso/data/home/use-skip-current-view-mutation';
-import { usePurchasePlanNotification } from 'calypso/landing/stepper/declarative-flow/internals/hooks/use-purchase-plan-notification';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { setDomainNotice } from 'calypso/lib/domains/set-domain-notice';
 import { preventWidows } from 'calypso/lib/formatting';
@@ -49,6 +48,7 @@ import {
 } from 'calypso/state/sites/selectors';
 import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { usePurchasePlanNotification } from 'calypso/stepper/declarative-flow/internals/hooks/use-purchase-plan-notification';
 import CelebrateLaunchModal from '../celebrate-launch-modal';
 import { FullScreenLaunchpad } from '../full-screen-launchpad';
 

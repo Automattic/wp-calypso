@@ -1,8 +1,8 @@
-import { getFlowFromURL } from 'calypso/landing/stepper/utils/get-flow-from-url';
 import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
 import { useExperiment, loadExperimentAssignment } from 'calypso/lib/explat';
 import isJetpackCheckout from 'calypso/lib/jetpack/is-jetpack-checkout';
 import { getSignupCompleteFlowName } from 'calypso/signup/storageUtils';
+import { getFlowFromURL } from 'calypso/stepper/utils/get-flow-from-url';
 
 const STREAMLINED_PRICE_EXPERIMENT_NAME = 'calypso_streamlined_plans_checkout';
 

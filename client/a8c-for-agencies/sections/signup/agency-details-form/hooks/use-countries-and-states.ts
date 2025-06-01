@@ -1,6 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
-import { useCountries } from 'calypso/landing/stepper/hooks/use-countries';
+import { useCountries } from 'calypso/stepper/hooks/use-countries';
 
 /**
  * List of countries Stripe allow state/area/province values for.

@@ -1,8 +1,8 @@
 import { BundledBadge } from '@automattic/components';
-import useIsUpdatedBadgeDesign from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/design-setup/hooks/use-is-updated-badge-design';
 import { useBundleSettingsByTheme } from 'calypso/my-sites/theme/hooks/use-bundle-settings';
 import { useSelector } from 'calypso/state';
 import { canUseTheme } from 'calypso/state/themes/selectors';
+import useIsUpdatedBadgeDesign from 'calypso/stepper/declarative-flow/internals/steps-repository/design-setup/hooks/use-is-updated-badge-design';
 import { useThemeTierBadgeContext } from './theme-tier-badge-context';
 import ThemeTierIncludedBadge from './theme-tier-included-badge';
 import ThemeTierUpgradeBadge from './theme-tier-upgrade-badge';

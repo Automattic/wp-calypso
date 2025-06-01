@@ -1,8 +1,6 @@
 import page from '@automattic/calypso-router';
 import { captureException } from '@automattic/calypso-sentry';
 import { fetchLaunchpad } from '@automattic/data-stores';
-import { areLaunchpadTasksCompleted } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/launchpad/task-helper';
-import { isRemovedFlow } from 'calypso/landing/stepper/utils/flow-redirect-handler';
 import { getQueryArgs } from 'calypso/lib/query-args';
 import { getSiteFragment } from 'calypso/lib/route';
 import { bumpStat } from 'calypso/state/analytics/actions';
@@ -20,6 +18,8 @@ import {
 	getSelectedSiteId,
 	getSelectedSite,
 } from 'calypso/state/ui/selectors';
+import { areLaunchpadTasksCompleted } from 'calypso/stepper/declarative-flow/internals/steps-repository/launchpad/task-helper';
+import { isRemovedFlow } from 'calypso/stepper/utils/flow-redirect-handler';
 import { redirectToLaunchpad } from 'calypso/utils';
 import CustomerHome from './main';
 

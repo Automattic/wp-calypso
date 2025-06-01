@@ -29,7 +29,6 @@ import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import LocaleSuggestions from 'calypso/components/locale-suggestions';
-import { startedInHostingFlow } from 'calypso/landing/stepper/utils/hosting-flow';
 import { addHotJarScript } from 'calypso/lib/analytics/hotjar';
 import {
 	recordSignupStart,
@@ -71,6 +70,7 @@ import {
 	getSitePlanName,
 } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { startedInHostingFlow } from 'calypso/stepper/utils/hosting-flow';
 import flows from './config/flows';
 import { getStepComponent } from './config/step-components';
 import steps from './config/steps';

@@ -5,7 +5,7 @@
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
-import { useSiteMigrationKey } from 'calypso/landing/stepper/hooks/use-site-migration-key';
+import { useSiteMigrationKey } from 'calypso/stepper/hooks/use-site-migration-key';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import MigrationOverview from '..';
 import type { SiteDetails } from '@automattic/data-stores';
@@ -40,7 +40,7 @@ jest.mock( 'calypso/state/ui/selectors', () => ( {
 	getSelectedSite: jest.fn(),
 } ) );
 
-jest.mock( 'calypso/landing/stepper/hooks/use-site-migration-key', () => ( {
+jest.mock( 'calypso/stepper/hooks/use-site-migration-key', () => ( {
 	useSiteMigrationKey: jest.fn(),
 } ) );
 

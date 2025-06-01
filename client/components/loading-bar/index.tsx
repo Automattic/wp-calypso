@@ -1,6 +1,6 @@
 import { useDispatch } from '@wordpress/data';
 import { useEffect, useState } from 'react';
-import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
+import { ONBOARD_STORE } from 'calypso/stepper/stores';
 import './style.scss';
 
 type LoadingBar = {

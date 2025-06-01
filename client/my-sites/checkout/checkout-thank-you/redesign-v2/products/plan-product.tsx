@@ -6,7 +6,6 @@ import { translate } from 'i18n-calypso';
 import moment from 'moment';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import ThankYouProduct from 'calypso/components/thank-you-v2/product';
-import { SITE_STORE } from 'calypso/landing/stepper/stores';
 import { getPurchaseByProductSlug } from 'calypso/lib/purchases/utils';
 import { useSelector } from 'calypso/state';
 import {
@@ -15,6 +14,7 @@ import {
 	isFetchingSitePurchases,
 } from 'calypso/state/purchases/selectors';
 import { ReceiptPurchase } from 'calypso/state/receipts/types';
+import { SITE_STORE } from 'calypso/stepper/stores';
 
 export type ThankYouPlanProductProps = {
 	purchase: ReceiptPurchase;

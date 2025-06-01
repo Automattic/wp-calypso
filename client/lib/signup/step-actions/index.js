@@ -9,7 +9,6 @@ import { isBlankCanvasDesign } from '@automattic/design-picker';
 import { guessTimezone, getLanguage } from '@automattic/i18n-utils';
 import debugFactory from 'debug';
 import { defer, difference, get, includes, isEmpty, pick, startsWith } from 'lodash';
-import { buildUpgradeFunction } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/unified-plans/util';
 import { recordRegistration } from 'calypso/lib/analytics/signup';
 import {
 	updatePrivacyForDomain,
@@ -48,6 +47,7 @@ import { getSiteId } from 'calypso/state/sites/selectors';
 import { THEMES_LOADING_CART } from 'calypso/state/themes/action-types';
 import { requestTheme } from 'calypso/state/themes/actions';
 import { isExternallyManagedTheme as getIsExternallyManagedTheme } from 'calypso/state/themes/selectors';
+import { buildUpgradeFunction } from 'calypso/stepper/declarative-flow/internals/steps-repository/unified-plans/util';
 
 const Visibility = Site.Visibility;
 const debug = debugFactory( 'calypso:signup:step-actions' );

@@ -18,7 +18,7 @@ import { type TranslateResult, useTranslate } from 'i18n-calypso';
 import { useState, useEffect, type PropsWithChildren } from 'react';
 import ButtonGroup from 'calypso/components/button-group';
 import { useSelectedPlanUpgradeMutation } from 'calypso/data/import-flow/use-selected-plan-upgrade';
-import { MigrationPlanFeatureList } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/site-migration-upgrade-plan/migration-plan-feature-list';
+import { MigrationPlanFeatureList } from 'calypso/stepper/declarative-flow/internals/steps-repository/site-migration-upgrade-plan/migration-plan-feature-list';
 import { UpgradePlanDetailsProps } from './types';
 import { UpgradePlanFeatureList } from './upgrade-plan-feature-list';
 import { UpgradePlanHostingDetails } from './upgrade-plan-hosting-details';

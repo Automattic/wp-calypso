@@ -2,7 +2,6 @@ import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { connect } from 'react-redux';
 import siteCopyIllustration from 'calypso/assets/images/customer-home/illustration--import-complete.svg';
-import { useSiteCopy } from 'calypso/landing/stepper/hooks/use-site-copy';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { preventWidows } from 'calypso/lib/formatting';
 import { navigate } from 'calypso/lib/navigate';
@@ -10,6 +9,7 @@ import { TASK_SITE_RESUME_COPY } from 'calypso/my-sites/customer-home/cards/cons
 import Task from 'calypso/my-sites/customer-home/cards/tasks/task';
 import { getSite, getSiteOption } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { useSiteCopy } from 'calypso/stepper/hooks/use-site-copy';
 
 const SiteResumeCopy = ( { siteSlug, sourceSite, sourceSiteSlug } ) => {
 	const translate = useTranslate();

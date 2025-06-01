@@ -95,15 +95,15 @@
 /packages/help-center @Automattic/t-rex
 
 # Onboarding
-/client/landing/stepper/declarative-flow/internals @Automattic/dotcom-stepper
-/client/landing/stepper/declarative-flow/helpers @Automattic/dotcom-stepper
-/client/landing/stepper/utils @Automattic/dotcom-stepper
-/client/landing/stepper/*.ts @Automattic/dotcom-stepper
-/client/landing/stepper/*.tsx @Automattic/dotcom-stepper
+/client/stepper/declarative-flow/internals @Automattic/dotcom-stepper
+/client/stepper/declarative-flow/helpers @Automattic/dotcom-stepper
+/client/stepper/utils @Automattic/dotcom-stepper
+/client/stepper/*.ts @Automattic/dotcom-stepper
+/client/stepper/*.tsx @Automattic/dotcom-stepper
 /packages/onboarding/src/step-container-v2 @Automattic/quake
 
 # Exclude Stepper steps
-/client/landing/stepper/declarative-flow/internals/steps-repository
+/client/stepper/declarative-flow/internals/steps-repository
 
 # DataViews
 /packages/dataviews @youknowriad @Automattic/io
