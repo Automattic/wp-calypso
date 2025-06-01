@@ -30,7 +30,7 @@ const SiteTransferAction = ( { site }: { site: Site } ) => {
 	);
 };
 
-const SiteReset = ( { site }: { site: Site } ) => {
+const SiteResetAction = ( { site }: { site: Site } ) => {
 	const [ isOpen, setIsOpen ] = useState( false );
 	return (
 		<>
@@ -97,11 +97,12 @@ const SiteDeleteAction = ( { site }: { site: Site } ) => {
 
 export default function DangerZone( { site }: { site: Site } ) {
 	const canTransferSite = useCanTransferSite( { site } );
+	const canResetSite = ! site.is_wpcom_staging_site;
 
 	const actions = [
 		canTransferSite && <SiteTransferAction key="transfer-site" site={ site } />,
 		<SiteLeaveAction key="leave-site" site={ site } />,
-		! site.is_wpcom_staging_site && <SiteReset key="reset-site" site={ site } />,
+		canResetSite && <SiteResetAction key="reset-site" site={ site } />,
 		showSiteDeleteAction( site ) && <SiteDeleteAction key="delete-site" site={ site } />,
 	].filter( Boolean );
 
