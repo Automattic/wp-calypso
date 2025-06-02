@@ -1,6 +1,13 @@
 @import "calypso/my-sites/stats/modernized-stats-table-styles";
 
+.stats__all-time-views-section {
+	.highlight-cards-list {
+		display: block;
+	}
+}
+
 // TODO: Consolidate the overlay styles back into the highlight card component.
+
 .highlight-card {
 	&.highlight-card--has-overlay {
 		.highlight-card-content {
