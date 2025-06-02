@@ -4,6 +4,8 @@ import {
 	TextareaControl,
 	CheckboxControl,
 	TextControl,
+	DatePicker,
+	Popover,
 } from '@wordpress/components';
 import { useState, useEffect, useRef } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
@@ -25,6 +27,7 @@ const MOCK_TIMEFRAMES = [
 	{ label: 'Last 30 days', value: 'last_30_days' },
 	{ label: 'Last 7 days', value: 'last_7_days' },
 	{ label: 'Last 24 hours', value: 'last_24_hours' },
+	{ label: 'Custom range', value: 'custom' },
 ];
 
 // Checkbox groups for Step 2
@@ -54,6 +57,10 @@ const BuildReport = () => {
 	const [ customIntroText, setCustomIntroText ] = useState( '' );
 	const [ sendMeACopy, setSendMeACopy ] = useState( false );
 	const [ teammateEmails, setTeammateEmails ] = useState( '' );
+	const [ startDate, setStartDate ] = useState< string | undefined >( undefined );
+	const [ endDate, setEndDate ] = useState< string | undefined >( undefined );
+	const [ isStartDatePickerOpen, setIsStartDatePickerOpen ] = useState( false );
+	const [ isEndDatePickerOpen, setIsEndDatePickerOpen ] = useState( false );
 
 	// Step 2: Pick Content State
 	const [ statsCheckedItems, setStatsCheckedItems ] = useState< CheckedItemsState >(
@@ -86,6 +93,31 @@ const BuildReport = () => {
 			}, 100 ); // Small delay to ensure field is rendered
 		}
 	}, [ sendMeACopy ] );
+
+	// Set default custom date range to yesterday and today if no dates are set
+	useEffect( () => {
+		if ( selectedTimeframe === 'custom' && ! startDate && ! endDate ) {
+			const today = new Date();
+			const yesterday = new Date( today );
+			yesterday.setDate( today.getDate() - 1 );
+
+			setStartDate( yesterday.toISOString().split( 'T' )[ 0 ] );
+			setEndDate( today.toISOString().split( 'T' )[ 0 ] );
+		}
+	}, [ selectedTimeframe, startDate, endDate ] );
+
+	// Helper function to format date for display
+	const formatDateForDisplay = ( dateString: string | undefined ) => {
+		if ( ! dateString ) {
+			return '';
+		}
+		const date = new Date( dateString );
+		return date.toLocaleDateString( 'en-US', {
+			year: 'numeric',
+			month: 'long',
+			day: 'numeric',
+		} );
+	};
 
 	const renderStepContent = () => {
 		switch ( currentStep ) {
@@ -126,6 +158,89 @@ const BuildReport = () => {
 							options={ MOCK_TIMEFRAMES }
 							onChange={ setSelectedTimeframe }
 						/>
+						{ selectedTimeframe === 'custom' && (
+							<div className="build-report__date-fields-container">
+								<div className="build-report__date-field">
+									<label htmlFor="start-date">{ translate( 'Report start date' ) }</label>
+									<div className="build-report__date-input-wrapper">
+										<TextControl
+											id="start-date"
+											value={ formatDateForDisplay( startDate ) }
+											placeholder={ translate( 'Select start date' ) }
+											onChange={ () => {} }
+											onClick={ () => setIsStartDatePickerOpen( true ) }
+											readOnly
+											className="build-report__date-input"
+										/>
+										{ isStartDatePickerOpen && (
+											<Popover
+												onClose={ () => setIsStartDatePickerOpen( false ) }
+												anchorRef={ undefined }
+												placement="bottom-start"
+												className="build-report__date-popover"
+											>
+												<DatePicker
+													currentDate={ startDate }
+													onChange={ ( date ) => {
+														setStartDate( date );
+														// If end date is set and is before or equal to the new start date,
+														// set end date to the day after start date
+														if ( endDate && new Date( date ) >= new Date( endDate ) ) {
+															const nextDay = new Date( date );
+															nextDay.setDate( nextDay.getDate() + 1 );
+															setEndDate( nextDay.toISOString().split( 'T' )[ 0 ] );
+														}
+														setIsStartDatePickerOpen( false );
+													} }
+												/>
+											</Popover>
+										) }
+									</div>
+								</div>
+								<div className="build-report__date-field">
+									<label htmlFor="end-date">{ translate( 'Report end date' ) }</label>
+									<div className="build-report__date-input-wrapper">
+										<TextControl
+											id="end-date"
+											value={ formatDateForDisplay( endDate ) }
+											placeholder={ translate( 'Select end date' ) }
+											onChange={ () => {} }
+											onClick={ () => setIsEndDatePickerOpen( true ) }
+											readOnly
+											className="build-report__date-input"
+										/>
+										{ isEndDatePickerOpen && (
+											<Popover
+												onClose={ () => setIsEndDatePickerOpen( false ) }
+												anchorRef={ undefined }
+												placement="bottom-start"
+												className="build-report__date-popover"
+											>
+												<DatePicker
+													currentDate={ endDate }
+													onChange={ ( date ) => {
+														setEndDate( date );
+														setIsEndDatePickerOpen( false );
+													} }
+													isInvalidDate={ ( date ) => {
+														// Disable dates before the start date
+														if ( ! startDate ) {
+															return false;
+														}
+														return new Date( date ) < new Date( startDate );
+													} }
+												/>
+											</Popover>
+										) }
+									</div>
+									{ startDate && endDate && new Date( endDate ) < new Date( startDate ) && (
+										<p className="build-report__date-error">
+											{ translate( 'End date must be after start date' ) }
+										</p>
+									) }
+								</div>
+							</div>
+						) }
 						<TextControl
 							label={ translate( 'Client email(s)' ) }
 							value={ clientEmail }
@@ -197,7 +312,11 @@ const BuildReport = () => {
 							{ translate( "We'll take it from there!" ) }
 						</p>
 
-						<Button variant="secondary" onClick={ () => alert( 'Send test report clicked' ) }>
+						<Button
+							variant="secondary"
+							onClick={ () => alert( 'Send test report clicked' ) }
+							className="build-report__preview-button"
+						>
 							{ translate( 'Send me a preview' ) }
 						</Button>
 					</>

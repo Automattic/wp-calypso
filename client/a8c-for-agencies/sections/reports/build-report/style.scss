@@ -65,4 +65,93 @@
 		margin-top: auto;
 		padding-block: 8px;
 	}
+
+	.build-report__date-fields-container {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 16px;
+
+		@media (max-width: 768px) {
+			grid-template-columns: 1fr;
+		}
+	}
+
+	.build-report__date-field {
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+
+		label {
+			@include body-medium;
+			font-weight: 500;
+			color: var( --color-text );
+		}
+
+		.build-report__date-input-wrapper {
+			position: relative;
+		}
+
+		.build-report__date-input {
+			.components-text-control__input {
+				cursor: pointer;
+				background-color: var( --color-surface );
+				border: 1px solid var( --color-neutral-20 );
+				border-radius: 4px;
+				padding: 8px 12px;
+
+				&:focus,
+				&:hover {
+					border-color: var( --color-primary );
+					box-shadow: 0 0 0 1px var( --color-primary );
+					outline: none;
+				}
+
+				&::placeholder {
+					color: var( --color-neutral-40 );
+				}
+			}
+		}
+
+		.components-datetime {
+			border: none;
+			background-color: var( --color-surface );
+
+			.components-datetime__date {
+				border: none;
+				background: transparent;
+			}
+
+			.components-datetime__date-header {
+				padding: 12px 16px;
+				border-bottom: 1px solid var( --color-neutral-10 );
+				background-color: var( --color-neutral-0 );
+			}
+
+			.components-datetime__calendar {
+				padding: 16px;
+			}
+		}
+
+		.components-button.is-primary {
+			background-color: var( --color-primary );
+			border-color: var( --color-primary );
+		}
+	}
+
+	.build-report__date-error {
+		@include body-small;
+		color: var( --color-error );
+		margin-top: 4px;
+		margin-bottom: 0;
+	}
+
+	.build-report__preview-button {
+		width: fit-content;
+	}
+}
+
+.build-report__date-popover {
+	.components-popover__content {
+		padding: 16px;
+	}
 }
