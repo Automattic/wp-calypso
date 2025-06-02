@@ -80,9 +80,12 @@ const ReportsOverview = () => {
 				<Button variant="primary" onClick={ handleBuildReport }>
 					{ translate( 'Build a new report' ) }
 				</Button>
+				<Button variant="secondary" onClick={ handleExampleReport }>
+					{ translate( 'View example report' ) }
+				</Button>
 			</div>
 		);
-	}, [ translate, handleBuildReport ] );
+	}, [ translate, handleBuildReport, handleExampleReport ] );
 
 	return (
 		<Layout className="reports-overview" title={ title } wide>
@@ -132,14 +135,6 @@ const ReportsOverview = () => {
 									'Reports turn raw data into clear stories. They highlight progress, justify fees, and create regular touchpoints that spark new goals. Each delivery invites a conversation, making upsells or scope expansion a natural, value-based next step for both sides.'
 								) }
 							</div>
-							<Button
-								__next40pxDefaultSize
-								href="#"
-								onClick={ handleExampleReport }
-								className="reports-overview__button--secondary"
-							>
-								{ translate( 'View an example report' ) }
-							</Button>
 						</div>
 					</PageSectionColumns.Column>
 					<PageSectionColumns.Column alignCenter>
