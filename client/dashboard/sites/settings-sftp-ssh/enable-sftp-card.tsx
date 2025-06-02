@@ -51,16 +51,17 @@ export default function EnableSftpCard( {
 	return (
 		<Card>
 			<CardBody>
-				<VStack spacing={ 6 }>
-					<Text as="p">
-						{ canUseSsh
-							? __(
-									"Access and edit your website's files directly by creating SFTP credentials and using an SFTP client. Optionally, enable SSH to perform advanced site operations using the command line."
-							  )
-							: __(
-									"Access and edit your website's files directly by creating SFTP credentials and using an SFTP client."
-							  ) }
-					</Text>
+				<Text variant="muted" lineHeight="20px" style={ { paddingBottom: '12px' } } as="p">
+					{ canUseSsh
+						? __(
+								"Access and edit your website's files directly by creating SFTP credentials and using an SFTP client. Optionally, enable SSH to perform advanced site operations using the command line."
+						  )
+						: __(
+								"Access and edit your website's files directly by creating SFTP credentials and using an SFTP client."
+						  ) }
+				</Text>
+				<VStack spacing={ 5 } style={ { padding: '8px 0' } }>
+					{ /* TODO: Replace the Panel with the Accordion component when it's ready */ }
 					<Panel>
 						<PanelBody title={ __( 'What is SFTP?' ) } initialOpen={ false }>
 							{ createInterpolateElement(
@@ -87,7 +88,7 @@ export default function EnableSftpCard( {
 							</PanelBody>
 						) }
 					</Panel>
-					<Text as="p">
+					<Text variant="muted" size="12px" lineHeight="16px" as="p">
 						{ createInterpolateElement(
 							__(
 								'<strong>Ready to access your website files?</strong> Keep in mind, if mistakes happen you can restore your last backup, but will lose changes made after the backup date.'
@@ -97,16 +98,16 @@ export default function EnableSftpCard( {
 							}
 						) }
 					</Text>
-					<HStack justify="flex-start">
-						<Button
-							variant="primary"
-							isBusy={ mutation.isPending }
-							onClick={ handleCreateCredentials }
-						>
-							{ __( 'Create credentials' ) }
-						</Button>
-					</HStack>
 				</VStack>
+				<HStack justify="flex-start" style={ { padding: '8px 0' } }>
+					<Button
+						variant="primary"
+						isBusy={ mutation.isPending }
+						onClick={ handleCreateCredentials }
+					>
+						{ __( 'Create credentials' ) }
+					</Button>
+				</HStack>
 			</CardBody>
 		</Card>
 	);
