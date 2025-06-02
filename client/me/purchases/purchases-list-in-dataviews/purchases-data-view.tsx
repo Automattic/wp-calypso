@@ -3,7 +3,7 @@ import { Gridicon, Card } from '@automattic/components';
 import { Purchases, SiteDetails } from '@automattic/data-stores';
 import { DESKTOP_BREAKPOINT } from '@automattic/viewport';
 import { useBreakpoint } from '@automattic/viewport-react';
-import { DataViews, View, filterSortAndPaginate } from '@wordpress/dataviews';
+import { DataViews, View, Filter, filterSortAndPaginate } from '@wordpress/dataviews';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo, useState } from 'react';
 import { MembershipSubscription } from 'calypso/lib/purchases/types';
@@ -28,6 +28,51 @@ export const purchasesDataView: View = {
 	layout: {},
 };
 
+function usePreservePurchasesFiltersInUrl( {
+	currentView,
+	setView,
+}: {
+	currentView: View;
+	setView: ( setter: ( currentView: View ) => View ) => void;
+} ) {
+	const urlSiteFilterKey = 'siteFilter';
+	const urlTypeFilterKey = 'typeFilter';
+	useEffect( () => {
+		const url = new URL( window.location.href );
+		const filters: Filter[] = [];
+		const siteFilterValue = url.searchParams.get( urlSiteFilterKey );
+		const typeFilterValue = url.searchParams.get( urlTypeFilterKey );
+		if ( siteFilterValue ) {
+			filters.push( { value: parseInt( siteFilterValue ), operator: 'is', field: 'site' } );
+		}
+		if ( typeFilterValue ) {
+			filters.push( { value: typeFilterValue, operator: 'is', field: 'type' } );
+		}
+		if ( filters.length > 0 ) {
+			setView( ( currentView ) => ( {
+				...currentView,
+				filters,
+			} ) );
+		}
+	}, [ setView ] );
+	useEffect( () => {
+		const url = new URL( window.location.href );
+		const siteFilter = currentView.filters?.find( ( filter ) => filter.field === 'site' );
+		if ( siteFilter ) {
+			url.searchParams.set( urlSiteFilterKey, siteFilter.value );
+		} else {
+			url.searchParams.delete( urlSiteFilterKey );
+		}
+		const typeFilter = currentView.filters?.find( ( filter ) => filter.field === 'type' );
+		if ( typeFilter ) {
+			url.searchParams.set( urlTypeFilterKey, typeFilter.value );
+		} else {
+			url.searchParams.delete( urlTypeFilterKey );
+		}
+		window.history.replaceState( {}, '', url );
+	}, [ currentView ] );
+}
+
 export function PurchasesDataViews( {
 	purchases,
 	sites,
@@ -38,6 +83,7 @@ export function PurchasesDataViews( {
 	const isDesktop = useBreakpoint( DESKTOP_BREAKPOINT );
 	const translate = useTranslate();
 	const [ currentView, setView ] = useState( purchasesDataView );
+
 	// Hide fields at mobile width
 	useEffect( () => {
 		if ( isDesktop && currentView.fields === purchasesMobileFields ) {
@@ -49,8 +95,11 @@ export function PurchasesDataViews( {
 			return;
 		}
 	}, [ isDesktop, currentView, setView ] );
-	const purchasesDataFields = usePurchasesFieldDefinitions( { sites } );
 
+	// Keep track of the current view params in the URL and restore them when the page loads.
+	usePreservePurchasesFiltersInUrl( { currentView, setView } );
+
+	const purchasesDataFields = usePurchasesFieldDefinitions( { sites } );
 	const { data: adjustedPurchases, paginationInfo } = useMemo( () => {
 		return filterSortAndPaginate( purchases, currentView, purchasesDataFields );
 	}, [ purchases, currentView, purchasesDataFields ] );
