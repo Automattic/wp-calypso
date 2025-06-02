@@ -202,11 +202,7 @@ export default function CachingSettings( { siteSlug }: { siteSlug: string } ) {
 									size="compact"
 									onClick={ handleClearAllCaches }
 									isBusy={ isClearingAllCaches }
-									disabled={
-										edgeCacheClearMutation.isPending ||
-										objectCacheClearMutation.isPending ||
-										isClearingAllCaches
-									}
+									disabled={ isClearingAllCaches }
 								>
 									{ __( 'Clear all' ) }
 								</Button>
