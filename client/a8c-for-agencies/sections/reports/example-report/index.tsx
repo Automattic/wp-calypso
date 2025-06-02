@@ -170,7 +170,7 @@ const ReportCard = ( { title, value, children, className, icon }: ReportCardProp
 
 const ExampleReport = () => {
 	const translate = useTranslate();
-	const agencyName = 'Pixel Perfect WordPress';
+	const agencyName = 'Blue Peak Digital';
 
 	// Mock data
 	const reportData = {
