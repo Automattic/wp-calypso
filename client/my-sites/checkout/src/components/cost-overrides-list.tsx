@@ -418,7 +418,8 @@ function SingleProductAndCostOverridesList( { product }: { product: ResponseCart
 			isSmallestUnit: true,
 			stripZeros: true,
 		} );
-		const itemSubtotalInteger = product.item_subtotal_integer;
+		const itemSubtotalInteger =
+			product.item_subtotal_integer + ( product.coupon_savings_integer ?? 0 );
 		streamlinedActualAmountDisplay = formatCurrency( itemSubtotalInteger, product.currency, {
 			isSmallestUnit: true,
 			stripZeros: true,
@@ -427,6 +428,8 @@ function SingleProductAndCostOverridesList( { product }: { product: ResponseCart
 			itemSubtotalInteger < originalAmountInteger && originalAmountDisplay
 		);
 
+		// For WPCOM plans always show the renewal amount for legal reasons.
+		// Introductory offer discount would be shown in LineItemCostOverrides.
 		if ( ! isDiscounted || isWpComPlan( product.product_slug ) ) {
 			streamlinedActualAmountDisplay = actualAmountDisplay;
 		}
