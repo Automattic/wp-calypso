@@ -61,7 +61,7 @@ export const IntervalTypeDropdown: React.FunctionComponent< IntervalTypeProps > 
 				} }
 				className="plan-type-selector__interval-type-dropdown"
 				label=""
-				describedBy={ describedByText }
+				describedBy={ describedByText as string }
 				options={ selectOptionsList }
 				value={ selectedOption }
 				onChange={ ( {
