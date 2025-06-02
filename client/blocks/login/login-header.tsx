@@ -12,8 +12,8 @@ import {
 	isA4AOAuth2Client,
 	isBlazeProOAuth2Client,
 	isGravatarFlowOAuth2Client,
-	isGravatarOAuth2Client,
 	isPartnerPortalOAuth2Client,
+	isWPJobManagerOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import './login-header.scss';
 
@@ -73,7 +73,12 @@ export function getHeaderText(
 	let headerText = translate( 'Log in to your account' );
 
 	if ( isSocialFirst ) {
-		const clientName = isFromAkismet ? 'Akismet' : oauth2Client?.name;
+		let clientName = oauth2Client?.name;
+		if ( isFromAkismet ) {
+			clientName = 'Akismet';
+		} else if ( isWPJobManagerOAuth2Client( oauth2Client ) ) {
+			clientName = 'WP Job Manager';
+		}
 
 		headerText = clientName
 			? ( fixMe( {
@@ -163,12 +168,6 @@ export function getHeaderText(
 			}
 		}
 
-		if ( isGravPoweredClient ) {
-			headerText = translate( 'Login to %(clientTitle)s', {
-				args: { clientTitle: oauth2Client.title },
-			} );
-		}
-
 		if ( isBlazeProOAuth2Client( oauth2Client ) ) {
 			headerText = translate( 'Log in to your Blaze Pro account' );
 		}
@@ -201,7 +200,6 @@ export function LoginHeader( {
 	isFromAkismet,
 	isFromAutomatticForAgenciesPlugin,
 	isGravPoweredClient,
-	isGravPoweredLoginPage,
 	isJetpack,
 	isManualRenewalImmediateLoginAttempt,
 	isSocialFirst,
@@ -372,28 +370,6 @@ export function LoginHeader( {
 					) }
 				</p>
 			);
-		}
-
-		if ( isGravPoweredClient ) {
-			if ( isGravPoweredLoginPage ) {
-				const isFromGravatar3rdPartyApp =
-					isGravatarOAuth2Client( oauth2Client ) && currentQuery?.gravatar_from === '3rd-party';
-				const isFromGravatarQuickEditor =
-					isGravatarOAuth2Client( oauth2Client ) && currentQuery?.gravatar_from === 'quick-editor';
-				const isGravatarFlowWithEmail = !! (
-					isGravatarFlowOAuth2Client( oauth2Client ) && currentQuery?.email_address
-				);
-
-				postHeader = (
-					<p className="login__header-subtitle">
-						{ isFromGravatar3rdPartyApp || isFromGravatarQuickEditor || isGravatarFlowWithEmail
-							? translate( 'Please log in with your email and password.' )
-							: translate(
-									'If you prefer logging in with a password, or a social media account, choose below:'
-							  ) }
-					</p>
-				);
-			}
 		}
 
 		if ( isBlazeProOAuth2Client( oauth2Client ) ) {

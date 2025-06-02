@@ -29,7 +29,6 @@ import {
 	canDoMagicLogin,
 	getLoginLinkPageUrl,
 } from 'calypso/lib/login';
-import { isGravatarFlowOAuth2Client, isGravatarOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/url';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -1046,13 +1045,6 @@ export class LoginForm extends Component {
 			currentQuery,
 			oauth2Client
 		);
-		const isFromGravatar3rdPartyApp =
-			isGravatarOAuth2Client( oauth2Client ) && currentQuery?.gravatar_from === '3rd-party';
-		const isFromGravatarQuickEditor =
-			isGravatarOAuth2Client( oauth2Client ) && currentQuery?.gravatar_from === 'quick-editor';
-		const isGravatarFlowWithEmail = !! (
-			isGravatarFlowOAuth2Client( oauth2Client ) && currentQuery?.email_address
-		);
 
 		const showLastUsedAuthenticationMethod =
 			lastUsedAuthenticationMethod &&
@@ -1063,10 +1055,7 @@ export class LoginForm extends Component {
 		const shouldShowSocialLoginForm =
 			config.isEnabled( 'signup/social' ) &&
 			! isFromAutomatticForAgenciesReferralClient &&
-			! isCoreProfilerLostPasswordFlow &&
-			! isFromGravatar3rdPartyApp &&
-			! isFromGravatarQuickEditor &&
-			! isGravatarFlowWithEmail;
+			! isCoreProfilerLostPasswordFlow;
 
 		if ( isJetpack ) {
 			return (
