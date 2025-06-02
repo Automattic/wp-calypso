@@ -170,6 +170,7 @@ const ReportCard = ( { title, value, children, className, icon }: ReportCardProp
 
 const ExampleReport = () => {
 	const translate = useTranslate();
+	const agencyName = 'Pixel Perfect WordPress';
 
 	// Mock data
 	const reportData = {
@@ -215,7 +216,8 @@ const ExampleReport = () => {
 			<div className="example-report__content">
 				<div className="example-report__header">
 					<div className="example-report__header-content">
-						<p className="example-report__date">{ translate( 'SITE UPDATE' ) }</p>
+						<p className="example-report__date">{ translate( 'SITE UPDATE FROM' ) }</p>
+						<p className="example-report__date">{ agencyName }</p>
 						<p className="example-report__date">{ reportData.dateRange }</p>
 						<h1>{ reportData.siteName }</h1>
 						<p className="example-report__url">{ reportData.siteUrl }</p>
@@ -314,11 +316,8 @@ const ExampleReport = () => {
 
 					<div className="example-report__section-title-container">
 						<h2 className="example-report__section-title example-report__section-title--flush">
-							{ translate( 'Total' ) }
+							{ translate( 'All time' ) }
 						</h2>
-						<p className="example-report__blurb">
-							{ translate( 'Since site created on WordPress.com or Jetpack installed' ) }
-						</p>
 					</div>
 					<div className="example-report__grid">
 						<ReportCard
@@ -342,6 +341,9 @@ const ExampleReport = () => {
 							icon={ <PopularDayIcon /> }
 						/>
 					</div>
+				</div>
+				<div className="example-report__footer">
+					{ translate( 'Brought to you by %s', { args: agencyName } ) }
 				</div>
 			</div>
 		</div>

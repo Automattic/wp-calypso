@@ -110,6 +110,10 @@
 	}
 }
 
+.example-report__grid:last-child {
+	margin-bottom: 24px;
+}
+
 .example-report__card {
 	background-color: var( --color-surface );
 	border: 1px solid var( --color-neutral-10 );
@@ -175,4 +179,12 @@
 	@include body-medium;
 	margin-bottom: 0;
 	margin-top: 8px;
+}
+
+.example-report__footer {
+	background-color: var( --studio-gray-0 );
+	@include body-small;
+	color: var( --studio-gray-70 );
+	text-align: left;
+	padding: 24px;
 }

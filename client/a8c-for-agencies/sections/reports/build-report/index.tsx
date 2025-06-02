@@ -39,10 +39,6 @@ const STATS_OPTIONS = [
 	{ label: 'Most popular day of week', value: 'most_popular_day_of_week' },
 ];
 
-const SECURITY_OPTIONS = [ { label: 'Backups made in this timeframe', value: 'backups_made' } ];
-
-const PERFORMANCE_OPTIONS = [ { label: 'Uptime information', value: 'uptime_info' } ];
-
 type CheckedItemsState = Record< string, boolean >;
 
 const BuildReport = () => {
@@ -63,29 +59,18 @@ const BuildReport = () => {
 	const [ statsCheckedItems, setStatsCheckedItems ] = useState< CheckedItemsState >(
 		STATS_OPTIONS.reduce( ( acc, item ) => ( { ...acc, [ item.value ]: true } ), {} )
 	);
-	const [ securityCheckedItems, setSecurityCheckedItems ] = useState< CheckedItemsState >(
-		SECURITY_OPTIONS.reduce( ( acc, item ) => ( { ...acc, [ item.value ]: true } ), {} )
-	);
-	const [ performanceCheckedItems, setPerformanceCheckedItems ] = useState< CheckedItemsState >(
-		PERFORMANCE_OPTIONS.reduce( ( acc, item ) => ( { ...acc, [ item.value ]: true } ), {} )
-	);
 
 	// Step 3: Schedule and Send State
 	const [ currentStep, setCurrentStep ] = useState( 1 );
 	const handleNextStep = () => setCurrentStep( ( prev ) => prev + 1 );
 	const handlePrevStep = () => setCurrentStep( ( prev ) => prev - 1 );
 
-	const handleStep2CheckboxChange = (
-		groupKey: 'stats' | 'security' | 'performance',
-		itemName: string
-	) => {
+	const handleStep2CheckboxChange = ( groupKey: 'stats', itemName: string ) => {
 		const setterMap: Record<
 			string,
 			React.Dispatch< React.SetStateAction< CheckedItemsState > >
 		> = {
 			stats: setStatsCheckedItems,
-			security: setSecurityCheckedItems,
-			performance: setPerformanceCheckedItems,
 		};
 		setterMap[ groupKey ]?.( ( prev: CheckedItemsState ) => ( {
 			...prev,
@@ -131,7 +116,7 @@ const BuildReport = () => {
 							value={ clientEmail }
 							onChange={ setClientEmail }
 							type="email"
-							help={ translate( 'We’ll email the report here. Use commas to separate addresses.' ) }
+							help={ translate( "We'll email the report here. Use commas to separate addresses." ) }
 						/>
 						<CheckboxControl
 							label={ translate( 'Also send to your team' ) }
@@ -178,26 +163,6 @@ const BuildReport = () => {
 								label={ item.label }
 								checked={ statsCheckedItems[ item.value ] }
 								onChange={ () => handleStep2CheckboxChange( 'stats', item.value ) }
-								className="build-report__checkbox-control"
-							/>
-						) ) }
-						<h3 className="build-report__group-label">{ translate( 'Security' ) }</h3>
-						{ SECURITY_OPTIONS.map( ( item ) => (
-							<CheckboxControl
-								key={ item.value }
-								label={ item.label }
-								checked={ securityCheckedItems[ item.value ] }
-								onChange={ () => handleStep2CheckboxChange( 'security', item.value ) }
-								className="build-report__checkbox-control"
-							/>
-						) ) }
-						<h3 className="build-report__group-label">{ translate( 'Performance' ) }</h3>
-						{ PERFORMANCE_OPTIONS.map( ( item ) => (
-							<CheckboxControl
-								key={ item.value }
-								label={ item.label }
-								checked={ performanceCheckedItems[ item.value ] }
-								onChange={ () => handleStep2CheckboxChange( 'performance', item.value ) }
 								className="build-report__checkbox-control"
 							/>
 						) ) }
