@@ -31,7 +31,6 @@ import { Mail } from '../icons';
 import { HelpCenterClosureNotice } from './help-center-closure-notice';
 import HelpCenterContactSupportOption from './help-center-contact-support-option';
 import { HelpCenterActiveTicketNotice } from './help-center-notice';
-import { generateContactOnClickEvent } from './utils';
 import './help-center-contact-page.scss';
 
 /**
@@ -132,7 +131,14 @@ export const HelpCenterContactPage: FC< HelpCenterContactPageProps > = ( {
 			<div className="help-center-contact-support">
 				<Link
 					to={ emailUrl }
-					onClick={ () => generateContactOnClickEvent( 'email', trackEventName, isUserEligible ) }
+					onClick={ () =>
+						recordTracksEvent( 'calypso_helpcenter_contact_options_click', {
+							location: 'help-center',
+							section: sectionName,
+							contact_option: 'email',
+							is_user_eligible: isUserEligible,
+						} )
+					}
 				>
 					<div
 						className={ clsx( 'help-center-contact-support__box', 'email' ) }
