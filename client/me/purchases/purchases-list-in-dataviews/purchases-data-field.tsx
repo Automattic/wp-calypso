@@ -152,6 +152,26 @@ export function getPurchasesFieldDefinitions( {
 			},
 		},
 		{
+			id: 'type',
+			label: translate( 'Type' ),
+			type: 'text',
+			elements: [
+				{ value: 'domain', label: translate( 'Domains' ) },
+				{ value: 'plan', label: translate( 'Plan' ) },
+				{ value: 'other', label: translate( 'Other' ) },
+			],
+			filterBy: { operators: [ 'is' ], isPrimary: true },
+			getValue: ( { item } ) => {
+				if ( item.isDomain || item.isDomainRegistration ) {
+					return 'domain';
+				}
+				if ( item.productType === 'bundle' ) {
+					return 'plan';
+				}
+				return 'other';
+			},
+		},
+		{
 			id: 'status',
 			label: translate( 'Status' ),
 			type: 'text',
