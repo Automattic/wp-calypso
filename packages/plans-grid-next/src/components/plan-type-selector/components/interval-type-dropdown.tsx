@@ -1,5 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { CustomSelectControl } from '@wordpress/components';
+import { useTranslate } from 'i18n-calypso';
 import { useRef } from 'react';
 import DropdownOption from '../../dropdown-option';
 import useIntervalOptions from '../hooks/use-interval-options';
@@ -19,6 +20,7 @@ export const IntervalTypeDropdown: React.FunctionComponent< IntervalTypeProps > 
 	) as SupportedUrlFriendlyTermType;
 	const optionsList = useIntervalOptions( props );
 	const hasOpenedDropdown = useRef( false );
+	const translate = useTranslate();
 
 	const selectOptionsList = Object.values( optionsList ).map( ( option ) => ( {
 		key: option.key,
@@ -36,8 +38,12 @@ export const IntervalTypeDropdown: React.FunctionComponent< IntervalTypeProps > 
 	} ) );
 
 	const selectedOption = selectOptionsList.find( ( { key } ) => key === supportedIntervalType );
+	// Translators: This is a description of the currently selected billing period for accessibility.
+	// billingPeriod is the name of the billing period and it's translated.
 	const describedByText = selectedOption?.accessibleName
-		? `Currently selected billing period:: ${ selectedOption.accessibleName }`
+		? translate( 'Currently selected billing period: %(billingPeriod)s', {
+				args: { billingPeriod: selectedOption.accessibleName },
+		  } )
 		: undefined;
 
 	return (
