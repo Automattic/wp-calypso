@@ -24,7 +24,7 @@ export default function ReportsDashboard() {
 			</LayoutTop>
 			<LayoutBody className="a4a-reports-content">
 				<div className="a4a-reports__main-content">
-					<h1>{ translate( 'Reports Dashboard' ) }</h1>
+					<h1>{ title }</h1>
 				</div>
 			</LayoutBody>
 		</Layout>

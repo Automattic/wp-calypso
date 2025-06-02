@@ -2,9 +2,9 @@ import { type Callback } from '@automattic/calypso-router';
 import PageViewTracker from 'calypso/a8c-for-agencies/components/a4a-page-view-tracker';
 import ReportsSidebar from 'calypso/a8c-for-agencies/components/sidebar-menu/reports';
 import SidebarPlaceholder from 'calypso/a8c-for-agencies/components/sidebar-placeholder';
-import ReportsDashboard from './dashboard';
 import ReportsLanding from './landing';
-import ReportsOverview from './overview';
+import ReportsDashboard from './primary/dashboard';
+import ReportsOverview from './primary/overview';
 
 export const reportsLandingContext: Callback = ( context, next ) => {
 	context.primary = <ReportsLanding />;
