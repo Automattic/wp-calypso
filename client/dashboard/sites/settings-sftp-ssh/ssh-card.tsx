@@ -4,6 +4,7 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
+	BaseControl,
 	Button,
 	Card,
 	CardBody,
@@ -26,6 +27,50 @@ import {
 } from '../../app/queries';
 import ClipboardInputControl from './clipboard-input-control';
 import type { SftpUser, SiteSshKey, ProfileSshKey } from '../../data/types';
+
+const SshKeyCard = ( {
+	siteSshKey,
+	userLocale,
+	isBusy,
+	onDetach,
+}: {
+	siteSshKey: SiteSshKey;
+	userLocale: string;
+	isBusy: boolean;
+	onDetach: ( siteSshKey: SiteSshKey ) => void;
+} ) => {
+	return (
+		<Card>
+			<CardBody>
+				<HStack spacing={ 4 } justify="space-between" alignment="flex-start">
+					<VStack spacing={ 3 } alignment="flex-start">
+						<VStack spacing={ 1 }>
+							<Text>{ `${ siteSshKey.user_login }-${ siteSshKey.name }` }</Text>
+							<Text variant="muted">{ siteSshKey.sha256 }</Text>
+						</VStack>
+						<CoreBadge intent="info" style={ { height: '24px' } }>
+							{ sprintf(
+								/* translators: %s is when the SSH key was attached. */
+								__( 'Attached on %s' ),
+								new Intl.DateTimeFormat( userLocale, {
+									dateStyle: 'long',
+									timeStyle: 'medium',
+								} ).format( new Date( siteSshKey.attached_at ) )
+							) }
+						</CoreBadge>
+					</VStack>
+					<Button
+						icon={ trash }
+						label={ __( 'Detach' ) }
+						isBusy={ isBusy }
+						style={ { margin: '-6px' } }
+						onClick={ () => onDetach( siteSshKey ) }
+					/>
+				</HStack>
+			</CardBody>
+		</Card>
+	);
+};
 
 export default function SshCard( {
 	siteSlug,
@@ -78,115 +123,90 @@ export default function SshCard( {
 	return (
 		<Card>
 			<CardBody>
-				<VStack spacing={ 5 }>
-					<VStack>
-						<Text size="15px" weight={ 500 } lineHeight="32px">
-							{ __( 'SSH' ) }
-						</Text>
-						<Text variant="muted" as="p">
-							{ createInterpolateElement(
-								__(
-									"SSH lets you access your site's backend via a terminal, so you can manage files and use <wpCliLink>WP-CLI</wpCliLink> for quick changes and troubleshooting. <learnMoreLink>Learn more</learnMoreLink>."
-								),
-								{
-									wpCliLink: <ExternalLink href="#" children={ null } />,
-									learnMoreLink: <ExternalLink href="#hosting-connect-to-ssh" children={ null } />,
-								}
-							) }
-						</Text>
-					</VStack>
-					<VStack spacing={ 4 }>
-						<ToggleControl
-							label={ __( 'Enable SSH access for this site' ) }
-							checked={ sshEnabled }
-							disabled={ toggleSshAccessMutation.isPending }
-							onChange={ handleToggleSshAccess }
-							__nextHasNoMarginBottom
-						/>
-						{ sshEnabled && (
-							<>
-								<ClipboardInputControl
-									label={ __( 'Connection command' ) }
-									value={ `ssh ${ username }@ssh.wp.com` }
-									readOnly
-									__next40pxDefaultSize
-								/>
-
-								{ siteSshKeys && siteSshKeys.length > 0 && (
-									<>
-										<Text>{ __( 'SSH Key' ) }</Text>
-										<VStack>
-											{ siteSshKeys.map( ( siteSshKey: SiteSshKey ) => (
-												<Card key={ siteSshKey.sha256 }>
-													<CardBody>
-														<HStack spacing={ 4 } justify="space-between" alignment="flex-start">
-															<VStack spacing={ 3 } alignment="flex-start">
-																<VStack spacing={ 1 }>
-																	<Text>{ `${ siteSshKey.user_login }-${ siteSshKey.name }` }</Text>
-																	<Text variant="muted">{ siteSshKey.sha256 }</Text>
-																</VStack>
-																<CoreBadge intent="info" style={ { height: '24px' } }>
-																	{ sprintf(
-																		/* translators: %s is when the SSH key was attached. */
-																		__( 'Attached on %s' ),
-																		new Intl.DateTimeFormat( userLocale, {
-																			dateStyle: 'long',
-																			timeStyle: 'medium',
-																		} ).format( new Date( siteSshKey.attached_at ) )
-																	) }
-																</CoreBadge>
-															</VStack>
-															<Button
-																icon={ trash }
-																label={ __( 'Detach' ) }
-																isBusy={ detachSshKeyMutation.isPending }
-																onClick={ () => handleDetachSshKey( siteSshKey ) }
-															/>
-														</HStack>
-													</CardBody>
-												</Card>
-											) ) }
-										</VStack>
-									</>
-								) }
-								{ /* TODO: Use DataForm and add ReauthRequired */ }
-								{ showSshKeysSelect && (
-									<>
-										<SelectControl
-											label={ __( 'SSH key' ) }
-											value={ selectedSshKey }
-											options={ profileSshKeys.map( ( profileSshKey: ProfileSshKey ) => ( {
-												label: `${ user.username }-${ profileSshKey.name }`,
-												value: profileSshKey.name,
-											} ) ) }
-											onChange={ handleSelectedSshKeyChange }
-											__next40pxDefaultSize
-											__nextHasNoMarginBottom
-										/>
-
-										<HStack justify="flex-start">
-											<Button
-												variant="primary"
-												isBusy={ attachSshKeyMutation.isPending }
-												onClick={ handleAttachSshKey }
-											>
-												{ __( 'Attach SSH key to site' ) }
-											</Button>
-											<Button
-												variant="secondary"
-												target="_blank"
-												href="/me/security/ssh-key"
-												rel="noreferrer"
-											>
-												{ __( 'Add new SSH key ↗' ) }
-											</Button>
-										</HStack>
-									</>
-								) }
-							</>
+				<VStack style={ { paddingBottom: '12px' } }>
+					<Text size="15px" weight={ 500 } lineHeight="32px">
+						{ __( 'SSH' ) }
+					</Text>
+					<Text variant="muted" as="p">
+						{ createInterpolateElement(
+							__(
+								"SSH lets you access your site's backend via a terminal, so you can manage files and use <wpCliLink>WP-CLI</wpCliLink> for quick changes and troubleshooting. <learnMoreLink>Learn more</learnMoreLink>."
+							),
+							{
+								wpCliLink: <ExternalLink href="#" children={ null } />,
+								learnMoreLink: <ExternalLink href="#hosting-connect-to-ssh" children={ null } />,
+							}
 						) }
-					</VStack>
+					</Text>
 				</VStack>
+				<VStack spacing={ 4 } style={ { padding: '8px 0' } }>
+					<ToggleControl
+						label={ __( 'Enable SSH access for this site' ) }
+						checked={ sshEnabled }
+						disabled={ toggleSshAccessMutation.isPending }
+						onChange={ handleToggleSshAccess }
+						__nextHasNoMarginBottom
+					/>
+					{ sshEnabled && (
+						<>
+							<ClipboardInputControl
+								label={ __( 'Connection command' ) }
+								value={ `ssh ${ username }@ssh.wp.com` }
+								readOnly
+								__next40pxDefaultSize
+							/>
+
+							{ siteSshKeys && siteSshKeys.length > 0 && (
+								<BaseControl label={ __( 'SSH Key' ) } __nextHasNoMarginBottom>
+									<VStack>
+										{ siteSshKeys.map( ( siteSshKey: SiteSshKey ) => (
+											<SshKeyCard
+												key={ siteSshKey.sha256 }
+												siteSshKey={ siteSshKey }
+												userLocale={ userLocale }
+												isBusy={ detachSshKeyMutation.isPending }
+												onDetach={ handleDetachSshKey }
+											/>
+										) ) }
+									</VStack>
+								</BaseControl>
+							) }
+							{ /* TODO: Use DataForm and add ReauthRequired */ }
+							{ showSshKeysSelect && (
+								<SelectControl
+									label={ __( 'SSH key' ) }
+									value={ selectedSshKey }
+									options={ profileSshKeys.map( ( profileSshKey: ProfileSshKey ) => ( {
+										label: `${ user.username }-${ profileSshKey.name }`,
+										value: profileSshKey.name,
+									} ) ) }
+									onChange={ handleSelectedSshKeyChange }
+									__next40pxDefaultSize
+									__nextHasNoMarginBottom
+								/>
+							) }
+						</>
+					) }
+				</VStack>
+				{ showSshKeysSelect && (
+					<HStack justify="flex-start" style={ { padding: '8px 0' } }>
+						<Button
+							variant="primary"
+							isBusy={ attachSshKeyMutation.isPending }
+							onClick={ handleAttachSshKey }
+						>
+							{ __( 'Attach SSH key to site' ) }
+						</Button>
+						<Button
+							variant="secondary"
+							target="_blank"
+							href="/me/security/ssh-key"
+							rel="noreferrer"
+						>
+							{ __( 'Add new SSH key ↗' ) }
+						</Button>
+					</HStack>
+				) }
 			</CardBody>
 		</Card>
 	);
