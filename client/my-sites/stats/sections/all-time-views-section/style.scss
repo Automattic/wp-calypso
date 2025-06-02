@@ -7,16 +7,11 @@
 
 	.highlight-card-heading {
 		flex-wrap: wrap;
-		gap: 16px
+		gap: 8px 16px;
 	}
 
-	.highlight-card-heading > * {
-		flex: 1;
-		min-width: fit-content;
-	}
-
-	.highlight-card-heading__title {
-		flex-grow: 999999; // An arbitrary large number to ensure it takes up available space.
+	.segmented-control {
+		margin-left: auto;
 	}
 }
 
