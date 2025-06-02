@@ -4,6 +4,20 @@
 	.highlight-cards-list {
 		display: block;
 	}
+
+	.highlight-card-heading {
+		flex-wrap: wrap;
+		gap: 16px
+	}
+
+	.highlight-card-heading > * {
+		flex: 1;
+		min-width: fit-content;
+	}
+
+	.highlight-card-heading__title {
+		flex-grow: 999999; // An arbitrary large number to ensure it takes up available space.
+	}
 }
 
 // TODO: Consolidate the overlay styles back into the highlight card component.
