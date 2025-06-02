@@ -32,7 +32,13 @@ export const IntervalTypeDropdown: React.FunctionComponent< IntervalTypeProps > 
 				) : null }
 			</DropdownOption>
 		 ) as unknown as string,
+		accessibleName: option.name as string,
 	} ) );
+
+	const selectedOption = selectOptionsList.find( ( { key } ) => key === supportedIntervalType );
+	const describedByText = selectedOption?.accessibleName
+		? `Currently selected: ${ selectedOption.accessibleName }`
+		: undefined;
 
 	return (
 		<div className="plan-type-selector__interval-type-dropdown-container">
@@ -49,8 +55,9 @@ export const IntervalTypeDropdown: React.FunctionComponent< IntervalTypeProps > 
 				} }
 				className="plan-type-selector__interval-type-dropdown"
 				label=""
+				describedBy={ describedByText }
 				options={ selectOptionsList }
-				value={ selectOptionsList.find( ( { key } ) => key === supportedIntervalType ) }
+				value={ selectedOption }
 				onChange={ ( {
 					selectedItem: { key: intervalType },
 				}: {
