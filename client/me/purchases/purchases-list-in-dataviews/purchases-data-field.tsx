@@ -94,7 +94,18 @@ export function getPurchasesFieldDefinitions( {
 			enableGlobalSearch: true,
 			enableSorting: true,
 			enableHiding: false,
+			elements: Object.values( sites ?? {} ).map( ( site ) => {
+				// This has to match the format of `getValue()` for filtering to work.
+				const key = `${ site.name } (${ site.URL })`;
+				return { value: key, label: key };
+			} ),
+			filterBy: { operators: [ 'is' ], isPrimary: true },
 			getValue: ( { item }: { item: Purchases.Purchase } ) => {
+				const site = sites?.[ item.siteId ];
+				// This format has to match the `elements` for filtering to work.
+				if ( site ) {
+					return `${ site.name } (${ site.URL })`;
+				}
 				return item.siteName;
 			},
 			// Render the site icon
