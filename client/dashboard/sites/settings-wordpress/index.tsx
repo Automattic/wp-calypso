@@ -20,9 +20,9 @@ import {
 	siteWordPressVersionMutation,
 } from '../../app/queries';
 import PageLayout from '../../components/page-layout';
+import { canUpdateWordPressVersion } from '../../utils/site-features';
 import { getFormattedWordPressVersion } from '../../utils/wp-version';
 import SettingsPageHeader from '../settings-page-header';
-import { canUpdateWordPressVersion } from './utils';
 import type { Field } from '@automattic/dataviews';
 
 export default function WordPressVersionSettings( { siteSlug }: { siteSlug: string } ) {

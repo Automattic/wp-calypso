@@ -3,8 +3,8 @@ import { Icon } from '@wordpress/components';
 import { wordpress } from '@wordpress/icons';
 import { siteWordPressVersionQuery } from '../../app/queries';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
+import { canUpdateWordPressVersion } from '../../utils/site-features';
 import { getFormattedWordPressVersion } from '../../utils/wp-version';
-import { canUpdateWordPressVersion } from './utils';
 import type { Site } from '../../data/types';
 import type { Density } from '@automattic/components/src/summary-button/types';
 

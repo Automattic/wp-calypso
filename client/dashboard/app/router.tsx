@@ -6,11 +6,13 @@ import {
 	createLazyRoute,
 } from '@tanstack/react-router';
 import { fetchTwoStep } from '../data';
-import { canUpdateDefensiveMode } from '../sites/settings-defensive-mode';
-import { canUpdatePHPVersion } from '../sites/settings-php/utils';
-import { canGetPrimaryDataCenter } from '../sites/settings-primary-data-center';
-import { canSetStaticFile404Handling } from '../sites/settings-static-file-404';
-import { canUpdateWordPressVersion } from '../sites/settings-wordpress/utils';
+import {
+	canUpdatePHPVersion,
+	canUpdateDefensiveMode,
+	canUpdateWordPressVersion,
+	canGetPrimaryDataCenter,
+	canSetStaticFile404Handling,
+} from '../utils/site-features';
 import NotFound from './404';
 import UnknownError from './500';
 import {

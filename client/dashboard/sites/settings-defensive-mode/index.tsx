@@ -18,13 +18,10 @@ import { useState } from 'react';
 import { siteQuery, siteDefensiveModeQuery, siteDefensiveModeMutation } from '../../app/queries';
 import Notice from '../../components/notice';
 import PageLayout from '../../components/page-layout';
+import { canUpdateDefensiveMode } from '../../utils/site-features';
 import SettingsPageHeader from '../settings-page-header';
-import type { DefensiveModeSettingsUpdate, Site } from '../../data/types';
+import type { DefensiveModeSettingsUpdate } from '../../data/types';
 import type { Field } from '@automattic/dataviews';
-
-export function canUpdateDefensiveMode( site: Site ) {
-	return site.is_wpcom_atomic;
-}
 
 const availableTtls = [
 	{

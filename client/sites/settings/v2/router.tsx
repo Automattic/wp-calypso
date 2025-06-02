@@ -18,11 +18,13 @@ import {
 	siteWordPressVersionQuery,
 } from 'calypso/dashboard/app/queries';
 import { queryClient } from 'calypso/dashboard/app/query-client';
-import { canUpdateDefensiveMode } from 'calypso/dashboard/sites/settings-defensive-mode';
-import { canUpdatePHPVersion } from 'calypso/dashboard/sites/settings-php/utils';
-import { canGetPrimaryDataCenter } from 'calypso/dashboard/sites/settings-primary-data-center';
-import { canSetStaticFile404Handling } from 'calypso/dashboard/sites/settings-static-file-404';
-import { canUpdateWordPressVersion } from 'calypso/dashboard/sites/settings-wordpress/utils';
+import {
+	canGetPrimaryDataCenter,
+	canSetStaticFile404Handling,
+	canUpdatePHPVersion,
+	canUpdateDefensiveMode,
+	canUpdateWordPressVersion,
+} from 'calypso/dashboard/utils/site-features';
 import Root from './root';
 
 const rootRoute = createRootRoute( { component: Root } );

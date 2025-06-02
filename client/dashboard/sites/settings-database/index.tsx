@@ -18,15 +18,11 @@ import { useState } from 'react';
 import { siteQuery } from '../../app/queries';
 import PageLayout from '../../components/page-layout';
 import { fetchPhpMyAdminToken } from '../../data';
+import { canAccessPhpMyAdmin } from '../../utils/site-features';
 import SettingsCallout from '../settings-callout';
 import SettingsPageHeader from '../settings-page-header';
 import calloutIllustrationUrl from './callout-illustration.svg';
 import ResetPasswordModal from './reset-password-modal';
-import type { Site } from '../../data/types';
-
-export function canOpenPhpMyAdmin( site: Site ) {
-	return site.is_wpcom_atomic;
-}
 
 export default function SiteDatabaseSettings( { siteSlug }: { siteSlug: string } ) {
 	const { data: site } = useQuery( siteQuery( siteSlug ) );
@@ -38,7 +34,7 @@ export default function SiteDatabaseSettings( { siteSlug }: { siteSlug: string }
 		return null;
 	}
 
-	if ( ! canOpenPhpMyAdmin( site ) ) {
+	if ( ! canAccessPhpMyAdmin( site ) ) {
 		return (
 			<PageLayout
 				size="small"
