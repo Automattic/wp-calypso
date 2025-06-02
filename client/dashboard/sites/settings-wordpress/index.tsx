@@ -7,7 +7,6 @@ import {
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
 	Button,
-	Notice,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
@@ -19,6 +18,7 @@ import {
 	siteWordPressVersionQuery,
 	siteWordPressVersionMutation,
 } from '../../app/queries';
+import Notice from '../../components/notice';
 import PageLayout from '../../components/page-layout';
 import { getFormattedWordPressVersion } from '../../utils/wp-version';
 import SettingsPageHeader from '../settings-page-header';
@@ -111,29 +111,29 @@ export default function WordPressVersionSettings( { siteSlug }: { siteSlug: stri
 
 	const renderNotice = () => {
 		return (
-			<Notice isDismissible={ false }>
-				<Text>
-					{ site.is_wpcom_atomic
-						? createInterpolateElement(
-								sprintf(
-									// translators: %s: WordPress version, e.g. 6.8
-									__(
-										'Every WordPress.com site runs the latest WordPress version (%s). For testing purposes, you can switch to the beta version of the next WordPress release on <a>your staging site</a>.'
-									),
-									getFormattedWordPressVersion( site )
+			<Notice>
+				<VStack>
+					<Text as="p">
+						{ sprintf(
+							// translators: %s: WordPress version, e.g. 6.8
+							__( 'Every WordPress.com site runs the latest WordPress version (%s).' ),
+							getFormattedWordPressVersion( site )
+						) }
+					</Text>
+					{ site.is_wpcom_atomic && (
+						<Text as="p">
+							{ createInterpolateElement(
+								__(
+									'Switch to a <a>staging site</a> to test a beta version of the next WordPress release.'
 								),
 								{
-									// TODO: use correct staging site URL when it's available.
-									// eslint-disable-next-line jsx-a11y/anchor-is-valid
-									a: <a href="#" />,
+									// TODO: use correct v2 staging site URL when it's available.
+									a: <a href={ `/staging-site/${ site.slug }` } />,
 								}
-						  )
-						: sprintf(
-								// translators: %s: WordPress version, e.g. 6.8
-								__( 'Every WordPress.com site runs the latest WordPress version (%s).' ),
-								getFormattedWordPressVersion( site )
-						  ) }
-				</Text>
+							) }
+						</Text>
+					) }
+				</VStack>
 			</Notice>
 		);
 	};
