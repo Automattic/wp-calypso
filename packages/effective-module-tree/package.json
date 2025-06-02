@@ -20,7 +20,7 @@
 	"dependencies": {
 		"debug": "^4.4.1",
 		"object-treeify": "^1.1.33",
-		"yargs": "^17.0.1"
+		"yargs": "^17.7.2"
 	},
 	"devDependencies": {
 		"@automattic/calypso-eslint-overrides": "workspace:^",

@@ -321,7 +321,7 @@
 		"webpack-cli": "^4.10.0",
 		"webpack-dev-middleware": "^5.3.4",
 		"whybundled": "^2.0.0",
-		"yargs": "^17.0.1"
+		"yargs": "^17.7.2"
 	},
 	"resolutions": {
 		"@types/react": "^18.3.21",

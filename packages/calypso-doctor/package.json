@@ -19,7 +19,7 @@
 	"bin": "./cli.js",
 	"dependencies": {
 		"chalk": "^4.1.2",
-		"yargs": "^17.0.1"
+		"yargs": "^17.7.2"
 	},
 	"devDependencies": {
 		"@automattic/calypso-eslint-overrides": "workspace:^",
