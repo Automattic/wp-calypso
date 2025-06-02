@@ -23,7 +23,7 @@ function PurchaseItemRowProduct( props: {
 } ) {
 	const { purchase, translate } = props;
 	const site = useSelector( ( state ) => getSite( state, purchase.siteId ?? 0 ) );
-	const slug = purchase.siteName ?? purchase.siteId;
+	const slug = site?.domain ?? undefined;
 	return (
 		<PurchaseItemProduct
 			purchase={ purchase }
