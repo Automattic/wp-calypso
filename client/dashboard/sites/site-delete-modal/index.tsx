@@ -135,7 +135,7 @@ function SiteDeleteConfirmContent( { site, onClose }: { site: Site; onClose: () 
 			id: 'domain',
 			label: __( 'Type the site domain to confirm' ),
 			type: 'text' as const,
-			description: sprintf(
+			help: sprintf(
 				/* translators: %s: site domain */
 				__( 'The site domain is: %s' ),
 				site.slug

@@ -27,7 +27,7 @@ const fields: Field< { setting: string } >[] = [
 		id: 'setting',
 		label: __( 'Server response' ),
 		Edit: 'select',
-		description: __(
+		help: __(
 			'Assets are images, fonts, JavaScript, and CSS files that web browsers request as part of loading a web page. This setting controls how the web server handles requests for missing asset files.'
 		),
 		elements: [
