@@ -6,6 +6,7 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs, getQueryArg, getQueryArgs, removeQueryArgs } from '@wordpress/url';
 import { useState, useEffect } from 'react';
 import { isSimplifiedOnboarding } from 'calypso/landing/stepper/hooks/use-simplified-onboarding';
+import { skipLaunchpad } from 'calypso/landing/stepper/utils/skip-launchpad';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { pathToUrl } from 'calypso/lib/url';
 import {
@@ -237,13 +238,19 @@ const onboarding: FlowV2< typeof initialize > = {
 					const [ destination, backDestination ] =
 						await getPostCheckoutDestination( providedDependencies );
 					if ( providedDependencies.processingResult === ProcessingResult.SUCCESS ) {
+						const siteId = providedDependencies.siteId as number;
+						const siteSlug = providedDependencies.siteSlug as string;
+
 						persistSignupDestination( destination );
 						setSignupCompleteFlowName( flowName );
 						setSignupCompleteSlug( providedDependencies.siteSlug );
 
-						if ( providedDependencies.goToCheckout ) {
-							const siteSlug = providedDependencies.siteSlug as string;
+						await skipLaunchpad( {
+							siteId,
+							siteSlug,
+						} );
 
+						if ( providedDependencies.goToCheckout ) {
 							/**
 							 * If the user comes from the Playground onboarding flow,
 							 * redirect the user back to Playground to start the import.
@@ -252,7 +259,7 @@ const onboarding: FlowV2< typeof initialize > = {
 							const redirectTo: string = playgroundId
 								? addQueryArgs( withLocale( '/setup/site-setup/importerPlayground', locale ), {
 										siteSlug,
-										siteId: providedDependencies.siteId,
+										siteId,
 										playground: playgroundId,
 								  } )
 								: addQueryArgs(
