@@ -127,7 +127,7 @@ const BuildReport = () => {
 							onChange={ setSelectedTimeframe }
 						/>
 						<TextControl
-							label={ translate( 'Client email' ) }
+							label={ translate( 'Client email(s)' ) }
 							value={ clientEmail }
 							onChange={ setClientEmail }
 							type="email"
@@ -141,7 +141,7 @@ const BuildReport = () => {
 						{ sendMeACopy && (
 							<div ref={ teammateEmailsRef }>
 								<TextControl
-									label={ translate( 'Teammate emails' ) }
+									label={ translate( 'Teammate email(s)' ) }
 									value={ teammateEmails }
 									onChange={ setTeammateEmails }
 									type="text"
