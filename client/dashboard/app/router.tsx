@@ -10,6 +10,7 @@ import { canUpdateCaching } from '../sites/settings-caching';
 import {
 	canUpdatePHPVersion,
 	canUpdateDefensiveMode,
+	canUpdateHundredYearPlanFeatures,
 	canUpdateWordPressVersion,
 	canGetPrimaryDataCenter,
 	canSetStaticFile404Handling,
@@ -224,6 +225,23 @@ const siteSettingsAgencyRoute = createRoute( {
 } ).lazy( () =>
 	import( '../sites/settings-agency' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-agency' )( {
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+		} )
+	)
+);
+
+const siteSettingsHundredYearPlanRoute = createRoute( {
+	getParentRoute: () => siteRoute,
+	path: 'settings/hundred-year-plan',
+	loader: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteQuery( siteSlug ) );
+		if ( canUpdateHundredYearPlanFeatures( site ) ) {
+			await queryClient.ensureQueryData( siteSettingsQuery( siteSlug ) );
+		}
+	},
+} ).lazy( () =>
+	import( '../sites/settings-hundred-year-plan' ).then( ( d ) =>
+		createLazyRoute( 'site-settings-hundred-year-plan' )( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )
 	)
@@ -477,6 +495,7 @@ const createRouteTree = ( config: AppConfig ) => {
 				siteSettingsWordPressRoute,
 				siteSettingsPHPRoute,
 				siteSettingsAgencyRoute,
+				siteSettingsHundredYearPlanRoute,
 				siteSettingsPrimaryDataCenterRoute,
 				siteSettingsStaticFile404Route,
 				siteSettingsCachingRoute,
