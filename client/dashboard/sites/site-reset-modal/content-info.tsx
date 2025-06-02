@@ -1,19 +1,19 @@
 import { __experimentalText as Text } from '@wordpress/components';
 import { __, _n, sprintf } from '@wordpress/i18n';
-import { SiteContent } from '../../data/types';
+import { SiteResetContentSummary } from '../../data/types';
 
 interface ContentItem {
 	text: string;
 	url?: string;
 }
 
-type ContentType = [ keyof SiteContent, string, string ];
+type ContentType = [ keyof SiteResetContentSummary, string, string ];
 
 export default function ContentInfo( {
 	siteContent,
 	siteDomain,
 }: {
-	siteContent: SiteContent;
+	siteContent: SiteResetContentSummary;
 	siteDomain: string;
 } ) {
 	const types: ContentType[] = [

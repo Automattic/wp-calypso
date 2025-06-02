@@ -21,7 +21,7 @@ import {
 } from '../../app/queries';
 import Notice from '../../components/notice';
 import ContentInfo from './content-info';
-import type { Site, SiteContent, SiteResetStatus } from '../../data/types';
+import type { Site, SiteResetContentSummary, SiteResetStatus } from '../../data/types';
 import type { Field } from '@automattic/dataviews';
 
 import './style.scss';
@@ -61,7 +61,7 @@ function SiteResetContent( {
 	onClose,
 }: {
 	site: Site;
-	siteContent: SiteContent;
+	siteContent: SiteResetContentSummary;
 	siteDomain: string;
 	isBusy: boolean;
 	onSubmit: () => void;
@@ -154,7 +154,9 @@ export default function SiteResetModal( { site, onClose }: { site: Site; onClose
 	const { createSuccessNotice } = useDispatch( noticesStore );
 	const [ error, setError ] = useState< string | null >( null );
 
-	const { data: siteContent } = useQuery< SiteContent >( siteResetContentSummaryQuery( site.ID ) );
+	const { data: siteContentSummary } = useQuery< SiteResetContentSummary >(
+		siteResetContentSummaryQuery( site.ID )
+	);
 
 	const statusQuery = {
 		...siteResetStatusQuery( site.ID ),
@@ -196,7 +198,7 @@ export default function SiteResetModal( { site, onClose }: { site: Site; onClose
 		}
 	}, [ resetStatus?.status, showSuccessNotice, onClose ] );
 
-	if ( ! siteContent || ! resetStatus ) {
+	if ( ! siteContentSummary || ! resetStatus ) {
 		return null;
 	}
 
@@ -243,7 +245,7 @@ export default function SiteResetModal( { site, onClose }: { site: Site; onClose
 			content: (
 				<SiteResetContent
 					site={ site }
-					siteContent={ siteContent }
+					siteContent={ siteContentSummary }
 					siteDomain={ site.slug }
 					isBusy={ isMutationPending }
 					onSubmit={ handleReset }

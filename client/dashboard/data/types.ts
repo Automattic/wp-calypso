@@ -213,7 +213,7 @@ export interface SiteTransferConfirmation {
 	new_owner_email: string;
 }
 
-export type SiteContent = {
+export type SiteResetContentSummary = {
 	post_count: number;
 	page_count: number;
 	media_count: number;

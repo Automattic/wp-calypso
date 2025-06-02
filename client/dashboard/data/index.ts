@@ -16,7 +16,7 @@ import type {
 	BasicMetricsData,
 	SiteSettings,
 	UrlPerformanceInsights,
-	SiteContent,
+	SiteResetContentSummary,
 	SiteResetStatus,
 	PhpMyAdminToken,
 	DefensiveModeSettings,
@@ -573,7 +573,7 @@ export const fetchP2HubP2s = async (
 
 export const fetchSiteResetContentSummary = async (
 	siteIdOrSlug: string
-): Promise< SiteContent > => {
+): Promise< SiteResetContentSummary > => {
 	return wpcom.req.get( {
 		path: `/sites/${ siteIdOrSlug }/reset-site/content-summary`,
 		apiNamespace: 'wpcom/v2',
