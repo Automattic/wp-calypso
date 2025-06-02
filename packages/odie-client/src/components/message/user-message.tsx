@@ -128,7 +128,9 @@ export const UserMessage = ( {
 			{ ! isConnectedToZendesk && (
 				<>
 					{ showDirectEscalationLink && <DirectEscalationLink messageId={ message.message_id } /> }
-					<WasThisHelpfulButtons message={ message } isDisliked={ isDisliked } />
+					{ ! message.rating_value && (
+						<WasThisHelpfulButtons message={ message } isDisliked={ isDisliked } />
+					) }
 				</>
 			) }
 		</>
