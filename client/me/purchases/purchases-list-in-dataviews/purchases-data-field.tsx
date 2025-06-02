@@ -75,10 +75,6 @@ export function getPurchasesFieldDefinitions( {
 		( paymentMethod ) => paymentMethod.is_backup === true
 	);
 
-	const getSiteValue = ( site: SiteDetails ): string => {
-		return `${ site.name } (${ site.domain })`;
-	};
-
 	const fields: Fields< Purchases.Purchase > = [
 		{
 			id: 'purchase-id',
@@ -99,17 +95,11 @@ export function getPurchasesFieldDefinitions( {
 			enableSorting: true,
 			enableHiding: false,
 			elements: sites.map( ( site ) => {
-				// This has to match the format of `getValue()` for filtering to work.
-				return { value: getSiteValue( site ), label: getSiteValue( site ) };
+				return { value: site.ID, label: `${ site.name } (${ site.domain })` };
 			} ),
 			filterBy: { operators: [ 'is' ], isPrimary: true },
 			getValue: ( { item }: { item: Purchases.Purchase } ) => {
-				const site = sites.find( ( site ) => site.ID === item.siteId );
-				// This format has to match the `elements` for filtering to work.
-				if ( site ) {
-					return getSiteValue( site );
-				}
-				return item.siteName;
+				return item.siteId;
 			},
 			// Render the site icon
 			render: ( { item }: { item: Purchases.Purchase } ) => {
