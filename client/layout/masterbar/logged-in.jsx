@@ -698,7 +698,6 @@ class MasterbarLoggedIn extends Component {
 						args: { display_name: user.display_name },
 					} ) }
 				</span>
-				{ /* translators: This is a description of the user's gravatar for accessibility. */ }
 				<Gravatar
 					className="masterbar__item-howdy-gravatar"
 					alt=" "
