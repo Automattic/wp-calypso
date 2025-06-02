@@ -37,7 +37,7 @@ export const IntervalTypeDropdown: React.FunctionComponent< IntervalTypeProps > 
 
 	const selectedOption = selectOptionsList.find( ( { key } ) => key === supportedIntervalType );
 	const describedByText = selectedOption?.accessibleName
-		? `Currently selected: ${ selectedOption.accessibleName }`
+		? `Currently selected billing period:: ${ selectedOption.accessibleName }`
 		: undefined;
 
 	return (
