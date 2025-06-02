@@ -138,6 +138,7 @@ export function CheckoutSummaryFeaturedList( {
 	) => void;
 } ) {
 	const translate = useTranslate();
+	const [ , streamlinedPriceExperimentAssignment ] = useStreamlinedPriceExperiment();
 
 	// Return early if the cart is only Chargebacks fees
 	if ( responseCart.products.every( isChargeback || isCredits ) ) {
@@ -155,17 +156,19 @@ export function CheckoutSummaryFeaturedList( {
 
 	return (
 		<>
-			<CheckoutSummaryFeatures className="checkout__summary-features">
-				<CheckoutSummaryFeaturesTitle>
-					{ responseCart.is_gift_purchase
-						? translate( 'WordPress.com Gift Subscription' )
-						: translate( 'Included with your purchase' ) }
-				</CheckoutSummaryFeaturesTitle>
-				<CheckoutSummaryFeaturesWrapper
-					siteId={ siteId }
-					nextDomainIsFree={ responseCart.next_domain_is_free }
-				/>
-			</CheckoutSummaryFeatures>
+			{ ! isStreamlinedPriceCheckoutTreatment( streamlinedPriceExperimentAssignment ) && (
+				<CheckoutSummaryFeatures className="checkout__summary-features">
+					<CheckoutSummaryFeaturesTitle>
+						{ responseCart.is_gift_purchase
+							? translate( 'WordPress.com Gift Subscription' )
+							: translate( 'Included with your purchase' ) }
+					</CheckoutSummaryFeaturesTitle>
+					<CheckoutSummaryFeaturesWrapper
+						siteId={ siteId }
+						nextDomainIsFree={ responseCart.next_domain_is_free }
+					/>
+				</CheckoutSummaryFeatures>
+			) }
 			{ ! isCartUpdating && ! hasRenewalInCart && ! isWcMobile && plan && hasMonthlyPlanInCart && (
 				<CheckoutSummaryAnnualUpsell plan={ plan } onChangeSelection={ onChangeSelection } />
 			) }

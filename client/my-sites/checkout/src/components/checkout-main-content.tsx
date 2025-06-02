@@ -403,8 +403,7 @@ export default function CheckoutMainContent( {
 
 	const leaveModalProps = useCheckoutLeaveModal( { siteUrl: siteUrl ?? '' } );
 
-	const [ isStreamlinedPriceExperimentLoading, streamlinedPriceExperimentAssignment ] =
-		useStreamlinedPriceExperiment();
+	const [ , streamlinedPriceExperimentAssignment ] = useStreamlinedPriceExperiment();
 
 	const searchParams = new URLSearchParams( window.location.search );
 	const isDIFMInCart = hasDIFMProduct( responseCart );
@@ -641,10 +640,7 @@ export default function CheckoutMainContent( {
 							<WPCheckoutOrderSummary
 								siteId={ siteId }
 								onChangeSelection={ changeSelection }
-								showFeaturesList={
-									! isStreamlinedPriceExperimentLoading &&
-									! isStreamlinedPriceCheckoutTreatment( streamlinedPriceExperimentAssignment )
-								}
+								showFeaturesList
 							/>
 							<CheckoutSidebarNudge
 								addItemToCart={ addItemToCart }
