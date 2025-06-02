@@ -299,16 +299,11 @@ interface RangeProps {
 	 */
 	excludeDisabled?: boolean;
 	/**
-	 * The minimum number of days to include in the range.
-	 * For example, a value of `1` will require the user to specify a range of
-	 * at least 2 days, preventing the user from having a range starting and
-	 * ending on the same day.
+	 * The minimum number of nights to include in the range.
 	 */
 	min?: number;
 	/**
-	 * The maximum number of days to include in the range.
-	 * For example, a value of `6` will allow the user to select a range of up
-	 * to a week (ie. Tuesday to Monday).
+	 * The maximum number of nights to include in the range.
 	 */
 	max?: number;
 	/** The selected range. */
