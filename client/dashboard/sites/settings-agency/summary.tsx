@@ -41,7 +41,7 @@ export default function SettingsAgencySummary( {
 					: {
 							text: __( 'WordPress.com features enabled' ),
 							intent: 'info',
-					},
+					  },
 			] }
 		/>
 	);
