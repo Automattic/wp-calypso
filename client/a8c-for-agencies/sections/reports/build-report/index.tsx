@@ -153,7 +153,7 @@ const BuildReport = () => {
 							/>
 						</div>
 						<SelectControl
-							label={ translate( 'Date range' ) }
+							label={ translate( 'Report date range' ) }
 							value={ selectedTimeframe }
 							options={ MOCK_TIMEFRAMES }
 							onChange={ setSelectedTimeframe }
@@ -161,10 +161,10 @@ const BuildReport = () => {
 						{ selectedTimeframe === 'custom' && (
 							<div className="build-report__date-fields-container">
 								<div className="build-report__date-field">
-									<label htmlFor="start-date">{ translate( 'Report start date' ) }</label>
 									<div className="build-report__date-input-wrapper">
 										<TextControl
 											id="start-date"
+											label={ translate( 'Start date' ) }
 											value={ formatDateForDisplay( startDate ) }
 											placeholder={ translate( 'Select start date' ) }
 											onChange={ () => {} }
@@ -198,10 +198,10 @@ const BuildReport = () => {
 									</div>
 								</div>
 								<div className="build-report__date-field">
-									<label htmlFor="end-date">{ translate( 'Report end date' ) }</label>
 									<div className="build-report__date-input-wrapper">
 										<TextControl
 											id="end-date"
+											label={ translate( 'End date' ) }
 											value={ formatDateForDisplay( endDate ) }
 											placeholder={ translate( 'Select end date' ) }
 											onChange={ () => {} }

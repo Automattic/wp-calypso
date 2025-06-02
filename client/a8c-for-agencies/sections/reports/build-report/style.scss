@@ -81,11 +81,6 @@
 		flex-direction: column;
 		gap: 8px;
 
-		label {
-			@include body-medium;
-			font-weight: 500;
-			color: var( --color-text );
-		}
 
 		.build-report__date-input-wrapper {
 			position: relative;
