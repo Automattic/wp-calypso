@@ -13,6 +13,7 @@
 
 - `Tabs`: make local copy of private wp components version ([#103515](https://github.com/Automattic/wp-calypso/pull/103515)).
 - `Tabs`: convert to (S)CSS modules ([#103710](https://github.com/Automattic/wp-calypso/pull/103710)).
+- Update `@ariakit/react` to `0.4.17` and `@ariakit/test` to `0.4.10` ([#103858](https://github.com/Automattic/wp-calypso/pull/103858)).
 
 ## 2.3.0
 
