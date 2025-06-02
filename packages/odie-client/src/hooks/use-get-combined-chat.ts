@@ -37,7 +37,7 @@ export const useGetCombinedChat = ( canConnectToZendesk: boolean ) => {
 	const getZendeskConversation = useGetZendeskConversation();
 	const { data: odieChat, isFetching: isOdieChatLoading } = useOdieChat( Number( odieId ) );
 	const { startNewInteraction } = useManageSupportInteraction();
-	const canFetchConversation = false; //conversationId && canConnectToZendesk;
+	const canFetchConversation = conversationId && canConnectToZendesk;
 
 	useEffect( () => {
 		if ( ! currentSupportInteraction || isOdieChatLoading || chatStatus !== 'loading' ) {
