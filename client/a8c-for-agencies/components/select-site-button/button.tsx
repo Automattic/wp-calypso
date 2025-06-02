@@ -4,12 +4,14 @@ import { useCallback, useState } from 'react';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import SelectSiteModal from './modal';
+import type { ReactNode } from 'react';
 
 export type SelectSiteButtonProps = {
 	onSiteSelect: ( siteId: number, siteDomain: string ) => void;
 	buttonLabel?: string;
 	modalTitle?: string;
 	modalSubtitle?: string;
+	helpText?: ReactNode;
 	trackingEvent?: string;
 	className?: string;
 };
@@ -19,6 +21,7 @@ const SelectSiteButton = ( {
 	buttonLabel,
 	modalTitle,
 	modalSubtitle,
+	helpText,
 	trackingEvent = 'calypso_select_site_button_click',
 	className,
 }: SelectSiteButtonProps ) => {
@@ -47,7 +50,7 @@ const SelectSiteButton = ( {
 					onClose={ () => setIsOpen( false ) }
 					onSiteSelect={ onSiteSelect }
 					title={ modalTitle }
-					subtitle={ modalSubtitle }
+					subtitle={ helpText || modalSubtitle }
 				/>
 			) }
 		</>

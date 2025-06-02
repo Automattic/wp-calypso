@@ -6,12 +6,13 @@ import { A4A_SITES_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import SelectSiteTable, { type SiteItem } from './site-table';
+import type { ReactNode } from 'react';
 
 type SelectSiteModalProps = {
 	onClose: () => void;
 	onSiteSelect: ( siteId: number, siteDomain: string ) => void;
 	title?: string;
-	subtitle?: string;
+	subtitle?: ReactNode;
 };
 
 const SelectSiteModal = ( { onClose, onSiteSelect, title, subtitle }: SelectSiteModalProps ) => {

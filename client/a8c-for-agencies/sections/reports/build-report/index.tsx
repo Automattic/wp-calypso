@@ -102,6 +102,21 @@ const BuildReport = () => {
 							<SelectSiteButton
 								onSiteSelect={ ( _siteId, siteDomain ) => setSelectedSite( siteDomain ) }
 								buttonLabel={ selectedSite || translate( 'Choose a site to report on' ) }
+								helpText={
+									<>
+										{ translate(
+											"If you don't see the site in the list, connect it first via the "
+										) }
+										<a href="/sites" target="_blank" rel="noopener noreferrer">
+											{ translate( 'Sites Dashboard' ) }
+										</a>
+										{ translate( '.' ) }
+										<br />
+										{ translate(
+											'Only live WordPress.com sites or Pressable sites with Jetpack installed are supported.'
+										) }
+									</>
+								}
 								trackingEvent="calypso_a4a_reports_select_site_button_click"
 							/>
 						</div>
