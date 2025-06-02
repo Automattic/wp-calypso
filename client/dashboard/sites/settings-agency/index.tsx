@@ -35,6 +35,9 @@ const fields: Field< SiteSettings >[] = [
 	{
 		id: 'is_fully_managed_agency_site',
 		label: __( 'Allow clients to use the WordPress.com Help Center and hosting features.' ),
+
+		// Use a custom edit component instead of checkbox since we need to invert the checkbox value.
+		// Allowing clients to use the WordPress.com Help Center and hosting features is when the agency site is not fully managed.
 		Edit: ( { field, onChange, data, hideLabelFromVision } ) => {
 			const { id, getValue } = field;
 			return (
