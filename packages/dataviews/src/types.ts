@@ -21,6 +21,10 @@ export type SortDirection = 'asc' | 'desc';
 export interface Option< Value extends any = any > {
 	value: Value;
 	label: string;
+	help?: string;
+	/**
+	 * @deprecated Use `help` instead.
+	 */
 	description?: string;
 }
 
@@ -128,6 +132,7 @@ export type Field< Item > = {
 
 	/**
 	 * A description of the field.
+	 * @deprecated Use `help` instead.
 	 */
 	description?: string;
 

@@ -15,7 +15,7 @@ export default function Email< Item >( {
 	onChange,
 	hideLabelFromVision,
 }: DataFormControlProps< Item > ) {
-	const { id, label, placeholder, help } = field;
+	const { id, label, placeholder, description, help } = field;
 	const value = field.getValue( { item: data } );
 
 	const onChangeControl = useCallback(
@@ -32,7 +32,7 @@ export default function Email< Item >( {
 			label={ label }
 			placeholder={ placeholder }
 			value={ value ?? '' }
-			help={ help }
+			help={ help ?? description }
 			onChange={ onChangeControl }
 			__next40pxDefaultSize
 			__nextHasNoMarginBottom

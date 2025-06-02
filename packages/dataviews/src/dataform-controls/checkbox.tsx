@@ -14,13 +14,13 @@ export default function Checkbox< Item >( {
 	data,
 	hideLabelFromVision,
 }: DataFormControlProps< Item > ) {
-	const { id, getValue, label, description } = field;
+	const { id, getValue, label, description, help } = field;
 
 	return (
 		<CheckboxControl
 			__nextHasNoMarginBottom
 			label={ ! hideLabelFromVision ? label : '' }
-			help={ description }
+			help={ help ?? description }
 			checked={ getValue( { item: data } ) }
 			onChange={ () =>
 				onChange( { [ id ]: ! getValue( { item: data } ) } )

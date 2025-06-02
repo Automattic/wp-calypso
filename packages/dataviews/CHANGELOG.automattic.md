@@ -2,7 +2,7 @@
 
 ## Next
 
-- `text`, `email`, `select` Edit control: add `help` property to `Field` and use instead of `description`.
+- `checkbox`, `email`, `integer`, `select`, `text`, `toggle-group` Edit control: add `help` property to `Field` and deprecate `description`.
 - `text`, `email` Edit control: add `help` support from the field `description` prop.
 - Add `align` to the `layout.styles` properties, for use in the DataViews table layout. Options are: `start`, `center`, and `end`.
 

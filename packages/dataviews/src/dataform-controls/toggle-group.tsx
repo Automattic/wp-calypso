@@ -39,7 +39,12 @@ export default function ToggleGroup< Item >( {
 				__nextHasNoMarginBottom
 				isBlock
 				label={ field.label }
-				help={ selectedOption?.description || field.description }
+				help={
+					selectedOption?.help ||
+					selectedOption?.description ||
+					field.help ||
+					field.description
+				}
 				onChange={ onChangeControl }
 				value={ value }
 				hideLabelFromVision={ hideLabelFromVision }

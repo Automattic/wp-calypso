@@ -15,7 +15,7 @@ export default function Integer< Item >( {
 	onChange,
 	hideLabelFromVision,
 }: DataFormControlProps< Item > ) {
-	const { id, label, description } = field;
+	const { id, label, description, help } = field;
 	const value = field.getValue( { item: data } ) ?? '';
 	const onChangeControl = useCallback(
 		( newValue: string | undefined ) =>
@@ -28,7 +28,7 @@ export default function Integer< Item >( {
 	return (
 		<NumberControl
 			label={ label }
-			help={ description }
+			help={ help ?? description }
 			value={ value }
 			onChange={ onChangeControl }
 			__next40pxDefaultSize

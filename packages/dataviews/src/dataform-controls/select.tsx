@@ -16,7 +16,7 @@ export default function Select< Item >( {
 	onChange,
 	hideLabelFromVision,
 }: DataFormControlProps< Item > ) {
-	const { id, label, help } = field;
+	const { id, label, description, help } = field;
 	const value = field.getValue( { item: data } ) ?? '';
 	const onChangeControl = useCallback(
 		( newValue: any ) =>
@@ -42,7 +42,7 @@ export default function Select< Item >( {
 		<SelectControl
 			label={ label }
 			value={ value }
-			help={ help }
+			help={ help ?? description }
 			options={ elements }
 			onChange={ onChangeControl }
 			__next40pxDefaultSize
