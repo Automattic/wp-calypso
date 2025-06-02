@@ -5,7 +5,7 @@ import { code } from '@wordpress/icons';
 import { getPHPVersions } from 'calypso/data/php-versions';
 import { sitePHPVersionQuery } from '../../app/queries';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
-import { canUpdatePHPVersion } from './utils';
+import { canUpdatePHPVersion } from '../../utils/site-features';
 import type { Site } from '../../data/types';
 import type { Density } from '@automattic/components/src/summary-button/types';
 

@@ -14637,7 +14637,6 @@ __metadata:
     cmdk: "npm:^0.2.1"
     component-closest: "npm:^1.0.1"
     component-event: "npm:^0.2.1"
-    component-file-picker: "npm:^0.2.1"
     component-query: "npm:^0.0.3"
     cookie: "npm:^0.7.2"
     cookie-parser: "npm:^1.4.7"
@@ -15739,26 +15738,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"component-event@npm:0.1.4":
-  version: 0.1.4
-  resolution: "component-event@npm:0.1.4"
-  checksum: 0e2dbe53164083b183f906cd4d1c448da67417cc285aaddf1744708f1bb6c1f32014f8a347783af1fe61ccab41109e4e8dd3fd0c689e69ac81d9ed9e26dc9498
-  languageName: node
-  linkType: hard
-
 "component-event@npm:^0.2.1":
   version: 0.2.1
   resolution: "component-event@npm:0.2.1"
   checksum: f49c8d00dc5d2b5540adfd2b29273191d74654ccd1ce3dda5fd82e33211d85a5b3d40469ee225f7a35ce7687929a98be440b7b8d0c2ac05eee208b5d0f2d9e3b
-  languageName: node
-  linkType: hard
-
-"component-file-picker@npm:^0.2.1":
-  version: 0.2.1
-  resolution: "component-file-picker@npm:0.2.1"
-  dependencies:
-    component-event: "npm:0.1.4"
-  checksum: e6cd14e95dab9e40d8f2c5b3338fb30dd6f7c01bc3a27d3e086da82cc8bda4f9bade46159176e827fb4ce7e65aa7cce03a85b89b58f501d1f651737a7e886b55
   languageName: node
   linkType: hard
 

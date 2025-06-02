@@ -7,12 +7,8 @@ import { cloud } from '@wordpress/icons';
 import { getDataCenterOptions } from 'calypso/data/data-center';
 import { siteQuery, sitePrimaryDataCenterQuery } from '../../app/queries';
 import PageLayout from '../../components/page-layout';
+import { canGetPrimaryDataCenter } from '../../utils/site-features';
 import SettingsPageHeader from '../settings-page-header';
-import type { Site } from '../../data/types';
-
-export function canGetPrimaryDataCenter( site: Site ) {
-	return site.is_wpcom_atomic;
-}
 
 export default function PrimaryDataCenterSettings( { siteSlug }: { siteSlug: string } ) {
 	const router = useRouter();

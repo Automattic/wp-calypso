@@ -44,6 +44,7 @@ type Fields = {
 	wpcom_newsletter_categories?: number[];
 	wpcom_newsletter_categories_enabled?: boolean;
 	wpcom_subscription_emails_use_excerpt?: boolean;
+	newsletter_has_active_plan?: boolean;
 	jetpack_subscriptions_reply_to?: string;
 	jetpack_subscriptions_from_name?: string;
 	sm_enabled?: boolean;
@@ -70,6 +71,7 @@ const getFormSettings = ( settings?: Fields ) => {
 		wpcom_newsletter_categories,
 		wpcom_newsletter_categories_enabled,
 		wpcom_subscription_emails_use_excerpt,
+		newsletter_has_active_plan,
 		jetpack_subscriptions_reply_to,
 		jetpack_subscriptions_from_name,
 		sm_enabled,
@@ -91,6 +93,7 @@ const getFormSettings = ( settings?: Fields ) => {
 		wpcom_newsletter_categories: wpcom_newsletter_categories || [],
 		wpcom_newsletter_categories_enabled: !! wpcom_newsletter_categories_enabled,
 		wpcom_subscription_emails_use_excerpt: !! wpcom_subscription_emails_use_excerpt,
+		newsletter_has_active_plan,
 		jetpack_subscriptions_reply_to: jetpack_subscriptions_reply_to || '',
 		jetpack_subscriptions_from_name: jetpack_subscriptions_from_name || '',
 		sm_enabled: !! sm_enabled,
@@ -265,7 +268,7 @@ const NewsletterSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 				id="paid-newsletter"
 				title={ translate( 'Paid Newsletter' ) }
 			/>
-			<PaidNewsletterSection />
+			<PaidNewsletterSection newsletterHasActivePlan={ fields.newsletter_has_active_plan } />
 			<SettingsSectionHeader
 				disabled={ disabled }
 				id="email-settings"

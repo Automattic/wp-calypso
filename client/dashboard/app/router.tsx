@@ -6,11 +6,14 @@ import {
 	createLazyRoute,
 } from '@tanstack/react-router';
 import { fetchTwoStep } from '../data';
-import { canUpdateDefensiveMode } from '../sites/settings-defensive-mode';
-import { canUpdatePHPVersion } from '../sites/settings-php/utils';
-import { canGetPrimaryDataCenter } from '../sites/settings-primary-data-center';
-import { canSetStaticFile404Handling } from '../sites/settings-static-file-404';
-import { canUpdateWordPressVersion } from '../sites/settings-wordpress/utils';
+import { canUpdateCaching } from '../sites/settings-caching';
+import {
+	canUpdatePHPVersion,
+	canUpdateDefensiveMode,
+	canUpdateWordPressVersion,
+	canGetPrimaryDataCenter,
+	canSetStaticFile404Handling,
+} from '../utils/site-features';
 import NotFound from './404';
 import UnknownError from './500';
 import {
@@ -26,7 +29,9 @@ import {
 	siteWordPressVersionQuery,
 	sitePHPVersionQuery,
 	sitePrimaryDataCenterQuery,
+	siteEdgeCacheStatusQuery,
 	siteDefensiveModeQuery,
+	agencyBlogQuery,
 } from './queries';
 import { queryClient } from './query-client';
 import Root from './root';
@@ -207,6 +212,23 @@ const siteSettingsPHPRoute = createRoute( {
 	)
 );
 
+const siteSettingsAgencyRoute = createRoute( {
+	getParentRoute: () => siteRoute,
+	path: 'settings/agency',
+	loader: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteQuery( siteSlug ) );
+		if ( site.is_wpcom_atomic ) {
+			await queryClient.ensureQueryData( agencyBlogQuery( site.ID ) );
+		}
+	},
+} ).lazy( () =>
+	import( '../sites/settings-agency' ).then( ( d ) =>
+		createLazyRoute( 'site-settings-agency' )( {
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+		} )
+	)
+);
+
 const siteSettingsPrimaryDataCenterRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: 'settings/primary-data-center',
@@ -236,6 +258,23 @@ const siteSettingsStaticFile404Route = createRoute( {
 } ).lazy( () =>
 	import( '../sites/settings-static-file-404' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-static-file-404' )( {
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+		} )
+	)
+);
+
+const siteSettingsCachingRoute = createRoute( {
+	getParentRoute: () => siteRoute,
+	path: 'settings/caching',
+	loader: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteQuery( siteSlug ) );
+		if ( canUpdateCaching( site ) ) {
+			await queryClient.ensureQueryData( siteEdgeCacheStatusQuery( siteSlug ) );
+		}
+	},
+} ).lazy( () =>
+	import( '../sites/settings-caching' ).then( ( d ) =>
+		createLazyRoute( 'site-settings-caching' )( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )
 	)
@@ -437,8 +476,10 @@ const createRouteTree = ( config: AppConfig ) => {
 				siteSettingsDatabaseRoute,
 				siteSettingsWordPressRoute,
 				siteSettingsPHPRoute,
+				siteSettingsAgencyRoute,
 				siteSettingsPrimaryDataCenterRoute,
 				siteSettingsStaticFile404Route,
+				siteSettingsCachingRoute,
 				siteSettingsDefensiveModeRoute,
 				siteSettingsTransferSiteRoute,
 			] )

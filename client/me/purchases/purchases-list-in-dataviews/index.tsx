@@ -2,7 +2,7 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { CompactCard } from '@automattic/components';
 import { SiteDetails } from '@automattic/data-stores';
 import { isValueTruthy } from '@automattic/wpcom-checkout';
-import { LocalizeProps, localize, useTranslate } from 'i18n-calypso';
+import { LocalizeProps, localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import noSitesIllustration from 'calypso/assets/images/illustrations/illustration-nosites.svg';
@@ -63,13 +63,11 @@ function MembershipSubscriptions( {
 }: {
 	memberships: Array< MembershipSubscription >;
 } ) {
-	const translate = useTranslate();
-
 	if ( ! memberships.length ) {
 		return null;
 	}
 
-	return <MembershipsDataViews memberships={ memberships } translate={ translate } />;
+	return <MembershipsDataViews memberships={ memberships } />;
 }
 
 function isDataLoading( {
@@ -113,7 +111,7 @@ class PurchasesListDataView extends Component<
 		}
 
 		if ( purchases && purchases.length ) {
-			content = <PurchasesDataViews purchases={ purchases } translate={ translate } />;
+			content = <PurchasesDataViews purchases={ purchases } />;
 		}
 
 		if ( purchases && ! purchases.length && ! subscriptions.length ) {
