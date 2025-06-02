@@ -211,8 +211,6 @@ const ExampleReport = () => {
 	};
 
 	return (
-		// <Layout className="example-report" title={ title } wide>
-		// 	<LayoutBody className="example-report__body">
 		<div className="example-report">
 			<div className="example-report__content">
 				<div className="example-report__header">
@@ -347,8 +345,6 @@ const ExampleReport = () => {
 				</div>
 			</div>
 		</div>
-		// 	</LayoutBody>
-		// </Layout>
 	);
 };
 

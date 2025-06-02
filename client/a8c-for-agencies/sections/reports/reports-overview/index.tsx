@@ -188,10 +188,7 @@ const ReportsOverview = () => {
 					onRequestClose={ closeExampleReportModal }
 					className="reports-overview__example-report-modal"
 					bodyOpenClassName="reports-overview__example-report-modal-body"
-					size="large"
-					style={ {
-						backgroundColor: 'var( --studio-red-60 )',
-					} }
+					isFullScreen
 				>
 					<ExampleReport />
 				</Modal>
