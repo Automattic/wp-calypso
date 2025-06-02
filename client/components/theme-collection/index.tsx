@@ -152,12 +152,14 @@ export default function ThemeCollection( {
 					<Button
 						onClick={ () => trackNavigationClick( 'previous' ) }
 						className="theme-collection__carousel-nav-button theme-collection__carousel-nav-button--previous"
+						aria-label={ translate( 'Previous themes' ) }
 					>
 						<Icon icon={ chevronLeft } />
 					</Button>
 					<Button
 						onClick={ () => trackNavigationClick( 'next' ) }
 						className="theme-collection__carousel-nav-button theme-collection__carousel-nav-button--next"
+						aria-label={ translate( 'Next themes' ) }
 					>
 						<Icon icon={ chevronRight } />
 					</Button>
