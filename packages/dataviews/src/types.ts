@@ -132,6 +132,11 @@ export type Field< Item > = {
 	description?: string;
 
 	/**
+	 * A help text for the field.
+	 */
+	help?: string;
+
+	/**
 	 * Placeholder for the field.
 	 */
 	placeholder?: string;
