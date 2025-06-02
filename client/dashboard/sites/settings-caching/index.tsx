@@ -83,7 +83,7 @@ export default function CachingSettings( { siteSlug }: { siteSlug: string } ) {
 	const handleClearEdgeCache = () => {
 		edgeCacheClearMutation.mutate( undefined, {
 			onSuccess: () => {
-				createSuccessNotice( __( 'Edge cache cleared.' ), { type: 'snackbar' } );
+				createSuccessNotice( __( 'Global edge cache cleared.' ), { type: 'snackbar' } );
 			},
 			onError: () => {
 				createErrorNotice( __( 'Failed to clear edge cache.' ), { type: 'snackbar' } );
