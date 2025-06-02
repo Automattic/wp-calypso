@@ -7,6 +7,12 @@
 		margin: 0;
 	}
 
+	.dashboard-summary-button-list__children-list-item {
+		&:empty {
+			display: none;
+		}
+	}
+
 	&.has-density-low {
 		.dashboard-summary-button-list__children-list-item:not(:last-child) {
 			margin-bottom: $grid-unit-30;
