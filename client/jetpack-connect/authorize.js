@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import {
 	PRODUCT_JETPACK_BACKUP_T1_YEARLY,
 	WPCOM_FEATURES_BACKUPS,
@@ -763,14 +762,6 @@ export class JetpackAuthorize extends Component {
 		const { authorizeError, authorizeSuccess, isAuthorizing } = this.props.authorizationData;
 		const { alreadyAuthorized } = this.props.authQuery;
 
-		if ( this.isFromMigrationPlugin() ) {
-			if ( this.props.isFetchingAuthorizationSite ) {
-				return translate( 'Preparing authorization' );
-			}
-
-			return translate( 'Continue' );
-		}
-
 		if ( ! this.props.isAlreadyOnSitesList && ! this.props.isFetchingSites && alreadyAuthorized ) {
 			return translate( 'Go back to your site' );
 		}
@@ -806,16 +797,11 @@ export class JetpackAuthorize extends Component {
 			return translate( 'Connect to WordPress.com' );
 		}
 
-		if (
-			config.isEnabled( 'jetpack/onboarding-user-connection-redesign' ) &&
-			this.isFromJetpackOnboarding()
-		) {
+		if ( this.isFromJetpackOnboarding() ) {
 			return translate( 'Connect my site' );
 		}
 
-		if ( ! this.retryingAuth ) {
-			return translate( 'Approve' );
-		}
+		return translate( 'Approve' );
 	}
 
 	getScreenReaderAuthMessage() {
@@ -823,14 +809,6 @@ export class JetpackAuthorize extends Component {
 		const { translate } = this.props;
 		const { authorizeError, authorizeSuccess, isAuthorizing } = this.props.authorizationData;
 		const { alreadyAuthorized } = this.props.authQuery;
-
-		if ( this.isFromMigrationPlugin() ) {
-			if ( this.props.isFetchingAuthorizationSite ) {
-				return translate( 'Preparing authorization' );
-			}
-
-			return;
-		}
 
 		if ( ! this.props.isAlreadyOnSitesList && ! this.props.isFetchingSites && alreadyAuthorized ) {
 			return;
@@ -863,19 +841,7 @@ export class JetpackAuthorize extends Component {
 	getUserText() {
 		const { translate } = this.props;
 		const { authorizeSuccess } = this.props.authorizationData;
-		const isWpcomMigration = this.isFromMigrationPlugin();
 		const isWooDnaFlow = this.getWooDnaConfig().isWooDnaFlow();
-
-		if ( isWpcomMigration ) {
-			const { display_name, email } = this.props.user;
-			return (
-				<>
-					<strong>{ display_name }</strong>
-					<br />
-					<small>{ email }</small>
-				</>
-			);
-		}
 
 		if ( this.isWooJPC() ) {
 			return (
@@ -886,10 +852,7 @@ export class JetpackAuthorize extends Component {
 			);
 		}
 
-		if (
-			config.isEnabled( 'jetpack/onboarding-user-connection-redesign' ) &&
-			this.isFromJetpackOnboarding()
-		) {
+		if ( this.isFromJetpackOnboarding() ) {
 			return (
 				<>
 					<div className="jetpack-connect__logged-in-user-text-name">
@@ -1063,22 +1026,14 @@ export class JetpackAuthorize extends Component {
 			);
 		}
 
-		const gravatarSize = this.isFromMigrationPlugin() ? 94 : 64;
 		const { from } = authQuery;
 		const loginURL = login( { isJetpack: true, redirectTo: window.location.href, from } );
 
-		if (
-			config.isEnabled( 'jetpack/onboarding-user-connection-redesign' ) &&
-			this.isFromJetpackOnboarding()
-		) {
+		if ( this.isFromJetpackOnboarding() ) {
 			return (
 				<>
 					<div className="jetpack-connect__logged-in-user-card">
-						<Gravatar
-							className="jetpack-connect__user-card-gravatar"
-							user={ user }
-							size={ gravatarSize }
-						/>
+						<Gravatar className="jetpack-connect__user-card-gravatar" user={ user } size={ 64 } />
 						<div className="jetpack-connect__user-card-text">{ this.getUserText() }</div>
 					</div>
 					<LoggedOutFormLinkItem
@@ -1133,7 +1088,7 @@ export class JetpackAuthorize extends Component {
 
 		return (
 			<Card className="jetpack-connect__logged-in-card">
-				<Gravatar user={ user } size={ gravatarSize } />
+				<Gravatar user={ user } size={ 64 } />
 				<p className="jetpack-connect__logged-in-form-user-text">{ this.getUserText() }</p>
 				{ this.isFromMyJetpackConnectAfterCheckout() && (
 					<p className="jetpack-connect__activate-product-text">
@@ -1280,10 +1235,7 @@ export class JetpackAuthorize extends Component {
 			/>
 		);
 
-		if (
-			config.isEnabled( 'jetpack/onboarding-user-connection-redesign' ) &&
-			this.isFromJetpackOnboarding()
-		) {
+		if ( this.isFromJetpackOnboarding() ) {
 			return (
 				<LoggedOutFormFooter className="jetpack-connect__action--onboarding">
 					{ actionButton }
@@ -1304,9 +1256,7 @@ export class JetpackAuthorize extends Component {
 		const wooDna = this.getWooDnaConfig();
 		const authSiteId = this.props.authQuery.clientId;
 		const { authorizeSuccess, isAuthorizing } = this.props.authorizationData;
-		const isFromJetpackOnboarding =
-			config.isEnabled( 'jetpack/onboarding-user-connection-redesign' ) &&
-			this.isFromJetpackOnboarding();
+		const isFromJetpackOnboarding = this.isFromJetpackOnboarding();
 
 		if ( this.isWooJPC() && ( isAuthorizing || authorizeSuccess ) ) {
 			return (
@@ -1331,7 +1281,6 @@ export class JetpackAuthorize extends Component {
 					'jetpack-connect__authorize-form-wrapper--onboarding': isFromJetpackOnboarding,
 				} ) }
 				isWooJPC={ this.isWooJPC() }
-				isWpcomMigration={ this.isFromMigrationPlugin() }
 				isFromAutomatticForAgenciesPlugin={ this.isFromAutomatticForAgenciesPlugin() }
 				wooDnaConfig={ wooDna }
 				useCompactLogo={ isFromJetpackOnboarding }
@@ -1365,7 +1314,6 @@ export class JetpackAuthorize extends Component {
 							<AuthFormHeader
 								authQuery={ this.props.authQuery }
 								isWooJPC={ this.isWooJPC() }
-								isWpcomMigration={ this.isFromMigrationPlugin() }
 								isFromAutomatticForAgenciesPlugin={ this.isFromAutomatticForAgenciesPlugin() }
 								wooDnaConfig={ wooDna }
 							/>

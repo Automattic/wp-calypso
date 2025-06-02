@@ -13,14 +13,10 @@ import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { siteQuery, siteStaticFile404Query, siteStaticFile404Mutation } from '../../app/queries';
 import PageLayout from '../../components/page-layout';
+import { canSetStaticFile404Handling } from '../../utils/site-features';
 import SettingsCallout from '../settings-callout';
 import SettingsPageHeader from '../settings-page-header';
-import type { Site } from '../../data/types';
 import type { Field } from '@automattic/dataviews';
-
-export function canSetStaticFile404Handling( site: Site ) {
-	return site.is_wpcom_atomic;
-}
 
 const fields: Field< { setting: string } >[] = [
 	{

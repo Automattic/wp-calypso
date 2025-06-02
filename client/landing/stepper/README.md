@@ -4,6 +4,14 @@
 
 Stepper is a framework that allows you to make all kinds of walkthroughs. It's geared towards signup and onboarding flows, but you can use it to make any wizard.
 
+## Introduction
+
+### Intro video
+
+Please watch this video before making your first flow:
+
+<https://github.com/user-attachments/assets/662eebd4-0d22-4f31-b11b-3a8b6beb7da7>
+
 ## Table of Contents
 
 - [How does it work](#how-does-it-work)
@@ -47,7 +55,6 @@ Stepper steps should be a lot like native form inputs. They may receive some pro
 3. **They should not have side effects (e.g. persisting stuff in local storage).**
 4. They should not know in which flow they are being rendered, nor refer directly to any other steps.
 
-
 They should **only submit** to the flow, and the flow should do all the thinking, persisting, and the navigation.
 
 **Common question**: What if a step wants to cancel/skip/drop out? Then it should submit something like `{ action: skip }`.
@@ -69,11 +76,10 @@ In general, the smarter the step, the more problematic and tailored it is. Pleas
 A flow is a collection of steps. Each of these steps submit some information to the flow, which means the state of the flow is largely the sum of these submitted data. For that reason, the `FlowV2` interface requires the steps collection to be defined before the flow itself. This way, the flow can shape its state around the submissions and properties of these steps.
 
 #### Notes
+
 1. We have an example flow you can use as a reference [here](/client/landing/stepper/declarative-flow/flows/00-example-flow/example.ts).
 2. Please make sure that your flow has a unique slug.
 3. Avoid inheriting flows by doing `const flow = { ...oldFlow, someChanges: ... }`, unless you own both flows and able to ensure changing the old flow won't break the new flow.
-
-
 
 #### Code example
 

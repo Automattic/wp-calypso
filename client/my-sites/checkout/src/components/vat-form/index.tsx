@@ -261,7 +261,7 @@ export function VatForm( {
 						} )
 					}
 					value={ vatDetailsInForm.address ?? '' }
-					autoComplete="address"
+					autoComplete={ `section-${ section } street-address` }
 					disabled={ isDisabled }
 					onChange={ ( newValue: string ) => {
 						setVatDetailsInForm( {

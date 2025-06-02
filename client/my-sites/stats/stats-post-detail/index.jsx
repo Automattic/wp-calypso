@@ -14,7 +14,6 @@ import QueryPostStats from 'calypso/components/data/query-post-stats';
 import QueryPosts from 'calypso/components/data/query-posts';
 import EmptyContent from 'calypso/components/empty-content';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
-import NavigationHeader from 'calypso/components/navigation-header';
 import WebPreview from 'calypso/components/web-preview';
 import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
 import { isHttps } from 'calypso/lib/url';
@@ -228,7 +227,6 @@ class StatsPostDetail extends Component {
 		const isWPAdmin = config.isEnabled( 'is_odyssey' );
 		const postDetailPageClasses = clsx( 'stats', {
 			'is-odyssey-stats': isWPAdmin,
-			'has-fixed-nav': ! config.isEnabled( 'stats/navigation-improvement' ),
 		} );
 
 		// TODO: Refactor navigationItems to a single object with backLink and title attributes.
@@ -267,33 +265,25 @@ class StatsPostDetail extends Component {
 				{ siteId && <QueryJetpackModules siteId={ siteId } /> }
 
 				<div className={ postDetailPageClasses }>
-					{ config.isEnabled( 'stats/navigation-improvement' ) ? (
-						<PageHeader
-							backLinkProps={ backLinkProps }
-							titleProps={ titleProps }
-							rightSection={
-								showViewLink && (
-									<CoreButton onClick={ this.openPreview } variant="primary">
-										<span>{ actionLabel }</span>
-									</CoreButton>
-								)
-							}
-						/>
-					) : (
-						<NavigationHeader navigationItems={ navigationItems }>
-							{ showViewLink && (
-								<Button onClick={ this.openPreview }>
+					<PageHeader
+						backLinkProps={ backLinkProps }
+						titleProps={ titleProps }
+						rightSection={
+							showViewLink && (
+								<CoreButton onClick={ this.openPreview } variant="primary">
 									<span>{ actionLabel }</span>
-								</Button>
-							) }
-						</NavigationHeader>
-					) }
+								</CoreButton>
+							)
+						}
+					/>
 
 					{ isEmailTabsAvailable && (
 						<div
-							className={ clsx( 'stats-navigation', 'stats-navigation--modernized', {
-								'stats-navigation--improved': config.isEnabled( 'stats/navigation-improvement' ),
-							} ) }
+							className={ clsx(
+								'stats-navigation',
+								'stats-navigation--modernized',
+								'stats-navigation--improved'
+							) }
 						>
 							<StatsDetailsNavigation postId={ postId } givenSiteId={ siteId } />
 						</div>

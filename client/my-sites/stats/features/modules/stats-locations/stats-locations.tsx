@@ -11,8 +11,6 @@ import useLocationViewsQuery, {
 } from 'calypso/my-sites/stats/hooks/use-location-views-query';
 import { useShouldGateStats } from 'calypso/my-sites/stats/hooks/use-should-gate-stats';
 import StatsCardUpsell from 'calypso/my-sites/stats/stats-card-upsell';
-import DownloadCsv from 'calypso/my-sites/stats/stats-download-csv';
-import DownloadCsvUpsell from 'calypso/my-sites/stats/stats-download-csv-upsell';
 import StatsListCard from 'calypso/my-sites/stats/stats-list/stats-list-card';
 import StatsModulePlaceholder from 'calypso/my-sites/stats/stats-module/placeholder';
 import {
@@ -27,7 +25,7 @@ import { normalizers } from 'calypso/state/stats/lists/utils';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import EmptyModuleCard from '../../../components/empty-module-card/empty-module-card';
 import { LOCATIONS_SUPPORT_URL, JETPACK_SUPPORT_URL_TRAFFIC } from '../../../const';
-import { STAT_TYPE_COUNTRY_VIEWS, STATS_FEATURE_DOWNLOAD_CSV } from '../../../constants';
+import { STAT_TYPE_COUNTRY_VIEWS } from '../../../constants';
 import Geochart from '../../../geochart';
 import StatsCardUpdateJetpackVersion from '../../../stats-card-upsell/stats-card-update-jetpack-version';
 import StatsCardSkeleton from '../shared/stats-card-skeleton';
@@ -52,7 +50,6 @@ interface StatsModuleLocationsProps extends StatsDefaultModuleProps {
 
 const StatsLocations: React.FC< StatsModuleLocationsProps > = ( {
 	initialGeoMode,
-	period,
 	query,
 	summaryUrl,
 	summary = false,
@@ -73,7 +70,6 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( {
 		return urlGeoMode && urlGeoMode in GEO_MODES ? urlGeoMode : OPTION_KEYS.COUNTRIES;
 	}, [ query.geoMode, initialGeoMode ] );
 
-	const isStatsNavigationImprovementEnabled = config.isEnabled( 'stats/navigation-improvement' );
 	const [ countryFilter, setCountryFilter ] = useState< string | null >( null );
 
 	// Set the state locally to avoid a page being reloaded by URL changes.
@@ -93,7 +89,6 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( {
 
 	// Use StatsModule to display paywall upsell.
 	const shouldGateStatsModule = useShouldGateStats( statType );
-	const shouldGateDownloads = useShouldGateStats( STATS_FEATURE_DOWNLOAD_CSV );
 	const shouldGateTab = useShouldGateStats( optionLabels[ selectedOption ].feature );
 	const shouldGate = shouldGateStatsModule || shouldGateTab;
 	// Mapping plural to singular form where all other places are using.
@@ -221,8 +216,7 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( {
 	};
 
 	// Need to keep the old tabs on Traffic page.
-	const toggleControlComponent = ( ! summary ||
-		! config.isEnabled( 'stats/navigation-improvement' ) ) && (
+	const toggleControlComponent = ! summary && (
 		<>
 			<SimplifiedSegmentedControl
 				className="stats-module-locations__tabs"
@@ -294,32 +288,6 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( {
 
 	const locationData = showUpsell ? sampleLocations : data;
 	const hasLocationData = Array.isArray( locationData ) && locationData.length > 0;
-	const locationCsvData = hasLocationData
-		? locationData.map( ( item ) => [
-				typeof item.label === 'string' ? `"${ item.label.replace( /"/g, '""' ) }"` : item.label,
-				item.value,
-		  ] )
-		: [];
-
-	let downloadCsvElement = null;
-	if ( ! isStatsNavigationImprovementEnabled ) {
-		downloadCsvElement = shouldGateDownloads ? (
-			<DownloadCsvUpsell
-				className="stats-module-locations__download-csv-upsell"
-				siteId={ siteId }
-				borderless
-			/>
-		) : (
-			<DownloadCsv
-				data={ locationCsvData }
-				path={ `locations-${ geoMode }` }
-				period={ period }
-				query={ query }
-				skipQuery
-				statType={ statType }
-			/>
-		);
-	}
 
 	const heroElementActions = (
 		<div className="stats-module-locations__actions">
@@ -332,7 +300,6 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( {
 					tooltip={ divisionsTooltip }
 				/>
 			) }
-			{ downloadCsvElement }
 		</div>
 	);
 
@@ -407,7 +374,6 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( {
 						heroElement={ heroElement }
 						mainItemLabel={ optionLabels[ selectedOption ]?.headerLabel }
 						toggleControl={ toggleControlComponent }
-						downloadCsv={ ! shouldGateTab ? downloadCsvElement : null }
 						showMore={
 							summaryUrl
 								? {

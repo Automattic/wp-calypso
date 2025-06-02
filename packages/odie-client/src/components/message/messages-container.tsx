@@ -66,9 +66,7 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
 		const currentInteraction = helpCenterSelect.getCurrentSupportInteraction();
 		return {
-			alreadyHasActiveZendeskChat:
-				interactionHasZendeskEvent( currentInteraction ) &&
-				! interactionHasEnded( currentInteraction ),
+			alreadyHasActiveZendeskChat: interactionHasZendeskEvent( currentInteraction ),
 			chatHasEnded: interactionHasEnded( currentInteraction ),
 		};
 	}, [] );

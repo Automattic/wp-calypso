@@ -1,4 +1,4 @@
-import config, { isEnabled } from '@automattic/calypso-config';
+import { isEnabled } from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
 import { isEqual, merge } from 'lodash';
 import { Component, Fragment } from 'react';
@@ -6,7 +6,6 @@ import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
 import QueryMedia from 'calypso/components/data/query-media';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
-import NavigationHeader from 'calypso/components/navigation-header';
 import AnnualSiteStats from 'calypso/my-sites/stats/annual-site-stats';
 import Main from 'calypso/my-sites/stats/components/stats-main';
 import StatsModuleAuthors from 'calypso/my-sites/stats/features/modules/stats-authors';
@@ -109,16 +108,6 @@ class StatsSummary extends Component {
 		let path;
 		let statType;
 
-		// Navigation settings. One of the following, depending on the summary view.
-		// Traffic => /stats/day/
-		// Insights => /stats/insights/
-		const localizedTabNames = {
-			traffic: translate( 'Traffic' ),
-			insights: translate( 'Insights' ),
-		};
-		let backLabel = localizedTabNames.traffic;
-		let backLink = `/stats/day/`;
-
 		const { period, endOf } = this.props.period;
 		const query = {
 			period: period,
@@ -140,7 +129,6 @@ class StatsSummary extends Component {
 		const moduleQuery = merge( {}, statsQueryOptions, query );
 		const urlParams = new URLSearchParams( this.props.context.querystring );
 		const listItemClassName = 'stats__summary--narrow-mobile';
-		const isStatsNavigationImprovementEnabled = config.isEnabled( 'stats/navigation-improvement' );
 
 		switch ( this.props.context.params.module ) {
 			case 'referrers':
@@ -368,14 +356,10 @@ class StatsSummary extends Component {
 				break;
 			case 'annualstats':
 				title = translate( 'Annual insights' );
-				backLabel = localizedTabNames.insights;
-				backLink = `/stats/insights/`;
 				summaryView = <AnnualSiteStats key="annualstats" />;
 				break;
 			case 'utm': {
 				title = translate( 'UTM insights' );
-				backLabel = localizedTabNames.traffic;
-				backLink = `/stats/traffic/`;
 				path = 'utm';
 				statType = 'statsUTM';
 				summaryView = <></>; // done inline to use context values
@@ -396,11 +380,6 @@ class StatsSummary extends Component {
 
 		const { module } = this.props.context.params;
 
-		const domain = this.props.siteSlug;
-		if ( domain?.length > 0 ) {
-			backLink += domain;
-		}
-		const navigationItems = [ { label: backLabel, href: backLink }, { label: title } ];
 		const geoMode = this.props.context.query.geoMode;
 		const geoModeLabel =
 			geoMode && Object.prototype.hasOwnProperty.call( GEO_MODES, geoMode )
@@ -414,49 +393,40 @@ class StatsSummary extends Component {
 					title={ `Stats > ${ titlecase( period ) } > ${ titlecase( module ) }` }
 				/>
 				<div className="stats stats-summary-view">
-					{ isStatsNavigationImprovementEnabled && (
-						<PageHeader
-							className="stats__section-header modernized-header"
-							titleProps={ { title, titleLogo: null } }
-							backLinkProps={ {
-								url: lastScreen.url,
-								text: lastScreen.text,
-							} }
-							rightSection={
-								<div className="stats-module__header-nav-button">
-									{ shouldGateStatsCsvDownload ? (
-										<DownloadCsvUpsell siteId={ siteId } borderless />
-									) : (
-										<DownloadCsv
-											statType={ statType }
-											query={ moduleQuery }
-											path={
-												statType === 'statsCountryViews' ? `${ path }-${ geoModeLabel }` : path
-											}
-											period={ this.props.period }
-											skipQuery
-											hideIfNoData
-										/>
-									) }
-								</div>
-							}
-						/>
-					) }
-
-					{ ! isStatsNavigationImprovementEnabled && (
-						<NavigationHeader className="stats-summary-view" navigationItems={ navigationItems } />
-					) }
-
-					{ isStatsNavigationImprovementEnabled &&
-						this.props.context.params.module === 'locations' && (
-							<div className="stats-navigation stats-navigation--improved">
-								<LocationsNavTabs
-									period={ this.props.period }
-									query={ moduleQuery }
-									givenSiteId={ siteId }
-								/>
+					<PageHeader
+						className="stats__section-header modernized-header"
+						titleProps={ { title, titleLogo: null } }
+						backLinkProps={ {
+							url: lastScreen.url,
+							text: lastScreen.text,
+						} }
+						rightSection={
+							<div className="stats-module__header-nav-button">
+								{ shouldGateStatsCsvDownload ? (
+									<DownloadCsvUpsell siteId={ siteId } borderless />
+								) : (
+									<DownloadCsv
+										statType={ statType }
+										query={ moduleQuery }
+										path={ statType === 'statsCountryViews' ? `${ path }-${ geoModeLabel }` : path }
+										period={ this.props.period }
+										skipQuery
+										hideIfNoData
+									/>
+								) }
 							</div>
-						) }
+						}
+					/>
+
+					{ this.props.context.params.module === 'locations' && (
+						<div className="stats-navigation stats-navigation--improved">
+							<LocationsNavTabs
+								period={ this.props.period }
+								query={ moduleQuery }
+								givenSiteId={ siteId }
+							/>
+						</div>
+					) }
 
 					<div id="my-stats-content" className="stats-summary-view stats-summary__positioned">
 						{ this.props.context.params.module === 'utm' ? (

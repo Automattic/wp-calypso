@@ -2,7 +2,7 @@ import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import { Button } from '@wordpress/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useRef, useState, useMemo } from 'react';
 import {
 	DATAVIEWS_TABLE,
 	initialDataViewsState,
@@ -36,11 +36,7 @@ import NewReferralOrderNotification from './new-referral-order-notification';
 
 import './style.scss';
 
-export default function ReferralsOverview( {
-	isArchiveView = false,
-}: {
-	isArchiveView?: boolean;
-} ) {
+export default function ReferralsOverview() {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -63,24 +59,33 @@ export default function ReferralsOverview( {
 
 	const isDesktop = useDesktopBreakpoint();
 
-	const selectedItem = dataViewsState.selectedItem;
+	const { data: tipaltiData, isFetching } = useGetTipaltiPayee();
+
+	const wrapperRef = useRef< HTMLButtonElement | null >( null );
+
+	const { data: referrals, isFetching: isFetchingReferrals } = useFetchReferrals();
+
+	const hasReferrals = !! referrals?.length;
+
+	// To ensure the selected item is updated when the referrals list is updated
+	// as we optimistically update the referrals list
+	const selectedItem = useMemo(
+		() =>
+			dataViewsState.selectedItem &&
+			referrals?.find( ( referral ) => referral.id === dataViewsState.selectedItem?.id ),
+		[ dataViewsState.selectedItem, referrals ]
+	);
+	const updatedDataViewsState = useMemo( () => {
+		return {
+			...dataViewsState,
+			selectedItem,
+		};
+	}, [ dataViewsState, selectedItem ] );
 
 	const title =
 		isDesktop && ! selectedItem
 			? translate( 'Your referrals and commissions' )
 			: translate( 'Referrals' );
-
-	const { data: tipaltiData, isFetching } = useGetTipaltiPayee();
-
-	const wrapperRef = useRef< HTMLButtonElement | null >( null );
-
-	const {
-		data: referrals,
-		isFetching: isFetchingReferrals,
-		refetch: refetchReferrals,
-	} = useFetchReferrals();
-
-	const hasReferrals = !! referrals?.length;
 
 	const makeAReferral = useCallback( () => {
 		sessionStorage.setItem( MARKETPLACE_TYPE_SESSION_STORAGE_KEY, MARKETPLACE_TYPE_REFERRAL );
@@ -135,18 +140,15 @@ export default function ReferralsOverview( {
 						tipaltiData={ tipaltiData }
 						referrals={ referrals }
 						isLoading={ isLoading }
-						dataViewsState={ dataViewsState }
+						dataViewsState={ updatedDataViewsState }
 						setDataViewsState={ setDataViewsState }
-						isArchiveView={ isArchiveView }
-						onReferralRefetch={ refetchReferrals }
 					/>
 				</LayoutBody>
 			</LayoutColumn>
-			{ dataViewsState.selectedItem && (
+			{ selectedItem && (
 				<LayoutColumn wide>
 					<ReferralDetails
-						referral={ dataViewsState.selectedItem }
-						isArchiveView={ isArchiveView }
+						referral={ selectedItem }
 						closeSitePreviewPane={ () =>
 							setDataViewsState( {
 								...dataViewsState,

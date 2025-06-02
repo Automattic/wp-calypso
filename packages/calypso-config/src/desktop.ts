@@ -1,7 +1,7 @@
 import type { ConfigData } from '@automattic/create-calypso-config';
 
 // TODO: Revisit whether it is useful for the Desktop app to override the following properties:
-// signup_url, login_url, logout_url and discover_logged_out_redirect_url
+// login_url, logout_url and discover_logged_out_redirect_url
 
 const config = {
 	env: 'production',

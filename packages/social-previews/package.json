@@ -55,7 +55,7 @@
 		"@wordpress/i18n": "^5.23.0",
 		"clsx": "^2.1.1",
 		"prop-types": "^15.8.1",
-		"tslib": "^2.3.0"
+		"tslib": "^2.8.1"
 	},
 	"devDependencies": {
 		"@automattic/calypso-build": "workspace:^",
@@ -67,7 +67,7 @@
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
 		"typescript": "^5.8.3",
-		"webpack": "^5.97.1"
+		"webpack": "^5.99.8"
 	},
 	"peerDependencies": {
 		"@babel/runtime": "^7.27.1",

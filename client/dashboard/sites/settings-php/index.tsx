@@ -14,9 +14,9 @@ import { useState } from 'react';
 import { getPHPVersions } from 'calypso/data/php-versions';
 import { siteQuery, sitePHPVersionQuery, sitePHPVersionMutation } from '../../app/queries';
 import PageLayout from '../../components/page-layout';
+import { canUpdatePHPVersion } from '../../utils/site-features';
 import SettingsCallout from '../settings-callout';
 import SettingsPageHeader from '../settings-page-header';
-import { canUpdatePHPVersion } from './utils';
 import type { Field } from '@automattic/dataviews';
 
 export default function PHPVersionSettings( { siteSlug }: { siteSlug: string } ) {

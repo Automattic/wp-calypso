@@ -4,7 +4,6 @@ import {
 	A4A_REFERRALS_DASHBOARD,
 	A4A_REFERRALS_PAYMENT_SETTINGS,
 	A4A_REFERRALS_FAQ,
-	A4A_REFERRALS_ARCHIVED,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import { requireAccessContext } from 'calypso/a8c-for-agencies/controller';
 import { makeLayout, render as clientRender } from 'calypso/controller';
@@ -29,13 +28,6 @@ export default function () {
 		A4A_REFERRALS_FAQ,
 		requireAccessContext,
 		controller.referralsFAQContext,
-		makeLayout,
-		clientRender
-	);
-	page(
-		A4A_REFERRALS_ARCHIVED,
-		requireAccessContext,
-		controller.referralsArchivedContext,
 		makeLayout,
 		clientRender
 	);

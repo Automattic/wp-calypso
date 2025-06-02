@@ -141,7 +141,7 @@ export const getThreatVulnerability = ( threat: Threat ): string | TranslateResu
 
 		case 'database':
 			if ( threat.signature !== undefined ) {
-				return translate( 'Thread found: %(signature)s', {
+				return translate( 'Threat found: %(signature)s', {
 					args: {
 						signature: threat.signature,
 					},

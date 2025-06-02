@@ -42,7 +42,7 @@
 		"cookie": "^0.7.2",
 		"debug": "^4.4.1",
 		"hash.js": "^1.1.7",
-		"tslib": "^2.3.0"
+		"tslib": "^2.8.1"
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",

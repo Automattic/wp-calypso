@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { StatsCard } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
@@ -20,7 +19,6 @@ import UTMBuilder from '../../../stats-module-utm-builder';
 import { StatsEmptyActionUTMBuilder } from '../shared';
 import StatsCardSkeleton from '../shared/stats-card-skeleton';
 import UTMDropdown from './stats-module-utm-dropdown';
-import UTMExportButton from './utm-export-button';
 import '../../../stats-module/style.scss';
 import '../../../stats-list/style.scss';
 
@@ -53,7 +51,6 @@ const StatsModuleUTM = ( {
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const isStatsNavigationImprovementEnabled = config.isEnabled( 'stats/navigation-improvement' );
 	const [ selectedOption, setSelectedOption ] = useState( () => {
 		const utmQueryParam = context.query[ UTM_QUERY_PARAM ];
 		return Object.values( OPTION_KEYS ).includes( utmQueryParam )
@@ -238,11 +235,6 @@ const StatsModuleUTM = ( {
 						titleNodes={ titleNodes }
 						emptyMessage={ <div>{ moduleStrings.empty }</div> }
 						metricLabel={ metricLabel }
-						downloadCsv={
-							! isStatsNavigationImprovementEnabled ? (
-								<UTMExportButton data={ data } path={ path } period={ period } />
-							) : null
-						}
 						showMore={
 							displaySummaryLink && ! summary
 								? {

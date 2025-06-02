@@ -62,6 +62,8 @@ export const DeploymentStyle = ( {
 					popoverClassName="github-deployments-deployments-style-popover"
 					// @todo Move to contextLinks
 					link="https://developer.wordpress.com/docs/developer-tools/github-deployments/github-deployments-workflow-recipes/"
+					supportPostId={ 99879 }
+					supportBlogId={ 33534099 }
 					privacyLink={ false }
 				>
 					{ supportMessage }

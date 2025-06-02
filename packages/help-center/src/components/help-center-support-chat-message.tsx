@@ -45,26 +45,11 @@ export const HelpCenterSupportChatMessage = ( {
 	const helpCenterContext = useHelpCenterContext();
 	const helpCenterContextSectionName = helpCenterContext.sectionName;
 	const { supportInteractions } = useGetHistoryChats();
-	const { setCurrentSupportInteraction, setOdieChatId } = useDataStoreDispatch( HELP_CENTER_STORE );
+	const { setCurrentSupportInteraction } = useDataStoreDispatch( HELP_CENTER_STORE );
 
-	const isZendeskConversation = (
-		conversation: OdieConversation | ZendeskConversation
-	): conversation is ZendeskConversation =>
-		'metadata' in conversation && 'participants' in conversation;
-
-	let odieChatId = undefined;
-	let conversationStatus: string = '';
-	let supportInteraction = undefined;
-
-	if ( isZendeskConversation( conversation ) ) {
-		conversationStatus = conversation.metadata.status;
-
-		supportInteraction = supportInteractions.find(
-			( interaction ) => interaction.uuid === conversation.metadata.supportInteractionId
-		);
-	} else {
-		odieChatId = parseInt( conversation.id );
-	}
+	const supportInteraction = supportInteractions.find(
+		( interaction ) => interaction.uuid === conversation.metadata.supportInteractionId
+	);
 
 	const messageDisplayName =
 		role === 'business' ? __( 'Happiness Engineer', __i18n_text_domain__ ) : displayName;
@@ -96,17 +81,11 @@ export const HelpCenterSupportChatMessage = ( {
 			to="/odie"
 			onClick={ () => {
 				trackContactButtonClicked( sectionName || helpCenterContextSectionName );
-
-				if ( odieChatId ) {
-					setOdieChatId( odieChatId );
-				} else if ( supportInteraction ) {
-					setOdieChatId( undefined );
-					setCurrentSupportInteraction( supportInteraction );
-				}
+				setCurrentSupportInteraction( supportInteraction );
 			} }
 			className={ clsx( 'help-center-support-chat__conversation-container', {
 				'is-unread-message': hasUnreadMessages,
-				[ `is-${ conversationStatus }` ]: conversationStatus,
+				[ `is-${ supportInteraction?.status }` ]: supportInteraction?.status,
 			} ) }
 		>
 			<div

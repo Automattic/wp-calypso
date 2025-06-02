@@ -30,7 +30,7 @@
 		"watch": "tsc --build ./tsconfig.json --watch"
 	},
 	"dependencies": {
-		"tslib": "^2.3.0",
+		"tslib": "^2.8.1",
 		"wpcom-proxy-request": "workspace:^"
 	},
 	"devDependencies": {

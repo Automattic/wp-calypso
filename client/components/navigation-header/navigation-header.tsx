@@ -82,10 +82,8 @@ const NavigationHeader: React.FC< HeaderProps > = ( {
 					{ titleProps.titleLogo }
 				</span>
 			) }
-			{ titleProps?.title && titleProps?.titleLogo ? (
+			{ titleProps?.title && (
 				<span className="calypso-navigation-header__title-text">{ titleProps?.title }</span>
-			) : (
-				titleProps?.title
 			) }
 		</h1>
 	);
