@@ -14,6 +14,7 @@ import { useState } from 'react';
 import { getPHPVersions } from 'calypso/data/php-versions';
 import { siteQuery, sitePHPVersionQuery, sitePHPVersionMutation } from '../../app/queries';
 import PageLayout from '../../components/page-layout';
+import RequiredSelect from '../../components/required-select';
 import { canUpdatePHPVersion } from '../../utils/site-features';
 import SettingsCallout from '../settings-callout';
 import SettingsPageHeader from '../settings-page-header';
@@ -52,7 +53,7 @@ export default function PHPVersionSettings( { siteSlug }: { siteSlug: string } )
 		{
 			id: 'version',
 			label: __( 'PHP version' ),
-			Edit: 'select',
+			Edit: RequiredSelect, // TODO: use DataForm's validation when available. See: DOTCOM-13298
 			elements: phpVersions.filter( ( option ) => {
 				// Show disabled PHP version only if the site is still using it.
 				if ( option.disabled && option.value !== currentVersion ) {
