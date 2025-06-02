@@ -37,8 +37,9 @@ function usePreservePurchasesFiltersInUrl( {
 } ) {
 	const urlSiteFilterKey = 'siteFilter';
 	const urlTypeFilterKey = 'typeFilter';
+	const currentUrl = window.location.href;
 	useEffect( () => {
-		const url = new URL( window.location.href );
+		const url = new URL( currentUrl );
 		const filters: Filter[] = [];
 		const siteFilterValue = url.searchParams.get( urlSiteFilterKey );
 		const typeFilterValue = url.searchParams.get( urlTypeFilterKey );
@@ -54,7 +55,7 @@ function usePreservePurchasesFiltersInUrl( {
 				filters,
 			} ) );
 		}
-	}, [ setView ] );
+	}, [ setView, currentUrl ] );
 	useEffect( () => {
 		const url = new URL( window.location.href );
 		const siteFilter = currentView.filters?.find( ( filter ) => filter.field === 'site' );
