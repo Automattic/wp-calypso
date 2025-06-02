@@ -53,26 +53,6 @@ export default function ReportsList( { reports, dataViewsState, setDataViewsStat
 				enableHiding: false,
 				enableSorting: false,
 			},
-			{
-				id: 'dateSent',
-				label: translate( 'Date Sent' ).toUpperCase(),
-				getValue: () => '-',
-				render: ( { item }: { item: Report } ): ReactNode => (
-					<span className="a4a-reports-date-sent">{ item.dateSent }</span>
-				),
-				enableHiding: false,
-				enableSorting: false,
-			},
-			{
-				id: 'status',
-				label: translate( 'Status' ).toUpperCase(),
-				getValue: () => '-',
-				render: ( { item }: { item: Report } ): ReactNode => (
-					<span className="a4a-reports-status">{ item.status }</span>
-				),
-				enableHiding: false,
-				enableSorting: false,
-			},
 		],
 		[ translate ]
 	);
