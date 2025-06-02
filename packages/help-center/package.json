@@ -18,8 +18,8 @@
 		"./src/*": {
 			"calypso:src": "./src/*"
 		},
-		"./?stepper": {
-			"calypso:src": "./src/index.ts?stepper"
+		"./app": {
+			"calypso:src": "./src/index.ts?app"
 		}
 	},
 	"sideEffects": [

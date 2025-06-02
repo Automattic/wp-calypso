@@ -11,11 +11,11 @@ import {
 import { __ } from '@wordpress/i18n';
 import { bellUnread, bell, commentAuthorAvatar } from '@wordpress/icons';
 import ReaderIcon from 'calypso/assets/icons/reader/reader-icon';
+import { AsyncHelpCenterApp, AsyncHelpCenterButton } from 'calypso/components/help-center'; // eslint-disable-line no-restricted-imports
 import RouterLinkMenuItem from '../../components/router-link-menu-item';
 import { useAuth } from '../auth';
 import { useOpenCommandPalette } from '../command-palette/utils';
 import { useAppContext } from '../context';
-import HelpCenter from './help-center';
 
 import './style.scss';
 
@@ -90,6 +90,7 @@ function UserProfile() {
 function SecondaryMenu() {
 	const navigate = useNavigate();
 	const { supports } = useAppContext();
+	const { user } = useAuth();
 	const hasUnreadNotifications = false;
 	const notificationsPath = '/me/notifications';
 
@@ -104,7 +105,12 @@ function SecondaryMenu() {
 					href="/reader"
 				/>
 			) }
-			{ supports.help && <HelpCenter /> }
+			{ supports.help && (
+				<>
+					<AsyncHelpCenterButton className="dashboard-secondary-menu__item" />
+					<AsyncHelpCenterApp user={ user } />
+				</>
+			) }
 			{ supports.notifications && (
 				<Button
 					className="dashboard-secondary-menu__item"
