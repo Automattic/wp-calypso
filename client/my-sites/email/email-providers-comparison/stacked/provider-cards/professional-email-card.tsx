@@ -30,7 +30,13 @@ import type { EmailProvidersStackedCardProps, ProviderCardProps } from './provid
 
 import './professional-email-card.scss';
 
-const logo = <Gridicon className="professional-email-card__logo" icon="my-sites" />;
+const logo = (
+	<Gridicon
+		className="professional-email-card__logo"
+		icon="my-sites"
+		title={ translate( 'Professional Email' ) }
+	/>
+);
 const badge = (
 	<img src={ poweredByTitanLogo } alt={ translate( 'Powered by Titan', { textOnly: true } ) } />
 );
