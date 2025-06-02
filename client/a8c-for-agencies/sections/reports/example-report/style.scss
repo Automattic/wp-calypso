@@ -2,18 +2,9 @@
 @import '@wordpress/base-styles/mixins';
 @import '@wordpress/base-styles/variables';
 
+
 .example-report {
-	background-color: var( --color-neutral-0 );
-	padding-bottom: 48px;
-
-	.layout__body {
-		padding-left: 0;
-		padding-right: 0;
-	}
-}
-
-.example-report__body {
-	padding: 24px;
+	padding: 56px;
 	background: #12304a;
 	width: unset;
 }

@@ -1,16 +1,14 @@
 import page from '@automattic/calypso-router';
-import { Button } from '@wordpress/components';
+import { Button, Modal } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo, useCallback } from 'react';
+import { useMemo, useCallback, useState } from 'react';
 import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
 import PageSectionColumns from 'calypso/a8c-for-agencies/components/page-section-columns';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
-import {
-	A4A_REPORTS_BUILD_LINK,
-	A4A_REPORTS_EXAMPLE_LINK,
-} from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import { A4A_REPORTS_BUILD_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import SimpleList from 'calypso/a8c-for-agencies/components/simple-list';
+import ExampleReport from 'calypso/a8c-for-agencies/sections/reports/example-report';
 import whyImage from 'calypso/assets/images/a8c-for-agencies/reports/report-mock-2.png';
 import readyImage from 'calypso/assets/images/a8c-for-agencies/reports/report-mock-3.png';
 import heroImage from 'calypso/assets/images/a8c-for-agencies/reports/report-mock.png';
@@ -27,6 +25,7 @@ import './style.scss';
 const ReportsOverview = () => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+	const [ isExampleReportModalOpen, setIsExampleReportModalOpen ] = useState( false );
 
 	const title = translate( 'Client Reports' );
 
@@ -68,8 +67,12 @@ const ReportsOverview = () => {
 
 	const handleExampleReport = useCallback( () => {
 		dispatch( recordTracksEvent( 'calypso_a4a_reports_example_report_button_click' ) );
-		page( A4A_REPORTS_EXAMPLE_LINK );
+		setIsExampleReportModalOpen( true );
 	}, [ dispatch ] );
+
+	const closeExampleReportModal = useCallback( () => {
+		setIsExampleReportModalOpen( false );
+	}, [] );
 
 	const buildReportButton = useMemo( () => {
 		return (
@@ -179,6 +182,20 @@ const ReportsOverview = () => {
 					</PageSectionColumns.Column>
 				</PageSectionColumns>
 			</LayoutBody>
+			{ isExampleReportModalOpen && (
+				<Modal
+					title={ translate( 'Example client report' ) }
+					onRequestClose={ closeExampleReportModal }
+					className="reports-overview__example-report-modal"
+					bodyOpenClassName="reports-overview__example-report-modal-body"
+					size="large"
+					style={ {
+						backgroundColor: 'var( --studio-red-60 )',
+					} }
+				>
+					<ExampleReport />
+				</Modal>
+			) }
 		</Layout>
 	);
 };

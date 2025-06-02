@@ -4,16 +4,10 @@ import {
 	A4A_REPORTS_OVERVIEW_LINK,
 	A4A_REPORTS_DASHBOARD_LINK,
 	A4A_REPORTS_BUILD_LINK,
-	A4A_REPORTS_EXAMPLE_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import { requireAccessContext } from 'calypso/a8c-for-agencies/controller';
 import { makeLayout, render as clientRender } from 'calypso/controller';
-import {
-	reportsOverviewContext,
-	reportsDashboardContext,
-	buildReportContext,
-	exampleReportContext,
-} from './controller';
+import { reportsOverviewContext, reportsDashboardContext, buildReportContext } from './controller';
 
 export default function () {
 	page(
@@ -34,13 +28,6 @@ export default function () {
 		A4A_REPORTS_BUILD_LINK,
 		requireAccessContext,
 		buildReportContext,
-		makeLayout,
-		clientRender
-	);
-	page(
-		A4A_REPORTS_EXAMPLE_LINK,
-		requireAccessContext,
-		exampleReportContext,
 		makeLayout,
 		clientRender
 	);
