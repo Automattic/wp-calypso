@@ -29,10 +29,7 @@ export const ODIE_FORWARD_TO_ZENDESK_MESSAGE = __(
 
 export const ODIE_TRANSFER_MESSAGE: Message[] = [
 	{
-		content: __(
-			"No problem. Help is on the way! I'm connecting you with one of our Happiness Engineers.",
-			__i18n_text_domain__
-		),
+		content: __( 'No problem. Help is on the way!', __i18n_text_domain__ ),
 		role: 'bot',
 		type: 'message',
 		context: {

@@ -610,8 +610,8 @@ describe( 'Site Migration Flow', () => {
 				} );
 			} );
 
-			it( 'redirects to IMPORT_OR_MIGRATE when a site is selected and the platform is not identified', () => {
-				const destination = runNavigation( {
+			it( 'redirects to IMPORT_LIST when a site is selected and the platform is not identified', () => {
+				runNavigation( {
 					from: STEPS.PICK_SITE,
 					dependencies: {
 						action: 'select-site',
@@ -622,11 +622,13 @@ describe( 'Site Migration Flow', () => {
 					},
 				} );
 
-				expect( destination ).toMatchDestination( {
-					step: STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE,
+				expect( window.location.assign ).toMatchURL( {
+					path: '/setup/site-setup/importList',
 					query: {
-						siteSlug: 'example.wordpress.com',
+						backToFlow: '/site-migration/sitePicker',
+						sessionId: 123,
 						siteId: 123,
+						siteSlug: 'example.wordpress.com',
 					},
 				} );
 			} );

@@ -94,6 +94,7 @@ export interface Site {
 	subscribers_count: number;
 	// Can be undefined for deleted sites.
 	options?: SiteOptions;
+	is_a4a_dev_site: boolean;
 	is_a8c: boolean;
 	is_deleted: boolean;
 	is_coming_soon: boolean;
@@ -167,6 +168,7 @@ export interface EngagementStats {
 }
 
 export interface SiteSettings {
+	is_fully_managed_agency_site?: boolean;
 	wpcom_site_visibility?: 'coming-soon' | 'public' | 'private';
 	wpcom_discourage_search_engines?: boolean;
 	wpcom_prevent_third_party_sharing?: boolean;
@@ -212,3 +214,15 @@ export interface SiteTransferConfirmation {
 	email_sent: boolean;
 	new_owner_email: string;
 }
+
+export type SiteResetContentSummary = {
+	post_count: number;
+	page_count: number;
+	media_count: number;
+	plugin_count: number;
+};
+
+export type SiteResetStatus = {
+	status: 'in-progress' | 'ready' | 'completed';
+	progress: number;
+};

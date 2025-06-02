@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Modal, Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
@@ -106,6 +107,10 @@ const CancelDifmMigrationForm = ( { siteId }: { siteId: number } ) => {
 	>( null );
 
 	const { site, isMigrationCompleted, isMigrationInProgress } = useSiteMigrationStatus( siteId );
+
+	if ( ! isEnabled( 'migration-flow/cancel-difm' ) ) {
+		return null;
+	}
 
 	if ( ! site ) {
 		return null;
