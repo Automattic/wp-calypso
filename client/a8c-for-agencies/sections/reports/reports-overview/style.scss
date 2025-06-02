@@ -22,6 +22,7 @@
 }
 
 .reports-overview__content {
+	container-type: inline-size;
 	display: flex;
 	flex-direction: column;
 	gap: 24px;
@@ -75,21 +76,27 @@ a.components-button.reports-overview__button--secondary {
 }
 
 .reports-overview__buttons-container {
+	container-type: inline-size;
 	display: flex;
 	flex-direction: column;
 	gap: 8px;
 
-	a.components-button {
+	.components-button.reports-overview__button {
+		flex: 1;
 		width: 100%;
-		text-wrap: balance;
 	}
+}
 
-	@include break-wide {
+@container (min-width: 375px) {
+	.reports-overview__buttons-container .components-button.reports-overview__button {
+		flex: none;
+		width: auto;
+	}
+}
+
+@container (min-width: 350px) {
+	.reports-overview__buttons-container{
 		flex-direction: row;
-
-		a.components-button {
-			width: auto;
-		}
 	}
 }
 

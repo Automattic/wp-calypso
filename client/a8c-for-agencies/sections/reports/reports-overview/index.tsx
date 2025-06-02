@@ -77,10 +77,18 @@ const ReportsOverview = () => {
 	const buildReportButton = useMemo( () => {
 		return (
 			<div className="reports-overview__buttons-container">
-				<Button variant="primary" onClick={ handleBuildReport }>
+				<Button
+					variant="primary"
+					className="reports-overview__button"
+					onClick={ handleBuildReport }
+				>
 					{ translate( 'Build a new report' ) }
 				</Button>
-				<Button variant="secondary" onClick={ handleExampleReport }>
+				<Button
+					variant="secondary"
+					className="reports-overview__button"
+					onClick={ handleExampleReport }
+				>
 					{ translate( 'View example report' ) }
 				</Button>
 			</div>
