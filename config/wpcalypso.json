@@ -120,7 +120,7 @@
 		"press-this": true,
 		"publicize-preview": true,
 		"purchases/new-payment-methods": true,
-		"purchases/purchase-list-dataview": true,
+		"purchases/purchase-list-dataview": false,
 		"reader": true,
 		"reader/full-errors": true,
 		"reader/quick-post": true,
