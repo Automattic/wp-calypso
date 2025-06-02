@@ -43,7 +43,7 @@ export function PurchasesDataViews( { purchases }: { purchases: Purchases.Purcha
 			return;
 		}
 	}, [ isDesktop, currentView, setView ] );
-	const purchasesDataFields = usePurchasesFieldDefinitions( purchasesDataView.fields );
+	const purchasesDataFields = usePurchasesFieldDefinitions();
 
 	const { data: adjustedPurchases, paginationInfo } = useMemo( () => {
 		return filterSortAndPaginate( purchases, currentView, purchasesDataFields );
