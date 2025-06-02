@@ -68,6 +68,7 @@ const MEMBER_ACCESSIBLE_PATHS: Record< string, string[] > = {
 	[ A4A_SITES_LINK_WALKTHROUGH_TOUR ]: [ 'a4a_read_managed_sites' ],
 	[ A4A_SITES_LINK_ADD_NEW_SITE_TOUR ]: [ 'a4a_read_managed_sites' ],
 	[ A4A_SITES_CONNECT_URL_LINK ]: [ 'a4a_read_managed_sites' ],
+	// TODO: Add the correct capability for Reports
 	[ A4A_REPORTS_LINK ]: [ 'a4a_read_managed_sites' ],
 	[ A4A_REPORTS_OVERVIEW_LINK ]: [ 'a4a_read_managed_sites' ],
 	[ A4A_REPORTS_DASHBOARD_LINK ]: [ 'a4a_read_managed_sites' ],
