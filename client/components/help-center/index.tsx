@@ -1,10 +1,2 @@
-import AsyncLoad from 'calypso/components/async-load';
-import { HelpCenterAppProps, HelpCenterButtonProps } from './types';
-
-export const AsyncHelpCenterApp = ( props: HelpCenterAppProps ) => {
-	return <AsyncLoad require="./help-center-app" placeholder={ null } { ...props } />;
-};
-
-export const AsyncHelpCenterButton = ( props: HelpCenterButtonProps ) => {
-	return <AsyncLoad require="./help-center-button" placeholder={ null } { ...props } />;
-};
+export { default as AsyncHelpCenterApp } from './async-help-center-app';
+export { default as useSetShowHelpCenter } from './use-set-show-help-center';

@@ -9,9 +9,10 @@ import {
 	MenuItem,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { bellUnread, bell, commentAuthorAvatar } from '@wordpress/icons';
+import { help, bellUnread, bell, commentAuthorAvatar } from '@wordpress/icons';
+import { useCallback, useState } from 'react';
 import ReaderIcon from 'calypso/assets/icons/reader/reader-icon';
-import { AsyncHelpCenterApp, AsyncHelpCenterButton } from 'calypso/components/help-center'; // eslint-disable-line no-restricted-imports
+import { AsyncHelpCenterApp, useSetShowHelpCenter } from 'calypso/components/help-center'; // eslint-disable-line no-restricted-imports
 import RouterLinkMenuItem from '../../components/router-link-menu-item';
 import { useAuth } from '../auth';
 import { useOpenCommandPalette } from '../command-palette/utils';
@@ -91,8 +92,19 @@ function SecondaryMenu() {
 	const navigate = useNavigate();
 	const { supports } = useAppContext();
 	const { user } = useAuth();
+	const [ isHelpCenterOpen, setIsHelpCenterOpen ] = useState( false );
+	const setShowHelpCenter = useSetShowHelpCenter();
 	const hasUnreadNotifications = false;
 	const notificationsPath = '/me/notifications';
+
+	const handleOpenHelpCenter = useCallback( () => {
+		setIsHelpCenterOpen( true );
+		setShowHelpCenter( true );
+	}, [ setIsHelpCenterOpen ] );
+
+	const handleCloseHelpCenter = useCallback( () => {
+		setIsHelpCenterOpen( false );
+	}, [ setIsHelpCenterOpen ] );
 
 	return (
 		<HStack spacing={ 2 } justify="flex-end">
@@ -107,8 +119,16 @@ function SecondaryMenu() {
 			) }
 			{ supports.help && (
 				<>
-					<AsyncHelpCenterButton className="dashboard-secondary-menu__item" />
-					<AsyncHelpCenterApp user={ user } />
+					<Button
+						className="dashboard-secondary-menu__item"
+						label={ __( 'Help' ) }
+						onClick={ ! isHelpCenterOpen ? handleOpenHelpCenter : handleCloseHelpCenter }
+						icon={ help }
+						variant="tertiary"
+					/>
+					{ isHelpCenterOpen && (
+						<AsyncHelpCenterApp user={ user } onClose={ handleCloseHelpCenter } />
+					) }
 				</>
 			) }
 			{ supports.notifications && (

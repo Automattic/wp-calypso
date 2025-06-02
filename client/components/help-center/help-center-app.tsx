@@ -14,12 +14,13 @@ import './help-center-app.scss';
 
 const HELP_CENTER_STORE = HelpCenterStore.register();
 
-const HelpCenterApp = ( { user }: HelpCenterAppProps ) => {
+const HelpCenterApp = ( { user, onClose }: HelpCenterAppProps ) => {
 	const { setShowHelpCenter } = useDispatch( HELP_CENTER_STORE );
 
 	const handleClose = useCallback( () => {
 		setShowHelpCenter( false );
-	}, [ setShowHelpCenter ] );
+		onClose?.();
+	}, [ setShowHelpCenter, onClose ] );
 
 	return (
 		<HelpCenter
