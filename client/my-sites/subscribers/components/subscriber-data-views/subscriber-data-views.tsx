@@ -5,7 +5,7 @@ import { useBreakpoint } from '@automattic/viewport-react';
 import { DataViews, type View, type ViewTable, type Action, Operator } from '@wordpress/dataviews';
 import { useMemo, useState, useCallback, useEffect } from '@wordpress/element';
 import { trash } from '@wordpress/icons';
-import { translate } from 'i18n-calypso';
+import { translate, fixMe } from 'i18n-calypso';
 import { useSubscribedNewsletterCategories } from 'calypso/data/newsletter-categories';
 import { useSelector, useDispatch } from 'calypso/state';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
@@ -374,7 +374,11 @@ export default function SubscriberDataViews( {
 			},
 			{
 				id: 'date_subscribed',
-				label: translate( 'Date Subscribed' ),
+				label: fixMe( {
+					text: 'Date subscribed',
+					newCopy: translate( 'Date subscribed' ),
+					oldCopy: translate( 'Since' ),
+				} ) as string,
 				getValue: ( { item }: { item: Subscriber } ) =>
 					getFormattedSubscriptionDate( item, locale ),
 				render: ( { item }: { item: Subscriber } ) => getFormattedSubscriptionDate( item, locale ),
@@ -382,7 +386,7 @@ export default function SubscriberDataViews( {
 				enableSorting: true,
 			},
 		],
-		[]
+		[ locale ]
 	);
 
 	const actions = useMemo< Action< Subscriber >[] >( () => {
