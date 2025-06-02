@@ -9,7 +9,6 @@ import {
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
 	Button,
-	Notice,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
@@ -17,6 +16,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { siteQuery, siteDefensiveModeQuery, siteDefensiveModeMutation } from '../../app/queries';
+import Notice from '../../components/notice';
 import PageLayout from '../../components/page-layout';
 import SettingsPageHeader from '../settings-page-header';
 import type { DefensiveModeSettingsUpdate, Site } from '../../data/types';
@@ -120,42 +120,46 @@ export default function DefensiveModeSettings( { siteSlug }: { siteSlug: string 
 		};
 
 		return (
-			<Notice status="success" isDismissible={ false }>
-				<Text as="p">{ __( 'Defensive mode is enabled' ) }</Text>
+			<Notice
+				variant="success"
+				title={ __( 'Defensive mode is enabled' ) }
+				actions={
+					! enabled_by_a11n && (
+						<Button
+							variant="primary"
+							type="submit"
+							isBusy={ isPending }
+							disabled={ isPending }
+							onClick={ handleDisable }
+						>
+							{ __( 'Disable' ) }
+						</Button>
+					)
+				}
+			>
+				<VStack>
+					{ enabled_by_a11n && (
+						<Text as="p">
+							{ createInterpolateElement(
+								__(
+									'We’ve enabled defensive mode to protect your site. <link>Contact a Happiness Engineer</link> if you need assistance.'
+								),
+								{
+									// @ts-expect-error children prop is injected by createInterpolateElement
+									link: <ExternalLink href="/help/contact" />,
+								}
+							) }
+						</Text>
+					) }
 
-				{ enabled_by_a11n && (
 					<Text as="p">
-						{ createInterpolateElement(
-							__(
-								'We’ve enabled defensive mode to protect your site. <link>Contact a Happiness Engineer</link> if you need assistance.'
-							),
-							{
-								// @ts-expect-error children prop is injected by createInterpolateElement
-								link: <ExternalLink href="/help/contact" />,
-							}
+						{ sprintf(
+							// translators: %s: timestamp, e.g. May 27, 2025 11:02 AM
+							__( 'This will be automatically disabled on %s.' ),
+							enabledUntil
 						) }
 					</Text>
-				) }
-
-				<Text as="p">
-					{ sprintf(
-						// translators: %s: timestamp, e.g. May 27, 2025 11:02 AM
-						__( 'This will be automatically disabled on %s.' ),
-						enabledUntil
-					) }
-				</Text>
-
-				{ ! enabled_by_a11n && (
-					<Button
-						variant="primary"
-						type="submit"
-						isBusy={ isPending }
-						disabled={ isPending }
-						onClick={ handleDisable }
-					>
-						{ __( 'Disable' ) }
-					</Button>
-				) }
+				</VStack>
 			</Notice>
 		);
 	};
@@ -171,9 +175,7 @@ export default function DefensiveModeSettings( { siteSlug }: { siteSlug: string 
 
 		return (
 			<VStack spacing={ 8 }>
-				<Notice status="info" isDismissible={ false }>
-					<Text>{ __( 'Defensive mode is disabled' ) }</Text>
-				</Notice>
+				<Notice>{ __( 'Defensive mode is disabled.' ) }</Notice>
 				<Card>
 					<CardBody>
 						<VStack spacing={ 8 } style={ { padding: '8px 0' } }>
