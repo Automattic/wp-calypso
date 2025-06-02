@@ -49,72 +49,70 @@ export default function SftpCard( {
 	return (
 		<Card>
 			<CardBody>
-				<VStack spacing={ 5 }>
-					<VStack>
-						<Text size="15px" weight={ 500 } lineHeight="32px">
-							{ __( 'SFTP' ) }
-						</Text>
-						<Text as="p">
-							{ createInterpolateElement(
-								__(
-									'Use the credentials below to access and edit your website files using an SFTP client. <link>Learn more</link>.'
-								),
-								{
-									link: <ExternalLink href="#" children={ null } />,
-								}
-							) }
-						</Text>
-					</VStack>
-					<VStack spacing={ 4 }>
-						<ClipboardInputControl
-							label={ __( 'URL' ) }
-							value={ SFTP_URL }
-							readOnly
-							__next40pxDefaultSize
-						/>
-						<ClipboardInputControl
-							label={ __( 'Port' ) }
-							value={ SFTP_PORT }
-							readOnly
-							__next40pxDefaultSize
-						/>
-						<ClipboardInputControl
-							label={ __( 'Username' ) }
-							value={ username }
-							readOnly
-							__next40pxDefaultSize
-						/>
-						{ password ? (
-							<ClipboardInputControl
-								label={ __( 'Password' ) }
-								value={ password }
-								help={ __(
-									'Save your password somewhere safe. You will need to reset it to view it again.'
-								) }
-								readOnly
-								__next40pxDefaultSize
-							/>
-						) : (
-							<BaseControl
-								label={ __( 'Password' ) }
-								help={ __( 'To maintain security, you must reset your password to view it.' ) }
-								__nextHasNoMarginBottom
-								children={ null }
-							/>
+				<VStack style={ { paddingBottom: '12px' } }>
+					<Text size="15px" weight={ 500 } lineHeight="32px">
+						{ __( 'SFTP' ) }
+					</Text>
+					<Text variant="muted" as="p">
+						{ createInterpolateElement(
+							__(
+								'Use the credentials below to access and edit your website files using an SFTP client. <link>Learn more</link>.'
+							),
+							{
+								link: <ExternalLink href="#" children={ null } />,
+							}
 						) }
-						{ ! password && (
-							<HStack>
-								<Button
-									variant="secondary"
-									isBusy={ mutation.isPending }
-									onClick={ handleCreatePassword }
-								>
-									{ __( 'Reset password' ) }
-								</Button>
-							</HStack>
-						) }
-					</VStack>
+					</Text>
 				</VStack>
+				<VStack spacing={ 4 } style={ { padding: '8px 0' } }>
+					<ClipboardInputControl
+						label={ __( 'URL' ) }
+						value={ SFTP_URL }
+						readOnly
+						__next40pxDefaultSize
+					/>
+					<ClipboardInputControl
+						label={ __( 'Port' ) }
+						value={ SFTP_PORT }
+						readOnly
+						__next40pxDefaultSize
+					/>
+					<ClipboardInputControl
+						label={ __( 'Username' ) }
+						value={ username }
+						readOnly
+						__next40pxDefaultSize
+					/>
+					{ password ? (
+						<ClipboardInputControl
+							label={ __( 'Password' ) }
+							value={ password }
+							help={ __(
+								'Save your password somewhere safe. You will need to reset it to view it again.'
+							) }
+							readOnly
+							__next40pxDefaultSize
+						/>
+					) : (
+						<BaseControl
+							label={ __( 'Password' ) }
+							help={ __( 'To maintain security, you must reset your password to view it.' ) }
+							__nextHasNoMarginBottom
+							children={ null }
+						/>
+					) }
+				</VStack>
+				{ ! password && (
+					<HStack style={ { padding: '8px 0' } }>
+						<Button
+							variant="secondary"
+							isBusy={ mutation.isPending }
+							onClick={ handleCreatePassword }
+						>
+							{ __( 'Reset password' ) }
+						</Button>
+					</HStack>
+				) }
 			</CardBody>
 		</Card>
 	);

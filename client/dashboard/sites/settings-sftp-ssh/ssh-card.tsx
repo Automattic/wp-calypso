@@ -83,7 +83,7 @@ export default function SshCard( {
 						<Text size="15px" weight={ 500 } lineHeight="32px">
 							{ __( 'SSH' ) }
 						</Text>
-						<Text as="p">
+						<Text variant="muted" as="p">
 							{ createInterpolateElement(
 								__(
 									"SSH lets you access your site's backend via a terminal, so you can manage files and use <wpCliLink>WP-CLI</wpCliLink> for quick changes and troubleshooting. <learnMoreLink>Learn more</learnMoreLink>."
