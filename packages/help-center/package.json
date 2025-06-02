@@ -19,7 +19,8 @@
 			"calypso:src": "./src/*"
 		},
 		"./app": {
-			"calypso:src": "./src/index.ts?app"
+			"calypso:src": "./src/index.ts?app",
+			"import": "./dist/esm/index.js?app"
 		}
 	},
 	"sideEffects": [
