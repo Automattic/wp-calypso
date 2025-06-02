@@ -5,6 +5,7 @@ import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs, getQueryArg, getQueryArgs, removeQueryArgs } from '@wordpress/url';
 import { useState, useEffect } from 'react';
+import { useRemoveFocusedLaunchpadExperiment } from 'calypso/landing/stepper/hooks/use-remove-focused-launchpad-experiment';
 import { isSimplifiedOnboarding } from 'calypso/landing/stepper/hooks/use-simplified-onboarding';
 import { skipLaunchpad } from 'calypso/landing/stepper/utils/skip-launchpad';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
@@ -89,6 +90,7 @@ const onboarding: FlowV2< typeof initialize > = {
 
 		const [ useMyDomainTracksEventProps, setUseMyDomainTracksEventProps ] = useState( {} );
 		const { setShouldShowNotification } = usePurchasePlanNotification();
+		const [ , shouldSkipLaunchpad ] = useRemoveFocusedLaunchpadExperiment();
 
 		/**
 		 * Returns [destination, backDestination] for the post-checkout destination.
@@ -245,10 +247,12 @@ const onboarding: FlowV2< typeof initialize > = {
 						setSignupCompleteFlowName( flowName );
 						setSignupCompleteSlug( providedDependencies.siteSlug );
 
-						await skipLaunchpad( {
-							siteId,
-							siteSlug,
-						} );
+						if ( shouldSkipLaunchpad ) {
+							await skipLaunchpad( {
+								siteId,
+								siteSlug,
+							} );
+						}
 
 						if ( providedDependencies.goToCheckout ) {
 							/**
