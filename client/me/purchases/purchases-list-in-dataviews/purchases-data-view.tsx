@@ -1,6 +1,6 @@
 import page from '@automattic/calypso-router';
 import { Gridicon, Card } from '@automattic/components';
-import { Purchases } from '@automattic/data-stores';
+import { Purchases, SiteDetails } from '@automattic/data-stores';
 import { DESKTOP_BREAKPOINT } from '@automattic/viewport';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { DataViews, View, filterSortAndPaginate } from '@wordpress/dataviews';
@@ -28,7 +28,13 @@ export const purchasesDataView: View = {
 	layout: {},
 };
 
-export function PurchasesDataViews( { purchases }: { purchases: Purchases.Purchase[] } ) {
+export function PurchasesDataViews( {
+	purchases,
+	sites,
+}: {
+	purchases: Purchases.Purchase[];
+	sites: SiteDetails[];
+} ) {
 	const isDesktop = useBreakpoint( DESKTOP_BREAKPOINT );
 	const translate = useTranslate();
 	const [ currentView, setView ] = useState( purchasesDataView );
@@ -43,7 +49,7 @@ export function PurchasesDataViews( { purchases }: { purchases: Purchases.Purcha
 			return;
 		}
 	}, [ isDesktop, currentView, setView ] );
-	const purchasesDataFields = usePurchasesFieldDefinitions();
+	const purchasesDataFields = usePurchasesFieldDefinitions( { sites } );
 
 	const { data: adjustedPurchases, paginationInfo } = useMemo( () => {
 		return filterSortAndPaginate( purchases, currentView, purchasesDataFields );

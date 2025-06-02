@@ -68,12 +68,16 @@ export function getPurchasesFieldDefinitions( {
 	translate: LocalizeProps[ 'translate' ];
 	moment: ReturnType< typeof useLocalizedMoment >;
 	paymentMethods: Array< StoredPaymentMethod >;
-	sites?: Record< number | string, SiteDetails >;
+	sites: SiteDetails[];
 	fieldIds?: string[];
 } ): Fields< Purchases.Purchase > {
 	const backupPaymentMethods = paymentMethods.filter(
 		( paymentMethod ) => paymentMethod.is_backup === true
 	);
+
+	const getSiteValue = ( site: SiteDetails ): string => {
+		return `${ site.name } (${ site.domain })`;
+	};
 
 	const fields: Fields< Purchases.Purchase > = [
 		{
@@ -94,17 +98,16 @@ export function getPurchasesFieldDefinitions( {
 			enableGlobalSearch: true,
 			enableSorting: true,
 			enableHiding: false,
-			elements: Object.values( sites ?? {} ).map( ( site ) => {
+			elements: sites.map( ( site ) => {
 				// This has to match the format of `getValue()` for filtering to work.
-				const key = `${ site.name } (${ site.URL })`;
-				return { value: key, label: key };
+				return { value: getSiteValue( site ), label: getSiteValue( site ) };
 			} ),
 			filterBy: { operators: [ 'is' ], isPrimary: true },
 			getValue: ( { item }: { item: Purchases.Purchase } ) => {
-				const site = sites?.[ item.siteId ];
+				const site = sites.find( ( site ) => site.ID === item.siteId );
 				// This format has to match the `elements` for filtering to work.
 				if ( site ) {
-					return `${ site.name } (${ site.URL })`;
+					return getSiteValue( site );
 				}
 				return item.siteName;
 			},
@@ -123,7 +126,7 @@ export function getPurchasesFieldDefinitions( {
 			enableHiding: false,
 			getValue: ( { item }: { item: Purchases.Purchase } ) => {
 				// Render a bunch of things to make this easily searchable.
-				const site = sites?.[ item.siteId ];
+				const site = sites.find( ( site ) => site.ID === item.siteId );
 				return (
 					getDisplayName( item ) +
 					' ' +
