@@ -95,7 +95,7 @@ export default function ReportsList( { reports, dataViewsState, setDataViewsStat
 		}
 
 		return [];
-	}, [ openReportPreviewPane, translate, dataViewsState.type ] );
+	}, [ translate, dataViewsState.type ] );
 
 	const placeholderReport: Report = useMemo(
 		() => ( {
