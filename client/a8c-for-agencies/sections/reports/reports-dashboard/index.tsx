@@ -8,6 +8,7 @@ import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-pa
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import { A4A_REPORTS_BUILD_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import LayoutBody from 'calypso/layout/hosting-dashboard/body';
+import LayoutColumn from 'calypso/layout/hosting-dashboard/column';
 import LayoutHeader, {
 	LayoutHeaderTitle as Title,
 	LayoutHeaderActions as Actions,
@@ -24,25 +25,27 @@ export default function ReportsDashboard() {
 	} );
 
 	return (
-		<Layout title={ pageTitle } wide>
-			<LayoutTop>
-				<LayoutHeader>
-					<Title>{ pageTitle }</Title>
-					<Actions>
-						<MobileSidebarNavigation />
-						<Button variant="primary" href={ A4A_REPORTS_BUILD_LINK }>
-							{ translate( 'Build a new report' ) }
-						</Button>
-					</Actions>
-				</LayoutHeader>
-			</LayoutTop>
-			<LayoutBody className="reports-dashboard-content">
-				<ReportsList
-					reports={ [] }
-					dataViewsState={ dataViewsState }
-					setDataViewsState={ setDataViewsState }
-				/>
-			</LayoutBody>
+		<Layout className="full-width-layout-with-table" title={ pageTitle } wide>
+			<LayoutColumn wide>
+				<LayoutTop isFullWidth>
+					<LayoutHeader>
+						<Title>{ pageTitle }</Title>
+						<Actions>
+							<MobileSidebarNavigation />
+							<Button variant="primary" href={ A4A_REPORTS_BUILD_LINK }>
+								{ translate( 'Build a new report' ) }
+							</Button>
+						</Actions>
+					</LayoutHeader>
+				</LayoutTop>
+				<LayoutBody className="reports-dashboard-content">
+					<ReportsList
+						reports={ [] }
+						dataViewsState={ dataViewsState }
+						setDataViewsState={ setDataViewsState }
+					/>
+				</LayoutBody>
+			</LayoutColumn>
 		</Layout>
 	);
 }
