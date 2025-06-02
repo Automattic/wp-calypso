@@ -1,5 +1,6 @@
 import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { useMemo, useCallback } from '@wordpress/element';
+import { chevronRight } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { DATAVIEWS_LIST } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
 import ItemsDataViews from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews';
@@ -81,36 +82,20 @@ export default function ReportsList( { reports, dataViewsState, setDataViewsStat
 			return [
 				{
 					id: 'view-report',
-					label: translate( 'View' ),
+					label: translate( 'View Details' ),
 					isPrimary: true,
+					icon: chevronRight,
 					callback( items ) {
-						openReportPreviewPane( items[ 0 ] );
-					},
-				},
-				{
-					id: 'duplicate-report',
-					label: translate( 'Duplicate' ),
-					isPrimary: false,
-					callback() {
-						// TODO: Implement duplicate report functionality
-						dispatch( recordTracksEvent( 'calypso_a4a_reports_list_duplicate_report_click' ) );
-					},
-				},
-				{
-					id: 'delete-report',
-					label: translate( 'Delete' ),
-					isPrimary: false,
-					isDestructive: true,
-					callback() {
-						// TODO: Implement delete report functionality
-						dispatch( recordTracksEvent( 'calypso_a4a_reports_list_delete_report_click' ) );
+						alert( `View Details clicked for report: ${ items[ 0 ].siteNameOrUrl }` );
+						// openReportPreviewPane( items[ 0 ] );
+						return false;
 					},
 				},
 			];
 		}
 
 		return [];
-	}, [ openReportPreviewPane, translate, dataViewsState.type, dispatch ] );
+	}, [ openReportPreviewPane, translate, dataViewsState.type ] );
 
 	const placeholderReport: Report = useMemo(
 		() => ( {
