@@ -219,7 +219,8 @@ class DomainRegistrationSuggestion extends Component {
 								'Accessible label for domain with sale price. %(baseLabel)s is the base label (e.g. "Select domain testing.com"). %(salePrice)s is the sale price. %(price)s is the price.',
 						}
 					);
-				} else if ( productCost ) {
+				}
+				if ( productCost ) {
 					return translate( '%(baseLabel)s. %(price)s per year', {
 						args: {
 							baseLabel,
