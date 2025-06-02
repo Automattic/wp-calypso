@@ -4,7 +4,7 @@ import { __ } from '@wordpress/i18n';
 import { file } from '@wordpress/icons';
 import { siteSftpUsersQuery, siteSshAccessStatusQuery } from '../../app/queries';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
-import { canUseSftp, canUseSsh } from './utils';
+import { canUseSftp, canUseSsh } from '../../utils/site-features';
 import type { Site } from '../../data/types';
 
 export default function SftpSshSettingsSummary( { site }: { site: Site } ) {

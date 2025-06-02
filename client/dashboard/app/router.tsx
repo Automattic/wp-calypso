@@ -6,7 +6,6 @@ import {
 	createLazyRoute,
 } from '@tanstack/react-router';
 import { fetchTwoStep } from '../data';
-import { canUseSftp, canUseSsh } from '../sites/settings-sftp-ssh/utils';
 import {
 	canUpdatePHPVersion,
 	canUpdateDefensiveMode,
@@ -15,6 +14,8 @@ import {
 	canGetPrimaryDataCenter,
 	canSetStaticFile404Handling,
 	canUpdateCaching,
+	canUseSftp,
+	canUseSsh,
 } from '../utils/site-features';
 import NotFound from './404';
 import UnknownError from './500';

@@ -4,13 +4,13 @@ import { __ } from '@wordpress/i18n';
 import { file } from '@wordpress/icons';
 import { siteQuery, siteSftpUsersQuery, siteSshAccessStatusQuery } from '../../app/queries';
 import PageLayout from '../../components/page-layout';
+import { canUseSftp, canUseSsh } from '../../utils/site-features';
 import SettingsCallout from '../settings-callout';
 import SettingsPageHeader from '../settings-page-header';
 import calloutIllustrationUrl from './callout-illustration.svg';
 import EnableSftpCard from './enable-sftp-card';
 import SftpCard from './sftp-card';
 import SshCard from './ssh-card';
-import { canUseSftp, canUseSsh } from './utils';
 
 export default function SftpSshSettings( { siteSlug }: { siteSlug: string } ) {
 	const { data: site } = useQuery( siteQuery( siteSlug ) );
