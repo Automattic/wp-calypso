@@ -235,6 +235,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@ariakit/core@npm:0.4.15":
+  version: 0.4.15
+  resolution: "@ariakit/core@npm:0.4.15"
+  checksum: 2d437d65e1ccadfdedb6b181447abf5a0af49a6b5380188163c80db18da7673172e2c8aa54bf2877fef534716b1755c5098ee11efa3372ee525d7ecdff611efb
+  languageName: node
+  linkType: hard
+
 "@ariakit/react-core@npm:0.4.15":
   version: 0.4.15
   resolution: "@ariakit/react-core@npm:0.4.15"
@@ -246,6 +253,20 @@ __metadata:
     react: ^17.0.0 || ^18.0.0 || ^19.0.0
     react-dom: ^17.0.0 || ^18.0.0 || ^19.0.0
   checksum: 8da567eadee423b38b54ea4c58ec19a84e329da141bf0277906a8a69b428ea6326e31e28a7f0fc67c4c8b1c420500137b6bee04e8c12253f2b7b290fb2173439
+  languageName: node
+  linkType: hard
+
+"@ariakit/react-core@npm:0.4.17":
+  version: 0.4.17
+  resolution: "@ariakit/react-core@npm:0.4.17"
+  dependencies:
+    "@ariakit/core": "npm:0.4.15"
+    "@floating-ui/dom": "npm:^1.0.0"
+    use-sync-external-store: "npm:^1.2.0"
+  peerDependencies:
+    react: ^17.0.0 || ^18.0.0 || ^19.0.0
+    react-dom: ^17.0.0 || ^18.0.0 || ^19.0.0
+  checksum: ae047aecb4e662a72e3b73b05986752f9fac9f0c839493f73f566a4cf557881a44e359ecc0be54c39e7d87b8df2be1238c4810b39ba275869a27e54cce6cbd94
   languageName: node
   linkType: hard
 
@@ -261,11 +282,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ariakit/test@npm:0.4.7":
-  version: 0.4.7
-  resolution: "@ariakit/test@npm:0.4.7"
+"@ariakit/react@npm:^0.4.17":
+  version: 0.4.17
+  resolution: "@ariakit/react@npm:0.4.17"
   dependencies:
-    "@ariakit/core": "npm:0.4.14"
+    "@ariakit/react-core": "npm:0.4.17"
+  peerDependencies:
+    react: ^17.0.0 || ^18.0.0 || ^19.0.0
+    react-dom: ^17.0.0 || ^18.0.0 || ^19.0.0
+  checksum: 4188e517726b27319c68da58721659fea4da91baf978407efdc48dd639ac1b095c013c027d07daae14c2a0ef62100f1f3bf849b0426d2162a9edc8f107548e8e
+  languageName: node
+  linkType: hard
+
+"@ariakit/test@npm:^0.4.10":
+  version: 0.4.10
+  resolution: "@ariakit/test@npm:0.4.10"
+  dependencies:
+    "@ariakit/core": "npm:0.4.15"
     "@testing-library/dom": "npm:^8.0.0 || ^9.0.0 || ^10.0.0"
   peerDependencies:
     "@playwright/test": ^1.27.0
@@ -278,7 +311,7 @@ __metadata:
       optional: true
     react:
       optional: true
-  checksum: 47d29ac8285b91762b640a881d51aa2515ebf381716b27bd781bc3b78f75e404f89c1537c4b07e76ed8bc9db0b1f3d126d6bc7577a3a3c60714b6681f2e96403
+  checksum: c851403dac8d984cfbe2a21838d53cc07e85d2196584984fccfd9e363b533c3b6525d5b1dc812c430dcaa3190d743cb440bb3ac422c148590c162d5302ecfd62
   languageName: node
   linkType: hard
 
@@ -855,8 +888,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/components@workspace:packages/components"
   dependencies:
-    "@ariakit/react": "npm:^0.4.15"
-    "@ariakit/test": "npm:0.4.7"
+    "@ariakit/react": "npm:^0.4.17"
+    "@ariakit/test": "npm:^0.4.10"
     "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-color-schemes": "workspace:^"
     "@automattic/calypso-storybook": "workspace:^"
@@ -1006,7 +1039,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/dataviews@workspace:packages/dataviews"
   dependencies:
-    "@ariakit/react": "npm:^0.4.15"
+    "@ariakit/react": "npm:^0.4.17"
     "@automattic/calypso-storybook": "workspace:^"
     "@testing-library/jest-dom": "npm:^6.6.3"
     "@types/jest": "npm:^29.5.14"

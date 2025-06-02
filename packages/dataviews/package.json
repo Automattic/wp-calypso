@@ -39,7 +39,7 @@
 	"types": "dist/types",
 	"sideEffects": false,
 	"dependencies": {
-		"@ariakit/react": "^0.4.15",
+		"@ariakit/react": "^0.4.17",
 		"@wordpress/base-styles": "^5.23.0",
 		"@wordpress/components": "^29.9.0",
 		"@wordpress/compose": "^7.23.0",
