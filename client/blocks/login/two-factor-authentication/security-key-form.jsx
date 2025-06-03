@@ -57,7 +57,7 @@ class SecurityKeyForm extends Component {
 					this.initiateSecurityKeyAuthentication();
 				} }
 			>
-				<Card compact className="two-factor-authentication__verification-code-form">
+				<Card className="two-factor-authentication__verification-code-form">
 					{ ! this.state.isAuthenticating && (
 						<div className="security-key-form__help-text">
 							<p>
