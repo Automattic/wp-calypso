@@ -1,5 +1,7 @@
-import { MenuItem, Modal } from '@wordpress/components';
+import { Button, MenuItem, Modal } from '@wordpress/components';
+import { Icon, close } from '@wordpress/icons';
 import clsx from 'clsx';
+import { useTranslate } from 'i18n-calypso';
 import {
 	Children,
 	isValidElement,
@@ -21,7 +23,9 @@ interface OnboardingTourModalProps {
 }
 
 function OnboardingTourModal( { onClose, children }: OnboardingTourModalProps ) {
+	const translate = useTranslate();
 	const dispatch = useDispatch();
+
 	const sections: ReactElement< OnboardingTourModalSectionProps >[] = Children.toArray(
 		children
 	).filter(
@@ -94,6 +98,18 @@ function OnboardingTourModal( { onClose, children }: OnboardingTourModalProps ) 
 					) ) }
 				</div>
 				<div className="onboarding-tour-modal__main">
+					<Button
+						className={ clsx( 'onboarding-tour-modal__close-button', {
+							'is-light': currentSection?.props?.isDarkBanner,
+						} ) }
+						onClick={ () => {
+							dispatch( recordTracksEvent( 'calypso_onboarding_tour_modal_close_button_click' ) );
+							onClose();
+						} }
+						aria-label={ translate( 'Close' ) }
+					>
+						<Icon size={ 24 } icon={ close } />
+					</Button>
 					<div className="onboarding-tour-modal__main-banner-container">
 						{ sections.map( ( section ) => (
 							<div

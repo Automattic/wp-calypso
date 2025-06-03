@@ -37,6 +37,7 @@ export default function useOnboardingTourSections() {
 				id: 'onboarding-tour-welcome',
 				title: translate( 'Welcome' ),
 				bannerImage: OnboardingTourBannerWelcome,
+				isDarkBanner: true,
 				content: (
 					<div className="a4a-onboarding-tour">
 						<h1 className="a4a-onboarding-tour__title">
@@ -150,6 +151,7 @@ export default function useOnboardingTourSections() {
 				id: 'onboarding-tour-marketplace',
 				title: translate( 'Marketplace' ),
 				bannerImage: OnboardingTourBannerMarketplace,
+				isDarkBanner: true,
 				content: (
 					<div className="a4a-onboarding-tour">
 						<h1 className="a4a-onboarding-tour__title">
@@ -199,6 +201,7 @@ export default function useOnboardingTourSections() {
 				id: 'onboarding-tour-purchases',
 				title: translate( 'Purchases' ),
 				bannerImage: OnboardingTourBannerPurchases,
+				isDarkBanner: true,
 				content: (
 					<div className="a4a-onboarding-tour">
 						<h1 className="a4a-onboarding-tour__title">
@@ -351,6 +354,7 @@ export default function useOnboardingTourSections() {
 				id: 'onboarding-tour-woopayments',
 				title: translate( 'WooPayments' ),
 				bannerImage: OnboardingTourBannerWooPayments,
+				isDarkBanner: true,
 				content: (
 					<div className="a4a-onboarding-tour">
 						<h1 className="a4a-onboarding-tour__title">{ translate( 'Learn. Pitch. Earn.' ) }</h1>
@@ -490,6 +494,7 @@ export default function useOnboardingTourSections() {
 				id: 'onboarding-tour-growth-call',
 				title: translate( 'Free growth call' ),
 				bannerImage: OnboardingTourBannerGrowthCall,
+				isDarkBanner: true,
 				content: (
 					<div className="a4a-onboarding-tour">
 						<h1 className="a4a-onboarding-tour__title">
