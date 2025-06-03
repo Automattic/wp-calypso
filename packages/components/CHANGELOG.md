@@ -4,6 +4,10 @@
 
 - `CoreBadge`: Fork from `@wordpress/components` and convert styles to CSS module. Static class names are no longer available ([#103568](https://github.com/Automattic/wp-calypso/pull/103568)).
 
+### New components
+
+- Add new `DateCalendar` and `DateRangeCalendar` components ([#103921](https://github.com/Automattic/wp-calypso/pull/103921)).
+
 ### Enhancements
 
 - Add `BigSkyLogo.Mark` component ([#103612](https://github.com/Automattic/wp-calypso/pull/103612)).
