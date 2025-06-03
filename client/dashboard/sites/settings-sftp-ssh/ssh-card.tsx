@@ -1,4 +1,5 @@
 import { CoreBadge } from '@automattic/components';
+import { DataForm } from '@automattic/dataviews';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import {
 	__experimentalHStack as HStack,
@@ -29,6 +30,12 @@ import {
 } from '../../app/queries';
 import ClipboardInputControl from './clipboard-input-control';
 import type { SftpUser, SiteSshKey, ProfileSshKey } from '../../data/types';
+import type { Field } from '@automattic/dataviews';
+
+type SshCardFormData = {
+	connection_command: string;
+	ssh_key: string;
+};
 
 const SshKeyCard = ( {
 	siteSshKey,
@@ -83,7 +90,6 @@ export default function SshCard( {
 	sftpUsers: SftpUser[];
 	sshEnabled: boolean;
 } ) {
-	const [ selectedSshKey, setSelectedSshKey ] = useState( 'default' );
 	const { user } = useAuth();
 	const { data: siteSshKeys } = useQuery( siteSshKeysQuery( siteSlug ) );
 	const { data: profileSshKeys } = useQuery( profileSshKeysQuery() );
@@ -96,7 +102,10 @@ export default function SshCard( {
 	const detachSshKeyMutation = useMutation( siteSshKeysDetachMutation( siteSlug ) );
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const userLocale = user.locale_variant || user.language || 'en';
-	const { username } = sftpUsers[ 0 ];
+	const [ formData, setFormData ] = useState< SshCardFormData >( {
+		connection_command: `ssh ${ sftpUsers[ 0 ]?.username }@ssh.wp.com`,
+		ssh_key: 'default',
+	} );
 
 	const userKeyIsAttached = useMemo( () => {
 		if ( ! siteSshKeys ) {
@@ -140,7 +149,7 @@ export default function SshCard( {
 	};
 
 	const handleAttachSshKey = () => {
-		attachSshKeyMutation.mutate( selectedSshKey, {
+		attachSshKeyMutation.mutate( formData.ssh_key, {
 			onError: () => {
 				createErrorNotice(
 					__(
@@ -169,8 +178,67 @@ export default function SshCard( {
 		} );
 	};
 
-	const handleSelectedSshKeyChange = ( currentSelectedKey: string ) => {
-		setSelectedSshKey( currentSelectedKey );
+	const fields: Field< SshCardFormData >[] = [
+		{
+			id: 'connection_command',
+			label: __( 'Connection command' ),
+			Edit: ( { field, data } ) => {
+				return (
+					<ClipboardInputControl
+						label={ field.label }
+						value={ field.getValue( { item: data } ) }
+						readOnly
+						__next40pxDefaultSize
+						onCopy={ handleCopy }
+					/>
+				);
+			},
+		},
+		{
+			id: 'ssh_key',
+			label: __( 'SSH key' ),
+			Edit: ( { field, data } ) => {
+				const value = field.getValue( { item: data } );
+				if ( siteSshKeys && siteSshKeys.length > 0 ) {
+					return (
+						<BaseControl label={ field.label } __nextHasNoMarginBottom>
+							<VStack>
+								{ siteSshKeys.map( ( siteSshKey: SiteSshKey ) => (
+									<SshKeyCard
+										key={ siteSshKey.sha256 }
+										siteSshKey={ siteSshKey }
+										userLocale={ userLocale }
+										isBusy={ detachSshKeyMutation.isPending }
+										onDetach={ handleDetachSshKey }
+									/>
+								) ) }
+							</VStack>
+						</BaseControl>
+					);
+				}
+
+				// TODO: Add ReauthRequired
+				return (
+					<SelectControl
+						label={ field.label }
+						value={ value }
+						options={ field.elements ?? [] }
+						onChange={ ( value ) => onChange( { [ id ]: value } ) }
+						__next40pxDefaultSize
+						__nextHasNoMarginBottom
+					/>
+				);
+			},
+			elements: profileSshKeys?.map( ( profileSshKey: ProfileSshKey ) => ( {
+				label: `${ user.username }-${ profileSshKey.name }`,
+				value: profileSshKey.name,
+			} ) ),
+		},
+	];
+
+	const form = {
+		type: 'regular' as const,
+		fields: [ 'connection_command', 'ssh_key' ],
 	};
 
 	return (
@@ -201,45 +269,14 @@ export default function SshCard( {
 						__nextHasNoMarginBottom
 					/>
 					{ sshEnabled && (
-						<>
-							<ClipboardInputControl
-								label={ __( 'Connection command' ) }
-								value={ `ssh ${ username }@ssh.wp.com` }
-								readOnly
-								__next40pxDefaultSize
-								onCopy={ handleCopy }
-							/>
-
-							{ siteSshKeys && siteSshKeys.length > 0 && (
-								<BaseControl label={ __( 'SSH Key' ) } __nextHasNoMarginBottom>
-									<VStack>
-										{ siteSshKeys.map( ( siteSshKey: SiteSshKey ) => (
-											<SshKeyCard
-												key={ siteSshKey.sha256 }
-												siteSshKey={ siteSshKey }
-												userLocale={ userLocale }
-												isBusy={ detachSshKeyMutation.isPending }
-												onDetach={ handleDetachSshKey }
-											/>
-										) ) }
-									</VStack>
-								</BaseControl>
-							) }
-							{ /* TODO: Use DataForm and add ReauthRequired */ }
-							{ showSshKeysSelect && (
-								<SelectControl
-									label={ __( 'SSH key' ) }
-									value={ selectedSshKey }
-									options={ profileSshKeys.map( ( profileSshKey: ProfileSshKey ) => ( {
-										label: `${ user.username }-${ profileSshKey.name }`,
-										value: profileSshKey.name,
-									} ) ) }
-									onChange={ handleSelectedSshKeyChange }
-									__next40pxDefaultSize
-									__nextHasNoMarginBottom
-								/>
-							) }
-						</>
+						<DataForm< SshCardFormData >
+							data={ formData }
+							fields={ fields }
+							form={ form }
+							onChange={ ( edits: Partial< SshCardFormData > ) => {
+								setFormData( ( data ) => ( { ...data, ...edits } ) );
+							} }
+						/>
 					) }
 				</VStack>
 				{ showSshKeysSelect && (
