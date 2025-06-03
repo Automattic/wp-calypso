@@ -10,9 +10,8 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { help, bellUnread, bell, commentAuthorAvatar } from '@wordpress/icons';
-import { useCallback, useState } from 'react';
 import ReaderIcon from 'calypso/assets/icons/reader/reader-icon';
-import { AsyncHelpCenterApp, useSetShowHelpCenter } from 'calypso/components/help-center'; // eslint-disable-line no-restricted-imports
+import { AsyncHelpCenterApp, useShowHelpCenter } from 'calypso/components/help-center'; // eslint-disable-line no-restricted-imports
 import RouterLinkMenuItem from '../../components/router-link-menu-item';
 import { useAuth } from '../auth';
 import { useOpenCommandPalette } from '../command-palette/utils';
@@ -92,19 +91,13 @@ function SecondaryMenu() {
 	const navigate = useNavigate();
 	const { supports } = useAppContext();
 	const { user } = useAuth();
-	const [ isHelpCenterOpen, setIsHelpCenterOpen ] = useState( false );
-	const setShowHelpCenter = useSetShowHelpCenter();
+	const [ isHelpCenterOpen, setIsHelpCenterOpen ] = useShowHelpCenter();
 	const hasUnreadNotifications = false;
 	const notificationsPath = '/me/notifications';
 
-	const handleOpenHelpCenter = useCallback( () => {
-		setIsHelpCenterOpen( true );
-		setShowHelpCenter( true );
-	}, [ setIsHelpCenterOpen ] );
-
-	const handleCloseHelpCenter = useCallback( () => {
-		setIsHelpCenterOpen( false );
-	}, [ setIsHelpCenterOpen ] );
+	const handleToggleHelpCenter = () => {
+		setIsHelpCenterOpen( ! isHelpCenterOpen );
+	};
 
 	return (
 		<HStack spacing={ 2 } justify="flex-end">
@@ -122,13 +115,11 @@ function SecondaryMenu() {
 					<Button
 						className="dashboard-secondary-menu__item"
 						label={ __( 'Help' ) }
-						onClick={ ! isHelpCenterOpen ? handleOpenHelpCenter : handleCloseHelpCenter }
+						onClick={ handleToggleHelpCenter }
 						icon={ help }
 						variant="tertiary"
 					/>
-					{ isHelpCenterOpen && (
-						<AsyncHelpCenterApp user={ user } onClose={ handleCloseHelpCenter } />
-					) }
+					{ isHelpCenterOpen && <AsyncHelpCenterApp user={ user } /> }
 				</>
 			) }
 			{ supports.notifications && (
