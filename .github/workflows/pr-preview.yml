@@ -1,0 +1,97 @@
+name: PR Preview
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+# Ensure only one preview build runs per-PR at a time
+concurrency:
+  group: pr-preview-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  pr-preview:
+    name: Adds a comment to the pull request with a link to a live preview of proposed changes.
+    runs-on: ubuntu-latest
+
+    # Avoid running this workflow for pull requests from forks, which would fail due to missing secrets
+    if: github.event.pull_request.head.repo.full_name == github.event.pull_request.base.repo.full_name
+
+    timeout-minutes: 10
+
+    steps:
+      # 1. Checkout the PR code
+      - uses: actions/checkout@v4
+
+      # 2. Check which files were changed, to determine if we need to build Design System Docs
+      - name: Check file changes
+        id: changes
+        uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36
+        with:
+          filters: |
+            design_system_docs:
+              - apps/design-system-docs/**
+              - .github/actions/build-design-system-docs/action.yml
+              - .github/workflows/pr-preview.yml
+              - packages/components/**
+
+      # 3. Build the Design System Docs site if needed
+      - uses: ./.github/actions/build-design-system-docs
+        if: steps.changes.outputs.design_system_docs == 'true'
+
+      # 4. Upload a new Worker version and capture the preview URL
+      - name: Upload Worker version
+        if: steps.changes.outputs.design_system_docs == 'true'
+        id: upload
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.DESIGN_SYSTEM_PREVIEW_CLOUDFLARE_ACCOUNT }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.DESIGN_SYSTEM_PREVIEW_CLOUDFLARE_TOKEN }}
+        run: |
+          npm install -g wrangler
+
+          # Run the upload and tee output so it's visible in the GitHub Actions log
+          OUT=$(wrangler versions upload --cwd apps/design-system-docs 2>&1 | tee /dev/stderr)
+
+          # Extract the preview URL from the output
+          URL=$(echo "$OUT" | grep -oE 'https://[a-z0-9-]+-preview\.a8cds\.workers\.dev/?')
+
+          # Output the URL to the GitHub Actions log for debugging
+          echo "URL: $URL"
+
+          # Expose it to later steps
+          echo "url=$URL" >> "$GITHUB_OUTPUT"
+
+      # 5. Find existing preview comment
+      - name: Find preview comment
+        id: find_comment
+        uses: peter-evans/find-comment@3eae4d37986fb5a8592848f6a574fdf654e61f9e
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          body-includes: '<!-- calypso-live-watermark -->'
+
+      # 6. Build comment body with optional Design System preview
+      - name: Build comment body
+        id: comment
+        run: |
+          body=$'<!-- calypso-live-watermark -->\n'
+          body+=$'**🌐 Live Previews:**\n\n'
+          body+=$'- [<img src="https://github.com/user-attachments/assets/b6aa37d0-b09b-402b-a06e-3ffafc438f64" height="14" valign="middle"> Calypso](https://calypso.live?image=registry.a8c.com/calypso/app:commit-${{ github.event.pull_request.head.sha }})\n'
+          body+=$'- [<img src="https://github.com/user-attachments/assets/5df2cf0c-e4d6-4599-b57f-60b5857249c9" height="14" valign="middle"> Jetpack Cloud](https://calypso.live?image=registry.a8c.com/calypso/app:commit-${{ github.event.pull_request.head.sha }}&env=jetpack)\n'
+          body+=$'- [<img src="https://github.com/user-attachments/assets/1eb842ba-5433-4f63-9076-700df5dcb121" height="14" valign="middle"> Automattic for Agencies](https://calypso.live?image=registry.a8c.com/calypso/app:commit-${{ github.event.pull_request.head.sha }}&env=a8c-for-agencies)\n'
+
+          if [ "${{ steps.changes.outputs.design_system_docs }}" = "true" ]; then
+            body+=$'- [<img src="https://github.com/user-attachments/assets/e858143b-f9af-4350-8094-42f76527a091" height="14" valign="middle"> Design System Reference Site](${{ steps.upload.outputs.url }})\n'
+          fi
+
+          echo "body<<EOF" >> "$GITHUB_OUTPUT"
+          echo "$body" >> "$GITHUB_OUTPUT"
+          echo "EOF" >> "$GITHUB_OUTPUT"
+
+      # 7. Create or update a comment that shows the preview URLs
+      - name: Comment (create or update)
+        uses: peter-evans/create-or-update-comment@71345be0265236311c031f5c7866368bd1eff043
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-id: ${{ steps.find_comment.outputs.comment-id }}
+          edit-mode: replace
+          body: ${{ steps.comment.outputs.body }}
