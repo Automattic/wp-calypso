@@ -1,3 +1,4 @@
+import { notAllowed } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -75,7 +76,9 @@ function ReaderPostOptionsMenuBlogStickerMenuItem( {
 
 	return (
 		<PopoverMenuItem
-			icon="flag"
+			icon={ notAllowed }
+			useWordPressIcon
+			iconSize={ 24 }
 			key={ blogStickerName }
 			className={ classes }
 			onClick={ toggleSticker }

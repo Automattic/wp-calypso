@@ -1,5 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { CustomSelectControl } from '@wordpress/components';
+import { useTranslate } from 'i18n-calypso';
 import { useRef } from 'react';
 import DropdownOption from '../../dropdown-option';
 import useIntervalOptions from '../hooks/use-interval-options';
@@ -19,6 +20,7 @@ export const IntervalTypeDropdown: React.FunctionComponent< IntervalTypeProps > 
 	) as SupportedUrlFriendlyTermType;
 	const optionsList = useIntervalOptions( props );
 	const hasOpenedDropdown = useRef( false );
+	const translate = useTranslate();
 
 	const selectOptionsList = Object.values( optionsList ).map( ( option ) => ( {
 		key: option.key,
@@ -32,7 +34,17 @@ export const IntervalTypeDropdown: React.FunctionComponent< IntervalTypeProps > 
 				) : null }
 			</DropdownOption>
 		 ) as unknown as string,
+		accessibleName: option.name as string,
 	} ) );
+
+	const selectedOption = selectOptionsList.find( ( { key } ) => key === supportedIntervalType );
+	// Translators: This is a description of the currently selected billing period for accessibility.
+	// billingPeriod is the name of the billing period and it's translated.
+	const describedByText = selectedOption?.accessibleName
+		? translate( 'Currently selected billing period: %(billingPeriod)s', {
+				args: { billingPeriod: selectedOption.accessibleName },
+		  } )
+		: undefined;
 
 	return (
 		<div className="plan-type-selector__interval-type-dropdown-container">
@@ -49,8 +61,9 @@ export const IntervalTypeDropdown: React.FunctionComponent< IntervalTypeProps > 
 				} }
 				className="plan-type-selector__interval-type-dropdown"
 				label=""
+				describedBy={ describedByText as string }
 				options={ selectOptionsList }
-				value={ selectOptionsList.find( ( { key } ) => key === supportedIntervalType ) }
+				value={ selectedOption }
 				onChange={ ( {
 					selectedItem: { key: intervalType },
 				}: {

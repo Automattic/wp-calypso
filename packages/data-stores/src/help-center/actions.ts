@@ -21,12 +21,6 @@ export function setCurrentSupportInteraction( supportInteraction: SupportInterac
 	} as const;
 }
 
-export const setLastMessageReceivedAt = ( lastMessageReceivedAt: number ) =>
-	( {
-		type: 'HELP_CENTER_SET_LAST_MESSAGE_RECEIVED_AT',
-		lastMessageReceivedAt,
-	} ) as const;
-
 export const setNavigateToRoute = ( route?: string ) =>
 	( {
 		type: 'HELP_CENTER_SET_NAVIGATE_TO_ROUTE',
@@ -249,6 +243,5 @@ export type HelpCenterAction =
 			| typeof setCurrentSupportInteraction
 			| typeof setAllowPremiumSupport
 			| typeof setHelpCenterOptions
-			| typeof setLastMessageReceivedAt
 	  >
 	| GeneratorReturnType< typeof setShowHelpCenter >;

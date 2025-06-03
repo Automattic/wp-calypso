@@ -1,6 +1,8 @@
 export enum DotcomFeatures {
 	SUBSCRIPTION_GIFTING = 'subscription-gifting',
 	COPY_SITE = 'copy-site',
+	LEGACY_CONTACT = 'legacy-contact',
+	LOCKED_MODE = 'locked-mode',
 }
 
 export const SITE_FIELDS = [

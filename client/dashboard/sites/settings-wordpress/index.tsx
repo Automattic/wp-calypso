@@ -20,6 +20,7 @@ import {
 } from '../../app/queries';
 import Notice from '../../components/notice';
 import PageLayout from '../../components/page-layout';
+import RequiredSelect from '../../components/required-select';
 import { canUpdateWordPressVersion } from '../../utils/site-features';
 import { getFormattedWordPressVersion } from '../../utils/wp-version';
 import SettingsPageHeader from '../settings-page-header';
@@ -48,7 +49,7 @@ export default function WordPressVersionSettings( { siteSlug }: { siteSlug: stri
 		{
 			id: 'version',
 			label: __( 'WordPress version' ),
-			Edit: 'select',
+			Edit: RequiredSelect, // TODO: use DataForm's validation when available. See: DOTCOM-13298
 			elements: [
 				{ value: 'latest', label: getFormattedWordPressVersion( site, 'latest' ) },
 				{ value: 'beta', label: getFormattedWordPressVersion( site, 'beta' ) },

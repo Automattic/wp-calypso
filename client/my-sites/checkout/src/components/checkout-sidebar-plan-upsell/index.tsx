@@ -40,48 +40,49 @@ function getUpsellVariant( currentVariant: WPCOMProductVariant, variants: WPCOMP
 function getUpsellTextForVariant(
 	upsellVariant: WPCOMProductVariant,
 	percentSavings: number,
-	__: any
+	__: any,
+	isStreamlinedPrice: boolean
 ) {
 	if ( upsellVariant.productBillingTermInMonths === 12 ) {
+		const cardTitle = isStreamlinedPrice
+			? // translators: "percentSavings" is the savings percentage for the upgrade as a number, like '20' for '20%'.
+			  __( '<strong>Save %(percentSavings)d%% extra</strong> by paying annually' )
+			: // translators: "percentSavings" is the savings percentage for the upgrade as a number, like '20' for '20%'.
+			  __( '<strong>Save %(percentSavings)d%%</strong> by paying annually' );
 		return {
-			cardTitle: createInterpolateElement(
-				sprintf(
-					// translators: "percentSavings" is the savings percentage for the upgrade as a number, like '20' for '20%'.
-					__( '<strong>Save %(percentSavings)d%%</strong> by paying annually' ),
-					{ percentSavings }
-				),
-				{ strong: createElement( 'strong' ) }
-			),
+			cardTitle: createInterpolateElement( sprintf( cardTitle, { percentSavings } ), {
+				strong: createElement( 'strong' ),
+			} ),
 			cellLabel: __( 'One-year cost' ),
 			ctaText: __( 'Switch to an annual plan' ),
 		};
 	}
 
 	if ( upsellVariant.productBillingTermInMonths === 24 ) {
+		const cardTitle = isStreamlinedPrice
+			? // translators: "percentSavings" is the savings percentage for the upgrade as a number, like '20' for '20%'.
+			  __( '<strong>Save %(percentSavings)d%% extra</strong> by paying for two years' )
+			: // translators: "percentSavings" is the savings percentage for the upgrade as a number, like '20' for '20%'.
+			  __( '<strong>Save %(percentSavings)d%%</strong> by paying for two years' );
 		return {
-			cardTitle: createInterpolateElement(
-				sprintf(
-					// translators: "percentSavings" is the savings percentage for the upgrade as a number, like '20' for '20%'.
-					__( '<strong>Save %(percentSavings)d%%</strong> by paying for two years' ),
-					{ percentSavings }
-				),
-				{ strong: createElement( 'strong' ) }
-			),
+			cardTitle: createInterpolateElement( sprintf( cardTitle, { percentSavings } ), {
+				strong: createElement( 'strong' ),
+			} ),
 			cellLabel: __( 'Two-year cost' ),
 			ctaText: __( 'Switch to a two-year plan' ),
 		};
 	}
 
 	if ( upsellVariant.productBillingTermInMonths === 36 ) {
+		const cardTitle = isStreamlinedPrice
+			? // translators: "percentSavings" is the savings percentage for the upgrade as a number, like '20' for '20%'.
+			  __( '<strong>Save %(percentSavings)d%% extra</strong> by paying for three years' )
+			: // translators: "percentSavings" is the savings percentage for the upgrade as a number, like '20' for '20%'.
+			  __( '<strong>Save %(percentSavings)d%%</strong> by paying for three years' );
 		return {
-			cardTitle: createInterpolateElement(
-				sprintf(
-					// translators: "percentSavings" is the savings percentage for the upgrade as a number, like '20' for '20%'.
-					__( '<strong>Save %(percentSavings)d%%</strong> by paying for three years' ),
-					{ percentSavings }
-				),
-				{ strong: createElement( 'strong' ) }
-			),
+			cardTitle: createInterpolateElement( sprintf( cardTitle, { percentSavings } ), {
+				strong: createElement( 'strong' ),
+			} ),
 			cellLabel: __( 'Three-year cost' ),
 			ctaText: __( 'Switch to a three-year plan' ),
 		};
@@ -199,7 +200,12 @@ export function CheckoutSidebarPlanUpsell() {
 		currentVariant.introductoryInterval === 1 &&
 		currentVariant.introductoryTerm === 'year';
 
-	const upsellText = getUpsellTextForVariant( upsellVariant, percentSavings, __ );
+	const upsellText = getUpsellTextForVariant(
+		upsellVariant,
+		percentSavings,
+		__,
+		isStreamlinedPriceCheckoutTreatment( streamlinedPriceExperimentAssignment )
+	);
 
 	if ( ! upsellText ) {
 		return;

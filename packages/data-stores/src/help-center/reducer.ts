@@ -50,15 +50,6 @@ const isMinimized: Reducer< boolean, HelpCenterAction > = ( state = false, actio
 	return state;
 };
 
-const lastMessageReceivedAt: Reducer< number | undefined, HelpCenterAction > = (
-	state,
-	action
-) => {
-	return action.type === 'HELP_CENTER_SET_LAST_MESSAGE_RECEIVED_AT'
-		? action.lastMessageReceivedAt
-		: state;
-};
-
 const isChatLoaded: Reducer< boolean, HelpCenterAction > = ( state = false, action ) => {
 	switch ( action.type ) {
 		case 'HELP_CENTER_SET_IS_CHAT_LOADED':
@@ -198,7 +189,6 @@ const reducer = combineReducers( {
 	zendeskClientId,
 	unreadCount,
 	navigateToRoute,
-	lastMessageReceivedAt,
 	odieInitialPromptText,
 	odieBotNameSlug,
 	allowPremiumSupport,

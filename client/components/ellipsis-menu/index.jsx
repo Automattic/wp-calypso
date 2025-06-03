@@ -1,4 +1,6 @@
-import { Button, Gridicon } from '@automattic/components';
+import { Button } from '@automattic/components';
+import { Icon } from '@wordpress/components';
+import { moreVertical } from '@wordpress/icons';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -84,7 +86,7 @@ class EllipsisMenu extends Component {
 					disabled={ disabled }
 					className="ellipsis-menu__toggle"
 				>
-					{ icon ? icon : <Gridicon icon="ellipsis" className="ellipsis-menu__toggle-icon" /> }
+					{ icon ? icon : <Icon icon={ moreVertical } className="ellipsis-menu__toggle-icon" /> }
 				</Button>
 				{ isMenuVisible && (
 					<PopoverMenu

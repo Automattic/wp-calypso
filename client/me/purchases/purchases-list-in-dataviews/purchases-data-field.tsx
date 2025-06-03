@@ -23,7 +23,7 @@ function PurchaseItemRowProduct( props: {
 } ) {
 	const { purchase, translate } = props;
 	const site = useSelector( ( state ) => getSite( state, purchase.siteId ?? 0 ) );
-	const slug = purchase.siteName ?? purchase.siteId;
+	const slug = site?.domain ?? undefined;
 	return (
 		<PurchaseItemProduct
 			purchase={ purchase }
@@ -68,7 +68,7 @@ export function getPurchasesFieldDefinitions( {
 	translate: LocalizeProps[ 'translate' ];
 	moment: ReturnType< typeof useLocalizedMoment >;
 	paymentMethods: Array< StoredPaymentMethod >;
-	sites?: Record< number | string, SiteDetails >;
+	sites: SiteDetails[];
 	fieldIds?: string[];
 } ): Fields< Purchases.Purchase > {
 	const backupPaymentMethods = paymentMethods.filter(
@@ -94,8 +94,12 @@ export function getPurchasesFieldDefinitions( {
 			enableGlobalSearch: true,
 			enableSorting: true,
 			enableHiding: false,
+			elements: sites.map( ( site ) => {
+				return { value: site.ID, label: `${ site.name } (${ site.domain })` };
+			} ),
+			filterBy: { operators: [ 'is' ], isPrimary: true },
 			getValue: ( { item }: { item: Purchases.Purchase } ) => {
-				return item.siteName;
+				return item.siteId;
 			},
 			// Render the site icon
 			render: ( { item }: { item: Purchases.Purchase } ) => {
@@ -112,7 +116,7 @@ export function getPurchasesFieldDefinitions( {
 			enableHiding: false,
 			getValue: ( { item }: { item: Purchases.Purchase } ) => {
 				// Render a bunch of things to make this easily searchable.
-				const site = sites?.[ item.siteId ];
+				const site = sites.find( ( site ) => site.ID === item.siteId );
 				return (
 					getDisplayName( item ) +
 					' ' +
@@ -138,6 +142,26 @@ export function getPurchasesFieldDefinitions( {
 						</div>
 					</div>
 				);
+			},
+		},
+		{
+			id: 'type',
+			label: translate( 'Type' ),
+			type: 'text',
+			elements: [
+				{ value: 'domain', label: translate( 'Domains' ) },
+				{ value: 'plan', label: translate( 'Plan' ) },
+				{ value: 'other', label: translate( 'Other' ) },
+			],
+			filterBy: { operators: [ 'is' ], isPrimary: true },
+			getValue: ( { item } ) => {
+				if ( item.isDomain || item.isDomainRegistration ) {
+					return 'domain';
+				}
+				if ( item.productType === 'bundle' ) {
+					return 'plan';
+				}
+				return 'other';
 			},
 		},
 		{
