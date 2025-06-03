@@ -700,7 +700,6 @@ class MasterbarLoggedIn extends Component {
 				</span>
 				<Gravatar
 					className="masterbar__item-howdy-gravatar"
-					alt=" "
 					role="presentation"
 					user={ user }
 					size={ 16 }
