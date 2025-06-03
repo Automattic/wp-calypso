@@ -3,12 +3,14 @@
  */
 @import "@wordpress/base-styles/breakpoints";
 
+$notification-panel-width: 450px;
+
 #wpnc-panel {
 	position: fixed;
 	top: var(--masterbar-height);
 	right: 0;
 	bottom: 0;
-	min-width: 400px;
+	min-width: $notification-panel-width;
 
 	@media only screen and (max-width: 600px) {
 		width: 100%;
@@ -173,7 +175,6 @@ div.reader-notifications__panel {
 	// using the $break-wide which is the closest larger breakpoint).
 	$breakpoint-flyout: 1114px;
 
-	--default-notes-panel-width: 400px;
 	--3pc-notice-external-height: 50px;
 	@media only screen and (min-width: $breakpoint-flyout) {
 		--3pc-notice-external-height: 0px; /* stylelint-disable-line length-zero-no-unit */
@@ -200,11 +201,11 @@ div.reader-notifications__panel {
 				width: calc(100vw - var(--sidebar-width-max) - 16px); // 16px for content frame padding.
 
 				.wpnc__single-view {
-					width: var(--default-notes-panel-width);
+					width: $notification-panel-width;
 					z-index: z-index( ".reader-notifications", ".wpnc__single-view" ); // This ensures the single view flies out above the 3PC notice.
 				}
 				.wpnc__note-list {
-					width: var(--default-notes-panel-width);
+					width: $notification-panel-width;
 					z-index: z-index( ".reader-notifications", ".wpnc__note-list" ); // This ensures the single view does not rise above the note list while animating outwards.
 				}
 			}
@@ -224,7 +225,7 @@ div.reader-notifications__panel {
 			display: none;
 			bottom: 0;
 			padding: 0 30px;
-			right: var(--default-notes-panel-width);
+			right: $notification-panel-width;
 
 			@media only screen and (min-width: $breakpoint-flyout) {
 				display: flex;
