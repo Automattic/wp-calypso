@@ -33,6 +33,7 @@ export default function SiteSettings( { siteSlug }: { siteSlug: string } ) {
 			<SummaryButtonList>
 				<SiteVisibilitySettingsSummary site={ site } />
 				<SubscriptionGiftingSettingsSummary site={ site } settings={ settings } />
+				<HundredYearPlanSettingsSummary site={ site } settings={ settings } />
 			</SummaryButtonList>
 			<SectionHeader title={ __( 'Server' ) } />
 			<SummaryButtonList>
@@ -40,7 +41,6 @@ export default function SiteSettings( { siteSlug }: { siteSlug: string } ) {
 				<WordPressSettingsSummary site={ site } />
 				<PHPSettingsSummary site={ site } />
 				<AgencySettingsSummary site={ site } />
-				<HundredYearPlanSettingsSummary site={ site } settings={ settings } />
 				<PrimaryDataCenterSettingsSummary site={ site } />
 				<StaticFile404SettingsSummary site={ site } />
 				<CachingSettingsSummary site={ site } />
