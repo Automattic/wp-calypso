@@ -119,7 +119,6 @@
 		"me/account-close": true,
 		"me/account/color-scheme-picker": true,
 		"migration-flow/introductory-offer": true,
-		"migration-flow/cancel-difm": true,
 		"oauth": false,
 		"onboarding/create-course": false,
 		"onboarding/import": true,

@@ -94,7 +94,6 @@
 		"me/account-close": true,
 		"me/account/color-scheme-picker": true,
 		"migration-flow/introductory-offer": true,
-		"migration-flow/cancel-difm": false,
 		"onboarding/create-course": false,
 		"onboarding/import": true,
 		"onboarding/import-from-blogger": true,
