@@ -79,7 +79,7 @@ export default function Notice( {
 	text,
 	theme = 'dark',
 	ariaLive,
-	role,
+	role = 'status',
 }: NoticeProps ) {
 	const translate = useTranslate();
 
