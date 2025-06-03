@@ -337,9 +337,7 @@ function PluginDetails( props ) {
 			),
 			wpcom_vs_wporg_link: (
 				<a
-					href={ localizeUrl(
-						'https://wordpress.com/go/website-building/wordpress-com-vs-wordpress-org/'
-					) }
+					href={ localizeUrl( 'https://wordpress.com/support/com-vs-org/' ) }
 					target="_blank"
 					rel="noreferrer noopener"
 				/>
