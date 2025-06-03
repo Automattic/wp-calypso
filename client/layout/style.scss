@@ -441,7 +441,22 @@ body.is-mobile-app-view {
 	}
 
 	h1.wp-brand-font,
-	.checkout-main-content > div:first-of-type,
+	.checkout-title {
+		font-family:
+			'SF Pro Display',
+			-apple-system,
+			BlinkMacSystemFont,
+			'Segoe UI',
+			Roboto,
+			Oxygen-Sans,
+			Ubuntu,
+			Cantarell,
+			'Helvetica Neue',
+			sans-serif !important;
+	}
+
+	h1.wp-brand-font,
+	.checkout-title,
 	.wp-checkout-order-summary__label,
 	.wp-checkout-order-summary__total-price {
 		font-weight: 700 !important;
@@ -484,7 +499,7 @@ body.is-mobile-app-view {
 			column-gap: 1em;
 		}
 
-		.checkout-step__stepper div:has( svg ) {
+		.checkout-step__number-completed {
 			background-color: #1d4fc4;
 			border-color: #1d4fc4;
 		}

@@ -1131,7 +1131,7 @@ function Stepper( {
 				<StepNumber isComplete={ isCompleteAndInactive } isActive={ isActive }>
 					{ children }
 				</StepNumber>
-				<StepNumberCompleted>
+				<StepNumberCompleted className="checkout-step__number-completed">
 					<CheckIcon id={ id } />
 				</StepNumberCompleted>
 			</StepNumberInnerWrapper>
