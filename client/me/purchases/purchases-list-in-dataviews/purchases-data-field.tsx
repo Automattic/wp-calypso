@@ -84,7 +84,8 @@ export function getPurchasesFieldDefinitions( {
 			enableSorting: false,
 			enableHiding: false,
 			getValue: ( { item }: { item: Purchases.Purchase } ) => {
-				return item.id;
+				// getValue must return a string because the DataViews search feature calls `trim()` on it.
+				return String( item.id );
 			},
 		},
 		{
@@ -95,11 +96,12 @@ export function getPurchasesFieldDefinitions( {
 			enableSorting: true,
 			enableHiding: false,
 			elements: sites.map( ( site ) => {
-				return { value: site.ID, label: `${ site.name } (${ site.domain })` };
+				return { value: String( site.ID ), label: `${ site.name } (${ site.domain })` };
 			} ),
 			filterBy: { operators: [ 'is' ], isPrimary: true },
 			getValue: ( { item }: { item: Purchases.Purchase } ) => {
-				return item.siteId;
+				// getValue must return a string because the DataViews search feature calls `trim()` on it.
+				return String( item.siteId );
 			},
 			// Render the site icon
 			render: ( { item }: { item: Purchases.Purchase } ) => {

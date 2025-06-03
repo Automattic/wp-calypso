@@ -46,7 +46,7 @@ function usePreservePurchasesFiltersInUrl( {
 		const siteFilterValue = url.searchParams.get( urlSiteFilterKey );
 		const typeFilterValue = url.searchParams.get( urlTypeFilterKey );
 		if ( siteFilterValue ) {
-			filters.push( { value: parseInt( siteFilterValue ), operator: 'is', field: 'site' } );
+			filters.push( { value: siteFilterValue, operator: 'is', field: 'site' } );
 		}
 		if ( typeFilterValue ) {
 			filters.push( { value: typeFilterValue, operator: 'is', field: 'type' } );
