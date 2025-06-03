@@ -11,7 +11,7 @@ import {
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
+import { sprintf, __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { siteSftpUsersResetPasswordMutation } from '../../app/queries';
 import ClipboardInputControl from './clipboard-input-control';
@@ -29,7 +29,20 @@ export default function SftpCard( {
 } ) {
 	const { username, password } = sftpUsers[ 0 ] ?? {};
 	const mutation = useMutation( siteSftpUsersResetPasswordMutation( siteSlug ) );
-	const { createErrorNotice } = useDispatch( noticesStore );
+	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+
+	const handleCopy = ( label: string ) => {
+		createSuccessNotice(
+			sprintf(
+				/* translators: %s is the copied field */
+				__( 'Copied %s to clipboard.' ),
+				label
+			),
+			{
+				type: 'snackbar',
+			}
+		);
+	};
 
 	const handleCreatePassword = () => {
 		mutation.mutate( username, {
@@ -70,18 +83,21 @@ export default function SftpCard( {
 						value={ SFTP_URL }
 						readOnly
 						__next40pxDefaultSize
+						onCopy={ handleCopy }
 					/>
 					<ClipboardInputControl
 						label={ __( 'Port' ) }
 						value={ SFTP_PORT }
 						readOnly
 						__next40pxDefaultSize
+						onCopy={ handleCopy }
 					/>
 					<ClipboardInputControl
 						label={ __( 'Username' ) }
 						value={ username }
 						readOnly
 						__next40pxDefaultSize
+						onCopy={ handleCopy }
 					/>
 					{ password ? (
 						<ClipboardInputControl
@@ -92,6 +108,7 @@ export default function SftpCard( {
 							) }
 							readOnly
 							__next40pxDefaultSize
+							onCopy={ handleCopy }
 						/>
 					) : (
 						<BaseControl

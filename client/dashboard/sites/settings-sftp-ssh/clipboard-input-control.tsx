@@ -9,15 +9,17 @@ import { sprintf, __ } from '@wordpress/i18n';
 import { copySmall } from '@wordpress/icons';
 import React, { useState, useEffect } from 'react';
 
-export default function ClipboardInputControl(
-	props: React.ComponentProps< typeof InputControl >
-) {
+export default function ClipboardInputControl( {
+	onCopy,
+	...props
+}: React.ComponentProps< typeof InputControl > & { onCopy?: ( label: string ) => void } ) {
 	const [ isCopied, setCopied ] = useState( false );
 
 	const handleCopy = () => {
 		if ( props.value ) {
 			navigator.clipboard.writeText( props.value );
 			setCopied( true );
+			onCopy?.( props.label );
 		}
 	};
 

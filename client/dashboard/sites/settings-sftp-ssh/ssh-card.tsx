@@ -12,9 +12,11 @@ import {
 	SelectControl,
 	ToggleControl,
 } from '@wordpress/components';
+import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { sprintf, __ } from '@wordpress/i18n';
 import { trash } from '@wordpress/icons';
+import { store as noticesStore } from '@wordpress/notices';
 import { useMemo, useState } from 'react';
 import { useAuth } from '../../app/auth';
 import {
@@ -92,6 +94,7 @@ export default function SshCard( {
 	);
 	const attachSshKeyMutation = useMutation( siteSshKeysAttachMutation( siteSlug ) );
 	const detachSshKeyMutation = useMutation( siteSshKeysDetachMutation( siteSlug ) );
+	const { createSuccessNotice } = useDispatch( noticesStore );
 	const userLocale = user.locale_variant || user.language || 'en';
 	const { username } = sftpUsers[ 0 ];
 
@@ -103,6 +106,19 @@ export default function SshCard( {
 	}, [ siteSshKeys, user.username ] );
 
 	const showSshKeysSelect = ! userKeyIsAttached && profileSshKeys && profileSshKeys.length > 0;
+
+	const handleCopy = ( label: string ) => {
+		createSuccessNotice(
+			sprintf(
+				/* translators: %s is the copied field */
+				__( 'Copied %s to clipboard.' ),
+				label
+			),
+			{
+				type: 'snackbar',
+			}
+		);
+	};
 
 	const handleToggleSshAccess = () => {
 		toggleSshAccessMutation.mutate();
@@ -154,6 +170,7 @@ export default function SshCard( {
 								value={ `ssh ${ username }@ssh.wp.com` }
 								readOnly
 								__next40pxDefaultSize
+								onCopy={ handleCopy }
 							/>
 
 							{ siteSshKeys && siteSshKeys.length > 0 && (
