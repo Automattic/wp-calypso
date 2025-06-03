@@ -3,7 +3,7 @@ import { GetSupport } from '@automattic/odie-client/src/components/message/get-s
 import { useI18n } from '@wordpress/react-i18n';
 import { useState } from 'react';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
-import { useSupportStatus } from '../data/use-support-status';
+import { useChatStatus } from '../hooks';
 import { ThumbsDownIcon, ThumbsUpIcon } from '../icons/thumbs';
 
 import './help-center-feedback-form.scss';
@@ -13,8 +13,7 @@ const HelpCenterFeedbackForm = ( { postId }: { postId: number } ) => {
 	const [ startedFeedback, setStartedFeedback ] = useState< boolean | null >( null );
 	const [ answerValue, setAnswerValue ] = useState< number | null >( null );
 
-	const { data } = useSupportStatus();
-	const isUserEligibleForPaidSupport = Boolean( data?.eligibility?.is_user_eligible );
+	const { isEligibleForChat, forceEmailSupport } = useChatStatus();
 	const { canConnectToZendesk } = useHelpCenterContext();
 
 	const handleFeedbackClick = ( value: number ) => {
@@ -53,7 +52,7 @@ const HelpCenterFeedbackForm = ( { postId }: { postId: number } ) => {
 		recordTracksEvent( 'calypso_odie_chat_get_support', {
 			location: 'article-feedback',
 			destination,
-			is_user_eligible: isUserEligibleForPaidSupport,
+			is_user_eligible: isEligibleForChat,
 		} );
 	};
 
@@ -75,8 +74,9 @@ const HelpCenterFeedbackForm = ( { postId }: { postId: number } ) => {
 					</div>
 					<GetSupport
 						onClickAdditionalEvent={ handleContactSupportClick }
-						isUserEligibleForPaidSupport={ isUserEligibleForPaidSupport }
+						isUserEligibleForPaidSupport={ isEligibleForChat }
 						canConnectToZendesk={ canConnectToZendesk }
+						forceEmailSupport={ forceEmailSupport }
 					/>
 				</>
 			) }

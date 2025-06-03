@@ -15,6 +15,7 @@ interface GetSupportProps {
 	onClickAdditionalEvent?: ( destination: string ) => void;
 	isUserEligibleForPaidSupport?: boolean;
 	canConnectToZendesk?: boolean;
+	forceEmailSupport?: boolean;
 }
 
 interface ButtonConfig {
@@ -53,6 +54,7 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 	onClickAdditionalEvent,
 	isUserEligibleForPaidSupport,
 	canConnectToZendesk = false,
+	forceEmailSupport = false,
 } ) => {
 	const navigate = useNavigate();
 	const createZendeskConversation = useCreateZendeskConversation();
@@ -64,7 +66,7 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 		canConnectToZendesk: contextCanConnectToZendesk,
 		trackEvent,
 		isChatLoaded,
-		forceEmailSupport,
+		forceEmailSupport: contextForceEmailSupport,
 	} = useOdieAssistantContext();
 
 	const { mostRecentSupportInteractionId } = useGetMostRecentOpenConversation();
@@ -84,7 +86,7 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 		const buttons: ButtonConfig[] = [];
 
 		if ( isUserEligibleForPaidSupport || contextIsUserEligibleForPaidSupport ) {
-			if ( forceEmailSupport ) {
+			if ( forceEmailSupport || contextForceEmailSupport ) {
 				buttons.push( {
 					text: __( 'Email support', __i18n_text_domain__ ),
 					action: async () => {

@@ -1,8 +1,11 @@
-/**
- * External Dependencies
- */
+import config from '@automattic/calypso-config';
 import { useSupportActivity } from '../data/use-support-activity';
 import { useSupportStatus } from '../data/use-support-status';
+
+const isTestModeEnvironment = () => {
+	const currentEnvironment = config( 'env_id' ) as string;
+	return ! [ 'production', 'desktop' ].includes( currentEnvironment );
+};
 
 export default function useChatStatus() {
 	const { data: supportStatus } = useSupportStatus();
@@ -18,6 +21,10 @@ export default function useChatStatus() {
 		supportActivity?.some( ( ticket ) => ticket.channel === 'Messaging' )
 	);
 
+	const forceEmailSupport =
+		supportStatus?.availability?.force_email_support ||
+		( isTestModeEnvironment() && supportStatus?.availability?.force_email_support_test );
+
 	return {
 		hasActiveChats,
 		isEligibleForChat,
@@ -26,5 +33,6 @@ export default function useChatStatus() {
 		isPrecancellationChatOpen: Boolean( availability?.is_precancellation_chat_open ),
 		supportActivity,
 		supportLevel: supportStatus?.eligibility?.support_level,
+		forceEmailSupport,
 	};
 }
