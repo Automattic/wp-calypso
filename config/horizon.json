@@ -110,6 +110,7 @@
 		"site-profiler/metrics": true,
 		"sites/drive-migrations": true,
 		"ssr/prefetch-timebox": true,
+		"stats/archive-breakdown": false,
 		"stats/chart-library": true,
 		"stats/empty-module-traffic": true,
 		"stats/paid-wpcom-v2": true,

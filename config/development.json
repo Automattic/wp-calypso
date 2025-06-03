@@ -170,6 +170,7 @@
 		"site-profiler/metrics": true,
 		"sites/drive-migrations": true,
 		"ssr/prefetch-timebox": false,
+		"stats/archive-breakdown": true,
 		"stats/chart-library": true,
 		"stats/empty-module-traffic": true,
 		"stats/locations": true,
