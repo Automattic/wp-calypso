@@ -15,6 +15,7 @@ import { useOdieAssistantContext } from '../../context';
 import { useSendChatMessage } from '../../hooks';
 import { Message } from '../../types';
 import { zendeskMessageConverter } from '../../utils';
+import { OdieNotice } from '../odie-notice';
 import { AttachmentButton } from './attachment-button';
 import { ResizableTextarea } from './resizable-textarea';
 
@@ -57,17 +58,25 @@ export const OdieSendMessageButton = () => {
 	const divContainerRef = useRef< HTMLDivElement >( null );
 	const inputRef = useRef< HTMLTextAreaElement >( null );
 	const attachmentButtonRef = useRef< HTMLElement >( null );
-	const { trackEvent, chat, addMessage, isUserEligibleForPaidSupport, canConnectToZendesk } =
-		useOdieAssistantContext();
+	const {
+		trackEvent,
+		chat,
+		addMessage,
+		isUserEligibleForPaidSupport,
+		canConnectToZendesk,
+		isChatLoaded,
+	} = useOdieAssistantContext();
 	const cantTransferToZendesk =
 		( chat.messages?.[ chat.messages.length - 1 ]?.context?.flags?.forward_to_human_support &&
 			! canConnectToZendesk ) ??
 		false;
+	const cantSendMessageToZendesk =
+		chat?.provider === 'zendesk' && ( ! canConnectToZendesk || ! isChatLoaded );
 	const sendMessage = useSendChatMessage();
 	const isChatBusy = chat.status === 'loading' || chat.status === 'sending';
 	const [ isMessageSizeValid, setIsMessageSizeValid ] = useState( true );
 	const [ submitDisabled, setSubmitDisabled ] = useState( true );
-
+	const [ sendingFailed, setSendingFailed ] = useState( false );
 	const { data: authData } = useAuthenticateZendeskMessaging(
 		isUserEligibleForPaidSupport,
 		'messenger'
@@ -82,6 +91,8 @@ export const OdieSendMessageButton = () => {
 
 	const { isPending: isAttachingFile, mutateAsync: attachFileToConversation } =
 		useAttachFileToConversation();
+	const shouldDisableInputField =
+		isChatBusy || isAttachingFile || cantTransferToZendesk || cantSendMessageToZendesk;
 
 	const textAreaPlaceholder = getTextAreaPlaceholder( isChatBusy, cantTransferToZendesk );
 
@@ -141,6 +152,7 @@ export const OdieSendMessageButton = () => {
 		const isMessageLengthValid = messageLength <= 4096; // zendesk api validation
 
 		setIsMessageSizeValid( isMessageLengthValid );
+		setSendingFailed( false );
 
 		if ( message === '' || isChatBusy || ! isMessageLengthValid ) {
 			return;
@@ -166,21 +178,22 @@ export const OdieSendMessageButton = () => {
 			setSubmitDisabled( true );
 
 			await sendMessage( message );
-			// Removes the message from the input field after it has been sent
-			if ( chat?.provider === 'zendesk' ) {
-				inputRef.current!.value = '';
-			}
 
 			trackEvent( 'chat_message_action_receive', {
 				message_length: messageString?.length,
 				provider: chat?.provider,
 			} );
 		} catch ( e ) {
+			setSendingFailed( true );
 			const error = e as Error;
 			trackEvent( 'chat_message_error', {
 				error: error?.message,
 			} );
 		} finally {
+			// Removes the message from the input field after it has been sent
+			if ( chat?.provider === 'zendesk' ) {
+				inputRef.current!.value = '';
+			}
 			setSubmitDisabled( false );
 			inputRef.current?.focus();
 		}
@@ -205,6 +218,20 @@ export const OdieSendMessageButton = () => {
 					{ __( 'Message exceeds 4096 characters limit.' ) }
 				</div>
 			) }
+			{ cantSendMessageToZendesk && (
+				<OdieNotice>
+					<span>
+						{ __( "We can't connect you to support at this moment.", __i18n_text_domain__ ) }
+					</span>
+				</OdieNotice>
+			) }
+			{ sendingFailed && (
+				<OdieNotice>
+					<span>
+						{ __( 'Error while sending message. Please try again later.', __i18n_text_domain__ ) }
+					</span>
+				</OdieNotice>
+			) }
 			<div className={ inputContainerClasses } ref={ divContainerRef }>
 				<form
 					onSubmit={ ( event ) => {
@@ -214,7 +241,7 @@ export const OdieSendMessageButton = () => {
 					className="odie-send-message-input-container"
 				>
 					<ResizableTextarea
-						shouldDisableInputField={ isChatBusy || isAttachingFile || cantTransferToZendesk }
+						shouldDisableInputField={ shouldDisableInputField }
 						sendMessageHandler={ sendMessageHandler }
 						className="odie-send-message-input"
 						inputRef={ inputRef }
