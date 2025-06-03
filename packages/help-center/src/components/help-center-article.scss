@@ -141,6 +141,15 @@
 				padding: 0;
 			}
 
+			.has-background {
+				padding: 16px;
+
+				&.has-gray-theme-background-color {
+					background-color: var(--studio-gray-0);
+				}
+			}
+
+
 			.wp-block-button {
 				width: 100%;
 

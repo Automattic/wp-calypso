@@ -24,7 +24,6 @@ interface LoginHeaderProps {
 	currentQuery: Record< string, string >;
 	fromSite: string | null;
 	isFromAkismet: boolean;
-	isFromMigrationPlugin: boolean;
 	isFromAutomatticForAgenciesPlugin: boolean;
 	isGravPoweredClient: boolean;
 	isGravPoweredLoginPage: boolean;
@@ -61,7 +60,6 @@ export function getHeaderText(
 	action: string,
 	oauth2Client: { title: string; icon: string; name: string } | null,
 	isWooJPC: boolean,
-	isFromMigrationPlugin: boolean,
 	isJetpack: boolean,
 	isWCCOM: boolean,
 	isFromAkismet: boolean,
@@ -192,8 +190,6 @@ export function getHeaderText(
 		} else {
 			headerText = translate( 'Log in to your account' );
 		}
-	} else if ( isFromMigrationPlugin ) {
-		headerText = translate( 'Log in to your account' );
 	} else if ( isJetpack && ! isFromAutomatticForAgenciesPlugin ) {
 		headerText = translate(
 			'Log in or create a WordPress.com account to supercharge your site with powerful growth, performance, and security tools.'
@@ -216,7 +212,6 @@ export function LoginHeader( {
 	currentQuery,
 	fromSite,
 	isFromAkismet,
-	isFromMigrationPlugin,
 	isFromAutomatticForAgenciesPlugin,
 	isGravPoweredClient,
 	isGravPoweredLoginPage,
@@ -249,7 +244,6 @@ export function LoginHeader( {
 		action,
 		oauth2Client,
 		isWooJPC,
-		isFromMigrationPlugin,
 		isJetpack,
 		isWCCOM,
 		isFromAkismet,

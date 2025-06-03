@@ -65,7 +65,7 @@ class InlineSupportLink extends Component {
 		if ( ! showSupportModal ) {
 			return;
 		}
-		onClick?.();
+		onClick?.( event );
 		openDialog( event, supportPostId, url, blogId );
 	}
 

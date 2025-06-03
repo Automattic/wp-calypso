@@ -1,7 +1,6 @@
+import { Card, Popover } from '@automattic/components';
 import clsx from 'clsx';
 import { useRef, useState } from 'react';
-import { Card } from '../';
-import Popover from '../popover';
 import { formatNumber } from './lib/numbers';
 import TooltipContent from './tooltip-content';
 

@@ -6,7 +6,6 @@ import { useNavigate } from 'react-router-dom';
 import useChatStatus from '../hooks/use-chat-status';
 import { useResetSupportInteraction } from '../hooks/use-reset-support-interaction';
 import ThirdPartyCookiesNotice from './help-center-third-party-cookies-notice';
-import { generateContactOnClickEvent } from './utils';
 
 import './help-center-contact-support-option.scss';
 
@@ -32,7 +31,6 @@ const HelpCenterContactSupportOption = ( { sectionName }: HelpCenterContactSuppo
 			destination,
 			is_user_eligible: isEligibleForChat,
 		} );
-		generateContactOnClickEvent( 'chat', 'calypso_helpcenter_feedback_contact_support' );
 		if ( isEligibleForChat ) {
 			await resetSupportInteraction();
 			navigate( '/odie' );

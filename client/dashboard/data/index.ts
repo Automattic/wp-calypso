@@ -16,6 +16,8 @@ import type {
 	BasicMetricsData,
 	SiteSettings,
 	UrlPerformanceInsights,
+	SiteResetContentSummary,
+	SiteResetStatus,
 	PhpMyAdminToken,
 	DefensiveModeSettings,
 	DefensiveModeSettingsUpdate,
@@ -483,6 +485,14 @@ export const resetPhpMyAdminPassword = async ( siteIdOrSlug: string ): Promise< 
 	} );
 };
 
+// This endpoint only accepts site ID, not slug.
+export const fetchAgencyBlogBySiteId = async ( siteId: string ): Promise< void > => {
+	return wpcom.req.get( {
+		path: `/agency/blog/${ siteId }`,
+		apiNamespace: 'wpcom/v2',
+	} );
+};
+
 export const fetchPrimaryDataCenter = async (
 	siteIdOrSlug: string
 ): Promise< DataCenterOption | null > => {
@@ -510,6 +520,43 @@ export const updateStaticFile404 = async (
 		},
 		{ setting }
 	);
+};
+
+export const clearObjectCache = async ( siteIdOrSlug: string, reason: string ): Promise< void > => {
+	return wpcom.req.post(
+		{
+			path: `/sites/${ siteIdOrSlug }/hosting/clear-cache`,
+			apiNamespace: 'wpcom/v2',
+		},
+		{ reason }
+	);
+};
+
+export const fetchEdgeCacheStatus = async ( siteIdOrSlug: string ): Promise< boolean > => {
+	return wpcom.req.get( {
+		path: `/sites/${ siteIdOrSlug }/hosting/edge-cache/active`,
+		apiNamespace: 'wpcom/v2',
+	} );
+};
+
+export const updateEdgeCacheStatus = async (
+	siteIdOrSlug: string,
+	active: boolean
+): Promise< boolean > => {
+	return wpcom.req.post(
+		{
+			path: `/sites/${ siteIdOrSlug }/hosting/edge-cache/active`,
+			apiNamespace: 'wpcom/v2',
+		},
+		{ active }
+	);
+};
+
+export const clearEdgeCache = async ( siteIdOrSlug: string ): Promise< void > => {
+	return wpcom.req.post( {
+		path: `/sites/${ siteIdOrSlug }/hosting/edge-cache/purge`,
+		apiNamespace: 'wpcom/v2',
+	} );
 };
 
 export const fetchEdgeCacheDefensiveMode = async (
@@ -567,4 +614,27 @@ export const fetchP2HubP2s = async (
 			...options,
 		}
 	);
+};
+
+export const fetchSiteResetContentSummary = async (
+	siteIdOrSlug: string
+): Promise< SiteResetContentSummary > => {
+	return wpcom.req.get( {
+		path: `/sites/${ siteIdOrSlug }/reset-site/content-summary`,
+		apiNamespace: 'wpcom/v2',
+	} );
+};
+
+export const resetSite = async ( siteIdOrSlug: string ): Promise< void > => {
+	return wpcom.req.post( {
+		path: `/sites/${ siteIdOrSlug }/reset-site`,
+		apiNamespace: 'wpcom/v2',
+	} );
+};
+
+export const fetchSiteResetStatus = async ( siteIdOrSlug: string ): Promise< SiteResetStatus > => {
+	return wpcom.req.get( {
+		path: `/sites/${ siteIdOrSlug }/reset-site/status`,
+		apiNamespace: 'wpcom/v2',
+	} );
 };

@@ -679,8 +679,8 @@ class PostCommentList extends Component {
 										postId={ postId }
 										post={ this.props.post }
 										followSource={ followSource }
-										followIcon={ ReaderFollowConversationIcon( { iconSize: 20 } ) }
-										followingIcon={ ReaderFollowingConversationIcon( { iconSize: 20 } ) }
+										followIcon={ ReaderFollowConversationIcon( { iconSize: 24 } ) }
+										followingIcon={ ReaderFollowingConversationIcon( { iconSize: 24 } ) }
 									/>
 								) }
 							</div>

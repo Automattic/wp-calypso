@@ -27,7 +27,7 @@ describe( 'useSubscriberCountQuery', () => {
 	let wrapper: React.FC< React.PropsWithChildren< any > >;
 
 	beforeEach( () => {
-		( wpcom.req.get as jest.MockedFunction< typeof wpcom.req.get > ).mockReset();
+		jest.mocked( wpcom.req.get ).mockReset();
 
 		queryClient = new QueryClient( {
 			defaultOptions: {
@@ -47,9 +47,7 @@ describe( 'useSubscriberCountQuery', () => {
 	} );
 
 	it( 'should call wpcom.req.get with the right parameters', async () => {
-		( wpcom.req.get as jest.MockedFunction< typeof wpcom.req.get > ).mockResolvedValue(
-			mockResponse
-		);
+		jest.mocked( wpcom.req.get ).mockResolvedValue( mockResponse );
 
 		const { result } = renderHook( () => useSubscriberCountQuery( 123 ), { wrapper } );
 
@@ -62,9 +60,7 @@ describe( 'useSubscriberCountQuery', () => {
 	} );
 
 	it( 'should return expected data when successful', async () => {
-		( wpcom.req.get as jest.MockedFunction< typeof wpcom.req.get > ).mockResolvedValue(
-			mockResponse
-		);
+		jest.mocked( wpcom.req.get ).mockResolvedValue( mockResponse );
 
 		const { result } = renderHook( () => useSubscriberCountQuery( 123 ), { wrapper } );
 
@@ -74,7 +70,7 @@ describe( 'useSubscriberCountQuery', () => {
 	} );
 
 	it( 'should handle empty response', async () => {
-		( wpcom.req.get as jest.MockedFunction< typeof wpcom.req.get > ).mockResolvedValue( {} );
+		jest.mocked( wpcom.req.get ).mockResolvedValue( {} );
 
 		const { result } = renderHook( () => useSubscriberCountQuery( 123 ), { wrapper } );
 
