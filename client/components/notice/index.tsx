@@ -46,7 +46,7 @@ interface NoticeProps {
 	text?: ReactNode;
 	children?: ReactNode;
 	ariaLive?: 'off' | 'polite' | 'assertive';
-	role?: string;
+	role?: 'status' | 'alert' | 'log' | 'marquee' | 'timer';
 }
 
 function getIcon( status: NoticeStatus | undefined ): string {
