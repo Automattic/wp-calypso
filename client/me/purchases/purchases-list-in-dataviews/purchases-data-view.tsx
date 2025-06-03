@@ -3,13 +3,7 @@ import { Gridicon, Card } from '@automattic/components';
 import { Purchases, SiteDetails } from '@automattic/data-stores';
 import { DESKTOP_BREAKPOINT } from '@automattic/viewport';
 import { useBreakpoint } from '@automattic/viewport-react';
-import {
-	DataViews,
-	View,
-	Filter,
-	filterSortAndPaginate,
-	SortDirection,
-} from '@wordpress/dataviews';
+import { DataViews, View, Filter, filterSortAndPaginate } from '@wordpress/dataviews';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo, useState } from 'react';
 import { MembershipSubscription } from 'calypso/lib/purchases/types';
@@ -22,19 +16,17 @@ import {
 
 const purchasesDesktopFields = [ 'site', 'product', 'status', 'payment-method' ];
 const purchasesMobileFields = [ 'product' ];
-const defaultPerPage = 5;
-const defaultSort = {
-	field: 'product',
-	direction: 'desc' as SortDirection,
-};
 export const purchasesDataView: View = {
 	type: 'table',
 	page: 1,
-	perPage: defaultPerPage,
+	perPage: 5,
 	titleField: 'purchase-id',
 	showTitle: false,
 	fields: purchasesDesktopFields,
-	sort: defaultSort,
+	sort: {
+		field: 'product',
+		direction: 'desc',
+	},
 	layout: {},
 };
 
@@ -45,42 +37,27 @@ function usePreservePurchasesFiltersInUrl( {
 	currentView: View;
 	setView: ( setter: ( currentView: View ) => View ) => void;
 } ) {
-	const urlSortField = 'sortField';
-	const urlSortDirection = 'sortDir';
-	const urlPaginationPage = 'pageNumber';
-	const urlPaginationPerPage = 'perPage';
 	const urlSiteFilterKey = 'siteFilter';
 	const urlTypeFilterKey = 'typeFilter';
 	const currentUrl = window.location.href;
-
-	// Apply view from URL
 	useEffect( () => {
 		const url = new URL( currentUrl );
 		const filters: Filter[] = [];
 		const siteFilterValue = url.searchParams.get( urlSiteFilterKey );
 		const typeFilterValue = url.searchParams.get( urlTypeFilterKey );
-		const pageNumber = url.searchParams.get( urlPaginationPage );
-		const perPage = url.searchParams.get( urlPaginationPerPage );
-		const sortField = url.searchParams.get( urlSortField );
-		const sortDir = (
-			url.searchParams.get( urlSortDirection ) === 'asc' ? 'asc' : 'desc'
-		) as SortDirection;
 		if ( siteFilterValue ) {
 			filters.push( { value: siteFilterValue, operator: 'is', field: 'site' } );
 		}
 		if ( typeFilterValue ) {
 			filters.push( { value: typeFilterValue, operator: 'is', field: 'type' } );
 		}
-		setView( ( currentView ) => ( {
-			...currentView,
-			...( filters.length > 0 ? { filters } : {} ),
-			...( pageNumber ? { page: parseInt( pageNumber ) } : {} ),
-			...( perPage ? { perPage: parseInt( perPage ) } : {} ),
-			...( sortField ? { sort: { field: sortField, direction: sortDir } } : {} ),
-		} ) );
+		if ( filters.length > 0 ) {
+			setView( ( currentView ) => ( {
+				...currentView,
+				filters,
+			} ) );
+		}
 	}, [ setView, currentUrl ] );
-
-	// Apply URL from view
 	useEffect( () => {
 		const url = new URL( window.location.href );
 		const siteFilter = currentView.filters?.find( ( filter ) => filter.field === 'site' );
@@ -89,39 +66,11 @@ function usePreservePurchasesFiltersInUrl( {
 		} else {
 			url.searchParams.delete( urlSiteFilterKey );
 		}
-
 		const typeFilter = currentView.filters?.find( ( filter ) => filter.field === 'type' );
 		if ( typeFilter ) {
 			url.searchParams.set( urlTypeFilterKey, typeFilter.value );
 		} else {
 			url.searchParams.delete( urlTypeFilterKey );
-		}
-
-		const pageNumber = currentView.page;
-		if ( pageNumber && pageNumber > 1 ) {
-			url.searchParams.set( urlPaginationPage, String( pageNumber ) );
-		} else {
-			url.searchParams.delete( urlPaginationPage );
-		}
-
-		const perPage = currentView.perPage;
-		if ( perPage && perPage !== defaultPerPage ) {
-			url.searchParams.set( urlPaginationPerPage, String( perPage ) );
-		} else {
-			url.searchParams.delete( urlPaginationPerPage );
-		}
-
-		const sort = currentView.sort;
-		if ( sort && sort !== defaultSort ) {
-			url.searchParams.set( urlSortField, sort.field );
-			url.searchParams.set( urlSortDirection, sort.direction );
-		} else {
-			url.searchParams.delete( urlSortField );
-			url.searchParams.delete( urlSortDirection );
-		}
-
-		if ( url.search === window.location.search ) {
-			return;
 		}
 		window.history.pushState( undefined, '', url );
 		// getPreviousRoute will not find this updated route unless we set it
