@@ -108,7 +108,7 @@
 		"livechat_solution": true,
 		"login/last-used-method": true,
 		"login/magic-login": true,
-		"login/use-magic-code": false,
+		"login/use-magic-code": true,
 		"logmein": true,
 		"mailchimp": true,
 		"manage/import/site-importer-endpoints": true,
