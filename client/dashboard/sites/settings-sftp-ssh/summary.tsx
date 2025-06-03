@@ -43,7 +43,7 @@ export default function SftpSshSettingsSummary( {
 	return (
 		<RouterLinkSummaryButton
 			to={ `/sites/${ site.slug }/settings/sftp-ssh` }
-			title="SFTP/SSH"
+			title={ __( 'SFTP/SSH' ) }
 			density={ density }
 			decoration={ <Icon icon={ file } /> }
 			badges={ badges }
