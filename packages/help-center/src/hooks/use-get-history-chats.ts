@@ -125,7 +125,7 @@ export const useGetHistoryChats = (): UseGetHistoryChatsResult => {
 	const { data: otherSupportInteractions, isLoading: isLoadingOtherSupportInteractions } =
 		useGetSupportInteractions( 'zendesk', 100, [ 'resolved', 'solved', 'closed' ] );
 	const { data: odieSupportInteractions, isLoading: isLoadingOdieSupportInteractions } =
-		useGetSupportInteractions( 'odie', 100, [ 'open' ] );
+		useGetSupportInteractions( 'odie', 100, [ 'open', 'resolved' ] );
 	const { data: odieConversations, isLoading: isLoadingOdieConversations } =
 		useGetOdieConversations();
 
