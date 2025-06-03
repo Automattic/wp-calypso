@@ -92,6 +92,7 @@ class SecurityKeyForm extends Component {
 						autoFocus
 						variant="primary"
 						disabled={ this.state.isAuthenticating }
+						accessibleWhenDisabled
 						__next40pxDefaultSize
 					>
 						{ translate( 'Continue with security key' ) }

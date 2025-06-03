@@ -164,7 +164,12 @@ class VerificationCodeForm extends Component {
 						{ smallPrint }
 					</FormFieldset>
 
-					<Button variant="primary" disabled={ this.state.isDisabled } __next40pxDefaultSize>
+					<Button
+						variant="primary"
+						disabled={ this.state.isDisabled }
+						accessibleWhenDisabled
+						__next40pxDefaultSize
+					>
 						{ buttonText }
 					</Button>
 				</Card>
