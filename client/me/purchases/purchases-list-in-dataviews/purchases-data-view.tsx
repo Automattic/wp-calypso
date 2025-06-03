@@ -3,7 +3,13 @@ import { Gridicon, Card } from '@automattic/components';
 import { Purchases, SiteDetails } from '@automattic/data-stores';
 import { DESKTOP_BREAKPOINT } from '@automattic/viewport';
 import { useBreakpoint } from '@automattic/viewport-react';
-import { DataViews, View, Filter, filterSortAndPaginate } from '@wordpress/dataviews';
+import {
+	DataViews,
+	View,
+	Filter,
+	filterSortAndPaginate,
+	SortDirection,
+} from '@wordpress/dataviews';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo, useState } from 'react';
 import { MembershipSubscription } from 'calypso/lib/purchases/types';
@@ -17,6 +23,10 @@ import {
 const purchasesDesktopFields = [ 'site', 'product', 'status', 'payment-method' ];
 const purchasesMobileFields = [ 'product' ];
 const defaultPerPage = 5;
+const defaultSort = {
+	field: 'product',
+	direction: 'desc' as SortDirection,
+};
 export const purchasesDataView: View = {
 	type: 'table',
 	page: 1,
@@ -24,10 +34,7 @@ export const purchasesDataView: View = {
 	titleField: 'purchase-id',
 	showTitle: false,
 	fields: purchasesDesktopFields,
-	sort: {
-		field: 'product',
-		direction: 'desc',
-	},
+	sort: defaultSort,
 	layout: {},
 };
 
@@ -38,6 +45,8 @@ function usePreservePurchasesFiltersInUrl( {
 	currentView: View;
 	setView: ( setter: ( currentView: View ) => View ) => void;
 } ) {
+	const urlSortField = 'sortField';
+	const urlSortDirection = 'sortDir';
 	const urlPaginationPage = 'pageNumber';
 	const urlPaginationPerPage = 'perPage';
 	const urlSiteFilterKey = 'siteFilter';
@@ -52,6 +61,10 @@ function usePreservePurchasesFiltersInUrl( {
 		const typeFilterValue = url.searchParams.get( urlTypeFilterKey );
 		const pageNumber = url.searchParams.get( urlPaginationPage );
 		const perPage = url.searchParams.get( urlPaginationPerPage );
+		const sortField = url.searchParams.get( urlSortField );
+		const sortDir = (
+			url.searchParams.get( urlSortDirection ) === 'asc' ? 'asc' : 'desc'
+		) as SortDirection;
 		if ( siteFilterValue ) {
 			filters.push( { value: siteFilterValue, operator: 'is', field: 'site' } );
 		}
@@ -60,9 +73,10 @@ function usePreservePurchasesFiltersInUrl( {
 		}
 		setView( ( currentView ) => ( {
 			...currentView,
-			...( filters.length > 0 ? { filters } : { filters: currentView.filters } ),
+			...( filters.length > 0 ? { filters } : {} ),
 			...( pageNumber ? { page: parseInt( pageNumber ) } : {} ),
 			...( perPage ? { perPage: parseInt( perPage ) } : {} ),
+			...( sortField ? { sort: { field: sortField, direction: sortDir } } : {} ),
 		} ) );
 	}, [ setView, currentUrl ] );
 
@@ -95,6 +109,15 @@ function usePreservePurchasesFiltersInUrl( {
 			url.searchParams.set( urlPaginationPerPage, String( perPage ) );
 		} else {
 			url.searchParams.delete( urlPaginationPerPage );
+		}
+
+		const sort = currentView.sort;
+		if ( sort && sort !== defaultSort ) {
+			url.searchParams.set( urlSortField, sort.field );
+			url.searchParams.set( urlSortDirection, sort.direction );
+		} else {
+			url.searchParams.delete( urlSortField );
+			url.searchParams.delete( urlSortDirection );
 		}
 
 		if ( url.search === window.location.search ) {
