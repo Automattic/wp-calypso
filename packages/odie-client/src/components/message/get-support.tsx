@@ -93,12 +93,10 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 				buttons.push( {
 					text: __( 'Continue your open conversation', __i18n_text_domain__ ),
 					action: async () => {
-						if ( supportInteraction ) {
-							trackEvent( 'chat_open_previous_conversation' );
-							setCurrentSupportInteraction( supportInteraction );
-							if ( ! location?.pathname?.includes( '/odie' ) ) {
-								navigate( '/odie' );
-							}
+						trackEvent( 'chat_open_previous_conversation' );
+						setCurrentSupportInteraction( supportInteraction );
+						if ( ! location?.pathname?.includes( '/odie' ) ) {
+							navigate( '/odie' );
 						}
 					},
 				} );
