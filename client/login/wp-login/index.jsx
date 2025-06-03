@@ -1,10 +1,10 @@
 import page from '@automattic/calypso-router';
-import { Gridicon } from '@automattic/components';
+import { Gridicon, WordPressLogo } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Step } from '@automattic/onboarding';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { get, startsWith } from 'lodash';
+import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -28,6 +28,7 @@ import {
 	isBlazeProOAuth2Client,
 	isWooOAuth2Client,
 	isPartnerPortalOAuth2Client,
+	isStudioAppOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { login, lostPassword } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/url';
@@ -48,6 +49,8 @@ import getIsWCCOM from 'calypso/state/selectors/get-is-wccom';
 import getIsWoo from 'calypso/state/selectors/get-is-woo';
 import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
 import { withEnhancers } from 'calypso/state/utils';
+import HeadingLogo from './components/heading-logo';
+import HeadingSubText from './components/heading-subtext';
 import LoginFooter from './login-footer';
 import LoginLinks from './login-links';
 
@@ -58,7 +61,6 @@ export class Login extends Component {
 		clientId: PropTypes.string,
 		isLoginView: PropTypes.bool,
 		isJetpack: PropTypes.bool.isRequired,
-		isFromMigrationPlugin: PropTypes.bool,
 		isWhiteLogin: PropTypes.bool.isRequired,
 		locale: PropTypes.string.isRequired,
 		oauth2Client: PropTypes.object,
@@ -518,7 +520,6 @@ export class Login extends Component {
 		const {
 			locale,
 			translate,
-			isFromMigrationPlugin,
 			isGenericOauth,
 			isGravPoweredClient,
 			isWoo,
@@ -581,7 +582,6 @@ export class Login extends Component {
 		const mainContent = (
 			<Main
 				className={ clsx( 'wp-login__main', {
-					'is-wpcom-migration': isFromMigrationPlugin,
 					'is-social-first': isSocialFirst,
 					'is-generic-oauth': isGenericOauth,
 					'is-jetpack': isJetpack,
@@ -615,7 +615,6 @@ export class Login extends Component {
 			action,
 			oauth2Client,
 			isWooJPC,
-			isFromMigrationPlugin,
 			isJetpack,
 			isWCCOM,
 			isFromAkismet,
@@ -636,6 +635,14 @@ export class Login extends Component {
 			document.location.search?.includes( 'wpcloud' )
 		) {
 			brandLogo = <WPCloudLogo className="login__wpcloud-logo" size={ 120 } />;
+		} else {
+			brandLogo = (
+				<WordPressLogo
+					size={ 21 }
+					className="step-container-v2__top-bar-wordpress-logo"
+					color="currentColor"
+				/>
+			);
 		}
 
 		return (
@@ -643,10 +650,26 @@ export class Login extends Component {
 				{ isWhiteLogin && (
 					<Step.CenteredColumnLayout
 						columnWidth={ 6 }
+						{ ...( isStudioAppOAuth2Client( oauth2Client ) && { columnWidthHeading: 8 } ) }
 						topBar={
 							<Step.TopBar rightElement={ this.renderLoginHeaderNavigation() } logo={ brandLogo } />
 						}
-						heading={ <Step.Heading text={ headerText } /> }
+						heading={
+							<Step.Heading
+								text={
+									<>
+										<HeadingLogo />
+										<div className="wp-login__heading-text">{ headerText }</div>
+									</>
+								}
+								subText={
+									<HeadingSubText
+										isSocialFirst={ isSocialFirst }
+										twoFactorAuthType={ twoFactorAuthType }
+									/>
+								}
+							/>
+						}
 						verticalAlign="center"
 					>
 						{ mainContent }
@@ -682,7 +705,6 @@ export default connect(
 			isFromAkismet: isAkismetRedirect(
 				new URLSearchParams( getRedirectToOriginal( state )?.split( '?' )[ 1 ] ).get( 'back' )
 			),
-			isFromMigrationPlugin: startsWith( get( currentQuery, 'from' ), 'wpcom-migration' ),
 			isWooJPC: isWooJPCFlow( state ),
 			isWCCOM: getIsWCCOM( state ),
 			isWoo: getIsWoo( state ),

@@ -1,4 +1,4 @@
-type Density = 'low' | 'medium';
+export type Density = 'low' | 'medium';
 
 /**
  * `badges` property of `SummaryButton` component is used to display `CoreBadge`

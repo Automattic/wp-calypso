@@ -205,10 +205,6 @@ export interface BaseProps
 	 */
 	disableNavigation?: boolean;
 	/**
-	 * Add modifiers to the matching days.
-	 */
-	modifiers?: Record< string, Matcher | Matcher[] | undefined > | undefined;
-	/**
 	 * Use custom labels, useful for translating the component.
 	 *
 	 * For a correct localized experience, consumers should make sure the locale
@@ -302,9 +298,13 @@ interface RangeProps {
 	 * When `true`, the range will reset when including a disabled day.
 	 */
 	excludeDisabled?: boolean;
-	/** The minimum number of days to include in the range. */
+	/**
+	 * The minimum number of nights to include in the range.
+	 */
 	min?: number;
-	/** The maximum number of days to include in the range. */
+	/**
+	 * The maximum number of nights to include in the range.
+	 */
 	max?: number;
 	/** The selected range. */
 	selected?: DateRange | undefined | null;

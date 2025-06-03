@@ -35,7 +35,7 @@ import { getAffiliateCouponLabel } from '../../utils';
 import { AkismetProQuantityDropDown } from './akismet-pro-quantity-dropdown';
 import { ItemVariationPicker } from './item-variation-picker';
 import type { OnChangeAkProQuantity } from './akismet-pro-quantity-dropdown';
-import type { OnChangeItemVariant } from './item-variation-picker';
+import type { OnChangeItemVariant, WPCOMProductVariant } from './item-variation-picker';
 import type {
 	ResponseCart,
 	RemoveProductFromCart,
@@ -387,8 +387,7 @@ function LineItemWrapper( {
 	const isJetpack = responseCart.products.some( ( product ) =>
 		isJetpackPurchasableItem( product.product_slug )
 	);
-
-	const variants = useGetProductVariants( product, ( variant ) => {
+	const variantsFilterCallback = ( variant: WPCOMProductVariant ) => {
 		// Only show term variants which are equal to or longer than the variant that
 		// was in the cart when checkout finished loading (not necessarily the
 		// current variant). For WordPress.com only, not Jetpack, Akismet or Marketplace.
@@ -403,12 +402,12 @@ function LineItemWrapper( {
 			return true;
 		}
 
-		if ( isStreamlinedPrice ) {
-			return true;
-		}
-
 		return variant.termIntervalInMonths >= initialVariantTerm;
-	} );
+	};
+	const variants = useGetProductVariants(
+		product,
+		! isStreamlinedPrice ? variantsFilterCallback : undefined
+	);
 
 	const areThereVariants = variants.length > 1;
 

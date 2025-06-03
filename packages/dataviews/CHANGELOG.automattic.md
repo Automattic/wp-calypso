@@ -3,6 +3,8 @@
 ## Next
 
 - Enhance filter operator handling to support field-type-specific labels.
+- `text`, `email` Edit control: add `help` support from the field `description` prop.
+- Add `align` to the `layout.styles` properties, for use in the DataViews table layout. Options are: `start`, `center`, and `end`.
 
 ## 0.2.0
 

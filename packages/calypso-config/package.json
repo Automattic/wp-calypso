@@ -43,7 +43,7 @@
 		"@types/cookie": "^0.6.0",
 		"@types/node": "^22.7.5",
 		"cookie": "^0.7.2",
-		"tslib": "^2.3.0"
+		"tslib": "^2.8.1"
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",

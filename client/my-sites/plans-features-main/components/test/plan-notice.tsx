@@ -1,5 +1,4 @@
 /** @jest-environment jsdom */
-// @ts-nocheck - TODO: Fix TypeScript issues
 
 import {
 	PLAN_BUSINESS,
@@ -70,29 +69,6 @@ jest.mock( 'calypso/state/currency-code/selectors', () => ( {
 } ) );
 jest.mock( '@automattic/calypso-config' );
 
-const mGetDiscountByName = getDiscountByName as jest.MockedFunction< typeof getDiscountByName >;
-const mUseMarketingMessage = useMarketingMessage as jest.MockedFunction<
-	typeof useMarketingMessage
->;
-const mIsCurrentPlanPaid = isCurrentPlanPaid as jest.MockedFunction< typeof isCurrentPlanPaid >;
-const mIsCurrentUserCurrentPlanOwner = isCurrentUserCurrentPlanOwner as jest.MockedFunction<
-	typeof isCurrentUserCurrentPlanOwner
->;
-const mIsRequestingSitePlans = isRequestingSitePlans as jest.MockedFunction<
-	typeof isRequestingSitePlans
->;
-const mUsePlanUpgradeCreditsApplicable = usePlanUpgradeCreditsApplicable as jest.MockedFunction<
-	typeof usePlanUpgradeCreditsApplicable
->;
-const mUseDomainToPlanCreditsApplicable = useDomainToPlanCreditsApplicable as jest.MockedFunction<
-	typeof useDomainToPlanCreditsApplicable
->;
-const mGetCurrentUserCurrencyCode = getCurrentUserCurrencyCode as jest.MockedFunction<
-	typeof getCurrentUserCurrencyCode
->;
-const mGetByPurchaseId = getByPurchaseId as jest.MockedFunction< typeof getByPurchaseId >;
-const mIsProPlan = isProPlan as jest.MockedFunction< typeof isProPlan >;
-
 const plansList: PlanSlug[] = [
 	PLAN_FREE,
 	PLAN_PERSONAL,
@@ -111,32 +87,29 @@ describe( '<PlanNotice /> Tests', () => {
 	beforeEach( () => {
 		jest.resetAllMocks();
 
-		mGetDiscountByName.mockImplementation( () => false );
-		mUseMarketingMessage.mockImplementation( () => [ false, [], () => ( {} ) ] );
-		mIsCurrentPlanPaid.mockImplementation( () => true );
-		mIsCurrentUserCurrentPlanOwner.mockImplementation( () => true );
-		mIsRequestingSitePlans.mockImplementation( () => true );
-		mGetCurrentUserCurrencyCode.mockImplementation( () => 'USD' );
-		mUsePlanUpgradeCreditsApplicable.mockImplementation( () => 100 );
-		mUseDomainToPlanCreditsApplicable.mockImplementation( () => 100 );
-		mGetByPurchaseId.mockImplementation(
-			() =>
-				( {
-					isInAppPurchase: false,
-				} ) as Purchase
-		);
-		mIsProPlan.mockImplementation( () => false );
+		jest.mocked( getDiscountByName ).mockReturnValue( false );
+		jest.mocked( useMarketingMessage ).mockReturnValue( [ false, [], () => ( {} ) ] );
+		jest.mocked( isCurrentPlanPaid ).mockReturnValue( true );
+		jest.mocked( isCurrentUserCurrentPlanOwner ).mockReturnValue( true );
+		jest.mocked( isRequestingSitePlans ).mockReturnValue( true );
+		jest.mocked( getCurrentUserCurrencyCode ).mockReturnValue( 'USD' );
+		jest.mocked( usePlanUpgradeCreditsApplicable ).mockReturnValue( 100 );
+		jest.mocked( useDomainToPlanCreditsApplicable ).mockReturnValue( 100 );
+		jest.mocked( getByPurchaseId ).mockReturnValue( {
+			isInAppPurchase: false,
+		} as Purchase );
+		jest.mocked( isProPlan ).mockReturnValue( false );
 	} );
 
 	test( 'A contact site owner <PlanNotice /> should be shown no matter what other conditions are met, when the current site owner is not logged in, and the site plan is paid', () => {
-		mGetDiscountByName.mockImplementation( () => discount );
-		mUsePlanUpgradeCreditsApplicable.mockImplementation( () => 100 );
-		mIsCurrentPlanPaid.mockImplementation( () => true );
-		mIsCurrentUserCurrentPlanOwner.mockImplementation( () => false );
+		jest.mocked( getDiscountByName ).mockReturnValue( discount );
+		jest.mocked( usePlanUpgradeCreditsApplicable ).mockReturnValue( 100 );
+		jest.mocked( isCurrentPlanPaid ).mockReturnValue( true );
+		jest.mocked( isCurrentUserCurrentPlanOwner ).mockReturnValue( false );
 
 		renderWithProvider(
 			<PlanNotice
-				discountInformation={ { withDiscount: 'test', discountEndDate: new Date() } }
+				discountInformation={ { coupon: 'test', discountEndDate: new Date() } }
 				visiblePlans={ plansList }
 				isInSignup={ false }
 				siteId={ 10000000 }
@@ -148,14 +121,14 @@ describe( '<PlanNotice /> Tests', () => {
 	} );
 
 	test( 'A discount <PlanNotice /> should be shown if the user is the site owner and no matter what other conditions are met', () => {
-		mIsCurrentUserCurrentPlanOwner.mockImplementation( () => true );
-		mIsCurrentPlanPaid.mockImplementation( () => true );
-		mGetDiscountByName.mockImplementation( () => discount );
-		mUsePlanUpgradeCreditsApplicable.mockImplementation( () => 100 );
+		jest.mocked( isCurrentUserCurrentPlanOwner ).mockReturnValue( true );
+		jest.mocked( isCurrentPlanPaid ).mockReturnValue( true );
+		jest.mocked( getDiscountByName ).mockReturnValue( discount );
+		jest.mocked( usePlanUpgradeCreditsApplicable ).mockReturnValue( 100 );
 
 		renderWithProvider(
 			<PlanNotice
-				discountInformation={ { withDiscount: 'test', discountEndDate: new Date() } }
+				discountInformation={ { coupon: 'test', discountEndDate: new Date() } }
 				visiblePlans={ plansList }
 				isInSignup={ false }
 				siteId={ 32234 }
@@ -165,14 +138,14 @@ describe( '<PlanNotice /> Tests', () => {
 	} );
 
 	test( 'A plan upgrade credit <PlanNotice /> should be shown in a site where a plan is purchased, without other active discounts, has upgradeable plan and, the site owner is logged in', () => {
-		mIsCurrentUserCurrentPlanOwner.mockImplementation( () => true );
-		mIsCurrentPlanPaid.mockImplementation( () => true );
-		mGetDiscountByName.mockImplementation( () => false );
-		mUsePlanUpgradeCreditsApplicable.mockImplementation( () => 10000 );
+		jest.mocked( isCurrentUserCurrentPlanOwner ).mockReturnValue( true );
+		jest.mocked( isCurrentPlanPaid ).mockReturnValue( true );
+		jest.mocked( getDiscountByName ).mockReturnValue( false );
+		jest.mocked( usePlanUpgradeCreditsApplicable ).mockReturnValue( 10000 );
 
 		renderWithProvider(
 			<PlanNotice
-				discountInformation={ { withDiscount: 'test', discountEndDate: new Date() } }
+				discountInformation={ { coupon: 'test', discountEndDate: new Date() } }
 				visiblePlans={ plansList }
 				isInSignup={ false }
 				siteId={ 32234 }
@@ -184,8 +157,8 @@ describe( '<PlanNotice /> Tests', () => {
 	} );
 
 	test( 'A domain-to-plan credit <PlanNotice /> should be shown in a site where a domain has been purchased without a paid plan', () => {
-		mUsePlanUpgradeCreditsApplicable.mockImplementation( () => null );
-		mUseDomainToPlanCreditsApplicable.mockImplementation( () => 1000 );
+		jest.mocked( usePlanUpgradeCreditsApplicable ).mockReturnValue( null );
+		jest.mocked( useDomainToPlanCreditsApplicable ).mockReturnValue( 1000 );
 
 		renderWithProvider(
 			<PlanNotice
@@ -201,20 +174,22 @@ describe( '<PlanNotice /> Tests', () => {
 	} );
 
 	test( 'A marketing message <PlanNotice /> when no other notices are available and marketing messages are available and the user is not in signup', () => {
-		mIsCurrentUserCurrentPlanOwner.mockImplementation( () => true );
-		mIsCurrentPlanPaid.mockImplementation( () => true );
-		mGetDiscountByName.mockImplementation( () => false );
-		mUsePlanUpgradeCreditsApplicable.mockImplementation( () => null );
-		mUseDomainToPlanCreditsApplicable.mockImplementation( () => null );
-		mUseMarketingMessage.mockImplementation( () => [
-			false,
-			[ { id: '12121', text: 'An important marketing message' } ],
-			() => ( {} ),
-		] );
+		jest.mocked( isCurrentUserCurrentPlanOwner ).mockReturnValue( true );
+		jest.mocked( isCurrentPlanPaid ).mockReturnValue( true );
+		jest.mocked( getDiscountByName ).mockReturnValue( false );
+		jest.mocked( usePlanUpgradeCreditsApplicable ).mockReturnValue( null );
+		jest.mocked( useDomainToPlanCreditsApplicable ).mockReturnValue( null );
+		jest
+			.mocked( useMarketingMessage )
+			.mockReturnValue( [
+				false,
+				[ { id: '12121', text: 'An important marketing message' } ],
+				() => ( {} ),
+			] );
 		//
 		renderWithProvider(
 			<PlanNotice
-				discountInformation={ { withDiscount: 'test', discountEndDate: new Date() } }
+				discountInformation={ { coupon: 'test', discountEndDate: new Date() } }
 				visiblePlans={ plansList }
 				isInSignup={ false }
 				siteId={ 32234 }
@@ -224,19 +199,21 @@ describe( '<PlanNotice /> Tests', () => {
 	} );
 
 	test( 'No <PlanNotice /> should be shown when in signup', () => {
-		mIsCurrentUserCurrentPlanOwner.mockImplementation( () => true );
-		mIsCurrentPlanPaid.mockImplementation( () => true );
-		mGetDiscountByName.mockImplementation( () => false );
-		mUsePlanUpgradeCreditsApplicable.mockImplementation( () => null );
-		mUseMarketingMessage.mockImplementation( () => [
-			false,
-			[ { id: '12121', text: 'An important marketing message' } ],
-			() => ( {} ),
-		] );
+		jest.mocked( isCurrentUserCurrentPlanOwner ).mockReturnValue( true );
+		jest.mocked( isCurrentPlanPaid ).mockReturnValue( true );
+		jest.mocked( getDiscountByName ).mockReturnValue( false );
+		jest.mocked( usePlanUpgradeCreditsApplicable ).mockReturnValue( null );
+		jest
+			.mocked( useMarketingMessage )
+			.mockReturnValue( [
+				false,
+				[ { id: '12121', text: 'An important marketing message' } ],
+				() => ( {} ),
+			] );
 		//
 		renderWithProvider(
 			<PlanNotice
-				discountInformation={ { withDiscount: 'test', discountEndDate: new Date() } }
+				discountInformation={ { coupon: 'test', discountEndDate: new Date() } }
 				visiblePlans={ plansList }
 				isInSignup
 				siteId={ 32234 }
@@ -246,10 +223,10 @@ describe( '<PlanNotice /> Tests', () => {
 	} );
 
 	test( 'Show retired plan <PlanNotice /> when the current site has the pro plan', () => {
-		mIsProPlan.mockImplementation( () => true );
+		jest.mocked( isProPlan ).mockReturnValue( true );
 		renderWithProvider(
 			<PlanNotice
-				discountInformation={ { withDiscount: 'test', discountEndDate: new Date() } }
+				discountInformation={ { coupon: 'test', discountEndDate: new Date() } }
 				visiblePlans={ plansList }
 				isInSignup={ false }
 				siteId={ 32234 }
@@ -261,15 +238,12 @@ describe( '<PlanNotice /> Tests', () => {
 	} );
 
 	test( 'Show in app purchase <PlanNotice /> when the current site was purchased in an app', () => {
-		mGetByPurchaseId.mockImplementation(
-			() =>
-				( {
-					isInAppPurchase: true,
-				} ) as Purchase
-		);
+		jest.mocked( getByPurchaseId ).mockReturnValue( {
+			isInAppPurchase: true,
+		} as Purchase );
 		renderWithProvider(
 			<PlanNotice
-				discountInformation={ { withDiscount: 'test', discountEndDate: new Date() } }
+				discountInformation={ { coupon: 'test', discountEndDate: new Date() } }
 				visiblePlans={ plansList }
 				isInSignup={ false }
 				siteId={ 32234 }

@@ -31,8 +31,12 @@ export const WithActions: Story = {
 				content is displayed to visitors.`,
 		actions: (
 			<>
-				<Button variant="secondary">Cancel</Button>
-				<Button variant="primary">Save Changes</Button>
+				<Button variant="secondary" __next40pxDefaultSize>
+					Cancel
+				</Button>
+				<Button variant="primary" __next40pxDefaultSize>
+					Save Changes
+				</Button>
 			</>
 		),
 	},
@@ -45,8 +49,12 @@ export const ImageDecoration: Story = {
 		decoration: <img src="https://placecats.com/300/200" alt="Cat" />,
 		actions: (
 			<>
-				<Button variant="secondary">Cancel</Button>
-				<Button variant="primary">Save Changes</Button>
+				<Button variant="secondary" __next40pxDefaultSize>
+					Cancel
+				</Button>
+				<Button variant="primary" __next40pxDefaultSize>
+					Save Changes
+				</Button>
 			</>
 		),
 	},

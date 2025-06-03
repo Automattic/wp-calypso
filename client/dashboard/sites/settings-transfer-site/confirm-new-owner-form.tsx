@@ -1,4 +1,5 @@
 import { DataForm, isItemValid } from '@automattic/dataviews';
+import { useMutation } from '@tanstack/react-query';
 import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
@@ -6,11 +7,12 @@ import {
 	Button,
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
-import { sprintf, __ } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
+import { siteOwnerTransferEligibilityCheckMutation } from '../../app/queries';
 import type { Field } from '@automattic/dataviews';
 
-type ConfirmNewOwnerFormData = {
+export type ConfirmNewOwnerFormData = {
 	email: string;
 };
 
@@ -29,42 +31,58 @@ const form = {
 
 export function ConfirmNewOwnerForm( {
 	siteSlug,
-	handleSubmit,
+	newOwnerEmail,
+	onSubmit,
 }: {
 	siteSlug: string;
-	handleSubmit: ( event: React.FormEvent ) => void;
+	newOwnerEmail: string;
+	onSubmit: ( data: ConfirmNewOwnerFormData ) => void;
 } ) {
 	const [ formData, setFormData ] = useState( {
-		email: '',
+		email: newOwnerEmail,
 	} );
 
+	const mutation = useMutation( siteOwnerTransferEligibilityCheckMutation( siteSlug ) );
+
 	const isSaveDisabled = ! isItemValid( formData, fields, form );
+
+	const handleSubmit = ( event: React.FormEvent ) => {
+		event.preventDefault();
+
+		mutation.mutate(
+			{ new_site_owner: formData.email },
+			{
+				onSuccess: () => {
+					onSubmit( formData );
+				},
+				onError: () => {
+					// TODO: Display error message below the field.
+				},
+			}
+		);
+	};
 
 	return (
 		<VStack spacing={ 1 }>
 			<VStack style={ { padding: '8px 0' } }>
-				<Text size="15px" weight={ 500 } lineHeight="32px">
+				{ /* TODO: Think about the better way of using <Heading /> as the font size doesn't match now */ }
+				<Text size="15px" weight={ 500 } lineHeight="32px" as="h2">
 					{ __( 'Confirm new owner' ) }
 				</Text>
 				<Text lineHeight="20px">
 					{ createInterpolateElement(
-						sprintf(
-							/* translators: %(siteSlug)s - the current site slug */
-							__(
-								"Ready to transfer <strong>%(siteSlug)s</strong> and its associated purchases? Simply enter the new owner's email below, or choose an existing user to start the transfer process."
-							),
-							{
-								siteSlug,
-							}
+						__(
+							"Ready to transfer <siteSlug /> and its associated purchases? Simply enter the new owner's email below, or choose an existing user to start the transfer process."
 						),
 						{
-							strong: <strong />,
+							siteSlug: <strong>{ siteSlug }</strong>,
 						}
 					) }
 				</Text>
 			</VStack>
 			<form onSubmit={ handleSubmit }>
 				<VStack spacing={ 4 } style={ { padding: '8px 0' } }>
+					{ /* TODO: Update the gap between each field */ }
 					<DataForm< ConfirmNewOwnerFormData >
 						data={ formData }
 						fields={ fields }
@@ -74,7 +92,12 @@ export function ConfirmNewOwnerForm( {
 						} }
 					/>
 					<HStack justify="flex-start">
-						<Button variant="primary" type="submit" disabled={ isSaveDisabled }>
+						<Button
+							variant="primary"
+							type="submit"
+							isBusy={ mutation.isPending }
+							disabled={ isSaveDisabled }
+						>
 							{ __( 'Continue' ) }
 						</Button>
 					</HStack>

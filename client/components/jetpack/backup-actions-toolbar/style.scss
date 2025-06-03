@@ -7,7 +7,7 @@
 	flex-direction: column-reverse;
 
 	@include break-small {
-		flex-direction: row;
+		flex-direction: column;
 	}
 
 	a {
