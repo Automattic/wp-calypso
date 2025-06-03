@@ -1,12 +1,6 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
-import {
-	Button as A8CButton,
-	Card,
-	FormInputValidation,
-	FormLabel,
-	Gridicon,
-} from '@automattic/components';
+import { Card, FormInputValidation, FormLabel, Gridicon } from '@automattic/components';
 import { alert } from '@automattic/components/src/icons';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { suggestEmailCorrection } from '@automattic/onboarding';
@@ -424,8 +418,8 @@ export class LoginForm extends Component {
 
 						<FormLabel htmlFor="usernameOrEmail">
 							{ this.isPasswordView() ? (
-								<A8CButton
-									borderless
+								<Button
+									variant="link"
 									className="login__form-change-username"
 									onClick={ this.resetView }
 								>
@@ -434,7 +428,7 @@ export class LoginForm extends Component {
 									{ includes( this.state.usernameOrEmail, '@' )
 										? this.props.translate( 'Change Email Address' )
 										: this.props.translate( 'Change Username' ) }
-								</A8CButton>
+								</Button>
 							) : null }
 						</FormLabel>
 
@@ -492,14 +486,15 @@ export class LoginForm extends Component {
 					<div className="login__form-footer">
 						<p className="login__social-tos">{ socialToS }</p>
 						<div className="login__form-action">
-							<A8CButton
-								primary
+							<Button
+								variant="primary"
 								disabled={ isFormDisabled }
 								onClick={ this.handleWooCommerceSubmit }
 								type="submit"
+								__next40pxDefaultSize
 							>
 								{ this.getLoginButtonText() }
-							</A8CButton>
+							</Button>
 						</div>
 
 						{ config.isEnabled( 'signup/social' ) && showSocialLogin && (
