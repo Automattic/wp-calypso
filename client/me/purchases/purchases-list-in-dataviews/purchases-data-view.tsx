@@ -16,10 +16,11 @@ import {
 
 const purchasesDesktopFields = [ 'site', 'product', 'status', 'payment-method' ];
 const purchasesMobileFields = [ 'product' ];
+const defaultPerPage = 5;
 export const purchasesDataView: View = {
 	type: 'table',
 	page: 1,
-	perPage: 5,
+	perPage: defaultPerPage,
 	titleField: 'purchase-id',
 	showTitle: false,
 	fields: purchasesDesktopFields,
@@ -37,27 +38,35 @@ function usePreservePurchasesFiltersInUrl( {
 	currentView: View;
 	setView: ( setter: ( currentView: View ) => View ) => void;
 } ) {
+	const urlPaginationPage = 'pageNumber';
+	const urlPaginationPerPage = 'perPage';
 	const urlSiteFilterKey = 'siteFilter';
 	const urlTypeFilterKey = 'typeFilter';
 	const currentUrl = window.location.href;
+
+	// Apply view from URL
 	useEffect( () => {
 		const url = new URL( currentUrl );
 		const filters: Filter[] = [];
 		const siteFilterValue = url.searchParams.get( urlSiteFilterKey );
 		const typeFilterValue = url.searchParams.get( urlTypeFilterKey );
+		const pageNumber = url.searchParams.get( urlPaginationPage );
+		const perPage = url.searchParams.get( urlPaginationPerPage );
 		if ( siteFilterValue ) {
 			filters.push( { value: siteFilterValue, operator: 'is', field: 'site' } );
 		}
 		if ( typeFilterValue ) {
 			filters.push( { value: typeFilterValue, operator: 'is', field: 'type' } );
 		}
-		if ( filters.length > 0 ) {
-			setView( ( currentView ) => ( {
-				...currentView,
-				filters,
-			} ) );
-		}
+		setView( ( currentView ) => ( {
+			...currentView,
+			...( filters.length > 0 ? { filters } : { filters: currentView.filters } ),
+			...( pageNumber ? { page: parseInt( pageNumber ) } : {} ),
+			...( perPage ? { perPage: parseInt( perPage ) } : {} ),
+		} ) );
 	}, [ setView, currentUrl ] );
+
+	// Apply URL from view
 	useEffect( () => {
 		const url = new URL( window.location.href );
 		const siteFilter = currentView.filters?.find( ( filter ) => filter.field === 'site' );
@@ -66,11 +75,30 @@ function usePreservePurchasesFiltersInUrl( {
 		} else {
 			url.searchParams.delete( urlSiteFilterKey );
 		}
+
 		const typeFilter = currentView.filters?.find( ( filter ) => filter.field === 'type' );
 		if ( typeFilter ) {
 			url.searchParams.set( urlTypeFilterKey, typeFilter.value );
 		} else {
 			url.searchParams.delete( urlTypeFilterKey );
+		}
+
+		const pageNumber = currentView.page;
+		if ( pageNumber && pageNumber > 1 ) {
+			url.searchParams.set( urlPaginationPage, String( pageNumber ) );
+		} else {
+			url.searchParams.delete( urlPaginationPage );
+		}
+
+		const perPage = currentView.perPage;
+		if ( perPage && perPage !== defaultPerPage ) {
+			url.searchParams.set( urlPaginationPerPage, String( perPage ) );
+		} else {
+			url.searchParams.delete( urlPaginationPerPage );
+		}
+
+		if ( url.search === window.location.search ) {
+			return;
 		}
 		window.history.pushState( undefined, '', url );
 		// getPreviousRoute will not find this updated route unless we set it
