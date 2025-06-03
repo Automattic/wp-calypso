@@ -13,6 +13,8 @@ import OnboardingTourBannerSites from 'calypso/assets/images/a8c-for-agencies/on
 import OnboardingTourBannerTeam from 'calypso/assets/images/a8c-for-agencies/onboarding-tour-banner-team.svg';
 import OnboardingTourBannerWelcome from 'calypso/assets/images/a8c-for-agencies/onboarding-tour-banner-welcome.svg';
 import OnboardingTourBannerWooPayments from 'calypso/assets/images/a8c-for-agencies/onboarding-tour-banner-woopayments.svg';
+import { useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	A4A_MARKETPLACE_LINK,
 	A4A_MIGRATIONS_LINK,
@@ -27,6 +29,7 @@ import {
 
 export default function useOnboardingTourSections() {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 
 	return useMemo(
 		() => [
@@ -63,12 +66,21 @@ export default function useOnboardingTourSections() {
 								variant="secondary"
 								onClick={ () => {
 									page( A4A_OVERVIEW_LINK );
+									dispatch(
+										recordTracksEvent( 'calypso_a4a_onboarding_tour_explore_overview_page_click' )
+									);
 									onClose();
 								} }
 							>
 								{ translate( 'Check out the Overview page' ) }
 							</Button>
-							<Button variant="primary" onClick={ onNext }>
+							<Button
+								variant="primary"
+								onClick={ () => {
+									dispatch( recordTracksEvent( 'calypso_a4a_onboarding_tour_start_tour_click' ) );
+									onNext();
+								} }
+							>
 								{ translate( 'Start tour' ) }
 							</Button>
 						</>
@@ -113,12 +125,21 @@ export default function useOnboardingTourSections() {
 								variant="secondary"
 								onClick={ () => {
 									page( A4A_SITES_LINK );
+									dispatch(
+										recordTracksEvent( 'calypso_a4a_onboarding_tour_explore_sites_page_click' )
+									);
 									onClose();
 								} }
 							>
 								{ translate( 'Connect your first site' ) }
 							</Button>
-							<Button variant="primary" onClick={ onNext }>
+							<Button
+								variant="primary"
+								onClick={ () => {
+									dispatch( recordTracksEvent( 'calypso_a4a_onboarding_tour_next_benefit_click' ) );
+									onNext();
+								} }
+							>
 								{ translate( 'Next benefit' ) }
 							</Button>
 						</>
@@ -151,12 +172,23 @@ export default function useOnboardingTourSections() {
 								variant="secondary"
 								onClick={ () => {
 									page( A4A_MARKETPLACE_LINK );
+									dispatch(
+										recordTracksEvent(
+											'calypso_a4a_onboarding_tour_explore_marketplace_page_click'
+										)
+									);
 									onClose();
 								} }
 							>
 								{ translate( 'Explore products & hosting' ) }
 							</Button>
-							<Button variant="primary" onClick={ onNext }>
+							<Button
+								variant="primary"
+								onClick={ () => {
+									dispatch( recordTracksEvent( 'calypso_a4a_onboarding_tour_next_benefit_click' ) );
+									onNext();
+								} }
+							>
 								{ translate( 'Next benefit' ) }
 							</Button>
 						</>
@@ -186,12 +218,21 @@ export default function useOnboardingTourSections() {
 								variant="secondary"
 								onClick={ () => {
 									page( A4A_PURCHASES_LINK );
+									dispatch(
+										recordTracksEvent( 'calypso_a4a_onboarding_tour_explore_purchases_page_click' )
+									);
 									onClose();
 								} }
 							>
 								{ translate( 'View purchases' ) }
 							</Button>
-							<Button variant="primary" onClick={ onNext }>
+							<Button
+								variant="primary"
+								onClick={ () => {
+									dispatch( recordTracksEvent( 'calypso_a4a_onboarding_tour_next_benefit_click' ) );
+									onNext();
+								} }
+							>
 								{ translate( 'Next benefit' ) }
 							</Button>
 						</>
@@ -226,12 +267,21 @@ export default function useOnboardingTourSections() {
 								variant="secondary"
 								onClick={ () => {
 									page( A4A_REFERRALS_LINK );
+									dispatch(
+										recordTracksEvent( 'calypso_a4a_onboarding_tour_explore_referrals_page_click' )
+									);
 									onClose();
 								} }
 							>
 								{ translate( 'View Referrals Dashboard' ) }
 							</Button>
-							<Button variant="primary" onClick={ onNext }>
+							<Button
+								variant="primary"
+								onClick={ () => {
+									dispatch( recordTracksEvent( 'calypso_a4a_onboarding_tour_next_benefit_click' ) );
+									onNext();
+								} }
+							>
 								{ translate( 'Next benefit' ) }
 							</Button>
 						</>
@@ -276,12 +326,21 @@ export default function useOnboardingTourSections() {
 								variant="secondary"
 								onClick={ () => {
 									page( A4A_MIGRATIONS_LINK );
+									dispatch(
+										recordTracksEvent( 'calypso_a4a_onboarding_tour_explore_migrations_page_click' )
+									);
 									onClose();
 								} }
 							>
 								{ translate( 'View migration offer' ) }
 							</Button>
-							<Button variant="primary" onClick={ onNext }>
+							<Button
+								variant="primary"
+								onClick={ () => {
+									dispatch( recordTracksEvent( 'calypso_a4a_onboarding_tour_next_benefit_click' ) );
+									onNext();
+								} }
+							>
 								{ translate( 'Next benefit' ) }
 							</Button>
 						</>
@@ -314,12 +373,23 @@ export default function useOnboardingTourSections() {
 								variant="secondary"
 								onClick={ () => {
 									page( A4A_WOOPAYMENTS_LINK );
+									dispatch(
+										recordTracksEvent(
+											'calypso_a4a_onboarding_tour_explore_woopayments_page_click'
+										)
+									);
 									onClose();
 								} }
 							>
 								{ translate( 'Check out WooPayments' ) }
 							</Button>
-							<Button variant="primary" onClick={ onNext }>
+							<Button
+								variant="primary"
+								onClick={ () => {
+									dispatch( recordTracksEvent( 'calypso_a4a_onboarding_tour_next_benefit_click' ) );
+									onNext();
+								} }
+							>
 								{ translate( 'Next benefit' ) }
 							</Button>
 						</>
@@ -349,12 +419,23 @@ export default function useOnboardingTourSections() {
 								variant="secondary"
 								onClick={ () => {
 									page( A4A_AGENCY_TIER_LINK );
+									dispatch(
+										recordTracksEvent(
+											'calypso_a4a_onboarding_tour_explore_agency_tiers_page_click'
+										)
+									);
 									onClose();
 								} }
 							>
 								{ translate( 'Check out WooPayments' ) }
 							</Button>
-							<Button variant="primary" onClick={ onNext }>
+							<Button
+								variant="primary"
+								onClick={ () => {
+									dispatch( recordTracksEvent( 'calypso_a4a_onboarding_tour_next_benefit_click' ) );
+									onNext();
+								} }
+							>
 								{ translate( 'Next benefit' ) }
 							</Button>
 						</>
@@ -384,12 +465,21 @@ export default function useOnboardingTourSections() {
 								variant="secondary"
 								onClick={ () => {
 									page( A4A_TEAM_LINK );
+									dispatch(
+										recordTracksEvent( 'calypso_a4a_onboarding_tour_explore_team_page_click' )
+									);
 									onClose();
 								} }
 							>
 								{ translate( 'Add your team' ) }
 							</Button>
-							<Button variant="primary" onClick={ onNext }>
+							<Button
+								variant="primary"
+								onClick={ () => {
+									dispatch( recordTracksEvent( 'calypso_a4a_onboarding_tour_next_benefit_click' ) );
+									onNext();
+								} }
+							>
 								{ translate( 'Next benefit' ) }
 							</Button>
 						</>
@@ -415,7 +505,13 @@ export default function useOnboardingTourSections() {
 				renderActions: ( { onClose }: { onNext: () => void; onClose: () => void } ) => {
 					return (
 						<>
-							<Button variant="secondary" onClick={ onClose }>
+							<Button
+								variant="secondary"
+								onClick={ () => {
+									dispatch( recordTracksEvent( 'calypso_a4a_onboarding_tour_end_tour_click' ) );
+									onClose();
+								} }
+							>
 								{ translate( 'End tour' ) }
 							</Button>
 							<OverviewSidebarGrowthAcceleratorCta
@@ -427,6 +523,6 @@ export default function useOnboardingTourSections() {
 				},
 			},
 		],
-		[ translate ]
+		[ dispatch, translate ]
 	);
 }
