@@ -24,9 +24,9 @@ const PlanHeaders = ( { options, renderedGridPlans }: PlanHeadersProps ) => {
 				scope={ options?.scope }
 				isHeader={ options?.isHeader }
 			>
-				<header aria-label={ planTitle as string } className={ headerClasses }>
+				<div role="columnheader" className={ headerClasses }>
 					<h4 className="plan-features-2023-grid__header-title">{ planTitle }</h4>
-				</header>
+				</div>
 			</PlanDivOrTdContainer>
 		);
 	} );

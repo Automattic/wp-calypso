@@ -92,7 +92,7 @@ const Table = ( {
 				{ translate( 'Available plans to choose from' ) }
 			</caption>
 			<thead>
-				<tr aria-hidden="true">
+				<tr>
 					<PlanLogos
 						renderedGridPlans={ gridPlansWithoutSpotlight }
 						isInSignup={ isInSignup }
