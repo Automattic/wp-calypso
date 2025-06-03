@@ -172,11 +172,7 @@ async function main() {
 							id="notices"
 						/>
 					</BrowserRouter>
-					<AsyncHelpCenterApp
-						currentUser={ user as UserStore.CurrentUser }
-						locale={ user.language }
-						sectionName="stepper"
-					/>
+					<AsyncHelpCenterApp currentUser={ user as UserStore.CurrentUser } sectionName="stepper" />
 					{ 'development' === process.env.NODE_ENV && (
 						<AsyncLoad require="calypso/components/webpack-build-monitor" placeholder={ null } />
 					) }

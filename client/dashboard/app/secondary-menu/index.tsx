@@ -120,11 +120,7 @@ function SecondaryMenu() {
 						variant="tertiary"
 					/>
 					{ isHelpCenterOpen && (
-						<AsyncHelpCenterApp
-							currentUser={ user }
-							locale={ user.language }
-							sectionName="dashboard"
-						/>
+						<AsyncHelpCenterApp currentUser={ user } sectionName="dashboard" />
 					) }
 				</>
 			) }

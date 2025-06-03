@@ -5,7 +5,10 @@ import { useDispatch } from '@wordpress/data';
 import React, { useCallback } from 'react';
 import './help-center-app.scss';
 
-export type HelpCenterAppProps = React.ComponentProps< typeof HelpCenter >;
+export type HelpCenterAppProps = Omit<
+	React.ComponentProps< typeof HelpCenter >,
+	'onboardingUrl' | 'handleClose'
+>;
 
 const HELP_CENTER_STORE = HelpCenterStore.register();
 
@@ -18,9 +21,9 @@ const HelpCenterApp = ( props: HelpCenterAppProps ) => {
 
 	return (
 		<HelpCenter
+			{ ...props }
 			onboardingUrl={ config( 'wpcom_signup_url' ) }
 			handleClose={ handleClose }
-			{ ...props }
 		/>
 	);
 };
