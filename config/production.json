@@ -142,6 +142,7 @@
 		"ssr/log-prefetch-errors": true,
 		"ssr/prefetch-timebox": true,
 		"ssr/sample-log-cache-misses": true,
+		"stats/archive-breakdown": false,
 		"stats/chart-library": true,
 		"stats/empty-module-traffic": true,
 		"stats/locations": true,

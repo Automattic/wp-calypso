@@ -1,13 +1,14 @@
-import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
-import { Gravatar, TimeSince } from '@automattic/components';
+import { Gravatar } from '@automattic/components';
+import { Locale } from '@automattic/i18n-utils';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { DataViews, type View, type ViewTable, type Action, Operator } from '@wordpress/dataviews';
 import { useMemo, useState, useCallback, useEffect } from '@wordpress/element';
 import { trash } from '@wordpress/icons';
-import { translate } from 'i18n-calypso';
+import { translate, fixMe } from 'i18n-calypso';
 import { useSubscribedNewsletterCategories } from 'calypso/data/newsletter-categories';
 import { useSelector, useDispatch } from 'calypso/state';
+import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { getCouponsAndGiftsEnabledForSiteId } from 'calypso/state/memberships/settings/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
@@ -58,7 +59,18 @@ const SubscriberName = ( { displayName, email }: { displayName: string; email: s
 	</div>
 );
 
-const useNewHelper = config.isEnabled( 'subscribers-helper-library' );
+const getFormattedSubscriptionDate = ( subscriber: Subscriber, locale: Locale = 'en-US' ) => {
+	// The timestamp returned is UTC, but there is no timezone label adding the gmt offset to help with conversion.
+	const subscribedDate =
+		( subscriber.wpcom_date_subscribed || subscriber.email_date_subscribed ) + '+00:00';
+
+	// Format - May 5, 2025
+	return new Date( subscribedDate ).toLocaleDateString( locale, {
+		year: 'numeric',
+		month: 'short',
+		day: 'numeric',
+	} );
+};
 
 const getSubscriptionId = ( subscriber: Subscriber ): number => {
 	return Number( getSubscriptionIdFromSubscriber( subscriber ) );
@@ -66,13 +78,6 @@ const getSubscriptionId = ( subscriber: Subscriber ): number => {
 
 const getSubscriptionIdString = ( subscriber: Subscriber ): string => {
 	return String( getSubscriptionIdFromSubscriber( subscriber ) );
-};
-
-const getSubscriptionDate = ( subscriber: Subscriber ): string => {
-	if ( useNewHelper ) {
-		return subscriber.wpcom_date_subscribed || subscriber.email_date_subscribed || '';
-	}
-	return subscriber.date_subscribed || '';
 };
 
 const defaultView: ViewTable = {
@@ -109,6 +114,7 @@ export default function SubscriberDataViews( {
 	const isSimple = useSelector( ( state ) => isSimpleSite( state, siteId ) );
 	const isAtomic = useSelector( ( state ) => isAtomicSite( state, siteId ) );
 	const isStaging = useSelector( ( state ) => isSiteWpcomStaging( state, siteId ) );
+	const locale = useSelector( getCurrentUserLocale );
 
 	const [ searchTerm, setSearchTerm ] = useState( '' );
 	const [ filters, setFilters ] = useState< SubscribersFilterBy[] >( [ SubscribersFilterBy.All ] );
@@ -368,16 +374,19 @@ export default function SubscriberDataViews( {
 			},
 			{
 				id: 'date_subscribed',
-				label: translate( 'Since' ),
-				getValue: ( { item }: { item: Subscriber } ) => getSubscriptionDate( item ),
-				render: ( { item }: { item: Subscriber } ) => (
-					<TimeSince date={ getSubscriptionDate( item ) } />
-				),
+				label: fixMe( {
+					text: 'Date subscribed',
+					newCopy: translate( 'Date subscribed' ),
+					oldCopy: translate( 'Since' ),
+				} ) as string,
+				getValue: ( { item }: { item: Subscriber } ) =>
+					getFormattedSubscriptionDate( item, locale ),
+				render: ( { item }: { item: Subscriber } ) => getFormattedSubscriptionDate( item, locale ),
 				enableHiding: false,
 				enableSorting: true,
 			},
 		],
-		[]
+		[ locale ]
 	);
 
 	const actions = useMemo< Action< Subscriber >[] >( () => {

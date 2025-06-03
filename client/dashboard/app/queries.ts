@@ -22,15 +22,23 @@ import {
 	deleteSite,
 	fetchWordPressVersion,
 	updateWordPressVersion,
+	fetchAgencyBlogBySiteId,
 	fetchPrimaryDataCenter,
 	fetchStaticFile404,
 	updateStaticFile404,
+	clearObjectCache,
+	clearEdgeCache,
+	fetchEdgeCacheStatus,
+	updateEdgeCacheStatus,
 	fetchEdgeCacheDefensiveMode,
 	updateEdgeCacheDefensiveMode,
 	fetchPurchases,
 	fetchSiteUserMe,
 	leaveSite,
 	fetchP2HubP2s,
+	fetchSiteResetContentSummary,
+	resetSite,
+	fetchSiteResetStatus,
 } from '../data';
 import { SITE_FIELDS, SITE_OPTIONS } from '../data/constants';
 import { queryClient } from './query-client';
@@ -118,6 +126,26 @@ export function siteWordPressVersionMutation( siteSlug: string ) {
 		onSuccess: () => {
 			queryClient.invalidateQueries( { queryKey: [ 'site', siteSlug, 'wp-version' ] } );
 		},
+	};
+}
+
+export function siteResetContentSummaryQuery( siteIdOrSlug: string ) {
+	return {
+		queryKey: [ 'site-reset-content', siteIdOrSlug ],
+		queryFn: () => fetchSiteResetContentSummary( siteIdOrSlug ),
+	};
+}
+
+export function resetSiteMutation( siteIdOrSlug: string ) {
+	return {
+		mutationFn: () => resetSite( siteIdOrSlug ),
+	};
+}
+
+export function siteResetStatusQuery( siteIdOrSlug: string ) {
+	return {
+		queryKey: [ 'site-reset-status', siteIdOrSlug ],
+		queryFn: () => fetchSiteResetStatus( siteIdOrSlug ),
 	};
 }
 
@@ -262,6 +290,45 @@ export function siteStaticFile404Mutation( siteId: string ) {
 		mutationFn: ( setting: string ) => updateStaticFile404( siteId, setting ),
 		onSuccess: () => {
 			queryClient.invalidateQueries( { queryKey: [ 'site', siteId, 'static-file-404' ] } );
+		},
+	};
+}
+
+export function agencyBlogQuery( siteId: string ) {
+	return {
+		queryKey: [ 'site', siteId, 'agency-blog' ],
+		queryFn: () => {
+			return fetchAgencyBlogBySiteId( siteId );
+		},
+	};
+}
+
+export function siteObjectCacheClearMutation( siteSlug: string ) {
+	return {
+		mutationFn: ( reason: string ) => clearObjectCache( siteSlug, reason ),
+	};
+}
+
+export function siteEdgeCacheClearMutation( siteSlug: string ) {
+	return {
+		mutationFn: () => clearEdgeCache( siteSlug ),
+	};
+}
+
+export function siteEdgeCacheStatusQuery( siteSlug: string ) {
+	return {
+		queryKey: [ 'site', siteSlug, 'edge-cache-status' ],
+		queryFn: () => {
+			return fetchEdgeCacheStatus( siteSlug );
+		},
+	};
+}
+
+export function siteEdgeCacheStatusMutation( siteSlug: string ) {
+	return {
+		mutationFn: ( active: boolean ) => updateEdgeCacheStatus( siteSlug, active ),
+		onSuccess: ( active: boolean ) => {
+			queryClient.setQueryData( [ 'site', siteSlug, 'edge-cache-status' ], active );
 		},
 	};
 }
