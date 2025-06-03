@@ -6,6 +6,7 @@ import PageLayout from '../../components/page-layout';
 import { SectionHeader } from '../../components/section-header';
 import { SummaryButtonList } from '../../components/summary-button-list';
 import AgencySummary from '../settings-agency/summary';
+import CachingSettingsSummary from '../settings-caching/summary';
 import DatabaseSettingsSummary from '../settings-database/summary';
 import DefensiveModeSettingsSummary from '../settings-defensive-mode/summary';
 import PHPSettingsSummary from '../settings-php/summary';
@@ -40,6 +41,7 @@ export default function SiteSettings( { siteSlug }: { siteSlug: string } ) {
 				<AgencySummary site={ site } />
 				<PrimaryDataCenterSettingsSummary site={ site } />
 				<StaticFile404SettingsSummary site={ site } />
+				<CachingSettingsSummary site={ site } />
 				<DefensiveModeSettingsSummary site={ site } />
 			</SummaryButtonList>
 			<SiteActions site={ site } />

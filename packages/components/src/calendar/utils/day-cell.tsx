@@ -2,6 +2,35 @@ import { CalendarDay } from 'react-day-picker';
 import type { Modifiers } from '../types';
 
 /**
+ * The dash array and offset are calculated by:
+ * - measuring the path length (eg 92,28384)
+ * - establishing how many segments should the path be split into (eg. 24)
+ * - dividing the path length by the number of segments (eg. 92,28384 / 24 = 3,84516)
+ * - playing with the dash offset to make sure the dashes look good on rounded corners
+ */
+
+/**
+ * Dashed rectangle. The dash array and offset are chosen to make sure dashes
+ * look good on rounded corners and have similar metrics to the other dash
+ * preview shapes.
+ */
+const PreviewDashStartAndEnd = () => {
+	return (
+		<svg
+			viewBox="0 0 32 32"
+			xmlns="http://www.w3.org/2000/svg"
+			fill="none"
+			stroke="currentColor"
+			strokeDasharray="3.7677"
+			strokeDashoffset="3.2"
+			strokeWidth="1"
+		>
+			<path d="M29.5,0.5 h-27 a2,2 0 0 0 -2,2 v27 a2,2 0 0 0 2,2 h27 a2,2 0 0 0 2,-2 v-27 a2,2 0 0 0 -2,-2" />
+		</svg>
+	);
+};
+
+/**
  * Dashed top, left, and bottom sides, with rounded corners. The dash array and
  * offset are chosen to make sure that multiple days in a row show a seamless
  * dashed border, and the dashes look good on rounded corners.
@@ -22,7 +51,7 @@ const PreviewDashStart = () => {
 	);
 };
 /**
- * Square with dashed top and bottom sides. The dash array and offset are chosen
+ * Dashed top and bottom sides. The dash array and offset are chosen
  * to make sure that multiple days in a row show a seamless dashed border.
  */
 const PreviewDashMiddle = () => {
@@ -79,7 +108,9 @@ export function Day(
 	const { day, modifiers, children, ...tdProps } = props;
 
 	let PreviewDash;
-	if ( modifiers.preview_start ) {
+	if ( modifiers.preview_start && modifiers.preview_end ) {
+		PreviewDash = PreviewDashStartAndEnd;
+	} else if ( modifiers.preview_start ) {
 		PreviewDash = PreviewDashStart;
 	} else if ( modifiers.preview_end ) {
 		PreviewDash = PreviewDashEnd;

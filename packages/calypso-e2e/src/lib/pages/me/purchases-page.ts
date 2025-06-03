@@ -34,6 +34,20 @@ export class PurchasesPage {
 	 * @param {string} siteSlug Site slug.
 	 */
 	async clickOnPurchase( name: string, siteSlug: string ) {
+		const purchasesListDataView = this.page.locator( '#purchases-list .dataviews-wrapper' );
+		const purchasesListCardView = this.page.locator( '.card.purchase-item' );
+		await purchasesListCardView.or( purchasesListDataView ).first().waitFor( { state: 'visible' } );
+
+		if ( await purchasesListDataView.isVisible() ) {
+			await this.page
+				.locator( '#purchases-list .dataviews-view-table__row' )
+				.filter( { hasText: name } )
+				.filter( { hasText: siteSlug } )
+				.locator( '.dataviews-view-table__actions-column button' )
+				.click();
+			return;
+		}
+
 		await this.page
 			.locator( '.card.purchase-item' )
 			.filter( { hasText: name } )

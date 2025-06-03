@@ -6,6 +6,7 @@ import {
 	createLazyRoute,
 } from '@tanstack/react-router';
 import { fetchTwoStep } from '../data';
+import { canUpdateCaching } from '../sites/settings-caching';
 import {
 	canUpdatePHPVersion,
 	canUpdateDefensiveMode,
@@ -28,6 +29,7 @@ import {
 	siteWordPressVersionQuery,
 	sitePHPVersionQuery,
 	sitePrimaryDataCenterQuery,
+	siteEdgeCacheStatusQuery,
 	siteDefensiveModeQuery,
 	agencyBlogQuery,
 } from './queries';
@@ -261,6 +263,23 @@ const siteSettingsStaticFile404Route = createRoute( {
 	)
 );
 
+const siteSettingsCachingRoute = createRoute( {
+	getParentRoute: () => siteRoute,
+	path: 'settings/caching',
+	loader: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteQuery( siteSlug ) );
+		if ( canUpdateCaching( site ) ) {
+			await queryClient.ensureQueryData( siteEdgeCacheStatusQuery( siteSlug ) );
+		}
+	},
+} ).lazy( () =>
+	import( '../sites/settings-caching' ).then( ( d ) =>
+		createLazyRoute( 'site-settings-caching' )( {
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+		} )
+	)
+);
+
 const siteSettingsDefensiveModeRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: 'settings/defensive-mode',
@@ -460,6 +479,7 @@ const createRouteTree = ( config: AppConfig ) => {
 				siteSettingsAgencyRoute,
 				siteSettingsPrimaryDataCenterRoute,
 				siteSettingsStaticFile404Route,
+				siteSettingsCachingRoute,
 				siteSettingsDefensiveModeRoute,
 				siteSettingsTransferSiteRoute,
 			] )

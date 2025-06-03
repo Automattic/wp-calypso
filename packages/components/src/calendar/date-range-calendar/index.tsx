@@ -1,11 +1,106 @@
+import { differenceInCalendarDays } from 'date-fns';
 import { useMemo, useState } from 'react';
-import { DayPicker } from 'react-day-picker';
+import { DayPicker, rangeContainsModifiers } from 'react-day-picker';
 import { enUS } from 'react-day-picker/locale';
 import { COMMON_PROPS, MODIFIER_CLASSNAMES } from '../utils/constants';
 import { clampNumberOfMonths } from '../utils/misc';
 import { useControlledValue } from '../utils/use-controlled-value';
 import { useLocalizationProps } from '../utils/use-localization-props';
 import type { DateRangeCalendarProps, DateRange } from '../types';
+
+export function usePreviewRange( {
+	selected,
+	hoveredDate,
+	excludeDisabled,
+	min,
+	max,
+	disabled,
+}: Pick< DateRangeCalendarProps, 'selected' | 'excludeDisabled' | 'min' | 'max' | 'disabled' > & {
+	hoveredDate: Date | undefined;
+} ) {
+	return useMemo( () => {
+		if ( ! hoveredDate || ! selected?.from ) {
+			return;
+		}
+
+		let previewHighlight: DateRange | undefined;
+		let potentialNewRange: { from: Date; to: Date } | undefined;
+
+		// Hovering on a date before the start of the selected range
+		if ( hoveredDate < selected.from ) {
+			previewHighlight = {
+				from: hoveredDate,
+				to: selected.from,
+			};
+
+			potentialNewRange = {
+				from: hoveredDate,
+				to: selected.to ?? selected.from,
+			};
+		} else if ( selected.to && hoveredDate > selected.from && hoveredDate < selected.to ) {
+			// Hovering on a date between the start and end of the selected range
+			previewHighlight = {
+				from: selected.from,
+				to: hoveredDate,
+			};
+
+			potentialNewRange = {
+				from: selected.from,
+				to: hoveredDate,
+			};
+		} else if ( hoveredDate > selected.from ) {
+			// Hovering on a date after the end of the selected range (either
+			// because it's greater than selected.to, or because it's not defined)
+			previewHighlight = {
+				from: selected.to ?? selected.from,
+				to: hoveredDate,
+			};
+
+			potentialNewRange = {
+				from: selected.from,
+				to: hoveredDate,
+			};
+		}
+
+		if (
+			min !== undefined &&
+			min > 0 &&
+			potentialNewRange &&
+			differenceInCalendarDays( potentialNewRange.to, potentialNewRange.from ) < min
+		) {
+			previewHighlight = {
+				from: hoveredDate,
+				to: hoveredDate,
+			};
+		}
+
+		if (
+			max !== undefined &&
+			max > 0 &&
+			potentialNewRange &&
+			differenceInCalendarDays( potentialNewRange.to, potentialNewRange.from ) > max
+		) {
+			previewHighlight = {
+				from: hoveredDate,
+				to: hoveredDate,
+			};
+		}
+
+		if (
+			excludeDisabled &&
+			disabled &&
+			potentialNewRange &&
+			rangeContainsModifiers( potentialNewRange, disabled )
+		) {
+			previewHighlight = {
+				from: hoveredDate,
+				to: hoveredDate,
+			};
+		}
+
+		return previewHighlight;
+	}, [ selected, hoveredDate, excludeDisabled, min, max, disabled ] );
+}
 
 /**
  * `DateRangeCalendar` is a React component that provides a customizable calendar
@@ -23,6 +118,7 @@ export const DateRangeCalendar = ( {
 	excludeDisabled,
 	min,
 	max,
+	disabled,
 	locale = enUS,
 	timeZone,
 	...props
@@ -36,47 +132,16 @@ export const DateRangeCalendar = ( {
 	} );
 
 	const [ hoveredDate, setHoveredDate ] = useState< Date | undefined >( undefined );
+
 	// Compute the preview range for hover effect
-	const previewRange = useMemo( () => {
-		// Range preview is disabled when:
-		// - min, max, excludeDisabled props are used (as the logic to handle
-		//   these cases is complex and hasn't been implemented yet);
-		// - or when there is no hovered date or selected range.
-		if (
-			min !== undefined ||
-			max !== undefined ||
-			excludeDisabled ||
-			! hoveredDate ||
-			! selected?.from
-		) {
-			return;
-		}
-
-		// Hovering on a date before the start of the selected range
-		if ( hoveredDate < selected.from ) {
-			return {
-				from: hoveredDate,
-				to: selected.from,
-			};
-		}
-
-		// Hovering on a date between the start and end of the selected range
-		if ( selected.to && hoveredDate > selected.from && hoveredDate < selected.to ) {
-			return {
-				from: selected.from,
-				to: hoveredDate,
-			};
-		}
-
-		// Hovering on a date after the end of the selected range (either
-		// because it's greater than selected.to, or because it's not defined)
-		if ( hoveredDate > selected.from ) {
-			return {
-				from: selected.to,
-				to: hoveredDate,
-			};
-		}
-	}, [ selected, hoveredDate, excludeDisabled, min, max ] );
+	const previewRange = usePreviewRange( {
+		selected,
+		hoveredDate,
+		excludeDisabled,
+		min,
+		max,
+		disabled,
+	} );
 
 	const modifiers = useMemo( () => {
 		return {
@@ -93,6 +158,7 @@ export const DateRangeCalendar = ( {
 			{ ...props }
 			mode="range"
 			numberOfMonths={ clampNumberOfMonths( numberOfMonths ) }
+			disabled={ disabled }
 			excludeDisabled={ excludeDisabled }
 			min={ min }
 			max={ max }
