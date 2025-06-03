@@ -397,7 +397,12 @@ const WPCheckoutCheckIcon = styled( CheckIcon )`
 
 function SingleProductAndCostOverridesList( { product }: { product: ResponseCartProduct } ) {
 	const translate = useTranslate();
-	const costOverridesList = filterCostOverridesForLineItem( product, translate );
+	const [ , streamlinedPriceExperimentAssignment ] = useStreamlinedPriceExperiment();
+	const costOverridesList = filterCostOverridesForLineItem(
+		product,
+		translate,
+		isStreamlinedPriceCheckoutTreatment( streamlinedPriceExperimentAssignment )
+	);
 	const label = getLabel( product );
 	const actualAmountDisplay = formatCurrency(
 		product.item_original_subtotal_integer,
@@ -407,7 +412,7 @@ function SingleProductAndCostOverridesList( { product }: { product: ResponseCart
 			stripZeros: true,
 		}
 	);
-	const [ , streamlinedPriceExperimentAssignment ] = useStreamlinedPriceExperiment();
+
 	const monthlyPrices = useEquivalentMonthlyTotals( [ product ] );
 	if ( isStreamlinedPriceCheckoutTreatment( streamlinedPriceExperimentAssignment ) ) {
 		let streamlinedActualAmountDisplay;
