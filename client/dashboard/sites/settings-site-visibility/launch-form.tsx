@@ -54,11 +54,14 @@ function useAgencyBillingMessage( site: Site ) {
 	);
 }
 
-export function LaunchAgencyDevelopmentSiteForm( { site }: { site: Site } ) {
+export function LaunchAgencyDevelopmentSiteForm( {
+	site,
+	onLaunchClick,
+}: {
+	site: Site;
+	onLaunchClick: () => void;
+} ) {
 	const billingMessage = useAgencyBillingMessage( site );
-
-	const handleLaunchSiteClick = () => {};
-
 	const handleReferClientClick = () => {
 		window.location.href = `https://agencies.automattic.com/marketplace/checkout?referral_blog_id=${ site.ID }`;
 	};
@@ -72,7 +75,7 @@ export function LaunchAgencyDevelopmentSiteForm( { site }: { site: Site } ) {
 			</Text>
 			{ billingMessage && <Text>{ billingMessage }</Text> }
 			<HStack justify="flex-start">
-				<Button __next40pxDefaultSize variant="primary" onClick={ handleLaunchSiteClick }>
+				<Button __next40pxDefaultSize variant="primary" onClick={ () => onLaunchClick() }>
 					{ __( 'Launch site' ) }
 				</Button>
 				<Button __next40pxDefaultSize variant="secondary" onClick={ handleReferClientClick }>

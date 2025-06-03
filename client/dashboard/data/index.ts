@@ -639,3 +639,10 @@ export const fetchSiteResetStatus = async ( siteIdOrSlug: string ): Promise< Sit
 		apiNamespace: 'wpcom/v2',
 	} );
 };
+
+export const launchSite = async ( siteId: string ): Promise< void > => {
+	return wpcom.req.post( {
+		path: `/sites/${ siteId }/launch`,
+		apiNamespace: 'wpcom/v2',
+	} );
+};

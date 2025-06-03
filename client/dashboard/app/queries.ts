@@ -39,6 +39,7 @@ import {
 	fetchSiteResetContentSummary,
 	resetSite,
 	fetchSiteResetStatus,
+	launchSite,
 } from '../data';
 import { SITE_FIELDS, SITE_OPTIONS } from '../data/constants';
 import { queryClient } from './query-client';
@@ -396,5 +397,11 @@ export function p2HubP2sQuery( siteId: string, options: { limit?: number } = {} 
 		queryFn: () => {
 			return fetchP2HubP2s( siteId, options );
 		},
+	};
+}
+
+export function launchSiteMutation( siteId: string ) {
+	return {
+		mutationFn: () => launchSite( siteId ),
 	};
 }
