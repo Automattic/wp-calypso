@@ -423,3 +423,74 @@ body.is-mobile-app-view {
 		}
 	}
 }
+
+// Handle Gravatar domain flow styles
+.layout.is-domain-for-gravatar {
+	* {
+		font-family:
+			'SF Pro Text',
+			-apple-system,
+			BlinkMacSystemFont,
+			'Segoe UI',
+			Roboto,
+			Oxygen-Sans,
+			Ubuntu,
+			Cantarell,
+			'Helvetica Neue',
+			sans-serif !important;
+	}
+
+	h1.wp-brand-font,
+	.checkout-main-content > div:first-of-type,
+	.wp-checkout-order-summary__label,
+	.wp-checkout-order-summary__total-price {
+		font-weight: 700 !important;
+	}
+
+	.domain-suggestion__action.is-primary:not( :disabled ),
+	.checkout-button.is-status-primary:not( :disabled ) {
+		background-color: #1d4fc4;
+
+		&.is-busy {
+			background-image: linear-gradient(
+				-45deg,
+				#1d4fc4 28%,
+				darken( #1d4fc4, 10% ) 28%,
+				darken( #1d4fc4, 10% ) 72%,
+				#1d4fc4 72%
+			);
+		}
+	}
+
+	// Domain pages only
+	&.is-section-signup {
+		.gravatar-text-logo {
+			position: absolute;
+			top: 20px;
+			left: 24px;
+			width: 130px;
+			height: 24px;
+		}
+	}
+
+	// Checkout pages only
+	&.is-section-checkout {
+		.gravatar-text-logo {
+			width: 119px;
+			height: 22px;
+		}
+
+		.masterbar__secure-checkout {
+			column-gap: 1em;
+		}
+
+		.checkout-step__stepper div:has( svg ) {
+			background-color: #1d4fc4;
+			border-color: #1d4fc4;
+		}
+
+		.checkout__summary-features ul > li > svg {
+			fill: #1d4fc4;
+		}
+	}
+}

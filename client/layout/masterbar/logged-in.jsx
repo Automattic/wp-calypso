@@ -74,6 +74,7 @@ class MasterbarLoggedIn extends Component {
 		isCheckoutFailed: PropTypes.bool,
 		loadHelpCenterIcon: PropTypes.bool,
 		isGlobalSidebarVisible: PropTypes.bool,
+		isDomainForGravatar: PropTypes.bool,
 	};
 
 	handleLayoutFocus = ( currentSection ) => {
@@ -289,6 +290,7 @@ class MasterbarLoggedIn extends Component {
 			isJetpackNotAtomic,
 			title,
 			loadHelpCenterIcon,
+			isDomainForGravatar,
 		} = this.props;
 
 		return (
@@ -302,6 +304,7 @@ class MasterbarLoggedIn extends Component {
 				isLeavingAllowed={ ! isCheckoutPending }
 				shouldClearCartWhenLeaving={ ! isCheckoutFailed }
 				loadHelpCenterIcon={ loadHelpCenterIcon }
+				isDomainForGravatar={ isDomainForGravatar }
 			/>
 		);
 	}

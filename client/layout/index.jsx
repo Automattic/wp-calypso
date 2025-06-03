@@ -136,6 +136,7 @@ class Layout extends Component {
 		sectionGroup: PropTypes.string,
 		sectionName: PropTypes.string,
 		colorScheme: PropTypes.string,
+		isDomainForGravatar: PropTypes.bool,
 	};
 
 	constructor( props ) {
@@ -190,6 +191,7 @@ class Layout extends Component {
 				isCheckoutFailed={ isCheckoutFailed }
 				loadHelpCenterIcon={ loadHelpCenterIcon }
 				isGlobalSidebarVisible={ this.props.isGlobalSidebarVisible }
+				isDomainForGravatar={ this.props.isDomainForGravatar }
 			/>
 		);
 	}
@@ -218,6 +220,7 @@ class Layout extends Component {
 			'is-woo-com-oauth': isWooOAuth2Client( this.props.oauth2Client ),
 			'jetpack-cloud': isJetpackCloudOAuth2Client( this.props.oauth2Client ),
 			'feature-flag-woocommerce-core-profiler-passwordless-auth': true,
+			'is-domain-for-gravatar': this.props.isDomainForGravatar,
 		} );
 
 		const optionalBodyProps = () => {
@@ -411,6 +414,10 @@ export default withCurrentRoute(
 			( sidebarType === SidebarType.UnifiedSiteDefault ||
 				sidebarType === SidebarType.UnifiedSiteClassic );
 
+		const isDomainForGravatar =
+			currentRoute.startsWith( '/start/domain-for-gravatar' ) ||
+			( currentSection?.name === 'checkout' && currentQuery?.isGravatarDomain === '1' );
+
 		return {
 			masterbarIsHidden,
 			sidebarIsHidden,
@@ -447,6 +454,7 @@ export default withCurrentRoute(
 			isGlobalSidebarCollapsed: shouldShowCollapsedGlobalSidebar && ! sidebarIsHidden,
 			isUnifiedSiteSidebarVisible: shouldShowUnifiedSiteSidebar && ! sidebarIsHidden,
 			isNewUser: isUserNewerThan( WEEK_IN_MILLISECONDS )( state ),
+			isDomainForGravatar,
 		};
 	} )( Layout )
 );
