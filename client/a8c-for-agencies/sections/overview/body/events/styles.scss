@@ -85,7 +85,7 @@
 
 		.a4a-event__image {
 			background-size: 100%;
-			background-position: 8px center;
+			background-position: left center;
 			background-repeat: no-repeat;
 			width: 100%;
 			height: 100%;
@@ -95,7 +95,7 @@
 			}
 
 			&--woo {
-				background-size: cover;
+				background-size: auto 110%;
 			}
 		}
 
