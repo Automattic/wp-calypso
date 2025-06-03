@@ -85,7 +85,7 @@ export function getIntroductoryOfferIntervalDisplay( {
 					i18n.getLocaleSlug()?.startsWith( 'en' ) ||
 					i18n.hasTranslation( 'Additional discount for first year' );
 				text =
-					isStreamlinedPrice && isAdditionalDiscountTranslated
+					! isPriceIncrease && isStreamlinedPrice && isAdditionalDiscountTranslated
 						? translate( 'Additional discount for first year' )
 						: text;
 			} else {
