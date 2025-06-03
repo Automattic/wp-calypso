@@ -6,8 +6,8 @@ import {
 	CardBody,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
+	__experimentalText as Text,
 	Button,
-	CheckboxControl,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
@@ -34,6 +34,19 @@ import type { Field } from '@automattic/dataviews';
 
 type CachingFormData = {
 	active: boolean;
+};
+
+const fields: Field< CachingFormData >[] = [
+	{
+		id: 'active',
+		label: __( 'Enable global edge caching for faster content delivery' ),
+		Edit: 'checkbox',
+	},
+];
+
+const form = {
+	type: 'regular' as const,
+	fields: [ 'active' ],
 };
 
 export default function CachingSettings( { siteSlug }: { siteSlug: string } ) {
@@ -116,129 +129,113 @@ export default function CachingSettings( { siteSlug }: { siteSlug: string } ) {
 	};
 
 	const renderForm = () => {
-		const fields: Field< CachingFormData >[] = [
-			{
-				id: 'active',
-				label: __( 'Enable global edge caching for faster content delivery' ),
-				Edit: ( { field, onChange, data, hideLabelFromVision } ) => (
-					<CheckboxControl
-						__nextHasNoMarginBottom
-						label={ hideLabelFromVision ? '' : field.label }
-						checked={ field.getValue( { item: data } ) }
-						disabled={ ! isEdgeCacheAvailable }
-						onChange={ () => {
-							onChange( { [ field.id ]: ! field.getValue( { item: data } ) } );
-						} }
-					/>
-				),
-			},
-		];
-		const form = {
-			type: 'regular' as const,
-			fields: [ 'active' ],
-		};
+		if ( ! isEdgeCacheAvailable ) {
+			return (
+				<Notice>
+					<VStack>
+						<Text as="p">
+							{ __(
+								'Faster content delivery with global edge caching is available for public sites.'
+							) }
+						</Text>
+						<Text as="p">
+							{ createInterpolateElement( __( '<a>Review site visibility settings</a>.' ), {
+								a: <Link to={ `/sites/${ siteSlug }/settings/site-visibility` } />,
+							} ) }
+						</Text>
+					</VStack>
+				</Notice>
+			);
+		}
 
 		return (
-			<>
-				<Card>
-					<CardBody>
-						<form onSubmit={ handleUpdateEdgeCacheStatus }>
-							<VStack spacing={ 4 } style={ { padding: '8px 0' } }>
-								<DataForm< CachingFormData >
-									data={ formData }
-									fields={ fields }
-									form={ form }
-									onChange={ ( edits: Partial< CachingFormData > ) => {
-										setFormData( ( data ) => ( { ...data, ...edits } ) );
-									} }
-								/>
+			<Card>
+				<CardBody>
+					<form onSubmit={ handleUpdateEdgeCacheStatus }>
+						<VStack spacing={ 4 } style={ { padding: '8px 0' } }>
+							<DataForm< CachingFormData >
+								data={ formData }
+								fields={ fields }
+								form={ form }
+								onChange={ ( edits: Partial< CachingFormData > ) => {
+									setFormData( ( data ) => ( { ...data, ...edits } ) );
+								} }
+							/>
 
-								{ isEdgeCacheAvailable ? (
-									<HStack justify="flex-start">
-										<Button
-											variant="primary"
-											type="submit"
-											isBusy={ isPending }
-											disabled={ isPending || ! isDirty }
-										>
-											{ __( 'Save' ) }
-										</Button>
-									</HStack>
-								) : (
-									<Notice density="medium">
-										{ createInterpolateElement(
-											__(
-												'Global edge cache can only be enabled for public sites. <a>Review site visibility settings</a>.'
-											),
-											{
-												a: <Link to={ `/sites/${ siteSlug }/settings/site-visibility` } />,
-											}
-										) }
-									</Notice>
-								) }
-							</VStack>
-						</form>
-					</CardBody>
-				</Card>
+							<HStack justify="flex-start">
+								<Button
+									variant="primary"
+									type="submit"
+									isBusy={ isPending }
+									disabled={ isPending || ! isDirty }
+								>
+									{ __( 'Save' ) }
+								</Button>
+							</HStack>
+						</VStack>
+					</form>
+				</CardBody>
+			</Card>
+		);
+	};
 
-				<VStack spacing={ 4 }>
-					<ActionList
-						title={ __( 'Clear caches' ) }
-						description={ __(
-							'Clearing the cache may temporarily make your site less responsive.'
-						) }
-					>
-						<ActionList.ActionItem
-							title={ __( 'Global edge cache' ) }
-							description={ __( 'Edge caching enables faster content delivery.' ) }
-							actions={
-								<Button
-									variant="secondary"
-									size="compact"
-									onClick={ handleClearEdgeCache }
-									isBusy={ edgeCacheClearMutation.isPending && ! isClearingAllCaches }
-									disabled={
-										! isEdgeCacheEnabled || edgeCacheClearMutation.isPending || isClearingAllCaches
-									}
-								>
-									{ __( 'Clear' ) }
-								</Button>
-							}
-						/>
-						<ActionList.ActionItem
-							title={ __( 'Object cache' ) }
-							description={ __( 'Data is cached using Memcached to reduce database lookups.' ) }
-							actions={
-								<Button
-									variant="secondary"
-									size="compact"
-									onClick={ handleClearObjectCache }
-									isBusy={ objectCacheClearMutation.isPending && ! isClearingAllCaches }
-									disabled={ objectCacheClearMutation.isPending || isClearingAllCaches }
-								>
-									{ __( 'Clear' ) }
-								</Button>
-							}
-						/>
-					</ActionList>
-					<ActionList>
-						<ActionList.ActionItem
-							title={ __( 'Clear all caches' ) }
-							actions={
-								<Button
-									variant="secondary"
-									size="compact"
-									onClick={ handleClearAllCaches }
-									isBusy={ isClearingAllCaches }
-									disabled={ isClearingAllCaches }
-								>
-									{ __( 'Clear all' ) }
-								</Button>
-							}
-						/>
-					</ActionList>
-				</VStack>
-			</>
+	const renderActions = () => {
+		return (
+			<VStack spacing={ 4 }>
+				<ActionList
+					title={ __( 'Clear caches' ) }
+					description={ __( 'Clearing the cache may temporarily make your site less responsive.' ) }
+				>
+					<ActionList.ActionItem
+						title={ __( 'Global edge cache' ) }
+						description={ __( 'Edge caching enables faster content delivery.' ) }
+						actions={
+							<Button
+								variant="secondary"
+								size="compact"
+								onClick={ handleClearEdgeCache }
+								isBusy={ edgeCacheClearMutation.isPending && ! isClearingAllCaches }
+								disabled={
+									! isEdgeCacheEnabled || edgeCacheClearMutation.isPending || isClearingAllCaches
+								}
+							>
+								{ __( 'Clear' ) }
+							</Button>
+						}
+					/>
+					<ActionList.ActionItem
+						title={ __( 'Object cache' ) }
+						description={ __( 'Data is cached using Memcached to reduce database lookups.' ) }
+						actions={
+							<Button
+								variant="secondary"
+								size="compact"
+								onClick={ handleClearObjectCache }
+								isBusy={ objectCacheClearMutation.isPending && ! isClearingAllCaches }
+								disabled={ objectCacheClearMutation.isPending || isClearingAllCaches }
+							>
+								{ __( 'Clear' ) }
+							</Button>
+						}
+					/>
+				</ActionList>
+				<ActionList>
+					<ActionList.ActionItem
+						title={ __( 'Clear all caches' ) }
+						actions={
+							<Button
+								variant="secondary"
+								size="compact"
+								onClick={ handleClearAllCaches }
+								isBusy={ isClearingAllCaches }
+								disabled={ isClearingAllCaches }
+							>
+								{ __( 'Clear all' ) }
+							</Button>
+						}
+					/>
+				</ActionList>
+			</VStack>
 		);
 	};
 
@@ -256,7 +253,14 @@ export default function CachingSettings( { siteSlug }: { siteSlug: string } ) {
 			size="small"
 			header={ <SettingsPageHeader title={ __( 'Caching' ) } description={ description } /> }
 		>
-			{ ! canUpdate ? renderCallout() : renderForm() }
+			{ canUpdate ? (
+				<>
+					{ renderForm() }
+					{ renderActions() }
+				</>
+			) : (
+				renderCallout()
+			) }
 		</PageLayout>
 	);
 }
