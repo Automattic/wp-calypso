@@ -43,6 +43,8 @@ import styled from '@emotion/styled';
 import { Icon, reusableBlock } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import * as React from 'react';
+import PromoCard from 'calypso/components/promo-section/promo-card';
+import PromoCardCTA from 'calypso/components/promo-section/promo-card/cta';
 import { hasFreeCouponTransfersOnly } from 'calypso/lib/cart-values/cart-items';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
@@ -176,7 +178,11 @@ export function CheckoutSummaryFeaturedList( {
 				</CheckoutSummaryFeatures>
 			) }
 			{ ! isCartUpdating && ! hasRenewalInCart && ! isWcMobile && plan && hasMonthlyPlanInCart && (
-				<CheckoutSummaryAnnualUpsell plan={ plan } onChangeSelection={ onChangeSelection } />
+				<CheckoutSummaryAnnualUpsell
+					plan={ plan }
+					onChangeSelection={ onChangeSelection }
+					isStreamlinedPrice={ isStreamlinedPrice }
+				/>
 			) }
 		</>
 	);
@@ -325,6 +331,7 @@ function SwitchToAnnualPlan( {
 	plan,
 	onChangeSelection,
 	linkText,
+	isStreamlinedPrice,
 }: {
 	plan: ResponseCartProduct;
 	onChangeSelection: (
@@ -334,6 +341,7 @@ function SwitchToAnnualPlan( {
 		volume?: number
 	) => void;
 	linkText?: React.ReactNode;
+	isStreamlinedPrice?: boolean;
 } ) {
 	const translate = useTranslate();
 	const handleClick = () => {
@@ -343,7 +351,16 @@ function SwitchToAnnualPlan( {
 		}
 	};
 	const text = linkText ?? translate( 'Switch to an annual plan and save!' );
-
+	if ( isStreamlinedPrice ) {
+		return (
+			<PromoCardCTA
+				cta={ {
+					text: String( text ),
+					action: handleClick,
+				} }
+			/>
+		);
+	}
 	return <SwitchToAnnualPlanButton onClick={ handleClick }>{ text }</SwitchToAnnualPlanButton>;
 }
 
@@ -866,6 +883,7 @@ function CheckoutSummaryAnnualUpsell( props: {
 		productId: number,
 		volume?: number
 	) => void;
+	isStreamlinedPrice?: boolean;
 } ) {
 	const translate = useTranslate();
 	const hasEnTranslation = useHasEnTranslation();
@@ -878,16 +896,9 @@ function CheckoutSummaryAnnualUpsell( props: {
 	const shouldShowFreeDomainUpsell = ! (
 		isWooExpressPlan( productSlug ) && Boolean( props.plan.introductory_offer_terms?.enabled )
 	);
-
-	return (
-		<CheckoutSummaryFeaturesUpsell>
-			<CheckoutSummaryFeaturesTitle>
-				<SwitchToAnnualPlan
-					plan={ props.plan }
-					onChangeSelection={ props.onChangeSelection }
-					linkText={ translate( 'Included with an annual plan' ) }
-				/>
-			</CheckoutSummaryFeaturesTitle>
+	const title = translate( 'Included with an annual plan' );
+	const content = (
+		<>
 			<CheckoutSummaryFeaturesListWrapper>
 				{ shouldShowFreeDomainUpsell && (
 					<CheckoutSummaryFeaturesListItem isSupported={ false }>
@@ -911,8 +922,36 @@ function CheckoutSummaryAnnualUpsell( props: {
 							</CheckoutSummaryFeaturesListItem>
 					  ) }
 			</CheckoutSummaryFeaturesListWrapper>
-			<SwitchToAnnualPlan plan={ props.plan } onChangeSelection={ props.onChangeSelection } />
-		</CheckoutSummaryFeaturesUpsell>
+			<SwitchToAnnualPlan
+				plan={ props.plan }
+				onChangeSelection={ props.onChangeSelection }
+				isStreamlinedPrice={ props.isStreamlinedPrice }
+			/>
+		</>
+	);
+
+	return (
+		<>
+			{ props.isStreamlinedPrice ? (
+				<PromoCard
+					title={ title }
+					className="checkout-sidebar-plan-upsell checkout-sidebar-plan-features-upsell checkout-sidebar-plan-upsell-streamlined"
+				>
+					{ content }
+				</PromoCard>
+			) : (
+				<CheckoutSummaryFeaturesUpsell>
+					<CheckoutSummaryFeaturesTitle>
+						<SwitchToAnnualPlan
+							plan={ props.plan }
+							onChangeSelection={ props.onChangeSelection }
+							linkText={ title }
+						/>
+					</CheckoutSummaryFeaturesTitle>
+					{ content }
+				</CheckoutSummaryFeaturesUpsell>
+			) }
+		</>
 	);
 }
 
