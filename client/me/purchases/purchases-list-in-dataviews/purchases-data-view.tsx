@@ -72,7 +72,7 @@ function usePreservePurchasesFiltersInUrl( {
 		} else {
 			url.searchParams.delete( urlTypeFilterKey );
 		}
-		window.history.replaceState( {}, '', url );
+		window.history.pushState( undefined, '', url );
 		// getPreviousRoute will not find this updated route unless we set it
 		// explicitly. It only records the route when the page first loads.
 		// This seems like a bug but it appears to be how it works.
