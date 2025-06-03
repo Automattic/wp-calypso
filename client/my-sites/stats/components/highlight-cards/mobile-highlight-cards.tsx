@@ -1,6 +1,6 @@
 import { formatNumberCompact } from '@automattic/number-formatters';
 import { Icon } from '@wordpress/icons';
-import { TrendComparison } from './count-comparison-card';
+import TrendComparison from './trend-comparison';
 import './style.scss';
 
 // TODO: Figure out a way to remove this and make count-comparison-card handle the mobile layout.

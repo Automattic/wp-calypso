@@ -18,7 +18,6 @@ import QueryEmailStats from 'calypso/components/data/query-email-stats';
 import QueryPostStats from 'calypso/components/data/query-post-stats';
 import QueryPosts from 'calypso/components/data/query-posts';
 import EmptyContent from 'calypso/components/empty-content';
-import NavigationHeader from 'calypso/components/navigation-header';
 import WebPreview from 'calypso/components/web-preview';
 import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
 import memoizeLast from 'calypso/lib/memoize-last';
@@ -275,11 +274,7 @@ class StatsEmailDetail extends Component {
 
 		return (
 			<>
-				<Main
-					className={ clsx( 'stats', 'stats__email-detail', {
-						'has-fixed-nav': ! config.isEnabled( 'stats/navigation-improvement' ),
-					} ) }
-				>
+				<Main className={ clsx( 'stats', 'stats__email-detail' ) }>
 					<QueryPosts siteId={ siteId } postId={ postId } />
 					<QueryPostStats siteId={ siteId } postId={ postId } />
 					<QueryEmailStats
@@ -300,23 +295,17 @@ class StatsEmailDetail extends Component {
 						title="Stats > Single Email"
 					/>
 
-					{ config.isEnabled( 'stats/navigation-improvement' ) ? (
-						<PageHeader
-							backLinkProps={ backLinkProps }
-							titleProps={ titleProps }
-							rightSection={
-								showViewLink && (
-									<CoreButton onClick={ this.openPreview } variant="primary">
-										<span>{ actionLabel }</span>
-									</CoreButton>
-								)
-							}
-						/>
-					) : (
-						<NavigationHeader
-							navigationItems={ this.getNavigationItemsWithTitle( this.getNavigationTitle() ) }
-						/>
-					) }
+					<PageHeader
+						backLinkProps={ backLinkProps }
+						titleProps={ titleProps }
+						rightSection={
+							showViewLink && (
+								<CoreButton onClick={ this.openPreview } variant="primary">
+									<span>{ actionLabel }</span>
+								</CoreButton>
+							)
+						}
+					/>
 
 					{ ! isRequestingStats && ! countViews && post && (
 						<EmptyContent
@@ -332,9 +321,11 @@ class StatsEmailDetail extends Component {
 					{ post ? (
 						<>
 							<div
-								className={ clsx( 'stats-navigation', 'stats-navigation--modernized', {
-									'stats-navigation--improved': config.isEnabled( 'stats/navigation-improvement' ),
-								} ) }
+								className={ clsx(
+									'stats-navigation',
+									'stats-navigation--modernized',
+									'stats-navigation--improved'
+								) }
 							>
 								<StatsDetailsNavigation
 									postId={ postId }

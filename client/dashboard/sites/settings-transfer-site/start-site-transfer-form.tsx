@@ -116,7 +116,7 @@ export function StartSiteTransferForm( {
 						<li>
 							{ createInterpolateElement(
 								__(
-									'You’ll be removed as owner of <siteSlug /> and <newOwnerEmail /> will the new owner from now on.'
+									'You’ll be removed as owner of <siteSlug /> and <newOwnerEmail /> will be the new owner from now on.'
 								),
 								{
 									siteSlug: renderSiteSlug(),

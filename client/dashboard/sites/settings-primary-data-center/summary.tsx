@@ -5,7 +5,7 @@ import { cloud } from '@wordpress/icons';
 import { getDataCenterOptions } from 'calypso/data/data-center';
 import { sitePrimaryDataCenterQuery } from '../../app/queries';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
-import { canGetPrimaryDataCenter } from './index';
+import { canGetPrimaryDataCenter } from '../../utils/site-features';
 import type { Site } from '../../data/types';
 import type { Density } from '@automattic/components/src/summary-button/types';
 

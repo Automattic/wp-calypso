@@ -1,4 +1,4 @@
-import { useTranslate, TranslateResult } from 'i18n-calypso';
+import { useTranslate, TranslateResult, fixMe } from 'i18n-calypso';
 import { capitalize } from 'lodash';
 import A4APlusWpComLogo from 'calypso/a8c-for-agencies/components/a4a-plus-wpcom-logo';
 import VisitSite from 'calypso/blocks/visit-site';
@@ -24,7 +24,6 @@ interface LoginHeaderProps {
 	currentQuery: Record< string, string >;
 	fromSite: string | null;
 	isFromAkismet: boolean;
-	isFromMigrationPlugin: boolean;
 	isFromAutomatticForAgenciesPlugin: boolean;
 	isGravPoweredClient: boolean;
 	isGravPoweredLoginPage: boolean;
@@ -61,7 +60,6 @@ export function getHeaderText(
 	action: string,
 	oauth2Client: { title: string; icon: string; name: string } | null,
 	isWooJPC: boolean,
-	isFromMigrationPlugin: boolean,
 	isJetpack: boolean,
 	isWCCOM: boolean,
 	isFromAkismet: boolean,
@@ -79,10 +77,14 @@ export function getHeaderText(
 	if ( isSocialFirst ) {
 		headerText =
 			oauth2Client && isStudioAppOAuth2Client( oauth2Client )
-				? translate( 'Log in to {{span}}%(client)s{{/span}} with WordPress.com', {
-						args: { client: oauth2Client.name },
-						components: { span: <span className="login-header-text__client-name" /> },
-				  } )
+				? ( fixMe( {
+						text: 'Log in to {{span}}%(client)s{{/span}} with WordPress.com',
+						newCopy: translate( 'Log in to {{span}}%(client)s{{/span}} with WordPress.com', {
+							args: { client: oauth2Client.name },
+							components: { span: <span className="login-header-text__client-name" /> },
+						} ),
+						oldCopy: translate( 'Log in to WordPress.com' ),
+				  } ) as TranslateResult )
 				: translate( 'Log in to WordPress.com' );
 	}
 
@@ -188,8 +190,6 @@ export function getHeaderText(
 		} else {
 			headerText = translate( 'Log in to your account' );
 		}
-	} else if ( isFromMigrationPlugin ) {
-		headerText = translate( 'Log in to your account' );
 	} else if ( isJetpack && ! isFromAutomatticForAgenciesPlugin ) {
 		headerText = translate(
 			'Log in or create a WordPress.com account to supercharge your site with powerful growth, performance, and security tools.'
@@ -212,7 +212,6 @@ export function LoginHeader( {
 	currentQuery,
 	fromSite,
 	isFromAkismet,
-	isFromMigrationPlugin,
 	isFromAutomatticForAgenciesPlugin,
 	isGravPoweredClient,
 	isGravPoweredLoginPage,
@@ -245,7 +244,6 @@ export function LoginHeader( {
 		action,
 		oauth2Client,
 		isWooJPC,
-		isFromMigrationPlugin,
 		isJetpack,
 		isWCCOM,
 		isFromAkismet,

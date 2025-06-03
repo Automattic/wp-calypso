@@ -72,7 +72,7 @@ describe( 'Dashboard: Site Visibility Settings', function () {
 		await page.getByRole( 'radio', { name: 'Coming soon' } ).click();
 		await saveChanges( page );
 
-		// Open the site in a new incognito browser context to verify it's private
+		// Open the site in a new incognito browser context to verify it's coming soon
 		const incognitoPage = await browser.newPage();
 		await incognitoPage.goto( site.blog_details.url );
 		const pageContent = await incognitoPage.content();
@@ -84,13 +84,26 @@ describe( 'Dashboard: Site Visibility Settings', function () {
 		await page.getByRole( 'radio', { name: 'Public' } ).click();
 		await saveChanges( page );
 
-		// Open the site in a new incognito browser context to verify it's private
+		// Open the site in a new incognito browser context to verify it's public
 		const incognitoPage = await browser.newPage();
 		await incognitoPage.goto( site.blog_details.url );
 		const pageContent = await incognitoPage.content();
 		expect( pageContent ).not.toContain( 'Private Site' );
 		expect( pageContent ).not.toContain( 'coming soon' );
 		await incognitoPage.close();
+	} );
+
+	it( 'Can discourage search engines from indexing site', async function () {
+		await page
+			.getByRole( 'checkbox', { name: 'Discourage search engines from indexing this site' } )
+			.click();
+		await saveChanges( page );
+
+		const robotsPage = await browser.newPage();
+		await robotsPage.goto( site.blog_details.url + '/robots.txt' );
+		const pageContent = await robotsPage.content();
+		expect( pageContent ).toContain( 'User-agent: *\nDisallow: /' );
+		await robotsPage.close();
 	} );
 } );
 

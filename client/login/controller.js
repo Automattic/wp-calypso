@@ -235,7 +235,7 @@ export function magicLoginUse( context, next ) {
 
 	const previousQuery = context.state || {};
 
-	const { client_id, email, redirect_to, token, transition: isTransition } = previousQuery;
+	const { client_id, email, redirect_to, path, token, transition: isTransition } = previousQuery;
 
 	let activate = '';
 	try {
@@ -246,7 +246,10 @@ export function magicLoginUse( context, next ) {
 	}
 	const transition = isTransition === 'true';
 
-	const flow = redirect_to?.includes( 'jetpack/connect' ) ? 'jetpack' : null;
+	const flow =
+		redirect_to?.includes( 'jetpack/connect' ) || path?.includes( 'jetpack/link/use' )
+			? 'jetpack'
+			: null;
 
 	const PrimaryComponent = getHandleEmailedLinkFormComponent( flow );
 

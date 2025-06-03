@@ -1,7 +1,7 @@
+import { ComponentSwapper } from '@automattic/components';
 import { comment, Icon, paragraph, postContent, starEmpty } from '@wordpress/icons';
 import clsx from 'clsx';
 import { translate, useTranslate } from 'i18n-calypso';
-import ComponentSwapper from '../component-swapper';
 import CountCard from './count-card';
 import MobileHighlightCardListing from './mobile-highlight-cards';
 

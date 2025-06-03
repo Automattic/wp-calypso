@@ -11,34 +11,22 @@ import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
-import version_compare from 'calypso/lib/version-compare';
-import { STATS_FEATURE_PAGE_TRAFFIC } from 'calypso/my-sites/stats/constants';
 import useNoticeVisibilityMutation from 'calypso/my-sites/stats/hooks/use-notice-visibility-mutation';
 import { useNoticeVisibilityQuery } from 'calypso/my-sites/stats/hooks/use-notice-visibility-query';
-import { shouldGateStats } from 'calypso/my-sites/stats/hooks/use-should-gate-stats';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isGoogleMyBusinessLocationConnectedSelector from 'calypso/state/selectors/is-google-my-business-location-connected';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import isSiteStore from 'calypso/state/selectors/is-site-store';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
-import {
-	getJetpackStatsAdminVersion,
-	getSiteOption,
-	isSimpleSite,
-} from 'calypso/state/sites/selectors';
+import { getSiteOption, isSimpleSite } from 'calypso/state/sites/selectors';
 import getSiteAdminUrl from 'calypso/state/sites/selectors/get-site-admin-url';
 import {
 	updateModuleToggles,
 	requestModuleToggles,
 } from 'calypso/state/stats/module-toggles/actions';
 import { getModuleToggles } from 'calypso/state/stats/module-toggles/selectors';
-import {
-	AVAILABLE_PAGE_MODULES,
-	navItems as allNavItems,
-	intervals as intervalConstants,
-} from './constants';
+import { navItems as allNavItems, intervals as intervalConstants } from './constants';
 import Intervals from './intervals';
-import PageModuleToggler from './page-module-toggler';
 
 import './style.scss';
 
@@ -178,24 +166,7 @@ class StatsNavigation extends Component {
 		isLegacy: PropTypes.bool,
 		adminUrl: PropTypes.string,
 		showLock: PropTypes.bool,
-		hideModuleSettings: PropTypes.bool,
 		delayTooltipPresentation: PropTypes.bool,
-	};
-
-	state = {
-		// Dismiss the tooltip before the API call is finished.
-		isPageSettingsTooltipDismissed: !! localStorage.getItem(
-			'notices_dismissed__traffic_page_settings'
-		),
-	};
-
-	onTooltipDismiss = () => {
-		if ( this.state.isPageSettingsTooltipDismissed || ! this.props.showSettingsTooltip ) {
-			return;
-		}
-		this.setState( { isPageSettingsTooltipDismissed: true } );
-		localStorage.setItem( 'notices_dismissed__traffic_page_settings', 1 );
-		this.props.mutateNoticeVisbilityAsync().finally( this.props.refetchNotices );
 	};
 
 	isValidItem = ( item ) => {
@@ -245,44 +216,14 @@ class StatsNavigation extends Component {
 	}
 
 	render() {
-		const {
-			slug,
-			selectedItem,
-			interval,
-			isLegacy,
-			showSettingsTooltip,
-			statsAdminVersion,
-			showLock,
-			hideModuleSettings,
-			delayTooltipPresentation,
-			gatedTrafficPage,
-			siteId,
-			isStatsNavigationImprovementEnabled,
-			pageModuleToggles,
-			adminUrl,
-		} = this.props;
-		const { isPageSettingsTooltipDismissed } = this.state;
+		const { slug, selectedItem, interval, isLegacy, showLock, siteId, adminUrl } = this.props;
 		const { path } = allNavItems[ selectedItem ];
 		const slugPath = slug ? `/${ slug }` : '';
 		const pathTemplate = `${ path }/{{ interval }}${ slugPath }`;
 
-		const wrapperClass = clsx( 'stats-navigation', {
+		const wrapperClass = clsx( 'stats-navigation', 'stats-navigation--improved', {
 			'stats-navigation--modernized': ! isLegacy,
-			'stats-navigation--improved': isStatsNavigationImprovementEnabled,
 		} );
-
-		// Module settings for Odyssey are not supported until stats-admin@0.9.0-alpha.
-		const isModuleSettingsSupported =
-			! config.isEnabled( 'is_running_in_jetpack_site' ) ||
-			!! ( statsAdminVersion && version_compare( statsAdminVersion, '0.9.0-alpha', '>=' ) );
-
-		const shouldRenderModuleToggler =
-			isModuleSettingsSupported &&
-			AVAILABLE_PAGE_MODULES[ this.props.selectedItem ] &&
-			! hideModuleSettings &&
-			! gatedTrafficPage;
-
-		// @TODO: Add loading status of modules settings to avoid toggling modules before they are loaded.
 
 		/** @type {Array<keyof typeof allNavItems>} Array of valid navigation item keys */
 		const navKeys = Object.keys( allNavItems );
@@ -309,46 +250,22 @@ class StatsNavigation extends Component {
 		return (
 			<div className={ wrapperClass }>
 				{ siteId && <QueryJetpackModules siteId={ siteId } /> }
-				{ isStatsNavigationImprovementEnabled && (
-					<ComponentSwapper
-						className="full-width"
-						breakpoint="<480px"
-						breakpointActiveComponent={
-							<SelectNav
-								navItems={ navItems }
-								selectedItemName={ selectedItem }
-								isLegacy={ isLegacy }
-								interval={ interval }
-								pathTemplate={ pathTemplate }
-							/>
-						}
-						breakpointInactiveComponent={
-							<TabNav tabs={ navItems } selectedTabName={ selectedItem } />
-						}
-					/>
-				) }
-				{ ! isStatsNavigationImprovementEnabled && (
-					// TODO: remove following SelectNav after 'stats/navigation-improvement' launch.
-					<SelectNav
-						navItems={ navItems }
-						selectedItemName={ selectedItem }
-						isLegacy={ isLegacy }
-						interval={ interval }
-						pathTemplate={ pathTemplate }
-					/>
-				) }
-
-				{ ! isStatsNavigationImprovementEnabled && shouldRenderModuleToggler && (
-					<PageModuleToggler
-						siteId={ siteId }
-						selectedItem={ selectedItem }
-						moduleToggles={ pageModuleToggles }
-						isTooltipShown={
-							showSettingsTooltip && ! isPageSettingsTooltipDismissed && ! delayTooltipPresentation
-						}
-						onTooltipDismiss={ this.onTooltipDismiss }
-					/>
-				) }
+				<ComponentSwapper
+					className="full-width"
+					breakpoint="<480px"
+					breakpointActiveComponent={
+						<SelectNav
+							navItems={ navItems }
+							selectedItemName={ selectedItem }
+							isLegacy={ isLegacy }
+							interval={ interval }
+							pathTemplate={ pathTemplate }
+						/>
+					}
+					breakpointInactiveComponent={
+						<TabNav tabs={ navItems } selectedTabName={ selectedItem } />
+					}
+				/>
 			</div>
 		);
 	}
@@ -389,13 +306,8 @@ export default connect(
 			isSubscriptionsModuleActive: isJetpackModuleActive( state, siteId, 'subscriptions', true ),
 			siteId,
 			pageModuleToggles: getModuleToggles( state, siteId, [ selectedItem ] ),
-			statsAdminVersion: getJetpackStatsAdminVersion( state, siteId ),
 			adminUrl: getSiteAdminUrl( state, siteId ),
 			delayTooltipPresentation: shouldDelayTooltipPresentation( state, siteId ),
-			gatedTrafficPage:
-				config.isEnabled( 'stats/paid-wpcom-v3' ) &&
-				shouldGateStats( state, siteId, STATS_FEATURE_PAGE_TRAFFIC ),
-			isStatsNavigationImprovementEnabled: config.isEnabled( 'stats/navigation-improvement' ),
 		};
 	},
 	{ requestModuleToggles, updateModuleToggles }

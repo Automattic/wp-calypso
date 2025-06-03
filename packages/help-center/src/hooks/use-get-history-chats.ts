@@ -36,19 +36,40 @@ const getLastMessageReceived = ( conversation: OdieConversation | ZendeskConvers
 
 /**
  * Returns Odie conversations that do not have any corresponding Zendesk support interaction.
+ * Updates the Odie conversations with the support interaction id and status.
  */
-const getOdieConversationsWithNoSupportInteractions = (
+const getAndUpdateOdieConversationsWithSupportInteractions = (
 	odieConversations: OdieConversation[] = [],
-	supportInteractions: SupportInteraction[]
+	odieSupportInteractions: SupportInteraction[]
 ): OdieConversation[] => {
 	const eventExternalIds = new Set(
-		supportInteractions
+		odieSupportInteractions
 			.flatMap( ( interaction ) => interaction.events || [] )
 			.filter( ( event ) => event.event_source === 'odie' )
 			.map( ( event ) => event.event_external_id )
 	);
 
-	return odieConversations.filter( ( conversation ) => ! eventExternalIds.has( conversation.id ) );
+	const filteredOdieConversations = odieConversations.filter( ( conversation ) =>
+		eventExternalIds.has( conversation.id )
+	);
+
+	return filteredOdieConversations.map( ( conversation ) => {
+		const supportInteraction = odieSupportInteractions.find( ( interaction ) =>
+			interaction.events.some(
+				( event ) => event.event_source === 'odie' && event.event_external_id === conversation.id
+			)
+		);
+
+		return {
+			...conversation,
+			metadata: {
+				supportInteractionId: supportInteraction?.uuid || '',
+				status: supportInteraction?.status || 'open',
+				odieChatId: parseInt( conversation.id ),
+				createdAt: supportInteraction?.start_date ? Date.parse( supportInteraction.start_date ) : 0,
+			},
+		};
+	} );
 };
 
 /**
@@ -93,28 +114,29 @@ export const useGetHistoryChats = (): UseGetHistoryChatsResult => {
 	const [ recentConversations, setRecentConversations ] = useState< Conversations >( [] );
 	const [ archivedConversations, setArchivedConversations ] = useState< Conversations >( [] );
 
-	const { isChatLoaded, lastMessageReceivedAt } = useSelect( ( select ) => {
+	const { isChatLoaded } = useSelect( ( select ) => {
 		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
 
 		return {
 			isChatLoaded: store.getIsChatLoaded(),
-			lastMessageReceivedAt: store.getLastMessageReceivedAt(),
 		};
 	}, [] );
 
-	const { data: openSupportInteraction, isLoading: isLoadingOpenInteractions } =
-		useGetSupportInteractions( 'zendesk', 10, 'open', 10, true, lastMessageReceivedAt );
 	const { data: otherSupportInteractions, isLoading: isLoadingOtherSupportInteractions } =
 		useGetSupportInteractions( 'zendesk', 100, [ 'resolved', 'solved', 'closed' ] );
+	const { data: odieSupportInteractions, isLoading: isLoadingOdieSupportInteractions } =
+		useGetSupportInteractions( 'odie', 100, [ 'open' ] );
 	const { data: odieConversations, isLoading: isLoadingOdieConversations } =
 		useGetOdieConversations();
 
 	const isLoadingInteractions =
-		isLoadingOpenInteractions || isLoadingOtherSupportInteractions || isLoadingOdieConversations;
+		isLoadingOtherSupportInteractions ||
+		isLoadingOdieSupportInteractions ||
+		isLoadingOdieConversations;
 
 	const supportInteractions: SupportInteraction[] = useMemo(
-		() => [ ...( openSupportInteraction || [] ), ...( otherSupportInteractions || [] ) ],
-		[ openSupportInteraction, otherSupportInteractions ]
+		() => [ ...( odieSupportInteractions || [] ), ...( otherSupportInteractions || [] ) ],
+		[ odieSupportInteractions, otherSupportInteractions ]
 	);
 
 	useEffect( () => {
@@ -127,7 +149,10 @@ export const useGetHistoryChats = (): UseGetHistoryChatsResult => {
 		// Merge Zendesk and Odie conversations, remove the ones with an invalid message, then sort them by recency
 		const conversations = [
 			...filterAndUpdateConversationsWithStatus( zendeskConversations, supportInteractions ),
-			...getOdieConversationsWithNoSupportInteractions( odieConversations, supportInteractions ),
+			...getAndUpdateOdieConversationsWithSupportInteractions(
+				odieConversations,
+				odieSupportInteractions || []
+			),
 		]
 			.filter( ( conversation ) => isValidLastMessageContent( conversation ) )
 			.sort( ( a, b ) => getLastMessageReceived( b ) - getLastMessageReceived( a ) );
@@ -139,7 +164,7 @@ export const useGetHistoryChats = (): UseGetHistoryChatsResult => {
 	}, [
 		isChatLoaded,
 		isLoadingInteractions,
-		openSupportInteraction,
+		odieSupportInteractions,
 		otherSupportInteractions,
 		odieConversations,
 		supportInteractions,
