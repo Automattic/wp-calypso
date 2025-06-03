@@ -9,13 +9,7 @@ import { canGetPrimaryDataCenter } from '../../utils/site-features';
 import type { Site } from '../../data/types';
 import type { Density } from '@automattic/components/src/summary-button/types';
 
-export default function SettingsPrimaryDataCenterSummary( {
-	site,
-	density,
-}: {
-	site: Site;
-	density?: Density;
-} ) {
+export function useCanRenderSettingsPrimaryDataCenterSummary( { site }: { site: Site } ) {
 	const { data: primaryDataCenter } = useQuery( {
 		...sitePrimaryDataCenterQuery( site.slug ),
 		enabled: canGetPrimaryDataCenter( site ),
@@ -24,10 +18,22 @@ export default function SettingsPrimaryDataCenterSummary( {
 	const dataCenterOptions = getDataCenterOptions();
 	const primaryDataCenterName = primaryDataCenter ? dataCenterOptions[ primaryDataCenter ] : null;
 
-	if ( ! primaryDataCenterName ) {
-		return null;
-	}
+	return {
+		show: !! primaryDataCenterName,
+		props: {
+			site,
+			primaryDataCenterName: primaryDataCenterName as string,
+		},
+	};
+}
 
+export default function SettingsPrimaryDataCenterSummary( {
+	site,
+	primaryDataCenterName,
+	density,
+}: ReturnType< typeof useCanRenderSettingsPrimaryDataCenterSummary >[ 'props' ] & {
+	density?: Density;
+} ) {
 	return (
 		<RouterLinkSummaryButton
 			to={ `/sites/${ site.slug }/settings/primary-data-center` }

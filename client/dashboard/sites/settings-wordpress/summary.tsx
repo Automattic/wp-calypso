@@ -8,37 +8,44 @@ import { getFormattedWordPressVersion } from '../../utils/wp-version';
 import type { Site } from '../../data/types';
 import type { Density } from '@automattic/components/src/summary-button/types';
 
-export default function WordPressSettingsSummary( {
-	site,
-	density,
-}: {
-	site: Site;
-	density?: Density;
-} ) {
-	const { data: versionTag } = useQuery( {
-		...siteWordPressVersionQuery( site.slug ),
+export function useCanRenderWordPressSettingsSummary( { site }: { site: Site } ) {
+	const { data: wpVersionTag } = useQuery( {
+		...siteWordPressVersionQuery( site?.slug ),
 		enabled: canUpdateWordPressVersion( site ),
 	} );
 
-	const wpVersion = getFormattedWordPressVersion( site, versionTag );
-	if ( ! wpVersion ) {
-		return null;
-	}
+	const wpVersion = getFormattedWordPressVersion( site, wpVersionTag );
 
-	const badges = [
-		{
-			text: wpVersion,
-			intent: versionTag === 'beta' ? ( 'warning' as const ) : ( 'success' as const ),
+	return {
+		show: !! wpVersion,
+		props: {
+			site,
+			wpVersion,
+			wpVersionTag,
 		},
-	];
+	};
+}
 
+export default function WordPressSettingsSummary( {
+	site,
+	wpVersion,
+	wpVersionTag,
+	density,
+}: ReturnType< typeof useCanRenderWordPressSettingsSummary >[ 'props' ] & {
+	density?: Density;
+} ) {
 	return (
 		<RouterLinkSummaryButton
 			to={ `/sites/${ site.slug }/settings/wordpress` }
 			title="WordPress"
 			density={ density }
 			decoration={ <Icon icon={ wordpress } /> }
-			badges={ badges }
+			badges={ [
+				{
+					text: wpVersion,
+					intent: wpVersionTag === 'beta' ? ( 'warning' as const ) : ( 'success' as const ),
+				},
+			] }
 		/>
 	);
 }

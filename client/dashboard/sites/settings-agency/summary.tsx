@@ -7,26 +7,29 @@ import RouterLinkSummaryButton from '../../components/router-link-summary-button
 import type { Site } from '../../data/types';
 import type { Density } from '@automattic/components/src/summary-button/types';
 
-export default function AgencySettingsSummary( {
-	site,
-	density,
-}: {
-	site: Site;
-	density?: Density;
-} ) {
+export function useCanRenderAgencySettingsSummary( { site }: { site: Site } ) {
 	const { data: siteSettings } = useQuery( siteSettingsQuery( site.slug ) );
 	const { data: agencyBlog } = useQuery( {
 		...agencyBlogQuery( site.ID ),
 		enabled: site.is_wpcom_atomic,
 	} );
 
-	if ( ! agencyBlog ) {
-		return null;
-	}
+	return {
+		show: !! agencyBlog,
+		props: {
+			site,
+			isWpcomFeaturesDisabled: siteSettings?.is_fully_managed_agency_site || site.is_a4a_dev_site,
+		},
+	};
+}
 
-	const isWpcomFeaturesDisabled =
-		siteSettings?.is_fully_managed_agency_site || site.is_a4a_dev_site;
-
+export default function AgencySettingsSummary( {
+	site,
+	isWpcomFeaturesDisabled,
+	density,
+}: ReturnType< typeof useCanRenderAgencySettingsSummary >[ 'props' ] & {
+	density?: Density;
+} ) {
 	return (
 		<RouterLinkSummaryButton
 			to={ `/sites/${ site.slug }/settings/agency` }

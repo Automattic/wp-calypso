@@ -8,27 +8,33 @@ import { canUpdateDefensiveMode } from '../../utils/site-features';
 import type { Site } from '../../data/types';
 import type { Density } from '@automattic/components/src/summary-button/types';
 
-export default function DefensiveModeSettingsSummary( {
-	site,
-	density,
-}: {
-	site: Site;
-	density?: Density;
-} ) {
+export function useCanRenderSettingsDefensiveModeSummary( { site }: { site: Site } ) {
 	const canUpdate = canUpdateDefensiveMode( site );
 
-	const { data } = useQuery( {
+	const { data: siteDefensiveModeData } = useQuery( {
 		...siteDefensiveModeQuery( site.slug ),
 		enabled: canUpdate,
 	} );
 
-	if ( ! canUpdate ) {
-		return null;
-	}
+	return {
+		show: !! canUpdate,
+		props: {
+			site,
+			siteDefensiveModeData,
+		},
+	};
+}
 
+export default function DefensiveModeSettingsSummary( {
+	site,
+	siteDefensiveModeData,
+	density,
+}: ReturnType< typeof useCanRenderSettingsDefensiveModeSummary >[ 'props' ] & {
+	density?: Density;
+} ) {
 	let badge;
-	if ( data ) {
-		if ( data.enabled ) {
+	if ( siteDefensiveModeData ) {
+		if ( siteDefensiveModeData.enabled ) {
 			badge = {
 				text: __( 'Enabled' ),
 				intent: 'info' as const,

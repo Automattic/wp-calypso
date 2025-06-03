@@ -6,6 +6,19 @@ import { hasSubscriptionGiftingFeature } from './utils';
 import type { Site, SiteSettings } from '../../data/types';
 import type { Density } from '@automattic/components/src/summary-button/types';
 
+export function useCanRenderSubscriptionGiftingSettingsSummary( {
+	site,
+	settings,
+}: {
+	site: Site;
+	settings: SiteSettings;
+} ) {
+	return {
+		show: hasSubscriptionGiftingFeature( site ),
+		props: { site, settings },
+	};
+}
+
 export default function SubscriptionGiftingSettingsSummary( {
 	site,
 	settings,
@@ -15,9 +28,6 @@ export default function SubscriptionGiftingSettingsSummary( {
 	settings: SiteSettings;
 	density?: Density;
 } ) {
-	if ( ! hasSubscriptionGiftingFeature( site ) ) {
-		return null;
-	}
 	return (
 		<RouterLinkSummaryButton
 			to={ `/sites/${ site.slug }/settings/subscription-gifting` }

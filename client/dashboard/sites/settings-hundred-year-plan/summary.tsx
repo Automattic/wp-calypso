@@ -6,19 +6,26 @@ import { canUpdateHundredYearPlanFeatures } from '../../utils/site-features';
 import type { Site, SiteSettings } from '../../data/types';
 import type { Density } from '@automattic/components/src/summary-button/types';
 
+export function useCanRenderHundredYearPlanSettingsSummary( {
+	site,
+	settings,
+}: {
+	site: Site;
+	settings: SiteSettings;
+} ) {
+	return {
+		show: canUpdateHundredYearPlanFeatures( site ),
+		props: { site, settings },
+	};
+}
+
 export default function HundredYearPlanSummary( {
 	site,
 	settings,
 	density,
-}: {
-	site: Site;
-	settings: SiteSettings;
+}: ReturnType< typeof useCanRenderHundredYearPlanSettingsSummary >[ 'props' ] & {
 	density?: Density;
 } ) {
-	if ( ! canUpdateHundredYearPlanFeatures( site ) ) {
-		return null;
-	}
-
 	return (
 		<RouterLinkSummaryButton
 			to={ `/sites/${ site.slug }/settings/hundred-year-plan` }
