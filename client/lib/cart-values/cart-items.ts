@@ -71,7 +71,9 @@ export const DOMAIN_PRICE_RULE = {
 	DOMAIN_MOVE_PRICE: 'DOMAIN_MOVE_PRICE',
 	INCLUDED_IN_HIGHER_PLAN: 'INCLUDED_IN_HIGHER_PLAN',
 	UPGRADE_TO_HIGHER_PLAN_TO_BUY: 'UPGRADE_TO_HIGHER_PLAN_TO_BUY',
-};
+} as const;
+
+type DomainPriceRule = ( typeof DOMAIN_PRICE_RULE )[ keyof typeof DOMAIN_PRICE_RULE ];
 
 export type ObjectWithProducts = Pick< ResponseCart, 'products' >;
 
@@ -873,7 +875,7 @@ export function getDomainPriceRule(
 	isDomainOnly: boolean,
 	flowName: string,
 	domainAndPlanUpsellFlow: boolean
-): string {
+): DomainPriceRule {
 	// We'll show a fixed, one time price in the 100-year domain flow
 	if ( isHundredYearDomainFlow( flowName ) ) {
 		return DOMAIN_PRICE_RULE.ONE_TIME_PRICE;
