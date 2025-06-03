@@ -1,11 +1,13 @@
 import { DataForm } from '@automattic/dataviews';
 import { useQuery, useMutation } from '@tanstack/react-query';
+import { Link } from '@tanstack/react-router';
 import {
 	Card,
 	CardBody,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	Button,
+	CheckboxControl,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
@@ -20,32 +22,19 @@ import {
 	siteObjectCacheClearMutation,
 } from '../../app/queries';
 import { ActionList } from '../../components/action-list';
+import Notice from '../../components/notice';
 import PageLayout from '../../components/page-layout';
+import {
+	canUpdateCaching,
+	isEdgeCacheAvailable as getIsEdgeCacheAvailable,
+} from '../../utils/site-features';
 import SettingsCallout from '../settings-callout';
 import SettingsPageHeader from '../settings-page-header';
-import type { Site } from '../../data/types';
 import type { Field } from '@automattic/dataviews';
 
 type CachingFormData = {
 	active: boolean;
 };
-
-const fields: Field< CachingFormData >[] = [
-	{
-		id: 'active',
-		label: __( 'Enable global edge caching for faster content delivery' ),
-		Edit: 'checkbox',
-	},
-];
-
-const form = {
-	type: 'regular' as const,
-	fields: [ 'active' ],
-};
-
-export function canUpdateCaching( site: Site ) {
-	return site.is_wpcom_atomic;
-}
 
 export default function CachingSettings( { siteSlug }: { siteSlug: string } ) {
 	const { data: site } = useQuery( siteQuery( siteSlug ) );
@@ -61,11 +50,14 @@ export default function CachingSettings( { siteSlug }: { siteSlug: string } ) {
 
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
+	const isEdgeCacheAvailable = site && getIsEdgeCacheAvailable( site );
+	const isEdgeCacheEnabled = isEdgeCacheAvailable && isEdgeCacheActive;
+
 	const [ formData, setFormData ] = useState< CachingFormData >( {
-		active: isEdgeCacheActive ?? false,
+		active: isEdgeCacheEnabled ?? false,
 	} );
 
-	const isDirty = isEdgeCacheActive !== formData.active;
+	const isDirty = isEdgeCacheEnabled !== formData.active;
 	const { isPending } = edgeCacheStatusMutation;
 
 	const handleUpdateEdgeCacheStatus = ( e: React.FormEvent ) => {
@@ -111,7 +103,7 @@ export default function CachingSettings( { siteSlug }: { siteSlug: string } ) {
 	}, [ edgeCacheClearMutation.isPending, objectCacheClearMutation.isPending ] );
 
 	const handleClearAllCaches = () => {
-		if ( isEdgeCacheActive ) {
+		if ( isEdgeCacheEnabled ) {
 			handleClearEdgeCache();
 		}
 		handleClearObjectCache();
@@ -124,6 +116,28 @@ export default function CachingSettings( { siteSlug }: { siteSlug: string } ) {
 	};
 
 	const renderForm = () => {
+		const fields: Field< CachingFormData >[] = [
+			{
+				id: 'active',
+				label: __( 'Enable global edge caching for faster content delivery' ),
+				Edit: ( { field, onChange, data, hideLabelFromVision } ) => (
+					<CheckboxControl
+						__nextHasNoMarginBottom
+						label={ hideLabelFromVision ? '' : field.label }
+						checked={ field.getValue( { item: data } ) }
+						disabled={ ! isEdgeCacheAvailable }
+						onChange={ () => {
+							onChange( { [ field.id ]: ! field.getValue( { item: data } ) } );
+						} }
+					/>
+				),
+			},
+		];
+		const form = {
+			type: 'regular' as const,
+			fields: [ 'active' ],
+		};
+
 		return (
 			<>
 				<Card>
@@ -138,16 +152,30 @@ export default function CachingSettings( { siteSlug }: { siteSlug: string } ) {
 										setFormData( ( data ) => ( { ...data, ...edits } ) );
 									} }
 								/>
-								<HStack justify="flex-start">
-									<Button
-										variant="primary"
-										type="submit"
-										isBusy={ isPending }
-										disabled={ isPending || ! isDirty }
-									>
-										{ __( 'Save' ) }
-									</Button>
-								</HStack>
+
+								{ isEdgeCacheAvailable ? (
+									<HStack justify="flex-start">
+										<Button
+											variant="primary"
+											type="submit"
+											isBusy={ isPending }
+											disabled={ isPending || ! isDirty }
+										>
+											{ __( 'Save' ) }
+										</Button>
+									</HStack>
+								) : (
+									<Notice density="medium">
+										{ createInterpolateElement(
+											__(
+												'Global edge cache can only be enabled for public sites. <a>Review site visibility settings</a>.'
+											),
+											{
+												a: <Link to={ `/sites/${ siteSlug }/settings/site-visibility` } />,
+											}
+										) }
+									</Notice>
+								) }
 							</VStack>
 						</form>
 					</CardBody>
@@ -170,7 +198,7 @@ export default function CachingSettings( { siteSlug }: { siteSlug: string } ) {
 									onClick={ handleClearEdgeCache }
 									isBusy={ edgeCacheClearMutation.isPending && ! isClearingAllCaches }
 									disabled={
-										! isEdgeCacheActive || edgeCacheClearMutation.isPending || isClearingAllCaches
+										! isEdgeCacheEnabled || edgeCacheClearMutation.isPending || isClearingAllCaches
 									}
 								>
 									{ __( 'Clear' ) }

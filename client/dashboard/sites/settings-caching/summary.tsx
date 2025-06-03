@@ -4,7 +4,7 @@ import { __ } from '@wordpress/i18n';
 import { next } from '@wordpress/icons';
 import { siteEdgeCacheStatusQuery } from '../../app/queries';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
-import { canUpdateCaching } from '.';
+import { canUpdateCaching, isEdgeCacheAvailable } from '../../utils/site-features';
 import type { Site } from '../../data/types';
 import type { Density } from '@automattic/components/src/summary-button/types';
 
@@ -24,7 +24,7 @@ export default function CachingSettingsSummary( {
 
 	let badge;
 	if ( canUpdate ) {
-		if ( isEdgeCacheActive ) {
+		if ( isEdgeCacheAvailable( site ) && isEdgeCacheActive ) {
 			badge = {
 				text: __( 'Edge cache enabled' ),
 				intent: 'success' as const,

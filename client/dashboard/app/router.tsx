@@ -6,7 +6,6 @@ import {
 	createLazyRoute,
 } from '@tanstack/react-router';
 import { fetchTwoStep } from '../data';
-import { canUpdateCaching } from '../sites/settings-caching';
 import {
 	canUpdatePHPVersion,
 	canUpdateDefensiveMode,
@@ -14,6 +13,7 @@ import {
 	canUpdateWordPressVersion,
 	canGetPrimaryDataCenter,
 	canSetStaticFile404Handling,
+	canUpdateCaching,
 } from '../utils/site-features';
 import NotFound from './404';
 import UnknownError from './500';
