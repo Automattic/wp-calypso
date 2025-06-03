@@ -3,7 +3,6 @@ import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
-import clsx from 'clsx';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useOdieAssistantContext } from '../../context';
 import { useGetSupportInteractionById } from '../../data';
@@ -81,27 +80,10 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 		return null;
 	}
 
-	const disabledButton =
-		! ( canConnectToZendesk || contextCanConnectToZendesk ) &&
-		( isUserEligibleForPaidSupport || contextIsUserEligibleForPaidSupport );
-
 	const getButtonConfig = (): ButtonConfig[] => {
 		const buttons: ButtonConfig[] = [];
 
 		if ( isUserEligibleForPaidSupport || contextIsUserEligibleForPaidSupport ) {
-			if ( supportInteraction && ! forceEmailSupport ) {
-				buttons.push( {
-					text: __( 'Continue your open conversation', __i18n_text_domain__ ),
-					action: async () => {
-						trackEvent( 'chat_open_previous_conversation' );
-						setCurrentSupportInteraction( supportInteraction );
-						if ( ! location?.pathname?.includes( '/odie' ) ) {
-							navigate( '/odie' );
-						}
-					},
-				} );
-			}
-
 			if ( forceEmailSupport ) {
 				buttons.push( {
 					text: __( 'Email support', __i18n_text_domain__ ),
@@ -111,26 +93,37 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 					},
 				} );
 			} else {
-				buttons.push( {
-					disabled: disabledButton,
-					className: clsx( 'odie__transfer-chat--button', {
-						'odie__transfer-chat--button--disabled': disabledButton,
-					} ),
-					text: __( 'Chat with support', __i18n_text_domain__ ),
-					waitTimeText: __( 'Average wait time < 5 minutes', __i18n_text_domain__ ),
-					action: async () => {
-						onClickAdditionalEvent?.( 'chat' );
-						resetSupportInteraction().then( ( interaction ) => {
-							if ( isChatLoaded ) {
-								createZendeskConversation( {
-									avoidTransfer: true,
-									interactionId: interaction?.uuid,
-									createdFrom: 'chat_support_button',
-								} );
+				if ( supportInteraction ) {
+					buttons.push( {
+						text: __( 'Continue your open conversation', __i18n_text_domain__ ),
+						action: async () => {
+							trackEvent( 'chat_open_previous_conversation' );
+							setCurrentSupportInteraction( supportInteraction );
+							if ( ! location?.pathname?.includes( '/odie' ) ) {
+								navigate( '/odie' );
 							}
-						} );
-					},
-				} );
+						},
+					} );
+				}
+
+				if ( canConnectToZendesk || contextCanConnectToZendesk ) {
+					buttons.push( {
+						text: __( 'Chat with support', __i18n_text_domain__ ),
+						waitTimeText: __( 'Average wait time < 5 minutes', __i18n_text_domain__ ),
+						action: async () => {
+							onClickAdditionalEvent?.( 'chat' );
+							resetSupportInteraction().then( ( interaction ) => {
+								if ( isChatLoaded ) {
+									createZendeskConversation( {
+										avoidTransfer: true,
+										interactionId: interaction?.uuid,
+										createdFrom: 'chat_support_button',
+									} );
+								}
+							} );
+						},
+					} );
+				}
 			}
 
 			return buttons;
