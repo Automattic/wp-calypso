@@ -7,7 +7,6 @@ import {
 	Button,
 	Card,
 	CardBody,
-	Notice,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
@@ -16,6 +15,7 @@ import { blockTable } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { siteQuery } from '../../app/queries';
+import Notice from '../../components/notice';
 import PageLayout from '../../components/page-layout';
 import { fetchPhpMyAdminToken } from '../../data';
 import { canAccessPhpMyAdmin } from '../../utils/site-features';
@@ -125,7 +125,7 @@ export default function SiteDatabaseSettings( { siteSlug }: { siteSlug: string }
 							</Text>
 						</VStack>
 						<VStack>
-							<Notice isDismissible={ false }>
+							<Notice density="medium">
 								{ __(
 									'Managing a database can be tricky and it’s not necessary for your site to function.'
 								) }

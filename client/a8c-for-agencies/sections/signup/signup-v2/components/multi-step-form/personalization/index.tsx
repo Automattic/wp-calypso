@@ -28,10 +28,12 @@ interface Props {
 }
 
 const PersonalizationFormRadio = ( {
+	id,
 	label,
 	checked,
 	onChange,
 }: {
+	id?: string;
 	label: string;
 	checked?: boolean;
 	onChange: () => void;
@@ -48,7 +50,13 @@ const PersonalizationFormRadio = ( {
 				}
 			} }
 		>
-			<FormRadio label={ label } checked={ checked } onChange={ onChange } />
+			<FormRadio
+				id={ id }
+				htmlFor={ id }
+				label={ label }
+				checked={ checked }
+				onChange={ onChange }
+			/>
 		</div>
 	);
 };
@@ -238,7 +246,11 @@ export default function PersonalizationForm( {
 				</FormFieldset>
 
 				<FormFieldset>
-					<FormField label={ translate( 'How would you describe yourself?' ) } isRequired>
+					<FormField
+						label={ translate( 'How would you describe yourself?' ) }
+						labelFor="user_type"
+						isRequired
+					>
 						<FormSelect
 							id="user_type"
 							value={ formData.userType }
@@ -260,6 +272,7 @@ export default function PersonalizationForm( {
 						<FormFieldset>
 							<FormField
 								label={ translate( 'What is the size of your agency (number of employees)?' ) }
+								labelFor="agency_size"
 								isRequired
 							>
 								<FormSelect
@@ -279,7 +292,11 @@ export default function PersonalizationForm( {
 						</FormFieldset>
 
 						<FormFieldset>
-							<FormField label={ translate( 'How many sites do you manage?' ) } isRequired>
+							<FormField
+								label={ translate( 'How many sites do you manage?' ) }
+								labelFor="managed_sites"
+								isRequired
+							>
 								<FormSelect
 									id="managed_sites"
 									value={ formData.managedSites }
@@ -299,6 +316,7 @@ export default function PersonalizationForm( {
 							<FormField
 								error={ validationError.servicesOffered }
 								label={ translate( 'What services do you offer?' ) }
+								labelFor="services_offered"
 								sub={ translate(
 									'Understanding your strategy helps us tailor the program to your needs'
 								) }
@@ -320,6 +338,7 @@ export default function PersonalizationForm( {
 								label={ translate(
 									'What Automattic products do you currently offer your clients?'
 								) }
+								labelFor="products_offered"
 								sub={ translate(
 									"We'll help you deliver more value to your clients with our products"
 								) }
@@ -340,12 +359,14 @@ export default function PersonalizationForm( {
 								<FormFieldset className="signup-personalization-form__checkbox is-horizontal">
 									<FormField label={ translate( 'Do you plan to offer more products?' ) }>
 										<PersonalizationFormRadio
+											id="plans_to_offer_products_yes"
 											label={ translate( 'Yes' ) }
 											checked={ formData.plansToOfferProducts === 'Yes' }
 											onChange={ () => handleSetPlansToOfferProducts( 'Yes' ) }
 										/>
 
 										<PersonalizationFormRadio
+											id="plans_to_offer_products_no"
 											label={ translate( 'No' ) }
 											checked={ formData.plansToOfferProducts === 'No' }
 											onChange={ () => handleSetPlansToOfferProducts( 'No' ) }
@@ -358,6 +379,7 @@ export default function PersonalizationForm( {
 										<FormField
 											error={ validationError.productsToOffer }
 											label={ translate( 'Select the products you plan to offer your clients.' ) }
+											labelFor="products_to_offer"
 											isRequired
 										>
 											<MultiCheckbox

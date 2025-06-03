@@ -522,6 +522,43 @@ export const updateStaticFile404 = async (
 	);
 };
 
+export const clearObjectCache = async ( siteIdOrSlug: string, reason: string ): Promise< void > => {
+	return wpcom.req.post(
+		{
+			path: `/sites/${ siteIdOrSlug }/hosting/clear-cache`,
+			apiNamespace: 'wpcom/v2',
+		},
+		{ reason }
+	);
+};
+
+export const fetchEdgeCacheStatus = async ( siteIdOrSlug: string ): Promise< boolean > => {
+	return wpcom.req.get( {
+		path: `/sites/${ siteIdOrSlug }/hosting/edge-cache/active`,
+		apiNamespace: 'wpcom/v2',
+	} );
+};
+
+export const updateEdgeCacheStatus = async (
+	siteIdOrSlug: string,
+	active: boolean
+): Promise< boolean > => {
+	return wpcom.req.post(
+		{
+			path: `/sites/${ siteIdOrSlug }/hosting/edge-cache/active`,
+			apiNamespace: 'wpcom/v2',
+		},
+		{ active }
+	);
+};
+
+export const clearEdgeCache = async ( siteIdOrSlug: string ): Promise< void > => {
+	return wpcom.req.post( {
+		path: `/sites/${ siteIdOrSlug }/hosting/edge-cache/purge`,
+		apiNamespace: 'wpcom/v2',
+	} );
+};
+
 export const fetchEdgeCacheDefensiveMode = async (
 	siteIdOrSlug: string
 ): Promise< DefensiveModeSettings > => {

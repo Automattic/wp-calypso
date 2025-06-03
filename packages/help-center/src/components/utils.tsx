@@ -1,7 +1,5 @@
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { getConversationIdFromInteraction } from '@automattic/odie-client/src/utils';
 import Smooch from 'smooch';
-import type { ContactOption } from '../types';
 import type {
 	OdieConversation,
 	OdieMessage,
@@ -26,20 +24,6 @@ const filterConversationsBySupportInteractions = (
 			isMatchingInteraction( interaction, conversation.metadata.supportInteractionId )
 		)
 	);
-};
-
-export const generateContactOnClickEvent = (
-	contactOption: ContactOption,
-	contactOptionEventName?: string,
-	isUserEligible?: boolean
-) => {
-	if ( contactOptionEventName ) {
-		recordTracksEvent( contactOptionEventName, {
-			location: 'help-center',
-			contact_option: contactOption,
-			is_user_eligible: isUserEligible,
-		} );
-	}
 };
 
 /**
