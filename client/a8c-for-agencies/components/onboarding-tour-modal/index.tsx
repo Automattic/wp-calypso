@@ -1,4 +1,5 @@
 import { MenuItem, Modal } from '@wordpress/components';
+import clsx from 'clsx';
 import { Children, isValidElement, ReactElement, ReactNode, useMemo, useState } from 'react';
 import OnboardingTourModalSection, { OnboardingTourModalSectionProps } from './section';
 
@@ -52,12 +53,19 @@ function OnboardingTourModal( { onClose, children }: OnboardingTourModalProps ) 
 					) ) }
 				</div>
 				<div className="onboarding-tour-modal__main">
-					<div
-						className="onboarding-tour-modal__main-banner"
-						style={ {
-							backgroundImage: `url(${ currentSection?.props.bannerImage })`,
-						} }
-					></div>
+					<div className="onboarding-tour-modal__main-banner-container">
+						{ sections.map( ( section ) => (
+							<div
+								className={ clsx( 'onboarding-tour-modal__main-banner', {
+									'is-visible': section.props.id === currentSection?.props.id,
+								} ) }
+								key={ section.props.id }
+								style={ {
+									backgroundImage: `url(${ section?.props.bannerImage })`,
+								} }
+							></div>
+						) ) }
+					</div>
 					<div className="onboarding-tour-modal__main-content">
 						<div
 							className="onboarding-tour-modal__main-content-body"
