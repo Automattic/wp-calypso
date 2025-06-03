@@ -3,6 +3,7 @@ import { ReactNode } from 'react';
 export type OnboardingTourModalSectionProps = {
 	id: string;
 	title: string;
+	bannerImage: string;
 	children: ReactNode;
 };
 
