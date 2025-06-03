@@ -104,7 +104,7 @@ export default function ReportsOverview() {
 						</div>
 					</PageSectionColumns.Column>
 					<PageSectionColumns.Column alignCenter>
-						<img src={ heroImage } alt="Reports & Analytics" />
+						<img src={ heroImage } alt="" />
 					</PageSectionColumns.Column>
 				</PageSectionColumns>
 
@@ -130,7 +130,7 @@ export default function ReportsOverview() {
 						</Button>
 					</PageSectionColumns.Column>
 					<PageSectionColumns.Column alignCenter>
-						<img src={ whyImage } alt="Client Reports" />
+						<img src={ whyImage } alt="" />
 					</PageSectionColumns.Column>
 				</PageSectionColumns>
 
@@ -159,7 +159,7 @@ export default function ReportsOverview() {
 						{ buildNewReportButton }
 					</PageSectionColumns.Column>
 					<PageSectionColumns.Column alignCenter>
-						<img src={ readyImage } alt="Reports & Analytics" />
+						<img src={ readyImage } alt="" />
 					</PageSectionColumns.Column>
 				</PageSectionColumns>
 			</LayoutBody>
