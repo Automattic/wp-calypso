@@ -1,15 +1,40 @@
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
+import { useDispatch } from 'react-redux';
 import Offering from 'calypso/a8c-for-agencies/components/offering';
 import klaviyoEventImage from 'calypso/assets/images/a8c-for-agencies/events/klaviyo-compliment-image.svg';
 import klaviyoLogo from 'calypso/assets/images/a8c-for-agencies/events/klaviyo-logo.svg';
 import wooEventImage from 'calypso/assets/images/a8c-for-agencies/events/woo-compliment-image.svg';
 import wooLogo from 'calypso/assets/images/a8c-for-agencies/events/woo-logo.svg';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 import './styles.scss';
 
 const OverviewBodyEvents = () => {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
+
+	const klaviyoRegistrationUrl =
+		'https://us02web.zoom.us/webinar/register/4117473222555/WN_tp0MS84_TYyp4NP9XMmRfQ#/registration';
+
+	const wooRegistrationUrl =
+		'https://developer.woocommerce.com/youre-invited-to-step-inside-woo-marketing/';
+
+	const handleKlaviyoRegisterClick = (): void => {
+		dispatch(
+			recordTracksEvent( 'calypso_a4a_overview_events_klaviyo_register_click', {
+				href: klaviyoRegistrationUrl,
+			} )
+		);
+	};
+
+	const handleWooRegisterClick = (): void => {
+		dispatch(
+			recordTracksEvent( 'calypso_a4a_overview_events_woo_register_click', {
+				href: wooRegistrationUrl,
+			} )
+		);
+	};
 
 	return (
 		<Offering
@@ -48,7 +73,8 @@ const OverviewBodyEvents = () => {
 							className="a4a-event__button"
 							variant="secondary"
 							target="_blank"
-							href="https://us02web.zoom.us/webinar/register/4117473222555/WN_tp0MS84_TYyp4NP9XMmRfQ#/registration"
+							href={ klaviyoRegistrationUrl }
+							onClick={ handleKlaviyoRegisterClick }
 						>
 							{ translate( 'Register now ↗' ) }
 						</Button>
@@ -88,7 +114,8 @@ const OverviewBodyEvents = () => {
 							className="a4a-event__button"
 							variant="secondary"
 							target="_blank"
-							href="https://developer.woocommerce.com/youre-invited-to-step-inside-woo-marketing/"
+							href={ wooRegistrationUrl }
+							onClick={ handleWooRegisterClick }
 						>
 							{ translate( 'Register now ↗' ) }
 						</Button>
