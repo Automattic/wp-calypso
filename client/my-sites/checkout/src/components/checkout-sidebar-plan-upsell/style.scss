@@ -25,6 +25,10 @@
 }
 .promo-card.checkout-sidebar-plan-features-upsell {
 	margin-bottom: 0;
+
+	.action-panel__body {
+		overflow: visible;
+	}
 }
 
 .checkout-sidebar-plan-upsell__plan-grid {
