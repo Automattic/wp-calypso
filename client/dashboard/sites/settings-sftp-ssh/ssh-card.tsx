@@ -94,7 +94,7 @@ export default function SshCard( {
 	);
 	const attachSshKeyMutation = useMutation( siteSshKeysAttachMutation( siteSlug ) );
 	const detachSshKeyMutation = useMutation( siteSshKeysDetachMutation( siteSlug ) );
-	const { createSuccessNotice } = useDispatch( noticesStore );
+	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const userLocale = user.locale_variant || user.language || 'en';
 	const { username } = sftpUsers[ 0 ];
 
@@ -121,15 +121,52 @@ export default function SshCard( {
 	};
 
 	const handleToggleSshAccess = () => {
-		toggleSshAccessMutation.mutate();
+		toggleSshAccessMutation.mutate( undefined, {
+			onError: () => {
+				createErrorNotice(
+					sshEnabled
+						? __(
+								'Sorry, we had a problem disabling SSH access for this site. Please refresh the page and try again.'
+						  )
+						: __(
+								'Sorry, we had a problem enabling SSH access for this site. Please refresh the page and try again.'
+						  ),
+					{
+						type: 'snackbar',
+					}
+				);
+			},
+		} );
 	};
 
 	const handleAttachSshKey = () => {
-		attachSshKeyMutation.mutate( selectedSshKey );
+		attachSshKeyMutation.mutate( selectedSshKey, {
+			onError: () => {
+				createErrorNotice(
+					__(
+						'Sorry, we had a problem attaching SSH key to this site. Please refresh the page and try again.'
+					),
+					{
+						type: 'snackbar',
+					}
+				);
+			},
+		} );
 	};
 
 	const handleDetachSshKey = ( siteSshKey: SiteSshKey ) => {
-		detachSshKeyMutation.mutate( siteSshKey );
+		detachSshKeyMutation.mutate( siteSshKey, {
+			onError: () => {
+				createErrorNotice(
+					__(
+						'Sorry, we had a problem detaching SSH key from this site. Please refresh the page and try again.'
+					),
+					{
+						type: 'snackbar',
+					}
+				);
+			},
+		} );
 	};
 
 	const handleSelectedSshKeyChange = ( currentSelectedKey: string ) => {
