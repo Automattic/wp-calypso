@@ -44,6 +44,7 @@
 				display: flex;
 				flex-direction: column;
 				gap: 2px;
+				flex: 1;
 
 				.a4a-event__date {
 					@include heading-small;
