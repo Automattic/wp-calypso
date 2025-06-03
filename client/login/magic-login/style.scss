@@ -36,6 +36,13 @@
 		margin-bottom: 1rem;
 	}
 
+	.login__form-header-wrapper{
+		padding: 0 16px 0 16px;
+		@include break-small {
+			padding: 0;
+		}
+	}
+
 	.magic-login {
 		max-width: calc(450px + 48px);
 		margin-top: calc(96px - 48px);
@@ -109,7 +116,9 @@
 	}
 
 	#content.layout__content {
-		padding-top: 10rem;
+		@include break-mobile {
+			padding-top: 10rem;
+		}
 	}
 
 	.magic-login__link-expired {

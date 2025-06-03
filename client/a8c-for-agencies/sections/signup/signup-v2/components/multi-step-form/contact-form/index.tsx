@@ -92,9 +92,11 @@ const SignupContactForm = ( { onContinue, initialFormData, withEmail = false }: 
 				<FormField
 					error={ validationError.firstName }
 					label={ translate( 'Your first name' ) }
+					labelFor="firstName"
 					isRequired
 				>
 					<FormTextInput
+						id="firstName"
 						name="firstName"
 						value={ formData.firstName }
 						onChange={ handleInputChange( 'firstName' ) }
@@ -102,8 +104,14 @@ const SignupContactForm = ( { onContinue, initialFormData, withEmail = false }: 
 					/>
 				</FormField>
 
-				<FormField error={ validationError.lastName } label={ translate( 'Last name' ) } isRequired>
+				<FormField
+					error={ validationError.lastName }
+					label={ translate( 'Last name' ) }
+					labelFor="lastName"
+					isRequired
+				>
 					<FormTextInput
+						id="lastName"
 						name="lastName"
 						value={ formData.lastName }
 						onChange={ handleInputChange( 'lastName' ) }
@@ -113,8 +121,14 @@ const SignupContactForm = ( { onContinue, initialFormData, withEmail = false }: 
 			</div>
 
 			{ withEmail && (
-				<FormField error={ validationError.email } label={ translate( 'Email' ) } isRequired>
+				<FormField
+					error={ validationError.email }
+					label={ translate( 'Email' ) }
+					labelFor="email"
+					isRequired
+				>
 					<FormTextInput
+						id="email"
 						name="email"
 						type="email"
 						value={ formData.email }
@@ -127,9 +141,11 @@ const SignupContactForm = ( { onContinue, initialFormData, withEmail = false }: 
 			<FormField
 				error={ validationError.agencyName }
 				label={ translate( 'Agency name' ) }
+				labelFor="agencyName"
 				isRequired
 			>
 				<FormTextInput
+					id="agencyName"
 					name="agencyName"
 					value={ formData.agencyName }
 					onChange={ handleInputChange( 'agencyName' ) }
@@ -140,9 +156,11 @@ const SignupContactForm = ( { onContinue, initialFormData, withEmail = false }: 
 			<FormField
 				error={ validationError.agencyUrl }
 				label={ translate( 'Business URL' ) }
+				labelFor="agencyUrl"
 				isRequired
 			>
 				<FormTextInput
+					id="agencyUrl"
 					name="agencyUrl"
 					value={ formData.agencyUrl }
 					onChange={ handleInputChange( 'agencyUrl' ) }
@@ -158,7 +176,11 @@ const SignupContactForm = ( { onContinue, initialFormData, withEmail = false }: 
 				onChange={ handlePhoneInputChange }
 				className="contact-form__phone-input"
 				phoneInputProps={ {
+					id: 'phone_number',
 					placeholder: translate( 'Phone number' ),
+				} }
+				countrySelectProps={ {
+					id: 'country_code',
 				} }
 				initialCountryCode="US"
 			/>

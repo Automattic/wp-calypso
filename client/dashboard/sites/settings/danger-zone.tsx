@@ -7,6 +7,7 @@ import { SectionHeader } from '../../components/section-header';
 import { useCanTransferSite } from '../hooks/use-can-transfer-site';
 import SiteDeleteModal from '../site-delete-modal';
 import SiteLeaveModal from '../site-leave-modal';
+import SiteResetModal from '../site-reset-modal';
 import type { Site } from '../../data/types';
 
 const SiteTransferAction = ( { site }: { site: Site } ) => {
@@ -26,6 +27,24 @@ const SiteTransferAction = ( { site }: { site: Site } ) => {
 				</RouterLinkButton>
 			}
 		/>
+	);
+};
+
+const SiteResetAction = ( { site }: { site: Site } ) => {
+	const [ isOpen, setIsOpen ] = useState( false );
+	return (
+		<>
+			<ActionList.ActionItem
+				title={ __( 'Reset site' ) }
+				description={ __( 'Restore this site to its original state.' ) }
+				actions={
+					<Button variant="secondary" size="compact" onClick={ () => setIsOpen( true ) }>
+						{ __( 'Reset' ) }
+					</Button>
+				}
+			/>
+			{ isOpen && <SiteResetModal site={ site } onClose={ () => setIsOpen( false ) } /> }
+		</>
 	);
 };
 
@@ -78,10 +97,12 @@ const SiteDeleteAction = ( { site }: { site: Site } ) => {
 
 export default function DangerZone( { site }: { site: Site } ) {
 	const canTransferSite = useCanTransferSite( { site } );
+	const canResetSite = ! site.is_wpcom_staging_site;
 
 	const actions = [
 		canTransferSite && <SiteTransferAction key="transfer-site" site={ site } />,
 		<SiteLeaveAction key="leave-site" site={ site } />,
+		canResetSite && <SiteResetAction key="reset-site" site={ site } />,
 		showSiteDeleteAction( site ) && <SiteDeleteAction key="delete-site" site={ site } />,
 	].filter( Boolean );
 

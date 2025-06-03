@@ -22,11 +22,7 @@ export class FeedbackInboxPage {
 	 * @param {string} siteUrlWithProtocol Site URL with the protocol.
 	 */
 	async visit( siteUrlWithProtocol: string ): Promise< void > {
-		const url = new URL(
-			// The query arg is necessary for sites that were using the "Classic" feedback view.
-			'/wp-admin/admin.php?page=jetpack-forms&dashboard-preferred-view=modern',
-			siteUrlWithProtocol
-		);
+		const url = new URL( '/wp-admin/admin.php?page=jetpack-forms-admin', siteUrlWithProtocol );
 		await this.page.goto( url.href, { timeout: 20 * 1000 } );
 	}
 

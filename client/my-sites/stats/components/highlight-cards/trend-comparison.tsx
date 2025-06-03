@@ -7,7 +7,7 @@ type TrendComparisonProps = {
 	previousCount?: number | null;
 };
 
-export function TrendComparison( { count, previousCount }: TrendComparisonProps ) {
+export default function TrendComparison( { count, previousCount }: TrendComparisonProps ) {
 	const difference = subtract( count, previousCount );
 	const percentage = Number.isFinite( difference )
 		? percentCalculator( Math.abs( difference as number ), previousCount )

@@ -1,8 +1,7 @@
-import { ExternalLink } from '@automattic/components';
-import { localizeUrl } from '@automattic/i18n-utils';
 import { SiteExcerptData } from '@automattic/sites';
 import { translate } from 'i18n-calypso';
 import React, { useMemo } from 'react';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import NavigationHeader from 'calypso/components/navigation-header';
 import { domainManagementAllOverview, domainManagementDns } from 'calypso/my-sites/domains/paths';
 import SiteIcon from 'calypso/sites/components/sites-dataviews/site-icon';
@@ -17,9 +16,7 @@ export const addDnsRecordsSubtitle = translate(
 	'DNS records change how your domain works. {{a}}Learn more{{/a}}.',
 	{
 		components: {
-			a: (
-				<ExternalLink href={ localizeUrl( 'https://wordpress.com/support/domains/custom-dns/' ) } />
-			),
+			a: <InlineSupportLink supportContext="manage-your-dns-records" showIcon={ false } />,
 		},
 	}
 );

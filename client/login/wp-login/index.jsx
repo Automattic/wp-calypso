@@ -4,7 +4,7 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { Step } from '@automattic/onboarding';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { get, startsWith } from 'lodash';
+import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -61,7 +61,6 @@ export class Login extends Component {
 		clientId: PropTypes.string,
 		isLoginView: PropTypes.bool,
 		isJetpack: PropTypes.bool.isRequired,
-		isFromMigrationPlugin: PropTypes.bool,
 		isWhiteLogin: PropTypes.bool.isRequired,
 		locale: PropTypes.string.isRequired,
 		oauth2Client: PropTypes.object,
@@ -521,7 +520,6 @@ export class Login extends Component {
 		const {
 			locale,
 			translate,
-			isFromMigrationPlugin,
 			isGenericOauth,
 			isGravPoweredClient,
 			isWoo,
@@ -584,7 +582,6 @@ export class Login extends Component {
 		const mainContent = (
 			<Main
 				className={ clsx( 'wp-login__main', {
-					'is-wpcom-migration': isFromMigrationPlugin,
 					'is-social-first': isSocialFirst,
 					'is-generic-oauth': isGenericOauth,
 					'is-jetpack': isJetpack,
@@ -618,7 +615,6 @@ export class Login extends Component {
 			action,
 			oauth2Client,
 			isWooJPC,
-			isFromMigrationPlugin,
 			isJetpack,
 			isWCCOM,
 			isFromAkismet,
@@ -709,7 +705,6 @@ export default connect(
 			isFromAkismet: isAkismetRedirect(
 				new URLSearchParams( getRedirectToOriginal( state )?.split( '?' )[ 1 ] ).get( 'back' )
 			),
-			isFromMigrationPlugin: startsWith( get( currentQuery, 'from' ), 'wpcom-migration' ),
 			isWooJPC: isWooJPCFlow( state ),
 			isWCCOM: getIsWCCOM( state ),
 			isWoo: getIsWoo( state ),

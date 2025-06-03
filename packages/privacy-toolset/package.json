@@ -57,7 +57,7 @@
 		"@testing-library/react": "^16.3.0",
 		"postcss": "^8.5.3",
 		"require-from-string": "^2.0.2",
-		"storybook": "^8.6.12",
+		"storybook": "^8.6.14",
 		"typescript": "^5.8.3",
 		"webpack": "^5.99.8"
 	}

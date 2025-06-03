@@ -8,8 +8,8 @@
 // TODO: Audit and remove since there is no footer colophon anymore.
 $colophon-height: 50px;
 
-.jetpack-connect__main:not(.is-woocommerce):not(.is-wpcom-migration):not(.is-automattic-for-agencies-flow),
-.layout.is-section-jetpack-connect:not(.is-jetpack-mobile-flow):not(.is-jetpack-woo-dna-flow):not(.is-wpcom-migration):not(.is-woocommerce-core-profiler-flow):not(.is-automattic-for-agencies-flow) {
+.jetpack-connect__main:not(.is-woocommerce):not(.is-automattic-for-agencies-flow),
+.layout.is-section-jetpack-connect:not(.is-jetpack-mobile-flow):not(.is-jetpack-woo-dna-flow):not(.is-woocommerce-core-profiler-flow):not(.is-automattic-for-agencies-flow) {
 	@include jetpack-connect-colors();
 }
 
@@ -1612,68 +1612,4 @@ body.is-section-jetpack-connect {
 .is-section-jetpack-connect .selector__main {
 	--color-accent: var(--studio-jetpack-green-40);
 	--color-primary: var(--studio-jetpack-green-40);
-}
-
-// wpcom migration plugin adjustments
-.jetpack-connect__main.is-wpcom-migration {
-	@include wpcom-migration-colors();
-	max-width: 472px;
-
-	.formatted-header__title {
-		color: var(--studio-gray-100);
-		font-size: rem(44px);
-		font-family: $brand-serif;
-	}
-
-	.formatted-header__subtitle {
-		font-size: rem(16px);
-		margin-bottom: rem(40px);
-	}
-
-	.jetpack-connect__site.card,
-	.jetpack-connect__logged-in-card.card {
-		max-width: 472px;
-		border-radius: 4px;
-		box-shadow: 0 0 0 1px #c3c4c7;
-	}
-
-	.gravatar {
-		border: solid 1px #a7aaad;
-		padding: 8px;
-	}
-
-	.jetpack-connect__logged-in-form-user-text {
-		font-size: $font-title-small;
-		margin-bottom: 0;
-	}
-
-	.jetpack-connect__tos-link {
-		font-size: $font-body-small;
-		margin-bottom: rem(50px);
-		color: var(--studio-gray-50);
-
-		a {
-			text-decoration: underline;
-		}
-	}
-
-	.button {
-		width: auto;
-		min-width: 170px;
-		margin: auto;
-		display: block;
-	}
-
-	.logged-out-form__links::before {
-		background: #c3c4c7;
-	}
-
-	.logged-out-form__link-item {
-		color: var(--color-accent-dark);
-
-		&:hover,
-		&:focus {
-			color: var(--color-accent);
-		}
-	}
 }

@@ -11,7 +11,6 @@ jest.mock( 'calypso/server/lib/logger', () => {
 		getLogger: () => ( { error: logger } ),
 	};
 } );
-const mockedLogger = Logger.getLogger().error as jest.MockedFunction< () => unknown >;
 
 function setSsrContext() {
 	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -41,7 +40,7 @@ describe( 'logError', () => {
 	it( 'should log to the server in SSR', () => {
 		setSsrContext();
 		logError( { message: 'asdf', foo: 'bar' } );
-		expect( mockedLogger.mock.calls ).toMatchInlineSnapshot( `
+		expect( jest.mocked( Logger.getLogger().error ).mock.calls ).toMatchInlineSnapshot( `
 		Array [
 		  Array [
 		    Object {
@@ -59,7 +58,7 @@ describe( 'logError', () => {
 	} );
 	it( 'should log to the server in the browser', () => {
 		logError( { message: 'asdf', foo: 'bar' } );
-		expect( wpcom.req.post.mock.calls ).toMatchInlineSnapshot( `
+		expect( jest.mocked( wpcom.req.post ).mock.calls ).toMatchInlineSnapshot( `
 		Array [
 		  Array [
 		    Object {

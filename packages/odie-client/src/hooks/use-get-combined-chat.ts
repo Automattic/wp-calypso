@@ -1,9 +1,10 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { HelpCenterSelect } from '@automattic/data-stores';
 import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { useSelect } from '@wordpress/data';
 import { useState, useEffect } from '@wordpress/element';
 import { ODIE_TRANSFER_MESSAGE } from '../constants';
-import { emptyChat, useOdieAssistantContext } from '../context';
+import { emptyChat } from '../context';
 import { useGetZendeskConversation, useManageSupportInteraction, useOdieChat } from '../data';
 import { getConversationIdFromInteraction, getOdieIdFromInteraction } from '../utils';
 import type { Chat, Message } from '../types';
@@ -36,7 +37,6 @@ export const useGetCombinedChat = ( canConnectToZendesk: boolean ) => {
 	const getZendeskConversation = useGetZendeskConversation();
 	const { data: odieChat, isFetching: isOdieChatLoading } = useOdieChat( Number( odieId ) );
 	const { startNewInteraction } = useManageSupportInteraction();
-	const { trackEvent } = useOdieAssistantContext();
 	const canFetchConversation = conversationId && canConnectToZendesk;
 
 	useEffect( () => {
@@ -53,7 +53,7 @@ export const useGetCombinedChat = ( canConnectToZendesk: boolean ) => {
 				status: 'loaded',
 			} );
 
-			trackEvent( 'zendesk_chat_reset_to_odie', {
+			recordTracksEvent( 'calypso_odie_zendesk_chat_reset_to_odie', {
 				interaction: currentSupportInteraction.uuid,
 				conversation_id: conversationId,
 				chat_id: odieChat?.odieId,
@@ -62,7 +62,7 @@ export const useGetCombinedChat = ( canConnectToZendesk: boolean ) => {
 			try {
 				getZendeskConversation( {
 					chatId: odieChat?.odieId,
-					conversationId: conversationId.toString(),
+					conversationId: conversationId?.toString(),
 				} )?.then( ( conversation ) => {
 					if ( conversation ) {
 						const filteredOdieMessages =
@@ -85,7 +85,7 @@ export const useGetCombinedChat = ( canConnectToZendesk: boolean ) => {
 				} );
 			} catch ( error ) {
 				// Conversation id was passed but the conversion was not found. Something went wrong.
-				trackEvent( 'zendesk_conversation_not_found', {
+				recordTracksEvent( 'calypso_odie_zendesk_conversation_not_found', {
 					conversationId,
 					odieId,
 				} );
@@ -107,7 +107,6 @@ export const useGetCombinedChat = ( canConnectToZendesk: boolean ) => {
 		canConnectToZendesk,
 		getZendeskConversation,
 		startNewInteraction,
-		trackEvent,
 	] );
 
 	// This effect sets the initial loading state when interaction is set, so that the chat is loaded

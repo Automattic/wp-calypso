@@ -7,7 +7,6 @@ import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { useSupportStatus } from '../data/use-support-status';
 import { useResetSupportInteraction } from '../hooks/use-reset-support-interaction';
 import { ThumbsDownIcon, ThumbsUpIcon } from '../icons/thumbs';
-import { generateContactOnClickEvent } from './utils';
 
 import './help-center-feedback-form.scss';
 
@@ -60,7 +59,6 @@ const HelpCenterFeedbackForm = ( { postId }: { postId: number } ) => {
 			destination,
 			is_user_eligible: isUserEligibleForPaidSupport,
 		} );
-		generateContactOnClickEvent( 'chat', 'calypso_helpcenter_feedback_contact_support' );
 		if ( isUserEligibleForPaidSupport ) {
 			await resetSupportInteraction();
 			navigate( '/odie' );
