@@ -44,11 +44,8 @@ function getUpsellTextForVariant(
 	isStreamlinedPrice: boolean
 ) {
 	if ( upsellVariant.productBillingTermInMonths === 12 ) {
-		const cardTitle = isStreamlinedPrice
-			? // translators: "percentSavings" is the savings percentage for the upgrade as a number, like '20' for '20%'.
-			  __( '<strong>Save %(percentSavings)d%% extra</strong> by paying annually' )
-			: // translators: "percentSavings" is the savings percentage for the upgrade as a number, like '20' for '20%'.
-			  __( '<strong>Save %(percentSavings)d%%</strong> by paying annually' );
+		// translators: "percentSavings" is the savings percentage for the upgrade as a number, like '20' for '20%'.
+		const cardTitle = __( '<strong>Save %(percentSavings)d%%</strong> by paying annually' );
 		return {
 			cardTitle: createInterpolateElement( sprintf( cardTitle, { percentSavings } ), {
 				strong: createElement( 'strong' ),
