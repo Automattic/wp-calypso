@@ -113,6 +113,15 @@ export interface Site {
 	jetpack_modules: string[] | null;
 }
 
+export interface AgencyBlog {
+	name: string;
+	existing_wpcom_license_count: number;
+	prices: {
+		actual_price: number;
+		currency: string;
+	};
+}
+
 export interface Purchase {
 	ID: number | string;
 	active: boolean;

@@ -2,9 +2,10 @@ import { useQuery, useMutation } from '@tanstack/react-query';
 import { Card, CardBody } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { siteQuery, siteSettingsMutation, siteSettingsQuery } from '../../app/queries';
+import { Notice } from '../../components/notice';
 import PageLayout from '../../components/page-layout';
 import SettingsPageHeader from '../settings-page-header';
-import { LaunchForm } from './launch-form';
+import { LaunchAgencyDevelopmentSiteForm, LaunchForm } from './launch-form';
 import { PrivacyForm } from './privacy-form';
 import './style.scss';
 
@@ -27,15 +28,21 @@ export default function SiteVisibilitySettings( { siteSlug }: { siteSlug: string
 				/>
 			}
 		>
-			<Card>
-				<CardBody>
-					{ site.launch_status === 'unlaunched' ? (
-						<LaunchForm site={ site } />
+			{ site.launch_status === 'unlaunched' ? (
+				<Notice>
+					{ site.is_a4a_dev_site ? (
+						<LaunchAgencyDevelopmentSiteForm site={ site } />
 					) : (
-						<PrivacyForm settings={ settings } mutation={ mutation } />
+						<LaunchForm site={ site } />
 					) }
-				</CardBody>
-			</Card>
+				</Notice>
+			) : (
+				<Card>
+					<CardBody>
+						<PrivacyForm settings={ settings } mutation={ mutation } />
+					</CardBody>
+				</Card>
+			) }
 		</PageLayout>
 	);
 }
