@@ -33,6 +33,10 @@ function OnboardingTourModal( { onClose, children }: OnboardingTourModalProps ) 
 		return sections.find( ( section ) => section?.props?.id === currentSectionId );
 	}, [ sections, currentSectionId ] );
 
+	const currentSectionIndex = sections.findIndex(
+		( section ) => section?.props?.id === currentSectionId
+	);
+
 	return (
 		<Modal
 			className="onboarding-tour-modal-wrapper"
@@ -55,8 +59,14 @@ function OnboardingTourModal( { onClose, children }: OnboardingTourModalProps ) 
 						} }
 					></div>
 					<div className="onboarding-tour-modal__main-content">
-						<div className="onboarding-tour-modal__main-content-body">{ currentSection }</div>
-
+						<div
+							className="onboarding-tour-modal__main-content-body"
+							style={ {
+								transform: `translateX(-${ currentSectionIndex * 100 }%)`,
+							} }
+						>
+							{ sections }
+						</div>
 						<div className="onboarding-tour-modal__main-content-footer"></div>
 					</div>
 				</div>

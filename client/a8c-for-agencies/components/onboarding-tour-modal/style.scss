@@ -23,11 +23,13 @@
 	flex-direction: column;
 	gap: 4px;
 	padding: 12px;
+	width: 220px;
 }
 
 .onboarding-tour-modal__main {
 	flex: 1;
 	border-inline-start: 1px solid var(--color-neutral-0);
+	max-width: calc( 100% - 220px );
 }
 
 .onboarding-tour-modal__main-banner {
@@ -37,14 +39,28 @@
 }
 
 .onboarding-tour-modal__main-content {
-	padding: 24px;
 	display: flex;
 	flex-direction: column;
-	gap: 16px;
+	overflow: hidden;
+	padding: 24px 0;
 }
 
 .onboarding-tour-modal__main-content-footer {
 	display: flex;
 	justify-content: flex-end;
 	gap: 16px;
+}
+
+.onboarding-tour-modal__main-content-body {
+	display: flex;
+	flex-direction: row;
+	transition: transform 0.2s ease-out;
+
+	> * {
+		min-width: 100%;
+	}
+}
+
+.onboarding-tour-modal__section {
+	padding: 0 24px;
 }
