@@ -8,8 +8,8 @@ const OverviewBody = () => {
 	return (
 		<div className="overview-body">
 			<OverviewBodyIntroCards />
-			<OverviewBodyNextSteps />
 			<OverviewBodyEvents />
+			<OverviewBodyNextSteps />
 			<OverviewBodyHosting />
 			<OverviewBodyProducts />
 		</div>
