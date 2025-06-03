@@ -6,6 +6,7 @@ import { useDispatch } from 'react-redux';
 import { LoadingBar } from 'calypso/components/loading-bar';
 import wp from 'calypso/lib/wp';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
+import { useFindZendeskMigrationTicket } from './use-find-zendesk-migration-ticket';
 import { useSiteMigrationStatus } from './use-site-migration-status';
 
 type CancelMigrationButtonProps = {
@@ -107,8 +108,13 @@ const CancelDifmMigrationForm = ( { siteId }: { siteId: number } ) => {
 	>( null );
 
 	const { site, isMigrationCompleted, isMigrationInProgress } = useSiteMigrationStatus( siteId );
+	const { data } = useFindZendeskMigrationTicket( siteId, isMigrationCompleted === false );
 
 	if ( ! isEnabled( 'migration-flow/cancel-difm' ) ) {
+		return null;
+	}
+
+	if ( ! data?.ticket_id ) {
 		return null;
 	}
 
