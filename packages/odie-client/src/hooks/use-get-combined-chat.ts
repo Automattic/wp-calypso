@@ -2,7 +2,7 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { HelpCenterSelect } from '@automattic/data-stores';
 import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { useSelect } from '@wordpress/data';
-import { useState, useEffect } from '@wordpress/element';
+import { useState, useEffect, useRef } from '@wordpress/element';
 import { ODIE_TRANSFER_MESSAGE } from '../constants';
 import { emptyChat } from '../context';
 import { useGetZendeskConversation, useManageSupportInteraction, useOdieChat } from '../data';
@@ -13,7 +13,10 @@ import type { Chat, Message } from '../types';
  * This combines the ODIE chat with the ZENDESK conversation.
  * @returns The combined chat.
  */
-export const useGetCombinedChat = ( canConnectToZendesk: boolean ) => {
+export const useGetCombinedChat = (
+	canConnectToZendesk: boolean,
+	isLoadingCanConnectToZendesk: boolean
+) => {
 	const { currentSupportInteraction, conversationId, odieId, isChatLoaded } = useSelect(
 		( select ) => {
 			const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
@@ -31,7 +34,7 @@ export const useGetCombinedChat = ( canConnectToZendesk: boolean ) => {
 		},
 		[]
 	);
-
+	const previousUuidRef = useRef< string | undefined >();
 	const [ mainChatState, setMainChatState ] = useState< Chat >( emptyChat );
 	const chatStatus = mainChatState?.status;
 	const getZendeskConversation = useGetZendeskConversation();
@@ -39,7 +42,14 @@ export const useGetCombinedChat = ( canConnectToZendesk: boolean ) => {
 	const { startNewInteraction } = useManageSupportInteraction();
 
 	useEffect( () => {
-		if ( ! currentSupportInteraction?.uuid || isOdieChatLoading || chatStatus !== 'loading' ) {
+		const interactionHasChanged = previousUuidRef.current !== currentSupportInteraction?.uuid;
+		previousUuidRef.current = currentSupportInteraction?.uuid;
+		if (
+			! currentSupportInteraction?.uuid ||
+			isOdieChatLoading ||
+			isLoadingCanConnectToZendesk ||
+			( chatStatus !== 'loading' && ! interactionHasChanged )
+		) {
 			return;
 		}
 

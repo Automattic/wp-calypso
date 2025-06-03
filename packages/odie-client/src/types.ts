@@ -4,6 +4,7 @@ import type { ReactNode, PropsWithChildren, SetStateAction } from 'react';
 export type OdieAssistantContextInterface = {
 	isChatLoaded: boolean;
 	canConnectToZendesk: boolean;
+	isLoadingCanConnectToZendesk: boolean;
 	addMessage: ( message: Message | Message[] ) => void;
 	botName?: string;
 	botNameSlug: OdieAllowedBots;
@@ -34,6 +35,7 @@ export type OdieAssistantContextInterface = {
 
 export type OdieAssistantProviderProps = {
 	canConnectToZendesk?: boolean;
+	isLoadingCanConnectToZendesk?: boolean;
 	botName?: string;
 	botNameSlug?: OdieAllowedBots;
 	isUserEligibleForPaidSupport?: boolean;
