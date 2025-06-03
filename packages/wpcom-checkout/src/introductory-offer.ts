@@ -81,7 +81,13 @@ export function getIntroductoryOfferIntervalDisplay( {
 				text = isPriceIncrease
 					? translate( 'Price for first year', { textOnly: true } )
 					: String( translate( 'Discount for first year' ) );
-				text = isStreamlinedPrice ? translate( 'Additional discount for first year' ) : text;
+				const isAdditionalDiscountTranslated =
+					i18n.getLocaleSlug()?.startsWith( 'en' ) ||
+					i18n.hasTranslation( 'Additional discount for first year' );
+				text =
+					isStreamlinedPrice && isAdditionalDiscountTranslated
+						? translate( 'Additional discount for first year' )
+						: text;
 			} else {
 				text = isPriceIncrease
 					? translate( 'Price for first %(numberOfYears)d years', {
