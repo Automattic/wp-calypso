@@ -100,25 +100,30 @@ export function WPCheckoutOrderSummary( {
 	const { responseCart } = useShoppingCart( cartKey );
 	const isCartUpdating = FormStatus.VALIDATING === formStatus;
 	const [ , streamlinedPriceExperimentAssignment ] = useStreamlinedPriceExperiment();
-
+	const isStreamlinedPrice = isStreamlinedPriceCheckoutTreatment(
+		streamlinedPriceExperimentAssignment
+	);
+	const featuresList = showFeaturesList && (
+		<CheckoutSummaryFeaturedList
+			responseCart={ responseCart }
+			siteId={ siteId }
+			isCartUpdating={ isCartUpdating }
+			onChangeSelection={ onChangeSelection }
+			isStreamlinedPrice={ isStreamlinedPrice }
+		/>
+	);
 	return (
-		<CheckoutSummaryCard
-			className={ isCartUpdating ? 'is-loading' : '' }
-			data-e2e-cart-is-loading={ isCartUpdating }
-			isStreamlinedPrice={ isStreamlinedPriceCheckoutTreatment(
-				streamlinedPriceExperimentAssignment
-			) }
-		>
-			{ showFeaturesList && (
-				<CheckoutSummaryFeaturedList
-					responseCart={ responseCart }
-					siteId={ siteId }
-					isCartUpdating={ isCartUpdating }
-					onChangeSelection={ onChangeSelection }
-				/>
-			) }
-			<CheckoutSummaryPriceList />
-		</CheckoutSummaryCard>
+		<>
+			<CheckoutSummaryCard
+				className={ isCartUpdating ? 'is-loading' : '' }
+				data-e2e-cart-is-loading={ isCartUpdating }
+				isStreamlinedPrice={ isStreamlinedPrice }
+			>
+				{ ! isStreamlinedPrice && featuresList }
+				<CheckoutSummaryPriceList />
+			</CheckoutSummaryCard>
+			{ isStreamlinedPrice && featuresList }
+		</>
 	);
 }
 export function CheckoutSummaryFeaturedList( {
@@ -126,6 +131,7 @@ export function CheckoutSummaryFeaturedList( {
 	siteId,
 	isCartUpdating,
 	onChangeSelection,
+	isStreamlinedPrice,
 }: {
 	responseCart: ResponseCart;
 	siteId: number | undefined;
@@ -136,9 +142,9 @@ export function CheckoutSummaryFeaturedList( {
 		productId: number,
 		volume?: number
 	) => void;
+	isStreamlinedPrice?: boolean;
 } ) {
 	const translate = useTranslate();
-	const [ , streamlinedPriceExperimentAssignment ] = useStreamlinedPriceExperiment();
 
 	// Return early if the cart is only Chargebacks fees
 	if ( responseCart.products.every( isChargeback || isCredits ) ) {
@@ -156,7 +162,7 @@ export function CheckoutSummaryFeaturedList( {
 
 	return (
 		<>
-			{ ! isStreamlinedPriceCheckoutTreatment( streamlinedPriceExperimentAssignment ) && (
+			{ ! isStreamlinedPrice && (
 				<CheckoutSummaryFeatures className="checkout__summary-features">
 					<CheckoutSummaryFeaturesTitle>
 						{ responseCart.is_gift_purchase
