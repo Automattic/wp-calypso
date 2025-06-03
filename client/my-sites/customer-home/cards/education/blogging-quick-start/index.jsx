@@ -1,5 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
-import startLearningPrompt from 'calypso/assets/images/customer-home/illustration--secondary-start-learning.svg';
+import illustration from 'calypso/assets/images/customer-home/illustration--course-blogging-quick-start.svg';
 import VideoModal from 'calypso/components/videos-ui/video-modal';
 import { COURSE_SLUGS } from 'calypso/data/courses';
 import { useRouteModal } from 'calypso/lib/route-modal';
@@ -34,7 +34,7 @@ const BloggingQuickStart = () => {
 					text: translate( 'Start course' ),
 				},
 			] }
-			illustration={ startLearningPrompt }
+			illustration={ illustration }
 			cardName={ EDUCATION_BLOGGING_QUICK_START }
 			width="183"
 			height="120"
