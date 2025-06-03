@@ -106,7 +106,21 @@ export function PurchasesDataViews( {
 	// Keep track of the current view params in the URL and restore them when the page loads.
 	usePreservePurchasesFiltersInUrl( { currentView, setView } );
 
-	const purchasesDataFields = usePurchasesFieldDefinitions( { sites } );
+	const sitesWithPurchases = useMemo( () => {
+		return Array.from(
+			purchases.reduce( ( collected, purchase ) => {
+				const siteForPurchase = sites.find( ( site ) => site.ID === purchase.siteId );
+				if ( siteForPurchase ) {
+					collected.add( siteForPurchase );
+				}
+				return collected;
+			}, new Set< SiteDetails >() )
+		);
+	}, [ sites, purchases ] );
+
+	const purchasesDataFields = usePurchasesFieldDefinitions( {
+		sites: sitesWithPurchases,
+	} );
 	const { data: adjustedPurchases, paginationInfo } = useMemo( () => {
 		return filterSortAndPaginate( purchases, currentView, purchasesDataFields );
 	}, [ purchases, currentView, purchasesDataFields ] );
