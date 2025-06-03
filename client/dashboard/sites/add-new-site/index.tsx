@@ -80,7 +80,7 @@ function AddNewSite( { context }: AddNewSiteProps ) {
 							action: 'big-sky',
 						} );
 					} }
-					href="#"
+					href={ `/setup/ai-site-builder?source=${ context }&ref=new-site-popover` }
 				/>
 				<MenuItem
 					icon={ <JetpackLogo /> }
