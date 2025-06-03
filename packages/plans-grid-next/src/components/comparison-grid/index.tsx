@@ -242,7 +242,27 @@ const Cell = styled.div< { textAlign?: 'start' | 'center' | 'end' } >`
 	` ) }
 `;
 
-const RowTitleCell = styled.div< {
+const RowTitleCell = styled.td< {
+	isPlaceholderHeaderCell?: boolean;
+	isFeatureGroupRowTitleCell?: boolean;
+} >`
+	display: none;
+	font-size: 14px;
+	padding-right: 10px;
+	${ plansGridMediumLarge( css`
+		display: block;
+		flex: 1;
+		min-width: 290px;
+	` ) }
+	max-width: ${ ( props ) => {
+		if ( props.isPlaceholderHeaderCell || props.isFeatureGroupRowTitleCell ) {
+			return `${ featureGroupRowTitleCellMaxWidth }px`;
+		}
+		return `${ rowCellMaxWidth }px`;
+	} };
+`;
+
+const RowHeaderCell = styled.th< {
 	isPlaceholderHeaderCell?: boolean;
 	isFeatureGroupRowTitleCell?: boolean;
 } >`
@@ -501,7 +521,6 @@ const ComparisonGridHeader = forwardRef< HTMLDivElement, ComparisonGridHeaderPro
 		return (
 			<PlanRow as="tr" isHiddenInMobile={ isHiddenInMobile } ref={ ref }>
 				<RowTitleCell
-					as="td"
 					key="feature-name"
 					className="plan-comparison-grid__header-cell is-placeholder-header-cell"
 					isPlaceholderHeaderCell
@@ -735,6 +754,8 @@ const ComparisonGridFeatureGroupRow: React.FunctionComponent< {
 	const featureSlug = feature?.getSlug() ?? '';
 	const footnote = planFeatureFootnotes?.footnotesByFeature?.[ featureSlug ];
 	const tooltipId = `${ feature?.getSlug() }-comparison-grid`;
+	const title = feature?.getTitle?.();
+	const headerAriaLabel: string = typeof title === 'string' ? title : '';
 
 	const { enableFeatureTooltips } = usePlansGridContext();
 
@@ -745,13 +766,12 @@ const ComparisonGridFeatureGroupRow: React.FunctionComponent< {
 			className={ rowClasses }
 			isHighlighted={ isHighlighted }
 		>
-			<RowTitleCell
-				as="th"
+			<RowHeaderCell
 				key="feature-name"
 				className="is-feature-group-row-title-cell"
 				isFeatureGroupRowTitleCell
-				{ ...{ scope: 'row' } }
-				aria-label={ ( feature?.getTitle?.() as string ) || '' }
+				scope="row"
+				aria-label={ headerAriaLabel }
 			>
 				{ isStorageFeature ? (
 					<Plans2023Tooltip
@@ -801,7 +821,7 @@ const ComparisonGridFeatureGroupRow: React.FunctionComponent< {
 						) }
 					</>
 				) }
-			</RowTitleCell>
+			</RowHeaderCell>
 			{ visibleGridPlans.map( ( { planSlug } ) => (
 				<ComparisonGridFeatureGroupRowCell
 					key={ planSlug }
@@ -915,7 +935,7 @@ const FeatureGroup = ( {
 				className="plan-comparison-grid__feature-group-title-row"
 				onClick={ handleFeatureGroupToggle }
 			>
-				<Title isHiddenInMobile={ isHiddenInMobile }>
+				<Title as="td" isHiddenInMobile={ isHiddenInMobile }>
 					<Gridicon icon="chevron-up" size={ 12 } color="#1E1E1E" />
 					<span>{ featureGroup.getTitle() }</span>
 				</Title>
@@ -1141,30 +1161,34 @@ const ComparisonGrid = ( {
 					plansLength={ visiblePlans.length }
 				/>
 			) ) }
-			<ComparisonGridHeader
-				displayedGridPlans={ gridPlans }
-				visibleGridPlans={ visibleGridPlans }
-				isInSignup={ isInSignup }
-				isFooter
-				onPlanChange={ onPlanChange }
-				currentSitePlanSlug={ currentSitePlanSlug }
-				planActionOverrides={ planActionOverrides }
-				selectedPlan={ selectedPlan }
-				showRefundPeriod={ showRefundPeriod }
-				isStuck={ false }
-				isHiddenInMobile
-				ref={ bottomHeaderRef }
-				planTypeSelectorProps={ planTypeSelectorProps }
-			/>
+			<tbody>
+				<ComparisonGridHeader
+					displayedGridPlans={ gridPlans }
+					visibleGridPlans={ visibleGridPlans }
+					isInSignup={ isInSignup }
+					isFooter
+					onPlanChange={ onPlanChange }
+					currentSitePlanSlug={ currentSitePlanSlug }
+					planActionOverrides={ planActionOverrides }
+					selectedPlan={ selectedPlan }
+					showRefundPeriod={ showRefundPeriod }
+					isStuck={ false }
+					isHiddenInMobile
+					ref={ bottomHeaderRef }
+					planTypeSelectorProps={ planTypeSelectorProps }
+				/>
+			</tbody>
 
 			<tfoot className="plan-comparison-grid__footer">
 				{ planFeatureFootnotes?.footnoteList && (
-					<FeatureFootnotes>
-						<ol>
-							{ planFeatureFootnotes?.footnoteList?.map( ( footnote, index ) => {
-								return <li key={ `${ footnote }-${ index }` }>{ footnote }</li>;
-							} ) }
-						</ol>
+					<FeatureFootnotes as="tr">
+						<td>
+							<ol>
+								{ planFeatureFootnotes?.footnoteList?.map( ( footnote, index ) => {
+									return <li key={ `${ footnote }-${ index }` }>{ footnote }</li>;
+								} ) }
+							</ol>
+						</td>
 					</FeatureFootnotes>
 				) }
 			</tfoot>
