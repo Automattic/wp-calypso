@@ -38,6 +38,13 @@ function OnboardingTourModal( { onClose, children }: OnboardingTourModalProps ) 
 		( section ) => section?.props?.id === currentSectionId
 	);
 
+	const actions = useMemo( () => {
+		return currentSection?.props?.renderActions?.( {
+			onClose,
+			onNext: () => setCurrentSectionId( sections[ currentSectionIndex + 1 ]?.props?.id ),
+		} );
+	}, [ currentSection?.props, onClose, sections, currentSectionIndex ] );
+
 	return (
 		<Modal
 			className="onboarding-tour-modal-wrapper"
@@ -75,7 +82,7 @@ function OnboardingTourModal( { onClose, children }: OnboardingTourModalProps ) 
 						>
 							{ sections }
 						</div>
-						<div className="onboarding-tour-modal__main-content-footer"></div>
+						<div className="onboarding-tour-modal__main-content-footer">{ actions }</div>
 					</div>
 				</div>
 			</div>

@@ -29,7 +29,11 @@
 .onboarding-tour-modal__main {
 	flex: 1;
 	border-inline-start: 1px solid var(--color-neutral-0);
-	max-width: calc( 100% - 220px );
+	max-width: 100%;
+
+	@include break-mobile {
+		max-width: calc( 100% - 220px );
+	}
 }
 
 .onboarding-tour-modal__main-banner-container {
@@ -59,12 +63,6 @@
 	padding: 24px 0;
 }
 
-.onboarding-tour-modal__main-content-footer {
-	display: flex;
-	justify-content: flex-end;
-	gap: 16px;
-}
-
 .onboarding-tour-modal__main-content-body {
 	display: flex;
 	flex-direction: row;
@@ -74,6 +72,14 @@
 		min-width: 100%;
 	}
 }
+
+.onboarding-tour-modal__main-content-footer {
+	display: flex;
+	justify-content: flex-end;
+	gap: 16px;
+	padding: 0 24px;
+}
+
 
 .onboarding-tour-modal__section {
 	padding: 0 24px;
