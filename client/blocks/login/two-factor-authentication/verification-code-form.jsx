@@ -165,6 +165,7 @@ class VerificationCodeForm extends Component {
 					</FormFieldset>
 
 					<Button
+						type="submit"
 						variant="primary"
 						disabled={ this.state.isDisabled }
 						accessibleWhenDisabled

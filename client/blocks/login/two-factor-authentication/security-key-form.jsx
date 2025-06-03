@@ -92,6 +92,7 @@ class SecurityKeyForm extends Component {
 						autoFocus
 						variant="primary"
 						disabled={ this.state.isAuthenticating }
+						type="submit"
 						accessibleWhenDisabled
 						__next40pxDefaultSize
 					>
