@@ -19,14 +19,7 @@ import WordPressSettingsSummary from '../settings-wordpress/summary';
 import DangerZone from './danger-zone';
 import SiteActions from './site-actions';
 
-export default function SiteSettings( { siteSlug }: { siteSlug: string } ) {
-	const { data: site } = useQuery( siteQuery( siteSlug ) );
-	const { data: settings } = useQuery( siteSettingsQuery( siteSlug ) );
-
-	if ( ! site || ! settings ) {
-		return null;
-	}
-
+function InnerSiteSettings( { site, settings }: { site: Site; settings: SiteSettings } ) {
 	return (
 		<PageLayout size="small" header={ <PageHeader title={ __( 'Settings' ) } /> }>
 			<SectionHeader title={ __( 'General' ) } />
@@ -50,4 +43,15 @@ export default function SiteSettings( { siteSlug }: { siteSlug: string } ) {
 			<DangerZone site={ site } />
 		</PageLayout>
 	);
+}
+
+export default function SiteSettings( { siteSlug }: { siteSlug: string } ) {
+	const { data: site } = useQuery( siteQuery( siteSlug ) );
+	const { data: settings } = useQuery( siteSettingsQuery( siteSlug ) );
+
+	if ( ! site || ! settings ) {
+		return null;
+	}
+
+	return <InnerSiteSettings site={ site } settings={ settings } />;
 }
