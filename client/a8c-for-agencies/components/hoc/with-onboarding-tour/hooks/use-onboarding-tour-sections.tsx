@@ -2,6 +2,7 @@ import page from '@automattic/calypso-router';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
+import OverviewSidebarGrowthAcceleratorCta from 'calypso/a8c-for-agencies/sections/overview/sidebar/growth-accelerator/cta';
 import OnboardingTourBannerAgencyTiers from 'calypso/assets/images/a8c-for-agencies/onboarding-tour-banner-agency-tiers.svg';
 import OnboardingTourBannerGrowthCall from 'calypso/assets/images/a8c-for-agencies/onboarding-tour-banner-growth-call.svg';
 import OnboardingTourBannerMarketplace from 'calypso/assets/images/a8c-for-agencies/onboarding-tour-banner-marketplace.svg';
@@ -417,9 +418,10 @@ export default function useOnboardingTourSections() {
 							<Button variant="secondary" onClick={ onClose }>
 								{ translate( 'End tour' ) }
 							</Button>
-							<Button variant="primary" onClick={ onClose }>
-								{ translate( 'Sechdule a call' ) }
-							</Button>
+							<OverviewSidebarGrowthAcceleratorCta
+								className="a4a-onboarding-tour__schedule-a-call-cta"
+								onRequestSuccess={ onClose }
+							/>
 						</>
 					);
 				},
