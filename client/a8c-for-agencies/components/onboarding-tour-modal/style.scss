@@ -26,6 +26,11 @@
 	width: 220px;
 }
 
+.onboarding-tour-modal__aside-menu-item.is-active {
+	background-color: var(--color-primary-0);
+	color: var(--color-primary-60);
+}
+
 .onboarding-tour-modal__main {
 	flex: 1;
 	border-inline-start: 1px solid var(--color-neutral-0);

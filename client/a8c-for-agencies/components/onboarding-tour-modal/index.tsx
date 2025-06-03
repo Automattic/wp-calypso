@@ -54,7 +54,13 @@ function OnboardingTourModal( { onClose, children }: OnboardingTourModalProps ) 
 			<div className="onboarding-tour-modal">
 				<div className="onboarding-tour-modal__aside">
 					{ menuItems.map( ( menuItem ) => (
-						<MenuItem key={ menuItem.id } onClick={ () => setCurrentSectionId( menuItem.id ) }>
+						<MenuItem
+							className={ clsx( 'onboarding-tour-modal__aside-menu-item', {
+								'is-active': menuItem.id === currentSectionId,
+							} ) }
+							key={ menuItem.id }
+							onClick={ () => setCurrentSectionId( menuItem.id ) }
+						>
 							{ menuItem.label }
 						</MenuItem>
 					) ) }
