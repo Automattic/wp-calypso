@@ -13,7 +13,7 @@ import {
 } from './controller';
 
 export default function () {
-	page( A4A_REPORTS_LINK, reportsLandingContext, makeLayout, clientRender );
+	page( A4A_REPORTS_LINK, requireAccessContext, reportsLandingContext, makeLayout, clientRender );
 	page(
 		A4A_REPORTS_OVERVIEW_LINK,
 		requireAccessContext,

@@ -38,7 +38,7 @@ type Props = {
 		trackEventName?: string;
 		trackEventProps?: { [ key: string ]: string };
 	}[];
-	title?: JSX.Element | string;
+	title?: React.ReactNode;
 	description?: string;
 	backButtonProps?: {
 		icon: JSX.Element;
