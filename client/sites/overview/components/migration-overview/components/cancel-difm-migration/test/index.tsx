@@ -13,7 +13,6 @@ jest.mock( '@automattic/calypso-config', () => {
 	return {
 		__esModule: true,
 		default: jest.fn(), // mock config()
-		isEnabled: jest.fn(),
 	};
 } );
 
@@ -33,7 +32,6 @@ jest.mock( '../use-find-zendesk-migration-ticket', () => ( {
 
 describe( 'CancelDifmMigrationForm', () => {
 	const siteId = 123;
-	const isEnabled = jest.requireMock( '@automattic/calypso-config' ).isEnabled;
 	const useSiteMigrationStatus = jest.requireMock(
 		'../use-site-migration-status'
 	).useSiteMigrationStatus;
@@ -44,7 +42,6 @@ describe( 'CancelDifmMigrationForm', () => {
 	beforeEach( () => {
 		nock.cleanAll();
 		jest.clearAllMocks();
-		isEnabled.mockReturnValue( true );
 		useSiteMigrationStatus.mockReturnValue( {
 			site: { ID: siteId },
 			isMigrationCompleted: false,
@@ -53,12 +50,6 @@ describe( 'CancelDifmMigrationForm', () => {
 		useFindZendeskMigrationTicket.mockReturnValue( {
 			data: { ticket_id: '123' },
 		} );
-	} );
-
-	it( 'renders nothing if feature flag is disabled', () => {
-		isEnabled.mockReturnValue( false );
-		renderWithProvider( <CancelDifmMigrationForm siteId={ siteId } /> );
-		expect( screen.queryByRole( 'button', { name: /cancel migration/i } ) ).toBeNull();
 	} );
 
 	describe( 'when migration is not in progress', () => {
