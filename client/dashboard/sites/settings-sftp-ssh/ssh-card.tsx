@@ -10,7 +10,6 @@ import {
 	Card,
 	CardBody,
 	ExternalLink,
-	SelectControl,
 	ToggleControl,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
@@ -28,9 +27,10 @@ import {
 	siteSshKeysDetachMutation,
 	profileSshKeysQuery,
 } from '../../app/queries';
+import RequiredSelect from '../../components/required-select';
 import ClipboardInputControl from './clipboard-input-control';
 import type { SftpUser, SiteSshKey, ProfileSshKey } from '../../data/types';
-import type { Field } from '@automattic/dataviews';
+import type { DataFormControlProps, Field } from '@automattic/dataviews';
 
 type SshCardFormData = {
 	connection_command: string;
@@ -81,6 +81,7 @@ const SshKeyCard = ( {
 	);
 };
 
+// TODO: Add ReauthRequired
 export default function SshCard( {
 	siteSlug,
 	sftpUsers,
@@ -178,6 +179,22 @@ export default function SshCard( {
 		} );
 	};
 
+	const SshKeysControl = < Item, >( { field }: DataFormControlProps< Item > ) => (
+		<BaseControl label={ field.label } __nextHasNoMarginBottom>
+			<VStack>
+				{ siteSshKeys.map( ( siteSshKey: SiteSshKey ) => (
+					<SshKeyCard
+						key={ siteSshKey.sha256 }
+						siteSshKey={ siteSshKey }
+						userLocale={ userLocale }
+						isBusy={ detachSshKeyMutation.isPending }
+						onDetach={ handleDetachSshKey }
+					/>
+				) ) }
+			</VStack>
+		</BaseControl>
+	);
+
 	const fields: Field< SshCardFormData >[] = [
 		{
 			id: 'connection_command',
@@ -197,38 +214,7 @@ export default function SshCard( {
 		{
 			id: 'ssh_key',
 			label: __( 'SSH key' ),
-			Edit: ( { field, data } ) => {
-				const value = field.getValue( { item: data } );
-				if ( siteSshKeys && siteSshKeys.length > 0 ) {
-					return (
-						<BaseControl label={ field.label } __nextHasNoMarginBottom>
-							<VStack>
-								{ siteSshKeys.map( ( siteSshKey: SiteSshKey ) => (
-									<SshKeyCard
-										key={ siteSshKey.sha256 }
-										siteSshKey={ siteSshKey }
-										userLocale={ userLocale }
-										isBusy={ detachSshKeyMutation.isPending }
-										onDetach={ handleDetachSshKey }
-									/>
-								) ) }
-							</VStack>
-						</BaseControl>
-					);
-				}
-
-				// TODO: Add ReauthRequired
-				return (
-					<SelectControl
-						label={ field.label }
-						value={ value }
-						options={ field.elements ?? [] }
-						onChange={ ( value ) => onChange( { [ id ]: value } ) }
-						__next40pxDefaultSize
-						__nextHasNoMarginBottom
-					/>
-				);
-			},
+			Edit: siteSshKeys && siteSshKeys.length > 0 ? SshKeysControl : RequiredSelect, // TODO: use DataForm's validation when available. See: DOTCOM-13298
 			elements: profileSshKeys?.map( ( profileSshKey: ProfileSshKey ) => ( {
 				label: `${ user.username }-${ profileSshKey.name }`,
 				value: profileSshKey.name,
