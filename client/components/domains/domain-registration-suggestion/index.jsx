@@ -20,6 +20,7 @@ import {
 	getDomainPriceRule,
 	hasDomainInCart,
 	isPaidDomain,
+	DOMAIN_PRICE_RULE,
 } from 'calypso/lib/cart-values/cart-items';
 import {
 	getDomainPrice,
@@ -142,7 +143,7 @@ class DomainRegistrationSuggestion extends Component {
 		} );
 
 		switch ( priceRule ) {
-			case 'ONE_TIME_PRICE':
+			case DOMAIN_PRICE_RULE.ONE_TIME_PRICE:
 				return translate( '%(baseLabel)s. %(price)s one-time', {
 					args: {
 						baseLabel,
@@ -151,7 +152,7 @@ class DomainRegistrationSuggestion extends Component {
 					comment:
 						'Accessible label for one-time priced domain (e.g. domain with 100-year plan). %(baseLabel)s is the base label (e.g. "Select domain testing.com"). %(price)s is the price.',
 				} );
-			case 'FREE_DOMAIN':
+			case DOMAIN_PRICE_RULE.FREE_DOMAIN:
 				return translate( '%(baseLabel)s. Free', {
 					args: {
 						baseLabel,
@@ -159,7 +160,7 @@ class DomainRegistrationSuggestion extends Component {
 					comment:
 						'Accessible label for free domain. %(baseLabel)s is the base label (e.g. "Select domain testing.com").',
 				} );
-			case 'FREE_FOR_FIRST_YEAR':
+			case DOMAIN_PRICE_RULE.FREE_FOR_FIRST_YEAR:
 				return translate( '%(baseLabel)s. Free for the first year, then %(price)s per year', {
 					args: {
 						baseLabel,
@@ -168,7 +169,7 @@ class DomainRegistrationSuggestion extends Component {
 					comment:
 						'Accessible label for domain free for the first year. %(baseLabel)s is the base label (e.g. "Select domain testing.com"). %(price)s is the price.',
 				} );
-			case 'FREE_WITH_PLAN':
+			case DOMAIN_PRICE_RULE.FREE_WITH_PLAN:
 				return translate(
 					'%(baseLabel)s. Free for the first year with annual paid plans, then %(price)s per year',
 					{
@@ -180,7 +181,7 @@ class DomainRegistrationSuggestion extends Component {
 							'Accessible label for free domain with normal price. %(baseLabel)s is the base label (e.g. "Select domain testing.com"). %(price)s is the price.',
 					}
 				);
-			case 'UPGRADE_TO_HIGHER_PLAN_TO_BUY':
+			case DOMAIN_PRICE_RULE.UPGRADE_TO_HIGHER_PLAN_TO_BUY:
 				return translate( '%(baseLabel)s. Plan upgrade required to register this domain.', {
 					args: {
 						baseLabel,
@@ -188,7 +189,7 @@ class DomainRegistrationSuggestion extends Component {
 					comment:
 						'Accessible label for domain that requires a plan upgrade. %(baseLabel)s is the base label (e.g. "Select domain testing.com").',
 				} );
-			case 'INCLUDED_IN_HIGHER_PLAN':
+			case DOMAIN_PRICE_RULE.INCLUDED_IN_HIGHER_PLAN:
 				return translate( '%(baseLabel)s. Included in paid plans', {
 					args: {
 						baseLabel,
@@ -196,7 +197,7 @@ class DomainRegistrationSuggestion extends Component {
 					comment:
 						'Accessible label for domain included in higher plans. %(baseLabel)s is the base label (e.g. "Select domain testing.com").',
 				} );
-			case 'DOMAIN_MOVE_PRICE':
+			case DOMAIN_PRICE_RULE.DOMAIN_MOVE_PRICE:
 				return translate( '%(baseLabel)s. %(price)s one-time', {
 					args: {
 						baseLabel,
@@ -205,7 +206,7 @@ class DomainRegistrationSuggestion extends Component {
 					comment:
 						'Accessible label for domain move price. %(baseLabel)s is the base label (e.g. "Select domain testing.com"). %(price)s is the price.',
 				} );
-			case 'PRICE':
+			case DOMAIN_PRICE_RULE.PRICE:
 				if ( productSaleCost && productCost ) {
 					return translate(
 						'%(baseLabel)s. %(salePrice)s for the first year, then %(price)s per year',
