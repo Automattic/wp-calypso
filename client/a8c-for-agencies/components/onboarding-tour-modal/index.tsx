@@ -1,6 +1,16 @@
 import { MenuItem, Modal } from '@wordpress/components';
 import clsx from 'clsx';
-import { Children, isValidElement, ReactElement, ReactNode, useMemo, useState } from 'react';
+import {
+	Children,
+	isValidElement,
+	ReactElement,
+	ReactNode,
+	useEffect,
+	useMemo,
+	useState,
+} from 'react';
+import { useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import OnboardingTourModalSection, { OnboardingTourModalSectionProps } from './section';
 
 import './style.scss';
@@ -11,6 +21,7 @@ interface OnboardingTourModalProps {
 }
 
 function OnboardingTourModal( { onClose, children }: OnboardingTourModalProps ) {
+	const dispatch = useDispatch();
 	const sections: ReactElement< OnboardingTourModalSectionProps >[] = Children.toArray(
 		children
 	).filter(
@@ -45,6 +56,16 @@ function OnboardingTourModal( { onClose, children }: OnboardingTourModalProps ) 
 		} );
 	}, [ currentSection?.props, onClose, sections, currentSectionIndex ] );
 
+	useEffect( () => {
+		if ( currentSection?.props?.id ) {
+			dispatch(
+				recordTracksEvent( 'calypso_onboarding_tour_modal_section_view', {
+					section: currentSection?.props?.id,
+				} )
+			);
+		}
+	}, [ currentSection, dispatch ] );
+
 	return (
 		<Modal
 			className="onboarding-tour-modal-wrapper"
@@ -59,7 +80,14 @@ function OnboardingTourModal( { onClose, children }: OnboardingTourModalProps ) 
 								'is-active': menuItem.id === currentSectionId,
 							} ) }
 							key={ menuItem.id }
-							onClick={ () => setCurrentSectionId( menuItem.id ) }
+							onClick={ () => {
+								setCurrentSectionId( menuItem.id );
+								dispatch(
+									recordTracksEvent( 'calypso_onboarding_tour_modal_section_menu_item_click', {
+										section: menuItem.id,
+									} )
+								);
+							} }
 						>
 							{ menuItem.label }
 						</MenuItem>
