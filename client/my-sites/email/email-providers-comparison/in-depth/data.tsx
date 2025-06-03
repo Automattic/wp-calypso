@@ -24,7 +24,7 @@ export const professionalEmailFeatures: EmailProviderFeatures = {
 	description: translate(
 		'Integrated email solution with powerful features. Manage your email and more on any device.'
 	),
-	logo: <Gridicon className="professional-email-logo" icon="my-sites" />,
+	logo: <Gridicon className="professional-email-logo" icon="my-sites" aria-hidden="true" />,
 	list: {
 		importing: translate( 'One-click import of existing emails and contacts' ),
 		storage: translate( '30GB storage for emails' ),
