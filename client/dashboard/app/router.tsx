@@ -324,13 +324,10 @@ const siteSettingsSftpSshRoute = createRoute( {
 	path: 'settings/sftp-ssh',
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteQuery( siteSlug ) );
-		if ( canUseSftp( site ) ) {
-			await queryClient.ensureQueryData( siteSftpUsersQuery( siteSlug ) );
-		}
-
-		if ( canUseSsh( site ) ) {
-			await queryClient.ensureQueryData( siteSshAccessStatusQuery( siteSlug ) );
-		}
+		return Promise.all( [
+			canUseSftp( site ) && queryClient.ensureQueryData( siteSftpUsersQuery( siteSlug ) ),
+			canUseSsh( site ) && queryClient.ensureQueryData( siteSshAccessStatusQuery( siteSlug ) ),
+		] );
 	},
 } ).lazy( () =>
 	import( '../sites/settings-sftp-ssh' ).then( ( d ) =>
