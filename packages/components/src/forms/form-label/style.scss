@@ -31,7 +31,10 @@
 	font-size: $font-body-small;
 	font-weight: 500;
 	line-height: 1.4;
-	text-transform: uppercase;
 	color: var(--color-neutral-100);
 	margin-bottom: 6px;
+
+	&:not(.form-label-core-styles-no-caps) {
+		text-transform: uppercase;
+	}
 }

@@ -8,10 +8,14 @@ type FormLabelProps = {
 	optional?: boolean;
 	required?: boolean;
 	hasCoreStyles?: boolean;
+	hasCoreStylesNoCaps?: boolean;
 } & JSX.IntrinsicElements[ 'label' ];
 
 const FormLabel = forwardRef< HTMLLabelElement, FormLabelProps >(
-	( { children, required, optional, className, hasCoreStyles, ...labelProps }, ref ) => {
+	(
+		{ children, required, optional, className, hasCoreStyles, hasCoreStylesNoCaps, ...labelProps },
+		ref
+	) => {
 		const translate = useTranslate();
 		const hasChildren: boolean = Children.count( children ) > 0;
 
@@ -19,7 +23,8 @@ const FormLabel = forwardRef< HTMLLabelElement, FormLabelProps >(
 			<label
 				{ ...labelProps }
 				className={ clsx( className, 'form-label', {
-					'form-label-core-styles': hasCoreStyles,
+					'form-label-core-styles': hasCoreStyles || hasCoreStylesNoCaps,
+					'form-label-core-styles-no-caps': hasCoreStylesNoCaps,
 				} ) }
 				ref={ ref }
 			>

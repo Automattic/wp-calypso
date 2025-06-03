@@ -842,7 +842,7 @@ export class LoginForm extends Component {
 								</p>
 							) }
 
-							<FormLabel htmlFor="usernameOrEmail" hasCoreStyles>
+							<FormLabel htmlFor="usernameOrEmail" hasCoreStylesNoCaps>
 								{ this.renderUsernameorEmailLabel() }
 							</FormLabel>
 
@@ -949,7 +949,7 @@ export class LoginForm extends Component {
 								} ) }
 								aria-hidden={ isPasswordHidden }
 							>
-								<FormLabel htmlFor="password" hasCoreStyles>
+								<FormLabel htmlFor="password" hasCoreStylesNoCaps>
 									{ this.props.translate( 'Password' ) }
 								</FormLabel>
 
