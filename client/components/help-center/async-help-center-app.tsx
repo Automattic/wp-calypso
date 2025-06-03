@@ -1,5 +1,5 @@
 import AsyncLoad from 'calypso/components/async-load';
-import { HelpCenterAppProps } from './types';
+import type { HelpCenterAppProps } from './help-center-app';
 
 const AsyncHelpCenterApp = ( props: HelpCenterAppProps ) => {
 	return <AsyncLoad require="./help-center-app" placeholder={ null } { ...props } />;

@@ -7,10 +7,10 @@ export type HelpCenterRequiredInformation = {
 	sectionName: string;
 	currentUser: CurrentUser;
 	// some users have no sites at all.
-	site: HelpCenterSite | null;
-	hasPurchases: false;
-	primarySiteId: number;
-	googleMailServiceFamily: string;
+	site?: HelpCenterSite | null;
+	hasPurchases?: boolean;
+	primarySiteId?: number;
+	googleMailServiceFamily?: string;
 	onboardingUrl: string;
 	canConnectToZendesk: boolean;
 	isLoadingCanConnectToZendesk: boolean;

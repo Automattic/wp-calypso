@@ -119,7 +119,13 @@ function SecondaryMenu() {
 						icon={ help }
 						variant="tertiary"
 					/>
-					{ isHelpCenterOpen && <AsyncHelpCenterApp user={ user } /> }
+					{ isHelpCenterOpen && (
+						<AsyncHelpCenterApp
+							currentUser={ user }
+							locale={ user.language }
+							sectionName="dashboard"
+						/>
+					) }
 				</>
 			) }
 			{ supports.notifications && (
