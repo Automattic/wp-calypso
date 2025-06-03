@@ -68,7 +68,6 @@ export const UserMessage = ( {
 
 	const hasCannedResponse = message.context?.flags?.canned_response;
 	const isRequestingHumanSupport = message.context?.flags?.forward_to_human_support ?? false;
-	const isBot = message.role === 'bot';
 
 	const showDirectEscalationLink = useMemo( () => {
 		return (
@@ -156,7 +155,7 @@ export const UserMessage = ( {
 					{ isRequestingHumanSupport ? displayMessage : message.content }
 				</Markdown>
 			</div>
-			{ isMessageWithEscalationOption && isBot && (
+			{ isMessageWithEscalationOption && (
 				<div
 					className={ clsx( 'chat-feedback-wrapper', {
 						'chat-feedback-wrapper-no-extra-contact': ! isRequestingHumanSupport,
