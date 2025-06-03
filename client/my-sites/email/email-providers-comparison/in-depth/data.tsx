@@ -47,13 +47,7 @@ export const googleWorkspaceFeatures: EmailProviderFeatures = {
 	description: translate(
 		'Business email with Gmail. Includes other collaboration and productivity tools from Google.'
 	),
-	logo: (
-		<img
-			alt={ translate( 'Google Workspace icon', { textOnly: true } ) }
-			className="google-workspace-logo"
-			src={ googleWorkspaceIcon }
-		/>
-	),
+	logo: <img alt="" className="google-workspace-logo" src={ googleWorkspaceIcon } />,
 	list: {
 		collaboration: translate( 'Real-time collaboration for Docs, Sheets, and Slides' ),
 		importing: translate( 'Easy to import your existing emails and contacts' ),
