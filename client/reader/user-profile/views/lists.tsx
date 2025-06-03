@@ -21,6 +21,7 @@ interface UserListsProps {
 	requestUserLists?: ( userLogin: string ) => void;
 	lists?: List[];
 	isLoading?: boolean;
+	currentUser: UserData | null;
 }
 
 export const UserLists = ( {
@@ -28,9 +29,12 @@ export const UserLists = ( {
 	requestUserLists,
 	lists,
 	isLoading,
+	currentUser,
 }: UserListsProps ): JSX.Element => {
 	const translate = useTranslate();
 	const [ hasRequested, setHasRequested ] = useState( false );
+
+	// Info about the owner of the lists we are viewing.
 	const userLogin = user.user_login;
 
 	useEffect( () => {
@@ -44,7 +48,19 @@ export const UserLists = ( {
 		return <></>;
 	}
 
-	if ( ! lists || lists.length === 0 ) {
+	const filteredLists =
+		lists?.filter( ( list: List ) => {
+			if ( list.is_public ) {
+				return true;
+			}
+
+			// If the current user is looking at their own profile, show all lists.
+			// Otherwise, only show public lists.
+			const isViewingOwnProfile = user.user_login === currentUser?.username;
+			return isViewingOwnProfile;
+		} ) || [];
+
+	if ( filteredLists.length === 0 ) {
 		return (
 			<div className="user-profile__lists">
 				<EmptyContent
@@ -60,7 +76,7 @@ export const UserLists = ( {
 	return (
 		<div className="user-profile__lists">
 			<div className="user-profile__lists-body">
-				{ lists.map( ( list: List ) => (
+				{ filteredLists.map( ( list: List ) => (
 					<a
 						className="user-profile__lists-body-link"
 						href={ `/reader/list/${ list.owner }/${ list.slug }` }

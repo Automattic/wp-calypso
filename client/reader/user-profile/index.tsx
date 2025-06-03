@@ -9,6 +9,7 @@ import UserProfileHeader from 'calypso/reader/user-profile/components/user-profi
 import { getUserProfileUrl } from 'calypso/reader/user-profile/user-profile.utils';
 import UserLists from 'calypso/reader/user-profile/views/lists';
 import UserPosts from 'calypso/reader/user-profile/views/posts';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { requestUser } from 'calypso/state/reader/users/actions';
 import getReaderUser from 'calypso/state/selectors/get-reader-user';
 import './style.scss';
@@ -19,6 +20,7 @@ export interface UserProfileProps {
 	user: UserData | undefined;
 	path: string;
 	isLoading: boolean;
+	currentUser: UserData | null;
 	requestUser: ( userLogin: string, findById?: boolean ) => Promise< void >;
 }
 
@@ -32,7 +34,7 @@ type UserProfileState = {
 };
 
 export function UserProfile( props: UserProfileProps ): JSX.Element | null {
-	const { userLogin, userId, path, requestUser, user, isLoading } = props;
+	const { userLogin, userId, path, requestUser, user, isLoading, currentUser } = props;
 	const translate = useTranslate();
 
 	useEffect( () => {
@@ -81,7 +83,7 @@ export function UserProfile( props: UserProfileProps ): JSX.Element | null {
 			case userProfileUrl:
 				return <UserPosts user={ user } />;
 			case `${ userProfileUrl }/lists`:
-				return <UserLists user={ user } />;
+				return <UserLists user={ user } currentUser={ currentUser } />;
 			default:
 				return null;
 		}
@@ -102,6 +104,7 @@ export function UserProfile( props: UserProfileProps ): JSX.Element | null {
 
 export default connect(
 	( state: UserProfileState, ownProps: UserProfileProps ) => ( {
+		currentUser: getCurrentUser( state ),
 		// The following logic works because userLogin and userId are mutually exclusive via the
 		// routes.
 		user: getReaderUser(
