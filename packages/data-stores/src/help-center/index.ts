@@ -9,7 +9,8 @@ import { isHelpCenterShown } from './resolvers';
 import * as selectors from './selectors';
 export type { State };
 
-declare const helpCenterData: { isProxied: boolean } | undefined;
+declare const helpCenterData: { isProxied: boolean; isSU: boolean } | undefined;
+declare const isSupportSession: boolean;
 
 let isRegistered = false;
 
@@ -19,7 +20,7 @@ const E2E_USER_AGENT = 'wp-e2e-tests';
 export const isE2ETest = () =>
 	typeof window !== 'undefined' && window.navigator.userAgent.includes( E2E_USER_AGENT );
 
-export const isSupportSession = () => {
+export const isInSupportSession = () => {
 	if ( typeof window !== 'undefined' ) {
 		return (
 			'disableHelpCenterAutoOpen' in window ||
@@ -30,16 +31,15 @@ export const isSupportSession = () => {
 			// Atomic
 			document.body.classList.contains( 'support-session' ) ||
 			document.querySelector( '#wpcom > .is-support-session' ) ||
-			// Our failover last hope, don't re-open when proxied.
-			// This is not the same `window.helpCenterData`, because it's defined as `const helpCenterData`
-			( typeof helpCenterData !== 'undefined' && helpCenterData?.isProxied )
+			( typeof isSupportSession !== 'undefined' && !! isSupportSession ) ||
+			( typeof helpCenterData !== 'undefined' && helpCenterData?.isSU )
 		);
 	}
 	return false;
 };
 
 export function register(): typeof STORE_KEY {
-	const enabledPesistedOpenState = ! isE2ETest() && ! isSupportSession();
+	const enabledPersistedOpenState = ! isE2ETest() && ! isInSupportSession();
 
 	registerPlugins();
 
@@ -51,7 +51,7 @@ export function register(): typeof STORE_KEY {
 			selectors,
 			persist: [ 'message', 'userDeclaredSite', 'userDeclaredSiteUrl', 'subject' ],
 			// Don't persist the open state for e2e users, because parallel tests will start interfering with each other.
-			resolvers: enabledPesistedOpenState ? { isHelpCenterShown } : undefined,
+			resolvers: enabledPersistedOpenState ? { isHelpCenterShown } : undefined,
 		} );
 		isRegistered = true;
 	}
