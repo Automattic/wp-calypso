@@ -208,7 +208,7 @@
 		"@wordpress/rich-text": "^7.23.0",
 		"@wordpress/url": "^4.23.0",
 		"@wordpress/viewport": "^6.23.0",
-		"@wp-playground/client": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.37/@wp-playground-client-1.0.37.tar.gz",
+		"@wp-playground/client": "^1.1.0",
 		"animate.css": "^4.1.1",
 		"browserslist": "^4.24.5",
 		"calypso": "workspace:^",
