@@ -4,6 +4,7 @@ export type OnboardingTourModalSectionProps = {
 	id: string;
 	title: string;
 	bannerImage: string;
+	isDarkBanner?: boolean;
 	renderActions?: ( { onClose, onNext }: { onClose: () => void; onNext: () => void } ) => ReactNode;
 	children: ReactNode;
 };

@@ -89,3 +89,14 @@
 .onboarding-tour-modal__section {
 	padding: 0 24px;
 }
+
+.onboarding-tour-modal__close-button {
+	position: absolute;
+	right: 8px;
+	top: 8px;
+	z-index: 1000;
+
+	&.is-light {
+		color: var(--color-text-inverted);
+	}
+}
