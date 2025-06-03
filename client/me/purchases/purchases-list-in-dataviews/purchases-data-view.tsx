@@ -7,6 +7,8 @@ import { DataViews, View, Filter, filterSortAndPaginate } from '@wordpress/datav
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo, useState } from 'react';
 import { MembershipSubscription } from 'calypso/lib/purchases/types';
+import { reduxDispatch } from 'calypso/lib/redux-bridge';
+import { setRoute } from 'calypso/state/route/actions';
 import {
 	usePurchasesFieldDefinitions,
 	useMembershipsFieldDefinitions,
@@ -71,6 +73,10 @@ function usePreservePurchasesFiltersInUrl( {
 			url.searchParams.delete( urlTypeFilterKey );
 		}
 		window.history.replaceState( {}, '', url );
+		// getPreviousRoute will not find this updated route unless we set it
+		// explicitly. It only records the route when the page first loads.
+		// This seems like a bug but it appears to be how it works.
+		reduxDispatch( setRoute( window.location.pathname, Object.fromEntries( url.searchParams ) ) );
 	}, [ currentView ] );
 }
 
