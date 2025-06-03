@@ -6,8 +6,15 @@ import { siteSftpUsersQuery, siteSshAccessStatusQuery } from '../../app/queries'
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
 import { canUseSftp, canUseSsh } from '../../utils/site-features';
 import type { Site } from '../../data/types';
+import type { Density } from '@automattic/components/src/summary-button/types';
 
-export default function SftpSshSettingsSummary( { site }: { site: Site } ) {
+export default function SftpSshSettingsSummary( {
+	site,
+	density,
+}: {
+	site: Site;
+	density: Density;
+} ) {
 	const { data: sftpUsers } = useQuery( {
 		...siteSftpUsersQuery( site.slug ),
 		enabled: canUseSftp( site ),
@@ -37,7 +44,7 @@ export default function SftpSshSettingsSummary( { site }: { site: Site } ) {
 		<RouterLinkSummaryButton
 			to={ `/sites/${ site.slug }/settings/sftp-ssh` }
 			title="SFTP/SSH"
-			density="medium"
+			density={ density }
 			decoration={ <Icon icon={ file } /> }
 			badges={ badges }
 		/>
