@@ -1,11 +1,6 @@
-import config from '@automattic/calypso-config';
+import { isTestModeEnvironment } from '@automattic/zendesk-client';
 import { useSupportActivity } from '../data/use-support-activity';
 import { useSupportStatus } from '../data/use-support-status';
-
-const isTestModeEnvironment = () => {
-	const currentEnvironment = config( 'env_id' ) as string;
-	return ! [ 'production', 'desktop' ].includes( currentEnvironment );
-};
 
 export default function useChatStatus() {
 	const { data: supportStatus } = useSupportStatus();
