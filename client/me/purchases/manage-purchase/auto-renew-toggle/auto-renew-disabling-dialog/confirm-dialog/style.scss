@@ -1,0 +1,12 @@
+.auto-renew-confirm-dialog {
+	max-width: 580px;
+
+	&__footer {
+		display: flex;
+		gap: 8px;
+		justify-content: flex-end;
+	}
+	&__content {
+		text-wrap: pretty;
+	}
+}
