@@ -27,6 +27,7 @@ import { siteBySlugQuery } from './queries/site';
 import { siteAgencyBlogQuery } from './queries/site-agency';
 import { siteEdgeCacheStatusQuery } from './queries/site-cache';
 import { siteDefensiveModeSettingsQuery } from './queries/site-defensive-mode';
+import { siteDomainsQuery } from './queries/site-domains';
 import { sitePHPVersionQuery } from './queries/site-php-version';
 import { siteCurrentPlanQuery } from './queries/site-plans';
 import { sitePrimaryDataCenterQuery } from './queries/site-primary-data-center';
@@ -155,7 +156,10 @@ const siteSettingsSiteVisibilityRoute = createRoute( {
 	path: 'settings/site-visibility',
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		queryClient.ensureQueryData( siteSettingsQuery( site.ID ) );
+		Promise.all( [
+			queryClient.ensureQueryData( siteSettingsQuery( site.ID ) ),
+			queryClient.ensureQueryData( siteDomainsQuery( site.ID ) ),
+		] );
 	},
 } ).lazy( () =>
 	import( '../sites/settings-site-visibility' ).then( ( d ) =>
