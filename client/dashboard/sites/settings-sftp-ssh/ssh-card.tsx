@@ -50,7 +50,7 @@ const SshKeyCard = ( {
 	onDetach: ( siteSshKey: SiteSshKey ) => void;
 } ) => {
 	return (
-		<Card>
+		<Card size="small">
 			<CardBody>
 				<HStack spacing={ 4 } justify="space-between" alignment="flex-start">
 					<VStack spacing={ 3 } alignment="flex-start">
