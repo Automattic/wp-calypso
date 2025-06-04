@@ -62,7 +62,7 @@ const HelpCenterContainer: React.FC< Container > = ( {
 	const focusReturnRef = useFocusReturn();
 	const cardMergeRefs = useMergeRefs( [ nodeRef, focusReturnRef ] );
 
-	// Keep focus within the help center when clicking "Still need help"
+	// Keep focus within the help center when entering `Zendesk messaging`
 	useEffect( () => {
 		const helpCenter = nodeRef.current;
 		if ( ! helpCenter ) {
