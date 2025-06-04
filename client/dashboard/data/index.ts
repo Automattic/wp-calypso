@@ -734,7 +734,7 @@ export const attachSiteSshKey = async ( siteIdOrSlug: string, name: string ) => 
 };
 
 export const detachSiteSshKey = async ( siteIdOrSlug: string, userLogin: string, name: string ) => {
-	return wpcom.req.get( {
+	return wpcom.req.post( {
 		path: `/sites/${ siteIdOrSlug }/hosting/ssh-keys/${ userLogin }/${ name }`,
 		apiNamespace: 'wpcom/v2',
 		method: 'DELETE',
