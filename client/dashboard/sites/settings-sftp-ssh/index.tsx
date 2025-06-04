@@ -1,5 +1,4 @@
 import { useQuery } from '@tanstack/react-query';
-import { __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { file } from '@wordpress/icons';
 import { siteQuery, siteSftpUsersQuery, siteSshAccessStatusQuery } from '../../app/queries';
@@ -48,20 +47,18 @@ export default function SftpSshSettings( { siteSlug }: { siteSlug: string } ) {
 
 	return (
 		<PageLayout size="small" header={ <SettingsPageHeader title={ __( 'SFTP/SSH' ) } /> }>
-			<VStack spacing={ 8 }>
-				{ sftpEnabled ? (
-					<SftpCard siteSlug={ site.slug } sftpUsers={ sftpUsers } />
-				) : (
-					<EnableSftpCard siteSlug={ site.slug } canUseSsh={ canUseSsh( site ) } />
-				) }
-				{ sftpEnabled && canUseSsh( site ) && (
-					<SshCard
-						siteSlug={ site.slug }
-						sftpUsers={ sftpUsers }
-						sshEnabled={ sshAccessStatus?.setting === 'ssh' }
-					/>
-				) }
-			</VStack>
+			{ sftpEnabled ? (
+				<SftpCard siteSlug={ site.slug } sftpUsers={ sftpUsers } />
+			) : (
+				<EnableSftpCard siteSlug={ site.slug } canUseSsh={ canUseSsh( site ) } />
+			) }
+			{ sftpEnabled && canUseSsh( site ) && (
+				<SshCard
+					siteSlug={ site.slug }
+					sftpUsers={ sftpUsers }
+					sshEnabled={ sshAccessStatus?.setting === 'ssh' }
+				/>
+			) }
 		</PageLayout>
 	);
 }
