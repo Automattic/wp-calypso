@@ -56,15 +56,15 @@
 				.a4a-event__date {
 					@include heading-small;
 					text-transform: uppercase;
-				}
 
-				.a4a-event__date--klaviyo {
-					--color-klaviyo: #b84f0a;
-					color: var(--color-klaviyo);
-				}
+					&--klaviyo {
+						--color-klaviyo: #b84f0a;
+						color: var(--color-klaviyo);
+					}
 
-				.a4a-event__date--woo {
-					color: var(--studio-woocommerce-purple-60);
+					&--woo {
+						color: var(--studio-woocommerce-purple-60);
+					}
 				}
 
 				.a4a-event__title {
