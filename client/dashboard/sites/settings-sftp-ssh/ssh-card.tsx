@@ -142,10 +142,10 @@ export default function SshCard( {
 	const handleToggleSshAccess = () => {
 		toggleSshAccessMutation.mutate( undefined, {
 			onSuccess: () => {
-				createErrorNotice(
+				createSuccessNotice(
 					sshEnabled
-						? __( 'SSH access has been successfully enabled for this site.' )
-						: __( 'SSH access has been successfully disabled for this site.' ),
+						? __( 'SSH access has been successfully disabled for this site.' )
+						: __( 'SSH access has been successfully enabled for this site.' ),
 					{
 						type: 'snackbar',
 					}
