@@ -275,6 +275,24 @@ export interface BaseProps
 	 * [Wikipedia](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones)
 	 * for the possible values.
 	 *
+	 * When working with time zones, use the `TZDate` object exported by this
+	 * package instead of the native `Date` object.
+	 * @example
+	 *   import { DateCalendar, TZDate } from "@automattic/components";
+	 *
+	 *   export function WithTimeZone() {
+	 *     const timeZone = "America/New_York";
+	 *     const [ selected, setSelected ] = useState< Date | undefined >(
+	 *       new TZDate( 2024, 12, 10, timeZone ) // Use `TZDate` instead of `Date`
+	 *     );
+	 *     return (
+	 *       <DateCalendar
+	 *         timeZone={ timeZone }
+	 *         selected={ selected }
+	 *         onSelect={ setSelected }
+	 *     />
+	 *   );
+	 * }
 	 */
 	timeZone?: string;
 	/**
