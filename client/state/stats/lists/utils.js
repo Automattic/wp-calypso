@@ -14,6 +14,7 @@ function getArchiveKeyLabel( key ) {
 		tag: translate( 'Tags' ),
 		author: translate( 'Authors' ),
 		tax: translate( 'Aggregated' ),
+		date: translate( 'Dates' ),
 	};
 
 	return archiveKeyLabelMap[ key ] || otherLabel;
