@@ -1,3 +1,4 @@
+import { DataForm } from '@automattic/dataviews';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import {
 	Card,
@@ -18,6 +19,7 @@ import SitePreviewLink from '../../components/site-preview-link';
 import { DotcomFeatures } from '../../data/constants';
 import { hasPlanFeature } from '../../utils/site-features';
 import type { Site } from '../../data/types';
+import type { Field } from '@automattic/dataviews';
 
 interface SitePreviewLinkProps {
 	site: Site;
@@ -35,8 +37,8 @@ export default function SitePreviewLinks( { site, title, description }: SitePrev
 		return null;
 	}
 
-	const handleChange = ( checked: boolean ) => {
-		if ( checked ) {
+	const handleChange = ( { enabled }: { enabled?: boolean } ) => {
+		if ( enabled ) {
 			createMutation.mutate( undefined, {
 				onSuccess: () => {
 					createSuccessNotice( __( 'Preview link enabled.' ), { type: 'snackbar' } );
@@ -61,13 +63,39 @@ export default function SitePreviewLinks( { site, title, description }: SitePrev
 
 	const renderContent = () => {
 		const isMutationPending = createMutation.isPending || deleteMutation.isPending;
+
+		const fields: Field< { enabled: boolean } >[] = [
+			{
+				id: 'enabled',
+				label: 'Enable share link',
+				Edit: ( { field, onChange, data, hideLabelFromVision } ) => {
+					const { id, label, getValue } = field;
+					return (
+						<ToggleControl
+							__nextHasNoMarginBottom
+							label={ hideLabelFromVision ? '' : label }
+							checked={ getValue( { item: data } ) }
+							disabled={ isMutationPending }
+							onChange={ () => onChange( { [ id ]: ! getValue( { item: data } ) } ) }
+						/>
+					);
+				},
+			},
+		];
+
+		const form = {
+			type: 'regular' as const,
+			fields: [ 'enabled' ],
+		};
+
+		const data = { enabled: links.length > 0 };
+
 		return (
 			<>
-				<ToggleControl
-					__nextHasNoMarginBottom
-					label={ __( 'Enable share link' ) }
-					checked={ links.length > 0 }
-					disabled={ isMutationPending }
+				<DataForm< { enabled: boolean } >
+					data={ data }
+					fields={ fields }
+					form={ form }
 					onChange={ handleChange }
 				/>
 				{ links?.map( ( link ) => (
