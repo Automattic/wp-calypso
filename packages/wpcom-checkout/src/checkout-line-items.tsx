@@ -28,7 +28,6 @@ import {
 } from '@automattic/composite-checkout';
 import { formatCurrency } from '@automattic/number-formatters';
 import styled from '@emotion/styled';
-import { Button as CoreButton } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState, PropsWithChildren, useRef, Dispatch, SetStateAction } from 'react';
 import { getLabel, DefaultLineItemSublabel } from './checkout-labels';
@@ -194,21 +193,9 @@ const DeleteButtonWrapper = styled.div`
 	width: 100%;
 	display: inherit;
 	justify-content: inherit;
-	.dropdown-wrapper.is-empty + & {
-		margin-top: 8px;
-	}
 `;
 
-const DeleteButton = styled( CoreButton )< { theme?: Theme } >`
-	color: ${ ( { theme } ) => theme.colors.textColorDark } !important;
-	font-size: 14px;
-	font-weight: 500;
-	line-height: 20px;
-	text-underline-offset: 2px;
-	width: auto;
-`;
-
-const LegacyDeleteButton = styled( Button )< { theme?: Theme } >`
+const DeleteButton = styled( Button )< { theme?: Theme } >`
 	width: auto;
 	font-size: 0.75rem;
 	color: ${ ( props ) => props.theme.colors.textColorLight };
@@ -1545,47 +1532,31 @@ function CheckoutLineItem( {
 			{ hasDeleteButton && removeProductFromCart && (
 				<>
 					<DeleteButtonWrapper>
-						{ isRestorable ? (
-							<DeleteButton
-								className="checkout-line-item__remove-product"
-								variant="link"
-								aria-label={ String(
-									translate( 'Remove %s from cart', {
-										args: label,
-									} )
-								) }
-								disabled={ isDisabled }
-								onClick={ () => {
+						<DeleteButton
+							className="checkout-line-item__remove-product"
+							buttonType="text-button"
+							aria-label={ String(
+								translate( 'Remove %s from cart', {
+									args: label,
+								} )
+							) }
+							disabled={ isDisabled }
+							onClick={ () => {
+								if ( isRestorable ) {
 									if ( hasRemoveFromCartModal ) {
 										setIsModalVisible( true );
 									} else {
 										removeProductFromCartAndSetAsRestorable();
 									}
-
-									onRemoveProductClick?.( label );
-								} }
-							>
-								{ translate( 'Remove from cart' ) }
-							</DeleteButton>
-						) : (
-							<LegacyDeleteButton
-								className="checkout-line-item__remove-product"
-								buttonType="text-button"
-								aria-label={ String(
-									translate( 'Remove %s from cart', {
-										args: label,
-									} )
-								) }
-								disabled={ isDisabled }
-								onClick={ () => {
+								} else {
 									setIsModalVisible( true );
+								}
 
-									onRemoveProductClick?.( label );
-								} }
-							>
-								{ translate( 'Remove from cart' ) }
-							</LegacyDeleteButton>
-						) }
+								onRemoveProductClick?.( label );
+							} }
+						>
+							{ translate( 'Remove from cart' ) }
+						</DeleteButton>
 					</DeleteButtonWrapper>
 
 					<CheckoutModal

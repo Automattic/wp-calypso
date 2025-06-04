@@ -19,7 +19,6 @@ import {
 	getPartnerCoupon,
 } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
-import clsx from 'clsx';
 import { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import { has100YearPlan } from 'calypso/lib/cart-values/cart-items';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
@@ -446,11 +445,7 @@ function LineItemWrapper( {
 				shouldShowComparison={ isStreamlinedPrice }
 				compareToPrice={ compareToPrice }
 			>
-				<DropdownWrapper
-					className={ clsx( 'dropdown-wrapper', {
-						'is-empty': ! finalShouldShowVariantSelector && ! ( ! isRenewal && isAkPro500Cart ),
-					} ) }
-				>
+				<DropdownWrapper>
 					{ finalShouldShowVariantSelector && (
 						<div ref={ variantDropdownRef }>
 							<ItemVariationPicker
