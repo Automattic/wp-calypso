@@ -44,7 +44,7 @@
 		"a4a-pressable-referrals": true,
 		"a4a-updated-add-new-site": true,
 		"a4a-signup-v2": true,
-		"a4a-signup-v2-via-email": true,
+		"a4a-signup-v2-via-email": false,
 		"a4a-client-checkout-v2": true,
 		"jetpack/crm-downloads": true
 	},
