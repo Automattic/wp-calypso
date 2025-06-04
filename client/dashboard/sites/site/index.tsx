@@ -36,14 +36,7 @@ function Site() {
 						/>
 					</HeaderBar.Title>
 					{ isDesktop && <MenuDivider /> }
-					<SiteMenu
-						siteSlug={ siteSlug }
-						config={ {
-							hide: {
-								settings: ! site.capabilities.manage_options,
-							},
-						} }
-					/>
+					<SiteMenu site={ site } />
 				</HStack>
 			</HeaderBar>
 			<Outlet />
