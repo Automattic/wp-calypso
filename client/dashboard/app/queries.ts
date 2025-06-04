@@ -201,6 +201,7 @@ export function profileSshKeysQuery() {
 		queryFn: () => {
 			return fetchProfileSshKeys();
 		},
+		retry: false, // Don't retry on 401 errors
 		meta: {
 			persist: false,
 		},

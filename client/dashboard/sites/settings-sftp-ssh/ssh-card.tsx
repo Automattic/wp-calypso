@@ -82,7 +82,6 @@ const SshKeyCard = ( {
 	);
 };
 
-// TODO: Redirect to /reauth-required if the token is expired.
 export default function SshCard( {
 	siteSlug,
 	sftpUsers,
@@ -94,7 +93,10 @@ export default function SshCard( {
 } ) {
 	const { user } = useAuth();
 	const { data: siteSshKeys } = useQuery( siteSshKeysQuery( siteSlug ) );
-	const { data: profileSshKeys } = useQuery( profileSshKeysQuery() );
+	const { data: profileSshKeys, profileSshKeysError } = useQuery( {
+		...profileSshKeysQuery(),
+		enabled: sshEnabled,
+	} );
 	const toggleSshAccessMutation = useMutation(
 		! sshEnabled
 			? siteSshAccessEnableMutation( siteSlug )
@@ -265,6 +267,13 @@ export default function SshCard( {
 		type: 'regular' as const,
 		fields: [ 'connection_command', 'ssh_key' ],
 	};
+
+	if ( profileSshKeysError?.code === 'reauthorization_required' ) {
+		const currentPath = window.location.pathname;
+		const loginUrl = `/reauth-required?redirect_to=${ encodeURIComponent( currentPath ) }`;
+		window.location.href = loginUrl;
+		return null;
+	}
 
 	return (
 		<Card>
