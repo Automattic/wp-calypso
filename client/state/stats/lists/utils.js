@@ -1,7 +1,22 @@
 import { translate, getLocaleSlug } from 'i18n-calypso';
 import { sortBy, camelCase, get, filter, map, flatten } from 'lodash';
 import moment from 'moment';
-import { PUBLICIZE_SERVICES_LABEL_ICON, STATS_ARCHIVE_KEYS } from './constants';
+import { PUBLICIZE_SERVICES_LABEL_ICON } from './constants';
+
+function getArchiveKeyLabel( key ) {
+	const archiveKeyLabelMap = {
+		home: translate( 'Homepage' ),
+		search: translate( 'Searches' ),
+		err: translate( 'Error' ),
+		cat: translate( 'Categories' ),
+		tag: translate( 'Tags' ),
+		author: translate( 'Authors' ),
+		tax: translate( 'Aggregated' ),
+		other: translate( 'Others' ),
+	};
+
+	return archiveKeyLabelMap[ key ] || key;
+}
 
 /**
  * Returns a string of the moment format for the period. Supports store stats
@@ -450,7 +465,7 @@ export const normalizers = {
 				} );
 
 				accumulatedArchives.push( {
-					label: STATS_ARCHIVE_KEYS[ archiveKey ],
+					label: getArchiveKeyLabel( archiveKey ),
 					value: totalTaxViews,
 					children: taxItems,
 				} );
@@ -471,7 +486,7 @@ export const normalizers = {
 					} );
 
 					accumulatedArchives.push( {
-						label: STATS_ARCHIVE_KEYS[ archiveKey ],
+						label: getArchiveKeyLabel( archiveKey ),
 						value: totalViews,
 						children,
 					} );

@@ -24,14 +24,3 @@ export const PUBLICIZE_SERVICES_LABEL_ICON = {
 		icon: 'https://secure.gravatar.com/blavatar/3a03c8ce5bf1271fb3760bb6e79b02c1?s=48',
 	},
 };
-
-export const STATS_ARCHIVE_KEYS = {
-	home: 'Homepage',
-	search: 'Searches',
-	error: 'Error',
-	cat: 'Categories',
-	tag: 'Tags',
-	author: 'Authors',
-	tax: 'Aggregated',
-	other: 'Others',
-};
