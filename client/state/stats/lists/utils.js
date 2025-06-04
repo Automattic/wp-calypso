@@ -417,7 +417,7 @@ export const normalizers = {
 
 			// Taxonomy items are grouped by taxonomy term.
 			if ( 'tax' === archiveKey ) {
-				let totaTaxViews = 0;
+				let totalTaxViews = 0;
 
 				const taxItems = Object.keys( archiveItems ).map( ( taxKey ) => {
 					const taxItem = archiveItems[ taxKey ];
@@ -427,7 +427,7 @@ export const normalizers = {
 					if ( hasSubItems ) {
 						const children = taxItem.map( ( item ) => {
 							itemViews += item.views;
-							totaTaxViews += item.views;
+							totalTaxViews += item.views;
 
 							return {
 								label: item.value,
@@ -451,7 +451,7 @@ export const normalizers = {
 
 				accumulatedArchives.push( {
 					label: STATS_ARCHIVE_KEYS[ archiveKey ],
-					value: totaTaxViews,
+					value: totalTaxViews,
 					children: taxItems,
 				} );
 			} else {
