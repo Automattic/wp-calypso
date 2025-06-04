@@ -27,8 +27,8 @@ import {
 	siteSshKeysDetachMutation,
 	profileSshKeysQuery,
 } from '../../app/queries';
+import ClipboardInputControl from '../../components/clipboard-input-control';
 import RequiredSelect from '../../components/required-select';
-import ClipboardInputControl from './clipboard-input-control';
 import type { SftpUser, SiteSshKey, ProfileSshKey } from '../../data/types';
 import type { DataFormControlProps, Field } from '@automattic/dataviews';
 

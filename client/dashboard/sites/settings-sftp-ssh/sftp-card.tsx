@@ -15,7 +15,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { sprintf, __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { siteSftpUsersResetPasswordMutation } from '../../app/queries';
-import ClipboardInputControl from './clipboard-input-control';
+import ClipboardInputControl from '../../components/clipboard-input-control';
 import type { SftpUser } from '../../data/types';
 import type { Field } from '@automattic/dataviews';
 
