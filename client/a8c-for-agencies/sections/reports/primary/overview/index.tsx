@@ -101,7 +101,16 @@ export default function ReportsOverview() {
 									) }
 								</div>
 							</div>
-							{ buildNewReportButton }
+							<div className="reports-overview__buttons-container">
+								{ buildNewReportButton }
+								<Button
+									__next40pxDefaultSize
+									variant="secondary"
+									onClick={ handleViewExampleReport }
+								>
+									{ translate( 'View example report' ) }
+								</Button>
+							</div>
 						</div>
 					</PageSectionColumns.Column>
 					<PageSectionColumns.Column alignCenter>
@@ -121,14 +130,6 @@ export default function ReportsOverview() {
 								'Reports turn raw data into clear stories. They highlight progress, justify fees, and create regular touchpoints that spark new goals. Each delivery invites a conversation, making upsells or scope expansion a natural, value-based next step for both sides.'
 							) }
 						</div>
-						<Button
-							__next40pxDefaultSize
-							variant="secondary"
-							className="reports-overview__button"
-							onClick={ handleViewExampleReport }
-						>
-							{ translate( 'View an example report' ) }
-						</Button>
 					</PageSectionColumns.Column>
 					<PageSectionColumns.Column alignCenter>
 						<img src={ whyImage } alt="" />

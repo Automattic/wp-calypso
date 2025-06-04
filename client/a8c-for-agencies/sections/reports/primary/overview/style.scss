@@ -50,20 +50,24 @@ $report-header-background-color: #b9e4fe;
 	}
 }
 
-button.components-button.reports-overview__button.is-secondary {
-	&,
-	&:hover,
-	&:focus,
-	&:focus-visible {
-		color: var( --color-primary-60 );
-		background-color: var( --color-surface );
-		border: none;
-		outline: none;
-		box-shadow: none;
-		text-decoration: none;
+.reports-overview__buttons-container {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+
+	a.components-button {
+		width: 100%;
+		text-wrap: balance;
+	}
+
+	@include break-wide {
+		flex-direction: row;
+
+		a.components-button {
+			width: auto;
+		}
 	}
 }
-
 
 .reports-overview__example-report-modal {
 	.components-modal__content {
