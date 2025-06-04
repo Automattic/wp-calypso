@@ -1,7 +1,7 @@
 import { translate, getLocaleSlug } from 'i18n-calypso';
 import { sortBy, camelCase, get, filter, map, flatten } from 'lodash';
 import moment from 'moment';
-import { PUBLICIZE_SERVICES_LABEL_ICON } from './constants';
+import { PUBLICIZE_SERVICES_LABEL_ICON, STATS_ARCHIVE_KEYS } from './constants';
 
 /**
  * Returns a string of the moment format for the period. Supports store stats
@@ -414,26 +414,68 @@ export const normalizers = {
 
 		const archives = Object.keys( archivesData ).reduce( ( accumulatedArchives, archiveKey ) => {
 			const archiveItems = archivesData[ archiveKey ];
-			const hasItems = archiveItems && archiveItems.length > 0;
 
-			if ( hasItems ) {
-				let totalViews = 0;
+			// Taxonomy items are grouped by taxonomy term.
+			if ( 'tax' === archiveKey ) {
+				let totaTaxViews = 0;
 
-				const children = archiveItems.map( ( item ) => {
-					totalViews += item.views;
+				const taxItems = Object.keys( archiveItems ).map( ( taxKey ) => {
+					const taxItem = archiveItems[ taxKey ];
+					const hasSubItems = Array.isArray( taxItem ) && taxItem.length > 0;
+					let itemViews = 0;
+
+					if ( hasSubItems ) {
+						const children = taxItem.map( ( item ) => {
+							itemViews += item.views;
+							totaTaxViews += item.views;
+
+							return {
+								label: item.value,
+								value: item.views,
+								link: item.href,
+							};
+						} );
+
+						return {
+							label: taxKey,
+							value: itemViews,
+							children,
+						};
+					}
 
 					return {
-						label: item.href,
-						value: item.views,
-						link: item.href,
+						label: taxKey,
+						value: itemViews,
 					};
 				} );
 
 				accumulatedArchives.push( {
-					label: archiveKey,
-					value: totalViews,
-					children,
+					label: STATS_ARCHIVE_KEYS[ archiveKey ],
+					value: totaTaxViews,
+					children: taxItems,
 				} );
+			} else {
+				const hasItems = Array.isArray( archiveItems ) && archiveItems.length > 0;
+
+				if ( hasItems ) {
+					let totalViews = 0;
+
+					const children = archiveItems.map( ( item ) => {
+						totalViews += item.views;
+
+						return {
+							label: [ 'home', 'search' ].includes( archiveKey ) ? item.href : item.value,
+							value: item.views,
+							link: item.href,
+						};
+					} );
+
+					accumulatedArchives.push( {
+						label: STATS_ARCHIVE_KEYS[ archiveKey ],
+						value: totalViews,
+						children,
+					} );
+				}
 			}
 
 			return accumulatedArchives;
