@@ -37,6 +37,7 @@ import getConciergeUserBlocked from 'calypso/state/selectors/get-concierge-user-
 import getSites from 'calypso/state/selectors/get-sites';
 import { getSiteId } from 'calypso/state/sites/selectors';
 import { AppState } from 'calypso/types';
+import { PurchasesByOtherAdminsNotice } from '../purchases-list/purchases-by-other-admins-notice';
 import PurchasesSite from '../purchases-site';
 import { PurchasesDataViews, MembershipsDataViews } from './purchases-data-view';
 import './style.scss';
@@ -145,6 +146,7 @@ function PurchasesListDataView(
 							eventName="calypso_no_purchases_upgrade_nudge_impression"
 							eventProperties={ commonEventProps }
 						/>
+						<PurchasesByOtherAdminsNotice sites={ sites } />
 						<EmptyContent
 							title={ translate( 'Looking to upgrade?' ) }
 							line={ translate(
