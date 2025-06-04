@@ -60,8 +60,30 @@ const HelpCenterContainer: React.FC< Container > = ( {
 	}, [ handleClose ] );
 
 	const focusReturnRef = useFocusReturn();
-
 	const cardMergeRefs = useMergeRefs( [ nodeRef, focusReturnRef ] );
+
+	// Keep focus within the help center when clicking "Still need help"
+	useEffect( () => {
+		const helpCenter = nodeRef.current;
+		if ( ! helpCenter ) {
+			return;
+		}
+
+		const handleFocusOut = ( event: FocusEvent ) => {
+			const relatedTarget = event.relatedTarget as HTMLElement;
+			if ( ! helpCenter.contains( relatedTarget ) && show && ! isMinimized ) {
+				// Focus back on the help center container
+				helpCenter.focus();
+			}
+		};
+
+		helpCenter.setAttribute( 'tabindex', '-1' );
+		document.addEventListener( 'focusout', handleFocusOut );
+
+		return () => {
+			document.removeEventListener( 'focusout', handleFocusOut );
+		};
+	}, [ show, isMinimized ] );
 
 	const shouldCloseOnEscapeRef = useRef( false );
 
