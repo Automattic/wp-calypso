@@ -485,7 +485,7 @@ __metadata:
     gettext-parser: "npm:^6.0.0"
     lodash: "npm:^4.17.21"
     mini-css-extract-plugin: "npm:^1.6.2"
-    postcss-custom-properties: "npm:^12.0.0"
+    postcss-custom-properties: "npm:^12.1.11"
     postcss-loader: "npm:^6.2.1"
     recursive-copy: "npm:^2.0.14"
     sass: "npm:1.54.0"
@@ -517,7 +517,7 @@ __metadata:
     "@automattic/color-studio": "npm:^4.1.0"
     "@types/node": "npm:^22.10.10"
     postcss: "npm:^8.5.3"
-    postcss-custom-properties: "npm:^12.0.0"
+    postcss-custom-properties: "npm:^12.1.11"
     sass: "npm:1.54.0"
   languageName: unknown
   linkType: soft
@@ -1671,7 +1671,7 @@ __metadata:
     html-webpack-plugin: "npm:^5.6.3"
     i18n-calypso: "workspace:^"
     postcss: "npm:^8.5.3"
-    postcss-custom-properties: "npm:^12.0.0"
+    postcss-custom-properties: "npm:^12.1.11"
     prop-types: "npm:^15.8.1"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
@@ -28594,7 +28594,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"postcss-custom-properties@npm:^12.0.0":
+"postcss-custom-properties@npm:^12.1.11":
   version: 12.1.11
   resolution: "postcss-custom-properties@npm:12.1.11"
   dependencies:
@@ -37312,7 +37312,7 @@ __metadata:
     photon: "workspace:^"
     postcss: "npm:^8.5.3"
     postcss-cli: "npm:^9.0.1"
-    postcss-custom-properties: "npm:^12.0.0"
+    postcss-custom-properties: "npm:^12.1.11"
     prettier: "npm:wp-prettier@3.0.3"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
