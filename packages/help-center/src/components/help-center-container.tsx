@@ -89,13 +89,6 @@ const HelpCenterContainer: React.FC< Container > = ( {
 
 		observer.observe( helpCenter, { childList: true, subtree: true } );
 
-		// Handle Zendesk messenger opening
-		if ( window.zE ) {
-			window.zE( 'messenger:on', 'open', () => {
-				helpCenter.focus();
-			} );
-		}
-
 		return () => {
 			observer.disconnect();
 		};
