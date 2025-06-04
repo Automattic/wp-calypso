@@ -497,7 +497,7 @@ export const normalizers = {
 			return accumulatedArchives;
 		}, [] );
 
-		return archives;
+		return archives.sort( ( a, b ) => b.value - a.value );
 	},
 
 	/**
