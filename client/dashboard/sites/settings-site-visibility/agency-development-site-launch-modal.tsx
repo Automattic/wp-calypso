@@ -55,9 +55,10 @@ export default function AgencyDevelopmentSiteLaunchModal( {
 				<Text as="p">
 					{ __( "After launch, we'll bill your agency in the next billing cycle." ) }
 				</Text>
-				<Text as="p">{ __( 'Ready to launch?' ) }</Text>
 				<HStack justify="flex-end" spacing={ 2 }>
-					<Button onClick={ onClose }>{ __( 'Cancel' ) }</Button>
+					<Button disabled={ isLaunching } onClick={ onClose }>
+						{ __( 'Cancel' ) }
+					</Button>
 					<Button variant="primary" isBusy={ isLaunching } onClick={ handleLaunch }>
 						{ __( 'Launch site' ) }
 					</Button>

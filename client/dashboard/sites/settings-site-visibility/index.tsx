@@ -27,12 +27,10 @@ export default function SiteVisibilitySettings( { siteSlug }: { siteSlug: string
 		if ( site.launch_status === 'unlaunched' && site.is_a4a_dev_site ) {
 			return (
 				<>
-					<Notice>
-						<LaunchAgencyDevelopmentSiteForm
-							site={ site }
-							onLaunchClick={ () => setIsAgencyDevelopmentSiteLaunchModalOpen( true ) }
-						/>
-					</Notice>
+					<LaunchAgencyDevelopmentSiteForm
+						site={ site }
+						onLaunchClick={ () => setIsAgencyDevelopmentSiteLaunchModalOpen( true ) }
+					/>
 					{ isAgencyDevelopmentSiteLaunchModalOpen && (
 						<AgencyDevelopmentSiteLaunchModal
 							site={ site }
