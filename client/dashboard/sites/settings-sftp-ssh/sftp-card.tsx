@@ -80,17 +80,17 @@ export default function SftpCard( {
 		},
 		{
 			id: 'port',
-			label: __( 'Port' ),
+			label: __( 'port' ),
 			Edit: ClipboardInputControlEdit,
 		},
 		{
 			id: 'username',
-			label: __( 'Username' ),
+			label: __( 'username' ),
 			Edit: ClipboardInputControlEdit,
 		},
 		{
 			id: 'password',
-			label: __( 'Password' ),
+			label: __( 'password' ),
 			Edit: ( { field, data } ) => {
 				const { getValue } = field;
 				const value = getValue( { item: data } );
@@ -107,7 +107,7 @@ export default function SftpCard( {
 					/>
 				) : (
 					<BaseControl
-						label={ __( 'Password' ) }
+						label={ field.label }
 						help={ __( 'To maintain security, you must reset your password to view it.' ) }
 						__nextHasNoMarginBottom
 						children={ null }
