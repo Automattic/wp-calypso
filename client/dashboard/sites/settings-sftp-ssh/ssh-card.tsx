@@ -112,7 +112,7 @@ export default function SshCard( {
 	const hasProfileSshKeys = profileSshKeys && profileSshKeys.length > 0;
 	const [ formData, setFormData ] = useState< SshCardFormData >( {
 		connection_command: `ssh ${ sftpUsers[ 0 ]?.username }@ssh.wp.com`,
-		ssh_key: hasProfileSshKeys ? 'default' : '',
+		ssh_key: 'default',
 	} );
 
 	const userKeyIsAttached = useMemo( () => {
