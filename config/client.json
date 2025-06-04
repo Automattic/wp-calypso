@@ -20,6 +20,7 @@
 	"oauth_url",
 	"readerFollowingSource",
 	"siftscience_key",
+	"stats/archive-breakdown",
 	"stats/chart-library",
 	"stats/empty-module-traffic",
 	"stats/real-time-tab",

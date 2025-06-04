@@ -55,7 +55,6 @@
 		"jetpack/manage-sites-v2-menu": false,
 		"jetpack/search-product": true,
 		"jetpack/server-credentials-advanced-flow": true,
-		"jetpack/simplify-pricing-structure": false,
 		"jetpack/standalone-plugin-onboarding-update-v1": true,
 		"jetpack/streamline-license-purchases": false,
 		"layout/app-banner": false,

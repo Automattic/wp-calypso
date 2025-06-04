@@ -1074,10 +1074,10 @@ const CheckoutSummarySubtotal = styled( CheckoutSummaryLineItem )`
 		display: flex;
 		flex: 0 0 auto;
 		gap: 4px;
-		margin-left: 12px;
+		margin-left: auto;
 
 		.rtl & {
-			margin-right: 12px;
+			margin-right: auto;
 			margin-left: 0;
 		}
 

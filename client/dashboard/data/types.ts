@@ -94,6 +94,7 @@ export interface Site {
 	subscribers_count: number;
 	// Can be undefined for deleted sites.
 	options?: SiteOptions;
+	is_a4a_dev_site: boolean;
 	is_a8c: boolean;
 	is_deleted: boolean;
 	is_coming_soon: boolean;
@@ -110,6 +111,16 @@ export interface Site {
 	site_owner: number;
 	jetpack: boolean;
 	jetpack_modules: string[] | null;
+}
+
+export interface AgencyBlog {
+	name: string;
+	existing_wpcom_license_count: number;
+	referral_status: 'active' | 'pending' | 'canceled' | 'archived';
+	prices: {
+		actual_price: number;
+		currency: string;
+	};
 }
 
 export interface Purchase {
@@ -167,9 +178,14 @@ export interface EngagementStats {
 }
 
 export interface SiteSettings {
+	is_fully_managed_agency_site?: boolean;
 	wpcom_site_visibility?: 'coming-soon' | 'public' | 'private';
+	wpcom_discourage_search_engines?: boolean;
+	wpcom_prevent_third_party_sharing?: boolean;
 	wpcom_gifting_subscription?: boolean;
 	wpcom_performance_report_url?: string;
+	wpcom_legacy_contact?: string;
+	wpcom_locked_mode?: boolean;
 }
 
 export interface BasicMetricsData {
@@ -210,3 +226,15 @@ export interface SiteTransferConfirmation {
 	email_sent: boolean;
 	new_owner_email: string;
 }
+
+export type SiteResetContentSummary = {
+	post_count: number;
+	page_count: number;
+	media_count: number;
+	plugin_count: number;
+};
+
+export type SiteResetStatus = {
+	status: 'in-progress' | 'ready' | 'completed';
+	progress: number;
+};

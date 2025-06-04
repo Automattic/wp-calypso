@@ -4,7 +4,7 @@ import { __ } from '@wordpress/i18n';
 import { shield } from '@wordpress/icons';
 import { siteDefensiveModeQuery } from '../../app/queries';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
-import { canUpdateDefensiveMode } from '.';
+import { canUpdateDefensiveMode } from '../../utils/site-features';
 import type { Site } from '../../data/types';
 import type { Density } from '@automattic/components/src/summary-button/types';
 

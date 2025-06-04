@@ -217,7 +217,7 @@ class StatsSummary extends Component {
 				break;
 
 			case 'posts':
-				title = translate( 'Posts & pages' );
+				title = StatsStrings.posts.title;
 				path = 'posts';
 				statType = 'statsTopPosts';
 				summaryView = (

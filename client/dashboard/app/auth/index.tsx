@@ -4,7 +4,6 @@ import { fetchUser } from '../../data';
 import type { User } from '../../data/types';
 
 export const AUTH_QUERY_KEY = [ 'auth', 'user' ];
-export const TWO_STEP_QUERY_KEY = [ 'me', 'two-step' ];
 
 interface AuthContextType {
 	user: User;
@@ -28,6 +27,9 @@ export function AuthProvider( { children }: { children: React.ReactNode } ) {
 		queryFn: fetchUser,
 		staleTime: 30 * 60 * 1000, // Consider auth valid for 30 minutes
 		retry: false, // Don't retry on 401 errors
+		meta: {
+			persist: false,
+		},
 	} );
 
 	if ( userIsError ) {

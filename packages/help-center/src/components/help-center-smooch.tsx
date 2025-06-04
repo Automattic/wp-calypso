@@ -81,8 +81,7 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 	const { data: authData } = useAuthenticateZendeskMessaging( allowChat, 'messenger' );
 
 	const { isMessagingScriptLoaded } = useLoadZendeskMessaging( allowChat, allowChat );
-	const { setIsChatLoaded, setZendeskClientId, setLastMessageReceivedAt } =
-		useDataStoreDispatch( HELP_CENTER_STORE );
+	const { setIsChatLoaded, setZendeskClientId } = useDataStoreDispatch( HELP_CENTER_STORE );
 	const getUnreadNotifications = useGetUnreadConversations();
 
 	const getUnreadListener = useCallback(
@@ -91,17 +90,13 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 				playNotificationSound();
 			}
 
-			if ( setLastMessageReceivedAt ) {
-				setLastMessageReceivedAt( Date.now() );
-			}
-
 			if ( isHelpCenterShown ) {
 				return;
 			}
 
 			Smooch.getConversationById( data?.conversation?.id ).then( () => getUnreadNotifications() );
 		},
-		[ isHelpCenterShown, areSoundNotificationsEnabled, setLastMessageReceivedAt ]
+		[ isHelpCenterShown, areSoundNotificationsEnabled ]
 	);
 
 	const clientIdListener = useCallback(

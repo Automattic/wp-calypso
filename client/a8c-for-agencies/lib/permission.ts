@@ -4,6 +4,11 @@ import {
 	PARTNER_DIRECTORY_DASHBOARD_SLUG,
 } from 'calypso/a8c-for-agencies/sections/partner-directory/constants';
 import {
+	A4A_REPORTS_LINK,
+	A4A_REPORTS_OVERVIEW_LINK,
+	A4A_REPORTS_DASHBOARD_LINK,
+} from 'calypso/a8c-for-agencies/sections/reports/constants';
+import {
 	A4A_LANDING_LINK,
 	A4A_FEEDBACK_LINK,
 	A4A_OVERVIEW_LINK,
@@ -63,6 +68,10 @@ const MEMBER_ACCESSIBLE_PATHS: Record< string, string[] > = {
 	[ A4A_SITES_LINK_WALKTHROUGH_TOUR ]: [ 'a4a_read_managed_sites' ],
 	[ A4A_SITES_LINK_ADD_NEW_SITE_TOUR ]: [ 'a4a_read_managed_sites' ],
 	[ A4A_SITES_CONNECT_URL_LINK ]: [ 'a4a_read_managed_sites' ],
+	// TODO: Add the correct capability for Reports
+	[ A4A_REPORTS_LINK ]: [ 'a4a_read_managed_sites' ],
+	[ A4A_REPORTS_OVERVIEW_LINK ]: [ 'a4a_read_managed_sites' ],
+	[ A4A_REPORTS_DASHBOARD_LINK ]: [ 'a4a_read_managed_sites' ],
 	[ A4A_MARKETPLACE_LINK ]: [ 'a4a_read_marketplace' ],
 	[ A4A_MARKETPLACE_PRODUCTS_LINK ]: [ 'a4a_read_marketplace' ],
 	[ A4A_MARKETPLACE_HOSTING_LINK ]: [ 'a4a_read_marketplace' ],

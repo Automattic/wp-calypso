@@ -58,22 +58,16 @@ export const UserMessage = ( {
 
 	const hasCannedResponse = message.context?.flags?.canned_response;
 	const isRequestingHumanSupport = message.context?.flags?.forward_to_human_support ?? false;
-	const hasFeedback = !! message?.rating_value;
 	const isBot = message.role === 'bot';
-	const isConnectedToZendesk = chat?.provider === 'zendesk';
-	const isPositiveFeedback =
-		hasFeedback && message && message.rating_value && +message.rating_value === 1;
-
-	const showExtraContactOptions =
-		( hasFeedback && ! isPositiveFeedback ) || isRequestingHumanSupport;
 
 	const showDirectEscalationLink = useMemo( () => {
 		return (
+			canConnectToZendesk &&
 			! chat.conversationId &&
 			userProvidedEnoughInformation( chat?.messages ) &&
 			! interactionHasZendeskEvent( currentSupportInteraction )
 		);
-	}, [ chat.conversationId, currentSupportInteraction, chat?.messages ] );
+	}, [ chat.conversationId, currentSupportInteraction, chat?.messages, canConnectToZendesk ] );
 
 	const forwardMessage = isUserEligibleForPaidSupport
 		? ODIE_FORWARD_TO_ZENDESK_MESSAGE
@@ -91,14 +85,13 @@ export const UserMessage = ( {
 	const displayingThirdPartyMessage =
 		isUserEligibleForPaidSupport && ! canConnectToZendesk && isRequestingHumanSupport;
 
-	const handleContactSupportClick = ( destination: string ) => {
-		trackEvent( 'chat_get_support', {
-			location: 'user-message',
-			destination,
-		} );
-	};
-
 	const renderExtraContactOptions = () => {
+		const handleContactSupportClick = ( destination: string ) => {
+			trackEvent( 'chat_get_support', {
+				location: 'user-message',
+				destination,
+			} );
+		};
 		return (
 			chat.provider === 'odie' && (
 				<GetSupport onClickAdditionalEvent={ handleContactSupportClick } />
@@ -132,10 +125,12 @@ export const UserMessage = ( {
 					}
 				) }
 			</div>
-			{ ! isConnectedToZendesk && (
+			{ ! interactionHasZendeskEvent( currentSupportInteraction ) && (
 				<>
 					{ showDirectEscalationLink && <DirectEscalationLink messageId={ message.message_id } /> }
-					<WasThisHelpfulButtons message={ message } isDisliked={ isDisliked } />
+					{ ! message.rating_value && (
+						<WasThisHelpfulButtons message={ message } isDisliked={ isDisliked } />
+					) }
 				</>
 			) }
 		</>
@@ -158,12 +153,12 @@ export const UserMessage = ( {
 			{ ! isMessageWithoutEscalationOption && isBot && (
 				<div
 					className={ clsx( 'chat-feedback-wrapper', {
-						'chat-feedback-wrapper-no-extra-contact': ! showExtraContactOptions,
+						'chat-feedback-wrapper-no-extra-contact': ! isRequestingHumanSupport,
 						'chat-feedback-wrapper-third-party-cookies': displayingThirdPartyMessage,
 					} ) }
 				>
 					<Sources message={ message } />
-					{ showExtraContactOptions && renderExtraContactOptions() }
+					{ isRequestingHumanSupport && renderExtraContactOptions() }
 					{ isMessageShowingDisclaimer && renderDisclaimers() }
 				</div>
 			) }

@@ -1,20 +1,62 @@
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { Card, CardBody } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { useState } from 'react';
 import { siteQuery, siteSettingsMutation, siteSettingsQuery } from '../../app/queries';
+import { Notice } from '../../components/notice';
 import PageLayout from '../../components/page-layout';
 import SettingsPageHeader from '../settings-page-header';
-import { LaunchForm } from './launch-form';
+import AgencyDevelopmentSiteLaunchModal from './agency-development-site-launch-modal';
+import { LaunchAgencyDevelopmentSiteForm, LaunchForm } from './launch-form';
 import { PrivacyForm } from './privacy-form';
+import './style.scss';
 
 export default function SiteVisibilitySettings( { siteSlug }: { siteSlug: string } ) {
 	const { data: site } = useQuery( siteQuery( siteSlug ) );
 	const { data: settings } = useQuery( siteSettingsQuery( siteSlug ) );
 	const mutation = useMutation( siteSettingsMutation( siteSlug ) );
 
+	const [ isAgencyDevelopmentSiteLaunchModalOpen, setIsAgencyDevelopmentSiteLaunchModalOpen ] =
+		useState( false );
+
 	if ( ! settings || ! site ) {
 		return null;
 	}
+
+	const renderContent = () => {
+		if ( site.launch_status === 'unlaunched' && site.is_a4a_dev_site ) {
+			return (
+				<>
+					<LaunchAgencyDevelopmentSiteForm
+						site={ site }
+						onLaunchClick={ () => setIsAgencyDevelopmentSiteLaunchModalOpen( true ) }
+					/>
+					{ isAgencyDevelopmentSiteLaunchModalOpen && (
+						<AgencyDevelopmentSiteLaunchModal
+							site={ site }
+							onClose={ () => setIsAgencyDevelopmentSiteLaunchModalOpen( false ) }
+						/>
+					) }
+				</>
+			);
+		}
+
+		if ( site.launch_status === 'unlaunched' ) {
+			return (
+				<Notice>
+					<LaunchForm site={ site } />
+				</Notice>
+			);
+		}
+
+		return (
+			<Card>
+				<CardBody>
+					<PrivacyForm settings={ settings } mutation={ mutation } />
+				</CardBody>
+			</Card>
+		);
+	};
 
 	return (
 		<PageLayout
@@ -26,15 +68,7 @@ export default function SiteVisibilitySettings( { siteSlug }: { siteSlug: string
 				/>
 			}
 		>
-			<Card>
-				<CardBody>
-					{ site.launch_status === 'unlaunched' ? (
-						<LaunchForm site={ site } />
-					) : (
-						<PrivacyForm settings={ settings } mutation={ mutation } />
-					) }
-				</CardBody>
-			</Card>
+			{ renderContent() }
 		</PageLayout>
 	);
 }

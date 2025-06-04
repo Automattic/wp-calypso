@@ -1,4 +1,5 @@
 import page from '@automattic/calypso-router';
+import { edit, external, seen, unseen } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
 import { size, map } from 'lodash';
 import PropTypes from 'prop-types';
@@ -8,7 +9,6 @@ import ConversationFollowButton from 'calypso/blocks/conversation-follow-button'
 import { shouldShowConversationFollowButton } from 'calypso/blocks/conversation-follow-button/helper';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
-import ReaderExternalIcon from 'calypso/reader/components/icons/external-icon';
 import ReaderFollowConversationIcon from 'calypso/reader/components/icons/follow-conversation-icon';
 import ReaderFollowingConversationIcon from 'calypso/reader/components/icons/following-conversation-icon';
 import ReaderFollowButton from 'calypso/reader/follow-button';
@@ -295,6 +295,17 @@ class ReaderPostEllipsisMenu extends Component {
 				position={ position }
 				onClick={ this.stopPropagation }
 			>
+				{ this.props.showFollow && (
+					<ReaderFollowButton
+						tagName={ PopoverMenuItem }
+						siteUrl={ post.feed_URL || post.site_URL }
+						followSource={ followSource }
+						iconSize={ 24 }
+						followingLabel={ translate( 'Subscribed' ) }
+						onFollowToggle={ this.openSuggestedFollowsModal }
+					/>
+				) }
+
 				{ showConversationFollowButton && (
 					<ConversationFollowButton
 						tagName={ PopoverMenuItem }
@@ -302,15 +313,20 @@ class ReaderPostEllipsisMenu extends Component {
 						postId={ postId }
 						post={ post }
 						followSource={ followSource }
-						followIcon={ ReaderFollowConversationIcon( { iconSize: 20 } ) }
-						followingIcon={ ReaderFollowingConversationIcon( { iconSize: 20 } ) }
+						followIcon={ ReaderFollowConversationIcon( { iconSize: 24 } ) }
+						followingIcon={ ReaderFollowingConversationIcon( { iconSize: 24 } ) }
 					/>
 				) }
 
 				{ isEligibleForUnseen( { isWPForTeamsItem, currentRoute, hasOrganization } ) &&
 					canBeMarkedAsSeen( { post, posts } ) &&
 					post.is_seen && (
-						<PopoverMenuItem onClick={ this.markAsUnSeen } icon="not-visible">
+						<PopoverMenuItem
+							onClick={ this.markAsUnSeen }
+							icon={ unseen }
+							useWordPressIcon
+							iconSize={ 24 }
+						>
 							{ size( posts ) > 0 && translate( 'Mark all as unseen' ) }
 							{ size( posts ) === 0 && translate( 'Mark as unseen' ) }
 						</PopoverMenuItem>
@@ -319,7 +335,12 @@ class ReaderPostEllipsisMenu extends Component {
 				{ isEligibleForUnseen( { isWPForTeamsItem, currentRoute, hasOrganization } ) &&
 					canBeMarkedAsSeen( { post, posts } ) &&
 					! post.is_seen && (
-						<PopoverMenuItem onClick={ this.markAsSeen } icon="visible">
+						<PopoverMenuItem
+							onClick={ this.markAsSeen }
+							icon={ seen }
+							useWordPressIcon
+							iconSize={ 24 }
+						>
 							{ size( posts ) > 0 && translate( 'Mark all as seen' ) }
 							{ size( posts ) === 0 && translate( 'Mark as seen' ) }
 						</PopoverMenuItem>
@@ -328,27 +349,18 @@ class ReaderPostEllipsisMenu extends Component {
 				{ this.props.showVisitPost && post.URL && (
 					<PopoverMenuItem
 						onClick={ this.visitPost }
-						icon={ ReaderExternalIcon( { iconSize: 20 } ) }
+						icon={ external }
+						useWordPressIcon
+						iconSize={ 24 }
 					>
 						{ translate( 'Visit post' ) }
 					</PopoverMenuItem>
 				) }
 
 				{ this.props.showEditPost && isEditPossible && (
-					<PopoverMenuItem onClick={ this.editPost } icon="pencil">
+					<PopoverMenuItem onClick={ this.editPost } icon={ edit } useWordPressIcon iconSize={ 24 }>
 						{ translate( 'Edit post' ) }
 					</PopoverMenuItem>
-				) }
-
-				{ this.props.showFollow && (
-					<ReaderFollowButton
-						tagName={ PopoverMenuItem }
-						siteUrl={ post.feed_URL || post.site_URL }
-						followSource={ followSource }
-						iconSize={ 20 }
-						followingLabel={ translate( 'Unsubscribe' ) }
-						onFollowToggle={ this.openSuggestedFollowsModal }
-					/>
 				) }
 
 				{ isTeamMember && site && <hr className="popover__menu-separator" /> }

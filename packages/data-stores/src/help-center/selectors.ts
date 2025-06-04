@@ -19,5 +19,4 @@ export const getOdieBotNameSlug = ( state: State ) => state.odieBotNameSlug;
 export const getCurrentSupportInteraction = ( state: State ) => state.currentSupportInteraction;
 export const getAllowPremiumSupport = ( state: State ) => state.allowPremiumSupport;
 export const getHelpCenterOptions = ( state: State ) => state.helpCenterOptions;
-export const getLastMessageReceivedAt = ( state: State ) => state.lastMessageReceivedAt;
 export const getContextTerm = ( state: State ) => state.contextTerm;

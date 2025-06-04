@@ -3,7 +3,7 @@
 @import "@automattic/typography/styles/fonts";
 @import "@automattic/components/src/styles/mixins";
 @import "@automattic/components/src/styles/typography";
-@import "@automattic/components/src/highlight-cards/variables";
+@import "calypso/my-sites/stats/components/highlight-cards/variables";
 
 $card-padding: 24px;
 $border-radius: 5px; // stylelint-disable-line scales/radii

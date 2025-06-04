@@ -1,4 +1,4 @@
-import { useTranslate, TranslateResult } from 'i18n-calypso';
+import { useTranslate, TranslateResult, fixMe } from 'i18n-calypso';
 import { capitalize } from 'lodash';
 import A4APlusWpComLogo from 'calypso/a8c-for-agencies/components/a4a-plus-wpcom-logo';
 import VisitSite from 'calypso/blocks/visit-site';
@@ -8,8 +8,6 @@ import WooCommerceConnectCartHeader from 'calypso/components/woocommerce-connect
 import WPCloudLogo from 'calypso/components/wp-cloud-logo';
 import { getPluginTitle } from 'calypso/lib/login';
 import {
-	isStudioAppOAuth2Client,
-	isCrowdsignalOAuth2Client,
 	isJetpackCloudOAuth2Client,
 	isA4AOAuth2Client,
 	isBlazeProOAuth2Client,
@@ -24,7 +22,6 @@ interface LoginHeaderProps {
 	currentQuery: Record< string, string >;
 	fromSite: string | null;
 	isFromAkismet: boolean;
-	isFromMigrationPlugin: boolean;
 	isFromAutomatticForAgenciesPlugin: boolean;
 	isGravPoweredClient: boolean;
 	isGravPoweredLoginPage: boolean;
@@ -61,7 +58,6 @@ export function getHeaderText(
 	action: string,
 	oauth2Client: { title: string; icon: string; name: string } | null,
 	isWooJPC: boolean,
-	isFromMigrationPlugin: boolean,
 	isJetpack: boolean,
 	isWCCOM: boolean,
 	isFromAkismet: boolean,
@@ -77,13 +73,18 @@ export function getHeaderText(
 	let headerText = translate( 'Log in to your account' );
 
 	if ( isSocialFirst ) {
-		headerText =
-			oauth2Client && isStudioAppOAuth2Client( oauth2Client )
-				? translate( 'Log in to {{span}}%(client)s{{/span}} with WordPress.com', {
-						args: { client: oauth2Client.name },
+		const clientName = isFromAkismet ? 'Akismet' : oauth2Client?.name;
+
+		headerText = clientName
+			? ( fixMe( {
+					text: 'Log in to {{span}}%(client)s{{/span}} with WordPress.com',
+					newCopy: translate( 'Log in to {{span}}%(client)s{{/span}} with WordPress.com', {
+						args: { client: clientName },
 						components: { span: <span className="login-header-text__client-name" /> },
-				  } )
-				: translate( 'Log in to WordPress.com' );
+					} ),
+					oldCopy: translate( 'Log in to WordPress.com' ),
+			  } ) as TranslateResult )
+			: translate( 'Log in to WordPress.com' );
 	}
 
 	if ( twoFactorAuthType === 'authenticator' ) {
@@ -162,14 +163,6 @@ export function getHeaderText(
 			}
 		}
 
-		if ( isCrowdsignalOAuth2Client( oauth2Client ) ) {
-			headerText = translate( 'Sign in to %(clientTitle)s', {
-				args: {
-					clientTitle: oauth2Client.title,
-				},
-			} );
-		}
-
 		if ( isGravPoweredClient ) {
 			headerText = translate( 'Login to %(clientTitle)s', {
 				args: { clientTitle: oauth2Client.title },
@@ -188,16 +181,10 @@ export function getHeaderText(
 		} else {
 			headerText = translate( 'Log in to your account' );
 		}
-	} else if ( isFromMigrationPlugin ) {
-		headerText = translate( 'Log in to your account' );
 	} else if ( isJetpack && ! isFromAutomatticForAgenciesPlugin ) {
 		headerText = translate(
 			'Log in or create a WordPress.com account to supercharge your site with powerful growth, performance, and security tools.'
 		);
-	}
-
-	if ( isFromAkismet ) {
-		headerText = translate( 'Log in to Akismet with WordPress.com' );
 	}
 
 	if ( isFromAutomatticForAgenciesPlugin ) {
@@ -212,7 +199,6 @@ export function LoginHeader( {
 	currentQuery,
 	fromSite,
 	isFromAkismet,
-	isFromMigrationPlugin,
 	isFromAutomatticForAgenciesPlugin,
 	isGravPoweredClient,
 	isGravPoweredLoginPage,
@@ -245,7 +231,6 @@ export function LoginHeader( {
 		action,
 		oauth2Client,
 		isWooJPC,
-		isFromMigrationPlugin,
 		isJetpack,
 		isWCCOM,
 		isFromAkismet,

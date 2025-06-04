@@ -8,6 +8,7 @@ import {
 	Button,
 } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
+import { useDispatch } from '@wordpress/data';
 import { __, sprintf } from '@wordpress/i18n';
 import { download, reusableBlock, Icon } from '@wordpress/icons';
 import devSiteBanner from 'calypso/assets/images/a8c-for-agencies/dev-site-banner.svg';
@@ -44,11 +45,6 @@ const offerClick = () => {
 		action: 'offer',
 	} );
 };
-const bigSkyClick = () => {
-	recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_item', {
-		action: 'big-sky',
-	} );
-};
 
 function AddNewSite( { context }: AddNewSiteProps ) {
 	const isDesktop = useViewportMatch( 'medium' );
@@ -60,6 +56,7 @@ function AddNewSite( { context }: AddNewSiteProps ) {
 			numberFormatOptions: { style: 'percent' },
 		} )
 	);
+	const { setShowHelpCenter } = useDispatch( 'automattic/help-center' );
 
 	return (
 		<Wrapper alignment="flex-start" style={ { padding: '16px' } } spacing={ 6 }>
@@ -77,7 +74,12 @@ function AddNewSite( { context }: AddNewSiteProps ) {
 					description={ __(
 						'Prompt, edit, and launch WordPress websites with Artificial Intelligence.'
 					) }
-					onClick={ bigSkyClick }
+					onClick={ () => {
+						setShowHelpCenter( false ); // Close the help center
+						recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_item', {
+							action: 'big-sky',
+						} );
+					} }
 					href={ `/setup/ai-site-builder?source=${ context }&ref=new-site-popover` }
 				/>
 				<MenuItem

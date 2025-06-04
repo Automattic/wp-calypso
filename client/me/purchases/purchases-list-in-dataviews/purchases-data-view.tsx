@@ -1,92 +1,251 @@
-import { Card } from '@automattic/components';
-import { Purchases } from '@automattic/data-stores';
-import { DataViews, View } from '@wordpress/dataviews';
-import { LocalizeProps } from 'i18n-calypso';
+import page from '@automattic/calypso-router';
+import { Gridicon, Card } from '@automattic/components';
+import { Purchases, SiteDetails } from '@automattic/data-stores';
+import { DESKTOP_BREAKPOINT } from '@automattic/viewport';
+import { useBreakpoint } from '@automattic/viewport-react';
+import { DataViews, View, Filter, filterSortAndPaginate } from '@wordpress/dataviews';
+import { useTranslate } from 'i18n-calypso';
+import { useEffect, useMemo, useState } from 'react';
 import { MembershipSubscription } from 'calypso/lib/purchases/types';
+import { reduxDispatch } from 'calypso/lib/redux-bridge';
+import { setRoute } from 'calypso/state/route/actions';
 import {
 	usePurchasesFieldDefinitions,
 	useMembershipsFieldDefinitions,
 } from './hooks/use-field-definitions';
 
-export const purchasesDataView = {
+const purchasesDesktopFields = [ 'site', 'product', 'status', 'payment-method' ];
+const purchasesMobileFields = [ 'product' ];
+export const purchasesDataView: View = {
 	type: 'table',
 	page: 1,
 	perPage: 5,
-	titleField: 'site',
-	fields: [ 'product', 'status', 'payment-method' ],
+	titleField: 'purchase-id',
+	showTitle: false,
+	fields: purchasesDesktopFields,
 	sort: {
-		field: 'site',
+		field: 'product',
 		direction: 'desc',
 	},
 	layout: {},
-} as View;
+};
 
-export function PurchasesDataViews( props: {
-	purchases: Purchases.Purchase[];
-	translate: LocalizeProps[ 'translate' ];
+function usePreservePurchasesFiltersInUrl( {
+	currentView,
+	setView,
+}: {
+	currentView: View;
+	setView: ( setter: ( currentView: View ) => View ) => void;
 } ) {
-	const { purchases } = props;
-	const onChangeView = () => {
-		return;
-	};
+	const urlSiteFilterKey = 'siteFilter';
+	const urlTypeFilterKey = 'typeFilter';
+	const currentUrl = window.location.href;
+	useEffect( () => {
+		const url = new URL( currentUrl );
+		const filters: Filter[] = [];
+		const siteFilterValue = url.searchParams.get( urlSiteFilterKey );
+		const typeFilterValue = url.searchParams.get( urlTypeFilterKey );
+		if ( siteFilterValue ) {
+			filters.push( { value: siteFilterValue, operator: 'is', field: 'site' } );
+		}
+		if ( typeFilterValue ) {
+			filters.push( { value: typeFilterValue, operator: 'is', field: 'type' } );
+		}
+		if ( filters.length > 0 ) {
+			setView( ( currentView ) => ( {
+				...currentView,
+				filters,
+			} ) );
+		}
+	}, [ setView, currentUrl ] );
+	useEffect( () => {
+		const url = new URL( window.location.href );
+		const siteFilter = currentView.filters?.find( ( filter ) => filter.field === 'site' );
+		if ( siteFilter ) {
+			url.searchParams.set( urlSiteFilterKey, siteFilter.value );
+		} else {
+			url.searchParams.delete( urlSiteFilterKey );
+		}
+		const typeFilter = currentView.filters?.find( ( filter ) => filter.field === 'type' );
+		if ( typeFilter ) {
+			url.searchParams.set( urlTypeFilterKey, typeFilter.value );
+		} else {
+			url.searchParams.delete( urlTypeFilterKey );
+		}
+		window.history.pushState( undefined, '', url );
+		// getPreviousRoute will not find this updated route unless we set it
+		// explicitly. It only records the route when the page first loads.
+		// This seems like a bug but it appears to be how it works.
+		reduxDispatch( setRoute( window.location.pathname, Object.fromEntries( url.searchParams ) ) );
+	}, [ currentView ] );
+}
+
+export function PurchasesDataViews( {
+	purchases,
+	sites,
+}: {
+	purchases: Purchases.Purchase[];
+	sites: SiteDetails[];
+} ) {
+	const isDesktop = useBreakpoint( DESKTOP_BREAKPOINT );
+	const translate = useTranslate();
+	const [ currentView, setView ] = useState( purchasesDataView );
+
+	// Hide fields at mobile width
+	useEffect( () => {
+		if ( isDesktop && currentView.fields === purchasesMobileFields ) {
+			setView( { ...currentView, fields: purchasesDesktopFields } );
+			return;
+		}
+		if ( ! isDesktop && currentView.fields === purchasesDesktopFields ) {
+			setView( { ...currentView, fields: purchasesMobileFields } );
+			return;
+		}
+	}, [ isDesktop, currentView, setView ] );
+
+	// Keep track of the current view params in the URL and restore them when the page loads.
+	usePreservePurchasesFiltersInUrl( { currentView, setView } );
+
+	const sitesWithPurchases = useMemo( () => {
+		return Array.from(
+			purchases.reduce( ( collected, purchase ) => {
+				const siteForPurchase = sites.find( ( site ) => site.ID === purchase.siteId );
+				if ( siteForPurchase ) {
+					collected.add( siteForPurchase );
+				}
+				return collected;
+			}, new Set< SiteDetails >() )
+		);
+	}, [ sites, purchases ] );
+
+	const purchasesDataFields = usePurchasesFieldDefinitions( {
+		sites: sitesWithPurchases,
+	} );
+	const { data: adjustedPurchases, paginationInfo } = useMemo( () => {
+		return filterSortAndPaginate( purchases, currentView, purchasesDataFields );
+	}, [ purchases, currentView, purchasesDataFields ] );
+
+	const actions = useMemo(
+		() => [
+			{
+				id: 'manage-purchase',
+				label: translate( 'Manage this purchase', { textOnly: true } ),
+				isPrimary: true,
+				icon: <Gridicon icon="chevron-right" />,
+				isEligible: ( item: Purchases.Purchase ) => Boolean( item.domain && item.id ),
+				callback: ( items: Purchases.Purchase[] ) => {
+					const siteUrl = items[ 0 ].domain;
+					const subscriptionId = items[ 0 ].id;
+					if ( ! siteUrl ) {
+						// eslint-disable-next-line no-console
+						console.error( 'Cannot display manage purchase page for subscription without site' );
+						return;
+					}
+					if ( ! subscriptionId ) {
+						// eslint-disable-next-line no-console
+						console.error( 'Cannot display manage purchase page for subscription without ID' );
+						return;
+					}
+					page( `/me/purchases/${ siteUrl }/${ subscriptionId }` );
+				},
+			},
+		],
+		[ translate ]
+	);
 
 	const getItemId = ( item: Purchases.Purchase ) => {
 		return item.id.toString();
 	};
-	const purchasesDataFields = usePurchasesFieldDefinitions();
 	return (
 		<Card id="purchases-list" className="section-content" tagName="section">
 			<DataViews
-				data={ purchases }
+				data={ adjustedPurchases }
 				fields={ purchasesDataFields }
-				view={ purchasesDataView }
-				onChangeView={ onChangeView }
+				view={ currentView }
+				onChangeView={ setView }
 				defaultLayouts={ { table: {} } }
-				actions={ undefined }
+				actions={ actions }
 				getItemId={ getItemId }
-				paginationInfo={ { totalItems: 100, totalPages: 10 } }
+				paginationInfo={ paginationInfo }
 			/>
 		</Card>
 	);
 }
 
-export const membershipDataView = {
+const membershipsDesktopFields = [ 'site', 'product', 'status' ];
+const membershipsMobileFields = [ 'product' ];
+export const membershipDataView: View = {
 	type: 'table',
 	page: 1,
 	perPage: 5,
-	titleField: 'site',
-	fields: [ 'product', 'status' ],
+	titleField: 'purchase-id',
+	showTitle: false,
+	fields: membershipsDesktopFields,
 	sort: {
-		field: 'site',
+		field: 'product',
 		direction: 'desc',
 	},
 	layout: {},
-} as View;
+};
 
-export function MembershipsDataViews( props: {
-	memberships: MembershipSubscription[];
-	translate: LocalizeProps[ 'translate' ];
-} ) {
-	const { memberships } = props;
-	const onChangeView = () => {
-		return;
-	};
+export function MembershipsDataViews( { memberships }: { memberships: MembershipSubscription[] } ) {
+	const membershipsDataFields = useMembershipsFieldDefinitions();
+	const [ currentView, setView ] = useState( membershipDataView );
+	const isDesktop = useBreakpoint( DESKTOP_BREAKPOINT );
+	const translate = useTranslate();
+
+	// Hide fields at mobile width
+	useEffect( () => {
+		if ( isDesktop && currentView.fields === membershipsMobileFields ) {
+			setView( { ...currentView, fields: membershipsDesktopFields } );
+			return;
+		}
+		if ( ! isDesktop && currentView.fields === membershipsDesktopFields ) {
+			setView( { ...currentView, fields: membershipsMobileFields } );
+			return;
+		}
+	}, [ isDesktop, currentView, setView ] );
+
+	const actions = useMemo(
+		() => [
+			{
+				id: 'manage-purchase',
+				label: translate( 'Manage this purchase', { textOnly: true } ),
+				isPrimary: true,
+				icon: <Gridicon icon="chevron-right" />,
+				isEligible: ( item: MembershipSubscription ) => Boolean( item.ID ),
+				callback: ( items: MembershipSubscription[] ) => {
+					const subscriptionId = items[ 0 ].ID;
+					if ( ! subscriptionId ) {
+						// eslint-disable-next-line no-console
+						console.error( 'Cannot display manage purchase page for subscription without ID' );
+						return;
+					}
+					page( `/me/purchases/other/${ subscriptionId }` );
+				},
+			},
+		],
+		[ translate ]
+	);
+
+	const { data: adjustedMemberships, paginationInfo } = useMemo( () => {
+		return filterSortAndPaginate( memberships, currentView, membershipsDataFields );
+	}, [ memberships, currentView, membershipsDataFields ] );
 
 	const getItemId = ( item: MembershipSubscription ) => {
 		return item.ID;
 	};
-	const membershipsDataFields = useMembershipsFieldDefinitions();
 	return (
 		<Card id="purchases-list" className="section-content" tagName="section">
 			<DataViews
-				data={ memberships }
+				data={ adjustedMemberships }
 				fields={ membershipsDataFields }
-				view={ membershipDataView }
-				onChangeView={ onChangeView }
+				view={ currentView }
+				onChangeView={ setView }
 				defaultLayouts={ { table: {} } }
-				actions={ undefined }
+				actions={ actions }
 				getItemId={ getItemId }
-				paginationInfo={ { totalItems: 100, totalPages: 10 } }
+				paginationInfo={ paginationInfo }
 			/>
 		</Card>
 	);
