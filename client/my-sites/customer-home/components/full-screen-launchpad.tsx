@@ -51,6 +51,7 @@ export const FullScreenLaunchpad = ( {
 		numberOfSteps,
 		completedSteps,
 		launchpadTitle,
+		launchpadScreen,
 		hasChecklist,
 		refetch,
 	} = useMyHomeCardLaunchpad( {
@@ -104,7 +105,10 @@ export const FullScreenLaunchpad = ( {
 		data: { checklist },
 	} = useSortedLaunchpadTasks( siteSlug, checklistSlug, launchpadContext );
 
-	if ( isDismissed ) {
+	if (
+		isDismissed ||
+		launchpadScreen !== 'full' // Only display if the launchpad screen is set to 'full'.
+	) {
 		return null;
 	}
 

@@ -23,7 +23,13 @@ export function useMyHomeCardLaunchpad( { checklistSlug, launchpadContext }: Use
 	const { mutate: dismiss } = useLaunchpadDismisser( siteSlug, checklistSlug, launchpadContext );
 
 	const {
-		data: { checklist, is_dismissed: isDismissed, is_dismissible: isDismissible, title },
+		data: {
+			checklist,
+			is_dismissed: isDismissed,
+			is_dismissible: isDismissible,
+			launchpad_screen: launchpadScreen,
+			title,
+		},
 		refetch,
 	} = useSortedLaunchpadTasks( siteSlug, checklistSlug, launchpadContext );
 
@@ -48,6 +54,7 @@ export function useMyHomeCardLaunchpad( { checklistSlug, launchpadContext }: Use
 		completedSteps,
 		hasChecklist,
 		launchpadTitle,
+		launchpadScreen,
 		temporaryDismiss,
 		permanentDismiss,
 		refetch,
