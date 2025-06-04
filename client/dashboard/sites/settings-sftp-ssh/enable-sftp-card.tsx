@@ -39,7 +39,7 @@ export default function EnableSftpCard( {
 			onError: () => {
 				createErrorNotice(
 					__(
-						'Sorry, we had a problem retrieving your sftp user details. Please refresh the page and try again.'
+						'Sorry, we had a problem retrieving your SFTP user details. Please refresh the page and try again.'
 					),
 					{
 						type: 'snackbar',
