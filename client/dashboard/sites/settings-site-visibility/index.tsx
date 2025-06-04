@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { siteQuery, siteSettingsMutation, siteSettingsQuery } from '../../app/queries';
 import { Notice } from '../../components/notice';
 import PageLayout from '../../components/page-layout';
+import { PageViewTracker } from '../../components/page-view-tracker';
 import SettingsPageHeader from '../settings-page-header';
 import AgencyDevelopmentSiteLaunchModal from './agency-development-site-launch-modal';
 import { LaunchAgencyDevelopmentSiteForm, LaunchForm } from './launch-form';
@@ -68,6 +69,7 @@ export default function SiteVisibilitySettings( { siteSlug }: { siteSlug: string
 				/>
 			}
 		>
+			<PageViewTracker title="Site > Settings > Site visibility" />
 			{ renderContent() }
 		</PageLayout>
 	);

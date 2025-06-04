@@ -14,6 +14,7 @@ import { useState } from 'react';
 import { getPHPVersions } from 'calypso/data/php-versions';
 import { siteQuery, sitePHPVersionQuery, sitePHPVersionMutation } from '../../app/queries';
 import PageLayout from '../../components/page-layout';
+import { PageViewTracker } from '../../components/page-view-tracker';
 import RequiredSelect from '../../components/required-select';
 import { canUpdatePHPVersion } from '../../utils/site-features';
 import SettingsCallout from '../settings-callout';
@@ -42,6 +43,7 @@ export default function PHPVersionSettings( { siteSlug }: { siteSlug: string } )
 	if ( ! canUpdate ) {
 		return (
 			<PageLayout size="small" header={ <SettingsPageHeader title="PHP" /> }>
+				<PageViewTracker title="Site > Settings > PHP" />
 				<SettingsCallout siteSlug={ siteSlug } />
 			</PageLayout>
 		);
@@ -88,6 +90,7 @@ export default function PHPVersionSettings( { siteSlug }: { siteSlug: string } )
 
 	return (
 		<PageLayout size="small" header={ <SettingsPageHeader title="PHP" /> }>
+			<PageViewTracker title="Site > Settings > PHP" />
 			<Card>
 				<CardBody>
 					<form onSubmit={ handleSubmit }>

@@ -23,6 +23,7 @@ import {
 } from '../../app/queries';
 import Notice from '../../components/notice';
 import PageLayout from '../../components/page-layout';
+import { PageViewTracker } from '../../components/page-view-tracker';
 import SettingsPageHeader from '../settings-page-header';
 import type { Site, SiteSettings } from '../../data/types';
 import type { Field, SimpleFormField } from '@automattic/dataviews';
@@ -167,6 +168,7 @@ export default function SettingsAgency( { siteSlug }: { siteSlug: string } ) {
 				/>
 			}
 		>
+			<PageViewTracker title="Site > Settings > Agency" />
 			{ renderContent() }
 		</PageLayout>
 	);

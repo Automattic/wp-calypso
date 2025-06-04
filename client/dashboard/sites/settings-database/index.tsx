@@ -17,6 +17,7 @@ import { useState } from 'react';
 import { siteQuery } from '../../app/queries';
 import Notice from '../../components/notice';
 import PageLayout from '../../components/page-layout';
+import { PageViewTracker } from '../../components/page-view-tracker';
 import { fetchPhpMyAdminToken } from '../../data';
 import { canAccessPhpMyAdmin } from '../../utils/site-features';
 import SettingsCallout from '../settings-callout';
@@ -47,6 +48,7 @@ export default function SiteDatabaseSettings( { siteSlug }: { siteSlug: string }
 					/>
 				}
 			>
+				<PageViewTracker title="Site > Settings > Database" />
 				<SettingsCallout
 					siteSlug={ siteSlug }
 					icon={ blockTable }

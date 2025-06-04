@@ -18,6 +18,7 @@ import { useState } from 'react';
 import { siteQuery, siteDefensiveModeQuery, siteDefensiveModeMutation } from '../../app/queries';
 import Notice from '../../components/notice';
 import PageLayout from '../../components/page-layout';
+import { PageViewTracker } from '../../components/page-view-tracker';
 import { canUpdateDefensiveMode } from '../../utils/site-features';
 import SettingsPageHeader from '../settings-page-header';
 import type { DefensiveModeSettingsUpdate } from '../../data/types';
@@ -211,6 +212,7 @@ export default function DefensiveModeSettings( { siteSlug }: { siteSlug: string 
 
 	return (
 		<PageLayout size="small" header={ <SettingsPageHeader title={ __( 'Defensive mode' ) } /> }>
+			<PageViewTracker title="Site > Settings > Defensive mode" />
 			{ enabled ? renderEnabled() : renderDisabled() }
 		</PageLayout>
 	);

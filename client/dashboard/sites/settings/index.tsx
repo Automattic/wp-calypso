@@ -3,6 +3,7 @@ import { __ } from '@wordpress/i18n';
 import { siteQuery, siteSettingsQuery } from '../../app/queries';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import { PageViewTracker } from '../../components/page-view-tracker';
 import { SectionHeader } from '../../components/section-header';
 import { SummaryButtonList } from '../../components/summary-button-list';
 import AgencySettingsSummary from '../settings-agency/summary';
@@ -29,6 +30,7 @@ export default function SiteSettings( { siteSlug }: { siteSlug: string } ) {
 
 	return (
 		<PageLayout size="small" header={ <PageHeader title={ __( 'Settings' ) } /> }>
+			<PageViewTracker title="Site > Settings" />
 			<SectionHeader title={ __( 'General' ) } />
 			<SummaryButtonList>
 				<SiteVisibilitySettingsSummary site={ site } />

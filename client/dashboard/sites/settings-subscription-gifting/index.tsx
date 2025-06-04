@@ -15,6 +15,7 @@ import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { siteQuery, siteSettingsMutation, siteSettingsQuery } from '../../app/queries';
 import PageLayout from '../../components/page-layout';
+import { PageViewTracker } from '../../components/page-view-tracker';
 import SettingsPageHeader from '../settings-page-header';
 import { hasSubscriptionGiftingFeature } from './utils';
 import type { SiteSettings } from '../../data/types';
@@ -96,6 +97,7 @@ export default function SubscriptionGiftingSettings( { siteSlug }: { siteSlug: s
 				/>
 			}
 		>
+			<PageViewTracker title="Site > Settings > Subscription gifting" />
 			<Card>
 				<CardBody>
 					<form onSubmit={ handleSubmit }>

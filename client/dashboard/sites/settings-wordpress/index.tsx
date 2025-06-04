@@ -20,6 +20,7 @@ import {
 } from '../../app/queries';
 import Notice from '../../components/notice';
 import PageLayout from '../../components/page-layout';
+import { PageViewTracker } from '../../components/page-view-tracker';
 import RequiredSelect from '../../components/required-select';
 import { canUpdateWordPressVersion } from '../../utils/site-features';
 import { getFormattedWordPressVersion } from '../../utils/wp-version';
@@ -141,6 +142,7 @@ export default function WordPressVersionSettings( { siteSlug }: { siteSlug: stri
 
 	return (
 		<PageLayout size="small" header={ <SettingsPageHeader title="WordPress" /> }>
+			<PageViewTracker title="Site > Settings > WordPress" />
 			{ canUpdate ? renderForm() : renderNotice() }
 		</PageLayout>
 	);
