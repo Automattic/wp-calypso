@@ -12,14 +12,14 @@ const MasterbarStyled = ( {
 	canGoBack = true,
 	contact = <DefaultMasterbarContact />,
 	showContact = true,
-	isDomainForGravatar,
+	isDomainForGravatar = false,
 }: {
 	onClick?: () => void;
 	backText?: string;
 	canGoBack?: boolean;
 	contact?: JSX.Element | null;
 	showContact?: boolean;
-	isDomainForGravatar: boolean;
+	isDomainForGravatar?: boolean;
 } ) => (
 	<Masterbar className="checkout-thank-you__masterbar">
 		<Global
