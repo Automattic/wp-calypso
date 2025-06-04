@@ -58,20 +58,14 @@ export const OdieSendMessageButton = () => {
 	const divContainerRef = useRef< HTMLDivElement >( null );
 	const inputRef = useRef< HTMLTextAreaElement >( null );
 	const attachmentButtonRef = useRef< HTMLElement >( null );
-	const {
-		trackEvent,
-		chat,
-		addMessage,
-		isUserEligibleForPaidSupport,
-		canConnectToZendesk,
-		isChatLoaded,
-	} = useOdieAssistantContext();
+	const { trackEvent, chat, addMessage, isUserEligibleForPaidSupport, canConnectToZendesk } =
+		useOdieAssistantContext();
 	const cantTransferToZendesk =
 		( chat.messages?.[ chat.messages.length - 1 ]?.context?.flags?.forward_to_human_support &&
 			! canConnectToZendesk ) ??
 		false;
-	const cantSendMessageToZendesk =
-		chat?.provider === 'zendesk' && ( ! canConnectToZendesk || ! isChatLoaded );
+	const cantConnectToZendeskChat = chat?.provider === 'zendesk' && ! canConnectToZendesk;
+	const isEligibleForZendeskChat = chat?.provider === 'zendesk' && ! isUserEligibleForPaidSupport;
 	const sendMessage = useSendChatMessage();
 	const isChatBusy = chat.status === 'loading' || chat.status === 'sending';
 	const [ isMessageSizeValid, setIsMessageSizeValid ] = useState( true );
@@ -92,7 +86,11 @@ export const OdieSendMessageButton = () => {
 	const { isPending: isAttachingFile, mutateAsync: attachFileToConversation } =
 		useAttachFileToConversation();
 	const shouldDisableInputField =
-		isChatBusy || isAttachingFile || cantTransferToZendesk || cantSendMessageToZendesk;
+		isChatBusy ||
+		isAttachingFile ||
+		cantTransferToZendesk ||
+		cantConnectToZendeskChat ||
+		isEligibleForZendeskChat;
 
 	const textAreaPlaceholder = getTextAreaPlaceholder( isChatBusy, cantTransferToZendesk );
 
@@ -218,10 +216,20 @@ export const OdieSendMessageButton = () => {
 					{ __( 'Message exceeds 4096 characters limit.' ) }
 				</div>
 			) }
-			{ cantSendMessageToZendesk && (
+			{ cantConnectToZendeskChat && (
 				<OdieNotice>
 					<span>
-						{ __( "We can't connect you to support at this moment.", __i18n_text_domain__ ) }
+						{ __(
+							"We can't connect you to support at this moment. Please try again later.",
+							__i18n_text_domain__
+						) }
+					</span>
+				</OdieNotice>
+			) }
+			{ isEligibleForZendeskChat && (
+				<OdieNotice>
+					<span>
+						{ __( 'You are no longer eligible for chat support.', __i18n_text_domain__ ) }
 					</span>
 				</OdieNotice>
 			) }
