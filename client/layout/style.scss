@@ -506,7 +506,7 @@ body.is-mobile-app-view {
 	// Checkout page only
 	&.is-section-checkout {
 		.masterbar__secure-checkout {
-			column-gap: 1em;
+			column-gap: 8px;
 		}
 
 		.checkout-step__number-completed {
