@@ -1,3 +1,4 @@
+import blazeProLogo from 'calypso/assets/images/blaze/blaze-pro-logo.png';
 import akismetLogo from 'calypso/assets/images/icons/akismet-logo.svg';
 import crowdsignalLogo from 'calypso/assets/images/icons/crowdsignal.svg';
 import gravatarLogo from 'calypso/assets/images/icons/gravatar.svg';
@@ -8,6 +9,7 @@ import {
 	isGravPoweredOAuth2Client,
 	isStudioAppOAuth2Client,
 	isWPJobManagerOAuth2Client,
+	isBlazeProOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { useSelector } from 'calypso/state';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
@@ -28,6 +30,8 @@ const HeadingLogo = ( { isFromAkismet }: Props ) => {
 		logo = <img src={ akismetLogo } alt="Akismet Logo" />;
 	} else if ( isWPJobManagerOAuth2Client( oauth2Client ) ) {
 		logo = <img src={ wpJobManagerLogo } alt="WP Job Manager Logo" />;
+	} else if ( isBlazeProOAuth2Client( oauth2Client ) ) {
+		logo = <img src={ blazeProLogo } alt="Blaze Pro Logo" />;
 	} else if ( isGravPoweredOAuth2Client( oauth2Client ) ) {
 		/**
 		 * Leave last to avoid overriding other grav-powered client logos.

@@ -326,7 +326,7 @@ export class Login extends Component {
 			return null;
 		}
 
-		if ( ( isWoo || isBlazePro ) && isLoginView ) {
+		if ( isWoo && isLoginView ) {
 			return <LoginFooter lostPasswordLink={ this.getLostPasswordLink() } shouldRenderTos />;
 		}
 
@@ -434,7 +434,7 @@ export class Login extends Component {
 		} = this.props;
 
 		const canonicalUrl = localizeUrl( 'https://wordpress.com/log-in', locale );
-		const isSocialFirst = isWhiteLogin && ! isWoo && ! isBlazePro;
+		const isSocialFirst = isWhiteLogin && ! isWoo;
 
 		const jetpackLogo = (
 			<div className="magic-login__gutenboarding-wordpress-logo">
@@ -521,7 +521,8 @@ export class Login extends Component {
 			isStudioAppOAuth2Client( oauth2Client ) ||
 			isFromAkismet ||
 			isCrowdsignalOAuth2Client( oauth2Client ) ||
-			isGravPoweredClient;
+			isGravPoweredClient ||
+			isBlazePro;
 
 		return (
 			<>

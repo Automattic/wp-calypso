@@ -78,6 +78,8 @@ export function getHeaderText(
 			clientName = 'Akismet';
 		} else if ( isWPJobManagerOAuth2Client( oauth2Client ) ) {
 			clientName = 'WP Job Manager';
+		} else if ( isBlazeProOAuth2Client( oauth2Client ) ) {
+			clientName = 'Blaze Pro';
 		}
 
 		headerText = clientName
@@ -166,10 +168,6 @@ export function getHeaderText(
 					'Howdy! Log into the Automattic Partner Portal with your WordPress.com account.'
 				);
 			}
-		}
-
-		if ( isBlazeProOAuth2Client( oauth2Client ) ) {
-			headerText = translate( 'Log in to your Blaze Pro account' );
 		}
 	} else if ( isWooJPC ) {
 		const isLostPasswordFlow = currentQuery.lostpassword_flow === 'true';
