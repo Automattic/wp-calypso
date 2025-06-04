@@ -7,11 +7,11 @@
 	position: relative;
 
 	.language-yaml {
-		color: var(--studio-wordpress-blue-60) !important;
+		color: var( --studio-wordpress-blue-60 ) !important;
 		text-wrap: pretty;
 	}
 
 	.token.key.atrule {
-		color: var(--studio-green) !important;
+		color: var( --studio-green ) !important;
 	}
 }
