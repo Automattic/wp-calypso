@@ -1,7 +1,7 @@
 import { DotcomFeatures } from '../data/constants';
 import type { Site } from '../data/types';
 
-const hasPlanFeature = ( site: Site, feature: DotcomFeatures ) => {
+export const hasPlanFeature = ( site: Site, feature: DotcomFeatures ) => {
 	if ( ! site.plan ) {
 		return false;
 	}
@@ -22,13 +22,9 @@ export const canSetStaticFile404Handling = ( site: Site ): boolean => site.is_wp
 export const canGetPrimaryDataCenter = ( site: Site ): boolean => site.is_wpcom_atomic;
 
 export const canUpdateHundredYearPlanFeatures = ( site: Site ): boolean => {
-	if ( ! site.plan ) {
-		return false;
-	}
-
-	const { plan } = site;
-	return [ DotcomFeatures.LEGACY_CONTACT, DotcomFeatures.LOCKED_MODE ].some( ( feature ) =>
-		plan.features.active.includes( feature )
+	return (
+		hasPlanFeature( site, DotcomFeatures.LEGACY_CONTACT ) ||
+		hasPlanFeature( site, DotcomFeatures.LOCKED_MODE )
 	);
 };
 

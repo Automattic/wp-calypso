@@ -11,7 +11,8 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
-import type { SiteSettings } from '../../data/types';
+import SitePreviewLinks from '../site-preview-links';
+import type { Site, SiteSettings } from '../../data/types';
 import type { Field, Form } from '@automattic/dataviews';
 import type { UseMutationResult } from '@tanstack/react-query';
 
@@ -93,9 +94,11 @@ const form = {
 } satisfies Form;
 
 export function PrivacyForm( {
+	site,
 	settings,
 	mutation,
 }: {
+	site: Site;
 	settings: SiteSettings;
 	mutation: UseMutationResult< Partial< SiteSettings >, Error, Partial< SiteSettings >, unknown >;
 } ) {
@@ -156,6 +159,8 @@ export function PrivacyForm( {
 						} );
 					} }
 				/>
+				{ settings.wpcom_site_visibility === 'coming-soon' &&
+					formData.wpcom_site_visibility === 'coming-soon' && <SitePreviewLinks site={ site } /> }
 				<HStack justify="flex-start">
 					<Button
 						variant="primary"

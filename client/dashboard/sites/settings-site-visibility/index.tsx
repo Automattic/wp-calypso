@@ -3,9 +3,9 @@ import { Card, CardBody } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
 import { siteQuery, siteSettingsMutation, siteSettingsQuery } from '../../app/queries';
-import { Notice } from '../../components/notice';
 import PageLayout from '../../components/page-layout';
 import SettingsPageHeader from '../settings-page-header';
+import SitePreviewLinks from '../site-preview-links';
 import AgencyDevelopmentSiteLaunchModal from './agency-development-site-launch-modal';
 import { LaunchAgencyDevelopmentSiteForm, LaunchForm } from './launch-form';
 import { PrivacyForm } from './privacy-form';
@@ -43,16 +43,17 @@ export default function SiteVisibilitySettings( { siteSlug }: { siteSlug: string
 
 		if ( site.launch_status === 'unlaunched' ) {
 			return (
-				<Notice>
+				<>
 					<LaunchForm site={ site } />
-				</Notice>
+					{ site.is_coming_soon && <SitePreviewLinks site={ site } title={ __( 'Share site' ) } /> }
+				</>
 			);
 		}
 
 		return (
 			<Card>
 				<CardBody>
-					<PrivacyForm settings={ settings } mutation={ mutation } />
+					<PrivacyForm site={ site } settings={ settings } mutation={ mutation } />
 				</CardBody>
 			</Card>
 		);

@@ -5,6 +5,7 @@ export enum DotcomFeatures {
 	LOCKED_MODE = 'locked-mode',
 	SFTP = 'sftp',
 	SSH = 'ssh',
+	SITE_PREVIEW_LINKS = 'site-preview-links',
 }
 
 export const SITE_FIELDS = [
