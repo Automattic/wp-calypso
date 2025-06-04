@@ -440,6 +440,11 @@ body.is-mobile-app-view {
 			sans-serif !important;
 	}
 
+	.gravatar-text-logo {
+		width: 119px;
+		height: 22px;
+	}
+
 	h1.wp-brand-font,
 	.checkout-title,
 	h1.thank-you__header-title {
@@ -495,15 +500,6 @@ body.is-mobile-app-view {
 			left: 24px;
 			width: 130px;
 			height: 24px;
-		}
-	}
-
-	// Checkout pages only
-	&.is-section-checkout,
-	&.is-section-checkout-thank-you {
-		.gravatar-text-logo {
-			width: 119px;
-			height: 22px;
 		}
 	}
 
