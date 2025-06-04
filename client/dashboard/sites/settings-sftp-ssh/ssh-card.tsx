@@ -10,6 +10,7 @@ import {
 	Card,
 	CardBody,
 	ExternalLink,
+	SelectControl,
 	ToggleControl,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
@@ -28,7 +29,6 @@ import {
 	profileSshKeysQuery,
 } from '../../app/queries';
 import ClipboardInputControl from '../../components/clipboard-input-control';
-import RequiredSelect from '../../components/required-select';
 import { SectionHeader } from '../../components/section-header';
 import type { SftpUser, SiteSshKey, ProfileSshKey } from '../../data/types';
 import type { DataFormControlProps, Field } from '@automattic/dataviews';
@@ -82,7 +82,7 @@ const SshKeyCard = ( {
 	);
 };
 
-// TODO: Add ReauthRequired
+// TODO: Redirect to /reauth-required if the token is expired.
 export default function SshCard( {
 	siteSlug,
 	sftpUsers,
@@ -104,9 +104,10 @@ export default function SshCard( {
 	const detachSshKeyMutation = useMutation( siteSshKeysDetachMutation( siteSlug ) );
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const userLocale = user.locale_variant || user.language || 'en';
+	const hasProfileSshKeys = profileSshKeys && profileSshKeys.length > 0;
 	const [ formData, setFormData ] = useState< SshCardFormData >( {
 		connection_command: `ssh ${ sftpUsers[ 0 ]?.username }@ssh.wp.com`,
-		ssh_key: 'default',
+		ssh_key: hasProfileSshKeys ? 'default' : '',
 	} );
 
 	const userKeyIsAttached = useMemo( () => {
@@ -115,8 +116,6 @@ export default function SshCard( {
 		}
 		return !! siteSshKeys.find( ( { user_login }: SiteSshKey ) => user_login === user.username );
 	}, [ siteSshKeys, user.username ] );
-
-	const showSshKeysSelect = ! userKeyIsAttached && profileSshKeys && profileSshKeys.length > 0;
 
 	const handleCopy = ( label: string ) => {
 		createSuccessNotice(
@@ -225,11 +224,40 @@ export default function SshCard( {
 		{
 			id: 'ssh_key',
 			label: __( 'SSH key' ),
-			Edit: siteSshKeys && siteSshKeys.length > 0 ? SshKeysControl : RequiredSelect, // TODO: use DataForm's validation when available. See: DOTCOM-13298
-			elements: profileSshKeys?.map( ( profileSshKey: ProfileSshKey ) => ( {
-				label: `${ user.username }-${ profileSshKey.name }`,
-				value: profileSshKey.name,
-			} ) ),
+			Edit: ( { data, field, onChange, hideLabelFromVision } ) => {
+				if ( siteSshKeys && siteSshKeys.length > 0 ) {
+					return <SshKeysControl field={ field } />;
+				}
+
+				return (
+					<SelectControl
+						label={ field.label }
+						value={ field.getValue( { item: data } ) ?? '' }
+						help={ field.description }
+						options={ field.elements }
+						disabled={ ! hasProfileSshKeys }
+						onChange={ ( newValue: any ) =>
+							onChange( {
+								[ field.id ]: newValue,
+							} )
+						}
+						__next40pxDefaultSize
+						__nextHasNoMarginBottom
+						hideLabelFromVision={ hideLabelFromVision }
+					/>
+				);
+			},
+			elements: hasProfileSshKeys
+				? profileSshKeys.map( ( profileSshKey: ProfileSshKey ) => ( {
+						label: `${ user.username }-${ profileSshKey.name }`,
+						value: profileSshKey.name,
+				  } ) )
+				: [
+						{
+							label: __( 'No SSH keys available' ),
+							value: '',
+						},
+				  ],
 		},
 	];
 
@@ -275,11 +303,12 @@ export default function SshCard( {
 						/>
 					) }
 				</VStack>
-				{ showSshKeysSelect && (
+				{ sshEnabled && ! userKeyIsAttached && (
 					<HStack justify="flex-start" style={ { padding: '8px 0' } }>
 						<Button
 							variant="primary"
 							isBusy={ attachSshKeyMutation.isPending }
+							disabled={ ! hasProfileSshKeys }
 							onClick={ handleAttachSshKey }
 						>
 							{ __( 'Attach SSH key to site' ) }
