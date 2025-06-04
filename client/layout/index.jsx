@@ -414,9 +414,11 @@ export default withCurrentRoute(
 			( sidebarType === SidebarType.UnifiedSiteDefault ||
 				sidebarType === SidebarType.UnifiedSiteClassic );
 
+		const isCheckoutSection =
+			currentSection?.name === 'checkout' || currentSection?.name === 'checkout-thank-you';
 		const isDomainForGravatar =
 			currentRoute.startsWith( '/start/domain-for-gravatar' ) ||
-			( currentSection?.name === 'checkout' && currentQuery?.isGravatarDomain === '1' );
+			( isCheckoutSection && currentQuery?.isGravatarDomain === '1' );
 
 		return {
 			masterbarIsHidden,

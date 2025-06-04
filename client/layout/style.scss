@@ -441,7 +441,8 @@ body.is-mobile-app-view {
 	}
 
 	h1.wp-brand-font,
-	.checkout-title {
+	.checkout-title,
+	h1.thank-you__header-title {
 		font-family:
 			'SF Pro Display',
 			-apple-system,
@@ -457,14 +458,23 @@ body.is-mobile-app-view {
 
 	h1.wp-brand-font,
 	.checkout-title,
+	h1.thank-you__header-title,
 	.wp-checkout-order-summary__label,
 	.wp-checkout-order-summary__total-price {
 		font-weight: 700 !important;
 	}
 
 	.domain-suggestion__action.is-primary:not( :disabled ),
-	.checkout-button.is-status-primary:not( :disabled ) {
+	.checkout-button.is-status-primary:not( :disabled ),
+	.components-button.is-primary:not( :disabled ) {
 		background-color: #1d4fc4;
+		border-color: #1d4fc4;
+
+		&:hover,
+		&:focus {
+			background-color: lighten( #1d4fc4, 10% );
+			border-color: lighten( #1d4fc4, 10% );
+		}
 
 		&.is-busy {
 			background-image: linear-gradient(
@@ -489,12 +499,16 @@ body.is-mobile-app-view {
 	}
 
 	// Checkout pages only
-	&.is-section-checkout {
+	&.is-section-checkout,
+	&.is-section-checkout-thank-you {
 		.gravatar-text-logo {
 			width: 119px;
 			height: 22px;
 		}
+	}
 
+	// Checkout page only
+	&.is-section-checkout {
 		.masterbar__secure-checkout {
 			column-gap: 1em;
 		}
@@ -506,6 +520,14 @@ body.is-mobile-app-view {
 
 		.checkout__summary-features ul > li > svg {
 			fill: #1d4fc4;
+		}
+	}
+
+	// Checkout thank you page only
+	&.is-section-checkout-thank-you {
+		.gravatar-text-logo {
+			margin-left: 24px;
+			align-self: center;
 		}
 	}
 }

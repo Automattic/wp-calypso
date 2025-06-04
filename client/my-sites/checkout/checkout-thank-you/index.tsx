@@ -56,6 +56,7 @@ import { fetchReceipt } from 'calypso/state/receipts/actions';
 import { getReceiptById } from 'calypso/state/receipts/selectors';
 import getAtomicTransfer from 'calypso/state/selectors/get-atomic-transfer';
 import getCheckoutUpgradeIntent from 'calypso/state/selectors/get-checkout-upgrade-intent';
+import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getCustomizeOrEditFrontPageUrl from 'calypso/state/selectors/get-customize-or-edit-front-page-url';
 import { requestSite } from 'calypso/state/sites/actions';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
@@ -129,6 +130,7 @@ export interface CheckoutThankYouConnectedProps {
 	customizeUrl: string | null | undefined;
 	site: SiteDetails | null | undefined;
 	siteDomains: ResponseDomain[] | null | undefined;
+	isDomainForGravatar: boolean;
 	fetchAtomicTransfer: ( siteId: number ) => void;
 	fetchSitePlugins: ( siteId: number ) => void;
 	fetchReceipt: ( receiptId: number ) => void;
@@ -481,7 +483,7 @@ export class CheckoutThankYou extends Component<
 	};
 
 	getMasterBar = () => {
-		const { translate } = this.props;
+		const { translate, isDomainForGravatar } = this.props;
 		const purchases = getPurchases( this.props );
 		const wasEcommercePlanPurchased = purchases.some( isEcommerce );
 
@@ -494,6 +496,7 @@ export class CheckoutThankYou extends Component<
 				backText={ translate( 'Back to dashboard' ) }
 				canGoBack={ !! siteId && ! wasEcommercePlanPurchased } // Back button is hidden for E-Commcerce Plans as a workaround to avoid taking users back to the loading page.
 				showContact
+				isDomainForGravatar={ isDomainForGravatar }
 			/>
 		);
 	};
@@ -723,6 +726,7 @@ export default connect(
 					: undefined,
 			site: siteId ? getSite( state, siteId ) : null,
 			siteDomains: siteId ? getDomainsBySiteId( state, siteId ) : null,
+			isDomainForGravatar: getCurrentQueryArguments( state )?.isGravatarDomain === '1',
 		};
 	},
 	{
