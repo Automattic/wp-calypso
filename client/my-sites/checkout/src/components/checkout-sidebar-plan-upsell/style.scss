@@ -23,12 +23,9 @@
 	max-width: 384px;
 	width: 100%;
 }
-.promo-card.checkout-sidebar-plan-features-upsell {
-	margin-bottom: 0;
-
-	.action-panel__body {
-		overflow: visible;
-	}
+.promo-card.checkout-sidebar-plan-upsell-streamlined .action-panel__body {
+	overflow: visible;
+	color: var(--studio-gray-100);
 }
 
 .checkout-sidebar-plan-upsell__plan-grid {

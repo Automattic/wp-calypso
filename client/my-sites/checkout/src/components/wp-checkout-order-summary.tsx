@@ -43,8 +43,6 @@ import styled from '@emotion/styled';
 import { Icon, reusableBlock } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import * as React from 'react';
-import PromoCard from 'calypso/components/promo-section/promo-card';
-import PromoCardCTA from 'calypso/components/promo-section/promo-card/cta';
 import { hasFreeCouponTransfersOnly } from 'calypso/lib/cart-values/cart-items';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
@@ -89,7 +87,7 @@ export function WPCheckoutOrderSummary( {
 	showFeaturesList,
 }: {
 	siteId: number | undefined;
-	onChangeSelection: (
+	onChangeSelection?: (
 		uuid: string,
 		productSlug: string,
 		productId: number,
@@ -105,15 +103,6 @@ export function WPCheckoutOrderSummary( {
 	const isStreamlinedPrice = isStreamlinedPriceCheckoutTreatment(
 		streamlinedPriceExperimentAssignment
 	);
-	const featuresList = showFeaturesList && (
-		<CheckoutSummaryFeaturedList
-			responseCart={ responseCart }
-			siteId={ siteId }
-			isCartUpdating={ isCartUpdating }
-			onChangeSelection={ onChangeSelection }
-			isStreamlinedPrice={ isStreamlinedPrice }
-		/>
-	);
 	return (
 		<>
 			<CheckoutSummaryCard
@@ -121,10 +110,16 @@ export function WPCheckoutOrderSummary( {
 				data-e2e-cart-is-loading={ isCartUpdating }
 				isStreamlinedPrice={ isStreamlinedPrice }
 			>
-				{ ! isStreamlinedPrice && featuresList }
+				{ showFeaturesList && (
+					<CheckoutSummaryFeaturedList
+						responseCart={ responseCart }
+						siteId={ siteId }
+						isCartUpdating={ isCartUpdating }
+						onChangeSelection={ onChangeSelection }
+					/>
+				) }
 				<CheckoutSummaryPriceList />
 			</CheckoutSummaryCard>
-			{ isStreamlinedPrice && featuresList }
 		</>
 	);
 }
@@ -138,7 +133,7 @@ export function CheckoutSummaryFeaturedList( {
 	responseCart: ResponseCart;
 	siteId: number | undefined;
 	isCartUpdating: boolean;
-	onChangeSelection: (
+	onChangeSelection?: (
 		uuid: string,
 		productSlug: string,
 		productId: number,
@@ -331,7 +326,6 @@ function SwitchToAnnualPlan( {
 	plan,
 	onChangeSelection,
 	linkText,
-	isStreamlinedPrice,
 }: {
 	plan: ResponseCartProduct;
 	onChangeSelection: (
@@ -351,16 +345,6 @@ function SwitchToAnnualPlan( {
 		}
 	};
 	const text = linkText ?? translate( 'Switch to an annual plan and save!' );
-	if ( isStreamlinedPrice ) {
-		return (
-			<PromoCardCTA
-				cta={ {
-					text: String( text ),
-					action: handleClick,
-				} }
-			/>
-		);
-	}
 	return <SwitchToAnnualPlanButton onClick={ handleClick }>{ text }</SwitchToAnnualPlanButton>;
 }
 
@@ -877,7 +861,7 @@ function CheckoutSummarySupportIfAvailable( props: {
 
 function CheckoutSummaryAnnualUpsell( props: {
 	plan: ResponseCartProduct;
-	onChangeSelection: (
+	onChangeSelection?: (
 		uuid: string,
 		productSlug: string,
 		productId: number,
@@ -897,8 +881,26 @@ function CheckoutSummaryAnnualUpsell( props: {
 		isWooExpressPlan( productSlug ) && Boolean( props.plan.introductory_offer_terms?.enabled )
 	);
 	const title = translate( 'Included with an annual plan' );
-	const content = (
-		<>
+	const hasStreamlinedPriceTitle =
+		translate.localeSlug?.startsWith( 'en' ) ||
+		hasEnTranslation( 'Extra features with annual plans' );
+	const streamlinedPriceTitle = hasStreamlinedPriceTitle
+		? translate( 'Extra features with annual plans' )
+		: title;
+
+	return (
+		<CheckoutSummaryFeaturesUpsell>
+			<CheckoutSummaryFeaturesTitle>
+				{ ! props.onChangeSelection ? (
+					<>{ streamlinedPriceTitle }</>
+				) : (
+					<SwitchToAnnualPlan
+						plan={ props.plan }
+						onChangeSelection={ props.onChangeSelection }
+						linkText={ title }
+					/>
+				) }
+			</CheckoutSummaryFeaturesTitle>
 			<CheckoutSummaryFeaturesListWrapper>
 				{ shouldShowFreeDomainUpsell && (
 					<CheckoutSummaryFeaturesListItem isSupported={ false }>
@@ -922,36 +924,14 @@ function CheckoutSummaryAnnualUpsell( props: {
 							</CheckoutSummaryFeaturesListItem>
 					  ) }
 			</CheckoutSummaryFeaturesListWrapper>
-			<SwitchToAnnualPlan
-				plan={ props.plan }
-				onChangeSelection={ props.onChangeSelection }
-				isStreamlinedPrice={ props.isStreamlinedPrice }
-			/>
-		</>
-	);
-
-	return (
-		<>
-			{ props.isStreamlinedPrice ? (
-				<PromoCard
-					title={ title }
-					className="checkout-sidebar-plan-upsell checkout-sidebar-plan-features-upsell checkout-sidebar-plan-upsell-streamlined"
-				>
-					{ content }
-				</PromoCard>
-			) : (
-				<CheckoutSummaryFeaturesUpsell>
-					<CheckoutSummaryFeaturesTitle>
-						<SwitchToAnnualPlan
-							plan={ props.plan }
-							onChangeSelection={ props.onChangeSelection }
-							linkText={ title }
-						/>
-					</CheckoutSummaryFeaturesTitle>
-					{ content }
-				</CheckoutSummaryFeaturesUpsell>
+			{ props.onChangeSelection && (
+				<SwitchToAnnualPlan
+					plan={ props.plan }
+					onChangeSelection={ props.onChangeSelection }
+					linkText={ title }
+				/>
 			) }
-		</>
+		</CheckoutSummaryFeaturesUpsell>
 	);
 }
 
@@ -1001,6 +981,17 @@ const CheckoutSummaryFeaturesUpsell = styled( CheckoutSummaryFeatures )`
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
 		padding: 0 0 24px;
 	}
+
+	.checkout-sidebar-plan-upsell-streamlined & {
+		padding-top: 12px;
+		padding-bottom: 0;
+		color: ${ ( props ) => props.theme.colors.textColorDark };
+		line-height: 1.6;
+
+		svg {
+			opacity: 100%;
+		}
+	}
 `;
 
 const CheckoutSummaryFeaturesTitle = styled.h3`
@@ -1013,6 +1004,10 @@ const CheckoutSummaryFeaturesTitle = styled.h3`
 		font-size: 16px;
 		font-weight: ${ ( props ) => props.theme.weights.bold };
 		text-decoration: none;
+	}
+	.checkout-sidebar-plan-upsell-streamlined & {
+		font-weight: 500;
+		margin-bottom: 6px;
 	}
 `;
 
@@ -1063,6 +1058,10 @@ const CheckoutSummaryFeaturesListItem = styled( 'li' )< { isSupported?: boolean 
 	.rtl & {
 		padding-right: 24px;
 		padding-left: 0;
+	}
+
+	.checkout-sidebar-plan-upsell-streamlined & {
+		color: inherit;
 	}
 `;
 CheckoutSummaryFeaturesListItem.defaultProps = {
