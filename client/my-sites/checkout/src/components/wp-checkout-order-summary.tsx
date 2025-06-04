@@ -923,11 +923,7 @@ function CheckoutSummaryAnnualUpsell( props: {
 					  ) }
 			</CheckoutSummaryFeaturesListWrapper>
 			{ props.onChangeSelection && (
-				<SwitchToAnnualPlan
-					plan={ props.plan }
-					onChangeSelection={ props.onChangeSelection }
-					linkText={ title }
-				/>
+				<SwitchToAnnualPlan plan={ props.plan } onChangeSelection={ props.onChangeSelection } />
 			) }
 		</CheckoutSummaryFeaturesUpsell>
 	);
