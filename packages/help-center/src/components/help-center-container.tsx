@@ -60,6 +60,7 @@ const HelpCenterContainer: React.FC< Container > = ( {
 	}, [ handleClose ] );
 
 	const focusReturnRef = useFocusReturn();
+
 	const cardMergeRefs = useMergeRefs( [ nodeRef, focusReturnRef ] );
 
 	// Keep focus within the help center when entering `Zendesk messaging`
@@ -72,7 +73,6 @@ const HelpCenterContainer: React.FC< Container > = ( {
 		const handleFocusOut = ( event: FocusEvent ) => {
 			const relatedTarget = event.relatedTarget as HTMLElement;
 			if ( ! helpCenter.contains( relatedTarget ) && show && ! isMinimized ) {
-				// Focus back on the help center container
 				helpCenter.focus();
 			}
 		};
