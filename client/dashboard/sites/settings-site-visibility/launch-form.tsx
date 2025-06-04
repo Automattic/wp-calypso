@@ -11,22 +11,21 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { agencyBlogQuery } from '../../app/queries';
-import type { Site } from '../../data/types';
+import type { AgencyBlog, Site } from '../../data/types';
 
-function useAgencyBillingMessage( site: Site ) {
-	const { data, isError } = useQuery( agencyBlogQuery( site.ID ) );
-	if ( ! data ) {
+function getAgencyBillingMessage( agency: AgencyBlog | undefined, isError: boolean ) {
+	if ( ! agency ) {
 		return undefined;
 	}
 
 	const priceInfoIsDefined =
-		Number.isFinite( data.prices?.actual_price ) && typeof data.prices?.currency === 'string';
+		Number.isFinite( agency.prices?.actual_price ) && typeof agency.prices?.currency === 'string';
 
 	if ( isError || ! priceInfoIsDefined ) {
 		return __( "After launch, we'll bill your agency in the next billing cycle." );
 	}
 
-	const { existing_wpcom_license_count: existingWPCOMLicenseCount = 0, name, prices } = data;
+	const { existing_wpcom_license_count: existingWPCOMLicenseCount = 0, name, prices } = agency;
 	const price = formatCurrency( prices.actual_price, prices.currency );
 
 	return createInterpolateElement(
@@ -61,7 +60,12 @@ export function LaunchAgencyDevelopmentSiteForm( {
 	site: Site;
 	onLaunchClick: () => void;
 } ) {
-	const billingMessage = useAgencyBillingMessage( site );
+	const { data, isError } = useQuery( agencyBlogQuery( site.ID ) );
+
+	const billingMessage = getAgencyBillingMessage( data, isError );
+	const isReferralStatusActive = data?.referral_status === 'active';
+	const shouldShowBillingMessage = ! isReferralStatusActive && !! billingMessage;
+	const shouldShowReferClientButton = ! isReferralStatusActive;
 
 	return (
 		<VStack spacing={ 4 } alignment="left">
@@ -70,18 +74,19 @@ export function LaunchAgencyDevelopmentSiteForm( {
 					'Your site hasn\'t been launched yet. It is hidden from visitors behind a "Coming Soon" notice until it is launched.'
 				) }
 			</Text>
-			{ billingMessage && <Text>{ billingMessage }</Text> }
+			{ shouldShowBillingMessage && <Text>{ billingMessage }</Text> }
 			<HStack justify="flex-start">
-				<Button __next40pxDefaultSize variant="primary" onClick={ () => onLaunchClick() }>
+				<Button variant="primary" onClick={ () => onLaunchClick() }>
 					{ __( 'Launch site' ) }
 				</Button>
-				<Button
-					__next40pxDefaultSize
-					variant="secondary"
-					href={ `https://agencies.automattic.com/marketplace/checkout?referral_blog_id=${ site.ID }` }
-				>
-					{ __( 'Refer a client ↗' ) }
-				</Button>
+				{ shouldShowReferClientButton && (
+					<Button
+						variant="secondary"
+						href={ `https://agencies.automattic.com/marketplace/checkout?referral_blog_id=${ site.ID }` }
+					>
+						{ __( 'Refer a client' ) }
+					</Button>
+				) }
 			</HStack>
 		</VStack>
 	);
