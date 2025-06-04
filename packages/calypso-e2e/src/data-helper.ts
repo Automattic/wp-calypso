@@ -214,7 +214,7 @@ export function getTosUploadDestination(): string {
 }
 
 /**
- * Returns a new test email address with the domain name `mailosaur.io` within a specific inbox.
+ * Returns a new test email address with the domain name `mailosaur.net` within a specific inbox.
  *
  * Examples:
  * 	e2eflowtestingpaid1600000@inboxID.mailosaur.net
