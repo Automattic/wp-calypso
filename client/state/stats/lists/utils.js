@@ -4,6 +4,8 @@ import moment from 'moment';
 import { PUBLICIZE_SERVICES_LABEL_ICON } from './constants';
 
 function getArchiveKeyLabel( key ) {
+	const otherLabel = translate( 'Others' );
+
 	const archiveKeyLabelMap = {
 		home: translate( 'Homepage' ),
 		search: translate( 'Searches' ),
@@ -12,10 +14,9 @@ function getArchiveKeyLabel( key ) {
 		tag: translate( 'Tags' ),
 		author: translate( 'Authors' ),
 		tax: translate( 'Aggregated' ),
-		other: translate( 'Others' ),
 	};
 
-	return archiveKeyLabelMap[ key ] || key;
+	return archiveKeyLabelMap[ key ] || otherLabel;
 }
 
 /**
