@@ -70,18 +70,34 @@ const HelpCenterContainer: React.FC< Container > = ( {
 			return;
 		}
 
-		const handleFocusOut = ( event: FocusEvent ) => {
-			const relatedTarget = event.relatedTarget as HTMLElement;
-			if ( ! helpCenter.contains( relatedTarget ) && show && ! isMinimized ) {
-				helpCenter.focus();
-			}
-		};
-
 		helpCenter.setAttribute( 'tabindex', '-1' );
-		document.addEventListener( 'focusout', handleFocusOut );
+
+		// Focus the chat container when it appears
+		const observer = new MutationObserver( ( mutations ) => {
+			for ( const mutation of mutations ) {
+				if ( mutation.type === 'childList' ) {
+					const chatContainer = document.querySelector( '.chatbox' ) as HTMLElement;
+					if ( chatContainer ) {
+						chatContainer.setAttribute( 'tabindex', '-1' );
+						chatContainer.focus();
+						observer.disconnect();
+						break;
+					}
+				}
+			}
+		} );
+
+		observer.observe( helpCenter, { childList: true, subtree: true } );
+
+		// Handle Zendesk messenger opening
+		if ( window.zE ) {
+			window.zE( 'messenger:on', 'open', () => {
+				helpCenter.focus();
+			} );
+		}
 
 		return () => {
-			document.removeEventListener( 'focusout', handleFocusOut );
+			observer.disconnect();
 		};
 	}, [ show, isMinimized ] );
 
