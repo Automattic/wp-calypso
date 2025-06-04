@@ -17,7 +17,7 @@ function render( ui: React.ReactElement ) {
 	} );
 	return testingLibraryRender(
 		<QueryClientProvider client={ queryClient }>
-			<RouterProvider router={ router } />
+			<RouterProvider router={ router } context={ { config: { basePath: '/' } } } />
 		</QueryClientProvider>
 	);
 }
