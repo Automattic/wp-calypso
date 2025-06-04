@@ -400,8 +400,12 @@ export function p2HubP2sQuery( siteId: string, options: { limit?: number } = {} 
 	};
 }
 
-export function launchSiteMutation( siteId: string ) {
+export function launchSiteMutation( siteIdOrSlug: string ) {
 	return {
-		mutationFn: () => launchSite( siteId ),
+		mutationFn: () => launchSite( siteIdOrSlug ),
+		onSuccess: () => {
+			queryClient.invalidateQueries( { queryKey: [ 'site', siteIdOrSlug ] } );
+			queryClient.invalidateQueries( { queryKey: [ 'site-settings', siteIdOrSlug ] } );
+		},
 	};
 }

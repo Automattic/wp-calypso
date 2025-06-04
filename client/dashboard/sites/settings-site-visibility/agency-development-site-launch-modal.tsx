@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import {
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
@@ -22,15 +22,9 @@ export default function AgencyDevelopmentSiteLaunchModal( {
 	site,
 	onClose,
 }: AgencyDevelopmentSiteLaunchModalProps ) {
-	const queryClient = useQueryClient();
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const [ isLaunching, setIsLaunching ] = useState( false );
-	const mutation = useMutation( {
-		...launchSiteMutation( site.ID ),
-		onSuccess: () => {
-			queryClient.invalidateQueries( { queryKey: [ 'site', site.slug ] } );
-		},
-	} );
+	const mutation = useMutation( launchSiteMutation( site.slug ) );
 
 	const handleLaunch = () => {
 		setIsLaunching( true );
@@ -42,15 +36,13 @@ export default function AgencyDevelopmentSiteLaunchModal( {
 						type: 'snackbar',
 					}
 				);
-
-				setIsLaunching( false );
-				onClose();
 			},
 			onError: ( error: Error ) => {
 				createErrorNotice( error.message || __( 'Failed to launch site' ), {
 					type: 'snackbar',
 				} );
-
+			},
+			onSettled: () => {
 				setIsLaunching( false );
 				onClose();
 			},

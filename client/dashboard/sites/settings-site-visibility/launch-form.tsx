@@ -14,7 +14,7 @@ import { agencyBlogQuery } from '../../app/queries';
 import type { Site } from '../../data/types';
 
 function useAgencyBillingMessage( site: Site ) {
-	const { data, isLoading: isLoading, isError: isError } = useQuery( agencyBlogQuery( site.ID ) );
+	const { data, isError } = useQuery( agencyBlogQuery( site.ID ) );
 	if ( ! data ) {
 		return undefined;
 	}
@@ -22,7 +22,7 @@ function useAgencyBillingMessage( site: Site ) {
 	const priceInfoIsDefined =
 		Number.isFinite( data.prices?.actual_price ) && typeof data.prices?.currency === 'string';
 
-	if ( isLoading || isError || ! priceInfoIsDefined ) {
+	if ( isError || ! priceInfoIsDefined ) {
 		return __( "After launch, we'll bill your agency in the next billing cycle." );
 	}
 
@@ -33,8 +33,8 @@ function useAgencyBillingMessage( site: Site ) {
 		sprintf(
 			/* translators: agencyName is the name of the agency that will be billed for the site; licenseCount is the number of licenses the agency will be billed for; price is the price per license */
 			_n(
-				"After launch, we'll bill %(agencyName)s in the next billing cycle. With %(licenseCount)s production hosting license, you will be charged %(price)s / license / month. <learnMoreLink>Learn more.</learnMoreLink>",
-				"After launch, we'll bill %(agencyName)s in the next billing cycle. With %(licenseCount)s production hosting licenses, you will be charged %(price)s / license / month. <learnMoreLink>Learn more.</learnMoreLink>",
+				"After launch, we'll bill %(agencyName)s in the next billing cycle. With %(licenseCount)d production hosting license, you will be charged %(price)s / license / month. <learnMoreLink>Learn more.</learnMoreLink>",
+				"After launch, we'll bill %(agencyName)s in the next billing cycle. With %(licenseCount)d production hosting licenses, you will be charged %(price)s / license / month. <learnMoreLink>Learn more.</learnMoreLink>",
 				existingWPCOMLicenseCount + 1
 			),
 			{
@@ -62,9 +62,6 @@ export function LaunchAgencyDevelopmentSiteForm( {
 	onLaunchClick: () => void;
 } ) {
 	const billingMessage = useAgencyBillingMessage( site );
-	const handleReferClientClick = () => {
-		window.location.href = `https://agencies.automattic.com/marketplace/checkout?referral_blog_id=${ site.ID }`;
-	};
 
 	return (
 		<VStack spacing={ 4 } alignment="left">
@@ -78,8 +75,12 @@ export function LaunchAgencyDevelopmentSiteForm( {
 				<Button __next40pxDefaultSize variant="primary" onClick={ () => onLaunchClick() }>
 					{ __( 'Launch site' ) }
 				</Button>
-				<Button __next40pxDefaultSize variant="secondary" onClick={ handleReferClientClick }>
-					{ __( 'Refer a client' ) }
+				<Button
+					__next40pxDefaultSize
+					variant="secondary"
+					href={ `https://agencies.automattic.com/marketplace/checkout?referral_blog_id=${ site.ID }` }
+				>
+					{ __( 'Refer a client ↗' ) }
 				</Button>
 			</HStack>
 		</VStack>
