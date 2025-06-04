@@ -546,7 +546,7 @@ export default function CheckoutMainContent( {
 			);
 		}
 
-		const headingText = translate( "Almost there – we're currently finalizing your order." );
+		const headingText = translate( 'Almost there—we’re currently finalizing your order.' );
 
 		return (
 			<WPCheckoutCompletedWrapper>
