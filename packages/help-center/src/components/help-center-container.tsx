@@ -9,11 +9,12 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import clsx from 'clsx';
 import { useRef, useEffect, useCallback, FC } from 'react';
 import Draggable, { DraggableProps } from 'react-draggable';
-import { MemoryRouter } from 'react-router-dom';
+import { HashRouter } from 'react-router-dom';
 /**
  * Internal Dependencies
  */
 import { FeatureFlagProvider } from '../contexts/FeatureFlagContext';
+import fakeWindow from '../hooks/persisted-router-history';
 import { HELP_CENTER_STORE } from '../stores';
 import { Container } from '../types';
 import HelpCenterContent from './help-center-content';
@@ -85,7 +86,7 @@ const HelpCenterContainer: React.FC< Container > = ( {
 	}
 
 	return (
-		<MemoryRouter>
+		<HashRouter window={ fakeWindow }>
 			<FeatureFlagProvider>
 				<OptionalDraggable
 					draggable={ ! isMobile && ! isMinimized }
@@ -105,7 +106,7 @@ const HelpCenterContainer: React.FC< Container > = ( {
 					</Card>
 				</OptionalDraggable>
 			</FeatureFlagProvider>
-		</MemoryRouter>
+		</HashRouter>
 	);
 };
 
