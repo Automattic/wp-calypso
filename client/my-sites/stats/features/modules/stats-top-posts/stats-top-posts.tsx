@@ -31,16 +31,16 @@ const StatsTopPosts: React.FC< StatsDefaultModuleProps > = ( {
 } ) => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId ) as number;
+
 	const mainStatType = 'statsTopPosts';
 	const subStatType = 'statsArchives';
+
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
-	const isArchiveBreakdownEnabled = config.isEnabled( 'stats/archive-breakdown' );
 	const supportUrl = isOdysseyStats
 		? `${ JETPACK_SUPPORT_URL_TRAFFIC }#analyzing-popular-posts-and-pages`
 		: TOP_POSTS_SUPPORT_URL;
 
-	// Use StatsModule to display paywall upsell.
-	const shouldGateStatsModule = useShouldGateStats( mainStatType );
+	const isArchiveBreakdownEnabled = config.isEnabled( 'stats/archive-breakdown' );
 
 	const isRequestingTopPostsData = useSelector( ( state: StatsStateProps ) =>
 		isRequestingSiteStatsForQuery( state, siteId, mainStatType, query )
@@ -49,14 +49,18 @@ const StatsTopPosts: React.FC< StatsDefaultModuleProps > = ( {
 		isRequestingSiteStatsForQuery( state, siteId, subStatType, query )
 	);
 	const isRequestingData = isArchiveBreakdownEnabled
-		? isRequestingArchivesData
+		? isRequestingTopPostsData || isRequestingArchivesData
 		: isRequestingTopPostsData;
 
+	// TODO: Toggle the statType with a control later.
 	const statType = isArchiveBreakdownEnabled ? subStatType : mainStatType;
 
 	const data = useSelector( ( state ) =>
 		getSiteStatsNormalizedData( state, siteId, statType, query )
 	) as [ id: number, label: string ]; // TODO: get post shape and share in an external type file.
+
+	// Use StatsModule to display paywall upsell.
+	const shouldGateStatsModule = useShouldGateStats( mainStatType );
 
 	const hasData = !! data?.length;
 	// TODO: Is there a way to show the Skeleton loader for real-time data?
@@ -74,11 +78,13 @@ const StatsTopPosts: React.FC< StatsDefaultModuleProps > = ( {
 	return (
 		<>
 			{ ! shouldGateStatsModule && siteId && (
-				<>
-					<QuerySiteStats statType={ mainStatType } siteId={ siteId } query={ query } />
-					<QuerySiteStats statType={ subStatType } siteId={ siteId } query={ query } />
-				</>
+				<QuerySiteStats statType={ mainStatType } siteId={ siteId } query={ query } />
 			) }
+
+			{ ! shouldGateStatsModule && siteId && isArchiveBreakdownEnabled && (
+				<QuerySiteStats statType={ subStatType } siteId={ siteId } query={ query } />
+			) }
+
 			{ presentLoadingUI && (
 				<StatsCardSkeleton
 					isLoading={ isRequestingData }
