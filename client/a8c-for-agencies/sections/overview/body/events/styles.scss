@@ -99,14 +99,14 @@
 			}
 		}
 
-		@container (max-width: 680px) {
+		@container (max-width: 60ch) {
 			.a4a-event__image {
 				display: none;
 			}
 		}
 	}
 
-	@container (max-width: 680px) {
+	@container (max-width: 60ch) {
 		.a4a-event {
 			grid-template-columns: 1fr;
 		}
