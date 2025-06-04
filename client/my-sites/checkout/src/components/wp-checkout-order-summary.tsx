@@ -335,7 +335,6 @@ function SwitchToAnnualPlan( {
 		volume?: number
 	) => void;
 	linkText?: React.ReactNode;
-	isStreamlinedPrice?: boolean;
 } ) {
 	const translate = useTranslate();
 	const handleClick = () => {
@@ -345,6 +344,7 @@ function SwitchToAnnualPlan( {
 		}
 	};
 	const text = linkText ?? translate( 'Switch to an annual plan and save!' );
+
 	return <SwitchToAnnualPlanButton onClick={ handleClick }>{ text }</SwitchToAnnualPlanButton>;
 }
 
@@ -880,25 +880,23 @@ function CheckoutSummaryAnnualUpsell( props: {
 	const shouldShowFreeDomainUpsell = ! (
 		isWooExpressPlan( productSlug ) && Boolean( props.plan.introductory_offer_terms?.enabled )
 	);
-	const title = translate( 'Included with an annual plan' );
-	const hasStreamlinedPriceTitle =
-		translate.localeSlug?.startsWith( 'en' ) ||
-		hasEnTranslation( 'Extra features with annual plans' );
-	const streamlinedPriceTitle = hasStreamlinedPriceTitle
-		? translate( 'Extra features with annual plans' )
-		: title;
+	let title = translate( 'Included with an annual plan' );
+
+	if ( props.isStreamlinedPrice && hasEnTranslation( 'Extra features with annual plans' ) ) {
+		title = translate( 'Extra features with annual plans' );
+	}
 
 	return (
 		<CheckoutSummaryFeaturesUpsell>
 			<CheckoutSummaryFeaturesTitle>
-				{ ! props.onChangeSelection ? (
-					<>{ streamlinedPriceTitle }</>
-				) : (
+				{ props.onChangeSelection ? (
 					<SwitchToAnnualPlan
 						plan={ props.plan }
 						onChangeSelection={ props.onChangeSelection }
 						linkText={ title }
 					/>
+				) : (
+					<>{ title }</>
 				) }
 			</CheckoutSummaryFeaturesTitle>
 			<CheckoutSummaryFeaturesListWrapper>
