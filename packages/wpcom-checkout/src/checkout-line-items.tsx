@@ -274,7 +274,7 @@ function WPNonProductLineItem( {
 					<DeleteButtonWrapper>
 						<DeleteButton
 							className="checkout-line-item__remove-product"
-							variant="link"
+							buttonType="text-button"
 							aria-label={ String(
 								translate( 'Remove %s from cart', {
 									args: label,
