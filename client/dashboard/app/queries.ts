@@ -432,7 +432,7 @@ export function launchSiteMutation( siteIdOrSlug: string ) {
 		onSuccess: () => {
 			queryClient.invalidateQueries( { queryKey: [ 'site', siteIdOrSlug ] } );
 			queryClient.invalidateQueries( { queryKey: [ 'site-settings', siteIdOrSlug ] } );
-		}
+		},
 	};
 }
 
