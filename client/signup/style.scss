@@ -41,17 +41,6 @@ body.is-section-signup {
 		display: none;
 	}
 
-	// Force the masterbar for Crowdsignal OAuth pages
-	.crowdsignal {
-		.masterbar__crowdsignal {
-			display: block;
-		}
-
-		.layout__content {
-			padding: 140px 0 0;
-		}
-	}
-
 	.layout__secondary {
 		background: var(--color-primary);
 		border: 0;

@@ -4,8 +4,9 @@ on:
   pull_request:
     types: [opened, synchronize, reopened]
     paths:
-      - 'apps/design-system-docs/**'
-      - .github/workflows/design-system-docs.yml
+      - apps/design-system-docs/**
+      - .github/actions/build-design-system-docs/action.yml
+      - .github/workflows/ds-docs-pr-preview.yml
 
 # Ensure only one preview build runs per-PR at a time
 concurrency:
@@ -23,23 +24,13 @@ jobs:
       # 1. Checkout the PR code
       - uses: actions/checkout@v4
 
-      # 2. Set up Node
-      - uses: actions/setup-node@v4
-        with:
-          node-version-file: .nvmrc
-          cache: yarn
+      # 2. Build the Design System Docs site
+      - uses: ./.github/actions/build-design-system-docs
 
-      # 3. Install dependencies for just the design-system-docs package
-      - run: yarn workspaces focus --production @automattic/design-system-docs
-
-      # 4. Build the design-system-docs workspace
-      - name: Build design system docs
-        run: yarn workspace @automattic/design-system-docs build
-
-      # 5. Install Wrangler
+      # 3. Install Wrangler
       - run: npm install -g wrangler
 
-      # 6. Upload a new Worker version and capture the preview URL
+      # 4. Upload a new Worker version and capture the preview URL
       - name: Upload Worker version
         id: upload
         env:
@@ -58,7 +49,7 @@ jobs:
           # Expose it to later steps
           echo "url=$URL" >> "$GITHUB_OUTPUT"
 
-      # 7. Try to find an existing comment with our marker
+      # 5. Try to find an existing comment with our marker
       - name: Find preview comment
         id: find_comment
         uses: peter-evans/find-comment@v3
@@ -66,7 +57,7 @@ jobs:
           issue-number: ${{ github.event.pull_request.number }}
           body-includes: '<!-- cf-preview-comment -->'
 
-      # 8. Create or update a comment that shows the preview URL
+      # 6. Create or update a comment that shows the preview URL
       - name: Comment (create or update)
         uses: peter-evans/create-or-update-comment@v4
         with:

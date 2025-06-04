@@ -25,7 +25,8 @@ export function HelpCenterChat( {
 	const navigate = useNavigate();
 	const shouldUseWapuu = useShouldUseWapuu();
 	const preventOdieAccess = ! shouldUseWapuu && ! isUserEligibleForPaidSupport;
-	const { currentUser, site, canConnectToZendesk } = useHelpCenterContext();
+	const { currentUser, site, canConnectToZendesk, isLoadingCanConnectToZendesk } =
+		useHelpCenterContext();
 	const { search } = useLocation();
 	const params = new URLSearchParams( search );
 	const userFieldMessage = params.get( 'userFieldMessage' );
@@ -46,6 +47,7 @@ export function HelpCenterChat( {
 		<OdieAssistantProvider
 			currentUser={ currentUser }
 			canConnectToZendesk={ canConnectToZendesk }
+			isLoadingCanConnectToZendesk={ isLoadingCanConnectToZendesk }
 			selectedSiteId={ Number( siteId ) || ( site?.ID as number ) }
 			selectedSiteURL={ siteUrl || ( site?.URL as string ) }
 			userFieldMessage={ userFieldMessage }

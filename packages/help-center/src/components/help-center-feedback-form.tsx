@@ -2,10 +2,8 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { GetSupport } from '@automattic/odie-client/src/components/message/get-support';
 import { useI18n } from '@wordpress/react-i18n';
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { useSupportStatus } from '../data/use-support-status';
-import { useResetSupportInteraction } from '../hooks/use-reset-support-interaction';
 import { ThumbsDownIcon, ThumbsUpIcon } from '../icons/thumbs';
 
 import './help-center-feedback-form.scss';
@@ -18,8 +16,6 @@ const HelpCenterFeedbackForm = ( { postId }: { postId: number } ) => {
 	const { data } = useSupportStatus();
 	const isUserEligibleForPaidSupport = Boolean( data?.eligibility?.is_user_eligible );
 	const { canConnectToZendesk } = useHelpCenterContext();
-	const navigate = useNavigate();
-	const resetSupportInteraction = useResetSupportInteraction();
 
 	const handleFeedbackClick = ( value: number ) => {
 		setStartedFeedback( true );
@@ -59,10 +55,6 @@ const HelpCenterFeedbackForm = ( { postId }: { postId: number } ) => {
 			destination,
 			is_user_eligible: isUserEligibleForPaidSupport,
 		} );
-		if ( isUserEligibleForPaidSupport ) {
-			await resetSupportInteraction();
-			navigate( '/odie' );
-		}
 	};
 
 	return (

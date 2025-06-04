@@ -111,7 +111,7 @@ class PurchasesListDataView extends Component<
 		}
 
 		if ( purchases && purchases.length ) {
-			content = <PurchasesDataViews purchases={ purchases } />;
+			content = <PurchasesDataViews purchases={ purchases } sites={ sites } />;
 		}
 
 		if ( purchases && ! purchases.length && ! subscriptions.length ) {

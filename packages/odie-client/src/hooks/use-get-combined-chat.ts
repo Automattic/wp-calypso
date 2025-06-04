@@ -2,7 +2,7 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { HelpCenterSelect } from '@automattic/data-stores';
 import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { useSelect } from '@wordpress/data';
-import { useState, useEffect } from '@wordpress/element';
+import { useState, useEffect, useRef } from '@wordpress/element';
 import { ODIE_TRANSFER_MESSAGE } from '../constants';
 import { emptyChat } from '../context';
 import { useGetZendeskConversation, useManageSupportInteraction, useOdieChat } from '../data';
@@ -13,7 +13,10 @@ import type { Chat, Message } from '../types';
  * This combines the ODIE chat with the ZENDESK conversation.
  * @returns The combined chat.
  */
-export const useGetCombinedChat = ( canConnectToZendesk: boolean ) => {
+export const useGetCombinedChat = (
+	canConnectToZendesk: boolean,
+	isLoadingCanConnectToZendesk: boolean
+) => {
 	const { currentSupportInteraction, conversationId, odieId, isChatLoaded } = useSelect(
 		( select ) => {
 			const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
@@ -31,44 +34,61 @@ export const useGetCombinedChat = ( canConnectToZendesk: boolean ) => {
 		},
 		[]
 	);
-
+	const previousUuidRef = useRef< string | undefined >();
 	const [ mainChatState, setMainChatState ] = useState< Chat >( emptyChat );
 	const chatStatus = mainChatState?.status;
 	const getZendeskConversation = useGetZendeskConversation();
 	const { data: odieChat, isFetching: isOdieChatLoading } = useOdieChat( Number( odieId ) );
 	const { startNewInteraction } = useManageSupportInteraction();
-	const canFetchConversation = conversationId && canConnectToZendesk;
 
 	useEffect( () => {
-		if ( ! currentSupportInteraction || isOdieChatLoading || chatStatus !== 'loading' ) {
+		const interactionHasChanged = previousUuidRef.current !== currentSupportInteraction?.uuid;
+		previousUuidRef.current = currentSupportInteraction?.uuid;
+		if (
+			! currentSupportInteraction?.uuid ||
+			isOdieChatLoading ||
+			isLoadingCanConnectToZendesk ||
+			( chatStatus !== 'loading' && ! interactionHasChanged )
+		) {
 			return;
 		}
 
-		if ( ! canFetchConversation ) {
+		// We don't have a conversation id, so our chat is simply the odie chat
+		if ( ! conversationId ) {
 			setMainChatState( {
 				...( odieChat ? odieChat : emptyChat ),
 				conversationId: null,
 				supportInteractionId: currentSupportInteraction.uuid,
-				provider: 'odie',
 				status: 'loaded',
+				provider: 'odie',
 			} );
+			return;
+		}
 
-			recordTracksEvent( 'calypso_odie_zendesk_chat_reset_to_odie', {
-				interaction: currentSupportInteraction.uuid,
-				conversation_id: conversationId,
-				chat_id: odieChat?.odieId,
+		const filteredOdieMessages =
+			odieChat?.messages.filter(
+				( message ) => ! message.context?.flags?.forward_to_human_support
+			) ?? [];
+
+		// We have an ongoing conversation with Zendesk, but we have some problems connecting to it
+		if ( ! canConnectToZendesk ) {
+			setMainChatState( {
+				messages: [ ...( odieChat ? filteredOdieMessages : [] ) ],
+				conversationId,
+				supportInteractionId: currentSupportInteraction.uuid,
+				status: 'loaded',
+				provider: 'zendesk',
 			} );
-		} else if ( isChatLoaded && canFetchConversation ) {
+			return;
+		}
+
+		if ( isChatLoaded ) {
 			try {
 				getZendeskConversation( {
 					chatId: odieChat?.odieId,
 					conversationId: conversationId?.toString(),
 				} )?.then( ( conversation ) => {
 					if ( conversation ) {
-						const filteredOdieMessages =
-							odieChat?.messages.filter(
-								( message ) => ! message.context?.flags?.forward_to_human_support
-							) ?? [];
 						setMainChatState( {
 							...( odieChat ? odieChat : {} ),
 							supportInteractionId: currentSupportInteraction.uuid,
@@ -84,7 +104,6 @@ export const useGetCombinedChat = ( canConnectToZendesk: boolean ) => {
 					}
 				} );
 			} catch ( error ) {
-				// Conversation id was passed but the conversion was not found. Something went wrong.
 				recordTracksEvent( 'calypso_odie_zendesk_conversation_not_found', {
 					conversationId,
 					odieId,
@@ -108,38 +127,6 @@ export const useGetCombinedChat = ( canConnectToZendesk: boolean ) => {
 		getZendeskConversation,
 		startNewInteraction,
 	] );
-
-	// This effect sets the initial loading state when interaction is set, so that the chat is loaded
-	useEffect( () => {
-		if ( ! currentSupportInteraction?.uuid ) {
-			return;
-		}
-
-		setMainChatState( ( prevChat ) => {
-			if ( odieId || conversationId ) {
-				// when we have the same support interaction we don't need to load the messages
-				if ( prevChat?.supportInteractionId === currentSupportInteraction!.uuid ) {
-					return {
-						...prevChat,
-						status: 'loaded',
-					};
-				}
-
-				return {
-					...prevChat,
-					supportInteractionId: currentSupportInteraction!.uuid,
-					status: 'loading',
-				};
-			}
-
-			// empty chat nothing to load
-			return {
-				...emptyChat,
-				supportInteractionId: currentSupportInteraction!.uuid,
-				status: 'loaded',
-			};
-		} );
-	}, [ currentSupportInteraction?.uuid, odieId, conversationId ] );
 
 	return { mainChatState, setMainChatState };
 };

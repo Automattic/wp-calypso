@@ -8,8 +8,6 @@ import WooCommerceConnectCartHeader from 'calypso/components/woocommerce-connect
 import WPCloudLogo from 'calypso/components/wp-cloud-logo';
 import { getPluginTitle } from 'calypso/lib/login';
 import {
-	isStudioAppOAuth2Client,
-	isCrowdsignalOAuth2Client,
 	isJetpackCloudOAuth2Client,
 	isA4AOAuth2Client,
 	isBlazeProOAuth2Client,
@@ -75,17 +73,18 @@ export function getHeaderText(
 	let headerText = translate( 'Log in to your account' );
 
 	if ( isSocialFirst ) {
-		headerText =
-			oauth2Client && isStudioAppOAuth2Client( oauth2Client )
-				? ( fixMe( {
-						text: 'Log in to {{span}}%(client)s{{/span}} with WordPress.com',
-						newCopy: translate( 'Log in to {{span}}%(client)s{{/span}} with WordPress.com', {
-							args: { client: oauth2Client.name },
-							components: { span: <span className="login-header-text__client-name" /> },
-						} ),
-						oldCopy: translate( 'Log in to WordPress.com' ),
-				  } ) as TranslateResult )
-				: translate( 'Log in to WordPress.com' );
+		const clientName = isFromAkismet ? 'Akismet' : oauth2Client?.name;
+
+		headerText = clientName
+			? ( fixMe( {
+					text: 'Log in to {{span}}%(client)s{{/span}} with WordPress.com',
+					newCopy: translate( 'Log in to {{span}}%(client)s{{/span}} with WordPress.com', {
+						args: { client: clientName },
+						components: { span: <span className="login-header-text__client-name" /> },
+					} ),
+					oldCopy: translate( 'Log in to WordPress.com' ),
+			  } ) as TranslateResult )
+			: translate( 'Log in to WordPress.com' );
 	}
 
 	if ( twoFactorAuthType === 'authenticator' ) {
@@ -164,14 +163,6 @@ export function getHeaderText(
 			}
 		}
 
-		if ( isCrowdsignalOAuth2Client( oauth2Client ) ) {
-			headerText = translate( 'Sign in to %(clientTitle)s', {
-				args: {
-					clientTitle: oauth2Client.title,
-				},
-			} );
-		}
-
 		if ( isGravPoweredClient ) {
 			headerText = translate( 'Login to %(clientTitle)s', {
 				args: { clientTitle: oauth2Client.title },
@@ -194,10 +185,6 @@ export function getHeaderText(
 		headerText = translate(
 			'Log in or create a WordPress.com account to supercharge your site with powerful growth, performance, and security tools.'
 		);
-	}
-
-	if ( isFromAkismet ) {
-		headerText = translate( 'Log in to Akismet with WordPress.com' );
 	}
 
 	if ( isFromAutomatticForAgenciesPlugin ) {

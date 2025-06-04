@@ -5,10 +5,11 @@ import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { SectionHeader } from '../../components/section-header';
 import { SummaryButtonList } from '../../components/summary-button-list';
-import AgencySummary from '../settings-agency/summary';
+import AgencySettingsSummary from '../settings-agency/summary';
 import CachingSettingsSummary from '../settings-caching/summary';
 import DatabaseSettingsSummary from '../settings-database/summary';
 import DefensiveModeSettingsSummary from '../settings-defensive-mode/summary';
+import HundredYearPlanSettingsSummary from '../settings-hundred-year-plan/summary';
 import PHPSettingsSummary from '../settings-php/summary';
 import PrimaryDataCenterSettingsSummary from '../settings-primary-data-center/summary';
 import SiteVisibilitySettingsSummary from '../settings-site-visibility/summary';
@@ -32,13 +33,14 @@ export default function SiteSettings( { siteSlug }: { siteSlug: string } ) {
 			<SummaryButtonList>
 				<SiteVisibilitySettingsSummary site={ site } />
 				<SubscriptionGiftingSettingsSummary site={ site } settings={ settings } />
+				<HundredYearPlanSettingsSummary site={ site } settings={ settings } />
 			</SummaryButtonList>
 			<SectionHeader title={ __( 'Server' ) } />
 			<SummaryButtonList>
 				<DatabaseSettingsSummary site={ site } />
 				<WordPressSettingsSummary site={ site } />
 				<PHPSettingsSummary site={ site } />
-				<AgencySummary site={ site } />
+				<AgencySettingsSummary site={ site } />
 				<PrimaryDataCenterSettingsSummary site={ site } />
 				<StaticFile404SettingsSummary site={ site } />
 				<CachingSettingsSummary site={ site } />

@@ -7,7 +7,7 @@ import RouterLinkSummaryButton from '../../components/router-link-summary-button
 import type { Site } from '../../data/types';
 import type { Density } from '@automattic/components/src/summary-button/types';
 
-export default function SettingsAgencySummary( {
+export default function AgencySettingsSummary( {
 	site,
 	density,
 }: {

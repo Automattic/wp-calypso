@@ -13,6 +13,7 @@ import { ONBOARD_STORE } from '../../../stores';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
 import { STEPS } from '../../internals/steps';
 import type { ProvidedDependencies, Flow } from '../../internals/types';
+import './style.scss';
 
 const steps = [ STEPS.DOMAINS, ...stepsWithRequiredLogin( [ STEPS.PROCESSING ] ) ];
 

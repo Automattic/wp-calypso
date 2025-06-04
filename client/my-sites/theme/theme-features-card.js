@@ -29,12 +29,14 @@ const ThemeFeaturesCard = ( { isWpcomTheme, siteSlug, features, translate, onCli
 							! isLoggedIn
 						);
 						return (
-							<li
-								key={ 'theme-features-item-' + slug }
-								role="presentation"
-								onClick={ () => onClick?.( slug ) }
-							>
-								{ ! isWpcomTheme ? <span>{ name }</span> : <a href={ filterPath }>{ name }</a> }
+							<li key={ 'theme-features-item-' + slug }>
+								{ ! isWpcomTheme ? (
+									<span>{ name }</span>
+								) : (
+									<a onClick={ () => onClick?.( slug ) } href={ filterPath }>
+										{ name }
+									</a>
+								) }
 							</li>
 						);
 					} ) }

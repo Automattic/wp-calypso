@@ -1,5 +1,15 @@
 import { fn } from '@storybook/test';
 import {
+	Button,
+	Composite,
+	Popover,
+	__experimentalInputControl as InputControl,
+	__experimentalHStack as HStack,
+	__experimentalVStack as VStack,
+	VisuallyHidden,
+} from '@wordpress/components';
+import { isSameDay } from 'date-fns';
+import {
 	enUS,
 	fr,
 	es,
@@ -18,7 +28,7 @@ import {
 	ar,
 	sv,
 } from 'date-fns/locale';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useId } from 'react';
 import { DateRangeCalendar, TZDate } from '../';
 import type { Meta, StoryObj } from '@storybook/react';
 
@@ -114,73 +124,6 @@ function dateToInputValue( date: Date ) {
 		.padStart( 2, '0' ) }`;
 }
 
-/**
- * The component can be used in controlled mode. This is useful, for example,
- * when in need of keeping the component in sync with external input fields.
- *
- * _Note: this example doesn't handle time zones_
- */
-export const ControlledWithInputFields: Story = {
-	render: function ControlledTemplate( args ) {
-		const [ range, setRange ] = useState< typeof args.selected | null >( null );
-		return (
-			<div style={ { display: 'flex', flexDirection: 'column', gap: 16 } }>
-				<label style={ { display: 'flex', flexDirection: 'column', gap: 4 } }>
-					Start date
-					<input
-						type="date"
-						value={
-							// Note: the following code doesn't handle time zones.
-							range?.from ? dateToInputValue( range.from ) : ''
-						}
-						onChange={ ( e ) => {
-							// Note: the following code doesn't handle time zones.
-							setRange( {
-								to: new Date( e.target.value ),
-								...range,
-								from: new Date( e.target.value ),
-							} );
-						} }
-						style={ { width: 160 } }
-					/>
-				</label>
-				<label style={ { display: 'flex', flexDirection: 'column', gap: 4 } }>
-					End date
-					<input
-						type="date"
-						value={
-							// Note: the following code doesn't handle time zones.
-							range?.to ? dateToInputValue( range.to ) : ''
-						}
-						onChange={ ( e ) => {
-							// Note: the following code doesn't handle time zones.
-							setRange( {
-								from: new Date( e.target.value ),
-								...range,
-								to: new Date( e.target.value ),
-							} );
-						} }
-						style={ { width: 160 } }
-					/>
-				</label>
-				<DateRangeCalendar
-					{ ...args }
-					selected={ range }
-					onSelect={ ( selectedDate, ...rest ) => {
-						setRange(
-							// Set controlled state to null if there's no selection
-							! selectedDate || ( selectedDate.from === undefined && selectedDate.to === undefined )
-								? null
-								: selectedDate
-						);
-						args.onSelect?.( selectedDate, ...rest );
-					} }
-				/>
-			</div>
-		);
-	},
-};
-
 export const DisabledDates: Story = {
 	args: {
 		disabled: [
@@ -228,7 +171,8 @@ export const WithTimeZone: Story = {
 
 		useEffect( () => {
 			setRange(
-				// Select from one week from today to two weeks from today 	every time the time zone changes.
+				// Select from one week from today to two weeks from today
+				// every time the timezone changes.
 				{
 					from: new TZDate( new Date().setDate( new Date().getDate() + 7 ), args.timeZone ),
 					to: new TZDate( new Date().setDate( new Date().getDate() + 14 ), args.timeZone ),
@@ -309,90 +253,325 @@ const lastTwelveMonths = ( date: Date ) => {
 	};
 };
 
-export const WithPresets: Story = {
-	render: function ControlledDateCalendar( args ) {
+function computePresetRange( preset: string ) {
+	let targetRange;
+	switch ( preset ) {
+		case 'today':
+			targetRange = { from: today, to: today };
+			break;
+		case 'last-7-days':
+			targetRange = lastSevenDays( today );
+			break;
+		case 'last-30-days':
+			targetRange = lastThirtyDays( today );
+			break;
+		case 'month-to-date':
+			targetRange = monthToDate( today );
+			break;
+		case 'last-12-months':
+			targetRange = lastTwelveMonths( today );
+			break;
+		case 'year-to-date':
+			targetRange = yearToDate( today );
+			break;
+	}
+	return targetRange;
+}
+
+function PresetItem( {
+	id,
+	label,
+	selected,
+	setSelected,
+}: {
+	id: string;
+	label: string;
+	selected: boolean;
+	setSelected: ( id: string ) => void;
+} ) {
+	return (
+		<Composite.Item
+			render={ <Button __next40pxDefaultSize variant={ selected ? 'primary' : undefined } /> }
+			id={ id }
+			onClick={ () => setSelected( id ) }
+			role="option"
+			aria-selected={ selected ? 'true' : undefined }
+			className="preset-listbox__item"
+			// It's fine to autofocus when the popover opens
+		>
+			<span className="preset-listbox__item-label">
+				{ label }
+				<span
+					className="preset-listbox__item-label-bullet"
+					style={ { visibility: selected ? 'visible' : 'hidden' } }
+				>
+					&bull;
+				</span>
+			</span>
+		</Composite.Item>
+	);
+}
+
+/**
+ * The component can be used in controlled mode. This is useful, for example,
+ * when in need of keeping the component in sync with external input fields or
+ * more advanced UI patterns such as a preset selector.
+ *
+ * _Note: this example doesn't handle time zones, and is not responsive. Do not
+ * assume this is production-ready code._
+ */
+export const WithPresetsDialog: Story = {
+	render: function ControlledDateRangeCalendar( args ) {
+		const popoverTitleId = useId();
+		const presetListboxId = useId();
+
 		const [ range, setRange ] = useState< typeof args.selected | null >( null );
 		const [ month, setMonth ] = useState< Date >();
 
+		const popoverTriggerRef = useRef< HTMLButtonElement >( null );
+		const [ isPopoverOpen, setIsPopoverOpen ] = useState( false );
+
+		const [ activePresetId, setActivePresetId ] = useState< string | null >( null );
+		const [ selectedPresetId, setSelectedPresetId ] = useState< string | null >( null );
+
+		const onPresetSelect = ( presetId: string ) => {
+			setSelectedPresetId( presetId );
+			setActivePresetId( presetId );
+
+			const targetRange = computePresetRange( presetId );
+			if ( targetRange ) {
+				setRange( targetRange );
+				setMonth( targetRange.to );
+			}
+		};
+
+		useEffect( () => {
+			if ( ! range || ! range.from || ! range.to ) {
+				setSelectedPresetId( null );
+				return;
+			}
+
+			let foundPresetId: string | null = null;
+
+			[
+				'today',
+				'last-7-days',
+				'last-30-days',
+				'month-to-date',
+				'last-12-months',
+				'year-to-date',
+			].forEach( ( presetId ) => {
+				const presetRange = computePresetRange( presetId );
+				if (
+					! foundPresetId &&
+					presetRange &&
+					isSameDay( range.from!, presetRange.from! ) &&
+					isSameDay( range.to!, presetRange.to! )
+				) {
+					foundPresetId = presetId;
+				}
+			} );
+
+			setSelectedPresetId( foundPresetId ?? 'custom' );
+			setActivePresetId( foundPresetId ?? 'custom' );
+		}, [ range ] );
+
 		return (
 			<>
-				<div style={ { display: 'flex', gap: 8, marginBottom: 16 } }>
-					<button
-						type="button"
-						onClick={ () => {
-							setRange( { from: today, to: today } );
-							setMonth( today );
-						} }
+				<style>{ `
+					.popover-content-wrapper {
+						width: max-content;
+					}
+					.preset-listbox {
+						align-self: stretch;
+						flex-shrink: 0;
+						padding: 12px 16px;
+						border-inline-end: 1px solid #ccc;
+					}
+					.preset-listbox:has([data-active-item]):focus {
+						outline: 3px solid transparent;
+					}
+					.preset-listbox__group {
+						outline: 1px solid red;
+					}
+					.preset-listbox__item:last-child {
+						margin-block-start: auto;
+					}
+					.preset-listbox:focus .preset-listbox__item[data-active-item] {
+						box-shadow:0 0 0 var(--wp-admin-border-width-focus) var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9));
+						outline: 3px solid transparent;
+					}
+					.preset-listbox__item-label {
+						width: 100%;
+						display: flex;
+						align-items: center;
+						gap: 8px;
+						justify-content: space-between;
+					}
+					.preset-listbox__item-label-bullet {
+						font-size: 2em;
+						position: relative;
+						top: -0.06em;
+					}
+					.date-controls-wrapper {
+						padding: 24px;
+					}
+					.date-input {
+						flex: 1;
+					}
+					.date-range-calendar {
+						z-index: 0;
+						min-height: 300px;
+					}
+					.reset-button {
+						position: absolute;
+						inset-inline-end: 24px;
+						inset-block-end: 12px;
+					}
+				` }</style>
+				<Button
+					__next40pxDefaultSize
+					variant="secondary"
+					ref={ popoverTriggerRef }
+					onClick={ () => setIsPopoverOpen( ! isPopoverOpen ) }
+				>
+					{ ! range || ! range.from
+						? 'Pick a date range'
+						: `Selected:${ range.from.toLocaleDateString() } - ${
+								range.to?.toLocaleDateString() ?? '?'
+						  }` }
+				</Button>
+
+				{ isPopoverOpen && (
+					<Popover
+						role="dialog"
+						open={ isPopoverOpen }
+						offset={ 16 }
+						anchor={ popoverTriggerRef.current }
+						aria-labelledby={ popoverTitleId }
 					>
-						Today
-					</button>
-					<button
-						type="button"
-						onClick={ () => {
-							const targetRange = lastSevenDays( today );
-							setRange( targetRange );
-							setMonth( targetRange.to );
-						} }
-					>
-						Last 7 days
-					</button>
-					<button
-						type="button"
-						onClick={ () => {
-							const targetRange = lastThirtyDays( today );
-							setRange( targetRange );
-							setMonth( targetRange.to );
-						} }
-					>
-						Last 30 days
-					</button>
-					<button
-						type="button"
-						onClick={ () => {
-							const targetRange = monthToDate( today );
-							setRange( targetRange );
-							setMonth( targetRange.to );
-						} }
-					>
-						Month to date
-					</button>
-					<button
-						type="button"
-						onClick={ () => {
-							const targetRange = lastTwelveMonths( today );
-							setRange( targetRange );
-							setMonth( targetRange.to );
-						} }
-					>
-						Last 12 months
-					</button>
-					<button
-						type="button"
-						onClick={ () => {
-							const targetRange = yearToDate( today );
-							setRange( targetRange );
-							setMonth( targetRange.to );
-						} }
-					>
-						Year to date
-					</button>
-				</div>
-				<DateRangeCalendar
-					{ ...args }
-					selected={ range }
-					onSelect={ ( selectedDate, ...rest ) => {
-						setRange(
-							// Set controlled state to null if there's no selection
-							! selectedDate || ( selectedDate.from === undefined && selectedDate.to === undefined )
-								? null
-								: selectedDate
-						);
-						args.onSelect?.( selectedDate, ...rest );
-					} }
-					month={ month }
-					onMonthChange={ setMonth }
-				/>
+						<VisuallyHidden id={ popoverTitleId }>Select a date range</VisuallyHidden>
+						<HStack spacing={ 0 } className="popover-content-wrapper" alignment="top">
+							<VisuallyHidden id={ presetListboxId }>Date range presets</VisuallyHidden>
+							<Composite
+								aria-labelledby={ presetListboxId }
+								activeId={ activePresetId }
+								setActiveId={ ( activeId ) => {
+									setActivePresetId( activeId ?? null );
+								} }
+								focusLoop
+								virtualFocus
+								render={
+									// @ts-expect-error children are passed directly to Composite
+									<VStack justify="flex-start" alignment="stretch" spacing={ 0 } />
+								}
+								role="listbox"
+								className="preset-listbox"
+								onFocus={ () => {
+									if ( ! activePresetId ) {
+										setActivePresetId( 'today' );
+									}
+								} }
+							>
+								{ [
+									{ id: 'today', label: 'Today' },
+									{ id: 'last-7-days', label: 'Last 7 days' },
+									{ id: 'last-30-days', label: 'Last 30 days' },
+									{ id: 'month-to-date', label: 'Month to date' },
+									{ id: 'last-12-months', label: 'Last 12 months' },
+									{ id: 'year-to-date', label: 'Year to date' },
+									{ id: 'custom', label: 'Custom' },
+								].map( ( preset ) => (
+									<PresetItem
+										key={ preset.id }
+										id={ preset.id }
+										label={ preset.label }
+										selected={ selectedPresetId === preset.id }
+										setSelected={ onPresetSelect }
+									/>
+								) ) }
+							</Composite>
+
+							<VStack spacing={ 8 } className="date-controls-wrapper">
+								<HStack justify="space-between" spacing={ 8 }>
+									<InputControl
+										__next40pxDefaultSize
+										label="Start date"
+										type="date"
+										value={
+											// Note: the following code doesn't handle time zones.
+											range?.from ? dateToInputValue( range.from ) : ''
+										}
+										onChange={ ( nextValue ) => {
+											// Note: the following code doesn't handle time zones.
+											setRange( {
+												to: new Date( `${ nextValue }` ),
+												...range,
+												from: new Date( `${ nextValue }` ),
+											} );
+										} }
+										className="date-input"
+									/>
+
+									<InputControl
+										__next40pxDefaultSize
+										label="End date"
+										type="date"
+										value={
+											// Note: the following code doesn't handle time zones.
+											range?.to ? dateToInputValue( range.to ) : ''
+										}
+										onChange={ ( nextValue ) => {
+											// Note: the following code doesn't handle time zones.
+											setRange( {
+												from: new Date( `${ nextValue }` ),
+												...range,
+												to: new Date( `${ nextValue }` ),
+											} );
+										} }
+										className="date-input"
+									/>
+								</HStack>
+
+								<DateRangeCalendar
+									{ ...args }
+									selected={ range }
+									onSelect={ ( selectedDate, ...rest ) => {
+										setRange(
+											// Set controlled state to null if there's no selection
+											! selectedDate ||
+												( selectedDate.from === undefined && selectedDate.to === undefined )
+												? null
+												: selectedDate
+										);
+										args.onSelect?.( selectedDate, ...rest );
+									} }
+									month={ month }
+									onMonthChange={ setMonth }
+									className="date-range-calendar"
+								/>
+							</VStack>
+
+							<Button
+								__next40pxDefaultSize
+								variant="secondary"
+								onClick={ () => {
+									setRange( null );
+									setMonth( today );
+									setSelectedPresetId( null );
+									setActivePresetId( null );
+								} }
+								className="reset-button"
+							>
+								Reset
+							</Button>
+						</HStack>
+					</Popover>
+				) }
 			</>
 		);
+	},
+	args: {
+		numberOfMonths: 2,
 	},
 };

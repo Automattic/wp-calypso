@@ -590,6 +590,14 @@ html {
 			}
 		}
 	}
+
+	&.bordered {
+		.dataviews-view-table {
+			border: 1px solid var(--color-neutral-5);
+			border-radius: 2px;
+		}
+	}
+
 }
 
 
