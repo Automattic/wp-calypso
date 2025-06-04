@@ -23,3 +23,7 @@ export const canUpdateHundredYearPlanFeatures = ( site: Site ): boolean => {
 		plan.features.active.includes( feature )
 	);
 };
+
+export const canUpdateCaching = ( site: Site ) => site.is_wpcom_atomic;
+
+export const isEdgeCacheAvailable = ( site: Site ) => ! site.is_private && ! site.is_coming_soon;

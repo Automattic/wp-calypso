@@ -893,7 +893,7 @@
 	margin-bottom: 32px;
 
 	.form-text-input.magic-login__verify-code-character-field {
-		width: 61px;
+		max-width: 61px;
 		height: 64px;
 		text-align: center;
 		padding: 0;

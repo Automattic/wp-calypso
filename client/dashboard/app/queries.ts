@@ -39,6 +39,7 @@ import {
 	fetchSiteResetContentSummary,
 	resetSite,
 	fetchSiteResetStatus,
+	launchSite,
 } from '../data';
 import { SITE_FIELDS, SITE_OPTIONS } from '../data/constants';
 import { queryClient } from './query-client';
@@ -395,6 +396,16 @@ export function p2HubP2sQuery( siteId: string, options: { limit?: number } = {} 
 		queryKey: [ 'p2-hub-p2s', siteId, options ],
 		queryFn: () => {
 			return fetchP2HubP2s( siteId, options );
+		},
+	};
+}
+
+export function launchSiteMutation( siteIdOrSlug: string ) {
+	return {
+		mutationFn: () => launchSite( siteIdOrSlug ),
+		onSuccess: () => {
+			queryClient.invalidateQueries( { queryKey: [ 'site', siteIdOrSlug ] } );
+			queryClient.invalidateQueries( { queryKey: [ 'site-settings', siteIdOrSlug ] } );
 		},
 	};
 }

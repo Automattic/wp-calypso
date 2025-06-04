@@ -14,6 +14,7 @@ import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import MainComponent from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import Notice from 'calypso/components/notice';
@@ -335,13 +336,7 @@ function PluginDetails( props ) {
 					rel="noreferrer noopener"
 				/>
 			),
-			wpcom_vs_wporg_link: (
-				<a
-					href={ localizeUrl( 'https://wordpress.com/support/com-vs-org/' ) }
-					target="_blank"
-					rel="noreferrer noopener"
-				/>
-			),
+			wpcom_vs_wporg_link: <InlineSupportLink supportContext="com_vs_org" showIcon={ false } />,
 		},
 	};
 

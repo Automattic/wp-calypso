@@ -1145,9 +1145,19 @@ function UpgradeCreditInformation( { product }: { product: ResponseCartProduct }
 	return null;
 }
 
-function IntroductoryOfferCallout( { product }: { product: ResponseCartProduct } ) {
+function IntroductoryOfferCallout( {
+	product,
+	isStreamlinedPrice,
+}: {
+	product: ResponseCartProduct;
+	isStreamlinedPrice?: boolean;
+} ) {
 	const translate = useTranslate();
-	const introductoryOffer = getItemIntroductoryOfferDisplay( translate, product );
+	const introductoryOffer = getItemIntroductoryOfferDisplay(
+		translate,
+		product,
+		isStreamlinedPrice
+	);
 
 	if ( ! introductoryOffer ) {
 		return null;
@@ -1422,7 +1432,10 @@ function CheckoutLineItem( {
 								compareToPrice={ compareToPrice }
 							/>
 							<DomainDiscountCallout product={ product } />
-							<IntroductoryOfferCallout product={ product } />
+							<IntroductoryOfferCallout
+								product={ product }
+								isStreamlinedPrice={ shouldShowComparison }
+							/>
 							<JetpackAkismetSaleCouponCallout product={ product } />
 						</LineItemMeta>
 					</>
