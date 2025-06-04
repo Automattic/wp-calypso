@@ -9,7 +9,7 @@ import { isHelpCenterShown } from './resolvers';
 import * as selectors from './selectors';
 export type { State };
 
-declare const helpCenterData: { isProxied: boolean; isSU: boolean } | undefined;
+declare const helpCenterData: { isProxied: boolean; isSU: boolean; isSSP: boolean } | undefined;
 declare const isSupportSession: boolean;
 
 let isRegistered = false;
@@ -32,7 +32,8 @@ export const isInSupportSession = () => {
 			document.body.classList.contains( 'support-session' ) ||
 			document.querySelector( '#wpcom > .is-support-session' ) ||
 			( typeof isSupportSession !== 'undefined' && !! isSupportSession ) ||
-			( typeof helpCenterData !== 'undefined' && helpCenterData?.isSU )
+			( typeof helpCenterData !== 'undefined' && helpCenterData?.isSU ) ||
+			( typeof helpCenterData !== 'undefined' && helpCenterData?.isSSP )
 		);
 	}
 	return false;
