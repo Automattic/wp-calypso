@@ -398,6 +398,51 @@ export const normalizers = {
 	},
 
 	/**
+	 * Returns a normalized payload from `/sites/{ site }/stats/archives`
+	 * @param   {Object} data    Stats data
+	 * @param   {Object} query   Stats query
+	 * @returns {Array}          Normalized stats data
+	 */
+	statsArchives: ( data, query ) => {
+		if ( ! data || ! query.period || ! query.date ) {
+			return [];
+		}
+
+		const { startOf } = rangeOfPeriod( query.period, query.date );
+		const dataPath = query.summarize ? [ 'summary' ] : [ 'days', startOf ];
+		const archivesData = get( data, dataPath, [] );
+
+		const archives = Object.keys( archivesData ).reduce( ( accumulatedArchives, archiveKey ) => {
+			const archiveItems = archivesData[ archiveKey ];
+			const hasItems = archiveItems && archiveItems.length > 0;
+
+			if ( hasItems ) {
+				let totalViews = 0;
+
+				const children = archiveItems.map( ( item ) => {
+					totalViews += item.views;
+
+					return {
+						label: item.href,
+						value: item.views,
+						link: item.href,
+					};
+				} );
+
+				accumulatedArchives.push( {
+					label: archiveKey,
+					value: totalViews,
+					children,
+				} );
+			}
+
+			return accumulatedArchives;
+		}, [] );
+
+		return archives;
+	},
+
+	/**
 	 * Returns a normalized payload from `/sites/{ site }/stats/country-views`
 	 * @param   {Object} data    Stats data
 	 * @param   {Object} query   Stats query

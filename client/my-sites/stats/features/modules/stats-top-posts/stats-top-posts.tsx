@@ -31,18 +31,29 @@ const StatsTopPosts: React.FC< StatsDefaultModuleProps > = ( {
 } ) => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId ) as number;
-	const statType = 'statsTopPosts';
+	const mainStatType = 'statsTopPosts';
+	const subStatType = 'statsArchives';
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
+	const isArchiveBreakdownEnabled = config.isEnabled( 'stats/archive-breakdown' );
 	const supportUrl = isOdysseyStats
 		? `${ JETPACK_SUPPORT_URL_TRAFFIC }#analyzing-popular-posts-and-pages`
 		: TOP_POSTS_SUPPORT_URL;
 
 	// Use StatsModule to display paywall upsell.
-	const shouldGateStatsModule = useShouldGateStats( statType );
+	const shouldGateStatsModule = useShouldGateStats( mainStatType );
 
-	const isRequestingData = useSelector( ( state: StatsStateProps ) =>
-		isRequestingSiteStatsForQuery( state, siteId, statType, query )
+	const isRequestingTopPostsData = useSelector( ( state: StatsStateProps ) =>
+		isRequestingSiteStatsForQuery( state, siteId, mainStatType, query )
 	);
+	const isRequestingArchivesData = useSelector( ( state: StatsStateProps ) =>
+		isRequestingSiteStatsForQuery( state, siteId, subStatType, query )
+	);
+	const isRequestingData = isArchiveBreakdownEnabled
+		? isRequestingArchivesData
+		: isRequestingTopPostsData;
+
+	const statType = isArchiveBreakdownEnabled ? subStatType : mainStatType;
+
 	const data = useSelector( ( state ) =>
 		getSiteStatsNormalizedData( state, siteId, statType, query )
 	) as [ id: number, label: string ]; // TODO: get post shape and share in an external type file.
@@ -62,8 +73,11 @@ const StatsTopPosts: React.FC< StatsDefaultModuleProps > = ( {
 
 	return (
 		<>
-			{ ! shouldGateStatsModule && siteId && statType && (
-				<QuerySiteStats statType={ statType } siteId={ siteId } query={ query } />
+			{ ! shouldGateStatsModule && siteId && (
+				<>
+					<QuerySiteStats statType={ mainStatType } siteId={ siteId } query={ query } />
+					<QuerySiteStats statType={ subStatType } siteId={ siteId } query={ query } />
+				</>
 			) }
 			{ presentLoadingUI && (
 				<StatsCardSkeleton
