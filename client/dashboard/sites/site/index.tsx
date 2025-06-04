@@ -36,7 +36,14 @@ function Site() {
 						/>
 					</HeaderBar.Title>
 					{ isDesktop && <MenuDivider /> }
-					<SiteMenu siteSlug={ siteSlug } capabilities={ site.capabilities } />
+					<SiteMenu
+						siteSlug={ siteSlug }
+						config={ {
+							hide: {
+								settings: ! site.capabilities.manage_options,
+							},
+						} }
+					/>
 				</HStack>
 			</HeaderBar>
 			<Outlet />

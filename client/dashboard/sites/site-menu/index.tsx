@@ -1,14 +1,15 @@
 import { __ } from '@wordpress/i18n';
 import ResponsiveMenu from '../../components/responsive-menu';
-import type { SiteCapabilities } from '../../data/types';
 
-const SiteMenu = ( {
-	siteSlug,
-	capabilities,
-}: {
-	siteSlug: string;
-	capabilities: SiteCapabilities;
-} ) => {
+export interface SiteMenuConfig {
+	hide?: {
+		settings?: boolean;
+	};
+}
+
+const SiteMenu = ( { siteSlug, config }: { siteSlug: string; config?: SiteMenuConfig } ) => {
+	const { hide = {} } = config ?? {};
+
 	return (
 		<ResponsiveMenu label={ __( 'Site Menu' ) }>
 			<ResponsiveMenu.Item to={ `/sites/${ siteSlug }` } activeOptions={ { exact: true } }>
@@ -20,7 +21,7 @@ const SiteMenu = ( {
 			<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/performance` }>
 				{ __( 'Performance' ) }
 			</ResponsiveMenu.Item>
-			{ capabilities.manage_options && (
+			{ ! hide.settings && (
 				<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/settings` }>
 					{ __( 'Settings' ) }
 				</ResponsiveMenu.Item>
