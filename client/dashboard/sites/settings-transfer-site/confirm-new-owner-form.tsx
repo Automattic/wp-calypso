@@ -10,6 +10,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
 import { siteOwnerTransferEligibilityCheckMutation } from '../../app/queries';
+import { SectionHeader } from '../../components/section-header';
 import type { Field } from '@automattic/dataviews';
 
 export type ConfirmNewOwnerFormData = {
@@ -63,12 +64,9 @@ export function ConfirmNewOwnerForm( {
 	};
 
 	return (
-		<VStack spacing={ 1 }>
-			<VStack style={ { padding: '8px 0' } }>
-				{ /* TODO: Think about the better way of using <Heading /> as the font size doesn't match now */ }
-				<Text size="15px" weight={ 500 } lineHeight="32px" as="h2">
-					{ __( 'Confirm new owner' ) }
-				</Text>
+		<>
+			<VStack style={ { padding: '8px 0 12px' } }>
+				<SectionHeader title={ __( 'Confirm new owner' ) } level={ 3 } />
 				<Text lineHeight="20px">
 					{ createInterpolateElement(
 						__(
@@ -103,6 +101,6 @@ export function ConfirmNewOwnerForm( {
 					</HStack>
 				</VStack>
 			</form>
-		</VStack>
+		</>
 	);
 }
