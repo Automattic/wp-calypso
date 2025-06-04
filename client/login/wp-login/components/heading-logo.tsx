@@ -13,33 +13,43 @@ import {
 } from 'calypso/lib/oauth2-clients';
 import { useSelector } from 'calypso/state';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
+import type { OAuth2Client } from 'calypso/login/types';
 
 interface Props {
 	isFromAkismet?: boolean;
+	width?: number;
+	height?: number;
 }
 
-const HeadingLogo = ( { isFromAkismet }: Props ) => {
-	const oauth2Client = useSelector( getCurrentOAuth2Client );
+const HeadingLogo = ( { isFromAkismet, width, height }: Props ) => {
+	const oauth2Client = useSelector( getCurrentOAuth2Client ) as OAuth2Client | null;
 
-	let logo = null;
+	let clientLogo: string | null = null;
 	if ( isStudioAppOAuth2Client( oauth2Client ) ) {
-		logo = <img src={ studioAppLogo } alt="Studio App Logo" />;
+		clientLogo = studioAppLogo;
 	} else if ( isCrowdsignalOAuth2Client( oauth2Client ) ) {
-		logo = <img src={ crowdsignalLogo } alt="Crowdsignal Logo" />;
+		clientLogo = crowdsignalLogo;
 	} else if ( isFromAkismet ) {
-		logo = <img src={ akismetLogo } alt="Akismet Logo" />;
+		clientLogo = akismetLogo;
 	} else if ( isWPJobManagerOAuth2Client( oauth2Client ) ) {
-		logo = <img src={ wpJobManagerLogo } alt="WP Job Manager Logo" />;
+		clientLogo = wpJobManagerLogo;
 	} else if ( isBlazeProOAuth2Client( oauth2Client ) ) {
-		logo = <img src={ blazeProLogo } alt="Blaze Pro Logo" />;
+		clientLogo = blazeProLogo;
 	} else if ( isGravPoweredOAuth2Client( oauth2Client ) ) {
 		/**
 		 * Leave last to avoid overriding other grav-powered client logos.
 		 */
-		logo = <img src={ gravatarLogo } alt="Gravatar Logo" />;
+		clientLogo = gravatarLogo;
 	}
 
-	return logo ? <div className="wp-login__heading-logo">{ logo }</div> : null;
+	return clientLogo ? (
+		<img
+			src={ clientLogo }
+			alt={ `${ oauth2Client?.name ?? 'Login' } Client Logo` }
+			width={ width }
+			height={ height }
+		/>
+	) : null;
 };
 
 export default HeadingLogo;

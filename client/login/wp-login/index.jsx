@@ -524,6 +524,10 @@ export class Login extends Component {
 			isGravPoweredClient ||
 			isBlazePro;
 
+		if ( shouldUseWideHeading ) {
+			brandLogo = <HeadingLogo isFromAkismet={ isFromAkismet } width={ 21 } height={ 21 } />;
+		}
+
 		return (
 			<>
 				{ isWhiteLogin && (
@@ -537,7 +541,9 @@ export class Login extends Component {
 							<Step.Heading
 								text={
 									<>
-										<HeadingLogo isFromAkismet={ isFromAkismet } />
+										{ /* <div className="wp-login__heading-logo">
+											<HeadingLogo isFromAkismet={ isFromAkismet } />
+										</div> */ }
 										<div className="wp-login__heading-text">{ headerText }</div>
 									</>
 								}
