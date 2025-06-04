@@ -672,17 +672,6 @@
 	}
 }
 
-.a8c-for-agencies {
-	.wp-login__links button {
-		color: var(--color-primary-40);
-
-		&:hover,
-		&:focus {
-			color: var(--color-primary-60);
-		}
-	}
-}
-
 // Adding some CSS to cover the --color-primary
 // background color in the signup flow for Akismet/IntenseDebate.
 .layout.dops.akismet,
