@@ -1,6 +1,7 @@
 import { DataForm } from '@automattic/dataviews';
 import { useMutation } from '@tanstack/react-query';
 import {
+	__experimentalConfirmDialog as ConfirmDialog,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	BaseControl,
@@ -13,6 +14,7 @@ import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { sprintf, __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
+import { useState } from 'react';
 import { siteSftpUsersResetPasswordMutation } from '../../app/queries';
 import ClipboardInputControl from '../../components/clipboard-input-control';
 import { SectionHeader } from '../../components/section-header';
@@ -39,6 +41,7 @@ export default function SftpCard( {
 	const { username = '', password = '' } = sftpUsers[ 0 ] ?? {};
 	const mutation = useMutation( siteSftpUsersResetPasswordMutation( siteSlug ) );
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+	const [ showResetPasswordConfirmDialog, setShowResetPasswordConfirmDialog ] = useState( false );
 	const formData = {
 		url: SFTP_URL,
 		port: SFTP_PORT,
@@ -122,7 +125,7 @@ export default function SftpCard( {
 		fields: [ 'url', 'port', 'username', 'password' ],
 	};
 
-	const handleCreatePassword = () => {
+	const handleConfirmResetPassword = () => {
 		mutation.mutate( username, {
 			onError: () => {
 				createErrorNotice(
@@ -135,6 +138,8 @@ export default function SftpCard( {
 				);
 			},
 		} );
+
+		setShowResetPasswordConfirmDialog( false );
 	};
 
 	return (
@@ -162,13 +167,24 @@ export default function SftpCard( {
 						<Button
 							variant="secondary"
 							isBusy={ mutation.isPending }
-							onClick={ handleCreatePassword }
+							onClick={ () => setShowResetPasswordConfirmDialog( true ) }
 						>
 							{ __( 'Reset password' ) }
 						</Button>
 					</HStack>
 				) }
 			</CardBody>
+			<ConfirmDialog
+				isOpen={ showResetPasswordConfirmDialog }
+				confirmButtonText={ __( 'Reset password' ) }
+				size="small"
+				onConfirm={ () => handleConfirmResetPassword() }
+				onCancel={ () => setShowResetPasswordConfirmDialog( false ) }
+			>
+				{ __(
+					'After resetting your password, be sure to update it in any SFTP clients, deployment tools, or scripts that use it to connect to your site.'
+				) }
+			</ConfirmDialog>
 		</Card>
 	);
 }
