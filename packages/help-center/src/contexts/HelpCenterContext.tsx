@@ -37,7 +37,6 @@ const defaultContext: HelpCenterRequiredInformation = {
 	onboardingUrl: '',
 	canConnectToZendesk: false,
 	isLoadingCanConnectToZendesk: false,
-} );
 };
 
 const HelpCenterRequiredContext = createContext< HelpCenterRequiredInformation >( defaultContext );
