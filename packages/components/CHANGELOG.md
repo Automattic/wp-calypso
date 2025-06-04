@@ -1,6 +1,6 @@
 ## Unreleased
 
-## 2.4.0
+## 3.0.0
 
 ### Breaking changes
 
