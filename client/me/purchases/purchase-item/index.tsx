@@ -56,6 +56,7 @@ import {
 	isJetpackTemporarySitePurchase,
 	isAkismetTemporarySitePurchase,
 	isMarketplaceTemporarySitePurchase,
+	isA4ATemporarySitePurchase,
 } from '../utils';
 import OwnerInfo from './owner-info';
 import type { Purchases, SiteDetails } from '@automattic/data-stores';
@@ -351,10 +352,14 @@ export function PurchaseItemStatus( {
 		}
 	}
 
+	console.log( '######################### purchase', purchase );
+	console.log( '######################### isDisconnectedSite', isDisconnectedSite );
+
 	if (
 		isDisconnectedSite &&
 		! isAkismetTemporarySitePurchase( purchase ) &&
-		! isMarketplaceTemporarySitePurchase( purchase )
+		! isMarketplaceTemporarySitePurchase( purchase ) &&
+		! isA4ATemporarySitePurchase( purchase )
 	) {
 		if ( isJetpackTemporarySitePurchase( purchase ) ) {
 			return (
