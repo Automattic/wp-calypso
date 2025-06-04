@@ -1,5 +1,7 @@
 ## Unreleased
 
+## 2.4.0
+
 ### Breaking changes
 
 - `CoreBadge`: Fork from `@wordpress/components` and convert styles to CSS module. Static class names are no longer available ([#103568](https://github.com/Automattic/wp-calypso/pull/103568)).
