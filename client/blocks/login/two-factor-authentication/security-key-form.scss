@@ -1,6 +1,10 @@
 .two-factor-authentication__verification-code-form-wrapper {
 	.two-factor-authentication__actions {
-		padding: 24px;
+		padding: 24px 16px;
+
+		@media (min-width: 480px) {
+			padding-inline: 24px;
+		}
 
 		button {
 			display: block;
