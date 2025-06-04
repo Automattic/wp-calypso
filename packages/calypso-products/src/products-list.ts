@@ -1992,7 +1992,7 @@ export const WOOCOMMERCE_EXTENSIONS_PRODUCTS: Record< WooCommerceProductSlug, Pr
 		bill_period: PLAN_ANNUAL_PERIOD,
 		categories: [],
 		getFeatures: () => [],
-		getProductId: () => 2759,
+		getProductId: () => 2757,
 		getStoreSlug: () => PRODUCT_WOOCOMMERCE_MOLLIE,
 	},
 	[ PRODUCT_WOOCOMMERCE_STRIPE ]: {
@@ -2003,7 +2003,7 @@ export const WOOCOMMERCE_EXTENSIONS_PRODUCTS: Record< WooCommerceProductSlug, Pr
 		bill_period: PLAN_ANNUAL_PERIOD,
 		categories: [],
 		getFeatures: () => [],
-		getProductId: () => 2761,
+		getProductId: () => 2759,
 		getStoreSlug: () => PRODUCT_WOOCOMMERCE_STRIPE,
 	},
 	[ PRODUCT_WOOCOMMERCE_KLARNA ]: {
@@ -2014,7 +2014,7 @@ export const WOOCOMMERCE_EXTENSIONS_PRODUCTS: Record< WooCommerceProductSlug, Pr
 		bill_period: PLAN_ANNUAL_PERIOD,
 		categories: [],
 		getFeatures: () => [],
-		getProductId: () => 2763,
+		getProductId: () => 2761,
 		getStoreSlug: () => PRODUCT_WOOCOMMERCE_KLARNA,
 	},
 	[ PRODUCT_WOOCOMMERCE_PAYPAL ]: {
@@ -2025,7 +2025,7 @@ export const WOOCOMMERCE_EXTENSIONS_PRODUCTS: Record< WooCommerceProductSlug, Pr
 		bill_period: PLAN_ANNUAL_PERIOD,
 		categories: [],
 		getFeatures: () => [],
-		getProductId: () => 2767,
+		getProductId: () => 2763,
 		getStoreSlug: () => PRODUCT_WOOCOMMERCE_PAYPAL,
 	},
 	[ PRODUCT_WOOCOMMERCE_KLAVIYO ]: {
@@ -2036,7 +2036,7 @@ export const WOOCOMMERCE_EXTENSIONS_PRODUCTS: Record< WooCommerceProductSlug, Pr
 		bill_period: PLAN_ANNUAL_PERIOD,
 		categories: [],
 		getFeatures: () => [],
-		getProductId: () => 2769,
+		getProductId: () => 2765,
 		getStoreSlug: () => PRODUCT_WOOCOMMERCE_KLAVIYO,
 	},
 };
