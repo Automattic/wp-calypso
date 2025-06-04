@@ -29,6 +29,7 @@ import {
 } from '../../app/queries';
 import ClipboardInputControl from '../../components/clipboard-input-control';
 import RequiredSelect from '../../components/required-select';
+import { SectionHeader } from '../../components/section-header';
 import type { SftpUser, SiteSshKey, ProfileSshKey } from '../../data/types';
 import type { DataFormControlProps, Field } from '@automattic/dataviews';
 
@@ -241,11 +242,9 @@ export default function SshCard( {
 		<Card>
 			<CardBody>
 				<VStack style={ { paddingBottom: '12px' } }>
-					<Text size="15px" weight={ 500 } lineHeight="32px">
-						{ __( 'SSH' ) }
-					</Text>
-					<Text variant="muted" as="p">
-						{ createInterpolateElement(
+					<SectionHeader
+						title={ __( 'SSH' ) }
+						description={ createInterpolateElement(
 							__(
 								"SSH lets you access your site's backend via a terminal, so you can manage files and use <wpCliLink>WP-CLI</wpCliLink> for quick changes and troubleshooting. <learnMoreLink>Learn more</learnMoreLink>."
 							),
@@ -254,7 +253,8 @@ export default function SshCard( {
 								learnMoreLink: <ExternalLink href="#hosting-connect-to-ssh" children={ null } />,
 							}
 						) }
-					</Text>
+						level={ 3 }
+					/>
 				</VStack>
 				<VStack spacing={ 4 } style={ { padding: '8px 0' } }>
 					<ToggleControl

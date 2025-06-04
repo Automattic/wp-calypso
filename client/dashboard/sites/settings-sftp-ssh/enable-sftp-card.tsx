@@ -15,6 +15,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { siteSftpUsersCreateMutation } from '../../app/queries';
+import { SectionHeader } from '../../components/section-header';
 
 const FILEZILLA_URL = 'https://filezilla-project.org/';
 
@@ -51,15 +52,21 @@ export default function EnableSftpCard( {
 	return (
 		<Card>
 			<CardBody>
-				<Text variant="muted" lineHeight="20px" style={ { paddingBottom: '12px' } } as="p">
-					{ canUseSsh
-						? __(
-								"Access and edit your website's files directly by creating SFTP credentials and using an SFTP client. Optionally, enable SSH to perform advanced site operations using the command line."
-						  )
-						: __(
-								"Access and edit your website's files directly by creating SFTP credentials and using an SFTP client."
-						  ) }
-				</Text>
+				<VStack style={ { paddingBottom: '12px' } }>
+					<SectionHeader
+						title={ __( 'Get started with SFTP/SSH' ) }
+						description={
+							canUseSsh
+								? __(
+										"Access and edit your website's files directly by creating SFTP credentials and using an SFTP client. Optionally, enable SSH to perform advanced site operations using the command line."
+								  )
+								: __(
+										"Access and edit your website's files directly by creating SFTP credentials and using an SFTP client."
+								  )
+						}
+						level={ 3 }
+					/>
+				</VStack>
 				<VStack spacing={ 5 } style={ { padding: '8px 0' } }>
 					{ /* TODO: Replace the Panel with the Accordion component when it's ready */ }
 					<Panel>

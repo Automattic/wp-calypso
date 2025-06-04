@@ -3,7 +3,6 @@ import { useMutation } from '@tanstack/react-query';
 import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
-	__experimentalText as Text,
 	BaseControl,
 	Button,
 	Card,
@@ -16,6 +15,7 @@ import { sprintf, __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { siteSftpUsersResetPasswordMutation } from '../../app/queries';
 import ClipboardInputControl from '../../components/clipboard-input-control';
+import { SectionHeader } from '../../components/section-header';
 import type { SftpUser } from '../../data/types';
 import type { Field } from '@automattic/dataviews';
 
@@ -127,7 +127,7 @@ export default function SftpCard( {
 			onError: () => {
 				createErrorNotice(
 					__(
-						'Sorry, we had a problem retrieving your sftp user details. Please refresh the page and try again.'
+						'Sorry, we had a problem retrieving your SFTP user details. Please refresh the page and try again.'
 					),
 					{
 						type: 'snackbar',
@@ -141,11 +141,9 @@ export default function SftpCard( {
 		<Card>
 			<CardBody>
 				<VStack style={ { paddingBottom: '12px' } }>
-					<Text size="15px" weight={ 500 } lineHeight="32px">
-						{ __( 'SFTP' ) }
-					</Text>
-					<Text variant="muted" as="p">
-						{ createInterpolateElement(
+					<SectionHeader
+						title={ __( 'SFTP' ) }
+						description={ createInterpolateElement(
 							__(
 								'Use the credentials below to access and edit your website files using an SFTP client. <link>Learn more</link>.'
 							),
@@ -153,7 +151,8 @@ export default function SftpCard( {
 								link: <ExternalLink href="#" children={ null } />,
 							}
 						) }
-					</Text>
+						level={ 3 }
+					/>
 				</VStack>
 				<VStack spacing={ 4 } style={ { padding: '8px 0' } }>
 					<DataForm< SftpCardFormData > data={ formData } fields={ fields } form={ form } />
