@@ -76,7 +76,7 @@ const OverviewBodyEvents = () => {
 							href={ klaviyoRegistrationUrl }
 							onClick={ handleKlaviyoRegisterClick }
 						>
-							{ translate( 'Register now ↗' ) }
+							{ translate( 'Register for free ↗' ) }
 						</Button>
 					</div>
 					<div
@@ -117,7 +117,7 @@ const OverviewBodyEvents = () => {
 							href={ wooRegistrationUrl }
 							onClick={ handleWooRegisterClick }
 						>
-							{ translate( 'Register now ↗' ) }
+							{ translate( 'Register for free ↗' ) }
 						</Button>
 					</div>
 					<div
