@@ -104,23 +104,21 @@ export function WPCheckoutOrderSummary( {
 		streamlinedPriceExperimentAssignment
 	);
 	return (
-		<>
-			<CheckoutSummaryCard
-				className={ isCartUpdating ? 'is-loading' : '' }
-				data-e2e-cart-is-loading={ isCartUpdating }
-				isStreamlinedPrice={ isStreamlinedPrice }
-			>
-				{ showFeaturesList && (
-					<CheckoutSummaryFeaturedList
-						responseCart={ responseCart }
-						siteId={ siteId }
-						isCartUpdating={ isCartUpdating }
-						onChangeSelection={ onChangeSelection }
-					/>
-				) }
-				<CheckoutSummaryPriceList />
-			</CheckoutSummaryCard>
-		</>
+		<CheckoutSummaryCard
+			className={ isCartUpdating ? 'is-loading' : '' }
+			data-e2e-cart-is-loading={ isCartUpdating }
+			isStreamlinedPrice={ isStreamlinedPrice }
+		>
+			{ showFeaturesList && (
+				<CheckoutSummaryFeaturedList
+					responseCart={ responseCart }
+					siteId={ siteId }
+					isCartUpdating={ isCartUpdating }
+					onChangeSelection={ onChangeSelection }
+				/>
+			) }
+			<CheckoutSummaryPriceList />
+		</CheckoutSummaryCard>
 	);
 }
 export function CheckoutSummaryFeaturedList( {
