@@ -11,6 +11,7 @@ export type { State };
 
 declare const helpCenterData: { isProxied: boolean; isSU: boolean; isSSP: boolean } | undefined;
 declare const isSupportSession: boolean;
+declare const isSSP: boolean;
 
 let isRegistered = false;
 
@@ -23,7 +24,6 @@ export const isE2ETest = () =>
 export const isInSupportSession = () => {
 	if ( typeof window !== 'undefined' ) {
 		return (
-			'disableHelpCenterAutoOpen' in window ||
 			// A bit hacky but much easier than passing down data from PHP in Jetpack
 			// Simple
 			!! document.querySelector( '#wp-admin-bar-support-session-details' ) ||
@@ -33,7 +33,8 @@ export const isInSupportSession = () => {
 			document.querySelector( '#wpcom > .is-support-session' ) ||
 			( typeof isSupportSession !== 'undefined' && !! isSupportSession ) ||
 			( typeof helpCenterData !== 'undefined' && helpCenterData?.isSU ) ||
-			( typeof helpCenterData !== 'undefined' && helpCenterData?.isSSP )
+			( typeof helpCenterData !== 'undefined' && helpCenterData?.isSSP ) ||
+			( typeof isSSP !== 'undefined' && !! isSSP )
 		);
 	}
 	return false;
