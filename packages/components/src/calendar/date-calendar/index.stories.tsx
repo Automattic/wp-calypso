@@ -1,5 +1,15 @@
 import { fn } from '@storybook/test';
 import {
+	Button,
+	Composite,
+	Popover,
+	__experimentalInputControl as InputControl,
+	__experimentalHStack as HStack,
+	__experimentalVStack as VStack,
+	VisuallyHidden,
+} from '@wordpress/components';
+import { isSameDay } from 'date-fns';
+import {
 	enUS,
 	fr,
 	es,
@@ -18,7 +28,7 @@ import {
 	ar,
 	sv,
 } from 'date-fns/locale';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useId } from 'react';
 import { DateCalendar, TZDate } from '../';
 import type { Meta, StoryObj } from '@storybook/react';
 
@@ -113,57 +123,6 @@ function dateToInputValue( date: Date ) {
 		.toString()
 		.padStart( 2, '0' ) }`;
 }
-
-/**
- * The component can be used in controlled mode. This is useful, for example,
- * when in need of keeping the component in sync with an external input field.
- *
- * _Note: this example doesn't handle time zones_
- */
-export const ControlledWithInputField: Story = {
-	render: function ControlledDateCalendar( args ) {
-		const [ selected, setSelected ] = useState< Date | null >( null );
-
-		return (
-			<div style={ { display: 'flex', flexDirection: 'column', gap: 16 } }>
-				<label style={ { display: 'flex', flexDirection: 'column', gap: 4 } }>
-					Selected date
-					<input
-						type="date"
-						value={
-							// Note: the following code doesn't handle time zones.
-							selected ? dateToInputValue( selected ) : ''
-						}
-						onChange={ ( e ) => {
-							// Note: the following code doesn't handle time zones.
-							setSelected( new Date( e.target.value ) );
-						} }
-						style={ { width: 160 } }
-					/>
-				</label>
-				<DateCalendar
-					{ ...args }
-					selected={ selected }
-					onSelect={ ( selectedDate, ...rest ) => {
-						setSelected( selectedDate ?? null );
-						args.onSelect?.( selectedDate, ...rest );
-					} }
-				/>
-			</div>
-		);
-	},
-	argTypes: {
-		defaultSelected: {
-			control: false,
-		},
-		selected: {
-			control: false,
-		},
-		timeZone: {
-			control: false,
-		},
-	},
-};
 
 export const DisabledDates: Story = {
 	args: {
@@ -275,84 +234,283 @@ const oneYearBefore = ( date: Date ) => {
 	return toReturn;
 };
 
-export const WithPresets: Story = {
+function computePresetRange( preset: string ) {
+	let targetDate;
+	switch ( preset ) {
+		case 'today':
+			targetDate = today;
+			break;
+		case 'one-week-ago':
+			targetDate = oneWeekBefore( today );
+			break;
+		case 'start-of-month':
+			targetDate = startOfMonth( today );
+			break;
+		case 'one-month-ago':
+			targetDate = oneMonthBefore( today );
+			break;
+		case 'start-of-year':
+			targetDate = startOfYear( today );
+			break;
+		case 'one-year-ago':
+			targetDate = oneYearBefore( today );
+			break;
+	}
+	return targetDate;
+}
+
+function PresetItem( {
+	id,
+	label,
+	selected,
+	setSelected,
+}: {
+	id: string;
+	label: string;
+	selected: boolean;
+	setSelected: ( id: string ) => void;
+} ) {
+	return (
+		<Composite.Item
+			render={ <Button __next40pxDefaultSize variant={ selected ? 'primary' : undefined } /> }
+			id={ id }
+			onClick={ () => setSelected( id ) }
+			role="option"
+			aria-selected={ selected ? 'true' : undefined }
+			className="preset-listbox__item"
+			// It's fine to autofocus when the popover opens
+		>
+			<span className="preset-listbox__item-label">
+				{ label }
+				<span
+					className="preset-listbox__item-label-bullet"
+					style={ { visibility: selected ? 'visible' : 'hidden' } }
+				>
+					&bull;
+				</span>
+			</span>
+		</Composite.Item>
+	);
+}
+
+/**
+ * The component can be used in controlled mode. This is useful, for example,
+ * when in need of keeping the component in sync with external input fields or
+ * more advanced UI patterns such as a preset selector.
+ *
+ * _Note: this example doesn't handle time zones, and is not responsive. Do not
+ * assume this is production-ready code._
+ */
+export const WithPresetsDialog: Story = {
 	render: function ControlledDateCalendar( args ) {
-		const [ selected, setSelected ] = useState< Date | null >( null );
+		const popoverTitleId = useId();
+		const presetListboxId = useId();
+
+		const [ selectedDate, setSelectedDate ] = useState< typeof args.selected | null >( null );
 		const [ month, setMonth ] = useState< Date >();
+
+		const popoverTriggerRef = useRef< HTMLButtonElement >( null );
+		const [ isPopoverOpen, setIsPopoverOpen ] = useState( false );
+
+		const [ activePresetId, setActivePresetId ] = useState< string | null >( null );
+		const [ selectedPresetId, setSelectedPresetId ] = useState< string | null >( null );
+
+		const onPresetSelect = ( presetId: string ) => {
+			setSelectedPresetId( presetId );
+			setActivePresetId( presetId );
+
+			const targetDate = computePresetRange( presetId );
+			if ( targetDate ) {
+				setSelectedDate( targetDate );
+				setMonth( targetDate );
+			}
+		};
+
+		useEffect( () => {
+			if ( ! selectedDate ) {
+				setSelectedPresetId( null );
+				return;
+			}
+
+			let foundPresetId: string | null = null;
+
+			[
+				'today',
+				'one-week-ago',
+				'start-of-month',
+				'one-month-ago',
+				'start-of-year',
+				'one-year-ago',
+			].forEach( ( presetId ) => {
+				const presetDate = computePresetRange( presetId );
+				if ( ! foundPresetId && presetDate && isSameDay( presetDate, selectedDate ) ) {
+					foundPresetId = presetId;
+				}
+			} );
+
+			setSelectedPresetId( foundPresetId ?? 'custom' );
+			setActivePresetId( foundPresetId ?? 'custom' );
+		}, [ selectedDate ] );
 
 		return (
 			<>
-				<div style={ { display: 'flex', gap: 8, marginBottom: 16 } }>
-					<button
-						type="button"
-						onClick={ () => {
-							setSelected( today );
-							setMonth( today );
-						} }
+				<style>{ `
+					.popover-content-wrapper {
+						width: max-content;
+					}
+					.preset-listbox {
+						align-self: stretch;
+						flex-shrink: 0;
+						padding: 12px 16px;
+						border-inline-end: 1px solid #ccc;
+					}
+					.preset-listbox:has([data-active-item]):focus {
+						outline: 3px solid transparent;
+					}
+					.preset-listbox__group {
+						outline: 1px solid red;
+					}
+					.preset-listbox__item:last-child {
+						margin-block-start: auto;
+					}
+					.preset-listbox:focus .preset-listbox__item[data-active-item] {
+						box-shadow:0 0 0 var(--wp-admin-border-width-focus) var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9));
+						outline: 3px solid transparent;
+					}
+					.preset-listbox__item-label {
+						width: 100%;
+						display: flex;
+						align-items: center;
+						gap: 8px;
+						justify-content: space-between;
+					}
+					.preset-listbox__item-label-bullet {
+						font-size: 2em;
+						position: relative;
+						top: -0.06em;
+					}
+					.date-controls-wrapper {
+						padding: 24px;
+					}
+					.date-input {
+						flex: 1;
+					}
+					.date-calendar {
+						z-index: 0;
+						min-height: 300px;
+					}
+					.reset-button {
+						position: absolute;
+						inset-inline-end: 24px;
+						inset-block-end: 12px;
+					}
+				` }</style>
+				<Button
+					__next40pxDefaultSize
+					variant="secondary"
+					ref={ popoverTriggerRef }
+					onClick={ () => setIsPopoverOpen( ! isPopoverOpen ) }
+				>
+					{ ! selectedDate ? 'Pick a date' : `Selected:${ selectedDate.toLocaleDateString() }` }
+				</Button>
+
+				{ isPopoverOpen && (
+					<Popover
+						role="dialog"
+						open={ isPopoverOpen }
+						offset={ 16 }
+						anchor={ popoverTriggerRef.current }
+						aria-labelledby={ popoverTitleId }
 					>
-						Today
-					</button>
-					<button
-						type="button"
-						onClick={ () => {
-							const targetDate = oneWeekBefore( today );
-							setSelected( targetDate );
-							setMonth( targetDate );
-						} }
-					>
-						One week ago
-					</button>
-					<button
-						type="button"
-						onClick={ () => {
-							const targetDate = startOfMonth( today );
-							setSelected( targetDate );
-							setMonth( targetDate );
-						} }
-					>
-						Start of this month
-					</button>
-					<button
-						type="button"
-						onClick={ () => {
-							const targetDate = oneMonthBefore( today );
-							setSelected( targetDate );
-							setMonth( targetDate );
-						} }
-					>
-						One month ago
-					</button>
-					<button
-						type="button"
-						onClick={ () => {
-							const targetDate = startOfYear( today );
-							setSelected( targetDate );
-							setMonth( targetDate );
-						} }
-					>
-						Start of the year
-					</button>
-					<button
-						type="button"
-						onClick={ () => {
-							const targetDate = oneYearBefore( today );
-							setSelected( targetDate );
-							setMonth( targetDate );
-						} }
-					>
-						One year ago
-					</button>
-				</div>
-				<DateCalendar
-					{ ...args }
-					selected={ selected }
-					onSelect={ ( selectedDate, ...rest ) => {
-						setSelected( selectedDate ?? null );
-						args.onSelect?.( selectedDate, ...rest );
-					} }
-					month={ month }
-					onMonthChange={ setMonth }
-				/>
+						<VisuallyHidden id={ popoverTitleId }>Select a date</VisuallyHidden>
+						<HStack spacing={ 0 } className="popover-content-wrapper" alignment="top">
+							<VisuallyHidden id={ presetListboxId }>Date presets</VisuallyHidden>
+							<Composite
+								aria-labelledby={ presetListboxId }
+								activeId={ activePresetId }
+								setActiveId={ ( activeId ) => {
+									setActivePresetId( activeId ?? null );
+								} }
+								focusLoop
+								virtualFocus
+								render={
+									// @ts-expect-error children are passed directly to Composite
+									<VStack justify="flex-start" alignment="stretch" spacing={ 0 } />
+								}
+								role="listbox"
+								className="preset-listbox"
+								onFocus={ () => {
+									if ( ! activePresetId ) {
+										setActivePresetId( 'today' );
+									}
+								} }
+							>
+								{ [
+									{ id: 'today', label: 'Today' },
+									{ id: 'one-week-ago', label: 'One week ago' },
+									{ id: 'start-of-month', label: 'Start of this month' },
+									{ id: 'one-month-ago', label: 'One month ago' },
+									{ id: 'start-of-year', label: 'Start of the year' },
+									{ id: 'one-year-ago', label: 'One year ago' },
+									{ id: 'custom', label: 'Custom' },
+								].map( ( preset ) => (
+									<PresetItem
+										key={ preset.id }
+										id={ preset.id }
+										label={ preset.label }
+										selected={ selectedPresetId === preset.id }
+										setSelected={ onPresetSelect }
+									/>
+								) ) }
+							</Composite>
+
+							<VStack spacing={ 8 } className="date-controls-wrapper">
+								<HStack justify="space-between" spacing={ 8 }>
+									<InputControl
+										__next40pxDefaultSize
+										label="Start date"
+										type="date"
+										value={
+											// Note: the following code doesn't handle time zones.
+											selectedDate ? dateToInputValue( selectedDate ) : ''
+										}
+										onChange={ ( nextValue ) => {
+											// Note: the following code doesn't handle time zones.
+											setSelectedDate( new Date( `${ nextValue }` ) );
+										} }
+										className="date-input"
+									/>
+								</HStack>
+
+								<DateCalendar
+									{ ...args }
+									selected={ selectedDate }
+									onSelect={ ( selectedDate, ...rest ) => {
+										setSelectedDate( selectedDate ?? null );
+										args.onSelect?.( selectedDate, ...rest );
+									} }
+									month={ month }
+									onMonthChange={ setMonth }
+									className="date-calendar"
+								/>
+							</VStack>
+
+							<Button
+								__next40pxDefaultSize
+								variant="secondary"
+								onClick={ () => {
+									setSelectedDate( null );
+									setMonth( today );
+									setSelectedPresetId( null );
+									setActivePresetId( null );
+								} }
+								className="reset-button"
+							>
+								Reset
+							</Button>
+						</HStack>
+					</Popover>
+				) }
 			</>
 		);
 	},

@@ -49,7 +49,7 @@ export async function initializeWordPressPlayground(
 
 		const client = await startPlaygroundWeb( {
 			iframe,
-			remoteUrl: 'https://wordpress-playground.atomicsites.blog/remote.html',
+			remoteUrl: 'https://playground.wordpress.net/remote.html',
 			blueprint: await getBlueprint( isWordPressInstalled, recommendedPhpVersion ),
 			shouldInstallWordPress: ! isWordPressInstalled,
 			mounts: isWordPressInstalled ? [ mountDescriptor ] : [],

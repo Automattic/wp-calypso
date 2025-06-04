@@ -167,11 +167,6 @@ const LayoutLoggedOut = ( {
 		classes.dops = true;
 		classes[ oauth2Client.name ] = true;
 
-		// Force masterbar for all Crowdsignal OAuth pages
-		if ( isCrowdsignalOAuth2Client( oauth2Client ) ) {
-			classes[ 'has-no-masterbar' ] = false;
-		}
-
 		masterbar = <OauthClientMasterbar oauth2Client={ oauth2Client } />;
 	} else if (
 		config.isEnabled( 'jetpack-cloud' ) ||
@@ -337,14 +332,16 @@ export default withCurrentRoute(
 			const isWooJPC = isWooJPCFlow( state );
 
 			const isStudioClient = isStudioAppOAuth2Client( oauth2Client );
+			const isCrowdsignalClient = isCrowdsignalOAuth2Client( oauth2Client );
 			const isWhiteLogin =
-				isStudioClient ||
 				( currentRoute.startsWith( '/log-in' ) &&
-					! isJetpackLogin &&
-					Boolean( currentQuery?.client_id ) === false &&
-					Boolean( currentQuery?.oauth2_client_id ) === false &&
-					! isBlazePro &&
-					! isWooJPC ) ||
+					( ( ! isJetpackLogin &&
+						Boolean( currentQuery?.client_id ) === false &&
+						Boolean( currentQuery?.oauth2_client_id ) === false &&
+						! isBlazePro &&
+						! isWooJPC ) ||
+						isStudioClient ||
+						isCrowdsignalClient ) ) ||
 				isPartnerPortal;
 
 			const noMasterbarForRoute =
@@ -359,7 +356,6 @@ export default withCurrentRoute(
 				[ 'signup', 'jetpack-connect' ].includes( sectionName );
 			const wccomFrom = getWccomFrom( state );
 			const masterbarIsHidden =
-				isStudioClient ||
 				! ( currentSection || currentRoute ) ||
 				! masterbarIsVisible( state ) ||
 				noMasterbarForSection ||

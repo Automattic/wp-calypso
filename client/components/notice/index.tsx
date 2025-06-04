@@ -45,6 +45,8 @@ interface NoticeProps {
 	theme?: 'light' | 'dark';
 	text?: ReactNode;
 	children?: ReactNode;
+	ariaLive?: 'off' | 'polite' | 'assertive';
+	role?: 'status' | 'alert' | 'log' | 'marquee' | 'timer';
 }
 
 function getIcon( status: NoticeStatus | undefined ): string {
@@ -76,6 +78,8 @@ export default function Notice( {
 	status,
 	text,
 	theme = 'dark',
+	ariaLive,
+	role = 'status',
 }: NoticeProps ) {
 	const translate = useTranslate();
 
@@ -118,7 +122,12 @@ export default function Notice( {
 	}
 
 	return (
-		<div className={ classes } role="status" aria-label={ translate( 'Notice' ) }>
+		<div
+			className={ classes }
+			role={ role || 'status' }
+			aria-label={ translate( 'Notice' ) }
+			aria-live={ ariaLive }
+		>
 			<span className="calypso-notice__icon-wrapper">
 				{ iconNeedsDrop && <span className="calypso-notice__icon-wrapper-drop" /> }
 				{ renderedIcon }

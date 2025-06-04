@@ -93,6 +93,12 @@ export const LineItem = styled( CheckoutLineItem )< {
 
 	.checkout-line-item__price {
 		position: relative;
+
+		${ ( { shouldShowComparison } ) =>
+			shouldShowComparison &&
+			`
+				display: flex;
+			` }
 	}
 `;
 
@@ -806,7 +812,8 @@ export function LineItemSublabelAndPrice( {
 			stripZeros: true,
 		} );
 		const showCrossedOutPrice =
-			product.item_subtotal_integer / ( product.months_per_bill_period ?? 1 ) !== compareToPrice;
+			product.item_original_subtotal_integer / ( product.months_per_bill_period ?? 1 ) !==
+			compareToPrice;
 		if ( isMonthlyProduct( product ) ) {
 			return (
 				<>
@@ -1138,9 +1145,19 @@ function UpgradeCreditInformation( { product }: { product: ResponseCartProduct }
 	return null;
 }
 
-function IntroductoryOfferCallout( { product }: { product: ResponseCartProduct } ) {
+function IntroductoryOfferCallout( {
+	product,
+	isStreamlinedPrice,
+}: {
+	product: ResponseCartProduct;
+	isStreamlinedPrice?: boolean;
+} ) {
 	const translate = useTranslate();
-	const introductoryOffer = getItemIntroductoryOfferDisplay( translate, product );
+	const introductoryOffer = getItemIntroductoryOfferDisplay(
+		translate,
+		product,
+		isStreamlinedPrice
+	);
 
 	if ( ! introductoryOffer ) {
 		return null;
@@ -1333,13 +1350,19 @@ function CheckoutLineItem( {
 	} );
 
 	let pricePerMonth = 0;
+	let originalPricePerMonth = 0;
 	if ( shouldShowComparison ) {
 		pricePerMonth = Math.round(
 			product.item_subtotal_integer / ( product.months_per_bill_period ?? 1 )
 		);
+		originalPricePerMonth = product.item_original_monthly_cost_integer;
 	}
 
 	const monthlyAmountDisplay = formatCurrency( pricePerMonth, product.currency, {
+		isSmallestUnit: true,
+		stripZeros: true,
+	} );
+	const originalMonthlyAmountDisplay = formatCurrency( originalPricePerMonth, product.currency, {
 		isSmallestUnit: true,
 		stripZeros: true,
 	} );
@@ -1380,7 +1403,11 @@ function CheckoutLineItem( {
 			<span aria-labelledby={ itemSpanId } className="checkout-line-item__price">
 				{ shouldShowComparison ? (
 					<>
-						{ monthlyAmountDisplay } { translate( '/month' ) }
+						<LineItemPrice
+							actualAmount={ monthlyAmountDisplay }
+							crossedOutAmount={ isDiscounted ? originalMonthlyAmountDisplay : undefined }
+						/>{ ' ' }
+						{ translate( '/month' ) }
 					</>
 				) : (
 					<>
@@ -1405,7 +1432,10 @@ function CheckoutLineItem( {
 								compareToPrice={ compareToPrice }
 							/>
 							<DomainDiscountCallout product={ product } />
-							<IntroductoryOfferCallout product={ product } />
+							<IntroductoryOfferCallout
+								product={ product }
+								isStreamlinedPrice={ shouldShowComparison }
+							/>
 							<JetpackAkismetSaleCouponCallout product={ product } />
 						</LineItemMeta>
 					</>

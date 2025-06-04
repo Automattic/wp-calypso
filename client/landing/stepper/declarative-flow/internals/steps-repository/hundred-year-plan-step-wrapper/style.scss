@@ -1,15 +1,5 @@
 @import "@automattic/onboarding/styles/mixins";
 
-.hundred-year-plan,
-.hundred-year-domain-transfer,
-.hundred-year-domain {
-	height: 100%;
-	padding: 0;
-	.signup-header {
-		display: none;
-	}
-}
-
 /**
  * A different selector (not `.step-container.${flowName}`) is needed for the 100-year domain transfer
  * since it's just a variation of the `domain-transfer` flow, and variations aren't accounted for

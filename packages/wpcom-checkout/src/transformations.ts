@@ -139,7 +139,8 @@ function getDiscountReasonForIntroductoryOffer(
 	terms: IntroductoryOfferTerms,
 	translate: ReturnType< typeof useTranslate >,
 	allowFreeText: boolean,
-	isPriceIncrease: boolean
+	isPriceIncrease: boolean,
+	isStreamlinedPrice?: boolean
 ): string {
 	return getIntroductoryOfferIntervalDisplay( {
 		translate,
@@ -149,6 +150,7 @@ function getDiscountReasonForIntroductoryOffer(
 		isPriceIncrease,
 		context: 'checkout',
 		remainingRenewalsUsingOffer: terms.transition_after_renewal_count,
+		isStreamlinedPrice,
 	} );
 }
 
@@ -216,7 +218,8 @@ function makeIntroductoryOfferCostOverrideUnique(
 	costOverride: ResponseCartCostOverride,
 	product: ResponseCartProduct,
 	translate: ReturnType< typeof useTranslate >,
-	allowFreeText: boolean
+	allowFreeText: boolean,
+	isStreamlinedPrice?: boolean
 ): ResponseCartCostOverride {
 	if ( 'introductory-offer' !== costOverride.override_code || ! product.introductory_offer_terms ) {
 		return costOverride;
@@ -242,7 +245,8 @@ function makeIntroductoryOfferCostOverrideUnique(
 			product.introductory_offer_terms,
 			translate,
 			allowFreeText,
-			isPriceIncrease
+			isPriceIncrease,
+			isStreamlinedPrice
 		),
 	};
 }
@@ -336,7 +340,8 @@ export function doesIntroductoryOfferHavePriceIncrease( product: ResponseCartPro
 
 export function filterCostOverridesForLineItem(
 	product: ResponseCartProduct,
-	translate: ReturnType< typeof useTranslate >
+	translate: ReturnType< typeof useTranslate >,
+	isStreamlinedPrice?: boolean
 ): LineItemCostOverrideForDisplay[] {
 	const costOverrides = product?.cost_overrides ?? [];
 
@@ -347,7 +352,13 @@ export function filterCostOverridesForLineItem(
 			.filter( ( costOverride ) => costOverride.override_code !== 'coupon-discount' )
 			.map( ( costOverride ) => makeSaleCostOverrideUnique( costOverride, product, translate ) )
 			.map( ( costOverride ) =>
-				makeIntroductoryOfferCostOverrideUnique( costOverride, product, translate, true )
+				makeIntroductoryOfferCostOverrideUnique(
+					costOverride,
+					product,
+					translate,
+					true,
+					isStreamlinedPrice
+				)
 			)
 			.map( ( costOverride ) => {
 				// Introductory offers which are renewals may have a prorated

@@ -59,15 +59,15 @@ export const UserMessage = ( {
 	const hasCannedResponse = message.context?.flags?.canned_response;
 	const isRequestingHumanSupport = message.context?.flags?.forward_to_human_support ?? false;
 	const isBot = message.role === 'bot';
-	const isConnectedToZendesk = chat?.provider === 'zendesk';
 
 	const showDirectEscalationLink = useMemo( () => {
 		return (
+			canConnectToZendesk &&
 			! chat.conversationId &&
 			userProvidedEnoughInformation( chat?.messages ) &&
 			! interactionHasZendeskEvent( currentSupportInteraction )
 		);
-	}, [ chat.conversationId, currentSupportInteraction, chat?.messages ] );
+	}, [ chat.conversationId, currentSupportInteraction, chat?.messages, canConnectToZendesk ] );
 
 	const forwardMessage = isUserEligibleForPaidSupport
 		? ODIE_FORWARD_TO_ZENDESK_MESSAGE
@@ -125,7 +125,7 @@ export const UserMessage = ( {
 					}
 				) }
 			</div>
-			{ ! isConnectedToZendesk && (
+			{ ! interactionHasZendeskEvent( currentSupportInteraction ) && (
 				<>
 					{ showDirectEscalationLink && <DirectEscalationLink messageId={ message.message_id } /> }
 					{ ! message.rating_value && (

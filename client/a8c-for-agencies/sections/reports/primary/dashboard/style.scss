@@ -1,0 +1,66 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+@import '@wordpress/base-styles/variables';
+
+.reports-dashboard {
+	.hosting-dashboard-layout__header-actions {
+		display: flex;
+		flex-direction: column;
+		align-items: normal;
+		justify-content: normal;
+	}
+
+	.dataviews-view-list__field-value {
+		color: var(--color-accent-80);
+	}
+
+	&.main.hosting-dashboard-layout {
+		background: inherit;
+	}
+
+	&.is-empty {
+		.hosting-dashboard-layout__body-wrapper {
+			max-width: 900px;
+			padding-block-start: calc(24px + 48px);
+		}
+	}
+
+	&.reports-dashboard--has-selected {
+		ul.dataviews-view-list {
+			margin: 0;
+			list-style: none;
+		}
+
+		.dataviews-view-list__item .components-flex {
+			gap: 0;
+		}
+
+		.hosting-dashboard-layout__top-wrapper > * {
+			padding-inline: 24px;
+		}
+
+		.reports-dashboard__column {
+			flex: unset;
+			height: 100%;
+			transition: all 0.2s;
+			width: 400px;
+			display: none;
+
+			@include break-wide {
+				display: block;
+			}
+		}
+	}
+}
+
+.reports-dashboard__actions {
+	@include body-small;
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+
+	@include break-xlarge {
+		flex-direction: row;
+		align-items: center;
+	}
+}

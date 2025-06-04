@@ -7,6 +7,7 @@ import type {
 	MonitorUptime,
 	Plan,
 	Site,
+	AgencyBlog,
 	Purchase,
 	User,
 	SiteUser,
@@ -486,7 +487,7 @@ export const resetPhpMyAdminPassword = async ( siteIdOrSlug: string ): Promise< 
 };
 
 // This endpoint only accepts site ID, not slug.
-export const fetchAgencyBlogBySiteId = async ( siteId: string ): Promise< void > => {
+export const fetchAgencyBlogBySiteId = async ( siteId: string ): Promise< AgencyBlog > => {
 	return wpcom.req.get( {
 		path: `/agency/blog/${ siteId }`,
 		apiNamespace: 'wpcom/v2',
@@ -635,6 +636,13 @@ export const resetSite = async ( siteIdOrSlug: string ): Promise< void > => {
 export const fetchSiteResetStatus = async ( siteIdOrSlug: string ): Promise< SiteResetStatus > => {
 	return wpcom.req.get( {
 		path: `/sites/${ siteIdOrSlug }/reset-site/status`,
+		apiNamespace: 'wpcom/v2',
+	} );
+};
+
+export const launchSite = async ( siteId: string ): Promise< void > => {
+	return wpcom.req.post( {
+		path: `/sites/${ siteId }/launch`,
 		apiNamespace: 'wpcom/v2',
 	} );
 };

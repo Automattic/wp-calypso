@@ -112,7 +112,7 @@
 /packages/grid @youknowriad
 
 # V2 Dashboard
-/client/dashboard @youknowriad @Automattic/io @Automattic/lego
+/client/dashboard @Automattic/lego
 
 # Design System
 /packages/components @Automattic/team-calypso

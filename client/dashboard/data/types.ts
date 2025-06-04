@@ -113,6 +113,16 @@ export interface Site {
 	jetpack_modules: string[] | null;
 }
 
+export interface AgencyBlog {
+	name: string;
+	existing_wpcom_license_count: number;
+	referral_status: 'active' | 'pending' | 'canceled' | 'archived';
+	prices: {
+		actual_price: number;
+		currency: string;
+	};
+}
+
 export interface Purchase {
 	ID: number | string;
 	active: boolean;
@@ -174,6 +184,8 @@ export interface SiteSettings {
 	wpcom_prevent_third_party_sharing?: boolean;
 	wpcom_gifting_subscription?: boolean;
 	wpcom_performance_report_url?: string;
+	wpcom_legacy_contact?: string;
+	wpcom_locked_mode?: boolean;
 }
 
 export interface BasicMetricsData {
