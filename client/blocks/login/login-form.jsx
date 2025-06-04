@@ -225,11 +225,7 @@ export class LoginForm extends Component {
 	isFullView() {
 		const { accountType, hasAccountTypeLoaded, socialAccountIsLinking } = this.props;
 
-		return (
-			socialAccountIsLinking ||
-			( hasAccountTypeLoaded && isRegularAccount( accountType ) ) ||
-			this.props.isBlazePro
-		);
+		return socialAccountIsLinking || ( hasAccountTypeLoaded && isRegularAccount( accountType ) );
 	}
 
 	isPasswordView() {
@@ -240,10 +236,7 @@ export class LoginForm extends Component {
 
 	isUsernameOrEmailView() {
 		const { hasAccountTypeLoaded, socialAccountIsLinking, isSendingEmail } = this.props;
-		return (
-			isSendingEmail ||
-			( ! socialAccountIsLinking && ! hasAccountTypeLoaded && ! this.props.isBlazePro )
-		);
+		return isSendingEmail || ( ! socialAccountIsLinking && ! hasAccountTypeLoaded );
 	}
 
 	resetView = ( event ) => {
@@ -276,8 +269,7 @@ export class LoginForm extends Component {
 	onSubmitForm = ( event ) => {
 		event.preventDefault();
 
-		// Skip this step if we're in the Blaze Pro signup flows, and hasAccountTypeLoaded.
-		if ( ! this.props.hasAccountTypeLoaded && ! this.props.isBlazePro ) {
+		if ( ! this.props.hasAccountTypeLoaded ) {
 			// Google Chrome on iOS will autofill without sending events, leading the user
 			// to see a filled box but getting an error. We fetch the value directly from
 			// the DOM as a workaround.
@@ -535,10 +527,6 @@ export class LoginForm extends Component {
 	renderUsernameorEmailLabel() {
 		if ( this.props.isWoo ) {
 			return this.props.translate( 'Your email or username' );
-		}
-
-		if ( this.props.isBlazePro ) {
-			return this.props.translate( 'Your email address' );
 		}
 
 		if ( this.props.isWoo ) {
