@@ -100,8 +100,10 @@ export function LaunchAgencyDevelopmentSiteForm( {
 export function LaunchForm( { site }: { site: Site } ) {
 	return (
 		<Notice
+			title={ __( "Your site hasn't been launched yet" ) }
 			actions={
 				<Button
+					size="compact"
 					variant="primary"
 					href={ addQueryArgs( '/start/launch-site', {
 						siteSlug: site.slug,
@@ -113,9 +115,7 @@ export function LaunchForm( { site }: { site: Site } ) {
 				</Button>
 			}
 		>
-			{ __(
-				'Your site hasn\'t been launched yet. It is hidden from visitors behind a "Coming Soon" notice until it is launched.'
-			) }
+			{ __( 'It is hidden from visitors behind a "Coming Soon" notice until it is launched.' ) }
 		</Notice>
 	);
 }
