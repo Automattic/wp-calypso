@@ -14,15 +14,18 @@ import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { sprintf, __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { siteSftpUsersResetPasswordMutation } from '../../app/queries';
 import ClipboardInputControl from '../../components/clipboard-input-control';
 import { SectionHeader } from '../../components/section-header';
 import type { SftpUser } from '../../data/types';
-import type { Field } from '@automattic/dataviews';
+import type { DataFormControlProps, Field } from '@automattic/dataviews';
 
 const SFTP_URL = 'sftp.wp.com';
+
 const SFTP_PORT = '22';
+
+const noop = () => {};
 
 type SftpCardFormData = {
 	url: string;
@@ -49,7 +52,11 @@ export default function SftpCard( {
 		password,
 	};
 
-	const handleCopy = ( label: string ) => {
+	const handleCopy = ( label?: React.ReactNode ) => {
+		if ( ! label ) {
+			return;
+		}
+
 		createSuccessNotice(
 			sprintf(
 				/* translators: %s is the copied field */
@@ -62,7 +69,7 @@ export default function SftpCard( {
 		);
 	};
 
-	const ClipboardInputControlEdit = ( { field, data } ) => {
+	const ClipboardInputControlEdit = < Item, >( { field, data }: DataFormControlProps< Item > ) => {
 		const { getValue } = field;
 		return (
 			<ClipboardInputControl
@@ -160,7 +167,12 @@ export default function SftpCard( {
 					/>
 				</VStack>
 				<VStack spacing={ 4 } style={ { padding: '8px 0' } }>
-					<DataForm< SftpCardFormData > data={ formData } fields={ fields } form={ form } />
+					<DataForm< SftpCardFormData >
+						data={ formData }
+						fields={ fields }
+						form={ form }
+						onChange={ noop }
+					/>
 				</VStack>
 				{ ! password && (
 					<HStack style={ { padding: '8px 0' } }>

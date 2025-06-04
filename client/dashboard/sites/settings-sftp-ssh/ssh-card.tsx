@@ -93,7 +93,10 @@ export default function SshCard( {
 } ) {
 	const { user } = useAuth();
 	const { data: siteSshKeys } = useQuery( siteSshKeysQuery( siteSlug ) );
-	const { data: profileSshKeys, profileSshKeysError } = useQuery( {
+	const { data: profileSshKeys, error: profileSshKeysError } = useQuery<
+		ProfileSshKey[],
+		{ code: string }
+	>( {
 		...profileSshKeysQuery(),
 		enabled: sshEnabled,
 	} );
@@ -119,7 +122,11 @@ export default function SshCard( {
 		return !! siteSshKeys.find( ( { user_login }: SiteSshKey ) => user_login === user.username );
 	}, [ siteSshKeys, user.username ] );
 
-	const handleCopy = ( label: string ) => {
+	const handleCopy = ( label?: React.ReactNode ) => {
+		if ( ! label ) {
+			return;
+		}
+
 		createSuccessNotice(
 			sprintf(
 				/* translators: %s is the copied field */
@@ -194,7 +201,7 @@ export default function SshCard( {
 	const SshKeysControl = < Item, >( { field }: DataFormControlProps< Item > ) => (
 		<BaseControl label={ field.label } __nextHasNoMarginBottom>
 			<VStack>
-				{ siteSshKeys.map( ( siteSshKey: SiteSshKey ) => (
+				{ siteSshKeys?.map( ( siteSshKey: SiteSshKey ) => (
 					<SshKeyCard
 						key={ siteSshKey.sha256 }
 						siteSshKey={ siteSshKey }
@@ -228,7 +235,14 @@ export default function SshCard( {
 			label: __( 'SSH key' ),
 			Edit: ( { data, field, onChange, hideLabelFromVision } ) => {
 				if ( siteSshKeys && siteSshKeys.length > 0 ) {
-					return <SshKeysControl field={ field } />;
+					return (
+						<SshKeysControl
+							data={ data }
+							field={ field }
+							onChange={ onChange }
+							hideLabelFromVision={ hideLabelFromVision }
+						/>
+					);
 				}
 
 				return (

@@ -13,7 +13,7 @@ export default function SftpSshSettingsSummary( {
 	density,
 }: {
 	site: Site;
-	density: Density;
+	density?: Density;
 } ) {
 	const { data: sftpUsers } = useQuery( {
 		...siteSftpUsersQuery( site.slug ),

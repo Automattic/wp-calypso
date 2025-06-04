@@ -12,7 +12,9 @@ import React, { useState, useEffect } from 'react';
 export default function ClipboardInputControl( {
 	onCopy,
 	...props
-}: React.ComponentProps< typeof InputControl > & { onCopy?: ( label: string ) => void } ) {
+}: Omit< React.ComponentProps< typeof InputControl >, 'onCopy' > & {
+	onCopy?: ( label?: React.ReactNode ) => void;
+} ) {
 	const [ isCopied, setCopied ] = useState( false );
 
 	const handleCopy = () => {
