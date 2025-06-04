@@ -4,7 +4,6 @@ import {
 	CardBody,
 	ToggleControl,
 	__experimentalVStack as VStack,
-	__experimentalText as Text,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
@@ -14,6 +13,7 @@ import {
 	sitePreviewLinkCreateMutation,
 	sitePreviewLinkDeleteMutation,
 } from '../../app/queries/site-preview-links';
+import { SectionHeader } from '../../components/section-header';
 import SitePreviewLink from '../../components/site-preview-link';
 import { DotcomFeatures } from '../../data/constants';
 import { hasPlanFeature } from '../../utils/site-features';
@@ -22,9 +22,10 @@ import type { Site } from '../../data/types';
 interface SitePreviewLinkProps {
 	site: Site;
 	title?: string;
+	description?: string;
 }
 
-export default function SitePreviewLinks( { site, title }: SitePreviewLinkProps ) {
+export default function SitePreviewLinks( { site, title, description }: SitePreviewLinkProps ) {
 	const { data: links = [] } = useQuery( sitePreviewLinksQuery( site.ID ) );
 	const createMutation = useMutation( sitePreviewLinkCreateMutation( site.ID ) );
 	const deleteMutation = useMutation( sitePreviewLinkDeleteMutation( site.ID ) );
@@ -64,9 +65,7 @@ export default function SitePreviewLinks( { site, title }: SitePreviewLinkProps 
 			<>
 				<ToggleControl
 					__nextHasNoMarginBottom
-					label={ __(
-						'Enable "Share site" to let collaborators without an account view your site.'
-					) }
+					label={ __( 'Enable share link' ) }
 					checked={ links.length > 0 }
 					disabled={ isMutationPending }
 					onChange={ handleChange }
@@ -83,14 +82,12 @@ export default function SitePreviewLinks( { site, title }: SitePreviewLinkProps 
 		);
 	};
 
-	if ( title ) {
+	if ( title && description ) {
 		return (
 			<Card>
 				<CardBody>
 					<VStack spacing={ 4 }>
-						<Text size="15px" weight={ 500 } lineHeight="20px">
-							{ title }
-						</Text>
+						<SectionHeader level={ 3 } title={ title } description={ description } />
 						{ renderContent() }
 					</VStack>
 				</CardBody>
