@@ -20,6 +20,7 @@ import {
 	getItemVariantCompareToPrice,
 	getItemVariantDiscount,
 } from '../item-variation-picker/util';
+import { CheckoutSummaryFeaturedList } from '../wp-checkout-order-summary';
 import type { WPCOMProductVariant } from '../item-variation-picker';
 import './style.scss';
 
@@ -111,6 +112,9 @@ export function CheckoutSidebarPlanUpsell() {
 		( product ) => isPlan( product ) && ! isJetpackPlan( product )
 	);
 	const [ , streamlinedPriceExperimentAssignment ] = useStreamlinedPriceExperiment();
+	const isStreamlinedPrice = isStreamlinedPriceCheckoutTreatment(
+		streamlinedPriceExperimentAssignment
+	);
 
 	const variants = useGetProductVariants( plan );
 
@@ -201,7 +205,7 @@ export function CheckoutSidebarPlanUpsell() {
 		upsellVariant,
 		percentSavings,
 		__,
-		isStreamlinedPriceCheckoutTreatment( streamlinedPriceExperimentAssignment )
+		isStreamlinedPrice
 	);
 
 	if ( ! upsellText ) {
@@ -212,15 +216,13 @@ export function CheckoutSidebarPlanUpsell() {
 
 	const checkoutSidebarPlanUpsellClassName =
 		'checkout-sidebar-plan-upsell' +
-		( isStreamlinedPriceCheckoutTreatment( streamlinedPriceExperimentAssignment )
-			? ' checkout-sidebar-plan-upsell-streamlined'
-			: '' );
+		( isStreamlinedPrice ? ' checkout-sidebar-plan-upsell-streamlined' : '' );
 
 	return (
 		<>
 			<PromoCard title={ cardTitle } className={ checkoutSidebarPlanUpsellClassName }>
 				<div className="checkout-sidebar-plan-upsell__plan-grid">
-					{ ! isStreamlinedPriceCheckoutTreatment( streamlinedPriceExperimentAssignment ) && (
+					{ ! isStreamlinedPrice && (
 						<>
 							<div className="checkout-sidebar-plan-upsell__plan-grid-cell">
 								<strong>{ __( 'Plan' ) }</strong>
@@ -262,6 +264,14 @@ export function CheckoutSidebarPlanUpsell() {
 						} ) }
 					</div>
 				</div>
+				{ isStreamlinedPrice && (
+					<CheckoutSummaryFeaturedList
+						responseCart={ responseCart }
+						siteId={ undefined }
+						isCartUpdating={ FormStatus.VALIDATING === formStatus }
+						isStreamlinedPrice={ isStreamlinedPrice }
+					/>
+				) }
 				<PromoCardCTA
 					cta={ {
 						disabled: isFormLoading,

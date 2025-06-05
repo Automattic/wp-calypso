@@ -4,6 +4,7 @@
 
 - `text`, `email` Edit control: add `help` support from the field `description` prop.
 - Add `align` to the `layout.styles` properties, for use in the DataViews table layout. Options are: `start`, `center`, and `end`.
+- Allow fields to opt-out of filtering via `field.filterBy: false`.
 
 ## 0.2.0
 

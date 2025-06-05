@@ -60,6 +60,7 @@ export { default as SummaryButton } from './summary-button';
 export { CoreBadge } from './core-badge';
 export { default as Menu } from './menu';
 export { Tabs } from './tabs';
+export { DateCalendar, DateRangeCalendar, TZDate } from './calendar';
 
 // Logos
 export { JetpackLogo } from './logos/jetpack-logo';

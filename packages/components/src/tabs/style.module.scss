@@ -60,6 +60,10 @@
 				linear-gradient( to left, var( --fade-gradient-composed ) );
 		}
 
+		&.has-compact-density {
+			gap: 1rem;
+		}
+
 		&::before {
 			bottom: 0;
 			height: 0;
@@ -161,6 +165,16 @@
 		&::after {
 			content: '';
 			inset: variables.$grid-unit-05 * 3;
+		}
+	}
+
+	.has-compact-density[aria-orientation='horizontal'] & {
+		padding-inline: 0;
+
+		&::after {
+			// Add enough inset to prevent the focus ring (which is 1.5px thick)
+			// from being visually clipped by the tablist.
+			inset-inline: 2px;
 		}
 	}
 

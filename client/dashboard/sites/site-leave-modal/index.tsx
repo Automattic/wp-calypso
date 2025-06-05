@@ -196,9 +196,13 @@ function ContentLeaveSite( { site, onClose }: ContentProps ) {
 
 export default function SiteLeaveModal( { site, onClose }: SiteLeaveModalProps ) {
 	const { user } = useAuth();
-	const { data: hasPurchasesCancelable } = useQuery(
+	const { data: hasPurchasesCancelable, isLoading: isLoadingHasPurchasesCancelable } = useQuery(
 		siteHasPurchasesCancelableQuery( site.slug, user.ID )
 	);
+
+	if ( isLoadingHasPurchasesCancelable ) {
+		return null;
+	}
 
 	const renderContent = () => {
 		if ( hasPurchasesCancelable ) {

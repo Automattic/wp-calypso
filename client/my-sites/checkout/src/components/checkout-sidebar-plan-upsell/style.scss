@@ -19,6 +19,14 @@
 	font-size: $font-title-small;
 	line-height: 1.3;
 }
+.promo-card.checkout-sidebar-plan-upsell-streamlined {
+	max-width: 384px;
+	width: 100%;
+}
+.promo-card.checkout-sidebar-plan-upsell-streamlined .action-panel__body {
+	overflow: visible;
+	color: var(--studio-gray-100);
+}
 
 .checkout-sidebar-plan-upsell__plan-grid {
 	display: grid;

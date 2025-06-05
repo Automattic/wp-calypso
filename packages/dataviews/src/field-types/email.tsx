@@ -11,6 +11,7 @@ import type {
 	SortDirection,
 	ValidationContext,
 	Operator,
+	FieldTypeDefinition,
 } from '../types';
 import { renderFromElements } from '../utils';
 import { OPERATOR_IS_ANY, OPERATOR_IS_NONE } from '../constants';
@@ -56,4 +57,4 @@ export default {
 	filterBy: {
 		operators,
 	},
-};
+} satisfies FieldTypeDefinition< any >;

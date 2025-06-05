@@ -19,7 +19,8 @@ const useNewHelper = config.isEnabled( 'subscribers-helper-library' );
 
 const getEmailSubscriptionId = ( subscriber: Subscriber ): number => {
 	if ( useNewHelper ) {
-		return subscriber.email_subscription_id || 0;
+		// For new helper library, use email_subscription_id if it exists, otherwise use subscription_id
+		return subscriber.email_subscription_id || subscriber.subscription_id || 0;
 	}
 	return subscriber.subscription_id || 0;
 };
@@ -113,8 +114,11 @@ const useSubscriberRemoveMutation = (
 						// Verify the response indicates successful deletion
 						emailRemoved = response?.deleted === true;
 					} catch ( e ) {
-						// Only throw if we haven't successfully removed them through any other method.
-						if ( ! wpcomRemoved ) {
+						// Consider "not_following" as a successful removal since they're already not following
+						if ( ( e as ApiResponseError )?.error === 'not_following' ) {
+							emailRemoved = true;
+						} else if ( ! wpcomRemoved ) {
+							// Only throw if we haven't successfully removed them through any other method
 							throw new Error( ( e as ApiResponseError )?.message );
 						}
 					}
@@ -254,10 +258,15 @@ const useSubscriberRemoveMutation = (
 				);
 				queryClient.setQueryData( detailsCacheKey, context.previousDetailsData );
 			}
+
+			// Force invalidate all subscriber queries to ensure UI is in sync
+			queryClient.invalidateQueries( { queryKey: [ 'subscribers', siteId ] } );
+			queryClient.invalidateQueries( { queryKey: [ 'subscribers', 'count', siteId ] } );
 		},
 		onSuccess: ( data, subscribers ) => {
-			// Invalidate all subscriber queries to trigger a refresh
+			// Force invalidate all subscriber queries to ensure UI is in sync
 			queryClient.invalidateQueries( { queryKey: [ 'subscribers', siteId ] } );
+			queryClient.invalidateQueries( { queryKey: [ 'subscribers', 'count', siteId ] } );
 
 			for ( const subscriber of subscribers ) {
 				recordSubscriberRemoved( {
@@ -268,13 +277,11 @@ const useSubscriberRemoveMutation = (
 			}
 		},
 		onSettled: ( data, error, subscribers ) => {
-			if ( error ) {
-				// On error, invalidate and refetch everything to ensure consistency
-				queryClient.invalidateQueries( { queryKey: [ 'subscribers', siteId ] } );
-				queryClient.invalidateQueries( { queryKey: [ 'subscribers', 'count', siteId ] } );
-			}
+			// Always invalidate and refetch everything to ensure consistency
+			queryClient.invalidateQueries( { queryKey: [ 'subscribers', siteId ] } );
+			queryClient.invalidateQueries( { queryKey: [ 'subscribers', 'count', siteId ] } );
 
-			// Always handle subscriber details cache if requested, regardless of success/error
+			// Always handle subscriber details cache if requested
 			if ( invalidateDetailsCache ) {
 				for ( const subscriber of subscribers ) {
 					const detailsCacheKey = getSubscriberDetailsCacheKey(

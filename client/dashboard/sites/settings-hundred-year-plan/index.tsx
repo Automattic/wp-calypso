@@ -94,7 +94,7 @@ export default function HundredYearPlanSettings( { siteSlug }: { siteSlug: strin
 			<Card>
 				<CardBody>
 					<form onSubmit={ handleSubmit } className="dashboard-site-settings-form">
-						<VStack spacing={ 4 } style={ { padding: '8px 0' } }>
+						<VStack spacing={ 4 }>
 							<VStack spacing={ 2 }>
 								<Text size="15px" weight={ 500 }>
 									{ __( 'Legacy contact' ) }

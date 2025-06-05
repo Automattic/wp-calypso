@@ -1019,7 +1019,7 @@ export class LoginForm extends Component {
 						) }
 
 						{ ! hideSignupLink && isOauthLogin && (
-							<div className={ clsx( 'login__form-signup-link' ) }>
+							<p className={ clsx( 'login__form-signup-link' ) }>
 								{ this.props.translate(
 									'Not on WordPress.com? {{signupLink}}Create an Account{{/signupLink}}.',
 									{
@@ -1028,7 +1028,7 @@ export class LoginForm extends Component {
 										},
 									}
 								) }
-							</div>
+							</p>
 						) }
 					</>
 				) }

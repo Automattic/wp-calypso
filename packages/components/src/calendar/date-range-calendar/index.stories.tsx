@@ -165,6 +165,9 @@ export const WithSelectedRangeAndMonth: Story = {
 	},
 };
 
+/**
+ * When working with time zones, use the `TZDate` object exported by this package instead of the native `Date` object.
+ */
 export const WithTimeZone: Story = {
 	render: function DateCalendarWithTimeZone( args ) {
 		const [ range, setRange ] = useState< typeof args.selected | null >( null );
@@ -203,7 +206,8 @@ export const WithTimeZone: Story = {
 				/>
 				<p>
 					Calendar set to { args.timeZone ?? 'current' } timezone, disabling selection for all dates
-					before today, and starting with a default date of 1 week from today`
+					before today, and starting with a default date range of 1 week from today to 2 weeks from
+					today.
 				</p>
 			</>
 		);
