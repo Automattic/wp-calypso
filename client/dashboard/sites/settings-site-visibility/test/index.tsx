@@ -13,6 +13,7 @@ function render( ui: React.ReactElement ) {
 	const router = createRouter( {
 		routeTree: createRootRoute( {
 			component: () => ui,
+			staticData: { analytics_title: '' },
 		} ),
 	} );
 	return testingLibraryRender(
