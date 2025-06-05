@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 import { DEFAULT_PER_PAGE } from '../constants';
@@ -15,23 +14,35 @@ type ApiResponseError = {
 	message: string;
 };
 
-const useNewHelper = config.isEnabled( 'subscribers-helper-library' );
-
+/**
+ * Gets the email subscription ID from a subscriber object.
+ * @param {Subscriber} subscriber - The subscriber object
+ * @returns {number} The email subscription ID, or 0 if not found
+ * @deprecated The `subscription_id` property is deprecated and from the old API endpoint response. Use `email_subscription_id` instead.
+ */
 const getEmailSubscriptionId = ( subscriber: Subscriber ): number => {
-	if ( useNewHelper ) {
-		// For new helper library, use email_subscription_id if it exists, otherwise use subscription_id
-		return subscriber.email_subscription_id || subscriber.subscription_id || 0;
-	}
-	return subscriber.subscription_id || 0;
+	// `subscription_id` is from the old API endpoint response.
+	return subscriber.email_subscription_id || subscriber.subscription_id || 0;
 };
 
+/**
+ * Gets the WordPress.com subscription ID from a subscriber object.
+ * @param {Subscriber} subscriber - The subscriber object
+ * @returns {number} The WordPress.com subscription ID, or 0 if not found
+ * @deprecated The `subscription_id` property is deprecated and from the old API endpoint response. Use `wpcom_subscription_id` instead.
+ */
 const getWpcomSubscriptionId = ( subscriber: Subscriber ): number => {
-	if ( useNewHelper ) {
-		return subscriber.wpcom_subscription_id || 0;
-	}
-	return 0;
+	// `subscription_id` is from the old API endpoint response.
+	return subscriber.wpcom_subscription_id || subscriber.subscription_id || 0;
 };
 
+/**
+ * Hook to remove subscribers from a site.
+ * Handles removal of email subscribers, WordPress.com followers, and paid subscription members.
+ * @param {number | null} siteId - The ID of the site
+ * @param {SubscriberQueryParams} SubscriberQueryParams - Query parameters for subscriber list
+ * @param {boolean} invalidateDetailsCache - Whether to invalidate the subscriber details cache (default: false)
+ */
 const useSubscriberRemoveMutation = (
 	siteId: number | null,
 	SubscriberQueryParams: SubscriberQueryParams,
