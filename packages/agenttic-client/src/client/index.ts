@@ -17,7 +17,9 @@ import {
 	type RequestConfig,
 } from './utils/index';
 import {
+	createTextMessage,
 	createToolResultDataPart,
+	createToolResultMessage,
 	extractTextFromMessage,
 	extractToolCallsFromMessage,
 } from './utils/index';
@@ -310,10 +312,10 @@ export function createClient( config: ClientConfig ): Client {
 					? conversationHistoryToDataParts( conversationHistory )
 					: [];
 
-				const toolResultMessage: Message = {
-					role: 'user',
-					parts: [ ...historyDataParts, ...toolResults ],
-				};
+				const toolResultMessage = createToolResultMessage(
+					toolResults,
+					historyDataParts
+				);
 
 				// Continue the same task with tool results
 				currentTask = await continueTask(
@@ -450,10 +452,10 @@ export function createClient( config: ClientConfig ): Client {
 							  )
 							: [];
 
-						const toolResultMessage: Message = {
-							role: 'user',
-							parts: [ ...historyDataParts, ...toolResults ],
-						};
+						const toolResultMessage = createToolResultMessage(
+							toolResults,
+							historyDataParts
+						);
 
 						yield {
 							id: update.id,
@@ -496,10 +498,7 @@ export function createClient( config: ClientConfig ): Client {
 			sessionId?: string
 		): Promise< TaskUpdate > {
 			// Create a simple text message for user input
-			const userMessage: Message = {
-				role: 'user',
-				parts: [ { type: 'text', text: userInput } ],
-			};
+			const userMessage = createTextMessage( userInput );
 
 			// Continue the task with user input
 			const continuedTask = await continueTask(
@@ -559,10 +558,8 @@ export function createClient( config: ClientConfig ): Client {
 				}
 
 				// Continue with tool results
-				const toolResultMessage: Message = {
-					role: 'user',
-					parts: toolResults,
-				};
+				const toolResultMessage =
+					createToolResultMessage( toolResults );
 
 				currentTask = await continueTask(
 					currentTask.id,

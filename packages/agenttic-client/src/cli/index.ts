@@ -5,6 +5,7 @@ import { config } from 'dotenv';
 config();
 
 import { cliLog, enableDebug, logger } from '../client/utils/logger';
+import { createTextMessage } from '../client/utils/index';
 import type { CLIOptions, InteractiveSession } from './types';
 import type { Message, TaskUpdate } from '../client/types/index';
 import { createRequire } from 'module';
@@ -322,10 +323,7 @@ Type 'help' for commands.
 		session.messageCount++;
 
 		// Add user message to conversation
-		const userMessage: Message = {
-			role: 'user',
-			parts: [ { type: 'text', text: options.message } ],
-		};
+		const userMessage = createTextMessage( options.message );
 		session.conversationMessages.push( userMessage );
 
 		const agentResponse = await sendMessageToAgent(
@@ -394,10 +392,7 @@ Just type your message to send it to the agent.
 			session.messageCount++;
 
 			// Add user message to conversation
-			const userMessage: Message = {
-				role: 'user',
-				parts: [ { type: 'text', text: trimmedInput } ],
-			};
+			const userMessage = createTextMessage( trimmedInput );
 			session.conversationMessages.push( userMessage );
 
 			const agentResponse = await sendMessageToAgent(
@@ -471,19 +466,3 @@ if ( import.meta.url === `file://${ process.argv[ 1 ] }` ) {
 }
 
 export { main, parseArgs, runInteractive };
-
-/**
- * Create a simple text message
- * @param text - The text content
- */
-function createTextMessage( text: string ): Message {
-	return {
-		role: 'user',
-		parts: [
-			{
-				type: 'text',
-				text,
-			},
-		],
-	};
-}
