@@ -19,6 +19,29 @@ import { useAppContext } from '../context';
 
 import './style.scss';
 
+function Help() {
+	const { user } = useAuth();
+	const { isLoading, isShown, setShowHelpCenter } = useShowHelpCenter();
+
+	const handleToggleHelpCenter = () => {
+		setShowHelpCenter( ! isShown );
+	};
+
+	return (
+		<>
+			<Button
+				className="dashboard-secondary-menu__item"
+				label={ __( 'Help' ) }
+				icon={ help }
+				variant="tertiary"
+				isBusy={ isLoading }
+				onClick={ handleToggleHelpCenter }
+			/>
+			{ isShown && <AsyncHelpCenterApp currentUser={ user } sectionName="dashboard" /> }
+		</>
+	);
+}
+
 // User profile dropdown component
 function UserProfile() {
 	const { user } = useAuth();
@@ -90,14 +113,8 @@ function UserProfile() {
 function SecondaryMenu() {
 	const navigate = useNavigate();
 	const { supports } = useAppContext();
-	const { user } = useAuth();
-	const [ isHelpCenterOpen, setIsHelpCenterOpen ] = useShowHelpCenter();
 	const hasUnreadNotifications = false;
 	const notificationsPath = '/me/notifications';
-
-	const handleToggleHelpCenter = () => {
-		setIsHelpCenterOpen( ! isHelpCenterOpen );
-	};
 
 	return (
 		<HStack spacing={ 2 } justify="flex-end">
@@ -110,20 +127,7 @@ function SecondaryMenu() {
 					href="/reader"
 				/>
 			) }
-			{ supports.help && (
-				<>
-					<Button
-						className="dashboard-secondary-menu__item"
-						label={ __( 'Help' ) }
-						onClick={ handleToggleHelpCenter }
-						icon={ help }
-						variant="tertiary"
-					/>
-					{ isHelpCenterOpen && (
-						<AsyncHelpCenterApp currentUser={ user } sectionName="dashboard" />
-					) }
-				</>
-			) }
+			{ supports.help && <Help /> }
 			{ supports.notifications && (
 				<Button
 					className="dashboard-secondary-menu__item"
