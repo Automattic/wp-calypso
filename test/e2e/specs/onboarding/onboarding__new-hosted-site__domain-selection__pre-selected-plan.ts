@@ -55,10 +55,10 @@ describe(
 
 		it( 'Select a domain name', async function () {
 			domainSearchComponent = new DomainSearchComponent( page );
-			await domainSearchComponent.search( blogName + '.live' );
+			await domainSearchComponent.search( blogName + '.blog' );
 
 			const promises = await Promise.all( [
-				domainSearchComponent.selectDomain( '.live', false ),
+				domainSearchComponent.selectDomain( '.blog', false ),
 				page.click( '.domains__domain-cart-continue' ),
 				page.waitForURL( /.*\/checkout\/.*/, { timeout: 30 * 1000 } ),
 			] );
