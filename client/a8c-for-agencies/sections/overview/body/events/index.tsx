@@ -44,7 +44,7 @@ const OverviewBodyEvents = () => {
 							</div>
 							<div className="a4a-event__date-and-title">
 								<div className="a4a-event__date a4a-event__date--klaviyo">
-									{ translate( 'June 12th' ) }
+									<time dateTime="2025-06-12">{ translate( 'June 12th' ) }</time>
 								</div>
 								<h3 className="a4a-event__title">
 									{ translate( 'Grow your agency with Klaviyo and WooCommerce' ) }
@@ -85,7 +85,7 @@ const OverviewBodyEvents = () => {
 							</div>
 							<div className="a4a-event__date-and-title">
 								<div className="a4a-event__date a4a-event__date--woo">
-									{ translate( 'June 25th' ) }
+									<time dateTime="2025-06-25">{ translate( 'June 25th' ) }</time>
 								</div>
 								<h3 className="a4a-event__title">
 									{ translate( "You're invited to Step Inside: Woo Marketing" ) }
