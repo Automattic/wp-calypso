@@ -75,11 +75,12 @@ export interface SiteCapabilities {
 }
 
 export interface SiteOptions {
-	software_version: string;
 	admin_url: string;
 	is_redirect?: boolean;
-	p2_hub_blog_id?: number;
 	is_wpforteams_site?: boolean;
+	p2_hub_blog_id?: number;
+	site_creation_flow?: string;
+	software_version: string;
 }
 
 export interface Site {
