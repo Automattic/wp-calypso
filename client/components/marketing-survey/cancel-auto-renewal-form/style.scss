@@ -7,8 +7,10 @@
 }
 
 .cancel-auto-renewal-form__chat-button {
-	float: left;
 	font-size: 0.875rem;
 	position: initial;
 	transform: none;
+	display: inline-block;
+	margin-right: auto;
+	// align-self: flex-start;
 }
