@@ -13,7 +13,6 @@ export const useQueryForRoute = ( currentRoute: string ) => {
 		'/me/notifications': __( 'notification settings' ),
 		'/me/privacy': __( 'privacy' ),
 		'/me/site-blocks': __( 'blocked sites' ),
-		'/plans/': __( 'upgrade plan' ),
 		'/plugins': __( 'plugins' ),
 		'/plugins/manage': __( 'manage plugins' ),
 		'/reader': __( 'reader' ),
