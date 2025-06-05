@@ -1,7 +1,7 @@
 export const IconFigma = () => {
 	return (
 		<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-			<g clip-path="url(#clip0_2162_27)">
+			<g clipPath="url(#clip0_2162_27)">
 				<path
 					d="M6.83594 17.9688C6.83594 16.4586 8.10389 15.2344 9.66797 15.2344H12.5V17.9688C12.5 19.4789 11.232 20.7031 9.66797 20.7031C8.10389 20.7031 6.83594 19.4789 6.83594 17.9688Z"
 					fill="#24CB71"
