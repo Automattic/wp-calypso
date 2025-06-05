@@ -47,7 +47,7 @@ interface ChatMessagesProps {
 }
 
 export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
-	const { chat, botNameSlug, isChatLoaded, isUserEligibleForPaidSupport } =
+	const { chat, botNameSlug, isChatLoaded, isUserEligibleForPaidSupport, forceEmailSupport } =
 		useOdieAssistantContext();
 	const createZendeskConversation = useCreateZendeskConversation();
 	const resetSupportInteraction = useResetSupportInteraction();
@@ -203,7 +203,7 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 						<JumpToRecent containerReference={ messagesContainerRef } />
 						{ chat.provider === 'odie' && (
 							<>
-								<ViewMostRecentOpenConversationNotice />
+								{ ! forceEmailSupport && <ViewMostRecentOpenConversationNotice /> }
 								{ availableStatusWithFeedback.includes( chat.status ) && (
 									<div className="odie-chatbox__action-message">
 										{ chat.status === 'sending' && <ThinkingPlaceholder /> }
